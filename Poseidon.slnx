@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/backend/">
+    <Project Path="backend/Poseidon.Domain/Poseidon.Domain.csproj" />
     <Project Path="backend/Poseidon.Api/Poseidon.Api.csproj" />
     <Project Path="backend/Poseidon.DbMigrator/Poseidon.DbMigrator.csproj" />
     <Project Path="backend/Poseidon.Persistence/Poseidon.Persistence.csproj" />
@@ -7,6 +8,7 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Poseidon.Api.Tests/Poseidon.Api.Tests.csproj" />
+    <Project Path="tests/Poseidon.Domain.Tests/Poseidon.Domain.Tests.csproj" />
     <Project Path="tests/Poseidon.Persistence.Tests/Poseidon.Persistence.Tests.csproj" />
   </Folder>
 </Solution>
