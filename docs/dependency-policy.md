@@ -10,9 +10,12 @@ Kullanıcı tercihi: yeni geliştirmelerde güncel **kararlı** ve karşılıkl�
 | EF Core / dotnet-ef | 10.0.14 | Central Package Management + local tool manifest |
 | Npgsql EF sağlayıcısı | 10.0.3 | EF Core 10 ile uyumlu |
 | PostgreSQL | 18.6 | Integration container |
-| React / React DOM | 19.3.1 | Frontend kurulurken hedef; henüz uygulama paketi yok |
-| TypeScript | 7.0.2 | Frontend kurulurken hedef; henüz kurulu değil |
-| Vite | 8.3.5 | Frontend kurulurken hedef; henüz kurulu değil |
+| React / React DOM | 19.3.1 | Frontend, exact pin + npm lock |
+| TypeScript | 7.0.2 latest; **5.9.3 uygulandı** | typescript-eslint <6.1 ve openapi-typescript ^5.x peer sınırlarının en güncel uyumlu kesişimi; peer kontrolleri kapatılmadı |
+| Vite | 8.3.5 | Frontend exact pin |
+| Node.js LTS | 26.13.0 | Node registry/dist metadata; yerel arşiv SHA256 doğrulandı; CI aynı sürüm |
+| Playwright | 1.64.1 | Desktop/mobile Chromium smoke, exact pin |
+| ASP.NET Core OpenAPI / Mvc.Testing | 10.0.14 | Gerçek API host ve contract testleri |
 | xUnit v3 | 4.0.2 | Backend test projesi |
 | Microsoft.NET.Test.Sdk | 18.11.0 | Backend test projesi |
 | Testcontainers.PostgreSql | 4.16.0 | Gerçek PostgreSQL integration testleri |
