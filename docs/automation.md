@@ -5,7 +5,7 @@
 - Hedef: https://github.com/kadirvurgun/Poseidon
 - Ajanlar geliştirme için tam yetkili; push ve PR açma açıkça yetkilendirildi.
 - Tam geliştirme yetkisi kapsamında, zorunlu testler ve bağımsız inceleme geçtikten sonra normal PR merge hedeflenir. Force push, depo silme ve canlı müşteri verisinde yıkıcı işlemler bu çalışma döngüsünün parçası değildir.
-- Mevcut üyelik: ChatGPT Plus/Codex. Claude erişimi henüz sağlanmadı; Claude zorunlu bağımlılık değildir.
+- Ayrı Esra Pro ve Kadir Plus profillerinin kimlik doğrulaması tamamlandı; her hesap yalnız kendi kotasıyla değerlendirilir. Claude zorunlu bağımlılık değildir.
 - 7/24 host seçimi, kullanım bütçesi, pilot kapasitesi, veri lokasyonu ve IdP henüz yanıtlanmadı.
 - Kullanıcı her faz bitiminde bilgi verilmesini istedi: teslim edilenler, test sonuçları, engeller, mevcut aşama ve sonraki adım raporlanır. Yerel alt paket ile tam sprint kabulü ayrı belirtilir.
 
@@ -23,7 +23,7 @@ GitHub Actions CI'ı çalıştırır; sürekli koordinatör ayrı bir makinede s
 
 ## Codex ve Claude
 
-Codex CLI `codex exec --json` ile scriptsiz etkileşim gerektirmeyen görevler çalıştırabilir ve kaydedilmiş oturumu kullanabilir. Plus üyeliği genel OpenAI API bakiyesi değildir. API kullanımı ayrı faturalandırılır. Üyelik kotasıyla sürekli ve sınırsız çalışma garanti edilmez; kendi hesabıyla CLI login ve küçük bir deneme gerekir. Hesaplar arasında kota aşmaya yönelik rotasyon tasarlanmaz.
+Codex CLI `codex exec --json` ile etkileşimsiz görevler çalıştırabilir ve kaydedilmiş oturumu kullanabilir. Üyelik kotasıyla sürekli ve sınırsız çalışma garanti edilmez. İki profil ayrı kimlik doğrulaması ve kendi kota pencereleriyle kullanılır; kota aşmaya yönelik sınırsız rotasyon tasarlanmaz. [Saatlik kontrol paketi](hourly-automation.md) varsayılan olarak yalnız metadata okur; model işi açıkça verilen güvenilir görev gerektirir.
 
 Claude gelecekte ayrı bir worker adapter olabilir. Satın alma veya hesap paylaşımı kurulumun ön koşulu değildir. Kullanılacaksa yetkili kişisel/ekip erişimi, headless çalışma ve limitler kendi resmi dokümanlarından doğrulanır.
 
@@ -36,9 +36,9 @@ Resmi kaynaklar:
 
 - Yerelde .NET 10 SDK, Node, Python 3.13, Claude CLI ve Graphify 0.9.15 bulundu. Docker daemon ve PostgreSQL container çalışması doğrulandı; Claude login doğrulanmadı.
 - Codex CLI proje içi `.tools/codex/` altında kurulur; kimlik bilgileri repoya yazılmaz.
-- Git origin tanımlandı; origin/main fetch geçti. Push dry-run mevcut avurgun1 hesabı için 403 aldı; Write yetkisi/doğru Git oturumu ve PR için GitHub CLI login bekleniyor.
+- Önceki 403 kurulum engeli güncel durum değildir: doğrulanmış PR #1 ve PR #3 merge edildi. Hesap worker PR #2 henüz merge edilmedi; bu paketteki worker temeli incelenmiş `e37ac0d` aktarımıdır.
 - Graphify Codex skill'i ve proje keşif talimatı kuruldu. Ürünün RAG servisi kurulmuş değildir.
-- Çalışan sürekli worker/scheduler yoktur. İlk backend workflow'u yerelde oluşturuldu: 12 unit/guard + 10 gerçek PostgreSQL integration testi geçti; 4 belge aktarım testi de geçti. Bağımsız statik QA foundation kapsamında bloklayıcı bulgu bildirmedi. Remote CI doğrulanmadı; HTTP/React/Playwright testleri yoktur. Sadece dosyaların varlığı otomasyonun aktif olduğu anlamına gelmez.
+- İki hesabın kimlik doğrulaması tamamlandı. Saatlik watcher ve scheduler tanımı yerel teslim paketidir; bu görev kapsamında Windows görevi kurulmadı veya başlatılmadı. PR #1/#3 merge kanıtı, sürekli scheduler veya görev kuyruğunun çalıştığını kanıtlamaz. Gerçek task kurulumu, geçmişi ve kuyruk doğrulaması ebeveyn koordinatörde bekler; dosyaların varlığı otomasyonun aktif olduğu anlamına gelmez. Bu paket hedef commit bağımsız QA/CI kabulü yerine geçmez.
 
 ## Devreye alma kabulü
 
