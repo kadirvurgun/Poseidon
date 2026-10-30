@@ -107,8 +107,13 @@ def summarize_account(profile, account, limits):
     account = account or {}
     plan = account.get('planType')
     buckets = limits.get('rateLimitsByLimitId') or {}
-    bucket = buckets.get('codex') or limits.get('rateLimits') or {}
-    windows = [bucket[key] for key in ('primary', 'secondary') if isinstance(bucket.get(key), dict)]
+    # Every returned window participates in eligibility, including additional
+    # subscription buckets. Never infer quota from a different profile.
+    all_buckets = [bucket for bucket in buckets.values() if isinstance(bucket, dict)]
+    if isinstance(limits.get('rateLimits'), dict):
+        all_buckets.append(limits['rateLimits'])
+    windows = [bucket[key] for bucket in all_buckets for key in ('primary', 'secondary')
+               if isinstance(bucket.get(key), dict)]
     exhausted = any(window.get('usedPercent', 0) >= 100 for window in windows)
     authenticated = account.get('type') == 'chatgpt'
     matches = plan in profile.get('accepted_plans', [profile['expected_plan']])
@@ -152,17 +157,29 @@ class Workers:
         # These workers must use their explicit ChatGPT login, not an ambient API key.
         for key in ('OPENAI_API_KEY', 'CODEX_API_KEY', 'CODEX_ACCESS_TOKEN'):
             environment.pop(key, None)
+        for key in list(environment):
+            upper = key.upper()
+            if (upper.endswith(('_API_KEY', '_APIKEY', '_KEY', '_TOKEN', '_SECRET', '_PASSWORD',
+                                '_SESSION_ID', '_THREAD_ID', '_TOOL_ID', '_TOOL_CALL_ID'))
+                    or upper.startswith(('OPENAI_', 'ANTHROPIC_', 'MCP_'))
+                    or (upper.startswith('CODEX_') and upper != 'CODEX_HOME')):
+                environment.pop(key, None)
         sdk = self.root / '.tools/dotnet'
         if sdk.is_dir():
             environment['DOTNET_ROOT'] = str(sdk)
             environment['PATH'] = str(sdk) + os.pathsep + environment.get('PATH', '')
+        node = self.root / '.tools/node/node-v26.13.0-win-x64'
+        if node.is_dir():
+            environment['PATH'] = str(node) + os.pathsep + environment.get('PATH', '')
+        environment.update(PYTHONUTF8='1', PYTHONIOENCODING='utf-8')
         return environment
 
     def command(self):
         native = self.root / '.tools/codex/node_modules/@openai/codex-win32-x64/vendor/x86_64-pc-windows-msvc/bin/codex.exe'
         if os.name == 'nt' and native.is_file():
             return [str(native), '--no-daemon', '-c', 'cli_auth_credentials_store="keyring"']
-        node = shutil.which('node')
+        local_node = self.root / '.tools/node/node-v26.13.0-win-x64/node.exe'
+        node = str(local_node) if local_node.is_file() else shutil.which('node')
         cli = self.root / '.tools/codex/node_modules/@openai/codex/bin/codex.js'
         if not node or not cli.is_file():
             raise RuntimeError('Install Node and the project-local Codex CLI first.')
