@@ -1,7 +1,7 @@
 {
   "as_of": "2026-10-30",
   "baseline": "POSEIDON v46.3 CONTROLLED CANDIDATE",
-  "current_stage": "S0 preparation; exit gate not passed",
+  "current_stage": "S0 preparation; API/React application foundation under independent QA; exit gate not passed",
   "method": "accepted story points / total baseline story points * 100",
   "scope": "complete v46.3 Backlog sheet; duplicates in other sheets excluded",
   "total_tasks": 121,
@@ -1815,10 +1815,10 @@
     }
   ],
   "limitations": [
-    "Manual snapshot; not a live dashboard",
-    "No fully accepted canonical backlog item or sprint",
-    "Remote push denied for avurgun1; remote CI unverified",
-    "IAM/HTTP audit, React/Playwright and continuous worker remain unimplemented",
+    "Manual snapshot; no fully accepted canonical sprint",
+    "APP-FOUNDATION-01 all local build/unit/integration/component/browser checks passed; final independent QA and target-commit remote CI pending",
+    "OIDC/tenant business API and HTTP user-action audit remain unimplemented",
+    "Two-account worker service is not active; see draft PR #2",
     "Source Excel preserved; assessment maintained separately"
   ],
   "verification": {
@@ -1841,9 +1841,43 @@
     "remote_ci": "not-yet-run",
     "complete_identity_http_audit": "not-yet-implemented",
     "independent_static_qa": "No blocking findings in limited foundation scope; target-commit confirmation pending",
-    "git_push": "dry-run denied with HTTP 403 for avurgun1"
+    "git_push": "dry-run denied with HTTP 403 for avurgun1",
+    "api_host_integration_tests": {
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "contract": "committed OpenAPI snapshot matches real host"
+    },
+    "frontend": {
+      "component_tests_passed": 12,
+      "lint": "passed",
+      "typecheck": "passed",
+      "build": "passed",
+      "typescript": "5.9.3 latest compatible with lint and OpenAPI generator"
+    },
+    "playwright": {
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "browser": "Chromium desktop + mobile viewport",
+      "backend": "real API; retry case injects first transport failure only",
+      "workers": 1
+    },
+    "continuous_service": "not-active; two-account package still draft PR #2",
+    "main_protection": {
+      "verified": true,
+      "strict": true,
+      "required_checks": [
+        "persistence-and-security",
+        "frontend-and-browser"
+      ],
+      "enforce_admins": true,
+      "allow_force_pushes": false,
+      "allow_deletions": false
+    }
   },
   "phase_reports": [
-    "docs/phases/DB-FOUNDATION-01.md"
+    "docs/phases/DB-FOUNDATION-01.md",
+    "docs/phases/APP-FOUNDATION-01.md"
   ]
 }

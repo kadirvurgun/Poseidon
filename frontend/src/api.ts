@@ -1,5 +1,6 @@
 // APP-FOUNDATION-01: public technical heartbeat; no operational data or identity.
-export interface SystemStatus { service: 'poseidon'; status: 'available' }
+import type { components } from './generated/api'
+export type SystemStatus = components['schemas']['SystemStatus']
 
 export async function getSystemStatus(signal: AbortSignal): Promise<SystemStatus> {
   const response = await fetch('/api/v1/system/status', {

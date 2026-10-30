@@ -4,7 +4,11 @@ Gemi ve römorkör operasyonel hazırlık, güvenlik, uygunluk ve kanıt platfor
 
 Hedef depo: https://github.com/kadirvurgun/Poseidon
 
-Başlangıç durumu: geliştirme altyapısı ve ilk EF Core persistence/seed/hash bileşenleri. Henüz uçtan uca ürün uygulaması veya çalışan 7/24 ajan servisi yoktur.
+Başlangıç durumu: EF Core persistence/seed/hash bileşenleri ve .NET API + React teknik bağlantı ekranı. Giriş, tenant operasyon API'leri ve çalışan 7/24 ajan servisi henüz yoktur. Teknik bağlantı ekranı bir operasyon onayı değildir.
+
+- [Uygulamayı yerelde çalıştırma ve test komutları](docs/development.md)
+- [APP-FOUNDATION-01 — API/React/Playwright paketi](docs/phases/APP-FOUNDATION-01.md)
+- [Branch ve PR standardı](docs/repository-policy.md)
 
 - [Mimari ve geliştirme kararları](docs/architecture.md)
 - [Proje ilerleme raporu — mevcut aşama ve tamamlanma yüzdesi](docs/project-status.md)

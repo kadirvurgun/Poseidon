@@ -5,7 +5,7 @@
 **Mevcut aşama:** S0 — analizden geliştirmeye geçiş ve altyapı hazırlığı.
 **Resmi geliştirme tamamlanması: %0.** Henüz kabul kriterleri, kod incelemesi ve zorunlu testleri birlikte geçen bir backlog işi yok.
 
-**Son güncelleme:** Docker açıldı; ilk EF Core/seed/audit paketinde Release build, 12 unit/guard ve **10 gerçek PostgreSQL integration testi geçti**. Bağımsız statik QA bloklayıcı bulgu bildirmedi. [DB-FOUNDATION-01 raporu](phases/DB-FOUNDATION-01.md) yerel teknik doğrulamayı kaydeder. Remote push, avurgun1 hesabı için GitHub 403 nedeniyle bekliyor; CI remote'da doğrulanmadı. Tam backlog/faz kabulü henüz yok.
+**Son güncelleme:** [APP-FOUNDATION-01](phases/APP-FOUNDATION-01.md): .NET API + React teknik bağlantı ekranı, OpenAPI'den tip üretimi ve push/PR frontend/browser CI hazırlandı. Yerelde build, 12 backend unit/guard + 15 integration (10 PostgreSQL, 5 HTTP host) + 12 component + 4 belge import testi geçti; lint/typecheck ve migration modeli geçti. 4 gerçek API Playwright senaryosu da geçti; bağımsız final QA ve remote CI doğrulaması sürüyor. Main branch protection iki zorunlu check ile etkin. Bu ekran operasyonel readiness veya IAM kabulü değildir. İki hesaplı sürekli worker servisi hâlâ aktif değil; ayrı [taslak PR #2](https://github.com/kadirvurgun/Poseidon/pull/2) açık. S0 çıkış kapısı açık.
 
 ## 1. Yüzde nasıl hesaplanıyor?
 
@@ -54,7 +54,7 @@ Bu hazırlıklar faydalıdır; backlog kabulü veya çalışan ürün olarak say
 | DEV-001 — Repository ve branch standardı | **Kısmen ilerledi** | Uygulama klasörleri, branch/PR politikası, yayınlanmış başlangıç ve koruma kuralları tamamlanmalı |
 | DEV-004 — Modular-monolith boundary ve ADR | **Kısmen ilerledi** | Başlangıç notları resmî ADR'lere ve doğrulanmış modül sözleşmelerine dönüştürülmeli |
 | DEV-010 — DoR / DoD / Release Gate | **Kısmen ilerledi** | Test yaklaşımı uygulanabilir görev/faz kabul sözleşmeleriyle dondurulmalı |
-| DEV-002 — CI pipeline | **Kısmen ilerledi** | Backend workflow'u yerelde var; remote CI, frontend build/lint ve gereken artifact/gate kabulü yok |
+| DEV-002 — CI pipeline | **Kısmen ilerledi** | Backend remote CI foundation için geçti; API/React/component/browser + artifact kapıları APP-FOUNDATION-01 ile doğrulanıyor |
 | Diğer 117 iş | **Kabul edilmiş teslimat yok** | Uygulama ve kabul kanıtı üretilmeli |
 
 Bu dört kısmi durum raporun yerel değerlendirmesidir. İlk backend bileşenleri sonraki foundation işlerini de destekler; ancak tamamlanmış sayılmaz. Kaynak Excel'deki 121 işin tamamı hâlâ `Not Started` olarak kayıtlıdır; kontrollü kaynak dosyası değiştirilmemiştir.
@@ -105,7 +105,7 @@ Host, günlük kullanım sınırı, pilot ölçeği, IdP ve veri lokasyonu açı
 - [18.01 Development Backlog](<sources/text/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx.md>): `Backlog` satır 2–122; `v46.3 Sprint Plan`; `DoR DoD Gates`; `Dashboard`.
 - [11.01 Traceability Matrix](<sources/text/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx.md>): `196 Ekran v46.3`; `2316 Alan v46.3`.
 - [19.01 Test/Pilot/Release Gates](<sources/text/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx.md>).
-- Yerel dosya envanteri: ilk .NET persistence/security/migrator/test kaynakları ve backend workflow'u mevcut; HTTP API ve React/Playwright henüz yok. Araç bağımlılıkları ve kaynak analiz dosyaları ürün kodu sayılmadı.
+- Yerel dosya envanteri: .NET persistence/security/migrator, teknik HTTP API, React bağlantı ekranı ve test/CI kaynakları mevcut. İş akışı API'leri, OIDC ve kullanıcı eylem audit'i henüz yok. Araç bağımlılıkları ve kaynak analiz dosyaları ürün kodu sayılmadı.
 - [Makine tarafından okunabilir durum](project-status.json): 121 işin kaynak sprint/öncelik/SP bilgisi ve bu raporun kabul değerlendirmesi.
 
 Her iş kabulünde durum dosyası ve bu rapor birlikte güncellenmeli; done kaydına commit, test ve review kanıtı eklenmelidir. Faz sonunda tam regresyon sonucu ve kalan riskler eklenir. **Bu rapor anlık durum fotoğrafıdır; henüz kendiliğinden güncellenen bir dashboard değildir.**

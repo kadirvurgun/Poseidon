@@ -1,4 +1,4 @@
-name: Backend foundation
+name: Application foundation
 
 on:
   push:
@@ -28,10 +28,68 @@ jobs:
       - name: Build
         run: dotnet build Poseidon.slnx --configuration Release --no-restore
       - name: Unit tests
-        run: dotnet test --solution Poseidon.slnx --configuration Release --no-build --filter-not-trait "Category=Integration"
+        run: dotnet test --project tests/Poseidon.Persistence.Tests/Poseidon.Persistence.Tests.csproj --configuration Release --no-build --filter-not-trait "Category=Integration"
       - name: PostgreSQL integration tests
         run: dotnet test --solution Poseidon.slnx --configuration Release --no-build --filter-trait "Category=Integration"
       - name: Check migration model
         run: dotnet ef migrations has-pending-model-changes --project backend/Poseidon.Persistence --startup-project backend/Poseidon.DbMigrator --configuration Release --no-build
       - name: Document import tests
         run: python3 -m unittest discover -s scripts -p 'test_*.py' -v
+      - name: Publish API artifact
+        run: dotnet publish backend/Poseidon.Api --configuration Release --no-build --no-restore --output .runtime/artifacts/api
+      - uses: actions/upload-artifact@v7.0.2
+        with:
+          name: api-development-build
+          path: .runtime/artifacts/api
+          if-no-files-found: error
+
+  frontend-and-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 26.13.0
+          cache: npm
+          cache-dependency-path: |
+            frontend/package-lock.json
+            tests/Poseidon.Browser.Tests/package-lock.json
+      - uses: actions/setup-dotnet@v6.0.0
+        with:
+          global-json-file: global.json
+      - name: Restore frontend and browser packages
+        run: |
+          npm ci --prefix frontend
+          npm ci --prefix tests/Poseidon.Browser.Tests
+      - name: Lint and typecheck
+        run: |
+          npm run generate:api --prefix frontend
+          git diff --exit-code -- frontend/src/generated/api.d.ts
+          npm run lint --prefix frontend
+          npm run typecheck --prefix frontend
+      - name: Component tests
+        run: npm test --prefix frontend
+      - name: Build frontend and real API
+        run: |
+          npm run build --prefix frontend
+          dotnet restore backend/Poseidon.Api --locked-mode
+          dotnet build backend/Poseidon.Api --configuration Release --no-restore
+      - name: Install Chromium
+        working-directory: tests/Poseidon.Browser.Tests
+        run: npx playwright install --with-deps chromium
+      - name: Real API browser smoke (desktop and mobile)
+        run: npm test --prefix tests/Poseidon.Browser.Tests
+      - uses: actions/upload-artifact@v7.0.2
+        with:
+          name: frontend-development-build
+          path: frontend/dist
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v7.0.2
+        if: always()
+        with:
+          name: playwright-evidence
+          path: |
+            tests/Poseidon.Browser.Tests/playwright-report
+            tests/Poseidon.Browser.Tests/test-results
+          retention-days: 14
