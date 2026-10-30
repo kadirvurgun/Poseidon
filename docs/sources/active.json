@@ -1,0 +1,13 @@
+{
+  "baseline_id": "poseidon-v46.3-20261030",
+  "source_root": "analiz/POSEIDON GUNCEL 30.10.2026",
+  "manifest": "docs/sources/2026-10-30/manifest.json",
+  "chunks": "docs/sources/2026-10-30/chunks.jsonl",
+  "delta": "docs/sources/2026-10-30/delta.json",
+  "prior_manifest": "docs/sources/manifest.json",
+  "authority": "user-supplied updated candidate; source proposals and external sign-off gates remain open",
+  "backlog_tasks": 121,
+  "backlog_story_points": 970,
+  "screens": 196,
+  "field_contracts": 2316
+}

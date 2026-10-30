@@ -1,0 +1,37 @@
+{
+  "evaluationDate": "2026-10-04",
+  "context": {
+    "tenantId": "TENANT-DEMO",
+    "mode": "TUG",
+    "evaluationType": "OPERATION_READINESS"
+  },
+  "vessel": {
+    "id": "TUG-007",
+    "name": "OCEAN TUG 7",
+    "flag": "TR",
+    "type": "ASD_TUG",
+    "gt": 420,
+    "mainPropulsionKw": 3600,
+    "contractForConstructionDate": "2022-03-14",
+    "operatingArea": "KOCAELI",
+    "classSociety": "DEMO_CLASS"
+  },
+  "class": {
+    "rulePack": {"IACS_M79": true}
+  },
+  "operation": {
+    "jobId": "JOB-2026-1004-17",
+    "jobType": "HARBOUR_ASSIST",
+    "profile": "CLOSE_QUARTERS_TOWAGE",
+    "serviceContext": "AUTHORIZED_TUG_SERVICE"
+  },
+  "equipment": {
+    "towingWinchFitted": true,
+    "emergencyReleaseState": "PASS",
+    "bollardPullCertificateVerified": true
+  },
+  "regulatory": {
+    "ismApplicable": true,
+    "msmdVerified": true
+  }
+}

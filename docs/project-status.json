@@ -1,6 +1,6 @@
 {
-  "as_of": "2026-10-30",
-  "baseline": "POSEIDON v46.3 CONTROLLED CANDIDATE",
+  "as_of": "2026-10-31",
+  "baseline": "POSEIDON v46.3 updated 2026-10-30 / Library26 candidate",
   "current_stage": "S0; DEV-001 and DEV-002 accepted; remaining exit gates open",
   "method": "accepted story points / total baseline story points * 100",
   "scope": "complete v46.3 Backlog sheet; duplicates in other sheets excluded",
@@ -137,9 +137,11 @@
         "docs/repository-policy.md",
         "docs/phases/APP-FOUNDATION-01.md"
       ],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:2"
+      "source_locator": "sheet:Backlog/row:2",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-002",
@@ -159,9 +161,11 @@
         "docs/repository-policy.md",
         "docs/phases/APP-FOUNDATION-01.md"
       ],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:3"
+      "source_locator": "sheet:Backlog/row:3",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-003",
@@ -173,9 +177,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:4"
+      "source_locator": "sheet:Backlog/row:4",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-004",
@@ -187,9 +193,11 @@
       "assessment": "partial-preparation",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:5"
+      "source_locator": "sheet:Backlog/row:5",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-005",
@@ -201,9 +209,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:6"
+      "source_locator": "sheet:Backlog/row:6",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-006",
@@ -215,9 +225,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:7"
+      "source_locator": "sheet:Backlog/row:7",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-007",
@@ -229,9 +241,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:8"
+      "source_locator": "sheet:Backlog/row:8",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-008",
@@ -243,9 +257,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:9"
+      "source_locator": "sheet:Backlog/row:9",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-009",
@@ -257,9 +273,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:10"
+      "source_locator": "sheet:Backlog/row:10",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-010",
@@ -271,9 +289,11 @@
       "assessment": "partial-preparation",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:11"
+      "source_locator": "sheet:Backlog/row:11",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-011",
@@ -285,9 +305,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:12"
+      "source_locator": "sheet:Backlog/row:12",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-012",
@@ -299,9 +321,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:13"
+      "source_locator": "sheet:Backlog/row:13",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-013",
@@ -313,9 +337,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:14"
+      "source_locator": "sheet:Backlog/row:14",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-014",
@@ -327,9 +353,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:15"
+      "source_locator": "sheet:Backlog/row:15",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-015",
@@ -341,9 +369,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:16"
+      "source_locator": "sheet:Backlog/row:16",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-016",
@@ -355,9 +385,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:17"
+      "source_locator": "sheet:Backlog/row:17",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-017",
@@ -369,9 +401,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:18"
+      "source_locator": "sheet:Backlog/row:18",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-018",
@@ -383,9 +417,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:19"
+      "source_locator": "sheet:Backlog/row:19",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-019",
@@ -397,9 +433,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:20"
+      "source_locator": "sheet:Backlog/row:20",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-020",
@@ -411,9 +449,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:21"
+      "source_locator": "sheet:Backlog/row:21",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-021",
@@ -425,9 +465,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:22"
+      "source_locator": "sheet:Backlog/row:22",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-022",
@@ -439,9 +481,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:23"
+      "source_locator": "sheet:Backlog/row:23",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-023",
@@ -453,9 +497,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:24"
+      "source_locator": "sheet:Backlog/row:24",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-024",
@@ -467,9 +513,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:25"
+      "source_locator": "sheet:Backlog/row:25",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-025",
@@ -481,9 +529,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:26"
+      "source_locator": "sheet:Backlog/row:26",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-026",
@@ -495,9 +545,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:27"
+      "source_locator": "sheet:Backlog/row:27",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-027",
@@ -509,9 +561,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:28"
+      "source_locator": "sheet:Backlog/row:28",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-028",
@@ -523,9 +577,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:29"
+      "source_locator": "sheet:Backlog/row:29",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-029",
@@ -537,9 +593,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:30"
+      "source_locator": "sheet:Backlog/row:30",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-030",
@@ -551,9 +609,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:31"
+      "source_locator": "sheet:Backlog/row:31",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-031",
@@ -565,9 +625,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:32"
+      "source_locator": "sheet:Backlog/row:32",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-032",
@@ -579,9 +641,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:33"
+      "source_locator": "sheet:Backlog/row:33",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-033",
@@ -593,9 +657,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:34"
+      "source_locator": "sheet:Backlog/row:34",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-034",
@@ -607,9 +673,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:35"
+      "source_locator": "sheet:Backlog/row:35",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-035",
@@ -621,9 +689,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:36"
+      "source_locator": "sheet:Backlog/row:36",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-036",
@@ -635,9 +705,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:37"
+      "source_locator": "sheet:Backlog/row:37",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-037",
@@ -649,9 +721,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:38"
+      "source_locator": "sheet:Backlog/row:38",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-038",
@@ -663,9 +737,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:39"
+      "source_locator": "sheet:Backlog/row:39",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-039",
@@ -677,9 +753,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:40"
+      "source_locator": "sheet:Backlog/row:40",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-040",
@@ -691,9 +769,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:41"
+      "source_locator": "sheet:Backlog/row:41",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-041",
@@ -705,9 +785,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:42"
+      "source_locator": "sheet:Backlog/row:42",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-042",
@@ -719,9 +801,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:43"
+      "source_locator": "sheet:Backlog/row:43",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-043",
@@ -733,9 +817,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:44"
+      "source_locator": "sheet:Backlog/row:44",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-044",
@@ -747,9 +833,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:45"
+      "source_locator": "sheet:Backlog/row:45",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-045",
@@ -761,9 +849,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:46"
+      "source_locator": "sheet:Backlog/row:46",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-046",
@@ -775,9 +865,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:47"
+      "source_locator": "sheet:Backlog/row:47",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-047",
@@ -789,9 +881,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:48"
+      "source_locator": "sheet:Backlog/row:48",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-048",
@@ -803,9 +897,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:49"
+      "source_locator": "sheet:Backlog/row:49",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-049",
@@ -817,9 +913,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:50"
+      "source_locator": "sheet:Backlog/row:50",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-050",
@@ -831,9 +929,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:51"
+      "source_locator": "sheet:Backlog/row:51",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-051",
@@ -845,9 +945,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:52"
+      "source_locator": "sheet:Backlog/row:52",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-052",
@@ -859,9 +961,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:53"
+      "source_locator": "sheet:Backlog/row:53",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-053",
@@ -873,9 +977,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:54"
+      "source_locator": "sheet:Backlog/row:54",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-054",
@@ -887,9 +993,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:55"
+      "source_locator": "sheet:Backlog/row:55",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-055",
@@ -901,9 +1009,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:56"
+      "source_locator": "sheet:Backlog/row:56",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-056",
@@ -915,9 +1025,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:57"
+      "source_locator": "sheet:Backlog/row:57",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-057",
@@ -929,9 +1041,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:58"
+      "source_locator": "sheet:Backlog/row:58",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-058",
@@ -943,9 +1057,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:59"
+      "source_locator": "sheet:Backlog/row:59",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-059",
@@ -957,9 +1073,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:60"
+      "source_locator": "sheet:Backlog/row:60",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-060",
@@ -971,9 +1089,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:61"
+      "source_locator": "sheet:Backlog/row:61",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-061",
@@ -985,9 +1105,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:62"
+      "source_locator": "sheet:Backlog/row:62",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-062",
@@ -999,9 +1121,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:63"
+      "source_locator": "sheet:Backlog/row:63",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-063",
@@ -1013,9 +1137,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:64"
+      "source_locator": "sheet:Backlog/row:64",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-064",
@@ -1027,9 +1153,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:65"
+      "source_locator": "sheet:Backlog/row:65",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-065",
@@ -1041,9 +1169,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:66"
+      "source_locator": "sheet:Backlog/row:66",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-066",
@@ -1055,9 +1185,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:67"
+      "source_locator": "sheet:Backlog/row:67",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-067",
@@ -1069,9 +1201,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:68"
+      "source_locator": "sheet:Backlog/row:68",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-068",
@@ -1083,9 +1217,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:69"
+      "source_locator": "sheet:Backlog/row:69",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-069",
@@ -1097,9 +1233,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:70"
+      "source_locator": "sheet:Backlog/row:70",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-070",
@@ -1111,9 +1249,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:71"
+      "source_locator": "sheet:Backlog/row:71",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-071",
@@ -1125,9 +1265,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:72"
+      "source_locator": "sheet:Backlog/row:72",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-072",
@@ -1139,9 +1281,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:73"
+      "source_locator": "sheet:Backlog/row:73",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-073",
@@ -1153,9 +1297,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:74"
+      "source_locator": "sheet:Backlog/row:74",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-074",
@@ -1167,9 +1313,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:75"
+      "source_locator": "sheet:Backlog/row:75",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-075",
@@ -1181,9 +1329,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:76"
+      "source_locator": "sheet:Backlog/row:76",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-076",
@@ -1195,9 +1345,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:77"
+      "source_locator": "sheet:Backlog/row:77",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-077",
@@ -1209,9 +1361,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:78"
+      "source_locator": "sheet:Backlog/row:78",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-078",
@@ -1223,9 +1377,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:79"
+      "source_locator": "sheet:Backlog/row:79",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-079",
@@ -1237,9 +1393,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:80"
+      "source_locator": "sheet:Backlog/row:80",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-080",
@@ -1251,9 +1409,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:81"
+      "source_locator": "sheet:Backlog/row:81",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-081",
@@ -1265,9 +1425,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:82"
+      "source_locator": "sheet:Backlog/row:82",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-082",
@@ -1279,9 +1441,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:83"
+      "source_locator": "sheet:Backlog/row:83",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-083",
@@ -1293,9 +1457,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:84"
+      "source_locator": "sheet:Backlog/row:84",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-084",
@@ -1307,9 +1473,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:85"
+      "source_locator": "sheet:Backlog/row:85",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-085",
@@ -1321,9 +1489,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:86"
+      "source_locator": "sheet:Backlog/row:86",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-086",
@@ -1335,9 +1505,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:87"
+      "source_locator": "sheet:Backlog/row:87",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-087",
@@ -1349,9 +1521,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:88"
+      "source_locator": "sheet:Backlog/row:88",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-088",
@@ -1363,9 +1537,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:89"
+      "source_locator": "sheet:Backlog/row:89",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-089",
@@ -1377,9 +1553,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:90"
+      "source_locator": "sheet:Backlog/row:90",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-090",
@@ -1391,9 +1569,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:91"
+      "source_locator": "sheet:Backlog/row:91",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-091",
@@ -1405,9 +1585,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:92"
+      "source_locator": "sheet:Backlog/row:92",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-092",
@@ -1419,9 +1601,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:93"
+      "source_locator": "sheet:Backlog/row:93",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-093",
@@ -1433,9 +1617,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:94"
+      "source_locator": "sheet:Backlog/row:94",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-094",
@@ -1447,9 +1633,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:95"
+      "source_locator": "sheet:Backlog/row:95",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-095",
@@ -1461,9 +1649,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:96"
+      "source_locator": "sheet:Backlog/row:96",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-096",
@@ -1475,9 +1665,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:97"
+      "source_locator": "sheet:Backlog/row:97",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-097",
@@ -1489,9 +1681,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:98"
+      "source_locator": "sheet:Backlog/row:98",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-098",
@@ -1503,9 +1697,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:99"
+      "source_locator": "sheet:Backlog/row:99",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-099",
@@ -1517,9 +1713,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:100"
+      "source_locator": "sheet:Backlog/row:100",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-100",
@@ -1531,9 +1729,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:101"
+      "source_locator": "sheet:Backlog/row:101",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-101",
@@ -1545,9 +1745,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:102"
+      "source_locator": "sheet:Backlog/row:102",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-102",
@@ -1559,9 +1761,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:103"
+      "source_locator": "sheet:Backlog/row:103",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-103",
@@ -1573,9 +1777,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:104"
+      "source_locator": "sheet:Backlog/row:104",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-104",
@@ -1587,9 +1793,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:105"
+      "source_locator": "sheet:Backlog/row:105",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-105",
@@ -1601,9 +1809,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:106"
+      "source_locator": "sheet:Backlog/row:106",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-106",
@@ -1615,9 +1825,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:107"
+      "source_locator": "sheet:Backlog/row:107",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-107",
@@ -1629,9 +1841,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:108"
+      "source_locator": "sheet:Backlog/row:108",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-108",
@@ -1643,9 +1857,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:109"
+      "source_locator": "sheet:Backlog/row:109",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-109",
@@ -1657,9 +1873,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:110"
+      "source_locator": "sheet:Backlog/row:110",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-110",
@@ -1671,9 +1889,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:111"
+      "source_locator": "sheet:Backlog/row:111",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-111",
@@ -1685,9 +1905,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:112"
+      "source_locator": "sheet:Backlog/row:112",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-112",
@@ -1699,9 +1921,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:113"
+      "source_locator": "sheet:Backlog/row:113",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-113",
@@ -1713,9 +1937,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:114"
+      "source_locator": "sheet:Backlog/row:114",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-114",
@@ -1727,9 +1953,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:115"
+      "source_locator": "sheet:Backlog/row:115",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-115",
@@ -1741,9 +1969,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:116"
+      "source_locator": "sheet:Backlog/row:116",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-116",
@@ -1755,9 +1985,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:117"
+      "source_locator": "sheet:Backlog/row:117",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-117",
@@ -1769,9 +2001,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:118"
+      "source_locator": "sheet:Backlog/row:118",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-118",
@@ -1783,9 +2017,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:119"
+      "source_locator": "sheet:Backlog/row:119",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-119",
@@ -1797,9 +2033,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:120"
+      "source_locator": "sheet:Backlog/row:120",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-120",
@@ -1811,9 +2049,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:121"
+      "source_locator": "sheet:Backlog/row:121",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     },
     {
       "id": "DEV-121",
@@ -1825,9 +2065,11 @@
       "assessment": "not-started",
       "accepted": false,
       "acceptance_evidence": [],
-      "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-      "source_locator": "sheet:Backlog/row:122"
+      "source_locator": "sheet:Backlog/row:122",
+      "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_baseline": "poseidon-v46.3-20261030"
     }
   ],
   "limitations": [
@@ -1904,10 +2146,23 @@
         "frontend-development-build",
         "playwright-evidence"
       ]
+    },
+    "analysis_admission": {
+      "files": 269,
+      "text_files": 125,
+      "chunks": 34958,
+      "source_manifest_hashes_verified": 266,
+      "mismatches": 0,
+      "python_behavior_tests_passed": 11,
+      "embedded_history_adopted_as_runtime": false,
+      "independent_qa": "pending target commit",
+      "remote_ci": "pending target commit"
     }
   },
   "phase_reports": [
     "docs/phases/DB-FOUNDATION-01.md",
-    "docs/phases/APP-FOUNDATION-01.md"
-  ]
+    "docs/phases/APP-FOUNDATION-01.md",
+    "docs/phases/ANALYSIS-20261030-01.md"
+  ],
+  "active_source": "docs/sources/active.json"
 }

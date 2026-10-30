@@ -1,0 +1,94 @@
+{
+  "evaluationId": "EVAL-2026-10-04-00017",
+  "result": "REVIEW_REQUIRED",
+  "mode": "TUG",
+  "evaluatedAt": "2026-10-04T20:00:00Z",
+  "ruleSetVersion": "v46.2-2026.10.04",
+  "summary": {
+    "applicable": 4,
+    "notApplicable": 2,
+    "reviewRequired": 0
+  },
+  "results": [
+    {
+      "ruleId": "RULE-ISM-7-TUG",
+      "result": "APPLICABLE",
+      "reasonCode": "ISM7_TUG_ACTIVE",
+      "activated": [
+        "tug-job-detail",
+        "towage-plan",
+        "towage-risk-briefing",
+        "towage-execution",
+        "CTRL-TUG-OPS-PLAN",
+        "EVID-TUG-PLAN-BRIEF-EXEC"
+      ],
+      "ruleVersion": 1,
+      "sourceId": "SRC-ISM",
+      "sourceLocator": "ISM Code §7"
+    },
+    {
+      "ruleId": "RULE-IACS-M79-APPLICABILITY",
+      "result": "APPLICABLE",
+      "reasonCode": "IACS_M79_ACTIVE",
+      "activated": [
+        "tug-equipment-readiness.emergency_release_state",
+        "tug-equipment-readiness.emergency_release_test",
+        "CTRL-TUG-ERS",
+        "VERIFY-TUG-ERS"
+      ],
+      "ruleVersion": 1,
+      "sourceId": "SRC-IACS-M79",
+      "sourceLocator": "IACS UR M79 Rev.1"
+    },
+    {
+      "ruleId": "RULE-TUG-MIN-MANNING-MSMD",
+      "result": "APPLICABLE",
+      "reasonCode": "TR_TUG_MSMD_REQUIRED",
+      "activated": [
+        "tug-crew-readiness.minimum_manning_state",
+        "CTRL-TUG-MSMD",
+        "TC-tug-crew-readiness-minimum_manning_state"
+      ],
+      "ruleVersion": 1,
+      "sourceId": "SRC-TR-MANNING",
+      "sourceLocator": "MSMD + current UAB manning rule set"
+    },
+    {
+      "ruleId": "RULE-TR-TUG-BP-5Y",
+      "result": "APPLICABLE",
+      "reasonCode": "TR_TUG_BP_CERT_REQUIRED",
+      "activated": [
+        "tug-equipment-readiness.bollard_pull_certificate",
+        "CTRL-TUG-BP-CERT",
+        "TC-tug-bp-certificate"
+      ],
+      "ruleVersion": 1,
+      "sourceId": "SRC-TR-TUG-2025",
+      "sourceLocator": "Kılavuzluk ve Römorkörcülük Hizmetleri Hakkında Yönetmelik - applicable provider requirement"
+    },
+    {
+      "ruleId": "RULE-STCW-V-TANKER",
+      "result": "NOT_APPLICABLE",
+      "reasonCode": "MODE_OR_VESSEL_TYPE_MISMATCH",
+      "activated": [],
+      "ruleVersion": 1,
+      "sourceId": "SRC-STCW",
+      "sourceLocator": "STCW Chapter V"
+    },
+    {
+      "ruleId": "RULE-IMDG-PACKAGED-DG",
+      "result": "NOT_APPLICABLE",
+      "reasonCode": "MODE_MISMATCH",
+      "activated": [],
+      "ruleVersion": 1,
+      "sourceId": "SRC-IMDG",
+      "sourceLocator": "IMDG Code 2024 / Amendment 42-24"
+    }
+  ],
+  "humanReview": {
+    "required": true,
+    "ownerRole": "REGULATORY_ADMIN",
+    "reason": "ILLUSTRATIVE NON-MUTATING SIMULATION ONLY. All sample rules are DRAFT with source verification PENDING, including unverified BP clause/validity and manning scope/effective date. Results must not be persisted as authoritative activation, readiness or legal approval."
+  },
+  "simulation": true
+}

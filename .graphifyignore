@@ -1,4 +1,5 @@
 # Controlled originals and normalized document corpus are indexed separately.
 # Keep the developer code graph focused; docs/knowledge.md defines the RAG path.
 /sources/
+/analiz/
 /docs/sources/
