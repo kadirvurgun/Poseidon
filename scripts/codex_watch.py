@@ -48,7 +48,6 @@ class Watch:
 
     def snapshot(self):
         profiles = {}
-        uncertain = False
         for profile in PROFILES:
             try:
                 with exclusive(self.workers.home(profile) / 'worker.lock'):
@@ -56,19 +55,15 @@ class Watch:
             except BusyError:
                 profiles[profile] = {'profile': profile, 'state': 'busy', 'ready': False}
             except WorkerStillRunningError:
-                # exclusive retains the profile lock. Retain the watcher lock too.
+                # Keep this profile locked. Metadata-only uncertainty must not
+                # freeze future hourly checks of the independent healthy profile.
                 profiles[profile] = {'profile': profile, 'state': 'reconcile_required', 'ready': False}
-                uncertain = True
             except Exception:
                 profiles[profile] = {'profile': profile, 'state': 'unavailable', 'ready': False}
         now = self.wall()
         snapshot = {'timestamp': timestamp(now), 'next_check': timestamp(now + INTERVAL), 'profiles': profiles,
                     'selected': next((p for p in PROFILES if profiles[p]['ready']), None)}
-        try:
-            write_json(self.workers.runtime / 'quota.json', snapshot)
-        finally:
-            if uncertain:
-                raise WorkerStillRunningError('Metadata termination uncertain; reconcile retained locks.')
+        write_json(self.workers.runtime / 'quota.json', snapshot)
         return snapshot
 
     def once(self, task=None):

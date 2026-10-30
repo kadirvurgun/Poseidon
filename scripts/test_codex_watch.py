@@ -65,13 +65,17 @@ class WatchTests(unittest.TestCase):
         self.assertEqual(path.read_bytes(), original)
         self.workers.run.assert_not_called()
 
-    def test_uncertain_termination_retains_watch_lock_even_when_snapshot_write_fails(self):
+    def test_uncertain_metadata_retains_profile_only_when_snapshot_write_fails(self):
         self.workers.account.side_effect = [WorkerStillRunningError('private'), metadata()]
         with patch('codex_watch.write_json', side_effect=OSError('disk failure')):
-            with self.assertRaises(WorkerStillRunningError):
+            with self.assertRaises(OSError):
                 self.watch.once()
-        self.assertTrue((self.workers.runtime / 'watch.lock').exists())
+        self.assertFalse((self.workers.runtime / 'watch.lock').exists())
         self.assertTrue((self.workers.home('esra-pro') / 'worker.lock').exists())
+        self.workers.account.side_effect = lambda profile: metadata()
+        result = self.watch.once(Path('trusted.md'))
+        self.assertTrue(result['profiles']['kadir-plus']['ready'])
+        self.workers.run.assert_not_called()
 
     def test_esra_priority_uses_each_accounts_own_quota(self):
         self.workers.account.side_effect = lambda p: metadata(84 if p == 'esra-pro' else 1)
@@ -101,13 +105,19 @@ class WatchTests(unittest.TestCase):
         self.assertEqual(result['profiles']['esra-pro']['state'], 'unavailable')
         self.workers.run.assert_not_called()
 
-    def test_uncertain_metadata_keeps_profile_and_watch_locks(self):
+    def test_uncertain_metadata_preserves_profile_lock_but_healthy_profile_is_rechecked(self):
         self.workers.account.side_effect = [WorkerStillRunningError('private'), metadata()]
-        with self.assertRaises(WorkerStillRunningError):
-            self.watch.once()
+        self.watch.once()
         self.assertTrue((self.workers.home('esra-pro') / 'worker.lock').exists())
-        self.assertTrue((self.workers.runtime / 'watch.lock').exists())
+        self.assertFalse((self.workers.runtime / 'watch.lock').exists())
         self.assertFalse(json.loads((self.workers.runtime / 'quota.json').read_text())['profiles']['esra-pro']['ready'])
+        self.workers.account.side_effect = lambda profile: metadata()
+        self.workers.account.reset_mock()
+        result = self.watch.once(Path('trusted.md'))
+        self.workers.account.assert_called_once_with('kadir-plus')
+        self.assertEqual(result['profiles']['esra-pro']['state'], 'busy')
+        self.assertTrue(result['profiles']['kadir-plus']['ready'])
+        self.workers.run.assert_not_called()
 
     def test_single_durable_dispatch_preserves_review_and_blocked(self):
         for status in ['needs_review', 'blocked', 'waiting_for_quota']:
@@ -161,36 +171,6 @@ class WatchTests(unittest.TestCase):
         with self.assertRaises(KeyboardInterrupt):
             run_loop(watch, monotonic=lambda: now[0], sleep=lambda seconds: now.__setitem__(0, now[0] + seconds))
         self.assertEqual(now[0], 7600)
-
-
-@unittest.skipUnless(os.name == 'nt', 'Windows scheduler construction')
-class SchedulerTests(unittest.TestCase):
-    def test_preview_constructs_task_with_mocked_scheduler_and_never_registers(self):
-        script = Path(__file__).with_name('install-hourly-watch.ps1').resolve()
-        with tempfile.TemporaryDirectory(prefix='quota scheduler ') as directory:
-            python = Path(directory) / 'pythonw.exe'
-            python.touch()
-            # Every scheduler cmdlet is a fake. Execute the real installer in
-            # Preview mode to validate argument binding and paths without install.
-            command = r'''
-function New-ScheduledTaskAction { param($Execute,$Argument,$WorkingDirectory) @{execute=$Execute; arguments=$Argument; cwd=$WorkingDirectory} }
-function New-ScheduledTaskTrigger { param([switch]$Once,$At,$RepetitionInterval) @{once=$Once.IsPresent; interval=$RepetitionInterval.TotalSeconds} }
-function New-ScheduledTaskPrincipal { param($UserId,$LogonType,$RunLevel) @{logon=$LogonType; level=$RunLevel} }
-function New-ScheduledTaskSettingsSet { param($MultipleInstances,[switch]$StartWhenAvailable,$ExecutionTimeLimit) @{instances=$MultipleInstances; available=$StartWhenAvailable.IsPresent; timeout=$ExecutionTimeLimit.TotalSeconds} }
-function New-ScheduledTask { param($Action,$Trigger,$Principal,$Settings) @{action=$Action; trigger=$Trigger; principal=$Principal; settings=$Settings} }
-function Register-ScheduledTask { throw 'Registration forbidden in test' }
-& $env:WATCH_INSTALLER -PythonPath $env:WATCH_PYTHON -Preview | ConvertTo-Json -Depth 5 -Compress
-'''
-            env = dict(os.environ, WATCH_INSTALLER=str(script), WATCH_PYTHON=str(python))
-            result = subprocess.run(['powershell.exe', '-NoProfile', '-NonInteractive', '-Command', command],
-                                    env=env, capture_output=True, text=True, timeout=30, check=True)
-            task = json.loads(result.stdout)
-            self.assertEqual(task['action']['execute'], str(python))
-            self.assertEqual(task['action']['arguments'], '"' + str(script.with_name('codex_watch.py')) + '" once')
-            self.assertEqual(task['action']['cwd'], str(script.parent.parent))
-            self.assertEqual(task['trigger'], {'once': True, 'interval': 3600})
-            self.assertEqual(task['principal'], {'logon': 'Interactive', 'level': 'Limited'})
-            self.assertEqual(task['settings'], {'instances': 'IgnoreNew', 'available': True, 'timeout': 300})
 
 
 if __name__ == '__main__':

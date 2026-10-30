@@ -17,3 +17,7 @@ The host must be awake, Windows running, and that user logged in with usable acc
 Acceptance/traceability: `scripts/test_codex_watch.py` covers OPS-HOURLY-01 metadata snapshots, redaction, busy/uncertain locks, reserve and account ordering, durable single dispatch, monotonic scheduling and mocked PowerShell task construction. Additional `scripts/test_codex_accounts.py` regressions cover single-account no-fallback, fresh reserve checks under lock and bounded taskkill. Run `py -m unittest discover -s scripts -p test_*.py -q`; tests use fake metadata/time/processes and scheduler cmdlets, with no real model/auth/network requests. Parent owns project-status files and phase reports.
 
 Protocol reference: [official Codex app-server documentation](https://learn.chatgpt.com/docs/app-server) describes `account/read` and `account/rateLimits/read`; the watcher reuses the existing adapter without starting a model turn.
+
+Metadata-only shutdown uncertainty retains the affected profile lock, but releases the global watcher lock so later hourly checks can still inspect the healthy account. Dispatch remains blocked while either profile is uncertain/busy. Snapshot disk failure also releases the global lock; no model is dispatched.
+
+Windows scheduler construction is tested separately via `py -m unittest discover -s scripts -p windows_scheduler_checks.py -v` on Windows. Generic discovery contains no platform skips. The Windows CI job runs this check without registering any real scheduled task.
