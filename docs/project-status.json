@@ -2126,7 +2126,8 @@
       "strict": true,
       "required_checks": [
         "persistence-and-security",
-        "frontend-and-browser"
+        "frontend-and-browser",
+        "windows-automation"
       ],
       "enforce_admins": true,
       "allow_force_pushes": false,
@@ -2163,19 +2164,31 @@
       "merge_commit": "e11828319c2e24e4712b04590e1f57c7cbf364a2"
     },
     "hourly_quota": {
-      "state": "51 generic + 1 Windows tests passed; final QA/CI and registration pending",
+      "state": "installed; scheduled task LastTaskResult0",
       "preferred": "esra-pro",
       "reserve_used_percent": 85,
       "interval_seconds": 3600,
       "model_calls_per_metadata_check": 0,
-      "continuous_development": "separate coordinator package under implementation"
+      "continuous_development": "separate coordinator package under implementation",
+      "task_name": "Poseidon-HourlyQuota",
+      "local_registration_verified": true,
+      "independent_qa": "approved exact06c916e",
+      "pr": "https://github.com/kadirvurgun/Poseidon/pull/5",
+      "merge_commit": "d295262dcb0886ed4fa9c0299361d67568b36aec"
+    },
+    "draft_required_data": {
+      "state": "16 domain unit tests passed; final QA/CI pending",
+      "author_profile": "esra-pro",
+      "code_commit": "fb8d3027f7e9173b531596c46ffbecee89df4cfd",
+      "operational_submit_authority": false
     }
   },
   "phase_reports": [
     "docs/phases/DB-FOUNDATION-01.md",
     "docs/phases/APP-FOUNDATION-01.md",
     "docs/phases/ANALYSIS-20261030-01.md",
-    "docs/phases/OPS-HOURLY-01.md"
+    "docs/phases/OPS-HOURLY-01.md",
+    "docs/phases/POL-DEFAULT-01-DOMAIN.md"
   ],
   "active_source": "docs/sources/active.json"
 }

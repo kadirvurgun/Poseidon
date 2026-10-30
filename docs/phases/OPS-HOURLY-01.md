@@ -18,4 +18,10 @@ Saatlik Windows görevi için kurucu hazırdır: `Poseidon-HourlyQuota`, Interac
 
 Saatlik izleme tek başına 7/24 çok görevli geliştirme servisi değildir. İzleyicinin opt-in görevi tek bounded iş üretir; geçmiş jobs/receipt varken tekrar başlatmaz, sonuç needs_review olur. Kuyruk, bağımsız QA, CI ve yayın/merge koordinasyonu ayrı OPS-COORDINATOR paketinde geliştirilir. Host ve kullanıcı oturumu çalışabilir durumda olmalıdır; kotalar birleştirilmez/sıfırlanmaz. Hiçbir runtime/uzman güvenlik onayı üretilmez.
 
-Kurulum, son hedef QA ve remote CI durumu: **hazırlanıyor**. [Komutlar ve teknik sınırlar](../hourly-automation.md).
+## Kapanış ve gerçek çalışma
+
+Kadir profili bağımsız QA `06c916e` hedefini onayladı; değişen iki belirsiz-metadata regresyonunu ve Windows kurulum construction testini tekrar çalıştırdı (3 passed, 0 skip/fail). İki GitHub koşusunda üçer job success: push41136015963, PR41136071349; [PR #5](https://github.com/kadirvurgun/Poseidon/pull/5) main ile birleşti (`d295262`).
+
+`Poseidon-HourlyQuota` Windows görevi gerçek olarak kaydedildi ve çalıştırıldı. 31 Ekim 01:09:23 +03:00 manuel ilk çalışma ve 01:10 otomatik başlangıç: LastTaskResult=0. Sonraki planlı çalışma 02:10:22 +03:00. Snapshot UTC zaman damgalı ve sonraki kontrol bilgisi içerir. Son kayıtta Kadir 5 saat %85 / haftalık %58 olduğu için rezerv politikası yeni iş başlatmıyor; Esra meşgul olduğundan bu tick'te dispatch adayı yok. Metadata görevi model çağırmadı. Değerler anlık gözlemdir.
+
+Saatlik izleme **aktif**. Çok görevli geliştirme koordinatörü bu paketin kapsamı değildir ve henüz aktif sayılmaz. [Komutlar ve teknik sınırlar](../hourly-automation.md).
