@@ -1,0 +1,8 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "rangeStrategy": "pin",
+  "automerge": false,
+  "ignorePaths": ["sources/**", "docs/sources/**", ".tools/**", ".runtime/**", "graphify-out/**"],
+  "packageRules": [{ "matchManagers": ["nuget"], "groupName": "dotnet-compatible-updates" }]
+}

@@ -1,0 +1,2302 @@
+openapi: 3.1.0
+info:
+  title: POSEIDON v46.3 Product-Wide API
+  version: 46.3.0
+  description: GEMİ + RÖMORKÖR canonical domain API skeleton. v46.3 adds Ship Operations
+    2.0, PMS/Assurance and Risk benchmark delta while preserving ERP/Port boundaries.
+servers:
+- url: https://api.poseidon.example.com
+security:
+- oidc: []
+tags:
+- name: Vessels
+- name: Crew
+- name: ShipOperations
+- name: TugOperations
+- name: Technical
+- name: Safety
+- name: Assurance
+- name: Regulatory
+- name: Knowledge
+- name: Evidence
+- name: Integration
+- name: Readiness
+- name: UIProjection
+- name: DailyOperations
+- name: FuelBunker
+- name: SurveyReadiness
+- name: RiskTemplates
+paths:
+  /api/v1/vessels:
+    get:
+      tags:
+      - Vessels
+      summary: Fleet/vessel search and create
+      parameters: &id007
+      - &id001
+        $ref: '#/components/parameters/TenantId'
+      - &id002
+        $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400': &id003
+          description: Invalid request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401': &id004
+          description: Unauthorized
+        '403': &id005
+          description: Forbidden
+        '409': &id006
+          description: Concurrency / material conflict
+    post:
+      tags:
+      - Vessels
+      summary: Fleet/vessel search and create - create/command boundary
+      parameters:
+      - *id001
+      - *id002
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandAccepted'
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+  /api/v1/vessels/{vesselId}:
+    get:
+      tags:
+      - Vessels
+      summary: Vessel aggregate
+      parameters:
+      - *id001
+      - *id002
+      - name: vesselId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+    post:
+      tags:
+      - Vessels
+      summary: Vessel aggregate - create/command boundary
+      parameters:
+      - *id001
+      - *id002
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandAccepted'
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+  /api/v1/vessels/{vesselId}/readiness:
+    get:
+      tags:
+      - Readiness
+      summary: Current vessel/tug readiness with Why tree
+      parameters:
+      - *id001
+      - *id002
+      - name: vesselId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+  /api/v1/people:
+    get:
+      tags:
+      - Crew
+      summary: People/crew query
+      parameters: *id007
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+    post:
+      tags:
+      - Crew
+      summary: People/crew query - create/command boundary
+      parameters:
+      - *id001
+      - *id002
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandAccepted'
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+  /api/v1/crew-assignments:
+    get:
+      tags:
+      - Crew
+      summary: Crew assignments
+      parameters: *id007
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+    post:
+      tags:
+      - Crew
+      summary: Crew assignments - create/command boundary
+      parameters:
+      - *id001
+      - *id002
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandAccepted'
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+  /api/v1/credentials:
+    get:
+      tags:
+      - Crew
+      summary: Credentials and verification state
+      parameters: *id007
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+    post:
+      tags:
+      - Crew
+      summary: Credentials and verification state - create/command boundary
+      parameters:
+      - *id001
+      - *id002
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandAccepted'
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+  /api/v1/competence-assessments:
+    get:
+      tags:
+      - Crew
+      summary: Competence assessments
+      parameters: *id007
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+    post:
+      tags:
+      - Crew
+      summary: Competence assessments - create/command boundary
+      parameters:
+      - *id001
+      - *id002
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandAccepted'
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+  /api/v1/work-rest-records:
+    get:
+      tags:
+      - Crew
+      summary: Work/rest records
+      parameters: *id007
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+    post:
+      tags:
+      - Crew
+      summary: Work/rest records - create/command boundary
+      parameters:
+      - *id001
+      - *id002
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandAccepted'
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+  /api/v1/ship-operations:
+    get:
+      tags:
+      - ShipOperations
+      summary: Ship operation records
+      parameters: *id007
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+    post:
+      tags:
+      - ShipOperations
+      summary: Ship operation records - create/command boundary
+      parameters:
+      - *id001
+      - *id002
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandAccepted'
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+  /api/v1/permits:
+    get:
+      tags:
+      - ShipOperations
+      summary: Permit-to-work records
+      parameters: *id007
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+    post:
+      tags:
+      - ShipOperations
+      summary: Permit-to-work records - create/command boundary
+      parameters:
+      - *id001
+      - *id002
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandAccepted'
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+  /api/v1/risk-assessments:
+    get:
+      tags:
+      - Safety
+      summary: Risk assessments
+      parameters:
+      - $ref: '#/components/parameters/TenantId'
+      - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+    post:
+      tags:
+      - Safety
+      summary: Risk assessments
+      parameters:
+      - $ref: '#/components/parameters/TenantId'
+      - $ref: '#/components/parameters/CorrelationId'
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+        '202':
+          description: Accepted
+        '400':
+          description: Invalid request
+        '403':
+          description: Forbidden
+        '409':
+          description: Conflict
+  /api/v1/tug-jobs:
+    get:
+      tags:
+      - TugOperations
+      summary: Tug job intake and lifecycle
+      parameters: *id007
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+    post:
+      tags:
+      - TugOperations
+      summary: Tug job intake and lifecycle - create/command boundary
+      parameters:
+      - *id001
+      - *id002
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandAccepted'
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+  /api/v1/tug-assignments:
+    get:
+      tags:
+      - TugOperations
+      summary: Tug assignment and overlap controls
+      parameters: *id007
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+    post:
+      tags:
+      - TugOperations
+      summary: Tug assignment and overlap controls - create/command boundary
+      parameters:
+      - *id001
+      - *id002
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandAccepted'
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+  /api/v1/towage-plans:
+    get:
+      tags:
+      - TugOperations
+      summary: Towage plans
+      parameters: *id007
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+    post:
+      tags:
+      - TugOperations
+      summary: Towage plans - create/command boundary
+      parameters:
+      - *id001
+      - *id002
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandAccepted'
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+  /api/v1/towage-executions:
+    get:
+      tags:
+      - TugOperations
+      summary: Towage execution lifecycle
+      parameters: *id007
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+    post:
+      tags:
+      - TugOperations
+      summary: Towage execution lifecycle - create/command boundary
+      parameters:
+      - *id001
+      - *id002
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandAccepted'
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+  /api/v1/assets:
+    get:
+      tags:
+      - Technical
+      summary: Asset hierarchy
+      parameters: *id007
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+    post:
+      tags:
+      - Technical
+      summary: Asset hierarchy - create/command boundary
+      parameters:
+      - *id001
+      - *id002
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandAccepted'
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+  /api/v1/maintenance-plans:
+    get:
+      tags:
+      - Technical
+      summary: Maintenance plans
+      parameters: *id007
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+    post:
+      tags:
+      - Technical
+      summary: Maintenance plans - create/command boundary
+      parameters:
+      - *id001
+      - *id002
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandAccepted'
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+  /api/v1/work-orders:
+    get:
+      tags:
+      - Technical
+      summary: Work orders
+      parameters: *id007
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+    post:
+      tags:
+      - Technical
+      summary: Work orders - create/command boundary
+      parameters:
+      - *id001
+      - *id002
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandAccepted'
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+  /api/v1/defects:
+    get:
+      tags:
+      - Technical
+      summary: Defects and safeguards
+      parameters: *id007
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+    post:
+      tags:
+      - Technical
+      summary: Defects and safeguards - create/command boundary
+      parameters:
+      - *id001
+      - *id002
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandAccepted'
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+  /api/v1/safety-events:
+    get:
+      tags:
+      - Safety
+      summary: Events/near misses/incidents
+      parameters: *id007
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+    post:
+      tags:
+      - Safety
+      summary: Events/near misses/incidents - create/command boundary
+      parameters:
+      - *id001
+      - *id002
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandAccepted'
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+  /api/v1/actions:
+    get:
+      tags:
+      - Safety
+      summary: Cross-domain actions
+      parameters: *id007
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+    post:
+      tags:
+      - Safety
+      summary: Cross-domain actions - create/command boundary
+      parameters:
+      - *id001
+      - *id002
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandAccepted'
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+  /api/v1/certificates:
+    get:
+      tags:
+      - Assurance
+      summary: Statutory/class certificates
+      parameters: *id007
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+    post:
+      tags:
+      - Assurance
+      summary: Statutory/class certificates - create/command boundary
+      parameters:
+      - *id001
+      - *id002
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandAccepted'
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+  /api/v1/surveys:
+    get:
+      tags:
+      - Assurance
+      summary: Survey planner and results
+      parameters: *id007
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+    post:
+      tags:
+      - Assurance
+      summary: Survey planner and results - create/command boundary
+      parameters:
+      - *id001
+      - *id002
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandAccepted'
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+  /api/v1/findings:
+    get:
+      tags:
+      - Assurance
+      summary: Audit/inspection findings
+      parameters: *id007
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+    post:
+      tags:
+      - Assurance
+      summary: Audit/inspection findings - create/command boundary
+      parameters:
+      - *id001
+      - *id002
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandAccepted'
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+  /api/v1/documents:
+    get:
+      tags:
+      - Knowledge
+      summary: Controlled documents
+      parameters: *id007
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+    post:
+      tags:
+      - Knowledge
+      summary: Controlled documents - create/command boundary
+      parameters:
+      - *id001
+      - *id002
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandAccepted'
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+  /api/v1/evidence:
+    get:
+      tags:
+      - Evidence
+      summary: Evidence metadata/capture
+      parameters: *id007
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+    post:
+      tags:
+      - Evidence
+      summary: Evidence metadata/capture - create/command boundary
+      parameters:
+      - *id001
+      - *id002
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandAccepted'
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+  /api/v1/verifications:
+    get:
+      tags:
+      - Evidence
+      summary: Evidence/control verification
+      parameters: *id007
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+    post:
+      tags:
+      - Evidence
+      summary: Evidence/control verification - create/command boundary
+      parameters:
+      - *id001
+      - *id002
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandAccepted'
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+  /api/v1/regulatory/sources:
+    get:
+      tags:
+      - Regulatory
+      summary: Regulatory source versions
+      parameters: *id007
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+    post:
+      tags:
+      - Regulatory
+      summary: Regulatory source versions - create/command boundary
+      parameters:
+      - *id001
+      - *id002
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandAccepted'
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+  /api/v1/regulatory/rules:
+    get:
+      tags:
+      - Regulatory
+      summary: Rule authoring/read
+      parameters: *id007
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+    post:
+      tags:
+      - Regulatory
+      summary: Rule authoring/read - create/command boundary
+      parameters:
+      - *id001
+      - *id002
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandAccepted'
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+  /api/v1/applicability/evaluate:
+    get:
+      tags:
+      - Regulatory
+      summary: Authoritative applicability evaluation
+      parameters: *id007
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+    post:
+      tags:
+      - Regulatory
+      summary: Authoritative applicability evaluation - create/command boundary
+      parameters:
+      - *id001
+      - *id002
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandAccepted'
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+  /api/v1/applicability/simulate:
+    get:
+      tags:
+      - Regulatory
+      summary: Non-mutating what-if evaluation
+      parameters: *id007
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+    post:
+      tags:
+      - Regulatory
+      summary: Non-mutating what-if evaluation - create/command boundary
+      parameters:
+      - *id001
+      - *id002
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandAccepted'
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+  /api/v1/integration/events:
+    get:
+      tags:
+      - Integration
+      summary: Integration/outbox visibility
+      parameters: *id007
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+    post:
+      tags:
+      - Integration
+      summary: Integration/outbox visibility - create/command boundary
+      parameters:
+      - *id001
+      - *id002
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandAccepted'
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+  /api/v1/sync/commands:
+    get:
+      tags:
+      - Integration
+      summary: Offline command ingestion
+      parameters: *id007
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+    post:
+      tags:
+      - Integration
+      summary: Offline command ingestion - create/command boundary
+      parameters:
+      - *id001
+      - *id002
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandAccepted'
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+  /api/v1/sync/conflicts:
+    get:
+      tags:
+      - Integration
+      summary: Material sync conflict resolution
+      parameters: *id007
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+    post:
+      tags:
+      - Integration
+      summary: Material sync conflict resolution - create/command boundary
+      parameters:
+      - *id001
+      - *id002
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandAccepted'
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+  /api/v1/ui-projections/{screenId}:
+    get:
+      tags:
+      - UIProjection
+      summary: Role/context optimized screen projection
+      parameters:
+      - *id001
+      - *id002
+      - name: screenId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400': *id003
+        '401': *id004
+        '403': *id005
+        '409': *id006
+  /api/v1/noon-reports:
+    get:
+      tags:
+      - DailyOperations
+      summary: Noon reports
+      parameters:
+      - $ref: '#/components/parameters/TenantId'
+      - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+    post:
+      tags:
+      - DailyOperations
+      summary: Noon reports
+      parameters:
+      - $ref: '#/components/parameters/TenantId'
+      - $ref: '#/components/parameters/CorrelationId'
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+        '202':
+          description: Accepted
+        '400':
+          description: Invalid request
+        '403':
+          description: Forbidden
+        '409':
+          description: Conflict
+  /api/v1/deck-daily-logs:
+    get:
+      tags:
+      - DailyOperations
+      summary: Deck daily/watch logs
+      parameters:
+      - $ref: '#/components/parameters/TenantId'
+      - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+    post:
+      tags:
+      - DailyOperations
+      summary: Deck daily/watch logs
+      parameters:
+      - $ref: '#/components/parameters/TenantId'
+      - $ref: '#/components/parameters/CorrelationId'
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+        '202':
+          description: Accepted
+        '400':
+          description: Invalid request
+        '403':
+          description: Forbidden
+        '409':
+          description: Conflict
+  /api/v1/engine-daily-logs:
+    get:
+      tags:
+      - DailyOperations
+      summary: Engine daily/watch logs
+      parameters:
+      - $ref: '#/components/parameters/TenantId'
+      - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+    post:
+      tags:
+      - DailyOperations
+      summary: Engine daily/watch logs
+      parameters:
+      - $ref: '#/components/parameters/TenantId'
+      - $ref: '#/components/parameters/CorrelationId'
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+        '202':
+          description: Accepted
+        '400':
+          description: Invalid request
+        '403':
+          description: Forbidden
+        '409':
+          description: Conflict
+  /api/v1/fuel-bunker-logs:
+    get:
+      tags:
+      - FuelBunker
+      summary: Fuel/Bunker/ROB/BDN records
+      parameters:
+      - $ref: '#/components/parameters/TenantId'
+      - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+    post:
+      tags:
+      - FuelBunker
+      summary: Fuel/Bunker/ROB/BDN records
+      parameters:
+      - $ref: '#/components/parameters/TenantId'
+      - $ref: '#/components/parameters/CorrelationId'
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+        '202':
+          description: Accepted
+        '400':
+          description: Invalid request
+        '403':
+          description: Forbidden
+        '409':
+          description: Conflict
+  /api/v1/port-activity-sof:
+    get:
+      tags:
+      - ShipOperations
+      summary: Own-vessel Port Activity / SOF records
+      parameters:
+      - $ref: '#/components/parameters/TenantId'
+      - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+    post:
+      tags:
+      - ShipOperations
+      summary: Own-vessel Port Activity / SOF records
+      parameters:
+      - $ref: '#/components/parameters/TenantId'
+      - $ref: '#/components/parameters/CorrelationId'
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+        '202':
+          description: Accepted
+        '400':
+          description: Invalid request
+        '403':
+          description: Forbidden
+        '409':
+          description: Conflict
+  /api/v1/operational-downtime:
+    get:
+      tags:
+      - ShipOperations
+      summary: Operational downtime records
+      parameters:
+      - $ref: '#/components/parameters/TenantId'
+      - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+    post:
+      tags:
+      - ShipOperations
+      summary: Operational downtime records
+      parameters:
+      - $ref: '#/components/parameters/TenantId'
+      - $ref: '#/components/parameters/CorrelationId'
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+        '202':
+          description: Accepted
+        '400':
+          description: Invalid request
+        '403':
+          description: Forbidden
+        '409':
+          description: Conflict
+  /api/v1/service-engineer-reports:
+    get:
+      tags:
+      - Technical
+      summary: Service/Engineer reports
+      parameters:
+      - $ref: '#/components/parameters/TenantId'
+      - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+    post:
+      tags:
+      - Technical
+      summary: Service/Engineer reports
+      parameters:
+      - $ref: '#/components/parameters/TenantId'
+      - $ref: '#/components/parameters/CorrelationId'
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+        '202':
+          description: Accepted
+        '400':
+          description: Invalid request
+        '403':
+          description: Forbidden
+        '409':
+          description: Conflict
+  /api/v1/pre-survey-checklists:
+    get:
+      tags:
+      - SurveyReadiness
+      summary: Pre-survey checklists
+      parameters:
+      - $ref: '#/components/parameters/TenantId'
+      - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+    post:
+      tags:
+      - SurveyReadiness
+      summary: Pre-survey checklists
+      parameters:
+      - $ref: '#/components/parameters/TenantId'
+      - $ref: '#/components/parameters/CorrelationId'
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+        '202':
+          description: Accepted
+        '400':
+          description: Invalid request
+        '403':
+          description: Forbidden
+        '409':
+          description: Conflict
+  /api/v1/risk-templates:
+    get:
+      tags:
+      - RiskTemplates
+      summary: Versioned risk templates
+      parameters:
+      - $ref: '#/components/parameters/TenantId'
+      - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+    post:
+      tags:
+      - RiskTemplates
+      summary: Versioned risk templates
+      parameters:
+      - $ref: '#/components/parameters/TenantId'
+      - $ref: '#/components/parameters/CorrelationId'
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Completed
+        '202':
+          description: Accepted
+        '400':
+          description: Invalid request
+        '403':
+          description: Forbidden
+        '409':
+          description: Conflict
+  /api/v1/high-risk-work:
+    get:
+      tags:
+      - Safety
+      summary: Fleet high-risk work projection
+      parameters:
+      - $ref: '#/components/parameters/TenantId'
+      - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+components:
+  securitySchemes:
+    oidc:
+      type: openIdConnect
+      openIdConnectUrl: https://identity.example.com/.well-known/openid-configuration
+  parameters:
+    TenantId:
+      name: X-Tenant-Id
+      in: header
+      required: true
+      schema:
+        type: string
+        format: uuid
+    CorrelationId:
+      name: X-Correlation-Id
+      in: header
+      required: true
+      schema:
+        type: string
+        maxLength: 120
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: false
+      schema:
+        type: string
+        maxLength: 120
+  schemas:
+    Problem:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - traceId
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        traceId:
+          type: string
+        errors:
+          type: object
+          additionalProperties: true
+    CommandAccepted:
+      type: object
+      required:
+      - commandId
+      - status
+      properties:
+        commandId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum:
+          - ACCEPTED
+          - COMPLETED
+          - REJECTED
+    Readiness:
+      type: object
+      required:
+      - state
+      - why
+      properties:
+        state:
+          type: string
+          enum:
+          - READY
+          - CONDITIONAL
+          - NOT_READY
+          - REVIEW_REQUIRED
+        why:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+    EvidenceRef:
+      type: object
+      properties:
+        evidenceId:
+          type: string
+          format: uuid
+        verificationState:
+          type: string
+        storageRef:
+          type: string

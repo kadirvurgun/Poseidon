@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/backend/">
+    <Project Path="backend/Poseidon.DbMigrator/Poseidon.DbMigrator.csproj" />
+    <Project Path="backend/Poseidon.Persistence/Poseidon.Persistence.csproj" />
+    <Project Path="backend/Poseidon.Security/Poseidon.Security.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Poseidon.Persistence.Tests/Poseidon.Persistence.Tests.csproj" />
+  </Folder>
+</Solution>

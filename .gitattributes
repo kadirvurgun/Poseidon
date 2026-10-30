@@ -1,0 +1,8 @@
+* text=auto eol=lf
+# Controlled originals must retain byte-for-byte provenance, including CRLF.
+sources/** -text -whitespace
+docs/sources/** -whitespace
+*.docx binary
+*.xlsx binary
+*.pptx binary
+*.zip binary

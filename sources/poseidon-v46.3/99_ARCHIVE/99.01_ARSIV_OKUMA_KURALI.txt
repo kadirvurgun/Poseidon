@@ -1,0 +1,13 @@
+POSEIDON v46.3 CONTROLLED DOCUMENT SET — ARŞİV KURALI
+
+Bu klasöre eski sürümler bilinçli olarak eklenmemiştir.
+Current geliştirme ve karar kaynağı 00–08 klasörlerindeki numbered set'tir.
+
+Eski v46.2 / v46.1 / v46 / 1.0 dosyaları yalnız tarihsel karar ve karşılaştırma için kullanılmalıdır.
+Tam tarihsel paket gerektiğinde ayrı 'POSEIDON_TUM_DOKUMANLAR_VE_CALISMALAR_TAM_ARSIVLI_OKUMA_SIRALI.zip' arşivi kullanılabilir.
+
+Kural:
+- 00–08 = current controlled working set
+- 90 = reference/research only
+- 99 = archive policy only
+- Eski dosyadan yeni requirement türetilmez.

@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><IsTestProject>true</IsTestProject></PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../backend/Poseidon.Persistence/Poseidon.Persistence.csproj" />
+    <ProjectReference Include="../../backend/Poseidon.Security/Poseidon.Security.csproj" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.runner.visualstudio" PrivateAssets="all" />
+    <PackageReference Include="Testcontainers.PostgreSql" />
+  </ItemGroup>
+  <ItemGroup><None Include="../../backend/seed/synthetic-demo.json" Link="synthetic-demo.json" CopyToOutputDirectory="PreserveNewest" /></ItemGroup>
+</Project>
