@@ -27,6 +27,10 @@ class BusyError(RuntimeError):
     pass
 
 
+class MetadataError(RuntimeError):
+    """Safe protocol diagnostics with no raw account response."""
+
+
 class WorkerStillRunningError(Exception):
     """Termination is uncertain: preserve locks and require reconciliation."""
 
@@ -107,7 +111,7 @@ def summarize_account(profile, account, limits):
     windows = [bucket[key] for key in ('primary', 'secondary') if isinstance(bucket.get(key), dict)]
     exhausted = any(window.get('usedPercent', 0) >= 100 for window in windows)
     authenticated = account.get('type') == 'chatgpt'
-    matches = plan == profile['expected_plan']
+    matches = plan in profile.get('accepted_plans', [profile['expected_plan']])
     return {
         'profile': profile['id'], 'authenticated': authenticated, 'plan': plan,
         'plan_matches': matches, 'exhausted': exhausted,
@@ -155,6 +159,9 @@ class Workers:
         return environment
 
     def command(self):
+        native = self.root / '.tools/codex/node_modules/@openai/codex-win32-x64/vendor/x86_64-pc-windows-msvc/bin/codex.exe'
+        if os.name == 'nt' and native.is_file():
+            return [str(native), '--no-daemon', '-c', 'cli_auth_credentials_store="keyring"']
         node = shutil.which('node')
         cli = self.root / '.tools/codex/node_modules/@openai/codex/bin/codex.js'
         if not node or not cli.is_file():
@@ -206,7 +213,14 @@ class Workers:
                     raise RuntimeError('Account metadata service exited; no worker dispatched.')
                 if message.get('id') == identifier:
                     if 'error' in message:
-                        raise RuntimeError('Account metadata unavailable; no worker dispatched.')
+                        error = message['error']
+                        text = str(error.get('message', '')).lower()
+                        terms = ('keyring', 'refresh', 'expired', 'unauthorized', 'timeout', 'permission', 'credential', 'storage', 'token', 'account', 'json', 'locked', 'initialize', 'unsupported', 'file', 'auth', 'path', 'database', 'connection', 'socket', 'network', 'client', 'server', 'proxy', 'tls', 'certificate', 'version', 'cache', 'deserialize')
+                        category = ','.join(name for name in terms if name in text) or 'unclassified'
+                        # Include only a numeric protocol code and a fixed category, never a raw auth error.
+                        code = error.get('code')
+                        code = code if isinstance(code, int) else 'unknown'
+                        raise MetadataError(f'Account metadata unavailable (code={code}, category={category}); no worker dispatched.')
                     return message['result']
 
         try:
@@ -253,7 +267,7 @@ class Workers:
 
     def execute(self, profile, worktree, prompt):
         kwargs = {'creationflags': subprocess.CREATE_NEW_PROCESS_GROUP} if os.name == 'nt' else {'start_new_session': True}
-        process = subprocess.Popen(self.command() + ['-C', str(worktree), '-a', 'never', 'exec', '-s', 'workspace-write', '--json', '-'],
+        process = subprocess.Popen(self.command() + ['-C', str(worktree), '-a', 'never', 'exec', '-s', 'danger-full-access', '--json', '-'],
                                    env=self.environment(profile), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                    stderr=subprocess.DEVNULL, text=True, encoding='utf-8', **kwargs)
         try:
@@ -325,8 +339,11 @@ class Workers:
                     state['status'] = 'reconcile_required'
                     write_json(directory / 'state.json', state)
                     raise
-                except (RuntimeError, OSError, subprocess.SubprocessError):
-                    state['attempts'].append({'profile': profile, 'result': 'worker-error'})
+                except (RuntimeError, OSError, subprocess.SubprocessError) as error:
+                    attempt = {'profile': profile, 'result': 'worker-error'}
+                    if isinstance(error, MetadataError):
+                        attempt['diagnostic'] = str(error)
+                    state['attempts'].append(attempt)
                     state['status'] = 'blocked'
                     write_json(directory / 'state.json', state)
                     return state

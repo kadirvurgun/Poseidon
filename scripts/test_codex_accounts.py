@@ -1,6 +1,7 @@
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import contextmanager
 import json
+import io
 import os
 from pathlib import Path
 import subprocess
@@ -8,7 +9,7 @@ import tempfile
 import unittest
 from unittest.mock import Mock, patch
 
-from codex_accounts import BusyError, ROOT, WorkerStillRunningError, Workers, evaluate_run, exclusive, quota_error, summarize_account, write_json
+from codex_accounts import BusyError, MetadataError, ROOT, WorkerStillRunningError, Workers, evaluate_run, exclusive, quota_error, summarize_account, write_json
 
 
 def limits(used=10):
@@ -16,6 +17,34 @@ def limits(used=10):
 
 
 class ProtocolTests(unittest.TestCase):
+    def test_native_launcher_and_node_fallback_preserve_auth_arguments(self):
+        workers = Workers()
+        with patch('codex_accounts.os.name', 'nt'), patch.object(Path, 'is_file', return_value=True):
+            command = workers.command()
+            self.assertTrue(command[0].endswith('codex.exe'))
+            self.assertEqual(command[1:], ['--no-daemon', '-c', 'cli_auth_credentials_store="keyring"'])
+        for platform in ['nt', 'posix']:
+            with patch('codex_accounts.os.name', platform), patch.object(Path, 'is_file', autospec=True, side_effect=lambda path: path.name == 'codex.js'), patch('codex_accounts.shutil.which', return_value='node'):
+                command = workers.command()
+                self.assertEqual(command[0], 'node')
+                self.assertTrue(command[1].endswith('codex.js'))
+                self.assertEqual(command[2:], ['--no-daemon', '-c', 'cli_auth_credentials_store="keyring"'])
+
+    def test_metadata_error_exposes_only_code_and_fixed_categories(self):
+        workers = Workers()
+        raw = 'credential token=FAKE_SECRET private@example.invalid C:/private/account.json'
+        process = Mock()
+        process.stdin = io.StringIO()
+        process.stdout = io.StringIO('\n'.join(json.dumps(value) for value in [
+            {'id': 1, 'result': {}}, {'id': 2, 'error': {'code': -32603, 'message': raw}},
+        ]) + '\n')
+        with patch.object(workers, 'initialize'), patch.object(workers, 'command', return_value=['codex']), patch.object(workers, 'finish_metadata'), patch('codex_accounts.subprocess.Popen', return_value=process):
+            with self.assertRaises(RuntimeError) as raised:
+                workers.account('esra-pro')
+        self.assertEqual(str(raised.exception), 'Account metadata unavailable (code=-32603, category=credential,token,account,json); no worker dispatched.')
+        self.assertNotIn('FAKE_SECRET', str(raised.exception))
+        self.assertNotIn('private@example.invalid', str(raised.exception))
+
     def test_structured_quota_failure_is_classified(self):
         event = {'type': 'turn.failed', 'error': {'code': 'usage_limit_reached'}}
         self.assertTrue(quota_error(event))
@@ -64,6 +93,13 @@ class ProtocolTests(unittest.TestCase):
         self.assertFalse(summarize_account(profile, account, limits(100))['ready'])
         self.assertFalse(summarize_account(profile, account, {})['ready'])
         self.assertTrue(summarize_account(profile, account, limits(10))['ready'])
+
+    def test_explicit_pro_variants_do_not_admit_plus_or_other_plans(self):
+        profile = {'id': 'esra-pro', 'expected_plan': 'pro', 'accepted_plans': ['pro', 'prolite', 'promax']}
+        for plan in ['pro', 'prolite', 'promax']:
+            self.assertTrue(summarize_account(profile, {'type': 'chatgpt', 'planType': plan}, limits())['ready'])
+        for plan in ['plus', 'free', 'unknown']:
+            self.assertFalse(summarize_account(profile, {'type': 'chatgpt', 'planType': plan}, limits())['ready'])
 
     def test_exclusive_lock_rejects_concurrent_holder_and_releases(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -146,6 +182,24 @@ class DispatchTests(unittest.TestCase):
             state = self.workers.run(self.task)
             self.assertEqual(state['status'], 'blocked')
             self.assertEqual(self.workers.calls, ['esra-pro'])
+
+    def test_metadata_failure_preserves_safe_diagnostic_without_handoff(self):
+        safe = 'Account metadata unavailable (code=-32603, category=credential); no worker dispatched.'
+        with patch.object(self.workers, 'account', side_effect=MetadataError(safe)):
+            state = self.workers.run(self.task)
+        self.assertEqual(state['status'], 'blocked')
+        self.assertEqual(state['attempts'], [{'profile': 'esra-pro', 'result': 'worker-error', 'diagnostic': safe}])
+        self.assertEqual(self.workers.calls, [])
+
+    def test_execute_requests_authorized_full_access_in_own_worktree(self):
+        process = Mock(returncode=0)
+        process.communicate.return_value = (json.dumps({'type': 'turn.completed', 'usage': {}}), None)
+        with patch.object(self.workers, 'command', return_value=['codex']), patch('codex_accounts.subprocess.Popen', return_value=process) as launch:
+            self.assertEqual(Workers.execute(self.workers, 'esra-pro', self.root, 'bounded task'), ('produced', {}))
+        arguments = launch.call_args.args[0]
+        self.assertEqual(arguments[arguments.index('-s') + 1], 'danger-full-access')
+        self.assertEqual(arguments[arguments.index('-C') + 1], str(self.root))
+        self.assertEqual(arguments[arguments.index('-a') + 1], 'never')
 
     def test_both_quotas_wait_and_resume_same_job(self):
         self.workers.results = {'esra-pro': 'quota', 'kadir-plus': 'quota'}

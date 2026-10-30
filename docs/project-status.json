@@ -1816,7 +1816,7 @@
   ],
   "limitations": [
     "Manual snapshot; no fully accepted canonical sprint",
-    "Foundation delivered; new account-worker package requires real login/plan and bounded smoke jobs",
+    "Both account logins verified; real parallel file-producing smoke blocked by metadata/shutdown errors; PR remains draft",
     "IAM/HTTP audit, React/Playwright and continuous scheduler remain unimplemented",
     "Source Excel preserved; assessment maintained separately"
   ],
@@ -1851,9 +1851,9 @@
       "merge_commit": "a7d5eafcf7ba952c03ff9d41b072c38b4d07304a"
     },
     "account_workers": {
-      "unit_control_tests_passed": 20,
-      "live_accounts": "pending separate OAuth login and plan verification",
-      "live_parallel_jobs": "not-run",
+      "unit_control_tests_passed": 25,
+      "live_accounts": "verified: esra-pro server plan prolite; kadir-plus server plan plus",
+      "live_parallel_jobs": "failed acceptance: no expected report; intermittent metadata/shutdown errors",
       "continuous_service": "not-active"
     }
   },

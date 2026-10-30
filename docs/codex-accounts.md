@@ -11,6 +11,7 @@ Bu repo kendi worker katmanını içerir; uygulama menüsündeki hesap seçimini
 - Kimlik bilgileri Windows keyring'de; token kopyalama, auth.json okuma veya repoya secret kaydı yok.
 - Her alt işlem kendi `CODEX_HOME` değerini alır. Ortak daemon kullanılmaz. Üst oturumdan API key/access token ortam değişkenleri taşınmaz.
 - `account/read` üzerinden ChatGPT girişi ve beklenen plan kontrol edilir; yanlış plan, oturum yokluğu veya bilinmeyen kota bilgisi worker dispatch'ini engeller.
+- Canlı doğrulamada Esra hesabının sunucu plan kimliği `prolite`, Kadir hesabınınki `plus` döndü. Esra için açık izin listesi `pro`, `prolite`, `promax`; Plus/free/unknown kabul edilmez. Bu kimliklerden fiyat veya kapasite eşitliği çıkarılmaz.
 - `account/rateLimits/read` primary/secondary pencerelerini okur. Kullanım %100 ise o oturum çalıştırılmaz; kota bilgisi sıfırlanmış gibi gösterilmez.
 - Genel Codex/VS Code hesap menüsü ve iş Git hesabı değiştirilmez. GitHub `kadirvurgun` oturumu ayrı bir kimliktir.
 
@@ -38,6 +39,8 @@ py scripts/codex_accounts.py resume JOB_ID --profile esra-pro
 
 Her görev `HEAD` commit'inden ayrı `agents/<job-id>` branch/worktree oluşturur. Pro varsayılan öncelikli worker, Plus ikinci worker'dır. Paralel komut iki bağımsız task alır; aynı dosya ağacında iki ajan yazmaz. Worktree'ler ve task/checkpoint dosyaları `.runtime/account-workers/` altında, Git dışında tutulur. Account başına tek aktif worker/login kilidi vardır.
 
+Kullanıcının açık tam geliştirme yetkisiyle CLI `-a never` ve `-s danger-full-access` kullanır. Ayrı worktree bir işletim sistemi güvenlik sınırı değildir. Windows'taki ilk `workspace-write` denemesi alt oturumda read-only olarak gerçekleşti ve rapor üretmedi; full-access ile canlı yazma kabulü henüz geçmedi. Windows'ta kurulu native CLI önceliklidir; diğer platformlarda Node launcher kullanılır.
+
 ## Görev devri
 
 1. Tercih edilen hesabın login/plan/kotası doğrulanır; meşgulse diğer kullanılabilir hesap değerlendirilebilir.
@@ -53,6 +56,8 @@ Başlangıç sınırları: işlem başına 30 dakika; dispatch/resume başına e
 ## Test ve devreye alma durumu
 
 Kontrol testleri sahte CLI/hesap metadatasıyla gerçek Git worktree'leri üzerinde çalışır. Bunlar model çağrısı yapmaz ve canlı hesap kotası tüketen bir failover deneyi değildir. Gerçek profil login/plan doğrulaması, iki küçük görevle paralel çalıştırma ve canlı görev devri ayrı kabul adımlarıdır.
+
+30 Ekim 2026: iki profilin OAuth/plan/kota doğrulaması geçti. Esra'dan gerçek model turn yanıtı alındı ancak istenen rapor dosyası oluşmadığından görev kabul edilmedi. Paralel denemelerde aralıklı metadata RPC hatası ve süreç kapanış belirsizliği görüldü; `blocked` / `reconcile_required` kayıtları korundu. `needs_review` yalnız protokol tamamlanmasıdır; beklenen dosya/kabul kriterleri ayrıca incelenmelidir. Paket draft durumundadır. Metadata tanısı yalnız sayısal kod ve sabit kategori sözcükleriyle kaydedilir; ham hata metni kaydedilmez.
 
 Bu paket **sürekli 7/24 scheduler/servis değildir**. Windows host/servis ve görev kuyruğu planı, günlük çalışma sınırları, açılışta başlatma, süreç öldüğünde reconciliation ve faz raporu tetikleri ayrıca tamamlanmalıdır. İki profile erişim sağlanmadan aktif worker veya failover varmış gibi rapor verilmez.
 

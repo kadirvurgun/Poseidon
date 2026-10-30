@@ -1,6 +1,6 @@
 # ACCOUNT-WORKERS-01 — Ayrı Pro/Plus worker ve görev devri
 
-Durum: **yerel kontrol testleri geçti; canlı profil kabulü bekliyor**. Kullanıcı isteği: Esra Pro ve Kadir Plus hesaplarını paralel veya kota sonrası devam için kullanmak.
+Durum: **iki hesap girişi doğrulandı; canlı paralel görev kabulü engelli; PR draft**. Kullanıcı isteği: Esra Pro ve Kadir Plus hesaplarını paralel veya kota sonrası devam için kullanmak.
 
 ## Hazırlanan paket
 
@@ -13,16 +13,17 @@ Durum: **yerel kontrol testleri geçti; canlı profil kabulü bekliyor**. Kullan
 
 ## Kanıtlar
 
-- **24 Python testi geçti:** 20 worker/protokol test yöntemi + 4 belge aktarım testi; 0 fail / skip.
+- **29 Python testi geçti:** 25 worker/protokol test yöntemi + 4 belge aktarım testi; 0 fail / skip (`py -m unittest discover -s scripts -p 'test_*.py' -q`). Native/Node Windows-POSIX launcher, metadata secret redaksiyonu ve izin argümanları da kapsandı.
 - Gerçek Git worktree'leri, sahte hesap/CLI ile parallel izolasyonu, kota devri, partial koruma, busy hesap, aynı işi yeniden yürütmeme, interrupt cleanup ve belirsiz süreçte kilit koruma doğrulandı.
-- Metadata durum sorgusu yeni profile bağlanabildi ve oturum olmadığını doğru raporladı; hesap girişleri henüz doğrulanmadı.
+- İki profil için canlı OAuth/plan/kota doğrulaması geçti: Esra `prolite`, Kadir `plus`. Profil izin listesi açık Pro varyantlarını kabul eder; fiyat/kapasite eşitliği iddiası yok.
 - Bağımsız QA bulduğu resume yarışı, interrupt cleanup ve tarihî quota sınıflandırma sorunlarının regresyonlarla giderildiğini doğruladı; draft teslimini onayladı. Son commit doğrulaması ayrıca kaydedilecek.
-- Worker'larla henüz gerçek model görevi başlatılmadı. Kontrol testleri canlı failover veya 24 saat servis kanıtı değildir.
+- Esra gerçek model turn'ü tamamlandı ancak rapor dosyası oluşmadı; alt oturum read-only bildirdi. Bu görev kabul edilmedi. Kullanıcının tam yetki talebi doğrultusunda explicit full-access CLI ayarlandı; bu ayarla canlı yazma henüz doğrulanmadı.
+- Paralel denemelerde metadata RPC ve süreç kapanış hataları yaşandı; başarısız işler/kilitler korunur. Bunlar kota hatası sayılmadı. Kontrol testleri canlı failover veya 24 saat servis kanıtı değildir.
 
 ## Açık kabul adımları
 
-1. Kullanıcı her profile ilgili hesabıyla OAuth girişini tamamlar; script sunucudan Pro/Plus planlarını doğrular.
-2. Birer küçük, süre sınırlı gerçek görev ayrı worktree'lerde çalıştırılır; sonuçları bağımsız incelenir.
+1. Tamamlandı: kullanıcı iki ayrı OAuth girişini yaptı; sunucu hesap/plan/kota doğrulandı. Yeniden giriş istenmiyor.
+2. Metadata/kapanış engeli çözülür, stale süreçler uzlaştırılır; iki küçük gerçek görevin dosya çıktısı ayrı worktree'lerde doğrulanır ve bağımsız incelenir.
 3. Draft PR'ın tüm CI kontrolleri ve son commit QA onayı tamamlanır.
 4. Sürekli servis, günlük çalışma sınırları, host/restart reconciliation ve faz raporu tetikleri ayrı pakette tamamlanır.
 

@@ -5,7 +5,7 @@
 **Mevcut aşama:** S0 — analizden geliştirmeye geçiş ve altyapı hazırlığı.
 **Resmi geliştirme tamamlanması: %0.** Henüz kabul kriterleri, kod incelemesi ve zorunlu testleri birlikte geçen bir backlog işi yok.
 
-**Son güncelleme:** İlk EF Core/seed/audit paketi, bağımsız QA ve iki başarılı remote CI ile [PR #1](https://github.com/kadirvurgun/Poseidon/pull/1) üzerinden main'e alındı. 12 backend unit/guard ve 10 PostgreSQL integration testi geçti. Pro/Plus hesapları için ayrı worker/iş devri paketi hazırlandı; **24 Python kontrol testi geçti**, gerçek profil login/plan ve iki küçük worker görevi henüz doğrulanmadı. [DB raporu](phases/DB-FOUNDATION-01.md), [hesap worker raporu](phases/ACCOUNT-WORKERS-01.md). Bütün S0/backlog kabulü hâlâ açık.
+**Son güncelleme:** İlk EF Core/seed/audit paketi, bağımsız QA ve iki başarılı remote CI ile [PR #1](https://github.com/kadirvurgun/Poseidon/pull/1) üzerinden main'e alındı. 12 backend unit/guard ve 10 PostgreSQL integration testi geçti. Pro/Plus hesapları için ayrı worker/iş devri paketi hazırlandı; **iki hesap girişi/plan/kota doğrulandı** (Esra: `prolite`, Kadir: `plus`). **29 Python testi geçti; 0 fail/skip.** Canlı görev beklenen rapor dosyasını üretmedi; metadata/kapanış hataları nedeniyle paralel kabul açık ve [PR #2](https://github.com/kadirvurgun/Poseidon/pull/2) draft. 7/24 servis aktif değil. [DB raporu](phases/DB-FOUNDATION-01.md), [hesap worker raporu](phases/ACCOUNT-WORKERS-01.md). Bütün S0/backlog kabulü hâlâ açık.
 
 ## 1. Yüzde nasıl hesaplanıyor?
 
