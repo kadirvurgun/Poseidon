@@ -1815,10 +1815,9 @@
     }
   ],
   "limitations": [
-    "Manual snapshot; not a live dashboard",
-    "No fully accepted canonical backlog item or sprint",
-    "Remote push denied for avurgun1; remote CI unverified",
-    "IAM/HTTP audit, React/Playwright and continuous worker remain unimplemented",
+    "Manual snapshot; no fully accepted canonical sprint",
+    "Foundation delivered; new account-worker package requires real login/plan and bounded smoke jobs",
+    "IAM/HTTP audit, React/Playwright and continuous scheduler remain unimplemented",
     "Source Excel preserved; assessment maintained separately"
   ],
   "verification": {
@@ -1838,12 +1837,28 @@
     "document_import_tests": {
       "passed": 4
     },
-    "remote_ci": "not-yet-run",
+    "remote_ci": {
+      "foundation_push": "https://github.com/kadirvurgun/Poseidon/actions/runs/41075632700",
+      "foundation_pr": "https://github.com/kadirvurgun/Poseidon/actions/runs/41075709919",
+      "conclusion": "success"
+    },
     "complete_identity_http_audit": "not-yet-implemented",
-    "independent_static_qa": "No blocking findings in limited foundation scope; target-commit confirmation pending",
-    "git_push": "dry-run denied with HTTP 403 for avurgun1"
+    "independent_static_qa": "Foundation commit 56b284c approved; account-worker static QA approved for draft delivery",
+    "git_push": "passed as repo-local kadirvurgun",
+    "foundation_delivery": {
+      "pr": "https://github.com/kadirvurgun/Poseidon/pull/1",
+      "state": "merged",
+      "merge_commit": "a7d5eafcf7ba952c03ff9d41b072c38b4d07304a"
+    },
+    "account_workers": {
+      "unit_control_tests_passed": 20,
+      "live_accounts": "pending separate OAuth login and plan verification",
+      "live_parallel_jobs": "not-run",
+      "continuous_service": "not-active"
+    }
   },
   "phase_reports": [
-    "docs/phases/DB-FOUNDATION-01.md"
+    "docs/phases/DB-FOUNDATION-01.md",
+    "docs/phases/ACCOUNT-WORKERS-01.md"
   ]
 }

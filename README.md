@@ -15,5 +15,6 @@ Başlangıç durumu: geliştirme altyapısı ve ilk EF Core persistence/seed/has
 - [EF Core ve seed import](docs/seed-data.md)
 - [Güvenlik, audit, parola ve gizlilik](docs/security-baseline.md)
 - [Güncel sürüm politikası](docs/dependency-policy.md)
+- [İki Codex hesabıyla worker çalıştırma ve kota sonrası görev devri](docs/codex-accounts.md)
 
 Kontrollü analiz seti `sources/poseidon-v46.3/` altında orijinal biçiminde korunur. Aranabilir metin ve bölüm kayıtları `docs/sources/` altında üretilir. Office belgelerindeki görsel, formül, biçim ve diyagramlar için her zaman orijinal belgeye dönülür.

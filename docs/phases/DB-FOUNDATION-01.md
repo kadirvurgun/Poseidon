@@ -1,6 +1,8 @@
 # DB-FOUNDATION-01 — Persistence, seed ve audit doğrulaması
 
-Tarih: 30 Ekim 2026. Durum: **yerel teknik doğrulama geçti; remote teslim/CI bekliyor**.
+Tarih: 30 Ekim 2026. Durum: **yerel teknik doğrulama + bağımsız QA + remote CI geçti; main'e teslim edildi**.
+
+[PR #1](https://github.com/kadirvurgun/Poseidon/pull/1) merged. İncelenen kod commit'i: 56b284c7923c3e6a031a37fcc956d37f89468c86. Main merge commit: a7d5eafcf7ba952c03ff9d41b072c38b4d07304a.
 
 Bu paket S0 hazırlığı ve ilerideki S1 foundation işleri için altyapıdır. Bütün S0/S1 fazının tamamlandığı anlamına gelmez. Ana backlog tamamlanması %0 kalır; hiçbir tam acceptance criteria paketi bu alt teslimat nedeniyle otomatik kapatılmaz.
 
@@ -13,7 +15,7 @@ Bu paket S0 hazırlığı ve ilerideki S1 foundation işleri için altyapıdır.
 - Tenant query/write sınırları, compound FK ve xmin concurrency kontrolü.
 - Yazma ile aynı transaction'da aktörlü audit; EF ve PostgreSQL trigger'ı ile audit mutasyon engeli.
 - Identity PasswordHasher kullanan ilk hash bileşeni; henüz login/session servisi yok.
-- Push/PR için backend foundation workflow'u; remote'da koştuğu henüz doğrulanmadı.
+- Push/PR için backend foundation workflow'u; iki remote koşu başarılı.
 
 ## Doğrulama sonuçları
 
@@ -26,7 +28,9 @@ Bu paket S0 hazırlığı ve ilerideki S1 foundation işleri için altyapıdır.
 | EF model/migration tutarlılığı | PASS; pending model change yok |
 | Idempotent SQL migration script üretimi | PASS; sadece üretim, canlı DB uygulanmadı |
 | Production ortamında demo seed reddi | PASS; DB bağlantısından önce reddedildi |
-| Bağımsız statik QA | Sınırlı foundation kapsamında bloklayıcı bulgu yok; son commit'e bağlama ve remote CI ayrıca izlenir |
+| Bağımsız statik QA | 56b284c hedef commit'i onaylandı; 55 kaynak hash'i de bağımsız doğrulandı |
+| Remote push CI | [PASS](https://github.com/kadirvurgun/Poseidon/actions/runs/41075632700) |
+| Remote PR CI | [PASS](https://github.com/kadirvurgun/Poseidon/actions/runs/41075709919) |
 
 Integration senaryoları: tekrar seed ve düzenlemeyi koruma; tenant read/write; audit UPDATE/DELETE/TRUNCATE reddi; geçersiz manifestte kısmi yazı olmaması; tenant dışı FK reddi ve audit rollback; senkron migration; üç eşzamanlı initializer; dış transaction rollback; başarısız yazıyı düzelterek tekrar kaydetme; stale xmin güncellemesinin ve başarısız işlem audit'inin reddi.
 
@@ -52,6 +56,6 @@ Kaynak: [18.01 Backlog](<../sources/text/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Dev
 
 ## Dış engel ve sıradaki adım
 
-Docker engeli kalktı. `origin/main` okunuyor; push dry-run GitHub'da **avurgun1 hesabı için 403** alıyor. Depo sahibi kadirvurgun; Write yetkisi veya doğru yerel Git oturumu gerekiyor. Yerel GitHub CLI oturumu da açık değil. Token/parola sohbetten istenmiyor.
+Docker ve GitHub erişim engelleri kalktı. Poseidon için kadirvurgun repo-local Git/GitHub oturumu ayrıldı; iş hesabı avurgun1 korunuyor. Workflow OAuth kapsamı onaylandı. Token/parola sohbetten istenmedi.
 
-Değişiklikler remote başlangıç commit'ine dayanan bootstrap/foundation dalında korunuyor. Yetki sağlanınca dal push, PR ve CI doğrulaması tamamlanır. Sonraki geliştirme: S0 karar/ortam/trace paketinin kalanları ve seçilen kimlik sağlayıcısına uygun HTTP auth/audit altyapısı. React/Playwright ve sürekli ajan servisi henüz çalışır değildir.
+Değişiklikler main'e teslim edildi. Sonraki geliştirme: Pro/Plus worker oturumları, S0 karar/ortam/trace paketinin kalanları ve seçilen kimlik sağlayıcısına uygun HTTP auth/audit altyapısı. React/Playwright ve sürekli ajan servisi henüz çalışır değildir.

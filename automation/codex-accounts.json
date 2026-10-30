@@ -1,0 +1,8 @@
+{
+  "profiles": [
+    { "id": "esra-pro", "expected_plan": "pro", "preferred_role": "backend" },
+    { "id": "kadir-plus", "expected_plan": "plus", "preferred_role": "ui-qa" }
+  ],
+  "timeout_seconds": 1800,
+  "max_accounts_per_attempt": 2
+}

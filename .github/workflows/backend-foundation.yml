@@ -33,5 +33,5 @@ jobs:
         run: dotnet test --solution Poseidon.slnx --configuration Release --no-build --filter-trait "Category=Integration"
       - name: Check migration model
         run: dotnet ef migrations has-pending-model-changes --project backend/Poseidon.Persistence --startup-project backend/Poseidon.DbMigrator --configuration Release --no-build
-      - name: Document import tests
+      - name: Automation and document tests
         run: python3 -m unittest discover -s scripts -p 'test_*.py' -v

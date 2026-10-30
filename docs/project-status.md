@@ -5,7 +5,7 @@
 **Mevcut aşama:** S0 — analizden geliştirmeye geçiş ve altyapı hazırlığı.
 **Resmi geliştirme tamamlanması: %0.** Henüz kabul kriterleri, kod incelemesi ve zorunlu testleri birlikte geçen bir backlog işi yok.
 
-**Son güncelleme:** Docker açıldı; ilk EF Core/seed/audit paketinde Release build, 12 unit/guard ve **10 gerçek PostgreSQL integration testi geçti**. Bağımsız statik QA bloklayıcı bulgu bildirmedi. [DB-FOUNDATION-01 raporu](phases/DB-FOUNDATION-01.md) yerel teknik doğrulamayı kaydeder. Remote push, avurgun1 hesabı için GitHub 403 nedeniyle bekliyor; CI remote'da doğrulanmadı. Tam backlog/faz kabulü henüz yok.
+**Son güncelleme:** İlk EF Core/seed/audit paketi, bağımsız QA ve iki başarılı remote CI ile [PR #1](https://github.com/kadirvurgun/Poseidon/pull/1) üzerinden main'e alındı. 12 backend unit/guard ve 10 PostgreSQL integration testi geçti. Pro/Plus hesapları için ayrı worker/iş devri paketi hazırlandı; **24 Python kontrol testi geçti**, gerçek profil login/plan ve iki küçük worker görevi henüz doğrulanmadı. [DB raporu](phases/DB-FOUNDATION-01.md), [hesap worker raporu](phases/ACCOUNT-WORKERS-01.md). Bütün S0/backlog kabulü hâlâ açık.
 
 ## 1. Yüzde nasıl hesaplanıyor?
 
@@ -26,7 +26,8 @@ Bir iş ancak acceptance criteria + gerekli otomatik testler + review + traceabi
 | Uygulanmış ve kabul edilmiş React ekranı | **0 / 196 — %0** | Analiz prototipi üretim uygulaması sayılmaz |
 | Alan sözleşmesi envanteri | 2.316 tanımlı | Uygulanan alan sayısı değildir |
 | Tamamlanan sprint/faz kapısı | 0 | S0 çıkış kontrolü henüz geçilmedi |
-| Backend testleri / CI | 12 unit/guard + 10 PostgreSQL integration geçti | Yerel workflow var; remote CI, HTTP/React/Playwright ve coverage kabulü yok |
+| Backend testleri / CI | 12 unit/guard + 10 PostgreSQL integration geçti | Foundation push/PR CI geçti; HTTP/React/Playwright ve coverage kabulü yok |
+| Pro/Plus worker kontrol testleri | 20 worker + 4 belge aktarım testi geçti | Sahte CLI/metadatalı kontroller; canlı iki hesaplı görev henüz çalışmadı |
 | 7/24 ajan servisi | Aktif değil | Skill ve CLI kurulumu, servis çalışması değildir |
 
 ## 2. Tamamlanan hazırlıklar
@@ -38,9 +39,9 @@ Bir iş ancak acceptance criteria + gerekli otomatik testler + review + traceabi
 | Bilgi grafiği kurulumu | Graphify kurulu; Python + .NET kod grafiği ve sorgusu doğrulandı. Analiz setinin tam anlamsal grafiği henüz üretilmedi |
 | Rol talimatları | Koordinatör, backend, UI ve QA skill'leri oluşturuldu; dört skill biçim kontrolünden geçti |
 | Mimari başlangıç notları | [.NET/React ve domain sınırları](architecture.md) yazıldı; kesinleşmiş ADR seti değildir |
-| Test ve otomasyon yaklaşımı | Push/PR ve faz sonu kontrolleri tanımlandı; backend workflow yerelde var, sürekli worker yok |
+| Test ve otomasyon yaklaşımı | Backend workflow push/PR'da çalıştı; iki hesap worker komutları hazır, sürekli scheduler yok |
 | Geliştirme araçları | Codex CLI kuruldu; `login status` mevcut ChatGPT oturumunu doğruladı. Gerçek worker görevi henüz denenmedi |
-| GitHub erişimi | `origin/main` fetch geçti; push dry-run avurgun1 hesabı için 403 aldı. PR/merge doğrulanmadı |
+| GitHub erişimi | Repo-local kadirvurgun ile push/PR/CI/merge geçti; avurgun1 iş hesabı korunuyor |
 | Aktarım aracının doğrulaması | 4 Python davranış testi geçti; 55 kaynak hash'i ve 24.006 benzersiz bölüm doğrulandı |
 | İlk backend persistence | EF Core + Npgsql, beş operasyonel entity, migration, seed importer; gerçek PostgreSQL doğrulaması geçti |
 | Güvenlik başlangıcı | Identity parola hash'i ve EF transaction audit'i; [güvenlik sözleşmesi](security-baseline.md) tüm modüller için yazıldı |
