@@ -64,6 +64,10 @@ def spreadsheet_rows(path):
 
 
 def source_class(relative):
+    if any(part.startswith('26.01_POSEIDON_Core') for part in relative.parts):
+        return 'embedded-source-reference'
+    if relative.parts[0] == '07_TEST_PILOT_RELEASE' and re.match(r'(?:2[7-9]|[3-9][0-9])\.\d+', relative.name):
+        return 'historical-validation-reference'
     if relative.parts[0] == '90_SOURCE_RESEARCH':
         return 'reference-only'
     if relative.parts[0] == '99_ARCHIVE':
@@ -84,13 +88,29 @@ def extract(path):
                 yield f'lines:{index + 1}-{min(index + 40, len(lines))}', text
 
 
-def import_set(source, repo_root=ROOT):
+def import_set(source, repo_root=ROOT, *, baseline_id='poseidon-v46.3',
+               output_relative='docs/sources', copy_originals=True):
+    if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._-]*', baseline_id):
+        raise ValueError('Invalid baseline ID')
+    repo_root = repo_root.resolve()
     source = source.resolve(strict=True)
     if not source.is_dir() or not (source / 'README_FIRST.txt').is_file():
         raise ValueError('Expected the controlled-set folder containing README_FIRST.txt')
     files = sorted(p for p in source.rglob('*') if p.is_file())
-    originals = repo_root / 'sources' / 'poseidon-v46.3'
-    output = repo_root / 'docs' / 'sources'
+    originals = repo_root / 'sources' / baseline_id if copy_originals else source
+    output = (repo_root / output_relative).resolve()
+    if not output.is_relative_to(repo_root) or output == repo_root or output.is_relative_to(source) or output.is_relative_to(originals):
+        raise ValueError('Output must be inside the repo and outside the source set')
+    if not copy_originals and not source.is_relative_to(repo_root):
+        raise ValueError('In-place sources must be inside the repo')
+    # Re-importing an existing index may not silently rewrite its provenance.
+    prior_manifest = output / 'manifest.json'
+    if prior_manifest.exists():
+        prior = json.loads(prior_manifest.read_text(encoding='utf-8'))
+        expected = {record['source_path']: record['sha256'] for record in prior['files']}
+        current = {(originals / path.relative_to(source)).relative_to(repo_root).as_posix(): digest(path.read_bytes()) for path in files}
+        if expected != current:
+            raise ValueError('Baseline changed; use a new version directory')
     # Validate the whole baseline before copying or replacing generated files.
     for path in files:
         destination = originals / path.relative_to(source)
@@ -101,8 +121,8 @@ def import_set(source, repo_root=ROOT):
     for path in files:
         relative = path.relative_to(source)
         data = path.read_bytes()
-        source_path = (Path('sources/poseidon-v46.3') / relative).as_posix()
-        source_id = 'v46.3:' + relative.as_posix()
+        source_path = (originals / relative).relative_to(repo_root).as_posix()
+        source_id = ('v46.3' if baseline_id == 'poseidon-v46.3' else baseline_id) + ':' + relative.as_posix()
         source_sha = digest(data)
         destination = originals / relative
         destination.parent.mkdir(parents=True, exist_ok=True)
@@ -112,7 +132,7 @@ def import_set(source, repo_root=ROOT):
         text_path = None
         if entries:
             text_relative = Path('text') / relative.with_suffix(relative.suffix + '.md')
-            text_path = (Path('docs/sources') / text_relative).as_posix()
+            text_path = (output.relative_to(repo_root) / text_relative).as_posix()
             text = f'# {path.name}\n\nSource: {source_path}\nSHA256: {source_sha}\n\n'
             for locator, content in entries:
                 text += f'## {locator}\n\n{content}\n\n'
@@ -136,7 +156,7 @@ def import_set(source, repo_root=ROOT):
     for path, text in texts:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(text.rstrip() + '\n', encoding='utf-8')
-    manifest = {'baseline': 'POSEIDON v46.3 CONTROLLED CANDIDATE',
+    manifest = {'baseline': 'POSEIDON v46.3 CONTROLLED CANDIDATE', 'baseline_id': baseline_id,
                 'parser_version': 1, 'files': records}
     (output / 'manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     (output / 'chunks.jsonl').write_text(''.join(json.dumps(c, ensure_ascii=False) + '\n' for c in chunks), encoding='utf-8')
@@ -146,5 +166,10 @@ def import_set(source, repo_root=ROOT):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--source', type=Path, required=True)
+    parser.add_argument('--baseline-id', default='poseidon-v46.3')
+    parser.add_argument('--output-relative', default='docs/sources')
+    parser.add_argument('--in-place', action='store_true', help='Index original files already inside this repo without copying them')
     arguments = parser.parse_args()
-    print(json.dumps(import_set(arguments.source), ensure_ascii=False))
+    print(json.dumps(import_set(arguments.source, baseline_id=arguments.baseline_id,
+                                output_relative=arguments.output_relative,
+                                copy_originals=not arguments.in_place), ensure_ascii=False))

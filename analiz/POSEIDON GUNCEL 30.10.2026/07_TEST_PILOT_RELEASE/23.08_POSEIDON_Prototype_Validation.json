@@ -1,0 +1,109 @@
+{
+  "validationType": "FOCUSED_VM_MOCK_DOM_PROTOTYPE_REGRESSION",
+  "status": "PASS",
+  "generatedAt": "2026-10-27T11:26:31.567Z",
+  "artifact": "04_UX_PRODUCT_DESIGN/12.01_POSEIDON_v46.3_TR_EN_Tam_Calisir_Tiklanabilir_Prototip.html",
+  "sha256": "0426683175cb8762c4ab0e63cf1d3557f050fc86807a9b3ed8abf4828a18a2fe",
+  "renderInvocations": 392,
+  "renderMeaning": "196 source screen renderers invoked for tr and en using Node VM plus mock DOM; not browser screenshots or real DOM integration tests",
+  "browserChecks": {
+    "status": "NOT_RUN",
+    "reason": "Chromium sandbox socket startup blocked; escalated environment setup failed before page execution. Cloud-browser local-file URL protocol denied; not retried or bypassed. No visual/layout/mobile/focus/history acceptance established."
+  },
+  "limitations": [
+    "Mock DOM does not exercise real browser layout, mutation observer translation, constraint-validation API, accessibility tree or localStorage persistence.",
+    "Mixed-language fixture/domain phrases still require editorial TR/EN acceptance.",
+    "No live backend, authentication, operational authority, evidence verification or real sync implemented."
+  ],
+  "canonicalCheck": {
+    "keySetsMatch": true,
+    "actualUnique": 2316,
+    "expectedUnique": 2316,
+    "propertyDiffs": [],
+    "actionDiffs": [],
+    "source": "03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+    "correctedAdditions": 11
+  },
+  "localeCheck": {
+    "pairs": 278,
+    "assertions": 543,
+    "failures": []
+  },
+  "defaultsCheck": {
+    "policy": "POL-DEFAULT-01",
+    "exactRowKeysMatch": true,
+    "affectedFields": 1660,
+    "unexpectedPrefills": [],
+    "explicitFalseCheckboxes": 24,
+    "checkboxFalseTypesCorrect": true
+  },
+  "corruptState": {
+    "status": "PASS",
+    "checks": 17
+  },
+  "count": 196,
+  "fieldCount": 2316,
+  "failures": [],
+  "brokenLinks": [],
+  "actions": [
+    "show-field-contract",
+    "generic-new",
+    "sync-now",
+    "refresh",
+    "capture-certificate",
+    "voice-event",
+    "export-demo",
+    "new-event",
+    "incident-detail",
+    "add-vessel",
+    "create-inspection",
+    "new-equipment",
+    "new-wo",
+    "advance-wo",
+    "attach-evidence",
+    "new-crew",
+    "crew-detail",
+    "matrix-add",
+    "renew-cert",
+    "new-survey",
+    "book-survey",
+    "new-connector",
+    "test-connector",
+    "retry-all",
+    "clear-chat",
+    "chat-send",
+    "toggle-offline",
+    "simulate-scan",
+    "new-requisition",
+    "assign-tug-demo",
+    "towage-demo-gate",
+    "suspend-towage",
+    "abort-towage",
+    "complete-towage"
+  ],
+  "inert": [],
+  "checks": [
+    "negative safety colors",
+    "scoped generic form selection",
+    "escaped persisted user text",
+    "empty work-order handling",
+    "required fields and stable option values",
+    "blank decision rationale blocked",
+    "decision rationale persisted and evidence request remains pending",
+    "certificate correction blocks save",
+    "empty voice draft blocked",
+    "generic save limited to active form",
+    "incomplete generic draft saves without approval",
+    "incomplete submit blocked without record mutation",
+    "valid submit produces local review-only state, never approval",
+    "all generic form fields rendered without truncation or duplicate names",
+    "canonical 11.01 complete field-key set, 11 addition contracts and all declared action counts",
+    "approved default policy exact canonical row-key set, blank ambiguous values, typed explicit false",
+    "UI dictionary bilingual exact-match translations and identifier word boundaries"
+  ],
+  "formsReport": {
+    "forms": 135,
+    "fields": 2316,
+    "failures": []
+  }
+}

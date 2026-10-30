@@ -1,0 +1,11 @@
+{
+  "name": "Poseidon synthetic private UAT",
+  "build": { "dockerfile": "Dockerfile" },
+  "remoteUser": "postgres",
+  "overrideCommand": true,
+  "forwardPorts": [8080],
+  "portsAttributes": { "8080": { "label": "Poseidon synthetic UAT — Private only", "onAutoForward": "silent" } },
+  "otherPortsAttributes": { "onAutoForward": "ignore" },
+  "customizations": { "vscode": { "settings": { "remote.autoForwardPorts": false } } },
+  "shutdownAction": "stopContainer"
+}

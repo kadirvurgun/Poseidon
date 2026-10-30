@@ -12,7 +12,13 @@ Business mutations must pass the audited SaveChanges path. ExecuteUpdate/Execute
 
 At each completed phase or reviewable delivery package, report the delivered behavior, exact verification results, unresolved blockers, current phase and next step to the user. Update docs/project-status.md, docs/project-status.json and a phase report under docs/phases/. Clearly distinguish a locally validated subpackage from a completed canonical sprint or release gate. Do not wait for the user to request a status report at phase boundaries.
 
-## Code discovery priority
+## Current analysis baseline
+
+Read docs/sources/active.json before selecting requirements. The user-supplied analiz/POSEIDON GUNCEL 30.10.2026 set supersedes changed prior documents; the prior sources/poseidon-v46.3 set remains immutable history. Use `py scripts/query_sources.py "exact phrase" --limit 4` for bounded local source retrieval, then read the cited locator. This makes no model calls. Do not read the whole chunks.jsonl into model context.
+
+The 26.01 embedded runtime and past test/UAT archives are historical reference; they are not current repo implementation or current passing tests. Documents 49/50 contain proposals and explicit expert/lookup/permit gates; never turn these into approved production catalogs, human sign-offs or automatic permit activation. POL-DEFAULT-01 allows incomplete drafts and blocks submission with missing required data; UNKNOWN must not be silently converted to No, Ready or NotApplicable.
+
+## Code discovery tools
 
 This project uses codebase-memory-mcp when available. Prefer MCP tools over grep/glob for code discovery in this order: search_graph, trace_path, get_code_snippet, query_graph, get_architecture. If tools are unavailable or insufficient, use the local Graphify graph, then targeted source reads. String literals, config and non-code files may be searched directly. Never claim an MCP graph or hook is connected merely because instructions exist.
 

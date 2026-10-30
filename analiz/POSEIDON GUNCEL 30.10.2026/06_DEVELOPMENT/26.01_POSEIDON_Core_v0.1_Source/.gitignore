@@ -1,0 +1,17 @@
+**/bin/
+**/obj/
+**/node_modules/
+**/dist/
+**/TestResults/
+.env
+.env.*
+!.env.example
+*.user
+*.log
+test-results/
+runtime-data/
+*.tsbuildinfo
+**/coverage/
+
+# Legacy cache from the UAT helper import; source/other untracked files stay visible.
+/scripts/__pycache__/uat-diagnose.cpython-*.pyc

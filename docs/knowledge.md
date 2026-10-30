@@ -39,3 +39,8 @@ Kaynak: https://github.com/Graphify-Labs/graphify
 - Graphify INFERRED/AMBIGUOUS kenarları doğrulanmış gereksinim veya mevzuat sayılmaz. AI yanıtı safety release veya yetkili insan imzası üretmez.
 - Değişen belge sürümü index ve cache invalidation üretir; silme/retention/legal hold kuralları embedding kayıtlarına da uygulanır.
 - Değerlendirme: doğru kaynağı bulma, desteklenmeyen iddia, tarih/sürüm doğruluğu, yetki izolasyonu, Türkçe/İngilizce sorgular ve çelişkili kaynak senaryoları.
+# Güncel kaynak seçimi ve düşük bağlamlı arama
+
+`docs/sources/active.json`, kullanıcının 30.10.2026 güncellenmiş setini işaret eder. Önceki indeks değişmez geçmiş olarak korunur. `py scripts/query_sources.py "POL-DEFAULT-01" --limit 4` yerel SQLite FTS ile yalnız ilgili kaynak/locator/hash ve kısa metni döndürür; model veya embedding API çağırmaz. Kod ilişkileri için MCP/Graphify önceliği sürer. `py scripts/verify_sources.py`, kaynak byte hash'lerini ve chunk soy zincirini doğrular; CI'da zorunludur.
+
+Yeni paketteki gömülü ürün kaynağı ve eski test raporları güncel implementation/acceptance kanıtı değildir. Varsayılan kaynak araması bunları ve research/archive sınıflarını dışarıda tutar. Gerektiğinde `--include-references` ile açıkça aranır.

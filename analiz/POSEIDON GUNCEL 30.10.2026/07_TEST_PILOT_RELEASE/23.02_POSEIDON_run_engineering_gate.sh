@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+# Controlled candidate: this script proves only the checks it actually executes.
+# It intentionally does not certify all ENG-01..ENG-14 or authorize production.
+set -euo pipefail
+
+if [[ $# -ne 1 ]]; then
+  echo "Usage: POSEIDON_ALLOW_TEST_DB_WRITE=YES $0 /path/to/Applicability_Backend" >&2
+  echo "Use an isolated disposable test database; backend is not bundled in this document set." >&2
+  exit 2
+fi
+if [[ "${POSEIDON_ALLOW_TEST_DB_WRITE:-}" != YES ]]; then
+  echo "BLOCKED: explicit disposable-test-database write authorization is required." >&2
+  exit 2
+fi
+ROOT="$1"
+cd "$ROOT"
+for file in Poseidon.Applicability.sln database/001_applicability_engine.sql database/002_seed_sample_rules.sql; do
+  [[ -f "$file" ]] || { echo "BLOCKED: missing $file" >&2; exit 2; }
+done
+for tool in dotnet docker; do
+  command -v "$tool" >/dev/null || { echo "BLOCKED: $tool unavailable" >&2; exit 2; }
+done
+trap 'echo "Engineering subset FAILED at line $LINENO; no release approval." >&2' ERR
+
+echo "== POSEIDON v46.3 Engineering Subset (v46.2 backend baseline) =="
+dotnet --info
+dotnet --version | grep -Eq '^10\.' || { echo "Expected .NET SDK 10.x" >&2; exit 2; }
+docker --version
+docker compose version
+
+echo "== Start isolated PostgreSQL test service =="
+docker compose up -d postgres
+ready=false
+for i in {1..30}; do
+  if docker compose exec -T postgres pg_isready -U poseidon -d poseidon >/dev/null 2>&1; then
+    ready=true
+    break
+  fi
+  sleep 2
+done
+if [[ "$ready" != true ]]; then
+  echo "FAIL: PostgreSQL readiness timed out; DDL/seed not attempted." >&2
+  exit 1
+fi
+# No cleanup or database deletion is performed; preserve test evidence.
+# Stop on SQL errors; a failed statement must not be reported as gate success.
+echo "== Apply DDL =="
+docker compose exec -T postgres psql -X -v ON_ERROR_STOP=1 -U poseidon -d poseidon < database/001_applicability_engine.sql
+echo "== Apply controlled candidate seed =="
+docker compose exec -T postgres psql -X -v ON_ERROR_STOP=1 -U poseidon -d poseidon < database/002_seed_sample_rules.sql
+
+echo "== Restore / warnings-as-errors build / tests =="
+dotnet restore Poseidon.Applicability.sln
+dotnet build Poseidon.Applicability.sln -c Release --no-restore -warnaserror
+dotnet test Poseidon.Applicability.sln -c Release --no-build --logger "trx;LogFileName=poseidon-gate.trx"
+
+echo "== SQL sanity (non-empty rule_versions) =="
+count="$(docker compose exec -T postgres psql -X -v ON_ERROR_STOP=1 -U poseidon -d poseidon -Atc 'SELECT count(*) FROM applicability.rule_versions;' | tr -d '[:space:]')"
+[[ "$count" =~ ^[0-9]+$ ]] && (( count > 0 )) || { echo "FAIL: seed rule count invalid/empty ($count)" >&2; exit 1; }
+echo "Rule count: $count"
+echo "Executed engineering subset completed; inspect TRX totals for discovered/pass/fail tests."
+echo "FULL ENGINEERING GATE REMAINS OPEN: API smoke, tenant isolation, concurrency, persistence, clean DB replay and artifact/sign-off evidence must be verified against ENG-01..ENG-14."

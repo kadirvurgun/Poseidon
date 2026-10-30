@@ -1,0 +1,117 @@
+{
+  "validationType": "FOCUSED_STATIC_CONTRACT_REGRESSION",
+  "status": "PASS",
+  "generatedAt": "2026-10-27T11:48:58.868215+00:00",
+  "checks": [
+    {
+      "artifact": "05_TECHNICAL_ARCHITECTURE/16.01_POSEIDON_v46.3_Product_Wide_API_OpenAPI_Skeleton.yaml",
+      "operationCount": 85,
+      "checks": [
+        "local_refs",
+        "unique_operation_ids",
+        "required_path_parameters",
+        "security_declaration",
+        "problem_errors",
+        "schema_structure",
+        "evaluation_samples"
+      ],
+      "result": "PASS"
+    },
+    {
+      "artifact": "03_REQUIREMENTS_REGULATORY/09.07_POSEIDON_Applicability_Engine_OpenAPI.yaml",
+      "operationCount": 6,
+      "checks": [
+        "local_refs",
+        "unique_operation_ids",
+        "required_path_parameters",
+        "security_declaration",
+        "problem_errors",
+        "schema_structure",
+        "evaluation_samples"
+      ],
+      "result": "PASS"
+    },
+    {
+      "artifact": "14.02 to named API DTO field identity",
+      "checkedProperties": 138,
+      "checks": [
+        "field_keys_match_source",
+        "create_excludes_system_fields",
+        "readiness_exact_source_key_sets",
+        "no_prototype_defaults"
+      ],
+      "result": "PASS"
+    },
+    {
+      "artifact": "User-approved default and draft policy",
+      "positiveDraftCases": 4,
+      "negativeDraftOrSubmissionCases": 8,
+      "checks": [
+        "incomplete_draft_allowed",
+        "incomplete_submission_rejected",
+        "no_yes_no_default_inference",
+        "draft_cannot_set_approval_or_ready",
+        "draft_ack_blocks_submission"
+      ],
+      "result": "PASS",
+      "runtimeEnforcement": "NOT_VERIFIED"
+    },
+    {
+      "artifact": "Named domain schemas and sample publication guard",
+      "positiveShapeCases": 4,
+      "negativeWriteCases": 11,
+      "negativePublicationCases": 3,
+      "checks": [
+        "server_state_injection_rejected",
+        "tenant_injection_rejected",
+        "date_and_count_types",
+        "human_verifier_spoof_rejected",
+        "draft_examples_not_publishable",
+        "simulation_label"
+      ],
+      "result": "PASS",
+      "note": "Example controlled codes are illustrative; catalog lookup and authorization require server implementation."
+    },
+    {
+      "artifact": "Applicability DSL and samples",
+      "positiveRuleSamples": 6,
+      "negativePredicateCases": 8,
+      "checks": [
+        "rule_schema",
+        "reject_malformed_predicates",
+        "sample_rule_set_coverage",
+        "summary_counts",
+        "source_rule_version_lineage",
+        "full_activations",
+        "human_review_preserved"
+      ],
+      "result": "PASS"
+    },
+    {
+      "artifact": "07_TEST_PILOT_RELEASE/23.02_POSEIDON_run_engineering_gate.sh",
+      "checks": [
+        "bash_syntax",
+        "no_arguments_fail_closed_exit_2"
+      ],
+      "result": "PASS"
+    }
+  ],
+  "limitations": [
+    "Not a full OpenAPI specification conformance validator.",
+    "No backend build, API server, Docker or database execution performed.",
+    "No authentication/authorization/idempotency/concurrency behavior proved.",
+    "Generic domain DTO refinement and critical state-transition contracts remain OPEN.",
+    "Rule structural validity does not establish legal applicability, source approval, or production readiness."
+  ],
+  "sha256": {
+    "03_REQUIREMENTS_REGULATORY/09.03_POSEIDON_Applicability_Rule_DSL.schema.json": "309afa07b393fb96556a0ea4ec70098b1e2b8648ab6daec181f5a81ce9ac8825",
+    "03_REQUIREMENTS_REGULATORY/09.04_POSEIDON_Applicability_Rules_Sample.json": "46eedee19a973c234e21724b08b1851d0a42af5578402cbde47d266680a2828d",
+    "03_REQUIREMENTS_REGULATORY/09.05_POSEIDON_Applicability_Evaluation_Request_Sample.json": "42bae8c5046cde3ecf5001b93e5d74761bdfba2e1a35fb758c9599a1474f4c66",
+    "03_REQUIREMENTS_REGULATORY/09.06_POSEIDON_Applicability_Evaluation_Response_Sample.json": "7c0bac504e099c5847527e49d983734e75ce5fbc6ae1b78486c7e962017e0321",
+    "03_REQUIREMENTS_REGULATORY/09.07_POSEIDON_Applicability_Engine_OpenAPI.yaml": "11a79ee1a92f4d5a2132b26cc2e87628476051d08f1f6efb8eff170cbe746401",
+    "05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+    "05_TECHNICAL_ARCHITECTURE/16.01_POSEIDON_v46.3_Product_Wide_API_OpenAPI_Skeleton.yaml": "5c2713c4585b090bfd15b2f78d7b4c042231d269eee277976302145965f59140",
+    "07_TEST_PILOT_RELEASE/23.02_POSEIDON_run_engineering_gate.sh": "2b482fea83f4bf8609f217c20d22a064d2bfad5fd9d1f07959c557b5ff4ecea6",
+    "07_TEST_PILOT_RELEASE/23.07_POSEIDON_Contract_Validation.py": "4cc28a0db8003134e90c3ddfef055323284dccb4e7893391bc57fc2a30d6566f"
+  }
+}

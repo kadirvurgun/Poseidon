@@ -1,0 +1,26 @@
+# TESLIM_2_OKU.txt
+
+Source: analiz/POSEIDON GUNCEL 30.10.2026/TESLIM_2_OKU.txt
+SHA256: 3f0b001d1edeb3669df87ed671cfed37e75a1877852076303bacab75fa7349ab
+
+## lines:1-19
+
+POSEIDON v26 teslim kopyası 2 / 2
+
+İki arşiv normal, birbirinden bağımsız ZIP dosyasıdır. Dosya birleştirme, .001 parçası veya özel bir birleştirme yazılımı gerekmez.
+
+1. Her iki ZIP dosyasını indirin.
+2. İkisini de AYNI hedef klasöre çıkarın. Windows'ta “Tümünü ayıkla” işleminde aynı hedefi seçin; her ZIP için farklı hedef klasör oluşturmayın.
+3. İki arşiv aynı POSEIDON_v46.3_CONTROLLED_DOCUMENT_SET kök klasörünü kullanır. Çıkarma tamamlandığında bu klasörde tam267 özgün dosya bulunur.
+4. README_FIRST.txt ve00_START_HERE/00.03 ile başlayın. PACKAGE_TREE.txt ve CONTROLLED_SET_MANIFEST_SHA256.md tam birleşik klasöre aittir; tek arşiv tek başına tüm belge seti değildir.
+
+TESLİM1: başlangıç, iş/ürün, gereksinim/mevzuat, UX, teknik mimari, yönetim, araştırma ve49/50 yeni analiz dosyaları.
+TESLİM2:06_DEVELOPMENT kaynak kod/rehberleri ile07_TEST_PILOT_RELEASE test raporları ve geçmiş kanıtlar.
+
+Bu iki ZIP yalnız aktarım boyutu sınırı için hazırlanmış kopyalardır. Kanonik ana ZIP değiştirilmedi; Library sürümü26, dosya adı POSEIDON_v46.3_GUNCEL_ANA_KLASOR.zip.
+Kanonik SHA256: 2c837762e0ab6c570bd6d8688628e8d5b39a300e624eb22b0a0efb6ff4afc97d
+Toplam:267 özgün dosya,113 mantıksal register kaydı,151 değişmemiş kaynak dosyası.
+Kaynak:dd504631b8df6c3061953444295353ae53041afc.
+
+49/50 analiz ve tasarım önerisidir; uygulanmış katalog/HSE veya operasyonel izin değildir. Eski kanıtlar korunur.
+Bu TESLIM_2_OKU.txt açıklaması kontrollü kök klasörünün dışında eklenmiştir; özgün267 dosyadan veya özgün manifestten biri değildir.
