@@ -1,0 +1,14 @@
+.tools/
+.runtime/
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+node_modules/
+bin/
+obj/
+playwright-report/
+test-results/
+graphify-out/
+.codex/hooks.json

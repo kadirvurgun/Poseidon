@@ -1,0 +1,55 @@
+{
+  "evaluationId": "EVAL-2026-10-04-00017",
+  "result": "REVIEW_REQUIRED",
+  "mode": "TUG",
+  "evaluatedAt": "2026-10-04T20:00:00Z",
+  "ruleSetVersion": "v46.2-2026.10.04",
+  "summary": {
+    "applicable": 4,
+    "notApplicable": 1,
+    "reviewRequired": 1
+  },
+  "results": [
+    {
+      "ruleId": "RULE-ISM-7-TUG",
+      "result": "APPLICABLE",
+      "reasonCode": "ISM7_TUG_ACTIVE",
+      "activated": ["towage-plan", "towage-risk-briefing", "towage-execution"]
+    },
+    {
+      "ruleId": "RULE-IACS-M79-APPLICABILITY",
+      "result": "APPLICABLE",
+      "reasonCode": "IACS_M79_ACTIVE",
+      "activated": ["tug-equipment-readiness.emergency_release_state", "VERIFY-TUG-ERS"]
+    },
+    {
+      "ruleId": "RULE-TUG-MIN-MANNING-MSMD",
+      "result": "APPLICABLE",
+      "reasonCode": "TR_TUG_MSMD_REQUIRED",
+      "activated": ["tug-crew-readiness.minimum_manning_state"]
+    },
+    {
+      "ruleId": "RULE-TR-TUG-BP-5Y",
+      "result": "APPLICABLE",
+      "reasonCode": "TR_TUG_BP_CERT_REQUIRED",
+      "activated": ["tug-equipment-readiness.bollard_pull_certificate"]
+    },
+    {
+      "ruleId": "RULE-STCW-V-TANKER",
+      "result": "NOT_APPLICABLE",
+      "reasonCode": "MODE_OR_VESSEL_TYPE_MISMATCH",
+      "activated": []
+    },
+    {
+      "ruleId": "RULE-TR-TUG-2026-MANNING-DRAFT",
+      "result": "REVIEW_REQUIRED",
+      "reasonCode": "SOURCE_NOT_FINAL",
+      "activated": ["regulatory-change-radar"]
+    }
+  ],
+  "humanReview": {
+    "required": true,
+    "ownerRole": "REGULATORY_ADMIN",
+    "reason": "Current Turkish tug manning directive is under monitored revision; source-version review required before publication-grade applicability claim."
+  }
+}

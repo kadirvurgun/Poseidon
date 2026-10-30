@@ -1,0 +1,37 @@
+name: Backend foundation
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backend-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  persistence-and-security:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-dotnet@v6.0.0
+        with:
+          global-json-file: global.json
+      - name: Restore locked packages and tools
+        run: |
+          dotnet tool restore
+          dotnet restore Poseidon.slnx --locked-mode
+      - name: Build
+        run: dotnet build Poseidon.slnx --configuration Release --no-restore
+      - name: Unit tests
+        run: dotnet test --solution Poseidon.slnx --configuration Release --no-build --filter-not-trait "Category=Integration"
+      - name: PostgreSQL integration tests
+        run: dotnet test --solution Poseidon.slnx --configuration Release --no-build --filter-trait "Category=Integration"
+      - name: Check migration model
+        run: dotnet ef migrations has-pending-model-changes --project backend/Poseidon.Persistence --startup-project backend/Poseidon.DbMigrator --configuration Release --no-build
+      - name: Document import tests
+        run: python3 -m unittest discover -s scripts -p 'test_*.py' -v
