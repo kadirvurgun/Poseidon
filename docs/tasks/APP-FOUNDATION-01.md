@@ -1,8 +1,8 @@
 # APP-FOUNDATION-01 — Çalışan uygulama ve CI alt paketi
 
-Owner: backend/UI; bağımsız QA ayrı atanır. Branch: feature/application-foundation; UI worktree: .runtime/ui-foundation. Durum: implementing.
+Owner: backend/UI; bağımsız QA ayrı atanır. Branch: feature/application-foundation; UI worktree: .runtime/ui-foundation. Durum: yerel + kod commit CI + bağımsız QA geçti; kapanış kaydı doğrulanıyor.
 
-Kaynak: v46.3 18.01 Development Backlog, Backlog row 2 (DEV-001 / T-S0-001), row 3 (DEV-002 / T-S0-002); 13.04 Design System paragraphs 10, 19–25 ve layout standardı. Bu paket DEV-001/002 hazırlık kapsamıdır; bağımlılık/kabul kapıları tamamlanmadan canonical işi accepted yapmaz.
+Kaynak: v46.3 18.01 Development Backlog, Backlog row 2 (DEV-001 / T-S0-001), row 3 (DEV-002 / T-S0-002); 13.04 Design System paragraphs 10, 19–25 ve layout standardı. Bu paket DEV-001/002 hazırlık kapsamıdır; bağımlılık/kabul kapıları tamamlanmadan canonical işi accepted yapmaz; 1ab836e kod commit CI ve bağımsız kaynak kriteri incelemesi sonrası yalnız DEV-001/002 accepted edildi, S0 gate açık.
 
 Kabul:
 - .NET API gerçek host üzerinde public liveness ve yalnız teknik durum döndürür; iş verisi/credential/DB connection string sunmaz. Kalıcı veriye erişmez ve migration çalıştırmaz.

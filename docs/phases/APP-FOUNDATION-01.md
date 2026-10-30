@@ -1,6 +1,6 @@
 # APP-FOUNDATION-01 — Çalışan API/React ve tarayıcı kapısı
 
-Tarih: 30 Ekim 2026. Durum: **yerel doğrulandı; bağımsız final QA ve hedef commit remote CI bekliyor**. Mevcut canonical aşama S0; sprint çıkış kapısı geçilmedi.
+Tarih: 30 Ekim 2026. Durum: **yerel + bağımsız QA + kod commit remote CI doğrulandı; kapanış kaydı PR içinde**. Mevcut canonical aşama S0; sprint çıkış kapısı geçilmedi.
 
 ## Teslim edilen davranış
 
@@ -12,7 +12,7 @@ Tarih: 30 Ekim 2026. Durum: **yerel doğrulandı; bağımsız final QA ve hedef 
 
 ## İzlenebilirlik ve kapsam
 
-[Görev/kabul sözleşmesi](../tasks/APP-FOUNDATION-01.md): DEV-001 / T-S0-001 (18.01 Backlog row 2), DEV-002 / T-S0-002 (row 3); 13.04 UX/layout standardı. Bu bir uygulama altyapısı alt paketidir; canonical rol/vessel shell, OIDC veya bir iş ekranı kabulü değildir. Remote CI ve final QA tamamlanmadan DEV-001/002 accepted yapılmadı.
+[Görev/kabul sözleşmesi](../tasks/APP-FOUNDATION-01.md): DEV-001 / T-S0-001 (18.01 Backlog row 2), DEV-002 / T-S0-002 (row 3); 13.04 UX/layout standardı. Bu bir uygulama altyapısı alt paketidir; canonical rol/vessel shell, OIDC veya bir iş ekranı kabulü değildir. Kod commit bağımsız QA ve iki başarılı remote CI sonrasında DEV-001 (3 SP) ve DEV-002 (5 SP) accepted yapıldı. Toplam 2/121 iş; 8/970 SP = %0,82. S0 tamamlanmadı.
 
 ## Kesin yerel doğrulama
 
@@ -37,4 +37,8 @@ OpenAPI generator'ın `typescript ^5.x`, lint aracının `<6.1` peer sınırlar�
 
 OIDC sağlayıcısı, tenant/role/vessel HTTP policies, login/deny/read kullanıcı audit'i, production deployment, tam S0 ADR/ortam/traceability kapıları açık. Mevcut EF write audit GDPR uyumu olarak sunulmaz. İki hesaplı worker ayrı draft PR #2'de; sürekli 7/24 scheduler aktif değildir.
 
-Sıradaki adım: final bağımsız QA + hedef commit CI; ardından source-backed S0/Identity kararları ve ilk yetkili tenant/vessel dikey dilimi. Kaynak bağımlılıkları kapanmadan uygulama ekranları accepted sayılmaz. Başlatma ve kontrol komutları [geliştirme rehberinde](../development.md).
+Sıradaki adım: kapanış kaydının hedef commit CI/QA kontrolü ve merge; ardından source-backed S0/Identity kararları ve ilk yetkili tenant/vessel dikey dilimi. Kaynak bağımlılıkları kapanmadan uygulama ekranları accepted sayılmaz. Başlatma ve kontrol komutları [geliştirme rehberinde](../development.md).
+
+## Kabul kanıtı
+
+Bağımsız QA kod commit `1ab836e0309d573b259294cffa899cf66ea64a7c` ve DEV-001/DEV-002 kaynak kriterlerini ayrı inceleyip onayladı. [Push CI](https://github.com/kadirvurgun/Poseidon/actions/runs/41090598675) ve [PR CI](https://github.com/kadirvurgun/Poseidon/actions/runs/41090658974) iki job için success; üç artifact üretildi: api-development-build, frontend-development-build, playwright-evidence. [PR #3](https://github.com/kadirvurgun/Poseidon/pull/3). Bu kapanış belgesi değişikliği de zorunlu CI geçmeden merge edilmez.

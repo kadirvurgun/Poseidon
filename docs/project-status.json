@@ -1,14 +1,14 @@
 {
   "as_of": "2026-10-30",
   "baseline": "POSEIDON v46.3 CONTROLLED CANDIDATE",
-  "current_stage": "S0 preparation; API/React application foundation under independent QA; exit gate not passed",
+  "current_stage": "S0; DEV-001 and DEV-002 accepted; remaining exit gates open",
   "method": "accepted story points / total baseline story points * 100",
   "scope": "complete v46.3 Backlog sheet; duplicates in other sheets excluded",
   "total_tasks": 121,
   "total_story_points": 970,
-  "accepted_tasks": 0,
-  "accepted_story_points": 0,
-  "completion_percent": 0,
+  "accepted_tasks": 2,
+  "accepted_story_points": 8,
+  "completion_percent": 0.82,
   "screen_inventory": 196,
   "accepted_screens": 0,
   "field_contract_inventory": 2316,
@@ -17,9 +17,9 @@
       "sprint": "S0",
       "tasks": 13,
       "story_points": 53,
-      "accepted_tasks": 0,
-      "accepted_story_points": 0,
-      "completion_percent": 0
+      "accepted_tasks": 2,
+      "accepted_story_points": 8,
+      "completion_percent": 15.09
     },
     {
       "sprint": "S1",
@@ -126,9 +126,17 @@
       "priority": "P0",
       "story_points": 3,
       "source_status": "Not Started",
-      "assessment": "partial-preparation",
-      "accepted": false,
-      "acceptance_evidence": [],
+      "assessment": "accepted",
+      "accepted": true,
+      "acceptance_evidence": [
+        "APP-FOUNDATION-01: code commit 1ab836e0309d573b259294cffa899cf66ea64a7c",
+        "Independent QA source-criteria review approved DEV-001 and DEV-002; no S0 release claim",
+        "https://github.com/kadirvurgun/Poseidon/actions/runs/41090598675",
+        "https://github.com/kadirvurgun/Poseidon/actions/runs/41090658974",
+        "GitHub main protection: strict two required checks, PR, admins included, no force push/deletion",
+        "docs/repository-policy.md",
+        "docs/phases/APP-FOUNDATION-01.md"
+      ],
       "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:2"
@@ -140,9 +148,17 @@
       "priority": "P0",
       "story_points": 5,
       "source_status": "Not Started",
-      "assessment": "partial-preparation",
-      "accepted": false,
-      "acceptance_evidence": [],
+      "assessment": "accepted",
+      "accepted": true,
+      "acceptance_evidence": [
+        "APP-FOUNDATION-01: code commit 1ab836e0309d573b259294cffa899cf66ea64a7c",
+        "Independent QA source-criteria review approved DEV-001 and DEV-002; no S0 release claim",
+        "https://github.com/kadirvurgun/Poseidon/actions/runs/41090598675",
+        "https://github.com/kadirvurgun/Poseidon/actions/runs/41090658974",
+        "GitHub main protection: strict two required checks, PR, admins included, no force push/deletion",
+        "docs/repository-policy.md",
+        "docs/phases/APP-FOUNDATION-01.md"
+      ],
       "source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:3"
@@ -1815,8 +1831,7 @@
     }
   ],
   "limitations": [
-    "Manual snapshot; no fully accepted canonical sprint",
-    "APP-FOUNDATION-01 all local build/unit/integration/component/browser checks passed; final independent QA and target-commit remote CI pending",
+    "S0 is incomplete despite DEV-001/DEV-002 acceptance",
     "OIDC/tenant business API and HTTP user-action audit remain unimplemented",
     "Two-account worker service is not active; see draft PR #2",
     "Source Excel preserved; assessment maintained separately"
@@ -1874,6 +1889,21 @@
       "enforce_admins": true,
       "allow_force_pushes": false,
       "allow_deletions": false
+    },
+    "application_foundation": {
+      "code_commit": "1ab836e0309d573b259294cffa899cf66ea64a7c",
+      "pr": "https://github.com/kadirvurgun/Poseidon/pull/3",
+      "independent_qa": "approved exact code commit and DEV-001/DEV-002 source AC",
+      "remote_ci": [
+        "https://github.com/kadirvurgun/Poseidon/actions/runs/41090598675",
+        "https://github.com/kadirvurgun/Poseidon/actions/runs/41090658974"
+      ],
+      "conclusion": "success",
+      "artifacts": [
+        "api-development-build",
+        "frontend-development-build",
+        "playwright-evidence"
+      ]
     }
   },
   "phase_reports": [
