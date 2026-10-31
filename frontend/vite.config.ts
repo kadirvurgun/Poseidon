@@ -18,5 +18,6 @@ export default defineConfig({
   plugins: [react()],
   server: { port: 5173, strictPort: true, proxy },
   preview: { host: '127.0.0.1', port: uiPort, strictPort: true, proxy },
-  test: { environment: 'jsdom', setupFiles: ['./src/test-setup.ts'], clearMocks: true },
+  test: { environment: 'jsdom', setupFiles: ['./src/test-setup.ts'], clearMocks: true,
+    reporters: ['default', './scripts/strict-test-reporter.ts'] },
 })

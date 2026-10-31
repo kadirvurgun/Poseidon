@@ -25,6 +25,7 @@ class FixedGateTests(unittest.TestCase):
                        '<Project><PropertyGroup><IsTestProject>true</IsTestProject></PropertyGroup></Project>')
             self.write('tests/' + name + '/Tests.cs', '[Fact] public void Test() {}')
         for name in ['Poseidon.slnx', 'scripts/verify_sources.py', 'scripts/nightly_python_tests.py', 'frontend/package-lock.json',
+                     'frontend/scripts/strict-test-reporter.ts',
                      'tests/Poseidon.Browser.Tests/package-lock.json', 'tests/Poseidon.Browser.Tests/playwright.config.ts',
                      'tests/Poseidon.Browser.Tests/node_modules/@playwright/test/cli.js']:
             self.write(name, 'fixture')
@@ -80,7 +81,9 @@ class FixedGateTests(unittest.TestCase):
             'vitest': dict(numTotalTests=1, numPassedTests=1, numFailedTests=0,
                            numPendingTests=0, numTodoTests=0, success=True,
                            testResults=[{'assertionResults': [{'status': 'passed'}]}]),
-            'playwright': dict(stats=dict(expected=1, unexpected=0, flaky=0, skipped=0), errors=[]),
+            'playwright': dict(stats=dict(expected=1, unexpected=0, flaky=0, skipped=0), errors=[],
+                               suites=[{'suites': [{'specs': [{'tests': [{'expectedStatus': 'passed',
+                                   'status': 'expected', 'results': [{'status': 'passed', 'errors': []}]}]}]}]}]),
         }
         report = reports[runner]
         if runner == self.bad_runner:
@@ -114,6 +117,7 @@ class FixedGateTests(unittest.TestCase):
         python = next(c for c in self.commands if 'scripts/nightly_python_tests.py' in c)
         self.assertIn('--report', python)
         self.assertTrue(any('--reporter=default' in c and '--reporter=json' in c for c in self.commands))
+        self.assertTrue(any('--reporter=./scripts/strict-test-reporter.ts' in c for c in self.commands))
         self.assertTrue(any('--reporter=list,html,json' in c for c in self.commands))
         self.assertEqual(self.coordinator.env['PLAYWRIGHT_JSON_OUTPUT_FILE'],
                          str(self.root / '.runtime/nightly-test-results/playwright.json'))
@@ -238,7 +242,9 @@ class StructuredSummaryTests(unittest.TestCase):
             'vitest': dict(numTotalTests=1, numPassedTests=1, numFailedTests=0,
                            numPendingTests=0, numTodoTests=0, success=True,
                            testResults=[{'assertionResults': [{'status': 'passed'}]}]),
-            'playwright': dict(stats=dict(expected=1, unexpected=0, flaky=0, skipped=0), errors=[]),
+            'playwright': dict(stats=dict(expected=1, unexpected=0, flaky=0, skipped=0), errors=[],
+                               suites=[{'specs': [{'tests': [{'expectedStatus': 'passed', 'status': 'expected',
+                                                            'results': [{'status': 'passed', 'errors': []}]}]}]}]),
         }
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / 'report.json'
@@ -250,8 +256,6 @@ class StructuredSummaryTests(unittest.TestCase):
                     if type(value) is not int:
                         continue
                     for replacement in (None, True, '1', -1, 2):
-                        if runner == 'playwright' and key == 'expected' and replacement == 2:
-                            continue  # Any positive expected count is valid.
                         invalid = json.loads(json.dumps(valid))
                         target = invalid['stats'] if runner == 'playwright' else invalid
                         target[key] = replacement
@@ -269,6 +273,35 @@ class StructuredSummaryTests(unittest.TestCase):
             path.write_text(json.dumps(invalid))
             with self.assertRaises(Blocked):
                 test_summary(path, 'vitest')
+
+
+    def test_playwright_expected_failures_and_incomplete_nested_results_block(self):
+        valid = dict(stats=dict(expected=1, unexpected=0, flaky=0, skipped=0), errors=[],
+                     suites=[{'suites': [{'specs': [{'tests': [{'expectedStatus': 'passed', 'status': 'expected',
+                                                              'results': [{'status': 'passed', 'errors': []}]}]}]}]}])
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'report.json'
+            path.write_text(json.dumps(valid))
+            test_summary(path, 'playwright')
+            for mode in ('expected-failure', 'actual-failure', 'retry-failure', 'empty-results', 'missing-suites', 'count-mismatch'):
+                invalid = json.loads(json.dumps(valid))
+                test = invalid['suites'][0]['suites'][0]['specs'][0]['tests'][0]
+                if mode == 'expected-failure':
+                    test['expectedStatus'] = 'failed'
+                    test['results'][0]['status'] = 'failed'
+                elif mode == 'actual-failure':
+                    test['results'][0]['status'] = 'failed'
+                elif mode == 'retry-failure':
+                    test['results'].insert(0, {'status': 'failed'})
+                elif mode == 'empty-results':
+                    test['results'] = []
+                elif mode == 'missing-suites':
+                    del invalid['suites']
+                else:
+                    invalid['stats']['expected'] = 2
+                path.write_text(json.dumps(invalid))
+                with self.subTest(mode=mode), self.assertRaises(Blocked):
+                    test_summary(path, 'playwright')
 
 
 class QueueTests(unittest.TestCase):

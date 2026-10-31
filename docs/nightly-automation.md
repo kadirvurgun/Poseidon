@@ -126,3 +126,5 @@ Current phase: locally validated operations subpackage; parent independent revie
 and controlled activation remain next. This is not canonical release acceptance.
 
 Parent integration: development/review reasoning effort is pinned to medium; task reads are scoped and source queries bounded. See [official configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference). A confirmed stopped metadata failure skips that unverified profile and checks the alternate profile independently; uncertain termination retains its lock and stops. Work-phase exceptions never trigger another account inside the same context. The root chat account is unaffected by CLI profile routing.
+
+Expected-failure hardening: Playwright summaries are reconciled against nested test records (expectedStatus passed; every actual result passed, nonempty and consistent). Vitest includes strict-test-reporter in both default config and explicit gate flags; inverted failures produce a nonzero process exit. Linux environment tests use isolated tool-directory fixtures instead of assuming ignored Windows tools are installed.

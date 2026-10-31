@@ -353,7 +353,14 @@ class ValidationTests(unittest.TestCase):
         self.assertNotEqual(selected['POSEIDON_API_PORT'], selected['POSEIDON_UI_PORT'])
 
     def test_sanitized_environment_no_inherited_context(self):
-        workers = Workers()
+        fixture = tempfile.TemporaryDirectory()
+        self.addCleanup(fixture.cleanup)
+        workers = Workers.__new__(Workers)
+        workers.root = Path(fixture.name)
+        workers.home_root = workers.root / 'profiles'
+        workers.profiles = {'esra-pro': {}}
+        (workers.root / '.tools/node/node-v26.13.0-win-x64').mkdir(parents=True)
+        (workers.root / '.tools/dotnet').mkdir(parents=True)
         with patch.dict(os.environ, {'ANTHROPIC_API_KEY': 'private', 'CODEX_SESSION_ID': 'private',
                                      'MCP_TOOL_ID': 'private', 'OPENAI_API_KEY': 'private'}):
             environment = workers.environment('esra-pro')

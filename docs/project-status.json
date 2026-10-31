@@ -2222,6 +2222,13 @@
         "playwright": 4,
         "failed": 0,
         "skipped": 0
+      },
+      "followup": {
+        "initial_ci": "Linux tool-path fixture assumption failed, corrected without weakening assertion",
+        "independent_qa": "Playwright expected-failure blocker corrected; final QA pending",
+        "focused_python_passed": 14,
+        "vitest_inverted_failure_probe_exit": 1,
+        "remote_ci": "new commit pending"
       }
     }
   },

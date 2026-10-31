@@ -145,7 +145,17 @@ def test_summary(path, runner):
             counts = report['stats']
             passed = total = counts['expected']
             other = [counts[k] for k in ('unexpected', 'flaky', 'skipped')]
-            if report['errors']:
+            tests = []
+            def collect(suites):
+                for suite in suites:
+                    for spec in suite.get('specs', []):
+                        tests.extend(spec['tests'])
+                    collect(suite.get('suites', []))
+            collect(report['suites'])
+            if (report['errors'] or len(tests) != total or any(
+                    test['expectedStatus'] != 'passed' or test['status'] != 'expected'
+                    or not test['results'] or any(result['status'] != 'passed' or result.get('errors')
+                                                 for result in test['results']) for test in tests)):
                 raise ValueError()
         if (any(type(n) is not int or n < 0 for n in [passed, total, *other])
                 or passed <= 0 or total != passed or any(other)):
@@ -341,6 +351,7 @@ class Coordinator:
     def gate(self):
         work = Path(self.job['worktree'])
         required = ['Poseidon.slnx', 'scripts/verify_sources.py', 'scripts/nightly_python_tests.py', 'frontend/package-lock.json',
+                    'frontend/scripts/strict-test-reporter.ts',
                     'tests/Poseidon.Browser.Tests/package-lock.json', 'tests/Poseidon.Browser.Tests/playwright.config.ts',
                     'tests/Poseidon.Persistence.Tests/Poseidon.Persistence.Tests.csproj',
                     'tests/Poseidon.Api.Tests/Poseidon.Api.Tests.csproj']
@@ -386,6 +397,7 @@ class Coordinator:
         commands += [(name, self.npm('run', name, '--prefix', 'frontend')) for name in
                      ('generate:api', 'lint', 'typecheck', 'test', 'build')]
         commands = [(name, command + ['--', '--reporter=default', '--reporter=json',
+                                      '--reporter=./scripts/strict-test-reporter.ts',
                                       '--outputFile=' + str(work / results / 'vitest.json')]
                      if name == 'test' else command) for name, command in commands]
         self.env.update(ports())
