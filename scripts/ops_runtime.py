@@ -14,11 +14,12 @@ import time
 from codex_accounts import ROOT, BusyError, WorkerStillRunningError, exclusive, write_json
 from codex_watch import Watch, PROFILES
 from nightly_coordinator import Coordinator
+from model_policy import ModelPolicy, ModelPolicyError
 
 STATUSES = {'unknown', 'known', 'busy', 'unavailable', 'reconcile_required', 'monitoring', 'idle',
     'running', 'finished', 'queued', 'developing', 'verifying', 'awaiting_qa', 'awaiting_ci',
-    'merged', 'blocked', 'waiting_for_account', 'waiting_for_quota', 'reconciliation_required'}
-PHASES = {'development', 'independent_qa', 'developer', 'qa', 'backend', 'ui', 'unknown'}
+    'merged', 'blocked', 'waiting_for_account', 'waiting_for_quota', 'reconciliation_required', 'produced', 'failed', 'timeout'}
+PHASES = {'development', 'independent_qa', 'developer', 'qa', 'backend', 'ui', 'unknown', 'routine', 'test-writing', 'security_qa'}
 REASONS = {'qa_used_tools', 'qa_unknown_startup_error', 'qa_unknown_or_error_event', 'qa_invalid_event_stream',
     'independent_qa_rejected_or_invalid', 'qa_waiting_for_account', 'window_call_budget_wait',
     'window_job_budget_wait', 'reconciliation_required_before_renewal', 'deadline_reached', 'model_call_cap',
@@ -26,6 +27,7 @@ REASONS = {'qa_used_tools', 'qa_unknown_startup_error', 'qa_unknown_or_error_eve
     'reconciliation_needed_interrupted_phase', 'reconciliation_needed_unknown_stage',
     'quota_changed_before_dispatch', 'development_failed_preserve_worktree',
     'reviewed_head_or_worktree_changed', 'ci_failed', 'ci_failed_or_skipped', 'operation_blocked'}
+REASONS |= {'invalid_or_missing_model_policy', 'model_not_advertised_for_profile'}
 
 
 def reason(value):
@@ -70,8 +72,22 @@ def load(path, default=None):
 
 
 def windows(values):
-    return [{k: w[k] for k in ('usedPercent', 'windowDurationMins', 'resetsAt') if number(w.get(k))}
-            for w in values[:20] if isinstance(w, dict)] if isinstance(values, list) else []
+    result = []
+    for value in values[:20] if isinstance(values, list) else []:
+        if isinstance(value, dict):
+            item = {k: value[k] for k in ('usedPercent', 'windowDurationMins', 'resetsAt') if number(value.get(k))}
+            if item not in result:
+                result.append(item)
+    return result
+
+
+def model_fields(value):
+    result = {}
+    if value.get('model') in {'gpt-6-luna', 'gpt-6.1-sol'}:
+        result['model'] = value['model']
+    if value.get('effort') in {'low', 'medium'}:
+        result['effort'] = value['effort']
+    return result
 
 
 def date(value):
@@ -148,7 +164,7 @@ class Store:
                 job['commit'] = j['commit']
             if isinstance(j.get('pr_url'), str) and re.fullmatch(r'https://github.com/kadirvurgun/Poseidon/pull/[0-9]+', j['pr_url']):
                 job['prUrl'] = j['pr_url']
-            job['calls'] = [{'profile': c['profile'], 'phase': choice(c.get('phase'), PHASES), 'usage': numeric(c.get('usage'))}
+            job['calls'] = [{'profile': c['profile'], 'phase': choice(c.get('phase'), PHASES), 'usage': numeric(c.get('usage')), **model_fields(c)}
                             for c in sequence(j.get('calls')) if isinstance(c, dict) and c.get('profile') in PROFILES]
             if job['calls']:
                 job.setdefault('profile', job['calls'][-1]['profile'])
@@ -168,7 +184,26 @@ class Store:
                 if date(a.get('finishedAt')):
                     safe['finishedAt'] = date(a['finishedAt'])
                 safe['usage'] = numeric(a.get('usage'))
+                safe.update(model_fields(a))
                 activities.append(safe)
+        # A model receipt is saved before dispatch. Show that live lease immediately,
+        # while the coordinator thread is still inside the CLI invocation.
+        for identifier, job in mapping(state.get('jobs')).items():
+            if not label(identifier) or not isinstance(job, dict):
+                continue
+            calls = sequence(job.get('calls'))
+            lease = mapping(job.get('lease'))
+            if (job.get('inflight') not in {'model', 'qa_model'} or not calls
+                    or not number(lease.get('until')) or lease['until'] <= now):
+                continue
+            call = mapping(calls[-1])
+            if call.get('profile') not in PROFILES or not number(call.get('started_at')) or number(call.get('finished_at')):
+                continue
+            active_id = identifier + '-' + str(len(calls) - 1)
+            activities = [a for a in activities if a['id'] != active_id]
+            activities.append({'id': active_id, 'taskId': identifier, 'profile': call['profile'],
+                'role': choice(call.get('phase'), PHASES), 'status': 'running',
+                'startedAt': iso(call['started_at']), 'usage': numeric(call.get('usage')), **model_fields(call)})
         project = load(self.root / 'docs/project-status.json')
         progress = {target: project.get(source) if number(project.get(source)) else None for target, source in {
             'completionPercent': 'completion_percent', 'acceptedStoryPoints': 'accepted_story_points',
@@ -194,7 +229,13 @@ class Store:
             'maxCalls': state.get('max_calls', 8) if number(state.get('max_calls', 8)) else 8,
             'maxJobs': state.get('max_jobs', 4) if number(state.get('max_jobs', 4)) else 4,
             'deadline': state.get('deadline') if number(state.get('deadline')) else None, 'jobs': jobs}
-        return {'schemaVersion': 1, 'generatedAt': iso(now),
+        policy = {}
+        try:
+            configured = ModelPolicy(self.root).value
+            policy['modelPolicy'] = {'roles': configured['roles'], 'automaticEscalation': False}
+        except ModelPolicyError:
+            pass
+        return {'schemaVersion': 1, 'generatedAt': iso(now), **policy,
             'quota': {'timestamp': stamp, 'next_check': next_check, 'selected': next((p for p in PROFILES if profiles[p]['ready']), None), 'profiles': profiles},
             'coordinator': coordinator, 'activities': activities, 'events': self.events(), 'alarms': alarms, 'project': progress}
 
@@ -275,9 +316,15 @@ class Driver:
         self.manage_wake = manage_wake
         self.wake_state = 'not_requested'
         self.wake_at = -1 if manage_wake else None
+        self.activity_signature = None
 
     def tick(self):
         now = self.store.wall()
+        activities = self.store.status()['activities']
+        signature = tuple((a['id'], a['status'], a.get('finishedAt')) for a in activities)
+        if self.activity_signature is not None and signature != self.activity_signature:
+            self.poll_at = 0  # Completion/assignment changes warrant fresh metadata, not a model probe.
+        self.activity_signature = signature
         if now >= self.poll_at:
             self.watch.once()  # Metadata only; locks each profile separately.
             current = self.store.status()
@@ -290,7 +337,9 @@ class Driver:
                     if old is not None and (old >= 85) != (w.get('usedPercent', 100) >= 85):
                         self.store.record('threshold_cross', profile=profile, usedPercent=w.get('usedPercent'), windowDurationMins=w.get('windowDurationMins'))
                     self.previous[key] = w.get('usedPercent')
-            resets = [a['resumeAt'] for a in current['alarms'] if a.get('usedPercent', 0) >= 85 and a.get('resumeAt', 0) > now]
+            # Observe real resets even when another (weekly) window still blocks.
+            # Waking is a metadata recheck, never permission to start a model.
+            resets = [a['resumeAt'] for a in current['alarms'] if number(a.get('resumeAt')) and a['resumeAt'] > now]
             self.poll_at = min([now + 3600, *resets])
             wake_at = min(resets) if resets else None
             if self.manage_wake and wake_at != self.wake_at:
@@ -311,6 +360,8 @@ class Driver:
             write_json(self.store.runtime / 'service.json', {'enabled': True, 'status': 'running',
                 'nextWake': self.poll_at, 'wakeState': self.wake_state, 'wakeAt': self.wake_at})
             after = self.coordinator.once()
+            if after.get('model_calls') != before.get('model_calls'):
+                self.poll_at = 0
             status = after.get('reason', 'idle' if not after.get('jobs') else 'running')
             if any(j.get('status') == 'blocked' or j.get('inflight') for j in after.get('jobs', {}).values()):
                 status = 'reconcile_required'
@@ -331,7 +382,7 @@ class Driver:
                         'role': label(call.get('phase')) or 'unknown',
                         'status': 'finished' if number(call.get('finished_at')) else 'unknown',
                         'startedAt': iso(call['started_at']) if number(call.get('started_at')) else None,
-                        'usage': numeric(call.get('usage'))}
+                        'usage': numeric(call.get('usage')), **model_fields(call)}
                     if number(call.get('finished_at')):
                         activity['finishedAt'] = iso(call['finished_at'])
                     write_json(self.store.runtime / 'activities' / (identifier + '.json'), activity)

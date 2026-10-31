@@ -2,7 +2,7 @@
 
 Source/traceability: explicit user assignment dated 2026-10-31;
 [hourly quota policy](hourly-automation.md), [existing coordinator gates](nightly-automation.md),
-and `.runtime/dashboard-ui-task.md` in the parent checkout (GET `/ops/status` contract).
+and the [typed GET `/ops/status` contract](../frontend/src/agents/contract.ts).
 This is a local development operations subpackage. Canonical S0 progress remains
 8/970 accepted story points (0.82%); the parent owns status and phase reports.
 
@@ -25,10 +25,14 @@ lastKnown value carries its own observedAt; busy, unavailable, reconciliation an
 stale (>75 minutes) values never authorize dispatch. No absent 5-hour window is invented.
 
 Metadata refresh runs at startup, hourly and the earliest known future blocking
-window's actual resetsAt + 60 seconds. It starts no model turn. A reset alarm is
+window's actual resetsAt + 60 seconds. All advertised future resets are observed,
+including a short window while a weekly window still blocks. Task completion
+also prompts a fresh measurement before the next hourly check. It starts no model turn. A reset alarm is
 an observation, never proof that weekly quota has recovered. Each profile must
 independently have fresh, known metadata with **every** window below 85%.
-Esra remains the development preference and Kadir the QA preference. Profile locks
+Esra remains the development preference and Kadir the QA preference. The
+[model policy](model-policy.md) pins model/effort per task and review risk; the
+actual selection is recorded before each model dispatch. Profile locks
 cover metadata and CLI use; another account can run only on its own eligible
 quota. The account adapter makes at most one proactive account/read refreshToken
 attempt after protocol internal error -32603, in the same locked profile/process;

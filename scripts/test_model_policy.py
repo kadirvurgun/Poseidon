@@ -2,8 +2,11 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import Mock, patch
 
 from model_policy import ModelPolicy, ModelPolicyError
+from nightly_coordinator import Blocked, Coordinator, SubscriptionWorkers, review_links
+from codex_accounts import Workers
 
 
 class ModelPolicyTests(unittest.TestCase):
@@ -51,6 +54,41 @@ class ModelPolicyTests(unittest.TestCase):
         model['supported_reasoning_levels'] = [{'effort': 'high'}]
         path.write_text(json.dumps({'models': [model]}))
         self.assertFalse(ModelPolicy.advertised(self.root, choice))
+
+    def test_dispatch_receipt_pins_the_actual_model_and_unknown_access_spends_no_call(self):
+        workers = SubscriptionWorkers.__new__(SubscriptionWorkers)
+        workers.root = self.root
+        workers.home_root = self.root / 'profiles'
+        workers.profiles = {'esra-pro': {}}
+        home = workers.home('esra-pro')
+        home.mkdir(parents=True)
+        coordinator = Coordinator.__new__(Coordinator)
+        coordinator.root, coordinator.workers = self.root, workers
+        coordinator.budget, coordinator.save = Mock(), Mock()
+        coordinator.wall = lambda: 1000
+        coordinator.state, coordinator.job = {'model_calls': 0}, {'id': 'S0-ADR-01'}
+        with self.assertRaisesRegex(Blocked, 'model_not_advertised'):
+            coordinator.call_receipt('esra-pro', 'development')
+        self.assertEqual(coordinator.state['model_calls'], 0)
+        self.assertNotIn('calls', coordinator.job)
+        (home / 'models_cache.json').write_text(json.dumps({'models': [{
+            'slug': 'gpt-6-luna', 'visibility': 'list', 'supported_reasoning_levels': [{'effort': 'medium'}]}]}))
+        coordinator.call_receipt('esra-pro', 'development')
+        self.assertEqual(coordinator.job['calls'][0]['model'], 'gpt-6-luna')
+        self.assertEqual(coordinator.job['calls'][0]['effort'], 'medium')
+        with patch.object(Workers, 'command', return_value=['fake-codex']):
+            command = workers.command()
+        self.assertIn('--model', command)
+        self.assertIn('gpt-6-luna', command)
+
+    def test_review_links_covers_unchanged_targets_and_rejects_outside_paths(self):
+        docs = self.root / 'docs'
+        docs.mkdir()
+        (docs / 'unchanged.json').write_text('{}')
+        (docs / 'task.md').write_text('[existing](unchanged.json) [missing](missing.json) [outside](../../outside.md)')
+        links = review_links(self.root, ['docs/task.md'])
+        self.assertEqual([True, False, False], [item['exists'] for item in links])
+        self.assertFalse(links[-1]['withinWorktree'])
 
 
 if __name__ == '__main__':

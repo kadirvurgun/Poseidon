@@ -14,6 +14,32 @@ from test_nightly_coordinator import FakeWorkers
 
 
 class RuntimeTests(unittest.TestCase):
+    def test_task_completion_refreshes_quota_before_the_next_hour(self):
+        self.quota(state='busy')
+        activity = self.store.runtime / 'activities/running.json'
+        write_json(activity, {'id': 'running', 'profile': 'esra-pro', 'taskId': 'OPS-TEST',
+            'role': 'development', 'status': 'running', 'startedAt': iso(self.now)})
+        watch = Mock()
+        driver = Driver(self.store, watch=watch)
+        driver.tick()
+        self.assertEqual(watch.once.call_count, 1)
+        self.now += 15
+        write_json(activity, {'id': 'running', 'profile': 'esra-pro', 'taskId': 'OPS-TEST',
+            'role': 'development', 'status': 'produced', 'startedAt': iso(self.now - 15), 'finishedAt': iso(self.now)})
+        driver.tick()
+        self.assertEqual(watch.once.call_count, 2)
+
+    def test_live_dispatch_model_is_visible_only_while_its_lease_is_valid(self):
+        job = {'status': 'developing', 'inflight': 'model', 'lease': {'until': self.now + 60},
+            'calls': [{'profile': 'esra-pro', 'phase': 'development', 'started_at': self.now,
+                       'model': 'gpt-6-luna', 'effort': 'medium'}]}
+        write_json(self.root / '.runtime/nightly/state.json', {'jobs': {'OPS-TEST': job}})
+        active = self.store.status()['activities'][0]
+        self.assertEqual(active['status'], 'running')
+        self.assertEqual(active['model'], 'gpt-6-luna')
+        self.now += 61
+        self.assertEqual(self.store.status()['activities'], [])
+
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
@@ -162,7 +188,8 @@ class RuntimeTests(unittest.TestCase):
         driver.tick()
         self.assertEqual(watch.once.call_count, 2)
         coordinator.once.assert_not_called()
-        self.assertEqual(driver.poll_at, self.now + 3600)
+        # Observe the newly advertised short reset as well; weekly still blocks.
+        self.assertEqual(driver.poll_at, self.now + 360)
         self.now += 3600
         watch.once.side_effect = lambda: self.quota(used=2, weekly=18)
         coordinator.once.return_value = {'jobs': {}}
