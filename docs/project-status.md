@@ -1,41 +1,22 @@
-# POSEIDON — Proje İlerleme Raporu
+# POSEIDON ilerleme raporu — 2026-10-31
 
-**Rapor tarihi:** 31 Ekim 2026. **Baseline:** POSEIDON v46.3 / Library26 güncellenmiş aday seti; gemi + römorkör.
+Kontrollü kabul: **8 / 970 SP = %0,82**; 2 / 121 iş. S0: **8 / 53 SP = %15,09**. Operasyonel ekran kabulü 0 / 196. Altyapı ve hazırlık paketleri canonical iş kabulüyle aynı değildir; S0 çıkış kapısı açık.
 
-**Analize göre tamamlanma: %0,82 — 8 / 970 story point.** Kaynak kabul kriterleri, bağımsız QA ve zorunlu CI ile **DEV-001 ve DEV-002 kabul edildi: 2 / 121 iş**. Mevcut aşama **S0**; sprint çıkış kapısı hâlâ açık.
+## Son teslimler
 
-[APP-FOUNDATION-01](phases/APP-FOUNDATION-01.md) gerçek .NET API + React bağlantı ekranını, sözleşmeden tip üretimini, component/integration/Playwright testlerini ve zorunlu push/PR kontrollerini teslim eder. [PR #3](https://github.com/kadirvurgun/Poseidon/pull/3) kod commit'i `1ab836e0309d573b259294cffa899cf66ea64a7c`, bağımsız QA ile onaylandı; [push CI](https://github.com/kadirvurgun/Poseidon/actions/runs/41090598675) ve [PR CI](https://github.com/kadirvurgun/Poseidon/actions/runs/41090658974) iki job ile başarılı. API/UI build ve Playwright kanıt artifact'ları üretildi. Teknik bağlantı ekranı operasyonel readiness veya IAM kabulü değildir.
+- [PR #4](https://github.com/kadirvurgun/Poseidon/pull/4): güncel 30.10.2026 analizinin 269 orijinali ve 34.958 kaynak adresli bölümü; byte/hash doğrulaması, küçük yerel kaynak sorguları. Önceki kaynaklar korunur.
+- [PR #5](https://github.com/kadirvurgun/Poseidon/pull/5): ayrı hesap profilleri, %85 rezerv eşiği, Esra önceliği, saatlik kota kontrolü. Eski PR #2 bununla kapatıldı.
+- [PR #6](https://github.com/kadirvurgun/Poseidon/pull/6): eksik/bilinmeyen zorunlu veri kapısı; false ve sıfır korunur, taslak değerleri değiştirilmez. 16 domain testi; exact-commit bağımsız QA ve üç CI işi geçti.
 
-Güncellenen analiz kabulü: [ANALYSIS-20261030-01](phases/ANALYSIS-20261030-01.md), 269 kaynak / 125 metin / 34.958 bölüm; teslim manifestindeki 266 hash eşleşti. 25 ortak belge değişti ve 214 dosya eklendi. Backlog byte kimliği korunduğu için yüzde/payda değişmedi. Yeni 49/50 proposal kararları ve gömülü eski runtime/test kanıtları üretim kabulü değildir. Kaynak doğrulama, 11 Python testi, bağımsız QA ve iki CI job geçti; [PR #4](https://github.com/kadirvurgun/Poseidon/pull/4) main ile birleşti.
+## Doğrulama ve otomasyon
 
-Saatlik kota paketi [OPS-HOURLY-01](phases/OPS-HOURLY-01.md): 51 genel Python + bir Windows construction testi geçti, 0 skip/fail; son hedef QA/CI ve görev kaydı doğrulanıyor. İzleme model çağırmaz; Esra önceliği ve %85 rezerv uygular. Çok görevli overnight koordinatörü ayrı dalda geliştiriliyor.
+Backend 12 persistence unit, 16 domain ve 15 integration (10 gerçek PostgreSQL, 5 HTTP host/contract); React 12 component ve 4 gerçek API Playwright testi ilgili merge CI'larında geçti. Kaynak import/sorgu/doğrulama 11 Python testi; hesap/watcher paketi 40 ek Python testi ve bir Windows scheduler yapım testi içerir. Paket sayıları [JSON kanıtında](project-status.json) tutulur; her sayı aynı anda alınmış tek yerel koşu iddiası değildir.
 
-## Ölçüm
+Main koruması PR, güncel taban ve üç zorunlu kontrolü gerektiriyor: persistence-and-security, frontend-and-browser, windows-automation. Force push/silme kapalı, adminler dahil.
 
-Ana ölçü `kabul edilmiş SP / 970 × 100`: `8 / 970 = %0,82`. İş adedi ayrı ölçüdür: `2 / 121 = %1,65`. Başlanan işe keyfî kısmi puan verilmez. SP zaman tahmini veya teslim tarihi değildir. Kapsam değişirse baseline ve payda birlikte değiştirilir.
+Gerçek Windows görevi `Poseidon-HourlyQuota` saatlik metadata kontrolü yapıyor; son gözlenen 31.10.2026 11:10:23 +03 koşusu exit 0. Son snapshot Esra kullanılabilir, Kadir doğrulanamadı. Bu kontrol model çağrısı yapmaz. Kota yüzdesi prompt token toplamından tahmin edilmez; hesap metadata'sından okunur. Ana sohbet hesabı CLI görev yönlendirmesiyle değişmez.
 
-| Ölçü | Sonuç |
-|---|---|
-| Kabul edilmiş backlog | 2 / 121 iş; 8 / 970 SP |
-| S0 kabul edilmiş SP | 8 / 53 — %15,09; çıkış kapısı geçilmedi |
-| Kabul edilmiş operasyonel ekran | 0 / 196; teknik bağlantı sayfası canonical ekran sayılmaz |
-| Alan sözleşmesi envanteri | 2.316 tanımlı; uygulanmış alan sayısı değildir |
-| Yerel testler | 12 backend unit/guard + 15 integration (10 PostgreSQL, 5 HTTP host/contract) + 12 component + 4 importer + 4 Playwright = **47 passed; 0 failed/skipped** |
-| Diğer kontroller | Release build, locked restore, lint/typecheck, API publish, contract/type drift, migration tutarlılığı geçti |
-| GitHub branch gate | Main: PR + iki zorunlu check, strict up-to-date, adminler dahil; force push/silme kapalı |
-| Sürekli 7/24 ajan servisi | Aktif değil; iki hesap doğrulandı, worker kabulü ayrı draft PR #2'de açık |
-
-## Tamamlanan ve devam eden işler
-
-| İş | Kabul | Kanıt veya açık koşul |
-|---|---|---|
-| DEV-001 / T-S0-001 — Repo ve branch standardı | **Accepted, 3 SP** | Backend/frontend/contracts/infra/docs; main/develop politikası, PR ve branch koruması; bağımsız QA |
-| DEV-002 / T-S0-002 — CI iskeleti | **Accepted, 5 SP** | Backend/frontend build, unit/lint, artifact, başarısız check merge engeli; DEV-001 bağımlılığı kapalı |
-| DEV-004 — Mimari/ADR | Kısmi hazırlık | [Mimari](architecture.md) başlangıcı var; onaylı modül/offline/outbox/AI ADR seti eksik |
-| DEV-010 — DoR/DoD | Kısmi hazırlık | Görev ve test kuralları var; tam kontrollü kabul sözleşmeleri açık |
-| Diğer işler | Kabul edilmiş teslim yok | Kaynak bağımlılık ve kabul kanıtları gerekir |
-
-Kaynak Excel korunur; orijinal 121 işin kaynak statüsü `Not Started` olarak kalır. Uygulama değerlendirmesi [JSON raporunda](project-status.json) ayrı tutulur. 55 orijinal dosyanın SHA256 [envanteri](sources/manifest.json), 52 metin ve 24.006 kaynak adresli bölüm korunur. Graphify kod keşfi için türetilmiş grafiktir; tam anlamsal regulatory/RAG doğrulaması değildir.
+Gece geliştirme koordinatörü henüz etkin değil: QA bulguları düzeltildi; 93 genel Python ve 7 Windows kontrolü geçti. Entegre hedef commit bağımsız QA/CI kabulünü bekliyor. Etkinleştirme öncesinde gerçek test→QA→PR→CI→merge denemesi gerekir. Planlanan sınır 4 iş / 8 model çağrısı / 8 saat; sadece açıkça tanımlanmış, kaynaklı görevler. Makine uyanık ve kullanıcı oturumu açık olmalıdır.
 
 ## Analize göre aşamalar
 
@@ -59,10 +40,8 @@ Sprint iş/SP sayıları 18.01 Backlog'un benzersiz DEV kimliklerinden alınır.
 
 Sprint tema sayfası ile tekil iş atamalarındaki uyuşmazlıklar karar gerektirir (örn. DEV-115 tema S0, Backlog S10). Eski 137/172/185 ekran baseline'ları 196 ekran v46.3 ile toplanmaz. Bu rapor takvim taahhüdü değildir.
 
-## Sonraki adım ve sınırlar
+## Mevcut aşama ve sonraki adım
 
-S0 mimari/ortam/güvenlik/traceability kararlarını ve backlog bağımlılıklarını kapat; ardından OIDC login, tenant/vessel/role yetki sınırları ve HTTP kullanıcı eylem audit'iyle ilk yetkili dikey dilimi geliştir. Mevcut EF transaction audit'i tam HTTP audit veya GDPR uyumu değildir. IdP, veri lokasyonu ve gerçek pilot/uzman sorumluları açık kararlardır; otomasyon imza/kanıt üretmez.
+S0 hazırlığı sürüyor. Gece koordinatörü kapılarını tamamla, sınırlandırılmış kuyruğu ADR, güvenlik tehdit modeli ve POL-DEFAULT React hazırlığıyla çalıştır. Ardından OIDC/tenant/vessel/rol yetkileri ve HTTP kullanıcı eylem audit'iyle ilk yetkili dikey dilime geç. EF transaction audit'i tam HTTP audit veya GDPR/KVKK uygunluğu değildir. IdP, veri lokasyonu, operasyonel katalog ve gerçek pilot/uzman kararları açık.
 
-Uygulama [geliştirme rehberi](development.md), [repo politikası](repository-policy.md), [güvenlik sözleşmesi](security-baseline.md), [ilk DB raporu](phases/DB-FOUNDATION-01.md) ve [ayrı worker draft PR #2](https://github.com/kadirvurgun/Poseidon/pull/2). Bu durum kaydı kendiliğinden güncellenen bir dashboard veya aktif scheduler değildir.
-
-Kaynak: [18.01 Development Backlog](sources/text/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx.md), Backlog rows 2–122; [11.01 Traceability Matrix](sources/text/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx.md), 196 Ekran/2316 Alan v46.3; [19.01 release gate'leri](sources/text/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx.md).
+Kaynak ve görev ayrıntıları: [aktif kaynak](sources/active.json), [mimari](architecture.md), [güvenlik](security-baseline.md), [faz raporları](phases/), [ayrıntılı durum](project-status.json).

@@ -107,3 +107,13 @@ jobs:
             tests/Poseidon.Browser.Tests/playwright-report
             tests/Poseidon.Browser.Tests/test-results
           retention-days: 14
+  nightly-installer-construction:
+    runs-on: windows-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v6.0.0
+        with:
+          python-version: '3.13'
+      - name: Construct nightly ScheduledTask in Preview only
+        run: python scripts/windows_nightly_checks.py -v
