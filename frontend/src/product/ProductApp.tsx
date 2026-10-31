@@ -18,6 +18,7 @@ export function ProductApp() {
   const [identity, setIdentity] = useState<State<api.Session>>({ state: 'loading' })
   const [tab, setTab] = useState<'companies' | 'fleet'>('companies')
   const [attempt, setAttempt] = useState(0)
+  const [identityAttempt, setIdentityAttempt] = useState(0)
   const [offset, setOffset] = useState(0)
   const [kind, setKind] = useState('')
   const [searchInput, setSearchInput] = useState('')
@@ -49,7 +50,7 @@ export function ProductApp() {
     const timeout = setTimeout(() => { controller.abort(); }, 10000)
     api.session(controller.signal).then(data => { if (active) { setIdentity({ state: 'ok', data }); if (data.canRead && !data.canReadCompanies) setTab('fleet') } }).catch(error => { if (active) setIdentity({ state: 'error', status: errorStatus(error) }) })
     return () => { active = false; clearTimeout(timeout); controller.abort() }
-  }, [attempt])
+  }, [identityAttempt])
   useEffect(() => {
     if (!canRead || (tab === 'companies' && !user?.canReadCompanies)) return
     const controller = new AbortController()
@@ -70,7 +71,7 @@ export function ProductApp() {
   }, [selected, tab, canRead, attempt])
 
   const message = (status: number) => status === 401 ? t.expired : status === 403 ? t.forbidden : status === 404 ? t.empty : t.unavailable
-  const retry = () => { setIdentity({ state: 'loading' }); setRecords({ state: 'loading' }); setDetail({ state: 'loading' }); setAttempt(v => v + 1) }
+  const retry = () => { setIdentity({ state: 'loading' }); setIdentityAttempt(v => v + 1); setRecords({ state: 'loading' }); setDetail({ state: 'loading' }); setAttempt(v => v + 1) }
   const navigate = (value: typeof tab) => { if (value === tab) return; guard(() => { closeEditor(); setNotice(''); setTab(value); setSearch(''); setSearchInput(''); setOffset(0); setSelected(null); setRecords({ state: 'loading' }) }) }
   const signout = async () => {
     if (!user) return

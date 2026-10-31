@@ -18,6 +18,14 @@ The [active pointer](../sources/active.json) selects candidate/unverified baseli
 
 Current evidence is scoped source inspection, not a fresh runtime security certification. The baseline and ADR implementation paragraphs predate some foundation code: [identity configuration](../../backend/Poseidon.Api/FoundationIdentity.cs), [startup](../../backend/Poseidon.Api/Startup.cs) and [directory endpoints](../../backend/Poseidon.Api/FoundationEndpoints.cs) now contain configured OIDC/session and directory reads. They do not implement every operational module. Historical 26.01 runtime/UAT is not current implementation or passing-test evidence.
 
+## DIR-WORKSPACE-01 engineering delta — authored, NOT RUN
+
+The directory workspace adds explicit server-provisioned tenant-wide read/manage and vessel read/edit grants, scope-aware projections/commands, strict bounded DTOs and CSRF, expected-version updates, and tenant+actor-bound online command receipts. Command entity/audit/receipt writes share a transaction; required independent `Attempted`/failure/denial events precede delivery, and no HTTP Success is persisted before commit. A committed command with lost acknowledgement can be retried under fresh authorization. Receipts hold fixed metadata/fingerprint/resource ID, not bodies. Directory grants do not implement the canonical operational role/job/protected-object matrix. Critical offline queue/device/replay controls in TM-07 remain unimplemented.
+
+This changes limited directory engineering controls under TM-01/TM-02/TM-06 and online retry preparation related to TM-07; it does not close those threats. Authored domain/PostgreSQL/API/UI/anonymous-browser tests and hand-maintained migration/contract metadata have **NOT RUN**. Parent generation, integrated gate and independent target-commit QA are pending. Existing best-effort legacy denial logging remains outside the required directory command path. Full user-action audit, canonical role/reason/before-after coverage, tamper monitoring, app/migrator production privilege separation and retention/privacy operations remain gaps. See [package contract](../tasks/directory-workspace-01.md).
+
+Threat-model QA interrupted by the batch instruction remains unaccepted. Authorized expert review and approval stay **OPEN**; no safety, regulatory, privacy/compliance or pilot sign-off is supplied.
+
 ## Assets, actors and trust boundaries
 
 Assets are tenant/company/vessel/job records; crew/health and protected-report identity; evidence bytes, hashes and provenance; human decisions and rule versions; credentials/session keys; audit history; offline queues and retrieval indexes/caches.

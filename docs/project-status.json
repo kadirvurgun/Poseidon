@@ -2082,7 +2082,8 @@
     "S0 exit gates remain open; local preparation does not automatically accept canonical story points",
     "Read-only OIDC/tenant foundation locally validated; external IdP/TLS membership deployment, business mutations and privacy/retention release gates remain open",
     "Hourly quota and metadata monitor active on awake logged-in host; persistent development/publish mode not activated during user-requested batched foundation work",
-    "Source originals preserved; assessment and execution evidence maintained separately"
+    "Source originals preserved; assessment and execution evidence maintained separately",
+    "DIR-WORKSPACE-01 is authored and NOT RUN; full S1, regulatory vessel master, real IdP, operational authority catalog, privacy and expert gates remain open"
   ],
   "verification": {
     "release_build": "passed",
@@ -2268,7 +2269,7 @@
       "routing": "Esra primary for all roles; Kadir only on verified Esra quota reserve and own eligible quota"
     },
     "foundation_app": {
-      "state": "implementation complete; integrated local core gate passed; exact-commit independent QA and four remote CI checks pending",
+      "state": "Merged PR #10 at 0bf7914; historical foundation evidence does not verify DIR-WORKSPACE-01",
       "task": "FOUNDATION-APP-01",
       "source": [
         "18.01 Backlog row14 DEV013/T-S1-001",
@@ -2307,7 +2308,23 @@
       },
       "canonical_acceptance_changed": false,
       "report": "docs/phases/FOUNDATION-APP-01.md",
-      "qa_followup": "Initial exact1851b21 review rejected repeat-selection loading; daefd85 fix plus two regressions; fresh exact-commit QA pending"
+      "qa_followup": "PR #10 merged; no new DIR target-commit acceptance inferred from historical foundation counts",
+      "pr": "https://github.com/kadirvurgun/Poseidon/pull/10",
+      "merge_commit": "0bf79141d1487621fd0124a330596e34cbce16e3"
+    },
+    "directory_workspace": {
+      "state": "NOT RUN",
+      "tests": "authored only; not executed",
+      "build": "NOT RUN",
+      "lint": "NOT RUN",
+      "typecheck": "NOT RUN",
+      "ef_cli": "NOT RUN",
+      "restore_generation": "NOT RUN",
+      "independent_qa": "pending parent integrated gate",
+      "contract_followup": "parent host OpenAPI export and generated TypeScript aliases; isolated directory-contract.ts additions are temporary",
+      "migration_followup": "parent validates hand-authored receipt migration/designer/snapshot and project-only locks",
+      "scope": "online company/fleet management engineering subpackage; canonical S1/regulatory/operational role acceptance remains open",
+      "implementation_checkpoint": "33b08929d2b81f2ef97b4537166609e9c6ec3f19"
     }
   },
   "phase_reports": [
@@ -2319,7 +2336,17 @@
     "docs/phases/OPS-COORDINATOR-01.md",
     "docs/phases/OPS-COORDINATOR-01-QA-FOLLOWUP.md",
     "docs/phases/OPS-DASH-01.md",
-    "docs/phases/FOUNDATION-APP-01.md"
+    "docs/phases/FOUNDATION-APP-01.md",
+    "docs/phases/DIR-WORKSPACE-01.md"
   ],
-  "active_source": "docs/sources/active.json"
+  "active_source": "docs/sources/active.json",
+  "current_package": {
+    "task": "DIR-WORKSPACE-01",
+    "branch": "feature/directory-workspace",
+    "state": "in development; implementation prepared; NOT RUN; parent integrated gate pending",
+    "report": "docs/phases/DIR-WORKSPACE-01.md",
+    "contract": "docs/tasks/directory-workspace-01.md",
+    "canonical_acceptance_changed": false,
+    "publication": "no push, PR or merge authorized"
+  }
 }

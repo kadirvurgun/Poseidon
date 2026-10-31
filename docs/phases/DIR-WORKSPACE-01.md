@@ -1,0 +1,17 @@
+# DIR-WORKSPACE-01 — draft delivery report
+
+Date: 2026-11-01. Branch: `feature/directory-workspace`. State: **in development / implementation prepared; NOT RUN; not accepted**.
+
+Delivered code: server-provisioned tenant-wide/vessel grants; scoped company/fleet reads/search; company and vessel create/code-name update; strict validation/CSRF; explicit xmin expected version; transactional online command receipts; required attempt/denial security events and atomic committed EF audit; responsive TR/EN real-HTTP workspace with server capabilities, accessible forms, uncertain-save retry, retained conflict drafts and guarded local navigation.
+
+Authored tests cover domain input rules, trusted scope resolution, real PostgreSQL/API transaction and receipt races/restart/rollback, scope/tenant/CSRF/role negatives, duplicates/stale edits, receipt append-only/seed behavior, mocked React forms/transport/draft preservation and real Playwright anonymous/setup boundaries. Existing OIDC negative tests remain. Authored tests are not passing evidence.
+
+Exact verification: tests **NOT RUN**; build **NOT RUN**; lint **NOT RUN**; typecheck **NOT RUN**; EF CLI/model/migration checks **NOT RUN**; restore/export/generation **NOT RUN**. User explicitly deferred these until the parent integrated gate. No push/PR/merge or delegated agents in this package.
+
+Follow-up: parent exports OpenAPI and generates TypeScript aliases, removes isolated temporary contract additions, validates hand-authored migration/designer/snapshot and project-only lock updates, runs the whole integrated gate, resolves findings and obtains independent exact-commit QA. External IdP/operator lifecycle, canonical operational role matrix, regulatory profile/provenance and full audit/privacy/retention gates remain open. Basic vessels intentionally have no invented regulatory profiles/measurements. Online directory retries do not implement critical offline commands. S0 threat model remains draft, approval OPEN.
+
+PR #10 is actually merged at `0bf7914` (local ancestry), superseding old status text that still said foundation QA/CI pending. Its historical local test counts do not verify this package. Task/source/criteria/configuration and evidence details: [directory-workspace-01](../tasks/directory-workspace-01.md).
+
+Canonical progress remains **8/970 SP = 0.82%; 2/121 tasks; 0/196 accepted screens**. Current phase: locally authored integrated subpackage awaiting parent verification, not complete canonical S1/S2 acceptance. Next step: parent generation and integrated gate, then independent QA. No regulatory/safety/compliance/expert sign-off is supplied.
+
+Local implementation checkpoint: `33b08929d2b81f2ef97b4537166609e9c6ec3f19`. A following local finalization commit records contract-decoding/draft refresh refinements and this delivery documentation. Both remain unverified; hooks that might run tests are disabled for local package commits. Local Graphify AST update completed with no model call; it is derived navigation, not behavioral verification. Concurrent architecture/automation document edits were preserved outside this task's commits.

@@ -57,3 +57,9 @@ dotnet test --solution Poseidon.slnx --filter-trait 'Category=Integration'
 .NET 10/xUnit v3 için global.json Microsoft.Testing.Platform çalıştırıcısını seçer; eski VSTest `--filter` biçimi kullanılmaz. Backend foundation workflow'u push/PR'da bu iki test grubunu, migration model kontrolünü ve belge aktarım testlerini çalıştıracak şekilde yazıldı. Henüz remote'da çalıştırıldığı doğrulanmadı; frontend/Playwright kapsamını içermez.
 
 Kaynak: [EF Core Data Seeding](https://learn.microsoft.com/en-us/ef/core/modeling/data-seeding).
+
+## DIR-WORKSPACE-01 preparation — NOT RUN
+
+Online company/vessel create does not seed regulatory measurements or profiles. A newly created basic vessel has unknown regulatory data; zero GT/BP, verified evidence or approval is not fabricated. The existing complete synthetic profile manifest and idempotent importer are unchanged.
+
+`core.CommandReceipts` records actual executed online commands; it is an observation/retry record, not an operational catalog to prepopulate. No receipt fixture is imported. API and persistence tests author actual synthetic operations and assert empty initial receipts, atomic write/audit/receipt behavior, tenant scope, append-only protection and reseed preservation. These tests are NOT RUN pending the parent integrated gate. Retention and controlled archive policy remain open; no production cleanup bypass is added.

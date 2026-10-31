@@ -15,6 +15,12 @@ async function request<T>(path: string, signal: AbortSignal, init?: RequestInit)
   }
   return response.json() as Promise<T>
 }
+function decodeCompany(value: unknown): Company {
+  if (!value || typeof value !== 'object' || !('id' in value) || !('code' in value) || !('name' in value) || !('version' in value) || !('canEdit' in value) ||
+      typeof value.id !== 'string' || typeof value.code !== 'string' || typeof value.name !== 'string' || typeof value.version !== 'number' ||
+      !Number.isInteger(value.version) || value.version < 1 || typeof value.canEdit !== 'boolean') throw new ApiError(502, 'invalid_contract')
+  return { id: value.id, code: value.code, name: value.name, version: value.version, canEdit: value.canEdit }
+}
 function decodeVessel(value: unknown): Vessel {
   if (!value || typeof value !== 'object' || !('kind' in value) || !('id' in value) || !('companyId' in value) || !('code' in value) || !('name' in value) ||
       !('version' in value) || !('canEdit' in value) || typeof value.version !== 'number' || !Number.isInteger(value.version) || value.version < 1 || typeof value.canEdit !== 'boolean' ||
@@ -28,13 +34,17 @@ function decodeVessels(value: unknown): Page<Vessel> {
   return { offset: value.offset, limit: value.limit, hasMore: value.hasMore, items: value.items.map(decodeVessel) }
 }
 export const session = (signal: AbortSignal) => request<Session>('auth/session', signal)
-export const companies = (offset: number, signal: AbortSignal, search = '') => request<Page<Company>>(`companies?offset=${offset}&limit=25${search ? `&q=${encodeURIComponent(search)}` : ''}`, signal)
+export const companies = async (offset: number, signal: AbortSignal, search = '') => {
+  const page = await request<Page<unknown>>(`companies?offset=${offset}&limit=25${search ? `&q=${encodeURIComponent(search)}` : ''}`, signal)
+  if (!page || !Array.isArray(page.items) || typeof page.hasMore !== 'boolean') throw new ApiError(502, 'invalid_contract')
+  return { ...page, items: page.items.map(decodeCompany) }
+}
 export const vessels = async (offset: number, kind: string, signal: AbortSignal, search = '') => decodeVessels(await request<unknown>(`vessels?offset=${offset}&limit=25${kind ? `&kind=${encodeURIComponent(kind)}` : ''}${search ? `&q=${encodeURIComponent(search)}` : ''}`, signal))
-export const company = (id: string, signal: AbortSignal) => request<Company>(`companies/${encodeURIComponent(id)}`, signal)
+export const company = async (id: string, signal: AbortSignal) => decodeCompany(await request<unknown>(`companies/${encodeURIComponent(id)}`, signal))
 export const vessel = async (id: string, signal: AbortSignal) => decodeVessel(await request<unknown>(`vessels/${encodeURIComponent(id)}`, signal))
 export async function saveDirectory(resource: 'companies' | 'vessels', id: string | undefined, body: CompanyCommand | VesselCreateCommand, csrf: string, key: string, signal: AbortSignal): Promise<Company | Vessel> {
   const result = await request<Company | Vessel>(`${resource}${id ? `/${encodeURIComponent(id)}` : ''}`, signal, {
     method: id ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf, 'Idempotency-Key': key }, body: JSON.stringify(body),
   })
-  return resource === 'vessels' ? decodeVessel(result) : result
+  return resource === 'vessels' ? decodeVessel(result) : decodeCompany(result)
 }

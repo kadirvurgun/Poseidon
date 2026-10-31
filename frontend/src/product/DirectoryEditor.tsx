@@ -62,7 +62,7 @@ export function DirectoryEditor({ target, language, csrf, onDirty, onSaving, onC
       { code: code.trim(), name: name.trim(), ...(initial ? { expectedVersion: initial.version } : {}) }
     const payload = JSON.stringify(body)
     if (!command.current.key || command.current.payload !== payload) command.current = { key: crypto.randomUUID(), payload }
-    busy.current = true; setSaving(true); onSaving(true); setFailure(null)
+    busy.current = true; onDirty(true); setSaving(true); onSaving(true); setFailure(null)
     const controller = new AbortController(); abort.current = controller
     const timeout = setTimeout(() => controller.abort(), 15000)
     try {
@@ -88,7 +88,7 @@ export function DirectoryEditor({ target, language, csrf, onDirty, onSaving, onC
         {vesselCreate && <>
           <label htmlFor="dir-kind">{t.kind} *</label><select id="dir-kind" required value={kind} aria-invalid={!!errors.kind?.length} aria-describedby="dir-kind-error" onChange={e => change('kind', e.target.value)}><option value="">{t.choose}</option><option value="Ship">{t.ship}</option><option value="Tug">{t.tug}</option></select>{fieldError('kind')}
           <label htmlFor="dir-companyId">{t.company} *</label><select id="dir-companyId" required value={companyId} aria-invalid={!!errors.companyId?.length} aria-describedby="dir-companyId-error" onChange={e => change('companyId', e.target.value)}><option value="">{t.choose}</option>{companyId && !choices?.items.some(c => c.id === companyId) && <option value={companyId}>{companyId}</option>}{choices?.items.map(c => <option key={c.id} value={c.id}>{c.code} · {c.name}</option>)}</select>{fieldError('companyId')}
-          {!choices && !choiceError && <p role="status">…</p>}
+          {!choices && !choiceError && <p role="status">{t.loading}</p>}
           {choiceError && <p role="alert">{t.failed} <button type="button" onClick={() => { setChoiceError(false); setChoiceAttempt(v => v + 1) }}>{t.reloadCompanies}</button></p>}
           {choices && <div className="form-actions"><button type="button" disabled={choiceOffset === 0} onClick={() => { setChoices(null); setChoiceOffset(v => v - 25) }}>{t.previous}</button><button type="button" disabled={!choices.hasMore} onClick={() => { setChoices(null); setChoiceOffset(v => v + 25) }}>{t.next}</button></div>}
         </>}

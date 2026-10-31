@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { ApiError, vessel, vessels } from './api'
+import { ApiError, company, vessel, vessels } from './api'
 
 const response = (body: unknown) => ({ ok: true, status: 200, json: async () => body }) as Response
 const ship = { id: 'vessel-1', companyId: 'company-1', code: 'S1', name: 'Synthetic Ship', kind: 'Ship', version: 1, canEdit: false }
@@ -27,5 +27,13 @@ describe('product API vessel contract decoding', () => {
       expect(error).toBeInstanceOf(ApiError)
       expect(error).toMatchObject({ status: 502 })
     }
+  })
+})
+
+
+describe('company version and capability contract', () => {
+  it.each([{ id: 'C', code: 'C', name: 'N' }, { id: 'C', code: 'C', name: 'N', version: 0, canEdit: true }])('rejects malformed company data before exposing an edit', async body => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response(body)))
+    await expect(company('C', new AbortController().signal)).rejects.toMatchObject({ status: 502 })
   })
 })
