@@ -556,6 +556,9 @@ class Coordinator:
             item = event.get('item', {})
             if not isinstance(item, dict):
                 raise Blocked('qa_invalid_event_stream')
+            if event['type'] in {'item.started', 'item.completed'} and item.get('type') not in {
+                    'agent_message', 'reasoning', 'error'}:
+                raise Blocked('qa_unknown_item_event')
             if item.get('type') == 'error':
                 digest = hashlib.sha256(str(item.get('message', '')).encode('utf-8')).hexdigest()
                 category = QA_STARTUP_DIAGNOSTICS.get(digest)

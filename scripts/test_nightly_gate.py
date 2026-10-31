@@ -237,6 +237,21 @@ class FixedGateTests(unittest.TestCase):
                 self.coordinator.review_cli('kadir-plus', 'bounded DATA')
         self.assertEqual(self.coordinator.job['calls'][-1]['usage'], {'input_tokens': 3})
 
+    def test_missing_empty_null_or_unknown_item_cannot_precede_approval(self):
+        process = Mock(returncode=0)
+        self.coordinator.job['calls'] = [{}]
+        approval = {'type': 'item.completed', 'item': {'type': 'agent_message', 'text':
+            json.dumps({'approved': True, 'commit': 'a' * 40, 'issues': []})}}
+        with patch.object(self.coordinator.workers, 'command', return_value=['fixture'], create=True), \
+                patch('nightly_coordinator.subprocess.Popen', return_value=process):
+            for event in [{'type': 'item.started'}, {'type': 'item.completed', 'item': {}},
+                          {'type': 'item.started', 'item': None},
+                          {'type': 'item.completed', 'item': {'type': 'unknown'}}]:
+                process.communicate.return_value = ('\n'.join(json.dumps(value) for value in [
+                    event, approval, {'type': 'turn.completed', 'usage': {}}]), None)
+                with self.subTest(event=event), self.assertRaises(Blocked):
+                    self.coordinator.review_cli('esra-pro', 'fixture')
+
     def test_missing_package_script_fails(self):
         self.write('frontend/package.json', '{"scripts":{"test":"anything"}}')
         with self.assertRaises(Blocked):
