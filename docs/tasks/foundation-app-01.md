@@ -57,15 +57,18 @@ Application/table-owner separation, external immutable export/tamper detection, 
 
 The native developer authored the foundation and tests without running build/tests,
 as requested. Parent then completed the integrated gate: Release build zero warnings/errors;
-68 .NET, 46 React and 14 desktop/mobile Playwright tests passed. Lint, typecheck,
+68 .NET, 48 React and 14 desktop/mobile Playwright tests passed. Lint, typecheck,
 frontend build and EF model parity passed. Actual Development OpenAPI was exported,
 committed and used to generate consumer aliases. Unknown Vessel kinds are rejected
 with focused transport coverage. The first gate found host-configuration timing and
 OIDC issuer claim-removal bugs; production code was fixed and the entire backend
 suite rerun. No assertions were weakened. Two DbContexts now require explicit
 `--context PoseidonDbContext` in EF CLI commands; CI/coordinator/docs include it.
-Focused coordinator regression: 16 PASS. Full Python automation, independent exact-commit
-QA and all four remote CI checks remain pending until separately recorded.
+Focused coordinator regression: 16 PASS; full Python automation: 127 PASS.
+API unit tests are explicitly included alongside integration tests in CI.
+Initial independent QA rejected the repeat-selection loading bug; Esra authored
+the production fix and two regression cases, then all 48 React tests passed.
+Fresh exact-commit QA and all four remote CI checks remain pending.
 
 See the [phase report](../phases/FOUNDATION-APP-01.md). Synthetic OIDC verification
 does not replace actual external IdP/TLS browser acceptance. Canonical story points

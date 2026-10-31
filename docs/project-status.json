@@ -2285,7 +2285,7 @@
           "skipped": 0
         },
         "react": {
-          "passed": 46,
+          "passed": 48,
           "failed": 0
         },
         "playwright": {
@@ -2299,10 +2299,15 @@
         "typecheck": "passed",
         "ef_model_parity": "passed; explicit PoseidonDbContext",
         "python_gate_regression": 16,
-        "full_python": "running; not yet claimed passed"
+        "full_python": {
+          "passed": 127,
+          "failed": 0,
+          "skipped": 0
+        }
       },
       "canonical_acceptance_changed": false,
-      "report": "docs/phases/FOUNDATION-APP-01.md"
+      "report": "docs/phases/FOUNDATION-APP-01.md",
+      "qa_followup": "Initial exact1851b21 review rejected repeat-selection loading; daefd85 fix plus two regressions; fresh exact-commit QA pending"
     }
   },
   "phase_reports": [

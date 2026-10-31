@@ -26,12 +26,12 @@ Eksik test/QA ile merge yapılmaz.
   odaklı contract/test işleri Esra GPT-6 Luna medium.
 - Release build: PASS, 0 warning / 0 error. Lint/typecheck/frontend build: PASS.
 - .NET: 16 domain + 23 persistence + 29 API = **68 PASS**, 0 failed/skip/not-run.
-- React component/transport: **46 PASS**.
+- React component/transport: **48 PASS** (ilk 46 + QA regresyonları).
 - Playwright desktop/mobile Chromium: **14 PASS**, 0 failed/skip.
   Kapsam: 4 gerçek API smoke + 6 sentetik ops UI + 4 gerçek ürün setup/klavye.
 - EF model/migration parity: PASS, açık `--context PoseidonDbContext` ile.
 - Coordinator EF komutu regresyonu: **16 Python PASS**; tam Python toplu koşusu
-  sürüyor, henüz PASS sayılmaz.
+  **127 PASS**, 0 failed/skip (260,569 saniye).
 - PR/push: bağımsız exact-commit QA ve dört uzak CI kontrolü merge ön koşulu.
 - Kabul: canonical 8/970 SP (%0,82), 2/121 görev değişmedi.
 - Sonraki adım: bağımsız exact-commit QA, PR ve gereken CI.
@@ -43,6 +43,14 @@ action'ın doğrulanmış `iss` alanını silmesi bulundu. Startup kaydı ve yal
 issuer silme action'ı düzeltildi. İmza/issuer/audience/expiry/nonce/state/correlation
 kontrolleri korunarak bütün 68 backend testi tekrar geçti. İkinci DbContext
 sonrası EF gate/dev komutlarına açık context seçimi eklendi.
+API unit testleri de CI unit adımına eklendi; integration filtresi bu testleri
+dışarıda bırakmıyor.
+
+İlk bağımsız Esra Sol incelemesi `1851b21` için aynı şirket/gemiye ikinci kez
+tıklamada detayın loading'de kalmasını buldu ve kabulü reddetti. Esra Luna
+`daefd85` ile aynı ID seçilirken detayın sıfırlanmasını engelledi; hem şirket
+hem gemi için ikinci tıklama regresyonları ekledi. Ardından 48 React testi geçti.
+Son hedef commit için bağımsız QA yeniden alınacak; önceki ret onay sayılmaz.
 
 Microsoft.Testing.Platform için eski solution-level `--logger trx` denemesi
 0 test/exit5 verdi; başarı sayılmadı. Ardından Release assembly'leri doğru xUnit
