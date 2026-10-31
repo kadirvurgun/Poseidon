@@ -104,17 +104,26 @@ public sealed class OidcProtocolTests
         if (failure == "valid")
         {
             Assert.Equal("/app", response.Headers.Location?.OriginalString);
-            var session = await client.GetFromJsonAsync<SessionDto>("/api/v1/auth/session", TestContext.Current.CancellationToken);
-            Assert.True(session!.Authenticated);
-            Assert.Equal(tenant, session.TenantId);
             var cookie = Assert.Single(response.Headers.GetValues("Set-Cookie"), x => x.StartsWith("__Host-poseidon-session="));
             Assert.Contains("secure", cookie, StringComparison.OrdinalIgnoreCase);
             Assert.Contains("httponly", cookie, StringComparison.OrdinalIgnoreCase);
             var cookieOptions = host.Services.GetRequiredService<Microsoft.Extensions.Options.IOptionsMonitor<Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationOptions>>().Get("poseidon-session");
-            var ticket = cookieOptions.TicketDataFormat.Unprotect(cookie.Split(';')[0].Split('=', 2)[1]);
-            Assert.NotNull(ticket);
+            var protectedValue = cookie.Split(';')[0].Split('=', 2)[1];
+            var ticket = cookieOptions.TicketDataFormat.Unprotect(protectedValue);
+            Assert.True(ticket != null, "The callback emitted a session cookie, but its protected ticket could not be read by the configured ticket format.");
+            var actor = host.Services.GetRequiredService<ActorResolver>().Resolve(ticket!.Principal);
+            Assert.True(ticket.Principal.Identity?.IsAuthenticated == true, "The protected callback ticket does not contain an authenticated principal.");
+            Assert.True(actor != null, "The protected callback principal does not resolve to the configured trusted membership.");
+            Assert.Equal(tenant, actor!.TenantId);
             Assert.True(ticket.Properties.ExpiresUtc <= DateTimeOffset.UtcNow.AddMinutes(11));
             Assert.Null(ticket.Properties.GetTokenValue("access_token"));
+            using var explicitCookieClient = host.CreateClient(new() { BaseAddress = new("https://localhost"), AllowAutoRedirect = false, HandleCookies = false });
+            explicitCookieClient.DefaultRequestHeaders.Add("Cookie", "__Host-poseidon-session=" + protectedValue);
+            var explicitSession = await explicitCookieClient.GetFromJsonAsync<SessionDto>("/api/v1/auth/session", TestContext.Current.CancellationToken);
+            Assert.True(explicitSession?.Authenticated == true, "The callback ticket resolves to a trusted actor, but an HTTPS request with that ticket was not authenticated.");
+            var session = await client.GetFromJsonAsync<SessionDto>("/api/v1/auth/session", TestContext.Current.CancellationToken);
+            Assert.True(session?.Authenticated == true, "The automatic HTTPS client did not authenticate after the callback issued a valid protected session ticket.");
+            Assert.Equal(tenant, session.TenantId);
             ticket.Properties.ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(-1);
             using var expiredClient = host.CreateClient(new() { BaseAddress = new("https://localhost"), AllowAutoRedirect = false, HandleCookies = false });
             expiredClient.DefaultRequestHeaders.Add("Cookie", "__Host-poseidon-session=" + cookieOptions.TicketDataFormat.Protect(ticket));
