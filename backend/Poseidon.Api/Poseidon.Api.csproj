@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <ItemGroup>
+    <ProjectReference Include="../Poseidon.Domain/Poseidon.Domain.csproj" />
     <ProjectReference Include="../Poseidon.Persistence/Poseidon.Persistence.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />

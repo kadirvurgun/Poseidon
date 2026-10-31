@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { ApiError, vessel, vessels } from './api'
 
 const response = (body: unknown) => ({ ok: true, status: 200, json: async () => body }) as Response
-const ship = { id: 'vessel-1', companyId: 'company-1', code: 'S1', name: 'Synthetic Ship', kind: 'Ship' }
+const ship = { id: 'vessel-1', companyId: 'company-1', code: 'S1', name: 'Synthetic Ship', kind: 'Ship', version: 1, canEdit: false }
 afterEach(() => vi.unstubAllGlobals())
 
 describe('product API vessel contract decoding', () => {

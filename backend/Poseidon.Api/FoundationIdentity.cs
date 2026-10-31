@@ -19,8 +19,22 @@ public sealed class FederationSettings
 }
 
 // Provisioned by the server operator, never populated from request binding or IdP role claims.
-public sealed record Membership(string Issuer, string Subject, Guid ActorId, Guid TenantId, string[] Permissions);
-public sealed record TrustedActor(Guid Id, Guid TenantId, string[] Permissions);
+public sealed record Membership(string Issuer, string Subject, Guid ActorId, Guid TenantId, string[] Permissions, bool TenantWideRead = false, bool TenantWideManage = false, VesselGrant[]? VesselGrants = null);
+public sealed record VesselGrant(Guid VesselId, bool CanEdit = false);
+public sealed record TrustedActor(Guid Id, Guid TenantId, string[] Permissions, bool TenantWideRead, bool TenantWideManage, VesselGrant[] VesselGrants)
+{
+    public bool CanRead => Permissions.Contains("directory.read") && (TenantWideRead || TenantWideManage || VesselGrants.Length > 0);
+    public bool CanManage => CanRead && TenantWideManage && Permissions.Contains("directory.write");
+    public bool CanEditVessel(Guid id) => CanRead && Permissions.Contains("directory.write") &&
+        (TenantWideManage || VesselGrants.Any(g => g.VesselId == id && g.CanEdit));
+    public IQueryable<Poseidon.Persistence.Vessel> Scope(IQueryable<Poseidon.Persistence.Vessel> query)
+    {
+        if (!CanRead) return query.Where(_ => false);
+        if (TenantWideRead || TenantWideManage) return query;
+        var ids = VesselGrants.Select(g => g.VesselId).ToArray();
+        return query.Where(v => ids.Contains(v.Id));
+    }
+}
 
 public sealed class ActorResolver(FederationSettings settings)
 {
@@ -33,7 +47,8 @@ public sealed class ActorResolver(FederationSettings settings)
         var matches = settings.Memberships.Where(x => x.Issuer == issuers[0].Value && x.Subject == subjects[0].Value).ToArray();
         if (matches.Length != 1 || matches[0].ActorId == Guid.Empty || matches[0].TenantId == Guid.Empty) return null;
         var m = matches[0];
-        return new(m.ActorId, m.TenantId, m.Permissions.Where(x => x is "directory.read" or "directory.write").Distinct().ToArray());
+        return new(m.ActorId, m.TenantId, (m.Permissions ?? []).Where(x => x is "directory.read" or "directory.write").Distinct().ToArray(),
+            m.TenantWideRead, m.TenantWideManage, (m.VesselGrants ?? []).Where(g => g.VesselId != Guid.Empty).ToArray());
     }
 }
 
@@ -153,7 +168,7 @@ public static class FoundationIdentity
         });
         services.AddAuthorizationBuilder().AddPolicy("DirectoryRead", policy => policy.RequireAuthenticatedUser()
             .RequireAssertion(c => c.Resource is HttpContext http && http.RequestServices.GetRequiredService<ActorResolver>()
-                .Resolve(c.User)?.Permissions.Contains("directory.read") == true))
+                .Resolve(c.User)?.CanRead == true))
             .AddPolicy("DirectoryWrite", policy => policy.RequireAuthenticatedUser()
                 .RequireAssertion(c => c.Resource is HttpContext http && http.RequestServices.GetRequiredService<ActorResolver>()
                     .Resolve(c.User)?.Permissions.Contains("directory.write") == true));

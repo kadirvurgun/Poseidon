@@ -12,6 +12,7 @@ public sealed class Startup(IConfiguration configuration)
         services.AddRouting();
         services.AddFoundationIdentity(configuration);
         services.AddScoped<SecurityAudit>();
+        services.AddSingleton<Microsoft.AspNetCore.Authorization.IAuthorizationMiddlewareResultHandler, DirectoryAuthorizationResultHandler>();
         services.AddHttpContextAccessor();
         services.AddScoped(sp =>
         {

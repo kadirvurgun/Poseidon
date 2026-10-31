@@ -43,6 +43,7 @@ public sealed class FoundationApiTests : IAsyncLifetime
             ["Authentication:Oidc:Memberships:0:Subject"] = mapped ? "synthetic-one" : "unmapped",
             ["Authentication:Oidc:Memberships:0:ActorId"] = actorId.ToString(),
             ["Authentication:Oidc:Memberships:0:TenantId"] = seed.Tenants[0].Id.ToString(),
+            ["Authentication:Oidc:Memberships:0:TenantWideRead"] = "true",
             ["Authentication:Oidc:Memberships:0:Permissions:0"] = permission ? "directory.read" : "unrecognized"
         }));
         b.ConfigureServices(services => services.AddAuthentication(o =>
@@ -111,7 +112,7 @@ public sealed class FoundationApiTests : IAsyncLifetime
         using var logout = await client.PostAsync("/api/v1/auth/logout", null, TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.Forbidden, logout.StatusCode);
         using var write = await client.PostAsJsonAsync("/api/v1/companies", new { tenantId = seed.Tenants[1].Id, name = "spoofed" }, TestContext.Current.CancellationToken);
-        Assert.Equal(HttpStatusCode.MethodNotAllowed, write.StatusCode);
+        Assert.Equal(HttpStatusCode.Forbidden, write.StatusCode);
     }
 
     private PoseidonDbContext TenantDb() => new(SeedImporter.Options(postgres.GetConnectionString()), seed.Tenants[0].Id, new("test", "User", "test"));

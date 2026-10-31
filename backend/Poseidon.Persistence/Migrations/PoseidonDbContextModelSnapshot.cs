@@ -72,6 +72,19 @@ namespace Poseidon.Persistence.Migrations
                     b.ToTable("AuditEvents", "audit");
                 });
 
+            modelBuilder.Entity("Poseidon.Persistence.CommandReceipt", b =>
+                {
+                    b.Property<Guid>("TenantId").HasColumnType("uuid");
+                    b.Property<Guid>("ActorId").HasColumnType("uuid");
+                    b.Property<string>("Key").HasMaxLength(80).HasColumnType("character varying(80)");
+                    b.Property<string>("Action").IsRequired().HasMaxLength(32).HasColumnType("character varying(32)");
+                    b.Property<string>("Fingerprint").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");
+                    b.Property<Guid>("ResourceId").HasColumnType("uuid");
+                    b.Property<DateTimeOffset>("CommittedAt").HasColumnType("timestamp with time zone");
+                    b.HasKey("TenantId", "ActorId", "Key");
+                    b.ToTable("CommandReceipts", "core");
+                });
+
             modelBuilder.Entity("Poseidon.Persistence.Company", b =>
                 {
                     b.Property<Guid>("TenantId")
@@ -220,6 +233,11 @@ namespace Poseidon.Persistence.Migrations
                     b.HasKey("TenantId", "VesselId");
 
                     b.ToTable("VesselProfiles", "core");
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.CommandReceipt", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.Tenant", null).WithMany().HasForeignKey("TenantId").OnDelete(DeleteBehavior.Restrict).IsRequired();
                 });
 
             modelBuilder.Entity("Poseidon.Persistence.AuditEvent", b =>

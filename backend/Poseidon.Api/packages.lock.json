@@ -136,6 +136,9 @@
           "Microsoft.EntityFrameworkCore.Relational": "[10.0.4, 11.0.0)",
           "Npgsql": "10.0.3"
         }
+      },
+      "poseidon.domain": {
+        "type": "Project"
       }
     }
   }

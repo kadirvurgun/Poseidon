@@ -18,3 +18,16 @@
 .product-shell [role=alert] { border-left: 4px solid #a34b21; padding: 1rem; background: #fff6ed; margin: 1rem 0; }
 .product-detail dd { margin: .3rem 0 1rem; overflow-wrap: anywhere; }
 @media (max-width: 500px) { .product-nav a { width: 100%; margin: .5rem 0 0; } .product-table th, .product-table td { padding: .45rem; } }
+.directory-editor { margin: 1.5rem 0; padding: clamp(1rem, 3vw, 2rem); border: 1px solid #b5c7d2; border-top: 4px solid #2d6178; border-radius: 10px; background: #fff; box-shadow: 0 8px 24px #1933440a; }
+.directory-editor fieldset { display: grid; gap: .6rem; border: 0; padding: 0; margin: 1.5rem 0; max-width: 620px; min-width: 0; }
+.directory-editor label { font-weight: 650; margin-top: .6rem; }
+.product-shell input { box-sizing: border-box; width: 100%; min-height: 44px; border: 1px solid #748d9c; border-radius: 6px; padding: .7rem; background: #fff; color: #193344; font: inherit; }
+.product-shell [aria-invalid=true] { border: 2px solid #a13d20; }
+.product-shell .field-error { color: #9b321b; }
+.product-shell .form-actions { display: flex; flex-wrap: wrap; gap: .8rem; margin-top: 1.2rem; }
+.product-shell .primary-button { display: inline-block; background: #193e52; color: #fff; border-radius: 6px; padding: .7rem 1rem; }
+.directory-notice { padding: 1rem; border-left: 4px solid #2d6178; background: #e8f1f6; }
+.product-shell dialog { max-width: min(90vw, 520px); border: 1px solid #748d9c; border-radius: 12px; padding: 1.5rem; color: #193344; }
+.product-shell dialog::backdrop { background: #102d3e99; }
+.directory-search { margin: 1.5rem 0; max-width: 660px; }
+.directory-search .form-actions { flex-wrap: nowrap; margin-top: .5rem; }

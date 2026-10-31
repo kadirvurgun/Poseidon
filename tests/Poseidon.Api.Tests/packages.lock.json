@@ -690,7 +690,8 @@
         "dependencies": {
           "Microsoft.AspNetCore.Authentication.OpenIdConnect": "[10.0.14, )",
           "Microsoft.AspNetCore.OpenApi": "[10.0.14, )",
-          "Poseidon.Persistence": "[1.0.0, )"
+          "Poseidon.Persistence": "[1.0.0, )",
+          "Poseidon.Domain": "[1.0.0, )"
         }
       },
       "poseidon.persistence": {
@@ -740,6 +741,9 @@
           "Microsoft.EntityFrameworkCore.Relational": "[10.0.4, 11.0.0)",
           "Npgsql": "10.0.3"
         }
+      },
+      "poseidon.domain": {
+        "type": "Project"
       }
     }
   }

@@ -27,3 +27,19 @@ test('product navigation is keyboard accessible and technical route is preserved
   await page.getByRole('link', { name: 'Sistem bağlantısı' }).click()
   await expect(page.getByTestId('connection-card')).toHaveAttribute('data-state', 'available')
 })
+
+test('directory setup exposes no management controls or invented operational status', async ({ page, request }) => {
+  const session = await request.get('/api/v1/auth/session')
+  expect(await session.json()).toMatchObject({ authenticated: false, setupRequired: true, canCreate: false, canReadCompanies: false })
+  await page.goto('/app')
+  await expect(page.getByText(/henüz yapılandırılmadı/)).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Yeni kayıt' })).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Düzenle' })).toHaveCount(0)
+  await page.getByRole('button', { name: 'Filo', exact: true }).click()
+  await expect(page.getByRole('table')).toHaveCount(0)
+  await expect(page.getByText('Ready', { exact: true })).toHaveCount(0)
+  expect((await request.get('/api/v1/vessels?kind=Tug&q=synthetic')).status()).toBe(401)
+  expect((await request.get('/health/live')).status()).toBe(200)
+  // External IdP, authenticated management forms and policy acceptance are covered separately;
+  // this real-browser setup test cannot claim an authenticated external login.
+})

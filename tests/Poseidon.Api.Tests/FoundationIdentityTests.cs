@@ -39,4 +39,26 @@ public sealed class FoundationIdentityTests
         settings.Memberships = [settings.Memberships[0], settings.Memberships[0]];
         Assert.Null(resolver.Resolve(new(new ClaimsIdentity(claims, "test"))));
     }
+
+    [Fact]
+    public void Scope_is_explicit_and_revalidated_without_trusting_claims()
+    {
+        var vessel = Guid.NewGuid();
+        var membership = new Membership("https://idp.example", "synthetic", Guid.NewGuid(), Guid.NewGuid(), ["directory.read", "directory.write"]);
+        var settings = new FederationSettings { Memberships = [membership] };
+        var resolver = new ActorResolver(settings);
+        var principal = new ClaimsPrincipal(new ClaimsIdentity([new Claim("sub", "synthetic"), new Claim("iss", membership.Issuer), new Claim("role", "admin"), new Claim("vessel", vessel.ToString())], "test"));
+        Assert.False(resolver.Resolve(principal)!.CanRead);
+        settings.Memberships = [membership with { VesselGrants = [new(vessel, true)] }];
+        var restricted = resolver.Resolve(principal)!;
+        Assert.True(restricted.CanRead); Assert.False(restricted.CanManage);
+        Assert.True(restricted.CanEditVessel(vessel)); Assert.False(restricted.CanEditVessel(Guid.NewGuid()));
+        settings.Memberships = [membership with { TenantWideRead = true }];
+        Assert.False(resolver.Resolve(principal)!.CanManage);
+        Assert.False(resolver.Resolve(principal)!.CanEditVessel(vessel));
+        settings.Memberships = [membership with { TenantWideManage = true }];
+        Assert.True(resolver.Resolve(principal)!.CanManage);
+        settings.Memberships = [membership with { VesselGrants = [new(vessel, false)] }];
+        Assert.False(resolver.Resolve(principal)!.CanEditVessel(vessel));
+    }
 }
