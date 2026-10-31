@@ -2384,9 +2384,69 @@
     "task": "VESSEL-PROFILE-DRAFT-01",
     "branch": "agents/9ff6b20f711a4809a7bf5a1a3ced7172",
     "baseline": "abd9445",
-    "state": "authored; integrated gate NOT RUN; independent QA pending",
+    "state": "local integrated developer gate passed; independent target-commit QA pending; NOT ACCEPTED",
     "report": "docs/phases/VESSEL-PROFILE-DRAFT-01.md",
     "canonical_acceptance_changed": false,
-    "publication": "prohibited for this worker; local commits only; coordinator owns publication/merge"
+    "publication": "prohibited for this worker; local commits only; coordinator owns publication/merge",
+    "implementation_checkpoint": "40e5a11",
+    "verification": {
+      "domain": {
+        "passed": 27,
+        "failed": 0,
+        "skipped": 0
+      },
+      "persistence": {
+        "passed": 25,
+        "failed": 0,
+        "skipped": 0
+      },
+      "api": {
+        "passed": 65,
+        "failed": 0,
+        "skipped": 0,
+        "duration": "2m42.739s",
+        "initial": "63 passed / 2 timestamp precision equality failures; corrected production precision; assertions retained"
+      },
+      "backend_total": 117,
+      "react": {
+        "passed": 76,
+        "failed": 0,
+        "skipped": 0
+      },
+      "playwright": {
+        "passed": 16,
+        "failed": 0,
+        "skipped": 0,
+        "scope": "4 real connection/retry + 6 mocked ops + 6 real anonymous/setup/keyboard; no external IdP browser claim"
+      },
+      "python": {
+        "passed": 127,
+        "failed": 0,
+        "skipped": 0
+      },
+      "release_build": "PASS; 0 warnings/errors",
+      "locked_restore": "PASS after updating project reference lock graph; 0 resolved package version changes",
+      "lint": "PASS",
+      "typecheck": "PASS",
+      "frontend_build": "PASS",
+      "ef_model_parity": "PASS",
+      "openapi": "actual built API export; generated TypeScript aliases; strict API snapshot PASS",
+      "source_verification": {
+        "files": 269,
+        "chunks": 34958,
+        "mismatches": 0,
+        "windows_extended_root": true,
+        "ordinary_path": "failed path length; no source changes"
+      },
+      "graphify": "AST update PASS;2774 nodes/4251 edges/226 communities;no model call"
+    },
+    "unresolved": [
+      "Independent target-commit QA",
+      "Existing 13 moderate frontend npm advisories",
+      "Canonical dependencies and operational role catalogs",
+      "Approved lookups and mandatory/lifecycle policy",
+      "Real IdP/TLS and authenticated external IdP browser gate",
+      "Expert approvals and canonical acceptance"
+    ]
   }
 }

@@ -1,6 +1,6 @@
 # VESSEL-PROFILE-DRAFT-01 — local engineering package
 
-Status: authored for integrated verification, **not accepted**. Independent target-commit QA is a separate later gate. No push, PR, merge, expert approval or canonical screen acceptance is authorized for this worker.
+Status: local integrated developer gate passed, **not accepted**. Independent target-commit QA is a separate later gate. No push, PR, merge, expert approval or canonical screen acceptance is authorized for this worker.
 
 Baseline: clean isolated branch `agents/9ff6b20f711a4809a7bf5a1a3ced7172` at `abd9445`. No prior partial edits were present. DIR evidence is historical local evidence: 98 backend / 63 React / 16 Playwright / 127 Python, then deterministic no-op repair `2443596` and documented API51 PASS in `abd9445`. Initial independent review rejected `e7d5b83`; fresh independent review remains pending. These counts do not verify this package.
 
@@ -43,6 +43,82 @@ Declaration, source reference and source-observed-at are package provenance meta
 
 ## Integrated gate
 
-All implementation and test authoring preceded build/test execution, per user cadence. At this checkpoint: **NOT RUN**. Actual API build/export and TypeScript generation are pending the gate; consumers use generated schema aliases, not handwritten DTO copies. Migration/model parity and locked graph restoration must pass before local validation can be claimed.
+All implementation and test authoring preceded build/test execution, per user cadence. Authored checkpoint: `40e5a11`. Its initial NOT RUN status is historical, not current evidence.
 
-Current phase: coherent local draft-profile package, canonical S0 exits and S2 acceptance OPEN. Canonical progress unchanged: **8/970 SP=0.82%; 2/121 tasks; 0/196 screens**. Canonical dependencies, operational role catalogs, approved lookups, human mandatory/lifecycle decisions and real IdP/TLS remain OPEN. Next: integrated local gate, fix real failures, local final commit, independent QA by coordinator. Publishing/merge remains with coordinator and outside this worker's instruction.
+Actual commands, from this isolated worktree, with output in local `.runtime/profile-*.log`:
+
+```powershell
+dotnet tool restore
+dotnet restore Poseidon.slnx --locked-mode
+# Initial NU1004 identified the new Persistence -> Domain project dependency.
+dotnet restore Poseidon.slnx --force-evaluate
+dotnet restore Poseidon.slnx --locked-mode
+dotnet build Poseidon.slnx --configuration Release --no-restore
+npm ci --prefix frontend
+npm ci --prefix tests/Poseidon.Browser.Tests
+# Run actual built API in a separate task-owned terminal; stop after export.
+$env:DOTNET_ENVIRONMENT = 'Development'
+$env:ASPNETCORE_ENVIRONMENT = 'Development'
+dotnet run --project backend/Poseidon.Api --configuration Release --no-build --no-launch-profile --urls http://127.0.0.1:5286
+Invoke-WebRequest http://127.0.0.1:5286/openapi/v1.json -OutFile contracts/openapi.v1.json
+npm run generate:api --prefix frontend
+# Copy the freshly exported strict snapshot into test output.
+dotnet build Poseidon.slnx --configuration Release --no-restore
+dotnet ef migrations has-pending-model-changes --context PoseidonDbContext --project backend/Poseidon.Persistence --startup-project backend/Poseidon.DbMigrator --configuration Release --no-build
+dotnet test --project tests/Poseidon.Domain.Tests/Poseidon.Domain.Tests.csproj --configuration Release --no-build
+dotnet test --project tests/Poseidon.Persistence.Tests/Poseidon.Persistence.Tests.csproj --configuration Release --no-build
+dotnet test --project tests/Poseidon.Api.Tests/Poseidon.Api.Tests.csproj --configuration Release --no-build
+npm run typecheck --prefix frontend
+npm run lint --prefix frontend
+npm test --prefix frontend
+npm run build --prefix frontend
+# From tests/Poseidon.Browser.Tests:
+npx playwright install chromium
+$env:POSEIDON_API_PORT = '5288'
+$env:POSEIDON_UI_PORT = '4288'
+$env:DOTNET_ENVIRONMENT = 'Development'
+npm test
+# From repository root:
+& 'C:/Users/avurgun/AppData/Local/Programs/Python/Python313/python.exe' -m unittest discover -s scripts -p 'test_*.py' -v
+& 'C:/Users/avurgun/AppData/Local/Programs/Python/Python313/python.exe' scripts/verify_sources.py
+graphify update .
+git diff --check
+```
+
+The ordinary-path source verifier failed on a long Windows path in this nested worktree. The same verifier, unchanged source bytes, passed with an extended-path root:
+
+```powershell
+@'
+from pathlib import Path
+import sys, json
+sys.path.insert(0, str(Path.cwd() / 'scripts'))
+from verify_sources import verify
+print(json.dumps(verify(Path('\\\\?\\' + str(Path.cwd())))))
+'@ | & 'C:/Users/avurgun/AppData/Local/Programs/Python/Python313/python.exe' -
+```
+
+| Gate | Actual result |
+|---|---|
+| Locked restore after project graph regeneration | PASS; zero resolved package version changes |
+| Release build, including timestamp correction | PASS; 0 warnings/errors |
+| EF migration model parity | PASS; no pending model changes |
+| Domain unit | 27 PASS, 0 failed/skipped |
+| Persistence unit + real PostgreSQL | 25 PASS, 0 failed/skipped |
+| API + PostgreSQL + OIDC + strict actual OpenAPI snapshot | 65 PASS, 0 failed/skipped (final rerun 2m42.739s; initial63 PASS/2 FAIL corrected) |
+| React component/transport | 76 PASS, 0 failed/skipped |
+| Frontend lint/typecheck/build | PASS |
+| Chromium desktop/mobile | 16 PASS, 0 failed/skipped |
+| Python regressions | 127 PASS, 0 failed/skipped |
+| Source byte/chunk verification, extended root | PASS; 269 files, 34,958 chunks, 0 mismatches |
+| Graphify AST update | PASS; 2,774 nodes / 4,251 edges / 226 communities; no model call |
+| Whitespace check | PASS |
+
+Initial gate corrections: one invalid Testing Library `getByRole` option in an authored test was removed; typecheck then passed. Two API equality regressions caught first-save timestamps retaining 100ns precision while PostgreSQL stores microseconds. Production save time now uses microsecond precision before history/receipt/response, preserving equality on fresh read and replay. Assertions were retained unchanged. Full API rerun passed65/65 after a fresh zero-warning Release build. No test was skipped, deleted or weakened.
+
+Actual host export added profile GET/PUT/history to `contracts/openapi.v1.json`; `frontend/src/generated/api.d.ts` was generated using the locked tool. Consumers use schema aliases; no handwritten generated DTOs were added. Lock changes add only the Domain project reference; package resolved versions are unchanged.
+
+Local derived logs: `.runtime/profile-{domain,persistence,api,api-final,react,browser,python,typecheck,ui-build,final-build,sources,sources-longpath,graphify}.log`. These are local diagnostics, not canonical approval evidence. Browser16 comprises4 real connection/retry,6 mocked ops,6 real anonymous/setup/keyboard. Authenticated forms have component and actual API/PostgreSQL coverage only. Real external IdP/TLS browser acceptance remains OPEN.
+
+Unresolved: `npm ci` reports13 moderate frontend advisories with existing pinned dependencies (browser installation reports0). No new npm dependencies or forced upgrades were introduced; dependency remediation/release review remains open. All canonical dependencies, lookup/role/mandatory/lifecycle/expert gates remain open. This is local developer validation only.
+
+Current phase: coherent local draft-profile package, canonical S0 exits and S2 acceptance OPEN. Canonical progress unchanged: **8/970 SP=0.82%; 2/121 tasks; 0/196 screens**. Canonical dependencies, operational role catalogs, approved lookups, human mandatory/lifecycle decisions and real IdP/TLS remain OPEN. Next: independent QA of the final local target commit by coordinator; no self-acceptance. Publishing/merge remains with coordinator and outside this worker's instruction.

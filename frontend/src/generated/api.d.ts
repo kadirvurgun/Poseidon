@@ -166,6 +166,39 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/vessels/{id}/regulatory-profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GetRegulatoryDraft"];
+        /** @description Draft only. Trusted vessel edit grant, CSRF and Idempotency-Key required. expectedVersion 0 creates an absent draft; otherwise use returned xmin. No submission, verification or operational release. */
+        put: operations["SaveRegulatoryDraft"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{id}/regulatory-profile/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GetRegulatoryHistory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -189,8 +222,22 @@ export interface components {
             /** Format: uint32 */
             expectedVersion: null | number | string;
         };
+        NumberInput: {
+            /** @default Missing */
+            state: string;
+            /** Format: double */
+            value?: null | number | string;
+        };
         PageDtoOfCompanyDto: {
             items: components["schemas"]["CompanyDto"][];
+            /** Format: int32 */
+            offset: number | string;
+            /** Format: int32 */
+            limit: number | string;
+            hasMore: boolean;
+        };
+        PageDtoOfRegulatoryRevisionDto: {
+            items: components["schemas"]["RegulatoryRevisionDto"][];
             /** Format: int32 */
             offset: number | string;
             /** Format: int32 */
@@ -213,6 +260,51 @@ export interface components {
             detail?: null | string;
             instance?: null | string;
         };
+        RegulatoryDraftContent: {
+            imo?: components["schemas"]["TextInput"];
+            flag?: components["schemas"]["TextInput"];
+            shipType?: components["schemas"]["TextInput"];
+            classSociety?: components["schemas"]["TextInput"];
+            classNumber?: components["schemas"]["TextInput"];
+            gt?: components["schemas"]["NumberInput"];
+            nt?: components["schemas"]["NumberInput"];
+            dwt?: components["schemas"]["NumberInput"];
+            loa?: components["schemas"]["NumberInput"];
+            breadth?: components["schemas"]["NumberInput"];
+            draft?: components["schemas"]["NumberInput"];
+            buildDate?: components["schemas"]["TextInput"];
+            tradingArea?: components["schemas"]["TextInput"];
+            cargoContext?: components["schemas"]["TextInput"];
+            declaration?: components["schemas"]["TextInput"];
+            sourceReference?: components["schemas"]["TextInput"];
+            sourceObservedAt?: components["schemas"]["TextInput"];
+        };
+        RegulatoryDraftDto: {
+            /** Format: uuid */
+            tenantId: string;
+            vessel: components["schemas"]["VesselDto"];
+            /** Format: uint32 */
+            version: number | string;
+            /** Format: int64 */
+            revision: number | string;
+            /** Format: date-time */
+            savedAt: null | string;
+            provenance: string;
+            content: components["schemas"]["RegulatoryDraftContent"];
+        };
+        RegulatoryRevisionDto: {
+            /** Format: int64 */
+            revision: number | string;
+            /** Format: date-time */
+            savedAt: string;
+            provenance: string;
+            content: components["schemas"]["RegulatoryDraftContent"];
+        };
+        SaveRegulatoryDraft: {
+            /** Format: uint32 */
+            expectedVersion: null | number | string;
+            content: null | components["schemas"]["RegulatoryDraftContent"];
+        };
         SessionDto: {
             authenticated: boolean;
             setupRequired: boolean;
@@ -230,6 +322,11 @@ export interface components {
         SystemStatus: {
             service: string;
             status: string;
+        };
+        TextInput: {
+            /** @default Missing */
+            state: string;
+            value?: null | string;
         };
         VesselCreateCommand: {
             code: null | string;
@@ -903,6 +1000,195 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["SystemStatus"];
                 };
+            };
+        };
+    };
+    GetRegulatoryDraft: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegulatoryDraftDto"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    SaveRegulatoryDraft: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string;
+                "X-CSRF-TOKEN"?: string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SaveRegulatoryDraft"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegulatoryDraftDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    GetRegulatoryHistory: {
+        parameters: {
+            query?: {
+                offset?: number | string;
+                limit?: number | string;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PageDtoOfRegulatoryRevisionDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

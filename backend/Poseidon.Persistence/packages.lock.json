@@ -126,6 +126,9 @@
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "10.0.0"
         }
+      },
+      "poseidon.domain": {
+        "type": "Project"
       }
     }
   }

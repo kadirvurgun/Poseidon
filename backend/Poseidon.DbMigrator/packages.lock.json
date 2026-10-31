@@ -275,11 +275,15 @@
           "System.Composition.Runtime": "9.0.0"
         }
       },
+      "poseidon.domain": {
+        "type": "Project"
+      },
       "poseidon.persistence": {
         "type": "Project",
         "dependencies": {
           "Microsoft.EntityFrameworkCore": "[10.0.14, )",
-          "Npgsql.EntityFrameworkCore.PostgreSQL": "[10.0.3, )"
+          "Npgsql.EntityFrameworkCore.PostgreSQL": "[10.0.3, )",
+          "Poseidon.Domain": "[1.0.0, )"
         }
       },
       "Microsoft.EntityFrameworkCore": {

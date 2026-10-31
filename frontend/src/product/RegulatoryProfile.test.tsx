@@ -136,7 +136,7 @@ describe('VESSEL-PROFILE-DRAFT-01 component and transport coverage (mocked API, 
     const user = userEvent.setup(); render(<ProductApp />); await user.click(screen.getByRole('button', { name: 'EN' }))
     await user.click(await screen.findByRole('button', { name: 'Synthetic Ship' })); await user.click(await screen.findByRole('button', { name: 'Regulatory profile' }))
     await screen.findByLabelText('Flag'); await user.selectOptions(screen.getByLabelText('Flag — Data state'), 'Unknown')
-    await user.click(screen.getByRole('button', { name: 'Close', exact: true }))
+    await user.click(screen.getByRole('button', { name: /^Close$/ }))
     expect(screen.getByRole('dialog')).toBeVisible()
     expect(screen.getByLabelText('Flag — Data state')).toHaveValue('Unknown')
     const event = new Event('beforeunload', { cancelable: true }); window.dispatchEvent(event); expect(event.defaultPrevented).toBe(true)

@@ -129,7 +129,11 @@ public static class RegulatoryDraftEndpoints
                 // Always issue an audited UPDATE with xmin, even for unchanged values.
                 db.Entry(draft).Property(x => x.ContentJson).IsModified = true;
             }
-            draft.ContentJson = json; draft.Revision++; draft.SavedAt = DateTimeOffset.UtcNow;
+            draft.ContentJson = json; draft.Revision++;
+            // PostgreSQL timestamps have microsecond precision. Return the same timestamp a
+            // subsequent history/read/replay will observe, without a sub-microsecond drift.
+            var savedAt = DateTimeOffset.UtcNow;
+            draft.SavedAt = savedAt.AddTicks(-(savedAt.Ticks % 10));
             draft.Provenance = content.Declaration.State == "Known" || content.SourceReference.State == "Known" ? "DeclaredUnverified" :
                 content.Declaration.State == "Unknown" || content.SourceReference.State == "Unknown" ? "Unknown" : "Missing";
             db.RegulatoryDraftRevisions.Add(draft.Snapshot());

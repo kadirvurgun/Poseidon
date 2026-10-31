@@ -715,6 +715,219 @@
           }
         }
       }
+    },
+    "/api/v1/vessels/{id}/regulatory-profile": {
+      "get": {
+        "tags": [
+          "RegulatoryDraftEndpoints"
+        ],
+        "operationId": "GetRegulatoryDraft",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegulatoryDraftDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "description": "Draft only. Trusted vessel edit grant, CSRF and Idempotency-Key required. expectedVersion 0 creates an absent draft; otherwise use returned xmin. No submission, verification or operational release.",
+        "operationId": "SaveRegulatoryDraft",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-CSRF-TOKEN",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveRegulatoryDraft"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegulatoryDraftDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/vessels/{id}/regulatory-profile/history": {
+      "get": {
+        "tags": [
+          "RegulatoryDraftEndpoints"
+        ],
+        "operationId": "GetRegulatoryHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageDtoOfRegulatoryRevisionDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -806,6 +1019,25 @@
         },
         "additionalProperties": false
       },
+      "NumberInput": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string",
+            "default": "Missing"
+          },
+          "value": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "null",
+              "number",
+              "string"
+            ],
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
       "PageDtoOfCompanyDto": {
         "required": [
           "items",
@@ -819,6 +1051,42 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CompanyDto"
+            }
+          },
+          "offset": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "limit": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PageDtoOfRegulatoryRevisionDto": {
+        "required": [
+          "items",
+          "offset",
+          "limit",
+          "hasMore"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RegulatoryRevisionDto"
             }
           },
           "offset": {
@@ -916,6 +1184,171 @@
           }
         }
       },
+      "RegulatoryDraftContent": {
+        "type": "object",
+        "properties": {
+          "imo": {
+            "$ref": "#/components/schemas/TextInput"
+          },
+          "flag": {
+            "$ref": "#/components/schemas/TextInput"
+          },
+          "shipType": {
+            "$ref": "#/components/schemas/TextInput"
+          },
+          "classSociety": {
+            "$ref": "#/components/schemas/TextInput"
+          },
+          "classNumber": {
+            "$ref": "#/components/schemas/TextInput"
+          },
+          "gt": {
+            "$ref": "#/components/schemas/NumberInput"
+          },
+          "nt": {
+            "$ref": "#/components/schemas/NumberInput"
+          },
+          "dwt": {
+            "$ref": "#/components/schemas/NumberInput"
+          },
+          "loa": {
+            "$ref": "#/components/schemas/NumberInput"
+          },
+          "breadth": {
+            "$ref": "#/components/schemas/NumberInput"
+          },
+          "draft": {
+            "$ref": "#/components/schemas/NumberInput"
+          },
+          "buildDate": {
+            "$ref": "#/components/schemas/TextInput"
+          },
+          "tradingArea": {
+            "$ref": "#/components/schemas/TextInput"
+          },
+          "cargoContext": {
+            "$ref": "#/components/schemas/TextInput"
+          },
+          "declaration": {
+            "$ref": "#/components/schemas/TextInput"
+          },
+          "sourceReference": {
+            "$ref": "#/components/schemas/TextInput"
+          },
+          "sourceObservedAt": {
+            "$ref": "#/components/schemas/TextInput"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RegulatoryDraftDto": {
+        "required": [
+          "tenantId",
+          "vessel",
+          "version",
+          "revision",
+          "savedAt",
+          "provenance",
+          "content"
+        ],
+        "type": "object",
+        "properties": {
+          "tenantId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vessel": {
+            "$ref": "#/components/schemas/VesselDto"
+          },
+          "version": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "uint32"
+          },
+          "revision": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int64"
+          },
+          "savedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "content": {
+            "$ref": "#/components/schemas/RegulatoryDraftContent"
+          }
+        }
+      },
+      "RegulatoryRevisionDto": {
+        "required": [
+          "revision",
+          "savedAt",
+          "provenance",
+          "content"
+        ],
+        "type": "object",
+        "properties": {
+          "revision": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int64"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "content": {
+            "$ref": "#/components/schemas/RegulatoryDraftContent"
+          }
+        }
+      },
+      "SaveRegulatoryDraft": {
+        "required": [
+          "expectedVersion",
+          "content"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
+            "format": "uint32"
+          },
+          "content": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/RegulatoryDraftContent"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
       "SessionDto": {
         "required": [
           "authenticated",
@@ -982,6 +1415,22 @@
             "type": "string"
           }
         }
+      },
+      "TextInput": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string",
+            "default": "Missing"
+          },
+          "value": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
       },
       "VesselCreateCommand": {
         "required": [
@@ -1099,6 +1548,9 @@
   "tags": [
     {
       "name": "Poseidon.Api"
+    },
+    {
+      "name": "RegulatoryDraftEndpoints"
     }
   ]
 }
