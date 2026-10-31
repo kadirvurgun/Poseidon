@@ -2471,5 +2471,17 @@
       "Actual host OpenAPI export and generated consumer contracts; legacy numeric storage exact-token reader"
     ],
     "next_step": "Coordinator obtains fresh independent QA of local repair commit; publishing/merge remains coordinator-owned"
+  },
+  "nav_workspace_01": {
+    "status": "preparation_only_awaiting_profile_independent_approval",
+    "accepted": false,
+    "baseline_commit": "ee3339e",
+    "task": "docs/tasks/nav-workspace-01.md",
+    "phase_report": "docs/phases/NAV-WORKSPACE-01.md",
+    "delivered": "Source, decisions, acceptance and planned test mapping only; no product code or tests",
+    "verification": "NAV integrated gates NOT RUN; implementation prerequisite not established",
+    "blocker": "User requires independent profile repair approval first; existing profile report says fresh target-commit QA pending",
+    "next_step": "Coordinator supplies independent approval evidence for ee3339e; then implement coherent NAV package and tests, run integrated gate, obtain final-commit independent QA",
+    "publication": "No push, PR or merge; coordinator-owned"
   }
 }

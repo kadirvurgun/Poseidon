@@ -53,6 +53,10 @@ S0 çıkış kapıları açık. Ürün temeli PR10 ile merge edildi. DIR-WORKSPA
 
 Kaynak ve görev ayrıntıları: [aktif kaynak](sources/active.json), [mimari](architecture.md), [güvenlik](security-baseline.md), [faz raporları](phases/), [ayrıntılı durum](project-status.json).
 
+## NAV-WORKSPACE-01 hazırlık kontrol noktası — 01.11.2026
+
+Kaynak/karar/kabul/test eşlemesi [görev sözleşmesinde](tasks/nav-workspace-01.md), mevcut aşama [faz raporunda](phases/NAV-WORKSPACE-01.md). Kullanıcının ön koşulu nedeniyle ürün geliştirmesi, `ee3339e` profil düzeltmesinin bağımsız onay kanıtını bekliyor; mevcut profil faz kaydı bu onayı henüz beklemede gösteriyor. Temiz worktree ve mevcut profil kodu korundu. NAV ürün kodu/testi henüz yazılmadı; NAV entegre kontrolleri NOT RUN. Kabul verilmedi; canonical 8/970 SP, 2/121 iş, 0/196 ekran değişmedi. Sonraki adım koordinatörün bağımsız onay kaydını sağlaması, ardından bütünlüklü NAV kod/test paketi ve entegre gate.
+
 ## DIR-WORKSPACE-01 paket sonu yerel kanıt — 01.11.2026
 
 Şirket/filo create-edit, açık tenant/vessel grant, CSRF, xmin conflict ve transaction içindeki idempotency receipt/audit akışları yerelde doğrulandı. 98 backend (22 domain + 25 persistence + 51 API), 63 React, 16 Playwright ve 127 Python testi geçti; failed/skip yok. Release build 0 warning/error; lint/typecheck/frontend build ve EF model parity geçti. 269 kaynak/34.958 chunk: 0 mismatch. Bağımsız hedef-commit QA bekliyor; kullanıcı kararıyla bu paket henüz push/PR yapılmadı. Canonical kabul 8/970 SP (%0,82) değişmedi. [Paket raporu](phases/DIR-WORKSPACE-01.md).
