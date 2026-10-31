@@ -63,6 +63,27 @@ describe('FOUNDATION-APP-01 product states (mocked HTTP, not backend acceptance)
     await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('/api/v1/vessels?offset=0&limit=25&kind=Tug', expect.objectContaining({ credentials: 'same-origin' })))
     expect(screen.getByRole('cell', { name: 'Römorkör' })).toBeVisible()
   })
+  it.each([
+    { tab: 'Şirketler', rowName: 'Synthetic Company', detailUrl: '/api/v1/companies/company-one', listUrl: '/api/v1/companies?offset=0&limit=25', item: { id: 'company-one', code: 'C1', name: 'Synthetic Company' } },
+    { tab: 'Filo', rowName: 'Synthetic Vessel', detailUrl: '/api/v1/vessels/vessel-one', listUrl: '/api/v1/vessels?offset=0&limit=25', item: { id: 'vessel-one', companyId: 'company-one', code: 'V1', name: 'Synthetic Vessel', kind: 'Ship' } },
+  ])('keeps the selected $tab detail visible after selecting its row again', async ({ tab, rowName, detailUrl, listUrl, item }) => {
+    const fetchMock = vi.fn(async (url: string) => {
+      if (url.endsWith('auth/session')) return reply(signedIn)
+      if (url === detailUrl) return reply(item)
+      if (url === listUrl) return reply({ items: [item], offset: 0, limit: 25, hasMore: false })
+      return reply({ items: [], offset: 0, limit: 25, hasMore: false })
+    })
+    vi.stubGlobal('fetch', fetchMock)
+    const user = userEvent.setup(); render(<ProductApp />)
+    if (tab === 'Filo') await user.click(await screen.findByRole('button', { name: tab }))
+    const row = await screen.findByRole('button', { name: rowName })
+    await user.click(row)
+    const detail = await screen.findByRole('region', { name: 'Ayrıntılar' })
+    expect(detail).toHaveTextContent(rowName)
+    await user.click(row)
+    expect(detail).toHaveTextContent(rowName)
+    expect(detail).not.toHaveTextContent('Yükleniyor')
+  })
   it('does not request business records for an authenticated identity without read permission', async () => {
     const fetchMock = vi.fn().mockResolvedValue(reply({ ...signedIn, canRead: false }))
     vi.stubGlobal('fetch', fetchMock); render(<ProductApp />)
