@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "speed": "standard",
+  "roles": {
+    "routine": { "model": "gpt-6-luna", "effort": "medium" },
+    "test-writing": { "model": "gpt-6-luna", "effort": "medium" },
+    "independent_qa": { "model": "gpt-6-luna", "effort": "medium" },
+    "development": { "model": "gpt-6.1-sol", "effort": "medium" },
+    "security_qa": { "model": "gpt-6.1-sol", "effort": "medium" }
+  },
+  "taskRoles": {
+    "S0-ADR-01": "routine",
+    "S0-THREATS-01": "development",
+    "UI-REQUIRED-DATA-01": "routine"
+  },
+  "criticalReviewTasks": ["S0-THREATS-01"],
+  "automaticEscalation": false
+}

@@ -34,6 +34,28 @@ const card = (name: string) => within(screen.getByRole('region', { name }))
 describe('OPS-DASH-UI-01 development operations (mock API)', () => {
   beforeEach(() => { vi.useFakeTimers(); vi.setSystemTime(new Date(instant)) })
 
+  it('shows a running task separately from unknown quota with real service UTC offsets', async () => {
+    const data = fixture()
+    data.generatedAt = '2026-10-31T15:00:00.200000+00:00'
+    data.quota.timestamp = '2026-10-31T15:00:00+00:00'
+    data.quota.profiles['esra-pro'] = { state: 'busy', ready: false,
+      lastKnown: { windows: [{ usedPercent: 18, windowDurationMins: 10080, resetsAt: epoch + 300 }], observedAt: instant } }
+    data.activities = [{ id: 'runtime', profile: 'esra-pro', taskId: 'runtime', role: 'development', status: 'running', startedAt: instant, model: 'gpt-6.1-sol', effort: 'medium' }]
+    await mount(data)
+    expect(card('Esra Pro').getByText('Çalışıyor')).toBeVisible()
+    expect(card('Esra Pro').getByText('Görev sürüyor · kota ölçümü görev bitince yenilenecek')).toBeVisible()
+    expect(card('Esra Pro').getByText('82% kalan')).toBeVisible()
+    expect(card('Esra Pro').getByText(/gpt-6.1-sol/)).toBeVisible()
+    expect(card('Esra Pro').queryByText('Yeni göreve uygun')).not.toBeInTheDocument()
+  })
+
+  it('does not claim completed activities are still running', async () => {
+    const data = fixture()
+    data.activities = [{ id: 'finished', profile: 'esra-pro', taskId: 'finished', role: 'development', status: 'produced', startedAt: instant }]
+    await mount(data)
+    expect(card('Esra Pro').queryByText('Çalışıyor')).not.toBeInTheDocument()
+  })
+
   it('renders both profiles, missing Pro 5h, raw quota, accepted progress and CLI budget', async () => {
     const { fetchMock } = await mount()
     expect(card('Esra Pro').getByText('Pencere bildirilmedi')).toBeVisible()
@@ -76,7 +98,7 @@ describe('OPS-DASH-UI-01 development operations (mock API)', () => {
     data.quota.profiles['esra-pro'].state = state
     await mount(data)
     expect(card('Esra Pro').getByText('Uygun değil / bilinmiyor')).toBeVisible()
-    expect(card('Kadir Plus').getByText('Uygun')).toBeVisible()
+    expect(card('Kadir Plus').getByText('Yeni göreve uygun')).toBeVisible()
   })
 
   it('requires reported windows and enforces the documented 85% reserve', async () => {
@@ -128,7 +150,7 @@ describe('OPS-DASH-UI-01 development operations (mock API)', () => {
     fetchMock.mockResolvedValue(response(fixture()))
     fireEvent.click(screen.getByRole('button', { name: 'Tekrar dene' }))
     await act(async () => {})
-    expect(card('Esra Pro').getByText('Uygun')).toBeVisible()
+    expect(card('Esra Pro').getByText('Yeni göreve uygun')).toBeVisible()
   })
 
   it('polls after 5 seconds, retains data on HTTP failure, and removes eligibility', async () => {
@@ -141,7 +163,7 @@ describe('OPS-DASH-UI-01 development operations (mock API)', () => {
     expect(screen.getByText('Son başarılı sorgu: 5 sn önce')).toBeVisible()
     fetchMock.mockResolvedValue(response(fixture()))
     await act(async () => { await vi.advanceTimersByTimeAsync(5_000) })
-    expect(card('Esra Pro').getByText('Uygun')).toBeVisible()
+    expect(card('Esra Pro').getByText('Yeni göreve uygun')).toBeVisible()
   })
 
   it('times out a hanging request, prevents overlap and aborts on unmount', async () => {
