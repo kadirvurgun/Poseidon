@@ -28,7 +28,7 @@ weakened or skipped. Earlier NOT RUN text above records the author handoff only.
 | Locked restore and Release build | PASS; zero warnings/errors |
 | Domain unit | 22 PASS |
 | Persistence, real PostgreSQL, writer validation | 25 PASS |
-| Actual API/PostgreSQL/OIDC | 47 PASS |
+| Actual API/PostgreSQL/OIDC | 51 PASS |
 | React component/transport | 63 PASS |
 | Chromium desktop/mobile | 16 PASS |
 | Python automation | 127 PASS |
@@ -46,7 +46,7 @@ browser acceptance remains OPEN.
 The initial gate found an unused pagination parameter, test API/analyzer mismatches and
 missing fixed write codes in the security sink. Corrected production allowlist accepts
 only new trusted literal codes; unknown code rejection remains tested. Backend rerun
-passed all47 API tests including concurrent same-key and different-payload races,
+passed all51 API tests including concurrent same-key and different-payload races,
 rollback/restart, tenant/object scope and stale-version denials. Existing OIDC checks remain.
 
 Local evidence: `.runtime/directory-{Domain-tests,final-Persistence,final-Api}.log`,
@@ -55,3 +55,15 @@ Local evidence: `.runtime/directory-{Domain-tests,final-Persistence,final-Api}.l
 These are derived local logs, not committed secrets or production approval evidence.
 Independent exact-commit QA is pending; no push/PR/remote CI for this package by user decision.
 Next: independent review and continued coherent product development before publication.
+
+## Independent review repair
+
+Initial independent Esra Sol review rejected exact `e7d5b83`: unchanged-value updates
+could avoid SQL xmin enforcement. `2443596` explicitly marks a permitted scalar
+modified for company/vessel updates; audited EF UPDATE now enforces expectedVersion
+even for touches. Same-key replay still avoids a second write. Test-only reader
+interception deterministically pauses original business SELECT, commits a competing
+edit through the real API and verifies409/no receipt/no failed business audit; both
+resource types and successful touch/replay are covered (4 new cases). Production
+startup/auth has no test hooks. Full API rerun:51 PASS,0 failed/skipped,98.264s;
+Release build0 warnings/errors. Fresh exact-commit review is still required.

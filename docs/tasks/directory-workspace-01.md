@@ -89,7 +89,7 @@ Canonical acceptance remains **8/970 SP (0.82%), 2/121 tasks, 0/196 screens**. F
 
 The historical NOT RUN/generator-follow-up section above describes the native author
 handoff. Parent subsequently exported actual OpenAPI, regenerated consumer aliases and
-completed the integrated gate:94 backend,63 React,16 Playwright,127 Python PASS; zero
+completed the integrated gate:98 backend,63 React,16 Playwright,127 Python PASS; zero
 failed/skipped; lint/typecheck/build/model parity/source hashes PASS. The fixed write
 audit-code allowlist omission and compiler/test-API issues were corrected without
 relaxing assertions. See the updated [phase evidence](../phases/DIR-WORKSPACE-01.md).

@@ -2318,8 +2318,8 @@
         "backend": {
           "domain": 22,
           "persistence": 25,
-          "api": 47,
-          "passed": 94,
+          "api": 51,
+          "passed": 98,
           "failed": 0,
           "skipped": 0
         },
@@ -2350,7 +2350,8 @@
         },
         "unknown_audit_code_unit": "strengthened test rerun separately:1 pass with configured provider and exact error assertion",
         "publication": "deferred by user; no push/PR/CI for this package",
-        "independent_qa": "pending exact target commit"
+        "independent_qa": "pending exact target commit",
+        "noop_concurrency": "company+vessel forced audited xmin UPDATE;4 deterministic race/touch/replay cases;full API51 passed"
       },
       "build": "passed; zero warnings/errors",
       "lint": "passed",
@@ -2361,7 +2362,8 @@
       "contract_followup": "completed; generated schema aliases in directory-contract.ts",
       "migration_followup": "model parity and actual PostgreSQL migrations passed",
       "scope": "online company/fleet management engineering subpackage; canonical S1/regulatory/operational role acceptance remains open",
-      "implementation_checkpoint": "33b08929d2b81f2ef97b4537166609e9c6ec3f19"
+      "implementation_checkpoint": "33b08929d2b81f2ef97b4537166609e9c6ec3f19",
+      "qa_followup": "Initial e7d5b83 security review rejected no-op concurrency;2443596 forces audited updates and adds4 deterministic regressions;API51 PASS;fresh review pending"
     }
   },
   "phase_reports": [
