@@ -29,12 +29,14 @@ public sealed class DiagnosticsTests
     }
 
     [Fact]
-    public async Task Liveness_is_process_only_and_business_routes_are_absent()
+    public async Task Liveness_is_process_only_and_business_routes_require_authentication()
     {
         await using var host = Host("Production");
         using var client = host.CreateClient();
         Assert.Equal("alive", await client.GetStringAsync("/health/live", TestContext.Current.CancellationToken));
-        foreach (var path in new[] { "/api/v1/vessels", "/api/v1/audit", "/api/v1/auth" })
+        using var vessels = await client.GetAsync("/api/v1/vessels", TestContext.Current.CancellationToken);
+        Assert.Equal(HttpStatusCode.Unauthorized, vessels.StatusCode);
+        foreach (var path in new[] { "/api/v1/audit", "/api/v1/auth" })
         {
             using var response = await client.GetAsync(path, TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);

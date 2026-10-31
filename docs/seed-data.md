@@ -42,7 +42,7 @@ dotnet run --project backend/Poseidon.DbMigrator
 Yeni entity/migration ekleme:
 
 ```powershell
-dotnet ef migrations add ChangeName --project backend/Poseidon.Persistence --startup-project backend/Poseidon.DbMigrator
+dotnet ef migrations add ChangeName --context PoseidonDbContext --project backend/Poseidon.Persistence --startup-project backend/Poseidon.DbMigrator
 ```
 
 ## Testler

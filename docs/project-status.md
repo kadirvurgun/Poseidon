@@ -1,9 +1,11 @@
-# POSEIDON ilerleme raporu — 2026-10-31
+# POSEIDON ilerleme raporu — 2026-11-01
 
 Kontrollü kabul: **8 / 970 SP = %0,82**; 2 / 121 iş. S0: **8 / 53 SP = %15,09**. Operasyonel ekran kabulü 0 / 196. Altyapı ve hazırlık paketleri canonical iş kabulüyle aynı değildir; S0 çıkış kapısı açık.
 
 ## Son teslimler
 
+- **Ürün temeli yerelde doğrulandı:** [FOUNDATION-APP-01](phases/FOUNDATION-APP-01.md), Esra profilinde OIDC/tenant/şirket-filo API/security audit/React paketi. Paket sonunda 68 backend, 48 React ve 14 Playwright testi geçti. Bağımsız exact-commit QA ve uzak CI bekliyor; canonical kabul artmadı.
+- [PR #8](https://github.com/kadirvurgun/Poseidon/pull/8) `cc92b744eb64b86b002f17d44b45b14cd4205653` ile merge edildi: iki hesap dashboard'u, Esra-first kota yönlendirmesi ve model politikası. Exact `96dd994` Esra bağımsız QA ve bütün push/PR CI kontrolleri geçti. [PR #9](https://github.com/kadirvurgun/Poseidon/pull/9) ADR hazırlığını `7f3ea00` ile taşıdı; kaynakta gereken uzman/karar onaylarının yerine geçmez.
 - [Canlı geliştirme dashboard'u](http://127.0.0.1:5173/agents): ayrı hesap/görev kayıtları, gerçek kota pencereleri, geçmiş ve kabul edilmiş ilerleme. Entegre paket yerelde doğrulanıyor; bağımsız QA/CI ve kalıcı servis aktivasyonu henüz tamamlanmış değildir. [Paket kanıtı](phases/OPS-DASH-01.md), [model politikası](model-policy.md).
 - [PR #7](https://github.com/kadirvurgun/Poseidon/pull/7): bounded gece koordinatörü `23a698eae690138fbebcd6833a2415bbf727ba00` olarak merge edildi; hedef commit bağımsız QA ve dört CI kontrolünü geçti. İlk gerçek ADR işi üretildi ve yerel tam gate geçti; CLI başlangıç uyarısının yanlış araç çağrısı sayılması nedeniyle bağımsız kabul/publish bekledi.
 - [PR #4](https://github.com/kadirvurgun/Poseidon/pull/4): güncel 30.10.2026 analizinin 269 orijinali ve 34.958 kaynak adresli bölümü; byte/hash doğrulaması, küçük yerel kaynak sorguları. Önceki kaynaklar korunur.
@@ -44,6 +46,6 @@ Sprint tema sayfası ile tekil iş atamalarındaki uyuşmazlıklar karar gerekti
 
 ## Mevcut aşama ve sonraki adım
 
-S0 hazırlığı sürüyor. Gece koordinatörü kapılarını tamamla, sınırlandırılmış kuyruğu ADR, güvenlik tehdit modeli ve POL-DEFAULT React hazırlığıyla çalıştır. Ardından OIDC/tenant/vessel/rol yetkileri ve HTTP kullanıcı eylem audit'iyle ilk yetkili dikey dilime geç. EF transaction audit'i tam HTTP audit veya GDPR/KVKK uygunluğu değildir. IdP, veri lokasyonu, operasyonel katalog ve gerçek pilot/uzman kararları açık.
+S0 çıkış kapıları açık. İlk read-only ürün temeli paketinin yerel doğrulaması tamamlandı; bağımsız QA ve dört uzak CI sonrası PR merge hedefleniyor. Sonraki ürün paketi şirket/filo mutation ve formları: yazma rolü, CSRF, validation ve concurrency birlikte. Gerçek IdP/HTTPS/üyelik provisioning, veri lokasyonu, privacy/retention ve gerçek pilot/uzman kararları açık. Bu teslim tam HTTP audit veya GDPR/KVKK uygunluğu değildir.
 
 Kaynak ve görev ayrıntıları: [aktif kaynak](sources/active.json), [mimari](architecture.md), [güvenlik](security-baseline.md), [faz raporları](phases/), [ayrıntılı durum](project-status.json).

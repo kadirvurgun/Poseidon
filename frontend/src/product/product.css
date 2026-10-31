@@ -1,0 +1,20 @@
+.product-shell { min-height: 100vh; color: #193344; background: #f4f7f9; }
+.product-header { display: flex; align-items: center; justify-content: space-between; padding: 1.4rem max(1rem, calc((100vw - 1120px)/2)); background: #102d3e; color: white; }
+.product-brand { color: white; letter-spacing: .15em; font-weight: 800; text-decoration: none; }
+.product-nav { display: flex; flex-wrap: wrap; align-items: center; gap: .7rem; padding: 1rem; border-bottom: 1px solid #d1dce3; background: white; }
+.product-nav a { margin-left: auto; color: #25556c; }
+.product-shell main { max-width: 1120px; margin: auto; padding: clamp(1rem, 4vw, 3rem); }
+.product-shell button, .product-shell select { min-height: 44px; border: 1px solid #9eb3c0; border-radius: 6px; padding: .55rem 1rem; background: white; color: #193344; cursor: pointer; font: inherit; }
+.product-shell button[aria-current=page] { background: #193e52; color: white; }
+.product-shell button:disabled { opacity: .55; cursor: default; }
+.product-shell :focus-visible { outline: 3px solid #c77616; outline-offset: 3px; }
+.product-session, .product-detail { background: white; border: 1px solid #d1dce3; border-radius: 10px; padding: 1.2rem; margin: 1.5rem 0; }
+.product-session code { overflow-wrap: anywhere; }
+.product-table { overflow-x: auto; background: white; border-radius: 8px; margin-top: 1.5rem; }
+.product-table table { width: 100%; border-collapse: collapse; text-align: left; }
+.product-table th, .product-table td { padding: .8rem; border-bottom: 1px solid #e2e9ed; }
+.product-table th { background: #e9f0f4; }
+.product-pagination { display: flex; align-items: center; justify-content: space-between; gap: .5rem; margin-top: 1rem; }
+.product-shell [role=alert] { border-left: 4px solid #a34b21; padding: 1rem; background: #fff6ed; margin: 1rem 0; }
+.product-detail dd { margin: .3rem 0 1rem; overflow-wrap: anywhere; }
+@media (max-width: 500px) { .product-nav a { width: 100%; margin: .5rem 0 0; } .product-table th, .product-table td { padding: .45rem; } }
