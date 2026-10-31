@@ -20,6 +20,11 @@ Canonical S0 kabulü değişmedi: 8/970 SP (%0,82), 2/121 görev.
 - Kadir üzerinden iki gerçek Luna salt okunur incelemesi tamamlandı; bunlar
   onay üretmedi. Eksik bağlam nedeniyle raporlanan belge hedefleri için QA verisine
   sınırlı gerçek dosya/link kanıtı eklendi. Başarısız inceleme kabul sayılmadı.
+- Son kullanıcı kararıyla Esra geliştirme ve QA için birincil; yalnız doğrulanmış
+  kota rezervinde Kadir kendi uygun kotasıyla değerlendirilebilir. Esra profilinin
+  metadata kimliği beklenen Esra hesabıyla gerçekten eşleşti (ham kimlik saklanmadı).
+  Esra/Luna gerçek ADR incelemesi geçti; [PR #9](https://github.com/kadirvurgun/Poseidon/pull/9)
+  tam yerel gate ve tüm push/PR CI kontrolleri sonrasında `7f3ea00` olarak merge edildi.
 - Metadata internal error -32603 için aynı profil/lock içinde tek proactive
   refresh denemesi; diğer/bilinmeyen hatalarda bekleme. Esra'da gerçek düzeltme
   doğrulandı; yeni oturum/credential kopyalama gerekmedi.
@@ -38,7 +43,8 @@ Canonical S0 kabulü değişmedi: 8/970 SP (%0,82), 2/121 görev.
 | Arayüz component | 34 passed |
 | Lint/typecheck/build | Başarılı |
 | Playwright desktop + mobile | 10 passed; 4 gerçek .NET API smoke, 6 sentetik ops contract |
-| Model routing ve gerçek komut/receipt bağlama | 6 passed |
+| Model routing ve gerçek komut/receipt bağlama | 7 passed; Esra-first/busy/unknown/quota geçişleri dahil |
+| Son hesap yönlendirme regresyonları | 31 passed; yeni Esra-first kuralı ve açık legacy paralel modu ayrı doğrulanır |
 | Runtime/HTTP/lease/erken metadata yenileme | 17 passed |
 | Sabit gate/QA adaptörü | 15 passed |
 | Tam Python ve Windows installer paketi | 122 Python passed, 0 failed/skipped; 10 Windows installer passed (6 nightly, 1 hourly, 3 runtime) |
@@ -51,11 +57,13 @@ Tam yerel gate geçti. [PR #8](https://github.com/kadirvurgun/Poseidon/pull/8) i
 bağımsız QA'nın eksik reset zamanı bulgusu düzeltildi; component ve browser
 regresyonları eklendi. Proxy üzerinden gerçek HTTP 200 zaten gözlendi; Host
 aktarımı ayrıca açık `changeOrigin: true` ile sabitlendi. Yeni exact commit QA
-ve uzaktaki dört CI kontrolü tamamlanınca merge edilecek. Windows `Poseidon-DevelopmentRuntime` ve reset
+ve uzaktaki dört CI kontrolü tamamlanınca merge edilecek. `ba225c3` bağımsız
+incelemede Esra/Sol medium ile onaylandı; sonraki main merge ve test-fixture
+değişikliği yeni hedef commit üzerinde yeniden incelenecek. Windows `Poseidon-DevelopmentRuntime` ve reset
 görevi henüz gerçekten kaydedilmiş sayılmaz; installer preview testi aktivasyon
-kanıtı değildir. İlk ADR işi `ee0aea4` için bilinmeyen yarım iş tekrarlanmayacak;
-yalnız doğrulanan başlangıç uyarısı hatası operatör kaydıyla reconcile edilip
-bağımsız QA yeniden çalıştırılacak. Sonra gerçek PR/CI/merge zinciri izlenecek.
+kanıtı değildir. İlk ADR işi `ee0aea4` için doğrulanan başlangıç uyarısı hatası
+operatör kaydıyla reconcile edildi; gerçek Esra bağımsız QA ve PR/CI/merge
+zinciri tamamlandı. Kalan kaynaklı iki görev kalıcı driver kuyruğunda ilerleyecek.
 
 7/24 erişim Windows'un açık, uygun oturumun kullanılabilir ve hostun uyanık
 olmasına bağlıdır. WakeToRun donanım/politika desteği gerektirir; kapalı makineyi

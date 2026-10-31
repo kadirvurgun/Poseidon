@@ -276,6 +276,9 @@ class DispatchTests(unittest.TestCase):
             self.workers.resume(state['job_id'])
 
     def test_parallel_jobs_have_different_worktrees_and_preferred_accounts(self):
+        # Legacy explicit parallel mode remains supported; production policy is
+        # Esra-first and is tested separately below.
+        self.workers.config.pop('routing_policy', None)
         with ThreadPoolExecutor(max_workers=2) as executor:
             pro = executor.submit(self.workers.run, self.task, 'esra-pro')
             plus = executor.submit(self.workers.run, self.task, 'kadir-plus')
@@ -284,10 +287,22 @@ class DispatchTests(unittest.TestCase):
         self.assertEqual({job['status'] for job in jobs}, {'needs_review'})
         self.assertEqual(set(self.workers.calls), {'esra-pro', 'kadir-plus'})
 
-    def test_busy_primary_account_can_use_idle_secondary(self):
+    def test_esra_first_busy_primary_never_uses_idle_secondary(self):
+        self.workers.config['routing_policy'] = 'esra_until_quota'
         with exclusive(self.workers.home('esra-pro') / 'worker.lock'):
             state = self.workers.run(self.task)
-        self.assertEqual(self.workers.calls, ['kadir-plus'])
+        self.assertEqual(self.workers.calls, [])
+        self.assertEqual(state['status'], 'waiting_for_account')
+
+    def test_esra_first_overrides_requested_plus_and_falls_back_only_on_terminal_quota(self):
+        self.workers.config['routing_policy'] = 'esra_until_quota'
+        state = self.workers.run(self.task, 'kadir-plus')
+        self.assertEqual(self.workers.calls, ['esra-pro'])
+        self.assertEqual(state['status'], 'needs_review')
+        self.workers.calls.clear()
+        self.workers.results['esra-pro'] = 'quota'
+        state = self.workers.run(self.task, 'kadir-plus')
+        self.assertEqual(self.workers.calls, ['esra-pro', 'kadir-plus'])
         self.assertEqual(state['status'], 'needs_review')
 
     def test_resume_reloads_state_after_job_lock_is_acquired(self):
