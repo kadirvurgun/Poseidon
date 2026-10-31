@@ -1,6 +1,7 @@
 """Fixed verification command contract and fail-closed evidence, with no tools/network."""
 import json
 import io
+import hashlib
 from pathlib import Path
 import subprocess
 import tempfile
@@ -8,13 +9,44 @@ import time
 import unittest
 from unittest.mock import Mock, patch
 
-from nightly_coordinator import Blocked, Coordinator, SubscriptionWorkers, queue_items, test_summary
+from nightly_coordinator import Blocked, Coordinator, SubscriptionWorkers, queue_items, test_summary, strict_json
 from nightly_python_tests import summary
 from codex_accounts import Workers, summarize_account
 from test_nightly_coordinator import FakeWorkers
 
 
 class FixedGateTests(unittest.TestCase):
+    def test_qa_json_rejects_duplicate_keys_and_non_json_constants(self):
+        for text in ['{"approved":false,"approved":true}', '{"approved":NaN}']:
+            with self.assertRaises(ValueError):
+                strict_json(text)
+
+    def test_only_exact_startup_hash_is_accepted_unknown_errors_and_tools_reject(self):
+        text = 'Synthetic pinned benign startup diagnostic'
+        digest = hashlib.sha256(text.encode()).hexdigest()
+        final = {'approved': True, 'commit': 'a' * 40, 'issues': []}
+        process = Mock(returncode=0)
+        self.coordinator.job['calls'] = [{}]
+        with patch.object(self.coordinator.workers, 'command', return_value=['fixture'], create=True), \
+                patch('nightly_coordinator.subprocess.Popen', return_value=process), \
+                patch('nightly_coordinator.QA_STARTUP_DIAGNOSTICS', {digest: 'fixture_startup'}):
+            for kind, message, permitted in [('error', text, True), ('error', text + ' auth failed', False),
+                    ('error', 'network failed', False), ('command_execution', '', False), ('mcp_tool_call', '', False)]:
+                events = [{'type': 'item.completed', 'item': {'type': kind, 'message': message}},
+                    {'type': 'item.completed', 'item': {'type': 'agent_message', 'text': json.dumps(final)}},
+                    {'type': 'turn.completed', 'usage': {}}]
+                process.communicate.return_value = ('\n'.join(json.dumps(e) for e in events), None)
+                if permitted:
+                    self.assertEqual(self.coordinator.review_cli('kadir-plus', 'fixture'), final)
+                else:
+                    with self.assertRaises(Blocked):
+                        self.coordinator.review_cli('kadir-plus', 'fixture')
+            events[0] = {'type': 'error', 'message': text}
+            process.communicate.return_value = ('\n'.join(json.dumps(e) for e in events), None)
+            with self.assertRaises(Blocked):
+                self.coordinator.review_cli('kadir-plus', 'fixture')
+        self.assertNotIn(text, json.dumps(self.coordinator.job))
+
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
@@ -194,6 +226,9 @@ class FixedGateTests(unittest.TestCase):
             self.assertIn('read-only', arguments)
             self.assertIn('features.shell_tool=false', arguments)
             self.assertIn('features.apply_patch_freeform=false', arguments)
+            self.assertIn('features.code_mode_host=false', arguments)
+            self.assertIn('features.code_mode=false', arguments)
+            self.assertIn('features.code_mode_only=false', arguments)
             self.assertIn('mcp_servers={}', arguments)
             self.assertNotIn('resume', arguments)
             events.insert(0, {'type': 'item.completed', 'item': {'type': 'command_execution'}})
@@ -201,6 +236,21 @@ class FixedGateTests(unittest.TestCase):
             with self.assertRaises(Blocked):
                 self.coordinator.review_cli('kadir-plus', 'bounded DATA')
         self.assertEqual(self.coordinator.job['calls'][-1]['usage'], {'input_tokens': 3})
+
+    def test_missing_empty_null_or_unknown_item_cannot_precede_approval(self):
+        process = Mock(returncode=0)
+        self.coordinator.job['calls'] = [{}]
+        approval = {'type': 'item.completed', 'item': {'type': 'agent_message', 'text':
+            json.dumps({'approved': True, 'commit': 'a' * 40, 'issues': []})}}
+        with patch.object(self.coordinator.workers, 'command', return_value=['fixture'], create=True), \
+                patch('nightly_coordinator.subprocess.Popen', return_value=process):
+            for event in [{'type': 'item.started'}, {'type': 'item.completed', 'item': {}},
+                          {'type': 'item.started', 'item': None},
+                          {'type': 'item.completed', 'item': {'type': 'unknown'}}]:
+                process.communicate.return_value = ('\n'.join(json.dumps(value) for value in [
+                    event, approval, {'type': 'turn.completed', 'usage': {}}]), None)
+                with self.subTest(event=event), self.assertRaises(Blocked):
+                    self.coordinator.review_cli('esra-pro', 'fixture')
 
     def test_missing_package_script_fails(self):
         self.write('frontend/package.json', '{"scripts":{"test":"anything"}}')

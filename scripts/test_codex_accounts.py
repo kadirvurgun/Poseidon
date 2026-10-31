@@ -17,6 +17,42 @@ def limits(used=10):
 
 
 class ProtocolTests(unittest.TestCase):
+    def test_internal_metadata_error_refreshes_once_same_locked_profile_then_reads_limits(self):
+        workers = Workers()
+        for refresh_error in (None, -32603, 401):
+            messages = [{'id': 1, 'result': {}}, {'id': 2, 'error': {'code': -32603, 'message': 'SECRET'}}]
+            messages.append({'id': 4, 'error': {'code': refresh_error, 'message': 'SECRET'}} if refresh_error else
+                {'id': 4, 'result': {'account': {'type': 'chatgpt', 'planType': 'prolite'}}})
+            if not refresh_error:
+                messages.append({'id': 3, 'result': limits(18)})
+            process = Mock()
+            process.stdin = io.StringIO()
+            process.stdout = io.StringIO('\n'.join(json.dumps(v) for v in messages) + '\n')
+            with tempfile.TemporaryDirectory() as folder, patch.object(workers, 'home', return_value=Path(folder)), \
+                    patch.object(workers, 'initialize'), patch.object(workers, 'command', return_value=['codex']), \
+                    patch.object(workers, 'finish_metadata'), patch('codex_accounts.subprocess.Popen', return_value=process):
+                with exclusive(workers.home('esra-pro') / 'worker.lock'):
+                    if refresh_error:
+                        with self.assertRaises(MetadataError) as raised:
+                            workers.account('esra-pro')
+                        self.assertNotIn('SECRET', str(raised.exception))
+                    else:
+                        self.assertTrue(workers.account('esra-pro')['ready'])
+                    self.assertTrue((workers.home('esra-pro') / 'worker.lock').exists())
+            requests = [json.loads(line) for line in process.stdin.getvalue().splitlines()]
+            reads = [r for r in requests if r['method'] == 'account/read']
+            self.assertEqual([r['params']['refreshToken'] for r in reads], [False, True])
+
+    def test_auth_error_never_attempts_refresh(self):
+        workers = Workers()
+        process = Mock(stdin=io.StringIO(), stdout=io.StringIO('\n'.join(json.dumps(v) for v in [
+            {'id': 1, 'result': {}}, {'id': 2, 'error': {'code': 401, 'message': 'SECRET'}}]) + '\n'))
+        with patch.object(workers, 'initialize'), patch.object(workers, 'command', return_value=['codex']), \
+                patch.object(workers, 'finish_metadata'), patch('codex_accounts.subprocess.Popen', return_value=process):
+            with self.assertRaises(MetadataError):
+                workers.account('esra-pro')
+        self.assertNotIn('"refreshToken": true', process.stdin.getvalue())
+
     def test_native_launcher_and_node_fallback_preserve_auth_arguments(self):
         workers = Workers()
         with patch('codex_accounts.os.name', 'nt'), patch.object(Path, 'is_file', return_value=True):
@@ -240,6 +276,9 @@ class DispatchTests(unittest.TestCase):
             self.workers.resume(state['job_id'])
 
     def test_parallel_jobs_have_different_worktrees_and_preferred_accounts(self):
+        # Legacy explicit parallel mode remains supported; production policy is
+        # Esra-first and is tested separately below.
+        self.workers.config.pop('routing_policy', None)
         with ThreadPoolExecutor(max_workers=2) as executor:
             pro = executor.submit(self.workers.run, self.task, 'esra-pro')
             plus = executor.submit(self.workers.run, self.task, 'kadir-plus')
@@ -248,10 +287,22 @@ class DispatchTests(unittest.TestCase):
         self.assertEqual({job['status'] for job in jobs}, {'needs_review'})
         self.assertEqual(set(self.workers.calls), {'esra-pro', 'kadir-plus'})
 
-    def test_busy_primary_account_can_use_idle_secondary(self):
+    def test_esra_first_busy_primary_never_uses_idle_secondary(self):
+        self.workers.config['routing_policy'] = 'esra_until_quota'
         with exclusive(self.workers.home('esra-pro') / 'worker.lock'):
             state = self.workers.run(self.task)
-        self.assertEqual(self.workers.calls, ['kadir-plus'])
+        self.assertEqual(self.workers.calls, [])
+        self.assertEqual(state['status'], 'waiting_for_account')
+
+    def test_esra_first_overrides_requested_plus_and_falls_back_only_on_terminal_quota(self):
+        self.workers.config['routing_policy'] = 'esra_until_quota'
+        state = self.workers.run(self.task, 'kadir-plus')
+        self.assertEqual(self.workers.calls, ['esra-pro'])
+        self.assertEqual(state['status'], 'needs_review')
+        self.workers.calls.clear()
+        self.workers.results['esra-pro'] = 'quota'
+        state = self.workers.run(self.task, 'kadir-plus')
+        self.assertEqual(self.workers.calls, ['esra-pro', 'kadir-plus'])
         self.assertEqual(state['status'], 'needs_review')
 
     def test_resume_reloads_state_after_job_lock_is_acquired(self):

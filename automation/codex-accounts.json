@@ -1,8 +1,9 @@
 {
   "profiles": [
     { "id": "esra-pro", "expected_plan": "pro", "accepted_plans": ["pro", "prolite", "promax"], "preferred_role": "backend" },
-    { "id": "kadir-plus", "expected_plan": "plus", "preferred_role": "ui-qa" }
+    { "id": "kadir-plus", "expected_plan": "plus", "preferred_role": "quota-fallback" }
   ],
+  "routing_policy": "esra_until_quota",
   "timeout_seconds": 1800,
   "max_accounts_per_attempt": 2
 }
