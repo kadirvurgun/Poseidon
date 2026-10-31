@@ -28,7 +28,11 @@ Kontroller:
 
 ```powershell
 dotnet test --project tests/Poseidon.Persistence.Tests/Poseidon.Persistence.Tests.csproj --configuration Release --no-build --filter-not-trait 'Category=Integration'
-dotnet test --solution Poseidon.slnx --configuration Release --no-build --filter-trait 'Category=Integration'
+dotnet test --project tests/Poseidon.Domain.Tests/Poseidon.Domain.Tests.csproj --configuration Release --no-build
+
+dotnet test --project tests/Poseidon.Persistence.Tests/Poseidon.Persistence.Tests.csproj --configuration Release --no-build --filter-trait 'Category=Integration'
+
+dotnet test --project tests/Poseidon.Api.Tests/Poseidon.Api.Tests.csproj --configuration Release --no-build --filter-trait 'Category=Integration'
 dotnet ef migrations has-pending-model-changes --project backend/Poseidon.Persistence --startup-project backend/Poseidon.DbMigrator --configuration Release --no-build
 py -m unittest discover -s scripts -p 'test_*.py' -v
 npm run lint --prefix frontend
