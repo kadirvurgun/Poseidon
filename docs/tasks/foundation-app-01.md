@@ -53,13 +53,20 @@ Use same-origin HTTPS for the authenticated browser UI/API. Technical pages and 
 
 Application/table-owner separation, external immutable export/tamper detection, retention/legal hold, privacy rights workflows, session revocation store, IdP rate/MFA controls, operational monitoring and full accessibility/security review remain release work. This is not a GDPR/KVKK or complete HTTP audit compliance claim. If the audit DB is unavailable, denial events cannot be guaranteed durable; successful business data delivery is blocked and business write routes are absent.
 
-## Exact execution and deferred integrated gate
+## Execution at the foundation package boundary
 
-- Dependency operation only: `dotnet restore Poseidon.slnx --force-evaluate` and API test-project restore after adding its PostgreSQL dependency. Locks updated; this is **not verification**.
-- AST generation only: `graphify update .` completed without model calls; derived graph artifacts are ignored. This was not a verification check.
-- Security migration, target model and snapshot authored directly without executing EF/build. Parent must validate migration/model parity and apply to real PostgreSQL.
-- **NOT RUN:** .NET unit/API/PostgreSQL tests, Vitest, Playwright, lint, typecheck/build, CI, independent QA, real IdP/TLS/browser login. No passing result is claimed.
-- Authored files: `tests/Poseidon.Api.Tests/{FoundationIdentityTests,FoundationApiTests,OidcProtocolTests}.cs`, `tests/Poseidon.Persistence.Tests/SecurityEventTests.cs`, `frontend/src/product/ProductApp.test.tsx`, `tests/Poseidon.Browser.Tests/specs/product.spec.ts`. Existing diagnostics expectation updated for protected vessel route. OIDC protocol tests use framework middleware with in-process synthetic discovery/token responses and real signing keys; production has no synthetic auth handler.
-- **Deferred generator:** after parent authorizes the integrated gate, build the API, export Development `/openapi/v1.json` to `contracts/openapi.v1.json`, then run `npm run generate:api` in frontend. The committed OpenAPI baseline remains the earlier technical contract; its existing exact-match test is expected to require regeneration. Foundation DTOs and endpoint response metadata are authored; the product consumer currently has explicit handwritten types. No generator/build was run or contract check weakened.
+The native developer authored the foundation and tests without running build/tests,
+as requested. Parent then completed the integrated gate: Release build zero warnings/errors;
+68 .NET, 46 React and 14 desktop/mobile Playwright tests passed. Lint, typecheck,
+frontend build and EF model parity passed. Actual Development OpenAPI was exported,
+committed and used to generate consumer aliases. Unknown Vessel kinds are rejected
+with focused transport coverage. The first gate found host-configuration timing and
+OIDC issuer claim-removal bugs; production code was fixed and the entire backend
+suite rerun. No assertions were weakened. Two DbContexts now require explicit
+`--context PoseidonDbContext` in EF CLI commands; CI/coordinator/docs include it.
+Focused coordinator regression: 16 PASS. Full Python automation, independent exact-commit
+QA and all four remote CI checks remain pending until separately recorded.
 
-Next: parent regenerates contract, runs the one integrated gate including migration/model parity and real PostgreSQL/API/UI tests, and obtains independent QA for the resulting target commit. Only then assess external gate progress and subsequent business mutations. This package remains implementation delivered, verification pending.
+See the [phase report](../phases/FOUNDATION-APP-01.md). Synthetic OIDC verification
+does not replace actual external IdP/TLS browser acceptance. Canonical story points
+and source dependencies remain open. Business mutations are the next package.

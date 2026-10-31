@@ -458,7 +458,7 @@ class Coordinator:
             ('all_tests', [dotnet, 'test', '--solution', 'Poseidon.slnx', '--configuration', 'Release', '--no-build',
                            '--minimum-expected-tests', '1', '--report-xunit-trx',
                            '--results-directory', results, '--results-directory-layout', 'per-module']),
-            ('migration_model', [dotnet, 'ef', 'migrations', 'has-pending-model-changes', '--project',
+            ('migration_model', [dotnet, 'ef', 'migrations', 'has-pending-model-changes', '--context', 'PoseidonDbContext', '--project',
                                  'backend/Poseidon.Persistence', '--startup-project', 'backend/Poseidon.DbMigrator',
                                  '--configuration', 'Release', '--no-build']),
             ('python', [sys.executable, 'scripts/nightly_python_tests.py',

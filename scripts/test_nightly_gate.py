@@ -146,6 +146,8 @@ class FixedGateTests(unittest.TestCase):
         self.assertFalse(any('filter' in word for word in test))
         self.assertIn('--minimum-expected-tests', test)
         self.assertIn('--report-xunit-trx', test)
+        migration = next(c for c in self.commands if 'has-pending-model-changes' in c)
+        self.assertEqual(migration[migration.index('--context') + 1], 'PoseidonDbContext')
         python = next(c for c in self.commands if 'scripts/nightly_python_tests.py' in c)
         self.assertIn('--report', python)
         self.assertTrue(any('--reporter=default' in c and '--reporter=json' in c for c in self.commands))

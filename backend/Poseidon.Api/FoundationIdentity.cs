@@ -92,6 +92,9 @@ public static class FoundationIdentity
             o.MapInboundClaims = false;
             o.SaveTokens = false;
             o.GetClaimsFromUserInfoEndpoint = false;
+            // Default claim actions run after token validation. Keep the validated
+            // issuer so the protected session still resolves its trusted membership.
+            o.ClaimActions.Remove("iss");
             o.UseTokenLifetime = false;
             o.Scope.Clear();
             o.Scope.Add("openid");
