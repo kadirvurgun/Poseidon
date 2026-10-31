@@ -64,6 +64,16 @@ describe('OPS-DASH-UI-01 development operations (mock API)', () => {
     expect(card('Kadir Plus').getByText('Uygun değil / bilinmiyor')).toBeVisible()
   })
 
+  it('preserves quota data without an advertised reset time and never invents a countdown', async () => {
+    const data = fixture()
+    delete data.quota.profiles['esra-pro'].windows![0].resetsAt
+    await mount(data)
+    expect(card('Esra Pro').getByText('80% kalan')).toBeVisible()
+    expect(card('Esra Pro').getByText('Sıfırlanma zamanı bilinmiyor')).toBeVisible()
+    expect(card('Esra Pro').queryByText(/Sıfırlanma:/)).not.toBeInTheDocument()
+    expect(screen.getByRole('status')).toHaveTextContent('Canlı servis bağlantısı')
+  })
+
   it('renders both profiles, missing Pro 5h, raw quota, accepted progress and CLI budget', async () => {
     const { fetchMock } = await mount()
     expect(card('Esra Pro').getByText('Pencere bildirilmedi')).toBeVisible()

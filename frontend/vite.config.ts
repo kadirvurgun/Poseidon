@@ -12,7 +12,7 @@ function port(name: string, fallback: number): number {
 const apiPort = port('POSEIDON_API_PORT', 5080)
 const uiPort = port('POSEIDON_UI_PORT', 4173)
 if (apiPort === uiPort) throw new Error('API and UI ports must differ')
-const proxy = { '/api': `http://127.0.0.1:${apiPort}`, '/ops': 'http://127.0.0.1:8765' }
+const proxy = { '/api': `http://127.0.0.1:${apiPort}`, '/ops': { target: 'http://127.0.0.1:8765', changeOrigin: true } }
 
 export default defineConfig({
   plugins: [react()],

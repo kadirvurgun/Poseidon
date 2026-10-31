@@ -2236,14 +2236,19 @@
       "merge_commit": "23a698eae690138fbebcd6833a2415bbf727ba00"
     },
     "ops_dashboard": {
-      "state": "local live preview; full integrated final Python run, independent exact-commit QA, CI and persistent activation pending",
+      "state": "local full gate passed; QA findings corrected, exact-commit follow-up and CI/persistent activation pending",
       "url": "http://127.0.0.1:5173/agents",
       "backend_passed": 43,
-      "component_passed": 33,
-      "playwright_passed": 8,
-      "playwright_scope": "4 real .NET API smoke plus 4 synthetic ops UI contract tests",
-      "python_previous_full_passed": 118,
-      "python_final": "pending; added dispatch/link/lease/metadata completion checks",
+      "component_passed": 34,
+      "playwright_passed": 10,
+      "playwright_scope": "4 real .NET API smoke plus 6 synthetic ops UI contract tests",
+      "python_final": {
+        "passed": 122,
+        "failed": 0,
+        "skipped": 0
+      },
+      "windows_installer_passed": 10,
+      "pr": "https://github.com/kadirvurgun/Poseidon/pull/8",
       "model_policy": "automation/model-policy.json",
       "actual_model_review": "Kadir Plus: gpt-6-luna medium, two actual read-only reviews; neither approved",
       "profiles_used": {

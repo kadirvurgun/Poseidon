@@ -2,7 +2,7 @@
 // docs/nightly-automation.md. Local development operations only.
 export const profiles = ['esra-pro', 'kadir-plus'] as const
 export type ProfileId = typeof profiles[number]
-export type WindowData = { usedPercent: number; windowDurationMins: number; resetsAt: number }
+export type WindowData = { usedPercent: number; windowDurationMins: number; resetsAt?: number }
 export type Profile = {
   state: 'known' | 'busy' | 'unavailable' | 'reconcile_required'; ready: boolean
   plan?: string; windows?: WindowData[]; observedAt?: string | null
@@ -35,7 +35,7 @@ function shape(required: Record<string, Check>, optional: Record<string, Check> 
     Object.entries(optional).every(([key, check]) => v[key] === undefined || check(v[key]))
 }
 const usage: Check = v => obj(v) && Object.values(v).every(num)
-const windowData = shape({ usedPercent: percent, windowDurationMins: v => num(v) && (v as number) > 0, resetsAt: num })
+const windowData = shape({ usedPercent: percent, windowDurationMins: v => num(v) && (v as number) > 0 }, { resetsAt: num })
 const profile = shape({ state: oneOf('known', 'busy', 'unavailable', 'reconcile_required'), ready: bool },
   { plan: str, windows: array(windowData), observedAt: nullable(date), lastKnown: v => array(windowData)(v) || shape({ windows: array(windowData), observedAt: nullable(date) })(v) })
 const profileId = oneOf(...profiles)

@@ -35,19 +35,23 @@ Canonical S0 kabulü değişmedi: 8/970 SP (%0,82), 2/121 görev.
 | Kontrol | Son gözlenen sonuç |
 | --- | --- |
 | .NET solution / gerçek PostgreSQL integration dahil | 43 passed, 0 failed, 0 skipped |
-| Arayüz component | 33 passed |
+| Arayüz component | 34 passed |
 | Lint/typecheck/build | Başarılı |
-| Playwright desktop + mobile | 8 passed; 4 gerçek .NET API smoke, 4 sentetik ops contract |
+| Playwright desktop + mobile | 10 passed; 4 gerçek .NET API smoke, 6 sentetik ops contract |
 | Model routing ve gerçek komut/receipt bağlama | 6 passed |
 | Runtime/HTTP/lease/erken metadata yenileme | 17 passed |
 | Sabit gate/QA adaptörü | 15 passed |
-| Tam Python ve Windows installer paketi | Önceki tam koşu 118 passed; son eklenen testlerle final koşu sürüyor. Yeni Windows installer 3 passed |
+| Tam Python ve Windows installer paketi | 122 Python passed, 0 failed/skipped; 10 Windows installer passed (6 nightly, 1 hourly, 3 runtime) |
+| Güncel analiz kaynak/hash/lineage | 269 dosya, 34.958 bölüm, 0 uyuşmazlık |
 | Canlı loopback / tarayıcı | HTTP 200; iki kart ve Esra “Çalışıyor” canlı doğrulandı |
 
 ## Açık kapılar ve sonraki adım
 
-Tam entegrasyon testleri, exact commit bağımsız QA ve uzaktaki dört CI kontrolü
-tamamlanınca merge edilecek. Windows `Poseidon-DevelopmentRuntime` ve reset
+Tam yerel gate geçti. [PR #8](https://github.com/kadirvurgun/Poseidon/pull/8) için
+bağımsız QA'nın eksik reset zamanı bulgusu düzeltildi; component ve browser
+regresyonları eklendi. Proxy üzerinden gerçek HTTP 200 zaten gözlendi; Host
+aktarımı ayrıca açık `changeOrigin: true` ile sabitlendi. Yeni exact commit QA
+ve uzaktaki dört CI kontrolü tamamlanınca merge edilecek. Windows `Poseidon-DevelopmentRuntime` ve reset
 görevi henüz gerçekten kaydedilmiş sayılmaz; installer preview testi aktivasyon
 kanıtı değildir. İlk ADR işi `ee0aea4` için bilinmeyen yarım iş tekrarlanmayacak;
 yalnız doğrulanan başlangıç uyarısı hatası operatör kaydıyla reconcile edilip

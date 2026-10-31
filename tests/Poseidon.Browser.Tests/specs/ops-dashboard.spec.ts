@@ -38,3 +38,21 @@ test('failed ops service displays retry without claiming account readiness', asy
   await expect(page.getByRole('button', { name: 'Tekrar dene' })).toBeVisible();
   await expect(page.getByText('Yeni göreve uygun')).toHaveCount(0);
 });
+
+test('quota without reset timestamp stays visible without an invented timer', async ({ page }) => {
+  const stamp = new Date().toISOString();
+  const profile = { state: 'known', ready: true, windows: [{ usedPercent: 20, windowDurationMins: 10080 }] };
+  await page.route('**/ops/status', route => route.fulfill({ json: {
+    schemaVersion: 1, generatedAt: stamp,
+    quota: { timestamp: stamp, next_check: null, selected: 'esra-pro', profiles: { 'esra-pro': profile, 'kadir-plus': profile } },
+    coordinator: { enabled: false, status: 'monitoring', modelCalls: 0, maxCalls: 8, maxJobs: 4, deadline: null, jobs: [] },
+    activities: [], events: [], alarms: [],
+    project: { completionPercent: 0.82, acceptedStoryPoints: 8, totalStoryPoints: 970, acceptedTasks: 2, totalTasks: 121, stage: 'S0' },
+  } }));
+  await page.goto('/agents');
+  const esra = page.getByRole('region', { name: 'Esra Pro' });
+  await expect(esra.getByText('80% kalan')).toBeVisible();
+  await expect(esra.getByText('Sıfırlanma zamanı bilinmiyor')).toBeVisible();
+  await expect(esra.getByText(/Sıfırlanma:/)).toHaveCount(0);
+  await expect(page.getByRole('status')).toContainText('Canlı servis bağlantısı');
+});
