@@ -155,7 +155,13 @@ public static class DirectoryCommands
                     targetCompany = new Company { Id = resource, TenantId = actor.TenantId, Code = code, Name = name };
                     db.Companies.Add(targetCompany);
                 }
-                else { targetCompany.Code = code; targetCompany.Name = name; db.Entry(targetCompany).Property(x => x.Version).OriginalValue = version!.Value; }
+                else
+                {
+                    targetCompany.Code = code; targetCompany.Name = name;
+                    db.Entry(targetCompany).Property(x => x.Version).OriginalValue = version!.Value;
+                    // An accepted unchanged update is an audited touch with an xmin check.
+                    db.Entry(targetCompany).Property(x => x.Name).IsModified = true;
+                }
             }
             else
             {
@@ -165,7 +171,12 @@ public static class DirectoryCommands
                     db.Vessels.Add(targetVessel);
                     // Regulatory measurements remain unknown; no zero-valued operational profiles are invented.
                 }
-                else { targetVessel.Code = code; targetVessel.Name = name; db.Entry(targetVessel).Property(x => x.Version).OriginalValue = version!.Value; }
+                else
+                {
+                    targetVessel.Code = code; targetVessel.Name = name;
+                    db.Entry(targetVessel).Property(x => x.Version).OriginalValue = version!.Value;
+                    db.Entry(targetVessel).Property(x => x.Name).IsModified = true;
+                }
             }
             await db.SaveChangesAsync(http.RequestAborted);
             db.CommandReceipts.Add(new CommandReceipt { TenantId = actor.TenantId, ActorId = actor.Id, Key = key, Action = action,

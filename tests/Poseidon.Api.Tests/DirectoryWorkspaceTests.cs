@@ -1,3 +1,4 @@
+using System.Data.Common;
 using System.Net;
 using System.Net.Http.Json;
 using System.Security.Claims;
@@ -6,9 +7,13 @@ using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Poseidon.Api;
@@ -36,7 +41,7 @@ public sealed class DirectoryWorkspaceTests : IAsyncLifetime
     }
     public async ValueTask DisposeAsync() => await postgres.DisposeAsync();
     private Vessel SeedVessel => seed.Vessels.First(v => v.TenantId == seed.Tenants[0].Id);
-    private WebApplicationFactory<Program> Host(bool manage = true, bool read = true, bool edit = true, bool scope = true) => new WebApplicationFactory<Program>().WithWebHostBuilder(b =>
+    private WebApplicationFactory<Program> Host(bool manage = true, bool read = true, bool edit = true, bool scope = true, DbCommandInterceptor? interceptor = null) => new WebApplicationFactory<Program>().WithWebHostBuilder(b =>
     {
         b.UseEnvironment("Test");
         b.ConfigureAppConfiguration((_, c) => c.AddInMemoryCollection(new Dictionary<string, string?>
@@ -57,6 +62,18 @@ public sealed class DirectoryWorkspaceTests : IAsyncLifetime
         {
             o.DefaultAuthenticateScheme = "DirectorySynthetic"; o.DefaultChallengeScheme = "DirectorySynthetic"; o.DefaultForbidScheme = "DirectorySynthetic";
         }).AddScheme<AuthenticationSchemeOptions, TestHandler>("DirectorySynthetic", _ => { }));
+        if (interceptor != null) b.ConfigureTestServices(s =>
+        {
+            s.RemoveAll<PoseidonDbContext>();
+            s.AddScoped(sp =>
+            {
+                var http = sp.GetRequiredService<IHttpContextAccessor>().HttpContext!;
+                var actor = sp.GetRequiredService<ActorResolver>().Resolve(http.User) ?? throw new UnauthorizedAccessException();
+                return new PoseidonDbContext(new DbContextOptionsBuilder<PoseidonDbContext>()
+                    .UseNpgsql(postgres.GetConnectionString()).AddInterceptors(interceptor).Options,
+                    actor.TenantId, new ActorContext(actor.Id.ToString(), "User", http.TraceIdentifier));
+            });
+        });
     });
     private static HttpClient Client(WebApplicationFactory<Program> host, bool authenticated = true)
     {
@@ -81,6 +98,158 @@ public sealed class DirectoryWorkspaceTests : IAsyncLifetime
     {
         await using var connection = new Npgsql.NpgsqlConnection(postgres.GetConnectionString()); await connection.OpenAsync(Ct);
         await using var command = new Npgsql.NpgsqlCommand(sql, connection); await command.ExecuteNonQueryAsync(Ct);
+    }
+
+    private async Task<(string Code, string Name, uint Version)> DirectoryRow(HttpClient client, string path, bool company)
+    {
+        if (company)
+        {
+            var row = (await client.GetFromJsonAsync<CompanyDto>("/api/v1/" + path, Ct))!;
+            return (row.Code, row.Name, row.Version);
+        }
+        var vessel = (await client.GetFromJsonAsync<VesselDto>("/api/v1/" + path, Ct))!;
+        return (vessel.Code, vessel.Name, vessel.Version);
+    }
+
+    // DIR-WORKSPACE-01; active 15.01 paragraph:10 and 14.01 paragraph:140:
+    // every mutable aggregate update checks xmin, including normalized unchanged values.
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Unchanged_update_is_an_attributed_touch_and_successful_replay_does_not_write_again(bool company)
+    {
+        await using var host = Host(); using var client = Client(host); await Token(client);
+        var id = company ? SeedVessel.CompanyId : SeedVessel.Id;
+        var path = $"{(company ? "companies" : "vessels")}/{id}";
+        var before = await DirectoryRow(client, path, company);
+        Guid[] auditIds;
+        await using (var db = Db()) auditIds = await db.AuditEvents.Select(a => a.Id).ToArrayAsync(Ct);
+        var key = Guid.NewGuid().ToString();
+        var body = new { code = " " + before.Code + " ", name = " " + before.Name + " ", expectedVersion = before.Version };
+        using var touch = await Send(client, path, body, key, true);
+        Assert.Equal(HttpStatusCode.OK, touch.StatusCode);
+        var touched = await DirectoryRow(client, path, company);
+        Assert.Equal(before.Code, touched.Code); Assert.Equal(before.Name, touched.Name);
+        Assert.NotEqual(before.Version, touched.Version);
+        using var replay = await Send(client, path, body, key, true);
+        Assert.Equal(HttpStatusCode.OK, replay.StatusCode);
+        Assert.Equal("true", Assert.Single(replay.Headers.GetValues("Idempotency-Replayed")));
+        Assert.Equal(touched, await DirectoryRow(client, path, company));
+        await using var fresh = Db();
+        var receipt = Assert.Single(await fresh.CommandReceipts.ToArrayAsync(Ct));
+        Assert.Equal(key, receipt.Key); Assert.Equal(id, receipt.ResourceId); Assert.Equal(actorId, receipt.ActorId);
+        var events = (await fresh.AuditEvents.ToArrayAsync(Ct)).Where(a => !auditIds.Contains(a.Id)).ToArray();
+        Assert.Equal(2, events.Length);
+        var business = Assert.Single(events, a => a.EntityType == (company ? nameof(Company) : nameof(Vessel)));
+        Assert.Equal("Modified", business.Action); Assert.Equal(actorId.ToString(), business.ActorId); Assert.Equal("User", business.ActorType);
+        Assert.EndsWith(id.ToString(), business.EntityId);
+        Assert.Equal(Assert.Single(touch.Headers.GetValues("X-Correlation-ID")), business.CorrelationId);
+        var receiptAudit = Assert.Single(events, a => a.EntityType == nameof(CommandReceipt));
+        Assert.Equal("Added", receiptAudit.Action); Assert.Equal(business.CorrelationId, receiptAudit.CorrelationId);
+        if (company)
+        {
+            var persisted = await fresh.Companies.SingleAsync(c => c.Id == id, Ct);
+            Assert.Equal(touched.Version, persisted.Version);
+        }
+        else
+        {
+            var persisted = await fresh.Vessels.SingleAsync(v => v.Id == id, Ct);
+            Assert.Equal(touched.Version, persisted.Version);
+        }
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Unchanged_update_loses_to_edit_after_original_select_without_receipt_or_business_audit(bool company)
+    {
+        var barrier = new DirectorySelectBarrier(company ? "Companies" : "Vessels");
+        await using var host = Host(interceptor: barrier);
+        using var originalClient = Client(host); await Token(originalClient);
+        using var competingClient = Client(host); await Token(competingClient);
+        var id = company ? SeedVessel.CompanyId : SeedVessel.Id;
+        var path = $"{(company ? "companies" : "vessels")}/{id}";
+        var before = await DirectoryRow(originalClient, path, company);
+        Guid[] auditIds;
+        await using (var db = Db()) auditIds = await db.AuditEvents.Select(a => a.Id).ToArrayAsync(Ct);
+        var originalKey = Guid.NewGuid().ToString(); var competingKey = Guid.NewGuid().ToString();
+        barrier.Arm();
+        var pending = Send(originalClient, path,
+            new { code = " " + before.Code + " ", name = " " + before.Name + " ", expectedVersion = before.Version }, originalKey, true);
+        HttpResponseMessage? original = null;
+        try
+        {
+            await barrier.WaitUntilReadAsync(Ct);
+            // The original reader already owns its MVCC result. Only this request is paused.
+            using var competing = await Send(competingClient, path,
+                new { code = "RACE-WINNER", name = "Competing edit", expectedVersion = before.Version }, competingKey, true);
+            Assert.Equal(HttpStatusCode.OK, competing.StatusCode);
+            var winner = await DirectoryRow(competingClient, path, company);
+            Assert.NotEqual(before.Version, winner.Version);
+            barrier.Release();
+            original = await pending.WaitAsync(TimeSpan.FromSeconds(30), Ct);
+            Assert.Equal(HttpStatusCode.Conflict, original.StatusCode);
+            Assert.Contains("version_conflict", await original.Content.ReadAsStringAsync(Ct));
+            Assert.False(original.Headers.Contains("Idempotency-Replayed"));
+
+            await using var fresh = Db();
+            var receipts = await fresh.CommandReceipts.ToArrayAsync(Ct);
+            Assert.DoesNotContain(receipts, r => r.Key == originalKey);
+            var receipt = Assert.Single(receipts);
+            Assert.Equal(competingKey, receipt.Key); Assert.Equal(id, receipt.ResourceId); Assert.Equal(actorId, receipt.ActorId);
+            var events = (await fresh.AuditEvents.ToArrayAsync(Ct)).Where(a => !auditIds.Contains(a.Id)).ToArray();
+            Assert.Equal(2, events.Length);
+            var business = Assert.Single(events, a => a.EntityType == (company ? nameof(Company) : nameof(Vessel)));
+            Assert.Equal("Modified", business.Action); Assert.Equal(actorId.ToString(), business.ActorId); Assert.Equal("User", business.ActorType);
+            Assert.EndsWith(id.ToString(), business.EntityId);
+            var competingCorrelation = Assert.Single(competing.Headers.GetValues("X-Correlation-ID"));
+            var originalCorrelation = Assert.Single(original.Headers.GetValues("X-Correlation-ID"));
+            Assert.Equal(competingCorrelation, business.CorrelationId);
+            Assert.DoesNotContain(events, a => a.CorrelationId == originalCorrelation);
+            var receiptAudit = Assert.Single(events, a => a.EntityType == nameof(CommandReceipt));
+            Assert.Equal("Added", receiptAudit.Action); Assert.Equal(competingCorrelation, receiptAudit.CorrelationId);
+            Assert.Contains(await fresh.Set<SecurityEvent>().ToArrayAsync(Ct),
+                e => e.CorrelationId == originalCorrelation && e.Result == "version_conflict");
+            if (company)
+            {
+                var persisted = await fresh.Companies.SingleAsync(c => c.Id == id, Ct);
+                Assert.Equal(("RACE-WINNER", "Competing edit", winner.Version), (persisted.Code, persisted.Name, persisted.Version));
+            }
+            else
+            {
+                var persisted = await fresh.Vessels.SingleAsync(v => v.Id == id, Ct);
+                Assert.Equal(("RACE-WINNER", "Competing edit", winner.Version), (persisted.Code, persisted.Name, persisted.Version));
+            }
+        }
+        finally
+        {
+            barrier.Release();
+            original ??= await pending.WaitAsync(TimeSpan.FromSeconds(30), Ct);
+            original.Dispose();
+        }
+    }
+
+    private sealed class DirectorySelectBarrier(string table) : DbCommandInterceptor
+    {
+        private readonly TaskCompletionSource read = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        private readonly TaskCompletionSource released = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        private int armed;
+        public void Arm() => Interlocked.Exchange(ref armed, 1);
+        public Task WaitUntilReadAsync(CancellationToken cancellationToken) => read.Task.WaitAsync(TimeSpan.FromSeconds(30), cancellationToken);
+        public void Release() => released.TrySetResult();
+
+        public override async ValueTask<DbDataReader> ReaderExecutedAsync(DbCommand command, CommandExecutedEventData eventData,
+            DbDataReader result, CancellationToken cancellationToken = default)
+        {
+            if (command.CommandText.StartsWith("SELECT", StringComparison.Ordinal) &&
+                command.CommandText.Contains($"FROM core.\"{table}\"", StringComparison.Ordinal) &&
+                Interlocked.CompareExchange(ref armed, 0, 1) == 1)
+            {
+                read.TrySetResult();
+                await released.Task.WaitAsync(TimeSpan.FromSeconds(30), cancellationToken);
+            }
+            return result;
+        }
     }
 
     [Fact]
