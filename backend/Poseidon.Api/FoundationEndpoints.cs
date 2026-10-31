@@ -12,7 +12,7 @@ public sealed record PageDto<T>(T[] Items, int Offset, int Limit, bool HasMore);
 
 public static class FoundationEndpoints
 {
-    public static void MapFoundation(this WebApplication app)
+    public static void MapFoundation(this IEndpointRouteBuilder app)
     {
         app.MapGet("/api/v1/auth/session", async (HttpContext http, FederationSettings settings, ActorResolver actors, IAntiforgery csrf, SecurityAudit audit) =>
         {
