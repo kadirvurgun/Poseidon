@@ -4,6 +4,8 @@ Kontrollü kabul: **8 / 970 SP = %0,82**; 2 / 121 iş. S0: **8 / 53 SP = %15,09*
 
 ## Son teslimler
 
+- **VESSEL-PROFILE-DRAFT-01 authored, NOT RUN:** real scoped regulatory draft/editor/history package on isolated worker branch from `abd9445`; integrated gate and independent target-commit QA pending. No publication/acceptance. [Sources, criteria and evidence](phases/VESSEL-PROFILE-DRAFT-01.md). Canonical totals remain unchanged.
+
 - **DIR-WORKSPACE-01 yerel entegre kapısı geçti:** [faz raporu](phases/DIR-WORKSPACE-01.md), [kaynak/kabul/yetki sözleşmesi](tasks/directory-workspace-01.md). 98 backend,63 React,16 Playwright,127 Python PASS; build/lint/typecheck/model parity PASS. Şirket/filo yönetimi, vessel grants, transaction receipt/audit, sürüm çatışması ve TR/EN formlar hazır. Bağımsız exact-commit QA bekliyor; kullanıcı kararıyla yayınlama daha büyük teslim paketine ertelendi. Canonical kabul artmadı.
 - **PR #10 merge edildi:** `0bf7914` yerel geçmişinde [FOUNDATION-APP-01](phases/FOUNDATION-APP-01.md) ürün temeli mevcut. Önceki yerel 68 backend/48 React/14 Playwright sayıları tarihsel kanıttır; DIR paketinin test sonucu değildir. Önceki "QA/CI bekliyor" son teslim notu PR10 merge durumunu yansıtmıyordu.
 - [PR #8](https://github.com/kadirvurgun/Poseidon/pull/8) `cc92b744eb64b86b002f17d44b45b14cd4205653` ile merge edildi: iki hesap dashboard'u, Esra-first kota yönlendirmesi ve model politikası. Exact `96dd994` Esra bağımsız QA ve bütün push/PR CI kontrolleri geçti. [PR #9](https://github.com/kadirvurgun/Poseidon/pull/9) ADR hazırlığını `7f3ea00` ile taşıdı; kaynakta gereken uzman/karar onaylarının yerine geçmez.

@@ -6,7 +6,7 @@ export class ApiError extends Error {
     super(`Request failed (${status})`)
   }
 }
-async function request<T>(path: string, signal: AbortSignal, init?: RequestInit): Promise<T> {
+export async function request<T>(path: string, signal: AbortSignal, init?: RequestInit): Promise<T> {
   const response = await fetch(`/api/v1/${path}`, { credentials: 'same-origin', signal, ...init, headers: { Accept: 'application/json', ...init?.headers } })
   if (!response.ok) {
     let body: { code?: string; errors?: Record<string, string[]>; correlationId?: string } = {}

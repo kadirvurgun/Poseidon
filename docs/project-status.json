@@ -2376,16 +2376,17 @@
     "docs/phases/OPS-COORDINATOR-01-QA-FOLLOWUP.md",
     "docs/phases/OPS-DASH-01.md",
     "docs/phases/FOUNDATION-APP-01.md",
-    "docs/phases/DIR-WORKSPACE-01.md"
+    "docs/phases/DIR-WORKSPACE-01.md",
+    "docs/phases/VESSEL-PROFILE-DRAFT-01.md"
   ],
   "active_source": "docs/sources/active.json",
   "current_package": {
-    "task": "DIR-WORKSPACE-01",
-    "branch": "feature/directory-workspace",
-    "state": "integrated local gate passed; exact-commit independent QA pending",
-    "report": "docs/phases/DIR-WORKSPACE-01.md",
-    "contract": "docs/tasks/directory-workspace-01.md",
+    "task": "VESSEL-PROFILE-DRAFT-01",
+    "branch": "agents/9ff6b20f711a4809a7bf5a1a3ced7172",
+    "baseline": "abd9445",
+    "state": "authored; integrated gate NOT RUN; independent QA pending",
+    "report": "docs/phases/VESSEL-PROFILE-DRAFT-01.md",
     "canonical_acceptance_changed": false,
-    "publication": "deferred by user until coherent product batch; no push/PR yet"
+    "publication": "prohibited for this worker; local commits only; coordinator owns publication/merge"
   }
 }

@@ -16,6 +16,12 @@ test('product shell presents missing federation setup in both languages', async 
   await expect(page.getByRole('table')).toHaveCount(0)
   expect((await request.get('/api/v1/vessels')).status()).toBe(401)
   expect((await request.get('/api/v1/companies')).status()).toBe(401)
+  // Real anonymous profile boundary only; authenticated profile behavior has API/component coverage.
+  const profile = '/api/v1/vessels/00000000-0000-0000-0000-000000000001/regulatory-profile'
+  expect((await request.get(profile)).status()).toBe(401)
+  expect((await request.get(`${profile}/history`)).status()).toBe(401)
+  // Setup host has no audit database: mandatory denial audit fails closed with 503.
+  expect((await request.put(profile, { data: { expectedVersion: 0, content: {} } })).status()).toBe(503)
 })
 
 test('product navigation is keyboard accessible and technical route is preserved', async ({ page }) => {

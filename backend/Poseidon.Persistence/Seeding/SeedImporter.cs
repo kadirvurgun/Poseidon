@@ -20,6 +20,21 @@ public static class SeedImporter
         await AddMissing(db, data.Vessels, v => [v.TenantId, v.Id], cancellationToken).ConfigureAwait(false);
         await AddMissing(db, data.VesselProfiles, p => [p.TenantId, p.VesselId], cancellationToken).ConfigureAwait(false);
         await AddMissing(db, data.TugProfiles, p => [p.TenantId, p.VesselId], cancellationToken).ConfigureAwait(false);
+        // Actual synthetic draft operations only. Never infer regulatory facts/freshness from legacy profiles.
+        foreach (var vessel in data.Vessels)
+        {
+            if (await db.RegulatoryDrafts.FindAsync([vessel.TenantId, vessel.Id], cancellationToken).ConfigureAwait(false) != null) continue;
+            var draft = new RegulatoryDraft
+            {
+                TenantId = vessel.TenantId, VesselId = vessel.Id, Revision = 1, SavedAt = DateTimeOffset.UtcNow,
+                Provenance = "Synthetic", ContentJson = RegulatoryDraftStorage.Serialize(new()
+                {
+                    Declaration = new("Unknown"), SourceReference = new("Known", "synthetic-demo/draft-v1"), SourceObservedAt = new("Unknown")
+                })
+            };
+            db.RegulatoryDrafts.Add(draft);
+            db.RegulatoryDraftRevisions.Add(draft.Snapshot());
+        }
         await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         if (transaction is not null)
             await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);

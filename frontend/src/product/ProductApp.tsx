@@ -4,6 +4,7 @@ import './product.css'
 import { DirectoryEditor } from './DirectoryEditor'
 import type { EditorTarget } from './DirectoryEditor'
 import { DraftConfirmation } from './DraftConfirmation'
+import { RegulatoryProfile } from './RegulatoryProfile'
 import { editorCopy } from './editor-copy'
 
 const copy = {
@@ -28,6 +29,7 @@ export function ProductApp() {
   const [detail, setDetail] = useState<State<api.Company | api.Vessel>>({ state: 'loading' })
   const [logoutError, setLogoutError] = useState(false)
   const [editor, setEditor] = useState<EditorTarget | null>(null)
+  const [profileOpen, setProfileOpen] = useState(false)
   const [dirty, setDirty] = useState(false)
   const [saving, setSaving] = useState(false)
   const [pendingNavigation, setPendingNavigation] = useState<(() => void) | null>(null)
@@ -39,7 +41,7 @@ export function ProductApp() {
     if (dirty) setPendingNavigation(() => action)
     else action()
   }
-  const closeEditor = () => { setEditor(null); setDirty(false) }
+  const closeEditor = () => { setEditor(null); setProfileOpen(false); setDirty(false) }
   const user = identity.state === 'ok' ? identity.data : null
   const canRead = user?.authenticated === true && user.canRead
 
@@ -124,7 +126,8 @@ export function ProductApp() {
           {records.state === 'ok' && (records.data.items.length === 0 ? <p>{t.empty}</p> : <div className="product-table"><table><thead><tr><th>{t.code}</th><th>{t.name}</th>{tab === 'fleet' && <th>{t.kind}</th>}</tr></thead><tbody>{records.data.items.map(row => <tr key={row.id}><td>{row.code}</td><td><button onClick={() => { if (selected !== row.id) guard(() => { closeEditor(); setSelected(row.id); setDetail({ state: 'loading' }) }) }}>{row.name}</button></td>{'kind' in row && <td>{row.kind === 'Tug' ? t.tug : t.ship}</td>}</tr>)}</tbody></table></div>)}
           {records.state === 'ok' && <div className="product-pagination"><button disabled={offset === 0} onClick={() => guard(() => { closeEditor(); setOffset(v => Math.max(0, v - 25)); setRecords({ state: 'loading' }); setSelected(null) })}>{t.previous}</button><span>{t.page} {offset / 25 + 1}</span><button disabled={!records.data.hasMore} onClick={() => guard(() => { closeEditor(); setOffset(v => v + 25); setRecords({ state: 'loading' }); setSelected(null) })}>{t.next}</button></div>}
         </section>
-        {selected && <section className="product-detail" aria-label={t.details}><h2>{t.details}</h2><button onClick={() => guard(() => { closeEditor(); setSelected(null) })}>{t.close}</button>{detail.state === 'loading' ? <p role="status">{t.loading}</p> : detail.state === 'error' ? <div role="alert"><p>{message(detail.status)}</p><button onClick={() => guard(() => { closeEditor(); retry() })}>{t.retry}</button></div> : <>{detail.data.canEdit && <button disabled={saving} onClick={() => guard(() => { closeEditor(); setEditor({ instanceKey: crypto.randomUUID(), resource: tab === 'companies' ? 'companies' : 'vessels', record: detail.data }) })}>{et.edit}</button>}<dl><dt>{t.code}</dt><dd>{detail.data.code}</dd><dt>{t.name}</dt><dd>{detail.data.name}</dd>{'kind' in detail.data && <><dt>{t.kind}</dt><dd>{detail.data.kind === 'Tug' ? t.tug : t.ship}</dd></>}</dl></>}</section>}
+        {selected && <section className="product-detail" aria-label={t.details}><h2>{t.details}</h2><button onClick={() => guard(() => { closeEditor(); setSelected(null) })}>{t.close}</button>{detail.state === 'loading' ? <p role="status">{t.loading}</p> : detail.state === 'error' ? <div role="alert"><p>{message(detail.status)}</p><button onClick={() => guard(() => { closeEditor(); retry() })}>{t.retry}</button></div> : <>{'kind' in detail.data && <button disabled={saving} onClick={() => guard(() => { closeEditor(); setProfileOpen(true) })}>{language === 'tr' ? 'Mevzuat profili' : 'Regulatory profile'}</button>}{detail.data.canEdit && <button disabled={saving} onClick={() => guard(() => { closeEditor(); setEditor({ instanceKey: crypto.randomUUID(), resource: tab === 'companies' ? 'companies' : 'vessels', record: detail.data }) })}>{et.edit}</button>}<dl><dt>{t.code}</dt><dd>{detail.data.code}</dd><dt>{t.name}</dt><dd>{detail.data.name}</dd>{'kind' in detail.data && <><dt>{t.kind}</dt><dd>{detail.data.kind === 'Tug' ? t.tug : t.ship}</dd></>}</dl></>}</section>}
+        {profileOpen && selected && tab === 'fleet' && user && <RegulatoryProfile key={selected} id={selected} language={language} csrf={user.csrfToken} onDirty={setDirty} onSaving={setSaving} />}
       </>}
     </main>
   </div>

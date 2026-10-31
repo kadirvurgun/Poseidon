@@ -26,7 +26,7 @@ namespace Poseidon.Api.Tests;
 
 // DIR-WORKSPACE-01 / DEV-014/015/016/019; actual API, antiforgery and PostgreSQL, no production test login.
 [Trait("Category", "Integration")]
-public sealed class DirectoryWorkspaceTests : IAsyncLifetime
+public sealed partial class DirectoryWorkspaceTests : IAsyncLifetime
 {
     private readonly PostgreSqlContainer postgres = new PostgreSqlBuilder("postgres:18.6").Build();
     private readonly Guid actorId = Guid.NewGuid();
