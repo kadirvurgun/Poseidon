@@ -75,7 +75,7 @@ TR/EN management forms use real HTTP, server CSRF and ephemeral command keys. Co
 
 UI component tests mock HTTP and are labelled accordingly. Real Playwright additions verify only absent-IdP setup, anonymous scope and absence of management controls with a real API. They do not claim external login or authenticated browser acceptance.
 
-## Parent follow-up and exact verification state
+## Native-author handoff — historical; parent results below
 
 **All authored tests, build, lint, typecheck, EF migration/model validation, restore and OpenAPI generation: NOT RUN. No passing counts are claimed.** Source inspection and local Git operations are not a runtime gate.
 
@@ -84,3 +84,14 @@ Parent must export the actual host OpenAPI to `contracts/openapi.v1.json`, regen
 Authored coverage: Domain DirectoryInputPolicyTests; FoundationIdentityTests scope/revalidation; DirectoryWorkspaceTests real host/PostgreSQL commands, concurrency, retry after host restart, audit/receipt trigger failure rollback, roles/CSRF, same-tenant restriction, foreign relationships, normalization, strict DTOs, duplicates, stale writes, invalid keys, actor/tenant receipt boundaries and search; PostgresSeedTests receipt isolation/immutability/reseed; DirectoryWorkspace.test.tsx forms/transport/errors/conflict/draft/refresh; prior foundation fixtures declare explicit scope; Playwright real setup assertions. Parent must run these alongside all existing OIDC negative tests and the full integrated gate, then independent QA for the exact target commit. Crash/lost-response test models restart after a durable response rather than forcibly killing PostgreSQL at a commit boundary; broader fault injection remains a follow-up.
 
 Canonical acceptance remains **8/970 SP (0.82%), 2/121 tasks, 0/196 screens**. Full S1, regulatory vessel master, operational authority catalogs, critical offline workflows, compliance and expert/pilot sign-offs remain open. S0 threat-model draft is preserved with expert approval OPEN; interrupted QA is not accepted. Current phase: integrated package development prepared for parent verification. Next step: parent contract generation and integrated gate, then independent review; no publication in this task.
+
+## Parent handoff completion
+
+The historical NOT RUN/generator-follow-up section above describes the native author
+handoff. Parent subsequently exported actual OpenAPI, regenerated consumer aliases and
+completed the integrated gate:94 backend,63 React,16 Playwright,127 Python PASS; zero
+failed/skipped; lint/typecheck/build/model parity/source hashes PASS. The fixed write
+audit-code allowlist omission and compiler/test-API issues were corrected without
+relaxing assertions. See the updated [phase evidence](../phases/DIR-WORKSPACE-01.md).
+Independent target-commit QA and publication remain separate; user deferred new PRs
+until a larger coherent batch. This evidence grants no canonical or expert approval.

@@ -97,6 +97,6 @@ public static class FoundationEndpoints
         }).WithName("GetVessel").Produces<VesselDto>().Produces(401).Produces(403).Produces(404).Produces(503);
     }
 
-    private static (int Skip, int Take) Bounds(int? offset, int? limit, string? q) =>
+    private static (int Skip, int Take) Bounds(int? offset, int? limit) =>
         offset is < 0 or > 100000 || limit is < 1 or > 100 ? (-1, 0) : (offset ?? 0, limit ?? 25);
 }

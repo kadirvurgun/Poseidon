@@ -319,8 +319,8 @@ public sealed class DirectoryWorkspaceTests : IAsyncLifetime
             Send(client, "companies", new { code = "RACE-B", name = "Synthetic B" }, key));
         try
         {
-            Assert.Single(results.Where(r => r.StatusCode == HttpStatusCode.OK));
-            var losing = Assert.Single(results.Where(r => r.StatusCode == HttpStatusCode.Conflict));
+            Assert.Single(results, r => r.StatusCode == HttpStatusCode.OK);
+            var losing = Assert.Single(results, r => r.StatusCode == HttpStatusCode.Conflict);
             Assert.Contains("idempotency_key_reused", await losing.Content.ReadAsStringAsync(Ct));
             await using var db = Db();
             var entity = Assert.Single(await db.Companies.Where(c => c.Code == "RACE-A" || c.Code == "RACE-B").ToArrayAsync(Ct));

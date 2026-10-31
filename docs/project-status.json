@@ -2313,16 +2313,53 @@
       "merge_commit": "0bf79141d1487621fd0124a330596e34cbce16e3"
     },
     "directory_workspace": {
-      "state": "NOT RUN",
-      "tests": "authored only; not executed",
-      "build": "NOT RUN",
-      "lint": "NOT RUN",
-      "typecheck": "NOT RUN",
-      "ef_cli": "NOT RUN",
-      "restore_generation": "NOT RUN",
-      "independent_qa": "pending parent integrated gate",
-      "contract_followup": "parent host OpenAPI export and generated TypeScript aliases; isolated directory-contract.ts additions are temporary",
-      "migration_followup": "parent validates hand-authored receipt migration/designer/snapshot and project-only locks",
+      "state": "integrated local gate passed; independent QA pending; publication deferred by user",
+      "tests": {
+        "backend": {
+          "domain": 22,
+          "persistence": 25,
+          "api": 47,
+          "passed": 94,
+          "failed": 0,
+          "skipped": 0
+        },
+        "react": {
+          "passed": 63,
+          "failed": 0
+        },
+        "playwright": {
+          "passed": 16,
+          "failed": 0,
+          "skipped": 0,
+          "scope": "4 real API smoke + 6 mock ops + 6 real API anonymous/setup/keyboard"
+        },
+        "python": {
+          "passed": 127,
+          "failed": 0,
+          "skipped": 0
+        },
+        "build": "Release passed; zero warnings/errors",
+        "lint": "passed",
+        "typecheck": "passed",
+        "frontend_build": "passed",
+        "ef_model_parity": "passed",
+        "source_verification": {
+          "files": 269,
+          "chunks": 34958,
+          "mismatches": 0
+        },
+        "unknown_audit_code_unit": "strengthened test rerun separately:1 pass with configured provider and exact error assertion",
+        "publication": "deferred by user; no push/PR/CI for this package",
+        "independent_qa": "pending exact target commit"
+      },
+      "build": "passed; zero warnings/errors",
+      "lint": "passed",
+      "typecheck": "passed",
+      "ef_cli": "model parity passed",
+      "restore_generation": "locked restore, actual host OpenAPI export and generated aliases passed",
+      "independent_qa": "pending exact target commit",
+      "contract_followup": "completed; generated schema aliases in directory-contract.ts",
+      "migration_followup": "model parity and actual PostgreSQL migrations passed",
       "scope": "online company/fleet management engineering subpackage; canonical S1/regulatory/operational role acceptance remains open",
       "implementation_checkpoint": "33b08929d2b81f2ef97b4537166609e9c6ec3f19"
     }
@@ -2343,10 +2380,10 @@
   "current_package": {
     "task": "DIR-WORKSPACE-01",
     "branch": "feature/directory-workspace",
-    "state": "in development; implementation prepared; NOT RUN; parent integrated gate pending",
+    "state": "integrated local gate passed; exact-commit independent QA pending",
     "report": "docs/phases/DIR-WORKSPACE-01.md",
     "contract": "docs/tasks/directory-workspace-01.md",
     "canonical_acceptance_changed": false,
-    "publication": "no push, PR or merge authorized"
+    "publication": "deferred by user until coherent product batch; no push/PR yet"
   }
 }

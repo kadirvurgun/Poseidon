@@ -11,6 +11,21 @@
 
 ## Hedef akış
 
+### Etkin teslim biçimi — 01.11.2026 kullanıcı kararı
+
+Küçük görev başına ayrı PR yerine, kullanılabilir ve bütünlüklü ürün paketleri
+hazırlanır. Backend, UI, migration ve anlamlı test dosyaları birlikte yazılır;
+paket tamamlanana kadar test/build ve otomatik push/PR başlatılmaz. Yerel commit
+kontrol noktasıdır, doğrulama veya kabul değildir. Paket bitince entegre kapı,
+bağımsız hedef-commit QA ve gereken push/PR CI uygulanır; ancak sonra merge edilir.
+Bu tercih testleri atlamaz veya merge kapısını kaldırmaz.
+
+DIR-WORKSPACE-01 sırasında küçük görevleri tek tek yayımlayan geliştirme/publish
+sürücüsü durduruldu; hazırlanmış S0 tehdit-modeli taslağı aynı ürün dalına korundu.
+Saatlik kota/metadata izleme ayrı kalır. Geliştirme Esra profilinde yürütülür;
+Kadir yalnız doğrulanmış Esra kota sınırı ve kendi uygun kotasıyla yedektir.
+Yeni küçük PR açan döngü, bu teslim tercihine uyarlanmadan yeniden etkinleştirilmez.
+
 Koordinatör → hazır görev → role özel worktree → geliştirici ve testleri → bağımsız QA → commit/push → PR → tam gereken CI → merge → sonraki görev.
 
 Koordinatör kalıcı görev kuyruğu ve lease tutar. Her görev requirement ID, kaynak sürümü/bölümü, kabul kriterleri, bağımlılıklar, rol, branch, doğrulama komutları ve faz taşır. Geliştirici kendi görevini tek başına kabul edemez. UI geliştirici contract üzerinden çalışır; backend geliştirici API değişikliğini ve consumer etkisini birlikte ele alır.
