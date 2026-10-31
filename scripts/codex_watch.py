@@ -53,6 +53,9 @@ class Watch:
             previous = {}
         profiles = {}
         for profile in PROFILES:
+            if isinstance(self.workers, Workers) and not self.workers.enabled(profile):
+                profiles[profile] = {'profile': profile, 'state': 'disabled', 'ready': False}
+                continue
             try:
                 with exclusive(self.workers.home(profile) / 'worker.lock'):
                     profiles[profile] = safe_status(profile, self.workers.account(profile))
@@ -75,6 +78,13 @@ class Watch:
         now = self.wall()
         snapshot = {'timestamp': timestamp(now), 'next_check': timestamp(now + INTERVAL), 'profiles': profiles,
                     'selected': next((p for p in PROFILES if profiles[p]['ready']), None)}
+        if self.workers.config.get('routing_policy') == 'esra_until_quota':
+            primary = profiles['esra-pro']
+            blocked_by_quota = (primary['state'] == 'known' and primary.get('authenticated') is True
+                and primary.get('plan_matches') is True and primary.get('limits_known') is True
+                and any(w.get('usedPercent', 0) >= RESERVE for w in primary.get('windows', [])))
+            snapshot['selected'] = ('esra-pro' if primary['ready'] else 'kadir-plus'
+                if blocked_by_quota and profiles['kadir-plus']['ready'] else None)
         write_json(self.workers.runtime / 'quota.json', snapshot)
         return snapshot
 

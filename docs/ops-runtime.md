@@ -30,7 +30,9 @@ including a short window while a weekly window still blocks. Task completion
 also prompts a fresh measurement before the next hourly check. It starts no model turn. A reset alarm is
 an observation, never proof that weekly quota has recovered. Each profile must
 independently have fresh, known metadata with **every** window below 85%.
-Esra remains the development preference and Kadir the QA preference. The
+Esra is primary for both development and QA. Kadir is considered only after
+Esra has verified quota at/above the 85% reserve; busy/unknown metadata never
+authorizes fallback. Each profile still needs its own eligible quota. The
 [model policy](model-policy.md) pins model/effort per task and review risk; the
 actual selection is recorded before each model dispatch. Profile locks
 cover metadata and CLI use; another account can run only on its own eligible

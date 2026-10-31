@@ -3,6 +3,11 @@
 Kaynak: kullanıcının 31.10.2026 model maliyeti ve hız talebi; OPS-MODEL-01.
 Çalıştırıcı [politikayı](../automation/model-policy.json) açıkça uygular.
 
+Son hesap yönlendirme kararı: geliştirme ve QA dahil **önce Esra Pro**.
+Kadir Plus yalnız Esra'nın doğrulanmış bütün metadata koşulları sağlanırken
+kota penceresi %85 rezerv sınırına ulaştığında, kendi kotası uygunsa kullanılır.
+Esra meşgul/kimliği veya bağlantısı belirsizken Kadir'e geçilmez.
+
 | İş | Model | Düşünme düzeyi |
 | --- | --- | --- |
 | Dar kapsamlı rutin düzenleme, test yazımı, rutin bağımsız QA | GPT-6 Luna | medium |

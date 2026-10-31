@@ -145,6 +145,9 @@ class Workers:
             raise ValueError('Unknown account profile.')
         return self.home_root / profile
 
+    def enabled(self, profile):
+        return self.profiles[profile].get('enabled', True) is True
+
     def initialize(self):
         for profile in self.profiles:
             home = self.home(profile)
@@ -297,6 +300,8 @@ class Workers:
             raise WorkerStillRunningError('Worker termination failed. Keep locks and reconcile the process tree.') from None
 
     def execute(self, profile, worktree, prompt):
+        if not self.enabled(profile):
+            raise RuntimeError('Account disabled by operator policy; no model dispatched.')
         kwargs = {'creationflags': subprocess.CREATE_NEW_PROCESS_GROUP} if os.name == 'nt' else {'start_new_session': True}
         process = subprocess.Popen(self.command() + ['-C', str(worktree), '-a', 'never', 'exec', '-s', 'danger-full-access', '--json', '-'],
                                    env=self.environment(profile), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
@@ -337,6 +342,9 @@ class Workers:
         return self.dispatch(directory, None, preferred or next(iter(self.profiles)))
 
     def dispatch(self, directory, state, preferred, *, single_account=False, eligibility=None):
+        primary_only = self.config.get('routing_policy') == 'esra_until_quota'
+        if primary_only:
+            preferred = 'esra-pro'
         order = [preferred] + ([] if single_account else [profile for profile in self.profiles if profile != preferred])
         task = (directory / 'task.md').read_text(encoding='utf-8')
         with exclusive(directory / 'job.lock'):
@@ -345,11 +353,20 @@ class Workers:
                 if state['status'] not in {'waiting_for_quota', 'waiting_for_account'}:
                     raise ValueError('Only quota/account-waiting jobs may automatically resume. Reconcile other failures first.')
             attempt_start = len(state['attempts'])
+            fallback_allowed = not primary_only
             for profile in order[:self.config['max_accounts_per_attempt']]:
+                if primary_only and profile == 'kadir-plus' and not fallback_allowed:
+                    break
+                if not self.enabled(profile):
+                    continue
                 try:
                     with exclusive(self.home(profile) / 'worker.lock'):
                         status = self.account(profile)
                         if not status['ready'] or (eligibility is not None and not eligibility(status)):
+                            if primary_only and profile == 'esra-pro':
+                                fallback_allowed = (all(status.get(k) is True for k in ('authenticated', 'plan_matches', 'limits_known'))
+                                    and any(type(window.get('usedPercent')) in (int, float) and window['usedPercent'] >= 85
+                                            for window in status.get('windows', []) if isinstance(window, dict)))
                             state['attempts'].append({'profile': profile, 'result': 'quota' if status['exhausted'] else 'account-unavailable'})
                             continue
                         state['status'] = 'running'
@@ -364,6 +381,8 @@ class Workers:
                         write_json(directory / 'state.json', state)
                         if result != 'quota':
                             return state
+                        if primary_only:
+                            fallback_allowed = True
                 except BusyError:
                     state['attempts'].append({'profile': profile, 'result': 'busy'})
                 except WorkerStillRunningError:

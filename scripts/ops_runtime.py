@@ -18,7 +18,7 @@ from model_policy import ModelPolicy, ModelPolicyError
 
 STATUSES = {'unknown', 'known', 'busy', 'unavailable', 'reconcile_required', 'monitoring', 'idle',
     'running', 'finished', 'queued', 'developing', 'verifying', 'awaiting_qa', 'awaiting_ci',
-    'merged', 'blocked', 'waiting_for_account', 'waiting_for_quota', 'reconciliation_required', 'produced', 'failed', 'timeout'}
+    'merged', 'blocked', 'waiting_for_account', 'waiting_for_quota', 'reconciliation_required', 'produced', 'failed', 'timeout', 'disabled'}
 PHASES = {'development', 'independent_qa', 'developer', 'qa', 'backend', 'ui', 'unknown', 'routine', 'test-writing', 'security_qa'}
 REASONS = {'qa_used_tools', 'qa_unknown_startup_error', 'qa_unknown_or_error_event', 'qa_invalid_event_stream',
     'independent_qa_rejected_or_invalid', 'qa_waiting_for_account', 'window_call_budget_wait',
@@ -117,7 +117,7 @@ class Store:
         profiles, alarms = {}, []
         for profile in PROFILES:
             item = mapping(mapping(raw.get('profiles')).get(profile))
-            state = choice(item.get('state'), {'known', 'busy', 'unavailable', 'reconcile_required'}, 'unavailable')
+            state = choice(item.get('state'), {'known', 'busy', 'unavailable', 'reconcile_required', 'disabled'}, 'unavailable')
             if not fresh:
                 state = 'unavailable'
             ws = windows(item.get('windows'))
@@ -223,6 +223,14 @@ class Store:
                 wait['resumeAt'] = state['deadline']
             alarms.append(wait)
         service_status = service.get('status')
+        routing = load(self.root / 'automation/codex-accounts.json').get('routing_policy')
+        selected = next((p for p in PROFILES if profiles[p]['ready']), None)
+        if routing == 'esra_until_quota':
+            primary = profiles['esra-pro']
+            quota_blocked = (primary['state'] == 'known'
+                and any(w.get('usedPercent', 0) >= 85 for w in primary.get('windows', [])))
+            selected = ('esra-pro' if primary['ready'] else 'kadir-plus'
+                        if quota_blocked and profiles['kadir-plus']['ready'] else None)
         coordinator = {'enabled': service.get('enabled') is True,
             'status': choice(service_status, STATUSES | REASONS),
             'modelCalls': state.get('model_calls', 0) if number(state.get('model_calls', 0)) else 0,
@@ -236,7 +244,7 @@ class Store:
         except ModelPolicyError:
             pass
         return {'schemaVersion': 1, 'generatedAt': iso(now), **policy,
-            'quota': {'timestamp': stamp, 'next_check': next_check, 'selected': next((p for p in PROFILES if profiles[p]['ready']), None), 'profiles': profiles},
+            'quota': {'timestamp': stamp, 'next_check': next_check, 'selected': selected, 'profiles': profiles},
             'coordinator': coordinator, 'activities': activities, 'events': self.events(), 'alarms': alarms, 'project': progress}
 
     def events(self):

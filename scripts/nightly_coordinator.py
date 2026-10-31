@@ -271,7 +271,14 @@ class Coordinator:
 
     @contextmanager
     def account(self, preferred):
-        for profile in (preferred, *[p for p in ('esra-pro', 'kadir-plus') if p != preferred]):
+        primary_only = self.workers.config.get('routing_policy') == 'esra_until_quota'
+        order = ('esra-pro', 'kadir-plus') if primary_only else (preferred, *[p for p in ('esra-pro', 'kadir-plus') if p != preferred])
+        fallback_allowed = not primary_only
+        for profile in order:
+            if primary_only and profile == 'kadir-plus' and not fallback_allowed:
+                break
+            if isinstance(self.workers, Workers) and not self.workers.enabled(profile):
+                continue
             with ExitStack() as locks:
                 try:
                     locks.enter_context(exclusive(self.workers.home(profile) / 'worker.lock'))
@@ -282,6 +289,11 @@ class Coordinator:
                 except RuntimeError:
                     continue  # This profile is unverified; check only the other's own quota.
                 if not eligible(status):
+                    if primary_only and profile == 'esra-pro':
+                        fallback_allowed = (all(status.get(k) is True for k in ('authenticated', 'plan_matches', 'limits_known'))
+                            and isinstance(status.get('windows'), list) and bool(status['windows'])
+                            and any(type(w.get('usedPercent')) in (int, float) and math.isfinite(w['usedPercent'])
+                                    and w['usedPercent'] >= 85 for w in status['windows'] if isinstance(w, dict)))
                     continue
                 yield profile
                 return
@@ -511,6 +523,8 @@ class Coordinator:
             raise Blocked('reviewed_head_or_worktree_changed')
 
     def review_cli(self, profile, prompt):
+        if isinstance(self.workers, Workers) and not self.workers.enabled(profile):
+            raise Blocked('account_disabled_by_operator')
         # Fresh read-only process; shell/apply-patch and MCP disabled. Reject all tool events as well.
         command = self.workers.command() + ['-C', self.job['worktree'], '-a', 'never',
                     '-c', 'features.shell_tool=false', '-c', 'features.apply_patch_freeform=false',
