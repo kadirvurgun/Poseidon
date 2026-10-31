@@ -27,12 +27,12 @@ export function RequiredDataField(props: Props) {
         aria-invalid={props.error} aria-describedby={props.error ? `${id}-error` : undefined}
         onChange={e => props.onChange({ state: 'Known', value: e.target.value === '' ? null : e.target.value === 'true' })}>
         <option value="">{tr ? 'Seçiniz' : 'Choose'}</option><option value="true">{tr ? 'Evet' : 'Yes'}</option><option value="false">{tr ? 'Hayır' : 'No'}</option>
-      </select> : <input id={id} type={props.kind === 'number' ? 'number' : 'text'} step={props.kind === 'number' ? 'any' : undefined}
-        maxLength={props.kind === 'text' ? 500 : undefined} value={props.value.value ?? ''} disabled={props.disabled || state !== 'Known'}
+      </select> : <input id={id} type="text" inputMode={props.kind === 'number' ? 'decimal' : undefined}
+        maxLength={props.kind === 'text' ? 500 : 59} value={props.value.value ?? ''} disabled={props.disabled || state !== 'Known'}
         aria-invalid={props.error} aria-describedby={props.error ? `${id}-error` : undefined}
         onChange={e => {
           if (props.kind === 'text') props.onChange({ state: 'Known', value: e.target.value })
-          else props.onChange({ state: 'Known', value: e.target.value === '' ? null : Number(e.target.value) })
+          else props.onChange({ state: 'Known', value: e.target.value === '' ? null : e.target.value })
         }} />}
     </div>
     {props.error && <p id={`${id}-error`} className="field-error">{tr ? 'Değeri ve bilgi durumunu kontrol edin.' : 'Check the value and data state.'}</p>}

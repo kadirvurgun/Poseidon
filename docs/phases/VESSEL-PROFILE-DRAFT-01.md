@@ -1,8 +1,8 @@
 # VESSEL-PROFILE-DRAFT-01 — local engineering package
 
-Status: local integrated developer gate passed, **not accepted**. Independent target-commit QA is a separate later gate. No push, PR, merge, expert approval or canonical screen acceptance is authorized for this worker.
+Status: QA repair locally validated after rejected07125a0, **not accepted**. Independent target-commit QA is a separate later gate. No push, PR, merge, expert approval or canonical screen acceptance is authorized for this worker.
 
-Baseline: clean isolated branch `agents/9ff6b20f711a4809a7bf5a1a3ced7172` at `abd9445`. No prior partial edits were present. DIR evidence is historical local evidence: 98 backend / 63 React / 16 Playwright / 127 Python, then deterministic no-op repair `2443596` and documented API51 PASS in `abd9445`. Initial independent review rejected `e7d5b83`; fresh independent review remains pending. These counts do not verify this package.
+Baseline: clean isolated branch `agents/9ff6b20f711a4809a7bf5a1a3ced7172` at `abd9445`. No prior partial edits were present. DIR evidence is historical local evidence: 98 backend / 63 React / 16 Playwright / 127 Python, then deterministic no-op repair `2443596` and documented API51 PASS in `abd9445`. Initial independent review rejected `e7d5b83`; the subsequent `abd9445` package was independently approved (historical DIR review). These counts do not verify this package.
 
 ## Controlled source and scope
 
@@ -122,3 +122,42 @@ Local derived logs: `.runtime/profile-{domain,persistence,api,api-final,react,br
 Unresolved: `npm ci` reports13 moderate frontend advisories with existing pinned dependencies (browser installation reports0). No new npm dependencies or forced upgrades were introduced; dependency remediation/release review remains open. All canonical dependencies, lookup/role/mandatory/lifecycle/expert gates remain open. This is local developer validation only.
 
 Current phase: coherent local draft-profile package, canonical S0 exits and S2 acceptance OPEN. Canonical progress unchanged: **8/970 SP=0.82%; 2/121 tasks; 0/196 screens**. Canonical dependencies, operational role catalogs, approved lookups, human mandatory/lifecycle decisions and real IdP/TLS remain OPEN. Next: independent QA of the final local target commit by coordinator; no self-acceptance. Publishing/merge remains with coordinator and outside this worker's instruction.
+
+
+## QA repair of 07125a0 — authored package
+
+Independent QA rejected 07125a01870f147e7b914ac133efd14955ec87a4: (1) JavaScript Number corrupted regulatory decimals during decode/input/unrelated save; (2) current-profile validation was incomplete and paginated history was unvalidated. This repair addresses both under the same DEV-020/DEV-021, POL-DEFAULT-01 and FR/TC field locators above. Fresh independent target-commit QA is pending; NOT ACCEPTED.
+
+Compatibility decision: the endpoint remains unpublished. Known measurements now require invariant **JSON strings**, including commands, current responses, history and generated OpenAPI consumers. Numeric JSON commands are rejected, rather than accepted after a lossy browser conversion. There is no mixed string/number wire union. No old-client or in-flight prepublication command compatibility is promised; old numeric-wire commands/receipts must not be reused by new clients. Existing stored numeric JSON is decoded from its exact raw token and emitted as strings, without altering immutable revisions. New writes store canonical strings. No schema/entity/seed/source changes or dependencies are needed.
+
+Decimal grammar is ASCII digits with an optional dot and nonempty fraction, 1–59 characters; signs, whitespace, exponents, separators and nonfinite values are rejected. Leading integer zeros and trailing fractional zeros normalize away (zero remains Known). After normalization scale must be <=28 and the unscaled coefficient <=79228162514264337593543950335. Validation precedes decimal parsing to prevent rounding; canonical strings drive storage and command fingerprints. Equivalent decimal spellings replay the same command; changed exact values conflict. RequiredDataField number mode is a reusable text/inputMode=decimal editor and carries exact strings, including partially typed invalid values until server validation.
+
+Consumer validation checks untrusted current/history JSON before rendering: nonempty GUID tenant/vessel/company, bounded directory metadata, uint versions/safe integer revisions, saved/absent metadata consistency, only server provenance states, full fixed field collection, state/value pairs, text/control limits, exact decimals, seven ASCII IMO digits, real calendar dates and explicit timezone timestamps (calendar checked before Date.parse). History enforces echoed bounded pagination, page size/hasMore consistency, positive descending unique revisions and all revision content/metadata. Invalid data yields ApiError(502, invalid_contract). History retries remain available with dirty local edits and do not reload the form.
+
+Authored regressions include Domain exact decimal bounds; real API/PostgreSQL exact values, raw string storage, unrelated saves, normalized replay/different-key-payload denial, legacy numeric history decoding and invalid wire no-effects; React transport/editor/high precision/history/retry and current/history malformed matrices; desktop/mobile browser synthetic routed editor save plus delayed malformed-history recovery. Browser auth remains mocked; actual API/OIDC fixture coverage is separate.
+
+All coherent repair code and regression tests were authored before the checks below. Subsequent lint/test corrections and review hardening were rerun; no tests were skipped, deleted or weakened.
+
+| Repair gate | Actual final result |
+|---|---|
+| Tool restore / locked solution restore | PASS; unchanged dependencies and locks |
+| Release build after actual export | PASS;0 warnings/errors |
+| Domain full MTP suite |46 PASS /0 failed /0 skipped;3.691s |
+| Persistence full MTP suite, actual PostgreSQL |25 PASS /0 failed /0 skipped;1m45.188s |
+| API full MTP suite, PostgreSQL/OIDC/strict OpenAPI parity |67 PASS /0 failed /0 skipped;4m11.723s |
+| EF model parity with explicit context |PASS;no pending model changes |
+| React full suite |136 PASS /0 failed /0 skipped;19.11s |
+| Frontend lint/typecheck/production build |PASS |
+| Actual Development host OpenAPI export |PASS;5286 task-owned host stopped before rebuild |
+| Generated TypeScript parity |PASS;generated via locked openapi-typescript;unchanged on regeneration |
+| Desktop/mobile Chromium final bundle |18 PASS /0 failed /0 skipped;36.2s |
+| Python/source gates |Retained prior07125a0 exact evidence:127 Python PASS;269 files/34,958 chunks/0 mismatches. Not rerun: git confirms scripts/source artifacts unchanged, with no dependency changes |
+| Host cleanup |PASS;no listeners on task ports5286/5288/4288 |
+| Graphify final AST update |PASS;no topology changes;2795 nodes/4319 edges/233 communities. Tool warns9 existing config/data files yield zero nodes;no model call |
+| Whitespace |PASS;git diff --check |
+
+Commands are the same actual.NET10 MTP/EF/frontend commands in Integrated gate above, with logs prefixed `.runtime/repair-`. No VSTest flags were used. Additional parity command reruns `npm run generate:api --prefix frontend` and checks unchanged generated file hash. Final frontend logs: `repair-{typecheck,lint,react,ui-build}-final2.log`; backend `repair-{domain,persistence,api,ef,final-build,restore}.log`; browser `repair-browser-final.log`; export/generation `repair-{export-host,generate,generation-parity}.log`. Local ignored logs contain diagnostics, not independent approval.
+
+Initial repair verification findings: lint disallowed a control-character regex, so the existing character-code check style was used (no rule suppression). React initially131 PASS/1 FAIL: the new precision test incorrectly expected a Missing flag after deliberately changing it to Unknown. The expected flag was corrected; exact-decimal assertions remained intact. Full rerun132 PASS. Review then removed kind coercion (a malformed object could throw), required full GUID/timestamp strings and rejected decimal trailing newline; corresponding regressions raised the final full run to136 PASS. Final browser rerun used the rebuilt hardened bundle; initial browser18 PASS/41.2s is superseded by final18 PASS/36.2s.
+
+Current phase: local coherent repair package ready for independent target-commit QA, **NOT ACCEPTED**. Original07125a0 independent rejection remains recorded; it is not replaced by self-approval. Historical abd9445 DIR package had independent approval. Canonical progress stays8/970 SP (0.82%),2/121 tasks,0/196 screens. Unresolved gates: fresh repair QA; existing13 moderate frontend advisories; canonical S0/S2 dependencies, operational roles, approved lookups, mandatory/lifecycle decisions, real external IdP/TLS browser acceptance and human expert approvals. Next: coordinator obtains independent QA and handles any later publication/merge. No push/PR/merge performed.

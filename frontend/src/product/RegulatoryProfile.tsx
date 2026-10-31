@@ -108,7 +108,7 @@ export function RegulatoryProfile({ id, language, csrf, onDirty, onSaving }: Pro
         {profile.vessel.canEdit && <div className="form-actions"><button type="submit" className="primary-button" disabled={saving || failure?.code === 'version_conflict'}>{saving ? t.saving : uncertain ? t.retry : t.save}</button></div>}
       </form>
       <h3>{t.history}</h3>
-      {historyFailure ? <div role="alert">{t.failed}<button onClick={() => setHistoryAttempt(v => v + 1)} disabled={dirty || saving || uncertain}>{t.reloadRead}</button></div> : !history ? <p role="status">{t.loading}</p> : <>
+      {historyFailure ? <div role="alert">{t.failed}<button onClick={() => setHistoryAttempt(v => v + 1)} disabled={saving || uncertain}>{t.reloadRead}</button></div> : !history ? <p role="status">{t.loading}</p> : <>
         {!history.items.length && <p>{t.noHistory}</p>}
         {history.items.map(row => <details key={row.revision}><summary>{t.revision} {row.revision} · {row.savedAt} · {provenance(row.provenance)}</summary>
           <dl>{profileFields.map(([key, , tr, en]) => <div key={key}><dt>{language === 'tr' ? tr : en}</dt><dd>{row.content[key]?.state === 'Known' ? String(row.content[key]?.value) : row.content[key]?.state === 'Unknown' ? t.unknown : (language === 'tr' ? 'Eksik' : 'Missing')}</dd></div>)}</dl></details>)}

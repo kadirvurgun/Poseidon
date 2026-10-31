@@ -6,7 +6,9 @@ namespace Poseidon.Domain;
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record TextInput(string State = "Missing", string? Value = null);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
-public sealed record NumberInput(string State = "Missing", decimal? Value = null);
+public sealed record NumberInput(string State = "Missing",
+    [property: System.ComponentModel.Description("Invariant nonnegative decimal string; ASCII digits with optional fraction, max 59 characters, scale <=28 after trailing-zero normalization, coefficient <=79228162514264337593543950335. No exponent, sign, whitespace or rounding. Null for Missing/Unknown.")]
+    string? Value = null);
 
 // Fixed source-backed fields; no client-supplied field definitions or mandatory/catalog policy.
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
@@ -55,8 +57,10 @@ public static class RegulatoryDraftPolicy
             if (value is null || value.State is not ("Missing" or "Unknown" or "Known") ||
                 (value.State == "Known" ? value.Value == null : value.Value != null))
             { errors[key] = ["invalid_state_value"]; return new(); }
-            if (value.Value < 0) errors[key] = ["non_negative_required"];
-            return value;
+            if (value.State != "Known") return value;
+            if (!InvariantDecimal.TryNormalize(value.Value, out var canonical))
+            { errors[key] = ["invalid_non_negative_decimal"]; return value; }
+            return value with { Value = canonical };
         }
         var result = input with
         {
@@ -76,6 +80,7 @@ public static class RegulatoryDraftPolicy
         {
             var timestamp = result.SourceObservedAt.Value!;
             if (!(timestamp.EndsWith('Z') || (timestamp.Length >= 6 && timestamp[^3] == ':' && timestamp[^6] is '+' or '-')) ||
+                !System.Text.RegularExpressions.Regex.IsMatch(timestamp, @"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,7})?(?:Z|[+-]\d{2}:\d{2})$", System.Text.RegularExpressions.RegexOptions.ECMAScript) ||
                 !DateTimeOffset.TryParse(timestamp, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsed))
                 errors["sourceObservedAt"] = ["offset_timestamp_required"];
             else result = result with { SourceObservedAt = new("Known", parsed.ToUniversalTime().ToString("O")) };

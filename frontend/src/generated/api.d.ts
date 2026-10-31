@@ -225,8 +225,8 @@ export interface components {
         NumberInput: {
             /** @default Missing */
             state: string;
-            /** Format: double */
-            value?: null | number | string;
+            /** @description Invariant nonnegative decimal string; ASCII digits with optional fraction, max 59 characters, scale <=28 after trailing-zero normalization, coefficient <=79228162514264337593543950335. No exponent, sign, whitespace or rounding. Null for Missing/Unknown. */
+            value?: null | string;
         };
         PageDtoOfCompanyDto: {
             items: components["schemas"]["CompanyDto"][];

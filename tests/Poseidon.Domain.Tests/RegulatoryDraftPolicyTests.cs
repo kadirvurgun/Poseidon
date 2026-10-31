@@ -10,11 +10,11 @@ public sealed class RegulatoryDraftPolicyTests
     {
         var (draft, errors) = RegulatoryDraftPolicy.Normalize(new()
         {
-            Imo = new("Known", "   "), Flag = new("Unknown"), Gt = new("Known", 0),
+            Imo = new("Known", "   "), Flag = new("Unknown"), Gt = new("Known", "0"),
             SourceObservedAt = new("Unknown")
         });
         Assert.Empty(errors); Assert.Equal("Missing", draft.Imo.State); Assert.Null(draft.Imo.Value);
-        Assert.Equal("Unknown", draft.Flag.State); Assert.Equal(0, draft.Gt.Value);
+        Assert.Equal("Unknown", draft.Flag.State); Assert.Equal("0", draft.Gt.Value);
         Assert.Equal("Known", draft.Gt.State); Assert.Equal("Unknown", draft.SourceObservedAt.State);
     }
 
@@ -33,7 +33,7 @@ public sealed class RegulatoryDraftPolicyTests
     {
         var (_, errors) = RegulatoryDraftPolicy.Normalize(new()
         {
-            Imo = new("Known", "ABC1234"), Gt = new("Known", -1), Nt = new("Known"),
+            Imo = new("Known", "ABC1234"), Gt = new("Known", "-1"), Nt = new("Known"),
             BuildDate = new("Known", "2025-02-30"), SourceObservedAt = new("Known", "2020-01-01T00:00:00"),
             ClassSociety = new("Known", new string('a', 501)), Declaration = new("Known", "bad\u0001text")
         });
@@ -45,5 +45,32 @@ public sealed class RegulatoryDraftPolicyTests
         });
         Assert.Empty(noErrors); Assert.Equal("0000000", valid.Imo.Value);
         Assert.Equal("2001-01-01T00:00:00.0000000+00:00", valid.SourceObservedAt.Value);
+    }
+
+    [Theory]
+    [InlineData("9007199254740993", "9007199254740993")]
+    [InlineData("0.1234567890123456789012345678", "0.1234567890123456789012345678")]
+    [InlineData("79228162514264337593543950335", "79228162514264337593543950335")]
+    [InlineData("7.9228162514264337593543950335", "7.9228162514264337593543950335")]
+    [InlineData("000.000", "0")]
+    [InlineData("001.2300", "1.23")]
+    public void Exact_decimal_normalization(string input, string expected)
+    {
+        var (draft, errors) = RegulatoryDraftPolicy.Normalize(new() { Gt = new("Known", input) });
+        Assert.Empty(errors); Assert.Equal(expected, draft.Gt.Value);
+    }
+
+    [Theory]
+    [InlineData("-1")][InlineData("+1")][InlineData("1e3")][InlineData("1,2")]
+    [InlineData(".1")][InlineData("1.")][InlineData(" 1")][InlineData("NaN")]
+    [InlineData("79228162514264337593543950336")]
+    [InlineData("0.12345678901234567890123456789")]
+    [InlineData("7.9228162514264337593543950336")]
+    [InlineData("0.00000000000000000000000000001")]
+    [InlineData("000000000000000000000000000000000000000000000000000000000000")]
+    public void Decimal_rejects_malformed_overflow_and_rounding(string input)
+    {
+        var (_, errors) = RegulatoryDraftPolicy.Normalize(new() { Gt = new("Known", input) });
+        Assert.Contains("gt", errors.Keys);
     }
 }

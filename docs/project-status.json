@@ -2384,14 +2384,14 @@
     "task": "VESSEL-PROFILE-DRAFT-01",
     "branch": "agents/9ff6b20f711a4809a7bf5a1a3ced7172",
     "baseline": "abd9445",
-    "state": "local integrated developer gate passed; independent target-commit QA pending; NOT ACCEPTED",
+    "state": "QA repair locally validated; fresh independent target-commit QA pending; NOT ACCEPTED",
     "report": "docs/phases/VESSEL-PROFILE-DRAFT-01.md",
     "canonical_acceptance_changed": false,
     "publication": "prohibited for this worker; local commits only; coordinator owns publication/merge",
     "implementation_checkpoint": "40e5a11",
     "verification": {
       "domain": {
-        "passed": 27,
+        "passed": 46,
         "failed": 0,
         "skipped": 0
       },
@@ -2401,44 +2401,51 @@
         "skipped": 0
       },
       "api": {
-        "passed": 65,
+        "passed": 67,
         "failed": 0,
         "skipped": 0,
-        "duration": "2m42.739s",
-        "initial": "63 passed / 2 timestamp precision equality failures; corrected production precision; assertions retained"
+        "duration": "4m11.723s",
+        "initial": "No API failures in repair gate; prior package timestamp failures remain historical"
       },
-      "backend_total": 117,
+      "backend_total": 138,
       "react": {
-        "passed": 76,
+        "passed": 136,
         "failed": 0,
-        "skipped": 0
+        "skipped": 0,
+        "initial": "131 passed/1 failed: new test expected Missing flag after deliberately changing it to Unknown; expectation corrected, decimal assertions retained. Then132 passed; final hardening regressions136 passed."
       },
       "playwright": {
-        "passed": 16,
+        "passed": 18,
         "failed": 0,
         "skipped": 0,
-        "scope": "4 real connection/retry + 6 mocked ops + 6 real anonymous/setup/keyboard; no external IdP browser claim"
+        "scope": "4 real connection/retry +6 mocked ops +6 real anonymous/setup/keyboard +2 routed synthetic profile repair; no external IdP browser claim",
+        "duration": "36.2s"
       },
       "python": {
         "passed": 127,
         "failed": 0,
-        "skipped": 0
+        "skipped": 0,
+        "evidence": "Retained unchanged prior07125a0 evidence (127 passed), not rerun; scripts/dependencies unchanged"
       },
       "release_build": "PASS; 0 warnings/errors",
-      "locked_restore": "PASS after updating project reference lock graph; 0 resolved package version changes",
+      "locked_restore": "PASS; locked restore; no dependency or package-lock changes",
       "lint": "PASS",
       "typecheck": "PASS",
       "frontend_build": "PASS",
       "ef_model_parity": "PASS",
-      "openapi": "actual built API export; generated TypeScript aliases; strict API snapshot PASS",
+      "openapi": "Actual built Development host export PASS; strict actual snapshot parity PASS within67/67 API suite; generated types unchanged on regeneration;host stopped",
       "source_verification": {
         "files": 269,
         "chunks": 34958,
         "mismatches": 0,
         "windows_extended_root": true,
-        "ordinary_path": "failed path length; no source changes"
+        "ordinary_path": "failed path length; no source changes",
+        "evidence": "Retained unchanged prior07125a0 evidence;269 files/34958 chunks/0 mismatches; source artifacts unchanged"
       },
-      "graphify": "AST update PASS;2774 nodes/4251 edges/226 communities;no model call"
+      "graphify": "PASS; final AST update no topology changes;2795 nodes/4319 edges/233 communities;9 existing config/data files yield zero nodes;no model call",
+      "logs": ".runtime/repair-*.log (local ignored diagnostics)",
+      "whitespace": "PASS;git diff --check",
+      "host_cleanup": "PASS;no task-owned listeners on5286/5288/4288"
     },
     "unresolved": [
       "Independent target-commit QA",
@@ -2447,6 +2454,22 @@
       "Approved lookups and mandatory/lifecycle policy",
       "Real IdP/TLS and authenticated external IdP browser gate",
       "Expert approvals and canonical acceptance"
-    ]
+    ],
+    "repair_baseline": "07125a01870f147e7b914ac133efd14955ec87a4",
+    "historical_dir_review": "abd9445 independently approved; does not approve profile package",
+    "previous_qa": {
+      "approved": false,
+      "commit": "07125a01870f147e7b914ac133efd14955ec87a4",
+      "issues": [
+        "JavaScript Number precision loss corrupts regulatory measurements",
+        "Incomplete current validation and unvalidated history responses"
+      ]
+    },
+    "repair_behavior": [
+      "Exact invariant decimal string wire/editor/storage/fingerprints; bounded normalization without rounding",
+      "Complete current/history runtime validation with safe invalid_contract errors and dirty-edit history retry",
+      "Actual host OpenAPI export and generated consumer contracts; legacy numeric storage exact-token reader"
+    ],
+    "next_step": "Coordinator obtains fresh independent QA of local repair commit; publishing/merge remains coordinator-owned"
   }
 }

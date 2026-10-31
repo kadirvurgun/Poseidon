@@ -30,14 +30,14 @@ public sealed partial class DirectoryWorkspaceTests
         await using var host = Host(); using var client = Client(host); await Token(client);
         var before = await Profile(client);
         var observed = "2001-01-01T00:00:00Z";
-        var content = new RegulatoryDraftContent { Imo = new("Known", "  "), Flag = new("Unknown"), Gt = new("Known", 0),
+        var content = new RegulatoryDraftContent { Imo = new("Known", "  "), Flag = new("Unknown"), Gt = new("Known", "0"),
             SourceObservedAt = new("Known", observed), SourceReference = new("Known", "Synthetic declaration source"), Declaration = new("Unknown") };
         var after = await SaveProfile(client, before, content);
         Assert.Equal(before.TenantId, after.TenantId); Assert.Equal(SeedVessel.Id, after.Vessel.Id);
         Assert.Equal(SeedVessel.Kind.ToString(), after.Vessel.Kind); Assert.True(after.Vessel.CanEdit);
         Assert.NotEqual(before.Version, after.Version); Assert.Equal(before.Revision + 1, after.Revision);
         Assert.Equal("DeclaredUnverified", after.Provenance); Assert.Equal("Unknown", after.Content.Flag.State);
-        Assert.Equal("Missing", after.Content.Imo.State); Assert.Equal(0, after.Content.Gt.Value); Assert.Equal("Known", after.Content.Gt.State);
+        Assert.Equal("Missing", after.Content.Imo.State); Assert.Equal("0", after.Content.Gt.Value); Assert.Equal("Known", after.Content.Gt.State);
         Assert.Equal(DateTimeOffset.Parse(observed), DateTimeOffset.Parse(after.Content.SourceObservedAt.Value!));
         Assert.True(after.SavedAt > DateTimeOffset.Parse(observed));
         var history = (await client.GetFromJsonAsync<PageDto<RegulatoryRevisionDto>>("/api/v1/" + ProfilePath(SeedVessel.Id) + "/history", Ct))!;
@@ -187,7 +187,7 @@ public sealed partial class DirectoryWorkspaceTests
     {
         await using var host = Host(); using var client = Client(host); await Token(client); var before = await Profile(client);
         foreach (var bad in new[] {
-            new RegulatoryDraftContent { Flag = new("Verified", "A") }, new() { Gt = new("Known", -1) },
+            new RegulatoryDraftContent { Flag = new("Verified", "A") }, new() { Gt = new("Known", "-1") },
             new() { Imo = new("Known", "bad") }, new() { SourceObservedAt = new("Known", "2020-01-01") },
             new() { Declaration = new("Known", new string('x', 501)) }, new() { Gt = null! }
         })
@@ -270,5 +270,53 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Equal(2, await db.RegulatoryDraftRevisions.CountAsync(x => x.VesselId == SeedVessel.Id, Ct));
         using var page = await client.GetAsync("/api/v1/" + ProfilePath(SeedVessel.Id) + "/history?limit=1", Ct);
         var result = (await page.Content.ReadFromJsonAsync<PageDto<RegulatoryRevisionDto>>(Ct))!; Assert.Single(result.Items); Assert.True(result.HasMore);
+    }
+
+    [Fact]
+    public async Task Exact_decimal_wire_storage_unrelated_save_history_and_normalized_replay()
+    {
+        await using var host = Host(); using var client = Client(host); await Token(client);
+        var before = await Profile(client); var key = Guid.NewGuid().ToString();
+        var content = before.Content with { Gt = new("Known", "9007199254740993"),
+            Nt = new("Known", "0.1234567890123456789012345678"), Dwt = new("Known", "79228162514264337593543950335"), Draft = new("Known", "0") };
+        var after = await SaveProfile(client, before, content, key);
+        Assert.Equal(content.Gt, after.Content.Gt); Assert.Equal(content.Nt, after.Content.Nt); Assert.Equal(content.Dwt, after.Content.Dwt);
+        var read = await Profile(client); Assert.Equal(after, read);
+        var unrelated = await SaveProfile(client, read, read.Content with { Flag = new("Unknown") });
+        Assert.Equal(content.Gt, unrelated.Content.Gt); Assert.Equal(content.Nt, unrelated.Content.Nt);
+        using var replay = await Send(client, ProfilePath(SeedVessel.Id), new SaveRegulatoryDraft(before.Version,
+            content with { Gt = new("Known", "09007199254740993.00") }), key, true);
+        Assert.Equal(HttpStatusCode.OK, replay.StatusCode);
+        Assert.Equal("true", Assert.Single(replay.Headers.GetValues("Idempotency-Replayed")));
+        Assert.Equal(unrelated, await replay.Content.ReadFromJsonAsync<RegulatoryDraftDto>(Ct));
+        using var reused = await Send(client, ProfilePath(SeedVessel.Id), new SaveRegulatoryDraft(before.Version,
+            content with { Gt = new("Known", "9007199254740992") }), key, true);
+        Assert.Equal(HttpStatusCode.Conflict, reused.StatusCode);
+        var history = (await client.GetFromJsonAsync<PageDto<RegulatoryRevisionDto>>("/api/v1/" + ProfilePath(SeedVessel.Id) + "/history", Ct))!;
+        Assert.Equal(content.Gt, history.Items[0].Content.Gt); Assert.Equal(content.Nt, history.Items[1].Content.Nt);
+        await using var db = Db();
+        var stored = await db.RegulatoryDrafts.SingleAsync(x => x.VesselId == SeedVessel.Id, Ct);
+        using var json = System.Text.Json.JsonDocument.Parse(stored.ContentJson);
+        Assert.Equal("9007199254740993", json.RootElement.GetProperty("gt").GetProperty("value").GetString());
+        Assert.Equal(3, await db.RegulatoryDraftRevisions.CountAsync(x => x.VesselId == SeedVessel.Id, Ct));
+        // Existing immutable numeric storage is read exactly, then emitted as strings.
+        var legacy = RegulatoryDraftStorage.Deserialize("{\"gt\":{\"state\":\"Known\",\"value\":9007199254740993},\"nt\":{\"state\":\"Known\",\"value\":0.1234567890123456789012345678}}");
+        Assert.Equal(content.Gt, legacy.Gt); Assert.Equal(content.Nt, legacy.Nt);
+    }
+
+    [Fact]
+    public async Task Decimal_invalid_wire_values_do_not_write_or_round()
+    {
+        await using var host = Host(); using var client = Client(host); await Token(client); var before = await Profile(client);
+        foreach (var value in new object[] { 9007199254740993L, -1, true, "-1", "1e3", "1,2", "1.", ".1", "+1", " 1", "NaN",
+            "79228162514264337593543950336", "0.12345678901234567890123456789", "7.9228162514264337593543950336", new string('0', 60) })
+        {
+            using var denied = await Send(client, ProfilePath(SeedVessel.Id), new { expectedVersion = before.Version,
+                content = new { gt = new { state = "Known", value } } }, update: true);
+            Assert.Equal(HttpStatusCode.BadRequest, denied.StatusCode);
+        }
+        Assert.Equal(before, await Profile(client));
+        await using var db = Db(); Assert.Empty(await db.CommandReceipts.ToArrayAsync(Ct));
+        Assert.Single(await db.RegulatoryDraftRevisions.Where(x => x.VesselId == SeedVessel.Id).ToArrayAsync(Ct));
     }
 }

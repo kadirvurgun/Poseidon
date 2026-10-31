@@ -1027,13 +1027,11 @@
             "default": "Missing"
           },
           "value": {
-            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
             "type": [
               "null",
-              "number",
               "string"
             ],
-            "format": "double"
+            "description": "Invariant nonnegative decimal string; ASCII digits with optional fraction, max 59 characters, scale <=28 after trailing-zero normalization, coefficient <=79228162514264337593543950335. No exponent, sign, whitespace or rounding. Null for Missing/Unknown."
           }
         },
         "additionalProperties": false

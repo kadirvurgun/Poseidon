@@ -5,13 +5,13 @@ import { useState } from 'react'
 import { RegulatoryProfile } from './RegulatoryProfile'
 import { RequiredDataField } from './RequiredDataField'
 import { ProductApp } from './ProductApp'
-import { loadProfile, saveProfile } from './profile-api'
+import { loadProfile, loadProfileHistory, saveProfile, validDecimal } from './profile-api'
 import { profileFields } from './profile-contract'
 import type { Profile, ProfileContent } from './profile-contract'
 
-const vessel = { id: 'vessel-one', companyId: 'company-one', code: 'S1', name: 'Synthetic Ship', kind: 'Ship', version: 7, canEdit: true }
+const vessel = { id: '10000000-0000-0000-0000-000000000001', companyId: '10000000-0000-0000-0000-000000000002', code: 'S1', name: 'Synthetic Ship', kind: 'Ship', version: 7, canEdit: true }
 const content = Object.fromEntries(profileFields.map(([key]) => [key, { state: 'Missing', value: null }])) as ProfileContent
-const profile = { tenantId: 'tenant-one', vessel, version: 19, revision: 1, savedAt: '2026-01-01T00:00:00Z', provenance: 'Synthetic', content } as Profile
+const profile = { tenantId: '10000000-0000-0000-0000-000000000003', vessel, version: 19, revision: 1, savedAt: '2026-01-01T00:00:00Z', provenance: 'Synthetic', content } as Profile
 const history = { items: [{ revision: 1, savedAt: profile.savedAt, provenance: 'Synthetic', content }], offset: 0, limit: 25, hasMore: false }
 const reply = (body: unknown, status = 200) => ({ ok: status >= 200 && status < 300, status, json: async () => body }) as Response
 const callbacks = () => ({ id: vessel.id, language: 'en' as const, csrf: 'synthetic-csrf', onDirty: vi.fn(), onSaving: vi.fn() })
@@ -25,7 +25,7 @@ describe('VESSEL-PROFILE-DRAFT-01 component and transport coverage (mocked API, 
   it('renders accessible draft fields, server context, unknown provenance and saved history without readiness', async () => {
     mock(); render(<RegulatoryProfile {...callbacks()} />)
     expect(screen.getAllByRole('status')[0]).toHaveTextContent('Loading profile')
-    expect(await screen.findByText(/tenant-one/)).toHaveTextContent('S1 · Synthetic Ship')
+    expect(await screen.findByText(/10000000-0000-0000-0000-000000000003/)).toHaveTextContent('S1 · Synthetic Ship')
     expect(screen.getByLabelText('GT')).toBeDisabled()
     expect(screen.getByLabelText('Flag — Data state')).toHaveValue('Missing')
     expect(screen.getByText(/Mandatory submission policy is unresolved/)).toBeVisible()
@@ -45,9 +45,9 @@ describe('VESSEL-PROFILE-DRAFT-01 component and transport coverage (mocked API, 
     await user.click(screen.getByRole('button', { name: 'Save draft' }))
     await screen.findByText('Draft saved.')
     const call = fetchMock.mock.calls.find(([, init]) => init?.method === 'PUT')!
-    expect(call[0]).toBe('/api/v1/vessels/vessel-one/regulatory-profile')
+    expect(call[0]).toBe('/api/v1/vessels/10000000-0000-0000-0000-000000000001/regulatory-profile')
     expect(call[1]).toMatchObject({ credentials: 'same-origin', method: 'PUT', headers: { 'X-CSRF-TOKEN': 'synthetic-csrf', 'Idempotency-Key': expect.any(String) } })
-    expect(JSON.parse(call[1].body as string)).toMatchObject({ expectedVersion: 19, content: { flag: { state: 'Unknown', value: null }, gt: { state: 'Known', value: 0 } } })
+    expect(JSON.parse(call[1].body as string)).toMatchObject({ expectedVersion: 19, content: { flag: { state: 'Unknown', value: null }, gt: { state: 'Known', value: '0' } } })
     expect(props.onDirty).toHaveBeenLastCalledWith(false)
   })
 
@@ -130,7 +130,7 @@ describe('VESSEL-PROFILE-DRAFT-01 component and transport coverage (mocked API, 
 
   it('opens from fleet details and guards vessel/tab navigation while a profile draft is dirty', async () => {
     vi.stubGlobal('fetch', vi.fn((url: string) => Promise.resolve(reply(url.includes('/auth/session') ?
-      { authenticated: true, canRead: true, canReadCompanies: false, canCreate: false, csrfToken: 'csrf', tenantId: 'tenant-one' } :
+      { authenticated: true, canRead: true, canReadCompanies: false, canCreate: false, csrfToken: 'csrf', tenantId: '10000000-0000-0000-0000-000000000003' } :
       url.includes('/history?') ? history : url.includes('/regulatory-profile') ? profile :
       url.includes('/vessels?') ? { items: [vessel], offset: 0, limit: 25, hasMore: false } : vessel))))
     const user = userEvent.setup(); render(<ProductApp />); await user.click(screen.getByRole('button', { name: 'EN' }))
@@ -140,5 +140,106 @@ describe('VESSEL-PROFILE-DRAFT-01 component and transport coverage (mocked API, 
     expect(screen.getByRole('dialog')).toBeVisible()
     expect(screen.getByLabelText('Flag — Data state')).toHaveValue('Unknown')
     const event = new Event('beforeunload', { cancelable: true }); window.dispatchEvent(event); expect(event.defaultPrevented).toBe(true)
+  })
+
+  it('preserves exact measurements on transport, unrelated save, typing, history and uncertain replay', async () => {
+    const precise = { ...content, gt: { state: 'Known', value: '9007199254740993' }, nt: { state: 'Known', value: '0.1234567890123456789012345678' } }
+    let lost = true
+    const fetchMock = vi.fn(async (url: string, init: RequestInit) => {
+      if (url.includes('/history?')) return reply({ ...history, items: [{ ...history.items[0], content: precise }] })
+      if (init?.method === 'PUT') {
+        if (lost) { lost = false; throw new TypeError('lost response') }
+        return reply({ ...profile, content: JSON.parse(init.body as string).content })
+      }
+      // Use real JSON decoding, so this would detect a numeric wire regression.
+      return new Response(JSON.stringify({ ...profile, content: precise }))
+    })
+    vi.stubGlobal('fetch', fetchMock)
+    const user = userEvent.setup(); render(<RegulatoryProfile {...callbacks()} />)
+    expect(await screen.findByLabelText('GT')).toHaveValue('9007199254740993')
+    await user.selectOptions(screen.getByLabelText('Flag — Data state'), 'Unknown')
+    await user.click(screen.getByRole('button', { name: 'Save draft' }))
+    await screen.findByText(/Fields are frozen/)
+    await user.click(screen.getByRole('button', { name: 'Retry same command' }))
+    await screen.findByText('Draft saved.')
+    const saves = fetchMock.mock.calls.filter(([, init]) => init?.method === 'PUT')
+    expect(saves[1][1].body).toBe(saves[0][1].body)
+    expect(JSON.parse(saves[0][1].body as string).content).toMatchObject({ ...precise, flag: { state: 'Unknown', value: null } })
+    await user.clear(screen.getByLabelText('GT'))
+    await user.type(screen.getByLabelText('GT'), '7.9228162514264337593543950335')
+    expect(screen.getByLabelText('GT')).toHaveValue('7.9228162514264337593543950335')
+    await user.click(screen.getByRole('button', { name: 'Save draft' })); await screen.findByText('Draft saved.')
+    const last = fetchMock.mock.calls.filter(([, init]) => init?.method === 'PUT').at(-1)!
+    expect(JSON.parse(last[1].body as string).content.gt.value).toBe('7.9228162514264337593543950335')
+    await user.click(screen.getByText(/Version 1 ·/))
+    expect(screen.getByText('9007199254740993')).toBeVisible()
+    expect(screen.getByText('0.1234567890123456789012345678')).toBeVisible()
+  })
+
+  const invalidFields = [
+    ['gt', { state: 'Known', value: '1\n' }], ['gt', { state: 'Known', value: '-1' }], ['gt', { state: 'Known', value: 9007199254740992 }],
+    ['gt', { state: 'Known', value: '79228162514264337593543950336' }],
+    ['nt', { state: 'Known', value: '0.12345678901234567890123456789' }],
+    ['gt', { state: 'Known', value: '1e2' }], ['gt', { state: 'Known', value: '' }],
+    ['flag', { state: 'Unknown', value: 'TR' }], ['flag', { state: 'Missing' }],
+    ['flag', { state: 'Verified', value: null }], ['flag', { state: 'Known', value: null }],
+    ['flag', { state: 'Known', value: 'x'.repeat(501) }], ['flag', { state: 'Known', value: 'bad\u0001' }],
+    ['imo', { state: 'Known', value: '１２３４５６７' }], ['imo', { state: 'Known', value: '123456' }],
+    ['buildDate', { state: 'Known', value: '2025-02-29' }], ['buildDate', { state: 'Known', value: '2024-04-31' }],
+    ['sourceObservedAt', { state: 'Known', value: '2024-02-30T00:00:00Z' }],
+    ['sourceObservedAt', { state: 'Known', value: '2024-01-01T00:00:00' }],
+    ['sourceObservedAt', { state: 'Known', value: '2024-01-01T24:00:00Z' }],
+    ['sourceObservedAt', { state: 'Known', value: '2024-01-01T00:00:00+14:01' }],
+  ] as const
+  it.each(invalidFields)('rejects invalid current AND history field %s %j', async (key, bad) => {
+    const badContent = { ...content, [key]: bad }
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => reply(url.includes('/history?') ?
+      { ...history, items: [{ ...history.items[0], content: badContent }] } : { ...profile, content: badContent })))
+    await expect(loadProfile(vessel.id, new AbortController().signal)).rejects.toMatchObject({ code: 'invalid_contract' })
+    await expect(loadProfileHistory(vessel.id, 0, new AbortController().signal)).rejects.toMatchObject({ code: 'invalid_contract' })
+  })
+  it.each([
+    { tenantId: 'invalid' }, { tenantId: profile.tenantId + '\n' }, { vessel: { ...vessel, kind: { toString: null } } }, { savedAt: profile.savedAt + '\n' }, { vessel: { ...vessel, companyId: null } }, { vessel: { ...vessel, name: 12 } },
+    { version: 4294967296 }, { revision: 1.5 }, { revision: Number.MAX_SAFE_INTEGER + 1 },
+    { savedAt: null }, { savedAt: '2025-02-30T00:00:00Z' }, { provenance: 'Verified' },
+    { content: {} }, { content: null }, { content: { ...content, gt: null } },
+    { revision: 0, version: 19, savedAt: null },
+  ])('rejects malformed current metadata/content %j without displaying it', async bad => {
+    vi.stubGlobal('fetch', vi.fn(async () => reply({ ...profile, ...bad })))
+    render(<RegulatoryProfile {...callbacks()} />)
+    expect((await screen.findAllByRole('alert'))[0]).toHaveTextContent('Unable to load')
+    expect(screen.queryByLabelText('GT')).not.toBeInTheDocument()
+  })
+  it.each([
+    null, {}, { ...history, items: null }, { ...history, items: [null] },
+    { ...history, offset: -1 }, { ...history, offset: 25 }, { ...history, limit: 101 },
+    { ...history, hasMore: 'false' }, { ...history, hasMore: true },
+    { ...history, items: Array(26).fill(history.items[0]) },
+    { ...history, items: [history.items[0], history.items[0]] },
+    { ...history, items: [history.items[0], { ...history.items[0], revision: 2 }] },
+    ...[{ revision: 0 }, { revision: 1.1 }, { savedAt: '2025-02-29T00:00:00Z' },
+      { provenance: 'Effective' }, { content: {} }].map(bad => ({ ...history, items: [{ ...history.items[0], ...bad }] })),
+  ])('returns controlled contract error for malformed history %j', async bad => {
+    vi.stubGlobal('fetch', vi.fn(async () => reply(bad)))
+    await expect(loadProfileHistory(vessel.id, 0, new AbortController().signal)).rejects.toMatchObject({ status: 502, code: 'invalid_contract' })
+  })
+  it('retains edits during background history contract failure and retries history independently', async () => {
+    let finish!: (response: Response) => void
+    let historyCalls = 0
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => url.includes('/history?') ?
+      (++historyCalls === 1 ? new Promise<Response>(resolve => { finish = resolve }) : reply(history)) : reply(profile)))
+    const user = userEvent.setup(); const props = callbacks(); render(<RegulatoryProfile {...props} />)
+    await screen.findByLabelText('Flag'); await user.selectOptions(screen.getByLabelText('Flag — Data state'), 'Known')
+    await user.type(screen.getByLabelText('Flag'), 'Local retained')
+    finish(reply({ ...history, items: [null] }))
+    expect(await screen.findByRole('alert')).toHaveTextContent('Unable to load')
+    expect(screen.getByLabelText('Flag')).toHaveValue('Local retained')
+    await user.click(screen.getByRole('button', { name: 'Retry loading' }))
+    await screen.findByText(/Version 1 ·/)
+    expect(screen.getByLabelText('Flag')).toHaveValue('Local retained')
+    expect(props.onDirty).toHaveBeenLastCalledWith(true)
+  })
+  it.each(['0', '9007199254740993', '0.1234567890123456789012345678', '79228162514264337593543950335'])('accepts exact bounded decimal %s', value => {
+    expect(validDecimal(value)).toBe(true)
   })
 })
