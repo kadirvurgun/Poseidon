@@ -1,4 +1,4 @@
-import type { Company, Vessel, Page, Session, CompanyCommand, VesselCreateCommand } from './directory-contract'
+import type { Company, Vessel, Page, Session, CompanyCommand, VesselCommand } from './directory-contract'
 export type { Company, Vessel, Page, Session, DirectoryRecord } from './directory-contract'
 
 export class ApiError extends Error {
@@ -42,7 +42,7 @@ export const companies = async (offset: number, signal: AbortSignal, search = ''
 export const vessels = async (offset: number, kind: string, signal: AbortSignal, search = '') => decodeVessels(await request<unknown>(`vessels?offset=${offset}&limit=25${kind ? `&kind=${encodeURIComponent(kind)}` : ''}${search ? `&q=${encodeURIComponent(search)}` : ''}`, signal))
 export const company = async (id: string, signal: AbortSignal) => decodeCompany(await request<unknown>(`companies/${encodeURIComponent(id)}`, signal))
 export const vessel = async (id: string, signal: AbortSignal) => decodeVessel(await request<unknown>(`vessels/${encodeURIComponent(id)}`, signal))
-export async function saveDirectory(resource: 'companies' | 'vessels', id: string | undefined, body: CompanyCommand | VesselCreateCommand, csrf: string, key: string, signal: AbortSignal): Promise<Company | Vessel> {
+export async function saveDirectory(resource: 'companies' | 'vessels', id: string | undefined, body: CompanyCommand | VesselCommand, csrf: string, key: string, signal: AbortSignal): Promise<Company | Vessel> {
   const result = await request<Company | Vessel>(`${resource}${id ? `/${encodeURIComponent(id)}` : ''}`, signal, {
     method: id ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf, 'Idempotency-Key': key }, body: JSON.stringify(body),
   })
