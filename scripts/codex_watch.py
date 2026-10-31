@@ -47,6 +47,10 @@ class Watch:
         self.wall = wall
 
     def snapshot(self):
+        try:
+            previous = json.loads((self.workers.runtime / 'quota.json').read_text(encoding='utf-8'))
+        except (OSError, ValueError):
+            previous = {}
         profiles = {}
         for profile in PROFILES:
             try:
@@ -60,6 +64,14 @@ class Watch:
                 profiles[profile] = {'profile': profile, 'state': 'reconcile_required', 'ready': False}
             except Exception:
                 profiles[profile] = {'profile': profile, 'state': 'unavailable', 'ready': False}
+            current = profiles[profile]
+            if current['state'] == 'known':
+                current['observedAt'] = timestamp(self.wall())
+            else:
+                old = previous.get('profiles', {}).get(profile, {})
+                last = old if old.get('state') == 'known' else old.get('lastKnown', {})
+                if last.get('windows'):
+                    current['lastKnown'] = {k: last[k] for k in ('windows', 'observedAt', 'plan') if k in last}
         now = self.wall()
         snapshot = {'timestamp': timestamp(now), 'next_check': timestamp(now + INTERVAL), 'profiles': profiles,
                     'selected': next((p for p in PROFILES if profiles[p]['ready']), None)}

@@ -5,6 +5,7 @@ Only numeric CLI usage and fixed diagnostics are persisted. Credentials are neve
 import argparse
 from contextlib import contextmanager, ExitStack
 import fnmatch
+import hashlib
 import json
 import math
 import os
@@ -23,6 +24,11 @@ from codex_accounts import (ROOT, BusyError, Workers, WorkerStillRunningError,
 
 class Blocked(RuntimeError):
     """Fixed, non-sensitive diagnostic only."""
+
+
+# Pinned CLI 0.166 startup diagnostics only. Populate with controlled probe hashes;
+# categories/substrings alone must never authorize ignoring an error.
+QA_STARTUP_DIAGNOSTICS = {}
 
 
 class SubscriptionWorkers(Workers):
@@ -104,6 +110,19 @@ def qa_approved(value, commit):
             and value['approved'] is True and value['commit'] == commit and value['issues'] == [])
 
 
+def strict_json(text):
+    def pairs(values):
+        result = {}
+        for key, value in values:
+            if key in result:
+                raise ValueError('duplicate_key')
+            result[key] = value
+        return result
+    def constant(_):
+        raise ValueError('invalid_constant')
+    return json.loads(text, object_pairs_hook=pairs, parse_constant=constant)
+
+
 def ci_result(pr, commit):
     if pr.get('headRefOid') != commit or pr.get('baseRefName') != 'main':
         raise Blocked('pr_head_or_base_changed')
@@ -166,7 +185,8 @@ def test_summary(path, runner):
 
 class Coordinator:
     def __init__(self, root=ROOT, *, enabled=False, publish=False, max_jobs=1,
-                 max_calls=2, hours=8, timeout=900, workers=None, runner=subprocess.run, wall=time.time):
+                 max_calls=2, hours=8, timeout=900, workers=None, runner=subprocess.run, wall=time.time,
+                 continuous=False):
         if (type(max_jobs) is not int or not 1 <= max_jobs <= 20 or type(max_calls) is not int
                 or not 1 <= max_calls <= 40 or not 0 <= hours <= 8 or not 1 <= timeout <= 900):
             raise ValueError('Settings exceed bounded limits.')
@@ -180,6 +200,7 @@ class Coordinator:
         self.state = {}
         self.env = self.workers.environment('esra-pro')
         self.tick_end = 0
+        self.continuous = continuous
 
     def save(self):
         write_json(self.runtime / 'state.json', self.state)
@@ -244,7 +265,7 @@ class Coordinator:
     def call_receipt(self, profile, phase):
         self.budget()
         self.state['model_calls'] += 1
-        self.job.setdefault('calls', []).append({'profile': profile, 'phase': phase})
+        self.job.setdefault('calls', []).append({'profile': profile, 'phase': phase, 'started_at': self.wall()})
         self.save()
 
     def tool(self, name):
@@ -298,6 +319,7 @@ class Coordinator:
             self.workers.config['timeout_seconds'] = self.bound()
             result, usage = self.workers.execute(profile, work, prompt)
             self.job['calls'][-1]['usage'] = numeric_usage(usage)
+            self.job['calls'][-1].update(finished_at=self.wall(), result=result)
             if result != 'produced':
                 raise Blocked('development_failed_preserve_worktree')
             if self.git('rev-parse', 'HEAD', cwd=work) != self.job['base']:
@@ -454,6 +476,8 @@ class Coordinator:
         command = self.workers.command() + ['-C', self.job['worktree'], '-a', 'never',
                     '-c', 'features.shell_tool=false', '-c', 'features.apply_patch_freeform=false',
                     '-c', 'features.unified_exec=false', '-c', 'features.multi_agent=false',
+                    '-c', 'features.code_mode_host=false', '-c', 'features.code_mode=false',
+                    '-c', 'features.code_mode_only=false',
                     '-c', 'tools.view_image=false', '-c', 'web_search="disabled"',
                     '-c', 'mcp_servers={}', 'exec', '--ephemeral', '-s', 'read-only', '--json', '-']
         kwargs = {'creationflags': subprocess.CREATE_NEW_PROCESS_GROUP} if os.name == 'nt' else {'start_new_session': True}
@@ -466,19 +490,36 @@ class Coordinator:
             raise
         result, usage = evaluate_run(process.returncode, output)
         self.job['calls'][-1]['usage'] = numeric_usage(usage)
+        self.job['calls'][-1].update(finished_at=self.wall(), result=result)
         final = None
         for line in output.splitlines():
             try:
                 event = json.loads(line)
             except json.JSONDecodeError:
-                continue
+                raise Blocked('qa_invalid_event_stream') from None
+            if not isinstance(event, dict) or event.get('type') not in {
+                    'thread.started', 'turn.started', 'turn.completed', 'item.started', 'item.completed'}:
+                raise Blocked('qa_unknown_or_error_event')
             item = event.get('item', {})
+            if not isinstance(item, dict):
+                raise Blocked('qa_invalid_event_stream')
+            if item.get('type') == 'error':
+                digest = hashlib.sha256(str(item.get('message', '')).encode('utf-8')).hexdigest()
+                category = QA_STARTUP_DIAGNOSTICS.get(digest)
+                self.job.setdefault('qa_diagnostics', []).append({'type': 'error', 'hash': digest,
+                    'category': category or 'rejected_unknown'})
+                if category and event['type'] == 'item.completed' and final is None:
+                    continue
+                raise Blocked('qa_unknown_startup_error')
             if item and item.get('type') not in {'agent_message', 'reasoning'}:
+                kind = item.get('type')
+                self.job['qa_rejected_event'] = kind if isinstance(kind, str) and re.fullmatch(
+                    r'[A-Za-z_]{1,64}', kind) else 'unknown'
                 raise Blocked('qa_used_tools')
             if event.get('type') == 'item.completed' and item.get('type') == 'agent_message':
                 try:
-                    final = json.loads(item.get('text', ''))
-                except json.JSONDecodeError:
+                    final = strict_json(item.get('text', ''))
+                except (ValueError, TypeError):
                     final = None
         return final if result == 'produced' else None
 
@@ -576,6 +617,24 @@ class Coordinator:
                 'max_jobs': self.max_jobs, 'max_calls': self.max_calls, 'model_calls': 0, 'jobs': {}}
             self.tick_end = self.wall() + 40 * 60
             items = queue_items(self.root, queue)
+            if self.continuous:
+                self.state.setdefault('window_jobs', list(self.state['jobs']))
+                if self.wall() >= self.state['deadline']:
+                    safe = all(not j.get('inflight') and not j.get('lease') and
+                               j['status'] in {'merged', 'waiting_for_account', 'awaiting_qa', 'awaiting_ci'}
+                               for j in self.state['jobs'].values())
+                    safe = safe and not any((self.workers.home(p) / 'worker.lock').exists()
+                                            for p in ('esra-pro', 'kadir-plus'))
+                    if not safe:
+                        self.state['reason'] = 'reconciliation_required_before_renewal'
+                        self.save()
+                        return self.state
+                    self.state.setdefault('renewals', []).append({'at': self.wall(),
+                        'previousDeadline': self.state['deadline'], 'calls': self.state['model_calls']})
+                    self.state['renewals'] = self.state['renewals'][-100:]
+                    self.state.update(started=self.wall(), deadline=self.wall() + 8 * 3600,
+                                      model_calls=0, window_jobs=[])
+                self.state.pop('reason', None)
             self.save()
             if not self.enabled:
                 return self.state
@@ -590,6 +649,8 @@ class Coordinator:
             tracked = set(self.git('ls-files', '-z', '--', *sorted(owned)).split('\0'))
             if not owned <= tracked:
                 raise Blocked('queue_and_tasks_must_be_repo_owned')
+            if self.continuous and self.git('status', '--porcelain', '--untracked-files=all', '--', *sorted(owned)):
+                raise Blocked('queue_and_tasks_must_be_committed')
             for item in items:
                 job = self.state['jobs'].get(item['id'])
                 if job and job['status'] in {'merged', 'blocked'}:
@@ -597,10 +658,15 @@ class Coordinator:
                 if not all(self.state['jobs'].get(d, {}).get('status') == 'merged' for d in item['dependencies']):
                     continue
                 if job is None:
-                    if len(self.state['jobs']) >= min(self.max_jobs, self.state['max_jobs']):
+                    if len(self.state.get('window_jobs', self.state['jobs'])) >= min(self.max_jobs, self.state['max_jobs']):
+                        if self.continuous:
+                            self.state['reason'] = 'window_job_budget_wait'
+                            self.save()
                         break
                     job = {'id': item['id'], 'status': 'waiting_for_account', 'metadata': item}
                     self.state['jobs'][item['id']] = job
+                    if self.continuous:
+                        self.state['window_jobs'].append(item['id'])
                 self.job = job
                 try:
                     self.bound()
@@ -609,6 +675,10 @@ class Coordinator:
                     if job.get('inflight') and job['inflight'] not in {'push', 'create_pr', 'merge'}:
                         raise Blocked('reconciliation_needed_interrupted_phase')
                     stage = job['status']
+                    if self.continuous and stage in {'waiting_for_account', 'awaiting_qa'} and self.state['model_calls'] >= min(self.max_calls, self.state['max_calls']):
+                        self.state['reason'] = 'window_call_budget_wait'
+                        self.save()
+                        break
                     if stage == 'waiting_for_account':
                         self.develop(item)
                     elif stage == 'verifying':

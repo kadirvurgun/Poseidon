@@ -30,6 +30,8 @@ class BusyError(RuntimeError):
 class MetadataError(RuntimeError):
     """Safe protocol diagnostics with no raw account response."""
 
+    code = None
+
 
 class WorkerStillRunningError(Exception):
     """Termination is uncertain: preserve locks and require reconciliation."""
@@ -237,14 +239,26 @@ class Workers:
                         # Include only a numeric protocol code and a fixed category, never a raw auth error.
                         code = error.get('code')
                         code = code if isinstance(code, int) else 'unknown'
-                        raise MetadataError(f'Account metadata unavailable (code={code}, category={category}); no worker dispatched.')
+                        failure = MetadataError(f'Account metadata unavailable (code={code}, category={category}); no worker dispatched.')
+                        failure.code = code
+                        raise failure
                     return message['result']
 
         try:
             request(1, 'initialize', {'clientInfo': {'name': 'poseidon-account-workers', 'version': '1.0.0'}})
             process.stdin.write('{"method":"initialized"}\n')
             process.stdin.flush()
-            account = request(2, 'account/read', {'refreshToken': False}).get('account')
+            try:
+                account = request(2, 'account/read', {'refreshToken': False}).get('account')
+            except MetadataError as error:
+                if error.code != -32603:
+                    raise
+                # Caller holds this profile's worker.lock throughout. One refresh,
+                # on this same process/profile only; no retry or profile handoff.
+                try:
+                    account = request(4, 'account/read', {'refreshToken': True}).get('account')
+                except RuntimeError:
+                    raise error from None
             limits = request(3, 'account/rateLimits/read') if account else {}
             return summarize_account(self.profiles[profile], account, limits)
         finally:

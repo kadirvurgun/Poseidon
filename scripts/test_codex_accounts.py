@@ -17,6 +17,42 @@ def limits(used=10):
 
 
 class ProtocolTests(unittest.TestCase):
+    def test_internal_metadata_error_refreshes_once_same_locked_profile_then_reads_limits(self):
+        workers = Workers()
+        for refresh_error in (None, -32603, 401):
+            messages = [{'id': 1, 'result': {}}, {'id': 2, 'error': {'code': -32603, 'message': 'SECRET'}}]
+            messages.append({'id': 4, 'error': {'code': refresh_error, 'message': 'SECRET'}} if refresh_error else
+                {'id': 4, 'result': {'account': {'type': 'chatgpt', 'planType': 'prolite'}}})
+            if not refresh_error:
+                messages.append({'id': 3, 'result': limits(18)})
+            process = Mock()
+            process.stdin = io.StringIO()
+            process.stdout = io.StringIO('\n'.join(json.dumps(v) for v in messages) + '\n')
+            with tempfile.TemporaryDirectory() as folder, patch.object(workers, 'home', return_value=Path(folder)), \
+                    patch.object(workers, 'initialize'), patch.object(workers, 'command', return_value=['codex']), \
+                    patch.object(workers, 'finish_metadata'), patch('codex_accounts.subprocess.Popen', return_value=process):
+                with exclusive(workers.home('esra-pro') / 'worker.lock'):
+                    if refresh_error:
+                        with self.assertRaises(MetadataError) as raised:
+                            workers.account('esra-pro')
+                        self.assertNotIn('SECRET', str(raised.exception))
+                    else:
+                        self.assertTrue(workers.account('esra-pro')['ready'])
+                    self.assertTrue((workers.home('esra-pro') / 'worker.lock').exists())
+            requests = [json.loads(line) for line in process.stdin.getvalue().splitlines()]
+            reads = [r for r in requests if r['method'] == 'account/read']
+            self.assertEqual([r['params']['refreshToken'] for r in reads], [False, True])
+
+    def test_auth_error_never_attempts_refresh(self):
+        workers = Workers()
+        process = Mock(stdin=io.StringIO(), stdout=io.StringIO('\n'.join(json.dumps(v) for v in [
+            {'id': 1, 'result': {}}, {'id': 2, 'error': {'code': 401, 'message': 'SECRET'}}]) + '\n'))
+        with patch.object(workers, 'initialize'), patch.object(workers, 'command', return_value=['codex']), \
+                patch.object(workers, 'finish_metadata'), patch('codex_accounts.subprocess.Popen', return_value=process):
+            with self.assertRaises(MetadataError):
+                workers.account('esra-pro')
+        self.assertNotIn('"refreshToken": true', process.stdin.getvalue())
+
     def test_native_launcher_and_node_fallback_preserve_auth_arguments(self):
         workers = Workers()
         with patch('codex_accounts.os.name', 'nt'), patch.object(Path, 'is_file', return_value=True):

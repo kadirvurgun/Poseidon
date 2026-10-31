@@ -41,6 +41,15 @@ class WatchTests(unittest.TestCase):
         self.assertFalse((self.workers.runtime / 'quota.tmp').exists())
         self.workers.run.assert_not_called()
 
+    def test_busy_retains_last_observation_timestamp_and_never_becomes_ready(self):
+        initial = self.watch.once()
+        with exclusive(self.workers.home('esra-pro') / 'worker.lock'):
+            current = self.watch.once()['profiles']['esra-pro']
+        self.assertEqual(current['state'], 'busy')
+        self.assertFalse(current['ready'])
+        self.assertEqual(current['lastKnown']['observedAt'], initial['timestamp'])
+        self.assertEqual(current['lastKnown']['windows'], initial['profiles']['esra-pro']['windows'])
+
     def test_reserve_unknown_invalid_and_exhausted_windows_fail_closed(self):
         for used in [85, 99, 100, -1, float('nan'), float('inf'), None, '10', True]:
             with self.subTest(used=used):
