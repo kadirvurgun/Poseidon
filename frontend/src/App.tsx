@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { getSystemStatus } from './api'
 import { AgentsDashboard } from './agents/AgentsDashboard'
+import { ProductApp } from './product/ProductApp'
 
 type Language = 'tr' | 'en'
 type Connection = 'loading' | 'available' | 'error'
@@ -34,6 +35,7 @@ const content = {
 }
 
 export function App() {
+  if (window.location.pathname === '/app' || window.location.pathname.startsWith('/app/')) return <ProductApp />
   return window.location.pathname.replace(/\/$/, '') === '/agents' ? <AgentsDashboard /> : <ExistingApp />
 }
 
@@ -69,6 +71,7 @@ export function ExistingApp() {
         <div className="sidebar-rule" />
         <div className="sidebar-section">WORKSPACE</div>
         <a className="nav-item" href="#main" aria-current="page"><span aria-hidden="true">◈</span>{t.page}</a>
+        <a className="nav-item" href="/app">{language === 'tr' ? 'Şirket ve filo' : 'Companies and fleet'}</a>
         <a className="nav-item" href="/agents">{language === 'tr' ? 'Geliştirme operasyonları' : 'Development operations'}</a>
         <div className="sidebar-bottom"><span className="compass" aria-hidden="true">✧</span><p>{t.phase}</p><small>v0.1 · DEVELOPMENT</small></div>
       </aside>

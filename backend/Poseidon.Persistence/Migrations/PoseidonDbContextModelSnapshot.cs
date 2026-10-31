@@ -266,6 +266,25 @@ namespace Poseidon.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
+            modelBuilder.Entity("Poseidon.Persistence.SecurityEvent", b =>
+                {
+                    b.Property<Guid>("Id").ValueGeneratedOnAdd().HasColumnType("uuid");
+                    b.Property<Guid?>("TenantId").HasColumnType("uuid");
+                    b.Property<Guid?>("ResourceId").HasColumnType("uuid");
+                    b.Property<string>("ActorId").HasMaxLength(200).HasColumnType("character varying(200)");
+                    b.Property<string>("Action").IsRequired().HasMaxLength(32).HasColumnType("character varying(32)");
+                    b.Property<string>("Result").IsRequired().HasMaxLength(32).HasColumnType("character varying(32)");
+                    b.Property<string>("CorrelationId").IsRequired().HasMaxLength(128).HasColumnType("character varying(128)");
+                    b.Property<DateTimeOffset>("OccurredAt").HasColumnType("timestamp with time zone");
+                    b.HasKey("Id");
+                    b.HasIndex("TenantId", "OccurredAt");
+                    b.ToTable("SecurityEvents", "audit");
+                });
+            modelBuilder.Entity("Poseidon.Persistence.SecurityEvent", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.Tenant", null).WithMany().HasForeignKey("TenantId").OnDelete(DeleteBehavior.Restrict);
+                });
+
 #pragma warning restore 612, 618
         }
     }
