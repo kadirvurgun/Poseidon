@@ -1,5 +1,6 @@
 """Fixed verification command contract and fail-closed evidence, with no tools/network."""
 import json
+import io
 from pathlib import Path
 import subprocess
 import tempfile
@@ -7,7 +8,8 @@ import time
 import unittest
 from unittest.mock import Mock, patch
 
-from nightly_coordinator import Blocked, Coordinator, SubscriptionWorkers, queue_items
+from nightly_coordinator import Blocked, Coordinator, SubscriptionWorkers, queue_items, test_summary
+from nightly_python_tests import summary
 from codex_accounts import Workers, summarize_account
 from test_nightly_coordinator import FakeWorkers
 
@@ -22,7 +24,7 @@ class FixedGateTests(unittest.TestCase):
             self.write('tests/' + name + '/' + name + '.csproj',
                        '<Project><PropertyGroup><IsTestProject>true</IsTestProject></PropertyGroup></Project>')
             self.write('tests/' + name + '/Tests.cs', '[Fact] public void Test() {}')
-        for name in ['Poseidon.slnx', 'scripts/verify_sources.py', 'frontend/package-lock.json',
+        for name in ['Poseidon.slnx', 'scripts/verify_sources.py', 'scripts/nightly_python_tests.py', 'frontend/package-lock.json',
                      'tests/Poseidon.Browser.Tests/package-lock.json', 'tests/Poseidon.Browser.Tests/playwright.config.ts',
                      'tests/Poseidon.Browser.Tests/node_modules/@playwright/test/cli.js']:
             self.write(name, 'fixture')
@@ -30,6 +32,7 @@ class FixedGateTests(unittest.TestCase):
             self.write(directory + '/package.json', json.dumps({'scripts': {
                 k: 'trusted script' for k in ['generate:api', 'lint', 'typecheck', 'test', 'build']}}))
         self.mode = 'passed'
+        self.bad_runner = None
         self.commands = []
         self.coordinator = Coordinator(self.root, workers=FakeWorkers(self.root), runner=self.runner)
         self.coordinator.state = {'deadline': time.time() + 1000, 'jobs': {}}
@@ -62,7 +65,40 @@ class FixedGateTests(unittest.TestCase):
                     self.write('.runtime/nightly-test-results/' + project + '/results.trx',
                                f'<TestRun xmlns="urn:test"><ResultSummary><Counters executed="{count}" '
                                f'failed="0" notExecuted="{skipped}" /></ResultSummary></TestRun>')
+        if 'scripts/nightly_python_tests.py' in command:
+            self.report('python')
+        elif any(c.startswith('--outputFile=') for c in command):
+            self.report('vitest')
+        elif '--reporter=list,html,json' in command:
+            self.report('playwright')
         return subprocess.CompletedProcess(command, 1 if self.mode == 'failed' and command == ['dotnet', 'tool', 'restore'] else 0, output, 'RAW_SECRET')
+
+    def report(self, runner):
+        reports = {
+            'python': dict(total=1, passed=1, failed=0, errors=0, skipped=0,
+                           expectedFailures=0, unexpectedSuccesses=0),
+            'vitest': dict(numTotalTests=1, numPassedTests=1, numFailedTests=0,
+                           numPendingTests=0, numTodoTests=0, success=True,
+                           testResults=[{'assertionResults': [{'status': 'passed'}]}]),
+            'playwright': dict(stats=dict(expected=1, unexpected=0, flaky=0, skipped=0), errors=[]),
+        }
+        report = reports[runner]
+        if runner == self.bad_runner:
+            if self.mode == 'missing':
+                return
+            if self.mode == 'malformed':
+                self.write('.runtime/nightly-test-results/' + runner + '.json', 'not json')
+                return
+            counts = report['stats'] if runner == 'playwright' else report
+            if self.mode == 'empty':
+                for key in counts:
+                    if type(counts[key]) is int:
+                        counts[key] = 0
+                if runner == 'vitest':
+                    report['testResults'] = []
+            else:
+                counts[{'python': 'skipped', 'vitest': 'numPendingTests', 'playwright': 'skipped'}[runner]] = 1
+        self.write('.runtime/nightly-test-results/' + runner + '.json', json.dumps(report))
 
     def test_exact_fixed_gate_all_projects_no_filters_and_ephemeral_ports(self):
         self.coordinator.gate()
@@ -75,6 +111,13 @@ class FixedGateTests(unittest.TestCase):
         self.assertFalse(any('filter' in word for word in test))
         self.assertIn('--minimum-expected-tests', test)
         self.assertIn('--report-xunit-trx', test)
+        python = next(c for c in self.commands if 'scripts/nightly_python_tests.py' in c)
+        self.assertIn('--report', python)
+        self.assertTrue(any('--reporter=default' in c and '--reporter=json' in c for c in self.commands))
+        self.assertTrue(any('--reporter=list,html,json' in c for c in self.commands))
+        self.assertEqual(self.coordinator.env['PLAYWRIGHT_JSON_OUTPUT_FILE'],
+                         str(self.root / '.runtime/nightly-test-results/playwright.json'))
+        self.assertEqual(self.coordinator.env['PLAYWRIGHT_HTML_OPEN'], 'never')
         self.assertNotEqual(self.coordinator.env['POSEIDON_API_PORT'], self.coordinator.env['POSEIDON_UI_PORT'])
         self.assertTrue(all(c['exit_code'] == 0 for c in self.coordinator.job['checks']))
 
@@ -98,6 +141,26 @@ class FixedGateTests(unittest.TestCase):
             self.coordinator.gate()
         self.assertEqual(self.coordinator.job['checks'][-1], {'name': 'tool_restore', 'exit_code': 1})
         self.assertNotIn('RAW_SECRET', (self.coordinator.runtime / 'report.json').read_text())
+
+    def test_each_runner_zero_exit_missing_empty_skipped_or_malformed_report_blocks(self):
+        import shutil
+        for runner in ('python', 'vitest', 'playwright'):
+            for mode in ('missing', 'empty', 'skipped', 'malformed'):
+                with self.subTest(runner=runner, mode=mode):
+                    shutil.rmtree(self.root / '.runtime/nightly-test-results', ignore_errors=True)
+                    self.bad_runner, self.mode = runner, mode
+                    # Keep .NET evidence valid to reach the selected runner.
+                    original = self.runner
+                    def run(command, **kwargs):
+                        if command[:3] == ['dotnet', 'test', '--solution']:
+                            self.mode = 'passed'
+                            result = original(command, **kwargs)
+                            self.mode = mode
+                            return result
+                        return original(command, **kwargs)
+                    self.coordinator.runner = run
+                    with self.assertRaisesRegex(Blocked, runner + '_report'):
+                        self.coordinator.gate()
 
     def test_missing_or_empty_project_fails(self):
         path = 'tests/Poseidon.Api.Tests/Poseidon.Api.Tests.csproj'
@@ -142,12 +205,80 @@ class FixedGateTests(unittest.TestCase):
         self.assertFalse(self.commands)
 
 
+class StructuredSummaryTests(unittest.TestCase):
+    def test_actual_unittest_outcomes_cannot_hide_skips_or_expected_failures(self):
+        class FakeTests(unittest.TestCase):
+            def test_pass(self):
+                pass
+
+            @unittest.skip('synthetic skip')
+            def test_skip(self):
+                pass
+
+            @unittest.expectedFailure
+            def test_expected_failure(self):
+                self.fail('synthetic failure')
+
+        result = unittest.TextTestRunner(stream=io.StringIO()).run(
+            unittest.defaultTestLoader.loadTestsFromTestCase(FakeTests))
+        counts = summary(result)
+        self.assertTrue(result.wasSuccessful())  # unittest alone accepts these outcomes.
+        self.assertEqual(counts, dict(total=3, passed=1, failed=0, errors=0, skipped=1,
+                                     expectedFailures=1, unexpectedSuccesses=0))
+        with tempfile.TemporaryDirectory() as directory:
+            report = Path(directory) / 'python.json'
+            report.write_text(json.dumps(counts))
+            with self.assertRaises(Blocked):
+                test_summary(report, 'python')
+
+    def test_incomplete_wrong_types_and_other_nonpassing_outcomes_rejected(self):
+        fixtures = {
+            'python': dict(total=1, passed=1, failed=0, errors=0, skipped=0,
+                           expectedFailures=0, unexpectedSuccesses=0),
+            'vitest': dict(numTotalTests=1, numPassedTests=1, numFailedTests=0,
+                           numPendingTests=0, numTodoTests=0, success=True,
+                           testResults=[{'assertionResults': [{'status': 'passed'}]}]),
+            'playwright': dict(stats=dict(expected=1, unexpected=0, flaky=0, skipped=0), errors=[]),
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'report.json'
+            for runner, valid in fixtures.items():
+                path.write_text(json.dumps(valid))
+                test_summary(path, runner)
+                counts = valid['stats'] if runner == 'playwright' else valid
+                for key, value in counts.items():
+                    if type(value) is not int:
+                        continue
+                    for replacement in (None, True, '1', -1, 2):
+                        if runner == 'playwright' and key == 'expected' and replacement == 2:
+                            continue  # Any positive expected count is valid.
+                        invalid = json.loads(json.dumps(valid))
+                        target = invalid['stats'] if runner == 'playwright' else invalid
+                        target[key] = replacement
+                        path.write_text(json.dumps(invalid))
+                        with self.subTest(runner=runner, key=key, replacement=replacement):
+                            with self.assertRaises(Blocked):
+                                test_summary(path, runner)
+                    invalid = json.loads(json.dumps(valid))
+                    del (invalid['stats'] if runner == 'playwright' else invalid)[key]
+                    path.write_text(json.dumps(invalid))
+                    with self.assertRaises(Blocked):
+                        test_summary(path, runner)
+            invalid = fixtures['vitest']
+            invalid['testResults'][0]['assertionResults'][0]['status'] = 'todo'
+            path.write_text(json.dumps(invalid))
+            with self.assertRaises(Blocked):
+                test_summary(path, 'vitest')
+
+
 class QueueTests(unittest.TestCase):
     def test_subscription_route_is_explicit_without_login_or_model_call(self):
         with patch.object(Workers, 'command', return_value=['fake-codex']):
             command = SubscriptionWorkers.__new__(SubscriptionWorkers).command()
         self.assertIn('forced_login_method="chatgpt"', command)
         self.assertIn('model_provider="openai"', command)
+        self.assertIn('model_reasoning_effort="medium"', command)
+        self.assertIn('features.multi_agent=false', command)
 
     def test_additional_account_windows_are_not_dropped(self):
         profile = {'id': 'esra-pro', 'expected_plan': 'pro'}

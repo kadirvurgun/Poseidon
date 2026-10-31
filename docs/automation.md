@@ -36,9 +36,9 @@ Resmi kaynaklar:
 
 - Yerelde .NET 10 SDK, Node, Python 3.13, Claude CLI ve Graphify 0.9.15 bulundu. Docker daemon ve PostgreSQL container çalışması doğrulandı; Claude login doğrulanmadı.
 - Codex CLI proje içi `.tools/codex/` altında kurulur; kimlik bilgileri repoya yazılmaz.
-- Önceki 403 kurulum engeli güncel durum değildir: doğrulanmış PR #1 ve PR #3 merge edildi. Hesap worker PR #2 henüz merge edilmedi; bu paketteki worker temeli incelenmiş `e37ac0d` aktarımıdır.
+- Önceki 403 kurulum engeli güncel durum değildir: doğrulanmış PR #1 ve PR #3 merge edildi. Worker temeli ve kota watcher PR #5 ile QA/CI sonrası merge edildi; draft PR #2 superseded olarak kapatıldı.
 - Graphify Codex skill'i ve proje keşif talimatı kuruldu. Ürünün RAG servisi kurulmuş değildir.
-- İki hesabın kimlik doğrulaması tamamlandı. Saatlik watcher ve scheduler tanımı yerel teslim paketidir; bu görev kapsamında Windows görevi kurulmadı veya başlatılmadı. PR #1/#3 merge kanıtı, sürekli scheduler veya görev kuyruğunun çalıştığını kanıtlamaz. Gerçek task kurulumu, geçmişi ve kuyruk doğrulaması ebeveyn koordinatörde bekler; dosyaların varlığı otomasyonun aktif olduğu anlamına gelmez. Bu paket hedef commit bağımsız QA/CI kabulü yerine geçmez.
+- Saatlik metadata görevi `Poseidon-HourlyQuota` gerçekten kaydedildi ve exit 0 ile çalıştı; son gözlenen koşu 31.10.2026 11:10:23 +03. Bu görev model işi yapmaz. [Gece koordinatörü](nightly-automation.md) ayrı geliştirme paketidir; gerçek aktivasyon ve uçtan uca deneme kanıtı [durum raporunda](project-status.md) izlenir.
 
 ## Devreye alma kabulü
 

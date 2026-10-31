@@ -1,7 +1,7 @@
 # Bounded nightly automation
 
 OPS-COORDINATOR-01 is a standard-library Python coordinator. Nothing is scheduled
-or dispatched by installation of these files. The checked-in queue is empty.
+or dispatched by installation of these files. The checked-in queue contains three bounded preparation tasks: S0 ADRs, a threat model depending on those ADRs, and a reusable required-data React component.
 Publishing and development both default to disabled. The parent owns activation,
 review and any GitHub registration, push or merge of this implementation.
 
@@ -21,7 +21,7 @@ cycles remain undispatched. Example metadata:
 `py scripts/nightly_coordinator.py --once` validates/reports without dispatch.
 An operator may add `--enable` for development and separately `--publish` for
 push/PR/CI-gated merge. Bounds are `--max-jobs` (1–20, default 1),
-`--max-model-calls` (1–40, default 2), `--hours` (>0–8, default 8), and
+`--max-model-calls` (1–40, default 2), `--hours` (0–8, default 8), and
 `--timeout` (1–900 seconds, default 900). Every invocation advances at most one
 queue item through one phase. Existing limits in durable state cannot be raised
 by later flags. The deadline starts with the first invocation, including a disabled
@@ -64,7 +64,7 @@ preserved; they cannot be modified through the sensitive-path gate.
 Before commit or QA the fixed gate runs local tools restore, locked solution
 restore, Release solution build, `dotnet test --solution Poseidon.slnx` without
 filters (nonempty per-project TRX, no skips), migration model check, Python generic
-discovery, source verification, frontend/browser npm ci, API generation, lint,
+discovery with a JSON result, source verification, frontend/browser npm ci, API generation, lint,
 typecheck, component tests, frontend build, Chromium installation and real-API
 Playwright. Commands use the job directory and root tool paths, bounded by the
 remaining deadline. Generated changes are included in the normal commit, then
@@ -72,6 +72,11 @@ API generation runs again and a clean exact HEAD is required. Ports are distinct
 ephemeral loopback choices via validated `POSEIDON_API_PORT`/`POSEIDON_UI_PORT`.
 Defaults remain API 5080, preview 4173 and dev 5173. Port races fail closed;
 Playwright never reuses or kills another server.
+
+Python, Vitest and Playwright also require fresh structured JSON summaries under
+the new results directory. Missing/malformed reports, zero passing tests, failures,
+skips, todo, expected failures and flaky browser outcomes block, even on exit zero.
+Vitest retains its default reporter and Playwright retains list/HTML evidence.
 
 Independent QA is a separate fresh read-only CLI process with shell/apply-patch
 and MCP tools disabled, no resume session and no publication. Its input contains
@@ -83,7 +88,8 @@ canonical accepted SP. Live CLI tool-disable compatibility is not validated by
 mocked tests; verify with a controlled parent-owned activation trial.
 
 Publishing uses trusted `.tools/gh/bin/gh.exe` (Linux PATH fallback). It reconciles
-PRs by branch/head, polls once per tick, waits for both backend/frontend and all
+PRs by branch/head, polls once per tick, waits for persistence-and-security,
+frontend-and-browser, windows-automation, nightly-installer-construction and all
 additional reported checks, and refuses failed/skipped/changed-head checks. Normal
 merge uses `--merge --match-head-commit`; required branch protection/reviews still
 apply. There is no admin bypass. No GitHub side effects are exercised by tests.
@@ -93,6 +99,11 @@ The installer supports `-Preview`, `-Enable`, and separately `-Publish`:
 ```powershell
 pwsh -File scripts/install-nightly-coordinator.ps1 -Preview
 ```
+
+Installer bounds: `-MaxJobs` 1–20 (default 4), `-MaxModelCalls` 1–40 (default 8),
+`-Hours` 0–8 (default 8), `-Timeout` 1–900 (default 900). All four are explicit
+CLI arguments in the task definition; zero hours allows no work. Decimal hours
+use invariant formatting. Direct CLI defaults remain 1 job and 2 model calls.
 
 Without Preview, registration is an explicit operator action. The definition uses
 an absolute pythonw path and quoted absolute script, Interactive/Limited,
@@ -113,3 +124,5 @@ port import checks pass using existing package caches. Graphify AST update passe
 registration, backend full gate or real browser execution were invoked here.
 Current phase: locally validated operations subpackage; parent independent review
 and controlled activation remain next. This is not canonical release acceptance.
+
+Parent integration: development/review reasoning effort is pinned to medium; task reads are scoped and source queries bounded. See [official configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference). A confirmed stopped metadata failure skips that unverified profile and checks the alternate profile independently; uncertain termination retains its lock and stops. Work-phase exceptions never trigger another account inside the same context. The root chat account is unaffected by CLI profile routing.

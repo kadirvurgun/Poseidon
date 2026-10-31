@@ -24,7 +24,8 @@ def pr(commit=SHA, checks=None):
                 headRefName='nightly/ops-test-01', baseRefName='main', state='OPEN',
                 statusCheckRollup=checks if checks is not None else [
                     dict(name=name, status='COMPLETED', conclusion='SUCCESS')
-                    for name in ('persistence-and-security', 'frontend-and-browser', 'extra-check')])
+                    for name in ('persistence-and-security', 'frontend-and-browser',
+                                 'windows-automation', 'nightly-installer-construction', 'extra-check')])
 
 
 class FakeWorkers:
@@ -331,6 +332,16 @@ class ValidationTests(unittest.TestCase):
             with self.assertRaises(Blocked):
                 inside(Path.cwd(), name)
 
+    def test_ci_requires_each_expected_check_even_when_all_reported_checks_pass(self):
+        for name in ('persistence-and-security', 'frontend-and-browser',
+                     'windows-automation', 'nightly-installer-construction'):
+            with self.subTest(missing=name):
+                data = pr()
+                data['statusCheckRollup'] = [c for c in data['statusCheckRollup'] if c['name'] != name]
+                self.assertEqual(ci_result(data, SHA), 'pending')
+        self.assertEqual(ci_result(pr(checks=[dict(name='extra', status='COMPLETED',
+                                                 conclusion='SUCCESS')]), SHA), 'pending')
+
     def test_settings_bounded(self):
         for settings in ({'max_jobs': 0}, {'max_calls': 41}, {'hours': 9}, {'timeout': 901}):
             with self.assertRaises(ValueError):
@@ -350,6 +361,51 @@ class ValidationTests(unittest.TestCase):
             self.assertNotIn(key, environment)
         self.assertEqual(environment['PYTHONUTF8'], '1')
         self.assertIn(str(workers.root / '.tools/node/node-v26.13.0-win-x64'), environment['PATH'])
+
+
+class AccountSelectionTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name)
+        self.workers = FakeWorkers(self.root)
+        self.coordinator = Coordinator(self.root, workers=self.workers)
+
+    def test_stopped_metadata_failure_checks_alternate_own_quota(self):
+        original = self.workers.account
+        def account(profile):
+            if profile == 'kadir-plus':
+                raise RuntimeError('metadata unavailable')
+            return original(profile)
+        self.workers.account = account
+        with self.coordinator.account('kadir-plus') as profile:
+            self.assertEqual(profile, 'esra-pro')
+            self.assertTrue((self.workers.home(profile) / 'worker.lock').exists())
+        self.assertFalse((self.workers.home('kadir-plus') / 'worker.lock').exists())
+
+    def test_both_metadata_failures_wait_without_dispatch(self):
+        self.workers.account = Mock(side_effect=RuntimeError('metadata unavailable'))
+        with self.coordinator.account('esra-pro') as profile:
+            self.assertIsNone(profile)
+        self.assertEqual(self.workers.account.call_count, 2)
+        self.assertEqual(self.workers.calls, [])
+
+    def test_work_failure_propagates_without_account_retry(self):
+        original = self.workers.account
+        self.workers.account = Mock(side_effect=original)
+        with self.assertRaises(BusyError):
+            with self.coordinator.account('esra-pro'):
+                raise BusyError('job failure')
+        self.assertEqual(self.workers.account.call_count, 1)
+
+    def test_uncertain_metadata_termination_keeps_lock_and_stops(self):
+        from codex_accounts import WorkerStillRunningError
+        self.workers.account = Mock(side_effect=WorkerStillRunningError())
+        with self.assertRaises(WorkerStillRunningError):
+            with self.coordinator.account('esra-pro'):
+                self.fail('must not dispatch')
+        self.assertEqual(self.workers.account.call_count, 1)
+        self.assertTrue((self.workers.home('esra-pro') / 'worker.lock').exists())
 
 
 if __name__ == '__main__':

@@ -4,7 +4,11 @@ param(
     [string]$PythonPath,
     [switch]$Preview,
     [switch]$Enable,
-    [switch]$Publish
+    [switch]$Publish,
+    [ValidateRange(1, 20)][int]$MaxJobs = 4,
+    [ValidateRange(1, 40)][int]$MaxModelCalls = 8,
+    [ValidateRange(0, 8)][double]$Hours = 8,
+    [ValidateRange(1, 900)][int]$Timeout = 900
 )
 $ErrorActionPreference = 'Stop'
 $repo = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
@@ -21,7 +25,7 @@ if (-not (Test-Path -LiteralPath $python -PathType Leaf) -or
     [IO.Path]::GetFileName($python) -ine 'pythonw.exe') { throw 'An absolute pythonw.exe path is required.' }
 $watch = (Resolve-Path -LiteralPath (Join-Path $repo 'scripts/nightly_coordinator.py')).Path
 if ($python.Contains('"') -or $watch.Contains('"')) { throw 'Invalid executable path.' }
-$arguments = '"{0}" --once' -f $watch
+$arguments = '"{0}" --once --max-jobs {1} --max-model-calls {2} --hours {3} --timeout {4}' -f $watch, $MaxJobs, $MaxModelCalls, $Hours.ToString([Globalization.CultureInfo]::InvariantCulture), $Timeout
 if ($Enable) { $arguments += ' --enable' }
 if ($Publish) { $arguments += ' --publish' }
 $action = New-ScheduledTaskAction -Execute $python -Argument $arguments -WorkingDirectory $repo

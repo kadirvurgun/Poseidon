@@ -2073,10 +2073,10 @@
     }
   ],
   "limitations": [
-    "S0 is incomplete despite DEV-001/DEV-002 acceptance",
-    "OIDC/tenant business API and HTTP user-action audit remain unimplemented",
-    "Two-account worker service is not active; see draft PR #2",
-    "Source Excel preserved; assessment maintained separately"
+    "S0 exit gates remain open; engineering subpackages do not automatically accept canonical story points",
+    "OIDC/tenant business API and complete HTTP user-action audit remain unimplemented",
+    "Hourly quota task active on logged-in Windows host; nightly development controller awaiting independent QA and activation",
+    "Source originals preserved; assessment and execution evidence maintained separately"
   ],
   "verification": {
     "release_build": "passed",
@@ -2093,12 +2093,14 @@
       "runtime": "Docker; real containers"
     },
     "document_import_tests": {
-      "passed": 4
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0
     },
-    "remote_ci": "not-yet-run",
+    "remote_ci": "PRs #3, #4, #5 and #6 passed all their checks before merge",
     "complete_identity_http_audit": "not-yet-implemented",
-    "independent_static_qa": "No blocking findings in limited foundation scope; target-commit confirmation pending",
-    "git_push": "dry-run denied with HTTP 403 for avurgun1",
+    "independent_static_qa": "Exact target commits approved for merged subpackages",
+    "git_push": "Verified using repository-local kadirvurgun identity",
     "api_host_integration_tests": {
       "passed": 5,
       "failed": 0,
@@ -2120,7 +2122,7 @@
       "backend": "real API; retry case injects first transport failure only",
       "workers": 1
     },
-    "continuous_service": "not-active; two-account package still draft PR #2",
+    "continuous_service": "Poseidon-HourlyQuota registered, hourly metadata checks; development coordinator not yet activated",
     "main_protection": {
       "verified": true,
       "strict": true,
@@ -2177,10 +2179,50 @@
       "merge_commit": "d295262dcb0886ed4fa9c0299361d67568b36aec"
     },
     "draft_required_data": {
-      "state": "16 domain unit tests passed; final QA/CI pending",
-      "author_profile": "esra-pro",
-      "code_commit": "fb8d3027f7e9173b531596c46ffbecee89df4cfd",
-      "operational_submit_authority": false
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0,
+      "commit": "acddf09c7d6138ea01f3c6146a726c6743393922",
+      "independent_qa": "approved exact commit",
+      "pr": "https://github.com/kadirvurgun/Poseidon/pull/6",
+      "remote_ci": [
+        "https://github.com/kadirvurgun/Poseidon/actions/runs/41136477687",
+        "https://github.com/kadirvurgun/Poseidon/actions/runs/41136647066"
+      ],
+      "scope": "pure draft-data library; no business submit authority"
+    },
+    "hourly_scheduler_actual": {
+      "task": "Poseidon-HourlyQuota",
+      "last_observed_run": "2026-10-31T11:10:23+03:00",
+      "last_exit_code": 0,
+      "interval_minutes": 60,
+      "profile_preference": "esra-pro",
+      "quota_reserve_percent": 85,
+      "requires": "logged-in awake Windows host"
+    },
+    "nightly_coordinator": {
+      "state": "Integrated local verification passed; independent exact-commit QA and CI pending; not activated",
+      "task_limit": 4,
+      "model_call_limit": 8,
+      "maximum_hours": 8,
+      "publish_gate": "exact commit independent QA plus all expected CI checks",
+      "python": {
+        "passed": 93,
+        "failed": 0,
+        "skipped": 0
+      },
+      "windows_installer": {
+        "passed": 7,
+        "failed": 0,
+        "skipped": 0
+      },
+      "local_core": {
+        "backend": 43,
+        "component": 12,
+        "playwright": 4,
+        "failed": 0,
+        "skipped": 0
+      }
     }
   },
   "phase_reports": [
@@ -2188,7 +2230,9 @@
     "docs/phases/APP-FOUNDATION-01.md",
     "docs/phases/ANALYSIS-20261030-01.md",
     "docs/phases/OPS-HOURLY-01.md",
-    "docs/phases/POL-DEFAULT-01-DOMAIN.md"
+    "docs/phases/POL-DEFAULT-01-DOMAIN.md",
+    "docs/phases/OPS-COORDINATOR-01.md",
+    "docs/phases/OPS-COORDINATOR-01-QA-FOLLOWUP.md"
   ],
   "active_source": "docs/sources/active.json"
 }

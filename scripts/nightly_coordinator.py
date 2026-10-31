@@ -3,7 +3,7 @@
 Only numeric CLI usage and fixed diagnostics are persisted. Credentials are never read.
 """
 import argparse
-from contextlib import contextmanager
+from contextlib import contextmanager, ExitStack
 import fnmatch
 import json
 import math
@@ -29,7 +29,8 @@ class SubscriptionWorkers(Workers):
     """Pin the CLI route to the profile's existing ChatGPT subscription."""
 
     def command(self):
-        return super().command() + ['-c', 'forced_login_method="chatgpt"', '-c', 'model_provider="openai"']
+        return super().command() + ['-c', 'forced_login_method="chatgpt"', '-c', 'model_provider="openai"',
+                                    '-c', 'model_reasoning_effort="medium"', '-c', 'features.multi_agent=false']
 
 
 def eligible(value):
@@ -108,7 +109,8 @@ def ci_result(pr, commit):
         raise Blocked('pr_head_or_base_changed')
     checks = pr.get('statusCheckRollup') or []
     names = {c.get('name', c.get('context')) for c in checks}
-    pending = not {'persistence-and-security', 'frontend-and-browser'} <= names
+    pending = not {'persistence-and-security', 'frontend-and-browser',
+                   'windows-automation', 'nightly-installer-construction'} <= names
     for check in checks:
         if check.get('__typename') == 'StatusContext':
             state = check.get('state')
@@ -124,11 +126,39 @@ def ci_result(pr, commit):
     return 'pending' if pending else 'passed'
 
 
+def test_summary(path, runner):
+    """Require fresh structured evidence: positive passing tests and no other outcomes."""
+    try:
+        report = json.loads(path.read_text(encoding='utf-8'))
+        if runner == 'python':
+            counts = report
+            passed, total = counts['passed'], counts['total']
+            other = [counts[k] for k in ('failed', 'errors', 'skipped', 'expectedFailures', 'unexpectedSuccesses')]
+        elif runner == 'vitest':
+            passed, total = report['numPassedTests'], report['numTotalTests']
+            other = [report[k] for k in ('numFailedTests', 'numPendingTests', 'numTodoTests')]
+            assertions = [a for suite in report['testResults'] for a in suite['assertionResults']]
+            if (report['success'] is not True or len(assertions) != total
+                    or any(a['status'] != 'passed' for a in assertions)):
+                raise ValueError()
+        else:
+            counts = report['stats']
+            passed = total = counts['expected']
+            other = [counts[k] for k in ('unexpected', 'flaky', 'skipped')]
+            if report['errors']:
+                raise ValueError()
+        if (any(type(n) is not int or n < 0 for n in [passed, total, *other])
+                or passed <= 0 or total != passed or any(other)):
+            raise ValueError()
+    except (OSError, ValueError, KeyError, TypeError, AttributeError):
+        raise Blocked('missing_empty_failed_or_skipped_' + runner + '_report') from None
+
+
 class Coordinator:
     def __init__(self, root=ROOT, *, enabled=False, publish=False, max_jobs=1,
                  max_calls=2, hours=8, timeout=900, workers=None, runner=subprocess.run, wall=time.time):
         if (type(max_jobs) is not int or not 1 <= max_jobs <= 20 or type(max_calls) is not int
-                or not 1 <= max_calls <= 40 or not 0 < hours <= 8 or not 1 <= timeout <= 900):
+                or not 1 <= max_calls <= 40 or not 0 <= hours <= 8 or not 1 <= timeout <= 900):
             raise ValueError('Settings exceed bounded limits.')
         self.root = Path(root).resolve()
         self.workers = workers or SubscriptionWorkers(self.root)
@@ -181,14 +211,19 @@ class Coordinator:
     @contextmanager
     def account(self, preferred):
         for profile in (preferred, *[p for p in ('esra-pro', 'kadir-plus') if p != preferred]):
-            try:
-                with exclusive(self.workers.home(profile) / 'worker.lock'):
-                    if not eligible(self.workers.account(profile)):
-                        continue
-                    yield profile
-                    return
-            except BusyError:
-                continue
+            with ExitStack() as locks:
+                try:
+                    locks.enter_context(exclusive(self.workers.home(profile) / 'worker.lock'))
+                except BusyError:
+                    continue
+                try:
+                    status = self.workers.account(profile)
+                except RuntimeError:
+                    continue  # This profile is unverified; check only the other's own quota.
+                if not eligible(status):
+                    continue
+                yield profile
+                return
         yield None
 
     def budget(self):
@@ -244,7 +279,8 @@ class Coordinator:
             prompt = ('Trusted task ' + item['id'] + '. Edit only this worktree; preserve partial files. '
                       'Read AGENTS.md and applicable skill. Implement tests/docs. No models/delegation, '
                       'auth/login, commit, push, PR, merge, safety sign-offs or canonical accepted SP updates. '
-                      'Publish is coordinator-only. Scope: ' + json.dumps(item['scope']) + '\n'
+                      'Publish is coordinator-only. Keep reads scoped, use bounded source queries, '
+                      'never load the document corpus. Keep the final report concise. Scope: ' + json.dumps(item['scope']) + '\n'
                       + inside(self.root, item['task']).read_text(encoding='utf-8')
                       + '\nSource: ' + item['source'] + '\nAcceptance: ' + json.dumps(item['acceptance']))
             if len(prompt) > 16000:
@@ -304,7 +340,7 @@ class Coordinator:
 
     def gate(self):
         work = Path(self.job['worktree'])
-        required = ['Poseidon.slnx', 'scripts/verify_sources.py', 'frontend/package-lock.json',
+        required = ['Poseidon.slnx', 'scripts/verify_sources.py', 'scripts/nightly_python_tests.py', 'frontend/package-lock.json',
                     'tests/Poseidon.Browser.Tests/package-lock.json', 'tests/Poseidon.Browser.Tests/playwright.config.ts',
                     'tests/Poseidon.Persistence.Tests/Poseidon.Persistence.Tests.csproj',
                     'tests/Poseidon.Api.Tests/Poseidon.Api.Tests.csproj']
@@ -341,16 +377,23 @@ class Coordinator:
             ('migration_model', [dotnet, 'ef', 'migrations', 'has-pending-model-changes', '--project',
                                  'backend/Poseidon.Persistence', '--startup-project', 'backend/Poseidon.DbMigrator',
                                  '--configuration', 'Release', '--no-build']),
-            ('python', [sys.executable, '-m', 'unittest', 'discover', '-s', 'scripts', '-p', 'test_*.py', '-v']),
+            ('python', [sys.executable, 'scripts/nightly_python_tests.py',
+                        '--report', str(work / results / 'python.json')]),
             ('source_lineage', [sys.executable, 'scripts/verify_sources.py']),
             ('frontend_ci', self.npm('ci', '--prefix', 'frontend')),
             ('browser_ci', self.npm('ci', '--prefix', 'tests/Poseidon.Browser.Tests')),
         ]
         commands += [(name, self.npm('run', name, '--prefix', 'frontend')) for name in
                      ('generate:api', 'lint', 'typecheck', 'test', 'build')]
+        commands = [(name, command + ['--', '--reporter=default', '--reporter=json',
+                                      '--outputFile=' + str(work / results / 'vitest.json')]
+                     if name == 'test' else command) for name, command in commands]
         self.env.update(ports())
         for name, command in commands:
             self.command(command, work, label=name)
+            if name in {'python', 'test'}:
+                test_summary(work / results / ('python.json' if name == 'python' else 'vitest.json'),
+                             'python' if name == 'python' else 'vitest')
             if name == 'all_tests':
                 reports = list((work / results).rglob('*.trx'))
                 if len(reports) != len(projects):
@@ -365,7 +408,11 @@ class Coordinator:
         if not cli.is_file():
             raise Blocked('missing_playwright_cli')
         self.command([self.tool('node'), str(cli), 'install', 'chromium'], work, label='chromium')
-        self.command(self.npm('test', '--prefix', 'tests/Poseidon.Browser.Tests'), work, label='real_api_browser')
+        self.env['PLAYWRIGHT_JSON_OUTPUT_FILE'] = str(work / results / 'playwright.json')
+        self.env['PLAYWRIGHT_HTML_OPEN'] = 'never'
+        self.command(self.npm('test', '--prefix', 'tests/Poseidon.Browser.Tests', '--',
+                              '--reporter=list,html,json'), work, label='real_api_browser')
+        test_summary(work / results / 'playwright.json', 'playwright')
 
     def verify(self, item):
         self.begin('verifying', 'fixed_gate')

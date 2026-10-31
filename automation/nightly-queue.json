@@ -1,1 +1,49 @@
-[]
+[
+  {
+    "id": "S0-ADR-01",
+    "task": "docs/tasks/s0-adr-01.md",
+    "source": "18.01 Backlog row5 DEV-004 / T-S0-004; docs/architecture.md",
+    "acceptance": [
+      "Module boundaries, dependency direction, outbox, storage, offline and AI decisions are explicit with source locators",
+      "Unresolved D-STATE-01, IdP, data location and expert decisions stay open; no invented approvals",
+      "Relative document links resolve and canonical accepted SP unchanged"
+    ],
+    "dependencies": [],
+    "scope": [
+      "docs/decisions/s0-*.md",
+      "docs/tasks/s0-adr-01.md"
+    ]
+  },
+  {
+    "id": "S0-THREATS-01",
+    "task": "docs/tasks/s0-threats-01.md",
+    "source": "18.01 Backlog row7 DEV-006 / T-S0-006; docs/security-baseline.md",
+    "acceptance": [
+      "Each required threat area has assets, trust boundary, abuse case, mitigation, verification and owner",
+      "P0 mitigation table maps real backlog IDs and explicitly records unimplemented controls",
+      "No GDPR/KVKK compliance or expert approval claimed"
+    ],
+    "dependencies": [
+      "S0-ADR-01"
+    ],
+    "scope": [
+      "docs/security/threat-model.md",
+      "docs/tasks/s0-threats-01.md"
+    ]
+  },
+  {
+    "id": "UI-REQUIRED-DATA-01",
+    "task": "docs/tasks/ui-required-data-01.md",
+    "source": "14.02 sheet:Yonetici Ozeti row19 POL-DEFAULT-01; 13.06 executive row18; backend/Poseidon.Domain/RequiredDataPolicy.cs",
+    "acceptance": [
+      "Reusable accessible TR/EN component distinguishes missing/unknown/known without implicit false",
+      "Meaningful component tests cover false, zero, whitespace, unknown, language and keyboard behavior",
+      "No business submit endpoint or operational readiness claim introduced"
+    ],
+    "dependencies": [],
+    "scope": [
+      "frontend/src/required-data/*",
+      "docs/tasks/ui-required-data-01.md"
+    ]
+  }
+]
