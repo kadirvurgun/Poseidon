@@ -117,3 +117,5 @@ jobs:
           python-version: '3.13'
       - name: Construct nightly ScheduledTask in Preview only
         run: python scripts/windows_nightly_checks.py -v
+      - name: Construct persistent runtime and quota wake tasks in Preview only
+        run: python scripts/windows_ops_checks.py -v

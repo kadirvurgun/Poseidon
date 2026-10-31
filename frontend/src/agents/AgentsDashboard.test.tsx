@@ -56,6 +56,14 @@ describe('OPS-DASH-UI-01 development operations (mock API)', () => {
     expect(card('Esra Pro').queryByText('Çalışıyor')).not.toBeInTheDocument()
   })
 
+  it('displays the most used bucket when several plan buckets have the same duration', async () => {
+    const data = fixture()
+    data.quota.profiles['kadir-plus'].windows!.push({ usedPercent: 92, windowDurationMins: 300, resetsAt: epoch + 300 })
+    await mount(data)
+    expect(card('Kadir Plus').getByText('8% kalan')).toBeVisible()
+    expect(card('Kadir Plus').getByText('Uygun değil / bilinmiyor')).toBeVisible()
+  })
+
   it('renders both profiles, missing Pro 5h, raw quota, accepted progress and CLI budget', async () => {
     const { fetchMock } = await mount()
     expect(card('Esra Pro').getByText('Pencere bildirilmedi')).toBeVisible()
