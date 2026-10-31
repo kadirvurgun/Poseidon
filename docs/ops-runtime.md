@@ -20,6 +20,10 @@ mutations are rejected. No CORS wildcard, static files, arbitrary paths, credent
 home reads, raw state, prompts, identities, source paths or CLI errors are exposed.
 The camelCase response contains generatedAt, quota, coordinator with flat jobs,
 activities, bounded sanitized events, alarms and accepted project progress.
+The API returns at most 100 jobs and 20 receipts per job. Completed derived
+activity files are pruned to the latest 200; unfinished/uncertain records and
+canonical dependency/reconciliation state are preserved. Historical quota with
+no original observedAt remains unknown; refresh time is not substituted.
 Quota's timestamp/next_check names match the agreed UI contract. Every retained
 lastKnown value carries its own observedAt; busy, unavailable, reconciliation and
 stale (>75 minutes) values never authorize dispatch. No absent 5-hour window is invented.

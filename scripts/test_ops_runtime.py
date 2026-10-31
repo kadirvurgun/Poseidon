@@ -14,6 +14,27 @@ from test_nightly_coordinator import FakeWorkers
 
 
 class RuntimeTests(unittest.TestCase):
+    def test_unknown_historical_observation_time_is_not_replaced_by_fresh_snapshot_time(self):
+        self.quota(state='busy')
+        profile = self.store.status()['quota']['profiles']['esra-pro']
+        self.assertIsNone(profile['lastKnown']['observedAt'])
+
+    def test_api_history_is_bounded_without_deleting_canonical_jobs(self):
+        jobs = {f'OPS-{i}': {'status': 'merged', 'calls': [
+            {'profile': 'esra-pro', 'phase': 'development'} for _ in range(30)]} for i in range(125)}
+        path = self.root / '.runtime/nightly/state.json'
+        write_json(path, {'jobs': jobs})
+        status = self.store.status()
+        self.assertEqual(len(status['coordinator']['jobs']), 100)
+        self.assertEqual(len(status['coordinator']['jobs'][0]['calls']), 20)
+        self.assertEqual(len(json.loads(path.read_text())['jobs']), 125)
+        for i in range(205):
+            write_json(self.store.runtime / f'activities/done-{i}.json', {'finishedAt': iso(self.now - i)})
+        write_json(self.store.runtime / 'activities/uncertain.json', {'status': 'unknown'})
+        Driver(self.store).prune_activities()
+        self.assertEqual(len(list((self.store.runtime / 'activities').glob('*.json'))), 201)
+        self.assertTrue((self.store.runtime / 'activities/uncertain.json').is_file())
+
     def test_task_completion_refreshes_quota_before_the_next_hour(self):
         self.quota(state='busy')
         activity = self.store.runtime / 'activities/running.json'

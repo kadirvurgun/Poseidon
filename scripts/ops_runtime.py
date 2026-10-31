@@ -133,7 +133,7 @@ class Store:
                 last = item if ws else mapping(item.get('lastKnown'))
                 if windows(last.get('windows')):
                     safe['lastKnown'] = {'windows': windows(last['windows']),
-                        'observedAt': date(last.get('observedAt')) or stamp}
+                        'observedAt': date(last.get('observedAt'))}
             profiles[profile] = safe
             for index, w in enumerate(ws if state == 'known' else safe.get('lastKnown', {}).get('windows', [])):
                 blocking = w.get('usedPercent', 100) >= 85
@@ -150,7 +150,10 @@ class Store:
                 alarms.append({'id': profile, 'profile': profile, 'state': 'unknown', 'reason': 'metadata_unknown'})
         state = load(self.root / '.runtime/nightly/state.json')
         jobs = []
-        for identifier, j in mapping(state.get('jobs')).items():
+        retained_jobs = list(mapping(state.get('jobs')).items())
+        # API view only: never delete canonical dependency/reconciliation state.
+        retained_jobs.sort(key=lambda item: isinstance(item[1], dict) and item[1].get('status') != 'merged', reverse=True)
+        for identifier, j in retained_jobs[:100]:
             if not label(identifier) or not isinstance(j, dict):
                 continue
             job = {'id': identifier, 'status': choice(j.get('status'), STATUSES)}
@@ -165,7 +168,7 @@ class Store:
             if isinstance(j.get('pr_url'), str) and re.fullmatch(r'https://github.com/kadirvurgun/Poseidon/pull/[0-9]+', j['pr_url']):
                 job['prUrl'] = j['pr_url']
             job['calls'] = [{'profile': c['profile'], 'phase': choice(c.get('phase'), PHASES), 'usage': numeric(c.get('usage')), **model_fields(c)}
-                            for c in sequence(j.get('calls')) if isinstance(c, dict) and c.get('profile') in PROFILES]
+                            for c in sequence(j.get('calls'))[-20:] if isinstance(c, dict) and c.get('profile') in PROFILES]
             if job['calls']:
                 job.setdefault('profile', job['calls'][-1]['profile'])
                 job.setdefault('phase', job['calls'][-1]['phase'])
@@ -188,7 +191,7 @@ class Store:
                 activities.append(safe)
         # A model receipt is saved before dispatch. Show that live lease immediately,
         # while the coordinator thread is still inside the CLI invocation.
-        for identifier, job in mapping(state.get('jobs')).items():
+        for identifier, job in retained_jobs[:100]:
             if not label(identifier) or not isinstance(job, dict):
                 continue
             calls = sequence(job.get('calls'))
@@ -396,8 +399,23 @@ class Driver:
                     write_json(self.store.runtime / 'activities' / (identifier + '.json'), activity)
             if after.get('started') != before.get('started') and before:
                 self.store.record('renewal')
+            self.prune_activities()
         write_json(self.store.runtime / 'service.json', {'enabled': enabled, 'status': status,
             'nextWake': self.poll_at, 'wakeState': self.wake_state, 'wakeAt': self.wake_at})
+
+    def prune_activities(self):
+        directory = self.store.runtime / 'activities'
+        if linked(directory) or not directory.is_dir():
+            return
+        finished = []
+        for path in directory.glob('*.json'):
+            if linked(path):
+                continue
+            value = load(path)
+            if date(value.get('finishedAt')):
+                finished.append((value['finishedAt'], path))
+        for _, path in sorted(finished, key=lambda pair: pair[0], reverse=True)[200:]:
+            path.unlink()  # Only bounded derived completed view; canonical state is retained.
 
     def run(self, stop):
         with exclusive(self.store.runtime / 'runtime.lock'):
