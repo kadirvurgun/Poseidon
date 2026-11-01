@@ -46,6 +46,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
     public void Configure(IApplicationBuilder app, IWebHostEnvironment environment)
     {
         app.UseExceptionHandler();
+        app.UseMiddleware<ApiRequestTelemetry>();
         app.Use(async (context, next) =>
         {
             context.TraceIdentifier = Guid.NewGuid().ToString("N");
