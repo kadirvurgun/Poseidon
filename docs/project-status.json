@@ -1,4 +1,44 @@
 {
+  "equipment_maintenance_01": {
+    "status": "authored_unverified_incomplete_not_accepted",
+    "accepted": false,
+    "task": "docs/tasks/equipment-maintenance-01.md",
+    "phase_report": "docs/phases/EQUIPMENT-MAINTENANCE-01.md",
+    "source_baseline": "poseidon-v46.3-20261030",
+    "receiving_head": "9c94f66",
+    "engineering_prerequisite": "80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44; supplied committed PR11 engineering review",
+    "support_origins_in_order": [
+      "dea9169d0eba123bf3d5cf469af3e97de68f5dc5",
+      "fa58d3ddb35f67970c75d8055fcc93a8a37c59a3",
+      "a6d6bd30d6e9ffdbabc9b5313262064a5e1af79d"
+    ],
+    "support_receipts_in_order": [
+      "3cae07d",
+      "4f8466a",
+      "ed9e9e1"
+    ],
+    "canonical_progress_unchanged": true,
+    "target_story_points": 194,
+    "canonical_total_story_points": 970,
+    "verification": "DEFERRED: all suites/build/typecheck/contracts/migration execution/browser/independent QA/CI; no new PASS",
+    "current_phase": "Larger domain foundation product authoring; actual technical draft implementation checkpoint",
+    "delivered": [
+      "Connected Asset hierarchy EF/API/TR-EN editor with actual supplied policy/tree",
+      "Authored transactional SSI + scoped database cycle trigger, composite FKs, xmin/revisions, attributed writes/receipts",
+      "Normalized Technical job/eligible role references and immutable plan calculation/input/asset lineage",
+      "Current and normalized API aliases share same storage/receipts",
+      "Synthetic add-missing unverified fixtures and domain/PostgreSQL/API/component/private real-host cases"
+    ],
+    "open_criteria": [
+      "Actual generated OpenAPI/consumer adapter parity at deferred bundle gate",
+      "Real race/model/migration/seed/audit/restart/backend/component/browser checks and fixes",
+      "Approved controlled catalogs/role lookup/freshness and meter-condition adapter contracts",
+      "DEV-109 WorkOrder deferral authority/reason/risk/evidence/max-extension/readiness rules; no activation or completion/verification",
+      "Durable offline support remains unavailable; current forms are online only",
+      "Fresh independent exact-target QA, required CI and separate source acceptance"
+    ],
+    "next_step": "Coordinator continues foundation bundle, provisions disposable technical fixture capabilities at gate, executes combined verification and obtains independent QA. Worker does not publish or merge."
+  },
   "crew_roster_01": {
     "status": "product_authoring_checkpoint_unverified_incomplete_not_accepted",
     "accepted": false,

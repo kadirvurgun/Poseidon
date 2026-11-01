@@ -42,7 +42,7 @@ public sealed partial class DirectoryWorkspaceTests(OwnedPostgresFixture fixture
     }
     public async ValueTask DisposeAsync() => await postgres.DisposeAsync();
     private Vessel SeedVessel => seed.Vessels.First(v => v.TenantId == seed.Tenants[0].Id);
-    private WebApplicationFactory<Program> Host(bool manage = true, bool read = true, bool edit = true, bool scope = true, DbCommandInterceptor? interceptor = null, bool search = false, bool regulatoryRead = false, bool regulatoryWrite = false, bool auditRead = false, bool crewRead = false, bool crewWrite = false, bool crewIdentity = false) => new WebApplicationFactory<Program>().WithWebHostBuilder(b =>
+    private WebApplicationFactory<Program> Host(bool manage = true, bool read = true, bool edit = true, bool scope = true, DbCommandInterceptor? interceptor = null, bool search = false, bool regulatoryRead = false, bool regulatoryWrite = false, bool auditRead = false, bool crewRead = false, bool crewWrite = false, bool crewIdentity = false, bool technicalRead = false, bool technicalWrite = false) => new WebApplicationFactory<Program>().WithWebHostBuilder(b =>
     {
         b.UseEnvironment("Test");
         b.ConfigureAppConfiguration((_, c) => c.AddInMemoryCollection(new Dictionary<string, string?>
@@ -64,6 +64,13 @@ public sealed partial class DirectoryWorkspaceTests(OwnedPostgresFixture fixture
             ["Authentication:Oidc:Memberships:0:Permissions:8"] = crewIdentity ? "crew.identity.read" : "unused",
             ["Authentication:Oidc:Memberships:0:Permissions:9"] = crewIdentity ? "crew.identity.write" : "unused",
             ["Authentication:Oidc:Memberships:0:Permissions:10"] = crewRead ? "crew.history.read" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:11"] = technicalRead ? "equipment.read" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:12"] = technicalWrite ? "equipment.write" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:13"] = technicalRead ? "equipment.history.read" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:14"] = technicalRead ? "maintenance.read" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:15"] = technicalWrite ? "maintenance.write" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:16"] = technicalRead ? "maintenance.history.read" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:17"] = technicalWrite ? "maintenance.owner.eligible" : "unused",
             ["Authentication:Oidc:Memberships:0:TenantWideManage"] = (scope && manage).ToString(),
             ["Authentication:Oidc:Memberships:0:TenantWideRead"] = (scope && read).ToString(),
             ["Authentication:Oidc:Memberships:0:VesselGrants:0:VesselId"] = scope ? SeedVessel.Id.ToString() : Guid.Empty.ToString(),

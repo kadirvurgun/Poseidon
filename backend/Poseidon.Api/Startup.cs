@@ -64,6 +64,15 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
+        app.Use(async (context, next) => {
+            await next(context);
+            // Invalid JSON/binding can end before the command handler. Record fixed metadata only.
+            var name = context.GetEndpoint()?.Metadata.GetMetadata<Microsoft.AspNetCore.Routing.IEndpointNameMetadata>()?.EndpointName;
+            if (context.Response.StatusCode == 400 && !context.Items.ContainsKey("TechnicalActionObserved") && name != null &&
+                (name.StartsWith("Equipment", StringComparison.Ordinal) || name.StartsWith("Maintenance", StringComparison.Ordinal)))
+                await context.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(context,
+                    name.StartsWith("Equipment", StringComparison.Ordinal) ? "EquipmentSave" : "MaintenanceSave", "validation_failed");
+        });
         var labAssets = configuration["DevelopmentLab:WebRoot"];
         if (!string.IsNullOrEmpty(labAssets))
         {
@@ -81,6 +90,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapSecureFiles();
             endpoints.MapDocuments();
             endpoints.MapCrew();
+            endpoints.MapTechnical();
             endpoints.MapGet("/health/live", () => Results.Text("alive"))
                 .WithName("GetLiveness")
                 .WithSummary("Process liveness only; does not indicate database or operational readiness.");

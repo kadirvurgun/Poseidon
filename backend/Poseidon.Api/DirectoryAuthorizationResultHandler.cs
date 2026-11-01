@@ -19,6 +19,11 @@ public sealed class DirectoryAuthorizationResultHandler : IAuthorizationMiddlewa
                 extensions: new Dictionary<string, object?> { ["code"] = code, ["correlationId"] = context.TraceIdentifier }).ExecuteAsync(context);
             return;
         }
+        if (!result.Succeeded && endpointName != null && (endpointName.StartsWith("Equipment", StringComparison.Ordinal) || endpointName.StartsWith("Maintenance", StringComparison.Ordinal))) {
+            await context.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(context,
+                endpointName.StartsWith("Equipment", StringComparison.Ordinal) ? context.Request.Method == "GET" ? "EquipmentRead" : "EquipmentSave" : context.Request.Method == "GET" ? "MaintenanceRead" : "MaintenanceSave",
+                result.Challenged ? "Unauthenticated" : "Denied");
+        }
         var todayAction = context.GetEndpoint()?.Metadata.GetMetadata<Microsoft.AspNetCore.Routing.IEndpointNameMetadata>()?.EndpointName switch
         {
             "GetRegulatoryDraft" => "ProfileRead",
