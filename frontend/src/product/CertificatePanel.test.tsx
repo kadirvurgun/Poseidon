@@ -34,3 +34,25 @@ it('withholds server diagnostics and private data when certificate permission is
   expect(await screen.findByRole('alert')).toHaveTextContent('Private certificate access denied.')
   expect(screen.queryByText(/PRIVATE/)).not.toBeInTheDocument(); expect(screen.queryByRole('button', { name: 'Add certificate declaration' })).not.toBeInTheDocument()
 })
+
+it('offers only scanned current-person document versions and withdraws choices after same-session denial', async () => {
+  const fileId = '33333333-3333-3333-3333-333333333333'
+  const manifest = { personId: assignment, policyVersion: 'synthetic-v1', purpose: 'synthetic-files', kinds: ['CertificateDocument', 'Photo'], canWrite: false,
+    hasMore: false, next: {}, items: [{ id: fileId, personId: assignment, kind: 'CertificateDocument', revision: 2, expiresOn: null,
+      policyVersion: 'synthetic-v1', purpose: 'synthetic-files', sourceVersion: 'poseidon-v46.3-20261030', createdAt: '2026-11-01T10:00:00Z', state: 'CleanTransport' }] }
+  fetcher.mockImplementation(async (url: string) => json(url.endsWith('/personal-files') ? manifest : []))
+  render(<CertificatePanel vessel={vessel} assignment={assignment} person={assignment} language="en" csrf="SYNTHETIC" onDirty={dirty} />)
+  await userEvent.click(await screen.findByRole('button', { name: 'Add certificate declaration' }))
+  const choice = await screen.findByRole('option', { name: 'Scanned unverified person version 2 · Expiry unknown' })
+  expect(choice).toHaveValue(fileId)
+  const selector = screen.getByLabelText('Scanned person document version')
+  await userEvent.selectOptions(selector, fileId)
+  expect(selector).toHaveValue(fileId)
+  fetcher.mockImplementation(async (url: string) => url.endsWith('/personal-files') ? json({}, 403) : json([]))
+  await userEvent.click(screen.getByRole('button', { name: 'Refresh document choices' }))
+  expect(await screen.findByRole('option', { name: 'Current reference unavailable; refresh or clear explicitly' })).toBeDisabled()
+  expect(screen.queryByRole('option', { name: 'Scanned unverified person version 2 · Expiry unknown' })).not.toBeInTheDocument()
+  // Explicit removal is distinct from unknown permissions silently clearing a captured declaration.
+  await userEvent.selectOptions(selector, '')
+  expect(selector).toHaveValue('')
+})

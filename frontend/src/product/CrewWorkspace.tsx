@@ -1,3 +1,4 @@
+import { CrewPersonalFiles } from './CrewPersonalFiles'
 import { CrewPersonalProfile } from './CrewPersonalProfile'
 import { WorkspaceContextBar } from './WorkspaceContextBar'
 import { CertificatePanel } from './CertificatePanel'
@@ -42,7 +43,8 @@ export function CrewWorkspace({ vessel, assignment }: { vessel: string; assignme
   const [loading, setLoading] = useState(true); const [error, setError] = useState(0)
   const [certificateDirty, setCertificateDirty] = useState(false)
   const [profileDirty, setProfileDirty] = useState(false)
-  const childDirty = certificateDirty || profileDirty
+  const [fileDirty, setFileDirty] = useState(false)
+  const childDirty = certificateDirty || profileDirty || fileDirty
   const [personMode, setPersonMode] = useState(false)
   const [editor, setEditor] = useState<Editor | null>(null); const [saving, setSaving] = useState(false)
   const [result, setResult] = useState<'idle' | 'saved' | 'uncertain' | 'conflict' | 'invalid' | 'denied' | 'expired'>('idle')
@@ -134,6 +136,7 @@ export function CrewWorkspace({ vessel, assignment }: { vessel: string; assignme
         <button type="button" disabled={saving || result === 'uncertain'} onClick={() => { setEditor(null); setResult('idle'); setGeneration(v => v + 1) }}>{result === 'conflict' ? t.reload : t.cancel}</button></form>}
       {destination && <dialog ref={dialog} aria-label={t.dirty} onCancel={() => setDestination(null)}><p>{t.dirty}</p><button autoFocus disabled={saving || result === 'uncertain'} onClick={() => window.location.assign(destination)}>{t.reload}</button><button onClick={() => setDestination(null)}>{t.cancel}</button></dialog>}
       {assignment && detail && user && !editor && !paused && error === 0 && <CrewPersonalProfile key={`profile:${user.actorId}:${user.tenantId}:${user.csrfToken}:${vessel}:${assignment}`} vessel={vessel} assignment={assignment} language={language} csrf={user.csrfToken} onDirty={setProfileDirty} />}
-      {assignment && detail && user && !editor && !paused && error === 0 && <CertificatePanel key={`${user.actorId}:${user.tenantId}:${user.csrfToken}:${vessel}:${assignment}`} vessel={vessel} assignment={assignment} language={language} csrf={user.csrfToken} onDirty={setCertificateDirty} />}
+      {assignment && row && detail && user && !editor && !paused && error === 0 && <CrewPersonalFiles key={`files:${user.actorId}:${user.tenantId}:${user.csrfToken}:${vessel}:${assignment}`} vessel={vessel} assignment={assignment} person={row.personId} language={language} csrf={user.csrfToken} onDirty={setFileDirty} />}
+      {assignment && detail && user && !editor && !paused && error === 0 && <CertificatePanel key={`${user.actorId}:${user.tenantId}:${user.csrfToken}:${vessel}:${assignment}`} vessel={vessel} assignment={assignment} person={row?.personId} language={language} csrf={user.csrfToken} onDirty={setCertificateDirty} />}
     </main></div>
 }

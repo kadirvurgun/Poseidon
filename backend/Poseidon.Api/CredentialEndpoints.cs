@@ -37,11 +37,14 @@ public static class CredentialEndpoints
             return await Fail(h, 404, "resource_not_found");
         var rows = await db.Credentials.AsNoTracking().Where(x => x.VesselId == vessel && x.AssignmentId == assignment)
             .OrderBy(x => x.Id).Take(100).ToArrayAsync(h.RequestAborted);
+        var visible = new List<Credential>();
+        foreach (var row in rows)
+            if (row.DocumentReference == null || await CrewFileEndpoints.AuthorizedDocument(vessel, assignment, row.DocumentReference.Value, h, db)) visible.Add(row);
         // Explicit UTC calendar observation, disclosed with the response; no legal cutoff policy.
         var reference = DateOnly.FromDateTime(DateTime.UtcNow);
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "CredentialRead", "Success", resourceId: vessel);
-        return Results.Ok(rows.Select(x => new CredentialDto(x.Id, x.Version, x.Revision, x.Metadata(), x.VerificationState,
-            x.Provenance, "ControlledLookupAndSignatureRequired", CredentialDeclarationDates.Evaluate(x.Metadata().Declaration, reference), reference)).ToArray());
+        return Results.Ok(visible.Select(x => new CredentialDto(x.Id, x.Version, x.Revision, x.Metadata(), x.VerificationState,
+            x.Provenance, x.LegacyDocumentReference != null && x.DocumentReference == null ? "LegacyDocumentReferenceUnavailable" : "ControlledLookupAndSignatureRequired", CredentialDeclarationDates.Evaluate(x.Metadata().Declaration, reference), reference)).ToArray());
     }
     private static Task<IResult> Save(Guid vessel, Guid assignment, CredentialSaveCommand command, HttpContext h, PoseidonDbContext db) =>
         Apply(vessel, assignment, command, h, db, false);
@@ -55,7 +58,7 @@ public static class CredentialEndpoints
         try { await h.RequestServices.GetRequiredService<IAntiforgery>().ValidateRequestAsync(h); }
         catch (AntiforgeryValidationException) { return await Fail(h, 400, "csrf_invalid"); }
         if (command.Id == Guid.Empty || !CertificateMetadataPolicy.Valid(command.Metadata)) return await Fail(h, 400, "validation_failed");
-        if (command.Metadata.DocumentReference is { } document && !await db.Documents.AnyAsync(x => x.Id == document && x.VesselId == vessel, ct))
+        if (command.Metadata.DocumentReference is { } document && !await CrewFileEndpoints.AuthorizedDocument(vessel, assignment, document, h, db))
             return await Fail(h, 400, "validation_failed");
         var key = h.Request.Headers["Idempotency-Key"].ToString();
         if (!Guid.TryParseExact(key, "D", out _)) return await Fail(h, 400, "invalid_idempotency_key");

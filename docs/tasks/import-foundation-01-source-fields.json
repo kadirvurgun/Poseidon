@@ -1535,10 +1535,10 @@
       "fr": "FR46-crew-profile-photo_ref",
       "tc": "TC46-crew-profile-photo_ref",
       "template_field_candidate": null,
-      "coverage": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
+      "coverage": "Person-owned versioned photo metadata/staging/scanned bytes/access and reachable review authored. Explicit persisted active photo_ref selection remains unimplemented; no implicit latest photo.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software",
-      "software_state": "unimplemented_in_this_package",
+      "coverage_state": "implemented_partial_active_photo_binding_software_open",
+      "software_state": "photo_transport_authored_active_reference_binding_unimplemented",
       "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
@@ -1972,10 +1972,10 @@
       "fr": "FR46-crew-certificates-document_ref",
       "tc": "TC46-crew-certificates-document_ref",
       "template_field_candidate": "document_ref",
-      "coverage": "Ordinary private Credential declaration handler; no authenticity/signature/qualification claim. Person-owned document contract remains software gap for document_ref.",
+      "coverage": "Configured person-owned immutable scanned file version reference; ordinary/private selector and Import preview/commit share current-owner authorization. Historic vessel refs retained separately unavailable. Verification deferred.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_partial_person_ownership_software_open",
-      "software_state": "declaration_capture_exists_person_owned_document_reference_contract_unimplemented",
+      "coverage_state": "authored_configured_person_owned_reference_unverified",
+      "software_state": "ordinary_import_scanned_person_version_reference_authored_unverified",
       "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {

@@ -19,6 +19,7 @@ beforeEach(() => {
     if (init?.method === 'POST' || init?.method === 'PUT') return mutation(init)
     if (path.endsWith('/auth/session')) return json({ authenticated: true, tenantId: vessel, actorId: id, csrfToken: 'synthetic-csrf' })
     if (path.endsWith('/current-assignment')) return json({ state: 'PolicyUnavailable' })
+    if (path.endsWith('/personal-files')) return json({ code: 'permission_denied' }, 404)
     if (path.includes('/personal-profile')) return json({ code: 'field_policy_denied' }, 403)
     if (path.endsWith('/positions') || path.endsWith('/certificates')) return json([])
     if (path.endsWith(`/${id}`)) return json({ assignment: row, personVersion: 12, employmentState: 'Unknown', fitnessState: 'Unknown', contactStatus: 'Withheld', healthStatus: 'Withheld' })

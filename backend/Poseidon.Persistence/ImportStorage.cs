@@ -25,6 +25,7 @@ public sealed class Credential : ITenantEntity
     public string? StcwReference { get; set; }
     public string? TankerRelevance { get; set; }
     public string? VesselTypeScope { get; set; }
+    public Guid? LegacyDocumentReference { get; set; }
     public Guid? DocumentReference { get; set; }
     public string? RenewalLeadDaysNumeric { get; set; }
     public string? SourceSystem { get; set; }
@@ -126,13 +127,18 @@ internal static class ImportStorage
             b.HasAlternateKey(x => new { x.TenantId, x.Id, x.VesselId }).HasName("AK_Credentials_Scope");
             b.HasOne<CrewAssignment>().WithMany().HasForeignKey(x => new { x.TenantId, x.AssignmentId, x.VesselId, x.PersonId })
                 .HasPrincipalKey(x => new { x.TenantId, x.Id, x.VesselId, x.PersonId }).HasConstraintName("FK_Credentials_Assignments_Scope").OnDelete(DeleteBehavior.Restrict);
-            b.HasOne<Document>().WithMany().HasForeignKey(x => new { x.TenantId, x.DocumentReference, x.VesselId })
+            b.HasOne<Document>().WithMany().HasForeignKey(x => new { x.TenantId, x.LegacyDocumentReference, x.VesselId })
                 .HasPrincipalKey(x => new { x.TenantId, x.Id, x.VesselId }).HasConstraintName("FK_Credentials_Documents_Scope_Document").OnDelete(DeleteBehavior.Restrict);
             b.Property(x => x.Version).IsRowVersion();
             b.Property(x => x.IssuingCountryNumeric).HasMaxLength(CertificateMetadataPolicy.MaxNumericCharacters);
             b.Property(x => x.RenewalLeadDaysNumeric).HasMaxLength(CertificateMetadataPolicy.MaxNumericCharacters);
             b.HasIndex(x => new { x.TenantId, x.AssignmentId, x.VesselId, x.PersonId });
-            b.HasIndex(x => new { x.TenantId, x.DocumentReference, x.VesselId });
+            b.Property(x => x.LegacyDocumentReference).HasColumnName("DocumentReference");
+            b.Property(x => x.DocumentReference).HasColumnName("PersonFileReference");
+            b.HasIndex(x => new { x.TenantId, x.LegacyDocumentReference, x.VesselId }).HasDatabaseName("IX_Credentials_TenantId_DocumentReference_VesselId");
+            b.HasIndex(x => new { x.TenantId, x.DocumentReference, x.VesselId }).HasDatabaseName("IX_Credentials_TenantId_PersonFileReference_VesselId");
+            b.HasOne<FileStage>().WithMany().HasForeignKey(x => new { x.TenantId, x.DocumentReference, x.VesselId })
+                .HasPrincipalKey(x => new { x.TenantId, x.Id, x.VesselId }).HasConstraintName("FK_Credentials_PersonFile_Scope").OnDelete(DeleteBehavior.Restrict);
         });
         model.Entity<CredentialRevision>(b => {
             b.ToTable("CredentialRevisions", "crew"); b.HasKey(x => new { x.TenantId, x.CredentialId, x.Revision });

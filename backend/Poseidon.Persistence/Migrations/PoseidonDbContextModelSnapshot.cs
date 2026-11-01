@@ -965,7 +965,8 @@ namespace Poseidon.Persistence.Migrations
                 b.Property<string>("StcwReference").HasColumnType("text");
                 b.Property<string>("TankerRelevance").HasColumnType("text");
                 b.Property<string>("VesselTypeScope").HasColumnType("text");
-                b.Property<Guid?>("DocumentReference").HasColumnType("uuid");
+                b.Property<Guid?>("LegacyDocumentReference").HasColumnName("DocumentReference").HasColumnType("uuid");
+                b.Property<Guid?>("DocumentReference").HasColumnName("PersonFileReference").HasColumnType("uuid");
                 b.Property<string>("RenewalLeadDaysNumeric").HasMaxLength(1024).HasColumnType("character varying(1024)");
                 b.Property<string>("SourceSystem").HasColumnType("text");
                 b.Property<string>("Notes").HasColumnType("text");
@@ -982,8 +983,12 @@ namespace Poseidon.Persistence.Migrations
             });
             modelBuilder.Entity("Poseidon.Persistence.Credential", b => b.HasOne("Poseidon.Persistence.CrewAssignment", null).WithMany().HasForeignKey("TenantId", "AssignmentId", "VesselId", "PersonId").HasPrincipalKey("TenantId", "Id", "VesselId", "PersonId").HasConstraintName("FK_Credentials_Assignments_Scope").OnDelete(DeleteBehavior.Restrict).IsRequired());
             modelBuilder.Entity("Poseidon.Persistence.Credential", b => b.HasIndex("TenantId", "AssignmentId", "VesselId", "PersonId"));
-            modelBuilder.Entity("Poseidon.Persistence.Credential", b => b.HasOne("Poseidon.Persistence.Document", null).WithMany().HasForeignKey("TenantId", "DocumentReference", "VesselId").HasPrincipalKey("TenantId", "Id", "VesselId").HasConstraintName("FK_Credentials_Documents_Scope_Document").OnDelete(DeleteBehavior.Restrict));
-            modelBuilder.Entity("Poseidon.Persistence.Credential", b => b.HasIndex("TenantId", "DocumentReference", "VesselId"));
+            modelBuilder.Entity("Poseidon.Persistence.Credential", b => b.HasOne("Poseidon.Persistence.Document", null).WithMany().HasForeignKey("TenantId", "LegacyDocumentReference", "VesselId").HasPrincipalKey("TenantId", "Id", "VesselId").HasConstraintName("FK_Credentials_Documents_Scope_Document").OnDelete(DeleteBehavior.Restrict));
+            modelBuilder.Entity("Poseidon.Persistence.Credential", b => {
+                b.HasIndex("TenantId", "LegacyDocumentReference", "VesselId").HasDatabaseName("IX_Credentials_TenantId_DocumentReference_VesselId");
+                b.HasIndex("TenantId", "DocumentReference", "VesselId").HasDatabaseName("IX_Credentials_TenantId_PersonFileReference_VesselId");
+                b.HasOne("Poseidon.Persistence.FileStage", null).WithMany().HasForeignKey("TenantId", "DocumentReference", "VesselId").HasPrincipalKey("TenantId", "Id", "VesselId").HasConstraintName("FK_Credentials_PersonFile_Scope").OnDelete(DeleteBehavior.Restrict);
+            });
             modelBuilder.Entity("Poseidon.Persistence.CredentialRevision", b => {
                 b.Property<Guid>("TenantId").HasColumnType("uuid");
                 b.Property<Guid>("CredentialId").HasColumnType("uuid");
@@ -1115,6 +1120,18 @@ namespace Poseidon.Persistence.Migrations
             modelBuilder.Entity("Poseidon.Persistence.MaintenanceObservationRevocation", b => b.HasOne("Poseidon.Persistence.MaintenanceObservation", null).WithMany().HasForeignKey("TenantId", "ObservationId").OnDelete(DeleteBehavior.Restrict).IsRequired());
             modelBuilder.Entity("Poseidon.Persistence.MaintenancePlan", b => b.HasOne("Poseidon.Persistence.MaintenanceObservation", null).WithMany().HasForeignKey("TenantId", "VesselId", "AssetId", "ObservationId").HasPrincipalKey("TenantId", "VesselId", "AssetId", "Id").HasConstraintName("FK_Plans_ObservationScope").OnDelete(DeleteBehavior.Restrict));
             modelBuilder.Entity("Poseidon.Persistence.MaintenancePlanRevision", b => b.HasOne("Poseidon.Persistence.MaintenanceObservation", null).WithMany().HasForeignKey("TenantId", "VesselId", "AssetId", "ObservationId").HasPrincipalKey("TenantId", "VesselId", "AssetId", "Id").HasConstraintName("FK_PlanRevisions_ObservationScope").OnDelete(DeleteBehavior.Restrict));
+            modelBuilder.Entity("Poseidon.Persistence.FileStage", b => {
+                b.Property<Guid?>("PersonId").HasColumnType("uuid");
+                b.Property<string>("PersonalKind").HasMaxLength(24).HasColumnType("character varying(24)");
+                b.Property<long?>("PersonalRevision").HasColumnType("bigint");
+                b.Property<DateOnly?>("PersonalExpiresOn").HasColumnType("date");
+                b.Property<string>("PersonalPolicyVersion").HasMaxLength(80).HasColumnType("character varying(80)");
+                b.Property<string>("PersonalPurpose").HasMaxLength(80).HasColumnType("character varying(80)");
+                b.Property<string>("PersonalSourceVersion").HasMaxLength(80).HasColumnType("character varying(80)");
+                b.HasIndex("TenantId", "PersonId", "PersonalKind", "PersonalRevision").IsUnique().HasFilter("\"PersonId\" IS NOT NULL");
+                b.ToTable("FileStages", "files", t => t.HasCheckConstraint("CK_FileStages_PersonOwner", "(\"PersonId\" IS NULL AND \"PersonalKind\" IS NULL AND \"PersonalRevision\" IS NULL AND \"PersonalExpiresOn\" IS NULL AND \"PersonalPolicyVersion\" IS NULL AND \"PersonalPurpose\" IS NULL AND \"PersonalSourceVersion\" IS NULL) OR (\"PersonId\" IS NOT NULL AND \"DocumentId\" IS NULL AND \"DocumentRevision\" IS NULL AND \"PersonalKind\" IS NOT NULL AND \"PersonalRevision\" IS NOT NULL AND \"PersonalRevision\" > 0 AND \"PersonalPolicyVersion\" IS NOT NULL AND \"PersonalPurpose\" IS NOT NULL AND \"PersonalSourceVersion\" IS NOT NULL)"));
+                b.HasOne("Poseidon.Persistence.Person", null).WithMany().HasForeignKey("TenantId", "PersonId").OnDelete(DeleteBehavior.Restrict);
+            });
 #pragma warning restore 612, 618
         }
     }

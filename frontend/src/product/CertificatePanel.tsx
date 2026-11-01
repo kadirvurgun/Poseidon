@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { ApiError, request } from './api'
+import { crewFileVersions, type CrewFileVersion } from './crew-files-api'
 import { label } from './import-api'
 
 type Declaration = { certificateTypeReference: string | null; certificateNumber: string | null; issuer: string | null; issueDate: string | null; expiryDate: string | null; limitations: string | null }
@@ -12,7 +13,7 @@ const blank = (): Metadata => ({ declaration: { certificateTypeReference: null, 
   issuingCountryNumeric: null, endorsementRequired: null, endorsementNumber: null, endorsementExpiry: null, stcwReference: null, tankerRelevance: null,
   vesselTypeScope: null, documentReference: null, renewalLeadDaysNumeric: null, sourceSystem: null, notes: null })
 const declarationFields: [keyof Declaration, string, string][] = [['certificateTypeReference', 'certificate_type', 'text'], ['certificateNumber', 'certificate_no', 'text'], ['issuer', 'issuer', 'text'], ['issueDate', 'issue_date', 'date'], ['expiryDate', 'expiry_date', 'date'], ['limitations', 'restriction', 'text']]
-const fields: [Exclude<keyof Metadata, 'declaration' | 'endorsementRequired'>, string, string][] = [['issuingCountryNumeric', 'issuing_country', 'text'], ['endorsementNumber', 'endorsement_no', 'text'], ['endorsementExpiry', 'endorsement_expiry', 'date'], ['stcwReference', 'stcw_reference', 'text'], ['tankerRelevance', 'tanker_relevance', 'text'], ['vesselTypeScope', 'vessel_type_scope', 'text'], ['documentReference', 'document_ref', 'text'], ['renewalLeadDaysNumeric', 'renewal_lead_days', 'text'], ['sourceSystem', 'source_system', 'text'], ['notes', 'notes', 'text']]
+const fields: [Exclude<keyof Metadata, 'declaration' | 'endorsementRequired'>, string, string][] = [['issuingCountryNumeric', 'issuing_country', 'text'], ['endorsementNumber', 'endorsement_no', 'text'], ['endorsementExpiry', 'endorsement_expiry', 'date'], ['stcwReference', 'stcw_reference', 'text'], ['tankerRelevance', 'tanker_relevance', 'text'], ['vesselTypeScope', 'vessel_type_scope', 'text'], ['renewalLeadDaysNumeric', 'renewal_lead_days', 'text'], ['sourceSystem', 'source_system', 'text'], ['notes', 'notes', 'text']]
 
 
 function calendarFact(value: string | number, order: boolean, en: boolean) {
@@ -24,10 +25,19 @@ function calendarFact(value: string | number, order: boolean, en: boolean) {
 }
 
 // Mounted only inside the current authorized crew profile. No global cache/storage.
-export function CertificatePanel({ vessel, assignment, language, csrf, onDirty }: { vessel: string; assignment: string; language: 'tr' | 'en'; csrf: string; onDirty: (value: boolean) => void }) {
+export function CertificatePanel({ vessel, assignment, language, csrf, onDirty, person }: { person?: string; vessel: string; assignment: string; language: 'tr' | 'en'; csrf: string; onDirty: (value: boolean) => void }) {
   const en = language === 'en', path = `vessels/${vessel}/crew/${assignment}/certificates`
   const [rows, setRows] = useState<Credential[] | null>(null), [error, setError] = useState(0), [version, reload] = useState(0)
   const [editor, setEditor] = useState<{ id: string; version: number | null; metadata: Metadata } | null>(null), [busy, setBusy] = useState(false), [uncertain, setUncertain] = useState(false)
+  const [documentChoices, setDocumentChoices] = useState<CrewFileVersion[]>([])
+  const [documentGeneration, refreshDocuments] = useState(0)
+  useEffect(() => {
+    const c = new AbortController(); setDocumentChoices([])
+    if (person) crewFileVersions(vessel, assignment, person, c.signal).then(data => {
+      if (!c.signal.aborted) setDocumentChoices(data.items.filter(x => x.kind === 'CertificateDocument' && x.state === 'CleanTransport'))
+    }).catch(() => { if (!c.signal.aborted) setDocumentChoices([]) })
+    return () => c.abort()
+  }, [person, vessel, assignment, csrf, documentGeneration])
   const attempt = useRef<string | null>(null), requestController = useRef<AbortController | null>(null)
   useEffect(() => { const c = new AbortController(); setRows(null); setError(0)
     request<Credential[]>(path, c.signal).then(data => { if (!Array.isArray(data) || data.some(r => !r || typeof r.id !== 'string' || !r.metadata?.declaration || !r.dates)) throw new ApiError(502); if (!c.signal.aborted) setRows(data) }).catch(e => { if (!c.signal.aborted) setError(e instanceof ApiError ? e.status : 503) })
@@ -52,6 +62,7 @@ export function CertificatePanel({ vessel, assignment, language, csrf, onDirty }
       {rows.length === 0 && <p>{en ? 'No declarations.' : 'Beyan yok.'}</p>}
       {!editor && <button onClick={() => { setEditor({ id: crypto.randomUUID(), version: null, metadata: blank() }); onDirty(true) }}>{en ? 'Add certificate declaration' : 'Sertifika beyanı ekle'}</button>}
       <ul>{rows.map((r, i) => <li key={r.id}>{en ? 'Declaration' : 'Beyan'} {i + 1} · {en ? 'Unverified' : 'Doğrulanmamış'} · {r.metadata.declaration.certificateNumber ?? '—'}
+        {r.lookupState === 'LegacyDocumentReferenceUnavailable' && <span role="status">{en ? 'Historic vessel document reference unavailable for this person. Select a scanned person version.' : 'Eski araç belgesi referansı bu kişi için kullanılamıyor. Taranmış personel sürümü seçin.'}</span>}
         <span> · {en ? 'UTC observation date' : 'UTC gözlem tarihi'}: {r.referenceDate}; {en ? 'issue / expiry / order facts' : 'düzenleme / bitiş / sıra gözlemi'}: {calendarFact(r.dates.issue, false, en)} / {calendarFact(r.dates.expiry, false, en)} / {calendarFact(r.dates.order, true, en)}</span>
         <button disabled={!!editor} onClick={() => { setEditor({ id: r.id, version: r.version, metadata: structuredClone(r.metadata) }); onDirty(true) }}>{en ? 'Edit declaration' : 'Beyanı düzenle'}</button></li>)}</ul>
       <a href={`/app/excel-migration/${vessel}?assignment=${assignment}`}>{en ? 'Open controlled import' : 'Kontrollü içe aktarmayı aç'}</a>
@@ -59,6 +70,12 @@ export function CertificatePanel({ vessel, assignment, language, csrf, onDirty }
     {editor && <form onSubmit={e => { e.preventDefault(); void save() }}><fieldset disabled={busy || uncertain}>
       <legend>{en ? 'Unverified certificate draft' : 'Doğrulanmamış sertifika taslağı'}</legend>
       {declarationFields.map(([key, field, type]) => <label key={key}>{label(field, language)}<input type={type} value={editor.metadata.declaration[key] ?? ''} onChange={e => { const value = e.target.value || null; setEditor({ ...editor, metadata: { ...editor.metadata, declaration: { ...editor.metadata.declaration, [key]: value } } }) }} /></label>)}
+      <label>{label('document_ref', language)}<select value={editor.metadata.documentReference ?? ''} onChange={e => setEditor({ ...editor, metadata: { ...editor.metadata, documentReference: e.target.value || null } })}>
+        <option value="">{en ? 'No document declared' : 'Belge beyan edilmedi'}</option>
+        {editor.metadata.documentReference && !documentChoices.some(x => x.id === editor.metadata.documentReference) && <option value={editor.metadata.documentReference} disabled>{en ? 'Current reference unavailable; refresh or clear explicitly' : 'Geçerli referans kullanılamıyor; yenileyin veya açıkça temizleyin'}</option>}
+        {documentChoices.map(x => <option key={x.id} value={x.id}>{en ? 'Scanned unverified person version' : 'Taranmış doğrulanmamış personel sürümü'} {x.revision} · {x.expiresOn ?? (en ? 'Expiry unknown' : 'Bitiş tarihi bilinmiyor')}</option>)}
+      </select></label>
+      <button type="button" onClick={() => refreshDocuments(n => n + 1)}>{en ? 'Refresh document choices' : 'Belge seçeneklerini yenile'}</button>
       {fields.map(([key, field, type]) => <label key={key}>{label(field, language)}<input type={type} value={editor.metadata[key] ?? ''} onChange={e => { const value = e.target.value || null; setEditor({ ...editor, metadata: { ...editor.metadata, [key]: value } }) }} /></label>)}
       <label>{label('endorsement_required', language)}<select value={editor.metadata.endorsementRequired == null ? '' : String(editor.metadata.endorsementRequired)} onChange={e => setEditor({ ...editor, metadata: { ...editor.metadata, endorsementRequired: e.target.value === '' ? null : e.target.value === 'true' } })}><option value="">{en ? 'Unknown' : 'Bilinmiyor'}</option><option value="true">{en ? 'Yes' : 'Evet'}</option><option value="false">{en ? 'No' : 'Hayır'}</option></select></label>
     </fieldset>

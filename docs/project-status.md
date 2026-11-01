@@ -1,3 +1,9 @@
+# FOUNDATION continuation — checkpoint E / AUTHORED_UNVERIFIED / INCOMPLETE
+
+Required context/session/profile privacy/40-task ledger support commits are integrated with normal -x receipts. Person-owned scanned file versions, private TR/EN transport/expiry review and ordinary/import certificate-reference consumers are authored. Nine API/PostgreSQL, eight React and two registered real private-host cases are authored, **none executed**. Shared context inventory remains41 (React10), plus seven profile privacy regressions. Canonical8/970 and40-task/272SP candidate scope are unchanged. No publishing or merge.
+
+Full offline application flows, Tug planning/assignment/type/board, protected legacy identity/import parity, Crew controlled lookups and explicit active photo binding remain required SOFTWARE. S0 contract scope is also unfinished; this is not readiness for the combined gate. Deployment/source/qualification and actual human authority decisions are separately open. [Exact current software, source criteria, receipts and next step](phases/DOMAIN-COMPLETION-01.md); [S0 scope preservation](tasks/s0-contract-closure-01.md). All suites/build/typecheck/generation/migration/browser/lab/QA/CI remain DEFERRED.
+
 # DOMAIN-COMPLETION-01 — checkpoint C / AUTHORED_UNVERIFIED / INCOMPLETE
 
 Closed audit action/result vocabulary, bounded complete capability metadata and exact authorized Tug revision drilldown are authored with tests. Crew/import checkpoint13f532d and normalized Technical/PMS checkpointc3de584 are preserved. Every suite/build/typecheck/migration/contract/browser/QA/CI check remains DEFERRED. Full offline, person-owned files/photo and remaining Tug software are still required. No publishing, merge or acceptance. [Exact software and external gates](phases/DOMAIN-COMPLETION-01.md).

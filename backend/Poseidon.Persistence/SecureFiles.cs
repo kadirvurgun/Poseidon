@@ -5,6 +5,13 @@ namespace Poseidon.Persistence;
 // Metadata-only staged intent. A quarantined intent is never evidence or a downloadable file.
 public sealed class FileStage : ITenantEntity
 {
+    public Guid? PersonId { get; set; }
+    public string? PersonalKind { get; set; }
+    public long? PersonalRevision { get; set; }
+    public DateOnly? PersonalExpiresOn { get; set; }
+    public string? PersonalPolicyVersion { get; set; }
+    public string? PersonalPurpose { get; set; }
+    public string? PersonalSourceVersion { get; set; }
     public string? StorageReference { get; set; }
     public Guid? DocumentId { get; set; }
     public long? DocumentRevision { get; set; }
@@ -57,6 +64,14 @@ public static class SecureFileStorage
             b.Property(x => x.State).HasMaxLength(24); b.Property(x => x.Version).IsRowVersion();
             b.Property(x => x.Mime).HasMaxLength(32).HasDefaultValue("image/png");
             b.Property(x => x.StorageReference).HasMaxLength(64);
+            b.Property(x => x.PersonalKind).HasMaxLength(24);
+            b.Property(x => x.PersonalPolicyVersion).HasMaxLength(80);
+            b.Property(x => x.PersonalPurpose).HasMaxLength(80);
+            b.Property(x => x.PersonalSourceVersion).HasMaxLength(80);
+            b.HasOne<Person>().WithMany().HasForeignKey(x => new { x.TenantId, x.PersonId }).OnDelete(DeleteBehavior.Restrict);
+            b.HasIndex(x => new { x.TenantId, x.PersonId, x.PersonalKind, x.PersonalRevision }).IsUnique().HasFilter("\"PersonId\" IS NOT NULL");
+            b.ToTable("FileStages", "files", t => t.HasCheckConstraint("CK_FileStages_PersonOwner",
+                "(\"PersonId\" IS NULL AND \"PersonalKind\" IS NULL AND \"PersonalRevision\" IS NULL AND \"PersonalExpiresOn\" IS NULL AND \"PersonalPolicyVersion\" IS NULL AND \"PersonalPurpose\" IS NULL AND \"PersonalSourceVersion\" IS NULL) OR (\"PersonId\" IS NOT NULL AND \"DocumentId\" IS NULL AND \"DocumentRevision\" IS NULL AND \"PersonalKind\" IS NOT NULL AND \"PersonalRevision\" IS NOT NULL AND \"PersonalRevision\" > 0 AND \"PersonalPolicyVersion\" IS NOT NULL AND \"PersonalPurpose\" IS NOT NULL AND \"PersonalSourceVersion\" IS NOT NULL)"));
         });
         model.Entity<StoredFile>(b => {
             b.ToTable("StoredFiles", "files"); b.HasKey(x => new { x.TenantId, x.Id });

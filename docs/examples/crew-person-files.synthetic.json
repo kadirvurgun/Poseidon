@@ -1,0 +1,13 @@
+{
+  "CrewFilePolicy": {
+    "Version": "synthetic-person-files-v1",
+    "SourceVersion": "poseidon-v46.3-20261030",
+    "Purpose": "synthetic-person-file-lab",
+    "Kinds": [
+      "Photo",
+      "Passport",
+      "SeamanBook",
+      "CertificateDocument"
+    ]
+  }
+}

@@ -4,8 +4,15 @@ import type { components } from '../generated/api'
 
 export type FileRecord = Omit<components['schemas']['FileDto'], 'state' | 'length' | 'revision' | 'version'> & { state: 'Pending' | 'Receiving' | 'CleanTransport' | 'Abandoned' | 'SyntheticUnverified'; length: number; revision: number | null; version: number }
 export type DocumentOwner = { id: string; revision: number }
-const route = (vessel: string, owner?: DocumentOwner) => {
-  if (!isGuid(vessel) || owner && (!isGuid(owner.id) || !Number.isSafeInteger(owner.revision) || owner.revision < 1)) return bad()
+export type PersonFileOwner = { type: 'Person'; assignment: string; kind: 'Photo' | 'Passport' | 'SeamanBook' | 'CertificateDocument'; revision: number; expiresOn: string | null }
+export type FileOwner = DocumentOwner | PersonFileOwner
+const route = (vessel: string, owner?: FileOwner) => {
+  if (!isGuid(vessel) || owner && (!Number.isSafeInteger(owner.revision) || owner.revision < 1)) return bad()
+  if (owner && 'type' in owner) {
+    if (!isGuid(owner.assignment) || !['Photo', 'Passport', 'SeamanBook', 'CertificateDocument'].includes(owner.kind)) return bad()
+    return `vessels/${vessel}/crew/${owner.assignment}/personal-files/${owner.kind}/versions/${owner.revision}`
+  }
+  if (owner && !isGuid(owner.id)) return bad()
   return `vessels/${vessel}/${owner ? `documents/${owner.id}/versions/${owner.revision}/` : ''}files`
 }
 export const mimeForName = (name: string) => /\.png$/i.test(name) ? 'image/png' : /\.jpe?g$/i.test(name) ? 'image/jpeg' : /\.pdf$/i.test(name) ? 'application/pdf' : ''
@@ -22,7 +29,7 @@ export function decodeFile(v: unknown, vessel: string): FileRecord {
     (v.state === 'CleanTransport' ? !hash(v.checksum) || v.revision !== 1 || v.length === 0 : v.checksum !== null || v.revision !== null)) return bad()
   return v as FileRecord
 }
-export async function filePage(vessel: string, offset: number, signal: AbortSignal, owner?: DocumentOwner): Promise<FilePage> {
+export async function filePage(vessel: string, offset: number, signal: AbortSignal, owner?: FileOwner): Promise<FilePage> {
   if (!isGuid(vessel) || !integer(offset)) return bad()
   const v = await request<unknown>(`${route(vessel, owner)}?offset=${offset}`, signal)
   if (!object(v) || ![6, 7].includes(Object.keys(v).length) || !Array.isArray(v.items) || v.items.length > 25 || v.offset !== offset ||
@@ -32,17 +39,20 @@ export async function filePage(vessel: string, offset: number, signal: AbortSign
   if (!Array.isArray(allowedTypes) || !allowedTypes.length || allowedTypes.some(t => !['image/png', 'image/jpeg', 'application/pdf'].includes(t))) return bad()
   return { items, offset, allowedTypes, hasMore: v.hasMore, canWrite: v.canWrite, available: v.available, maxBytes: v.maxBytes }
 }
-export const fileDetail = async (vessel: string, id: string, signal: AbortSignal, owner?: DocumentOwner) => {
+export const fileDetail = async (vessel: string, id: string, signal: AbortSignal, owner?: FileOwner) => {
   if (!isGuid(vessel) || !isGuid(id)) return bad()
   const row = decodeFile(await request<unknown>(`${route(vessel, owner)}/${id}`, signal), vessel)
   if (row.id !== id) return bad(); return row
 }
 export type FileAttempt = { key: string; file: File; checksum: string }
-export async function stageFile(vessel: string, attempt: FileAttempt, csrf: string, signal: AbortSignal, owner?: DocumentOwner) {
-  const command = { name: attempt.file.name, mime: attempt.file.type, length: attempt.file.size, checksum: attempt.checksum } satisfies components['schemas']['StageFileCommand']
+export async function stageFile(vessel: string, attempt: FileAttempt, csrf: string, signal: AbortSignal, owner?: FileOwner) {
+  const personal = owner && 'type' in owner ? owner : null
+  const name = personal ? (personal.kind === 'Photo' ? 'photo' : 'document') + (attempt.file.type === 'image/png' ? '.png' : attempt.file.type === 'image/jpeg' ? '.jpg' : '.pdf') : attempt.file.name
+  const command = { name, mime: attempt.file.type, length: attempt.file.size, checksum: attempt.checksum,
+    ...(personal ? { expiresOn: personal.expiresOn } : {}) }
   return decodeFile(await request<unknown>(route(vessel, owner), signal, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf, 'Idempotency-Key': attempt.key }, body: JSON.stringify(command) }), vessel)
 }
-export function uploadFile(vessel: string, id: string, file: File, csrf: string, signal: AbortSignal, progress: (n: number) => void, owner?: DocumentOwner): Promise<FileRecord> {
+export function uploadFile(vessel: string, id: string, file: File, csrf: string, signal: AbortSignal, progress: (n: number) => void, owner?: FileOwner): Promise<FileRecord> {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest()
     const abort = () => xhr.abort()
@@ -57,7 +67,7 @@ export function uploadFile(vessel: string, id: string, file: File, csrf: string,
     xhr.send(file)
   })
 }
-export async function downloadFile(vessel: string, row: FileRecord, csrf: string, signal: AbortSignal, owner?: DocumentOwner): Promise<Blob> {
+export async function downloadFile(vessel: string, row: FileRecord, csrf: string, signal: AbortSignal, owner?: FileOwner): Promise<Blob> {
   const v = await request<unknown>(`${route(vessel, owner)}/${row.id}/access`, signal, { method: 'POST', headers: { 'X-CSRF-TOKEN': csrf } })
   if (!object(v) || Object.keys(v).length !== 3 || typeof v.token !== 'string' || v.token.length > 2048 || typeof v.expiresAt !== 'string' || !Number.isFinite(Date.parse(v.expiresAt)) || v.revision !== row.revision) return bad()
   const response = await fetch(`/api/v1/${route(vessel, owner)}/${row.id}/bytes`, { credentials: 'same-origin', signal, headers: { 'X-File-Capability': v.token } })

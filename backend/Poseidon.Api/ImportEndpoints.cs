@@ -68,8 +68,11 @@ public static class ImportEndpoints
         if (b == null || !Category(a, vessel, b.Category, write)) return null;
         if (b.Category == "certificate" && !await db.CrewAssignments.AnyAsync(x => x.VesselId == vessel && x.Id == b.AssignmentId, h.RequestAborted)) return null;
         if (b.Category == "crew" && !AllowedProfileBindings(b, h, write)) return null;
+        if (b.Category == "certificate" && b.BindingsJson.Contains("\"document_ref\"", StringComparison.Ordinal) && !CanReadPersonDocuments(h)) return null;
         return b;
     }
+    private static bool CanReadPersonDocuments(HttpContext h) => Actor(h).Permissions.Contains("file.read") &&
+        CrewFilePolicy.Current(h).Allows(Actor(h), false) && CrewFilePolicy.Current(h).Kinds.Contains("CertificateDocument");
     private static bool AllowedProfileBindings(ImportBatch b, HttpContext h, bool write) {
         var bindings = JsonSerializer.Deserialize<ImportColumnBinding[]>(b.BindingsJson, Json)!;
         var policy = h.RequestServices.GetRequiredService<CrewProfilePolicy>();
@@ -163,6 +166,7 @@ public static class ImportEndpoints
         if (!Offset(h, out var offset) || offset > 100000 || h.Request.Query.Keys.Any(k => k != "offset")) return await Fail(h, 400, "invalid_request");
         var a = Actor(h); var categories = ImportTemplates.Categories.Where(c => Category(a, vessel, c, false)).ToArray(); var session = Session(h);
         var query = db.ImportBatches.AsNoTracking().Where(x => x.VesselId == vessel && x.ActorId == a.Id && x.SessionHash == session && categories.Contains(x.Category));
+        if (!CanReadPersonDocuments(h)) query = query.Where(x => x.Category != "certificate" || !x.BindingsJson.Contains("\"document_ref\""));
         var profilePolicy = h.RequestServices.GetRequiredService<CrewProfilePolicy>();
         foreach (var field in Enum.GetValues<CrewPersonalField>().Where(f => profilePolicy.Rule(f, profilePolicy.ImportPurpose, a.Permissions, false) == null)) {
             var target = "\"" + CrewPersonalData.Key(field) + "\"";
@@ -233,7 +237,7 @@ public static class ImportEndpoints
                     var old = credentials.SingleOrDefault(x => x.Id == id); var c = r.Certificate(old);
                     if (old == null && version != null || old != null && (old.Version != version || old.Status != "Draft" || old.VerificationState != "Unverified")) Issue("conflict", "record_key");
                     if (!CertificateMetadataPolicy.Valid(c.Metadata)) Issue("domain_validation");
-                    if (c.Metadata.DocumentReference != null && !await db.Documents.AnyAsync(x => x.Id == c.Metadata.DocumentReference && x.VesselId == b.VesselId, h.RequestAborted)) Issue("unresolved_reference", "document_ref");
+                    if (c.Metadata.DocumentReference != null && !await CrewFileEndpoints.AuthorizedDocument(b.VesselId, b.AssignmentId!.Value, c.Metadata.DocumentReference.Value, h, db)) Issue("unresolved_reference", "document_ref");
                 } else {
                     var old = assets.SingleOrDefault(x => x.Id == id); var c = r.Equipment(old);
                     if (old == null && version != null || old != null && old.Version != version) Issue("conflict", "record_key");
@@ -341,6 +345,14 @@ public static class ImportEndpoints
                     var personal = row.PersonalProfile();
                     if (personal != null && !CrewProfileEndpoints.Valid(personal with { Purpose = profilePolicy.ImportPurpose }, a, profilePolicy)) return await Fail(h, 403, "field_policy_denied");
                     if (!h.RequestServices.GetRequiredService<CrewAssignmentPolicy>().CanDeclare(row.Get("assignment_status"), row.Get("assignment_policy_version"), a)) return await Fail(h, 403, "assignment_policy_denied");
+                }
+            }
+            if (b.Category == "certificate") {
+                foreach (var cells in table.Rows) {
+                    var row = new ImportTemplates.Row(mapping.Mapping, cells); var id = row.Id("record_key", true);
+                    var old = await db.Credentials.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id && x.VesselId == vessel && x.AssignmentId == b.AssignmentId, h.RequestAborted);
+                    var reference = row.Certificate(old).Metadata.DocumentReference;
+                    if (reference is { } file && !await CrewFileEndpoints.AuthorizedDocument(vessel, b.AssignmentId!.Value, file, h, db)) return await Fail(h, 403, "permission_denied");
                 }
             }
             var receipt = await db.CommandReceipts.AsNoTracking().SingleOrDefaultAsync(x => x.ActorId == a.Id && x.Key == originalKey.ToString(), h.RequestAborted);

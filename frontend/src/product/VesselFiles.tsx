@@ -1,7 +1,9 @@
+import { ApiError } from './api'
 import { useEffect, useRef, useState } from 'react'
-import { downloadFile, fileDetail, filePage, stageFile, uploadFile, mimeForName, type DocumentOwner, type FileAttempt, type FilePage, type FileRecord } from './file-api'
+import { downloadFile, fileDetail, filePage, stageFile, uploadFile, mimeForName, type FileOwner, type FileAttempt, type FilePage, type FileRecord } from './file-api'
 
-export function VesselFiles({ vessel, language, csrf, onDirty, onSaving, owner }: { owner?: DocumentOwner; vessel: string; language: 'tr' | 'en'; csrf: string; onDirty: (v: boolean) => void; onSaving: (v: boolean) => void }) {
+export function VesselFiles({ vessel, language, csrf, onDirty, onSaving, owner, onCommitted }: { owner?: FileOwner; onCommitted?: () => void; vessel: string; language: 'tr' | 'en'; csrf: string; onDirty: (v: boolean) => void; onSaving: (v: boolean) => void }) {
+  const personal = owner && 'type' in owner ? owner : null
   const en = language === 'en'
   const stateLabel = (state: FileRecord['state']) => ({ Pending: en ? 'Pending upload' : 'Yükleme bekliyor', Receiving: en ? 'Quarantined / interrupted' : 'Karantina / kesilmiş', CleanTransport: en ? 'Scanned transport, unverified evidence' : 'Taranmış aktarım, doğrulanmamış kanıt', Abandoned: en ? 'Abandoned / reconciliation' : 'Bırakıldı / uzlaştırma', SyntheticUnverified: en ? 'Synthetic unverified metadata' : 'Sentetik doğrulanmamış meta veri' })[state]
   const [loaded, setLoaded] = useState<{ key: string; page: FilePage } | null>(null); const [offset, setOffset] = useState(0)
@@ -10,11 +12,16 @@ export function VesselFiles({ vessel, language, csrf, onDirty, onSaving, owner }
   const [frozen, setFrozen] = useState(false); const [busy, setBusy] = useState(false); const [progress, setProgress] = useState(0)
   const [selection, setSelection] = useState<{ key: string; row: FileRecord } | null>(null); const [notice, setNotice] = useState('')
   const controller = useRef<AbortController | null>(null)
-  const pageKey = `${vessel}:${owner?.id}:${owner?.revision}:${offset}:${reload}`
+  const pageKey = `${vessel}:${JSON.stringify(owner)}:${offset}:${reload}`
   const selected = selection?.key === pageKey ? selection.row : null
   const setSelected = (row: FileRecord | null) => setSelection(row ? { key: pageKey, row } : null)
   const page = loaded?.key === pageKey ? loaded.page : null
-  useEffect(() => { const c = new AbortController(); let active = true; filePage(vessel, offset, c.signal, owner).then(value => { if (active) { setLoaded({ key: pageKey, page: value }); setSelection(null); setError(false) } }).catch(() => { if (active && !c.signal.aborted) setError(true) }); return () => { active = false; c.abort() } }, [vessel, owner, offset, reload, pageKey])
+  const denied = (error: unknown) => {
+    if (error instanceof ApiError && [401, 403, 404].includes(error.status)) {
+      setLoaded(null); setSelection(null); setFile(null); attempt.current = null; setFrozen(false); setNotice(''); onDirty(false)
+    }
+  }
+  useEffect(() => { const c = new AbortController(); let active = true; filePage(vessel, offset, c.signal, owner).then(value => { if (active) { setLoaded({ key: pageKey, page: value }); setSelection(null); setError(false) } }).catch(e => { if (active && !c.signal.aborted) { denied(e); setError(true) } }); return () => { active = false; c.abort() } }, [vessel, owner, offset, reload, pageKey])
   useEffect(() => () => controller.current?.abort(), [])
   const start = async () => {
     if (!file || busy || !page?.available || !page.canWrite) return
@@ -28,20 +35,21 @@ export function VesselFiles({ vessel, language, csrf, onDirty, onSaving, owner }
       }
       const staged = await stageFile(vessel, attempt.current, csrf, c.signal, owner)
       const row = staged.state === 'Pending' ? await uploadFile(vessel, staged.id, attempt.current.file, csrf, c.signal, setProgress, owner) : await fileDetail(vessel, staged.id, c.signal, owner)
+      if (c.signal.aborted) return
       setSelected(row)
       if (row.state !== 'CleanTransport') { setNotice(en ? 'Quarantined or interrupted. This attempt cannot upload again. Reconcile its state before starting another.' : 'Karantinada veya kesildi. Bu deneme yeniden yüklenemez. Yeni denemeden önce durumunu uzlaştırın.'); return }
       attempt.current = null; setFile(null); setFrozen(false); onDirty(false)
-      setNotice(en ? 'Transport scanned. Evidence remains unverified.' : 'Aktarım tarandı. Kanıt doğrulanmış değildir.'); setReload(x => x + 1)
-    } catch { setError(true); setNotice(en ? 'Outcome unknown or rejected. Retry checks the same frozen attempt; cancellation does not undo a server commit.' : 'Sonuç belirsiz veya reddedildi. Tekrar aynı sabit denemeyi kontrol eder; iptal sunucu kaydını geri almaz.') }
+      setNotice(en ? 'Transport scanned. Evidence remains unverified.' : 'Aktarım tarandı. Kanıt doğrulanmış değildir.'); setReload(x => x + 1); onCommitted?.()
+    } catch (e) { if (c.signal.aborted) return; denied(e); setError(true); setNotice(en ? 'Outcome unknown or rejected. Retry checks the same frozen attempt; cancellation does not undo a server commit.' : 'Sonuç belirsiz veya reddedildi. Tekrar aynı sabit denemeyi kontrol eder; iptal sunucu kaydını geri almaz.') }
     finally { setBusy(false); onSaving(false) }
   }
   const download = async () => {
     if (!selected) return; setBusy(true); onSaving(true); const c = new AbortController(); controller.current = c
-    try { const blob = await downloadFile(vessel, selected, csrf, c.signal, owner); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = selected.name; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000) }
-    catch { setError(true) } finally { setBusy(false); onSaving(false) }
+    try { const blob = await downloadFile(vessel, selected, csrf, c.signal, owner); if (c.signal.aborted) return; const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = selected.name; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000) }
+    catch (e) { if (!c.signal.aborted) { denied(e); setError(true) } } finally { setBusy(false); onSaving(false) }
   }
-  return <section className="vessel-files" aria-label={en ? 'Vessel files' : 'Araç dosyaları'}>
-    <h2>{en ? 'Vessel files' : 'Araç dosyaları'}</h2>
+  return <section className="vessel-files" aria-label={personal ? (en ? 'Private person file transport' : 'Özel personel dosya aktarımı') : (en ? 'Vessel files' : 'Araç dosyaları')}>
+    <h2>{personal ? (en ? 'Private person file transport' : 'Özel personel dosya aktarımı') : (en ? 'Vessel files' : 'Araç dosyaları')}</h2>
     <p>{en ? 'File presence and a malware scan do not verify evidence or activate readiness.' : 'Dosyanın bulunması ve zararlı yazılım taraması kanıtı doğrulamaz, hazırlığı etkinleştirmez.'}</p>
     {error && <p role="alert">{en ? 'File service unavailable or request rejected.' : 'Dosya servisi kullanılamıyor veya istek reddedildi.'}</p>}
     {notice && <p role="status">{notice}</p>}
@@ -56,7 +64,7 @@ export function VesselFiles({ vessel, language, csrf, onDirty, onSaving, owner }
         {busy && <><progress aria-label={en ? 'Upload progress' : 'Yükleme ilerlemesi'} max={100} value={progress} /><button type="button" onClick={() => controller.current?.abort()}>{en ? 'Cancel request' : 'İsteği iptal et'}</button></>}
         {!busy && (file || frozen) && <button type="button" onClick={() => { attempt.current = null; setFrozen(false); setFile(null); onDirty(false); setNotice(en ? 'Local attempt discarded; quarantined server bytes may remain for reconciliation.' : 'Yerel deneme bırakıldı; karantina baytları uzlaştırma için sunucuda kalabilir.') }}>{en ? 'Discard local attempt' : 'Yerel denemeyi bırak'}</button>}
       </form>}
-      {page.items.length === 0 ? <p>{en ? 'No files in this vessel scope.' : 'Bu araç kapsamında dosya yok.'}</p> : <ul>{page.items.map(row => <li key={row.id}><button disabled={busy || frozen} onClick={async () => { controller.current?.abort(); const c = new AbortController(); controller.current = c; try { const detail = await fileDetail(vessel, row.id, c.signal, owner); if (!c.signal.aborted) setSelected(detail) } catch { if (!c.signal.aborted) { setSelected(null); setError(true) } } }}>{row.name}</button> · {stateLabel(row.state)}</li>)}</ul>}
+      {page.items.length === 0 ? <p>{en ? 'No files in this vessel scope.' : 'Bu araç kapsamında dosya yok.'}</p> : <ul>{page.items.map(row => <li key={row.id}><button disabled={busy || frozen} onClick={async () => { controller.current?.abort(); const c = new AbortController(); controller.current = c; try { const detail = await fileDetail(vessel, row.id, c.signal, owner); if (!c.signal.aborted) setSelected(detail) } catch (e) { if (!c.signal.aborted) { denied(e); setSelected(null); setError(true) } } }}>{row.name}</button> · {stateLabel(row.state)}</li>)}</ul>}
       <button disabled={offset === 0 || busy || frozen} onClick={() => setOffset(x => Math.max(0, x - 25))}>{en ? 'Previous files' : 'Önceki dosyalar'}</button><button disabled={!page.hasMore || busy || frozen} onClick={() => setOffset(x => x + 25)}>{en ? 'Next files' : 'Sonraki dosyalar'}</button>
     </>}
     {selected && <article aria-label={en ? 'File details' : 'Dosya ayrıntıları'}><h3>{selected.name}</h3><dl><dt>{en ? 'Transport state' : 'Aktarım durumu'}</dt><dd>{stateLabel(selected.state)}</dd><dt>SHA-256</dt><dd>{selected.checksum ?? '—'}</dd><dt>{en ? 'Revision' : 'Revizyon'}</dt><dd>{selected.revision ?? '—'}</dd></dl>{selected.state === 'CleanTransport' && <button disabled={busy || !page?.available} onClick={() => void download()}>{en ? 'Download file' : 'Dosyayı indir'}</button>}</article>}

@@ -4,7 +4,7 @@
     "accepted": false,
     "task": "docs/tasks/domain-completion-01.md",
     "phase_report": "docs/phases/DOMAIN-COMPLETION-01.md",
-    "current_phase": "Larger domain foundation authoring; checkpoints A/B/C/D, incomplete",
+    "current_phase": "FOUNDATION authoring checkpoint E: person-owned files/reference consumers, incomplete",
     "verification": "DEFERRED: all suites/build/typecheck/migrations/contract/browser/independent QA/CI",
     "canonical_progress_unchanged": true,
     "new_personal_fields": 15,
@@ -26,7 +26,22 @@
       "ee707e9",
       "f413c08"
     ],
-    "publishing": "Not performed; coordinator owns publishing and merge"
+    "publishing": "Not performed; coordinator owns publishing and merge",
+    "person_owned_scanned_files": "authored_configured_unverified; active photo_ref binding remains software gap",
+    "support_origin_receipts": {
+      "312999e55c6575927f894fc2239846a1d748f4af": "0ae9c70",
+      "f578f859c5e6fa1d7ae5e511a884afd6b9c8706f": "e3159c5",
+      "94c9c255193cc00405046b79b7abc0f5ffbf27b4": "27d08e7",
+      "2a6f6a544d44c3450c54d963795c654e6ef2c71d": "62b1587"
+    },
+    "checkpoint_e_authored_cases_not_run": {
+      "actual_api_postgresql": 9,
+      "react": 8,
+      "private_host_browser": 2
+    },
+    "shared_context_authored_not_run": 41,
+    "shared_context_react_authored_not_run": 10,
+    "profile_privacy_authored_not_run": 7
   },
   "import_foundation_01": {
     "status": "authored_unverified_incomplete_not_accepted",
@@ -3259,5 +3274,14 @@
     "build_exit": 0,
     "independent_qa": "PENDING for the new exact commit",
     "canonical_accepted_story_points": 8
+  },
+  "s0_contract_closure_01": {
+    "status": "prerequisite_authoring_incomplete_not_accepted",
+    "accepted": false,
+    "task": "docs/tasks/s0-contract-closure-01.md",
+    "phase_report": "docs/phases/S0-CONTRACT-CLOSURE-01.md",
+    "verification": "DEFERRED_NOT_RUN",
+    "current_phase": "Foundation software continuation before S0 closure and combined gate",
+    "canonical_progress_unchanged": true
   }
 }

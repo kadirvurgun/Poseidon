@@ -602,12 +602,12 @@
       "screen": "crew-profile",
       "fr": "FR46-crew-profile-photo_ref",
       "tc": "TC46-crew-profile-photo_ref",
-      "implementation": "WITHHELD/UNIMPLEMENTED: source policy or owning future domain unresolved",
+      "implementation": "AUTHORED_UNVERIFIED: person-owned scanned version transport/review; persisted active photo_ref binding remains SOFTWARE GAP",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
       "coverage": "safe_unknown_or_withheld_gap",
-      "domain_completion_state": "unimplemented_software",
-      "domain_completion_gate": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count."
+      "domain_completion_state": "partial_software",
+      "domain_completion_gate": "Explicit active photo reference selection/storage/consumer still required; no implicit latest version."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
