@@ -22,6 +22,13 @@ public sealed class CrewProfileProtectionTests
             Assert.Throws<CryptographicException>(() => protection.Decrypt(tenant, person, CrewPersonalField.PassportNo, cipher));
         } finally { Environment.SetEnvironmentVariable(reference, null); }
     }
+    [Fact]
+    public void Missing_field_identifier_never_defaults_to_nationality_permission() {
+        var policy = new CrewProfilePolicy { Version = "synthetic-v1", ActiveKeyId = "key1", KeyReferences = new() { ["key1"] = "POSEIDON_SYNTHETIC_KEY" },
+            Fields = [new() { Purpose = "crew-profile", ReadCapability = "crew.profile.identity.read", WriteCapability = "crew.profile.identity.write", ControlledValues = ["SYNTHETIC"] }] };
+        Assert.False(policy.Valid);
+        Assert.Null(policy.Rule(CrewPersonalField.Nationality,"crew-profile",new[] { "crew.profile.identity.read", "crew.profile.identity.write" },true));
+    }
     [Theory]
     [InlineData("1\n")][InlineData("01")][InlineData("1e3")][InlineData("-1")][InlineData(" 1")]
     public void Experience_rejects_coercion_and_noncanonical_values(string value) => Assert.False(CrewPersonalData.Valid(CrewPersonalField.SeaServiceMonths, value));

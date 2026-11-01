@@ -12,7 +12,7 @@ public sealed record MaintenanceInputs(
     string? Condition = null, string? TimeZone = null, string? Provenance = null,
     string? WarningLead = null, string? GracePeriod = null, string? PostponementAllowed = null,
     string? ApprovalRule = null, string? Criticality = null, string? ApplicableRequirement = null,
-    string? PlanType = null, Guid? ObservationId = null);
+    string? PlanType = null, [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] Guid? ObservationId = null);
 public sealed record MaintenanceDue(string State, string Reason, DateOnly? NextDueDate = null,
     string? NextDueMeter = null, string Algorithm = "planning-v1");
 

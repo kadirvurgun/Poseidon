@@ -54,7 +54,7 @@ public static class CrewProfileEndpoints
     private static async Task<IResult> History(Guid vessel, Guid assignment, HttpContext h, PoseidonDbContext db, CrewProfilePolicy policy) {
         var owner = await Owner(vessel, assignment, h, db, false); if (owner == null) return await Fail(h, 404, "resource_not_found");
         var a = h.RequestServices.GetRequiredService<ActorResolver>().Resolve(h.User)!;
-        if (!a.Permissions.Contains("crew.history.read") || !policy.Fields.Any(f => policy.Rule(f.Field, policy.ImportPurpose, a.Permissions, false) != null)) return await Fail(h, 403, "permission_denied");
+        if (!a.Permissions.Contains("crew.history.read") || !policy.Fields.Any(f => f.Field is { } field && policy.Rule(field, policy.ImportPurpose, a.Permissions, false) != null)) return await Fail(h, 403, "permission_denied");
         var rows = await db.CrewPersonalProfileRevisions.AsNoTracking().Where(x => x.PersonId == owner.PersonId)
             .OrderByDescending(x => x.Revision).Take(100).Select(x => new { x.Revision, x.PolicyVersion, x.Provenance, x.SavedAt }).ToArrayAsync(h.RequestAborted);
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "CrewProfileHistory", "Success", resourceId: owner.PersonId);

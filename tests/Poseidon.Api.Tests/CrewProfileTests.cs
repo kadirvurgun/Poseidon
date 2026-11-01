@@ -147,6 +147,17 @@ public sealed partial class DirectoryWorkspaceTests
         await using var db=Db();Assert.Equal(1,await db.CommandReceipts.CountAsync(x=>x.Action=="ImportCommit"&&x.ResourceId==batch.Id,Ct));
     }
     [Fact]
+    public async Task Existing_crew_semantic_envelope_keeps_its_original_receipt_fingerprint_when_new_optional_fields_are_absent() {
+        using var host=Host(crewRead:true,crewWrite:true);using var client=Client(host);await Token(client);var id=Guid.NewGuid();
+        var original=new { Id=id, PersonId=(Guid?)null, BaseVersion=(uint?)null, FullName=(string?)null, EmployeeNo=(string?)null, PositionId=(Guid?)null,
+            From=(DateOnly?)null, To=(DateOnly?)null, ContractEndDate=(DateOnly?)null, WatchGroup=(string?)null, SourceObservedAt=(DateTimeOffset?)null };
+        var fingerprint=Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(new { vessel=SeedVessel.Id, command=original })));
+        var key=Guid.NewGuid().ToString();
+        Assert.Equal(HttpStatusCode.OK,(await Send(client,$"vessels/{SeedVessel.Id}/crew",original,key)).StatusCode);
+        await using var db=Db();Assert.Equal(fingerprint,(await db.CommandReceipts.SingleAsync(x=>x.ActorId==actorId&&x.Key==key,Ct)).Fingerprint);
+        Assert.Equal(HttpStatusCode.OK,(await Send(client,$"vessels/{SeedVessel.Id}/crew",original,key)).StatusCode);
+    }
+    [Fact]
     public async Task Crew_personal_unconfigured_policy_has_no_protected_projection() {
         using var host = ImportHost(); using var client = Client(host);
         Assert.Equal(HttpStatusCode.Forbidden, (await client.GetAsync("/api/v1/" + PersonalPath + "?purpose=crew-profile", Ct)).StatusCode);

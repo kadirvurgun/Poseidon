@@ -11,7 +11,8 @@ namespace Poseidon.Api;
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record CrewSaveCommand(Guid Id, Guid? PersonId, uint? BaseVersion, string? FullName,
     string? EmployeeNo, Guid? PositionId, DateOnly? From, DateOnly? To, DateOnly? ContractEndDate,
-    string? WatchGroup, DateTimeOffset? SourceObservedAt, string? DeclaredStatus = null, string? AssignmentPolicyVersion = null);
+    string? WatchGroup, DateTimeOffset? SourceObservedAt, [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? DeclaredStatus = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? AssignmentPolicyVersion = null);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record CrewPositionCommand(Guid Id, string Code, string? Rank, string? Capacity, string? Department);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]

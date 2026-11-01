@@ -17,6 +17,7 @@ public sealed class MaintenanceObservationPolicyTests
     [Fact] public void Missing_and_unconfigured_are_distinct() {
         Assert.Equal("ObservationMissing", Assess(null, Rule()).State);
         Assert.Equal("ObservationPolicyUnavailable", Assess(Observation(), null).State);
+        Assert.Equal("ObservationPolicyUnavailable", Assess(Observation(), Rule() with { MaxScale = null }).State);
     }
     [Fact] public void Scope_revocation_policy_change_and_wrong_unit_fail_explicitly() {
         Assert.Equal("ObservationScopeMismatch", Assess(Observation() with { TenantId = Guid.NewGuid() }, Rule()).State);

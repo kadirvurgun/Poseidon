@@ -9,7 +9,9 @@ public sealed class MaintenanceObservationSettings
     public MaintenanceObservationRule[] Sources { get; set; } = [];
     public MaintenanceObservationRule? Rule(Guid tenant, Guid vessel, Guid asset, string source) {
         var matches = Sources.Where(s => s.TenantId == tenant && s.VesselId == vessel && s.AssetId == asset && s.Source == source).Take(2).ToArray();
-        return matches.Length == 1 ? matches[0] : null;
+        var candidate = matches.Length == 1 ? matches[0] : null;
+        return candidate != null && candidate.FreshnessSeconds > 0 && candidate.MaxScale is >= 0 and <= 28 && (candidate.Kind is "Meter" or "Condition") &&
+            candidate.Source.Length is > 0 and <= 80 && candidate.Version.Length is > 0 and <= 80 && candidate.Unit.Length is > 0 and <= 40 ? candidate : null;
     }
 }
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
@@ -36,6 +38,7 @@ public static class MaintenanceObservationEndpoints
     private static async Task<IResult> List(Guid vessel, Guid asset, HttpContext h, PoseidonDbContext db, MaintenanceObservationSettings settings) {
         if (!await Allowed(vessel, asset, h, db, false)) return await Fail(h, 404, "resource_not_found");
         var sources = settings.Sources.Where(s => s.TenantId == db.TenantId && s.VesselId == vessel && s.AssetId == asset)
+            .Where(s => settings.Rule(db.TenantId, vessel, asset, s.Source) != null)
             .GroupBy(s => s.Source, StringComparer.Ordinal).Where(g => g.Count() == 1).Select(g => g.Single()).ToArray();
         var rows = await db.MaintenanceObservations.AsNoTracking().Where(x => x.VesselId == vessel && x.AssetId == asset)
             .OrderByDescending(x => x.RecordedAt).ThenBy(x => x.Id).Take(100).Select(x => new { x.Id, x.Source, x.PolicyVersion, x.SourceRevision, x.Kind, x.Unit, x.Value, x.ObservedAt, x.Provenance,
@@ -50,7 +53,7 @@ public static class MaintenanceObservationEndpoints
         try { await h.RequestServices.GetRequiredService<IAntiforgery>().ValidateRequestAsync(h); }
         catch (AntiforgeryValidationException) { return await Fail(h, 400, "csrf_invalid"); }
         var rule = settings.Rule(db.TenantId, vessel, asset, command.Source);
-        if (rule == null || rule.Version != command.PolicyVersion || rule.Kind != command.Kind || rule.Unit != command.Unit || rule.FreshnessSeconds <= 0 || rule.MaxScale is < 0 or > 28)
+        if (rule == null || rule.Version != command.PolicyVersion || rule.Kind != command.Kind || rule.Unit != command.Unit || rule.FreshnessSeconds <= 0 || rule.MaxScale is null or < 0 or > 28)
             return await Fail(h, 403, "observation_policy_denied");
         if (command.Id == Guid.Empty || command.SourceRevision <= 0 || command.ObservedAt > DateTimeOffset.UtcNow || command.Source.Length is 0 or > 80 ||
             command.PolicyVersion.Length is 0 or > 80 || command.Unit.Length is 0 or > 40 || command.Kind is not ("Meter" or "Condition") ||
