@@ -45,7 +45,7 @@ public static class TugRequestPolicy
         if (TugPlanningWindowPolicy.Assess(new(x.RequestedStart, x.RequestedEnd)) == TugPlanningWindowState.InvalidOrder) errors.Add("requested_end");
         return errors.ToArray();
     }
-    public static bool ValidImo(string text) => Regex.IsMatch(text, "^[0-9]{7}$", RegexOptions.CultureInvariant) &&
+    public static bool ValidImo(string text) => text.Length == 7 && Regex.IsMatch(text, @"\A[0-9]{7}\z", RegexOptions.CultureInvariant) &&
         Enumerable.Range(0, 6).Sum(i => (text[i] - '0') * (7 - i)) % 10 == text[6] - '0';
     public static string[] Missing(TugRequestInputs x) => new (string Key, bool Missing)[] {
         ("request_source", x.RequestSource == null), ("assisted_vessel", x.AssistedVessel == null), ("job_type", x.JobType == null),

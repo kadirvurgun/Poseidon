@@ -1,0 +1,9 @@
+# TUG-IMO-BOUNDARY-01
+
+AUTHORED_UNVERIFIED; tests and all larger execution DEFERRED. No canonical SP or operational acceptance.
+
+Scope: existing conditional assisted-vessel IMO validation in DEV-081/T-TUG-002 and DEV-082/T-TUG-003. Active14.02 Data Dictionary2316 rows1918 and1948, SHA3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018; corresponding11.01 FR/TC-tug-job-intake-assisted_vessel_imo and FR/TC-tug-job-detail-assisted_vessel_imo, sheet2126 Alan v46.2 rows1918/1948, SHAbc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9. Those candidate rows retain physical-schema/business-rule review warnings. This repair does not turn their proposals into approved production policy: it enforces the pre-existing seven-ASCII-digit/checksum software contract completely.
+
+The old .NET dollar anchor could match before a terminal LF, admitting an eighth character while calculating only the first seven. Exact length and absolute anchors now reject that suffix. No trim, Unicode-digit conversion, silent repair or new requiredness; omitted conditional data remains an incomplete draft. Existing BP/timing/owner controls are preserved independently.
+
+Acceptance TIB-01: exact current IMO lexical/checksum contract; TIB-02: rejected actual API commands create no job/revision/receipt; TIB-03: a corrected exact IMO can reuse the previously rejected UUID/key and commits one ordinary audited revision. New domain cases cover line terminators, padding, non-ASCII digits, checksum and omission. Actual host/PostgreSQL cases cover rejected persistence and corrected same-attempt recovery. They are authored, NOT RUN; no observed PASS/count or signed-provider evidence. No migration/seed or credentials change. Run with the single later foundation gate and independent exact-commit QA/CI.
