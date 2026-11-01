@@ -34,6 +34,7 @@ it.each([403, 502])('withdraws loaded results when the next search is denied or 
   await user.type(screen.getByRole('searchbox'), 'next')
   await user.click(screen.getByRole('button', { name: 'Search' }))
   expect(await screen.findByRole('alert')).toBeVisible()
+  expect(screen.getByRole('alert')).toHaveFocus()
   expect(screen.queryByRole('link')).not.toBeInTheDocument()
   expect(screen.queryByText('No records found.')).not.toBeInTheDocument()
 })
@@ -54,4 +55,50 @@ it('discards a late successful result after its search was superseded by a denie
   await act(async () => finish(response(page([item]))))
   expect(screen.queryByRole('link')).not.toBeInTheDocument()
   expect(screen.getByRole('alert')).toHaveTextContent('not permitted')
+})
+
+it('does not fetch or expose a fabricated empty result when opened offline', () => {
+  vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(false)
+  const fetch = vi.fn(); vi.stubGlobal('fetch', fetch)
+  render(<WorkspaceSearch {...props} />)
+  expect(screen.getByRole('dialog')).toBeVisible()
+  expect(screen.getByRole('status')).toHaveTextContent('Offline')
+  expect(screen.getByRole('button', { name: 'Search' })).toBeDisabled()
+  expect(screen.queryByText('No records found.')).not.toBeInTheDocument()
+  expect(fetch).not.toHaveBeenCalled()
+})
+
+it('withdraws online results on disconnect and performs a new authorized read on reconnect', async () => {
+  const online = vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(true)
+  const fetch = vi.fn().mockResolvedValueOnce(response(page([item]))).mockResolvedValueOnce(response({}, 403))
+  vi.stubGlobal('fetch', fetch)
+  render(<WorkspaceSearch {...props} />)
+  await screen.findByRole('link', { name: /Earlier private result/ })
+  online.mockReturnValue(false)
+  act(() => { window.dispatchEvent(new Event('offline')) })
+  expect(screen.queryByRole('link')).not.toBeInTheDocument()
+  expect(screen.getByRole('status')).toHaveTextContent('Offline')
+  expect(fetch).toHaveBeenCalledTimes(1)
+  online.mockReturnValue(true)
+  act(() => { window.dispatchEvent(new Event('online')) })
+  expect(await screen.findByRole('alert')).toHaveTextContent('not permitted')
+  expect(fetch).toHaveBeenCalledTimes(2)
+  expect(screen.queryByRole('link')).not.toBeInTheDocument()
+})
+
+it('aborts an in-flight read on disconnect and ignores success returned after abort', async () => {
+  const online = vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(true)
+  let finish!: (value: Response) => void
+  let signal: AbortSignal | undefined
+  vi.stubGlobal('fetch', vi.fn((_url: string, init: RequestInit) => {
+    signal = init.signal as AbortSignal
+    return new Promise<Response>(resolve => { finish = resolve })
+  }))
+  render(<WorkspaceSearch {...props} />)
+  online.mockReturnValue(false)
+  act(() => { window.dispatchEvent(new Event('offline')) })
+  expect(signal?.aborted).toBe(true)
+  await act(async () => finish(response(page([item]))))
+  expect(screen.queryByRole('link')).not.toBeInTheDocument()
+  expect(screen.getByRole('status')).toHaveTextContent('Offline')
 })
