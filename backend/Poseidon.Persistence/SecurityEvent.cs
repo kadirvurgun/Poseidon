@@ -44,7 +44,7 @@ public sealed class SecurityEventWriter(DbContextOptions<SecurityEventWriter> op
     public async Task AppendAsync(SecurityEvent entry, CancellationToken cancellationToken = default)
     {
         if (ChangeTracker.HasChanges()) throw new InvalidOperationException("Only one security event may be appended at a time.");
-        if (entry.Action is not ("EquipmentRead" or "EquipmentSave" or "MaintenanceRead" or "MaintenanceSave" or "CrewRead" or "CrewProfile" or "CrewHistory" or "CrewSave" or "CrewPositions" or "Login" or "Logout" or "CompaniesRead" or "VesselsRead" or "AccessDenied" or "Session" or
+        if (entry.Action is not ("TugRead" or "TugSave" or "EquipmentRead" or "EquipmentSave" or "MaintenanceRead" or "MaintenanceSave" or "CrewRead" or "CrewProfile" or "CrewHistory" or "CrewSave" or "CrewPositions" or "Login" or "Logout" or "CompaniesRead" or "VesselsRead" or "AccessDenied" or "Session" or
             "CompanyCreate" or "CompanyUpdate" or "VesselCreate" or "VesselUpdate" or "DirectoryWrite" or
             "ProfileRead" or "ProfileHistory" or "ProfileSave" or "WorkspaceRead" or "WorkspaceSearch" or "TodayRead" or "TodayWhyRead" or
             "AuditQuery" or "AuditDetail" or "AuditRevision" or "RegisterList" or "RegisterRead" or "RegisterHistory" or "RegisterSave" or

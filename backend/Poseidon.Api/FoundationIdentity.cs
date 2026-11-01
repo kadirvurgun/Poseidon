@@ -31,6 +31,10 @@ public sealed record VesselGrant(Guid VesselId, bool CanEdit = false);
 public sealed record TrustedActor(Guid Id, Guid TenantId, string[] Permissions, bool TenantWideRead, bool TenantWideManage, VesselGrant[] VesselGrants)
 {
     public string? RoleContext { get; init; }
+    public bool CanReadTug => CanRead && Permissions.Contains("mode.tug") && Permissions.Contains("tug.read");
+    public bool CanSeeShip => !Permissions.Contains("mode.tug") || Permissions.Contains("mode.cross");
+    public bool CanSeeTug => Permissions.Contains("mode.tug");
+    public bool CanAccessKind(Poseidon.Persistence.VesselKind kind) => kind == Poseidon.Persistence.VesselKind.Tug ? CanSeeTug : CanSeeShip;
     public bool CanReadAudit => Permissions.Contains("audit.read") && CanRead;
     public string AuditCapabilities => string.Join(',', Permissions.Order(StringComparer.Ordinal));
     // Explicit tenant-local capability. Vessel-only grants and directory writes confer no catalog authority.
@@ -45,6 +49,7 @@ public sealed record TrustedActor(Guid Id, Guid TenantId, string[] Permissions, 
     public IQueryable<Poseidon.Persistence.Vessel> Scope(IQueryable<Poseidon.Persistence.Vessel> query)
     {
         if (!CanRead) return query.Where(_ => false);
+        query = query.Where(v => v.Kind == Poseidon.Persistence.VesselKind.Tug ? CanSeeTug : CanSeeShip);
         if (TenantWideRead || TenantWideManage) return query;
         var ids = VesselGrants.Select(g => g.VesselId).ToArray();
         return query.Where(v => ids.Contains(v.Id));
@@ -67,7 +72,7 @@ public sealed class ActorResolver(FederationSettings settings)
         var matches = settings.Memberships.Where(x => x.Issuer == issuers[0].Value && x.Subject == subjects[0].Value).ToArray();
         if (matches.Length != 1 || matches[0].ActorId == Guid.Empty || matches[0].TenantId == Guid.Empty) return null;
         var m = matches[0];
-        return new TrustedActor(m.ActorId, m.TenantId, (m.Permissions ?? []).Where(x => x is "directory.read" or "directory.write" or "workspace.search" or "regulatory.draft.read" or "regulatory.draft.write" or "audit.read" or "file.read" or "file.write" or "equipment.read" or "equipment.write" or "equipment.history.read" or "maintenance.read" or "maintenance.write" or "maintenance.history.read" or "maintenance.owner.eligible").Distinct().ToArray(),
+        return new TrustedActor(m.ActorId, m.TenantId, (m.Permissions ?? []).Where(x => x is "mode.tug" or "mode.cross" or "tug.read" or "tug.write" or "tug.owner.eligible" or "crew.read" or "crew.write" or "crew.identity.read" or "crew.identity.write" or "crew.history.read" or "directory.read" or "directory.write" or "workspace.search" or "regulatory.draft.read" or "regulatory.draft.write" or "audit.read" or "file.read" or "file.write" or "equipment.read" or "equipment.write" or "equipment.history.read" or "maintenance.read" or "maintenance.write" or "maintenance.history.read" or "maintenance.owner.eligible").Distinct().ToArray(),
             m.TenantWideRead, m.TenantWideManage, (m.VesselGrants ?? []).Where(g => g.VesselId != Guid.Empty).ToArray()) { RoleContext = TrustedRoleContext(m.RoleReferences) };
     }
 }

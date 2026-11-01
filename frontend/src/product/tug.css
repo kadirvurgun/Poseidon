@@ -1,0 +1,13 @@
+.tug-workspace main { min-width: 0; }
+.tug-workspace main > nav { display: flex; flex-wrap: wrap; gap: 1rem; margin-block: 1.2rem; }
+.tug-workspace nav a { padding: .5rem; min-height: 44px; }
+.tug-workspace nav a[aria-current="page"] { font-weight: 700; text-decoration-thickness: 3px; }
+.tug-workspace fieldset { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 1rem; margin-block: 1rem; padding: 1rem; }
+.tug-workspace label { display: grid; gap: .4rem; margin-block: .5rem; min-width: 0; }
+.tug-workspace input, .tug-workspace select { width: 100%; min-width: 0; min-height: 44px; padding: .6rem; box-sizing: border-box; font: inherit; }
+.tug-workspace .product-table { max-width: 100%; }
+.tug-workspace table { min-width: 960px; }
+.tug-workspace td { max-width: 270px; overflow-wrap: anywhere; vertical-align: top; }
+.tug-workspace dd { margin: .3rem 0 1rem; overflow-wrap: anywhere; }
+.tug-workspace summary { cursor: pointer; padding-block: .6rem; }
+.tug-workspace button { margin: .3rem; }

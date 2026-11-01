@@ -88,3 +88,14 @@ Each existing synthetic vessel additionally receives one FICTIONAL/unverified te
 ## EQUIPMENT-MAINTENANCE-01 — AUTHORED / execution DEFERRED
 
 Each existing synthetic vessel additionally authors one FICTIONAL/unverified Asset and initial AssetRevision, one immutable synthetic PMS MaintenanceJob (not TugJob), one incomplete Draft MaintenancePlan and immutable initial calculation/input revision. Deterministic type-scoped IDs; add-missing only, preserving all operator changes. No owners, meter readings, condition observations, completed/verified maintenance, approvals or receipts are seeded. Five actual inserts per vessel author fifteen additional attributed writes: current fixture46→61, one later operation47→62. Counts are expectations, not executed observations. Related current model/migration/reseed/tenant/rollback tests are authored and DEFERRED. Normal API startup and production import prohibition remain unchanged. [Task/source/gate contract](tasks/equipment-maintenance-01.md).
+
+## TUG-FOUNDATION-01 — AUTHORED / execution DEFERRED
+
+The existing synthetic Tug receives one deterministic entirely incomplete draft
+TugJob plus its immutable initial source-versioned revision, add-missing only.
+Ship fixtures receive no TugJob. Operator edits are preserved. No owner, assignment,
+measurement, receipt, dispatch approval, signed decision or credential is seeded.
+Two additional real insert audit expectations change63/64 total after the prior61/62;
+these totals are authored expectations, not observed execution. Migration/designer/
+snapshot and independent PostgreSQL reseed/kind/tenant/immutability cases are authored,
+all DEFERRED. [Task and acceptance gaps](tasks/tug-foundation-01.md).

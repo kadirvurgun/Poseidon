@@ -14,6 +14,7 @@ public static class WorkspaceEndpoints
     {
         if (!actor.CanRead) return [];
         NavigationDto[] destinations = actor.CanReadAudit ? [.. BaseDestinations(actor), new NavigationDto("audit", "/app/audit")] : BaseDestinations(actor);
+        if (actor.CanReadTug) destinations = [.. destinations, new("tug-command", "/app/tug-command"), new("tug-job-board", "/app/tug-job-board"), new("tug-job-intake", "/app/tug-job-intake")];
         return actor.CanReadRegulatory ? [.. destinations, new("sources", "/app/sources"), new("requirements", "/app/requirements")] : destinations;
     }
     private static NavigationDto[] BaseDestinations(TrustedActor actor) =>

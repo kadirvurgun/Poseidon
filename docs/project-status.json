@@ -1,4 +1,35 @@
 {
+  "tug_foundation_01": {
+    "status": "authored_unverified_incomplete_not_accepted",
+    "accepted": false,
+    "task": "docs/tasks/tug-foundation-01.md",
+    "phase_report": "docs/phases/TUG-FOUNDATION-01.md",
+    "source_baseline": "poseidon-v46.3-20261030",
+    "receiving_head": "5cb416f",
+    "engineering_prerequisite": "80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44; supplied committed PR11 engineering receipt",
+    "support_origin": "40ec40cdef905ca3e7e0f0e5db56b0eb0ba76756",
+    "support_receipt": "c711fd8",
+    "canonical_progress_unchanged": true,
+    "target_story_points": 194,
+    "canonical_total_story_points": 970,
+    "verification": "DEFERRED: all suites/build/typecheck/contracts/migration/browser/independent QA/CI; no new PASS",
+    "current_phase": "Larger domain foundation product authoring; Tug draft checkpoint",
+    "delivered": [
+      "Trusted kind/mode/grant-scoped Tug context and mode-filtered shared reads/search",
+      "Normalized request EF aggregate; immutable source/revision/receipt lineage, authored migration/designer/snapshot and synthetic incomplete fixtures",
+      "Audited API with bounded duplicate-aware input, exact BP, xmin, serializable transaction and exact revision replay",
+      "Connected TR/EN intake/detail/context/board URLs with honest assignment/readiness/conflict coverage and retained uncertain attempts",
+      "Authored domain, real isolated PostgreSQL/API, React and registered private real-host browser cases"
+    ],
+    "open_gaps": [
+      "D-STATE-01 and approved conditional/stable-code contracts",
+      "Verified BP/type/certificate/crew/equipment and controlled assignment/dispatch adapters",
+      "Approved plan, available BP, readiness and operational conflict remain Unknown/Unavailable",
+      "Durable offline synchronization and dedicated Tug audit revision projection",
+      "All execution evidence and independent exact-target QA/CI"
+    ],
+    "next": "Coordinator continues larger bundle and later executes combined gate; no publication/merge by this worker"
+  },
   "equipment_maintenance_01": {
     "status": "authored_unverified_incomplete_not_accepted",
     "accepted": false,

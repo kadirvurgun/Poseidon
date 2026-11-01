@@ -1,3 +1,4 @@
+import { tugCases } from './tug-cases.ts'
 import { technicalCases } from './technical-cases.ts'
 import { crewCases } from './crew-cases.ts'
 import { fileCases } from './file-cases.ts'
@@ -95,6 +96,7 @@ export async function restrictedRegister(page: Page) {
 }
 
 export const registerCases = [
+  ...tugCases,
   ...technicalCases,
   ...crewCases,
   ...auditCases,

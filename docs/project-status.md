@@ -1,3 +1,22 @@
+## TUG-FOUNDATION-01 — authored UNVERIFIED checkpoint (01.11.2026)
+
+Connected trusted Tug context, normalized EF draft request/revisions/receipts/seed,
+audited API and TR/EN intake/detail/board with actual stored data. Exact planning
+origin40ec40c was integrated with `-x` as c711fd8; existing modules are preserved.
+The board keeps requested time separate from an approved plan and labels missing
+assignment/available-BP/readiness/conflict coverage Unknown/Unavailable.
+
+All new suites/build/typecheck/contracts/migration/browser/QA/CI checks are
+**DEFERRED / NOT RUN**. This package is **INCOMPLETE / NOT ACCEPTED**, with no
+canonical SP/progress change (goal194/970). Controlled assignment/dispatch,
+verified adapters, source state/conditional/code decisions and durable offline
+synchronization remain open. No publish/merge or new human sign-off.
+
+Current phase: larger foundation product authoring. Next: coordinator's larger
+integrated gate, independent exact-target QA, required CI and separate source-task
+reconciliation. [Task criteria/tests](tasks/tug-foundation-01.md) ·
+[Phase report](phases/TUG-FOUNDATION-01.md).
+
 **Current delivery — EQUIPMENT-MAINTENANCE-01: AUTHORED_UNVERIFIED / INCOMPLETE / NOT ACCEPTED.** Preserved Crew and prior modules; integrated exact support commits dea9169→fa58d3d→a6d6bd3 using ordinary cherry-pick -x. Actual shared Asset hierarchy, database/transaction cycle protection, scoped APIs/versions/receipts, normalized PMS job/eligible role references, deterministic immutable plan calculations, migration/designer/snapshot, synthetic fixtures and fleet-linked TR/EN tree/editor/plan/history UI authored with domain/PostgreSQL/API/component/private real-host cases. **All suites/build/typecheck/contracts/migration/browser/QA/CI execution DEFERRED; no new PASS.** Generated adapter parity, real race/browser proof, controlled catalogs/adapter freshness and DEV-109 operational postponement policy remain open. No readiness, sign-offs, safety/privacy acceptance or canonical SP change;194/970 target retained. [Source/field/FR/TC criteria and limitations](tasks/equipment-maintenance-01.md), [phase handoff](phases/EQUIPMENT-MAINTENANCE-01.md). Next: coordinator continues bundle and owns actual gate, fresh independent QA and publishing/merge.
 
 **Current delivery — CREW-ROSTER-01: product authoring checkpoint, UNVERIFIED / INCOMPLETE / NOT ACCEPTED.** Normalized tenant Person, vessel Position/Assignment/period, immutable safe history, migration/designer/snapshot, synthetic add-missing fixtures, trusted crew API and TR/EN roster/profile/person/assignment forms authored. Separate identity permissions, scoped reads/denials and atomic version/idempotency handling; no readiness or sign-offs inferred. Meaningful domain/PostgreSQL/API/component/real-host cases authored. **All suites/build/typecheck/contracts/browser checks DEFERRED; no PASS or acceptance claimed.** Offline READ/CAPTURE and unresolved personal/profile/source policies remain explicit unmet criteria. Canonical counts and the194/970SP target unchanged. [Field/FR/TC coverage and gaps](tasks/crew-roster-01.md), [phase handoff](phases/CREW-ROSTER-01.md). Publishing/merge remain with coordinator.

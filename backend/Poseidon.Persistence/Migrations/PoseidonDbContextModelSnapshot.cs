@@ -859,6 +859,88 @@ namespace Poseidon.Persistence.Migrations
             modelBuilder.Entity("Poseidon.Persistence.MaintenancePlanRevision", b => { b.HasOne("Poseidon.Persistence.AssetRevision", null).WithMany().HasForeignKey("TenantId", "VesselId", "AssetId", "AssetRevision").HasPrincipalKey("TenantId", "VesselId", "AssetId", "Revision").OnDelete(DeleteBehavior.Restrict).IsRequired(); });
             modelBuilder.Entity("Poseidon.Persistence.MaintenancePlanRevision", b => { b.HasOne("Poseidon.Persistence.MaintenanceJob", null).WithMany().HasForeignKey("TenantId", "VesselId", "JobId").HasPrincipalKey("TenantId", "VesselId", "Id").OnDelete(DeleteBehavior.Restrict); });
             modelBuilder.Entity("Poseidon.Persistence.MaintenancePlanRevision", b => { b.HasOne("Poseidon.Persistence.TechnicalOwner", null).WithMany().HasForeignKey("TenantId", "VesselId", "OwnerRoleId").HasPrincipalKey("TenantId", "VesselId", "Id").OnDelete(DeleteBehavior.Restrict); });
+
+            // TUG-FOUNDATION-01 authored frozen metadata; parity check DEFERRED.
+            modelBuilder.Entity("Poseidon.Persistence.TugOwner", b => {
+                b.Property<Guid>("TenantId").HasColumnType("uuid");
+                b.Property<Guid>("VesselId").HasColumnType("uuid");
+                b.Property<Guid>("Id").HasColumnType("uuid");
+                b.HasKey("TenantId", "VesselId", "Id");
+                b.ToTable("Owners", "tug");
+            });
+            modelBuilder.Entity("Poseidon.Persistence.TugJob", b => {
+                b.Property<Guid>("TenantId").HasColumnType("uuid");
+                b.Property<Guid>("Id").HasColumnType("uuid");
+                b.Property<Guid>("VesselId").HasColumnType("uuid");
+                b.Property<string>("JobNumber").HasColumnType("character varying(40)").IsRequired().HasMaxLength(40);
+                b.Property<string>("RequestSource").HasColumnType("text");
+                b.Property<string>("CustomerRef").HasColumnType("text");
+                b.Property<string>("AssistedVessel").HasColumnType("text");
+                b.Property<string>("AssistedVesselImo").HasColumnType("text");
+                b.Property<string>("JobType").HasColumnType("text");
+                b.Property<string>("OperationArea").HasColumnType("text");
+                b.Property<string>("PickupPoint").HasColumnType("text");
+                b.Property<string>("DestinationPoint").HasColumnType("text");
+                b.Property<string>("SpecialRequirements").HasColumnType("text");
+                b.Property<string>("Priority").HasColumnType("text");
+                b.Property<string>("Notes").HasColumnType("text");
+                b.Property<string>("Status").HasColumnType("text").IsRequired();
+                b.Property<string>("SourceVersion").HasColumnType("text").IsRequired();
+                b.Property<string>("Provenance").HasColumnType("text").IsRequired();
+                b.Property<DateTimeOffset?>("RequestedStart").HasColumnType("timestamp with time zone");
+                b.Property<DateTimeOffset?>("RequestedEnd").HasColumnType("timestamp with time zone");
+                b.Property<decimal?>("RequiredBollardPull").HasColumnType("numeric(10,2)").HasPrecision(10, 2);
+                b.Property<int?>("RequiredTugCount").HasColumnType("integer");
+                b.Property<Guid?>("RequestOwner").HasColumnType("uuid");
+                b.Property<long>("Revision").HasColumnType("bigint");
+                b.Property<uint>("Version").HasColumnType("xid").IsConcurrencyToken().ValueGeneratedOnAddOrUpdate().HasColumnName("xmin");
+                b.Property<DateTimeOffset>("SavedAt").HasColumnType("timestamp with time zone");
+                b.HasKey("TenantId", "Id");
+                b.HasAlternateKey("TenantId", "VesselId", "Id");
+                b.HasIndex("TenantId", "JobNumber").IsUnique();
+                b.HasIndex("TenantId", "VesselId", "RequestedStart");
+                b.HasIndex("TenantId", "VesselId", "RequestOwner");
+                b.ToTable("Jobs", "tug", t => {
+                    t.HasCheckConstraint("CK_TugJob_Draft", "\"Status\" = 'Draft'");
+                    t.HasCheckConstraint("CK_TugJob_Window", "\"RequestedEnd\" IS NULL OR \"RequestedStart\" IS NULL OR \"RequestedEnd\" >= \"RequestedStart\"");
+                    t.HasCheckConstraint("CK_TugJob_Count", "\"RequiredTugCount\" IS NULL OR \"RequiredTugCount\" BETWEEN 1 AND 1000");
+                    t.HasCheckConstraint("CK_TugJob_BP", "\"RequiredBollardPull\" IS NULL OR \"RequiredBollardPull\" >= 0");
+                });
+            });
+            modelBuilder.Entity("Poseidon.Persistence.TugJobRevision", b => {
+                b.Property<Guid>("TenantId").HasColumnType("uuid");
+                b.Property<Guid>("VesselId").HasColumnType("uuid");
+                b.Property<Guid>("JobId").HasColumnType("uuid");
+                b.Property<long>("Revision").HasColumnType("bigint");
+                b.Property<string>("JobNumber").HasColumnType("character varying(40)").IsRequired().HasMaxLength(40);
+                b.Property<string>("ContentJson").HasColumnType("jsonb").IsRequired();
+                b.Property<string>("SourceVersion").HasColumnType("text").IsRequired();
+                b.Property<string>("Provenance").HasColumnType("text").IsRequired();
+                b.Property<DateTimeOffset>("SavedAt").HasColumnType("timestamp with time zone");
+                b.HasKey("TenantId", "VesselId", "JobId", "Revision");
+                b.ToTable("JobRevisions", "tug");
+            });
+            modelBuilder.Entity("Poseidon.Persistence.TugAssignment", b => {
+                b.Property<Guid>("TenantId").HasColumnType("uuid");
+                b.Property<Guid>("Id").HasColumnType("uuid");
+                b.Property<Guid>("VesselId").HasColumnType("uuid");
+                b.Property<Guid>("JobId").HasColumnType("uuid");
+                b.Property<Guid>("TugId").HasColumnType("uuid");
+                b.Property<long>("JobRevision").HasColumnType("bigint");
+                b.Property<string>("DecisionReference").HasColumnType("character varying(200)").IsRequired().HasMaxLength(200);
+                b.Property<DateTimeOffset>("RecordedAt").HasColumnType("timestamp with time zone");
+                b.HasKey("TenantId", "Id");
+                b.HasIndex("TenantId", "VesselId", "JobId", "TugId").IsUnique();
+                b.HasIndex("TenantId", "VesselId", "JobId", "JobRevision");
+                b.HasIndex("TenantId", "TugId");
+                b.ToTable("Assignments", "tug");
+            });
+            modelBuilder.Entity("Poseidon.Persistence.TugOwner", b => { b.HasOne("Poseidon.Persistence.Vessel", null).WithMany().HasForeignKey("TenantId", "VesselId").HasPrincipalKey("TenantId", "Id").OnDelete(DeleteBehavior.Restrict).IsRequired(); });
+            modelBuilder.Entity("Poseidon.Persistence.TugJob", b => { b.HasOne("Poseidon.Persistence.Vessel", null).WithMany().HasForeignKey("TenantId", "VesselId").HasPrincipalKey("TenantId", "Id").OnDelete(DeleteBehavior.Restrict).IsRequired(); });
+            modelBuilder.Entity("Poseidon.Persistence.TugJob", b => { b.HasOne("Poseidon.Persistence.TugOwner", null).WithMany().HasForeignKey("TenantId", "VesselId", "RequestOwner").HasPrincipalKey("TenantId", "VesselId", "Id").OnDelete(DeleteBehavior.Restrict); });
+            modelBuilder.Entity("Poseidon.Persistence.TugJobRevision", b => { b.HasOne("Poseidon.Persistence.TugJob", null).WithMany().HasForeignKey("TenantId", "VesselId", "JobId").HasPrincipalKey("TenantId", "VesselId", "Id").OnDelete(DeleteBehavior.Restrict).IsRequired(); });
+            modelBuilder.Entity("Poseidon.Persistence.TugAssignment", b => { b.HasOne("Poseidon.Persistence.TugJobRevision", null).WithMany().HasForeignKey("TenantId", "VesselId", "JobId", "JobRevision").HasPrincipalKey("TenantId", "VesselId", "JobId", "Revision").OnDelete(DeleteBehavior.Restrict).IsRequired(); });
+            modelBuilder.Entity("Poseidon.Persistence.TugAssignment", b => { b.HasOne("Poseidon.Persistence.Vessel", null).WithMany().HasForeignKey("TenantId", "TugId").HasPrincipalKey("TenantId", "Id").OnDelete(DeleteBehavior.Restrict).IsRequired(); });
 #pragma warning restore 612, 618
         }
     }

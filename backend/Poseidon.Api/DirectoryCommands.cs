@@ -107,6 +107,7 @@ public static class DirectoryCommands
             if (companyId is null || companyId == Guid.Empty) errors["companyId"] = ["required"];
         }
         if (errors.Count > 0) return await Fail(400, "validation_failed", errors);
+        if (!company && !update && !actor.CanAccessKind(kind == "Tug" ? VesselKind.Tug : VesselKind.Ship)) return await Fail(403, "permission_denied");
         code = code!.Trim(); name = name!.Trim();
         var keys = http.Request.Headers["Idempotency-Key"];
         var key = keys.Count == 1 ? keys[0] : null;

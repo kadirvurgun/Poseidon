@@ -24,6 +24,9 @@ public sealed class DirectoryAuthorizationResultHandler : IAuthorizationMiddlewa
                 endpointName.StartsWith("Equipment", StringComparison.Ordinal) ? context.Request.Method == "GET" ? "EquipmentRead" : "EquipmentSave" : context.Request.Method == "GET" ? "MaintenanceRead" : "MaintenanceSave",
                 result.Challenged ? "Unauthenticated" : "Denied");
         }
+        if (!result.Succeeded && endpointName?.StartsWith("Tug", StringComparison.Ordinal) == true)
+            await context.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(context,
+                context.Request.Method == "GET" ? "TugRead" : "TugSave", result.Challenged ? "Unauthenticated" : "Denied");
         var todayAction = context.GetEndpoint()?.Metadata.GetMetadata<Microsoft.AspNetCore.Routing.IEndpointNameMetadata>()?.EndpointName switch
         {
             "GetRegulatoryDraft" => "ProfileRead",

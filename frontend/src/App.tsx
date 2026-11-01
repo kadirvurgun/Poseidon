@@ -1,3 +1,4 @@
+import { TugWorkspace } from './product/TugWorkspace'
 import { TechnicalWorkspace } from './product/TechnicalWorkspace'
 import { CrewWorkspace } from './product/CrewWorkspace'
 import { useEffect, useState } from 'react'
@@ -37,6 +38,7 @@ const content = {
 }
 
 export function App() {
+  if (/^\/app\/tug-(command|job-board|job-intake|job-detail)(?:\/|$)/.test(window.location.pathname)) return <TugWorkspace />
   if (/^\/app\/(equipment-hierarchy|maintenance-plan)\//.test(window.location.pathname)) return <TechnicalWorkspace />
   const crew = /^\/app\/crew-roster\/([0-9a-fA-F-]{36})(?:\/crew-profile\/([0-9a-fA-F-]{36}))?\/?$/.exec(window.location.pathname)
   if (crew) return <CrewWorkspace key={`${crew[1]}:${crew[2] ?? ''}`} vessel={crew[1]} assignment={crew[2]} />

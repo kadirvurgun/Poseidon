@@ -15,7 +15,7 @@ public sealed record AuditPageDto(AuditRecordDto[] Items, int Total, int Limit, 
 public static class AuditHistoryEndpoints
 {
     private static readonly string[] Types = [nameof(Tenant), nameof(Company), nameof(Vessel), nameof(VesselProfile),
-        nameof(TugProfile), nameof(RegulatoryDraft), nameof(RegulatoryDraftRevision), nameof(RegisterDraft), nameof(RegisterRevision), nameof(FileStage), nameof(StoredFile)];
+        nameof(TugJob), nameof(TugJobRevision), nameof(TugAssignment), nameof(TugProfile), nameof(RegulatoryDraft), nameof(RegulatoryDraftRevision), nameof(RegisterDraft), nameof(RegisterRevision), nameof(FileStage), nameof(StoredFile)];
     public static void MapAuditHistory(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/v1/audit").RequireAuthorization("AuditRead");
@@ -38,6 +38,9 @@ public static class AuditHistoryEndpoints
         // Catalog identifiers and source lineage require the same capability as the actual resource.
         if (!actor.CanReadRegulatory) rows = rows.Where(x => x.EntityType != nameof(RegisterDraft) && x.EntityType != nameof(RegisterRevision));
         if (!actor.Permissions.Contains("file.read")) rows = rows.Where(x => x.EntityType != nameof(FileStage) && x.EntityType != nameof(StoredFile));
+        var modeIds = actor.Scope(db.Vessels).Select(v => v.Id);
+        rows = rows.Where(x => x.VesselId == null || modeIds.Contains(x.VesselId.Value));
+        if (!actor.CanReadTug) rows = rows.Where(x => x.EntityType != nameof(TugJob) && x.EntityType != nameof(TugJobRevision) && x.EntityType != nameof(TugAssignment));
         return rows;
     }
 
