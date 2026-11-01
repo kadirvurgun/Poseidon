@@ -60,3 +60,6 @@ Kaynak/karar/kabul/test eşlemesi [görev sözleşmesinde](tasks/nav-workspace-0
 ## DIR-WORKSPACE-01 paket sonu yerel kanıt — 01.11.2026
 
 Şirket/filo create-edit, açık tenant/vessel grant, CSRF, xmin conflict ve transaction içindeki idempotency receipt/audit akışları yerelde doğrulandı. 98 backend (22 domain + 25 persistence + 51 API), 63 React, 16 Playwright ve 127 Python testi geçti; failed/skip yok. Release build 0 warning/error; lint/typecheck/frontend build ve EF model parity geçti. 269 kaynak/34.958 chunk: 0 mismatch. Bağımsız hedef-commit QA bekliyor; kullanıcı kararıyla bu paket henüz push/PR yapılmadı. Canonical kabul 8/970 SP (%0,82) değişmedi. [Paket raporu](phases/DIR-WORKSPACE-01.md).
+
+
+Coordinator prerequisite reconciliation: independent Esra Sol review approved exact profile code `ee3339e58747302c5effd9baef8f05b262c33e0e` with zero blocking issues. Committed evidence: [review](reviews/profile-draft-ee3339e.json). This resolves the earlier missing-evidence stop. Proceed with actual NAV implementation and tests; NAV checks/independent acceptance remain pending. No canonical/IdP/expert/release approval or publication.

@@ -1,0 +1,24 @@
+{
+  "task": "VESSEL-PROFILE-DRAFT-01",
+  "commit": "ee3339e58747302c5effd9baef8f05b262c33e0e",
+  "approved": true,
+  "issues": [],
+  "reviewer": {
+    "profile": "esra-pro",
+    "role": "independent_qa",
+    "model": "gpt-6.1-sol",
+    "effort": "medium"
+  },
+  "scope": "Local profile engineering only. Future NAV code requires its own checks/review. Canonical, IdP, expert and release gates remain open.",
+  "verification": {
+    "domain": 46,
+    "persistence": 25,
+    "api": 67,
+    "react": 136,
+    "playwright": 18,
+    "failed": 0,
+    "skipped": 0,
+    "python": "Unchanged prior127 PASS evidence retained, not rerun"
+  },
+  "review_finished_at": 1793489633.4527755
+}
