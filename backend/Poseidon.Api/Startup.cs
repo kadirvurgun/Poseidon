@@ -90,6 +90,8 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapSecureFiles();
             endpoints.MapDocuments();
             endpoints.MapCrew();
+            endpoints.MapCredentials();
+            endpoints.MapImports();
             endpoints.MapTechnical();
             endpoints.MapTug();
             endpoints.MapGet("/health/live", () => Results.Text("alive"))

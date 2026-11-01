@@ -167,22 +167,25 @@ public static class CrewEndpoints
         catch (DbUpdateException) { return await Fail(h, 409, "version_conflict"); }
     }
 
-    private static async Task<IResult> Save(Guid vessel, CrewSaveCommand command, HttpContext h, PoseidonDbContext db, IAntiforgery csrf)
+    internal static bool ValidInput(CrewSaveCommand command) => command.Id != Guid.Empty && command.FullName?.Length is not > 200 &&
+        command.EmployeeNo?.Length is not > 64 && command.WatchGroup?.Length is not > 64 && CrewPeriod.Valid(command.From, command.To) &&
+        !(command.SourceObservedAt > DateTimeOffset.UtcNow);
+    private static Task<IResult> Save(Guid vessel, CrewSaveCommand command, HttpContext h, PoseidonDbContext db, IAntiforgery csrf) => ApplyImport(vessel, command, h, db, csrf, false);
+    internal static async Task<IResult> ApplyImport(Guid vessel, CrewSaveCommand command, HttpContext h, PoseidonDbContext db, IAntiforgery csrf, bool imported)
     {
         var a = Actor(h); var ct = h.RequestAborted;
         if (!Write(a, vessel)) return await Fail(h, 403, "permission_denied");
         if (!await Scope(db, a, vessel, ct)) return await Fail(h, 404, "resource_not_found");
         try { await csrf.ValidateRequestAsync(h); } catch (AntiforgeryValidationException) { return await Fail(h, 400, "csrf_invalid"); }
         if ((command.FullName != null || command.EmployeeNo != null) && !IdentityWrite(a)) return await Fail(h, 403, "permission_denied");
-        if (command.Id == Guid.Empty || command.FullName?.Length > 200 || command.EmployeeNo?.Length > 64 || command.WatchGroup?.Length > 64 ||
-            !CrewPeriod.Valid(command.From, command.To) || command.SourceObservedAt > DateTimeOffset.UtcNow)
+        if (!ValidInput(command))
             return await Fail(h, 400, "validation_failed");
         var key = h.Request.Headers["Idempotency-Key"].ToString();
         if (!Guid.TryParseExact(key, "D", out _)) return await Fail(h, 400, "invalid_idempotency_key");
         var fingerprint = Convert.ToHexString(SHA256.HashData(JsonSerializer.SerializeToUtf8Bytes(new { vessel, command })));
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "CrewSave", "Attempted", resourceId: vessel);
         // SERIALIZABLE plus DB exclusion constraint protects overlap and duplicate/restart races.
-        await using var tx = await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable, ct);
+        await using var tx = db.Database.CurrentTransaction == null ? await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable, ct) : null;
         var receipt = await db.CommandReceipts.AsNoTracking().SingleOrDefaultAsync(x => x.ActorId == a.Id && x.Key == key, ct);
         if (receipt != null) {
             if (receipt.Action != "CrewSave" || receipt.Fingerprint != fingerprint) return await Fail(h, 409, "idempotency_key_reused");
@@ -206,20 +209,21 @@ public static class CrewEndpoints
             (x.To == null || command.From < x.To) && (command.To == null || x.From < command.To), ct)) return await Fail(h, 409, "version_conflict");
         if (assignment == null) {
             if (command.PersonId == null) db.Persons.Add(new Person { TenantId = a.TenantId, Id = personId,
-                FullName = command.FullName, EmployeeNo = command.EmployeeNo, SourceObservedAt = command.SourceObservedAt?.ToUniversalTime() });
+                FullName = command.FullName, EmployeeNo = command.EmployeeNo, Provenance = imported ? "ImportedDeclaredUnverified" : "UserDeclaredUnverified", SourceObservedAt = command.SourceObservedAt?.ToUniversalTime() });
             assignment = new() { TenantId = a.TenantId, Id = command.Id, VesselId = vessel, PersonId = personId };
             db.CrewAssignments.Add(assignment);
         } else assignment.Revision = checked(assignment.Revision + 1);
         assignment.PositionId = command.PositionId; assignment.From = command.From; assignment.To = command.To;
         assignment.ContractEndDate = command.ContractEndDate; assignment.WatchGroup = command.WatchGroup; assignment.SourceObservedAt = command.SourceObservedAt?.ToUniversalTime();
+        assignment.Provenance = imported ? "ImportedDeclaredUnverified" : assignment.Provenance;
         db.CrewAssignmentRevisions.Add(assignment.Snapshot());
         try {
             await db.SaveChangesAsync(ct);
             db.CommandReceipts.Add(new() { TenantId = a.TenantId, ActorId = a.Id, Key = key, Action = "CrewSave", Fingerprint = fingerprint,
                 ResourceId = assignment.Id, RegisterRevision = assignment.Revision, RegisterVersion = assignment.Version, CommittedAt = DateTimeOffset.UtcNow });
-            await db.SaveChangesAsync(ct); await tx.CommitAsync(ct);
+            await db.SaveChangesAsync(ct); if (tx != null) await tx.CommitAsync(ct);
             return Results.Ok(new { id = assignment.Id, assignment.Revision, assignment.Version, replayed = false });
-        } catch (DbUpdateException) { await tx.RollbackAsync(ct); return await Fail(h, 409, "version_conflict"); }
-        catch (Npgsql.PostgresException e) when (e.SqlState == "40001") { await tx.RollbackAsync(ct); return await Fail(h, 409, "version_conflict"); }
+        } catch (DbUpdateException) { if (tx != null) await tx.RollbackAsync(ct); return await Fail(h, 409, "version_conflict"); }
+        catch (Npgsql.PostgresException e) when (e.SqlState == "40001") { if (tx != null) await tx.RollbackAsync(ct); return await Fail(h, 409, "version_conflict"); }
     }
 }

@@ -1,3 +1,4 @@
+import { CertificatePanel } from './CertificatePanel'
 import { useEffect, useRef, useState } from 'react'
 import { ApiError, session } from './api'
 import type { Session } from './directory-contract'
@@ -36,6 +37,7 @@ export function CrewWorkspace({ vessel, assignment }: { vessel: string; assignme
   const [positions, setPositions] = useState<crew.CrewPosition[]>([])
   const [offset, setOffset] = useState(0); const [generation, setGeneration] = useState(0)
   const [loading, setLoading] = useState(true); const [error, setError] = useState(0)
+  const [certificateDirty, setCertificateDirty] = useState(false)
   const [personMode, setPersonMode] = useState(false)
   const [editor, setEditor] = useState<Editor | null>(null); const [saving, setSaving] = useState(false)
   const [result, setResult] = useState<'idle' | 'saved' | 'uncertain' | 'conflict' | 'invalid' | 'denied' | 'expired'>('idle')
@@ -69,7 +71,7 @@ export function CrewWorkspace({ vessel, assignment }: { vessel: string; assignme
   }, [vessel, assignment, offset, generation])
   useEffect(() => {
     const update = () => setOnline(navigator.onLine)
-    const leave = (e: BeforeUnloadEvent) => { if (editor || inFlight.current) e.preventDefault() }
+    const leave = (e: BeforeUnloadEvent) => { if (editor || certificateDirty || inFlight.current) e.preventDefault() }
     // Nothing is stored in browser storage. Hide all personal projections when the session leaves view.
     const hide = () => { if (document.visibilityState === 'hidden') { setPaused(true); setPage(null); setDetail(null); setPositions([]) }
       else { setGeneration(v => v + 1) } }
@@ -78,7 +80,7 @@ export function CrewWorkspace({ vessel, assignment }: { vessel: string; assignme
     window.addEventListener('online', update); window.addEventListener('offline', update); window.addEventListener('beforeunload', leave)
     document.addEventListener('visibilitychange', hide)
     return () => { window.removeEventListener('pageshow', restore); window.removeEventListener('online', update); window.removeEventListener('offline', update); window.removeEventListener('beforeunload', leave); document.removeEventListener('visibilitychange', hide) }
-  }, [editor])
+  }, [editor, certificateDirty])
   useEffect(() => { document.documentElement.lang = language; document.title = `POSEIDON · ${assignment ? t.profile : t.title}` }, [language, assignment, t])
   useEffect(() => { if (destination && dialog.current && !dialog.current.open) dialog.current.showModal() }, [destination])
   const start = (row?: crew.CrewRow, personal = false) => { setPersonMode(personal); setResult('idle'); setEditor({ key: crypto.randomUUID(), command: {
@@ -101,7 +103,7 @@ export function CrewWorkspace({ vessel, assignment }: { vessel: string; assignme
   }
   const row = detail?.assignment
   const nullable = (value: string | null | undefined) => value ?? t.unknown
-  const navigate = (href: string) => { if (editor || saving) setDestination(href); else window.location.assign(href) }
+  const navigate = (href: string) => { if (editor || certificateDirty || saving) setDestination(href); else window.location.assign(href) }
   return <div className="product-shell crew-shell"><a className="skip-link" href="#crew-main">{assignment ? t.profile : t.title}</a>
     <header className="product-header"><a href="/app">POSEIDON</a><div role="group" aria-label={t.language}><button aria-pressed={language === 'tr'} onClick={() => setLanguage('tr')}>TR</button><button aria-pressed={language === 'en'} onClick={() => setLanguage('en')}>EN</button></div></header>
     <main id="crew-main" tabIndex={-1}>
@@ -111,10 +113,10 @@ export function CrewWorkspace({ vessel, assignment }: { vessel: string; assignme
       {loading && <p role="status">{t.loading}</p>}
       {error > 0 && <div role="alert"><p>{error === 401 ? t.expired : error === 403 || error === 404 ? t.denied : t.error}</p><button onClick={() => setGeneration(v => v + 1)}>{t.retry}</button>{error === 401 && <a href={`/api/v1/auth/login?returnUrl=${encodeURIComponent(window.location.pathname)}`}>{t.expired}</a>}</div>}
       {result !== 'idle' && <p role={result === 'saved' ? 'status' : 'alert'}>{t[result]}</p>}
-      {page && online && !paused && !assignment && <><button disabled={!page.canWrite || !online || !!editor} onClick={() => start()}>{t.create}</button>
+      {page && online && !paused && !assignment && <><button disabled={!page.canWrite || !online || !!editor || certificateDirty} onClick={() => start()}>{t.create}</button>
         {page.items.length === 0 ? <p>{t.empty}</p> : <div className="product-table"><table><thead><tr><th>{t.person}</th><th>{t.rank}</th><th>{t.capacity}</th><th>{t.period}</th></tr></thead><tbody>{page.items.map(item => <tr key={item.id}><td><a href={`${rosterHref}/crew-profile/${item.id}`} onClick={e => { e.preventDefault(); navigate(`${rosterHref}/crew-profile/${item.id}`) }}>{item.fullName ?? t.withheld}</a></td><td>{nullable(item.rank)}</td><td>{nullable(item.capacity)}</td><td>{nullable(item.from)} — {nullable(item.to)}</td></tr>)}</tbody></table></div>}
-        <div className="product-pagination"><button disabled={offset === 0 || !!editor} onClick={() => setOffset(v => v - 25)}>{t.prev}</button><button disabled={!page.hasMore || !!editor} onClick={() => setOffset(v => v + 25)}>{t.next}</button></div></>}
-      {page && online && !paused && row && <section><h2>{row.fullName ?? t.withheld}</h2><dl><dt>{t.employee}</dt><dd>{row.employeeNo ?? t.withheld}</dd><dt>{t.position}</dt><dd>{nullable(row.rank)} / {nullable(row.capacity)}</dd><dt>{t.period}</dt><dd>{nullable(row.from)} — {nullable(row.to)}</dd><dt>{t.eligibility}</dt><dd>{t.unknown}</dd><dt>{t.fitness}</dt><dd>{t.unknown}</dd><dt>{t.certificate}</dt><dd>{t.unknown}</dd><dt>{t.competence}</dt><dd>{t.unknown}</dd><dt>{t.contact}</dt><dd>{t.withheld}</dd><dt>{t.health}</dt><dd>{t.withheld}</dd></dl><button disabled={!page.canWrite || !!editor || !online} onClick={() => start(row)}>{t.edit}</button>{page.canWrite && page.canWriteIdentity && detail?.personVersion && <button disabled={!!editor || !online} onClick={() => start(row, true)}>{t.editPerson}</button>}</section>}
+        <div className="product-pagination"><button disabled={offset === 0 || !!editor || certificateDirty} onClick={() => setOffset(v => v - 25)}>{t.prev}</button><button disabled={!page.hasMore || !!editor || certificateDirty} onClick={() => setOffset(v => v + 25)}>{t.next}</button></div></>}
+      {page && online && !paused && row && <section><h2>{row.fullName ?? t.withheld}</h2><dl><dt>{t.employee}</dt><dd>{row.employeeNo ?? t.withheld}</dd><dt>{t.position}</dt><dd>{nullable(row.rank)} / {nullable(row.capacity)}</dd><dt>{t.period}</dt><dd>{nullable(row.from)} — {nullable(row.to)}</dd><dt>{t.eligibility}</dt><dd>{t.unknown}</dd><dt>{t.fitness}</dt><dd>{t.unknown}</dd><dt>{t.certificate}</dt><dd>{t.unknown}</dd><dt>{t.competence}</dt><dd>{t.unknown}</dd><dt>{t.contact}</dt><dd>{t.withheld}</dd><dt>{t.health}</dt><dd>{t.withheld}</dd></dl><button disabled={!page.canWrite || !!editor || certificateDirty || !online} onClick={() => start(row)}>{t.edit}</button>{page.canWrite && page.canWriteIdentity && detail?.personVersion && <button disabled={!!editor || certificateDirty || !online} onClick={() => start(row, true)}>{t.editPerson}</button>}</section>}
       {editor && !paused && <form onSubmit={e => { e.preventDefault(); void save() }}><h2>{t.dirty}</h2><fieldset disabled={saving || result === 'uncertain' || result === 'conflict'}>
         {(personMode || !editor.command.personId) && page?.canWriteIdentity && <><label>{t.name}<input maxLength={200} value={editor.command.fullName ?? ''} onChange={e => change('fullName', e.target.value)} /></label><label>{t.employee}<input maxLength={64} value={editor.command.employeeNo ?? ''} onChange={e => change('employeeNo', e.target.value)} /></label></>}
         {!personMode && <><label>{t.position}<select value={editor.command.positionId ?? ''} onChange={e => change('positionId', e.target.value)}><option value="">{t.unknown}</option>{positions.map(p => <option value={p.id} key={p.id}>{p.code} · {nullable(p.rank)} · {nullable(p.capacity)}</option>)}</select></label>
@@ -123,5 +125,6 @@ export function CrewWorkspace({ vessel, assignment }: { vessel: string; assignme
       </fieldset><button type="submit" disabled={saving || !online || result === 'conflict'}>{result === 'uncertain' ? t.retry : t.save}</button>
         <button type="button" disabled={saving || result === 'uncertain'} onClick={() => { setEditor(null); setResult('idle'); setGeneration(v => v + 1) }}>{result === 'conflict' ? t.reload : t.cancel}</button></form>}
       {destination && <dialog ref={dialog} aria-label={t.dirty} onCancel={() => setDestination(null)}><p>{t.dirty}</p><button autoFocus disabled={saving || result === 'uncertain'} onClick={() => window.location.assign(destination)}>{t.reload}</button><button onClick={() => setDestination(null)}>{t.cancel}</button></dialog>}
+      {assignment && detail && user && !editor && !paused && error === 0 && <CertificatePanel key={`${user.actorId}:${user.tenantId}:${user.csrfToken}:${vessel}:${assignment}`} vessel={vessel} assignment={assignment} language={language} csrf={user.csrfToken} onDirty={setCertificateDirty} />}
     </main></div>
 }

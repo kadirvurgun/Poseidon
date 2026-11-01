@@ -18,7 +18,7 @@ beforeEach(() => {
   fetcher.mockImplementation(async (path: string, init?: RequestInit) => {
     if (init?.method === 'POST' || init?.method === 'PUT') return mutation(init)
     if (path.endsWith('/auth/session')) return json({ authenticated: true, tenantId: vessel, actorId: id, csrfToken: 'synthetic-csrf' })
-    if (path.endsWith('/positions')) return json([])
+    if (path.endsWith('/positions') || path.endsWith('/certificates')) return json([])
     if (path.endsWith(`/${id}`)) return json({ assignment: row, personVersion: 12, employmentState: 'Unknown', fitnessState: 'Unknown', contactStatus: 'Withheld', healthStatus: 'Withheld' })
     return json({ items: [row], offset: 0, hasMore: false, canWrite: true, canWriteIdentity: true })
   })

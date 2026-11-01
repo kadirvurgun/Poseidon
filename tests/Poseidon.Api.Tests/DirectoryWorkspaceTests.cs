@@ -42,7 +42,7 @@ public sealed partial class DirectoryWorkspaceTests(OwnedPostgresFixture fixture
     }
     public async ValueTask DisposeAsync() => await postgres.DisposeAsync();
     private Vessel SeedVessel => seed.Vessels.First(v => v.TenantId == seed.Tenants[0].Id);
-    private WebApplicationFactory<Program> Host(bool manage = true, bool read = true, bool edit = true, bool scope = true, DbCommandInterceptor? interceptor = null, bool search = false, bool regulatoryRead = false, bool regulatoryWrite = false, bool auditRead = false, bool crewRead = false, bool crewWrite = false, bool crewIdentity = false, bool technicalRead = false, bool technicalWrite = false, bool tugRead = false, bool tugWrite = false, bool tugOwner = false, bool tugMode = false, bool crossMode = true) => new WebApplicationFactory<Program>().WithWebHostBuilder(b =>
+    private WebApplicationFactory<Program> Host(bool manage = true, bool read = true, bool edit = true, bool scope = true, DbCommandInterceptor? interceptor = null, bool search = false, bool regulatoryRead = false, bool regulatoryWrite = false, bool auditRead = false, bool crewRead = false, bool crewWrite = false, bool crewIdentity = false, bool technicalRead = false, bool technicalWrite = false, bool tugRead = false, bool tugWrite = false, bool tugOwner = false, bool tugMode = false, bool crossMode = true, bool importRead = false, bool importWrite = false, bool certificateRead = false, bool certificateWrite = false) => new WebApplicationFactory<Program>().WithWebHostBuilder(b =>
     {
         b.UseEnvironment("Test");
         b.ConfigureAppConfiguration((_, c) => c.AddInMemoryCollection(new Dictionary<string, string?>
@@ -75,6 +75,10 @@ public sealed partial class DirectoryWorkspaceTests(OwnedPostgresFixture fixture
             ["Authentication:Oidc:Memberships:0:Permissions:19"] = crossMode ? "mode.cross" : "unused",
             ["Authentication:Oidc:Memberships:0:Permissions:20"] = tugRead ? "tug.read" : "unused",
             ["Authentication:Oidc:Memberships:0:Permissions:21"] = tugWrite ? "tug.write" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:23"] = importRead ? "import.read" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:24"] = importWrite ? "import.write" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:25"] = certificateRead ? "crew.certificate.read" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:26"] = certificateWrite ? "crew.certificate.write" : "unused",
             ["Authentication:Oidc:Memberships:0:Permissions:22"] = tugOwner ? "tug.owner.eligible" : "unused",
             ["Authentication:Oidc:Memberships:0:TenantWideManage"] = (scope && manage).ToString(),
             ["Authentication:Oidc:Memberships:0:TenantWideRead"] = (scope && read).ToString(),

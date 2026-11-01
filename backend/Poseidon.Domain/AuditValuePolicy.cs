@@ -17,7 +17,7 @@ public static class AuditValuePolicy
         // Do not even call ToString on withheld arbitrary text/body objects.
         if (Evidence(field) != "Allowlisted" || value == null) return null;
         return (field, value) switch {
-            ("State", string state) when state is "Pending" or "Receiving" or "CleanTransport" or "Abandoned" or "SyntheticUnverified" => state,
+            ("State", string state) when state is "Uploaded" or "MappingDraft" or "Previewed" or "Committed" or "Pending" or "Receiving" or "CleanTransport" or "Abandoned" or "SyntheticUnverified" => state,
             ("SourceVersion", string source) when source == TugRequestPolicy.SourceVersion => source,
             ("RequiredTugCount", int count) when count is >= 1 and <= 1000 => count.ToString(CultureInfo.InvariantCulture),
             ("RequestedStart" or "RequestedEnd", DateTimeOffset time) => time.ToUniversalTime().ToString("O", CultureInfo.InvariantCulture),

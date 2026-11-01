@@ -61,7 +61,7 @@ public static class TechnicalEndpoints
         a.Permissions.Contains(module + ".write") && (a.TenantWideManage || a.VesselGrants.Any(g => g.VesselId == vessel && g.CanEdit));
     private static Task<bool> Scope(PoseidonDbContext db, TrustedActor a, Guid vessel, CancellationToken ct) =>
         a.Scope(db.Vessels).AnyAsync(x => x.Id == vessel, ct);
-    private static string Action(HttpContext h) => h.Request.Path.StartsWithSegments("/api/v1/equipment-hierarchy") || h.Request.Path.StartsWithSegments("/api/v1/assets")
+    private static string Action(HttpContext h) => h.Request.Path.Value?.Contains("/imports/", StringComparison.Ordinal) == true || h.Request.Path.StartsWithSegments("/api/v1/equipment-hierarchy") || h.Request.Path.StartsWithSegments("/api/v1/assets")
         ? h.Request.Method == "GET" ? "EquipmentRead" : "EquipmentSave"
         : h.Request.Method == "GET" ? "MaintenanceRead" : "MaintenanceSave";
     private static async Task<IResult> Fail(HttpContext h, int status, string code) {
@@ -97,7 +97,7 @@ public static class TechnicalEndpoints
     }
     // Eligible role references are computed from server provisioning for this tenant/vessel each time,
     // including replay; no names, subject IDs or credential data leave the server.
-    private static Guid[] EligibleOwners(HttpContext h, Guid vessel) {
+    internal static Guid[] EligibleOwners(HttpContext h, Guid vessel) {
         var a = Actor(h);
         return h.RequestServices.GetRequiredService<FederationSettings>().Memberships
             .Where(m => m.TenantId == a.TenantId && m.ActorId != Guid.Empty && m.Permissions.Contains("maintenance.owner.eligible") &&
@@ -133,18 +133,20 @@ public static class TechnicalEndpoints
         await db.SaveChangesAsync(h.RequestAborted);
     }
     private static bool Texts(params string?[] values) => values.All(x => x == null || x.Length <= 2000 && !x.Any(char.IsControl));
-    private static async Task<IResult> SaveEquipment(Guid vessel, EquipmentCommand command, HttpContext h, PoseidonDbContext db) {
+    internal static bool ValidEquipmentInput(EquipmentCommand command) => command.Id != Guid.Empty && command.ParentId != Guid.Empty &&
+        command.Level is "System" or "Equipment" or "Component" && Texts(command.Code, command.Name, command.SystemFamily, command.EquipmentType,
+            command.Criticality, command.Maker, command.Model, command.SerialNumber, command.Location, command.Notes);
+    private static Task<IResult> SaveEquipment(Guid vessel, EquipmentCommand command, HttpContext h, PoseidonDbContext db) => ApplyImport(vessel, command, h, db, false);
+    internal static async Task<IResult> ApplyImport(Guid vessel, EquipmentCommand command, HttpContext h, PoseidonDbContext db, bool imported) {
         var failure = await Gate(h, db, vessel, "equipment", true); if (failure != null) return failure;
-        if (command.Id == Guid.Empty || command.ParentId == Guid.Empty || command.Level is not ("System" or "Equipment" or "Component") ||
-            !Texts(command.Code, command.Name, command.SystemFamily, command.EquipmentType, command.Criticality, command.Maker,
-                command.Model, command.SerialNumber, command.Location, command.Notes)) return await Fail(h, 400, "validation_failed");
+        if (!ValidEquipmentInput(command)) return await Fail(h, 400, "validation_failed");
         if (command.ResponsibleRoleId != null && !EligibleOwners(h, vessel).Contains(command.ResponsibleRoleId.Value)) return await Fail(h, 403, "permission_denied");
         if (!Key(h, out var key)) return await Fail(h, 400, "invalid_idempotency_key");
         var fingerprint = Fingerprint(vessel, command); var ct = h.RequestAborted;
         await Observe(h, vessel, "Attempted");
         // SSI reads the entire authorized vessel predicate before any edge is changed. Concurrent
         // disjoint A->B / B->A changes cannot both commit; client retries must reload after 409.
-        await using var tx = await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable, ct);
+        await using var tx = db.Database.CurrentTransaction == null ? await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable, ct) : null;
         try {
             var replay = await Replay(db, h, vessel, key, fingerprint, "EquipmentSave", command.Id); if (replay != null) return replay;
             var rows = await db.Assets.Where(x => x.VesselId == vessel).ToListAsync(ct);
@@ -160,11 +162,12 @@ public static class TechnicalEndpoints
             asset.SystemFamily = command.SystemFamily; asset.EquipmentType = command.EquipmentType; asset.Criticality = command.Criticality;
             asset.Maker = command.Maker; asset.Model = command.Model; asset.SerialNumber = command.SerialNumber; asset.Location = command.Location;
             asset.CommissionDate = command.CommissionDate; asset.ResponsibleRoleId = command.ResponsibleRoleId; asset.Notes = command.Notes;
+            asset.Provenance = imported ? "ImportedDeclaredUnverified" : asset.Provenance;
             db.AssetRevisions.Add(asset.Snapshot()); await db.SaveChangesAsync(ct);
             await Receipt(db, h, key, fingerprint, "EquipmentSave", asset.Id, asset.Revision, asset.Version);
-            await tx.CommitAsync(ct); return Results.Ok(new TechnicalSaved(asset.Id, asset.Revision, asset.Version, false));
+            if (tx != null) await tx.CommitAsync(ct); return Results.Ok(new TechnicalSaved(asset.Id, asset.Revision, asset.Version, false));
         } catch (Exception e) when (e is DbUpdateException || e is Npgsql.PostgresException { SqlState: "40001" or "40P01" }) {
-            await tx.RollbackAsync(ct); return await Fail(h, 409, "version_conflict");
+            if (tx != null) await tx.RollbackAsync(ct); return await Fail(h, 409, "version_conflict");
         }
     }
     private static async Task<IResult> Plans(Guid vessel, HttpContext h, PoseidonDbContext db) {

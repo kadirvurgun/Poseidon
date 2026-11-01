@@ -475,6 +475,23 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** IMPORT-FOUNDATION-01 authored DTO extension; generator/parity execution DEFERRED. */
+        ImportTemplateField: { key: string; requiredInput: boolean; userWritable: boolean };
+        ImportColumnBinding: { sourceColumn: number; targetField: string };
+        ImportTemplateDto: { category: string; version: string; fingerprint: string; fields: components['schemas']['ImportTemplateField'][];
+            allowSourceColumnReuse: boolean; format: string; maxBytes: number; maxRows: number; maxColumns: number; maxCellCharacters: number;
+            numericPolicy: string; commitPolicy: string };
+        ImportBatchDto: { id: string; category: string; revision: number; version: number; state: string;
+            template: components['schemas']['ImportTemplateDto']; headers: string[]; bindings: components['schemas']['ImportColumnBinding'][];
+            rowCount: number; sourceHash: string; createdAt: string; reviewerState: string; committedAt: string | null; committedPreviewId: string | null };
+        ImportMappingCommand: { version: number; bindings: components['schemas']['ImportColumnBinding'][] };
+        ImportCommitCommand: { previewId: string; revision: number; templateFingerprint: string };
+        ImportValidationRowDto: { rowNumber: number; outcome: string; issues: { code: string; fieldOrdinal: number | null }[] };
+        ImportPreviewPageDto: { previewId: string; revision: string; templateVersion: string; templateFingerprint: string;
+            totalRows: number; validRows: number; rejectedRows: number; offset: number; limit: number; hasMore: boolean;
+            rows: components['schemas']['ImportValidationRowDto'][] };
+        ImportCommittedDto: { batchId: string; state: string; importedRows: number; previewId: string; replayed: boolean };
+
         AuditEvidenceDto: {
             kind: string;
             profile: null | components["schemas"]["RegulatoryRevisionDto"];

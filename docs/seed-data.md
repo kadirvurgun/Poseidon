@@ -99,3 +99,18 @@ Two additional real insert audit expectations change63/64 total after the prior6
 these totals are authored expectations, not observed execution. Migration/designer/
 snapshot and independent PostgreSQL reseed/kind/tenant/immutability cases are authored,
 all DEFERRED. [Task and acceptance gaps](tasks/tug-foundation-01.md).
+
+
+## IMPORT-FOUNDATION-01 — AUTHORED / execution DEFERRED
+
+Each existing fictional crew assignment receives one deterministic incomplete private
+Credential declaration and one metadata-only initial CredentialRevision, add-missing
+only. Composite tenant/vessel/assignment/person relationships are preserved. No
+certificate number, issuer, dates, country, controlled lookup, real PII, verification,
+signature, receipt, preview or successful import is seeded. Operator edits are never
+updated by reseed. Six additional actual insert expectations change63/64→69/70;
+these are authored test expectations, not executed counts. Source numeric precision
+remains unresolved, and imported declarations cannot grant eligibility/readiness.
+Migration/designer/snapshot, real PostgreSQL preservation/isolation/rollback and actual
+API consumers are authored; all execution waits for the larger foundation gate.
+[Task/source/remaining gates](tasks/import-foundation-01.md).

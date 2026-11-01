@@ -28,6 +28,11 @@ public sealed class PoseidonDbContext(
     public DbSet<Document> Documents => Set<Document>();
     public DbSet<DocumentVersion> DocumentVersions => Set<DocumentVersion>();
 
+    public DbSet<Credential> Credentials => Set<Credential>();
+    public DbSet<CredentialRevision> CredentialRevisions => Set<CredentialRevision>();
+    public DbSet<ImportBatch> ImportBatches => Set<ImportBatch>();
+    public DbSet<ImportPreview> ImportPreviews => Set<ImportPreview>();
+    public DbSet<ImportRowResult> ImportRowResults => Set<ImportRowResult>();
     public DbSet<Person> Persons => Set<Person>();
     public DbSet<Asset> Assets => Set<Asset>();
     public DbSet<AssetRevision> AssetRevisions => Set<AssetRevision>();
@@ -47,6 +52,12 @@ public sealed class PoseidonDbContext(
     protected override void OnModelCreating(ModelBuilder model)
     {
         model.HasDefaultSchema("core");
+        ImportStorage.Configure(model);
+        model.Entity<Credential>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<CredentialRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ImportBatch>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ImportPreview>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ImportRowResult>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         TugStorage.Configure(model);
         model.Entity<TugJob>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<TugJobRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -240,6 +251,14 @@ public sealed class PoseidonDbContext(
         if (changes.Any(e => e.Entity is RegisterDraft && (e.State == EntityState.Deleted ||
             e.State == EntityState.Modified && e.Property(nameof(RegisterDraft.Kind)).IsModified)))
             throw new InvalidOperationException("Register kind and history cannot be removed or reassigned.");
+        if (changes.Any(e => e.Entity is ImportPreview or ImportRowResult or CredentialRevision && e.State != EntityState.Added))
+            throw new InvalidOperationException("Import observations and credential history are immutable.");
+        if (changes.Any(e => e.Entity is Credential && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
+            new[] { "VesselId", "AssignmentId", "PersonId" }.Any(n => e.Property(n).IsModified))))
+            throw new InvalidOperationException("Credential ownership is immutable.");
+        if (changes.Any(e => e.Entity is ImportBatch && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
+            new[] { "VesselId", "ActorId", "SessionHash", "AssignmentId", "Category", "TemplateVersion", "TemplateFingerprint", "SourceHash", "TableJson", "SourceName", "SourceLocator" }.Any(n => e.Property(n).IsModified))))
+            throw new InvalidOperationException("Import source and ownership are immutable.");
         var events = new List<AuditEvent>();
         foreach (var entry in changes)
         {

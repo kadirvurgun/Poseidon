@@ -1,3 +1,11 @@
+## IMPORT-FOUNDATION-01 — local authored checkpoint / UNVERIFIED
+
+Current phase: larger domain foundation product authoring. Four real trial import categories now have versioned XLSX/schema download, bounded parsing, explicit mapping, domain-aware preview, scoped safe results/paging/reject reports and atomic normal-handler commit/receipt/history. Private normalized certificate declarations, composite ownership, migration/designer/snapshot, incomplete synthetic fixtures and actual TR/EN importer/crew-profile consumers are authored. Four exact -x handoffs were integrated and preserved.
+
+**All execution DEFERRED; task INCOMPLETE / NOT ACCEPTED.** No suites/build/typecheck/generation/browser/provider labs ran. Source whitespace inspection returned exit0; Graphify AST refresh is maintenance only. Authored coverage:28 domain,16 real PostgreSQL/API,5 persistence,10 React and3 actual-host browser cases plus88 support cases. These are not passing observations. Canonical **8/970** remains unchanged.
+
+Open: all verification/independent exact-code QA/CI, source precision/key/catalog/complete field whitelist, full certificate verification/signature, retention/session-history policy and production reviewer/reject/rollback/pilot gates. Production commit is unavailable outside Development/Test; no owner sign-off or readiness is inferred. Next: coordinator continues the larger bundle and runs the deferred combined gate before later publication/merge. [Source/FR/TC/coverage report](tasks/import-foundation-01.md) · [phase report](phases/IMPORT-FOUNDATION-01.md).
+
 ## TUG-FOUNDATION-01 — authored UNVERIFIED checkpoint (01.11.2026)
 
 Connected trusted Tug context, normalized EF draft request/revisions/receipts/seed,
