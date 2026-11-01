@@ -10,7 +10,7 @@ Geliştirici grafiği ajanların kod keşfini daraltır. İleride ürün RAG'i i
 
 `py scripts/import_documents.py --source <controlled-set-folder>`
 
-Orijinaller `sources/poseidon-v46.3/` altında tutulur. Script SHA256, göreli kaynak yolu, belge kimliği ve kaynak sınıfını manifest'e kaydeder. DOCX paragrafları ve XLSX hücreleri metne çıkarılır; orijinal kaynak adresi ve paragrafa/sheet+row'a dayanan locator ile JSONL chunk kayıtları üretilir. Çıktı dosyaları yalnız değişiklik kontrolüyle yenilenir; farklı bir kaynak baseline aynı klasör üzerine aktarılmaz.
+İlk baseline'ın orijinalleri `sources/poseidon-v46.3/` altında değişmez geçmiş olarak tutulur. Güncel baseline ve orijinal dizin, aktarım veya gereksinim seçimi öncesinde [active.json](sources/active.json) üzerinden okunur; şu an kullanıcı tarafından sağlanan `analiz/POSEIDON GUNCEL 30.10.2026/` setidir. Script SHA256, göreli kaynak yolu, belge kimliği ve kaynak sınıfını manifest'e kaydeder. DOCX paragrafları ve XLSX hücreleri metne çıkarılır; orijinal kaynak adresi ve paragrafa/sheet+row'a dayanan locator ile JSONL chunk kayıtları üretilir. Çıktı dosyaları yalnız değişiklik kontrolüyle yenilenir; farklı bir kaynak baseline aynı klasör üzerine aktarılmaz.
 
 Bu aktarım canonical register'ın insan incelemesinin yerini almaz. `90_SOURCE_RESEARCH` ve `99_ARCHIVE` requirement kaynağı değildir. Diğer dosyalar da register okunana kadar `candidate-unverified` kabul edilir. DOCX şekilleri ve XLSX formül hesapları metin çıkarımından doğrulanamaz; kritik karar için orijinal dosya incelenir.
 
@@ -19,12 +19,18 @@ Bu aktarım canonical register'ın insan incelemesinin yerini almaz. `90_SOURCE_
 Python paketi `graphifyy==0.9.15`; CLI adı `graphify`. Kurulu araç ve komutlar yerelde kontrol edilmiştir.
 
 ```text
-graphify extract scripts --code-only --no-cluster --out .
-graphify query "import_documents" --budget 1500
 graphify update .
+graphify query "OfflineApplication" --budget 1500
+graphify explain "PoseidonDbContext"
 ```
 
-AST extraction yereldir ve model çağrısı gerektirmez. Üçüncü komut uygulama kodu oluşunca artımlı güncelleme içindir. Anlamsal belge grafiği ayrıca host ajanla veya yapılandırılmış modelle üretilebilir; mevcut oturumla da yapılabilir, zorunlu bir API anahtarı gerektirmez. Headless API extraction ise ayrıca sağlayıcı erişimi ve ücretlendirme gerektirir. Kurulum, bütün analiz setinin anlamsal grafiğinin üretildiği anlamına gelmez.
+AST extraction yereldir ve model çağrısı gerektirmez. `update .` mevcut geliştirici grafiğini değişen uygulama koduyla artımlı günceller. İlk kurulumdaki yalnız `scripts` çıkarımı güncel uygulama grafiğinin kapsamı değildir; mevcut grafiği tekrar yalnız bootstrap scriptleriyle değiştirmek gerekmez. Sorgu/explain örnekleri kapsamı daraltır; ilişki bulunmaması ilgili davranışın mevcut olmadığı veya bütün dosyaların tarandığı anlamına gelmez. Anlamsal belge grafiği ayrıca host ajanla veya yapılandırılmış modelle üretilebilir; mevcut oturumla da yapılabilir, zorunlu bir API anahtarı gerektirmez. Headless API extraction ise ayrıca sağlayıcı erişimi ve ücretlendirme gerektirir. Kurulum, bütün analiz setinin anlamsal grafiğinin üretildiği anlamına gelmez.
+
+### 02.11.2026 gerçek kapsam gözlemi
+
+Kurulu Python313 paket metadata'sı `graphifyy==0.9.15` bildirdi. Yerel `graphify update .` uygulama/API/domain/persistence/frontend/test kodunu da içeren AST çıktısı üretti: son `8e069bc` kaynak snapshot'ında6842 node/14167 edge/474 community. Bu tarihli bakım gözlemidir; her alanın semantik olarak doğrulandığını, MCP bağlantısını, test başarısını veya accepted story point'i kanıtlamaz.36 sıfır-node uyarısı ve5000-node sınırı nedeniyle HTML görselleştirmesinin atlanması raporlandı; JSON grafiği ve metin raporu üretildi. Sonraki kod değişiklikleri bu sayıları değiştirebilir.
+
+[.graphifyignore](../.graphifyignore), `sources/`, `analiz/`, `docs/sources/`, `.runtime/` ve `.tools/` içeriklerini bu geliştirici AST grafiğinden ayırır. Kontrollü belge retrieval'ı aşağıdaki bounded kaynak sorgusunu kullanır. `graphify-out/` türetilmiş yerel çıktıdır; canonical gereksinim, gözlenmiş gerçek işletim verisi veya kaynak/uzman onayı değildir. Runtime özel anahtarlar, OAuth dosyaları, kimlik/sağlık kayıtları ve signed dosya URL'leri bu grafiğe veya ilerideki genel RAG indeksine taşınmaz. Ürün RAG servisi, vector extension/embedding sağlayıcısı, bütün belge setinin semantik grafiği ve ürün RAG değerlendirme kapısı henüz uygulanmış kabul edilmez.
 
 Makineye özgü Codex hook dosyası git dışında tutulur. Hook'un bu istemcide gerçekten tetiklendiği henüz doğrulanmadığından güncelleme açık komutla çalıştırılır. Token tasarrufu miktarı corpus ve sorguya göre ölçülür; sabit bir tasarruf katsayısı vaat edilmez.
 
