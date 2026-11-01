@@ -1,5 +1,13 @@
 # REG-BOUNDARY-TLS-01 — browser TLS and register runtime boundary
 
+## Current independent rejection repair — Today pagination
+
+Rejected target: `9c402664c5920cb1fe413ad035a1d02376259846`. The local successor containing this update repairs only the reported Today pagination boundary within the same REG-SRC-08 package/source scope. NOT ACCEPTED; fresh independent review of the complete diff from approved93de and coordinator CI remain required. The worktree was clean; all prior code and evidence remain preserved. No delegation, publishing or self-approval.
+
+REG-BOUNDARY-03 acceptance criteria: Today cards must match the actual requested offset0/limit25, including empty responses; vessel pages must match the request, use a safe integer offset0–100000 and limit25, and contain25 valid distinct vessels whenever hasMore is true. Short/empty terminal pages remain valid. Malformed responses must render an error, not legitimate scoped/empty results. Regressions cover mismatched Today metadata on empty/populated pages, short/empty vessel continuation on initial/later pages, invalid offset bounds, valid boundary pages and UI error behavior. Exact affected frontend gate results are recorded at the top of the [phase report](../phases/REG-BOUNDARY-TLS-01.md).
+
+Sources remain the controlled30.10 baseline and locators below: REG-SRC-08 strict runtime boundary; 13.04 paragraph105 server pagination; 15.01 paragraphs74–75 pagination/stable sort; 19.01 paragraphs13–18/25–30 contract/security gates. Bounded retrieval and exact SQLite locator reads were repeated; actual `TodayEndpoints.cs` Read uses default0/25 and offset maximum100000, and the selector requests25. No cursor migration or new requirement scope is introduced. Original task/evidence follows unchanged.
+
 Status: local corrective candidate; NOT ACCEPTED. Parent `318a14788a37b5d30dfd27c6c2eca94745b546b5` remains REJECTED as a whole. CORE's automatic backend repair stage ended; its first two review portions passed according to the assigned review, without approving the complete commit. This is a new bounded frontend/browser remediation, not another attempt at the three earlier backend issues. No extra agents, account/auth/production changes, push, PR, merge or self-approval. The task remains subject to the two-native-start limit; no additional worker was started here.
 
 The initial worktree was clean, with no partial changes to discard. Preserve the complete existing Today/REG code and all historical passing and failed evidence. Fresh independent review must examine the complete resulting diff against approved `93de7b6b376fb4592150c5c7b15a8c52e39bd4b3`. Canonical progress remains 8/970 SP, 2/121 tasks and 0/196 accepted screens.

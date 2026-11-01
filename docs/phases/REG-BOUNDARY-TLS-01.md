@@ -1,5 +1,28 @@
 # REG-BOUNDARY-TLS-01 — local corrective gate
 
+## Current successor to rejected9c40266 — Today pagination
+
+Date: 2026-11-01. Rejected parent: `9c402664c5920cb1fe413ad035a1d02376259846`. Candidate is the local commit containing this report, supplied in the delivery message. Developer frontend gate passed; NOT ACCEPTED. Independent target-commit QA and required coordinator CI remain pending. Whole318a147 and9c40266 remain REJECTED; approved baseline93de and canonical8/970SP,2/121tasks,0/196 accepted screens are unchanged. Same package/source scope, no delegation, publishing or self-approval, no original budget reset.
+
+The initial worktree was clean. Today now explicitly requests offset0/limit25 and requires those exact response values, even when cards are empty. Vessel-page decoding enforces requested offset equality plus safe integer0–100000 bounds and requires a full25-item page when hasMore is true. Existing exact members, vessel validation, uniqueness and terminal-page semantics remain enforced. The selector navigation fixture now supplies25 distinct synthetic vessels for continuation. REG-BOUNDARY-03/REG-SRC-08 adds23 regression cases: wrong Today offset/limit on empty/populated pages via real transport decoding; exact request parameters; empty/short continuation on first/later vessel pages; invalid offset bounds; valid terminal/full/boundary pages; component error rendering for fabricated empty results. No backend/auth/TLS/fixture-service changes.
+
+Affected checks ran once after code and regressions were complete (npm commands from frontend):
+
+| Command | Result |
+|---|---|
+| `npm run lint` | exit0; zero ESLint warnings |
+| `npm test` | exit0;11 files,321 PASS,0 failed,0 skipped;19.64s; Today42 cases including23 new regressions |
+| `npm run typecheck` | exit0 |
+| `npm run build` | exit0; tsc + Vite,38 modules;461ms Vite build |
+| `graphify update .` | exit0; AST-only3235 nodes/5271 edges/260 communities;12 existing zero-node warnings |
+| `git diff --check` | exit0 |
+
+No failed or skipped affected checks. npm emitted its existing user-config always-auth deprecation warning; no config/dependency changes. Current frontend evidence supersedes only the historical298-test frontend run below. Unchanged lab/provider/TLS/backend/persistence/domain/Python/source suites were not rerun for this exact Today-only rejection. Earlier6 strict-TLS authenticated register cases,3 real negative TLS cases,2 provider journeys and backend135/persistence29/React193 remain separately attributed historical evidence, not current-target reruns. No lab was started or private state created, so no profile/service cleanup was necessary in this repair. All prior failures/evidence are retained below. Source/security/production/legal/expert/pilot/human gates remain open as listed below.
+
+Next step: coordinator fresh independent exact-commit review of the complete diff against93de, then required CI. No accepted-point increment. The following report describes the rejected9c40266 candidate's earlier work and results, not approval of this successor.
+
+## Preserved9c40266 implementation and verification
+
 Date: 2026-11-01. Status: developer-validated local candidate, NOT ACCEPTED; independent exact-commit QA and coordinator CI pending. Candidate is the local commit containing this report, parent `318a14788a37b5d30dfd27c6c2eca94745b546b5`; final commit ID is supplied in the delivery message. Whole318a147 remains REJECTED. No publishing, PR, merge, extra agents, self-approval or accepted-point increment. [Source/criteria](../tasks/reg-boundary-tls-01.md); [CORE history](CORE-BUNDLE-01.md). Approved review baseline remains `93de7b6b376fb4592150c5c7b15a8c52e39bd4b3`.
 
 ## Delivered behavior

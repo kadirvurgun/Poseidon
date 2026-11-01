@@ -1,5 +1,9 @@
 # POSEIDON ilerleme raporu — 2026-11-01
 
+- **REG-BOUNDARY-TLS-01 Today pagination repair; NOT ACCEPTED:** rejected9c40266 successor requires exact Today0/25 metadata, bounded vessel offsets and full continuation pages. Affected frontend gate:321 tests PASS (23 new, Today42),0 failed/skipped; lint/typecheck/build PASS. Same package/source scope. Lab/TLS/backend results below are historical and were not rerun for this Today-only repair. [Current successor/evidence](phases/REG-BOUNDARY-TLS-01.md). Fresh complete-diff independent review against93de and coordinator CI pending; no publishing, delegation, self-approval or canonical progress change.
+
+The following REG/CORE delivery results are preserved historical evidence, including rejected9c40266 and whole318a147.
+
 - **REG-BOUNDARY-TLS-01 local corrective gate PASS; NOT ACCEPTED:** whole318a147 remains REJECTED and CORE automatic backend repair ended. Strict exact register DTO/date/page validation and scoped Firefox NSS trust implemented. 298 React,6 actual authenticated register cases,3 real negative browser TLS cases and2 additional signed-provider journeys PASS,0 skips; lint/typecheck/build and lab typecheck PASS. Firefox desktop/narrow-responsive coverage carries no Chromium/touch claim. Zero task-port listeners/profiles/transient states after cleanup; owned volumes/private configuration preserved. [Current candidate/evidence](phases/REG-BOUNDARY-TLS-01.md), [task/criteria](tasks/reg-boundary-tls-01.md). Coordinator fresh complete-diff review against approved93de and CI pending; no publication/self-approval/canonical change.
 
 The CORE/earlier delivery results below are retained historical evidence. Backend135/persistence29/React193 are preserved, not rerun here; their former browser TLS bypass does not count as strict TLS proof.

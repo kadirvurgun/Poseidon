@@ -1,5 +1,7 @@
 # Current handoff — REG-BOUNDARY-TLS-01
 
+Current local candidate succeeds rejected9c40266 with the exact Today pagination repair. [Updated phase](REG-BOUNDARY-TLS-01.md) records321 frontend tests and lint/typecheck/build PASS; earlier browser/backend evidence stays historical. Independent complete-diff review against93de and coordinator CI pending; NOT ACCEPTED. No original repair-budget reset or canonical progress change.
+
 Whole `318a14788a37b5d30dfd27c6c2eca94745b546b5` remains REJECTED. CORE automatic backend repair stage ended; its first two review portions passing does not approve the whole commit. The new bounded [frontend/browser task](../tasks/reg-boundary-tls-01.md) and [corrective phase report](REG-BOUNDARY-TLS-01.md) identify the current local candidate. Fresh independent review must cover the complete diff against approved93de. No original repair-budget reset, publication, self-approval or canonical progress change. The following entire report, including backend135/persistence29/React193 and bypassed browser results, is preserved historical evidence for318a147 and earlier targets, not new strict-browser proof.
 
 # CORE-BUNDLE-01 — rejection repair candidate

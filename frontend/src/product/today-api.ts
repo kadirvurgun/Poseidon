@@ -4,6 +4,8 @@ import { ApiError, request } from './api'
 
 export type Today = components['schemas']['TodayDto']
 export type Why = components['schemas']['TodayWhyDto']
+const pageLimit = 25
+const todayOffset = 0
 const object = (x: unknown): x is Record<string, unknown> => !!x && typeof x === 'object' && !Array.isArray(x)
 const exact = (x: Record<string, unknown>, keys: string[]) => Object.keys(x).length === keys.length && keys.every(k => k in x)
 const date = (x: unknown) => {
@@ -29,17 +31,16 @@ function validVessel(x: unknown): x is Vessel {
 }
 function fail(): never { throw new ApiError(502, 'invalid_today_contract') }
 export function decodeTodayVessels(x: unknown, offset: number): Page<Vessel> {
-  if (!object(x) || !exact(x, ['items', 'offset', 'limit', 'hasMore']) || x.offset !== offset || x.limit !== 25 ||
-    typeof x.hasMore !== 'boolean' || !Array.isArray(x.items) || x.items.length > 25 || !x.items.every(validVessel) ||
+  if (!integer(offset) || offset > 100000 || !object(x) || !exact(x, ['items', 'offset', 'limit', 'hasMore']) || x.offset !== offset || x.limit !== pageLimit ||
+    typeof x.hasMore !== 'boolean' || !Array.isArray(x.items) || x.items.length > pageLimit || (x.hasMore && x.items.length !== pageLimit) || !x.items.every(validVessel) ||
     new Set(x.items.map(v => v.id.toLowerCase())).size !== x.items.length) fail()
   return x as Page<Vessel>
 }
 export function decodeToday(x: unknown, id: string): Today {
   if (!object(x) || !exact(x, ['vessel', 'readAt', 'coverage', 'cards']) || !validVessel(x.vessel) || x.vessel.id !== id || !guid(id) || !date(x.readAt) ||
     !Array.isArray(x.coverage) || x.coverage.length !== 5 || !object(x.cards) || !Array.isArray(x.cards.items) || x.cards.items.length > 1 ||
-    !exact(x.cards, ['items', 'offset', 'limit', 'hasMore']) || !integer(x.cards.offset) || Number(x.cards.offset) > 100000 ||
-    !integer(x.cards.limit) || Number(x.cards.limit) < 1 || Number(x.cards.limit) > 25 || x.cards.hasMore !== false ||
-    (Number(x.cards.offset) > 0 && x.cards.items.length > 0)) fail()
+    !exact(x.cards, ['items', 'offset', 'limit', 'hasMore']) || x.cards.offset !== todayOffset ||
+    x.cards.limit !== pageLimit || x.cards.hasMore !== false) fail()
   const sources = ['RegulatoryDraft', 'OperationalTasks', 'SafetyDecisions', 'Permits', 'EvidenceVerification']
   if (!x.coverage.every((c, i) => object(c) && exact(c, ['source', 'status']) && c.source === sources[i] && one(c.status, i === 0 ? ['Available', 'Missing'] : ['Unavailable']))) fail()
   const draftMissing = x.coverage[0].status === 'Missing'
@@ -63,6 +64,6 @@ export function decodeWhy(x: unknown, id: string): Why {
     x.blockers[1] !== 'OperationalSourcesUnavailable' || x.owner !== null || !one(x.nextAction, ['ViewDraft', 'ReviewDraft']) || !href(x.href, id)) fail()
   return x as Why
 }
-export const today = async (id: string, signal: AbortSignal) => decodeToday(await request<unknown>(`poseidon-today?vesselId=${encodeURIComponent(id)}`, signal), id)
+export const today = async (id: string, signal: AbortSignal) => decodeToday(await request<unknown>(`poseidon-today?vesselId=${encodeURIComponent(id)}&offset=${todayOffset}&limit=${pageLimit}`, signal), id)
 export const why = async (id: string, signal: AbortSignal) => decodeWhy(await request<unknown>(`why-engine?vesselId=${encodeURIComponent(id)}&cardKey=regulatory-draft`, signal), id)
-export const todayVessels = async (offset: number, signal: AbortSignal) => decodeTodayVessels(await request<unknown>(`vessels?offset=${offset}&limit=25`, signal), offset)
+export const todayVessels = async (offset: number, signal: AbortSignal) => decodeTodayVessels(await request<unknown>(`vessels?offset=${offset}&limit=${pageLimit}`, signal), offset)

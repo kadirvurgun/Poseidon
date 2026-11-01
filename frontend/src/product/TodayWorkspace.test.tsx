@@ -2,11 +2,12 @@ import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, expect, it, vi } from 'vitest'
 import { TodayWorkspace } from './TodayWorkspace'
-import { decodeToday, decodeWhy, decodeTodayVessels } from './today-api'
+import { decodeToday, decodeWhy, decodeTodayVessels, today, todayVessels } from './today-api'
 import { ProductApp } from './ProductApp'
 
 const id = '10000000-0000-0000-0000-000000000001'
 const vessel = { id, companyId: '10000000-0000-0000-0000-000000000002', code: 'T1', name: 'Synthetic Tug', kind: 'Tug', version: 1, canEdit: true }
+const vesselPage = (count: number) => Array.from({ length: count }, (_, i) => ({ ...vessel, id: `10000000-0000-0000-0000-${String(i + 1).padStart(12, '0')}`, code: `T${i + 1}` }))
 const now = '2026-11-01T00:00:00Z'
 const href = `/app/fleet/${id}/profile`
 const data = { vessel, readAt: now, coverage: ['RegulatoryDraft', 'OperationalTasks', 'SafetyDecisions', 'Permits', 'EvidenceVerification'].map((source, i) => ({ source, status: i ? 'Unavailable' : 'Available' })), cards: { items: [{ key: 'regulatory-draft', priority: 'Advisory', source: 'RegulatoryDraft', reason: 'DraftUnverified', owner: null, nextAction: 'ReviewDraft', href }], offset: 0, limit: 25, hasMore: false } }
@@ -112,7 +113,7 @@ it('aborts the previous vessel request and ignores a late response when the cont
   expect(screen.queryByText(/Synthetic Tug/)).not.toBeInTheDocument()
 })
 it('pages the authorized vessel selector and navigates only to a selected Today context', async () => {
-  const fetch = vi.fn(async (url: string) => response({ items: url.includes('offset=25') ? [] : [vessel], offset: url.includes('offset=25') ? 25 : 0, limit: 25, hasMore: !url.includes('offset=25') }))
+  const fetch = vi.fn(async (url: string) => response({ items: url.includes('offset=25') ? [] : vesselPage(25), offset: url.includes('offset=25') ? 25 : 0, limit: 25, hasMore: !url.includes('offset=25') }))
   vi.stubGlobal('fetch', fetch)
   const navigate = vi.fn(); const user = userEvent.setup()
   render(<TodayWorkspace id={null} language="en" offline={false} onNavigate={navigate} />)
@@ -126,6 +127,50 @@ it('pages the authorized vessel selector and navigates only to a selected Today 
 it.each(['2026-02-30T00:00:00Z', '2026-11-01', '2026-11-01T00:00:00+15:00', '2026-11-01T25:00:00Z'])('rejects ambiguous or invalid source timestamps %s', timestamp => {
   expect(() => decodeToday({ ...data, readAt: timestamp }, id)).toThrow()
   expect(() => decodeWhy({ ...why, sourceObservedAt: timestamp }, id)).toThrow()
+})
+it.each([{ offset: 1 }, { offset: 25 }, { offset: -1 }, { offset: 100001 }, { offset: 0.5 }, { offset: '0' }, { limit: 1 }, { limit: 24 }, { limit: 26 }, { limit: '25' }])('rejects mismatched Today pagination %# even on empty pages', async changes => {
+  for (const items of [[], data.cards.items]) {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response({ ...data, cards: { ...data.cards, items, ...changes } })))
+    await expect(today(id, new AbortController().signal)).rejects.toMatchObject({ status: 502, code: 'invalid_today_contract' })
+  }
+})
+it('requests the exact first Today page and preserves valid empty and populated results', async () => {
+  const fetch = vi.fn().mockResolvedValueOnce(response(data)).mockResolvedValueOnce(response({ ...data, cards: { ...data.cards, items: [] } }))
+  vi.stubGlobal('fetch', fetch)
+  const signal = new AbortController().signal
+  expect(await today(id, signal)).toEqual(data)
+  expect((await today(id, signal)).cards.items).toEqual([])
+  const url = new URL(fetch.mock.calls[0][0], 'https://example.invalid')
+  expect(url.searchParams.get('offset')).toBe('0')
+  expect(url.searchParams.get('limit')).toBe('25')
+})
+it.each([0, 1, 24])('rejects vessel continuation with only %s items on first and later pages', async count => {
+  for (const offset of [0, 25]) {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response({ items: vesselPage(count), offset, limit: 25, hasMore: true })))
+    await expect(todayVessels(offset, new AbortController().signal)).rejects.toMatchObject({ status: 502, code: 'invalid_today_contract' })
+  }
+})
+it.each([-1, 0.5, 100001, Number.MAX_SAFE_INTEGER + 1, NaN, Infinity])('rejects vessel offset outside supported bounds %s even if it matches the request', offset => {
+  expect(() => decodeTodayVessels({ items: [], offset, limit: 25, hasMore: false }, offset)).toThrow()
+})
+it('preserves bounded vessel pages and requires full continuation pages', () => {
+  for (const offset of [0, 25, 100000]) {
+    for (const count of [0, 1, 24, 25]) {
+      const page = { items: vesselPage(count), offset, limit: 25, hasMore: false }
+      expect(decodeTodayVessels(page, offset)).toEqual(page)
+    }
+    const page = { items: vesselPage(25), offset, limit: 25, hasMore: true }
+    expect(decodeTodayVessels(page, offset)).toEqual(page)
+  }
+})
+it.each(['cards', 'vessels'])('renders malformed %s pagination as an error without a scoped empty success', async kind => {
+  const body = kind === 'cards' ? { ...data, cards: { ...data.cards, items: [], offset: 1 } } : { items: [], offset: 0, limit: 25, hasMore: true }
+  vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response(body)))
+  render(<TodayWorkspace id={kind === 'cards' ? id : null} language="en" offline={false} onNavigate={vi.fn()} />)
+  expect(await screen.findByRole('alert')).toBeVisible()
+  expect(screen.queryByText(/No returned items/)).not.toBeInTheDocument()
+  expect(screen.queryByText(/Current vessel/)).not.toBeInTheDocument()
+  expect(screen.queryByRole('button', { name: 'Next vessels' })).not.toBeInTheDocument()
 })
 it('rejects unknown members, contradictory coverage, fabricated pagination and absent-draft provenance', () => {
   expect(() => decodeToday({ ...data, sourcePath: 'unsupported' }, id)).toThrow()
