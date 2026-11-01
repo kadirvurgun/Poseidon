@@ -31,6 +31,8 @@ export function CrewPersonalProfile({ vessel, assignment, csrf, language, onDirt
     const controller = new AbortController(); active.current = controller
     setProfile(null); setChanges({}); attempt.current = null; setState('loading'); onDirty(false)
     request<PersonalProfile>(`${path}?purpose=crew-profile`, controller.signal).then(value => {
+      if (!value || !value.data || !Array.isArray(value.readable) || !Array.isArray(value.writable) || !Array.isArray(value.options) ||
+        [...value.readable, ...value.writable].some(f => !Number.isInteger(f) || f < 0 || f >= fields.length) || value.writable.some(f => !value.readable.includes(f))) throw new ApiError(502)
       if (!controller.signal.aborted) { setProfile(value); setState('ready') }
     }).catch(error => { if (!controller.signal.aborted) setState(error instanceof ApiError && [401, 403, 404].includes(error.status) ? 'denied' : 'unavailable') })
     return () => { controller.abort(); active.current?.abort() }

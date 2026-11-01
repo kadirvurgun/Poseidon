@@ -22,7 +22,7 @@ public sealed record CrewRow(Guid Id, Guid VesselId, Guid PersonId, uint Version
     DateOnly? ContractEndDate, string? WatchGroup, string AssignmentStatus, string Provenance,
     string? FullName, string? EmployeeNo, string PrivacyScope, DateTimeOffset? SourceObservedAt,
     string EligibilityState = "Unknown", string WorkRestState = "Unknown", string CertificateState = "Unknown",
-    string CompetenceState = "Unknown", string ContactStatus = "Unavailable");
+    string CompetenceState = "Unknown", string ContactStatus = "Unavailable", string? Nationality = null, string NationalityState = "Withheld");
 public sealed record CrewDeclarationPolicyDto(string Version, string[] Statuses);
 public sealed record CrewPage(CrewRow[] Items, int Offset, bool HasMore, bool CanWrite, bool CanWriteIdentity, CrewDeclarationPolicyDto? DeclarationPolicy = null);
 public sealed record CrewProfile(CrewRow Assignment, string EmploymentState, string FitnessState,
@@ -70,8 +70,22 @@ public static class CrewEndpoints
             pos == null ? null : pos.Rank, pos == null ? null : pos.Capacity, pos == null ? null : pos.Department,
             c.From, c.To, c.ContractEndDate, c.WatchGroup, c.Status, c.Provenance,
             identity ? p.FullName : null, identity ? p.EmployeeNo : null, identity ? "IdentityPermitted" : "Withheld",
-            c.SourceObservedAt, "Unknown", "Unknown", "Unknown", "Unknown", "Unavailable");
+            c.SourceObservedAt, "Unknown", "Unknown", "Unknown", "Unknown", "Unavailable", null, "Withheld");
 
+    private static async Task<CrewRow[]> Nationalities(CrewRow[] rows, HttpContext h, PoseidonDbContext db) {
+        var a = Actor(h); var policy = h.RequestServices.GetRequiredService<CrewProfilePolicy>();
+        if (!Identity(a) || policy.Rule(CrewPersonalField.Nationality, policy.ImportPurpose, a.Permissions, false) == null) return rows;
+        var protection = h.RequestServices.GetRequiredService<CrewProfileProtection>();
+        if (!protection.Available) return rows.Select(r => r with { NationalityState = "Unavailable" }).ToArray();
+        var ids = rows.Select(r => r.PersonId).ToArray();
+        var profiles = await db.CrewPersonalProfiles.AsNoTracking().Where(p => ids.Contains(p.PersonId)).ToDictionaryAsync(p => p.PersonId, h.RequestAborted);
+        return rows.Select(r => {
+            try {
+                var value = profiles.TryGetValue(r.PersonId, out var p) ? protection.Decrypt(db.TenantId, r.PersonId, CrewPersonalField.Nationality, p.Nationality) : null;
+                return r with { Nationality = value, NationalityState = value == null ? "Missing" : "DeclaredUnverified" };
+            } catch (CryptographicException) { return r with { NationalityState = "Unavailable" }; }
+        }).ToArray();
+    }
     private static async Task<IResult> List(Guid vessel, HttpContext h, PoseidonDbContext db)
     {
         var a = Actor(h); var ct = h.RequestAborted;
@@ -81,7 +95,7 @@ public static class CrewEndpoints
             h.Request.Query.ContainsKey("offset") && !int.TryParse(h.Request.Query["offset"], out _)) return await Fail(h, 400, "invalid_request");
         var offset = h.Request.Query.ContainsKey("offset") ? int.Parse(h.Request.Query["offset"]!) : 0;
         if (offset < 0 || offset > 100000) return await Fail(h, 400, "invalid_request");
-        var rows = await Rows(db, vessel, Identity(a), offset: offset).ToArrayAsync(ct);
+        var rows = await Nationalities(await Rows(db, vessel, Identity(a), offset: offset).ToArrayAsync(ct), h, db);
         await Observe(h, "CrewRead", vessel);
         var policy = h.RequestServices.GetRequiredService<CrewAssignmentPolicy>();
         var declaration = policy.Configured && a.Permissions.Contains("crew.assignment.declare") && Write(a, vessel)
@@ -95,6 +109,7 @@ public static class CrewEndpoints
         if (!await Scope(db, a, vessel, h.RequestAborted)) return await Fail(h, 404, "resource_not_found");
         var row = await Rows(db, vessel, Identity(a), id, limit: 1).SingleOrDefaultAsync(h.RequestAborted);
         if (row == null) return await Fail(h, 404, "resource_not_found");
+        row = (await Nationalities([row], h, db))[0];
         var personVersion = IdentityWrite(a) ? await db.Persons.Where(x => x.Id == row.PersonId).Select(x => (uint?)x.Version).SingleAsync(h.RequestAborted) : null;
         await Observe(h, "CrewProfile", vessel);
         return Results.Ok(new CrewProfile(row, "Unknown", "Unknown", Identity(a) ? "Permitted" : "Withheld", "Withheld", "Withheld", personVersion));

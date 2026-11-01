@@ -56,7 +56,7 @@ public sealed class CrewProfileProtection(CrewProfilePolicy policy)
     public string? Decrypt(Guid tenant, Guid person, CrewPersonalField field, string? value) => Open(tenant, person, "profile/" + CrewPersonalData.Key(field), value, 16384);
     public string EncryptImport(Guid tenant, Guid batch, string table) => "protected-v1:" + Seal(tenant, batch, "import/table", table);
     public string DecryptImport(Guid tenant, Guid batch, string table) => !table.StartsWith("protected-v1:", StringComparison.Ordinal)
-        ? throw new CryptographicException("protected_storage_unavailable") : Open(tenant, batch, "import/table", table[13..], 16 * 1024 * 1024)!;
+        ? throw new CryptographicException("protected_storage_unavailable") : Open(tenant, batch, "import/table", table[13..], 64 * 1024 * 1024)!;
     private string? Seal(Guid tenant, Guid person, string field, string? value) {
         if (value == null) return null;
         var key = Key(policy.ActiveKeyId); var plain = Encoding.UTF8.GetBytes(value);

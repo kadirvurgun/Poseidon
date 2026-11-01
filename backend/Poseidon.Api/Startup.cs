@@ -13,6 +13,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         services.AddDataProtection();
         services.AddSingleton(configuration.GetSection("CrewProfilePolicy").Get<CrewProfilePolicy>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<CrewProfileProtection>();
+        services.AddSingleton(configuration.GetSection("MaintenanceObservations").Get<MaintenanceObservationSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton(configuration.GetSection("CrewAssignmentPolicy").Get<CrewAssignmentPolicy>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton(configuration.GetSection("SecureFiles").Get<SecureFileSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<LocalFileObjects>();
@@ -98,6 +99,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapCredentials();
             endpoints.MapImports();
             endpoints.MapTechnical();
+            endpoints.MapMaintenanceObservations();
             endpoints.MapTug();
             endpoints.MapGet("/health/live", () => Results.Text("alive"))
                 .WithName("GetLiveness")

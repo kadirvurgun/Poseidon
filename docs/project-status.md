@@ -1,3 +1,7 @@
+# DOMAIN-COMPLETION-01 — checkpoint B / AUTHORED_UNVERIFIED / INCOMPLETE
+
+Normalized scoped meter/condition observation capture/revocation, configured freshness/unit/precision adapter, real PMS calculation/current assessment consumers and TR/EN data entry are authored with domain/API/React tests. All execution remains DEFERRED. Earlier Crew/import handoffs are committed at13f532d. Full offline, person files/photo and Tug closure remain required software, separately from deployment/source approval gates. No acceptance, publishing or merge. [Current report](phases/DOMAIN-COMPLETION-01.md).
+
 # DOMAIN-COMPLETION-01 — checkpoint A / AUTHORED_UNVERIFIED / INCOMPLETE
 
 Fifteen protected Crew profile fields, ordinary/import parity, configured current-effective assignment selection, source coverage contract and exact requested security/storage handoffs are authored. No SP accepted, no publish/merge. Every build/test/typecheck/migration/contract/browser/QA/CI check remains DEFERRED. Person files/photo, full offline application, Tug planning/assessment and PMS observation software remain required; external approvals are separately recorded in [the phase report](phases/DOMAIN-COMPLETION-01.md).

@@ -1,3 +1,4 @@
+import { MaintenanceObservations } from './MaintenanceObservations'
 import { dueReason, dueState } from './maintenance-copy'
 import { useEffect, useRef, useState } from 'react'
 import { ApiError, session } from './api'
@@ -22,6 +23,7 @@ const assetFields = [
   ['location', 'Location', 'Konum'], ['commissionDate', 'Commission date', 'Devreye alma tarihi'], ['notes', 'Notes', 'Notlar'],
 ] as const
 const planFields = [
+  ['observationId', 'Normalized observation reference', 'Normalleştirilmiş gözlem referansı'],
   ['planType', 'Plan type declaration', 'Plan türü beyanı'], ['intervalValue', 'Interval value (exact decimal)', 'Aralık değeri (kesin ondalık)'],
   ['intervalUnit', 'Unit (day / month / year for calendar)', 'Birim (takvim için day / month / year)'],
   ['meterSource', 'Meter source / unit context', 'Sayaç kaynağı / birim bağlamı'], ['lastDoneDate', 'Declared last done date', 'Beyan edilen son bakım tarihi'],
@@ -44,6 +46,8 @@ export function TechnicalWorkspace() {
   const [editor, setEditor] = useState<api.EquipmentCommand | api.PlanCommand | null>(null)
   const [owners, setOwners] = useState<string[]>([])
   const [jobDraft, setJobDraft] = useState<{ id: string; code: string; title: string } | null>(null)
+  const [observationDirty, setObservationDirty] = useState(false)
+  const [observationUncertain, setObservationUncertain] = useState(false)
   const [conflict, setConflict] = useState(false)
   const [history, setHistory] = useState<unknown[] | null>(null), [historyError, setHistoryError] = useState(false)
   const [dirty, setDirty] = useState(false), [busy, setBusy] = useState(false), [uncertain, setUncertain] = useState(false)
@@ -52,10 +56,10 @@ export function TechnicalWorkspace() {
   const historyGeneration = useRef(0)
   const savedAttempt = useRef<{ key: string; body: api.EquipmentCommand | api.PlanCommand; plan: boolean; vessel: string } | null>(null)
   const current = useRef({ url: location.href, index: Number(window.history.state?.technicalIndex ?? 0) })
-  const guards = useRef({ dirty, busy, uncertain })
-  useEffect(() => { guards.current = { dirty, busy, uncertain } }, [dirty, busy, uncertain])
-  const clear = () => { historyGeneration.current++; setEditor(null); setJobDraft(null); setDirty(false); setUncertain(false); setHistory(null); setHistoryError(false); setNotice(''); setConflict(false); savedAttempt.current = null }
-  const guard = (action: () => void) => { if (busy || uncertain) return; if (dirty) setPending(() => action); else action() }
+  const guards = useRef({ dirty: dirty || observationDirty, busy, uncertain: uncertain || observationUncertain })
+  useEffect(() => { guards.current = { dirty: dirty || observationDirty, busy, uncertain: uncertain || observationUncertain } }, [dirty, busy, uncertain, observationDirty, observationUncertain])
+  const clear = () => { historyGeneration.current++; setEditor(null); setJobDraft(null); setObservationDirty(false); setObservationUncertain(false); setDirty(false); setUncertain(false); setHistory(null); setHistoryError(false); setNotice(''); setConflict(false); savedAttempt.current = null }
+  const guard = (action: () => void) => { const state = guards.current; if (state.busy || state.uncertain) return; if (state.dirty) setPending(() => action); else action() }
   const navigate = (r: Route) => guard(() => {
     clear(); const index = current.current.index + 1
     window.history.pushState({ technicalIndex: index }, '', path(r)); current.current = { index, url: location.href }; setRoute(r)
@@ -173,11 +177,13 @@ export function TechnicalWorkspace() {
           {route.id && !(route.plan ? plan : asset) && <p role="alert">{en ? 'The selected record is unavailable.' : 'Seçilen kayıt kullanılamıyor.'}</p>}
           {asset && !route.plan && <dl>{assetFields.map(([key, english, turkish]) => <div key={key}><dt>{en ? english : turkish}</dt><dd>{asset[key] ?? (en ? 'Unknown' : 'Bilinmiyor')}</dd></div>)}<dt>{en ? 'Revision' : 'Revizyon'}</dt><dd>{asset.revision}</dd></dl>}
           {plan && route.plan && <><p>{dueState(plan.due.state, en)} · {dueReason(plan.due.reason, en)}</p><dl><dt>{en ? 'Reference clock' : 'Referans zamanı'}</dt><dd>{plan.referenceAt}</dd><dt>{en ? 'Time zone' : 'Saat dilimi'}</dt><dd>{plan.inputs.timeZone ?? 'Unknown'}</dd><dt>{en ? 'Source / observation version' : 'Kaynak / gözlem sürümü'}</dt><dd>{plan.inputs.provenance ?? 'Unknown'} / {plan.inputs.observationRevision ?? 'Unknown'}</dd><dt>{en ? 'Observation time' : 'Gözlem zamanı'}</dt><dd>{plan.inputs.observedAt ?? 'Unknown'}</dd><dt>{en ? 'Next due date / meter' : 'Sonraki bakım tarihi / sayacı'}</dt><dd>{plan.due.nextDueDate ?? 'Unknown'} / {plan.due.nextDueMeter ?? 'Unknown'}</dd></dl>
+            {plan.observationState && plan.observationState !== 'NotRequested' && <p>{en ? 'Current observation assessment' : 'Güncel gözlem değerlendirmesi'}: {dueReason(plan.observationState, en)} · {plan.observationAssessedAt}</p>}
             <dl>{planFields.map(([key, english, turkish]) => <div key={key}><dt>{en ? english : turkish}</dt><dd>{plan.inputs[key] ?? (en ? 'Unknown' : 'Bilinmiyor')}</dd></div>)}<dt>{en ? 'Owner role reference' : 'Sorumlu rol referansı'}</dt><dd>{plan.ownerRoleId ?? (en ? 'Unknown' : 'Bilinmiyor')}</dd><dt>{en ? 'Maintenance job' : 'Bakım işi'}</dt><dd>{refs?.jobs.find(j => j.id === plan.jobId)?.title ?? (en ? 'Unknown' : 'Bilinmiyor')}</dd></dl>
             <p>{en ? 'Postponement requires a resolved authority, risk, evidence and maximum-extension policy. No postponement is activated here.' : 'Erteleme; yetki, risk, kanıt ve azami uzatma politikasının çözümlenmesini gerektirir. Burada erteleme etkinleştirilmez.'}</p></>}
           {canWrite && <div><button disabled={busy || uncertain || offline} onClick={() => start(true)}>{en ? 'Add draft' : 'Taslak ekle'}</button>{(asset || plan) && <button disabled={busy || uncertain || offline} onClick={() => start(false)}>{en ? 'Edit draft' : 'Taslağı düzenle'}</button>}</div>}
           {canHistory && route.id && <button onClick={loadHistory}>{en ? 'History' : 'Geçmiş'}</button>}
           {historyError && <p role="alert">{en ? 'History could not be loaded.' : 'Geçmiş yüklenemedi.'}</p>}
+          {!route.plan && route.id && user && !editor && loadedScope === `${route.vessel}:${route.plan}` && <MaintenanceObservations key={`${user.actorId}:${user.tenantId}:${user.csrfToken}:${route.vessel}:${route.id}`} vessel={route.vessel} asset={route.id} csrf={user.csrfToken} en={en} onDirty={setObservationDirty} onUncertain={setObservationUncertain} />}
           {history && <ol>{history.map((r, i) => { const record = r as { revision?: number; savedAt?: string; referenceAt?: string; inputs?: api.Inputs; due?: api.Due; asset?: api.Asset }; return <li key={i}><details><summary>{en ? 'Revision' : 'Revizyon'} {record.revision ?? '—'} · {record.savedAt ?? '—'}</summary>{record.due && <p>{dueState(record.due.state, en)} · {dueReason(record.due.reason, en)} · {record.referenceAt}</p>}<dl>{record.inputs && planFields.map(([key, english, turkish]) => <div key={key}><dt>{en ? english : turkish}</dt><dd>{record.inputs![key] ?? (en ? 'Unknown' : 'Bilinmiyor')}</dd></div>)}{record.asset && assetFields.map(([key, english, turkish]) => <div key={key}><dt>{en ? english : turkish}</dt><dd>{record.asset![key] ?? (en ? 'Unknown' : 'Bilinmiyor')}</dd></div>)}</dl></details></li> })}</ol>}
         </section></div>
       </>}

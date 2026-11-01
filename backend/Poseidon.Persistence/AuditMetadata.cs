@@ -14,6 +14,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         Guid? vessel = entry.Entity switch {
             Credential c => c.VesselId, CredentialRevision c => c.VesselId, ImportBatch b => b.VesselId, ImportPreview p => p.VesselId, ImportRowResult r => r.VesselId,
             TugJob j => j.VesselId, TugJobRevision j => j.VesselId, TugOwner o => o.VesselId, TugAssignment a => a.VesselId,
+            MaintenanceObservation o => o.VesselId,
             Asset a => a.VesselId, AssetRevision r => r.VesselId, MaintenancePlan p => p.VesselId,
             MaintenancePlanRevision r => r.VesselId, MaintenanceJob j => j.VesselId, TechnicalOwner o => o.VesselId,
             CrewAssignment c => c.VesselId, CrewAssignmentRevision c => c.VesselId, CrewPosition c => c.VesselId,
@@ -27,6 +28,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         Guid? resource = entry.Entity switch {
             Credential c => c.Id, CredentialRevision c => c.CredentialId, ImportBatch b => b.Id, ImportPreview p => p.BatchId, ImportRowResult r => r.PreviewId,
             TugJob j => j.Id, TugJobRevision j => j.JobId, TugOwner o => o.Id, TugAssignment a => a.JobId,
+            MaintenanceObservation o => o.Id, MaintenanceObservationRevocation r => r.ObservationId,
             Asset a => a.Id, AssetRevision r => r.AssetId, MaintenancePlan p => p.Id,
             MaintenancePlanRevision r => r.PlanId, MaintenanceJob j => j.Id, TechnicalOwner o => o.Id,
             CrewPersonalProfile p => p.PersonId, CrewPersonalProfileRevision p => p.PersonId,

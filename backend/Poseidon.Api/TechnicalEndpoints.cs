@@ -21,7 +21,7 @@ public sealed record TechnicalSaved(Guid Id, long Revision, uint Version, bool R
 public sealed record EquipmentSnapshot(Asset[] Items, bool Complete, bool CanWrite, bool CanReadHistory);
 public sealed record EquipmentHistoryRow(long Revision, DateTimeOffset SavedAt, Asset Asset);
 public sealed record MaintenanceRow(Guid Id, Guid AssetId, Guid? JobId, Guid? OwnerRoleId, uint Version, long Revision,
-    string Status, string Provenance, MaintenanceInputs Inputs, MaintenanceDue Due, DateTimeOffset ReferenceAt, DateTimeOffset SavedAt, long AssetRevision);
+    string Status, string Provenance, MaintenanceInputs Inputs, MaintenanceDue Due, DateTimeOffset ReferenceAt, DateTimeOffset SavedAt, long AssetRevision, string ObservationState = "NotRequested", DateTimeOffset? ObservationAssessedAt = null);
 public sealed record MaintenancePage(MaintenanceRow[] Items, bool CanWrite, bool CanReadHistory);
 public sealed record MaintenanceJobRow(Guid Id, string Code, string Title, string Provenance);
 public sealed record TechnicalReferences(MaintenanceJobRow[] Jobs, Guid[] Owners, string Policy);
@@ -56,7 +56,7 @@ public static class TechnicalEndpoints
         plans.MapPost("/{id:guid}/postpone", RejectPostponement).WithName("MaintenancePostpone");
     }
     private static TrustedActor Actor(HttpContext h) => h.RequestServices.GetRequiredService<ActorResolver>().Resolve(h.User)!;
-    private static bool Read(TrustedActor a, string module) => a.CanRead && a.Permissions.Contains(module + ".read");
+    private static bool Read(TrustedActor a, string module) => a.CanRead && a.Permissions.Contains(module + ".read") && (module != "maintenance" || a.Permissions.Contains("equipment.read"));
     private static bool Write(TrustedActor a, Guid vessel, string module) => Read(a, module) && a.HasWriteAttribution &&
         a.Permissions.Contains(module + ".write") && (a.TenantWideManage || a.VesselGrants.Any(g => g.VesselId == vessel && g.CanEdit));
     private static Task<bool> Scope(PoseidonDbContext db, TrustedActor a, Guid vessel, CancellationToken ct) =>
@@ -177,9 +177,14 @@ public static class TechnicalEndpoints
             orderby p.Id select new { p.Id, p.AssetId, p.JobId, p.OwnerRoleId, p.Version, p.Revision, p.Status, p.Provenance,
                 r.ContentJson, r.CalculationJson, r.ReferenceAt, r.SavedAt, r.AssetRevision }).ToArrayAsync(h.RequestAborted);
         await Observe(h, vessel);
-        return Results.Ok(new MaintenancePage(rows.Select(p => new MaintenanceRow(p.Id, p.AssetId, p.JobId, p.OwnerRoleId, p.Version, p.Revision, p.Status, p.Provenance,
-            JsonSerializer.Deserialize<MaintenanceInputs>(p.ContentJson)!, JsonSerializer.Deserialize<MaintenanceDue>(p.CalculationJson)!, p.ReferenceAt, p.SavedAt, p.AssetRevision)).ToArray(),
-            Write(Actor(h), vessel, "maintenance"), Actor(h).Permissions.Contains("maintenance.history.read")));
+        var result = new List<MaintenanceRow>();
+        foreach (var p in rows) {
+            var inputs = JsonSerializer.Deserialize<MaintenanceInputs>(p.ContentJson)!;
+            var observation = inputs.ObservationId == null ? null : await MaintenanceObservationEndpoints.Resolve(vessel, p.AssetId, inputs, h, db);
+            result.Add(new(p.Id, p.AssetId, p.JobId, p.OwnerRoleId, p.Version, p.Revision, p.Status, p.Provenance, inputs,
+                JsonSerializer.Deserialize<MaintenanceDue>(p.CalculationJson)!, p.ReferenceAt, p.SavedAt, p.AssetRevision, observation?.State ?? "NotRequested", observation == null ? null : DateTimeOffset.UtcNow));
+        }
+        return Results.Ok(new MaintenancePage(result.ToArray(), Write(Actor(h), vessel, "maintenance"), Actor(h).Permissions.Contains("maintenance.history.read")));
     }
     private static async Task<IResult> References(Guid vessel, HttpContext h, PoseidonDbContext db) {
         var failure = await Gate(h, db, vessel, "maintenance"); if (failure != null) return failure;
@@ -231,8 +236,17 @@ public static class TechnicalEndpoints
             if (plan == null) { plan = new() { TenantId = db.TenantId, Id = command.Id, VesselId = vessel, AssetId = asset.Id }; db.MaintenancePlans.Add(plan); }
             else plan.Revision = checked(plan.Revision + 1);
             plan.AssetId = asset.Id; plan.JobId = command.JobId; plan.OwnerRoleId = command.OwnerRoleId;
-            plan.ContentJson = JsonSerializer.Serialize(command.Inputs);
-            db.MaintenancePlanRevisions.Add(plan.Snapshot(command.ReferenceAt.ToUniversalTime(), asset.Revision));
+            MaintenanceDue? evaluated = null; var inputs = command.Inputs;
+            if (inputs.ObservationId != null) {
+                if (!await db.MaintenanceObservations.AnyAsync(x => x.Id == inputs.ObservationId && x.VesselId == vessel && x.AssetId == asset.Id, ct)) return await Fail(h, 404, "resource_not_found");
+                var observation = await MaintenanceObservationEndpoints.Resolve(vessel, asset.Id, inputs, h, db);
+                inputs = observation.Inputs;
+                evaluated = observation.Ready ? MaintenanceCalculation.Evaluate(inputs, command.ReferenceAt.ToUniversalTime(), observation)
+                    with { Algorithm = "planning-observation-v1/" + observation.PolicyVersion } : new("ReviewRequired", observation.State, Algorithm: "planning-observation-v1/" + observation.PolicyVersion);
+            }
+            plan.ObservationId = inputs.ObservationId;
+            plan.ContentJson = JsonSerializer.Serialize(inputs);
+            db.MaintenancePlanRevisions.Add(plan.Snapshot(command.ReferenceAt.ToUniversalTime(), asset.Revision, evaluated));
             await db.SaveChangesAsync(ct); await Receipt(db, h, key, fingerprint, "MaintenanceSave", plan.Id, plan.Revision, plan.Version);
             await tx.CommitAsync(ct); return Results.Ok(new TechnicalSaved(plan.Id, plan.Revision, plan.Version, false));
         } catch (Exception e) when (e is DbUpdateException || e is Npgsql.PostgresException { SqlState: "40001" or "40P01" }) {

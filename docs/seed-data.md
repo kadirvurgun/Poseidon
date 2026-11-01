@@ -118,3 +118,7 @@ API consumers are authored; all execution waits for the larger foundation gate.
 ## DOMAIN-COMPLETION-01 checkpoint A — AUTHORED / execution DEFERRED
 
 Each existing fictional Person receives an add-missing empty PersonalProfile and metadata-only initial revision. No private values, fake ciphertext, actual keys, files, qualification or effective appointment are seeded. Reseed preserves all columns/operator changes. Six additional insert audit expectations change69/70→75/76; these are authored expectations only. See the DOMAIN-COMPLETION-01 phase report for remaining software and separate deployment/source decisions.
+
+## DOMAIN-COMPLETION-01 checkpoint B — AUTHORED / execution DEFERRED
+
+Each existing synthetic Asset receives one add-missing empty unverified Observation, with no reading/value or observation timestamp. It cannot supply valid current PMS input or verified equipment evidence. Reseed preserves actual operator observations/revocations. Three new insert audit expectations change75/76→78/79; none was executed or observed. Production source/freshness/unit/calibration policy remains external; normalized adapter software is authored.

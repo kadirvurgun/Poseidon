@@ -4,12 +4,21 @@
     "accepted": false,
     "task": "docs/tasks/domain-completion-01.md",
     "phase_report": "docs/phases/DOMAIN-COMPLETION-01.md",
-    "current_phase": "Larger domain foundation authoring; checkpoint A",
+    "current_phase": "Larger domain foundation authoring; checkpoints A/B",
     "verification": "DEFERRED: all suites/build/typecheck/migrations/contract/browser/independent QA/CI",
     "canonical_progress_unchanged": true,
     "new_personal_fields": 15,
     "source_fields_traced_not_imported": 111,
-    "next_step": "Continue remaining required software; coordinator owns combined gate and publishing"
+    "next_step": "Continue remaining required software; coordinator owns combined gate and publishing",
+    "technical_observation_adapter": "authored_configured_unverified",
+    "seed_audit_expectations_not_observed": [
+      78,
+      79
+    ],
+    "source_only_observations": [
+      "git diff --check exit0",
+      "Graphify AST update; graph refreshed, HTML visualization omitted for graph size; not a product test"
+    ]
   },
   "import_foundation_01": {
     "status": "authored_unverified_incomplete_not_accepted",

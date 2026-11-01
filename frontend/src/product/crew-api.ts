@@ -7,7 +7,7 @@ export type CrewRow = {
   from: string | null; to: string | null; contractEndDate: string | null; watchGroup: string | null;
   assignmentStatus: string; provenance: string; fullName: string | null; employeeNo: string | null;
   privacyScope: string; sourceObservedAt: string | null; eligibilityState: string;
-  workRestState: string; certificateState: string; competenceState: string; contactStatus: string;
+  workRestState: string; certificateState: string; competenceState: string; contactStatus: string; nationality?: string | null; nationalityState?: string;
 }
 export type CrewPage = { items: CrewRow[]; offset: number; hasMore: boolean; canWrite: boolean; canWriteIdentity: boolean; declarationPolicy?: { version: string; statuses: string[] } | null }
 export type CrewPosition = { id: string; code: string; rank: string | null; capacity: string | null; provenance: string }

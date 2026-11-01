@@ -12,7 +12,7 @@ public sealed record MaintenanceInputs(
     string? Condition = null, string? TimeZone = null, string? Provenance = null,
     string? WarningLead = null, string? GracePeriod = null, string? PostponementAllowed = null,
     string? ApprovalRule = null, string? Criticality = null, string? ApplicableRequirement = null,
-    string? PlanType = null);
+    string? PlanType = null, Guid? ObservationId = null);
 public sealed record MaintenanceDue(string State, string Reason, DateOnly? NextDueDate = null,
     string? NextDueMeter = null, string Algorithm = "planning-v1");
 
@@ -28,7 +28,7 @@ public static class MaintenanceCalculation
         if (digits.Length > 28 || input.EndsWith('.') || (input.Contains('.') && input.Length - input.IndexOf('.') - 1 > 28)) return false;
         return decimal.TryParse(input, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out value);
     }
-    public static MaintenanceDue Evaluate(MaintenanceInputs x, DateTimeOffset reference)
+    public static MaintenanceDue Evaluate(MaintenanceInputs x, DateTimeOffset reference, MaintenanceObservationAssessment? observation = null)
     {
         if (string.IsNullOrWhiteSpace(x.Provenance)) return new("ReviewRequired", "MissingProvenance");
         TimeZoneInfo zone;
@@ -57,7 +57,7 @@ public static class MaintenanceCalculation
                 return new("ReviewRequired", "MissingMeterAdapterOrReading");
             if (x.ObservedAt > reference) return new("ReviewRequired", "FutureObservation");
             // No source freshness duration exists: a historic observation does not prove current usage.
-            if (x.ObservedAt != reference) return new("ReviewRequired", "ReadingFreshnessPolicyUnresolved");
+            if (x.ObservedAt != reference && observation?.Ready != true) return new("ReviewRequired", "ReadingFreshnessPolicyUnresolved");
             if (!Number(x.IntervalValue, out var interval) || interval <= 0 || !Number(x.LastDoneMeter, out var baseline) || current < baseline)
                 return new("ReviewRequired", "MissingOrResetMeterBaseline");
             try {
@@ -69,7 +69,8 @@ public static class MaintenanceCalculation
         if (x.TriggerType == "Condition") {
             if (x.Condition is not ("True" or "False") || x.ObservedAt == null || string.IsNullOrWhiteSpace(x.ObservationRevision))
                 return new("ReviewRequired", "MissingConditionAdapterOrObservation");
-            if (x.ObservedAt != reference) return new("ReviewRequired", "ConditionFreshnessPolicyUnresolved");
+            if (x.ObservedAt > reference) return new("ReviewRequired", "FutureObservation");
+            if (x.ObservedAt != reference && observation?.Ready != true) return new("ReviewRequired", "ConditionFreshnessPolicyUnresolved");
             return new(x.Condition == "True" ? "Due" : "NotDue", "DeclaredConditionObservation");
         }
         return new("ReviewRequired", "MissingOrUnsupportedTrigger");

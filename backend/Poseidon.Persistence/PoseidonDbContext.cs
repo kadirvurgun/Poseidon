@@ -35,6 +35,8 @@ public sealed class PoseidonDbContext(
     public DbSet<ImportRowResult> ImportRowResults => Set<ImportRowResult>();
     public DbSet<CrewPersonalProfile> CrewPersonalProfiles => Set<CrewPersonalProfile>();
     public DbSet<CrewPersonalProfileRevision> CrewPersonalProfileRevisions => Set<CrewPersonalProfileRevision>();
+    public DbSet<MaintenanceObservation> MaintenanceObservations => Set<MaintenanceObservation>();
+    public DbSet<MaintenanceObservationRevocation> MaintenanceObservationRevocations => Set<MaintenanceObservationRevocation>();
     public DbSet<Person> Persons => Set<Person>();
     public DbSet<Asset> Assets => Set<Asset>();
     public DbSet<AssetRevision> AssetRevisions => Set<AssetRevision>();
@@ -65,6 +67,9 @@ public sealed class PoseidonDbContext(
         model.Entity<TugJobRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<TugOwner>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<TugAssignment>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        MaintenanceObservationStorage.Configure(model);
+        model.Entity<MaintenanceObservation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<MaintenanceObservationRevocation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         TechnicalStorage.Configure(model);
         model.Entity<Asset>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<AssetRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -230,6 +235,8 @@ public sealed class PoseidonDbContext(
         if (changes.Any(e => e.Entity is TugJob && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
             (e.Property("VesselId").IsModified || e.Property("JobNumber").IsModified))))
             throw new InvalidOperationException("Tug request identity is immutable.");
+        if (changes.Any(e => e.Entity is MaintenanceObservation or MaintenanceObservationRevocation && e.State != EntityState.Added))
+            throw new InvalidOperationException("Observation lineage is immutable.");
         if (changes.Any(e => e.Entity is AssetRevision or MaintenancePlanRevision or TechnicalOwner or MaintenanceJob && e.State != EntityState.Added))
             throw new InvalidOperationException("Technical history and references are immutable.");
         if (changes.Any(e => e.Entity is Asset or MaintenancePlan && (e.State == EntityState.Deleted ||

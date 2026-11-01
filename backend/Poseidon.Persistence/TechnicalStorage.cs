@@ -62,6 +62,7 @@ public sealed class MaintenancePlan : ITenantEntity
     public Guid VesselId { get; set; }
     public Guid Id { get; set; }
     public Guid AssetId { get; set; }
+    public Guid? ObservationId { get; set; }
     public Guid? JobId { get; set; }
     public Guid? OwnerRoleId { get; set; }
     public string ContentJson { get; set; } = "{}";
@@ -69,13 +70,13 @@ public sealed class MaintenancePlan : ITenantEntity
     public string Provenance { get; set; } = "UserDeclaredUnverified";
     public long Revision { get; set; } = 1;
     public uint Version { get; set; }
-    public MaintenancePlanRevision Snapshot(DateTimeOffset reference, long assetRevision) {
+    public MaintenancePlanRevision Snapshot(DateTimeOffset reference, long assetRevision, MaintenanceDue? evaluated = null) {
         var inputs = JsonSerializer.Deserialize<MaintenanceInputs>(ContentJson)!;
-        var due = MaintenanceCalculation.Evaluate(inputs, reference);
+        var due = evaluated ?? MaintenanceCalculation.Evaluate(inputs, reference);
         if (JobId == null || OwnerRoleId == null || (string.IsNullOrWhiteSpace(inputs.Criticality) || inputs.Criticality == "Unknown"))
             due = due with { State = "ReviewRequired", Reason = due.State == "ReviewRequired" ? due.Reason : "IncompletePlanContext" };
         return new() { TenantId = TenantId, VesselId = VesselId, PlanId = Id, AssetId = AssetId,
-            AssetRevision = assetRevision, JobId = JobId, OwnerRoleId = OwnerRoleId, Revision = Revision,
+            AssetRevision = assetRevision, ObservationId = ObservationId, JobId = JobId, OwnerRoleId = OwnerRoleId, Revision = Revision,
             ContentJson = ContentJson, CalculationJson = JsonSerializer.Serialize(due),
             ReferenceAt = reference, SavedAt = DateTimeOffset.UtcNow, Provenance = Provenance };
     }
@@ -87,6 +88,7 @@ public sealed class MaintenancePlanRevision : ITenantEntity
     public Guid PlanId { get; set; }
     public Guid AssetId { get; set; }
     public long AssetRevision { get; set; }
+    public Guid? ObservationId { get; set; }
     public Guid? JobId { get; set; }
     public Guid? OwnerRoleId { get; set; }
     public long Revision { get; set; }
@@ -135,6 +137,9 @@ internal static class TechnicalStorage
             b.HasOne<Vessel>().WithMany().HasForeignKey(x => new { x.TenantId, x.VesselId }).OnDelete(DeleteBehavior.Restrict);
         });
         model.Entity<MaintenancePlan>(b => {
+            b.HasOne<MaintenanceObservation>().WithMany().HasForeignKey(x => new { x.TenantId, x.VesselId, x.AssetId, x.ObservationId })
+                .HasPrincipalKey(x => new { x.TenantId, x.VesselId, x.AssetId, x.Id }).HasConstraintName("FK_Plans_ObservationScope").OnDelete(DeleteBehavior.Restrict);
+            b.HasIndex(x => new { x.TenantId, x.VesselId, x.AssetId, x.ObservationId }).HasDatabaseName("IX_Plan_Observation");
             b.HasIndex("TenantId", "VesselId", "AssetId");
             b.HasIndex("TenantId", "VesselId", "JobId");
             b.HasIndex("TenantId", "VesselId", "OwnerRoleId");
@@ -148,6 +153,9 @@ internal static class TechnicalStorage
             b.HasOne<TechnicalOwner>().WithMany().HasForeignKey(x => new { x.TenantId, x.VesselId, x.OwnerRoleId }).OnDelete(DeleteBehavior.Restrict);
         });
         model.Entity<MaintenancePlanRevision>(b => {
+            b.HasOne<MaintenanceObservation>().WithMany().HasForeignKey(x => new { x.TenantId, x.VesselId, x.AssetId, x.ObservationId })
+                .HasPrincipalKey(x => new { x.TenantId, x.VesselId, x.AssetId, x.Id }).HasConstraintName("FK_PlanRevisions_ObservationScope").OnDelete(DeleteBehavior.Restrict);
+            b.HasIndex(x => new { x.TenantId, x.VesselId, x.AssetId, x.ObservationId }).HasDatabaseName("IX_PlanRevision_Observation");
             b.HasIndex("TenantId", "VesselId", "AssetId", "AssetRevision");
             b.HasIndex("TenantId", "VesselId", "JobId");
             b.HasIndex("TenantId", "VesselId", "OwnerRoleId");

@@ -13,10 +13,10 @@ export type Inputs = { triggerType?: string | null; intervalValue?: string | nul
   meterSource?: string | null; lastDoneDate?: string | null; lastDoneMeter?: string | null; currentMeter?: string | null;
   observedAt?: string | null; observationRevision?: string | null; condition?: string | null; timeZone?: string | null;
   provenance?: string | null; warningLead?: string | null; gracePeriod?: string | null; postponementAllowed?: string | null;
-  approvalRule?: string | null; criticality?: string | null; applicableRequirement?: string | null; planType?: string | null }
+  approvalRule?: string | null; criticality?: string | null; applicableRequirement?: string | null; planType?: string | null; observationId?: string | null }
 export type Due = { state: string; reason: string; nextDueDate: string | null; nextDueMeter: string | null; algorithm: string }
 export type Plan = { id: string; assetId: string; jobId: string | null; ownerRoleId: string | null; inputs: Inputs;
-  due: Due; revision: number; version: number; referenceAt: string; savedAt: string; assetRevision: number; status: string; provenance: string }
+  due: Due; revision: number; version: number; referenceAt: string; savedAt: string; assetRevision: number; status: string; provenance: string; observationState?: string; observationAssessedAt?: string | null }
 export type Snapshot = { items: Asset[]; complete: boolean; canWrite: boolean; canReadHistory: boolean }
 export type Plans = { items: Plan[]; canWrite: boolean; canReadHistory: boolean }
 export type References = { jobs: { id: string; code: string; title: string; provenance: string }[]; owners: string[]; policy: string }

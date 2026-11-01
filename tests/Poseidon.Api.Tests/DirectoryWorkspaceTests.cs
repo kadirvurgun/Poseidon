@@ -88,6 +88,7 @@ public sealed partial class DirectoryWorkspaceTests(OwnedPostgresFixture fixture
             ["Authentication:Oidc:Memberships:0:Permissions:24"] = importWrite ? "import.write" : "unused",
             ["Authentication:Oidc:Memberships:0:Permissions:25"] = certificateRead ? "crew.certificate.read" : "unused",
             ["Authentication:Oidc:Memberships:0:Permissions:26"] = certificateWrite ? "crew.certificate.write" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:34"] = crewWrite ? "crew.position.write" : "unused",
             ["Authentication:Oidc:Memberships:0:Permissions:22"] = tugOwner ? "tug.owner.eligible" : "unused",
             ["Authentication:Oidc:Memberships:0:TenantWideManage"] = (scope && manage).ToString(),
             ["Authentication:Oidc:Memberships:0:TenantWideRead"] = (scope && read).ToString(),

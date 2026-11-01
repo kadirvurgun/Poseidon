@@ -807,6 +807,8 @@ namespace Poseidon.Persistence.Migrations
             b.ToTable("Jobs", "technical");
             });
             modelBuilder.Entity("Poseidon.Persistence.MaintenancePlan", b => {
+                b.Property<Guid?>("ObservationId").HasColumnType("uuid");
+                b.HasIndex("TenantId", "VesselId", "AssetId", "ObservationId").HasDatabaseName("IX_Plan_Observation");
             b.Property<Guid>("TenantId").HasColumnType("uuid");
             b.Property<Guid>("VesselId").HasColumnType("uuid");
             b.Property<Guid>("Id").HasColumnType("uuid");
@@ -828,6 +830,8 @@ namespace Poseidon.Persistence.Migrations
             });
             });
             modelBuilder.Entity("Poseidon.Persistence.MaintenancePlanRevision", b => {
+                b.Property<Guid?>("ObservationId").HasColumnType("uuid");
+                b.HasIndex("TenantId", "VesselId", "AssetId", "ObservationId").HasDatabaseName("IX_PlanRevision_Observation");
             b.Property<Guid>("TenantId").HasColumnType("uuid");
             b.Property<Guid>("VesselId").HasColumnType("uuid");
             b.Property<Guid>("PlanId").HasColumnType("uuid");
@@ -1084,6 +1088,33 @@ namespace Poseidon.Persistence.Migrations
             });
             modelBuilder.Entity("Poseidon.Persistence.CrewPersonalProfile", b => b.HasOne("Poseidon.Persistence.Person", null).WithMany().HasForeignKey("TenantId", "PersonId").OnDelete(DeleteBehavior.Restrict).IsRequired());
             modelBuilder.Entity("Poseidon.Persistence.CrewPersonalProfileRevision", b => b.HasOne("Poseidon.Persistence.CrewPersonalProfile", null).WithMany().HasForeignKey("TenantId", "PersonId").OnDelete(DeleteBehavior.Restrict).IsRequired());
+
+            modelBuilder.Entity("Poseidon.Persistence.MaintenanceObservation", b => {
+                b.Property<Guid>("TenantId").HasColumnType("uuid");
+                b.Property<Guid>("Id").HasColumnType("uuid");
+                b.Property<Guid>("VesselId").HasColumnType("uuid");
+                b.Property<Guid>("AssetId").HasColumnType("uuid");
+                b.Property<string>("Source").IsRequired().HasMaxLength(80).HasColumnType("character varying(80)");
+                b.Property<string>("PolicyVersion").IsRequired().HasMaxLength(80).HasColumnType("character varying(80)");
+                b.Property<long>("SourceRevision").HasColumnType("bigint");
+                b.Property<string>("Kind").IsRequired().HasMaxLength(16).HasColumnType("character varying(16)");
+                b.Property<string>("Unit").IsRequired().HasMaxLength(40).HasColumnType("character varying(40)");
+                b.Property<string>("Value").HasMaxLength(1024).HasColumnType("character varying(1024)");
+                b.Property<DateTimeOffset?>("ObservedAt").HasColumnType("timestamp with time zone");
+                b.Property<DateTimeOffset>("RecordedAt").HasColumnType("timestamp with time zone");
+                b.Property<string>("Provenance").IsRequired().HasMaxLength(40).HasColumnType("character varying(40)");
+                b.HasKey("TenantId", "Id"); b.HasAlternateKey("TenantId", "VesselId", "AssetId", "Id").HasName("AK_Observation_Scope"); b.HasIndex("TenantId", "VesselId", "AssetId", "Source", "SourceRevision").IsUnique().HasDatabaseName("IX_Observations_SourceRevision");
+                b.ToTable("Observations", "technical");
+            });
+            modelBuilder.Entity("Poseidon.Persistence.MaintenanceObservationRevocation", b => {
+                b.Property<Guid>("TenantId").HasColumnType("uuid"); b.Property<Guid>("ObservationId").HasColumnType("uuid");
+                b.Property<DateTimeOffset>("RecordedAt").HasColumnType("timestamp with time zone"); b.HasKey("TenantId", "ObservationId");
+                b.ToTable("ObservationRevocations", "technical");
+            });
+            modelBuilder.Entity("Poseidon.Persistence.MaintenanceObservation", b => b.HasOne("Poseidon.Persistence.Asset", null).WithMany().HasForeignKey("TenantId", "VesselId", "AssetId").HasPrincipalKey("TenantId", "VesselId", "Id").OnDelete(DeleteBehavior.Restrict).IsRequired());
+            modelBuilder.Entity("Poseidon.Persistence.MaintenanceObservationRevocation", b => b.HasOne("Poseidon.Persistence.MaintenanceObservation", null).WithMany().HasForeignKey("TenantId", "ObservationId").OnDelete(DeleteBehavior.Restrict).IsRequired());
+            modelBuilder.Entity("Poseidon.Persistence.MaintenancePlan", b => b.HasOne("Poseidon.Persistence.MaintenanceObservation", null).WithMany().HasForeignKey("TenantId", "VesselId", "AssetId", "ObservationId").HasPrincipalKey("TenantId", "VesselId", "AssetId", "Id").HasConstraintName("FK_Plans_ObservationScope").OnDelete(DeleteBehavior.Restrict));
+            modelBuilder.Entity("Poseidon.Persistence.MaintenancePlanRevision", b => b.HasOne("Poseidon.Persistence.MaintenanceObservation", null).WithMany().HasForeignKey("TenantId", "VesselId", "AssetId", "ObservationId").HasPrincipalKey("TenantId", "VesselId", "AssetId", "Id").HasConstraintName("FK_PlanRevisions_ObservationScope").OnDelete(DeleteBehavior.Restrict));
 #pragma warning restore 612, 618
         }
     }

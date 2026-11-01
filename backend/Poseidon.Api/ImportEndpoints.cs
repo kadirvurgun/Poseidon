@@ -330,14 +330,25 @@ public static class ImportEndpoints
         await using var tx = await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable, h.RequestAborted);
         try {
             var a = Actor(h);
+            // Field/purpose/policy/catalog authority is current even for historic batch receipt recovery.
+            // Do not re-run stale domain base-version validation to recover a receipt.
+            var table = Table(b, h); var mapping = Mapping(b, table);
+            if (!mapping.IsValid || mapping.Mapping!.TemplateFingerprint != b.TemplateFingerprint) return await Fail(h, 409, "version_conflict");
+            if (b.Category == "crew") {
+                var profilePolicy = h.RequestServices.GetRequiredService<CrewProfilePolicy>();
+                foreach (var cells in table.Rows) {
+                    var row = new ImportTemplates.Row(mapping.Mapping, cells);
+                    var personal = row.PersonalProfile();
+                    if (personal != null && !CrewProfileEndpoints.Valid(personal with { Purpose = profilePolicy.ImportPurpose }, a, profilePolicy)) return await Fail(h, 403, "field_policy_denied");
+                    if (!h.RequestServices.GetRequiredService<CrewAssignmentPolicy>().CanDeclare(row.Get("assignment_status"), row.Get("assignment_policy_version"), a)) return await Fail(h, 403, "assignment_policy_denied");
+                }
+            }
             var receipt = await db.CommandReceipts.AsNoTracking().SingleOrDefaultAsync(x => x.ActorId == a.Id && x.Key == originalKey.ToString(), h.RequestAborted);
             if (receipt != null) {
                 if (receipt.Action != "ImportCommit" || receipt.Fingerprint != fingerprint || receipt.ResourceId != batch) return await Fail(h, 409, "idempotency_key_reused");
                 return Results.Ok(new ImportCommittedDto(batch, "Committed", b.RowCount, p.Id, true));
             }
             if (b.State == "Committed") return await Fail(h, 409, "version_conflict");
-            var table = Table(b, h); var mapping = Mapping(b, table);
-            if (!mapping.IsValid || mapping.Mapping!.TemplateFingerprint != b.TemplateFingerprint) return await Fail(h, 409, "version_conflict");
             var current = await Validate(b, table, mapping.Mapping, h, db);
             if (current.Any(r => r.Outcome != "valid")) return await Fail(h, 409, "version_conflict");
             foreach (var (cells, i) in table.Rows.Select((r, i) => (r, i))) {

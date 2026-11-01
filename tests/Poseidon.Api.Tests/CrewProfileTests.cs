@@ -133,6 +133,19 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Contains(contract.Fields, f => f.State == "unimplemented_software");
     }
     [Fact]
+    public async Task Crew_personal_import_policy_version_change_precedes_historic_batch_receipt_recovery() {
+        using var host=ProfileHost(); using var client=ImportSessionClient(host); var session=await ImportSession(client);
+        var batch=await UploadImport(client,"crew",new() { ["record_key"]=Guid.NewGuid().ToString(),["profile_policy_version"]="synthetic-profile-v1",["email"]="synthetic@example.invalid" });
+        var preview=await PreviewImport(client,batch); Assert.Equal(0,preview.RejectedRows);
+        var command=new ImportCommitCommand(preview.PreviewId,long.Parse(preview.Revision),preview.TemplateFingerprint);var key=Guid.NewGuid().ToString();
+        Assert.Equal(HttpStatusCode.OK,(await Send(client,Imports+$"/{batch.Id}/commit",command,key)).StatusCode);
+        using var changedHost=ProfileHost().WithWebHostBuilder(b=>b.ConfigureAppConfiguration((_,c)=>c.AddInMemoryCollection(new Dictionary<string,string?> { ["CrewProfilePolicy:Version"]="synthetic-profile-v2" })));
+        using var changed=ImportSessionClient(changedHost,session.Cookie,session.Csrf);
+        Assert.Equal(HttpStatusCode.OK,(await changed.GetAsync("/api/v1/"+Imports+$"/{batch.Id}",Ct)).StatusCode);
+        Assert.Equal(HttpStatusCode.Forbidden,(await Send(changed,Imports+$"/{batch.Id}/commit",command,key)).StatusCode);
+        await using var db=Db();Assert.Equal(1,await db.CommandReceipts.CountAsync(x=>x.Action=="ImportCommit"&&x.ResourceId==batch.Id,Ct));
+    }
+    [Fact]
     public async Task Crew_personal_unconfigured_policy_has_no_protected_projection() {
         using var host = ImportHost(); using var client = Client(host);
         Assert.Equal(HttpStatusCode.Forbidden, (await client.GetAsync("/api/v1/" + PersonalPath + "?purpose=crew-profile", Ct)).StatusCode);
