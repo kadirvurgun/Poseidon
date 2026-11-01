@@ -2536,6 +2536,24 @@
     "task": "docs/tasks/dev-oidc-lab-01.md",
     "phase_report": "docs/phases/DEV-OIDC-LAB-01.md",
     "baseline_commit": "029d1ba",
+    "rejection_repair": {
+      "rejected_commit": "3a7801263cf48debb860786de358592f892f2065",
+      "status": "locally_validated_awaiting_independent_qa",
+      "accepted": false,
+      "scope": "LAB-04 equivalent DOTNET_/ASPNETCORE_ ambient host configuration isolation",
+      "actual_host_red_green": "Before fix: two extra wildcard HTTP listeners; after fix: only loopback HTTPS5443, strict CA/hostname liveness",
+      "verification": {
+        "python_full": "132 PASS;0 failed/skipped;151.277s",
+        "portable_fixture": "5 PASS;70 new matrix combinations;0 failed/skipped",
+        "windows_bootstrap_tls_actual_host": "2 PASS;0 failed/skipped;18.037s",
+        "real_keycloak_https_postgresql_browser": "2 PASS;0 failed",
+        "graphify_ast": "PASS;2936 nodes/4558 edges/239 communities;11 existing zero-node warnings",
+        "whitespace": "PASS",
+        "host_cleanup": "PASS;0 listeners on5443/8443/55432;data/configuration retained"
+      },
+      "unchanged_checks": "Original verification below is historical; no .NET/frontend/dependency/API contract changes in repair",
+      "next_step": "Coordinator independent QA of exact local repair commit; no publication or self-approval"
+    },
     "prerequisite_review": "docs/reviews/nav-workspace-01-ff1e95ebf5f4.json",
     "prerequisite_commit": "ff1e95ebf5f43ba5883f69e5e52b0cb2f205b775",
     "delivered": "Development-only pinned Keycloak/PostgreSQL local HTTPS browser lab, private random bootstrap/server memberships, scoped CA transport, actual product flows and membership configuration binding repair",

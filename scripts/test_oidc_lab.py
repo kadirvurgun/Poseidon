@@ -20,6 +20,19 @@ class LabTests(unittest.TestCase):
         self.assertEqual('Development', env['ASPNETCORE_ENVIRONMENT'])
         self.assertEqual(str(lab.PRIVATE / 'appsettings.json'), env['POSEIDON_LAB_CONFIG'])
 
+    def test_host_prefixes_and_configuration_delimiters_cannot_extend_lab_configuration(self):
+        for prefix in ('', 'DOTNET_', 'ASPNETCORE_', 'dotnet_', 'aspnetcore_'):
+            for delimiter in ('__', ':'):
+                for key in ('Kestrel:Endpoints:Other:Url', 'Authentication:Oidc:Memberships:9:Subject',
+                            'ConnectionStrings:Other', 'DevelopmentLab:WebRoot', 'URLS', 'HTTP_PORTS', 'HTTPS_PORTS'):
+                    ambient_key = prefix + key.replace(':', delimiter)
+                    with self.subTest(prefix=prefix, delimiter=delimiter, key=key), \
+                         patch.dict(os.environ, {ambient_key: 'ambient', 'LAB_TEST_UNRELATED': 'preserved'}), \
+                         patch.object(lab, 'root_tool', return_value=str(Path('synthetic-tools/dotnet.exe').resolve())):
+                        env = lab.environment()
+                        self.assertNotIn(ambient_key, env)
+                        self.assertEqual('preserved', env['LAB_TEST_UNRELATED'])
+
     def test_generated_credentials_and_subjects_are_random_and_server_scope_is_explicit(self):
         realm, credentials, password, config = lab.make_configuration()
         other, other_credentials, other_password, _ = lab.make_configuration()

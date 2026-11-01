@@ -1,6 +1,10 @@
 """Explicit Windows lab bootstrap/TLS checks; synthetic data only, no diagnostics dump."""
 import http.server
+import ipaddress
+import json
+import os
 from pathlib import Path
+import subprocess
 import ssl
 import tempfile
 import threading
@@ -21,6 +25,45 @@ class QuietHandler(http.server.BaseHTTPRequestHandler):
 
 
 class LocalBootstrapTests(unittest.TestCase):
+    def test_actual_api_host_has_only_loopback_https_despite_prefixed_ambient_endpoints(self):
+        # Exercise Host.CreateDefaultBuilder + ConfigureWebHostDefaults, not a
+        # dictionary/configuration mock. Every listener belonging to this child
+        # must be the lab endpoint; arbitrary dynamic HTTP ports expose the bug.
+        ambient = {
+            'DOTNET_Kestrel__Endpoints__InjectedDotnet__Url': 'http://0.0.0.0:0',
+            'ASPNETCORE_Kestrel__Endpoints__InjectedAspnet__Url': 'http://0.0.0.0:0',
+            'Kestrel__Endpoints__InjectedDirect__Url': 'http://0.0.0.0:0',
+            'DOTNET_URLS': 'http://0.0.0.0:0',
+            'ASPNETCORE_HTTP_PORTS': '0',
+        }
+        with tempfile.TemporaryDirectory() as temporary, patch.object(lab, 'PRIVATE', Path(temporary) / 'private'):
+            lab.init()
+            with patch.dict(os.environ, ambient):
+                env = lab.environment()
+            process = subprocess.Popen(
+                [lab.root_tool('dotnet'), str(lab.ROOT / 'backend/Poseidon.Api/bin/Release/net10.0/Poseidon.Api.dll')],
+                cwd=lab.ROOT, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                creationflags=subprocess.CREATE_NO_WINDOW)
+            try:
+                lab.wait_https(lab.APP + '/health/live')
+                result = subprocess.run(
+                    ['pwsh', '-NoProfile', '-Command',
+                     f'Get-NetTCPConnection -State Listen -OwningProcess {process.pid} -ErrorAction Stop | '
+                     'Select-Object LocalAddress,LocalPort | ConvertTo-Json -Compress'],
+                    capture_output=True, timeout=30)
+                self.assertEqual(0, result.returncode, 'listener inspection failed')
+                listeners = json.loads(result.stdout)
+                if isinstance(listeners, dict):
+                    listeners = [listeners]
+                self.assertTrue(listeners, 'API must own its HTTPS listener')
+                self.assertEqual({5443}, {listener['LocalPort'] for listener in listeners})
+                self.assertTrue(all(ipaddress.ip_address(listener['LocalAddress']).is_loopback for listener in listeners))
+                self.assertIsNone(process.poll(), 'API must remain running')
+            finally:
+                if process.poll() is None:
+                    process.terminate()
+                process.wait(timeout=30)
+
     def test_actual_private_bootstrap_restart_and_strict_python_tls(self):
         with tempfile.TemporaryDirectory() as temporary, patch.object(lab, 'PRIVATE', Path(temporary) / 'private'):
             lab.init()

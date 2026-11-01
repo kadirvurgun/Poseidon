@@ -2,6 +2,26 @@
 
 Current phase: coherent local developer lab implementation; independent QA pending, NOT ACCEPTED. Coordinator owns publishing and merge. Exact source/acceptance/configuration locators and safe operation: [task](../tasks/dev-oidc-lab-01.md).
 
+## Independent rejection repair — 2026-11-01
+
+Target rejected: `3a7801263cf48debb860786de358592f892f2065`. Started from that exact commit with a clean worktree; preserved the entire existing package, fixtures and operator data. Same DEV-OIDC-LAB-01/LAB-04 and source scope. Committed NAV prerequisite proof was read and retained. No delegation, publication, credential output or self-approval.
+
+The prior ambient scrub missed the generic/web host providers' prefix stripping. Additional `DOTNET_Kestrel__Endpoints__...` or `ASPNETCORE_Kestrel__Endpoints__...` entries survived the JSON overlay and opened HTTP listeners. `environment()` now compares effective configuration keys after prefix/delimiter normalization, covering the same sensitive settings and direct/prefixed URL/port configuration. Unrelated environment variables remain available; no production code, auth pipeline, TLS validation, dependencies or API contract changed.
+
+Tests were authored before the fix. The new actual-host regression **failed before repair**, observing two extra dynamic HTTP listener ports. After repair it **passed**: the real Release API loaded generated lab JSON through `Host.CreateDefaultBuilder`/`ConfigureWebHostDefaults`, HTTPS liveness passed strict CA/hostname validation, and every TCP listener owned by its PID had a loopback address and port5443. The child is terminated in `finally`; logs/child diagnostics are discarded. This verifies actual hosting behavior rather than only a dictionary or mocked configuration provider.
+
+Affected checks after implementation:
+
+| Command | Result |
+|---|---|
+| `py -3.13 -m unittest discover -s scripts -p test_oidc_lab.py -v` | 5 PASS,0 failed/skipped;0.150s. New matrix includes70 prefix/case/delimiter/settings combinations and preservation of unrelated environment. |
+| `py -3.13 scripts/windows_oidc_lab_checks.py` | 2 PASS,0 failed/skipped;18.037s: actual-host listener isolation plus actual private bootstrap/restart and strict TLS/wrong-host denial. |
+| `py -3.13 -m unittest discover -s scripts -p 'test_*.py' -v` | 132 PASS,0 failed/skipped;151.277s; full affected Python suite. Safe local log `.runtime/oidc-repair-python.log`. |
+| `py -3.13 scripts/oidc_lab.py start`, `... browser`, `... stop` | All exit0;2 real Keycloak/HTTPS/PostgreSQL browser journeys PASS,0 failures; task-owned services stopped, data/configuration retained. Safe count evidence remains at the private locator. |
+| `graphify update .` | PASS;2936 nodes/4558 edges/239 communities;11 existing zero-node warnings. AST only. |
+
+Final repair handoff: all affected checks passed; no implementation blocker. `git diff --check` passed; task ports5443/8443/55432 have no remaining listeners after stop. Original integrated .NET/frontend checks below remain historical evidence for unchanged code, not newly executed repair results. No source, schema, generated OpenAPI/type, dependency or lock changes. Current phase: local rejection repair, awaiting coordinator independent target-commit QA; NOT ACCEPTED. Canonical8/970SP,2/121tasks,0/196screens and all external gates remain unchanged.
+
 Delivered: pinned Docker Keycloak HTTPS provider and PostgreSQL; explicit random private bootstrap and server memberships; loopback HTTPS actual app/static product; Development-scoped private CA backchannel; no fake auth or production bypass. Authenticated browser suite and transport/bootstrap tests authored before executing the integrated gate. Existing profile precision/history/idempotency and NAV regressions retained.
 
 Prerequisite: committed independent NAV proof approves exact `ff1e95ebf5f43ba5883f69e5e52b0cb2f205b775`; implementation started clean at `029d1ba`. No stopped-worker changes were discarded. No push, PR, merge, extra agent or external auth-account change. Only explicitly authorized synthetic local provider accounts were provisioned.

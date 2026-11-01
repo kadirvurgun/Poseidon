@@ -150,10 +150,22 @@ def wait_https(url):
 def environment():
     # Prevent ambient operator/production configuration from extending a lab array
     # or adding extra Kestrel listeners after the explicit local JSON is loaded.
-    blocked = ('authentication__oidc__', 'connectionstrings__', 'kestrel__', 'developmentlab__')
-    exact = {'poseidon_database', 'poseidon_lab_config', 'aspnetcore_urls', 'aspnetcore_http_ports', 'aspnetcore_https_ports'}
+    # Default host/web-host providers strip these prefixes before chaining host
+    # configuration into app configuration. Compare their effective keys too;
+    # JSON overrides values, but cannot remove additional endpoint/array entries.
+    blocked = ('authentication:oidc:', 'connectionstrings:', 'kestrel:', 'developmentlab:')
+    exact = {'poseidon_database', 'poseidon_lab_config', 'urls', 'http_ports', 'https_ports'}
+
+    def isolated(key):
+        key = key.lower().replace('__', ':')
+        for prefix in ('dotnet_', 'aspnetcore_'):
+            if key.startswith(prefix):
+                key = key[len(prefix):]
+                break
+        return not key.startswith(blocked) and key not in exact
+
     env = {key: value for key, value in os.environ.items()
-           if not key.lower().startswith(blocked) and key.lower() not in exact}
+           if isolated(key)}
     env.update({'ASPNETCORE_ENVIRONMENT': 'Development', 'DOTNET_ENVIRONMENT': 'Development',
                 'POSEIDON_LAB_CONFIG': str(PRIVATE / 'appsettings.json'),
                 'DOTNET_ROOT': str(Path(root_tool('dotnet')).parent)})
