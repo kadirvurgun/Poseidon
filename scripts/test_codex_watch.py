@@ -9,6 +9,7 @@ from unittest.mock import Mock, patch
 
 from codex_accounts import WorkerStillRunningError, exclusive
 from codex_watch import PROFILES, Watch, eligible, run_loop
+from test_native_usage_observation import event as native_event, rollout
 
 
 def metadata(used=10, plan='pro'):
@@ -18,6 +19,30 @@ def metadata(used=10, plan='pro'):
 
 
 class WatchTests(unittest.TestCase):
+    def test_busy_native_observation_updates_display_without_unlocking_selecting_or_dispatching(self):
+        now = 1800000000
+        self.watch.wall = lambda: now
+        self.workers.config = {'routing_policy': 'esra_until_quota'}
+        rollout(self.workers.home('esra-pro'), events=[native_event(54, now)])
+        with exclusive(self.workers.home('esra-pro') / 'worker.lock'):
+            result = self.watch.once(Path('trusted.md'))
+        profile = result['profiles']['esra-pro']
+        self.assertEqual('busy', profile['state'])
+        self.assertFalse(profile['ready'])
+        self.assertEqual(54, profile['lastKnown']['windows'][0]['usedPercent'])
+        self.assertIsNone(result['selected'])
+        self.workers.account.assert_called_once_with('kadir-plus')
+        self.workers.run.assert_not_called()
+
+    def test_older_native_observation_cannot_replace_a_newer_direct_provider_read(self):
+        now = 1800000000
+        self.watch.wall = lambda: now
+        self.watch.once()
+        rollout(self.workers.home('esra-pro'), events=[native_event(99, now - 30)])
+        with exclusive(self.workers.home('esra-pro') / 'worker.lock'):
+            result = self.watch.once()
+        self.assertEqual(10, result['profiles']['esra-pro']['lastKnown']['windows'][0]['usedPercent'])
+
     def setUp(self):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
