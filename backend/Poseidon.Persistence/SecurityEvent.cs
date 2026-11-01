@@ -46,7 +46,7 @@ public sealed class SecurityEventWriter(DbContextOptions<SecurityEventWriter> op
         if (ChangeTracker.HasChanges()) throw new InvalidOperationException("Only one security event may be appended at a time.");
         if (entry.Action is not ("Login" or "Logout" or "CompaniesRead" or "VesselsRead" or "AccessDenied" or "Session" or
             "CompanyCreate" or "CompanyUpdate" or "VesselCreate" or "VesselUpdate" or "DirectoryWrite" or
-            "ProfileRead" or "ProfileHistory" or "ProfileSave" or "WorkspaceRead" or "WorkspaceSearch") ||
+            "ProfileRead" or "ProfileHistory" or "ProfileSave" or "WorkspaceRead" or "WorkspaceSearch" or "TodayRead" or "TodayWhyRead") ||
             entry.Result is not ("Success" or "Denied" or "Unauthenticated" or "Failed" or "SetupRequired" or "NotFound" or
             "Attempted" or "permission_denied" or "csrf_invalid" or "invalid_request" or "validation_failed" or
             "invalid_idempotency_key" or "resource_not_found" or "idempotency_key_reused" or "version_conflict" or

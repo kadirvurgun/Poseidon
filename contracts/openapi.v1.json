@@ -775,6 +775,115 @@
         }
       }
     },
+    "/api/v1/poseidon-today": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "GetToday",
+        "parameters": [
+          {
+            "name": "vesselId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TodayDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/why-engine": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "GetTodayWhy",
+        "parameters": [
+          {
+            "name": "vesselId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cardKey",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TodayWhyDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
     "/health/live": {
       "get": {
         "tags": [
@@ -1113,6 +1222,44 @@
         },
         "additionalProperties": false
       },
+      "DraftObservation": {
+        "required": [
+          "known",
+          "missing",
+          "unknown",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "known": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "missing": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "unknown": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      },
       "NavigationDto": {
         "required": [
           "key",
@@ -1230,6 +1377,42 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/SearchItemDto"
+            }
+          },
+          "offset": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "limit": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PageDtoOfTodayCardDto": {
+        "required": [
+          "items",
+          "offset",
+          "limit",
+          "hasMore"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TodayCardDto"
             }
           },
           "offset": {
@@ -1601,6 +1784,164 @@
           }
         },
         "additionalProperties": false
+      },
+      "TodayCardDto": {
+        "required": [
+          "key",
+          "priority",
+          "source",
+          "reason",
+          "owner",
+          "nextAction",
+          "href"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "owner": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nextAction": {
+            "type": "string"
+          },
+          "href": {
+            "type": "string"
+          }
+        }
+      },
+      "TodayCoverageDto": {
+        "required": [
+          "source",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "TodayDto": {
+        "required": [
+          "vessel",
+          "readAt",
+          "coverage",
+          "cards"
+        ],
+        "type": "object",
+        "properties": {
+          "vessel": {
+            "$ref": "#/components/schemas/VesselDto"
+          },
+          "readAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "coverage": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TodayCoverageDto"
+            }
+          },
+          "cards": {
+            "$ref": "#/components/schemas/PageDtoOfTodayCardDto"
+          }
+        }
+      },
+      "TodayWhyDto": {
+        "required": [
+          "vesselId",
+          "cardKey",
+          "rule",
+          "reason",
+          "inputs",
+          "readAt",
+          "savedAt",
+          "sourceObservedAt",
+          "freshness",
+          "provenance",
+          "blockers",
+          "owner",
+          "nextAction",
+          "href"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "cardKey": {
+            "type": "string"
+          },
+          "rule": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "inputs": {
+            "$ref": "#/components/schemas/DraftObservation"
+          },
+          "readAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "savedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "sourceObservedAt": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "freshness": {
+            "type": "string"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "owner": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nextAction": {
+            "type": "string"
+          },
+          "href": {
+            "type": "string"
+          }
+        }
       },
       "VesselCreateCommand": {
         "required": [

@@ -9,6 +9,17 @@ public sealed class DirectoryAuthorizationResultHandler : IAuthorizationMiddlewa
     private readonly AuthorizationMiddlewareResultHandler fallback = new();
     public async Task HandleAsync(RequestDelegate next, HttpContext context, AuthorizationPolicy policy, PolicyAuthorizationResult result)
     {
+        var todayAction = context.GetEndpoint()?.Metadata.GetMetadata<Microsoft.AspNetCore.Routing.IEndpointNameMetadata>()?.EndpointName switch
+        {
+            "GetToday" => "TodayRead",
+            "GetTodayWhy" => "TodayWhyRead",
+            _ => null
+        };
+        if (!result.Succeeded && todayAction != null)
+        {
+            await context.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(context,
+                todayAction, result.Challenged ? "Unauthenticated" : "Denied");
+        }
         if (!result.Succeeded && (context.Request.Method is "POST" or "PUT") &&
             (context.Request.Path.StartsWithSegments("/api/v1/companies") || context.Request.Path.StartsWithSegments("/api/v1/vessels")))
         {

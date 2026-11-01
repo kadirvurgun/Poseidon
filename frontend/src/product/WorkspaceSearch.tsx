@@ -27,7 +27,7 @@ export function WorkspaceSearch({ language, onNavigate, onClose }: Props) {
         if (!value || !Array.isArray(value.items) || value.items.length > 25 || typeof value.hasMore !== 'boolean' || value.items.some(item =>
           !item || typeof item.key !== 'string' || typeof item.label !== 'string' || typeof item.href !== 'string' || readLocation(item.href).invalid ||
           !['Destination', 'Ship', 'Tug'].includes(item.kind) ||
-          (item.kind === 'Destination' ? !['/app/companies', '/app/fleet'].includes(item.href) : !/^\/app\/fleet\/[a-fA-F0-9-]{36}$/.test(item.href)))) throw new ApiError(502, 'invalid_contract')
+          (item.kind === 'Destination' ? !['/app/today', '/app/companies', '/app/fleet'].includes(item.href) : !/^\/app\/fleet\/[a-fA-F0-9-]{36}$/.test(item.href)))) throw new ApiError(502, 'invalid_contract')
         if (active) setState(value)
       }).catch(error => { if (active) setFailure(error instanceof ApiError ? error.status : 0) })
     return () => { active = false; clearTimeout(timeout); controller.abort() }

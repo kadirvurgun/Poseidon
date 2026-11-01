@@ -12,8 +12,8 @@ public static class WorkspaceEndpoints
 {
     public static NavigationDto[] Destinations(TrustedActor actor) => !actor.CanRead ? [] :
         actor.TenantWideRead || actor.TenantWideManage
-            ? [new("companies", "/app/companies"), new("fleet", "/app/fleet")]
-            : [new("fleet", "/app/fleet")];
+            ? [new("today", "/app/today"), new("companies", "/app/companies"), new("fleet", "/app/fleet")]
+            : [new("today", "/app/today"), new("fleet", "/app/fleet")];
 
     public static void MapWorkspace(this IEndpointRouteBuilder app)
     {

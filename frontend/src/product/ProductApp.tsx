@@ -7,11 +7,12 @@ import { DraftConfirmation } from './DraftConfirmation'
 import { RegulatoryProfile } from './RegulatoryProfile'
 import { editorCopy } from './editor-copy'
 import { loginHref, readLocation, useWorkspaceLocation } from './workspace-location'
+import { TodayWorkspace } from './TodayWorkspace'
 import { WorkspaceSearch } from './WorkspaceSearch'
 
 const copy = {
-  tr: { companies: 'Şirketler', fleet: 'Filo', signin: 'Oturum aç', signout: 'Oturumu kapat', loading: 'Yükleniyor…', retry: 'Tekrar dene', empty: 'Kayıt bulunamadı.', unavailable: 'Hizmete ulaşılamıyor. Lütfen tekrar deneyin.', forbidden: 'Bu çalışma alanına erişim yetkiniz yok.', expired: 'Devam etmek için oturum açın.', setup: 'Kurumsal oturum açma henüz yapılandırılmadı. Kuruluş yöneticinizle iletişime geçin.', tenant: 'Çalışma alanı', identity: 'Oturum', ship: 'Gemi', tug: 'Römorkör', all: 'Tüm araçlar', name: 'Ad', code: 'Kod', kind: 'Tür', next: 'Sonraki', previous: 'Önceki', close: 'Kapat', details: 'Ayrıntılar', skip: 'Ana içeriğe geç', failed: 'Oturum açma tamamlanamadı. Lütfen tekrar deneyin.', intro: 'Yetkili olduğunuz kayıtları görüntüleyin.', language: 'Dil', filter: 'Araç türü', page: 'Sayfa', technical: 'Sistem bağlantısı' },
-  en: { companies: 'Companies', fleet: 'Fleet', signin: 'Sign in', signout: 'Sign out', loading: 'Loading…', retry: 'Retry', empty: 'No records found.', unavailable: 'The service is unavailable. Please try again.', forbidden: 'You do not have access to this workspace.', expired: 'Sign in to continue.', setup: 'Organization sign-in has not been configured. Contact your organization administrator.', tenant: 'Workspace', identity: 'Session', ship: 'Ship', tug: 'Tug', all: 'All vessels', name: 'Name', code: 'Code', kind: 'Type', next: 'Next', previous: 'Previous', close: 'Close', details: 'Details', skip: 'Skip to main content', failed: 'Sign-in could not be completed. Please try again.', intro: 'Browse the records available in your workspace.', language: 'Language', filter: 'Vessel type', page: 'Page', technical: 'System connection' },
+  tr: { today: 'Bugün', companies: 'Şirketler', fleet: 'Filo', signin: 'Oturum aç', signout: 'Oturumu kapat', loading: 'Yükleniyor…', retry: 'Tekrar dene', empty: 'Kayıt bulunamadı.', unavailable: 'Hizmete ulaşılamıyor. Lütfen tekrar deneyin.', forbidden: 'Bu çalışma alanına erişim yetkiniz yok.', expired: 'Devam etmek için oturum açın.', setup: 'Kurumsal oturum açma henüz yapılandırılmadı. Kuruluş yöneticinizle iletişime geçin.', tenant: 'Çalışma alanı', identity: 'Oturum', ship: 'Gemi', tug: 'Römorkör', all: 'Tüm araçlar', name: 'Ad', code: 'Kod', kind: 'Tür', next: 'Sonraki', previous: 'Önceki', close: 'Kapat', details: 'Ayrıntılar', skip: 'Ana içeriğe geç', failed: 'Oturum açma tamamlanamadı. Lütfen tekrar deneyin.', intro: 'Yetkili olduğunuz kayıtları görüntüleyin.', language: 'Dil', filter: 'Araç türü', page: 'Sayfa', technical: 'Sistem bağlantısı' },
+  en: { today: 'Today', companies: 'Companies', fleet: 'Fleet', signin: 'Sign in', signout: 'Sign out', loading: 'Loading…', retry: 'Retry', empty: 'No records found.', unavailable: 'The service is unavailable. Please try again.', forbidden: 'You do not have access to this workspace.', expired: 'Sign in to continue.', setup: 'Organization sign-in has not been configured. Contact your organization administrator.', tenant: 'Workspace', identity: 'Session', ship: 'Ship', tug: 'Tug', all: 'All vessels', name: 'Name', code: 'Code', kind: 'Type', next: 'Next', previous: 'Previous', close: 'Close', details: 'Details', skip: 'Skip to main content', failed: 'Sign-in could not be completed. Please try again.', intro: 'Browse the records available in your workspace.', language: 'Language', filter: 'Vessel type', page: 'Page', technical: 'System connection' },
 }
 type State<T> = { state: 'loading' } | { state: 'ok'; data: T } | { state: 'error'; status: number }
 const errorStatus = (error: unknown) => error instanceof api.ApiError ? error.status : 0
@@ -95,7 +96,7 @@ export function ProductApp() {
     return () => { active = false; clearTimeout(timeout); controller.abort() }
   }, [identityAttempt, move])
   useEffect(() => {
-    if (!canRead || route.invalid || (tab === 'companies' && !user?.canReadCompanies)) return
+    if (tab === 'today' || !canRead || route.invalid || (tab === 'companies' && !user?.canReadCompanies)) return
     const controller = new AbortController()
     let active = true
     const timeout = setTimeout(() => { controller.abort(); }, 10000)
@@ -104,7 +105,7 @@ export function ProductApp() {
     return () => { active = false; clearTimeout(timeout); controller.abort() }
   }, [canRead, user?.canReadCompanies, route.invalid, tab, offset, kind, search, attempt])
   useEffect(() => {
-    if (!selected || !canRead || (tab === 'companies' && !user?.canReadCompanies)) return
+    if (tab === 'today' || !selected || !canRead || (tab === 'companies' && !user?.canReadCompanies)) return
     const controller = new AbortController()
     let active = true
     const timeout = setTimeout(() => controller.abort(), 10000)
@@ -142,13 +143,13 @@ export function ProductApp() {
   }}>
     <a className="skip-link" href="#product-main">{t.skip}</a>
     <header className="product-header" inert={drawer}><a href="/app" className="product-brand">POSEIDON</a><button className="workspace-menu" aria-expanded={drawer} aria-controls="workspace-navigation" onClick={() => setDrawer(v => !v)}>{language === 'en' ? 'Menu' : 'Menü'}</button><span className="workspace-breadcrumb">{heading}</span>{user?.canSearch && <button onClick={() => setPowerSearch(true)}>{language === 'en' ? 'Search workspace' : 'Çalışma alanında ara'} <kbd>Ctrl K</kbd></button>}<div className="languages" role="group" aria-label={t.language}><button aria-pressed={language === 'tr'} onClick={() => setLanguage('tr')}>TR</button><button aria-pressed={language === 'en'} onClick={() => setLanguage('en')}>EN</button></div></header>
-    <nav id="workspace-navigation" className={`product-nav ${drawer ? 'is-open' : ''}`} aria-label="POSEIDON" role={drawer ? "dialog" : undefined} aria-modal={drawer ? true : undefined}>{drawer && <button onClick={() => setDrawer(false)}>{t.close}</button>}{user?.canReadCompanies && <button aria-current={tab === 'companies' ? 'page' : undefined} onClick={() => navigate('companies')}>{t.companies}</button>}{canRead && <button aria-current={tab === 'fleet' ? 'page' : undefined} onClick={() => navigate('fleet')}>{t.fleet}</button>}<a href="/">{t.technical}</a></nav>
+    <nav id="workspace-navigation" className={`product-nav ${drawer ? 'is-open' : ''}`} aria-label="POSEIDON" role={drawer ? "dialog" : undefined} aria-modal={drawer ? true : undefined}>{drawer && <button onClick={() => setDrawer(false)}>{t.close}</button>}{user?.canReadCompanies && <button aria-current={tab === 'companies' ? 'page' : undefined} onClick={() => navigate('companies')}>{t.companies}</button>}{canRead && <button aria-current={tab === 'today' ? 'page' : undefined} onClick={() => navigate('today')}>{t.today}</button>}{canRead && <button aria-current={tab === 'fleet' ? 'page' : undefined} onClick={() => navigate('fleet')}>{t.fleet}</button>}<a href="/">{t.technical}</a></nav>
     <main id="product-main" tabIndex={-1} inert={drawer}>
       <h1>{heading}</h1><p>{t.intro}</p>
       {offline && <p role="alert">{language === 'en' ? 'Offline. Displayed data is unverified; reconnect and retry.' : 'Çevrimdışı. Görüntülenen veriler doğrulanmadı; bağlanıp tekrar deneyin.'}</p>}
       {powerSearch && user?.canSearch && <WorkspaceSearch language={language} onClose={() => setPowerSearch(false)} onNavigate={follow} />}
       {canRead && (route.invalid || (tab === 'companies' && !user?.canReadCompanies)) && <p role="alert">{t.forbidden}</p>}
-      {canRead && selected && detail.state === 'ok' && 'kind' in detail.data && <div className="workspace-context"><span>{language === 'en' ? 'Current vessel' : 'Etkin araç'}: <strong>{detail.data.kind === 'Ship' ? t.ship : t.tug} · {detail.data.name}</strong></span><button disabled={saving} onClick={() => navigate('fleet')}>{language === 'en' ? 'Switch vessel' : 'Araç değiştir'}</button></div>}
+      {canRead && tab !== 'today' && selected && detail.state === 'ok' && 'kind' in detail.data && <div className="workspace-context"><span>{language === 'en' ? 'Current vessel' : 'Etkin araç'}: <strong>{detail.data.kind === 'Ship' ? t.ship : t.tug} · {detail.data.name}</strong></span><button disabled={saving} onClick={() => navigate('fleet')}>{language === 'en' ? 'Switch vessel' : 'Araç değiştir'}</button></div>}
       {identity.state === 'loading' && <p role="status">{t.loading}</p>}
       {identity.state === 'error' && <div role="alert"><p>{message(identity.status)}</p><button onClick={() => guard(() => { closeEditor(); retry() })}>{t.retry}</button></div>}
       {user && <section className="product-session" aria-label={t.identity}>
@@ -160,7 +161,8 @@ export function ProductApp() {
       {pendingNavigation && <DraftConfirmation language={language} onStay={() => setPendingNavigation(null)} onDiscard={() => {
         const action = pendingNavigation; setPendingNavigation(null); closeEditor(); action()
       }} />}
-      {canRead && !route.invalid && (tab !== 'companies' || user?.canReadCompanies) && <>
+      {canRead && !route.invalid && tab === 'today' && <TodayWorkspace key={selected ?? 'select'} id={selected} language={language} offline={offline} onNavigate={follow} />}
+      {canRead && tab !== 'today' && !route.invalid && (tab !== 'companies' || user?.canReadCompanies) && <>
         {notice && <p role="status" className="directory-notice">{notice}</p>}
         {user?.canCreate && <button className="primary-button" disabled={saving} onClick={() => guard(() => { closeEditor(); move({ tab, selected: null, profile: false }); setNotice(''); setEditor({ instanceKey: crypto.randomUUID(), resource: tab === 'companies' ? 'companies' : 'vessels' }) })}>{et.create}</button>}
         {editor && user && <DirectoryEditor key={editor.instanceKey} target={editor} language={language} csrf={user.csrfToken} onDirty={setDirty} onSaving={setSaving}

@@ -2590,5 +2590,36 @@
       "Expert/pilot/release approvals",
       "Existing dependency advisory remediation/release review"
     ]
+  },
+  "today_why_01": {
+    "status": "unverified_authored_checkpoint",
+    "accepted": false,
+    "task": "docs/tasks/today-why-01.md",
+    "phase_report": "docs/phases/TODAY-WHY-01.md",
+    "baseline_commit": "b67dd63",
+    "prerequisite_reviews": [
+      "docs/reviews/dev-oidc-lab-01-93de7b6b376f.json",
+      "docs/reviews/nav-workspace-01-ff1e95ebf5f4.json"
+    ],
+    "delivered": "Scoped Today/Why persisted-draft read projections, fail-closed fixed read audit, honest coverage/freshness, TR/EN vessel workspace/disclosure, offline/reconnect/revocation/refresh flows and authored regressions",
+    "verification": {
+      "current_suites": "DEFERRED / NOT RUN by direct user instruction",
+      "previous_today_worker": "INTERRUPTED deliberately; no inferred product failure",
+      "build_lint_typecheck_restore": "DEFERRED / NOT RUN",
+      "actual_host_openapi_generation_parity": "DEFERRED; inherited contract/type changes retained unchanged, provenance/parity unverified",
+      "browser_lab_python": "DEFERRED / NOT RUN",
+      "independent_target_commit_qa": "PENDING; coordinator-owned",
+      "historical_evidence": "Prior OIDC/NAV evidence retained, not Today verification",
+      "graphify_ast": "AST-only final update exit 0;3014 nodes/4730 edges/239 communities;12 zero-node warnings;not product verification"
+    },
+    "limitations": [
+      "Only persisted regulatory-draft advisory input is supported",
+      "Operational tasks, safety decisions, permits and evidence verification sources unavailable",
+      "No fake lifecycle, operational approval, mandatory policy, verified evidence or owner assignment",
+      "Canonical prerequisites and expert/pilot/release gates remain open"
+    ],
+    "next_step": "Coordinator-directed source-ready regulatory draft foundation package before one combined final gate and independent exact-target QA",
+    "publication": "Local UNVERIFIED checkpoint only; no push/PR/merge/self-approval",
+    "canonical_progress_unchanged": true
   }
 }

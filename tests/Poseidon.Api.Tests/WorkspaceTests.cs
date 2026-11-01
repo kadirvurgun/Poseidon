@@ -21,9 +21,9 @@ public sealed partial class DirectoryWorkspaceTests
         var session = (await client.GetFromJsonAsync<SessionDto>("/api/v1/auth/session", Ct))!;
         Assert.Null(session.TenantName); Assert.False(session.CanReadCompanies); Assert.True(session.CanSearch);
         var workspace = (await client.GetFromJsonAsync<WorkspaceDto>("/api/v1/workspace", Ct))!;
-        Assert.Equal("fleet", Assert.Single(workspace.Destinations).Key);
+        Assert.Equal(["today", "fleet"], workspace.Destinations.Select(x => x.Key).ToArray());
         var page = (await client.GetFromJsonAsync<PageDto<SearchItemDto>>("/api/v1/workspace/search", Ct))!;
-        Assert.Equal(["fleet", SeedVessel.Id.ToString()], page.Items.Select(x => x.Key).ToArray());
+        Assert.Equal(["today", "fleet", SeedVessel.Id.ToString()], page.Items.Select(x => x.Key).ToArray());
         Assert.False(page.HasMore);
         var body = await client.GetStringAsync("/api/v1/workspace/search?tenantId=" + seed.Tenants[1].Id, Ct);
         Assert.DoesNotContain(SeedVessel.CompanyId.ToString(), body);

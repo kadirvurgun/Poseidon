@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-export type WorkspaceLocation = { tab: 'companies' | 'fleet'; selected: string | null; profile: boolean; invalid?: boolean }
+export type WorkspaceLocation = { tab: 'companies' | 'fleet' | 'today'; selected: string | null; profile: boolean; invalid?: boolean }
 const idPattern = /^[a-zA-Z0-9-]{1,64}$/
 export function loginHref() {
   const path = window.location.pathname
@@ -9,7 +9,7 @@ export function loginHref() {
 export function readLocation(path = window.location.pathname): WorkspaceLocation {
   if (path === '/app' || path === '/app/') return { tab: 'companies', selected: null, profile: false }
   // Reject encoded separators, malformed encodings and unknown routes without decoding into a new path.
-  const match = /^\/app\/(companies|fleet)(?:\/([a-zA-Z0-9-]{1,64})(\/profile)?)?\/?$/.exec(path)
+  const match = /^\/app\/(companies|fleet|today)(?:\/([a-zA-Z0-9-]{1,64})(\/profile)?)?\/?$/.exec(path)
   if (!match || (match[3] && match[1] !== 'fleet')) return { tab: 'fleet', selected: null, profile: false, invalid: true }
   return { tab: match[1] as WorkspaceLocation['tab'], selected: match[2] ?? null, profile: !!match[3] }
 }
