@@ -35,3 +35,7 @@ DEV-OIDC-LAB-01 development fixture verification (2026-11-01): official [Keycloa
 - https://registry.npmjs.org/react/latest
 - https://registry.npmjs.org/typescript/latest
 - https://registry.npmjs.org/vite/latest
+
+## SECURE-FILES-01 authoring — NOT EXECUTED
+
+No SDK/library dependency or lock changes. A gate-only official ClamAV container is pinned to `clamav/clamav:1.5.4@sha256:bda39705e291105049c3936e2803ac90b955172af8030f94f05dce1252df6c6d`. Official registry stable/1.5.4 metadata matched this digest on2026-11-01. Protocol/image docs: https://docs.clamav.net/manual/Usage/ClamdProtocol.html and https://docs.clamav.net/manual/Installing/Docker.html . This is a development/CI integration fixture, not a production scanner choice or executed verification. No image was pulled or started; compatibility and real signature tests remain DEFERRED to AUDIT-FILES-BUNDLE-01.

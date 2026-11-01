@@ -21,6 +21,14 @@ jobs:
       - name: Verify Windows scheduler construction without registration
         run: python -m unittest discover -s scripts -p windows_scheduler_checks.py -v
 
+  secret-scanning:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - name: Scan every tracked repository input including controlled documents
+        run: python3 scripts/secret_scan.py --mode repository
+
   persistence-and-security:
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -40,7 +48,26 @@ jobs:
           dotnet test --project tests/Poseidon.Persistence.Tests/Poseidon.Persistence.Tests.csproj --configuration Release --no-build --filter-not-trait "Category=Integration"
           dotnet test --project tests/Poseidon.Domain.Tests/Poseidon.Domain.Tests.csproj --configuration Release --no-build
           dotnet test --project tests/Poseidon.Api.Tests/Poseidon.Api.Tests.csproj --configuration Release --no-build --filter-not-trait "Category=Integration"
+      - name: Start pinned real loopback ClamAV for the integrated file gate
+        run: |
+          docker run --detach --name poseidon-gate-clamd --publish 127.0.0.1:3310:3310 clamav/clamav:1.5.4@sha256:bda39705e291105049c3936e2803ac90b955172af8030f94f05dce1252df6c6d
+          python3 - <<'PY'
+          import socket, time
+          for attempt in range(90):
+              try:
+                  with socket.create_connection(('127.0.0.1', 3310), timeout=2) as peer:
+                      peer.sendall(b'zPING\0')
+                      if peer.recv(5) == b'PONG\0':
+                          break
+              except OSError:
+                  pass
+              time.sleep(1)
+          else:
+              raise SystemExit('Required scanner unavailable')
+          PY
       - name: PostgreSQL integration tests
+        env:
+          POSEIDON_GATE_CLAMD_PORT: '3310'
         run: |
           dotnet test --project tests/Poseidon.Persistence.Tests/Poseidon.Persistence.Tests.csproj --configuration Release --no-build --filter-trait "Category=Integration"
           dotnet test --project tests/Poseidon.Api.Tests/Poseidon.Api.Tests.csproj --configuration Release --no-build --filter-trait "Category=Integration"
@@ -90,6 +117,8 @@ jobs:
           npm run build --prefix frontend
           dotnet restore backend/Poseidon.Api --locked-mode
           dotnet build backend/Poseidon.Api --configuration Release --no-restore
+      - name: Scan actual frontend production output
+        run: python3 scripts/secret_scan.py --mode client --bundle frontend/dist
       - name: Install Chromium
         working-directory: tests/Poseidon.Browser.Tests
         run: npx playwright install --with-deps chromium

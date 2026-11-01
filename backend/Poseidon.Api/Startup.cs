@@ -10,6 +10,11 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         // The generic host completes application configuration before invoking Startup.
         // OIDC scheme registration and membership resolution must share that final configuration.
         services.AddRouting();
+        services.AddDataProtection();
+        services.AddSingleton(configuration.GetSection("SecureFiles").Get<SecureFileSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
+        services.AddSingleton<LocalFileObjects>();
+        services.AddSingleton<ClamdScanner>();
+        services.AddSingleton<FileCapabilities>();
         services.AddFoundationIdentity(configuration, hostEnvironment);
         services.AddScoped<SecurityAudit>();
         services.AddSingleton<Microsoft.AspNetCore.Authorization.IAuthorizationMiddlewareResultHandler, DirectoryAuthorizationResultHandler>();
@@ -18,10 +23,10 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         {
             var http = sp.GetRequiredService<IHttpContextAccessor>().HttpContext!;
             var actor = sp.GetRequiredService<ActorResolver>().Resolve(http.User) ?? throw new UnauthorizedAccessException();
-            var connection = configuration.GetConnectionString("Poseidon") ?? configuration["POSEIDON_DATABASE"];
+            var connection = OperatorSecretReferences.Database(configuration, hostEnvironment);
             if (string.IsNullOrWhiteSpace(connection)) throw new AuditUnavailableException();
             return new PoseidonDbContext(new DbContextOptionsBuilder<PoseidonDbContext>().UseNpgsql(connection).Options,
-                actor.TenantId, new ActorContext(actor.Id.ToString(), "User", http.TraceIdentifier, actor.AuditCapabilities, "WebCommand"));
+                actor.TenantId, new ActorContext(actor.Id.ToString(), "User", http.TraceIdentifier, actor.AuditCapabilities, "WebCommand", actor.RoleContext));
         });
         services.AddProblemDetails();
         services.AddOpenApi(options => options.AddDocumentTransformer((document, _, _) =>
@@ -72,6 +77,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapRegulatoryRegister();
             endpoints.MapToday();
             endpoints.MapAuditHistory();
+            endpoints.MapSecureFiles();
             endpoints.MapGet("/health/live", () => Results.Text("alive"))
                 .WithName("GetLiveness")
                 .WithSummary("Process liveness only; does not indicate database or operational readiness.");

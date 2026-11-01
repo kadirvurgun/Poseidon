@@ -36,6 +36,14 @@ public static class SeedImporter
             db.RegulatoryDraftRevisions.Add(draft.Snapshot());
         }
         await RegulatoryRegisterFixtures.AddMissingAsync(db, data.Tenants, cancellationToken).ConfigureAwait(false);
+        foreach (var vessel in data.Vessels)
+        {
+            if (await db.FileStages.FindAsync([vessel.TenantId, vessel.Id], cancellationToken).ConfigureAwait(false) != null) continue;
+            db.FileStages.Add(new FileStage { TenantId = vessel.TenantId, Id = vessel.Id, VesselId = vessel.Id,
+                ActorId = Guid.Empty, Key = "synthetic-unverified-" + vessel.Id.ToString("N"), Fingerprint = new string('0', 64),
+                Name = "synthetic-unverified.png", ExpectedChecksum = new string('0', 64), ExpectedLength = 0,
+                State = "SyntheticUnverified", CreatedAt = DateTimeOffset.UtcNow });
+        }
         await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         if (transaction is not null)
             await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);

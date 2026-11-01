@@ -13,6 +13,7 @@ public sealed class FederationSettings
     public string? Issuer { get; set; }
     public string? ClientId { get; set; }
     public string? ClientSecret { get; set; }
+    public string? ClientSecretReference { get; set; }
     public Membership[] Memberships { get; set; } = [];
     public bool Configured => Uri.TryCreate(Authority, UriKind.Absolute, out var uri) && uri.Scheme == "https" &&
         !string.IsNullOrWhiteSpace(Issuer) && !string.IsNullOrWhiteSpace(ClientId);
@@ -21,6 +22,7 @@ public sealed class FederationSettings
 // Provisioned by the server operator, never populated from request binding or IdP role claims.
 public sealed record Membership(string Issuer, string Subject, Guid ActorId, Guid TenantId, string[] Permissions, bool TenantWideRead = false, bool TenantWideManage = false, VesselGrant[]? VesselGrants = null)
 {
+    public string[]? RoleReferences { get; set; }
     // ConfigurationBinder must use property binding. Constructor binding can silently
     // omit an array member whose optional collection is an explicit empty JSON array.
     public Membership() : this("", "", Guid.Empty, Guid.Empty, []) { }
@@ -28,6 +30,7 @@ public sealed record Membership(string Issuer, string Subject, Guid ActorId, Gui
 public sealed record VesselGrant(Guid VesselId, bool CanEdit = false);
 public sealed record TrustedActor(Guid Id, Guid TenantId, string[] Permissions, bool TenantWideRead, bool TenantWideManage, VesselGrant[] VesselGrants)
 {
+    public string? RoleContext { get; init; }
     public bool CanReadAudit => Permissions.Contains("audit.read") && CanRead;
     public string AuditCapabilities => string.Join(',', Permissions.Order(StringComparer.Ordinal));
     // Explicit tenant-local capability. Vessel-only grants and directory writes confer no catalog authority.
@@ -49,6 +52,11 @@ public sealed record TrustedActor(Guid Id, Guid TenantId, string[] Permissions, 
 
 public sealed class ActorResolver(FederationSettings settings)
 {
+    // Operator-assigned local role references are observations only: never permission grants or IdP labels.
+    public static string? TrustedRoleContext(string[]? refs) => refs is { Length: > 0 and <= 16 } &&
+        refs.All(x => x != null && x.Length == 36 && Guid.TryParseExact(x, "D", out var id) && id != Guid.Empty) &&
+        refs.Distinct(StringComparer.OrdinalIgnoreCase).Count() == refs.Length
+        ? string.Join(',', refs.Select(x => Guid.Parse(x).ToString("D")).Order(StringComparer.Ordinal)) : null;
     public TrustedActor? Resolve(ClaimsPrincipal principal)
     {
         if (principal.Identity?.IsAuthenticated != true) return null;
@@ -58,8 +66,8 @@ public sealed class ActorResolver(FederationSettings settings)
         var matches = settings.Memberships.Where(x => x.Issuer == issuers[0].Value && x.Subject == subjects[0].Value).ToArray();
         if (matches.Length != 1 || matches[0].ActorId == Guid.Empty || matches[0].TenantId == Guid.Empty) return null;
         var m = matches[0];
-        return new(m.ActorId, m.TenantId, (m.Permissions ?? []).Where(x => x is "directory.read" or "directory.write" or "workspace.search" or "regulatory.draft.read" or "regulatory.draft.write" or "audit.read").Distinct().ToArray(),
-            m.TenantWideRead, m.TenantWideManage, (m.VesselGrants ?? []).Where(g => g.VesselId != Guid.Empty).ToArray());
+        return new TrustedActor(m.ActorId, m.TenantId, (m.Permissions ?? []).Where(x => x is "directory.read" or "directory.write" or "workspace.search" or "regulatory.draft.read" or "regulatory.draft.write" or "audit.read" or "file.read" or "file.write").Distinct().ToArray(),
+            m.TenantWideRead, m.TenantWideManage, (m.VesselGrants ?? []).Where(g => g.VesselId != Guid.Empty).ToArray()) { RoleContext = TrustedRoleContext(m.RoleReferences) };
     }
 }
 
@@ -75,6 +83,9 @@ public static class FoundationIdentity
     public static void AddFoundationIdentity(this IServiceCollection services, IConfiguration configuration, IHostEnvironment environment)
     {
         var settings = configuration.GetSection("Authentication:Oidc").Get<FederationSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new();
+        if (settings.ClientSecretReference != null)
+            settings.ClientSecret = OperatorSecretReferences.Resolve(settings.ClientSecretReference, Environment.GetEnvironmentVariable)
+                ?? throw new InvalidOperationException("Required operator secret is unavailable.");
         services.AddSingleton(settings);
         services.AddSingleton<ActorResolver>();
         services.AddAntiforgery(o =>

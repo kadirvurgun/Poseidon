@@ -73,6 +73,8 @@ namespace Poseidon.Persistence.Migrations
                     b.Property<long?>("AfterVersion").HasColumnType("bigint");
                     b.Property<Guid?>("VesselId").HasColumnType("uuid");
                     b.Property<Guid?>("ResourceId").HasColumnType("uuid");
+                    b.Property<string>("RoleContext").HasMaxLength(600).HasColumnType("character varying(600)");
+
                     b.Property<string>("CapabilityContext").HasMaxLength(512).HasColumnType("character varying(512)");
                     b.Property<string>("ChangeSummary").HasMaxLength(2048).HasColumnType("character varying(2048)");
                     b.Property<long?>("BeforeRevision").HasColumnType("bigint");
@@ -574,6 +576,53 @@ namespace Poseidon.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
+            modelBuilder.Entity("Poseidon.Persistence.FileStage", b =>
+            {
+                b.Property<Guid>("TenantId").HasColumnType("uuid");
+                b.Property<Guid>("Id").HasColumnType("uuid");
+                b.Property<Guid>("VesselId").HasColumnType("uuid");
+                b.Property<Guid>("ActorId").HasColumnType("uuid");
+                b.Property<string>("Key").IsRequired().HasMaxLength(80).HasColumnType("character varying(80)");
+                b.Property<string>("Fingerprint").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");
+                b.Property<string>("Name").IsRequired().HasMaxLength(120).HasColumnType("character varying(120)");
+                b.Property<string>("ExpectedChecksum").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");
+                b.Property<long>("ExpectedLength").HasColumnType("bigint");
+                b.Property<string>("State").IsRequired().HasMaxLength(24).HasColumnType("character varying(24)");
+                b.Property<DateTimeOffset>("CreatedAt").HasColumnType("timestamp with time zone");
+                b.Property<uint>("Version").IsConcurrencyToken().ValueGeneratedOnAddOrUpdate().HasColumnType("xid").HasColumnName("xmin");
+                b.HasKey("TenantId", "Id");
+                b.HasAlternateKey("TenantId", "Id", "VesselId");
+                b.HasIndex("TenantId", "VesselId");
+                b.HasIndex("TenantId", "ActorId", "Key").IsUnique();
+                b.ToTable("FileStages", "files");
+            });
+            modelBuilder.Entity("Poseidon.Persistence.FileStage", b => {
+                b.HasOne("Poseidon.Persistence.Vessel", null).WithMany().HasForeignKey("TenantId", "VesselId").OnDelete(DeleteBehavior.Restrict).IsRequired();
+            });
+
+            modelBuilder.Entity("Poseidon.Persistence.StoredFile", b =>
+            {
+                b.Property<Guid>("TenantId").HasColumnType("uuid");
+                b.Property<Guid>("Id").HasColumnType("uuid");
+                b.Property<Guid>("VesselId").HasColumnType("uuid");
+                b.Property<string>("Name").IsRequired().HasMaxLength(120).HasColumnType("character varying(120)");
+                b.Property<string>("Checksum").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");
+                b.Property<long>("Length").HasColumnType("bigint");
+                b.Property<long>("Revision").HasColumnType("bigint");
+                b.Property<string>("Mime").IsRequired().HasMaxLength(32).HasColumnType("character varying(32)");
+                b.Property<string>("RetentionReference").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");
+                b.Property<string>("ScannerReference").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");
+                b.Property<DateTimeOffset>("ScannedAt").HasColumnType("timestamp with time zone");
+                b.Property<uint>("Version").IsConcurrencyToken().ValueGeneratedOnAddOrUpdate().HasColumnType("xid").HasColumnName("xmin");
+                b.HasKey("TenantId", "Id");
+                b.HasIndex("TenantId", "VesselId");
+                b.HasIndex("TenantId", "Id", "VesselId").IsUnique();
+                b.ToTable("StoredFiles", "files");
+            });
+            modelBuilder.Entity("Poseidon.Persistence.StoredFile", b => {
+                b.HasOne("Poseidon.Persistence.Vessel", null).WithMany().HasForeignKey("TenantId", "VesselId").OnDelete(DeleteBehavior.Restrict).IsRequired();
+                b.HasOne("Poseidon.Persistence.FileStage", null).WithOne().HasForeignKey("Poseidon.Persistence.StoredFile", "TenantId", "Id", "VesselId").HasPrincipalKey("Poseidon.Persistence.FileStage", "TenantId", "Id", "VesselId").OnDelete(DeleteBehavior.Restrict).IsRequired();
+            });
 #pragma warning restore 612, 618
         }
     }

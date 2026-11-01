@@ -2,12 +2,12 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, expect, it, vi } from 'vitest'
 import { AuditWorkspace } from './AuditWorkspace'
-import { decodeAuditPage, decodeAuditRecord } from './audit-api'
+import { changes, decodeAuditPage, decodeAuditRecord } from './audit-api'
 import { locationPath, readLocation } from './workspace-location'
 
 const id = '10000000-0000-0000-0000-000000000001'
 const vessel = '10000000-0000-0000-0000-000000000002'
-const record = { id, occurredAt: '2026-11-01T00:00:00Z', actorReference: null, actorType: 'User', action: 'Modified', entityType: 'RegulatoryDraft', resourceId: vessel, vesselId: vessel, capabilityContext: 'audit.read,directory.read', changeSummary: '[{"field":"ContentJson","before":null,"after":null,"evidence":"RevisionReference"}]', beforeVersion: 21, afterVersion: 22, beforeRevision: 1, afterRevision: 2, reasonStatus: 'NotRequiredForCommand', correlationId: null, metadataStatus: 'Recorded', revisionHref: `/api/v1/audit/${id}/revision` }
+const record = { id, occurredAt: '2026-11-01T00:00:00Z', actorReference: null, actorType: 'User', action: 'Modified', entityType: 'RegulatoryDraft', resourceId: vessel, vesselId: vessel, roleContext: null, capabilityContext: 'audit.read,directory.read', changeSummary: '[{"field":"ContentJson","before":null,"after":null,"evidence":"RevisionReference"}]', beforeVersion: 21, afterVersion: 22, beforeRevision: 1, afterRevision: 2, reasonStatus: 'NotRequiredForCommand', correlationId: null, metadataStatus: 'Recorded', revisionHref: `/api/v1/audit/${id}/revision` }
 const page = { items: [record], total: 1, limit: 25, nextCursor: null }
 const response = (value: unknown, status = 200) => ({ ok: status === 200, status, json: async () => value }) as Response
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals() })
@@ -40,7 +40,7 @@ it.each([401, 403, 404, 503])('clears results on failure %s and retries without 
   expect(await screen.findByRole('table')).toBeVisible()
 })
 it('distinguishes empty authorized history and missing historical values', async () => {
-  vi.stubGlobal('fetch', vi.fn(async (url: string) => response(url.includes('?') ? { ...page, items: [], total: 0 } : { ...record, actorReference: null, capabilityContext: null, changeSummary: null, beforeVersion: null, afterVersion: null, beforeRevision: null, afterRevision: null, revisionHref: null, reasonStatus: null, metadataStatus: 'HistoricalMetadataUnavailable' })))
+  vi.stubGlobal('fetch', vi.fn(async (url: string) => response(url.includes('?') ? { ...page, items: [], total: 0 } : { ...record, actorReference: null, roleContext: null, capabilityContext: null, changeSummary: null, beforeVersion: null, afterVersion: null, beforeRevision: null, afterRevision: null, revisionHref: null, reasonStatus: null, metadataStatus: 'HistoricalMetadataUnavailable' })))
   render(<AuditWorkspace language="en" selected={id} allowed onNavigate={vi.fn()} />)
   expect(await screen.findByText('No authorized records match these filters.')).toBeVisible()
   expect(screen.getByText('Historical values are unavailable.')).toBeVisible()
@@ -75,7 +75,7 @@ it.each([
   { ...record, metadataStatus: ['Recorded'] },
   { ...record, revisionHref: 'https://outside.example/export' },
   { ...record, id: id + '\n' },
-  { ...record, capabilityContext: 'external-admin' },
+  { ...record, roleContext: null, capabilityContext: 'external-admin' },
   { ...record, payload: 'unexpected body' },
   { ...record, changeSummary: '[{"field":"AccessToken","before":null,"after":"secret","evidence":"Allowlisted"}]' },
   { ...record, changeSummary: '[{"field":"Name","before":null,"after":"unexpected text","evidence":"Allowlisted"}]' },
@@ -88,4 +88,20 @@ it.each([
 it('rejects count/page inconsistency, duplicate rows and unsafe cursors', () => {
   for (const value of [{ ...page, total: 0 }, { ...page, items: [record, record] }, { ...page, limit: 100 }, { ...page, nextCursor: 'arbitrary' }])
     expect(() => decodeAuditPage(value, 25)).toThrow()
+})
+it.each(['\n', '\r', '\u2028', '\u2029', '\r\n'])('rejects complete numeric-string suffix %j in audit change evidence', suffix => {
+  for (const field of ['GrossTonnage', 'BollardPullTonnes', 'Revision']) {
+    expect(() => changes(JSON.stringify([{ field, before: null, after: '12' + suffix, evidence: 'Allowlisted' }]))).toThrow()
+    expect(changes(JSON.stringify([{ field, before: null, after: '12', evidence: 'Allowlisted' }]))).toHaveLength(1)
+  }
+})
+it('rejects arrays, objects and coercible values at every wire enum and role boundary', () => {
+  for (const [field, value] of [['actorType', 'User'], ['action', 'Modified'], ['metadataStatus', 'Recorded']]) {
+    for (const invalid of [[value], { toString: () => value }, { value }, null, 1]) expect(() => decodeAuditRecord({ ...record, [field]: invalid })).toThrow()
+  }
+  for (const evidence of [['Allowlisted'], { value: 'Allowlisted' }, 1])
+    expect(() => changes(JSON.stringify([{ field: 'Revision', before: null, after: '1', evidence }]))).toThrow()
+  for (const roleContext of [['operator'], 'directory.write', vessel + '\n', `${vessel},${vessel}`])
+    expect(() => decodeAuditRecord({ ...record, roleContext })).toThrow()
+  expect(decodeAuditRecord({ ...record, roleContext: vessel }).roleContext).toBe(vessel)
 })

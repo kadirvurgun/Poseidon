@@ -4,11 +4,11 @@ using Poseidon.Persistence;
 
 namespace Poseidon.Api;
 
-public sealed class SecurityAudit(IConfiguration configuration, ActorResolver actors, ILogger<SecurityAudit> logger)
+public sealed class SecurityAudit(IConfiguration configuration, ActorResolver actors, ILogger<SecurityAudit> logger, IHostEnvironment environment)
 {
     public async Task WriteAsync(HttpContext http, string action, string result, ClaimsPrincipal? principal = null, Guid? resourceId = null)
     {
-        var connection = configuration.GetConnectionString("Poseidon") ?? configuration["POSEIDON_DATABASE"];
+        var connection = OperatorSecretReferences.Database(configuration, environment);
         if (string.IsNullOrWhiteSpace(connection)) { AuditTelemetry.Record(false, TimeSpan.Zero); throw new AuditUnavailableException(); }
         var actor = actors.Resolve(principal ?? http.User);
         var started = System.Diagnostics.Stopwatch.GetTimestamp();

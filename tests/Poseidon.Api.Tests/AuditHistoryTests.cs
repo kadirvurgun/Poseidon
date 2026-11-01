@@ -35,7 +35,7 @@ public sealed partial class DirectoryWorkspaceTests
         await using var db = Db();
         var sameTenantOther = seed.Vessels.First(x => x.TenantId == SeedVessel.TenantId && x.Id != SeedVessel.Id);
         var otherTenant = seed.Vessels.First(x => x.TenantId != SeedVessel.TenantId);
-        var allowed = await db.AuditEvents.Where(x => x.VesselId == SeedVessel.Id && x.EntityType != nameof(CommandReceipt)).CountAsync(Ct);
+        var allowed = await db.AuditEvents.Where(x => x.VesselId == SeedVessel.Id && x.EntityType != nameof(CommandReceipt) && x.EntityType != nameof(FileStage) && x.EntityType != nameof(StoredFile)).CountAsync(Ct);
         var page = (await client.GetFromJsonAsync<AuditPageDto>("/api/v1/audit?limit=1", Ct))!;
         Assert.Equal(allowed, page.Total); Assert.All(page.Items, x => Assert.Equal(SeedVessel.Id, x.VesselId));
         foreach (var vessel in new[] { sameTenantOther, otherTenant }) {

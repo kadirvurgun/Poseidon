@@ -5,7 +5,7 @@ using Poseidon.Persistence;
 namespace Poseidon.Api;
 
 public sealed record AuditRecordDto(Guid Id, DateTimeOffset OccurredAt, string? ActorReference, string ActorType,
-    string Action, string EntityType, Guid? ResourceId, Guid? VesselId, string? CapabilityContext,
+    string Action, string EntityType, Guid? ResourceId, Guid? VesselId, string? CapabilityContext, string? RoleContext,
     string? ChangeSummary, uint? BeforeVersion, uint? AfterVersion, long? BeforeRevision, long? AfterRevision, string? ReasonStatus,
     string? CorrelationId, string MetadataStatus, string? RevisionHref);
 public sealed record AuditEvidenceDto(string Kind, RegulatoryRevisionDto? Profile, RegisterRevisionDto? Register);
@@ -15,7 +15,7 @@ public sealed record AuditPageDto(AuditRecordDto[] Items, int Total, int Limit, 
 public static class AuditHistoryEndpoints
 {
     private static readonly string[] Types = [nameof(Tenant), nameof(Company), nameof(Vessel), nameof(VesselProfile),
-        nameof(TugProfile), nameof(RegulatoryDraft), nameof(RegulatoryDraftRevision), nameof(RegisterDraft), nameof(RegisterRevision)];
+        nameof(TugProfile), nameof(RegulatoryDraft), nameof(RegulatoryDraftRevision), nameof(RegisterDraft), nameof(RegisterRevision), nameof(FileStage), nameof(StoredFile)];
     public static void MapAuditHistory(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/v1/audit").RequireAuthorization("AuditRead");
@@ -37,13 +37,14 @@ public static class AuditHistoryEndpoints
         }
         // Catalog identifiers and source lineage require the same capability as the actual resource.
         if (!actor.CanReadRegulatory) rows = rows.Where(x => x.EntityType != nameof(RegisterDraft) && x.EntityType != nameof(RegisterRevision));
+        if (!actor.Permissions.Contains("file.read")) rows = rows.Where(x => x.EntityType != nameof(FileStage) && x.EntityType != nameof(StoredFile));
         return rows;
     }
 
     private static AuditRecordDto Dto(AuditEvent e, uint? afterVersion = null) => new(e.Id, e.OccurredAt,
         Guid.TryParse(e.ActorId, out var actor) ? actor.ToString() : e.ActorId == "system:seed-import" ? e.ActorId : null,
         e.ActorType is "User" or "System" ? e.ActorType : "Unavailable", e.Action, e.EntityType,
-        e.ResourceId, e.VesselId, e.CapabilityContext, e.ChangeSummary, e.BeforeVersion, afterVersion, e.BeforeRevision, e.AfterRevision, e.ReasonStatus,
+        e.ResourceId, e.VesselId, e.CapabilityContext, e.RoleContext, e.ChangeSummary, e.BeforeVersion, afterVersion, e.BeforeRevision, e.AfterRevision, e.ReasonStatus,
         (e.CorrelationId.Length == 32 && Guid.TryParseExact(e.CorrelationId, "N", out _) || e.CorrelationId.Length == 36 && Guid.TryParseExact(e.CorrelationId, "D", out _)) ? e.CorrelationId : null,
         e.Source == null ? "HistoricalMetadataUnavailable" : e.CapabilityContext == null ? "CapabilityContextUnavailable" : "Recorded",
         e.AfterRevision is > 0 && e.ResourceId != null && (e.EntityType is nameof(RegulatoryDraft) or nameof(RegulatoryDraftRevision) or nameof(RegisterDraft) or nameof(RegisterRevision))

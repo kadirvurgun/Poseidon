@@ -1,4 +1,54 @@
 {
+  "secure_files_01": {
+    "status": "authored_unverified_not_accepted",
+    "accepted": false,
+    "task": "docs/tasks/secure-files-01.md",
+    "phase_report": "docs/phases/SECURE-FILES-01.md",
+    "baseline_checkpoint": "3fd26e2",
+    "approved_ancestry_merge": "5a2930b17c3895f1d9d20212e0319fff37cf8cd2",
+    "predecessor_head": "80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44",
+    "predecessor_equal_tree": "868a966ab2ed0fd8816f8bc508569e554be69b35",
+    "predecessor_proof_scope": "Supplied QA4/4 and8 checks; predecessor only, no successor acceptance",
+    "delivered": [
+      "Explicit trusted file.read/file.write and vessel scope before file reads/mutations/capabilities",
+      "Metadata-first immutable UUID intent, bounded streamed bytes/checksum/passive PNG subset and real loopback clamd transport",
+      "Immutable file revision, audited DB finalization/receipt, quarantine and xmin-fenced explicit reconciliation",
+      "Actor/tenant/vessel/object/version/expiry-bound download capability with fresh membership and byte integrity",
+      "Accessible TR/EN real vessel file UI, progress/cancel/frozen retry/dirty guard and honest quarantine",
+      "Operator environment secret references; safe bounded tracked-repository/actual production-output scanner and CI authoring",
+      "Separate operator role-reference audit snapshot and complete wire-type/numeric-string regressions",
+      "Metadata-only SyntheticUnverified fixtures and meaningful Domain/PostgreSQL/API/component/browser tests"
+    ],
+    "verification": {
+      "build_restore": "DEFERRED / NOT RUN",
+      "domain": "DEFERRED / NOT RUN",
+      "postgresql_api_migrations_seed": "DEFERRED / NOT RUN",
+      "real_clamd": "DEFERRED / NOT RUN",
+      "repository_and_client_secret_scans": "DEFERRED / NOT RUN",
+      "frontend_components_lint_typecheck_build": "DEFERRED / NOT RUN",
+      "openapi_and_consumers": "DEFERRED / NOT RUN",
+      "playwright_private_provider_tls": "DEFERRED / NOT RUN",
+      "independent_exact_target_qa_ci": "DEFERRED / NOT RUN"
+    },
+    "executed_product_checks": 0,
+    "new_pass_receipts": 0,
+    "canonical_progress_unchanged": true,
+    "canonical_accepted_story_points": 8,
+    "canonical_total_story_points": 970,
+    "user_delivery_target_story_points": 194,
+    "current_phase": "Foundation authoring; UNVERIFIED local checkpoint, not canonical sprint/release acceptance",
+    "open_gates": [
+      "AUDIT-FILES-BUNDLE-01 combined actual gate",
+      "Production object provider/secret references, scanner trust/signature/deployment, operator limits/type policy",
+      "Role catalog/actual configured assignments; no DEV-016100% acceptance from capability strings or references alone",
+      "Retention/legal hold/operator reconciliation scheduling/restore and privacy",
+      "Actual secret scan findings UNKNOWN; no DEV-017 PASS/closure claim",
+      "Independent exact-target review and coordinator-owned publication"
+    ],
+    "publication": "LOCAL UNVERIFIED COMMIT ONLY; no push/PR/new publication merge/self approval; only explicitly authorized predecessor ancestry merge",
+    "next_step": "Coordinator queues AUDIT-FILES-BUNDLE-01 then independent target QA; accepted counts unchanged",
+    "graph_maintenance": "AST-only final graphify update exit0;3604 nodes/6133 edges/294 communities;14 zero-node source warnings;not product verification"
+  },
   "as_of": "2026-11-01",
   "audit_trace_01": {
     "status": "authored_unverified_not_accepted",

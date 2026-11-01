@@ -12,12 +12,14 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
     internal static AuditMetadata From(EntityEntry entry)
     {
         Guid? vessel = entry.Entity switch {
+            FileStage f => f.VesselId, StoredFile f => f.VesselId,
             Vessel v => v.Id, VesselProfile p => p.VesselId, TugProfile p => p.VesselId,
             RegulatoryDraft d => d.VesselId, RegulatoryDraftRevision r => r.VesselId,
             CommandReceipt r when r.Action is "ProfileSave" or "VesselCreate" or "VesselUpdate" => r.ResourceId,
             _ => null
         };
         Guid? resource = entry.Entity switch {
+            FileStage f => f.Id, StoredFile f => f.Id,
             Tenant t => t.Id, Company c => c.Id, Vessel v => v.Id,
             RegisterDraft d => d.Id, RegisterRevision r => r.Id, CommandReceipt r => r.ResourceId,
             _ => vessel
