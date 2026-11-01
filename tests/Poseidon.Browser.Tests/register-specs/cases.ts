@@ -1,3 +1,4 @@
+import { contextCases } from './context-cases.ts'
 import { importCases } from './import-cases.ts'
 import { tugCases } from './tug-cases.ts'
 import { technicalCases } from './technical-cases.ts'
@@ -97,6 +98,7 @@ export async function restrictedRegister(page: Page) {
 }
 
 export const registerCases = [
+  ...contextCases,
   ...importCases,
   ...tugCases,
   ...technicalCases,

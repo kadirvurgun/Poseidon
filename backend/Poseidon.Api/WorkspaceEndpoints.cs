@@ -24,6 +24,7 @@ public static class WorkspaceEndpoints
 
     public static void MapWorkspace(this IEndpointRouteBuilder app)
     {
+        app.MapWorkspaceContext();
         app.MapGet("/api/v1/workspace", async (HttpContext http, ActorResolver actors, SecurityAudit audit) =>
         {
             var actor = actors.Resolve(http.User)!;

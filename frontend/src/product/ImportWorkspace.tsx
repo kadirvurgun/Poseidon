@@ -1,3 +1,4 @@
+import { WorkspaceContextBar } from './WorkspaceContextBar'
 import { useEffect, useRef, useState } from 'react'
 import { ApiError, session } from './api'
 import type { Session } from './directory-contract'
@@ -35,7 +36,7 @@ export function ImportWorkspace({ vessel }: { vessel: string }) {
   }
   return <div className="product-shell import-workspace"><a className="skip-link" href="#import-main">{en ? 'Import' : 'İçe aktarma'}</a>
     <header><a href={`/app?tab=fleet&selected=${vessel}`}>{en ? 'Vessel' : 'Araç'}</a><div role="group" aria-label={en ? 'Language' : 'Dil'}>
-      <button onClick={() => setLanguage('tr')} aria-pressed={!en}>TR</button><button onClick={() => setLanguage('en')} aria-pressed={en}>EN</button></div></header>
+      <button onClick={() => setLanguage('tr')} aria-pressed={!en}>TR</button><button onClick={() => setLanguage('en')} aria-pressed={en}>EN</button></div><WorkspaceContextBar session={identity} vessel={vessel} language={language} /></header>
     <main id="import-main" tabIndex={-1}><h1>{en ? 'Controlled import' : 'Kontrollü içe aktarma'}</h1>
       <p>{en ? 'Vessel · crew · certificate · equipment. Declarations remain unverified. Trial results do not grant owner sign-off, pilot authorization or readiness.' : 'Araç · mürettebat · sertifika · ekipman. Beyanlar doğrulanmamış kalır. Deneme sonuçları veri sahibi onayı, pilot yetkisi veya hazır olma durumu oluşturmaz.'}</p>
       {error ? <div role="alert"><p>{error === 401 ? (en ? 'Sign in again.' : 'Yeniden oturum açın.') : (en ? 'Import access unavailable.' : 'İçe aktarma erişimi kullanılamıyor.')}</p>

@@ -1,4 +1,5 @@
 import { CrewPersonalProfile } from './CrewPersonalProfile'
+import { WorkspaceContextBar } from './WorkspaceContextBar'
 import { CertificatePanel } from './CertificatePanel'
 import { useEffect, useRef, useState } from 'react'
 import { ApiError, session, request } from './api'
@@ -110,7 +111,7 @@ export function CrewWorkspace({ vessel, assignment }: { vessel: string; assignme
   const nullable = (value: string | null | undefined) => value ?? t.unknown
   const navigate = (href: string) => { if (editor || childDirty || saving) setDestination(href); else window.location.assign(href) }
   return <div className="product-shell crew-shell"><a className="skip-link" href="#crew-main">{assignment ? t.profile : t.title}</a>
-    <header className="product-header"><a href="/app">POSEIDON</a><div role="group" aria-label={t.language}><button aria-pressed={language === 'tr'} onClick={() => setLanguage('tr')}>TR</button><button aria-pressed={language === 'en'} onClick={() => setLanguage('en')}>EN</button></div></header>
+    <header className="product-header"><a href="/app">POSEIDON</a><div role="group" aria-label={t.language}><button aria-pressed={language === 'tr'} onClick={() => setLanguage('tr')}>TR</button><button aria-pressed={language === 'en'} onClick={() => setLanguage('en')}>EN</button></div><WorkspaceContextBar session={user} vessel={vessel} language={language} /></header>
     <main id="crew-main" tabIndex={-1}>
       <nav><a href={`/app/fleet/${vessel}`} onClick={e => { e.preventDefault(); navigate(`/app/fleet/${vessel}`) }}>{t.fleet}</a>{assignment && <a href={rosterHref} onClick={e => { e.preventDefault(); navigate(rosterHref) }}>{t.roster}</a>}</nav>
       <h1>{assignment ? t.profile : t.title}</h1><p>{t.privacy}</p><p>{t.unverified}</p>

@@ -1,7 +1,8 @@
+import { WorkspaceContextBar } from './WorkspaceContextBar'
 import { useEffect, useState } from 'react'
 import './tug.css'
 import { DraftConfirmation } from './DraftConfirmation'
-import { ApiError, session } from './api'
+import { ApiError, session, type Session } from './api'
 import { emptyTugInputs, tugApi, type TugAttempt, type TugBoard, type TugContext, type TugInputs, type TugRequest } from './tug-api'
 
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -23,6 +24,7 @@ function location() {
 export function TugWorkspace() {
   const [lang, language] = useState<'tr' | 'en'>('tr'), t = text[lang]
   const [route, setRoute] = useState(location), [reload, setReload] = useState(0)
+  const [user, setUser] = useState<Session | null>(null)
   const [ctx, context] = useState<TugContext | null>(null), [vessels, setVessels] = useState<TugContext['vessel'][]>([])
   const [board, setBoard] = useState<TugBoard | null>(null), [record, setRecord] = useState<TugRequest | null>(null)
   const [inputs, setInputs] = useState<TugInputs>(emptyTugInputs), [csrf, setCsrf] = useState('')
@@ -46,12 +48,12 @@ export function TugWorkspace() {
   }, [lang, t.title])
   useEffect(() => {
     const c = new AbortController(); let active = true; const timeout = setTimeout(() => c.abort(), 10000)
-    setLoading(true); setError(0); context(null); setBoard(null); setRecord(null); setSearch(route.q); setEditing(route.screen === 'tug-job-intake'); setDirty(false); setAttempt(null); setConflict(false); setInputs(emptyTugInputs())
+    setLoading(true); setError(0); setUser(null); context(null); setBoard(null); setRecord(null); setSearch(route.q); setEditing(route.screen === 'tug-job-intake'); setDirty(false); setAttempt(null); setConflict(false); setInputs(emptyTugInputs())
     async function load() {
       if (route.invalid) throw new ApiError(400)
       const s = await session(c.signal)
       if (!s.authenticated || !s.canRead) throw new ApiError(403)
-      if (active) setCsrf(s.csrfToken)
+      if (active) { setCsrf(s.csrfToken); setUser(s) }
       if (!route.vessel) { const list = await tugApi.vessels(c.signal); if (active) setVessels(list.vessels); return }
       const v = await tugApi.context(route.vessel, c.signal); if (!active) return; context(v)
       if (route.screen === 'tug-job-board') { const b = await tugApi.board(route.vessel, route.priority, route.q, route.offset, c.signal); if (active) setBoard(b) }
@@ -78,7 +80,7 @@ export function TugWorkspace() {
   const formOpen = ctx?.canWrite && editing
   const nullText = (value: string | null | undefined) => value ?? t.unknown
   return <div className="product-shell tug-workspace"><a className="skip-link" href="#tug-main">{lang === 'en' ? 'Skip to content' : 'İçeriğe geç'}</a>
-    <header className="product-header"><a className="product-brand" href="/app" onClick={e => { if (dirty || attempt || busy) { e.preventDefault(); guard(() => window.location.assign('/app')) } }}>POSEIDON</a><div role="group" aria-label="Language"><button aria-pressed={lang === 'tr'} onClick={() => language('tr')}>TR</button><button aria-pressed={lang === 'en'} onClick={() => language('en')}>EN</button></div></header>
+    <header className="product-header"><a className="product-brand" href="/app" onClick={e => { if (dirty || attempt || busy) { e.preventDefault(); guard(() => window.location.assign('/app')) } }}>POSEIDON</a><div role="group" aria-label="Language"><button aria-pressed={lang === 'tr'} onClick={() => language('tr')}>TR</button><button aria-pressed={lang === 'en'} onClick={() => language('en')}>EN</button></div><WorkspaceContextBar session={user} vessel={route.vessel || null} language={lang} /></header>
     <main id="tug-main" tabIndex={-1}><h1>{t.title}</h1><p>{t.boundary}</p>{offline && <p role="alert">{t.offline}</p>}
       {loading && <p role="status">{t.loading}</p>}{error > 0 && <div role="alert"><p>{[401, 403, 404].includes(error) ? t.denied : t.unavailable}</p><button onClick={() => guard(() => setReload(n => n + 1))}>{t.retry}</button></div>}
       {!loading && !error && !route.vessel && <section><h2>{t.select}</h2>{vessels.length === 0 && <p>{t.empty}</p>}{vessels.map(v => <p key={v.id}><a href={`/app/tug-command?vessel=${v.id}`} onClick={e => { e.preventDefault(); move(`/app/tug-command?vessel=${v.id}`) }}>{v.code} · {v.name}</a></p>)}</section>}

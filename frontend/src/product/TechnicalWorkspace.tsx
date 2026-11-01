@@ -1,4 +1,5 @@
 import { MaintenanceObservations } from './MaintenanceObservations'
+import { WorkspaceContextBar } from './WorkspaceContextBar'
 import { dueReason, dueState } from './maintenance-copy'
 import { useEffect, useRef, useState } from 'react'
 import { ApiError, session } from './api'
@@ -161,7 +162,7 @@ export function TechnicalWorkspace() {
     const a = (e.target as HTMLElement).closest('a')
     if (a && (dirty || busy || uncertain)) { e.preventDefault(); guard(() => { window.location.assign(a.href) }) }
   }}>
-    <header><a href={`/app/fleet/${route.vessel}`}>{en ? 'Back to vessel' : 'Araca dön'}</a><div role="group" aria-label={en ? 'Language' : 'Dil'}><button onClick={() => setLanguage('tr')}>TR</button><button onClick={() => setLanguage('en')}>EN</button></div></header>
+    <header><a href={`/app/fleet/${route.vessel}`}>{en ? 'Back to vessel' : 'Araca dön'}</a><div role="group" aria-label={en ? 'Language' : 'Dil'}><button onClick={() => setLanguage('tr')}>TR</button><button onClick={() => setLanguage('en')}>EN</button></div><WorkspaceContextBar session={user} vessel={route.vessel} language={language} /></header>
     <main id="technical-main"><h1>{route.plan ? (en ? 'Maintenance plan' : 'Bakım planı') : (en ? 'Equipment hierarchy' : 'Ekipman hiyerarşisi')}</h1>
       <nav aria-label={en ? 'Technical' : 'Teknik'}><button aria-current={!route.plan ? 'page' : undefined} disabled={busy || uncertain} onClick={() => navigate({ ...route, plan: false, id: null })}>{en ? 'Equipment' : 'Ekipman'}</button><button aria-current={route.plan ? 'page' : undefined} disabled={busy || uncertain} onClick={() => navigate({ ...route, plan: true, id: null })}>{en ? 'Plans' : 'Planlar'}</button></nav>
       {offline && <p role="alert">{en ? 'Offline. Reconnect before saving or refreshing.' : 'Çevrimdışı. Kaydetmek veya yenilemek için yeniden bağlanın.'}</p>}
