@@ -1,0 +1,11 @@
+.import-results { min-width: 0; }
+.import-results__counts { display: flex; flex-wrap: wrap; gap: 1rem 2rem; }
+.import-results__counts dd { margin: .3rem 0; font-size: 1.4rem; }
+.import-results__scroll { overflow-x: auto; max-width: 100%; border: 1px solid currentColor; border-radius: .5rem; }
+.import-results table { width: 100%; border-collapse: collapse; }
+.import-results caption { text-align: start; padding: .7rem; font-weight: 600; }
+.import-results :is(td, th) { text-align: start; vertical-align: top; padding: .7rem; border-block-start: 1px solid currentColor; overflow-wrap: anywhere; }
+.import-results ul { margin: 0; padding-inline-start: 1.2rem; }
+.import-results__actions { display: flex; flex-wrap: wrap; gap: .8rem; margin-block: 1rem; }
+.import-results button { min-height: 44px; padding: .6rem 1rem; font: inherit; }
+.import-results :is(button, .import-results__scroll):focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
