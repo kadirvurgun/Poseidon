@@ -44,11 +44,29 @@ public static class ErpReferenceBoundary
         if (x.ValueKind != JsonValueKind.String || !Token(x.GetString(), length)) return false;
         value = x.GetString(); return true;
     }
-    private static bool Integer(JsonElement e, string key, out long value) {
+    private static bool PositiveInteger(JsonElement e, string key, out long value) {
         value = 0;
-        if (!e.TryGetProperty(key, out var x) || x.ValueKind != JsonValueKind.Number || !x.TryGetDecimal(out var number) ||
-            number != decimal.Truncate(number) || number < long.MinValue || number > long.MaxValue) return false;
-        value = (long)number; return true;
+        if (!e.TryGetProperty(key, out var x) || x.ValueKind != JsonValueKind.Number) return false;
+        var raw = x.GetRawText();
+        if (raw.StartsWith('-')) return false;
+        var exponentAt = raw.IndexOfAny(['e', 'E']); var exponent = 0;
+        if (exponentAt >= 0 && !int.TryParse(raw[(exponentAt + 1)..], NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out exponent)) return false;
+        var mantissa = exponentAt < 0 ? raw : raw[..exponentAt]; var dot = mantissa.IndexOf('.');
+        var digits = mantissa.Replace(".", "", StringComparison.Ordinal).TrimStart('0');
+        if (digits.Length == 0) return false;
+        var scale = (long)exponent - (dot < 0 ? 0 : mantissa.Length - dot - 1);
+        if (scale < 0) {
+            var remove = -scale;
+            if (remove >= digits.Length) return false;
+            var cut = digits.Length - (int)remove;
+            if (digits.AsSpan(cut).IndexOfAnyExcept('0') >= 0) return false;
+            digits = digits[..cut]; scale = 0;
+        }
+        // Exact decimal lexeme arithmetic: decimal parsing could round a tiny
+        // fractional revision to an integer. No floating-point or rounding.
+        if (digits.Length + scale > 16 || !long.TryParse(digits, NumberStyles.None, CultureInfo.InvariantCulture, out value)) return false;
+        for (var i = 0L; i < scale; i++) value *= 10;
+        return value > 0 && value <= MaxSourceRevision;
     }
     public static bool TryRead(string? json, ErpReferenceContext context, out ErpReferenceProjection? projection) {
         projection = null;
@@ -62,13 +80,13 @@ public static class ErpReferenceBoundary
             if (e.ValueKind != JsonValueKind.Object) return false;
             var names = new HashSet<string>(StringComparer.Ordinal);
             foreach (var field in e.EnumerateObject()) if (!Fields.Contains(field.Name) || !names.Add(field.Name)) return false;
-            if (!Integer(e, "contractVersion", out var v) || v != ContractVersion ||
+            if (!PositiveInteger(e, "contractVersion", out var v) || v != ContractVersion ||
                 !Id(e, "messageId", out var message) || !Id(e, "referenceId", out var reference) || !Id(e, "tenantId", out var tenant) || !Id(e, "vesselId", out var vessel) ||
                 reference != context.ReferenceId || tenant != context.TenantId || vessel != context.VesselId ||
                 !Text(e, "kind", 32, true, out var kind) || kind != context.Kind ||
                 !Text(e, "sourceSystem", 64, true, out var system) || system != context.SourceSystem ||
                 !Text(e, "sourceVersion", 80, true, out var sourceVersion) || sourceVersion != context.SourceVersion ||
-                !Integer(e, "sourceRevision", out var rev) || rev < 1 || rev > MaxSourceRevision ||
+                !PositiveInteger(e, "sourceRevision", out var rev) || rev < 1 || rev > MaxSourceRevision ||
                 !Text(e, "externalReference", 160, true, out var external) ||
                 !Text(e, "externalStatus", 64, false, out var status) ||
                 !Text(e, "externalPurchaseOrderReference", 160, false, out var po) ||

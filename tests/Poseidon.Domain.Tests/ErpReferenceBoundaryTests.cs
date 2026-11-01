@@ -88,13 +88,19 @@ public sealed class ErpReferenceBoundaryTests
         var json = Input().ToJsonString().Replace("\"contractVersion\":1", "\"contractVersion\":1.0", StringComparison.Ordinal)
             .Replace("\"sourceRevision\":2", "\"sourceRevision\":2e0", StringComparison.Ordinal);
         Assert.True(ErpReferenceBoundary.TryRead(json, Context(), out var result)); Assert.Equal(2, result!.Reference.SourceRevision);
+        foreach (var token in new[] { "2.0000000000000000000000000000000000000001", "2e-100", "2e999999999999999999", "-2", "0e999999999999999999" }) {
+            var precise = Input().ToJsonString().Replace("\"sourceRevision\":2", "\"sourceRevision\":" + token, StringComparison.Ordinal);
+            Assert.False(ErpReferenceBoundary.TryRead(precise, Context(), out _));
+        }
+        var exact = Input().ToJsonString().Replace("\"sourceRevision\":2", "\"sourceRevision\":2.0000000000000000000000000000000000000000", StringComparison.Ordinal);
+        Assert.True(ErpReferenceBoundary.TryRead(exact, Context(), out _));
         var fractional = Input(); fractional["sourceRevision"] = 2.5m;
         Assert.False(ErpReferenceBoundary.TryRead(fractional.ToJsonString(), Context(), out _));
         var safeLimit = Input(); safeLimit["sourceRevision"] = ErpReferenceBoundary.MaxSourceRevision;
         Assert.Equal(ErpReferenceBoundary.MaxSourceRevision, Read(safeLimit).Reference.SourceRevision);
     }
     [Theory]
-    [InlineData("{]")][InlineData("[]")][InlineData("null")][InlineData("{}")] 
+    [InlineData("{]")][InlineData("[]")][InlineData("null")][InlineData("{}")]
     public void Invalid_json_shapes_have_no_projection(string json) => Assert.False(ErpReferenceBoundary.TryRead(json, Context(), out _));
     [Fact]
     public void Invalid_policy_versions_types_dates_limits_and_empty_ids_fail_closed() {
