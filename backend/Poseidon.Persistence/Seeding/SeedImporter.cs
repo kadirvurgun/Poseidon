@@ -46,6 +46,7 @@ public static class SeedImporter
                 VesselId = vessel.Id, Revision = 1, SavedAt = DateTimeOffset.UtcNow, Provenance = "SyntheticUnverified" });
         }
         await RegulatoryRegisterFixtures.AddMissingAsync(db, data.Tenants, cancellationToken).ConfigureAwait(false);
+        await ControlEvidenceFixtures.AddMissingAsync(db, data.Vessels, cancellationToken).ConfigureAwait(false);
         await ApplicabilityFixtures.AddMissingAsync(db, data.Tenants, cancellationToken).ConfigureAwait(false);
         foreach (var vessel in data.Vessels)
         {

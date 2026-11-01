@@ -105,3 +105,12 @@
 .crew-shell dialog { max-width: min(32rem, 90vw); padding: 1.5rem; border: 1px solid #9eb3c0; border-radius: 6px; background: #f4f7f9; color: #193344; }
 .crew-shell dialog::backdrop { background: rgb(16 45 62 / .65); }
 @media (max-width: 600px) { .crew-shell fieldset { grid-template-columns: minmax(0, 1fr); } }
+.control-evidence { min-width: 0; max-width: 100%; }
+.control-evidence fieldset { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)); gap: 1rem; min-width: 0; margin: 1rem 0; }
+.control-evidence label { display: flex; flex-direction: column; gap: .4rem; min-width: 0; }
+.control-evidence input, .control-evidence select, .control-evidence textarea { width: 100%; min-width: 0; max-width: 100%; min-height: 44px; box-sizing: border-box; padding: .6rem; font: inherit; }
+.control-evidence input[type=checkbox] { width: 1.5rem; }
+.control-evidence p, .control-evidence li, .control-evidence button, .control-evidence summary { overflow-wrap: anywhere; }
+.control-evidence button { min-height: 44px; max-width: 100%; white-space: normal; }
+.control-evidence :focus-visible { outline: 3px solid #126b94; outline-offset: 3px; }
+.control-evidence article { padding: 1rem; margin-block: 1rem; border: 1px solid #9eb3c0; }

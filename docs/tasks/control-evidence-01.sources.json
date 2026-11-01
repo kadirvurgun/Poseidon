@@ -1,0 +1,576 @@
+{
+  "baseline_id": "poseidon-v46.3-20261030",
+  "authority": "controlled candidate; no source/legal admission",
+  "records": [
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:611",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A611: Doküman, Kanıt ve Bilgi | B611: Kontrollü Bilgi ve Kanıt | C611: Doküman, kanıt ve veri güveni | D611: Ortak | E611: evidence-graph | F611: Evidence Graph | G611: Regulatory Control | H611: record_id | I611: Record ID | J611: input/text | K611: Metin Girişi | L611: Text | M611: Text | N611: varchar/text — length TBD | O611: TBD | P611: TBD | Q611: Conditional | R611: No | S611: PLACEHOLDER — REVIEW_REQUIRED | U611: N/A | V611: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | W611: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X611: Type, length, format and contextual uniqueness rules | Y611: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z611: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA611: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB611: Read cache if available; authoritative configuration/publish actions require server connectivity. | AC611: /api/v1/evidence-graph | AD611: EvidenceGraph | AE611: record_id | AF611: UNCONFIRMED — physical schema review | AG611: FR-evidence-graph-record_id | AH611: TC-evidence-graph-record_id | AI611: P1 | AJ611: DEFAULT_PLACEHOLDER; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK611: UI/TRACE TAM — PROD REVIEW | AL611: SOURCE + DERIVED GAP ANALYSIS | AM611: ÖNERİ: Evidence Graph bağlamında Record ID. İş anlamı/birim BA onayı bekler. | AN611: Metin Girişi | AO611: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ611: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AV611: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD611: Record ID: Type, length, format and contextual uniqueness rules | BE611: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH611: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ611: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK611: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN611: DEC-DATA-01…06 | BO611: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:612",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A612: Doküman, Kanıt ve Bilgi | B612: Kontrollü Bilgi ve Kanıt | C612: Doküman, kanıt ve veri güveni | D612: Ortak | E612: evidence-graph | F612: Evidence Graph | G612: Regulatory Control | H612: vessel_imo | I612: Vessel / IMO | J612: input/text | K612: Metin Girişi | L612: Identifier | M612: Identifier | N612: uuid/text — REVIEW | O612: TBD | P612: TBD | Q612: Yes | R612: No | S612: PLACEHOLDER — REVIEW_REQUIRED | U612: N/A | V612: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | W612: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X612: 7-digit IMO number | Y612: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z612: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA612: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB612: Read cache if available; authoritative configuration/publish actions require server connectivity. | AC612: /api/v1/evidence-graph | AD612: EvidenceGraph | AE612: vessel_imo | AF612: UNCONFIRMED — physical schema review | AG612: FR-evidence-graph-vessel_imo | AH612: TC-evidence-graph-vessel_imo | AI612: P1 | AJ612: DEFAULT_PLACEHOLDER; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK612: UI/TRACE TAM — PROD REVIEW | AL612: SOURCE + DERIVED GAP ANALYSIS | AM612: ÖNERİ: Evidence Graph bağlamında Vessel / IMO. İş anlamı/birim BA onayı bekler. | AN612: Metin Girişi | AO612: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ612: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AR612: SOURCE: required | AS612: Vessel.imo_no | AT612: 14.01 §4/§15; logical mapping candidate, NOT physical FK | AV612: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | AW612: 7 karakter (11.01 validation); fiziksel tip onaysız | BD612: Vessel / IMO: yedi rakam giriniz. | BE612: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH612: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ612: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK612: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN612: DEC-DATA-01…06 | BO612: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:613",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A613: Doküman, Kanıt ve Bilgi | B613: Kontrollü Bilgi ve Kanıt | C613: Doküman, kanıt ve veri güveni | D613: Ortak | E613: evidence-graph | F613: Evidence Graph | G613: Regulatory Control | H613: requirement_ref | I613: Applicable Requirement | J613: input/text | K613: Metin Girişi | L613: Controlled Reference | M613: Reference | N613: uuid or text FK — REVIEW | O613: TBD | P613: TBD | Q613: Yes | R613: No | S613: PLACEHOLDER — REVIEW_REQUIRED | U613: KAYNAK EKSİK / TÜRÜ DOĞRULANACAK | V613: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | W613: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X613: Published/approved source/version/reference | Y613: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z613: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA613: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB613: Read cache if available; authoritative configuration/publish actions require server connectivity. | AC613: /api/v1/evidence-graph | AD613: EvidenceGraph | AE613: requirement_ref | AF613: UNCONFIRMED — physical schema review | AG613: FR-evidence-graph-requirement_ref | AH613: TC-evidence-graph-requirement_ref | AI613: P0 | AJ613: DEFAULT_PLACEHOLDER; LOOKUP_SOURCE_MISSING; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK613: UI/TRACE TAM — PROD REVIEW | AL613: SOURCE + DERIVED GAP ANALYSIS | AM613: ÖNERİ: Evidence Graph bağlamında Applicable Requirement. İş anlamı/birim BA onayı bekler. | AN613: ÖNERİ: yetkili referans seçici; free-text değil | AO613: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ613: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AR613: SOURCE: required | AV613: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD613: Applicable Requirement: geçerli ve bu bağlamda yetkili bir referans seçiniz. | BE613: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH613: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ613: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK613: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN613: DEC-DATA-01…06 | BO613: REVIEW_REQUIRED | BR613: evidence-graph::requirement_ref | BT613: RECOVERED_ENTITY_ONLY"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:614",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A614: Doküman, Kanıt ve Bilgi | B614: Kontrollü Bilgi ve Kanıt | C614: Doküman, kanıt ve veri güveni | D614: Ortak | E614: evidence-graph | F614: Evidence Graph | G614: Regulatory Control | H614: responsible_role | I614: Responsible Role | J614: input/text | K614: Metin Girişi | L614: Reference | M614: Reference | N614: uuid or text FK — REVIEW | O614: TBD | P614: TBD | Q614: Yes/Business rule | R614: Context role/user | S614: Bağlamdan türetilir | U614: KAYNAK EKSİK / TÜRÜ DOĞRULANACAK | V614: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | W614: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X614: Active authorized role/user in tenant/vessel scope | Y614: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z614: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA614: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB614: Read cache if available; authoritative configuration/publish actions require server connectivity. | AC614: /api/v1/evidence-graph | AD614: EvidenceGraph | AE614: responsible_role | AF614: UNCONFIRMED — physical schema review | AG614: FR-evidence-graph-responsible_role | AH614: TC-evidence-graph-responsible_role | AI614: P0 | AJ614: LOOKUP_SOURCE_MISSING; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK614: UI/TRACE TAM — PROD REVIEW | AL614: SOURCE + DERIVED GAP ANALYSIS | AM614: ÖNERİ: Evidence Graph bağlamında Responsible Role. İş anlamı/birim BA onayı bekler. | AN614: ÖNERİ: yetkili referans seçici; free-text değil | AO614: CONTEXT_DERIVED | AQ614: DERIVATION_REQUIRES_SPECIFICATION | AV614: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD614: Responsible Role: geçerli ve bu bağlamda yetkili bir referans seçiniz. | BE614: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH614: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ614: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK614: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN614: DEC-DATA-01…06 | BO614: REVIEW_REQUIRED | BR614: evidence-graph::responsible_role | BT614: RECOVERED_ENTITY_ONLY"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:615",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A615: Doküman, Kanıt ve Bilgi | B615: Kontrollü Bilgi ve Kanıt | C615: Doküman, kanıt ve veri güveni | D615: Ortak | E615: evidence-graph | F615: Evidence Graph | G615: Regulatory Control | H615: record_datetime | I615: Record Date/Time | J615: input/datetime-local | K615: Tarih-Saat | L615: Date/Time | M615: DateTime | N615: timestamptz | O615: TBD | P615: TBD | Q615: Business rule | R615: Yes | S615: Kaynakta explicit — production doğrulaması gerekir | U615: N/A | V615: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | W615: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X615: Valid ISO/local datetime; chronology and expiry rules | Y615: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z615: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA615: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB615: Read cache if available; authoritative configuration/publish actions require server connectivity. | AC615: /api/v1/evidence-graph | AD615: EvidenceGraph | AE615: record_datetime | AF615: UNCONFIRMED — physical schema review | AG615: FR-evidence-graph-record_datetime | AH615: TC-evidence-graph-record_datetime | AI615: P1 | AJ615: EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK615: UI/TRACE TAM — PROD REVIEW | AL615: SOURCE + DERIVED GAP ANALYSIS | AM615: ÖNERİ: Evidence Graph bağlamında Record Date/Time. İş anlamı/birim BA onayı bekler. | AN615: Tarih-Saat | AO615: NO_IMPLICIT_DEFAULT_SOURCE_CONFLICT | AQ615: DATE_TIME_DEFAULT_REQUIRES_LITERAL_OR_DERIVATION | AV615: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD615: Record Date/Time: geçerli tarih/saat giriniz; kronoloji ve geçerlilik koşullarını kontrol ediniz. | BE615: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH615: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ615: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK615: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN615: DEC-DATA-01…06 | BO615: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:616",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A616: Doküman, Kanıt ve Bilgi | B616: Kontrollü Bilgi ve Kanıt | C616: Doküman, kanıt ve veri güveni | D616: Ortak | E616: evidence-graph | F616: Evidence Graph | G616: Regulatory Control | H616: status | I616: Operational Status | J616: select/select | K616: Seçim Listesi | L616: State | M616: Controlled Code / Enum | N616: text / controlled-code FK — REVIEW | O616: TBD | P616: TBD | Q616: System/Business rule | R616: System | S616: Sistem tarafından türetilir | T616: Open; In Review; Effective; Attention; Restricted; Closed; Not Applicable | U616: Tanımlı | V616: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | W616: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X616: Allowed state machine transition only | Y616: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z616: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA616: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB616: Read cache if available; authoritative configuration/publish actions require server connectivity. | AC616: /api/v1/evidence-graph | AD616: EvidenceGraph | AE616: status | AF616: UNCONFIRMED — physical schema review | AG616: FR-evidence-graph-status | AH616: TC-evidence-graph-status | AI616: P1 | AJ616: EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK616: UI/TRACE TAM — PROD REVIEW | AL616: SOURCE + DERIVED GAP ANALYSIS | AM616: ÖNERİ: Evidence Graph bağlamında Operational Status. İş anlamı/birim BA onayı bekler. | AN616: Seçim Listesi | AO616: SYSTEM_DERIVED | AQ616: DERIVATION_REQUIRES_SPECIFICATION | AU616: INLINE_SOURCE_OPTIONS | AV616: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD616: Operational Status: tanımlı seçeneklerden birini seçiniz. | BE616: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH616: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ616: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK616: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN616: DEC-DATA-01…06 | BO616: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:617",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A617: Doküman, Kanıt ve Bilgi | B617: Kontrollü Bilgi ve Kanıt | C617: Doküman, kanıt ve veri güveni | D617: Ortak | E617: evidence-graph | F617: Evidence Graph | G617: Regulatory Control | H617: evidence_ref | I617: Evidence Reference | J617: input/text | K617: Metin Girişi | L617: Narrative/Reference | M617: Narrative Text | N617: text | O617: TBD | P617: TBD | Q617: Business rule | R617: No | S617: PLACEHOLDER — REVIEW_REQUIRED | U617: N/A | V617: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | W617: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X617: Trimmed non-empty when required; length/content policy | Y617: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z617: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA617: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB617: Read cache if available; authoritative configuration/publish actions require server connectivity. | AC617: /api/v1/evidence-graph | AD617: EvidenceGraph | AE617: evidence_ref | AF617: UNCONFIRMED — physical schema review | AG617: FR-evidence-graph-evidence_ref | AH617: TC-evidence-graph-evidence_ref | AI617: P1 | AJ617: DEFAULT_PLACEHOLDER; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK617: UI/TRACE TAM — PROD REVIEW | AL617: SOURCE + DERIVED GAP ANALYSIS | AM617: ÖNERİ: Evidence Graph bağlamında Evidence Reference. İş anlamı/birim BA onayı bekler. | AN617: ÖNERİ: yetkili referans seçici; free-text değil | AO617: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ617: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AV617: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD617: Evidence Reference: geçerli ve bu bağlamda yetkili bir referans seçiniz. | BE617: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH617: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ617: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK617: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN617: DEC-DATA-01…06 | BO617: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:618",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A618: Doküman, Kanıt ve Bilgi | B618: Kontrollü Bilgi ve Kanıt | C618: Doküman, kanıt ve veri güveni | D618: Ortak | E618: evidence-graph | F618: Evidence Graph | G618: Regulatory Control | H618: verifier | I618: Verifier / Approver | J618: input/text | K618: Metin Girişi | L618: Controlled Decision | M618: Controlled Code / Enum | N618: text / controlled-code FK — REVIEW | O618: TBD | P618: TBD | Q618: Yes | R618: No | S618: PLACEHOLDER — REVIEW_REQUIRED | U618: KAYNAK EKSİK / TÜRÜ DOĞRULANACAK | V618: Authorized human decision role only; Master authority where operational safety decision applies | W618: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X618: Authorized role; reason/evidence prerequisites; legal transition | Y618: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z618: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA618: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB618: Read cache if available; authoritative configuration/publish actions require server connectivity. | AC618: /api/v1/evidence-graph | AD618: EvidenceGraph | AE618: verifier | AF618: UNCONFIRMED — physical schema review | AG618: FR-evidence-graph-verifier | AH618: TC-evidence-graph-verifier | AI618: P0 | AJ618: DEFAULT_PLACEHOLDER; LOOKUP_SOURCE_MISSING; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK618: UI/TRACE TAM — PROD REVIEW | AL618: SOURCE + DERIVED GAP ANALYSIS | AM618: ÖNERİ: Evidence Graph bağlamında Verifier / Approver. İş anlamı/birim BA onayı bekler. | AN618: Metin Girişi | AO618: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ618: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AR618: SOURCE: required | AV618: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD618: Verifier / Approver: Authorized role; reason/evidence prerequisites; legal transition | BE618: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH618: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ618: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK618: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN618: DEC-DATA-01…06 | BO618: REVIEW_REQUIRED | BR618: evidence-graph::verifier | BT618: CONFLICT"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:619",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A619: Doküman, Kanıt ve Bilgi | B619: Kontrollü Bilgi ve Kanıt | C619: Doküman, kanıt ve veri güveni | D619: Ortak | E619: evidence-graph | F619: Evidence Graph | G619: Regulatory Control | H619: instrument | I619: Instrument | J619: input/text | K619: Metin Girişi | L619: Text | M619: Text | N619: varchar/text — length TBD | O619: TBD | P619: TBD | Q619: Conditional | R619: No | S619: PLACEHOLDER — REVIEW_REQUIRED | U619: N/A | V619: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | W619: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X619: Type, length, format and contextual uniqueness rules | Y619: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z619: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA619: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB619: Read cache if available; authoritative configuration/publish actions require server connectivity. | AC619: /api/v1/evidence-graph | AD619: EvidenceGraph | AE619: instrument | AF619: UNCONFIRMED — physical schema review | AG619: FR-evidence-graph-instrument | AH619: TC-evidence-graph-instrument | AI619: P1 | AJ619: DEFAULT_PLACEHOLDER; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK619: UI/TRACE TAM — PROD REVIEW | AL619: SOURCE + DERIVED GAP ANALYSIS | AM619: ÖNERİ: Evidence Graph bağlamında Instrument. İş anlamı/birim BA onayı bekler. | AN619: Metin Girişi | AO619: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ619: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AV619: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD619: Instrument: Type, length, format and contextual uniqueness rules | BE619: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH619: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ619: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK619: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN619: DEC-DATA-01…06 | BO619: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:620",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A620: Doküman, Kanıt ve Bilgi | B620: Kontrollü Bilgi ve Kanıt | C620: Doküman, kanıt ve veri güveni | D620: Ortak | E620: evidence-graph | F620: Evidence Graph | G620: Regulatory Control | H620: clause | I620: Clause / Regulation | J620: input/text | K620: Metin Girişi | L620: Controlled Reference | M620: Reference | N620: uuid or text FK — REVIEW | O620: TBD | P620: TBD | Q620: Yes | R620: No | S620: PLACEHOLDER — REVIEW_REQUIRED | U620: KAYNAK EKSİK / TÜRÜ DOĞRULANACAK | V620: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | W620: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X620: Published/approved source/version/reference | Y620: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z620: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA620: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB620: Read cache if available; authoritative configuration/publish actions require server connectivity. | AC620: /api/v1/evidence-graph | AD620: EvidenceGraph | AE620: clause | AF620: UNCONFIRMED — physical schema review | AG620: FR-evidence-graph-clause | AH620: TC-evidence-graph-clause | AI620: P0 | AJ620: DEFAULT_PLACEHOLDER; LOOKUP_SOURCE_MISSING; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK620: UI/TRACE TAM — PROD REVIEW | AL620: SOURCE + DERIVED GAP ANALYSIS | AM620: ÖNERİ: Evidence Graph bağlamında Clause / Regulation. İş anlamı/birim BA onayı bekler. | AN620: ÖNERİ: yetkili referans seçici; free-text değil | AO620: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ620: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AR620: SOURCE: required | AV620: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD620: Clause / Regulation: geçerli ve bu bağlamda yetkili bir referans seçiniz. | BE620: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH620: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ620: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK620: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN620: DEC-DATA-01…06 | BO620: REVIEW_REQUIRED | BR620: evidence-graph::clause | BT620: UNRESOLVED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:621",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A621: Doküman, Kanıt ve Bilgi | B621: Kontrollü Bilgi ve Kanıt | C621: Doküman, kanıt ve veri güveni | D621: Ortak | E621: evidence-graph | F621: Evidence Graph | G621: Regulatory Control | H621: edition | I621: Edition / Amendment | J621: input/text | K621: Metin Girişi | L621: Text | M621: Text | N621: varchar/text — length TBD | O621: TBD | P621: TBD | Q621: Conditional | R621: No | S621: PLACEHOLDER — REVIEW_REQUIRED | U621: N/A | V621: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | W621: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X621: Type, length, format and contextual uniqueness rules | Y621: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z621: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA621: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB621: Read cache if available; authoritative configuration/publish actions require server connectivity. | AC621: /api/v1/evidence-graph | AD621: EvidenceGraph | AE621: edition | AF621: UNCONFIRMED — physical schema review | AG621: FR-evidence-graph-edition | AH621: TC-evidence-graph-edition | AI621: P1 | AJ621: DEFAULT_PLACEHOLDER; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK621: UI/TRACE TAM — PROD REVIEW | AL621: SOURCE + DERIVED GAP ANALYSIS | AM621: ÖNERİ: Evidence Graph bağlamında Edition / Amendment. İş anlamı/birim BA onayı bekler. | AN621: Metin Girişi | AO621: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ621: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AV621: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD621: Edition / Amendment: Type, length, format and contextual uniqueness rules | BE621: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH621: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ621: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK621: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN621: DEC-DATA-01…06 | BO621: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:622",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A622: Doküman, Kanıt ve Bilgi | B622: Kontrollü Bilgi ve Kanıt | C622: Doküman, kanıt ve veri güveni | D622: Ortak | E622: evidence-graph | F622: Evidence Graph | G622: Regulatory Control | H622: effective_date | I622: Effective Date | J622: input/date | K622: Tarih | L622: Date/Time | M622: Date | N622: date | O622: TBD | P622: TBD | Q622: Business rule | R622: Yes | S622: Kaynakta explicit — production doğrulaması gerekir | U622: N/A | V622: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | W622: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X622: Valid ISO/local datetime; chronology and expiry rules | Y622: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z622: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA622: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB622: Read cache if available; authoritative configuration/publish actions require server connectivity. | AC622: /api/v1/evidence-graph | AD622: EvidenceGraph | AE622: effective_date | AF622: UNCONFIRMED — physical schema review | AG622: FR-evidence-graph-effective_date | AH622: TC-evidence-graph-effective_date | AI622: P1 | AJ622: EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK622: UI/TRACE TAM — PROD REVIEW | AL622: SOURCE + DERIVED GAP ANALYSIS | AM622: ÖNERİ: Evidence Graph bağlamında Effective Date. İş anlamı/birim BA onayı bekler. | AN622: Tarih | AO622: NO_IMPLICIT_DEFAULT_SOURCE_CONFLICT | AQ622: DATE_TIME_DEFAULT_REQUIRES_LITERAL_OR_DERIVATION | AV622: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD622: Effective Date: geçerli tarih/saat giriniz; kronoloji ve geçerlilik koşullarını kontrol ediniz. | BE622: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH622: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ622: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK622: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN622: DEC-DATA-01…06 | BO622: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:623",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A623: Doküman, Kanıt ve Bilgi | B623: Kontrollü Bilgi ve Kanıt | C623: Doküman, kanıt ve veri güveni | D623: Ortak | E623: evidence-graph | F623: Evidence Graph | G623: Regulatory Control | H623: applicability | I623: Applicability Result | J623: select/select | K623: Seçim Listesi | L623: State | M623: Controlled Code / Enum | N623: text / controlled-code FK — REVIEW | O623: TBD | P623: TBD | Q623: System/Business rule | R623: System | S623: Sistem tarafından türetilir | T623: Applicable; Not Applicable; Conditional; Pending Review | U623: Tanımlı | V623: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | W623: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X623: Allowed state machine transition only | Y623: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z623: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA623: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB623: Read cache if available; authoritative configuration/publish actions require server connectivity. | AC623: /api/v1/evidence-graph | AD623: EvidenceGraph | AE623: applicability | AF623: UNCONFIRMED — physical schema review | AG623: FR-evidence-graph-applicability | AH623: TC-evidence-graph-applicability | AI623: P1 | AJ623: EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK623: UI/TRACE TAM — PROD REVIEW | AL623: SOURCE + DERIVED GAP ANALYSIS | AM623: ÖNERİ: Evidence Graph bağlamında Applicability Result. İş anlamı/birim BA onayı bekler. | AN623: Seçim Listesi | AO623: SYSTEM_DERIVED | AQ623: DERIVATION_REQUIRES_SPECIFICATION | AU623: INLINE_SOURCE_OPTIONS | AV623: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD623: Applicability Result: tanımlı seçeneklerden birini seçiniz. | BE623: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH623: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ623: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK623: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN623: DEC-DATA-01…06 | BO623: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:624",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A624: Doküman, Kanıt ve Bilgi | B624: Kontrollü Bilgi ve Kanıt | C624: Doküman, kanıt ve veri güveni | D624: Ortak | E624: evidence-graph | F624: Evidence Graph | G624: Regulatory Control | H624: applicability_basis | I624: Applicability Basis | J624: textarea/text | K624: Uzun Metin | L624: Text | M624: Text | N624: varchar/text — length TBD | O624: TBD | P624: TBD | Q624: Conditional | R624: No | S624: PLACEHOLDER — REVIEW_REQUIRED | U624: N/A | V624: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | W624: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X624: Type, length, format and contextual uniqueness rules | Y624: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z624: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA624: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB624: Read cache if available; authoritative configuration/publish actions require server connectivity. | AC624: /api/v1/evidence-graph | AD624: EvidenceGraph | AE624: applicability_basis | AF624: UNCONFIRMED — physical schema review | AG624: FR-evidence-graph-applicability_basis | AH624: TC-evidence-graph-applicability_basis | AI624: P1 | AJ624: DEFAULT_PLACEHOLDER; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK624: UI/TRACE TAM — PROD REVIEW | AL624: SOURCE + DERIVED GAP ANALYSIS | AM624: ÖNERİ: Evidence Graph bağlamında Applicability Basis. İş anlamı/birim BA onayı bekler. | AN624: Uzun Metin | AO624: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ624: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AV624: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD624: Applicability Basis: Type, length, format and contextual uniqueness rules | BE624: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH624: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ624: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK624: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN624: DEC-DATA-01…06 | BO624: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:625",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A625: Doküman, Kanıt ve Bilgi | B625: Kontrollü Bilgi ve Kanıt | C625: Doküman, kanıt ve veri güveni | D625: Ortak | E625: evidence-graph | F625: Evidence Graph | G625: Regulatory Control | H625: control_id | I625: Operational Control ID | J625: input/text | K625: Metin Girişi | L625: Narrative/Reference | M625: Narrative Text | N625: text | O625: TBD | P625: TBD | Q625: Business rule | R625: No | S625: PLACEHOLDER — REVIEW_REQUIRED | U625: N/A | V625: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | W625: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X625: Trimmed non-empty when required; length/content policy | Y625: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z625: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA625: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB625: Read cache if available; authoritative configuration/publish actions require server connectivity. | AC625: /api/v1/evidence-graph | AD625: EvidenceGraph | AE625: control_id | AF625: UNCONFIRMED — physical schema review | AG625: FR-evidence-graph-control_id | AH625: TC-evidence-graph-control_id | AI625: P1 | AJ625: DEFAULT_PLACEHOLDER; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK625: UI/TRACE TAM — PROD REVIEW | AL625: SOURCE + DERIVED GAP ANALYSIS | AM625: ÖNERİ: Evidence Graph bağlamında Operational Control ID. İş anlamı/birim BA onayı bekler. | AN625: ÖNERİ: yetkili referans seçici; free-text değil | AO625: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ625: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AV625: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD625: Operational Control ID: geçerli ve bu bağlamda yetkili bir referans seçiniz. | BE625: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH625: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ625: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK625: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN625: DEC-DATA-01…06 | BO625: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:626",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A626: Doküman, Kanıt ve Bilgi | B626: Kontrollü Bilgi ve Kanıt | C626: Doküman, kanıt ve veri güveni | D626: Ortak | E626: evidence-graph | F626: Evidence Graph | G626: Regulatory Control | H626: control_owner | I626: Control Owner | J626: input/text | K626: Metin Girişi | L626: Reference | M626: Reference | N626: uuid or text FK — REVIEW | O626: TBD | P626: TBD | Q626: Yes/Business rule | R626: Context role/user | S626: Bağlamdan türetilir | U626: KAYNAK EKSİK / TÜRÜ DOĞRULANACAK | V626: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | W626: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X626: Active authorized role/user in tenant/vessel scope | Y626: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z626: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA626: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB626: Read cache if available; authoritative configuration/publish actions require server connectivity. | AC626: /api/v1/evidence-graph | AD626: EvidenceGraph | AE626: control_owner | AF626: UNCONFIRMED — physical schema review | AG626: FR-evidence-graph-control_owner | AH626: TC-evidence-graph-control_owner | AI626: P0 | AJ626: LOOKUP_SOURCE_MISSING; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK626: UI/TRACE TAM — PROD REVIEW | AL626: SOURCE + DERIVED GAP ANALYSIS | AM626: ÖNERİ: Evidence Graph bağlamında Control Owner. İş anlamı/birim BA onayı bekler. | AN626: ÖNERİ: yetkili referans seçici; free-text değil | AO626: CONTEXT_DERIVED | AQ626: DERIVATION_REQUIRES_SPECIFICATION | AV626: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD626: Control Owner: geçerli ve bu bağlamda yetkili bir referans seçiniz. | BE626: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH626: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ626: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK626: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN626: DEC-DATA-01…06 | BO626: REVIEW_REQUIRED | BR626: evidence-graph::control_owner | BT626: UNRESOLVED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:627",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A627: Doküman, Kanıt ve Bilgi | B627: Kontrollü Bilgi ve Kanıt | C627: Doküman, kanıt ve veri güveni | D627: Ortak | E627: evidence-graph | F627: Evidence Graph | G627: Regulatory Control | H627: required_evidence | I627: Required Evidence | J627: textarea/text | K627: Uzun Metin | L627: Narrative/Reference | M627: Narrative Text | N627: text | O627: TBD | P627: TBD | Q627: Business rule | R627: No | S627: PLACEHOLDER — REVIEW_REQUIRED | U627: N/A | V627: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | W627: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X627: Trimmed non-empty when required; length/content policy | Y627: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z627: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA627: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB627: Read cache if available; authoritative configuration/publish actions require server connectivity. | AC627: /api/v1/evidence-graph | AD627: EvidenceGraph | AE627: required_evidence | AF627: UNCONFIRMED — physical schema review | AG627: FR-evidence-graph-required_evidence | AH627: TC-evidence-graph-required_evidence | AI627: P1 | AJ627: DEFAULT_PLACEHOLDER; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK627: UI/TRACE TAM — PROD REVIEW | AL627: SOURCE + DERIVED GAP ANALYSIS | AM627: ÖNERİ: Evidence Graph bağlamında Required Evidence. İş anlamı/birim BA onayı bekler. | AN627: Uzun Metin | AO627: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ627: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AV627: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD627: Required Evidence: geçerli ve bu bağlamda yetkili bir referans seçiniz. | BE627: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH627: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ627: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK627: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN627: DEC-DATA-01…06 | BO627: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:628",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A628: Doküman, Kanıt ve Bilgi | B628: Kontrollü Bilgi ve Kanıt | C628: Doküman, kanıt ve veri güveni | D628: Ortak | E628: evidence-graph | F628: Evidence Graph | G628: Regulatory Control | H628: verification_method | I628: Verification Method | J628: input/text | K628: Metin Girişi | L628: Controlled Decision | M628: Controlled Code / Enum | N628: text / controlled-code FK — REVIEW | O628: TBD | P628: TBD | Q628: Yes | R628: No | S628: PLACEHOLDER — REVIEW_REQUIRED | U628: KAYNAK EKSİK / TÜRÜ DOĞRULANACAK | V628: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | W628: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X628: Authorized role; reason/evidence prerequisites; legal transition | Y628: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z628: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA628: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB628: Read cache if available; authoritative configuration/publish actions require server connectivity. | AC628: /api/v1/evidence-graph | AD628: EvidenceGraph | AE628: verification_method | AF628: UNCONFIRMED — physical schema review | AG628: FR-evidence-graph-verification_method | AH628: TC-evidence-graph-verification_method | AI628: P0 | AJ628: DEFAULT_PLACEHOLDER; LOOKUP_SOURCE_MISSING; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK628: UI/TRACE TAM — PROD REVIEW | AL628: SOURCE + DERIVED GAP ANALYSIS | AM628: ÖNERİ: Evidence Graph bağlamında Verification Method. İş anlamı/birim BA onayı bekler. | AN628: Metin Girişi | AO628: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ628: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AR628: SOURCE: required | AV628: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD628: Verification Method: Authorized role; reason/evidence prerequisites; legal transition | BE628: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH628: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ628: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK628: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN628: DEC-DATA-01…06 | BO628: REVIEW_REQUIRED | BR628: evidence-graph::verification_method | BT628: UNRESOLVED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:629",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A629: Doküman, Kanıt ve Bilgi | B629: Kontrollü Bilgi ve Kanıt | C629: Doküman, kanıt ve veri güveni | D629: Ortak | E629: evidence-graph | F629: Evidence Graph | G629: Regulatory Control | H629: last_verified | I629: Last Verified | J629: input/date | K629: Tarih | L629: Text | M629: Date | N629: date | O629: TBD | P629: TBD | Q629: Conditional | R629: No | S629: PLACEHOLDER — REVIEW_REQUIRED | U629: N/A | V629: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | W629: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X629: Type, length, format and contextual uniqueness rules | Y629: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z629: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA629: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB629: Read cache if available; authoritative configuration/publish actions require server connectivity. | AC629: /api/v1/evidence-graph | AD629: EvidenceGraph | AE629: last_verified | AF629: UNCONFIRMED — physical schema review | AG629: FR-evidence-graph-last_verified | AH629: TC-evidence-graph-last_verified | AI629: P1 | AJ629: DEFAULT_PLACEHOLDER; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK629: UI/TRACE TAM — PROD REVIEW | AL629: SOURCE + DERIVED GAP ANALYSIS | AM629: ÖNERİ: Evidence Graph bağlamında Last Verified. İş anlamı/birim BA onayı bekler. | AN629: Tarih | AO629: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ629: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AV629: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD629: Last Verified: Type, length, format and contextual uniqueness rules | BE629: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH629: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ629: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK629: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN629: DEC-DATA-01…06 | BO629: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:630",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A630: Doküman, Kanıt ve Bilgi | B630: Kontrollü Bilgi ve Kanıt | C630: Doküman, kanıt ve veri güveni | D630: Ortak | E630: evidence-graph | F630: Evidence Graph | G630: Regulatory Control | H630: effectiveness | I630: Effectiveness | J630: select/select | K630: Seçim Listesi | L630: Date/Time | M630: Text | N630: varchar/text — length TBD | O630: TBD | P630: TBD | Q630: Business rule | R630: Yes | S630: Kaynakta explicit — production doğrulaması gerekir | T630: Effective; Attention; Non-effective; Not Applicable | U630: Tanımlı | V630: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | W630: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X630: Valid ISO/local datetime; chronology and expiry rules | Y630: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z630: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA630: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB630: Read cache if available; authoritative configuration/publish actions require server connectivity. | AC630: /api/v1/evidence-graph | AD630: EvidenceGraph | AE630: effectiveness | AF630: UNCONFIRMED — physical schema review | AG630: FR-evidence-graph-effectiveness | AH630: TC-evidence-graph-effectiveness | AI630: P1 | AJ630: EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK630: UI/TRACE TAM — PROD REVIEW | AL630: SOURCE + DERIVED GAP ANALYSIS | AM630: ÖNERİ: Evidence Graph bağlamında Effectiveness. İş anlamı/birim BA onayı bekler. | AN630: Seçim Listesi | AO630: NO_IMPLICIT_DEFAULT_SOURCE_CONFLICT | AQ630: SOURCE_TYPE_AND_ENUM_DEFAULT_CONFLICT | AU630: INLINE_SOURCE_OPTIONS | AV630: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD630: Effectiveness: tanımlı seçeneklerden birini seçiniz. | BE630: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH630: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ630: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK630: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN630: DEC-DATA-01…06 | BO630: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:631",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A631: Doküman, Kanıt ve Bilgi | B631: Kontrollü Bilgi ve Kanıt | C631: Doküman, kanıt ve veri güveni | D631: Ortak | E631: evidence-graph | F631: Evidence Graph | G631: Regulatory Control | H631: notes | I631: Comments / Operational Notes | J631: textarea/text | K631: Uzun Metin | L631: Narrative/Reference | M631: Narrative Text | N631: text | O631: TBD | P631: TBD | Q631: Business rule | R631: No | S631: PLACEHOLDER — REVIEW_REQUIRED | U631: N/A | V631: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | W631: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X631: Trimmed non-empty when required; length/content policy | Y631: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z631: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA631: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB631: Read cache if available; authoritative configuration/publish actions require server connectivity. | AC631: /api/v1/evidence-graph | AD631: EvidenceGraph | AE631: notes | AF631: UNCONFIRMED — physical schema review | AG631: FR-evidence-graph-notes | AH631: TC-evidence-graph-notes | AI631: P1 | AJ631: DEFAULT_PLACEHOLDER; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK631: UI/TRACE TAM — PROD REVIEW | AL631: SOURCE + DERIVED GAP ANALYSIS | AM631: ÖNERİ: Evidence Graph bağlamında Comments / Operational Notes. İş anlamı/birim BA onayı bekler. | AN631: Uzun Metin | AO631: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ631: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AV631: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD631: Comments / Operational Notes: geçerli ve bu bağlamda yetkili bir referans seçiniz. | BE631: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH631: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ631: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK631: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN631: DEC-DATA-01…06 | BO631: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:2316 Alan v46.3/row:611",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A611: evidence-graph | B611: Evidence Graph | C611: Regulatory Control | D611: record_id | E611: Record ID | F611: input/text | G611: Text | H611: Conditional | I611: No | K611: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L611: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M611: Type, length, format and contextual uniqueness rules | N611: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | O611: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P611: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | Q611: Read cache if available; authoritative configuration/publish actions require server connectivity. | R611: /api/v1/evidence-graph | S611: EvidenceGraph | T611: record_id | U611: FR-evidence-graph-record_id | V611: TC-evidence-graph-record_id"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:2316 Alan v46.3/row:612",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A612: evidence-graph | B612: Evidence Graph | C612: Regulatory Control | D612: vessel_imo | E612: Vessel / IMO | F612: input/text | G612: Identifier | H612: Yes | I612: No | K612: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L612: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M612: 7-digit IMO number | N612: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | O612: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P612: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | Q612: Read cache if available; authoritative configuration/publish actions require server connectivity. | R612: /api/v1/evidence-graph | S612: EvidenceGraph | T612: vessel_imo | U612: FR-evidence-graph-vessel_imo | V612: TC-evidence-graph-vessel_imo"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:2316 Alan v46.3/row:613",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A613: evidence-graph | B613: Evidence Graph | C613: Regulatory Control | D613: requirement_ref | E613: Applicable Requirement | F613: input/text | G613: Controlled Reference | H613: Yes | I613: No | K613: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L613: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M613: Published/approved source/version/reference | N613: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | O613: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P613: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | Q613: Read cache if available; authoritative configuration/publish actions require server connectivity. | R613: /api/v1/evidence-graph | S613: EvidenceGraph | T613: requirement_ref | U613: FR-evidence-graph-requirement_ref | V613: TC-evidence-graph-requirement_ref"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:2316 Alan v46.3/row:614",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A614: evidence-graph | B614: Evidence Graph | C614: Regulatory Control | D614: responsible_role | E614: Responsible Role | F614: input/text | G614: Reference | H614: Yes/Business rule | I614: Context role/user | K614: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L614: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M614: Active authorized role/user in tenant/vessel scope | N614: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | O614: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P614: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | Q614: Read cache if available; authoritative configuration/publish actions require server connectivity. | R614: /api/v1/evidence-graph | S614: EvidenceGraph | T614: responsible_role | U614: FR-evidence-graph-responsible_role | V614: TC-evidence-graph-responsible_role"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:2316 Alan v46.3/row:615",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A615: evidence-graph | B615: Evidence Graph | C615: Regulatory Control | D615: record_datetime | E615: Record Date/Time | F615: input/datetime-local | G615: Date/Time | H615: Business rule | I615: Yes | K615: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L615: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M615: Valid ISO/local datetime; chronology and expiry rules | N615: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | O615: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P615: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | Q615: Read cache if available; authoritative configuration/publish actions require server connectivity. | R615: /api/v1/evidence-graph | S615: EvidenceGraph | T615: record_datetime | U615: FR-evidence-graph-record_datetime | V615: TC-evidence-graph-record_datetime"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:2316 Alan v46.3/row:616",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A616: evidence-graph | B616: Evidence Graph | C616: Regulatory Control | D616: status | E616: Operational Status | F616: select/select | G616: State | H616: System/Business rule | I616: System | J616: Open; In Review; Effective; Attention; Restricted; Closed; Not Applicable | K616: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L616: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M616: Allowed state machine transition only | N616: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | O616: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P616: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | Q616: Read cache if available; authoritative configuration/publish actions require server connectivity. | R616: /api/v1/evidence-graph | S616: EvidenceGraph | T616: status | U616: FR-evidence-graph-status | V616: TC-evidence-graph-status"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:2316 Alan v46.3/row:617",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A617: evidence-graph | B617: Evidence Graph | C617: Regulatory Control | D617: evidence_ref | E617: Evidence Reference | F617: input/text | G617: Narrative/Reference | H617: Business rule | I617: No | K617: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L617: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M617: Trimmed non-empty when required; length/content policy | N617: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | O617: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P617: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | Q617: Read cache if available; authoritative configuration/publish actions require server connectivity. | R617: /api/v1/evidence-graph | S617: EvidenceGraph | T617: evidence_ref | U617: FR-evidence-graph-evidence_ref | V617: TC-evidence-graph-evidence_ref"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:2316 Alan v46.3/row:618",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A618: evidence-graph | B618: Evidence Graph | C618: Regulatory Control | D618: verifier | E618: Verifier / Approver | F618: input/text | G618: Controlled Decision | H618: Yes | I618: No | K618: Authorized human decision role only; Master authority where operational safety decision applies | L618: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M618: Authorized role; reason/evidence prerequisites; legal transition | N618: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | O618: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P618: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | Q618: Read cache if available; authoritative configuration/publish actions require server connectivity. | R618: /api/v1/evidence-graph | S618: EvidenceGraph | T618: verifier | U618: FR-evidence-graph-verifier | V618: TC-evidence-graph-verifier"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:2316 Alan v46.3/row:619",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A619: evidence-graph | B619: Evidence Graph | C619: Regulatory Control | D619: instrument | E619: Instrument | F619: input/text | G619: Text | H619: Conditional | I619: No | K619: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L619: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M619: Type, length, format and contextual uniqueness rules | N619: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | O619: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P619: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | Q619: Read cache if available; authoritative configuration/publish actions require server connectivity. | R619: /api/v1/evidence-graph | S619: EvidenceGraph | T619: instrument | U619: FR-evidence-graph-instrument | V619: TC-evidence-graph-instrument"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:2316 Alan v46.3/row:620",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A620: evidence-graph | B620: Evidence Graph | C620: Regulatory Control | D620: clause | E620: Clause / Regulation | F620: input/text | G620: Controlled Reference | H620: Yes | I620: No | K620: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L620: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M620: Published/approved source/version/reference | N620: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | O620: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P620: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | Q620: Read cache if available; authoritative configuration/publish actions require server connectivity. | R620: /api/v1/evidence-graph | S620: EvidenceGraph | T620: clause | U620: FR-evidence-graph-clause | V620: TC-evidence-graph-clause"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:2316 Alan v46.3/row:621",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A621: evidence-graph | B621: Evidence Graph | C621: Regulatory Control | D621: edition | E621: Edition / Amendment | F621: input/text | G621: Text | H621: Conditional | I621: No | K621: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L621: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M621: Type, length, format and contextual uniqueness rules | N621: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | O621: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P621: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | Q621: Read cache if available; authoritative configuration/publish actions require server connectivity. | R621: /api/v1/evidence-graph | S621: EvidenceGraph | T621: edition | U621: FR-evidence-graph-edition | V621: TC-evidence-graph-edition"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:2316 Alan v46.3/row:622",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A622: evidence-graph | B622: Evidence Graph | C622: Regulatory Control | D622: effective_date | E622: Effective Date | F622: input/date | G622: Date/Time | H622: Business rule | I622: Yes | K622: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L622: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M622: Valid ISO/local datetime; chronology and expiry rules | N622: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | O622: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P622: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | Q622: Read cache if available; authoritative configuration/publish actions require server connectivity. | R622: /api/v1/evidence-graph | S622: EvidenceGraph | T622: effective_date | U622: FR-evidence-graph-effective_date | V622: TC-evidence-graph-effective_date"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:2316 Alan v46.3/row:623",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A623: evidence-graph | B623: Evidence Graph | C623: Regulatory Control | D623: applicability | E623: Applicability Result | F623: select/select | G623: State | H623: System/Business rule | I623: System | J623: Applicable; Not Applicable; Conditional; Pending Review | K623: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L623: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M623: Allowed state machine transition only | N623: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | O623: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P623: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | Q623: Read cache if available; authoritative configuration/publish actions require server connectivity. | R623: /api/v1/evidence-graph | S623: EvidenceGraph | T623: applicability | U623: FR-evidence-graph-applicability | V623: TC-evidence-graph-applicability"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:2316 Alan v46.3/row:624",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A624: evidence-graph | B624: Evidence Graph | C624: Regulatory Control | D624: applicability_basis | E624: Applicability Basis | F624: textarea/text | G624: Text | H624: Conditional | I624: No | K624: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L624: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M624: Type, length, format and contextual uniqueness rules | N624: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | O624: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P624: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | Q624: Read cache if available; authoritative configuration/publish actions require server connectivity. | R624: /api/v1/evidence-graph | S624: EvidenceGraph | T624: applicability_basis | U624: FR-evidence-graph-applicability_basis | V624: TC-evidence-graph-applicability_basis"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:2316 Alan v46.3/row:625",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A625: evidence-graph | B625: Evidence Graph | C625: Regulatory Control | D625: control_id | E625: Operational Control ID | F625: input/text | G625: Narrative/Reference | H625: Business rule | I625: No | K625: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L625: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M625: Trimmed non-empty when required; length/content policy | N625: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | O625: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P625: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | Q625: Read cache if available; authoritative configuration/publish actions require server connectivity. | R625: /api/v1/evidence-graph | S625: EvidenceGraph | T625: control_id | U625: FR-evidence-graph-control_id | V625: TC-evidence-graph-control_id"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:2316 Alan v46.3/row:626",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A626: evidence-graph | B626: Evidence Graph | C626: Regulatory Control | D626: control_owner | E626: Control Owner | F626: input/text | G626: Reference | H626: Yes/Business rule | I626: Context role/user | K626: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L626: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M626: Active authorized role/user in tenant/vessel scope | N626: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | O626: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P626: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | Q626: Read cache if available; authoritative configuration/publish actions require server connectivity. | R626: /api/v1/evidence-graph | S626: EvidenceGraph | T626: control_owner | U626: FR-evidence-graph-control_owner | V626: TC-evidence-graph-control_owner"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:2316 Alan v46.3/row:627",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A627: evidence-graph | B627: Evidence Graph | C627: Regulatory Control | D627: required_evidence | E627: Required Evidence | F627: textarea/text | G627: Narrative/Reference | H627: Business rule | I627: No | K627: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L627: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M627: Trimmed non-empty when required; length/content policy | N627: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | O627: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P627: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | Q627: Read cache if available; authoritative configuration/publish actions require server connectivity. | R627: /api/v1/evidence-graph | S627: EvidenceGraph | T627: required_evidence | U627: FR-evidence-graph-required_evidence | V627: TC-evidence-graph-required_evidence"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:2316 Alan v46.3/row:628",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A628: evidence-graph | B628: Evidence Graph | C628: Regulatory Control | D628: verification_method | E628: Verification Method | F628: input/text | G628: Controlled Decision | H628: Yes | I628: No | K628: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L628: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M628: Authorized role; reason/evidence prerequisites; legal transition | N628: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | O628: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P628: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | Q628: Read cache if available; authoritative configuration/publish actions require server connectivity. | R628: /api/v1/evidence-graph | S628: EvidenceGraph | T628: verification_method | U628: FR-evidence-graph-verification_method | V628: TC-evidence-graph-verification_method"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:2316 Alan v46.3/row:629",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A629: evidence-graph | B629: Evidence Graph | C629: Regulatory Control | D629: last_verified | E629: Last Verified | F629: input/date | G629: Text | H629: Conditional | I629: No | K629: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L629: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M629: Type, length, format and contextual uniqueness rules | N629: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | O629: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P629: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | Q629: Read cache if available; authoritative configuration/publish actions require server connectivity. | R629: /api/v1/evidence-graph | S629: EvidenceGraph | T629: last_verified | U629: FR-evidence-graph-last_verified | V629: TC-evidence-graph-last_verified"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:2316 Alan v46.3/row:630",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A630: evidence-graph | B630: Evidence Graph | C630: Regulatory Control | D630: effectiveness | E630: Effectiveness | F630: select/select | G630: Date/Time | H630: Business rule | I630: Yes | J630: Effective; Attention; Non-effective; Not Applicable | K630: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L630: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M630: Valid ISO/local datetime; chronology and expiry rules | N630: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | O630: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P630: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | Q630: Read cache if available; authoritative configuration/publish actions require server connectivity. | R630: /api/v1/evidence-graph | S630: EvidenceGraph | T630: effectiveness | U630: FR-evidence-graph-effectiveness | V630: TC-evidence-graph-effectiveness"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:2316 Alan v46.3/row:631",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A631: evidence-graph | B631: Evidence Graph | C631: Regulatory Control | D631: notes | E631: Comments / Operational Notes | F631: textarea/text | G631: Narrative/Reference | H631: Business rule | I631: No | K631: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L631: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M631: Trimmed non-empty when required; length/content policy | N631: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | O631: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P631: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | Q631: Read cache if available; authoritative configuration/publish actions require server connectivity. | R631: /api/v1/evidence-graph | S631: EvidenceGraph | T631: notes | U631: FR-evidence-graph-notes | V631: TC-evidence-graph-notes"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "locator": "paragraph:6",
+      "sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "text": "POSEIDON veri modeli ekran-merkezli değil, domain ve yaşam-döngüsü merkezli kurulacaktır. 196 ekran aynı entity'lerin farklı rol/context projection'larıdır; ekran başına ayrı tablo oluşturulmayacaktır. Gemi ve Römorkör aynı çekirdek Tenant/Company/Vessel/Person/Asset/Evidence/Audit altyapısını kullanır; TugJob/TowagePlan/TowageExecution gibi römorköre özgü aggregate'lar yalnız Tug Mode'da aktive olur."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "locator": "paragraph:10",
+      "sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "text": "Soft-delete yalnız operasyonel master-data için; legal/audit/evidence kayıtlarında immutable/superseded yaklaşımı tercih edilir."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "locator": "paragraph:12",
+      "sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "text": "Evidence lineage source → object → verification → decision → readiness zincirinde korunur."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "locator": "paragraph:125",
+      "sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "text": "Evidence"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "locator": "paragraph:126",
+      "sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "text": "id, tenant_id, object_type/id, evidence_type, source, captured_at, hash, storage_ref, provenance_state"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "locator": "paragraph:129",
+      "sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "text": "evidence_id/control_id, verifier, result, verified_at, reason"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "locator": "paragraph:132",
+      "sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "text": "subject_type/id, decision, actor_role, actor_id, reason, evidence_context, decided_at"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "locator": "paragraph:136",
+      "sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "text": "Şekil 2 - Source → Requirement → Rule → Control → Evidence → Verification → Human Decision → Readiness zinciri."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "locator": "paragraph:142",
+      "sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "text": "Evidence binary içerik DB'de değil object storage'da; DB'de immutable metadata, hash, MIME, size, storage_ref."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "locator": "paragraph:146",
+      "sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "text": "Hard delete: yalnız staging/import temp data. Published rule, evidence, verification, signed decision, audit event silinmez; supersede/revoke edilir."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "locator": "paragraph:191",
+      "sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "text": "evidence(object_type, object_id, evidence_type, captured_at DESC): evidence history."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "locator": "paragraph:221",
+      "sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "text": "Evidence can link to Requirement/Control/Operation/WorkOrder/Event/Certificate/Survey."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "locator": "paragraph:247",
+      "sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "text": "Bu ERD/Data Architecture v46.3 için ürün geneli kontrollü aday teknik tasarımdır; uygulama ve fiziksel DB doğrulaması değildir. Uygulama geliştirirken ekran veya müşteri bazında veri yapısı çoğaltılmamalı; yeni ihtiyaçlar mevcut domain aggregate'a eklenmeli veya Change Control ile yeni aggregate olarak gerekçelendirilmelidir."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:7",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Canonical resources: vessel, person/crew, operation, tug job, asset/PMS, safety event, certificate/survey/finding, document, evidence, regulatory rule."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:12",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Evidence upload is metadata-first + presigned/object-storage pattern; hashes/provenance server-side verified."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:83",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Object storage references; malware/type/size/hash controls before VERIFIED evidence."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:99",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Authorized human decision with reason/evidence context."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:100",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Evidence verify"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:135",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "POST /evidence / verifications"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:136",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Evidence and human verification."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:239",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Non-material additive evidence can auto-merge; safety/legal material field conflict cannot."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:545",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "operational-control-library"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:546",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Operational Control Library"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:547",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Regulatory Control"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:548",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "/api/v1/operational-control-library"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:1035",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "evidence-graph"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:1036",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Evidence Graph"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:1037",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Regulatory Control"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:1038",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "/api/v1/evidence-graph"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:1622",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Evidence metadata carries provenance and verification state."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "locator": "paragraph:219",
+      "sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "text": "operational-control-library"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "locator": "paragraph:220",
+      "sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "text": "Operational Control Library"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "locator": "paragraph:221",
+      "sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "text": "Regulatory Control"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "locator": "paragraph:222",
+      "sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "text": "0"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "locator": "paragraph:223",
+      "sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "text": "0"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "locator": "paragraph:224",
+      "sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "text": "34"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "locator": "paragraph:639",
+      "sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "text": "evidence-graph"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "locator": "paragraph:640",
+      "sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "text": "Evidence Graph"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "locator": "paragraph:641",
+      "sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "text": "Regulatory Control"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "locator": "paragraph:642",
+      "sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "text": "21"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "locator": "paragraph:643",
+      "sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "text": "6"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "locator": "paragraph:644",
+      "sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "text": "104"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "locator": "paragraph:1364",
+      "sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "text": "033  Operational Control Library"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "locator": "paragraph:1365",
+      "sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "text": "Screen ID: operational-control-library   |   Domain: Regulatory Control   |   0 alan / 0 aksiyon"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "locator": "paragraph:1367",
+      "sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "text": "API projection: /api/v1/operational-control-library   |   Status: READY FOR BA/DEV REVIEW"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "locator": "paragraph:1368",
+      "sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "text": "———————————————————————————————————————————————————————"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "locator": "paragraph:1714",
+      "sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "text": "103  Evidence Graph"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "locator": "paragraph:1715",
+      "sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "text": "Screen ID: evidence-graph   |   Domain: Regulatory Control   |   21 alan / 6 aksiyon"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "locator": "paragraph:1717",
+      "sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "text": "API projection: /api/v1/evidence-graph   |   Status: READY FOR BA/DEV REVIEW"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "locator": "paragraph:1718",
+      "sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "text": "———————————————————————————————————————————————————————"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:101",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "Evidence upload'ta allowed type/size/malware/checksum state kullanıcıya anlaşılır biçimde gösterilir."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:29",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A29: DEV-028 | B29: Story | C29: E04 Control & Evidence | D29: Control | E29: Operational Control entity | F29: Regulatory/safety admin olarak requirement'ı operasyonel kontrole bağlamak istiyorum. | G29: Owner/frequency/evidence rule/verification rule/state ve requirement links kaydedilir; orphan critical control raporlanır. | H29: /api/v1/controls | I29: P0 | J29: S3 | K29: Backend | L29: DEV-026,DEV-027 | M29: T-S3-003 | N29: Not Started | O29: YES | P29: 8 | Q29: M"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:30",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A30: DEV-029 | B30: Story | C30: E04 Control & Evidence | D30: Evidence | E30: Evidence graph foundation | F30: Kullanıcı olarak bir kanıtı birden fazla gereksinimi desteklemek için kullanmak istiyorum. | G30: Evidence immutable metadata/checksum/provenance ile kaydedilir; many-to-many links; stale/expired/superseded durumu görünür. | H30: /api/v1/evidence | I30: P0 | J30: S3 | K30: Backend | L30: DEV-018,DEV-028 | M30: T-S3-004 | N30: Not Started | O30: YES | P30: 13 | Q30: H"
+    }
+  ]
+}

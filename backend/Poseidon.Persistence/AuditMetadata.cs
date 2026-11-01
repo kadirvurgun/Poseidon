@@ -12,6 +12,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
     internal static AuditMetadata From(EntityEntry entry)
     {
         Guid? vessel = entry.Entity switch {
+            ControlEvidenceHead e => e.VesselId, ControlEvidenceRevision e => e.VesselId, ControlEvidenceRequirement e => e.VesselId, ControlEvidenceEdge e => e.VesselId, ControlEvidenceReceipt e => e.VesselId,
             ApplicabilityEvaluation e => e.VesselId, ApplicabilityReceipt r => r.VesselId,
             OfflineEnrollment o => o.VesselId, OfflineOutcome o => o.VesselId, OfflineLifecycle o => o.VesselId,
             Credential c => c.VesselId, CredentialRevision c => c.VesselId, ImportBatch b => b.VesselId, ImportPreview p => p.VesselId, ImportRowResult r => r.VesselId,
@@ -29,6 +30,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             _ => null
         };
         Guid? resource = entry.Entity switch {
+            ControlEvidenceHead e => e.Id, ControlEvidenceRevision e => e.Id, ControlEvidenceRequirement e => e.Id, ControlEvidenceEdge e => e.Id, ControlEvidenceReceipt e => e.ResourceId,
             RuleDraft d => d.Id, RuleRevision r => r.Id, ApplicabilityEvaluation e => e.Id,
             EvaluationRule r => r.EvaluationId, ApplicabilityReceipt r => r.ResourceId,
             OfflineEnrollment o => o.AssignmentId, OfflineOutcome o => o.AssignmentId, OfflineLifecycle o => o.AssignmentId,
@@ -59,6 +61,13 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             if (outcome.Result is not ("Committed" or "MaterialConflict")) throw new InvalidOperationException("Unsupported offline outcome.");
             return new(vessel, resource, "OfflineOutcome", null, outcome.Revision, JsonSerializer.Serialize(new[] {
                 new { field = "Outcome", before = (string?)null, after = outcome.Result, evidence = "Allowlisted" } }));
+        }
+        if (entry.Entity is ControlEvidenceRevision ce) {
+            if (ce.Lifecycle != "DRAFT" || ce.ReasonCode is not ("INITIAL_AUTHORING" or "AUTHORING_CORRECTION" or "SYNTHETIC_INCOMPLETE_DRAFT")) throw new InvalidOperationException("Invalid control/evidence change metadata.");
+            return new(vessel, resource, ce.Kind, null, ce.Revision, JsonSerializer.Serialize(new[] {
+                new { field = "ReasonCode", before = (string?)null, after = ce.ReasonCode, evidence = "Allowlisted" },
+                new { field = "Lifecycle", before = (string?)null, after = "DRAFT", evidence = "Allowlisted" }
+            }));
         }
         if (entry.Entity is RuleRevision rule) {
             if (rule.ReasonCode is not ("INITIAL_AUTHORING" or "AUTHORING_CORRECTION" or "REQUEST_REVIEW" or "SYNTHETIC_INCOMPLETE_DRAFT") ||

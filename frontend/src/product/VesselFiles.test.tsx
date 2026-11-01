@@ -12,6 +12,22 @@ const page = { items: [row], offset: 0, hasMore: false, canWrite: false, availab
 const response = (value: unknown, status = 200) => ({ ok: status === 200, status, json: async () => value }) as Response
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals() })
 
+it('retains the selected upload through offline/reconnect without issuing an offline request', async () => {
+  const fetch = vi.fn(async () => response({ ...page, items: [], available: true, canWrite: true, maxBytes: 1024, allowedTypes: ['image/png'] }))
+  vi.stubGlobal('fetch', fetch)
+  const callbacks = { onDirty: vi.fn(), onSaving: vi.fn() }; const user = userEvent.setup()
+  const view = render(<VesselFiles vessel={vessel} language="en" csrf="synthetic-csrf" {...callbacks} />)
+  const input = await screen.findByLabelText('Attachment file'); await waitFor(() => expect(input).toBeEnabled())
+  const selected = new File(['synthetic'], 'synthetic.png', { type: 'image/png' }); await user.upload(input, selected)
+  const count = fetch.mock.calls.length
+  view.rerender(<VesselFiles vessel={vessel} language="tr" csrf="synthetic-csrf" offline {...callbacks} />)
+  expect(screen.getByLabelText('Ek dosyası')).toBeDisabled(); expect((input as HTMLInputElement).files?.[0]).toBe(selected)
+  expect(fetch).toHaveBeenCalledTimes(count)
+  view.rerender(<VesselFiles vessel={vessel} language="en" csrf="synthetic-csrf" {...callbacks} />)
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Upload file' })).toBeEnabled())
+  expect((input as HTMLInputElement).files?.[0]).toBe(selected); expect(callbacks.onDirty).toHaveBeenCalledWith(true)
+})
+
 it('shows quarantine and operator gate honestly in TR/EN and cannot download pending bytes', async () => {
   vi.stubGlobal('fetch', vi.fn(async (path: string) => response(path.includes('?') ? page : row)))
   const user = userEvent.setup(); const view = render(<VesselFiles vessel={vessel} language="en" csrf="synthetic-csrf" onDirty={vi.fn()} onSaving={vi.fn()} />)

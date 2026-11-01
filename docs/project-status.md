@@ -1,3 +1,22 @@
+# CONTROL-EVIDENCE-01 — authored, UNVERIFIED / NOT ACCEPTED
+
+Scoped control/evidence draft APIs, immutable revision/link history, tenant/vessel
+FKs, live provisioned owner-role references, real secure-file version/byte checks,
+atomic audited receipts/xmin and TR/EN screens are authored with meaningful domain,
+PostgreSQL, API, React and registered genuine-host Playwright test sources.
+Critical draft orphans are reported separately from unavailable authoritative
+coverage. Clean transport does not imply completion, verification or effectiveness.
+All product checks/generation/migrations/scans/QA/CI are DEFERRED / NOT RUN until
+REGULATORY-CHAIN-BUNDLE-01. Authoritative source/policy/current-obligation and
+human-decision integrations remain open software and genuine external authority
+gates remain separate. Canonical8/970 and selected40 tasks/272SP unchanged;
+194/970 is a target. No publishing, auth setup, agents or self-approval.
+[Task/source mapping](tasks/control-evidence-01.md) ·
+[Phase and source-only evidence](phases/CONTROL-EVIDENCE-01.md).
+Only docs origin70756561 was normally cherry-picked -x as46c08d5; basis300cfe3
+and preparation branch were not integrated. Next: coordinator review/continuation
+through HUMAN-DECISION-TRACE-01 and remaining full bundle software, then one gate.
+
 # LIFECYCLE-APPLICABILITY-01 — authored, not accepted
 
 Immutable tenant rule authoring/review requests, bounded three-valued DSL/reasons,

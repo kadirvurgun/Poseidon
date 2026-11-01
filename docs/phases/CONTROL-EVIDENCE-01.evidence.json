@@ -1,0 +1,192 @@
+{
+  "task": "CONTROL-EVIDENCE-01",
+  "status": "AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+  "accepted": false,
+  "candidate": "Local commit containing this record; exact ID in coordinator delivery",
+  "receiving_head": "dc15b6fbed2ec2360200a7e7a2c779e70bb2e880",
+  "origin_receipts": {
+    "70756561f35e3be38ae34a122f7596defa5f8927": "46c08d58a4d9460c8460aca475af8449726e1855"
+  },
+  "origin_scope": "docs/knowledge.md only; normal -x; no preparation branch or snapshot-basis300cfe3 integration",
+  "baseline_id": "poseidon-v46.3-20261030",
+  "source_records": "docs/tasks/control-evidence-01.sources.json",
+  "canonical_progress_unchanged": true,
+  "publication": "LOCAL ONLY; no agents, account/auth/private config changes, publishing or self-approval",
+  "product_checks": {
+    "domain": "DEFERRED_NOT_RUN_UNTIL_REGULATORY_CHAIN_BUNDLE_01",
+    "postgresql": "DEFERRED_NOT_RUN_UNTIL_REGULATORY_CHAIN_BUNDLE_01",
+    "api": "DEFERRED_NOT_RUN_UNTIL_REGULATORY_CHAIN_BUNDLE_01",
+    "react": "DEFERRED_NOT_RUN_UNTIL_REGULATORY_CHAIN_BUNDLE_01",
+    "playwright": "DEFERRED_NOT_RUN_UNTIL_REGULATORY_CHAIN_BUNDLE_01",
+    "build_lint_typecheck_restore": "DEFERRED_NOT_RUN_UNTIL_REGULATORY_CHAIN_BUNDLE_01",
+    "actual_openapi_and_consumers": "DEFERRED_NOT_RUN_UNTIL_REGULATORY_CHAIN_BUNDLE_01",
+    "ef_scaffold_designer_snapshot_parity": "DEFERRED_NOT_RUN_UNTIL_REGULATORY_CHAIN_BUNDLE_01",
+    "migration_and_seed": "DEFERRED_NOT_RUN_UNTIL_REGULATORY_CHAIN_BUNDLE_01",
+    "real_provider_scanner_browser_lab": "DEFERRED_NOT_RUN_UNTIL_REGULATORY_CHAIN_BUNDLE_01",
+    "mandatory_security_scans": "DEFERRED_NOT_RUN_UNTIL_REGULATORY_CHAIN_BUNDLE_01",
+    "independent_target_qa_and_ci": "DEFERRED_NOT_RUN_UNTIL_REGULATORY_CHAIN_BUNDLE_01"
+  },
+  "source_only_observations": {
+    "git_diff_cached_check_exit": 0,
+    "graphify_update_exit": 0,
+    "graphify_nodes": 7173,
+    "graphify_edges": 15317,
+    "graphify_communities": 499,
+    "graphify_zero_node_warnings": 47,
+    "graphify_html": "omitted above5000 nodes; AST maintenance only, no semantic/source authority or MCP claim"
+  },
+  "files": [
+    {
+      "path": "backend/Poseidon.Api/ControlEvidenceEndpoints.cs",
+      "staged_bytes": 24920,
+      "staged_sha256": "cb68933f8ec96ee2abda0fa4e3be2f5bae9631b353a23be1fb8b85bcbec9b235"
+    },
+    {
+      "path": "backend/Poseidon.Api/FoundationIdentity.cs",
+      "staged_bytes": 14443,
+      "staged_sha256": "1f6f23893ba624c21428accbbb5571099b442e76082adb2424e55efe9a6aa1a5"
+    },
+    {
+      "path": "backend/Poseidon.Api/Startup.cs",
+      "staged_bytes": 8246,
+      "staged_sha256": "b9b5a22b3b537776bbe978d47d093e6289e2cbaa2d93887e6b2fa1852e6ff4c2"
+    },
+    {
+      "path": "backend/Poseidon.Domain/ControlEvidencePolicy.cs",
+      "staged_bytes": 3336,
+      "staged_sha256": "8e31ffd0b05beacad911247d8e814cac4b64c802662f2ea65e1ac774af15f1a8"
+    },
+    {
+      "path": "backend/Poseidon.Persistence/AuditMetadata.cs",
+      "staged_bytes": 8191,
+      "staged_sha256": "26734f415471baef41f7b2e05fdc4e114b295ea3ba66637ccbe67ee27ecda8df"
+    },
+    {
+      "path": "backend/Poseidon.Persistence/ControlEvidenceStorage.cs",
+      "staged_bytes": 7507,
+      "staged_sha256": "15448aacffdda0eb221525eb488e768b4caa909ccd9dcdf52bc8f301a451cfcc"
+    },
+    {
+      "path": "backend/Poseidon.Persistence/Migrations/20261102150000_ControlEvidence.cs",
+      "staged_bytes": 7418,
+      "staged_sha256": "5bc5adf26daa2bc74b87b41d5aad60e2f6ab3fab8031e7f747aff36e7ff9e614"
+    },
+    {
+      "path": "backend/Poseidon.Persistence/PoseidonDbContext.cs",
+      "staged_bytes": 30055,
+      "staged_sha256": "f746fb37e0602a778b380614c6a2fdedf4903bd6562ecfa5d77556cd7d4356be"
+    },
+    {
+      "path": "backend/Poseidon.Persistence/Seeding/ControlEvidenceFixtures.cs",
+      "staged_bytes": 1671,
+      "staged_sha256": "45d871f145d3d08769f8f6127319462d51f028c9596f9b997d580f937e9c7f29"
+    },
+    {
+      "path": "backend/Poseidon.Persistence/Seeding/SeedImporter.cs",
+      "staged_bytes": 5848,
+      "staged_sha256": "1d78b364a0ad5f67cd6c978335e21b2818488e51afb479f61d15b010dacf0565"
+    },
+    {
+      "path": "docs/phases/CONTROL-EVIDENCE-01.md",
+      "staged_bytes": 2736,
+      "staged_sha256": "1d269d65cf9c3fcbd328f002e71397eb4249557e0b80745312047102b1b0596e"
+    },
+    {
+      "path": "docs/project-status.json",
+      "staged_bytes": 179585,
+      "staged_sha256": "14fa6e24ff280ddd9c8954fdd0fd69025157e844d1f990e7e37b08d9e858d911"
+    },
+    {
+      "path": "docs/project-status.md",
+      "staged_bytes": 47848,
+      "staged_sha256": "28093dcc8368f014c94a0cd7e05a45054a3ca1c9a179367b83672de049d1c09c"
+    },
+    {
+      "path": "docs/tasks/control-evidence-01.md",
+      "staged_bytes": 13504,
+      "staged_sha256": "c79f3c8a3e76daa27571acd0456701e9a7a832502d2d81205dbef8180d7e93a9"
+    },
+    {
+      "path": "docs/tasks/control-evidence-01.sources.json",
+      "staged_bytes": 107418,
+      "staged_sha256": "3c4e4f4d6a0317421636468d88500caa0d228bb0ace5b7f2348ba0db95541fac"
+    },
+    {
+      "path": "frontend/src/product/ControlEvidence.test.tsx",
+      "staged_bytes": 6869,
+      "staged_sha256": "29083a3c0ae493d0f217ef124b0b42dd8e0104b0c84b63c1331abd3951eeb5c6"
+    },
+    {
+      "path": "frontend/src/product/ControlEvidence.tsx",
+      "staged_bytes": 25808,
+      "staged_sha256": "b218cdbd04d60aede84c58e7e15f32aa0f8d29b12dbbf47859ec39cd9121b9e8"
+    },
+    {
+      "path": "frontend/src/product/RegulatoryRegister.tsx",
+      "staged_bytes": 19099,
+      "staged_sha256": "15c81516164e62077845be37d6a15e5b1023538feb9c7ed9a11761ac0074b100"
+    },
+    {
+      "path": "frontend/src/product/VesselFiles.test.tsx",
+      "staged_bytes": 6471,
+      "staged_sha256": "2dc06cfd4da97fc55a302be8f4cd175fcdf23b0928f5cd659c53a52166496a95"
+    },
+    {
+      "path": "frontend/src/product/VesselFiles.tsx",
+      "staged_bytes": 9836,
+      "staged_sha256": "ac5f1510f81db01084165eb3d1ef2538a9b86881152f33cf9a8238764bfe5d14"
+    },
+    {
+      "path": "frontend/src/product/control-evidence-api.test.ts",
+      "staged_bytes": 2857,
+      "staged_sha256": "aa37884d3bae77edd57741c0ca2ea06e96fe4f38fc09ed39a45cb378c589e685"
+    },
+    {
+      "path": "frontend/src/product/control-evidence-api.ts",
+      "staged_bytes": 8794,
+      "staged_sha256": "0d7355a34b7a8bb4a0fc23e56ce075b738b24721c206c4af23b7081a144abeed"
+    },
+    {
+      "path": "frontend/src/product/product.css",
+      "staged_bytes": 10465,
+      "staged_sha256": "322aee4f8b070d2339adf68c2f3ef7ea21b8b0b1384abf199266db665c481ab6"
+    },
+    {
+      "path": "tests/Poseidon.Api.Tests/ControlEvidenceTests.cs",
+      "staged_bytes": 20257,
+      "staged_sha256": "43b612cbdfc7219bed54bb1b72ed07744b5cde347edf1a9408f88a7fa0f5a456"
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/register-specs/cases.ts",
+      "staged_bytes": 8513,
+      "staged_sha256": "d917e765bfa34e61774b843fda7b480583e53652c3fbea0b49ad68fc112cf3e5"
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/register-specs/control-evidence-cases.ts",
+      "staged_bytes": 3134,
+      "staged_sha256": "f5d6b8e91cb104fe68f64ec7a3c128d1cacc91b10658d705bb75dd8f1d374dfb"
+    },
+    {
+      "path": "tests/Poseidon.Domain.Tests/ControlEvidencePolicyTests.cs",
+      "staged_bytes": 3752,
+      "staged_sha256": "932e8fb1e4aebc943567cfe3b80b0950e0b766510e33f1414e4688a6600f4269"
+    },
+    {
+      "path": "tests/Poseidon.Persistence.Tests/ControlEvidencePersistenceTests.cs",
+      "staged_bytes": 6589,
+      "staged_sha256": "98351c29ae739fd5d9a8b3f84e6b3cf71bd80c7aabcd4524ed586967f789de40"
+    },
+    {
+      "path": "tests/Poseidon.Persistence.Tests/PostgresSeedTests.cs",
+      "staged_bytes": 16165,
+      "staged_sha256": "5a81bca1505ae1265e17ff52c0f9016da5ce47489fb17bfd0416aaaabef1335a"
+    }
+  ],
+  "inventory_scope": "Staged UTF-8/git blob bytes before adding this inventory itself; not executed verification or a secret scan",
+  "open_software": [
+    "Admitted source/policy/current obligation and qualified freshness integration",
+    "Authorized human verification/separation-of-duties/HUMAN-DECISION-TRACE-01",
+    "Full branch generated model/contract/consumer reconciliation and required bundle gate"
+  ],
+  "next_step": "Coordinator independent review/continuation, then the single combined execution gate and independent target QA/CI; no acceptance here"
+}
