@@ -35,11 +35,12 @@ public sealed record TrustedActor(Guid Id, Guid TenantId, string[] Permissions, 
     public string AuditCapabilities => string.Join(',', Permissions.Order(StringComparer.Ordinal));
     // Explicit tenant-local capability. Vessel-only grants and directory writes confer no catalog authority.
     public bool CanReadRegulatory => CanRead && (TenantWideRead || TenantWideManage) && Permissions.Contains("regulatory.draft.read");
-    public bool CanWriteRegulatory => CanReadRegulatory && Permissions.Contains("regulatory.draft.write");
+    public bool HasWriteAttribution => RoleContext != null;
+    public bool CanWriteRegulatory => HasWriteAttribution && CanReadRegulatory && Permissions.Contains("regulatory.draft.write");
     public bool CanRead => Permissions.Contains("directory.read") && (TenantWideRead || TenantWideManage || VesselGrants.Length > 0);
-    public bool CanManage => CanRead && TenantWideManage && Permissions.Contains("directory.write");
+    public bool CanManage => HasWriteAttribution && CanRead && TenantWideManage && Permissions.Contains("directory.write");
     public bool CanSearch => CanRead && Permissions.Contains("workspace.search");
-    public bool CanEditVessel(Guid id) => CanRead && Permissions.Contains("directory.write") &&
+    public bool CanEditVessel(Guid id) => HasWriteAttribution && CanRead && Permissions.Contains("directory.write") &&
         (TenantWideManage || VesselGrants.Any(g => g.VesselId == id && g.CanEdit));
     public IQueryable<Poseidon.Persistence.Vessel> Scope(IQueryable<Poseidon.Persistence.Vessel> query)
     {

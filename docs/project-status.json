@@ -1,6 +1,44 @@
 {
+  "audit_files_bundle_01": {
+    "status": "executed_combined_gate_not_met_not_accepted",
+    "accepted": false,
+    "phase_report": "docs/phases/AUDIT-FILES-BUNDLE-01.md",
+    "evidence": "docs/phases/AUDIT-FILES-BUNDLE-01.evidence.json",
+    "approved_base": "80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44",
+    "receiving_head": "e764f96",
+    "canonical_progress_unchanged": true,
+    "canonical_accepted_story_points": 8,
+    "canonical_total_story_points": 970,
+    "canonical_accepted_tasks": 2,
+    "canonical_total_tasks": 121,
+    "canonical_accepted_screens": 0,
+    "canonical_total_screens": 196,
+    "verification": {
+      "domain": "83/83 PASS",
+      "persistence": "29/29 PASS real PostgreSQL",
+      "api": "full189/189 PASS; affected Diagnostics6/6 PASS including one new case;190 unique covered",
+      "frontend": "full380/380 PASS; affected45/45 then34/34 PASS; lint/typecheck/build PASS",
+      "ordinary_browser": "26 unique cases covered by initial full and affected repairs; no full26 green rerun claimed",
+      "signed_browser": "broad2/2 PASS; audit/REG/files13/14 initial then only affected1/1 PASS;14 unique covered",
+      "python": "initial141:140 PASS/1 ERROR; fixed affected modules/new cases cover144 current discovered cases",
+      "source_bytes": "269 files;34958 chunks;0 mismatches",
+      "ef": "no pending model changes",
+      "repository_scan": "FAIL;810 inputs;156 findings;safe ledger retained;final changed inputs supplemented separately;final changed-input supplement86 files/6 findings/0 input failures,also FAIL",
+      "actual_client_scan": "PASS;3 files;0 findings;final dist hashes retained",
+      "independent_exact_commit_qa_remote_ci": "NOT RUN;coordinator-owned",
+      "source_criteria_reconciliation": "NOT RUN;canonical counts unchanged"
+    },
+    "not_met": [
+      "Repository findings need actual classification/remediation/exact reviewed exceptions; controlled originals preserved",
+      "Missing configurable S3-compatible/API object-storage adapter and object-storage secret references",
+      "PNG-only transport does not complete broader evidence/document source contract;no mandatory PDF inferred",
+      "Entire-product critical audit/operational role appointments/retention/production/DEV-003/006 and source/expert gates remain open"
+    ],
+    "current_phase": "Executed local foundation gate; source/security gaps remain;NOT ACCEPTED",
+    "next_step": "Coordinator independent exact-commit review, actual remaining adapter/secret development and source reconciliation before any publication; no self approval"
+  },
   "secure_files_01": {
-    "status": "authored_unverified_not_accepted",
+    "status": "combined_gate_executed_not_accepted",
     "accepted": false,
     "task": "docs/tasks/secure-files-01.md",
     "phase_report": "docs/phases/SECURE-FILES-01.md",
@@ -19,24 +57,11 @@
       "Separate operator role-reference audit snapshot and complete wire-type/numeric-string regressions",
       "Metadata-only SyntheticUnverified fixtures and meaningful Domain/PostgreSQL/API/component/browser tests"
     ],
-    "verification": {
-      "build_restore": "DEFERRED / NOT RUN",
-      "domain": "DEFERRED / NOT RUN",
-      "postgresql_api_migrations_seed": "DEFERRED / NOT RUN",
-      "real_clamd": "DEFERRED / NOT RUN",
-      "repository_and_client_secret_scans": "DEFERRED / NOT RUN",
-      "frontend_components_lint_typecheck_build": "DEFERRED / NOT RUN",
-      "openapi_and_consumers": "DEFERRED / NOT RUN",
-      "playwright_private_provider_tls": "DEFERRED / NOT RUN",
-      "independent_exact_target_qa_ci": "DEFERRED / NOT RUN"
-    },
-    "executed_product_checks": 0,
-    "new_pass_receipts": 0,
     "canonical_progress_unchanged": true,
     "canonical_accepted_story_points": 8,
     "canonical_total_story_points": 970,
     "user_delivery_target_story_points": 194,
-    "current_phase": "Foundation authoring; UNVERIFIED local checkpoint, not canonical sprint/release acceptance",
+    "current_phase": "AUDIT-FILES-BUNDLE-01 executed;combined gate NOT MET;no canonical acceptance",
     "open_gates": [
       "AUDIT-FILES-BUNDLE-01 combined actual gate",
       "Production object provider/secret references, scanner trust/signature/deployment, operator limits/type policy",
@@ -47,11 +72,30 @@
     ],
     "publication": "LOCAL UNVERIFIED COMMIT ONLY; no push/PR/new publication merge/self approval; only explicitly authorized predecessor ancestry merge",
     "next_step": "Coordinator queues AUDIT-FILES-BUNDLE-01 then independent target QA; accepted counts unchanged",
-    "graph_maintenance": "AST-only final graphify update exit0;3604 nodes/6133 edges/294 communities;14 zero-node source warnings;not product verification"
+    "graph_maintenance": "AST-only final graphify update exit0;3604 nodes/6133 edges/294 communities;14 zero-node source warnings;not product verification",
+    "latest_gate": "docs/phases/AUDIT-FILES-BUNDLE-01.md",
+    "historical_authoring_verification": {
+      "build_restore": "DEFERRED / NOT RUN",
+      "domain": "DEFERRED / NOT RUN",
+      "postgresql_api_migrations_seed": "DEFERRED / NOT RUN",
+      "real_clamd": "DEFERRED / NOT RUN",
+      "repository_and_client_secret_scans": "DEFERRED / NOT RUN",
+      "frontend_components_lint_typecheck_build": "DEFERRED / NOT RUN",
+      "openapi_and_consumers": "DEFERRED / NOT RUN",
+      "playwright_private_provider_tls": "DEFERRED / NOT RUN",
+      "independent_exact_target_qa_ci": "DEFERRED / NOT RUN"
+    },
+    "historical_authoring_executed_product_checks": 0,
+    "historical_authoring_new_pass_receipts": 0,
+    "verification": {
+      "latest_gate": "docs/phases/AUDIT-FILES-BUNDLE-01.md",
+      "combined_result": "NOT MET",
+      "accepted": false
+    }
   },
   "as_of": "2026-11-01",
   "audit_trace_01": {
-    "status": "authored_unverified_not_accepted",
+    "status": "combined_gate_executed_not_accepted",
     "accepted": false,
     "baseline_commit": "473ced0",
     "prerequisite_independent_proof": {
@@ -78,26 +122,12 @@
       "One actual PostgreSQL container per directory collection, fresh registered UUID database/current migrations/synthetic seed per test; isolated cleanup",
       "Meaningful domain/PostgreSQL/API/React/real-host Playwright tests plus source-backed all-current-route/mutation coverage matrix"
     ],
-    "verification": {
-      "domain": "DEFERRED / NOT RUN",
-      "postgresql_persistence_migration_seed": "DEFERRED / NOT RUN",
-      "api_security_transactions_concurrency": "DEFERRED / NOT RUN",
-      "react_runtime_transport_ui": "DEFERRED / NOT RUN",
-      "playwright_signed_provider_tls": "DEFERRED / NOT RUN",
-      "restore_build_lint_typecheck": "DEFERRED / NOT RUN",
-      "actual_openapi_export_generated_consumers": "DEFERRED / NOT RUN",
-      "ef_model_designer_snapshot_parity": "DEFERRED / NOT RUN",
-      "timing_before_after": "DEFERRED / NOT RUN",
-      "independent_target_qa_ci": "DEFERRED / NOT RUN"
-    },
     "graph_maintenance": "AST-only update completed exit0;3391 nodes/5627 edges/279 communities;13 zero-node source warnings;not product verification",
-    "executed_product_checks": 0,
-    "new_pass_receipts": 0,
     "canonical_progress_unchanged": true,
     "canonical_accepted_story_points": 8,
     "canonical_total_story_points": 970,
     "publication": "LOCAL COMMIT ONLY; no push/PR/merge/self-approval; coordinator owns publication",
-    "current_phase": "Foundation authoring; locally UNVERIFIED subpackage, not canonical sprint/release acceptance",
+    "current_phase": "AUDIT-FILES-BUNDLE-01 executed;combined gate NOT MET;no canonical acceptance",
     "limitations": [
       "SecurityEvents have no viewer; audit.read grants no security log/export authority",
       "Historical missing metadata remains unavailable; unknown vessel scope withheld from vessel-only actors",
@@ -112,7 +142,27 @@
       "Production IdP/MFA/roles, source admission, retention/privacy/export/DB privileges",
       "Expert/legal/permit/pilot/release and existing dependency advisory gates"
     ],
-    "next_step": "Secure-files foundation authoring, then combined audit/files actual generation/checks, timing and independent exact-target review"
+    "next_step": "Secure-files foundation authoring, then combined audit/files actual generation/checks, timing and independent exact-target review",
+    "latest_gate": "docs/phases/AUDIT-FILES-BUNDLE-01.md",
+    "historical_authoring_verification": {
+      "domain": "DEFERRED / NOT RUN",
+      "postgresql_persistence_migration_seed": "DEFERRED / NOT RUN",
+      "api_security_transactions_concurrency": "DEFERRED / NOT RUN",
+      "react_runtime_transport_ui": "DEFERRED / NOT RUN",
+      "playwright_signed_provider_tls": "DEFERRED / NOT RUN",
+      "restore_build_lint_typecheck": "DEFERRED / NOT RUN",
+      "actual_openapi_export_generated_consumers": "DEFERRED / NOT RUN",
+      "ef_model_designer_snapshot_parity": "DEFERRED / NOT RUN",
+      "timing_before_after": "DEFERRED / NOT RUN",
+      "independent_target_qa_ci": "DEFERRED / NOT RUN"
+    },
+    "historical_authoring_executed_product_checks": 0,
+    "historical_authoring_new_pass_receipts": 0,
+    "verification": {
+      "latest_gate": "docs/phases/AUDIT-FILES-BUNDLE-01.md",
+      "combined_result": "NOT MET",
+      "accepted": false
+    }
   },
   "reg_source_draft_01": {
     "status": "whole318a147_rejected_new_bounded_boundary_tls_candidate_pending_independent_qa",

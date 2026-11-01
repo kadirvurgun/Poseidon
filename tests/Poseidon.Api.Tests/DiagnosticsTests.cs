@@ -1,15 +1,31 @@
 using System.Net;
+using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Poseidon.Persistence;
+using Poseidon.Persistence.Seeding;
 using Xunit;
 
 namespace Poseidon.Api.Tests;
 
 [Trait("Category", "Integration")]
-public sealed class DiagnosticsTests
+[Collection("directory-postgres")]
+public sealed class DiagnosticsTests(OwnedPostgresFixture fixture)
 {
+    [Fact]
+    public async Task Mandatory_anonymous_denial_audit_without_storage_fails_closed()
+    {
+        await using var host = Host("Production").WithWebHostBuilder(b => b.ConfigureAppConfiguration((_, c) => c.AddInMemoryCollection(new Dictionary<string, string?> { ["SecretReferences:Database"] = "POSEIDON_UNCONFIGURED_SYNTHETIC_AUDIT_GATE" })));
+        using var client = host.CreateClient();
+        foreach (var path in new[] { "/api/v1/vessels", "/api/v1/companies", "/api/v1/audit" })
+            Assert.Equal(HttpStatusCode.ServiceUnavailable, (await client.GetAsync(path, TestContext.Current.CancellationToken)).StatusCode);
+        using var denied = await client.PutAsJsonAsync("/api/v1/vessels/00000000-0000-0000-0000-000000000001/regulatory-profile", new { expectedVersion = 0, content = new { } }, TestContext.Current.CancellationToken);
+        Assert.Equal(HttpStatusCode.ServiceUnavailable, denied.StatusCode);
+    }
     [Theory]
     [InlineData("Development")]
     [InlineData("Production")]
@@ -31,12 +47,20 @@ public sealed class DiagnosticsTests
     [Fact]
     public async Task Liveness_is_process_only_and_business_routes_require_authentication()
     {
-        await using var host = Host("Production");
+        await using var postgres = await fixture.CreateAsync(TestContext.Current.CancellationToken);
+        var seed = SeedData.Load(Path.Combine(AppContext.BaseDirectory, "synthetic-demo.json"));
+        await using var db = new PoseidonDbContext(SeedImporter.Options(postgres.GetConnectionString(), seed), Guid.Empty, ActorContext.SeedImport(), true);
+        await db.Database.MigrateAsync(TestContext.Current.CancellationToken);
+        await using var host = Host("Test").WithWebHostBuilder(b => b.ConfigureAppConfiguration((_, c) => c.AddInMemoryCollection(new Dictionary<string, string?> { ["ConnectionStrings:Poseidon"] = postgres.GetConnectionString() })));
         using var client = host.CreateClient();
         Assert.Equal("alive", await client.GetStringAsync("/health/live", TestContext.Current.CancellationToken));
         using var vessels = await client.GetAsync("/api/v1/vessels", TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.Unauthorized, vessels.StatusCode);
-        foreach (var path in new[] { "/api/v1/audit", "/api/v1/auth" })
+        using var audit = await client.GetAsync("/api/v1/audit", TestContext.Current.CancellationToken);
+        Assert.Equal(HttpStatusCode.Unauthorized, audit.StatusCode);
+        await using var observations = new SecurityEventWriter(new DbContextOptionsBuilder<SecurityEventWriter>().UseNpgsql(postgres.GetConnectionString()).Options);
+        Assert.True(await observations.Set<SecurityEvent>().AnyAsync(x => x.Action == "AuditQuery" && x.Result == "Unauthenticated" && x.TenantId == null && x.ActorId == null, TestContext.Current.CancellationToken));
+        foreach (var path in new[] { "/api/v1/auth" })
         {
             using var response = await client.GetAsync(path, TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);

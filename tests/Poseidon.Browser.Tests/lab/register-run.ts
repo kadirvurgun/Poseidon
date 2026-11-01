@@ -16,14 +16,15 @@ Object.assign(process.env, {
 });
 const { default: config } = await import('../register.playwright.config.ts');
 const selectedCases = registerCases.filter(entry => !process.env.POSEIDON_REGISTER_CASE || process.env.POSEIDON_REGISTER_CASE === entry.name);
-const counts = { status: 'running', discovered: selectedCases.length * config.projects!.length,
+const selectedProjects = config.projects!.filter(project => !process.env.POSEIDON_REGISTER_PROJECT || process.env.POSEIDON_REGISTER_PROJECT === project.name);
+const counts = { status: 'running', discovered: selectedCases.length * selectedProjects.length,
   passed: 0, failed: 0, results: [] as { project: string; name: string; passed: boolean; milliseconds: number; line: number | null }[] };
 const persist = () => writeFileSync(resolve(directory, 'register-counts.json'), JSON.stringify(counts));
 persist();
 const sessions = new Map<string, Awaited<ReturnType<import('@playwright/test').BrowserContext['storageState']>>>();
 try {
   await tlsCases();
-  if (!selectedCases.length) throw new Error('Unknown case selection');
+  if (!selectedCases.length || !selectedProjects.length) throw new Error('Unknown case or project selection');
   for (const [account, path] of [['lab-manager', writer], ['lab-restricted', restricted]]) {
     const owned = await strictContext({ baseURL: config.use!.baseURL });
     const { context } = owned;
@@ -33,7 +34,7 @@ try {
       sessions.set(path, await context.storageState());
     } finally { await owned.close(); }
   }
-  for (const project of config.projects!) {
+  for (const project of selectedProjects) {
     for (const entry of selectedCases) {
       const owned = await strictContext({ ...project.use, baseURL: config.use!.baseURL });
       const { context } = owned;

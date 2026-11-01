@@ -1,5 +1,8 @@
 # AUDIT-TRACE-01 local authoring checkpoint
 
+> Current verification: [AUDIT-FILES-BUNDLE-01](AUDIT-FILES-BUNDLE-01.md) executes the current app gate against approved80b057a. Scoped regressions pass after documented fixes; repository scan fails and the S3-compatible/API storage criterion is NOT MET. NOT ACCEPTED; canonical progress unchanged. Earlier authoring/CORE statements below retain historical scope.
+
+
 Phase: foundation bundle authoring. **AUTHORED / UNVERIFIED / NOT ACCEPTED**. Local-only delivery; no push, PR, merge, self-approval, external appointments or canonical count increment. Canonical acceptance remains **8/970 SP**, 2/121 tasks, 0/196 screens. The ≥194-SP target is not satisfied by this checkpoint.
 
 The worktree began clean at473ced0. The coordinator-supplied [independent approval](../reviews/reg-boundary-tls-01-80b057a6d183.json) for exact80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44 was read and preserved. Earlier source, code, meaningful tests and historical failures/results remain separate; none is reclassified as current-target execution.

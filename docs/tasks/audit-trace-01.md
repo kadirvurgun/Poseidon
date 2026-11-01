@@ -1,5 +1,8 @@
 # AUDIT-TRACE-01 — scoped action history
 
+> Current executed verification and source-fit limits: [AUDIT-FILES-BUNDLE-01](../phases/AUDIT-FILES-BUNDLE-01.md). Valid trusted role references are now required for new human writes; missing/malformed roles remain readable but cannot write. Historical/null/System context is preserved. Repository scanning fails; the S3-compatible/API adapter and broader document handling remain NOT MET software criteria. This supplements the historical authoring contract without accepting DEV-016/017/018.
+
+
 Status: AUTHORED / UNVERIFIED / NOT ACCEPTED. All product execution is **DEFERRED** to AUDIT-FILES-BUNDLE-01 by the direct user instruction. Local commit only; coordinator owns publication and independent target-commit QA. Canonical acceptance stays **8/970 SP, 2/121 tasks, 0/196 screens**. The requested ≥194 accepted SP remains a future evidence-reconciliation target.
 
 ## Authority and source locators

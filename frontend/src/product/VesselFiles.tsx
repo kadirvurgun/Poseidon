@@ -4,13 +4,17 @@ import { downloadFile, fileDetail, filePage, stageFile, uploadFile, type FileAtt
 export function VesselFiles({ vessel, language, csrf, onDirty, onSaving }: { vessel: string; language: 'tr' | 'en'; csrf: string; onDirty: (v: boolean) => void; onSaving: (v: boolean) => void }) {
   const en = language === 'en'
   const stateLabel = (state: FileRecord['state']) => ({ Pending: en ? 'Pending upload' : 'Yükleme bekliyor', Receiving: en ? 'Quarantined / interrupted' : 'Karantina / kesilmiş', CleanTransport: en ? 'Scanned transport, unverified evidence' : 'Taranmış aktarım, doğrulanmamış kanıt', Abandoned: en ? 'Abandoned / reconciliation' : 'Bırakıldı / uzlaştırma', SyntheticUnverified: en ? 'Synthetic unverified metadata' : 'Sentetik doğrulanmamış meta veri' })[state]
-  const [page, setPage] = useState<FilePage | null>(null); const [offset, setOffset] = useState(0)
+  const [loaded, setLoaded] = useState<{ key: string; page: FilePage } | null>(null); const [offset, setOffset] = useState(0)
   const [reload, setReload] = useState(0); const [error, setError] = useState(false)
   const [file, setFile] = useState<File | null>(null); const attempt = useRef<FileAttempt | null>(null)
   const [frozen, setFrozen] = useState(false); const [busy, setBusy] = useState(false); const [progress, setProgress] = useState(0)
-  const [selected, setSelected] = useState<FileRecord | null>(null); const [notice, setNotice] = useState('')
+  const [selection, setSelection] = useState<{ key: string; row: FileRecord } | null>(null); const [notice, setNotice] = useState('')
   const controller = useRef<AbortController | null>(null)
-  useEffect(() => { const c = new AbortController(); let active = true; setPage(null); setSelected(null); setError(false); filePage(vessel, offset, c.signal).then(value => { if (active) setPage(value) }).catch(() => { if (active && !c.signal.aborted) setError(true) }); return () => { active = false; c.abort() } }, [vessel, offset, reload])
+  const pageKey = `${vessel}:${offset}:${reload}`
+  const selected = selection?.key === pageKey ? selection.row : null
+  const setSelected = (row: FileRecord | null) => setSelection(row ? { key: pageKey, row } : null)
+  const page = loaded?.key === pageKey ? loaded.page : null
+  useEffect(() => { const c = new AbortController(); let active = true; filePage(vessel, offset, c.signal).then(value => { if (active) { setLoaded({ key: pageKey, page: value }); setSelection(null); setError(false) } }).catch(() => { if (active && !c.signal.aborted) setError(true) }); return () => { active = false; c.abort() } }, [vessel, offset, reload, pageKey])
   useEffect(() => () => controller.current?.abort(), [])
   const start = async () => {
     if (!file || busy || !page?.available || !page.canWrite) return
@@ -36,7 +40,7 @@ export function VesselFiles({ vessel, language, csrf, onDirty, onSaving }: { ves
     try { const blob = await downloadFile(vessel, selected, csrf, c.signal); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = selected.name; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000) }
     catch { setError(true) } finally { setBusy(false); onSaving(false) }
   }
-  return <section aria-label={en ? 'Vessel files' : 'Araç dosyaları'}>
+  return <section className="vessel-files" aria-label={en ? 'Vessel files' : 'Araç dosyaları'}>
     <h2>{en ? 'Vessel files' : 'Araç dosyaları'}</h2>
     <p>{en ? 'File presence and a malware scan do not verify evidence or activate readiness.' : 'Dosyanın bulunması ve zararlı yazılım taraması kanıtı doğrulamaz, hazırlığı etkinleştirmez.'}</p>
     {error && <p role="alert">{en ? 'File service unavailable or request rejected.' : 'Dosya servisi kullanılamıyor veya istek reddedildi.'}</p>}

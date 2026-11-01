@@ -1,8 +1,9 @@
 import { ApiError, request } from './api'
 import { isGuid } from './identifiers'
+import type { components } from '../generated/api'
 
-export type FileRecord = { id: string; vesselId: string; name: string; state: 'Pending' | 'Receiving' | 'CleanTransport' | 'Abandoned' | 'SyntheticUnverified'; length: number; checksum: string | null; revision: number | null; version: number }
-export type FilePage = { items: FileRecord[]; offset: number; hasMore: boolean; canWrite: boolean; available: boolean; maxBytes: number }
+export type FileRecord = Omit<components['schemas']['FileDto'], 'state' | 'length' | 'revision' | 'version'> & { state: 'Pending' | 'Receiving' | 'CleanTransport' | 'Abandoned' | 'SyntheticUnverified'; length: number; revision: number | null; version: number }
+export type FilePage = Omit<components['schemas']['FileListDto'], 'items' | 'offset' | 'maxBytes'> & { items: FileRecord[]; offset: number; maxBytes: number }
 const bad = (): never => { throw new ApiError(502, 'invalid_file_contract') }
 const object = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v)
 const integer = (v: unknown, min = 0): v is number => typeof v === 'number' && Number.isSafeInteger(v) && v >= min
@@ -30,7 +31,8 @@ export const fileDetail = async (vessel: string, id: string, signal: AbortSignal
 }
 export type FileAttempt = { key: string; file: File; checksum: string }
 export async function stageFile(vessel: string, attempt: FileAttempt, csrf: string, signal: AbortSignal) {
-  return decodeFile(await request<unknown>(`vessels/${vessel}/files`, signal, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf, 'Idempotency-Key': attempt.key }, body: JSON.stringify({ name: attempt.file.name, mime: attempt.file.type, length: attempt.file.size, checksum: attempt.checksum }) }), vessel)
+  const command = { name: attempt.file.name, mime: attempt.file.type, length: attempt.file.size, checksum: attempt.checksum } satisfies components['schemas']['StageFileCommand']
+  return decodeFile(await request<unknown>(`vessels/${vessel}/files`, signal, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf, 'Idempotency-Key': attempt.key }, body: JSON.stringify(command) }), vessel)
 }
 export function uploadFile(vessel: string, id: string, file: File, csrf: string, signal: AbortSignal, progress: (n: number) => void): Promise<FileRecord> {
   return new Promise((resolve, reject) => {

@@ -25,7 +25,8 @@ using Xunit;
 namespace Poseidon.Api.Tests;
 
 [Trait("Category", "Integration")]
-public sealed class OidcProtocolTests
+[Collection("directory-postgres")]
+public sealed class OidcProtocolTests(OwnedPostgresFixture fixture)
 {
     [Theory]
     [InlineData("valid")]
@@ -38,16 +39,11 @@ public sealed class OidcProtocolTests
     [InlineData("correlation")]
     public async Task Federation_validates_protocol_before_issuing_a_bounded_session(string failure)
     {
-        await using var postgres = new PostgreSqlBuilder("postgres:18.6").Build();
-        var tenant = Guid.NewGuid();
-        if (failure == "valid")
-        {
-            await postgres.StartAsync(TestContext.Current.CancellationToken);
-            var seed = SeedData.Load(Path.Combine(AppContext.BaseDirectory, "synthetic-demo.json"));
-            tenant = seed.Tenants[0].Id;
-            await using var setup = new PoseidonDbContext(SeedImporter.Options(postgres.GetConnectionString(), seed), Guid.Empty, ActorContext.SeedImport(), true);
-            await setup.Database.MigrateAsync(TestContext.Current.CancellationToken);
-        }
+        await using var postgres = await fixture.CreateAsync(TestContext.Current.CancellationToken);
+        var seed = SeedData.Load(Path.Combine(AppContext.BaseDirectory, "synthetic-demo.json"));
+        var tenant = seed.Tenants[0].Id;
+        await using var setup = new PoseidonDbContext(SeedImporter.Options(postgres.GetConnectionString(), seed), Guid.Empty, ActorContext.SeedImport(), true);
+        await setup.Database.MigrateAsync(TestContext.Current.CancellationToken);
         using var rsa = RSA.Create(2048);
         var signingKey = new RsaSecurityKey(rsa) { KeyId = "synthetic-key" };
         var backchannel = new TokenEndpoint();
@@ -56,7 +52,7 @@ public sealed class OidcProtocolTests
             b.UseEnvironment("Test");
             b.ConfigureAppConfiguration((_, c) => c.AddInMemoryCollection(new Dictionary<string, string?>
             {
-                ["ConnectionStrings:Poseidon"] = failure == "valid" ? postgres.GetConnectionString() : null,
+                ["ConnectionStrings:Poseidon"] = postgres.GetConnectionString(),
                 ["Authentication:Oidc:Authority"] = "https://idp.example",
                 ["Authentication:Oidc:Issuer"] = "https://idp.example",
                 ["Authentication:Oidc:ClientId"] = "synthetic-client",
@@ -145,6 +141,8 @@ public sealed class OidcProtocolTests
         Assert.Equal(HttpStatusCode.Unauthorized, mutation.StatusCode);
         using var protectedRead = await client.GetAsync("/api/v1/companies", TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.Unauthorized, protectedRead.StatusCode);
+        await using var observations = new SecurityEventWriter(new DbContextOptionsBuilder<SecurityEventWriter>().UseNpgsql(postgres.GetConnectionString()).Options);
+        Assert.True(await observations.Set<SecurityEvent>().AnyAsync(x => x.Action == "CompaniesRead" && x.Result == "Unauthenticated" && x.TenantId == null && x.ActorId == null, TestContext.Current.CancellationToken));
         if (failure is not ("state" or "correlation")) Assert.Contains("code_verifier=", backchannel.LastBody);
     }
 

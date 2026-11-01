@@ -1,15 +1,13 @@
 import { ApiError, request } from './api'
+import type { components } from '../generated/api'
 import { isGuid } from './identifiers'
 import { timestamp } from './date-validation'
 
 export const auditTypes = ['Tenant', 'Company', 'Vessel', 'VesselProfile', 'TugProfile', 'RegulatoryDraft', 'RegulatoryDraftRevision', 'RegisterDraft', 'RegisterRevision', 'FileStage', 'StoredFile'] as const
-export type AuditRecord = {
-  id: string; occurredAt: string; actorReference: string | null; actorType: string; action: string; entityType: string;
-  resourceId: string | null; vesselId: string | null; capabilityContext: string | null; roleContext: string | null; changeSummary: string | null;
-  beforeVersion: number | null; afterVersion: number | null; beforeRevision: number | null; afterRevision: number | null; reasonStatus: string | null; correlationId: string | null;
-  metadataStatus: string; revisionHref: string | null;
+export type AuditRecord = components['schemas']['AuditRecordDto'] & {
+  beforeVersion: number | null; afterVersion: number | null; beforeRevision: number | null; afterRevision: number | null;
 }
-export type AuditPage = { items: AuditRecord[]; total: number; limit: number; nextCursor: string | null }
+export type AuditPage = components['schemas']['AuditPageDto'] & { items: AuditRecord[]; total: number; limit: number }
 export type Change = { field: string; before: string | null; after: string | null; evidence: string }
 const object = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v)
 const keys = (v: Record<string, unknown>, names: string[]) => Object.keys(v).length === names.length && names.every(k => Object.hasOwn(v, k))

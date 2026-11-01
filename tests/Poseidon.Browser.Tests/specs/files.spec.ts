@@ -16,7 +16,7 @@ test('quarantined transport cannot be downloaded and malformed success is withhe
   await page.goto(`/app/fleet/${vessel.id}`); await page.getByRole('button', { name: 'EN', exact: true }).click()
   const region = page.getByRole('region', { name: 'Vessel files', exact: true })
   await region.getByRole('button', { name: pending.name, exact: true }).click()
-  await expect(region.getByText('Quarantined / interrupted', { exact: true })).toHaveCount(1)
+  await expect(region.getByRole('article', { name: 'File details' }).getByText('Quarantined / interrupted', { exact: true })).toHaveCount(1)
   await expect(region.getByRole('button', { name: 'Download file' })).toHaveCount(0)
   malformed = true; await region.getByRole('button', { name: 'Refresh files' }).click()
   await expect(region.getByRole('alert')).toBeVisible()

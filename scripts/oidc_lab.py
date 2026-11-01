@@ -16,6 +16,8 @@ import sys
 import time
 import urllib.request
 import uuid
+import tempfile
+import shutil
 
 ROOT = Path(__file__).resolve().parents[1]
 PRIVATE = ROOT / '.runtime/oidc-lab'
@@ -26,6 +28,10 @@ STAGE = 'initialization'
 
 
 def root_tool(name):
+    if os.name != 'nt':
+        executable = shutil.which(name)
+        if executable:
+            return executable  # CI setup-dotnet/setup-node owns exact pinned tool versions.
     relative = {'dotnet': 'dotnet/dotnet.exe', 'node': 'node/node-v26.13.0-win-x64/node.exe'}[name]
     for directory in (ROOT, *ROOT.parents):
         path = directory / '.tools' / relative
@@ -153,7 +159,7 @@ def environment():
     # Default host/web-host providers strip these prefixes before chaining host
     # configuration into app configuration. Compare their effective keys too;
     # JSON overrides values, but cannot remove additional endpoint/array entries.
-    blocked = ('authentication:oidc:', 'connectionstrings:', 'kestrel:', 'developmentlab:')
+    blocked = ('authentication:oidc:', 'connectionstrings:', 'kestrel:', 'developmentlab:', 'securefiles:', 'secretreferences:')
     exact = {'poseidon_database', 'poseidon_lab_config', 'urls', 'http_ports', 'https_ports'}
 
     def isolated(key):
@@ -273,9 +279,38 @@ def register_browser():
     run([root_tool('node'), str(ROOT / 'tests/Poseidon.Browser.Tests/lab/register-run.ts')], env=env, timeout=600)
 
 
+def prepare_bundle():
+    """Explicit disposable fixture enrollment only; never production operational appointments."""
+    stage('explicit_lab_bundle_configuration')
+    port = int(os.environ.get('POSEIDON_GATE_CLAMD_PORT', '0'))
+    if not 0 < port <= 65535:
+        raise RuntimeError('real_scanner_port_required')
+    with socket.create_connection(('127.0.0.1', port), timeout=2) as peer:
+        peer.sendall(b'zPING\0')
+        if peer.recv(5) != b'PONG\0':
+            raise RuntimeError('real_scanner_unready')
+    prepare_register()
+    path = PRIVATE / 'appsettings.json'
+    config = json.loads(path.read_text())
+    realm = json.loads((PRIVATE / 'realm/poseidon-lab-realm.json').read_text())
+    subject = next(u['id'] for u in realm['users'] if u['username'] == 'lab-manager')
+    member = next(m for m in config['Authentication']['Oidc']['Memberships'] if m['Issuer'] == AUTHORITY and m['Subject'] == subject)
+    for permission in ('audit.read', 'file.read', 'file.write'):
+        if permission not in member['Permissions']:
+            member['Permissions'].append(permission)
+    if not member.get('RoleReferences'):
+        member['RoleReferences'] = [str(uuid.uuid5(uuid.NAMESPACE_URL, PROJECT + '/synthetic-writer-assignment'))]
+    objects = Path(tempfile.gettempdir()) / (PROJECT + '-audit-files-objects')
+    private_directory(objects)
+    config['SecureFiles'] = {'Adapter': 'LocalDevelopment', 'Root': str(objects), 'MaxBytes': 1048576,
+                             'MaxPixels': 1048576, 'ScanSeconds': 15, 'ClamdPort': port, 'CapabilitySeconds': 60,
+                             'RetentionReference': 'synthetic-lab-only', 'ScannerReference': 'pinned-ephemeral-clamd'}
+    write(path, json.dumps(config))
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', choices=['init', 'start', 'stop', 'browser', 'prepare_register', 'register_browser'])
+    parser.add_argument('action', choices=['init', 'start', 'stop', 'browser', 'prepare_register', 'prepare_bundle', 'register_browser'])
     action = parser.parse_args().action
     try:
         if sys.version_info[:3] != (3, 13, 13):

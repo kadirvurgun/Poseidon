@@ -47,11 +47,14 @@ public sealed class SecurityEventWriter(DbContextOptions<SecurityEventWriter> op
         if (entry.Action is not ("Login" or "Logout" or "CompaniesRead" or "VesselsRead" or "AccessDenied" or "Session" or
             "CompanyCreate" or "CompanyUpdate" or "VesselCreate" or "VesselUpdate" or "DirectoryWrite" or
             "ProfileRead" or "ProfileHistory" or "ProfileSave" or "WorkspaceRead" or "WorkspaceSearch" or "TodayRead" or "TodayWhyRead" or
-            "AuditQuery" or "AuditDetail" or "AuditRevision" or "RegisterList" or "RegisterRead" or "RegisterHistory" or "RegisterSave") ||
+            "AuditQuery" or "AuditDetail" or "AuditRevision" or "RegisterList" or "RegisterRead" or "RegisterHistory" or "RegisterSave" or
+            "FileRequest" or "FileList" or "FileDetail" or "FileAccessIssue" or "FileDownload") ||
             entry.Result is not ("Success" or "Denied" or "Unauthenticated" or "Failed" or "SetupRequired" or "NotFound" or
-            "Attempted" or "permission_denied" or "csrf_invalid" or "invalid_request" or "validation_failed" or
+            "Attempted" or "Authorized" or "permission_denied" or "csrf_invalid" or "invalid_request" or "validation_failed" or
             "invalid_idempotency_key" or "resource_not_found" or "idempotency_key_reused" or "version_conflict" or
-            "duplicate_code" or "service_unavailable" or "source_revision_unavailable" or "Invalid"))
+            "duplicate_code" or "service_unavailable" or "source_revision_unavailable" or "Invalid" or
+            "file_settings_unavailable" or "invalid_file_metadata" or "file_attempt_conflict" or "file_attempt_frozen" or
+            "file_type_or_size_invalid" or "file_quarantined_or_unknown" or "file_capability_invalid" or "file_bytes_unavailable"))
             throw new InvalidOperationException("Unknown security event code.");
         if (entry.TenantId == Guid.Empty || (entry.ActorId != null && entry.TenantId == null))
             throw new InvalidOperationException("Attributed events require trusted tenant scope.");

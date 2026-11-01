@@ -1813,10 +1813,569 @@
           }
         }
       }
+    },
+    "/api/v1/audit": {
+      "get": {
+        "tags": [
+          "AuditHistoryEndpoints"
+        ],
+        "operationId": "GetAuditHistory",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditPageDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/audit/{id}": {
+      "get": {
+        "tags": [
+          "AuditHistoryEndpoints"
+        ],
+        "operationId": "GetAuditRecord",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditRecordDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/audit/{id}/revision": {
+      "get": {
+        "tags": [
+          "AuditHistoryEndpoints"
+        ],
+        "operationId": "GetAuditRevision",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditEvidenceDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/vessels/{vessel}/files": {
+      "get": {
+        "tags": [
+          "SecureFileEndpoints"
+        ],
+        "operationId": "ListVesselFiles",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileListDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "SecureFileEndpoints"
+        ],
+        "operationId": "StageVesselFile",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StageFileCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/vessels/{vessel}/files/{id}": {
+      "get": {
+        "tags": [
+          "SecureFileEndpoints"
+        ],
+        "operationId": "GetVesselFile",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/vessels/{vessel}/files/{id}/bytes": {
+      "put": {
+        "tags": [
+          "SecureFileEndpoints"
+        ],
+        "operationId": "UploadVesselFile",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "image/png": {
+              "schema": {
+                "type": "string",
+                "format": "byte"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "SecureFileEndpoints"
+        ],
+        "operationId": "DownloadVesselFile",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/vessels/{vessel}/files/{id}/access": {
+      "post": {
+        "tags": [
+          "SecureFileEndpoints"
+        ],
+        "operationId": "IssueFileAccess",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "AuditEvidenceDto": {
+        "required": [
+          "kind",
+          "profile",
+          "register"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "profile": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/RegulatoryRevisionDto"
+              }
+            ]
+          },
+          "register": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/RegisterRevisionDto"
+              }
+            ]
+          }
+        }
+      },
+      "AuditPageDto": {
+        "required": [
+          "items",
+          "total",
+          "limit",
+          "nextCursor"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditRecordDto"
+            }
+          },
+          "total": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "limit": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "nextCursor": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "AuditRecordDto": {
+        "required": [
+          "id",
+          "occurredAt",
+          "actorReference",
+          "actorType",
+          "action",
+          "entityType",
+          "resourceId",
+          "vesselId",
+          "capabilityContext",
+          "roleContext",
+          "changeSummary",
+          "beforeVersion",
+          "afterVersion",
+          "beforeRevision",
+          "afterRevision",
+          "reasonStatus",
+          "correlationId",
+          "metadataStatus",
+          "revisionHref"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "actorReference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "actorType": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          },
+          "entityType": {
+            "type": "string"
+          },
+          "resourceId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "capabilityContext": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "roleContext": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "changeSummary": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "beforeVersion": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
+            "format": "uint32"
+          },
+          "afterVersion": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
+            "format": "uint32"
+          },
+          "beforeRevision": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
+            "format": "int64"
+          },
+          "afterRevision": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
+            "format": "int64"
+          },
+          "reasonStatus": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "correlationId": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "metadataStatus": {
+            "type": "string"
+          },
+          "revisionHref": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "CompanyCreateCommand": {
         "required": [
           "code",
@@ -1939,6 +2498,110 @@
           },
           "reason": {
             "type": "string"
+          }
+        }
+      },
+      "FileDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "name",
+          "state",
+          "length",
+          "checksum",
+          "revision",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "length": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int64"
+          },
+          "checksum": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "revision": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
+            "format": "int64"
+          },
+          "version": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "uint32"
+          }
+        }
+      },
+      "FileListDto": {
+        "required": [
+          "items",
+          "offset",
+          "hasMore",
+          "canWrite",
+          "available",
+          "maxBytes"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FileDto"
+            }
+          },
+          "offset": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "canWrite": {
+            "type": "boolean"
+          },
+          "available": {
+            "type": "boolean"
+          },
+          "maxBytes": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int64"
           }
         }
       },
@@ -2671,6 +3334,44 @@
           }
         }
       },
+      "StageFileCommand": {
+        "required": [
+          "name",
+          "mime",
+          "length",
+          "checksum"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "mime": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "length": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int64"
+          },
+          "checksum": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
       "SystemStatus": {
         "required": [
           "service",
@@ -3001,6 +3702,12 @@
     },
     {
       "name": "RegulatoryDraftEndpoints"
+    },
+    {
+      "name": "AuditHistoryEndpoints"
+    },
+    {
+      "name": "SecureFileEndpoints"
     }
   ]
 }

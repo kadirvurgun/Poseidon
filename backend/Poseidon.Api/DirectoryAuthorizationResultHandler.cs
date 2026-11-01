@@ -30,6 +30,9 @@ public sealed class DirectoryAuthorizationResultHandler : IAuthorizationMiddlewa
             "GetAuditHistory" => "AuditQuery",
             "GetAuditRecord" => "AuditDetail",
             "GetAuditRevision" => "AuditRevision",
+            "ListVesselFiles" => "FileList",
+            "GetVesselFile" => "FileDetail",
+            "DownloadVesselFile" => "FileDownload",
             "GetToday" => "TodayRead",
             "GetTodayWhy" => "TodayWhyRead",
             _ => null

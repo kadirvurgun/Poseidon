@@ -4,12 +4,52 @@ import json
 import tempfile
 import unittest
 import zipfile
+import os
+import subprocess
 from pathlib import Path
 from unittest.mock import patch
 import secret_scan
 
 
 class SecretScanTests(unittest.TestCase):
+    def test_linked_input_parent_is_rejected_even_when_target_is_inside_root(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); original = root / 'original'; original.mkdir()
+            (original / 'fixture.txt').write_text('synthetic noncredential input')
+            link = root / 'shortcut'
+            if os.name == 'nt':
+                result = subprocess.run(['cmd.exe', '/c', 'mklink', '/J', str(link), str(original)], capture_output=True)
+                self.assertEqual(0, result.returncode)
+            else:
+                link.symlink_to(original, target_is_directory=True)
+            try:
+                with self.assertRaises(ValueError):
+                    secret_scan.scan_file(link / 'fixture.txt', root)
+            finally:
+                if os.name == 'nt':
+                    link.rmdir()
+                else:
+                    link.unlink()
+
+    def test_nested_archive_is_scanned_and_shares_expansion_budget(self):
+        inner = io.BytesIO()
+        marker = 'gh' + 'p_' + 'z' * 36
+        with zipfile.ZipFile(inner, 'w') as archive:
+            archive.writestr('fixture.txt', marker)
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); path = root / 'outer.zip'
+            with zipfile.ZipFile(path, 'w') as archive:
+                archive.writestr('inner.zip', inner.getvalue())
+            findings = secret_scan.scan_file(path, root)
+            self.assertTrue(any(x['path'].endswith('!inner.zip!fixture.txt') for x in findings))
+            self.assertNotIn(marker, json.dumps(findings))
+            with patch('secret_scan.MAX_EXPANDED', len(inner.getvalue())):
+                with self.assertRaises(ValueError):
+                    secret_scan.scan_file(path, root)
+            with patch('secret_scan.MAX_DEPTH', 0):
+                with self.assertRaises(ValueError):
+                    secret_scan.scan_file(path, root)
+
     def test_detects_redacts_and_scans_real_client_output(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp); (root / 'frontend/dist').mkdir(parents=True)

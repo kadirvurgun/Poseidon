@@ -359,10 +359,164 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/audit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GetAuditHistory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/audit/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GetAuditRecord"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/audit/{id}/revision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GetAuditRevision"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{vessel}/files": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ListVesselFiles"];
+        put?: never;
+        post: operations["StageVesselFile"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{vessel}/files/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GetVesselFile"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{vessel}/files/{id}/bytes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["DownloadVesselFile"];
+        put: operations["UploadVesselFile"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{vessel}/files/{id}/access": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["IssueFileAccess"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        AuditEvidenceDto: {
+            kind: string;
+            profile: null | components["schemas"]["RegulatoryRevisionDto"];
+            register: null | components["schemas"]["RegisterRevisionDto"];
+        };
+        AuditPageDto: {
+            items: components["schemas"]["AuditRecordDto"][];
+            /** Format: int32 */
+            total: number | string;
+            /** Format: int32 */
+            limit: number | string;
+            nextCursor: null | string;
+        };
+        AuditRecordDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: date-time */
+            occurredAt: string;
+            actorReference: null | string;
+            actorType: string;
+            action: string;
+            entityType: string;
+            /** Format: uuid */
+            resourceId: null | string;
+            /** Format: uuid */
+            vesselId: null | string;
+            capabilityContext: null | string;
+            roleContext: null | string;
+            changeSummary: null | string;
+            /** Format: uint32 */
+            beforeVersion: null | number | string;
+            /** Format: uint32 */
+            afterVersion: null | number | string;
+            /** Format: int64 */
+            beforeRevision: null | number | string;
+            /** Format: int64 */
+            afterRevision: null | number | string;
+            reasonStatus: null | string;
+            correlationId: null | string;
+            metadataStatus: string;
+            revisionHref: null | string;
+        };
         CompanyCreateCommand: {
             code: null | string;
             name: null | string;
@@ -390,6 +544,31 @@ export interface components {
             /** Format: int32 */
             unknown: number | string;
             reason: string;
+        };
+        FileDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            vesselId: string;
+            name: string;
+            state: string;
+            /** Format: int64 */
+            length: number | string;
+            checksum: null | string;
+            /** Format: int64 */
+            revision: null | number | string;
+            /** Format: uint32 */
+            version: number | string;
+        };
+        FileListDto: {
+            items: components["schemas"]["FileDto"][];
+            /** Format: int32 */
+            offset: number | string;
+            hasMore: boolean;
+            canWrite: boolean;
+            available: boolean;
+            /** Format: int64 */
+            maxBytes: number | string;
         };
         NavigationDto: {
             key: string;
@@ -574,6 +753,13 @@ export interface components {
             canCreate: boolean;
             /** @default false */
             canSearch: boolean;
+        };
+        StageFileCommand: {
+            name: null | string;
+            mime: null | string;
+            /** Format: int64 */
+            length: number | string;
+            checksum: null | string;
         };
         SystemStatus: {
             service: string;
@@ -2314,6 +2500,308 @@ export interface operations {
             };
             /** @description Service Unavailable */
             503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    GetAuditHistory: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuditPageDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    GetAuditRecord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuditRecordDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    GetAuditRevision: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuditEvidenceDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ListVesselFiles: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FileListDto"];
+                };
+            };
+        };
+    };
+    StageVesselFile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StageFileCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FileDto"];
+                };
+            };
+        };
+    };
+    GetVesselFile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FileDto"];
+                };
+            };
+        };
+    };
+    DownloadVesselFile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UploadVesselFile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "image/png": string;
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FileDto"];
+                };
+            };
+        };
+    };
+    IssueFileAccess: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };

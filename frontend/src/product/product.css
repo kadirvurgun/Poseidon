@@ -81,4 +81,8 @@
 .audit-filters label { display: grid; gap: .25rem; flex: 1 1 12rem; }
 .audit-filters input, .audit-filters select { max-width: 100%; min-width: 0; }
 .product-detail dd { overflow-wrap: anywhere; }
+.vessel-files { min-width: 0; overflow-wrap: anywhere; }
+.vessel-files dd { margin-inline-start: 0; overflow-wrap: anywhere; }
+.vessel-files input { max-width: 100%; min-width: 0; box-sizing: border-box; }
+.vessel-files button { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
 @media (max-width: 600px) { .audit-filters { display: grid; grid-template-columns: minmax(0, 1fr); } }

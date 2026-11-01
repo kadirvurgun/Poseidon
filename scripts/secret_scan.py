@@ -5,6 +5,8 @@ Never print matching data, exception details, environment or raw lines.
 """
 import argparse
 import hashlib
+import io
+import os
 import json
 import re
 import subprocess
@@ -16,6 +18,7 @@ from xml.etree import ElementTree
 MAX_FILE = 128 * 1024 * 1024
 MAX_MEMBER = 32 * 1024 * 1024
 MAX_EXPANDED = 128 * 1024 * 1024
+MAX_DEPTH = 6
 RULES = {
     'private-key': re.compile(r'-----BEGIN (?:RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----'),
     'github-token': re.compile(r'\b(?:gh[pousr]_[A-Za-z0-9]{30,255}|github_pat_[A-Za-z0-9_]{40,255})\b'),
@@ -43,6 +46,13 @@ def safe_path(value):
 
 
 def read_file(path, root):
+    if os.name == 'nt':
+        # Normalize the long-path prefix without following links before the guards below.
+        path, root = Path(os.path.abspath(path)), Path(os.path.abspath(root))
+        if not str(path).startswith('\\\\?\\'):
+            path = Path('\\\\?\\' + str(path))
+        if not str(root).startswith('\\\\?\\'):
+            root = Path('\\\\?\\' + str(root))
     if path.is_symlink() or path.is_junction() or not path.resolve().is_relative_to(root.resolve()):
         raise ValueError('input')
     for parent in path.parents:
@@ -63,9 +73,17 @@ def scan_file(path, root):
         result.extend(findings(raw.decode('utf-16'), label + '#utf16'))
     # Controlled originals are scanned without editing their bytes/hashes. No blanket docs/fixture exclusion.
     if path.suffix.lower() in ('.docx', '.xlsx', '.pptx', '.zip'):
-        with zipfile.ZipFile(path) as archive:
+        budget = {'bytes': 0, 'members': 0}
+        def expand(content, prefix, depth):
+            if depth > MAX_DEPTH:
+                raise ValueError('archive-depth')
+            with zipfile.ZipFile(io.BytesIO(content)) as archive:
+                scan_archive(archive, prefix, depth)
+        def scan_archive(archive, prefix, depth):
             members = archive.infolist()
-            if len(members) > 10000 or sum(m.file_size for m in members) > MAX_EXPANDED:
+            budget['members'] += len(members)
+            budget['bytes'] += sum(m.file_size for m in members)
+            if budget['members'] > 10000 or budget['bytes'] > MAX_EXPANDED:
                 raise ValueError('archive')
             for member in members:
                 if member.is_dir():
@@ -76,10 +94,9 @@ def scan_file(path, root):
                     body = stream.read(MAX_MEMBER + 1)
                 if len(body) > MAX_MEMBER or len(body) != member.file_size:
                     raise ValueError('archive')
+                location = prefix + '!' + safe_path(member.filename)
                 if body.startswith(b'PK\x03\x04'):
-                    # Nested archives require explicit bounded expansion support, never silently claim coverage.
-                    raise ValueError('nested-archive')
-                location = label + '!' + safe_path(member.filename)
+                    expand(body, location, depth + 1)
                 decoded = body.decode('utf-8', errors='replace')
                 result.extend(findings(decoded, location))
                 if member.filename.endswith('.xml'):
@@ -88,11 +105,14 @@ def scan_file(path, root):
                         raise ValueError('xml')
                     element = ElementTree.fromstring(body)
                     result.extend(findings(''.join(element.itertext()), location + '#text'))
+        expand(raw, label, 0)
     return result
 
 
 def scan(root, mode, bundle=None, exceptions=None):
     root = Path(root).resolve()
+    if os.name == 'nt' and not str(root).startswith('\\\\?\\'):
+        root = Path('\\\\?\\' + str(root))
     exemptions = [] if exceptions is None else json.loads(read_file(Path(exceptions), root))
     if not isinstance(exemptions, list):
         raise ValueError('exceptions')

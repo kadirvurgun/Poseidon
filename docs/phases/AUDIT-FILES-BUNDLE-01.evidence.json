@@ -1,0 +1,2137 @@
+{
+  "bundle": "AUDIT-FILES-BUNDLE-01",
+  "accepted": false,
+  "approved_base": "80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44",
+  "receiving_head": "e764f962d9ed55b5421b32c27d28d0b20e1d8302",
+  "commands": [
+    {
+      "label": "api-final",
+      "command": [
+        "dotnet",
+        "test",
+        "--project",
+        "tests/Poseidon.Api.Tests",
+        "--configuration",
+        "Release",
+        "--no-build"
+      ],
+      "exit": 0,
+      "seconds": 192.146
+    },
+    {
+      "label": "api-fixed",
+      "command": [
+        "dotnet",
+        "test",
+        "--project",
+        "tests/Poseidon.Api.Tests",
+        "--configuration",
+        "Release",
+        "--no-build"
+      ],
+      "exit": 2,
+      "seconds": 142.917
+    },
+    {
+      "label": "api",
+      "command": [
+        "dotnet",
+        "test",
+        "--project",
+        "tests/Poseidon.Api.Tests",
+        "--configuration",
+        "Release",
+        "--no-build"
+      ],
+      "exit": 2,
+      "seconds": 156.234
+    },
+    {
+      "label": "browser-affected",
+      "command": [
+        "py",
+        "-3.13",
+        "scripts/browser_gate.py",
+        "--grep",
+        "quarantined transport|product shell presents|directory setup|anonymous deep links|Today honest coverage"
+      ],
+      "exit": 1,
+      "seconds": 75.059
+    },
+    {
+      "label": "browser-ci",
+      "command": [
+        "npm",
+        "ci",
+        "--prefix",
+        "tests/Poseidon.Browser.Tests"
+      ],
+      "exit": 0,
+      "seconds": 14.268
+    },
+    {
+      "label": "browser-ownership-tests",
+      "command": [
+        "py",
+        "-3.13",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts",
+        "-p",
+        "test_browser_gate.py",
+        "-v"
+      ],
+      "exit": 0,
+      "seconds": 0.731
+    },
+    {
+      "label": "browser-product-final",
+      "command": [
+        "py",
+        "-3.13",
+        "scripts/browser_gate.py",
+        "--grep",
+        "product shell presents"
+      ],
+      "exit": 0,
+      "seconds": 57.466
+    },
+    {
+      "label": "browser",
+      "command": [
+        "npm",
+        "test",
+        "--prefix",
+        "tests/Poseidon.Browser.Tests"
+      ],
+      "exit": 1,
+      "seconds": 190.54
+    },
+    {
+      "label": "build-audit-inspection",
+      "command": [
+        "dotnet",
+        "build",
+        "Poseidon.slnx",
+        "--configuration",
+        "Release",
+        "--no-restore"
+      ],
+      "exit": 0,
+      "seconds": 5.456
+    },
+    {
+      "label": "build-contract",
+      "command": [
+        "dotnet",
+        "build",
+        "Poseidon.slnx",
+        "--configuration",
+        "Release",
+        "--no-restore"
+      ],
+      "exit": 0,
+      "seconds": 17.031
+    },
+    {
+      "label": "build-final-test-addition",
+      "command": [
+        "dotnet",
+        "build",
+        "Poseidon.slnx",
+        "--configuration",
+        "Release",
+        "--no-restore"
+      ],
+      "exit": 0,
+      "seconds": 11.306
+    },
+    {
+      "label": "build-final",
+      "command": [
+        "dotnet",
+        "build",
+        "Poseidon.slnx",
+        "--configuration",
+        "Release",
+        "--no-restore"
+      ],
+      "exit": 0,
+      "seconds": 7.856
+    },
+    {
+      "label": "build-fixed",
+      "command": [
+        "dotnet",
+        "build",
+        "Poseidon.slnx",
+        "--configuration",
+        "Release",
+        "--no-restore"
+      ],
+      "exit": 0,
+      "seconds": 7.612
+    },
+    {
+      "label": "build",
+      "command": [
+        "dotnet",
+        "build",
+        "Poseidon.slnx",
+        "--configuration",
+        "Release",
+        "--no-restore"
+      ],
+      "exit": 0,
+      "seconds": 27.761
+    },
+    {
+      "label": "client-final",
+      "command": [
+        "py",
+        "-3.13",
+        "scripts/secret_scan.py",
+        "--mode",
+        "client",
+        "--bundle",
+        "frontend/dist"
+      ],
+      "exit": 0,
+      "seconds": 0.416
+    },
+    {
+      "label": "client-guard-final",
+      "command": [
+        "py",
+        "-3.13",
+        "scripts/secret_scan.py",
+        "--mode",
+        "client",
+        "--bundle",
+        "frontend/dist"
+      ],
+      "exit": 0,
+      "seconds": 0.499
+    },
+    {
+      "label": "client-scan",
+      "command": [
+        "py",
+        "-3.13",
+        "scripts/secret_scan.py",
+        "--mode",
+        "client",
+        "--bundle",
+        "frontend/dist"
+      ],
+      "exit": 0,
+      "seconds": 0.522
+    },
+    {
+      "label": "diagnostics-final",
+      "command": [
+        "dotnet",
+        "test",
+        "--project",
+        "tests/Poseidon.Api.Tests",
+        "--configuration",
+        "Release",
+        "--no-build",
+        "--filter-class",
+        "Poseidon.Api.Tests.DiagnosticsTests"
+      ],
+      "exit": 0,
+      "seconds": 28.672
+    },
+    {
+      "label": "domain",
+      "command": [
+        "dotnet",
+        "test",
+        "--project",
+        "tests/Poseidon.Domain.Tests",
+        "--configuration",
+        "Release",
+        "--no-build"
+      ],
+      "exit": 0,
+      "seconds": 6.668
+    },
+    {
+      "label": "ef-final",
+      "command": [
+        "dotnet",
+        "ef",
+        "migrations",
+        "has-pending-model-changes",
+        "--context",
+        "PoseidonDbContext",
+        "--project",
+        "backend/Poseidon.Persistence",
+        "--startup-project",
+        "backend/Poseidon.DbMigrator",
+        "--configuration",
+        "Release",
+        "--no-build"
+      ],
+      "exit": 0,
+      "seconds": 9.788
+    },
+    {
+      "label": "ef-parity",
+      "command": [
+        "dotnet",
+        "ef",
+        "migrations",
+        "has-pending-model-changes",
+        "--context",
+        "PoseidonDbContext",
+        "--project",
+        "backend/Poseidon.Persistence",
+        "--startup-project",
+        "backend/Poseidon.DbMigrator",
+        "--configuration",
+        "Release",
+        "--no-build"
+      ],
+      "exit": 0,
+      "seconds": 10.319
+    },
+    {
+      "label": "frontend-affected",
+      "command": [
+        "npm",
+        "test",
+        "--prefix",
+        "frontend",
+        "--",
+        "src/product/VesselFiles.test.tsx",
+        "src/product/AuditWorkspace.test.tsx",
+        "src/product/ProductApp.test.tsx"
+      ],
+      "exit": 0,
+      "seconds": 16.791
+    },
+    {
+      "label": "frontend-build-fixed",
+      "command": [
+        "npm",
+        "run",
+        "build",
+        "--prefix",
+        "frontend"
+      ],
+      "exit": 0,
+      "seconds": 12.821
+    },
+    {
+      "label": "frontend-build",
+      "command": [
+        "npm",
+        "run",
+        "build",
+        "--prefix",
+        "frontend"
+      ],
+      "exit": 1,
+      "seconds": 8.735
+    },
+    {
+      "label": "frontend-final-affected",
+      "command": [
+        "npm",
+        "test",
+        "--prefix",
+        "frontend",
+        "--",
+        "src/product/VesselFiles.test.tsx",
+        "src/product/AuditWorkspace.test.tsx"
+      ],
+      "exit": 0,
+      "seconds": 22.42
+    },
+    {
+      "label": "frontend-final-build",
+      "command": [
+        "npm",
+        "run",
+        "build",
+        "--prefix",
+        "frontend"
+      ],
+      "exit": 0,
+      "seconds": 16.364
+    },
+    {
+      "label": "frontend-final-lint",
+      "command": [
+        "npm",
+        "run",
+        "lint",
+        "--prefix",
+        "frontend"
+      ],
+      "exit": 0,
+      "seconds": 28.464
+    },
+    {
+      "label": "frontend-layout-build",
+      "command": [
+        "npm",
+        "run",
+        "build",
+        "--prefix",
+        "frontend"
+      ],
+      "exit": 0,
+      "seconds": 8.82
+    },
+    {
+      "label": "frontend-lint-fixed",
+      "command": [
+        "npm",
+        "run",
+        "lint",
+        "--prefix",
+        "frontend"
+      ],
+      "exit": 0,
+      "seconds": 20.649
+    },
+    {
+      "label": "frontend-lint",
+      "command": [
+        "npm",
+        "run",
+        "lint",
+        "--prefix",
+        "frontend"
+      ],
+      "exit": 1,
+      "seconds": 32.34
+    },
+    {
+      "label": "frontend-tests",
+      "command": [
+        "npm",
+        "test",
+        "--prefix",
+        "frontend"
+      ],
+      "exit": 0,
+      "seconds": 35.775
+    },
+    {
+      "label": "frontend-typecheck-fixed",
+      "command": [
+        "npm",
+        "run",
+        "typecheck",
+        "--prefix",
+        "frontend"
+      ],
+      "exit": 0,
+      "seconds": 6.803
+    },
+    {
+      "label": "frontend-typecheck",
+      "command": [
+        "npm",
+        "run",
+        "typecheck",
+        "--prefix",
+        "frontend"
+      ],
+      "exit": 1,
+      "seconds": 12.069
+    },
+    {
+      "label": "generate",
+      "command": [
+        "npm",
+        "run",
+        "generate:api",
+        "--prefix",
+        "frontend"
+      ],
+      "exit": 0,
+      "seconds": 6.28
+    },
+    {
+      "label": "graph-final",
+      "command": [
+        "graphify",
+        "update",
+        "."
+      ],
+      "exit": 0,
+      "seconds": 26.536
+    },
+    {
+      "label": "graph-link-final",
+      "command": [
+        "graphify",
+        "update",
+        "."
+      ],
+      "exit": 0,
+      "seconds": 27.125
+    },
+    {
+      "label": "graph",
+      "command": [
+        "graphify",
+        "update",
+        "."
+      ],
+      "exit": 0,
+      "seconds": 26.503
+    },
+    {
+      "label": "lab-browser",
+      "command": [
+        "py",
+        "-3.13",
+        "scripts/oidc_lab.py",
+        "browser"
+      ],
+      "exit": 0,
+      "seconds": 53.478
+    },
+    {
+      "label": "lab-file-layout",
+      "command": [
+        "py",
+        "-3.13",
+        "scripts/oidc_lab.py",
+        "register_browser"
+      ],
+      "exit": 0,
+      "seconds": 62.243
+    },
+    {
+      "label": "lab-final-tests",
+      "command": [
+        "py",
+        "-3.13",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts",
+        "-p",
+        "test_oidc_lab.py",
+        "-v"
+      ],
+      "exit": 0,
+      "seconds": 0.967
+    },
+    {
+      "label": "lab-prepare",
+      "command": [
+        "py",
+        "-3.13",
+        "scripts/oidc_lab.py",
+        "prepare_bundle"
+      ],
+      "exit": 0,
+      "seconds": 6.76
+    },
+    {
+      "label": "lab-register-browser",
+      "command": [
+        "py",
+        "-3.13",
+        "scripts/oidc_lab.py",
+        "register_browser"
+      ],
+      "exit": 1,
+      "seconds": 125.044
+    },
+    {
+      "label": "lab-start",
+      "command": [
+        "py",
+        "-3.13",
+        "scripts/oidc_lab.py",
+        "start"
+      ],
+      "exit": 0,
+      "seconds": 81.195
+    },
+    {
+      "label": "lab-stop",
+      "command": [
+        "py",
+        "-3.13",
+        "scripts/oidc_lab.py",
+        "stop"
+      ],
+      "exit": 0,
+      "seconds": 5.482
+    },
+    {
+      "label": "lint-closeout",
+      "command": [
+        "npm",
+        "run",
+        "lint",
+        "--prefix",
+        "frontend"
+      ],
+      "exit": 0,
+      "seconds": 17.102
+    },
+    {
+      "label": "npm-ci",
+      "command": [
+        "npm",
+        "ci",
+        "--prefix",
+        "frontend"
+      ],
+      "exit": 0,
+      "seconds": 117.426
+    },
+    {
+      "label": "openapi",
+      "command": [
+        "py",
+        "-3.13",
+        ".runtime/audit-files-bundle/export.py"
+      ],
+      "exit": 0,
+      "seconds": 4.959
+    },
+    {
+      "label": "persistence",
+      "command": [
+        "dotnet",
+        "test",
+        "--project",
+        "tests/Poseidon.Persistence.Tests",
+        "--configuration",
+        "Release",
+        "--no-build"
+      ],
+      "exit": 0,
+      "seconds": 95.855
+    },
+    {
+      "label": "python-affected",
+      "command": [
+        "py",
+        "-3.13",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts",
+        "-p",
+        "test_oidc_lab.py",
+        "-v"
+      ],
+      "exit": 0,
+      "seconds": 2.014
+    },
+    {
+      "label": "python",
+      "command": [
+        "py",
+        "-3.13",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "exit": 1,
+      "seconds": 191.107
+    },
+    {
+      "label": "repository-scan-recursive",
+      "command": [
+        "py",
+        "-3.13",
+        "scripts/secret_scan.py",
+        "--mode",
+        "repository"
+      ],
+      "exit": 1,
+      "seconds": 109.745
+    },
+    {
+      "label": "repository-scan",
+      "command": [
+        "py",
+        "-3.13",
+        "scripts/secret_scan.py",
+        "--mode",
+        "repository"
+      ],
+      "exit": 2,
+      "seconds": 77.333
+    },
+    {
+      "label": "restore",
+      "command": [
+        "dotnet",
+        "restore",
+        "Poseidon.slnx",
+        "--locked-mode"
+      ],
+      "exit": 0,
+      "seconds": 7.292
+    },
+    {
+      "label": "scanner-final-tests",
+      "command": [
+        "py",
+        "-3.13",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts",
+        "-p",
+        "test_secret_scan.py",
+        "-v"
+      ],
+      "exit": 0,
+      "seconds": 1.033
+    },
+    {
+      "label": "scanner-link-final-tests",
+      "command": [
+        "py",
+        "-3.13",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts",
+        "-p",
+        "test_secret_scan.py",
+        "-v"
+      ],
+      "exit": 0,
+      "seconds": 1.408
+    },
+    {
+      "label": "scanner-ownership-tests",
+      "command": [
+        "py",
+        "-3.13",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts",
+        "-p",
+        "test_clamd_gate.py",
+        "-v"
+      ],
+      "exit": 0,
+      "seconds": 0.639
+    },
+    {
+      "label": "scanner-start",
+      "command": [
+        "py",
+        "-3.13",
+        "scripts/clamd_gate.py",
+        "start",
+        "--state",
+        ".runtime/audit-files-bundle/clamd.json"
+      ],
+      "exit": 0,
+      "seconds": 63.205
+    },
+    {
+      "label": "scanner-stop",
+      "command": [
+        "py",
+        "-3.13",
+        "scripts/clamd_gate.py",
+        "stop",
+        "--state",
+        ".runtime/audit-files-bundle/clamd.json"
+      ],
+      "exit": 0,
+      "seconds": 1.276
+    },
+    {
+      "label": "scanner-tests",
+      "command": [
+        "py",
+        "-3.13",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts",
+        "-p",
+        "test_secret_scan.py",
+        "-v"
+      ],
+      "exit": 0,
+      "seconds": 1.377
+    },
+    {
+      "label": "source-bytes",
+      "command": [
+        "py",
+        "-3.13",
+        "-c",
+        "import sys,pathlib;sys.path.insert(0,'scripts');import verify_sources;print(verify_sources.verify(pathlib.Path('\\\\\\\\?\\\\'+str(pathlib.Path.cwd()))))"
+      ],
+      "exit": 0,
+      "seconds": 4.256
+    },
+    {
+      "label": "tools",
+      "command": [
+        "dotnet",
+        "tool",
+        "restore"
+      ],
+      "exit": 0,
+      "seconds": 1.74
+    },
+    {
+      "label": "windows-https",
+      "command": [
+        "py",
+        "-3.13",
+        "scripts/windows_oidc_lab_checks.py"
+      ],
+      "exit": 0,
+      "seconds": 25.632
+    },
+    {
+      "label": "windows-nightly",
+      "command": [
+        "py",
+        "-3.13",
+        "scripts/windows_nightly_checks.py"
+      ],
+      "exit": 0,
+      "seconds": 38.838
+    },
+    {
+      "label": "windows-ops",
+      "command": [
+        "py",
+        "-3.13",
+        "scripts/windows_ops_checks.py"
+      ],
+      "exit": 0,
+      "seconds": 9.693
+    },
+    {
+      "label": "windows-scheduler",
+      "command": [
+        "py",
+        "-3.13",
+        "scripts/windows_scheduler_checks.py"
+      ],
+      "exit": 0,
+      "seconds": 1.603
+    }
+  ],
+  "repository_scan": {
+    "covered_files": 810,
+    "exit": 1,
+    "findings": [
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/26.01_POSEIDON_Core_v0.1_Source/README.md",
+        "rule": "db-password",
+        "line": 69
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/26.01_POSEIDON_Core_v0.1_Source/README.md",
+        "rule": "db-password",
+        "line": 88
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/26.01_POSEIDON_Core_v0.1_Source/src/Frontend/src/App.test.tsx",
+        "rule": "credential-literal",
+        "line": 71
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/26.01_POSEIDON_Core_v0.1_Source/tests/Backend/BffTests.cs",
+        "rule": "credential-literal",
+        "line": 130
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/26.01_POSEIDON_Core_v0.1_Source/tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 48
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/26.01_POSEIDON_Core_v0.1_Source/tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 108
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/26.02_POSEIDON_Core_v0.1_Uygulama_Calistirma_ve_Dogrulama_Rehberi_TR.docx!word/document.xml",
+        "rule": "db-password",
+        "line": 2
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/26.02_POSEIDON_Core_v0.1_Uygulama_Calistirma_ve_Dogrulama_Rehberi_TR.docx!word/document.xml",
+        "rule": "db-password",
+        "line": 2
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/26.02_POSEIDON_Core_v0.1_Uygulama_Calistirma_ve_Dogrulama_Rehberi_TR.docx!word/document.xml#text",
+        "rule": "db-password",
+        "line": 1
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/26.02_POSEIDON_Core_v0.1_Uygulama_Calistirma_ve_Dogrulama_Rehberi_TR.docx!word/document.xml#text",
+        "rule": "db-password",
+        "line": 1
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/28.02_POSEIDON_Core_v0.1_Kimlik_BFF_ve_Responsive_Kanitlari_2026-10-27.zip!combined.patch",
+        "rule": "credential-literal",
+        "line": 968
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/28.02_POSEIDON_Core_v0.1_Kimlik_BFF_ve_Responsive_Kanitlari_2026-10-27.zip!source/README.md",
+        "rule": "db-password",
+        "line": 69
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/28.02_POSEIDON_Core_v0.1_Kimlik_BFF_ve_Responsive_Kanitlari_2026-10-27.zip!source/README.md",
+        "rule": "db-password",
+        "line": 88
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/28.02_POSEIDON_Core_v0.1_Kimlik_BFF_ve_Responsive_Kanitlari_2026-10-27.zip!source/src/Frontend/src/App.test.tsx",
+        "rule": "credential-literal",
+        "line": 69
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/28.02_POSEIDON_Core_v0.1_Kimlik_BFF_ve_Responsive_Kanitlari_2026-10-27.zip!source/tests/Backend/BffTests.cs",
+        "rule": "credential-literal",
+        "line": 116
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/29.02_POSEIDON_Core_v0.1_BFF_UI_Oturum_ve_Taslak_Kanitlari_2026-10-27.zip!source/README.md",
+        "rule": "db-password",
+        "line": 69
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/29.02_POSEIDON_Core_v0.1_BFF_UI_Oturum_ve_Taslak_Kanitlari_2026-10-27.zip!source/README.md",
+        "rule": "db-password",
+        "line": 88
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/29.02_POSEIDON_Core_v0.1_BFF_UI_Oturum_ve_Taslak_Kanitlari_2026-10-27.zip!source/src/Frontend/src/App.test.tsx",
+        "rule": "credential-literal",
+        "line": 69
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/29.02_POSEIDON_Core_v0.1_BFF_UI_Oturum_ve_Taslak_Kanitlari_2026-10-27.zip!source/tests/Backend/BffTests.cs",
+        "rule": "credential-literal",
+        "line": 123
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/31.02_POSEIDON_Core_v0.1_Kismi_Envanter_Tarama_ve_Sayfalama_Kanitlari_2026-10-27.zip!source/README.md",
+        "rule": "db-password",
+        "line": 69
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/31.02_POSEIDON_Core_v0.1_Kismi_Envanter_Tarama_ve_Sayfalama_Kanitlari_2026-10-27.zip!source/README.md",
+        "rule": "db-password",
+        "line": 88
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/31.02_POSEIDON_Core_v0.1_Kismi_Envanter_Tarama_ve_Sayfalama_Kanitlari_2026-10-27.zip!source/src/Frontend/src/App.test.tsx",
+        "rule": "credential-literal",
+        "line": 69
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/31.02_POSEIDON_Core_v0.1_Kismi_Envanter_Tarama_ve_Sayfalama_Kanitlari_2026-10-27.zip!source/tests/Backend/BffTests.cs",
+        "rule": "credential-literal",
+        "line": 125
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/32.02_POSEIDON_Core_v0.1_Idari_Gemi_Romorkor_Envanteri_Kanitlari_2026-10-27.zip!source/README.md",
+        "rule": "db-password",
+        "line": 69
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/32.02_POSEIDON_Core_v0.1_Idari_Gemi_Romorkor_Envanteri_Kanitlari_2026-10-27.zip!source/README.md",
+        "rule": "db-password",
+        "line": 88
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/32.02_POSEIDON_Core_v0.1_Idari_Gemi_Romorkor_Envanteri_Kanitlari_2026-10-27.zip!source/src/Frontend/src/App.test.tsx",
+        "rule": "credential-literal",
+        "line": 70
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/32.02_POSEIDON_Core_v0.1_Idari_Gemi_Romorkor_Envanteri_Kanitlari_2026-10-27.zip!source/tests/Backend/BffTests.cs",
+        "rule": "credential-literal",
+        "line": 126
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/33.02_POSEIDON_Core_v0.1_Idari_Belge_Kayitlari_ve_Tarih_Takibi_Kanitlari_2026-10-27.zip!source/README.md",
+        "rule": "db-password",
+        "line": 69
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/33.02_POSEIDON_Core_v0.1_Idari_Belge_Kayitlari_ve_Tarih_Takibi_Kanitlari_2026-10-27.zip!source/README.md",
+        "rule": "db-password",
+        "line": 88
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/33.02_POSEIDON_Core_v0.1_Idari_Belge_Kayitlari_ve_Tarih_Takibi_Kanitlari_2026-10-27.zip!source/src/Frontend/src/App.test.tsx",
+        "rule": "credential-literal",
+        "line": 70
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/33.02_POSEIDON_Core_v0.1_Idari_Belge_Kayitlari_ve_Tarih_Takibi_Kanitlari_2026-10-27.zip!source/tests/Backend/BffTests.cs",
+        "rule": "credential-literal",
+        "line": 128
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/34.02_POSEIDON_Core_v0.1_Karantinali_Ek_Alimi_Kanitlari_2026-10-27.zip!source/README.md",
+        "rule": "db-password",
+        "line": 69
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/34.02_POSEIDON_Core_v0.1_Karantinali_Ek_Alimi_Kanitlari_2026-10-27.zip!source/README.md",
+        "rule": "db-password",
+        "line": 88
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/34.02_POSEIDON_Core_v0.1_Karantinali_Ek_Alimi_Kanitlari_2026-10-27.zip!source/src/Frontend/src/App.test.tsx",
+        "rule": "credential-literal",
+        "line": 70
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/34.02_POSEIDON_Core_v0.1_Karantinali_Ek_Alimi_Kanitlari_2026-10-27.zip!source/tests/Backend/BffTests.cs",
+        "rule": "credential-literal",
+        "line": 130
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/35.02_POSEIDON_Core_v0.1_Sentetik_Restore_Provasi_Kanitlari_2026-10-27.zip!restore-rehearsal.patch",
+        "rule": "credential-literal",
+        "line": 123
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/35.02_POSEIDON_Core_v0.1_Sentetik_Restore_Provasi_Kanitlari_2026-10-27.zip!restore-rehearsal.patch",
+        "rule": "credential-literal",
+        "line": 183
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/35.02_POSEIDON_Core_v0.1_Sentetik_Restore_Provasi_Kanitlari_2026-10-27.zip!tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 48
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/35.02_POSEIDON_Core_v0.1_Sentetik_Restore_Provasi_Kanitlari_2026-10-27.zip!tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 108
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/36.02_POSEIDON_Core_v0.1_Ozel_Codespaces_Hazirligi_Kanitlari_2026-10-28.zip!source/README.md",
+        "rule": "db-password",
+        "line": 69
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/36.02_POSEIDON_Core_v0.1_Ozel_Codespaces_Hazirligi_Kanitlari_2026-10-28.zip!source/README.md",
+        "rule": "db-password",
+        "line": 88
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/36.02_POSEIDON_Core_v0.1_Ozel_Codespaces_Hazirligi_Kanitlari_2026-10-28.zip!source/src/Frontend/src/App.test.tsx",
+        "rule": "credential-literal",
+        "line": 70
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/36.02_POSEIDON_Core_v0.1_Ozel_Codespaces_Hazirligi_Kanitlari_2026-10-28.zip!source/tests/Backend/BffTests.cs",
+        "rule": "credential-literal",
+        "line": 130
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/36.02_POSEIDON_Core_v0.1_Ozel_Codespaces_Hazirligi_Kanitlari_2026-10-28.zip!source/tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 48
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/36.02_POSEIDON_Core_v0.1_Ozel_Codespaces_Hazirligi_Kanitlari_2026-10-28.zip!source/tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 108
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/37.02_POSEIDON_Core_v0.1_Npm_Yapilandirma_Duzeltmesi_Kanitlari_2026-10-28.zip!source/README.md",
+        "rule": "db-password",
+        "line": 69
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/37.02_POSEIDON_Core_v0.1_Npm_Yapilandirma_Duzeltmesi_Kanitlari_2026-10-28.zip!source/README.md",
+        "rule": "db-password",
+        "line": 88
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/37.02_POSEIDON_Core_v0.1_Npm_Yapilandirma_Duzeltmesi_Kanitlari_2026-10-28.zip!source/src/Frontend/src/App.test.tsx",
+        "rule": "credential-literal",
+        "line": 70
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/37.02_POSEIDON_Core_v0.1_Npm_Yapilandirma_Duzeltmesi_Kanitlari_2026-10-28.zip!source/tests/Backend/BffTests.cs",
+        "rule": "credential-literal",
+        "line": 130
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/37.02_POSEIDON_Core_v0.1_Npm_Yapilandirma_Duzeltmesi_Kanitlari_2026-10-28.zip!source/tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 48
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/37.02_POSEIDON_Core_v0.1_Npm_Yapilandirma_Duzeltmesi_Kanitlari_2026-10-28.zip!source/tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 108
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/38.02_POSEIDON_Core_v0.1_Codespaces_Host_Uyumu_Kanitlari_2026-10-28.zip!source/README.md",
+        "rule": "db-password",
+        "line": 69
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/38.02_POSEIDON_Core_v0.1_Codespaces_Host_Uyumu_Kanitlari_2026-10-28.zip!source/README.md",
+        "rule": "db-password",
+        "line": 88
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/38.02_POSEIDON_Core_v0.1_Codespaces_Host_Uyumu_Kanitlari_2026-10-28.zip!source/src/Frontend/src/App.test.tsx",
+        "rule": "credential-literal",
+        "line": 70
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/38.02_POSEIDON_Core_v0.1_Codespaces_Host_Uyumu_Kanitlari_2026-10-28.zip!source/tests/Backend/BffTests.cs",
+        "rule": "credential-literal",
+        "line": 130
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/38.02_POSEIDON_Core_v0.1_Codespaces_Host_Uyumu_Kanitlari_2026-10-28.zip!source/tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 48
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/38.02_POSEIDON_Core_v0.1_Codespaces_Host_Uyumu_Kanitlari_2026-10-28.zip!source/tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 108
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/39.02_POSEIDON_Core_v0.1_Supervisor_Kilit_Yasam_Dongusu_Kanitlari_2026-10-28.zip!source/README.md",
+        "rule": "db-password",
+        "line": 69
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/39.02_POSEIDON_Core_v0.1_Supervisor_Kilit_Yasam_Dongusu_Kanitlari_2026-10-28.zip!source/README.md",
+        "rule": "db-password",
+        "line": 88
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/39.02_POSEIDON_Core_v0.1_Supervisor_Kilit_Yasam_Dongusu_Kanitlari_2026-10-28.zip!source/src/Frontend/src/App.test.tsx",
+        "rule": "credential-literal",
+        "line": 70
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/39.02_POSEIDON_Core_v0.1_Supervisor_Kilit_Yasam_Dongusu_Kanitlari_2026-10-28.zip!source/tests/Backend/BffTests.cs",
+        "rule": "credential-literal",
+        "line": 130
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/39.02_POSEIDON_Core_v0.1_Supervisor_Kilit_Yasam_Dongusu_Kanitlari_2026-10-28.zip!source/tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 48
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/39.02_POSEIDON_Core_v0.1_Supervisor_Kilit_Yasam_Dongusu_Kanitlari_2026-10-28.zip!source/tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 108
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/40.02_POSEIDON_Core_v0.1_Salt_Okunur_Tanilama_Kanitlari_2026-10-28.zip!v7/Poseidon-codespaces-preparation-2026-10-28.zip!source/README.md",
+        "rule": "db-password",
+        "line": 69
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/40.02_POSEIDON_Core_v0.1_Salt_Okunur_Tanilama_Kanitlari_2026-10-28.zip!v7/Poseidon-codespaces-preparation-2026-10-28.zip!source/README.md",
+        "rule": "db-password",
+        "line": 88
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/40.02_POSEIDON_Core_v0.1_Salt_Okunur_Tanilama_Kanitlari_2026-10-28.zip!v7/Poseidon-codespaces-preparation-2026-10-28.zip!source/src/Frontend/src/App.test.tsx",
+        "rule": "credential-literal",
+        "line": 70
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/40.02_POSEIDON_Core_v0.1_Salt_Okunur_Tanilama_Kanitlari_2026-10-28.zip!v7/Poseidon-codespaces-preparation-2026-10-28.zip!source/tests/Backend/BffTests.cs",
+        "rule": "credential-literal",
+        "line": 130
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/40.02_POSEIDON_Core_v0.1_Salt_Okunur_Tanilama_Kanitlari_2026-10-28.zip!v7/Poseidon-codespaces-preparation-2026-10-28.zip!source/tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 48
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/40.02_POSEIDON_Core_v0.1_Salt_Okunur_Tanilama_Kanitlari_2026-10-28.zip!v7/Poseidon-codespaces-preparation-2026-10-28.zip!source/tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 108
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/40.02_POSEIDON_Core_v0.1_Salt_Okunur_Tanilama_Kanitlari_2026-10-28.zip!v8/Poseidon-codespaces-preparation-2026-10-28.zip!evidence/poseidon_diagnose_fixture.py",
+        "rule": "credential-literal",
+        "line": 10
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/40.02_POSEIDON_Core_v0.1_Salt_Okunur_Tanilama_Kanitlari_2026-10-28.zip!v8/Poseidon-codespaces-preparation-2026-10-28.zip!source/README.md",
+        "rule": "db-password",
+        "line": 69
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/40.02_POSEIDON_Core_v0.1_Salt_Okunur_Tanilama_Kanitlari_2026-10-28.zip!v8/Poseidon-codespaces-preparation-2026-10-28.zip!source/README.md",
+        "rule": "db-password",
+        "line": 88
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/40.02_POSEIDON_Core_v0.1_Salt_Okunur_Tanilama_Kanitlari_2026-10-28.zip!v8/Poseidon-codespaces-preparation-2026-10-28.zip!source/src/Frontend/src/App.test.tsx",
+        "rule": "credential-literal",
+        "line": 70
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/40.02_POSEIDON_Core_v0.1_Salt_Okunur_Tanilama_Kanitlari_2026-10-28.zip!v8/Poseidon-codespaces-preparation-2026-10-28.zip!source/tests/Backend/BffTests.cs",
+        "rule": "credential-literal",
+        "line": 130
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/40.02_POSEIDON_Core_v0.1_Salt_Okunur_Tanilama_Kanitlari_2026-10-28.zip!v8/Poseidon-codespaces-preparation-2026-10-28.zip!source/tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 48
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/40.02_POSEIDON_Core_v0.1_Salt_Okunur_Tanilama_Kanitlari_2026-10-28.zip!v8/Poseidon-codespaces-preparation-2026-10-28.zip!source/tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 108
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/41.02_POSEIDON_Core_v0.1_Tanilama_Neden_Kodu_ve_Peer_Kimligi_Kanitlari_2026-10-28.zip!v9/Poseidon-codespaces-preparation-2026-10-28.zip!source/README.md",
+        "rule": "db-password",
+        "line": 69
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/41.02_POSEIDON_Core_v0.1_Tanilama_Neden_Kodu_ve_Peer_Kimligi_Kanitlari_2026-10-28.zip!v9/Poseidon-codespaces-preparation-2026-10-28.zip!source/README.md",
+        "rule": "db-password",
+        "line": 88
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/41.02_POSEIDON_Core_v0.1_Tanilama_Neden_Kodu_ve_Peer_Kimligi_Kanitlari_2026-10-28.zip!v9/Poseidon-codespaces-preparation-2026-10-28.zip!source/src/Frontend/src/App.test.tsx",
+        "rule": "credential-literal",
+        "line": 70
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/41.02_POSEIDON_Core_v0.1_Tanilama_Neden_Kodu_ve_Peer_Kimligi_Kanitlari_2026-10-28.zip!v9/Poseidon-codespaces-preparation-2026-10-28.zip!source/tests/Backend/BffTests.cs",
+        "rule": "credential-literal",
+        "line": 130
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/41.02_POSEIDON_Core_v0.1_Tanilama_Neden_Kodu_ve_Peer_Kimligi_Kanitlari_2026-10-28.zip!v9/Poseidon-codespaces-preparation-2026-10-28.zip!source/tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 48
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/41.02_POSEIDON_Core_v0.1_Tanilama_Neden_Kodu_ve_Peer_Kimligi_Kanitlari_2026-10-28.zip!v9/Poseidon-codespaces-preparation-2026-10-28.zip!source/tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 108
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/41.02_POSEIDON_Core_v0.1_Tanilama_Neden_Kodu_ve_Peer_Kimligi_Kanitlari_2026-10-28.zip!v10/Poseidon-codespaces-preparation-2026-10-28.zip!source/README.md",
+        "rule": "db-password",
+        "line": 69
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/41.02_POSEIDON_Core_v0.1_Tanilama_Neden_Kodu_ve_Peer_Kimligi_Kanitlari_2026-10-28.zip!v10/Poseidon-codespaces-preparation-2026-10-28.zip!source/README.md",
+        "rule": "db-password",
+        "line": 88
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/41.02_POSEIDON_Core_v0.1_Tanilama_Neden_Kodu_ve_Peer_Kimligi_Kanitlari_2026-10-28.zip!v10/Poseidon-codespaces-preparation-2026-10-28.zip!source/src/Frontend/src/App.test.tsx",
+        "rule": "credential-literal",
+        "line": 70
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/41.02_POSEIDON_Core_v0.1_Tanilama_Neden_Kodu_ve_Peer_Kimligi_Kanitlari_2026-10-28.zip!v10/Poseidon-codespaces-preparation-2026-10-28.zip!source/tests/Backend/BffTests.cs",
+        "rule": "credential-literal",
+        "line": 130
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/41.02_POSEIDON_Core_v0.1_Tanilama_Neden_Kodu_ve_Peer_Kimligi_Kanitlari_2026-10-28.zip!v10/Poseidon-codespaces-preparation-2026-10-28.zip!source/tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 48
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/41.02_POSEIDON_Core_v0.1_Tanilama_Neden_Kodu_ve_Peer_Kimligi_Kanitlari_2026-10-28.zip!v10/Poseidon-codespaces-preparation-2026-10-28.zip!source/tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 108
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/42.02_POSEIDON_Core_v0.1_Kontrollu_Gorev_DB_Durdurma_Kanitlari_2026-10-28.zip!source/README.md",
+        "rule": "db-password",
+        "line": 69
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/42.02_POSEIDON_Core_v0.1_Kontrollu_Gorev_DB_Durdurma_Kanitlari_2026-10-28.zip!source/README.md",
+        "rule": "db-password",
+        "line": 88
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/42.02_POSEIDON_Core_v0.1_Kontrollu_Gorev_DB_Durdurma_Kanitlari_2026-10-28.zip!source/src/Frontend/src/App.test.tsx",
+        "rule": "credential-literal",
+        "line": 70
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/42.02_POSEIDON_Core_v0.1_Kontrollu_Gorev_DB_Durdurma_Kanitlari_2026-10-28.zip!source/tests/Backend/BffTests.cs",
+        "rule": "credential-literal",
+        "line": 130
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/42.02_POSEIDON_Core_v0.1_Kontrollu_Gorev_DB_Durdurma_Kanitlari_2026-10-28.zip!source/tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 48
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/42.02_POSEIDON_Core_v0.1_Kontrollu_Gorev_DB_Durdurma_Kanitlari_2026-10-28.zip!source/tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 108
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/43.02_POSEIDON_Core_v0.1_Helper_Bytecode_Onbellek_Duzeltmesi_Kanitlari_2026-10-28.zip!source/README.md",
+        "rule": "db-password",
+        "line": 69
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/43.02_POSEIDON_Core_v0.1_Helper_Bytecode_Onbellek_Duzeltmesi_Kanitlari_2026-10-28.zip!source/README.md",
+        "rule": "db-password",
+        "line": 88
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/43.02_POSEIDON_Core_v0.1_Helper_Bytecode_Onbellek_Duzeltmesi_Kanitlari_2026-10-28.zip!source/src/Frontend/src/App.test.tsx",
+        "rule": "credential-literal",
+        "line": 70
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/43.02_POSEIDON_Core_v0.1_Helper_Bytecode_Onbellek_Duzeltmesi_Kanitlari_2026-10-28.zip!source/tests/Backend/BffTests.cs",
+        "rule": "credential-literal",
+        "line": 130
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/43.02_POSEIDON_Core_v0.1_Helper_Bytecode_Onbellek_Duzeltmesi_Kanitlari_2026-10-28.zip!source/tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 48
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/43.02_POSEIDON_Core_v0.1_Helper_Bytecode_Onbellek_Duzeltmesi_Kanitlari_2026-10-28.zip!source/tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 108
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/44.02_POSEIDON_Core_v0.1_Login_Ret_Tanilama_Dogrulama_Kanitlari_2026-10-28.zip!original_v13/Poseidon-codespaces-preparation-2026-10-28.zip!source/README.md",
+        "rule": "db-password",
+        "line": 69
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/44.02_POSEIDON_Core_v0.1_Login_Ret_Tanilama_Dogrulama_Kanitlari_2026-10-28.zip!original_v13/Poseidon-codespaces-preparation-2026-10-28.zip!source/README.md",
+        "rule": "db-password",
+        "line": 88
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/44.02_POSEIDON_Core_v0.1_Login_Ret_Tanilama_Dogrulama_Kanitlari_2026-10-28.zip!original_v13/Poseidon-codespaces-preparation-2026-10-28.zip!source/src/Frontend/src/App.test.tsx",
+        "rule": "credential-literal",
+        "line": 70
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/44.02_POSEIDON_Core_v0.1_Login_Ret_Tanilama_Dogrulama_Kanitlari_2026-10-28.zip!original_v13/Poseidon-codespaces-preparation-2026-10-28.zip!source/tests/Backend/BffTests.cs",
+        "rule": "credential-literal",
+        "line": 130
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/44.02_POSEIDON_Core_v0.1_Login_Ret_Tanilama_Dogrulama_Kanitlari_2026-10-28.zip!original_v13/Poseidon-codespaces-preparation-2026-10-28.zip!source/tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 48
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/44.02_POSEIDON_Core_v0.1_Login_Ret_Tanilama_Dogrulama_Kanitlari_2026-10-28.zip!original_v13/Poseidon-codespaces-preparation-2026-10-28.zip!source/tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 108
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/44.02_POSEIDON_Core_v0.1_Login_Ret_Tanilama_Dogrulama_Kanitlari_2026-10-28.zip!original_v14/Poseidon-codespaces-preparation-2026-10-28.zip!source/README.md",
+        "rule": "db-password",
+        "line": 69
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/44.02_POSEIDON_Core_v0.1_Login_Ret_Tanilama_Dogrulama_Kanitlari_2026-10-28.zip!original_v14/Poseidon-codespaces-preparation-2026-10-28.zip!source/README.md",
+        "rule": "db-password",
+        "line": 88
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/44.02_POSEIDON_Core_v0.1_Login_Ret_Tanilama_Dogrulama_Kanitlari_2026-10-28.zip!original_v14/Poseidon-codespaces-preparation-2026-10-28.zip!source/src/Frontend/src/App.test.tsx",
+        "rule": "credential-literal",
+        "line": 70
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/44.02_POSEIDON_Core_v0.1_Login_Ret_Tanilama_Dogrulama_Kanitlari_2026-10-28.zip!original_v14/Poseidon-codespaces-preparation-2026-10-28.zip!source/tests/Backend/BffTests.cs",
+        "rule": "credential-literal",
+        "line": 130
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/44.02_POSEIDON_Core_v0.1_Login_Ret_Tanilama_Dogrulama_Kanitlari_2026-10-28.zip!original_v14/Poseidon-codespaces-preparation-2026-10-28.zip!source/tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 48
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/44.02_POSEIDON_Core_v0.1_Login_Ret_Tanilama_Dogrulama_Kanitlari_2026-10-28.zip!original_v14/Poseidon-codespaces-preparation-2026-10-28.zip!source/tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 108
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/45.02_POSEIDON_Core_v0.1_PostgreSQL_Hazirlik_Zaman_Asimi_Duzeltmesi_Kanitlari_2026-10-29.zip!source/README.md",
+        "rule": "db-password",
+        "line": 69
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/45.02_POSEIDON_Core_v0.1_PostgreSQL_Hazirlik_Zaman_Asimi_Duzeltmesi_Kanitlari_2026-10-29.zip!source/README.md",
+        "rule": "db-password",
+        "line": 88
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/45.02_POSEIDON_Core_v0.1_PostgreSQL_Hazirlik_Zaman_Asimi_Duzeltmesi_Kanitlari_2026-10-29.zip!source/src/Frontend/src/App.test.tsx",
+        "rule": "credential-literal",
+        "line": 70
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/45.02_POSEIDON_Core_v0.1_PostgreSQL_Hazirlik_Zaman_Asimi_Duzeltmesi_Kanitlari_2026-10-29.zip!source/tests/Backend/BffTests.cs",
+        "rule": "credential-literal",
+        "line": 130
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/45.02_POSEIDON_Core_v0.1_PostgreSQL_Hazirlik_Zaman_Asimi_Duzeltmesi_Kanitlari_2026-10-29.zip!source/tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 48
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/45.02_POSEIDON_Core_v0.1_PostgreSQL_Hazirlik_Zaman_Asimi_Duzeltmesi_Kanitlari_2026-10-29.zip!source/tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 108
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/46.02_POSEIDON_Core_v0.1_UAT_Origin_Tasima_Uyarlamasi_Kanitlari_2026-10-29.zip!source/README.md",
+        "rule": "db-password",
+        "line": 69
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/46.02_POSEIDON_Core_v0.1_UAT_Origin_Tasima_Uyarlamasi_Kanitlari_2026-10-29.zip!source/README.md",
+        "rule": "db-password",
+        "line": 88
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/46.02_POSEIDON_Core_v0.1_UAT_Origin_Tasima_Uyarlamasi_Kanitlari_2026-10-29.zip!source/src/Frontend/src/App.test.tsx",
+        "rule": "credential-literal",
+        "line": 70
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/46.02_POSEIDON_Core_v0.1_UAT_Origin_Tasima_Uyarlamasi_Kanitlari_2026-10-29.zip!source/tests/Backend/BffTests.cs",
+        "rule": "credential-literal",
+        "line": 130
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/46.02_POSEIDON_Core_v0.1_UAT_Origin_Tasima_Uyarlamasi_Kanitlari_2026-10-29.zip!source/tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 48
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/46.02_POSEIDON_Core_v0.1_UAT_Origin_Tasima_Uyarlamasi_Kanitlari_2026-10-29.zip!source/tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 108
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/47.02_POSEIDON_Core_v0.1_UAT_Oturum_Tani_Kanitlari_2026-10-29.zip!source/README.md",
+        "rule": "db-password",
+        "line": 69
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/47.02_POSEIDON_Core_v0.1_UAT_Oturum_Tani_Kanitlari_2026-10-29.zip!source/README.md",
+        "rule": "db-password",
+        "line": 88
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/47.02_POSEIDON_Core_v0.1_UAT_Oturum_Tani_Kanitlari_2026-10-29.zip!source/src/Frontend/src/App.test.tsx",
+        "rule": "credential-literal",
+        "line": 70
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/47.02_POSEIDON_Core_v0.1_UAT_Oturum_Tani_Kanitlari_2026-10-29.zip!source/tests/Backend/BffTests.cs",
+        "rule": "credential-literal",
+        "line": 130
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/47.02_POSEIDON_Core_v0.1_UAT_Oturum_Tani_Kanitlari_2026-10-29.zip!source/tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 48
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/47.02_POSEIDON_Core_v0.1_UAT_Oturum_Tani_Kanitlari_2026-10-29.zip!source/tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 108
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/48.02_POSEIDON_Core_v0.1_IMO_Dogrulama_ve_Belirsiz_Islem_Duzeltmesi_Kanitlari_2026-10-29.zip!originals/v18/Poseidon-codespaces-preparation-2026-10-28.zip!source/README.md",
+        "rule": "db-password",
+        "line": 69
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/48.02_POSEIDON_Core_v0.1_IMO_Dogrulama_ve_Belirsiz_Islem_Duzeltmesi_Kanitlari_2026-10-29.zip!originals/v18/Poseidon-codespaces-preparation-2026-10-28.zip!source/README.md",
+        "rule": "db-password",
+        "line": 88
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/48.02_POSEIDON_Core_v0.1_IMO_Dogrulama_ve_Belirsiz_Islem_Duzeltmesi_Kanitlari_2026-10-29.zip!originals/v18/Poseidon-codespaces-preparation-2026-10-28.zip!source/src/Frontend/src/App.test.tsx",
+        "rule": "credential-literal",
+        "line": 70
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/48.02_POSEIDON_Core_v0.1_IMO_Dogrulama_ve_Belirsiz_Islem_Duzeltmesi_Kanitlari_2026-10-29.zip!originals/v18/Poseidon-codespaces-preparation-2026-10-28.zip!source/tests/Backend/BffTests.cs",
+        "rule": "credential-literal",
+        "line": 130
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/48.02_POSEIDON_Core_v0.1_IMO_Dogrulama_ve_Belirsiz_Islem_Duzeltmesi_Kanitlari_2026-10-29.zip!originals/v18/Poseidon-codespaces-preparation-2026-10-28.zip!source/tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 48
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/48.02_POSEIDON_Core_v0.1_IMO_Dogrulama_ve_Belirsiz_Islem_Duzeltmesi_Kanitlari_2026-10-29.zip!originals/v18/Poseidon-codespaces-preparation-2026-10-28.zip!source/tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 108
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/48.02_POSEIDON_Core_v0.1_IMO_Dogrulama_ve_Belirsiz_Islem_Duzeltmesi_Kanitlari_2026-10-29.zip!originals/v19/Poseidon-codespaces-preparation-2026-10-28.zip!source/README.md",
+        "rule": "db-password",
+        "line": 69
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/48.02_POSEIDON_Core_v0.1_IMO_Dogrulama_ve_Belirsiz_Islem_Duzeltmesi_Kanitlari_2026-10-29.zip!originals/v19/Poseidon-codespaces-preparation-2026-10-28.zip!source/README.md",
+        "rule": "db-password",
+        "line": 88
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/48.02_POSEIDON_Core_v0.1_IMO_Dogrulama_ve_Belirsiz_Islem_Duzeltmesi_Kanitlari_2026-10-29.zip!originals/v19/Poseidon-codespaces-preparation-2026-10-28.zip!source/src/Frontend/src/App.test.tsx",
+        "rule": "credential-literal",
+        "line": 71
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/48.02_POSEIDON_Core_v0.1_IMO_Dogrulama_ve_Belirsiz_Islem_Duzeltmesi_Kanitlari_2026-10-29.zip!originals/v19/Poseidon-codespaces-preparation-2026-10-28.zip!source/tests/Backend/BffTests.cs",
+        "rule": "credential-literal",
+        "line": 130
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/48.02_POSEIDON_Core_v0.1_IMO_Dogrulama_ve_Belirsiz_Islem_Duzeltmesi_Kanitlari_2026-10-29.zip!originals/v19/Poseidon-codespaces-preparation-2026-10-28.zip!source/tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 48
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/48.02_POSEIDON_Core_v0.1_IMO_Dogrulama_ve_Belirsiz_Islem_Duzeltmesi_Kanitlari_2026-10-29.zip!originals/v19/Poseidon-codespaces-preparation-2026-10-28.zip!source/tests/Backend/restore-rehearsal.py",
+        "rule": "credential-literal",
+        "line": 108
+      },
+      {
+        "path": "docs/sources/2026-10-30/chunks.jsonl",
+        "rule": "db-password",
+        "line": 29467
+      },
+      {
+        "path": "docs/sources/2026-10-30/chunks.jsonl",
+        "rule": "db-password",
+        "line": 29468
+      },
+      {
+        "path": "docs/sources/2026-10-30/chunks.jsonl",
+        "rule": "db-password",
+        "line": 29626
+      },
+      {
+        "path": "docs/sources/2026-10-30/chunks.jsonl",
+        "rule": "db-password",
+        "line": 29639
+      },
+      {
+        "path": "docs/sources/2026-10-30/text/06_DEVELOPMENT/26.01_POSEIDON_Core_v0.1_Source/README.md.md",
+        "rule": "db-password",
+        "line": 79
+      },
+      {
+        "path": "docs/sources/2026-10-30/text/06_DEVELOPMENT/26.01_POSEIDON_Core_v0.1_Source/README.md.md",
+        "rule": "db-password",
+        "line": 100
+      },
+      {
+        "path": "docs/sources/2026-10-30/text/06_DEVELOPMENT/26.02_POSEIDON_Core_v0.1_Uygulama_Calistirma_ve_Dogrulama_Rehberi_TR.docx.md",
+        "rule": "db-password",
+        "line": 188
+      },
+      {
+        "path": "docs/sources/2026-10-30/text/06_DEVELOPMENT/26.02_POSEIDON_Core_v0.1_Uygulama_Calistirma_ve_Dogrulama_Rehberi_TR.docx.md",
+        "rule": "db-password",
+        "line": 240
+      },
+      {
+        "path": "scripts/oidc_lab.py",
+        "rule": "db-password",
+        "line": 105
+      },
+      {
+        "path": "scripts/oidc_lab.py",
+        "rule": "credential-literal",
+        "line": 126
+      },
+      {
+        "path": "scripts/test_codex_accounts.py",
+        "rule": "credential-literal",
+        "line": 350
+      },
+      {
+        "path": "scripts/test_codex_accounts.py",
+        "rule": "credential-literal",
+        "line": 350
+      },
+      {
+        "path": "tests/Poseidon.Api.Tests/OidcProtocolTests.cs",
+        "rule": "credential-literal",
+        "line": 157
+      },
+      {
+        "path": "tests/Poseidon.Persistence.Tests/PasswordHashingTests.cs",
+        "rule": "credential-literal",
+        "line": 13
+      }
+    ],
+    "rules": {
+      "db-password": 61,
+      "credential-literal": 95
+    }
+  },
+  "signed_provider": {
+    "status": "passed",
+    "passed": 2,
+    "failed": 0,
+    "failureLines": []
+  },
+  "signed_audit_reg_files_initial": {
+    "status": "failed",
+    "discovered": 14,
+    "passed": 13,
+    "failed": 1,
+    "results": [
+      {
+        "project": "firefox-desktop",
+        "name": "audit-history",
+        "passed": true,
+        "milliseconds": 3058,
+        "line": null
+      },
+      {
+        "project": "firefox-desktop",
+        "name": "audit-default-deny",
+        "passed": true,
+        "milliseconds": 1973,
+        "line": null
+      },
+      {
+        "project": "firefox-desktop",
+        "name": "file-transport-real-scanner",
+        "passed": true,
+        "milliseconds": 2817,
+        "line": null
+      },
+      {
+        "project": "firefox-desktop",
+        "name": "file-default-deny",
+        "passed": true,
+        "milliseconds": 1643,
+        "line": null
+      },
+      {
+        "project": "firefox-desktop",
+        "name": "draft-citation",
+        "passed": true,
+        "milliseconds": 5488,
+        "line": null
+      },
+      {
+        "project": "firefox-desktop",
+        "name": "response-loss-conflict",
+        "passed": true,
+        "milliseconds": 3087,
+        "line": null
+      },
+      {
+        "project": "firefox-desktop",
+        "name": "restricted-membership",
+        "passed": true,
+        "milliseconds": 1880,
+        "line": null
+      },
+      {
+        "project": "firefox-narrow-responsive",
+        "name": "audit-history",
+        "passed": true,
+        "milliseconds": 2535,
+        "line": null
+      },
+      {
+        "project": "firefox-narrow-responsive",
+        "name": "audit-default-deny",
+        "passed": true,
+        "milliseconds": 2052,
+        "line": null
+      },
+      {
+        "project": "firefox-narrow-responsive",
+        "name": "file-transport-real-scanner",
+        "passed": false,
+        "milliseconds": 3207,
+        "line": 39
+      },
+      {
+        "project": "firefox-narrow-responsive",
+        "name": "file-default-deny",
+        "passed": true,
+        "milliseconds": 1728,
+        "line": null
+      },
+      {
+        "project": "firefox-narrow-responsive",
+        "name": "draft-citation",
+        "passed": true,
+        "milliseconds": 3589,
+        "line": null
+      },
+      {
+        "project": "firefox-narrow-responsive",
+        "name": "response-loss-conflict",
+        "passed": true,
+        "milliseconds": 3693,
+        "line": null
+      },
+      {
+        "project": "firefox-narrow-responsive",
+        "name": "restricted-membership",
+        "passed": true,
+        "milliseconds": 3083,
+        "line": null
+      }
+    ]
+  },
+  "signed_file_layout_affected": {
+    "status": "passed",
+    "discovered": 1,
+    "passed": 1,
+    "failed": 0,
+    "results": [
+      {
+        "project": "firefox-narrow-responsive",
+        "name": "file-transport-real-scanner",
+        "passed": true,
+        "milliseconds": 5544,
+        "line": null
+      }
+    ]
+  },
+  "ordinary_final_affected": {
+    "source": "ordinary Playwright HTML report",
+    "stats": {
+      "total": 2,
+      "expected": 2,
+      "unexpected": 0,
+      "flaky": 0,
+      "skipped": 0,
+      "ok": true
+    }
+  },
+  "built_client": [
+    {
+      "path": "frontend/dist/assets/index-Bt_d6PSW.js",
+      "sha256": "4aed38cb0003bdf7607c12e8f090db859b255b4fcd627284cbcc7935054575eb",
+      "bytes": 337503
+    },
+    {
+      "path": "frontend/dist/assets/index-Ds8hwQ3J.css",
+      "sha256": "20b4943666688e9219f3e319d9f0730c766154b0f15c890eff2a206e6dcc3b75",
+      "bytes": 19579
+    },
+    {
+      "path": "frontend/dist/index.html",
+      "sha256": "6a25e8394850421b0ab6dda00aaa8812acdf2be1b9bec855f27cbab60a1730b3",
+      "bytes": 549
+    }
+  ],
+  "canonical": {
+    "accepted_sp": 8,
+    "total_sp": 970,
+    "accepted_tasks": 2,
+    "total_tasks": 121,
+    "accepted_screens": 0,
+    "total_screens": 196
+  },
+  "final_changed_input_scan": {
+    "covered_files": 86,
+    "covered_bytes": 1074166,
+    "findings": [
+      {
+        "path": "scripts/browser_gate.py",
+        "rule": "db-password",
+        "line": 54
+      },
+      {
+        "path": "scripts/browser_gate.py",
+        "rule": "db-password",
+        "line": 75
+      },
+      {
+        "path": "scripts/browser_gate.py",
+        "rule": "credential-literal",
+        "line": 56
+      },
+      {
+        "path": "scripts/oidc_lab.py",
+        "rule": "db-password",
+        "line": 110
+      },
+      {
+        "path": "scripts/oidc_lab.py",
+        "rule": "credential-literal",
+        "line": 131
+      },
+      {
+        "path": "tests/Poseidon.Api.Tests/OidcProtocolTests.cs",
+        "rule": "credential-literal",
+        "line": 158
+      }
+    ],
+    "failures": [],
+    "result": "FAIL"
+  },
+  "code_manifest": {
+    "base": "80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44",
+    "count": 71,
+    "sha256": "1e5024c0a2b745456bf8567f537a0a335e3c236860f54aeb77a763cfcd55e165",
+    "staged_git_blobs": [
+      {
+        "path": ".github/workflows/backend-foundation.yml",
+        "sha256": "821b1683a49bc845fc10ad57267056394a6d0bee8628dfa2e49f0b7d4742a0ce"
+      },
+      {
+        "path": "backend/Poseidon.Api/AuditHistoryEndpoints.cs",
+        "sha256": "5df8a134ff1cb5ed3a8e78084fc9030600f7e94705f250bb9a4eafec95c0cd78"
+      },
+      {
+        "path": "backend/Poseidon.Api/AuditTelemetry.cs",
+        "sha256": "99f914970877be7047b094fd1e3ad0d94dea0c27a023c985fae1779ebed17048"
+      },
+      {
+        "path": "backend/Poseidon.Api/DirectoryAuthorizationResultHandler.cs",
+        "sha256": "de1e2d81a198a08971cdc641641bec2a01ceb841c4c8c5d700cb391545cf8455"
+      },
+      {
+        "path": "backend/Poseidon.Api/FileReconciliation.cs",
+        "sha256": "052f203842e58a9aa0ef2181c3289a814d2b498422bb690755d294ebb3969ddb"
+      },
+      {
+        "path": "backend/Poseidon.Api/FoundationEndpoints.cs",
+        "sha256": "fe4a2aac6000766d642c7147dfdc2ac92ef8e4181f3cf0f6883a72bdfd2b6993"
+      },
+      {
+        "path": "backend/Poseidon.Api/FoundationIdentity.cs",
+        "sha256": "d763071f50d4820aa2f920d732b7ccb9f1d4cbbd31990a959949cb8f6d7864de"
+      },
+      {
+        "path": "backend/Poseidon.Api/OperatorSecretReferences.cs",
+        "sha256": "4285868c0bffd7d51fc94a74a059f7428b840b62e68396e44dc447b47472efb6"
+      },
+      {
+        "path": "backend/Poseidon.Api/RegulatoryDraftEndpoints.cs",
+        "sha256": "0e092dd299895f1029dd30bd7cc8e2eebdc9b3ff06008fbbdbceb08b956cfd80"
+      },
+      {
+        "path": "backend/Poseidon.Api/RegulatoryRegisterEndpoints.cs",
+        "sha256": "3c91223a6d6861b4b30ed6181528e4bc1ea1e7106a443f8954a9a178a01f25fb"
+      },
+      {
+        "path": "backend/Poseidon.Api/SecureFileEndpoints.cs",
+        "sha256": "4acb277c1a0a582bc5eaccf59fd945e092422dbbcbfccd09556316b60fb6cdec"
+      },
+      {
+        "path": "backend/Poseidon.Api/SecureFileRuntime.cs",
+        "sha256": "1f05bb7a921bd3dfd5a00b2f23f54d22ffea6a6a4a52a0e82eae280d8019a41a"
+      },
+      {
+        "path": "backend/Poseidon.Api/SecurityAudit.cs",
+        "sha256": "07e226facf4d0897ff42d3ee8e3f9ddc18e8c1c9ab1e544198dd94bf1719a500"
+      },
+      {
+        "path": "backend/Poseidon.Api/Startup.cs",
+        "sha256": "7d68093f12c94eaa465c41e781dc95f5788debaf1d4e3bdb0ad775ee8d1f1367"
+      },
+      {
+        "path": "backend/Poseidon.Api/WorkspaceEndpoints.cs",
+        "sha256": "7af9f592860826a2014b709dd0c1eb2c0bd5ad1022c463790a3c50375878bf8e"
+      },
+      {
+        "path": "backend/Poseidon.Domain/AuditValuePolicy.cs",
+        "sha256": "fd3062444226055bcb9c0590df412f40a091b4f05a23e44a39ab53f37c533bec"
+      },
+      {
+        "path": "backend/Poseidon.Domain/SecureFilePolicy.cs",
+        "sha256": "3b65d05d5ad9705cbd182b977b05f9c6206165c37fae2a5e779487b23b1f572a"
+      },
+      {
+        "path": "backend/Poseidon.Persistence/AuditMetadata.cs",
+        "sha256": "e49f4eb328b15ab0a49dac19c67147031c5db28783d69522edcbf3ef7d01dc10"
+      },
+      {
+        "path": "backend/Poseidon.Persistence/Entities.cs",
+        "sha256": "675426d0eafc048ae8a4c88c7fa9af53da2331fd23d4e4cd092e2fd02d0ec2aa"
+      },
+      {
+        "path": "backend/Poseidon.Persistence/Migrations/20261101220000_AuditHistoryMetadata.Designer.cs",
+        "sha256": "1146887b472471e3be44a55b9695f19b22c77be3cdfcfc443e6559965046c3f8"
+      },
+      {
+        "path": "backend/Poseidon.Persistence/Migrations/20261101220000_AuditHistoryMetadata.cs",
+        "sha256": "0258fe99944305f28c9cc314910de23aea699a72836c00b6d397ee733860a5ab"
+      },
+      {
+        "path": "backend/Poseidon.Persistence/Migrations/20261101230000_SecureFilesFoundation.Designer.cs",
+        "sha256": "fa92e21ef57b322413cf6bb3f894c5ed534f5821f67c517586ba90f98a430e5c"
+      },
+      {
+        "path": "backend/Poseidon.Persistence/Migrations/20261101230000_SecureFilesFoundation.cs",
+        "sha256": "f904e82e53ee3a0c69fabd454441d970c07f4cb06e863dee319f14084ad954c8"
+      },
+      {
+        "path": "backend/Poseidon.Persistence/Migrations/PoseidonDbContextModelSnapshot.cs",
+        "sha256": "fe15976964fab7dced2afff552bbe6e52e15c4046726a05db1190432a42bf4d3"
+      },
+      {
+        "path": "backend/Poseidon.Persistence/PoseidonDbContext.cs",
+        "sha256": "9816e07f5c634923e6cd449585e55cd394855b006aa689c2eb6d24764c45ed5e"
+      },
+      {
+        "path": "backend/Poseidon.Persistence/SecureFiles.cs",
+        "sha256": "b2ee086e08de03c8fec6474a07410e5751789abaab911c719156f2b301aa7f36"
+      },
+      {
+        "path": "backend/Poseidon.Persistence/SecurityEvent.cs",
+        "sha256": "8514737e5d837d0bdfe07e266a246f7070b0b5c965b17182e11eb5acb79b7178"
+      },
+      {
+        "path": "backend/Poseidon.Persistence/Seeding/SeedImporter.cs",
+        "sha256": "9a72a45b52dd24e74e3d1f770b64b257ef4acb826f50faeb07d2c9222ed3f0c0"
+      },
+      {
+        "path": "contracts/openapi.v1.json",
+        "sha256": "d5448d3e5422879cd65ca9e8aedc8a2911d083d8529ca5dee6977d3079989c8d"
+      },
+      {
+        "path": "frontend/src/generated/api.d.ts",
+        "sha256": "989a89edfab03ee5a0d732bdc6f1299956e5a8eeb3550a8db86a7948cf305c7e"
+      },
+      {
+        "path": "frontend/src/product/AuditWorkspace.test.tsx",
+        "sha256": "bb7e279c806f1459c3acf9762e8eca00c0817f2e2893e386f88c951b561a5df8"
+      },
+      {
+        "path": "frontend/src/product/AuditWorkspace.tsx",
+        "sha256": "6c34df06d23ee771f7439932baec2e8abe3badf9070af9961904f846fb0bdf2a"
+      },
+      {
+        "path": "frontend/src/product/ProductApp.tsx",
+        "sha256": "0a8eec23d8c0f7ef5cce81b7f940f6a91f3614b806cde76f41cc127be560fc35"
+      },
+      {
+        "path": "frontend/src/product/VesselFiles.test.tsx",
+        "sha256": "33bec9810238013eacb673d7a2404045a7ff453828987c5c5cc3b5a3d5915725"
+      },
+      {
+        "path": "frontend/src/product/VesselFiles.tsx",
+        "sha256": "7c495d718ff12cb4007b634d9669f19cac6be8033dab7bbc6d22d8e13ca9b71d"
+      },
+      {
+        "path": "frontend/src/product/audit-api.ts",
+        "sha256": "871106270f2328a74aa4750388731f06840156e959c48b260e4f3e37368c537a"
+      },
+      {
+        "path": "frontend/src/product/file-api.ts",
+        "sha256": "e39e9928e31d216ccbd71ebc270bb8d43ed650b071d061c6cd8417661daca7c7"
+      },
+      {
+        "path": "frontend/src/product/product.css",
+        "sha256": "2bc402ba5d3917bf4ba8693468e9937b6171b062729857b94c96d3d083f901fa"
+      },
+      {
+        "path": "frontend/src/product/workspace-location.ts",
+        "sha256": "9b7162d9e1457609e487bf82df81221a26a7a9575b17c08c17c3b751c2574eb7"
+      },
+      {
+        "path": "scripts/browser_gate.py",
+        "sha256": "657e918874cc17a6f2ab2131ba4bfac58dadbd9367a60ae418222cf8e563a63f"
+      },
+      {
+        "path": "scripts/clamd_gate.py",
+        "sha256": "99ee34cd48b870ee561e9bd896924315a2e4d4b668a371ee1a2a83eb37e54825"
+      },
+      {
+        "path": "scripts/oidc_lab.py",
+        "sha256": "71c58a41f49deaab891f09862a811eb0effa7e56a290461556268f60801da93b"
+      },
+      {
+        "path": "scripts/secret_scan.py",
+        "sha256": "2d2f0f48d443e14c1730487573d25a822e674335bacf37a97c319de3262f0e08"
+      },
+      {
+        "path": "scripts/test_browser_gate.py",
+        "sha256": "85715c09f8caa533fade89a032f7494315decf52acc378c6031db7a1ebe8fa2b"
+      },
+      {
+        "path": "scripts/test_clamd_gate.py",
+        "sha256": "0393b1833355178d0039aeaa7709d7327c7941db20d060c5de9f6fbd000782b8"
+      },
+      {
+        "path": "scripts/test_oidc_lab.py",
+        "sha256": "06f5f962a9abffa062f0aa02fe369c0d2077b1a5fdc97b55f655221430a18455"
+      },
+      {
+        "path": "scripts/test_secret_scan.py",
+        "sha256": "883b3b94579644f18518cabe956d0430596330b06c78cf4cbefb97c1f9787335"
+      },
+      {
+        "path": "tests/Poseidon.Api.Tests/AuditAuthorityTests.cs",
+        "sha256": "8b80c88f8d4ccc626237bfb40427b7cdb545f68373331959557b76d26a5b9e1d"
+      },
+      {
+        "path": "tests/Poseidon.Api.Tests/AuditHistoryTests.cs",
+        "sha256": "593c741088402b01b9555fe7b3f44d369008d364417f03ed34f5af408a9b22af"
+      },
+      {
+        "path": "tests/Poseidon.Api.Tests/AuditTelemetryTests.cs",
+        "sha256": "0f731e49f2d03f965db978fbd90c8e0ad57428de79dc312986321701f2c644d8"
+      },
+      {
+        "path": "tests/Poseidon.Api.Tests/ClamdIntegrationTests.cs",
+        "sha256": "4c6a818a77e8a97b45177db73e5a070ba4a423e34ec26755587d3540251ba53f"
+      },
+      {
+        "path": "tests/Poseidon.Api.Tests/DiagnosticsTests.cs",
+        "sha256": "7ef54e20b9d839486a4d34e6d2c41daa3e3721089df993a5d91fe58ed57c3f91"
+      },
+      {
+        "path": "tests/Poseidon.Api.Tests/DirectoryWorkspaceTests.cs",
+        "sha256": "2053302aa8a06832698b892189a79bfe5ee4dbc2368a6a37425c37136f62da6d"
+      },
+      {
+        "path": "tests/Poseidon.Api.Tests/FoundationIdentityTests.cs",
+        "sha256": "efa08f6968004bc6ebf707a13c43f3927a6dfce140fe970742460e99df3a09e1"
+      },
+      {
+        "path": "tests/Poseidon.Api.Tests/LocalFileObjectTests.cs",
+        "sha256": "2cc970ed2086dfdd34f2148a7b6be847c7384dc02270d7b9d2e8286db66a855b"
+      },
+      {
+        "path": "tests/Poseidon.Api.Tests/OidcProtocolTests.cs",
+        "sha256": "2e6c6fc5a623b25c0bcb735c4b104ea8d68dd27aea8993cc4171269502f0f8c0"
+      },
+      {
+        "path": "tests/Poseidon.Api.Tests/OperatorSecretReferenceTests.cs",
+        "sha256": "a499fac9fa8fa74c138a76e6020f65ba5b6b6935a839d8be83968464452b279c"
+      },
+      {
+        "path": "tests/Poseidon.Api.Tests/OwnedPostgresFixture.cs",
+        "sha256": "4f63a4685331dbc77c3101f78a785a6e6d9583eb50d296c959eb4a2d040f81ea"
+      },
+      {
+        "path": "tests/Poseidon.Api.Tests/OwnedPostgresIsolationTests.cs",
+        "sha256": "b1dbb6a3e9052240c681ce4265720d6b158a704df89c41605f9fc805ab80ff56"
+      },
+      {
+        "path": "tests/Poseidon.Api.Tests/SecureFileAuthorityTests.cs",
+        "sha256": "dce513c4d972a9240e05e12600b84ba85425e509b6816f6b46b657e990f24a62"
+      },
+      {
+        "path": "tests/Poseidon.Api.Tests/SecureFilesTests.cs",
+        "sha256": "e69cf284b00ec3e6bf4d1df7e73f281e44ac0834e1316d3705816c2e8694eeb8"
+      },
+      {
+        "path": "tests/Poseidon.Api.Tests/TrustedWriteRoleTests.cs",
+        "sha256": "b043584ef5766cf34ac197f9c024113da43898204166563ed92edbf8ae08968c"
+      },
+      {
+        "path": "tests/Poseidon.Browser.Tests/lab/register-run.ts",
+        "sha256": "03a6fa11abdcb0305a5c3b676e3f5d0f8280cd1914507f90a9a9c1fac6e372c2"
+      },
+      {
+        "path": "tests/Poseidon.Browser.Tests/register-specs/audit-cases.ts",
+        "sha256": "5f4c281b78a777d9b2b2408faa2d9927350647b7d857db297369b1332bf98891"
+      },
+      {
+        "path": "tests/Poseidon.Browser.Tests/register-specs/cases.ts",
+        "sha256": "613c086125be2cd42561e6d812eb6c7fb3961c78c7170be280b50d95ebe0c708"
+      },
+      {
+        "path": "tests/Poseidon.Browser.Tests/register-specs/file-cases.ts",
+        "sha256": "39be9c8f7761d3c1fa4a8ac5175354afd66ca26620c47cdc5fa53194bd7bdc00"
+      },
+      {
+        "path": "tests/Poseidon.Browser.Tests/specs/files.spec.ts",
+        "sha256": "48bcdee5b0132b30cabd25d46a4f55f0d5e28266104105d03383005fcc5e5c4b"
+      },
+      {
+        "path": "tests/Poseidon.Browser.Tests/specs/product.spec.ts",
+        "sha256": "24b386041e207908964300526ec869edf597dab35c1690884cb7014970377708"
+      },
+      {
+        "path": "tests/Poseidon.Domain.Tests/AuditValuePolicyTests.cs",
+        "sha256": "7e192d1d4e56530f01aa0c53dd430ae4461c70e0a5f77a9838e549d91bcb5127"
+      },
+      {
+        "path": "tests/Poseidon.Domain.Tests/SecureFilePolicyTests.cs",
+        "sha256": "4ee6be264303be8aaa7b739761c1aaed5f826ba029a42d47c70e0c18b67d593e"
+      },
+      {
+        "path": "tests/Poseidon.Persistence.Tests/PostgresSeedTests.cs",
+        "sha256": "c0d18ed3594a737d8b7e1ecbd66ff84d9dfd08461e77edbbe50676b676452fe3"
+      }
+    ]
+  },
+  "final_tracked_inputs": 814,
+  "cleanup": {
+    "remaining_gate_port_listeners": 0,
+    "running_owned_scanner_containers": 0,
+    "running_owned_browser_database_containers": 0,
+    "volumes_deleted": false,
+    "private_credentials_preserved": true
+  }
+}

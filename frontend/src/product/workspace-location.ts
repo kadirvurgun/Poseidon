@@ -10,7 +10,7 @@ export function readLocation(path = window.location.pathname + window.location.s
   const boundary = path.indexOf('?')
   const pathname = boundary < 0 ? path : path.slice(0, boundary)
   const query = boundary < 0 ? '' : path.slice(boundary + 1)
-  if ((pathname === '/app/audit' || pathname.startsWith('/app/audit/')) && (query.length > 1024 || /[\x00-\x1f]/.test(query))) return { tab: 'audit', selected: null, profile: false, invalid: true }
+  if ((pathname === '/app/audit' || pathname.startsWith('/app/audit/')) && (query.length > 1024 || [...query].some(c => c.charCodeAt(0) < 32))) return { tab: 'audit', selected: null, profile: false, invalid: true }
   path = pathname
   if (path === '/app' || path === '/app/') return { tab: 'companies', selected: null, profile: false }
   // Reject encoded separators, malformed encodings and unknown routes without decoding into a new path.

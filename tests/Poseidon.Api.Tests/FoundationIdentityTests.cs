@@ -14,7 +14,7 @@ public sealed class FoundationIdentityTests
     [Fact]
     public void Regulatory_capabilities_require_explicit_whitelisted_server_grants_and_tenant_wide_scope()
     {
-        var membership = new Membership("https://synthetic.example", "synthetic", Guid.NewGuid(), Guid.NewGuid(), ["directory.read", "directory.write"], true, true);
+        var membership = new Membership("https://synthetic.example", "synthetic", Guid.NewGuid(), Guid.NewGuid(), ["directory.read", "directory.write"], true, true) { RoleReferences = [Guid.NewGuid().ToString()] };
         var settings = new FederationSettings { Memberships = [membership] };
         var principal = new ClaimsPrincipal(new ClaimsIdentity([new("sub", membership.Subject), new("iss", membership.Issuer),
             new("permission", "regulatory.draft.write"), new("role", "RegulatoryAdmin"), new("tenant", Guid.NewGuid().ToString())], "test"));
@@ -40,7 +40,7 @@ public sealed class FoundationIdentityTests
         const string issuer = "https://localhost:8443/realms/poseidon-lab";
         var members = new[]
         {
-            new Membership(issuer, "manager", Guid.NewGuid(), Guid.NewGuid(), ["directory.read", "directory.write", "workspace.search"], true, true, []),
+            new Membership(issuer, "manager", Guid.NewGuid(), Guid.NewGuid(), ["directory.read", "directory.write", "workspace.search"], true, true, []) { RoleReferences = [Guid.NewGuid().ToString()] },
             new Membership(issuer, "restricted", Guid.NewGuid(), Guid.NewGuid(), ["directory.read"], false, false, [new(Guid.NewGuid())])
         };
         using var json = new MemoryStream(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(new { Authentication = new { Oidc = new { Authority = issuer, Issuer = issuer, ClientId = "local", Memberships = members } } })));
@@ -107,7 +107,7 @@ public sealed class FoundationIdentityTests
     public void Scope_is_explicit_and_revalidated_without_trusting_claims()
     {
         var vessel = Guid.NewGuid();
-        var membership = new Membership("https://idp.example", "synthetic", Guid.NewGuid(), Guid.NewGuid(), ["directory.read", "directory.write"]);
+        var membership = new Membership("https://idp.example", "synthetic", Guid.NewGuid(), Guid.NewGuid(), ["directory.read", "directory.write"]) { RoleReferences = [Guid.NewGuid().ToString()] };
         var settings = new FederationSettings { Memberships = [membership] };
         var resolver = new ActorResolver(settings);
         var principal = new ClaimsPrincipal(new ClaimsIdentity([new Claim("sub", "synthetic"), new Claim("iss", membership.Issuer), new Claim("role", "admin"), new Claim("vessel", vessel.ToString())], "test"));

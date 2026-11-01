@@ -21,7 +21,7 @@ it('renders honest TR/EN details, withheld values, resource versions and exact a
   expect(screen.getByRole('link', { name: 'Değişmez revizyonu aç' })).toHaveAttribute('href', record.revisionHref)
   view.rerender(<AuditWorkspace language="en" selected={id} allowed onNavigate={navigate} />)
   expect(screen.getByText(/does not require a decision reason/)).toBeVisible()
-  const close = screen.getByRole('button', { name: 'Close', exact: true }); close.focus(); await user.keyboard('{Enter}')
+  const close = screen.getByRole('button', { name: 'Close' }); close.focus(); await user.keyboard('{Enter}')
   expect(navigate).toHaveBeenCalledWith('/app/audit')
 })
 it('does not fetch or expose records without trusted capability', () => {
@@ -54,7 +54,7 @@ it('keeps filters and selected record in shareable URL context and clears cursor
   await screen.findByRole('table')
   expect(screen.getByLabelText('Vessel ID')).toHaveValue(vessel)
   await user.selectOptions(screen.getByLabelText('Action'), 'Modified')
-  await user.click(screen.getByRole('button', { name: 'Filter', exact: true }))
+  await user.click(screen.getByRole('button', { name: 'Filter' }))
   expect(navigate).toHaveBeenCalledWith(`/app/audit?vesselId=${vessel}&action=Modified`)
   const path = `/app/audit/${id}?vesselId=${vessel}&action=Modified`
   expect(locationPath(readLocation(path))).toBe(path)

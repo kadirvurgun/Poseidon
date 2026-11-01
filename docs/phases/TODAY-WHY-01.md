@@ -1,5 +1,8 @@
 # TODAY-WHY-01 — UNVERIFIED authored product checkpoint
 
+> Current verification: [AUDIT-FILES-BUNDLE-01](AUDIT-FILES-BUNDLE-01.md) executes the current app gate against approved80b057a. Scoped regressions pass after documented fixes; repository scan fails and the S3-compatible/API storage criterion is NOT MET. NOT ACCEPTED; canonical progress unchanged. Earlier authoring/CORE statements below retain historical scope.
+
+
 > Current follow-up: the [CORE-BUNDLE-01 rejection repair](CORE-BUNDLE-01.md) records exact replay/query/header fixes and actual affected-check reruns after rejected20f1198. Unchanged original results below are historical. Independent exact-commit QA/CI pending;NOT ACCEPTED.
 
 > Final local verification: [CORE-BUNDLE-01](CORE-BUNDLE-01.md) records the combined gate, integration fixes, actual counts, initial failures and affected reruns. The authoring/deferred record below is historical. Locally validated developer candidate only; independent exact-commit QA/CI pending, NOT ACCEPTED.

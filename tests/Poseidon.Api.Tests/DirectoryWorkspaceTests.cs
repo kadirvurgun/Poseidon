@@ -52,6 +52,7 @@ public sealed partial class DirectoryWorkspaceTests(OwnedPostgresFixture fixture
             ["Authentication:Oidc:Memberships:0:Subject"] = "synthetic",
             ["Authentication:Oidc:Memberships:0:ActorId"] = actorId.ToString(),
             ["Authentication:Oidc:Memberships:0:TenantId"] = seed.Tenants[0].Id.ToString(),
+            ["Authentication:Oidc:Memberships:0:RoleReferences:0"] = "91c26eb5-cf16-4553-981d-1c275358c535", // Synthetic local assignment, no operational appointment.
             ["Authentication:Oidc:Memberships:0:Permissions:0"] = "directory.read",
             ["Authentication:Oidc:Memberships:0:Permissions:1"] = edit ? "directory.write" : "unused",
             ["Authentication:Oidc:Memberships:0:Permissions:2"] = search ? "workspace.search" : "unused",
@@ -76,7 +77,7 @@ public sealed partial class DirectoryWorkspaceTests(OwnedPostgresFixture fixture
                 var actor = sp.GetRequiredService<ActorResolver>().Resolve(http.User) ?? throw new UnauthorizedAccessException();
                 return new PoseidonDbContext(new DbContextOptionsBuilder<PoseidonDbContext>()
                     .UseNpgsql(postgres.GetConnectionString()).AddInterceptors(interceptor).Options,
-                    actor.TenantId, new ActorContext(actor.Id.ToString(), "User", http.TraceIdentifier, actor.AuditCapabilities, "WebCommand"));
+                    actor.TenantId, new ActorContext(actor.Id.ToString(), "User", http.TraceIdentifier, actor.AuditCapabilities, "WebCommand", actor.RoleContext));
             });
         });
     });

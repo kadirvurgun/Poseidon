@@ -1,5 +1,8 @@
 # SECURE-FILES-01 — authored foundation, UNVERIFIED / NOT ACCEPTED
 
+> Current executed verification and source-fit limits: [AUDIT-FILES-BUNDLE-01](../phases/AUDIT-FILES-BUNDLE-01.md). Valid trusted role references are now required for new human writes; missing/malformed roles remain readable but cannot write. Historical/null/System context is preserved. Repository scanning fails; the S3-compatible/API adapter and broader document handling remain NOT MET software criteria. This supplements the historical authoring contract without accepting DEV-016/017/018.
+
+
 Owner handoff: coordinator. Date: 2026-11-01. Gate: **AUDIT-FILES-BUNDLE-01**.
 User target194/970SP is a delivery target, not an accepted count. Canonical accepted
 counts remain unchanged. No product check, scanner scan, build, typecheck, contract
