@@ -10,6 +10,23 @@ import oidc_lab as lab
 
 
 class LabTests(unittest.TestCase):
+    def test_register_enrollment_is_explicit_server_owned_idempotent_and_preserves_other_members(self):
+        realm, _, _, config = lab.make_configuration()
+        with tempfile.TemporaryDirectory() as directory, patch.object(lab, 'PRIVATE', Path(directory)):
+            (Path(directory) / 'realm').mkdir()
+            (Path(directory) / 'realm/poseidon-lab-realm.json').write_text(json.dumps(realm))
+            original = json.loads(json.dumps(config))
+            lab.register_membership(config)
+            lab.register_membership(config)
+            members = config['Authentication']['Oidc']['Memberships']
+            self.assertEqual(original['Authentication']['Oidc']['Memberships'][1], members[1])
+            self.assertEqual(original['Authentication']['Oidc']['Memberships'][0]['Subject'], members[0]['Subject'])
+            self.assertEqual(1, members[0]['Permissions'].count('regulatory.draft.write'))
+            self.assertIn('regulatory.draft.read', members[0]['Permissions'])
+            members[0]['Subject'] = 'untrusted'
+            with self.assertRaisesRegex(RuntimeError, 'lab_manager_scope_invalid'):
+                lab.register_membership(config)
+
     def test_lab_environment_excludes_ambient_memberships_database_and_listeners(self):
         ambient = {'Authentication__Oidc__Memberships__9__Subject': 'ambient',
                    'ConnectionStrings__Poseidon': 'ambient', 'Kestrel__Endpoints__Other__Url': 'http://0.0.0.0:9999',

@@ -107,8 +107,16 @@ public sealed partial class DirectoryWorkspaceTests
         {
             using var response = await client.GetAsync(path, Ct); Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         }
-        await using var db = Db();
-        Assert.Contains(await db.Set<SecurityEvent>().ToArrayAsync(Ct), e => e.Action == "TodayRead" && e.Result == "Unauthenticated" && e.ActorId == null);
+        // Anonymous audit rows intentionally have no tenant and are invisible to
+        // the normal tenant projection. Inspect only the fixed aggregate here.
+        await using var connection = new Npgsql.NpgsqlConnection(postgres.GetConnectionString());
+        await connection.OpenAsync(Ct);
+        await using var count = new Npgsql.NpgsqlCommand("""
+            SELECT count(DISTINCT "Action") FROM audit."SecurityEvents"
+            WHERE "TenantId" IS NULL AND "ActorId" IS NULL
+              AND "Action" IN ('TodayRead', 'TodayWhyRead') AND "Result" = 'Unauthenticated'
+            """, connection);
+        Assert.Equal(2L, await count.ExecuteScalarAsync(Ct));
     }
 
     [Fact]

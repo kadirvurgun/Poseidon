@@ -24,7 +24,7 @@ test('Today honest coverage, Why reauthorization, refresh and offline on desktop
   const why = page.getByRole('button', { name: 'Why?', exact: true })
   await why.focus(); await page.keyboard.press('Enter')
   await expect(page.getByText(/Input source observation: Unknown/)).toBeVisible()
-  await expect(why).toBeFocused()
+  await expect(page.getByRole('button', { name: 'Close Why', exact: true })).toBeFocused()
   await page.getByRole('button', { name: 'Close Why' }).click(); deny = true
   await why.click(); await expect(page.getByText('Access denied.', { exact: true })).toBeVisible()
   await expect(page.getByText(/Current vessel/)).toHaveCount(0)

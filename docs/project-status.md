@@ -1,5 +1,7 @@
 # POSEIDON ilerleme raporu — 2026-11-01
 
+- **CORE-BUNDLE-01 local developer gate complete; NOT ACCEPTED:** [actual evidence](phases/CORE-BUNDLE-01.md). 206 backend (61 Domain/29 PostgreSQL persistence/116 API),193 unique component cases covered (full192 plus affected19/14 reruns),24 ordinary desktop/mobile cases covered,6 separately discovered real-host REG cases covered,2 signed-provider OIDC journeys,133 Python and2 Windows checks PASS after documented repairs;0 skips. Actual OpenAPI/types, locked restore/build, lint/typecheck/build, EF scaffold/model parity,269 source files/34,958 chunks and AST checks completed. Initial failures preserved; authenticated diagnostics contain bounded counts only. Cleanup preserves private credentials/volumes and leaves0 task-port listeners/state artifacts. Coordinator independent exact-commit QA/CI pending; no push/PR/merge/self-approval. Canonical8/970SP,2/121tasks,0/196 screens and external gates unchanged. Earlier authoring/deferral notes below remain historical.
+
 Kontrollü kabul: **8 / 970 SP = %0,82**; 2 / 121 iş. S0: **8 / 53 SP = %15,09**. Operasyonel ekran kabulü 0 / 196. Altyapı ve hazırlık paketleri canonical iş kabulüyle aynı değildir; S0 çıkış kapısı açık.
 
 ## Son teslimler

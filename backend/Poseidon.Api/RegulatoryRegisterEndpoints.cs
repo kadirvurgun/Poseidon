@@ -27,7 +27,7 @@ public static class RegulatoryRegisterEndpoints
                 .WithName("Get" + kind + "Draft").Produces<RegisterDto>().Produces(401).Produces(403).Produces(404).Produces(503);
             group.MapGet("/{id:guid}/history", (Guid id, HttpContext h, PoseidonDbContext db, SecurityAudit a, int? offset, int? limit) => History(kind, id, h, db, a, offset, limit))
                 .WithName("Get" + kind + "DraftHistory").Produces<PageDto<RegisterRevisionDto>>().Produces(400).Produces(401).Produces(403).Produces(404).Produces(503);
-            group.MapPost("", (HttpContext h) => Save(kind, null, h)).WithName("Create" + kind + "Draft").Accepts<RegisterCommand>("application/json")
+            group.MapPost("", (Delegate)((HttpContext h) => Save(kind, null, h))).WithName("Create" + kind + "Draft").Accepts<RegisterCommand>("application/json")
                 .Produces<RegisterDto>().ProducesProblem(400).Produces(401).ProducesProblem(403).ProducesProblem(409).Produces(503);
             group.MapPut("/{id:guid}", (Guid id, HttpContext h) => Save(kind, id, h)).WithName("Save" + kind + "Draft").Accepts<RegisterCommand>("application/json")
                 .Produces<RegisterDto>().ProducesProblem(400).Produces(401).ProducesProblem(403).ProducesProblem(404).ProducesProblem(409).Produces(503);

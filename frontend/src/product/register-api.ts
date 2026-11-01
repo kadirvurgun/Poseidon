@@ -1,15 +1,17 @@
 import { ApiError, request } from './api'
+import type { components } from '../generated/api'
 
-// Authored boundary types; generated OpenAPI consumer stays untouched until CORE-BUNDLE-01.
-export type Field = { state: 'Missing' | 'Unknown' | 'Known'; value: string | null }
+// Refine actual generated DTOs only after validating the supported runtime states.
+type Schemas = components['schemas']
+export type Field = Schemas['TextInput'] & { state: 'Missing' | 'Unknown' | 'Known'; value: string | null }
 export const fieldBounds = { title: 200, authority: 200, locator: 1000, instrument: 200, amendment: 200, effectiveDate: 10, declaration: 1000, observedAt: 40 } as const
 export type FieldKey = keyof typeof fieldBounds
-export type RegisterContent = Record<FieldKey, Field>
-export type Revision = { id: string; kind: 'Source' | 'Requirement'; revision: number; savedAt: string; provenance: 'DeclaredUnverified' | 'SyntheticUnverified'; hash: string; content: RegisterContent; sourceId: string | null; sourceRevision: number | null; lifecycle: 'DRAFT' }
-export type Draft = { version: number; canEdit: boolean; current: Revision }
+export type RegisterContent = Required<{ [K in keyof Schemas['RegisterContent']]: Field }>
+export type Revision = Schemas['RegisterRevisionDto'] & { kind: 'Source' | 'Requirement'; revision: number; provenance: 'DeclaredUnverified' | 'SyntheticUnverified'; content: RegisterContent; sourceRevision: number | null; lifecycle: 'DRAFT' }
+export type Draft = Schemas['RegisterDto'] & { version: number; current: Revision }
 export type RegisterPage<T> = { items: T[]; offset: number; limit: number; hasMore: boolean }
 export type RegisterKind = 'sources' | 'requirements'
-export type Command = { expectedVersion: number; content: RegisterContent; sourceId: string | null; sourceRevision: number | null }
+export type Command = Schemas['RegisterCommand'] & { expectedVersion: number; content: RegisterContent; sourceId: string | null; sourceRevision: number | null }
 const uuid = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i
 const positive = (v: unknown) => typeof v === 'number' && Number.isSafeInteger(v) && v > 0
 const record = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v)
@@ -20,7 +22,7 @@ export function validContent(value: unknown): value is RegisterContent {
   for (const [key, bound] of Object.entries(fieldBounds)) {
     const f = value[key]
     if (!record(f) || !['Missing', 'Unknown', 'Known'].includes(String(f.state)) ||
-      (f.state === 'Known' ? typeof f.value !== 'string' || !f.value.trim() || f.value.length > bound || /[\u0000-\u001f\u007f]/.test(f.value) : f.value !== null)) return false
+      (f.state === 'Known' ? typeof f.value !== 'string' || !f.value.trim() || f.value.length > bound || Array.from(f.value).some(c => c.charCodeAt(0) < 32 || c.charCodeAt(0) === 127) : f.value !== null)) return false
   }
   const c = value as RegisterContent
   if (c.effectiveDate.state === 'Known' && (!/^\d{4}-\d{2}-\d{2}$/.test(c.effectiveDate.value!) || Number.isNaN(Date.parse(c.effectiveDate.value!)) || new Date(c.effectiveDate.value!).toISOString().slice(0, 10) !== c.effectiveDate.value)) return false

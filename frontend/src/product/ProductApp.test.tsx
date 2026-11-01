@@ -39,8 +39,13 @@ describe('FOUNDATION-APP-01 product states (mocked HTTP, not backend acceptance)
     expect(screen.queryByText('Kayıt bulunamadı.')).not.toBeInTheDocument()
   })
   it('shows real empty results and retries a failed service request', async () => {
-    const fetchMock = vi.fn().mockResolvedValueOnce(reply(signedIn)).mockRejectedValueOnce(new TypeError('offline'))
-      .mockResolvedValueOnce(reply(signedIn)).mockResolvedValue(reply({ items: [], offset: 0, limit: 25, hasMore: false }))
+    let attempts = 0
+    const fetchMock = vi.fn(async (url: string) => {
+      if (url.endsWith('auth/session')) return reply(signedIn)
+      if (url.endsWith('workspace')) return reply({ destinations: [], canWriteRegulatory: false })
+      if (++attempts === 1) throw new TypeError('offline')
+      return reply({ items: [], offset: 0, limit: 25, hasMore: false })
+    })
     vi.stubGlobal('fetch', fetchMock)
     const user = userEvent.setup(); render(<ProductApp />)
     await user.click(await screen.findByRole('button', { name: 'Tekrar dene' }))

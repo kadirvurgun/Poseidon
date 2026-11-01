@@ -1,7 +1,7 @@
 {
   "as_of": "2026-11-01",
   "reg_source_draft_01": {
-    "status": "unverified_authored_checkpoint",
+    "status": "locally_validated_in_core_bundle_01_awaiting_independent_qa",
     "accepted": false,
     "baseline_commit": "5784b82",
     "task": "docs/tasks/reg-source-draft-01.md",
@@ -29,7 +29,9 @@
       "Combined CORE-BUNDLE-01 checks, independent target QA, pilot/release"
     ],
     "publication": "UNVERIFIED local checkpoint only; no push/PR/merge/accounts/extra agents/self-approval",
-    "next_step": "CORE-BUNDLE-01 actual contract generation, combined test/build gates and independent QA on final target"
+    "next_step": "Coordinator independent exact-commit QA and required CI; no canonical acceptance",
+    "final_verification_reference": "docs/phases/CORE-BUNDLE-01.md",
+    "verification_record_scope": "Original authored/deferred verification retained as historical; final current results in core_bundle_01"
   },
   "baseline": "POSEIDON v46.3 updated 2026-10-30 / Library26 candidate",
   "current_stage": "S0; DEV-001 and DEV-002 accepted; remaining exit gates open",
@@ -2623,7 +2625,7 @@
     ]
   },
   "today_why_01": {
-    "status": "unverified_authored_checkpoint",
+    "status": "locally_validated_in_core_bundle_01_awaiting_independent_qa",
     "accepted": false,
     "task": "docs/tasks/today-why-01.md",
     "phase_report": "docs/phases/TODAY-WHY-01.md",
@@ -2649,8 +2651,56 @@
       "No fake lifecycle, operational approval, mandatory policy, verified evidence or owner assignment",
       "Canonical prerequisites and expert/pilot/release gates remain open"
     ],
-    "next_step": "Coordinator-directed source-ready regulatory draft foundation package before one combined final gate and independent exact-target QA",
+    "next_step": "Coordinator independent exact-commit QA and required CI; no canonical acceptance",
     "publication": "Local UNVERIFIED checkpoint only; no push/PR/merge/self-approval",
-    "canonical_progress_unchanged": true
+    "canonical_progress_unchanged": true,
+    "final_verification_reference": "docs/phases/CORE-BUNDLE-01.md",
+    "verification_record_scope": "Original authored/deferred verification retained as historical; final current results in core_bundle_01"
+  },
+  "core_bundle_01": {
+    "status": "locally_validated_candidate_awaiting_independent_qa",
+    "accepted": false,
+    "phase_report": "docs/phases/CORE-BUNDLE-01.md",
+    "approved_base": "93de7b6b376fb4592150c5c7b15a8c52e39bd4b3",
+    "parent_commit": "73b2352",
+    "verification": {
+      "domain": 61,
+      "persistence_postgresql": 29,
+      "api_postgresql_http_protocol_contract": 116,
+      "backend_failed": 0,
+      "backend_skipped": 0,
+      "react_unique_covered": 193,
+      "react_execution": "Full192/10files PASS, affected Today19 and REG14 PASS after repairs; no full193 rerun claimed",
+      "ordinary_desktop_mobile_covered": 24,
+      "ordinary_execution": "Initial22 PASS/2 failed; affected Today2 PASS",
+      "register_discovered": 6,
+      "register_real_host_covered": 6,
+      "register_execution": "Initial4 PASS/2 failed; affected citation desktop/mobile2 PASS; direct safe runner consumes same manifest/config projects",
+      "real_oidc_lab_journeys": 2,
+      "python": 133,
+      "windows_actual_lab": 2,
+      "source_files": 269,
+      "source_chunks": 34958,
+      "source_mismatches": 0,
+      "locked_restore_build_lint_typecheck_build": "PASS; final Release0 warnings/errors; locks unchanged",
+      "actual_openapi_generated_consumers": "PASS; actual host export, locked generation, full API strict snapshot",
+      "ef_model_scaffold_parity": "PASS; actual generated empty probe/model reconciliation, PostgreSQL migrations/seed/audit/races",
+      "graph_ast": "PASS;3190 nodes/5161 edges/261 communities;12 existing zero-node warnings",
+      "cleanup": "PASS;0 task-port listeners,0 authenticated diagnostic artifacts,0 transient states; volumes/private data preserved",
+      "private_secret_scan": {
+        "scanned_staged_bundle_graph_files": 293,
+        "private_secret_matches": 0,
+        "private_credentials_ignored": true
+      }
+    },
+    "publication": "Local candidate only; no push/PR/merge/extra agents/self-approval",
+    "canonical_progress_unchanged": true,
+    "open_gates": [
+      "Independent exact-commit QA and coordinator CI",
+      "Canonical dependencies/source admission/lifecycle/lookups",
+      "Production IdP/MFA/revocation/privacy/retention/DB privileges",
+      "Expert/pilot/release and existing13 moderate frontend advisories"
+    ],
+    "next_step": "Coordinator independent exact-commit review before any future publication"
   }
 }

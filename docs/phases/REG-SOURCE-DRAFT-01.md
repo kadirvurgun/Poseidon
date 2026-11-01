@@ -1,5 +1,7 @@
 # REG-SOURCE-DRAFT-01 phase handoff
 
+> Final local verification: [CORE-BUNDLE-01](CORE-BUNDLE-01.md) records the combined gate, integration fixes, actual counts, initial failures and affected reruns. The authoring/deferred record below is historical. Locally validated developer candidate only; independent exact-commit QA/CI pending, NOT ACCEPTED.
+
 Status: UNVERIFIED AUTHORED LOCAL CHECKPOINT — NOT ACCEPTED. Current phase: tenant-local regulatory draft preparation for the larger foundation bundle. Source/criteria/decision limits: [task contract](../tasks/reg-source-draft-01.md). Parent baseline `5784b82`; Today `58b609d` and stopped Today logs remain historical interrupted diagnostics, never acceptance evidence.
 
 Delivered code: tenant-local source/requirement register, editor and immutable revision history; exact tenant-correct source revision citations; explicit trusted regulatory read/write grants with default denial; audited SaveChanges transactions, receipts, xmin/no-op/race handling; fictional idempotent import fixtures; real-HTTP TR/EN responsive UI with shell/Today navigation, scoped search, explicit Missing/Unknown/Known, history retry, dirty/conflict retention and frozen retry. Only DRAFT/DeclaredUnverified operations exist. Declared observed time and content hashes never imply freshness, legal authority or approval.

@@ -234,9 +234,42 @@ def browser():
     run([root_tool('node'), str(ROOT / 'tests/Poseidon.Browser.Tests/lab/run.ts')], env=env, timeout=300)
 
 
+def register_membership(config):
+    """Explicit lab-only capability enrollment; preserve identities and all other grants."""
+    realm = json.loads((PRIVATE / 'realm/poseidon-lab-realm.json').read_text())
+    subjects = [u['id'] for u in realm['users'] if u['username'] == 'lab-manager']
+    if len(subjects) != 1:
+        raise RuntimeError('lab_manager_not_unique')
+    members = [m for m in config['Authentication']['Oidc']['Memberships']
+               if m['Issuer'] == AUTHORITY and m['Subject'] == subjects[0]]
+    if len(members) != 1 or not members[0]['TenantWideRead'] or not members[0]['TenantWideManage']:
+        raise RuntimeError('lab_manager_scope_invalid')
+    for permission in ('regulatory.draft.read', 'regulatory.draft.write'):
+        if permission not in members[0]['Permissions']:
+            members[0]['Permissions'].append(permission)
+    return config
+
+
+def prepare_register():
+    stage('explicit_lab_register_membership')
+    init()
+    # Stop only this marked app, never rotate provider accounts or remove volumes.
+    owned_process('stop')
+    path = PRIVATE / 'appsettings.json'
+    config = register_membership(json.loads(path.read_text()))
+    write(path, json.dumps(config))
+
+
+def register_browser():
+    stage('real_provider_register_browser')
+    env = environment()
+    env['POSEIDON_LAB_PRIVATE'] = str(PRIVATE)
+    run([root_tool('node'), str(ROOT / 'tests/Poseidon.Browser.Tests/lab/register-run.ts')], env=env, timeout=600)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', choices=['init', 'start', 'stop', 'browser'])
+    parser.add_argument('action', choices=['init', 'start', 'stop', 'browser', 'prepare_register', 'register_browser'])
     action = parser.parse_args().action
     try:
         if sys.version_info[:3] != (3, 13, 13):

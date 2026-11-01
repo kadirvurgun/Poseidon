@@ -46,7 +46,7 @@ describe('REG-SOURCE-DRAFT-01 authored component/transport tests; mocked transpo
     vi.stubGlobal('fetch', vi.fn((url: string, init: RequestInit) => Promise.resolve(response(init?.method ? { code: 'version_conflict' } : url.includes('history') ? fail ? {} : page([draft.current]) : draft, init?.method ? 409 : 200))))
     const p = props(); const { rerender } = render(<RegulatoryRegister {...p} />); const user = userEvent.setup()
     await screen.findByLabelText('Title · State'); await user.selectOptions(screen.getByLabelText('Title · State'), 'Known'); await user.type(screen.getByLabelText('Title', { exact: true }), 'Retained declaration')
-    fail = false; await user.click(await screen.findByRole('button', { name: 'Retry history' })); await screen.findByText(/Revision 1 ·/)
+    fail = false; await user.click(await screen.findByRole('button', { name: 'Retry history' })); await screen.findByText(/Revision 1 ·/, { selector: 'summary' })
     rerender(<RegulatoryRegister {...p} offline />); rerender(<RegulatoryRegister {...p} offline={false} />)
     await waitFor(() => expect(screen.getByLabelText('Title', { exact: true })).toHaveValue('Retained declaration'))
     await user.click(screen.getByRole('button', { name: 'Save draft' })); await screen.findByRole('button', { name: 'Reload saved draft' })
@@ -67,7 +67,7 @@ describe('REG-SOURCE-DRAFT-01 authored component/transport tests; mocked transpo
   it('searches the tenant register and shows an honest empty result', async () => {
     const fetch = vi.fn(() => Promise.resolve(response(page([])))); vi.stubGlobal('fetch', fetch)
     render(<RegulatoryRegister {...props()} id={null} />); const user = userEvent.setup()
-    await screen.findByText('No drafts found.'); await user.type(screen.getByLabelText('Search drafts'), 'fictional'); await user.click(screen.getByRole('button', { name: 'Search', exact: true }))
+    await screen.findByText('No drafts found.'); await user.type(screen.getByLabelText('Search drafts'), 'fictional'); await user.click(screen.getByRole('button', { name: 'Search' }))
     await waitFor(() => expect(fetch.mock.calls.length).toBe(2))
     expect((fetch.mock.calls as unknown as [string, RequestInit][])[1][0]).toContain('q=fictional')
   })
@@ -78,6 +78,20 @@ describe('REG-SOURCE-DRAFT-01 authored component/transport tests; mocked transpo
     const fetch = vi.fn((url: string, init: RequestInit) => Promise.resolve(response(init?.method ? requirement : url.includes('source-drafts') ? url.includes('history') ? page(sourceHistory) : page([sourceDraft]) : url.includes('history') ? page([requirement.current]) : requirement)))
     vi.stubGlobal('fetch', fetch); render(<RegulatoryRegister {...props()} kind="requirements" />); const user = userEvent.setup()
     await screen.findByLabelText('Exact revision'); await waitFor(() => expect(screen.getByLabelText('Exact revision')).toHaveValue('1'))
+    await user.click(screen.getByRole('button', { name: 'Save draft' })); await screen.findByText('Draft saved. Unverified.')
+    expect(JSON.parse(fetch.mock.calls.find(([, init]) => init?.method)?.[1].body as string)).toMatchObject({ sourceId: source, sourceRevision: 1 })
+  })
+  it('labels source and revision selectors independently of their options while creating a requirement', async () => {
+    const sourceDraft = { ...draft, current: { ...draft.current, id: source, revision: 2 } }
+    const revisions = [sourceDraft.current, { ...sourceDraft.current, revision: 1 }]
+    const requirement = { ...draft, current: { ...draft.current, kind: 'Requirement', sourceId: source, sourceRevision: 1 } }
+    const fetch = vi.fn((url: string, init: RequestInit) => Promise.resolve(response(init?.method ? requirement : url.includes('source-drafts') ? url.includes('history') ? page(revisions) : page([sourceDraft]) : page([]))))
+    vi.stubGlobal('fetch', fetch); render(<RegulatoryRegister {...props()} kind="requirements" id={null} />); const user = userEvent.setup()
+    await user.click(await screen.findByRole('button', { name: 'New draft' }))
+    await screen.findByRole('option', { name: source })
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Source draft' }), source)
+    await screen.findByRole('option', { name: /^1 ·/ })
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Exact revision' }), '1')
     await user.click(screen.getByRole('button', { name: 'Save draft' })); await screen.findByText('Draft saved. Unverified.')
     expect(JSON.parse(fetch.mock.calls.find(([, init]) => init?.method)?.[1].body as string)).toMatchObject({ sourceId: source, sourceRevision: 1 })
   })

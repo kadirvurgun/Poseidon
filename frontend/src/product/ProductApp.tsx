@@ -61,14 +61,14 @@ export function ProductApp() {
   const heading = registerTab ? (language === 'en' ? (tab === 'sources' ? 'Source drafts' : 'Requirement drafts') : (tab === 'sources' ? 'Kaynak taslakları' : 'Gereksinim taslakları')) : canRead && !route.invalid && (tab !== 'companies' || user?.canReadCompanies) ? t[tab] : t.tenant
 
   useEffect(() => {
-    if (!canRead) return
+    if (!canRead || route.invalid) return
     const c = new AbortController(); let active = true
     const timer = setTimeout(() => c.abort(), 10000)
     api.request<{ destinations: { key: string; href: string }[]; canWriteRegulatory: boolean }>('workspace', c.signal).then(value => {
       if (active) { setRegulatory(Array.isArray(value?.destinations) && value.destinations.some(d => d.key === 'sources' && d.href === '/app/sources')); setRegulatoryWrite(value.canWriteRegulatory === true) }
     }).catch(() => { if (active) { setRegulatory(false); setRegulatoryWrite(false) } })
     return () => { active = false; c.abort(); clearTimeout(timer) }
-  }, [canRead, identityAttempt])
+  }, [canRead, route.invalid, identityAttempt])
 
   useEffect(() => {
     const update = () => setOffline(!navigator.onLine)

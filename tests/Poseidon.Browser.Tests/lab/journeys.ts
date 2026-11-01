@@ -11,7 +11,7 @@ const credentials = JSON.parse(readFileSync(resolve(process.env.POSEIDON_LAB_PRI
 async function english(page: Page) {
   await page.getByRole('button', { name: 'EN', exact: true }).click();
 }
-async function login(page: Page, account: string, destination: string) {
+export async function login(page: Page, account: string, destination: string) {
   await page.goto(destination);
   await english(page);
   await page.getByRole('link', { name: 'Sign in', exact: true }).click();
@@ -84,6 +84,13 @@ export async function managerJourney(page: Page) {
   expect(new URL(page.url()).pathname === `/app/fleet/${tug}`).toBe(true);
   await page.goBack();
   expect(new URL(page.url()).pathname === profile).toBe(true);
+  await page.goto(`/app/today/${ship}`); await english(page);
+  await expect(page.getByRole('heading', { name: /Current vessel: Ship/ })).toBeVisible();
+  await page.getByRole('button', { name: 'Why?', exact: true }).click();
+  await expect(page.getByText('Input freshness is unverified. Save/read time does not verify the source.', { exact: true })).toBeVisible();
+  const why = await (await page.request.get(`/api/v1/why-engine?vesselId=${ship}&cardKey=regulatory-draft`)).json();
+  expect(why.freshness === 'Unverified' && why.inputs.known > 0).toBe(true);
+  await page.goto(profile); await english(page);
   // Existing antiforgery pipeline also applies to real signed-provider sessions.
   expect((await page.request.post('/api/v1/auth/logout')).status()).toBe(403);
   await page.getByRole('button', { name: 'Sign out', exact: true }).click();

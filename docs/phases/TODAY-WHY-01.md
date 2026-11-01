@@ -1,5 +1,7 @@
 # TODAY-WHY-01 — UNVERIFIED authored product checkpoint
 
+> Final local verification: [CORE-BUNDLE-01](CORE-BUNDLE-01.md) records the combined gate, integration fixes, actual counts, initial failures and affected reruns. The authoring/deferred record below is historical. Locally validated developer candidate only; independent exact-commit QA/CI pending, NOT ACCEPTED.
+
 Date: 2026-11-01. Current phase: larger foundation authoring; local checkpoint only. Not accepted, locally validated, sprint-complete or release-ready. No publication or independent QA was performed by this worker.
 
 ## Authority, reconciliation and sources
