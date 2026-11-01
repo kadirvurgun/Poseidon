@@ -21,7 +21,7 @@ public static partial class CertificateMetadataPolicy
     // Technical capture bounds, not approved source precision/scale or legal limits.
     public const int MaxText = 4096;
     public const int MaxNumericCharacters = 1024;
-    [GeneratedRegex(@"^(0|[1-9][0-9]*)(\.[0-9]+)?$", RegexOptions.CultureInvariant)]
+    [GeneratedRegex(@"\A(0|[1-9][0-9]*)(\.[0-9]+)?\z", RegexOptions.CultureInvariant)]
     private static partial Regex NonnegativeNumeric();
     public static bool ExactNumeric(string? value) => value is null ||
         value.Length <= MaxNumericCharacters && NonnegativeNumeric().IsMatch(value);

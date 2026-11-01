@@ -33,7 +33,7 @@ public sealed partial class DirectoryWorkspaceTests
     }
     private async Task<ImportBatchDto> UploadImport(HttpClient client, string category, params Dictionary<string, string>[] rows) {
         var templates = (await client.GetFromJsonAsync<ImportTemplateDto[]>("/api/v1/" + Imports + "/templates", Ct))!;
-        var schema = templates.Single(t => t.Category == category); var headers = schema.Fields.Where(x => x.UserWritable).Select(x => x.Key).ToArray();
+        var schema = templates.Single(t => t.Category == category); var headers = schema.Fields.Where(x => x.UserWritable && (x.RequiredInput || rows.Any(r => r.ContainsKey(x.Key)))).Select(x => x.Key).ToArray();
         using var content = new ByteArrayContent(SourceWorkbook(headers, rows.Select(row => headers.Select(f => row.GetValueOrDefault(f, "")).ToArray()).ToArray()));
         content.Headers.ContentType = new MediaTypeHeaderValue("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         var response = await client.PostAsync("/api/v1/" + Imports + "/uploads/" + category + (category == "certificate" ? "?assignment=" + SeedVessel.Id : ""), content, Ct);

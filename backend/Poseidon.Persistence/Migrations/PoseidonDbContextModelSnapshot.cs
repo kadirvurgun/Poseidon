@@ -713,6 +713,7 @@ namespace Poseidon.Persistence.Migrations
                 b.ToTable("Assignments", "crew", t => t.HasCheckConstraint("CK_Assignment_Period", "\"To\" IS NULL OR (\"From\" IS NOT NULL AND \"To\" > \"From\")"));
             });
             modelBuilder.Entity("Poseidon.Persistence.CrewAssignmentRevision", b => {
+                b.Property<string>("Status").IsRequired().HasMaxLength(32).HasColumnType("character varying(32)");
                 b.Property<Guid>("TenantId").HasColumnType("uuid");
                 b.Property<Guid>("AssignmentId").HasColumnType("uuid");
                 b.Property<Guid>("VesselId").HasColumnType("uuid");
@@ -1053,6 +1054,36 @@ namespace Poseidon.Persistence.Migrations
             modelBuilder.Entity("Poseidon.Persistence.ImportBatch", b => b.HasIndex("TenantId", "VesselId", "ActorId", "CreatedAt"));
             modelBuilder.Entity("Poseidon.Persistence.Credential", b => b.ToTable("Credentials", "crew", t => t.HasCheckConstraint("CK_Credential_IssuingCountryNumeric", "\"IssuingCountryNumeric\" IS NULL OR \"IssuingCountryNumeric\" ~ '^(0|[1-9][0-9]*)(\\.[0-9]+)?$'")));
             modelBuilder.Entity("Poseidon.Persistence.Credential", b => b.ToTable("Credentials", "crew", t => t.HasCheckConstraint("CK_Credential_RenewalLeadDaysNumeric", "\"RenewalLeadDaysNumeric\" IS NULL OR \"RenewalLeadDaysNumeric\" ~ '^(0|[1-9][0-9]*)(\\.[0-9]+)?$'")));
+
+            modelBuilder.Entity("Poseidon.Persistence.CrewPersonalProfile", b => {
+                b.Property<Guid>("TenantId").HasColumnType("uuid"); b.Property<Guid>("PersonId").HasColumnType("uuid");
+                b.Property<long>("Revision").HasColumnType("bigint"); b.Property<uint>("Version").IsConcurrencyToken().ValueGeneratedOnAddOrUpdate().HasColumnType("xid").HasColumnName("xmin");
+                b.Property<string>("Nationality").HasColumnType("text");
+                b.Property<string>("DateOfBirth").HasColumnType("text");
+                b.Property<string>("PassportNo").HasColumnType("text");
+                b.Property<string>("PassportExpiry").HasColumnType("text");
+                b.Property<string>("SeamanBookNo").HasColumnType("text");
+                b.Property<string>("SeamanBookExpiry").HasColumnType("text");
+                b.Property<string>("CompanyStartDate").HasColumnType("text");
+                b.Property<string>("SeaServiceMonths").HasColumnType("text");
+                b.Property<string>("TankerExperienceMonths").HasColumnType("text");
+                b.Property<string>("VesselTypeExperience").HasColumnType("text");
+                b.Property<string>("CompanyExperienceMonths").HasColumnType("text");
+                b.Property<string>("EmergencyContact").HasColumnType("text");
+                b.Property<string>("PreferredLanguage").HasColumnType("text");
+                b.Property<string>("ContactPhone").HasColumnType("text");
+                b.Property<string>("Email").HasColumnType("text");
+                b.HasKey("TenantId", "PersonId"); b.ToTable("PersonalProfiles", "crew");
+            });
+            modelBuilder.Entity("Poseidon.Persistence.CrewPersonalProfileRevision", b => {
+                b.Property<Guid>("TenantId").HasColumnType("uuid"); b.Property<Guid>("PersonId").HasColumnType("uuid");
+                b.Property<long>("Revision").HasColumnType("bigint"); b.Property<string>("PolicyVersion").IsRequired().HasMaxLength(80).HasColumnType("character varying(80)");
+                b.Property<string>("Provenance").IsRequired().HasMaxLength(40).HasColumnType("character varying(40)");
+                b.Property<DateTimeOffset>("SavedAt").HasColumnType("timestamp with time zone");
+                b.HasKey("TenantId", "PersonId", "Revision"); b.ToTable("PersonalProfileRevisions", "crew");
+            });
+            modelBuilder.Entity("Poseidon.Persistence.CrewPersonalProfile", b => b.HasOne("Poseidon.Persistence.Person", null).WithMany().HasForeignKey("TenantId", "PersonId").OnDelete(DeleteBehavior.Restrict).IsRequired());
+            modelBuilder.Entity("Poseidon.Persistence.CrewPersonalProfileRevision", b => b.HasOne("Poseidon.Persistence.CrewPersonalProfile", null).WithMany().HasForeignKey("TenantId", "PersonId").OnDelete(DeleteBehavior.Restrict).IsRequired());
 #pragma warning restore 612, 618
         }
     }

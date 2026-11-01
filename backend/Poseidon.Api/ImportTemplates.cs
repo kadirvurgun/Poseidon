@@ -12,12 +12,13 @@ public sealed record ImportValidationRowDto(int RowNumber, string Outcome, Impor
 
 internal static class ImportTemplates
 {
-    internal const string Version = "DEV-069-declaration-v1";
+    internal const string Version = "DEV-069-declaration-v2";
     internal static readonly string[] Categories = ["vessel", "crew", "certificate", "equipment"];
     internal static ImportTemplateDefinition? Definition(string category) {
         string[] fields = category switch {
             "vessel" => ["record_key", "base_version", "code", "name"],
-            "crew" => ["record_key", "base_version", "full_name", "employee_no", "position_ref", "from", "to", "contract_end_date", "watch_group"],
+            "crew" => new string[] { "record_key", "base_version", "full_name", "employee_no", "position_ref", "from", "to", "contract_end_date", "watch_group", "profile_base_version", "profile_policy_version", "assignment_status", "assignment_policy_version" }
+                .Concat(Enum.GetValues<CrewPersonalField>().Select(CrewPersonalData.Key)).ToArray(),
             "certificate" => ["record_key", "base_version", "certificate_type", "certificate_no", "issuer", "issuing_country", "issue_date", "expiry_date",
                 "endorsement_required", "endorsement_no", "endorsement_expiry", "stcw_reference", "tanker_relevance", "vessel_type_scope",
                 "document_ref", "renewal_lead_days", "restriction", "source_system", "notes"],
@@ -59,8 +60,8 @@ internal static class ImportTemplates
             return id;
         }
         public Guid? Reference(string key) { var id = Id(key); return id == Guid.Empty ? null : id; }
-        public uint? BaseVersion() {
-            var s = Get("base_version"); if (s == null) return null;
+        public uint? BaseVersion(string key = "base_version") {
+            var s = Get(key); if (s == null) return null;
             if (!uint.TryParse(s, NumberStyles.None, CultureInfo.InvariantCulture, out var v) || v == 0) throw new FormatException(); return v;
         }
         public DateOnly? Date(string key) {
@@ -68,6 +69,17 @@ internal static class ImportTemplates
             if (!DateOnly.TryParseExact(s, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var d)) throw new FormatException(); return d;
         }
         public bool? Boolean(string key) => Get(key) switch { null => null, "true" => true, "false" => false, _ => throw new FormatException() };
+        public CrewProfileCommand? PersonalProfile() {
+            var fields = Enum.GetValues<CrewPersonalField>().Where(f => Has(CrewPersonalData.Key(f))).ToArray();
+            if (fields.Length == 0) return null;
+            var data = new CrewPersonalData();
+            foreach (var field in fields) {
+                var value = Get(CrewPersonalData.Key(field));
+                if (!CrewPersonalData.Valid(field, value)) throw new FormatException();
+                data = data.With(field, value);
+            }
+            return new(BaseVersion("profile_base_version"), Get("profile_policy_version") ?? "", "", fields, data);
+        }
         public CredentialSaveCommand Certificate(Credential? old = null) => new(Id("record_key", true), BaseVersion(), new(
             new(Text("certificate_type", old?.CertificateTypeReference), Text("certificate_no", old?.CertificateNumber), Text("issuer", old?.Issuer),
                 Day("issue_date", old?.IssueDate), Day("expiry_date", old?.ExpiryDate), Text("restriction", old?.Limitations)),
@@ -76,7 +88,7 @@ internal static class ImportTemplates
             Text("tanker_relevance", old?.TankerRelevance), Text("vessel_type_scope", old?.VesselTypeScope), Ref("document_ref", old?.DocumentReference),
             Text("renewal_lead_days", old?.RenewalLeadDaysNumeric), Text("source_system", old?.SourceSystem), Text("notes", old?.Notes)));
         public CrewSaveCommand Crew(CrewAssignment? old) => new(Id("record_key", true), old?.PersonId, BaseVersion(), Get("full_name"), Get("employee_no"),
-            Ref("position_ref", old?.PositionId), Day("from", old?.From), Day("to", old?.To), Day("contract_end_date", old?.ContractEndDate), Text("watch_group", old?.WatchGroup), old?.SourceObservedAt);
+            Ref("position_ref", old?.PositionId), Day("from", old?.From), Day("to", old?.To), Day("contract_end_date", old?.ContractEndDate), Text("watch_group", old?.WatchGroup), old?.SourceObservedAt, Get("assignment_status"), Get("assignment_policy_version"));
         public EquipmentCommand Equipment(Asset? old = null) => new(Id("record_key", true), BaseVersion(), Ref("parent_ref", old?.ParentId),
             Text("code", old?.Code), Text("name", old?.Name), Text("level", old?.Level) ?? "", Text("system_family", old?.SystemFamily),
             Text("equipment_type", old?.EquipmentType), Text("criticality", old?.Criticality), Text("maker", old?.Maker), Text("model", old?.Model),

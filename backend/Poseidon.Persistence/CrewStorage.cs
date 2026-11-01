@@ -47,7 +47,7 @@ public sealed class CrewAssignment : ITenantEntity
     public CrewAssignmentRevision Snapshot() => new() {
         TenantId = TenantId, AssignmentId = Id, VesselId = VesselId, PersonId = PersonId,
         PositionId = PositionId, From = From, To = To, ContractEndDate = ContractEndDate,
-        Revision = Revision, Provenance = Provenance, SourceObservedAt = SourceObservedAt, SavedAt = DateTimeOffset.UtcNow
+        Revision = Revision, Status = Status, Provenance = Provenance, SourceObservedAt = SourceObservedAt, SavedAt = DateTimeOffset.UtcNow
     };
 }
 
@@ -63,6 +63,7 @@ public sealed class CrewAssignmentRevision : ITenantEntity
     public DateOnly? To { get; set; }
     public DateOnly? ContractEndDate { get; set; }
     public long Revision { get; set; }
+    public string Status { get; set; } = "Draft";
     public required string Provenance { get; set; }
     public DateTimeOffset? SourceObservedAt { get; set; }
     public DateTimeOffset SavedAt { get; set; }
@@ -107,7 +108,7 @@ internal static class CrewStorage
             b.ToTable("AssignmentRevisions", "crew"); b.HasKey(x => new { x.TenantId, x.AssignmentId, x.Revision });
             b.HasOne<CrewAssignment>().WithMany().HasForeignKey(x => new { x.TenantId, x.AssignmentId, x.VesselId, x.PersonId })
                 .HasPrincipalKey(x => new { x.TenantId, x.Id, x.VesselId, x.PersonId }).OnDelete(DeleteBehavior.Restrict);
-            b.Property(x => x.Provenance).HasMaxLength(32);
+            b.Property(x => x.Status).HasMaxLength(32); b.Property(x => x.Provenance).HasMaxLength(32);
         });
     }
 }

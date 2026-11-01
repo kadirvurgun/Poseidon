@@ -33,6 +33,8 @@ public sealed class PoseidonDbContext(
     public DbSet<ImportBatch> ImportBatches => Set<ImportBatch>();
     public DbSet<ImportPreview> ImportPreviews => Set<ImportPreview>();
     public DbSet<ImportRowResult> ImportRowResults => Set<ImportRowResult>();
+    public DbSet<CrewPersonalProfile> CrewPersonalProfiles => Set<CrewPersonalProfile>();
+    public DbSet<CrewPersonalProfileRevision> CrewPersonalProfileRevisions => Set<CrewPersonalProfileRevision>();
     public DbSet<Person> Persons => Set<Person>();
     public DbSet<Asset> Assets => Set<Asset>();
     public DbSet<AssetRevision> AssetRevisions => Set<AssetRevision>();
@@ -70,6 +72,9 @@ public sealed class PoseidonDbContext(
         model.Entity<MaintenanceJob>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<MaintenancePlan>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<MaintenancePlanRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        CrewPersonalProfileStorage.Configure(model);
+        model.Entity<CrewPersonalProfile>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<CrewPersonalProfileRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         CrewStorage.Configure(model);
         model.Entity<Person>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<CrewPosition>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -196,6 +201,7 @@ public sealed class PoseidonDbContext(
             TugJob j => receipt.Action == "TugSave" && j.Id == receipt.ResourceId && j.TenantId == receipt.TenantId,
             Asset a => receipt.Action == "EquipmentSave" && a.Id == receipt.ResourceId && a.TenantId == receipt.TenantId,
             MaintenancePlan p => receipt.Action == "MaintenanceSave" && p.Id == receipt.ResourceId && p.TenantId == receipt.TenantId,
+            CrewPersonalProfile p => receipt.Action == "CrewProfileSave" && p.PersonId == receipt.ResourceId && p.TenantId == receipt.TenantId,
             Person p => receipt.Action == "CrewPersonSave" && p.Id == receipt.ResourceId && p.TenantId == receipt.TenantId,
             CrewAssignment c => receipt.Action == "CrewSave" && c.Id == receipt.ResourceId && c.TenantId == receipt.TenantId,
             Document d => receipt.Action == "DocumentDraftSave" && d.Id == receipt.ResourceId && d.TenantId == receipt.TenantId && d.Revision == receipt.RegisterRevision,
@@ -229,6 +235,10 @@ public sealed class PoseidonDbContext(
         if (changes.Any(e => e.Entity is Asset or MaintenancePlan && (e.State == EntityState.Deleted ||
             e.State == EntityState.Modified && e.Property("VesselId").IsModified)))
             throw new InvalidOperationException("Technical ownership is immutable.");
+        if (changes.Any(e => e.Entity is CrewPersonalProfileRevision && e.State != EntityState.Added))
+            throw new InvalidOperationException("Crew profile lineage is immutable.");
+        if (changes.Any(e => e.Entity is CrewPersonalProfile && (e.State == EntityState.Deleted || e.State == EntityState.Modified && e.Property("PersonId").IsModified)))
+            throw new InvalidOperationException("Crew profile ownership is immutable.");
         if (changes.Any(e => e.Entity is CrewAssignmentRevision && e.State != EntityState.Added))
             throw new InvalidOperationException("Crew revisions are immutable.");
         if (changes.Any(e => e.Entity is CrewAssignment && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&

@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <ItemGroup>
+    <EmbeddedResource Include="../../docs/tasks/import-foundation-01-source-fields.json" LogicalName="Poseidon.ImportSourceCoverage" />
     <InternalsVisibleTo Include="Poseidon.Api.Tests" />
     <PackageReference Include="AWSSDK.S3" />
     <ProjectReference Include="../Poseidon.Domain/Poseidon.Domain.csproj" />

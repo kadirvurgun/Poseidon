@@ -114,3 +114,7 @@ remains unresolved, and imported declarations cannot grant eligibility/readiness
 Migration/designer/snapshot, real PostgreSQL preservation/isolation/rollback and actual
 API consumers are authored; all execution waits for the larger foundation gate.
 [Task/source/remaining gates](tasks/import-foundation-01.md).
+
+## DOMAIN-COMPLETION-01 checkpoint A — AUTHORED / execution DEFERRED
+
+Each existing fictional Person receives an add-missing empty PersonalProfile and metadata-only initial revision. No private values, fake ciphertext, actual keys, files, qualification or effective appointment are seeded. Reseed preserves all columns/operator changes. Six additional insert audit expectations change69/70→75/76; these are authored expectations only. See the DOMAIN-COMPLETION-01 phase report for remaining software and separate deployment/source decisions.

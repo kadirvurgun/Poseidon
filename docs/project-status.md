@@ -1,3 +1,7 @@
+# DOMAIN-COMPLETION-01 — checkpoint A / AUTHORED_UNVERIFIED / INCOMPLETE
+
+Fifteen protected Crew profile fields, ordinary/import parity, configured current-effective assignment selection, source coverage contract and exact requested security/storage handoffs are authored. No SP accepted, no publish/merge. Every build/test/typecheck/migration/contract/browser/QA/CI check remains DEFERRED. Person files/photo, full offline application, Tug planning/assessment and PMS observation software remain required; external approvals are separately recorded in [the phase report](phases/DOMAIN-COMPLETION-01.md).
+
 ## IMPORT-FOUNDATION-01 — local authored checkpoint / UNVERIFIED
 
 Current phase: larger domain foundation product authoring. Four real trial import categories now have versioned XLSX/schema download, bounded parsing, explicit mapping, domain-aware preview, scoped safe results/paging/reject reports and atomic normal-handler commit/receipt/history. Private normalized certificate declarations, composite ownership, migration/designer/snapshot, incomplete synthetic fixtures and actual TR/EN importer/crew-profile consumers are authored. Four exact -x handoffs were integrated and preserved.

@@ -11,6 +11,9 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         // OIDC scheme registration and membership resolution must share that final configuration.
         services.AddRouting();
         services.AddDataProtection();
+        services.AddSingleton(configuration.GetSection("CrewProfilePolicy").Get<CrewProfilePolicy>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
+        services.AddSingleton<CrewProfileProtection>();
+        services.AddSingleton(configuration.GetSection("CrewAssignmentPolicy").Get<CrewAssignmentPolicy>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton(configuration.GetSection("SecureFiles").Get<SecureFileSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<LocalFileObjects>();
         services.AddSingleton<FileObjects>();
@@ -54,7 +57,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
                     await context.RequestServices.GetRequiredService<SecurityAudit>().TryWriteAsync(context, "AccessDenied",
                         context.Response.StatusCode == 401 ? "Unauthenticated" : "Denied");
             }
-            catch (Exception exception) when (exception is AuditUnavailableException or Npgsql.NpgsqlException)
+            catch (Exception exception) when (exception is AuditUnavailableException or Npgsql.NpgsqlException or System.Security.Cryptography.CryptographicException)
             {
                 if (context.Response.HasStarted) throw;
                 context.Response.StatusCode = 503;
@@ -90,6 +93,8 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapSecureFiles();
             endpoints.MapDocuments();
             endpoints.MapCrew();
+            endpoints.MapCrewPersonalProfiles();
+            endpoints.MapCrewSelection();
             endpoints.MapCredentials();
             endpoints.MapImports();
             endpoints.MapTechnical();

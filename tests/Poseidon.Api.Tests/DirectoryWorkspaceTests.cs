@@ -29,6 +29,12 @@ namespace Poseidon.Api.Tests;
 public sealed partial class DirectoryWorkspaceTests(OwnedPostgresFixture fixture) : IAsyncLifetime
 {
     private OwnedTestDatabase postgres = null!;
+    private static readonly string ProfileTestKeyReference = CreateProfileTestKey();
+    private static string CreateProfileTestKey() {
+        var reference = "POSEIDON_TEST_PROFILE_" + Guid.NewGuid().ToString("N").ToUpperInvariant();
+        Environment.SetEnvironmentVariable(reference, Convert.ToBase64String(System.Security.Cryptography.RandomNumberGenerator.GetBytes(32)));
+        return reference;
+    }
     private readonly Guid actorId = Guid.NewGuid();
     private SeedData seed = null!;
     private CancellationToken Ct => TestContext.Current.CancellationToken;
@@ -47,6 +53,9 @@ public sealed partial class DirectoryWorkspaceTests(OwnedPostgresFixture fixture
         b.UseEnvironment("Test");
         b.ConfigureAppConfiguration((_, c) => c.AddInMemoryCollection(new Dictionary<string, string?>
         {
+            ["CrewProfilePolicy:Version"] = "synthetic-profile-v1",
+            ["CrewProfilePolicy:ActiveKeyId"] = "synthetic-key-v1",
+            ["CrewProfilePolicy:KeyReferences:synthetic-key-v1"] = ProfileTestKeyReference,
             ["ConnectionStrings:Poseidon"] = postgres.GetConnectionString(),
             ["Authentication:Oidc:Memberships:0:Issuer"] = "https://directory-test.example",
             ["Authentication:Oidc:Memberships:0:Subject"] = "synthetic",

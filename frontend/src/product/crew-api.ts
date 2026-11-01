@@ -9,13 +9,13 @@ export type CrewRow = {
   privacyScope: string; sourceObservedAt: string | null; eligibilityState: string;
   workRestState: string; certificateState: string; competenceState: string; contactStatus: string;
 }
-export type CrewPage = { items: CrewRow[]; offset: number; hasMore: boolean; canWrite: boolean; canWriteIdentity: boolean }
+export type CrewPage = { items: CrewRow[]; offset: number; hasMore: boolean; canWrite: boolean; canWriteIdentity: boolean; declarationPolicy?: { version: string; statuses: string[] } | null }
 export type CrewPosition = { id: string; code: string; rank: string | null; capacity: string | null; provenance: string }
 export type CrewProfile = { assignment: CrewRow; employmentState: string; fitnessState: string; identityStatus: string; contactStatus: string; healthStatus: string; personVersion: number | null }
 export type CrewCommand = {
   id: string; personId: string | null; baseVersion: number | null; fullName: string | null; employeeNo: string | null;
   positionId: string | null; from: string | null; to: string | null; contractEndDate: string | null;
-  watchGroup: string | null; sourceObservedAt: string | null;
+  watchGroup: string | null; sourceObservedAt: string | null; declaredStatus?: string | null; assignmentPolicyVersion?: string | null;
 }
 export const crewPath = (vessel: string) => `vessels/${encodeURIComponent(vessel)}/crew`
 export const roster = (vessel: string, offset: number, signal: AbortSignal) => request<CrewPage>(`${crewPath(vessel)}?offset=${offset}`, signal)

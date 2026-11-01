@@ -11,6 +11,11 @@ internal static class CrewFixtures
             if (await db.Persons.FindAsync([vessel.TenantId, vessel.Id], ct) == null)
                 db.Persons.Add(new() { TenantId = vessel.TenantId, Id = vessel.Id, FullName = "FICTIONAL unverified crew",
                     EmployeeNo = "SYNTHETIC-" + vessel.Code, Provenance = "SyntheticUnverified" });
+            if (await db.CrewPersonalProfiles.FindAsync([vessel.TenantId, vessel.Id], ct) == null) {
+                db.CrewPersonalProfiles.Add(new() { TenantId = vessel.TenantId, PersonId = vessel.Id });
+                db.CrewPersonalProfileRevisions.Add(new() { TenantId = vessel.TenantId, PersonId = vessel.Id, Revision = 1,
+                    PolicyVersion = "synthetic-empty-v1", Provenance = "SyntheticUnverified", SavedAt = DateTimeOffset.UtcNow });
+            }
             if (await db.CrewPositions.FindAsync([vessel.TenantId, vessel.Id], ct) == null)
                 db.CrewPositions.Add(new() { TenantId = vessel.TenantId, Id = vessel.Id, VesselId = vessel.Id,
                     Code = "SYNTHETIC-UNVERIFIED", Provenance = "SyntheticUnverified" });

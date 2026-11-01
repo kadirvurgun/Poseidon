@@ -29,6 +29,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             TugJob j => j.Id, TugJobRevision j => j.JobId, TugOwner o => o.Id, TugAssignment a => a.JobId,
             Asset a => a.Id, AssetRevision r => r.AssetId, MaintenancePlan p => p.Id,
             MaintenancePlanRevision r => r.PlanId, MaintenanceJob j => j.Id, TechnicalOwner o => o.Id,
+            CrewPersonalProfile p => p.PersonId, CrewPersonalProfileRevision p => p.PersonId,
             Person p => p.Id, CrewPosition c => c.Id, CrewAssignment c => c.Id, CrewAssignmentRevision c => c.AssignmentId,
             Document d => d.Id, DocumentVersion d => d.DocumentId,
             FileStage f => f.Id, StoredFile f => f.Id,

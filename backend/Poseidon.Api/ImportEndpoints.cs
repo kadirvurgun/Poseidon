@@ -25,6 +25,7 @@ public static class ImportEndpoints
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
     public static void MapImports(this IEndpointRouteBuilder app) {
         var group = app.MapGroup("/api/v1/vessels/{vessel:guid}/imports").RequireAuthorization("DirectoryRead");
+        group.MapGet("/coverage", Coverage).WithName("ImportSourceCoverage").Produces<ImportSourceCoverageDto>();
         group.MapGet("/templates", Templates).WithName("ImportTemplates").Produces<ImportTemplateDto[]>();
         group.MapGet("/templates/{category}/download", DownloadTemplate).WithName("ImportTemplateDownload");
         group.MapPost("/uploads/{category}", Upload).WithName("ImportUpload").Produces<ImportBatchDto>();
@@ -66,13 +67,27 @@ public static class ImportEndpoints
         var b = await db.ImportBatches.SingleOrDefaultAsync(x => x.Id == batch && x.VesselId == vessel && x.ActorId == a.Id && x.SessionHash == session, h.RequestAborted);
         if (b == null || !Category(a, vessel, b.Category, write)) return null;
         if (b.Category == "certificate" && !await db.CrewAssignments.AnyAsync(x => x.VesselId == vessel && x.Id == b.AssignmentId, h.RequestAborted)) return null;
+        if (b.Category == "crew" && !AllowedProfileBindings(b, h, write)) return null;
         return b;
     }
-    private static ImportBatchDto Dto(ImportBatch b) => new(b.Id, b.Category, b.Revision, b.Version, b.State, ImportTemplates.Describe(b.Category),
-        JsonSerializer.Deserialize<ImportTable>(b.TableJson, Json)!.Headers,
+    private static bool AllowedProfileBindings(ImportBatch b, HttpContext h, bool write) {
+        var bindings = JsonSerializer.Deserialize<ImportColumnBinding[]>(b.BindingsJson, Json)!;
+        var policy = h.RequestServices.GetRequiredService<CrewProfilePolicy>();
+        return Enum.GetValues<CrewPersonalField>().Where(f => bindings.Any(c => c.TargetField == CrewPersonalData.Key(f)))
+            .All(f => policy.Rule(f, policy.ImportPurpose, Actor(h).Permissions, write) != null);
+    }
+    private static ImportTable Table(ImportBatch b, HttpContext h) => JsonSerializer.Deserialize<ImportTable>(
+        b.Category == "crew" ? h.RequestServices.GetRequiredService<CrewProfileProtection>().DecryptImport(b.TenantId, b.Id, b.TableJson) : b.TableJson, Json)!;
+    private static ImportBatchDto Dto(ImportBatch b, HttpContext h) => new(b.Id, b.Category, b.Revision, b.Version, b.State, ImportTemplates.Describe(b.Category),
+        Table(b, h).Headers,
         JsonSerializer.Deserialize<ImportColumnBinding[]>(b.BindingsJson, Json)!, b.RowCount, b.SourceHash, b.CreatedAt, b.ReviewerState, b.CommittedAt, b.CommittedPreviewId);
     private static async Task Observe(HttpContext h, Guid vessel, string action = "ImportRead") =>
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, action, "Success", resourceId: vessel);
+    private static async Task<IResult> Coverage(Guid vessel, HttpContext h, PoseidonDbContext db) {
+        var failure = await Gate(h, db, vessel); if (failure != null) return failure;
+        var categories = ImportTemplates.Categories.Where(c => Category(Actor(h), vessel, c, false)).ToArray();
+        await Observe(h, vessel); return Results.Ok(ImportCoverage.Describe(categories));
+    }
     private static async Task<IResult> Templates(Guid vessel, HttpContext h, PoseidonDbContext db) {
         var failure = await Gate(h, db, vessel); if (failure != null) return failure;
         var rows = ImportTemplates.Categories.Where(c => Category(Actor(h), vessel, c, false)).Select(ImportTemplates.Describe).ToArray();
@@ -116,15 +131,20 @@ public static class ImportEndpoints
             AssignmentId = assignment, Category = category, TemplateVersion = t.Version, TemplateFingerprint = t.Fingerprint,
             SourceName = "name-withheld.xlsx", SourceHash = Convert.ToHexString(SHA256.HashData(bytes)), TableJson = JsonSerializer.Serialize(table, Json),
             RowCount = table.Rows.Length, CreatedAt = DateTimeOffset.UtcNow };
+        if (category == "crew") {
+            var protection = h.RequestServices.GetRequiredService<CrewProfileProtection>();
+            if (!protection.Available) return await Fail(h, 503, "protected_storage_unavailable");
+            b.TableJson = protection.EncryptImport(b.TenantId, b.Id, b.TableJson);
+        }
         await using var tx = await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable, h.RequestAborted);
         try {
             // Exact source bytes + immutable authorized context identify an upload retry.
             // No fuzzy file/key match and no operational data merge is inferred.
             var old = await db.ImportBatches.SingleOrDefaultAsync(x => x.VesselId == vessel && x.ActorId == b.ActorId && x.SessionHash == b.SessionHash &&
                 x.Category == category && x.AssignmentId == assignment && x.SourceHash == b.SourceHash && x.TemplateFingerprint == b.TemplateFingerprint, h.RequestAborted);
-            if (old != null) { await Observe(h, vessel); return Results.Ok(Dto(old)); }
+            if (old != null) { await Observe(h, vessel); return Results.Ok(Dto(old, h)); }
             db.ImportBatches.Add(b); await db.SaveChangesAsync(h.RequestAborted); await tx.CommitAsync(h.RequestAborted);
-            await Observe(h, vessel, "ImportSave"); return Results.Ok(Dto(b));
+            await Observe(h, vessel, "ImportSave"); return Results.Ok(Dto(b, h));
         } catch (Exception e) when (e is DbUpdateException || e is Npgsql.PostgresException { SqlState: "40001" }) {
             await tx.RollbackAsync(CancellationToken.None); return await Fail(h, 409, "version_conflict");
         }
@@ -132,7 +152,7 @@ public static class ImportEndpoints
     private static async Task<IResult> Detail(Guid vessel, Guid batch, HttpContext h, PoseidonDbContext db) {
         var failure = await Gate(h, db, vessel); if (failure != null) return failure;
         var b = await Load(vessel, batch, h, db); if (b == null) return await Fail(h, 404, "resource_not_found");
-        await Observe(h, vessel); return Results.Ok(Dto(b));
+        await Observe(h, vessel); return Results.Ok(Dto(b, h));
     }
     private static bool Offset(HttpContext h, out int value) {
         value = 0; var raw = h.Request.Query["offset"];
@@ -142,8 +162,13 @@ public static class ImportEndpoints
         var failure = await Gate(h, db, vessel); if (failure != null) return failure;
         if (!Offset(h, out var offset) || offset > 100000 || h.Request.Query.Keys.Any(k => k != "offset")) return await Fail(h, 400, "invalid_request");
         var a = Actor(h); var categories = ImportTemplates.Categories.Where(c => Category(a, vessel, c, false)).ToArray(); var session = Session(h);
-        var rows = await db.ImportBatches.AsNoTracking().Where(x => x.VesselId == vessel && x.ActorId == a.Id && x.SessionHash == session && categories.Contains(x.Category))
-            .OrderByDescending(x => x.CreatedAt).ThenBy(x => x.Id).Skip(offset).Take(26)
+        var query = db.ImportBatches.AsNoTracking().Where(x => x.VesselId == vessel && x.ActorId == a.Id && x.SessionHash == session && categories.Contains(x.Category));
+        var profilePolicy = h.RequestServices.GetRequiredService<CrewProfilePolicy>();
+        foreach (var field in Enum.GetValues<CrewPersonalField>().Where(f => profilePolicy.Rule(f, profilePolicy.ImportPurpose, a.Permissions, false) == null)) {
+            var target = "\"" + CrewPersonalData.Key(field) + "\"";
+            query = query.Where(x => x.Category != "crew" || !x.BindingsJson.Contains(target));
+        }
+        var rows = await query.OrderByDescending(x => x.CreatedAt).ThenBy(x => x.Id).Skip(offset).Take(26)
             .Select(x => new { x.Id, x.Category, x.State, x.Revision, x.RowCount, x.SourceHash, x.TemplateVersion, x.CreatedAt, x.CommittedAt }).ToArrayAsync(h.RequestAborted);
         await Observe(h, vessel); return Results.Ok(new { items = rows.Take(25), offset = offset, hasMore = rows.Length > 25 });
     }
@@ -156,9 +181,14 @@ public static class ImportEndpoints
         if (command?.Bindings == null || command.Bindings.Length > ImportWorkbook.MaxColumns || command.Bindings.Any(x => x == null || x.TargetField?.Length > 100))
             return await Fail(h, 400, "invalid_request");
         if (b.Version != command.Version || b.State == "Committed") return await Fail(h, 409, "version_conflict");
+        if (b.Category == "crew") {
+            var policy = h.RequestServices.GetRequiredService<CrewProfilePolicy>();
+            if (Enum.GetValues<CrewPersonalField>().Where(f => command.Bindings.Any(c => c.TargetField == CrewPersonalData.Key(f)))
+                .Any(f => policy.Rule(f, policy.ImportPurpose, Actor(h).Permissions, true) == null)) return await Fail(h, 403, "field_policy_denied");
+        }
         // Incomplete drafts are captured; only preview requires complete validated bindings.
         b.BindingsJson = JsonSerializer.Serialize(command.Bindings, Json); b.Revision++; b.State = "MappingDraft";
-        try { await db.SaveChangesAsync(h.RequestAborted); await Observe(h, vessel, "ImportSave"); return Results.Ok(Dto(b)); }
+        try { await db.SaveChangesAsync(h.RequestAborted); await Observe(h, vessel, "ImportSave"); return Results.Ok(Dto(b, h)); }
         catch (DbUpdateException) { return await Fail(h, 409, "version_conflict"); }
     }
     private static ImportColumnMappingResult Mapping(ImportBatch b, ImportTable table) => ImportColumnMappingPolicy.Validate(
@@ -186,6 +216,15 @@ public static class ImportEndpoints
                 } else if (b.Category == "crew") {
                     var old = assignments.SingleOrDefault(x => x.Id == id); var c = r.Crew(old);
                     if (old == null && version != null || old != null && old.Version != version) Issue("conflict", "record_key");
+                    var personal = r.PersonalProfile();
+                    if (personal != null) {
+                        var policy = h.RequestServices.GetRequiredService<CrewProfilePolicy>();
+                        personal = personal with { Purpose = policy.ImportPurpose };
+                        if (!CrewProfileEndpoints.Valid(personal, Actor(h), policy) || !h.RequestServices.GetRequiredService<CrewProfileProtection>().Available) Issue("unsupported_value");
+                        var stored = old == null ? null : await db.CrewPersonalProfiles.AsNoTracking().SingleOrDefaultAsync(x => x.PersonId == old.PersonId, h.RequestAborted);
+                        if (stored == null && personal.BaseVersion != null || stored != null && stored.Version != personal.BaseVersion) Issue("conflict", "profile_base_version");
+                    }
+                    if (!h.RequestServices.GetRequiredService<CrewAssignmentPolicy>().CanDeclare(c.DeclaredStatus, c.AssignmentPolicyVersion, Actor(h))) Issue("unsupported_value");
                     if (!CrewEndpoints.ValidInput(c) || old != null && (c.FullName != null || c.EmployeeNo != null)) Issue("domain_validation");
                     if (c.PositionId != null && !await db.CrewPositions.AnyAsync(x => x.Id == c.PositionId && x.VesselId == b.VesselId, h.RequestAborted)) Issue("unresolved_reference", "position_ref");
                     if (c.From != null && old != null && await db.CrewAssignments.AnyAsync(x => x.PersonId == old.PersonId && x.Id != id && x.From != null &&
@@ -223,7 +262,7 @@ public static class ImportEndpoints
         var failure = await Gate(h, db, vessel, true); if (failure != null) return failure;
         var b = await Load(vessel, batch, h, db, true); if (b == null) return await Fail(h, 404, "resource_not_found");
         if (b.State == "Committed") return await Fail(h, 409, "version_conflict");
-        var table = JsonSerializer.Deserialize<ImportTable>(b.TableJson, Json)!; var mapping = Mapping(b, table);
+        var table = Table(b, h); var mapping = Mapping(b, table);
         if (!mapping.IsValid || mapping.Mapping!.TemplateFingerprint != b.TemplateFingerprint) return await Fail(h, 400, "validation_failed");
         await using var tx = await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable, h.RequestAborted);
         var rows = await Validate(b, table, mapping.Mapping, h, db);
@@ -297,7 +336,7 @@ public static class ImportEndpoints
                 return Results.Ok(new ImportCommittedDto(batch, "Committed", b.RowCount, p.Id, true));
             }
             if (b.State == "Committed") return await Fail(h, 409, "version_conflict");
-            var table = JsonSerializer.Deserialize<ImportTable>(b.TableJson, Json)!; var mapping = Mapping(b, table);
+            var table = Table(b, h); var mapping = Mapping(b, table);
             if (!mapping.IsValid || mapping.Mapping!.TemplateFingerprint != b.TemplateFingerprint) return await Fail(h, 409, "version_conflict");
             var current = await Validate(b, table, mapping.Mapping, h, db);
             if (current.Any(r => r.Outcome != "valid")) return await Fail(h, 409, "version_conflict");
@@ -320,6 +359,12 @@ public static class ImportEndpoints
                     var id = r.Id("record_key", true);
                     var old = await db.CrewAssignments.SingleOrDefaultAsync(x => x.Id == id && x.VesselId == vessel, h.RequestAborted);
                     result = await CrewEndpoints.ApplyImport(vessel, r.Crew(old), h, db, h.RequestServices.GetRequiredService<IAntiforgery>(), true);
+                    var personal = r.PersonalProfile();
+                    if (personal != null && result is IStatusCodeHttpResult { StatusCode: >= 200 and < 300 }) {
+                        var policy = h.RequestServices.GetRequiredService<CrewProfilePolicy>();
+                        h.Request.Headers["Idempotency-Key"] = new Guid(SHA256.HashData(Encoding.UTF8.GetBytes($"{batch:D}/{p.Id:D}/{i}/profile"))[..16]).ToString("D");
+                        result = await CrewProfileEndpoints.Apply(vessel, id, personal with { Purpose = policy.ImportPurpose }, h, db, true);
+                    }
                 }
                 if (result is not IStatusCodeHttpResult { StatusCode: >= 200 and < 300 }) {
                     await tx.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear(); return await Fail(h, 409, "version_conflict");

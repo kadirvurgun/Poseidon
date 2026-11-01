@@ -1,4 +1,16 @@
 {
+  "domain_completion_01": {
+    "status": "authored_unverified_incomplete_not_accepted",
+    "accepted": false,
+    "task": "docs/tasks/domain-completion-01.md",
+    "phase_report": "docs/phases/DOMAIN-COMPLETION-01.md",
+    "current_phase": "Larger domain foundation authoring; checkpoint A",
+    "verification": "DEFERRED: all suites/build/typecheck/migrations/contract/browser/independent QA/CI",
+    "canonical_progress_unchanged": true,
+    "new_personal_fields": 15,
+    "source_fields_traced_not_imported": 111,
+    "next_step": "Continue remaining required software; coordinator owns combined gate and publishing"
+  },
   "import_foundation_01": {
     "status": "authored_unverified_incomplete_not_accepted",
     "accepted": false,

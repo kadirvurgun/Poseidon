@@ -13,7 +13,9 @@
       "implementation": "Assignment.VesselId; trusted vessel scope",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "authored_partial"
+      "coverage": "authored_partial",
+      "domain_completion_state": "unimplemented_software",
+      "domain_completion_gate": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -27,7 +29,9 @@
       "implementation": "tenant Person + Assignment.PersonId",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "authored_partial"
+      "coverage": "authored_partial",
+      "domain_completion_state": "source_context",
+      "domain_completion_gate": "Server-derived authorized context/owner; never user-written source actor or identity."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -41,7 +45,9 @@
       "implementation": "Person.EmployeeNo; explicit crew.identity.read/write",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "authored_partial"
+      "coverage": "authored_partial",
+      "domain_completion_state": "implemented_trial_new_person_only",
+      "domain_completion_gate": "Existing-person edits use separate ordinary person endpoint; controlled existing-person identity update integration remains software gap."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -55,7 +61,9 @@
       "implementation": "vessel Position reference; declared unverified",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "authored_partial"
+      "coverage": "authored_partial",
+      "domain_completion_state": "unimplemented_software",
+      "domain_completion_gate": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -66,10 +74,12 @@
       "screen": "crew-roster",
       "fr": "FR46-crew-roster-department",
       "tc": "TC46-crew-roster-department",
-      "implementation": "vessel Position.Department; personal primary department not inferred",
+      "implementation": "CrewEffectiveAssignment + scoped API; configured period/status/provenance; no Draft inference. Position rank/department from selected assignment.",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "authored_partial"
+      "coverage": "authored_partial",
+      "domain_completion_state": "implemented_configured_projection",
+      "domain_completion_gate": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -80,10 +90,12 @@
       "screen": "crew-roster",
       "fr": "FR46-crew-roster-nationality",
       "tc": "TC46-crew-roster-nationality",
-      "implementation": "WITHHELD/UNIMPLEMENTED: source policy or owning future domain unresolved",
+      "implementation": "Typed protected CrewPersonalProfile; ordinary authorized endpoint + controlled import + TR/EN panel; field/version/purpose configuration, no legal/operational approval.",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "safe_unknown_or_withheld_gap"
+      "coverage": "safe_unknown_or_withheld_gap",
+      "domain_completion_state": "implemented_configured",
+      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -97,7 +109,9 @@
       "implementation": "Assignment.From; nullable draft",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "authored_partial"
+      "coverage": "authored_partial",
+      "domain_completion_state": "implemented_trial",
+      "domain_completion_gate": "Scoped assignment period and ordinary domain handler; no employment/operational appointment approval."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -111,7 +125,9 @@
       "implementation": "Assignment.To; exclusive technical convention pending source reconciliation",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "authored_partial"
+      "coverage": "authored_partial",
+      "domain_completion_state": "implemented_trial",
+      "domain_completion_gate": "Scoped assignment period and ordinary domain handler; no employment/operational appointment approval."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -125,7 +141,9 @@
       "implementation": "Assignment.ContractEndDate",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "authored_partial"
+      "coverage": "authored_partial",
+      "domain_completion_state": "implemented_trial",
+      "domain_completion_gate": "Scoped assignment period and ordinary domain handler; no employment/operational appointment approval."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -139,7 +157,9 @@
       "implementation": "Assignment.WatchGroup; no audit text snapshot",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "authored_partial"
+      "coverage": "authored_partial",
+      "domain_completion_state": "implemented_trial",
+      "domain_completion_gate": "Scoped assignment period and ordinary domain handler; no employment/operational appointment approval."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -153,7 +173,9 @@
       "implementation": "Draft only; no approved operational state machine inferred",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "authored_partial"
+      "coverage": "authored_partial",
+      "domain_completion_state": "unimplemented_software",
+      "domain_completion_gate": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -167,7 +189,9 @@
       "implementation": "Unknown/Unavailable; no affirmative inference",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "safe_unknown_or_withheld_gap"
+      "coverage": "safe_unknown_or_withheld_gap",
+      "domain_completion_state": "system_or_external_workflow",
+      "domain_completion_gate": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -181,7 +205,9 @@
       "implementation": "Unknown/Unavailable; no affirmative inference",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "safe_unknown_or_withheld_gap"
+      "coverage": "safe_unknown_or_withheld_gap",
+      "domain_completion_state": "system_or_external_workflow",
+      "domain_completion_gate": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -195,7 +221,9 @@
       "implementation": "Unknown/Unavailable; no affirmative inference",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "safe_unknown_or_withheld_gap"
+      "coverage": "safe_unknown_or_withheld_gap",
+      "domain_completion_state": "system_or_external_workflow",
+      "domain_completion_gate": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -209,7 +237,9 @@
       "implementation": "Unknown/Unavailable; no affirmative inference",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "safe_unknown_or_withheld_gap"
+      "coverage": "safe_unknown_or_withheld_gap",
+      "domain_completion_state": "system_or_external_workflow",
+      "domain_completion_gate": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -223,7 +253,9 @@
       "implementation": "Unknown/Unavailable; no affirmative inference",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "safe_unknown_or_withheld_gap"
+      "coverage": "safe_unknown_or_withheld_gap",
+      "domain_completion_state": "system_or_external_workflow",
+      "domain_completion_gate": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -237,7 +269,9 @@
       "implementation": "tenant Person + Assignment.PersonId",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "authored_partial"
+      "coverage": "authored_partial",
+      "domain_completion_state": "source_context",
+      "domain_completion_gate": "Server-derived authorized context/owner; never user-written source actor or identity."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -251,7 +285,9 @@
       "implementation": "Person.EmployeeNo; explicit crew.identity.read/write",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "authored_partial"
+      "coverage": "authored_partial",
+      "domain_completion_state": "implemented_trial_new_person_only",
+      "domain_completion_gate": "Existing-person edits use separate ordinary person endpoint; controlled existing-person identity update integration remains software gap."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -265,7 +301,9 @@
       "implementation": "Person.FullName; explicit crew.identity.read/write",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "authored_partial"
+      "coverage": "authored_partial",
+      "domain_completion_state": "implemented_trial_new_person_only",
+      "domain_completion_gate": "Existing-person edits use separate ordinary person endpoint; controlled existing-person identity update integration remains software gap."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -276,10 +314,12 @@
       "screen": "crew-profile",
       "fr": "FR46-crew-profile-date_of_birth",
       "tc": "TC46-crew-profile-date_of_birth",
-      "implementation": "WITHHELD/UNIMPLEMENTED: source policy or owning future domain unresolved",
+      "implementation": "Typed protected CrewPersonalProfile; ordinary authorized endpoint + controlled import + TR/EN panel; field/version/purpose configuration, no legal/operational approval.",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "safe_unknown_or_withheld_gap"
+      "coverage": "safe_unknown_or_withheld_gap",
+      "domain_completion_state": "implemented_configured",
+      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -290,10 +330,12 @@
       "screen": "crew-profile",
       "fr": "FR46-crew-profile-nationality",
       "tc": "TC46-crew-profile-nationality",
-      "implementation": "WITHHELD/UNIMPLEMENTED: source policy or owning future domain unresolved",
+      "implementation": "Typed protected CrewPersonalProfile; ordinary authorized endpoint + controlled import + TR/EN panel; field/version/purpose configuration, no legal/operational approval.",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "safe_unknown_or_withheld_gap"
+      "coverage": "safe_unknown_or_withheld_gap",
+      "domain_completion_state": "implemented_configured",
+      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -304,10 +346,12 @@
       "screen": "crew-profile",
       "fr": "FR46-crew-profile-passport_no",
       "tc": "TC46-crew-profile-passport_no",
-      "implementation": "WITHHELD/UNIMPLEMENTED: source policy or owning future domain unresolved",
+      "implementation": "Typed protected CrewPersonalProfile; ordinary authorized endpoint + controlled import + TR/EN panel; field/version/purpose configuration, no legal/operational approval.",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "safe_unknown_or_withheld_gap"
+      "coverage": "safe_unknown_or_withheld_gap",
+      "domain_completion_state": "implemented_configured",
+      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -318,10 +362,12 @@
       "screen": "crew-profile",
       "fr": "FR46-crew-profile-passport_expiry",
       "tc": "TC46-crew-profile-passport_expiry",
-      "implementation": "WITHHELD/UNIMPLEMENTED: source policy or owning future domain unresolved",
+      "implementation": "Typed protected CrewPersonalProfile; ordinary authorized endpoint + controlled import + TR/EN panel; field/version/purpose configuration, no legal/operational approval.",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "safe_unknown_or_withheld_gap"
+      "coverage": "safe_unknown_or_withheld_gap",
+      "domain_completion_state": "implemented_configured",
+      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -332,10 +378,12 @@
       "screen": "crew-profile",
       "fr": "FR46-crew-profile-seaman_book_no",
       "tc": "TC46-crew-profile-seaman_book_no",
-      "implementation": "WITHHELD/UNIMPLEMENTED: source policy or owning future domain unresolved",
+      "implementation": "Typed protected CrewPersonalProfile; ordinary authorized endpoint + controlled import + TR/EN panel; field/version/purpose configuration, no legal/operational approval.",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "safe_unknown_or_withheld_gap"
+      "coverage": "safe_unknown_or_withheld_gap",
+      "domain_completion_state": "implemented_configured",
+      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -346,10 +394,12 @@
       "screen": "crew-profile",
       "fr": "FR46-crew-profile-seaman_book_expiry",
       "tc": "TC46-crew-profile-seaman_book_expiry",
-      "implementation": "WITHHELD/UNIMPLEMENTED: source policy or owning future domain unresolved",
+      "implementation": "Typed protected CrewPersonalProfile; ordinary authorized endpoint + controlled import + TR/EN panel; field/version/purpose configuration, no legal/operational approval.",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "safe_unknown_or_withheld_gap"
+      "coverage": "safe_unknown_or_withheld_gap",
+      "domain_completion_state": "implemented_configured",
+      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -363,7 +413,9 @@
       "implementation": "WITHHELD/UNIMPLEMENTED: source policy or owning future domain unresolved",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "safe_unknown_or_withheld_gap"
+      "coverage": "safe_unknown_or_withheld_gap",
+      "domain_completion_state": "unimplemented_software",
+      "domain_completion_gate": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -374,10 +426,12 @@
       "screen": "crew-profile",
       "fr": "FR46-crew-profile-primary_rank",
       "tc": "TC46-crew-profile-primary_rank",
-      "implementation": "WITHHELD/UNIMPLEMENTED: source policy or owning future domain unresolved",
+      "implementation": "CrewEffectiveAssignment + scoped API; configured period/status/provenance; no Draft inference. Position rank/department from selected assignment.",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "safe_unknown_or_withheld_gap"
+      "coverage": "safe_unknown_or_withheld_gap",
+      "domain_completion_state": "implemented_configured_projection",
+      "domain_completion_gate": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -388,10 +442,12 @@
       "screen": "crew-profile",
       "fr": "FR46-crew-profile-department",
       "tc": "TC46-crew-profile-department",
-      "implementation": "vessel Position.Department; personal primary department not inferred",
+      "implementation": "CrewEffectiveAssignment + scoped API; configured period/status/provenance; no Draft inference. Position rank/department from selected assignment.",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "authored_partial"
+      "coverage": "authored_partial",
+      "domain_completion_state": "implemented_configured_projection",
+      "domain_completion_gate": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -402,10 +458,12 @@
       "screen": "crew-profile",
       "fr": "FR46-crew-profile-company_start_date",
       "tc": "TC46-crew-profile-company_start_date",
-      "implementation": "WITHHELD/UNIMPLEMENTED: source policy or owning future domain unresolved",
+      "implementation": "Typed protected CrewPersonalProfile; ordinary authorized endpoint + controlled import + TR/EN panel; field/version/purpose configuration, no legal/operational approval.",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "safe_unknown_or_withheld_gap"
+      "coverage": "safe_unknown_or_withheld_gap",
+      "domain_completion_state": "implemented_configured",
+      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -416,10 +474,12 @@
       "screen": "crew-profile",
       "fr": "FR46-crew-profile-sea_service_months",
       "tc": "TC46-crew-profile-sea_service_months",
-      "implementation": "WITHHELD/UNIMPLEMENTED: source policy or owning future domain unresolved",
+      "implementation": "Typed protected CrewPersonalProfile; ordinary authorized endpoint + controlled import + TR/EN panel; field/version/purpose configuration, no legal/operational approval.",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "safe_unknown_or_withheld_gap"
+      "coverage": "safe_unknown_or_withheld_gap",
+      "domain_completion_state": "implemented_configured",
+      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -430,10 +490,12 @@
       "screen": "crew-profile",
       "fr": "FR46-crew-profile-tanker_experience_months",
       "tc": "TC46-crew-profile-tanker_experience_months",
-      "implementation": "WITHHELD/UNIMPLEMENTED: source policy or owning future domain unresolved",
+      "implementation": "Typed protected CrewPersonalProfile; ordinary authorized endpoint + controlled import + TR/EN panel; field/version/purpose configuration, no legal/operational approval.",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "safe_unknown_or_withheld_gap"
+      "coverage": "safe_unknown_or_withheld_gap",
+      "domain_completion_state": "implemented_configured",
+      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -444,10 +506,12 @@
       "screen": "crew-profile",
       "fr": "FR46-crew-profile-vessel_type_experience",
       "tc": "TC46-crew-profile-vessel_type_experience",
-      "implementation": "WITHHELD/UNIMPLEMENTED: source policy or owning future domain unresolved",
+      "implementation": "Typed protected CrewPersonalProfile; ordinary authorized endpoint + controlled import + TR/EN panel; field/version/purpose configuration, no legal/operational approval.",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "safe_unknown_or_withheld_gap"
+      "coverage": "safe_unknown_or_withheld_gap",
+      "domain_completion_state": "implemented_configured",
+      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -458,10 +522,12 @@
       "screen": "crew-profile",
       "fr": "FR46-crew-profile-company_experience_months",
       "tc": "TC46-crew-profile-company_experience_months",
-      "implementation": "WITHHELD/UNIMPLEMENTED: source policy or owning future domain unresolved",
+      "implementation": "Typed protected CrewPersonalProfile; ordinary authorized endpoint + controlled import + TR/EN panel; field/version/purpose configuration, no legal/operational approval.",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "safe_unknown_or_withheld_gap"
+      "coverage": "safe_unknown_or_withheld_gap",
+      "domain_completion_state": "implemented_configured",
+      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -472,10 +538,12 @@
       "screen": "crew-profile",
       "fr": "FR46-crew-profile-emergency_contact",
       "tc": "TC46-crew-profile-emergency_contact",
-      "implementation": "WITHHELD/UNIMPLEMENTED: source policy or owning future domain unresolved",
+      "implementation": "Typed protected CrewPersonalProfile; ordinary authorized endpoint + controlled import + TR/EN panel; field/version/purpose configuration, no legal/operational approval.",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "safe_unknown_or_withheld_gap"
+      "coverage": "safe_unknown_or_withheld_gap",
+      "domain_completion_state": "implemented_configured",
+      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -486,10 +554,12 @@
       "screen": "crew-profile",
       "fr": "FR46-crew-profile-preferred_language",
       "tc": "TC46-crew-profile-preferred_language",
-      "implementation": "WITHHELD/UNIMPLEMENTED: source policy or owning future domain unresolved",
+      "implementation": "Typed protected CrewPersonalProfile; ordinary authorized endpoint + controlled import + TR/EN panel; field/version/purpose configuration, no legal/operational approval.",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "safe_unknown_or_withheld_gap"
+      "coverage": "safe_unknown_or_withheld_gap",
+      "domain_completion_state": "implemented_configured",
+      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -500,10 +570,12 @@
       "screen": "crew-profile",
       "fr": "FR46-crew-profile-contact_phone",
       "tc": "TC46-crew-profile-contact_phone",
-      "implementation": "WITHHELD/UNIMPLEMENTED: source policy or owning future domain unresolved",
+      "implementation": "Typed protected CrewPersonalProfile; ordinary authorized endpoint + controlled import + TR/EN panel; field/version/purpose configuration, no legal/operational approval.",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "safe_unknown_or_withheld_gap"
+      "coverage": "safe_unknown_or_withheld_gap",
+      "domain_completion_state": "implemented_configured",
+      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -514,10 +586,12 @@
       "screen": "crew-profile",
       "fr": "FR46-crew-profile-email",
       "tc": "TC46-crew-profile-email",
-      "implementation": "WITHHELD/UNIMPLEMENTED: source policy or owning future domain unresolved",
+      "implementation": "Typed protected CrewPersonalProfile; ordinary authorized endpoint + controlled import + TR/EN panel; field/version/purpose configuration, no legal/operational approval.",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "safe_unknown_or_withheld_gap"
+      "coverage": "safe_unknown_or_withheld_gap",
+      "domain_completion_state": "implemented_configured",
+      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -531,7 +605,9 @@
       "implementation": "WITHHELD/UNIMPLEMENTED: source policy or owning future domain unresolved",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "safe_unknown_or_withheld_gap"
+      "coverage": "safe_unknown_or_withheld_gap",
+      "domain_completion_state": "unimplemented_software",
+      "domain_completion_gate": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -545,7 +621,9 @@
       "implementation": "server Withheld/IdentityPermitted projection",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "authored_partial"
+      "coverage": "authored_partial",
+      "domain_completion_state": "unimplemented_software",
+      "domain_completion_gate": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -556,10 +634,12 @@
       "screen": "crew-profile",
       "fr": "FR46-crew-profile-current_vessel",
       "tc": "TC46-crew-profile-current_vessel",
-      "implementation": "selected scoped Assignment.VesselId; actual current-effective selection remains a gap",
+      "implementation": "CrewEffectiveAssignment + scoped API; configured period/status/provenance; no Draft inference. Position rank/department from selected assignment.",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "authored_partial"
+      "coverage": "authored_partial",
+      "domain_completion_state": "implemented_configured_projection",
+      "domain_completion_gate": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -570,10 +650,12 @@
       "screen": "crew-profile",
       "fr": "FR46-crew-profile-current_assignment",
       "tc": "TC46-crew-profile-current_assignment",
-      "implementation": "selected scoped Assignment; actual current-effective selection remains a gap",
+      "implementation": "CrewEffectiveAssignment + scoped API; configured period/status/provenance; no Draft inference. Position rank/department from selected assignment.",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "authored_partial"
+      "coverage": "authored_partial",
+      "domain_completion_state": "implemented_configured_projection",
+      "domain_completion_gate": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -587,7 +669,9 @@
       "implementation": "Unknown/Unavailable; no affirmative inference",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "safe_unknown_or_withheld_gap"
+      "coverage": "safe_unknown_or_withheld_gap",
+      "domain_completion_state": "system_or_external_workflow",
+      "domain_completion_gate": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -601,7 +685,9 @@
       "implementation": "Unknown/Unavailable; no affirmative inference",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "safe_unknown_or_withheld_gap"
+      "coverage": "safe_unknown_or_withheld_gap",
+      "domain_completion_state": "system_or_external_workflow",
+      "domain_completion_gate": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct."
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -615,7 +701,9 @@
       "implementation": "Unknown/Unavailable; no affirmative inference",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "safe_unknown_or_withheld_gap"
+      "coverage": "safe_unknown_or_withheld_gap",
+      "domain_completion_state": "system_or_external_workflow",
+      "domain_completion_gate": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct."
     }
   ],
   "original_locator_read": "Original openpyxl read_only Data Dictionary 2316 rows1572..1615;44 records; SHA matched retrieved source SHA. This is source retrieval, not product verification.",

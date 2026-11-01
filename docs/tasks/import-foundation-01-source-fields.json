@@ -15,8 +15,9 @@
       "fr": "FR-fleet-vessels-record_id",
       "tc": "TC-fleet-vessels-record_id",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -31,8 +32,9 @@
       "fr": "FR-fleet-vessels-vessel_imo",
       "tc": "TC-fleet-vessels-vessel_imo",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -47,8 +49,9 @@
       "fr": "FR-fleet-vessels-requirement_ref",
       "tc": "TC-fleet-vessels-requirement_ref",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -63,8 +66,9 @@
       "fr": "FR-fleet-vessels-responsible_role",
       "tc": "TC-fleet-vessels-responsible_role",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -79,8 +83,9 @@
       "fr": "FR-fleet-vessels-record_datetime",
       "tc": "TC-fleet-vessels-record_datetime",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -95,8 +100,9 @@
       "fr": "FR-fleet-vessels-status",
       "tc": "TC-fleet-vessels-status",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -111,8 +117,9 @@
       "fr": "FR-fleet-vessels-evidence_ref",
       "tc": "TC-fleet-vessels-evidence_ref",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -127,8 +134,9 @@
       "fr": "FR-fleet-vessels-verifier",
       "tc": "TC-fleet-vessels-verifier",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -143,8 +151,9 @@
       "fr": "FR-fleet-vessels-flag",
       "tc": "TC-fleet-vessels-flag",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -159,8 +168,9 @@
       "fr": "FR-fleet-vessels-port_registry",
       "tc": "TC-fleet-vessels-port_registry",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -175,8 +185,9 @@
       "fr": "FR-fleet-vessels-call_sign",
       "tc": "TC-fleet-vessels-call_sign",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -191,8 +202,9 @@
       "fr": "FR-fleet-vessels-mmsi",
       "tc": "TC-fleet-vessels-mmsi",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -207,8 +219,9 @@
       "fr": "FR-fleet-vessels-ship_type",
       "tc": "TC-fleet-vessels-ship_type",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -223,8 +236,9 @@
       "fr": "FR-fleet-vessels-gt",
       "tc": "TC-fleet-vessels-gt",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -239,8 +253,9 @@
       "fr": "FR-fleet-vessels-nt",
       "tc": "TC-fleet-vessels-nt",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -255,8 +270,9 @@
       "fr": "FR-fleet-vessels-dwt",
       "tc": "TC-fleet-vessels-dwt",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -271,8 +287,9 @@
       "fr": "FR-fleet-vessels-loa",
       "tc": "TC-fleet-vessels-loa",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -287,8 +304,9 @@
       "fr": "FR-fleet-vessels-breadth",
       "tc": "TC-fleet-vessels-breadth",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -303,8 +321,9 @@
       "fr": "FR-fleet-vessels-draft",
       "tc": "TC-fleet-vessels-draft",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -319,8 +338,9 @@
       "fr": "FR-fleet-vessels-build_date",
       "tc": "TC-fleet-vessels-build_date",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -335,8 +355,9 @@
       "fr": "FR-fleet-vessels-class_society",
       "tc": "TC-fleet-vessels-class_society",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -351,8 +372,9 @@
       "fr": "FR-fleet-vessels-class_no",
       "tc": "TC-fleet-vessels-class_no",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -367,8 +389,9 @@
       "fr": "FR-fleet-vessels-doc_company",
       "tc": "TC-fleet-vessels-doc_company",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -383,8 +406,9 @@
       "fr": "FR-fleet-vessels-company_imo",
       "tc": "TC-fleet-vessels-company_imo",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -399,8 +423,9 @@
       "fr": "FR-fleet-vessels-master_name",
       "tc": "TC-fleet-vessels-master_name",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -415,8 +440,9 @@
       "fr": "FR-fleet-vessels-dpa_name",
       "tc": "TC-fleet-vessels-dpa_name",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -430,9 +456,10 @@
       "rule": "Trimmed non-empty when required; length/content policy",
       "fr": "FR-fleet-vessels-notes",
       "tc": "TC-fleet-vessels-notes",
-      "template_field_candidate": "notes",
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "template_field_candidate": null,
+      "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -447,8 +474,9 @@
       "fr": "FR46-equipment-hierarchy-vessel_id",
       "tc": "TC46-equipment-hierarchy-vessel_id",
       "template_field_candidate": null,
-      "coverage": "AUTHORED ownership derived from trusted authorized context; not an input grant",
-      "verification": "DEFERRED"
+      "coverage": "Server-derived authorized context/owner; never user-written source actor or identity.",
+      "verification": "DEFERRED",
+      "coverage_state": "source_context"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -462,9 +490,10 @@
       "rule": "Active authorized reference in tenant/vessel/source scope",
       "fr": "FR46-equipment-hierarchy-parent_equipment_id",
       "tc": "TC46-equipment-hierarchy-parent_equipment_id",
-      "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "template_field_candidate": "parent_ref",
+      "coverage": "Ordinary scoped Technical validation; declarations unverified. Production lookup/type policy and DEV-052 acceptance remain separate.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -479,8 +508,9 @@
       "fr": "FR46-equipment-hierarchy-equipment_code",
       "tc": "TC46-equipment-hierarchy-equipment_code",
       "template_field_candidate": "code",
-      "coverage": "AUTHORED existing-domain adapter; exact generated contract and execution DEFERRED",
-      "verification": "DEFERRED"
+      "coverage": "Ordinary scoped Technical validation; declarations unverified. Production lookup/type policy and DEV-052 acceptance remain separate.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -495,8 +525,9 @@
       "fr": "FR46-equipment-hierarchy-equipment_name",
       "tc": "TC46-equipment-hierarchy-equipment_name",
       "template_field_candidate": "name",
-      "coverage": "AUTHORED existing-domain adapter; exact generated contract and execution DEFERRED",
-      "verification": "DEFERRED"
+      "coverage": "Ordinary scoped Technical validation; declarations unverified. Production lookup/type policy and DEV-052 acceptance remain separate.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -510,9 +541,10 @@
       "rule": "Active authorized reference in tenant/vessel/source scope",
       "fr": "FR46-equipment-hierarchy-equipment_level",
       "tc": "TC46-equipment-hierarchy-equipment_level",
-      "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "template_field_candidate": "level",
+      "coverage": "Ordinary scoped Technical validation; declarations unverified. Production lookup/type policy and DEV-052 acceptance remain separate.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -526,9 +558,10 @@
       "rule": "Type, length, format and contextual uniqueness rules",
       "fr": "FR46-equipment-hierarchy-system_family",
       "tc": "TC46-equipment-hierarchy-system_family",
-      "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "template_field_candidate": "system_family",
+      "coverage": "Ordinary scoped Technical validation; declarations unverified. Production lookup/type policy and DEV-052 acceptance remain separate.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -542,9 +575,10 @@
       "rule": "Value must be from controlled list applicable to tenant/vessel/context",
       "fr": "FR46-equipment-hierarchy-equipment_type",
       "tc": "TC46-equipment-hierarchy-equipment_type",
-      "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "template_field_candidate": "equipment_type",
+      "coverage": "Ordinary scoped Technical validation; declarations unverified. Production lookup/type policy and DEV-052 acceptance remain separate.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -558,9 +592,10 @@
       "rule": "Value must be from controlled list applicable to tenant/vessel/context",
       "fr": "FR46-equipment-hierarchy-criticality",
       "tc": "TC46-equipment-hierarchy-criticality",
-      "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "template_field_candidate": "criticality",
+      "coverage": "Ordinary scoped Technical validation; declarations unverified. Production lookup/type policy and DEV-052 acceptance remain separate.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -575,8 +610,9 @@
       "fr": "FR46-equipment-hierarchy-maker",
       "tc": "TC46-equipment-hierarchy-maker",
       "template_field_candidate": "maker",
-      "coverage": "AUTHORED existing-domain adapter; exact generated contract and execution DEFERRED",
-      "verification": "DEFERRED"
+      "coverage": "Ordinary scoped Technical validation; declarations unverified. Production lookup/type policy and DEV-052 acceptance remain separate.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -591,8 +627,9 @@
       "fr": "FR46-equipment-hierarchy-model",
       "tc": "TC46-equipment-hierarchy-model",
       "template_field_candidate": "model",
-      "coverage": "AUTHORED existing-domain adapter; exact generated contract and execution DEFERRED",
-      "verification": "DEFERRED"
+      "coverage": "Ordinary scoped Technical validation; declarations unverified. Production lookup/type policy and DEV-052 acceptance remain separate.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -606,9 +643,10 @@
       "rule": "Type, length, format and contextual uniqueness rules",
       "fr": "FR46-equipment-hierarchy-serial_number",
       "tc": "TC46-equipment-hierarchy-serial_number",
-      "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "template_field_candidate": "serial_number",
+      "coverage": "Ordinary scoped Technical validation; declarations unverified. Production lookup/type policy and DEV-052 acceptance remain separate.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -623,8 +661,9 @@
       "fr": "FR46-equipment-hierarchy-location",
       "tc": "TC46-equipment-hierarchy-location",
       "template_field_candidate": "location",
-      "coverage": "AUTHORED existing-domain adapter; exact generated contract and execution DEFERRED",
-      "verification": "DEFERRED"
+      "coverage": "Ordinary scoped Technical validation; declarations unverified. Production lookup/type policy and DEV-052 acceptance remain separate.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -639,8 +678,9 @@
       "fr": "FR46-equipment-hierarchy-commission_date",
       "tc": "TC46-equipment-hierarchy-commission_date",
       "template_field_candidate": "commission_date",
-      "coverage": "AUTHORED existing-domain adapter; exact generated contract and execution DEFERRED",
-      "verification": "DEFERRED"
+      "coverage": "Ordinary scoped Technical validation; declarations unverified. Production lookup/type policy and DEV-052 acceptance remain separate.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -655,8 +695,9 @@
       "fr": "FR46-equipment-hierarchy-status",
       "tc": "TC46-equipment-hierarchy-status",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct.",
+      "verification": "DEFERRED",
+      "coverage_state": "system_or_external_workflow"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -671,8 +712,9 @@
       "fr": "FR46-equipment-hierarchy-responsible_role",
       "tc": "TC46-equipment-hierarchy-responsible_role",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -687,8 +729,9 @@
       "fr": "FR46-equipment-hierarchy-notes",
       "tc": "TC46-equipment-hierarchy-notes",
       "template_field_candidate": "notes",
-      "coverage": "AUTHORED existing-domain adapter; exact generated contract and execution DEFERRED",
-      "verification": "DEFERRED"
+      "coverage": "Ordinary scoped Technical validation; declarations unverified. Production lookup/type policy and DEV-052 acceptance remain separate.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -703,8 +746,9 @@
       "fr": "FR46-crew-roster-vessel_id",
       "tc": "TC46-crew-roster-vessel_id",
       "template_field_candidate": null,
-      "coverage": "AUTHORED ownership derived from trusted authorized context; not an input grant",
-      "verification": "DEFERRED"
+      "coverage": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -719,8 +763,9 @@
       "fr": "FR46-crew-roster-person_id",
       "tc": "TC46-crew-roster-person_id",
       "template_field_candidate": null,
-      "coverage": "AUTHORED ownership derived from trusted authorized context; not an input grant",
-      "verification": "DEFERRED"
+      "coverage": "Server-derived authorized context/owner; never user-written source actor or identity.",
+      "verification": "DEFERRED",
+      "coverage_state": "source_context"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -735,8 +780,9 @@
       "fr": "FR46-crew-roster-employee_no",
       "tc": "TC46-crew-roster-employee_no",
       "template_field_candidate": "employee_no",
-      "coverage": "AUTHORED existing-domain adapter; exact generated contract and execution DEFERRED",
-      "verification": "DEFERRED"
+      "coverage": "Existing-person edits use separate ordinary person endpoint; controlled existing-person identity update integration remains software gap.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial_new_person_only"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -751,8 +797,9 @@
       "fr": "FR46-crew-roster-rank",
       "tc": "TC46-crew-roster-rank",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -767,8 +814,9 @@
       "fr": "FR46-crew-roster-department",
       "tc": "TC46-crew-roster-department",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -782,9 +830,10 @@
       "rule": "Value must be from controlled list applicable to tenant/vessel/context",
       "fr": "FR46-crew-roster-nationality",
       "tc": "TC46-crew-roster-nationality",
-      "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "template_field_candidate": "nationality",
+      "coverage": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_configured"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -799,8 +848,9 @@
       "fr": "FR46-crew-roster-sign_on_date",
       "tc": "TC46-crew-roster-sign_on_date",
       "template_field_candidate": "from",
-      "coverage": "AUTHORED existing-domain adapter; exact generated contract and execution DEFERRED",
-      "verification": "DEFERRED"
+      "coverage": "Scoped assignment period and ordinary domain handler; no employment/operational appointment approval.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -815,8 +865,9 @@
       "fr": "FR46-crew-roster-sign_off_date",
       "tc": "TC46-crew-roster-sign_off_date",
       "template_field_candidate": "to",
-      "coverage": "AUTHORED existing-domain adapter; exact generated contract and execution DEFERRED",
-      "verification": "DEFERRED"
+      "coverage": "Scoped assignment period and ordinary domain handler; no employment/operational appointment approval.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -831,8 +882,9 @@
       "fr": "FR46-crew-roster-contract_end_date",
       "tc": "TC46-crew-roster-contract_end_date",
       "template_field_candidate": "contract_end_date",
-      "coverage": "AUTHORED existing-domain adapter; exact generated contract and execution DEFERRED",
-      "verification": "DEFERRED"
+      "coverage": "Scoped assignment period and ordinary domain handler; no employment/operational appointment approval.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -847,8 +899,9 @@
       "fr": "FR46-crew-roster-watch_group",
       "tc": "TC46-crew-roster-watch_group",
       "template_field_candidate": "watch_group",
-      "coverage": "AUTHORED existing-domain adapter; exact generated contract and execution DEFERRED",
-      "verification": "DEFERRED"
+      "coverage": "Scoped assignment period and ordinary domain handler; no employment/operational appointment approval.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -863,8 +916,9 @@
       "fr": "FR46-crew-roster-assignment_status",
       "tc": "TC46-crew-roster-assignment_status",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -879,8 +933,9 @@
       "fr": "FR46-crew-roster-eligibility_state",
       "tc": "TC46-crew-roster-eligibility_state",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct.",
+      "verification": "DEFERRED",
+      "coverage_state": "system_or_external_workflow"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -895,8 +950,9 @@
       "fr": "FR46-crew-roster-work_rest_state",
       "tc": "TC46-crew-roster-work_rest_state",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct.",
+      "verification": "DEFERRED",
+      "coverage_state": "system_or_external_workflow"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -911,8 +967,9 @@
       "fr": "FR46-crew-roster-certificate_state",
       "tc": "TC46-crew-roster-certificate_state",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct.",
+      "verification": "DEFERRED",
+      "coverage_state": "system_or_external_workflow"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -927,8 +984,9 @@
       "fr": "FR46-crew-roster-competence_state",
       "tc": "TC46-crew-roster-competence_state",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct.",
+      "verification": "DEFERRED",
+      "coverage_state": "system_or_external_workflow"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -943,8 +1001,9 @@
       "fr": "FR46-crew-roster-contact_status",
       "tc": "TC46-crew-roster-contact_status",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct.",
+      "verification": "DEFERRED",
+      "coverage_state": "system_or_external_workflow"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -959,8 +1018,9 @@
       "fr": "FR46-crew-profile-person_id",
       "tc": "TC46-crew-profile-person_id",
       "template_field_candidate": null,
-      "coverage": "AUTHORED ownership derived from trusted authorized context; not an input grant",
-      "verification": "DEFERRED"
+      "coverage": "Server-derived authorized context/owner; never user-written source actor or identity.",
+      "verification": "DEFERRED",
+      "coverage_state": "source_context"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -975,8 +1035,9 @@
       "fr": "FR46-crew-profile-employee_no",
       "tc": "TC46-crew-profile-employee_no",
       "template_field_candidate": "employee_no",
-      "coverage": "AUTHORED existing-domain adapter; exact generated contract and execution DEFERRED",
-      "verification": "DEFERRED"
+      "coverage": "Existing-person edits use separate ordinary person endpoint; controlled existing-person identity update integration remains software gap.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial_new_person_only"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -991,8 +1052,9 @@
       "fr": "FR46-crew-profile-full_name",
       "tc": "TC46-crew-profile-full_name",
       "template_field_candidate": "full_name",
-      "coverage": "AUTHORED existing-domain adapter; exact generated contract and execution DEFERRED",
-      "verification": "DEFERRED"
+      "coverage": "Existing-person edits use separate ordinary person endpoint; controlled existing-person identity update integration remains software gap.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial_new_person_only"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1006,9 +1068,10 @@
       "rule": "Valid ISO/local date/time; chronology, expiry and business-window rules",
       "fr": "FR46-crew-profile-date_of_birth",
       "tc": "TC46-crew-profile-date_of_birth",
-      "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "template_field_candidate": "date_of_birth",
+      "coverage": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_configured"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1022,9 +1085,10 @@
       "rule": "Value must be from controlled list applicable to tenant/vessel/context",
       "fr": "FR46-crew-profile-nationality",
       "tc": "TC46-crew-profile-nationality",
-      "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "template_field_candidate": "nationality",
+      "coverage": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_configured"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1038,9 +1102,10 @@
       "rule": "Type, length, format and contextual uniqueness rules",
       "fr": "FR46-crew-profile-passport_no",
       "tc": "TC46-crew-profile-passport_no",
-      "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "template_field_candidate": "passport_no",
+      "coverage": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_configured"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1054,9 +1119,10 @@
       "rule": "Valid ISO/local date/time; chronology, expiry and business-window rules",
       "fr": "FR46-crew-profile-passport_expiry",
       "tc": "TC46-crew-profile-passport_expiry",
-      "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "template_field_candidate": "passport_expiry",
+      "coverage": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_configured"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1070,9 +1136,10 @@
       "rule": "Type, length, format and contextual uniqueness rules",
       "fr": "FR46-crew-profile-seaman_book_no",
       "tc": "TC46-crew-profile-seaman_book_no",
-      "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "template_field_candidate": "seaman_book_no",
+      "coverage": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_configured"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1086,9 +1153,10 @@
       "rule": "Valid ISO/local date/time; chronology, expiry and business-window rules",
       "fr": "FR46-crew-profile-seaman_book_expiry",
       "tc": "TC46-crew-profile-seaman_book_expiry",
-      "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "template_field_candidate": "seaman_book_expiry",
+      "coverage": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_configured"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1103,8 +1171,9 @@
       "fr": "FR46-crew-profile-medical_expiry",
       "tc": "TC46-crew-profile-medical_expiry",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1119,8 +1188,9 @@
       "fr": "FR46-crew-profile-primary_rank",
       "tc": "TC46-crew-profile-primary_rank",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1135,8 +1205,9 @@
       "fr": "FR46-crew-profile-department",
       "tc": "TC46-crew-profile-department",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1150,9 +1221,10 @@
       "rule": "Valid ISO/local date/time; chronology, expiry and business-window rules",
       "fr": "FR46-crew-profile-company_start_date",
       "tc": "TC46-crew-profile-company_start_date",
-      "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "template_field_candidate": "company_start_date",
+      "coverage": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_configured"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1166,9 +1238,10 @@
       "rule": "Numeric domain range; non-negative unless explicitly allowed; unit/context consistency",
       "fr": "FR46-crew-profile-sea_service_months",
       "tc": "TC46-crew-profile-sea_service_months",
-      "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "template_field_candidate": "sea_service_months",
+      "coverage": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_configured"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1182,9 +1255,10 @@
       "rule": "Numeric domain range; non-negative unless explicitly allowed; unit/context consistency",
       "fr": "FR46-crew-profile-tanker_experience_months",
       "tc": "TC46-crew-profile-tanker_experience_months",
-      "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "template_field_candidate": "tanker_experience_months",
+      "coverage": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_configured"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1198,9 +1272,10 @@
       "rule": "Value must be from controlled list applicable to tenant/vessel/context",
       "fr": "FR46-crew-profile-vessel_type_experience",
       "tc": "TC46-crew-profile-vessel_type_experience",
-      "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "template_field_candidate": "vessel_type_experience",
+      "coverage": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_configured"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1214,9 +1289,10 @@
       "rule": "Numeric domain range; non-negative unless explicitly allowed; unit/context consistency",
       "fr": "FR46-crew-profile-company_experience_months",
       "tc": "TC46-crew-profile-company_experience_months",
-      "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "template_field_candidate": "company_experience_months",
+      "coverage": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_configured"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1230,9 +1306,10 @@
       "rule": "Type, length, format and contextual uniqueness rules",
       "fr": "FR46-crew-profile-emergency_contact",
       "tc": "TC46-crew-profile-emergency_contact",
-      "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "template_field_candidate": "emergency_contact",
+      "coverage": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_configured"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1246,9 +1323,10 @@
       "rule": "Value must be from controlled list applicable to tenant/vessel/context",
       "fr": "FR46-crew-profile-preferred_language",
       "tc": "TC46-crew-profile-preferred_language",
-      "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "template_field_candidate": "preferred_language",
+      "coverage": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_configured"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1262,9 +1340,10 @@
       "rule": "Type, length, format and contextual uniqueness rules",
       "fr": "FR46-crew-profile-contact_phone",
       "tc": "TC46-crew-profile-contact_phone",
-      "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "template_field_candidate": "contact_phone",
+      "coverage": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_configured"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1278,9 +1357,10 @@
       "rule": "Type, length, format and contextual uniqueness rules",
       "fr": "FR46-crew-profile-email",
       "tc": "TC46-crew-profile-email",
-      "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "template_field_candidate": "email",
+      "coverage": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_configured"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1295,8 +1375,9 @@
       "fr": "FR46-crew-profile-photo_ref",
       "tc": "TC46-crew-profile-photo_ref",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1311,8 +1392,9 @@
       "fr": "FR46-crew-profile-privacy_scope",
       "tc": "TC46-crew-profile-privacy_scope",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1327,8 +1409,9 @@
       "fr": "FR46-crew-profile-current_vessel",
       "tc": "TC46-crew-profile-current_vessel",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1343,8 +1426,9 @@
       "fr": "FR46-crew-profile-current_assignment",
       "tc": "TC46-crew-profile-current_assignment",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1359,8 +1443,9 @@
       "fr": "FR46-crew-profile-fitness_state",
       "tc": "TC46-crew-profile-fitness_state",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct.",
+      "verification": "DEFERRED",
+      "coverage_state": "system_or_external_workflow"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1375,8 +1460,9 @@
       "fr": "FR46-crew-profile-eligibility_state",
       "tc": "TC46-crew-profile-eligibility_state",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct.",
+      "verification": "DEFERRED",
+      "coverage_state": "system_or_external_workflow"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1391,8 +1477,9 @@
       "fr": "FR46-crew-profile-status",
       "tc": "TC46-crew-profile-status",
       "template_field_candidate": null,
-      "coverage": "OPEN: inherited domain/privacy/controlled lookup or full story scope; no import acceptance claimed",
-      "verification": "DEFERRED"
+      "coverage": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct.",
+      "verification": "DEFERRED",
+      "coverage_state": "system_or_external_workflow"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1407,8 +1494,9 @@
       "fr": "FR46-crew-certificates-person_id",
       "tc": "TC46-crew-certificates-person_id",
       "template_field_candidate": null,
-      "coverage": "AUTHORED private declaration metadata; read-only system/verification fields remain missing controlled gates",
-      "verification": "DEFERRED"
+      "coverage": "Server-derived authorized context/owner; never user-written source actor or identity.",
+      "verification": "DEFERRED",
+      "coverage_state": "source_context"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1423,8 +1511,9 @@
       "fr": "FR46-crew-certificates-certificate_type",
       "tc": "TC46-crew-certificates-certificate_type",
       "template_field_candidate": "certificate_type",
-      "coverage": "AUTHORED typed private declaration capture; controlled lookup/precision gaps retained",
-      "verification": "DEFERRED"
+      "coverage": "Ordinary private Credential declaration handler; no authenticity/signature/qualification claim. Person-owned document contract remains software gap for document_ref.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1439,8 +1528,9 @@
       "fr": "FR46-crew-certificates-certificate_no",
       "tc": "TC46-crew-certificates-certificate_no",
       "template_field_candidate": "certificate_no",
-      "coverage": "AUTHORED typed private declaration capture; controlled lookup/precision gaps retained",
-      "verification": "DEFERRED"
+      "coverage": "Ordinary private Credential declaration handler; no authenticity/signature/qualification claim. Person-owned document contract remains software gap for document_ref.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1455,8 +1545,9 @@
       "fr": "FR46-crew-certificates-issuer",
       "tc": "TC46-crew-certificates-issuer",
       "template_field_candidate": "issuer",
-      "coverage": "AUTHORED typed private declaration capture; controlled lookup/precision gaps retained",
-      "verification": "DEFERRED"
+      "coverage": "Ordinary private Credential declaration handler; no authenticity/signature/qualification claim. Person-owned document contract remains software gap for document_ref.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1471,8 +1562,9 @@
       "fr": "FR46-crew-certificates-issuing_country",
       "tc": "TC46-crew-certificates-issuing_country",
       "template_field_candidate": "issuing_country",
-      "coverage": "AUTHORED typed private declaration capture; controlled lookup/precision gaps retained",
-      "verification": "DEFERRED"
+      "coverage": "Ordinary private Credential declaration handler; no authenticity/signature/qualification claim. Person-owned document contract remains software gap for document_ref.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1487,8 +1579,9 @@
       "fr": "FR46-crew-certificates-issue_date",
       "tc": "TC46-crew-certificates-issue_date",
       "template_field_candidate": "issue_date",
-      "coverage": "AUTHORED typed private declaration capture; controlled lookup/precision gaps retained",
-      "verification": "DEFERRED"
+      "coverage": "Ordinary private Credential declaration handler; no authenticity/signature/qualification claim. Person-owned document contract remains software gap for document_ref.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1503,8 +1596,9 @@
       "fr": "FR46-crew-certificates-expiry_date",
       "tc": "TC46-crew-certificates-expiry_date",
       "template_field_candidate": "expiry_date",
-      "coverage": "AUTHORED typed private declaration capture; controlled lookup/precision gaps retained",
-      "verification": "DEFERRED"
+      "coverage": "Ordinary private Credential declaration handler; no authenticity/signature/qualification claim. Person-owned document contract remains software gap for document_ref.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1519,8 +1613,9 @@
       "fr": "FR46-crew-certificates-endorsement_required",
       "tc": "TC46-crew-certificates-endorsement_required",
       "template_field_candidate": "endorsement_required",
-      "coverage": "AUTHORED typed private declaration capture; controlled lookup/precision gaps retained",
-      "verification": "DEFERRED"
+      "coverage": "Ordinary private Credential declaration handler; no authenticity/signature/qualification claim. Person-owned document contract remains software gap for document_ref.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1535,8 +1630,9 @@
       "fr": "FR46-crew-certificates-endorsement_no",
       "tc": "TC46-crew-certificates-endorsement_no",
       "template_field_candidate": "endorsement_no",
-      "coverage": "AUTHORED typed private declaration capture; controlled lookup/precision gaps retained",
-      "verification": "DEFERRED"
+      "coverage": "Ordinary private Credential declaration handler; no authenticity/signature/qualification claim. Person-owned document contract remains software gap for document_ref.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1551,8 +1647,9 @@
       "fr": "FR46-crew-certificates-endorsement_expiry",
       "tc": "TC46-crew-certificates-endorsement_expiry",
       "template_field_candidate": "endorsement_expiry",
-      "coverage": "AUTHORED typed private declaration capture; controlled lookup/precision gaps retained",
-      "verification": "DEFERRED"
+      "coverage": "Ordinary private Credential declaration handler; no authenticity/signature/qualification claim. Person-owned document contract remains software gap for document_ref.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1567,8 +1664,9 @@
       "fr": "FR46-crew-certificates-stcw_reference",
       "tc": "TC46-crew-certificates-stcw_reference",
       "template_field_candidate": "stcw_reference",
-      "coverage": "AUTHORED typed private declaration capture; controlled lookup/precision gaps retained",
-      "verification": "DEFERRED"
+      "coverage": "Ordinary private Credential declaration handler; no authenticity/signature/qualification claim. Person-owned document contract remains software gap for document_ref.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1583,8 +1681,9 @@
       "fr": "FR46-crew-certificates-tanker_relevance",
       "tc": "TC46-crew-certificates-tanker_relevance",
       "template_field_candidate": "tanker_relevance",
-      "coverage": "AUTHORED typed private declaration capture; controlled lookup/precision gaps retained",
-      "verification": "DEFERRED"
+      "coverage": "Ordinary private Credential declaration handler; no authenticity/signature/qualification claim. Person-owned document contract remains software gap for document_ref.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1599,8 +1698,9 @@
       "fr": "FR46-crew-certificates-vessel_type_scope",
       "tc": "TC46-crew-certificates-vessel_type_scope",
       "template_field_candidate": "vessel_type_scope",
-      "coverage": "AUTHORED typed private declaration capture; controlled lookup/precision gaps retained",
-      "verification": "DEFERRED"
+      "coverage": "Ordinary private Credential declaration handler; no authenticity/signature/qualification claim. Person-owned document contract remains software gap for document_ref.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1615,8 +1715,9 @@
       "fr": "FR46-crew-certificates-verification_status",
       "tc": "TC46-crew-certificates-verification_status",
       "template_field_candidate": null,
-      "coverage": "AUTHORED private declaration metadata; read-only system/verification fields remain missing controlled gates",
-      "verification": "DEFERRED"
+      "coverage": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct.",
+      "verification": "DEFERRED",
+      "coverage_state": "system_or_external_workflow"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1631,8 +1732,9 @@
       "fr": "FR46-crew-certificates-verified_by",
       "tc": "TC46-crew-certificates-verified_by",
       "template_field_candidate": null,
-      "coverage": "AUTHORED private declaration metadata; read-only system/verification fields remain missing controlled gates",
-      "verification": "DEFERRED"
+      "coverage": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1647,8 +1749,9 @@
       "fr": "FR46-crew-certificates-verified_at",
       "tc": "TC46-crew-certificates-verified_at",
       "template_field_candidate": null,
-      "coverage": "AUTHORED private declaration metadata; read-only system/verification fields remain missing controlled gates",
-      "verification": "DEFERRED"
+      "coverage": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
+      "verification": "DEFERRED",
+      "coverage_state": "unimplemented_software"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1663,8 +1766,9 @@
       "fr": "FR46-crew-certificates-document_ref",
       "tc": "TC46-crew-certificates-document_ref",
       "template_field_candidate": "document_ref",
-      "coverage": "AUTHORED typed private declaration capture; controlled lookup/precision gaps retained",
-      "verification": "DEFERRED"
+      "coverage": "Ordinary private Credential declaration handler; no authenticity/signature/qualification claim. Person-owned document contract remains software gap for document_ref.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1679,8 +1783,9 @@
       "fr": "FR46-crew-certificates-renewal_lead_days",
       "tc": "TC46-crew-certificates-renewal_lead_days",
       "template_field_candidate": "renewal_lead_days",
-      "coverage": "AUTHORED typed private declaration capture; controlled lookup/precision gaps retained",
-      "verification": "DEFERRED"
+      "coverage": "Ordinary private Credential declaration handler; no authenticity/signature/qualification claim. Person-owned document contract remains software gap for document_ref.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1695,8 +1800,9 @@
       "fr": "FR46-crew-certificates-alert_state",
       "tc": "TC46-crew-certificates-alert_state",
       "template_field_candidate": null,
-      "coverage": "AUTHORED private declaration metadata; read-only system/verification fields remain missing controlled gates",
-      "verification": "DEFERRED"
+      "coverage": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct.",
+      "verification": "DEFERRED",
+      "coverage_state": "system_or_external_workflow"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1711,8 +1817,9 @@
       "fr": "FR46-crew-certificates-restriction",
       "tc": "TC46-crew-certificates-restriction",
       "template_field_candidate": "restriction",
-      "coverage": "AUTHORED typed private declaration capture; controlled lookup/precision gaps retained",
-      "verification": "DEFERRED"
+      "coverage": "Ordinary private Credential declaration handler; no authenticity/signature/qualification claim. Person-owned document contract remains software gap for document_ref.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1727,8 +1834,9 @@
       "fr": "FR46-crew-certificates-source_system",
       "tc": "TC46-crew-certificates-source_system",
       "template_field_candidate": "source_system",
-      "coverage": "AUTHORED typed private declaration capture; controlled lookup/precision gaps retained",
-      "verification": "DEFERRED"
+      "coverage": "Ordinary private Credential declaration handler; no authenticity/signature/qualification claim. Person-owned document contract remains software gap for document_ref.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1743,8 +1851,9 @@
       "fr": "FR46-crew-certificates-sync_state",
       "tc": "TC46-crew-certificates-sync_state",
       "template_field_candidate": null,
-      "coverage": "AUTHORED private declaration metadata; read-only system/verification fields remain missing controlled gates",
-      "verification": "DEFERRED"
+      "coverage": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct.",
+      "verification": "DEFERRED",
+      "coverage_state": "system_or_external_workflow"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1759,8 +1868,9 @@
       "fr": "FR46-crew-certificates-status",
       "tc": "TC46-crew-certificates-status",
       "template_field_candidate": null,
-      "coverage": "AUTHORED private declaration metadata; read-only system/verification fields remain missing controlled gates",
-      "verification": "DEFERRED"
+      "coverage": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct.",
+      "verification": "DEFERRED",
+      "coverage_state": "system_or_external_workflow"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1775,8 +1885,17 @@
       "fr": "FR46-crew-certificates-notes",
       "tc": "TC46-crew-certificates-notes",
       "template_field_candidate": "notes",
-      "coverage": "AUTHORED typed private declaration capture; controlled lookup/precision gaps retained",
-      "verification": "DEFERRED"
+      "coverage": "Ordinary private Credential declaration handler; no authenticity/signature/qualification claim. Person-owned document contract remains software gap for document_ref.",
+      "verification": "DEFERRED",
+      "coverage_state": "implemented_trial"
     }
-  ]
+  ],
+  "coverage_version": "DEV-069-source-coverage-v2",
+  "imported_field_count_claim": false,
+  "owning_dependencies": [
+    "DEV-020",
+    "DEV-047",
+    "DEV-052"
+  ],
+  "production_commit": "Unavailable until actual controlled activation requirements; DEV-070 separate"
 }
