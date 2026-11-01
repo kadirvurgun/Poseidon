@@ -65,6 +65,7 @@ export function DirectoryEditor({ target, language, csrf, onDirty, onSaving, onC
     busy.current = true; onDirty(true); setSaving(true); onSaving(true); setFailure(null)
     const controller = new AbortController(); abort.current = controller
     const timeout = setTimeout(() => controller.abort(), 15000)
+    let navigationFrozen = false
     try {
       const record = await api.saveDirectory(target.resource, initial?.id, body, csrf, command.current.key, controller.signal)
       onDirty(false); onSaved(record)
@@ -73,7 +74,8 @@ export function DirectoryEditor({ target, language, csrf, onDirty, onSaving, onC
       setFailure(failure); setErrors(failure.errors)
       // A failed response or transport can follow a committed transaction. Retry keeps key and payload.
       setUncertain(failure.status === 0 || failure.status >= 500)
-    } finally { clearTimeout(timeout); busy.current = false; setSaving(false); onSaving(false) }
+      navigationFrozen = failure.status === 0 || failure.status >= 500
+    } finally { clearTimeout(timeout); busy.current = false; setSaving(false); onSaving(navigationFrozen) }
   }
   const errorText = failure?.code === 'version_conflict' ? t.conflict : failure?.code === 'duplicate_code' ? t.duplicate :
     failure?.status === 401 || failure?.status === 403 ? t.forbidden : uncertain ? t.uncertain : t.failed

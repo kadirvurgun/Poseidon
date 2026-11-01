@@ -1,12 +1,12 @@
 # NAV-WORKSPACE-01 — prerequisite and implementation contract
 
-Status: source preparation only; implementation awaits independent approval of profile repair `ee3339e`. NOT ACCEPTED. Coordinator owns independent QA, publication and merge. No extra agents, push, PR, merge or authentication changes in this assignment.
+Status: real product implementation and authored tests delivered; integrated developer gate PASS; independent QA pending. NOT ACCEPTED. Coordinator owns independent QA, publication and merge. No extra agents, push, PR, merge or federation changes in this assignment. Explicit search provisioning and local-return validation are within the assigned scope.
 
 ## Reconciled baseline
 
-Isolated worktree branch `agents/9ff6b20f711a4809a7bf5a1a3ced7172` was clean at `ee3339e`. No uncommitted partial implementation was present to reconcile. Existing profile repair is preserved. Its phase report explicitly says fresh independent target-commit QA is pending; historical DIR approval and local repair test results do not satisfy the user's prerequisite. Approval evidence was requested before dependent implementation.
+Isolated worktree branch `agents/9ff6b20f711a4809a7bf5a1a3ced7172` was clean at implementation start `0cd887a115e50f46c59b1dbbf3a01b9fc5c13749` with committed contracts and profile approval; the preserved profile code baseline is `ee3339e`. No uncommitted partial implementation was present to reconcile. Existing profile repair is preserved. The earlier preparation checkpoint lacked approval evidence. The coordinator subsequently committed independent approval of the exact profile repair; that prerequisite is satisfied and actual implementation follows below.
 
-Read: AGENTS.md, backend/UI role skills, architecture, automation, security baseline, seed and dependency policy, and `docs/sources/active.json`. MCP code graph tools were unavailable; `graphify query "application navigation shell actor permissions vessel profile dirty navigation"` succeeded before targeted code reads. No graph connection is claimed. Existing ProductApp, ActorResolver, FoundationEndpoints and SecurityAudit were inspected without modification.
+Read: AGENTS.md, backend/UI role skills, architecture, automation, security baseline, seed and dependency policy, and `docs/sources/active.json`. MCP code graph tools were unavailable; `graphify query "application navigation shell actor permissions vessel profile dirty navigation"` succeeded before targeted code reads. No graph connection is claimed. Existing ProductApp, ActorResolver, FoundationEndpoints and SecurityAudit were inspected before implementation.
 
 ## Controlled sources and decisions
 
@@ -29,24 +29,25 @@ Decision NAV-D02: search requires a separate explicit server-provisioned default
 
 Decision NAV-D03: selected context is untrusted until freshly authorized by the server. No speculative offline cache, fake login, production test-auth or client-supplied actor/role/tenant/grants. If location persistence is added, isolate it by trusted account and tenant without sensitive stored values. Do not introduce an operational entity just to persist navigation.
 
-## Acceptance and authored-test plan — all NOT IMPLEMENTED / NOT RUN
-
-These are acceptance targets, not authored or passing tests. Final implementation must replace this plan with actual test names, commands and results.
-
-| Trace ID | Acceptance target | Required evidence |
-|---|---|---|
-| NAV-01 / DEV-022 | Server determines implemented destinations and search capability; restricted vessel users see no forbidden company metadata, destination, identifier or count. Direct endpoints enforce the same scope. | Real API/PostgreSQL: anonymous, default denial, tenant-wide and scoped readers/editors, cross-tenant, wrong vessel, revoked grants, spoofed request/IdP capabilities. |
-| NAV-02 / DEV-022 | Explicit power search with bounded input, deterministic bounded pagination, authorized record projections and fixed audit actions/results; no raw query in logs. | API/PostgreSQL search boundaries, pagination/ties, denial and fixed audit events, forbidden ID/count non-disclosure. |
-| NAV-03 / DEV-021 | Real URL navigation, refresh and Back/Forward preserve allowed selection/profile; invalid/encoded/wrong-scope/stale links fail safely. `/app` and `/agents` retain working paths; return URLs fail closed. | Route/component regressions plus API authorization and return URL regressions; real browser anonymous/setup route smoke separately. |
-| NAV-04 / DEV-021 | Dirty guard covers links, vessel switch and history; cancel preserves location and exact draft; discard resets it. Uncertain save retains frozen payload/key and blocks navigation until resolved. | React route/history/profile/editor tests including language, search, mobile drawer, repeated popstate and delayed retry. Existing precision/history/conflict tests retained. |
-| NAV-05 / DEV-025 | TR/EN sidebar/topbar, distinct Ship/Tug active context, mobile drawer, skip link, visible current destination, authorized keyboard search, focus restoration/live regions and responsive overflow. | React keyboard/mobile/search/focus tests; real Chromium anonymous/setup/keyboard smoke distinguished from authenticated mocked components. |
-| NAV-06 / DEV-025 | Loading/empty/error/401/403, stale/revoked context and offline/failed fetch remain visible and unverified. Company/fleet management and profile precision/history/save semantics remain intact. | React transport/component regressions and full affected integrated gate after coherent implementation/test authoring. |
-
-## Delivery gate and limitations
-
-No product code or test changes yet. Backend build, MTP suites, real PostgreSQL/API, actual OpenAPI export/type generation, frontend checks/components and browser suite: **NOT RUN for NAV-WORKSPACE-01**, because implementation has not started. No prior profile counts are reused as NAV verification. No dependencies changed; no migration, seed or graph topology change is introduced by this preparation.
-
-After approval evidence arrives: implement the entire package and authored tests together, then run the affected integrated gate with .NET 10 / Node 26 and existing MTP conventions; export actual OpenAPI if contracts change, regenerate consumers, update Graphify, record exact counts/errors, and commit locally for independent final-commit QA. Never self-accept. External IdP browser validation, operational roles/lookups/mandatory policy, expert/pilot/release and canonical S0/S2 gates remain open. Canonical progress remains 8/970 SP, 2/121 tasks, 0/196 accepted screens.
-
-
 Coordinator prerequisite reconciliation: independent Esra Sol review approved exact profile code `ee3339e58747302c5effd9baef8f05b262c33e0e` with zero blocking issues. Committed evidence: [review](../reviews/profile-draft-ee3339e.json). This resolves the earlier missing-evidence stop. Proceed with actual NAV implementation and tests; NAV checks/independent acceptance remain pending. No canonical/IdP/expert/release approval or publication.
+
+## Implemented delivery and traceability — 01.11.2026
+
+The original preparation sections above are historical. The committed independent review of exact `ee3339e58747302c5effd9baef8f05b262c33e0e` satisfies the profile prerequisite. The worktree was clean before implementation; no partial or unrelated work was discarded. NAV remains NOT ACCEPTED and unpublished.
+
+| Trace | Delivered behavior | Authored regression evidence |
+|---|---|---|
+| NAV-01 / DEV-022 | Server workspace projection exposes company/fleet only with existing trusted scope. Session suppresses tenant display metadata for restricted vessel users. | API `Restricted_navigation_search_and_session_reveal_only_granted_vessel` (reader/editor), `Navigation_and_search_revalidate_revoked_scope_and_anonymous_access`; React restricted-reader journey; retained direct company/vessel denial suites. |
+| NAV-02 / DEV-022 | `workspace.search` is a separate server-provisioned permission, default-deny and ActorResolver-whitelisted. Search returns implemented destinations and scoped Ship/Tug vessels only; no company metadata, totals or foreign IDs. Input <=100, page <=25, offset <=100000, stable destination then Code/Id order. | API `Search_is_explicit_default_deny_and_request_claims_do_not_grant_it`, `Search_pagination_is_stable_bounded_and_audited_without_query_text`, `Search_does_not_deliver_data_when_mandatory_audit_fails`; identity provisioning/IdP-claim test; seven search component cases. |
+| NAV-03 / DEV-021 | `/app/companies`, `/app/fleet`, record and vessel `/profile` URLs support refresh and native history. Malformed/encoded/unsupported paths fail closed. Existing `/`, `/app`, `/agents` paths remain. Return URLs reject escapes, dot traversal and excessive length. | `Workspace.test.tsx` malformed-path matrix, profile refresh, wrong-scope 401/403/404, Back/Forward; identity return-url matrix; real anonymous deep-link browser smoke and synthetic native-history browser journey. |
+| NAV-04 / DEV-021 | Dirty drafts guard navigation, vessel switch, external links and Back/Forward. Cancel restores URL with exact input; explicit discard remounts saved profile. Directory unknown-outcome saves now freeze navigation as profiles already did; original key/body survives retry. Language/search/drawer do not remount drafts. | React repeated Back cancel/discard/Forward, exact decimal retained across language/search/drawer, vessel-switch cancel, uncertain directory save/history/retry; existing profile retry/precision/conflict/history cases; synthetic browser native dirty Back cancel. |
+| NAV-05 / DEV-025 | Responsive sidebar/topbar, visible destination, authorized Ctrl/Command-K search dialog, current Ship/Tug context and allowed fleet switch, mobile drawer focus trap/Escape/restoration, skip link and live results; cohesive TR/EN. | React drawer/keyboard/search cases; desktop/mobile Playwright keyboard, setup, deep-link and synthetic workspace journey; retained profile browser precision journey. |
+| NAV-06 / DEV-025 | Explicit loading/empty/error/401/403/404 and unverified offline state. No cache, fake login, automatic readiness or new operational entity. Existing directory/profile management retained. | React transport/status/offline matrix; full component and API/PostgreSQL regression suites; real browser setup denies business endpoints. |
+
+Implementation: `WorkspaceEndpoints.cs`, trusted capability/session projections and fixed `WorkspaceRead` / `WorkspaceSearch` audit allowlist; generated actual-host OpenAPI/types; `workspace-location.ts`, `WorkspaceSearch.tsx` and existing ProductApp/DirectoryEditor/styles. No new dependency, migration or entity; existing synthetic fixtures remain sufficient and unchanged. No client storage: URLs are untrusted selectors, freshly authorized by endpoints; history state contains only an index and no tenant/account/form data. No request/IdP grants, operational role catalog or safety authority is introduced.
+
+Search scope decision NAV-D04: generic directory filtering remains ordinary scoped directory read; workspace search alone needs the additional capability. The shell consumes trusted session capabilities; `/workspace` provides the same implemented destination projection for discovery. No proposed dashboard APIs or unavailable catalog links are rendered. Source 13.02 paragraph18 and93-109/1259-1272 remains review intent; source 13.04 paragraph19-25/29-42/105/110-131 governs the delivered foundation.
+
+Gate commands, exact results, initial failures and remaining limits are recorded in [the phase report](../phases/NAV-WORKSPACE-01.md). Only coordinator-led independent QA of the final commit may accept the engineering package. Canonical progress remains 8/970 SP, 2/121 tasks, 0/196 accepted screens.
+
+Final developer verification: Release build0 warnings/errors; Domain46, Persistence25, API78, React160, Chromium22 PASS, zero failed/skipped in the final runs. EF parity, actual OpenAPI/generated types, lint/typecheck/build, Graphify and whitespace/JSON checks PASS. Python/source gates NOT RUN for NAV; unchanged prior evidence is explicitly separated in the phase report. No NAV acceptance or publication.

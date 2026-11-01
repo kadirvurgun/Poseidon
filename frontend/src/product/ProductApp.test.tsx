@@ -1,11 +1,12 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ProductApp } from './ProductApp'
 
 const anonymous = { authenticated: false, setupRequired: false, actorId: null, tenantId: null, canRead: false, csrfToken: '' }
 const signedIn = { ...anonymous, authenticated: true, canRead: true, canReadCompanies: true, canCreate: false, actorId: 'synthetic-actor', tenantId: 'synthetic-workspace', csrfToken: 'synthetic-csrf' }
 const reply = (data: unknown, status = 200) => ({ ok: status === 200, status, json: async () => data }) as Response
+beforeEach(() => window.history.replaceState(null, '', '/app'))
 afterEach(() => vi.unstubAllGlobals())
 
 describe('FOUNDATION-APP-01 product states (mocked HTTP, not backend acceptance)', () => {
@@ -26,7 +27,7 @@ describe('FOUNDATION-APP-01 product states (mocked HTTP, not backend acceptance)
     const user = userEvent.setup(); render(<ProductApp />)
     expect(await screen.findByRole('link', { name: 'Oturum aç' })).toHaveAttribute('href', '/api/v1/auth/login?returnUrl=%2Fapp')
     await user.click(screen.getByRole('button', { name: 'EN' }))
-    expect(screen.getByRole('heading', { name: 'Companies' })).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'Workspace' })).toBeVisible()
     expect(document.documentElement.lang).toBe('en')
     expect(screen.getByRole('link', { name: 'Sign in' })).toBeVisible()
   })

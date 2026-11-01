@@ -25,6 +25,7 @@ public sealed record TrustedActor(Guid Id, Guid TenantId, string[] Permissions, 
 {
     public bool CanRead => Permissions.Contains("directory.read") && (TenantWideRead || TenantWideManage || VesselGrants.Length > 0);
     public bool CanManage => CanRead && TenantWideManage && Permissions.Contains("directory.write");
+    public bool CanSearch => CanRead && Permissions.Contains("workspace.search");
     public bool CanEditVessel(Guid id) => CanRead && Permissions.Contains("directory.write") &&
         (TenantWideManage || VesselGrants.Any(g => g.VesselId == id && g.CanEdit));
     public IQueryable<Poseidon.Persistence.Vessel> Scope(IQueryable<Poseidon.Persistence.Vessel> query)
@@ -47,7 +48,7 @@ public sealed class ActorResolver(FederationSettings settings)
         var matches = settings.Memberships.Where(x => x.Issuer == issuers[0].Value && x.Subject == subjects[0].Value).ToArray();
         if (matches.Length != 1 || matches[0].ActorId == Guid.Empty || matches[0].TenantId == Guid.Empty) return null;
         var m = matches[0];
-        return new(m.ActorId, m.TenantId, (m.Permissions ?? []).Where(x => x is "directory.read" or "directory.write").Distinct().ToArray(),
+        return new(m.ActorId, m.TenantId, (m.Permissions ?? []).Where(x => x is "directory.read" or "directory.write" or "workspace.search").Distinct().ToArray(),
             m.TenantWideRead, m.TenantWideManage, (m.VesselGrants ?? []).Where(g => g.VesselId != Guid.Empty).ToArray());
     }
 }
@@ -57,7 +58,9 @@ public static class FoundationIdentity
     public const string Cookie = "poseidon-session";
     public const string Oidc = "oidc";
     public static string LocalReturn(string? value) => value != null && value.StartsWith("/app", StringComparison.Ordinal) &&
-        (value.Length == 4 || value[4] is '/' or '?' or '#') && !value.Contains('\\') && !value.Any(char.IsControl) ? value : "/app";
+        (value.Length == 4 || value[4] is '/' or '?' or '#') && value.Length <= 512 &&
+        !value.Contains('%') && !value.Contains('\\') && !value.Split('?', '#')[0].Split('/').Any(x => x is "." or "..") &&
+        !value.Any(char.IsControl) ? value : "/app";
 
     public static void AddFoundationIdentity(this IServiceCollection services, IConfiguration configuration)
     {

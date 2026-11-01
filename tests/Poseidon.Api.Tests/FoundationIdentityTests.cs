@@ -6,11 +6,29 @@ namespace Poseidon.Api.Tests;
 
 public sealed class FoundationIdentityTests
 {
+    [Fact]
+    public void Search_permission_requires_explicit_trusted_provisioning_and_directory_scope()
+    {
+        var membership = new Membership("https://synthetic.example", "synthetic", Guid.NewGuid(), Guid.NewGuid(), ["directory.read"], TenantWideRead: true);
+        var settings = new FederationSettings { Memberships = [membership] };
+        var principal = new ClaimsPrincipal(new ClaimsIdentity([new("sub", membership.Subject), new("iss", membership.Issuer), new("role", "workspace.search"), new("permission", "workspace.search")], "test"));
+        var resolver = new ActorResolver(settings);
+        Assert.False(resolver.Resolve(principal)!.CanSearch);
+        settings.Memberships = [membership with { Permissions = ["directory.read", "workspace.search", "invented.authority"] }];
+        Assert.True(resolver.Resolve(principal)!.CanSearch);
+        Assert.DoesNotContain("invented.authority", resolver.Resolve(principal)!.Permissions);
+        settings.Memberships = [membership with { Permissions = ["workspace.search"] }];
+        Assert.False(resolver.Resolve(principal)!.CanSearch);
+    }
     [Theory]
     [InlineData("https://evil.example")]
     [InlineData("//evil.example")]
     [InlineData("/application")]
     [InlineData("/app\\evil")]
+    [InlineData("/app/%2f%2fevil.example")]
+    [InlineData("/app/%255cevil")]
+    [InlineData("/app/../other")]
+    [InlineData("/app/%")]
     [InlineData("/app\r\nLocation: evil")]
     [InlineData(null)]
     public void Unsafe_return_urls_fall_back_to_product(string? url) => Assert.Equal("/app", FoundationIdentity.LocalReturn(url));

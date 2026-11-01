@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { DirectoryEditor } from './DirectoryEditor'
 import { ProductApp } from './ProductApp'
 import { saveDirectory } from './api'
@@ -11,6 +11,7 @@ const reply = (body: unknown, status = 200) => ({ ok: status >= 200 && status < 
 function props(edit = false) {
   return { target: { resource: 'companies' as const, ...(edit ? { record } : {}) }, language: 'en' as const, csrf: 'csrf-test', onDirty: vi.fn(), onSaving: vi.fn(), onCancel: vi.fn(), onReload: vi.fn(), onSaved: vi.fn() }
 }
+beforeEach(() => window.history.replaceState(null, '', '/app'))
 afterEach(() => vi.restoreAllMocks())
 
 describe('DIR-WORKSPACE-01 mocked UI behavior (not real backend acceptance)', () => {
@@ -116,7 +117,7 @@ describe('DIR-WORKSPACE-01 mocked UI behavior (not real backend acceptance)', ()
     vi.stubGlobal('fetch', fetchMock)
     const user = userEvent.setup(); render(<ProductApp />)
     await screen.findByRole('heading', { name: 'Filo' })
-    expect(screen.getByRole('button', { name: 'Şirketler' })).toBeDisabled()
+    expect(screen.queryByRole('button', { name: 'Şirketler' })).not.toBeInTheDocument()
     await user.type(screen.getByLabelText('Kod veya ad ile ara'), 'Synthetic & Tug')
     await user.click(screen.getByRole('button', { name: /^Ara$/ }))
     await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('/api/v1/vessels?offset=0&limit=25&q=Synthetic%20%26%20Tug', expect.anything()))

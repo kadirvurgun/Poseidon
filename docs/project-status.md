@@ -63,3 +63,8 @@ Kaynak/karar/kabul/test eşlemesi [görev sözleşmesinde](tasks/nav-workspace-0
 
 
 Coordinator prerequisite reconciliation: independent Esra Sol review approved exact profile code `ee3339e58747302c5effd9baef8f05b262c33e0e` with zero blocking issues. Committed evidence: [review](reviews/profile-draft-ee3339e.json). This resolves the earlier missing-evidence stop. Proceed with actual NAV implementation and tests; NAV checks/independent acceptance remain pending. No canonical/IdP/expert/release approval or publication.
+
+
+## NAV-WORKSPACE-01 actual implementation — 01.11.2026
+
+This supersedes the preparation-only checkpoint above. Real company/fleet/profile URL navigation, capability-first responsive TR/EN shell, scoped explicit-permission workspace search/audit, dirty native-history guards, uncertain-command freeze and mobile/keyboard behavior are implemented with authored tests. Profile prerequisite approval is committed; no further user evidence is required. Final integrated developer gate PASS after correcting the audit allowlist and pagination assembly failures: Domain46, actual PostgreSQL Persistence25, API78, React160 and desktop/mobile Chromium22 passed, with zero final failures/skips. Release build0 warnings/errors, OpenAPI generation/parity, EF model parity, lint/typecheck/build, Graphify and whitespace/JSON/host checks passed. Python/source gates NOT RUN for NAV; unchanged prior evidence stays separate. Exact final results and limitations: [phase report](phases/NAV-WORKSPACE-01.md). NAV is NOT ACCEPTED; independent target-commit QA and publication remain coordinator-owned. Canonical8/970 SP,2/121 tasks,0/196 screens unchanged.

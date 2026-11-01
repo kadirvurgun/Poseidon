@@ -132,6 +132,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/workspace": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GetWorkspace"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/workspace/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["SearchWorkspace"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health/live": {
         parameters: {
             query?: never;
@@ -222,6 +254,10 @@ export interface components {
             /** Format: uint32 */
             expectedVersion: null | number | string;
         };
+        NavigationDto: {
+            key: string;
+            href: string;
+        };
         NumberInput: {
             /** @default Missing */
             state: string;
@@ -238,6 +274,14 @@ export interface components {
         };
         PageDtoOfRegulatoryRevisionDto: {
             items: components["schemas"]["RegulatoryRevisionDto"][];
+            /** Format: int32 */
+            offset: number | string;
+            /** Format: int32 */
+            limit: number | string;
+            hasMore: boolean;
+        };
+        PageDtoOfSearchItemDto: {
+            items: components["schemas"]["SearchItemDto"][];
             /** Format: int32 */
             offset: number | string;
             /** Format: int32 */
@@ -305,6 +349,12 @@ export interface components {
             expectedVersion: null | number | string;
             content: null | components["schemas"]["RegulatoryDraftContent"];
         };
+        SearchItemDto: {
+            key: string;
+            href: string;
+            label: string;
+            kind: string;
+        };
         SessionDto: {
             authenticated: boolean;
             setupRequired: boolean;
@@ -318,6 +368,8 @@ export interface components {
             canReadCompanies: boolean;
             /** @default false */
             canCreate: boolean;
+            /** @default false */
+            canSearch: boolean;
         };
         SystemStatus: {
             service: string;
@@ -352,6 +404,10 @@ export interface components {
             name: null | string;
             /** Format: uint32 */
             expectedVersion: null | number | string;
+        };
+        WorkspaceDto: {
+            destinations: components["schemas"]["NavigationDto"][];
+            canSearch: boolean;
         };
     };
     responses: never;
@@ -955,6 +1011,99 @@ export interface operations {
                 content: {
                     "application/problem+json": components["schemas"]["ProblemDetails"];
                 };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    GetWorkspace: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WorkspaceDto"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    SearchWorkspace: {
+        parameters: {
+            query?: {
+                q?: string;
+                offset?: number | string;
+                limit?: number | string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PageDtoOfSearchItemDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Service Unavailable */
             503: {

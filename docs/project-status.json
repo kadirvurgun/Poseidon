@@ -2497,16 +2497,37 @@
     }
   },
   "nav_workspace_01": {
-    "status": "ready_for_implementation_profile_prerequisite_satisfied",
+    "status": "locally_validated_awaiting_independent_qa",
     "accepted": false,
     "baseline_commit": "ee3339e",
     "task": "docs/tasks/nav-workspace-01.md",
     "phase_report": "docs/phases/NAV-WORKSPACE-01.md",
-    "delivered": "Source, decisions, acceptance and planned test mapping only; no product code or tests",
-    "verification": "NAV integrated gates NOT RUN; implementation prerequisite not established",
+    "delivered": "Real capability-first shell, URLs/history/draft guards, explicit scoped search/audit, responsive TR/EN and authored backend/component/browser tests",
+    "verification": {
+      "release_build": "PASS;0 warnings/errors",
+      "domain": 46,
+      "persistence_postgresql": 25,
+      "api_postgresql_oidc_openapi": 78,
+      "react": 160,
+      "chromium_desktop_mobile": 22,
+      "failed": 0,
+      "skipped": 0,
+      "frontend_typecheck_lint_build": "PASS",
+      "actual_openapi_generated_types": "PASS",
+      "ef_model_parity": "PASS",
+      "graphify_ast": "PASS;2848 nodes/4420 edges/232 communities;10 zero-node warnings",
+      "python_sources": "NOT RUN for NAV; unchanged prior evidence retained separately",
+      "whitespace_json_host_cleanup": "PASS"
+    },
     "blocker": null,
-    "next_step": "Implement real NAV code and tests then integrated gate and independent review",
+    "next_step": "Coordinator independent QA of final exact local commit; no acceptance or publication by worker",
     "publication": "No push, PR or merge; coordinator-owned",
-    "profile_approval": "docs/reviews/profile-draft-ee3339e.json"
+    "profile_approval": "docs/reviews/profile-draft-ee3339e.json",
+    "limitations": [
+      "Operational role catalog unresolved; capability-first implemented destinations only",
+      "External IdP/TLS authenticated browser validation remains open",
+      "Canonical dependencies, lookups, mandatory policy, expert/pilot/release gates remain open",
+      "Existing dependency advisory remediation remains open; no dependency changes"
+    ]
   }
 }

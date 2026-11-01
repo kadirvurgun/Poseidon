@@ -5,6 +5,7 @@ import * as api from './profile-api'
 import { profileFields } from './profile-contract'
 import type { Profile, ProfileCommand, ProfileContent, ProfileHistory } from './profile-contract'
 import { RequiredDataField } from './RequiredDataField'
+import { loginHref } from './workspace-location'
 
 const copy = {
   en: { title: 'Regulatory profile draft', note: 'Incomplete drafts can be saved. Declarations and reference values are unverified. This draft does not authorize submission or operations.', loading: 'Loading profile…', empty: 'No saved profile draft yet.', save: 'Save draft', saving: 'Saving…', saved: 'Draft saved.', retry: 'Retry same command', reload: 'Reload saved draft', conflict: 'The saved profile changed. Your draft is retained. Reload explicitly to discard it.', uncertain: 'The save outcome is unknown. Fields are frozen; retry the same command before leaving.', failed: 'Unable to load or save the profile.', denied: 'You do not have permission for this profile.', expired: 'Sign in to continue.', missing: 'Profile not found in your vessel scope.', history: 'Version history', noHistory: 'No saved versions.', observed: 'Source observation time', time: 'Saved at', provenance: 'Source status', revision: 'Version', unknown: 'Unknown', previous: 'Previous', next: 'Next', view: 'View saved values', count: 'fields have missing or unknown data. Mandatory submission policy is unresolved; draft only.', readonly: 'Read-only profile', reloadRead: 'Retry loading' },
@@ -88,7 +89,7 @@ export function RegulatoryProfile({ id, language, csrf, onDirty, onSaving }: Pro
   const provenance = (value: string) => ({ Synthetic: language === 'tr' ? 'Sentetik' : 'Synthetic', Missing: language === 'tr' ? 'Eksik' : 'Missing', Unknown: t.unknown, DeclaredUnverified: language === 'tr' ? 'Beyan — doğrulanmamış' : 'Declared — unverified' })[value] ?? t.unknown
   return <section className="regulatory-profile" aria-label={t.title}>
     <h2>{t.title}</h2><p className="profile-draft-note">{t.note}</p>
-    {failure && <div role="alert"><p>{errorText}</p>{status === 401 && <a href="/api/v1/auth/login?returnUrl=%2Fapp">{language === 'tr' ? 'Oturum aç' : 'Sign in'}</a>}
+    {failure && <div role="alert"><p>{errorText}</p>{status === 401 && <a href={loginHref()}>{language === 'tr' ? 'Oturum aç' : 'Sign in'}</a>}
       {!profile && <button onClick={reload}>{t.reloadRead}</button>}
       {failure.code === 'version_conflict' && <button onClick={reload}>{t.reload}</button>}</div>}
     {!profile && !failure && <p role="status">{t.loading}</p>}

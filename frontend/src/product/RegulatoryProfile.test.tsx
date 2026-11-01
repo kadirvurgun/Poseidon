@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useState } from 'react'
 import { RegulatoryProfile } from './RegulatoryProfile'
 import { RequiredDataField } from './RequiredDataField'
@@ -19,6 +19,7 @@ function mock(save: (init: RequestInit) => Promise<Response> = async () => reply
   const fetchMock = vi.fn((url: string, init: RequestInit) => url.endsWith('/history?offset=0&limit=25') ? Promise.resolve(reply(history)) : init?.method === 'PUT' ? save(init) : Promise.resolve(reply(profile)))
   vi.stubGlobal('fetch', fetchMock); return fetchMock
 }
+beforeEach(() => window.history.replaceState(null, '', '/app'))
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals() })
 
 describe('VESSEL-PROFILE-DRAFT-01 component and transport coverage (mocked API, no external IdP)', () => {

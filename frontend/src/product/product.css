@@ -43,3 +43,29 @@
 .regulatory-profile dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
 .regulatory-profile dt { font-weight: 650; }
 .regulatory-profile dd { margin: .4rem 0; overflow-wrap: anywhere; }
+
+/* NAV-WORKSPACE-01: shared shell, without remote fonts or a second component system. */
+.product-shell { display: grid; grid-template-columns: 220px minmax(0, 1fr); grid-template-rows: auto 1fr; }
+.product-header { grid-column: 1 / -1; padding: 1rem 1.5rem; gap: 1rem; flex-wrap: wrap; }
+.workspace-breadcrumb { margin-right: auto; color: #d5e3eb; }
+.product-nav { grid-column: 1; grid-row: 2; display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; padding: 1.5rem 1rem; border-right: 1px solid #d1dce3; border-bottom: 0; }
+.product-nav button { text-align: left; }
+.product-nav a { margin: 1.5rem 0 0; padding: .6rem; }
+.product-shell main { grid-column: 2; grid-row: 2; min-width: 0; width: 100%; box-sizing: border-box; }
+.product-shell h1 { letter-spacing: -.03em; margin-bottom: .5rem; }
+.workspace-context { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; background: #e7eef3; border: 1px solid #bccdd8; border-radius: 8px; padding: 1rem; overflow-wrap: anywhere; }
+.product-header .workspace-menu { display: none; }
+.workspace-search { width: min(640px, 90vw); max-height: 85vh; overflow: auto; }
+.workspace-search ul { padding: 0; list-style: none; }
+.workspace-search li a { display: block; padding: .8rem .4rem; color: #193e52; border-bottom: 1px solid #d1dce3; overflow-wrap: anywhere; }
+.product-shell kbd { font-size: .75rem; }
+@media (max-width: 760px) {
+  .product-shell { display: block; }
+  .product-header { padding: 1rem; gap: .75rem; }
+  .workspace-breadcrumb { display: none; }
+  .product-header .workspace-menu { display: inline-block; }
+  .product-nav { display: none; }
+  .product-nav.is-open { display: flex; position: fixed; z-index: 20; inset: 0 auto 0 0; width: min(280px, 82vw); box-sizing: border-box; box-shadow: 0 0 0 100vmax #102d3e99; overflow-y: auto; }
+  .product-shell main { width: 100%; }
+  .product-pagination { flex-wrap: wrap; }
+}

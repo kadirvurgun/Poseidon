@@ -1,6 +1,9 @@
 import '@testing-library/jest-dom/vitest'
 import { cleanup } from '@testing-library/react'
-import { afterEach, vi } from 'vitest'
+import { afterEach, beforeEach, vi } from 'vitest'
+
+// Each mounted application starts with its own browser location, as a fresh page would.
+beforeEach(() => window.history.replaceState(null, '', '/'))
 
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); vi.useRealTimers() })
 
