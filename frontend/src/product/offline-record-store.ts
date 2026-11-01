@@ -1,6 +1,9 @@
 import type { OfflineSealedRecord } from './offline-cipher'
 
-export type OfflineStoreLimits = Readonly<{ maxRecords: number; maxEncryptedBytes: number }>
+export type OfflineStoreLimits = Readonly<{
+  maxRecords: number; maxEncryptedBytes: number
+  maxDeviceRecords: number; maxDeviceEncryptedBytes: number
+}>
 export type OfflineStoredHeader = Readonly<{ commandId: string; revision: number; encryptedBytes: number }>
 export type OfflineStoredRecord = OfflineStoredHeader & Readonly<{ sealed: OfflineSealedRecord }>
 type Stored = OfflineStoredRecord & { key: string; namespace: string }
@@ -35,6 +38,15 @@ function encryptedSize(sealed: OfflineSealedRecord) {
   return bytes + 12 + 32
 }
 
+// Structural inventory validation contains no authorization or plaintext access.
+// Global budgeting inspects opaque sizes only and never returns foreign headers.
+function storedRecord(value: Stored) {
+  if (!value || !digest(value.namespace) || value.key !== `${value.namespace}/${identifier(value.commandId)}` ||
+    !Number.isSafeInteger(value.revision) || value.revision <= 0 || value.encryptedBytes !== encryptedSize(value.sealed))
+    throw new OfflineStoreError('invalid_record')
+  return value
+}
+
 // Actual IndexedDB storage, not an authorization or crypto-key store. namespace is
 // an opaque SHA256 of the current authorized scope, NEVER a token or raw actor ID.
 export class OfflineEncryptedRecordStore {
@@ -52,6 +64,8 @@ export class OfflineEncryptedRecordStore {
     if (!factory || !digest(namespace) || !limits ||
       !Number.isSafeInteger(limits.maxRecords) || limits.maxRecords <= 0 ||
       !Number.isSafeInteger(limits.maxEncryptedBytes) || limits.maxEncryptedBytes <= 0 ||
+      !Number.isSafeInteger(limits.maxDeviceRecords) || limits.maxDeviceRecords <= 0 ||
+      !Number.isSafeInteger(limits.maxDeviceEncryptedBytes) || limits.maxDeviceEncryptedBytes <= 0 ||
       !/^poseidon\.offline\.[a-z0-9.-]{1,100}$/.test(databaseName))
       return Promise.reject(new OfflineStoreError('invalid_configuration'))
     const snapshot = { ...limits }
@@ -81,10 +95,9 @@ export class OfflineEncryptedRecordStore {
     catch { throw new OfflineStoreError('storage_unavailable') }
   }
   private validate(value: Stored) {
-    if (!value || value.namespace !== this.namespace || value.key !== this.key(value.commandId) ||
-      !Number.isSafeInteger(value.revision) || value.revision <= 0 || value.encryptedBytes !== encryptedSize(value.sealed))
-      throw new OfflineStoreError('invalid_record')
-    return value
+    const record = storedRecord(value)
+    if (record.namespace !== this.namespace) throw new OfflineStoreError('invalid_record')
+    return record
   }
   private range(afterCommandId?: string) {
     const prefix = `${this.namespace}/`
@@ -133,30 +146,36 @@ export class OfflineEncryptedRecordStore {
     if (expectedRevision !== null && (!Number.isSafeInteger(expectedRevision) || expectedRevision < 1 || expectedRevision >= Number.MAX_SAFE_INTEGER))
       throw new OfflineStoreError('invalid_record')
     const encryptedBytes = encryptedSize(sealed)
-    if (encryptedBytes > this.limits.maxEncryptedBytes) throw new OfflineStoreError('quota_exceeded')
+    if (encryptedBytes > this.limits.maxEncryptedBytes || encryptedBytes > this.limits.maxDeviceEncryptedBytes)
+      throw new OfflineStoreError('quota_exceeded')
     // Copy before async storage so callers cannot mutate the captured buffers/size.
     const copy = structuredClone({ version: sealed.version, contextHash: sealed.contextHash, iv: sealed.iv, ciphertext: sealed.ciphertext })
     const tx = this.transaction('readwrite'), store = tx.objectStore(storeName)
     return new Promise((resolve, reject) => {
-      let count = 0, bytes = 0, existing: Stored | null = null, failure: Failure = 'storage_unavailable'
+      let count = 0, bytes = 0, deviceCount = 0, deviceBytes = 0
+      let existing: Stored | null = null, failure: Failure = 'storage_unavailable'
       const header = { commandId: canonicalId, revision: expectedRevision === null ? 1 : expectedRevision + 1, encryptedBytes }
-      const request = store.openCursor(this.range())
+      const request = store.openCursor()
       request.onsuccess = () => {
         const cursor = request.result
         if (cursor) {
           try {
-            const record = this.validate(cursor.value as Stored)
+            const record = storedRecord(cursor.value as Stored)
             if (record.key === key) existing = record
-            else { count++; bytes += record.encryptedBytes }
+            else {
+              deviceCount++; deviceBytes += record.encryptedBytes
+              if (record.namespace === this.namespace) { count++; bytes += record.encryptedBytes }
+            }
             cursor.continue()
           } catch { failure = 'invalid_record'; tx.abort() }
           return
         }
         if ((existing?.revision ?? null) !== expectedRevision) { failure = 'revision_conflict'; tx.abort(); return }
-        if (count >= this.limits.maxRecords || encryptedBytes > this.limits.maxEncryptedBytes - bytes) {
+        if (count >= this.limits.maxRecords || encryptedBytes > this.limits.maxEncryptedBytes - bytes ||
+            deviceCount >= this.limits.maxDeviceRecords || encryptedBytes > this.limits.maxDeviceEncryptedBytes - deviceBytes) {
           failure = 'quota_exceeded'; tx.abort(); return
         }
-        // Cursor, quota, expected revision and write share one readwrite transaction.
+        // Device and namespace inventory, expected revision and write are atomic.
         store.put({ key, namespace: this.namespace, ...header, sealed: copy } satisfies Stored)
       }
       tx.oncomplete = () => resolve(header)

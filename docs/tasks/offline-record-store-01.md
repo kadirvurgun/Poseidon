@@ -15,7 +15,7 @@ Command UUIDs must already be canonical lowercase at capture creation, before
 AEAD encryption; the storage layer rejects aliases rather than rewriting the
 authenticated binding and making a legitimate ciphertext unreadable.
 
-Expected revision, per-namespace record/cipher-byte quota inventory and write
+Expected revision, per-namespace and device-wide record/cipher-byte inventory and write
 run in one readwrite transaction, serializing actual two-tab create/update and
 quota races. No first/last-writer overwrite. The Promise acknowledges a write
 only after transaction completion. Browser quota errors become fixed codes.
@@ -27,20 +27,27 @@ key-loss, logout, quota-pressure eviction or database deletion API.
 Reduced quota blocks excess new writes but still permits paginated encrypted
 record inventory/read, enabling explicit retained/recover/discard UI. Quotas
 count ciphertext/tag, nonce and context digest; metadata is separately bounded
-by record count. This is not an exact physical disk-usage measurement. The
-actual vault must additionally enforce device-wide/all-namespace budgets,
-bounded policy/session renewal, current capture permissions, key custody and
+by record count. This is not an exact physical disk-usage measurement.
+All four namespace/device budgets must be explicitly configured; no unbounded
+fallback is supplied. Device inventory covers all namespaces in the same fixed
+device database, without returning foreign IDs/counts/ciphertexts to a namespace
+caller. The actual vault must use that fixed DB across session/policy renewal
+and invalidate stale quota/policy handles across tabs on locally observed renewal;
+opening a new database or continuing a superseded handle is not policy renewal.
+The actual vault must additionally enforce bounded policy/session renewal,
+current capture permissions, key custody and
 loss recovery, expiry/reauthentication, schema validation, idempotent reconnect,
 atomic audited server mutation/receipt and real history/conflict journeys.
 An open storage handle does not grant policy permission or offline identity.
 
-Eight authored Playwright technical cases execute the actual source modules in
+Ten authored Playwright technical cases execute the actual source modules in
 an isolated fulfilled fixture origin with real browser IndexedDB and WebCrypto:
 close/reopen exact-byte persistence, wrong-key retention, two-connection CAS,
 record and byte quota races, namespace separation, reduced-quota retention and
 revision-matched discard, pagination after quota reduction, and version-upgrade
 preservation/stale handle closure and UUID binding preservation (some scenarios
-share a case). The fixture
+share a case), plus atomic record/byte budget races across different namespaces
+and capacity released only by explicit revision-matched discard. The fixture
 uses synthetic data only; no exported product debug API or modified CSP.
 These driver tests are explicitly not ordinary signed-host/SSO/application
 offline evidence. DOMAIN-COMPLETION-01 must add the real composed user journeys.

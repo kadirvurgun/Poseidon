@@ -35,9 +35,9 @@ test('encrypted capture survives connection close/reopen with exact bytes and no
     const key = await crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt'])
     const text = 'SYNTHETIC protected draft: İ ⚓ 000.1000 Unknown', limits = { plaintextBytes: 2048, contextBytes: 2048 }
     const sealed = await cipher.sealOfflineRecord(crypto, key, context, new TextEncoder().encode(text), limits)
-    const first = await Store.open(indexedDB, 'a'.repeat(64), { maxRecords: 4, maxEncryptedBytes: 8192 }, databaseName)
+    const first = await Store.open(indexedDB, 'a'.repeat(64), { maxRecords: 4, maxEncryptedBytes: 8192, maxDeviceRecords: 64, maxDeviceEncryptedBytes: 65536 }, databaseName)
     const saved = await first.put(id, sealed, null); first.close()
-    const second = await Store.open(indexedDB, 'a'.repeat(64), { maxRecords: 4, maxEncryptedBytes: 8192 }, databaseName)
+    const second = await Store.open(indexedDB, 'a'.repeat(64), { maxRecords: 4, maxEncryptedBytes: 8192, maxDeviceRecords: 64, maxDeviceEncryptedBytes: 65536 }, databaseName)
     const record = (await second.read(id))!, headers = await second.list(4)
     const rawHasText = JSON.stringify(record.sealed).includes('SYNTHETIC protected draft')
     const wrongKey = await crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt'])
@@ -59,7 +59,7 @@ test('two connections serialize create/update expected revisions without a lost 
   const result = await page.evaluate(async () => {
     const { __poseidonOfflineStore: Store, __poseidonOfflineCipher: cipher } = globalThis as unknown as Fixture
     const id = crypto.randomUUID(), databaseName = `poseidon.offline.test.${crypto.randomUUID()}`
-    const policy = { maxRecords: 4, maxEncryptedBytes: 8192 }
+    const policy = { maxRecords: 4, maxEncryptedBytes: 8192, maxDeviceRecords: 64, maxDeviceEncryptedBytes: 65536 }
     const first = await Store.open(indexedDB, 'a'.repeat(64), policy, databaseName)
     const second = await Store.open(indexedDB, 'a'.repeat(64), policy, databaseName)
     const context = { tenantId: 'synthetic-tenant', actorId: 'synthetic-actor', vesselId: 'synthetic-vessel',
@@ -89,7 +89,7 @@ for (const quota of ['records', 'bytes'] as const) test(`concurrent ${quota} quo
     // Opaque fixed-format storage fixture, not a claim of authenticated ciphertext.
     const envelope = { version: 1 as const, contextHash: 'b'.repeat(64), iv: new Uint8Array(12), ciphertext: new ArrayBuffer(32) }
     const byteCost = 32 + 12 + 32
-    const policy = { maxRecords: quota === 'records' ? 1 : 8, maxEncryptedBytes: quota === 'bytes' ? byteCost : 8192 }
+    const policy = { maxRecords: quota === 'records' ? 1 : 8, maxEncryptedBytes: quota === 'bytes' ? byteCost : 8192, maxDeviceRecords: 64, maxDeviceEncryptedBytes: 65536 }
     const databaseName = `poseidon.offline.test.${crypto.randomUUID()}`, firstId = crypto.randomUUID(), secondId = crypto.randomUUID()
     const first = await Store.open(indexedDB, 'a'.repeat(64), policy, databaseName)
     const second = await Store.open(indexedDB, 'a'.repeat(64), policy, databaseName)
@@ -111,9 +111,9 @@ test('reduced quota retains captures; removal requires the exact stored revision
     const { __poseidonOfflineStore: Store } = globalThis as unknown as Fixture
     const databaseName = `poseidon.offline.test.${crypto.randomUUID()}`, id = crypto.randomUUID()
     const envelope = { version: 1 as const, contextHash: 'b'.repeat(64), iv: new Uint8Array(12), ciphertext: new ArrayBuffer(32) }
-    const first = await Store.open(indexedDB, 'a'.repeat(64), { maxRecords: 2, maxEncryptedBytes: 8192 }, databaseName)
+    const first = await Store.open(indexedDB, 'a'.repeat(64), { maxRecords: 2, maxEncryptedBytes: 8192, maxDeviceRecords: 64, maxDeviceEncryptedBytes: 65536 }, databaseName)
     await first.put(id, envelope, null); first.close()
-    const reduced = await Store.open(indexedDB, 'a'.repeat(64), { maxRecords: 1, maxEncryptedBytes: 1 }, databaseName)
+    const reduced = await Store.open(indexedDB, 'a'.repeat(64), { maxRecords: 1, maxEncryptedBytes: 1, maxDeviceRecords: 64, maxDeviceEncryptedBytes: 65536 }, databaseName)
     const code = async (operation: Promise<unknown>) => { try { await operation; return 'unexpected_success' } catch (error) { return (error as { code: string }).code } }
     const quotaError = await code(reduced.put(crypto.randomUUID(), envelope, null))
     const staleRemoval = await code(reduced.remove(id, 2))
@@ -132,12 +132,12 @@ test('old captures remain paginatable after a lower record quota and closed stor
     const databaseName = `poseidon.offline.test.${crypto.randomUUID()}`
     const ids = [crypto.randomUUID(), crypto.randomUUID()].sort()
     const envelope = { version: 1 as const, contextHash: 'b'.repeat(64), iv: new Uint8Array(12), ciphertext: new ArrayBuffer(32) }
-    const first = await Store.open(indexedDB, 'a'.repeat(64), { maxRecords: 2, maxEncryptedBytes: 8192 }, databaseName)
+    const first = await Store.open(indexedDB, 'a'.repeat(64), { maxRecords: 2, maxEncryptedBytes: 8192, maxDeviceRecords: 64, maxDeviceEncryptedBytes: 65536 }, databaseName)
     for (const id of ids) await first.put(id, envelope, null)
     first.close()
     let closedCode = ''
     try { await first.read(ids[0]) } catch (error) { closedCode = (error as { code: string }).code }
-    const reduced = await Store.open(indexedDB, 'a'.repeat(64), { maxRecords: 1, maxEncryptedBytes: 8192 }, databaseName)
+    const reduced = await Store.open(indexedDB, 'a'.repeat(64), { maxRecords: 1, maxEncryptedBytes: 8192, maxDeviceRecords: 64, maxDeviceEncryptedBytes: 65536 }, databaseName)
     const firstPage = await reduced.list(1), secondPage = await reduced.list(1, firstPage[0].commandId)
     const end = await reduced.list(1, secondPage[0].commandId)
     reduced.close()
@@ -151,7 +151,7 @@ test('a schema upgrade closes stale connections and never resets the captured re
   const result = await page.evaluate(async () => {
     const { __poseidonOfflineStore: Store } = globalThis as unknown as Fixture
     const databaseName = `poseidon.offline.test.${crypto.randomUUID()}`, id = crypto.randomUUID()
-    const first = await Store.open(indexedDB, 'a'.repeat(64), { maxRecords: 2, maxEncryptedBytes: 8192 }, databaseName)
+    const first = await Store.open(indexedDB, 'a'.repeat(64), { maxRecords: 2, maxEncryptedBytes: 8192, maxDeviceRecords: 64, maxDeviceEncryptedBytes: 65536 }, databaseName)
     await first.put(id, { version: 1, contextHash: 'b'.repeat(64), iv: new Uint8Array(12), ciphertext: new ArrayBuffer(32) }, null)
     const upgraded = await new Promise<IDBDatabase>((resolve, reject) => {
       const request = indexedDB.open(databaseName, 2)
@@ -175,7 +175,7 @@ test('noncanonical UUID casing is rejected instead of rewriting an authenticated
   await install(page)
   const result = await page.evaluate(async () => {
     const { __poseidonOfflineStore: Store } = globalThis as unknown as Fixture
-    const store = await Store.open(indexedDB, 'a'.repeat(64), { maxRecords: 2, maxEncryptedBytes: 8192 }, `poseidon.offline.test.${crypto.randomUUID()}`)
+    const store = await Store.open(indexedDB, 'a'.repeat(64), { maxRecords: 2, maxEncryptedBytes: 8192, maxDeviceRecords: 64, maxDeviceEncryptedBytes: 65536 }, `poseidon.offline.test.${crypto.randomUUID()}`)
     const id = 'aaaaaaaa-0000-0000-0000-000000000001'
     const envelope = { version: 1 as const, contextHash: 'b'.repeat(64), iv: new Uint8Array(12), ciphertext: new ArrayBuffer(32) }
     await store.put(id, envelope, null)
@@ -185,4 +185,30 @@ test('noncanonical UUID casing is rejected instead of rewriting an authenticated
     return { aliasCode, count: records.length, commandId: records[0].commandId }
   })
   expect(result).toEqual({ aliasCode: 'invalid_record', count: 1, commandId: 'aaaaaaaa-0000-0000-0000-000000000001' })
+})
+
+for (const quota of ['records', 'bytes'] as const) test(`device ${quota} quota cannot be bypassed by concurrent different namespaces`, async ({ page }) => {
+  await install(page)
+  const result = await page.evaluate(async quota => {
+    const { __poseidonOfflineStore: Store } = globalThis as unknown as Fixture
+    const databaseName = `poseidon.offline.test.${crypto.randomUUID()}`
+    const envelope = { version: 1 as const, contextHash: 'd'.repeat(64), iv: new Uint8Array(12), ciphertext: new ArrayBuffer(32) }
+    const policy = { maxRecords: 8, maxEncryptedBytes: 8192,
+      maxDeviceRecords: quota === 'records' ? 1 : 8, maxDeviceEncryptedBytes: quota === 'bytes' ? 76 : 8192 }
+    const first = await Store.open(indexedDB, 'a'.repeat(64), policy, databaseName)
+    const second = await Store.open(indexedDB, 'b'.repeat(64), policy, databaseName)
+    const results = await Promise.allSettled([first.put(crypto.randomUUID(), envelope, null), second.put(crypto.randomUUID(), envelope, null)])
+    const firstRows = await first.list(8), secondRows = await second.list(8)
+    const namespacesWithRecords = [firstRows.length, secondRows.length].filter(count => count > 0).length
+    const originalNamespace = firstRows.length ? first : second
+    const stored = (await originalNamespace.list(8))[0]
+    await originalNamespace.remove(stored.commandId, stored.revision)
+    // Explicit discard releases device capacity without exposing foreign headers.
+    await second.put(crypto.randomUUID(), envelope, null)
+    const afterDiscard = (await second.list(8)).length
+    first.close(); second.close()
+    return { outcomes: results.map(item => item.status === 'fulfilled' ? 'saved' : item.reason.code).sort(),
+      total: firstRows.length + secondRows.length, namespacesWithRecords, afterDiscard }
+  }, quota)
+  expect(result).toEqual({ outcomes: ['quota_exceeded', 'saved'], total: 1, namespacesWithRecords: 1, afterDiscard: 1 })
 })
