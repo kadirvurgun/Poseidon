@@ -1,0 +1,187 @@
+{
+  "kind": "SOURCE_ONLY_AUTHORING_CHECKPOINT_NOT_TEST_EVIDENCE",
+  "source_head": "70e578d5ca63581411ff0ed88868992c787c47b8",
+  "configured_base_commit": "80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44",
+  "config_metadata_source": "operator .runtime/product-batch/config.json: base_commit only",
+  "software_precondition_satisfied": false,
+  "combined_gate_started": false,
+  "candidate_commit": null,
+  "base_to_receiving_head_changed_file_count": 294,
+  "base_to_receiving_head_diff_sha256": "8ebbf3acb91f05bb94b22114ed4d5c3aeda01998350031865507c06be192a3a6",
+  "working_tree_tracked_diff_sha256": "93fab1353777bbfe8f416411b1b5c90dbbd81fb91021979aaefa71aca17f68ca",
+  "authored_logical_cases_not_executed": {
+    "actual_host_postgresql": 6,
+    "react_component_mocked": 6,
+    "registered_real_private_host": 1
+  },
+  "test_results": {
+    "discovered": null,
+    "executed": null,
+    "passed": null,
+    "failed": null,
+    "skipped": null,
+    "duration_seconds": null,
+    "reason": "NOT RUN: required foundation SOFTWARE incomplete"
+  },
+  "source_only_commands": [
+    {
+      "command": "git status --short; git diff --stat",
+      "result": "initial clean receiving worktree; no partial edits discarded"
+    },
+    {
+      "command": "git merge-base --is-ancestor 80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44 HEAD",
+      "exit_code": 0
+    },
+    {
+      "command": "py -3.13 scripts/query_sources.py \"photo_ref\" --limit 4",
+      "exit_code": 0,
+      "result": "bounded active-source retrieval"
+    },
+    {
+      "command": "git -c core.safecrlf=false diff --check",
+      "exit_code": 0,
+      "scope": "tracked source whitespace only; not tests/build/parity"
+    },
+    {
+      "command": "static source Fact/it/manifest-name count",
+      "exit_code": 0,
+      "result": "6+6+1 authored logical cases; NOT runtime discovery"
+    },
+    {
+      "command": "graphify update .",
+      "exit_code": 0,
+      "result": "final AST-only refresh:5478 nodes,11011 edges,382 communities;27 zero-node warnings;HTML omitted above5000 nodes;not product verification"
+    }
+  ],
+  "files": [
+    {
+      "path": "backend/Poseidon.Api/CrewFilePolicy.cs",
+      "sha256_worktree_bytes": "517760297a32fdeac324d99d929bff985a0de4d14d34005063257f251dba36f5",
+      "bytes": 5402
+    },
+    {
+      "path": "backend/Poseidon.Api/CrewPhotoEndpoints.cs",
+      "sha256_worktree_bytes": "3f02a47171c3ec53023a1097630cb71392a39c072be90667ede5b2742aa42428",
+      "bytes": 10590
+    },
+    {
+      "path": "backend/Poseidon.Persistence/CrewPersonalProfile.cs",
+      "sha256_worktree_bytes": "17effecdd6a0555b34528c328da2ff8dc7161515f88f483c19683428343fb58e",
+      "bytes": 6961
+    },
+    {
+      "path": "backend/Poseidon.Persistence/Migrations/20261102090000_CrewPhotoSelection.Designer.cs",
+      "sha256_worktree_bytes": "d62ef7b62cb11a0342824991e778f0de13df62e4c86964973bfde2a6e1e73776",
+      "bytes": 77713
+    },
+    {
+      "path": "backend/Poseidon.Persistence/Migrations/20261102090000_CrewPhotoSelection.cs",
+      "sha256_worktree_bytes": "a3ce35738ab8e90e6a7b2adc7850c22d31076bf3a3d67a4255ac7e8361e91d3e",
+      "bytes": 4371
+    },
+    {
+      "path": "backend/Poseidon.Persistence/Migrations/PoseidonDbContextModelSnapshot.cs",
+      "sha256_worktree_bytes": "a81c036ddbbcc9a3ad4b08635d819948aa5123df9511120e7eddc44353f70088",
+      "bytes": 77632
+    },
+    {
+      "path": "backend/Poseidon.Persistence/PoseidonDbContext.cs",
+      "sha256_worktree_bytes": "c4c0a1a1b52c403bfcbe551baec6a6e9bc848955b55a701171cfe4b1263ff49e",
+      "bytes": 22704
+    },
+    {
+      "path": "docs/phases/DOMAIN-COMPLETION-01.md",
+      "sha256_worktree_bytes": "18aed149c355b8825037f2811a530d44e22de64ca537a226e1b9a0e0ee053d09",
+      "bytes": 31942
+    },
+    {
+      "path": "docs/phases/FOUNDATION-ACCEPTANCE-BUNDLE-01.candidates.json",
+      "sha256_worktree_bytes": "e4e45f4fcbf9b6b38b6a0b400c87194bcd84a7a19a6b233a27b368dd25b1b60d",
+      "bytes": 37778
+    },
+    {
+      "path": "docs/phases/FOUNDATION-ACCEPTANCE-BUNDLE-01.md",
+      "sha256_worktree_bytes": "38386640611b269d5fc9fd839ef931ed6bdbeecce07e4abe0f141c50b545e3c1",
+      "bytes": 11215
+    },
+    {
+      "path": "docs/phases/REG-SOURCE-DRAFT-01.md",
+      "sha256_worktree_bytes": "62e309e1aa5ed0e2c4bcd4b822609be1b7f7e5b50d73d3ea63b4ba60ca81d3a2",
+      "bytes": 4655
+    },
+    {
+      "path": "docs/phases/S0-CONTRACT-CLOSURE-01.md",
+      "sha256_worktree_bytes": "0dcb40f764b9c50584f0ec5b532aa0f765b3f1c13ad513e6fcbfa9f1faea92e2",
+      "bytes": 4354
+    },
+    {
+      "path": "docs/phases/TODAY-WHY-01.md",
+      "sha256_worktree_bytes": "cdc8608b6b0e5fc06dbf3b6d56b4351c5f871dded29a910c6439b4bb1f68334a",
+      "bytes": 11981
+    },
+    {
+      "path": "docs/project-status.json",
+      "sha256_worktree_bytes": "8cf717ce8844d8c16f925cd6a00bd7899a9245cf477948b91155816b70bc5b73",
+      "bytes": 160132
+    },
+    {
+      "path": "docs/project-status.md",
+      "sha256_worktree_bytes": "3b95f5dff0ae4815bb9079a1cf50edacf4f9ea4533c8332c593aa0025eaa0957",
+      "bytes": 34577
+    },
+    {
+      "path": "docs/seed-data.md",
+      "sha256_worktree_bytes": "9e3e34aa8f20b3d9c977fd4376236e792958ea8489680805f4f5bb24e392aed2",
+      "bytes": 13422
+    },
+    {
+      "path": "docs/tasks/crew-roster-01.fields.json",
+      "sha256_worktree_bytes": "6df41fcf9b559c673bd3a6aab93a334aefbf3574dbd8a5c6e6c36ea6a0b1e17b",
+      "bytes": 156885
+    },
+    {
+      "path": "docs/tasks/domain-completion-01.md",
+      "sha256_worktree_bytes": "8ebd9826c8c4160d124e20dfd0dfa4b3c5ef7d301beefc93ace8bfe428763ac4",
+      "bytes": 31952
+    },
+    {
+      "path": "docs/tasks/s0-contract-closure-01.md",
+      "sha256_worktree_bytes": "783706d460c2b020cff8f247fbc1142abe3be77358febd48190119a0aa54bc97",
+      "bytes": 10278
+    },
+    {
+      "path": "frontend/src/product/CrewPersonalFiles.tsx",
+      "sha256_worktree_bytes": "a750c04794fbe7f4cb177177936ee8e5e26eae5e6bfe1754bd8c7c7126b26582",
+      "bytes": 5828
+    },
+    {
+      "path": "frontend/src/product/CrewPhotoSelection.test.tsx",
+      "sha256_worktree_bytes": "270387b1c3af921aae989cf599c7522712c52b9425ea1a4957727ed500b749ba",
+      "bytes": 6794
+    },
+    {
+      "path": "frontend/src/product/CrewPhotoSelection.tsx",
+      "sha256_worktree_bytes": "ccca53adfccc87d3eca016fff5c9bea49cd86c2a1f1b514d6594e0baa3a4cefc",
+      "bytes": 5291
+    },
+    {
+      "path": "frontend/src/product/crew-photo-api.ts",
+      "sha256_worktree_bytes": "b4b0d878d8cca1bc8db58ed743c5b850d41ba73a71814aa04bf1b1b78392f60e",
+      "bytes": 2881
+    },
+    {
+      "path": "tests/Poseidon.Api.Tests/CrewPhotoTests.cs",
+      "sha256_worktree_bytes": "0aaf453598bc5124034dcb5b85ce2515f0d9284268d5e4edb9828ec8e7a6eabb",
+      "bytes": 12116
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/register-specs/person-file-cases.ts",
+      "sha256_worktree_bytes": "aecae488a693f91a33275205f82d745535d2ae63f524594bbee6ad54855474d7",
+      "bytes": 8979
+    }
+  ],
+  "canonical_progress_unchanged": "8/970SP;2/121tasks;0/196screens",
+  "independent_qa": "PENDING",
+  "required_remote_ci": "PENDING",
+  "publication": "NOT PERFORMED"
+}

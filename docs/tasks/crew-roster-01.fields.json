@@ -602,10 +602,10 @@
       "screen": "crew-profile",
       "fr": "FR46-crew-profile-photo_ref",
       "tc": "TC46-crew-profile-photo_ref",
-      "implementation": "AUTHORED_UNVERIFIED: person-owned scanned version transport/review; persisted active photo_ref binding remains SOFTWARE GAP",
+      "implementation": "AUTHORED_UNVERIFIED: person-owned scanned transport and explicit versioned active photo selection/clear/current exact-version consumer; source catalog approval and full offline application remain open",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
-      "coverage": "safe_unknown_or_withheld_gap",
+      "coverage": "configured_unverified_photo_selection",
       "domain_completion_state": "partial_software",
       "domain_completion_gate": "Explicit active photo reference selection/storage/consumer still required; no implicit latest version."
     },

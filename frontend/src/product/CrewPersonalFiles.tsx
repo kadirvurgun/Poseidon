@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { crewFileVersions, type CrewFileKind, type CrewFileManifest } from './crew-files-api'
 import type { PersonFileOwner } from './file-api'
 import { VesselFiles } from './VesselFiles'
+import { CrewPhotoSelection } from './CrewPhotoSelection'
 
 type Props = { vessel: string; assignment: string; person: string; language: 'tr' | 'en'; csrf: string; onDirty: (value: boolean) => void }
 // Parent mounts this private child for one current authenticated session/tenant/vessel/person only.
@@ -13,9 +14,10 @@ export function CrewPersonalFiles(props: Props) {
   const [kind, setKind] = useState<CrewFileKind>('Photo'); const [expiry, setExpiry] = useState('')
   const [error, setError] = useState(false); const [dirty, setDirty] = useState(false); const [busy, setBusy] = useState(false)
   const [generation, reload] = useState(0)
+  const [photoDirty, setPhotoDirty] = useState(false)
   const source = loaded?.scope === scope ? loaded.data : null
   const selected = owner?.scope === scope ? owner.data : undefined
-  const changeDirty = (value: boolean) => { setDirty(value); props.onDirty(value) }
+  const changeDirty = (value: boolean) => { setDirty(value); props.onDirty(value || photoDirty) }
   const callbacks = useRef(props); callbacks.current = props
   useEffect(() => () => callbacks.current.onDirty(false), [])
   useEffect(() => {
@@ -34,16 +36,21 @@ export function CrewPersonalFiles(props: Props) {
     <h2>{en ? 'Private person files' : 'Özel personel dosyaları'}</h2>
     <p>{en ? 'Versioned scanned declarations. Scan and expiry metadata do not establish authenticity, eligibility or legal approval.' : 'Sürümlü taranmış beyanlar. Tarama ve bitiş tarihi bilgisi özgünlük, uygunluk veya hukuki onay sağlamaz.'}</p>
     {error && <p role="alert">{en ? 'Private file access or policy unavailable.' : 'Özel dosya erişimi veya politikası kullanılamıyor.'}</p>}
-    <button disabled={dirty || busy} onClick={() => { setOwner(null); reload(n => n + 1) }}>{en ? 'Refresh private files' : 'Özel dosyaları yenile'}</button>
+    <button disabled={dirty || busy || photoDirty} onClick={() => { setOwner(null); reload(n => n + 1) }}>{en ? 'Refresh private files' : 'Özel dosyaları yenile'}</button>
     {source && <>
       <p>{source.policyVersion} · {source.purpose}</p>
+      {source.kinds.includes('Photo') && <CrewPhotoSelection key={scope} {...props} manifest={source} blocked={dirty || busy}
+        onDirty={value => { setPhotoDirty(value); if (value) setOwner(null); props.onDirty(value || dirty) }}
+        onReview={row => setOwner({ scope, data: { type: 'Person', assignment: props.assignment, kind: 'Photo', revision: row.revision, expiresOn: null } })}
+        onDenied={() => { setLoaded(null); setOwner(null); setPhotoDirty(false); setDirty(false); props.onDirty(false); setError(true) }} />}
+
       {source.canWrite && <form onSubmit={e => { e.preventDefault(); const revision = source.next[kind]; if (revision) setOwner({ scope, data: { type: 'Person', assignment: props.assignment, kind, revision, expiresOn: kind === 'Photo' ? null : expiry || null } }) }}>
-        <fieldset disabled={dirty || busy}><label>{en ? 'Private file kind' : 'Özel dosya türü'}<select value={kind} onChange={e => { setKind(e.target.value as CrewFileKind); setExpiry(''); setOwner(null) }}>{source.kinds.map(k => <option key={k} value={k}>{label(k)}</option>)}</select></label>
+        <fieldset disabled={dirty || busy || photoDirty}><label>{en ? 'Private file kind' : 'Özel dosya türü'}<select value={kind} onChange={e => { setKind(e.target.value as CrewFileKind); setExpiry(''); setOwner(null) }}>{source.kinds.map(k => <option key={k} value={k}>{label(k)}</option>)}</select></label>
           {kind !== 'Photo' && <label>{en ? 'Declared expiry date (unknown if blank)' : 'Beyan edilen bitiş tarihi (boşsa bilinmiyor)'}<input type="date" value={expiry} onChange={e => { setExpiry(e.target.value); setOwner(null) }} /></label>}
           <button>{en ? 'Start new private version' : 'Yeni özel sürüm başlat'}</button></fieldset>
       </form>}
       <ol>{source.items.map(row => <li key={row.id}>
-        <button disabled={dirty || busy} onClick={() => setOwner({ scope, data: { type: 'Person', assignment: props.assignment, kind: row.kind, revision: row.revision, expiresOn: row.expiresOn } })}>{label(row.kind)} · {row.revision}</button>
+        <button disabled={dirty || busy || photoDirty} onClick={() => setOwner({ scope, data: { type: 'Person', assignment: props.assignment, kind: row.kind, revision: row.revision, expiresOn: row.expiresOn } })}>{label(row.kind)} · {row.revision}</button>
         {' · '}{row.expiresOn ?? (en ? 'Expiry unknown' : 'Bitiş tarihi bilinmiyor')}{' · '}{row.state === 'CleanTransport' ? (en ? 'Scanned, unverified' : 'Taranmış, doğrulanmamış') : (en ? 'Pending or quarantined' : 'Bekliyor veya karantinada')}
       </li>)}</ol>
       {source.hasMore && <p role="status">{en ? 'Only the latest 100 declarations are shown.' : 'Son 100 beyan gösteriliyor.'}</p>}

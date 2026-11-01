@@ -1,3 +1,5 @@
+> Current target continuation: [FOUNDATION-ACCEPTANCE-BUNDLE-01](FOUNDATION-ACCEPTANCE-BUNDLE-01.md) remains **SOFTWARE PRECONDITION INCOMPLETE / NOT RUN / NOT ACCEPTED**. Results below retain historical scope; none validate the current target. Ordinary and separate register/direct-provider suites must both be included at the later single gate.
+
 # TODAY-WHY-01 — UNVERIFIED authored product checkpoint
 
 > Current verification: [AUDIT-FILES-BUNDLE-01](AUDIT-FILES-BUNDLE-01.md) executes the current app gate against approved80b057a. Scoped regressions pass after documented fixes; repository scan fails and the S3-compatible/API storage criterion is NOT MET. NOT ACCEPTED; canonical progress unchanged. Earlier authoring/CORE statements below retain historical scope.

@@ -1132,6 +1132,26 @@ namespace Poseidon.Persistence.Migrations
                 b.ToTable("FileStages", "files", t => t.HasCheckConstraint("CK_FileStages_PersonOwner", "(\"PersonId\" IS NULL AND \"PersonalKind\" IS NULL AND \"PersonalRevision\" IS NULL AND \"PersonalExpiresOn\" IS NULL AND \"PersonalPolicyVersion\" IS NULL AND \"PersonalPurpose\" IS NULL AND \"PersonalSourceVersion\" IS NULL) OR (\"PersonId\" IS NOT NULL AND \"DocumentId\" IS NULL AND \"DocumentRevision\" IS NULL AND \"PersonalKind\" IS NOT NULL AND \"PersonalRevision\" IS NOT NULL AND \"PersonalRevision\" > 0 AND \"PersonalPolicyVersion\" IS NOT NULL AND \"PersonalPurpose\" IS NOT NULL AND \"PersonalSourceVersion\" IS NOT NULL)"));
                 b.HasOne("Poseidon.Persistence.Person", null).WithMany().HasForeignKey("TenantId", "PersonId").OnDelete(DeleteBehavior.Restrict);
             });
+
+            // Authored photo selection target; deferred EF parity must verify this model.
+            modelBuilder.Entity("Poseidon.Persistence.CrewPersonalProfile", b => {
+                b.Property<Guid?>("PhotoFileId").HasColumnType("uuid");
+                b.Property<Guid?>("PhotoVesselId").HasColumnType("uuid");
+                b.Property<string>("PhotoPolicyVersion").HasMaxLength(80).HasColumnType("character varying(80)");
+                b.Property<string>("PhotoPurpose").HasMaxLength(80).HasColumnType("character varying(80)");
+                b.HasIndex("TenantId", "PhotoFileId", "PhotoVesselId");
+                b.HasOne("Poseidon.Persistence.FileStage", null).WithMany().HasForeignKey("TenantId", "PhotoFileId", "PhotoVesselId")
+                    .HasPrincipalKey("TenantId", "Id", "VesselId").HasConstraintName("FK_ProfilePhotoFile").OnDelete(DeleteBehavior.Restrict);
+            });
+            modelBuilder.Entity("Poseidon.Persistence.CrewPersonalProfileRevision", b => {
+                b.Property<bool>("IsPhotoSelection").HasColumnType("boolean");
+                b.Property<Guid?>("PhotoFileId").HasColumnType("uuid");
+                b.Property<Guid?>("PhotoVesselId").HasColumnType("uuid");
+                b.Property<string>("PhotoPurpose").HasMaxLength(80).HasColumnType("character varying(80)");
+                b.HasIndex("TenantId", "PhotoFileId", "PhotoVesselId");
+                b.HasOne("Poseidon.Persistence.FileStage", null).WithMany().HasForeignKey("TenantId", "PhotoFileId", "PhotoVesselId")
+                    .HasPrincipalKey("TenantId", "Id", "VesselId").HasConstraintName("FK_ProfileRevisionPhotoFile").OnDelete(DeleteBehavior.Restrict);
+            });
 #pragma warning restore 612, 618
         }
     }

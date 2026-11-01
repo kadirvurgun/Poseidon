@@ -1,3 +1,9 @@
+# FOUNDATION continuation — checkpoint F / AUTHORED_UNVERIFIED / INCOMPLETE
+
+Explicit person-owned active photo selection/clear, immutable private selection lineage, scoped exact-version consumer, API/EF migration/model and13 logical test cases (API/PostgreSQL6, React6, private-host1) are authored, **none executed**. Existing checkpoints/contexts/tests are preserved. Current configured base80b057a, not historical93de. [Readiness precondition and exact evidence disposition](phases/FOUNDATION-ACCEPTANCE-BUNDLE-01.md).
+
+Full offline application, protected legacy identity/import parity, controlled Crew lookups, actual Tug planning/assignment/type/board/BP/conflict/localization and full S0 software remain incomplete. The combined gate has **NOT RUN**; all product checks remain DEFERRED. Canonical8/970SP,2/121tasks,0/196accepted and40-task/272SP candidate scope unchanged. No candidate commit before gate evidence; preserved reviewable working tree only. Coordinator owns independent exact-commit QA/source review/CI and later publication.
+
 # FOUNDATION continuation — checkpoint E / AUTHORED_UNVERIFIED / INCOMPLETE
 
 Required context/session/profile privacy/40-task ledger support commits are integrated with normal -x receipts. Person-owned scanned file versions, private TR/EN transport/expiry review and ordinary/import certificate-reference consumers are authored. Nine API/PostgreSQL, eight React and two registered real private-host cases are authored, **none executed**. Shared context inventory remains41 (React10), plus seven profile privacy regressions. Canonical8/970 and40-task/272SP candidate scope are unchanged. No publishing or merge.

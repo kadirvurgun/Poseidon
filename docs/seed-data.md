@@ -122,3 +122,8 @@ Each existing fictional Person receives an add-missing empty PersonalProfile and
 ## DOMAIN-COMPLETION-01 checkpoint B — AUTHORED / execution DEFERRED
 
 Each existing synthetic Asset receives one add-missing empty unverified Observation, with no reading/value or observation timestamp. It cannot supply valid current PMS input or verified equipment evidence. Reseed preserves actual operator observations/revocations. Three new insert audit expectations change75/76→78/79; none was executed or observed. Production source/freshness/unit/calibration policy remains external; normalized adapter software is authored.
+
+
+## FOUNDATION checkpoint F — photo_ref selection, AUTHORED / execution DEFERRED
+
+Existing add-missing empty PersonalProfiles and safe PersonalProfileRevisions receive nullable photo columns only. They remain null; IsPhotoSelection is false for synthetic revisions. No new entity or synthetic active photo, object, clean scan, identity verification or binding is seeded. Current audit expectations78/79 are unchanged and unobserved. New actual API/PostgreSQL authored coverage selects/clears an ordinary scanned synthetic photo, reseeds and asserts operator state and two immutable selection revisions/receipts remain unchanged. Migration/designer/snapshot and all execution remain DEFERRED. [Exact report](phases/FOUNDATION-ACCEPTANCE-BUNDLE-01.md).

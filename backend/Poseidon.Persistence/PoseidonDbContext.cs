@@ -206,7 +206,7 @@ public sealed class PoseidonDbContext(
             TugJob j => receipt.Action == "TugSave" && j.Id == receipt.ResourceId && j.TenantId == receipt.TenantId,
             Asset a => receipt.Action == "EquipmentSave" && a.Id == receipt.ResourceId && a.TenantId == receipt.TenantId,
             MaintenancePlan p => receipt.Action == "MaintenanceSave" && p.Id == receipt.ResourceId && p.TenantId == receipt.TenantId,
-            CrewPersonalProfile p => receipt.Action == "CrewProfileSave" && p.PersonId == receipt.ResourceId && p.TenantId == receipt.TenantId,
+            CrewPersonalProfile p => receipt.Action is "CrewProfileSave" or "CrewPhotoSave" && p.PersonId == receipt.ResourceId && p.TenantId == receipt.TenantId,
             Person p => receipt.Action == "CrewPersonSave" && p.Id == receipt.ResourceId && p.TenantId == receipt.TenantId,
             CrewAssignment c => receipt.Action == "CrewSave" && c.Id == receipt.ResourceId && c.TenantId == receipt.TenantId,
             Document d => receipt.Action == "DocumentDraftSave" && d.Id == receipt.ResourceId && d.TenantId == receipt.TenantId && d.Revision == receipt.RegisterRevision,

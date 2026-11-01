@@ -9,6 +9,11 @@ public sealed class CrewPersonalProfile : ITenantEntity
     public Guid PersonId { get; set; }
     public long Revision { get; set; } = 1;
     public uint Version { get; set; }
+    // Explicit selection; never infer a photo from the latest uploaded version.
+    public Guid? PhotoFileId { get; set; }
+    public Guid? PhotoVesselId { get; set; }
+    public string? PhotoPolicyVersion { get; set; }
+    public string? PhotoPurpose { get; set; }
     public string? Nationality { get; set; } // authenticated encrypted lexical value
     public string? DateOfBirth { get; set; } // authenticated encrypted lexical value
     public string? PassportNo { get; set; } // authenticated encrypted lexical value
@@ -72,6 +77,10 @@ public sealed class CrewPersonalProfileRevision : ITenantEntity
     public required string PolicyVersion { get; set; }
     public required string Provenance { get; set; }
     public DateTimeOffset SavedAt { get; set; }
+    public bool IsPhotoSelection { get; set; }
+    public Guid? PhotoFileId { get; set; }
+    public Guid? PhotoVesselId { get; set; }
+    public string? PhotoPurpose { get; set; }
 }
 public static class CrewPersonalProfileStorage
 {
@@ -80,11 +89,17 @@ public static class CrewPersonalProfileStorage
             b.ToTable("PersonalProfiles", "crew"); b.HasKey(x => new { x.TenantId, x.PersonId });
             b.HasOne<Person>().WithMany().HasForeignKey(x => new { x.TenantId, x.PersonId }).OnDelete(DeleteBehavior.Restrict);
             b.Property(x => x.Version).IsRowVersion();
+            b.Property(x => x.PhotoPolicyVersion).HasMaxLength(80); b.Property(x => x.PhotoPurpose).HasMaxLength(80);
+            b.HasOne<FileStage>().WithMany().HasForeignKey(x => new { x.TenantId, x.PhotoFileId, x.PhotoVesselId })
+                .HasPrincipalKey(x => new { x.TenantId, x.Id, x.VesselId }).HasConstraintName("FK_ProfilePhotoFile").OnDelete(DeleteBehavior.Restrict);
         });
         model.Entity<CrewPersonalProfileRevision>(b => {
             b.ToTable("PersonalProfileRevisions", "crew"); b.HasKey(x => new { x.TenantId, x.PersonId, x.Revision });
             b.HasOne<CrewPersonalProfile>().WithMany().HasForeignKey(x => new { x.TenantId, x.PersonId }).OnDelete(DeleteBehavior.Restrict);
             b.Property(x => x.PolicyVersion).HasMaxLength(80); b.Property(x => x.Provenance).HasMaxLength(40);
+            b.Property(x => x.PhotoPurpose).HasMaxLength(80);
+            b.HasOne<FileStage>().WithMany().HasForeignKey(x => new { x.TenantId, x.PhotoFileId, x.PhotoVesselId })
+                .HasPrincipalKey(x => new { x.TenantId, x.Id, x.VesselId }).HasConstraintName("FK_ProfileRevisionPhotoFile").OnDelete(DeleteBehavior.Restrict);
         });
     }
 }

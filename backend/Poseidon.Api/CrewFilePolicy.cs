@@ -38,6 +38,7 @@ public static class CrewFileEndpoints
     }
     public static void MapCrewFiles(this IEndpointRouteBuilder app)
     {
+        app.MapCrewPhotos();
         app.MapGet("/api/v1/vessels/{vessel:guid}/crew/{assignment:guid}/personal-files", async
             (Guid vessel, Guid assignment, HttpContext h, PoseidonDbContext db, ActorResolver actors, SecurityAudit audit) =>
         {

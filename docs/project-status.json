@@ -4,7 +4,7 @@
     "accepted": false,
     "task": "docs/tasks/domain-completion-01.md",
     "phase_report": "docs/phases/DOMAIN-COMPLETION-01.md",
-    "current_phase": "FOUNDATION authoring checkpoint E: person-owned files/reference consumers, incomplete",
+    "current_phase": "FOUNDATION authoring checkpoint F: explicit active photo selection; larger software incomplete",
     "verification": "DEFERRED: all suites/build/typecheck/migrations/contract/browser/independent QA/CI",
     "canonical_progress_unchanged": true,
     "new_personal_fields": 15,
@@ -27,7 +27,7 @@
       "f413c08"
     ],
     "publishing": "Not performed; coordinator owns publishing and merge",
-    "person_owned_scanned_files": "authored_configured_unverified; active photo_ref binding remains software gap",
+    "person_owned_scanned_files": "authored_configured_unverified; explicit active photo selection/clear/current exact-version consumer now authored; verification and full offline remain open",
     "support_origin_receipts": {
       "312999e55c6575927f894fc2239846a1d748f4af": "0ae9c70",
       "f578f859c5e6fa1d7ae5e511a884afd6b9c8706f": "e3159c5",
@@ -3283,5 +3283,26 @@
     "verification": "DEFERRED_NOT_RUN",
     "current_phase": "Foundation software continuation before S0 closure and combined gate",
     "canonical_progress_unchanged": true
+  },
+  "foundation_acceptance_bundle_01": {
+    "status": "software_precondition_incomplete_not_run_not_accepted",
+    "accepted": false,
+    "ready_for_combined_gate": false,
+    "current_phase": "Foundation software authoring checkpoint F; incomplete",
+    "source_head": "70e578d5ca63581411ff0ed88868992c787c47b8",
+    "configured_base_commit": "80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44",
+    "phase_report": "docs/phases/FOUNDATION-ACCEPTANCE-BUNDLE-01.md",
+    "candidate_matrix": "docs/phases/FOUNDATION-ACCEPTANCE-BUNDLE-01.candidates.json",
+    "source_only_evidence": "docs/phases/FOUNDATION-ACCEPTANCE-BUNDLE-01.evidence.json",
+    "canonical_progress_unchanged": true,
+    "authored_logical_cases_not_run": {
+      "actual_host_postgresql": 6,
+      "react": 6,
+      "private_host": 1
+    },
+    "verification": "NOT RUN: software precondition false; no build/suite/generation/migration/browser/provider/independent QA/CI",
+    "candidate_commit": null,
+    "publishing": "None; coordinator-owned after independent exact-target QA/CI",
+    "next_step": "Continue legacy identity/import/Crew lookups/full offline/Tug/S0 software before combined gate"
   }
 }

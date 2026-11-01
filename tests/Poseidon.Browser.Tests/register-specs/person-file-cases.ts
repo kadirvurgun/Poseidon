@@ -53,7 +53,49 @@ async function deniedPersonFiles(page: Page) {
   const result = await page.request.get(`/api/v1/vessels/${vessel}/crew/${unknownAssignment}/personal-files`, { headers: { 'X-Role': 'Crewing' } })
   expect(result.status()).toBe(404); expect((await result.text()).includes('items')).toBe(false)
 }
+async function explicitPhotoSelection(page: Page) {
+  const vessels = await (await page.request.get('/api/v1/vessels?limit=25')).json()
+  expect(vessels.items.length > 0).toBe(true); const vessel = vessels.items[0].id
+  const roster = await (await page.request.get(`/api/v1/vessels/${vessel}/crew`)).json()
+  expect(roster.items.length > 0).toBe(true); const assignment = roster.items[0].id
+  const root = `/api/v1/vessels/${vessel}/crew/${assignment}`
+  const beforeResponse = await page.request.get(`${root}/personal-files`); expect(beforeResponse.status()).toBe(200)
+  const manifest = await beforeResponse.json(); expect(manifest.canWrite && manifest.kinds.includes('Photo')).toBe(true)
+  const revision = manifest.next.Photo; expect(Number.isSafeInteger(revision)).toBe(true)
+  const initialResponse = await page.request.get(`${root}/photo`); expect(initialResponse.status()).toBe(200)
+  const initial = await initialResponse.json()
+  await page.goto(`/app/crew-roster/${vessel}/crew-profile/${assignment}`)
+  await page.getByRole('button', { name: 'EN', exact: true }).click()
+  const region = page.getByRole('region', { name: 'Private person files', exact: true })
+  await region.getByLabel('Private file kind', { exact: true }).selectOption('Photo')
+  await region.getByRole('button', { name: 'Start new private version', exact: true }).click()
+  const transport = region.getByRole('region', { name: 'Private person file transport', exact: true })
+  const bytes = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGMQUDD4DwACBAFgjby7cQAAAABJRU5ErkJggg==', 'base64')
+  await transport.getByLabel('Attachment file', { exact: true }).setInputFiles({ name: 'synthetic-photo.png', mimeType: 'image/png', buffer: bytes })
+  const uploaded = page.waitForResponse(r => r.request().method() === 'PUT' && r.url().includes(`/personal-files/Photo/versions/${revision}/`) && r.url().endsWith('/bytes'))
+  await transport.getByRole('button', { name: 'Upload file', exact: true }).click()
+  expect((await uploaded).status()).toBe(200)
+  const unchanged = await (await page.request.get(`${root}/photo`)).json()
+  expect(unchanged.selected?.id ?? null).toBe(initial.selected?.id ?? null) // Upload is never selection.
+  const photo = region.getByRole('region', { name: 'Selected profile photo', exact: true })
+  const committed = page.waitForResponse(r => r.request().method() === 'PUT' && r.url().endsWith(`${root}/photo`))
+  await photo.getByRole('button', { name: `Select photo version · ${revision}`, exact: true }).click()
+  expect((await committed).status()).toBe(200)
+  await expect(photo.getByRole('button', { name: `Review selected photo · ${revision}`, exact: true })).toBeVisible()
+  await page.reload(); await page.getByRole('button', { name: 'EN', exact: true }).click()
+  await photo.getByRole('button', { name: `Review selected photo · ${revision}`, exact: true }).click()
+  await transport.getByRole('button', { name: 'photo.png', exact: true }).click()
+  await expect(transport.getByRole('article', { name: 'File details', exact: true })).toBeVisible()
+  const stored = await (await page.request.get(`${root}/photo`)).json()
+  expect(stored.state).toBe('SelectedUnverified'); expect(stored.selected.personId).toBe(roster.items[0].personId)
+  expect(stored.selected.revision).toBe(revision)
+  const cleared = page.waitForResponse(r => r.request().method() === 'PUT' && r.url().endsWith(`${root}/photo`))
+  await photo.getByRole('button', { name: 'Clear photo selection', exact: true }).click()
+  expect((await cleared).status()).toBe(200)
+  await expect(photo.getByText('No photo selected; unknown.', { exact: true })).toBeVisible()
+}
 export const personFileCases = [
   { name: 'person-file-scanned-private-version-restart', run: personFiles, restricted: false },
   { name: 'person-file-restricted-owner-spoof', run: deniedPersonFiles, restricted: true },
+  { name: 'person-photo-explicit-selection-reload-clear', run: explicitPhotoSelection, restricted: false },
 ] as const
