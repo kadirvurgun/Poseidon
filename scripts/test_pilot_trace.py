@@ -1,5 +1,6 @@
 import copy
 import hashlib
+import json
 from pathlib import Path
 import tempfile
 import unittest
@@ -59,6 +60,51 @@ class PilotTraceTests(unittest.TestCase):
         source["path"] = "../outside.txt"
         self.assertIn("source_identity", validate(p, self.root)["structureErrors"])
 
+
+
+
+class CurrentSourceTraceTests(unittest.TestCase):
+    def setUp(self):
+        self.root = Path(__file__).resolve().parents[1]
+        self.package = json.loads((self.root / "contracts/trace/pilot-capabilities.v1.json").read_text(encoding="utf-8"))
+
+    def test_current_inventory_retains_ten_and_reports_actual_absent_definitions(self):
+        result = validate(self.package, self.root)
+        self.assertEqual([], result["structureErrors"])
+        for number in (3, 9, 10):
+            self.assertIn(f"capability-{number}:source-definition-gap", result["criticalGaps"])
+        self.assertEqual(10, len(result["executionGaps"]))
+        self.assertFalse(result["accepted"])
+
+    def test_invented_requirement_is_not_resolved_by_existing_file(self):
+        self.package["capabilities"][0]["definitionChains"][0]["requirement"]["value"] = "FR-invented"
+        self.assertIn("source_definition_mismatch", validate(self.package, self.root)["structureErrors"])
+
+    def test_one_complete_chain_does_not_hide_removed_critical_field(self):
+        self.package["capabilities"][0]["definitionChains"].pop()
+        self.assertIn("capability-1:missing-critical-source-fields", validate(self.package, self.root)["criticalGaps"])
+
+    def test_duplicate_and_cross_field_source_chain_are_rejected(self):
+        chains = self.package["capabilities"][0]["definitionChains"]
+        chains.append(copy.deepcopy(chains[0]))
+        chains[1]["test"] = chains[0]["test"].copy()
+        result = validate(self.package, self.root)
+        self.assertIn("duplicate_definition_id", result["structureErrors"])
+        self.assertIn("source_mismatched_chain", result["structureErrors"])
+
+    def test_deleting_canonical_inventory_does_not_fall_back_to_partial_nodes(self):
+        del self.package["capabilities"][0]["sourceIdentity"]
+        self.assertIn("missing_source_definition_inventory", validate(self.package, self.root)["structureErrors"])
+
+    def test_wrong_source_column_cannot_relabel_api_as_requirement(self):
+        chain = self.package["capabilities"][0]["definitionChains"][0]
+        chain["requirement"] = chain["api"].copy()
+        self.assertIn("source_definition_mismatch", validate(self.package, self.root)["structureErrors"])
+
+    def test_extra_unlinked_critical_node_is_reported(self):
+        cap = self.package["capabilities"][0]
+        cap["nodes"].append({**cap["nodes"][0], "id": "unlinked-critical"})
+        self.assertIn("capability-1:orphan-critical-node", validate(self.package, self.root)["criticalGaps"])
 
 if __name__ == "__main__":
     unittest.main()

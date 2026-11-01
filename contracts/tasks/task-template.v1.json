@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "poseidon.task-template.v1",
+  "trust": "Version-controlled engineering input only; never bind from HTTP/offline requests or grant authority from a task label.",
+  "sourceCriteria": [
+    {
+      "source": "backlog",
+      "locator": "sheet:Backlog/row:11"
+    },
+    {
+      "source": "uat",
+      "locator": "paragraph:6..42"
+    },
+    {
+      "source": "uat",
+      "locator": "paragraph:155..184"
+    },
+    {
+      "source": "uat",
+      "locator": "paragraph:255..280"
+    }
+  ],
+  "ready": [
+    "Exact immutable source version/locator and literal AC recorded",
+    "Owner role, scope, dependency dispositions and scoped pending decisions recorded",
+    "All seven impact assessments include reasons and actual references",
+    "Meaningful implementation and test authoring planned; deferred execution does not forbid draft authoring"
+  ],
+  "done": [
+    "Implementation and meaningful tests authored; actual references retained",
+    "Required checks RUN/PASS on exact target with immutable receipt identity; authored is not run",
+    "No unresolved critical software; scoped decisions resolved for acceptance",
+    "Independent exact-target QA/source review with genuinely validated reviewer authority; author cannot self approve",
+    "Documentation, audit/offline/security/regulatory effects reconciled; coordinator handles publication"
+  ],
+  "executionPolicy": "User deferral: all execution DEFERRED_NOT_RUN until larger foundation authored. No check is waived; no acceptance inferred.",
+  "requiredImpacts": [
+    "design",
+    "security",
+    "offline",
+    "audit",
+    "regulatory",
+    "docs",
+    "test"
+  ],
+  "requiredCheckAssessments": [
+    "unit",
+    "integration",
+    "contract",
+    "shipE2E",
+    "tugE2E",
+    "security",
+    "offlineChaos",
+    "regulatoryRegression",
+    "aiEvaluation",
+    "usability",
+    "disasterRecovery"
+  ],
+  "taskShape": {
+    "id": "DEV from source",
+    "source": "source/locator/column/value",
+    "acceptanceSource": "literal AC column G",
+    "acceptanceCriteria": "literal source text",
+    "ownerRole": "source role, not invented individual",
+    "dependencies": "IDs with source and authoring versus acceptance disposition",
+    "impacts": "seven disposition/reason/reference assessments",
+    "references": "actual source/code/tests/docs/evidence paths",
+    "checks": "authored/state/runCount/passedCount/reason/targetCommit/executionEvidence",
+    "pendingDecisions": "scope/ownerRole/description",
+    "unresolvedSoftware": "severity/description",
+    "acceptanceState": "NOT_ACCEPTED",
+    "independentEvidence": []
+  }
+}

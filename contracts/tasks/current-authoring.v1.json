@@ -1,0 +1,3017 @@
+{
+  "schemaVersion": "poseidon.current-authoring-tasks.v1",
+  "template": "contracts/tasks/task-template.v1.json",
+  "baseline": "poseidon-v46.3-20261030",
+  "status": "AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+  "sources": {
+    "backlog": {
+      "path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674"
+    },
+    "uat": {
+      "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
+      "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49"
+    }
+  },
+  "tasks": [
+    {
+      "id": "DEV-003",
+      "source": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:4",
+        "column": "A",
+        "value": "DEV-003"
+      },
+      "acceptanceSource": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:4",
+        "column": "G",
+        "value": "Her ortam için URL/secret/data/retention/deploy owner tanımlı; production datası DEV'e kopyalanmaz; environment promotion akışı yazılıdır."
+      },
+      "acceptanceCriteria": "Her ortam için URL/secret/data/retention/deploy owner tanımlı; production datası DEV'e kopyalanmaz; environment promotion akışı yazılıdır.",
+      "ownerRole": "DevOps",
+      "authoringScope": "Environment definition/deployment separation; no resources or secrets provisioned.",
+      "dependencies": [
+        {
+          "id": "DEV-001",
+          "source": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:2",
+            "column": "A",
+            "value": "DEV-001"
+          },
+          "disposition": "Acceptance dependency remains open; scoped draft authoring is explicitly authorized."
+        }
+      ],
+      "impacts": {
+        "design": {
+          "disposition": "assessed",
+          "reason": "Environment definition/deployment separation; no resources or secrets provisioned.",
+          "references": [
+            "scripts/environment_contract.py",
+            "docs/operations/environment-contract.md"
+          ]
+        },
+        "security": {
+          "disposition": "assessed",
+          "reason": "Read-only engineering inputs grant no actor/source/safety authority. Existing tenant/role/privacy and mandatory security scans remain required.",
+          "references": [
+            "docs/security-baseline.md",
+            "scripts/environment_contract.py"
+          ]
+        },
+        "offline": {
+          "disposition": "assessed",
+          "reason": "No supported offline whitelist is expanded by a QA contract. Existing ordinary mutation/replay and material conflicts retained; selected coverage gaps remain.",
+          "references": [
+            "docs/tasks/offline-application-01.md",
+            "docs/operations/environment-contract.md"
+          ]
+        },
+        "audit": {
+          "disposition": "assessed",
+          "reason": "No new business mutation or audit store. Existing EF SaveChanges and separate HTTP/user-action coverage retain their limits.",
+          "references": [
+            "docs/security-baseline.md",
+            "docs/operations/environment-contract.md"
+          ]
+        },
+        "regulatory": {
+          "disposition": "assessed",
+          "reason": "Source identity and review are retained; no inferred threshold, source activation, legal authority or positive readiness.",
+          "references": [
+            "docs/sources/active.json",
+            "docs/operations/environment-contract.md"
+          ]
+        },
+        "docs": {
+          "disposition": "assessed",
+          "reason": "Current report/status are additive; immutable source/history and canonical ledger retained.",
+          "references": [
+            "docs/operations/environment-contract.md",
+            "docs/phases/S0-FOUNDATION-REMAINDER-01.md"
+          ]
+        },
+        "test": {
+          "disposition": "assessed",
+          "reason": "Meaningful authored tests are retained. All execution is deferred by user; authored/run/pass and exact-target independent QA are distinct.",
+          "references": [
+            "scripts/test_environment_contract.py"
+          ]
+        }
+      },
+      "references": {
+        "source": [
+          "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+          "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx"
+        ],
+        "code": [
+          "scripts/environment_contract.py"
+        ],
+        "tests": [
+          "scripts/test_environment_contract.py"
+        ],
+        "docs": [
+          "docs/operations/environment-contract.md"
+        ],
+        "evidence": []
+      },
+      "checks": {
+        "unit": {
+          "authored": true,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "integration": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "contract": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "shipE2E": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "tugE2E": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "security": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "offlineChaos": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "regulatoryRegression": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "aiEvaluation": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "usability": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "disasterRecovery": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        }
+      },
+      "pendingDecisions": [
+        {
+          "scope": "DEV-003 exact-target source/engineering acceptance",
+          "ownerRole": "DevOps",
+          "description": "Independent definition review and real environment deployment bindings remain pending."
+        }
+      ],
+      "unresolvedSoftware": [],
+      "acceptanceState": "NOT_ACCEPTED",
+      "independentEvidence": [],
+      "traceId": "T-S0-003",
+      "traceSource": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:4",
+        "column": "M",
+        "value": "T-S0-003"
+      }
+    },
+    {
+      "id": "DEV-004",
+      "source": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:5",
+        "column": "A",
+        "value": "DEV-004"
+      },
+      "acceptanceSource": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:5",
+        "column": "G",
+        "value": "Domain modülleri, dependency yönü, event/outbox yaklaşımı, object storage, offline sync ve AI boundary ADR'ları approved durumundadır."
+      },
+      "acceptanceCriteria": "Domain modülleri, dependency yönü, event/outbox yaklaşımı, object storage, offline sync ve AI boundary ADR'ları approved durumundadır.",
+      "ownerRole": "Solution Architect",
+      "authoringScope": "Engineering decision reconciliation against actual shared API/EF orchestration, offline/file lineage and unavailable outbox.",
+      "dependencies": [
+        {
+          "id": "DEV-001",
+          "source": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:2",
+            "column": "A",
+            "value": "DEV-001"
+          },
+          "disposition": "Acceptance dependency remains open; scoped draft authoring is explicitly authorized."
+        }
+      ],
+      "impacts": {
+        "design": {
+          "disposition": "assessed",
+          "reason": "Engineering decision reconciliation against actual shared API/EF orchestration, offline/file lineage and unavailable outbox.",
+          "references": [
+            "backend/Poseidon.Domain/Poseidon.Domain.csproj",
+            "docs/decisions/s0-module-boundaries.md"
+          ]
+        },
+        "security": {
+          "disposition": "assessed",
+          "reason": "Read-only engineering inputs grant no actor/source/safety authority. Existing tenant/role/privacy and mandatory security scans remain required.",
+          "references": [
+            "docs/security-baseline.md",
+            "backend/Poseidon.Domain/Poseidon.Domain.csproj"
+          ]
+        },
+        "offline": {
+          "disposition": "assessed",
+          "reason": "No supported offline whitelist is expanded by a QA contract. Existing ordinary mutation/replay and material conflicts retained; selected coverage gaps remain.",
+          "references": [
+            "docs/tasks/offline-application-01.md",
+            "docs/decisions/s0-module-boundaries.md"
+          ]
+        },
+        "audit": {
+          "disposition": "assessed",
+          "reason": "No new business mutation or audit store. Existing EF SaveChanges and separate HTTP/user-action coverage retain their limits.",
+          "references": [
+            "docs/security-baseline.md",
+            "docs/decisions/s0-module-boundaries.md"
+          ]
+        },
+        "regulatory": {
+          "disposition": "assessed",
+          "reason": "Source identity and review are retained; no inferred threshold, source activation, legal authority or positive readiness.",
+          "references": [
+            "docs/sources/active.json",
+            "docs/decisions/s0-module-boundaries.md"
+          ]
+        },
+        "docs": {
+          "disposition": "assessed",
+          "reason": "Current report/status are additive; immutable source/history and canonical ledger retained.",
+          "references": [
+            "docs/decisions/s0-module-boundaries.md",
+            "docs/phases/S0-FOUNDATION-REMAINDER-01.md"
+          ]
+        },
+        "test": {
+          "disposition": "assessed",
+          "reason": "Meaningful authored tests are retained. All execution is deferred by user; authored/run/pass and exact-target independent QA are distinct.",
+          "references": [
+            "tests/Poseidon.Domain.Tests/OfflineReplayPolicyTests.cs"
+          ]
+        }
+      },
+      "references": {
+        "source": [
+          "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+          "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx"
+        ],
+        "code": [
+          "backend/Poseidon.Domain/Poseidon.Domain.csproj"
+        ],
+        "tests": [
+          "tests/Poseidon.Domain.Tests/OfflineReplayPolicyTests.cs"
+        ],
+        "docs": [
+          "docs/decisions/s0-module-boundaries.md"
+        ],
+        "evidence": []
+      },
+      "checks": {
+        "unit": {
+          "authored": true,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "integration": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "contract": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "shipE2E": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "tugE2E": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "security": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "offlineChaos": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "regulatoryRegression": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "aiEvaluation": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "usability": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "disasterRecovery": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        }
+      },
+      "pendingDecisions": [
+        {
+          "scope": "DEV-004 exact-target source/engineering acceptance",
+          "ownerRole": "Solution Architect",
+          "description": "Independent exact-target engineering ADR review; application-port separation and outbox delivery remain unimplemented future design."
+        }
+      ],
+      "unresolvedSoftware": [],
+      "acceptanceState": "NOT_ACCEPTED",
+      "independentEvidence": [],
+      "traceId": "T-S0-004",
+      "traceSource": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:5",
+        "column": "M",
+        "value": "T-S0-004"
+      }
+    },
+    {
+      "id": "DEV-005",
+      "source": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:6",
+        "column": "A",
+        "value": "DEV-005"
+      },
+      "acceptanceSource": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:6",
+        "column": "G",
+        "value": "Core entity listesi, PK/FK, tenancy, versioning, audit columns, evidence object refs ve migration stratejisi approved olur."
+      },
+      "acceptanceCriteria": "Core entity listesi, PK/FK, tenancy, versioning, audit columns, evidence object refs ve migration stratejisi approved olur.",
+      "ownerRole": "Backend Lead",
+      "authoringScope": "Normalized physical proposal and source field inventory; golden/trace/task contracts are read-only QA inputs, no operational tables.",
+      "dependencies": [
+        {
+          "id": "DEV-004",
+          "source": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:5",
+            "column": "A",
+            "value": "DEV-004"
+          },
+          "disposition": "Acceptance dependency remains open; scoped draft authoring is explicitly authorized."
+        }
+      ],
+      "impacts": {
+        "design": {
+          "disposition": "assessed",
+          "reason": "Normalized physical proposal and source field inventory; golden/trace/task contracts are read-only QA inputs, no operational tables.",
+          "references": [
+            "scripts/core_schema_inventory.py",
+            "docs/architecture/core-schema-plan.md"
+          ]
+        },
+        "security": {
+          "disposition": "assessed",
+          "reason": "Read-only engineering inputs grant no actor/source/safety authority. Existing tenant/role/privacy and mandatory security scans remain required.",
+          "references": [
+            "docs/security-baseline.md",
+            "scripts/core_schema_inventory.py"
+          ]
+        },
+        "offline": {
+          "disposition": "assessed",
+          "reason": "No supported offline whitelist is expanded by a QA contract. Existing ordinary mutation/replay and material conflicts retained; selected coverage gaps remain.",
+          "references": [
+            "docs/tasks/offline-application-01.md",
+            "docs/architecture/core-schema-plan.md"
+          ]
+        },
+        "audit": {
+          "disposition": "assessed",
+          "reason": "No new business mutation or audit store. Existing EF SaveChanges and separate HTTP/user-action coverage retain their limits.",
+          "references": [
+            "docs/security-baseline.md",
+            "docs/architecture/core-schema-plan.md"
+          ]
+        },
+        "regulatory": {
+          "disposition": "assessed",
+          "reason": "Source identity and review are retained; no inferred threshold, source activation, legal authority or positive readiness.",
+          "references": [
+            "docs/sources/active.json",
+            "docs/architecture/core-schema-plan.md"
+          ]
+        },
+        "docs": {
+          "disposition": "assessed",
+          "reason": "Current report/status are additive; immutable source/history and canonical ledger retained.",
+          "references": [
+            "docs/architecture/core-schema-plan.md",
+            "docs/phases/S0-FOUNDATION-REMAINDER-01.md"
+          ]
+        },
+        "test": {
+          "disposition": "assessed",
+          "reason": "Meaningful authored tests are retained. All execution is deferred by user; authored/run/pass and exact-target independent QA are distinct.",
+          "references": [
+            "scripts/test_core_schema_inventory.py"
+          ]
+        }
+      },
+      "references": {
+        "source": [
+          "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+          "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx"
+        ],
+        "code": [
+          "scripts/core_schema_inventory.py"
+        ],
+        "tests": [
+          "scripts/test_core_schema_inventory.py"
+        ],
+        "docs": [
+          "docs/architecture/core-schema-plan.md"
+        ],
+        "evidence": []
+      },
+      "checks": {
+        "unit": {
+          "authored": true,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "integration": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "contract": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "shipE2E": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "tugE2E": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "security": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "offlineChaos": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "regulatoryRegression": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "aiEvaluation": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "usability": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "disasterRecovery": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        }
+      },
+      "pendingDecisions": [
+        {
+          "scope": "DEV-005 exact-target source/engineering acceptance",
+          "ownerRole": "Backend Lead",
+          "description": "Independent physical-mapping semantics and model/migration parity remain unverified."
+        }
+      ],
+      "unresolvedSoftware": [],
+      "acceptanceState": "NOT_ACCEPTED",
+      "independentEvidence": [],
+      "traceId": "T-S0-005",
+      "traceSource": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:6",
+        "column": "M",
+        "value": "T-S0-005"
+      }
+    },
+    {
+      "id": "DEV-006",
+      "source": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:7",
+        "column": "A",
+        "value": "DEV-006"
+      },
+      "acceptanceSource": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:7",
+        "column": "G",
+        "value": "Tenant isolation, authn/authz, file upload, protected reporting, secrets, audit, offline device, AI prompt/data threats kayıtlı; P0 mitigations backlog'a bağlıdır."
+      },
+      "acceptanceCriteria": "Tenant isolation, authn/authz, file upload, protected reporting, secrets, audit, offline device, AI prompt/data threats kayıtlı; P0 mitigations backlog'a bağlıdır.",
+      "ownerRole": "Security/Architect",
+      "authoringScope": "Preserve actual security controls and mandatory scans with unresolved source findings.",
+      "dependencies": [
+        {
+          "id": "DEV-004",
+          "source": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:5",
+            "column": "A",
+            "value": "DEV-004"
+          },
+          "disposition": "Acceptance dependency remains open; scoped draft authoring is explicitly authorized."
+        }
+      ],
+      "impacts": {
+        "design": {
+          "disposition": "assessed",
+          "reason": "Preserve actual security controls and mandatory scans with unresolved source findings.",
+          "references": [
+            "scripts/secret_scan.py",
+            "docs/security/threat-model.md"
+          ]
+        },
+        "security": {
+          "disposition": "assessed",
+          "reason": "Read-only engineering inputs grant no actor/source/safety authority. Existing tenant/role/privacy and mandatory security scans remain required.",
+          "references": [
+            "docs/security-baseline.md",
+            "scripts/secret_scan.py"
+          ]
+        },
+        "offline": {
+          "disposition": "assessed",
+          "reason": "No supported offline whitelist is expanded by a QA contract. Existing ordinary mutation/replay and material conflicts retained; selected coverage gaps remain.",
+          "references": [
+            "docs/tasks/offline-application-01.md",
+            "docs/security/threat-model.md"
+          ]
+        },
+        "audit": {
+          "disposition": "assessed",
+          "reason": "No new business mutation or audit store. Existing EF SaveChanges and separate HTTP/user-action coverage retain their limits.",
+          "references": [
+            "docs/security-baseline.md",
+            "docs/security/threat-model.md"
+          ]
+        },
+        "regulatory": {
+          "disposition": "assessed",
+          "reason": "Source identity and review are retained; no inferred threshold, source activation, legal authority or positive readiness.",
+          "references": [
+            "docs/sources/active.json",
+            "docs/security/threat-model.md"
+          ]
+        },
+        "docs": {
+          "disposition": "assessed",
+          "reason": "Current report/status are additive; immutable source/history and canonical ledger retained.",
+          "references": [
+            "docs/security/threat-model.md",
+            "docs/phases/S0-FOUNDATION-REMAINDER-01.md"
+          ]
+        },
+        "test": {
+          "disposition": "assessed",
+          "reason": "Meaningful authored tests are retained. All execution is deferred by user; authored/run/pass and exact-target independent QA are distinct.",
+          "references": [
+            "scripts/test_secret_scan.py"
+          ]
+        }
+      },
+      "references": {
+        "source": [
+          "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+          "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx"
+        ],
+        "code": [
+          "scripts/secret_scan.py"
+        ],
+        "tests": [
+          "scripts/test_secret_scan.py"
+        ],
+        "docs": [
+          "docs/security/threat-model.md"
+        ],
+        "evidence": []
+      },
+      "checks": {
+        "unit": {
+          "authored": true,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "integration": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "contract": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "shipE2E": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "tugE2E": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "security": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "offlineChaos": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "regulatoryRegression": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "aiEvaluation": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "usability": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "disasterRecovery": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        }
+      },
+      "pendingDecisions": [
+        {
+          "scope": "DEV-006 exact-target source/engineering acceptance",
+          "ownerRole": "Security/Architect",
+          "description": "160 source findings remain unresolved; no exceptions or legal/privacy acceptance authored."
+        }
+      ],
+      "unresolvedSoftware": [],
+      "acceptanceState": "NOT_ACCEPTED",
+      "independentEvidence": [],
+      "traceId": "T-S0-006",
+      "traceSource": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:7",
+        "column": "M",
+        "value": "T-S0-006"
+      }
+    },
+    {
+      "id": "DEV-007",
+      "source": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:8",
+        "column": "A",
+        "value": "DEV-007"
+      },
+      "acceptanceSource": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:8",
+        "column": "G",
+        "value": "10 pilot capability için orphan kritik öğe kalmaz; trace ID'leri backlog ve test case'lerine bağlıdır."
+      },
+      "acceptanceCriteria": "10 pilot capability için orphan kritik öğe kalmaz; trace ID'leri backlog ve test case'lerine bağlıdır.",
+      "ownerRole": "BA/QA Lead",
+      "authoringScope": "All10 capabilities retained; canonical source field chains and explicit source definition gaps.",
+      "dependencies": [],
+      "impacts": {
+        "design": {
+          "disposition": "assessed",
+          "reason": "All10 capabilities retained; canonical source field chains and explicit source definition gaps.",
+          "references": [
+            "scripts/pilot_trace.py",
+            "docs/architecture/pilot-trace.md"
+          ]
+        },
+        "security": {
+          "disposition": "assessed",
+          "reason": "Read-only engineering inputs grant no actor/source/safety authority. Existing tenant/role/privacy and mandatory security scans remain required.",
+          "references": [
+            "docs/security-baseline.md",
+            "scripts/pilot_trace.py"
+          ]
+        },
+        "offline": {
+          "disposition": "assessed",
+          "reason": "No supported offline whitelist is expanded by a QA contract. Existing ordinary mutation/replay and material conflicts retained; selected coverage gaps remain.",
+          "references": [
+            "docs/tasks/offline-application-01.md",
+            "docs/architecture/pilot-trace.md"
+          ]
+        },
+        "audit": {
+          "disposition": "assessed",
+          "reason": "No new business mutation or audit store. Existing EF SaveChanges and separate HTTP/user-action coverage retain their limits.",
+          "references": [
+            "docs/security-baseline.md",
+            "docs/architecture/pilot-trace.md"
+          ]
+        },
+        "regulatory": {
+          "disposition": "assessed",
+          "reason": "Source identity and review are retained; no inferred threshold, source activation, legal authority or positive readiness.",
+          "references": [
+            "docs/sources/active.json",
+            "docs/architecture/pilot-trace.md"
+          ]
+        },
+        "docs": {
+          "disposition": "assessed",
+          "reason": "Current report/status are additive; immutable source/history and canonical ledger retained.",
+          "references": [
+            "docs/architecture/pilot-trace.md",
+            "docs/phases/S0-FOUNDATION-REMAINDER-01.md"
+          ]
+        },
+        "test": {
+          "disposition": "assessed",
+          "reason": "Meaningful authored tests are retained. All execution is deferred by user; authored/run/pass and exact-target independent QA are distinct.",
+          "references": [
+            "scripts/test_pilot_trace.py"
+          ]
+        }
+      },
+      "references": {
+        "source": [
+          "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+          "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx"
+        ],
+        "code": [
+          "scripts/pilot_trace.py"
+        ],
+        "tests": [
+          "scripts/test_pilot_trace.py"
+        ],
+        "docs": [
+          "docs/architecture/pilot-trace.md"
+        ],
+        "evidence": []
+      },
+      "checks": {
+        "unit": {
+          "authored": true,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "integration": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "contract": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "shipE2E": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "tugE2E": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "security": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "offlineChaos": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "regulatoryRegression": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "aiEvaluation": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "usability": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "disasterRecovery": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        }
+      },
+      "pendingDecisions": [
+        {
+          "scope": "DEV-007 exact-target source/engineering acceptance",
+          "ownerRole": "BA/QA Lead",
+          "description": "Today/Safety Inbox/current mixed-fleet value proof lack complete source chain definitions; independent source mapping required."
+        }
+      ],
+      "unresolvedSoftware": [
+        {
+          "severity": "critical",
+          "description": "Today/Safety Inbox/current mixed-fleet value proof lack complete source chain definitions; independent source mapping required."
+        }
+      ],
+      "acceptanceState": "NOT_ACCEPTED",
+      "independentEvidence": [],
+      "traceId": "T-S0-007",
+      "traceSource": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:8",
+        "column": "M",
+        "value": "T-S0-007"
+      }
+    },
+    {
+      "id": "DEV-008",
+      "source": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:9",
+        "column": "A",
+        "value": "DEV-008"
+      },
+      "acceptanceSource": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:9",
+        "column": "G",
+        "value": "ISM/SOLAS/STCW/MLC/MARPOL/Flag/Class pilot kapsamı için source owner, version, validation status ve reviewer atanır."
+      },
+      "acceptanceCriteria": "ISM/SOLAS/STCW/MLC/MARPOL/Flag/Class pilot kapsamı için source owner, version, validation status ve reviewer atanır.",
+      "ownerRole": "Regulatory Lead",
+      "authoringScope": "Retain role-based source responsibility proposal and existing immutable regulatory revisions.",
+      "dependencies": [
+        {
+          "id": "DEV-007",
+          "source": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:8",
+            "column": "A",
+            "value": "DEV-007"
+          },
+          "disposition": "Acceptance dependency remains open; scoped draft authoring is explicitly authorized."
+        }
+      ],
+      "impacts": {
+        "design": {
+          "disposition": "assessed",
+          "reason": "Retain role-based source responsibility proposal and existing immutable regulatory revisions.",
+          "references": [
+            "backend/Poseidon.Domain/RegulatoryRegisterPolicy.cs",
+            "docs/tasks/source-ownership-plan-01.md"
+          ]
+        },
+        "security": {
+          "disposition": "assessed",
+          "reason": "Read-only engineering inputs grant no actor/source/safety authority. Existing tenant/role/privacy and mandatory security scans remain required.",
+          "references": [
+            "docs/security-baseline.md",
+            "backend/Poseidon.Domain/RegulatoryRegisterPolicy.cs"
+          ]
+        },
+        "offline": {
+          "disposition": "assessed",
+          "reason": "No supported offline whitelist is expanded by a QA contract. Existing ordinary mutation/replay and material conflicts retained; selected coverage gaps remain.",
+          "references": [
+            "docs/tasks/offline-application-01.md",
+            "docs/tasks/source-ownership-plan-01.md"
+          ]
+        },
+        "audit": {
+          "disposition": "assessed",
+          "reason": "No new business mutation or audit store. Existing EF SaveChanges and separate HTTP/user-action coverage retain their limits.",
+          "references": [
+            "docs/security-baseline.md",
+            "docs/tasks/source-ownership-plan-01.md"
+          ]
+        },
+        "regulatory": {
+          "disposition": "assessed",
+          "reason": "Source identity and review are retained; no inferred threshold, source activation, legal authority or positive readiness.",
+          "references": [
+            "docs/sources/active.json",
+            "docs/tasks/source-ownership-plan-01.md"
+          ]
+        },
+        "docs": {
+          "disposition": "assessed",
+          "reason": "Current report/status are additive; immutable source/history and canonical ledger retained.",
+          "references": [
+            "docs/tasks/source-ownership-plan-01.md",
+            "docs/phases/S0-FOUNDATION-REMAINDER-01.md"
+          ]
+        },
+        "test": {
+          "disposition": "assessed",
+          "reason": "Meaningful authored tests are retained. All execution is deferred by user; authored/run/pass and exact-target independent QA are distinct.",
+          "references": [
+            "tests/Poseidon.Domain.Tests/RegulatoryRegisterPolicyTests.cs"
+          ]
+        }
+      },
+      "references": {
+        "source": [
+          "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+          "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx"
+        ],
+        "code": [
+          "backend/Poseidon.Domain/RegulatoryRegisterPolicy.cs"
+        ],
+        "tests": [
+          "tests/Poseidon.Domain.Tests/RegulatoryRegisterPolicyTests.cs"
+        ],
+        "docs": [
+          "docs/tasks/source-ownership-plan-01.md"
+        ],
+        "evidence": []
+      },
+      "checks": {
+        "unit": {
+          "authored": true,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "integration": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "contract": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "shipE2E": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "tugE2E": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "security": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "offlineChaos": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "regulatoryRegression": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "aiEvaluation": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "usability": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "disasterRecovery": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        }
+      },
+      "pendingDecisions": [
+        {
+          "scope": "DEV-008 exact-target source/engineering acceptance",
+          "ownerRole": "Regulatory Lead",
+          "description": "Literal assignment sufficiency needs independent review; operational owner/reviewer assignment software and eligible bindings absent if required."
+        }
+      ],
+      "unresolvedSoftware": [
+        {
+          "severity": "critical",
+          "description": "Literal assignment sufficiency needs independent review; operational owner/reviewer assignment software and eligible bindings absent if required."
+        }
+      ],
+      "acceptanceState": "NOT_ACCEPTED",
+      "independentEvidence": [],
+      "traceId": "T-S0-008",
+      "traceSource": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:9",
+        "column": "M",
+        "value": "T-S0-008"
+      }
+    },
+    {
+      "id": "DEV-009",
+      "source": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:10",
+        "column": "A",
+        "value": "DEV-009"
+      },
+      "acceptanceSource": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:10",
+        "column": "G",
+        "value": "En az tanker + genel cargo/tug profile; crew/certificate/asset/defect/evidence edge cases; expected applicability/readiness outcomes kayıtlıdır."
+      },
+      "acceptanceCriteria": "En az tanker + genel cargo/tug profile; crew/certificate/asset/defect/evidence edge cases; expected applicability/readiness outcomes kayıtlıdır.",
+      "ownerRole": "QA Lead",
+      "authoringScope": "Deterministic7-profile10-source-case dataset with actual typed policy consumers and unavailable adapter inventory.",
+      "dependencies": [
+        {
+          "id": "DEV-005",
+          "source": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:6",
+            "column": "A",
+            "value": "DEV-005"
+          },
+          "disposition": "Acceptance dependency remains open; scoped draft authoring is explicitly authorized."
+        },
+        {
+          "id": "DEV-008",
+          "source": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:9",
+            "column": "A",
+            "value": "DEV-008"
+          },
+          "disposition": "Acceptance dependency remains open; scoped draft authoring is explicitly authorized."
+        }
+      ],
+      "impacts": {
+        "design": {
+          "disposition": "assessed",
+          "reason": "Deterministic7-profile10-source-case dataset with actual typed policy consumers and unavailable adapter inventory.",
+          "references": [
+            "scripts/golden_dataset.py",
+            "docs/tasks/s0-foundation-remainder-01.md"
+          ]
+        },
+        "security": {
+          "disposition": "assessed",
+          "reason": "Read-only engineering inputs grant no actor/source/safety authority. Existing tenant/role/privacy and mandatory security scans remain required.",
+          "references": [
+            "docs/security-baseline.md",
+            "scripts/golden_dataset.py"
+          ]
+        },
+        "offline": {
+          "disposition": "assessed",
+          "reason": "No supported offline whitelist is expanded by a QA contract. Existing ordinary mutation/replay and material conflicts retained; selected coverage gaps remain.",
+          "references": [
+            "docs/tasks/offline-application-01.md",
+            "docs/tasks/s0-foundation-remainder-01.md"
+          ]
+        },
+        "audit": {
+          "disposition": "assessed",
+          "reason": "No new business mutation or audit store. Existing EF SaveChanges and separate HTTP/user-action coverage retain their limits.",
+          "references": [
+            "docs/security-baseline.md",
+            "docs/tasks/s0-foundation-remainder-01.md"
+          ]
+        },
+        "regulatory": {
+          "disposition": "assessed",
+          "reason": "Source identity and review are retained; no inferred threshold, source activation, legal authority or positive readiness.",
+          "references": [
+            "docs/sources/active.json",
+            "docs/tasks/s0-foundation-remainder-01.md"
+          ]
+        },
+        "docs": {
+          "disposition": "assessed",
+          "reason": "Current report/status are additive; immutable source/history and canonical ledger retained.",
+          "references": [
+            "docs/tasks/s0-foundation-remainder-01.md",
+            "docs/phases/S0-FOUNDATION-REMAINDER-01.md"
+          ]
+        },
+        "test": {
+          "disposition": "assessed",
+          "reason": "Meaningful authored tests are retained. All execution is deferred by user; authored/run/pass and exact-target independent QA are distinct.",
+          "references": [
+            "tests/Poseidon.Domain.Tests/GoldenPilotDatasetTests.cs"
+          ]
+        }
+      },
+      "references": {
+        "source": [
+          "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+          "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx"
+        ],
+        "code": [
+          "scripts/golden_dataset.py"
+        ],
+        "tests": [
+          "tests/Poseidon.Domain.Tests/GoldenPilotDatasetTests.cs"
+        ],
+        "docs": [
+          "docs/tasks/s0-foundation-remainder-01.md"
+        ],
+        "evidence": []
+      },
+      "checks": {
+        "unit": {
+          "authored": true,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "integration": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "contract": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "shipE2E": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "tugE2E": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "security": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "offlineChaos": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "regulatoryRegression": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "aiEvaluation": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "usability": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "disasterRecovery": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        }
+      },
+      "pendingDecisions": [
+        {
+          "scope": "DEV-009 exact-target source/engineering acceptance",
+          "ownerRole": "QA Lead",
+          "description": "Full source-backed regulatory rule, crew eligibility, critical defect/evidence/readiness production adapters remain unimplemented; DEV005/008 acceptance gates open."
+        }
+      ],
+      "unresolvedSoftware": [
+        {
+          "severity": "noncritical",
+          "description": "Full source-backed regulatory rule, crew eligibility, critical defect/evidence/readiness production adapters remain unimplemented; DEV005/008 acceptance gates open. This is a retained unavailable future adapter, not automatically a prerequisite of this literal contract/dataset task. Independent source review decides any specifically required existing-surface consumer."
+        }
+      ],
+      "acceptanceState": "NOT_ACCEPTED",
+      "independentEvidence": [],
+      "traceId": "T-S0-009",
+      "traceSource": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:10",
+        "column": "M",
+        "value": "T-S0-009"
+      }
+    },
+    {
+      "id": "DEV-010",
+      "source": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:11",
+        "column": "A",
+        "value": "DEV-010"
+      },
+      "acceptanceSource": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:11",
+        "column": "G",
+        "value": "DoR/DoD; design, security, offline, audit, regulatory, docs ve test etkisini kapsar; backlog template'e uygulanır."
+      },
+      "acceptanceCriteria": "DoR/DoD; design, security, offline, audit, regulatory, docs ve test etkisini kapsar; backlog template'e uygulanır.",
+      "ownerRole": "Product Owner",
+      "authoringScope": "Trusted reusable template, current authoring register and adversarial gate validator.",
+      "dependencies": [
+        {
+          "id": "DEV-007",
+          "source": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:8",
+            "column": "A",
+            "value": "DEV-007"
+          },
+          "disposition": "Acceptance dependency remains open; scoped draft authoring is explicitly authorized."
+        }
+      ],
+      "impacts": {
+        "design": {
+          "disposition": "assessed",
+          "reason": "Trusted reusable template, current authoring register and adversarial gate validator.",
+          "references": [
+            "scripts/task_contracts.py",
+            "docs/tasks/task-definition-template.md"
+          ]
+        },
+        "security": {
+          "disposition": "assessed",
+          "reason": "Read-only engineering inputs grant no actor/source/safety authority. Existing tenant/role/privacy and mandatory security scans remain required.",
+          "references": [
+            "docs/security-baseline.md",
+            "scripts/task_contracts.py"
+          ]
+        },
+        "offline": {
+          "disposition": "assessed",
+          "reason": "No supported offline whitelist is expanded by a QA contract. Existing ordinary mutation/replay and material conflicts retained; selected coverage gaps remain.",
+          "references": [
+            "docs/tasks/offline-application-01.md",
+            "docs/tasks/task-definition-template.md"
+          ]
+        },
+        "audit": {
+          "disposition": "assessed",
+          "reason": "No new business mutation or audit store. Existing EF SaveChanges and separate HTTP/user-action coverage retain their limits.",
+          "references": [
+            "docs/security-baseline.md",
+            "docs/tasks/task-definition-template.md"
+          ]
+        },
+        "regulatory": {
+          "disposition": "assessed",
+          "reason": "Source identity and review are retained; no inferred threshold, source activation, legal authority or positive readiness.",
+          "references": [
+            "docs/sources/active.json",
+            "docs/tasks/task-definition-template.md"
+          ]
+        },
+        "docs": {
+          "disposition": "assessed",
+          "reason": "Current report/status are additive; immutable source/history and canonical ledger retained.",
+          "references": [
+            "docs/tasks/task-definition-template.md",
+            "docs/phases/S0-FOUNDATION-REMAINDER-01.md"
+          ]
+        },
+        "test": {
+          "disposition": "assessed",
+          "reason": "Meaningful authored tests are retained. All execution is deferred by user; authored/run/pass and exact-target independent QA are distinct.",
+          "references": [
+            "scripts/test_task_contracts.py"
+          ]
+        }
+      },
+      "references": {
+        "source": [
+          "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+          "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx"
+        ],
+        "code": [
+          "scripts/task_contracts.py"
+        ],
+        "tests": [
+          "scripts/test_task_contracts.py"
+        ],
+        "docs": [
+          "docs/tasks/task-definition-template.md"
+        ],
+        "evidence": []
+      },
+      "checks": {
+        "unit": {
+          "authored": true,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "integration": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "contract": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "shipE2E": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "tugE2E": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "security": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "offlineChaos": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "regulatoryRegression": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "aiEvaluation": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "usability": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "disasterRecovery": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        }
+      },
+      "pendingDecisions": [
+        {
+          "scope": "DEV-010 exact-target source/engineering acceptance",
+          "ownerRole": "Product Owner",
+          "description": "Independent source/template acceptance; no checks executed, no task accepted."
+        }
+      ],
+      "unresolvedSoftware": [],
+      "acceptanceState": "NOT_ACCEPTED",
+      "independentEvidence": [],
+      "traceId": "T-S0-010",
+      "traceSource": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:11",
+        "column": "M",
+        "value": "T-S0-010"
+      }
+    },
+    {
+      "id": "DEV-011",
+      "source": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:12",
+        "column": "A",
+        "value": "DEV-011"
+      },
+      "acceptanceSource": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:12",
+        "column": "G",
+        "value": "Correlation/tenant/vessel/request IDs; API latency/error, sync backlog/conflict, integration retry, audit health ve data freshness metric sözleşmesi vardır."
+      },
+      "acceptanceCriteria": "Correlation/tenant/vessel/request IDs; API latency/error, sync backlog/conflict, integration retry, audit health ve data freshness metric sözleşmesi vardır.",
+      "ownerRole": "DevOps",
+      "authoringScope": "Retain real request/audit/freshness and committed offline outcome telemetry.",
+      "dependencies": [
+        {
+          "id": "DEV-004",
+          "source": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:5",
+            "column": "A",
+            "value": "DEV-004"
+          },
+          "disposition": "Acceptance dependency remains open; scoped draft authoring is explicitly authorized."
+        }
+      ],
+      "impacts": {
+        "design": {
+          "disposition": "assessed",
+          "reason": "Retain real request/audit/freshness and committed offline outcome telemetry.",
+          "references": [
+            "backend/Poseidon.Api/OperationalTelemetry.cs",
+            "docs/operations/observability-contract.md"
+          ]
+        },
+        "security": {
+          "disposition": "assessed",
+          "reason": "Read-only engineering inputs grant no actor/source/safety authority. Existing tenant/role/privacy and mandatory security scans remain required.",
+          "references": [
+            "docs/security-baseline.md",
+            "backend/Poseidon.Api/OperationalTelemetry.cs"
+          ]
+        },
+        "offline": {
+          "disposition": "assessed",
+          "reason": "No supported offline whitelist is expanded by a QA contract. Existing ordinary mutation/replay and material conflicts retained; selected coverage gaps remain.",
+          "references": [
+            "docs/tasks/offline-application-01.md",
+            "docs/operations/observability-contract.md"
+          ]
+        },
+        "audit": {
+          "disposition": "assessed",
+          "reason": "No new business mutation or audit store. Existing EF SaveChanges and separate HTTP/user-action coverage retain their limits.",
+          "references": [
+            "docs/security-baseline.md",
+            "docs/operations/observability-contract.md"
+          ]
+        },
+        "regulatory": {
+          "disposition": "assessed",
+          "reason": "Source identity and review are retained; no inferred threshold, source activation, legal authority or positive readiness.",
+          "references": [
+            "docs/sources/active.json",
+            "docs/operations/observability-contract.md"
+          ]
+        },
+        "docs": {
+          "disposition": "assessed",
+          "reason": "Current report/status are additive; immutable source/history and canonical ledger retained.",
+          "references": [
+            "docs/operations/observability-contract.md",
+            "docs/phases/S0-FOUNDATION-REMAINDER-01.md"
+          ]
+        },
+        "test": {
+          "disposition": "assessed",
+          "reason": "Meaningful authored tests are retained. All execution is deferred by user; authored/run/pass and exact-target independent QA are distinct.",
+          "references": [
+            "tests/Poseidon.Domain.Tests/SourceFreshnessTests.cs"
+          ]
+        }
+      },
+      "references": {
+        "source": [
+          "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+          "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx"
+        ],
+        "code": [
+          "backend/Poseidon.Api/OperationalTelemetry.cs"
+        ],
+        "tests": [
+          "tests/Poseidon.Domain.Tests/SourceFreshnessTests.cs"
+        ],
+        "docs": [
+          "docs/operations/observability-contract.md"
+        ],
+        "evidence": []
+      },
+      "checks": {
+        "unit": {
+          "authored": true,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "integration": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "contract": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "shipE2E": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "tugE2E": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "security": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "offlineChaos": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "regulatoryRegression": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "aiEvaluation": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "usability": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "disasterRecovery": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        }
+      },
+      "pendingDecisions": [
+        {
+          "scope": "DEV-011 exact-target source/engineering acceptance",
+          "ownerRole": "DevOps",
+          "description": "Device-wide pending queue and integration dispatcher adapters unavailable; no healthy zero invented."
+        }
+      ],
+      "unresolvedSoftware": [
+        {
+          "severity": "noncritical",
+          "description": "Device-wide pending queue and integration dispatcher adapters unavailable; no healthy zero invented. This is a retained unavailable future adapter, not automatically a prerequisite of this literal contract/dataset task. Independent source review decides any specifically required existing-surface consumer."
+        }
+      ],
+      "acceptanceState": "NOT_ACCEPTED",
+      "independentEvidence": [],
+      "traceId": "T-S0-011",
+      "traceSource": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:12",
+        "column": "M",
+        "value": "T-S0-011"
+      }
+    },
+    {
+      "id": "DEV-116",
+      "source": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:117",
+        "column": "A",
+        "value": "DEV-116"
+      },
+      "acceptanceSource": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:117",
+        "column": "G",
+        "value": "Explicit OUT list; integration-only contracts; technical requisition/critical spares boundary; no accidental PO/AP/AR/payroll tables."
+      },
+      "acceptanceCriteria": "Explicit OUT list; integration-only contracts; technical requisition/critical spares boundary; no accidental PO/AP/AR/payroll tables.",
+      "ownerRole": "Solution Architect",
+      "authoringScope": "Reference-only ERP boundary and exact-revision decoder; no finance/dispatch expansion.",
+      "dependencies": [
+        {
+          "id": "DEV-004",
+          "source": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:5",
+            "column": "A",
+            "value": "DEV-004"
+          },
+          "disposition": "Acceptance dependency remains open; scoped draft authoring is explicitly authorized."
+        }
+      ],
+      "impacts": {
+        "design": {
+          "disposition": "assessed",
+          "reason": "Reference-only ERP boundary and exact-revision decoder; no finance/dispatch expansion.",
+          "references": [
+            "backend/Poseidon.Domain/ErpReferenceBoundary.cs",
+            "docs/tasks/selected-source-reconciliation-2026-11-02.md"
+          ]
+        },
+        "security": {
+          "disposition": "assessed",
+          "reason": "Read-only engineering inputs grant no actor/source/safety authority. Existing tenant/role/privacy and mandatory security scans remain required.",
+          "references": [
+            "docs/security-baseline.md",
+            "backend/Poseidon.Domain/ErpReferenceBoundary.cs"
+          ]
+        },
+        "offline": {
+          "disposition": "assessed",
+          "reason": "No supported offline whitelist is expanded by a QA contract. Existing ordinary mutation/replay and material conflicts retained; selected coverage gaps remain.",
+          "references": [
+            "docs/tasks/offline-application-01.md",
+            "docs/tasks/selected-source-reconciliation-2026-11-02.md"
+          ]
+        },
+        "audit": {
+          "disposition": "assessed",
+          "reason": "No new business mutation or audit store. Existing EF SaveChanges and separate HTTP/user-action coverage retain their limits.",
+          "references": [
+            "docs/security-baseline.md",
+            "docs/tasks/selected-source-reconciliation-2026-11-02.md"
+          ]
+        },
+        "regulatory": {
+          "disposition": "assessed",
+          "reason": "Source identity and review are retained; no inferred threshold, source activation, legal authority or positive readiness.",
+          "references": [
+            "docs/sources/active.json",
+            "docs/tasks/selected-source-reconciliation-2026-11-02.md"
+          ]
+        },
+        "docs": {
+          "disposition": "assessed",
+          "reason": "Current report/status are additive; immutable source/history and canonical ledger retained.",
+          "references": [
+            "docs/tasks/selected-source-reconciliation-2026-11-02.md",
+            "docs/phases/S0-FOUNDATION-REMAINDER-01.md"
+          ]
+        },
+        "test": {
+          "disposition": "assessed",
+          "reason": "Meaningful authored tests are retained. All execution is deferred by user; authored/run/pass and exact-target independent QA are distinct.",
+          "references": [
+            "tests/Poseidon.Domain.Tests/ErpReferenceBoundaryTests.cs"
+          ]
+        }
+      },
+      "references": {
+        "source": [
+          "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+          "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx"
+        ],
+        "code": [
+          "backend/Poseidon.Domain/ErpReferenceBoundary.cs"
+        ],
+        "tests": [
+          "tests/Poseidon.Domain.Tests/ErpReferenceBoundaryTests.cs"
+        ],
+        "docs": [
+          "docs/tasks/selected-source-reconciliation-2026-11-02.md"
+        ],
+        "evidence": []
+      },
+      "checks": {
+        "unit": {
+          "authored": true,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "integration": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "contract": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "shipE2E": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "tugE2E": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "security": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "offlineChaos": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "regulatoryRegression": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "aiEvaluation": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "usability": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "disasterRecovery": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        }
+      },
+      "pendingDecisions": [
+        {
+          "scope": "DEV-116 exact-target source/engineering acceptance",
+          "ownerRole": "Solution Architect",
+          "description": "No trusted runtime ERP reference authorization/persistence/outbox/provider adapter; source requires boundary contracts, future transactions remain OUT."
+        }
+      ],
+      "unresolvedSoftware": [
+        {
+          "severity": "noncritical",
+          "description": "No trusted runtime ERP reference authorization/persistence/outbox/provider adapter; source requires boundary contracts, future transactions remain OUT. This is a retained unavailable future adapter, not automatically a prerequisite of this literal contract/dataset task. Independent source review decides any specifically required existing-surface consumer."
+        }
+      ],
+      "acceptanceState": "NOT_ACCEPTED",
+      "independentEvidence": [],
+      "traceId": "T-V463-002",
+      "traceSource": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:117",
+        "column": "M",
+        "value": "T-V463-002"
+      }
+    },
+    {
+      "id": "DEV-047",
+      "source": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:48",
+        "column": "A",
+        "value": "DEV-047"
+      },
+      "acceptanceSource": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:48",
+        "column": "G",
+        "value": "Person/assignment/rank/capacity/period scoped; privacy masking and vessel scope; offline supported read/capture as defined."
+      },
+      "acceptanceCriteria": "Person/assignment/rank/capacity/period scoped; privacy masking and vessel scope; offline supported read/capture as defined.",
+      "ownerRole": "Full Stack",
+      "authoringScope": "Preserve44 Crew field assessments, actual identity/files/photo/import/medical/watch offline consumers.",
+      "dependencies": [
+        {
+          "id": "DEV-020",
+          "source": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:21",
+            "column": "A",
+            "value": "DEV-020"
+          },
+          "disposition": "Acceptance dependency remains open; scoped draft authoring is explicitly authorized."
+        },
+        {
+          "id": "DEV-015",
+          "source": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:16",
+            "column": "A",
+            "value": "DEV-015"
+          },
+          "disposition": "Acceptance dependency remains open; scoped draft authoring is explicitly authorized."
+        }
+      ],
+      "impacts": {
+        "design": {
+          "disposition": "assessed",
+          "reason": "Preserve44 Crew field assessments, actual identity/files/photo/import/medical/watch offline consumers.",
+          "references": [
+            "backend/Poseidon.Domain/CrewPeriod.cs",
+            "docs/tasks/selected-source-reconciliation-2026-11-02.md"
+          ]
+        },
+        "security": {
+          "disposition": "assessed",
+          "reason": "Read-only engineering inputs grant no actor/source/safety authority. Existing tenant/role/privacy and mandatory security scans remain required.",
+          "references": [
+            "docs/security-baseline.md",
+            "backend/Poseidon.Domain/CrewPeriod.cs"
+          ]
+        },
+        "offline": {
+          "disposition": "assessed",
+          "reason": "No supported offline whitelist is expanded by a QA contract. Existing ordinary mutation/replay and material conflicts retained; selected coverage gaps remain.",
+          "references": [
+            "docs/tasks/offline-application-01.md",
+            "docs/tasks/selected-source-reconciliation-2026-11-02.md"
+          ]
+        },
+        "audit": {
+          "disposition": "assessed",
+          "reason": "No new business mutation or audit store. Existing EF SaveChanges and separate HTTP/user-action coverage retain their limits.",
+          "references": [
+            "docs/security-baseline.md",
+            "docs/tasks/selected-source-reconciliation-2026-11-02.md"
+          ]
+        },
+        "regulatory": {
+          "disposition": "assessed",
+          "reason": "Source identity and review are retained; no inferred threshold, source activation, legal authority or positive readiness.",
+          "references": [
+            "docs/sources/active.json",
+            "docs/tasks/selected-source-reconciliation-2026-11-02.md"
+          ]
+        },
+        "docs": {
+          "disposition": "assessed",
+          "reason": "Current report/status are additive; immutable source/history and canonical ledger retained.",
+          "references": [
+            "docs/tasks/selected-source-reconciliation-2026-11-02.md",
+            "docs/phases/S0-FOUNDATION-REMAINDER-01.md"
+          ]
+        },
+        "test": {
+          "disposition": "assessed",
+          "reason": "Meaningful authored tests are retained. All execution is deferred by user; authored/run/pass and exact-target independent QA are distinct.",
+          "references": [
+            "tests/Poseidon.Domain.Tests/CrewPeriodTests.cs"
+          ]
+        }
+      },
+      "references": {
+        "source": [
+          "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+          "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx"
+        ],
+        "code": [
+          "backend/Poseidon.Domain/CrewPeriod.cs"
+        ],
+        "tests": [
+          "tests/Poseidon.Domain.Tests/CrewPeriodTests.cs"
+        ],
+        "docs": [
+          "docs/tasks/selected-source-reconciliation-2026-11-02.md"
+        ],
+        "evidence": []
+      },
+      "checks": {
+        "unit": {
+          "authored": true,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "integration": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "contract": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "shipE2E": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "tugE2E": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "security": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "offlineChaos": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "regulatoryRegression": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "aiEvaluation": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "usability": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "disasterRecovery": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        }
+      },
+      "pendingDecisions": [
+        {
+          "scope": "DEV-047 exact-target source/engineering acceptance",
+          "ownerRole": "Full Stack",
+          "description": "Remaining selected input/offline/evaluator obligations require exact source review; Unknown projections do not implement evaluators."
+        }
+      ],
+      "unresolvedSoftware": [
+        {
+          "severity": "critical",
+          "description": "Remaining selected input/offline/evaluator obligations require exact source review; Unknown projections do not implement evaluators."
+        }
+      ],
+      "acceptanceState": "NOT_ACCEPTED",
+      "independentEvidence": [],
+      "traceId": "T-S7-001",
+      "traceSource": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:48",
+        "column": "M",
+        "value": "T-S7-001"
+      }
+    },
+    {
+      "id": "DEV-080",
+      "source": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:81",
+        "column": "A",
+        "value": "DEV-080"
+      },
+      "acceptanceSource": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:81",
+        "column": "G",
+        "value": "Tug profile bollard pull/type/equipment context + role lens; Ship Mode screens remain hidden unless cross-mode role."
+      },
+      "acceptanceCriteria": "Tug profile bollard pull/type/equipment context + role lens; Ship Mode screens remain hidden unless cross-mode role.",
+      "ownerRole": "Full Stack",
+      "authoringScope": "Actual Tug context/profile/role lens; source-backed BP/type/equipment distinctions.",
+      "dependencies": [
+        {
+          "id": "DEV-020",
+          "source": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:21",
+            "column": "A",
+            "value": "DEV-020"
+          },
+          "disposition": "Acceptance dependency remains open; scoped draft authoring is explicitly authorized."
+        },
+        {
+          "id": "DEV-022",
+          "source": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:23",
+            "column": "A",
+            "value": "DEV-022"
+          },
+          "disposition": "Acceptance dependency remains open; scoped draft authoring is explicitly authorized."
+        }
+      ],
+      "impacts": {
+        "design": {
+          "disposition": "assessed",
+          "reason": "Actual Tug context/profile/role lens; source-backed BP/type/equipment distinctions.",
+          "references": [
+            "backend/Poseidon.Domain/TugRequestPolicy.cs",
+            "docs/tasks/selected-source-reconciliation-2026-11-02.md"
+          ]
+        },
+        "security": {
+          "disposition": "assessed",
+          "reason": "Read-only engineering inputs grant no actor/source/safety authority. Existing tenant/role/privacy and mandatory security scans remain required.",
+          "references": [
+            "docs/security-baseline.md",
+            "backend/Poseidon.Domain/TugRequestPolicy.cs"
+          ]
+        },
+        "offline": {
+          "disposition": "assessed",
+          "reason": "No supported offline whitelist is expanded by a QA contract. Existing ordinary mutation/replay and material conflicts retained; selected coverage gaps remain.",
+          "references": [
+            "docs/tasks/offline-application-01.md",
+            "docs/tasks/selected-source-reconciliation-2026-11-02.md"
+          ]
+        },
+        "audit": {
+          "disposition": "assessed",
+          "reason": "No new business mutation or audit store. Existing EF SaveChanges and separate HTTP/user-action coverage retain their limits.",
+          "references": [
+            "docs/security-baseline.md",
+            "docs/tasks/selected-source-reconciliation-2026-11-02.md"
+          ]
+        },
+        "regulatory": {
+          "disposition": "assessed",
+          "reason": "Source identity and review are retained; no inferred threshold, source activation, legal authority or positive readiness.",
+          "references": [
+            "docs/sources/active.json",
+            "docs/tasks/selected-source-reconciliation-2026-11-02.md"
+          ]
+        },
+        "docs": {
+          "disposition": "assessed",
+          "reason": "Current report/status are additive; immutable source/history and canonical ledger retained.",
+          "references": [
+            "docs/tasks/selected-source-reconciliation-2026-11-02.md",
+            "docs/phases/S0-FOUNDATION-REMAINDER-01.md"
+          ]
+        },
+        "test": {
+          "disposition": "assessed",
+          "reason": "Meaningful authored tests are retained. All execution is deferred by user; authored/run/pass and exact-target independent QA are distinct.",
+          "references": [
+            "tests/Poseidon.Domain.Tests/TugRequestPolicyTests.cs"
+          ]
+        }
+      },
+      "references": {
+        "source": [
+          "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+          "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx"
+        ],
+        "code": [
+          "backend/Poseidon.Domain/TugRequestPolicy.cs"
+        ],
+        "tests": [
+          "tests/Poseidon.Domain.Tests/TugRequestPolicyTests.cs"
+        ],
+        "docs": [
+          "docs/tasks/selected-source-reconciliation-2026-11-02.md"
+        ],
+        "evidence": []
+      },
+      "checks": {
+        "unit": {
+          "authored": true,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "integration": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "contract": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "shipE2E": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "tugE2E": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "security": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "offlineChaos": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "regulatoryRegression": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "aiEvaluation": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "usability": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "disasterRecovery": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        }
+      },
+      "pendingDecisions": [
+        {
+          "scope": "DEV-080 exact-target source/engineering acceptance",
+          "ownerRole": "Full Stack",
+          "description": "Authoritative BP/equipment/crew source consumers remain incomplete; no operational readiness inferred."
+        }
+      ],
+      "unresolvedSoftware": [
+        {
+          "severity": "critical",
+          "description": "Authoritative BP/equipment/crew source consumers remain incomplete; no operational readiness inferred."
+        }
+      ],
+      "acceptanceState": "NOT_ACCEPTED",
+      "independentEvidence": [],
+      "traceId": "T-TUG-001",
+      "traceSource": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:81",
+        "column": "M",
+        "value": "T-TUG-001"
+      }
+    },
+    {
+      "id": "DEV-081",
+      "source": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:82",
+        "column": "A",
+        "value": "DEV-081"
+      },
+      "acceptanceSource": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:82",
+        "column": "G",
+        "value": "Job ID; assisted vessel; job type; time window; area; required tug count/BP; priority; owner; audited create."
+      },
+      "acceptanceCriteria": "Job ID; assisted vessel; job type; time window; area; required tug count/BP; priority; owner; audited create.",
+      "ownerRole": "Full Stack",
+      "authoringScope": "Preserve audited draft intake and source-specific required data.",
+      "dependencies": [
+        {
+          "id": "DEV-080",
+          "source": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:81",
+            "column": "A",
+            "value": "DEV-080"
+          },
+          "disposition": "Acceptance dependency remains open; scoped draft authoring is explicitly authorized."
+        }
+      ],
+      "impacts": {
+        "design": {
+          "disposition": "assessed",
+          "reason": "Preserve audited draft intake and source-specific required data.",
+          "references": [
+            "backend/Poseidon.Domain/TugRequestPolicy.cs",
+            "docs/tasks/tug-foundation-01.md"
+          ]
+        },
+        "security": {
+          "disposition": "assessed",
+          "reason": "Read-only engineering inputs grant no actor/source/safety authority. Existing tenant/role/privacy and mandatory security scans remain required.",
+          "references": [
+            "docs/security-baseline.md",
+            "backend/Poseidon.Domain/TugRequestPolicy.cs"
+          ]
+        },
+        "offline": {
+          "disposition": "assessed",
+          "reason": "No supported offline whitelist is expanded by a QA contract. Existing ordinary mutation/replay and material conflicts retained; selected coverage gaps remain.",
+          "references": [
+            "docs/tasks/offline-application-01.md",
+            "docs/tasks/tug-foundation-01.md"
+          ]
+        },
+        "audit": {
+          "disposition": "assessed",
+          "reason": "No new business mutation or audit store. Existing EF SaveChanges and separate HTTP/user-action coverage retain their limits.",
+          "references": [
+            "docs/security-baseline.md",
+            "docs/tasks/tug-foundation-01.md"
+          ]
+        },
+        "regulatory": {
+          "disposition": "assessed",
+          "reason": "Source identity and review are retained; no inferred threshold, source activation, legal authority or positive readiness.",
+          "references": [
+            "docs/sources/active.json",
+            "docs/tasks/tug-foundation-01.md"
+          ]
+        },
+        "docs": {
+          "disposition": "assessed",
+          "reason": "Current report/status are additive; immutable source/history and canonical ledger retained.",
+          "references": [
+            "docs/tasks/tug-foundation-01.md",
+            "docs/phases/S0-FOUNDATION-REMAINDER-01.md"
+          ]
+        },
+        "test": {
+          "disposition": "assessed",
+          "reason": "Meaningful authored tests are retained. All execution is deferred by user; authored/run/pass and exact-target independent QA are distinct.",
+          "references": [
+            "tests/Poseidon.Domain.Tests/TugRequestPolicyTests.cs"
+          ]
+        }
+      },
+      "references": {
+        "source": [
+          "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+          "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx"
+        ],
+        "code": [
+          "backend/Poseidon.Domain/TugRequestPolicy.cs"
+        ],
+        "tests": [
+          "tests/Poseidon.Domain.Tests/TugRequestPolicyTests.cs"
+        ],
+        "docs": [
+          "docs/tasks/tug-foundation-01.md"
+        ],
+        "evidence": []
+      },
+      "checks": {
+        "unit": {
+          "authored": true,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "integration": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "contract": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "shipE2E": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "tugE2E": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "security": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "offlineChaos": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "regulatoryRegression": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "aiEvaluation": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "usability": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "disasterRecovery": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        }
+      },
+      "pendingDecisions": [
+        {
+          "scope": "DEV-081 exact-target source/engineering acceptance",
+          "ownerRole": "Full Stack",
+          "description": "Exact source/UI/input coverage requires independent QA; draft intake is not dispatch."
+        }
+      ],
+      "unresolvedSoftware": [],
+      "acceptanceState": "NOT_ACCEPTED",
+      "independentEvidence": [],
+      "traceId": "T-TUG-002",
+      "traceSource": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:82",
+        "column": "M",
+        "value": "T-TUG-002"
+      }
+    },
+    {
+      "id": "DEV-082",
+      "source": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:83",
+        "column": "A",
+        "value": "DEV-082"
+      },
+      "acceptanceSource": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:83",
+        "column": "G",
+        "value": "Job board shows planned window, assigned tugs, BP, readiness, conflict, priority and next action."
+      },
+      "acceptanceCriteria": "Job board shows planned window, assigned tugs, BP, readiness, conflict, priority and next action.",
+      "ownerRole": "Frontend+Backend",
+      "authoringScope": "Preserve current plan/window/assignment/history/geometry and declared BP consumers.",
+      "dependencies": [
+        {
+          "id": "DEV-081",
+          "source": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:82",
+            "column": "A",
+            "value": "DEV-081"
+          },
+          "disposition": "Acceptance dependency remains open; scoped draft authoring is explicitly authorized."
+        }
+      ],
+      "impacts": {
+        "design": {
+          "disposition": "assessed",
+          "reason": "Preserve current plan/window/assignment/history/geometry and declared BP consumers.",
+          "references": [
+            "backend/Poseidon.Domain/TugDraftPlanning.cs",
+            "docs/tasks/selected-source-reconciliation-2026-11-02.md"
+          ]
+        },
+        "security": {
+          "disposition": "assessed",
+          "reason": "Read-only engineering inputs grant no actor/source/safety authority. Existing tenant/role/privacy and mandatory security scans remain required.",
+          "references": [
+            "docs/security-baseline.md",
+            "backend/Poseidon.Domain/TugDraftPlanning.cs"
+          ]
+        },
+        "offline": {
+          "disposition": "assessed",
+          "reason": "No supported offline whitelist is expanded by a QA contract. Existing ordinary mutation/replay and material conflicts retained; selected coverage gaps remain.",
+          "references": [
+            "docs/tasks/offline-application-01.md",
+            "docs/tasks/selected-source-reconciliation-2026-11-02.md"
+          ]
+        },
+        "audit": {
+          "disposition": "assessed",
+          "reason": "No new business mutation or audit store. Existing EF SaveChanges and separate HTTP/user-action coverage retain their limits.",
+          "references": [
+            "docs/security-baseline.md",
+            "docs/tasks/selected-source-reconciliation-2026-11-02.md"
+          ]
+        },
+        "regulatory": {
+          "disposition": "assessed",
+          "reason": "Source identity and review are retained; no inferred threshold, source activation, legal authority or positive readiness.",
+          "references": [
+            "docs/sources/active.json",
+            "docs/tasks/selected-source-reconciliation-2026-11-02.md"
+          ]
+        },
+        "docs": {
+          "disposition": "assessed",
+          "reason": "Current report/status are additive; immutable source/history and canonical ledger retained.",
+          "references": [
+            "docs/tasks/selected-source-reconciliation-2026-11-02.md",
+            "docs/phases/S0-FOUNDATION-REMAINDER-01.md"
+          ]
+        },
+        "test": {
+          "disposition": "assessed",
+          "reason": "Meaningful authored tests are retained. All execution is deferred by user; authored/run/pass and exact-target independent QA are distinct.",
+          "references": [
+            "tests/Poseidon.Domain.Tests/TugDraftPlanningTests.cs"
+          ]
+        }
+      },
+      "references": {
+        "source": [
+          "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+          "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx"
+        ],
+        "code": [
+          "backend/Poseidon.Domain/TugDraftPlanning.cs"
+        ],
+        "tests": [
+          "tests/Poseidon.Domain.Tests/TugDraftPlanningTests.cs"
+        ],
+        "docs": [
+          "docs/tasks/selected-source-reconciliation-2026-11-02.md"
+        ],
+        "evidence": []
+      },
+      "checks": {
+        "unit": {
+          "authored": true,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "integration": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "contract": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "shipE2E": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "tugE2E": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "security": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "offlineChaos": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "regulatoryRegression": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "aiEvaluation": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "usability": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        },
+        "disasterRecovery": {
+          "authored": false,
+          "state": "DEFERRED",
+          "runCount": 0,
+          "passedCount": 0,
+          "reason": "User explicitly deferred all execution until larger foundation software is authored; required scope assessed at combined gate.",
+          "executionEvidence": []
+        }
+      },
+      "pendingDecisions": [
+        {
+          "scope": "DEV-082 exact-target source/engineering acceptance",
+          "ownerRole": "Frontend+Backend",
+          "description": "Selected board BP/readiness/conflict adapters remain software gaps; do not automatically add unselected DEV083/084 or call unavailable labels implemented."
+        }
+      ],
+      "unresolvedSoftware": [
+        {
+          "severity": "critical",
+          "description": "Selected board BP/readiness/conflict adapters remain software gaps; do not automatically add unselected DEV083/084 or call unavailable labels implemented."
+        }
+      ],
+      "acceptanceState": "NOT_ACCEPTED",
+      "independentEvidence": [],
+      "traceId": "T-TUG-003",
+      "traceSource": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:83",
+        "column": "M",
+        "value": "T-TUG-003"
+      }
+    }
+  ]
+}
