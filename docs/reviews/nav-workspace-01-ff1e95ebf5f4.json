@@ -1,0 +1,14 @@
+{
+  "task": "NAV-WORKSPACE-01",
+  "commit": "ff1e95ebf5f43ba5883f69e5e52b0cb2f205b775",
+  "approved": true,
+  "issues": [],
+  "reviewer": {
+    "profile": "esra-pro",
+    "role": "security_qa",
+    "model": "gpt-6.1-sol",
+    "effort": "medium"
+  },
+  "scope": "Local engineering only; canonical/release gates remain open",
+  "review_finished_at": 1793527420.4783456
+}
