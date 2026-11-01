@@ -51,7 +51,7 @@ public sealed partial class DirectoryWorkspaceTests(OwnedPostgresFixture fixture
         await postgres.DisposeAsync();
     }
     private Vessel SeedVessel => seed.Vessels.First(v => v.TenantId == seed.Tenants[0].Id);
-    private WebApplicationFactory<Program> Host(bool manage = true, bool read = true, bool edit = true, bool scope = true, DbCommandInterceptor? interceptor = null, bool search = false, bool regulatoryRead = false, bool regulatoryWrite = false, bool auditRead = false, bool crewRead = false, bool crewWrite = false, bool crewIdentity = false, bool technicalRead = false, bool technicalWrite = false, bool tugRead = false, bool tugWrite = false, bool tugOwner = false, bool tugMode = false, bool crossMode = true, bool importRead = false, bool importWrite = false, bool certificateRead = false, bool certificateWrite = false) => new WebApplicationFactory<Program>().WithWebHostBuilder(b =>
+    private WebApplicationFactory<Program> Host(bool manage = true, bool read = true, bool edit = true, bool scope = true, DbCommandInterceptor? interceptor = null, bool search = false, bool regulatoryRead = false, bool regulatoryWrite = false, bool auditRead = false, bool crewRead = false, bool crewWrite = false, bool crewIdentity = false, bool technicalRead = false, bool technicalWrite = false, bool tugRead = false, bool tugWrite = false, bool tugOwner = false, bool tugMode = false, bool crossMode = true, bool importRead = false, bool importWrite = false, bool certificateRead = false, bool certificateWrite = false, bool applicabilityRead = false, bool applicabilityEvaluate = false, bool ruleWrite = false, bool ruleReview = false) => new WebApplicationFactory<Program>().WithWebHostBuilder(b =>
     {
         b.UseEnvironment("Test");
         b.ConfigureAppConfiguration((_, c) => c.AddInMemoryCollection(new Dictionary<string, string?>
@@ -78,6 +78,10 @@ public sealed partial class DirectoryWorkspaceTests(OwnedPostgresFixture fixture
             ["CrewIdentityPolicy:Fields:1:ReadCapability"] = "crew.profile.identity.read",
             ["CrewIdentityPolicy:Fields:0:WriteCapability"] = "crew.profile.identity.write",
             ["CrewIdentityPolicy:Fields:1:WriteCapability"] = "crew.profile.identity.write",
+            ["Authentication:Oidc:Memberships:0:Permissions:40"] = applicabilityRead ? "applicability.read" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:41"] = applicabilityEvaluate ? "applicability.evaluate" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:42"] = ruleWrite ? "rules.write" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:43"] = ruleReview ? "rules.review" : "unused",
             ["Authentication:Oidc:Memberships:0:Permissions:35"] = crewIdentity ? "crew.profile.identity.read" : "unused",
             ["Authentication:Oidc:Memberships:0:Permissions:36"] = crewIdentity ? "crew.profile.identity.write" : "unused",
             ["Authentication:Oidc:Memberships:0:Permissions:37"] = crewIdentity ? "crew.identity.convert" : "unused",

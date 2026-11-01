@@ -153,3 +153,16 @@ Two additional insert-audit expectations change78/79→80/81, never observed cou
 Real PostgreSQL seed/preservation/tenant/kind/history tests are authored, not run.
 Migration130000/designer/snapshot and all generation/application wait for the larger
 gate. [Task/source and actual remaining gaps](tasks/tug-planning-01.md).
+
+
+## LIFECYCLE-APPLICABILITY-01 — AUTHORED_UNVERIFIED / NOT RUN
+
+Add-missing fixture adds one incomplete tenant-local DRAFT RuleDraft/RuleRevision
+per synthetic tenant. The seed actor remains system:seed-import through audited
+SaveChanges; the empty ActorId and SystemSyntheticFixture context in the authoring
+row explicitly mean no human appointment/signature. No DSL/legal catalog, observed
+input, review, authority, evaluation, receipt, credential or evidence is fabricated.
+Reseed preserves operator revisions. Two-tenant authored insert-audit expectations
+80/81 become84/85; these are not observed counts or passing evidence. Persistence/
+API/domain fixture tests and migration application/parity remain DEFERRED to the
+combined gate. [Task and limits](tasks/lifecycle-applicability-01.md).

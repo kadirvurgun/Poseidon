@@ -1,0 +1,396 @@
+{
+  "baseline": "poseidon-v46.3-20261030",
+  "status": "SOURCE_LOCATORS_NOT_ACCEPTANCE",
+  "entries": [
+    {
+      "chunk_id": "706c353e8ef259c3059b033483ed87f15c867b554b966f118b3d5df2fdda8ebc",
+      "source_id": "poseidon-v46.3-20261030:00_START_HERE/00.02_POSEIDON_v46.3_Controlled_Document_Register_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/00_START_HERE/00.02_POSEIDON_v46.3_Controlled_Document_Register_TR.xlsx",
+      "source_sha256": "67421342e5aad294979ad19df44143ab2b8cc6f257780f10ef75483ccbf7c5ec",
+      "source_class": "candidate-unverified",
+      "locator": "sheet:Controlled Register/row:16",
+      "text": "A16: 09.02 | B16: 03_REQUIREMENTS_REGULATORY | C16: 09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx | D16: v46.2 support | E16: CURRENT-CONTRACT | F16: P0 | G16: Backend, QA, Regulatory | H16: 09.01 ile birlikte | I16: Input/rule/golden test/simulator karar matrisi.",
+      "content_sha256": "cbfa5830d2adf5051db01cf360c9290d88499e501565b42d51b5459af0ad9252"
+    },
+    {
+      "chunk_id": "322c95cb37a716ed0763d7253a824072234c5640f87aee60abcf0f95e74a6696",
+      "source_id": "poseidon-v46.3-20261030:00_START_HERE/00.02_POSEIDON_v46.3_Controlled_Document_Register_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/00_START_HERE/00.02_POSEIDON_v46.3_Controlled_Document_Register_TR.xlsx",
+      "source_sha256": "67421342e5aad294979ad19df44143ab2b8cc6f257780f10ef75483ccbf7c5ec",
+      "source_class": "candidate-unverified",
+      "locator": "sheet:Controlled Register/row:17",
+      "text": "A17: 09.03 | B17: 03_REQUIREMENTS_REGULATORY | C17: 09.03_POSEIDON_Applicability_Rule_DSL.schema.json | D17: v46.2 support | E17: CURRENT-CONTRACT | F17: P1 | G17: Backend | H17: 09.01 sonrası | I17: Rule DSL JSON schema; 23.07 ile statik contract kontrolü. Engine runtime doğrulaması değildir.",
+      "content_sha256": "c6bbaac9cd3dde62fe7774e264a73c04681cdf0dff2de561ef69626ee4e8fbe5"
+    },
+    {
+      "chunk_id": "8fe5330419695bf51ae54f81aef8c93062fa20d7baf63e74a62c02a914323990",
+      "source_id": "poseidon-v46.3-20261030:03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+      "source_sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+      "source_class": "candidate-unverified",
+      "locator": "sheet:Golden Tests/row:2",
+      "text": "A2: GOLD-001 | B2: GP-TUG-HARBOUR | C2: Normal verified inputs | D2: RULE-ISM-7-TUG | E2: APPLICABLE | F2: Towage workflow screens activated | G2: P0",
+      "content_sha256": "d48f2bfef6bf796238f88a8487ffdbeb9daeb01e5af2006ade991235a3044918"
+    },
+    {
+      "chunk_id": "caa42eead895559d07d008beb27437db145c1dd11b0ed94e41ae9b8dd429b7f1",
+      "source_id": "poseidon-v46.3-20261030:03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+      "source_sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+      "source_class": "candidate-unverified",
+      "locator": "sheet:Golden Tests/row:3",
+      "text": "A3: GOLD-002 | B3: GP-TUG-HARBOUR | C3: M79 pack TRUE + contract 2022 + winch fitted | D3: RULE-IACS-M79 | E3: APPLICABLE | F3: ERS field/control/verification | G3: P0",
+      "content_sha256": "853504a18b5ee679560ea381af06f8d91fdae4cc2aca10a9a4d89b0da3fe26bf"
+    },
+    {
+      "chunk_id": "a595fe44db466b7f8376af9a416e609ac84a531764004a212c2b257e655d2d25",
+      "source_id": "poseidon-v46.3-20261030:03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+      "source_sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+      "source_class": "candidate-unverified",
+      "locator": "sheet:Golden Tests/row:4",
+      "text": "A4: GOLD-003 | B4: GP-TUG-HARBOUR | C4: Class pack unknown | D4: RULE-IACS-M79 | E4: REVIEW_REQUIRED | F4: No false READY; class review | G4: P0",
+      "content_sha256": "03b7a31f17a39b76f45b46c119cce0896e4d2c67cc58c5e3fbcc2b680a05b85c"
+    },
+    {
+      "chunk_id": "f75f5950042f7b8a149b8ffabc3b5844aebf1d494261f5dd9b6885f6ff98d77e",
+      "source_id": "poseidon-v46.3-20261030:03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+      "source_sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+      "source_class": "candidate-unverified",
+      "locator": "sheet:Golden Tests/row:5",
+      "text": "A5: GOLD-004 | B5: GP-TUG-HARBOUR | C5: MSMD unverified | D5: RULE-TR-TUG-MSMD | E5: APPLICABLE + readiness review | F5: minimum_manning_state blocks full READY | G5: P0",
+      "content_sha256": "828509ef1973935dba2a171024ffb7a2be213715764c1bdcffe34fe99285d3ee"
+    },
+    {
+      "chunk_id": "f87f26a6d5b6bda4a2420a9f4262817d597d563a39989e86d82a5f963f3d934d",
+      "source_id": "poseidon-v46.3-20261030:03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+      "source_sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+      "source_class": "candidate-unverified",
+      "locator": "sheet:Golden Tests/row:6",
+      "text": "A6: GOLD-005 | B6: GP-TUG-ESCORT | C6: Area=Istanbul Strait + Escort | D6: RULE-TR-TUG-ESCORT-EXTRA | E6: REVIEW_REQUIRED/APPLICABLE per validated source | F6: Extra Able Seaman requirement visible with source lifecycle | G6: P0",
+      "content_sha256": "9bc385e6ce7edc00de65aea09401911170f3059787dbcd75cc1672ad72ee8bc5"
+    },
+    {
+      "chunk_id": "e7d3e8f09fc299d311e8beaee1cb83d67f1eadbb69c55f3ea8d9adc5dcf992fd",
+      "source_id": "poseidon-v46.3-20261030:03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+      "source_sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+      "source_class": "candidate-unverified",
+      "locator": "sheet:Golden Tests/row:7",
+      "text": "A7: GOLD-006 | B7: GP-TUG-OCEAN | C7: operation profile solely long-distance ocean towage | D7: RULE-IACS-M79 | E7: NOT_APPLICABLE | F7: Ocean towage pack considered separately | G7: P0",
+      "content_sha256": "323447f475563158881a96d46b49afbd5016b1cb0316cb77d931d0a74b5c6796"
+    },
+    {
+      "chunk_id": "73b58c7c7d0c41d8bc86763421da9f3b41af4128d0ec12050335a468d8afda4f",
+      "source_id": "poseidon-v46.3-20261030:03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "source_sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "source_class": "candidate-unverified",
+      "locator": "sheet:1342 Alan/row:15",
+      "text": "A15: requirement-master | B15: Requirement Master | C15: Regulatory Control | D15: requirement_id | E15: Requirement ID | F15: input/text | G15: Controlled Reference | H15: Yes | I15: No | K15: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L15: Editable in Draft/Review; published/in-force records changed through new version/supersession. | M15: Published/approved source/version/reference | N15: Onaylı kaynak/sürüm bilgisi zorunludur. | O15: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P15: Persist critical change with actor, role, tenant, vessel/context, before/after, reason, correlation ID. | Q15: Read cache if available; authoritative configuration/publish actions require server connectivity. | R15: /api/v1/requirement-master | S15: RequirementMaster | T15: requirement_id | U15: FR-requirement-master-requirement_id | V15: TC-requirement-master-requirement_id",
+      "content_sha256": "f5cca2a87533bb5c79c4679097c56410ae96d25225b0fdda342a7948d1c251ab"
+    },
+    {
+      "chunk_id": "59261871522ab42e37be253f3983313775b497515302d9ac25a0e9bfc945338a",
+      "source_id": "poseidon-v46.3-20261030:03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "source_sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "source_class": "candidate-unverified",
+      "locator": "sheet:1342 Alan/row:17",
+      "text": "A17: requirement-master | B17: Requirement Master | C17: Regulatory Control | D17: version | E17: Version / Amendment | F17: input/text | G17: Controlled Reference | H17: Yes | I17: No | K17: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L17: Editable in Draft/Review; published/in-force records changed through new version/supersession. | M17: Published/approved source/version/reference | N17: Onaylı kaynak/sürüm bilgisi zorunludur. | O17: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P17: Persist critical change with actor, role, tenant, vessel/context, before/after, reason, correlation ID. | Q17: Read cache if available; authoritative configuration/publish actions require server connectivity. | R17: /api/v1/requirement-master | S17: RequirementMaster | T17: version | U17: FR-requirement-master-version | V17: TC-requirement-master-version",
+      "content_sha256": "17bfc5a1fd2cebc818a7141da3ce06f67a51d8ac398f5696bf9750806a0790d6"
+    },
+    {
+      "chunk_id": "99c99ec465d95a45fd64833213c3b4cb4e426bef6976a955ea31ad5cdbf60bf0",
+      "source_id": "poseidon-v46.3-20261030:03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "source_sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "source_class": "candidate-unverified",
+      "locator": "sheet:1342 Alan/row:18",
+      "text": "A18: requirement-master | B18: Requirement Master | C18: Regulatory Control | D18: legal_state | E18: Legal State | F18: select/select | G18: State | H18: System/Business rule | I18: System | J18: In Force; Adopted; Awaiting Certification; Future / Draft | K18: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L18: Editable only in legal predecessor state; locked/superseded after final decision unless explicit reopen flow. | M18: Allowed state machine transition only | N18: Geçersiz durum geçişi. | O18: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P18: Persist critical change with actor, role, tenant, vessel/context, before/after, reason, correlation ID. | Q18: Read cache if available; authoritative configuration/publish actions require server connectivity. | R18: /api/v1/requirement-master | S18: RequirementMaster | T18: legal_state | U18: FR-requirement-master-legal_state | V18: TC-requirement-master-legal_state",
+      "content_sha256": "3713e341e0ab9e5f26cb6ff83755ad1a9528a0dd34c09ed2f471d4d87231c898"
+    },
+    {
+      "chunk_id": "08788123fb3f45e3f342acc62b225892d1a00dbfdabbe8a99d1e07b4eb81456e",
+      "source_id": "poseidon-v46.3-20261030:03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "source_sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "source_class": "candidate-unverified",
+      "locator": "sheet:1342 Alan/row:19",
+      "text": "A19: requirement-master | B19: Requirement Master | C19: Regulatory Control | D19: effective_date | E19: Effective Date | F19: input/date | G19: Date/Time | H19: Business rule | I19: Yes | K19: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L19: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M19: Valid ISO/local datetime; chronology and expiry rules | N19: Geçerli tarih/saat giriniz; tarih sırasını kontrol ediniz. | O19: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P19: Persist critical change with actor, role, tenant, vessel/context, before/after, reason, correlation ID. | Q19: Read cache if available; authoritative configuration/publish actions require server connectivity. | R19: /api/v1/requirement-master | S19: RequirementMaster | T19: effective_date | U19: FR-requirement-master-effective_date | V19: TC-requirement-master-effective_date",
+      "content_sha256": "f3dbcde956907ba716174cf0c7a831ec6cdf148f5eaa639744d0c092eaf5bf4a"
+    },
+    {
+      "chunk_id": "82afcdd3ae2b968d83a1d41357d75ae68821f6e180133515ffca4c76252ad735",
+      "source_id": "poseidon-v46.3-20261030:03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "source_sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "source_class": "candidate-unverified",
+      "locator": "sheet:1342 Alan/row:20",
+      "text": "A20: requirement-master | B20: Requirement Master | C20: Regulatory Control | D20: applicability_rule | E20: Applicability Rule | F20: input/text | G20: Controlled Reference | H20: Yes | I20: No | K20: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L20: Editable in Draft/Review; published/in-force records changed through new version/supersession. | M20: Published/approved source/version/reference | N20: Onaylı kaynak/sürüm bilgisi zorunludur. | O20: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P20: Persist critical change with actor, role, tenant, vessel/context, before/after, reason, correlation ID. | Q20: Read cache if available; authoritative configuration/publish actions require server connectivity. | R20: /api/v1/requirement-master | S20: RequirementMaster | T20: applicability_rule | U20: FR-requirement-master-applicability_rule | V20: TC-requirement-master-applicability_rule",
+      "content_sha256": "645dbfb27e6d10efd6e0f992b02540bb65506a7ef7257818ecde7e6694091223"
+    },
+    {
+      "chunk_id": "0c3456c00d8a9b6e5fde3d99440de3b9685270a4b9d2984a7d76749278663dff",
+      "source_id": "poseidon-v46.3-20261030:03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "source_sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "source_class": "candidate-unverified",
+      "locator": "sheet:1342 Alan/row:21",
+      "text": "A21: requirement-master | B21: Requirement Master | C21: Regulatory Control | D21: responsible_role | E21: Responsible Role | F21: input/text | G21: Reference | H21: Yes/Business rule | I21: Context role/user | K21: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L21: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M21: Active authorized role/user in tenant/vessel scope | N21: Geçerli ve yetkili bir sorumlu seçiniz. | O21: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P21: Persist critical change with actor, role, tenant, vessel/context, before/after, reason, correlation ID. | Q21: Read cache if available; authoritative configuration/publish actions require server connectivity. | R21: /api/v1/requirement-master | S21: RequirementMaster | T21: responsible_role | U21: FR-requirement-master-responsible_role | V21: TC-requirement-master-responsible_role",
+      "content_sha256": "e38050f2c732e6eeb1b84966a1ee34357801f5eb0c9ba9f0fff153a0a9271993"
+    },
+    {
+      "chunk_id": "050a775cb7558fbe00e8b08f71da3442fa347bbf75c195400fb00a2844197e9a",
+      "source_id": "poseidon-v46.3-20261030:04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "source_sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "source_class": "candidate-unverified",
+      "locator": "paragraph:1354",
+      "text": "031  Requirement Master",
+      "content_sha256": "951b295b78104391d2e2813690434f8669646efb368c55e94a0bc7455f1dda79"
+    },
+    {
+      "chunk_id": "634127388023866551f212ecf8b0b5f47e01c0dd6eac22db7eed097351b05122",
+      "source_id": "poseidon-v46.3-20261030:04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "source_sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "source_class": "candidate-unverified",
+      "locator": "paragraph:1355",
+      "text": "Screen ID: requirement-master   |   Domain: Regulatory Control   |   10 alan / 1 aksiyon",
+      "content_sha256": "b51fc8fe6e083fe4b7f0ba095921d80980d6299b66d6c2df455ec7518793f567"
+    },
+    {
+      "chunk_id": "b199e20c10b8fe8c62f470a8356beeeb35095248b5712862fe0340dc64c4270d",
+      "source_id": "poseidon-v46.3-20261030:04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "source_sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "source_class": "candidate-unverified",
+      "locator": "paragraph:1357",
+      "text": "API projection: /api/v1/requirement-master   |   Status: READY FOR BA/DEV REVIEW",
+      "content_sha256": "25d1c04131a60fb34a7adf31444bdf88e37d9ee4a979477dcf8d405ddd72ff2c"
+    },
+    {
+      "chunk_id": "0e752b514f40ffa01b14b97e040f524e761e21d9e084e51d22b6e80de415c0f8",
+      "source_id": "poseidon-v46.3-20261030:04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "source_sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "source_class": "candidate-unverified",
+      "locator": "paragraph:1374",
+      "text": "035  Regulatory Source Governance",
+      "content_sha256": "5741e1e45651905ff64ddcbd11e711ed06944595092084e2b44cfbe0f736ef98"
+    },
+    {
+      "chunk_id": "a16952c53a54df8ce9bd757dbe077c60be4ecdd54959ee67c3e39a9dfe209af4",
+      "source_id": "poseidon-v46.3-20261030:04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "source_sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "source_class": "candidate-unverified",
+      "locator": "paragraph:1375",
+      "text": "Screen ID: regulatory-source-governance   |   Domain: Regulatory Control   |   0 alan / 1 aksiyon",
+      "content_sha256": "68900b24b9d02ccdd6761f57b202a66ac983f79817efde7eb1fa821f68c56a43"
+    },
+    {
+      "chunk_id": "4445f5f106374d594639dabb2e9f72d7326da76c37e38f2ba898f1ff4b395dcc",
+      "source_id": "poseidon-v46.3-20261030:04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "source_sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "source_class": "candidate-unverified",
+      "locator": "paragraph:1377",
+      "text": "API projection: /api/v1/regulatory-source-governance   |   Status: READY FOR BA/DEV REVIEW",
+      "content_sha256": "11ff16423b7ba75eeb1a7647faa825f46391a61f504e30103ecfc162db60cb1a"
+    },
+    {
+      "chunk_id": "bcc39acae3e6dbd6dc6aa4fed0f33c387260204635a1a517f4744ba4d2efb86a",
+      "source_id": "poseidon-v46.3-20261030:05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "source_sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "source_class": "candidate-unverified",
+      "locator": "paragraph:119",
+      "text": "RegulatorySource",
+      "content_sha256": "9dc6898bc419fafaaebb42f5d27fd30d821037158007826b8c74a4b306e5fa01"
+    },
+    {
+      "chunk_id": "6fde9aa151b92eac3c95487c552b462a72274e2a51dfa3fde7f1cb96a95403c3",
+      "source_id": "poseidon-v46.3-20261030:05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "source_sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "source_class": "candidate-unverified",
+      "locator": "paragraph:120",
+      "text": "source_id, authority, title, locator, version, lifecycle, effective_dates",
+      "content_sha256": "d1a2a6b4c92528952ed5d0382e471a752ec957f1ae60fd2c513df2a70b98e68f"
+    },
+    {
+      "chunk_id": "eab6339d3aa92940cd4486f51ef3453558c808464e639bd688d58328c89ca1c5",
+      "source_id": "poseidon-v46.3-20261030:05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "source_sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "source_class": "candidate-unverified",
+      "locator": "paragraph:121",
+      "text": "Authoritative source record.",
+      "content_sha256": "26ee32eff426dde94b78f92e85fde1fffb1fa4e19ad9920d353f7098ce16a7a7"
+    },
+    {
+      "chunk_id": "31c3d68b6ac4d53b7cc85b45aaf86caac587901897f0a03516f430e977d88572",
+      "source_id": "poseidon-v46.3-20261030:05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "source_sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "source_class": "candidate-unverified",
+      "locator": "paragraph:122",
+      "text": "RuleVersion",
+      "content_sha256": "884e551f93f55db436240e9cf579438bf5beb300fcdca592e3c0e283a4bbdb91"
+    },
+    {
+      "chunk_id": "ed5910faec7b4dba9639ea0df3e6ab0910ba1ef61aadad5a0bc083c7f403accd",
+      "source_id": "poseidon-v46.3-20261030:05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "source_sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "source_class": "candidate-unverified",
+      "locator": "paragraph:123",
+      "text": "rule_id, source_id, predicate, outcome, effective_dates, approval_state",
+      "content_sha256": "b0d617a63f1e9e9feaeabb26e0999aaa9603539be24e1150c51a10e012ea9377"
+    },
+    {
+      "chunk_id": "21e717858af33062cd4cd4e0697087639f1bbf765b703e510fc1822ea88d2fe2",
+      "source_id": "poseidon-v46.3-20261030:05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "source_sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "source_class": "candidate-unverified",
+      "locator": "paragraph:124",
+      "text": "Versioned, approved publication.",
+      "content_sha256": "8123b2c51d36fe4dc1626457e7f3b9296629be68c7fdc59cf949abee814415b1"
+    },
+    {
+      "chunk_id": "7f909d63827b6de2428d8d6623e73fa5c1ec9bd3293835aa842be2ba46ac9a45",
+      "source_id": "poseidon-v46.3-20261030:05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "source_sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "source_class": "candidate-unverified",
+      "locator": "sheet:Data Dictionary 2316/row:15",
+      "text": "A15: Uyum, Mevzuat ve Assurance | B15: Uygulanabilirlik ve Kontrol Motoru | C15: Gereksinim, applicability ve doğrulama | D15: Ortak | E15: requirement-master | F15: Requirement Master | G15: Regulatory Control | H15: requirement_id | I15: Requirement ID | J15: input/text | K15: Metin Girişi | L15: Controlled Reference | M15: Reference | N15: uuid or text FK — REVIEW | O15: TBD | P15: TBD | Q15: Yes | R15: No | S15: PLACEHOLDER — REVIEW_REQUIRED | U15: KAYNAK EKSİK / TÜRÜ DOĞRULANACAK | V15: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | W15: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X15: Published/approved source/version/reference | Y15: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z15: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA15: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB15: Read cache if available; authoritative configuration/publish actions require server connectivity. | AC15: /api/v1/requirement-master | AD15: RequirementMaster | AE15: requirement_id | AF15: UNCONFIRMED — physical schema review | AG15: FR-requirement-master-requirement_id | AH15: TC-requirement-master-requirement_id | AI15: P0 | AJ15: DEFAULT_PLACEHOLDER; LOOKUP_SOURCE_MISSING; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK15: UI/TRACE TAM — PROD REVIEW | AL15: SOURCE + DERIVED GAP ANALYSIS | AM15: ÖNERİ: Requirement Master bağlamında Requirement ID. İş anlamı/birim BA onayı bekler. | AN15: ÖNERİ: yetkili referans seçici; free-text değil | AO15: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ15: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AR15: SOURCE: required | AV15: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD15: Requirement ID: geçerli ve bu bağlamda yetkili bir referans seçiniz. | BE15: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH15: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ15: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK15: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN15: DEC-DATA-01…06 | BO15: REVIEW_REQUIRED | BR15: requirement-master::requirement_id | BT15: UNRESOLVED",
+      "content_sha256": "53b45aac35cc5430c432bded24f5927b550c3f203dd401764bd7b3ceba304afc"
+    },
+    {
+      "chunk_id": "26e2ad2dd9cad17b149e3609448147161ec9e1535cdef1d5548f86fa2fed9f62",
+      "source_id": "poseidon-v46.3-20261030:05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "source_sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "source_class": "candidate-unverified",
+      "locator": "sheet:Data Dictionary 2316/row:17",
+      "text": "A17: Uyum, Mevzuat ve Assurance | B17: Uygulanabilirlik ve Kontrol Motoru | C17: Gereksinim, applicability ve doğrulama | D17: Ortak | E17: requirement-master | F17: Requirement Master | G17: Regulatory Control | H17: version | I17: Version / Amendment | J17: input/text | K17: Metin Girişi | L17: Controlled Reference | M17: Reference | N17: uuid or text FK — REVIEW | O17: TBD | P17: TBD | Q17: Yes | R17: No | S17: PLACEHOLDER — REVIEW_REQUIRED | U17: KAYNAK EKSİK / TÜRÜ DOĞRULANACAK | V17: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | W17: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X17: Published/approved source/version/reference | Y17: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z17: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA17: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB17: Read cache if available; authoritative configuration/publish actions require server connectivity. | AC17: /api/v1/requirement-master | AD17: RequirementMaster | AE17: version | AF17: UNCONFIRMED — physical schema review | AG17: FR-requirement-master-version | AH17: TC-requirement-master-version | AI17: P0 | AJ17: DEFAULT_PLACEHOLDER; LOOKUP_SOURCE_MISSING; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK17: UI/TRACE TAM — PROD REVIEW | AL17: SOURCE + DERIVED GAP ANALYSIS | AM17: ÖNERİ: Requirement Master bağlamında Version / Amendment. İş anlamı/birim BA onayı bekler. | AN17: ÖNERİ: yetkili referans seçici; free-text değil | AO17: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ17: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AR17: SOURCE: required | AV17: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD17: Version / Amendment: geçerli ve bu bağlamda yetkili bir referans seçiniz. | BE17: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH17: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ17: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK17: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN17: DEC-DATA-01…06 | BO17: REVIEW_REQUIRED | BR17: requirement-master::version | BT17: UNRESOLVED",
+      "content_sha256": "bf7a4fb42f75ca3a2cd822f08ddba6ed24d218330f7fc018b9992a514fa1ce0c"
+    },
+    {
+      "chunk_id": "d5c80bb5221471abf81047e0b3005e3e992a2f63a1b8a13481c26e09d4fd906c",
+      "source_id": "poseidon-v46.3-20261030:05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "source_sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "source_class": "candidate-unverified",
+      "locator": "sheet:Data Dictionary 2316/row:18",
+      "text": "A18: Uyum, Mevzuat ve Assurance | B18: Uygulanabilirlik ve Kontrol Motoru | C18: Gereksinim, applicability ve doğrulama | D18: Ortak | E18: requirement-master | F18: Requirement Master | G18: Regulatory Control | H18: legal_state | I18: Legal State | J18: select/select | K18: Seçim Listesi | L18: State | M18: Controlled Code / Enum | N18: text / controlled-code FK — REVIEW | O18: TBD | P18: TBD | Q18: System/Business rule | R18: System | S18: Sistem tarafından türetilir | T18: In Force; Adopted; Awaiting Certification; Future / Draft | U18: Tanımlı | V18: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | W18: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X18: Allowed state machine transition only | Y18: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z18: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA18: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB18: Read cache if available; authoritative configuration/publish actions require server connectivity. | AC18: /api/v1/requirement-master | AD18: RequirementMaster | AE18: legal_state | AF18: UNCONFIRMED — physical schema review | AG18: FR-requirement-master-legal_state | AH18: TC-requirement-master-legal_state | AI18: P1 | AJ18: EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK18: UI/TRACE TAM — PROD REVIEW | AL18: SOURCE + DERIVED GAP ANALYSIS | AM18: ÖNERİ: Requirement Master bağlamında Legal State. İş anlamı/birim BA onayı bekler. | AN18: Seçim Listesi | AO18: SYSTEM_DERIVED | AQ18: DERIVATION_REQUIRES_SPECIFICATION | AU18: INLINE_SOURCE_OPTIONS | AV18: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD18: Legal State: tanımlı seçeneklerden birini seçiniz. | BE18: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH18: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ18: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK18: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN18: DEC-DATA-01…06 | BO18: REVIEW_REQUIRED",
+      "content_sha256": "279d5b72bbbeef49494606bc492ed7c56ea99d012733114ecdeaee197cde24b0"
+    },
+    {
+      "chunk_id": "a71e1c036b7cc100d8fa25bc7516d83726d618ef8633b3200b44764437d2ac05",
+      "source_id": "poseidon-v46.3-20261030:05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "source_sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "source_class": "candidate-unverified",
+      "locator": "sheet:Data Dictionary 2316/row:19",
+      "text": "A19: Uyum, Mevzuat ve Assurance | B19: Uygulanabilirlik ve Kontrol Motoru | C19: Gereksinim, applicability ve doğrulama | D19: Ortak | E19: requirement-master | F19: Requirement Master | G19: Regulatory Control | H19: effective_date | I19: Effective Date | J19: input/date | K19: Tarih | L19: Date/Time | M19: Date | N19: date | O19: TBD | P19: TBD | Q19: Business rule | R19: Yes | S19: Kaynakta explicit — production doğrulaması gerekir | U19: N/A | V19: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | W19: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X19: Valid ISO/local datetime; chronology and expiry rules | Y19: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z19: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA19: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB19: Read cache if available; authoritative configuration/publish actions require server connectivity. | AC19: /api/v1/requirement-master | AD19: RequirementMaster | AE19: effective_date | AF19: UNCONFIRMED — physical schema review | AG19: FR-requirement-master-effective_date | AH19: TC-requirement-master-effective_date | AI19: P1 | AJ19: EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK19: UI/TRACE TAM — PROD REVIEW | AL19: SOURCE + DERIVED GAP ANALYSIS | AM19: ÖNERİ: Requirement Master bağlamında Effective Date. İş anlamı/birim BA onayı bekler. | AN19: Tarih | AO19: NO_IMPLICIT_DEFAULT_SOURCE_CONFLICT | AQ19: DATE_TIME_DEFAULT_REQUIRES_LITERAL_OR_DERIVATION | AV19: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD19: Effective Date: geçerli tarih/saat giriniz; kronoloji ve geçerlilik koşullarını kontrol ediniz. | BE19: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH19: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ19: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK19: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN19: DEC-DATA-01…06 | BO19: REVIEW_REQUIRED",
+      "content_sha256": "70c294d31e59746c9f6ce08aba8424384988144fcf937a1aae18326cda78c177"
+    },
+    {
+      "chunk_id": "6de811d16bcb63958d271597186f46652c8c53220da00c42a1d1e6bd7c1718e1",
+      "source_id": "poseidon-v46.3-20261030:05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "source_sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "source_class": "candidate-unverified",
+      "locator": "sheet:Data Dictionary 2316/row:20",
+      "text": "A20: Uyum, Mevzuat ve Assurance | B20: Uygulanabilirlik ve Kontrol Motoru | C20: Gereksinim, applicability ve doğrulama | D20: Ortak | E20: requirement-master | F20: Requirement Master | G20: Regulatory Control | H20: applicability_rule | I20: Applicability Rule | J20: input/text | K20: Metin Girişi | L20: Controlled Reference | M20: Reference | N20: uuid or text FK — REVIEW | O20: TBD | P20: TBD | Q20: Yes | R20: No | S20: PLACEHOLDER — REVIEW_REQUIRED | U20: KAYNAK EKSİK / TÜRÜ DOĞRULANACAK | V20: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | W20: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X20: Published/approved source/version/reference | Y20: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z20: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA20: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB20: Read cache if available; authoritative configuration/publish actions require server connectivity. | AC20: /api/v1/requirement-master | AD20: RequirementMaster | AE20: applicability_rule | AF20: UNCONFIRMED — physical schema review | AG20: FR-requirement-master-applicability_rule | AH20: TC-requirement-master-applicability_rule | AI20: P0 | AJ20: DEFAULT_PLACEHOLDER; LOOKUP_SOURCE_MISSING; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK20: UI/TRACE TAM — PROD REVIEW | AL20: SOURCE + DERIVED GAP ANALYSIS | AM20: ÖNERİ: Requirement Master bağlamında Applicability Rule. İş anlamı/birim BA onayı bekler. | AN20: ÖNERİ: yetkili referans seçici; free-text değil | AO20: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ20: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AR20: SOURCE: required | AV20: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD20: Applicability Rule: geçerli ve bu bağlamda yetkili bir referans seçiniz. | BE20: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH20: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ20: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK20: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN20: DEC-DATA-01…06 | BO20: REVIEW_REQUIRED | BR20: requirement-master::applicability_rule | BT20: UNRESOLVED",
+      "content_sha256": "4072d7118a614c9a2da7d670bd8613565b1b0599f62180a11acec543863b241f"
+    },
+    {
+      "chunk_id": "dd698210d36d601a544f9b0d4155c7dbb09fb300a1db96d005d27b984f54ce9a",
+      "source_id": "poseidon-v46.3-20261030:05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "source_sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "source_class": "candidate-unverified",
+      "locator": "sheet:Data Dictionary 2316/row:21",
+      "text": "A21: Uyum, Mevzuat ve Assurance | B21: Uygulanabilirlik ve Kontrol Motoru | C21: Gereksinim, applicability ve doğrulama | D21: Ortak | E21: requirement-master | F21: Requirement Master | G21: Regulatory Control | H21: responsible_role | I21: Responsible Role | J21: input/text | K21: Metin Girişi | L21: Reference | M21: Reference | N21: uuid or text FK — REVIEW | O21: TBD | P21: TBD | Q21: Yes/Business rule | R21: Context role/user | S21: Bağlamdan türetilir | U21: KAYNAK EKSİK / TÜRÜ DOĞRULANACAK | V21: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | W21: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X21: Active authorized role/user in tenant/vessel scope | Y21: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z21: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA21: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB21: Read cache if available; authoritative configuration/publish actions require server connectivity. | AC21: /api/v1/requirement-master | AD21: RequirementMaster | AE21: responsible_role | AF21: UNCONFIRMED — physical schema review | AG21: FR-requirement-master-responsible_role | AH21: TC-requirement-master-responsible_role | AI21: P0 | AJ21: LOOKUP_SOURCE_MISSING; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK21: UI/TRACE TAM — PROD REVIEW | AL21: SOURCE + DERIVED GAP ANALYSIS | AM21: ÖNERİ: Requirement Master bağlamında Responsible Role. İş anlamı/birim BA onayı bekler. | AN21: ÖNERİ: yetkili referans seçici; free-text değil | AO21: CONTEXT_DERIVED | AQ21: DERIVATION_REQUIRES_SPECIFICATION | AV21: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD21: Responsible Role: geçerli ve bu bağlamda yetkili bir referans seçiniz. | BE21: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH21: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ21: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK21: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN21: DEC-DATA-01…06 | BO21: REVIEW_REQUIRED | BR21: requirement-master::responsible_role | BT21: RECOVERED_ENTITY_ONLY",
+      "content_sha256": "8cd4f628aee57428c0cf95035788ca27f479212585422fe4021b8d7b80d32cfd"
+    },
+    {
+      "chunk_id": "bd71c033651b0ac87b09ff8152e658826ccf219ebe530ea223e3e17d735831fe",
+      "source_id": "poseidon-v46.3-20261030:05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "source_sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "source_class": "candidate-unverified",
+      "locator": "paragraph:104",
+      "text": "POST /applicability/simulate",
+      "content_sha256": "1b1e54f89e946597c2f8c8bebf1b66a42574acc9fe12e09526c752d42b466388"
+    },
+    {
+      "chunk_id": "d47326927c115279e2682e66a65ff5d865f6b38219efe18440e82fb03c8d13d0",
+      "source_id": "poseidon-v46.3-20261030:05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "source_sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "source_class": "candidate-unverified",
+      "locator": "paragraph:105",
+      "text": "No state mutation.",
+      "content_sha256": "86116f1a2d3c0b5204f26f9c01d0544cb215799903661ce6aeb0315a251d4a5a"
+    },
+    {
+      "chunk_id": "f2945e02777bd5fa5c3a6eedfe441d572477c9d70d47f7758b59d751c005b07e",
+      "source_id": "poseidon-v46.3-20261030:05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "source_sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "source_class": "candidate-unverified",
+      "locator": "paragraph:106",
+      "text": "Authoritative evaluation",
+      "content_sha256": "171052c2f0e076d40aede654861fde015df161b26d333c440f8d2ccafa3e3328"
+    },
+    {
+      "chunk_id": "a72eb9eff493b6ff5ade4b642f5def3e81ed3604ef19ef86c4ee39a9b646ba64",
+      "source_id": "poseidon-v46.3-20261030:05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "source_sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "source_class": "candidate-unverified",
+      "locator": "paragraph:107",
+      "text": "POST /applicability/evaluate",
+      "content_sha256": "73f6805000503f1173ea368e0a01e14b55de469d5da627f4c21053c51181664e"
+    },
+    {
+      "chunk_id": "a75ddf87999743578d9d078b7f145a3ea0de8f6c772f6aba6be84d7d142ae51d",
+      "source_id": "poseidon-v46.3-20261030:05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "source_sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "source_class": "candidate-unverified",
+      "locator": "paragraph:108",
+      "text": "Persisted source/rule/input trace.",
+      "content_sha256": "14ac67791879d18a315eee3fc58a5e8337685a1a44c405104b8e0e59c04f2431"
+    },
+    {
+      "chunk_id": "fcbe4527af199a71ba54fa880708f53d3f7f9635e4c4500856080b81c873158b",
+      "source_id": "poseidon-v46.3-20261030:06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "source_class": "candidate-unverified",
+      "locator": "sheet:Backlog/row:27",
+      "text": "A27: DEV-026 | B27: Story | C27: E03 Regulatory Core | D27: Requirement | E27: Requirement/source/version entity | F27: Regulatory admin olarak requirement'ları source/version lifecycle ile yönetmek istiyorum. | G27: Draft/adopted/future/in-force/superseded ayrımı vardır; current source silent overwrite edilmez. | H27: requirement-master / /api/v1/requirements | I27: P0 | J27: S3 | K27: Backend | L27: DEV-005,DEV-008 | M27: T-S3-001 | N27: Not Started | O27: YES | P27: 8 | Q27: H",
+      "content_sha256": "32b72e7d67a793e450666af6eb4a0cfd35221ddd62fb8a92df0102bb73d13107"
+    },
+    {
+      "chunk_id": "6f7f3d7cd17ef452529dbf81426f2175ab04b517141a7dd8c6cbe4a981679960",
+      "source_id": "poseidon-v46.3-20261030:06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "source_class": "candidate-unverified",
+      "locator": "sheet:Backlog/row:28",
+      "text": "A28: DEV-027 | B28: Story | C28: E03 Regulatory Core | D28: Applicability | E28: Applicability evaluation engine v1 | F28: DPA olarak pilot gemiye hangi requirement'ın neden uygulandığını görmek istiyorum. | G28: Flag/type/GT/build/cargo/trading context predicate'leri versioned; result APPLICABLE/NOT_APPLICABLE/REVIEW_REQUIRED + reason döner. | H28: applicability / /api/v1/applicability/evaluate | I28: P0 | J28: S3 | K28: Backend | L28: DEV-020,DEV-026 | M28: T-S3-002 | N28: Not Started | O28: YES | P28: 13 | Q28: H",
+      "content_sha256": "e971997f438d52e6038ecf2a40e068194df347531a3553d7d695173e9a489cd5"
+    }
+  ]
+}

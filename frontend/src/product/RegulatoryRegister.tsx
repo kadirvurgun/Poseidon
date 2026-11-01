@@ -1,13 +1,28 @@
 import { useEffect, useRef, useState } from 'react'
 import { ApiError } from './api'
 import { loginHref } from './workspace-location'
+import { LifecycleApplicability } from './LifecycleApplicability'
+import { DraftConfirmation } from './DraftConfirmation'
 import * as service from './register-api'
 import type { Draft, FieldKey, RegisterKind, RegisterPage, Revision } from './register-api'
 
 const labels: Record<FieldKey, [string, string]> = { title: ['Title', 'Başlık'], authority: ['Declared authority', 'Beyan edilen otorite'], locator: ['Source reference (text only)', 'Kaynak referansı (yalnız metin)'], instrument: ['Instrument', 'Düzenleme'], amendment: ['Version / amendment declaration', 'Sürüm / değişiklik beyanı'], effectiveDate: ['Declared effective date', 'Beyan edilen yürürlük tarihi'], declaration: ['Declaration / provenance', 'Beyan / köken'], observedAt: ['Source observed at (with UTC offset)', 'Kaynak gözlem zamanı (UTC farkı ile)'] }
 type Props = { kind: RegisterKind; id: string | null; language: 'tr' | 'en'; csrf: string; canWrite: boolean; offline: boolean; onDirty: (v: boolean) => void; onSaving: (v: boolean) => void; onNavigate: (href: string) => void }
 export function RegulatoryRegister(props: Props) {
-  return <RegisterContext key={`${props.kind}/${props.id ?? 'list'}`} {...props} />
+  const [chain, setChain] = useState(false), [chainDirty, setChainDirty] = useState(false), [confirm, setConfirm] = useState(false)
+  const [chainSaving, setChainSaving] = useState(false)
+  const [registerDirty, setRegisterDirty] = useState(false), [registerSaving, setRegisterSaving] = useState(false), [enterConfirm, setEnterConfirm] = useState(false)
+  const enter = () => { props.onDirty(false); setRegisterDirty(false); setEnterConfirm(false); setChain(true) }
+  const close = () => { props.onDirty(false); setChainDirty(false); setChain(false); setConfirm(false) }
+  return chain ? <>
+    <button type="button" disabled={chainSaving} onClick={() => chainDirty ? setConfirm(true) : close()}>{props.language === 'en' ? 'Back to register' : 'Kayıtlara dön'}</button>
+    {confirm && <DraftConfirmation language={props.language} onStay={() => setConfirm(false)} onDiscard={close} />}
+    <LifecycleApplicability language={props.language} csrf={props.csrf} offline={props.offline} onDirty={v => { setChainDirty(v); props.onDirty(v) }} onSaving={v => { setChainSaving(v); props.onSaving(v) }} />
+  </> : <>
+    {!props.id && <button type="button" disabled={registerSaving} onClick={() => registerDirty ? setEnterConfirm(true) : enter()}>{props.language === 'en' ? 'Lifecycle and applicability' : 'Yaşam döngüsü ve uygulanabilirlik'}</button>}
+    {enterConfirm && <DraftConfirmation language={props.language} onStay={() => setEnterConfirm(false)} onDiscard={enter} />}
+    <RegisterContext key={`${props.kind}/${props.id ?? 'list'}`} {...props} onDirty={v => { setRegisterDirty(v); props.onDirty(v) }} onSaving={v => { setRegisterSaving(v); props.onSaving(v) }} />
+  </>
 }
 function RegisterContext({ kind, id, language, csrf, canWrite, offline, onDirty, onSaving, onNavigate }: Props) {
   const en = language === 'en'; const text = (a: string, b: string) => en ? a : b

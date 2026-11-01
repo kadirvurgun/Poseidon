@@ -12,6 +12,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
     internal static AuditMetadata From(EntityEntry entry)
     {
         Guid? vessel = entry.Entity switch {
+            ApplicabilityEvaluation e => e.VesselId, ApplicabilityReceipt r => r.VesselId,
             OfflineEnrollment o => o.VesselId, OfflineOutcome o => o.VesselId, OfflineLifecycle o => o.VesselId,
             Credential c => c.VesselId, CredentialRevision c => c.VesselId, ImportBatch b => b.VesselId, ImportPreview p => p.VesselId, ImportRowResult r => r.VesselId,
             TugDraftPlan p => p.VesselId, TugDraftPlanRevision p => p.VesselId, TugDraftPlanTug p => p.VesselId,
@@ -28,6 +29,8 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             _ => null
         };
         Guid? resource = entry.Entity switch {
+            RuleDraft d => d.Id, RuleRevision r => r.Id, ApplicabilityEvaluation e => e.Id,
+            EvaluationRule r => r.EvaluationId, ApplicabilityReceipt r => r.ResourceId,
             OfflineEnrollment o => o.AssignmentId, OfflineOutcome o => o.AssignmentId, OfflineLifecycle o => o.AssignmentId,
             Credential c => c.Id, CredentialRevision c => c.CredentialId, ImportBatch b => b.Id, ImportPreview p => p.BatchId, ImportRowResult r => r.PreviewId,
             TugDraftPlan p => p.JobId, TugDraftPlanRevision p => p.JobId, TugDraftPlanTug p => p.JobId,
@@ -57,7 +60,15 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             return new(vessel, resource, "OfflineOutcome", null, outcome.Revision, JsonSerializer.Serialize(new[] {
                 new { field = "Outcome", before = (string?)null, after = outcome.Result, evidence = "Allowlisted" } }));
         }
-        var kind = entry.Entity switch { RegisterDraft d => d.Kind, RegisterRevision r => r.Kind, _ => null };
+        if (entry.Entity is RuleRevision rule) {
+            if (rule.ReasonCode is not ("INITIAL_AUTHORING" or "AUTHORING_CORRECTION" or "REQUEST_REVIEW" or "SYNTHETIC_INCOMPLETE_DRAFT") ||
+                rule.Lifecycle != "DRAFT" || rule.ReviewStatus is not ("NOT_REQUESTED" or "BLOCKED_SOURCE_ADMISSION")) throw new InvalidOperationException("Invalid rule change metadata.");
+            return new(vessel, resource, "RuleRevision", null, rule.Revision, JsonSerializer.Serialize(new[] {
+                new { field = "ReasonCode", before = (string?)null, after = rule.ReasonCode, evidence = "Allowlisted" },
+                new { field = "ReviewStatus", before = (string?)null, after = rule.ReviewStatus, evidence = "Allowlisted" }
+            }));
+        }
+        var kind = entry.Entity switch { RuleDraft => "RuleDraft", ApplicabilityEvaluation => "ApplicabilityEvaluation", EvaluationRule => "EvaluationRule", RegisterDraft d => d.Kind, RegisterRevision r => r.Kind, _ => null };
         var revisionProperty = entry.Entity is Person ? "IdentityRevision" : "Revision";
         var revision = entry.Metadata.FindProperty(revisionProperty) == null ? null : entry.Property(revisionProperty);
         long? before = revision != null && entry.State != EntityState.Added ? (long?)revision.OriginalValue : null;

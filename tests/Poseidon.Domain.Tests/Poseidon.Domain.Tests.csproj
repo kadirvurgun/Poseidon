@@ -7,6 +7,7 @@
     <PackageReference Include="xunit.runner.visualstudio" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="../../contracts/golden/applicability.sample-rules.json" Link="Fixtures/applicability.sample-rules.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="../../contracts/golden/pilot-dataset.v1.json" Link="Fixtures/pilot-dataset.v1.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

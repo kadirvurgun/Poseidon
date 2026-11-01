@@ -3,6 +3,7 @@
 sources/** -text -whitespace
 analiz/** -text -whitespace
 docs/sources/** -whitespace
+contracts/golden/applicability.sample-rules.json -text -whitespace
 *.docx binary
 *.xlsx binary
 *.pptx binary

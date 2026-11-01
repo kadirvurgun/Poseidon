@@ -1,3 +1,18 @@
+# LIFECYCLE-APPLICABILITY-01 — authored, not accepted
+
+Immutable tenant rule authoring/review requests, bounded three-valued DSL/reasons,
+server context resolution, non-mutating simulation, scoped history/storage foundation
+and TR/EN UI are authored with domain/golden/PostgreSQL/API/component/Playwright test
+source. Authoritative evaluate remains configured-denied until admitted sources and
+the real control/evidence/human authority write chain exist. This remaining software
+is distinct from external legal/source qualification. All product checks/generation/
+scans/QA/CI are DEFERRED / NOT RUN; no foundation readiness or194/970 acceptance.
+Canonical8/970 and selected40 tasks/272SP remain unchanged. Prior work and actual
+8e069bc offline corrective receipt are preserved; no publication or extra agents.
+[Task and source/FR/TC mapping](tasks/lifecycle-applicability-01.md) ·
+[Phase handoff and source-only observations](phases/LIFECYCLE-APPLICABILITY-01.md).
+Next: CONTROL-EVIDENCE-01 then HUMAN-DECISION-TRACE-01 before the one combined gate.
+
 ## 2026-11-02 FOUNDATION readiness and offline privacy continuation — INCOMPLETE
 
 Preserved clean receiving0bf43be and all normal lab/native/scanner origins. Actual

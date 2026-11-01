@@ -1,0 +1,462 @@
+[
+  {
+    "ruleId": "RULE-ISM-7-TUG",
+    "version": 1,
+    "titleTr": "Römorkör gemi operasyonlarının planlanması",
+    "titleEn": "Planning of tug shipboard operations",
+    "source": {
+      "sourceId": "SRC-ISM",
+      "locator": "ISM Code §7",
+      "authorityLayer": "INTERNATIONAL",
+      "mandatory": true,
+      "url": "https://www.imo.org/en/ourwork/humanelement/pages/ismcode.aspx"
+    },
+    "lifecycle": {
+      "state": "IN_FORCE",
+      "effectiveFrom": "1998-07-01",
+      "effectiveTo": null,
+      "supersedes": null
+    },
+    "scope": {
+      "modes": [
+        "TUG"
+      ]
+    },
+    "when": {
+      "all": [
+        {
+          "field": "context.mode",
+          "operator": "EQ",
+          "value": "TUG"
+        },
+        {
+          "field": "regulatory.ismApplicable",
+          "operator": "IS_TRUE"
+        }
+      ]
+    },
+    "then": {
+      "result": "APPLICABLE",
+      "activate": [
+        {
+          "type": "SCREEN",
+          "id": "tug-job-detail"
+        },
+        {
+          "type": "SCREEN",
+          "id": "towage-plan"
+        },
+        {
+          "type": "SCREEN",
+          "id": "towage-risk-briefing"
+        },
+        {
+          "type": "SCREEN",
+          "id": "towage-execution"
+        },
+        {
+          "type": "CONTROL",
+          "id": "CTRL-TUG-OPS-PLAN"
+        },
+        {
+          "type": "EVIDENCE_POLICY",
+          "id": "EVID-TUG-PLAN-BRIEF-EXEC"
+        }
+      ],
+      "stateEffect": "TUG_OPERATION_CONTROL_REQUIRED",
+      "reasonCode": "ISM7_TUG_ACTIVE"
+    },
+    "unknownPolicy": "REVIEW_REQUIRED",
+    "priority": 500,
+    "requiresHumanReview": false,
+    "tags": [
+      "ISM",
+      "TUG",
+      "OPERATIONS"
+    ],
+    "exampleOnly": true,
+    "publicationStatus": "DRAFT",
+    "sourceVerificationStatus": "PENDING"
+  },
+  {
+    "ruleId": "RULE-TR-TUG-BP-5Y",
+    "version": 1,
+    "titleTr": "Römorkör bollard pull sertifikası yaş kontrolü",
+    "titleEn": "Tug bollard pull certificate age control",
+    "source": {
+      "sourceId": "SRC-TR-TUG-2025",
+      "locator": "Kılavuzluk ve Römorkörcülük Hizmetleri Hakkında Yönetmelik - applicable provider requirement",
+      "authorityLayer": "FLAG",
+      "mandatory": true,
+      "url": "https://denizcilik.uab.gov.tr/duyurular/planlanan-romorkorculuk-ihaleleri"
+    },
+    "lifecycle": {
+      "state": "IN_FORCE",
+      "effectiveFrom": "2025-02-11",
+      "effectiveTo": null,
+      "supersedes": null
+    },
+    "scope": {
+      "modes": [
+        "TUG"
+      ],
+      "flags": [
+        "TR"
+      ]
+    },
+    "when": {
+      "all": [
+        {
+          "field": "context.mode",
+          "operator": "EQ",
+          "value": "TUG"
+        },
+        {
+          "field": "vessel.flag",
+          "operator": "EQ",
+          "value": "TR"
+        },
+        {
+          "field": "operation.serviceContext",
+          "operator": "EQ",
+          "value": "AUTHORIZED_TUG_SERVICE"
+        }
+      ]
+    },
+    "then": {
+      "result": "APPLICABLE",
+      "activate": [
+        {
+          "type": "FIELD",
+          "id": "tug-equipment-readiness.bollard_pull_certificate"
+        },
+        {
+          "type": "CONTROL",
+          "id": "CTRL-TUG-BP-CERT"
+        },
+        {
+          "type": "TEST_CASE",
+          "id": "TC-tug-bp-certificate"
+        }
+      ],
+      "stateEffect": "BP_CERTIFICATE_VALIDITY_REQUIRED",
+      "reasonCode": "TR_TUG_BP_CERT_REQUIRED"
+    },
+    "unknownPolicy": "REVIEW_REQUIRED",
+    "priority": 700,
+    "requiresHumanReview": true,
+    "tags": [
+      "TR",
+      "TUG",
+      "BOLLARD_PULL"
+    ],
+    "exampleOnly": true,
+    "publicationStatus": "DRAFT",
+    "sourceVerificationStatus": "PENDING"
+  },
+  {
+    "ruleId": "RULE-IACS-M79-APPLICABILITY",
+    "version": 1,
+    "titleTr": "Towing winch emergency release uygulanabilirliği",
+    "titleEn": "Towing winch emergency release applicability",
+    "source": {
+      "sourceId": "SRC-IACS-M79",
+      "locator": "IACS UR M79 Rev.1",
+      "authorityLayer": "CLASS_RO",
+      "mandatory": true,
+      "url": "https://iacs.org.uk/resolutions/unified-requirements/ur-m/ur-m79-rev1-cln"
+    },
+    "lifecycle": {
+      "state": "IN_FORCE",
+      "effectiveFrom": "2021-07-01",
+      "effectiveTo": null,
+      "supersedes": null
+    },
+    "scope": {
+      "modes": [
+        "TUG"
+      ]
+    },
+    "when": {
+      "all": [
+        {
+          "field": "context.mode",
+          "operator": "EQ",
+          "value": "TUG"
+        },
+        {
+          "field": "equipment.towingWinchFitted",
+          "operator": "IS_TRUE"
+        },
+        {
+          "field": "class.rulePack.IACS_M79",
+          "operator": "IS_TRUE"
+        },
+        {
+          "field": "vessel.contractForConstructionDate",
+          "operator": "DATE_GTE",
+          "value": "2021-07-01"
+        },
+        {
+          "field": "operation.profile",
+          "operator": "NOT_IN",
+          "value": [
+            "SOLELY_LONG_DISTANCE_OCEAN_TOWAGE",
+            "ANCHOR_HANDLING"
+          ]
+        }
+      ]
+    },
+    "then": {
+      "result": "APPLICABLE",
+      "activate": [
+        {
+          "type": "FIELD",
+          "id": "tug-equipment-readiness.emergency_release_state"
+        },
+        {
+          "type": "FIELD",
+          "id": "tug-equipment-readiness.emergency_release_test"
+        },
+        {
+          "type": "CONTROL",
+          "id": "CTRL-TUG-ERS"
+        },
+        {
+          "type": "VERIFICATION_GATE",
+          "id": "VERIFY-TUG-ERS"
+        }
+      ],
+      "stateEffect": "ERS_REQUIRED",
+      "reasonCode": "IACS_M79_ACTIVE"
+    },
+    "unknownPolicy": "REVIEW_REQUIRED",
+    "priority": 650,
+    "requiresHumanReview": true,
+    "tags": [
+      "IACS",
+      "TUG",
+      "WINCH",
+      "ERS"
+    ],
+    "exampleOnly": true,
+    "publicationStatus": "DRAFT",
+    "sourceVerificationStatus": "PENDING"
+  },
+  {
+    "ruleId": "RULE-TUG-MIN-MANNING-MSMD",
+    "version": 1,
+    "titleTr": "Römorkör minimum manning belgesi doğrulaması",
+    "titleEn": "Tug minimum safe manning verification",
+    "source": {
+      "sourceId": "SRC-TR-MANNING",
+      "locator": "MSMD + current UAB manning rule set",
+      "authorityLayer": "FLAG",
+      "mandatory": true,
+      "url": "https://denizcilik.uab.gov.tr/uploads/pages/yonerge-talimat/gemilerin-gemiadamlari-ile-donatilmasina-iliskin-yonerge.pdf"
+    },
+    "lifecycle": {
+      "state": "IN_FORCE",
+      "effectiveFrom": "2019-01-01",
+      "effectiveTo": null,
+      "supersedes": null
+    },
+    "scope": {
+      "modes": [
+        "TUG"
+      ],
+      "flags": [
+        "TR"
+      ]
+    },
+    "when": {
+      "all": [
+        {
+          "field": "context.mode",
+          "operator": "EQ",
+          "value": "TUG"
+        },
+        {
+          "field": "vessel.flag",
+          "operator": "EQ",
+          "value": "TR"
+        }
+      ]
+    },
+    "then": {
+      "result": "APPLICABLE",
+      "activate": [
+        {
+          "type": "FIELD",
+          "id": "tug-crew-readiness.minimum_manning_state"
+        },
+        {
+          "type": "CONTROL",
+          "id": "CTRL-TUG-MSMD"
+        },
+        {
+          "type": "TEST_CASE",
+          "id": "TC-tug-crew-readiness-minimum_manning_state"
+        }
+      ],
+      "stateEffect": "VERIFIED_MSMD_REQUIRED",
+      "reasonCode": "TR_TUG_MSMD_REQUIRED"
+    },
+    "unknownPolicy": "REVIEW_REQUIRED",
+    "priority": 800,
+    "requiresHumanReview": true,
+    "tags": [
+      "TR",
+      "TUG",
+      "CREW",
+      "MANNING"
+    ],
+    "exampleOnly": true,
+    "publicationStatus": "DRAFT",
+    "sourceVerificationStatus": "PENDING"
+  },
+  {
+    "ruleId": "RULE-STCW-V-TANKER",
+    "version": 1,
+    "titleTr": "Tanker özel eğitim ve yeterlik gereksinimi",
+    "titleEn": "Tanker special training and qualification requirement",
+    "source": {
+      "sourceId": "SRC-STCW",
+      "locator": "STCW Chapter V",
+      "authorityLayer": "INTERNATIONAL",
+      "mandatory": true,
+      "url": "https://www.imo.org/en/ourwork/humanelement/pages/stcw-convention.aspx"
+    },
+    "lifecycle": {
+      "state": "IN_FORCE",
+      "effectiveFrom": "2012-01-01",
+      "effectiveTo": null,
+      "supersedes": null
+    },
+    "scope": {
+      "modes": [
+        "SHIP"
+      ],
+      "vesselTypes": [
+        "OIL_TANKER",
+        "CHEMICAL_TANKER",
+        "GAS_CARRIER"
+      ]
+    },
+    "when": {
+      "all": [
+        {
+          "field": "context.mode",
+          "operator": "EQ",
+          "value": "SHIP"
+        },
+        {
+          "field": "vessel.type",
+          "operator": "IN",
+          "value": [
+            "OIL_TANKER",
+            "CHEMICAL_TANKER",
+            "GAS_CARRIER"
+          ]
+        }
+      ]
+    },
+    "then": {
+      "result": "APPLICABLE",
+      "activate": [
+        {
+          "type": "CONTROL",
+          "id": "CTRL-CREW-SPECIAL-TANKER"
+        },
+        {
+          "type": "SCREEN",
+          "id": "training-position-matrix"
+        },
+        {
+          "type": "FIELD",
+          "id": "crew-certificates.special_training_state"
+        }
+      ],
+      "stateEffect": "SPECIAL_TRAINING_REQUIRED",
+      "reasonCode": "STCW_V_TANKER"
+    },
+    "unknownPolicy": "REVIEW_REQUIRED",
+    "priority": 600,
+    "requiresHumanReview": false,
+    "tags": [
+      "STCW",
+      "SHIP",
+      "TANKER"
+    ],
+    "exampleOnly": true,
+    "publicationStatus": "DRAFT",
+    "sourceVerificationStatus": "PENDING"
+  },
+  {
+    "ruleId": "RULE-IMDG-PACKAGED-DG",
+    "version": 1,
+    "titleTr": "Paketli tehlikeli yük IMDG kontrolü",
+    "titleEn": "Packaged dangerous goods IMDG control",
+    "source": {
+      "sourceId": "SRC-IMDG",
+      "locator": "IMDG Code 2024 / Amendment 42-24",
+      "authorityLayer": "INTERNATIONAL",
+      "mandatory": true,
+      "url": "https://www.imo.org/en/publications/pages/imdg%20code.aspx"
+    },
+    "lifecycle": {
+      "state": "IN_FORCE",
+      "effectiveFrom": "2026-01-01",
+      "effectiveTo": null,
+      "supersedes": null
+    },
+    "scope": {
+      "modes": [
+        "SHIP"
+      ]
+    },
+    "when": {
+      "all": [
+        {
+          "field": "context.mode",
+          "operator": "EQ",
+          "value": "SHIP"
+        },
+        {
+          "field": "cargo.packagedDangerousGoods",
+          "operator": "IS_TRUE"
+        }
+      ]
+    },
+    "then": {
+      "result": "APPLICABLE",
+      "activate": [
+        {
+          "type": "SCREEN",
+          "id": "imdg-control"
+        },
+        {
+          "type": "CONTROL",
+          "id": "CTRL-IMDG-DG"
+        },
+        {
+          "type": "EVIDENCE_POLICY",
+          "id": "EVID-IMDG-MANIFEST-DECLARATION"
+        }
+      ],
+      "stateEffect": "DG_CONTROL_REQUIRED",
+      "reasonCode": "IMDG_42_24_ACTIVE"
+    },
+    "unknownPolicy": "REVIEW_REQUIRED",
+    "priority": 700,
+    "requiresHumanReview": false,
+    "tags": [
+      "IMDG",
+      "SHIP",
+      "CARGO"
+    ],
+    "exampleOnly": true,
+    "publicationStatus": "DRAFT",
+    "sourceVerificationStatus": "PENDING"
+  }
+]
