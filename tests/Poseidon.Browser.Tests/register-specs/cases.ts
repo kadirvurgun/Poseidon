@@ -1,4 +1,5 @@
 import { personFileCases } from './person-file-cases.ts'
+import { searchCases } from './search-cases.ts'
 import { contextCases } from './context-cases.ts'
 import { importCases } from './import-cases.ts'
 import { tugCases } from './tug-cases.ts'
@@ -99,7 +100,11 @@ export async function restrictedRegister(page: Page) {
 }
 
 export const registerCases = [
+<<<<<<< HEAD
   ...personFileCases,
+=======
+  ...searchCases,
+>>>>>>> d5a3c71 (Author registered real-host search and guarded Tug navigation journeys (UNVERIFIED))
   ...contextCases,
   ...importCases,
   ...tugCases,
