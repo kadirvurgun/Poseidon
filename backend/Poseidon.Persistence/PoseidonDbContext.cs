@@ -100,6 +100,13 @@ public sealed class PoseidonDbContext(
             b.Property(x => x.EntityType).HasMaxLength(128);
             b.Property(x => x.EntityId).HasMaxLength(128);
             b.Property(x => x.CorrelationId).HasMaxLength(128);
+            b.Property(x => x.CapabilityContext).HasMaxLength(512);
+            b.Property(x => x.ChangeSummary).HasMaxLength(2048);
+            b.Property(x => x.ResourceKind).HasMaxLength(16);
+            b.Property(x => x.ReasonStatus).HasMaxLength(32);
+            b.Property(x => x.Source).HasMaxLength(32);
+            b.HasIndex(x => new { x.TenantId, x.ResourceId, x.CorrelationId });
+            b.HasIndex(x => new { x.TenantId, x.VesselId, x.OccurredAt, x.Id });
             b.HasIndex(x => new { x.TenantId, x.OccurredAt });
             b.HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         });
@@ -125,6 +132,19 @@ public sealed class PoseidonDbContext(
             foreach (var entry in generated) Entry(entry).State = EntityState.Detached;
             throw;
         }
+    }
+
+    private uint? CommittedVersion(CommandReceipt receipt)
+    {
+        var resource = ChangeTracker.Entries().FirstOrDefault(e => e.Entity switch {
+            Company c => receipt.Action.StartsWith("Company", StringComparison.Ordinal) && c.Id == receipt.ResourceId && c.TenantId == receipt.TenantId,
+            Vessel v => receipt.Action.StartsWith("Vessel", StringComparison.Ordinal) && v.Id == receipt.ResourceId && v.TenantId == receipt.TenantId,
+            RegulatoryDraft d => receipt.Action == "ProfileSave" && d.VesselId == receipt.ResourceId && d.TenantId == receipt.TenantId,
+            RegisterDraft d => receipt.Action == d.Kind + "DraftSave" && d.Id == receipt.ResourceId && d.TenantId == receipt.TenantId && d.Revision == receipt.RegisterRevision,
+            _ => false
+        });
+        return resource is { State: EntityState.Unchanged } && resource.Metadata.FindProperty("Version") != null &&
+            resource.Property("Version").CurrentValue is uint version && version > 0 ? version : null;
     }
 
     private List<AuditEvent> PrepareAudit()
@@ -154,13 +174,21 @@ public sealed class PoseidonDbContext(
             if (entry.State == EntityState.Modified && entry.Entity is ITenantEntity && entry.Property(nameof(ITenantEntity.TenantId)).IsModified)
                 throw new UnauthorizedAccessException("Tenant ownership cannot be changed.");
             var key = entry.Metadata.FindPrimaryKey()!.Properties;
+            var metadata = AuditMetadata.From(entry);
             events.Add(new AuditEvent
             {
                 Id = Guid.NewGuid(), TenantId = scope, ActorId = actor.Id, ActorType = actor.Type,
                 Action = entry.State.ToString(), EntityType = entry.Metadata.ClrType.Name,
                 EntityId = entry.Entity is CommandReceipt receipt ? receipt.ResourceId.ToString() :
                     string.Join('/', key.Select(p => entry.Property(p.Name).CurrentValue)),
-                CorrelationId = actor.CorrelationId, OccurredAt = DateTimeOffset.UtcNow
+                CorrelationId = actor.CorrelationId, OccurredAt = DateTimeOffset.UtcNow,
+                VesselId = metadata.VesselId, ResourceId = metadata.ResourceId,
+                BeforeVersion = entry.State == EntityState.Modified && entry.Metadata.FindProperty("Version") != null ? (uint?)entry.Property("Version").OriginalValue : null,
+                // Receipt save happens after PostgreSQL returned the business xmin, inside the same transaction.
+                AfterVersion = entry.Entity is CommandReceipt command ? CommittedVersion(command) : null,
+                CapabilityContext = actor.CapabilityContext, ChangeSummary = metadata.Summary,
+                BeforeRevision = metadata.BeforeRevision, AfterRevision = metadata.AfterRevision,
+                ResourceKind = metadata.Kind, ReasonStatus = "NotRequiredForCommand", Source = actor.Source
             });
         }
         AuditEvents.AddRange(events);

@@ -1,3 +1,4 @@
+import { auditCases } from './audit-cases.ts'
 import { expect, type Page } from '@playwright/test'
 
 export async function draftCitation(page: Page) {
@@ -91,6 +92,7 @@ export async function restrictedRegister(page: Page) {
 }
 
 export const registerCases = [
+  ...auditCases,
   { name: 'draft-citation', run: draftCitation, restricted: false },
   { name: 'response-loss-conflict', run: responseLossConflict, restricted: false },
   { name: 'restricted-membership', run: restrictedRegister, restricted: true },

@@ -19,29 +19,30 @@ using Microsoft.Extensions.Options;
 using Poseidon.Api;
 using Poseidon.Persistence;
 using Poseidon.Persistence.Seeding;
-using Testcontainers.PostgreSql;
 using Xunit;
 
 namespace Poseidon.Api.Tests;
 
 // DIR-WORKSPACE-01 / DEV-014/015/016/019; actual API, antiforgery and PostgreSQL, no production test login.
 [Trait("Category", "Integration")]
-public sealed partial class DirectoryWorkspaceTests : IAsyncLifetime
+[Collection("directory-postgres")]
+public sealed partial class DirectoryWorkspaceTests(OwnedPostgresFixture fixture) : IAsyncLifetime
 {
-    private readonly PostgreSqlContainer postgres = new PostgreSqlBuilder("postgres:18.6").Build();
+    private OwnedTestDatabase postgres = null!;
     private readonly Guid actorId = Guid.NewGuid();
     private SeedData seed = null!;
     private CancellationToken Ct => TestContext.Current.CancellationToken;
     public async ValueTask InitializeAsync()
     {
-        await postgres.StartAsync(Ct);
+        postgres = await fixture.CreateAsync(Ct);
         seed = SeedData.Load(Path.Combine(AppContext.BaseDirectory, "synthetic-demo.json"));
         await using var db = new PoseidonDbContext(SeedImporter.Options(postgres.GetConnectionString(), seed), Guid.Empty, ActorContext.SeedImport(), true);
-        await db.Database.MigrateAsync(Ct);
+        try { await db.Database.MigrateAsync(Ct); }
+        catch { await postgres.DisposeAsync(); throw; }
     }
     public async ValueTask DisposeAsync() => await postgres.DisposeAsync();
     private Vessel SeedVessel => seed.Vessels.First(v => v.TenantId == seed.Tenants[0].Id);
-    private WebApplicationFactory<Program> Host(bool manage = true, bool read = true, bool edit = true, bool scope = true, DbCommandInterceptor? interceptor = null, bool search = false, bool regulatoryRead = false, bool regulatoryWrite = false) => new WebApplicationFactory<Program>().WithWebHostBuilder(b =>
+    private WebApplicationFactory<Program> Host(bool manage = true, bool read = true, bool edit = true, bool scope = true, DbCommandInterceptor? interceptor = null, bool search = false, bool regulatoryRead = false, bool regulatoryWrite = false, bool auditRead = false) => new WebApplicationFactory<Program>().WithWebHostBuilder(b =>
     {
         b.UseEnvironment("Test");
         b.ConfigureAppConfiguration((_, c) => c.AddInMemoryCollection(new Dictionary<string, string?>
@@ -56,6 +57,7 @@ public sealed partial class DirectoryWorkspaceTests : IAsyncLifetime
             ["Authentication:Oidc:Memberships:0:Permissions:2"] = search ? "workspace.search" : "unused",
             ["Authentication:Oidc:Memberships:0:Permissions:3"] = regulatoryRead ? "regulatory.draft.read" : "unused",
             ["Authentication:Oidc:Memberships:0:Permissions:4"] = regulatoryWrite ? "regulatory.draft.write" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:5"] = auditRead ? "audit.read" : "unused",
             ["Authentication:Oidc:Memberships:0:TenantWideManage"] = (scope && manage).ToString(),
             ["Authentication:Oidc:Memberships:0:TenantWideRead"] = (scope && read).ToString(),
             ["Authentication:Oidc:Memberships:0:VesselGrants:0:VesselId"] = scope ? SeedVessel.Id.ToString() : Guid.Empty.ToString(),
@@ -74,7 +76,7 @@ public sealed partial class DirectoryWorkspaceTests : IAsyncLifetime
                 var actor = sp.GetRequiredService<ActorResolver>().Resolve(http.User) ?? throw new UnauthorizedAccessException();
                 return new PoseidonDbContext(new DbContextOptionsBuilder<PoseidonDbContext>()
                     .UseNpgsql(postgres.GetConnectionString()).AddInterceptors(interceptor).Options,
-                    actor.TenantId, new ActorContext(actor.Id.ToString(), "User", http.TraceIdentifier));
+                    actor.TenantId, new ActorContext(actor.Id.ToString(), "User", http.TraceIdentifier, actor.AuditCapabilities, "WebCommand"));
             });
         });
     });

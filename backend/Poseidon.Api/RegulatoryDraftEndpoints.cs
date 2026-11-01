@@ -43,23 +43,27 @@ public static class RegulatoryDraftEndpoints
     {
         var actor = Actor(http);
         var vessel = await actor.Scope(db.Vessels.AsNoTracking()).SingleOrDefaultAsync(x => x.Id == id, http.RequestAborted);
-        await audit.WriteAsync(http, "ProfileRead", vessel == null ? "NotFound" : "Success", resourceId: id);
-        if (vessel == null) return Results.NotFound();
-        return Results.Ok(Dto(actor, vessel, await db.RegulatoryDrafts.AsNoTracking().SingleOrDefaultAsync(x => x.VesselId == id, http.RequestAborted)));
+        if (vessel == null) { await audit.WriteAsync(http, "ProfileRead", "NotFound", resourceId: id); return Results.NotFound(); }
+        var projection = Dto(actor, vessel, await db.RegulatoryDrafts.AsNoTracking().SingleOrDefaultAsync(x => x.VesselId == id, http.RequestAborted));
+        await audit.WriteAsync(http, "ProfileRead", "Success", resourceId: id);
+        return Results.Ok(projection);
     }
 
     private static async Task<IResult> History(Guid id, HttpContext http, PoseidonDbContext db, SecurityAudit audit, int? offset, int? limit)
     {
         var actor = Actor(http);
         var allowed = await actor.Scope(db.Vessels.AsNoTracking()).AnyAsync(x => x.Id == id, http.RequestAborted);
-        await audit.WriteAsync(http, "ProfileHistory", allowed ? "Success" : "NotFound", resourceId: id);
-        if (!allowed) return Results.NotFound();
-        if (offset is < 0 or > 100000 || limit is < 1 or > 100) return Results.BadRequest();
+        if (!allowed) { await audit.WriteAsync(http, "ProfileHistory", "NotFound", resourceId: id); return Results.NotFound(); }
+        if (offset is < 0 or > 100000 || limit is < 1 or > 100) {
+            await audit.WriteAsync(http, "ProfileHistory", "Invalid", resourceId: id); return Results.BadRequest();
+        }
         var (skip, take) = (offset ?? 0, limit ?? 25);
         var rows = await db.RegulatoryDraftRevisions.AsNoTracking().Where(x => x.VesselId == id)
             .OrderByDescending(x => x.Revision).Skip(skip).Take(take + 1).ToArrayAsync(http.RequestAborted);
-        return Results.Ok(new PageDto<RegulatoryRevisionDto>(rows.Take(take).Select(x =>
-            new RegulatoryRevisionDto(x.Revision, x.SavedAt, x.Provenance, RegulatoryDraftStorage.Deserialize(x.ContentJson))).ToArray(), skip, take, rows.Length > take));
+        var projection = new PageDto<RegulatoryRevisionDto>(rows.Take(take).Select(x =>
+            new RegulatoryRevisionDto(x.Revision, x.SavedAt, x.Provenance, RegulatoryDraftStorage.Deserialize(x.ContentJson))).ToArray(), skip, take, rows.Length > take);
+        await audit.WriteAsync(http, "ProfileHistory", "Success", resourceId: id);
+        return Results.Ok(projection);
     }
 
     private static async Task<IResult> Save(Guid id, HttpContext http)

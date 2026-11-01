@@ -69,6 +69,20 @@ namespace Poseidon.Persistence.Migrations
 
                     b.HasIndex("TenantId", "OccurredAt");
 
+                    b.Property<long?>("BeforeVersion").HasColumnType("bigint");
+                    b.Property<long?>("AfterVersion").HasColumnType("bigint");
+                    b.Property<Guid?>("VesselId").HasColumnType("uuid");
+                    b.Property<Guid?>("ResourceId").HasColumnType("uuid");
+                    b.Property<string>("CapabilityContext").HasMaxLength(512).HasColumnType("character varying(512)");
+                    b.Property<string>("ChangeSummary").HasMaxLength(2048).HasColumnType("character varying(2048)");
+                    b.Property<long?>("BeforeRevision").HasColumnType("bigint");
+                    b.Property<long?>("AfterRevision").HasColumnType("bigint");
+                    b.Property<string>("ResourceKind").HasMaxLength(16).HasColumnType("character varying(16)");
+                    b.Property<string>("ReasonStatus").HasMaxLength(32).HasColumnType("character varying(32)");
+                    b.Property<string>("Source").HasMaxLength(32).HasColumnType("character varying(32)");
+                    b.HasIndex("TenantId", "ResourceId", "CorrelationId");
+                    b.HasIndex("TenantId", "VesselId", "OccurredAt", "Id");
+
                     b.ToTable("AuditEvents", "audit");
                 });
 

@@ -28,6 +28,8 @@ public sealed record Membership(string Issuer, string Subject, Guid ActorId, Gui
 public sealed record VesselGrant(Guid VesselId, bool CanEdit = false);
 public sealed record TrustedActor(Guid Id, Guid TenantId, string[] Permissions, bool TenantWideRead, bool TenantWideManage, VesselGrant[] VesselGrants)
 {
+    public bool CanReadAudit => Permissions.Contains("audit.read") && CanRead;
+    public string AuditCapabilities => string.Join(',', Permissions.Order(StringComparer.Ordinal));
     // Explicit tenant-local capability. Vessel-only grants and directory writes confer no catalog authority.
     public bool CanReadRegulatory => CanRead && (TenantWideRead || TenantWideManage) && Permissions.Contains("regulatory.draft.read");
     public bool CanWriteRegulatory => CanReadRegulatory && Permissions.Contains("regulatory.draft.write");
@@ -56,7 +58,7 @@ public sealed class ActorResolver(FederationSettings settings)
         var matches = settings.Memberships.Where(x => x.Issuer == issuers[0].Value && x.Subject == subjects[0].Value).ToArray();
         if (matches.Length != 1 || matches[0].ActorId == Guid.Empty || matches[0].TenantId == Guid.Empty) return null;
         var m = matches[0];
-        return new(m.ActorId, m.TenantId, (m.Permissions ?? []).Where(x => x is "directory.read" or "directory.write" or "workspace.search" or "regulatory.draft.read" or "regulatory.draft.write").Distinct().ToArray(),
+        return new(m.ActorId, m.TenantId, (m.Permissions ?? []).Where(x => x is "directory.read" or "directory.write" or "workspace.search" or "regulatory.draft.read" or "regulatory.draft.write" or "audit.read").Distinct().ToArray(),
             m.TenantWideRead, m.TenantWideManage, (m.VesselGrants ?? []).Where(g => g.VesselId != Guid.Empty).ToArray());
     }
 }
@@ -181,7 +183,9 @@ public static class FoundationIdentity
                 }
             };
         });
-        services.AddAuthorizationBuilder().AddPolicy("RegulatoryDraftRead", policy => policy.RequireAuthenticatedUser()
+        services.AddAuthorizationBuilder().AddPolicy("AuditRead", policy => policy.RequireAuthenticatedUser()
+            .RequireAssertion(c => c.Resource is HttpContext http && http.RequestServices.GetRequiredService<ActorResolver>()
+                .Resolve(c.User)?.CanReadAudit == true)).AddPolicy("RegulatoryDraftRead", policy => policy.RequireAuthenticatedUser()
             .RequireAssertion(c => c.Resource is HttpContext http && http.RequestServices.GetRequiredService<ActorResolver>()
                 .Resolve(c.User)?.CanReadRegulatory == true))
             .AddPolicy("DirectoryRead", policy => policy.RequireAuthenticatedUser()

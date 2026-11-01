@@ -60,11 +60,23 @@ public sealed class AuditEvent : ITenantEntity
     public required string EntityId { get; set; }
     public required string CorrelationId { get; set; }
     public DateTimeOffset OccurredAt { get; set; }
+    // Nullable means unavailable historical metadata, never guessed during migration.
+    public Guid? VesselId { get; set; }
+    public Guid? ResourceId { get; set; }
+    public string? CapabilityContext { get; set; }
+    public string? ChangeSummary { get; set; }
+    public uint? BeforeVersion { get; set; }
+    public uint? AfterVersion { get; set; }
+    public long? BeforeRevision { get; set; }
+    public long? AfterRevision { get; set; }
+    public string? ResourceKind { get; set; }
+    public string? ReasonStatus { get; set; }
+    public string? Source { get; set; }
 }
 
-public sealed record ActorContext(string Id, string Type, string CorrelationId)
+public sealed record ActorContext(string Id, string Type, string CorrelationId, string? CapabilityContext = null, string? Source = null)
 {
-    public static ActorContext SeedImport() => new("system:seed-import", "System", Guid.NewGuid().ToString());
+    public static ActorContext SeedImport() => new("system:seed-import", "System", Guid.NewGuid().ToString(), Source: "SeedImport");
 }
 
 // Retry metadata only; register receipts pin the committed immutable revision and xmin.

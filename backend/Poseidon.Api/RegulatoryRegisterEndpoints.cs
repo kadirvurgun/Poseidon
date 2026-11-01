@@ -75,25 +75,28 @@ public static class RegulatoryRegisterEndpoints
             where d.Kind == kind && (text == "" || d.ContentJson.Contains(text) || d.Id.ToString().Contains(text))
             orderby d.SavedAt descending, d.Id
             select new { Draft = d, Revision = r }).Skip(skip).Take(take + 1).ToArrayAsync(h.RequestAborted);
+        var projection = new PageDto<RegisterDto>(rows.Take(take).Select(x => Dto(actor, x.Draft, x.Revision)).ToArray(), skip, take, rows.Length > take);
         await audit.WriteAsync(h, "RegisterList", "Success");
-        return Results.Ok(new PageDto<RegisterDto>(rows.Take(take).Select(x => Dto(actor, x.Draft, x.Revision)).ToArray(), skip, take, rows.Length > take));
+        return Results.Ok(projection);
     }
     private static async Task<IResult> Read(string kind, Guid id, HttpContext h, PoseidonDbContext db, SecurityAudit audit)
     {
         var d = await db.RegisterDrafts.AsNoTracking().SingleOrDefaultAsync(x => x.Kind == kind && x.Id == id, h.RequestAborted);
-        await audit.WriteAsync(h, "RegisterRead", d == null ? "NotFound" : "Success", resourceId: id);
-        if (d == null) return Results.NotFound();
+        if (d == null) { await audit.WriteAsync(h, "RegisterRead", "NotFound", resourceId: id); return Results.NotFound(); }
         var r = await db.RegisterRevisions.AsNoTracking().SingleAsync(x => x.Kind == kind && x.Id == id && x.Revision == d.Revision, h.RequestAborted);
-        return Results.Ok(Dto(Actor(h), d, r));
+        var projection = Dto(Actor(h), d, r);
+        await audit.WriteAsync(h, "RegisterRead", "Success", resourceId: id);
+        return Results.Ok(projection);
     }
     private static async Task<IResult> History(string kind, Guid id, HttpContext h, PoseidonDbContext db, SecurityAudit audit)
     {
         if (!Query(h, true, out _, out var skip, out var take)) { await audit.WriteAsync(h, "RegisterHistory", "Invalid", resourceId: id); return Results.BadRequest(); }
         var exists = await db.RegisterDrafts.AnyAsync(x => x.Id == id && x.Kind == kind, h.RequestAborted);
-        await audit.WriteAsync(h, "RegisterHistory", exists ? "Success" : "NotFound", resourceId: id);
-        if (!exists) return Results.NotFound();
+        if (!exists) { await audit.WriteAsync(h, "RegisterHistory", "NotFound", resourceId: id); return Results.NotFound(); }
         var rows = await db.RegisterRevisions.AsNoTracking().Where(x => x.Id == id && x.Kind == kind).OrderByDescending(x => x.Revision).Skip(skip).Take(take + 1).ToArrayAsync(h.RequestAborted);
-        return Results.Ok(new PageDto<RegisterRevisionDto>(rows.Take(take).Select(Revision).ToArray(), skip, take, rows.Length > take));
+        var projection = new PageDto<RegisterRevisionDto>(rows.Take(take).Select(Revision).ToArray(), skip, take, rows.Length > take);
+        await audit.WriteAsync(h, "RegisterHistory", "Success", resourceId: id);
+        return Results.Ok(projection);
     }
     private static async Task<IResult> Save(string kind, Guid? id, HttpContext h)
     {

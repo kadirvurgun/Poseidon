@@ -21,7 +21,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             var connection = configuration.GetConnectionString("Poseidon") ?? configuration["POSEIDON_DATABASE"];
             if (string.IsNullOrWhiteSpace(connection)) throw new AuditUnavailableException();
             return new PoseidonDbContext(new DbContextOptionsBuilder<PoseidonDbContext>().UseNpgsql(connection).Options,
-                actor.TenantId, new ActorContext(actor.Id.ToString(), "User", http.TraceIdentifier));
+                actor.TenantId, new ActorContext(actor.Id.ToString(), "User", http.TraceIdentifier, actor.AuditCapabilities, "WebCommand"));
         });
         services.AddProblemDetails();
         services.AddOpenApi(options => options.AddDocumentTransformer((document, _, _) =>
@@ -71,6 +71,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapRegulatoryDrafts();
             endpoints.MapRegulatoryRegister();
             endpoints.MapToday();
+            endpoints.MapAuditHistory();
             endpoints.MapGet("/health/live", () => Results.Text("alive"))
                 .WithName("GetLiveness")
                 .WithSummary("Process liveness only; does not indicate database or operational readiness.");

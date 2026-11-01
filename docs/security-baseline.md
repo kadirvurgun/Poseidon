@@ -55,3 +55,7 @@ Resmi kaynaklar:
 ## DEV-OIDC-LAB-01 sınırı
 
 Yerel Docker Keycloak fixture üretim IdP kararı değildir. Yalnız Development ve açık localhost authority için özel CA chain trust uygulanır; hostname/expiry/EKU doğrulaması, HTTPS metadata ve imza/issuer/audience/nonce/state/correlation/CSRF korunur. Sistem root store değişmez. Güvenli yerel bootstrap ve sensitive artifact yasağı [görev sözleşmesinde](tasks/dev-oidc-lab-01.md). Bu fixture tüm HTTP audit kapsamı, MFA, GDPR/KVKK veya production kabulü iddiası oluşturmaz.
+
+## AUDIT-TRACE-01 authored extension — execution DEFERRED
+
+Explicit server-provisioned audit.read plus actual tenant/vessel scope gates the new action history. Catalog history additionally requires regulatory.draft.read and tenant-wide scope. Scope precedes counts/paging/detail and exact immutable revision resolution. SecurityEvents remain separately restricted with no viewer; no audit permission implies log/export access. Safe new summaries withhold text/body values and retain allowlisted measurements/type/FK/revision references, trusted capability context, original xmin and the committed xmin observed at receipt save. Historical missing scope/role/reason/value/version data stays unavailable. Ordinary current preparation commands do not fabricate a safety-decision reason or approved role. No raw request/entity snapshot is added. This is not full HTTP audit, privacy/retention or GDPR/KVKK acceptance. [Coverage, exclusions and deferred tests](tasks/audit-trace-01.md).

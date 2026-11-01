@@ -9,8 +9,10 @@ public sealed class SecurityAudit(IConfiguration configuration, ActorResolver ac
     public async Task WriteAsync(HttpContext http, string action, string result, ClaimsPrincipal? principal = null, Guid? resourceId = null)
     {
         var connection = configuration.GetConnectionString("Poseidon") ?? configuration["POSEIDON_DATABASE"];
-        if (string.IsNullOrWhiteSpace(connection)) throw new AuditUnavailableException();
+        if (string.IsNullOrWhiteSpace(connection)) { AuditTelemetry.Record(false, TimeSpan.Zero); throw new AuditUnavailableException(); }
         var actor = actors.Resolve(principal ?? http.User);
+        var started = System.Diagnostics.Stopwatch.GetTimestamp();
+        var persisted = false;
         try
         {
             using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(5));
@@ -21,8 +23,10 @@ public sealed class SecurityAudit(IConfiguration configuration, ActorResolver ac
                 ResourceId = resourceId,
                 Action = action, Result = result, CorrelationId = http.TraceIdentifier, OccurredAt = DateTimeOffset.UtcNow
             }, deadline.Token);
+            persisted = true;
         }
         catch (Exception) { throw new AuditUnavailableException(); }
+        finally { AuditTelemetry.Record(persisted, System.Diagnostics.Stopwatch.GetElapsedTime(started)); }
     }
 
     public async Task TryWriteAsync(HttpContext http, string action, string result)

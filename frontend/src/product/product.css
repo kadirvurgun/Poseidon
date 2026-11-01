@@ -76,3 +76,9 @@
   .product-shell main { width: 100%; }
   .product-pagination { flex-wrap: wrap; }
 }
+
+.audit-filters { display: flex; flex-wrap: wrap; align-items: end; gap: .75rem; margin-block: 1rem; }
+.audit-filters label { display: grid; gap: .25rem; flex: 1 1 12rem; }
+.audit-filters input, .audit-filters select { max-width: 100%; min-width: 0; }
+.product-detail dd { overflow-wrap: anywhere; }
+@media (max-width: 600px) { .audit-filters { display: grid; grid-template-columns: minmax(0, 1fr); } }
