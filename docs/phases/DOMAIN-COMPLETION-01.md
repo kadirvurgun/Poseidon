@@ -1,3 +1,5 @@
+> Current continuation: [CREW-LEGACY-CLOSURE-01](CREW-LEGACY-CLOSURE-01.md) records the concrete historical batch conversion authoring and literal source lookup decision. Historical plaintext storage conversion is no longer an unimplemented software gap at source level; interpretation of unsupported history remains explicitly Unavailable. Generic consumer field editability does not create a production catalog admin/history requirement. All execution/QA/acceptance remains DEFERRED; earlier checkpoint evidence and source hashes below are preserved, not reclassified as passing.
+
 # DOMAIN-COMPLETION-01 — checkpoints A–D
 
 Status: **AUTHORED_UNVERIFIED / INCOMPLETE / NOT ACCEPTED**. No canonical SP acceptance, publishing, merge, operational decision, GDPR/KVKK approval or production migration activation. Execution of every suite/build/typecheck/contract generator/migration/browser/provider setup remains **DEFERRED** by the user. Source whitespace inspection is not product verification.

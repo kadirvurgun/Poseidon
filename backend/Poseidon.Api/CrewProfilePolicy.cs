@@ -59,6 +59,19 @@ public sealed class CrewProfileProtection(CrewProfilePolicy policy)
     public string EncryptImport(Guid tenant, Guid batch, string table) => "protected-v1:" + Seal(tenant, batch, "import/table", table);
     public string DecryptImport(Guid tenant, Guid batch, string table) => !table.StartsWith("protected-v1:", StringComparison.Ordinal)
         ? throw new CryptographicException("protected_storage_unavailable") : Open(tenant, batch, "import/table", table[13..], 64 * 1024 * 1024)!;
+    private static string HistoricalBinding(Poseidon.Persistence.ImportBatch b) =>
+        "import/historical/" + System.Text.Json.JsonSerializer.Serialize(new {
+            b.VesselId, b.LegacyProtectionPolicyVersion, b.LegacyProtectionIdentityVersion, b.LegacyProtectionPurpose
+        });
+    public string SealHistoricalImport(Poseidon.Persistence.ImportBatch b, HistoricalCrewImportSource source) =>
+        LegacyCrewImport.Prefix + Seal(b.TenantId, b.Id, HistoricalBinding(b), System.Text.Json.JsonSerializer.Serialize(source));
+    public HistoricalCrewImportSource OpenHistoricalImport(Poseidon.Persistence.ImportBatch b) {
+        if (!b.TableJson.StartsWith(LegacyCrewImport.Prefix, StringComparison.Ordinal)) throw new CryptographicException("protected_storage_unavailable");
+        try {
+            return System.Text.Json.JsonSerializer.Deserialize<HistoricalCrewImportSource>(Open(b.TenantId, b.Id, HistoricalBinding(b),
+                b.TableJson[LegacyCrewImport.Prefix.Length..], 64 * 1024 * 1024)!) ?? throw new CryptographicException("protected_storage_unavailable");
+        } catch (System.Text.Json.JsonException) { throw new CryptographicException("protected_storage_unavailable"); }
+    }
     private string? Seal(Guid tenant, Guid person, string field, string? value) {
         if (value == null) return null;
         var key = Key(policy.ActiveKeyId); var plain = Encoding.UTF8.GetBytes(value);

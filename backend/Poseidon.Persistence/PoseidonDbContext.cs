@@ -205,6 +205,7 @@ public sealed class PoseidonDbContext(
     private uint? CommittedVersion(CommandReceipt receipt)
     {
         var resource = ChangeTracker.Entries().FirstOrDefault(e => e.Entity switch {
+            ImportBatch b => receipt.Action == "CrewImportLegacyConvert" && b.Id == receipt.ResourceId && b.TenantId == receipt.TenantId,
             TugJob j => receipt.Action == "TugSave" && j.Id == receipt.ResourceId && j.TenantId == receipt.TenantId,
             Asset a => receipt.Action == "EquipmentSave" && a.Id == receipt.ResourceId && a.TenantId == receipt.TenantId,
             MaintenancePlan p => receipt.Action == "MaintenanceSave" && p.Id == receipt.ResourceId && p.TenantId == receipt.TenantId,
@@ -246,6 +247,8 @@ public sealed class PoseidonDbContext(
             throw new InvalidOperationException("Technical ownership is immutable.");
         if (changes.Any(e => e.Entity is CrewIdentityRevision && e.State != EntityState.Added))
             throw new InvalidOperationException("Crew identity lineage is immutable.");
+        if (changes.Any(e => e.Entity is CrewPosition && e.State != EntityState.Added))
+            throw new InvalidOperationException("Crew position references are immutable; use a distinct configured reference.");
         if (changes.Any(e => e.Entity is CrewPersonalProfileRevision && e.State != EntityState.Added))
             throw new InvalidOperationException("Crew profile lineage is immutable.");
         if (changes.Any(e => e.Entity is CrewPersonalProfile && (e.State == EntityState.Deleted || e.State == EntityState.Modified && e.Property("PersonId").IsModified)))
@@ -277,8 +280,8 @@ public sealed class PoseidonDbContext(
         if (changes.Any(e => e.Entity is Credential && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
             new[] { "VesselId", "AssignmentId", "PersonId" }.Any(n => e.Property(n).IsModified))))
             throw new InvalidOperationException("Credential ownership is immutable.");
-        if (changes.Any(e => e.Entity is ImportBatch && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
-            new[] { "VesselId", "ActorId", "SessionHash", "AssignmentId", "Category", "TemplateVersion", "TemplateFingerprint", "CrewIdentityPolicyVersion", "SourceHash", "TableJson", "SourceName", "SourceLocator" }.Any(n => e.Property(n).IsModified))))
+        if (changes.Any(e => e.Entity is ImportBatch && (e.State == EntityState.Deleted || e.State == EntityState.Modified && !LegacyImportStorage.IsConversion(e) &&
+            (LegacyImportStorage.Protected(e) || new[] { "VesselId", "ActorId", "SessionHash", "AssignmentId", "Category", "TemplateVersion", "TemplateFingerprint", "CrewIdentityPolicyVersion", "SourceHash", "TableJson", "SourceName", "SourceLocator", "LegacyProtectedAt", "LegacyProtectionPolicyVersion", "LegacyProtectionIdentityVersion", "LegacyProtectionPurpose" }.Any(n => e.Property(n).IsModified)))))
             throw new InvalidOperationException("Import source and ownership are immutable.");
         var events = new List<AuditEvent>();
         foreach (var entry in changes)

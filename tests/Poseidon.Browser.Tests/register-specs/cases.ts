@@ -1,4 +1,5 @@
 import { crewIdentityCases } from './crew-identity-cases.ts'
+import { crewLegacyCases } from './crew-legacy-cases.ts'
 import { personFileCases } from './person-file-cases.ts'
 import { searchCases } from './search-cases.ts'
 import { contextCases } from './context-cases.ts'
@@ -102,6 +103,7 @@ export async function restrictedRegister(page: Page) {
 
 export const registerCases = [
   ...crewIdentityCases,
+  ...crewLegacyCases,
   ...personFileCases,
   ...searchCases,
   ...contextCases,

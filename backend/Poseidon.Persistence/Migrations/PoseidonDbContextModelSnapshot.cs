@@ -1021,6 +1021,10 @@ namespace Poseidon.Persistence.Migrations
             modelBuilder.Entity("Poseidon.Persistence.CredentialRevision", b => b.HasOne("Poseidon.Persistence.Credential", null).WithMany().HasForeignKey("TenantId", "CredentialId", "VesselId").HasPrincipalKey("TenantId", "Id", "VesselId").HasConstraintName("FK_CredentialRevisions_Credentials_Scope").OnDelete(DeleteBehavior.Restrict).IsRequired());
             modelBuilder.Entity("Poseidon.Persistence.CredentialRevision", b => b.HasIndex("TenantId", "CredentialId", "VesselId"));
             modelBuilder.Entity("Poseidon.Persistence.ImportBatch", b => {
+                b.Property<string>("LegacyProtectionPolicyVersion").HasColumnType("text");
+                b.Property<string>("LegacyProtectionIdentityVersion").HasColumnType("text");
+                b.Property<string>("LegacyProtectionPurpose").HasColumnType("text");
+                b.Property<DateTimeOffset?>("LegacyProtectedAt").HasColumnType("timestamp with time zone");
                 b.Property<string>("CrewIdentityPolicyVersion").HasColumnType("text");
                 b.Property<Guid>("TenantId").HasColumnType("uuid");
                 b.Property<Guid>("Id").HasColumnType("uuid");
@@ -1046,7 +1050,15 @@ namespace Poseidon.Persistence.Migrations
                 b.Property<uint>("Version").IsConcurrencyToken().ValueGeneratedOnAddOrUpdate().HasColumnName("xmin").HasColumnType("xid");
                 b.HasKey("TenantId", "Id");
                 b.HasAlternateKey("TenantId", "Id", "VesselId").HasName("AK_ImportBatches_Scope");
-                b.ToTable("ImportBatches", "integration");
+                b.ToTable("ImportBatches", "integration", t => t.HasCheckConstraint("CK_ImportBatch_LegacyProtection", """
+("LegacyProtectedAt" IS NULL AND "LegacyProtectionPolicyVersion" IS NULL AND "LegacyProtectionIdentityVersion" IS NULL AND "LegacyProtectionPurpose" IS NULL)
+OR ("Category" = 'crew' AND "LegacyProtectedAt" IS NOT NULL
+AND "LegacyProtectionPolicyVersion" IS NOT NULL AND "LegacyProtectionIdentityVersion" IS NOT NULL AND "LegacyProtectionPurpose" IS NOT NULL
+AND length("LegacyProtectionPolicyVersion") BETWEEN 1 AND 80 AND length("LegacyProtectionIdentityVersion") BETWEEN 1 AND 80
+AND length("LegacyProtectionPurpose") BETWEEN 1 AND 80
+AND "TableJson" LIKE 'protected-legacy-v1:%' AND "BindingsJson" = '[]' AND "SourceHash" = ''
+AND "SourceName" = 'name-withheld.xlsx' AND "SourceLocator" = 'protected-history')
+"""));
             });
             modelBuilder.Entity("Poseidon.Persistence.ImportBatch", b => b.HasOne("Poseidon.Persistence.Vessel", null).WithMany().HasForeignKey("TenantId", "VesselId").HasPrincipalKey("TenantId", "Id").HasConstraintName("FK_ImportBatches_Vessels_Scope").OnDelete(DeleteBehavior.Restrict).IsRequired());
             modelBuilder.Entity("Poseidon.Persistence.ImportBatch", b => b.HasIndex("TenantId", "VesselId"));

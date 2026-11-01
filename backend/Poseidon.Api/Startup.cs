@@ -101,6 +101,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapCrewSelection();
             endpoints.MapCredentials();
             endpoints.MapImports();
+            endpoints.MapLegacyCrewImports();
             endpoints.MapTechnical();
             endpoints.MapMaintenanceObservations();
             endpoints.MapTug();

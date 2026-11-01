@@ -65,10 +65,13 @@ public static class ImportEndpoints
     private static async Task<ImportBatch?> Load(Guid vessel, Guid batch, HttpContext h, PoseidonDbContext db, bool write = false) {
         var a = Actor(h); var session = Session(h);
         var b = await db.ImportBatches.SingleOrDefaultAsync(x => x.Id == batch && x.VesselId == vessel && x.ActorId == a.Id && x.SessionHash == session, h.RequestAborted);
-        if (b == null || !Category(a, vessel, b.Category, write)) return null;
+        if (b == null || b.LegacyProtectedAt != null || b.Category == "crew" && !b.TableJson.StartsWith("protected-v1:", StringComparison.Ordinal) || !Category(a, vessel, b.Category, write)) return null;
         if (b.Category == "certificate" && !await db.CrewAssignments.AnyAsync(x => x.VesselId == vessel && x.Id == b.AssignmentId, h.RequestAborted)) return null;
         if (b.Category == "crew" && (!h.RequestServices.GetRequiredService<CrewIdentityPolicy>().Allows(a, write) || b.CrewIdentityPolicyVersion != h.RequestServices.GetRequiredService<CrewIdentityPolicy>().Version)) return null;
         if (b.Category == "crew" && !AllowedProfileBindings(b, h, write)) return null;
+        // Protecting historic storage never makes an obsolete template editable through today's schema.
+        var template = ImportTemplates.Describe(b.Category);
+        if (b.TemplateVersion != template.Version || b.TemplateFingerprint != template.Fingerprint) return null;
         if (b.Category == "certificate" && b.BindingsJson.Contains("\"document_ref\"", StringComparison.Ordinal) && !CanReadPersonDocuments(h)) return null;
         return b;
     }
@@ -150,7 +153,7 @@ public static class ImportEndpoints
             var old = await db.ImportBatches.SingleOrDefaultAsync(x => x.VesselId == vessel && x.ActorId == b.ActorId && x.SessionHash == b.SessionHash &&
                 x.Category == category && x.AssignmentId == assignment && x.SourceHash == b.SourceHash && x.TemplateFingerprint == b.TemplateFingerprint, h.RequestAborted);
             if (old != null) {
-                if (old.Category == "crew" && old.CrewIdentityPolicyVersion != b.CrewIdentityPolicyVersion) return await Fail(h, 403, "field_policy_denied");
+                if (old.Category == "crew" && (old.LegacyProtectedAt != null || !old.TableJson.StartsWith("protected-v1:", StringComparison.Ordinal) || old.CrewIdentityPolicyVersion != b.CrewIdentityPolicyVersion)) return await Fail(h, 403, "field_policy_denied");
                 if (old.Category == "crew" && !AllowedProfileBindings(old, h, false)) return await Fail(h, 403, "field_policy_denied");
                 await Observe(h, vessel); return Results.Ok(Dto(old, h)); }
             db.ImportBatches.Add(b); await db.SaveChangesAsync(h.RequestAborted); await tx.CommitAsync(h.RequestAborted);
@@ -174,7 +177,7 @@ public static class ImportEndpoints
         var a = Actor(h); var categories = ImportTemplates.Categories.Where(c => Category(a, vessel, c, false) && (c != "crew" || h.RequestServices.GetRequiredService<CrewIdentityPolicy>().Allows(a, false))).ToArray(); var session = Session(h);
         var query = db.ImportBatches.AsNoTracking().Where(x => x.VesselId == vessel && x.ActorId == a.Id && x.SessionHash == session && categories.Contains(x.Category));
         var identityVersion = h.RequestServices.GetRequiredService<CrewIdentityPolicy>().Version;
-        query = query.Where(x => x.Category != "crew" || x.CrewIdentityPolicyVersion == identityVersion);
+        query = query.Where(x => x.Category != "crew" || x.LegacyProtectedAt == null && x.TableJson.StartsWith("protected-v1:") && x.CrewIdentityPolicyVersion == identityVersion);
         if (!CanReadPersonDocuments(h)) query = query.Where(x => x.Category != "certificate" || !x.BindingsJson.Contains("\"document_ref\""));
         var profilePolicy = h.RequestServices.GetRequiredService<CrewProfilePolicy>();
         foreach (var field in Enum.GetValues<CrewPersonalField>().Where(f => profilePolicy.Rule(f, profilePolicy.ImportPurpose, a.Permissions, false) == null)) {

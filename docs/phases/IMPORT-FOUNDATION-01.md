@@ -1,3 +1,5 @@
+> Current continuation: [CREW-LEGACY-CLOSURE-01](CREW-LEGACY-CLOSURE-01.md) records the concrete historical batch conversion authoring and literal source lookup decision. Historical plaintext storage conversion is no longer an unimplemented software gap at source level; interpretation of unsupported history remains explicitly Unavailable. Generic consumer field editability does not create a production catalog admin/history requirement. All execution/QA/acceptance remains DEFERRED; earlier checkpoint evidence and source hashes below are preserved, not reclassified as passing.
+
 # IMPORT-FOUNDATION-01 local authoring phase
 
 **AUTHORED_UNVERIFIED / INCOMPLETE / NOT ACCEPTED.** Current phase: larger domain foundation authoring. DEV-0698SP and canonical8/970 are unchanged. This local delivery package does not close the canonical sprint or release gate.

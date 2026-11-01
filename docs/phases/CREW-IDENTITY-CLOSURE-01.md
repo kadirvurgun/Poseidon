@@ -1,3 +1,5 @@
+> Current continuation: [CREW-LEGACY-CLOSURE-01](CREW-LEGACY-CLOSURE-01.md) records the concrete historical batch conversion authoring and literal source lookup decision. Historical plaintext storage conversion is no longer an unimplemented software gap at source level; interpretation of unsupported history remains explicitly Unavailable. Generic consumer field editability does not create a production catalog admin/history requirement. All execution/QA/acceptance remains DEFERRED; earlier checkpoint evidence and source hashes below are preserved, not reclassified as passing.
+
 # CREW-IDENTITY-CLOSURE-01 — foundation checkpoint G
 
 **AUTHORED_UNVERIFIED / INCOMPLETE / NOT ACCEPTED.** Current phase: sustained foundation product authoring. This is a local source checkpoint for independent QA, not a validated candidate or completed Crew story, sprint, S0/foundation gate or release. The user permits a local authoring commit and defers execution. No publication/merge/approval or extra agents.

@@ -1,3 +1,5 @@
+> Current continuation: [CREW-LEGACY-CLOSURE-01](crew-legacy-closure-01.md) authors historical plaintext batch protection through the controlled ordinary audited API, with exact preservation/atomic receipt/current-policy retry denial and tests, all NOT RUN. It also reconciles literal lookup criteria: configured immutable/versioned scoped/effective references cover selected software criteria; broad production catalog administration/history is optional later scope. Earlier gap statements below describe their historical checkpoint, not current software. Identity protection, ordinary Import v3 and prior consumers remain preserved. No acceptance or publication.
+
 # CREW-IDENTITY-CLOSURE-01
 
 Status: **AUTHORED_UNVERIFIED / INCOMPLETE / NOT ACCEPTED**. Backend and UI skills applied. Esra primary account; no delegation, publication or merge. Receiving tree was clean at `06dd3da`; all earlier source checkpoints, tests, native ProductApp/BP/context/session/file/photo changes were retained. The user expressly permits a local authoring commit; it is not a validated candidate.

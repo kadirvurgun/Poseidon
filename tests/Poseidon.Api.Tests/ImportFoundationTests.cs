@@ -13,9 +13,9 @@ namespace Poseidon.Api.Tests;
 public sealed partial class DirectoryWorkspaceTests
 {
     private string Imports => $"vessels/{SeedVessel.Id}/imports";
-    private Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory<Program> ImportHost(bool write = true) => Host(
+    private Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory<Program> ImportHost(bool write = true, Microsoft.EntityFrameworkCore.Diagnostics.DbCommandInterceptor? interceptor = null) => Host(
         crewRead: true, crewWrite: write, crewIdentity: true, technicalRead: true, technicalWrite: write,
-        importRead: true, importWrite: write, certificateRead: true, certificateWrite: write);
+        importRead: true, importWrite: write, certificateRead: true, certificateWrite: write, interceptor: interceptor);
 
     private static byte[] SourceWorkbook(string[] headers, params string[][] rows) {
         using var memory = new MemoryStream(); memory.Write(ImportWorkbook.Template(headers));

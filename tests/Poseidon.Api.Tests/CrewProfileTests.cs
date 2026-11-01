@@ -13,7 +13,7 @@ namespace Poseidon.Api.Tests;
 public sealed partial class DirectoryWorkspaceTests
 {
     private string PersonalPath => $"vessels/{SeedVessel.Id}/crew/{SeedVessel.Id}/personal-profile";
-    private WebApplicationFactory<Program> ProfileHost(bool write = true, bool contact = true) => ImportHost().WithWebHostBuilder(b => b.ConfigureAppConfiguration((_, builder) => {
+    private WebApplicationFactory<Program> ProfileHost(bool write = true, bool contact = true, Microsoft.EntityFrameworkCore.Diagnostics.DbCommandInterceptor? interceptor = null) => ImportHost(interceptor: interceptor).WithWebHostBuilder(b => b.ConfigureAppConfiguration((_, builder) => {
         var config = new Dictionary<string, string?>();
         var fields = Enum.GetValues<CrewPersonalField>();
         for (var i = 0; i < fields.Length; i++) {

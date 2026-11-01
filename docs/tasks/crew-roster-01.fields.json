@@ -75,7 +75,7 @@
       "verification": "DEFERRED",
       "coverage": "authored_partial",
       "domain_completion_state": "authored_configured_position_lookup",
-      "domain_completion_gate": "Unexecuted; production codebooks remain external; independently versioned position update/history registry remains software beyond configured validation/creation.",
+      "domain_completion_gate": "Unexecuted; selected controlled/scoped/effective lookup criteria have configured immutable tuple consumers. Generic field editability does not require a catalog administration/history UI; optional later scope. Production codebook/mapping warnings remain unresolved. See CREW-LEGACY-CLOSURE-01.",
       "crew_identity_closure_01": {
         "state": "authored_configured_unverified",
         "trace": "docs/tasks/crew-identity-closure-01.trace.json",
@@ -97,7 +97,7 @@
       "verification": "DEFERRED",
       "coverage": "authored_partial",
       "domain_completion_state": "authored_configured_position_lookup",
-      "domain_completion_gate": "Unexecuted; production codebooks remain external; independently versioned position update/history registry remains software beyond configured validation/creation.",
+      "domain_completion_gate": "Unexecuted; selected controlled/scoped/effective lookup criteria have configured immutable tuple consumers. Generic field editability does not require a catalog administration/history UI; optional later scope. Production codebook/mapping warnings remain unresolved. See CREW-LEGACY-CLOSURE-01.",
       "crew_identity_closure_01": {
         "state": "authored_configured_unverified",
         "trace": "docs/tasks/crew-identity-closure-01.trace.json",
@@ -473,7 +473,7 @@
       "verification": "DEFERRED",
       "coverage": "safe_unknown_or_withheld_gap",
       "domain_completion_state": "authored_configured_position_lookup",
-      "domain_completion_gate": "Unexecuted; production codebooks remain external; independently versioned position update/history registry remains software beyond configured validation/creation.",
+      "domain_completion_gate": "Unexecuted; selected controlled/scoped/effective lookup criteria have configured immutable tuple consumers. Generic field editability does not require a catalog administration/history UI; optional later scope. Production codebook/mapping warnings remain unresolved. See CREW-LEGACY-CLOSURE-01.",
       "crew_identity_closure_01": {
         "state": "authored_configured_unverified",
         "trace": "docs/tasks/crew-identity-closure-01.trace.json",
@@ -495,7 +495,7 @@
       "verification": "DEFERRED",
       "coverage": "authored_partial",
       "domain_completion_state": "authored_configured_position_lookup",
-      "domain_completion_gate": "Unexecuted; production codebooks remain external; independently versioned position update/history registry remains software beyond configured validation/creation.",
+      "domain_completion_gate": "Unexecuted; selected controlled/scoped/effective lookup criteria have configured immutable tuple consumers. Generic field editability does not require a catalog administration/history UI; optional later scope. Production codebook/mapping warnings remain unresolved. See CREW-LEGACY-CLOSURE-01.",
       "crew_identity_closure_01": {
         "state": "authored_configured_unverified",
         "trace": "docs/tasks/crew-identity-closure-01.trace.json",

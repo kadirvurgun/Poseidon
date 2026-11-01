@@ -1,0 +1,553 @@
+{
+  "task": "CREW-LEGACY-CLOSURE-01",
+  "status": "AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+  "verification": "DEFERRED_NOT_RUN",
+  "accepted": false,
+  "records": [
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1572",
+      "field": "vessel_id",
+      "fr": "FR46-crew-roster-vessel_id",
+      "tc": "TC46-crew-roster-vessel_id",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1573",
+      "field": "person_id",
+      "fr": "FR46-crew-roster-person_id",
+      "tc": "TC46-crew-roster-person_id",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1574",
+      "field": "employee_no",
+      "fr": "FR46-crew-roster-employee_no",
+      "tc": "TC46-crew-roster-employee_no",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1575",
+      "field": "rank",
+      "fr": "FR46-crew-roster-rank",
+      "tc": "TC46-crew-roster-rank",
+      "acceptance": "CL-CREW-LOOKUP",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1576",
+      "field": "department",
+      "fr": "FR46-crew-roster-department",
+      "tc": "TC46-crew-roster-department",
+      "acceptance": "CL-CREW-LOOKUP",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1577",
+      "field": "nationality",
+      "fr": "FR46-crew-roster-nationality",
+      "tc": "TC46-crew-roster-nationality",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1578",
+      "field": "sign_on_date",
+      "fr": "FR46-crew-roster-sign_on_date",
+      "tc": "TC46-crew-roster-sign_on_date",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1579",
+      "field": "sign_off_date",
+      "fr": "FR46-crew-roster-sign_off_date",
+      "tc": "TC46-crew-roster-sign_off_date",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1580",
+      "field": "contract_end_date",
+      "fr": "FR46-crew-roster-contract_end_date",
+      "tc": "TC46-crew-roster-contract_end_date",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1581",
+      "field": "watch_group",
+      "fr": "FR46-crew-roster-watch_group",
+      "tc": "TC46-crew-roster-watch_group",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1582",
+      "field": "assignment_status",
+      "fr": "FR46-crew-roster-assignment_status",
+      "tc": "TC46-crew-roster-assignment_status",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1583",
+      "field": "eligibility_state",
+      "fr": "FR46-crew-roster-eligibility_state",
+      "tc": "TC46-crew-roster-eligibility_state",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1584",
+      "field": "work_rest_state",
+      "fr": "FR46-crew-roster-work_rest_state",
+      "tc": "TC46-crew-roster-work_rest_state",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1585",
+      "field": "certificate_state",
+      "fr": "FR46-crew-roster-certificate_state",
+      "tc": "TC46-crew-roster-certificate_state",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1586",
+      "field": "competence_state",
+      "fr": "FR46-crew-roster-competence_state",
+      "tc": "TC46-crew-roster-competence_state",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1587",
+      "field": "contact_status",
+      "fr": "FR46-crew-roster-contact_status",
+      "tc": "TC46-crew-roster-contact_status",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1588",
+      "field": "person_id",
+      "fr": "FR46-crew-profile-person_id",
+      "tc": "TC46-crew-profile-person_id",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1589",
+      "field": "employee_no",
+      "fr": "FR46-crew-profile-employee_no",
+      "tc": "TC46-crew-profile-employee_no",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1590",
+      "field": "full_name",
+      "fr": "FR46-crew-profile-full_name",
+      "tc": "TC46-crew-profile-full_name",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1591",
+      "field": "date_of_birth",
+      "fr": "FR46-crew-profile-date_of_birth",
+      "tc": "TC46-crew-profile-date_of_birth",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1592",
+      "field": "nationality",
+      "fr": "FR46-crew-profile-nationality",
+      "tc": "TC46-crew-profile-nationality",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1593",
+      "field": "passport_no",
+      "fr": "FR46-crew-profile-passport_no",
+      "tc": "TC46-crew-profile-passport_no",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1594",
+      "field": "passport_expiry",
+      "fr": "FR46-crew-profile-passport_expiry",
+      "tc": "TC46-crew-profile-passport_expiry",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1595",
+      "field": "seaman_book_no",
+      "fr": "FR46-crew-profile-seaman_book_no",
+      "tc": "TC46-crew-profile-seaman_book_no",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1596",
+      "field": "seaman_book_expiry",
+      "fr": "FR46-crew-profile-seaman_book_expiry",
+      "tc": "TC46-crew-profile-seaman_book_expiry",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1597",
+      "field": "medical_expiry",
+      "fr": "FR46-crew-profile-medical_expiry",
+      "tc": "TC46-crew-profile-medical_expiry",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1598",
+      "field": "primary_rank",
+      "fr": "FR46-crew-profile-primary_rank",
+      "tc": "TC46-crew-profile-primary_rank",
+      "acceptance": "CL-CREW-LOOKUP",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1599",
+      "field": "department",
+      "fr": "FR46-crew-profile-department",
+      "tc": "TC46-crew-profile-department",
+      "acceptance": "CL-CREW-LOOKUP",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1600",
+      "field": "company_start_date",
+      "fr": "FR46-crew-profile-company_start_date",
+      "tc": "TC46-crew-profile-company_start_date",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1601",
+      "field": "sea_service_months",
+      "fr": "FR46-crew-profile-sea_service_months",
+      "tc": "TC46-crew-profile-sea_service_months",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1602",
+      "field": "tanker_experience_months",
+      "fr": "FR46-crew-profile-tanker_experience_months",
+      "tc": "TC46-crew-profile-tanker_experience_months",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1603",
+      "field": "vessel_type_experience",
+      "fr": "FR46-crew-profile-vessel_type_experience",
+      "tc": "TC46-crew-profile-vessel_type_experience",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1604",
+      "field": "company_experience_months",
+      "fr": "FR46-crew-profile-company_experience_months",
+      "tc": "TC46-crew-profile-company_experience_months",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1605",
+      "field": "emergency_contact",
+      "fr": "FR46-crew-profile-emergency_contact",
+      "tc": "TC46-crew-profile-emergency_contact",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1606",
+      "field": "preferred_language",
+      "fr": "FR46-crew-profile-preferred_language",
+      "tc": "TC46-crew-profile-preferred_language",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1607",
+      "field": "contact_phone",
+      "fr": "FR46-crew-profile-contact_phone",
+      "tc": "TC46-crew-profile-contact_phone",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1608",
+      "field": "email",
+      "fr": "FR46-crew-profile-email",
+      "tc": "TC46-crew-profile-email",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1609",
+      "field": "photo_ref",
+      "fr": "FR46-crew-profile-photo_ref",
+      "tc": "TC46-crew-profile-photo_ref",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1610",
+      "field": "privacy_scope",
+      "fr": "FR46-crew-profile-privacy_scope",
+      "tc": "TC46-crew-profile-privacy_scope",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1611",
+      "field": "current_vessel",
+      "fr": "FR46-crew-profile-current_vessel",
+      "tc": "TC46-crew-profile-current_vessel",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1612",
+      "field": "current_assignment",
+      "fr": "FR46-crew-profile-current_assignment",
+      "tc": "TC46-crew-profile-current_assignment",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1613",
+      "field": "fitness_state",
+      "fr": "FR46-crew-profile-fitness_state",
+      "tc": "TC46-crew-profile-fitness_state",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1614",
+      "field": "eligibility_state",
+      "fr": "FR46-crew-profile-eligibility_state",
+      "tc": "TC46-crew-profile-eligibility_state",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    },
+    {
+      "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "sheet:Data Dictionary 2316/row:1615",
+      "field": "status",
+      "fr": "FR46-crew-profile-status",
+      "tc": "TC46-crew-profile-status",
+      "acceptance": "CL-CREW-LEGACY",
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted": false
+    }
+  ],
+  "sources": [
+    {
+      "path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "locator": "paragraphs92..100,137..146,207..209"
+    },
+    {
+      "path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locator": "Data Dictionary 2316/rows1572..1615"
+    },
+    {
+      "path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "locator": "2316 Alan v46.3/rows1572..1615"
+    },
+    {
+      "path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "locator": "Backlog/row48 DEV-047/T-S7-001;row52 DEV-051;row70 DEV-069/T-S11-001;row71 DEV-070 separate"
+    },
+    {
+      "path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "locator": "paragraphs220..228,especially226"
+    },
+    {
+      "path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.03_POSEIDON_v46.3_Data_Migration_ve_Customer_Onboarding_Plani_TR.docx",
+      "sha256": "bf2047e86f7f59b38ebfd3bfbd67c242b41a192a3e62ed4a55407f8ffac1758d",
+      "locator": "paragraphs34..36,44,79"
+    }
+  ],
+  "lookup_decision": "Selected scoped/effective controlled-selection criterion is covered by configured immutable tuple references; generic field editability does not require production catalog administration; dictionary/codebook/mapping warnings remain unresolved.",
+  "code_tests": {
+    "CL-CREW-LEGACY": [
+      "backend/Poseidon.Api/LegacyCrewImportEndpoints.cs",
+      "backend/Poseidon.Persistence/LegacyImportStorage.cs",
+      "tests/Poseidon.Api.Tests/CrewLegacyImportTests.cs",
+      "tests/Poseidon.Persistence.Tests/ImportPersistenceTests.cs"
+    ],
+    "CL-CREW-CRYPTO": [
+      "backend/Poseidon.Api/CrewProfilePolicy.cs",
+      "backend/Poseidon.Domain/LegacyCrewImport.cs",
+      "tests/Poseidon.Api.Tests/CrewLegacyImportProtectionTests.cs",
+      "tests/Poseidon.Domain.Tests/LegacyCrewImportTests.cs"
+    ],
+    "CL-CREW-HISTORY": [
+      "frontend/src/product/CrewIdentityHistory.tsx",
+      "frontend/src/product/CrewIdentityHistory.test.tsx"
+    ],
+    "CL-CREW-LOOKUP": [
+      "backend/Poseidon.Api/CrewPositionPolicy.cs",
+      "backend/Poseidon.Persistence/PoseidonDbContext.cs",
+      "tests/Poseidon.Api.Tests/CrewLegacyImportTests.cs"
+    ],
+    "CL-CREW-HOST": [
+      "tests/Poseidon.Browser.Tests/register-specs/crew-legacy-cases.ts",
+      "tests/Poseidon.Browser.Tests/register-specs/cases.ts",
+      "backend/Poseidon.Persistence/Seeding/LegacyCrewBrowserFixture.cs"
+    ]
+  }
+}

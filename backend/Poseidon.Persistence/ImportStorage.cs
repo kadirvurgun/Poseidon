@@ -66,6 +66,11 @@ public sealed class CredentialRevision : ITenantEntity
 
 public sealed class ImportBatch : ITenantEntity
 {
+    // Current storage authority only. Original capture authority is never backfilled.
+    public string? LegacyProtectionPolicyVersion { get; set; }
+    public string? LegacyProtectionIdentityVersion { get; set; }
+    public string? LegacyProtectionPurpose { get; set; }
+    public DateTimeOffset? LegacyProtectedAt { get; set; }
     public string? CrewIdentityPolicyVersion { get; set; }
     public Guid TenantId { get; set; }
     public Guid Id { get; set; }
@@ -148,7 +153,7 @@ internal static class ImportStorage
             b.HasIndex(x => new { x.TenantId, x.CredentialId, x.VesselId });
         });
         model.Entity<ImportBatch>(b => {
-            b.ToTable("ImportBatches", "integration"); b.HasKey(x => new { x.TenantId, x.Id });
+            b.ToTable("ImportBatches", "integration", t => t.HasCheckConstraint("CK_ImportBatch_LegacyProtection", LegacyImportStorage.Check)); b.HasKey(x => new { x.TenantId, x.Id });
             b.HasAlternateKey(x => new { x.TenantId, x.Id, x.VesselId }).HasName("AK_ImportBatches_Scope");
             b.HasOne<Vessel>().WithMany().HasForeignKey(x => new { x.TenantId, x.VesselId }).HasConstraintName("FK_ImportBatches_Vessels_Scope").OnDelete(DeleteBehavior.Restrict);
             b.HasIndex(x => new { x.TenantId, x.VesselId, x.ActorId, x.CreatedAt }); b.Property(x => x.Version).IsRowVersion();

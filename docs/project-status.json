@@ -42,7 +42,8 @@
     "shared_context_authored_not_run": 41,
     "shared_context_react_authored_not_run": 10,
     "profile_privacy_authored_not_run": 7,
-    "crew_identity_closure": "docs/phases/CREW-IDENTITY-CLOSURE-01.md; AUTHORED_UNVERIFIED; NOT ACCEPTED"
+    "crew_identity_closure": "docs/phases/CREW-IDENTITY-CLOSURE-01.md; AUTHORED_UNVERIFIED; NOT ACCEPTED",
+    "crew_legacy_continuation": "docs/phases/CREW-LEGACY-CLOSURE-01.md; AUTHORED_UNVERIFIED_NOT_ACCEPTED; historical storage conversion authored, interpretation unavailable, lookup admin optional per literal source"
   },
   "import_foundation_01": {
     "status": "authored_unverified_incomplete_not_accepted",
@@ -99,7 +100,8 @@
       "Retention/provider/privacy/session-history policy and canonical root API alias reconciliation"
     ],
     "next": "Coordinator continues larger bundle and exact-target gate; worker does not publish, merge or accept",
-    "crew_identity_parity": "Crew v3 existing-person ordinary identity handler, explicit person/base/policy/purpose and configured tuple reference parity authored; NOT RUN; historical plaintext batch conversion and production activation remain unavailable"
+    "crew_identity_parity": "Crew v3 existing-person ordinary identity handler, explicit person/base/policy/purpose and configured tuple reference parity authored; NOT RUN; historical plaintext batch storage conversion is authored separately in CREW-LEGACY-CLOSURE-01; interpretation and production activation remain unavailable",
+    "crew_legacy_continuation": "docs/phases/CREW-LEGACY-CLOSURE-01.md; AUTHORED_UNVERIFIED_NOT_ACCEPTED; historical storage conversion authored, interpretation unavailable, lookup admin optional per literal source"
   },
   "tug_foundation_01": {
     "status": "authored_unverified_incomplete_not_accepted",
@@ -3308,7 +3310,7 @@
     "verification": "NOT RUN: software precondition false; no build/suite/generation/migration/browser/provider/independent QA/CI",
     "candidate_commit": null,
     "publishing": "None; coordinator-owned after independent exact-target QA/CI",
-    "next_step": "Continue explicit remaining Crew historical batch conversion/position registry history, full offline/Tug/S0 software; coordinator owns later combined gate and independent QA/CI",
+    "next_step": "Crew legacy conversion authored and lookup admin scoped as optional in CREW-LEGACY-CLOSURE-01; continue full offline/Tug/S0 software; coordinator owns later combined gate and independent QA/CI",
     "crew_identity_report": "docs/phases/CREW-IDENTITY-CLOSURE-01.md"
   },
   "crew_identity_closure_01": {
@@ -3328,8 +3330,6 @@
     "publishing": "Not performed; coordinator only",
     "canonical_progress_unchanged": true,
     "remaining_software": [
-      "Historical plaintext Import batch protection conversion",
-      "Independent versioned position update/registry history beyond configured lookup validation/creation",
       "Deferred actual model/generation and all consumers reconciliation",
       "Complete durable offline application/domain+offline receipts/conflict/history",
       "Tug versioned planning/assignment/type/context/board/BP/conflict/localization",
@@ -3340,6 +3340,37 @@
       "git diff --cached --check exit0; not product verification",
       "Graphify AST final refresh exit0; zero-node warnings and size-related omitted HTML; not product verification"
     ],
-    "source_hash_record": "docs/phases/CREW-IDENTITY-CLOSURE-01.evidence.json"
+    "source_hash_record": "docs/phases/CREW-IDENTITY-CLOSURE-01.evidence.json",
+    "continuation": "CREW-LEGACY-CLOSURE-01: historical batch conversion authored; broad catalog admin/history optional per literal selected sources; all NOT RUN"
+  },
+  "crew_legacy_closure_01": {
+    "status": "AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+    "accepted": false,
+    "task": "docs/tasks/crew-legacy-closure-01.md",
+    "phase_report": "docs/phases/CREW-LEGACY-CLOSURE-01.md",
+    "trace": "docs/tasks/crew-legacy-closure-01.trace.json",
+    "receiving_head": "03f2f5c",
+    "support_origin_receipts": {
+      "0952b2bad0412f5159bef9294a060ea05b4260a2": "7198a81",
+      "e722ba10454da43b1981324b0e5fb86249008b2d": "20892a2"
+    },
+    "verification": "DEFERRED_NOT_RUN: all test/build/typecheck/generation/migration/browser/provider/QA/CI",
+    "legacy_storage_conversion": "authored_controlled_current_policy_tenant_scope_lossless_authenticated_encryption_atomic_audit_receipt_unverified",
+    "historical_interpretation": "Unavailable; original capture authority Unknown; no current policy backfill or obsolete template writes",
+    "lookup_source_decision": "Selected scoped/effective controlled selection uses immutable configured tuples; broad catalog admin/history optional later scope; codebook/mapping warnings unresolved",
+    "required_software_remaining": [
+      "OFFLINE-APPLICATION-01 durable application/offline receipts/recovery/conflict/history",
+      "Tug planning/assignment/type/context/board/BP/conflict/localization",
+      "Real role lens and original S0 criteria",
+      "Later actual generation/model parity and full foundation gate/independent target QA/CI"
+    ],
+    "canonical_progress": "8/970SP,2/121tasks,0/196accepted",
+    "canonical_progress_unchanged": true,
+    "publishing": "Not performed; coordinator only",
+    "next_step": "Coordinator continues OFFLINE-APPLICATION-01, Tug planning, real role lens and original S0 before the single full foundation gate",
+    "source_only_observations": [
+      "git diff --check exit0; source whitespace only",
+      "Graphify AST update exit0; zero-node warnings and size-related omitted HTML; not product verification"
+    ]
   }
 }

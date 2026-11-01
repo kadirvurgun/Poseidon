@@ -1,3 +1,5 @@
+> Current continuation: [CREW-LEGACY-CLOSURE-01](crew-legacy-closure-01.md) authors historical plaintext batch protection through the controlled ordinary audited API, with exact preservation/atomic receipt/current-policy retry denial and tests, all NOT RUN. It also reconciles literal lookup criteria: configured immutable/versioned scoped/effective references cover selected software criteria; broad production catalog administration/history is optional later scope. Earlier gap statements below describe their historical checkpoint, not current software. Identity protection, ordinary Import v3 and prior consumers remain preserved. No acceptance or publication.
+
 # DOMAIN-COMPLETION-01 — checkpoints A–D
 
 Status: **AUTHORED_UNVERIFIED / INCOMPLETE / NOT ACCEPTED**. No canonical SP acceptance, publishing, merge, operational decision, GDPR/KVKK approval or production migration activation. Execution of every suite/build/typecheck/contract generator/migration/browser/provider setup remains **DEFERRED** by the user. Source whitespace inspection is not product verification.

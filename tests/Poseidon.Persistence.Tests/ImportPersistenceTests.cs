@@ -61,4 +61,56 @@ public sealed class ImportPersistenceTests : IAsyncLifetime
         Assert.All(await db.Credentials.ToArrayAsync(Ct), x => Assert.Equal(db.TenantId, x.TenantId));
         Assert.All(await db.CredentialRevisions.ToArrayAsync(Ct), x => Assert.Equal(db.TenantId, x.TenantId));
     }
+    [Fact]
+    public async Task Legacy_defaults_preserve_original_plaintext_and_unknown_capture_authority_and_reject_direct_source_rewrite() {
+        var vessel = data.Vessels.First(v => v.TenantId == data.Tenants[0].Id); var id = Guid.NewGuid();
+        await using (var db = Db()) {
+            db.ImportBatches.Add(new() { TenantId = db.TenantId, Id = id, VesselId = vessel.Id, ActorId = Guid.NewGuid(),
+                Category = "crew", TableJson = "FICTIONAL UNSUPPORTED LEGACY SOURCE", SourceName = "FICTIONAL historical.xlsx", CreatedAt = DateTimeOffset.UtcNow });
+            await db.SaveChangesAsync(Ct);
+        }
+        await using (var db = Db()) {
+            var original = await db.ImportBatches.SingleAsync(x => x.Id == id, Ct);
+            Assert.Null(original.LegacyProtectedAt); Assert.Null(original.CrewIdentityPolicyVersion); Assert.Null(original.LegacyProtectionPolicyVersion);
+            Assert.Equal("FICTIONAL UNSUPPORTED LEGACY SOURCE", original.TableJson);
+            // Deliberate negative DB-boundary probe; scoped target, no successful raw-SQL business mutation.
+            await Assert.ThrowsAsync<Npgsql.PostgresException>(() => db.Database.ExecuteSqlInterpolatedAsync(
+                $"UPDATE integration.\"ImportBatches\" SET \"TableJson\" = 'replacement' WHERE \"TenantId\" = {db.TenantId} AND \"Id\" = {id}", Ct));
+        }
+        await using var other = Db(data.Tenants.First(t => t.Id != vessel.TenantId).Id);
+        Assert.False(await other.ImportBatches.AnyAsync(x => x.Id == id, Ct));
+    }
+    [Fact]
+    public async Task Persisted_position_reference_is_immutable_in_EF_and_database_without_rewriting_saved_assignment_facts() {
+        await using (var db = Db()) {
+            var position = await db.CrewPositions.FirstAsync(Ct); position.Department = "FICTIONAL rewrite";
+            await Assert.ThrowsAsync<InvalidOperationException>(() => db.SaveChangesAsync(Ct));
+        }
+        await using var boundary = Db(); var saved = await boundary.CrewPositions.AsNoTracking().FirstAsync(Ct);
+        await Assert.ThrowsAsync<Npgsql.PostgresException>(() => boundary.Database.ExecuteSqlInterpolatedAsync(
+            $"UPDATE crew.\"Positions\" SET \"Department\" = 'rewrite' WHERE \"TenantId\" = {boundary.TenantId} AND \"Id\" = {saved.Id}", Ct));
+        Assert.Equal(saved.Department, (await boundary.CrewPositions.AsNoTracking().SingleAsync(x => x.Id == saved.Id, Ct)).Department);
+    }
+    [Fact]
+    public async Task Explicit_disposable_browser_fixture_is_attributed_idempotent_preserves_operator_state_and_never_invents_capture_policy() {
+        await LegacyCrewBrowserFixture.AddAsync(postgres.GetConnectionString(), "Test", data);
+        await using (var db = Db()) {
+            var batch = await db.ImportBatches.SingleAsync(x => x.Id == LegacyCrewBrowserFixture.BatchId, Ct);
+            Assert.Null(batch.CrewIdentityPolicyVersion); Assert.Null(batch.LegacyProtectedAt); Assert.Equal("crew", batch.Category);
+            Assert.StartsWith("synthetic-legacy", batch.TemplateVersion); Assert.Equal(Guid.Empty, batch.ActorId);
+            batch.State = "MappingDraft"; await db.SaveChangesAsync(Ct);
+        }
+        await LegacyCrewBrowserFixture.AddAsync(postgres.GetConnectionString(), "Test", data);
+        await using var verify = Db(); var retained = await verify.ImportBatches.SingleAsync(x => x.Id == LegacyCrewBrowserFixture.BatchId, Ct);
+        Assert.Equal("MappingDraft", retained.State);
+        Assert.Equal(1, await verify.AuditEvents.CountAsync(x => x.ResourceId == retained.Id && x.Action == "Added" && x.ActorType == "System" && x.Source == "SyntheticFixture", Ct));
+        Assert.Empty(await verify.CommandReceipts.ToArrayAsync(Ct));
+    }
+    [Theory]
+    [InlineData("Production")]
+    [InlineData("Development")]
+    public async Task Legacy_browser_fixture_is_never_normal_seed_or_production_data(string environment) {
+        await Assert.ThrowsAsync<InvalidOperationException>(() => LegacyCrewBrowserFixture.AddAsync(postgres.GetConnectionString(), environment, data));
+        await using var db = Db(); Assert.False(await db.ImportBatches.AnyAsync(Ct));
+    }
 }
