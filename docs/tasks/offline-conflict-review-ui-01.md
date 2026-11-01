@@ -39,3 +39,8 @@ Write actual signed-host browser and PostgreSQL/API races/privacy/revocation cas
 The component tests are authored only: **DEFERRED / NOT RUN**, as are build,
 typecheck, browser, independent QA and CI. This is no complete offline system,
 human decision evidence, production policy approval, accepted task or canonical SP.
+
+
+## Application consumer — AUTHORED_UNVERIFIED
+
+The former handoff is now composed in the actual Crew workspace by OFFLINE-APPLICATION-01: explicitly configured Draft watch_group, enrolled device/encryption/signing keys, persistent encrypted snapshot/queue, ordinary-handler atomic replay/receipts/audit/conflict, explicit lifecycle/recovery/history/cleanup and registered real signed-host scenarios. Primitive coverage remains retained. All execution is DEFERRED. Other fields/binary evidence remain denied, and production policy is not approved. [Exact source and boundaries](offline-application-01.md).

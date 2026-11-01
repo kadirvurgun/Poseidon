@@ -136,3 +136,8 @@ New add-missing synthetic Persons now contain no name/employee values, protected
 ## CREW-LEGACY-CLOSURE-01 — AUTHORED / NOT RUN
 
 Normal add-missing synthetic seed and its unobserved78/79 audit expectations are unchanged. Migration110000 adds nullable protection metadata and immutable reference/source guards without rewriting any historical/operator data or manufacturing capture authority. A separate explicit Test-only `--legacy-crew-browser-fixture` command authors one fictional unsupported old-format batch in fixed synthetic scope through ordinary tenant-scoped System/SyntheticFixture SaveChanges; it accepts no caller actor/scope/content and performs no schema/provider/auth setup. This is an opt-in disposable gate fixture, not normal seed/startup/production data. Add-missing retry preserves prior conversion/operator edits. Attribution/idempotency/preservation/environment-denial tests are authored, never run. No verified evidence/credential/consent/receipt/key is seeded. [Contract](tasks/crew-legacy-closure-01.md).
+
+
+## OFFLINE-APPLICATION-01 — AUTHORED_UNVERIFIED
+
+Normal add-missing seed creates no enrolled device/key/authority, replay receipt, conflict or resolution. Those are real user-context lifecycle facts and cannot be fabricated by seed. Explicit fictional integration fixtures provision policy only inside test host setup and use ordinary authenticated enrollment/key/replay endpoints. A real PostgreSQL test authors reseed twice preserving these actual synthetic-session mutations and tenant isolation. No real evidence/signature/credential is seeded; prior78/79 expectations unchanged and unobserved. Migration120000/model/designer, all fixtures/tests and provider execution DEFERRED. [Source/contract](tasks/offline-application-01.md).

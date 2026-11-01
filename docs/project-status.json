@@ -1,10 +1,42 @@
 {
+  "offline_application_01": {
+    "status": "authored_unverified_not_accepted",
+    "accepted": false,
+    "task": "docs/tasks/offline-application-01.md",
+    "phase_report": "docs/phases/OFFLINE-APPLICATION-01.md",
+    "current_phase": "FOUNDATION authoring checkpoint I: configured durable Crew draft watch-group workflow",
+    "verification": "DEFERRED_NOT_RUN: all suites/build/typecheck/contract/EF generation/migration/browser/provider/independent QA/CI",
+    "supported_commands": [
+      "crew.draft.watch-group.v1"
+    ],
+    "canonical_progress_unchanged": true,
+    "canonical_story_points": "8/970",
+    "accepted_screens": "0/196",
+    "authored_source_counts_not_executed": {
+      "domain_theory_rows": 12,
+      "real_api_postgresql_facts": 16,
+      "react_behaviors": 11,
+      "registered_signed_host_cases": 4
+    },
+    "support_origin_receipts": {
+      "0952b2bad0412f5159bef9294a060ea05b4260a2": "7198a81",
+      "e722ba10454da43b1981324b0e5fb86249008b2d": "20892a2"
+    },
+    "remaining": "Other offline typed domains/binary evidence remain denied; Tug, real role lens and original S0 software; full generation/model/security/QA/CI gate",
+    "publishing": "None; coordinator owns publishing and merge",
+    "seed": "No manufactured enrollment/key/receipt/conflict authority; prior78/79 expectations unchanged and unobserved",
+    "source_only_observations": [
+      "git diff --cached --check exit0; not a product check",
+      "Graphify AST refresh exit0;34 zero-node warnings and oversized HTML omitted; no model/provider/test execution"
+    ],
+    "source_evidence": "docs/phases/OFFLINE-APPLICATION-01.evidence.json"
+  },
   "domain_completion_01": {
     "status": "authored_unverified_incomplete_not_accepted",
     "accepted": false,
     "task": "docs/tasks/domain-completion-01.md",
     "phase_report": "docs/phases/DOMAIN-COMPLETION-01.md",
-    "current_phase": "FOUNDATION authoring checkpoint G: protected identity/conversion/existing-person Import and configured Crew lookup source; larger software incomplete",
+    "current_phase": "FOUNDATION authoring checkpoint I: configured durable Crew draft watch-group workflow; larger foundation/S0 incomplete",
     "verification": "DEFERRED: all suites/build/typecheck/migrations/contract/browser/independent QA/CI",
     "canonical_progress_unchanged": true,
     "new_personal_fields": 15,
@@ -43,7 +75,8 @@
     "shared_context_react_authored_not_run": 10,
     "profile_privacy_authored_not_run": 7,
     "crew_identity_closure": "docs/phases/CREW-IDENTITY-CLOSURE-01.md; AUTHORED_UNVERIFIED; NOT ACCEPTED",
-    "crew_legacy_continuation": "docs/phases/CREW-LEGACY-CLOSURE-01.md; AUTHORED_UNVERIFIED_NOT_ACCEPTED; historical storage conversion authored, interpretation unavailable, lookup admin optional per literal source"
+    "crew_legacy_continuation": "docs/phases/CREW-LEGACY-CLOSURE-01.md; AUTHORED_UNVERIFIED_NOT_ACCEPTED; historical storage conversion authored, interpretation unavailable, lookup admin optional per literal source",
+    "offline_application_01": "docs/phases/OFFLINE-APPLICATION-01.md; configured watch-group source authored_unverified; other offline adapters denied"
   },
   "import_foundation_01": {
     "status": "authored_unverified_incomplete_not_accepted",

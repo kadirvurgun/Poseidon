@@ -12,6 +12,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
     internal static AuditMetadata From(EntityEntry entry)
     {
         Guid? vessel = entry.Entity switch {
+            OfflineEnrollment o => o.VesselId, OfflineOutcome o => o.VesselId, OfflineLifecycle o => o.VesselId,
             Credential c => c.VesselId, CredentialRevision c => c.VesselId, ImportBatch b => b.VesselId, ImportPreview p => p.VesselId, ImportRowResult r => r.VesselId,
             TugJob j => j.VesselId, TugJobRevision j => j.VesselId, TugOwner o => o.VesselId, TugAssignment a => a.VesselId,
             MaintenanceObservation o => o.VesselId,
@@ -26,6 +27,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             _ => null
         };
         Guid? resource = entry.Entity switch {
+            OfflineEnrollment o => o.AssignmentId, OfflineOutcome o => o.AssignmentId, OfflineLifecycle o => o.AssignmentId,
             Credential c => c.Id, CredentialRevision c => c.CredentialId, ImportBatch b => b.Id, ImportPreview p => p.BatchId, ImportRowResult r => r.PreviewId,
             TugJob j => j.Id, TugJobRevision j => j.JobId, TugOwner o => o.Id, TugAssignment a => a.JobId,
             MaintenanceObservation o => o.Id, MaintenanceObservationRevocation r => r.ObservationId,
@@ -40,6 +42,19 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             RegisterDraft d => d.Id, RegisterRevision r => r.Id, CommandReceipt r => r.ResourceId,
             _ => vessel
         };
+        if (entry.Entity is OfflineLifecycle lifecycle) {
+            if (lifecycle.Action is not ("Enrolled" or "KeyEnrolled" or "Renewed" or "Revoked" or "KeyLost" or "CleanupAllowed"))
+                throw new InvalidOperationException("Unsupported offline lifecycle event.");
+            return new(vessel, resource, "OfflineLifecycle", null, null, JsonSerializer.Serialize(new[] {
+                new { field = "Lifecycle", before = (string?)null, after = lifecycle.Action, evidence = "Allowlisted" } }));
+        }
+        if (entry.Entity is OfflineEnrollment) return new(vessel, resource, "OfflineEnrollment", null, null,
+            "[{\"field\":\"Binding\",\"before\":null,\"after\":\"ServerOwnedContext\",\"evidence\":\"Allowlisted\"}]");
+        if (entry.Entity is OfflineOutcome outcome) {
+            if (outcome.Result is not ("Committed" or "MaterialConflict")) throw new InvalidOperationException("Unsupported offline outcome.");
+            return new(vessel, resource, "OfflineOutcome", null, outcome.Revision, JsonSerializer.Serialize(new[] {
+                new { field = "Outcome", before = (string?)null, after = outcome.Result, evidence = "Allowlisted" } }));
+        }
         var kind = entry.Entity switch { RegisterDraft d => d.Kind, RegisterRevision r => r.Kind, _ => null };
         var revisionProperty = entry.Entity is Person ? "IdentityRevision" : "Revision";
         var revision = entry.Metadata.FindProperty(revisionProperty) == null ? null : entry.Property(revisionProperty);

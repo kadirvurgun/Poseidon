@@ -179,11 +179,16 @@
       "fr": "FR46-crew-roster-watch_group",
       "tc": "TC46-crew-roster-watch_group",
       "implementation": "Assignment.WatchGroup; no audit text snapshot",
-      "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
+      "offline": "AUTHORED_UNVERIFIED: explicit server-configured existing-Draft watch_group typed patch; durable encrypted read/capture, key/session/device lifecycle, ordinary atomic replay/receipts/conflict/history; no production classification/codebook approval; all execution DEFERRED",
       "verification": "DEFERRED",
       "coverage": "authored_partial",
       "domain_completion_state": "implemented_trial",
-      "domain_completion_gate": "Scoped assignment period and ordinary domain handler; no employment/operational appointment approval."
+      "domain_completion_gate": "Scoped assignment period and ordinary domain handler; no employment/operational appointment approval.",
+      "offline_application_01": {
+        "task": "docs/tasks/offline-application-01.md",
+        "state": "authored_configured_unverified_not_accepted",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",

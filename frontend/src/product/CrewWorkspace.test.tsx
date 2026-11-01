@@ -128,7 +128,7 @@ describe('CREW-ROSTER-01 authored component behavior; no backend execution claim
     render(<CrewWorkspace vessel={vessel} />); await english()
     await userEvent.click(screen.getByRole('button', { name: 'Add person and assignment' }))
     Object.defineProperty(navigator, 'onLine', { value: false, configurable: true }); fireEvent(window, new Event('offline'))
-    await screen.findByText('Offline read/capture is unavailable pending the crew field and device policy. This form requires a connection.')
+    await screen.findByText('Ordinary forms require a connection. Use Durable offline drafts for explicitly configured capture.')
     expect(screen.getByRole('button', { name: 'Save draft' })).toBeDisabled()
     expect(fetcher.mock.calls.filter(([, init]) => init?.method === 'POST')).toHaveLength(0)
     expect(localStorage.length).toBe(0); expect(sessionStorage.length).toBe(0)

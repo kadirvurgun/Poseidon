@@ -11,6 +11,8 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         // OIDC scheme registration and membership resolution must share that final configuration.
         services.AddRouting();
         services.AddDataProtection();
+        services.AddSingleton<TimeProvider>(TimeProvider.System);
+        services.AddSingleton(configuration.GetSection("OfflineApplication").Get<OfflineApplicationPolicy>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton(configuration.GetSection("CrewPositionPolicy").Get<CrewPositionPolicy>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton(configuration.GetSection("CrewIdentityPolicy").Get<CrewIdentityPolicy>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton(configuration.GetSection("CrewProfilePolicy").Get<CrewProfilePolicy>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
@@ -97,6 +99,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapSecureFiles();
             endpoints.MapDocuments();
             endpoints.MapCrew();
+            endpoints.MapOfflineApplication();
             endpoints.MapCrewPersonalProfiles();
             endpoints.MapCrewSelection();
             endpoints.MapCredentials();

@@ -39,3 +39,8 @@ bindings, delimiter ambiguity, tampering, wrong/substituted keys/context, extrac
 and smaller keys, byte/context quotas, safe errors and retained encrypted records.
 They are **AUTHORED ONLY / NOT RUN**. No suites/build/typecheck/IndexedDB/browser/QA/
 CI executed. No seed entity is introduced and canonical progress is unchanged.
+
+
+## Application consumer — AUTHORED_UNVERIFIED
+
+The former handoff is now composed in the actual Crew workspace by OFFLINE-APPLICATION-01: explicitly configured Draft watch_group, enrolled device/encryption/signing keys, persistent encrypted snapshot/queue, ordinary-handler atomic replay/receipts/audit/conflict, explicit lifecycle/recovery/history/cleanup and registered real signed-host scenarios. Primitive coverage remains retained. All execution is DEFERRED. Other fields/binary evidence remain denied, and production policy is not approved. [Exact source and boundaries](offline-application-01.md).

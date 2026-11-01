@@ -1,0 +1,24 @@
+{
+  "OfflineApplication": {
+    "Version": "SYNTHETIC-UNAPPROVED-offline-v1",
+    "SourceVersion": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+    "Purpose": "Fictional disposable combined-gate fixture only",
+    "FieldClassification": "NonPersonalControlledDraftDeclaration",
+    "DevicePolicyReference": "SYNTHETIC-UNAPPROVED-device",
+    "KeyPolicyReference": "SYNTHETIC-UNAPPROVED-WebCrypto-AES256-GCM-and-P256",
+    "StoragePolicyReference": "SYNTHETIC-UNAPPROVED-encrypted-IndexedDB-static-shell-only",
+    "RetentionPolicyReference": "SYNTHETIC-UNAPPROVED-disposable-test-no-automatic-deletion",
+    "Operation": "crew.draft.watch-group.v1",
+    "Fields": ["watch_group"],
+    "WatchGroups": ["SYNTHETIC-A", "SYNTHETIC-B"],
+    "Scopes": [],
+    "NotBefore": "2026-11-01T00:00:00Z",
+    "ExpiresAt": "2026-11-02T00:00:00Z",
+    "LeaseSeconds": 3600,
+    "MaxRecords": 32,
+    "MaxEncryptedBytes": 131072,
+    "MaxDeviceRecords": 128,
+    "MaxDeviceEncryptedBytes": 524288,
+    "MaxEnrollments": 8
+  }
+}

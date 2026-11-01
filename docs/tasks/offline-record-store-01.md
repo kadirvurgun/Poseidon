@@ -55,3 +55,8 @@ offline evidence. DOMAIN-COMPLETION-01 must add the real composed user journeys.
 No test/browser/build/typecheck/provider lab/independent QA/CI was run.
 Execution is **DEFERRED / NOT RUN**, as requested. No operational entity/seed,
 production encryption/key policy approval, GDPR certification or canonical SP.
+
+
+## Application consumer — AUTHORED_UNVERIFIED
+
+The former handoff is now composed in the actual Crew workspace by OFFLINE-APPLICATION-01: explicitly configured Draft watch_group, enrolled device/encryption/signing keys, persistent encrypted snapshot/queue, ordinary-handler atomic replay/receipts/audit/conflict, explicit lifecycle/recovery/history/cleanup and registered real signed-host scenarios. Primitive coverage remains retained. All execution is DEFERRED. Other fields/binary evidence remain denied, and production policy is not approved. [Exact source and boundaries](offline-application-01.md).

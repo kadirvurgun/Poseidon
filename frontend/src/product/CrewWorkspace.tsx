@@ -1,4 +1,5 @@
 import { CrewIdentityHistory } from './CrewIdentityHistory'
+import { OfflineApplicationPanel } from './OfflineApplicationPanel'
 import { CrewPersonalFiles } from './CrewPersonalFiles'
 import { CrewPersonalProfile } from './CrewPersonalProfile'
 import { WorkspaceContextBar } from './WorkspaceContextBar'
@@ -14,7 +15,7 @@ const words = {
     position: 'Position / rank / capacity', from: 'Sign-on date', to: 'Sign-off date (exclusive)', contract: 'Contract end date', watch: 'Watch group',
     unknown: 'Unknown', withheld: 'Withheld', dirty: 'Unsaved changes', uncertain: 'Result uncertain. Retry the same attempt before editing.',
     conflict: 'Conflict. Reload the current assignment and resolve the changes.', invalid: 'Check the period and field values.',
-    offline: 'Offline read/capture is unavailable pending the crew field and device policy. This form requires a connection.',
+    offline: 'Ordinary forms require a connection. Use Durable offline drafts for explicitly configured capture.',
     prev: 'Previous', next: 'Next', roster: 'Back to roster', fleet: 'Back to vessel', unverified: 'Draft · unverified', expired: 'Session expired. Sign in again.',
     privacy: 'Identity, contact and health access are separate. Unavailable information remains Unknown.', saved: 'Draft saved.', reload: 'Discard and reload',
     eligibility: 'Eligibility', fitness: 'Fitness', certificate: 'Certificates', competence: 'Competence', contact: 'Contact', health: 'Health',
@@ -25,7 +26,7 @@ const words = {
     position: 'Pozisyon / rütbe / kapasite', from: 'Katılış tarihi', to: 'Ayrılış tarihi (hariç)', contract: 'Sözleşme bitiş tarihi', watch: 'Vardiya grubu',
     unknown: 'Bilinmiyor', withheld: 'Gizli', dirty: 'Kaydedilmemiş değişiklikler', uncertain: 'Sonuç belirsiz. Düzenlemeden önce aynı denemeyi tekrarlayın.',
     conflict: 'Çakışma. Güncel atamayı yükleyip değişiklikleri uzlaştırın.', invalid: 'Dönemi ve alan değerlerini kontrol edin.',
-    offline: 'Mürettebat alan ve cihaz politikası belirlenene kadar çevrimdışı okuma/kayıt kullanılamıyor. Bu form bağlantı gerektirir.',
+    offline: 'Normal formlar bağlantı gerektirir. Açıkça yapılandırılmış kayıt için Kalıcı çevrimdışı taslaklar bölümünü kullanın.',
     prev: 'Önceki', next: 'Sonraki', roster: 'Listeye dön', fleet: 'Araca dön', unverified: 'Taslak · doğrulanmamış', expired: 'Oturum süresi doldu. Yeniden oturum açın.',
     privacy: 'Kimlik, iletişim ve sağlık erişimleri ayrıdır. Eksik bilgi Bilinmiyor olarak kalır.', saved: 'Taslak kaydedildi.', reload: 'Vazgeç ve yeniden yükle',
     eligibility: 'Uygunluk', fitness: 'Sağlık uygunluğu', certificate: 'Belgeler', competence: 'Yetkinlik', contact: 'İletişim', health: 'Sağlık',
@@ -45,7 +46,8 @@ export function CrewWorkspace({ vessel, assignment }: { vessel: string; assignme
   const [certificateDirty, setCertificateDirty] = useState(false)
   const [profileDirty, setProfileDirty] = useState(false)
   const [fileDirty, setFileDirty] = useState(false)
-  const childDirty = certificateDirty || profileDirty || fileDirty
+  const [offlineDirty, setOfflineDirty] = useState(false)
+  const childDirty = certificateDirty || profileDirty || fileDirty || offlineDirty
   const [personMode, setPersonMode] = useState(false)
   const [conversion, setConversion] = useState(false)
   const [positionVersion, setPositionVersion] = useState<string | null>(null)
@@ -121,6 +123,7 @@ export function CrewWorkspace({ vessel, assignment }: { vessel: string; assignme
     <main id="crew-main" tabIndex={-1}>
       <nav><a href={`/app/fleet/${vessel}`} onClick={e => { e.preventDefault(); navigate(`/app/fleet/${vessel}`) }}>{t.fleet}</a>{assignment && <a href={rosterHref} onClick={e => { e.preventDefault(); navigate(rosterHref) }}>{t.roster}</a>}</nav>
       <h1>{assignment ? t.profile : t.title}</h1><p>{t.privacy}</p><p>{t.unverified}</p>
+      {assignment && <OfflineApplicationPanel key={`offline:${vessel}:${assignment}`} vessel={vessel} assignment={assignment} language={language} onDirty={setOfflineDirty} />}
       {!online && <p role="alert">{t.offline}</p>}
       {loading && <p role="status">{t.loading}</p>}
       {error > 0 && <div role="alert"><p>{error === 401 ? t.expired : error === 403 || error === 404 ? t.denied : t.error}</p><button onClick={() => setGeneration(v => v + 1)}>{t.retry}</button>{error === 401 && <a href={`/api/v1/auth/login?returnUrl=${encodeURIComponent(window.location.pathname)}`}>{t.expired}</a>}</div>}
