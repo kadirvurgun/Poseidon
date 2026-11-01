@@ -18,6 +18,7 @@ import urllib.request
 import uuid
 import tempfile
 import shutil
+from copy import deepcopy
 
 ROOT = Path(__file__).resolve().parents[1]
 PRIVATE = ROOT / '.runtime/oidc-lab'
@@ -159,7 +160,8 @@ def environment():
     # Default host/web-host providers strip these prefixes before chaining host
     # configuration into app configuration. Compare their effective keys too;
     # JSON overrides values, but cannot remove additional endpoint/array entries.
-    blocked = ('authentication:oidc:', 'connectionstrings:', 'kestrel:', 'developmentlab:', 'securefiles:', 'secretreferences:')
+    blocked = ('authentication:oidc:', 'connectionstrings:', 'kestrel:', 'developmentlab:', 'securefiles:', 'secretreferences:',
+               'workspacecontext:', 'workspacenavigation:')
     exact = {'poseidon_database', 'poseidon_lab_config', 'urls', 'http_ports', 'https_ports'}
 
     def isolated(key):
@@ -279,6 +281,77 @@ def register_browser():
     run([root_tool('node'), str(ROOT / 'tests/Poseidon.Browser.Tests/lab/register-run.ts')], env=env, timeout=600)
 
 
+def navigation_membership(config, realm):
+    """Explicit synthetic signed-host setup; labels/mappings never grant runtime authority.
+
+    Work on a copy so a conflicting operator catalog cannot partially enroll roles.
+    This function performs no provider calls and never changes provider identities.
+    """
+    candidate = deepcopy(config)
+    tenant = '10000000-0000-0000-0000-000000000001'
+    subjects = [u['id'] for u in realm['users'] if u['username'] == 'lab-manager']
+    if realm.get('realm') != 'poseidon-lab' or len(subjects) != 1:
+        raise RuntimeError('lab_navigation_identity_invalid')
+    members = [m for m in candidate['Authentication']['Oidc']['Memberships']
+               if m['Issuer'] == AUTHORITY and m['Subject'] == subjects[0]]
+    if (len(members) != 1 or members[0].get('TenantId') != tenant or
+            members[0].get('TenantWideRead') is not True or members[0].get('TenantWideManage') is not True):
+        raise RuntimeError('lab_navigation_scope_invalid')
+    member = members[0]
+    daily = str(uuid.uuid5(uuid.NAMESPACE_URL, PROJECT + '/synthetic-writer-assignment'))
+    review = str(uuid.uuid5(uuid.NAMESPACE_URL, PROJECT + '/synthetic-review-assignment'))
+    refs = member.get('RoleReferences', [])
+    if not isinstance(refs, list) or len(refs) > 16:
+        raise RuntimeError('lab_navigation_roles_invalid')
+    try:
+        canonical = [str(uuid.UUID(ref)) for ref in refs]
+    except (ValueError, TypeError, AttributeError):
+        raise RuntimeError('lab_navigation_roles_invalid') from None
+    # Unknown operator roles need explicit manual reconciliation; never invent
+    # meanings/catalog entries for them or silently discard their attribution.
+    if (canonical != refs or len(set(refs)) != len(refs) or
+            any(ref not in (daily, review) for ref in refs)):
+        raise RuntimeError('lab_navigation_existing_roles_require_manual_setup')
+    member['RoleReferences'] = list(dict.fromkeys([*refs, daily, review]))
+    labels = candidate.setdefault('WorkspaceContext', {}).setdefault('RoleCatalog', {})
+    mapping = candidate.setdefault('WorkspaceNavigation', {})
+    for catalog, key in ((labels, 'Roles'), (mapping, 'Mappings')):
+        catalog.setdefault('Version', 'SYNTHETIC-LAB-NAVIGATION-v1')
+        version = catalog['Version']
+        if (not isinstance(version, str) or not 1 <= len(version) <= 64 or
+                version.strip() != version or any(ord(c) < 32 or ord(c) == 127 for c in version)):
+            raise RuntimeError('lab_navigation_catalog_invalid')
+        rows = catalog.setdefault(key, [])
+        if not isinstance(rows, list) or len(rows) > 4096 or any(not isinstance(row, dict) for row in rows):
+            raise RuntimeError('lab_navigation_catalog_invalid')
+    for ref, tr, en, keys in (
+        (daily, 'KURGUSAL günlük iş rolü', 'FICTIONAL daily work role',
+         ['today', 'fleet', 'crew', 'equipment', 'maintenance', 'tug-command', 'tug-job-board']),
+        (review, 'KURGUSAL inceleme rolü', 'FICTIONAL review role',
+         ['fleet', 'import', 'audit', 'sources', 'requirements']),
+    ):
+        for rows, expected in (
+            (labels['Roles'], {'TenantId': tenant, 'Reference': ref, 'Tr': tr, 'En': en}),
+            (mapping['Mappings'], {'TenantId': tenant, 'Reference': ref,
+                                  'Modes': ['Fleet', 'Ship', 'Tug'], 'Keys': keys}),
+        ):
+            matches = [row for row in rows if str(row.get('TenantId', '')).lower() == tenant and
+                       str(row.get('Reference', '')).lower() == ref]
+            if matches and (len(matches) != 1 or matches[0] != expected):
+                raise RuntimeError('lab_navigation_operator_catalog_preserved')
+            if not matches:
+                if len(rows) >= 4096:
+                    raise RuntimeError('lab_navigation_catalog_budget')
+                rows.append(expected)
+    # Explicit read-only fixture grants for the five real workspace families.
+    # No new write, safety, verifier, owner or source-validation capability.
+    for permission in ('crew.read', 'equipment.read', 'maintenance.read', 'import.read',
+                       'mode.tug', 'mode.cross', 'tug.read'):
+        if permission not in member['Permissions']:
+            member['Permissions'].append(permission)
+    return candidate
+
+
 def prepare_bundle():
     """Explicit disposable fixture enrollment only; never production operational appointments."""
     stage('explicit_lab_bundle_configuration')
@@ -300,6 +373,7 @@ def prepare_bundle():
             member['Permissions'].append(permission)
     if not member.get('RoleReferences'):
         member['RoleReferences'] = [str(uuid.uuid5(uuid.NAMESPACE_URL, PROJECT + '/synthetic-writer-assignment'))]
+    config = navigation_membership(config, realm)
     objects = Path(tempfile.gettempdir()) / (PROJECT + '-audit-files-objects')
     private_directory(objects)
     config['SecureFiles'] = {'Adapter': 'LocalDevelopment', 'Root': str(objects), 'MaxBytes': 1048576,

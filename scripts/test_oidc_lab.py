@@ -62,7 +62,9 @@ class LabTests(unittest.TestCase):
         for prefix in ('', 'DOTNET_', 'ASPNETCORE_', 'dotnet_', 'aspnetcore_'):
             for delimiter in ('__', ':'):
                 for key in ('Kestrel:Endpoints:Other:Url', 'Authentication:Oidc:Memberships:9:Subject',
-                            'ConnectionStrings:Other', 'DevelopmentLab:WebRoot', 'URLS', 'HTTP_PORTS', 'HTTPS_PORTS'):
+                            'ConnectionStrings:Other', 'DevelopmentLab:WebRoot',
+                            'WorkspaceContext:RoleCatalog:Roles:9:Reference',
+                            'WorkspaceNavigation:Mappings:9:Keys:0', 'URLS', 'HTTP_PORTS', 'HTTPS_PORTS'):
                     ambient_key = prefix + key.replace(':', delimiter)
                     with self.subTest(prefix=prefix, delimiter=delimiter, key=key), \
                          patch.dict(os.environ, {ambient_key: 'ambient', 'LAB_TEST_UNRELATED': 'preserved'}), \
