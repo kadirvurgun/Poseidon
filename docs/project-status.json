@@ -4,7 +4,7 @@
     "accepted": false,
     "task": "docs/tasks/domain-completion-01.md",
     "phase_report": "docs/phases/DOMAIN-COMPLETION-01.md",
-    "current_phase": "Larger domain foundation authoring; checkpoints A/B",
+    "current_phase": "Larger domain foundation authoring; checkpoints A/B/C, incomplete",
     "verification": "DEFERRED: all suites/build/typecheck/migrations/contract/browser/independent QA/CI",
     "canonical_progress_unchanged": true,
     "new_personal_fields": 15,
@@ -18,6 +18,11 @@
     "source_only_observations": [
       "git diff --check exit0",
       "Graphify AST update; graph refreshed, HTML visualization omitted for graph size; not a product test"
+    ],
+    "tug_audit_revision": "authored_scoped_exact_revision_unverified",
+    "committed_checkpoints": [
+      "13f532d",
+      "c3de584"
     ]
   },
   "import_foundation_01": {

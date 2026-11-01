@@ -45,6 +45,7 @@ public sealed partial class DirectoryWorkspaceTests
         await using var db = Db(); var stored = await db.CrewPersonalProfiles.SingleAsync(x => x.PersonId == SeedVessel.Id, Ct);
         Assert.DoesNotContain(data.PassportNo!, stored.PassportNo!); Assert.DoesNotContain(data.SeaServiceMonths!, stored.SeaServiceMonths!);
         var audit = string.Join('|', await db.AuditEvents.Select(x => x.ChangeSummary).ToArrayAsync(Ct));
+        Assert.True(await db.AuditEvents.AnyAsync(x => x.CapabilityContext != null && x.CapabilityContext.Length > 512 && x.CapabilityContext.Length <= 2048, Ct));
         Assert.DoesNotContain(data.PassportNo!, audit); Assert.DoesNotContain(data.Email!, audit); Assert.DoesNotContain(stored.PassportNo!, audit);
         Assert.Equal(2, await db.CrewPersonalProfileRevisions.CountAsync(x => x.PersonId == SeedVessel.Id, Ct));
         var revision = await db.CrewPersonalProfileRevisions.FirstAsync(x => x.PersonId == SeedVessel.Id, Ct); revision.PolicyVersion = "mutated";

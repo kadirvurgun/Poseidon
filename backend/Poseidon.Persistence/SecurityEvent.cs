@@ -44,12 +44,12 @@ public sealed class SecurityEventWriter(DbContextOptions<SecurityEventWriter> op
     public async Task AppendAsync(SecurityEvent entry, CancellationToken cancellationToken = default)
     {
         if (ChangeTracker.HasChanges()) throw new InvalidOperationException("Only one security event may be appended at a time.");
-        if (entry.Action is not ("ImportRead" or "ImportSave" or "ImportReport" or "CredentialRead" or "CredentialSave" or "TugRead" or "TugSave" or "EquipmentRead" or "EquipmentSave" or "MaintenanceRead" or "MaintenanceSave" or "CrewRead" or "CrewProfile" or "CrewHistory" or "CrewSave" or "CrewPositions" or "Login" or "Logout" or "CompaniesRead" or "VesselsRead" or "AccessDenied" or "Session" or
+        if (entry.Action is not ("CrewProfileRead" or "CrewProfileSave" or "CrewProfileHistory" or "CrewCurrentAssignmentRead" or "MaintenanceObservation" or "MaintenanceObservationRead" or "MaintenanceObservationCapture" or "MaintenanceObservationRevoke" or "ImportRead" or "ImportSave" or "ImportReport" or "CredentialRead" or "CredentialSave" or "TugRead" or "TugSave" or "EquipmentRead" or "EquipmentSave" or "MaintenanceRead" or "MaintenanceSave" or "CrewRead" or "CrewProfile" or "CrewHistory" or "CrewSave" or "CrewPositions" or "Login" or "Logout" or "CompaniesRead" or "VesselsRead" or "AccessDenied" or "Session" or
             "CompanyCreate" or "CompanyUpdate" or "VesselCreate" or "VesselUpdate" or "DirectoryWrite" or
             "ProfileRead" or "ProfileHistory" or "ProfileSave" or "WorkspaceRead" or "WorkspaceSearch" or "TodayRead" or "TodayWhyRead" or
             "AuditQuery" or "AuditDetail" or "AuditRevision" or "RegisterList" or "RegisterRead" or "RegisterHistory" or "RegisterSave" or
             "FileRequest" or "FileList" or "FileDetail" or "FileAccessIssue" or "FileDownload") ||
-            entry.Result is not ("Success" or "Denied" or "Unauthenticated" or "Failed" or "SetupRequired" or "NotFound" or
+            entry.Result is not ("field_policy_denied" or "assignment_policy_denied" or "protected_storage_unavailable" or "observation_policy_denied" or "command_reuse_conflict" or "Success" or "Denied" or "Unauthenticated" or "Failed" or "SetupRequired" or "NotFound" or
             "Attempted" or "Authorized" or "permission_denied" or "csrf_invalid" or "invalid_request" or "validation_failed" or
             "invalid_idempotency_key" or "resource_not_found" or "idempotency_key_reused" or "version_conflict" or
             "duplicate_code" or "service_unavailable" or "source_revision_unavailable" or "Invalid" or

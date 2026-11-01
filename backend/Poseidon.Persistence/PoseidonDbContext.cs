@@ -166,7 +166,7 @@ public sealed class PoseidonDbContext(
             b.Property(x => x.EntityId).HasMaxLength(128);
             b.Property(x => x.CorrelationId).HasMaxLength(128);
             b.Property(x => x.RoleContext).HasMaxLength(600);
-            b.Property(x => x.CapabilityContext).HasMaxLength(512);
+            b.Property(x => x.CapabilityContext).HasMaxLength(2048);
             b.Property(x => x.ChangeSummary).HasMaxLength(2048);
             b.Property(x => x.ResourceKind).HasMaxLength(16);
             b.Property(x => x.ReasonStatus).HasMaxLength(32);

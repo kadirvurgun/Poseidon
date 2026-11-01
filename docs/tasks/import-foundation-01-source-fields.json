@@ -17,7 +17,9 @@
       "template_field_candidate": null,
       "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -34,7 +36,9 @@
       "template_field_candidate": null,
       "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -51,7 +55,9 @@
       "template_field_candidate": null,
       "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -68,7 +74,9 @@
       "template_field_candidate": null,
       "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -85,7 +93,9 @@
       "template_field_candidate": null,
       "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -102,7 +112,9 @@
       "template_field_candidate": null,
       "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -119,7 +131,9 @@
       "template_field_candidate": null,
       "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -136,7 +150,9 @@
       "template_field_candidate": null,
       "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -153,7 +169,9 @@
       "template_field_candidate": null,
       "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -170,7 +188,9 @@
       "template_field_candidate": null,
       "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -187,7 +207,9 @@
       "template_field_candidate": null,
       "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -204,7 +226,9 @@
       "template_field_candidate": null,
       "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -221,7 +245,9 @@
       "template_field_candidate": null,
       "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -238,7 +264,9 @@
       "template_field_candidate": null,
       "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -255,7 +283,9 @@
       "template_field_candidate": null,
       "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -272,7 +302,9 @@
       "template_field_candidate": null,
       "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -289,7 +321,9 @@
       "template_field_candidate": null,
       "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -306,7 +340,9 @@
       "template_field_candidate": null,
       "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -323,7 +359,9 @@
       "template_field_candidate": null,
       "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -340,7 +378,9 @@
       "template_field_candidate": null,
       "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -357,7 +397,9 @@
       "template_field_candidate": null,
       "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -374,7 +416,9 @@
       "template_field_candidate": null,
       "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -391,7 +435,9 @@
       "template_field_candidate": null,
       "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -408,7 +454,9 @@
       "template_field_candidate": null,
       "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -425,7 +473,9 @@
       "template_field_candidate": null,
       "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -442,7 +492,9 @@
       "template_field_candidate": null,
       "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -459,7 +511,9 @@
       "template_field_candidate": null,
       "coverage": "DEV-020 actual vessel profile field and mutation contract dependency remains; code/name selected-vessel update is not this profile. DEV-069 does not infer vessel creation.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -476,7 +530,9 @@
       "template_field_candidate": null,
       "coverage": "Server-derived authorized context/owner; never user-written source actor or identity.",
       "verification": "DEFERRED",
-      "coverage_state": "source_context"
+      "coverage_state": "source_context",
+      "software_state": "implemented_server_owned_context",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -493,7 +549,9 @@
       "template_field_candidate": "parent_ref",
       "coverage": "Ordinary scoped Technical validation; declarations unverified. Production lookup/type policy and DEV-052 acceptance remain separate.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial"
+      "coverage_state": "implemented_trial",
+      "software_state": "implemented_trial",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -510,7 +568,9 @@
       "template_field_candidate": "code",
       "coverage": "Ordinary scoped Technical validation; declarations unverified. Production lookup/type policy and DEV-052 acceptance remain separate.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial"
+      "coverage_state": "implemented_trial",
+      "software_state": "implemented_trial",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -527,7 +587,9 @@
       "template_field_candidate": "name",
       "coverage": "Ordinary scoped Technical validation; declarations unverified. Production lookup/type policy and DEV-052 acceptance remain separate.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial"
+      "coverage_state": "implemented_trial",
+      "software_state": "implemented_trial",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -544,7 +606,9 @@
       "template_field_candidate": "level",
       "coverage": "Ordinary scoped Technical validation; declarations unverified. Production lookup/type policy and DEV-052 acceptance remain separate.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial"
+      "coverage_state": "implemented_trial",
+      "software_state": "implemented_trial",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -561,7 +625,9 @@
       "template_field_candidate": "system_family",
       "coverage": "Ordinary scoped Technical validation; declarations unverified. Production lookup/type policy and DEV-052 acceptance remain separate.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial"
+      "coverage_state": "implemented_trial",
+      "software_state": "implemented_trial",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -578,7 +644,9 @@
       "template_field_candidate": "equipment_type",
       "coverage": "Ordinary scoped Technical validation; declarations unverified. Production lookup/type policy and DEV-052 acceptance remain separate.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial"
+      "coverage_state": "implemented_trial",
+      "software_state": "implemented_trial",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -595,7 +663,9 @@
       "template_field_candidate": "criticality",
       "coverage": "Ordinary scoped Technical validation; declarations unverified. Production lookup/type policy and DEV-052 acceptance remain separate.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial"
+      "coverage_state": "implemented_trial",
+      "software_state": "implemented_trial",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -612,7 +682,9 @@
       "template_field_candidate": "maker",
       "coverage": "Ordinary scoped Technical validation; declarations unverified. Production lookup/type policy and DEV-052 acceptance remain separate.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial"
+      "coverage_state": "implemented_trial",
+      "software_state": "implemented_trial",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -629,7 +701,9 @@
       "template_field_candidate": "model",
       "coverage": "Ordinary scoped Technical validation; declarations unverified. Production lookup/type policy and DEV-052 acceptance remain separate.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial"
+      "coverage_state": "implemented_trial",
+      "software_state": "implemented_trial",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -646,7 +720,9 @@
       "template_field_candidate": "serial_number",
       "coverage": "Ordinary scoped Technical validation; declarations unverified. Production lookup/type policy and DEV-052 acceptance remain separate.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial"
+      "coverage_state": "implemented_trial",
+      "software_state": "implemented_trial",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -663,7 +739,9 @@
       "template_field_candidate": "location",
       "coverage": "Ordinary scoped Technical validation; declarations unverified. Production lookup/type policy and DEV-052 acceptance remain separate.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial"
+      "coverage_state": "implemented_trial",
+      "software_state": "implemented_trial",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -680,7 +758,9 @@
       "template_field_candidate": "commission_date",
       "coverage": "Ordinary scoped Technical validation; declarations unverified. Production lookup/type policy and DEV-052 acceptance remain separate.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial"
+      "coverage_state": "implemented_trial",
+      "software_state": "implemented_trial",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -697,7 +777,9 @@
       "template_field_candidate": null,
       "coverage": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct.",
       "verification": "DEFERRED",
-      "coverage_state": "system_or_external_workflow"
+      "coverage_state": "system_owned_not_imported",
+      "software_state": "separate_owning_workflow_not_completed_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -714,7 +796,9 @@
       "template_field_candidate": null,
       "coverage": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -731,7 +815,9 @@
       "template_field_candidate": "notes",
       "coverage": "Ordinary scoped Technical validation; declarations unverified. Production lookup/type policy and DEV-052 acceptance remain separate.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial"
+      "coverage_state": "implemented_trial",
+      "software_state": "implemented_trial",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -748,7 +834,9 @@
       "template_field_candidate": null,
       "coverage": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -765,7 +853,9 @@
       "template_field_candidate": null,
       "coverage": "Server-derived authorized context/owner; never user-written source actor or identity.",
       "verification": "DEFERRED",
-      "coverage_state": "source_context"
+      "coverage_state": "source_context",
+      "software_state": "implemented_server_owned_context",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -782,7 +872,9 @@
       "template_field_candidate": "employee_no",
       "coverage": "Existing-person edits use separate ordinary person endpoint; controlled existing-person identity update integration remains software gap.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial_new_person_only"
+      "coverage_state": "implemented_trial_new_person_only",
+      "software_state": "implemented_trial_new_person_only",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -799,7 +891,9 @@
       "template_field_candidate": null,
       "coverage": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -816,7 +910,9 @@
       "template_field_candidate": null,
       "coverage": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -833,7 +929,9 @@
       "template_field_candidate": "nationality",
       "coverage": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_configured"
+      "coverage_state": "implemented_configured",
+      "software_state": "implemented_configured",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -850,7 +948,9 @@
       "template_field_candidate": "from",
       "coverage": "Scoped assignment period and ordinary domain handler; no employment/operational appointment approval.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial"
+      "coverage_state": "implemented_trial",
+      "software_state": "implemented_trial",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -867,7 +967,9 @@
       "template_field_candidate": "to",
       "coverage": "Scoped assignment period and ordinary domain handler; no employment/operational appointment approval.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial"
+      "coverage_state": "implemented_trial",
+      "software_state": "implemented_trial",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -884,7 +986,9 @@
       "template_field_candidate": "contract_end_date",
       "coverage": "Scoped assignment period and ordinary domain handler; no employment/operational appointment approval.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial"
+      "coverage_state": "implemented_trial",
+      "software_state": "implemented_trial",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -901,7 +1005,9 @@
       "template_field_candidate": "watch_group",
       "coverage": "Scoped assignment period and ordinary domain handler; no employment/operational appointment approval.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial"
+      "coverage_state": "implemented_trial",
+      "software_state": "implemented_trial",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -918,7 +1024,9 @@
       "template_field_candidate": null,
       "coverage": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -935,7 +1043,9 @@
       "template_field_candidate": null,
       "coverage": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct.",
       "verification": "DEFERRED",
-      "coverage_state": "system_or_external_workflow"
+      "coverage_state": "system_owned_not_imported",
+      "software_state": "separate_owning_workflow_not_completed_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -952,7 +1062,9 @@
       "template_field_candidate": null,
       "coverage": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct.",
       "verification": "DEFERRED",
-      "coverage_state": "system_or_external_workflow"
+      "coverage_state": "system_owned_not_imported",
+      "software_state": "separate_owning_workflow_not_completed_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -969,7 +1081,9 @@
       "template_field_candidate": null,
       "coverage": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct.",
       "verification": "DEFERRED",
-      "coverage_state": "system_or_external_workflow"
+      "coverage_state": "system_owned_not_imported",
+      "software_state": "separate_owning_workflow_not_completed_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -986,7 +1100,9 @@
       "template_field_candidate": null,
       "coverage": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct.",
       "verification": "DEFERRED",
-      "coverage_state": "system_or_external_workflow"
+      "coverage_state": "system_owned_not_imported",
+      "software_state": "separate_owning_workflow_not_completed_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1003,7 +1119,9 @@
       "template_field_candidate": null,
       "coverage": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct.",
       "verification": "DEFERRED",
-      "coverage_state": "system_or_external_workflow"
+      "coverage_state": "system_owned_not_imported",
+      "software_state": "separate_owning_workflow_not_completed_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1020,7 +1138,9 @@
       "template_field_candidate": null,
       "coverage": "Server-derived authorized context/owner; never user-written source actor or identity.",
       "verification": "DEFERRED",
-      "coverage_state": "source_context"
+      "coverage_state": "source_context",
+      "software_state": "implemented_server_owned_context",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1037,7 +1157,9 @@
       "template_field_candidate": "employee_no",
       "coverage": "Existing-person edits use separate ordinary person endpoint; controlled existing-person identity update integration remains software gap.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial_new_person_only"
+      "coverage_state": "implemented_trial_new_person_only",
+      "software_state": "implemented_trial_new_person_only",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1054,7 +1176,9 @@
       "template_field_candidate": "full_name",
       "coverage": "Existing-person edits use separate ordinary person endpoint; controlled existing-person identity update integration remains software gap.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial_new_person_only"
+      "coverage_state": "implemented_trial_new_person_only",
+      "software_state": "implemented_trial_new_person_only",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1071,7 +1195,9 @@
       "template_field_candidate": "date_of_birth",
       "coverage": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_configured"
+      "coverage_state": "implemented_configured",
+      "software_state": "implemented_configured",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1088,7 +1214,9 @@
       "template_field_candidate": "nationality",
       "coverage": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_configured"
+      "coverage_state": "implemented_configured",
+      "software_state": "implemented_configured",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1105,7 +1233,9 @@
       "template_field_candidate": "passport_no",
       "coverage": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_configured"
+      "coverage_state": "implemented_configured",
+      "software_state": "implemented_configured",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1122,7 +1252,9 @@
       "template_field_candidate": "passport_expiry",
       "coverage": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_configured"
+      "coverage_state": "implemented_configured",
+      "software_state": "implemented_configured",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1139,7 +1271,9 @@
       "template_field_candidate": "seaman_book_no",
       "coverage": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_configured"
+      "coverage_state": "implemented_configured",
+      "software_state": "implemented_configured",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1156,7 +1290,9 @@
       "template_field_candidate": "seaman_book_expiry",
       "coverage": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_configured"
+      "coverage_state": "implemented_configured",
+      "software_state": "implemented_configured",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1173,7 +1309,9 @@
       "template_field_candidate": null,
       "coverage": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1190,7 +1328,9 @@
       "template_field_candidate": null,
       "coverage": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1207,7 +1347,9 @@
       "template_field_candidate": null,
       "coverage": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1224,7 +1366,9 @@
       "template_field_candidate": "company_start_date",
       "coverage": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_configured"
+      "coverage_state": "implemented_configured",
+      "software_state": "implemented_configured",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1241,7 +1385,9 @@
       "template_field_candidate": "sea_service_months",
       "coverage": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_configured"
+      "coverage_state": "implemented_configured",
+      "software_state": "implemented_configured",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1258,7 +1404,9 @@
       "template_field_candidate": "tanker_experience_months",
       "coverage": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_configured"
+      "coverage_state": "implemented_configured",
+      "software_state": "implemented_configured",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1275,7 +1423,9 @@
       "template_field_candidate": "vessel_type_experience",
       "coverage": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_configured"
+      "coverage_state": "implemented_configured",
+      "software_state": "implemented_configured",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1292,7 +1442,9 @@
       "template_field_candidate": "company_experience_months",
       "coverage": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_configured"
+      "coverage_state": "implemented_configured",
+      "software_state": "implemented_configured",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1309,7 +1461,9 @@
       "template_field_candidate": "emergency_contact",
       "coverage": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_configured"
+      "coverage_state": "implemented_configured",
+      "software_state": "implemented_configured",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1326,7 +1480,9 @@
       "template_field_candidate": "preferred_language",
       "coverage": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_configured"
+      "coverage_state": "implemented_configured",
+      "software_state": "implemented_configured",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1343,7 +1499,9 @@
       "template_field_candidate": "contact_phone",
       "coverage": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_configured"
+      "coverage_state": "implemented_configured",
+      "software_state": "implemented_configured",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1360,7 +1518,9 @@
       "template_field_candidate": "email",
       "coverage": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_configured"
+      "coverage_state": "implemented_configured",
+      "software_state": "implemented_configured",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1377,7 +1537,9 @@
       "template_field_candidate": null,
       "coverage": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1394,7 +1556,9 @@
       "template_field_candidate": null,
       "coverage": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1411,7 +1575,9 @@
       "template_field_candidate": null,
       "coverage": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1428,7 +1594,9 @@
       "template_field_candidate": null,
       "coverage": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1445,7 +1613,9 @@
       "template_field_candidate": null,
       "coverage": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct.",
       "verification": "DEFERRED",
-      "coverage_state": "system_or_external_workflow"
+      "coverage_state": "system_owned_not_imported",
+      "software_state": "separate_owning_workflow_not_completed_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1462,7 +1632,9 @@
       "template_field_candidate": null,
       "coverage": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct.",
       "verification": "DEFERRED",
-      "coverage_state": "system_or_external_workflow"
+      "coverage_state": "system_owned_not_imported",
+      "software_state": "separate_owning_workflow_not_completed_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1479,7 +1651,9 @@
       "template_field_candidate": null,
       "coverage": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct.",
       "verification": "DEFERRED",
-      "coverage_state": "system_or_external_workflow"
+      "coverage_state": "system_owned_not_imported",
+      "software_state": "separate_owning_workflow_not_completed_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1496,7 +1670,9 @@
       "template_field_candidate": null,
       "coverage": "Server-derived authorized context/owner; never user-written source actor or identity.",
       "verification": "DEFERRED",
-      "coverage_state": "source_context"
+      "coverage_state": "source_context",
+      "software_state": "implemented_server_owned_context",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1513,7 +1689,9 @@
       "template_field_candidate": "certificate_type",
       "coverage": "Ordinary private Credential declaration handler; no authenticity/signature/qualification claim. Person-owned document contract remains software gap for document_ref.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial"
+      "coverage_state": "implemented_trial",
+      "software_state": "implemented_trial",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1530,7 +1708,9 @@
       "template_field_candidate": "certificate_no",
       "coverage": "Ordinary private Credential declaration handler; no authenticity/signature/qualification claim. Person-owned document contract remains software gap for document_ref.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial"
+      "coverage_state": "implemented_trial",
+      "software_state": "implemented_trial",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1547,7 +1727,9 @@
       "template_field_candidate": "issuer",
       "coverage": "Ordinary private Credential declaration handler; no authenticity/signature/qualification claim. Person-owned document contract remains software gap for document_ref.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial"
+      "coverage_state": "implemented_trial",
+      "software_state": "implemented_trial",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1564,7 +1746,9 @@
       "template_field_candidate": "issuing_country",
       "coverage": "Ordinary private Credential declaration handler; no authenticity/signature/qualification claim. Person-owned document contract remains software gap for document_ref.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial"
+      "coverage_state": "implemented_trial",
+      "software_state": "implemented_trial",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1581,7 +1765,9 @@
       "template_field_candidate": "issue_date",
       "coverage": "Ordinary private Credential declaration handler; no authenticity/signature/qualification claim. Person-owned document contract remains software gap for document_ref.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial"
+      "coverage_state": "implemented_trial",
+      "software_state": "implemented_trial",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1598,7 +1784,9 @@
       "template_field_candidate": "expiry_date",
       "coverage": "Ordinary private Credential declaration handler; no authenticity/signature/qualification claim. Person-owned document contract remains software gap for document_ref.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial"
+      "coverage_state": "implemented_trial",
+      "software_state": "implemented_trial",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1615,7 +1803,9 @@
       "template_field_candidate": "endorsement_required",
       "coverage": "Ordinary private Credential declaration handler; no authenticity/signature/qualification claim. Person-owned document contract remains software gap for document_ref.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial"
+      "coverage_state": "implemented_trial",
+      "software_state": "implemented_trial",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1632,7 +1822,9 @@
       "template_field_candidate": "endorsement_no",
       "coverage": "Ordinary private Credential declaration handler; no authenticity/signature/qualification claim. Person-owned document contract remains software gap for document_ref.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial"
+      "coverage_state": "implemented_trial",
+      "software_state": "implemented_trial",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1649,7 +1841,9 @@
       "template_field_candidate": "endorsement_expiry",
       "coverage": "Ordinary private Credential declaration handler; no authenticity/signature/qualification claim. Person-owned document contract remains software gap for document_ref.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial"
+      "coverage_state": "implemented_trial",
+      "software_state": "implemented_trial",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1666,7 +1860,9 @@
       "template_field_candidate": "stcw_reference",
       "coverage": "Ordinary private Credential declaration handler; no authenticity/signature/qualification claim. Person-owned document contract remains software gap for document_ref.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial"
+      "coverage_state": "implemented_trial",
+      "software_state": "implemented_trial",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1683,7 +1879,9 @@
       "template_field_candidate": "tanker_relevance",
       "coverage": "Ordinary private Credential declaration handler; no authenticity/signature/qualification claim. Person-owned document contract remains software gap for document_ref.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial"
+      "coverage_state": "implemented_trial",
+      "software_state": "implemented_trial",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1700,7 +1898,9 @@
       "template_field_candidate": "vessel_type_scope",
       "coverage": "Ordinary private Credential declaration handler; no authenticity/signature/qualification claim. Person-owned document contract remains software gap for document_ref.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial"
+      "coverage_state": "implemented_trial",
+      "software_state": "implemented_trial",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1717,7 +1917,9 @@
       "template_field_candidate": null,
       "coverage": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct.",
       "verification": "DEFERRED",
-      "coverage_state": "system_or_external_workflow"
+      "coverage_state": "system_owned_not_imported",
+      "software_state": "separate_owning_workflow_not_completed_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1734,7 +1936,9 @@
       "template_field_candidate": null,
       "coverage": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1751,7 +1955,9 @@
       "template_field_candidate": null,
       "coverage": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software"
+      "coverage_state": "unimplemented_software",
+      "software_state": "unimplemented_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1768,7 +1974,9 @@
       "template_field_candidate": "document_ref",
       "coverage": "Ordinary private Credential declaration handler; no authenticity/signature/qualification claim. Person-owned document contract remains software gap for document_ref.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial"
+      "coverage_state": "implemented_partial_person_ownership_software_open",
+      "software_state": "declaration_capture_exists_person_owned_document_reference_contract_unimplemented",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1785,7 +1993,9 @@
       "template_field_candidate": "renewal_lead_days",
       "coverage": "Ordinary private Credential declaration handler; no authenticity/signature/qualification claim. Person-owned document contract remains software gap for document_ref.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial"
+      "coverage_state": "implemented_trial",
+      "software_state": "implemented_trial",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1802,7 +2012,9 @@
       "template_field_candidate": null,
       "coverage": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct.",
       "verification": "DEFERRED",
-      "coverage_state": "system_or_external_workflow"
+      "coverage_state": "system_owned_not_imported",
+      "software_state": "separate_owning_workflow_not_completed_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1819,7 +2031,9 @@
       "template_field_candidate": "restriction",
       "coverage": "Ordinary private Credential declaration handler; no authenticity/signature/qualification claim. Person-owned document contract remains software gap for document_ref.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial"
+      "coverage_state": "implemented_trial",
+      "software_state": "implemented_trial",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1836,7 +2050,9 @@
       "template_field_candidate": "source_system",
       "coverage": "Ordinary private Credential declaration handler; no authenticity/signature/qualification claim. Person-owned document contract remains software gap for document_ref.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial"
+      "coverage_state": "implemented_trial",
+      "software_state": "implemented_trial",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1853,7 +2069,9 @@
       "template_field_candidate": null,
       "coverage": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct.",
       "verification": "DEFERRED",
-      "coverage_state": "system_or_external_workflow"
+      "coverage_state": "system_owned_not_imported",
+      "software_state": "separate_owning_workflow_not_completed_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1870,7 +2088,9 @@
       "template_field_candidate": null,
       "coverage": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct.",
       "verification": "DEFERRED",
-      "coverage_state": "system_or_external_workflow"
+      "coverage_state": "system_owned_not_imported",
+      "software_state": "separate_owning_workflow_not_completed_in_this_package",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1887,7 +2107,9 @@
       "template_field_candidate": "notes",
       "coverage": "Ordinary private Credential declaration handler; no authenticity/signature/qualification claim. Person-owned document contract remains software gap for document_ref.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial"
+      "coverage_state": "implemented_trial",
+      "software_state": "implemented_trial",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     }
   ],
   "coverage_version": "DEV-069-source-coverage-v2",

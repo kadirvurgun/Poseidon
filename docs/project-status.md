@@ -1,3 +1,7 @@
+# DOMAIN-COMPLETION-01 — checkpoint C / AUTHORED_UNVERIFIED / INCOMPLETE
+
+Closed audit action/result vocabulary, bounded complete capability metadata and exact authorized Tug revision drilldown are authored with tests. Crew/import checkpoint13f532d and normalized Technical/PMS checkpointc3de584 are preserved. Every suite/build/typecheck/migration/contract/browser/QA/CI check remains DEFERRED. Full offline, person-owned files/photo and remaining Tug software are still required. No publishing, merge or acceptance. [Exact software and external gates](phases/DOMAIN-COMPLETION-01.md).
+
 # DOMAIN-COMPLETION-01 — checkpoint B / AUTHORED_UNVERIFIED / INCOMPLETE
 
 Normalized scoped meter/condition observation capture/revocation, configured freshness/unit/precision adapter, real PMS calculation/current assessment consumers and TR/EN data entry are authored with domain/API/React tests. All execution remains DEFERRED. Earlier Crew/import handoffs are committed at13f532d. Full offline, person files/photo and Tug closure remain required software, separately from deployment/source approval gates. No acceptance, publishing or merge. [Current report](phases/DOMAIN-COMPLETION-01.md).

@@ -3,7 +3,7 @@ import type { components } from '../generated/api'
 import { isGuid } from './identifiers'
 import { timestamp } from './date-validation'
 
-export const auditTypes = ['Tenant', 'Company', 'Vessel', 'VesselProfile', 'TugProfile', 'RegulatoryDraft', 'RegulatoryDraftRevision', 'RegisterDraft', 'RegisterRevision', 'FileStage', 'StoredFile'] as const
+export const auditTypes = ['Tenant', 'Company', 'Vessel', 'VesselProfile', 'TugProfile', 'TugJob', 'TugJobRevision', 'TugAssignment', 'RegulatoryDraft', 'RegulatoryDraftRevision', 'RegisterDraft', 'RegisterRevision', 'FileStage', 'StoredFile'] as const
 export type AuditRecord = components['schemas']['AuditRecordDto'] & {
   beforeVersion: number | null; afterVersion: number | null; beforeRevision: number | null; afterRevision: number | null;
 }
@@ -19,15 +19,15 @@ export function changes(summary: string | null): Change[] {
   if (summary === null) return []
   let values: unknown
   try { values = JSON.parse(summary) } catch { return invalid() }
-  if (!Array.isArray(values) || values.length > 8) return invalid()
+  if (!Array.isArray(values) || values.length > 20) return invalid()
   return values.map(v => {
     if (!object(v) || !keys(v, ['field', 'before', 'after', 'evidence']) || typeof v.field !== 'string' ||
-      !['Code', 'Name', 'Kind', 'CompanyId', 'GrossTonnage', 'BollardPullTonnes', 'Revision', 'ContentJson', 'State'].includes(v.field) ||
+      !['Code', 'Name', 'Kind', 'CompanyId', 'SourceVersion', 'RequiredBollardPull', 'RequiredTugCount', 'RequestOwner', 'RequestedStart', 'RequestedEnd', 'GrossTonnage', 'BollardPullTonnes', 'Revision', 'ContentJson', 'State'].includes(v.field) ||
       (typeof v.evidence !== 'string' || !['ValuesWithheld', 'RevisionReference', 'Allowlisted'].includes(v.evidence))) return invalid()
     const expected = v.field === 'ContentJson' ? 'RevisionReference' : ['Code', 'Name'].includes(v.field) ? 'ValuesWithheld' : 'Allowlisted'
     if (v.evidence !== expected) return invalid()
-    const safeValue = (x: unknown) => x === null || typeof x === 'string' && x.length <= 64 && (
-      v.field === 'State' ? ['Pending', 'Receiving', 'CleanTransport', 'Abandoned', 'SyntheticUnverified'].includes(x) : v.field === 'CompanyId' ? isGuid(x) : v.field === 'Kind' ? ['Ship', 'Tug', 'Source', 'Requirement'].includes(x) : (v.field === 'Revision' ? /^\d+$(?![\s\S])/.test(x) : /^\d+(?:\.\d+)?$(?![\s\S])/.test(x)) && !/[\r\n]/.test(x))
+    const safeValue = (x: unknown) => x === null || typeof x === 'string' && x.length <= 128 && (
+      v.field === 'State' ? ['Pending', 'Receiving', 'CleanTransport', 'Abandoned', 'SyntheticUnverified', 'Draft', 'Uploaded', 'MappingDraft', 'Previewed', 'Committed'].includes(x) : ['CompanyId', 'RequestOwner'].includes(v.field) ? isGuid(x) : ['RequestedStart', 'RequestedEnd'].includes(v.field) ? timestamp(x) : v.field === 'SourceVersion' ? x === 'poseidon-v46.3-20261030/14.02/1914-1931/TUG-FOUNDATION-01' : v.field === 'Kind' ? ['Ship', 'Tug', 'Source', 'Requirement'].includes(x) : (v.field === 'Revision' ? /^\d+$(?![\s\S])/.test(x) : /^\d+(?:\.\d+)?$(?![\s\S])/.test(x)) && !/[\r\n]/.test(x))
     if (['Code', 'Name', 'ContentJson'].includes(v.field) ? v.before !== null || v.after !== null : !safeValue(v.before) || !safeValue(v.after)) return invalid()
     return v as Change
   })
@@ -42,7 +42,7 @@ export function decodeAuditRecord(v: unknown): AuditRecord {
     typeof v.metadataStatus !== 'string' || !['Recorded', 'HistoricalMetadataUnavailable', 'CapabilityContextUnavailable'].includes(v.metadataStatus) ||
     !(v.correlationId === null || isGuid(v.correlationId) || typeof v.correlationId === 'string' && v.correlationId.length === 32 && /^[0-9a-f]{32}$/i.test(v.correlationId)) || !(v.changeSummary === null || typeof v.changeSummary === 'string' && v.changeSummary.length <= 2048) ||
     !(v.roleContext === null || typeof v.roleContext === 'string' && v.roleContext.length <= 600 && v.roleContext.split(',').length <= 16 && v.roleContext.split(',').every(isGuid) && new Set(v.roleContext.split(',')).size === v.roleContext.split(',').length) ||
-    !(v.capabilityContext === null || typeof v.capabilityContext === 'string' && v.capabilityContext.length <= 512 && v.capabilityContext.split(',').every(p => ['directory.read', 'directory.write', 'workspace.search', 'regulatory.draft.read', 'regulatory.draft.write', 'audit.read', 'file.read', 'file.write'].includes(p))) ||
+    !(v.capabilityContext === null || typeof v.capabilityContext === 'string' && v.capabilityContext.length <= 2048 && v.capabilityContext.split(',').every(p => ['crew.position.write', 'maintenance.observation.write', 'crew.assignment.declare', 'import.read', 'import.write', 'crew.certificate.read', 'crew.certificate.write', 'crew.profile.identity.read', 'crew.profile.identity.write', 'crew.profile.contact.read', 'crew.profile.contact.write', 'crew.profile.employment.read', 'crew.profile.employment.write', 'mode.tug', 'mode.cross', 'tug.read', 'tug.write', 'tug.owner.eligible', 'crew.read', 'crew.write', 'crew.identity.read', 'crew.identity.write', 'crew.history.read', 'directory.read', 'directory.write', 'workspace.search', 'regulatory.draft.read', 'regulatory.draft.write', 'audit.read', 'file.read', 'file.write', 'equipment.read', 'equipment.write', 'equipment.history.read', 'maintenance.read', 'maintenance.write', 'maintenance.history.read', 'maintenance.owner.eligible'].includes(p))) ||
     !(v.revisionHref === null || v.revisionHref === `/api/v1/audit/${v.id}/revision` && integer(v.afterRevision, 1) && isGuid(v.resourceId))) return invalid()
   changes(v.changeSummary as string | null)
   return v as AuditRecord

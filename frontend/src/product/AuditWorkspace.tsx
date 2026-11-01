@@ -1,3 +1,4 @@
+import { TugAuditRevision } from './TugAuditRevision'
 import { useEffect, useState } from 'react'
 import { ApiError } from './api'
 import { auditDetail, auditPage, auditTypes, changes } from './audit-api'
@@ -62,6 +63,7 @@ export function AuditWorkspace({ language, selected, query = '', allowed, onNavi
       <dt>{en ? 'Resource version' : 'Kaynak sürümü'}</dt><dd>{detail.data.beforeVersion ?? '—'} → {detail.data.afterVersion ?? (en ? 'Unavailable' : 'Mevcut değil')}</dd>
       <dt>{en ? 'Correlation' : 'Korelasyon'}</dt><dd>{detail.data.correlationId ?? '—'}</dd>
     </dl>{detail.data.changeSummary === null ? <p>{en ? 'Historical values are unavailable.' : 'Tarihsel değerler mevcut değil.'}</p> : <ul>{changes(detail.data.changeSummary).map(c => <li key={c.field}>{c.field}: {c.evidence === 'Allowlisted' ? `${c.before ?? '—'} → ${c.after ?? '—'}` : c.evidence === 'RevisionReference' ? `${detail.data.beforeRevision ?? '—'} → ${detail.data.afterRevision ?? '—'}` : (en ? 'Values withheld' : 'Değerler gizlendi')}</li>)}</ul>}
+      {detail.data.revisionHref && ['TugJob', 'TugJobRevision'].includes(detail.data.entityType) && <TugAuditRevision key={detail.data.id} auditId={detail.data.id} language={language} />}
       {detail.data.revisionHref ? <a href={detail.data.revisionHref}>{en ? 'Open exact immutable revision' : 'Değişmez revizyonu aç'}</a> : <p>{en ? 'Immutable revision evidence is unavailable for this record.' : 'Bu kayıt için değişmez revizyon kanıtı mevcut değil.'}</p>}
     </section>}
   </section>

@@ -22,7 +22,7 @@ public static class TugRequestPolicy
     {
         value = null;
         if (text == null) return true;
-        if (!Regex.IsMatch(text, @"^(0|[1-9][0-9]{0,7})(\.[0-9]{1,2})?$", RegexOptions.CultureInvariant)) return false;
+        if (!Regex.IsMatch(text, @"\A(0|[1-9][0-9]{0,7})(\.[0-9]{1,2})?\z", RegexOptions.CultureInvariant)) return false;
         value = decimal.Parse(text, CultureInfo.InvariantCulture); return true;
     }
     public static string[] Invalid(TugRequestInputs x)

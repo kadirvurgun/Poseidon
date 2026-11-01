@@ -1,4 +1,6 @@
 using System.Globalization;
+using System.Text.Json;
+using Poseidon.Domain;
 using Microsoft.EntityFrameworkCore;
 using Poseidon.Persistence;
 
@@ -8,7 +10,9 @@ public sealed record AuditRecordDto(Guid Id, DateTimeOffset OccurredAt, string? 
     string Action, string EntityType, Guid? ResourceId, Guid? VesselId, string? CapabilityContext, string? RoleContext,
     string? ChangeSummary, uint? BeforeVersion, uint? AfterVersion, long? BeforeRevision, long? AfterRevision, string? ReasonStatus,
     string? CorrelationId, string MetadataStatus, string? RevisionHref);
-public sealed record AuditEvidenceDto(string Kind, RegulatoryRevisionDto? Profile, RegisterRevisionDto? Register);
+public sealed record TugAuditRevisionDto(Guid JobId, long Revision, string JobNumber, string SourceVersion, DateTimeOffset SavedAt, string Provenance,
+    DateTimeOffset? RequestedStart, DateTimeOffset? RequestedEnd, string? RequiredBollardPull, int? RequiredTugCount, string? JobType, string? Priority, Guid? OwnerRoleReference);
+public sealed record AuditEvidenceDto(string Kind, RegulatoryRevisionDto? Profile, RegisterRevisionDto? Register, TugAuditRevisionDto? Tug = null);
 public sealed record AuditPageDto(AuditRecordDto[] Items, int Total, int Limit, string? NextCursor);
 
 // AUDIT-TRACE-01 / T-S1-004. Security events and internal receipt rows are deliberately not a log viewer.
@@ -50,7 +54,7 @@ public static class AuditHistoryEndpoints
         e.ResourceId, e.VesselId, e.CapabilityContext, e.RoleContext, e.ChangeSummary, e.BeforeVersion, afterVersion, e.BeforeRevision, e.AfterRevision, e.ReasonStatus,
         (e.CorrelationId.Length == 32 && Guid.TryParseExact(e.CorrelationId, "N", out _) || e.CorrelationId.Length == 36 && Guid.TryParseExact(e.CorrelationId, "D", out _)) ? e.CorrelationId : null,
         e.Source == null ? "HistoricalMetadataUnavailable" : e.CapabilityContext == null ? "CapabilityContextUnavailable" : "Recorded",
-        e.AfterRevision is > 0 && e.ResourceId != null && (e.EntityType is nameof(RegulatoryDraft) or nameof(RegulatoryDraftRevision) or nameof(RegisterDraft) or nameof(RegisterRevision))
+        e.AfterRevision is > 0 && e.ResourceId != null && (e.EntityType is nameof(RegulatoryDraft) or nameof(RegulatoryDraftRevision) or nameof(RegisterDraft) or nameof(RegisterRevision) or nameof(TugJob) or nameof(TugJobRevision))
             ? $"/api/v1/audit/{e.Id}/revision" : null);
 
     private static async Task<AuditRecordDto[]> Project(PoseidonDbContext db, AuditEvent[] authorized, CancellationToken ct)
@@ -134,6 +138,14 @@ public static class AuditHistoryEndpoints
             if (row.EntityType is nameof(RegulatoryDraft) or nameof(RegulatoryDraftRevision)) {
                 var r = await db.RegulatoryDraftRevisions.AsNoTracking().SingleOrDefaultAsync(x => x.VesselId == row.ResourceId && x.Revision == row.AfterRevision, h.RequestAborted);
                 if (r != null) evidence = new("RegulatoryProfile", new(r.Revision, r.SavedAt, r.Provenance, RegulatoryDraftStorage.Deserialize(r.ContentJson)), null);
+            } else if (Actor(h).CanReadTug && (row.EntityType is nameof(TugJob) or nameof(TugJobRevision))) {
+                var revision = await db.TugJobRevisions.AsNoTracking().SingleOrDefaultAsync(x => x.JobId == row.ResourceId && x.VesselId == row.VesselId && x.Revision == row.AfterRevision, h.RequestAborted);
+                if (revision != null) {
+                    var inputs = JsonSerializer.Deserialize<TugRequestInputs>(revision.ContentJson)!;
+                    // Closed source facts. Arbitrary customer/vessel/note text remains outside generic audit projections.
+                    evidence = new("TugJob", null, null, new(revision.JobId, revision.Revision, revision.JobNumber, revision.SourceVersion, revision.SavedAt, revision.Provenance,
+                        inputs.RequestedStart, inputs.RequestedEnd, inputs.RequiredBollardPull, inputs.RequiredTugCount, inputs.JobType, inputs.Priority, inputs.RequestOwner));
+                }
             } else if (Actor(h).CanReadRegulatory && (row.EntityType is nameof(RegisterDraft) or nameof(RegisterRevision))) {
                 var r = await db.RegisterRevisions.AsNoTracking().SingleOrDefaultAsync(x => x.Id == row.ResourceId && x.Kind == row.ResourceKind && x.Revision == row.AfterRevision, h.RequestAborted);
                 if (r != null) evidence = new(r.Kind, null, new(r.Id, r.Kind, r.Revision, r.SavedAt, r.Provenance, r.Hash, RegisterStorage.Deserialize(r.ContentJson), r.SourceId, r.SourceRevision));
