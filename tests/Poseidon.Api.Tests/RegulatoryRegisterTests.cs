@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Poseidon.Api.Tests;
 
-// REG-SOURCE-DRAFT-01 / DEV-026 preparation. Real PostgreSQL and API; AUTHORED, NOT RUN.
+// REG-SOURCE-DRAFT-01 / DEV-026 preparation. Real PostgreSQL and API; results in CORE-BUNDLE-01.
 public sealed partial class DirectoryWorkspaceTests
 {
     private async Task<RegisterDto> CreateRegister(HttpClient client, string path = "source-drafts", RegisterContent? content = null, Guid? source = null, long? revision = null)
@@ -23,6 +23,88 @@ public sealed partial class DirectoryWorkspaceTests
         using var response = await Send(client, $"{path}/{before.Current.Id}", new RegisterCommand(before.Version, content ?? before.Current.Content, before.Current.SourceId, before.Current.SourceRevision), key, true);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         return (await response.Content.ReadFromJsonAsync<RegisterDto>(Ct))!;
+    }
+    // REG-SRC-04: a retry resolves its own commit, even after another edit.
+    [Theory]
+    [InlineData("source-drafts", false)]
+    [InlineData("source-drafts", true)]
+    [InlineData("requirement-drafts", false)]
+    [InlineData("requirement-drafts", true)]
+    public async Task Register_replay_returns_original_revision_and_xmin_after_subsequent_save(string path, bool update)
+    {
+        await using var host = Host(regulatoryRead: true, regulatoryWrite: true); using var client = Client(host); await Token(client);
+        var initial = update ? await CreateRegister(client, path) : null;
+        var content = path == "source-drafts" ? new RegisterContent { Title = new("Known", "FICTIONAL A") } : new RegisterContent { Instrument = new("Known", "FICTIONAL A") };
+        var command = new RegisterCommand(initial?.Version ?? 0, content);
+        var route = update ? $"{path}/{initial!.Current.Id}" : path;
+        var key = Guid.NewGuid().ToString();
+        using var a = await Send(client, route, command, key, update); Assert.Equal(HttpStatusCode.OK, a.StatusCode);
+        var original = (await a.Content.ReadFromJsonAsync<RegisterDto>(Ct))!;
+        var b = await UpdateRegister(client, original, path, new RegisterContent { Declaration = new("Known", "FICTIONAL B") });
+        Assert.NotEqual(original.Version, b.Version);
+        using var replay = await Send(client, route, command, key, update);
+        Assert.Equal(HttpStatusCode.OK, replay.StatusCode);
+        Assert.Equal("true", Assert.Single(replay.Headers.GetValues("Idempotency-Replayed")));
+        Assert.Equal(original, await replay.Content.ReadFromJsonAsync<RegisterDto>(Ct));
+        var current = await client.GetFromJsonAsync<RegisterDto>($"/api/v1/{path}/{original.Current.Id}", Ct);
+        Assert.Equal(b, current);
+        await using var db = Db();
+        Assert.Equal(update ? 3 : 2, await db.RegisterRevisions.CountAsync(x => x.Id == original.Current.Id, Ct));
+        var receipt = await db.CommandReceipts.SingleAsync(x => x.Key == key, Ct);
+        Assert.Equal(original.Current.Revision, receipt.RegisterRevision); Assert.Equal(original.Version, receipt.RegisterVersion);
+    }
+    [Fact]
+    public async Task Register_legacy_receipt_cannot_replay_a_later_edit_as_the_original_result()
+    {
+        await using var host = Host(regulatoryRead: true, regulatoryWrite: true); using var client = Client(host); await Token(client);
+        var key = Guid.NewGuid().ToString(); var legacyKey = Guid.NewGuid().ToString();
+        var command = new RegisterCommand(0, new());
+        using var saved = await Send(client, "source-drafts", command, key); Assert.Equal(HttpStatusCode.OK, saved.StatusCode);
+        await using (var db = Db()) {
+            var receipt = await db.CommandReceipts.SingleAsync(x => x.Key == key, Ct);
+            db.CommandReceipts.Add(new() { TenantId = receipt.TenantId, ActorId = receipt.ActorId, Key = legacyKey,
+                Action = receipt.Action, Fingerprint = receipt.Fingerprint, ResourceId = receipt.ResourceId, CommittedAt = receipt.CommittedAt });
+            await db.SaveChangesAsync(Ct);
+        }
+        using var replay = await Send(client, "source-drafts", command, legacyKey);
+        Assert.Equal(HttpStatusCode.ServiceUnavailable, replay.StatusCode);
+        Assert.False(replay.Headers.Contains("Idempotency-Replayed"));
+    }
+    // REG-SRC-08: parsing and audit failure must be exercised through real HTTP.
+    [Theory]
+    [InlineData("offset=abc")]
+    [InlineData("limit=2147483648")]
+    [InlineData("offset=-1")]
+    [InlineData("offset=100001")]
+    [InlineData("limit=0")]
+    [InlineData("limit=101")]
+    [InlineData("offset=1&offset=2")]
+    [InlineData("limit=1&limit=1")]
+    [InlineData("offset=")]
+    [InlineData("limit=%201")]
+    [InlineData("limit=%2B1")]
+    [InlineData("unsupported=1")]
+    [InlineData("q=a&q=b")]
+    [InlineData("q=%00")]
+    public async Task Register_invalid_queries_are_audited_and_fail_closed_on_audit_outage(string query)
+    {
+        await using var host = Host(regulatoryRead: true); using var client = Client(host);
+        foreach (var path in new[] { "source-drafts", "requirement-drafts" })
+        foreach (var history in new[] { false, true }) {
+            var action = history ? "RegisterHistory" : "RegisterList";
+            var url = $"/api/v1/{path}" + (history ? $"/{Guid.NewGuid()}/history" : "") + "?" + query;
+            using var invalid = await client.GetAsync(url, Ct); Assert.Equal(HttpStatusCode.BadRequest, invalid.StatusCode);
+            var correlation = Assert.Single(invalid.Headers.GetValues("X-Correlation-ID"));
+            await using (var db = Db()) {
+                var observation = await db.Set<SecurityEvent>().SingleAsync(x => x.CorrelationId == correlation && x.Action == action, Ct);
+                Assert.Equal("Invalid", observation.Result); Assert.Equal(actorId.ToString(), observation.ActorId);
+            }
+            await Sql("CREATE TRIGGER reject_register_query_security BEFORE INSERT ON audit.\"SecurityEvents\" FOR EACH STATEMENT EXECUTE FUNCTION audit.reject_mutation();");
+            try {
+                using var outage = await client.GetAsync(url, Ct); Assert.Equal(HttpStatusCode.ServiceUnavailable, outage.StatusCode);
+                Assert.DoesNotContain("Postgres", await outage.Content.ReadAsStringAsync(Ct));
+            } finally { await Sql("DROP TRIGGER reject_register_query_security ON audit.\"SecurityEvents\";"); }
+        }
     }
     [Fact]
     public async Task Register_audit_and_receipt_failures_leave_no_draft_revision_or_business_audit()

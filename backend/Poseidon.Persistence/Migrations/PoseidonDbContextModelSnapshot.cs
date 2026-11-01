@@ -97,6 +97,12 @@ namespace Poseidon.Persistence.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
 
+                    b.Property<long?>("RegisterRevision")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("RegisterVersion")
+                        .HasColumnType("bigint");
+
                     b.Property<Guid>("ResourceId")
                         .HasColumnType("uuid");
 

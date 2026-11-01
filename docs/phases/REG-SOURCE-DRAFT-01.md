@@ -1,5 +1,7 @@
 # REG-SOURCE-DRAFT-01 phase handoff
 
+> Current follow-up: the [CORE-BUNDLE-01 rejection repair](CORE-BUNDLE-01.md) records exact replay/query/header fixes and actual affected-check reruns after rejected20f1198. Unchanged original results below are historical. Independent exact-commit QA/CI pending;NOT ACCEPTED.
+
 > Final local verification: [CORE-BUNDLE-01](CORE-BUNDLE-01.md) records the combined gate, integration fixes, actual counts, initial failures and affected reruns. The authoring/deferred record below is historical. Locally validated developer candidate only; independent exact-commit QA/CI pending, NOT ACCEPTED.
 
 Status: UNVERIFIED AUTHORED LOCAL CHECKPOINT — NOT ACCEPTED. Current phase: tenant-local regulatory draft preparation for the larger foundation bundle. Source/criteria/decision limits: [task contract](../tasks/reg-source-draft-01.md). Parent baseline `5784b82`; Today `58b609d` and stopped Today logs remain historical interrupted diagnostics, never acceptance evidence.

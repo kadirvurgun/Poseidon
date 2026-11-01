@@ -1707,8 +1707,8 @@ export interface operations {
         parameters: {
             query?: {
                 q?: string;
-                offset?: number | string;
-                limit?: number | string;
+                offset?: string;
+                limit?: string;
             };
             header?: never;
             path?: never;
@@ -1758,7 +1758,10 @@ export interface operations {
     CreateSourceDraft: {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-CSRF-TOKEN": string;
+            };
             path?: never;
             cookie?: never;
         };
@@ -1873,7 +1876,10 @@ export interface operations {
     SaveSourceDraft: {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-CSRF-TOKEN": string;
+            };
             path: {
                 id: string;
             };
@@ -1949,8 +1955,8 @@ export interface operations {
     GetSourceDraftHistory: {
         parameters: {
             query?: {
-                offset?: number | string;
-                limit?: number | string;
+                offset?: string;
+                limit?: string;
             };
             header?: never;
             path: {
@@ -2010,8 +2016,8 @@ export interface operations {
         parameters: {
             query?: {
                 q?: string;
-                offset?: number | string;
-                limit?: number | string;
+                offset?: string;
+                limit?: string;
             };
             header?: never;
             path?: never;
@@ -2061,7 +2067,10 @@ export interface operations {
     CreateRequirementDraft: {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-CSRF-TOKEN": string;
+            };
             path?: never;
             cookie?: never;
         };
@@ -2176,7 +2185,10 @@ export interface operations {
     SaveRequirementDraft: {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-CSRF-TOKEN": string;
+            };
             path: {
                 id: string;
             };
@@ -2252,8 +2264,8 @@ export interface operations {
     GetRequirementDraftHistory: {
         parameters: {
             query?: {
-                offset?: number | string;
-                limit?: number | string;
+                offset?: string;
+                limit?: string;
             };
             header?: never;
             path: {

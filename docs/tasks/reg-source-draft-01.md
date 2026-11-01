@@ -51,7 +51,7 @@ Requirement title/authority/locator must be Missing: these come from the explici
 
 Projection mapping: `TC-regulatory-source-governance-projection` (14.02 projection-gap row31) maps to scope/field-state/search/failed-read/history cases. Additional local REG-SRC IDs express this preparation decision; they do not replace canonical FR/TC acceptance.
 
-Routes: `/api/v1/source-drafts` and `/api/v1/requirement-drafts` provide GET/POST, `/{id}` GET/PUT, `/{id}/history` GET; bounded stable paging. Create requires expectedVersion0; update requires current xmin. All commands require CSRF and Idempotency-Key. Every later save (including a no-op) creates a revision; exact same-key replay creates none. Replay returns the currently authorized saved aggregate, matching profile command behavior. Hash covers stored declared content only; integrity is not legal authority.
+Routes: `/api/v1/source-drafts` and `/api/v1/requirement-drafts` provide GET/POST, `/{id}` GET/PUT, `/{id}/history` GET; bounded stable paging. Create requires expectedVersion0; update requires current xmin. All commands require CSRF and Idempotency-Key. Every later save (including a no-op) creates a revision; exact same-key replay creates none. Register replay rechecks current write authority and returns the exact committed immutable revision and xmin pinned by that command receipt. Later saves never replace a retried command result. Historical receipts without the original xmin fail closed (503); no result is reconstructed from the live draft. Profile/directory replay behavior is outside this repair scope. Hash covers stored declared content only; integrity is not legal authority.
 
 ## Deferred combined gate
 

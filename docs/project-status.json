@@ -1,12 +1,12 @@
 {
   "as_of": "2026-11-01",
   "reg_source_draft_01": {
-    "status": "locally_validated_in_core_bundle_01_awaiting_independent_qa",
+    "status": "rejection_repaired_local_candidate_awaiting_independent_exact_commit_qa",
     "accepted": false,
     "baseline_commit": "5784b82",
     "task": "docs/tasks/reg-source-draft-01.md",
     "phase_report": "docs/phases/REG-SOURCE-DRAFT-01.md",
-    "current_phase": "Tenant-local declared draft foundation bundle authoring",
+    "current_phase": "Rejection repair locally validated;awaiting independent exact-commit QA",
     "delivered": "Source/requirement draft registers, immutable exact source lineage, explicit trusted default-deny permissions, transactional audit/receipts/xmin, fictional fixtures, real HTTP TR/EN editor/history/search/dirty/conflict/frozen retry and authored tests",
     "verification": {
       "backend_domain_persistence_api_postgresql": "DEFERRED / NOT RUN",
@@ -29,9 +29,9 @@
       "Combined CORE-BUNDLE-01 checks, independent target QA, pilot/release"
     ],
     "publication": "UNVERIFIED local checkpoint only; no push/PR/merge/accounts/extra agents/self-approval",
-    "next_step": "Coordinator independent exact-commit QA and required CI; no canonical acceptance",
+    "next_step": "Coordinator independent exact-commit review of rejection repair and required CI;NOT ACCEPTED",
     "final_verification_reference": "docs/phases/CORE-BUNDLE-01.md",
-    "verification_record_scope": "Original authored/deferred verification retained as historical; final current results in core_bundle_01"
+    "verification_record_scope": "Authored/deferred and original20f1198 results are historical;current rejection-repair evidence in core_bundle_01.verification"
   },
   "baseline": "POSEIDON v46.3 updated 2026-10-30 / Library26 candidate",
   "current_stage": "S0; DEV-001 and DEV-002 accepted; remaining exit gates open",
@@ -2658,12 +2658,21 @@
     "verification_record_scope": "Original authored/deferred verification retained as historical; final current results in core_bundle_01"
   },
   "core_bundle_01": {
-    "status": "locally_validated_candidate_awaiting_independent_qa",
+    "status": "rejection_repaired_local_candidate_awaiting_independent_exact_commit_qa",
     "accepted": false,
     "phase_report": "docs/phases/CORE-BUNDLE-01.md",
     "approved_base": "93de7b6b376fb4592150c5c7b15a8c52e39bd4b3",
-    "parent_commit": "73b2352",
-    "verification": {
+    "parent_commit": "20f11984109875156182bb502b149327e95bf723",
+    "publication": "Local candidate only; no push/PR/merge/extra agents/self-approval",
+    "canonical_progress_unchanged": true,
+    "open_gates": [
+      "Independent exact-commit QA and coordinator CI",
+      "Canonical dependencies/source admission/lifecycle/lookups",
+      "Production IdP/MFA/revocation/privacy/retention/DB privileges",
+      "Expert/pilot/release and existing13 moderate frontend advisories"
+    ],
+    "next_step": "Coordinator independent exact-commit review before any future publication",
+    "historical_rejected_commit_verification": {
       "domain": 61,
       "persistence_postgresql": 29,
       "api_postgresql_http_protocol_contract": 116,
@@ -2693,14 +2702,51 @@
         "private_credentials_ignored": true
       }
     },
-    "publication": "Local candidate only; no push/PR/merge/extra agents/self-approval",
-    "canonical_progress_unchanged": true,
-    "open_gates": [
-      "Independent exact-commit QA and coordinator CI",
-      "Canonical dependencies/source admission/lifecycle/lookups",
-      "Production IdP/MFA/revocation/privacy/retention/DB privileges",
-      "Expert/pilot/release and existing13 moderate frontend advisories"
-    ],
-    "next_step": "Coordinator independent exact-commit review before any future publication"
+    "historical_verification_commit": "20f11984109875156182bb502b149327e95bf723",
+    "verification": {
+      "scope": "Affected-package repair runs only; unchanged original gate results are historical",
+      "api": 135,
+      "api_failed": 0,
+      "api_skipped": 0,
+      "api_duration": "11m 41s 143ms",
+      "persistence_postgresql": 29,
+      "persistence_failed": 0,
+      "persistence_skipped": 0,
+      "persistence_duration": "3m46.870s",
+      "react": 193,
+      "react_files": 10,
+      "react_failed": 0,
+      "react_skipped": 0,
+      "react_duration_seconds": 49.59,
+      "register_discovered": 6,
+      "register_executed": 6,
+      "register_passed": 6,
+      "register_failed": 0,
+      "register_skipped": 0,
+      "register_driver_seconds": 33.273,
+      "locked_restore_release_build": "PASS;0 warnings/errors;locks unchanged",
+      "actual_host_openapi_and_locked_consumers": "PASS;strict full-project snapshot/header assertions",
+      "frontend_lint_typecheck_build": "PASS",
+      "ef_parity": "PASS;new tool-generated migration ordered after existing register migration",
+      "graph_ast": "PASS;3203 nodes/5199 edges/271 communities;12 existing zero-node warnings",
+      "cleanup": {
+        "task_port_listeners": 0,
+        "transient_register_states": 0,
+        "authenticated_diagnostic_artifacts": 0
+      },
+      "not_rerun": "Unchanged Domain/Python/source-byte/ordinary mocked browser/broader2 OIDC journeys;no current-target inference",
+      "failures_preserved": "Initial build failures;interrupted migration-ordering runs API42PASS/11FAIL,persistence13PASS/10FAIL;initial REG0 executed/1 setup failure;all final affected runs pass",
+      "legacy_receipt_limitation": "Historical receipts lacking original xmin fail503;no fabricated backfill",
+      "changed_code_evidence": {
+        "files_against_approved_base": 50,
+        "manifest_sha256": "99da7072838acdd80adda545dfdae3cd679efb2a34fabb6fccc747bef52b6b4d"
+      },
+      "private_secret_scan": {
+        "files_scanned": 15,
+        "private_secret_matches": 0,
+        "private_files_ignored": true
+      }
+    },
+    "current_phase": "Local rejection repair;coordinator review pending"
   }
 }

@@ -1,4 +1,56 @@
-# CORE-BUNDLE-01 — combined foundation developer gate
+# CORE-BUNDLE-01 — rejection repair candidate
+
+Date: 2026-11-01. Parent/rejected target: `20f11984109875156182bb502b149327e95bf723`. Current phase: repaired local developer candidate, **NOT ACCEPTED**, awaiting coordinator independent review of the exact resulting commit and required CI. No publishing, PR, merge, delegation or self-approval. Canonical **8/970 SP, 2/121 tasks, 0/196 accepted screens unchanged**.
+
+## Repair scope, source and behavior
+
+Initial worktree status/diff was clean at the rejected commit. Preserved the entire existing Today/REG bundle and private configuration. The original approved base remains `93de7b6b376fb4592150c5c7b15a8c52e39bd4b3`; this repair changes only the rejected REG receipt/query/contract behavior and its evidence. Source/acceptance scope remains REG-SRC-04/08 in [REG task](../tasks/reg-source-draft-01.md), current 15.01 API specification paragraphs69–81 (command idempotency, aggregate version, pagination, attributed audit), and the existing Today/REG source locators below. Read AGENTS, backend skill, architecture/automation/security/seed/dependency policies and active baseline; bounded Python313 retrieval and locator reads only. No production auth or legal/safety authority change.
+
+- **REG-SRC-04 / replay:** CommandReceipt stores the committed immutable register revision number and original xmin in the same audited transaction as the draft/revision. Replay rechecks permission, CSRF, action and fingerprint, then reads that exact revision and returns the original xmin. It never reads the live draft. Existing append-only receipt/revision enforcement protects these fields. Tool-scaffolded `RegisterCommittedReceipt` migration adds nullable metadata, preserving existing receipts. Historical receipts without the original xmin return503 without a replay header; the original result cannot safely be reconstructed. There is no invented backfill or response-body storage.
+- **REG-SRC-08 / query audit:** List/history bind only optional strings for documentation and parse the raw query inside the audited handler. Keys, one-value multiplicity, unsigned invariant integer syntax, overflow and paging bounds are validated before business querying. History rejects search keys; list preserves bounded literal search. Invalid requests produce fixed Invalid observations and400, or503 if required audit storage fails. No query text is logged.
+- **Mutation contract:** All four create/save operations explicitly declare required Idempotency-Key and X-CSRF-TOKEN header metadata. Runtime validation remains inside the audited handler. Exported actual built-host OpenAPI and regenerated TypeScript using the locked generator. Paging query types now describe the raw string boundary; numeric syntax/bounds are checked in the handler.
+
+Regression mapping: four A→B→replay-A theory rows cover Source/Requirement create and update, asserting full original DTO/xmin/revision equality, current B remains intact and no extra revision is created. One historical-receipt case proves fail-closed behavior. Fourteen actual-HTTP invalid-query rows each exercise both register kinds × list/history, durable attributed Invalid observations and audit-storage outages. The existing strict actual-host contract test additionally asserts both required headers on all four operations. Prior rollback, receipt/audit failure, permission, tenant, concurrency and seed tests remain intact. No test deleted, weakened or skipped.
+
+## Current repair verification
+
+Pinned root SDK10.0.403/EF10.0.14, Node26.13.0, explicit Python3.13.13; locks/dependencies unchanged. Code and meaningful regressions were authored before affected checks. Commands use MTP, never VSTest flags. These results belong to the repair tree, not the original rejected tree.
+
+| Affected check / exact command | Actual result |
+|---|---|
+| `dotnet restore Poseidon.slnx --locked-mode` | PASS;5/8 projects already current;locks unchanged. Duration not separately captured. |
+| `dotnet build Poseidon.slnx --configuration Release --no-restore` | Final PASS,0 warnings/errors;9.87s after migration ordering repair. |
+| Built Development API `/openapi/v1.json` export; `npm run generate:api --prefix frontend`; rebuild to copy strict snapshot | PASS; actual-host export, generator127.1ms;contract build7.44s. Generated files never hand-edited. |
+| `dotnet test --project tests/Poseidon.Api.Tests --configuration Release --no-build` | **135 PASS,0 failed,0 skipped;11m 41s 143ms**. Full project, real PostgreSQL/HTTP/protocol/strict snapshot, including19 new cases. |
+| `dotnet test --project tests/Poseidon.Persistence.Tests --configuration Release --no-build` | **29 PASS,0 failed,0 skipped;3m46.870s** (230s command wall time). Full project, actual migration/seed/audit/rollback/races. |
+| `dotnet ef migrations has-pending-model-changes --context PoseidonDbContext --project backend/Poseidon.Persistence --startup-project backend/Poseidon.DbMigrator --configuration Release --no-build` | PASS;no pending model changes;15s command wall time after final ordering. |
+| Frontend `npm run typecheck`, `npm test`, `npm run build` with `--prefix frontend` | PASS;**193/193 tests across10/10 files**,0 failed/skipped;49.59s component duration. Production Vite build808ms;combined command86s. |
+| `npm run lint --prefix frontend` | PASS;0 lint warnings. npm's existing user-config deprecation message is not a lint failure. |
+| `py -3.13 scripts/oidc_lab.py prepare_register`, `start`, `register_browser`, finally `stop` | Final **6 discovered/6 executed/6 PASS,0 failed/skipped**, same committed REG manifest/config desktop/mobile, real signed-provider writer/restricted sessions. Stage durations4.651/86.480/33.273s;stop exit0. No production IdP acceptance inference. |
+| `graphify update .` | PASS;3203 nodes/5199 edges/271 communities;12 existing zero-node warnings;AST only. |
+| Cleanup |0 task-port listeners (5443/8443/55432/5487),0 transient REG states,0 authenticated diagnostic artifacts. Only exact owned test processes/services stopped;private configuration and volumes/operator data preserved. |
+
+Unchanged Domain, Python/source-byte, ordinary mocked desktop/mobile and two broader OIDC journeys were **NOT RERUN** in this exact rejection repair. Their original evidence below is historical for20f1198, not a current-target execution claim. The current full API/persistence suites and full React suite cover affected integration; the six authenticated REG cases are counted separately and never inferred from ordinary mocked browser green. No zero-discovery acceptance.
+
+## Failures and limitations retained
+
+Initial build failures: two read-only OpenAPI interface property assignments, then an ASP.NET route analyzer exception with attributed handler lambdas. Resolved by explicit endpoint OpenAPI metadata;no analyzer exemptions or audit bypass. Logs retained.
+
+The first PostgreSQL attempts exposed EF's generated timestamp sorting before the manually future-dated existing migrations. Interrupted only exact worktree-owned test executables after API42 passes/11 failures (53 observed,88.845s), persistence13 passes/10 failures (23 observed,88.858s);these are incomplete failed runs, never full-suite passes. Corrected only the new tool-generated migration identity/file names to `20261101210000`, after the existing register migration. Rebuilt and reran both affected projects in full. EF parity alone did not detect ordering;actual migration runs did.
+
+First REG attempt discovered6 but failed during session setup, before any case execution (0 case passes/1 setup failure;52.072s browser stage). No raw errors or sensitive diagnostics were recorded. A bounded direct login probe then passed both genuine provider accounts, exposing only a fixed stage/boolean/source-line result. Final full six-case rerun above passes;the initial setup failure was not reproduced. The probe is diagnostic, not case coverage. Direct library runner avoids automatic CLI error-context artifacts;fresh private states are created through the real provider and removed in finally. Server-owned capability preparation remains confined to the existing explicit private loopback lab.
+
+Evidence remains ignored under `.runtime/core-bundle/repair-*`: scaffold/restore, all build attempts, initial interrupted API/persistence logs, final `api-ordered`/`persistence-ordered`/`ef-ordered`, frontend/lint/generate, initial and final sanitized lab stage counts, bounded login result, graph, cleanup and secret scan. Historical failure evidence was preserved. No credentials, cookies, storage values, DOM snapshots, raw auth errors or private configuration are in tracked evidence.
+
+Remaining gates: coordinator independent exact-commit QA and required CI;historical receipt recovery limitation above;all existing canonical/source/lifecycle/lookup/production IdP/MFA/privacy/retention/DB privilege/expert/pilot/release gates and dependency advisories below. No automatic law adoption, operational readiness, permit, human sign-off, GDPR/production or sprint acceptance. Next step: coordinator review of the local commit containing this repair;publishing/merge remain coordinator-owned.
+
+Changed-code evidence against the approved base: 50 staged backend/frontend/scripts/tests/contracts files; SHA256 of sorted compact JSON (`path`, `sha256` of staged Git blob; keys sorted) is `99da7072838acdd80adda545dfdae3cd679efb2a34fabb6fccc747bef52b6b4d`. Full bounded manifest is ignored at `.runtime/core-bundle/repair-code-evidence.json`. Final local commit identifies the complete review candidate. Private-secret scan:15 changed files,0 matches;private credential files remain ignored.
+
+## Historical original gate record — rejected20f1198
+
+The following original record is preserved for traceability. Its old current-target/status/verification statements describe20f1198 only;they do not approve that rejected commit or assert unchanged-suite reruns on the repair.
+
+### Original combined foundation developer gate
 
 Date: 2026-11-01. Status: locally validated developer candidate, awaiting coordinator independent exact-commit QA and CI; NOT ACCEPTED. Target: the local commit containing this report (parent73b2352); final commit ID is supplied in the delivery message. No self-approval. Publishing, PR, merge and independent approval belong to the coordinator. Canonical progress remains **8/970 SP, 2/121 tasks, 0/196 accepted screens**.
 

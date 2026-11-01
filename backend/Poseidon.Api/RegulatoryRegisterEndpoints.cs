@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Antiforgery;
@@ -21,28 +22,53 @@ public static class RegulatoryRegisterEndpoints
         foreach (var (path, kind) in new[] { ("source-drafts", "Source"), ("requirement-drafts", "Requirement") })
         {
             var group = app.MapGroup("/api/v1/" + path).RequireAuthorization("RegulatoryDraftRead");
-            group.MapGet("", (HttpContext h, PoseidonDbContext db, SecurityAudit a, string? q, int? offset, int? limit) => List(kind, h, db, a, q, offset, limit))
+            group.MapGet("", (HttpContext h, PoseidonDbContext db, SecurityAudit a, string? q, string? offset, string? limit) => List(kind, h, db, a))
                 .WithName("List" + kind + "Drafts").Produces<PageDto<RegisterDto>>().Produces(400).Produces(401).Produces(403).Produces(503);
             group.MapGet("/{id:guid}", (Guid id, HttpContext h, PoseidonDbContext db, SecurityAudit a) => Read(kind, id, h, db, a))
                 .WithName("Get" + kind + "Draft").Produces<RegisterDto>().Produces(401).Produces(403).Produces(404).Produces(503);
-            group.MapGet("/{id:guid}/history", (Guid id, HttpContext h, PoseidonDbContext db, SecurityAudit a, int? offset, int? limit) => History(kind, id, h, db, a, offset, limit))
+            group.MapGet("/{id:guid}/history", (Guid id, HttpContext h, PoseidonDbContext db, SecurityAudit a, string? offset, string? limit) => History(kind, id, h, db, a))
                 .WithName("Get" + kind + "DraftHistory").Produces<PageDto<RegisterRevisionDto>>().Produces(400).Produces(401).Produces(403).Produces(404).Produces(503);
             group.MapPost("", (Delegate)((HttpContext h) => Save(kind, null, h))).WithName("Create" + kind + "Draft").Accepts<RegisterCommand>("application/json")
+                .AddOpenApiOperationTransformer((operation, _, _) => {
+                    operation.Parameters ??= [];
+                    foreach (var name in new[] { "Idempotency-Key", "X-CSRF-TOKEN" })
+                        operation.Parameters.Add(new Microsoft.OpenApi.OpenApiParameter { Name = name, In = Microsoft.OpenApi.ParameterLocation.Header,
+                            Required = true, Schema = new Microsoft.OpenApi.OpenApiSchema { Type = Microsoft.OpenApi.JsonSchemaType.String } });
+                    return Task.CompletedTask;
+                })
                 .Produces<RegisterDto>().ProducesProblem(400).Produces(401).ProducesProblem(403).ProducesProblem(409).Produces(503);
             group.MapPut("/{id:guid}", (Guid id, HttpContext h) => Save(kind, id, h)).WithName("Save" + kind + "Draft").Accepts<RegisterCommand>("application/json")
+                .AddOpenApiOperationTransformer((operation, _, _) => {
+                    operation.Parameters ??= [];
+                    foreach (var name in new[] { "Idempotency-Key", "X-CSRF-TOKEN" })
+                        operation.Parameters.Add(new Microsoft.OpenApi.OpenApiParameter { Name = name, In = Microsoft.OpenApi.ParameterLocation.Header,
+                            Required = true, Schema = new Microsoft.OpenApi.OpenApiSchema { Type = Microsoft.OpenApi.JsonSchemaType.String } });
+                    return Task.CompletedTask;
+                })
                 .Produces<RegisterDto>().ProducesProblem(400).Produces(401).ProducesProblem(403).ProducesProblem(404).ProducesProblem(409).Produces(503);
         }
     }
     private static TrustedActor Actor(HttpContext h) => h.RequestServices.GetRequiredService<ActorResolver>().Resolve(h.User)!;
     private static RegisterRevisionDto Revision(RegisterRevision r) => new(r.Id, r.Kind, r.Revision, r.SavedAt, r.Provenance, r.Hash, RegisterStorage.Deserialize(r.ContentJson), r.SourceId, r.SourceRevision);
     private static RegisterDto Dto(TrustedActor actor, RegisterDraft d, RegisterRevision r) => new(d.Version, actor.CanWriteRegulatory, Revision(r));
-    private static bool Bounds(int? offset, int? limit) => offset is not (< 0 or > 100000) && limit is not (< 1 or > 100);
-    private static async Task<IResult> List(string kind, HttpContext h, PoseidonDbContext db, SecurityAudit audit, string? q, int? offset, int? limit)
+    // Parse inside the audited boundary: automatic numeric binding bypasses Invalid observations.
+    private static bool Query(HttpContext h, bool history, out string text, out int skip, out int take)
     {
-        if (!Bounds(offset, limit) || q is { Length: > 100 } || q?.Any(char.IsControl) == true) {
+        text = ""; skip = 0; take = 25;
+        var query = h.Request.Query;
+        if (query.Any(x => x.Value.Count != 1 || !(x.Key is "offset" or "limit" || !history && x.Key == "q"))) return false;
+        if (query.ContainsKey("offset") && (!int.TryParse(query["offset"], NumberStyles.None, CultureInfo.InvariantCulture, out skip) || skip > 100000)) return false;
+        if (query.ContainsKey("limit") && (!int.TryParse(query["limit"], NumberStyles.None, CultureInfo.InvariantCulture, out take) || take is < 1 or > 100)) return false;
+        var q = query["q"].ToString();
+        if (q.Length > 100 || q.Any(char.IsControl)) return false;
+        text = q.Trim(); return true;
+    }
+    private static async Task<IResult> List(string kind, HttpContext h, PoseidonDbContext db, SecurityAudit audit)
+    {
+        if (!Query(h, false, out var text, out var skip, out var take)) {
             await audit.WriteAsync(h, "RegisterList", "Invalid"); return Results.BadRequest();
         }
-        var actor = Actor(h); var skip = offset ?? 0; var take = limit ?? 25; var text = q?.Trim() ?? "";
+        var actor = Actor(h);
         // Tenant-filtered metadata only; literal Contains avoids interpreting user wildcards.
         var rows = await (from d in db.RegisterDrafts.AsNoTracking() join r in db.RegisterRevisions.AsNoTracking()
             on new { d.TenantId, d.Kind, d.Id, d.Revision } equals new { r.TenantId, r.Kind, r.Id, r.Revision }
@@ -60,13 +86,12 @@ public static class RegulatoryRegisterEndpoints
         var r = await db.RegisterRevisions.AsNoTracking().SingleAsync(x => x.Kind == kind && x.Id == id && x.Revision == d.Revision, h.RequestAborted);
         return Results.Ok(Dto(Actor(h), d, r));
     }
-    private static async Task<IResult> History(string kind, Guid id, HttpContext h, PoseidonDbContext db, SecurityAudit audit, int? offset, int? limit)
+    private static async Task<IResult> History(string kind, Guid id, HttpContext h, PoseidonDbContext db, SecurityAudit audit)
     {
-        if (!Bounds(offset, limit)) { await audit.WriteAsync(h, "RegisterHistory", "Invalid", resourceId: id); return Results.BadRequest(); }
+        if (!Query(h, true, out _, out var skip, out var take)) { await audit.WriteAsync(h, "RegisterHistory", "Invalid", resourceId: id); return Results.BadRequest(); }
         var exists = await db.RegisterDrafts.AnyAsync(x => x.Id == id && x.Kind == kind, h.RequestAborted);
         await audit.WriteAsync(h, "RegisterHistory", exists ? "Success" : "NotFound", resourceId: id);
         if (!exists) return Results.NotFound();
-        var skip = offset ?? 0; var take = limit ?? 25;
         var rows = await db.RegisterRevisions.AsNoTracking().Where(x => x.Id == id && x.Kind == kind).OrderByDescending(x => x.Revision).Skip(skip).Take(take + 1).ToArrayAsync(h.RequestAborted);
         return Results.Ok(new PageDto<RegisterRevisionDto>(rows.Take(take).Select(Revision).ToArray(), skip, take, rows.Length > take));
     }
@@ -108,8 +133,13 @@ public static class RegulatoryRegisterEndpoints
             var receipt = await db.CommandReceipts.AsNoTracking().SingleOrDefaultAsync(x => x.ActorId == actor.Id && x.Key == key, h.RequestAborted);
             if (receipt == null) return null;
             if (receipt.Action != action || receipt.Fingerprint != fingerprint) return await Fail(409, "idempotency_key_reused");
+            // Older receipts cannot reconstruct the original xmin. Fail closed, never return another edit.
+            if (receipt.RegisterRevision == null || receipt.RegisterVersion == null) return await Fail(503, "service_unavailable");
+            var committed = await db.RegisterRevisions.AsNoTracking().SingleAsync(x => x.Kind == kind &&
+                x.Id == receipt.ResourceId && x.Revision == receipt.RegisterRevision, h.RequestAborted);
+            await audit.WriteAsync(h, "RegisterRead", "Success", resourceId: receipt.ResourceId);
             h.Response.Headers["Idempotency-Replayed"] = "true";
-            return await Read(kind, receipt.ResourceId, h, db, audit);
+            return Results.Ok(new RegisterDto(receipt.RegisterVersion.Value, actor.CanWriteRegulatory, Revision(committed)));
         }
         var replay = await Replay(); if (replay != null) return replay;
         if (command.SourceId != null && !await db.RegisterRevisions.AnyAsync(x => x.Kind == "Source" && x.Id == command.SourceId && x.Revision == command.SourceRevision, h.RequestAborted))
@@ -130,7 +160,7 @@ public static class RegulatoryRegisterEndpoints
             var now = DateTimeOffset.UtcNow; draft.SavedAt = now.AddTicks(-(now.Ticks % 10));
             var revision = draft.Snapshot(command.SourceId, command.SourceRevision); db.RegisterRevisions.Add(revision);
             await db.SaveChangesAsync(h.RequestAborted);
-            db.CommandReceipts.Add(new() { TenantId = actor.TenantId, ActorId = actor.Id, Key = key, Action = action, Fingerprint = fingerprint, ResourceId = draft.Id, CommittedAt = draft.SavedAt });
+            db.CommandReceipts.Add(new() { TenantId = actor.TenantId, ActorId = actor.Id, Key = key, Action = action, Fingerprint = fingerprint, ResourceId = draft.Id, CommittedAt = draft.SavedAt, RegisterRevision = revision.Revision, RegisterVersion = draft.Version });
             await db.SaveChangesAsync(h.RequestAborted); await transaction.CommitAsync(h.RequestAborted);
             return Results.Ok(Dto(actor, draft, revision));
         } catch (DbUpdateConcurrencyException) {
