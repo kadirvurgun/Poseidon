@@ -1,0 +1,5 @@
+# ERP-REFERENCE-BOUNDARY-01 — authored architecture/API support
+
+Typed .NET integration-only reference decoding/reconciliation and a closed JSON schema now distinguish selected external PO/vendor/status/cost references from local finance/procurement operations. Tenant/vessel/object/source/version binding, bounded payloads, explicit null/stale/future semantics and material revision conflicts are authored. Domain adversarial cases and an actual EF-model forbidden-aggregate alias guard are authored. [Exact sources, scope, limits and remaining obligations](../tasks/erp-reference-boundary-01.md).
+
+ALL execution DEFERRED/NOT RUN. No HTTP consumer, persistence/outbox/provider connection, actual principal authorization, delivery/financial/safety decision or external approval is claimed. No new operational entities, migrations, fixtures or dependencies. This is real typed contract support for DEV-116, not a runtime ERP module or accepted5SP. S0 source/dependency integration, full later gate, independent exact-target QA/CI and canonical acceptance remain open. Canonical8/970SP,2/121tasks,0/196accepted unchanged.
