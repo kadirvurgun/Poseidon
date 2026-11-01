@@ -1,4 +1,23 @@
 {
+  "crew_roster_01": {
+    "status": "product_authoring_checkpoint_unverified_incomplete_not_accepted",
+    "accepted": false,
+    "task": "docs/tasks/crew-roster-01.md",
+    "phase_report": "docs/phases/CREW-ROSTER-01.md",
+    "source_baseline": "poseidon-v46.3-20261030",
+    "receiving_head": "67d25bc93d6d983ef4bef5ba8d935e9dadcca114",
+    "engineering_prerequisite": "80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44; supplied committed PR11 review",
+    "canonical_progress_unchanged": true,
+    "target_story_points": 194,
+    "verification": "DEFERRED: no suites/build/typecheck/contract generation/browser; no new PASS evidence",
+    "current_phase": "Larger domain foundation authoring; online crew draft slice authored, full DEV-047 incomplete",
+    "open_criteria": [
+      "Crew field classification and source-approved offline whitelist/device/session/expiry and durable READ/CAPTURE/reconnect conflict/cache-isolation implementation",
+      "Remaining personal/contact/identity and profile contracts, scoped current-effective selection and approved assignment-state/period conventions",
+      "Combined migration/model/contract and all product checks, fresh exact-target independent QA, remote CI and separate source acceptance"
+    ],
+    "next_step": "Continue source scope and larger foundation bundle; coordinator owns execution, fresh QA and publishing. No merge/publication by worker."
+  },
   "files_source_completion_01_repair": {
     "status": "bounded_repair_authored_unverified_not_accepted",
     "accepted": false,

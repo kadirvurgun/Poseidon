@@ -12,6 +12,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
     internal static AuditMetadata From(EntityEntry entry)
     {
         Guid? vessel = entry.Entity switch {
+            CrewAssignment c => c.VesselId, CrewAssignmentRevision c => c.VesselId, CrewPosition c => c.VesselId,
             Document d => d.VesselId, DocumentVersion d => d.VesselId,
             FileStage f => f.VesselId, StoredFile f => f.VesselId,
             Vessel v => v.Id, VesselProfile p => p.VesselId, TugProfile p => p.VesselId,
@@ -20,6 +21,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             _ => null
         };
         Guid? resource = entry.Entity switch {
+            Person p => p.Id, CrewPosition c => c.Id, CrewAssignment c => c.Id, CrewAssignmentRevision c => c.AssignmentId,
             Document d => d.Id, DocumentVersion d => d.DocumentId,
             FileStage f => f.Id, StoredFile f => f.Id,
             Tenant t => t.Id, Company c => c.Id, Vessel v => v.Id,

@@ -33,6 +33,10 @@ public sealed class DirectoryAuthorizationResultHandler : IAuthorizationMiddlewa
             "ListVesselFiles" => "FileList",
             "GetVesselFile" => "FileDetail",
             "DownloadVesselFile" => "FileDownload",
+            "CrewList" => "CrewRead",
+            "CrewProfile" => "CrewProfile",
+            "CrewHistory" => "CrewHistory",
+            "CrewPositions" => "CrewPositions",
             "GetToday" => "TodayRead",
             "GetTodayWhy" => "TodayWhyRead",
             _ => null
@@ -45,7 +49,7 @@ public sealed class DirectoryAuthorizationResultHandler : IAuthorizationMiddlewa
         if (!result.Succeeded && (context.Request.Method is "POST" or "PUT") &&
             (context.Request.Path.StartsWithSegments("/api/v1/companies") || context.Request.Path.StartsWithSegments("/api/v1/vessels")))
         {
-            await context.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(context, endpointName == "SaveRegulatoryDraft" ? "ProfileSave" : "DirectoryWrite", result.Challenged ? "Unauthenticated" : "Denied");
+            await context.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(context, endpointName is "CrewSave" or "CrewPersonSave" or "CrewPositionSave" ? "CrewSave" : endpointName == "SaveRegulatoryDraft" ? "ProfileSave" : "DirectoryWrite", result.Challenged ? "Unauthenticated" : "Denied");
             var code = result.Challenged ? "authentication_required" : "permission_denied";
             await Results.Problem(statusCode: result.Challenged ? 401 : 403, title: code,
                 extensions: new Dictionary<string, object?> { ["code"] = code, ["correlationId"] = context.TraceIdentifier }).ExecuteAsync(context);

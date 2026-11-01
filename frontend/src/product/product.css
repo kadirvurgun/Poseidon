@@ -86,3 +86,15 @@
 .vessel-files input { max-width: 100%; min-width: 0; box-sizing: border-box; }
 .vessel-files button { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
 @media (max-width: 600px) { .audit-filters { display: grid; grid-template-columns: minmax(0, 1fr); } }
+
+/* CREW-ROSTER-01: shared product tokens and narrow-screen keyboard accessible forms. */
+.crew-shell { grid-template-columns: minmax(0, 1fr); }
+.crew-shell main { grid-column: 1; grid-row: 2; }
+.crew-shell nav { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem; }
+.crew-shell form { margin-top: 1.5rem; }
+.crew-shell fieldset { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; min-width: 0; margin: 1rem 0; }
+.crew-shell label { display: flex; flex-direction: column; gap: .4rem; min-width: 0; }
+.crew-shell input, .crew-shell select { min-height: 44px; max-width: 100%; width: 100%; padding: .6rem; background: white; color: #193344; border: 1px solid #9eb3c0; border-radius: 6px; font: inherit; }
+.crew-shell dialog { max-width: min(32rem, 90vw); padding: 1.5rem; border: 1px solid #9eb3c0; border-radius: 6px; background: #f4f7f9; color: #193344; }
+.crew-shell dialog::backdrop { background: rgb(16 45 62 / .65); }
+@media (max-width: 600px) { .crew-shell fieldset { grid-template-columns: minmax(0, 1fr); } }

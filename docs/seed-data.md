@@ -79,3 +79,8 @@ No new historic audit/receipt fixtures or credentials. Existing synthetic import
 ## SECURE-FILES-01 authoring — NOT RUN
 
 Each of the three existing synthetic vessels now authors one deterministic metadata-only FileStage with state SyntheticUnverified, empty actor assignment, zero length and explicitly synthetic zero digest placeholders. No byte object, actual scan, StoredFile, signed capability, evidence verification or command receipt is seeded. Import is add-missing, tenant-bound, idempotent and preserves intent/operator state. The three actual inserts add three real write audit observations: initial25→28; one later operation26→29. Existing seed negative assertions remain; revised count and fixture regressions are DEFERRED. These placeholders never satisfy the normal upload metadata policy or become downloadable.
+
+
+## CREW-ROSTER-01 — AUTHORED / execution DEFERRED
+
+Each existing synthetic vessel additionally receives one FICTIONAL/unverified tenant Person, vessel-local Position (rank/capacity unknown), incomplete Draft Assignment and immutable initial safe revision. IDs are deterministic per entity type and tenant/vessel; add-missing import preserves operator edits. No actual employment period, qualification, credential, medical decision, operational appointment or receipt is seeded. Twelve actual inserts for three vessels add twelve attributed writes (existing fixture34→46); related seed expectations and PostgreSQL reseed/tenant/rollback tests are authored, not run. No change to production import prohibition or normal-request context boundaries.

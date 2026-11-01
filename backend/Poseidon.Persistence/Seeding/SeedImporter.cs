@@ -35,6 +35,7 @@ public static class SeedImporter
             db.RegulatoryDrafts.Add(draft);
             db.RegulatoryDraftRevisions.Add(draft.Snapshot());
         }
+        await CrewFixtures.AddMissingAsync(db, data.Vessels, cancellationToken).ConfigureAwait(false);
         await RegulatoryRegisterFixtures.AddMissingAsync(db, data.Tenants, cancellationToken).ConfigureAwait(false);
         foreach (var vessel in data.Vessels)
         {

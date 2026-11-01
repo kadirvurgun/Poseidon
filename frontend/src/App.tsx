@@ -1,3 +1,4 @@
+import { CrewWorkspace } from './product/CrewWorkspace'
 import { useEffect, useState } from 'react'
 import { getSystemStatus } from './api'
 import { AgentsDashboard } from './agents/AgentsDashboard'
@@ -35,6 +36,8 @@ const content = {
 }
 
 export function App() {
+  const crew = /^\/app\/crew-roster\/([0-9a-fA-F-]{36})(?:\/crew-profile\/([0-9a-fA-F-]{36}))?\/?$/.exec(window.location.pathname)
+  if (crew) return <CrewWorkspace key={`${crew[1]}:${crew[2] ?? ''}`} vessel={crew[1]} assignment={crew[2]} />
   if (window.location.pathname === '/app' || window.location.pathname.startsWith('/app/')) return <ProductApp />
   return window.location.pathname.replace(/\/$/, '') === '/agents' ? <AgentsDashboard /> : <ExistingApp />
 }

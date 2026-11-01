@@ -659,6 +659,90 @@ namespace Poseidon.Persistence.Migrations
                 b.HasOne("Poseidon.Persistence.Vessel", null).WithMany().HasForeignKey("TenantId", "VesselId").OnDelete(DeleteBehavior.Restrict).IsRequired();
                 b.HasOne("Poseidon.Persistence.FileStage", null).WithOne().HasForeignKey("Poseidon.Persistence.StoredFile", "TenantId", "Id", "VesselId").HasPrincipalKey("Poseidon.Persistence.FileStage", "TenantId", "Id", "VesselId").OnDelete(DeleteBehavior.Restrict).IsRequired();
             });
+            modelBuilder.HasPostgresExtension("btree_gist");
+            modelBuilder.Entity("Poseidon.Persistence.Person", b => {
+                b.Property<Guid>("TenantId").HasColumnType("uuid");
+                b.Property<Guid>("Id").HasColumnType("uuid");
+                b.Property<string?>("FullName").HasMaxLength(200).HasColumnType("character varying(200)");
+                b.Property<string?>("EmployeeNo").HasMaxLength(64).HasColumnType("character varying(64)");
+                b.Property<string>("EmploymentState").IsRequired().HasMaxLength(32).HasColumnType("character varying(32)");
+                b.Property<string>("Provenance").IsRequired().HasMaxLength(32).HasColumnType("character varying(32)");
+                b.Property<DateTimeOffset?>("SourceObservedAt").HasColumnType("timestamp with time zone");
+                b.Property<uint>("Version").IsConcurrencyToken().ValueGeneratedOnAddOrUpdate().HasColumnName("xmin").HasColumnType("xid");
+                b.HasKey("TenantId", "Id");
+                b.HasIndex("TenantId");
+                b.ToTable("Persons", "crew");
+            });
+            modelBuilder.Entity("Poseidon.Persistence.CrewPosition", b => {
+                b.Property<Guid>("TenantId").HasColumnType("uuid");
+                b.Property<Guid>("Id").HasColumnType("uuid");
+                b.Property<Guid>("VesselId").HasColumnType("uuid");
+                b.Property<string>("Code").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");
+                b.Property<string?>("Rank").HasMaxLength(100).HasColumnType("character varying(100)");
+                b.Property<string?>("Capacity").HasMaxLength(100).HasColumnType("character varying(100)");
+                b.Property<string?>("Department").HasMaxLength(100).HasColumnType("character varying(100)");
+                b.Property<string>("Provenance").IsRequired().HasMaxLength(32).HasColumnType("character varying(32)");
+                b.Property<uint>("Version").IsConcurrencyToken().ValueGeneratedOnAddOrUpdate().HasColumnName("xmin").HasColumnType("xid");
+                b.HasKey("TenantId", "Id");
+                b.HasAlternateKey("TenantId", "Id", "VesselId");
+                b.HasIndex("TenantId", "VesselId", "Code").IsUnique();
+                b.HasIndex("TenantId", "VesselId");
+                b.ToTable("Positions", "crew");
+            });
+            modelBuilder.Entity("Poseidon.Persistence.CrewAssignment", b => {
+                b.Property<Guid>("TenantId").HasColumnType("uuid");
+                b.Property<Guid>("Id").HasColumnType("uuid");
+                b.Property<Guid>("VesselId").HasColumnType("uuid");
+                b.Property<Guid>("PersonId").HasColumnType("uuid");
+                b.Property<Guid?>("PositionId").HasColumnType("uuid");
+                b.Property<DateOnly?>("From").HasColumnType("date");
+                b.Property<DateOnly?>("To").HasColumnType("date");
+                b.Property<DateOnly?>("ContractEndDate").HasColumnType("date");
+                b.Property<string?>("WatchGroup").HasMaxLength(64).HasColumnType("character varying(64)");
+                b.Property<string>("Status").IsRequired().HasMaxLength(32).HasColumnType("character varying(32)");
+                b.Property<string>("Provenance").IsRequired().HasMaxLength(32).HasColumnType("character varying(32)");
+                b.Property<DateTimeOffset?>("SourceObservedAt").HasColumnType("timestamp with time zone");
+                b.Property<long>("Revision").HasColumnType("bigint");
+                b.Property<uint>("Version").IsConcurrencyToken().ValueGeneratedOnAddOrUpdate().HasColumnName("xmin").HasColumnType("xid");
+                b.HasKey("TenantId", "Id");
+                b.HasAlternateKey("TenantId", "Id", "VesselId", "PersonId");
+                b.HasIndex("TenantId", "PersonId", "From");
+                b.HasIndex("TenantId", "PersonId");
+                b.HasIndex("TenantId", "VesselId");
+                b.HasIndex("TenantId", "PositionId", "VesselId");
+                b.ToTable("Assignments", "crew", t => t.HasCheckConstraint("CK_Assignment_Period", "\"To\" IS NULL OR (\"From\" IS NOT NULL AND \"To\" > \"From\")"));
+            });
+            modelBuilder.Entity("Poseidon.Persistence.CrewAssignmentRevision", b => {
+                b.Property<Guid>("TenantId").HasColumnType("uuid");
+                b.Property<Guid>("AssignmentId").HasColumnType("uuid");
+                b.Property<Guid>("VesselId").HasColumnType("uuid");
+                b.Property<Guid>("PersonId").HasColumnType("uuid");
+                b.Property<Guid?>("PositionId").HasColumnType("uuid");
+                b.Property<DateOnly?>("From").HasColumnType("date");
+                b.Property<DateOnly?>("To").HasColumnType("date");
+                b.Property<DateOnly?>("ContractEndDate").HasColumnType("date");
+                b.Property<long>("Revision").HasColumnType("bigint");
+                b.Property<string>("Provenance").IsRequired().HasMaxLength(32).HasColumnType("character varying(32)");
+                b.Property<DateTimeOffset?>("SourceObservedAt").HasColumnType("timestamp with time zone");
+                b.Property<DateTimeOffset>("SavedAt").HasColumnType("timestamp with time zone");
+                b.HasKey("TenantId", "AssignmentId", "Revision");
+                b.HasIndex("TenantId", "AssignmentId", "VesselId", "PersonId");
+                b.ToTable("AssignmentRevisions", "crew");
+            });
+            modelBuilder.Entity("Poseidon.Persistence.Person", b => {
+                b.HasOne("Poseidon.Persistence.Tenant", null).WithMany().HasForeignKey("TenantId").OnDelete(DeleteBehavior.Restrict).IsRequired();
+            });
+            modelBuilder.Entity("Poseidon.Persistence.CrewPosition", b => {
+                b.HasOne("Poseidon.Persistence.Vessel", null).WithMany().HasForeignKey("TenantId", "VesselId").OnDelete(DeleteBehavior.Restrict).IsRequired();
+            });
+            modelBuilder.Entity("Poseidon.Persistence.CrewAssignment", b => {
+                b.HasOne("Poseidon.Persistence.Person", null).WithMany().HasForeignKey("TenantId", "PersonId").OnDelete(DeleteBehavior.Restrict).IsRequired();
+                b.HasOne("Poseidon.Persistence.Vessel", null).WithMany().HasForeignKey("TenantId", "VesselId").OnDelete(DeleteBehavior.Restrict).IsRequired();
+                b.HasOne("Poseidon.Persistence.CrewPosition", null).WithMany().HasForeignKey("TenantId", "PositionId", "VesselId").HasPrincipalKey("TenantId", "Id", "VesselId").OnDelete(DeleteBehavior.Restrict);
+            });
+            modelBuilder.Entity("Poseidon.Persistence.CrewAssignmentRevision", b => {
+                b.HasOne("Poseidon.Persistence.CrewAssignment", null).WithMany().HasForeignKey("TenantId", "AssignmentId", "VesselId", "PersonId").HasPrincipalKey("TenantId", "Id", "VesselId", "PersonId").OnDelete(DeleteBehavior.Restrict).IsRequired();
+            });
 #pragma warning restore 612, 618
         }
     }
