@@ -10,6 +10,20 @@ const response = (body: unknown, status = 200) => ({ ok: status === 200, status,
 const props = { language: 'en' as const, onClose: vi.fn(), onNavigate: vi.fn() }
 afterEach(() => { vi.unstubAllGlobals(); vi.restoreAllMocks() })
 
+it('withdraws old search results immediately on focus before the current-session read denies revoked search', async () => {
+  let finish!: (value: Response) => void
+  const fetch = vi.fn().mockResolvedValueOnce(response(page([item])))
+    .mockImplementationOnce(() => new Promise<Response>(resolve => { finish = resolve }))
+  vi.stubGlobal('fetch', fetch)
+  render(<WorkspaceSearch {...props} />)
+  await screen.findByRole('link', { name: /Earlier private result/ })
+  act(() => window.dispatchEvent(new Event('focus')))
+  expect(screen.queryByRole('link')).not.toBeInTheDocument()
+  await act(async () => finish(response({}, 403)))
+  expect(await screen.findByRole('alert')).toHaveTextContent('not permitted')
+  expect(screen.queryByRole('link')).not.toBeInTheDocument()
+})
+
 it('renders localized audit and Tug destinations from the actual validated server result', async () => {
   const results = [
     { key: 'audit', href: '/app/audit', label: 'audit', kind: 'Destination' },

@@ -1,0 +1,60 @@
+{
+  "WorkspaceContext": {
+    "RoleCatalog": {
+      "Version": "SYNTHETIC-EXAMPLE-ONLY-v1",
+      "Roles": [
+        {
+          "TenantId": "10000000-0000-0000-0000-000000000001",
+          "Reference": "91c26eb5-cf16-4553-981d-1c275358c535",
+          "Tr": "KURGUSAL test rolü",
+          "En": "FICTIONAL test role"
+        },
+        {
+          "TenantId": "10000000-0000-0000-0000-000000000001",
+          "Reference": "20000000-0000-0000-0000-000000000002",
+          "Tr": "KURGUSAL inceleme merceği",
+          "En": "FICTIONAL review lens"
+        }
+      ]
+    }
+  },
+  "WorkspaceNavigation": {
+    "Version": "SYNTHETIC-EXAMPLE-ONLY-v1",
+    "Mappings": [
+      {
+        "TenantId": "10000000-0000-0000-0000-000000000001",
+        "Reference": "91c26eb5-cf16-4553-981d-1c275358c535",
+        "Modes": [
+          "Fleet",
+          "Ship",
+          "Tug"
+        ],
+        "Keys": [
+          "today",
+          "fleet",
+          "crew",
+          "equipment",
+          "maintenance",
+          "tug-command",
+          "tug-job-board"
+        ]
+      },
+      {
+        "TenantId": "10000000-0000-0000-0000-000000000001",
+        "Reference": "20000000-0000-0000-0000-000000000002",
+        "Modes": [
+          "Fleet",
+          "Ship",
+          "Tug"
+        ],
+        "Keys": [
+          "fleet",
+          "import",
+          "audit",
+          "sources",
+          "requirements"
+        ]
+      }
+    ]
+  }
+}

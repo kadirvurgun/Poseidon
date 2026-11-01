@@ -1,3 +1,4 @@
+import { WorkspaceRoleNavigation } from './WorkspaceRoleNavigation'
 import { MaintenanceObservations } from './MaintenanceObservations'
 import { WorkspaceContextBar } from './WorkspaceContextBar'
 import { dueReason, dueState } from './maintenance-copy'
@@ -160,10 +161,13 @@ export function TechnicalWorkspace() {
   if (!route) return <main><p role="alert">{en ? 'Page unavailable.' : 'Sayfa kullanılamıyor.'}</p><a href="/app/fleet">{en ? 'Fleet' : 'Filo'}</a></main>
   return <div className="product-shell technical-workspace" onClickCapture={e => {
     const a = (e.target as HTMLElement).closest('a')
-    if (a && (dirty || busy || uncertain)) { e.preventDefault(); guard(() => { window.location.assign(a.href) }) }
+    if (a?.closest('.workspace-search') || a?.getAttribute('href')?.startsWith('#')) return
+    if (a && (dirty || observationDirty || busy || uncertain || observationUncertain)) { e.preventDefault(); e.stopPropagation(); guard(() => { window.location.assign(a.href) }) }
   }}>
-    <header><a href={`/app/fleet/${route.vessel}`}>{en ? 'Back to vessel' : 'Araca dön'}</a><div role="group" aria-label={en ? 'Language' : 'Dil'}><button onClick={() => setLanguage('tr')}>TR</button><button onClick={() => setLanguage('en')}>EN</button></div><WorkspaceContextBar session={user} vessel={route.vessel} language={language} /></header>
-    <main id="technical-main"><h1>{route.plan ? (en ? 'Maintenance plan' : 'Bakım planı') : (en ? 'Equipment hierarchy' : 'Ekipman hiyerarşisi')}</h1>
+    <a className="skip-link" href="#technical-main">{en ? 'Skip to content' : 'İçeriğe geç'}</a>
+    <header className="product-header"><a className="product-brand" href={`/app/fleet/${route.vessel}`}>{en ? 'Back to vessel' : 'Araca dön'}</a><div role="group" aria-label={en ? 'Language' : 'Dil'}><button onClick={() => setLanguage('tr')}>TR</button><button onClick={() => setLanguage('en')}>EN</button></div><WorkspaceContextBar session={user} vessel={route.vessel} language={language} /></header>
+    <WorkspaceRoleNavigation session={user} vessel={route.vessel} language={language} onNavigate={href => guard(() => window.location.assign(href))} />
+    <main id="technical-main" tabIndex={-1}><h1>{route.plan ? (en ? 'Maintenance plan' : 'Bakım planı') : (en ? 'Equipment hierarchy' : 'Ekipman hiyerarşisi')}</h1>
       <nav aria-label={en ? 'Technical' : 'Teknik'}><button aria-current={!route.plan ? 'page' : undefined} disabled={busy || uncertain} onClick={() => navigate({ ...route, plan: false, id: null })}>{en ? 'Equipment' : 'Ekipman'}</button><button aria-current={route.plan ? 'page' : undefined} disabled={busy || uncertain} onClick={() => navigate({ ...route, plan: true, id: null })}>{en ? 'Plans' : 'Planlar'}</button></nav>
       {offline && <p role="alert">{en ? 'Offline. Reconnect before saving or refreshing.' : 'Çevrimdışı. Kaydetmek veya yenilemek için yeniden bağlanın.'}</p>}
       {error ? <div role="alert"><p>{error === 401 ? (en ? 'Sign in to continue.' : 'Devam etmek için oturum açın.') : error === 403 || error === 404 ? (en ? 'Access is not available.' : 'Erişim kullanılamıyor.') : (en ? 'Equipment could not be loaded.' : 'Ekipman yüklenemedi.')}</p><button onClick={() => guard(() => setAttempt(x => x + 1))}>{en ? 'Retry' : 'Tekrar dene'}</button></div> : !assets || loadedScope !== `${route.vessel}:${route.plan}` || route.plan && !plans ? <p role="status">{en ? 'Loading…' : 'Yükleniyor…'}</p> : <>

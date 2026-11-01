@@ -149,3 +149,19 @@ Remaining SOFTWARE: protected legacy Person identity and existing-person import 
 ## Checkpoint I — OFFLINE-APPLICATION-01 (AUTHORED_UNVERIFIED)
 
 Actual configured existing-Draft watch_group offline read/capture now consumes the retained replay policy, WebCrypto cipher, encrypted IndexedDB store and shared conflict reviewer in the real Crew workspace. Server-owned enrollment/key challenge/proof/context, explicit renewal/restart/relogin/reconnect/retry/history, atomic ordinary-handler replay plus immutable receipts/audit/conflict lineage, bounded storage and explicit key-loss cleanup are authored. No other field/command or binary evidence is implicitly enabled. [Exact source/FR/TC, behavior,16 API/PG facts,12 Domain theory rows,11 React behaviors,4 registered signed-host journeys and remaining gaps](../tasks/offline-application-01.md). All execution/generation/build/typecheck/migration/browser/provider/QA/CI DEFERRED; no accepted result. Normal parent documentation7198a81 and HTTP telemetry20892a2 -x receipts preserved; full S0 observability still required. Canonical8/970SP,2/121tasks,0/196accepted and40-task/272SP ledger unchanged. Current phase FOUNDATION authoring; coordinator continues dependent software before the one combined gate and independent exact-target QA/CI/publication.
+
+
+## NAVIGATION-ROLE-LENS-01 continuation — AUTHORED_UNVERIFIED
+
+Actual role-first daily-work menu software now supplements the retained context
+labels: explicit versioned trusted tenant-local role-reference mappings, current
+capability/mode/authorized-vessel intersections, grouped TR/EN navigation across
+all five supported workspace families, fresh-session/revocation withdrawal and
+separate power search with existing dirty/uncertain/offline guards. No role grant,
+appointment or production catalog is inferred. Code and policy/API+PG/React/wire/
+registered signed-host cases are authored, with all execution/generation DEFERRED.
+This replaces the known absent configured role-menu software gap, without source
+acceptance or completion of the remaining S0/Domain/Tug operational scope. Current
+phase: FOUNDATION authoring before S0 closure and the single combined gate.
+Canonical8/970SP,2/121tasks,0/196accepted unchanged. Coordinator owns later exact-target
+independent QA/CI/publication. [Exact source/FR/TC and remaining gates](navigation-role-lens-01.md).

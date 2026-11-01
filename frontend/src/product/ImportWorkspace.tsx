@@ -1,3 +1,4 @@
+import { WorkspaceRoleNavigation } from './WorkspaceRoleNavigation'
 import { WorkspaceContextBar } from './WorkspaceContextBar'
 import { useEffect, useRef, useState } from 'react'
 import { ApiError, session } from './api'
@@ -30,13 +31,18 @@ export function ImportWorkspace({ vessel }: { vessel: string }) {
     return () => { window.removeEventListener('beforeunload', leave); window.removeEventListener('popstate', pop); document.removeEventListener('visibilitychange', privacy) }
   }, [])
   useEffect(() => { document.documentElement.lang = language; document.title = `POSEIDON · ${en ? 'Controlled import' : 'Kontrollü içe aktarma'}` }, [language, en])
-  function navigate(next: string) {
-    if (dirty) { setPending(next); return }
+  function commitNavigation(next: string) {
+    if (!next.startsWith(`/app/excel-migration/${vessel}`)) { window.location.assign(next); return }
     history.pushState(null, '', next); location.current = window.location.href; setHref(window.location.href)
   }
+  function navigate(next: string) {
+    if (dirty) { setPending(next); return }
+    commitNavigation(next)
+  }
   return <div className="product-shell import-workspace"><a className="skip-link" href="#import-main">{en ? 'Import' : 'İçe aktarma'}</a>
-    <header><a href={`/app?tab=fleet&selected=${vessel}`}>{en ? 'Vessel' : 'Araç'}</a><div role="group" aria-label={en ? 'Language' : 'Dil'}>
+    <header className="product-header"><a className="product-brand" href={`/app/fleet/${vessel}`} onClick={e => { e.preventDefault(); navigate(`/app/fleet/${vessel}`) }}>{en ? 'Vessel' : 'Araç'}</a><div role="group" aria-label={en ? 'Language' : 'Dil'}>
       <button onClick={() => setLanguage('tr')} aria-pressed={!en}>TR</button><button onClick={() => setLanguage('en')} aria-pressed={en}>EN</button></div><WorkspaceContextBar session={identity} vessel={vessel} language={language} /></header>
+    <WorkspaceRoleNavigation session={identity} vessel={vessel} language={language} onNavigate={navigate} />
     <main id="import-main" tabIndex={-1}><h1>{en ? 'Controlled import' : 'Kontrollü içe aktarma'}</h1>
       <p>{en ? 'Vessel · crew · certificate · equipment. Declarations remain unverified. Trial results do not grant owner sign-off, pilot authorization or readiness.' : 'Araç · mürettebat · sertifika · ekipman. Beyanlar doğrulanmamış kalır. Deneme sonuçları veri sahibi onayı, pilot yetkisi veya hazır olma durumu oluşturmaz.'}</p>
       {error ? <div role="alert"><p>{error === 401 ? (en ? 'Sign in again.' : 'Yeniden oturum açın.') : (en ? 'Import access unavailable.' : 'İçe aktarma erişimi kullanılamıyor.')}</p>
@@ -47,7 +53,7 @@ export function ImportWorkspace({ vessel }: { vessel: string }) {
     {pending && <div role="dialog" aria-modal="true" aria-label={en ? 'Unsaved import changes' : 'Kaydedilmemiş içe aktarma değişiklikleri'}>
       <p>{en ? 'Discard the current mapping or uncertain attempt?' : 'Geçerli eşleme veya belirsiz deneme bırakılsın mı?'}</p>
       <button autoFocus onClick={() => setPending(null)}>{en ? 'Keep working' : 'Düzenlemeye devam et'}</button>
-      <button onClick={() => { setDirty(false); dirtyRef.current = false; const next = pending; setPending(null); history.pushState(null, '', next); location.current = window.location.href; setHref(window.location.href) }}>{en ? 'Discard and leave' : 'Bırak ve ayrıl'}</button>
+      <button onClick={() => { setDirty(false); dirtyRef.current = false; const next = pending; setPending(null); commitNavigation(next) }}>{en ? 'Discard and leave' : 'Bırak ve ayrıl'}</button>
     </div>}
   </div>
 }

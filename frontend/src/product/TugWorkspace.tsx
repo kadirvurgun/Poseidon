@@ -1,3 +1,4 @@
+import { WorkspaceRoleNavigation } from './WorkspaceRoleNavigation'
 import { WorkspaceContextBar } from './WorkspaceContextBar'
 import { useEffect, useState } from 'react'
 import './tug.css'
@@ -85,6 +86,7 @@ export function TugWorkspace() {
   const nullText = (value: string | null | undefined) => value ?? t.unknown
   return <div className="product-shell tug-workspace"><a className="skip-link" href="#tug-main">{lang === 'en' ? 'Skip to content' : 'İçeriğe geç'}</a>
     <header className="product-header"><a className="product-brand" href="/app" onClick={e => { if (dirty || planningDirty || attempt || busy) { e.preventDefault(); guard(() => window.location.assign('/app')) } }}>POSEIDON</a><div role="group" aria-label="Language"><button aria-pressed={lang === 'tr'} onClick={() => language('tr')}>TR</button><button aria-pressed={lang === 'en'} onClick={() => language('en')}>EN</button></div><WorkspaceContextBar session={user} vessel={route.vessel || null} language={lang} /></header>
+    <WorkspaceRoleNavigation session={user} vessel={route.vessel || null} language={lang} onNavigate={href => guard(() => window.location.assign(href))} />
     <main id="tug-main" tabIndex={-1}><h1>{t.title}</h1><p>{t.boundary}</p>{offline && <p role="alert">{t.offline}</p>}
       {loading && <p role="status">{t.loading}</p>}{error > 0 && <div role="alert"><p>{[401, 403, 404].includes(error) ? t.denied : t.unavailable}</p><button onClick={() => guard(() => setReload(n => n + 1))}>{t.retry}</button></div>}
       {!loading && !error && !route.vessel && <section><h2>{t.select}</h2>{vessels.length === 0 && <p>{t.empty}</p>}{vessels.map(v => <p key={v.id}><a href={`/app/tug-command?vessel=${v.id}`} onClick={e => { e.preventDefault(); move(`/app/tug-command?vessel=${v.id}`) }}>{v.code} · {v.name}</a></p>)}</section>}

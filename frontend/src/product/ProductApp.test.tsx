@@ -1,10 +1,15 @@
+import { navigationTestIdentity, navigationTestRole } from './workspace-navigation.test-fixture'
+vi.mock('./workspace-lens-api', async original => ({ ...await original<typeof import('./workspace-lens-api')>(),
+  loadLenses: vi.fn(async (tenant: string, actor: string, vessel: string | null) => (await import('./workspace-navigation.test-fixture')).navigationTestLenses(tenant, actor, vessel)) }))
+vi.mock('./workspace-context-api', async original => ({ ...await original<typeof import('./workspace-context-api')>(),
+  loadWorkspaceContext: (await import('./workspace-navigation.test-fixture')).navigationTestContext }))
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ProductApp } from './ProductApp'
 
 const anonymous = { authenticated: false, setupRequired: false, actorId: null, tenantId: null, canRead: false, csrfToken: '' }
-const signedIn = { ...anonymous, authenticated: true, canRead: true, canReadCompanies: true, canCreate: false, actorId: 'synthetic-actor', tenantId: 'synthetic-workspace', csrfToken: 'synthetic-csrf' }
+const signedIn = { ...anonymous, authenticated: true, canRead: true, canReadCompanies: true, canCreate: false, ...navigationTestIdentity, csrfToken: 'synthetic-csrf' }
 const reply = (data: unknown, status = 200) => ({ ok: status === 200, status, json: async () => data }) as Response
 beforeEach(() => window.history.replaceState(null, '', '/app'))
 afterEach(() => vi.unstubAllGlobals())
@@ -63,8 +68,9 @@ describe('FOUNDATION-APP-01 product states (mocked HTTP, not backend acceptance)
     const user = userEvent.setup(); render(<ProductApp />)
     await user.click(await screen.findByRole('button', { name: 'Synthetic Company' }))
     expect(await screen.findByRole('region', { name: 'Ayrıntılar' })).toHaveTextContent('Synthetic Company')
+    await user.selectOptions(await screen.findByLabelText('Menü merceği'), navigationTestRole)
     await user.click(screen.getByRole('button', { name: 'Filo' }))
-    await user.selectOptions(screen.getByRole('combobox'), 'Tug')
+    await user.selectOptions(screen.getByLabelText('Araç türü'), 'Tug')
     expect(await screen.findByRole('button', { name: 'Synthetic Tug' })).toBeVisible()
     await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('/api/v1/vessels?offset=0&limit=25&kind=Tug', expect.objectContaining({ credentials: 'same-origin' })))
     expect(screen.getByRole('cell', { name: 'Römorkör' })).toBeVisible()
@@ -81,7 +87,7 @@ describe('FOUNDATION-APP-01 product states (mocked HTTP, not backend acceptance)
     })
     vi.stubGlobal('fetch', fetchMock)
     const user = userEvent.setup(); render(<ProductApp />)
-    if (tab === 'Filo') await user.click(await screen.findByRole('button', { name: tab }))
+    if (tab === 'Filo') { await user.selectOptions(await screen.findByLabelText('Menü merceği'), navigationTestRole); await user.click(await screen.findByRole('button', { name: tab })) }
     const row = await screen.findByRole('button', { name: rowName })
     await user.click(row)
     const detail = await screen.findByRole('region', { name: 'Ayrıntılar' })

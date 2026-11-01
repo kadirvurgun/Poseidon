@@ -3431,5 +3431,33 @@
       "git diff --check exit0; source whitespace only",
       "Graphify AST update exit0; zero-node warnings and size-related omitted HTML; not product verification"
     ]
+  },
+  "navigation_role_lens_01": {
+    "status": "AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+    "accepted": false,
+    "task": "docs/tasks/navigation-role-lens-01.md",
+    "phase_report": "docs/phases/NAVIGATION-ROLE-LENS-01.md",
+    "receiving_head": "dbf86e3",
+    "current_phase": "FOUNDATION software authoring before S0 closure and single combined gate",
+    "verification": "DEFERRED_NOT_RUN: all suites/build/typecheck/restore/contract-and-EF-generation/migration/browser/provider/security/independent-QA/CI",
+    "authored_cases_not_run": {
+      "pure_policy": 10,
+      "actual_api_postgresql": 8,
+      "role_menu_react": 11,
+      "wire_boundary": 8,
+      "parent_search_focus_revocation": 1,
+      "registered_signed_host": 3
+    },
+    "behavior": "Explicit versioned trusted tenant-local role lens over current endpoint/mode/authorized-vessel intersection; shared guarded TR/EN menu in five workspace families; no persistent cache or role assignment",
+    "configuration": "Explicit operator role-reference/label/presentation mapping; synthetic example never auto-loaded; private configuration unchanged",
+    "canonical_progress": "8/970SP,2/121tasks,0/196accepted",
+    "canonical_progress_unchanged": true,
+    "publishing": "None; coordinator-owned after later exact-target independent QA/required CI",
+    "remaining_gates": [
+      "Actual generation/model/consumer reconciliation and all deferred execution",
+      "Full original S0 criteria and current Domain/Tug broader operational scope",
+      "Independent exact-target QA/CI and separate source acceptance"
+    ],
+    "next_step": "Continue dependent foundation/S0 software, then the single coordinator-owned combined gate"
   }
 }

@@ -174,3 +174,19 @@ DEFERRED; no accepted story or validated candidate. Canonical8/970SP,2/121tasks,
 operational conflict/readiness/authority adapters, durable Tug offline workflow
 (predecessor supports Crew watch-group only) and broader command/lifecycle fields.
 Continue FOUNDATION authoring before the combined gate. [Exact scope and sources](../tasks/tug-planning-01.md).
+
+
+## NAVIGATION-ROLE-LENS-01 continuation — AUTHORED_UNVERIFIED
+
+Actual role-first daily-work menu software now supplements the retained context
+labels: explicit versioned trusted tenant-local role-reference mappings, current
+capability/mode/authorized-vessel intersections, grouped TR/EN navigation across
+all five supported workspace families, fresh-session/revocation withdrawal and
+separate power search with existing dirty/uncertain/offline guards. No role grant,
+appointment or production catalog is inferred. Code and policy/API+PG/React/wire/
+registered signed-host cases are authored, with all execution/generation DEFERRED.
+This replaces the known absent configured role-menu software gap, without source
+acceptance or completion of the remaining S0/Domain/Tug operational scope. Current
+phase: FOUNDATION authoring before S0 closure and the single combined gate.
+Canonical8/970SP,2/121tasks,0/196accepted unchanged. Coordinator owns later exact-target
+independent QA/CI/publication. [Exact source/FR/TC and remaining gates](../tasks/navigation-role-lens-01.md).

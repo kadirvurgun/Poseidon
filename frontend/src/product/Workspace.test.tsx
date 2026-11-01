@@ -1,3 +1,9 @@
+import { navigationTestIdentity, navigationTestRole } from './workspace-navigation.test-fixture'
+import { loadLenses } from './workspace-lens-api'
+vi.mock('./workspace-lens-api', async original => ({ ...await original<typeof import('./workspace-lens-api')>(),
+  loadLenses: vi.fn(async (tenant: string, actor: string, vessel: string | null) => (await import('./workspace-navigation.test-fixture')).navigationTestLenses(tenant, actor, vessel)) }))
+vi.mock('./workspace-context-api', async original => ({ ...await original<typeof import('./workspace-context-api')>(),
+  loadWorkspaceContext: (await import('./workspace-navigation.test-fixture')).navigationTestContext }))
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -7,11 +13,12 @@ import { profileFields } from './profile-contract'
 
 const vessel = { id: '10000000-0000-0000-0000-000000000001', companyId: '10000000-0000-0000-0000-000000000002', code: 'S1', name: 'Synthetic Ship', kind: 'Ship', version: 7, canEdit: true }
 const company = { id: vessel.companyId, code: 'C1', name: 'Synthetic Company', version: 7, canEdit: true }
-const session = { authenticated: true, setupRequired: false, canRead: true, canReadCompanies: true, canCreate: true, canSearch: false, csrfToken: 'synthetic-token' }
+const session = { ...navigationTestIdentity, authenticated: true, setupRequired: false, canRead: true, canReadCompanies: true, canCreate: true, canSearch: false, csrfToken: 'synthetic-token' }
 const content = Object.fromEntries(profileFields.map(([key]) => [key, { state: 'Missing', value: null }]))
 const profile = { tenantId: '10000000-0000-0000-0000-000000000003', vessel, version: 19, revision: 1, savedAt: '2026-01-01T00:00:00Z', provenance: 'Synthetic', content }
 const reply = (body: unknown, status = 200) => ({ ok: status === 200, status, json: async () => body }) as Response
 function mock(overrides: Partial<typeof session> = {}, detailStatus = 200) {
+  vi.mocked(loadLenses).mockImplementation(async (tenant, actor, vessel) => (await import('./workspace-navigation.test-fixture')).navigationTestLenses(tenant, actor, vessel, overrides.canSearch ?? false, overrides.canReadCompanies ?? true))
   const fetch = vi.fn(async (url: string) => {
     if (url.endsWith('auth/session')) return reply({ ...session, ...overrides })
     if (url.includes('workspace/search')) return reply({ items: [{ key: vessel.id, href: `/app/fleet/${vessel.id}`, label: vessel.name, kind: 'Ship' }], offset: 0, limit: 25, hasMore: false })
@@ -67,6 +74,7 @@ describe('NAV-WORKSPACE-01 mocked component journeys, separate from real API/bro
   })
   it('guards Back repeatedly; cancel preserves draft and URL, discard and Forward reload saved state', async () => {
     mock(); const user = userEvent.setup(); render(<ProductApp />)
+    await user.selectOptions(await screen.findByLabelText('Menü merceği'), navigationTestRole)
     await user.click(await screen.findByRole('button', { name: 'Filo' }))
     await user.click(await screen.findByRole('button', { name: vessel.name }))
     await user.click(await screen.findByRole('button', { name: 'Mevzuat profili' }))
@@ -108,7 +116,7 @@ describe('NAV-WORKSPACE-01 mocked component journeys, separate from real API/bro
   })
   it('restores drawer focus and traps keyboard movement without navigation', async () => {
     mock(); const user = userEvent.setup(); render(<ProductApp />)
-    await screen.findByRole('button', { name: 'Filo' })
+    await screen.findByLabelText('Menü merceği')
     const menu = screen.getByRole('button', { name: 'Menü' }); await user.click(menu)
     expect(screen.getByRole('button', { name: 'Kapat' })).toHaveFocus()
     await user.tab({ shift: true }); expect(screen.getByRole('link', { name: 'Sistem bağlantısı' })).toHaveFocus()
@@ -130,6 +138,7 @@ describe('NAV-WORKSPACE-01 mocked component journeys, separate from real API/bro
     await user.click(screen.getByRole('button', { name: 'Kaydet' }))
     await screen.findByText(/sonucu doğrulanamadı/)
     const url = window.location.pathname
+    await user.selectOptions(await screen.findByLabelText('Menü merceği'), navigationTestRole)
     await user.click(screen.getByRole('button', { name: 'Filo' }))
     act(() => history.back()); await new Promise(resolve => setTimeout(resolve, 60))
     await waitFor(() => expect(window.location.pathname).toBe(url))

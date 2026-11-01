@@ -4,6 +4,7 @@ import { crewLegacyCases } from './crew-legacy-cases.ts'
 import { personFileCases } from './person-file-cases.ts'
 import { searchCases } from './search-cases.ts'
 import { contextCases } from './context-cases.ts'
+import { navigationRoleLensCases } from './navigation-role-lens-cases.ts'
 import { importCases } from './import-cases.ts'
 import { tugCases } from './tug-cases.ts'
 import { technicalCases } from './technical-cases.ts'
@@ -109,6 +110,7 @@ export const registerCases = [
   ...personFileCases,
   ...searchCases,
   ...contextCases,
+  ...navigationRoleLensCases,
   ...importCases,
   ...tugCases,
   ...technicalCases,

@@ -1,3 +1,21 @@
+## NAVIGATION-ROLE-LENS-01 — AUTHORED_UNVERIFIED / NOT ACCEPTED
+
+Actual role-first presentation now uses explicit versioned server mappings of
+trusted tenant-local role references, intersected with current endpoint capabilities,
+mode and authorized vessel scope. Shared grouped TR/EN navigation is authored in
+all five supported workspace families, with honest missing/unavailable states,
+in-memory selection, revocation revalidation, separate capability-gated power search
+and dirty/uncertain guards. No role assignment/impersonation, production catalog,
+private configuration change or publication. Code plus10 pure policy,8 real API/PG,
+11 menu React,8 wire,1 search focus and3 registered genuine-host cases are authored.
+All suites/build/typecheck/generation/migration/browser/provider/security/QA/CI
+remain **DEFERRED / NOT RUN**. Canonical **8/970SP,2/121tasks,0/196accepted** unchanged.
+Current phase: FOUNDATION authoring before S0 closure and the one combined gate.
+Next: dependent foundation/S0 software, then coordinator-owned generation/model/
+security/full execution and independent target-commit QA/CI; no acceptance here.
+[Exact source/FR/TC/coverage and gaps](tasks/navigation-role-lens-01.md),
+[phase report](phases/NAVIGATION-ROLE-LENS-01.md).
+
 ## TUG-PLANNING-01 — AUTHORED_UNVERIFIED / INCOMPLETE / NOT ACCEPTED
 
 FOUNDATION product authoring continues. Normal parent support `8be19ed` was received

@@ -1,3 +1,8 @@
+import { navigationTestIdentity, navigationTestRole } from './workspace-navigation.test-fixture'
+vi.mock('./workspace-lens-api', async original => ({ ...await original<typeof import('./workspace-lens-api')>(),
+  loadLenses: vi.fn(async (tenant: string, actor: string, vessel: string | null) => (await import('./workspace-navigation.test-fixture')).navigationTestLenses(tenant, actor, vessel)) }))
+vi.mock('./workspace-context-api', async original => ({ ...await original<typeof import('./workspace-context-api')>(),
+  loadWorkspaceContext: (await import('./workspace-navigation.test-fixture')).navigationTestContext }))
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -6,7 +11,7 @@ import { ProductApp } from './ProductApp'
 import { saveDirectory } from './api'
 
 const record = { id: 'company-one', code: 'C1', name: 'Synthetic Company', version: 21, canEdit: true }
-const session = { authenticated: true, setupRequired: false, canRead: true, canReadCompanies: true, canCreate: true, tenantName: 'Synthetic workspace', csrfToken: 'csrf-test' }
+const session = { ...navigationTestIdentity, authenticated: true, setupRequired: false, canRead: true, canReadCompanies: true, canCreate: true, tenantName: 'Synthetic workspace', csrfToken: 'csrf-test' }
 const reply = (body: unknown, status = 200) => ({ ok: status >= 200 && status < 300, status, json: async () => body }) as Response
 function props(edit = false) {
   return { target: { resource: 'companies' as const, ...(edit ? { record } : {}) }, language: 'en' as const, csrf: 'csrf-test', onDirty: vi.fn(), onSaving: vi.fn(), onCancel: vi.fn(), onReload: vi.fn(), onSaved: vi.fn() }
@@ -103,6 +108,7 @@ describe('DIR-WORKSPACE-01 mocked UI behavior (not real backend acceptance)', ()
     vi.stubGlobal('fetch', vi.fn(async (url: string) => url.endsWith('auth/session') ? reply(session) : reply({ items: [], offset: 0, limit: 25, hasMore: false })))
     const user = userEvent.setup(); render(<ProductApp />)
     await user.click(await screen.findByRole('button', { name: 'Yeni kayıt' }))
+    await user.selectOptions(await screen.findByLabelText('Menü merceği'), navigationTestRole)
     await user.type(screen.getByLabelText('Ad *'), 'Korunan taslak')
     await user.click(screen.getByRole('button', { name: 'Filo' }))
     await user.click(screen.getByRole('button', { name: 'Düzenlemeye devam et' }))

@@ -1,0 +1,8 @@
+.workspace-role-navigation { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; min-width: 0; overflow-wrap: anywhere; padding: .75rem; border: 1px solid var(--border, #667788); }
+.workspace-role-navigation p { margin: 0; }
+.product-shell > .workspace-role-navigation { grid-column: 1; grid-row: 2; align-self: start; }
+.workspace-role-navigation nav { flex-basis: 100%; }
+.workspace-role-navigation nav > div { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin-block: .5rem; }
+.workspace-role-navigation button, .workspace-role-navigation select { min-height: 44px; max-width: 100%; }
+.workspace-role-navigation :is(button, select):focus-visible { outline: 3px solid #1673b8; outline-offset: 3px; }
+@media (max-width: 600px) { .workspace-role-navigation { align-items: stretch; flex-direction: column; } .workspace-role-navigation nav > div { align-items: stretch; flex-direction: column; } }

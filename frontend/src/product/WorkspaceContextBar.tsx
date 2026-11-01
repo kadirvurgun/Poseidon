@@ -4,6 +4,7 @@ import type { Session } from './directory-contract'
 import { loadWorkspaceContext } from './workspace-context-api'
 import type { WorkspaceContext } from './workspace-context-api'
 import './workspace-context-bar.css'
+import { useWorkspaceRevalidation } from './use-workspace-revalidation'
 
 type Props = { session: Session | null; vessel?: string | null; language: 'tr' | 'en' }
 export function WorkspaceContextBar(props: Props) {
@@ -13,9 +14,10 @@ export function WorkspaceContextBar(props: Props) {
   return <ScopedWorkspaceContextBar key={`${identity.tenantId}:${identity.actorId}:${props.vessel ?? ''}`} {...props} />
 }
 function ScopedWorkspaceContextBar({ session, vessel = null, language }: Props) {
+  const epoch = useWorkspaceRevalidation()
   const tenant = session?.tenantId, actor = session?.actorId
   const allowed = session?.authenticated === true && session.canRead === true && !!tenant && !!actor
-  const scope = `${tenant}:${actor}:${vessel ?? ''}`
+  const scope = `${tenant}:${actor}:${vessel ?? ''}:${epoch}`
   const [attempt, retry] = useState(0)
   const [result, setResult] = useState<{ scope: string; owner: Session | null; data?: WorkspaceContext; error?: number } | null>(null)
   const [online, setOnline] = useState(navigator.onLine)
@@ -27,6 +29,7 @@ function ScopedWorkspaceContextBar({ session, vessel = null, language }: Props) 
   }, [])
   useEffect(() => {
     if (!allowed || !tenant || !actor) return
+    if (!navigator.onLine || document.visibilityState === 'hidden') return
     const c = new AbortController(); let active = true
     const timer = setTimeout(() => c.abort(), 10000)
     loadWorkspaceContext(tenant, actor, vessel, c.signal).then(data => { if (active) setResult({ scope, owner: session, data }) })
