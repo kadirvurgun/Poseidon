@@ -15,9 +15,11 @@ const storeName = 'encryptedRecords'
 const digest = (value: string) => typeof value === 'string' && /^[a-f0-9]{64}$/.test(value)
 function identifier(value: string) {
   if (typeof value !== 'string' || value.length !== 36 ||
-    !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value) ||
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(value) ||
     value === '00000000-0000-0000-0000-000000000000') throw new OfflineStoreError('invalid_record')
-  return value.toLowerCase()
+  // Canonicalize at capture creation BEFORE encryption; never rewrite an ID
+  // after it has already been bound into authenticated additional data.
+  return value
 }
 function length(value: unknown): number | null {
   try { return Object.getOwnPropertyDescriptor(ArrayBuffer.prototype, 'byteLength')!.get!.call(value) as number }

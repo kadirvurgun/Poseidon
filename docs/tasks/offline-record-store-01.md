@@ -11,6 +11,9 @@ server-context-derived opaque SHA256, not authorization; real privacy depends
 on current scope/key lifecycle and the cipher's authenticated binding. Input
 buffers are copied before asynchronous writes. Native ArrayBuffer brand checks
 support real browser/worker structured-clone realms.
+Command UUIDs must already be canonical lowercase at capture creation, before
+AEAD encryption; the storage layer rejects aliases rather than rewriting the
+authenticated binding and making a legitimate ciphertext unreadable.
 
 Expected revision, per-namespace record/cipher-byte quota inventory and write
 run in one readwrite transaction, serializing actual two-tab create/update and
@@ -31,12 +34,13 @@ loss recovery, expiry/reauthentication, schema validation, idempotent reconnect,
 atomic audited server mutation/receipt and real history/conflict journeys.
 An open storage handle does not grant policy permission or offline identity.
 
-Seven authored Playwright technical cases execute the actual source modules in
+Eight authored Playwright technical cases execute the actual source modules in
 an isolated fulfilled fixture origin with real browser IndexedDB and WebCrypto:
 close/reopen exact-byte persistence, wrong-key retention, two-connection CAS,
 record and byte quota races, namespace separation, reduced-quota retention and
 revision-matched discard, pagination after quota reduction, and version-upgrade
-preservation/stale handle closure (some scenarios share a case). The fixture
+preservation/stale handle closure and UUID binding preservation (some scenarios
+share a case). The fixture
 uses synthetic data only; no exported product debug API or modified CSP.
 These driver tests are explicitly not ordinary signed-host/SSO/application
 offline evidence. DOMAIN-COMPLETION-01 must add the real composed user journeys.

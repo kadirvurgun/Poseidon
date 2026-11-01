@@ -170,3 +170,19 @@ test('a schema upgrade closes stale connections and never resets the captured re
   })
   expect(result).toEqual({ staleCode: 'storage_closed', count: 1 })
 })
+
+test('noncanonical UUID casing is rejected instead of rewriting an authenticated binding', async ({ page }) => {
+  await install(page)
+  const result = await page.evaluate(async () => {
+    const { __poseidonOfflineStore: Store } = globalThis as unknown as Fixture
+    const store = await Store.open(indexedDB, 'a'.repeat(64), { maxRecords: 2, maxEncryptedBytes: 8192 }, `poseidon.offline.test.${crypto.randomUUID()}`)
+    const id = 'aaaaaaaa-0000-0000-0000-000000000001'
+    const envelope = { version: 1 as const, contextHash: 'b'.repeat(64), iv: new Uint8Array(12), ciphertext: new ArrayBuffer(32) }
+    await store.put(id, envelope, null)
+    let aliasCode = ''
+    try { await store.put(id.toUpperCase(), envelope, null) } catch (error) { aliasCode = (error as { code: string }).code }
+    const records = await store.list(2); store.close()
+    return { aliasCode, count: records.length, commandId: records[0].commandId }
+  })
+  expect(result).toEqual({ aliasCode: 'invalid_record', count: 1, commandId: 'aaaaaaaa-0000-0000-0000-000000000001' })
+})
