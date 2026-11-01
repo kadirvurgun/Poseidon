@@ -5,7 +5,7 @@ using Xunit;
 namespace Poseidon.Persistence.Tests;
 
 [Trait("Category","Integration")]
-public sealed class TugPersistenceTests : IAsyncLifetime
+public sealed partial class TugPersistenceTests : IAsyncLifetime
 {
     private readonly PostgreSqlContainer postgres = new PostgreSqlBuilder("postgres:18.6").Build();
     private SeedData data = null!;

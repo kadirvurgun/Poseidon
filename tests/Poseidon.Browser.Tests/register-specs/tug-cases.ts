@@ -61,14 +61,71 @@ async function lossReplay(page: Page) {
   await expect(page.getByText(/Save outcome uncertain/)).toBeVisible()
   await expect(page.getByLabel('Assisted vessel', { exact: true })).toBeDisabled()
   await page.getByRole('button', { name: 'Retry', exact: true }).click()
-  await expect(page.getByText('Draft saved. Planning and dispatch approval remain unavailable.', { exact: true })).toBeVisible()
+  await expect(page.getByText('Draft saved. Operational approval remains unavailable.', { exact: true })).toBeVisible()
   expect(attempts).toHaveLength(2); expect(attempts[0]).toEqual(attempts[1])
   const body = JSON.parse(attempts[0].body!)
   const r = await (await page.request.get(`/api/v1/tug-jobs/${body.clientId}?vessel=${vessel}`)).json()
   expect(r.revision).toBe(1)
 }
+async function planningJourney(page: Page) {
+  // Requires explicitly provisioned synthetic TugPlanning scope/type/source contract and
+  // current tug.plan.write + editable membership. Missing setup fails; never skip/fake it.
+  const vessel = await context(page)
+  await page.goto(`/app/tug-job-intake?vessel=${vessel}`); await page.getByRole('button', { name: 'EN', exact: true }).click()
+  await page.getByLabel('Assisted vessel', { exact: true }).fill('FICTIONAL planning ' + crypto.randomUUID())
+  const created = page.waitForResponse(r => r.url().includes('/api/v1/tug-jobs?') && r.request().method() === 'POST')
+  await page.getByRole('button', { name: 'Save draft', exact: true }).click(); const job = await (await created).json()
+  const optionsResponse = await page.request.get(`/api/v1/tug-jobs/${job.id}/plan/options?vessel=${vessel}`)
+  expect(optionsResponse.status()).toBe(200); const options = await optionsResponse.json()
+  expect(options.canWrite).toBe(true); expect(options.tugs.length).toBeGreaterThanOrEqual(2)
+  const panel = page.getByRole('region', { name: 'Draft planning', exact: true })
+  await panel.getByLabel('Planned start (UTC)', { exact: true }).fill('2026-11-02T12:00:00')
+  await page.getByRole('link', { name: 'Job board', exact: true }).click()
+  await page.getByRole('dialog').getByRole('button', { name: 'Stay', exact: true }).click()
+  await panel.getByRole('button', { name: 'Save planning window', exact: true }).click()
+  await expect(panel.getByText(/r1 ·/).first()).toBeVisible()
+  await panel.getByLabel('Eligible tug', { exact: true }).selectOption(options.tugs[0].id)
+  await panel.getByRole('button', { name: 'Assign to draft', exact: true }).click()
+  await expect(panel.getByText(/r2 ·/).first()).toBeVisible()
+  await panel.getByLabel('Replacement tug', { exact: true }).selectOption(options.tugs[1].id)
+  await panel.getByRole('button', { name: 'Reassign in draft', exact: true }).click()
+  await expect(panel.getByText(/r3 ·/).first()).toBeVisible()
+  await panel.getByRole('button', { name: 'Review exact revision 2', exact: true }).click()
+  await expect(panel.getByRole('article')).toContainText(options.tugs[0].id)
+  await panel.getByLabel('Eligible tug', { exact: true }).selectOption(options.tugs[1].id)
+  await panel.getByRole('button', { name: 'Remove from draft', exact: true }).click()
+  await expect(panel.getByText(/r4 ·/).first()).toBeVisible()
+  await page.reload(); await page.getByRole('button', { name: 'EN', exact: true }).click()
+  const detail = await (await page.request.get(`/api/v1/tug-jobs/${job.id}/plan?vessel=${vessel}`)).json()
+  expect(detail.plan.revision).toBe(4); expect(detail.plan.inputs.plannedEnd).toBeNull(); expect(detail.plan.inputs.assignedTugs).toEqual([])
+  expect(detail.evidence.availableBollardPull).toBeNull(); expect(detail.evidence.readiness).toBe('Unknown')
+  const board = await (await page.request.get(`/api/v1/tug-job-board?vessel=${vessel}&q=${encodeURIComponent(job.jobNumber)}`)).json()
+  expect(board.items[0].draftPlan.revision).toBe(4); expect(board.items[0].request.inputs.requestedStart).toBeNull()
+  await page.getByRole('link', { name: 'Job board', exact: true }).click()
+  await page.getByLabel('Search requests', { exact: true }).fill(job.jobNumber); await page.getByRole('button', { name: 'Search requests', exact: true }).click()
+  await expect(page.getByRole('row').filter({ hasText: job.jobNumber })).toContainText('Draft plan')
+}
+async function planningLoss(page: Page) {
+  await planningJourney(page)
+  const link = page.getByRole('link', { name: /^TUG-/ }).first(); await link.click()
+  const panel = page.getByRole('region', { name: 'Draft planning', exact: true })
+  const attempts: { body: string | null; key: string | undefined }[] = []; let lost = false
+  await page.route('**/api/v1/tug-jobs/*/plan?*', async route => {
+    if (route.request().method() !== 'PUT') return route.continue()
+    attempts.push({ body: route.request().postData(), key: route.request().headers()['idempotency-key'] })
+    if (!lost) { lost = true; const committed = await route.fetch(); expect(committed.status()).toBe(200); return route.abort('failed') }
+    return route.continue()
+  })
+  await panel.getByRole('button', { name: 'Save planning window', exact: true }).click()
+  await expect(panel.getByText('Planning outcome uncertain. Retry the retained command.')).toBeVisible()
+  await panel.getByRole('button', { name: 'Retry exact planning command', exact: true }).click()
+  await expect(panel.getByRole('button', { name: 'Save planning window', exact: true })).toBeEnabled()
+  expect(attempts).toHaveLength(2); expect(attempts[0]).toEqual(attempts[1])
+}
 export const tugCases = [
   { name: 'tug-intake-board-exact-bp-null-end-dirty-url-responsive', run: intakeBoard, restricted: false },
   { name: 'tug-restricted-direct-url-and-navigation', run: denied, restricted: true },
   { name: 'tug-controlled-response-loss-real-commit', run: lossReplay, restricted: false },
+  { name: 'tug-versioned-draft-plan-assign-reassign-remove-exact-history-board', run: planningJourney, restricted: false },
+  { name: 'tug-plan-controlled-response-loss-real-commit-recovery', run: planningLoss, restricted: false },
 ] as const

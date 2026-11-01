@@ -1,4 +1,30 @@
 {
+  "tug_planning_01": {
+    "status": "authored_unverified_incomplete_not_accepted",
+    "accepted": false,
+    "task": "docs/tasks/tug-planning-01.md",
+    "phase_report": "docs/phases/TUG-PLANNING-01.md",
+    "field_coverage": "docs/tasks/tug-planning-01.fields.json",
+    "phase": "FOUNDATION product authoring",
+    "support_origin": "8be19ed554d20b75429a919fe83e8fe9f151cdf4",
+    "support_receipt": "df96875",
+    "verification": "ALL suites/build/typecheck/EF/OpenAPI/contract generation/migration/browser/provider/security/independent QA/CI DEFERRED_NOT_RUN",
+    "behavior": [
+      "Separate versioned draft plan windows and explicit assign/reassign/remove",
+      "Current actor/mode/tenant/object/policy/eligible-Tug enforcement before recovery",
+      "Atomic audited revisions/references/receipts and scoped exact history",
+      "Real board/TR-EN editor and normalized BP declarations/all-visible-plan geometry"
+    ],
+    "remaining_software": [
+      "Authoritative verified available-BP integration",
+      "Operational conflict/readiness/authority evidence adapters",
+      "Durable Tug offline enrollment/capture/proof/replay/conflict workflow; predecessor command remains Crew watch-group only",
+      "Broader operational command/lifecycle source coverage"
+    ],
+    "canonical_story_points": "8/970",
+    "accepted_screens": "0/196",
+    "canonical_progress_unchanged": true
+  },
   "offline_application_01": {
     "status": "authored_unverified_not_accepted",
     "accepted": false,

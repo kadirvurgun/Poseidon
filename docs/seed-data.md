@@ -141,3 +141,15 @@ Normal add-missing synthetic seed and its unobserved78/79 audit expectations are
 ## OFFLINE-APPLICATION-01 — AUTHORED_UNVERIFIED
 
 Normal add-missing seed creates no enrolled device/key/authority, replay receipt, conflict or resolution. Those are real user-context lifecycle facts and cannot be fabricated by seed. Explicit fictional integration fixtures provision policy only inside test host setup and use ordinary authenticated enrollment/key/replay endpoints. A real PostgreSQL test authors reseed twice preserving these actual synthetic-session mutations and tenant isolation. No real evidence/signature/credential is seeded; prior78/79 expectations unchanged and unobserved. Migration120000/model/designer, all fixtures/tests and provider execution DEFERRED. [Source/contract](tasks/offline-application-01.md).
+
+
+## TUG-PLANNING-01 — AUTHORED_UNVERIFIED / execution DEFERRED
+
+One add-missing empty SyntheticUnverified DraftPlan and immutable initial revision
+now belong to the existing synthetic Tug job. No requested time is copied, and no
+assigned Tug, measurement, verified capacity/evidence, appointment, receipt, permit,
+decision or credential is seeded. Reseed preserves all operator revisions/links.
+Two additional insert-audit expectations change78/79→80/81, never observed counts.
+Real PostgreSQL seed/preservation/tenant/kind/history tests are authored, not run.
+Migration130000/designer/snapshot and all generation/application wait for the larger
+gate. [Task/source and actual remaining gaps](tasks/tug-planning-01.md).

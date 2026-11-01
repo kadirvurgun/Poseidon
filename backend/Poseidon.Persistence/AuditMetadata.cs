@@ -14,6 +14,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         Guid? vessel = entry.Entity switch {
             OfflineEnrollment o => o.VesselId, OfflineOutcome o => o.VesselId, OfflineLifecycle o => o.VesselId,
             Credential c => c.VesselId, CredentialRevision c => c.VesselId, ImportBatch b => b.VesselId, ImportPreview p => p.VesselId, ImportRowResult r => r.VesselId,
+            TugDraftPlan p => p.VesselId, TugDraftPlanRevision p => p.VesselId, TugDraftPlanTug p => p.VesselId,
             TugJob j => j.VesselId, TugJobRevision j => j.VesselId, TugOwner o => o.VesselId, TugAssignment a => a.VesselId,
             MaintenanceObservation o => o.VesselId,
             Asset a => a.VesselId, AssetRevision r => r.VesselId, MaintenancePlan p => p.VesselId,
@@ -29,6 +30,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         Guid? resource = entry.Entity switch {
             OfflineEnrollment o => o.AssignmentId, OfflineOutcome o => o.AssignmentId, OfflineLifecycle o => o.AssignmentId,
             Credential c => c.Id, CredentialRevision c => c.CredentialId, ImportBatch b => b.Id, ImportPreview p => p.BatchId, ImportRowResult r => r.PreviewId,
+            TugDraftPlan p => p.JobId, TugDraftPlanRevision p => p.JobId, TugDraftPlanTug p => p.JobId,
             TugJob j => j.Id, TugJobRevision j => j.JobId, TugOwner o => o.Id, TugAssignment a => a.JobId,
             MaintenanceObservation o => o.Id, MaintenanceObservationRevocation r => r.ObservationId,
             Asset a => a.Id, AssetRevision r => r.AssetId, MaintenancePlan p => p.Id,

@@ -6,7 +6,7 @@ namespace Poseidon.Domain;
 public static class AuditValuePolicy
 {
     public static bool Includes(string field) => field is "Code" or "Name" or "Kind" or "CompanyId" or
-        "SourceVersion" or "RequiredBollardPull" or "RequiredTugCount" or "RequestOwner" or "RequestedStart" or "RequestedEnd" or "GrossTonnage" or "BollardPullTonnes" or "Revision" or "ContentJson" or "State";
+        "SourceVersion" or "RequiredBollardPull" or "RequiredTugCount" or "RequestOwner" or "PlannedStart" or "PlannedEnd" or "RequestedStart" or "RequestedEnd" or "GrossTonnage" or "BollardPullTonnes" or "Revision" or "ContentJson" or "State";
     public static string Evidence(string field) => field switch {
         "ContentJson" => "RevisionReference", "Code" or "Name" => "ValuesWithheld",
         _ when Includes(field) => "Allowlisted", _ => throw new ArgumentException("Unsupported audit field.", nameof(field))
@@ -18,9 +18,9 @@ public static class AuditValuePolicy
         if (Evidence(field) != "Allowlisted" || value == null) return null;
         return (field, value) switch {
             ("State", string state) when state is "Uploaded" or "MappingDraft" or "Previewed" or "Committed" or "Pending" or "Receiving" or "CleanTransport" or "Abandoned" or "SyntheticUnverified" => state,
-            ("SourceVersion", string source) when source == TugRequestPolicy.SourceVersion => source,
+            ("SourceVersion", string source) when source == TugRequestPolicy.SourceVersion || source == TugDraftPlanning.SourceVersion => source,
             ("RequiredTugCount", int count) when count is >= 1 and <= 1000 => count.ToString(CultureInfo.InvariantCulture),
-            ("RequestedStart" or "RequestedEnd", DateTimeOffset time) => time.ToUniversalTime().ToString("O", CultureInfo.InvariantCulture),
+            ("PlannedStart" or "PlannedEnd" or "RequestedStart" or "RequestedEnd", DateTimeOffset time) => time.ToUniversalTime().ToString("O", CultureInfo.InvariantCulture),
             ("RequestOwner", Guid role) => role.ToString("D"),
             ("CompanyId", Guid id) => id.ToString("D"),
             ("Revision", long revision) when revision >= 0 => revision.ToString(CultureInfo.InvariantCulture),

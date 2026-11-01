@@ -16,11 +16,12 @@ public sealed record TugRequestDto(Guid Id, Guid VesselId, string JobNumber, lon
 public sealed record TugDeclaredComparison(Guid JobId, string Relation);
 public sealed record TugBoardRow(TugRequestDto Request, string WindowState, string PlannedTimeSource,
     Guid[] AssignedTugs, string AssignmentCoverage, string? AvailableBollardPull, string Readiness,
-    string Conflict, TugDeclaredComparison[] DeclaredComparisons, string ComparisonCoverage, string[] BlockingReasons, string NextAction, string DetailHref);
+    string Conflict, TugDeclaredComparison[] DeclaredComparisons, string ComparisonCoverage, string[] BlockingReasons, string NextAction, string DetailHref, TugPlanDto? DraftPlan = null, TugPlanningEvidence? PlanningEvidence = null);
 
-public static class TugEndpoints
+public static partial class TugEndpoints
 {
     public static void MapTug(this IEndpointRouteBuilder app) {
+        MapPlanning(app);
         var g = app.MapGroup("/api/v1").RequireAuthorization("DirectoryRead");
         g.MapGet("/tug-command", Context).WithName("TugContext");
         g.MapGet("/tug-job-board", Board).WithName("TugBoard");
@@ -75,12 +76,16 @@ public static class TugEndpoints
         var bp = await db.TugProfiles.AsNoTracking().SingleOrDefaultAsync(p => p.VesselId == vessel, h.RequestAborted);
         var assets = a.Permissions.Contains("equipment.read") ? await db.Assets.AsNoTracking().Where(x => x.VesselId == vessel)
             .Select(x => new { x.Id, x.Level, x.EquipmentType, x.Revision, x.Provenance }).ToArrayAsync(h.RequestAborted) : null;
+        var policy = Planning(h); var configuredContext = policy.Scope(a, vessel) != null;
+        var bindings = configuredContext ? policy.Contexts.Where(x => x.TenantId == a.TenantId && x.VesselId == vessel).Take(2).ToArray() : [];
+        var binding = configuredContext && bindings.Length == 1 && bindings[0].ObservedAt <= DateTimeOffset.UtcNow && bindings[0].SourceRevision > 0 &&
+            policy.Types.Any(t => t.Code == bindings[0].Code) ? bindings[0] : null;
         await Observe(h, "Success", vessel);
         return Results.Ok(new { vessel = new { v.Id, v.Code, v.Name }, mode = "Tug", crossMode = a.Permissions.Contains("mode.cross"),
             roleReferences = a.RoleContext, canWrite = Write(a, vessel), owners = Owners(h, vessel),
             bollardPull = new { value = bp?.BollardPullTonnes.ToString(CultureInfo.InvariantCulture), version = bp?.Version,
                 provenance = bp == null ? "Missing" : "LegacyMeasurementUnverified", source = "TugProfile", observedAt = (DateTimeOffset?)null, freshness = "Unknown" },
-            tugType = "Unknown", equipment = assets, equipmentCoverage = assets == null ? "Unavailable" : "DraftDeclarationsOnly",
+            tugType = binding?.Code ?? "Unavailable", tugTypeContext = binding, tugTypeOptions = configuredContext ? policy.Types : [], tugTypePolicyVersion = configuredContext ? policy.Version : null, equipment = assets, equipmentCoverage = assets == null ? "Unavailable" : "DraftDeclarationsOnly",
             readiness = "Unknown", reason = "VerifiedMeasurementCertificateCrewAndAssignmentAdaptersUnavailable", jobTypes = TugRequestPolicy.JobTypes, priorities = TugRequestPolicy.Priorities, requestSources = TugRequestPolicy.RequestSources });
     }
     private static async Task<IResult> Detail(Guid id, HttpContext h, PoseidonDbContext db) {
@@ -101,16 +106,27 @@ public static class TugEndpoints
         var ids = jobs.Take(limit).Select(j => j.Id).ToArray();
         var authorizedTugs = Tugs(db, Actor(h)).Select(v => v.Id);
         var assignments = await db.TugAssignments.AsNoTracking().Where(x => x.VesselId == vessel && ids.Contains(x.JobId) && authorizedTugs.Contains(x.TugId)).ToArrayAsync(h.RequestAborted);
-        var rows = jobs.Take(limit).Select(j => {
+        var rows = new List<TugBoardRow>();
+        foreach (var j in jobs.Take(limit)) {
+            TugPlanDto? draft = null; TugPlanningEvidence? planningEvidence = null;
+            var p = await db.TugDraftPlans.AsNoTracking().SingleOrDefaultAsync(p => p.JobId == j.Id && p.VesselId == vessel, h.RequestAborted);
+            if (p != null) {
+                var r = await db.TugDraftPlanRevisions.AsNoTracking().SingleAsync(r => r.JobId == j.Id && r.VesselId == vessel && r.Revision == p.Revision, h.RequestAborted);
+                if (await PlanVisible(h, db, r.Inputs())) {
+                    draft = PlanDto(r, p.Version);
+                    planningEvidence = await TugPlanningEvidenceAdapter.Read(db, Actor(h), Planning(h), h.RequestServices.GetRequiredService<MaintenanceObservationSettings>(), j.Id, r.Inputs(), h.RequestAborted);
+                }
+            }
             var actual = assignments.Where(x => x.JobId == j.Id && x.JobRevision == j.Revision).Select(x => x.TugId).Distinct().ToArray();
             var missing = TugRequestPolicy.Missing(j.Inputs());
-            return new TugBoardRow(Dto(j), TugPlanningWindowPolicy.Assess(new(j.RequestedStart, j.RequestedEnd)).ToString(),
-                "RequestedWindowOnly;NoApprovedPlan", actual, "UnavailableControlledAssignmentAdapter", null, "Unknown", "Unknown",
+            if (draft != null) actual = draft.Inputs.AssignedTugs;
+            rows.Add(new TugBoardRow(Dto(j), TugPlanningWindowPolicy.Assess(new(j.RequestedStart, j.RequestedEnd)).ToString(),
+                draft == null ? "RequestedWindowOnly;NoApprovedPlan" : "DraftPlanUnverified;NoOperationalApproval", actual, draft == null ? "UnavailableControlledAssignmentAdapter" : "CurrentDraftAssignmentsOnly", planningEvidence?.AvailableBollardPull, "Unknown", planningEvidence?.ConflictState ?? "Unknown",
                 jobs.Take(limit).Where(other => other.Id != j.Id).Select(other => new TugDeclaredComparison(other.Id, TugPlanningWindowPolicy.CompareDeclared(new(j.RequestedStart, j.RequestedEnd), new(other.RequestedStart, other.RequestedEnd)).ToString())).ToArray(), "VisiblePageEnteredDataOnly;NoBufferOrOperationalAssessment",
-                [.. missing.Select(x => "Missing:" + x), "AssignmentCoverageUnavailable", "VerifiedBPCertificateCrewUnavailable", "OperationalConflictInputsUnavailable", "D-STATE-01"],
-                missing.Length > 0 ? "CompleteDraft" : "AuthorizedPlanningReviewRequired", $"/app/tug-job-detail/{j.Id}?vessel={vessel}");
-        }).ToArray();
-        await Observe(h, "Success", vessel); return Results.Ok(new PageDto<TugBoardRow>(rows, offset, limit, jobs.Length > limit));
+                [.. missing.Select(x => "Missing:" + x), draft == null ? "AssignmentCoverageUnavailable" : "DraftAssignmentsUnverified", .. (draft != null && draft.RequestRevision != j.Revision ? new[] { "RequestChangedSincePlan" } : Array.Empty<string>()), "VerifiedBPCertificateCrewUnavailable", "OperationalConflictInputsUnavailable", .. (planningEvidence?.Conflicts.Length > 0 ? new[] { "AuthorizedHumanConflictReviewRequired" } : Array.Empty<string>()), "D-STATE-01"],
+                planningEvidence?.Conflicts.Length > 0 ? "AuthorizedHumanConflictReviewRequired" : draft != null && draft.RequestRevision != j.Revision ? "RequestChangedSincePlan" : missing.Length > 0 ? "CompleteDraft" : "AuthorizedPlanningReviewRequired", $"/app/tug-job-detail/{j.Id}?vessel={vessel}", draft, planningEvidence));
+        }
+        await Observe(h, "Success", vessel); return Results.Ok(new PageDto<TugBoardRow>(rows.ToArray(), offset, limit, jobs.Length > limit));
     }
     private static bool Unique(JsonElement e) => e.ValueKind switch {
         JsonValueKind.Object => e.EnumerateObject().Select(p => p.Name.ToUpperInvariant()).Distinct().Count() == e.EnumerateObject().Count() && e.EnumerateObject().All(p => Unique(p.Value)),

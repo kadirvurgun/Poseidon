@@ -34,3 +34,19 @@ Remaining SOFTWARE: later actual model/consumer reconciliation and all verificat
 ## Checkpoint I — OFFLINE-APPLICATION-01 (AUTHORED_UNVERIFIED)
 
 Actual configured existing-Draft watch_group offline read/capture now consumes the retained replay policy, WebCrypto cipher, encrypted IndexedDB store and shared conflict reviewer in the real Crew workspace. Server-owned enrollment/key challenge/proof/context, explicit renewal/restart/relogin/reconnect/retry/history, atomic ordinary-handler replay plus immutable receipts/audit/conflict lineage, bounded storage and explicit key-loss cleanup are authored. No other field/command or binary evidence is implicitly enabled. [Exact source/FR/TC, behavior,16 API/PG facts,12 Domain theory rows,11 React behaviors,4 registered signed-host journeys and remaining gaps](../tasks/offline-application-01.md). All execution/generation/build/typecheck/migration/browser/provider/QA/CI DEFERRED; no accepted result. Normal parent documentation7198a81 and HTTP telemetry20892a2 -x receipts preserved; full S0 observability still required. Canonical8/970SP,2/121tasks,0/196accepted and40-task/272SP ledger unchanged. Current phase FOUNDATION authoring; coordinator continues dependent software before the one combined gate and independent exact-target QA/CI/publication.
+
+
+## TUG-PLANNING-01 continuation — AUTHORED_UNVERIFIED
+
+Separate EF draft plan windows, explicit controlled assignment/reassignment/removal,
+immutable scoped exact history, current-rights atomic ordinary receipts/audit,
+configured source-versioned type/eligible-Tug contracts, real board/TR-EN editor,
+normalized declaration evidence and all-visible-plan geometry are now authored with
+meaningful Domain/API+PG/persistence/React and registered signed-host tests. Normal
+parent support8be19ed→df96875 (-x) is retained. All suites/build/typecheck/EF/OpenAPI/
+contract generation/migration/browser/provider/security/independent QA/CI remain
+DEFERRED; no accepted story or validated candidate. Canonical8/970SP,2/121tasks,
+0/196accepted unchanged. Remaining software includes authoritative verified BP,
+operational conflict/readiness/authority adapters, durable Tug offline workflow
+(predecessor supports Crew watch-group only) and broader command/lifecycle fields.
+Continue FOUNDATION authoring before the combined gate. [Exact scope and sources](../tasks/tug-planning-01.md).

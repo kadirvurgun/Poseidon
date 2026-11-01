@@ -52,6 +52,9 @@ public sealed class PoseidonDbContext(
     public DbSet<CrewAssignment> CrewAssignments => Set<CrewAssignment>();
     public DbSet<CrewAssignmentRevision> CrewAssignmentRevisions => Set<CrewAssignmentRevision>();
 
+    public DbSet<TugDraftPlan> TugDraftPlans => Set<TugDraftPlan>();
+    public DbSet<TugDraftPlanRevision> TugDraftPlanRevisions => Set<TugDraftPlanRevision>();
+    public DbSet<TugDraftPlanTug> TugDraftPlanTugs => Set<TugDraftPlanTug>();
     public DbSet<TugJob> TugJobs => Set<TugJob>();
     public DbSet<TugJobRevision> TugJobRevisions => Set<TugJobRevision>();
     public DbSet<TugOwner> TugOwners => Set<TugOwner>();
@@ -70,6 +73,10 @@ public sealed class PoseidonDbContext(
         model.Entity<ImportBatch>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<ImportPreview>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<ImportRowResult>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        TugDraftPlanStorage.Configure(model);
+        model.Entity<TugDraftPlan>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<TugDraftPlanRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<TugDraftPlanTug>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         TugStorage.Configure(model);
         model.Entity<TugJob>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<TugJobRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -213,6 +220,7 @@ public sealed class PoseidonDbContext(
     {
         var resource = ChangeTracker.Entries().FirstOrDefault(e => e.Entity switch {
             ImportBatch b => receipt.Action == "CrewImportLegacyConvert" && b.Id == receipt.ResourceId && b.TenantId == receipt.TenantId,
+            TugDraftPlan p => receipt.Action == "TugPlanSave" && p.JobId == receipt.ResourceId && p.TenantId == receipt.TenantId,
             TugJob j => receipt.Action == "TugSave" && j.Id == receipt.ResourceId && j.TenantId == receipt.TenantId,
             Asset a => receipt.Action == "EquipmentSave" && a.Id == receipt.ResourceId && a.TenantId == receipt.TenantId,
             MaintenancePlan p => receipt.Action == "MaintenanceSave" && p.Id == receipt.ResourceId && p.TenantId == receipt.TenantId,
@@ -246,8 +254,11 @@ public sealed class PoseidonDbContext(
             e.Properties.Any(p => p.IsModified && p.Metadata.Name is not "ExpiresAt" and not "RevokedAt" and not "PublicSigningKey") ||
             e.State == EntityState.Modified && e.Property("PublicSigningKey").IsModified && e.Property("PublicSigningKey").OriginalValue != null)))
             throw new InvalidOperationException("Offline capture context is immutable.");
-        if (changes.Any(e => e.Entity is TugJobRevision or TugOwner or TugAssignment && e.State != EntityState.Added))
+        if (changes.Any(e => e.Entity is TugJobRevision or TugOwner or TugAssignment or TugDraftPlanRevision or TugDraftPlanTug && e.State != EntityState.Added))
             throw new InvalidOperationException("Tug lineage is immutable.");
+        if (changes.Any(e => e.Entity is TugDraftPlan && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
+            (e.Property("VesselId").IsModified || e.Property("JobId").IsModified))))
+            throw new InvalidOperationException("Draft plan ownership is immutable.");
         if (changes.Any(e => e.Entity is TugJob && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
             (e.Property("VesselId").IsModified || e.Property("JobNumber").IsModified))))
             throw new InvalidOperationException("Tug request identity is immutable.");

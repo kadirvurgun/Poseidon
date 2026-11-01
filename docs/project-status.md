@@ -1,3 +1,24 @@
+## TUG-PLANNING-01 — AUTHORED_UNVERIFIED / INCOMPLETE / NOT ACCEPTED
+
+FOUNDATION product authoring continues. Normal parent support `8be19ed` was received
+with -x as `df96875` before Tug work. Authored separate EF draft planning windows,
+explicit controlled assignment/reassignment/removal, immutable scoped history,
+ordinary atomic audited receipt recovery, actual board and TR/EN editor,
+configured default-deny type/eligible-Tug contracts and normalized declaration/
+all-visible-plan evidence adapters. Meaningful domain/API+PostgreSQL/migration/
+seed/race/revocation/React and two registered signed-host journeys are authored.
+Every suite/build/typecheck/generation/migration/browser/provider/security/QA/CI
+execution remains **DEFERRED / NOT RUN**. No publication, merge or acceptance.
+Canonical **8/970SP,2/121tasks,0/196accepted** unchanged.
+
+Remaining software: verified BP integration; actual operational conflict/readiness/
+authority adapters; durable Tug offline workflow (predecessor is Crew watch-group
+only); broader operational command/lifecycle fields. No Marine readiness, approved
+catalog, fixture evidence or safety/human/pilot sign-off is claimed. Next author
+continues these integrations before the mandatory combined generation/model/security/
+independent exact-target QA/CI gate. [Task/source/test coverage](tasks/tug-planning-01.md)
+and [phase report](phases/TUG-PLANNING-01.md).
+
 # FOUNDATION continuation — Offline application checkpoint I / AUTHORED_UNVERIFIED / NOT ACCEPTED
 
 Concrete existing-Draft Crew watch_group offline read/capture now has real product consumers: server-owned enrollment and cryptographic key proof, persistent encrypted snapshot/queue, static-only offline restart, explicit signed-session renew/relogin/reconnect/retry/recovery/history, ordinary-handler atomic domain+offline receipts/audit and immutable reasoned material-conflict resolution, bounded device storage and confirmed key-loss cleanup. Source inventory:12 Domain theory rows,16 API/PostgreSQL facts,11 React behaviors,4 registered genuine signed-host scenarios; none executed. [Exact scope/source/software/remaining gaps](phases/OFFLINE-APPLICATION-01.md).
