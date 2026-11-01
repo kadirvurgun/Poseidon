@@ -1,0 +1,9 @@
+.offline-conflict { min-width: 0; max-width: 70rem; }
+.offline-conflict__fields { display: grid; gap: 1rem; margin-block: 1rem; }
+.offline-conflict fieldset { min-width: 0; border: 1px solid currentColor; border-radius: .6rem; padding: 1rem; }
+.offline-conflict dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); gap: 1rem; }
+.offline-conflict dd { margin: .3rem 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.offline-conflict__choice { display: flex; align-items: center; gap: .6rem; min-height: 44px; }
+.offline-conflict textarea { display: block; box-sizing: border-box; width: 100%; min-height: 7rem; margin-block: .5rem 1rem; padding: .7rem; font: inherit; }
+.offline-conflict button { min-height: 44px; padding: .6rem 1rem; font: inherit; }
+.offline-conflict :is(button, textarea, input):focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
