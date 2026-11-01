@@ -26,6 +26,8 @@ Renovate yapılandırması repoda bulunur; bot/app bağlantısı kurulmadan kend
 
 Resmi kaynaklar:
 
+DEV-OIDC-LAB-01 development fixture verification (2026-11-01): official [Keycloak downloads](https://www.keycloak.org/downloads) reports stable26.8.1. The local Docker pull verified `quay.io/keycloak/keycloak:26.8.1@sha256:3f3c5f8e03c614774b4bd9173b88391fefa4153bfc010d8012d59ad825377332`; PostgreSQL18.6 repository digest `sha256:979bccfde35445db618c65107d27d08c6c21339d8dc3ad4c830c6633947be0e4` is also pinned in the explicit lab compose. No floating image tag or new package dependency. This fixture does not select a production IdP. Update pins only with fresh official verification and real browser/API regression evidence.
+
 - https://builds.dotnet.microsoft.com/dotnet/release-metadata/releases-index.json
 - https://api.nuget.org/v3-flatcontainer/microsoft.entityframeworkcore/index.json
 - https://api.nuget.org/v3-flatcontainer/npgsql.entityframeworkcore.postgresql/index.json

@@ -2529,5 +2529,48 @@
       "Canonical dependencies, lookups, mandatory policy, expert/pilot/release gates remain open",
       "Existing dependency advisory remediation remains open; no dependency changes"
     ]
+  },
+  "dev_oidc_lab_01": {
+    "status": "locally_validated_awaiting_independent_qa",
+    "accepted": false,
+    "task": "docs/tasks/dev-oidc-lab-01.md",
+    "phase_report": "docs/phases/DEV-OIDC-LAB-01.md",
+    "baseline_commit": "029d1ba",
+    "prerequisite_review": "docs/reviews/nav-workspace-01-ff1e95ebf5f4.json",
+    "prerequisite_commit": "ff1e95ebf5f43ba5883f69e5e52b0cb2f205b775",
+    "delivered": "Development-only pinned Keycloak/PostgreSQL local HTTPS browser lab, private random bootstrap/server memberships, scoped CA transport, actual product flows and membership configuration binding repair",
+    "verification": {
+      "release_build": "PASS;0 warnings/errors",
+      "domain": 46,
+      "persistence_postgresql": 25,
+      "api_postgresql_oidc_openapi": 91,
+      "react": 160,
+      "existing_chromium_desktop_mobile": 22,
+      "real_keycloak_https_postgresql_browser": 2,
+      "python": 131,
+      "windows_bootstrap_strict_tls": 1,
+      "focused_portable_fixture": 4,
+      "failed": 0,
+      "skipped": 0,
+      "frontend_lint_typecheck_build": "PASS",
+      "actual_https_openapi_generated_types": "PASS;unchanged contracts",
+      "ef_model_parity": "PASS",
+      "restart_data_configuration_preservation": "PASS;repeated start preserves row counts and private hashes",
+      "graphify_ast": "PASS;2934 nodes/4556 edges/239 communities;initial update had11 zero-node warnings",
+      "private_secret_scan": "PASS;0 staged/bundle/graph matches;0 sensitive browser artifacts",
+      "host_cleanup": "PASS;0 task-port listeners;volumes/configuration retained"
+    },
+    "implementation_blocker": null,
+    "next_step": "Coordinator independent QA of exact final local commit; no self-acceptance",
+    "publication": "Local commit only; no push, PR or merge",
+    "canonical_progress_unchanged": true,
+    "external_gates": [
+      "Canonical prerequisites and S0 exits",
+      "Production IdP/data locality/MFA and revocation",
+      "Deployment TLS/DP keys and app/migrator DB privilege separation",
+      "Retention/privacy/legal assessment and external immutable audit",
+      "Expert/pilot/release approvals",
+      "Existing dependency advisory remediation/release review"
+    ]
   }
 }

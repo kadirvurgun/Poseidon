@@ -19,7 +19,12 @@ public sealed class FederationSettings
 }
 
 // Provisioned by the server operator, never populated from request binding or IdP role claims.
-public sealed record Membership(string Issuer, string Subject, Guid ActorId, Guid TenantId, string[] Permissions, bool TenantWideRead = false, bool TenantWideManage = false, VesselGrant[]? VesselGrants = null);
+public sealed record Membership(string Issuer, string Subject, Guid ActorId, Guid TenantId, string[] Permissions, bool TenantWideRead = false, bool TenantWideManage = false, VesselGrant[]? VesselGrants = null)
+{
+    // ConfigurationBinder must use property binding. Constructor binding can silently
+    // omit an array member whose optional collection is an explicit empty JSON array.
+    public Membership() : this("", "", Guid.Empty, Guid.Empty, []) { }
+}
 public sealed record VesselGrant(Guid VesselId, bool CanEdit = false);
 public sealed record TrustedActor(Guid Id, Guid TenantId, string[] Permissions, bool TenantWideRead, bool TenantWideManage, VesselGrant[] VesselGrants)
 {
@@ -62,9 +67,9 @@ public static class FoundationIdentity
         !value.Contains('%') && !value.Contains('\\') && !value.Split('?', '#')[0].Split('/').Any(x => x is "." or "..") &&
         !value.Any(char.IsControl) ? value : "/app";
 
-    public static void AddFoundationIdentity(this IServiceCollection services, IConfiguration configuration)
+    public static void AddFoundationIdentity(this IServiceCollection services, IConfiguration configuration, IHostEnvironment environment)
     {
-        var settings = configuration.GetSection("Authentication:Oidc").Get<FederationSettings>() ?? new();
+        var settings = configuration.GetSection("Authentication:Oidc").Get<FederationSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new();
         services.AddSingleton(settings);
         services.AddSingleton<ActorResolver>();
         services.AddAntiforgery(o =>
@@ -101,6 +106,10 @@ public static class FoundationIdentity
         });
         if (settings.Configured) auth.AddOpenIdConnect(Oidc, o =>
         {
+            var localCa = configuration["DevelopmentLab:OidcCaPath"];
+            if (!string.IsNullOrEmpty(localCa))
+                o.BackchannelHttpHandler = DevelopmentOidcTransport.Create(
+                    environment, settings.Authority!, localCa);
             o.Authority = settings.Authority;
             o.ClientId = settings.ClientId;
             o.ClientSecret = settings.ClientSecret;
