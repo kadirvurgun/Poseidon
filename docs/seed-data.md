@@ -166,3 +166,18 @@ Reseed preserves operator revisions. Two-tenant authored insert-audit expectatio
 80/81 become84/85; these are not observed counts or passing evidence. Persistence/
 API/domain fixture tests and migration application/parity remain DEFERRED to the
 combined gate. [Task and limits](tasks/lifecycle-applicability-01.md).
+
+
+## HUMAN-DECISION-TRACE-01 — AUTHORED / NOT RUN
+
+Human review events/receipts/appointments and retained evaluations are real lifecycle
+facts, not seed catalogs. Normal add-missing seed inserts none; no verified/effective
+evidence, decision, authority, signature, credential or fake observed audit is seeded.
+Existing incomplete control/evidence fixtures remain unchanged. PostgreSQL reseed
+coverage authors a fictional pending review via ordinary audited SaveChanges, reseeds
+twice and asserts the actual synthetic-session event/rationale and audit count remain
+unchanged. The independent-human API branch explicitly inserts a fictional test-only
+pinned evaluation/rule fixture in the disposable owned database, then uses real HTTP
+review commands and scanner/file transport. It is neither normal seed nor production
+source/sign-off evidence. All generation/migration/fixtures/tests remain DEFERRED to
+REGULATORY-CHAIN-BUNDLE-01. [Task](tasks/human-decision-trace-01.md).

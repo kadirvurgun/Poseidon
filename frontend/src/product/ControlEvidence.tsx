@@ -5,6 +5,7 @@ import * as registers from './register-api'
 import * as rules from './applicability-api'
 import { filePage } from './file-api'
 import type { FileRecord } from './file-api'
+import { HumanDecisionTrace } from './HumanDecisionTrace'
 import { VesselFiles } from './VesselFiles'
 import { DraftConfirmation } from './DraftConfirmation'
 import { timestamp } from './date-validation'
@@ -44,11 +45,13 @@ function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving }: Pr
   const [history, setHistory] = useState<service.Page | null>(null), [historyOffset, setHistoryOffset] = useState(0), [asOf, setAsOf] = useState(''), [historyAsOf, setHistoryAsOf] = useState('')
   const [orphan, setOrphan] = useState<{ draftCriticalOrphans: string[]; hasMore: boolean } | null>(null), [orphanOffset, setOrphanOffset] = useState(0)
   const [busy, setBusy] = useState(false), [frozen, setFrozen] = useState<{ body: string; key: string } | null>(null), [conflict, setConflict] = useState(false), [notice, setNotice] = useState('')
+  const [reviewDrafts, setReviewDrafts] = useState<Record<string, boolean>>({}), [reviewSaves, setReviewSaves] = useState<Record<string, boolean>>({})
+  const reviewDirty = Object.values(reviewDrafts).some(Boolean), reviewBusy = Object.values(reviewSaves).some(Boolean)
   const [uploadDirty, setUploadDirty] = useState(false), [uploadBusy, setUploadBusy] = useState(false), [discard, setDiscard] = useState(false)
   const [source, setSource] = useState<registers.RegisterPage<registers.Revision> | null>(null), [pickerError, setPickerError] = useState(false)
   const [sourceId, setSourceId] = useState(''), [sourceOffset, setSourceOffset] = useState(0)
-  useEffect(() => { onDirty(dirty || !!frozen || uploadDirty) }, [dirty, frozen, uploadDirty, onDirty])
-  useEffect(() => { onSaving(busy || uploadBusy) }, [busy, uploadBusy, onSaving])
+  useEffect(() => { onDirty(dirty || !!frozen || uploadDirty || reviewDirty) }, [dirty, frozen, uploadDirty, reviewDirty, onDirty])
+  useEffect(() => { onSaving(busy || uploadBusy || reviewBusy) }, [busy, uploadBusy, reviewBusy, onSaving])
   useEffect(() => {
     if (offline) return
     let active = true; const c = new AbortController(); const timer = setTimeout(() => c.abort(), 15000)
@@ -75,10 +78,10 @@ function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving }: Pr
     registers.historyDraft('sources', sourceId, sourceOffset, c.signal).then(p => { if (active) setSource(p) }).catch(() => { if (active) setPickerError(true) })
     return () => { active = false; c.abort() }
   }, [sourceId, sourceOffset, offline])
-  const locked = busy || uploadBusy || !!frozen || conflict || error === 401 || error === 403 || error === 404 || !rows?.canWrite
+  const locked = busy || uploadBusy || reviewDirty || reviewBusy || !!frozen || conflict || error === 401 || error === 403 || error === 404 || !rows?.canWrite
   const mutate = (key: keyof service.Content, value: string | boolean | null) => { setContent(c => ({ ...c, [key]: value })); setDirty(true) }
   function choose(row: service.Row | null) {
-    if (dirty || frozen || uploadDirty || busy || uploadBusy) return
+    if (dirty || frozen || uploadDirty || busy || uploadBusy || reviewDirty || reviewBusy) return
     setSelected(row); setContent(row?.content ?? service.blank()); setFile(row?.file ?? null); setRequirements(row?.requirements ?? []); setLinks(row?.links ?? []); setHistoryOffset(0); setSource(null); setSourceId(''); setConflict(false)
   }
   async function save() {
@@ -110,8 +113,8 @@ function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving }: Pr
     {notice && <p role="status">{notice}</p>}
     <button disabled={busy || offline} onClick={() => setReload(x => x + 1)}>{t('Refresh register', 'Kaydı yenile')}</button>
     {!rows && error === null && <p role="status">{t('Loading register…', 'Kayıt yükleniyor…')}</p>}
-    {rows && <><p>{rows.canWrite ? t('Draft authoring available', 'Taslak yazımı kullanılabilir') : t('Read only', 'Salt okunur')}</p>{rows.items.length === 0 && <p>{t('No scoped records.', 'Bu kapsamda kayıt yok.')}</p>}<ul>{rows.items.map(r => <li key={r.id}><button disabled={dirty || !!frozen || uploadDirty || busy} onClick={() => choose(r)}>{r.content.title ?? r.id} · {r.revision}</button> · {timeLabel(r.timeState)}</li>)}</ul>{pages(offset, rows.hasMore, setOffset, t('Register pages', 'Kayıt sayfaları'))}</>}
-    <button disabled={dirty || !!frozen || uploadDirty || busy} onClick={() => choose(null)}>{t('New draft', 'Yeni taslak')}</button>
+    {rows && <><p>{rows.canWrite ? t('Draft authoring available', 'Taslak yazımı kullanılabilir') : t('Read only', 'Salt okunur')}</p>{rows.items.length === 0 && <p>{t('No scoped records.', 'Bu kapsamda kayıt yok.')}</p>}<ul>{rows.items.map(r => <li key={r.id}><button disabled={dirty || !!frozen || uploadDirty || busy || reviewDirty || reviewBusy} onClick={() => choose(r)}>{r.content.title ?? r.id} · {r.revision}</button> · {timeLabel(r.timeState)}</li>)}</ul>{pages(offset, rows.hasMore, setOffset, t('Register pages', 'Kayıt sayfaları'))}</>}
+    <button disabled={dirty || !!frozen || uploadDirty || busy || reviewDirty || reviewBusy} onClick={() => choose(null)}>{t('New draft', 'Yeni taslak')}</button>
     {kind === 'Evidence' && selected && <button disabled={locked || dirty || uploadDirty} onClick={() => { const old = selected; setSelected(null); setContent(service.blank()); setFile(null); setRequirements(old.requirements); setLinks([{ kind: 'Evidence', id: old.id, revision: old.revision, expectedVersion: old.version }]); setDirty(true) }}>{t('New evidence superseding this revision', 'Bu sürümün yerine geçecek yeni kanıt')}</button>}
     <form onSubmit={e => { e.preventDefault(); void save() }}>
       <fieldset disabled={locked}><legend>{t('Draft authoring', 'Taslak yazımı')}</legend>
@@ -140,6 +143,7 @@ function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving }: Pr
     <ul aria-label={t('Retained links', 'Korunan bağlantılar')}>{requirements.map(p => <li key={`${p.requirementId}/${p.requirementRevision}`}>{p.requirementId}/{p.requirementRevision} → {p.sourceId}/{p.sourceRevision}<button disabled={offline} onClick={() => { setSourceId(p.sourceId); setSourceOffset(0) }}>{t('Source history', 'Kaynak geçmişi')}</button><button disabled={locked} onClick={() => { setRequirements(ps => ps.filter(x => x !== p)); setDirty(true) }}>{t('Unlink in next revision', 'Sonraki sürümde bağlantıyı kaldır')}</button></li>)}{links.map(p => <li key={`${p.kind}/${p.id}/${p.revision}`}>{p.kind} {p.id}/{p.revision}<button disabled={locked} onClick={() => { setLinks(ps => ps.filter(x => x !== p)); setDirty(true) }}>{t('Unlink in next revision', 'Sonraki sürümde bağlantıyı kaldır')}</button></li>)}</ul>
     {source && <><ul aria-label={t('Linked source history', 'Bağlı kaynak geçmişi')}>{source.items.map(r => <li key={r.revision}>{r.id}/{r.revision} · {r.content.title.value} · {r.content.locator.value} · {r.hash} · {r.lifecycle}</li>)}</ul>{pages(sourceOffset, source.hasMore, setSourceOffset, t('Source history pages', 'Kaynak geçmişi sayfaları'))}</>}
     {selected && <section aria-label={t('Immutable history', 'Değişmez geçmiş')}><h3>{t('Immutable history', 'Değişmez geçmiş')}</h3><label>{t('Replay as of with UTC offset', 'Tekrar zamanı, UTC farkı ile')}<input value={asOf} onChange={e => setAsOf(e.target.value)} /></label><button disabled={offline || !!asOf && !timestamp(asOf)} onClick={() => { setHistoryAsOf(asOf); setHistoryOffset(0) }}>{t('Read historical projection', 'Tarihsel görünümü oku')}</button>{history?.items.map(r => <article key={r.revision}><h4>{r.revision} · {r.content.title}</h4><p>{r.savedAt} · {timeLabel(r.timeState)} · {r.hash}</p><p>{t('Completion unknown · Unverified · Effectiveness unknown', 'Tamamlanma bilinmiyor · Doğrulanmamış · Etkinlik bilinmiyor')}</p><p>{r.file ? `${r.file.id}/${r.file.revision} · ${r.file.checksum}` : t('No clean evidence file', 'Temiz kanıt dosyası yok')}</p><ul>{r.requirements.map(p => <li key={`${p.requirementId}/${p.requirementRevision}`}>{p.requirementId}/{p.requirementRevision} → {p.sourceId}/{p.sourceRevision} · {p.ruleId ?? '—'}/{p.ruleRevision ?? '—'}</li>)}{r.links.map(p => <li key={`${p.kind}/${p.id}/${p.revision}`}>{p.kind} {p.id}/{p.revision}</li>)}</ul><p>{t('Submission blocked: source admission and authorized verification remain unmet.', 'Gönderim engelli: kaynak kabulü ve yetkili doğrulama karşılanmadı.')}</p><details><summary>{t('Unmet policy details', 'Karşılanmayan politika ayrıntıları')}</summary><ul>{r.blockers.map(b => <li key={b}>{blockerLabel(b)}</li>)}</ul></details></article>)}{history && pages(historyOffset, history.hasMore, setHistoryOffset, t('History pages', 'Geçmiş sayfaları'))}</section>}
+    {selected?.kind === 'Evidence' && !dirty && !frozen && !uploadDirty && selected.links.filter(p => p.kind === 'Control').map(p => <HumanDecisionTrace key={`${selected.id}/${selected.revision}/${p.id}/${p.revision}`} anchor={{ vesselId: vessel, evidenceId: selected.id, evidenceRevision: selected.revision, controlId: p.id, controlRevision: p.revision }} language={language} csrf={csrf} offline={offline} onDirty={v => setReviewDrafts(current => current[p.id] === v ? current : { ...current, [p.id]: v })} onSaving={v => setReviewSaves(current => current[p.id] === v ? current : { ...current, [p.id]: v })} />)}
     <section aria-label={t('Critical orphan report', 'Kritik yetim raporu')}><h3>{t('Critical orphan report', 'Kritik yetim raporu')}</h3><p>{t('Authoritative applicability report unavailable. The following are critical declarations without requirement links only.', 'Yetkili uygulanabilirlik raporu kullanılamıyor. Aşağıdakiler yalnızca gereksinim bağlantısı olmayan kritik beyanlardır.')}</p>{orphan ? <><ul>{orphan.draftCriticalOrphans.map(id => <li key={id}>{id}</li>)}</ul>{pages(orphanOffset, orphan.hasMore, setOrphanOffset, t('Report pages', 'Rapor sayfaları'))}</> : <p>{t('Draft report unavailable.', 'Taslak raporu kullanılamıyor.')}</p>}</section>
     {kind === 'Evidence' && <VesselFiles offline={offline} vessel={vessel} language={language} csrf={csrf} onDirty={setUploadDirty} onSaving={setUploadBusy} onCommitted={() => setReload(x => x + 1)} />}
   </div>

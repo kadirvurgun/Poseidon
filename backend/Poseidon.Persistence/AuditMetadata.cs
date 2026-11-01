@@ -12,6 +12,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
     internal static AuditMetadata From(EntityEntry entry)
     {
         Guid? vessel = entry.Entity switch {
+            HumanReviewHead e => e.VesselId, HumanReviewEvent e => e.VesselId, HumanReviewReceipt e => e.VesselId,
             ControlEvidenceHead e => e.VesselId, ControlEvidenceRevision e => e.VesselId, ControlEvidenceRequirement e => e.VesselId, ControlEvidenceEdge e => e.VesselId, ControlEvidenceReceipt e => e.VesselId,
             ApplicabilityEvaluation e => e.VesselId, ApplicabilityReceipt r => r.VesselId,
             OfflineEnrollment o => o.VesselId, OfflineOutcome o => o.VesselId, OfflineLifecycle o => o.VesselId,
@@ -30,6 +31,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             _ => null
         };
         Guid? resource = entry.Entity switch {
+            HumanReviewHead e => e.Id, HumanReviewEvent e => e.Id, HumanReviewReceipt e => e.ResourceId,
             ControlEvidenceHead e => e.Id, ControlEvidenceRevision e => e.Id, ControlEvidenceRequirement e => e.Id, ControlEvidenceEdge e => e.Id, ControlEvidenceReceipt e => e.ResourceId,
             RuleDraft d => d.Id, RuleRevision r => r.Id, ApplicabilityEvaluation e => e.Id,
             EvaluationRule r => r.EvaluationId, ApplicabilityReceipt r => r.ResourceId,
@@ -61,6 +63,14 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             if (outcome.Result is not ("Committed" or "MaterialConflict")) throw new InvalidOperationException("Unsupported offline outcome.");
             return new(vessel, resource, "OfflineOutcome", null, outcome.Revision, JsonSerializer.Serialize(new[] {
                 new { field = "Outcome", before = (string?)null, after = outcome.Result, evidence = "Allowlisted" } }));
+        }
+        if (entry.Entity is HumanReviewEvent review) {
+            if (review.ReasonCode is not ("REQUEST_REVIEW" or "HUMAN_VERIFIED" or "HUMAN_REJECTED" or "VALIDITY_ELAPSED" or "INPUT_SUPERSEDED"))
+                throw new InvalidOperationException("Invalid review metadata.");
+            return new(vessel, resource, "HumanReview", null, review.Revision, JsonSerializer.Serialize(new[] {
+                new { field = "ReasonCode", before = (string?)null, after = review.ReasonCode, evidence = "Allowlisted" },
+                new { field = "State", before = (string?)null, after = review.State, evidence = "Allowlisted" }
+            }));
         }
         if (entry.Entity is ControlEvidenceRevision ce) {
             if (ce.Lifecycle != "DRAFT" || ce.ReasonCode is not ("INITIAL_AUTHORING" or "AUTHORING_CORRECTION" or "SYNTHETIC_INCOMPLETE_DRAFT")) throw new InvalidOperationException("Invalid control/evidence change metadata.");

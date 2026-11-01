@@ -1,4 +1,32 @@
 {
+  "human_decision_trace_01": {
+    "status": "AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+    "accepted": false,
+    "foundation_ready": false,
+    "phase": "Regulatory chain product authoring before REGULATORY-CHAIN-BUNDLE-01",
+    "task": "docs/tasks/human-decision-trace-01.md",
+    "report": "docs/phases/HUMAN-DECISION-TRACE-01.md",
+    "source_evidence": "docs/tasks/human-decision-trace-01.sources.json",
+    "evidence": "docs/phases/HUMAN-DECISION-TRACE-01.evidence.json",
+    "predecessor": "docs/phases/HUMAN-DECISION-TRACE-01.predecessor.json",
+    "delivered": [
+      "Exact server-appointed human role/tenant/vessel/evidence/control/operation and separation of duties",
+      "Immutable verification/rejection/expiry/supersession and non-approving human decision review streams",
+      "Audited atomic EF/xmin/input-head guards and immutable exact receipts",
+      "Filtered source/requirement/rule/control/evidence/review trace and real TR/EN accessible consumer",
+      "Domain/owned PostgreSQL/API/React/registered Playwright test sources"
+    ],
+    "verification": "DEFERRED_NOT_RUN: all suites/build/typecheck/restore/generation/migrations/provider/scanner/browser/lab/scans/independent QA/CI",
+    "remaining_software": [
+      "Admitted source/current obligation/authoritative evaluation integration",
+      "Qualified policy and source-specific acknowledgment/external signature validation/final decision adapter",
+      "Actual authority provisioning and broader screen/source gaps",
+      "Full generated model and consumer reconciliation at later combined gate"
+    ],
+    "canonical_progress_unchanged": true,
+    "publication": "LOCAL ONLY; coordinator owns publishing/merge; no agents/account/auth setup/self-approval",
+    "next_step": "Coordinator reviews local UNVERIFIED source and continues missing integrations, then REGULATORY-CHAIN-BUNDLE-01 and independent exact-target QA/CI"
+  },
   "control_evidence_01": {
     "status": "AUTHORED_UNVERIFIED_NOT_ACCEPTED",
     "accepted": false,

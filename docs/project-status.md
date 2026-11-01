@@ -1,3 +1,20 @@
+# HUMAN-DECISION-TRACE-01 — product authored, UNVERIFIED / NOT ACCEPTED
+
+Server-appointed human review, immutable verification/decision events, separation
+of duties, exact scoped lineage, audited EF/xmin/receipts and real TR/EN trace UI
+are authored with domain/PostgreSQL/API/React/Playwright test sources. Approving
+operational decisions stay blocked: source admission/authoritative evaluation and
+external signature/policy adapters remain unavailable. No real approval was issued.
+All suites/build/typecheck/generation/migrations/browser/lab/provider/scans/QA/CI
+are DEFERRED / NOT RUN until REGULATORY-CHAIN-BUNDLE-01. Canonical8/970 and the
+selected40-task/272SP ledger are unchanged;194/970 is a target. This is product
+authoring, not a preparation-only or accepted checkpoint. Incoming3dba9c6 was clean;
+29 predecessor source-byte proofs matched. No agents/auth setup/publication.
+[Task and exact source contracts](tasks/human-decision-trace-01.md) ·
+[Phase and deferred handoff](phases/HUMAN-DECISION-TRACE-01.md).
+Next: coordinator integration review/continuation, single combined gate and
+independent exact-target QA/CI before any publishing or acceptance.
+
 # CONTROL-EVIDENCE-01 — authored, UNVERIFIED / NOT ACCEPTED
 
 Scoped control/evidence draft APIs, immutable revision/link history, tenant/vessel

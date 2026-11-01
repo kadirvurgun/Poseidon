@@ -97,6 +97,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapRegulatoryRegister();
             endpoints.MapLifecycleApplicability();
             endpoints.MapControlEvidence();
+            endpoints.MapHumanReviews();
             endpoints.MapToday();
             endpoints.MapAuditHistory();
             endpoints.MapSecureFiles();

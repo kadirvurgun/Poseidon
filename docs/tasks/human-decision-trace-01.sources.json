@@ -1,0 +1,642 @@
+{
+  "baseline_id": "poseidon-v46.3-20261030",
+  "authority": "candidate-unverified; locators are source evidence, never approval",
+  "records": [
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:31",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A31: DEV-030 | B31: Story | C31: E04 Control & Evidence | D31: Verification | E31: Verification record ve gate | F31: Verifier olarak kanıtı kabul/reject etmek ve gerekçe bırakmak istiyorum. | G31: Verifier authorization + separation-of-duties; PENDING/VERIFIED/REJECTED/EXPIRED/SUPERSEDED; evidence existence alone state'i kapatmaz. | H31: /api/v1/verifications | I31: P0 | J31: S3 | K31: Backend | L31: DEV-015,DEV-029 | M31: T-S3-005 | N31: Not Started | O31: YES | P31: 8 | Q31: H"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:32",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A32: DEV-031 | B32: Story | C32: E05 Human Decision & Workflow | D32: Decision | E32: Authorized Human Decision foundation | F32: Master/DPA olarak kritik kararı gerekçesiyle vermek istiyorum. | G32: Authorized role + context + reason + decision lineage kaydedilir; AI veya generic admin final decision oluşturamaz. | H32: /api/v1/decisions | I32: P0 | J32: S3 | K32: Backend | L32: DEV-030 | M32: T-S3-006 | N32: Not Started | O32: YES | P32: 8 | Q32: H"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:33",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A33: DEV-032 | B33: Task | C33: E17 Assurance & Audit | D33: Trace UI | E33: Requirement-to-decision trace görünümü | F33: Auditor olarak requirement'tan karara kadar tek trace görmek istiyorum. | G33: Requirement→control→evidence→verification→decision state ve timestamps source-grounded drill-down ile görünür. | H33: audit-ready | I33: P0 | J33: S3 | K33: Frontend | L33: DEV-027:DEV-031 | M33: T-S3-007 | N33: Not Started | O33: YES | P33: 8 | Q33: M"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "locator": "paragraph:119",
+      "sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "text": "RegulatorySource"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "locator": "paragraph:120",
+      "sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "text": "source_id, authority, title, locator, version, lifecycle, effective_dates"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "locator": "paragraph:123",
+      "sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "text": "rule_id, source_id, predicate, outcome, effective_dates, approval_state"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "locator": "paragraph:124",
+      "sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "text": "Versioned, approved publication."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "locator": "paragraph:125",
+      "sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "text": "Evidence"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "locator": "paragraph:126",
+      "sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "text": "id, tenant_id, object_type/id, evidence_type, source, captured_at, hash, storage_ref, provenance_state"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "locator": "paragraph:128",
+      "sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "text": "Verification"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "locator": "paragraph:129",
+      "sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "text": "evidence_id/control_id, verifier, result, verified_at, reason"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "locator": "paragraph:130",
+      "sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "text": "Human gate."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "locator": "paragraph:131",
+      "sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "text": "HumanDecision"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "locator": "paragraph:132",
+      "sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "text": "subject_type/id, decision, actor_role, actor_id, reason, evidence_context, decided_at"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "locator": "paragraph:133",
+      "sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "text": "Master/Tug Master/DPA/authorized role."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "locator": "paragraph:136",
+      "sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "text": "Şekil 2 - Source → Requirement → Rule → Control → Evidence → Verification → Human Decision → Readiness zinciri."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:76",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Errors"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:77",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "RFC7807 application/problem+json + traceId + field errors."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:78",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Language"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:79",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Accept-Language tr-TR/en; controlled maritime terminology."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:80",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Audit"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:81",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Actor + role + source/device + correlation + action + object + decision reason."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:98",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "POST /decisions"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:99",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Authorized human decision with reason/evidence context."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:100",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Evidence verify"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:101",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "POST /verifications"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:102",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Verifier outcome; Completed state does not imply verified."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:288",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "RBAC + object scope: tenant/company/vessel/tug/role; ABAC can add assignment/state restrictions."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:289",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Master/Tug Master onboard decisions require role + current vessel assignment, not only global role."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:290",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "DPA fleet visibility and escalation rights separate from vessel operational approval."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
+      "locator": "paragraph:87",
+      "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49",
+      "text": "S-UAT-06"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
+      "locator": "paragraph:88",
+      "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49",
+      "text": "Audit"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
+      "locator": "paragraph:89",
+      "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49",
+      "text": "Requirement→evidence→verification→decision trace is retrievable"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
+      "locator": "paragraph:90",
+      "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49",
+      "text": "4. Mandatory Tug UAT"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
+      "locator": "paragraph:91",
+      "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49",
+      "text": "ID"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
+      "locator": "paragraph:128",
+      "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49",
+      "text": "Unknown/ambiguous applicability produces REVIEW_REQUIRED."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
+      "locator": "paragraph:131",
+      "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49",
+      "text": "Tenant and asset/job scope enforced server-side."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
+      "locator": "paragraph:132",
+      "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49",
+      "text": "Römorkör Operasyon Sorumlusu may assign jobs but cannot override Master/Tug Master safety decision."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
+      "locator": "paragraph:133",
+      "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49",
+      "text": "Generic platform admin cannot create safety/legal final decision."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
+      "locator": "paragraph:134",
+      "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49",
+      "text": "Critical tug assignment/execution state changes are audited."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
+      "locator": "paragraph:135",
+      "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49",
+      "text": "AI cannot autonomously release, start, suspend, abort or complete towage operation."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
+      "locator": "paragraph:136",
+      "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49",
+      "text": "Protected report identity excluded from generic analytics/AI context."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
+      "locator": "paragraph:182",
+      "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49",
+      "text": "Critical requirement/control/evidence/verification/decision orphan = 0."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
+      "locator": "paragraph:183",
+      "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49",
+      "text": "Value"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.01_POSEIDON_Dynamic_Applicability_Engine_Specification_TR.docx",
+      "locator": "paragraph:13",
+      "sha256": "8a338adb39f2ec62ff149d0c5e75c8df266f03107b7de5630b52685143bc3f0c",
+      "text": "Applicability sonucu hiçbir zaman tek başına 'uyumlu' anlamına gelmez. Uyum zinciri control + evidence + verification + human decision gerektirir."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.01_POSEIDON_Dynamic_Applicability_Engine_Specification_TR.docx",
+      "locator": "paragraph:14",
+      "sha256": "8a338adb39f2ec62ff149d0c5e75c8df266f03107b7de5630b52685143bc3f0c",
+      "text": "2. Ana Karar Zinciri"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.01_POSEIDON_Dynamic_Applicability_Engine_Specification_TR.docx",
+      "locator": "paragraph:237",
+      "sha256": "8a338adb39f2ec62ff149d0c5e75c8df266f03107b7de5630b52685143bc3f0c",
+      "text": "Human override source metnini değiştirmez; yalnız context-bound controlled decision'dır."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.01_POSEIDON_Dynamic_Applicability_Engine_Specification_TR.docx",
+      "locator": "paragraph:238",
+      "sha256": "8a338adb39f2ec62ff149d0c5e75c8df266f03107b7de5630b52685143bc3f0c",
+      "text": "9. Gemi Modu Örnek Aktivasyonları"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.01_POSEIDON_Dynamic_Applicability_Engine_Specification_TR.docx",
+      "locator": "paragraph:433",
+      "sha256": "8a338adb39f2ec62ff149d0c5e75c8df266f03107b7de5630b52685143bc3f0c",
+      "text": "Regulatory source/rule publication offline yapılmaz. Ancak gemi/römorkör onboard kullanımında son published rule-set ve required control snapshot'ı cache edilebilir."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.01_POSEIDON_Dynamic_Applicability_Engine_Specification_TR.docx",
+      "locator": "paragraph:434",
+      "sha256": "8a338adb39f2ec62ff149d0c5e75c8df266f03107b7de5630b52685143bc3f0c",
+      "text": "Offline client rule set version'ı görünür."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.01_POSEIDON_Dynamic_Applicability_Engine_Specification_TR.docx",
+      "locator": "paragraph:435",
+      "sha256": "8a338adb39f2ec62ff149d0c5e75c8df266f03107b7de5630b52685143bc3f0c",
+      "text": "Critical rule or evidence freshness expired ise offline READY üretilmez."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.01_POSEIDON_Dynamic_Applicability_Engine_Specification_TR.docx",
+      "locator": "paragraph:436",
+      "sha256": "8a338adb39f2ec62ff149d0c5e75c8df266f03107b7de5630b52685143bc3f0c",
+      "text": "Reconnect sonrası current rule set değişmişse evaluation STALE işaretlenir ve re-evaluate edilir."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.01_POSEIDON_Dynamic_Applicability_Engine_Specification_TR.docx",
+      "locator": "paragraph:437",
+      "sha256": "8a338adb39f2ec62ff149d0c5e75c8df266f03107b7de5630b52685143bc3f0c",
+      "text": "Offline captured evidence sync old evaluation'a bağlı olsa bile lineage korunur; current rule result yeniden hesaplanır."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.01_POSEIDON_Dynamic_Applicability_Engine_Specification_TR.docx",
+      "locator": "paragraph:438",
+      "sha256": "8a338adb39f2ec62ff149d0c5e75c8df266f03107b7de5630b52685143bc3f0c",
+      "text": "Material conflict silent last-write-wins kullanmaz."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.01_POSEIDON_Dynamic_Applicability_Engine_Specification_TR.docx",
+      "locator": "paragraph:444",
+      "sha256": "8a338adb39f2ec62ff149d0c5e75c8df266f03107b7de5630b52685143bc3f0c",
+      "text": "Human override reason/evidence/expiry ve actor lineage audit edilir."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.01_POSEIDON_Dynamic_Applicability_Engine_Specification_TR.docx",
+      "locator": "paragraph:445",
+      "sha256": "8a338adb39f2ec62ff149d0c5e75c8df266f03107b7de5630b52685143bc3f0c",
+      "text": "Protected crew/reporting data rule trace içinde minimum gerekli seviyede gösterilir."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "locator": "paragraph:1369",
+      "sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "text": "034  Verification Gates"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "locator": "paragraph:1370",
+      "sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "text": "Screen ID: verification-gates   |   Domain: Regulatory Control   |   0 alan / 1 aksiyon"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "locator": "paragraph:1372",
+      "sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "text": "API projection: /api/v1/verification-gates   |   Status: READY FOR BA/DEV REVIEW"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "locator": "paragraph:1509",
+      "sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "text": "062  Audit Ready"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "locator": "paragraph:1510",
+      "sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "text": "Screen ID: audit-ready   |   Domain: Regulatory Control   |   0 alan / 1 aksiyon"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "locator": "paragraph:1512",
+      "sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "text": "API projection: /api/v1/audit-ready   |   Status: READY FOR BA/DEV REVIEW"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "locator": "paragraph:2029",
+      "sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "text": "166  Decision Center"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "locator": "paragraph:2030",
+      "sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "text": "Screen ID: decision-center   |   Domain: Maritime Intelligence   |   14 alan / 10 aksiyon"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "locator": "paragraph:2032",
+      "sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "text": "API projection: /api/v1/decision-center   |   Status: V46 NEW / DEV READY"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:35",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "Content"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:36",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "12-col responsive grid; tables/cards only if answer is clearer"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:37",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "Right rail/panel"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:38",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "AI/Why/helper context; ana işlem yerine geçmez"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Read Model - Projection Gap/row:30",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A30: verification-gates | B30: Uyum, Mevzuat ve Assurance | C30: Uygulanabilirlik ve Kontrol Motoru | D30: Gereksinim, applicability ve doğrulama | E30: Verification Gates | F30: Regulatory Control | G30: 1 | H30: API /api/v1/verification-gates | I30: READY FOR BA/DEV REVIEW | J30: READ MODEL / PROJECTION CONTRACT REQUIRED | K30: Bu ekranın kontrollü input field contract'ı yok; dashboard/KPI/table/filter/command projection alanları ayrıca tanımlanmalı. | L30: verification-gates: query/response schema ve ekran bileşenleri tanımlanmalı | M30: ACTION_CONTRACT_REQUIRED | N30: Her aksiyon: command ID, payload, precondition, actor, state transition, idempotency, audit, hata | O30: tenant/context + role isolation; protected identity redaction | P30: freshness/as-of/source version; missing/stale critical data ≠ READY | Q30: TC-verification-gates-projection: schema + scope + missing/stale + forbidden role + failure state | R30: 12.01 screen metadata; 06.01 §1/F01; 14.01 §6/9/12 | S30: DEC-DATA-07 | T30: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:1810",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A1810: Platform, Entegrasyon ve Yapay Zekâ | B1810: Yapay Zekâ ve Karar Desteği | C1810: Copilot, öneri ve karar desteği | D1810: Ortak | E1810: decision-center | F1810: Decision Center | G1810: Maritime Intelligence | H1810: decision_id | I1810: Decision ID | J1810: lookup | K1810: Referans/Lookup | L1810: Reference | M1810: Reference | N1810: uuid or text FK — REVIEW | O1810: TBD | P1810: TBD | Q1810: Yes/Business rule | R1810: No | S1810: PLACEHOLDER — REVIEW_REQUIRED | U1810: KAYNAK EKSİK / TÜRÜ DOĞRULANACAK | V1810: Authorized operational role in tenant/vessel context; AI never grants authority | W1810: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1810: Active authorized reference in tenant/vessel/source scope | Y1810: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1810: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1810: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1810: Read cache where safe; authoritative decision/publish/verification requires server connectivity unless explicitly supported | AC1810: /api/v1/decision-center | AD1810: DecisionCenter | AE1810: decision_id | AF1810: UNCONFIRMED — physical schema review | AG1810: FR46-decision-center-decision_id | AH1810: TC46-decision-center-decision_id | AI1810: P0 | AJ1810: DEFAULT_PLACEHOLDER; LOOKUP_SOURCE_MISSING; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1810: UI/TRACE TAM — PROD REVIEW | AL1810: SOURCE + DERIVED GAP ANALYSIS | AM1810: ÖNERİ: Decision Center bağlamında Decision ID. İş anlamı/birim BA onayı bekler. | AN1810: Referans/Lookup | AO1810: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ1810: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AV1810: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1810: Decision ID: geçerli ve bu bağlamda yetkili bir referans seçiniz. | BE1810: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1810: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1810: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1810: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1810: DEC-DATA-01…06 | BO1810: REVIEW_REQUIRED | BR1810: decision-center::decision_id | BT1810: RECOVERED_ENTITY_ONLY"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:1811",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A1811: Platform, Entegrasyon ve Yapay Zekâ | B1811: Yapay Zekâ ve Karar Desteği | C1811: Copilot, öneri ve karar desteği | D1811: Ortak | E1811: decision-center | F1811: Decision Center | G1811: Maritime Intelligence | H1811: vessel_id | I1811: Vessel | J1811: lookup | K1811: Referans/Lookup | L1811: Reference | M1811: Reference | N1811: uuid or text FK — REVIEW | O1811: TBD | P1811: TBD | Q1811: Yes/Business rule | R1811: No | S1811: PLACEHOLDER — REVIEW_REQUIRED | U1811: KAYNAK EKSİK / TÜRÜ DOĞRULANACAK | V1811: Authorized operational role in tenant/vessel context; AI never grants authority | W1811: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1811: Active authorized reference in tenant/vessel/source scope | Y1811: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1811: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1811: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1811: Read cache where safe; authoritative decision/publish/verification requires server connectivity unless explicitly supported | AC1811: /api/v1/decision-center | AD1811: DecisionCenter | AE1811: vessel_id | AF1811: UNCONFIRMED — physical schema review | AG1811: FR46-decision-center-vessel_id | AH1811: TC46-decision-center-vessel_id | AI1811: P0 | AJ1811: DEFAULT_PLACEHOLDER; LOOKUP_SOURCE_MISSING; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1811: UI/TRACE TAM — PROD REVIEW | AL1811: SOURCE + DERIVED GAP ANALYSIS | AM1811: ÖNERİ: Decision Center bağlamında Vessel. İş anlamı/birim BA onayı bekler. | AN1811: Referans/Lookup | AO1811: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ1811: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AS1811: Vessel.id | AT1811: 14.01 §4/§15; logical mapping candidate, NOT physical FK | AV1811: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1811: Vessel: geçerli ve bu bağlamda yetkili bir referans seçiniz. | BE1811: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1811: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1811: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1811: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1811: DEC-DATA-01…06 | BO1811: REVIEW_REQUIRED | BR1811: decision-center::vessel_id | BT1811: RECOVERED_ENTITY_AND_READ_API"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:1812",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A1812: Platform, Entegrasyon ve Yapay Zekâ | B1812: Yapay Zekâ ve Karar Desteği | C1812: Copilot, öneri ve karar desteği | D1812: Ortak | E1812: decision-center | F1812: Decision Center | G1812: Maritime Intelligence | H1812: decision_type | I1812: Decision Type | J1812: select | K1812: Seçim Listesi | L1812: Enum | M1812: Controlled Code / Enum | N1812: text / controlled-code FK — REVIEW | O1812: TBD | P1812: TBD | Q1812: Conditional | R1812: No | S1812: PLACEHOLDER — REVIEW_REQUIRED | T1812: Controlled list / state machine | U1812: Tanımlı | V1812: Authorized operational role in tenant/vessel context; AI never grants authority | W1812: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1812: Value must be from controlled list applicable to tenant/vessel/context | Y1812: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1812: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1812: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1812: Read cache where safe; authoritative decision/publish/verification requires server connectivity unless explicitly supported | AC1812: /api/v1/decision-center | AD1812: DecisionCenter | AE1812: decision_type | AF1812: UNCONFIRMED — physical schema review | AG1812: FR46-decision-center-decision_type | AH1812: TC46-decision-center-decision_type | AI1812: P1 | AJ1812: DEFAULT_PLACEHOLDER; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1812: UI/TRACE TAM — PROD REVIEW | AL1812: SOURCE + DERIVED GAP ANALYSIS | AM1812: ÖNERİ: Decision Center bağlamında Decision Type. İş anlamı/birim BA onayı bekler. | AN1812: Seçim Listesi | AO1812: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ1812: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AV1812: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1812: Decision Type: Value must be from controlled list applicable to tenant/vessel/context | BE1812: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1812: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1812: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1812: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1812: DEC-DATA-01…06 | BO1812: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:1813",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A1813: Platform, Entegrasyon ve Yapay Zekâ | B1813: Yapay Zekâ ve Karar Desteği | C1813: Copilot, öneri ve karar desteği | D1813: Ortak | E1813: decision-center | F1813: Decision Center | G1813: Maritime Intelligence | H1813: trigger_source | I1813: Trigger Source | J1813: input/text | K1813: Metin Girişi | L1813: Text | M1813: Text | N1813: varchar/text — length TBD | O1813: TBD | P1813: TBD | Q1813: Conditional | R1813: No | S1813: PLACEHOLDER — REVIEW_REQUIRED | U1813: N/A | V1813: Authorized operational role in tenant/vessel context; AI never grants authority | W1813: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1813: Type, length, format and contextual uniqueness rules | Y1813: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1813: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1813: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1813: Read cache where safe; authoritative decision/publish/verification requires server connectivity unless explicitly supported | AC1813: /api/v1/decision-center | AD1813: DecisionCenter | AE1813: trigger_source | AF1813: UNCONFIRMED — physical schema review | AG1813: FR46-decision-center-trigger_source | AH1813: TC46-decision-center-trigger_source | AI1813: P1 | AJ1813: DEFAULT_PLACEHOLDER; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1813: UI/TRACE TAM — PROD REVIEW | AL1813: SOURCE + DERIVED GAP ANALYSIS | AM1813: ÖNERİ: Decision Center bağlamında Trigger Source. İş anlamı/birim BA onayı bekler. | AN1813: Metin Girişi | AO1813: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ1813: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AV1813: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1813: Trigger Source: Type, length, format and contextual uniqueness rules | BE1813: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1813: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1813: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1813: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1813: DEC-DATA-01…06 | BO1813: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:1814",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A1814: Platform, Entegrasyon ve Yapay Zekâ | B1814: Yapay Zekâ ve Karar Desteği | C1814: Copilot, öneri ve karar desteği | D1814: Ortak | E1814: decision-center | F1814: Decision Center | G1814: Maritime Intelligence | H1814: decision_context | I1814: Decision Context | J1814: input/text | K1814: Metin Girişi | L1814: Text | M1814: Text | N1814: varchar/text — length TBD | O1814: TBD | P1814: TBD | Q1814: Conditional | R1814: No | S1814: PLACEHOLDER — REVIEW_REQUIRED | U1814: N/A | V1814: Authorized operational role in tenant/vessel context; AI never grants authority | W1814: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1814: Type, length, format and contextual uniqueness rules | Y1814: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1814: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1814: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1814: Read cache where safe; authoritative decision/publish/verification requires server connectivity unless explicitly supported | AC1814: /api/v1/decision-center | AD1814: DecisionCenter | AE1814: decision_context | AF1814: UNCONFIRMED — physical schema review | AG1814: FR46-decision-center-decision_context | AH1814: TC46-decision-center-decision_context | AI1814: P1 | AJ1814: DEFAULT_PLACEHOLDER; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1814: UI/TRACE TAM — PROD REVIEW | AL1814: SOURCE + DERIVED GAP ANALYSIS | AM1814: ÖNERİ: Decision Center bağlamında Decision Context. İş anlamı/birim BA onayı bekler. | AN1814: Metin Girişi | AO1814: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ1814: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AV1814: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1814: Decision Context: Type, length, format and contextual uniqueness rules | BE1814: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1814: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1814: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1814: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1814: DEC-DATA-01…06 | BO1814: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:1815",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A1815: Platform, Entegrasyon ve Yapay Zekâ | B1815: Yapay Zekâ ve Karar Desteği | C1815: Copilot, öneri ve karar desteği | D1815: Ortak | E1815: decision-center | F1815: Decision Center | G1815: Maritime Intelligence | H1815: recommended_options | I1815: Recommended Options | J1815: input/text | K1815: Metin Girişi | L1815: Text | M1815: Text | N1815: varchar/text — length TBD | O1815: TBD | P1815: TBD | Q1815: Conditional | R1815: No | S1815: PLACEHOLDER — REVIEW_REQUIRED | U1815: N/A | V1815: Authorized operational role in tenant/vessel context; AI never grants authority | W1815: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1815: Type, length, format and contextual uniqueness rules | Y1815: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1815: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1815: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1815: Read cache where safe; authoritative decision/publish/verification requires server connectivity unless explicitly supported | AC1815: /api/v1/decision-center | AD1815: DecisionCenter | AE1815: recommended_options | AF1815: UNCONFIRMED — physical schema review | AG1815: FR46-decision-center-recommended_options | AH1815: TC46-decision-center-recommended_options | AI1815: P1 | AJ1815: DEFAULT_PLACEHOLDER; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1815: UI/TRACE TAM — PROD REVIEW | AL1815: SOURCE + DERIVED GAP ANALYSIS | AM1815: ÖNERİ: Decision Center bağlamında Recommended Options. İş anlamı/birim BA onayı bekler. | AN1815: Metin Girişi | AO1815: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ1815: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AV1815: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1815: Recommended Options: Type, length, format and contextual uniqueness rules | BE1815: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1815: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1815: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1815: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1815: DEC-DATA-01…06 | BO1815: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:1816",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A1816: Platform, Entegrasyon ve Yapay Zekâ | B1816: Yapay Zekâ ve Karar Desteği | C1816: Copilot, öneri ve karar desteği | D1816: Ortak | E1816: decision-center | F1816: Decision Center | G1816: Maritime Intelligence | H1816: risk_summary | I1816: Risk Summary | J1816: input/text | K1816: Metin Girişi | L1816: Text | M1816: Text | N1816: varchar/text — length TBD | O1816: TBD | P1816: TBD | Q1816: Conditional | R1816: No | S1816: PLACEHOLDER — REVIEW_REQUIRED | U1816: N/A | V1816: Authorized operational role in tenant/vessel context; AI never grants authority | W1816: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1816: Type, length, format and contextual uniqueness rules | Y1816: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1816: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1816: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1816: Read cache where safe; authoritative decision/publish/verification requires server connectivity unless explicitly supported | AC1816: /api/v1/decision-center | AD1816: DecisionCenter | AE1816: risk_summary | AF1816: UNCONFIRMED — physical schema review | AG1816: FR46-decision-center-risk_summary | AH1816: TC46-decision-center-risk_summary | AI1816: P1 | AJ1816: DEFAULT_PLACEHOLDER; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1816: UI/TRACE TAM — PROD REVIEW | AL1816: SOURCE + DERIVED GAP ANALYSIS | AM1816: ÖNERİ: Decision Center bağlamında Risk Summary. İş anlamı/birim BA onayı bekler. | AN1816: Metin Girişi | AO1816: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ1816: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AV1816: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1816: Risk Summary: Type, length, format and contextual uniqueness rules | BE1816: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1816: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1816: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1816: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1816: DEC-DATA-01…06 | BO1816: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:1817",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A1817: Platform, Entegrasyon ve Yapay Zekâ | B1817: Yapay Zekâ ve Karar Desteği | C1817: Copilot, öneri ve karar desteği | D1817: Ortak | E1817: decision-center | F1817: Decision Center | G1817: Maritime Intelligence | H1817: source_trace | I1817: Source Trace | J1817: input/text | K1817: Metin Girişi | L1817: Text | M1817: Text | N1817: varchar/text — length TBD | O1817: TBD | P1817: TBD | Q1817: Conditional | R1817: No | S1817: PLACEHOLDER — REVIEW_REQUIRED | U1817: N/A | V1817: Authorized operational role in tenant/vessel context; AI never grants authority | W1817: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1817: Type, length, format and contextual uniqueness rules | Y1817: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1817: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1817: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1817: Read cache where safe; authoritative decision/publish/verification requires server connectivity unless explicitly supported | AC1817: /api/v1/decision-center | AD1817: DecisionCenter | AE1817: source_trace | AF1817: UNCONFIRMED — physical schema review | AG1817: FR46-decision-center-source_trace | AH1817: TC46-decision-center-source_trace | AI1817: P1 | AJ1817: DEFAULT_PLACEHOLDER; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1817: UI/TRACE TAM — PROD REVIEW | AL1817: SOURCE + DERIVED GAP ANALYSIS | AM1817: ÖNERİ: Decision Center bağlamında Source Trace. İş anlamı/birim BA onayı bekler. | AN1817: Metin Girişi | AO1817: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ1817: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AV1817: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1817: Source Trace: Type, length, format and contextual uniqueness rules | BE1817: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1817: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1817: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1817: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1817: DEC-DATA-01…06 | BO1817: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:1818",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A1818: Platform, Entegrasyon ve Yapay Zekâ | B1818: Yapay Zekâ ve Karar Desteği | C1818: Copilot, öneri ve karar desteği | D1818: Ortak | E1818: decision-center | F1818: Decision Center | G1818: Maritime Intelligence | H1818: ai_confidence_state | I1818: AI Confidence State | J1818: select | K1818: Seçim Listesi | L1818: State | M1818: Controlled Code / Enum | N1818: text / controlled-code FK — REVIEW | O1818: TBD | P1818: TBD | Q1818: Yes/Business rule | R1818: System | S1818: Sistem tarafından türetilir | T1818: Controlled list / state machine | U1818: Tanımlı | V1818: Authorized operational role in tenant/vessel context; AI never grants authority | W1818: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1818: Allowed controlled-state transition only | Y1818: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1818: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1818: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1818: Read cache where safe; authoritative decision/publish/verification requires server connectivity unless explicitly supported | AC1818: /api/v1/decision-center | AD1818: DecisionCenter | AE1818: ai_confidence_state | AF1818: UNCONFIRMED — physical schema review | AG1818: FR46-decision-center-ai_confidence_state | AH1818: TC46-decision-center-ai_confidence_state | AI1818: P1 | AJ1818: EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1818: UI/TRACE TAM — PROD REVIEW | AL1818: SOURCE + DERIVED GAP ANALYSIS | AM1818: ÖNERİ: Decision Center bağlamında AI Confidence State. İş anlamı/birim BA onayı bekler. | AN1818: Seçim Listesi | AO1818: SYSTEM_DERIVED | AQ1818: DERIVATION_REQUIRES_SPECIFICATION | AV1818: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1818: AI Confidence State: Allowed controlled-state transition only | BE1818: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1818: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1818: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1818: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1818: DEC-DATA-01…06 | BO1818: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:1819",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A1819: Platform, Entegrasyon ve Yapay Zekâ | B1819: Yapay Zekâ ve Karar Desteği | C1819: Copilot, öneri ve karar desteği | D1819: Ortak | E1819: decision-center | F1819: Decision Center | G1819: Maritime Intelligence | H1819: authorized_role | I1819: Authorized Role | J1819: lookup | K1819: Referans/Lookup | L1819: Reference | M1819: Reference | N1819: uuid or text FK — REVIEW | O1819: TBD | P1819: TBD | Q1819: Conditional | R1819: No | S1819: PLACEHOLDER — REVIEW_REQUIRED | U1819: KAYNAK EKSİK / TÜRÜ DOĞRULANACAK | V1819: Authorized operational role in tenant/vessel context; AI never grants authority | W1819: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1819: Active authorized reference in tenant/vessel/source scope | Y1819: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1819: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1819: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1819: Read cache where safe; authoritative decision/publish/verification requires server connectivity unless explicitly supported | AC1819: /api/v1/decision-center | AD1819: DecisionCenter | AE1819: authorized_role | AF1819: UNCONFIRMED — physical schema review | AG1819: FR46-decision-center-authorized_role | AH1819: TC46-decision-center-authorized_role | AI1819: P1 | AJ1819: DEFAULT_PLACEHOLDER; LOOKUP_SOURCE_MISSING; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1819: UI/TRACE TAM — PROD REVIEW | AL1819: SOURCE + DERIVED GAP ANALYSIS | AM1819: ÖNERİ: Decision Center bağlamında Authorized Role. İş anlamı/birim BA onayı bekler. | AN1819: Referans/Lookup | AO1819: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ1819: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AV1819: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1819: Authorized Role: geçerli ve bu bağlamda yetkili bir referans seçiniz. | BE1819: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1819: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1819: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1819: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1819: DEC-DATA-01…06 | BO1819: REVIEW_REQUIRED | BR1819: decision-center::authorized_role | BT1819: RECOVERED_ENTITY_ONLY"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:1820",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A1820: Platform, Entegrasyon ve Yapay Zekâ | B1820: Yapay Zekâ ve Karar Desteği | C1820: Copilot, öneri ve karar desteği | D1820: Ortak | E1820: decision-center | F1820: Decision Center | G1820: Maritime Intelligence | H1820: human_decision | I1820: Human Decision | J1820: input/text | K1820: Metin Girişi | L1820: Text | M1820: Text | N1820: varchar/text — length TBD | O1820: TBD | P1820: TBD | Q1820: Conditional | R1820: No | S1820: PLACEHOLDER — REVIEW_REQUIRED | U1820: N/A | V1820: Authorized operational role in tenant/vessel context; AI never grants authority | W1820: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1820: Type, length, format and contextual uniqueness rules | Y1820: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1820: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1820: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1820: Read cache where safe; authoritative decision/publish/verification requires server connectivity unless explicitly supported | AC1820: /api/v1/decision-center | AD1820: DecisionCenter | AE1820: human_decision | AF1820: UNCONFIRMED — physical schema review | AG1820: FR46-decision-center-human_decision | AH1820: TC46-decision-center-human_decision | AI1820: P1 | AJ1820: DEFAULT_PLACEHOLDER; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1820: UI/TRACE TAM — PROD REVIEW | AL1820: SOURCE + DERIVED GAP ANALYSIS | AM1820: ÖNERİ: Decision Center bağlamında Human Decision. İş anlamı/birim BA onayı bekler. | AN1820: Metin Girişi | AO1820: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ1820: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AV1820: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1820: Human Decision: Type, length, format and contextual uniqueness rules | BE1820: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1820: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1820: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1820: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1820: DEC-DATA-01…06 | BO1820: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:1821",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A1821: Platform, Entegrasyon ve Yapay Zekâ | B1821: Yapay Zekâ ve Karar Desteği | C1821: Copilot, öneri ve karar desteği | D1821: Ortak | E1821: decision-center | F1821: Decision Center | G1821: Maritime Intelligence | H1821: decision_reason | I1821: Decision Reason | J1821: textarea | K1821: Uzun Metin | L1821: Narrative/Reference | M1821: Narrative Text | N1821: text | O1821: TBD | P1821: TBD | Q1821: Conditional | R1821: No | S1821: PLACEHOLDER — REVIEW_REQUIRED | U1821: N/A | V1821: Authorized operational role in tenant/vessel context; AI never grants authority | W1821: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1821: Trimmed content; length, evidence/source and sensitive-data rules where applicable | Y1821: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1821: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1821: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1821: Read cache where safe; authoritative decision/publish/verification requires server connectivity unless explicitly supported | AC1821: /api/v1/decision-center | AD1821: DecisionCenter | AE1821: decision_reason | AF1821: UNCONFIRMED — physical schema review | AG1821: FR46-decision-center-decision_reason | AH1821: TC46-decision-center-decision_reason | AI1821: P1 | AJ1821: DEFAULT_PLACEHOLDER; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1821: UI/TRACE TAM — PROD REVIEW | AL1821: SOURCE + DERIVED GAP ANALYSIS | AM1821: ÖNERİ: Decision Center bağlamında Decision Reason. İş anlamı/birim BA onayı bekler. | AN1821: Uzun Metin | AO1821: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ1821: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AV1821: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1821: Decision Reason: geçerli ve bu bağlamda yetkili bir referans seçiniz. | BE1821: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1821: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1821: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1821: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1821: DEC-DATA-01…06 | BO1821: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:1822",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A1822: Platform, Entegrasyon ve Yapay Zekâ | B1822: Yapay Zekâ ve Karar Desteği | C1822: Copilot, öneri ve karar desteği | D1822: Ortak | E1822: decision-center | F1822: Decision Center | G1822: Maritime Intelligence | H1822: decided_at | I1822: Decided At | J1822: input/date-time | K1822: Tarih-Saat | L1822: Date/Time | M1822: DateTime | N1822: timestamptz | O1822: TBD | P1822: TBD | Q1822: Conditional | R1822: No | S1822: PLACEHOLDER — REVIEW_REQUIRED | U1822: N/A | V1822: Authorized operational role in tenant/vessel context; AI never grants authority | W1822: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1822: Valid ISO/local date/time; chronology, expiry and business-window rules | Y1822: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1822: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1822: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1822: Read cache where safe; authoritative decision/publish/verification requires server connectivity unless explicitly supported | AC1822: /api/v1/decision-center | AD1822: DecisionCenter | AE1822: decided_at | AF1822: UNCONFIRMED — physical schema review | AG1822: FR46-decision-center-decided_at | AH1822: TC46-decision-center-decided_at | AI1822: P1 | AJ1822: DEFAULT_PLACEHOLDER; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1822: UI/TRACE TAM — PROD REVIEW | AL1822: SOURCE + DERIVED GAP ANALYSIS | AM1822: ÖNERİ: Decision Center bağlamında Decided At. İş anlamı/birim BA onayı bekler. | AN1822: Tarih-Saat | AO1822: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ1822: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AV1822: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1822: Decided At: geçerli tarih/saat giriniz; kronoloji ve geçerlilik koşullarını kontrol ediniz. | BE1822: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1822: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1822: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1822: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1822: DEC-DATA-01…06 | BO1822: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:1823",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A1823: Platform, Entegrasyon ve Yapay Zekâ | B1823: Yapay Zekâ ve Karar Desteği | C1823: Copilot, öneri ve karar desteği | D1823: Ortak | E1823: decision-center | F1823: Decision Center | G1823: Maritime Intelligence | H1823: status | I1823: Status | J1823: select | K1823: Seçim Listesi | L1823: State | M1823: Controlled Code / Enum | N1823: text / controlled-code FK — REVIEW | O1823: TBD | P1823: TBD | Q1823: Yes/Business rule | R1823: System | S1823: Sistem tarafından türetilir | T1823: Controlled list / state machine | U1823: Tanımlı | V1823: Authorized operational role in tenant/vessel context; AI never grants authority | W1823: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1823: Allowed controlled-state transition only | Y1823: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1823: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1823: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1823: Read cache where safe; authoritative decision/publish/verification requires server connectivity unless explicitly supported | AC1823: /api/v1/decision-center | AD1823: DecisionCenter | AE1823: status | AF1823: UNCONFIRMED — physical schema review | AG1823: FR46-decision-center-status | AH1823: TC46-decision-center-status | AI1823: P1 | AJ1823: EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1823: UI/TRACE TAM — PROD REVIEW | AL1823: SOURCE + DERIVED GAP ANALYSIS | AM1823: ÖNERİ: Decision Center bağlamında Status. İş anlamı/birim BA onayı bekler. | AN1823: Seçim Listesi | AO1823: SYSTEM_DERIVED | AQ1823: DERIVATION_REQUIRES_SPECIFICATION | AV1823: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1823: Status: Allowed controlled-state transition only | BE1823: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1823: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1823: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1823: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1823: DEC-DATA-01…06 | BO1823: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:Rol Yetki/row:9",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A9: Auditor/Verifier | B9: Evidence/assurance verification | C9: Verification result | D9: Separation-of-duties"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:1900 Alan v46/row:1820",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A1820: decision-center | B1820: Decision Center | C1820: Maritime Intelligence | D1820: human_decision | E1820: Human Decision | F1820: input/text | G1820: Text | H1820: Conditional | I1820: No | K1820: Authorized operational role in tenant/vessel context; AI never grants authority | L1820: Authorized-human only; AI suggestion is read-only input to the decision | M1820: Type, length, format and contextual uniqueness rules | N1820: Alan değerini ve formatını kontrol ediniz. | O1820: Visible only when role, vessel/context, feature flag and applicability permit; protected data is excluded from generic views | P1820: Persist critical mutation with actor, role, tenant, vessel/context, before/after, reason and correlation ID | Q1820: Read cache where safe; authoritative decision/publish/verification requires server connectivity unless explicitly supported | R1820: /api/v1/decision-center | S1820: DecisionCenter | T1820: human_decision | U1820: FR46-decision-center-human_decision | V1820: TC46-decision-center-human_decision"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:1900 Alan v46/row:1821",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A1821: decision-center | B1821: Decision Center | C1821: Maritime Intelligence | D1821: decision_reason | E1821: Decision Reason | F1821: textarea | G1821: Narrative/Reference | H1821: Conditional | I1821: No | K1821: Authorized operational role in tenant/vessel context; AI never grants authority | L1821: Authorized-human only; AI suggestion is read-only input to the decision | M1821: Trimmed content; length, evidence/source and sensitive-data rules where applicable | N1821: Zorunlu açıklama veya kanıt bilgisini kontrol ediniz. | O1821: Visible only when role, vessel/context, feature flag and applicability permit; protected data is excluded from generic views | P1821: Persist critical mutation with actor, role, tenant, vessel/context, before/after, reason and correlation ID | Q1821: Read cache where safe; authoritative decision/publish/verification requires server connectivity unless explicitly supported | R1821: /api/v1/decision-center | S1821: DecisionCenter | T1821: decision_reason | U1821: FR46-decision-center-decision_reason | V1821: TC46-decision-center-decision_reason"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:1342 Alan/row:571",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A571: regulatory-trace | B571: Regulatory Traceability | C571: Regulatory Control | D571: requirement_ref | E571: Applicable Requirement | F571: input/text | G571: Controlled Reference | H571: Yes | I571: No | K571: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L571: Editable in Draft/Review; published/in-force records changed through new version/supersession. | M571: Published/approved source/version/reference | N571: Onaylı kaynak/sürüm bilgisi zorunludur. | O571: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P571: Persist critical change with actor, role, tenant, vessel/context, before/after, reason, correlation ID. | Q571: Read cache if available; authoritative configuration/publish actions require server connectivity. | R571: /api/v1/regulatory-trace | S571: RegulatoryTraceability | T571: requirement_ref | U571: FR-regulatory-trace-requirement_ref | V571: TC-regulatory-trace-requirement_ref"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:1342 Alan/row:572",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A572: regulatory-trace | B572: Regulatory Traceability | C572: Regulatory Control | D572: responsible_role | E572: Responsible Role | F572: input/text | G572: Reference | H572: Yes/Business rule | I572: Context role/user | K572: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L572: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M572: Active authorized role/user in tenant/vessel scope | N572: Geçerli ve yetkili bir sorumlu seçiniz. | O572: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P572: Persist critical change with actor, role, tenant, vessel/context, before/after, reason, correlation ID. | Q572: Read cache if available; authoritative configuration/publish actions require server connectivity. | R572: /api/v1/regulatory-trace | S572: RegulatoryTraceability | T572: responsible_role | U572: FR-regulatory-trace-responsible_role | V572: TC-regulatory-trace-responsible_role"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:1342 Alan/row:573",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A573: regulatory-trace | B573: Regulatory Traceability | C573: Regulatory Control | D573: record_datetime | E573: Record Date/Time | F573: input/datetime-local | G573: Date/Time | H573: Business rule | I573: Yes | K573: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L573: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M573: Valid ISO/local datetime; chronology and expiry rules | N573: Geçerli tarih/saat giriniz; tarih sırasını kontrol ediniz. | O573: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P573: Persist critical change with actor, role, tenant, vessel/context, before/after, reason, correlation ID. | Q573: Read cache if available; authoritative configuration/publish actions require server connectivity. | R573: /api/v1/regulatory-trace | S573: RegulatoryTraceability | T573: record_datetime | U573: FR-regulatory-trace-record_datetime | V573: TC-regulatory-trace-record_datetime"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:1342 Alan/row:574",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A574: regulatory-trace | B574: Regulatory Traceability | C574: Regulatory Control | D574: status | E574: Operational Status | F574: select/select | G574: State | H574: System/Business rule | I574: System | J574: Open; In Review; Effective; Attention; Restricted; Closed; Not Applicable | K574: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L574: Editable only in legal predecessor state; locked/superseded after final decision unless explicit reopen flow. | M574: Allowed state machine transition only | N574: Geçersiz durum geçişi. | O574: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P574: Persist critical change with actor, role, tenant, vessel/context, before/after, reason, correlation ID. | Q574: Read cache if available; authoritative configuration/publish actions require server connectivity. | R574: /api/v1/regulatory-trace | S574: RegulatoryTraceability | T574: status | U574: FR-regulatory-trace-status | V574: TC-regulatory-trace-status"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:1342 Alan/row:575",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A575: regulatory-trace | B575: Regulatory Traceability | C575: Regulatory Control | D575: evidence_ref | E575: Evidence Reference | F575: input/text | G575: Narrative/Reference | H575: Business rule | I575: No | K575: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L575: Append/link/supersede; verified original is not overwritten. | M575: Trimmed non-empty when required; length/content policy | N575: Zorunlu açıklama/kanıt bilgisini giriniz. | O575: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P575: Persist critical change with actor, role, tenant, vessel/context, before/after, reason, correlation ID. | Q575: Read cache if available; authoritative configuration/publish actions require server connectivity. | R575: /api/v1/regulatory-trace | S575: RegulatoryTraceability | T575: evidence_ref | U575: FR-regulatory-trace-evidence_ref | V575: TC-regulatory-trace-evidence_ref"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:1342 Alan/row:576",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A576: regulatory-trace | B576: Regulatory Traceability | C576: Regulatory Control | D576: verifier | E576: Verifier / Approver | F576: input/text | G576: Controlled Decision | H576: Yes | I576: No | K576: Authorized human decision role only; Master authority where operational safety decision applies | L576: Editable only in legal predecessor state; locked/superseded after final decision unless explicit reopen flow. | M576: Authorized role; reason/evidence prerequisites; legal transition | N576: Bu işlem için yetkiniz veya gerekli ön koşullar bulunmuyor. | O576: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P576: Persist critical change with actor, role, tenant, vessel/context, before/after, reason, correlation ID. | Q576: Read cache if available; authoritative configuration/publish actions require server connectivity. | R576: /api/v1/regulatory-trace | S576: RegulatoryTraceability | T576: verifier | U576: FR-regulatory-trace-verifier | V576: TC-regulatory-trace-verifier"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:1342 Alan/row:577",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A577: regulatory-trace | B577: Regulatory Traceability | C577: Regulatory Control | D577: instrument | E577: Instrument | F577: input/text | G577: Text | H577: Conditional | I577: No | K577: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L577: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M577: Type, length, format and contextual uniqueness rules | N577: Alan değerini ve formatını kontrol ediniz. | O577: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P577: Persist critical change with actor, role, tenant, vessel/context, before/after, reason, correlation ID. | Q577: Read cache if available; authoritative configuration/publish actions require server connectivity. | R577: /api/v1/regulatory-trace | S577: RegulatoryTraceability | T577: instrument | U577: FR-regulatory-trace-instrument | V577: TC-regulatory-trace-instrument"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:1342 Alan/row:578",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A578: regulatory-trace | B578: Regulatory Traceability | C578: Regulatory Control | D578: clause | E578: Clause / Regulation | F578: input/text | G578: Controlled Reference | H578: Yes | I578: No | K578: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L578: Editable in Draft/Review; published/in-force records changed through new version/supersession. | M578: Published/approved source/version/reference | N578: Onaylı kaynak/sürüm bilgisi zorunludur. | O578: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P578: Persist critical change with actor, role, tenant, vessel/context, before/after, reason, correlation ID. | Q578: Read cache if available; authoritative configuration/publish actions require server connectivity. | R578: /api/v1/regulatory-trace | S578: RegulatoryTraceability | T578: clause | U578: FR-regulatory-trace-clause | V578: TC-regulatory-trace-clause"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:1342 Alan/row:579",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A579: regulatory-trace | B579: Regulatory Traceability | C579: Regulatory Control | D579: edition | E579: Edition / Amendment | F579: input/text | G579: Text | H579: Conditional | I579: No | K579: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L579: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M579: Type, length, format and contextual uniqueness rules | N579: Alan değerini ve formatını kontrol ediniz. | O579: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P579: Persist critical change with actor, role, tenant, vessel/context, before/after, reason, correlation ID. | Q579: Read cache if available; authoritative configuration/publish actions require server connectivity. | R579: /api/v1/regulatory-trace | S579: RegulatoryTraceability | T579: edition | U579: FR-regulatory-trace-edition | V579: TC-regulatory-trace-edition"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:1342 Alan/row:580",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A580: regulatory-trace | B580: Regulatory Traceability | C580: Regulatory Control | D580: effective_date | E580: Effective Date | F580: input/date | G580: Date/Time | H580: Business rule | I580: Yes | K580: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L580: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M580: Valid ISO/local datetime; chronology and expiry rules | N580: Geçerli tarih/saat giriniz; tarih sırasını kontrol ediniz. | O580: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P580: Persist critical change with actor, role, tenant, vessel/context, before/after, reason, correlation ID. | Q580: Read cache if available; authoritative configuration/publish actions require server connectivity. | R580: /api/v1/regulatory-trace | S580: RegulatoryTraceability | T580: effective_date | U580: FR-regulatory-trace-effective_date | V580: TC-regulatory-trace-effective_date"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:1342 Alan/row:581",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A581: regulatory-trace | B581: Regulatory Traceability | C581: Regulatory Control | D581: applicability | E581: Applicability Result | F581: select/select | G581: State | H581: System/Business rule | I581: System | J581: Applicable; Not Applicable; Conditional; Pending Review | K581: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L581: Editable only in legal predecessor state; locked/superseded after final decision unless explicit reopen flow. | M581: Allowed state machine transition only | N581: Geçersiz durum geçişi. | O581: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P581: Persist critical change with actor, role, tenant, vessel/context, before/after, reason, correlation ID. | Q581: Read cache if available; authoritative configuration/publish actions require server connectivity. | R581: /api/v1/regulatory-trace | S581: RegulatoryTraceability | T581: applicability | U581: FR-regulatory-trace-applicability | V581: TC-regulatory-trace-applicability"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:1342 Alan/row:582",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A582: regulatory-trace | B582: Regulatory Traceability | C582: Regulatory Control | D582: applicability_basis | E582: Applicability Basis | F582: textarea/text | G582: Text | H582: Conditional | I582: No | K582: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L582: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M582: Type, length, format and contextual uniqueness rules | N582: Alan değerini ve formatını kontrol ediniz. | O582: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P582: Persist critical change with actor, role, tenant, vessel/context, before/after, reason, correlation ID. | Q582: Read cache if available; authoritative configuration/publish actions require server connectivity. | R582: /api/v1/regulatory-trace | S582: RegulatoryTraceability | T582: applicability_basis | U582: FR-regulatory-trace-applicability_basis | V582: TC-regulatory-trace-applicability_basis"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:1342 Alan/row:583",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A583: regulatory-trace | B583: Regulatory Traceability | C583: Regulatory Control | D583: control_id | E583: Operational Control ID | F583: input/text | G583: Narrative/Reference | H583: Business rule | I583: No | K583: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L583: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M583: Trimmed non-empty when required; length/content policy | N583: Zorunlu açıklama/kanıt bilgisini giriniz. | O583: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P583: Persist critical change with actor, role, tenant, vessel/context, before/after, reason, correlation ID. | Q583: Read cache if available; authoritative configuration/publish actions require server connectivity. | R583: /api/v1/regulatory-trace | S583: RegulatoryTraceability | T583: control_id | U583: FR-regulatory-trace-control_id | V583: TC-regulatory-trace-control_id"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:1342 Alan/row:584",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A584: regulatory-trace | B584: Regulatory Traceability | C584: Regulatory Control | D584: control_owner | E584: Control Owner | F584: input/text | G584: Reference | H584: Yes/Business rule | I584: Context role/user | K584: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L584: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M584: Active authorized role/user in tenant/vessel scope | N584: Geçerli ve yetkili bir sorumlu seçiniz. | O584: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P584: Persist critical change with actor, role, tenant, vessel/context, before/after, reason, correlation ID. | Q584: Read cache if available; authoritative configuration/publish actions require server connectivity. | R584: /api/v1/regulatory-trace | S584: RegulatoryTraceability | T584: control_owner | U584: FR-regulatory-trace-control_owner | V584: TC-regulatory-trace-control_owner"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:1342 Alan/row:585",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A585: regulatory-trace | B585: Regulatory Traceability | C585: Regulatory Control | D585: required_evidence | E585: Required Evidence | F585: textarea/text | G585: Narrative/Reference | H585: Business rule | I585: No | K585: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L585: Append/link/supersede; verified original is not overwritten. | M585: Trimmed non-empty when required; length/content policy | N585: Zorunlu açıklama/kanıt bilgisini giriniz. | O585: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P585: Persist critical change with actor, role, tenant, vessel/context, before/after, reason, correlation ID. | Q585: Read cache if available; authoritative configuration/publish actions require server connectivity. | R585: /api/v1/regulatory-trace | S585: RegulatoryTraceability | T585: required_evidence | U585: FR-regulatory-trace-required_evidence | V585: TC-regulatory-trace-required_evidence"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:1342 Alan/row:586",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A586: regulatory-trace | B586: Regulatory Traceability | C586: Regulatory Control | D586: verification_method | E586: Verification Method | F586: input/text | G586: Controlled Decision | H586: Yes | I586: No | K586: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L586: Editable only in legal predecessor state; locked/superseded after final decision unless explicit reopen flow. | M586: Authorized role; reason/evidence prerequisites; legal transition | N586: Bu işlem için yetkiniz veya gerekli ön koşullar bulunmuyor. | O586: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P586: Persist critical change with actor, role, tenant, vessel/context, before/after, reason, correlation ID. | Q586: Read cache if available; authoritative configuration/publish actions require server connectivity. | R586: /api/v1/regulatory-trace | S586: RegulatoryTraceability | T586: verification_method | U586: FR-regulatory-trace-verification_method | V586: TC-regulatory-trace-verification_method"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:1342 Alan/row:587",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A587: regulatory-trace | B587: Regulatory Traceability | C587: Regulatory Control | D587: last_verified | E587: Last Verified | F587: input/date | G587: Text | H587: Conditional | I587: No | K587: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L587: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M587: Type, length, format and contextual uniqueness rules | N587: Alan değerini ve formatını kontrol ediniz. | O587: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P587: Persist critical change with actor, role, tenant, vessel/context, before/after, reason, correlation ID. | Q587: Read cache if available; authoritative configuration/publish actions require server connectivity. | R587: /api/v1/regulatory-trace | S587: RegulatoryTraceability | T587: last_verified | U587: FR-regulatory-trace-last_verified | V587: TC-regulatory-trace-last_verified"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:1342 Alan/row:588",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A588: regulatory-trace | B588: Regulatory Traceability | C588: Regulatory Control | D588: effectiveness | E588: Effectiveness | F588: select/select | G588: Date/Time | H588: Business rule | I588: Yes | J588: Effective; Attention; Non-effective; Not Applicable | K588: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L588: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M588: Valid ISO/local datetime; chronology and expiry rules | N588: Geçerli tarih/saat giriniz; tarih sırasını kontrol ediniz. | O588: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P588: Persist critical change with actor, role, tenant, vessel/context, before/after, reason, correlation ID. | Q588: Read cache if available; authoritative configuration/publish actions require server connectivity. | R588: /api/v1/regulatory-trace | S588: RegulatoryTraceability | T588: effectiveness | U588: FR-regulatory-trace-effectiveness | V588: TC-regulatory-trace-effectiveness"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:1342 Alan/row:589",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A589: regulatory-trace | B589: Regulatory Traceability | C589: Regulatory Control | D589: notes | E589: Comments / Operational Notes | F589: textarea/text | G589: Narrative/Reference | H589: Business rule | I589: No | K589: DPA/Regulatory Admin/Control Owner; Auditor read/verify as assigned | L589: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M589: Trimmed non-empty when required; length/content policy | N589: Zorunlu açıklama/kanıt bilgisini giriniz. | O589: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P589: Persist critical change with actor, role, tenant, vessel/context, before/after, reason, correlation ID. | Q589: Read cache if available; authoritative configuration/publish actions require server connectivity. | R589: /api/v1/regulatory-trace | S589: RegulatoryTraceability | T589: notes | U589: FR-regulatory-trace-notes | V589: TC-regulatory-trace-notes"
+    }
+  ]
+}

@@ -114,3 +114,10 @@
 .control-evidence button { min-height: 44px; max-width: 100%; white-space: normal; }
 .control-evidence :focus-visible { outline: 3px solid #126b94; outline-offset: 3px; }
 .control-evidence article { padding: 1rem; margin-block: 1rem; border: 1px solid #9eb3c0; }
+.human-review { border-block-start: 1px solid var(--border, #718096); margin-block-start: 1rem; padding-block-start: 1rem; min-width: 0; }
+.human-review article { padding-block: .75rem; border-block-end: 1px solid var(--border, #718096); }
+.human-review code, .human-review p, .human-review li { overflow-wrap: anywhere; }
+.human-review label { display: grid; gap: .25rem; margin-block: .5rem; }
+.human-review select, .human-review textarea, .human-review input { max-width: 100%; min-width: 0; }
+.human-review textarea { min-height: 6rem; }
+.human-review button, .human-review a { margin-inline-end: .5rem; margin-block: .25rem; }

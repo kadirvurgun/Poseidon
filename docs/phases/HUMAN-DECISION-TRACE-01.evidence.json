@@ -1,0 +1,175 @@
+{
+  "task": "HUMAN-DECISION-TRACE-01",
+  "status": "AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+  "accepted": false,
+  "candidate": "Local commit containing this manifest; exact hash in coordinator delivery",
+  "receiving_head": "3dba9c6701c0f0afdad3895582982c0bcf756f72",
+  "baseline_id": "poseidon-v46.3-20261030",
+  "source_records": "docs/tasks/human-decision-trace-01.sources.json",
+  "predecessor": "docs/phases/HUMAN-DECISION-TRACE-01.predecessor.json",
+  "canonical_progress_unchanged": true,
+  "publication": "LOCAL ONLY; coordinator owns publishing/merge; no additional agents/auth/account/private configuration changes or self-approval",
+  "product_checks": {
+    "domain": "DEFERRED_NOT_RUN_UNTIL_REGULATORY_CHAIN_BUNDLE_01",
+    "postgresql": "DEFERRED_NOT_RUN_UNTIL_REGULATORY_CHAIN_BUNDLE_01",
+    "api": "DEFERRED_NOT_RUN_UNTIL_REGULATORY_CHAIN_BUNDLE_01",
+    "react": "DEFERRED_NOT_RUN_UNTIL_REGULATORY_CHAIN_BUNDLE_01",
+    "playwright": "DEFERRED_NOT_RUN_UNTIL_REGULATORY_CHAIN_BUNDLE_01",
+    "build_lint_typecheck_restore": "DEFERRED_NOT_RUN_UNTIL_REGULATORY_CHAIN_BUNDLE_01",
+    "actual_openapi_and_consumers": "DEFERRED_NOT_RUN_UNTIL_REGULATORY_CHAIN_BUNDLE_01",
+    "ef_scaffold_designer_snapshot_parity": "DEFERRED_NOT_RUN_UNTIL_REGULATORY_CHAIN_BUNDLE_01",
+    "migration_and_seed": "DEFERRED_NOT_RUN_UNTIL_REGULATORY_CHAIN_BUNDLE_01",
+    "real_provider_scanner_browser_lab": "DEFERRED_NOT_RUN_UNTIL_REGULATORY_CHAIN_BUNDLE_01",
+    "mandatory_security_scans": "DEFERRED_NOT_RUN_UNTIL_REGULATORY_CHAIN_BUNDLE_01",
+    "independent_target_qa_and_ci": "DEFERRED_NOT_RUN_UNTIL_REGULATORY_CHAIN_BUNDLE_01"
+  },
+  "source_only_observations": {
+    "predecessor_source_matches": 29,
+    "predecessor_source_mismatches": 0,
+    "git_diff_cached_check_exit": 0,
+    "graphify_update_exit": 0,
+    "graphify_nodes": 7334,
+    "graphify_edges": 15784,
+    "graphify_communities": 511,
+    "graphify_zero_node_warnings": 50,
+    "graphify_html": "omitted above5000 nodes; AST maintenance only"
+  },
+  "files": [
+    {
+      "path": "backend/Poseidon.Api/FoundationIdentity.cs",
+      "staged_bytes": 14745,
+      "staged_sha256": "43827289189302f878b7590d740bd20b838430b0c362055dc879d362c2565cbe"
+    },
+    {
+      "path": "backend/Poseidon.Api/HumanReviewEndpoints.cs",
+      "staged_bytes": 29544,
+      "staged_sha256": "db2c124129edca13e022d7c7d160150e2e8d6a2e1c1fb36aa73145e30bb68873"
+    },
+    {
+      "path": "backend/Poseidon.Api/Startup.cs",
+      "staged_bytes": 8287,
+      "staged_sha256": "ccb23bf15418d5ccc12d91a26ef82b2778e2515e85766115d8e00c8ecb8d05ab"
+    },
+    {
+      "path": "backend/Poseidon.Domain/HumanReviewPolicy.cs",
+      "staged_bytes": 2539,
+      "staged_sha256": "d7535ae6ae4601a2d6a75a8ec7dbd0ff6e71f02bd36eb72721c23a68ad23031d"
+    },
+    {
+      "path": "backend/Poseidon.Persistence/AuditMetadata.cs",
+      "staged_bytes": 9066,
+      "staged_sha256": "3636093c20aac0221497c2ee4119a9707abec194106029cc478af962b6046d0c"
+    },
+    {
+      "path": "backend/Poseidon.Persistence/HumanReviewStorage.cs",
+      "staged_bytes": 4640,
+      "staged_sha256": "e4360d17d360703e6ca85b4c0fd6e9b530a1c961e804cfd2a3d452006ab051d9"
+    },
+    {
+      "path": "backend/Poseidon.Persistence/Migrations/20261102160000_HumanReviews.cs",
+      "staged_bytes": 4979,
+      "staged_sha256": "595903cd6d3e44490061b1431cd0c62217e9c7953ebe5c8f4ffc02aa02be3160"
+    },
+    {
+      "path": "backend/Poseidon.Persistence/PoseidonDbContext.cs",
+      "staged_bytes": 31520,
+      "staged_sha256": "ec62f078360d61fb744f251c63e2f605fc619754469ede525348526eaf890845"
+    },
+    {
+      "path": "docs/phases/HUMAN-DECISION-TRACE-01.md",
+      "staged_bytes": 3949,
+      "staged_sha256": "7b4e29fafce8602f1d879492b589500bdd298dd850481f8e3292c6acb97f8c05"
+    },
+    {
+      "path": "docs/phases/HUMAN-DECISION-TRACE-01.predecessor.json",
+      "staged_bytes": 1843,
+      "staged_sha256": "d560479c177a76d439da7593542cdf46ac57f549f52e1d7147e1fe35a73abcd2"
+    },
+    {
+      "path": "docs/project-status.json",
+      "staged_bytes": 181496,
+      "staged_sha256": "b1d58660970ae30eca2c0010d72e175e2e4ac1adf2e7c5e3efe4f75fc7f7c08d"
+    },
+    {
+      "path": "docs/project-status.md",
+      "staged_bytes": 49019,
+      "staged_sha256": "17f486bc5403d6aefe92c763e5d12b0cc5e17d81a28b5a5640ba52272abe8217"
+    },
+    {
+      "path": "docs/seed-data.md",
+      "staged_bytes": 18224,
+      "staged_sha256": "08aa51a07c4aab6f5ca93238ee3e0f18a2ef936c6eef3e9a8b864534e585da38"
+    },
+    {
+      "path": "docs/tasks/human-decision-trace-01.md",
+      "staged_bytes": 12502,
+      "staged_sha256": "ff0f22874b5867ee6132d8cfd2199692463c75b79cbf61b615f32f2d2e3638bb"
+    },
+    {
+      "path": "docs/tasks/human-decision-trace-01.sources.json",
+      "staged_bytes": 96141,
+      "staged_sha256": "81b763b52db1b4de98e79db47d54ed173d1029cea762097e62f0027389c79104"
+    },
+    {
+      "path": "frontend/src/product/ControlEvidence.tsx",
+      "staged_bytes": 26920,
+      "staged_sha256": "72c9bc44691063afc133d094b5888c6e3d22a8dd3fdc65b4bad8ff3c0551d730"
+    },
+    {
+      "path": "frontend/src/product/HumanDecisionTrace.test.tsx",
+      "staged_bytes": 5494,
+      "staged_sha256": "db84d4b9876785bb20bef79924ec741637988aa5cebb18cea6db6d04d3087c18"
+    },
+    {
+      "path": "frontend/src/product/HumanDecisionTrace.tsx",
+      "staged_bytes": 14198,
+      "staged_sha256": "c2e5f348d15ff8d2c22bf87d800aee78265e5ca47f15bd1617893f809a0ccec0"
+    },
+    {
+      "path": "frontend/src/product/human-review-api.test.ts",
+      "staged_bytes": 1630,
+      "staged_sha256": "8f646bfbd597733dcfbf4c38c705268018345a5796865e2e679fe7eec69c2fe6"
+    },
+    {
+      "path": "frontend/src/product/human-review-api.ts",
+      "staged_bytes": 8079,
+      "staged_sha256": "4be035e28a8fe5e177f2bbf7b232a83c8c42558869bdc82ba9fe4cd10d4ddf35"
+    },
+    {
+      "path": "frontend/src/product/human-review.test-fixtures.ts",
+      "staged_bytes": 1689,
+      "staged_sha256": "85304e78fa20246aafae0d322774aaa96f06ad42ca3a980628f5f9cf74956c68"
+    },
+    {
+      "path": "frontend/src/product/product.css",
+      "staged_bytes": 11097,
+      "staged_sha256": "0293cd3af09ca701174b5bcfd7333c24b58fb0d50e46f305f30546c4cb56105b"
+    },
+    {
+      "path": "tests/Poseidon.Api.Tests/HumanReviewTests.cs",
+      "staged_bytes": 22305,
+      "staged_sha256": "f9da4b2dfc156b15e9353b03b0fafceb172f7f2cab086388c8d0e692ea33bc3d"
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/register-specs/cases.ts",
+      "staged_bytes": 8595,
+      "staged_sha256": "c9a78a77ab2ccaeab26ac5c21b9726eb7eb48ca226800fcb8bfb25d768c01f29"
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/register-specs/human-review-cases.ts",
+      "staged_bytes": 3535,
+      "staged_sha256": "84395d951f4da06bdb6393934925b7de740bb948212417e2868a01522bf30191"
+    },
+    {
+      "path": "tests/Poseidon.Domain.Tests/HumanReviewPolicyTests.cs",
+      "staged_bytes": 3625,
+      "staged_sha256": "77605af887699d73d8562cc57005142016bdc11753263f9fa3f23cdfb644324a"
+    },
+    {
+      "path": "tests/Poseidon.Persistence.Tests/HumanReviewPersistenceTests.cs",
+      "staged_bytes": 6363,
+      "staged_sha256": "bfca4e3980ceb7852d885fbe90f8d21e23b3fa3b1a0059838f77804312c3d603"
+    }
+  ],
+  "inventory_exclusion": "This manifest is excluded from its own recursive byte inventory"
+}
