@@ -6,7 +6,7 @@ reported rate windows and timestamps. Busy remains ineligible; account locks,
 direct eligibility checks and Esra-first routing are preserved.
 
 [Issue, bounds, privacy and exact local trace](../tasks/native-usage-lastknown-01.md).
-Seven meaningful source tests authored; tests/build/browser/provider/QA/CI are
+Eight meaningful source tests authored; tests/build/browser/provider/QA/CI are
 **DEFERRED / NOT RUN**. No native observation establishes a live process or
 complete account eligibility, and no missing five-hour window is fabricated.
 

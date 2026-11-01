@@ -85,6 +85,14 @@ class NativeObservationTests(unittest.TestCase):
             path.write_bytes(b' ' * (128 * 1024 + 1) + b'\n')
             self.assertIsNone(recent_usage(directory, NOW))
 
+    def test_symlink_or_windows_junction_cannot_redirect_profile_session_reads(self):
+        with tempfile.TemporaryDirectory() as directory:
+            rollout(directory)
+            for method in ('is_symlink', 'is_junction'):
+                with self.subTest(method=method), patch.object(Path, method, return_value=True), \
+                        patch.object(Path, 'open', side_effect=AssertionError('linked content must not be opened')):
+                    self.assertIsNone(recent_usage(directory, NOW))
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -14,6 +14,10 @@ MAX_FILES = 128
 MAX_AGE = 4500
 
 
+def linked(path):
+    return path.is_symlink() or path.is_junction()
+
+
 def finite(value):
     return type(value) in (int, float) and math.isfinite(value)
 
@@ -60,7 +64,7 @@ def event_observation(event, now):
 def recent_usage(home, now):
     """Historical numeric observation only, even if the native process has ended."""
     sessions = Path(home) / 'sessions'
-    if sessions.is_symlink():
+    if linked(sessions):
         return None
     today = datetime.fromtimestamp(now).astimezone().date()
     newest = None
@@ -68,7 +72,7 @@ def recent_usage(home, now):
     try:
         for day in (today, today - timedelta(days=1)):
             directory = sessions / f'{day.year:04}' / f'{day.month:02}' / f'{day.day:02}'
-            if any(p.is_symlink() for p in (directory, directory.parent, directory.parent.parent)):
+            if any(linked(p) for p in (directory, directory.parent, directory.parent.parent)):
                 continue
             if not directory.is_dir():
                 continue
@@ -76,7 +80,7 @@ def recent_usage(home, now):
                 seen += 1
                 if seen > MAX_FILES:
                     return None  # A truncated directory view cannot be called the latest.
-                if path.is_symlink() or not path.is_file() or not path.name.startswith('rollout-') or path.suffix != '.jsonl':
+                if linked(path) or not path.is_file() or not path.name.startswith('rollout-') or path.suffix != '.jsonl':
                     continue
                 with path.open('rb') as stream:
                     header = stream.readline(HEADER_BYTES + 1)

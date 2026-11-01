@@ -18,6 +18,7 @@ can update the display without proving the account is eligible for more work.
 entries,128KiB header,4MiB per-file tail,1MiB maximum event line and4500-second
 observation freshness. Only `event_msg/token_count/rate_limits` with `limit_id`
 `codex`, valid finite numeric windows and an actual event timestamp contributes.
+Symbolic links and Windows junctions cannot redirect these account-local reads.
 Partial current events and unrelated tool/source text are ignored. Newest
 actual provider timestamp wins, not filename order. Malformed/missing/unbounded
 input yields unavailable observation. No auth files or remote calls are used.
@@ -45,7 +46,7 @@ live/eligible state or new frontend field is introduced.
 | NUL-04 | Busy remains ineligible and cannot trigger fallback/dispatch | Watch integration test holds the real exclusive fixture lock; only the other profile metadata is read, no task call occurs |
 | NUL-05 | A newer direct-provider observation is retained | Watch test supplies an older native event and verifies it cannot replace direct metadata |
 
-Five reader tests plus two watcher tests were authored. All execution remains
+Six reader tests plus two watcher tests were authored. All execution remains
 **DEFERRED / NOT RUN** until the larger foundation gate. Reading actual native
 quota metadata later is operational observation, not a passing regression test.
 No new dependency, entity, migration, seed, approval or canonical SP.
