@@ -47,7 +47,9 @@ approval. Production definitions remain actual operator configuration.
 
 The client validates actor/tenant/vessel binding and role envelopes before
 projecting fields. Old labels disappear synchronously when identity or vessel
-changes; aborted/stale responses cannot restore them. Logout removes the bar.
+changes; aborted/stale responses cannot restore them. Logout destroys the child
+cache, including re-login with identical IDs. A refreshed session object requires
+new server validation even with unchanged scope IDs; old responses remain hidden.
 Current-access errors hide labels and allow explicit reload. TR/EN uses the same
 returned catalog; no credentials, actor IDs or raw role references are rendered or
 persisted. Browser connection state is shown factually; offline context is marked
@@ -59,11 +61,11 @@ potentially stale. Immediate disconnected revocation knowledge is not claimed.
 |---|---:|
 | API-project pure policy | 9: trusted reference, no membership inference, five invalid/missing definitions, duplicates, partial multi-role mapping |
 | Actual API/PostgreSQL | 9: current scope/role labels, all ungranted/foreign vessels, three untrusted selectors, unavailable labels, missing attribution, grant revocation and anonymous denial |
-| React component | 8: bilingual labels/no IDs, delayed response isolation, same-tenant actor change, logout, explicit retry, Missing/Unavailable and factual offline state |
+| React component | 10: bilingual labels/no IDs, delayed response isolation, same-tenant actor change, logout, same-ID re-login, refreshed-session revalidation, explicit retry, Missing/Unavailable and factual offline state |
 | Client wire boundary | 11: safe projection, actor/tenant/vessel mismatch, malformed enum arrays, duplicates, empty labels, partial roles and unexpected/missing vessel |
 | Actual-host Playwright | 2 registered cases: five authorized headers checked against real API and restricted missing-scope direct URL; no route mocks |
 
-39 cases are an authored inventory, not execution results. Suites/build/typecheck,
+41 cases are an authored inventory, not execution results. Suites/build/typecheck,
 OpenAPI generation, browser/provider lab, independent QA and CI were NOT RUN.
 The private browser case deliberately fails for absent actual fixture role-label
 configuration rather than skipping or accepting an unconfigured role as proof.
