@@ -14,8 +14,7 @@ const source = (artifacts = fixtures) => versionOfflineShell(template, artifacts
 const cacheName = (worker: string) => `poseidon.offline.static.${JSON.parse(worker.match(/const build = ("[a-f0-9]+")/)![1])}`
 type WorkerEvent = { request?: { url: string; method: string; mode: string }; waitUntil: (value: Promise<unknown>) => void; respondWith: (value: Promise<Response>) => void }
 
-function harness(worker = source()) {
-  const stores = new Map<string, Map<string, Response>>()
+function harness(worker = source(), stores = new Map<string, Map<string, Response>>()) {
   const listeners = new Map<string, (event: WorkerEvent) => void>()
   const network = new Map(fixtures.map(x => [`/${x.fileName}`, new Response(typeof x.bytes === 'string' ? x.bytes : Uint8Array.from(x.bytes).buffer)]))
   const fetcher = vi.fn(async (input: string | { url: string }, options?: unknown) => {
@@ -39,7 +38,7 @@ function harness(worker = source()) {
   runInNewContext(worker, {
     self: { location: { origin: 'https://poseidon.test' }, skipWaiting, clients: { claim, reload },
       addEventListener: (name: string, callback: (event: WorkerEvent) => void) => listeners.set(name, callback) },
-    caches: cacheStorage, fetch: fetcher, URL, crypto: webcrypto, Uint8Array,
+    caches: cacheStorage, fetch: fetcher, URL, crypto: webcrypto, Uint8Array, Response,
   })
   function lifecycle(name: string) {
     let pending: Promise<unknown> | undefined
@@ -73,7 +72,7 @@ describe('public offline shell build and safe update lifecycle', () => {
   })
   it('precaches only integrity-checked public bytes without credentials or forcing current tabs', async () => {
     const h = harness(); await h.lifecycle('install')
-    expect([...h.stores.get(cacheName(source()))!.keys()].sort()).toEqual(fixtures.map(x => `/${x.fileName}`).sort())
+    expect([...h.stores.get(cacheName(source()))!.keys()].sort()).toEqual([...fixtures.map(x => `/${x.fileName}`), '/__poseidon_offline_public_builds__'].sort())
     for (const call of h.fetcher.mock.calls) expect(call[1]).toEqual({ credentials: 'omit', cache: 'no-cache', redirect: 'error' })
     expect(h.skipWaiting).not.toHaveBeenCalled(); expect(h.claim).not.toHaveBeenCalled(); expect(h.reload).not.toHaveBeenCalled()
   })
@@ -85,11 +84,16 @@ describe('public offline shell build and safe update lifecycle', () => {
     expect(await h.stores.get('poseidon.offline.static.v1')!.get('/index.html')!.text()).toBe('old public shell')
   })
   it('cleans only obsolete owned public versions on natural activation, retaining unrelated caches', async () => {
-    const h = harness(); await h.lifecycle('install')
+    const h = harness()
     const old = `poseidon.offline.static.${'a'.repeat(64)}`
     for (const name of [old, 'poseidon.offline.static.v1', 'another-app', 'poseidon.offline.static.private-records']) h.stores.set(name, new Map())
-    await h.lifecycle('activate')
-    expect(h.cacheStorage.delete.mock.calls.flat().sort()).toEqual([old, 'poseidon.offline.static.v1'].sort())
+    await h.lifecycle('install')
+    const future = `poseidon.offline.static.${'b'.repeat(64)}`
+    h.stores.set(future, new Map()) // A later install completed while this worker waited.
+    const restarted = harness(source(), h.stores) // Waiting worker process was terminated.
+    await restarted.lifecycle('activate')
+    expect(restarted.cacheStorage.delete.mock.calls.flat().sort()).toEqual([old, 'poseidon.offline.static.v1'].sort())
+    expect(h.stores.has(future)).toBe(true)
     expect(h.stores.has(cacheName(source()))).toBe(true)
     expect(h.stores.has('another-app')).toBe(true); expect(h.stores.has('poseidon.offline.static.private-records')).toBe(true)
     expect(h.claim).not.toHaveBeenCalled(); expect(h.reload).not.toHaveBeenCalled()
