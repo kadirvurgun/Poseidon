@@ -1,0 +1,3 @@
+# CLASSIFICATION-INTERRUPTED-01
+
+User explicitly directed product development to take priority on2026-11-01. Exact owned native PID46076 and parent14912 were verified and stopped; unrelated processes were preserved. Partial scanner/evidence WIP is checkpointed UNVERIFIED/INTERRUPTED, not discarded, approved or tested. Any optimistic wording in the interrupted author draft is not a completed delivery receipt. No exceptions installed; original rejected review and source bytes remain preserved. Actual product sequence now starts CREW-ROSTER-01. Meaningful tests are authored, execution deferred until the larger product foundation gate. Publication still requires genuine QA/CI. Canonical8/970 unchanged.

@@ -1,4 +1,36 @@
 {
+  "files_source_completion_01_repair": {
+    "status": "bounded_repair_authored_unverified_not_accepted",
+    "accepted": false,
+    "receiving_head": "97a1500e937de43ca3e83d0c1e49e034c22f6af7",
+    "approved_base": "80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44",
+    "phase_report": "docs/phases/FILES-SOURCE-COMPLETION-01-REPAIR.md",
+    "contract": "docs/security/source-review-v2.md",
+    "prior_review_status": "rejected_all_159_proposed_waivers_not_proof_of_live_credentials",
+    "receipt_sha256": "02183cf634aff093beb33a8952db99b071ad02aa5f2ccd23967be2b2963bd523",
+    "source_checkpoint_and_failed_0bb_preserved": true,
+    "targeted_occurrences": 160,
+    "shared_contexts": 104,
+    "unresolved_archived_locators": 0,
+    "approved": 0,
+    "all_cases": "unresolved_pending_independent_review_and_operator_assessment",
+    "canonical_progress_unchanged": true,
+    "canonical_accepted_story_points": 8,
+    "canonical_total_story_points": 970,
+    "verification": "DEFERRED: no suites/build/typecheck/browser/provider/full scans executed; targeted authoring generation only",
+    "authored_check_ids": [
+      "FSC-REPAIR-ID-01",
+      "FSC-REPAIR-ID-02",
+      "FSC-REPAIR-BYTE-01",
+      "FSC-REPAIR-NL-01",
+      "FSC-REPAIR-ARCHIVE-01",
+      "FSC-REPAIR-SAFE-01",
+      "FSC-REPAIR-EVIDENCE-01",
+      "FSC-REPAIR-CI-01"
+    ],
+    "current_phase": "Foundation bounded implementation repair checkpoint UNVERIFIED",
+    "next_step": "Coordinator v2 adapter/protected-pin setup and independent safe classification; renewed combined gate and exact-target QA; no worker publication"
+  },
   "files_source_completion_01": {
     "status": "implementation_checkpoint_unverified_not_accepted",
     "accepted": false,

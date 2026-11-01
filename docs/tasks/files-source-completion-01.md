@@ -1,3 +1,5 @@
+**Current bounded repair — AUTHORED / UNVERIFIED / NOT ACCEPTED.** The independent SOURCE-CLASSIFICATION-REVIEW-01 rejection of97a1500 is preserved. Byte-bound source/context identity, exact coordinator-pinned receipt/proposal binding, nested UTF-16 coverage and safe structural evidence are authored with negative tests. The new v2 ledger has160 exact occurrences across104 shared contexts, all unresolved,0 approved; the prior159-proposal ledger remains preserved. All suites/build/typecheck/browser/provider/full scans are DEFERRED. Canonical8/970 unchanged. [Repair report](../phases/FILES-SOURCE-COMPLETION-01-REPAIR.md), [exact reviewed contract](../security/source-review-v2.md). Earlier checkpoint text below is historical and does not define the repaired approval contract.
+
 # FILES-SOURCE-COMPLETION-01 — authoring checkpoint, UNVERIFIED
 
 Date: 2026-11-01. Receiving worktree clean at `0bb2492f8eff66e92109ebad18c8c8c55b64621b`.
