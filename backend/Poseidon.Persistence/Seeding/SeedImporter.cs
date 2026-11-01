@@ -38,6 +38,11 @@ public static class SeedImporter
         await RegulatoryRegisterFixtures.AddMissingAsync(db, data.Tenants, cancellationToken).ConfigureAwait(false);
         foreach (var vessel in data.Vessels)
         {
+            if (await db.Documents.FindAsync([vessel.TenantId, vessel.Id], cancellationToken).ConfigureAwait(false) == null) {
+                db.Documents.Add(new Document { TenantId = vessel.TenantId, Id = vessel.Id, VesselId = vessel.Id });
+                db.DocumentVersions.Add(new DocumentVersion { TenantId = vessel.TenantId, DocumentId = vessel.Id, VesselId = vessel.Id,
+                    Revision = 1, Title = "FICTIONAL unverified document draft", Provenance = "SyntheticUnverified", CreatedAt = DateTimeOffset.UtcNow });
+            }
             if (await db.FileStages.FindAsync([vessel.TenantId, vessel.Id], cancellationToken).ConfigureAwait(false) != null) continue;
             db.FileStages.Add(new FileStage { TenantId = vessel.TenantId, Id = vessel.Id, VesselId = vessel.Id,
                 ActorId = Guid.Empty, Key = "synthetic-unverified-" + vessel.Id.ToString("N"), Fingerprint = new string('0', 64),

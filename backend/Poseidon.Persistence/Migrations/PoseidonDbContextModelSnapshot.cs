@@ -576,6 +576,33 @@ namespace Poseidon.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
+            modelBuilder.Entity("Poseidon.Persistence.Document", b => {
+                b.Property<Guid>("TenantId").HasColumnType("uuid");
+                b.Property<Guid>("Id").HasColumnType("uuid");
+                b.Property<Guid>("VesselId").HasColumnType("uuid");
+                b.Property<long>("Revision").HasColumnType("bigint");
+                b.Property<uint>("Version").IsConcurrencyToken().ValueGeneratedOnAddOrUpdate().HasColumnType("xid").HasColumnName("xmin");
+                b.HasKey("TenantId", "Id"); b.HasAlternateKey("TenantId", "Id", "VesselId");
+                b.HasIndex("TenantId", "VesselId"); b.ToTable("Documents", "files");
+            });
+            modelBuilder.Entity("Poseidon.Persistence.DocumentVersion", b => {
+                b.Property<Guid>("TenantId").HasColumnType("uuid");
+                b.Property<Guid>("DocumentId").HasColumnType("uuid");
+                b.Property<Guid>("VesselId").HasColumnType("uuid");
+                b.Property<long>("Revision").HasColumnType("bigint");
+                b.Property<string>("Title").HasMaxLength(200).HasColumnType("character varying(200)");
+                b.Property<string>("Status").IsRequired().HasMaxLength(32).HasColumnType("character varying(32)");
+                b.Property<string>("Provenance").IsRequired().HasMaxLength(32).HasColumnType("character varying(32)");
+                b.Property<DateTimeOffset>("CreatedAt").HasColumnType("timestamp with time zone");
+                b.HasKey("TenantId", "DocumentId", "Revision"); b.HasAlternateKey("TenantId", "DocumentId", "Revision", "VesselId");
+                b.HasIndex("TenantId", "DocumentId", "VesselId"); b.ToTable("DocumentVersions", "files");
+            });
+            modelBuilder.Entity("Poseidon.Persistence.Document", b => {
+                b.HasOne("Poseidon.Persistence.Vessel", null).WithMany().HasForeignKey("TenantId", "VesselId").OnDelete(DeleteBehavior.Restrict).IsRequired();
+            });
+            modelBuilder.Entity("Poseidon.Persistence.DocumentVersion", b => {
+                b.HasOne("Poseidon.Persistence.Document", null).WithMany().HasForeignKey("TenantId", "DocumentId", "VesselId").HasPrincipalKey("TenantId", "Id", "VesselId").OnDelete(DeleteBehavior.Restrict).IsRequired();
+            });
             modelBuilder.Entity("Poseidon.Persistence.FileStage", b =>
             {
                 b.Property<Guid>("TenantId").HasColumnType("uuid");
@@ -594,9 +621,15 @@ namespace Poseidon.Persistence.Migrations
                 b.HasAlternateKey("TenantId", "Id", "VesselId");
                 b.HasIndex("TenantId", "VesselId");
                 b.HasIndex("TenantId", "ActorId", "Key").IsUnique();
-                b.ToTable("FileStages", "files");
+                b.Property<string>("StorageReference").HasMaxLength(64).HasColumnType("character varying(64)");
+                b.Property<Guid?>("DocumentId").HasColumnType("uuid");
+                b.Property<long?>("DocumentRevision").HasColumnType("bigint");
+                b.Property<string>("Mime").IsRequired().ValueGeneratedOnAdd().HasMaxLength(32).HasColumnType("character varying(32)").HasDefaultValue("image/png");
+                b.HasIndex("TenantId", "DocumentId", "DocumentRevision", "VesselId");
+                b.ToTable("FileStages", "files", t => t.HasCheckConstraint("CK_FileStages_DocumentOwner", "(\"DocumentId\" IS NULL AND \"DocumentRevision\" IS NULL) OR (\"DocumentId\" IS NOT NULL AND \"DocumentRevision\" IS NOT NULL AND \"DocumentRevision\" > 0)"));
             });
             modelBuilder.Entity("Poseidon.Persistence.FileStage", b => {
+                b.HasOne("Poseidon.Persistence.DocumentVersion", null).WithMany().HasForeignKey("TenantId", "DocumentId", "DocumentRevision", "VesselId").HasPrincipalKey("TenantId", "DocumentId", "Revision", "VesselId").HasConstraintName("FK_FileStages_DocumentVersion").OnDelete(DeleteBehavior.Restrict);
                 b.HasOne("Poseidon.Persistence.Vessel", null).WithMany().HasForeignKey("TenantId", "VesselId").OnDelete(DeleteBehavior.Restrict).IsRequired();
             });
 
@@ -617,6 +650,9 @@ namespace Poseidon.Persistence.Migrations
                 b.HasKey("TenantId", "Id");
                 b.HasIndex("TenantId", "VesselId");
                 b.HasIndex("TenantId", "Id", "VesselId").IsUnique();
+                b.Property<string>("ProviderVersion").HasMaxLength(1024).HasColumnType("character varying(1024)");
+                b.Property<string>("ProviderETag").HasMaxLength(256).HasColumnType("character varying(256)");
+                b.Property<string>("ProviderReference").HasMaxLength(64).HasColumnType("character varying(64)");
                 b.ToTable("StoredFiles", "files");
             });
             modelBuilder.Entity("Poseidon.Persistence.StoredFile", b => {

@@ -1,5 +1,16 @@
 # Güncel sürüm politikası
 
+FILES-SOURCE-COMPLETION-01 authors official AWSSDK.S3 **4.0.104.8** and resolved
+AWSSDK.Core **4.0.102.14** using the official NuGet flat-container index/nuspec/package
+bytes on2026-11-01. Central version and both API/consumer locks include package SHA512.
+The compatible net8 asset is selected for the net10 target; actual locked restore, SDK/API
+compatibility and tests are **DEFERRED**, not established by metadata. No provider was set up.
+Primary references: [NuGet index](https://api.nuget.org/v3-flatcontainer/awssdk.s3/index.json),
+[official SDK PutObject](https://docs.aws.amazon.com/sdkfornet/v4/apidocs/items/S3/TPutObjectRequest.html),
+[official GetObject version/checksum contract](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObject.html).
+The owned S3 lab accepts only an explicitly reviewed local source-built immutable image;
+image selection/build/pinning and execution remain a later gate input, not a production vendor choice.
+
 Kullanıcı tercihi: yeni geliştirmelerde güncel **kararlı** ve karşılıklı uyumlu sürümler. Preview/RC sürümleri varsayılan değildir. Bu karar React 18/PostgreSQL 17+ başlangıç baseline'ından kontrollü teknik güncellemedir; iş kapsamını değiştirmez.
 
 30 Ekim 2026 tarihinde resmi release metadata, NuGet ve npm registry üzerinden doğrulanan sürümler:

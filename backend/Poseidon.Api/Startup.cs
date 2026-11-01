@@ -13,6 +13,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         services.AddDataProtection();
         services.AddSingleton(configuration.GetSection("SecureFiles").Get<SecureFileSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<LocalFileObjects>();
+        services.AddSingleton<FileObjects>();
         services.AddSingleton<ClamdScanner>();
         services.AddSingleton<FileCapabilities>();
         services.AddFoundationIdentity(configuration, hostEnvironment);
@@ -78,6 +79,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapToday();
             endpoints.MapAuditHistory();
             endpoints.MapSecureFiles();
+            endpoints.MapDocuments();
             endpoints.MapGet("/health/live", () => Results.Text("alive"))
                 .WithName("GetLiveness")
                 .WithSummary("Process liveness only; does not indicate database or operational readiness.");

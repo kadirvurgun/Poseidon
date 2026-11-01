@@ -38,7 +38,7 @@ it('does not retain stale file details after an authorization error and refreshe
 it('preserves selected file dirty state and does not submit while unavailable', async () => {
   vi.stubGlobal('fetch', vi.fn(async () => response({ ...page, canWrite: true })))
   const dirty = vi.fn(); render(<VesselFiles vessel={vessel} language="en" csrf="synthetic-csrf" onDirty={dirty} onSaving={vi.fn()} />)
-  await waitFor(() => expect(screen.getByLabelText('PNG file')).toBeDisabled())
+  await waitFor(() => expect(screen.getByLabelText('Attachment file')).toBeDisabled())
   expect(screen.getByRole('button', { name: 'Upload file' })).toBeDisabled()
   expect(dirty).not.toHaveBeenCalled()
 })
@@ -50,7 +50,7 @@ it('freezes ambiguous upload payload and key; retry reconciles without a second 
   vi.stubGlobal('fetch', fetch)
   const user = userEvent.setup(); const dirty = vi.fn()
   render(<VesselFiles vessel={vessel} language="en" csrf="synthetic-csrf" onDirty={dirty} onSaving={vi.fn()} />)
-  const input = await screen.findByLabelText('PNG file'); await waitFor(() => expect(input).toBeEnabled())
+  const input = await screen.findByLabelText('Attachment file'); await waitFor(() => expect(input).toBeEnabled())
   await user.upload(input, new File([new Uint8Array(32)], 'synthetic.png', { type: 'image/png' }))
   expect(dirty).toHaveBeenCalledWith(true)
   await user.click(screen.getByRole('button', { name: 'Upload file' }))

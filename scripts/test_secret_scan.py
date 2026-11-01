@@ -12,6 +12,29 @@ import secret_scan
 
 
 class SecretScanTests(unittest.TestCase):
+    def test_context_hash_is_newline_stable_and_any_surrounding_change_invalidates_review(self):
+        marker = 'gh' + 'p_' + 'n' * 36
+        a = list(secret_scan.findings('before\r\n' + marker + '\r\nafter', 'fixture.txt'))[0]
+        b = list(secret_scan.findings('before\n' + marker + '\nafter', 'fixture.txt'))[0]
+        c = list(secret_scan.findings('changed\n' + marker + '\nafter', 'fixture.txt'))[0]
+        self.assertEqual(a, b)
+        self.assertEqual(a['fingerprint'], c['fingerprint'])
+        self.assertNotEqual(a['context_sha256'], c['context_sha256'])
+
+    def test_pending_self_review_and_legacy_unbound_exception_records_fail_closed(self):
+        marker = 'gh' + 'p_' + 'n' * 36
+        found = next(secret_scan.findings(marker, 'fixture.txt'))
+        legacy = {k: v for k, v in found.items() if k != 'context_sha256'}
+        legacy['rationale'] = 'A claimed fixture without source-context and independent review cannot suppress findings.'
+        with self.assertRaises(ValueError):
+            secret_scan.approved_exceptions([legacy])
+        review = {'status': 'pending-independent-review', 'reviewer_reference': 'same-author', 'author_reference': 'same-author', 'target_context_sha256': found['context_sha256'], 'target_fingerprint': found['fingerprint'], 'evidence_reference': 'synthetic-unit-test'}
+        proposal = {**found, 'classification': 'synthetic-fixture', 'rationale': legacy['rationale'], 'review': review}
+        for state in ('pending-independent-review', 'independently-reviewed'):
+            review['status'] = state
+            with self.assertRaises(ValueError):
+                secret_scan.approved_exceptions([proposal])
+
     def test_linked_input_parent_is_rejected_even_when_target_is_inside_root(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp); original = root / 'original'; original.mkdir()
@@ -87,7 +110,7 @@ class SecretScanTests(unittest.TestCase):
         a = next(secret_scan.findings('gh' + 'p_' + 'x' * 36, 'fixture.txt'))
         b = next(secret_scan.findings('gh' + 'p_' + 'y' * 36, 'fixture.txt'))
         self.assertNotEqual(a['fingerprint'], b['fingerprint'])
-        self.assertEqual({'path', 'rule', 'line', 'fingerprint'}, set(a))
+        self.assertEqual({'path', 'rule', 'line', 'fingerprint', 'context_sha256'}, set(a))
 
     def test_archive_limits_and_malformed_xml_are_errors(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -104,7 +127,7 @@ class SecretScanTests(unittest.TestCase):
             first = 'gh' + 'p_' + 'a' * 36; second = 'gh' + 'p_' + 'b' * 36
             file.write_text(first)
             found = secret_scan.scan_file(file, root)
-            exceptions.write_text(json.dumps([{**found[0], 'rationale': 'Reviewed exact synthetic test fixture, no operational credential'}]))
+            exceptions.write_text(json.dumps([{**found[0], 'classification': 'synthetic-fixture', 'rationale': 'Exact generated synthetic marker in an isolated unit test, never used by an implementation credential consumer.', 'review': {'status': 'independently-reviewed', 'reviewer_reference': 'test-reviewer', 'author_reference': 'test-author', 'target_context_sha256': found[0]['context_sha256'], 'target_fingerprint': found[0]['fingerprint'], 'evidence_reference': 'synthetic-unit-test-only'}}]))
             with patch('secret_scan.subprocess.run', return_value=SimpleNamespace(stdout=b'fixture.txt\0')):
                 self.assertEqual([], secret_scan.scan(root, 'repository', exceptions=exceptions)[1])
                 file.write_text(second)

@@ -18,10 +18,12 @@ public sealed class SecureFileSettings
     public int CapabilitySeconds { get; set; }
     public string? RetentionReference { get; set; }
     public string? ScannerReference { get; set; }
-    public bool Ready(IHostEnvironment environment) => environment.IsDevelopment() && Adapter == "LocalDevelopment" &&
-        Root != null && Path.IsPathFullyQualified(Root) && !Path.GetFullPath(Root).Equals(Path.GetFullPath(environment.ContentRootPath), StringComparison.OrdinalIgnoreCase) && !Path.GetFullPath(Root).StartsWith(Path.GetFullPath(environment.ContentRootPath).TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase) && MaxBytes > 0 && MaxPixels > 0 &&
+    public S3ObjectSettings S3 { get; set; } = new();
+    public string[] AllowedTypes { get; set; } = ["image/png"];
+    public bool Ready(IHostEnvironment environment) => (Adapter == "S3" && S3.Valid(environment) || environment.IsDevelopment() && Adapter == "LocalDevelopment") &&
+        Root != null && Path.IsPathFullyQualified(Root) && !Path.GetFullPath(Root).Equals(Path.GetFullPath(environment.ContentRootPath), StringComparison.OrdinalIgnoreCase) && !Path.GetFullPath(Root).StartsWith(Path.GetFullPath(environment.ContentRootPath).TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase) && MaxBytes is > 0 and <= 5242880 && MaxPixels > 0 &&
         ScanSeconds is > 0 and <= 300 && ClamdPort is > 0 and <= 65535 && CapabilitySeconds is > 0 and <= 300 &&
-        Reference(RetentionReference) && Reference(ScannerReference);
+        Reference(RetentionReference) && Reference(ScannerReference) && AllowedTypes.Length > 0 && AllowedTypes.All(DocumentBinaryPolicy.Supported);
     private static bool Reference(string? value) => value is { Length: > 0 and <= 64 } && value.All(c => char.IsAsciiLetterOrDigit(c) || c is '-' or '_' or '.');
 }
 

@@ -30,12 +30,17 @@ RULES = {
 
 
 def findings(text, locator):
+    # Canonical newlines preserve match identity on Windows and Linux. Do not normalize
+    # other bytes: source/context changes must invalidate an exact reviewed exception.
+    text = text.replace('\r\n', '\n').replace('\r', '\n')
+    context = hashlib.sha256(text.encode('utf-8')).hexdigest()
     for rule, pattern in RULES.items():
         for match in pattern.finditer(text):
             line = text.count('\n', 0, match.start()) + 1
             # The fingerprint covers the exact match and cannot act as a path-wide exemption.
             yield {'path': locator, 'rule': rule, 'line': line,
-                   'fingerprint': hashlib.sha256(match.group().encode()).hexdigest()}
+                   'fingerprint': hashlib.sha256(match.group().encode()).hexdigest(),
+                   'context_sha256': context}
 
 
 def safe_path(value):
@@ -109,16 +114,30 @@ def scan_file(path, root):
     return result
 
 
+def approved_exceptions(items):
+    if not isinstance(items, list):
+        raise ValueError('exceptions')
+    required = {'path', 'rule', 'line', 'fingerprint', 'context_sha256', 'rationale', 'classification', 'review'}
+    for item in items:
+        if set(item) != required or item['rule'] not in RULES or not isinstance(item['line'], int) or item['line'] < 1 or not isinstance(item['rationale'], str) or len(item['rationale']) < 40:
+            raise ValueError('exceptions')
+        if any(not isinstance(item[k], str) or not re.fullmatch('[0-9a-f]{64}', item[k]) for k in ('fingerprint', 'context_sha256')):
+            raise ValueError('exceptions')
+        review = item['review']
+        if not isinstance(review, dict) or set(review) != {'status', 'reviewer_reference', 'author_reference', 'target_context_sha256', 'target_fingerprint', 'evidence_reference'}:
+            raise ValueError('exceptions')
+        if item['classification'] not in ('synthetic-fixture', 'formal-reference', 'public-example') or review['status'] != 'independently-reviewed' or review['reviewer_reference'] == review['author_reference'] or not review['reviewer_reference'] or not review['evidence_reference'] or review['target_context_sha256'] != item['context_sha256'] or review['target_fingerprint'] != item['fingerprint']:
+            raise ValueError('exceptions')
+    # Review records are trusted coordinator inputs, never generated/approved by this scanner.
+    return items
+
+
 def scan(root, mode, bundle=None, exceptions=None):
     root = Path(root).resolve()
     if os.name == 'nt' and not str(root).startswith('\\\\?\\'):
         root = Path('\\\\?\\' + str(root))
     exemptions = [] if exceptions is None else json.loads(read_file(Path(exceptions), root))
-    if not isinstance(exemptions, list):
-        raise ValueError('exceptions')
-    for item in exemptions:
-        if set(item) != {'path', 'rule', 'line', 'fingerprint', 'rationale'} or not isinstance(item['rationale'], str) or len(item['rationale']) < 20 or not re.fullmatch('[0-9a-f]{64}', item['fingerprint']):
-            raise ValueError('exceptions')
+    exemptions = approved_exceptions(exemptions)
     if mode == 'repository':
         listed = subprocess.run(['git', '-C', str(root), 'ls-files', '-z'], check=True, capture_output=True).stdout
         paths = [root / p.decode('utf-8') for p in listed.split(b'\0') if p]

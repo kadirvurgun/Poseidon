@@ -12,25 +12,45 @@ namespace Poseidon.Api;
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record StageFileCommand(string? Name, string? Mime, long Length, string? Checksum);
 public sealed record FileDto(Guid Id, Guid VesselId, string Name, string State, long Length, string? Checksum, long? Revision, uint Version);
-public sealed record FileListDto(FileDto[] Items, int Offset, bool HasMore, bool CanWrite, bool Available, long MaxBytes);
+public sealed record FileListDto(FileDto[] Items, int Offset, bool HasMore, bool CanWrite, bool Available, long MaxBytes, string[] AllowedTypes);
 
 public static class SecureFileEndpoints
 {
     public static void MapSecureFiles(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/v1/vessels/{vessel:guid}/files").RequireAuthorization("DirectoryRead");
+        var documents = app.MapGroup("/api/v1/vessels/{vessel:guid}/documents/{document:guid}/versions/{revision:long}/files").RequireAuthorization("DirectoryRead");
+        documents.MapGet("", List).WithName("ListDocumentFiles").Produces<FileListDto>();
+        documents.MapPost("", Stage).WithName("StageDocumentFile").Produces<FileDto>();
+        documents.MapGet("/{id:guid}", Detail).WithName("GetDocumentFile").Produces<FileDto>();
+        documents.MapPut("/{id:guid}/bytes", Upload).WithName("UploadDocumentFile").Produces<FileDto>();
+        documents.MapPost("/{id:guid}/access", Access).WithName("IssueDocumentFileAccess");
+        documents.MapGet("/{id:guid}/bytes", Download).WithName("DownloadDocumentFile");
         group.MapGet("", List).WithName("ListVesselFiles").Produces<FileListDto>();
         group.MapPost("", Stage).WithName("StageVesselFile").Accepts<StageFileCommand>("application/json").Produces<FileDto>();
         group.MapGet("/{id:guid}", Detail).WithName("GetVesselFile").Produces<FileDto>();
-        group.MapPut("/{id:guid}/bytes", Upload).WithName("UploadVesselFile").Accepts<byte[]>("image/png").Produces<FileDto>();
+        group.MapPut("/{id:guid}/bytes", Upload).WithName("UploadVesselFile").Accepts<byte[]>("image/png", "image/jpeg", "application/pdf").Produces<FileDto>();
         group.MapPost("/{id:guid}/access", Access).WithName("IssueFileAccess");
         group.MapGet("/{id:guid}/bytes", Download).WithName("DownloadVesselFile");
     }
     private static TrustedActor Actor(HttpContext h) => h.RequestServices.GetRequiredService<ActorResolver>().Resolve(h.User)!;
     private static bool Read(TrustedActor a) => a.CanRead && a.Permissions.Contains("file.read");
     private static bool Write(TrustedActor a, Guid vessel) => Read(a) && a.Permissions.Contains("file.write") && a.CanEditVessel(vessel);
-    private static async Task<bool> Scope(PoseidonDbContext db, TrustedActor a, Guid vessel, CancellationToken ct) =>
-        Read(a) && await a.Scope(db.Vessels).AnyAsync(x => x.Id == vessel, ct);
+    private static Guid? DocumentId(HttpContext h) => h.Request.RouteValues.TryGetValue("document", out var d) && Guid.TryParse(d?.ToString(), out var id) ? id : null;
+    private static long? DocumentRevision(HttpContext h) => h.Request.RouteValues.TryGetValue("revision", out var r) && long.TryParse(r?.ToString(), out var revision) ? revision : null;
+    private static IQueryable<FileStage> Owned(PoseidonDbContext db, HttpContext h) {
+        var document = DocumentId(h); var revision = DocumentRevision(h);
+        return db.FileStages.Where(x => x.DocumentId == document && x.DocumentRevision == revision);
+    }
+    private static IQueryable<StoredFile> OwnedFiles(PoseidonDbContext db, HttpContext h, Guid vessel) {
+        var stages = Owned(db, h).Where(s => s.VesselId == vessel);
+        return db.StoredFiles.Where(f => f.VesselId == vessel && stages.Any(s => s.Id == f.Id));
+    }
+    private static async Task<bool> Scope(PoseidonDbContext db, TrustedActor a, Guid vessel, HttpContext h, CancellationToken ct) {
+        if (!Read(a) || !await a.Scope(db.Vessels).AnyAsync(x => x.Id == vessel, ct)) return false;
+        var document = DocumentId(h); var revision = DocumentRevision(h);
+        return document == null || revision > 0 && await db.DocumentVersions.AnyAsync(x => x.DocumentId == document && x.Revision == revision && x.VesselId == vessel, ct);
+    }
     private static FileDto Dto(FileStage s, StoredFile? f = null) => new(s.Id, s.VesselId, s.Name, s.State, f?.Length ?? s.ExpectedLength, f?.Checksum, f?.Revision, s.Version);
     private static async Task<IResult> Failure(HttpContext h, int status, string code, Guid? id = null)
     {
@@ -57,26 +77,26 @@ public static class SecureFileEndpoints
     {
         var a = Actor(h); var ct = h.RequestAborted;
         if (!Read(a)) return await Failure(h, 403, "permission_denied");
-        if (!await Scope(db, a, vessel, ct)) return await Failure(h, 404, "resource_not_found");
+        if (!await Scope(db, a, vessel, h, ct)) return await Failure(h, 404, "resource_not_found");
         if (h.Request.Query.Keys.Any(k => k != "offset") || h.Request.Query["offset"].Count > 1 ||
             h.Request.Query.ContainsKey("offset") && !int.TryParse(h.Request.Query["offset"], System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out _))
             return await Failure(h, 400, "invalid_request");
         var offset = h.Request.Query.ContainsKey("offset") ? int.Parse(h.Request.Query["offset"]!, System.Globalization.CultureInfo.InvariantCulture) : 0;
-        var rows = await db.FileStages.AsNoTracking().Where(x => x.VesselId == vessel).OrderByDescending(x => x.CreatedAt).ThenBy(x => x.Id).Skip(offset).Take(26).ToArrayAsync(ct);
+        var rows = await Owned(db, h).AsNoTracking().Where(x => x.VesselId == vessel).OrderByDescending(x => x.CreatedAt).ThenBy(x => x.Id).Skip(offset).Take(26).ToArrayAsync(ct);
         var ids = rows.Select(x => x.Id).ToArray();
         var files = await db.StoredFiles.AsNoTracking().Where(x => x.VesselId == vessel && ids.Contains(x.Id)).ToArrayAsync(ct);
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "FileList", "Success", resourceId: vessel);
         var settings = h.RequestServices.GetRequiredService<SecureFileSettings>();
-        return Results.Ok(new FileListDto(rows.Take(25).Select(s => Dto(s, files.SingleOrDefault(f => f.Id == s.Id))).ToArray(), offset, rows.Length > 25, Write(a, vessel), Ready(h), Ready(h) ? settings.MaxBytes : 0));
+        return Results.Ok(new FileListDto(rows.Take(25).Select(s => Dto(s, files.SingleOrDefault(f => f.Id == s.Id))).ToArray(), offset, rows.Length > 25, Write(a, vessel), Ready(h), Ready(h) ? settings.MaxBytes : 0, settings.AllowedTypes));
     }
     private static async Task<IResult> Detail(Guid vessel, Guid id, HttpContext h, PoseidonDbContext db)
     {
         var a = Actor(h);
         if (!Read(a)) return await Failure(h, 403, "permission_denied", id);
-        if (!await Scope(db, a, vessel, h.RequestAborted)) return await Failure(h, 404, "resource_not_found", id);
-        var s = await db.FileStages.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id && x.VesselId == vessel, h.RequestAborted);
+        if (!await Scope(db, a, vessel, h, h.RequestAborted)) return await Failure(h, 404, "resource_not_found", id);
+        var s = await Owned(db, h).AsNoTracking().SingleOrDefaultAsync(x => x.Id == id && x.VesselId == vessel, h.RequestAborted);
         if (s == null) return await Failure(h, 404, "resource_not_found", id);
-        var f = await db.StoredFiles.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id && x.VesselId == vessel, h.RequestAborted);
+        var f = await OwnedFiles(db, h, vessel).AsNoTracking().SingleOrDefaultAsync(x => x.Id == id && x.VesselId == vessel, h.RequestAborted);
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "FileDetail", "Success", resourceId: id);
         return Results.Ok(Dto(s, f));
     }
@@ -84,7 +104,7 @@ public static class SecureFileEndpoints
     {
         var a = Actor(h); var ct = h.RequestAborted;
         if (!Write(a, vessel)) return await Failure(h, 403, "permission_denied");
-        if (!await Scope(db, a, vessel, ct)) return await Failure(h, 404, "resource_not_found");
+        if (!await Scope(db, a, vessel, h, ct)) return await Failure(h, 404, "resource_not_found");
         if (!await Csrf(h)) return await Failure(h, 403, "csrf_invalid");
         if (!Ready(h)) return await Failure(h, 503, "file_settings_unavailable");
         var key = h.Request.Headers["Idempotency-Key"].Count == 1 ? h.Request.Headers["Idempotency-Key"].ToString() : "";
@@ -97,12 +117,19 @@ public static class SecureFileEndpoints
             command = JsonSerializer.Deserialize<StageFileCommand>(buffer.ToArray(), new JsonSerializerOptions(JsonSerializerDefaults.Web) { MaxDepth = 4 });
         } catch (Exception e) when (e is JsonException or InvalidDataException) { return await Failure(h, 400, "invalid_request"); }
         var settings = h.RequestServices.GetRequiredService<SecureFileSettings>();
-        if (command == null || !SecureFilePolicy.ValidName(command.Name) || command.Mime != "image/png" || command.Length <= 0 || command.Length > settings.MaxBytes || !SecureFilePolicy.Hash(command.Checksum))
+        if (command == null || command.Name is not { Length: > 0 and <= 120 } || command.Mime == null || !settings.AllowedTypes.Contains(command.Mime) || command.Length <= 0 || command.Length > settings.MaxBytes || !SecureFilePolicy.Hash(command.Checksum))
             return await Failure(h, 400, "invalid_file_metadata");
-        var fingerprint = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(new { vessel, command.Name, command.Length, Checksum = command.Checksum!.ToUpperInvariant() }))));
+        // Preserve historical immutable PNG intent fingerprints and their original replay contract.
+        var content = DocumentId(h) == null && command.Mime == "image/png"
+            ? JsonSerializer.Serialize(new { vessel, command.Name, command.Length, Checksum = command.Checksum!.ToUpperInvariant() })
+            : JsonSerializer.Serialize(new { vessel, DocumentId = DocumentId(h), DocumentRevision = DocumentRevision(h), command.Name, command.Mime, command.Length, Checksum = command.Checksum!.ToUpperInvariant() });
+        var fingerprint = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(content)));
         var existing = await db.FileStages.SingleOrDefaultAsync(x => x.ActorId == a.Id && x.Key == key, ct);
-        if (existing != null) return existing.VesselId == vessel && existing.Fingerprint == fingerprint ? Results.Ok(Dto(existing, await db.StoredFiles.SingleOrDefaultAsync(x => x.Id == existing.Id, ct))) : await Failure(h, 409, "idempotency_key_reused");
-        var stage = new FileStage { TenantId = a.TenantId, Id = Guid.NewGuid(), VesselId = vessel, ActorId = a.Id, Key = key, Fingerprint = fingerprint, Name = command.Name!, ExpectedLength = command.Length, ExpectedChecksum = command.Checksum!.ToUpperInvariant(), CreatedAt = DateTimeOffset.UtcNow };
+        if (existing != null) return existing.VesselId == vessel && existing.DocumentId == DocumentId(h) && existing.DocumentRevision == DocumentRevision(h) && existing.Fingerprint == fingerprint ? Results.Ok(Dto(existing, await db.StoredFiles.SingleOrDefaultAsync(x => x.Id == existing.Id, ct))) : await Failure(h, 409, "idempotency_key_reused");
+        if (!DocumentBinaryPolicy.ValidName(command.Name, command.Mime)) return await Failure(h, 400, "invalid_file_metadata");
+        var stage = new FileStage { TenantId = a.TenantId, Id = Guid.NewGuid(), DocumentId = DocumentId(h), DocumentRevision = DocumentRevision(h), VesselId = vessel, ActorId = a.Id, Key = key, Fingerprint = fingerprint,
+            StorageReference = settings.Adapter == "S3" ? settings.S3.ContextHash() : null,
+            Name = command.Name!, Mime = command.Mime!, ExpectedLength = command.Length, ExpectedChecksum = command.Checksum!.ToUpperInvariant(), CreatedAt = DateTimeOffset.UtcNow };
         db.FileStages.Add(stage);
         try { await db.SaveChangesAsync(ct); }
         catch (DbUpdateException) { return await Failure(h, 409, "file_attempt_conflict"); }
@@ -112,36 +139,40 @@ public static class SecureFileEndpoints
     {
         var a = Actor(h); var ct = h.RequestAborted;
         if (!Write(a, vessel)) return await Failure(h, 403, "permission_denied", id);
-        if (!await Scope(db, a, vessel, ct)) return await Failure(h, 404, "resource_not_found", id);
+        if (!await Scope(db, a, vessel, h, ct)) return await Failure(h, 404, "resource_not_found", id);
         if (!await Csrf(h)) return await Failure(h, 403, "csrf_invalid", id);
         if (!Ready(h)) return await Failure(h, 503, "file_settings_unavailable", id);
-        var stage = await db.FileStages.SingleOrDefaultAsync(x => x.Id == id && x.VesselId == vessel && x.ActorId == a.Id, ct);
+        var stage = await Owned(db, h).SingleOrDefaultAsync(x => x.Id == id && x.VesselId == vessel && x.ActorId == a.Id, ct);
         if (stage == null) return await Failure(h, 404, "resource_not_found", id);
         if (stage.State == "CleanTransport") return Results.Ok(Dto(stage, await db.StoredFiles.SingleAsync(x => x.Id == id, ct)));
         if (stage.State != "Pending") return await Failure(h, 409, "file_attempt_frozen", id);
-        if (h.Request.ContentType != "image/png" || h.Request.ContentLength.HasValue && h.Request.ContentLength != stage.ExpectedLength)
+        if (h.Request.ContentType != stage.Mime || h.Request.ContentLength.HasValue && h.Request.ContentLength != stage.ExpectedLength)
             return await Failure(h, 400, "file_type_or_size_invalid", id);
         stage.State = "Receiving";
         try { await db.SaveChangesAsync(ct); }
         catch (DbUpdateConcurrencyException) { return await Failure(h, 409, "file_attempt_conflict", id); }
-        var objects = h.RequestServices.GetRequiredService<LocalFileObjects>();
+        var objects = h.RequestServices.GetRequiredService<FileObjects>();
         var settings = h.RequestServices.GetRequiredService<SecureFileSettings>();
+        if (stage.StorageReference != (settings.Adapter == "S3" ? settings.S3.ContextHash() : null)) return await Failure(h, 503, "file_settings_unavailable", id);
         try {
             await using (var stream = objects.Create(a.TenantId, id)) {
                 var observed = await SecureFilePolicy.CopyAsync(h.Request.Body, stream, Math.Min(settings.MaxBytes, stage.ExpectedLength), ct);
                 await stream.FlushAsync(ct);
                 if (observed.Length != stage.ExpectedLength || observed.Checksum != stage.ExpectedChecksum) throw new InvalidDataException("file_checksum_invalid");
-                stream.Position = 0; await SecureFilePolicy.ValidatePngAsync(stream, settings.MaxPixels, ct);
+                stream.Position = 0; await DocumentBinaryPolicy.ValidateAsync(stream, stage.Mime, settings.MaxPixels, ct);
                 stream.Position = 0; await h.RequestServices.GetRequiredService<ClamdScanner>().ScanAsync(stream, ct);
                 // Same exclusive immutable handle for validation and scan. No caller-provided clean assertion.
             }
+            var provider = await objects.CommitAsync(a.TenantId, id, stage.ExpectedChecksum, stage.ExpectedLength, stage.Mime, ct);
             var current = h.RequestServices.GetRequiredService<ActorResolver>().Resolve(h.User);
-            if (current == null || current.Id != a.Id || current.TenantId != a.TenantId || !Write(current, vessel) || !await Scope(db, current, vessel, ct))
+            if (current == null || current.Id != a.Id || current.TenantId != a.TenantId || !Write(current, vessel) || !await Scope(db, current, vessel, h, ct))
                 return await Failure(h, 403, "permission_denied", id);
             // Bytes exist before committing accepted metadata; a failed commit leaves an orphan, never a downloadable row.
             await using var transaction = await db.Database.BeginTransactionAsync(ct);
             stage.State = "CleanTransport";
-            var file = new StoredFile { TenantId = a.TenantId, Id = id, VesselId = vessel, Name = stage.Name, Checksum = stage.ExpectedChecksum, Length = stage.ExpectedLength, RetentionReference = settings.RetentionReference!, ScannerReference = settings.ScannerReference!, ScannedAt = DateTimeOffset.UtcNow };
+            var file = new StoredFile { TenantId = a.TenantId, Id = id, VesselId = vessel, Name = stage.Name, Mime = stage.Mime, ProviderVersion = provider.Version, ProviderETag = provider.ETag,
+                ProviderReference = settings.Adapter == "S3" ? settings.S3.ContextHash() : null,
+                Checksum = stage.ExpectedChecksum, Length = stage.ExpectedLength, RetentionReference = settings.RetentionReference!, ScannerReference = settings.ScannerReference!, ScannedAt = DateTimeOffset.UtcNow };
             db.StoredFiles.Add(file); await db.SaveChangesAsync(ct);
             db.CommandReceipts.Add(new() { TenantId = a.TenantId, ActorId = a.Id, Key = stage.Key, Action = "FileFinalize", Fingerprint = stage.Fingerprint, ResourceId = id, RegisterRevision = 1, RegisterVersion = file.Version, CommittedAt = DateTimeOffset.UtcNow });
             await db.SaveChangesAsync(ct); await transaction.CommitAsync(ct);
@@ -159,10 +190,10 @@ public static class SecureFileEndpoints
     {
         var a = Actor(h);
         if (!Read(a)) return await Failure(h, 403, "permission_denied", id);
-        if (!await Scope(db, a, vessel, h.RequestAborted)) return await Failure(h, 404, "resource_not_found", id);
+        if (!await Scope(db, a, vessel, h, h.RequestAborted)) return await Failure(h, 404, "resource_not_found", id);
         if (!await Csrf(h)) return await Failure(h, 403, "csrf_invalid", id);
         if (!Ready(h)) return await Failure(h, 503, "file_settings_unavailable", id);
-        var f = await db.StoredFiles.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id && x.VesselId == vessel, h.RequestAborted);
+        var f = await OwnedFiles(db, h, vessel).AsNoTracking().SingleOrDefaultAsync(x => x.Id == id && x.VesselId == vessel, h.RequestAborted);
         if (f == null) return await Failure(h, 404, "resource_not_found", id);
         var expires = DateTimeOffset.UtcNow.AddSeconds(h.RequestServices.GetRequiredService<SecureFileSettings>().CapabilitySeconds);
         var token = h.RequestServices.GetRequiredService<FileCapabilities>().Issue(a.TenantId, a.Id, vessel, id, f.Revision, expires);
@@ -174,20 +205,20 @@ public static class SecureFileEndpoints
     {
         var a = Actor(h); var ct = h.RequestAborted;
         if (!Read(a)) return await Failure(h, 403, "permission_denied", id);
-        if (!await Scope(db, a, vessel, ct)) return await Failure(h, 404, "resource_not_found", id);
+        if (!await Scope(db, a, vessel, h, ct)) return await Failure(h, 404, "resource_not_found", id);
         if (!Ready(h)) return await Failure(h, 503, "file_settings_unavailable", id);
-        var file = await db.StoredFiles.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id && x.VesselId == vessel, ct);
+        var file = await OwnedFiles(db, h, vessel).AsNoTracking().SingleOrDefaultAsync(x => x.Id == id && x.VesselId == vessel, ct);
         if (file == null) return await Failure(h, 404, "resource_not_found", id);
         if (h.Request.Headers["X-File-Capability"].Count != 1 || !h.RequestServices.GetRequiredService<FileCapabilities>().Valid(h.Request.Headers["X-File-Capability"], a.TenantId, a.Id, vessel, id, file.Revision, DateTimeOffset.UtcNow))
             return await Failure(h, 403, "file_capability_invalid", id);
         FileStream? stream = null;
         try {
-            stream = h.RequestServices.GetRequiredService<LocalFileObjects>().Open(a.TenantId, id);
+            stream = await h.RequestServices.GetRequiredService<FileObjects>().OpenAsync(file, ct);
             if (stream.Length != file.Length || stream.Length > h.RequestServices.GetRequiredService<SecureFileSettings>().MaxBytes || Convert.ToHexString(await SHA256.HashDataAsync(stream, ct)) != file.Checksum)
                 throw new InvalidDataException();
             stream.Position = 0;
             await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "FileDownload", "Authorized", resourceId: id);
-            return Results.Stream(stream, "image/png", file.Name, enableRangeProcessing: false);
+            return Results.Stream(stream, file.Mime, file.Name, enableRangeProcessing: false);
         } catch (Exception e) when (e is IOException or InvalidDataException) {
             if (stream != null) await stream.DisposeAsync();
             return await Failure(h, 503, "file_bytes_unavailable", id);

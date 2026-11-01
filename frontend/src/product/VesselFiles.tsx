@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
-import { downloadFile, fileDetail, filePage, stageFile, uploadFile, type FileAttempt, type FilePage, type FileRecord } from './file-api'
+import { downloadFile, fileDetail, filePage, stageFile, uploadFile, mimeForName, type DocumentOwner, type FileAttempt, type FilePage, type FileRecord } from './file-api'
 
-export function VesselFiles({ vessel, language, csrf, onDirty, onSaving }: { vessel: string; language: 'tr' | 'en'; csrf: string; onDirty: (v: boolean) => void; onSaving: (v: boolean) => void }) {
+export function VesselFiles({ vessel, language, csrf, onDirty, onSaving, owner }: { owner?: DocumentOwner; vessel: string; language: 'tr' | 'en'; csrf: string; onDirty: (v: boolean) => void; onSaving: (v: boolean) => void }) {
   const en = language === 'en'
   const stateLabel = (state: FileRecord['state']) => ({ Pending: en ? 'Pending upload' : 'Yükleme bekliyor', Receiving: en ? 'Quarantined / interrupted' : 'Karantina / kesilmiş', CleanTransport: en ? 'Scanned transport, unverified evidence' : 'Taranmış aktarım, doğrulanmamış kanıt', Abandoned: en ? 'Abandoned / reconciliation' : 'Bırakıldı / uzlaştırma', SyntheticUnverified: en ? 'Synthetic unverified metadata' : 'Sentetik doğrulanmamış meta veri' })[state]
   const [loaded, setLoaded] = useState<{ key: string; page: FilePage } | null>(null); const [offset, setOffset] = useState(0)
@@ -10,11 +10,11 @@ export function VesselFiles({ vessel, language, csrf, onDirty, onSaving }: { ves
   const [frozen, setFrozen] = useState(false); const [busy, setBusy] = useState(false); const [progress, setProgress] = useState(0)
   const [selection, setSelection] = useState<{ key: string; row: FileRecord } | null>(null); const [notice, setNotice] = useState('')
   const controller = useRef<AbortController | null>(null)
-  const pageKey = `${vessel}:${offset}:${reload}`
+  const pageKey = `${vessel}:${owner?.id}:${owner?.revision}:${offset}:${reload}`
   const selected = selection?.key === pageKey ? selection.row : null
   const setSelected = (row: FileRecord | null) => setSelection(row ? { key: pageKey, row } : null)
   const page = loaded?.key === pageKey ? loaded.page : null
-  useEffect(() => { const c = new AbortController(); let active = true; filePage(vessel, offset, c.signal).then(value => { if (active) { setLoaded({ key: pageKey, page: value }); setSelection(null); setError(false) } }).catch(() => { if (active && !c.signal.aborted) setError(true) }); return () => { active = false; c.abort() } }, [vessel, offset, reload, pageKey])
+  useEffect(() => { const c = new AbortController(); let active = true; filePage(vessel, offset, c.signal, owner).then(value => { if (active) { setLoaded({ key: pageKey, page: value }); setSelection(null); setError(false) } }).catch(() => { if (active && !c.signal.aborted) setError(true) }); return () => { active = false; c.abort() } }, [vessel, owner, offset, reload, pageKey])
   useEffect(() => () => controller.current?.abort(), [])
   const start = async () => {
     if (!file || busy || !page?.available || !page.canWrite) return
@@ -22,12 +22,12 @@ export function VesselFiles({ vessel, language, csrf, onDirty, onSaving }: { ves
     const c = new AbortController(); controller.current = c
     try {
       if (!attempt.current) {
-        if (file.size === 0 || file.size > page.maxBytes || file.type !== 'image/png' || !/^[A-Za-z0-9_.-]+\.png$(?![\s\S])/i.test(file.name) || file.name.includes('..')) throw Error()
+        if (file.name.normalize('NFC') !== file.name || file.name.length > 120 || file.size === 0 || file.size > page.maxBytes || !page.allowedTypes.includes(file.type) || mimeForName(file.name) !== file.type || !/^[\p{L}\p{N}_. -]+\.(png|jpe?g|pdf)$(?![\s\S])/iu.test(file.name) || (file.name.match(/\./g)?.length ?? 0) !== 1) throw Error()
         const checksum = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', await file.arrayBuffer())), x => x.toString(16).padStart(2, '0')).join('').toUpperCase()
         attempt.current = { key: crypto.randomUUID(), file, checksum }; setFrozen(true)
       }
-      const staged = await stageFile(vessel, attempt.current, csrf, c.signal)
-      const row = staged.state === 'Pending' ? await uploadFile(vessel, staged.id, attempt.current.file, csrf, c.signal, setProgress) : await fileDetail(vessel, staged.id, c.signal)
+      const staged = await stageFile(vessel, attempt.current, csrf, c.signal, owner)
+      const row = staged.state === 'Pending' ? await uploadFile(vessel, staged.id, attempt.current.file, csrf, c.signal, setProgress, owner) : await fileDetail(vessel, staged.id, c.signal, owner)
       setSelected(row)
       if (row.state !== 'CleanTransport') { setNotice(en ? 'Quarantined or interrupted. This attempt cannot upload again. Reconcile its state before starting another.' : 'Karantinada veya kesildi. Bu deneme yeniden yüklenemez. Yeni denemeden önce durumunu uzlaştırın.'); return }
       attempt.current = null; setFile(null); setFrozen(false); onDirty(false)
@@ -37,7 +37,7 @@ export function VesselFiles({ vessel, language, csrf, onDirty, onSaving }: { ves
   }
   const download = async () => {
     if (!selected) return; setBusy(true); onSaving(true); const c = new AbortController(); controller.current = c
-    try { const blob = await downloadFile(vessel, selected, csrf, c.signal); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = selected.name; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000) }
+    try { const blob = await downloadFile(vessel, selected, csrf, c.signal, owner); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = selected.name; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000) }
     catch { setError(true) } finally { setBusy(false); onSaving(false) }
   }
   return <section className="vessel-files" aria-label={en ? 'Vessel files' : 'Araç dosyaları'}>
@@ -50,13 +50,13 @@ export function VesselFiles({ vessel, language, csrf, onDirty, onSaving }: { ves
     {page && <>
       {!page.available && <p role="status">{en ? 'Storage, scanner and operator settings are required before upload/download.' : 'Yükleme/indirme için depolama, tarayıcı ve operatör ayarları gereklidir.'}</p>}
       {page.canWrite && <form onSubmit={e => { e.preventDefault(); void start() }}>
-        <label>{en ? 'PNG file' : 'PNG dosyası'} <input type="file" accept="image/png,.png" disabled={frozen || busy || !page.available} onChange={e => { setFile(e.target.files?.[0] ?? null); onDirty(!!e.target.files?.length) }} /></label>
-        <p>{en ? 'Allowed: passive PNG subset. Operator byte limit:' : 'İzin verilen: pasif PNG alt kümesi. Operatör bayt sınırı:'} {page.maxBytes}</p>
+        <label>{en ? 'Attachment file' : 'Ek dosyası'} <input type="file" accept={page.allowedTypes.join(',')} disabled={frozen || busy || !page.available} onChange={e => { setFile(e.target.files?.[0] ?? null); onDirty(!!e.target.files?.length) }} /></label>
+        <p>{en ? 'Allowed types and byte limit:' : 'İzin verilen türler ve bayt sınırı:'} {page.allowedTypes.join(', ')} · {page.maxBytes}</p>
         <button disabled={!file || busy || !page.available}>{frozen ? (en ? 'Retry same attempt' : 'Aynı denemeyi kontrol et') : (en ? 'Upload file' : 'Dosyayı yükle')}</button>
         {busy && <><progress aria-label={en ? 'Upload progress' : 'Yükleme ilerlemesi'} max={100} value={progress} /><button type="button" onClick={() => controller.current?.abort()}>{en ? 'Cancel request' : 'İsteği iptal et'}</button></>}
         {!busy && (file || frozen) && <button type="button" onClick={() => { attempt.current = null; setFrozen(false); setFile(null); onDirty(false); setNotice(en ? 'Local attempt discarded; quarantined server bytes may remain for reconciliation.' : 'Yerel deneme bırakıldı; karantina baytları uzlaştırma için sunucuda kalabilir.') }}>{en ? 'Discard local attempt' : 'Yerel denemeyi bırak'}</button>}
       </form>}
-      {page.items.length === 0 ? <p>{en ? 'No files in this vessel scope.' : 'Bu araç kapsamında dosya yok.'}</p> : <ul>{page.items.map(row => <li key={row.id}><button disabled={busy || frozen} onClick={async () => { controller.current?.abort(); const c = new AbortController(); controller.current = c; try { const detail = await fileDetail(vessel, row.id, c.signal); if (!c.signal.aborted) setSelected(detail) } catch { if (!c.signal.aborted) { setSelected(null); setError(true) } } }}>{row.name}</button> · {stateLabel(row.state)}</li>)}</ul>}
+      {page.items.length === 0 ? <p>{en ? 'No files in this vessel scope.' : 'Bu araç kapsamında dosya yok.'}</p> : <ul>{page.items.map(row => <li key={row.id}><button disabled={busy || frozen} onClick={async () => { controller.current?.abort(); const c = new AbortController(); controller.current = c; try { const detail = await fileDetail(vessel, row.id, c.signal, owner); if (!c.signal.aborted) setSelected(detail) } catch { if (!c.signal.aborted) { setSelected(null); setError(true) } } }}>{row.name}</button> · {stateLabel(row.state)}</li>)}</ul>}
       <button disabled={offset === 0 || busy || frozen} onClick={() => setOffset(x => Math.max(0, x - 25))}>{en ? 'Previous files' : 'Önceki dosyalar'}</button><button disabled={!page.hasMore || busy || frozen} onClick={() => setOffset(x => x + 25)}>{en ? 'Next files' : 'Sonraki dosyalar'}</button>
     </>}
     {selected && <article aria-label={en ? 'File details' : 'Dosya ayrıntıları'}><h3>{selected.name}</h3><dl><dt>{en ? 'Transport state' : 'Aktarım durumu'}</dt><dd>{stateLabel(selected.state)}</dd><dt>SHA-256</dt><dd>{selected.checksum ?? '—'}</dd><dt>{en ? 'Revision' : 'Revizyon'}</dt><dd>{selected.revision ?? '—'}</dd></dl>{selected.state === 'CleanTransport' && <button disabled={busy || !page?.available} onClick={() => void download()}>{en ? 'Download file' : 'Dosyayı indir'}</button>}</article>}

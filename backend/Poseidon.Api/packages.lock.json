@@ -140,6 +140,20 @@
           "Microsoft.EntityFrameworkCore.Relational": "[10.0.4, 11.0.0)",
           "Npgsql": "10.0.3"
         }
+      },
+      "AWSSDK.S3": {
+        "type": "Direct",
+        "requested": "[4.0.104.8, )",
+        "resolved": "4.0.104.8",
+        "contentHash": "NB3HpmPmXtzQepJliwRr6G6aAqRmnH+xQyKnZekrL+5W3fuOC7Bvki6rlQRxbIZ74oNutxJkTmUVWc1nLPO9vQ==",
+        "dependencies": {
+          "AWSSDK.Core": "[4.0.102.14, 5.0.0)"
+        }
+      },
+      "AWSSDK.Core": {
+        "type": "Transitive",
+        "resolved": "4.0.102.14",
+        "contentHash": "u9SxFnF/Bf8k9hQYkfSljxDcD4erpVmtDfj4XeIfwutF5HQR29L0YSibJqnwuG8oUZ6CPla6plOdqxULeDj5rg=="
       }
     }
   }
