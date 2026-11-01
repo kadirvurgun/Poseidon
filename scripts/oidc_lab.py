@@ -231,6 +231,9 @@ def browser():
     write(PRIVATE / 'browser-counts.json', json.dumps({'status': 'not_completed', 'passed': 0, 'failed': 0, 'failureLines': []}))
     env = environment()
     env['POSEIDON_LAB_PRIVATE'] = str(PRIVATE)
+    env['POSEIDON_LAB_PYTHON'] = sys.executable
+    env['NODE_EXTRA_CA_CERTS'] = str(PRIVATE / 'ca.pem')
+    env.pop('NODE_TLS_REJECT_UNAUTHORIZED', None)
     run([root_tool('node'), str(ROOT / 'tests/Poseidon.Browser.Tests/lab/run.ts')], env=env, timeout=300)
 
 
@@ -264,6 +267,9 @@ def register_browser():
     stage('real_provider_register_browser')
     env = environment()
     env['POSEIDON_LAB_PRIVATE'] = str(PRIVATE)
+    env['POSEIDON_LAB_PYTHON'] = sys.executable
+    env['NODE_EXTRA_CA_CERTS'] = str(PRIVATE / 'ca.pem')
+    env.pop('NODE_TLS_REJECT_UNAUTHORIZED', None)
     run([root_tool('node'), str(ROOT / 'tests/Poseidon.Browser.Tests/lab/register-run.ts')], env=env, timeout=600)
 
 

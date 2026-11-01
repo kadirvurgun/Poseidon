@@ -1,3 +1,4 @@
+import { calendar, timestamp } from './date-validation'
 import { ApiError, request } from './api'
 import type { components } from '../generated/api'
 
@@ -13,50 +14,52 @@ export type RegisterPage<T> = { items: T[]; offset: number; limit: number; hasMo
 export type RegisterKind = 'sources' | 'requirements'
 export type Command = Schemas['RegisterCommand'] & { expectedVersion: number; content: RegisterContent; sourceId: string | null; sourceRevision: number | null }
 const uuid = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i
+const guid = (v: unknown): v is string => typeof v === 'string' && v.length === 36 && uuid.test(v) && v !== '00000000-0000-0000-0000-000000000000'
 const positive = (v: unknown) => typeof v === 'number' && Number.isSafeInteger(v) && v > 0
 const record = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v)
+const exact = (v: Record<string, unknown>, keys: readonly string[]) => Object.keys(v).length === keys.length && keys.every(k => Object.hasOwn(v, k))
 const invalid = (): never => { throw new ApiError(502, 'invalid_contract') }
 export const blankContent = (): RegisterContent => Object.fromEntries(Object.keys(fieldBounds).map(key => [key, { state: 'Missing', value: null }])) as RegisterContent
 export function validContent(value: unknown): value is RegisterContent {
-  if (!record(value) || Object.keys(value).length !== Object.keys(fieldBounds).length) return false
+  if (!record(value) || !exact(value, Object.keys(fieldBounds))) return false
   for (const [key, bound] of Object.entries(fieldBounds)) {
     const f = value[key]
-    if (!record(f) || !['Missing', 'Unknown', 'Known'].includes(String(f.state)) ||
-      (f.state === 'Known' ? typeof f.value !== 'string' || !f.value.trim() || f.value.length > bound || Array.from(f.value).some(c => c.charCodeAt(0) < 32 || c.charCodeAt(0) === 127) : f.value !== null)) return false
+    if (!record(f) || !exact(f, ['state', 'value']) || (typeof f.state !== 'string' || !['Missing', 'Unknown', 'Known'].includes(f.state)) ||
+      (f.state === 'Known' ? typeof f.value !== 'string' || !f.value.trim() || f.value.length > bound || Array.from(f.value).some(c => c.charCodeAt(0) < 32 || (c.charCodeAt(0) >= 127 && c.charCodeAt(0) <= 159)) : f.value !== null)) return false
   }
   const c = value as RegisterContent
-  if (c.effectiveDate.state === 'Known' && (!/^\d{4}-\d{2}-\d{2}$/.test(c.effectiveDate.value!) || Number.isNaN(Date.parse(c.effectiveDate.value!)) || new Date(c.effectiveDate.value!).toISOString().slice(0, 10) !== c.effectiveDate.value)) return false
-  if (c.observedAt.state === 'Known' && (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,7})?(?:Z|[+-]\d{2}:\d{2})$/.test(c.observedAt.value!) || Number.isNaN(Date.parse(c.observedAt.value!)))) return false
+  if (c.effectiveDate.state === 'Known' && !calendar(c.effectiveDate.value!)) return false
+  if (c.observedAt.state === 'Known' && !timestamp(c.observedAt.value)) return false
   return true
 }
 export function decodeRevision(value: unknown, kind: RegisterKind): Revision {
-  if (!record(value) || typeof value.id !== 'string' || !uuid.test(value.id) || value.kind !== (kind === 'sources' ? 'Source' : 'Requirement') ||
-    !positive(value.revision) || typeof value.savedAt !== 'string' || !/Z$|[+-]\d{2}:\d{2}$/.test(value.savedAt) || Number.isNaN(Date.parse(value.savedAt)) ||
-    !['DeclaredUnverified', 'SyntheticUnverified'].includes(String(value.provenance)) || typeof value.hash !== 'string' || !/^[A-F0-9]{64}$/.test(value.hash) ||
+  if (!record(value) || !exact(value, ['id', 'kind', 'revision', 'savedAt', 'provenance', 'hash', 'content', 'sourceId', 'sourceRevision', 'lifecycle']) || !guid(value.id) || value.kind !== (kind === 'sources' ? 'Source' : 'Requirement') ||
+    !positive(value.revision) || !timestamp(value.savedAt) ||
+    (typeof value.provenance !== 'string' || !['DeclaredUnverified', 'SyntheticUnverified'].includes(value.provenance)) || typeof value.hash !== 'string' || value.hash.length !== 64 || !/^[A-F0-9]{64}$/.test(value.hash) ||
     value.lifecycle !== 'DRAFT' || !validContent(value.content) ||
-    !(value.sourceId === null && value.sourceRevision === null || kind === 'requirements' && typeof value.sourceId === 'string' && uuid.test(value.sourceId) && positive(value.sourceRevision))) return invalid()
+    !(value.sourceId === null && value.sourceRevision === null || kind === 'requirements' && guid(value.sourceId) && value.sourceId.toLowerCase() !== value.id.toLowerCase() && positive(value.sourceRevision))) return invalid()
   const content = value.content
   if (kind === 'sources' ? content.instrument.state !== 'Missing' : [content.title, content.authority, content.locator].some(f => f.state !== 'Missing')) return invalid()
   return value as Revision
 }
 export function decodeDraft(value: unknown, kind: RegisterKind): Draft {
-  if (!record(value) || !positive(value.version) || (value.version as number) > 4294967295 || typeof value.canEdit !== 'boolean') return invalid()
+  if (!record(value) || !exact(value, ['version', 'canEdit', 'current']) || !positive(value.version) || (value.version as number) > 4294967295 || typeof value.canEdit !== 'boolean') return invalid()
   return { version: value.version as number, canEdit: value.canEdit, current: decodeRevision(value.current, kind) }
 }
-function page<T>(value: unknown, decode: (v: unknown) => T): RegisterPage<T> {
-  if (!record(value) || !Array.isArray(value.items) || value.items.length > 25 || typeof value.offset !== 'number' || !Number.isSafeInteger(value.offset) || value.offset < 0 || value.limit !== 25 || typeof value.hasMore !== 'boolean') return invalid()
+function page<T>(value: unknown, decode: (v: unknown) => T, offset: number): RegisterPage<T> {
+  if (!record(value) || !exact(value, ['items', 'offset', 'limit', 'hasMore']) || !Array.isArray(value.items) || value.items.length > 25 || typeof value.offset !== 'number' || !Number.isSafeInteger(value.offset) || value.offset < 0 || value.offset > 100000 || value.offset !== offset || value.limit !== 25 || typeof value.hasMore !== 'boolean' || value.hasMore && value.items.length !== 25) return invalid()
   return { items: value.items.map(decode), offset: value.offset, limit: 25, hasMore: value.hasMore }
 }
 const path = (kind: RegisterKind) => kind === 'sources' ? 'source-drafts' : 'requirement-drafts'
-export const listDrafts = async (kind: RegisterKind, q: string, offset: number, signal: AbortSignal) => page(await request<unknown>(`${path(kind)}?q=${encodeURIComponent(q)}&offset=${offset}&limit=25`, signal), v => decodeDraft(v, kind))
+export const listDrafts = async (kind: RegisterKind, q: string, offset: number, signal: AbortSignal) => page(await request<unknown>(`${path(kind)}?q=${encodeURIComponent(q)}&offset=${offset}&limit=25`, signal), v => decodeDraft(v, kind), offset)
 export const readDraft = async (kind: RegisterKind, id: string, signal: AbortSignal) => {
   const value = decodeDraft(await request<unknown>(`${path(kind)}/${encodeURIComponent(id)}`, signal), kind)
   if (value.current.id.toLowerCase() !== id.toLowerCase()) return invalid()
   return value
 }
 export const historyDraft = async (kind: RegisterKind, id: string, offset: number, signal: AbortSignal) => {
-  const result = page(await request<unknown>(`${path(kind)}/${encodeURIComponent(id)}/history?offset=${offset}&limit=25`, signal), v => decodeRevision(v, kind))
-  if (result.items.some(v => v.id.toLowerCase() !== id.toLowerCase())) return invalid()
+  const result = page(await request<unknown>(`${path(kind)}/${encodeURIComponent(id)}/history?offset=${offset}&limit=25`, signal), v => decodeRevision(v, kind), offset)
+  if (result.items.some((v, i) => v.id.toLowerCase() !== id.toLowerCase() || i > 0 && v.revision >= result.items[i - 1].revision)) return invalid()
   return result
 }
 export const saveDraft = async (kind: RegisterKind, id: string | null, body: string, csrf: string, key: string, signal: AbortSignal) => {

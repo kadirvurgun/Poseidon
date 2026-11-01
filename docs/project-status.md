@@ -1,5 +1,9 @@
 # POSEIDON ilerleme raporu — 2026-11-01
 
+- **REG-BOUNDARY-TLS-01 local corrective gate PASS; NOT ACCEPTED:** whole318a147 remains REJECTED and CORE automatic backend repair ended. Strict exact register DTO/date/page validation and scoped Firefox NSS trust implemented. 298 React,6 actual authenticated register cases,3 real negative browser TLS cases and2 additional signed-provider journeys PASS,0 skips; lint/typecheck/build and lab typecheck PASS. Firefox desktop/narrow-responsive coverage carries no Chromium/touch claim. Zero task-port listeners/profiles/transient states after cleanup; owned volumes/private configuration preserved. [Current candidate/evidence](phases/REG-BOUNDARY-TLS-01.md), [task/criteria](tasks/reg-boundary-tls-01.md). Coordinator fresh complete-diff review against approved93de and CI pending; no publication/self-approval/canonical change.
+
+The CORE/earlier delivery results below are retained historical evidence. Backend135/persistence29/React193 are preserved, not rerun here; their former browser TLS bypass does not count as strict TLS proof.
+
 - **CORE-BUNDLE-01 rejection repaired locally; NOT ACCEPTED:** exact replay revision/xmin, strict audited queries and all four mandatory-header contracts repaired. Current repair checks:135 API,29 PostgreSQL persistence,193 React and6 real-provider REG cases PASS,0 skips;locked restore/build,actual-host generation,lint/typecheck/build,EF parity and AST PASS. Initial failures retained;unchanged original suites remain historical. [Current repair evidence](phases/CORE-BUNDLE-01.md). Coordinator exact-commit QA/CI and publication remain pending.
 
 

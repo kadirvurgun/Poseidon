@@ -13,7 +13,8 @@ export default defineConfig({
   // These options alone do not disable automatic error context in the test runner.
   captureGitInfo: { commit: false, diff: false },
   projects: [
-    { name: 'desktop', use: { ...devices['Desktop Chrome'] } },
-    { name: 'mobile', use: { ...devices['Desktop Chrome'], viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true } },
+    { name: 'firefox-desktop', use: { ...devices['Desktop Firefox'] } },
+    // Firefox has no isMobile emulation: actual narrow responsive layout, no touch claim.
+    { name: 'firefox-narrow-responsive', use: { ...devices['Desktop Firefox'], viewport: { width: 390, height: 844 } } },
   ],
 })

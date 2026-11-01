@@ -41,6 +41,25 @@ describe('REG-SOURCE-DRAFT-01 authored component/transport tests; mocked transpo
     const saves = fetch.mock.calls.filter(([, init]) => init?.method === 'PUT'); expect(saves).toHaveLength(2)
     expect(saves[0][1].body).toBe(saves[1][1].body); expect(saves[0][1].headers).toEqual(saves[1][1].headers)
   })
+  it('retains dirty values and frozen bytes/key after an ambiguous malformed successful save response', async () => {
+    let saves = 0
+    const fetch = mock(async () => response(++saves === 1 ? { ...draft, unexpected: true } : draft))
+    const p = props(); render(<RegulatoryRegister {...p} />); const user = userEvent.setup()
+    await screen.findByLabelText('Title · State')
+    await user.selectOptions(screen.getByLabelText('Title · State'), 'Known')
+    await user.type(screen.getByLabelText('Title', { exact: true }), 'Retained declaration')
+    await user.click(screen.getByRole('button', { name: 'Save draft' }))
+    const retry = await screen.findByRole('button', { name: 'Retry frozen command' })
+    expect(screen.queryByText('Draft saved. Unverified.')).not.toBeInTheDocument()
+    expect(screen.getByLabelText('Title', { exact: true })).toHaveValue('Retained declaration')
+    expect(screen.getByLabelText('Title', { exact: true })).toBeDisabled()
+    expect(p.onDirty).toHaveBeenLastCalledWith(true)
+    await user.click(retry); await screen.findByText('Draft saved. Unverified.')
+    const commands = fetch.mock.calls.filter(([, init]) => init?.method === 'PUT')
+    expect(commands).toHaveLength(2)
+    expect(commands[1][1].body).toBe(commands[0][1].body)
+    expect(commands[1][1].headers).toEqual(commands[0][1].headers)
+  })
   it('retains dirty values through history failure, history retry, offline reconnect and conflict', async () => {
     let fail = true
     vi.stubGlobal('fetch', vi.fn((url: string, init: RequestInit) => Promise.resolve(response(init?.method ? { code: 'version_conflict' } : url.includes('history') ? fail ? {} : page([draft.current]) : draft, init?.method ? 409 : 200))))

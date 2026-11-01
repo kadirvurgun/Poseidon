@@ -1,12 +1,12 @@
 {
   "as_of": "2026-11-01",
   "reg_source_draft_01": {
-    "status": "rejection_repaired_local_candidate_awaiting_independent_exact_commit_qa",
+    "status": "whole318a147_rejected_new_bounded_boundary_tls_candidate_pending_independent_qa",
     "accepted": false,
     "baseline_commit": "5784b82",
     "task": "docs/tasks/reg-source-draft-01.md",
     "phase_report": "docs/phases/REG-SOURCE-DRAFT-01.md",
-    "current_phase": "Rejection repair locally validated;awaiting independent exact-commit QA",
+    "current_phase": "Corrective frontend/browser developer gate complete; independent QA pending; NOT ACCEPTED",
     "delivered": "Source/requirement draft registers, immutable exact source lineage, explicit trusted default-deny permissions, transactional audit/receipts/xmin, fictional fixtures, real HTTP TR/EN editor/history/search/dirty/conflict/frozen retry and authored tests",
     "verification": {
       "backend_domain_persistence_api_postgresql": "DEFERRED / NOT RUN",
@@ -29,8 +29,8 @@
       "Combined CORE-BUNDLE-01 checks, independent target QA, pilot/release"
     ],
     "publication": "UNVERIFIED local checkpoint only; no push/PR/merge/accounts/extra agents/self-approval",
-    "next_step": "Coordinator independent exact-commit review of rejection repair and required CI;NOT ACCEPTED",
-    "final_verification_reference": "docs/phases/CORE-BUNDLE-01.md",
+    "next_step": "Coordinator independent review of complete local candidate against93de; no accepted points added",
+    "final_verification_reference": "docs/phases/REG-BOUNDARY-TLS-01.md",
     "verification_record_scope": "Authored/deferred and original20f1198 results are historical;current rejection-repair evidence in core_bundle_01.verification"
   },
   "baseline": "POSEIDON v46.3 updated 2026-10-30 / Library26 candidate",
@@ -2658,7 +2658,7 @@
     "verification_record_scope": "Original authored/deferred verification retained as historical; final current results in core_bundle_01"
   },
   "core_bundle_01": {
-    "status": "rejection_repaired_local_candidate_awaiting_independent_exact_commit_qa",
+    "status": "whole318a147_rejected_backend_repair_stage_ended_new_bounded_frontend_candidate_pending_independent_qa",
     "accepted": false,
     "phase_report": "docs/phases/CORE-BUNDLE-01.md",
     "approved_base": "93de7b6b376fb4592150c5c7b15a8c52e39bd4b3",
@@ -2671,7 +2671,7 @@
       "Production IdP/MFA/revocation/privacy/retention/DB privileges",
       "Expert/pilot/release and existing13 moderate frontend advisories"
     ],
-    "next_step": "Coordinator independent exact-commit review before any future publication",
+    "next_step": "Coordinator independent review of complete local candidate against93de; no accepted points added",
     "historical_rejected_commit_verification": {
       "domain": 61,
       "persistence_postgresql": 29,
@@ -2747,6 +2747,79 @@
         "private_files_ignored": true
       }
     },
-    "current_phase": "Local rejection repair;coordinator review pending"
+    "current_phase": "Corrective frontend/browser developer gate complete; independent QA pending; NOT ACCEPTED",
+    "verification_commit": "318a14788a37b5d30dfd27c6c2eca94745b546b5",
+    "verification_record_scope": "Existing verification object is preserved historical318a147 developer evidence; browser TLS was bypassed there. New scoped strict-TLS/runtime-boundary candidate evidence is reg_boundary_tls_01; no whole-commit approval.",
+    "current_candidate_task": "docs/tasks/reg-boundary-tls-01.md",
+    "current_candidate_phase": "docs/phases/REG-BOUNDARY-TLS-01.md"
+  },
+  "reg_boundary_tls_01": {
+    "status": "local_developer_gate_passed_awaiting_independent_exact_commit_review",
+    "accepted": false,
+    "parent_rejected_commit": "318a14788a37b5d30dfd27c6c2eca94745b546b5",
+    "approved_base": "93de7b6b376fb4592150c5c7b15a8c52e39bd4b3",
+    "candidate": "Local commit containing this record; supplied in delivery message; complete diff against approved base required",
+    "task": "docs/tasks/reg-boundary-tls-01.md",
+    "phase_report": "docs/phases/REG-BOUNDARY-TLS-01.md",
+    "current_phase": "Corrective frontend/browser developer gate complete; independent QA pending; NOT ACCEPTED",
+    "delivered": [
+      "Exact register runtime DTO/member/state/link/page/request-offset validation",
+      "Shared strict calendar/time/offset validators preserve exact values and decimals",
+      "Pinned Firefox NSS profile-only owned lab CA trust; actual signed-provider and register journeys validate TLS",
+      "Disposable profiles finally removed after absolute containment/ownership checks; register sessions memory-only"
+    ],
+    "verification": {
+      "frontend_lint": "PASS exit0",
+      "frontend_typecheck": "PASS exit0 after recorded test-only nullable-target correction",
+      "frontend_build": "PASS exit0,38 modules",
+      "lab_typecheck": "PASS exit0",
+      "react_files": 11,
+      "react_passed": 298,
+      "react_failed": 0,
+      "react_skipped": 0,
+      "react_seconds": 19.23,
+      "new_register_transport_cases": 104,
+      "register_component_cases": 15,
+      "register_discovered": 6,
+      "register_executed": 6,
+      "register_passed": 6,
+      "register_failed": 0,
+      "register_skipped": 0,
+      "tls_rejection_discovered": 3,
+      "tls_rejection_executed": 3,
+      "tls_rejection_passed": 3,
+      "tls_rejection_failed": 0,
+      "tls_rejection_skipped": 0,
+      "additional_signed_provider_passed": 2,
+      "additional_signed_provider_failed": 0,
+      "additional_signed_provider_skipped": 0,
+      "browser_engine": "Playwright1.64.1 Firefox157.0 revision1555; desktop1280x720 + narrow-responsive390x844; no Chromium/isMobile/touch claim",
+      "graphify": "AST exit0;3224 nodes/5252 edges/265 communities;12 existing zero-node warnings",
+      "not_rerun": "Unchanged backend135/persistence29/domain/Python/source suites and ordinary mocked browser suites; historical evidence preserved, not current-target reruns",
+      "failures_preserved": "Initial nullable test-target typecheck plus failed correction path/repeated type error; initial lab path setup failure6 discovered/0 executed/1 setup failure; final affected gates pass"
+    },
+    "cleanup": {
+      "task_port_listeners": 0,
+      "owned_profiles_remaining": 0,
+      "transient_register_states": 0,
+      "owned_volumes_preserved": true,
+      "private_credentials_ignored": true
+    },
+    "unchanged_evidence": "All earlier code and backend135/persistence29/React193 evidence retained. Whole318a147 remains REJECTED; approved93de baseline unchanged. CORE automatic backend repair stage ended; first two review portions passing does not approve whole commit.",
+    "canonical_progress_unchanged": true,
+    "publication": "LOCAL ONLY; no push/PR/merge/extra agents/self-approval; coordinator owns publishing",
+    "open_gates": [
+      "Fresh independent exact-commit review of complete diff against93de; required coordinator CI",
+      "Existing canonical source admission/DEV-005/008/DEV-026 lifecycle/roles/lookups",
+      "Production IdP/MFA/session rollout/privacy/retention/export/DB privileges",
+      "Existing dependency advisories; expert/legal/permit/pilot/release/human approvals"
+    ],
+    "next_step": "Coordinator independent review of complete local candidate against93de; no accepted points added",
+    "private_scan": {
+      "complete_candidate_files_against_approved_base": 70,
+      "private_value_matches": 0,
+      "private_credentials_ignored": true,
+      "scope": "Staged complete candidate against93de; private passwords/client secrets/subjects/database/provider values checked without emitting them"
+    }
   }
 }

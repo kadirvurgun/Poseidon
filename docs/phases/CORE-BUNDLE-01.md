@@ -1,3 +1,7 @@
+# Current handoff — REG-BOUNDARY-TLS-01
+
+Whole `318a14788a37b5d30dfd27c6c2eca94745b546b5` remains REJECTED. CORE automatic backend repair stage ended; its first two review portions passing does not approve the whole commit. The new bounded [frontend/browser task](../tasks/reg-boundary-tls-01.md) and [corrective phase report](REG-BOUNDARY-TLS-01.md) identify the current local candidate. Fresh independent review must cover the complete diff against approved93de. No original repair-budget reset, publication, self-approval or canonical progress change. The following entire report, including backend135/persistence29/React193 and bypassed browser results, is preserved historical evidence for318a147 and earlier targets, not new strict-browser proof.
+
 # CORE-BUNDLE-01 — rejection repair candidate
 
 Date: 2026-11-01. Parent/rejected target: `20f11984109875156182bb502b149327e95bf723`. Current phase: repaired local developer candidate, **NOT ACCEPTED**, awaiting coordinator independent review of the exact resulting commit and required CI. No publishing, PR, merge, delegation or self-approval. Canonical **8/970 SP, 2/121 tasks, 0/196 accepted screens unchanged**.
