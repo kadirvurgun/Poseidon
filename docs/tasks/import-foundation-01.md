@@ -1,5 +1,8 @@
 # IMPORT-FOUNDATION-01 — authored product checkpoint
 
+> Additive DOMAIN-COMPLETION-01 integration: schema v2 now includes fifteen protected typed Crew profile fields with ordinary authorized mutation/preview/commit parity, explicit profile policy/base versions, encrypted new Crew source staging, current field-policy checks before batch receipt recovery, Text-formatted XLSX editable columns and absolute numeric consumption. Existing identity updates/person-owned document/photo software remain incomplete; historical plaintext Crew batch conversion is unavailable without controlled protection work. Actual111-record software/source/system/external gates are separately recorded in the current source register. DEV-020 vessel-profile scope and production activation restrictions remain; DEV-069 is NOT complete. See DOMAIN-COMPLETION-01 task/phase for exact current checkpoints. No suites/build/typecheck/browser were executed.
+
+
 Status: **AUTHORED_UNVERIFIED / INCOMPLETE / NOT ACCEPTED**. DEV-069 / T-S11-001 / 8SP is not accepted. Canonical progress remains **8/970**. This is a local foundation checkpoint for the coordinator and independent exact-code QA, not a completed canonical sprint/release gate. No publication, push, PR, merge, self approval, scanner classification, auth configuration or additional agents.
 
 The receiving worktree was clean at `dd292d9`. These exact local support commits were integrated with normal `git cherry-pick -x`, preserving origin trailers and history, in this order:

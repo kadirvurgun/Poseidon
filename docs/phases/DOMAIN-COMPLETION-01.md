@@ -1,4 +1,4 @@
-# DOMAIN-COMPLETION-01 — checkpoint A
+# DOMAIN-COMPLETION-01 — checkpoints A–D
 
 Status: **AUTHORED_UNVERIFIED / INCOMPLETE / NOT ACCEPTED**. No canonical SP acceptance, publishing, merge, operational decision, GDPR/KVKK approval or production migration activation. Execution of every suite/build/typecheck/contract generator/migration/browser/provider setup remains **DEFERRED** by the user. Source whitespace inspection is not product verification.
 
@@ -82,3 +82,9 @@ The111-record Import coverage register now separates `software_state` from `exte
 Configuration omission closure (authored, unexecuted): a missing profile field identifier remains null and denies policy activation instead of silently becoming enum0/Nationality. Missing observation precision also remains null and makes the source unavailable, rather than activating a default integer policy. Source selection omits invalid configured contracts. Two corresponding assertions are authored; no suites or acceptance executed.
 
 Compatibility authoring: new optional Crew declaration fields and the PMS ObservationId are omitted from canonical serialization when absent, preserving earlier semantic receipt fingerprints. An additional actual-host/PostgreSQL case compares the original Crew envelope digest to the persisted receipt and retries the same UUID. Execution remains DEFERRED.
+
+## Coordinator handoff ledger
+
+Committed product checkpoints: `13f532d` protected Crew/profile/import and effective selection; `c3de584` normalized observations/PMS; `ee707e9` scoped Tug audit/vocabulary; `f413c08` explicit omitted-policy denial and legacy receipt envelope compatibility. All are AUTHORED_UNVERIFIED, never accepted. Nine exact support-origin cherry-pick receipts are listed above. Normal history preserved, no publishing/merge or suite/build/browser/provider setup. Source whitespace inspections returned exit0; graph maintenance is separate from product validation.
+
+The entire requested DOMAIN-COMPLETION-01 scope is still incomplete. The next required product implementation is the actual durable offline application/server/conflict path, person-owned files/photo and associated protected reference/identity/import completion, and the remaining Tug draft plan/assignment/lookup/BP/conflict/localization software. Continue from these commits; do not discard partial work or label remaining software as external approval. Full combined execution and independent exact-target QA/CI remain later coordinator gates.

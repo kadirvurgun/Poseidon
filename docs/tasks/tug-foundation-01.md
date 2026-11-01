@@ -1,5 +1,8 @@
 # TUG-FOUNDATION-01 — authored UNVERIFIED checkpoint
 
+> Additive DOMAIN-COMPLETION-01 integration: exact authorized immutable audit revision drilldown (selected source facts, free text withheld), actual TR/EN review UI, current-session revocation regression and absolute BP lexical consumption are authored. Plan/assignment/lookup/BP/conflict/localization software remains INCOMPLETE. DEV-080/081/082 and24SP remain NOT ACCEPTED. See DOMAIN-COMPLETION-01 for current source and software states. All execution remains DEFERRED.
+
+
 Status: **AUTHORED_UNVERIFIED / INCOMPLETE / NOT ACCEPTED**. No publishing, merge,
 independent QA, canonical acceptance or awarded SP. The unchanged goal remains194/970.
 All new suites/build/typecheck/contracts/migration/browser/CI checks are **DEFERRED**

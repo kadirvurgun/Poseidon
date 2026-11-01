@@ -4,7 +4,7 @@
     "accepted": false,
     "task": "docs/tasks/domain-completion-01.md",
     "phase_report": "docs/phases/DOMAIN-COMPLETION-01.md",
-    "current_phase": "Larger domain foundation authoring; checkpoints A/B/C, incomplete",
+    "current_phase": "Larger domain foundation authoring; checkpoints A/B/C/D, incomplete",
     "verification": "DEFERRED: all suites/build/typecheck/migrations/contract/browser/independent QA/CI",
     "canonical_progress_unchanged": true,
     "new_personal_fields": 15,
@@ -22,8 +22,11 @@
     "tug_audit_revision": "authored_scoped_exact_revision_unverified",
     "committed_checkpoints": [
       "13f532d",
-      "c3de584"
-    ]
+      "c3de584",
+      "ee707e9",
+      "f413c08"
+    ],
+    "publishing": "Not performed; coordinator owns publishing and merge"
   },
   "import_foundation_01": {
     "status": "authored_unverified_incomplete_not_accepted",

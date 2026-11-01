@@ -1,5 +1,8 @@
 # CREW-ROSTER-01 — product implementation checkpoint
 
+> Additive DOMAIN-COMPLETION-01 integration: fifteen protected typed profile fields, version/purpose/access/catalog contracts, ordinary/import paths, policy-masked roster nationality and configured current-effective status/period/provenance/Position projection are authored. Missing field configuration denies access. Person-owned secure files/photo, complete Crew controlled lookups, remaining identity/import protection and full application offline still require software; DEV-047 is NOT complete. Exact44-record FR/TC states and DOMAIN-COMPLETION-01 phase are current. All execution is DEFERRED.
+
+
 Status: AUTHORED, UNVERIFIED, INCOMPLETE, NOT ACCEPTED. DEV-047 / T-S7-001 / 8SP remains unaccepted. No canonical count changes; 194/970SP remains the target. Execution is DEFERRED to the larger domain foundation bundle under the active 01.11.2026 user cadence. This checkpoint does not complete the canonical sprint or release gate.
 
 The receiving tree was clean at `67d25bc93d6d983ef4bef5ba8d935e9dadcca114`; prior modules/checkpoints were preserved. The user supplied exact engineering prerequisite proof for `80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44` in `docs/reviews/reg-boundary-tls-01-80b057a6d183.json` / merged PR11. That permits this authoring; it does not accept DEV-047. DEV-020/015 dependency reconciliation, exact-target QA and publishing belong to the coordinator. No account/auth configuration, scanner classification, orchestration, dashboard or provider-lab work was performed.

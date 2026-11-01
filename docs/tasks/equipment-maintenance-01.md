@@ -1,5 +1,8 @@
 # EQUIPMENT-MAINTENANCE-01
 
+> Additive DOMAIN-COMPLETION-01 integration: normalized immutable scoped meter/condition observations and revocations, configured source/version/unit/freshness/precision contracts, actual PMS adapter/calculation and separate current assessment, relational observation scope FKs, reachable TR/EN data entry and meaningful tests are authored. Missing precision/source configuration is unavailable; synthetic values never approve production freshness/calibration or WorkOrder state. See DOMAIN-COMPLETION-01 for current checkpoints and remaining required scope. All execution remains DEFERRED; no acceptance.
+
+
 Status: AUTHORED_UNVERIFIED, NOT ACCEPTED. Execution is DEFERRED by the 01.11.2026 product-first direction. This is a local implementation checkpoint within the larger foundation bundle, not a completed canonical sprint or release gate. Coordinator owns publishing, fresh independent exact-target QA and required CI.
 
 ## Reconciliation and authority
