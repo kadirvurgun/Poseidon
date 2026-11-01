@@ -111,3 +111,8 @@ or 159-target count require v2 adaptation before the renewed gate. Do not migrat
 automatically or treat the new pending ledger as an exception envelope. Run the combined
 gate, source-bound independent review and exact-target independent code QA before any later
 publication. All suites/build/typecheck/browser/provider/full scans remain DEFERRED here.
+
+
+## REVIEWED-SOURCE-SCAN-01 consumer wiring — supersedes direct-invocation paragraph
+
+The required repository and postbuild-client steps now call reviewed_secret_scan.py, which unconditionally delegates to the same full scanner or fails nonzero on invalid trust. Optional reviewed-source exceptions require the externally provisioned POSEIDON_SOURCE_REVIEW_SHA256 JSON hash list. No hashes, reviewer verdict, exception file or external configuration value is supplied by this authoring. Current pending cases remain unresolved and old rejected waivers remain rejected. Actual protection/provisioning of external trust is a coordinator obligation, not proved by a workflow variable. Current pending safe evidence must be regenerated against the final workflow and consumer identities before independent review. See the exact [consumer contract](../tasks/reviewed-source-scan-01.md); all new regressions/scans/CI remain DEFERRED/NOT RUN.
