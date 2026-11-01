@@ -1,44 +1,54 @@
-/* global self, caches, fetch, URL, Request */
-/* Static application shell only. Never cache API responses, signed HTML, query
- * strings, user data, files, provider traffic or authentication state. */
-const shellCache = 'poseidon.offline.static.v1'
-const asset = path => /^\/assets\/[a-zA-Z0-9_.-]+\.(js|css|woff2)$/.test(path)
-const eligible = url => url.origin === self.location.origin && !url.search && asset(url.pathname)
-async function storeStatic(cache, url) {
-  const response = await fetch(url, { credentials: 'omit', cache: 'no-cache' })
+/* global self, caches, fetch, URL, crypto */
+/* Public build artifacts only. No API/auth/user/evidence response is cached. */
+const build = '__POSEIDON_STATIC_BUILD__'
+const manifest = '__POSEIDON_STATIC_MANIFEST__'
+const shellCache = `poseidon.offline.static.${build}`
+const ownedCache = name => /^poseidon\.offline\.static\.(?:v1|[a-f0-9]{64})$/.test(name)
+const inventory = Array.isArray(manifest) ? new Map(manifest.map(x => [x.path, x])) : new Map()
+const uuid = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+const crewPath = new RegExp(`^/app/crew-roster/${uuid}(?:/crew-profile/${uuid})?$`)
+async function publicArtifact(entry) {
+  const response = await fetch(entry.path, { credentials: 'omit', cache: 'no-cache', redirect: 'error' })
   if (!response.ok || response.redirected) throw new Error('static_shell_unavailable')
-  await cache.put(url, response.clone()); return response
+  const bytes = await response.clone().arrayBuffer()
+  if (bytes.byteLength !== entry.size) throw new Error('static_shell_integrity')
+  const sha = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', bytes)), x => x.toString(16).padStart(2, '0')).join('')
+  if (sha !== entry.sha256) throw new Error('static_shell_integrity')
+  return response
 }
 self.addEventListener('install', event => event.waitUntil((async () => {
+  if (!/^[a-f0-9]{64}$/.test(build) || inventory.size < 2 || inventory.size > 128 || !inventory.has('/index.html'))
+    throw new Error('static_shell_build_required')
+  // Validate the entire exact public build before writing any cache entry.
+  // A deployment race or sign-in fallback must never replace a valid shell.
+  const responses = await Promise.all([...inventory.values()].map(async entry => [entry.path, await publicArtifact(entry)]))
   const cache = await caches.open(shellCache)
-  const shell = await storeStatic(cache, '/index.html')
-  if (!(shell.headers.get('content-type') || '').includes('text/html')) throw new Error('static_shell_unavailable')
-  const html = await shell.text()
-  // The build-owned shell has no interpolated user state. Only exact static asset URLs are followed.
-  const paths = [...html.matchAll(/(?:src|href)=["'](\/assets\/[a-zA-Z0-9_.-]+\.(?:js|css))["']/g)].map(x => x[1])
-  if (!paths.length || paths.length > 32) throw new Error('static_shell_unavailable')
-  await Promise.all([...new Set(paths)].map(path => storeStatic(cache, path)))
-  await self.skipWaiting()
+  await Promise.all(responses.map(([path, response]) => cache.put(path, response)))
+  // Default browser lifecycle waits for old controlled tabs to close. Do not
+  // skipWaiting, claim existing tabs, post a reload, or touch IndexedDB/keys.
 })()))
-self.addEventListener('activate', event => event.waitUntil(self.clients.claim()))
+self.addEventListener('activate', event => event.waitUntil((async () => {
+  // Browser activation follows old controlled clients closing naturally.
+  // Delete this application's obsolete public builds only, never other caches.
+  const names = await caches.keys()
+  await Promise.all(names.filter(name => name !== shellCache && ownedCache(name)).map(name => caches.delete(name)))
+})()))
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url)
-  if (event.request.method !== 'GET' || url.origin !== self.location.origin) return
-  // Controlled Crew workspace navigation may boot the static shell disconnected.
-  // It still requires explicit online server authorization before decrypting/capturing after restart.
-  const crew = event.request.mode === 'navigate' && !url.search && /^\/app\/crew-roster\/[0-9a-f-]{36}(?:\/crew-profile\/[0-9a-f-]{36})?$/.test(url.pathname)
-  if (!crew && !eligible(url)) return
+  if (event.request.method !== 'GET' || url.origin !== self.location.origin || url.search) return
+  const crew = event.request.mode === 'navigate' && crewPath.test(url.pathname)
+  const entry = inventory.get(url.pathname)
+  if (!crew && (!entry || url.pathname === '/index.html')) return
   event.respondWith((async () => {
     const cache = await caches.open(shellCache)
     if (crew) {
       try { return await fetch(event.request) }
       catch { const response = await cache.match('/index.html'); if (response) return response; throw new Error('static_shell_unavailable') }
     }
-    // Bounded same-build static inventory; never evict unsent application records.
-    const existing = await cache.match(url.href)
+    const existing = await cache.match(url.pathname)
     if (existing) return existing
-    const response = await fetch(new Request(event.request, { credentials: 'omit' }))
-    if (response.ok && !response.redirected && (await cache.keys()).length < 128) await cache.put(url.href, response.clone())
+    const response = await publicArtifact(entry)
+    await cache.put(url.pathname, response.clone())
     return response
   })())
 })
