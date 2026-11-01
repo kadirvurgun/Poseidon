@@ -1,0 +1,10 @@
+.import-mapping { min-width: 0; max-width: 60rem; }
+.import-mapping fieldset { border: 1px solid currentColor; border-radius: .6rem; padding: 1rem; }
+.import-mapping__field { display: grid; gap: .4rem; margin-block: 1rem; min-width: 0; }
+.import-mapping__field label, .import-mapping__field p { overflow-wrap: anywhere; }
+.import-mapping select { min-height: 44px; width: 100%; min-width: 0; max-width: 100%; padding: .6rem; font: inherit; color: inherit; background: var(--surface, #122a38); }
+.import-mapping__issue { margin: 0; border-inline-start: 3px solid currentColor; padding-inline-start: .7rem; }
+.import-mapping__actions { display: flex; flex-wrap: wrap; gap: .8rem; margin-block: 1rem; }
+.import-mapping button { min-height: 44px; padding: .6rem 1rem; font: inherit; }
+.import-mapping :is(button, select):focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
+@media (forced-colors: active) { .import-mapping select { background: Canvas; color: CanvasText; } }
