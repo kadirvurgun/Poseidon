@@ -4,7 +4,7 @@ State: AUTHORED_UNVERIFIED. Execution is DEFERRED by the user's foundation-bundl
 
 Sources: active `poseidon-v46.3-20261030`; development backlog18.01 SHA `09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674`, `sheet:Backlog/row:23` DEV-022/T-S2-003 and row26 DEV-025/T-S2-006. Existing NAV-WORKSPACE-01 source decisions remain:13.04 paragraphs105/110–114/118–131 for server pagination, TR/EN, keyboard and safe navigation; source scope/authority and dependencies DEV-015/021 are not waived. This continuation changes actual existing product consumers, not an independent permission registry.
 
-Problem: the real server search now returns Audit and three Tug destinations, but the older UI whitelist rejected these results, failing the entire authorized search page. The old client ignored actual offset/limit metadata and allowed a vessel key to name a different destination vessel. The direct Tug navigation link also bypassed the existing unsaved-draft guard.
+Problem: the real server search now returns Audit and three Tug destinations, but the older UI whitelist rejected these results, failing the entire authorized search page. The old client ignored actual offset/limit metadata and allowed a vessel key to name a different destination vessel. The existing shell capture handler already guarded dirty anchor clicks. Separate-workspace dispatch is now also explicit in the shared follow callback, so validated search/programmatic navigation uses the same owning draft guard; the sidebar routes through that callback as well.
 
 Acceptance / authored behavior:
 
