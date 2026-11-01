@@ -64,7 +64,8 @@ public sealed class OidcProtocolTests
                 ["Authentication:Oidc:Memberships:0:Subject"] = "synthetic-subject",
                 ["Authentication:Oidc:Memberships:0:ActorId"] = Guid.NewGuid().ToString(),
                 ["Authentication:Oidc:Memberships:0:TenantId"] = tenant.ToString(),
-                ["Authentication:Oidc:Memberships:0:Permissions:0"] = "directory.read"
+                ["Authentication:Oidc:Memberships:0:TenantWideRead"] = "true",
+            ["Authentication:Oidc:Memberships:0:Permissions:0"] = "directory.read"
             }));
             b.ConfigureServices(services => services.PostConfigure<OpenIdConnectOptions>("oidc", o =>
             {

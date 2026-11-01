@@ -28,7 +28,7 @@ public sealed class PostgresSeedTests : IAsyncLifetime
             Assert.Equal(3, await db.Vessels.CountAsync(TestContext.Current.CancellationToken));
             Assert.Equal(3, await db.VesselProfiles.CountAsync(TestContext.Current.CancellationToken));
             Assert.Equal(1, await db.TugProfiles.CountAsync(TestContext.Current.CancellationToken));
-            Assert.Equal(11, await db.AuditEvents.CountAsync(TestContext.Current.CancellationToken));
+            Assert.Equal(25, await db.AuditEvents.CountAsync(TestContext.Current.CancellationToken));
             Assert.All(await db.AuditEvents.ToListAsync(TestContext.Current.CancellationToken), e => Assert.Equal("system:seed-import", e.ActorId));
         }
         await using (var db = Tenant(data.Tenants[0].Id))
@@ -41,7 +41,7 @@ public sealed class PostgresSeedTests : IAsyncLifetime
         await using (var db = Admin())
         {
             Assert.Equal(3, await db.Vessels.CountAsync(TestContext.Current.CancellationToken));
-            Assert.Equal(12, await db.AuditEvents.CountAsync(TestContext.Current.CancellationToken));
+            Assert.Equal(26, await db.AuditEvents.CountAsync(TestContext.Current.CancellationToken));
             Assert.Contains(await db.Vessels.ToListAsync(TestContext.Current.CancellationToken), v => v.Name == "Operator edited name");
             var audit = Assert.Single(await db.AuditEvents.Where(e => e.ActorId == "test-user").ToListAsync(TestContext.Current.CancellationToken));
             Assert.Equal("Modified", audit.Action);
@@ -99,7 +99,7 @@ public sealed class PostgresSeedTests : IAsyncLifetime
         }
         await using var verify = Admin();
         Assert.Equal(3, await verify.Vessels.CountAsync(TestContext.Current.CancellationToken));
-        Assert.Equal(11, await verify.AuditEvents.CountAsync(TestContext.Current.CancellationToken));
+        Assert.Equal(25, await verify.AuditEvents.CountAsync(TestContext.Current.CancellationToken));
     }
 
     [Fact]
@@ -121,7 +121,7 @@ public sealed class PostgresSeedTests : IAsyncLifetime
         }));
         await using var verify = Admin();
         Assert.Equal(3, await verify.Vessels.CountAsync(TestContext.Current.CancellationToken));
-        Assert.Equal(11, await verify.AuditEvents.CountAsync(TestContext.Current.CancellationToken));
+        Assert.Equal(25, await verify.AuditEvents.CountAsync(TestContext.Current.CancellationToken));
     }
 
     [Fact]
@@ -155,7 +155,7 @@ public sealed class PostgresSeedTests : IAsyncLifetime
         }
         await using var verify = Admin();
         Assert.Equal(4, await verify.Vessels.CountAsync(TestContext.Current.CancellationToken));
-        Assert.Equal(12, await verify.AuditEvents.CountAsync(TestContext.Current.CancellationToken));
+        Assert.Equal(26, await verify.AuditEvents.CountAsync(TestContext.Current.CancellationToken));
         Assert.Single(await verify.AuditEvents.Where(e => e.ActorId == "test-user").ToListAsync(TestContext.Current.CancellationToken));
     }
 
@@ -175,6 +175,27 @@ public sealed class PostgresSeedTests : IAsyncLifetime
         await Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => stale.SaveChangesAsync(TestContext.Current.CancellationToken));
         await using var verify = Admin();
         Assert.Equal("Accepted change", (await verify.Vessels.SingleAsync(v => v.Id == id, TestContext.Current.CancellationToken)).Name);
-        Assert.Equal(12, await verify.AuditEvents.CountAsync(TestContext.Current.CancellationToken));
+        Assert.Equal(26, await verify.AuditEvents.CountAsync(TestContext.Current.CancellationToken));
+    }
+
+    [Fact]
+    public async Task Command_receipts_are_audited_tenant_scoped_immutable_and_never_seeded()
+    {
+        var data = SeedValidationTests.Demo();
+        await using (var setup = Admin(data)) await setup.Database.MigrateAsync(TestContext.Current.CancellationToken);
+        await using var db = Tenant(data.Tenants[0].Id);
+        Assert.Empty(await db.CommandReceipts.ToArrayAsync(TestContext.Current.CancellationToken));
+        var receipt = new CommandReceipt { TenantId = data.Tenants[0].Id, ActorId = Guid.NewGuid(), Key = new string('K', 80),
+            Action = "CompanyCreate", Fingerprint = new string('A', 64), ResourceId = data.Companies[0].Id, CommittedAt = DateTimeOffset.UtcNow };
+        db.CommandReceipts.Add(receipt); await db.SaveChangesAsync(TestContext.Current.CancellationToken);
+        Assert.Contains(await db.AuditEvents.ToArrayAsync(TestContext.Current.CancellationToken), e => e.EntityType == nameof(CommandReceipt) && e.EntityId == receipt.ResourceId.ToString());
+        await using (var other = Tenant(data.Tenants[1].Id)) Assert.Empty(await other.CommandReceipts.ToArrayAsync(TestContext.Current.CancellationToken));
+        receipt.Action = "Tampered";
+        await Assert.ThrowsAsync<InvalidOperationException>(() => db.SaveChangesAsync(TestContext.Current.CancellationToken));
+        db.ChangeTracker.Clear();
+        foreach (var sql in new[] { "DELETE FROM core.\"CommandReceipts\"", "UPDATE core.\"CommandReceipts\" SET \"Action\" = 'Tampered'", "TRUNCATE core.\"CommandReceipts\"" })
+            await Assert.ThrowsAsync<Npgsql.PostgresException>(() => db.Database.ExecuteSqlRawAsync(sql, TestContext.Current.CancellationToken));
+        await using (var reseed = Admin(SeedValidationTests.Demo())) await reseed.Database.MigrateAsync(TestContext.Current.CancellationToken);
+        Assert.Single(await db.CommandReceipts.ToArrayAsync(TestContext.Current.CancellationToken));
     }
 }

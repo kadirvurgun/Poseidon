@@ -1,13 +1,13 @@
 # Güvenlik, audit ve kişisel veri başlangıç sözleşmesi
 
-Durum: zorunlu mimari gereksinimler + ilk persistence/hash altyapısı. Tam IAM, HTTP audit ve hukuki uyum kabulü henüz tamamlanmadı.
+Durum: zorunlu mimari gereksinimler; mevcut OIDC/cookie, server membership, HTTP security/read audit ve EF write audit uygulanmıştır. Üretim IAM rollout, tam audit kapsamı ve hukuki uyum kabulü henüz tamamlanmadı.
 
 ## Kimlik ve parola
 
-- .NET tarafında ASP.NET Core Identity veya kurumsal OIDC sağlayıcısı kullanılacak. Login/reset/MFA/session akışları özel kriptografiyle yazılmayacak.
+- Mevcut web akışı ASP.NET Core OpenIdConnect ile OIDC code+PKCE ve güvenli cookie oturumu kullanır; üretim IdP seçimi/rollout açıktır. Login/reset/MFA/session akışları özel kriptografiyle yazılmaz.
 - Yerel parola tutulursa yalnız versioned ve salted Identity PasswordHasher çıktısı saklanır. Düz metin, geri çözülebilir şifreleme veya doğrudan SHA/MD5 parola saklama yöntemi değildir.
-- İlk hash bileşeni hazırdır; Identity kullanıcı tabloları ve gerçek login endpoint'i henüz yoktur. Hash biçimi eski kaldığında `SuccessRehashNeeded` sonucu girişte yeni hash'e geçiş gerektirir.
-- Girişte brute-force/rate limit, hesap kilitleme, güvenli reset token'ı, admin için MFA ve session iptali gerekir. Web'de güvenli cookie/BFF veya seçilen OIDC akışı ADR ile belirlenir; bearer token localStorage'a gelişigüzel yazılmaz.
+- Hash bileşeni hazırdır; yerel Identity kullanıcı tabloları yoktur. Gerçek OIDC login/logout/session endpoint'leri ve güvenli cookie oturumu foundation paketinde uygulanmıştır; üretim IdP/MFA kararı açıktır. Hash biçimi eski kaldığında `SuccessRehashNeeded` sonucu girişte yeni hash'e geçiş gerektirir.
+- Girişte brute-force/rate limit, hesap kilitleme, güvenli reset token'ı, admin için MFA ve session iptali gerekir. Web'de mevcut güvenli cookie/OIDC kararı foundation sözleşmesinde kayıtlıdır; üretim rollout ve session revocation kapıları açıktır; bearer token localStorage'a gelişigüzel yazılmaz.
 - Seed verisinde gerçek kullanıcı, parola/hash, sabit admin parolası veya erişim token'ı bulunmaz. Demo hesap gerekiyorsa kontrollü bootstrap ve ortam secret store'u kullanılır.
 
 ## Her kullanıcının işlem izi
@@ -16,10 +16,10 @@ Durum: zorunlu mimari gereksinimler + ilk persistence/hash altyapısı. Tam IAM,
 
 | Olay | Kaydedilecek bağlam | Uygulama noktası |
 |---|---|---|
-| Login/logout, başarısız giriş, MFA/reset | Sonuç, aktör/anonim bağlam, güvenli correlation, zaman | Identity/auth akışı; henüz kurulmadı |
-| Liste/detay görüntüleme, indirme, arama, dışa aktarma | Yetkili aktör, tenant, kaynak türü/kimliği, eylem, sonuç | API middleware/authorization ve query handler; henüz kurulmadı |
+| Login/logout, başarısız giriş, MFA/reset | Sonuç, aktör/anonim bağlam, güvenli correlation, zaman | Mevcut OIDC login/logout/session handler + SecurityAudit; IdP MFA/reset ve üretim rollout açık |
+| Liste/detay görüntüleme, indirme, arama, dışa aktarma | Yetkili aktör, tenant, kaynak türü/kimliği, eylem, sonuç | Mevcut company/vessel/profile/workspace read/search handler + SecurityAudit; indirme/export ve tam ürün kapsamı açık |
 | Create/update/delete | Aktör, tenant, entity/kimlik, eylem, UTC, correlation | Mevcut EF SaveChanges audit'i; business write ve audit aynı transaction'da |
-| Yetki reddi, başarısız deneme | Aktör ve scope, eylem, hata sınıfı/sonuç | Security event sink; business transaction rollback'inden bağımsız; henüz kurulmadı |
+| Yetki reddi, başarısız deneme | Aktör ve scope, eylem, hata sınıfı/sonuç | Mevcut bağımsız SecurityAudit writer + authorization result handler; business rollback dışında; üretim dayanıklılığı/export açık |
 | Onay, publish, release, kritik karar | Yetki/rol, gerekçe, rule/evidence sürümü, karar sonucu | Domain handler ve server-side yetki; henüz kurulmadı |
 | Seed/import ve background iş | Ayrı sistem aktörü, job/dataset sürümü, sonuç | Seed import `system:seed-import` aktörüyle kayıt üretir |
 
@@ -27,7 +27,7 @@ Durum: zorunlu mimari gereksinimler + ilk persistence/hash altyapısı. Tam IAM,
 
 Audit event EF üzerinden elle eklenemez/değiştirilemez/silinemez. PostgreSQL migration'ı UPDATE/DELETE/TRUNCATE engeli koyar. Ayrı schema kullanılır. Üretimde application ve migrator DB rolleri ayrılmalı; tablo sahibi/superuser uygulama rolü olarak kullanılmamalı. DB yöneticisine karşı mutlak değişmezlik iddia edilmez; ayrı append-only depoya aktarım, erişim denetimi ve kurcalama tespiti release gereksinimidir.
 
-Tenant kimliği ve aktör, API devreye alındığında doğrulanmış sunucu kimliğinden üretilir; istemcinin gönderdiği actor/tenant değeri güvenilir kabul edilmez. EF query filter tek başına tam güvenlik sınırı sayılmaz: backend policy, yazma kontrolü, tenant içeren ilişkisel FK ve gerçek negatif testler birlikte gerekir. Admin import context'i yalnız ayrı migrator işleminde kullanılır, normal web isteğine sunulmaz.
+Mevcut API tenant kimliği ve aktörü doğrulanmış issuer/subject ve sunucunun provision ettiği membership üzerinden üretir; istemcinin gönderdiği actor/tenant değeri güvenilir kabul edilmez. EF query filter tek başına tam güvenlik sınırı sayılmaz: backend policy, yazma kontrolü, tenant içeren ilişkisel FK ve gerçek negatif testler birlikte gerekir. Admin import context'i yalnız ayrı migrator işleminde kullanılır, normal web isteğine sunulmaz.
 
 ## GDPR / KVKK ve gizlilik
 
@@ -51,3 +51,7 @@ Resmi kaynaklar:
 - [ASP.NET Core Identity](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/identity?view=aspnetcore-10.0)
 - [GDPR resmî metni — özellikle madde 5, 17, 25, 30, 32–35](https://eur-lex.europa.eu/eli/reg/2016/679/oj/eng)
 - KVKK uygulanabilirlik ve operasyonel gereksinimleri ayrıca ilgili resmi kaynaklarla değerlendirilmelidir.
+
+## DEV-OIDC-LAB-01 sınırı
+
+Yerel Docker Keycloak fixture üretim IdP kararı değildir. Yalnız Development ve açık localhost authority için özel CA chain trust uygulanır; hostname/expiry/EKU doğrulaması, HTTPS metadata ve imza/issuer/audience/nonce/state/correlation/CSRF korunur. Sistem root store değişmez. Güvenli yerel bootstrap ve sensitive artifact yasağı [görev sözleşmesinde](tasks/dev-oidc-lab-01.md). Bu fixture tüm HTTP audit kapsamı, MFA, GDPR/KVKK veya production kabulü iddiası oluşturmaz.

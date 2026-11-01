@@ -61,6 +61,31 @@ public sealed class DiagnosticsTests
         var properties = root.GetProperty("components").GetProperty("schemas").GetProperty(reference.Split('/')[^1]).GetProperty("properties");
         Assert.Equal(["service", "status"], properties.EnumerateObject().Select(property => property.Name).Order().ToArray());
         Assert.All(properties.EnumerateObject(), property => Assert.Equal("string", property.Value.GetProperty("type").GetString()));
+        // TW-02/03: actual host metadata, not a hand-maintained consumer-only fixture.
+        var paths = root.GetProperty("paths");
+        // REG-SRC-04: all mutations advertise the runtime-required security/retry headers.
+        foreach (var draft in new[] { "source", "requirement" })
+        foreach (var (suffix, method) in new[] { ("", "post"), ("/{id}", "put") }) {
+            var mutation = paths.GetProperty($"/api/v1/{draft}-drafts{suffix}").GetProperty(method);
+            foreach (var name in new[] { "Idempotency-Key", "X-CSRF-TOKEN" }) {
+                var header = Assert.Single(mutation.GetProperty("parameters").EnumerateArray(), p => p.GetProperty("name").GetString() == name);
+                Assert.Equal("header", header.GetProperty("in").GetString()); Assert.True(header.GetProperty("required").GetBoolean());
+            }
+        }
+        Assert.False(paths.TryGetProperty("/api/v1/today", out _));
+        Assert.False(paths.TryGetProperty("/api/v1/why", out _));
+        foreach (var (path, operationId, parameters) in new[]
+        {
+            ("/api/v1/poseidon-today", "GetToday", new[] { "vesselId", "offset", "limit" }),
+            ("/api/v1/why-engine", "GetTodayWhy", new[] { "vesselId", "cardKey" })
+        })
+        {
+            var read = paths.GetProperty(path).GetProperty("get");
+            Assert.Equal(operationId, read.GetProperty("operationId").GetString());
+            Assert.Equal(parameters.Order(), read.GetProperty("parameters").EnumerateArray().Select(p => p.GetProperty("name").GetString()!).Order());
+            foreach (var code in new[] { "200", "400", "401", "403", "404", "503" })
+                Assert.True(read.GetProperty("responses").TryGetProperty(code, out _));
+        }
     }
 
     [Fact]

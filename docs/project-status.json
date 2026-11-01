@@ -1,5 +1,38 @@
 {
   "as_of": "2026-11-01",
+  "reg_source_draft_01": {
+    "status": "whole318a147_rejected_new_bounded_boundary_tls_candidate_pending_independent_qa",
+    "accepted": false,
+    "baseline_commit": "5784b82",
+    "task": "docs/tasks/reg-source-draft-01.md",
+    "phase_report": "docs/phases/REG-SOURCE-DRAFT-01.md",
+    "current_phase": "Corrective frontend/browser developer gate complete; independent QA pending; NOT ACCEPTED",
+    "delivered": "Source/requirement draft registers, immutable exact source lineage, explicit trusted default-deny permissions, transactional audit/receipts/xmin, fictional fixtures, real HTTP TR/EN editor/history/search/dirty/conflict/frozen retry and authored tests",
+    "verification": {
+      "backend_domain_persistence_api_postgresql": "DEFERRED / NOT RUN",
+      "react_transport": "DEFERRED / NOT RUN",
+      "playwright_browser_idp_lab": "DEFERRED / NOT RUN; no host started",
+      "python_source_verification": "DEFERRED / NOT RUN; bounded local source reads only",
+      "restore_build_lint_typecheck": "DEFERRED / NOT RUN",
+      "actual_openapi_generated_contracts": "DEFERRED / NOT RUN; generated DTOs untouched",
+      "migration_model_parity": "DEFERRED / NOT RUN; migration/designer/snapshot authored with one scaffold",
+      "graphify": "AST-only final update exit0;3165 nodes/5120 edges/267 communities;12 existing zero-node warnings;no model call;not product verification",
+      "independent_qa_ci": "PENDING; coordinator-owned"
+    },
+    "canonical_progress_unchanged": true,
+    "prior_wip": "Clean initial worktree; Today58b609d and interrupted diagnostics preserved",
+    "open_gates": [
+      "DEV-005/008 source admission and canonical DEV-026 lifecycle",
+      "Production IdP, operational roles and approved lookups",
+      "Mandatory/lifecycle/expert/signature/permit decisions",
+      "Privacy/retention/export and production DB privilege separation",
+      "Combined CORE-BUNDLE-01 checks, independent target QA, pilot/release"
+    ],
+    "publication": "UNVERIFIED local checkpoint only; no push/PR/merge/accounts/extra agents/self-approval",
+    "next_step": "Coordinator independent review of complete local candidate against93de; no accepted points added",
+    "final_verification_reference": "docs/phases/REG-BOUNDARY-TLS-01.md",
+    "verification_record_scope": "Authored/deferred and original20f1198 results are historical;current rejection-repair evidence in core_bundle_01.verification"
+  },
   "baseline": "POSEIDON v46.3 updated 2026-10-30 / Library26 candidate",
   "current_stage": "S0; DEV-001 and DEV-002 accepted; remaining exit gates open",
   "method": "accepted story points / total baseline story points * 100",
@@ -2082,7 +2115,8 @@
     "S0 exit gates remain open; local preparation does not automatically accept canonical story points",
     "Read-only OIDC/tenant foundation locally validated; external IdP/TLS membership deployment, business mutations and privacy/retention release gates remain open",
     "Hourly quota and metadata monitor active on awake logged-in host; persistent development/publish mode not activated during user-requested batched foundation work",
-    "Source originals preserved; assessment and execution evidence maintained separately"
+    "Source originals preserved; assessment and execution evidence maintained separately",
+    "DIR-WORKSPACE-01 is authored and NOT RUN; full S1, regulatory vessel master, real IdP, operational authority catalog, privacy and expert gates remain open"
   ],
   "verification": {
     "release_build": "passed",
@@ -2268,7 +2302,7 @@
       "routing": "Esra primary for all roles; Kadir only on verified Esra quota reserve and own eligible quota"
     },
     "foundation_app": {
-      "state": "implementation complete; integrated local core gate passed; exact-commit independent QA and four remote CI checks pending",
+      "state": "Merged PR #10 at 0bf7914; historical foundation evidence does not verify DIR-WORKSPACE-01",
       "task": "FOUNDATION-APP-01",
       "source": [
         "18.01 Backlog row14 DEV013/T-S1-001",
@@ -2307,7 +2341,62 @@
       },
       "canonical_acceptance_changed": false,
       "report": "docs/phases/FOUNDATION-APP-01.md",
-      "qa_followup": "Initial exact1851b21 review rejected repeat-selection loading; daefd85 fix plus two regressions; fresh exact-commit QA pending"
+      "qa_followup": "PR #10 merged; no new DIR target-commit acceptance inferred from historical foundation counts",
+      "pr": "https://github.com/kadirvurgun/Poseidon/pull/10",
+      "merge_commit": "0bf79141d1487621fd0124a330596e34cbce16e3"
+    },
+    "directory_workspace": {
+      "state": "integrated local gate passed; independent QA pending; publication deferred by user",
+      "tests": {
+        "backend": {
+          "domain": 22,
+          "persistence": 25,
+          "api": 51,
+          "passed": 98,
+          "failed": 0,
+          "skipped": 0
+        },
+        "react": {
+          "passed": 63,
+          "failed": 0
+        },
+        "playwright": {
+          "passed": 16,
+          "failed": 0,
+          "skipped": 0,
+          "scope": "4 real API smoke + 6 mock ops + 6 real API anonymous/setup/keyboard"
+        },
+        "python": {
+          "passed": 127,
+          "failed": 0,
+          "skipped": 0
+        },
+        "build": "Release passed; zero warnings/errors",
+        "lint": "passed",
+        "typecheck": "passed",
+        "frontend_build": "passed",
+        "ef_model_parity": "passed",
+        "source_verification": {
+          "files": 269,
+          "chunks": 34958,
+          "mismatches": 0
+        },
+        "unknown_audit_code_unit": "strengthened test rerun separately:1 pass with configured provider and exact error assertion",
+        "publication": "deferred by user; no push/PR/CI for this package",
+        "independent_qa": "pending exact target commit",
+        "noop_concurrency": "company+vessel forced audited xmin UPDATE;4 deterministic race/touch/replay cases;full API51 passed"
+      },
+      "build": "passed; zero warnings/errors",
+      "lint": "passed",
+      "typecheck": "passed",
+      "ef_cli": "model parity passed",
+      "restore_generation": "locked restore, actual host OpenAPI export and generated aliases passed",
+      "independent_qa": "pending exact target commit",
+      "contract_followup": "completed; generated schema aliases in directory-contract.ts",
+      "migration_followup": "model parity and actual PostgreSQL migrations passed",
+      "scope": "online company/fleet management engineering subpackage; canonical S1/regulatory/operational role acceptance remains open",
+      "implementation_checkpoint": "33b08929d2b81f2ef97b4537166609e9c6ec3f19",
+      "qa_followup": "Initial e7d5b83 security review rejected no-op concurrency;2443596 forces audited updates and adds4 deterministic regressions;API51 PASS;fresh review pending"
     }
   },
   "phase_reports": [
@@ -2319,7 +2408,455 @@
     "docs/phases/OPS-COORDINATOR-01.md",
     "docs/phases/OPS-COORDINATOR-01-QA-FOLLOWUP.md",
     "docs/phases/OPS-DASH-01.md",
-    "docs/phases/FOUNDATION-APP-01.md"
+    "docs/phases/FOUNDATION-APP-01.md",
+    "docs/phases/DIR-WORKSPACE-01.md",
+    "docs/phases/VESSEL-PROFILE-DRAFT-01.md"
   ],
-  "active_source": "docs/sources/active.json"
+  "active_source": "docs/sources/active.json",
+  "current_package": {
+    "task": "VESSEL-PROFILE-DRAFT-01",
+    "branch": "agents/9ff6b20f711a4809a7bf5a1a3ced7172",
+    "baseline": "abd9445",
+    "state": "QA repair locally validated; fresh independent target-commit QA pending; NOT ACCEPTED",
+    "report": "docs/phases/VESSEL-PROFILE-DRAFT-01.md",
+    "canonical_acceptance_changed": false,
+    "publication": "prohibited for this worker; local commits only; coordinator owns publication/merge",
+    "implementation_checkpoint": "40e5a11",
+    "verification": {
+      "domain": {
+        "passed": 46,
+        "failed": 0,
+        "skipped": 0
+      },
+      "persistence": {
+        "passed": 25,
+        "failed": 0,
+        "skipped": 0
+      },
+      "api": {
+        "passed": 67,
+        "failed": 0,
+        "skipped": 0,
+        "duration": "4m11.723s",
+        "initial": "No API failures in repair gate; prior package timestamp failures remain historical"
+      },
+      "backend_total": 138,
+      "react": {
+        "passed": 136,
+        "failed": 0,
+        "skipped": 0,
+        "initial": "131 passed/1 failed: new test expected Missing flag after deliberately changing it to Unknown; expectation corrected, decimal assertions retained. Then132 passed; final hardening regressions136 passed."
+      },
+      "playwright": {
+        "passed": 18,
+        "failed": 0,
+        "skipped": 0,
+        "scope": "4 real connection/retry +6 mocked ops +6 real anonymous/setup/keyboard +2 routed synthetic profile repair; no external IdP browser claim",
+        "duration": "36.2s"
+      },
+      "python": {
+        "passed": 127,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": "Retained unchanged prior07125a0 evidence (127 passed), not rerun; scripts/dependencies unchanged"
+      },
+      "release_build": "PASS; 0 warnings/errors",
+      "locked_restore": "PASS; locked restore; no dependency or package-lock changes",
+      "lint": "PASS",
+      "typecheck": "PASS",
+      "frontend_build": "PASS",
+      "ef_model_parity": "PASS",
+      "openapi": "Actual built Development host export PASS; strict actual snapshot parity PASS within67/67 API suite; generated types unchanged on regeneration;host stopped",
+      "source_verification": {
+        "files": 269,
+        "chunks": 34958,
+        "mismatches": 0,
+        "windows_extended_root": true,
+        "ordinary_path": "failed path length; no source changes",
+        "evidence": "Retained unchanged prior07125a0 evidence;269 files/34958 chunks/0 mismatches; source artifacts unchanged"
+      },
+      "graphify": "PASS; final AST update no topology changes;2795 nodes/4319 edges/233 communities;9 existing config/data files yield zero nodes;no model call",
+      "logs": ".runtime/repair-*.log (local ignored diagnostics)",
+      "whitespace": "PASS;git diff --check",
+      "host_cleanup": "PASS;no task-owned listeners on5286/5288/4288"
+    },
+    "unresolved": [
+      "Independent target-commit QA",
+      "Existing 13 moderate frontend npm advisories",
+      "Canonical dependencies and operational role catalogs",
+      "Approved lookups and mandatory/lifecycle policy",
+      "Real IdP/TLS and authenticated external IdP browser gate",
+      "Expert approvals and canonical acceptance"
+    ],
+    "repair_baseline": "07125a01870f147e7b914ac133efd14955ec87a4",
+    "historical_dir_review": "abd9445 independently approved; does not approve profile package",
+    "previous_qa": {
+      "approved": false,
+      "commit": "07125a01870f147e7b914ac133efd14955ec87a4",
+      "issues": [
+        "JavaScript Number precision loss corrupts regulatory measurements",
+        "Incomplete current validation and unvalidated history responses"
+      ]
+    },
+    "repair_behavior": [
+      "Exact invariant decimal string wire/editor/storage/fingerprints; bounded normalization without rounding",
+      "Complete current/history runtime validation with safe invalid_contract errors and dirty-edit history retry",
+      "Actual host OpenAPI export and generated consumer contracts; legacy numeric storage exact-token reader"
+    ],
+    "next_step": "Profile engineering accepted exact ee3339e; NAV implementation follows",
+    "independent_qa": {
+      "task": "VESSEL-PROFILE-DRAFT-01",
+      "commit": "ee3339e58747302c5effd9baef8f05b262c33e0e",
+      "approved": true,
+      "issues": [],
+      "reviewer": {
+        "profile": "esra-pro",
+        "role": "independent_qa",
+        "model": "gpt-6.1-sol",
+        "effort": "medium"
+      },
+      "scope": "Local profile engineering only. Future NAV code requires its own checks/review. Canonical, IdP, expert and release gates remain open.",
+      "verification": {
+        "domain": 46,
+        "persistence": 25,
+        "api": 67,
+        "react": 136,
+        "playwright": 18,
+        "failed": 0,
+        "skipped": 0,
+        "python": "Unchanged prior127 PASS evidence retained, not rerun"
+      },
+      "review_finished_at": 1793489633.4527755
+    }
+  },
+  "nav_workspace_01": {
+    "status": "locally_validated_awaiting_independent_qa",
+    "accepted": false,
+    "baseline_commit": "ee3339e",
+    "task": "docs/tasks/nav-workspace-01.md",
+    "phase_report": "docs/phases/NAV-WORKSPACE-01.md",
+    "delivered": "Real capability-first shell, URLs/history/draft guards, explicit scoped search/audit, responsive TR/EN and authored backend/component/browser tests",
+    "verification": {
+      "release_build": "PASS;0 warnings/errors",
+      "domain": 46,
+      "persistence_postgresql": 25,
+      "api_postgresql_oidc_openapi": 78,
+      "react": 160,
+      "chromium_desktop_mobile": 22,
+      "failed": 0,
+      "skipped": 0,
+      "frontend_typecheck_lint_build": "PASS",
+      "actual_openapi_generated_types": "PASS",
+      "ef_model_parity": "PASS",
+      "graphify_ast": "PASS;2848 nodes/4420 edges/232 communities;10 zero-node warnings",
+      "python_sources": "NOT RUN for NAV; unchanged prior evidence retained separately",
+      "whitespace_json_host_cleanup": "PASS"
+    },
+    "blocker": null,
+    "next_step": "Coordinator independent QA of final exact local commit; no acceptance or publication by worker",
+    "publication": "No push, PR or merge; coordinator-owned",
+    "profile_approval": "docs/reviews/profile-draft-ee3339e.json",
+    "limitations": [
+      "Operational role catalog unresolved; capability-first implemented destinations only",
+      "External IdP/TLS authenticated browser validation remains open",
+      "Canonical dependencies, lookups, mandatory policy, expert/pilot/release gates remain open",
+      "Existing dependency advisory remediation remains open; no dependency changes"
+    ]
+  },
+  "dev_oidc_lab_01": {
+    "status": "locally_validated_awaiting_independent_qa",
+    "accepted": false,
+    "task": "docs/tasks/dev-oidc-lab-01.md",
+    "phase_report": "docs/phases/DEV-OIDC-LAB-01.md",
+    "baseline_commit": "029d1ba",
+    "rejection_repair": {
+      "rejected_commit": "3a7801263cf48debb860786de358592f892f2065",
+      "status": "locally_validated_awaiting_independent_qa",
+      "accepted": false,
+      "scope": "LAB-04 equivalent DOTNET_/ASPNETCORE_ ambient host configuration isolation",
+      "actual_host_red_green": "Before fix: two extra wildcard HTTP listeners; after fix: only loopback HTTPS5443, strict CA/hostname liveness",
+      "verification": {
+        "python_full": "132 PASS;0 failed/skipped;151.277s",
+        "portable_fixture": "5 PASS;70 new matrix combinations;0 failed/skipped",
+        "windows_bootstrap_tls_actual_host": "2 PASS;0 failed/skipped;18.037s",
+        "real_keycloak_https_postgresql_browser": "2 PASS;0 failed",
+        "graphify_ast": "PASS;2936 nodes/4558 edges/239 communities;11 existing zero-node warnings",
+        "whitespace": "PASS",
+        "host_cleanup": "PASS;0 listeners on5443/8443/55432;data/configuration retained"
+      },
+      "unchanged_checks": "Original verification below is historical; no .NET/frontend/dependency/API contract changes in repair",
+      "next_step": "Coordinator independent QA of exact local repair commit; no publication or self-approval"
+    },
+    "prerequisite_review": "docs/reviews/nav-workspace-01-ff1e95ebf5f4.json",
+    "prerequisite_commit": "ff1e95ebf5f43ba5883f69e5e52b0cb2f205b775",
+    "delivered": "Development-only pinned Keycloak/PostgreSQL local HTTPS browser lab, private random bootstrap/server memberships, scoped CA transport, actual product flows and membership configuration binding repair",
+    "verification": {
+      "release_build": "PASS;0 warnings/errors",
+      "domain": 46,
+      "persistence_postgresql": 25,
+      "api_postgresql_oidc_openapi": 91,
+      "react": 160,
+      "existing_chromium_desktop_mobile": 22,
+      "real_keycloak_https_postgresql_browser": 2,
+      "python": 131,
+      "windows_bootstrap_strict_tls": 1,
+      "focused_portable_fixture": 4,
+      "failed": 0,
+      "skipped": 0,
+      "frontend_lint_typecheck_build": "PASS",
+      "actual_https_openapi_generated_types": "PASS;unchanged contracts",
+      "ef_model_parity": "PASS",
+      "restart_data_configuration_preservation": "PASS;repeated start preserves row counts and private hashes",
+      "graphify_ast": "PASS;2934 nodes/4556 edges/239 communities;initial update had11 zero-node warnings",
+      "private_secret_scan": "PASS;0 staged/bundle/graph matches;0 sensitive browser artifacts",
+      "host_cleanup": "PASS;0 task-port listeners;volumes/configuration retained"
+    },
+    "implementation_blocker": null,
+    "next_step": "Coordinator independent QA of exact final local commit; no self-acceptance",
+    "publication": "Local commit only; no push, PR or merge",
+    "canonical_progress_unchanged": true,
+    "external_gates": [
+      "Canonical prerequisites and S0 exits",
+      "Production IdP/data locality/MFA and revocation",
+      "Deployment TLS/DP keys and app/migrator DB privilege separation",
+      "Retention/privacy/legal assessment and external immutable audit",
+      "Expert/pilot/release approvals",
+      "Existing dependency advisory remediation/release review"
+    ]
+  },
+  "today_why_01": {
+    "status": "locally_validated_in_core_bundle_01_awaiting_independent_qa",
+    "accepted": false,
+    "task": "docs/tasks/today-why-01.md",
+    "phase_report": "docs/phases/TODAY-WHY-01.md",
+    "baseline_commit": "b67dd63",
+    "prerequisite_reviews": [
+      "docs/reviews/dev-oidc-lab-01-93de7b6b376f.json",
+      "docs/reviews/nav-workspace-01-ff1e95ebf5f4.json"
+    ],
+    "delivered": "Scoped Today/Why persisted-draft read projections, fail-closed fixed read audit, honest coverage/freshness, TR/EN vessel workspace/disclosure, offline/reconnect/revocation/refresh flows and authored regressions",
+    "verification": {
+      "current_suites": "DEFERRED / NOT RUN by direct user instruction",
+      "previous_today_worker": "INTERRUPTED deliberately; no inferred product failure",
+      "build_lint_typecheck_restore": "DEFERRED / NOT RUN",
+      "actual_host_openapi_generation_parity": "DEFERRED; inherited contract/type changes retained unchanged, provenance/parity unverified",
+      "browser_lab_python": "DEFERRED / NOT RUN",
+      "independent_target_commit_qa": "PENDING; coordinator-owned",
+      "historical_evidence": "Prior OIDC/NAV evidence retained, not Today verification",
+      "graphify_ast": "AST-only final update exit 0;3014 nodes/4730 edges/239 communities;12 zero-node warnings;not product verification"
+    },
+    "limitations": [
+      "Only persisted regulatory-draft advisory input is supported",
+      "Operational tasks, safety decisions, permits and evidence verification sources unavailable",
+      "No fake lifecycle, operational approval, mandatory policy, verified evidence or owner assignment",
+      "Canonical prerequisites and expert/pilot/release gates remain open"
+    ],
+    "next_step": "Coordinator independent exact-commit QA and required CI; no canonical acceptance",
+    "publication": "Local UNVERIFIED checkpoint only; no push/PR/merge/self-approval",
+    "canonical_progress_unchanged": true,
+    "final_verification_reference": "docs/phases/CORE-BUNDLE-01.md",
+    "verification_record_scope": "Original authored/deferred verification retained as historical; final current results in core_bundle_01"
+  },
+  "core_bundle_01": {
+    "status": "whole318a147_rejected_backend_repair_stage_ended_new_bounded_frontend_candidate_pending_independent_qa",
+    "accepted": false,
+    "phase_report": "docs/phases/CORE-BUNDLE-01.md",
+    "approved_base": "93de7b6b376fb4592150c5c7b15a8c52e39bd4b3",
+    "parent_commit": "20f11984109875156182bb502b149327e95bf723",
+    "publication": "Local candidate only; no push/PR/merge/extra agents/self-approval",
+    "canonical_progress_unchanged": true,
+    "open_gates": [
+      "Independent exact-commit QA and coordinator CI",
+      "Canonical dependencies/source admission/lifecycle/lookups",
+      "Production IdP/MFA/revocation/privacy/retention/DB privileges",
+      "Expert/pilot/release and existing13 moderate frontend advisories"
+    ],
+    "next_step": "Coordinator independent review of complete local candidate against93de; no accepted points added",
+    "historical_rejected_commit_verification": {
+      "domain": 61,
+      "persistence_postgresql": 29,
+      "api_postgresql_http_protocol_contract": 116,
+      "backend_failed": 0,
+      "backend_skipped": 0,
+      "react_unique_covered": 193,
+      "react_execution": "Full192/10files PASS, affected Today19 and REG14 PASS after repairs; no full193 rerun claimed",
+      "ordinary_desktop_mobile_covered": 24,
+      "ordinary_execution": "Initial22 PASS/2 failed; affected Today2 PASS",
+      "register_discovered": 6,
+      "register_real_host_covered": 6,
+      "register_execution": "Initial4 PASS/2 failed; affected citation desktop/mobile2 PASS; direct safe runner consumes same manifest/config projects",
+      "real_oidc_lab_journeys": 2,
+      "python": 133,
+      "windows_actual_lab": 2,
+      "source_files": 269,
+      "source_chunks": 34958,
+      "source_mismatches": 0,
+      "locked_restore_build_lint_typecheck_build": "PASS; final Release0 warnings/errors; locks unchanged",
+      "actual_openapi_generated_consumers": "PASS; actual host export, locked generation, full API strict snapshot",
+      "ef_model_scaffold_parity": "PASS; actual generated empty probe/model reconciliation, PostgreSQL migrations/seed/audit/races",
+      "graph_ast": "PASS;3190 nodes/5161 edges/261 communities;12 existing zero-node warnings",
+      "cleanup": "PASS;0 task-port listeners,0 authenticated diagnostic artifacts,0 transient states; volumes/private data preserved",
+      "private_secret_scan": {
+        "scanned_staged_bundle_graph_files": 293,
+        "private_secret_matches": 0,
+        "private_credentials_ignored": true
+      }
+    },
+    "historical_verification_commit": "20f11984109875156182bb502b149327e95bf723",
+    "verification": {
+      "scope": "Affected-package repair runs only; unchanged original gate results are historical",
+      "api": 135,
+      "api_failed": 0,
+      "api_skipped": 0,
+      "api_duration": "11m 41s 143ms",
+      "persistence_postgresql": 29,
+      "persistence_failed": 0,
+      "persistence_skipped": 0,
+      "persistence_duration": "3m46.870s",
+      "react": 193,
+      "react_files": 10,
+      "react_failed": 0,
+      "react_skipped": 0,
+      "react_duration_seconds": 49.59,
+      "register_discovered": 6,
+      "register_executed": 6,
+      "register_passed": 6,
+      "register_failed": 0,
+      "register_skipped": 0,
+      "register_driver_seconds": 33.273,
+      "locked_restore_release_build": "PASS;0 warnings/errors;locks unchanged",
+      "actual_host_openapi_and_locked_consumers": "PASS;strict full-project snapshot/header assertions",
+      "frontend_lint_typecheck_build": "PASS",
+      "ef_parity": "PASS;new tool-generated migration ordered after existing register migration",
+      "graph_ast": "PASS;3203 nodes/5199 edges/271 communities;12 existing zero-node warnings",
+      "cleanup": {
+        "task_port_listeners": 0,
+        "transient_register_states": 0,
+        "authenticated_diagnostic_artifacts": 0
+      },
+      "not_rerun": "Unchanged Domain/Python/source-byte/ordinary mocked browser/broader2 OIDC journeys;no current-target inference",
+      "failures_preserved": "Initial build failures;interrupted migration-ordering runs API42PASS/11FAIL,persistence13PASS/10FAIL;initial REG0 executed/1 setup failure;all final affected runs pass",
+      "legacy_receipt_limitation": "Historical receipts lacking original xmin fail503;no fabricated backfill",
+      "changed_code_evidence": {
+        "files_against_approved_base": 50,
+        "manifest_sha256": "99da7072838acdd80adda545dfdae3cd679efb2a34fabb6fccc747bef52b6b4d"
+      },
+      "private_secret_scan": {
+        "files_scanned": 15,
+        "private_secret_matches": 0,
+        "private_files_ignored": true
+      }
+    },
+    "current_phase": "Corrective frontend/browser developer gate complete; independent QA pending; NOT ACCEPTED",
+    "verification_commit": "318a14788a37b5d30dfd27c6c2eca94745b546b5",
+    "verification_record_scope": "Existing verification object is preserved historical318a147 developer evidence; browser TLS was bypassed there. New scoped strict-TLS/runtime-boundary candidate evidence is reg_boundary_tls_01; no whole-commit approval.",
+    "current_candidate_task": "docs/tasks/reg-boundary-tls-01.md",
+    "current_candidate_phase": "docs/phases/REG-BOUNDARY-TLS-01.md"
+  },
+  "reg_boundary_tls_01": {
+    "status": "rejected9c40266_today_pagination_repaired_local_frontend_gate_passed_pending_independent_qa",
+    "accepted": false,
+    "parent_rejected_commit": "318a14788a37b5d30dfd27c6c2eca94745b546b5",
+    "approved_base": "93de7b6b376fb4592150c5c7b15a8c52e39bd4b3",
+    "candidate": "Local commit containing this record; supplied in delivery message; complete diff against approved base required",
+    "task": "docs/tasks/reg-boundary-tls-01.md",
+    "phase_report": "docs/phases/REG-BOUNDARY-TLS-01.md",
+    "current_phase": "Exact Today pagination rejection repaired; frontend developer gate complete; independent QA pending; NOT ACCEPTED",
+    "today_pagination_repair": {
+      "rejected_commit": "9c402664c5920cb1fe413ad035a1d02376259846",
+      "candidate": "Local successor commit containing this record; supplied in delivery message",
+      "traceability": "REG-BOUNDARY-03 / REG-SRC-08; same package and controlled30.10 source scope",
+      "delivered": "Exact requested Today offset0/limit25 including empty pages; vessel safe integer offset0-100000 and full25-item continuation pages; errors for malformed scoped/empty results",
+      "frontend_lint": "PASS exit0",
+      "frontend_typecheck": "PASS exit0",
+      "frontend_build": "PASS exit0;38 modules;461ms Vite build",
+      "frontend_test_files": 11,
+      "frontend_tests_passed": 321,
+      "frontend_tests_failed": 0,
+      "frontend_tests_skipped": 0,
+      "frontend_seconds": 19.64,
+      "today_cases": 42,
+      "new_regression_cases": 23,
+      "graphify": "AST exit0;3235 nodes/5271 edges/260 communities;12 existing zero-node warnings",
+      "diff_check": "PASS exit0",
+      "not_rerun": "Unchanged lab/provider/TLS/backend/persistence/domain/Python/source suites; all previous results retained as historical evidence",
+      "cleanup": "No lab started or private state created",
+      "accepted": false,
+      "next_step": "Coordinator fresh independent exact-commit review of complete diff against approved93de and required CI; no publishing or self-approval"
+    },
+    "verification_record_scope": "Verification and cleanup objects below describe historical rejected9c40266 developer evidence. Current Today-only frontend evidence is today_pagination_repair; no current-target browser/backend rerun claim.",
+    "delivered": [
+      "Exact register runtime DTO/member/state/link/page/request-offset validation",
+      "Shared strict calendar/time/offset validators preserve exact values and decimals",
+      "Pinned Firefox NSS profile-only owned lab CA trust; actual signed-provider and register journeys validate TLS",
+      "Disposable profiles finally removed after absolute containment/ownership checks; register sessions memory-only"
+    ],
+    "verification": {
+      "frontend_lint": "PASS exit0",
+      "frontend_typecheck": "PASS exit0 after recorded test-only nullable-target correction",
+      "frontend_build": "PASS exit0,38 modules",
+      "lab_typecheck": "PASS exit0",
+      "react_files": 11,
+      "react_passed": 298,
+      "react_failed": 0,
+      "react_skipped": 0,
+      "react_seconds": 19.23,
+      "new_register_transport_cases": 104,
+      "register_component_cases": 15,
+      "register_discovered": 6,
+      "register_executed": 6,
+      "register_passed": 6,
+      "register_failed": 0,
+      "register_skipped": 0,
+      "tls_rejection_discovered": 3,
+      "tls_rejection_executed": 3,
+      "tls_rejection_passed": 3,
+      "tls_rejection_failed": 0,
+      "tls_rejection_skipped": 0,
+      "additional_signed_provider_passed": 2,
+      "additional_signed_provider_failed": 0,
+      "additional_signed_provider_skipped": 0,
+      "browser_engine": "Playwright1.64.1 Firefox157.0 revision1555; desktop1280x720 + narrow-responsive390x844; no Chromium/isMobile/touch claim",
+      "graphify": "AST exit0;3224 nodes/5252 edges/265 communities;12 existing zero-node warnings",
+      "not_rerun": "Unchanged backend135/persistence29/domain/Python/source suites and ordinary mocked browser suites; historical evidence preserved, not current-target reruns",
+      "failures_preserved": "Initial nullable test-target typecheck plus failed correction path/repeated type error; initial lab path setup failure6 discovered/0 executed/1 setup failure; final affected gates pass"
+    },
+    "cleanup": {
+      "task_port_listeners": 0,
+      "owned_profiles_remaining": 0,
+      "transient_register_states": 0,
+      "owned_volumes_preserved": true,
+      "private_credentials_ignored": true
+    },
+    "unchanged_evidence": "All earlier code and backend135/persistence29/React193 evidence retained. Whole318a147 remains REJECTED; approved93de baseline unchanged. CORE automatic backend repair stage ended; first two review portions passing does not approve whole commit.",
+    "canonical_progress_unchanged": true,
+    "publication": "LOCAL ONLY; no push/PR/merge/extra agents/self-approval; coordinator owns publishing",
+    "open_gates": [
+      "Fresh independent exact-commit review of complete diff against93de; required coordinator CI",
+      "Existing canonical source admission/DEV-005/008/DEV-026 lifecycle/roles/lookups",
+      "Production IdP/MFA/session rollout/privacy/retention/export/DB privileges",
+      "Existing dependency advisories; expert/legal/permit/pilot/release/human approvals"
+    ],
+    "next_step": "Coordinator independent review of complete local candidate against93de; no accepted points added",
+    "private_scan": {
+      "complete_candidate_files_against_approved_base": 70,
+      "private_value_matches": 0,
+      "private_credentials_ignored": true,
+      "scope": "Staged complete candidate against93de; private passwords/client secrets/subjects/database/provider values checked without emitting them"
+    }
+  },
+  "coordinator_transport_correction": {
+    "parent_rejected": "b2ec2fa218d86ebc10e53b1dba9088ab27da14d6",
+    "scope": "Strict complete-string GUID/time response boundary",
+    "native_author_starts": 0,
+    "native_budget_reset": false,
+    "frontend_passed": 346,
+    "failed": 0,
+    "skipped": 0,
+    "lint_exit": 0,
+    "typecheck_exit": 0,
+    "build_exit": 0,
+    "independent_qa": "PENDING for the new exact commit",
+    "canonical_accepted_story_points": 8
+  }
 }

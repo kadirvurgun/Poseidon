@@ -36,11 +36,14 @@ Bu sıra bir başlangıç önerisidir; 18.01 backlog ve 11.01 traceability satı
 
 | Tetik | Zorunlu kontroller |
 |---|---|
-| Her görev | Değişen davranışın developer testleri ve bağımsız kabul incelemesi |
+| Ürün paketi geliştirilirken | Değişen davranışın developer testleri kodla birlikte yazılır; kullanıcı talimatıyla paket bitmeden çalıştırılmaz |
 | Her push ve PR | Backend build + unit + gerçek PostgreSQL ile integration; frontend lint/typecheck/build + component; API contract + Playwright smoke |
 | Faz bitişi | Bütün önceki kontroller + Ship/Tug Playwright regresyonu, offline/retry/duplicate/conflict, tenant ve rol izolasyonu, regulatory golden cases, migration doğrulaması |
 | Release | Faz kontrolleri + güvenlik, restore/rollback kanıtı, UAT/pilot ve yetkili karar |
 
 Önerilen araçlar: xUnit, WebApplicationFactory, Testcontainers/PostgreSQL; Vitest + Testing Library; Playwright. Araç sürümleri uygulama iskeleti kurulurken sabitlenir.
 
-Testler yalnız faz sonunda çalışmaz; faz sonunda daha geniş paket çalışır. Testi silmek, skip etmek veya kabul eşiğini düşürmek başarısız işi başarılı yapmaz. Eksik test projesi CI'da başarı sayılmaz.
+01.11.2026 kullanıcı kararıyla yerel build/test bütün ürün paketi hazır olduğunda
+topluca çalışır; daha sonra gereken push/PR ve release kapıları korunur.
+Testi silmek, skip etmek veya kabul eşiğini düşürmek başarısız işi başarılı yapmaz.
+Eksik test projesi CI'da başarı sayılmaz. Yerel commit test sonucu değildir.

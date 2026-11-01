@@ -1,0 +1,14 @@
+{
+  "task": "DEV-OIDC-LAB-01",
+  "commit": "93de7b6b376fb4592150c5c7b15a8c52e39bd4b3",
+  "approved": true,
+  "issues": [],
+  "reviewer": {
+    "profile": "esra-pro",
+    "role": "security_qa",
+    "model": "gpt-6.1-sol",
+    "effort": "medium"
+  },
+  "scope": "Local engineering only; canonical/release gates remain open",
+  "review_finished_at": 1793531048.2110355
+}

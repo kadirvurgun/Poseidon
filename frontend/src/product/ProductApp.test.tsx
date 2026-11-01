@@ -1,11 +1,12 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ProductApp } from './ProductApp'
 
 const anonymous = { authenticated: false, setupRequired: false, actorId: null, tenantId: null, canRead: false, csrfToken: '' }
-const signedIn = { ...anonymous, authenticated: true, canRead: true, actorId: 'synthetic-actor', tenantId: 'synthetic-workspace', csrfToken: 'synthetic-csrf' }
+const signedIn = { ...anonymous, authenticated: true, canRead: true, canReadCompanies: true, canCreate: false, actorId: 'synthetic-actor', tenantId: 'synthetic-workspace', csrfToken: 'synthetic-csrf' }
 const reply = (data: unknown, status = 200) => ({ ok: status === 200, status, json: async () => data }) as Response
+beforeEach(() => window.history.replaceState(null, '', '/app'))
 afterEach(() => vi.unstubAllGlobals())
 
 describe('FOUNDATION-APP-01 product states (mocked HTTP, not backend acceptance)', () => {
@@ -26,7 +27,7 @@ describe('FOUNDATION-APP-01 product states (mocked HTTP, not backend acceptance)
     const user = userEvent.setup(); render(<ProductApp />)
     expect(await screen.findByRole('link', { name: 'Oturum aç' })).toHaveAttribute('href', '/api/v1/auth/login?returnUrl=%2Fapp')
     await user.click(screen.getByRole('button', { name: 'EN' }))
-    expect(screen.getByRole('heading', { name: 'Companies' })).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'Workspace' })).toBeVisible()
     expect(document.documentElement.lang).toBe('en')
     expect(screen.getByRole('link', { name: 'Sign in' })).toBeVisible()
   })
@@ -38,8 +39,13 @@ describe('FOUNDATION-APP-01 product states (mocked HTTP, not backend acceptance)
     expect(screen.queryByText('Kayıt bulunamadı.')).not.toBeInTheDocument()
   })
   it('shows real empty results and retries a failed service request', async () => {
-    const fetchMock = vi.fn().mockResolvedValueOnce(reply(signedIn)).mockRejectedValueOnce(new TypeError('offline'))
-      .mockResolvedValueOnce(reply(signedIn)).mockResolvedValue(reply({ items: [], offset: 0, limit: 25, hasMore: false }))
+    let attempts = 0
+    const fetchMock = vi.fn(async (url: string) => {
+      if (url.endsWith('auth/session')) return reply(signedIn)
+      if (url.endsWith('workspace')) return reply({ destinations: [], canWriteRegulatory: false })
+      if (++attempts === 1) throw new TypeError('offline')
+      return reply({ items: [], offset: 0, limit: 25, hasMore: false })
+    })
     vi.stubGlobal('fetch', fetchMock)
     const user = userEvent.setup(); render(<ProductApp />)
     await user.click(await screen.findByRole('button', { name: 'Tekrar dene' }))
@@ -49,9 +55,9 @@ describe('FOUNDATION-APP-01 product states (mocked HTTP, not backend acceptance)
   it('loads company detail and requests ship/tug filters from the API', async () => {
     const fetchMock = vi.fn(async (url: string) => {
       if (url.endsWith('auth/session')) return reply(signedIn)
-      if (url.endsWith('companies/company-one')) return reply({ id: 'company-one', code: 'C1', name: 'Synthetic Company' })
-      if (url.includes('companies?')) return reply({ items: [{ id: 'company-one', code: 'C1', name: 'Synthetic Company' }], offset: 0, limit: 25, hasMore: false })
-      return reply({ items: [{ id: 'tug-one', companyId: 'company-one', code: 'T1', name: 'Synthetic Tug', kind: 'Tug' }], offset: 0, limit: 25, hasMore: false })
+      if (url.endsWith('companies/company-one')) return reply({ id: 'company-one', code: 'C1', name: 'Synthetic Company', version: 1, canEdit: false })
+      if (url.includes('companies?')) return reply({ items: [{ id: 'company-one', code: 'C1', name: 'Synthetic Company', version: 1, canEdit: false }], offset: 0, limit: 25, hasMore: false })
+      return reply({ items: [{ id: 'tug-one', companyId: 'company-one', code: 'T1', name: 'Synthetic Tug', kind: 'Tug', version: 1, canEdit: false }], offset: 0, limit: 25, hasMore: false })
     })
     vi.stubGlobal('fetch', fetchMock)
     const user = userEvent.setup(); render(<ProductApp />)
@@ -64,8 +70,8 @@ describe('FOUNDATION-APP-01 product states (mocked HTTP, not backend acceptance)
     expect(screen.getByRole('cell', { name: 'Römorkör' })).toBeVisible()
   })
   it.each([
-    { tab: 'Şirketler', rowName: 'Synthetic Company', detailUrl: '/api/v1/companies/company-one', listUrl: '/api/v1/companies?offset=0&limit=25', item: { id: 'company-one', code: 'C1', name: 'Synthetic Company' } },
-    { tab: 'Filo', rowName: 'Synthetic Vessel', detailUrl: '/api/v1/vessels/vessel-one', listUrl: '/api/v1/vessels?offset=0&limit=25', item: { id: 'vessel-one', companyId: 'company-one', code: 'V1', name: 'Synthetic Vessel', kind: 'Ship' } },
+    { tab: 'Şirketler', rowName: 'Synthetic Company', detailUrl: '/api/v1/companies/company-one', listUrl: '/api/v1/companies?offset=0&limit=25', item: { id: 'company-one', code: 'C1', name: 'Synthetic Company', version: 1, canEdit: false } },
+    { tab: 'Filo', rowName: 'Synthetic Vessel', detailUrl: '/api/v1/vessels/vessel-one', listUrl: '/api/v1/vessels?offset=0&limit=25', item: { id: 'vessel-one', companyId: 'company-one', code: 'V1', name: 'Synthetic Vessel', kind: 'Ship', version: 1, canEdit: false } },
   ])('keeps the selected $tab detail visible after selecting its row again', async ({ tab, rowName, detailUrl, listUrl, item }) => {
     const fetchMock = vi.fn(async (url: string) => {
       if (url.endsWith('auth/session')) return reply(signedIn)

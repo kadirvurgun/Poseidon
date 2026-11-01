@@ -18,3 +18,61 @@
 .product-shell [role=alert] { border-left: 4px solid #a34b21; padding: 1rem; background: #fff6ed; margin: 1rem 0; }
 .product-detail dd { margin: .3rem 0 1rem; overflow-wrap: anywhere; }
 @media (max-width: 500px) { .product-nav a { width: 100%; margin: .5rem 0 0; } .product-table th, .product-table td { padding: .45rem; } }
+.directory-editor { margin: 1.5rem 0; padding: clamp(1rem, 3vw, 2rem); border: 1px solid #b5c7d2; border-top: 4px solid #2d6178; border-radius: 10px; background: #fff; box-shadow: 0 8px 24px #1933440a; }
+.directory-editor fieldset { display: grid; gap: .6rem; border: 0; padding: 0; margin: 1.5rem 0; max-width: 620px; min-width: 0; }
+.directory-editor label { font-weight: 650; margin-top: .6rem; }
+.product-shell input { box-sizing: border-box; width: 100%; min-height: 44px; border: 1px solid #748d9c; border-radius: 6px; padding: .7rem; background: #fff; color: #193344; font: inherit; }
+.product-shell [aria-invalid=true] { border: 2px solid #a13d20; }
+.product-shell .field-error { color: #9b321b; }
+.product-shell .form-actions { display: flex; flex-wrap: wrap; gap: .8rem; margin-top: 1.2rem; }
+.product-shell .primary-button { display: inline-block; background: #193e52; color: #fff; border-radius: 6px; padding: .7rem 1rem; }
+.directory-notice { padding: 1rem; border-left: 4px solid #2d6178; background: #e8f1f6; }
+.product-shell dialog { max-width: min(90vw, 520px); border: 1px solid #748d9c; border-radius: 12px; padding: 1.5rem; color: #193344; }
+.product-shell dialog::backdrop { background: #102d3e99; }
+.directory-search { margin: 1.5rem 0; max-width: 660px; }
+.directory-search .form-actions { flex-wrap: nowrap; margin-top: .5rem; }
+.regulatory-profile { background: #fff; border: 1px solid #b5c7d2; border-radius: 12px; padding: clamp(1rem, 3vw, 2rem); margin: 1.5rem 0; }
+.profile-draft-note { background: #fff5e4; border-left: 4px solid #9a6619; padding: 1rem; line-height: 1.6; }
+.profile-context { background: #e9f0f4; padding: 1rem; overflow-wrap: anywhere; }
+.profile-field-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); gap: 1.4rem; }
+.required-data-field label { display: block; font-weight: 650; margin-bottom: .5rem; }
+.required-data-controls { display: grid; grid-template-columns: minmax(115px, .8fr) minmax(0, 1.5fr); gap: .5rem; }
+.required-data-controls input, .required-data-controls select { width: 100%; min-width: 0; }
+.regulatory-profile details { border-top: 1px solid #d1dce3; padding: 1rem 0; }
+.regulatory-profile summary { cursor: pointer; min-height: 44px; line-height: 1.6; }
+.regulatory-profile dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+.regulatory-profile dt { font-weight: 650; }
+.regulatory-profile dd { margin: .4rem 0; overflow-wrap: anywhere; }
+
+/* NAV-WORKSPACE-01: shared shell, without remote fonts or a second component system. */
+.product-shell { display: grid; grid-template-columns: 220px minmax(0, 1fr); grid-template-rows: auto 1fr; }
+.product-header { grid-column: 1 / -1; padding: 1rem 1.5rem; gap: 1rem; flex-wrap: wrap; }
+.workspace-breadcrumb { margin-right: auto; color: #d5e3eb; }
+.product-nav { grid-column: 1; grid-row: 2; display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; padding: 1.5rem 1rem; border-right: 1px solid #d1dce3; border-bottom: 0; }
+.product-nav button { text-align: left; }
+.product-nav a { margin: 1.5rem 0 0; padding: .6rem; }
+.product-shell main { grid-column: 2; grid-row: 2; min-width: 0; width: 100%; box-sizing: border-box; }
+.product-shell h1 { letter-spacing: -.03em; margin-bottom: .5rem; }
+.workspace-context { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; background: #e7eef3; border: 1px solid #bccdd8; border-radius: 8px; padding: 1rem; overflow-wrap: anywhere; }
+.product-header .workspace-menu { display: none; }
+.workspace-search { width: min(640px, 90vw); max-height: 85vh; overflow: auto; }
+.workspace-search ul { padding: 0; list-style: none; }
+.workspace-search li a { display: block; padding: .8rem .4rem; color: #193e52; border-bottom: 1px solid #d1dce3; overflow-wrap: anywhere; }
+.product-shell kbd { font-size: .75rem; }
+.register-hash { overflow-wrap: anywhere; font-family: monospace; }
+.product-shell section[aria-label="Regulatory draft register"] fieldset,
+.product-shell section[aria-label="Mevzuat taslak kaydı"] fieldset { min-width: 0; }
+.product-shell section[aria-label="Regulatory draft register"] input,
+.product-shell section[aria-label="Regulatory draft register"] select,
+.product-shell section[aria-label="Mevzuat taslak kaydı"] input,
+.product-shell section[aria-label="Mevzuat taslak kaydı"] select { max-width: 100%; box-sizing: border-box; }
+@media (max-width: 760px) {
+  .product-shell { display: block; }
+  .product-header { padding: 1rem; gap: .75rem; }
+  .workspace-breadcrumb { display: none; }
+  .product-header .workspace-menu { display: inline-block; }
+  .product-nav { display: none; }
+  .product-nav.is-open { display: flex; position: fixed; z-index: 20; inset: 0 auto 0 0; width: min(280px, 82vw); box-sizing: border-box; box-shadow: 0 0 0 100vmax #102d3e99; overflow-y: auto; }
+  .product-shell main { width: 100%; }
+  .product-pagination { flex-wrap: wrap; }
+}

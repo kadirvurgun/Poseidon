@@ -690,14 +690,19 @@
         "dependencies": {
           "Microsoft.AspNetCore.Authentication.OpenIdConnect": "[10.0.14, )",
           "Microsoft.AspNetCore.OpenApi": "[10.0.14, )",
+          "Poseidon.Domain": "[1.0.0, )",
           "Poseidon.Persistence": "[1.0.0, )"
         }
+      },
+      "poseidon.domain": {
+        "type": "Project"
       },
       "poseidon.persistence": {
         "type": "Project",
         "dependencies": {
           "Microsoft.EntityFrameworkCore": "[10.0.14, )",
-          "Npgsql.EntityFrameworkCore.PostgreSQL": "[10.0.3, )"
+          "Npgsql.EntityFrameworkCore.PostgreSQL": "[10.0.3, )",
+          "Poseidon.Domain": "[1.0.0, )"
         }
       },
       "Microsoft.AspNetCore.Authentication.OpenIdConnect": {

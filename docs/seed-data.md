@@ -1,5 +1,9 @@
 # EF Core ve seed import
 
+## REG-SOURCE-DRAFT-01 — AUTHORED / NOT RUN
+
+The existing synthetic import additionally authors one explicitly FICTIONAL Source draft and one FICTIONAL Requirement draft per tenant, each with an immutable initial revision. Deterministic tenant-derived IDs and add-missing behavior preserve operator edits/history. Requirement fixtures cite that tenant's source revision1; they never follow a later source edit. ObservedAt/declaration remain Unknown; provenance is SyntheticUnverified. There is no law text, signature, credential or approved catalog fixture. Eight actual additional entity imports produce eight attributed audit observations (initial total17→25); no-op reseed adds no audits/history/receipts. New PostgreSQL reseed/lineage/rollback tests and adjusted prior seed expectations are AUTHORED ONLY. Migration and test execution are deferred to CORE-BUNDLE-01.
+
 İlk entity'ler: Tenant, Company, Vessel, VesselProfile, TugProfile. AuditEvent seed JSON'dan yüklenmez; importer'ın gerçek yazma işlemleri tarafından üretilir. Bunlar bütün ürün ERD'sinin tamamı değildir.
 
 ## Veri sözleşmesi
@@ -57,3 +61,13 @@ dotnet test --solution Poseidon.slnx --filter-trait 'Category=Integration'
 .NET 10/xUnit v3 için global.json Microsoft.Testing.Platform çalıştırıcısını seçer; eski VSTest `--filter` biçimi kullanılmaz. Backend foundation workflow'u push/PR'da bu iki test grubunu, migration model kontrolünü ve belge aktarım testlerini çalıştıracak şekilde yazıldı. Henüz remote'da çalıştırıldığı doğrulanmadı; frontend/Playwright kapsamını içermez.
 
 Kaynak: [EF Core Data Seeding](https://learn.microsoft.com/en-us/ef/core/modeling/data-seeding).
+
+## DIR-WORKSPACE-01 preparation — NOT RUN
+
+Online company/vessel create does not seed regulatory measurements or profiles. A newly created basic vessel has unknown regulatory data; zero GT/BP, verified evidence or approval is not fabricated. The existing complete synthetic profile manifest and idempotent importer are unchanged.
+
+`core.CommandReceipts` records actual executed online commands; it is an observation/retry record, not an operational catalog to prepopulate. No receipt fixture is imported. API and persistence tests author actual synthetic operations and assert empty initial receipts, atomic write/audit/receipt behavior, tenant scope, append-only protection and reseed preservation. These tests are NOT RUN pending the parent integrated gate. Retention and controlled archive policy remain open; no production cleanup bypass is added.
+
+## VESSEL-PROFILE-DRAFT-01
+
+The existing manifest's vessels receive idempotent regulatory draft fixtures during actual synthetic import. These are separate from legacy VesselProfile/TugProfile measurements: all regulatory fields start Missing, declaration/source observation Unknown, reference `synthetic-demo/draft-v1`, provenance Synthetic. Save time describes the import operation only. Each actual draft insertion produces its immutable initial revision and attributed audit; no approval/verification/signature is seeded. Reseed does not update drafts or add history for existing rows. Three drafts and three revisions add six real audit observations (initial manifest total17). Command receipts remain empty until actual API commands. Gate evidence: [phase report](phases/VESSEL-PROFILE-DRAFT-01.md).

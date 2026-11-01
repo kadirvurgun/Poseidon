@@ -19,8 +19,31 @@ public sealed class FederationSettings
 }
 
 // Provisioned by the server operator, never populated from request binding or IdP role claims.
-public sealed record Membership(string Issuer, string Subject, Guid ActorId, Guid TenantId, string[] Permissions);
-public sealed record TrustedActor(Guid Id, Guid TenantId, string[] Permissions);
+public sealed record Membership(string Issuer, string Subject, Guid ActorId, Guid TenantId, string[] Permissions, bool TenantWideRead = false, bool TenantWideManage = false, VesselGrant[]? VesselGrants = null)
+{
+    // ConfigurationBinder must use property binding. Constructor binding can silently
+    // omit an array member whose optional collection is an explicit empty JSON array.
+    public Membership() : this("", "", Guid.Empty, Guid.Empty, []) { }
+}
+public sealed record VesselGrant(Guid VesselId, bool CanEdit = false);
+public sealed record TrustedActor(Guid Id, Guid TenantId, string[] Permissions, bool TenantWideRead, bool TenantWideManage, VesselGrant[] VesselGrants)
+{
+    // Explicit tenant-local capability. Vessel-only grants and directory writes confer no catalog authority.
+    public bool CanReadRegulatory => CanRead && (TenantWideRead || TenantWideManage) && Permissions.Contains("regulatory.draft.read");
+    public bool CanWriteRegulatory => CanReadRegulatory && Permissions.Contains("regulatory.draft.write");
+    public bool CanRead => Permissions.Contains("directory.read") && (TenantWideRead || TenantWideManage || VesselGrants.Length > 0);
+    public bool CanManage => CanRead && TenantWideManage && Permissions.Contains("directory.write");
+    public bool CanSearch => CanRead && Permissions.Contains("workspace.search");
+    public bool CanEditVessel(Guid id) => CanRead && Permissions.Contains("directory.write") &&
+        (TenantWideManage || VesselGrants.Any(g => g.VesselId == id && g.CanEdit));
+    public IQueryable<Poseidon.Persistence.Vessel> Scope(IQueryable<Poseidon.Persistence.Vessel> query)
+    {
+        if (!CanRead) return query.Where(_ => false);
+        if (TenantWideRead || TenantWideManage) return query;
+        var ids = VesselGrants.Select(g => g.VesselId).ToArray();
+        return query.Where(v => ids.Contains(v.Id));
+    }
+}
 
 public sealed class ActorResolver(FederationSettings settings)
 {
@@ -33,7 +56,8 @@ public sealed class ActorResolver(FederationSettings settings)
         var matches = settings.Memberships.Where(x => x.Issuer == issuers[0].Value && x.Subject == subjects[0].Value).ToArray();
         if (matches.Length != 1 || matches[0].ActorId == Guid.Empty || matches[0].TenantId == Guid.Empty) return null;
         var m = matches[0];
-        return new(m.ActorId, m.TenantId, m.Permissions.Where(x => x is "directory.read" or "directory.write").Distinct().ToArray());
+        return new(m.ActorId, m.TenantId, (m.Permissions ?? []).Where(x => x is "directory.read" or "directory.write" or "workspace.search" or "regulatory.draft.read" or "regulatory.draft.write").Distinct().ToArray(),
+            m.TenantWideRead, m.TenantWideManage, (m.VesselGrants ?? []).Where(g => g.VesselId != Guid.Empty).ToArray());
     }
 }
 
@@ -42,11 +66,13 @@ public static class FoundationIdentity
     public const string Cookie = "poseidon-session";
     public const string Oidc = "oidc";
     public static string LocalReturn(string? value) => value != null && value.StartsWith("/app", StringComparison.Ordinal) &&
-        (value.Length == 4 || value[4] is '/' or '?' or '#') && !value.Contains('\\') && !value.Any(char.IsControl) ? value : "/app";
+        (value.Length == 4 || value[4] is '/' or '?' or '#') && value.Length <= 512 &&
+        !value.Contains('%') && !value.Contains('\\') && !value.Split('?', '#')[0].Split('/').Any(x => x is "." or "..") &&
+        !value.Any(char.IsControl) ? value : "/app";
 
-    public static void AddFoundationIdentity(this IServiceCollection services, IConfiguration configuration)
+    public static void AddFoundationIdentity(this IServiceCollection services, IConfiguration configuration, IHostEnvironment environment)
     {
-        var settings = configuration.GetSection("Authentication:Oidc").Get<FederationSettings>() ?? new();
+        var settings = configuration.GetSection("Authentication:Oidc").Get<FederationSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new();
         services.AddSingleton(settings);
         services.AddSingleton<ActorResolver>();
         services.AddAntiforgery(o =>
@@ -83,6 +109,10 @@ public static class FoundationIdentity
         });
         if (settings.Configured) auth.AddOpenIdConnect(Oidc, o =>
         {
+            var localCa = configuration["DevelopmentLab:OidcCaPath"];
+            if (!string.IsNullOrEmpty(localCa))
+                o.BackchannelHttpHandler = DevelopmentOidcTransport.Create(
+                    environment, settings.Authority!, localCa);
             o.Authority = settings.Authority;
             o.ClientId = settings.ClientId;
             o.ClientSecret = settings.ClientSecret;
@@ -151,9 +181,12 @@ public static class FoundationIdentity
                 }
             };
         });
-        services.AddAuthorizationBuilder().AddPolicy("DirectoryRead", policy => policy.RequireAuthenticatedUser()
+        services.AddAuthorizationBuilder().AddPolicy("RegulatoryDraftRead", policy => policy.RequireAuthenticatedUser()
             .RequireAssertion(c => c.Resource is HttpContext http && http.RequestServices.GetRequiredService<ActorResolver>()
-                .Resolve(c.User)?.Permissions.Contains("directory.read") == true))
+                .Resolve(c.User)?.CanReadRegulatory == true))
+            .AddPolicy("DirectoryRead", policy => policy.RequireAuthenticatedUser()
+            .RequireAssertion(c => c.Resource is HttpContext http && http.RequestServices.GetRequiredService<ActorResolver>()
+                .Resolve(c.User)?.CanRead == true))
             .AddPolicy("DirectoryWrite", policy => policy.RequireAuthenticatedUser()
                 .RequireAssertion(c => c.Resource is HttpContext http && http.RequestServices.GetRequiredService<ActorResolver>()
                     .Resolve(c.User)?.Permissions.Contains("directory.write") == true));

@@ -1,0 +1,29 @@
+# DEVELOPMENT ONLY. Private generated files must exist before compose is invoked.
+services:
+  provider:
+    image: quay.io/keycloak/keycloak:26.8.1@sha256:3f3c5f8e03c614774b4bd9173b88391fefa4153bfc010d8012d59ad825377332
+    command: [start-dev, --import-realm, --http-enabled=false, --hostname=https://localhost:8443, --https-certificate-file=/lab/tls.pem, --https-certificate-key-file=/lab/tls.key, --log-level=off]
+    ports: ["127.0.0.1:8443:8443"]
+    env_file: ../../.runtime/oidc-lab/provider.env
+    volumes:
+      - ../../.runtime/oidc-lab/tls.pem:/lab/tls.pem:ro
+      - ../../.runtime/oidc-lab/tls.key:/lab/tls.key:ro
+      - ../../.runtime/oidc-lab/realm:/opt/keycloak/data/import:ro
+      - provider-data:/opt/keycloak/data
+    logging: { driver: none }
+  database:
+    image: postgres:18.6@sha256:979bccfde35445db618c65107d27d08c6c21339d8dc3ad4c830c6633947be0e4
+    ports: ["127.0.0.1:55432:5432"]
+    environment:
+      POSTGRES_DB: poseidon_lab
+      POSTGRES_USER: poseidon_lab
+      POSTGRES_PASSWORD_FILE: /run/secrets/database_password
+    secrets: [database_password]
+    volumes: ["database-data:/var/lib/postgresql"]
+    logging: { driver: none }
+secrets:
+  database_password:
+    file: ../../.runtime/oidc-lab/database-password
+volumes:
+  provider-data:
+  database-data:

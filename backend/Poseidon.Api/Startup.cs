@@ -3,15 +3,16 @@ using Poseidon.Persistence;
 
 namespace Poseidon.Api;
 
-public sealed class Startup(IConfiguration configuration)
+public sealed class Startup(IConfiguration configuration, IWebHostEnvironment hostEnvironment)
 {
     public void ConfigureServices(IServiceCollection services)
     {
         // The generic host completes application configuration before invoking Startup.
         // OIDC scheme registration and membership resolution must share that final configuration.
         services.AddRouting();
-        services.AddFoundationIdentity(configuration);
+        services.AddFoundationIdentity(configuration, hostEnvironment);
         services.AddScoped<SecurityAudit>();
+        services.AddSingleton<Microsoft.AspNetCore.Authorization.IAuthorizationMiddlewareResultHandler, DirectoryAuthorizationResultHandler>();
         services.AddHttpContextAccessor();
         services.AddScoped(sp =>
         {
@@ -57,9 +58,19 @@ public sealed class Startup(IConfiguration configuration)
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
+        var labAssets = configuration["DevelopmentLab:WebRoot"];
+        if (!string.IsNullOrEmpty(labAssets))
+        {
+            if (!environment.IsDevelopment()) throw new InvalidOperationException("Lab assets require Development.");
+            app.UseDefaultFiles(new DefaultFilesOptions { FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(labAssets) });
+            app.UseStaticFiles(new StaticFileOptions { FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(labAssets) });
+        }
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapFoundation();
+            endpoints.MapRegulatoryDrafts();
+            endpoints.MapRegulatoryRegister();
+            endpoints.MapToday();
             endpoints.MapGet("/health/live", () => Results.Text("alive"))
                 .WithName("GetLiveness")
                 .WithSummary("Process liveness only; does not indicate database or operational readiness.");
@@ -69,6 +80,13 @@ public sealed class Startup(IConfiguration configuration)
                 .WithSummary("Public technical connectivity check. No business data or safety approval.");
 
             if (environment.IsDevelopment()) endpoints.MapOpenApi();
+            if (environment.IsDevelopment() && !string.IsNullOrEmpty(labAssets))
+            {
+                endpoints.MapFallbackToFile("/app/{*path:nonfile}", "index.html", new StaticFileOptions
+                { FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(labAssets) });
+                endpoints.MapFallbackToFile("/agents", "index.html", new StaticFileOptions
+                { FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(labAssets) });
+            }
         });
         // Migration and synthetic import remain separate operator commands.
     }

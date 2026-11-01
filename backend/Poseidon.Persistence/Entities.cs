@@ -66,3 +66,17 @@ public sealed record ActorContext(string Id, string Type, string CorrelationId)
 {
     public static ActorContext SeedImport() => new("system:seed-import", "System", Guid.NewGuid().ToString());
 }
+
+// Retry metadata only; register receipts pin the committed immutable revision and xmin.
+public sealed class CommandReceipt : ITenantEntity
+{
+    public Guid TenantId { get; set; }
+    public Guid ActorId { get; set; }
+    public required string Key { get; set; }
+    public required string Action { get; set; }
+    public required string Fingerprint { get; set; }
+    public Guid ResourceId { get; set; }
+    public DateTimeOffset CommittedAt { get; set; }
+    public long? RegisterRevision { get; set; }
+    public uint? RegisterVersion { get; set; }
+}
