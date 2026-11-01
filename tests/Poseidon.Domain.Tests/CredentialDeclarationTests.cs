@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Poseidon.Domain;
+using Xunit;
 
 namespace Poseidon.Domain.Tests;
 
