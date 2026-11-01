@@ -69,6 +69,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         {
             endpoints.MapFoundation();
             endpoints.MapRegulatoryDrafts();
+            endpoints.MapRegulatoryRegister();
             endpoints.MapToday();
             endpoints.MapGet("/health/live", () => Results.Text("alive"))
                 .WithName("GetLiveness")

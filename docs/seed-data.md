@@ -1,5 +1,9 @@
 # EF Core ve seed import
 
+## REG-SOURCE-DRAFT-01 — AUTHORED / NOT RUN
+
+The existing synthetic import additionally authors one explicitly FICTIONAL Source draft and one FICTIONAL Requirement draft per tenant, each with an immutable initial revision. Deterministic tenant-derived IDs and add-missing behavior preserve operator edits/history. Requirement fixtures cite that tenant's source revision1; they never follow a later source edit. ObservedAt/declaration remain Unknown; provenance is SyntheticUnverified. There is no law text, signature, credential or approved catalog fixture. Eight actual additional entity imports produce eight attributed audit observations (initial total17→25); no-op reseed adds no audits/history/receipts. New PostgreSQL reseed/lineage/rollback tests and adjusted prior seed expectations are AUTHORED ONLY. Migration and test execution are deferred to CORE-BUNDLE-01.
+
 İlk entity'ler: Tenant, Company, Vessel, VesselProfile, TugProfile. AuditEvent seed JSON'dan yüklenmez; importer'ın gerçek yazma işlemleri tarafından üretilir. Bunlar bütün ürün ERD'sinin tamamı değildir.
 
 ## Veri sözleşmesi

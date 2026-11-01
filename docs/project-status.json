@@ -1,5 +1,36 @@
 {
   "as_of": "2026-11-01",
+  "reg_source_draft_01": {
+    "status": "unverified_authored_checkpoint",
+    "accepted": false,
+    "baseline_commit": "5784b82",
+    "task": "docs/tasks/reg-source-draft-01.md",
+    "phase_report": "docs/phases/REG-SOURCE-DRAFT-01.md",
+    "current_phase": "Tenant-local declared draft foundation bundle authoring",
+    "delivered": "Source/requirement draft registers, immutable exact source lineage, explicit trusted default-deny permissions, transactional audit/receipts/xmin, fictional fixtures, real HTTP TR/EN editor/history/search/dirty/conflict/frozen retry and authored tests",
+    "verification": {
+      "backend_domain_persistence_api_postgresql": "DEFERRED / NOT RUN",
+      "react_transport": "DEFERRED / NOT RUN",
+      "playwright_browser_idp_lab": "DEFERRED / NOT RUN; no host started",
+      "python_source_verification": "DEFERRED / NOT RUN; bounded local source reads only",
+      "restore_build_lint_typecheck": "DEFERRED / NOT RUN",
+      "actual_openapi_generated_contracts": "DEFERRED / NOT RUN; generated DTOs untouched",
+      "migration_model_parity": "DEFERRED / NOT RUN; migration/designer/snapshot authored with one scaffold",
+      "graphify": "AST-only final update exit0;3165 nodes/5120 edges/267 communities;12 existing zero-node warnings;no model call;not product verification",
+      "independent_qa_ci": "PENDING; coordinator-owned"
+    },
+    "canonical_progress_unchanged": true,
+    "prior_wip": "Clean initial worktree; Today58b609d and interrupted diagnostics preserved",
+    "open_gates": [
+      "DEV-005/008 source admission and canonical DEV-026 lifecycle",
+      "Production IdP, operational roles and approved lookups",
+      "Mandatory/lifecycle/expert/signature/permit decisions",
+      "Privacy/retention/export and production DB privilege separation",
+      "Combined CORE-BUNDLE-01 checks, independent target QA, pilot/release"
+    ],
+    "publication": "UNVERIFIED local checkpoint only; no push/PR/merge/accounts/extra agents/self-approval",
+    "next_step": "CORE-BUNDLE-01 actual contract generation, combined test/build gates and independent QA on final target"
+  },
   "baseline": "POSEIDON v46.3 updated 2026-10-30 / Library26 candidate",
   "current_stage": "S0; DEV-001 and DEV-002 accepted; remaining exit gates open",
   "method": "accepted story points / total baseline story points * 100",

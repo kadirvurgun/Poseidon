@@ -41,7 +41,7 @@ public sealed partial class DirectoryWorkspaceTests : IAsyncLifetime
     }
     public async ValueTask DisposeAsync() => await postgres.DisposeAsync();
     private Vessel SeedVessel => seed.Vessels.First(v => v.TenantId == seed.Tenants[0].Id);
-    private WebApplicationFactory<Program> Host(bool manage = true, bool read = true, bool edit = true, bool scope = true, DbCommandInterceptor? interceptor = null, bool search = false) => new WebApplicationFactory<Program>().WithWebHostBuilder(b =>
+    private WebApplicationFactory<Program> Host(bool manage = true, bool read = true, bool edit = true, bool scope = true, DbCommandInterceptor? interceptor = null, bool search = false, bool regulatoryRead = false, bool regulatoryWrite = false) => new WebApplicationFactory<Program>().WithWebHostBuilder(b =>
     {
         b.UseEnvironment("Test");
         b.ConfigureAppConfiguration((_, c) => c.AddInMemoryCollection(new Dictionary<string, string?>
@@ -54,6 +54,8 @@ public sealed partial class DirectoryWorkspaceTests : IAsyncLifetime
             ["Authentication:Oidc:Memberships:0:Permissions:0"] = "directory.read",
             ["Authentication:Oidc:Memberships:0:Permissions:1"] = edit ? "directory.write" : "unused",
             ["Authentication:Oidc:Memberships:0:Permissions:2"] = search ? "workspace.search" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:3"] = regulatoryRead ? "regulatory.draft.read" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:4"] = regulatoryWrite ? "regulatory.draft.write" : "unused",
             ["Authentication:Oidc:Memberships:0:TenantWideManage"] = (scope && manage).ToString(),
             ["Authentication:Oidc:Memberships:0:TenantWideRead"] = (scope && read).ToString(),
             ["Authentication:Oidc:Memberships:0:VesselGrants:0:VesselId"] = scope ? SeedVessel.Id.ToString() : Guid.Empty.ToString(),

@@ -20,10 +20,15 @@ public sealed class PoseidonDbContext(
     public DbSet<CommandReceipt> CommandReceipts => Set<CommandReceipt>();
     public DbSet<RegulatoryDraft> RegulatoryDrafts => Set<RegulatoryDraft>();
     public DbSet<RegulatoryDraftRevision> RegulatoryDraftRevisions => Set<RegulatoryDraftRevision>();
+    public DbSet<RegisterDraft> RegisterDrafts => Set<RegisterDraft>();
+    public DbSet<RegisterRevision> RegisterRevisions => Set<RegisterRevision>();
 
     protected override void OnModelCreating(ModelBuilder model)
     {
         model.HasDefaultSchema("core");
+        RegisterStorage.Configure(model);
+        model.Entity<RegisterDraft>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<RegisterRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         RegulatoryDraftStorage.Configure(model);
         model.Entity<RegulatoryDraft>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<RegulatoryDraftRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -135,6 +140,11 @@ public sealed class PoseidonDbContext(
             throw new InvalidOperationException("Command receipts are immutable.");
         if (changes.Any(e => e.Entity is RegulatoryDraftRevision && e.State != EntityState.Added))
             throw new InvalidOperationException("Draft revisions are immutable.");
+        if (changes.Any(e => e.Entity is RegisterRevision && e.State != EntityState.Added))
+            throw new InvalidOperationException("Register revisions are immutable.");
+        if (changes.Any(e => e.Entity is RegisterDraft && (e.State == EntityState.Deleted ||
+            e.State == EntityState.Modified && e.Property(nameof(RegisterDraft.Kind)).IsModified)))
+            throw new InvalidOperationException("Register kind and history cannot be removed or reassigned.");
         var events = new List<AuditEvent>();
         foreach (var entry in changes)
         {

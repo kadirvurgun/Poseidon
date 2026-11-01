@@ -59,6 +59,13 @@
 .workspace-search ul { padding: 0; list-style: none; }
 .workspace-search li a { display: block; padding: .8rem .4rem; color: #193e52; border-bottom: 1px solid #d1dce3; overflow-wrap: anywhere; }
 .product-shell kbd { font-size: .75rem; }
+.register-hash { overflow-wrap: anywhere; font-family: monospace; }
+.product-shell section[aria-label="Regulatory draft register"] fieldset,
+.product-shell section[aria-label="Mevzuat taslak kaydı"] fieldset { min-width: 0; }
+.product-shell section[aria-label="Regulatory draft register"] input,
+.product-shell section[aria-label="Regulatory draft register"] select,
+.product-shell section[aria-label="Mevzuat taslak kaydı"] input,
+.product-shell section[aria-label="Mevzuat taslak kaydı"] select { max-width: 100%; box-sizing: border-box; }
 @media (max-width: 760px) {
   .product-shell { display: block; }
   .product-header { padding: 1rem; gap: .75rem; }

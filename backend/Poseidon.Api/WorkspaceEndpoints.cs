@@ -4,13 +4,19 @@ using Poseidon.Persistence;
 namespace Poseidon.Api;
 
 public sealed record NavigationDto(string Key, string Href);
-public sealed record WorkspaceDto(NavigationDto[] Destinations, bool CanSearch);
+public sealed record WorkspaceDto(NavigationDto[] Destinations, bool CanSearch, bool CanWriteRegulatory = false);
 public sealed record SearchItemDto(string Key, string Href, string Label, string Kind);
 
 // NAV-01/02: projections contain implemented routes only, with the same scope as their endpoints.
 public static class WorkspaceEndpoints
 {
-    public static NavigationDto[] Destinations(TrustedActor actor) => !actor.CanRead ? [] :
+    public static NavigationDto[] Destinations(TrustedActor actor)
+    {
+        if (!actor.CanRead) return [];
+        var destinations = BaseDestinations(actor);
+        return actor.CanReadRegulatory ? [.. destinations, new("sources", "/app/sources"), new("requirements", "/app/requirements")] : destinations;
+    }
+    private static NavigationDto[] BaseDestinations(TrustedActor actor) =>
         actor.TenantWideRead || actor.TenantWideManage
             ? [new("today", "/app/today"), new("companies", "/app/companies"), new("fleet", "/app/fleet")]
             : [new("today", "/app/today"), new("fleet", "/app/fleet")];
@@ -21,7 +27,7 @@ public static class WorkspaceEndpoints
         {
             var actor = actors.Resolve(http.User)!;
             await audit.WriteAsync(http, "WorkspaceRead", "Success");
-            return TypedResults.Ok(new WorkspaceDto(Destinations(actor), actor.CanSearch));
+            return TypedResults.Ok(new WorkspaceDto(Destinations(actor), actor.CanSearch, actor.CanWriteRegulatory));
         }).RequireAuthorization("DirectoryRead").WithName("GetWorkspace").Produces(401).Produces(403).Produces(503);
 
         app.MapGet("/api/v1/workspace/search", async (HttpContext http, ActorResolver actors, PoseidonDbContext db, SecurityAudit audit, string? q, int? offset, int? limit) =>

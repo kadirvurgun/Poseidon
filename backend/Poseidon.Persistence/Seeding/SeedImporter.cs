@@ -35,6 +35,7 @@ public static class SeedImporter
             db.RegulatoryDrafts.Add(draft);
             db.RegulatoryDraftRevisions.Add(draft.Snapshot());
         }
+        await RegulatoryRegisterFixtures.AddMissingAsync(db, data.Tenants, cancellationToken).ConfigureAwait(false);
         await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         if (transaction is not null)
             await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);

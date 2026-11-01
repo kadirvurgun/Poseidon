@@ -12,6 +12,21 @@ namespace Poseidon.Api.Tests;
 public sealed class FoundationIdentityTests
 {
     [Fact]
+    public void Regulatory_capabilities_require_explicit_whitelisted_server_grants_and_tenant_wide_scope()
+    {
+        var membership = new Membership("https://synthetic.example", "synthetic", Guid.NewGuid(), Guid.NewGuid(), ["directory.read", "directory.write"], true, true);
+        var settings = new FederationSettings { Memberships = [membership] };
+        var principal = new ClaimsPrincipal(new ClaimsIdentity([new("sub", membership.Subject), new("iss", membership.Issuer),
+            new("permission", "regulatory.draft.write"), new("role", "RegulatoryAdmin"), new("tenant", Guid.NewGuid().ToString())], "test"));
+        var resolver = new ActorResolver(settings);
+        Assert.False(resolver.Resolve(principal)!.CanReadRegulatory); Assert.False(resolver.Resolve(principal)!.CanWriteRegulatory);
+        settings.Memberships = [membership with { Permissions = ["directory.read", "regulatory.draft.read", "regulatory.draft.write", "regulatory.approve"] }];
+        var trusted = resolver.Resolve(principal)!; Assert.True(trusted.CanReadRegulatory); Assert.True(trusted.CanWriteRegulatory);
+        Assert.Equal(membership.TenantId, trusted.TenantId); Assert.DoesNotContain("regulatory.approve", trusted.Permissions);
+        settings.Memberships = [settings.Memberships[0] with { TenantWideRead = false, TenantWideManage = false, VesselGrants = [new(Guid.NewGuid(), true)] }];
+        Assert.False(resolver.Resolve(principal)!.CanReadRegulatory); Assert.False(resolver.Resolve(principal)!.CanWriteRegulatory);
+    }
+    [Fact]
     public void Malformed_server_membership_configuration_fails_startup_instead_of_silently_dropping_entries()
     {
         var configuration = new ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string, string?>

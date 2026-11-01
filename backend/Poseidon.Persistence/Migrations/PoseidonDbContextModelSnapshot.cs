@@ -335,6 +335,43 @@ namespace Poseidon.Persistence.Migrations
                     b.HasOne("Poseidon.Persistence.RegulatoryDraft", null).WithMany().HasForeignKey("TenantId", "VesselId").OnDelete(DeleteBehavior.Restrict).IsRequired();
                 });
 
+            modelBuilder.Entity("Poseidon.Persistence.RegisterDraft", b =>
+                {
+                    b.Property<Guid>("TenantId").HasColumnType("uuid");
+                    b.Property<Guid>("Id").HasColumnType("uuid");
+                    b.Property<long>("Revision").HasColumnType("bigint");
+                    b.Property<DateTimeOffset>("SavedAt").HasColumnType("timestamp with time zone");
+                    b.Property<string>("Kind").IsRequired().HasMaxLength(16).HasColumnType("character varying(16)");
+                    b.Property<string>("ContentJson").IsRequired().HasColumnType("text");
+                    b.Property<string>("Provenance").IsRequired().HasMaxLength(32).HasColumnType("character varying(32)");
+                    b.Property<uint>("Version").IsConcurrencyToken().ValueGeneratedOnAddOrUpdate().HasColumnType("xid").HasColumnName("xmin");
+                    b.HasKey("TenantId", "Kind", "Id");
+                    b.ToTable("RegisterDrafts", "core", t => t.HasCheckConstraint("CK_RegisterDrafts_Kind", "\"Kind\" IN ('Source','Requirement') AND \"Revision\" > 0 AND \"Provenance\" IN ('DeclaredUnverified','SyntheticUnverified')"));
+                });
+            modelBuilder.Entity("Poseidon.Persistence.RegisterRevision", b =>
+                {
+                    b.Property<Guid>("TenantId").HasColumnType("uuid");
+                    b.Property<Guid>("Id").HasColumnType("uuid");
+                    b.Property<long>("Revision").HasColumnType("bigint");
+                    b.Property<DateTimeOffset>("SavedAt").HasColumnType("timestamp with time zone");
+                    b.Property<string>("Kind").IsRequired().HasMaxLength(16).HasColumnType("character varying(16)");
+                    b.Property<string>("ContentJson").IsRequired().HasColumnType("text");
+                    b.Property<string>("Provenance").IsRequired().HasMaxLength(32).HasColumnType("character varying(32)");
+                    b.Property<string>("Hash").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");
+                    b.Property<string>("SourceKind").HasMaxLength(16).HasColumnType("character varying(16)");
+                    b.Property<Guid?>("SourceId").HasColumnType("uuid");
+                    b.Property<long?>("SourceRevision").HasColumnType("bigint");
+                    b.HasIndex("TenantId", "SourceKind", "SourceId", "SourceRevision");
+                    b.HasKey("TenantId", "Kind", "Id", "Revision");
+                    b.ToTable("RegisterRevisions", "core", t => t.HasCheckConstraint("CK_RegisterRevisions_Lineage", "\"Revision\" > 0 AND \"Kind\" IN ('Source','Requirement') AND \"Provenance\" IN ('DeclaredUnverified','SyntheticUnverified') AND ((\"SourceKind\" IS NULL AND \"SourceId\" IS NULL AND \"SourceRevision\" IS NULL) OR (\"Kind\" = 'Requirement' AND \"SourceKind\" IS NOT NULL AND \"SourceKind\" = 'Source' AND \"SourceId\" IS NOT NULL AND \"SourceRevision\" IS NOT NULL AND \"SourceRevision\" > 0))"));
+                });
+            modelBuilder.Entity("Poseidon.Persistence.RegisterDraft", b => {
+                b.HasOne("Poseidon.Persistence.Tenant", null).WithMany().HasForeignKey("TenantId").OnDelete(DeleteBehavior.Restrict).IsRequired();
+            });
+            modelBuilder.Entity("Poseidon.Persistence.RegisterRevision", b => {
+                b.HasOne("Poseidon.Persistence.RegisterDraft", null).WithMany().HasForeignKey("TenantId", "Kind", "Id").OnDelete(DeleteBehavior.Restrict).IsRequired();
+                b.HasOne("Poseidon.Persistence.RegisterRevision", null).WithMany().HasForeignKey("TenantId", "SourceKind", "SourceId", "SourceRevision").HasPrincipalKey("TenantId", "Kind", "Id", "Revision").OnDelete(DeleteBehavior.Restrict).HasConstraintName("FK_RegisterRevisions_Source");
+            });
 #pragma warning restore 612, 618
         }
     }
