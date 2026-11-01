@@ -66,7 +66,7 @@ class NavigationFixtureTests(unittest.TestCase):
 
     def test_wrong_tenant_scope_duplicate_identity_and_non_lab_realm_fail_before_mutation(self):
         realm, _, _, config = lab.make_configuration()
-        for change in ('tenant', 'scope', 'duplicate', 'realm'):
+        for change in ('tenant', 'scope', 'duplicate', 'realm', 'provider'):
             with self.subTest(change=change):
                 candidate, current_realm = deepcopy(config), deepcopy(realm)
                 members = candidate['Authentication']['Oidc']['Memberships']
@@ -74,6 +74,7 @@ class NavigationFixtureTests(unittest.TestCase):
                 if change == 'scope': members[0]['TenantWideManage'] = False
                 if change == 'duplicate': members.append(deepcopy(members[0]))
                 if change == 'realm': current_realm['realm'] = 'production'
+                if change == 'provider': candidate['Authentication']['Oidc']['Authority'] = 'https://provider.example.invalid'
                 original = deepcopy(candidate)
                 with self.assertRaises(RuntimeError):
                     lab.navigation_membership(candidate, current_realm)
@@ -95,7 +96,7 @@ class NavigationFixtureTests(unittest.TestCase):
 
     def test_invalid_or_over_budget_configuration_cannot_partially_assign_roles(self):
         realm, _, _, config = lab.make_configuration()
-        for version, rows in (('', []), ('bad\nversion', []), ('v1', [None]),
+        for version, rows in (('', []), ('bad\nversion', []), ('bad\u0085version', []), ('v1', [None]),
                               ('v1', [{}] * 4096)):
             with self.subTest(version_valid=version == 'v1', rows=len(rows)):
                 candidate = deepcopy(config)

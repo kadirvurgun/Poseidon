@@ -292,6 +292,10 @@ def navigation_membership(config, realm):
     subjects = [u['id'] for u in realm['users'] if u['username'] == 'lab-manager']
     if realm.get('realm') != 'poseidon-lab' or len(subjects) != 1:
         raise RuntimeError('lab_navigation_identity_invalid')
+    federation = candidate['Authentication']['Oidc']
+    if (federation.get('Authority') != AUTHORITY or federation.get('Issuer') != AUTHORITY or
+            federation.get('ClientId') != 'poseidon-local'):
+        raise RuntimeError('lab_navigation_provider_invalid')
     members = [m for m in candidate['Authentication']['Oidc']['Memberships']
                if m['Issuer'] == AUTHORITY and m['Subject'] == subjects[0]]
     if (len(members) != 1 or members[0].get('TenantId') != tenant or
@@ -319,7 +323,7 @@ def navigation_membership(config, realm):
         catalog.setdefault('Version', 'SYNTHETIC-LAB-NAVIGATION-v1')
         version = catalog['Version']
         if (not isinstance(version, str) or not 1 <= len(version) <= 64 or
-                version.strip() != version or any(ord(c) < 32 or ord(c) == 127 for c in version)):
+                version.strip() != version or any(ord(c) < 32 or 127 <= ord(c) <= 159 for c in version)):
             raise RuntimeError('lab_navigation_catalog_invalid')
         rows = catalog.setdefault(key, [])
         if not isinstance(rows, list) or len(rows) > 4096 or any(not isinstance(row, dict) for row in rows):
