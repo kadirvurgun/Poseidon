@@ -1,0 +1,176 @@
+{
+  "schemaVersion": "poseidon.environment.v1",
+  "source": {
+    "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/23.03_POSEIDON_v46.3_Deployment_Environment_Runbook_TR.docx",
+    "sha256": "7359acce4371c525d942f78c7dde8383915378bdc8ccff5ddc6137f8ce76ee0a",
+    "locators": [
+      "paragraph:19..49",
+      "paragraph:50..111"
+    ]
+  },
+  "environments": {
+    "DEV": {
+      "deployRole": "DevOps",
+      "approvalRole": "Engineering",
+      "dataClass": "Synthetic",
+      "productionCopyAllowed": false,
+      "hosting": "DevelopmentTestOnly",
+      "references": {
+        "publicOrigin": "config://poseidon/DEV/public-origin",
+        "apiOrigin": "config://poseidon/DEV/api-origin",
+        "databaseSecret": "config://poseidon/DEV/database-secret",
+        "oidcSecret": "config://poseidon/DEV/oidc-secret",
+        "objectStoreSecret": "config://poseidon/DEV/object-store-secret",
+        "profileKeySecret": "config://poseidon/DEV/profile-key-secret",
+        "offlineKeySecret": "config://poseidon/DEV/offline-key-secret",
+        "retentionPolicy": "config://poseidon/DEV/retention-policy",
+        "dataPolicy": "config://poseidon/DEV/data-policy",
+        "migrationRole": "config://poseidon/DEV/migration-role",
+        "applicationRole": "config://poseidon/DEV/application-role",
+        "backupPolicy": "config://poseidon/DEV/backup-policy",
+        "monitoringPolicy": "config://poseidon/DEV/monitoring-policy",
+        "rollbackPlan": "config://poseidon/DEV/rollback-plan"
+      },
+      "configurationEvidence": {
+        "state": "DefaultsOnly",
+        "sourcePaths": [
+          "frontend/vite.config.ts",
+          ".github/workflows/backend-foundation.yml"
+        ]
+      }
+    },
+    "TEST": {
+      "deployRole": "DevOps",
+      "approvalRole": "QA/Engineering",
+      "dataClass": "SyntheticGolden",
+      "productionCopyAllowed": false,
+      "hosting": "DevelopmentTestOnly",
+      "references": {
+        "publicOrigin": "config://poseidon/TEST/public-origin",
+        "apiOrigin": "config://poseidon/TEST/api-origin",
+        "databaseSecret": "config://poseidon/TEST/database-secret",
+        "oidcSecret": "config://poseidon/TEST/oidc-secret",
+        "objectStoreSecret": "config://poseidon/TEST/object-store-secret",
+        "profileKeySecret": "config://poseidon/TEST/profile-key-secret",
+        "offlineKeySecret": "config://poseidon/TEST/offline-key-secret",
+        "retentionPolicy": "config://poseidon/TEST/retention-policy",
+        "dataPolicy": "config://poseidon/TEST/data-policy",
+        "migrationRole": "config://poseidon/TEST/migration-role",
+        "applicationRole": "config://poseidon/TEST/application-role",
+        "backupPolicy": "config://poseidon/TEST/backup-policy",
+        "monitoringPolicy": "config://poseidon/TEST/monitoring-policy",
+        "rollbackPlan": "config://poseidon/TEST/rollback-plan"
+      },
+      "configurationEvidence": {
+        "state": "DefaultsOnly",
+        "sourcePaths": [
+          "frontend/vite.config.ts",
+          ".github/workflows/backend-foundation.yml"
+        ]
+      }
+    },
+    "UAT": {
+      "deployRole": "DevOps",
+      "approvalRole": "PO/QA",
+      "dataClass": "MaskedRepresentative",
+      "productionCopyAllowed": false,
+      "hosting": "OnPremisesOrSelfHosted",
+      "references": {
+        "publicOrigin": "config://poseidon/UAT/public-origin",
+        "apiOrigin": "config://poseidon/UAT/api-origin",
+        "databaseSecret": "config://poseidon/UAT/database-secret",
+        "oidcSecret": "config://poseidon/UAT/oidc-secret",
+        "objectStoreSecret": "config://poseidon/UAT/object-store-secret",
+        "profileKeySecret": "config://poseidon/UAT/profile-key-secret",
+        "offlineKeySecret": "config://poseidon/UAT/offline-key-secret",
+        "retentionPolicy": "config://poseidon/UAT/retention-policy",
+        "dataPolicy": "config://poseidon/UAT/data-policy",
+        "migrationRole": "config://poseidon/UAT/migration-role",
+        "applicationRole": "config://poseidon/UAT/application-role",
+        "backupPolicy": "config://poseidon/UAT/backup-policy",
+        "monitoringPolicy": "config://poseidon/UAT/monitoring-policy",
+        "rollbackPlan": "config://poseidon/UAT/rollback-plan"
+      },
+      "configurationEvidence": {
+        "state": "Unprovisioned",
+        "sourcePaths": []
+      }
+    },
+    "PILOT": {
+      "deployRole": "DevOps",
+      "approvalRole": "Product/Pilot/Engineering",
+      "dataClass": "ApprovedReal",
+      "productionCopyAllowed": false,
+      "hosting": "OnPremisesOrSelfHosted",
+      "references": {
+        "publicOrigin": "config://poseidon/PILOT/public-origin",
+        "apiOrigin": "config://poseidon/PILOT/api-origin",
+        "databaseSecret": "config://poseidon/PILOT/database-secret",
+        "oidcSecret": "config://poseidon/PILOT/oidc-secret",
+        "objectStoreSecret": "config://poseidon/PILOT/object-store-secret",
+        "profileKeySecret": "config://poseidon/PILOT/profile-key-secret",
+        "offlineKeySecret": "config://poseidon/PILOT/offline-key-secret",
+        "retentionPolicy": "config://poseidon/PILOT/retention-policy",
+        "dataPolicy": "config://poseidon/PILOT/data-policy",
+        "migrationRole": "config://poseidon/PILOT/migration-role",
+        "applicationRole": "config://poseidon/PILOT/application-role",
+        "backupPolicy": "config://poseidon/PILOT/backup-policy",
+        "monitoringPolicy": "config://poseidon/PILOT/monitoring-policy",
+        "rollbackPlan": "config://poseidon/PILOT/rollback-plan"
+      },
+      "configurationEvidence": {
+        "state": "Unprovisioned",
+        "sourcePaths": []
+      }
+    },
+    "PROD": {
+      "deployRole": "DevOps",
+      "approvalRole": "ReleaseAuthority",
+      "dataClass": "Authoritative",
+      "productionCopyAllowed": false,
+      "hosting": "OnPremisesOrSelfHosted",
+      "references": {
+        "publicOrigin": "config://poseidon/PROD/public-origin",
+        "apiOrigin": "config://poseidon/PROD/api-origin",
+        "databaseSecret": "config://poseidon/PROD/database-secret",
+        "oidcSecret": "config://poseidon/PROD/oidc-secret",
+        "objectStoreSecret": "config://poseidon/PROD/object-store-secret",
+        "profileKeySecret": "config://poseidon/PROD/profile-key-secret",
+        "offlineKeySecret": "config://poseidon/PROD/offline-key-secret",
+        "retentionPolicy": "config://poseidon/PROD/retention-policy",
+        "dataPolicy": "config://poseidon/PROD/data-policy",
+        "migrationRole": "config://poseidon/PROD/migration-role",
+        "applicationRole": "config://poseidon/PROD/application-role",
+        "backupPolicy": "config://poseidon/PROD/backup-policy",
+        "monitoringPolicy": "config://poseidon/PROD/monitoring-policy",
+        "rollbackPlan": "config://poseidon/PROD/rollback-plan"
+      },
+      "configurationEvidence": {
+        "state": "Unprovisioned",
+        "sourcePaths": []
+      }
+    }
+  },
+  "promotion": {
+    "order": [
+      "DEV",
+      "TEST",
+      "UAT",
+      "PILOT",
+      "PROD"
+    ],
+    "artifact": "SameImmutableDigest",
+    "checks": [
+      "RequiredCI",
+      "IndependentQA",
+      "SourceReview",
+      "MigrationDryRun",
+      "BackupRecoveryPoint",
+      "Smoke",
+      "Telemetry",
+      "Rollback"
+    ],
+    "approval": "IndependentTargetEnvironmentAuthority",
+    "failure": "StopOrRollbackNoAutomaticRetry"
+  }
+}

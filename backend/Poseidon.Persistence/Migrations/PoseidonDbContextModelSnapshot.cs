@@ -1105,6 +1105,7 @@ AND "SourceName" = 'name-withheld.xlsx' AND "SourceLocator" = 'protected-history
                 b.Property<string>("PassportExpiry").HasColumnType("text");
                 b.Property<string>("SeamanBookNo").HasColumnType("text");
                 b.Property<string>("SeamanBookExpiry").HasColumnType("text");
+                b.Property<string>("MedicalExpiry").HasColumnType("text");
                 b.Property<string>("CompanyStartDate").HasColumnType("text");
                 b.Property<string>("SeaServiceMonths").HasColumnType("text");
                 b.Property<string>("TankerExperienceMonths").HasColumnType("text");

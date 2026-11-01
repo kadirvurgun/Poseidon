@@ -29,6 +29,7 @@ public sealed class CrewPersonalProfile : ITenantEntity
     public string? PreferredLanguage { get; set; } // authenticated encrypted lexical value
     public string? ContactPhone { get; set; } // authenticated encrypted lexical value
     public string? Email { get; set; } // authenticated encrypted lexical value
+    public string? MedicalExpiry { get; set; } // restricted declaration only; never a fitness/eligibility decision
     public string? Ciphertext(CrewPersonalField field) => field switch {
         CrewPersonalField.Nationality => Nationality,
         CrewPersonalField.DateOfBirth => DateOfBirth,
@@ -45,6 +46,7 @@ public sealed class CrewPersonalProfile : ITenantEntity
         CrewPersonalField.PreferredLanguage => PreferredLanguage,
         CrewPersonalField.ContactPhone => ContactPhone,
         CrewPersonalField.Email => Email,
+        CrewPersonalField.MedicalExpiry => MedicalExpiry,
         _ => throw new ArgumentOutOfRangeException(nameof(field))
     };
     public void Capture(CrewPersonalField field, string? ciphertext) {
@@ -64,6 +66,7 @@ public sealed class CrewPersonalProfile : ITenantEntity
             case CrewPersonalField.PreferredLanguage: PreferredLanguage = ciphertext; break;
             case CrewPersonalField.ContactPhone: ContactPhone = ciphertext; break;
             case CrewPersonalField.Email: Email = ciphertext; break;
+            case CrewPersonalField.MedicalExpiry: MedicalExpiry = ciphertext; break;
             default: throw new ArgumentOutOfRangeException(nameof(field));
         }
     }

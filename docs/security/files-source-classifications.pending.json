@@ -135,7 +135,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "aa2740ec678d419becfd634ae282d3fd00a860b62d884d8043723d342ac63eee",
+      "evidence_sha256": "ecec61eb3f65f20eb737514e130624e5ea7b440602aafd540b618c5318a6016f",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "e022680b72945874917ee3d4da504493a20345f2c6c845cff0cac39cc99c3a16",
@@ -147,7 +147,7 @@
           "archived_line": 48
         }
       ],
-      "proposal_sha256": "96bcab434e85252218042da1b511d3cd4085034d5800959807c1f2a871b3f790"
+      "proposal_sha256": "8dfedf6f709cac1c96e87373795520e1749a4a920e5954d581eafc1771dd63fd"
     },
     {
       "target": {
@@ -162,7 +162,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "aa2740ec678d419becfd634ae282d3fd00a860b62d884d8043723d342ac63eee",
+      "evidence_sha256": "ecec61eb3f65f20eb737514e130624e5ea7b440602aafd540b618c5318a6016f",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "e022680b72945874917ee3d4da504493a20345f2c6c845cff0cac39cc99c3a16",
@@ -174,7 +174,7 @@
           "archived_line": 108
         }
       ],
-      "proposal_sha256": "6805e746201798a49248bc3731bcb35f9ce4b8734f325622a29c7aec4996c2e7"
+      "proposal_sha256": "34e922bba05d2f23ec4801d3e00da0135734c04a32811fccbf01930dd9dd8c5d"
     },
     {
       "target": {
@@ -1026,7 +1026,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "773746b9f4827d4f9d37393243eca3a63b1962f4145c2e60d2c40d032096ea7a",
+      "evidence_sha256": "885b1bdc54c9daba8f01e2b7fd1ba442cbf670cff0bebd9d024da2f5b637bf07",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "153f35c40471ff0e53ae1b4cd8ec8ebc77812e54176ab36fe24d19929ed5c181",
@@ -1038,7 +1038,7 @@
           "archived_line": 48
         }
       ],
-      "proposal_sha256": "a2ac27f973f22f5b2e33e50174a79f41383a2a30a307080b409e3943f1fcf1db"
+      "proposal_sha256": "444a43a2eed6a4d6ea5078362644af579f3670c6d2154f6e1f5f4e90ff4a58ed"
     },
     {
       "target": {
@@ -1053,7 +1053,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "773746b9f4827d4f9d37393243eca3a63b1962f4145c2e60d2c40d032096ea7a",
+      "evidence_sha256": "885b1bdc54c9daba8f01e2b7fd1ba442cbf670cff0bebd9d024da2f5b637bf07",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "153f35c40471ff0e53ae1b4cd8ec8ebc77812e54176ab36fe24d19929ed5c181",
@@ -1065,7 +1065,7 @@
           "archived_line": 108
         }
       ],
-      "proposal_sha256": "ffdca1fe1402fc4c44842bab230856e65361ed93db3014f3997cfb9dc74eb627"
+      "proposal_sha256": "4da4e6f74ac619eb3d6430cd2c14407952be1839207cf2a727d1903d4f338072"
     },
     {
       "target": {
@@ -1188,7 +1188,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "57ea207b23e5371d6e9ff2fb354d414d2d83a6d20e809b75706874fe58ccf250",
+      "evidence_sha256": "7c327b872248fb1da52c7524a61363a1eb91c33deeea0558b65471fb79680fb1",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "b4ba384699a3aded1cba856a17affedc2e5929069128a3e66e80955691a3c751",
@@ -1200,7 +1200,7 @@
           "archived_line": 48
         }
       ],
-      "proposal_sha256": "329d99bb0b0c2e10235c4d4e109ade1ebf2bab30c16617ae9413905c053d0f4f"
+      "proposal_sha256": "a8cafdab559fa7a4119663b9bc8705af57d39c026f35ca4715a90089bac5ee14"
     },
     {
       "target": {
@@ -1215,7 +1215,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "57ea207b23e5371d6e9ff2fb354d414d2d83a6d20e809b75706874fe58ccf250",
+      "evidence_sha256": "7c327b872248fb1da52c7524a61363a1eb91c33deeea0558b65471fb79680fb1",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "b4ba384699a3aded1cba856a17affedc2e5929069128a3e66e80955691a3c751",
@@ -1227,7 +1227,7 @@
           "archived_line": 108
         }
       ],
-      "proposal_sha256": "f1eb69d33afe99b13452f8b099f93b2f7fd4ca9b4bae9f741031eeded00caedc"
+      "proposal_sha256": "f7ceaf243499d401da6d61cb50c1924b8bd51458c129c94950d8a7c25da6ae64"
     },
     {
       "target": {
@@ -1350,7 +1350,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "2c930725b58377f632c91702d425069178f37b9974f8bf61eb6a3086b603a494",
+      "evidence_sha256": "df86ce13e5a1011d18c124f9eadd85ef86cc160cbd958912c3249e1346233cde",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "e47bf406008390026214778517b1ad55b1dd992740808078f0b8471f5450ba7d",
@@ -1362,7 +1362,7 @@
           "archived_line": 48
         }
       ],
-      "proposal_sha256": "4fdf4a752341ca51b645b7609d4c2ab8c599008a0c07c5704d616014f9ac9103"
+      "proposal_sha256": "afc430bf83af087f640519d9311d2ab2417c91fd09e2532d814fa1d154542954"
     },
     {
       "target": {
@@ -1377,7 +1377,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "2c930725b58377f632c91702d425069178f37b9974f8bf61eb6a3086b603a494",
+      "evidence_sha256": "df86ce13e5a1011d18c124f9eadd85ef86cc160cbd958912c3249e1346233cde",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "e47bf406008390026214778517b1ad55b1dd992740808078f0b8471f5450ba7d",
@@ -1389,7 +1389,7 @@
           "archived_line": 108
         }
       ],
-      "proposal_sha256": "e84c09a07623979330b2f5f3b11f54d222307e729b05bd00c0530991d165573f"
+      "proposal_sha256": "2cda4fabb158751115f661f6df6341e2067ae7dbd31f2763c60d8322986d70de"
     },
     {
       "target": {
@@ -1512,7 +1512,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "6d4442ecbd47264142d6d54903a8903d73e181697c2a701504e2368295b9b2c2",
+      "evidence_sha256": "51aaa236ec5f75932aa389a66da3c938605b5bf8ab7af06b13b9e8835552eabb",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "53cab75c30c9d0ec5c02df18bf998ab012224737d387bd7a36d273ee5ca0c1ab",
@@ -1524,7 +1524,7 @@
           "archived_line": 48
         }
       ],
-      "proposal_sha256": "fe3cbb43aa9ee0a27304ff13799a858e275dd2f9f6c2e10280f7c540cd206da3"
+      "proposal_sha256": "78c8df96360f2d77889c2b2e3c65af96a2aef89e202b5f36d26006b1a769af77"
     },
     {
       "target": {
@@ -1539,7 +1539,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "6d4442ecbd47264142d6d54903a8903d73e181697c2a701504e2368295b9b2c2",
+      "evidence_sha256": "51aaa236ec5f75932aa389a66da3c938605b5bf8ab7af06b13b9e8835552eabb",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "53cab75c30c9d0ec5c02df18bf998ab012224737d387bd7a36d273ee5ca0c1ab",
@@ -1551,7 +1551,7 @@
           "archived_line": 108
         }
       ],
-      "proposal_sha256": "8f70068d5f1e609cab742981b928da358e4e152a4ff77ffb7f9efa2cd18633f4"
+      "proposal_sha256": "6619053005ba2abbd6fa1eb2f30ba21e8b459a12ea26a20abf2b851b3f086a51"
     },
     {
       "target": {
@@ -1674,7 +1674,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "70a7d0b37801fcc269f63af8c0e2f9bdd9235c92392ebeabe23373bfe363771b",
+      "evidence_sha256": "4619ae9f65828010bd9f717df2a3434489095e19e056b131c61f610029ee2fc8",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "9179dc2b293503fa5af219c8714d15429926d4374ee221725a6f89062e9d66b8",
@@ -1686,7 +1686,7 @@
           "archived_line": 48
         }
       ],
-      "proposal_sha256": "af96151ea962aa305b9f647945b67b28e2f486e234072071cfba609fbe54cc21"
+      "proposal_sha256": "81e8514bf387a137d73149f3543db70b8f76e169dacf538268174bc6e13d0c39"
     },
     {
       "target": {
@@ -1701,7 +1701,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "70a7d0b37801fcc269f63af8c0e2f9bdd9235c92392ebeabe23373bfe363771b",
+      "evidence_sha256": "4619ae9f65828010bd9f717df2a3434489095e19e056b131c61f610029ee2fc8",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "9179dc2b293503fa5af219c8714d15429926d4374ee221725a6f89062e9d66b8",
@@ -1713,7 +1713,7 @@
           "archived_line": 108
         }
       ],
-      "proposal_sha256": "8b480247e33e163c66bf8ef52dbb2062fdc66629bde1226b51a11de60c549cc0"
+      "proposal_sha256": "3c827a7897c51da0683bd1f094774bead87bbda74cab8810ffd3da78ef60dedc"
     },
     {
       "target": {
@@ -1836,7 +1836,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "48d79fa094428122d77c5573d6c298bf63171c9c8fcbe987ecffc2b7bbec9c5e",
+      "evidence_sha256": "0b49592e4571e1dbefe3532532fce4627b08d25968715054183a02e4e885687a",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "0e6eba9085d2b96b1931afc6853ecb57f4b031d2cec2db6e3e5ad7ff297989c1",
@@ -1848,7 +1848,7 @@
           "archived_line": 48
         }
       ],
-      "proposal_sha256": "d071e0a87a595965ab92f458f524279d726a47dcc67398c6805396a162f2f699"
+      "proposal_sha256": "7e323f6ed78d982f223cff300e3057394d0c4aa46db536cb191f52ae5150e77d"
     },
     {
       "target": {
@@ -1863,7 +1863,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "48d79fa094428122d77c5573d6c298bf63171c9c8fcbe987ecffc2b7bbec9c5e",
+      "evidence_sha256": "0b49592e4571e1dbefe3532532fce4627b08d25968715054183a02e4e885687a",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "0e6eba9085d2b96b1931afc6853ecb57f4b031d2cec2db6e3e5ad7ff297989c1",
@@ -1875,7 +1875,7 @@
           "archived_line": 108
         }
       ],
-      "proposal_sha256": "2d9a2fbe6123f89c9d76a1844df8563b45b7fa6503f23805c6d9479a73e9ff7e"
+      "proposal_sha256": "331d68a9407d4e04010f77ad518908a8ea67b90953ab88c75effdc27f2373e08"
     },
     {
       "target": {
@@ -1890,7 +1890,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "398e8c152088337f0919b1f6cc6da44982276da32ca622715f57934bbdc44017",
+      "evidence_sha256": "e5d02dd4a2339373823675741b61fcdce413792def68925aeeb9d44018c8eff6",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "c48338e3cde57adb08cb1e92d195b96f3c13250561137000f38f3f5295a7edbd",
@@ -1902,7 +1902,7 @@
           "archived_line": 10
         }
       ],
-      "proposal_sha256": "a0c328ce8e05aa4e85a361c436fe59a5f228cc70f0103bd8f20efae84f0e15cb"
+      "proposal_sha256": "3d2ca49c5785da52626dfd444cbdaa07884464b7b285125aa7a53e6e3eb1c9bd"
     },
     {
       "target": {
@@ -2025,7 +2025,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "ba7b7a447a08a92531ca1148b151330d52efb574c75bacadfe490bc4f360f953",
+      "evidence_sha256": "b5c4d7306d4b4167d82bc22416dfc63ba520610d861e1befb92eb8a7d9fb8f4d",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "0b47a3bbe509fa191263705aff71e9f9854f7b0b06661fd294dd58309cdf73c0",
@@ -2037,7 +2037,7 @@
           "archived_line": 48
         }
       ],
-      "proposal_sha256": "bc94b72f2df413b9d1221f7a6b62028d0ed90acbf97e87f139cfb19d5ce3df09"
+      "proposal_sha256": "85004569232d1ef5048949583b3fdebcd67995de755089138a7d0141b508c6bd"
     },
     {
       "target": {
@@ -2052,7 +2052,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "ba7b7a447a08a92531ca1148b151330d52efb574c75bacadfe490bc4f360f953",
+      "evidence_sha256": "b5c4d7306d4b4167d82bc22416dfc63ba520610d861e1befb92eb8a7d9fb8f4d",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "0b47a3bbe509fa191263705aff71e9f9854f7b0b06661fd294dd58309cdf73c0",
@@ -2064,7 +2064,7 @@
           "archived_line": 108
         }
       ],
-      "proposal_sha256": "9b5dabafb30bd9a2b2b66b3d401c54525d8f32181c2dfa131849e62a04c1bd83"
+      "proposal_sha256": "37573b9a386d0a299937cab7d3efa5ccc7a0f604f72e9f43f38d2431ab2531f4"
     },
     {
       "target": {
@@ -2187,7 +2187,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "51190aef3f5c25d10a3300c143a950ab926d58d47b8066a685c1ea9fddb4f75c",
+      "evidence_sha256": "1ede22c17f92b9a718f509d354b62cfc8acf7d233cc5f3e8a799d278fe92f1ab",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "e9290cf9ce40169ebdbc4269d89110d60d8c4dbca3eca9fe6fbba2b70ba680a1",
@@ -2199,7 +2199,7 @@
           "archived_line": 48
         }
       ],
-      "proposal_sha256": "8ad4da50d8f0fd2f46cf15745d4f4fc81f58f74cc76559070a3daffe418712c2"
+      "proposal_sha256": "f8e2425afb88e8ade3dad8cf27104fef13b35d3045fc95f3ac1c375b998074fb"
     },
     {
       "target": {
@@ -2214,7 +2214,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "51190aef3f5c25d10a3300c143a950ab926d58d47b8066a685c1ea9fddb4f75c",
+      "evidence_sha256": "1ede22c17f92b9a718f509d354b62cfc8acf7d233cc5f3e8a799d278fe92f1ab",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "e9290cf9ce40169ebdbc4269d89110d60d8c4dbca3eca9fe6fbba2b70ba680a1",
@@ -2226,7 +2226,7 @@
           "archived_line": 108
         }
       ],
-      "proposal_sha256": "1a59cf44383f178763cf129bd02706fbea34ae2f94eae378151b928cf3807b40"
+      "proposal_sha256": "8baa859084e4645a4c1a04f9ffb86ef64d064b5cdf8ec99dcec4c575caad4477"
     },
     {
       "target": {
@@ -2349,7 +2349,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "09bbf923b55a2709c0838ab516eb35b45f24136e5e15fc1b810c423f7064dd3f",
+      "evidence_sha256": "38f73c1d4640e74066205668cf0c21859104cf14b84bd5fc14b61a28e76432b5",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "d797b96582dc27e8d61d64c49b9c8ee6e1d61518fc421eb8396c59066cf275f1",
@@ -2361,7 +2361,7 @@
           "archived_line": 48
         }
       ],
-      "proposal_sha256": "8dbe2f1f6f50aa5d9fa757d0f4b845bee6eff010defbbfdab23e261b3fde6d1c"
+      "proposal_sha256": "fc8bc77613716f01d50dfe5bd17d57ecae9abcb5132d27b81cee367bb47c130a"
     },
     {
       "target": {
@@ -2376,7 +2376,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "09bbf923b55a2709c0838ab516eb35b45f24136e5e15fc1b810c423f7064dd3f",
+      "evidence_sha256": "38f73c1d4640e74066205668cf0c21859104cf14b84bd5fc14b61a28e76432b5",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "d797b96582dc27e8d61d64c49b9c8ee6e1d61518fc421eb8396c59066cf275f1",
@@ -2388,7 +2388,7 @@
           "archived_line": 108
         }
       ],
-      "proposal_sha256": "6674c05e59467fcc0d39c2b5e2b1b115bb8c938a81bd122e7346b20ca325eba9"
+      "proposal_sha256": "19accf14c13eedb999ca54ddff1d922173ca13d561c6ae004622aa372d6a0826"
     },
     {
       "target": {
@@ -2511,7 +2511,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "f43013d624be63bd028a16c63aa5b53f5a7ca375b0ff64d2f5e3059101929f98",
+      "evidence_sha256": "af3e079672bd993182b5ed57a5b8ee624d9a471b1585e2f83f338b5bcf3380a7",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "d29d5dcf82453374fd9ad6423d9e966819dc9037a5776c1e46593bda5c208768",
@@ -2523,7 +2523,7 @@
           "archived_line": 48
         }
       ],
-      "proposal_sha256": "754be1206cde9f1196b3ce8eefa96513c9a0c0f8d43283c77edb8f3fa25e5d5a"
+      "proposal_sha256": "bdd7163f2b47dd240bfade262c9a7f19000a97e433f6baab8bb15508a3367903"
     },
     {
       "target": {
@@ -2538,7 +2538,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "f43013d624be63bd028a16c63aa5b53f5a7ca375b0ff64d2f5e3059101929f98",
+      "evidence_sha256": "af3e079672bd993182b5ed57a5b8ee624d9a471b1585e2f83f338b5bcf3380a7",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "d29d5dcf82453374fd9ad6423d9e966819dc9037a5776c1e46593bda5c208768",
@@ -2550,7 +2550,7 @@
           "archived_line": 108
         }
       ],
-      "proposal_sha256": "d98174eb2f740e9827c92e268b928bc528e21d77ed8de0d10a32adfb93f58241"
+      "proposal_sha256": "e06dd1911cdf533b7c31c2ff4cb7747c90958116da44e3d02086536592ab0cfd"
     },
     {
       "target": {
@@ -2673,7 +2673,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "f47b98fef48052d8c3ce7bf4f17de7eac563bbdeeb0094770cda5308c14041b3",
+      "evidence_sha256": "34f194ec172183a73a1f8b1fe777459d7d4998ead2ebf09b81e6afda13ea734f",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "45379cced7e4488844d7bacc5824fbba8cc695746352bef8dfc20c385162a93f",
@@ -2685,7 +2685,7 @@
           "archived_line": 48
         }
       ],
-      "proposal_sha256": "5bf54d188a370a3ef73b69b10866e0f40ba3fb412df382d01709f928d169b649"
+      "proposal_sha256": "c3545ac97a6ab9fbaba45ccc5b785b1787b5551267a8406983b16fc50b192a97"
     },
     {
       "target": {
@@ -2700,7 +2700,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "f47b98fef48052d8c3ce7bf4f17de7eac563bbdeeb0094770cda5308c14041b3",
+      "evidence_sha256": "34f194ec172183a73a1f8b1fe777459d7d4998ead2ebf09b81e6afda13ea734f",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "45379cced7e4488844d7bacc5824fbba8cc695746352bef8dfc20c385162a93f",
@@ -2712,7 +2712,7 @@
           "archived_line": 108
         }
       ],
-      "proposal_sha256": "8fac839a5450c7255603ca6f887b187158b4006c590d759627819ed2775373ef"
+      "proposal_sha256": "1f14d2dc0525aebbcae932e1d5ae390bbb57616b9365d6386462819d0130b6b9"
     },
     {
       "target": {
@@ -2835,7 +2835,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "4b0c605bf9553f210a0aa773ddcaf9f2ca9bc12eece513e037060e0ac507b619",
+      "evidence_sha256": "18cac5f5b03d3851d76db7de380c4db3483489f7046fa26952020f26343c08fd",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "cddf52b9f0c33d32df0b1cd58c233f1a6579d167f5dcb60db28d4da66b5301bd",
@@ -2847,7 +2847,7 @@
           "archived_line": 48
         }
       ],
-      "proposal_sha256": "27e8bf6ee9134c3bdd634bd1d7d9364e9fe14f6abed2c324fc741dcd3d66061c"
+      "proposal_sha256": "d5e5a38d510581b45b5fca38b1f87b3590063dfc56bc5e1b765f963e58e9f28a"
     },
     {
       "target": {
@@ -2862,7 +2862,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "4b0c605bf9553f210a0aa773ddcaf9f2ca9bc12eece513e037060e0ac507b619",
+      "evidence_sha256": "18cac5f5b03d3851d76db7de380c4db3483489f7046fa26952020f26343c08fd",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "cddf52b9f0c33d32df0b1cd58c233f1a6579d167f5dcb60db28d4da66b5301bd",
@@ -2874,7 +2874,7 @@
           "archived_line": 108
         }
       ],
-      "proposal_sha256": "b08644b668a467f1c44f4ef352973196bd3311f14cd9c4786b9fddb2a01e6801"
+      "proposal_sha256": "c41c6398b6630768194b59c3c412cbca619a268b313118c010b25f93bd0e7164"
     },
     {
       "target": {
@@ -2997,7 +2997,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "e239713a84b7f6679e5d3bda8826a8e18d356c4404583e4ea4e39792cca029d2",
+      "evidence_sha256": "0242332c73efa9c98c408b630ab22a54b871946a0235e93cc13cb2a21557e071",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "988e4164620fcff56ec55bd1096b903b06ed178ab661a1914dff9190bc999f52",
@@ -3009,7 +3009,7 @@
           "archived_line": 48
         }
       ],
-      "proposal_sha256": "bdc7ec1f1d72d4924f5fd1061b93af222b39b4ebcf73e117df380cbfd7097101"
+      "proposal_sha256": "1b613efd15c8b9e2d46de46dcd96dfdc005d5622f8df2130c27098796413568e"
     },
     {
       "target": {
@@ -3024,7 +3024,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "e239713a84b7f6679e5d3bda8826a8e18d356c4404583e4ea4e39792cca029d2",
+      "evidence_sha256": "0242332c73efa9c98c408b630ab22a54b871946a0235e93cc13cb2a21557e071",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "988e4164620fcff56ec55bd1096b903b06ed178ab661a1914dff9190bc999f52",
@@ -3036,7 +3036,7 @@
           "archived_line": 108
         }
       ],
-      "proposal_sha256": "358c75e0860e458344c147a2a0c8959c8c8eccdc551e5ba139be1fde89d1e07f"
+      "proposal_sha256": "09aef7e7e091774e30a89f052b21a2358eef0ef44e771f0c3adc4a3326567333"
     },
     {
       "target": {
@@ -3159,7 +3159,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "e9d613cc8c9b4763d3999f403e71c55a21191c1b8b7fc1e67714fdcf11b6c28a",
+      "evidence_sha256": "1f70fe46d9212609b980594b55e88f90fbc6ffd29cfd8d8d6c7f5c041c614d33",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "980a0fdac011cd8546e6055e002dc0604c9142053b2fa0018fcd213df5d22cb9",
@@ -3171,7 +3171,7 @@
           "archived_line": 48
         }
       ],
-      "proposal_sha256": "e9ea97da0967b719d538f69ea2bf28729eda32dedfadc9ee5cc200d21384e09f"
+      "proposal_sha256": "eb56f79c4e3b36e0fc82534cf29f5a4f701115593efd10e105fc50614a0e793b"
     },
     {
       "target": {
@@ -3186,7 +3186,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "e9d613cc8c9b4763d3999f403e71c55a21191c1b8b7fc1e67714fdcf11b6c28a",
+      "evidence_sha256": "1f70fe46d9212609b980594b55e88f90fbc6ffd29cfd8d8d6c7f5c041c614d33",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "980a0fdac011cd8546e6055e002dc0604c9142053b2fa0018fcd213df5d22cb9",
@@ -3198,7 +3198,7 @@
           "archived_line": 108
         }
       ],
-      "proposal_sha256": "895a3886cc385c429a04d46de422b0d1baa75a09cc6c69d6c6ff3070c8e7eb9d"
+      "proposal_sha256": "9940033a907ebdc53c8a70ccda808c19faeccc3765c5fc9dd745d726a70f0e37"
     },
     {
       "target": {
@@ -3321,7 +3321,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "ec995b45ad2c5780b665d9e655a16d7ab8a5b00b6ba37cf0cd0da8edaa2927c1",
+      "evidence_sha256": "dd8241b09308506135912a369be6b229531b207d68f16eb47e13b06c95086925",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "ec60788dff7c082b62c4f57f9623c69d098ee648cee4edc7f86529b804c6fbe0",
@@ -3333,7 +3333,7 @@
           "archived_line": 48
         }
       ],
-      "proposal_sha256": "522595681047955bebaac7110920de36e1552a0121be33fc8ded9c61b41b07ee"
+      "proposal_sha256": "c63480a02c1283d0512fd8d68ebf2f6ee1eab22b9285a32a125fed4e8b4ca442"
     },
     {
       "target": {
@@ -3348,7 +3348,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "ec995b45ad2c5780b665d9e655a16d7ab8a5b00b6ba37cf0cd0da8edaa2927c1",
+      "evidence_sha256": "dd8241b09308506135912a369be6b229531b207d68f16eb47e13b06c95086925",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "ec60788dff7c082b62c4f57f9623c69d098ee648cee4edc7f86529b804c6fbe0",
@@ -3360,7 +3360,7 @@
           "archived_line": 108
         }
       ],
-      "proposal_sha256": "79e0a51c63d646f6dc9191e3d565c308fedd209a324c375ac969cce825f2348f"
+      "proposal_sha256": "f16488dcf6d7d7fff443bec73affaea3021e1cc8b4160ea622928b648730d5f6"
     },
     {
       "target": {
@@ -3483,7 +3483,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "3b2d7341a28b4f4d52cde8b029cc1c9139f2bcfb8d569b1ae1b60fb59fc8da28",
+      "evidence_sha256": "f82be4e1edcae0fdc4a6baa44c1bcad05c86e43555d74847c32fffabca8cdc9e",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "dea5d97f7712d42950cccb5b53f1d5df2797ff035a27b57f86b90724ea08d9a3",
@@ -3495,7 +3495,7 @@
           "archived_line": 48
         }
       ],
-      "proposal_sha256": "c9d85780d2e5faaa1dbec6fcfa91cbb21d5ebe718a825af925574816549e1ba5"
+      "proposal_sha256": "906b4861dcfa16b895fd45b659498119df8cde22c53011fccaa1671d81b44786"
     },
     {
       "target": {
@@ -3510,7 +3510,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "3b2d7341a28b4f4d52cde8b029cc1c9139f2bcfb8d569b1ae1b60fb59fc8da28",
+      "evidence_sha256": "f82be4e1edcae0fdc4a6baa44c1bcad05c86e43555d74847c32fffabca8cdc9e",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "dea5d97f7712d42950cccb5b53f1d5df2797ff035a27b57f86b90724ea08d9a3",
@@ -3522,7 +3522,7 @@
           "archived_line": 108
         }
       ],
-      "proposal_sha256": "c426c4b89c25cfbad124967b2c9b825a761db71877069f1c3f94b5ec7d593c43"
+      "proposal_sha256": "59f205a978850575e8fd5273135333b573467b51b99d2bae9aca0e49afd04af3"
     },
     {
       "target": {
@@ -3645,7 +3645,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "fc8f531a3a6368626a4cba3a0d88410c228ef6a407c0deb28e2b225bfe807e82",
+      "evidence_sha256": "a4a7d5eabab7a5d3f84e8ac75fbcae02c182f24376d08a468bca9f4a0e0da80d",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "558eea88cb216a200ae3a0e6d40738f5dd9bf381a33604d3c8115dcdaeb03c6e",
@@ -3657,7 +3657,7 @@
           "archived_line": 48
         }
       ],
-      "proposal_sha256": "aa9117e0acbe35c5eae801f6aaa45212fac7390b27bdfe3794fdef3e89498579"
+      "proposal_sha256": "cdb862b5e0564f7834445faf223b8fbdfcbb4b071e8fc11e270384dbfb4cc3bb"
     },
     {
       "target": {
@@ -3672,7 +3672,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "fc8f531a3a6368626a4cba3a0d88410c228ef6a407c0deb28e2b225bfe807e82",
+      "evidence_sha256": "a4a7d5eabab7a5d3f84e8ac75fbcae02c182f24376d08a468bca9f4a0e0da80d",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "558eea88cb216a200ae3a0e6d40738f5dd9bf381a33604d3c8115dcdaeb03c6e",
@@ -3684,7 +3684,7 @@
           "archived_line": 108
         }
       ],
-      "proposal_sha256": "4bb9ddedf7609c5ae01c2230134530a0b3256ac3af3a0592f68794e3431f733c"
+      "proposal_sha256": "921bdfc221288da2ca514ca2a9ce2719aa909fb4764c1fe2f51639f22cffc9cd"
     },
     {
       "target": {
@@ -3807,7 +3807,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "cb571cabef3295746ba2bbcae8537e44cfbbddc380d0718b771fd82c51c8700f",
+      "evidence_sha256": "7c7b8a6fdebddb920d2e071448570fdbbb86a3dd9935a54984f046aad9a523d7",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "09acc77dff33d45e40bb575128ab43f3d379ac0ac0a6c3fcfec8afe694977c69",
@@ -3819,7 +3819,7 @@
           "archived_line": 48
         }
       ],
-      "proposal_sha256": "2b5378860bfaf44af974f94a4166cd07cf452b86e12c920fb3e341299e1f7b8b"
+      "proposal_sha256": "e893490de6f71e2061bfd4fbc73a34468a78aa5ab93c4975dd2fce8a48b2a508"
     },
     {
       "target": {
@@ -3834,7 +3834,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "cb571cabef3295746ba2bbcae8537e44cfbbddc380d0718b771fd82c51c8700f",
+      "evidence_sha256": "7c7b8a6fdebddb920d2e071448570fdbbb86a3dd9935a54984f046aad9a523d7",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "09acc77dff33d45e40bb575128ab43f3d379ac0ac0a6c3fcfec8afe694977c69",
@@ -3846,7 +3846,7 @@
           "archived_line": 108
         }
       ],
-      "proposal_sha256": "46c73a6302d5a8e259061745b298606a8216d4155bfce9ac774a6a37c5e9ab54"
+      "proposal_sha256": "047950a635b560ef93fcdac2b47a19a4470114420e3b13559f1b5837362cb95d"
     },
     {
       "target": {
@@ -4077,7 +4077,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "074c63a7b774e511e045575ae669d8562600f13bb2bb35d6ff474963e239dc0f",
+      "evidence_sha256": "1afacc3efacae999024ca4e620a9a6340833f73e39e71417c7fa1305ba7462c0",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "a4b3d81c22b2e6e3c25c610fa3072fe1718e37e7532ba0d505cbf6dc451ec1e4",
@@ -4094,7 +4094,7 @@
           "archived_line": 110
         }
       ],
-      "proposal_sha256": "60b70acfc31b3e066cd614a66a2c289076cb7795d545a6b878e401c448e46908"
+      "proposal_sha256": "5bdc8a83300f56a784fd2cb9a12630049c27df725759dd1328d6b35d5a1a8bc0"
     },
     {
       "target": {
@@ -4109,7 +4109,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "074c63a7b774e511e045575ae669d8562600f13bb2bb35d6ff474963e239dc0f",
+      "evidence_sha256": "1afacc3efacae999024ca4e620a9a6340833f73e39e71417c7fa1305ba7462c0",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "a4b3d81c22b2e6e3c25c610fa3072fe1718e37e7532ba0d505cbf6dc451ec1e4",
@@ -4126,7 +4126,7 @@
           "archived_line": 131
         }
       ],
-      "proposal_sha256": "b3354b3812da1072e851f01bc1e084ca5b179ea0dcb1505dd87ce4d61ebb8243"
+      "proposal_sha256": "4a11810ef78b1b4169f8c4917f7ed7a9e1e0477007711cc3b1a6a19f454b18db"
     },
     {
       "target": {
@@ -4141,7 +4141,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "7418cf0fd36ca9568a78df041a1d72a34f945dac9035a93d88c7cfe869d6a50e",
+      "evidence_sha256": "f50b183539627dc7405500d5aed90d14d24137885e07c6c835bed87b9e9a44bc",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "a2780c169fe6ce609d3671dd60c80f46b6bd0458e921c8741ba055f43fd17579",
@@ -4153,7 +4153,7 @@
           "archived_line": 350
         }
       ],
-      "proposal_sha256": "2c7ddfe1da6739f5174f3ae8ef9d2ab021f6997c7462fbad0001984b54b2e64d"
+      "proposal_sha256": "9f49c429645c0d73e955b303653e342eef79d975bb30006b6db929a94f0ecabc"
     },
     {
       "target": {
@@ -4168,7 +4168,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "7418cf0fd36ca9568a78df041a1d72a34f945dac9035a93d88c7cfe869d6a50e",
+      "evidence_sha256": "f50b183539627dc7405500d5aed90d14d24137885e07c6c835bed87b9e9a44bc",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "a2780c169fe6ce609d3671dd60c80f46b6bd0458e921c8741ba055f43fd17579",
@@ -4180,7 +4180,7 @@
           "archived_line": 350
         }
       ],
-      "proposal_sha256": "7437442a6b7b857d69d9dfcf5d501e9954dbe29af0e138d70fcda993cd79b885"
+      "proposal_sha256": "d7a08d9a33d4f3889ac1eadcd6be85470014cf8f275a24fd5b1a274228e46027"
     },
     {
       "target": {
@@ -4195,7 +4195,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "7418cf0fd36ca9568a78df041a1d72a34f945dac9035a93d88c7cfe869d6a50e",
+      "evidence_sha256": "f50b183539627dc7405500d5aed90d14d24137885e07c6c835bed87b9e9a44bc",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "a2780c169fe6ce609d3671dd60c80f46b6bd0458e921c8741ba055f43fd17579",
@@ -4207,7 +4207,7 @@
           "archived_line": 350
         }
       ],
-      "proposal_sha256": "6fa26ad26eab2fc6d512ee8f3cfe8f232378ac8e2cdac3f9ae890e68f0afb9b5"
+      "proposal_sha256": "5f7719631e079f398ac2a963f91b5d158a2619cf85466a1a9555cac6f71a5ebd"
     },
     {
       "target": {
@@ -4281,7 +4281,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "2420c51b86b22d626b0bfd326fcccb3be7a0c05ee9706aa0bf36c58055b738b0",
+      "evidence_sha256": "e3d967effdfdb89d43df0121231f99616bd66b02f921e286159c617c118de44d",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "efb8f1c6bb931a1728d799dc8aa9e334787e4c35bd9efc3a6a92f6009eca27bd",
@@ -4293,7 +4293,7 @@
           "archived_line": 54
         }
       ],
-      "proposal_sha256": "b4d135f27f3a3de742ac1132bd7893bdcfbdc655aa7d50009f0ef15f8dc7c36e"
+      "proposal_sha256": "344f21736eb90ef5a4e68e2054e1e0be20c71ad93a6023da44500e19bc1bfb1d"
     },
     {
       "target": {
@@ -4308,7 +4308,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "2420c51b86b22d626b0bfd326fcccb3be7a0c05ee9706aa0bf36c58055b738b0",
+      "evidence_sha256": "e3d967effdfdb89d43df0121231f99616bd66b02f921e286159c617c118de44d",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "efb8f1c6bb931a1728d799dc8aa9e334787e4c35bd9efc3a6a92f6009eca27bd",
@@ -4320,7 +4320,7 @@
           "archived_line": 75
         }
       ],
-      "proposal_sha256": "7769ba97c07605e0014a0068575b67ef453435f909afc929961d402f64c762bc"
+      "proposal_sha256": "cbb8af5071ec2cc9f8b353731b627ac752459554802046695db221403eff62c6"
     },
     {
       "target": {
@@ -4335,7 +4335,7 @@
       },
       "classification": "unresolved",
       "rationale": "Safe structural evidence is supplied for independent analysis. Historical author proposals are not approvals; generation and consumer provenance, operator reuse and remediation remain unresolved until conclusive independent review.",
-      "evidence_sha256": "2420c51b86b22d626b0bfd326fcccb3be7a0c05ee9706aa0bf36c58055b738b0",
+      "evidence_sha256": "e3d967effdfdb89d43df0121231f99616bd66b02f921e286159c617c118de44d",
       "author_reference": "FILES-SOURCE-COMPLETION-01-author",
       "status": "pending-independent-review",
       "context_evidence_id": "efb8f1c6bb931a1728d799dc8aa9e334787e4c35bd9efc3a6a92f6009eca27bd",
@@ -4347,7 +4347,7 @@
           "archived_line": 56
         }
       ],
-      "proposal_sha256": "ecf2e09f0eb1dde71e9de3f8ce695420c1ba4e13deb115f4d401290c9b5973fe"
+      "proposal_sha256": "37c15af0d69c0a00aa14c4aeefcb2bc7f7880be427ae6c3f8597a2e4b339aa55"
     }
   ],
   "unresolved_locators": []

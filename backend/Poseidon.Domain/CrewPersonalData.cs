@@ -1,8 +1,10 @@
 using System.Text.Json.Serialization;
 namespace Poseidon.Domain;
 
-// 14.02 rows1591–1608. All are declarations; health/qualification and person files have separate contracts.
-public enum CrewPersonalField { Nationality, DateOfBirth, PassportNo, PassportExpiry, SeamanBookNo, SeamanBookExpiry, CompanyStartDate, SeaServiceMonths, TankerExperienceMonths, VesselTypeExperience, CompanyExperienceMonths, EmergencyContact, PreferredLanguage, ContactPhone, Email }
+// 14.02 rows1591–1608. All are declarations; medical expiry has separate restricted capabilities.
+// Medical/qualification decisions and person files retain separate contracts.
+// Append only: numeric field IDs are persisted/consumed by existing clients.
+public enum CrewPersonalField { Nationality, DateOfBirth, PassportNo, PassportExpiry, SeamanBookNo, SeamanBookExpiry, CompanyStartDate, SeaServiceMonths, TankerExperienceMonths, VesselTypeExperience, CompanyExperienceMonths, EmergencyContact, PreferredLanguage, ContactPhone, Email, MedicalExpiry }
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record CrewPersonalData(
     string? Nationality = null,
@@ -19,7 +21,8 @@ public sealed record CrewPersonalData(
     string? EmergencyContact = null,
     string? PreferredLanguage = null,
     string? ContactPhone = null,
-    string? Email = null)
+    string? Email = null,
+    DateOnly? MedicalExpiry = null)
 {
     public override string ToString() => nameof(CrewPersonalData);
     public string? Lexical(CrewPersonalField field) => field switch {
@@ -38,6 +41,7 @@ public sealed record CrewPersonalData(
         CrewPersonalField.PreferredLanguage => PreferredLanguage,
         CrewPersonalField.ContactPhone => ContactPhone,
         CrewPersonalField.Email => Email,
+        CrewPersonalField.MedicalExpiry => MedicalExpiry?.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture),
         _ => throw new ArgumentOutOfRangeException(nameof(field))
     };
     public CrewPersonalData With(CrewPersonalField field, string? value) => field switch {
@@ -56,6 +60,7 @@ public sealed record CrewPersonalData(
         CrewPersonalField.PreferredLanguage => this with { PreferredLanguage = value },
         CrewPersonalField.ContactPhone => this with { ContactPhone = value },
         CrewPersonalField.Email => this with { Email = value },
+        CrewPersonalField.MedicalExpiry => this with { MedicalExpiry = value == null ? null : DateOnly.ParseExact(value, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture) },
         _ => throw new ArgumentOutOfRangeException(nameof(field))
     };
     public static string Key(CrewPersonalField field) => field switch {
@@ -74,12 +79,13 @@ public sealed record CrewPersonalData(
         CrewPersonalField.PreferredLanguage => "preferred_language",
         CrewPersonalField.ContactPhone => "contact_phone",
         CrewPersonalField.Email => "email",
+        CrewPersonalField.MedicalExpiry => "medical_expiry",
         _ => throw new ArgumentOutOfRangeException(nameof(field))
     };
     public static bool Valid(CrewPersonalField field, string? value) => value == null ||
         value.Length <= 4096 && !value.Any(char.IsControl) && (field switch {
         CrewPersonalField.SeaServiceMonths or CrewPersonalField.TankerExperienceMonths or CrewPersonalField.CompanyExperienceMonths => CertificateMetadataPolicy.ExactNumeric(value),
-        CrewPersonalField.DateOfBirth or CrewPersonalField.PassportExpiry or CrewPersonalField.SeamanBookExpiry or CrewPersonalField.CompanyStartDate => DateOnly.TryParseExact(value, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out _),
+        CrewPersonalField.DateOfBirth or CrewPersonalField.PassportExpiry or CrewPersonalField.SeamanBookExpiry or CrewPersonalField.CompanyStartDate or CrewPersonalField.MedicalExpiry => DateOnly.TryParseExact(value, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out _),
         _ => true
     });
 }

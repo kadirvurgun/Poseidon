@@ -44,6 +44,12 @@ public static class MaintenanceObservationEndpoints
             .OrderByDescending(x => x.RecordedAt).ThenBy(x => x.Id).Take(100).Select(x => new { x.Id, x.Source, x.PolicyVersion, x.SourceRevision, x.Kind, x.Unit, x.Value, x.ObservedAt, x.Provenance,
                 revoked = db.MaintenanceObservationRevocations.Any(r => r.ObservationId == x.Id) }).ToArrayAsync(h.RequestAborted);
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "MaintenanceObservationRead", "Success", resourceId: asset);
+        var now = DateTimeOffset.UtcNow;
+        foreach (var row in rows) {
+            var rule = settings.Rule(db.TenantId, vessel, asset, row.Source);
+            var age = rule != null && rule.Version == row.PolicyVersion && !row.revoked ? TimeSpan.FromSeconds(rule.FreshnessSeconds) : (TimeSpan?)null;
+            OperationalTelemetry.ObserveFreshness(ObservationArea.Technical, SourceFreshnessPolicy.Assess(row.ObservedAt, now, age));
+        }
         var actor = h.RequestServices.GetRequiredService<ActorResolver>().Resolve(h.User)!;
         return Results.Ok(new { sources, items = rows, canWrite = actor.Permissions.Contains("maintenance.observation.write") && actor.Permissions.Contains("maintenance.write") && actor.HasWriteAttribution &&
             (actor.TenantWideManage || actor.VesselGrants.Any(g => g.VesselId == vessel && g.CanEdit)), state = sources.Length == 0 ? "PolicyUnavailable" : "ConfiguredDeclarationsOnly" });

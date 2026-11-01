@@ -244,6 +244,7 @@ public static class OfflineApplicationEndpoints
         var recorded = await Outcomes(db, a, e).SingleOrDefaultAsync(o => o.CommandId == c.CommandId, h.RequestAborted);
         if (recorded != null) {
             if (recorded.EnrollmentId != e.Id || recorded.Digest != hash) return await Fail(h, 409, "offline_command_reused");
+            OperationalTelemetry.ObserveReplay(ReplayObservation.Recovered);
             return Results.Ok(Dto(recorded));
         }
         if (e.ExpiresAt <= now || !OfflineWatchCapture.ValidCaptureTime(c.CapturedAt, c.OffsetMinutes, e.CreatedAt, now, e.ExpiresAt) ||
@@ -289,6 +290,7 @@ public static class OfflineApplicationEndpoints
         try { await db.SaveChangesAsync(h.RequestAborted); await tx.CommitAsync(h.RequestAborted); }
         catch (DbUpdateException) { return await Fail(h, 409, "offline_retry"); }
         catch (Npgsql.PostgresException ex) when (ex.SqlState == "40001") { return await Fail(h, 409, "offline_retry"); }
+        OperationalTelemetry.ObserveReplay(outcome.Result == "Committed" ? ReplayObservation.Committed : ReplayObservation.MaterialConflict);
         return Results.Ok(Dto(outcome));
     }
     private static async Task<IResult> History(Guid vessel, Guid assignment, Guid enrollment, HttpContext h, PoseidonDbContext db) {

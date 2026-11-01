@@ -15,7 +15,26 @@
       "verification": "DEFERRED",
       "coverage": "authored_partial",
       "domain_completion_state": "unimplemented_software",
-      "domain_completion_gate": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count."
+      "domain_completion_gate": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
+      "current_scope_2026_11_02": {
+        "state": "AUTHORED_UNVERIFIED",
+        "consumer_behavior": "Trusted authorized vessel route and tenant/vessel composite assignment relationships; caller cannot substitute a hidden vessel.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewEndpoints.cs::Scope,Rows,Save",
+          "backend/Poseidon.Persistence/CrewStorage.cs",
+          "tests/Poseidon.Api.Tests/CrewRosterTests.cs"
+        ],
+        "remaining": [],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -35,6 +54,25 @@
       "crew_identity_closure_01": {
         "state": "authored_configured_unverified",
         "trace": "docs/tasks/crew-identity-closure-01.trace.json",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      "current_scope_2026_11_02": {
+        "state": "AUTHORED_UNVERIFIED",
+        "consumer_behavior": "Persisted tenant Person/Assignment relationship and current owner checked before projection/mutation; person reference is not a browser actor.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewEndpoints.cs::Rows,ApplyImport",
+          "backend/Poseidon.Api/CrewIdentityEndpoints.cs",
+          "tests/Poseidon.Api.Tests/CrewIdentityClosureTests.cs"
+        ],
+        "remaining": [],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
         "verification": "DEFERRED_NOT_RUN",
         "accepted": false
       }
@@ -59,6 +97,29 @@
         "trace": "docs/tasks/crew-identity-closure-01.trace.json",
         "verification": "DEFERRED_NOT_RUN",
         "accepted": false
+      },
+      "current_scope_2026_11_02": {
+        "state": "AUTHORED_UNVERIFIED",
+        "consumer_behavior": "Encrypted identity storage and explicit ordinary existing-person/import updates plus controlled historical protection conversion; field policy/current rights precede reads and recovery.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewIdentityEndpoints.cs",
+          "backend/Poseidon.Api/LegacyCrewImportEndpoints.cs",
+          "frontend/src/product/CrewWorkspace.tsx",
+          "docs/tasks/crew-identity-closure-01.trace.json",
+          "docs/tasks/crew-legacy-closure-01.trace.json"
+        ],
+        "remaining": [
+          "Production natural-key/lifecycle/purpose policy decisions and key custody are unverified; historical ciphertext/key availability may withhold data."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
       }
     },
     {
@@ -79,6 +140,28 @@
       "crew_identity_closure_01": {
         "state": "authored_configured_unverified",
         "trace": "docs/tasks/crew-identity-closure-01.trace.json",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      "current_scope_2026_11_02": {
+        "state": "AUTHORED_UNVERIFIED",
+        "consumer_behavior": "Actual scoped persisted Position tuple is matched to configured version/effective rank/capacity/department references; ordinary/import consumers share validation. Not an approved global maritime catalog.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewPositionPolicy.cs",
+          "backend/Poseidon.Api/CrewEndpoints.cs::Positions,Identities,AddPosition",
+          "frontend/src/product/CrewWorkspace.tsx",
+          "docs/tasks/crew-identity-closure-01.trace.json"
+        ],
+        "remaining": [
+          "Source-approved catalog and lifecycle decisions remain pending; independent position supersession/history administration is not implemented."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
         "verification": "DEFERRED_NOT_RUN",
         "accepted": false
       }
@@ -103,6 +186,28 @@
         "trace": "docs/tasks/crew-identity-closure-01.trace.json",
         "verification": "DEFERRED_NOT_RUN",
         "accepted": false
+      },
+      "current_scope_2026_11_02": {
+        "state": "AUTHORED_UNVERIFIED",
+        "consumer_behavior": "Actual scoped persisted Position tuple is matched to configured version/effective rank/capacity/department references; ordinary/import consumers share validation. Not an approved global maritime catalog.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewPositionPolicy.cs",
+          "backend/Poseidon.Api/CrewEndpoints.cs::Positions,Identities,AddPosition",
+          "frontend/src/product/CrewWorkspace.tsx",
+          "docs/tasks/crew-identity-closure-01.trace.json"
+        ],
+        "remaining": [
+          "Source-approved catalog and lifecycle decisions remain pending; independent position supersession/history administration is not implemented."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
       }
     },
     {
@@ -119,7 +224,32 @@
       "verification": "DEFERRED",
       "coverage": "safe_unknown_or_withheld_gap",
       "domain_completion_state": "implemented_configured",
-      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval."
+      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
+      "current_scope_2026_11_02": {
+        "state": "AUTHORED_UNVERIFIED",
+        "consumer_behavior": "Typed encrypted person-owned declaration; separately configured purpose/field capabilities and controlled-value validation; ordinary/import partial updates and current read masking.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewPersonalData.cs",
+          "backend/Poseidon.Api/CrewProfilePolicy.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "backend/Poseidon.Api/ImportTemplates.cs",
+          "frontend/src/product/CrewPersonalProfile.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "frontend/src/product/CrewPersonalProfile.test.tsx"
+        ],
+        "remaining": [
+          "Production purpose/classification/retention/key-custody and controlled catalog approval are pending."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -135,7 +265,29 @@
       "verification": "DEFERRED",
       "coverage": "authored_partial",
       "domain_completion_state": "implemented_trial",
-      "domain_completion_gate": "Scoped assignment period and ordinary domain handler; no employment/operational appointment approval."
+      "domain_completion_gate": "Scoped assignment period and ordinary domain handler; no employment/operational appointment approval.",
+      "current_scope_2026_11_02": {
+        "state": "AUTHORED_UNVERIFIED",
+        "consumer_behavior": "Ordinary versioned declaration and immutable revisions; configured effective/planned statuses have explicit period/provenance/timezone rules. Draft grants no onboard authority.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewEndpoints.cs",
+          "backend/Poseidon.Domain/CrewEffectiveAssignment.cs",
+          "frontend/src/product/CrewWorkspace.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs"
+        ],
+        "remaining": [
+          "Operational appointment/sign-on/off approval is not implemented by declaration status. Source period/lifecycle review remains pending."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -151,7 +303,29 @@
       "verification": "DEFERRED",
       "coverage": "authored_partial",
       "domain_completion_state": "implemented_trial",
-      "domain_completion_gate": "Scoped assignment period and ordinary domain handler; no employment/operational appointment approval."
+      "domain_completion_gate": "Scoped assignment period and ordinary domain handler; no employment/operational appointment approval.",
+      "current_scope_2026_11_02": {
+        "state": "AUTHORED_UNVERIFIED",
+        "consumer_behavior": "Ordinary versioned declaration and immutable revisions; configured effective/planned statuses have explicit period/provenance/timezone rules. Draft grants no onboard authority.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewEndpoints.cs",
+          "backend/Poseidon.Domain/CrewEffectiveAssignment.cs",
+          "frontend/src/product/CrewWorkspace.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs"
+        ],
+        "remaining": [
+          "Operational appointment/sign-on/off approval is not implemented by declaration status. Source period/lifecycle review remains pending."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -167,7 +341,29 @@
       "verification": "DEFERRED",
       "coverage": "authored_partial",
       "domain_completion_state": "implemented_trial",
-      "domain_completion_gate": "Scoped assignment period and ordinary domain handler; no employment/operational appointment approval."
+      "domain_completion_gate": "Scoped assignment period and ordinary domain handler; no employment/operational appointment approval.",
+      "current_scope_2026_11_02": {
+        "state": "AUTHORED_UNVERIFIED",
+        "consumer_behavior": "Ordinary versioned declaration and immutable revisions; configured effective/planned statuses have explicit period/provenance/timezone rules. Draft grants no onboard authority.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewEndpoints.cs",
+          "backend/Poseidon.Domain/CrewEffectiveAssignment.cs",
+          "frontend/src/product/CrewWorkspace.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs"
+        ],
+        "remaining": [
+          "Operational appointment/sign-on/off approval is not implemented by declaration status. Source period/lifecycle review remains pending."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -188,6 +384,28 @@
         "task": "docs/tasks/offline-application-01.md",
         "state": "authored_configured_unverified_not_accepted",
         "accepted": false
+      },
+      "current_scope_2026_11_02": {
+        "state": "AUTHORED_UNVERIFIED",
+        "consumer_behavior": "Ordinary versioned declaration and immutable revisions; configured effective/planned statuses have explicit period/provenance/timezone rules. Draft grants no onboard authority.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewEndpoints.cs",
+          "backend/Poseidon.Domain/CrewEffectiveAssignment.cs",
+          "frontend/src/product/CrewWorkspace.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs"
+        ],
+        "remaining": [
+          "Operational appointment/sign-on/off approval is not implemented by declaration status. Source period/lifecycle review remains pending."
+        ],
+        "offline": {
+          "state": "AUTHORED_CONFIGURED_SINGLE_COMMAND",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
       }
     },
     {
@@ -204,7 +422,29 @@
       "verification": "DEFERRED",
       "coverage": "authored_partial",
       "domain_completion_state": "unimplemented_software",
-      "domain_completion_gate": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count."
+      "domain_completion_gate": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
+      "current_scope_2026_11_02": {
+        "state": "AUTHORED_UNVERIFIED",
+        "consumer_behavior": "Ordinary versioned declaration and immutable revisions; configured effective/planned statuses have explicit period/provenance/timezone rules. Draft grants no onboard authority.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewEndpoints.cs",
+          "backend/Poseidon.Domain/CrewEffectiveAssignment.cs",
+          "frontend/src/product/CrewWorkspace.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs"
+        ],
+        "remaining": [
+          "Operational appointment/sign-on/off approval is not implemented by declaration status. Source period/lifecycle review remains pending."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -220,7 +460,27 @@
       "verification": "DEFERRED",
       "coverage": "safe_unknown_or_withheld_gap",
       "domain_completion_state": "system_or_external_workflow",
-      "domain_completion_gate": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct."
+      "domain_completion_gate": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct.",
+      "current_scope_2026_11_02": {
+        "state": "UNRESOLVED_OWNING_WORKFLOW",
+        "consumer_behavior": "Explicit Unknown/Unavailable projection only. No eligibility/work-rest/competence/contact/fitness evaluator or operational-status lifecycle is supplied by the roster.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewEndpoints.cs::CrewRow,CrewProfile",
+          "frontend/src/product/CrewWorkspace.tsx"
+        ],
+        "remaining": [
+          "Actual owning workflow/evaluator adapters are unimplemented; source acceptance must determine selected DEV-047 dependencies without treating a label as implementation."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -236,7 +496,27 @@
       "verification": "DEFERRED",
       "coverage": "safe_unknown_or_withheld_gap",
       "domain_completion_state": "system_or_external_workflow",
-      "domain_completion_gate": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct."
+      "domain_completion_gate": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct.",
+      "current_scope_2026_11_02": {
+        "state": "UNRESOLVED_OWNING_WORKFLOW",
+        "consumer_behavior": "Explicit Unknown/Unavailable projection only. No eligibility/work-rest/competence/contact/fitness evaluator or operational-status lifecycle is supplied by the roster.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewEndpoints.cs::CrewRow,CrewProfile",
+          "frontend/src/product/CrewWorkspace.tsx"
+        ],
+        "remaining": [
+          "Actual owning workflow/evaluator adapters are unimplemented; source acceptance must determine selected DEV-047 dependencies without treating a label as implementation."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -252,7 +532,27 @@
       "verification": "DEFERRED",
       "coverage": "safe_unknown_or_withheld_gap",
       "domain_completion_state": "system_or_external_workflow",
-      "domain_completion_gate": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct."
+      "domain_completion_gate": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct.",
+      "current_scope_2026_11_02": {
+        "state": "UNRESOLVED_OWNING_WORKFLOW",
+        "consumer_behavior": "Explicit Unknown/Unavailable projection only. No eligibility/work-rest/competence/contact/fitness evaluator or operational-status lifecycle is supplied by the roster.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewEndpoints.cs::CrewRow,CrewProfile",
+          "frontend/src/product/CrewWorkspace.tsx"
+        ],
+        "remaining": [
+          "Actual owning workflow/evaluator adapters are unimplemented; source acceptance must determine selected DEV-047 dependencies without treating a label as implementation."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -268,7 +568,27 @@
       "verification": "DEFERRED",
       "coverage": "safe_unknown_or_withheld_gap",
       "domain_completion_state": "system_or_external_workflow",
-      "domain_completion_gate": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct."
+      "domain_completion_gate": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct.",
+      "current_scope_2026_11_02": {
+        "state": "UNRESOLVED_OWNING_WORKFLOW",
+        "consumer_behavior": "Explicit Unknown/Unavailable projection only. No eligibility/work-rest/competence/contact/fitness evaluator or operational-status lifecycle is supplied by the roster.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewEndpoints.cs::CrewRow,CrewProfile",
+          "frontend/src/product/CrewWorkspace.tsx"
+        ],
+        "remaining": [
+          "Actual owning workflow/evaluator adapters are unimplemented; source acceptance must determine selected DEV-047 dependencies without treating a label as implementation."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -284,7 +604,27 @@
       "verification": "DEFERRED",
       "coverage": "safe_unknown_or_withheld_gap",
       "domain_completion_state": "system_or_external_workflow",
-      "domain_completion_gate": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct."
+      "domain_completion_gate": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct.",
+      "current_scope_2026_11_02": {
+        "state": "UNRESOLVED_OWNING_WORKFLOW",
+        "consumer_behavior": "Explicit Unknown/Unavailable projection only. No eligibility/work-rest/competence/contact/fitness evaluator or operational-status lifecycle is supplied by the roster.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewEndpoints.cs::CrewRow,CrewProfile",
+          "frontend/src/product/CrewWorkspace.tsx"
+        ],
+        "remaining": [
+          "Actual owning workflow/evaluator adapters are unimplemented; source acceptance must determine selected DEV-047 dependencies without treating a label as implementation."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -304,6 +644,25 @@
       "crew_identity_closure_01": {
         "state": "authored_configured_unverified",
         "trace": "docs/tasks/crew-identity-closure-01.trace.json",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      "current_scope_2026_11_02": {
+        "state": "AUTHORED_UNVERIFIED",
+        "consumer_behavior": "Persisted tenant Person/Assignment relationship and current owner checked before projection/mutation; person reference is not a browser actor.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewEndpoints.cs::Rows,ApplyImport",
+          "backend/Poseidon.Api/CrewIdentityEndpoints.cs",
+          "tests/Poseidon.Api.Tests/CrewIdentityClosureTests.cs"
+        ],
+        "remaining": [],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
         "verification": "DEFERRED_NOT_RUN",
         "accepted": false
       }
@@ -328,6 +687,29 @@
         "trace": "docs/tasks/crew-identity-closure-01.trace.json",
         "verification": "DEFERRED_NOT_RUN",
         "accepted": false
+      },
+      "current_scope_2026_11_02": {
+        "state": "AUTHORED_UNVERIFIED",
+        "consumer_behavior": "Encrypted identity storage and explicit ordinary existing-person/import updates plus controlled historical protection conversion; field policy/current rights precede reads and recovery.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewIdentityEndpoints.cs",
+          "backend/Poseidon.Api/LegacyCrewImportEndpoints.cs",
+          "frontend/src/product/CrewWorkspace.tsx",
+          "docs/tasks/crew-identity-closure-01.trace.json",
+          "docs/tasks/crew-legacy-closure-01.trace.json"
+        ],
+        "remaining": [
+          "Production natural-key/lifecycle/purpose policy decisions and key custody are unverified; historical ciphertext/key availability may withhold data."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
       }
     },
     {
@@ -350,6 +732,29 @@
         "trace": "docs/tasks/crew-identity-closure-01.trace.json",
         "verification": "DEFERRED_NOT_RUN",
         "accepted": false
+      },
+      "current_scope_2026_11_02": {
+        "state": "AUTHORED_UNVERIFIED",
+        "consumer_behavior": "Encrypted identity storage and explicit ordinary existing-person/import updates plus controlled historical protection conversion; field policy/current rights precede reads and recovery.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewIdentityEndpoints.cs",
+          "backend/Poseidon.Api/LegacyCrewImportEndpoints.cs",
+          "frontend/src/product/CrewWorkspace.tsx",
+          "docs/tasks/crew-identity-closure-01.trace.json",
+          "docs/tasks/crew-legacy-closure-01.trace.json"
+        ],
+        "remaining": [
+          "Production natural-key/lifecycle/purpose policy decisions and key custody are unverified; historical ciphertext/key availability may withhold data."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
       }
     },
     {
@@ -366,7 +771,32 @@
       "verification": "DEFERRED",
       "coverage": "safe_unknown_or_withheld_gap",
       "domain_completion_state": "implemented_configured",
-      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval."
+      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
+      "current_scope_2026_11_02": {
+        "state": "AUTHORED_UNVERIFIED",
+        "consumer_behavior": "Typed encrypted person-owned declaration; separately configured purpose/field capabilities and controlled-value validation; ordinary/import partial updates and current read masking.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewPersonalData.cs",
+          "backend/Poseidon.Api/CrewProfilePolicy.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "backend/Poseidon.Api/ImportTemplates.cs",
+          "frontend/src/product/CrewPersonalProfile.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "frontend/src/product/CrewPersonalProfile.test.tsx"
+        ],
+        "remaining": [
+          "Production purpose/classification/retention/key-custody and controlled catalog approval are pending."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -382,7 +812,32 @@
       "verification": "DEFERRED",
       "coverage": "safe_unknown_or_withheld_gap",
       "domain_completion_state": "implemented_configured",
-      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval."
+      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
+      "current_scope_2026_11_02": {
+        "state": "AUTHORED_UNVERIFIED",
+        "consumer_behavior": "Typed encrypted person-owned declaration; separately configured purpose/field capabilities and controlled-value validation; ordinary/import partial updates and current read masking.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewPersonalData.cs",
+          "backend/Poseidon.Api/CrewProfilePolicy.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "backend/Poseidon.Api/ImportTemplates.cs",
+          "frontend/src/product/CrewPersonalProfile.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "frontend/src/product/CrewPersonalProfile.test.tsx"
+        ],
+        "remaining": [
+          "Production purpose/classification/retention/key-custody and controlled catalog approval are pending."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -398,7 +853,32 @@
       "verification": "DEFERRED",
       "coverage": "safe_unknown_or_withheld_gap",
       "domain_completion_state": "implemented_configured",
-      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval."
+      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
+      "current_scope_2026_11_02": {
+        "state": "AUTHORED_UNVERIFIED",
+        "consumer_behavior": "Typed encrypted person-owned declaration; separately configured purpose/field capabilities and controlled-value validation; ordinary/import partial updates and current read masking.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewPersonalData.cs",
+          "backend/Poseidon.Api/CrewProfilePolicy.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "backend/Poseidon.Api/ImportTemplates.cs",
+          "frontend/src/product/CrewPersonalProfile.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "frontend/src/product/CrewPersonalProfile.test.tsx"
+        ],
+        "remaining": [
+          "Production purpose/classification/retention/key-custody and controlled catalog approval are pending."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -414,7 +894,32 @@
       "verification": "DEFERRED",
       "coverage": "safe_unknown_or_withheld_gap",
       "domain_completion_state": "implemented_configured",
-      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval."
+      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
+      "current_scope_2026_11_02": {
+        "state": "AUTHORED_UNVERIFIED",
+        "consumer_behavior": "Typed encrypted person-owned declaration; separately configured purpose/field capabilities and controlled-value validation; ordinary/import partial updates and current read masking.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewPersonalData.cs",
+          "backend/Poseidon.Api/CrewProfilePolicy.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "backend/Poseidon.Api/ImportTemplates.cs",
+          "frontend/src/product/CrewPersonalProfile.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "frontend/src/product/CrewPersonalProfile.test.tsx"
+        ],
+        "remaining": [
+          "Production purpose/classification/retention/key-custody and controlled catalog approval are pending."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -430,7 +935,32 @@
       "verification": "DEFERRED",
       "coverage": "safe_unknown_or_withheld_gap",
       "domain_completion_state": "implemented_configured",
-      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval."
+      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
+      "current_scope_2026_11_02": {
+        "state": "AUTHORED_UNVERIFIED",
+        "consumer_behavior": "Typed encrypted person-owned declaration; separately configured purpose/field capabilities and controlled-value validation; ordinary/import partial updates and current read masking.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewPersonalData.cs",
+          "backend/Poseidon.Api/CrewProfilePolicy.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "backend/Poseidon.Api/ImportTemplates.cs",
+          "frontend/src/product/CrewPersonalProfile.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "frontend/src/product/CrewPersonalProfile.test.tsx"
+        ],
+        "remaining": [
+          "Production purpose/classification/retention/key-custody and controlled catalog approval are pending."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -446,7 +976,32 @@
       "verification": "DEFERRED",
       "coverage": "safe_unknown_or_withheld_gap",
       "domain_completion_state": "implemented_configured",
-      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval."
+      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
+      "current_scope_2026_11_02": {
+        "state": "AUTHORED_UNVERIFIED",
+        "consumer_behavior": "Typed encrypted person-owned declaration; separately configured purpose/field capabilities and controlled-value validation; ordinary/import partial updates and current read masking.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewPersonalData.cs",
+          "backend/Poseidon.Api/CrewProfilePolicy.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "backend/Poseidon.Api/ImportTemplates.cs",
+          "frontend/src/product/CrewPersonalProfile.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "frontend/src/product/CrewPersonalProfile.test.tsx"
+        ],
+        "remaining": [
+          "Production purpose/classification/retention/key-custody and controlled catalog approval are pending."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -462,7 +1017,32 @@
       "verification": "DEFERRED",
       "coverage": "safe_unknown_or_withheld_gap",
       "domain_completion_state": "unimplemented_software",
-      "domain_completion_gate": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count."
+      "domain_completion_gate": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
+      "current_scope_2026_11_02": {
+        "state": "AUTHORED_UNVERIFIED",
+        "consumer_behavior": "New encrypted nullable exact-date declaration, dedicated medical read/write capabilities; ordinary/import/current-masking consumers. Never a fitness/eligibility/verification decision.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewPersonalData.cs",
+          "backend/Poseidon.Api/CrewProfilePolicy.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "frontend/src/product/CrewPersonalProfile.tsx",
+          "tests/Poseidon.Api.Tests/CrewMedicalExpiryTests.cs",
+          "tests/Poseidon.Domain.Tests/CrewMedicalExpiryTests.cs",
+          "tests/Poseidon.Browser.Tests/register-specs/crew-cases.ts"
+        ],
+        "remaining": [
+          "Migration/model/client generation and all execution deferred; minimum-data lawful purpose/retention/key policy and medical verification remain pending."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -482,6 +1062,28 @@
       "crew_identity_closure_01": {
         "state": "authored_configured_unverified",
         "trace": "docs/tasks/crew-identity-closure-01.trace.json",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      "current_scope_2026_11_02": {
+        "state": "AUTHORED_UNVERIFIED",
+        "consumer_behavior": "Actual scoped persisted Position tuple is matched to configured version/effective rank/capacity/department references; ordinary/import consumers share validation. Not an approved global maritime catalog.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewPositionPolicy.cs",
+          "backend/Poseidon.Api/CrewEndpoints.cs::Positions,Identities,AddPosition",
+          "frontend/src/product/CrewWorkspace.tsx",
+          "docs/tasks/crew-identity-closure-01.trace.json"
+        ],
+        "remaining": [
+          "Source-approved catalog and lifecycle decisions remain pending; independent position supersession/history administration is not implemented."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
         "verification": "DEFERRED_NOT_RUN",
         "accepted": false
       }
@@ -506,6 +1108,28 @@
         "trace": "docs/tasks/crew-identity-closure-01.trace.json",
         "verification": "DEFERRED_NOT_RUN",
         "accepted": false
+      },
+      "current_scope_2026_11_02": {
+        "state": "AUTHORED_UNVERIFIED",
+        "consumer_behavior": "Actual scoped persisted Position tuple is matched to configured version/effective rank/capacity/department references; ordinary/import consumers share validation. Not an approved global maritime catalog.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewPositionPolicy.cs",
+          "backend/Poseidon.Api/CrewEndpoints.cs::Positions,Identities,AddPosition",
+          "frontend/src/product/CrewWorkspace.tsx",
+          "docs/tasks/crew-identity-closure-01.trace.json"
+        ],
+        "remaining": [
+          "Source-approved catalog and lifecycle decisions remain pending; independent position supersession/history administration is not implemented."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
       }
     },
     {
@@ -522,7 +1146,32 @@
       "verification": "DEFERRED",
       "coverage": "safe_unknown_or_withheld_gap",
       "domain_completion_state": "implemented_configured",
-      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval."
+      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
+      "current_scope_2026_11_02": {
+        "state": "AUTHORED_UNVERIFIED",
+        "consumer_behavior": "Typed encrypted person-owned declaration; separately configured purpose/field capabilities and controlled-value validation; ordinary/import partial updates and current read masking.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewPersonalData.cs",
+          "backend/Poseidon.Api/CrewProfilePolicy.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "backend/Poseidon.Api/ImportTemplates.cs",
+          "frontend/src/product/CrewPersonalProfile.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "frontend/src/product/CrewPersonalProfile.test.tsx"
+        ],
+        "remaining": [
+          "Production purpose/classification/retention/key-custody and controlled catalog approval are pending."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -538,7 +1187,32 @@
       "verification": "DEFERRED",
       "coverage": "safe_unknown_or_withheld_gap",
       "domain_completion_state": "implemented_configured",
-      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval."
+      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
+      "current_scope_2026_11_02": {
+        "state": "AUTHORED_UNVERIFIED",
+        "consumer_behavior": "Typed encrypted person-owned declaration; separately configured purpose/field capabilities and controlled-value validation; ordinary/import partial updates and current read masking.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewPersonalData.cs",
+          "backend/Poseidon.Api/CrewProfilePolicy.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "backend/Poseidon.Api/ImportTemplates.cs",
+          "frontend/src/product/CrewPersonalProfile.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "frontend/src/product/CrewPersonalProfile.test.tsx"
+        ],
+        "remaining": [
+          "Production purpose/classification/retention/key-custody and controlled catalog approval are pending."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -554,7 +1228,32 @@
       "verification": "DEFERRED",
       "coverage": "safe_unknown_or_withheld_gap",
       "domain_completion_state": "implemented_configured",
-      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval."
+      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
+      "current_scope_2026_11_02": {
+        "state": "AUTHORED_UNVERIFIED",
+        "consumer_behavior": "Typed encrypted person-owned declaration; separately configured purpose/field capabilities and controlled-value validation; ordinary/import partial updates and current read masking.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewPersonalData.cs",
+          "backend/Poseidon.Api/CrewProfilePolicy.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "backend/Poseidon.Api/ImportTemplates.cs",
+          "frontend/src/product/CrewPersonalProfile.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "frontend/src/product/CrewPersonalProfile.test.tsx"
+        ],
+        "remaining": [
+          "Production purpose/classification/retention/key-custody and controlled catalog approval are pending."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -570,7 +1269,32 @@
       "verification": "DEFERRED",
       "coverage": "safe_unknown_or_withheld_gap",
       "domain_completion_state": "implemented_configured",
-      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval."
+      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
+      "current_scope_2026_11_02": {
+        "state": "AUTHORED_UNVERIFIED",
+        "consumer_behavior": "Typed encrypted person-owned declaration; separately configured purpose/field capabilities and controlled-value validation; ordinary/import partial updates and current read masking.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewPersonalData.cs",
+          "backend/Poseidon.Api/CrewProfilePolicy.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "backend/Poseidon.Api/ImportTemplates.cs",
+          "frontend/src/product/CrewPersonalProfile.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "frontend/src/product/CrewPersonalProfile.test.tsx"
+        ],
+        "remaining": [
+          "Production purpose/classification/retention/key-custody and controlled catalog approval are pending."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -586,7 +1310,32 @@
       "verification": "DEFERRED",
       "coverage": "safe_unknown_or_withheld_gap",
       "domain_completion_state": "implemented_configured",
-      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval."
+      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
+      "current_scope_2026_11_02": {
+        "state": "AUTHORED_UNVERIFIED",
+        "consumer_behavior": "Typed encrypted person-owned declaration; separately configured purpose/field capabilities and controlled-value validation; ordinary/import partial updates and current read masking.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewPersonalData.cs",
+          "backend/Poseidon.Api/CrewProfilePolicy.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "backend/Poseidon.Api/ImportTemplates.cs",
+          "frontend/src/product/CrewPersonalProfile.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "frontend/src/product/CrewPersonalProfile.test.tsx"
+        ],
+        "remaining": [
+          "Production purpose/classification/retention/key-custody and controlled catalog approval are pending."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -602,7 +1351,32 @@
       "verification": "DEFERRED",
       "coverage": "safe_unknown_or_withheld_gap",
       "domain_completion_state": "implemented_configured",
-      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval."
+      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
+      "current_scope_2026_11_02": {
+        "state": "AUTHORED_UNVERIFIED",
+        "consumer_behavior": "Typed encrypted person-owned declaration; separately configured purpose/field capabilities and controlled-value validation; ordinary/import partial updates and current read masking.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewPersonalData.cs",
+          "backend/Poseidon.Api/CrewProfilePolicy.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "backend/Poseidon.Api/ImportTemplates.cs",
+          "frontend/src/product/CrewPersonalProfile.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "frontend/src/product/CrewPersonalProfile.test.tsx"
+        ],
+        "remaining": [
+          "Production purpose/classification/retention/key-custody and controlled catalog approval are pending."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -618,7 +1392,32 @@
       "verification": "DEFERRED",
       "coverage": "safe_unknown_or_withheld_gap",
       "domain_completion_state": "implemented_configured",
-      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval."
+      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
+      "current_scope_2026_11_02": {
+        "state": "AUTHORED_UNVERIFIED",
+        "consumer_behavior": "Typed encrypted person-owned declaration; separately configured purpose/field capabilities and controlled-value validation; ordinary/import partial updates and current read masking.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewPersonalData.cs",
+          "backend/Poseidon.Api/CrewProfilePolicy.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "backend/Poseidon.Api/ImportTemplates.cs",
+          "frontend/src/product/CrewPersonalProfile.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "frontend/src/product/CrewPersonalProfile.test.tsx"
+        ],
+        "remaining": [
+          "Production purpose/classification/retention/key-custody and controlled catalog approval are pending."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -634,7 +1433,32 @@
       "verification": "DEFERRED",
       "coverage": "safe_unknown_or_withheld_gap",
       "domain_completion_state": "implemented_configured",
-      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval."
+      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
+      "current_scope_2026_11_02": {
+        "state": "AUTHORED_UNVERIFIED",
+        "consumer_behavior": "Typed encrypted person-owned declaration; separately configured purpose/field capabilities and controlled-value validation; ordinary/import partial updates and current read masking.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewPersonalData.cs",
+          "backend/Poseidon.Api/CrewProfilePolicy.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "backend/Poseidon.Api/ImportTemplates.cs",
+          "frontend/src/product/CrewPersonalProfile.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "frontend/src/product/CrewPersonalProfile.test.tsx"
+        ],
+        "remaining": [
+          "Production purpose/classification/retention/key-custody and controlled catalog approval are pending."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -650,7 +1474,32 @@
       "verification": "DEFERRED",
       "coverage": "safe_unknown_or_withheld_gap",
       "domain_completion_state": "implemented_configured",
-      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval."
+      "domain_completion_gate": "CrewProfilePolicy version/purpose/field grants; explicit secret-reference protection and controlled values where applicable. Source BH classifications/legal basis/retention/approved production catalogs unresolved; synthetic example is not approval.",
+      "current_scope_2026_11_02": {
+        "state": "AUTHORED_UNVERIFIED",
+        "consumer_behavior": "Typed encrypted person-owned declaration; separately configured purpose/field capabilities and controlled-value validation; ordinary/import partial updates and current read masking.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewPersonalData.cs",
+          "backend/Poseidon.Api/CrewProfilePolicy.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "backend/Poseidon.Api/ImportTemplates.cs",
+          "frontend/src/product/CrewPersonalProfile.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "frontend/src/product/CrewPersonalProfile.test.tsx"
+        ],
+        "remaining": [
+          "Production purpose/classification/retention/key-custody and controlled catalog approval are pending."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -666,7 +1515,32 @@
       "verification": "DEFERRED",
       "coverage": "configured_unverified_photo_selection",
       "domain_completion_state": "partial_software",
-      "domain_completion_gate": "Explicit active photo reference selection/storage/consumer still required; no implicit latest version."
+      "domain_completion_gate": "Explicit active photo reference selection/storage/consumer still required; no implicit latest version.",
+      "current_scope_2026_11_02": {
+        "state": "AUTHORED_UNVERIFIED",
+        "consumer_behavior": "Actual staged scanned person-owned bytes/version/expiry/current authorization and explicit select/clear exact photo version; selected bytes remain unverified identity evidence.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewPhotoEndpoints.cs",
+          "backend/Poseidon.Api/SecureFileEndpoints.cs",
+          "frontend/src/product/CrewPhotoSelection.tsx",
+          "frontend/src/product/CrewPersonalFiles.tsx",
+          "tests/Poseidon.Api.Tests/CrewPhotoTests.cs",
+          "frontend/src/product/CrewPhotoSelection.test.tsx",
+          "tests/Poseidon.Browser.Tests/register-specs/person-file-cases.ts"
+        ],
+        "remaining": [
+          "Provider/scanner/key/purpose qualification is unverified; offline binary capture is unimplemented."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -686,6 +1560,28 @@
       "crew_identity_closure_01": {
         "state": "authored_configured_unverified",
         "trace": "docs/tasks/crew-identity-closure-01.trace.json",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      "current_scope_2026_11_02": {
+        "state": "AUTHORED_UNVERIFIED",
+        "consumer_behavior": "Server-derived per-request Withheld/LegacyUnavailable/Unavailable/IdentityPermitted projection; no operator-editable privacy grant or arbitrary scope string.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewEndpoints.cs::Identities",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs::Read",
+          "backend/Poseidon.Api/CrewIdentityEndpoints.cs",
+          "frontend/src/product/CrewWorkspace.tsx"
+        ],
+        "remaining": [
+          "Source placeholder does not define a writable privacy enum; approved legal processing matrix remains pending."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
         "verification": "DEFERRED_NOT_RUN",
         "accepted": false
       }
@@ -710,6 +1606,28 @@
         "trace": "docs/tasks/crew-identity-closure-01.trace.json",
         "verification": "DEFERRED_NOT_RUN",
         "accepted": false
+      },
+      "current_scope_2026_11_02": {
+        "state": "AUTHORED_UNVERIFIED",
+        "consumer_behavior": "Configured effective assignment selection under visible-vessel filtering; missing/ambiguous/unknown remains explicit; actual Position supplies rank/department.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewEffectiveAssignment.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "backend/Poseidon.Api/CrewAssignmentPolicy.cs",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs"
+        ],
+        "remaining": [
+          "Current effective declaration is not an independently approved operational appointment."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
       }
     },
     {
@@ -732,6 +1650,28 @@
         "trace": "docs/tasks/crew-identity-closure-01.trace.json",
         "verification": "DEFERRED_NOT_RUN",
         "accepted": false
+      },
+      "current_scope_2026_11_02": {
+        "state": "AUTHORED_UNVERIFIED",
+        "consumer_behavior": "Configured effective assignment selection under visible-vessel filtering; missing/ambiguous/unknown remains explicit; actual Position supplies rank/department.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewEffectiveAssignment.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "backend/Poseidon.Api/CrewAssignmentPolicy.cs",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs"
+        ],
+        "remaining": [
+          "Current effective declaration is not an independently approved operational appointment."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
       }
     },
     {
@@ -748,7 +1688,27 @@
       "verification": "DEFERRED",
       "coverage": "safe_unknown_or_withheld_gap",
       "domain_completion_state": "system_or_external_workflow",
-      "domain_completion_gate": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct."
+      "domain_completion_gate": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct.",
+      "current_scope_2026_11_02": {
+        "state": "UNRESOLVED_OWNING_WORKFLOW",
+        "consumer_behavior": "Explicit Unknown/Unavailable projection only. No eligibility/work-rest/competence/contact/fitness evaluator or operational-status lifecycle is supplied by the roster.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewEndpoints.cs::CrewRow,CrewProfile",
+          "frontend/src/product/CrewWorkspace.tsx"
+        ],
+        "remaining": [
+          "Actual owning workflow/evaluator adapters are unimplemented; source acceptance must determine selected DEV-047 dependencies without treating a label as implementation."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -764,7 +1724,27 @@
       "verification": "DEFERRED",
       "coverage": "safe_unknown_or_withheld_gap",
       "domain_completion_state": "system_or_external_workflow",
-      "domain_completion_gate": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct."
+      "domain_completion_gate": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct.",
+      "current_scope_2026_11_02": {
+        "state": "UNRESOLVED_OWNING_WORKFLOW",
+        "consumer_behavior": "Explicit Unknown/Unavailable projection only. No eligibility/work-rest/competence/contact/fitness evaluator or operational-status lifecycle is supplied by the roster.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewEndpoints.cs::CrewRow,CrewProfile",
+          "frontend/src/product/CrewWorkspace.tsx"
+        ],
+        "remaining": [
+          "Actual owning workflow/evaluator adapters are unimplemented; source acceptance must determine selected DEV-047 dependencies without treating a label as implementation."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -780,9 +1760,30 @@
       "verification": "DEFERRED",
       "coverage": "safe_unknown_or_withheld_gap",
       "domain_completion_state": "system_or_external_workflow",
-      "domain_completion_gate": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct."
+      "domain_completion_gate": "Read-only/system-owned or separately controlled source workflow. No import bypass; owning workflow software and evidence/authority gates remain distinct.",
+      "current_scope_2026_11_02": {
+        "state": "UNRESOLVED_OWNING_WORKFLOW",
+        "consumer_behavior": "Explicit Unknown/Unavailable projection only. No eligibility/work-rest/competence/contact/fitness evaluator or operational-status lifecycle is supplied by the roster.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewEndpoints.cs::CrewRow,CrewProfile",
+          "frontend/src/product/CrewWorkspace.tsx"
+        ],
+        "remaining": [
+          "Actual owning workflow/evaluator adapters are unimplemented; source acceptance must determine selected DEV-047 dependencies without treating a label as implementation."
+        ],
+        "offline": {
+          "state": "NOT_SUPPORTED_FOR_THIS_FIELD",
+          "evidence": [
+            "docs/tasks/offline-application-01.trace.json"
+          ],
+          "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
+        },
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     }
   ],
   "original_locator_read": "Original openpyxl read_only Data Dictionary 2316 rows1572..1615;44 records; SHA matched retrieved source SHA. This is source retrieval, not product verification.",
-  "accepted": false
+  "accepted": false,
+  "current_scope_notice": "2026-11-02: current_scope_2026_11_02 supersedes older coarse coverage/domain_completion flags for software inventory only. Original44 source contracts and historical checkpoint flags retained. No acceptance."
 }

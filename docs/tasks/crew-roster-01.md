@@ -1,5 +1,12 @@
 # CREW-ROSTER-01 — product implementation checkpoint
 
+## Supersession / current scope — 2026-11-02
+
+This dated section supersedes the old software inventory only. Earlier no-local-storage/offline-not-implemented and absent-identity/files/photo statements below are historical checkpoints, not the current product state. Their original evidence is retained. Actual final consumers are documented in [protected identity/import](../tasks/crew-identity-closure-01.md), [legacy batch conversion](../tasks/crew-legacy-closure-01.md), [person files/photo checkpoint](../phases/FOUNDATION-ACCEPTANCE-BUNDLE-01.md), [durable configured offline application](../tasks/offline-application-01.md) and [restricted medical declaration](../tasks/crew-medical-declaration-01.md). The actual44 source records each carry a `current_scope_2026_11_02` assessment in `docs/tasks/crew-roster-01.fields.json`, retaining old flags as history. Task-relative links resolve from both original task/phase folders.
+
+Actual encrypted IndexedDB read/capture/restart/reauthorization/replay/recovery/conflict/history supports only explicitly configured existing-Draft watch_group. Other fields and binary capture are not supported; generic AB capture permission is not an approved or universal PII cache whitelist. Actual identity/profile/files/photo declarations do not implement fitness/eligibility/work-rest/competence evaluation, operational appointments or human validation. Source placeholders, exact supported offline scope, production processing/key/provider policies and DEV-020/015 dependency acceptance remain unresolved. See [exact final-source interpretation and software/input distinction](../tasks/selected-source-reconciliation-2026-11-02.md). Do not infer full DEV-047 acceptance from this slice or old flags. All new/current suites/build/generation/browser/CI remain DEFERRED_NOT_RUN; independent exact-target QA/source reconciliation is pending.
+
+
 > Additive DOMAIN-COMPLETION-01 integration: fifteen protected typed profile fields, version/purpose/access/catalog contracts, ordinary/import paths, policy-masked roster nationality and configured current-effective status/period/provenance/Position projection are authored. Missing field configuration denies access. Person-owned secure files/photo, complete Crew controlled lookups, remaining identity/import protection and full application offline still require software; DEV-047 is NOT complete. Exact44-record FR/TC states and DOMAIN-COMPLETION-01 phase are current. All execution is DEFERRED.
 
 

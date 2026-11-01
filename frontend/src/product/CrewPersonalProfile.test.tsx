@@ -9,6 +9,26 @@ const fixture: PersonalProfile = { version: 12, revision: 1, policyVersion: 'syn
   readable: [2, 7, 14], writable: [7, 14], options: [] }
 const props = { vessel: 'vessel', assignment: 'assignment', language: 'en' as const, csrf: 'synthetic-csrf', onDirty: vi.fn() }
 beforeEach(() => { vi.clearAllMocks(); read.mockResolvedValue(fixture) })
+it('edits the separately authorized medical declaration without granting fitness or caching it', async () => {
+  read.mockResolvedValue({ ...fixture, data: { medicalExpiry: '2031-02-03' }, readable: [15], writable: [15] })
+  render(<CrewPersonalProfile {...props} />)
+  const input = await screen.findByLabelText('Declared medical expiry')
+  expect(input).toHaveAttribute('type', 'date')
+  fireEvent.change(input, { target: { value: '2032-04-05' } })
+  fireEvent.click(screen.getByRole('button', { name: 'Save declaration' }))
+  await waitFor(() => expect(read.mock.calls.some(call => call[2]?.method === 'PUT')).toBe(true))
+  const call = read.mock.calls.find(value => value[2]?.method === 'PUT')!
+  expect(JSON.parse(call[2]!.body as string)).toEqual({ baseVersion: 12, policyVersion: 'synthetic-v1', purpose: 'crew-profile', fields: [15], data: { medicalExpiry: '2032-04-05' } })
+  expect(screen.queryByText('ELIGIBLE')).not.toBeInTheDocument()
+  expect(screen.queryByText('FIT')).not.toBeInTheDocument()
+})
+it('withholds a medical value outside the current readable field set', async () => {
+  read.mockResolvedValue({ ...fixture, data: { ...fixture.data, medicalExpiry: '2031-02-03' } })
+  render(<CrewPersonalProfile {...props} />)
+  await screen.findByLabelText('Email')
+  expect(screen.queryByLabelText('Declared medical expiry')).not.toBeInTheDocument()
+  expect(screen.queryByDisplayValue('2031-02-03')).not.toBeInTheDocument()
+})
 it('renders only current authorized fields and keeps exact numeric declarations as text', async () => {
   render(<CrewPersonalProfile {...props} />)
   expect(await screen.findByLabelText('Sea service months')).toHaveValue(fixture.data.seaServiceMonths)

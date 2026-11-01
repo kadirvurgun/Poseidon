@@ -1,0 +1,19 @@
+# Environment contract v1 — proposed freeze, 2026-11-02
+
+DEV-003 / T-S0-003, active18.01 Backlog row4; DEV-001 dependency. AUTHORED_UNVERIFIED, independent literal-source acceptance pending. [Machine contract](../../contracts/environments/environments.v1.json) binds23.03 SHA `7359acce4371c525d942f78c7dde8383915378bdc8ccff5ddc6137f8ce76ee0a`, paragraphs19–49 and50–111.23.03 paragraphs10/12/14 additionally define on-premises/self-hosted product deployment, development/test-only cloud use, immutable artifact promotion and managed secret storage. No infrastructure was provisioned.
+
+Every environment freezes distinct mandatory `config://poseidon/<environment>/<key>` references for public/API origins; database, OIDC, object, profile/offline-key secrets; retention/data, app/migrator roles, backup/monitoring and rollback policies. The reference itself is the contract identifier, not a live URL or secret. The operator resolves it in a separate environment manifest. URL origins reject credentials, queries, fragments and paths. HTTPS is mandatory except DEV/TEST loopback. Secret bindings accept versioned `secret-ref://` references only; no secret is resolved by this tool. Reviewed policies require exact receipt/hash references. Their authority must be verified independently; a syntactically valid hash cannot approve a deployment or a retention period.
+
+| Environment | Data | Technical deploy role | Approval role from23.03 | Actual known configuration |
+|---|---|---|---|---|
+|DEV|Synthetic|DevOps|Engineering|Vite defaults: server5173, preview4173, API5080 loopback; these are source defaults, not observed live URLs|
+|TEST|Synthetic/golden|DevOps|QA/Engineering|Required foundation CI and disposable lab/test configuration exist in source; current execution/configuration not verified|
+|UAT|Masked/representative|DevOps|PO/QA|Unprovisioned operator bindings|
+|PILOT|Approved real|DevOps|Product/Pilot/Engineering|Unprovisioned operator bindings and authorized data-use decisions|
+|PROD|Authoritative|DevOps|Release authority|Unprovisioned operator bindings and authorized release/data-use decisions|
+
+Production copies into DEV/TEST are forbidden. UAT masked representative inputs require reviewed lineage/purpose and no unreviewed production clone. PILOT/PROD require genuine data-use authority.23.06 paragraphs44–49 govern per-record purpose/legal/retention/hold; there is no invented universal retention duration. Separate least-privilege app/migrator policies must be resolved and reviewed. No actor, grant or named appointment is manufactured by these role labels.
+
+Promotion moves the **same immutable artifact digest** DEV→TEST→UAT→PILOT→PROD. Exact release metadata and independent required-CI/QA/source/migration-dry-run/backup/smoke/telemetry/rollback receipts are mandatory. Change set and target-environment authority are independently reviewed. A rebuild with a different digest is a new candidate. On migration/auth/tenant/P0/smoke/telemetry failure stop or roll back according to23.03 paragraphs97–111; no automatic retry/promotion. Before changing a target, verify configuration, current secrets, recovery point, migration duration/audit and restore/forward-fix route. Communication is an authorized release activity; this author sends nothing.
+
+`scripts/environment_contract.py` validates definition separately from `--deployment-manifest`. Missing deployment bindings fail closed. Definition success would establish structural contract completeness only, never live resources, authority or accepted DEV-003. Eight meaningful adversarial regression sources are authored in `test_environment_contract.py`; validation/tests have NOT RUN. Independent source review decides whether the frozen concrete references satisfy row4; it must not invent a live UAT/PILOT provisioning criterion or waive unresolved deployment inputs.

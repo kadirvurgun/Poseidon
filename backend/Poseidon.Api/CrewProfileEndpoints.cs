@@ -61,7 +61,7 @@ public static class CrewProfileEndpoints
         return Results.Ok(new { items = rows, privateSnapshots = "Withheld" });
     }
     private static Task<IResult> Save(Guid vessel, Guid assignment, CrewProfileCommand command, HttpContext h, PoseidonDbContext db) => Apply(vessel, assignment, command, h, db, false);
-    internal static bool Valid(CrewProfileCommand? command, TrustedActor a, CrewProfilePolicy policy) => command?.Data != null && command.Fields is { Length: > 0 and <= 15 } &&
+    internal static bool Valid(CrewProfileCommand? command, TrustedActor a, CrewProfilePolicy policy) => command?.Data != null && command.Fields is { Length: > 0 and <= 16 } &&
         command.Fields.Distinct().Count() == command.Fields.Length && command.PolicyVersion == policy.Version &&
         command.Fields.All(f => Enum.IsDefined(f) && policy.Rule(f, command.Purpose, a.Permissions, true) != null && policy.ValueAllowed(f, command.Data.Lexical(f))) &&
         Enum.GetValues<CrewPersonalField>().All(f => command.Fields.Contains(f) || command.Data.Lexical(f) == null);

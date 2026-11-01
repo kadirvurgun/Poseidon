@@ -37,7 +37,7 @@ public sealed partial class DirectoryWorkspaceTests
     public async Task Crew_personal_all_typed_fields_exact_protected_roundtrip_and_safe_immutable_lineage() {
         using var host = ProfileHost(); using var client = Client(host); await Token(client);
         var before = await Personal(client); var data = SyntheticProfile();
-        var command = new CrewProfileCommand(before.Version, before.PolicyVersion, before.Purpose, Enum.GetValues<CrewPersonalField>(), data);
+        var command = new CrewProfileCommand(before.Version, before.PolicyVersion, before.Purpose, Enum.GetValues<CrewPersonalField>().Where(f => f != CrewPersonalField.MedicalExpiry).ToArray(), data);
         var key = Guid.NewGuid().ToString(); var response = await Send(client, PersonalPath, command, key, true);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.Equal(data, (await Personal(client)).Data);

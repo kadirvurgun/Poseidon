@@ -1313,10 +1313,10 @@
       "rule": "Valid ISO/local date/time; chronology, expiry and business-window rules",
       "fr": "FR46-crew-profile-medical_expiry",
       "tc": "TC46-crew-profile-medical_expiry",
-      "template_field_candidate": null,
-      "coverage": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
+      "template_field_candidate": "medical_expiry",
+      "coverage": "Typed encrypted restricted nullable date; dedicated medical field capability/purpose/current-policy masking; ordinary/import handler parity. All generation/execution deferred; no fitness/eligibility/legal verification. See crew-medical-declaration-01.md.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software",
+      "coverage_state": "authored_configured_unverified",
       "software_state": "unimplemented_in_this_package",
       "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
     },

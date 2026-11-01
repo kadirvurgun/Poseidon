@@ -10,6 +10,7 @@ const fields = [
   ['tankerExperienceMonths', 'Tanker experience months', 'Tanker deneyimi (ay)'], ['vesselTypeExperience', 'Vessel type experience', 'Gemi tipi deneyimi'],
   ['companyExperienceMonths', 'Company experience months', 'Şirket deneyimi (ay)'], ['emergencyContact', 'Emergency contact', 'Acil durum iletişimi'],
   ['preferredLanguage', 'Preferred language', 'Tercih edilen dil'], ['contactPhone', 'Contact phone', 'İletişim telefonu'], ['email', 'Email', 'E-posta'],
+  ['medicalExpiry', 'Declared medical expiry', 'Beyan edilen sağlık geçerlilik tarihi'],
 ] as const
 export type PersonalData = Partial<Record<typeof fields[number][0], string | null>>
 export type PersonalProfile = { version: number | null; revision: number; policyVersion: string; purpose: string;
@@ -65,7 +66,7 @@ export function CrewPersonalProfile({ vessel, assignment, csrf, language, onDirt
         {profile.options.find(option => option.field === i) ? <select disabled={!profile.writable.includes(i)} value={changes[key] === undefined ? profile.data[key] ?? '' : changes[key] ?? ''}
           onChange={event => { setChanges(old => ({ ...old, [key]: event.target.value || null })); onDirty(true) }}><option value="">{tr ? 'Bilinmiyor' : 'Unknown'}</option>
           {profile.options.find(option => option.field === i)!.values.map(value => <option key={value}>{value}</option>)}</select> :
-          <input type={['dateOfBirth', 'passportExpiry', 'seamanBookExpiry', 'companyStartDate'].includes(key) ? 'date' : 'text'} autoComplete="off" maxLength={4096}
+          <input type={['dateOfBirth', 'passportExpiry', 'seamanBookExpiry', 'companyStartDate', 'medicalExpiry'].includes(key) ? 'date' : 'text'} autoComplete="off" maxLength={4096}
             readOnly={!profile.writable.includes(i)} value={changes[key] === undefined ? profile.data[key] ?? '' : changes[key] ?? ''}
             onChange={event => { setChanges(old => ({ ...old, [key]: event.target.value || null })); onDirty(true) }} />}
       </label>)}

@@ -1,5 +1,12 @@
 # CREW-ROSTER-01 — UNVERIFIED product authoring checkpoint
 
+## Supersession / current scope — 2026-11-02
+
+This dated section supersedes the old software inventory only. Earlier no-local-storage/offline-not-implemented and absent-identity/files/photo statements below are historical checkpoints, not the current product state. Their original evidence is retained. Actual final consumers are documented in [protected identity/import](../tasks/crew-identity-closure-01.md), [legacy batch conversion](../tasks/crew-legacy-closure-01.md), [person files/photo checkpoint](../phases/FOUNDATION-ACCEPTANCE-BUNDLE-01.md), [durable configured offline application](../tasks/offline-application-01.md) and [restricted medical declaration](../tasks/crew-medical-declaration-01.md). The actual44 source records each carry a `current_scope_2026_11_02` assessment in `docs/tasks/crew-roster-01.fields.json`, retaining old flags as history. Task-relative links resolve from both original task/phase folders.
+
+Actual encrypted IndexedDB read/capture/restart/reauthorization/replay/recovery/conflict/history supports only explicitly configured existing-Draft watch_group. Other fields and binary capture are not supported; generic AB capture permission is not an approved or universal PII cache whitelist. Actual identity/profile/files/photo declarations do not implement fitness/eligibility/work-rest/competence evaluation, operational appointments or human validation. Source placeholders, exact supported offline scope, production processing/key/provider policies and DEV-020/015 dependency acceptance remain unresolved. See [exact final-source interpretation and software/input distinction](../tasks/selected-source-reconciliation-2026-11-02.md). Do not infer full DEV-047 acceptance from this slice or old flags. All new/current suites/build/generation/browser/CI remain DEFERRED_NOT_RUN; independent exact-target QA/source reconciliation is pending.
+
+
 Phase: larger domain foundation authoring. Canonical DEV-047/T-S7-001 remains INCOMPLETE and NOT ACCEPTED; no sprint/release gate or canonical count increment. Full source and field/FR/TC trace: [task](../tasks/crew-roster-01.md), [all44 fields](../tasks/crew-roster-01.fields.json).
 
 Receiving tree was clean at67d25bc93d6d983ef4bef5ba8d935e9dadcca114. Existing product modules and supplied exact80b057a engineering proof are preserved. No scanner/agent infrastructure work, extra agents, auth/account modification or publication was performed.

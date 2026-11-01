@@ -68,7 +68,35 @@ async function restrictedCrew(page: Page) {
   await expect(page.getByText('Crew access denied.', { exact: true })).toBeVisible()
   await expect(page.getByRole('table')).toHaveCount(0)
 }
+// Disposable medical field policy + dedicated current membership capabilities must
+// be deliberately configured at the later private-host gate. Absence FAILS.
+async function medicalDeclaration(page: Page) {
+  const vessel = await vesselFor(page)
+  const rosterResponse = await page.request.get(`/api/v1/vessels/${vessel}/crew`)
+  expect(rosterResponse.status()).toBe(200)
+  const roster = await rosterResponse.json(); expect(roster.items.length > 0).toBe(true)
+  const assignment = roster.items[0].id
+  const path = `/api/v1/vessels/${vessel}/crew/${assignment}`
+  const current = await page.request.get(`${path}/personal-profile?purpose=crew-profile`)
+  expect(current.status()).toBe(200)
+  const projection = await current.json()
+  expect(projection.readable.includes(15) && projection.writable.includes(15)).toBe(true)
+  await page.goto(`/app/crew-roster/${vessel}/crew-profile/${assignment}`)
+  await page.getByRole('button', { name: 'EN', exact: true }).click()
+  await page.getByLabel('Declared medical expiry', { exact: true }).fill('2031-02-03')
+  const saved = page.waitForResponse(r => r.url().endsWith(`${path}/personal-profile`) && r.request().method() === 'PUT')
+  await page.getByRole('button', { name: 'Save declaration', exact: true }).click()
+  expect((await saved).status()).toBe(200)
+  await page.reload(); await page.getByRole('button', { name: 'EN', exact: true }).click()
+  await expect(page.getByLabel('Declared medical expiry', { exact: true })).toHaveValue('2031-02-03')
+  const profile = await (await page.request.get(path)).json()
+  expect(profile.fitnessState === 'Unknown' && profile.assignment.eligibilityState === 'Unknown').toBe(true)
+  const history = await page.request.get(`${path}/personal-profile/history`)
+  expect(history.status()).toBe(200)
+  expect(!(await history.text()).includes('2031-02-03')).toBe(true)
+}
 export const crewCases = [
+  { name: 'crew-restricted-medical-declaration-reload-no-fitness-grant', run: medicalDeclaration, restricted: false },
   { name: 'crew-roster-profile-dirty', run: rosterCreateProfile, restricted: false },
   { name: 'crew-period-version-conflict', run: materialConflict, restricted: false },
   { name: 'crew-restricted-direct-url', run: restrictedCrew, restricted: true },

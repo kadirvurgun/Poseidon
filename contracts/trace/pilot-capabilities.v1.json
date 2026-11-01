@@ -1,0 +1,737 @@
+{
+  "schemaVersion": "poseidon.pilot-trace.v1",
+  "status": "AUTHORED_UNVERIFIED_INCOMPLETE",
+  "sources": {
+    "trace": {
+      "path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9"
+    },
+    "backlog": {
+      "path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674"
+    },
+    "uat": {
+      "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
+      "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49"
+    }
+  },
+  "capabilities": [
+    {
+      "number": 1,
+      "title": "Ship onboarding + applicability",
+      "exitProof": "Ship profile generates reviewed applicable controls",
+      "source": "trace",
+      "locator": "sheet:Pilot Scope v46.2/row:2",
+      "nodes": [
+        {
+          "id": "cap-1:requirement:pilot-exit",
+          "kind": "requirement",
+          "source": "trace",
+          "locator": "sheet:Pilot Scope v46.2/row:2",
+          "state": "DEFINED",
+          "files": []
+        },
+        {
+          "id": "cap-1:screen:fleet-vessels",
+          "kind": "screen",
+          "source": "trace",
+          "locator": "sheet:196 Ekran v46.3/row:86",
+          "state": "DEFINED",
+          "files": []
+        },
+        {
+          "id": "cap-1:api:RegulatoryDraftEndpoints.cs",
+          "kind": "api",
+          "source": "trace",
+          "locator": "sheet:196 Ekran v46.3/row:86",
+          "state": "AUTHORED",
+          "files": [
+            "backend/Poseidon.Api/RegulatoryDraftEndpoints.cs"
+          ],
+          "implementationNote": "Actual scoped handler path is partial; source screen/API name is a contract reference, not proof of complete canonical aliases or generated wire parity."
+        },
+        {
+          "id": "cap-1:entity:RegulatoryDraft.cs",
+          "kind": "entity",
+          "source": "backlog",
+          "locator": "sheet:Backlog/row:21",
+          "state": "AUTHORED",
+          "files": [
+            "backend/Poseidon.Persistence/RegulatoryDraft.cs"
+          ]
+        },
+        {
+          "id": "cap-1:backlog:DEV-020",
+          "kind": "backlog",
+          "source": "backlog",
+          "locator": "sheet:Backlog/row:21",
+          "state": "DEFINED",
+          "files": []
+        },
+        {
+          "id": "cap-1:test:RegulatoryDraftTests.cs",
+          "kind": "test",
+          "source": "uat",
+          "locator": "paragraph:72..74",
+          "state": "AUTHORED",
+          "files": [
+            "tests/Poseidon.Api.Tests/RegulatoryDraftTests.cs"
+          ]
+        }
+      ],
+      "edges": [
+        [
+          "cap-1:requirement:pilot-exit",
+          "cap-1:screen:fleet-vessels"
+        ],
+        [
+          "cap-1:screen:fleet-vessels",
+          "cap-1:api:RegulatoryDraftEndpoints.cs"
+        ],
+        [
+          "cap-1:api:RegulatoryDraftEndpoints.cs",
+          "cap-1:entity:RegulatoryDraft.cs"
+        ],
+        [
+          "cap-1:entity:RegulatoryDraft.cs",
+          "cap-1:backlog:DEV-020"
+        ],
+        [
+          "cap-1:backlog:DEV-020",
+          "cap-1:test:RegulatoryDraftTests.cs"
+        ]
+      ],
+      "definedUat": {
+        "id": "S-UAT-01",
+        "source": "uat",
+        "locator": "paragraph:72..74",
+        "state": "DEFINED"
+      },
+      "remaining": [
+        "Reviewed applicability/control generation is unimplemented; current vessel profile is a draft."
+      ]
+    },
+    {
+      "number": 2,
+      "title": "Tug onboarding + tug operational profile",
+      "exitProof": "Bollard pull/towing equipment/crew context complete",
+      "source": "trace",
+      "locator": "sheet:Pilot Scope v46.2/row:3",
+      "nodes": [
+        {
+          "id": "cap-2:requirement:pilot-exit",
+          "kind": "requirement",
+          "source": "trace",
+          "locator": "sheet:Pilot Scope v46.2/row:3",
+          "state": "DEFINED",
+          "files": []
+        },
+        {
+          "id": "cap-2:screen:tug-command",
+          "kind": "screen",
+          "source": "trace",
+          "locator": "sheet:196 Ekran v46.3/row:174",
+          "state": "DEFINED",
+          "files": []
+        },
+        {
+          "id": "cap-2:api:TugEndpoints.cs",
+          "kind": "api",
+          "source": "trace",
+          "locator": "sheet:196 Ekran v46.3/row:174",
+          "state": "AUTHORED",
+          "files": [
+            "backend/Poseidon.Api/TugEndpoints.cs"
+          ],
+          "implementationNote": "Actual scoped handler path is partial; source screen/API name is a contract reference, not proof of complete canonical aliases or generated wire parity."
+        },
+        {
+          "id": "cap-2:entity:RegulatoryDraft.cs",
+          "kind": "entity",
+          "source": "backlog",
+          "locator": "sheet:Backlog/row:81",
+          "state": "AUTHORED",
+          "files": [
+            "backend/Poseidon.Persistence/RegulatoryDraft.cs"
+          ]
+        },
+        {
+          "id": "cap-2:backlog:DEV-080",
+          "kind": "backlog",
+          "source": "backlog",
+          "locator": "sheet:Backlog/row:81",
+          "state": "DEFINED",
+          "files": []
+        },
+        {
+          "id": "cap-2:test:TugPlanningTests.cs",
+          "kind": "test",
+          "source": "uat",
+          "locator": "paragraph:121..123",
+          "state": "AUTHORED",
+          "files": [
+            "tests/Poseidon.Api.Tests/TugPlanningTests.cs"
+          ]
+        }
+      ],
+      "edges": [
+        [
+          "cap-2:requirement:pilot-exit",
+          "cap-2:screen:tug-command"
+        ],
+        [
+          "cap-2:screen:tug-command",
+          "cap-2:api:TugEndpoints.cs"
+        ],
+        [
+          "cap-2:api:TugEndpoints.cs",
+          "cap-2:entity:RegulatoryDraft.cs"
+        ],
+        [
+          "cap-2:entity:RegulatoryDraft.cs",
+          "cap-2:backlog:DEV-080"
+        ],
+        [
+          "cap-2:backlog:DEV-080",
+          "cap-2:test:TugPlanningTests.cs"
+        ]
+      ],
+      "definedUat": {
+        "id": "T-UAT-10",
+        "source": "uat",
+        "locator": "paragraph:121..123",
+        "state": "DEFINED"
+      },
+      "remaining": [
+        "Source qualification and complete authoritative BP/equipment/crew context remain unresolved."
+      ]
+    },
+    {
+      "number": 3,
+      "title": "Mode-aware POSEIDON Today",
+      "exitProof": "Ship shows voyage tasks; tug shows next jobs/readiness",
+      "source": "trace",
+      "locator": "sheet:Pilot Scope v46.2/row:4",
+      "nodes": [
+        {
+          "id": "cap-3:requirement:pilot-exit",
+          "kind": "requirement",
+          "source": "trace",
+          "locator": "sheet:Pilot Scope v46.2/row:4",
+          "state": "DEFINED",
+          "files": []
+        },
+        {
+          "id": "cap-3:screen:poseidon-today",
+          "kind": "screen",
+          "source": "trace",
+          "locator": "sheet:196 Ekran v46.3/row:56",
+          "state": "DEFINED",
+          "files": []
+        },
+        {
+          "id": "cap-3:api:TodayEndpoints.cs",
+          "kind": "api",
+          "source": "trace",
+          "locator": "sheet:196 Ekran v46.3/row:56",
+          "state": "AUTHORED",
+          "files": [
+            "backend/Poseidon.Api/TodayEndpoints.cs"
+          ],
+          "implementationNote": "Actual scoped handler path is partial; source screen/API name is a contract reference, not proof of complete canonical aliases or generated wire parity."
+        },
+        {
+          "id": "cap-3:entity:RegulatoryDraft.cs",
+          "kind": "entity",
+          "source": "backlog",
+          "locator": "sheet:Backlog/row:24",
+          "state": "AUTHORED",
+          "files": [
+            "backend/Poseidon.Persistence/RegulatoryDraft.cs"
+          ]
+        },
+        {
+          "id": "cap-3:backlog:DEV-023",
+          "kind": "backlog",
+          "source": "backlog",
+          "locator": "sheet:Backlog/row:24",
+          "state": "DEFINED",
+          "files": []
+        },
+        {
+          "id": "cap-3:test:TodayTests.cs",
+          "kind": "test",
+          "source": "uat",
+          "locator": "paragraph:121..123",
+          "state": "AUTHORED",
+          "files": [
+            "tests/Poseidon.Api.Tests/TodayTests.cs"
+          ]
+        }
+      ],
+      "edges": [
+        [
+          "cap-3:requirement:pilot-exit",
+          "cap-3:screen:poseidon-today"
+        ],
+        [
+          "cap-3:screen:poseidon-today",
+          "cap-3:api:TodayEndpoints.cs"
+        ],
+        [
+          "cap-3:api:TodayEndpoints.cs",
+          "cap-3:entity:RegulatoryDraft.cs"
+        ],
+        [
+          "cap-3:entity:RegulatoryDraft.cs",
+          "cap-3:backlog:DEV-023"
+        ],
+        [
+          "cap-3:backlog:DEV-023",
+          "cap-3:test:TodayTests.cs"
+        ]
+      ],
+      "definedUat": {
+        "id": "T-UAT-10",
+        "source": "uat",
+        "locator": "paragraph:121..123",
+        "state": "DEFINED"
+      },
+      "remaining": [
+        "Actual source-backed next-job/readiness daily projections and full ship voyage tasks remain partial."
+      ]
+    },
+    {
+      "number": 4,
+      "title": "Certificates + crew shared core",
+      "exitProof": "Invalid/expired state blocks positive readiness",
+      "source": "trace",
+      "locator": "sheet:Pilot Scope v46.2/row:5",
+      "nodes": [
+        {
+          "id": "cap-4:requirement:pilot-exit",
+          "kind": "requirement",
+          "source": "trace",
+          "locator": "sheet:Pilot Scope v46.2/row:5",
+          "state": "DEFINED",
+          "files": []
+        },
+        {
+          "id": "cap-4:screen:crew-roster",
+          "kind": "screen",
+          "source": "trace",
+          "locator": "sheet:196 Ekran v46.3/row:153",
+          "state": "DEFINED",
+          "files": []
+        },
+        {
+          "id": "cap-4:api:CrewEndpoints.cs",
+          "kind": "api",
+          "source": "trace",
+          "locator": "sheet:196 Ekran v46.3/row:153",
+          "state": "AUTHORED",
+          "files": [
+            "backend/Poseidon.Api/CrewEndpoints.cs"
+          ],
+          "implementationNote": "Actual scoped handler path is partial; source screen/API name is a contract reference, not proof of complete canonical aliases or generated wire parity."
+        },
+        {
+          "id": "cap-4:entity:CrewStorage.cs",
+          "kind": "entity",
+          "source": "backlog",
+          "locator": "sheet:Backlog/row:48",
+          "state": "AUTHORED",
+          "files": [
+            "backend/Poseidon.Persistence/CrewStorage.cs"
+          ]
+        },
+        {
+          "id": "cap-4:backlog:DEV-047",
+          "kind": "backlog",
+          "source": "backlog",
+          "locator": "sheet:Backlog/row:48",
+          "state": "DEFINED",
+          "files": []
+        },
+        {
+          "id": "cap-4:test:CrewRosterTests.cs",
+          "kind": "test",
+          "source": "uat",
+          "locator": "paragraph:75..77",
+          "state": "AUTHORED",
+          "files": [
+            "tests/Poseidon.Api.Tests/CrewRosterTests.cs"
+          ]
+        }
+      ],
+      "edges": [
+        [
+          "cap-4:requirement:pilot-exit",
+          "cap-4:screen:crew-roster"
+        ],
+        [
+          "cap-4:screen:crew-roster",
+          "cap-4:api:CrewEndpoints.cs"
+        ],
+        [
+          "cap-4:api:CrewEndpoints.cs",
+          "cap-4:entity:CrewStorage.cs"
+        ],
+        [
+          "cap-4:entity:CrewStorage.cs",
+          "cap-4:backlog:DEV-047"
+        ],
+        [
+          "cap-4:backlog:DEV-047",
+          "cap-4:test:CrewRosterTests.cs"
+        ]
+      ],
+      "definedUat": {
+        "id": "S-UAT-02",
+        "source": "uat",
+        "locator": "paragraph:75..77",
+        "state": "DEFINED"
+      },
+      "remaining": [
+        "No eligibility evaluator/credential verification or full selected offline acceptance; see exact44 records."
+      ]
+    },
+    {
+      "number": 5,
+      "title": "PMS + critical defect shared core",
+      "exitProof": "Tug winch/towline/emergency-release and ship critical assets trace",
+      "source": "trace",
+      "locator": "sheet:Pilot Scope v46.2/row:6",
+      "nodes": [
+        {
+          "id": "cap-5:requirement:pilot-exit",
+          "kind": "requirement",
+          "source": "trace",
+          "locator": "sheet:Pilot Scope v46.2/row:6",
+          "state": "DEFINED",
+          "files": []
+        },
+        {
+          "id": "cap-5:screen:equipment-hierarchy",
+          "kind": "screen",
+          "source": "trace",
+          "locator": "sheet:196 Ekran v46.3/row:140",
+          "state": "DEFINED",
+          "files": []
+        },
+        {
+          "id": "cap-5:api:TechnicalEndpoints.cs",
+          "kind": "api",
+          "source": "trace",
+          "locator": "sheet:196 Ekran v46.3/row:140",
+          "state": "AUTHORED",
+          "files": [
+            "backend/Poseidon.Api/TechnicalEndpoints.cs"
+          ],
+          "implementationNote": "Actual scoped handler path is partial; source screen/API name is a contract reference, not proof of complete canonical aliases or generated wire parity."
+        },
+        {
+          "id": "cap-5:entity:TechnicalStorage.cs",
+          "kind": "entity",
+          "source": "backlog",
+          "locator": "sheet:Backlog/row:54",
+          "state": "AUTHORED",
+          "files": [
+            "backend/Poseidon.Persistence/TechnicalStorage.cs"
+          ]
+        },
+        {
+          "id": "cap-5:backlog:DEV-053",
+          "kind": "backlog",
+          "source": "backlog",
+          "locator": "sheet:Backlog/row:54",
+          "state": "DEFINED",
+          "files": []
+        },
+        {
+          "id": "cap-5:test:TechnicalTests.cs",
+          "kind": "test",
+          "source": "uat",
+          "locator": "paragraph:78..80",
+          "state": "AUTHORED",
+          "files": [
+            "tests/Poseidon.Api.Tests/TechnicalTests.cs"
+          ]
+        }
+      ],
+      "edges": [
+        [
+          "cap-5:requirement:pilot-exit",
+          "cap-5:screen:equipment-hierarchy"
+        ],
+        [
+          "cap-5:screen:equipment-hierarchy",
+          "cap-5:api:TechnicalEndpoints.cs"
+        ],
+        [
+          "cap-5:api:TechnicalEndpoints.cs",
+          "cap-5:entity:TechnicalStorage.cs"
+        ],
+        [
+          "cap-5:entity:TechnicalStorage.cs",
+          "cap-5:backlog:DEV-053"
+        ],
+        [
+          "cap-5:backlog:DEV-053",
+          "cap-5:test:TechnicalTests.cs"
+        ]
+      ],
+      "definedUat": {
+        "id": "S-UAT-03",
+        "source": "uat",
+        "locator": "paragraph:78..80",
+        "state": "DEFINED"
+      },
+      "remaining": [
+        "Critical defect safeguards/verification and whole technical readiness path are not implemented."
+      ]
+    },
+    {
+      "number": 6,
+      "title": "Ship departure readiness",
+      "exitProof": "Crew+technical+statutory+emergency blockers before sign-off",
+      "source": "trace",
+      "locator": "sheet:Pilot Scope v46.2/row:7",
+      "nodes": [
+        {
+          "id": "cap-6:requirement:pilot-exit",
+          "kind": "requirement",
+          "source": "trace",
+          "locator": "sheet:Pilot Scope v46.2/row:7",
+          "state": "DEFINED",
+          "files": []
+        },
+        {
+          "id": "cap-6:screen:departure-readiness",
+          "kind": "screen",
+          "source": "trace",
+          "locator": "sheet:196 Ekran v46.3/row:128",
+          "state": "DEFINED",
+          "files": []
+        }
+      ],
+      "edges": [
+        [
+          "cap-6:requirement:pilot-exit",
+          "cap-6:screen:departure-readiness"
+        ]
+      ],
+      "definedUat": {
+        "id": "S-UAT-04",
+        "source": "uat",
+        "locator": "paragraph:81..83",
+        "state": "DEFINED"
+      },
+      "remaining": [
+        "Departure aggregation, source-qualified controls and actual Master sign-off path are unimplemented."
+      ]
+    },
+    {
+      "number": 7,
+      "title": "Tug job assignment + readiness",
+      "exitProof": "Assignment conflict and readiness checked before release",
+      "source": "trace",
+      "locator": "sheet:Pilot Scope v46.2/row:8",
+      "nodes": [
+        {
+          "id": "cap-7:requirement:pilot-exit",
+          "kind": "requirement",
+          "source": "trace",
+          "locator": "sheet:Pilot Scope v46.2/row:8",
+          "state": "DEFINED",
+          "files": []
+        },
+        {
+          "id": "cap-7:screen:tug-job-board",
+          "kind": "screen",
+          "source": "trace",
+          "locator": "sheet:196 Ekran v46.3/row:176",
+          "state": "DEFINED",
+          "files": []
+        },
+        {
+          "id": "cap-7:api:TugEndpoints.cs",
+          "kind": "api",
+          "source": "trace",
+          "locator": "sheet:196 Ekran v46.3/row:176",
+          "state": "AUTHORED",
+          "files": [
+            "backend/Poseidon.Api/TugEndpoints.cs"
+          ],
+          "implementationNote": "Actual scoped handler path is partial; source screen/API name is a contract reference, not proof of complete canonical aliases or generated wire parity."
+        },
+        {
+          "id": "cap-7:entity:TugStorage.cs",
+          "kind": "entity",
+          "source": "backlog",
+          "locator": "sheet:Backlog/row:83",
+          "state": "AUTHORED",
+          "files": [
+            "backend/Poseidon.Persistence/TugStorage.cs"
+          ]
+        },
+        {
+          "id": "cap-7:backlog:DEV-082",
+          "kind": "backlog",
+          "source": "backlog",
+          "locator": "sheet:Backlog/row:83",
+          "state": "DEFINED",
+          "files": []
+        },
+        {
+          "id": "cap-7:test:TugPlanningTests.cs",
+          "kind": "test",
+          "source": "uat",
+          "locator": "paragraph:97..99",
+          "state": "AUTHORED",
+          "files": [
+            "tests/Poseidon.Api.Tests/TugPlanningTests.cs"
+          ]
+        }
+      ],
+      "edges": [
+        [
+          "cap-7:requirement:pilot-exit",
+          "cap-7:screen:tug-job-board"
+        ],
+        [
+          "cap-7:screen:tug-job-board",
+          "cap-7:api:TugEndpoints.cs"
+        ],
+        [
+          "cap-7:api:TugEndpoints.cs",
+          "cap-7:entity:TugStorage.cs"
+        ],
+        [
+          "cap-7:entity:TugStorage.cs",
+          "cap-7:backlog:DEV-082"
+        ],
+        [
+          "cap-7:backlog:DEV-082",
+          "cap-7:test:TugPlanningTests.cs"
+        ]
+      ],
+      "definedUat": {
+        "id": "T-UAT-02",
+        "source": "uat",
+        "locator": "paragraph:97..99",
+        "state": "DEFINED"
+      },
+      "remaining": [
+        "Selected draft board BP/readiness/conflict source coverage remains pending; DEV-083/084 operational checks/decision remain distinct unselected work."
+      ]
+    },
+    {
+      "number": 8,
+      "title": "Towage plan + risk/briefing + execution",
+      "exitProof": "Plan, barriers, briefing and execution evidence complete",
+      "source": "trace",
+      "locator": "sheet:Pilot Scope v46.2/row:9",
+      "nodes": [
+        {
+          "id": "cap-8:requirement:pilot-exit",
+          "kind": "requirement",
+          "source": "trace",
+          "locator": "sheet:Pilot Scope v46.2/row:9",
+          "state": "DEFINED",
+          "files": []
+        },
+        {
+          "id": "cap-8:screen:towage-plan",
+          "kind": "screen",
+          "source": "trace",
+          "locator": "sheet:196 Ekran v46.3/row:180",
+          "state": "DEFINED",
+          "files": []
+        }
+      ],
+      "edges": [
+        [
+          "cap-8:requirement:pilot-exit",
+          "cap-8:screen:towage-plan"
+        ]
+      ],
+      "definedUat": {
+        "id": "T-UAT-04",
+        "source": "uat",
+        "locator": "paragraph:103..105",
+        "state": "DEFINED"
+      },
+      "remaining": [
+        "Towage safety plan, risk/briefing acknowledgement and operation execution chain are unimplemented; draft planning is not this chain."
+      ]
+    },
+    {
+      "number": 9,
+      "title": "Safety event + evidence/audit + offline",
+      "exitProof": "Offline onboard capture and auditable safety trace",
+      "source": "trace",
+      "locator": "sheet:Pilot Scope v46.2/row:10",
+      "nodes": [
+        {
+          "id": "cap-9:requirement:pilot-exit",
+          "kind": "requirement",
+          "source": "trace",
+          "locator": "sheet:Pilot Scope v46.2/row:10",
+          "state": "DEFINED",
+          "files": []
+        },
+        {
+          "id": "cap-9:screen:safety-inbox",
+          "kind": "screen",
+          "source": "trace",
+          "locator": "sheet:196 Ekran v46.3/row:2",
+          "state": "DEFINED",
+          "files": []
+        }
+      ],
+      "edges": [
+        [
+          "cap-9:requirement:pilot-exit",
+          "cap-9:screen:safety-inbox"
+        ]
+      ],
+      "definedUat": {
+        "id": "S-UAT-06",
+        "source": "uat",
+        "locator": "paragraph:87..89",
+        "state": "DEFINED"
+      },
+      "remaining": [
+        "Safety event/evidence/verification/decision trace and safety offline adapters are unimplemented; actual Crew watch-group offline is narrower."
+      ]
+    },
+    {
+      "number": 10,
+      "title": "Dual-mode UAT and value proof",
+      "exitProof": "At least one ship and one tug complete daily journeys",
+      "source": "trace",
+      "locator": "sheet:Pilot Scope v46.2/row:11",
+      "nodes": [
+        {
+          "id": "cap-10:requirement:pilot-exit",
+          "kind": "requirement",
+          "source": "trace",
+          "locator": "sheet:Pilot Scope v46.2/row:11",
+          "state": "DEFINED",
+          "files": []
+        }
+      ],
+      "edges": [],
+      "definedUat": {
+        "id": "T-UAT-10",
+        "source": "uat",
+        "locator": "paragraph:121..123",
+        "state": "DEFINED"
+      },
+      "remaining": [
+        "Real one-ship/one-tug daily UAT, value evidence and authorized pilot decisions have not run or been accepted; imports alone cannot prove them."
+      ]
+    }
+  ]
+}

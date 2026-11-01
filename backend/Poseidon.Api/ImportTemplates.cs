@@ -26,7 +26,7 @@ internal static class ImportTemplates
                 "maker", "model", "serial_number", "location", "commission_date", "notes"],
             _ => []
         };
-        return fields.Length == 0 ? null : new(Version + "/" + category,
+        return fields.Length == 0 ? null : new((category == "crew" ? "DEV-069-declaration-v4" : Version) + "/" + category,
             fields.Select(f => new ImportTemplateField(f, f == "record_key" || category == "vessel" && f is "code" or "name" or "base_version" ||
                 category == "equipment" && f == "level", true))
                 .Concat(category == "certificate" ? new[] { "person_id", "verification_status", "verified_by", "verified_at", "alert_state", "sync_state", "status" }

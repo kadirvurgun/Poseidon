@@ -29,7 +29,8 @@ public sealed class CrewProfilePolicy
         Fields.Select(f => f.Field).Distinct().Count() == Fields.Length;
     public static bool Controlled(CrewPersonalField f) => f is CrewPersonalField.Nationality or CrewPersonalField.PreferredLanguage or CrewPersonalField.VesselTypeExperience;
     public CrewProfileFieldRule? Rule(CrewPersonalField field, string purpose, IReadOnlyCollection<string> permissions, bool write) => !Valid ? null :
-        Fields.SingleOrDefault(f => f.Field == field && f.Purpose == purpose && permissions.Contains(f.ReadCapability) && (!write || permissions.Contains(f.WriteCapability)));
+        Fields.SingleOrDefault(f => f.Field == field && f.Purpose == purpose && permissions.Contains(f.ReadCapability) && (!write || permissions.Contains(f.WriteCapability)) &&
+            (field != CrewPersonalField.MedicalExpiry || f.ReadCapability == "crew.profile.medical.read" && f.WriteCapability == "crew.profile.medical.write"));
     public bool ValueAllowed(CrewPersonalField field, string? value) => CrewPersonalData.Valid(field, value) &&
         (value == null || !Controlled(field) || Fields.SingleOrDefault(x => x.Field == field)?.ControlledValues?.Contains(value, StringComparer.Ordinal) == true);
 }
