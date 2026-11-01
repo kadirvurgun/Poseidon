@@ -456,8 +456,9 @@
       "engineering_commit": "73b23523be48cadc112bef8a280166be48aa588b",
       "bundle_assessment": "NOT_RUN_SOFTWARE_PRECONDITION_INCOMPLETE",
       "target_test_evidence": [],
-      "current_gap": "Entire current target remains unverified; historical source/authoring state is retained, not reaccepted. Evaluate exact criteria and dependencies at later gate.",
-      "independent_source_acceptance": "PENDING"
+      "current_gap": "Current register is DRAFT preparation; observation primitives/file transport/audit do not implement full lifecycle/applicability/control/evidence/verifier/authorized-decision/trace criterion. Required software/source-scope reconciliation remains incomplete, separately from external approvals. No execution or acceptance.",
+      "independent_source_acceptance": "PENDING",
+      "current_authoring_reference": "docs/phases/FOUNDATION-CONTINUATION-2026-11-02.md"
     },
     {
       "id": "DEV-027",
@@ -472,8 +473,9 @@
       "state": "NOT_ACCEPTED",
       "bundle_assessment": "NOT_RUN_SOFTWARE_PRECONDITION_INCOMPLETE",
       "target_test_evidence": [],
-      "current_gap": "Entire current target remains unverified; historical source/authoring state is retained, not reaccepted. Evaluate exact criteria and dependencies at later gate.",
-      "independent_source_acceptance": "PENDING"
+      "current_gap": "Current register is DRAFT preparation; observation primitives/file transport/audit do not implement full lifecycle/applicability/control/evidence/verifier/authorized-decision/trace criterion. Required software/source-scope reconciliation remains incomplete, separately from external approvals. No execution or acceptance.",
+      "independent_source_acceptance": "PENDING",
+      "current_authoring_reference": "docs/phases/FOUNDATION-CONTINUATION-2026-11-02.md"
     },
     {
       "id": "DEV-028",
@@ -488,8 +490,9 @@
       "state": "NOT_ACCEPTED",
       "bundle_assessment": "NOT_RUN_SOFTWARE_PRECONDITION_INCOMPLETE",
       "target_test_evidence": [],
-      "current_gap": "Entire current target remains unverified; historical source/authoring state is retained, not reaccepted. Evaluate exact criteria and dependencies at later gate.",
-      "independent_source_acceptance": "PENDING"
+      "current_gap": "Current register is DRAFT preparation; observation primitives/file transport/audit do not implement full lifecycle/applicability/control/evidence/verifier/authorized-decision/trace criterion. Required software/source-scope reconciliation remains incomplete, separately from external approvals. No execution or acceptance.",
+      "independent_source_acceptance": "PENDING",
+      "current_authoring_reference": "docs/phases/FOUNDATION-CONTINUATION-2026-11-02.md"
     },
     {
       "id": "DEV-029",
@@ -504,8 +507,9 @@
       "state": "NOT_ACCEPTED",
       "bundle_assessment": "NOT_RUN_SOFTWARE_PRECONDITION_INCOMPLETE",
       "target_test_evidence": [],
-      "current_gap": "Entire current target remains unverified; historical source/authoring state is retained, not reaccepted. Evaluate exact criteria and dependencies at later gate.",
-      "independent_source_acceptance": "PENDING"
+      "current_gap": "Current register is DRAFT preparation; observation primitives/file transport/audit do not implement full lifecycle/applicability/control/evidence/verifier/authorized-decision/trace criterion. Required software/source-scope reconciliation remains incomplete, separately from external approvals. No execution or acceptance.",
+      "independent_source_acceptance": "PENDING",
+      "current_authoring_reference": "docs/phases/FOUNDATION-CONTINUATION-2026-11-02.md"
     },
     {
       "id": "DEV-030",
@@ -520,8 +524,9 @@
       "state": "NOT_ACCEPTED",
       "bundle_assessment": "NOT_RUN_SOFTWARE_PRECONDITION_INCOMPLETE",
       "target_test_evidence": [],
-      "current_gap": "Entire current target remains unverified; historical source/authoring state is retained, not reaccepted. Evaluate exact criteria and dependencies at later gate.",
-      "independent_source_acceptance": "PENDING"
+      "current_gap": "Current register is DRAFT preparation; observation primitives/file transport/audit do not implement full lifecycle/applicability/control/evidence/verifier/authorized-decision/trace criterion. Required software/source-scope reconciliation remains incomplete, separately from external approvals. No execution or acceptance.",
+      "independent_source_acceptance": "PENDING",
+      "current_authoring_reference": "docs/phases/FOUNDATION-CONTINUATION-2026-11-02.md"
     },
     {
       "id": "DEV-031",
@@ -536,8 +541,9 @@
       "state": "NOT_ACCEPTED",
       "bundle_assessment": "NOT_RUN_SOFTWARE_PRECONDITION_INCOMPLETE",
       "target_test_evidence": [],
-      "current_gap": "Entire current target remains unverified; historical source/authoring state is retained, not reaccepted. Evaluate exact criteria and dependencies at later gate.",
-      "independent_source_acceptance": "PENDING"
+      "current_gap": "Current register is DRAFT preparation; observation primitives/file transport/audit do not implement full lifecycle/applicability/control/evidence/verifier/authorized-decision/trace criterion. Required software/source-scope reconciliation remains incomplete, separately from external approvals. No execution or acceptance.",
+      "independent_source_acceptance": "PENDING",
+      "current_authoring_reference": "docs/phases/FOUNDATION-CONTINUATION-2026-11-02.md"
     },
     {
       "id": "DEV-032",
@@ -552,8 +558,9 @@
       "state": "NOT_ACCEPTED",
       "bundle_assessment": "NOT_RUN_SOFTWARE_PRECONDITION_INCOMPLETE",
       "target_test_evidence": [],
-      "current_gap": "Entire current target remains unverified; historical source/authoring state is retained, not reaccepted. Evaluate exact criteria and dependencies at later gate.",
-      "independent_source_acceptance": "PENDING"
+      "current_gap": "Current register is DRAFT preparation; observation primitives/file transport/audit do not implement full lifecycle/applicability/control/evidence/verifier/authorized-decision/trace criterion. Required software/source-scope reconciliation remains incomplete, separately from external approvals. No execution or acceptance.",
+      "independent_source_acceptance": "PENDING",
+      "current_authoring_reference": "docs/phases/FOUNDATION-CONTINUATION-2026-11-02.md"
     },
     {
       "id": "DEV-116",
@@ -590,8 +597,9 @@
       "phase_report": "docs/phases/CREW-ROSTER-01.md",
       "bundle_assessment": "NOT_RUN_SOFTWARE_PRECONDITION_INCOMPLETE",
       "target_test_evidence": [],
-      "current_gap": "Photo selection now authored unverified; protected legacy identity, existing-person import parity, Crew controlled lookups and full durable offline journeys remain required software.",
-      "independent_source_acceptance": "PENDING"
+      "current_gap": "Identity/legacy conversion/files/photo/configured lookups/medical/watch-group application offline authored; closed offline consumer and actual protected-medical exclusion tests added in current continuation, all NOT RUN. Remaining selected input/offline/evaluator scope and full integration/generation required.",
+      "independent_source_acceptance": "PENDING",
+      "current_authoring_reference": "docs/phases/FOUNDATION-CONTINUATION-2026-11-02.md"
     },
     {
       "id": "DEV-052",
@@ -672,8 +680,9 @@
       "phase_report": "docs/phases/TUG-FOUNDATION-01.md",
       "bundle_assessment": "NOT_RUN_SOFTWARE_PRECONDITION_INCOMPLETE",
       "target_test_evidence": [],
-      "current_gap": "Scoped Tug type/context catalogs and complete source labels remain unimplemented software.",
-      "independent_source_acceptance": "PENDING"
+      "current_gap": "Draft intake/planning/assignment/context/board authored; BP adapter remains declared/unverified, operational readiness Unknown, conflict coverage draft geometry. Actual required authoritative consumers and selected scope still incomplete; no execution or acceptance.",
+      "independent_source_acceptance": "PENDING",
+      "current_authoring_reference": "docs/phases/FOUNDATION-CONTINUATION-2026-11-02.md"
     },
     {
       "id": "DEV-081",
@@ -693,8 +702,9 @@
       "phase_report": "docs/phases/TUG-FOUNDATION-01.md",
       "bundle_assessment": "NOT_RUN_SOFTWARE_PRECONDITION_INCOMPLETE",
       "target_test_evidence": [],
-      "current_gap": "Draft request authored; versioned planning window/assignment mutation/history and evidence-aware BP/conflict software incomplete.",
-      "independent_source_acceptance": "PENDING"
+      "current_gap": "Draft intake/planning/assignment/context/board authored; BP adapter remains declared/unverified, operational readiness Unknown, conflict coverage draft geometry. Actual required authoritative consumers and selected scope still incomplete; no execution or acceptance.",
+      "independent_source_acceptance": "PENDING",
+      "current_authoring_reference": "docs/phases/FOUNDATION-CONTINUATION-2026-11-02.md"
     },
     {
       "id": "DEV-082",
@@ -714,8 +724,17 @@
       "phase_report": "docs/phases/TUG-FOUNDATION-01.md",
       "bundle_assessment": "NOT_RUN_SOFTWARE_PRECONDITION_INCOMPLETE",
       "target_test_evidence": [],
-      "current_gap": "Board still explicitly returns requested-window-only and unavailable assignment/BP/conflict adapters; real planning consumers incomplete.",
-      "independent_source_acceptance": "PENDING"
+      "current_gap": "Draft intake/planning/assignment/context/board authored; BP adapter remains declared/unverified, operational readiness Unknown, conflict coverage draft geometry. Actual required authoritative consumers and selected scope still incomplete; no execution or acceptance.",
+      "independent_source_acceptance": "PENDING",
+      "current_authoring_reference": "docs/phases/FOUNDATION-CONTINUATION-2026-11-02.md"
     }
-  ]
+  ],
+  "current_continuation": {
+    "report": "docs/phases/FOUNDATION-CONTINUATION-2026-11-02.md",
+    "evidence": "docs/phases/FOUNDATION-ACCEPTANCE-BUNDLE-01.continuation-2026-11-02.json",
+    "receiving_head": "0bf43bee2991c4c85618a23b81807ef91b9c4771",
+    "status": "INCOMPLETE_NOT_RUN_NOT_ACCEPTED",
+    "gate_executed": false,
+    "notice": "Original source_head and source acceptance states retained as historical. No current passing results."
+  }
 }

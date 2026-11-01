@@ -1,4 +1,57 @@
 {
+  "foundation_continuation_2026_11_02": {
+    "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+    "accepted": false,
+    "foundation_ready": false,
+    "phase": "FOUNDATION software authoring before the single combined gate",
+    "phase_report": "docs/phases/FOUNDATION-CONTINUATION-2026-11-02.md",
+    "task": "docs/tasks/offline-medical-exclusion-01.md",
+    "source_only_evidence": "docs/phases/FOUNDATION-ACCEPTANCE-BUNDLE-01.continuation-2026-11-02.json",
+    "receiving_head": "0bf43bee2991c4c85618a23b81807ef91b9c4771",
+    "configured_base_commit": "80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44",
+    "verification": "ALL software/generation/model/build/test/security/browser/provider/independent QA/CI DEFERRED_NOT_RUN; software precondition false",
+    "software": [
+      "Closed supported encrypted offline plaintext/response contracts",
+      "Exact persisted replay body/UUID/revision and outcome provenance binding",
+      "Calendar-valid UTC capture validation",
+      "Actual browser static-cache assertion reconciled with content-addressed public builds"
+    ],
+    "authored_not_executed": {
+      "vitest_logical_cases": 10,
+      "additional_api_pg_facts": 1,
+      "additional_registered_signed_host_journeys": 1,
+      "offline_registered_journeys_total": 5,
+      "configured_register_projects": 2
+    },
+    "remaining_software": [
+      "Selected Crew input/offline/evaluator scope reconciliation",
+      "Actual authoritative Tug BP/operational readiness/conflict consumers; Tug offline remains unsupported",
+      "Selected source lifecycle/applicability/control/evidence/verifier/authorized-decision/trace product workflows beyond draft preparation and primitives",
+      "S0 source chains/conditional owner assignments and unavailable delivery/backlog/trace integrations",
+      "Complete 471-file semantic/model/lock/OpenAPI/consumer reconciliation and all required execution"
+    ],
+    "security": "Prior160 unresolved proposals retained as historical; no current full scans, trusted receipt/pin/exception or verified protected CI trust",
+    "canonical_progress": "8/970SP;2/121tasks;0/196screens",
+    "publication": "NONE; no candidate commit without genuine gate evidence; coordinator owns independent review/CI/publication",
+    "source_only_observations": {
+      "whitespace": {
+        "command": "git diff --check",
+        "exit_code": 0,
+        "meaning": "Tracked source whitespace inspection only; line-ending normalization warnings; not a build or test"
+      },
+      "graphify_ast": {
+        "command": "graphify update .",
+        "exit_code": 0,
+        "nodes": 6755,
+        "edges": 14117,
+        "communities": 472,
+        "zero_node_warnings": 44,
+        "html": "Omitted above5000 nodes",
+        "final_after_test_assertion_refinement": "exit0;no code-graph topology changes;outputs unchanged",
+        "meaning": "AST maintenance only; no model/API calls or product validation"
+      }
+    }
+  },
   "s0_foundation_remainder_01": {
     "status": "AUTHORED_UNVERIFIED_NOT_ACCEPTED",
     "accepted": false,

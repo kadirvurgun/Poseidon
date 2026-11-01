@@ -3,6 +3,8 @@ import { isGuid } from './identifiers'
 import { openOfflineRecord, sealOfflineRecord, type OfflineCipherContext } from './offline-cipher'
 import { OfflineEncryptedRecordStore } from './offline-record-store'
 import type { OfflineConflict, OfflineConflictResolution } from './OfflineConflictReview'
+import { decodeOfflineCapture, decodeOfflineSnapshot, offlineKeys, offlineOperation as operation, offlineSource as source,
+  offlineInteger as integer, offlineTime as time, invalidOffline as bad, type OfflineCaptureBody } from './offline-capture-contract'
 
 // Hand-authored transport: locked OpenAPI generation remains deferred to the bundle gate.
 export type OfflineContext = {
@@ -18,8 +20,6 @@ export type OfflineHistory = { items: OfflineOutcome[]; offset: number; hasMore:
 export type OfflineConflictDetail = OfflineConflict & { base: { kind: string; text?: string }; currentVersion: number; resolved: OfflineOutcome | null
   resolvedValue?: { kind: string; text?: string } | null; resolutionReason?: string | null; resolvedBy?: string | null }
 export type PendingCapture = { commandId: string; revision: number; body: string; outcome?: OfflineOutcome }
-const operation = 'crew.draft.watch-group.v1'
-const source = '3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018'
 const limits = { plaintextBytes: 4096, contextBytes: 2048 }
 export async function prepareOfflineShell(signal: AbortSignal) {
   if (!('serviceWorker' in navigator)) throw new Error('offline_restart_unavailable')
@@ -38,12 +38,11 @@ export async function prepareOfflineShell(signal: AbortSignal) {
     worker.addEventListener('statechange', finish); signal.addEventListener('abort', finish); finish()
   })
 }
-const bad = (): never => { throw new ApiError(502, 'invalid_offline_contract') }
-const object = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v)
-const integer = (v: unknown, min: number, max: number): v is number => Number.isSafeInteger(v) && Number(v) >= min && Number(v) <= max
-const time = (v: unknown): v is string => typeof v === 'string' && Number.isFinite(Date.parse(v))
 export function decodeOfflineContext(value: unknown, vessel: string, assignment: string): OfflineContext {
-  if (!object(value) || ['id', 'tenantId', 'actorId', 'deviceId', 'keyId'].some(k => !isGuid(value[k])) ||
+  if (!offlineKeys(value, ['id', 'tenantId', 'actorId', 'vesselId', 'assignmentId', 'deviceId', 'keyId', 'keyChallenge',
+    'sessionBinding', 'policyVersion', 'sourceVersion', 'baseVersion', 'baseRevision', 'baseWatchGroup', 'watchGroups',
+    'serverTime', 'expiresAt', 'maxRecords', 'maxEncryptedBytes', 'maxDeviceRecords', 'maxDeviceEncryptedBytes']) ||
+    ['id', 'tenantId', 'actorId', 'deviceId', 'keyId'].some(k => !isGuid(value[k])) ||
     value.vesselId !== vessel || value.assignmentId !== assignment || value.sessionBinding !== value.id ||
     typeof value.keyChallenge !== 'string' || !/^[A-Za-z0-9+/]{43}=$/.test(value.keyChallenge) ||
     typeof value.policyVersion !== 'string' || value.policyVersion.length < 1 || value.policyVersion.length > 80 || value.sourceVersion !== source ||
@@ -57,10 +56,18 @@ export function decodeOfflineContext(value: unknown, vessel: string, assignment:
   return value as OfflineContext
 }
 function decodeOutcome(v: unknown): OfflineOutcome {
-  if (!object(v) || !isGuid(v.commandId) || !['Committed', 'MaterialConflict'].includes(String(v.result)) ||
+  if (!offlineKeys(v, ['commandId', 'result', 'baseVersion', 'serverVersion', 'revision', 'capturedAt', 'offsetMinutes', 'receivedAt', 'parentCommandId']) ||
+    !isGuid(v.commandId) || !['Committed', 'MaterialConflict'].includes(String(v.result)) ||
     !integer(v.baseVersion, 1, 4294967295) || !integer(v.serverVersion, 1, 4294967295) || !integer(v.revision, 1, Number.MAX_SAFE_INTEGER) ||
     !time(v.capturedAt) || !time(v.receivedAt) || !integer(v.offsetMinutes, -840, 840) || v.parentCommandId !== null && !isGuid(v.parentCommandId)) return bad()
   return v as OfflineOutcome
+}
+function captureOutcome(value: unknown, body: OfflineCaptureBody): OfflineOutcome {
+  const outcome = decodeOutcome(value)
+  if (outcome.commandId !== body.commandId || outcome.baseVersion !== body.baseVersion ||
+    Date.parse(outcome.capturedAt) !== Date.parse(body.capturedAt) || outcome.offsetMinutes !== body.offsetMinutes ||
+    outcome.parentCommandId !== (body.parentCommandId ?? null)) return bad()
+  return outcome
 }
 export const offlineRoot = (vessel: string, assignment: string) => {
   if (!isGuid(vessel) || !isGuid(assignment)) return bad()
@@ -68,7 +75,8 @@ export const offlineRoot = (vessel: string, assignment: string) => {
 }
 export async function inventory(vessel: string, assignment: string, signal: AbortSignal): Promise<OfflineInventory> {
   const value = await request<unknown>(offlineRoot(vessel, assignment), signal)
-  if (!object(value) || !Array.isArray(value.items) || value.items.length > 32 || value.items.some(x => !object(x) || !isGuid(x.id) ||
+  if (!offlineKeys(value, ['items']) || !Array.isArray(value.items) || value.items.length > 32 ||
+    value.items.some(x => !offlineKeys(x, ['id', 'revokedAt', 'expiresAt', 'policyVersion']) || !isGuid(x.id) ||
     !time(x.expiresAt) || x.revokedAt !== null && !time(x.revokedAt) || typeof x.policyVersion !== 'string')) return bad()
   return value as OfflineInventory
 }
@@ -204,11 +212,10 @@ export class OfflineApplication {
       const record = await this.store.read(row.commandId); if (!record) continue
       const bytes = await openOfflineRecord(crypto, this.key, this.aad(row.commandId), record.sealed, limits)
       this.requireActive(); const value: unknown = JSON.parse(new TextDecoder().decode(bytes))
-      if (!object(value) || typeof value.body !== 'string') return bad()
-      const body: unknown = JSON.parse(value.body)
-      if (!object(body) || body.commandId !== row.commandId || body.keyId !== this.context.keyId || body.deviceId !== this.context.deviceId ||
-        body.operation !== operation || body.policyVersion !== this.context.policyVersion || body.sourceVersion !== source) return bad()
-      values.push({ commandId: row.commandId, revision: row.revision, body: value.body, ...(value.outcome ? { outcome: decodeOutcome(value.outcome) } : {}) })
+      if (!offlineKeys(value, ['body'], ['outcome']) || typeof value.body !== 'string') return bad()
+      const body = decodeOfflineCapture(JSON.parse(value.body), row.commandId, this.context)
+      const outcome = value.outcome === undefined ? undefined : captureOutcome(value.outcome, body)
+      values.push({ commandId: row.commandId, revision: row.revision, body: value.body, ...(outcome ? { outcome } : {}) })
     }
     return values
   }
@@ -216,11 +223,10 @@ export class OfflineApplication {
     this.requireActive(); const record = await this.store.read(this.context.id); if (!record) return bad()
     const bytes = await openOfflineRecord(crypto, this.key, this.aad(this.context.id), record.sealed, limits)
     const envelope: unknown = JSON.parse(new TextDecoder().decode(bytes))
-    if (!object(envelope) || typeof envelope.body !== 'string') return bad()
+    if (!offlineKeys(envelope, ['body']) || typeof envelope.body !== 'string') return bad()
     const value: unknown = JSON.parse(envelope.body)
-    if (!object(value) || value.kind !== 'snapshot' || value.baseVersion !== this.context.baseVersion || value.revision !== this.context.baseRevision ||
-      value.watchGroup !== null && !this.context.watchGroups.includes(String(value.watchGroup))) return bad()
-    this.requireActive(); return value as { watchGroup: string | null; baseVersion: number; revision: number }
+    const snapshot = decodeOfflineSnapshot(value, this.context)
+    this.requireActive(); return snapshot
   }
   async capture(watchGroup: string | null, resolution?: OfflineConflictResolution) {
     this.requireActive()
@@ -233,11 +239,16 @@ export class OfflineApplication {
       capturedAt: new Date().toISOString(), offsetMinutes: -new Date().getTimezoneOffset(), watchGroup,
       ...(resolution ? { parentCommandId: resolution.conflictId, expectedServerVersion: Number(resolution.expectedRevision),
         choice: resolution.decisions[0]?.choice, reason: resolution.reason } : {}) })
+    decodeOfflineCapture(JSON.parse(body), commandId, this.context)
     await this.write(commandId, body, null)
     return commandId
   }
   async replay(capture: PendingCapture, signal: AbortSignal) {
     this.requireActive()
+    // Sign only the exact already-persisted eligible command, including uncertain
+    // retries. A caller-supplied object cannot widen the supported field contract.
+    const stored = (await this.captures()).find(row => row.commandId === capture.commandId)
+    if (!stored || stored.revision !== capture.revision || stored.body !== capture.body) return bad()
     // Every submission explicitly checks the CURRENT signed session. No background timer retries.
     const user = await session(signal)
     if (!user.authenticated || user.actorId !== this.context.actorId || user.tenantId !== this.context.tenantId) { this.close(); throw new ApiError(403) }
@@ -245,9 +256,9 @@ export class OfflineApplication {
     await this.reserve() // signing invocations share the durable key budget
     const signature = base64(await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, this.signing.privateKey, new TextEncoder().encode(digest)))
     this.requireActive()
-    const result = decodeOutcome(await request<unknown>(`${offlineRoot(this.context.vesselId, this.context.assignmentId)}/${this.context.id}/replay`, signal, {
+    const result = captureOutcome(await request<unknown>(`${offlineRoot(this.context.vesselId, this.context.assignmentId)}/${this.context.id}/replay`, signal, {
       method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': user.csrfToken, 'X-Offline-Hash': digest, 'X-Offline-Signature': signature }, body: capture.body,
-    }))
+    }), decodeOfflineCapture(JSON.parse(capture.body), capture.commandId, this.context))
     this.requireActive(); if (signal.aborted || result.commandId !== capture.commandId) throw new Error('response_withdrawn')
     await this.write(capture.commandId, capture.body, capture.revision, result)
     return result
@@ -255,8 +266,25 @@ export class OfflineApplication {
   async conflict(commandId: string, signal: AbortSignal): Promise<OfflineConflictDetail> {
     this.requireActive()
     const v = await request<unknown>(`${offlineRoot(this.context.vesselId, this.context.assignmentId)}/${this.context.id}/conflicts/${commandId}`, signal)
-    if (!object(v) || v.id !== commandId || v.contextKey !== this.context.id || !/^\d+$/.test(String(v.revision)) || !integer(v.currentVersion, 1, 4294967295) ||
-      !object(v.base) || !Array.isArray(v.fields) || v.fields.length !== 1 || !object(v.fields[0]) || v.fields[0].key !== 'watch_group') return bad()
+    const allowedValue = (value: unknown) => offlineKeys(value, ['kind'], ['text']) &&
+      (value.kind === 'known' ? typeof value.text === 'string' && this.context.watchGroups.includes(value.text)
+        : ['unknown', 'withheld'].includes(String(value.kind)) && !Object.hasOwn(value, 'text'))
+    if (!offlineKeys(v, ['id', 'revision', 'contextKey', 'base', 'currentVersion', 'resolved', 'originalServerVersion',
+      'resolvedValue', 'resolutionReason', 'resolvedBy', 'fields']) || v.id !== commandId || v.contextKey !== this.context.id ||
+      v.revision !== String(v.currentVersion) || !integer(v.currentVersion, 1, 4294967295) ||
+      !integer(v.originalServerVersion, 1, 4294967295) || !allowedValue(v.base) ||
+      !Array.isArray(v.fields) || v.fields.length !== 1 || !offlineKeys(v.fields[0], ['key', 'label', 'captured', 'server', 'choices']) ||
+      v.fields[0].key !== 'watch_group' || v.fields[0].label !== 'Watch group' ||
+      !allowedValue(v.fields[0].captured) || !allowedValue(v.fields[0].server) ||
+      !Array.isArray(v.fields[0].choices) || v.fields[0].choices.length > 2 ||
+      new Set(v.fields[0].choices).size !== v.fields[0].choices.length ||
+      v.fields[0].choices.some(choice => !['keepServer', 'useCaptured'].includes(String(choice))) ||
+      (v.resolved === null ? v.resolvedValue !== null || v.resolutionReason !== null || v.resolvedBy !== null :
+        !allowedValue(v.resolvedValue) || typeof v.resolutionReason !== 'string' || v.resolutionReason.length > 500 || !isGuid(v.resolvedBy))) return bad()
+    if (v.resolved !== null) {
+      const resolved = decodeOutcome(v.resolved)
+      if (resolved.parentCommandId !== commandId || resolved.result !== 'Committed' || v.fields[0].choices.length !== 0) return bad()
+    }
     this.requireActive(); if (signal.aborted) throw new Error('response_withdrawn')
     return v as OfflineConflictDetail
   }
@@ -264,7 +292,7 @@ export class OfflineApplication {
     this.requireActive()
     if (!integer(offset, 0, 1000000)) return bad()
     const value = await request<unknown>(`${offlineRoot(this.context.vesselId, this.context.assignmentId)}/${this.context.id}/history?offset=${offset}`, signal)
-    if (!object(value) || !Array.isArray(value.items) || value.items.length > 25 || value.offset !== offset || typeof value.hasMore !== 'boolean') return bad()
+    if (!offlineKeys(value, ['items', 'offset', 'hasMore']) || !Array.isArray(value.items) || value.items.length > 25 || value.offset !== offset || typeof value.hasMore !== 'boolean') return bad()
     this.requireActive(); return { items: value.items.map(decodeOutcome), offset, hasMore: value.hasMore }
   }
   async discard(capture: PendingCapture, confirmed: boolean) {
@@ -301,7 +329,8 @@ export async function discardLostCaptures(vessel: string, assignment: string, en
   const user = await session(signal)
   const value = await request<unknown>(`${offlineRoot(vessel, assignment)}/${enrollment}/cleanup`, signal,
     { method: 'POST', headers: { 'X-CSRF-TOKEN': user.csrfToken } })
-  if (!object(value) || value.id !== enrollment || value.vesselId !== vessel || value.assignmentId !== assignment ||
+  if (!offlineKeys(value, ['id', 'tenantId', 'actorId', 'vesselId', 'assignmentId', 'deviceId', 'keyId', 'policyVersion']) ||
+    value.id !== enrollment || value.vesselId !== vessel || value.assignmentId !== assignment ||
     ['id', 'tenantId', 'actorId', 'deviceId', 'keyId'].some(k => !isGuid(value[k])) || typeof value.policyVersion !== 'string') return bad()
   const ctx = value as Pick<OfflineContext, 'id' | 'tenantId' | 'actorId' | 'vesselId' | 'assignmentId' | 'deviceId' | 'keyId' | 'policyVersion'>
   if (!user.authenticated || ctx.actorId !== user.actorId || ctx.tenantId !== user.tenantId || signal.aborted) throw new ApiError(403)

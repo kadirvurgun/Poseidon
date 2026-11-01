@@ -2,8 +2,11 @@ using System.Net;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Poseidon.Api;
 using Poseidon.Domain;
 using Poseidon.Persistence;
@@ -93,5 +96,62 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Equal(HttpStatusCode.Forbidden, (await Send(client, PersonalPath,
             new CrewProfileCommand(before.Version, before.PolicyVersion, before.Purpose, [CrewPersonalField.MedicalExpiry],
                 new(MedicalExpiry: new(2031, 2, 3))), update: true)).StatusCode);
+    }
+
+    [Fact]
+    public async Task Actual_protected_medical_declaration_is_excluded_from_supported_offline_context_conflict_replay_and_history()
+    {
+        using var host = MedicalHost().WithWebHostBuilder(b => b.ConfigureTestServices(s => {
+            s.RemoveAll<OfflineApplicationPolicy>(); s.AddSingleton(SyntheticOfflinePolicy());
+        }));
+        using var client = Client(host); await Token(client);
+        var before = await Personal(client);
+        var medical = new DateOnly(2031, 2, 3);
+        using var saved = await Send(client, PersonalPath, new CrewProfileCommand(before.Version, before.PolicyVersion, before.Purpose,
+            [CrewPersonalField.MedicalExpiry], new(MedicalExpiry: medical)), update: true);
+        Assert.Equal(HttpStatusCode.OK, saved.StatusCode);
+        Assert.Equal(medical, (await Personal(client)).Data.MedicalExpiry);
+
+        // Real server enrollment + P-256 proof from the existing test device fixture.
+        // These contexts are the actual inputs used by the browser's encrypted snapshot.
+        var captured = await EnrollOffline(client); var competing = await EnrollOffline(client);
+        var jsonOptions = new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web);
+        void NoMedical(string material) {
+            Assert.DoesNotContain("2031-02-03", material);
+            Assert.DoesNotContain("medical", material, StringComparison.OrdinalIgnoreCase);
+        }
+        NoMedical(System.Text.Json.JsonSerializer.Serialize(captured, jsonOptions));
+        using var renewed = await Send(client, $"{OfflinePath}/{captured.Id}/renew", new { });
+        Assert.Equal(HttpStatusCode.OK, renewed.StatusCode); NoMedical(await renewed.Content.ReadAsStringAsync(Ct));
+        using var changed = await Deliver(client, competing, Captured(competing, "SYNTHETIC-B"));
+        Assert.Equal(HttpStatusCode.OK, changed.StatusCode);
+        var local = Captured(captured);
+        var frozen = System.Text.Json.JsonSerializer.Serialize(local, jsonOptions);
+        using var injected = await Deliver(client, captured, local, frozen[..^1] + ",\"medicalExpiry\":\"2031-02-03\"}");
+        Assert.Equal(HttpStatusCode.BadRequest, injected.StatusCode);
+        using var response = await Deliver(client, captured, local);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode); NoMedical(await response.Content.ReadAsStringAsync(Ct));
+        var conflict = (await response.Content.ReadFromJsonAsync<OfflineOutcomeDto>(Ct))!;
+        Assert.Equal("MaterialConflict", conflict.Result);
+        using var detail = await client.GetAsync($"/api/v1/{OfflinePath}/{captured.Id}/conflicts/{local.CommandId}", Ct);
+        Assert.Equal(HttpStatusCode.OK, detail.StatusCode); NoMedical(await detail.Content.ReadAsStringAsync(Ct));
+        using (var parsed = System.Text.Json.JsonDocument.Parse(await detail.Content.ReadAsStringAsync(Ct))) {
+            var fields = parsed.RootElement.GetProperty("fields"); Assert.Equal(1, fields.GetArrayLength());
+            Assert.Equal("watch_group", fields[0].GetProperty("key").GetString());
+        }
+        var resolution = Captured(captured, null) with { ParentCommandId = local.CommandId, BaseVersion = conflict.ServerVersion,
+            ExpectedServerVersion = conflict.ServerVersion, Choice = "useCaptured", Reason = "Fictional privacy regression resolution" };
+        using var committed = await Deliver(client, captured, resolution);
+        Assert.Equal(HttpStatusCode.OK, committed.StatusCode);
+        Assert.Equal("Committed", (await committed.Content.ReadFromJsonAsync<OfflineOutcomeDto>(Ct))!.Result);
+        using var recovered = await Deliver(client, captured, resolution);
+        Assert.Equal(HttpStatusCode.OK, recovered.StatusCode); NoMedical(await recovered.Content.ReadAsStringAsync(Ct));
+        using var history = await client.GetAsync($"/api/v1/{OfflinePath}/{captured.Id}/history", Ct);
+        Assert.Equal(HttpStatusCode.OK, history.StatusCode); NoMedical(await history.Content.ReadAsStringAsync(Ct));
+        // The ordinary replay handler must not clear or replace unrelated protected fields.
+        Assert.Equal(medical, (await Personal(client)).Data.MedicalExpiry);
+        await using var db = Db();
+        Assert.Equal(3, await db.OfflineOutcomes.CountAsync(Ct));
+        Assert.All(await db.AuditEvents.ToArrayAsync(Ct), a => Assert.DoesNotContain("2031-02-03", a.ChangeSummary));
     }
 }

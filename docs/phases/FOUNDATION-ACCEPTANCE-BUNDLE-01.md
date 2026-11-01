@@ -1,4 +1,16 @@
-# FOUNDATION-ACCEPTANCE-BUNDLE-01 — readiness precondition checkpoint F
+# FOUNDATION-ACCEPTANCE-BUNDLE-01 — current readiness reconciliation, 2026-11-02
+
+Status: INCOMPLETE
+
+Software precondition remains false. All required combined software/generation/model/build/test/security gates are NOT RUN for the current branch. This is an uncommitted AUTHORED_UNVERIFIED continuation, not a clean validated candidate, independent approval or accepted package. Do not dispatch paid gate review from this checkpoint.
+
+Receiving HEAD `0bf43bee2991c4c85618a23b81807ef91b9c4771` was clean. Actual current `config.base_commit` remains `80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44` (ancestor, exit0); HEAD differs by471 files,254491 insertions/161 deletions before this continuation. That is a history inventory, not completed review of471 files. A real `git fetch origin --quiet` exited0: origin/main `5a2930b17c3895f1d9d20212e0319fff37cf8cd2`, `git rev-list --left-right --count origin/main...HEAD` =0/64. No rebase, duplicate cherry-pick, private config, account, auth, source archive or trust setting changed.
+
+The requested lab/native/scanner origins already have normal -x receipts. Current source includes identity/legacy conversion, files/photo, configured watch-group application offline, Tug planning and navigation, S0 golden/task/trace authoring. Earlier absence statements below are historical. The new continuation hardens the actual encrypted offline consumer and authors integrated medical exclusion coverage; it also repairs the old browser cache assertion to inspect actual content-addressed worker caches. [Behavior, exact sources, acceptance cases, remaining software and NOT RUN matrix](FOUNDATION-CONTINUATION-2026-11-02.md).
+
+Canonical **8/970SP,2/121tasks,0/196accepted** and40-task/272SP selected ledger remain unchanged. Continue concrete required software before the single combined gate; coordinator owns exact-target independent QA/source review/CI and later publication.
+
+## Historical readiness checkpoint F
 
 Status: **SOFTWARE PRECONDITION INCOMPLETE / NOT RUN / NOT ACCEPTED**. Current phase is foundation authoring. The combined gate has not started. This is a preserved local working-tree checkpoint, not a clean validated candidate, canonical sprint, phase acceptance or release gate.
 

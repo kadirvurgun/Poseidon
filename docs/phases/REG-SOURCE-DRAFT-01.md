@@ -1,4 +1,4 @@
-> Current target continuation: [FOUNDATION-ACCEPTANCE-BUNDLE-01](FOUNDATION-ACCEPTANCE-BUNDLE-01.md) remains **SOFTWARE PRECONDITION INCOMPLETE / NOT RUN / NOT ACCEPTED**. Results below retain historical scope; none validate the current target. Ordinary and separate register/direct-provider suites must both be included at the later single gate.
+> Current target continuation: [FOUNDATION-ACCEPTANCE-BUNDLE-01](FOUNDATION-ACCEPTANCE-BUNDLE-01.md) remains **SOFTWARE PRECONDITION INCOMPLETE / NOT RUN / NOT ACCEPTED**. [2026-11-02 readiness/code continuation](FOUNDATION-CONTINUATION-2026-11-02.md) records current base/history, new offline privacy regression source and remaining software. Results below retain historical scope; none validate the current target. Ordinary and separate register/direct-provider suites must both be included at the later single gate.
 
 # REG-SOURCE-DRAFT-01 phase handoff
 
