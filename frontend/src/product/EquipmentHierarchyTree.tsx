@@ -49,7 +49,7 @@ export function EquipmentHierarchyTree(props: Props) {
   if (props.loading) return <p role="status">{en ? 'Loading equipment…' : 'Ekipman yükleniyor…'}</p>
   if (props.error === 'denied') return <p role="alert">{en ? 'Equipment access is not permitted.' : 'Ekipman erişim yetkiniz yok.'}</p>
   if (props.error || props.nodes === null) return <div role="alert">
-    <p>{en ? 'Equipment is unavailable. No empty or healthy state is inferred.' : 'Ekipmana ulaşılamıyor. Kayıtların boş veya uygun olduğu varsayılmaz.'}</p>
+    <p>{en ? 'Equipment could not be loaded.' : 'Ekipman yüklenemedi.'}</p>
     {props.onRetry && <button type="button" onClick={props.onRetry}>{en ? 'Retry' : 'Tekrar dene'}</button>}
   </div>
   return <ScopedTree key={props.scopeKey} {...props} nodes={props.nodes} />

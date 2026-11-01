@@ -126,7 +126,7 @@ describe('T-S8-001 hierarchy presentation (authored; real API/browser coverage r
   it('offers a real retry callback for unavailable data and labels genuine empty data separately', async () => {
     const user = userEvent.setup(), retry = vi.fn()
     const view = render(<EquipmentHierarchyTree {...base} language="en" nodes={null} onRetry={retry} />)
-    expect(screen.getByRole('alert')).toHaveTextContent('unavailable')
+    expect(screen.getByRole('alert')).toHaveTextContent('Equipment could not be loaded.')
     await user.click(screen.getByRole('button', { name: 'Retry' }))
     expect(retry).toHaveBeenCalledTimes(1)
     view.rerender(<EquipmentHierarchyTree {...base} language="en" nodes={[]} />)
