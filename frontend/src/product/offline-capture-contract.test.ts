@@ -1,5 +1,5 @@
 import { webcrypto } from 'node:crypto'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { decodeOfflineCapture, decodeOfflineSnapshot, offlineKeys, offlineOperation, offlineSource } from './offline-capture-contract'
 import { openOfflineRecord, sealOfflineRecord } from './offline-cipher'
 import { decodeOfflineContext } from './offline-application'
@@ -64,5 +64,24 @@ describe('closed supported offline plaintext (AUTHORED / NOT RUN)', () => {
     expect(() => decodeOfflineCapture(decrypted, id, scope)).toThrow(expect.objectContaining({ status: 502, code: 'invalid_offline_contract' }))
     expect(key.extractable).toBe(false)
     expect(offlineKeys({ body: '{}', medicalExpiry: '2031-02-03' }, ['body'], ['outcome'])).toBe(false)
+  })
+  it('requires a literal resolution choice and never coerces arrays or executes an object conversion', () => {
+    const resolution = { ...command(), baseVersion: 9, parentCommandId: parent, expectedServerVersion: 9,
+      choice: 'useCaptured', reason: 'Fictional explicit reconciliation' }
+    for (const choice of [['useCaptured'], ['keepServer'], [['useCaptured']], null, true, 1, { toString: null }])
+      expect(() => decodeOfflineCapture({ ...resolution, choice }, id, scope)).toThrow('invalid_offline_contract')
+    const toString = vi.fn(() => 'useCaptured')
+    expect(() => decodeOfflineCapture({ ...resolution, choice: { toString } }, id, scope)).toThrow('invalid_offline_contract')
+    expect(toString).not.toHaveBeenCalled()
+    expect(decodeOfflineCapture({ ...resolution, choice: 'keepServer' }, id, scope).choice).toBe('keepServer')
+  })
+  it('rejects invalid calendar or clock components rather than silently normalizing a captured timestamp', () => {
+    for (const capturedAt of ['0000-01-01T00:00:00Z', '2026-02-29T00:00:00Z', '2024-02-30T00:00:00Z',
+      '1900-02-29T00:00:00Z', '2026-04-31T00:00:00Z', '2026-00-01T00:00:00Z', '2026-13-01T00:00:00Z',
+      '2026-01-00T00:00:00Z', '2026-01-01T24:00:00Z', '2026-01-01T23:60:00Z', '2026-01-01T23:59:60Z'])
+      expect(() => decodeOfflineCapture({ ...command(), capturedAt }, id, scope)).toThrow('invalid_offline_contract')
+    for (const capturedAt of ['0001-01-01T00:00:00Z', '2000-02-29T23:59:59.1234567+00:00',
+      '2024-02-29T00:00:00Z', '9999-12-31T23:59:59.9999999Z'])
+      expect(decodeOfflineCapture({ ...command(), capturedAt }, id, scope).capturedAt).toBe(capturedAt)
   })
 })

@@ -36,7 +36,7 @@ export function decodeOfflineCapture(value: unknown, commandId: string, scope: C
     value.watchGroup !== null && !scope.watchGroups.includes(value.watchGroup as string)) return invalidOffline()
   const resolution = resolutionKeys.some(key => Object.hasOwn(value, key))
   if (resolution ? !resolutionKeys.every(key => Object.hasOwn(value, key)) || !isGuid(value.parentCommandId) || value.parentCommandId === commandId ||
-    value.expectedServerVersion !== value.baseVersion || !['keepServer', 'useCaptured'].includes(String(value.choice)) ||
+    value.expectedServerVersion !== value.baseVersion || typeof value.choice !== 'string' || !['keepServer', 'useCaptured'].includes(value.choice) ||
     typeof value.reason !== 'string' || value.reason.trim().length < 1 || value.reason.length > 500 || /\p{Cc}/u.test(value.reason)
     : value.baseVersion !== scope.baseVersion) return invalidOffline()
   return value as OfflineCaptureBody
