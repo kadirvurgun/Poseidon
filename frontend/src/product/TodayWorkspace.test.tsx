@@ -2,7 +2,7 @@ import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, expect, it, vi } from 'vitest'
 import { TodayWorkspace } from './TodayWorkspace'
-import { decodeToday, decodeWhy, decodeTodayVessels, today, todayVessels } from './today-api'
+import { decodeToday, decodeWhy, decodeTodayVessels, today, todayVessels, why as loadWhy } from './today-api'
 import { ProductApp } from './ProductApp'
 
 const id = '10000000-0000-0000-0000-000000000001'
@@ -203,4 +203,24 @@ it('guards navigation from an unsaved directory draft into Today', async () => {
   await user.click(screen.getByRole('button', { name: 'Düzenlemeye devam et' }))
   expect(screen.getByLabelText('Ad *')).toHaveValue('Synthetic Tug retained')
   expect(window.location.pathname).toBe(`/app/fleet/${id}`)
+})
+
+// TW-03 / REG-BOUNDARY-03: remote identifiers and timestamps must consume the full string.
+const lineTerminators = [{ name: 'LF', suffix: '\n' }, { name: 'CR', suffix: '\r' }, { name: 'LS', suffix: '\u2028' }, { name: 'PS', suffix: '\u2029' }]
+it.each(lineTerminators.flatMap(t => (['id', 'companyId'] as const).map(field => ({ ...t, field }))))('rejects trailing $name in vessel $field through the real transport decoder', async ({ suffix, field }) => {
+  vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response({ items: [{ ...vessel, [field]: vessel[field] + suffix }], offset: 0, limit: 25, hasMore: false })))
+  await expect(todayVessels(0, new AbortController().signal)).rejects.toMatchObject({ code: 'invalid_today_contract' })
+})
+it.each(lineTerminators)('rejects trailing $name in Today readAt rather than normalizing it', async ({ suffix }) => {
+  vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response({ ...data, readAt: now + suffix })))
+  await expect(today(id, new AbortController().signal)).rejects.toMatchObject({ code: 'invalid_today_contract' })
+})
+it.each(lineTerminators.flatMap(t => (['readAt', 'savedAt', 'sourceObservedAt'] as const).map(field => ({ ...t, field }))))('rejects trailing $name in Why $field through the real transport decoder', async ({ suffix, field }) => {
+  vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response({ ...why, [field]: now + suffix })))
+  await expect(loadWhy(id, new AbortController().signal)).rejects.toMatchObject({ code: 'invalid_today_contract' })
+})
+it('retains complete mixed-case nonempty GUIDs on a legitimate terminal vessel page', async () => {
+  const upper = { ...vessel, id: 'ABCDEF12-3456-789A-BCDE-F0123456789A', companyId: 'ABCDEF12-3456-789A-BCDE-F0123456789B' }
+  vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response({ items: [upper], offset: 0, limit: 25, hasMore: false })))
+  expect((await todayVessels(0, new AbortController().signal)).items).toEqual([upper])
 })

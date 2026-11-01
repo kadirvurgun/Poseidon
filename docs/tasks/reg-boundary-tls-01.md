@@ -31,3 +31,8 @@ Acceptance criteria for coordinator review:
 - REG-CLEANUP-01: direct library runner emits only bounded counts/codes/lines, no raw auth errors, DOM, cookie/storage values, traces or sensitive failure artifacts. Finally removes owned profiles after absolute containment and random ownership-marker checks; sessions stay in memory. Preserve unrelated services and operator volumes.
 
 Implementation and exact developer verification are in the [phase report](../phases/REG-BOUNDARY-TLS-01.md). Independent review and required coordinator CI remain pending. Existing source admission/DEV-005/008/canonical DEV-026, lookups, production IdP/MFA/session rollout, privacy/retention/export/DB privileges, legal/expert/permit/pilot/release and dependency-advisory gates remain open. Documents49/50 proposals confer no authority; no credential rotation, live resources, legal adoption, safety decision or human sign-off was introduced.
+
+
+## REG-BOUNDARY-04 — complete-string identity/time transport boundary
+
+Source: TW-03/REG-BOUNDARY-03 strict UI contract,15.01 API/field constraints and the independent b2ec2fa rejection. Trailing LF/CR/Unicode line/paragraph separators in vessel IDs/company IDs and Today/Why times must fail through actual transport decoding; legitimate complete mixed-case GUIDs remain supported. Shared strict GUID and timestamp guards preserve profile/register behavior.25 regression cases added; full frontend346 PASS, lint/typecheck/build exit0. This manual coordinator correction does not reset the native repair budget, approve itself, publish or change canonical acceptance.

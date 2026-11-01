@@ -1,3 +1,4 @@
+import { isGuid as guid } from './identifiers'
 import { calendar, timestamp } from './date-validation'
 import { ApiError, request } from './api'
 import { profileFields } from './profile-contract'
@@ -8,7 +9,6 @@ type ObjectValue = Record<string, unknown>
 const object = (v: unknown): v is ObjectValue => !!v && typeof v === 'object' && !Array.isArray(v)
 const integer = (v: unknown, min: number, max = Number.MAX_SAFE_INTEGER): v is number => typeof v === 'number' && Number.isSafeInteger(v) && v >= min && v <= max
 const text = (v: unknown, max = 500): v is string => typeof v === 'string' && v.length > 0 && v.length <= max && v.trim() === v && !Array.from(v).some(c => c.charCodeAt(0) < 32 || (c.charCodeAt(0) >= 127 && c.charCodeAt(0) <= 159))
-const guid = (v: unknown): v is string => typeof v === 'string' && v.length === 36 && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v) && !/^0{8}-0{4}-0{4}-0{4}-0{12}$/.test(v)
 const provenance = (v: unknown) => typeof v === 'string' && ['Synthetic', 'Missing', 'Unknown', 'DeclaredUnverified'].includes(v)
 
 export function validDecimal(v: unknown): v is string {

@@ -1,5 +1,18 @@
 # REG-BOUNDARY-TLS-01 — local corrective gate
 
+## Coordinator manual transport-boundary correction after rejected b2ec2fa
+
+The bounded native author/automatic-repair budget was exhausted and has NOT been reset. The coordinator directly repaired the newly reported GUID terminal-line-character defect on the existing clean b2ec2fa tree; no new native author/model worker was started. Approved baseline93de and all rejected-target history remain unchanged. This candidate still requires independent exact-commit QA and remote CI; canonical8/970SP remains unchanged.
+
+Shared `identifiers.ts` now validates exactly36 characters, the complete case-insensitive .NET GUID shape and nonempty identity. Today, profile and register transports reuse the same guard; the latter two already enforced the same length/nonempty semantics. Today also reuses the existing unchanged complete-string calendar/timestamp boundary, removing its duplicate regex that could accept a terminal newline. No backend/auth/provider/TLS/lookup/source/operational authority changes.
+
+25 additional transport regression cases exercise trailing LF/CR/Unicode line/paragraph separators in vessel id/companyId and Today/Why timestamps, and retain valid mixed-case complete GUIDs. They call real transport decoders through mocked HTTP responses, so they verify response rejection before navigation/domain state rather than mirror the helper implementation. Existing partial-draft, context/dirty form, precision and unavailable/unknown behavior remain covered.
+
+Affected final checks on this manual candidate: full frontend11 files/346 PASS,0 failed/skipped,18.49s; lint exit0; explicit typecheck exit0; production build exit0 (tsc+Vite). Commands use the pinned root Node26.13 tool and locked existing dependencies. Logs are ignored under `.runtime/reg-boundary-tls-01/manual-guid-*`. Graph AST and git diff whitespace checks are recorded at handoff. No unchanged backend135/persistence29/domain61/Python/source/lab/browser suites were rerun for this transport-only change; their exact earlier evidence remains separately scoped. The previous321/298/193 and strict-browser results below are historical, not claimed reruns. No publication, self approval or source/human sign-off.
+
+The earlier rejected candidate reports follow unchanged for traceability.
+
+
 ## Current successor to rejected9c40266 — Today pagination
 
 Date: 2026-11-01. Rejected parent: `9c402664c5920cb1fe413ad035a1d02376259846`. Candidate is the local commit containing this report, supplied in the delivery message. Developer frontend gate passed; NOT ACCEPTED. Independent target-commit QA and required coordinator CI remain pending. Whole318a147 and9c40266 remain REJECTED; approved baseline93de and canonical8/970SP,2/121tasks,0/196 accepted screens are unchanged. Same package/source scope, no delegation, publishing or self-approval, no original budget reset.

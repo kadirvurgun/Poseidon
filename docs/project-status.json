@@ -2844,5 +2844,19 @@
       "private_credentials_ignored": true,
       "scope": "Staged complete candidate against93de; private passwords/client secrets/subjects/database/provider values checked without emitting them"
     }
+  },
+  "coordinator_transport_correction": {
+    "parent_rejected": "b2ec2fa218d86ebc10e53b1dba9088ab27da14d6",
+    "scope": "Strict complete-string GUID/time response boundary",
+    "native_author_starts": 0,
+    "native_budget_reset": false,
+    "frontend_passed": 346,
+    "failed": 0,
+    "skipped": 0,
+    "lint_exit": 0,
+    "typecheck_exit": 0,
+    "build_exit": 0,
+    "independent_qa": "PENDING for the new exact commit",
+    "canonical_accepted_story_points": 8
   }
 }

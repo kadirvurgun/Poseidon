@@ -1,3 +1,5 @@
+import { timestamp as date } from './date-validation'
+import { isGuid as guid } from './identifiers'
 import type { components } from '../generated/api'
 import type { Page, Vessel } from './directory-contract'
 import { ApiError, request } from './api'
@@ -8,20 +10,8 @@ const pageLimit = 25
 const todayOffset = 0
 const object = (x: unknown): x is Record<string, unknown> => !!x && typeof x === 'object' && !Array.isArray(x)
 const exact = (x: Record<string, unknown>, keys: string[]) => Object.keys(x).length === keys.length && keys.every(k => k in x)
-const date = (x: unknown) => {
-  if (typeof x !== 'string') return false
-  const m = /^([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})(?:\.[0-9]{1,7})?(Z|[+-]([0-9]{2}):([0-9]{2}))$/.exec(x)
-  if (!m) return false
-  const y = +m[1]; const month = +m[2]; const day = +m[3]
-  const leap = y % 4 === 0 && (y % 100 !== 0 || y % 400 === 0)
-  if (y < 1 || month < 1 || month > 12 || day < 1 || day > [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1] ||
-    +m[4] > 23 || +m[5] > 59 || +m[6] > 59 || (m[7] !== 'Z' && (+m[8] > 14 || +m[9] > 59 || (+m[8] === 14 && +m[9] !== 0)))) return false
-  const instant = Date.parse(x)
-  return Number.isFinite(instant) && instant >= -62135596800000 && instant <= 253402300799999
-}
 const integer = (x: unknown) => typeof x === 'number' && Number.isSafeInteger(x) && x >= 0
 const one = (x: unknown, values: string[]) => typeof x === 'string' && values.includes(x)
-const guid = (x: unknown) => typeof x === 'string' && /^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(x) && x !== '00000000-0000-0000-0000-000000000000'
 const text = (x: unknown, max: number) => typeof x === 'string' && x.length > 0 && x.length <= max && !Array.from(x).some(c => c.charCodeAt(0) < 32 || (c.charCodeAt(0) >= 127 && c.charCodeAt(0) <= 159))
 const href = (x: unknown, id: string) => x === `/app/fleet/${id}/profile`
 function validVessel(x: unknown): x is Vessel {

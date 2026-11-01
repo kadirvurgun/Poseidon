@@ -1,3 +1,4 @@
+import { isGuid as guid } from './identifiers'
 import { calendar, timestamp } from './date-validation'
 import { ApiError, request } from './api'
 import type { components } from '../generated/api'
@@ -13,8 +14,6 @@ export type Draft = Schemas['RegisterDto'] & { version: number; current: Revisio
 export type RegisterPage<T> = { items: T[]; offset: number; limit: number; hasMore: boolean }
 export type RegisterKind = 'sources' | 'requirements'
 export type Command = Schemas['RegisterCommand'] & { expectedVersion: number; content: RegisterContent; sourceId: string | null; sourceRevision: number | null }
-const uuid = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i
-const guid = (v: unknown): v is string => typeof v === 'string' && v.length === 36 && uuid.test(v) && v !== '00000000-0000-0000-0000-000000000000'
 const positive = (v: unknown) => typeof v === 'number' && Number.isSafeInteger(v) && v > 0
 const record = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v)
 const exact = (v: Record<string, unknown>, keys: readonly string[]) => Object.keys(v).length === keys.length && keys.every(k => Object.hasOwn(v, k))
