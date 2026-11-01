@@ -11,6 +11,7 @@ import { editorCopy } from './editor-copy'
 import { loginHref, readLocation, useWorkspaceLocation } from './workspace-location'
 import { TodayWorkspace } from './TodayWorkspace'
 import { WorkspaceSearch } from './WorkspaceSearch'
+import { isSeparateWorkspaceDestination } from './workspace-search-api'
 import { AuditWorkspace } from './AuditWorkspace'
 import { RegulatoryRegister } from './RegulatoryRegister'
 
@@ -137,6 +138,10 @@ export function ProductApp() {
   const retry = () => { setIdentity({ state: 'loading' }); setIdentityAttempt(v => v + 1); setRecords({ state: 'loading' }); setDetail({ state: 'loading' }); setAttempt(v => v + 1) }
   const navigate = (value: typeof tab) => { if (value === tab && !selected) { setDrawer(false); return }; guard(() => { closeEditor(); setDrawer(false); setNotice(''); setTab(value); setSearch(''); setSearchInput(''); setOffset(0); setRecords({ state: 'loading' }); setAttempt(v => v + 1); document.getElementById('product-main')?.focus() }) }
   const follow = (href: string) => {
+    if (isSeparateWorkspaceDestination(href)) {
+      guard(() => { closeEditor(); setPowerSearch(false); window.location.assign(href) })
+      return
+    }
     const next = href === '/app' && !user?.canReadCompanies ? { tab: 'fleet' as const, selected: null, profile: false } : readLocation(href)
     if (next.invalid || (next.tab === 'companies' && !user?.canReadCompanies)) return
     guard(() => { closeEditor(); move(next); setDrawer(false); setPowerSearch(false); setDetail({ state: 'loading' }); setRecords({ state: 'loading' }); setOffset(0); setSearch(''); setSearchInput(''); setAttempt(v => v + 1); document.getElementById('product-main')?.focus() })
@@ -162,7 +167,7 @@ export function ProductApp() {
   }}>
     <a className="skip-link" href="#product-main">{t.skip}</a>
     <header className="product-header" inert={drawer}><a href="/app" className="product-brand">POSEIDON</a><button className="workspace-menu" aria-expanded={drawer} aria-controls="workspace-navigation" onClick={() => setDrawer(v => !v)}>{language === 'en' ? 'Menu' : 'Menü'}</button><span className="workspace-breadcrumb">{heading}</span>{user?.canSearch && <button onClick={() => setPowerSearch(true)}>{language === 'en' ? 'Search workspace' : 'Çalışma alanında ara'} <kbd>Ctrl K</kbd></button>}<div className="languages" role="group" aria-label={t.language}><button aria-pressed={language === 'tr'} onClick={() => setLanguage('tr')}>TR</button><button aria-pressed={language === 'en'} onClick={() => setLanguage('en')}>EN</button></div><WorkspaceContextBar session={user} vessel={tab === 'fleet' || tab === 'today' ? selected : null} language={language} /></header>
-    <nav id="workspace-navigation" className={`product-nav ${drawer ? 'is-open' : ''}`} aria-label="POSEIDON" role={drawer ? "dialog" : undefined} aria-modal={drawer ? true : undefined}>{drawer && <button onClick={() => setDrawer(false)}>{t.close}</button>}{user?.canReadCompanies && <button aria-current={tab === 'companies' ? 'page' : undefined} onClick={() => navigate('companies')}>{t.companies}</button>}{canRead && <button aria-current={tab === 'today' ? 'page' : undefined} onClick={() => navigate('today')}>{t.today}</button>}{canRead && <button aria-current={tab === 'fleet' ? 'page' : undefined} onClick={() => navigate('fleet')}>{t.fleet}</button>}{canRead && auditAllowed && <button aria-current={tab === 'audit' ? 'page' : undefined} onClick={() => navigate('audit')}>{t.audit}</button>}{tugAllowed && <a href="/app/tug-command">{language === 'en' ? 'Tug operations' : 'Römorkör operasyonları'}</a>}<a href="/">{t.technical}</a></nav>
+    <nav id="workspace-navigation" className={`product-nav ${drawer ? 'is-open' : ''}`} aria-label="POSEIDON" role={drawer ? "dialog" : undefined} aria-modal={drawer ? true : undefined}>{drawer && <button onClick={() => setDrawer(false)}>{t.close}</button>}{user?.canReadCompanies && <button aria-current={tab === 'companies' ? 'page' : undefined} onClick={() => navigate('companies')}>{t.companies}</button>}{canRead && <button aria-current={tab === 'today' ? 'page' : undefined} onClick={() => navigate('today')}>{t.today}</button>}{canRead && <button aria-current={tab === 'fleet' ? 'page' : undefined} onClick={() => navigate('fleet')}>{t.fleet}</button>}{canRead && auditAllowed && <button aria-current={tab === 'audit' ? 'page' : undefined} onClick={() => navigate('audit')}>{t.audit}</button>}{tugAllowed && <a href="/app/tug-command" onClick={e => { e.preventDefault(); follow('/app/tug-command') }}>{language === 'en' ? 'Tug operations' : 'Römorkör operasyonları'}</a>}<a href="/">{t.technical}</a></nav>
     <main id="product-main" tabIndex={-1} inert={drawer}>
       {canRead && regulatory && <nav aria-label={language === 'en' ? 'Regulatory drafts' : 'Mevzuat taslakları'}><button aria-current={tab === 'sources' ? 'page' : undefined} onClick={() => navigate('sources')}>{language === 'en' ? 'Source drafts' : 'Kaynak taslakları'}</button><button aria-current={tab === 'requirements' ? 'page' : undefined} onClick={() => navigate('requirements')}>{language === 'en' ? 'Requirement drafts' : 'Gereksinim taslakları'}</button></nav>}
       <h1>{heading}</h1><p>{t.intro}</p>

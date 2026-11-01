@@ -14,7 +14,7 @@ const reply = (body: unknown, status = 200) => ({ ok: status === 200, status, js
 function mock(overrides: Partial<typeof session> = {}, detailStatus = 200) {
   const fetch = vi.fn(async (url: string) => {
     if (url.endsWith('auth/session')) return reply({ ...session, ...overrides })
-    if (url.includes('workspace/search')) return reply({ items: [{ key: vessel.id, href: `/app/fleet/${vessel.id}`, label: vessel.name, kind: 'Ship' }], hasMore: false })
+    if (url.includes('workspace/search')) return reply({ items: [{ key: vessel.id, href: `/app/fleet/${vessel.id}`, label: vessel.name, kind: 'Ship' }], offset: 0, limit: 25, hasMore: false })
     if (url.includes('/history?')) return reply({ items: [], offset: 0, limit: 25, hasMore: false })
     if (url.endsWith('regulatory-profile')) return reply(profile)
     if (url.endsWith(vessel.id)) return reply(vessel, detailStatus)

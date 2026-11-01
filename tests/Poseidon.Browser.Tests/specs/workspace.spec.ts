@@ -6,7 +6,7 @@ test('workspace URL history, dirty cancel/discard and responsive drawer work wit
   await page.route('**/api/v1/**', async route => {
     const url = route.request().url()
     const body = url.includes('auth/session') ? { authenticated: true, canRead: true, canReadCompanies: false, canCreate: false, canSearch: true, csrfToken: 'synthetic' }
-      : url.includes('workspace/search') ? { items: [{ key: vessel.id, href: `/app/fleet/${vessel.id}`, label: vessel.name, kind: 'Tug' }], hasMore: false }
+      : url.includes('workspace/search') ? { items: [{ key: vessel.id, href: `/app/fleet/${vessel.id}`, label: vessel.name, kind: 'Tug' }], offset: 0, limit: 25, hasMore: false }
       : url.includes('vessels?') ? { items: [vessel], offset: 0, limit: 25, hasMore: false } : vessel
     await route.fulfill({ json: body })
   })
