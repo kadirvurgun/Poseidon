@@ -76,8 +76,8 @@ export async function sealOfflineRecord(provider: Crypto, key: CryptoKey, contex
   const aad = additionalData(context, policyLimits.contextBytes)
   // New random 96-bit IV for every encryption, including an update of one UUID.
   // Invocation/key-rotation limits are the actual device key lifecycle's concern.
-  const iv = provider.getRandomValues(new Uint8Array(12))
   try {
+    const iv = provider.getRandomValues(new Uint8Array(12))
     const ciphertext = await provider.subtle.encrypt({ name: 'AES-GCM', iv, additionalData: aad, tagLength: 128 }, key, plaintext)
     return { version: 1, contextHash: await digest(provider, aad), iv, ciphertext }
   } catch { throw new OfflineCipherError('crypto_unavailable') }
@@ -94,7 +94,10 @@ export async function openOfflineRecord(provider: Crypto, key: CryptoKey, contex
     throw new OfflineCipherError('invalid_envelope')
   if (ciphertextLength - 16 > policyLimits.plaintextBytes) throw new OfflineCipherError('payload_too_large')
   const aad = additionalData(context, policyLimits.contextBytes)
-  if (await digest(provider, aad) !== sealed.contextHash) throw new OfflineCipherError('context_mismatch')
+  let expectedHash: string
+  try { expectedHash = await digest(provider, aad) }
+  catch { throw new OfflineCipherError('crypto_unavailable') }
+  if (expectedHash !== sealed.contextHash) throw new OfflineCipherError('context_mismatch')
   try {
     return new Uint8Array(await provider.subtle.decrypt({ name: 'AES-GCM', iv: sealed.iv, additionalData: aad, tagLength: 128 }, key, sealed.ciphertext))
   } catch { throw new OfflineCipherError('authentication_failed') }
