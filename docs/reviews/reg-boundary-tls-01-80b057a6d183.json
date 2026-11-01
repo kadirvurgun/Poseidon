@@ -1,0 +1,14 @@
+{
+  "task": "REG-BOUNDARY-TLS-01",
+  "commit": "80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44",
+  "approved": true,
+  "issues": [],
+  "reviewer": {
+    "profile": "esra-pro",
+    "role": "security_qa",
+    "model": "gpt-6.1-sol",
+    "effort": "medium"
+  },
+  "scope": "Local engineering only; canonical/release gates remain open",
+  "review_finished_at": 1793540328.166275
+}
