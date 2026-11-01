@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics.Metrics;
 using System.Net;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Patterns;
 using Poseidon.Api;
@@ -100,6 +101,28 @@ public sealed class ApiRequestTelemetryTests
         listener.Start(); var context = new DefaultHttpContext();
         await new ApiRequestTelemetry(c => { c.Response.StatusCode = 204; return Task.CompletedTask; }).InvokeAsync(context);
         Assert.Equal(204, context.Response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Failure_after_headers_retains_the_sent_status_and_records_a_distinct_error()
+    {
+        var samples = new ConcurrentQueue<Sample>(); using var listener = Listen(samples);
+        var context = new DefaultHttpContext(); context.Features.Set<IHttpResponseFeature>(new StartedResponse());
+        await Assert.ThrowsAsync<InvalidOperationException>(() => new ApiRequestTelemetry(_ =>
+            Task.FromException(new InvalidOperationException("fictional late stream failure"))).InvokeAsync(context));
+        Assert.Equal(200, context.Response.StatusCode);
+        Assert.Contains(samples, s => s.Name == "poseidon.api.errors" && Tag(s, "http.response.status_class") == "2xx" && Tag(s, "poseidon.request.failure") == "unhandled");
+    }
+
+    private sealed class StartedResponse : IHttpResponseFeature
+    {
+        public int StatusCode { get; set; } = 200;
+        public string? ReasonPhrase { get; set; }
+        public IHeaderDictionary Headers { get; set; } = new HeaderDictionary();
+        public Stream Body { get; set; } = Stream.Null;
+        public bool HasStarted => true;
+        public void OnStarting(Func<object, Task> callback, object state) { }
+        public void OnCompleted(Func<object, Task> callback, object state) { }
     }
 }
 

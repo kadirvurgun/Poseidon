@@ -25,7 +25,10 @@ public sealed class ApiRequestTelemetry(RequestDelegate next)
         }
         catch { failure = "unhandled"; throw; }
         finally {
-            var code = failure == "cancelled" ? 499 : failure == "unhandled" ? 500 : context.Response.StatusCode;
+            // Once headers are sent the observed HTTP status cannot be rewritten.
+            // Retain it and expose the late transport failure separately.
+            var code = context.Response.HasStarted ? context.Response.StatusCode :
+                failure == "cancelled" ? 499 : failure == "unhandled" ? 500 : context.Response.StatusCode;
             var status = code is >= 100 and <= 599 ? $"{code / 100}xx" : "other";
             var method = context.Request.Method switch {
                 "GET" or "POST" or "PUT" or "PATCH" or "DELETE" or "HEAD" or "OPTIONS" => context.Request.Method,
@@ -37,7 +40,7 @@ public sealed class ApiRequestTelemetry(RequestDelegate next)
                 { "poseidon.area", Area(route) }, { "poseidon.request.failure", failure } };
             try {
                 Requests.Add(1, tags);
-                if (code is >= 400 and <= 599) Errors.Add(1, tags);
+                if (failure != "none" || code is >= 400 and <= 599) Errors.Add(1, tags);
                 Duration.Record(Stopwatch.GetElapsedTime(started).TotalSeconds, tags);
             }
             catch {
