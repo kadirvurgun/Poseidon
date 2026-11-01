@@ -107,9 +107,12 @@ def inventory(root):
         workflow = secret_scan.read_file(workflow_path, root)
         review['ci_wiring'] = {'workflow': '.github/workflows/backend-foundation.yml',
             'immutable_source_revision': secret_scan.source_revision(workflow), 'execution': 'DEFERRED',
+            'trusted_receipt_input': 'externally-provisioned POSEIDON_SOURCE_REVIEW_SHA256; never repository self-pins',
+            'scan_consumer': {'path': 'scripts/reviewed_secret_scan.py',
+                'immutable_source_revision': secret_scan.source_revision(secret_scan.read_file(root / 'scripts/reviewed_secret_scan.py', root))},
             'required_jobs': [
-                {'job': 'persistence-and-security', 'command': 'python3 scripts/secret_scan.py --mode repository'},
-                {'job': 'frontend-and-browser', 'command': 'python3 scripts/secret_scan.py --mode client --bundle frontend/dist',
+                {'job': 'persistence-and-security', 'command': 'python3 scripts/reviewed_secret_scan.py --mode repository'},
+                {'job': 'frontend-and-browser', 'command': 'python3 scripts/reviewed_secret_scan.py --mode client --bundle frontend/dist',
                  'input': 'actual npm production build output'}],
             'static_wiring_check': 'SafeSourceEvidenceTests.test_required_ci_jobs_scan_repository_and_actual_postbuild_client_directly'}
     if len(json.dumps(review)) > 12 * 1024 * 1024:

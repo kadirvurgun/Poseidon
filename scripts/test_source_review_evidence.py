@@ -79,11 +79,13 @@ class SafeSourceEvidenceTests(unittest.TestCase):
         for job in (backend, frontend):
             self.assertNotIn('needs:', job)
             self.assertNotIn('continue-on-error:', job)
-        self.assertIn('run: python3 scripts/secret_scan.py --mode repository', backend)
-        command = 'run: python3 scripts/secret_scan.py --mode client --bundle frontend/dist'
+        self.assertIn('run: python3 scripts/reviewed_secret_scan.py --mode repository', backend)
+        command = 'run: python3 scripts/reviewed_secret_scan.py --mode client --bundle frontend/dist'
         self.assertIn(command, frontend)
         self.assertLess(frontend.index('npm run build --prefix frontend'), frontend.index(command))
         for job, command in ((backend, '--mode repository'), (frontend, '--mode client')):
             step = job[:job.index(command)].rsplit('      - name:', 1)[1]
             self.assertNotIn('if:', step)
             self.assertNotIn('--exceptions', job)
+            self.assertIn('POSEIDON_SOURCE_REVIEW_SHA256: ${{ vars.POSEIDON_SOURCE_REVIEW_SHA256 }}', step)
+            self.assertNotIn('continue-on-error:', step)

@@ -27,7 +27,9 @@ jobs:
     steps:
       - uses: actions/checkout@v7.0.1
       - name: Scan every tracked repository input including controlled documents
-        run: python3 scripts/secret_scan.py --mode repository
+        env:
+          POSEIDON_SOURCE_REVIEW_SHA256: ${{ vars.POSEIDON_SOURCE_REVIEW_SHA256 }}
+        run: python3 scripts/reviewed_secret_scan.py --mode repository
       - uses: actions/setup-dotnet@v6.0.0
         with:
           global-json-file: global.json
@@ -111,7 +113,9 @@ jobs:
           dotnet restore backend/Poseidon.DbMigrator --locked-mode
           dotnet build backend/Poseidon.DbMigrator --configuration Release --no-restore
       - name: Scan actual frontend production output
-        run: python3 scripts/secret_scan.py --mode client --bundle frontend/dist
+        env:
+          POSEIDON_SOURCE_REVIEW_SHA256: ${{ vars.POSEIDON_SOURCE_REVIEW_SHA256 }}
+        run: python3 scripts/reviewed_secret_scan.py --mode client --bundle frontend/dist
       - name: Install Chromium
         working-directory: tests/Poseidon.Browser.Tests
         run: npx playwright install --with-deps chromium
