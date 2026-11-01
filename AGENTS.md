@@ -34,3 +34,8 @@ Rules:
 - If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
 - Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
 - After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
+
+
+## Active user delivery cadence — 01.11.2026
+
+The user explicitly deferred package/backend/UI/Playwright test execution until a larger foundation bundle is implemented. Continue real product code and author meaningful tests, but do not run test suites, repeated browser/lab journeys or per-module validation loops now. Record checks as DEFERRED/INTERRUPTED, never PASS or accepted. Quick source retrieval/code generation may support authoring; full build/typecheck/contract generation and regression run once at the later bundle gate. This overrides older per-package execution cadence, not source/security requirements or the required independent QA/CI before any later merge/publication. Preserve prior actual evidence separately. Do not stop product development merely because deferred checks have not run.
