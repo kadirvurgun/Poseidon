@@ -4,7 +4,7 @@
     "accepted": false,
     "task": "docs/tasks/domain-completion-01.md",
     "phase_report": "docs/phases/DOMAIN-COMPLETION-01.md",
-    "current_phase": "FOUNDATION authoring checkpoint F: explicit active photo selection; larger software incomplete",
+    "current_phase": "FOUNDATION authoring checkpoint G: protected identity/conversion/existing-person Import and configured Crew lookup source; larger software incomplete",
     "verification": "DEFERRED: all suites/build/typecheck/migrations/contract/browser/independent QA/CI",
     "canonical_progress_unchanged": true,
     "new_personal_fields": 15,
@@ -41,7 +41,8 @@
     },
     "shared_context_authored_not_run": 41,
     "shared_context_react_authored_not_run": 10,
-    "profile_privacy_authored_not_run": 7
+    "profile_privacy_authored_not_run": 7,
+    "crew_identity_closure": "docs/phases/CREW-IDENTITY-CLOSURE-01.md; AUTHORED_UNVERIFIED; NOT ACCEPTED"
   },
   "import_foundation_01": {
     "status": "authored_unverified_incomplete_not_accepted",
@@ -97,7 +98,8 @@
       "Source-approved production reject/transaction/reviewer/disposition policy, DEV-070 owner reconciliation and environment rollback/pilot authorization",
       "Retention/provider/privacy/session-history policy and canonical root API alias reconciliation"
     ],
-    "next": "Coordinator continues larger bundle and exact-target gate; worker does not publish, merge or accept"
+    "next": "Coordinator continues larger bundle and exact-target gate; worker does not publish, merge or accept",
+    "crew_identity_parity": "Crew v3 existing-person ordinary identity handler, explicit person/base/policy/purpose and configured tuple reference parity authored; NOT RUN; historical plaintext batch conversion and production activation remain unavailable"
   },
   "tug_foundation_01": {
     "status": "authored_unverified_incomplete_not_accepted",
@@ -187,7 +189,8 @@
       "Remaining personal/contact/identity and profile contracts, scoped current-effective selection and approved assignment-state/period conventions",
       "Combined migration/model/contract and all product checks, fresh exact-target independent QA, remote CI and separate source acceptance"
     ],
-    "next_step": "Continue source scope and larger foundation bundle; coordinator owns execution, fresh QA and publishing. No merge/publication by worker."
+    "next_step": "Continue source scope and larger foundation bundle; coordinator owns execution, fresh QA and publishing. No merge/publication by worker.",
+    "crew_identity_closure": "Protected identity/conversion/scoped lookup consumers authored; NOT RUN/NOT ACCEPTED; see CREW-IDENTITY-CLOSURE-01"
   },
   "files_source_completion_01_repair": {
     "status": "bounded_repair_authored_unverified_not_accepted",
@@ -2826,7 +2829,8 @@
     "docs/phases/OPS-DASH-01.md",
     "docs/phases/FOUNDATION-APP-01.md",
     "docs/phases/DIR-WORKSPACE-01.md",
-    "docs/phases/VESSEL-PROFILE-DRAFT-01.md"
+    "docs/phases/VESSEL-PROFILE-DRAFT-01.md",
+    "docs/phases/CREW-IDENTITY-CLOSURE-01.md"
   ],
   "active_source": "docs/sources/active.json",
   "current_package": {
@@ -3282,13 +3286,14 @@
     "phase_report": "docs/phases/S0-CONTRACT-CLOSURE-01.md",
     "verification": "DEFERRED_NOT_RUN",
     "current_phase": "Foundation software continuation before S0 closure and combined gate",
-    "canonical_progress_unchanged": true
+    "canonical_progress_unchanged": true,
+    "crew_identity_prerequisite": "Checkpoint G authored/unverified; full S0 criteria remain unfinished; see CREW-IDENTITY-CLOSURE-01 phase"
   },
   "foundation_acceptance_bundle_01": {
     "status": "software_precondition_incomplete_not_run_not_accepted",
     "accepted": false,
     "ready_for_combined_gate": false,
-    "current_phase": "Foundation software authoring checkpoint F; incomplete",
+    "current_phase": "Foundation source authoring checkpoint G; Crew identity/conversion/import/configured lookups authored; incomplete/unverified",
     "source_head": "70e578d5ca63581411ff0ed88868992c787c47b8",
     "configured_base_commit": "80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44",
     "phase_report": "docs/phases/FOUNDATION-ACCEPTANCE-BUNDLE-01.md",
@@ -3303,6 +3308,38 @@
     "verification": "NOT RUN: software precondition false; no build/suite/generation/migration/browser/provider/independent QA/CI",
     "candidate_commit": null,
     "publishing": "None; coordinator-owned after independent exact-target QA/CI",
-    "next_step": "Continue legacy identity/import/Crew lookups/full offline/Tug/S0 software before combined gate"
+    "next_step": "Continue explicit remaining Crew historical batch conversion/position registry history, full offline/Tug/S0 software; coordinator owns later combined gate and independent QA/CI",
+    "crew_identity_report": "docs/phases/CREW-IDENTITY-CLOSURE-01.md"
+  },
+  "crew_identity_closure_01": {
+    "status": "AUTHORED_UNVERIFIED_INCOMPLETE_NOT_ACCEPTED",
+    "accepted": false,
+    "task": "docs/tasks/crew-identity-closure-01.md",
+    "phase_report": "docs/phases/CREW-IDENTITY-CLOSURE-01.md",
+    "trace": "docs/tasks/crew-identity-closure-01.trace.json",
+    "current_phase": "Foundation source authoring; Crew identity checkpoint G; combined gate not started",
+    "verification": "DEFERRED_NOT_RUN: all suites/build/typecheck/EF-generation/migration/contract/browser/provider/QA/CI",
+    "support_origin_receipts": {
+      "45ae4791908b54deae2a165b589c116bcccb1654": "cb662c6",
+      "6d9874b3674a07689ae3b212729ca18ab0fabf35": "4341492",
+      "d5a3c714ecec6a7d7d97b9e0bc4406e3aacc719c": "0ea95d3",
+      "41e2924d67679973585251bbd0f2dbcb774abe1f": "88ca4fc"
+    },
+    "publishing": "Not performed; coordinator only",
+    "canonical_progress_unchanged": true,
+    "remaining_software": [
+      "Historical plaintext Import batch protection conversion",
+      "Independent versioned position update/registry history beyond configured lookup validation/creation",
+      "Deferred actual model/generation and all consumers reconciliation",
+      "Complete durable offline application/domain+offline receipts/conflict/history",
+      "Tug versioned planning/assignment/type/context/board/BP/conflict/localization",
+      "Full original S0 criteria and remaining real-host journeys"
+    ],
+    "next_step": "Coordinator continues required source authoring; later one combined execution gate, exact-target independent QA/required CI and separate source acceptance",
+    "source_only_observations": [
+      "git diff --cached --check exit0; not product verification",
+      "Graphify AST final refresh exit0; zero-node warnings and size-related omitted HTML; not product verification"
+    ],
+    "source_hash_record": "docs/phases/CREW-IDENTITY-CLOSURE-01.evidence.json"
   }
 }

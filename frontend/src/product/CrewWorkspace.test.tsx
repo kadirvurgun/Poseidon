@@ -21,9 +21,10 @@ beforeEach(() => {
     if (path.endsWith('/current-assignment')) return json({ state: 'PolicyUnavailable' })
     if (path.endsWith('/personal-files')) return json({ code: 'permission_denied' }, 404)
     if (path.includes('/personal-profile')) return json({ code: 'field_policy_denied' }, 403)
+    if (path.endsWith('/position-policy')) return json({ state: 'Unavailable', version: null, items: [] })
     if (path.endsWith('/positions') || path.endsWith('/certificates')) return json([])
     if (path.endsWith(`/${id}`)) return json({ assignment: row, personVersion: 12, employmentState: 'Unknown', fitnessState: 'Unknown', contactStatus: 'Withheld', healthStatus: 'Withheld' })
-    return json({ items: [row], offset: 0, hasMore: false, canWrite: true, canWriteIdentity: true })
+    return json({ items: [row], offset: 0, hasMore: false, canWrite: true, canWriteIdentity: true, identityPolicy: { version: 'synthetic-v1', purpose: 'synthetic', employeeNumberMode: 'MutableDeclaration' } })
   })
   vi.stubGlobal('fetch', fetcher)
 })
@@ -31,6 +32,59 @@ afterEach(() => { cleanup(); vi.unstubAllGlobals(); fetcher.mockReset() })
 const english = async () => { await userEvent.click(screen.getByRole('button', { name: 'EN', exact: true })); await screen.findByRole('button', { name: 'Add person and assignment' }) }
 
 describe('CREW-ROSTER-01 authored component behavior; no backend execution claim', () => {
+  it('requires explicit conversion for legacy identity and retries an uncertain conversion without sending identity values', async () => {
+    const previous = fetcher.getMockImplementation()!
+    fetcher.mockImplementation(async (path: string, init?: RequestInit) => path.endsWith(`/${id}`) && !init?.method
+      ? json({ assignment: { ...row, privacyScope: 'LegacyUnavailable' }, personVersion: 12, canConvertIdentity: true,
+        identityPolicy: { version: 'synthetic-v1', purpose: 'synthetic', employeeNumberMode: 'ImmutableAfterCapture' } }) : previous(path, init))
+    let count = 0; mutation = async () => { if (count++ === 0) throw new TypeError('synthetic interrupted conversion'); return json({ version: 13 }) }
+    render(<CrewWorkspace vessel={vessel} assignment={id} />)
+    await userEvent.click(screen.getByRole('button', { name: 'EN', exact: true }))
+    const convert = await screen.findByRole('button', { name: 'Convert legacy identity to protected storage' })
+    expect(screen.getByRole('button', { name: 'Edit person' })).toBeDisabled()
+    await userEvent.click(convert)
+    expect(screen.queryByLabelText('Full name')).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Save draft' }))
+    await screen.findByText('Result uncertain. Retry the same attempt before editing.')
+    await userEvent.click(screen.getByRole('button', { name: 'Retry', exact: true }))
+    await screen.findByText('Draft saved.')
+    const calls = fetcher.mock.calls.filter(([path]) => path.endsWith('/person/convert'))
+    expect(calls).toHaveLength(2); expect(calls[0][1].body).toEqual(calls[1][1].body); expect(calls[0][1].headers).toEqual(calls[1][1].headers)
+    expect(JSON.parse(calls[0][1].body)).toEqual({ baseVersion: 12, policyVersion: 'synthetic-v1', purpose: 'synthetic' })
+  })
+  it('keeps configured immutable employee identity while allowing ordinary name changes with the exact policy', async () => {
+    const previous = fetcher.getMockImplementation()!
+    fetcher.mockImplementation(async (path: string, init?: RequestInit) => path.endsWith(`/${id}`) && !init?.method
+      ? json({ assignment: { ...row, fullName: 'FICTIONAL original', employeeNo: '0001', privacyScope: 'IdentityPermitted' }, personVersion: 12,
+        identityPolicy: { version: 'synthetic-v1', purpose: 'synthetic', employeeNumberMode: 'ImmutableAfterCapture' } }) : previous(path, init))
+    render(<CrewWorkspace vessel={vessel} assignment={id} />)
+    await userEvent.click(screen.getByRole('button', { name: 'EN', exact: true }))
+    await userEvent.click(await screen.findByRole('button', { name: 'Edit person' }))
+    expect(screen.getByLabelText('Employee number')).toBeDisabled()
+    await userEvent.clear(screen.getByLabelText('Full name')); await userEvent.type(screen.getByLabelText('Full name'), 'FICTIONAL renamed')
+    await userEvent.click(screen.getByRole('button', { name: 'Save draft' })); await screen.findByText('Draft saved.')
+    const body = JSON.parse(fetcher.mock.calls.find(([, init]) => init?.method === 'PUT')![1].body)
+    expect(body).toEqual({ baseVersion: 12, fullName: 'FICTIONAL renamed', employeeNo: '0001', policyVersion: 'synthetic-v1', purpose: 'synthetic' })
+  })
+  it('shows controlled lookup unavailability while retaining an explicit Unknown choice for an incomplete draft', async () => {
+    render(<CrewWorkspace vessel={vessel} />); await english()
+    await userEvent.click(screen.getByRole('button', { name: 'Add person and assignment' }))
+    expect(screen.getByText('Controlled position lookup unavailable. An incomplete draft may keep position unknown.')).toBeVisible()
+    expect(screen.getByLabelText('Position / rank / capacity')).toHaveValue('')
+    expect(screen.getAllByRole('option').map(o => o.textContent)).toEqual(['Unknown'])
+  })
+  it('selects a server configured position tuple with its department and freezes the exact lookup version in the command', async () => {
+    const previous = fetcher.getMockImplementation()!
+    fetcher.mockImplementation(async (path: string, init?: RequestInit) => path.endsWith('/position-policy')
+      ? json({ state: 'ConfiguredUnverified', version: 'synthetic-position-v7', items: [{ id, code: 'SYNTHETIC', rank: 'SYNTHETIC-R', capacity: null, department: 'SYNTHETIC-D', provenance: 'SyntheticUnverified' }] }) : previous(path, init))
+    render(<CrewWorkspace vessel={vessel} />); await english()
+    await userEvent.click(screen.getByRole('button', { name: 'Add person and assignment' }))
+    await userEvent.selectOptions(screen.getByLabelText('Position / rank / capacity'), id)
+    expect(screen.getByRole('option', { name: 'SYNTHETIC · SYNTHETIC-R · Unknown · SYNTHETIC-D' })).toBeVisible()
+    await userEvent.click(screen.getByRole('button', { name: 'Save draft' })); await screen.findByText('Draft saved.')
+    const body = JSON.parse(fetcher.mock.calls.find(([, init]) => init?.method === 'POST')![1].body)
+    expect(body.positionId).toBe(id); expect(body.positionPolicyVersion).toBe('synthetic-position-v7')
+  })
   it('renders server-withheld identity and Unknown operational values without readiness approval', async () => {
     render(<CrewWorkspace vessel={vessel} />); await english()
     expect(screen.getByRole('link', { name: 'Withheld' })).toHaveAttribute('href', `/app/crew-roster/${vessel}/crew-profile/${id}`)

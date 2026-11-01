@@ -8,10 +8,27 @@ public sealed class Person : ITenantEntity
     public Guid Id { get; set; }
     public string? FullName { get; set; }
     public string? EmployeeNo { get; set; }
+    // Legacy plaintext is retained only until an explicit attributable conversion succeeds.
+    public string? ProtectedFullName { get; set; }
+    public string? ProtectedEmployeeNo { get; set; }
+    public string IdentityStorageState { get; set; } = "LegacyUnavailable";
+    public long IdentityRevision { get; set; }
     public string EmploymentState { get; set; } = "Unknown";
     public string Provenance { get; set; } = "UserDeclaredUnverified";
     public DateTimeOffset? SourceObservedAt { get; set; }
     public uint Version { get; set; }
+}
+
+// Metadata-only identity history. No private values, ciphertext or private value digests.
+public sealed class CrewIdentityRevision : ITenantEntity
+{
+    public Guid TenantId { get; set; }
+    public Guid PersonId { get; set; }
+    public long Revision { get; set; }
+    public required string PolicyVersion { get; set; }
+    public required string Purpose { get; set; }
+    public required string Operation { get; set; }
+    public DateTimeOffset SavedAt { get; set; }
 }
 
 // Operator-managed tenant-local position references, never a legal qualification catalog.
@@ -75,11 +92,18 @@ internal static class CrewStorage
     {
         model.HasPostgresExtension("btree_gist");
         model.Entity<Person>(b => {
-            b.ToTable("Persons", "crew"); b.HasKey(x => new { x.TenantId, x.Id }); b.HasIndex(x => x.TenantId);
+            b.ToTable("Persons", "crew", t => t.HasCheckConstraint("CK_Person_ProtectedIdentity", "\"IdentityStorageState\" IN ('LegacyUnavailable','ProtectedV1') AND (\"IdentityStorageState\" <> 'ProtectedV1' OR (\"FullName\" IS NULL AND \"EmployeeNo\" IS NULL AND \"IdentityRevision\" > 0))")); b.HasKey(x => new { x.TenantId, x.Id }); b.HasIndex(x => x.TenantId);
             b.HasOne<Tenant>().WithMany().HasForeignKey(x => x.TenantId).OnDelete(DeleteBehavior.Restrict);
             b.Property(x => x.FullName).HasMaxLength(200); b.Property(x => x.EmployeeNo).HasMaxLength(64);
+            b.Property(x => x.IdentityStorageState).HasMaxLength(32);
             b.Property(x => x.EmploymentState).HasMaxLength(32); b.Property(x => x.Provenance).HasMaxLength(32);
             b.Property(x => x.Version).IsRowVersion();
+        });
+        model.Entity<CrewIdentityRevision>(b => {
+            b.ToTable("IdentityRevisions", "crew"); b.HasKey(x => new { x.TenantId, x.PersonId, x.Revision });
+            b.HasOne<Person>().WithMany().HasForeignKey(x => new { x.TenantId, x.PersonId }).OnDelete(DeleteBehavior.Restrict);
+            b.Property(x => x.PolicyVersion).HasMaxLength(80); b.Property(x => x.Purpose).HasMaxLength(80);
+            b.Property(x => x.Operation).HasMaxLength(32);
         });
         model.Entity<CrewPosition>(b => {
             b.ToTable("Positions", "crew"); b.HasKey(x => new { x.TenantId, x.Id });

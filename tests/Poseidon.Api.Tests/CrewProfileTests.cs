@@ -118,7 +118,7 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Contains("Missing", await client.GetStringAsync(path, Ct)); // Seed Draft is not picked.
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
         var command = new CrewSaveCommand(SeedVessel.Id, SeedVessel.Id, detail.Assignment.Version, null, null, SeedVessel.Id,
-            today, today.AddDays(1), null, null, DateTimeOffset.UtcNow.AddMinutes(-1), "SyntheticOnboard", "synthetic-period-v1");
+            today, today.AddDays(1), null, null, DateTimeOffset.UtcNow.AddMinutes(-1), "SyntheticOnboard", "synthetic-period-v1", PositionPolicyVersion: "synthetic-position-v1");
         Assert.Equal(HttpStatusCode.OK, (await Send(client, $"vessels/{SeedVessel.Id}/crew", command)).StatusCode);
         var current = await client.GetStringAsync(path, Ct);
         Assert.Contains("ConfiguredEffectiveDeclaration", current); Assert.Contains(SeedVessel.Id.ToString(), current); Assert.DoesNotContain("READY", current);

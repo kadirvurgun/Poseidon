@@ -12,12 +12,12 @@ public sealed record ImportValidationRowDto(int RowNumber, string Outcome, Impor
 
 internal static class ImportTemplates
 {
-    internal const string Version = "DEV-069-declaration-v2";
+    internal const string Version = "DEV-069-declaration-v3";
     internal static readonly string[] Categories = ["vessel", "crew", "certificate", "equipment"];
     internal static ImportTemplateDefinition? Definition(string category) {
         string[] fields = category switch {
             "vessel" => ["record_key", "base_version", "code", "name"],
-            "crew" => new string[] { "record_key", "base_version", "full_name", "employee_no", "position_ref", "from", "to", "contract_end_date", "watch_group", "profile_base_version", "profile_policy_version", "assignment_status", "assignment_policy_version" }
+            "crew" => new string[] { "record_key", "base_version", "full_name", "employee_no", "person_id", "person_base_version", "identity_policy_version", "identity_purpose", "position_policy_version", "position_ref", "from", "to", "contract_end_date", "watch_group", "profile_base_version", "profile_policy_version", "assignment_status", "assignment_policy_version" }
                 .Concat(Enum.GetValues<CrewPersonalField>().Select(CrewPersonalData.Key)).ToArray(),
             "certificate" => ["record_key", "base_version", "certificate_type", "certificate_no", "issuer", "issuing_country", "issue_date", "expiry_date",
                 "endorsement_required", "endorsement_no", "endorsement_expiry", "stcw_reference", "tanker_relevance", "vessel_type_scope",
@@ -87,8 +87,11 @@ internal static class ImportTemplates
             Text("endorsement_no", old?.EndorsementNumber), Day("endorsement_expiry", old?.EndorsementExpiry), Text("stcw_reference", old?.StcwReference),
             Text("tanker_relevance", old?.TankerRelevance), Text("vessel_type_scope", old?.VesselTypeScope), Ref("document_ref", old?.DocumentReference),
             Text("renewal_lead_days", old?.RenewalLeadDaysNumeric), Text("source_system", old?.SourceSystem), Text("notes", old?.Notes)));
-        public CrewSaveCommand Crew(CrewAssignment? old) => new(Id("record_key", true), old?.PersonId, BaseVersion(), Get("full_name"), Get("employee_no"),
-            Ref("position_ref", old?.PositionId), Day("from", old?.From), Day("to", old?.To), Day("contract_end_date", old?.ContractEndDate), Text("watch_group", old?.WatchGroup), old?.SourceObservedAt, Get("assignment_status"), Get("assignment_policy_version"));
+        public bool HasIdentity => Has("full_name") || Has("employee_no");
+        public CrewPersonCommand Identity() => new(BaseVersion("person_base_version") ?? 0, Get("full_name"), Get("employee_no"),
+            Get("identity_policy_version"), Get("identity_purpose"), Has("full_name"), Has("employee_no"));
+        public CrewSaveCommand Crew(CrewAssignment? old) => new(Id("record_key", true), Reference("person_id") ?? old?.PersonId, BaseVersion(), old == null ? Get("full_name") : null, old == null ? Get("employee_no") : null,
+            Ref("position_ref", old?.PositionId), Day("from", old?.From), Day("to", old?.To), Day("contract_end_date", old?.ContractEndDate), Text("watch_group", old?.WatchGroup), old?.SourceObservedAt, Get("assignment_status"), Get("assignment_policy_version"), Get("identity_policy_version"), Get("identity_purpose"), Get("position_policy_version"));
         public EquipmentCommand Equipment(Asset? old = null) => new(Id("record_key", true), BaseVersion(), Ref("parent_ref", old?.ParentId),
             Text("code", old?.Code), Text("name", old?.Name), Text("level", old?.Level) ?? "", Text("system_family", old?.SystemFamily),
             Text("equipment_type", old?.EquipmentType), Text("criticality", old?.Criticality), Text("maker", old?.Maker), Text("model", old?.Model),

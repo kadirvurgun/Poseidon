@@ -850,12 +850,13 @@
       "rule": "Active authorized reference in tenant/vessel/source scope",
       "fr": "FR46-crew-roster-person_id",
       "tc": "TC46-crew-roster-person_id",
-      "template_field_candidate": null,
-      "coverage": "Server-derived authorized context/owner; never user-written source actor or identity.",
+      "template_field_candidate": "person_id",
+      "coverage": "Crew v3 protected ordinary-handler parity; explicit scoped existing-person assertion/base/version/purpose; unmapped fields preserved; current-policy filtered history/recovery. Authored, not run. Natural-key/lifecycle approvals unresolved.",
       "verification": "DEFERRED",
-      "coverage_state": "source_context",
-      "software_state": "implemented_server_owned_context",
-      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
+      "coverage_state": "authored_unverified",
+      "software_state": "authored_configured_identity_conversion_and_existing_person_import",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured.",
+      "crew_identity_closure_01": "docs/tasks/crew-identity-closure-01.md; DEFERRED_NOT_RUN; NOT ACCEPTED"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -870,11 +871,12 @@
       "fr": "FR46-crew-roster-employee_no",
       "tc": "TC46-crew-roster-employee_no",
       "template_field_candidate": "employee_no",
-      "coverage": "Existing-person edits use separate ordinary person endpoint; controlled existing-person identity update integration remains software gap.",
+      "coverage": "Crew v3 protected ordinary-handler parity; explicit scoped existing-person assertion/base/version/purpose; unmapped fields preserved; current-policy filtered history/recovery. Authored, not run. Natural-key/lifecycle approvals unresolved.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial_new_person_only",
-      "software_state": "implemented_trial_new_person_only",
-      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
+      "coverage_state": "authored_unverified",
+      "software_state": "authored_configured_identity_conversion_and_existing_person_import",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured.",
+      "crew_identity_closure_01": "docs/tasks/crew-identity-closure-01.md; DEFERRED_NOT_RUN; NOT ACCEPTED"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -888,12 +890,13 @@
       "rule": "Value must be from controlled list applicable to tenant/vessel/context",
       "fr": "FR46-crew-roster-rank",
       "tc": "TC46-crew-roster-rank",
-      "template_field_candidate": null,
-      "coverage": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
+      "template_field_candidate": "position_ref",
+      "coverage": "Crew v3 position_ref selects an exact scoped/effective versioned configured tuple from actual persisted positions; independent rank/department import text is denied. Production catalog and mutable registry history remain separate.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software",
-      "software_state": "unimplemented_in_this_package",
-      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
+      "coverage_state": "authored_unverified",
+      "software_state": "authored_configured_position_lookup",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured.",
+      "crew_identity_closure_01": "docs/tasks/crew-identity-closure-01.md; DEFERRED_NOT_RUN; NOT ACCEPTED"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -907,12 +910,13 @@
       "rule": "Value must be from controlled list applicable to tenant/vessel/context",
       "fr": "FR46-crew-roster-department",
       "tc": "TC46-crew-roster-department",
-      "template_field_candidate": null,
-      "coverage": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
+      "template_field_candidate": "position_ref",
+      "coverage": "Crew v3 position_ref selects an exact scoped/effective versioned configured tuple from actual persisted positions; independent rank/department import text is denied. Production catalog and mutable registry history remain separate.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software",
-      "software_state": "unimplemented_in_this_package",
-      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
+      "coverage_state": "authored_unverified",
+      "software_state": "authored_configured_position_lookup",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured.",
+      "crew_identity_closure_01": "docs/tasks/crew-identity-closure-01.md; DEFERRED_NOT_RUN; NOT ACCEPTED"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1135,12 +1139,13 @@
       "rule": "Active authorized reference in tenant/vessel/source scope",
       "fr": "FR46-crew-profile-person_id",
       "tc": "TC46-crew-profile-person_id",
-      "template_field_candidate": null,
-      "coverage": "Server-derived authorized context/owner; never user-written source actor or identity.",
+      "template_field_candidate": "person_id",
+      "coverage": "Crew v3 protected ordinary-handler parity; explicit scoped existing-person assertion/base/version/purpose; unmapped fields preserved; current-policy filtered history/recovery. Authored, not run. Natural-key/lifecycle approvals unresolved.",
       "verification": "DEFERRED",
-      "coverage_state": "source_context",
-      "software_state": "implemented_server_owned_context",
-      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
+      "coverage_state": "authored_unverified",
+      "software_state": "authored_configured_identity_conversion_and_existing_person_import",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured.",
+      "crew_identity_closure_01": "docs/tasks/crew-identity-closure-01.md; DEFERRED_NOT_RUN; NOT ACCEPTED"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1155,11 +1160,12 @@
       "fr": "FR46-crew-profile-employee_no",
       "tc": "TC46-crew-profile-employee_no",
       "template_field_candidate": "employee_no",
-      "coverage": "Existing-person edits use separate ordinary person endpoint; controlled existing-person identity update integration remains software gap.",
+      "coverage": "Crew v3 protected ordinary-handler parity; explicit scoped existing-person assertion/base/version/purpose; unmapped fields preserved; current-policy filtered history/recovery. Authored, not run. Natural-key/lifecycle approvals unresolved.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial_new_person_only",
-      "software_state": "implemented_trial_new_person_only",
-      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
+      "coverage_state": "authored_unverified",
+      "software_state": "authored_configured_identity_conversion_and_existing_person_import",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured.",
+      "crew_identity_closure_01": "docs/tasks/crew-identity-closure-01.md; DEFERRED_NOT_RUN; NOT ACCEPTED"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1174,11 +1180,12 @@
       "fr": "FR46-crew-profile-full_name",
       "tc": "TC46-crew-profile-full_name",
       "template_field_candidate": "full_name",
-      "coverage": "Existing-person edits use separate ordinary person endpoint; controlled existing-person identity update integration remains software gap.",
+      "coverage": "Crew v3 protected ordinary-handler parity; explicit scoped existing-person assertion/base/version/purpose; unmapped fields preserved; current-policy filtered history/recovery. Authored, not run. Natural-key/lifecycle approvals unresolved.",
       "verification": "DEFERRED",
-      "coverage_state": "implemented_trial_new_person_only",
-      "software_state": "implemented_trial_new_person_only",
-      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
+      "coverage_state": "authored_unverified",
+      "software_state": "authored_configured_identity_conversion_and_existing_person_import",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured.",
+      "crew_identity_closure_01": "docs/tasks/crew-identity-closure-01.md; DEFERRED_NOT_RUN; NOT ACCEPTED"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1325,12 +1332,13 @@
       "rule": "Value must be from controlled list applicable to tenant/vessel/context",
       "fr": "FR46-crew-profile-primary_rank",
       "tc": "TC46-crew-profile-primary_rank",
-      "template_field_candidate": null,
-      "coverage": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
+      "template_field_candidate": "position_ref",
+      "coverage": "Crew v3 position_ref selects an exact scoped/effective versioned configured tuple from actual persisted positions; independent rank/department import text is denied. Production catalog and mutable registry history remain separate.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software",
-      "software_state": "unimplemented_in_this_package",
-      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
+      "coverage_state": "authored_unverified",
+      "software_state": "authored_configured_position_lookup",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured.",
+      "crew_identity_closure_01": "docs/tasks/crew-identity-closure-01.md; DEFERRED_NOT_RUN; NOT ACCEPTED"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -1344,12 +1352,13 @@
       "rule": "Value must be from controlled list applicable to tenant/vessel/context",
       "fr": "FR46-crew-profile-department",
       "tc": "TC46-crew-profile-department",
-      "template_field_candidate": null,
-      "coverage": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
+      "template_field_candidate": "position_ref",
+      "coverage": "Crew v3 position_ref selects an exact scoped/effective versioned configured tuple from actual persisted positions; independent rank/department import text is denied. Production catalog and mutable registry history remain separate.",
       "verification": "DEFERRED",
-      "coverage_state": "unimplemented_software",
-      "software_state": "unimplemented_in_this_package",
-      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured."
+      "coverage_state": "authored_unverified",
+      "software_state": "authored_configured_position_lookup",
+      "external_gate": "Source-approved production catalogs/natural keys/precision/field classification and any required authorized evidence/approval remain external; no approval manufactured.",
+      "crew_identity_closure_01": "docs/tasks/crew-identity-closure-01.md; DEFERRED_NOT_RUN; NOT ACCEPTED"
     },
     {
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",

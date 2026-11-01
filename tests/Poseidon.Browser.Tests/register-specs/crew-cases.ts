@@ -45,10 +45,11 @@ async function materialConflict(page: Page) {
   await page.getByRole('button', { name: 'Edit assignment', exact: true }).click()
   await page.getByLabel('Watch group', { exact: true }).fill('FICTIONAL retained local edit')
   const identity = await (await page.request.get('/api/v1/auth/session')).json()
+  const policy = await (await page.request.get(`/api/v1/vessels/${vessel}/crew/position-policy`)).json()
   const concurrent = await page.request.post(`/api/v1/vessels/${vessel}/crew`, {
     headers: { 'X-CSRF-TOKEN': identity.csrfToken, 'Idempotency-Key': crypto.randomUUID() },
     data: { id: row.id, personId: row.personId, baseVersion: row.version, fullName: null, employeeNo: null,
-      positionId: row.positionId, from: row.from, to: row.to, contractEndDate: row.contractEndDate,
+      positionId: row.positionId, positionPolicyVersion: policy.version, from: row.from, to: row.to, contractEndDate: row.contractEndDate,
       watchGroup: 'FICTIONAL concurrent edit', sourceObservedAt: row.sourceObservedAt },
   })
   expect(concurrent.status() === 200).toBe(true)

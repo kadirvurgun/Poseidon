@@ -66,6 +66,7 @@ public sealed class CredentialRevision : ITenantEntity
 
 public sealed class ImportBatch : ITenantEntity
 {
+    public string? CrewIdentityPolicyVersion { get; set; }
     public Guid TenantId { get; set; }
     public Guid Id { get; set; }
     public Guid VesselId { get; set; }

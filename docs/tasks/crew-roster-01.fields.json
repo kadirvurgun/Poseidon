@@ -31,7 +31,13 @@
       "verification": "DEFERRED",
       "coverage": "authored_partial",
       "domain_completion_state": "source_context",
-      "domain_completion_gate": "Server-derived authorized context/owner; never user-written source actor or identity."
+      "domain_completion_gate": "Server-derived authorized context/owner; never user-written source actor or identity.",
+      "crew_identity_closure_01": {
+        "state": "authored_configured_unverified",
+        "trace": "docs/tasks/crew-identity-closure-01.trace.json",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -42,12 +48,18 @@
       "screen": "crew-roster",
       "fr": "FR46-crew-roster-employee_no",
       "tc": "TC46-crew-roster-employee_no",
-      "implementation": "Person.EmployeeNo; explicit crew.identity.read/write",
+      "implementation": "Protected Person identity columns; configured scoped policy; controlled legacy conversion; ordinary/import shared handler with explicit person/base/policy/purpose; safe history/receipts.",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
       "coverage": "authored_partial",
-      "domain_completion_state": "implemented_trial_new_person_only",
-      "domain_completion_gate": "Existing-person edits use separate ordinary person endpoint; controlled existing-person identity update integration remains software gap."
+      "domain_completion_state": "authored_configured_identity_conversion_and_existing_person_import",
+      "domain_completion_gate": "Unexecuted handwritten model/migration and consumers; source-approved natural keys/lifecycle/privacy/retention/key custody unresolved; no acceptance.",
+      "crew_identity_closure_01": {
+        "state": "authored_configured_unverified",
+        "trace": "docs/tasks/crew-identity-closure-01.trace.json",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -58,12 +70,18 @@
       "screen": "crew-roster",
       "fr": "FR46-crew-roster-rank",
       "tc": "TC46-crew-roster-rank",
-      "implementation": "vessel Position reference; declared unverified",
+      "implementation": "Exact versioned scoped/effective CrewPositionPolicy tuple matching of actual persisted position; reader/editor/ordinary/import consumers; no independent free-text list.",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
       "coverage": "authored_partial",
-      "domain_completion_state": "unimplemented_software",
-      "domain_completion_gate": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count."
+      "domain_completion_state": "authored_configured_position_lookup",
+      "domain_completion_gate": "Unexecuted; production codebooks remain external; independently versioned position update/history registry remains software beyond configured validation/creation.",
+      "crew_identity_closure_01": {
+        "state": "authored_configured_unverified",
+        "trace": "docs/tasks/crew-identity-closure-01.trace.json",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -74,12 +92,18 @@
       "screen": "crew-roster",
       "fr": "FR46-crew-roster-department",
       "tc": "TC46-crew-roster-department",
-      "implementation": "CrewEffectiveAssignment + scoped API; configured period/status/provenance; no Draft inference. Position rank/department from selected assignment.",
+      "implementation": "Exact versioned scoped/effective CrewPositionPolicy tuple matching of actual persisted position; reader/editor/ordinary/import consumers; no independent free-text list.",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
       "coverage": "authored_partial",
-      "domain_completion_state": "implemented_configured_projection",
-      "domain_completion_gate": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count."
+      "domain_completion_state": "authored_configured_position_lookup",
+      "domain_completion_gate": "Unexecuted; production codebooks remain external; independently versioned position update/history registry remains software beyond configured validation/creation.",
+      "crew_identity_closure_01": {
+        "state": "authored_configured_unverified",
+        "trace": "docs/tasks/crew-identity-closure-01.trace.json",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -271,7 +295,13 @@
       "verification": "DEFERRED",
       "coverage": "authored_partial",
       "domain_completion_state": "source_context",
-      "domain_completion_gate": "Server-derived authorized context/owner; never user-written source actor or identity."
+      "domain_completion_gate": "Server-derived authorized context/owner; never user-written source actor or identity.",
+      "crew_identity_closure_01": {
+        "state": "authored_configured_unverified",
+        "trace": "docs/tasks/crew-identity-closure-01.trace.json",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -282,12 +312,18 @@
       "screen": "crew-profile",
       "fr": "FR46-crew-profile-employee_no",
       "tc": "TC46-crew-profile-employee_no",
-      "implementation": "Person.EmployeeNo; explicit crew.identity.read/write",
+      "implementation": "Protected Person identity columns; configured scoped policy; controlled legacy conversion; ordinary/import shared handler with explicit person/base/policy/purpose; safe history/receipts.",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
       "coverage": "authored_partial",
-      "domain_completion_state": "implemented_trial_new_person_only",
-      "domain_completion_gate": "Existing-person edits use separate ordinary person endpoint; controlled existing-person identity update integration remains software gap."
+      "domain_completion_state": "authored_configured_identity_conversion_and_existing_person_import",
+      "domain_completion_gate": "Unexecuted handwritten model/migration and consumers; source-approved natural keys/lifecycle/privacy/retention/key custody unresolved; no acceptance.",
+      "crew_identity_closure_01": {
+        "state": "authored_configured_unverified",
+        "trace": "docs/tasks/crew-identity-closure-01.trace.json",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -298,12 +334,18 @@
       "screen": "crew-profile",
       "fr": "FR46-crew-profile-full_name",
       "tc": "TC46-crew-profile-full_name",
-      "implementation": "Person.FullName; explicit crew.identity.read/write",
+      "implementation": "Protected Person identity columns; configured scoped policy; controlled legacy conversion; ordinary/import shared handler with explicit person/base/policy/purpose; safe history/receipts.",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
       "coverage": "authored_partial",
-      "domain_completion_state": "implemented_trial_new_person_only",
-      "domain_completion_gate": "Existing-person edits use separate ordinary person endpoint; controlled existing-person identity update integration remains software gap."
+      "domain_completion_state": "authored_configured_identity_conversion_and_existing_person_import",
+      "domain_completion_gate": "Unexecuted handwritten model/migration and consumers; source-approved natural keys/lifecycle/privacy/retention/key custody unresolved; no acceptance.",
+      "crew_identity_closure_01": {
+        "state": "authored_configured_unverified",
+        "trace": "docs/tasks/crew-identity-closure-01.trace.json",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -426,12 +468,18 @@
       "screen": "crew-profile",
       "fr": "FR46-crew-profile-primary_rank",
       "tc": "TC46-crew-profile-primary_rank",
-      "implementation": "CrewEffectiveAssignment + scoped API; configured period/status/provenance; no Draft inference. Position rank/department from selected assignment.",
+      "implementation": "Exact versioned scoped/effective CrewPositionPolicy tuple matching of actual persisted position; reader/editor/ordinary/import consumers; no independent free-text list.",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
       "coverage": "safe_unknown_or_withheld_gap",
-      "domain_completion_state": "implemented_configured_projection",
-      "domain_completion_gate": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count."
+      "domain_completion_state": "authored_configured_position_lookup",
+      "domain_completion_gate": "Unexecuted; production codebooks remain external; independently versioned position update/history registry remains software beyond configured validation/creation.",
+      "crew_identity_closure_01": {
+        "state": "authored_configured_unverified",
+        "trace": "docs/tasks/crew-identity-closure-01.trace.json",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -442,12 +490,18 @@
       "screen": "crew-profile",
       "fr": "FR46-crew-profile-department",
       "tc": "TC46-crew-profile-department",
-      "implementation": "CrewEffectiveAssignment + scoped API; configured period/status/provenance; no Draft inference. Position rank/department from selected assignment.",
+      "implementation": "Exact versioned scoped/effective CrewPositionPolicy tuple matching of actual persisted position; reader/editor/ordinary/import consumers; no independent free-text list.",
       "offline": "OPEN: generic AB rule does not resolve crew field/device/session whitelist",
       "verification": "DEFERRED",
       "coverage": "authored_partial",
-      "domain_completion_state": "implemented_configured_projection",
-      "domain_completion_gate": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count."
+      "domain_completion_state": "authored_configured_position_lookup",
+      "domain_completion_gate": "Unexecuted; production codebooks remain external; independently versioned position update/history registry remains software beyond configured validation/creation.",
+      "crew_identity_closure_01": {
+        "state": "authored_configured_unverified",
+        "trace": "docs/tasks/crew-identity-closure-01.trace.json",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -623,7 +677,13 @@
       "verification": "DEFERRED",
       "coverage": "authored_partial",
       "domain_completion_state": "unimplemented_software",
-      "domain_completion_gate": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count."
+      "domain_completion_gate": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
+      "crew_identity_closure_01": {
+        "state": "authored_configured_unverified",
+        "trace": "docs/tasks/crew-identity-closure-01.trace.json",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -639,7 +699,13 @@
       "verification": "DEFERRED",
       "coverage": "authored_partial",
       "domain_completion_state": "implemented_configured_projection",
-      "domain_completion_gate": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count."
+      "domain_completion_gate": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
+      "crew_identity_closure_01": {
+        "state": "authored_configured_unverified",
+        "trace": "docs/tasks/crew-identity-closure-01.trace.json",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
@@ -655,7 +721,13 @@
       "verification": "DEFERRED",
       "coverage": "authored_partial",
       "domain_completion_state": "implemented_configured_projection",
-      "domain_completion_gate": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count."
+      "domain_completion_gate": "Owning-source domain/mutation contract not yet implemented; not satisfied by a banner or traced field count.",
+      "crew_identity_closure_01": {
+        "state": "authored_configured_unverified",
+        "trace": "docs/tasks/crew-identity-closure-01.trace.json",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
     },
     {
       "source": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",

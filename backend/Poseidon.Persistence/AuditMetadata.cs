@@ -32,6 +32,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             Asset a => a.Id, AssetRevision r => r.AssetId, MaintenancePlan p => p.Id,
             MaintenancePlanRevision r => r.PlanId, MaintenanceJob j => j.Id, TechnicalOwner o => o.Id,
             CrewPersonalProfile p => p.PersonId, CrewPersonalProfileRevision p => p.PersonId,
+            CrewIdentityRevision r => r.PersonId,
             Person p => p.Id, CrewPosition c => c.Id, CrewAssignment c => c.Id, CrewAssignmentRevision c => c.AssignmentId,
             Document d => d.Id, DocumentVersion d => d.DocumentId,
             FileStage f => f.Id, StoredFile f => f.Id,
@@ -40,7 +41,8 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             _ => vessel
         };
         var kind = entry.Entity switch { RegisterDraft d => d.Kind, RegisterRevision r => r.Kind, _ => null };
-        var revision = entry.Metadata.FindProperty("Revision") == null ? null : entry.Property("Revision");
+        var revisionProperty = entry.Entity is Person ? "IdentityRevision" : "Revision";
+        var revision = entry.Metadata.FindProperty(revisionProperty) == null ? null : entry.Property(revisionProperty);
         long? before = revision != null && entry.State != EntityState.Added ? (long?)revision.OriginalValue : null;
         long? after = revision != null && entry.State != EntityState.Deleted ? (long?)revision.CurrentValue : null;
         var fields = new List<object>();

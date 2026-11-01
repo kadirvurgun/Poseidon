@@ -1,3 +1,9 @@
+# FOUNDATION continuation — Crew identity checkpoint G / AUTHORED_UNVERIFIED / INCOMPLETE
+
+Protected existing Person identity/conversion and actual consumers, existing-person Crew Import ordinary-handler parity, and configured scoped/versioned/effective Crew position/rank/department lookup consumers are authored with meaningful domain/API-real-PG/persistence/React and registered signed-host journey test source. All earlier source checkpoints and parent support registrations remain retained. Local authoring commit permitted by the current user instruction; no validated-candidate/accepted claim. [Exact source, code, authored tests and remaining gaps](phases/CREW-IDENTITY-CLOSURE-01.md).
+
+All suites/build/typecheck/generation/migrations/browser/provider/QA/CI are **DEFERRED / NOT RUN**. Historical plaintext Import-batch conversion and independent versioned position update/history administration remain software gaps; full offline application, Tug and original S0 work continue under the coordinator before the later combined gate. Production catalog/privacy/key custody/source-authority decisions remain separate. Canonical8/970SP,2/121tasks,0/196accepted and40-task/272SP candidate scope unchanged. No publication or merge.
+
 # FOUNDATION continuation — checkpoint F / AUTHORED_UNVERIFIED / INCOMPLETE
 
 Explicit person-owned active photo selection/clear, immutable private selection lineage, scoped exact-version consumer, API/EF migration/model and13 logical test cases (API/PostgreSQL6, React6, private-host1) are authored, **none executed**. Existing checkpoints/contexts/tests are preserved. Current configured base80b057a, not historical93de. [Readiness precondition and exact evidence disposition](phases/FOUNDATION-ACCEPTANCE-BUNDLE-01.md).

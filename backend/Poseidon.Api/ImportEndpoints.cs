@@ -67,6 +67,7 @@ public static class ImportEndpoints
         var b = await db.ImportBatches.SingleOrDefaultAsync(x => x.Id == batch && x.VesselId == vessel && x.ActorId == a.Id && x.SessionHash == session, h.RequestAborted);
         if (b == null || !Category(a, vessel, b.Category, write)) return null;
         if (b.Category == "certificate" && !await db.CrewAssignments.AnyAsync(x => x.VesselId == vessel && x.Id == b.AssignmentId, h.RequestAborted)) return null;
+        if (b.Category == "crew" && (!h.RequestServices.GetRequiredService<CrewIdentityPolicy>().Allows(a, write) || b.CrewIdentityPolicyVersion != h.RequestServices.GetRequiredService<CrewIdentityPolicy>().Version)) return null;
         if (b.Category == "crew" && !AllowedProfileBindings(b, h, write)) return null;
         if (b.Category == "certificate" && b.BindingsJson.Contains("\"document_ref\"", StringComparison.Ordinal) && !CanReadPersonDocuments(h)) return null;
         return b;
@@ -88,17 +89,18 @@ public static class ImportEndpoints
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, action, "Success", resourceId: vessel);
     private static async Task<IResult> Coverage(Guid vessel, HttpContext h, PoseidonDbContext db) {
         var failure = await Gate(h, db, vessel); if (failure != null) return failure;
-        var categories = ImportTemplates.Categories.Where(c => Category(Actor(h), vessel, c, false)).ToArray();
+        var categories = ImportTemplates.Categories.Where(c => Category(Actor(h), vessel, c, false) && (c != "crew" || h.RequestServices.GetRequiredService<CrewIdentityPolicy>().Allows(Actor(h), false))).ToArray();
         await Observe(h, vessel); return Results.Ok(ImportCoverage.Describe(categories));
     }
     private static async Task<IResult> Templates(Guid vessel, HttpContext h, PoseidonDbContext db) {
         var failure = await Gate(h, db, vessel); if (failure != null) return failure;
-        var rows = ImportTemplates.Categories.Where(c => Category(Actor(h), vessel, c, false)).Select(ImportTemplates.Describe).ToArray();
+        var rows = ImportTemplates.Categories.Where(c => Category(Actor(h), vessel, c, false) && (c != "crew" || h.RequestServices.GetRequiredService<CrewIdentityPolicy>().Allows(Actor(h), false))).Select(ImportTemplates.Describe).ToArray();
         await Observe(h, vessel); return Results.Ok(rows);
     }
     private static async Task<IResult> DownloadTemplate(Guid vessel, string category, HttpContext h, PoseidonDbContext db) {
         var failure = await Gate(h, db, vessel); if (failure != null) return failure;
         if (ImportTemplates.Definition(category) == null || !Category(Actor(h), vessel, category, false)) return await Fail(h, 404, "resource_not_found");
+        if (category == "crew" && !h.RequestServices.GetRequiredService<CrewIdentityPolicy>().Allows(Actor(h), false)) return await Fail(h, 404, "resource_not_found");
         var t = ImportTemplates.Describe(category); await Observe(h, vessel);
         h.Response.Headers["X-Import-Schema"] = t.Fingerprint;
         return Results.File(ImportWorkbook.Template(t.Fields.Where(f => f.UserWritable).Select(f => f.Key).ToArray()),
@@ -122,6 +124,7 @@ public static class ImportEndpoints
             assignment = selected;
         }
         if (ImportTemplates.Definition(category) == null || !Category(Actor(h), vessel, category, true)) return await Fail(h, 403, "permission_denied");
+        if (category == "crew" && !h.RequestServices.GetRequiredService<CrewIdentityPolicy>().Allows(Actor(h), true)) return await Fail(h, 403, "field_policy_denied");
         if (h.Request.Query.Keys.Any(k => k != "assignment") || category != "certificate" && assignment != null) return await Fail(h, 400, "invalid_request");
         if (category == "certificate" && (assignment == null || !await db.CrewAssignments.AnyAsync(x => x.Id == assignment && x.VesselId == vessel, h.RequestAborted)))
             return await Fail(h, 404, "resource_not_found");
@@ -137,6 +140,7 @@ public static class ImportEndpoints
         if (category == "crew") {
             var protection = h.RequestServices.GetRequiredService<CrewProfileProtection>();
             if (!protection.Available) return await Fail(h, 503, "protected_storage_unavailable");
+            b.CrewIdentityPolicyVersion = h.RequestServices.GetRequiredService<CrewIdentityPolicy>().Version;
             b.TableJson = protection.EncryptImport(b.TenantId, b.Id, b.TableJson);
         }
         await using var tx = await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable, h.RequestAborted);
@@ -145,7 +149,10 @@ public static class ImportEndpoints
             // No fuzzy file/key match and no operational data merge is inferred.
             var old = await db.ImportBatches.SingleOrDefaultAsync(x => x.VesselId == vessel && x.ActorId == b.ActorId && x.SessionHash == b.SessionHash &&
                 x.Category == category && x.AssignmentId == assignment && x.SourceHash == b.SourceHash && x.TemplateFingerprint == b.TemplateFingerprint, h.RequestAborted);
-            if (old != null) { await Observe(h, vessel); return Results.Ok(Dto(old, h)); }
+            if (old != null) {
+                if (old.Category == "crew" && old.CrewIdentityPolicyVersion != b.CrewIdentityPolicyVersion) return await Fail(h, 403, "field_policy_denied");
+                if (old.Category == "crew" && !AllowedProfileBindings(old, h, false)) return await Fail(h, 403, "field_policy_denied");
+                await Observe(h, vessel); return Results.Ok(Dto(old, h)); }
             db.ImportBatches.Add(b); await db.SaveChangesAsync(h.RequestAborted); await tx.CommitAsync(h.RequestAborted);
             await Observe(h, vessel, "ImportSave"); return Results.Ok(Dto(b, h));
         } catch (Exception e) when (e is DbUpdateException || e is Npgsql.PostgresException { SqlState: "40001" }) {
@@ -164,8 +171,10 @@ public static class ImportEndpoints
     private static async Task<IResult> History(Guid vessel, HttpContext h, PoseidonDbContext db) {
         var failure = await Gate(h, db, vessel); if (failure != null) return failure;
         if (!Offset(h, out var offset) || offset > 100000 || h.Request.Query.Keys.Any(k => k != "offset")) return await Fail(h, 400, "invalid_request");
-        var a = Actor(h); var categories = ImportTemplates.Categories.Where(c => Category(a, vessel, c, false)).ToArray(); var session = Session(h);
+        var a = Actor(h); var categories = ImportTemplates.Categories.Where(c => Category(a, vessel, c, false) && (c != "crew" || h.RequestServices.GetRequiredService<CrewIdentityPolicy>().Allows(a, false))).ToArray(); var session = Session(h);
         var query = db.ImportBatches.AsNoTracking().Where(x => x.VesselId == vessel && x.ActorId == a.Id && x.SessionHash == session && categories.Contains(x.Category));
+        var identityVersion = h.RequestServices.GetRequiredService<CrewIdentityPolicy>().Version;
+        query = query.Where(x => x.Category != "crew" || x.CrewIdentityPolicyVersion == identityVersion);
         if (!CanReadPersonDocuments(h)) query = query.Where(x => x.Category != "certificate" || !x.BindingsJson.Contains("\"document_ref\""));
         var profilePolicy = h.RequestServices.GetRequiredService<CrewProfilePolicy>();
         foreach (var field in Enum.GetValues<CrewPersonalField>().Where(f => profilePolicy.Rule(f, profilePolicy.ImportPurpose, a.Permissions, false) == null)) {
@@ -229,7 +238,21 @@ public static class ImportEndpoints
                         if (stored == null && personal.BaseVersion != null || stored != null && stored.Version != personal.BaseVersion) Issue("conflict", "profile_base_version");
                     }
                     if (!h.RequestServices.GetRequiredService<CrewAssignmentPolicy>().CanDeclare(c.DeclaredStatus, c.AssignmentPolicyVersion, Actor(h))) Issue("unsupported_value");
-                    if (!CrewEndpoints.ValidInput(c) || old != null && (c.FullName != null || c.EmployeeNo != null)) Issue("domain_validation");
+                    if (!CrewEndpoints.ValidInput(c)) Issue("domain_validation");
+                    var identityPolicy = h.RequestServices.GetRequiredService<CrewIdentityPolicy>();
+                    if (old != null && r.HasIdentity) {
+                        if (r.Reference("person_id") != old.PersonId) Issue("unresolved_reference", "person_id");
+                        var person = await db.Persons.AsNoTracking().SingleAsync(x => x.Id == old.PersonId, h.RequestAborted);
+                        var identity = r.Identity();
+                        if (!CrewIdentityEndpoints.Valid(identity, identityPolicy, Actor(h))) Issue("unsupported_value");
+                        if (person.Version != identity.BaseVersion) Issue("conflict", "person_base_version");
+                        try {
+                            var current = CrewIdentityStorage.Open(person, h.RequestServices.GetRequiredService<CrewProfileProtection>());
+                            if (identity.EmployeeNoPresent && !CrewIdentityData.EmployeeChangeAllowed(identityPolicy.EmployeeNumberMode, current.Employee, identity.EmployeeNo)) Issue("unsupported_value", "employee_no");
+                        } catch (CryptographicException) { Issue("unsupported_value"); }
+                    } else if (old == null && c.PersonId == null && (!identityPolicy.Allows(Actor(h), true) || c.IdentityPolicyVersion != identityPolicy.Version || c.IdentityPurpose != identityPolicy.Purpose)) Issue("unsupported_value");
+                    if (old != null && c.PersonId != old.PersonId || old == null && c.PersonId != null && (r.HasIdentity || !assignments.Any(x => x.PersonId == c.PersonId))) Issue("unresolved_reference", "person_id");
+                    if (!CrewPositionPolicy.Current(h).AllowsReference(Actor(h).TenantId, b.VesselId, c.PositionId, c.PositionPolicyVersion, await db.CrewPositions.AsNoTracking().Where(x => x.VesselId == b.VesselId).ToArrayAsync(h.RequestAborted))) Issue("unresolved_reference", "position_ref");
                     if (c.PositionId != null && !await db.CrewPositions.AnyAsync(x => x.Id == c.PositionId && x.VesselId == b.VesselId, h.RequestAborted)) Issue("unresolved_reference", "position_ref");
                     if (c.From != null && old != null && await db.CrewAssignments.AnyAsync(x => x.PersonId == old.PersonId && x.Id != id && x.From != null &&
                         (x.To == null || c.From < x.To) && (c.To == null || x.From < c.To), h.RequestAborted)) Issue("conflict");
@@ -342,6 +365,12 @@ public static class ImportEndpoints
                 var profilePolicy = h.RequestServices.GetRequiredService<CrewProfilePolicy>();
                 foreach (var cells in table.Rows) {
                     var row = new ImportTemplates.Row(mapping.Mapping, cells);
+                    var identityPolicy = h.RequestServices.GetRequiredService<CrewIdentityPolicy>();
+                    if (!identityPolicy.Allows(a, true) || row.HasIdentity && (row.Get("identity_policy_version") != identityPolicy.Version || row.Get("identity_purpose") != identityPolicy.Purpose)) return await Fail(h, 403, "field_policy_denied");
+                    var assignment = await db.CrewAssignments.AsNoTracking().SingleOrDefaultAsync(x => x.VesselId == vessel && x.Id == row.Id("record_key", true), h.RequestAborted);
+                    var crewCommand = row.Crew(assignment);
+                    if (!CrewPositionPolicy.Current(h).AllowsReference(a.TenantId, vessel, crewCommand.PositionId, crewCommand.PositionPolicyVersion,
+                        await db.CrewPositions.AsNoTracking().Where(x => x.VesselId == vessel).ToArrayAsync(h.RequestAborted))) return await Fail(h, 403, "field_policy_denied");
                     var personal = row.PersonalProfile();
                     if (personal != null && !CrewProfileEndpoints.Valid(personal with { Purpose = profilePolicy.ImportPurpose }, a, profilePolicy)) return await Fail(h, 403, "field_policy_denied");
                     if (!h.RequestServices.GetRequiredService<CrewAssignmentPolicy>().CanDeclare(row.Get("assignment_status"), row.Get("assignment_policy_version"), a)) return await Fail(h, 403, "assignment_policy_denied");
@@ -382,6 +411,10 @@ public static class ImportEndpoints
                     var id = r.Id("record_key", true);
                     var old = await db.CrewAssignments.SingleOrDefaultAsync(x => x.Id == id && x.VesselId == vessel, h.RequestAborted);
                     result = await CrewEndpoints.ApplyImport(vessel, r.Crew(old), h, db, h.RequestServices.GetRequiredService<IAntiforgery>(), true);
+                    if (old != null && r.HasIdentity && result is IStatusCodeHttpResult { StatusCode: >= 200 and < 300 }) {
+                        h.Request.Headers["Idempotency-Key"] = new Guid(SHA256.HashData(Encoding.UTF8.GetBytes($"{batch:D}/{p.Id:D}/{i}/identity"))[..16]).ToString("D");
+                        result = await CrewIdentityEndpoints.Apply(vessel, id, r.Identity(), h, db, imported: true);
+                    }
                     var personal = r.PersonalProfile();
                     if (personal != null && result is IStatusCodeHttpResult { StatusCode: >= 200 and < 300 }) {
                         var policy = h.RequestServices.GetRequiredService<CrewProfilePolicy>();

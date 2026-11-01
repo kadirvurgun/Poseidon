@@ -6,6 +6,23 @@ namespace Poseidon.Api.Tests;
 public sealed class CrewProfileProtectionTests
 {
     [Fact]
+    public void Existing_identity_ciphertext_cannot_be_rebound_to_a_person_tenant_profile_field_or_removed_key() {
+        var reference = "POSEIDON_TEST_IDENTITY_" + Guid.NewGuid().ToString("N").ToUpperInvariant();
+        Environment.SetEnvironmentVariable(reference, Convert.ToBase64String(RandomNumberGenerator.GetBytes(32)));
+        try {
+            var policy = new CrewProfilePolicy { Version = "synthetic", ActiveKeyId = "key1", KeyReferences = new() { ["key1"] = reference } };
+            var protection = new CrewProfileProtection(policy); var tenant = Guid.NewGuid(); var person = Guid.NewGuid();
+            var cipher = protection.EncryptIdentity(tenant, person, CrewIdentityField.EmployeeNo, "00001");
+            Assert.Equal("00001", protection.DecryptIdentity(tenant, person, CrewIdentityField.EmployeeNo, cipher));
+            Assert.Throws<CryptographicException>(() => protection.DecryptIdentity(Guid.NewGuid(), person, CrewIdentityField.EmployeeNo, cipher));
+            Assert.Throws<CryptographicException>(() => protection.DecryptIdentity(tenant, Guid.NewGuid(), CrewIdentityField.EmployeeNo, cipher));
+            Assert.Throws<CryptographicException>(() => protection.DecryptIdentity(tenant, person, CrewIdentityField.FullName, cipher));
+            Assert.Throws<CryptographicException>(() => protection.Decrypt(tenant, person, CrewPersonalField.PassportNo, cipher));
+            policy.KeyReferences.Clear();
+            Assert.Throws<CryptographicException>(() => protection.DecryptIdentity(tenant, person, CrewIdentityField.EmployeeNo, cipher));
+        } finally { Environment.SetEnvironmentVariable(reference, null); }
+    }
+    [Fact]
     public void Encryption_requires_explicit_external_key_and_binds_person_tenant_and_field() {
         var reference = "POSEIDON_TEST_PROFILE_" + Guid.NewGuid().ToString("N").ToUpperInvariant();
         Environment.SetEnvironmentVariable(reference, Convert.ToBase64String(RandomNumberGenerator.GetBytes(32)));

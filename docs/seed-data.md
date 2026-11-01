@@ -127,3 +127,8 @@ Each existing synthetic Asset receives one add-missing empty unverified Observat
 ## FOUNDATION checkpoint F — photo_ref selection, AUTHORED / execution DEFERRED
 
 Existing add-missing empty PersonalProfiles and safe PersonalProfileRevisions receive nullable photo columns only. They remain null; IsPhotoSelection is false for synthetic revisions. No new entity or synthetic active photo, object, clean scan, identity verification or binding is seeded. Current audit expectations78/79 are unchanged and unobserved. New actual API/PostgreSQL authored coverage selects/clears an ordinary scanned synthetic photo, reseeds and asserts operator state and two immutable selection revisions/receipts remain unchanged. Migration/designer/snapshot and all execution remain DEFERRED. [Exact report](phases/FOUNDATION-ACCEPTANCE-BUNDLE-01.md).
+
+
+## CREW-IDENTITY-CLOSURE-01 — AUTHORED / NOT RUN
+
+New add-missing synthetic Persons now contain no name/employee values, protected ciphertext or identity verification. Existing historical/operator Person rows are never reseeded over. Separate controlled current-rights conversion may encrypt historical values atomically; reseed preserves that state and receipt/history. No new seed entity/verified identity/qualification/photo/key or identity revision is fabricated; prior audit expectations78/79 remain unchanged and unobserved. New API/PostgreSQL and DB-guard/reseed test source is authored, not executed. Migration100000/designer/snapshot require later real generation/parity/application. [Scope](tasks/crew-identity-closure-01.md).

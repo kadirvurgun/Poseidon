@@ -3,7 +3,7 @@ import { expect, type Page } from '@playwright/test'
 // Actual HTTPS API, EF/PostgreSQL and authenticated browser only. No lab is run by authoring.
 // Bundle operator provisions import.read/write + equipment.read/write for the disposable actor.
 // The restricted actor deliberately has no import capability. No role/signature is fabricated.
-function workbook(headers: string[], values: string[]) {
+export function workbook(headers: string[], values: string[]) {
   const escape = (s: string) => s.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('"', '&quot;')
   const row = (cells: string[], n: number) => `<row r="${n}">${cells.map((s, i) => `<c r="${String.fromCharCode(65 + i)}${n}" t="inlineStr"><is><t>${escape(s)}</t></is></c>`).join('')}</row>`
   const entries: [string, string][] = [

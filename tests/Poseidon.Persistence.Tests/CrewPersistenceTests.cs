@@ -24,6 +24,27 @@ public sealed class CrewPersistenceTests : IAsyncLifetime
         From = new(2026, 11, 1), To = new(2026, 12, 1)
     };
     [Fact]
+    public async Task Protected_identity_database_blocks_downgrade_plaintext_and_history_mutation_and_keeps_tenant_foreign_key() {
+        var vessel = data.Vessels.First(v => v.TenantId == data.Tenants[0].Id);
+        await using var db = Db(); var person = await db.Persons.SingleAsync(x => x.Id == vessel.Id, Ct);
+        // Empty protected declaration: no fake ciphertext, verified identity or credential is seeded.
+        person.IdentityStorageState = "ProtectedV1"; person.IdentityRevision = 1; person.FullName = null; person.EmployeeNo = null;
+        db.CrewIdentityRevisions.Add(new() { TenantId = db.TenantId, PersonId = person.Id, Revision = 1,
+            PolicyVersion = "synthetic-empty", Purpose = "synthetic-test", Operation = "Declaration", SavedAt = DateTimeOffset.UtcNow });
+        await db.SaveChangesAsync(Ct);
+        // Isolated test database only. Deliberately bypass EF to exercise independent DB guards.
+        foreach (var sql in new[] {
+            "UPDATE crew.\"Persons\" SET \"IdentityStorageState\" = 'LegacyUnavailable' WHERE \"IdentityStorageState\" = 'ProtectedV1'",
+            "UPDATE crew.\"Persons\" SET \"FullName\" = 'FICTIONAL forbidden plaintext' WHERE \"IdentityStorageState\" = 'ProtectedV1'",
+            "UPDATE crew.\"IdentityRevisions\" SET \"Operation\" = 'tampered'", "DELETE FROM crew.\"IdentityRevisions\"", "TRUNCATE crew.\"IdentityRevisions\""
+        }) await Assert.ThrowsAsync<Npgsql.PostgresException>(() => db.Database.ExecuteSqlRawAsync(sql, Ct));
+        var foreign = data.Vessels.First(v => v.TenantId != db.TenantId);
+        db.CrewIdentityRevisions.Add(new() { TenantId = db.TenantId, PersonId = foreign.Id, Revision = 1,
+            PolicyVersion = "synthetic-empty", Purpose = "synthetic-test", Operation = "Declaration", SavedAt = DateTimeOffset.UtcNow });
+        await Assert.ThrowsAsync<DbUpdateException>(() => db.SaveChangesAsync(Ct));
+        await using var verify = Db(foreign.TenantId); Assert.Empty(await verify.CrewIdentityRevisions.ToArrayAsync(Ct));
+    }
+    [Fact]
     public async Task Crew_reseed_preserves_operator_edits_and_never_creates_eligibility_or_receipts()
     {
         var vessel = data.Vessels.First(v => v.TenantId == data.Tenants[0].Id);

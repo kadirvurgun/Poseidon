@@ -15,7 +15,7 @@ public sealed partial class DirectoryWorkspaceTests
 {
     private string CrewUrl => $"vessels/{SeedVessel.Id}/crew";
     private CrewSaveCommand NewCrew(Guid? id = null) => new(id ?? Guid.NewGuid(), null, null, null, null,
-        null, new(2026, 11, 1), new(2026, 12, 1), null, null, null);
+        null, new(2026, 11, 1), new(2026, 12, 1), null, null, null, IdentityPolicyVersion: "synthetic-identity-v1", IdentityPurpose: "synthetic-crew-identity");
 
     [Fact]
     public async Task Crew_directory_write_and_spoofed_roles_do_not_grant_crew_access_or_counts()
@@ -98,7 +98,7 @@ public sealed partial class DirectoryWorkspaceTests
         await Token(client);
         Assert.Equal(HttpStatusCode.BadRequest, (await Send(client, CrewUrl, command with { To = command.From })).StatusCode);
         Assert.Equal(HttpStatusCode.NotFound, (await Send(client, CrewUrl, command with { PersonId = seed.Vessels.Last().Id })).StatusCode);
-        Assert.Equal(HttpStatusCode.NotFound, (await Send(client, CrewUrl, command with { PositionId = seed.Vessels.Last().Id })).StatusCode);
+        Assert.Equal(HttpStatusCode.Forbidden, (await Send(client, CrewUrl, command with { PositionId = seed.Vessels.Last().Id })).StatusCode);
         await using var db = Db(); Assert.False(await db.CrewAssignments.AnyAsync(x => x.Id == command.Id, Ct));
     }
     [Fact]
@@ -129,7 +129,10 @@ public sealed partial class DirectoryWorkspaceTests
     {
         using var host = Host(crewRead: true, crewWrite: true, crewIdentity: true); using var client = Client(host); await Token(client);
         var profile = (await client.GetFromJsonAsync<CrewProfile>($"/api/v1/{CrewUrl}/{SeedVessel.Id}", Ct))!;
-        var command = new CrewPersonCommand(profile.PersonVersion!.Value, "FICTIONAL amended name", null);
+        Assert.Equal(HttpStatusCode.OK, (await Send(client, $"{CrewUrl}/{SeedVessel.Id}/person/convert",
+            new CrewIdentityConversionCommand(profile.PersonVersion!.Value, "synthetic-identity-v1", "synthetic-crew-identity"))).StatusCode);
+        profile = (await client.GetFromJsonAsync<CrewProfile>($"/api/v1/{CrewUrl}/{SeedVessel.Id}", Ct))!;
+        var command = new CrewPersonCommand(profile.PersonVersion!.Value, "FICTIONAL amended name", null, "synthetic-identity-v1", "synthetic-crew-identity");
         var path = $"{CrewUrl}/{SeedVessel.Id}/person"; var key = Guid.NewGuid().ToString();
         Assert.Equal(HttpStatusCode.OK, (await Send(client, path, command, key, true)).StatusCode);
         Assert.Equal(HttpStatusCode.OK, (await Send(client, path, command, key, true)).StatusCode);

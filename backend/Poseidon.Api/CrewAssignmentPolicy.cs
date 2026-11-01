@@ -36,8 +36,9 @@ public static class CrewAssignmentSelectionEndpoints
         var selection = CrewEffectiveAssignment.Select(rows, date, now, policy.EffectiveStatuses, policy.Provenances, policy.RequireSourceObservation);
         var position = selection.AssignmentId == null ? null : await (from c in db.CrewAssignments.AsNoTracking().Where(x => x.Id == selection.AssignmentId)
             join p in db.CrewPositions.AsNoTracking() on new { c.TenantId, Id = c.PositionId, c.VesselId } equals new { p.TenantId, Id = (Guid?)p.Id, p.VesselId }
-            select new { p.Id, p.Rank, p.Capacity, p.Department, p.Provenance }).SingleOrDefaultAsync(h.RequestAborted);
-        return Results.Ok(new { selection.State, selection.AssignmentId, selection.VesselId, position, policyVersion = policy.Version, referenceDate = date, timeZone = zone.Id,
+            select p).SingleOrDefaultAsync(h.RequestAborted);
+        if (position != null && !CrewPositionPolicy.Current(h).Allows(position)) position = null;
+        return Results.Ok(new { selection.State, selection.AssignmentId, selection.VesselId, position = position == null ? null : new { position.Id, position.Rank, position.Capacity, position.Department, position.Provenance }, policyVersion = policy.Version, referenceDate = date, timeZone = zone.Id,
             authority = "UnverifiedDeclaration;NoQualificationOrSafetyDecision" });
     }
 }

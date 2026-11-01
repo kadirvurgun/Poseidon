@@ -1,3 +1,4 @@
+import { CrewIdentityHistory } from './CrewIdentityHistory'
 import { CrewPersonalFiles } from './CrewPersonalFiles'
 import { CrewPersonalProfile } from './CrewPersonalProfile'
 import { WorkspaceContextBar } from './WorkspaceContextBar'
@@ -17,7 +18,7 @@ const words = {
     prev: 'Previous', next: 'Next', roster: 'Back to roster', fleet: 'Back to vessel', unverified: 'Draft · unverified', expired: 'Session expired. Sign in again.',
     privacy: 'Identity, contact and health access are separate. Unavailable information remains Unknown.', saved: 'Draft saved.', reload: 'Discard and reload',
     eligibility: 'Eligibility', fitness: 'Fitness', certificate: 'Certificates', competence: 'Competence', contact: 'Contact', health: 'Health',
-    language: 'Language', rank: 'Rank', capacity: 'Capacity', period: 'Period', person: 'Person',
+    language: 'Language', department: 'Department', rank: 'Rank', capacity: 'Capacity', period: 'Period', person: 'Person',
   },
   tr: { title: 'Mürettebat listesi', profile: 'Personel profili', loading: 'Yükleniyor…', empty: 'Bu araçta atama yok.', denied: 'Mürettebat erişimi reddedildi.', error: 'Mürettebat servisine erişilemiyor.',
     save: 'Taslağı kaydet', retry: 'Tekrar dene', create: 'Personel ve atama ekle', edit: 'Atamayı düzenle', editPerson: 'Personeli düzenle', cancel: 'Vazgeç', name: 'Ad soyad', employee: 'Personel numarası',
@@ -28,7 +29,7 @@ const words = {
     prev: 'Önceki', next: 'Sonraki', roster: 'Listeye dön', fleet: 'Araca dön', unverified: 'Taslak · doğrulanmamış', expired: 'Oturum süresi doldu. Yeniden oturum açın.',
     privacy: 'Kimlik, iletişim ve sağlık erişimleri ayrıdır. Eksik bilgi Bilinmiyor olarak kalır.', saved: 'Taslak kaydedildi.', reload: 'Vazgeç ve yeniden yükle',
     eligibility: 'Uygunluk', fitness: 'Sağlık uygunluğu', certificate: 'Belgeler', competence: 'Yetkinlik', contact: 'İletişim', health: 'Sağlık',
-    language: 'Dil', rank: 'Rütbe', capacity: 'Kapasite', period: 'Dönem', person: 'Personel',
+    language: 'Dil', department: 'Bölüm', rank: 'Rütbe', capacity: 'Kapasite', period: 'Dönem', person: 'Personel',
   },
 }
 type Editor = { command: crew.CrewCommand; key: string }
@@ -46,6 +47,8 @@ export function CrewWorkspace({ vessel, assignment }: { vessel: string; assignme
   const [fileDirty, setFileDirty] = useState(false)
   const childDirty = certificateDirty || profileDirty || fileDirty
   const [personMode, setPersonMode] = useState(false)
+  const [conversion, setConversion] = useState(false)
+  const [positionVersion, setPositionVersion] = useState<string | null>(null)
   const [editor, setEditor] = useState<Editor | null>(null); const [saving, setSaving] = useState(false)
   const [result, setResult] = useState<'idle' | 'saved' | 'uncertain' | 'conflict' | 'invalid' | 'denied' | 'expired'>('idle')
   const [online, setOnline] = useState(navigator.onLine)
@@ -65,13 +68,13 @@ export function CrewWorkspace({ vessel, assignment }: { vessel: string; assignme
       const value = await crew.roster(vessel, offset, c.signal)
       const record = assignment ? await crew.profile(vessel, assignment, c.signal) : null
       const currentAssignment = assignment ? await request<{ state: string; vesselId?: string; assignmentId?: string; policyVersion?: string; position?: { rank: string | null; department: string | null } | null }>(`vessels/${encodeURIComponent(vessel)}/crew/${encodeURIComponent(assignment)}/current-assignment`, c.signal) : null
-      const refs = value.canWrite ? await crew.positions(vessel, c.signal) : []
+      const refs = value.canWrite ? await crew.positionPolicy(vessel, c.signal) : { items: [], version: null, state: 'Unavailable' }
       if (active) {
         const old = knownIdentity.current
         if (old && (old.actorId !== identity.actorId || old.tenantId !== identity.tenantId) || !value.canWrite || !value.canWriteIdentity) {
           setEditor(previous => previous && (old?.actorId !== identity.actorId || old?.tenantId !== identity.tenantId || !value.canWrite || previous.command.fullName !== null || previous.command.employeeNo !== null) ? null : previous)
         }
-        knownIdentity.current = identity; setUser(identity); setPage(value); setDetail(record); setCurrent(currentAssignment); setPositions(refs); setPaused(false)
+        knownIdentity.current = identity; setUser(identity); setPage(value); setDetail(record); setCurrent(currentAssignment); setPositions(refs.items); setPositionVersion(refs.version); setPaused(false)
       }
     }).catch(e => { if (active) { clear(); setPaused(false); setError(e instanceof ApiError ? e.status : 503) } })
       .finally(() => { if (active) setLoading(false); clearTimeout(timer) })
@@ -91,10 +94,11 @@ export function CrewWorkspace({ vessel, assignment }: { vessel: string; assignme
   }, [editor, childDirty])
   useEffect(() => { document.documentElement.lang = language; document.title = `POSEIDON · ${assignment ? t.profile : t.title}` }, [language, assignment, t])
   useEffect(() => { if (destination && dialog.current && !dialog.current.open) dialog.current.showModal() }, [destination])
-  const start = (row?: crew.CrewRow, personal = false) => { setPersonMode(personal); setResult('idle'); setEditor({ key: crypto.randomUUID(), command: {
+  const start = (row?: crew.CrewRow, personal = false, convert = false) => { setPersonMode(personal); setConversion(convert); setResult('idle'); setEditor({ key: crypto.randomUUID(), command: {
     id: row?.id ?? crypto.randomUUID(), personId: row?.personId ?? null, baseVersion: personal ? detail?.personVersion ?? null : row?.version ?? null,
     fullName: personal ? row?.fullName ?? null : null, employeeNo: personal ? row?.employeeNo ?? null : null, positionId: row?.positionId ?? null, from: row?.from ?? null, to: row?.to ?? null,
     contractEndDate: row?.contractEndDate ?? null, watchGroup: row?.watchGroup ?? null, sourceObservedAt: row?.sourceObservedAt ?? null, declaredStatus: null, assignmentPolicyVersion: page?.declarationPolicy?.version ?? null,
+    identityPolicyVersion: (detail?.identityPolicy ?? page?.identityPolicy)?.version ?? null, identityPurpose: (detail?.identityPolicy ?? page?.identityPolicy)?.purpose ?? null, positionPolicyVersion: positionVersion,
   } }) }
   const change = (field: keyof crew.CrewCommand, value: string) => setEditor(old => old ? { ...old, command: { ...old.command, [field]: value || null } } : null)
   const save = async () => {
@@ -102,7 +106,7 @@ export function CrewWorkspace({ vessel, assignment }: { vessel: string; assignme
     inFlight.current = true; setSaving(true)
     const c = new AbortController(); const timer = setTimeout(() => c.abort(), 15000)
     try {
-      await (personMode ? crew.savePerson : crew.saveCrew)(vessel, editor.command, user.csrfToken, editor.key, c.signal)
+      await (conversion ? crew.convertPerson : personMode ? crew.savePerson : crew.saveCrew)(vessel, editor.command, user.csrfToken, editor.key, c.signal)
       setEditor(null); setResult('saved'); setGeneration(v => v + 1)
     } catch (e) {
       if (e instanceof ApiError && (e.status === 401 || e.status === 403)) { clear(); setResult(e.status === 401 ? 'expired' : 'denied') }
@@ -121,20 +125,22 @@ export function CrewWorkspace({ vessel, assignment }: { vessel: string; assignme
       {loading && <p role="status">{t.loading}</p>}
       {error > 0 && <div role="alert"><p>{error === 401 ? t.expired : error === 403 || error === 404 ? t.denied : t.error}</p><button onClick={() => setGeneration(v => v + 1)}>{t.retry}</button>{error === 401 && <a href={`/api/v1/auth/login?returnUrl=${encodeURIComponent(window.location.pathname)}`}>{t.expired}</a>}</div>}
       {result !== 'idle' && <p role={result === 'saved' ? 'status' : 'alert'}>{t[result]}</p>}
-      {page && online && !paused && !assignment && <><button disabled={!page.canWrite || !online || !!editor || childDirty} onClick={() => start()}>{t.create}</button>
-        {page.items.length === 0 ? <p>{t.empty}</p> : <div className="product-table"><table><thead><tr><th>{t.person}</th><th>{t.rank}</th><th>{t.capacity}</th><th>{language === 'tr' ? 'Uyruk' : 'Nationality'}</th><th>{t.period}</th></tr></thead><tbody>{page.items.map(item => <tr key={item.id}><td><a href={`${rosterHref}/crew-profile/${item.id}`} onClick={e => { e.preventDefault(); navigate(`${rosterHref}/crew-profile/${item.id}`) }}>{item.fullName ?? t.withheld}</a></td><td>{nullable(item.rank)}</td><td>{nullable(item.capacity)}</td><td>{item.nationality ?? (item.nationalityState === 'Withheld' ? t.withheld : t.unknown)}</td><td>{nullable(item.from)} — {nullable(item.to)}</td></tr>)}</tbody></table></div>}
+      {page && online && !paused && !assignment && <><button disabled={!page.canWrite || !page.canWriteIdentity || !page.identityPolicy || !online || !!editor || childDirty} onClick={() => start()}>{t.create}</button>
+        {page.items.length === 0 ? <p>{t.empty}</p> : <div className="product-table"><table><thead><tr><th>{t.person}</th><th>{t.rank}</th><th>{t.capacity}</th><th>{t.department}</th><th>{language === 'tr' ? 'Uyruk' : 'Nationality'}</th><th>{t.period}</th></tr></thead><tbody>{page.items.map(item => <tr key={item.id}><td><a href={`${rosterHref}/crew-profile/${item.id}`} onClick={e => { e.preventDefault(); navigate(`${rosterHref}/crew-profile/${item.id}`) }}>{item.fullName ?? t.withheld}</a></td><td>{nullable(item.rank)}</td><td>{nullable(item.capacity)}</td><td>{nullable(item.department)}</td><td>{item.nationality ?? (item.nationalityState === 'Withheld' ? t.withheld : t.unknown)}</td><td>{nullable(item.from)} — {nullable(item.to)}</td></tr>)}</tbody></table></div>}
         <div className="product-pagination"><button disabled={offset === 0 || !!editor || childDirty} onClick={() => setOffset(v => v - 25)}>{t.prev}</button><button disabled={!page.hasMore || !!editor || childDirty} onClick={() => setOffset(v => v + 25)}>{t.next}</button></div></>}
       {current && !paused && <section aria-label={language === 'tr' ? 'Güncel atama' : 'Current assignment'}><h2>{language === 'tr' ? 'Güncel atama' : 'Current assignment'}</h2><p>{current.state === 'ConfiguredEffectiveDeclaration' ? (language === 'tr' ? 'Yapılandırılmış dönem ve durumla eşleşen doğrulanmamış beyan' : 'Unverified declaration matching configured period and state') : current.state === 'PolicyUnavailable' ? (language === 'tr' ? 'Güncellik politikası yapılandırılmamış' : 'Effective assignment policy unavailable') : current.state === 'Ambiguous' ? (language === 'tr' ? 'Birden fazla aday: inceleme gerekli' : 'Multiple candidates: review required') : (language === 'tr' ? 'Güncel atama bulunamadı' : 'No current assignment')}</p>{current.assignmentId && <><p>{current.position?.rank ?? t.unknown} · {current.position?.department ?? t.unknown}</p><a href={`/app/crew-roster/${current.vesselId}/crew-profile/${current.assignmentId}`} onClick={e => { e.preventDefault(); navigate(`/app/crew-roster/${current.vesselId}/crew-profile/${current.assignmentId}`) }}>{language === 'tr' ? 'Güncel atamayı aç' : 'Open current assignment'}</a></>}</section>}
-      {page && online && !paused && row && <section><h2>{row.fullName ?? t.withheld}</h2><dl><dt>{t.employee}</dt><dd>{row.employeeNo ?? t.withheld}</dd><dt>{t.position}</dt><dd>{nullable(row.rank)} / {nullable(row.capacity)}</dd><dt>{t.period}</dt><dd>{nullable(row.from)} — {nullable(row.to)}</dd><dt>{t.eligibility}</dt><dd>{t.unknown}</dd><dt>{t.fitness}</dt><dd>{t.unknown}</dd><dt>{t.certificate}</dt><dd>{t.unknown}</dd><dt>{t.competence}</dt><dd>{t.unknown}</dd><dt>{t.contact}</dt><dd>{t.withheld}</dd><dt>{t.health}</dt><dd>{t.withheld}</dd></dl><button disabled={!page.canWrite || !!editor || childDirty || !online} onClick={() => start(row)}>{t.edit}</button>{page.canWrite && page.canWriteIdentity && detail?.personVersion && <button disabled={!!editor || childDirty || !online} onClick={() => start(row, true)}>{t.editPerson}</button>}</section>}
+      {page && online && !paused && row && <section><h2>{row.fullName ?? t.withheld}</h2>{row.privacyScope === 'LegacyUnavailable' && <p role="status">{language === 'tr' ? 'Eski kimlik verisi: kontrollü dönüşüm gerekli.' : 'Legacy identity unavailable: controlled conversion required.'}</p>}{row.privacyScope === 'Unavailable' && <p role="alert">{language === 'tr' ? 'Korumalı kimlik kullanılamıyor.' : 'Protected identity unavailable.'}</p>}<dl><dt>{t.employee}</dt><dd>{row.employeeNo ?? t.withheld}</dd><dt>{t.position}</dt><dd>{nullable(row.rank)} / {nullable(row.capacity)}</dd><dt>{t.department}</dt><dd>{nullable(row.department)}</dd><dt>{t.period}</dt><dd>{nullable(row.from)} — {nullable(row.to)}</dd><dt>{t.eligibility}</dt><dd>{t.unknown}</dd><dt>{t.fitness}</dt><dd>{t.unknown}</dd><dt>{t.certificate}</dt><dd>{t.unknown}</dd><dt>{t.competence}</dt><dd>{t.unknown}</dd><dt>{t.contact}</dt><dd>{t.withheld}</dd><dt>{t.health}</dt><dd>{t.withheld}</dd></dl><button disabled={!page.canWrite || !!editor || childDirty || !online} onClick={() => start(row)}>{t.edit}</button>{page.canWrite && page.canWriteIdentity && detail?.personVersion && <><button disabled={!!editor || childDirty || !online || row.privacyScope !== 'IdentityPermitted'} onClick={() => start(row, true)}>{t.editPerson}</button>{row.privacyScope === 'LegacyUnavailable' && detail?.canConvertIdentity && <button disabled={!!editor || childDirty || !online} onClick={() => start(row, true, true)}>{language === 'tr' ? 'Eski kimliği korumalı depoya dönüştür' : 'Convert legacy identity to protected storage'}</button>}</>}</section>}
       {editor && !paused && <form onSubmit={e => { e.preventDefault(); void save() }}><h2>{t.dirty}</h2><fieldset disabled={saving || result === 'uncertain' || result === 'conflict'}>
-        {(personMode || !editor.command.personId) && page?.canWriteIdentity && <><label>{t.name}<input maxLength={200} value={editor.command.fullName ?? ''} onChange={e => change('fullName', e.target.value)} /></label><label>{t.employee}<input maxLength={64} value={editor.command.employeeNo ?? ''} onChange={e => change('employeeNo', e.target.value)} /></label></>}
-        {!personMode && <><label>{t.position}<select value={editor.command.positionId ?? ''} onChange={e => change('positionId', e.target.value)}><option value="">{t.unknown}</option>{positions.map(p => <option value={p.id} key={p.id}>{p.code} · {nullable(p.rank)} · {nullable(p.capacity)}</option>)}</select></label>
+        {!conversion && (personMode || !editor.command.personId) && page?.canWriteIdentity && <><label>{t.name}<input maxLength={200} value={editor.command.fullName ?? ''} onChange={e => change('fullName', e.target.value)} /></label><label>{t.employee}<input disabled={personMode && detail?.identityPolicy?.employeeNumberMode === 'ImmutableAfterCapture' && row?.employeeNo != null} maxLength={64} value={editor.command.employeeNo ?? ''} onChange={e => change('employeeNo', e.target.value)} /></label></>}
+        {conversion && <p>{language === 'tr' ? 'Mevcut eski kimlik değerlerini koruyarak korumalı depoya dönüştür.' : 'Preserve existing legacy identity values and convert to protected storage.'}</p>}
+        {!personMode && <>{!positionVersion && <p role="status">{language === 'tr' ? 'Kontrollü pozisyon listesi kullanılamıyor. Eksik taslakta pozisyon bilinmiyor kalabilir.' : 'Controlled position lookup unavailable. An incomplete draft may keep position unknown.'}</p>}<label>{t.position}<select value={editor.command.positionId ?? ''} onChange={e => change('positionId', e.target.value)}><option value="">{t.unknown}</option>{positions.map(p => <option value={p.id} key={p.id}>{p.code} · {nullable(p.rank)} · {nullable(p.capacity)} · {nullable(p.department)}</option>)}</select></label>
         <label>{t.from}<input type="date" value={editor.command.from ?? ''} onChange={e => change('from', e.target.value)} /></label><label>{t.to}<input type="date" value={editor.command.to ?? ''} onChange={e => change('to', e.target.value)} /></label>
         <label>{t.contract}<input type="date" value={editor.command.contractEndDate ?? ''} onChange={e => change('contractEndDate', e.target.value)} /></label>{page?.declarationPolicy && <label>{language === 'tr' ? 'Beyan edilen atama durumu' : 'Declared assignment state'}<select value={editor.command.declaredStatus ?? ''} onChange={e => change('declaredStatus', e.target.value)}><option value="">{language === 'tr' ? 'Mevcut durumu koru' : 'Preserve current state'}</option>{page.declarationPolicy.statuses.map(status => <option key={status}>{status}</option>)}</select></label>}
         <label>{t.watch}<input maxLength={64} value={editor.command.watchGroup ?? ''} onChange={e => change('watchGroup', e.target.value)} /></label></>}
       </fieldset><button type="submit" disabled={saving || !online || result === 'conflict'}>{result === 'uncertain' ? t.retry : t.save}</button>
         <button type="button" disabled={saving || result === 'uncertain'} onClick={() => { setEditor(null); setResult('idle'); setGeneration(v => v + 1) }}>{result === 'conflict' ? t.reload : t.cancel}</button></form>}
       {destination && <dialog ref={dialog} aria-label={t.dirty} onCancel={() => setDestination(null)}><p>{t.dirty}</p><button autoFocus disabled={saving || result === 'uncertain'} onClick={() => window.location.assign(destination)}>{t.reload}</button><button onClick={() => setDestination(null)}>{t.cancel}</button></dialog>}
+      {assignment && detail && user && !editor && !paused && online && error === 0 && <CrewIdentityHistory key={`identity:${user.actorId}:${user.tenantId}:${user.csrfToken}:${vessel}:${assignment}`} vessel={vessel} assignment={assignment} language={language} />}
       {assignment && detail && user && !editor && !paused && error === 0 && <CrewPersonalProfile key={`profile:${user.actorId}:${user.tenantId}:${user.csrfToken}:${vessel}:${assignment}`} vessel={vessel} assignment={assignment} language={language} csrf={user.csrfToken} onDirty={setProfileDirty} />}
       {assignment && row && detail && user && !editor && !paused && error === 0 && <CrewPersonalFiles key={`files:${user.actorId}:${user.tenantId}:${user.csrfToken}:${vessel}:${assignment}`} vessel={vessel} assignment={assignment} person={row.personId} language={language} csrf={user.csrfToken} onDirty={setFileDirty} />}
       {assignment && detail && user && !editor && !paused && error === 0 && <CertificatePanel key={`${user.actorId}:${user.tenantId}:${user.csrfToken}:${vessel}:${assignment}`} vessel={vessel} assignment={assignment} person={row?.personId} language={language} csrf={user.csrfToken} onDirty={setCertificateDirty} />}

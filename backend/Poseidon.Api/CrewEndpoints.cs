@@ -12,11 +12,15 @@ namespace Poseidon.Api;
 public sealed record CrewSaveCommand(Guid Id, Guid? PersonId, uint? BaseVersion, string? FullName,
     string? EmployeeNo, Guid? PositionId, DateOnly? From, DateOnly? To, DateOnly? ContractEndDate,
     string? WatchGroup, DateTimeOffset? SourceObservedAt, [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? DeclaredStatus = null,
-    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? AssignmentPolicyVersion = null);
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? AssignmentPolicyVersion = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? IdentityPolicyVersion = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? IdentityPurpose = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? PositionPolicyVersion = null);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
-public sealed record CrewPositionCommand(Guid Id, string Code, string? Rank, string? Capacity, string? Department);
+public sealed record CrewPositionCommand(Guid Id, string Code, string? Rank, string? Capacity, string? Department, string? PolicyVersion = null);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
-public sealed record CrewPersonCommand(uint BaseVersion, string? FullName, string? EmployeeNo);
+public sealed record CrewPersonCommand(uint BaseVersion, string? FullName, string? EmployeeNo,
+    string? PolicyVersion = null, string? Purpose = null, bool FullNamePresent = true, bool EmployeeNoPresent = true);
 public sealed record CrewSavedDto(Guid Id, long Revision, uint Version, bool Replayed);
 public sealed record CrewRow(Guid Id, Guid VesselId, Guid PersonId, uint Version, long Revision,
     Guid? PositionId, string? Rank, string? Capacity, string? Department, DateOnly? From, DateOnly? To,
@@ -25,14 +29,16 @@ public sealed record CrewRow(Guid Id, Guid VesselId, Guid PersonId, uint Version
     string EligibilityState = "Unknown", string WorkRestState = "Unknown", string CertificateState = "Unknown",
     string CompetenceState = "Unknown", string ContactStatus = "Unavailable", string? Nationality = null, string NationalityState = "Withheld");
 public sealed record CrewDeclarationPolicyDto(string Version, string[] Statuses);
-public sealed record CrewPage(CrewRow[] Items, int Offset, bool HasMore, bool CanWrite, bool CanWriteIdentity, CrewDeclarationPolicyDto? DeclarationPolicy = null);
+public sealed record CrewIdentityPolicyDto(string Version, string Purpose, string EmployeeNumberMode);
+public sealed record CrewPage(CrewRow[] Items, int Offset, bool HasMore, bool CanWrite, bool CanWriteIdentity, CrewDeclarationPolicyDto? DeclarationPolicy = null, CrewIdentityPolicyDto? IdentityPolicy = null);
 public sealed record CrewProfile(CrewRow Assignment, string EmploymentState, string FitnessState,
-    string IdentityStatus, string ContactStatus, string HealthStatus, uint? PersonVersion);
+    string IdentityStatus, string ContactStatus, string HealthStatus, uint? PersonVersion, CrewIdentityPolicyDto? IdentityPolicy = null, bool CanConvertIdentity = false);
 
 public static class CrewEndpoints
 {
     public static void MapCrew(this IEndpointRouteBuilder app)
     {
+        app.MapCrewIdentity(); app.MapCrewPositionPolicy();
         var group = app.MapGroup("/api/v1/vessels/{vessel:guid}/crew").RequireAuthorization("DirectoryRead");
         group.MapGet("", List).WithName("CrewList").Produces<CrewPage>();
         group.MapGet("/{id:guid}", Profile).WithName("CrewProfile").Produces<CrewProfile>();
@@ -70,7 +76,7 @@ public static class CrewEndpoints
         select new CrewRow(c.Id, c.VesselId, c.PersonId, c.Version, c.Revision, c.PositionId,
             pos == null ? null : pos.Rank, pos == null ? null : pos.Capacity, pos == null ? null : pos.Department,
             c.From, c.To, c.ContractEndDate, c.WatchGroup, c.Status, c.Provenance,
-            identity ? p.FullName : null, identity ? p.EmployeeNo : null, identity ? "IdentityPermitted" : "Withheld",
+            null, null, "Withheld",
             c.SourceObservedAt, "Unknown", "Unknown", "Unknown", "Unknown", "Unavailable", null, "Withheld");
 
     private static async Task<CrewRow[]> Nationalities(CrewRow[] rows, HttpContext h, PoseidonDbContext db) {
@@ -96,12 +102,12 @@ public static class CrewEndpoints
             h.Request.Query.ContainsKey("offset") && !int.TryParse(h.Request.Query["offset"], out _)) return await Fail(h, 400, "invalid_request");
         var offset = h.Request.Query.ContainsKey("offset") ? int.Parse(h.Request.Query["offset"]!) : 0;
         if (offset < 0 || offset > 100000) return await Fail(h, 400, "invalid_request");
-        var rows = await Nationalities(await Rows(db, vessel, Identity(a), offset: offset).ToArrayAsync(ct), h, db);
+        var rows = await Identities(await Nationalities(await Rows(db, vessel, Identity(a), offset: offset).ToArrayAsync(ct), h, db), h, db);
         await Observe(h, "CrewRead", vessel);
         var policy = h.RequestServices.GetRequiredService<CrewAssignmentPolicy>();
         var declaration = policy.Configured && a.Permissions.Contains("crew.assignment.declare") && Write(a, vessel)
             ? new CrewDeclarationPolicyDto(policy.Version, new[] { "Draft" }.Concat(policy.EffectiveStatuses).Concat(policy.PlannedStatuses).Distinct().ToArray()) : null;
-        return Results.Ok(new CrewPage(rows.Take(25).ToArray(), offset, rows.Length > 25, Write(a, vessel), IdentityWrite(a), declaration));
+        return Results.Ok(new CrewPage(rows.Take(25).ToArray(), offset, rows.Length > 25, Write(a, vessel), IdentityPolicy(h, true) != null, declaration, IdentityPolicy(h, true)));
     }
     private static async Task<IResult> Profile(Guid vessel, Guid id, HttpContext h, PoseidonDbContext db)
     {
@@ -110,41 +116,35 @@ public static class CrewEndpoints
         if (!await Scope(db, a, vessel, h.RequestAborted)) return await Fail(h, 404, "resource_not_found");
         var row = await Rows(db, vessel, Identity(a), id, limit: 1).SingleOrDefaultAsync(h.RequestAborted);
         if (row == null) return await Fail(h, 404, "resource_not_found");
-        row = (await Nationalities([row], h, db))[0];
-        var personVersion = IdentityWrite(a) ? await db.Persons.Where(x => x.Id == row.PersonId).Select(x => (uint?)x.Version).SingleAsync(h.RequestAborted) : null;
+        row = (await Identities(await Nationalities([row], h, db), h, db))[0];
+        var personVersion = IdentityPolicy(h, true) != null ? await db.Persons.Where(x => x.Id == row.PersonId).Select(x => (uint?)x.Version).SingleAsync(h.RequestAborted) : null;
         await Observe(h, "CrewProfile", vessel);
-        return Results.Ok(new CrewProfile(row, "Unknown", "Unknown", Identity(a) ? "Permitted" : "Withheld", "Withheld", "Withheld", personVersion));
+        return Results.Ok(new CrewProfile(row, "Unknown", "Unknown", row.PrivacyScope, "Withheld", "Withheld", personVersion, IdentityPolicy(h, true), a.Permissions.Contains("crew.identity.convert") && IdentityPolicy(h, true) != null));
     }
-    private static async Task<IResult> SavePerson(Guid vessel, Guid id, CrewPersonCommand command, HttpContext h, PoseidonDbContext db, IAntiforgery csrf)
-    {
-        var a = Actor(h); var ct = h.RequestAborted;
-        if (!Write(a, vessel) || !IdentityWrite(a)) return await Fail(h, 403, "permission_denied");
-        if (!await Scope(db, a, vessel, ct)) return await Fail(h, 404, "resource_not_found");
-        try { await csrf.ValidateRequestAsync(h); } catch (AntiforgeryValidationException) { return await Fail(h, 400, "csrf_invalid"); }
-        if (command.FullName?.Length > 200 || command.EmployeeNo?.Length > 64 || command.BaseVersion == 0) return await Fail(h, 400, "validation_failed");
-        var key = h.Request.Headers["Idempotency-Key"].ToString();
-        if (!Guid.TryParseExact(key, "D", out _)) return await Fail(h, 400, "invalid_idempotency_key");
-        var person = await (from c in db.CrewAssignments.Where(x => x.VesselId == vessel && x.Id == id)
-            join p in db.Persons on new { c.TenantId, Id = c.PersonId } equals new { p.TenantId, p.Id } select p).SingleOrDefaultAsync(ct);
-        if (person == null) return await Fail(h, 404, "resource_not_found");
-        var fingerprint = Convert.ToHexString(SHA256.HashData(JsonSerializer.SerializeToUtf8Bytes(new { vessel, id, command })));
-        await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "CrewSave", "Attempted", resourceId: vessel);
-        await using var tx = await db.Database.BeginTransactionAsync(ct);
-        var receipt = await db.CommandReceipts.AsNoTracking().SingleOrDefaultAsync(x => x.ActorId == a.Id && x.Key == key, ct);
-        if (receipt != null) {
-            if (receipt.Action != "CrewPersonSave" || receipt.Fingerprint != fingerprint || receipt.ResourceId != person.Id) return await Fail(h, 409, "idempotency_key_reused");
-            return Results.Ok(new { version = receipt.RegisterVersion, replayed = true });
-        }
-        if (person.Version != command.BaseVersion) return await Fail(h, 409, "version_conflict");
-        person.FullName = command.FullName; person.EmployeeNo = command.EmployeeNo;
-        // Even unchanged declarations observe the original xmin; no no-op race bypass.
-        db.Entry(person).Property(x => x.FullName).IsModified = true;
-        try {
-            await db.SaveChangesAsync(ct);
-            db.CommandReceipts.Add(new() { TenantId = a.TenantId, ActorId = a.Id, Key = key, Action = "CrewPersonSave", Fingerprint = fingerprint,
-                ResourceId = person.Id, RegisterVersion = person.Version, CommittedAt = DateTimeOffset.UtcNow });
-            await db.SaveChangesAsync(ct); await tx.CommitAsync(ct); return Results.Ok(new { person.Version, replayed = false });
-        } catch (DbUpdateException) { await tx.RollbackAsync(ct); return await Fail(h, 409, "version_conflict"); }
+    private static Task<IResult> SavePerson(Guid vessel, Guid id, CrewPersonCommand command, HttpContext h, PoseidonDbContext db) =>
+        CrewIdentityEndpoints.Apply(vessel, id, command, h, db);
+
+    private static CrewIdentityPolicyDto? IdentityPolicy(HttpContext h, bool write) {
+        var policy = h.RequestServices.GetRequiredService<CrewIdentityPolicy>();
+        return policy.Allows(Actor(h), write) ? new(policy.Version, policy.Purpose, policy.EmployeeNumberMode) : null;
+    }
+    private static async Task<CrewRow[]> Identities(CrewRow[] rows, HttpContext h, PoseidonDbContext db) {
+        var lookup = CrewPositionPolicy.Current(h);
+        var positionIds = rows.Where(x => x.PositionId != null).Select(x => x.PositionId).ToArray();
+        var currentPositions = await db.CrewPositions.AsNoTracking().Where(x => positionIds.Contains(x.Id)).ToArrayAsync(h.RequestAborted);
+        rows = rows.Select(row => row.PositionId == null || currentPositions.Any(p => p.Id == row.PositionId && p.VesselId == row.VesselId && lookup.Allows(p))
+            ? row : row with { Rank = null, Capacity = null, Department = null }).ToArray();
+        if (IdentityPolicy(h, false) == null) return rows;
+        var protection = h.RequestServices.GetRequiredService<CrewProfileProtection>();
+        var ids = rows.Select(x => x.PersonId).ToArray();
+        var persons = await db.Persons.AsNoTracking().Where(x => ids.Contains(x.Id)).ToDictionaryAsync(x => x.Id, h.RequestAborted);
+        return rows.Select(row => {
+            var p = persons[row.PersonId];
+            if (p.IdentityStorageState != "ProtectedV1") return row with { PrivacyScope = "LegacyUnavailable" };
+            try { var value = CrewIdentityStorage.Open(p, protection);
+                return row with { FullName = value.Name, EmployeeNo = value.Employee, PrivacyScope = "IdentityPermitted" };
+            } catch (CryptographicException) { return row with { PrivacyScope = "Unavailable" }; }
+        }).ToArray();
     }
     private static async Task<IResult> History(Guid vessel, Guid id, HttpContext h, PoseidonDbContext db)
     {
@@ -161,8 +161,9 @@ public static class CrewEndpoints
         var a = Actor(h);
         if (!Read(a)) return await Fail(h, 403, "permission_denied");
         if (!await Scope(db, a, vessel, h.RequestAborted)) return await Fail(h, 404, "resource_not_found");
-        var rows = await db.CrewPositions.AsNoTracking().Where(x => x.VesselId == vessel).OrderBy(x => x.Code).Take(200)
-            .Select(x => new { x.Id, x.Code, x.Rank, x.Capacity, x.Department, x.Provenance }).ToArrayAsync(h.RequestAborted);
+        var stored = await db.CrewPositions.AsNoTracking().Where(x => x.VesselId == vessel).OrderBy(x => x.Code).ToArrayAsync(h.RequestAborted);
+        var rows = stored.Where(x => CrewPositionPolicy.Current(h).Allows(x)).Take(200)
+            .Select(x => new { x.Id, x.Code, x.Rank, x.Capacity, x.Department, x.Provenance }).ToArray();
         await Observe(h, "CrewPositions", vessel); return Results.Ok(rows);
     }
     private static async Task<IResult> AddPosition(Guid vessel, CrewPositionCommand command, HttpContext h, PoseidonDbContext db, IAntiforgery csrf)
@@ -173,6 +174,12 @@ public static class CrewEndpoints
         try { await csrf.ValidateRequestAsync(h); } catch (AntiforgeryValidationException) { return await Fail(h, 400, "csrf_invalid"); }
         if (command.Id == Guid.Empty || string.IsNullOrWhiteSpace(command.Code) || command.Code.Length > 64 ||
             command.Rank?.Length > 100 || command.Capacity?.Length > 100 || command.Department?.Length > 100) return await Fail(h, 400, "validation_failed");
+        var lookupPolicy = CrewPositionPolicy.Current(h);
+        if (!lookupPolicy.Configured) return await Fail(h, 403, "field_policy_denied");
+        var rule = lookupPolicy.Positions.SingleOrDefault(x => x.TenantId == a.TenantId && x.VesselId == vessel && x.PositionId == command.Id);
+        var proposed = new CrewPosition { TenantId = a.TenantId, Id = command.Id, VesselId = vessel, Code = command.Code,
+            Rank = command.Rank, Capacity = command.Capacity, Department = command.Department, Provenance = rule?.Provenance ?? "UserDeclaredUnverified" };
+        if (command.PolicyVersion != lookupPolicy.Version || !lookupPolicy.Allows(proposed)) return await Fail(h, 403, "field_policy_denied");
         // Client UUID makes retry safe; conflicting edits cannot overwrite the existing reference.
         var old = await db.CrewPositions.SingleOrDefaultAsync(x => x.Id == command.Id, h.RequestAborted);
         if (old != null) {
@@ -180,15 +187,14 @@ public static class CrewEndpoints
                 return await Fail(h, 409, "version_conflict");
             await Observe(h, "CrewPositions", vessel); return Results.Ok(new { old.Id });
         }
-        db.CrewPositions.Add(new() { TenantId = a.TenantId, Id = command.Id, VesselId = vessel, Code = command.Code,
-            Rank = command.Rank, Capacity = command.Capacity, Department = command.Department });
+        db.CrewPositions.Add(proposed);
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "CrewSave", "Attempted", resourceId: vessel);
         try { await db.SaveChangesAsync(h.RequestAborted); return Results.Ok(new { command.Id }); }
         catch (DbUpdateException) { return await Fail(h, 409, "version_conflict"); }
     }
 
     internal static bool ValidInput(CrewSaveCommand command) => command.Id != Guid.Empty && command.FullName?.Length is not > 200 &&
-        command.EmployeeNo?.Length is not > 64 && command.WatchGroup?.Length is not > 64 && CrewPeriod.Valid(command.From, command.To) &&
+        command.EmployeeNo?.Length is not > 64 && CrewIdentityData.Valid(command.FullName, command.EmployeeNo) && command.WatchGroup?.Length is not > 64 && CrewPeriod.Valid(command.From, command.To) &&
         !(command.SourceObservedAt > DateTimeOffset.UtcNow);
     private static Task<IResult> Save(Guid vessel, CrewSaveCommand command, HttpContext h, PoseidonDbContext db, IAntiforgery csrf) => ApplyImport(vessel, command, h, db, csrf, false);
     internal static async Task<IResult> ApplyImport(Guid vessel, CrewSaveCommand command, HttpContext h, PoseidonDbContext db, IAntiforgery csrf, bool imported)
@@ -198,6 +204,13 @@ public static class CrewEndpoints
         if (!await Scope(db, a, vessel, ct)) return await Fail(h, 404, "resource_not_found");
         try { await csrf.ValidateRequestAsync(h); } catch (AntiforgeryValidationException) { return await Fail(h, 400, "csrf_invalid"); }
         if ((command.FullName != null || command.EmployeeNo != null) && !IdentityWrite(a)) return await Fail(h, 403, "permission_denied");
+        var identityPolicy = h.RequestServices.GetRequiredService<CrewIdentityPolicy>();
+        var protection = h.RequestServices.GetRequiredService<CrewProfileProtection>();
+        if (command.FullName != null || command.EmployeeNo != null) {
+            if (!identityPolicy.Allows(a, true) || command.IdentityPolicyVersion != identityPolicy.Version || command.IdentityPurpose != identityPolicy.Purpose)
+                return await Fail(h, 403, "field_policy_denied");
+            if (!protection.Available) return await Fail(h, 503, "protected_storage_unavailable");
+        }
         var assignmentPolicy = h.RequestServices.GetRequiredService<CrewAssignmentPolicy>();
         if (!assignmentPolicy.CanDeclare(command.DeclaredStatus, command.AssignmentPolicyVersion, a)) return await Fail(h, 403, "assignment_policy_denied");
         if (!ValidInput(command))
@@ -220,6 +233,8 @@ public static class CrewEndpoints
             return await Fail(h, 409, "version_conflict");
         if (assignment != null && (command.PersonId != assignment.PersonId || command.FullName != null || command.EmployeeNo != null))
             return await Fail(h, 400, "invalid_request");
+        if (!CrewPositionPolicy.Current(h).AllowsReference(a.TenantId, vessel, command.PositionId, command.PositionPolicyVersion,
+            await db.CrewPositions.AsNoTracking().Where(x => x.VesselId == vessel).ToArrayAsync(ct))) return await Fail(h, 403, "field_policy_denied");
         if (command.PositionId != null && !await db.CrewPositions.AnyAsync(x => x.Id == command.PositionId && x.VesselId == vessel, ct))
             return await Fail(h, 404, "resource_not_found");
         var personId = assignment?.PersonId ?? command.PersonId ?? Guid.NewGuid();
@@ -230,8 +245,15 @@ public static class CrewEndpoints
         if (command.From != null && await db.CrewAssignments.AnyAsync(x => x.PersonId == personId && x.Id != command.Id && x.From != null &&
             (x.To == null || command.From < x.To) && (command.To == null || x.From < command.To), ct)) return await Fail(h, 409, "version_conflict");
         if (assignment == null) {
-            if (command.PersonId == null) db.Persons.Add(new Person { TenantId = a.TenantId, Id = personId,
-                FullName = command.FullName, EmployeeNo = command.EmployeeNo, Provenance = imported ? "ImportedDeclaredUnverified" : "UserDeclaredUnverified", SourceObservedAt = command.SourceObservedAt?.ToUniversalTime() });
+            if (command.PersonId == null) {
+                var person = new Person { TenantId = a.TenantId, Id = personId,
+                    Provenance = imported ? "ImportedDeclaredUnverified" : "UserDeclaredUnverified", SourceObservedAt = command.SourceObservedAt?.ToUniversalTime() };
+                try { CrewIdentityStorage.Capture(person, command.FullName, command.EmployeeNo, protection); }
+                catch (CryptographicException) { return await Fail(h, 503, "protected_storage_unavailable"); }
+                db.Persons.Add(person);
+                if (command.FullName != null || command.EmployeeNo != null) db.CrewIdentityRevisions.Add(new() { TenantId = a.TenantId, PersonId = person.Id, Revision = person.IdentityRevision,
+                    PolicyVersion = identityPolicy.Version, Purpose = identityPolicy.Purpose, Operation = "Declaration", SavedAt = DateTimeOffset.UtcNow });
+            }
             assignment = new() { TenantId = a.TenantId, Id = command.Id, VesselId = vessel, PersonId = personId };
             db.CrewAssignments.Add(assignment);
         } else assignment.Revision = checked(assignment.Revision + 1);

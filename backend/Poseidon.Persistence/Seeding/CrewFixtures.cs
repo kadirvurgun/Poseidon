@@ -9,8 +9,7 @@ internal static class CrewFixtures
         foreach (var vessel in vessels) {
             // IDs are deterministic per entity type; no real people, dates, credentials or appointments.
             if (await db.Persons.FindAsync([vessel.TenantId, vessel.Id], ct) == null)
-                db.Persons.Add(new() { TenantId = vessel.TenantId, Id = vessel.Id, FullName = "FICTIONAL unverified crew",
-                    EmployeeNo = "SYNTHETIC-" + vessel.Code, Provenance = "SyntheticUnverified" });
+                db.Persons.Add(new() { TenantId = vessel.TenantId, Id = vessel.Id, Provenance = "SyntheticUnverified" });
             if (await db.CrewPersonalProfiles.FindAsync([vessel.TenantId, vessel.Id], ct) == null) {
                 db.CrewPersonalProfiles.Add(new() { TenantId = vessel.TenantId, PersonId = vessel.Id });
                 db.CrewPersonalProfileRevisions.Add(new() { TenantId = vessel.TenantId, PersonId = vessel.Id, Revision = 1,
