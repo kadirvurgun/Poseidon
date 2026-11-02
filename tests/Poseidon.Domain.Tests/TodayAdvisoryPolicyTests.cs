@@ -8,13 +8,13 @@ public sealed class TodayAdvisoryPolicyTests
     public void Absent_is_distinct_from_persisted_missing_inputs()
     {
         Assert.Equal(new DraftObservation(0, 0, 0, "DraftAbsent"), TodayAdvisoryPolicy.Observe(null));
-        Assert.Equal(new DraftObservation(0, 17, 0, "DraftUnverified"), TodayAdvisoryPolicy.Observe(new()));
+        Assert.Equal(new DraftObservation(0, 20, 0, "DraftUnverified"), TodayAdvisoryPolicy.Observe(new()));
     }
     [Fact]
     public void Zero_and_unknown_are_preserved_without_readiness_or_mandatory_policy()
     {
         var content = new RegulatoryDraftContent { Gt = new("Known", "0"), Flag = new("Unknown"), SourceObservedAt = new("Unknown") };
-        Assert.Equal(new DraftObservation(1, 14, 2, "DraftUnverified"), TodayAdvisoryPolicy.Observe(content));
+        Assert.Equal(new DraftObservation(1, 17, 2, "DraftUnverified"), TodayAdvisoryPolicy.Observe(content));
         Assert.Equal("0", content.Gt.Value);
     }
 
@@ -27,10 +27,11 @@ public sealed class TodayAdvisoryPolicyTests
         {
             Imo = new("Known", "1234567"), Flag = declared, ShipType = declared, ClassSociety = declared, ClassNumber = declared,
             Gt = measurement, Nt = measurement, Dwt = measurement, Loa = measurement, Breadth = measurement, Draft = measurement,
+            MainPropulsionKw = measurement, ContractForConstructionDate = new("Known", "1999-01-01"), ConstructionRecordReference = declared,
             BuildDate = new("Known", "2000-01-01"), TradingArea = declared, CargoContext = declared,
             Declaration = declared, SourceReference = declared, SourceObservedAt = new("Known", "2001-01-01T00:00:00Z")
         };
-        Assert.Equal(new DraftObservation(17, 0, 0, "DraftUnverified"), TodayAdvisoryPolicy.Observe(content));
+        Assert.Equal(new DraftObservation(20, 0, 0, "DraftUnverified"), TodayAdvisoryPolicy.Observe(content));
         Assert.Equal(measurement.Value, content.Gt.Value);
     }
 }

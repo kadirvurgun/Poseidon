@@ -88,9 +88,10 @@ public static class LifecycleApplicabilityEndpoints
         var a = Actor(h); if (!Read(a)) return await Fail(h, 403, "permission_denied");
         if (h.Request.Query.Count != 0) return await Fail(h, 400, "invalid_query");
         var vessels = a.Scope(db.Vessels);
-        var row = await db.ApplicabilityEvaluations.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id && vessels.Any(v => v.Id == x.VesselId), h.RequestAborted);
+        var row = await db.ApplicabilityEvaluations.AsNoTracking().Where(x => a.Permissions.Contains("file.read") || !db.RegulatoryDraftRevisions.Any(p => p.VesselId == x.VesselId && p.Revision == x.ProfileRevision && p.ConstructionFileId != null))
+            .SingleOrDefaultAsync(x => x.Id == id && vessels.Any(v => v.Id == x.VesselId), h.RequestAborted);
         if (row == null) return await Fail(h, 404, "resource_not_found");
-        var causes = await CurrentRegulatoryContext.Stale(db, id, row.VesselId, DateTimeOffset.UtcNow, h.RequestAborted);
+        var causes = await CurrentRegulatoryContext.Stale(db, id, row.VesselId, h.RequestServices.GetRequiredService<TimeProvider>().GetUtcNow(), h.RequestAborted, h.RequestServices.GetRequiredService<FederationSettings>());
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "ApplicabilityCurrentRead", "Success", resourceId: id);
         return Results.Ok(new { id, current = causes.Length == 0, causes });
     }
@@ -98,7 +99,8 @@ public static class LifecycleApplicabilityEndpoints
     {
         var actor = Actor(h); if (!Read(actor)) return await Fail(h, 403, "permission_denied");
         var vessels = actor.Scope(db.Vessels);
-        var row = await db.ApplicabilityEvaluations.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id && vessels.Any(v => v.Id == x.VesselId), h.RequestAborted);
+        var row = await db.ApplicabilityEvaluations.AsNoTracking().Where(x => actor.Permissions.Contains("file.read") || !db.RegulatoryDraftRevisions.Any(p => p.VesselId == x.VesselId && p.Revision == x.ProfileRevision && p.ConstructionFileId != null))
+            .SingleOrDefaultAsync(x => x.Id == id && vessels.Any(v => v.Id == x.VesselId), h.RequestAborted);
         if (row == null) return await Fail(h, 404, "resource_not_found");
         await audit.WriteAsync(h, "ApplicabilityRead", "Success", resourceId: id);
         return Results.Content(row.ResultJson, "application/json");
@@ -108,7 +110,8 @@ public static class LifecycleApplicabilityEndpoints
         var actor = Actor(h); if (!Read(actor)) return await Fail(h, 403, "permission_denied");
         if (!Paging(h, ["vesselId"], out var offset) || !Guid.TryParse(h.Request.Query["vesselId"], out var vessel)) return await Fail(h, 400, "invalid_query");
         if (!await actor.Scope(db.Vessels).AnyAsync(x => x.Id == vessel, h.RequestAborted)) return await Fail(h, 404, "resource_not_found");
-        var rows = await db.ApplicabilityEvaluations.AsNoTracking().Where(x => x.VesselId == vessel).OrderByDescending(x => x.SavedAt).ThenBy(x => x.Id).Skip(offset).Take(26)
+        var rows = await db.ApplicabilityEvaluations.AsNoTracking().Where(x => x.VesselId == vessel && (actor.Permissions.Contains("file.read") || !db.RegulatoryDraftRevisions.Any(p => p.VesselId == x.VesselId && p.Revision == x.ProfileRevision && p.ConstructionFileId != null)))
+            .OrderByDescending(x => x.SavedAt).ThenBy(x => x.Id).Skip(offset).Take(26)
             .Select(x => new { x.Id, x.VesselId, x.SavedAt, x.AsOf, x.SnapshotHash, x.RuleSetHash }).ToArrayAsync(h.RequestAborted);
         await audit.WriteAsync(h, "ApplicabilityHistory", "Success", resourceId: vessel);
         return Results.Ok(new { items = rows.Take(25), offset, limit = 25, hasMore = rows.Length > 25 });
@@ -139,6 +142,7 @@ public static class LifecycleApplicabilityEndpoints
         var fingerprint = RegisterStorage.Hash(JsonSerializer.Serialize(new { action, id, body }));
         // Live capabilities AND live vessel scope are checked before receipt lookup.
         if (evaluate != null && !await actor.Scope(db.Vessels).AnyAsync(x => x.Id == evaluate.VesselId, ct)) return await Fail(h, 404, "resource_not_found");
+        if (evaluate != null && !actor.Permissions.Contains("file.read") && await db.RegulatoryDraftRevisions.AnyAsync(x => x.VesselId == evaluate.VesselId && x.ConstructionFileId != null, ct)) return await Fail(h, 403, "permission_denied");
         // 15.01 §104..108 and 09.03 publication boundary: draft/PENDING source
         // outputs are non-mutating simulation ONLY. No receipt, activation or saved
         // evaluation is manufactured while the admission/decision chain is absent.
@@ -146,6 +150,7 @@ public static class LifecycleApplicabilityEndpoints
         async Task<IResult?> Replay() {
             var live = Actor(h); if (live == null || live.Id != actor.Id || live.TenantId != actor.TenantId || !(action == "author" ? Write(live) : action == "review" ? Review(live) : Evaluate(live))) return await Fail(h, 403, "permission_denied");
             if (evaluate != null && !await live.Scope(db.Vessels).AnyAsync(v => v.Id == evaluate.VesselId, ct)) return await Fail(h, 404, "resource_not_found");
+            if (evaluate != null && !live.Permissions.Contains("file.read") && await db.RegulatoryDraftRevisions.AnyAsync(x => x.VesselId == evaluate.VesselId && x.ConstructionFileId != null, ct)) return await Fail(h, 403, "permission_denied");
             var r = await db.ApplicabilityReceipts.AsNoTracking().SingleOrDefaultAsync(x => x.ActorId == actor.Id && x.Key == key, ct);
             if (r == null) return null;
             if (r.Action != action || r.Fingerprint != fingerprint) return await Fail(h, 409, "idempotency_key_reused");
@@ -154,6 +159,7 @@ public static class LifecycleApplicabilityEndpoints
         }
         var replay = await Replay(); if (replay != null) return replay;
         await using var tx = await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.RepeatableRead, ct);
+        var usedAttestations = new List<RegulatoryFactAttestation>();
         try {
             object outcome; Guid resource; var now = h.RequestServices.GetRequiredService<TimeProvider>().GetUtcNow(); now = now.AddTicks(-(now.Ticks % 10));
             if (evaluate != null) {
@@ -189,7 +195,8 @@ public static class LifecycleApplicabilityEndpoints
                             var input = await db.RegisterDrafts.SingleAsync(x => x.Kind == kind && x.Id == inputId, ct);
                             db.Entry(input).Property(x => x.Revision).IsModified = true;
                         }
-                        var (qualifiedFacts, attestation) = await CurrentRegulatoryContext.Facts(db, q, vessel.Id, profileRevision, facts, asOf, ct);
+                        var (qualifiedFacts, attestation) = await CurrentRegulatoryContext.Facts(db, q, vessel.Id, profileRevision, facts, asOf, ct, h.RequestServices.GetRequiredService<FederationSettings>());
+                        if (attestation != null && qualifiedFacts.Values.Any(f => f.Provenance == "RecordedHumanAttestation")) usedAttestations.Add(attestation);
                         var parsed = ApplicabilityEngine.Parse(rule.RuleJson!);
                         var prediction = ApplicabilityEngine.Preview(parsed with { Lifecycle = parsed.Lifecycle with { State = q.State, Supersedes = q.SupersedingRuleId == null ? parsed.Lifecycle.Supersedes : $"{q.SupersedingRuleId:D}/{q.SupersedingRuleRevision}" } }, qualifiedFacts, asOf);
                         prediction = prediction with { Authoritative = true, CurrentResult = prediction.Result,
@@ -274,6 +281,9 @@ public static class LifecycleApplicabilityEndpoints
             await db.SaveChangesAsync(ct);
             var live = Actor(h); if (live == null || live.Id != actor.Id || live.TenantId != actor.TenantId || !(action == "author" ? Write(live) : action == "review" ? Review(live) : Evaluate(live))) return await Fail(h, 403, "permission_denied");
             if (evaluate != null && !await live.Scope(db.Vessels).AnyAsync(v => v.Id == evaluate.VesselId, ct)) return await Fail(h, 404, "resource_not_found");
+            if (evaluate != null && !live.Permissions.Contains("file.read") && await db.RegulatoryDraftRevisions.AnyAsync(x => x.VesselId == evaluate.VesselId && x.ConstructionFileId != null, ct)) return await Fail(h, 403, "permission_denied");
+            if (usedAttestations.Any(e => !CurrentRegulatoryContext.AttestationCurrent(h.RequestServices.GetRequiredService<FederationSettings>(), e, h.RequestServices.GetRequiredService<TimeProvider>().GetUtcNow())))
+                return await Fail(h, 409, "attestation_authority_changed");
             await tx.CommitAsync(ct);
             return Results.Content(outcomeJson, "application/json");
         } catch (JsonException) { await tx.RollbackAsync(CancellationToken.None); return await Fail(h, 400, "invalid_rule");

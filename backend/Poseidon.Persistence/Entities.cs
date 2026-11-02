@@ -92,4 +92,7 @@ public sealed class CommandReceipt : ITenantEntity
     public DateTimeOffset CommittedAt { get; set; }
     public long? RegisterRevision { get; set; }
     public uint? RegisterVersion { get; set; }
+    // Exact profile command outcome only; never a generic protected-data snapshot.
+    public string? ProfileOutcomeJson { get; set; }
+    public Guid? ProfileVesselId { get; set; }
 }

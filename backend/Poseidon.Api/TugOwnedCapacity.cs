@@ -44,7 +44,7 @@ internal static class TugOwnedCapacityConsumer
             return Reject("ChangedInput", "ProfileOrEquipmentChanged");
         var pins = await db.ControlEvidenceRequirements.AsNoTracking().Where(x => x.VesselId == tug && x.Kind == "Evidence" && x.Id == test.Id && x.Revision == test.Revision)
             .Select(x => new RequirementPin(x.RequirementId, x.RequirementRevision, x.SourceId, x.SourceRevision, x.RuleId, x.RuleRevision)).ToArrayAsync(ct);
-        var qualified = await QualifiedControlContext.Resolve(db, tug, pins, "Evidence", Content(test), true, now, ct);
+        var qualified = await QualifiedControlContext.Resolve(db, tug, pins, "Evidence", Content(test), true, now, ct, settings);
         if (qualified.Blockers.Length != 0) return Reject("SourceReviewRequired", "CurrentQualifiedEvidencePolicyRequired");
         var formulae = new List<(TugCalculationPolicy Policy, RegulatoryQualificationEvent Source)>();
         foreach (var pin in pins) {
@@ -72,12 +72,12 @@ internal static class TugOwnedCapacityConsumer
                 db.HumanReviewHeads.Any(h => h.VesselId == tug && h.Id == v.Id && h.Revision == v.Revision)).OrderByDescending(v => v.SavedAt).ThenBy(v => v.Id).FirstOrDefaultAsync(ct);
             if (verification?.State != "VERIFIED" || verification.ValidUntil <= plan.PlannedEnd || verification.ValidUntil == null ||
                 !CurrentVerifier(settings, verification, now, plan.PlannedEnd.Value) || verification.EvaluationId == null ||
-                (await CurrentRegulatoryContext.Stale(db, verification.EvaluationId.Value, tug, now, ct)).Length != 0 ||
+                (await CurrentRegulatoryContext.Stale(db, verification.EvaluationId.Value, tug, now, ct, settings)).Length != 0 ||
                 !await db.ControlEvidenceHeads.AnyAsync(h => h.VesselId == tug && h.Kind == "Control" && h.Id == verification.ControlId && h.Revision == verification.ControlRevision, ct))
                 return Reject("Unverified", "CurrentIndependentVerificationRequired");
             var ep = await db.ControlEvidenceRequirements.AsNoTracking().Where(x => x.VesselId == tug && x.Kind == "Evidence" && x.Id == evidence.Id && x.Revision == evidence.Revision)
                 .Select(x => new RequirementPin(x.RequirementId, x.RequirementRevision, x.SourceId, x.SourceRevision, x.RuleId, x.RuleRevision)).ToArrayAsync(ct);
-            if ((await QualifiedControlContext.Resolve(db, tug, ep, "Evidence", content, evidence.FileId != null, now, ct)).Blockers.Length != 0)
+            if ((await QualifiedControlContext.Resolve(db, tug, ep, "Evidence", content, evidence.FileId != null, now, ct, settings)).Blockers.Length != 0)
                 return Reject("SourceReviewRequired", "ConditionSourcePolicyChanged");
             expires.Add(verification.ValidUntil.Value);
             expires.Add(settings.Memberships.Single(m => m.ActorId == verification.ActorId && m.TenantId == verification.TenantId)

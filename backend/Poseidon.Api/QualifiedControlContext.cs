@@ -8,7 +8,7 @@ namespace Poseidon.Api;
 internal static class QualifiedControlContext
 {
     internal static async Task<(string[] Blockers, QualifiedControlPolicy[] Policies)> Resolve(PoseidonDbContext db, Guid vessel,
-        RequirementPin[] pins, string kind, ControlEvidenceContent content, bool file, DateTimeOffset now, CancellationToken ct)
+        RequirementPin[] pins, string kind, ControlEvidenceContent content, bool file, DateTimeOffset now, CancellationToken ct, FederationSettings settings)
     {
         var blockers = new HashSet<string>(); var policies = new List<QualifiedControlPolicy>();
         if (content.TugCapability is { } capability) {
@@ -38,7 +38,7 @@ internal static class QualifiedControlContext
             .OrderByDescending(x => x.SavedAt).ThenBy(x => x.Id).FirstOrDefaultAsync(ct);
         if (evaluation == null) blockers.Add("AUTHORITATIVE_EVALUATION_UNAVAILABLE");
         else {
-            foreach (var cause in await CurrentRegulatoryContext.Stale(db, evaluation.Id, vessel, now, ct)) blockers.Add(cause);
+            foreach (var cause in await CurrentRegulatoryContext.Stale(db, evaluation.Id, vessel, now, ct, settings)) blockers.Add(cause);
             var result = JsonSerializer.Deserialize<EvaluationDto>(evaluation.ResultJson, RegulatoryQualificationEndpoints.Json)!;
             if (!result.Authoritative || result.Conflicts.Length > 0) blockers.Add("APPLICABILITY_REVIEW_REQUIRED");
             foreach (var pin in pins)

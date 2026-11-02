@@ -170,6 +170,10 @@ public sealed class PoseidonDbContext(
             b.Property(x => x.Key).HasMaxLength(80);
             b.Property(x => x.Action).HasMaxLength(32);
             b.Property(x => x.Fingerprint).HasMaxLength(64);
+            b.ToTable("CommandReceipts", t => t.HasCheckConstraint("CK_CommandReceipts_ProfileOutcome", RegulatoryDraftStorage.ReceiptConstraint));
+            b.HasIndex(x => new { x.TenantId, x.ProfileVesselId, x.RegisterRevision }).HasDatabaseName("IX_CommandReceipts_ProfileOutcome");
+            b.HasOne<RegulatoryDraftRevision>().WithMany().HasForeignKey(x => new { x.TenantId, x.ProfileVesselId, x.RegisterRevision })
+                .HasPrincipalKey(x => new { x.TenantId, x.VesselId, x.Revision }).HasConstraintName("FK_CommandReceipts_ProfileOutcome").OnDelete(DeleteBehavior.Restrict);
             b.HasOne<Tenant>().WithMany().HasForeignKey(x => x.TenantId).OnDelete(DeleteBehavior.Restrict);
             b.HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         });

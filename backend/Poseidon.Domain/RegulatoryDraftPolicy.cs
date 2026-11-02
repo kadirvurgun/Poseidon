@@ -9,6 +9,8 @@ public sealed record TextInput(string State = "Missing", string? Value = null);
 public sealed record NumberInput(string State = "Missing",
     [property: System.ComponentModel.Description("Invariant nonnegative decimal string; ASCII digits with optional fraction, max 59 characters, scale <=28 after trailing-zero normalization, coefficient <=79228162514264337593543950335. No exponent, sign, whitespace or rounding. Null for Missing/Unknown.")]
     string? Value = null);
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
+public sealed record ConstructionRecordPin(Guid Id, long Revision, string Checksum);
 
 // Fixed source-backed fields; no client-supplied field definitions or mandatory/catalog policy.
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
@@ -26,6 +28,11 @@ public sealed record RegulatoryDraftContent
     public NumberInput Breadth { get; init; } = new();
     public NumberInput Draft { get; init; } = new();
     public TextInput BuildDate { get; init; } = new();
+    // 09.02 Input Catalog7/9. Contract signing is not keel, delivery or build date.
+    public NumberInput MainPropulsionKw { get; init; } = new();
+    public TextInput ContractForConstructionDate { get; init; } = new();
+    public TextInput ConstructionRecordReference { get; init; } = new();
+    public ConstructionRecordPin? ConstructionRecord { get; init; }
     public TextInput TradingArea { get; init; } = new();
     public TextInput CargoContext { get; init; } = new();
     public TextInput Declaration { get; init; } = new();
@@ -40,6 +47,9 @@ public static class RegulatoryDraftPolicy
     public static (RegulatoryDraftContent Content, Dictionary<string, string[]> Errors) Normalize(RegulatoryDraftContent input)
     {
         var errors = new Dictionary<string, string[]>();
+        if (input.ConstructionRecord is { } pin && (pin.Id == Guid.Empty || pin.Revision <= 0 ||
+            !System.Text.RegularExpressions.Regex.IsMatch(pin.Checksum ?? "", "\\A[A-F0-9]{64}\\z")))
+            errors["constructionRecord"] = ["invalid_document_reference"];
         TextInput Text(TextInput? value, string key)
         {
             if (value is null || value.State is not ("Missing" or "Unknown" or "Known") ||
@@ -69,6 +79,9 @@ public static class RegulatoryDraftPolicy
             Gt = Number(input.Gt, "gt"), Nt = Number(input.Nt, "nt"), Dwt = Number(input.Dwt, "dwt"),
             Loa = Number(input.Loa, "loa"), Breadth = Number(input.Breadth, "breadth"), Draft = Number(input.Draft, "draft"),
             BuildDate = Text(input.BuildDate, "buildDate"), TradingArea = Text(input.TradingArea, "tradingArea"),
+            MainPropulsionKw = Number(input.MainPropulsionKw, "mainPropulsionKw"),
+            ContractForConstructionDate = Text(input.ContractForConstructionDate, "contractForConstructionDate"),
+            ConstructionRecordReference = Text(input.ConstructionRecordReference, "constructionRecordReference"),
             CargoContext = Text(input.CargoContext, "cargoContext"), Declaration = Text(input.Declaration, "declaration"),
             SourceReference = Text(input.SourceReference, "sourceReference"), SourceObservedAt = Text(input.SourceObservedAt, "sourceObservedAt")
         };
@@ -76,6 +89,8 @@ public static class RegulatoryDraftPolicy
             errors["imo"] = ["seven_digits_required"];
         if (result.BuildDate.State == "Known" && !DateOnly.TryParseExact(result.BuildDate.Value, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
             errors["buildDate"] = ["iso_date_required"];
+        if (result.ContractForConstructionDate.State == "Known" && !DateOnly.TryParseExact(result.ContractForConstructionDate.Value, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
+            errors["contractForConstructionDate"] = ["iso_date_required"];
         if (result.SourceObservedAt.State == "Known")
         {
             var timestamp = result.SourceObservedAt.Value!;

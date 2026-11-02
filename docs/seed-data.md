@@ -1,3 +1,7 @@
+# RULE-OWNING-ADAPTERS-01 — AUTHORED / NOT RUN
+
+Existing incomplete profile fixtures acquire default Missing propulsion/contract-date/reference fields and null construction file only on fresh add-missing import. No extra entity, qualified profile, clean file, attestation or approval is seeded. Historical/operator JSON and immutable history are never reseeded over. Nullable file-binding and exact-outcome receipt columns remain empty for historical rows; no backfill. Actual commands alone create file relationships/receipts. Existing audit totals stay unchanged; PostgreSQL reseed/operator-preservation/immutability test source is authored, not executed.
+
 # EF Core ve seed import
 
 ## TUG-OWNING-CONSUMERS-01 — AUTHORED / NOT RUN

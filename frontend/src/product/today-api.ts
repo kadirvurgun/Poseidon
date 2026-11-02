@@ -46,7 +46,7 @@ export function decodeWhy(x: unknown, id: string): Why {
     !one(x.reason, ['DraftAbsent', 'DraftUnverified']) || !object(x.inputs) || x.inputs.reason !== x.reason ||
     !exact(x.inputs, ['known', 'missing', 'unknown', 'reason']) ||
     ![x.inputs.known, x.inputs.missing, x.inputs.unknown].every(integer) ||
-    Number(x.inputs.known) + Number(x.inputs.missing) + Number(x.inputs.unknown) !== (x.reason === 'DraftAbsent' ? 0 : 17) ||
+    Number(x.inputs.known) + Number(x.inputs.missing) + Number(x.inputs.unknown) !== (x.reason === 'DraftAbsent' ? 0 : 20) ||
     !date(x.readAt) || !(x.savedAt === null || date(x.savedAt)) || !(x.sourceObservedAt === null || date(x.sourceObservedAt)) ||
     x.freshness !== 'Unverified' || (x.reason === 'DraftAbsent' ? x.provenance !== 'Missing' || x.savedAt !== null || x.sourceObservedAt !== null
       : !one(x.provenance, ['Unknown', 'Synthetic', 'DeclaredUnverified']) || x.savedAt === null) ||

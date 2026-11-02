@@ -3,7 +3,8 @@ import { ApiError, request } from './api'
 import { isGuid } from './identifiers'
 import { timestamp } from './date-validation'
 
-export const profileInputs = ['vessel.flag', 'vessel.type', 'vessel.gt', 'vessel.buildDate', 'vessel.classSociety', 'vessel.tradingArea', 'cargo.type']
+export const profileInputs = ['vessel.flag', 'vessel.type', 'vessel.gt', 'vessel.buildDate', 'vessel.classSociety', 'vessel.tradingArea', 'cargo.type', 'vessel.mainPropulsionKw', 'vessel.contractForConstructionDate']
+export const verifiedProfileInputs = ['vessel.gt', 'vessel.buildDate', 'vessel.mainPropulsionKw', 'vessel.contractForConstructionDate']
 export type InputPolicy = { field: string; basis: 'Declared' | 'HumanAttested' | 'ProviderVerified'; maxAgeHours: number | null }
 export type ControlPolicy = { ownerRole: string | null; frequency: string | null; evidencePolicy: string | null; verificationPolicy: string | null; maxAgeHours: number | null; requireFile: boolean | null; requireAcknowledgment: boolean | null; acknowledgmentRole: string | null; requiredVerificationMechanism: string | null; verificationMechanismSourceLocator: string | null; sourceLocator: string | null }
 export type Content = { tugCalculation?: CalculationPolicy | null; sourceBytesBase64: string | null; publisher: string | null; edition: string | null; ownerId: string | null; ownerRole: string | null; validationReview: string | null; inputs: InputPolicy[] | null; control: ControlPolicy | null; trigger: string | null; impactReview: string | null; supersedingRuleId: string | null; supersedingRuleRevision: number | null }
@@ -51,7 +52,7 @@ export async function send(rule: string, attempt: { body: string; key: string; a
 }
 export async function current(id: string, signal: AbortSignal): Promise<{ current: boolean; causes: string[] }> {
   const v = await request<unknown>(`applicability/evaluations/${id}/current`, signal)
-  const causes = ['EVALUATION_UNAVAILABLE', 'QUALIFICATION_LINEAGE_UNAVAILABLE', 'PROFILE_CHANGED', 'VESSEL_CHANGED', 'RULE_CHANGED', 'QUALIFICATION_CHANGED', 'SOURCE_REVIEW_REQUIRED', 'SOURCE_NOT_CURRENT', 'ATTESTATION_EXPIRED', 'INPUT_STALE']
+  const causes = ['EVALUATION_UNAVAILABLE', 'QUALIFICATION_LINEAGE_UNAVAILABLE', 'PROFILE_CHANGED', 'VESSEL_CHANGED', 'RULE_CHANGED', 'QUALIFICATION_CHANGED', 'SOURCE_REVIEW_REQUIRED', 'SOURCE_NOT_CURRENT', 'ATTESTATION_EXPIRED', 'ATTESTATION_AUTHORITY_CHANGED', 'INPUT_STALE', 'CONSTRUCTION_RECORD_CHANGED']
   if (!exact(v, ['id', 'current', 'causes']) || v.id !== id || typeof v.current !== 'boolean' || !Array.isArray(v.causes) || v.causes.some(c => !causes.includes(c)) || v.current !== (v.causes.length === 0)) return fail()
   return v as { current: boolean; causes: string[] }
 }

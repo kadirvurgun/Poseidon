@@ -28,6 +28,27 @@ public sealed class RegulatoryQualificationPersistenceTests : IAsyncLifetime
         await using var other = Db(data.Tenants[1].Id); Assert.DoesNotContain(await other.RegulatoryQualificationEvents.ToArrayAsync(Ct), x => x.TenantId == e.TenantId);
     }
     [Fact]
+    public async Task Owning_profile_fixture_is_incomplete_and_reseed_preserves_operator_power_contract_and_history()
+    {
+        await using var db = Db();
+        var profile = await db.RegulatoryDrafts.OrderBy(x => x.VesselId).FirstAsync(Ct);
+        var content = RegulatoryDraftStorage.Deserialize(profile.ContentJson);
+        Assert.Equal("Missing", content.MainPropulsionKw.State); Assert.Equal("Missing", content.ContractForConstructionDate.State);
+        Assert.Null(content.ConstructionRecord); Assert.Null(profile.ConstructionFileId);
+        profile.ContentJson = RegulatoryDraftStorage.Serialize(content with { MainPropulsionKw = new("Known", "3600"),
+            ContractForConstructionDate = new("Unknown"), ConstructionRecordReference = new("Known", "FICTIONAL unverified operator record") });
+        profile.Revision++; db.RegulatoryDraftRevisions.Add(profile.Snapshot()); await db.SaveChangesAsync(Ct);
+        var bytes = profile.ContentJson; var version = profile.Version; var revision = profile.Revision;
+        var count = await db.AuditEvents.LongCountAsync(Ct);
+        await using (var import = Import()) { await SeedImporter.ImportAsync(import, data, Ct); await SeedImporter.ImportAsync(import, data, Ct); }
+        await db.Entry(profile).ReloadAsync(Ct);
+        Assert.Equal(bytes, profile.ContentJson); Assert.Equal(version, profile.Version); Assert.Equal(revision, profile.Revision);
+        Assert.Equal(count, await db.AuditEvents.LongCountAsync(Ct)); Assert.Null(profile.ConstructionFileId);
+        Assert.Empty(await db.RegulatoryFactAttestations.ToArrayAsync(Ct));
+        var history = await db.RegulatoryDraftRevisions.SingleAsync(x => x.VesselId == profile.VesselId && x.Revision == revision, Ct);
+        history.ConstructionFileId = Guid.NewGuid(); await Assert.ThrowsAsync<InvalidOperationException>(() => db.SaveChangesAsync(Ct));
+    }
+    [Fact]
     public async Task Immutable_source_history_is_rejected_by_EF_and_database_and_cross_tenant_FK_is_enforced()
     {
         await using (var db = Db()) {

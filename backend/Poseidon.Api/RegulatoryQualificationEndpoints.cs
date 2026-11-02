@@ -152,14 +152,31 @@ public static class RegulatoryQualificationEndpoints
             object outcome;
             if (fact != null) {
                 if (prior == null || prior.RuleRevision != r.Revision || prior.State != "IN_FORCE" || prior.Revision != fact.QualificationRevision || head!.Version != fact.QualificationVersion) return await Fail(h, 409, "qualified_source_required");
-                if (fact.Fields == null || fact.Fields.Length is < 1 or > 7 || fact.Fields.Distinct().Count() != fact.Fields.Length || fact.Fields.Any(f => !RegulatoryQualificationPolicy.ProfileFields.Contains(f)) || fact.ValidUntil <= now || fact.ValidUntil > grant.ValidUntil) return await Fail(h, 400, "invalid_fact_attestation");
+                if (fact.Fields == null || fact.Fields.Length < 1 || fact.Fields.Length > RegulatoryQualificationPolicy.ProfileFields.Length || fact.Fields.Distinct().Count() != fact.Fields.Length || fact.Fields.Any(f => !RegulatoryQualificationPolicy.ProfileFields.Contains(f)) || fact.ValidUntil <= now || fact.ValidUntil > grant.ValidUntil) return await Fail(h, 400, "invalid_fact_attestation");
                 var policy = Content(prior);
                 if (fact.Fields.Any(f => policy.Inputs?.Any(p => p.Field == f && p.Basis == "HumanAttested") != true)) return await Fail(h, 409, "attestation_policy_mismatch");
                 var profile = await db.RegulatoryDrafts.SingleOrDefaultAsync(x => x.VesselId == fact.VesselId, ct);
                 if (profile == null || profile.Revision != fact.ProfileRevision || profile.Version != fact.ProfileVersion) return await Fail(h, 409, "profile_context_conflict");
                 var vessel = await a.Scope(db.Vessels).AsNoTracking().SingleAsync(x => x.Id == fact.VesselId, ct);
+                if (fact.Fields.Contains("vessel.contractForConstructionDate") && !a.Permissions.Contains("file.read")) return await Fail(h, 403, "permission_denied");
                 var (_, facts) = await ApplicabilityContextResolver.Resolve(db, vessel, now, ct);
                 if (fact.Fields.Any(f => facts[f].Knowledge != "Unverified")) return await Fail(h, 409, "known_profile_value_required");
+                if (fact.Fields.Contains("vessel.contractForConstructionDate")) {
+                    var record = RegulatoryDraftStorage.Deserialize(profile.ContentJson).ConstructionRecord;
+                    if (record == null) return await Fail(h, 409, "construction_record_required");
+                    var file = await db.StoredFiles.AsNoTracking().SingleOrDefaultAsync(f => f.Id == record.Id && f.VesselId == vessel.Id && f.Revision == record.Revision && f.Checksum == record.Checksum &&
+                        db.FileStages.Any(s => s.Id == f.Id && s.VesselId == vessel.Id && s.PersonId == null && s.DocumentId == null && s.State == "CleanTransport"), ct);
+                    if (file == null) return await Fail(h, 409, "construction_record_required");
+                    var fileStage = await db.FileStages.SingleAsync(s => s.Id == file.Id && s.VesselId == vessel.Id && s.PersonId == null && s.DocumentId == null && s.State == "CleanTransport", ct);
+                    db.Entry(fileStage).Property(s => s.State).IsModified = true;
+                    var settings = h.RequestServices.GetRequiredService<SecureFileSettings>();
+                    if (!settings.Ready(h.RequestServices.GetRequiredService<IWebHostEnvironment>())) return await Fail(h, 503, "file_settings_unavailable");
+                    try {
+                        await using var bytes = await h.RequestServices.GetRequiredService<FileObjects>().OpenAsync(file, ct);
+                        if (bytes.Length != file.Length || bytes.Length > settings.MaxBytes || Convert.ToHexString(await SHA256.HashDataAsync(bytes, ct)) != file.Checksum)
+                            return await Fail(h, 503, "file_integrity_unavailable");
+                    } catch (Exception ex) when (ex is IOException or InvalidDataException or HttpRequestException or CryptographicException) { return await Fail(h, 503, "file_integrity_unavailable"); }
+                }
                 db.Entry(profile).Property(x => x.Revision).IsModified = true; db.Entry(head!).Property(x => x.Revision).IsModified = true;
                 var e = new RegulatoryFactAttestation { TenantId = a.TenantId, Id = Guid.NewGuid(), RuleId = rule, QualificationRevision = prior.Revision,
                     VesselId = fact.VesselId, ProfileRevision = profile.Revision, FieldsJson = JsonSerializer.Serialize(fact.Fields.Order(), Json), ActorId = a.Id, RoleId = grant.RoleId,

@@ -10,7 +10,7 @@ import { profileFields } from './profile-contract'
 import type { Profile, ProfileContent } from './profile-contract'
 
 const vessel = { id: '10000000-0000-0000-0000-000000000001', companyId: '10000000-0000-0000-0000-000000000002', code: 'S1', name: 'Synthetic Ship', kind: 'Ship', version: 7, canEdit: true }
-const content = Object.fromEntries(profileFields.map(([key]) => [key, { state: 'Missing', value: null }])) as ProfileContent
+const content = { ...Object.fromEntries(profileFields.map(([key]) => [key, { state: 'Missing', value: null }])), constructionRecord: null } as ProfileContent
 const profile = { tenantId: '10000000-0000-0000-0000-000000000003', vessel, version: 19, revision: 1, savedAt: '2026-01-01T00:00:00Z', provenance: 'Synthetic', content } as Profile
 const history = { items: [{ revision: 1, savedAt: profile.savedAt, provenance: 'Synthetic', content }], offset: 0, limit: 25, hasMore: false }
 const reply = (body: unknown, status = 200) => ({ ok: status >= 200 && status < 300, status, json: async () => body }) as Response

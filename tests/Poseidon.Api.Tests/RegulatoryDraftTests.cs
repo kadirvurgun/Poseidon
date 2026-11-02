@@ -288,7 +288,7 @@ public sealed partial class DirectoryWorkspaceTests
             content with { Gt = new("Known", "09007199254740993.00") }), key, true);
         Assert.Equal(HttpStatusCode.OK, replay.StatusCode);
         Assert.Equal("true", Assert.Single(replay.Headers.GetValues("Idempotency-Replayed")));
-        Assert.Equal(unrelated, await replay.Content.ReadFromJsonAsync<RegulatoryDraftDto>(Ct));
+        Assert.Equal(after, await replay.Content.ReadFromJsonAsync<RegulatoryDraftDto>(Ct)); // Exact original outcome; unrelated edits remain current separately.
         using var reused = await Send(client, ProfilePath(SeedVessel.Id), new SaveRegulatoryDraft(before.Version,
             content with { Gt = new("Known", "9007199254740992") }), key, true);
         Assert.Equal(HttpStatusCode.Conflict, reused.StatusCode);

@@ -20,7 +20,10 @@ export function validDecimal(v: unknown): v is string {
   return fraction.length <= 28 && (coefficient.length < max.length || (coefficient.length === max.length && coefficient <= max))
 }
 function validContent(v: unknown): boolean {
-  return object(v) && Object.keys(v).length === profileFields.length && profileFields.every(([key, kind]) => {
+  if (!object(v) || Object.keys(v).length !== profileFields.length + 1) return false
+  const pin = v.constructionRecord
+  if (!(pin === null || object(pin) && Object.keys(pin).length === 3 && guid(pin.id) && integer(pin.revision, 1) && typeof pin.checksum === 'string' && /^[A-F0-9]{64}$(?![\s\S])/.test(pin.checksum))) return false
+  return profileFields.every(([key, kind]) => {
     const field = v[key]
     if (!object(field) || Object.keys(field).some(k => k !== 'state' && k !== 'value')) return false
     if (field.state === 'Missing' || field.state === 'Unknown') return field.value === null
@@ -28,7 +31,7 @@ function validContent(v: unknown): boolean {
     if (kind === 'number') return validDecimal(field.value)
     if (!text(field.value)) return false
     if (key === 'imo') return /^[0-9]{7}$/.test(field.value)
-    if (key === 'buildDate') return calendar(field.value)
+    if (key === 'buildDate' || key === 'contractForConstructionDate') return calendar(field.value)
     if (key === 'sourceObservedAt') return timestamp(field.value)
     return true
   })

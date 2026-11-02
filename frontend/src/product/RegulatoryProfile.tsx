@@ -6,6 +6,7 @@ import { profileFields } from './profile-contract'
 import type { Profile, ProfileCommand, ProfileContent, ProfileHistory } from './profile-contract'
 import { RequiredDataField } from './RequiredDataField'
 import { loginHref } from './workspace-location'
+import { ConstructionRecordPicker } from './ConstructionRecordPicker'
 
 const copy = {
   en: { title: 'Regulatory profile draft', note: 'Incomplete drafts can be saved. Declarations and reference values are unverified. This draft does not authorize submission or operations.', loading: 'Loading profile…', empty: 'No saved profile draft yet.', save: 'Save draft', saving: 'Saving…', saved: 'Draft saved.', retry: 'Retry same command', reload: 'Reload saved draft', conflict: 'The saved profile changed. Your draft is retained. Reload explicitly to discard it.', uncertain: 'The save outcome is unknown. Fields are frozen; retry the same command before leaving.', failed: 'Unable to load or save the profile.', denied: 'You do not have permission for this profile.', expired: 'Sign in to continue.', missing: 'Profile not found in your vessel scope.', history: 'Version history', noHistory: 'No saved versions.', observed: 'Source observation time', time: 'Saved at', provenance: 'Source status', revision: 'Version', unknown: 'Unknown', previous: 'Previous', next: 'Next', view: 'View saved values', count: 'fields have missing or unknown data. Mandatory submission policy is unresolved; draft only.', readonly: 'Read-only profile', reloadRead: 'Retry loading' },
@@ -136,6 +137,7 @@ function ScopedRegulatoryProfile({ id, language, csrf, onDirty, onSaving }: Prop
       <p>{profileFields.filter(([key]) => content[key]?.state !== 'Known').length} {t.count}</p>
       {!profile.vessel.canEdit && <p>{t.readonly}</p>}
       <form noValidate aria-busy={saving} onSubmit={event => void submit(event)}>
+        <ConstructionRecordPicker vessel={id} language={language} value={content.constructionRecord} disabled={!profile.vessel.canEdit || saving || uncertain} onChange={value => change('constructionRecord', value)} onDenied={invalidateAccess} />
         <div className="profile-field-grid">{profileFields.map(([key, kind, tr, en]) => {
           const common = { label: language === 'tr' ? tr : en, language, disabled: !profile.vessel.canEdit || saving || uncertain, error: !!errors[key]?.length }
           return kind === 'number' ? <RequiredDataField key={key} {...common} kind="number" value={content[key] ?? { state: 'Missing' }} onChange={value => change(key, value)} /> :

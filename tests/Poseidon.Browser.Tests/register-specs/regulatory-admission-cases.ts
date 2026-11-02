@@ -38,7 +38,31 @@ async function deniedQualification(page: Page) {
   expect(response.status()).toBe(403)
   const body = await response.json(); expect(body.items).toBeUndefined(); expect(body.owners).toBeUndefined()
 }
+// Genuine signed-host ordinary profile capture. Requires a disposable scoped
+// human editor; never changes account/authority configuration or qualifies a record.
+async function owningProfileCapture(page: Page) {
+  const fleet = await page.request.get('/api/v1/vessels?offset=0&limit=25'); expect(fleet.status()).toBe(200)
+  const vessel = (await fleet.json()).items.find((v: { kind: string; canEdit: boolean }) => v.kind === 'Ship' && v.canEdit)
+  expect(!!vessel).toBe(true)
+  await page.goto(`/app/fleet/${vessel.id}/profile`); await page.getByRole('button', { name: 'EN', exact: true }).click()
+  const profile = page.getByRole('region', { name: 'Regulatory profile draft', exact: true })
+  await profile.getByLabel('Main propulsion power (kW) — Data state', { exact: true }).selectOption('Known')
+  await profile.getByLabel('Main propulsion power (kW)', { exact: true }).fill('3600.000001')
+  await profile.getByLabel('Construction contract date (YYYY-MM-DD) — Data state', { exact: true }).selectOption('Unknown')
+  const waiting = page.waitForResponse(r => r.request().method() === 'PUT' && r.url().endsWith(`/vessels/${vessel.id}/regulatory-profile`))
+  await profile.getByRole('button', { name: 'Save draft', exact: true }).click()
+  const saved = await waiting; expect(saved.status()).toBe(200)
+  const result = await saved.json(); expect(result.content.mainPropulsionKw).toEqual({ state: 'Known', value: '3600.000001' })
+  expect(result.content.contractForConstructionDate).toEqual({ state: 'Unknown', value: null })
+  await page.reload()
+  await expect(profile.getByLabel('Main propulsion power (kW)', { exact: true })).toHaveValue('3600.000001')
+  await expect(profile.getByLabel('Construction contract date (YYYY-MM-DD) — Data state', { exact: true })).toHaveValue('Unknown')
+  const history = await page.request.get(`/api/v1/vessels/${vessel.id}/regulatory-profile/history?offset=0&limit=25`)
+  expect(history.status()).toBe(200)
+  expect((await history.json()).items[0].content.mainPropulsionKw.value).toBe('3600.000001')
+}
 export const regulatoryAdmissionCases = [
+  { name: 'owning-power-and-independent-construction-date-draft-signed-host', run: owningProfileCapture, restricted: false },
   { name: 'synthetic-assigned-human-source-qualification-current-evaluation-signed-host', run: assignedQualification, restricted: false },
   { name: 'source-qualification-denied-before-lineage-or-owner-disclosure', run: deniedQualification, restricted: true },
 ] as const

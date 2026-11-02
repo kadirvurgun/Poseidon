@@ -99,10 +99,10 @@ public static class HumanReviewEndpoints
     private static bool GuidQuery(HttpContext h, string key, out Guid id) => Guid.TryParseExact(h.Request.Query[key], "D", out id) && id != Guid.Empty;
     private static bool RevisionQuery(HttpContext h, string key, out long revision) => long.TryParse(h.Request.Query[key], NumberStyles.None, CultureInfo.InvariantCulture, out revision) && revision is > 0 and <= 9007199254740991;
     private static bool Superseded(ControlEvidenceHead evidence, ControlEvidenceHead control, long er, long cr) => evidence.Revision != er || control.Revision != cr;
-    private static async Task<HumanReviewDto> Dto(PoseidonDbContext db, HumanReviewEvent e, uint version, DateTimeOffset asOf, CancellationToken ct, bool currentView = true) {
+    private static async Task<HumanReviewDto> Dto(PoseidonDbContext db, HumanReviewEvent e, uint version, DateTimeOffset asOf, CancellationToken ct, FederationSettings settings, bool currentView = true) {
         var superseded = await db.ControlEvidenceRevisions.AnyAsync(x => x.VesselId == e.VesselId && x.SavedAt <= asOf &&
             (x.Kind == "Evidence" && x.Id == e.EvidenceId && x.Revision > e.EvidenceRevision || x.Kind == "Control" && x.Id == e.ControlId && x.Revision > e.ControlRevision), ct)
-            || await LineageChanged(db, e.VesselId, e.ControlId, e.ControlRevision, e.EvaluationId, asOf, ct, currentView);
+            || await LineageChanged(db, e.VesselId, e.ControlId, e.ControlRevision, e.EvaluationId, asOf, ct, settings, currentView);
         if (e.VerificationId != null) superseded |= await db.HumanReviewEvents.AnyAsync(x => x.VesselId == e.VesselId && x.Id == e.VerificationId && x.Revision > e.VerificationRevision && x.SavedAt <= asOf, ct);
         if (e.DecisionJson != null) {
             var capture = JsonSerializer.Deserialize<RecordedDecision>(e.DecisionJson, Json)!;
@@ -113,7 +113,7 @@ public static class HumanReviewEndpoints
             e.ReasonCode, e.Rationale, e.AuthorityHash, e.ContextHash, e.SavedAt, e.ValidUntil, asOf,
             e.DecisionJson == null ? null : JsonSerializer.Deserialize<RecordedDecision>(e.DecisionJson, Json));
     }
-    private static async Task<bool> LineageChanged(PoseidonDbContext db, Guid vessel, Guid control, long revision, Guid? evaluation, DateTimeOffset asOf, CancellationToken ct, bool currentView = true)
+    private static async Task<bool> LineageChanged(PoseidonDbContext db, Guid vessel, Guid control, long revision, Guid? evaluation, DateTimeOffset asOf, CancellationToken ct, FederationSettings settings, bool currentView = true)
     {
         var pins = db.ControlEvidenceRequirements.Where(x => x.VesselId == vessel && x.Kind == "Control" && x.Id == control && x.Revision == revision);
         if (await pins.AnyAsync(p => db.RegisterRevisions.Any(r => r.SavedAt <= asOf &&
@@ -121,7 +121,7 @@ public static class HumanReviewEndpoints
             p.RuleId != null && db.RuleRevisions.Any(r => r.Id == p.RuleId && r.Revision > p.RuleRevision && r.SavedAt <= asOf), ct)) return true;
         if (evaluation == null) return false;
         var e = await db.ApplicabilityEvaluations.AsNoTracking().SingleOrDefaultAsync(x => x.Id == evaluation && x.VesselId == vessel && x.SavedAt <= asOf, ct);
-        if (currentView && e != null && await db.EvaluationQualifications.AnyAsync(x => x.EvaluationId == e.Id, ct) && (await CurrentRegulatoryContext.Stale(db, e.Id, vessel, asOf, ct)).Length > 0) return true;
+        if (currentView && e != null && await db.EvaluationQualifications.AnyAsync(x => x.EvaluationId == e.Id, ct) && (await CurrentRegulatoryContext.Stale(db, e.Id, vessel, asOf, ct, settings)).Length > 0) return true;
         return e == null || e.ProfileRevision == null || await db.RegulatoryDraftRevisions.AnyAsync(x => x.VesselId == vessel && x.Revision > e.ProfileRevision && x.SavedAt <= asOf, ct);
     }
     private static async Task<IResult> Trace(HttpContext h, PoseidonDbContext db)
@@ -162,7 +162,7 @@ public static class HumanReviewEndpoints
         var traceRuleIds = pins.Where(p => p.RuleId != null).Select(p => p.RuleId!.Value).ToArray();
         var latestEvaluation = await db.ApplicabilityEvaluations.AsNoTracking().Where(e => e.VesselId == vessel && e.SavedAt <= asOf && db.EvaluationQualifications.Any(q => q.EvaluationId == e.Id && traceRuleIds.Contains(q.RuleId)))
             .OrderByDescending(e => e.SavedAt).ThenBy(e => e.Id).FirstOrDefaultAsync(ct);
-        var evaluationCauses = latestEvaluation == null ? new[] { "AUTHORITATIVE_EVALUATION_UNAVAILABLE" } : await CurrentRegulatoryContext.Stale(db, latestEvaluation.Id, vessel, DateTimeOffset.UtcNow, ct);
+        var evaluationCauses = latestEvaluation == null ? new[] { "AUTHORITATIVE_EVALUATION_UNAVAILABLE" } : await CurrentRegulatoryContext.Stale(db, latestEvaluation.Id, vessel, DateTimeOffset.UtcNow, ct, h.RequestServices.GetRequiredService<FederationSettings>());
         segments.Add(latestEvaluation == null ? new("Applicability", null, null, "Unavailable", "REVIEW_REQUIRED", "AUTHORITATIVE_EVALUATION_UNAVAILABLE", null, null) :
             new("Applicability", latestEvaluation.Id, null, "Available", evaluationCauses.Length == 0 ? "RETAINED" : "REVIEW_REQUIRED", "HISTORICAL_INPUTS_ONLY", latestEvaluation.SnapshotHash, latestEvaluation.SavedAt));
         segments.Add(new("Control", co.Id, co.Revision, "Available", co.Lifecycle, "COMPLETION_AND_EFFECTIVENESS_UNKNOWN", co.Hash, co.SavedAt));
@@ -179,7 +179,7 @@ public static class HumanReviewEndpoints
         var items = new List<HumanReviewDto>();
         foreach (var e in events.Take(25)) {
             var version = await db.HumanReviewHeads.Where(x => x.VesselId == vessel && x.Id == e.Id).Select(x => x.Version).SingleAsync(ct);
-            items.Add(await Dto(db, e, version, asOf, ct, !historical));
+            items.Add(await Dto(db, e, version, asOf, ct, h.RequestServices.GetRequiredService<FederationSettings>(), !historical));
         }
         var auditItems = new List<AuditTraceEvent>(); var auditHasMore = false;
         var authorizedMetadata = q;
@@ -194,7 +194,7 @@ public static class HumanReviewEndpoints
             auditHasMore = auditRows.Length > 25;
             foreach (var e in auditRows.Take(25)) {
                 var version = await db.HumanReviewHeads.Where(x => x.VesselId == vessel && x.Id == e.Id).Select(x => x.Version).SingleAsync(ct);
-                var state = await Dto(db, e, version, asOf, ct, !historical);
+                var state = await Dto(db, e, version, asOf, ct, h.RequestServices.GetRequiredService<FederationSettings>(), !historical);
                 auditItems.Add(new(e.Id, e.Revision, e.Kind, e.State, state.CurrentState, e.SavedAt, e.ValidUntil, e.EvaluationId,
                     e.VerificationId, e.VerificationRevision, e.AuthorityId, e.RoleId, e.AuthorityHash, e.ContextHash));
             }
@@ -321,7 +321,7 @@ public static class HumanReviewEndpoints
         }
         async Task<bool> RecordingChanged() =>
             await db.ControlEvidenceHeads.AnyAsync(x => x.VesselId == vessel && (x.Kind == "Evidence" && x.Id == ev.Id && x.Revision != ev.Revision || x.Kind == "Control" && x.Id == co.Id && x.Revision != co.Revision), ct) ||
-            await LineageChanged(db, vessel, co.Id, co.Revision, cmd.EvaluationId, DateTimeOffset.UtcNow, ct) ||
+            await LineageChanged(db, vessel, co.Id, co.Revision, cmd.EvaluationId, DateTimeOffset.UtcNow, ct, h.RequestServices.GetRequiredService<FederationSettings>()) ||
             await db.HumanReviewHeads.AnyAsync(x => x.VesselId == vessel && x.Id == cmd.VerificationId && x.Revision != cmd.VerificationRevision, ct);
         var replay = await Replay(); if (replay != null) return replay;
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "HumanReviewCommand", "Attempted", resourceId: id);
@@ -337,7 +337,7 @@ public static class HumanReviewEndpoints
             var ch = await db.ControlEvidenceHeads.SingleAsync(x => x.VesselId == vessel && x.Kind == "Control" && x.Id == co.Id, ct);
             if (eh.Version != cmd.EvidenceVersion || ch.Version != cmd.ControlVersion) return await Fail(h, 409, "input_version_conflict");
             var content = JsonSerializer.Deserialize<ControlEvidenceContent>(ev.ContentJson, Json)!; var now = DateTimeOffset.UtcNow;
-            var changed = Superseded(eh, ch, ev.Revision, co.Revision) || await LineageChanged(db, vessel, co.Id, co.Revision, cmd.EvaluationId, now, ct);
+            var changed = Superseded(eh, ch, ev.Revision, co.Revision) || await LineageChanged(db, vessel, co.Id, co.Revision, cmd.EvaluationId, now, ct, h.RequestServices.GetRequiredService<FederationSettings>());
             if (cmd.Recording != null) {
                 var verificationHead = await db.HumanReviewHeads.SingleAsync(x => x.VesselId == vessel && x.Id == cmd.VerificationId, ct);
                 changed |= verificationHead.Revision != cmd.VerificationRevision;
@@ -346,7 +346,7 @@ public static class HumanReviewEndpoints
             }
             var requirementPins = await db.ControlEvidenceRequirements.AsNoTracking().Where(x => x.VesselId == vessel && x.Kind == "Control" && x.Id == co.Id && x.Revision == co.Revision)
                 .Select(x => new RequirementPin(x.RequirementId, x.RequirementRevision, x.SourceId, x.SourceRevision, x.RuleId, x.RuleRevision)).ToArrayAsync(ct);
-            var qualified = await QualifiedControlContext.Resolve(db, vessel, requirementPins, "Evidence", content, ev.FileId != null, now, ct);
+            var qualified = await QualifiedControlContext.Resolve(db, vessel, requirementPins, "Evidence", content, ev.FileId != null, now, ct, h.RequestServices.GetRequiredService<FederationSettings>());
             var fresh = qualified.Blockers.Length == 0;
             if (cmd.State == "VERIFIED") {
                 if (!await db.EvaluationQualifications.AnyAsync(x => x.EvaluationId == cmd.EvaluationId, ct)) return await Fail(h, 409, "qualified_evaluation_required");
@@ -397,7 +397,7 @@ public static class HumanReviewEndpoints
                 ContextHash = cmd.Recording == null && prior != null ? prior.ContextHash : RegisterStorage.Hash(JsonSerializer.Serialize(new { ev.Hash, controlHash = co.Hash, cmd.EvaluationId, cmd.VerificationId, cmd.VerificationRevision, verificationHash = verification?.ContextHash, cmd.OperationId, cmd.Recording, policy = grant.Recording, profileRevision = profileHead?.Revision, priorContextHash = prior?.ContextHash })),
                 SavedAt = now, ValidUntil = cmd.State == "VERIFIED" ? new[] { content.ValidUntil, content.FreshUntil, grant.ValidUntil }.Where(t => t != null).Select(t => t!.Value).Concat(qualified.Policies.Where(p => p.MaxAgeHours != null).Select(p => content.ObservedAt!.Value.AddHours(p.MaxAgeHours!.Value))).Min() : prior?.ValidUntil };
             db.HumanReviewEvents.Add(e); await db.SaveChangesAsync(ct);
-            var outcome = JsonSerializer.Serialize(await Dto(db, e, head.Version, now, ct), Json);
+            var outcome = JsonSerializer.Serialize(await Dto(db, e, head.Version, now, ct, h.RequestServices.GetRequiredService<FederationSettings>()), Json);
             db.HumanReviewReceipts.Add(new() { TenantId = a.TenantId, VesselId = vessel, ActorId = a.Id, Key = key, ResourceId = head.Id, Fingerprint = fingerprint, OutcomeJson = outcome, SavedAt = now });
             await db.SaveChangesAsync(ct);
             var commitGrant = Grant();

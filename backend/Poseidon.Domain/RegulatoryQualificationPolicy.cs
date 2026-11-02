@@ -21,7 +21,8 @@ public sealed record QualificationContent(string? SourceBytesBase64 = null, stri
 public static class RegulatoryQualificationPolicy
 {
     public const string Version = "recorded-qualification-v1";
-    public static readonly string[] ProfileFields = ["vessel.flag", "vessel.type", "vessel.gt", "vessel.buildDate", "vessel.classSociety", "vessel.tradingArea", "cargo.type"];
+    public static readonly string[] ProfileFields = ["vessel.flag", "vessel.type", "vessel.gt", "vessel.buildDate", "vessel.classSociety", "vessel.tradingArea", "cargo.type", "vessel.mainPropulsionKw", "vessel.contractForConstructionDate"];
+    public static readonly string[] VerifiedProfileFields = ["vessel.gt", "vessel.buildDate", "vessel.mainPropulsionKw", "vessel.contractForConstructionDate"];
     public static void Validate(QualificationContent c)
     {
         if (c.TugCalculation != null) TugCapability.Validate(c.TugCalculation);
@@ -37,7 +38,7 @@ public static class RegulatoryQualificationPolicy
             p.Basis is not ("Declared" or "HumanAttested" or "ProviderVerified") || p.MaxAgeHours is <= 0 or > 87600) || inputs.Select(p => p.Field).Distinct().Count() != inputs.Length))
             throw new ArgumentException("invalid_input_policy");
         // 09.02 Input Catalog6/8 explicitly requires a verified vessel profile.
-        if (c.Inputs?.Any(p => p.Field is "vessel.gt" or "vessel.buildDate" && p.Basis == "Declared") == true) throw new ArgumentException("verified_profile_required");
+        if (c.Inputs?.Any(p => VerifiedProfileFields.Contains(p.Field) && p.Basis == "Declared") == true) throw new ArgumentException("verified_profile_required");
         if ((c.SupersedingRuleId == null) != (c.SupersedingRuleRevision == null) || c.SupersedingRuleRevision is <= 0) throw new ArgumentException("invalid_superseding_revision");
         if (c.Control?.MaxAgeHours is <= 0 or > 87600) throw new ArgumentException("invalid_freshness_policy");
     }

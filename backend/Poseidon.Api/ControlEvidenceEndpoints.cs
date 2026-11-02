@@ -89,7 +89,7 @@ public static class ControlEvidenceEndpoints
             db.TugCapabilityBindings.Any(b => b.VesselId == vessel && b.Kind == edge.TargetKind && b.Id == edge.TargetId && b.Revision == edge.TargetRevision))) &&
         (r.FileId == null || db.StoredFiles.Any(f => f.Id == r.FileId && f.Revision == r.FileRevision && f.Checksum == r.Checksum && f.VesselId == vessel &&
             db.FileStages.Any(s => s.Id == f.Id && s.VesselId == vessel && s.PersonId == null && s.DocumentId == null && s.State == "CleanTransport"))));
-    private static async Task<ControlEvidenceDto> Dto(PoseidonDbContext db, ControlEvidenceRevision r, uint version, DateTimeOffset asOf, CancellationToken ct, TrustedActor actor)
+    private static async Task<ControlEvidenceDto> Dto(PoseidonDbContext db, ControlEvidenceRevision r, uint version, DateTimeOffset asOf, CancellationToken ct, TrustedActor actor, FederationSettings settings)
     {
         var requirements = await db.ControlEvidenceRequirements.AsNoTracking().Where(x => x.VesselId == r.VesselId && x.Kind == r.Kind && x.Id == r.Id && x.Revision == r.Revision).OrderBy(x => x.RequirementId).ThenBy(x => x.RequirementRevision).ToArrayAsync(ct);
         var edges = await db.ControlEvidenceEdges.AsNoTracking().Where(x => x.VesselId == r.VesselId && x.Kind == r.Kind && x.Id == r.Id && x.Revision == r.Revision).OrderBy(x => x.TargetKind).ThenBy(x => x.TargetId).ThenBy(x => x.TargetRevision).ToArrayAsync(ct);
@@ -97,7 +97,7 @@ public static class ControlEvidenceEndpoints
         var superseded = await db.ControlEvidenceRevisions.AnyAsync(x => x.VesselId == r.VesselId && x.Kind == r.Kind && x.Id == r.Id && x.Revision > r.Revision && x.SavedAt <= asOf, ct) ||
             await db.ControlEvidenceEdges.AnyAsync(x => x.VesselId == r.VesselId && x.TargetKind == r.Kind && x.TargetId == r.Id && x.TargetRevision == r.Revision && x.TargetKind == "Evidence" &&
                 db.ControlEvidenceRevisions.Any(s => s.VesselId == x.VesselId && s.Kind == x.Kind && s.Id == x.Id && s.Revision == x.Revision && s.FileId != null && s.SavedAt <= asOf), ct);
-        var qualified = await QualifiedControlContext.Resolve(db, r.VesselId, requirements.Select(x => new RequirementPin(x.RequirementId, x.RequirementRevision, x.SourceId, x.SourceRevision, x.RuleId, x.RuleRevision)).ToArray(), r.Kind, content, r.FileId != null, asOf, ct);
+        var qualified = await QualifiedControlContext.Resolve(db, r.VesselId, requirements.Select(x => new RequirementPin(x.RequirementId, x.RequirementRevision, x.SourceId, x.SourceRevision, x.RuleId, x.RuleRevision)).ToArray(), r.Kind, content, r.FileId != null, asOf, ct, settings);
         var missing = ControlEvidencePolicy.Blockers(r.Kind, content, requirements.Length, r.FileId != null, requirements.Count(p => p.RuleId != null))
             .Where(x => x is not ("SOURCE_ADMISSION_UNAVAILABLE" or "VERIFICATION_NOT_PERFORMED" or "CLEAN_FILE_MISSING")).Concat(qualified.Blockers).Distinct().ToArray();
         var visibleEvidence = Visible(db, r.VesselId, actor);
@@ -128,7 +128,7 @@ public static class ControlEvidenceEndpoints
         var items = new List<ControlEvidenceDto>();
         foreach (var r in rows.Take(25)) {
             var head = await db.ControlEvidenceHeads.AsNoTracking().SingleAsync(x => x.VesselId == vessel && x.Kind == kind && x.Id == r.Id, ct);
-            items.Add(await Dto(db, r, head.Version, asOf, ct, a));
+            items.Add(await Dto(db, r, head.Version, asOf, ct, a, h.RequestServices.GetRequiredService<FederationSettings>()));
         }
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "ControlEvidenceRead", "Success", resourceId: vessel);
         return Results.Ok(new { items, offset, hasMore = rows.Length > 25, canWrite = Write(a, kind, vessel) });
@@ -146,7 +146,7 @@ public static class ControlEvidenceEndpoints
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "ControlOrphans", "Success", resourceId: vessel);
         var evaluation = await db.ApplicabilityEvaluations.AsNoTracking().Where(e => e.VesselId == vessel && db.EvaluationQualifications.Any(q => q.EvaluationId == e.Id))
             .OrderByDescending(e => e.SavedAt).ThenBy(e => e.Id).FirstOrDefaultAsync(h.RequestAborted);
-        var causes = evaluation == null ? new[] { "AUTHORITATIVE_APPLICABILITY_UNAVAILABLE" } : await CurrentRegulatoryContext.Stale(db, evaluation.Id, vessel, DateTimeOffset.UtcNow, h.RequestAborted);
+        var causes = evaluation == null ? new[] { "AUTHORITATIVE_APPLICABILITY_UNAVAILABLE" } : await CurrentRegulatoryContext.Stale(db, evaluation.Id, vessel, DateTimeOffset.UtcNow, h.RequestAborted, h.RequestServices.GetRequiredService<FederationSettings>());
         var result = evaluation == null ? null : JsonSerializer.Deserialize<EvaluationDto>(evaluation.ResultJson, Json);
         var eligible = await db.RegulatoryQualificationEvents.AsNoTracking().Where(q => q.State == "IN_FORCE" && db.RegulatoryQualificationHeads.Any(head => head.RuleId == q.RuleId && head.Revision == q.Revision) &&
             db.RuleDrafts.Any(rule => rule.Id == q.RuleId && rule.Revision == q.RuleRevision)).Select(q => q.RuleId).ToArrayAsync(h.RequestAborted);
@@ -251,7 +251,7 @@ public static class ControlEvidenceEndpoints
             if (action != "save") {
                 var basic = ControlEvidencePolicy.Blockers(kind, command.Content, command.Requirements.Length, file != null, command.Requirements.Count(p => p.RuleId != null))
                     .Where(x => x is not ("SOURCE_ADMISSION_UNAVAILABLE" or "VERIFICATION_NOT_PERFORMED" or "CLEAN_FILE_MISSING")).ToArray();
-                var qualified = await QualifiedControlContext.Resolve(db, vessel, command.Requirements, kind, command.Content, file != null, now, ct);
+                var qualified = await QualifiedControlContext.Resolve(db, vessel, command.Requirements, kind, command.Content, file != null, now, ct, h.RequestServices.GetRequiredService<FederationSettings>());
                 if (basic.Length > 0 || qualified.Blockers.Length > 0) return Results.Problem(statusCode: 409, title: "submission_blocked",
                     extensions: new Dictionary<string, object?> { ["code"] = "submission_blocked", ["blockers"] = basic.Concat(qualified.Blockers).Distinct().ToArray(), ["mechanisms"] = kind == "Evidence" ? qualified.Policies.Where(p => p.RequiredVerificationMechanism != null).Select(p => new { p.RequiredVerificationMechanism, p.VerificationMechanismSourceLocator }).ToArray() : [] });
                 if (command.Content.Acknowledgments?.Length > 0 && !h.RequestServices.GetRequiredService<FederationSettings>().Memberships.Any(m => m.ActorId == a.Id && m.TenantId == a.TenantId && m.ActorKind == "Human")) return await Fail(h, 403, "human_acknowledgment_required");
@@ -271,7 +271,7 @@ public static class ControlEvidenceEndpoints
                 RequirementId = p.RequirementId, RequirementRevision = p.RequirementRevision, SourceId = p.SourceId, SourceRevision = p.SourceRevision, RuleId = p.RuleId, RuleRevision = p.RuleRevision });
             foreach (var p in command.Links) db.ControlEvidenceEdges.Add(new() { TenantId = a.TenantId, VesselId = vessel, Kind = kind, Id = head.Id, Revision = head.Revision, TargetKind = p.Kind, TargetId = p.Id, TargetRevision = p.Revision, TargetVersion = p.ExpectedVersion });
             await db.SaveChangesAsync(ct);
-            var outcome = JsonSerializer.Serialize(await Dto(db, revision, head.Version, now, ct, a), Json);
+            var outcome = JsonSerializer.Serialize(await Dto(db, revision, head.Version, now, ct, a, h.RequestServices.GetRequiredService<FederationSettings>()), Json);
             db.ControlEvidenceReceipts.Add(new() { TenantId = a.TenantId, VesselId = vessel, Kind = kind, ResourceId = head.Id, ActorId = a.Id, Key = key, Fingerprint = fingerprint, OutcomeJson = outcome, SavedAt = now });
             await db.SaveChangesAsync(ct);
             var live = Actor(h); if (live == null || live.Id != a.Id || live.TenantId != a.TenantId || !Write(live, kind, vessel) || !await Scope(db, live, vessel, ct)) return await Fail(h, 403, "permission_denied");

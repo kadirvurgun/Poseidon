@@ -44,6 +44,9 @@ public static class RegulatoryDraftEndpoints
         var actor = Actor(http);
         var vessel = await actor.Scope(db.Vessels.AsNoTracking()).SingleOrDefaultAsync(x => x.Id == id, http.RequestAborted);
         if (vessel == null) { await audit.WriteAsync(http, "ProfileRead", "NotFound", resourceId: id); return Results.NotFound(); }
+        if (!actor.Permissions.Contains("file.read") && await db.RegulatoryDrafts.AnyAsync(x => x.VesselId == id && x.ConstructionFileId != null, http.RequestAborted)) {
+            await audit.WriteAsync(http, "ProfileRead", "permission_denied", resourceId: id); return Results.StatusCode(403);
+        }
         var projection = Dto(actor, vessel, await db.RegulatoryDrafts.AsNoTracking().SingleOrDefaultAsync(x => x.VesselId == id, http.RequestAborted));
         await audit.WriteAsync(http, "ProfileRead", "Success", resourceId: id);
         return Results.Ok(projection);
@@ -54,6 +57,9 @@ public static class RegulatoryDraftEndpoints
         var actor = Actor(http);
         var allowed = await actor.Scope(db.Vessels.AsNoTracking()).AnyAsync(x => x.Id == id, http.RequestAborted);
         if (!allowed) { await audit.WriteAsync(http, "ProfileHistory", "NotFound", resourceId: id); return Results.NotFound(); }
+        if (!actor.Permissions.Contains("file.read") && await db.RegulatoryDraftRevisions.AnyAsync(x => x.VesselId == id && x.ConstructionFileId != null, http.RequestAborted)) {
+            await audit.WriteAsync(http, "ProfileHistory", "permission_denied", resourceId: id); return Results.StatusCode(403);
+        }
         if (offset is < 0 or > 100000 || limit is < 1 or > 100) {
             await audit.WriteAsync(http, "ProfileHistory", "Invalid", resourceId: id); return Results.BadRequest();
         }
@@ -95,12 +101,23 @@ public static class RegulatoryDraftEndpoints
                 if (buffer.Length + count > 32768) return await Fail(400, "invalid_request");
                 buffer.Write(bytes, 0, count);
             }
-            command = JsonSerializer.Deserialize<SaveRegulatoryDraft>(buffer.ToArray(), new JsonSerializerOptions(JsonSerializerDefaults.Web) { MaxDepth = 6 }) ?? throw new JsonException();
+            using var document = JsonDocument.Parse(buffer.ToArray(), new() { MaxDepth = 6 });
+            ApplicabilityEngine.RejectDuplicateKeys(document.RootElement);
+            command = document.RootElement.Deserialize<SaveRegulatoryDraft>(new JsonSerializerOptions(JsonSerializerDefaults.Web) { MaxDepth = 6, PropertyNameCaseInsensitive = false }) ?? throw new JsonException();
         }
         catch (JsonException) { return await Fail(400, "invalid_request"); }
         if (command.ExpectedVersion == null || command.Content == null) return await Fail(400, "validation_failed");
         var (content, errors) = RegulatoryDraftPolicy.Normalize(command.Content);
         if (errors.Count > 0) return await Fail(400, "validation_failed", errors);
+        async Task<bool> RecordAccess() {
+            var live = Actor(http);
+            if (live == null || live.Id != actor.Id || live.TenantId != actor.TenantId || !live.CanEditVessel(id) || !await live.Scope(db.Vessels).AnyAsync(v => v.Id == id, http.RequestAborted)) return false;
+            if (!live.Permissions.Contains("file.read") && (content.ConstructionRecord != null || await db.RegulatoryDrafts.AnyAsync(x => x.VesselId == id && x.ConstructionFileId != null, http.RequestAborted))) return false;
+            if (content.ConstructionRecord is not { } pin) return true;
+            return await db.StoredFiles.AnyAsync(f => f.Id == pin.Id && f.VesselId == id && f.Revision == pin.Revision && f.Checksum == pin.Checksum &&
+                db.FileStages.Any(s => s.Id == f.Id && s.VesselId == id && s.PersonId == null && s.DocumentId == null && s.State == "CleanTransport"), http.RequestAborted);
+        }
+        if (!await RecordAccess()) return await Fail(403, "construction_record_unavailable");
         var keys = http.Request.Headers["Idempotency-Key"];
         var key = keys.Count == 1 ? keys[0] : null;
         if (key == null || key.Length is < 16 or > 80 || key.Any(c => !char.IsAsciiLetterOrDigit(c) && c != '-'))
@@ -109,19 +126,26 @@ public static class RegulatoryDraftEndpoints
         var fingerprint = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes($"ProfileSave/{id}/{command.ExpectedVersion}/{json}")));
         async Task<IResult?> Replay()
         {
+            if (!await RecordAccess()) return await Fail(403, "construction_record_unavailable");
             var receipt = await db.CommandReceipts.AsNoTracking().SingleOrDefaultAsync(x => x.ActorId == actor.Id && x.Key == key, http.RequestAborted);
             if (receipt == null) return null;
             if (receipt.Action != "ProfileSave" || receipt.ResourceId != id || receipt.Fingerprint != fingerprint)
                 return await Fail(409, "idempotency_key_reused");
+            if (receipt.ProfileOutcomeJson == null) return await Fail(409, "historical_outcome_unavailable");
             http.Response.Headers["Idempotency-Replayed"] = "true";
-            return Results.Ok(Dto(actor, vessel, await db.RegulatoryDrafts.AsNoTracking().SingleAsync(x => x.VesselId == id, http.RequestAborted)));
+            return Results.Content(receipt.ProfileOutcomeJson, "application/json");
         }
         var replay = await Replay(); if (replay != null) return replay;
         var draft = await db.RegulatoryDrafts.SingleOrDefaultAsync(x => x.VesselId == id, http.RequestAborted);
         if ((draft?.Version ?? 0) != command.ExpectedVersion) return await Replay() ?? await Fail(409, "version_conflict");
-        await using var transaction = await db.Database.BeginTransactionAsync(http.RequestAborted);
+        await using var transaction = await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable, http.RequestAborted);
         try
         {
+            if (content.ConstructionRecord is { } record) {
+                var stage = await db.FileStages.SingleOrDefaultAsync(s => s.Id == record.Id && s.VesselId == id && s.PersonId == null && s.DocumentId == null && s.State == "CleanTransport", http.RequestAborted);
+                if (stage == null) return await Fail(403, "construction_record_unavailable");
+                db.Entry(stage).Property(s => s.State).IsModified = true;
+            }
             if (draft == null)
             {
                 draft = new() { TenantId = actor.TenantId, VesselId = id, ContentJson = json, Provenance = "Missing" };
@@ -134,6 +158,9 @@ public static class RegulatoryDraftEndpoints
                 db.Entry(draft).Property(x => x.ContentJson).IsModified = true;
             }
             draft.ContentJson = json; draft.Revision++;
+            draft.ConstructionFileId = content.ConstructionRecord?.Id;
+            draft.ConstructionFileRevision = content.ConstructionRecord?.Revision;
+            draft.ConstructionFileChecksum = content.ConstructionRecord?.Checksum;
             // PostgreSQL timestamps have microsecond precision. Return the same timestamp a
             // subsequent history/read/replay will observe, without a sub-microsecond drift.
             var savedAt = DateTimeOffset.UtcNow;
@@ -142,11 +169,13 @@ public static class RegulatoryDraftEndpoints
                 content.Declaration.State == "Unknown" || content.SourceReference.State == "Unknown" ? "Unknown" : "Missing";
             db.RegulatoryDraftRevisions.Add(draft.Snapshot());
             await db.SaveChangesAsync(http.RequestAborted);
+            var outcomeJson = JsonSerializer.Serialize(Dto(actor, vessel, draft), new JsonSerializerOptions(JsonSerializerDefaults.Web));
             db.CommandReceipts.Add(new() { TenantId = actor.TenantId, ActorId = actor.Id, Key = key, Action = "ProfileSave",
-                Fingerprint = fingerprint, ResourceId = id, CommittedAt = draft.SavedAt });
+                Fingerprint = fingerprint, ResourceId = id, CommittedAt = draft.SavedAt, RegisterRevision = draft.Revision, RegisterVersion = draft.Version, ProfileVesselId = id, ProfileOutcomeJson = outcomeJson });
             await db.SaveChangesAsync(http.RequestAborted);
+            if (!await RecordAccess()) return await Fail(403, "construction_record_unavailable");
             await transaction.CommitAsync(http.RequestAborted);
-            return Results.Ok(Dto(actor, vessel, draft));
+            return Results.Content(outcomeJson, "application/json");
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -161,7 +190,9 @@ public static class RegulatoryDraftEndpoints
         catch (Exception ex) when (ex is DbUpdateException or NpgsqlException)
         {
             await transaction.RollbackAsync(CancellationToken.None);
-            return await Fail(503, "service_unavailable");
+            db.ChangeTracker.Clear();
+            var state = ex is PostgresException p ? p.SqlState : (ex.InnerException as PostgresException)?.SqlState;
+            return await Replay() ?? await Fail(state is "40001" or "40P01" ? 409 : 503, state is "40001" or "40P01" ? "version_conflict" : "service_unavailable");
         }
     }
 }

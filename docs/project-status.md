@@ -1,3 +1,9 @@
+## RULE-OWNING-ADAPTERS-01 — 2026-11-02 — INCOMPLETE / UNVERIFIED
+
+Authored actual versioned propulsion and distinct construction-contract date/file inputs, exact relational revision/checksum lineage, object integrity and source-scoped human attestation, current attestation withdrawal/expiry across downstream consumers, exact original profile receipt outcomes and TR/EN strict file/profile UI. Domain, real PostgreSQL/actual-host, React/wire and signed-host test sources accompany the code. Preserved predecessor Crew/medical/offline/Tug/Safety and independent80b history.
+
+All suites/build/generation/model/migration/browser/provider/security/QA/CI **NOT RUN**. This checkpoint does **not** finish the other eleven adapters, Crew controlled status/catalog/defined offline scope, golden/multi-human journeys or full foundation engineering. [Literal thirteen-input/source/selected-task reconciliation and delivered acceptance cases](tasks/rule-owning-adapters-01.md), [phase](phases/RULE-OWNING-ADAPTERS-01.md). Next continue required software authoring before the one combined gate; no publication/merge/self approval or accepted SP. Canonical8/970SP,2/121tasks,0/196accepted unchanged.
+
 ## CREW-FULL-SCOPE-01 — 2026-11-02 — INCOMPLETE / UNVERIFIED
 
 Authored scoped onboard/planned declaration presence, immutable declaration/position policy lineage, stale tuple masking, actual protected input observations, TR/EN assignment history/source-observation consumers and domain/real PostgreSQL/actual-host/wire/React/signed-host tests. Preserved all predecessor code and normal Safety receipt; received only six-file1f82b754 normally with-x as b568e9e. Today/mixed-fleet definition remains an unreviewed engineering association.

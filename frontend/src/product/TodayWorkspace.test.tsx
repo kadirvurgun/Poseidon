@@ -11,7 +11,7 @@ const vesselPage = (count: number) => Array.from({ length: count }, (_, i) => ({
 const now = '2026-11-01T00:00:00Z'
 const href = `/app/fleet/${id}/profile`
 const data = { vessel, readAt: now, coverage: ['RegulatoryDraft', 'OperationalTasks', 'SafetyDecisions', 'Permits', 'EvidenceVerification'].map((source, i) => ({ source, status: i ? 'Unavailable' : 'Available' })), cards: { items: [{ key: 'regulatory-draft', priority: 'Advisory', source: 'RegulatoryDraft', reason: 'DraftUnverified', owner: null, nextAction: 'ReviewDraft', href }], offset: 0, limit: 25, hasMore: false } }
-const why = { vesselId: id, cardKey: 'regulatory-draft', rule: 'TW-DRAFT-01', reason: 'DraftUnverified', inputs: { known: 0, missing: 16, unknown: 1, reason: 'DraftUnverified' }, readAt: now, savedAt: now, sourceObservedAt: null, freshness: 'Unverified', provenance: 'Synthetic', blockers: ['VerificationUnavailable', 'OperationalSourcesUnavailable'], owner: null, nextAction: 'ReviewDraft', href }
+const why = { vesselId: id, cardKey: 'regulatory-draft', rule: 'TW-DRAFT-01', reason: 'DraftUnverified', inputs: { known: 0, missing: 19, unknown: 1, reason: 'DraftUnverified' }, readAt: now, savedAt: now, sourceObservedAt: null, freshness: 'Unverified', provenance: 'Synthetic', blockers: ['VerificationUnavailable', 'OperationalSourcesUnavailable'], owner: null, nextAction: 'ReviewDraft', href }
 const response = (body: unknown, status = 200) => ({ ok: status === 200, status, json: async () => body }) as Response
 afterEach(() => vi.restoreAllMocks())
 it('shows honest TR/EN coverage, keyboard disclosure and fresh authorized Why on every expansion', async () => {
@@ -23,7 +23,7 @@ it('shows honest TR/EN coverage, keyboard disclosure and fresh authorized Why on
   view.rerender(<TodayWorkspace id={id} language="en" offline={false} onNavigate={navigate} />)
   expect(screen.getAllByText(/Unavailable: source not connected/)).toHaveLength(4)
   const button = screen.getByRole('button', { name: 'Why?' }); button.focus(); await user.keyboard('{Enter}')
-  expect(await screen.findByText(/Declared \/ missing \/ unknown inputs: 0 \/ 16 \/ 1/)).toBeVisible()
+  expect(await screen.findByText(/Declared \/ missing \/ unknown inputs: 0 \/ 19 \/ 1/)).toBeVisible()
   expect(screen.getByText(/Input source observation: Unknown/)).toBeVisible()
   expect(button).toHaveFocus()
   await user.click(screen.getByRole('button', { name: 'Close Why' })); await user.click(screen.getByRole('button', { name: 'Why?' }))

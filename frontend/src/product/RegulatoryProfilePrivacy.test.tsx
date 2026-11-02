@@ -11,7 +11,7 @@ vi.mock('./profile-api', () => ({ loadProfile: vi.fn(), loadProfileHistory: vi.f
 
 const firstId = '10000000-0000-0000-0000-000000000001'
 const nextId = '10000000-0000-0000-0000-000000000002'
-const content = Object.fromEntries(profileFields.map(([key]) => [key, { state: 'Missing', value: null }])) as ProfileContent
+const content = { ...Object.fromEntries(profileFields.map(([key]) => [key, { state: 'Missing', value: null }])), constructionRecord: null } as ProfileContent
 function profile(id = firstId): Profile {
   return { tenantId: '10000000-0000-0000-0000-000000000003', vessel: { id, companyId: nextId,
     code: id === firstId ? 'FICTIONAL-OLD' : 'FICTIONAL-NEW', name: 'Synthetic vessel', kind: 'Ship', canEdit: true, version: 1 },

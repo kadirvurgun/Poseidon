@@ -23,6 +23,13 @@ internal static class ApplicabilityContextResolver
             JsonSerializer.SerializeToElement(value), profile.Provenance, profile.Revision.ToString(System.Globalization.CultureInfo.InvariantCulture), observed);
         Set("vessel.flag", content.Flag.State, content.Flag.Value); Set("vessel.type", content.ShipType.State, content.ShipType.Value);
         Set("vessel.gt", content.Gt.State, content.Gt.Value); Set("vessel.buildDate", content.BuildDate.State, content.BuildDate.Value);
+        Set("vessel.mainPropulsionKw", content.MainPropulsionKw.State, content.MainPropulsionKw.Value);
+        Set("vessel.contractForConstructionDate", content.ContractForConstructionDate.State, content.ContractForConstructionDate.Value);
+        if (content.ContractForConstructionDate.State == "Known" && (content.ConstructionRecordReference.State != "Known" || content.ConstructionRecord == null ||
+            profile.ConstructionFileId != content.ConstructionRecord.Id || profile.ConstructionFileRevision != content.ConstructionRecord.Revision || profile.ConstructionFileChecksum != content.ConstructionRecord.Checksum ||
+            !await db.StoredFiles.AnyAsync(f => f.Id == profile.ConstructionFileId && f.VesselId == vessel.Id && f.Revision == profile.ConstructionFileRevision && f.Checksum == profile.ConstructionFileChecksum &&
+                db.FileStages.Any(s => s.Id == f.Id && s.VesselId == vessel.Id && s.PersonId == null && s.DocumentId == null && s.State == "CleanTransport"), ct)))
+            facts["vessel.contractForConstructionDate"] = facts["vessel.contractForConstructionDate"] with { Knowledge = "Unknown", Provenance = "ConstructionRecordMissing" };
         Set("vessel.classSociety", content.ClassSociety.State, content.ClassSociety.Value); Set("vessel.tradingArea", content.TradingArea.State, content.TradingArea.Value);
         Set("cargo.type", content.CargoContext.State, content.CargoContext.Value);
         // Class-pack, manning, eligibility, equipment and operational authority are
