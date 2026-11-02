@@ -15,6 +15,43 @@ public sealed class OwnedPostgresIsolationTests(OwnedPostgresFixture fixture)
         SeedImporter.Options(database.GetConnectionString(), seed), Guid.Empty, ActorContext.SeedImport(), true);
 
     [Fact]
+    public async Task Migrated_clones_preserve_actual_migrations_seed_audit_isolation_and_the_fresh_database_path()
+    {
+        var clones = await Task.WhenAll(fixture.CreateMigratedAsync(Ct), fixture.CreateMigratedAsync(Ct));
+        await using var first = clones[0]; await using var second = clones[1];
+        await using var fresh = await fixture.CreateAsync(Ct);
+        Assert.NotEqual(first.Name, second.Name);
+        await using (var a = Admin(first))
+        await using (var b = Admin(second))
+        {
+            Assert.Empty(await a.Companies.ToArrayAsync(Ct));
+            Assert.Empty(await b.Companies.ToArrayAsync(Ct));
+            Assert.Empty(await a.AuditEvents.ToArrayAsync(Ct));
+            Assert.Empty(await b.CommandReceipts.ToArrayAsync(Ct));
+            Assert.Equal(a.Database.GetMigrations(), await a.Database.GetAppliedMigrationsAsync(Ct));
+            Assert.Equal(b.Database.GetMigrations(), await b.Database.GetAppliedMigrationsAsync(Ct));
+        }
+        await using (var connection = new NpgsqlConnection(fresh.GetConnectionString()))
+        {
+            await connection.OpenAsync(Ct);
+            await using var command = new NpgsqlCommand("SELECT to_regclass('core.\"Tenants\"') IS NULL AND to_regclass('public.\"__EFMigrationsHistory\"') IS NULL", connection);
+            Assert.True((bool)(await command.ExecuteScalarAsync(Ct))!);
+        }
+        var seed = SeedData.Load(Path.Combine(AppContext.BaseDirectory, "synthetic-demo.json"));
+        var secondSeed = SeedData.Load(Path.Combine(AppContext.BaseDirectory, "synthetic-demo.json"));
+        await using (var a = Admin(first, seed)) await a.Database.MigrateAsync(Ct);
+        await using (var b = Admin(second, secondSeed)) await b.Database.MigrateAsync(Ct);
+        await using var mutated = Admin(first);
+        await using var untouched = Admin(second);
+        var marker = Guid.NewGuid();
+        mutated.Companies.Add(new() { TenantId = seed.Tenants[0].Id, Id = marker, Code = "CLONE-ONLY", Name = "Synthetic isolated clone company" });
+        await mutated.SaveChangesAsync(Ct);
+        Assert.True(await mutated.AuditEvents.AnyAsync(x => x.ResourceId == marker, Ct));
+        Assert.False(await untouched.Companies.AnyAsync(x => x.Id == marker, Ct));
+        Assert.False(await untouched.AuditEvents.AnyAsync(x => x.ResourceId == marker, Ct));
+    }
+
+    [Fact]
     public async Task Simultaneous_databases_isolate_migrations_rows_receipts_triggers_and_audit()
     {
         var leases = await Task.WhenAll(fixture.CreateAsync(Ct), fixture.CreateAsync(Ct));

@@ -40,7 +40,7 @@ public sealed partial class DirectoryWorkspaceTests(OwnedPostgresFixture fixture
     private CancellationToken Ct => TestContext.Current.CancellationToken;
     public async ValueTask InitializeAsync()
     {
-        postgres = await fixture.CreateAsync(Ct);
+        postgres = await fixture.CreateMigratedAsync(Ct);
         seed = SeedData.Load(Path.Combine(AppContext.BaseDirectory, "synthetic-demo.json"));
         await using var db = new PoseidonDbContext(SeedImporter.Options(postgres.GetConnectionString(), seed), Guid.Empty, ActorContext.SeedImport(), true);
         try { await db.Database.MigrateAsync(Ct); }

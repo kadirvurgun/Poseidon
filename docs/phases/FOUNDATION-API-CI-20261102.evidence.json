@@ -1,0 +1,222 @@
+{
+  "status": "SCOPED_REPAIR_CHECKS_PASS_FULL_FOUNDATION_GATE_PENDING",
+  "source_commit": "f858c53d015cd6933266deda6186bf688b476218",
+  "trace_ids": [
+    "DEV-002",
+    "T-S0-002",
+    "DEV-017",
+    "T-S1-005"
+  ],
+  "new_api_gate_unit_run": {
+    "scope": "unit",
+    "status": "PASS_EXACT_DISCOVERED_SCOPE",
+    "raw_output_persisted": false,
+    "started_at": "2026-11-02T09:32:10.257134+00:00",
+    "discovery": {
+      "exit_code": 0,
+      "cases": 82,
+      "output_sha256": "37893b2e04fc403c702cfb6f9f996359747df7491c72d664ca26c1abf3df0efe"
+    },
+    "exit_code": 0,
+    "count_observations": {
+      "total": [
+        82
+      ],
+      "failed": [
+        0
+      ],
+      "succeeded": [
+        82
+      ],
+      "skipped": [
+        0
+      ]
+    },
+    "output_sha256": "d6fd065f622a61301075707d3edfe999dd5e35c3529c930fa39db4c72aa2093e",
+    "failed_static_test_names": [],
+    "finished_at": "2026-11-02T09:32:25.813993+00:00",
+    "code_commit": "f858c53d015cd6933266deda6186bf688b476218",
+    "runner_scope": "new root API gate implementation against immutable native Release binaries; product source unmodified"
+  },
+  "api_gate_helper_tests": {
+    "executed": 9,
+    "passed": 9,
+    "failed": 0,
+    "skipped": 0
+  },
+  "dockerfile_check": {
+    "command": "docker build --check --progress=plain --file infra/s3-gate/Dockerfile infra/s3-gate",
+    "exit_code": 0,
+    "warnings": 0,
+    "full_image_build": {
+      "exit_code": 0,
+      "image_id": "sha256:d29cf68af86528039dd90210d08ce821a9b3d13159d8da674f1cbf738ff9595b",
+      "source_revision": "9e49d5e7a648f00e26f2246f4dc28e6b07f8c84a",
+      "source_archive_sha256": "45521908307306e925c98d629e1c17d78c8b72b6ee242b1bfb1409f7d8ee5841",
+      "source_label": "https://github.com/minio/minio",
+      "image_user": "65532:65532"
+    }
+  },
+  "full_api_gate": {
+    "discovery": {
+      "exit_code": 0,
+      "discovered_case_lines": 594,
+      "distinct_static_prefixes": 378,
+      "output_sha256": "7016cb10c2c5c2f19894022fa9844230779458313613f99fd2e4ed2920a6bcc9",
+      "raw_output_persisted": false,
+      "command": [
+        "C:\\Users\\avurgun\\source\\repos\\Poseidon\\.tools\\dotnet\\dotnet.exe",
+        "test",
+        "--project",
+        "tests/Poseidon.Api.Tests/Poseidon.Api.Tests.csproj",
+        "--configuration",
+        "Release",
+        "--no-build",
+        "--list-tests"
+      ]
+    },
+    "execution": {
+      "started_at": "2026-11-02T09:12:58.107130+00:00",
+      "commit": "f858c53d015cd6933266deda6186bf688b476218",
+      "scope": "unfiltered full API project",
+      "raw_output_persisted": false,
+      "approved": false,
+      "command": [
+        "C:\\Users\\avurgun\\source\\repos\\Poseidon\\.tools\\dotnet\\dotnet.exe",
+        "test",
+        "--project",
+        "tests/Poseidon.Api.Tests/Poseidon.Api.Tests.csproj",
+        "--configuration",
+        "Release",
+        "--no-build"
+      ],
+      "status": "INTERRUPTED_CHILD_DEADLINE",
+      "exit_code": null,
+      "finished_at": "2026-11-02T09:43:00.264571+00:00",
+      "duration_seconds": 1802.157
+    },
+    "controller": {
+      "status": "FAIL_OR_UNPROVEN_SCOPE",
+      "pid": 34540,
+      "started_at": "2026-11-02T09:12:21.199902+00:00",
+      "commit": "f858c53d015cd6933266deda6186bf688b476218",
+      "scope": "full API project with owned PostgreSQL, S3 and ClamAV",
+      "approved": false,
+      "exit_code": 2,
+      "owned_clamd_removed": true,
+      "source_unchanged": true,
+      "finished_at": "2026-11-02T09:43:03.268232+00:00"
+    }
+  },
+  "new_ci_source_hashes": {
+    "scripts/api_test_gate.py": "89deb0ddc2b882dfb611cb786f0befd3c93358dc66607b2bff6ac4f366e0d534",
+    "scripts/test_api_test_gate.py": "a701381f41c148bf1371136461c1d4383d483551eeaa4c7c5d4e02e6dbc9d200",
+    "infra/s3-gate/Dockerfile": "96008abc827f78a9e5b99cbd2c0bb575ac95b0f48984ceb4184f852d88106c9c",
+    ".github/workflows/backend-foundation.yml": "1c5fd9987f80e3b1df6c07816d0fd95e071492474674ffc3a8572d52501d2d34"
+  },
+  "canonical_acceptance_changed": false,
+  "independent_qa": "PENDING",
+  "source_scan_approval": "PENDING",
+  "fixture_optimization": "ACTUAL_POSTGRESQL_SCOPED_PASS: independent migrated data-free clones, fresh database path and normal seed/audit isolation",
+  "release_api_test_build": {
+    "command": "dotnet build tests/Poseidon.Api.Tests/Poseidon.Api.Tests.csproj --configuration Release --no-restore",
+    "exit_code": 0,
+    "warnings": 0,
+    "errors": 0,
+    "duration_seconds": 45.54
+  },
+  "fixture_initial_attempt": {
+    "started_at": "2026-11-02T09:46:43.126007+00:00",
+    "scope": "all owned PostgreSQL fixture isolation cases including original fresh migrations and new migrated clones",
+    "raw_output_persisted": false,
+    "approved": false,
+    "source_hashes": {
+      "tests/Poseidon.Api.Tests/OwnedPostgresFixture.cs": "d8ed1a06336cfa57156e0e302bdffb48364418de9f3f21fcccb676acd4e9ab2c",
+      "tests/Poseidon.Api.Tests/OwnedPostgresIsolationTests.cs": "0cd2b737451140d241fb32ebe2f1b9d565b01dba41001d3de658fde184639f70",
+      "tests/Poseidon.Api.Tests/DirectoryWorkspaceTests.cs": "b4f92072f157fa296b77b86829b0fd4f2dc77299862092b3225633146ddcb510"
+    },
+    "discovered_cases": 3,
+    "exit_code": 2,
+    "count_observations": {
+      "total": [
+        3
+      ],
+      "failed": [
+        3
+      ],
+      "succeeded": [
+        0
+      ],
+      "skipped": [
+        0
+      ]
+    },
+    "output_sha256": "6544fcf251adad2485976f9b7096fb8c0dbc20236cb9336a032f7163070fe2cc",
+    "fixed_markers": {},
+    "status": "FAIL_OR_UNPROVEN_SCOPE",
+    "finished_at": "2026-11-02T09:48:47.327745+00:00"
+  },
+  "fixture_fresh_diagnostic": {
+    "started_at": "2026-11-02T09:52:41.896801+00:00",
+    "scope": "retained original fresh PostgreSQL isolation case after concurrent source image build terminated",
+    "raw_output_persisted": false,
+    "exit_code": 0,
+    "counts": {
+      "total": [
+        1
+      ],
+      "failed": [
+        0
+      ],
+      "succeeded": [
+        1
+      ],
+      "skipped": [
+        0
+      ]
+    },
+    "output_sha256": "713f8daea581273e28561b07588f18964fc5b0994644de83e24cfa55a9a133e1",
+    "exception_types": [],
+    "fixed_message_flags": [],
+    "source_stack_locations": [],
+    "finished_at": "2026-11-02T09:53:13.598537+00:00"
+  },
+  "fixture_reconciled": {
+    "started_at": "2026-11-02T09:54:43.217010+00:00",
+    "scope": "all three retained fresh/unsafe-name and new migrated-clone PostgreSQL isolation cases after source-build completion and actual fresh-case pass",
+    "raw_output_persisted": false,
+    "approved": false,
+    "discovered_cases": 3,
+    "exit_code": 0,
+    "counts": {
+      "total": [
+        3
+      ],
+      "failed": [
+        0
+      ],
+      "succeeded": [
+        3
+      ],
+      "skipped": [
+        0
+      ]
+    },
+    "output_sha256": "382522ab67e5165ac700e7730dfe005875f4a1dc3665a7644778e4872f7f196b",
+    "exception_types": [],
+    "fixed_message_flags": [],
+    "source_stack_locations": [],
+    "status": "PASS_SCOPED",
+    "finished_at": "2026-11-02T09:55:21.432765+00:00"
+  },
+  "full_api_followup": {
+    "status": "PENDING_OPTIMIZED_IMMUTABLE_CHECKPOINT",
+    "passed": null,
+    "skipped": null
+  },
+  "fixture_source_hashes": {
+    "tests/Poseidon.Api.Tests/OwnedPostgresFixture.cs": "d8ed1a06336cfa57156e0e302bdffb48364418de9f3f21fcccb676acd4e9ab2c",
+    "tests/Poseidon.Api.Tests/DirectoryWorkspaceTests.cs": "b4f92072f157fa296b77b86829b0fd4f2dc77299862092b3225633146ddcb510",
+    "tests/Poseidon.Api.Tests/OwnedPostgresIsolationTests.cs": "0cd2b737451140d241fb32ebe2f1b9d565b01dba41001d3de658fde184639f70"
+  }
+}

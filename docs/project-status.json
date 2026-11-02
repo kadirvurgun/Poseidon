@@ -1114,7 +1114,7 @@
     "verification_record_scope": "Authored/deferred and original20f1198 results are historical;current rejection-repair evidence in core_bundle_01.verification"
   },
   "baseline": "POSEIDON v46.3 updated 2026-10-30 / Library26 candidate",
-  "current_stage": "S0; DEV-001 and DEV-002 accepted; remaining exit gates open",
+  "current_stage": "Foundation source triage164 proposals remains pending independent approval. PR12 f858c53 has3passing CI jobs and mandatory repository scan failure. Actual full API594cases hit1800second deadline; no pass claimed. Authored CI real S3 source-build/closed test-count gate and migrated-clone fixture repair now build0warnings/errors, helper9/9, actual APIunit82/82 and fixture PostgreSQL3/3. Full optimized API and remaining foundation/genuine-provider/independent gates pending; canonical8/970 unchanged.",
   "method": "accepted story points / total baseline story points * 100",
   "scope": "complete v46.3 Backlog sheet; duplicates in other sheets excluded",
   "total_tasks": 121,
@@ -4082,6 +4082,18 @@
       "dispatch_threshold_percent": 85
     },
     "report": "docs/phases/PR12-SECURITY-TRIAGE-20261102.md",
+    "canonical_acceptance_changed": false
+  },
+  "foundation_api_ci_repair": {
+    "status": "SCOPED_REPAIR_CHECKS_PASS_FULL_FOUNDATION_GATE_PENDING",
+    "report": "docs/phases/FOUNDATION-API-CI-20261102.md",
+    "full_predecessor_api": "INTERRUPTED_CHILD_DEADLINE_594_DISCOVERED",
+    "helper_tests_passed": 9,
+    "actual_api_unit_passed_before_fixture_change": 82,
+    "fixture_isolation_passed": 3,
+    "source_image_build_exit": 0,
+    "compile_warnings": 0,
+    "compile_errors": 0,
     "canonical_acceptance_changed": false
   }
 }

@@ -1,6 +1,9 @@
 using System.Collections.Concurrent;
 using System.Text.RegularExpressions;
 using Npgsql;
+using Microsoft.EntityFrameworkCore;
+using Poseidon.Persistence;
+using Poseidon.Persistence.Seeding;
 using Testcontainers.PostgreSql;
 using Xunit;
 
@@ -15,6 +18,8 @@ public sealed class OwnedPostgresFixture : IAsyncLifetime
     private readonly PostgreSqlContainer container = new PostgreSqlBuilder("postgres:18.6").Build();
     private readonly ConcurrentDictionary<string, OwnedTestDatabase> owned = new(StringComparer.Ordinal);
     private readonly SemaphoreSlim lifecycle = new(1, 1);
+    private readonly SemaphoreSlim templateCreation = new(1, 1);
+    private OwnedTestDatabase? migratedTemplate;
     public async ValueTask InitializeAsync()
     {
         using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(90));
@@ -22,7 +27,37 @@ public sealed class OwnedPostgresFixture : IAsyncLifetime
         catch { await container.DisposeAsync(); throw; }
     }
 
-    public async Task<OwnedTestDatabase> CreateAsync(CancellationToken ct)
+    // Fresh leases still have no schema/history. Migration isolation tests use
+    // this path; ordinary API cases may opt into a distinct migrated clone.
+    public Task<OwnedTestDatabase> CreateAsync(CancellationToken ct) => CreateDatabaseAsync(null, ct);
+
+    public async Task<OwnedTestDatabase> CreateMigratedAsync(CancellationToken ct)
+    {
+        string source;
+        await templateCreation.WaitAsync(ct);
+        try
+        {
+            if (migratedTemplate == null)
+            {
+                var candidate = await CreateAsync(ct);
+                try
+                {
+                    // Only actual migrations, no seed/business/audit data. The
+                    // caller still runs EF's ordinary idempotent seed path.
+                    await using var db = new PoseidonDbContext(SeedImporter.Options(candidate.GetConnectionString()),
+                        Guid.Empty, ActorContext.SeedImport(), true);
+                    await db.Database.MigrateAsync(ct);
+                    migratedTemplate = candidate;
+                }
+                catch { await candidate.DisposeAsync(); throw; }
+            }
+            source = migratedTemplate.Name;
+        }
+        finally { templateCreation.Release(); }
+        return await CreateDatabaseAsync(source, ct);
+    }
+
+    private async Task<OwnedTestDatabase> CreateDatabaseAsync(string? template, CancellationToken ct)
     {
         using var deadline = CancellationTokenSource.CreateLinkedTokenSource(ct);
         deadline.CancelAfter(TimeSpan.FromSeconds(30));
@@ -31,13 +66,20 @@ public sealed class OwnedPostgresFixture : IAsyncLifetime
         {
             var name = "test_" + Guid.NewGuid().ToString("N");
             ValidateName(name);
+            if (template != null)
+            {
+                ValidateName(template);
+                if (migratedTemplate?.Name != template || !owned.TryGetValue(template, out var actual) || !ReferenceEquals(actual, migratedTemplate))
+                    throw new InvalidOperationException("Migration template is not owned by this fixture.");
+            }
             var connection = new NpgsqlConnectionStringBuilder(container.GetConnectionString()) { Database = name, Pooling = false };
             var lease = new OwnedTestDatabase(this, name, connection.ConnectionString);
             if (!owned.TryAdd(name, lease)) throw new InvalidOperationException("Test database ownership collision.");
             try {
                 await using var admin = new NpgsqlConnection(container.GetConnectionString());
                 await admin.OpenAsync(deadline.Token);
-                await using var command = new NpgsqlCommand($"CREATE DATABASE \"{name}\"", admin) { CommandTimeout = 20 };
+                var sql = template == null ? $"CREATE DATABASE \"{name}\"" : $"CREATE DATABASE \"{name}\" TEMPLATE \"{template}\"";
+                await using var command = new NpgsqlCommand(sql, admin) { CommandTimeout = 20 };
                 await command.ExecuteNonQueryAsync(deadline.Token);
             } catch { /* Keep ownership registered: a cancelled CREATE may already have committed. */ throw; }
             return lease;
@@ -71,8 +113,12 @@ public sealed class OwnedPostgresFixture : IAsyncLifetime
 
     public async ValueTask DisposeAsync()
     {
-        try { foreach (var lease in owned.Values.ToArray()) await lease.DisposeAsync(); }
-        finally { await container.DisposeAsync(); lifecycle.Dispose(); }
+        try
+        {
+            foreach (var lease in owned.Values.Where(x => !ReferenceEquals(x, migratedTemplate)).ToArray()) await lease.DisposeAsync();
+            if (migratedTemplate != null) await migratedTemplate.DisposeAsync();
+        }
+        finally { await container.DisposeAsync(); lifecycle.Dispose(); templateCreation.Dispose(); }
     }
 }
 
