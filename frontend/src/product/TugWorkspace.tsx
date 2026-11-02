@@ -1,7 +1,9 @@
-import { WorkspaceRoleNavigation } from './WorkspaceRoleNavigation'
-import { WorkspaceContextBar } from './WorkspaceContextBar'
+import { EnterpriseChrome } from './EnterpriseChrome'
 import { useEffect, useState } from 'react'
-import { TugOwningEvidence } from './TugOwningEvidence'
+import { TugBoardView, tugBoardHref } from './TugBoardView'
+import { TugRequestSummary } from './TugRequestSummary'
+import { Button } from '../components/ui/button'
+import { Plus } from 'lucide-react'
 import './tug.css'
 import { tugLabel } from './tug-labels'
 import { TugPlanningPanel } from './TugPlanningPanel'
@@ -37,7 +39,6 @@ export function TugWorkspace() {
   const [attempt, setAttempt] = useState<TugAttempt | null>(null), [conflict, setConflict] = useState(false)
   const [pending, setPending] = useState<(() => void) | null>(null), [offline, setOffline] = useState(!navigator.onLine)
   const [planningDirty, setPlanningDirty] = useState(false)
-  const [search, setSearch] = useState(route.q)
   const guard = (action: () => void) => { if (busy) return; if (dirty || planningDirty || attempt) setPending(() => action); else action() }
   const move = (href: string) => guard(() => { history.pushState(null, '', href); setRoute(location()); setReload(n => n + 1) })
   const href = (screen: string) => `/app/${screen}${route.vessel ? `?vessel=${route.vessel}` : ''}`
@@ -63,7 +64,7 @@ export function TugWorkspace() {
   // Withdraw stale state in the same render that changes the request scope.
   if (!Object.is(previousScope1[0], route) || !Object.is(previousScope1[1], reload)) {
     setPreviousScope1(resetScope1)
-    setLoading(true); setError(0); setUser(null); context(null); setBoard(null); setRecord(null); setSearch(route.q); setEditing(route.screen === 'tug-job-intake'); setDirty(false); setAttempt(null); setConflict(false); setInputs(emptyTugInputs())
+    setLoading(true); setError(0); setUser(null); context(null); setBoard(null); setRecord(null); setEditing(route.screen === 'tug-job-intake'); setDirty(false); setAttempt(null); setConflict(false); setInputs(emptyTugInputs())
   }
   useEffect(() => {
     const c = new AbortController(); let active = true; const timeout = setTimeout(() => c.abort(), 10000)
@@ -99,19 +100,20 @@ export function TugWorkspace() {
   const formOpen = ctx?.canWrite && editing
   const label = (value: string) => tugLabel(value, lang)
   const nullText = (value: string | null | undefined) => value ?? t.unknown
-  return <div className="product-shell tug-workspace"><a className="skip-link" href="#tug-main">{lang === 'en' ? 'Skip to content' : 'İçeriğe geç'}</a>
-    <header className="product-header"><a className="product-brand" href="/app" onClick={e => { if (dirty || planningDirty || attempt || busy) { e.preventDefault(); guard(() => window.location.assign('/app')) } }}>POSEIDON</a><div role="group" aria-label="Language"><button aria-pressed={lang === 'tr'} onClick={() => language('tr')}>TR</button><button aria-pressed={lang === 'en'} onClick={() => language('en')}>EN</button></div><WorkspaceContextBar session={user} vessel={route.vessel || null} language={lang} /></header>
-    <WorkspaceRoleNavigation session={user} vessel={route.vessel || null} language={lang} onNavigate={href => guard(() => window.location.assign(href))} />
-    <main id="tug-main" tabIndex={-1}><h1>{t.title}</h1><p>{t.boundary}</p>{offline && <p role="alert">{t.offline}</p>}
+  const pageTitle = route.screen === 'tug-job-board' ? t.board : route.screen === 'tug-job-intake' ? t.intake : route.screen === 'tug-job-detail' ? t.detail : t.title
+  return <div className="product-shell enterprise-shell tug-workspace">
+    <EnterpriseChrome session={user} vessel={route.vessel || null} language={lang} onLanguageChange={language} onNavigate={(href, committed) => guard(() => { committed?.(); window.location.assign(href) })} title={pageTitle} mainId="tug-main" />
+    <main id="tug-main" tabIndex={-1}><div className="enterprise-page-heading"><div><p className="enterprise-page-eyebrow">{t.title}</p><h1>{pageTitle}</h1><p>{lang === 'en' ? 'Requests, draft plans and current source context.' : 'Talepler, taslak planlar ve güncel kaynak bağlamı.'}</p></div>
+      {!loading && !error && ctx?.canWrite && ['tug-command', 'tug-job-board'].includes(route.screen ?? '') && <Button onClick={() => move(href('tug-job-intake'))}><Plus />{lang === 'en' ? 'New request' : 'Yeni talep'}</Button>}</div><p className="tug-planning-boundary">{t.boundary}</p>{offline && <p role="alert">{t.offline}</p>}
       {loading && <p role="status">{t.loading}</p>}{error > 0 && <div role="alert"><p>{[401, 403, 404].includes(error) ? t.denied : t.unavailable}</p><button onClick={() => guard(() => setReload(n => n + 1))}>{t.retry}</button></div>}
       {!loading && !error && !route.vessel && <section><h2>{t.select}</h2>{vessels.length === 0 && <p>{t.empty}</p>}{vessels.map(v => <p key={v.id}><a href={`/app/tug-command?vessel=${v.id}`} onClick={e => { e.preventDefault(); move(`/app/tug-command?vessel=${v.id}`) }}>{v.code} · {v.name}</a></p>)}</section>}
       {!loading && !error && ctx && <><p>{t.context}: <strong>{ctx.vessel.code} · {ctx.vessel.name}</strong> · {ctx.mode}</p>
         <nav aria-label={t.title}>{(['tug-command', 'tug-job-board', ...(ctx.canWrite ? ['tug-job-intake'] : [])] as const).map((s, i) => <a key={s} aria-current={route.screen === s ? 'page' : undefined} href={href(s)} onClick={e => { e.preventDefault(); move(href(s)) }}>{[t.context, t.board, t.intake][i]} </a>)}</nav>
         {route.screen === 'tug-command' && <section><h2>{t.context}</h2><dl><dt>{lang === 'en' ? 'Role references' : 'Rol referansları'}</dt><dd>{ctx.roleReferences ?? t.unknown}</dd><dt>{lang === 'en' ? 'Tug type' : 'Römorkör tipi'}</dt><dd>{ctx.tugTypeOptions?.find(x => x.code === ctx.tugType)?.[lang] ?? t.unknown}</dd><dt>{lang === 'en' ? 'Configured type options' : 'Yapılandırılmış tip seçenekleri'}</dt><dd>{ctx.tugTypeOptions?.map(x => x[lang]).join(', ') || t.unknown} · {ctx.tugTypePolicyVersion ?? '—'}</dd><dt>{t.bpContext}</dt><dd>{nullText(ctx.bollardPull.value)}</dd><dt>{t.provenance}</dt><dd>{label(ctx.bollardPull.provenance)} · {ctx.bollardPull.version ?? '—'}</dd><dt>{t.freshness}</dt><dd>{t.unknown}</dd><dt>{t.readiness}</dt><dd>{t.unknown}</dd><dt>{t.why}</dt><dd>{label(ctx.reason)}</dd></dl><h3>{t.equipment}</h3><p>{label(ctx.equipmentCoverage)}</p><ul>{ctx.equipment?.map(a => <li key={a.id}>{a.equipmentType ?? t.unknown} · {a.level} · r{a.revision} · {label(a.provenance)}</li>)}</ul></section>}
         {notice && <p role="alert">{notice === 'saved' ? t.saved : notice === 'uncertain' ? t.uncertain : notice === 'conflict' ? t.conflict : `${lang === 'en' ? 'Check fields' : 'Alanları kontrol edin'} (${notice})`}</p>}
-        {route.screen === 'tug-job-board' && <section><h2>{t.board}</h2><form onSubmit={e => { e.preventDefault(); move(`${href('tug-job-board')}&priority=${encodeURIComponent(route.priority)}&q=${encodeURIComponent(search)}`) }}><label>{t.search}<input type="search" maxLength={100} value={search} onChange={e => setSearch(e.target.value)} /></label><button>{t.search}</button></form><label>{t.priority}<select value={route.priority} onChange={e => move(`${href('tug-job-board')}&priority=${encodeURIComponent(e.target.value)}`)}><option value="">{t.all}</option>{ctx.priorities.map(p => <option key={p} value={p}>{label(p)}</option>)}</select></label>
-          {board?.items.length === 0 && <p>{t.empty}</p>}<div className="product-table"><table><thead><tr>{['Job ID', t.window, t.assignments, t.bp, t.readiness, t.conflictLabel, t.priority, t.why].map(h => <th key={h}>{h}</th>)}</tr></thead><tbody>{board?.items.map(row => <tr key={row.request.id}><td><a href={row.detailHref} onClick={e => { e.preventDefault(); move(row.detailHref) }}>{row.request.jobNumber}</a><p>{nullText(row.request.inputs.assistedVessel)}</p></td><td>{row.request.inputs.requestedStart ?? '—'} / {row.request.inputs.requestedEnd ?? '—'}<p>{label(row.windowState)}</p>{row.draftPlan && <p>{lang === 'en' ? 'Draft plan' : 'Taslak plan'}: {row.draftPlan.inputs.plannedStart ?? t.unknown} / {row.draftPlan.inputs.plannedEnd ?? t.unknown} · r{row.draftPlan.revision}</p>}<small>{label(row.plannedTimeSource)}</small></td><td>{row.assignedTugs.join(', ') || '—'}<p>{label(row.assignmentCoverage)}</p></td><td>{row.request.inputs.requiredBollardPull ?? t.unknown}<p>{lang === 'en' ? 'Available' : 'Kullanılabilir'}: {row.availableBollardPull ?? t.unknown}</p></td><td>{label(row.readiness)}</td><td>{label(row.conflict)}</td><td>{row.request.inputs.priority ? label(row.request.inputs.priority) : t.unknown}</td><td><details><summary>{t.why}</summary><p>{label(row.nextAction)}</p><TugOwningEvidence value={row.planningEvidence ?? null} language={lang} /><p>{label(row.comparisonCoverage)}</p><ul>{row.declaredComparisons.map(x => <li key={x.jobId}>{x.jobId}: {label(x.relation)}</li>)}</ul><ul>{row.blockingReasons.map(r => <li key={r}>{label(r)}</li>)}</ul></details></td></tr>)}</tbody></table></div><button disabled={route.offset === 0} onClick={() => move(`${href('tug-job-board')}&offset=${Math.max(0, route.offset - 25)}&priority=${route.priority}&q=${encodeURIComponent(route.q)}`)}>{t.previous}</button><button disabled={!board?.hasMore} onClick={() => move(`${href('tug-job-board')}&offset=${route.offset + 25}&priority=${route.priority}&q=${encodeURIComponent(route.q)}`)}>{t.next}</button></section>}
-        {route.screen === 'tug-job-detail' && record && <section><h2>{t.detail} · {record.jobNumber}</h2><p>{label('Draft')} · r{record.revision} · {label(record.provenance)}</p><p>{record.sourceVersion}</p><p>{t.required}: {record.missing.map(label).join(', ') || '—'}</p>{!editing && <><dl>{Object.entries(record.inputs).map(([key, value]) => <div key={key}><dt>{labels[key]?.[lang === 'en' ? 1 : 0] ?? label(key)}</dt><dd>{value == null ? t.unknown : typeof value === 'string' ? label(value) : value}</dd></div>)}</dl>{ctx.canWrite && <button onClick={() => guard(() => setEditing(true))}>{t.edit}</button>}</>}</section>}
+        {route.screen === 'tug-job-board' && <TugBoardView board={board} priorities={ctx.priorities} filter={{ q: route.q, priority: route.priority, offset: route.offset }} language={lang} offline={offline}
+          onFilter={filter => move(tugBoardHref(route.vessel, filter))} onNavigate={move} onRefresh={() => guard(() => setReload(n => n + 1))} />}
+        {route.screen === 'tug-job-detail' && record && <TugRequestSummary record={record} language={lang} editing={editing} onEdit={ctx.canWrite ? () => guard(() => setEditing(true)) : undefined} />}
         {route.screen === 'tug-job-detail' && record && !editing && <TugPlanningPanel id={record.id} vessel={route.vessel} requestVersion={record.version} csrf={csrf} language={lang} onDirty={setPlanningDirty} />}
         {route.screen === 'tug-job-intake' && !ctx.canWrite && <p role="alert">{t.denied}</p>}
         {formOpen && <form onSubmit={e => { e.preventDefault(); void save() }} aria-label={t.intake}><fieldset disabled={busy || !!attempt}><legend>{t.intake}</legend>{Object.entries(labels).map(([key, label]) => <label key={key}>{label[lang === 'en' ? 1 : 0]}<input maxLength={['notes', 'specialRequirements'].includes(key) ? 2000 : 200} value={String(inputs[key as keyof TugInputs] ?? '')} onChange={e => change(key as keyof TugInputs, e.target.value || null)} /></label>)}

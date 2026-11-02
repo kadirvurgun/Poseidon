@@ -1,0 +1,193 @@
+{
+  "task": "ENTERPRISE-WORKSPACE-01",
+  "baseline": "poseidon-v46.3-20261030",
+  "status": "bounded local controlled source receipts; not acceptance",
+  "records": [
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:19",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "Role-first: kullanıcıya tüm sistemi değil, rolünün o anda yapması gereken işi göster."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:20",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "Mode-aware: Ship ve Tug ekranları ortak core'u paylaşır ancak operasyon ritmi ve terminoloji karıştırılmaz."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:21",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "Manage by Exception: normal durumlar geri planda, attention/blocker/decision önde."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:22",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "Explainability: readiness/compliance state tek renk veya puan değildir; Why görünümü source→control→evidence→owner→next action verir."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:23",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "Human authority: safety/legal kritik karar butonları yetkili rol ve state olmadan aktif olamaz."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:24",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "Progressive disclosure: yoğun tabloda kritik kolonlar sabit, ayrıntı drill-down ile açılır."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:29",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "Topbar"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:30",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "Tenant/vessel/tug context, role, delegation, language, online/offline/sync state"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:31",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "Sidebar"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:32",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "Search + grouped nav; current screen visible; role/mode incompatible item gizlenir"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:33",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "Page header"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:34",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "Back icon when needed; screen title; context subtitle; primary action sağ üst"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:35",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "Content"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:36",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "12-col responsive grid; tables/cards only if answer is clearer"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:37",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "Right rail/panel"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:38",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "AI/Why/helper context; ana işlem yerine geçmez"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:39",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "Complex edit"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:40",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "Full page preferred; drawer sadece lightweight review/context"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:41",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "Mobile"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:42",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "Bottom/compact actions; no horizontal critical workflow dependency"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:104",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "6. Tablo/hiyerarşi standardı"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:105",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "Binlerce ekipman/pozisyon gibi yapılarda server-side search/filter/pagination kullan."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:106",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "Hierarchy expand/collapse; parent seçimi gerekiyorsa child selection kuralı açık ve deterministik."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:107",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "Sticky identifier columns only where needed."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:108",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "Export, bulk activate/passivate/delete yalnız permission + selection state uygunsa gösterilir."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:109",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "User view customization core data modelini değiştirmez."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:110",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "7. Accessibility ve dil"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:111",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "TR/EN label'lar aynı semantic key'i kullanır; literal text business logic'e gömülmez."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:112",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "Renk tek başına anlam taşımaz; icon/text/state birlikte kullanılır."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:113",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "Keyboard focus görünür; form label ve error association korunur."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:114",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "Contrast ve touch target'lar tablet/gemi kullanımını destekler."
+    }
+  ]
+}

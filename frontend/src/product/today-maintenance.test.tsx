@@ -13,7 +13,7 @@ const card = { key: `maintenance-plan:${planId}`, priority: 'Review', source: 'M
   owner: null, nextAction: 'ReviewMaintenancePlan', href: `/app/maintenance-plan/${vesselId}?id=${planId}` }
 const draft = { key: 'regulatory-draft', priority: 'Advisory', source: 'RegulatoryDraft', reason: 'DraftUnverified', owner: null,
   nextAction: 'ReviewDraft', href: `/app/fleet/${vesselId}/profile` }
-const page = { vessel, readAt: now, coverage: ['RegulatoryDraft', 'OperationalTasks', 'SafetyDecisions', 'Permits', 'EvidenceVerification', 'TechnicalMaintenance']
+const page = { vessel, readAt: now, coverage: ['RegulatoryDraft', 'OperationalTasks', 'SafetyDecisions', 'Permits', 'EvidenceVerification', 'TechnicalMaintenance', 'TugPlanning']
   .map((source, i) => ({ source, status: i === 0 || i === 5 ? 'Available' : 'Unavailable' })),
 cards: { items: [card, draft], offset: 0, limit: 25, hasMore: false } }
 const why = { vesselId, cardKey: card.key, rule: 'TW-MAINTENANCE-01', reason: card.reason, inputs: null, readAt: now, savedAt: now,

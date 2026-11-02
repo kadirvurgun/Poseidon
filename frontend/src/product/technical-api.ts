@@ -1,4 +1,6 @@
 import { ApiError, request } from './api'
+import { isGuid } from './identifiers'
+import { calendar, timestamp } from './date-validation'
 
 // Authored DTO adapter; OpenAPI generation/parity is DEFERRED to the bundle gate.
 // Decimal values stay strings throughout transport and forms, never JS numbers.
@@ -31,7 +33,27 @@ export async function snapshot(vessel: string, signal: AbortSignal) {
     value.items.some(x => x.vesselId !== vessel || typeof x.id !== 'string' || typeof x.version !== 'number' || x.version < 1)) throw new ApiError(502, 'invalid_contract')
   return value
 }
-export const plans = (vessel: string, signal: AbortSignal) => request<Plans>(planPath(vessel), signal)
+const object = (value: unknown): value is Record<string, unknown> => !!value && typeof value === 'object' && !Array.isArray(value)
+const positive = (value: unknown) => typeof value === 'number' && Number.isSafeInteger(value) && value > 0
+export function decodeTechnicalPlans(value: unknown): Plans {
+  const invalid = (): never => { throw new ApiError(502, 'invalid_technical_plan_contract') }
+  if (!object(value) || !Array.isArray(value.items) || typeof value.canWrite !== 'boolean' || typeof value.canReadHistory !== 'boolean') return invalid()
+  const ids = new Set<string>()
+  for (const plan of value.items) {
+    if (!object(plan) || !isGuid(plan.id) || ids.has(plan.id) || !isGuid(plan.assetId) ||
+      !(plan.jobId === null || isGuid(plan.jobId)) || !(plan.ownerRoleId === null || isGuid(plan.ownerRoleId)) ||
+      !positive(plan.version) || !positive(plan.revision) || !positive(plan.assetRevision) || plan.status !== 'Draft' || typeof plan.provenance !== 'string' ||
+      !timestamp(plan.referenceAt) || !timestamp(plan.savedAt) || !object(plan.inputs) || !Object.values(plan.inputs).every(v => v === null || typeof v === 'string') ||
+      !object(plan.due) || !['Due', 'NotDue', 'ReviewRequired'].includes(plan.due.state as string) || typeof plan.due.reason !== 'string' || typeof plan.due.algorithm !== 'string' ||
+      !(plan.due.nextDueDate === null || typeof plan.due.nextDueDate === 'string' && calendar(plan.due.nextDueDate)) ||
+      !(plan.due.nextDueMeter === null || typeof plan.due.nextDueMeter === 'string' && plan.due.nextDueMeter.length <= 100 && /^-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?$/.test(plan.due.nextDueMeter)) ||
+      !(plan.observationState === undefined || typeof plan.observationState === 'string') ||
+      !(plan.observationAssessedAt === undefined || plan.observationAssessedAt === null || timestamp(plan.observationAssessedAt))) return invalid()
+    ids.add(plan.id)
+  }
+  return value as Plans
+}
+export const plans = async (vessel: string, signal: AbortSignal) => decodeTechnicalPlans(await request<unknown>(planPath(vessel), signal))
 export const references = (vessel: string, signal: AbortSignal) => request<References>(`${planPath(vessel)}/references`, signal)
 export const owners = (vessel: string, signal: AbortSignal) => request<string[]>(`${equipmentPath(vessel)}/owners`, signal)
 export const addJob = (vessel: string, body: { id: string; code: string; title: string }, csrf: string, signal: AbortSignal) =>

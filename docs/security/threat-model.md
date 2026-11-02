@@ -109,7 +109,7 @@ P0 means mitigation required before exposing the affected capability or pilot sc
 - **Current controls:** ADR/source guardrails only; product RAG, model/provider/tool pipeline and evaluations unimplemented. Development `query_sources.py` is local source lookup, not tenant-authorized product retrieval.
 - **Gaps / mitigation:** source documents are untrusted data, never executable instructions or authority to change tool policy. Enforce trusted tenant/role/vessel/job/sensitive-field scope before retrieval and again before evidence return; bind indexes/caches to tenant/access/version and approved deletion policy. Allowlist tools/object scope; document links cannot trigger arbitrary fetch or widen access. Cite source/evidence ID/version, surface missing/conflicting data, redact protected identities and keep customer data out of external AI/training by default pending authorized review. AI has no authority over safety, permits, regulatory activation or expert decisions. Extracted fields remain pending verification; UNKNOWN remains explicit, drafts may save and missing required data blocks submission. Preserve usable non-AI workflows.
 - **Verification:** malicious document/tool instruction, tenant/cache crossover, role revocation, narrative redaction, missing/conflicting citations, provider outage, Master rejection and attempted automatic permit/sign-off. Use synthetic fixtures; no model call or customer-data transfer is authorized by this draft.
-- **Owner:** AI engineering with Backend and Security/privacy; Marine/Regulatory authority stays human. Backlog mapping is the enabling security work DEV-006, DEV-014, DEV-015, DEV-019 and review gate DEV-068, not a claim those rows deliver a complete AI pipeline. Dedicated AI evaluation/tool-policy implementation assignment remains OPEN for coordinator triage.
+- **Owner:** AI engineering with Backend and Security/privacy; Marine/Regulatory authority stays human. Backlog mapping is the enabling security work DEV-006, DEV-014, DEV-015, DEV-019 and review gate DEV-068, not a claim those rows deliver a complete AI pipeline. OCR confirmation/evaluation are assigned to DEV-045 (46; T-S6-003) and DEV-046 (47; T-S6-004); authorized human decision is DEV-031 (32; T-S3-006). General product RAG/tool-policy implementation beyond those exact scopes still requires coordinator assignment.
 
 ## P0 mitigation backlog and residual gaps
 
@@ -124,7 +124,7 @@ Every DEV ID below was located with bounded `scripts/query_sources.py` queries a
 | TM-05 secrets/redaction | DEV-017 (18; T-S1-005), DEV-016 (17; T-S1-004) | Fixed security diagnostic metadata partial; secret store/rotation/scans and complete redaction coverage unverified | DevOps + Backend; synthetic canary and repository/client scans |
 | TM-06 attributed write and access audit; admin separation | DEV-016 (17; T-S1-004), DEV-014 (15; T-S1-002), DEV-017 (18; T-S1-005) | EF write and selected HTTP security events partial; full HTTP coverage/role/reason/approved before-after, resilient sink and production DB-role separation open | Backend + DevOps; atomicity/immutability/sink failure/admin denial; HTTP additions need coverage review under baseline |
 | TM-07 secure queue/replay/conflicts | DEV-033 (34; T-S4-001), DEV-034 (35; T-S4-002), DEV-035 (36; T-S4-003), DEV-038 (39; T-S4-006) | Queue/encryption/device lifecycle/replay/conflicts/chaos pack unimplemented; device revocation policy assignment open | Frontend + Backend + Full Stack + QA; loss/retry/revocation/material conflict cases |
-| TM-08 advisory, tenant-bound AI | DEV-006 (7; T-S0-006), DEV-014 (15; T-S1-002), DEV-015 (16; T-S1-003), DEV-019 (20; T-S1-007) | Threat specification and security prerequisites only; product retrieval/tool policy/evaluations unimplemented, dedicated implementation assignment OPEN | Security/Architect + AI engineering; injection/leakage/authority/fallback cases |
+| TM-08 advisory, tenant-bound AI | DEV-006 (7; T-S0-006), DEV-014 (15; T-S1-002), DEV-015 (16; T-S1-003), DEV-019 (20; T-S1-007), DEV-031 (32; T-S3-006), DEV-045 (46; T-S6-003), DEV-046 (47; T-S6-004) | Threat specification and security prerequisites only; product retrieval/tool policy/evaluations unimplemented, dedicated implementation assignment OPEN | Security/Architect + AI engineering; injection/leakage/authority/fallback cases |
 | All: pre-pilot independent security gate | DEV-068 (69; T-S10-005) | Unfulfilled gate: scoped tenant/RBAC/upload/escalation/secret checks and zero unresolved critical/high findings required by source | Security/QA; reviewed target-commit evidence, never self-certified by this document |
 
 Review must reconcile scope extensions (protected-report narrative, full HTTP events, device lifecycle and AI evaluations) with these real backlog owners; no new DEV IDs or accepted work are invented. Unimplemented controls remain exposure blockers, not residual risks accepted by this draft.
@@ -141,3 +141,34 @@ Current phase: S0 documentation preparation. Next step: coordinator arranges ind
 Earlier absent-file/absent-offline/core-only claims above describe historical checkpoints. Current TM-01/02 controls additionally include real Crew/Technical/Tug/Import scoped handlers, current session/context/navigation revalidation and protected profile withdrawal. TM-03 now has actual staging/hash/type/size/scanner/private byte transport, versioned person ownership and exact photo reauthorization; provider/scanner qualification and independent tests are unexecuted, never assumed clean/verified. TM-04 now includes encrypted identity/profile/current masking and separately authorized minimum medical-expiry declaration; protected safety reporting/narrative/export/AI workflows remain unimplemented. TM-05 retains mandatory actual repository/postbuild client scans and received external-review consumer;160 targeted observations remain unresolved,159 prior waiver proposals rejected, no real reviews/pins/exceptions/variables/approvals. Targeted pending evidence regeneration is not a full passing scan.
 
 TM-06 adds actual request/error/latency and audit-health instrumentation plus existing transactional revision/receipt paths; full user-action audit, production DB privileges, retention and tamper/restore acceptance remain incomplete. TM-07 now has a concrete encrypted IndexedDB/P256-enrolled/re-authorized atomic ordinary replay/conflict/history path for one configured Crew watch_group command, with safe deterministic public shell upgrade preserving pending records/keys/dirty tabs. Other fields/binaries/Tug workflows and qualification remain gaps. TM-08 product AI remains unimplemented/advisory-only; no tool/source/legal/safety authority is manufactured. Existing real DEV mitigation IDs/owners and independent source/security gates remain unchanged. Every new/current test/build/browser/full scan/QA/CI is DEFERRED_NOT_RUN; this updates implementation inventory, not threat closure or accepted residual risk. See the current S0 continuation phase and observability/source-reconciliation contracts.
+
+## S0 closure currentness correction — 2026-11-02
+
+The160-unresolved/159-rejected observation counts in the prior supersession were
+an earlier snapshot. The [actual PR12 classification closure](../phases/PR12-SEMANTIC-SOURCE-20261102.md)
+records genuine independent approval of164 exact context-bound classifications
+and installation through separately trusted coordinator pins. The later first
+full scan still failed on3additional matches; those were corrected and focused
+regression/changed-file scan evidence retained. None establishes a current whole-
+branch or built-client clean result, and source-classification review is not
+product/security acceptance. Fresh actual scans remain required at this S0 gate;
+no detector, coverage rule, protected pin or assertion is weakened here.
+
+TM-07 current software also includes `TugOfflineEndpoints.cs`, `TugOffline.cs`,
+`TugDraftPlanning.cs` and `tug-offline.ts`: enrolled, encrypted, exact-context
+Tug draft-window replay/recovery/conflicts and atomic ordinary-plan receipts.
+This is separate from Crew watch_group and does not enable operational Tug
+release, permits or human safety decisions. TM-03/06 additionally have current
+control/evidence, qualified source and human-review lineage handlers/storage.
+They are authored software, not automatically verified evidence or real sign-offs.
+The [current engineering candidate](../architecture/s0-current-engineering-candidate-20261102.md)
+links the review scope; S0 threat registration/mitigation-backlog acceptance does
+not certify every later S1/S4/S10 mitigation as implemented or production-safe.
+
+Source-linked AI mitigation clarification: active18.01 Backlog row46 assigns
+DEV045 to AI+Full Stack for OCR confidence and user confirmation before mutation;
+row47 assigns DEV046 to AI+QA for masked golden-set accuracy/correction and no
+critical hallucination/authority bypass; row32 assigns DEV031 to Backend for
+authorized contextual human decisions. These actual P0/S3/S6 tasks link future
+mitigation ownership; no AI runtime, measured accuracy or operational sign-off is
+claimed by S0 threat-model acceptance.

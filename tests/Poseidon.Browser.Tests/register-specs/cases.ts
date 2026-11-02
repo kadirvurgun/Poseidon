@@ -14,6 +14,7 @@ import { contextCases } from './context-cases.ts'
 import { navigationRoleLensCases } from './navigation-role-lens-cases.ts'
 import { importCases } from './import-cases.ts'
 import { tugCases } from './tug-cases.ts'
+import { todayTugCases } from './today-tug-cases.ts'
 import { technicalCases } from './technical-cases.ts'
 import { crewCases } from './crew-cases.ts'
 import { fileCases } from './file-cases.ts'
@@ -127,6 +128,7 @@ export const registerCases = [
   ...navigationRoleLensCases,
   ...importCases,
   ...tugCases,
+  ...todayTugCases,
   ...technicalCases,
   ...crewCases,
   ...auditCases,

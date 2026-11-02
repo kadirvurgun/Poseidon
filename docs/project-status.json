@@ -1009,7 +1009,7 @@
       "accepted": false
     }
   },
-  "as_of": "2026-11-01",
+  "as_of": "2026-11-02",
   "audit_trace_01": {
     "status": "combined_gate_executed_not_accepted",
     "accepted": false,
@@ -1114,7 +1114,7 @@
     "verification_record_scope": "Authored/deferred and original20f1198 results are historical;current rejection-repair evidence in core_bundle_01.verification"
   },
   "baseline": "POSEIDON v46.3 updated 2026-10-30 / Library26 candidate",
-  "current_stage": "PR12:164 source classifications genuinely approved and externally pinned. First full reviewed scan1427inputs/3new artifact findingsFAIL; quote-safe evidence serialization and synthetic header construction corrected all3.49/49 focused testsPASS;10 changed files0findings. New full CI and independent product QA pending;canonical8/970 unchanged.",
+  "current_stage": "Larger foundation authoring; job-window source-qualified minimum Crew role composition authored, all execution deferred",
   "method": "accepted story points / total baseline story points * 100",
   "scope": "complete v46.3 Backlog sheet; duplicates in other sheets excluded",
   "total_tasks": 121,
@@ -3495,120 +3495,14 @@
   ],
   "active_source": "docs/sources/active.json",
   "current_package": {
-    "task": "VESSEL-PROFILE-DRAFT-01",
-    "branch": "agents/9ff6b20f711a4809a7bf5a1a3ced7172",
-    "baseline": "abd9445",
-    "state": "QA repair locally validated; fresh independent target-commit QA pending; NOT ACCEPTED",
-    "report": "docs/phases/VESSEL-PROFILE-DRAFT-01.md",
+    "task": "TUG-CREW-COMPOSITION-01",
+    "branch": "foundation/current-tug-today-20261102",
+    "baseline": "610074e",
+    "state": "AUTHORED_UNVERIFIED",
+    "report": "docs/phases/TUG-CREW-COMPOSITION-01.md",
     "canonical_acceptance_changed": false,
-    "publication": "prohibited for this worker; local commits only; coordinator owns publication/merge",
-    "implementation_checkpoint": "40e5a11",
-    "verification": {
-      "domain": {
-        "passed": 46,
-        "failed": 0,
-        "skipped": 0
-      },
-      "persistence": {
-        "passed": 25,
-        "failed": 0,
-        "skipped": 0
-      },
-      "api": {
-        "passed": 67,
-        "failed": 0,
-        "skipped": 0,
-        "duration": "4m11.723s",
-        "initial": "No API failures in repair gate; prior package timestamp failures remain historical"
-      },
-      "backend_total": 138,
-      "react": {
-        "passed": 136,
-        "failed": 0,
-        "skipped": 0,
-        "initial": "131 passed/1 failed: new test expected Missing flag after deliberately changing it to Unknown; expectation corrected, decimal assertions retained. Then132 passed; final hardening regressions136 passed."
-      },
-      "playwright": {
-        "passed": 18,
-        "failed": 0,
-        "skipped": 0,
-        "scope": "4 real connection/retry +6 mocked ops +6 real anonymous/setup/keyboard +2 routed synthetic profile repair; no external IdP browser claim",
-        "duration": "36.2s"
-      },
-      "python": {
-        "passed": 127,
-        "failed": 0,
-        "skipped": 0,
-        "evidence": "Retained unchanged prior07125a0 evidence (127 passed), not rerun; scripts/dependencies unchanged"
-      },
-      "release_build": "PASS; 0 warnings/errors",
-      "locked_restore": "PASS; locked restore; no dependency or package-lock changes",
-      "lint": "PASS",
-      "typecheck": "PASS",
-      "frontend_build": "PASS",
-      "ef_model_parity": "PASS",
-      "openapi": "Actual built Development host export PASS; strict actual snapshot parity PASS within67/67 API suite; generated types unchanged on regeneration;host stopped",
-      "source_verification": {
-        "files": 269,
-        "chunks": 34958,
-        "mismatches": 0,
-        "windows_extended_root": true,
-        "ordinary_path": "failed path length; no source changes",
-        "evidence": "Retained unchanged prior07125a0 evidence;269 files/34958 chunks/0 mismatches; source artifacts unchanged"
-      },
-      "graphify": "PASS; final AST update no topology changes;2795 nodes/4319 edges/233 communities;9 existing config/data files yield zero nodes;no model call",
-      "logs": ".runtime/repair-*.log (local ignored diagnostics)",
-      "whitespace": "PASS;git diff --check",
-      "host_cleanup": "PASS;no task-owned listeners on5286/5288/4288"
-    },
-    "unresolved": [
-      "Independent target-commit QA",
-      "Existing 13 moderate frontend npm advisories",
-      "Canonical dependencies and operational role catalogs",
-      "Approved lookups and mandatory/lifecycle policy",
-      "Real IdP/TLS and authenticated external IdP browser gate",
-      "Expert approvals and canonical acceptance"
-    ],
-    "repair_baseline": "07125a01870f147e7b914ac133efd14955ec87a4",
-    "historical_dir_review": "abd9445 independently approved; does not approve profile package",
-    "previous_qa": {
-      "approved": false,
-      "commit": "07125a01870f147e7b914ac133efd14955ec87a4",
-      "issues": [
-        "JavaScript Number precision loss corrupts regulatory measurements",
-        "Incomplete current validation and unvalidated history responses"
-      ]
-    },
-    "repair_behavior": [
-      "Exact invariant decimal string wire/editor/storage/fingerprints; bounded normalization without rounding",
-      "Complete current/history runtime validation with safe invalid_contract errors and dirty-edit history retry",
-      "Actual host OpenAPI export and generated consumer contracts; legacy numeric storage exact-token reader"
-    ],
-    "next_step": "Profile engineering accepted exact ee3339e; NAV implementation follows",
-    "independent_qa": {
-      "task": "VESSEL-PROFILE-DRAFT-01",
-      "commit": "ee3339e58747302c5effd9baef8f05b262c33e0e",
-      "approved": true,
-      "issues": [],
-      "reviewer": {
-        "profile": "esra-pro",
-        "role": "independent_qa",
-        "model": "gpt-6.1-sol",
-        "effort": "medium"
-      },
-      "scope": "Local profile engineering only. Future NAV code requires its own checks/review. Canonical, IdP, expert and release gates remain open.",
-      "verification": {
-        "domain": 46,
-        "persistence": 25,
-        "api": 67,
-        "react": 136,
-        "playwright": 18,
-        "failed": 0,
-        "skipped": 0,
-        "python": "Unchanged prior127 PASS evidence retained, not rerun"
-      },
-      "review_finished_at": 1793489633.4527755
-    }
+    "publication": "No push/PR/merge; larger bundle continues",
+    "next_step": "Continue remaining source-dependent foundation software in the same larger bundle; one integrated gate before PR, then independent exact-target QA and required CI"
   },
   "nav_workspace_01": {
     "status": "locally_validated_awaiting_independent_qa",
@@ -4208,5 +4102,403 @@
     },
     "current_gate": "PENDING_CI_AND_INDEPENDENT_TARGET_REVIEW",
     "canonical_acceptance_changed": false
+  },
+  "today_tug_current_01": {
+    "task_id": "TODAY-TUG-CURRENT-01",
+    "status": "AUTHORED_UNVERIFIED",
+    "accepted": false,
+    "accepted_sp_added": 0,
+    "phase": "Larger foundation product authoring; tests deferred until intended phase is ready for a substantial PR",
+    "baseline_commit": "610074e",
+    "branch": "foundation/current-tug-today-20261102",
+    "source_baseline": "poseidon-v46.3-20261030",
+    "task": "docs/tasks/today-tug-current-01.md",
+    "sources": "docs/tasks/today-tug-current-01.sources.json",
+    "report": "docs/phases/TODAY-TUG-CURRENT-01.md",
+    "delivered": [
+      "Scoped current Tug jobs and exact request/plan Why lineage in mixed Today feed",
+      "Shared board/detail owning evidence consumer; inaccessible assigned Tug suppresses the whole job before paging",
+      "Current maintenance equipment/owner/job/observation assessment through declared job end",
+      "Accessible TR/EN Tug disclosures and exact guarded job navigation; strict authored wire validation",
+      "Domain, actual-host/PostgreSQL, React, mocked browser and registered signed-provider test sources authored",
+      "Current stored Tug request-owner role is rechecked through the ordinary owning scope/eligibility reader; withdrawal removes it"
+    ],
+    "verification": {
+      "tests": "DEFERRED / NOT RUN",
+      "build_restore_lint_typecheck": "DEFERRED / NOT RUN",
+      "model_openapi_generated_parity": "DEFERRED / NOT RUN; generated files preserved",
+      "browser_provider_lab": "DEFERRED / NOT RUN",
+      "security_scan": "DEFERRED / NOT RUN",
+      "independent_qa_ci": "NOT RUN",
+      "source_maintenance": {
+        "whitespace": "git diff --check exit0; line-ending normalization notices only; not behavioral validation",
+        "graphify": "AST-only graphify update . exit0; no model/API call",
+        "graph_nodes": 8907,
+        "graph_edges": 20035,
+        "graph_communities": 563,
+        "graph_limitations": "74 source/configuration files produced zero AST nodes; HTML omitted above5000 nodes"
+      }
+    },
+    "publication": false,
+    "canonical_progress": "8/970SP;2/121tasks;0/196accepted screens",
+    "next": "Continue source-qualified job-specific Crew/Credential/MSMD/golden composition, supported offline and provider fixture software in the larger bundle; integrated gate and independent exact-target QA/CI before PR/merge",
+    "limitations": [
+      "Canonical readiness derivation remains source-owned and requires specification; local advice is not an approved state machine",
+      "No source qualification, human appointment, operational release, canonical acceptance or provider success is created",
+      "No complete foundation phase or release gate is claimed"
+    ]
+  },
+  "historical_profile_package": {
+    "task": "VESSEL-PROFILE-DRAFT-01",
+    "branch": "agents/9ff6b20f711a4809a7bf5a1a3ced7172",
+    "baseline": "abd9445",
+    "state": "QA repair locally validated; fresh independent target-commit QA pending; NOT ACCEPTED",
+    "report": "docs/phases/VESSEL-PROFILE-DRAFT-01.md",
+    "canonical_acceptance_changed": false,
+    "publication": "prohibited for this worker; local commits only; coordinator owns publication/merge",
+    "implementation_checkpoint": "40e5a11",
+    "verification": {
+      "domain": {
+        "passed": 46,
+        "failed": 0,
+        "skipped": 0
+      },
+      "persistence": {
+        "passed": 25,
+        "failed": 0,
+        "skipped": 0
+      },
+      "api": {
+        "passed": 67,
+        "failed": 0,
+        "skipped": 0,
+        "duration": "4m11.723s",
+        "initial": "No API failures in repair gate; prior package timestamp failures remain historical"
+      },
+      "backend_total": 138,
+      "react": {
+        "passed": 136,
+        "failed": 0,
+        "skipped": 0,
+        "initial": "131 passed/1 failed: new test expected Missing flag after deliberately changing it to Unknown; expectation corrected, decimal assertions retained. Then132 passed; final hardening regressions136 passed."
+      },
+      "playwright": {
+        "passed": 18,
+        "failed": 0,
+        "skipped": 0,
+        "scope": "4 real connection/retry +6 mocked ops +6 real anonymous/setup/keyboard +2 routed synthetic profile repair; no external IdP browser claim",
+        "duration": "36.2s"
+      },
+      "python": {
+        "passed": 127,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": "Retained unchanged prior07125a0 evidence (127 passed), not rerun; scripts/dependencies unchanged"
+      },
+      "release_build": "PASS; 0 warnings/errors",
+      "locked_restore": "PASS; locked restore; no dependency or package-lock changes",
+      "lint": "PASS",
+      "typecheck": "PASS",
+      "frontend_build": "PASS",
+      "ef_model_parity": "PASS",
+      "openapi": "Actual built Development host export PASS; strict actual snapshot parity PASS within67/67 API suite; generated types unchanged on regeneration;host stopped",
+      "source_verification": {
+        "files": 269,
+        "chunks": 34958,
+        "mismatches": 0,
+        "windows_extended_root": true,
+        "ordinary_path": "failed path length; no source changes",
+        "evidence": "Retained unchanged prior07125a0 evidence;269 files/34958 chunks/0 mismatches; source artifacts unchanged"
+      },
+      "graphify": "PASS; final AST update no topology changes;2795 nodes/4319 edges/233 communities;9 existing config/data files yield zero nodes;no model call",
+      "logs": ".runtime/repair-*.log (local ignored diagnostics)",
+      "whitespace": "PASS;git diff --check",
+      "host_cleanup": "PASS;no task-owned listeners on5286/5288/4288"
+    },
+    "unresolved": [
+      "Independent target-commit QA",
+      "Existing 13 moderate frontend npm advisories",
+      "Canonical dependencies and operational role catalogs",
+      "Approved lookups and mandatory/lifecycle policy",
+      "Real IdP/TLS and authenticated external IdP browser gate",
+      "Expert approvals and canonical acceptance"
+    ],
+    "repair_baseline": "07125a01870f147e7b914ac133efd14955ec87a4",
+    "historical_dir_review": "abd9445 independently approved; does not approve profile package",
+    "previous_qa": {
+      "approved": false,
+      "commit": "07125a01870f147e7b914ac133efd14955ec87a4",
+      "issues": [
+        "JavaScript Number precision loss corrupts regulatory measurements",
+        "Incomplete current validation and unvalidated history responses"
+      ]
+    },
+    "repair_behavior": [
+      "Exact invariant decimal string wire/editor/storage/fingerprints; bounded normalization without rounding",
+      "Complete current/history runtime validation with safe invalid_contract errors and dirty-edit history retry",
+      "Actual host OpenAPI export and generated consumer contracts; legacy numeric storage exact-token reader"
+    ],
+    "next_step": "Profile engineering accepted exact ee3339e; NAV implementation follows",
+    "independent_qa": {
+      "task": "VESSEL-PROFILE-DRAFT-01",
+      "commit": "ee3339e58747302c5effd9baef8f05b262c33e0e",
+      "approved": true,
+      "issues": [],
+      "reviewer": {
+        "profile": "esra-pro",
+        "role": "independent_qa",
+        "model": "gpt-6.1-sol",
+        "effort": "medium"
+      },
+      "scope": "Local profile engineering only. Future NAV code requires its own checks/review. Canonical, IdP, expert and release gates remain open.",
+      "verification": {
+        "domain": 46,
+        "persistence": 25,
+        "api": 67,
+        "react": 136,
+        "playwright": 18,
+        "failed": 0,
+        "skipped": 0,
+        "python": "Unchanged prior127 PASS evidence retained, not rerun"
+      },
+      "review_finished_at": 1793489633.4527755
+    }
+  },
+  "tug_crew_composition_01": {
+    "task_id": "TUG-CREW-COMPOSITION-01",
+    "status": "AUTHORED_UNVERIFIED",
+    "accepted": false,
+    "accepted_sp_added": 0,
+    "phase": "Larger foundation authoring; job-window source-qualified minimum Crew role composition authored, all execution deferred",
+    "branch": "foundation/current-tug-today-20261102",
+    "baseline_commit": "610074e",
+    "task": "docs/tasks/tug-crew-composition-01.md",
+    "sources": "docs/tasks/tug-crew-composition-01.sources.json",
+    "report": "docs/phases/TUG-CREW-COMPOSITION-01.md",
+    "delivered": [
+      "Shared current independent source/file/control/verification qualification reader",
+      "Personal source-defined criteria separated from MSMD aggregate role counts",
+      "Job start/end current assignment/position/credential/source coverage with distinct-person and cross-role review",
+      "Explicit unknown/false endorsement handling with current reference/expiry constraints",
+      "Permission-gated current minimum-role summaries in board/detail/Today Why and strict TR/EN UI",
+      "Domain, ordinary actual-host/PostgreSQL, React/wire and retained signed-provider browser test sources authored"
+    ],
+    "verification": {
+      "tests": "DEFERRED / NOT RUN",
+      "build_restore_lint_typecheck": "DEFERRED / NOT RUN",
+      "generated_model_api_parity": "DEFERRED / NOT RUN; generated output preserved",
+      "browser_provider_lab": "DEFERRED / NOT RUN",
+      "security_scan": "DEFERRED / NOT RUN",
+      "independent_qa_ci": "NOT RUN",
+      "source_maintenance": {
+        "whitespace": "git diff --check exit0; line-ending notices only",
+        "graphify": "Final AST-only graphify update . exit0; no model/API call",
+        "nodes": 8994,
+        "edges": 20248,
+        "communities": 541,
+        "limitations": "75 source/configuration files have zero AST nodes; HTML omitted above5000 nodes; no product validation"
+      }
+    },
+    "publication": false,
+    "canonical_progress": "8/970SP;2/121tasks;0/196accepted screens",
+    "selected_scope": "40tasks/272SP unchanged",
+    "remaining": [
+      "Remaining selected job-context criterion bindings and current source/credential consumers; later full clinical/training/work-rest/familiarization/briefing workflows are separate scope, not invented047 predecessors",
+      "Complete golden/multi-human/real-provider fixture composition",
+      "Additional defined offline adapters",
+      "Whole-branch generated/model/contract integration",
+      "External source specifications and real Marine/clinical/legal/privacy/provider/pilot decisions where required"
+    ],
+    "next": "Continue remaining source-dependent foundation software in the same larger bundle; one integrated gate before PR, then independent exact-target QA and required CI",
+    "preview_followup": {
+      "report": "docs/phases/ENTERPRISE-WORKSPACE-01.md",
+      "note": "Subsequent user-requested local preview required builds/migrations/seed/startup; successful API build includes explicit null/empty MSMD role guard. Original deferred test checkpoint retained; no suite or acceptance."
+    }
+  },
+  "enterprise_workspace_01": {
+    "task_id": "ENTERPRISE-WORKSPACE-01",
+    "status": "AUTHORED_UNVERIFIED",
+    "accepted": false,
+    "accepted_sp_added": 0,
+    "phase": "Larger foundation authoring; enterprise design and requested local preview; integrated gate deferred",
+    "branch": "foundation/current-tug-today-20261102",
+    "baseline_commit": "610074e",
+    "task": "docs/tasks/enterprise-workspace-01.md",
+    "sources": "docs/tasks/enterprise-workspace-01.sources.json",
+    "report": "docs/phases/ENTERPRISE-WORKSPACE-01.md",
+    "delivered": [
+      "Shared authorized sidebar/context topbar/search and TR/EN chrome across five workspace families",
+      "Manual shadcn/ui foundations, Tailwind4, Radix/CVA, Lucide and pinned dependency lock",
+      "Actual page-scoped directory/Today metrics and lazy SVG ECharts distribution with text fallback",
+      "Guarded dirty navigation, actor/scope invalidation, mobile focus/inert/Escape restoration",
+      "Meaningful component/contract test sources authored; no suites executed"
+    ],
+    "preview": {
+      "url": "https://localhost:5443/app/fleet",
+      "authorization": "Explicit user request to run the app for inspection; preview builds only",
+      "backend_api_dbmigrator": "Locked restore and Release builds PASS; 0 warnings/errors after nullable-role guard repair",
+      "frontend": "TypeScript and production build PASS; current static distribution served",
+      "runtime": "Local migration/idempotent synthetic seed and strict-TLS health startup succeeded",
+      "identity": "Owned synthetic provider/database reused; ignored private preview config adds ordinary module read access only",
+      "browser": "User reported viewing; automated sign-in not established; no automated visual acceptance"
+    },
+    "verification": {
+      "tests": "DEFERRED / NOT RUN",
+      "lint_generated_model_contract_parity": "DEFERRED / NOT RUN",
+      "security_scan": "DEFERRED / NOT RUN",
+      "independent_qa_ci": "NOT RUN",
+      "navigation_maintenance": {
+        "whitespace": "git diff --check exit0 after one trailing-space repair; line-ending notices only",
+        "graphify": "AST-only graphify update . exit0; no model/API calls",
+        "nodes": 9114,
+        "edges": 20475,
+        "communities": 550,
+        "limitations": "77 source/configuration files have zero AST nodes; HTML omitted above5000 nodes; navigation maintenance only"
+      },
+      "preview_health": "Strict TLS /health/live HTTP200; availability only, not a test suite"
+    },
+    "limitations": [
+      "Main frontend chunk exceeds500kB; later bundle review needed",
+      "Install reported13moderate advisories; full dependency/security review deferred",
+      "Existing family/dirty/offline/authority regression and visual/accessibility checks deferred",
+      "Broader selected foundation software and external authority gates remain open"
+    ],
+    "publication": false,
+    "canonical_progress": "8/970SP;2/121tasks;0/196accepted screens",
+    "selected_scope": "40tasks/272SP unchanged",
+    "next": "Continue source-supported workflows/fixtures/offline/integration; one integrated gate before substantial PR, then independent exact-target QA and required CI"
+  },
+  "enterprise_tug_workspace_01": {
+    "task_id": "ENTERPRISE-TUG-WORKSPACE-01",
+    "status": "AUTHORED_UNVERIFIED",
+    "accepted": false,
+    "accepted_sp_added": 0,
+    "phase": "Larger foundation authoring; enterprise Tug board/detail presentation authored; integrated gate deferred",
+    "branch": "foundation/current-tug-today-20261102",
+    "baseline_commit": "610074e",
+    "task": "docs/tasks/enterprise-tug-workspace-01.md",
+    "sources": "docs/tasks/enterprise-tug-workspace-01.sources.json",
+    "report": "docs/phases/ENTERPRISE-TUG-WORKSPACE-01.md",
+    "delivered": [
+      "Responsive job board with guarded job links, current-page metrics and progressive owning evidence",
+      "Requested UTC versus draft/approved times remain distinct; exact BP strings and Unknown assignment coverage retained",
+      "Combined server-side search/priority/pagination and offline refresh state",
+      "Grouped request detail, write-gated edit callback, draft completeness and revision lineage",
+      "Foreign job destinations, duplicate job/assignment IDs and malformed explanation arrays rejected",
+      "Component/wire tests and actual-host keyboard/mobile assertion sources authored"
+    ],
+    "verification": {
+      "preview_build": "PASS; TypeScript and Vite production build; 0 test execution",
+      "main_js_kb": 837.23,
+      "main_js_gzip_kb": 243.67,
+      "echarts_js_kb": 435.13,
+      "css_kb": 70.61,
+      "tests": "DEFERRED / NOT RUN",
+      "lint_generation_model_security": "DEFERRED / NOT RUN",
+      "browser_visual_a11y": "DEFERRED / NOT RUN",
+      "independent_qa_ci": "NOT RUN",
+      "navigation_maintenance": {
+        "whitespace": "git diff --check exit0 after one trailing-space repair; line-ending notices only",
+        "graphify": "AST-only graphify update . exit0; no model/API calls",
+        "nodes": 9114,
+        "edges": 20475,
+        "communities": 550,
+        "limitations": "77 source/configuration files have zero AST nodes; HTML omitted above5000 nodes; navigation maintenance only"
+      },
+      "preview_health": "Strict TLS /health/live HTTP200; availability only, not a test suite"
+    },
+    "limitations": [
+      "Main chunk>500kB and earlier install-reported13moderate advisories remain open",
+      "No automated visual/accessibility or full family regression evidence",
+      "No new canonical operational state/readiness derivation or production authority",
+      "Broader foundation software/fixture/offline/integration work remains incomplete"
+    ],
+    "publication": false,
+    "canonical_progress": "8/970SP;2/121tasks;0/196accepted screens",
+    "selected_scope": "40tasks/272SP unchanged",
+    "next": "Continue remaining source-supported owning workflows, fixtures/offline/integration; one integrated gate before substantial PR, then independent exact-target QA and required CI"
+  },
+  "enterprise_crew_workspace_01": {
+    "task_id": "ENTERPRISE-CREW-WORKSPACE-01",
+    "status": "AUTHORED_UNVERIFIED",
+    "accepted": false,
+    "accepted_sp_added": 0,
+    "phase": "Enterprise UI authoring checkpoint; current priority S0 closure",
+    "branch": "foundation/current-tug-today-20261102",
+    "baseline_commit": "610074e",
+    "task": "docs/tasks/enterprise-crew-workspace-01.md",
+    "sources": "docs/tasks/enterprise-crew-workspace-01.sources.json",
+    "report": "docs/phases/ENTERPRISE-CREW-WORKSPACE-01.md",
+    "verification": {
+      "preview_build": "PASS; coordinated TypeScript/Vite build after correcting two Testing Library exact-option type errors; no suite executed",
+      "main_js_kb": 856.02,
+      "main_js_gzip_kb": 249.72,
+      "echarts_js_kb": 435.13,
+      "css_kb": 81.36,
+      "tests_lint_browser_visual_a11y_generation_security_qa_ci": "DEFERRED / NOT RUN",
+      "source_maintenance": "git diff --check exit0; AST snapshot9171nodes/20641edges/594communities before S0 code continuation"
+    },
+    "limitations": [
+      "Current authored UI is not accepted canonical screen/sprint work",
+      "Main chunk>500kB; earlier13moderate npm advisories await phase dependency/security gate",
+      "Server-wide large-list search/pagination and remaining source-defined owning behavior not closed by local refinement"
+    ],
+    "publication": false,
+    "canonical_progress": "8/970SP;2/121tasks;0/196accepted screens",
+    "selected_scope": "40tasks/272SP unchanged",
+    "next": "User reprioritized S0 closure; larger UI extension paused at authored checkpoint"
+  },
+  "enterprise_technical_workspace_01": {
+    "task_id": "ENTERPRISE-TECHNICAL-WORKSPACE-01",
+    "status": "AUTHORED_UNVERIFIED",
+    "accepted": false,
+    "accepted_sp_added": 0,
+    "phase": "Enterprise UI authoring checkpoint; current priority S0 closure",
+    "branch": "foundation/current-tug-today-20261102",
+    "baseline_commit": "610074e",
+    "task": "docs/tasks/enterprise-technical-workspace-01.md",
+    "sources": "docs/tasks/enterprise-technical-workspace-01.sources.json",
+    "report": "docs/phases/ENTERPRISE-TECHNICAL-WORKSPACE-01.md",
+    "verification": {
+      "preview_build": "PASS; coordinated TypeScript/Vite build after correcting two Testing Library exact-option type errors; no suite executed",
+      "main_js_kb": 856.02,
+      "main_js_gzip_kb": 249.72,
+      "echarts_js_kb": 435.13,
+      "css_kb": 81.36,
+      "tests_lint_browser_visual_a11y_generation_security_qa_ci": "DEFERRED / NOT RUN",
+      "source_maintenance": "git diff --check exit0; AST snapshot9171nodes/20641edges/594communities before S0 code continuation"
+    },
+    "limitations": [
+      "Current authored UI is not accepted canonical screen/sprint work",
+      "Main chunk>500kB; earlier13moderate npm advisories await phase dependency/security gate",
+      "Server-wide large-list search/pagination and remaining source-defined owning behavior not closed by local refinement"
+    ],
+    "publication": false,
+    "canonical_progress": "8/970SP;2/121tasks;0/196accepted screens",
+    "selected_scope": "40tasks/272SP unchanged",
+    "next": "User reprioritized S0 closure; larger UI extension paused at authored checkpoint"
+  },
+  "s0_overnight_20261102": {
+    "status": "IN_PROGRESS",
+    "accepted": false,
+    "phase": "Exact-source S0 closure, user priority by morning",
+    "accepted_sp": 8,
+    "total_sp": 53,
+    "percent": 15.09,
+    "remaining_sp": 45,
+    "task_count": 13,
+    "accepted_tasks": 2,
+    "report": "docs/reports/s0-closure-gap-2026-11-02.md",
+    "user_progress_report": "docs/reports/project-progress-2026-11-02.md",
+    "scope": "DEV001..012 +DEV116; literal S0 contracts/gates, not entire40task272SP foundation or later production/pilot",
+    "work": [
+      "Independent exact-source gap audit",
+      "DEV007 actual149-chain validation hardening",
+      "DEV010 dependency-range parsing repair",
+      "DEV012 actual evidence/independent-review closure gate authoring",
+      "DEV003/004/005/006/008/009/011/116 current contract/engineering reconciliation"
+    ],
+    "test_cadence": "Write tests now; run coordinated S0 phase gate after required authoring, no earlier suite runs or fake PASS",
+    "publication": false
   }
 }

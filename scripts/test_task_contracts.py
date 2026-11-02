@@ -2,7 +2,25 @@ import copy
 import json
 from pathlib import Path
 import unittest
-from task_contracts import validate
+from task_contracts import dependency_ids, validate
+
+
+class SourceDependencyRangeTests(unittest.TestCase):
+    def test_s0_exit_requires_every_task_in_the_literal_inclusive_range(self):
+        self.assertEqual({f"DEV-{n:03d}" for n in range(1, 12)}, dependency_ids("DEV-001:DEV-011"))
+        self.assertIn("DEV-006", dependency_ids("DEV-001:DEV-011"))
+
+    def test_source_mixed_range_and_individual_dependency_are_both_retained(self):
+        self.assertEqual({"DEV-033", "DEV-034", "DEV-035", "DEV-054"}, dependency_ids("DEV-033:DEV-035,DEV-054"))
+
+    def test_overlapping_dependencies_preserve_the_full_set(self):
+        self.assertEqual({"DEV-005", "DEV-006", "DEV-007", "DEV-008"}, dependency_ids("DEV-005:DEV-008,DEV-006"))
+        self.assertEqual(set(), dependency_ids(""))
+
+    def test_malformed_or_reversed_source_ranges_are_not_silently_reduced(self):
+        for value in ("DEV-011:DEV-001", "DEV-000:DEV-011", "DEV-001:", "DEV-001,", "DEV-001:garbage", "DEV-001;DEV-002", "DEV-001 narrative DEV-011", None):
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                dependency_ids(value)
 
 class TaskContractTests(unittest.TestCase):
     def setUp(self):
@@ -40,6 +58,14 @@ class TaskContractTests(unittest.TestCase):
     def test_acceptance_dependencies_cannot_be_silently_dropped(self):
         self.task["dependencies"] = []
         self.has("dependency_inventory")
+
+    def test_actual_s0_exit_definition_rejects_lost_middle_dependencies(self):
+        register = json.loads((self.root / "contracts/tasks/current-authoring.v1.json").read_text(encoding="utf-8"))
+        task = next(t for t in register["tasks"] if t["id"] == "DEV-012")
+        register["tasks"] = [task]
+        self.assertEqual([], validate(register, self.root)["errors"])
+        task["dependencies"] = [d for d in task["dependencies"] if d["id"] in {"DEV-001", "DEV-011"}]
+        self.assertIn("DEV-012:dependency_inventory", validate(register, self.root)["errors"])
 
     def test_source_trace_and_ac_cannot_be_rewritten(self):
         self.task["traceId"] = "T-invented"

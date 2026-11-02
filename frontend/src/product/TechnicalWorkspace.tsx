@@ -1,11 +1,14 @@
-import { WorkspaceRoleNavigation } from './WorkspaceRoleNavigation'
+import { EnterpriseChrome } from './EnterpriseChrome'
 import { MaintenanceObservations } from './MaintenanceObservations'
-import { WorkspaceContextBar } from './WorkspaceContextBar'
 import { dueReason, dueState } from './maintenance-copy'
 import { useEffect, useRef, useState } from 'react'
 import { ApiError, session } from './api'
 import type { Session } from './directory-contract'
 import { EquipmentHierarchyTree } from './EquipmentHierarchyTree'
+import { assetFields, planFields } from './technical-fields'
+import { TechnicalOverview, TechnicalPlanList, TechnicalEmptyDetail, EquipmentSummary, MaintenancePlanSummary } from './TechnicalReadViews'
+import { Button } from '../components/ui/button'
+import { Plus, Search } from 'lucide-react'
 import * as api from './technical-api'
 import './technical-workspace.css'
 
@@ -18,26 +21,6 @@ function read(): Route | null {
     ? { vessel: match[2], plan: match[1] === 'maintenance-plan', id } : null
 }
 const path = (r: Route) => `/app/${r.plan ? 'maintenance-plan' : 'equipment-hierarchy'}/${r.vessel}${r.id ? `?id=${r.id}` : ''}`
-const assetFields = [
-  ['code', 'Equipment code', 'Ekipman kodu'], ['name', 'Equipment name', 'Ekipman adı'], ['systemFamily', 'System family', 'Sistem ailesi'],
-  ['equipmentType', 'Type declaration', 'Tür beyanı'], ['criticality', 'Criticality declaration', 'Kritiklik beyanı'],
-  ['maker', 'Maker', 'Üretici'], ['model', 'Model', 'Model'], ['serialNumber', 'Serial number', 'Seri numarası'],
-  ['location', 'Location', 'Konum'], ['commissionDate', 'Commission date', 'Devreye alma tarihi'], ['notes', 'Notes', 'Notlar'],
-] as const
-const planFields = [
-  ['observationId', 'Normalized observation reference', 'Normalleştirilmiş gözlem referansı'],
-  ['planType', 'Plan type declaration', 'Plan türü beyanı'], ['intervalValue', 'Interval value (exact decimal)', 'Aralık değeri (kesin ondalık)'],
-  ['intervalUnit', 'Unit (day / month / year for calendar)', 'Birim (takvim için day / month / year)'],
-  ['meterSource', 'Meter source / unit context', 'Sayaç kaynağı / birim bağlamı'], ['lastDoneDate', 'Declared last done date', 'Beyan edilen son bakım tarihi'],
-  ['lastDoneMeter', 'Declared last done meter', 'Beyan edilen son bakım sayacı'], ['currentMeter', 'Observed meter', 'Gözlenen sayaç'],
-  ['observedAt', 'Observation time (ISO with offset)', 'Gözlem zamanı (ISO, saat farkı ile)'], ['observationRevision', 'Observation version / reference', 'Gözlem sürümü / referansı'],
-  ['timeZone', 'Time zone (IANA)', 'Saat dilimi (IANA)'], ['provenance', 'Input provenance', 'Girdi kaynağı'],
-  ['warningLead', 'Warning lead declaration', 'Ön uyarı beyanı'], ['gracePeriod', 'Grace declaration', 'Tolerans beyanı'],
-  ['postponementAllowed', 'Postponement policy reference / Unknown', 'Erteleme politika referansı / Unknown'],
-  ['approvalRule', 'Approval rule reference', 'Onay kuralı referansı'], ['criticality', 'Criticality declaration', 'Kritiklik beyanı'],
-  ['applicableRequirement', 'Applicable requirement reference', 'Uygulanabilir gereksinim referansı'],
-] as const
-
 export function TechnicalWorkspace() {
   const [route, setRoute] = useState<Route | null>(read)
   const [language, setLanguage] = useState<'tr' | 'en'>('tr'), en = language === 'en'
@@ -167,33 +150,33 @@ export function TechnicalWorkspace() {
     try { const result = await api.history(route.vessel, route.id, route.plan, c.signal); if (generation === historyGeneration.current) setHistory(result) } catch { if (generation === historyGeneration.current) setHistoryError(true) } finally { clearTimeout(timeout) }
   }
   if (!route) return <main><p role="alert">{en ? 'Page unavailable.' : 'Sayfa kullanılamıyor.'}</p><a href="/app/fleet">{en ? 'Fleet' : 'Filo'}</a></main>
-  return <div className="product-shell technical-workspace" onClickCapture={e => {
+  return <div className="product-shell enterprise-shell technical-workspace" onClickCapture={e => {
     const a = (e.target as HTMLElement).closest('a')
-    if (a?.closest('.workspace-search') || a?.getAttribute('href')?.startsWith('#')) return
+    // Chrome closes its mobile drawer before invoking this workspace's guard.
+    // Intercepting its anchors here would leave the dirty dialog inside inert main.
+    if (a?.closest('.workspace-search, .enterprise-sidebar, .enterprise-topbar') || a?.getAttribute('href')?.startsWith('#')) return
     if (a && (dirty || observationDirty || busy || uncertain || observationUncertain)) { e.preventDefault(); e.stopPropagation(); guard(() => { window.location.assign(a.href) }) }
   }}>
-    <a className="skip-link" href="#technical-main">{en ? 'Skip to content' : 'İçeriğe geç'}</a>
-    <header className="product-header"><a className="product-brand" href={`/app/fleet/${route.vessel}`}>{en ? 'Back to vessel' : 'Araca dön'}</a><div role="group" aria-label={en ? 'Language' : 'Dil'}><button onClick={() => setLanguage('tr')}>TR</button><button onClick={() => setLanguage('en')}>EN</button></div><WorkspaceContextBar session={user} vessel={route.vessel} language={language} /></header>
-    <WorkspaceRoleNavigation session={user} vessel={route.vessel} language={language} onNavigate={href => guard(() => window.location.assign(href))} />
-    <main id="technical-main" tabIndex={-1}><h1>{route.plan ? (en ? 'Maintenance plan' : 'Bakım planı') : (en ? 'Equipment hierarchy' : 'Ekipman hiyerarşisi')}</h1>
+
+    <EnterpriseChrome session={user} vessel={route.vessel} language={language} onLanguageChange={setLanguage} onNavigate={(href, committed) => guard(() => { committed?.(); window.location.assign(href) })} title={route.plan ? (en ? 'Maintenance plan' : 'Bakım planı') : (en ? 'Equipment hierarchy' : 'Ekipman hiyerarşisi')} mainId="technical-main" />
+    <main id="technical-main" tabIndex={-1}><div className="enterprise-page-heading"><div><p className="enterprise-page-eyebrow">{en ? 'TECHNICAL OPERATIONS' : 'TEKNİK OPERASYONLAR'}</p><h1>{route.plan ? (en ? 'Maintenance plan' : 'Bakım planı') : (en ? 'Equipment hierarchy' : 'Ekipman hiyerarşisi')}</h1><p>{en ? 'Equipment, current planning inputs and their owning records.' : 'Ekipman, güncel planlama girdileri ve sahip kayıtlar.'}</p></div>
+      {canWrite && !editor && !jobDraft && !error && <Button disabled={busy || uncertain || offline} onClick={() => start(true)}><Plus />{en ? 'Add draft' : 'Taslak ekle'}</Button>}</div>
       <nav aria-label={en ? 'Technical' : 'Teknik'}><button aria-current={!route.plan ? 'page' : undefined} disabled={busy || uncertain} onClick={() => navigate({ ...route, plan: false, id: null })}>{en ? 'Equipment' : 'Ekipman'}</button><button aria-current={route.plan ? 'page' : undefined} disabled={busy || uncertain} onClick={() => navigate({ ...route, plan: true, id: null })}>{en ? 'Plans' : 'Planlar'}</button></nav>
       {offline && <p role="alert">{en ? 'Offline. Reconnect before saving or refreshing.' : 'Çevrimdışı. Kaydetmek veya yenilemek için yeniden bağlanın.'}</p>}
       {error ? <div role="alert"><p>{error === 401 ? (en ? 'Sign in to continue.' : 'Devam etmek için oturum açın.') : error === 403 || error === 404 ? (en ? 'Access is not available.' : 'Erişim kullanılamıyor.') : (en ? 'Equipment could not be loaded.' : 'Ekipman yüklenemedi.')}</p><button onClick={() => guard(() => setAttempt(x => x + 1))}>{en ? 'Retry' : 'Tekrar dene'}</button></div> : !assets || loadedScope !== `${route.vessel}:${route.plan}` || route.plan && !plans ? <p role="status">{en ? 'Loading…' : 'Yükleniyor…'}</p> : <>
-        <p>{en ? 'Draft declarations. Missing or unresolved inputs require review; maintenance records do not establish operational fitness.' : 'Taslak beyanlar. Eksik veya çözümlenmemiş girdiler inceleme gerektirir; bakım kayıtları operasyonel uygunluk belirtmez.'}</p>
-        <label>{en ? 'Filter list by name or code' : 'Listeyi ad veya kod ile filtrele'}<input type="search" value={filter} onChange={e => setFilter(e.target.value)} /></label>
-        <div className="technical-columns"><section aria-label={en ? 'Records' : 'Kayıtlar'}>
-          {route.plan ? <ul>{plans!.items.filter(p => `${refs?.jobs.find(j => j.id === p.jobId)?.title ?? ''} ${p.id}`.toLocaleLowerCase(language).includes(filter.toLocaleLowerCase(language))).map(p => <li key={p.id}><button aria-current={route.id === p.id ? 'true' : undefined} onClick={() => navigate({ ...route, id: p.id })}>{refs?.jobs.find(j => j.id === p.jobId)?.title ?? (en ? 'Incomplete plan' : 'Eksik plan')} · {dueState(p.due.state, en)}</button></li>)}</ul>
+        <p className="technical-boundary">{en ? 'Draft declarations. Missing or unresolved inputs require review; maintenance records do not establish operational fitness.' : 'Taslak beyanlar. Eksik veya çözümlenmemiş girdiler inceleme gerektirir; bakım kayıtları operasyonel uygunluk belirtmez.'}</p>
+        <TechnicalOverview assets={assets} plans={route.plan ? plans : null} en={en} />
+        <label className="technical-filter"><span>{en ? 'Filter list by name or code' : 'Listeyi ad veya kod ile filtrele'}</span><div><Search aria-hidden="true" /><input type="search" value={filter} onChange={e => setFilter(e.target.value)} /></div></label>
+        <div className="technical-columns"><section className="technical-record-panel" aria-label={en ? 'Records' : 'Kayıtlar'}><h2>{route.plan ? (en ? 'Plan register' : 'Plan kayıtları') : (en ? 'Equipment structure' : 'Ekipman yapısı')}</h2>
+          {route.plan ? <TechnicalPlanList plans={plans!.items} assets={assets.items} references={refs} filter={filter} selectedId={route.id} en={en} onSelect={id => navigate({ ...route, id })} />
             : <><EquipmentHierarchyTree scopeKey={`${user?.tenantId}:${user?.actorId}:${route.vessel}`} language={language} nodes={assets!.items.map(a => ({ id: a.id, parentId: a.parentId, label: a.name || a.code }))} selectedId={route.id} onSelect={id => navigate({ ...route, id })} />
               {filter && <ul aria-label={en ? 'Matching equipment' : 'Eşleşen ekipman'}>{assets!.items.filter(a => `${a.name ?? ''} ${a.code ?? ''}`.toLocaleLowerCase(language).includes(filter.toLocaleLowerCase(language))).map(a => <li key={a.id}><button onClick={() => navigate({ ...route, id: a.id })}>{a.name || a.code || a.id}</button></li>)}</ul>}</>}
-          {route.plan && !plans!.items.length && <p>{en ? 'No plans.' : 'Plan bulunamadı.'}</p>}
         </section><section aria-label={en ? 'Details' : 'Ayrıntılar'}>
           {route.id && !(route.plan ? plan : asset) && <p role="alert">{en ? 'The selected record is unavailable.' : 'Seçilen kayıt kullanılamıyor.'}</p>}
-          {asset && !route.plan && <dl>{assetFields.map(([key, english, turkish]) => <div key={key}><dt>{en ? english : turkish}</dt><dd>{asset[key] ?? (en ? 'Unknown' : 'Bilinmiyor')}</dd></div>)}<dt>{en ? 'Revision' : 'Revizyon'}</dt><dd>{asset.revision}</dd></dl>}
-          {plan && route.plan && <><p>{dueState(plan.due.state, en)} · {dueReason(plan.due.reason, en)}</p><p>{en ? 'Current planning calculation. Historical results remain in revision history; this does not verify completed maintenance or operational fitness.' : 'Güncel planlama hesabı. Geçmiş sonuçlar revizyon geçmişinde korunur; bu hesap tamamlanmış bakımı veya operasyonel uygunluğu doğrulamaz.'}</p><dl><dt>{en ? 'Current calculation reference clock' : 'Güncel hesap referans zamanı'}</dt><dd>{plan.referenceAt}</dd><dt>{en ? 'Time zone' : 'Saat dilimi'}</dt><dd>{plan.inputs.timeZone ?? 'Unknown'}</dd><dt>{en ? 'Source / observation version' : 'Kaynak / gözlem sürümü'}</dt><dd>{plan.inputs.provenance ?? 'Unknown'} / {plan.inputs.observationRevision ?? 'Unknown'}</dd><dt>{en ? 'Observation time' : 'Gözlem zamanı'}</dt><dd>{plan.inputs.observedAt ?? 'Unknown'}</dd><dt>{en ? 'Next due date / meter' : 'Sonraki bakım tarihi / sayacı'}</dt><dd>{plan.due.nextDueDate ?? 'Unknown'} / {plan.due.nextDueMeter ?? 'Unknown'}</dd></dl>
-            {plan.observationState && plan.observationState !== 'NotRequested' && <p>{en ? 'Current observation assessment' : 'Güncel gözlem değerlendirmesi'}: {dueReason(plan.observationState, en)} · {plan.observationAssessedAt}</p>}
-            <dl>{planFields.map(([key, english, turkish]) => <div key={key}><dt>{en ? english : turkish}</dt><dd>{plan.inputs[key] ?? (en ? 'Unknown' : 'Bilinmiyor')}</dd></div>)}<dt>{en ? 'Owner role reference' : 'Sorumlu rol referansı'}</dt><dd>{plan.ownerRoleId ?? (en ? 'Unknown' : 'Bilinmiyor')}</dd><dt>{en ? 'Maintenance job' : 'Bakım işi'}</dt><dd>{refs?.jobs.find(j => j.id === plan.jobId)?.title ?? (en ? 'Unknown' : 'Bilinmiyor')}</dd></dl>
-            <p>{en ? 'Postponement requires a resolved authority, risk, evidence and maximum-extension policy. No postponement is activated here.' : 'Erteleme; yetki, risk, kanıt ve azami uzatma politikasının çözümlenmesini gerektirir. Burada erteleme etkinleştirilmez.'}</p></>}
-          {canWrite && <div><button disabled={busy || uncertain || offline} onClick={() => start(true)}>{en ? 'Add draft' : 'Taslak ekle'}</button>{(asset || plan) && <button disabled={busy || uncertain || offline} onClick={() => start(false)}>{en ? 'Edit draft' : 'Taslağı düzenle'}</button>}</div>}
+          {!route.id && !editor && <TechnicalEmptyDetail plan={route.plan} en={en} />}
+          {!editor && asset && !route.plan && <EquipmentSummary asset={asset} en={en} />}
+          {!editor && plan && route.plan && <MaintenancePlanSummary plan={plan} asset={assets.items.find(asset => asset.id === plan.assetId)} references={refs} en={en} />}
+          {canWrite && !editor && (asset || plan) && <div className="technical-actions"><Button variant="outline" disabled={busy || uncertain || offline} onClick={() => start(false)}>{en ? 'Edit draft' : 'Taslağı düzenle'}</Button></div>}
           {canHistory && route.id && <button onClick={loadHistory}>{en ? 'History' : 'Geçmiş'}</button>}
           {historyError && <p role="alert">{en ? 'History could not be loaded.' : 'Geçmiş yüklenemedi.'}</p>}
           {!route.plan && route.id && user && !editor && loadedScope === `${route.vessel}:${route.plan}` && <MaintenanceObservations key={`${user.actorId}:${user.tenantId}:${user.csrfToken}:${route.vessel}:${route.id}`} vessel={route.vessel} asset={route.id} csrf={user.csrfToken} en={en} onDirty={setObservationDirty} onUncertain={setObservationUncertain} />}

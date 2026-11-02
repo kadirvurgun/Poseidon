@@ -1,5 +1,4 @@
-import { WorkspaceRoleNavigation } from './WorkspaceRoleNavigation'
-import { WorkspaceContextBar } from './WorkspaceContextBar'
+import { EnterpriseChrome } from './EnterpriseChrome'
 import { useLayoutEffect, useEffect, useRef, useState } from 'react'
 import { ApiError, session } from './api'
 import type { Session } from './directory-contract'
@@ -14,6 +13,7 @@ export function ImportWorkspace({ vessel }: { vessel: string }) {
   const [href, setHref] = useState(window.location.href), [generation, setGeneration] = useState(0), [error, setError] = useState(0)
   const [dirty, setDirty] = useState(false), [pending, setPending] = useState<string | null>(null)
   const location = useRef(href), dirtyRef = useRef(false)
+  const navigationCommit = useRef<(() => void) | null>(null)
   useLayoutEffect(() => { dirtyRef.current = dirty }, [dirty])
   const en = language === 'en'
   const resetScope1 = [generation] as const
@@ -42,14 +42,13 @@ export function ImportWorkspace({ vessel }: { vessel: string }) {
     if (!next.startsWith(`/app/excel-migration/${vessel}`)) { window.location.assign(next); return }
     history.pushState(null, '', next); location.current = window.location.href; setHref(window.location.href)
   }
-  function navigate(next: string) {
-    if (dirty) { setPending(next); return }
+  function navigate(next: string, committed?: () => void) {
+    if (dirty) { navigationCommit.current = committed ?? null; setPending(next); return }
+    committed?.()
     commitNavigation(next)
   }
-  return <div className="product-shell import-workspace"><a className="skip-link" href="#import-main">{en ? 'Import' : 'İçe aktarma'}</a>
-    <header className="product-header"><a className="product-brand" href={`/app/fleet/${vessel}`} onClick={e => { e.preventDefault(); navigate(`/app/fleet/${vessel}`) }}>{en ? 'Vessel' : 'Araç'}</a><div role="group" aria-label={en ? 'Language' : 'Dil'}>
-      <button onClick={() => setLanguage('tr')} aria-pressed={!en}>TR</button><button onClick={() => setLanguage('en')} aria-pressed={en}>EN</button></div><WorkspaceContextBar session={identity} vessel={vessel} language={language} /></header>
-    <WorkspaceRoleNavigation session={identity} vessel={vessel} language={language} onNavigate={navigate} />
+  return <div className="product-shell enterprise-shell import-workspace">
+    <EnterpriseChrome session={identity} vessel={vessel} language={language} onLanguageChange={setLanguage} onNavigate={navigate} title={en ? 'Controlled import' : 'Kontrollü içe aktarma'} mainId="import-main" />
     <main id="import-main" tabIndex={-1}><h1>{en ? 'Controlled import' : 'Kontrollü içe aktarma'}</h1>
       <p>{en ? 'Vessel · crew · certificate · equipment. Declarations remain unverified. Trial results do not grant owner sign-off, pilot authorization or readiness.' : 'Araç · mürettebat · sertifika · ekipman. Beyanlar doğrulanmamış kalır. Deneme sonuçları veri sahibi onayı, pilot yetkisi veya hazır olma durumu oluşturmaz.'}</p>
       {error ? <div role="alert"><p>{error === 401 ? (en ? 'Sign in again.' : 'Yeniden oturum açın.') : (en ? 'Import access unavailable.' : 'İçe aktarma erişimi kullanılamıyor.')}</p>
@@ -59,8 +58,8 @@ export function ImportWorkspace({ vessel }: { vessel: string }) {
     </main>
     {pending && <div role="dialog" aria-modal="true" aria-label={en ? 'Unsaved import changes' : 'Kaydedilmemiş içe aktarma değişiklikleri'}>
       <p>{en ? 'Discard the current mapping or uncertain attempt?' : 'Geçerli eşleme veya belirsiz deneme bırakılsın mı?'}</p>
-      <button autoFocus onClick={() => setPending(null)}>{en ? 'Keep working' : 'Düzenlemeye devam et'}</button>
-      <button onClick={() => { setDirty(false); dirtyRef.current = false; const next = pending; setPending(null); commitNavigation(next) }}>{en ? 'Discard and leave' : 'Bırak ve ayrıl'}</button>
+      <button autoFocus onClick={() => { navigationCommit.current = null; setPending(null) }}>{en ? 'Keep working' : 'Düzenlemeye devam et'}</button>
+      <button onClick={() => { setDirty(false); dirtyRef.current = false; const next = pending; setPending(null); navigationCommit.current?.(); navigationCommit.current = null; commitNavigation(next) }}>{en ? 'Discard and leave' : 'Bırak ve ayrıl'}</button>
     </div>}
   </div>
 }

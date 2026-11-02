@@ -1,4 +1,5 @@
 import type { PlanningEvidence } from './tug-planning-api'
+import { TugCrewCoverage } from './TugCrewCoverage'
 
 export function TugOwningEvidence({ value, language }: { value: PlanningEvidence | null; language: 'tr' | 'en' }) {
   const t = (en: string, tr: string) => language === 'en' ? en : tr
@@ -7,6 +8,7 @@ export function TugOwningEvidence({ value, language }: { value: PlanningEvidence
     <h4>{t('Owning capacity and readiness evidence', 'Kapasite ve hazırlığın sahip kanıtları')}</h4>
     <p>{t('Planning calculation and current recorded blockers. Master safety authority remains separate.', 'Planlama hesabı ve güncel kayıtlı engeller. Kaptanın emniyet yetkisi ayrıdır.')}</p>
     {!value && <p role="status">{t('Current evidence unavailable; refresh when connected.', 'Güncel kanıt kullanılamıyor; bağlantı kurulduğunda yenileyin.')}</p>}
+    {value?.crew && <TugCrewCoverage items={value.crew} language={language} />}
     <ul>{value?.ownedBp?.map(b => <li key={b.tugId}>{b.tugId} · {state(b.state)} · {b.tonnes ?? '—'} t
       <p>{t('Why / next action', 'Neden / sonraki adım')}: {b.why} · {t('Evidence revision', 'Kanıt sürümü')}: {b.evidenceRevision ?? '—'} · {t('Condition revision', 'Kondisyon sürümü')}: {b.conditionRevision ?? '—'}</p>
       <p>{t('Qualified source revision', 'Nitelendirilmiş kaynak sürümü')}: {b.qualificationRevision ?? '—'} · {t('Test time', 'Test zamanı')}: {b.observedAt ?? '—'} · {t('Valid until', 'Geçerlilik sonu')}: {b.validUntil ?? '—'}</p>

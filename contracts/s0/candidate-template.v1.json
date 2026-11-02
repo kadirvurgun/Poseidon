@@ -1,0 +1,118 @@
+{
+  "schemaVersion": "poseidon.s0-candidate.v1",
+  "baseline": "poseidon-v46.3-20261030",
+  "target": {
+    "commit": null,
+    "tree": null
+  },
+  "tasks": [
+    {
+      "id": "DEV-001",
+      "authored": {
+        "state": "NOT_ASSESSED",
+        "artifacts": []
+      },
+      "evidence": {}
+    },
+    {
+      "id": "DEV-002",
+      "authored": {
+        "state": "NOT_ASSESSED",
+        "artifacts": []
+      },
+      "evidence": {}
+    },
+    {
+      "id": "DEV-003",
+      "authored": {
+        "state": "NOT_ASSESSED",
+        "artifacts": []
+      },
+      "evidence": {}
+    },
+    {
+      "id": "DEV-004",
+      "authored": {
+        "state": "NOT_ASSESSED",
+        "artifacts": []
+      },
+      "evidence": {}
+    },
+    {
+      "id": "DEV-005",
+      "authored": {
+        "state": "NOT_ASSESSED",
+        "artifacts": []
+      },
+      "evidence": {}
+    },
+    {
+      "id": "DEV-006",
+      "authored": {
+        "state": "NOT_ASSESSED",
+        "artifacts": []
+      },
+      "evidence": {}
+    },
+    {
+      "id": "DEV-007",
+      "authored": {
+        "state": "NOT_ASSESSED",
+        "artifacts": []
+      },
+      "evidence": {}
+    },
+    {
+      "id": "DEV-008",
+      "authored": {
+        "state": "NOT_ASSESSED",
+        "artifacts": []
+      },
+      "evidence": {}
+    },
+    {
+      "id": "DEV-009",
+      "authored": {
+        "state": "NOT_ASSESSED",
+        "artifacts": []
+      },
+      "evidence": {}
+    },
+    {
+      "id": "DEV-010",
+      "authored": {
+        "state": "NOT_ASSESSED",
+        "artifacts": []
+      },
+      "evidence": {}
+    },
+    {
+      "id": "DEV-011",
+      "authored": {
+        "state": "NOT_ASSESSED",
+        "artifacts": []
+      },
+      "evidence": {}
+    },
+    {
+      "id": "DEV-012",
+      "authored": {
+        "state": "NOT_ASSESSED",
+        "artifacts": []
+      },
+      "evidence": {}
+    },
+    {
+      "id": "DEV-116",
+      "authored": {
+        "state": "NOT_ASSESSED",
+        "artifacts": []
+      },
+      "evidence": {}
+    }
+  ],
+  "blockers": [],
+  "externalBindings": [],
+  "status": "DRAFT_NOT_ASSESSED_NOT_ACCEPTED",
+  "note": "Template only. Coordinator must assess original literal AC, retain actual unresolved P0s/bindings, freeze exact target and attach actual execution and independently authenticated review evidence. Empty lists are not claims that blockers/bindings are absent."
+}

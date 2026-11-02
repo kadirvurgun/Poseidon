@@ -1,6 +1,7 @@
 import type { Plan, PlanningEvidence } from './tug-planning-api'
 import { decodePlanningEvidence } from './tug-planning-api'
 import { ApiError, request } from './api'
+import { isGuid } from './identifiers'
 
 export type TugInputs = {
   requestSource: string | null; customerRef: string | null; assistedVessel: string | null; assistedVesselImo: string | null; jobType: string | null
@@ -26,8 +27,14 @@ export const tugApi = {
   board: async (vessel: string, priority: string, q: string, offset: number, signal: AbortSignal) => {
     const result = await request<TugBoard>(`tug-job-board?${new URLSearchParams({ vessel, priority, q, offset: String(offset), limit: '25' })}`, signal)
     if (!result || !Array.isArray(result.items) || result.items.length > 25 || typeof result.hasMore !== 'boolean') throw new ApiError(502, 'invalid_tug_board_contract')
+    const ids = new Set<string>()
     for (const row of result.items) {
-      if (row.request?.vesselId !== vessel || !Array.isArray(row.assignedTugs)) throw new ApiError(502, 'invalid_tug_board_contract')
+      if (!row || !isGuid(row.request?.id) || row.request.vesselId !== vessel || ids.has(row.request.id) ||
+        row.detailHref !== `/app/tug-job-detail/${row.request.id}?vessel=${vessel}` ||
+        !Array.isArray(row.assignedTugs) || !row.assignedTugs.every(isGuid) || new Set(row.assignedTugs).size !== row.assignedTugs.length ||
+        !Array.isArray(row.blockingReasons) || !row.blockingReasons.every(reason => typeof reason === 'string') ||
+        !Array.isArray(row.declaredComparisons) || !row.declaredComparisons.every(item => item && isGuid(item.jobId) && item.jobId !== row.request.id && ['Unknown', 'Separate', 'BoundaryTouch', 'Intersecting', 'InvalidWindow'].includes(item.relation))) throw new ApiError(502, 'invalid_tug_board_contract')
+      ids.add(row.request.id)
       if (row.planningEvidence != null) {
         const current = decodePlanningEvidence(row.planningEvidence, row.assignedTugs)
         if (row.availableBollardPull !== current.availableBollardPull || row.readiness !== current.readiness || row.conflict !== current.conflictState) throw new ApiError(502, 'invalid_tug_board_contract')

@@ -1,6 +1,8 @@
 import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
-import { offlineShellBuild } from './scripts/offline-shell-build'
+import tailwindcss from '@tailwindcss/vite'
+import { fileURLToPath, URL } from 'node:url'
+import { offlineShellBuild } from './scripts/offline-shell-build.ts'
 
 function port(name: string, fallback: number): number {
   const value = process.env[name]
@@ -16,7 +18,8 @@ if (apiPort === uiPort) throw new Error('API and UI ports must differ')
 const proxy = { '/api': `http://127.0.0.1:${apiPort}`, '/ops': { target: 'http://127.0.0.1:8765', changeOrigin: true } }
 
 export default defineConfig({
-  plugins: [react(), offlineShellBuild()],
+  plugins: [react(), tailwindcss(), offlineShellBuild()],
+  resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
   server: { port: 5173, strictPort: true, proxy },
   preview: { host: '127.0.0.1', port: uiPort, strictPort: true, proxy },
   test: { environment: 'jsdom', setupFiles: ['./src/test-setup.ts'], clearMocks: true,

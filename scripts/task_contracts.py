@@ -15,6 +15,24 @@ CHECKS = {"unit", "integration", "contract", "shipE2E", "tugE2E", "security", "o
 SHA = re.compile(r"[a-f0-9]{40}\Z")
 
 
+def dependency_ids(cell):
+    """Read literal backlog IDs and inclusive ranges without dropping middle tasks."""
+    if not isinstance(cell, str):
+        raise ValueError("dependency_source")
+    if not cell.strip():
+        return set()
+    result = set()
+    for token in cell.split(","):
+        match = re.fullmatch(r"DEV-([0-9]{3})(?::DEV-([0-9]{3}))?", token.strip())
+        if not match:
+            raise ValueError("dependency_source")
+        start = int(match[1]); end = int(match[2] or match[1])
+        if start < 1 or end < start:
+            raise ValueError("dependency_source")
+        result.update(f"DEV-{number:03d}" for number in range(start, end + 1))
+    return result
+
+
 def validate(register, root):
     errors = set(); pending = set()
     sources = SourceRecords(register.get("sources", {}), root)
@@ -45,7 +63,7 @@ def validate(register, root):
             if task["source"].get("column") != "A" or task["acceptanceSource"].get("column") != "G" or task["traceSource"].get("column") != "M" or len({(task[k]["source"], task[k]["locator"]) for k in ("source", "acceptanceSource", "traceSource")}) != 1:
                 error("source_mismatch")
             dependency_cell = re.search(r"(?:^| \| )L[0-9]+: (.*?)(?= \| [A-Z]+[0-9]+: |$)", source_text)
-            expected_dependencies = set(re.findall(r"DEV-[0-9]+", dependency_cell.group(1) if dependency_cell else ""))
+            expected_dependencies = dependency_ids(dependency_cell.group(1) if dependency_cell else "")
             actual_dependencies = [d["id"] for d in task.get("dependencies", [])]
             if set(actual_dependencies) != expected_dependencies or len(actual_dependencies) != len(set(actual_dependencies)):
                 error("dependency_inventory")

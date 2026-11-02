@@ -6,13 +6,13 @@ import { useWorkspaceRevalidation } from './use-workspace-revalidation'
 import { WorkspaceSearch } from './WorkspaceSearch'
 import './workspace-role-navigation.css'
 
-type Props = { session: Session | null; vessel?: string | null; language: 'tr' | 'en'; onNavigate: (href: string, committed?: () => void) => void; onSearchOpen?: () => void }
+type Props = { session: Session | null; vessel?: string | null; language: 'tr' | 'en'; onNavigate: (href: string, committed?: () => void) => void; onSearchOpen?: () => void; embedded?: boolean }
 export function WorkspaceRoleNavigation(props: Props) {
   const s = props.session
   return s?.authenticated && s.canRead && s.tenantId && s.actorId
     ? <RoleNavigation key={`${s.tenantId}:${s.actorId}:${props.vessel ?? ''}`} {...props} /> : null
 }
-function RoleNavigation({ session, vessel = null, language, onNavigate, onSearchOpen }: Props) {
+function RoleNavigation({ session, vessel = null, language, onNavigate, onSearchOpen, embedded = false }: Props) {
   const epoch = useWorkspaceRevalidation()
   const [attempt, retry] = useState(0)
   const [result, setResult] = useState<{ owner: Session | null; epoch: number; data: Lenses } | null>(null)
@@ -45,13 +45,14 @@ function RoleNavigation({ session, vessel = null, language, onNavigate, onSearch
     return () => { active = false; c.abort(); clearTimeout(timer) }
   }, [session, vessel, epoch, attempt])
   useEffect(() => {
+    if (embedded) return
     const key = (e: KeyboardEvent) => {
       if (data?.canSearch && (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); onSearchOpen?.(); showSearch(session) }
     }
     window.addEventListener('keydown', key); return () => window.removeEventListener('keydown', key)
-  }, [data, onSearchOpen, session])
+  }, [data, onSearchOpen, session, embedded])
   return <section className="workspace-role-navigation" aria-label={en ? 'Role navigation' : 'Rol menüsü'}>
-    <p>{en ? 'Menu lens changes presentation only.' : 'Menü merceği yalnızca görünümü değiştirir.'}</p>
+    {!embedded && <p>{en ? 'Menu lens changes presentation only.' : 'Menü merceği yalnızca görünümü değiştirir.'}</p>}
     {!data ? <><span role="status">{error ? (en ? 'Navigation unavailable.' : 'Menü kullanılamıyor.') : (en ? 'Navigation needs current online context.' : 'Menü için güncel çevrimiçi bağlam gerekli.')}</span><button type="button" onClick={() => { setResult(null); retry(x => x + 1) }}>{en ? 'Reload menu' : 'Menüyü yeniden yükle'}</button></>
       : <>
         <span>{data.mode === 'Fleet' ? (en ? 'Fleet context' : 'Filo bağlamı') : data.mode === 'Ship' ? (en ? 'Ship' : 'Gemi') : (en ? 'Tug' : 'Römorkör')}</span>
@@ -66,7 +67,7 @@ function RoleNavigation({ session, vessel = null, language, onNavigate, onSearch
           })}{chosen.items.length === 0 && <p role="status">{en ? 'No available work in this lens and context.' : 'Bu mercek ve bağlamda kullanılabilir iş yok.'}</p>}</nav>}
         </> : <span role="status">{data.state === 'Missing' ? (en ? 'No assigned role context.' : 'Atanmış rol bağlamı yok.') : data.state === 'Unavailable' ? (en ? 'Role menu configuration unavailable.' : 'Rol menüsü yapılandırması kullanılamıyor.') : (en ? 'No role lens for this mode.' : 'Bu mod için rol merceği yok.')}</span>}
         <button type="button" onClick={() => onNavigate(vessel ? `/app/fleet/${vessel}` : '/app/fleet')}>{en ? 'Vessel context' : 'Araç bağlamı'}</button>
-        {data.canSearch && <button type="button" onClick={() => { onSearchOpen?.(); showSearch(session) }}>{en ? 'Search workspace' : 'Çalışma alanında ara'}</button>}
+        {data.canSearch && !embedded && <button type="button" onClick={() => { onSearchOpen?.(); showSearch(session) }}>{en ? 'Search workspace' : 'Çalışma alanında ara'}</button>}
       </>}
     {search && search === session && createPortal(<WorkspaceSearch language={language} onClose={() => showSearch(null)} onNavigate={href => onNavigate(href, () => showSearch(null))} />, document.querySelector('.product-shell') ?? document.body)}
   </section>

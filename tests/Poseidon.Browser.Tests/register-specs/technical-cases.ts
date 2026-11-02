@@ -47,6 +47,17 @@ async function hierarchyPlan(page: Page) {
   const persisted = await (await page.request.get(`/api/v1/maintenance-plan/${vessel}`)).json()
   const row = persisted.items.find((p: { id: string }) => p.id === plan.id)
   expect(row.inputs.intervalValue === '0.100000000000000002' && row.inputs.currentMeter === null && row.due.state === 'ReviewRequired').toBe(true)
+  const currentDetail = page.locator('.technical-read-detail')
+  await expect(currentDetail).toContainText('Current planning calculation.')
+  const inputsDisclosure = currentDetail.locator('summary').filter({ hasText: 'All recorded plan inputs' })
+  await inputsDisclosure.focus(); await page.keyboard.press('Enter')
+  await expect(currentDetail.getByText('0.100000000000000002', { exact: true })).toBeVisible()
+  const previousViewport = page.viewportSize()
+  try {
+    await page.setViewportSize({ width: 390, height: 844 })
+    await expect(page.getByRole('button', { name: 'Edit draft', exact: true })).toBeVisible()
+    expect(await currentDetail.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true)
+  } finally { if (previousViewport) await page.setViewportSize(previousViewport) }
   await page.getByRole('button', { name: 'Edit draft', exact: true }).click()
   await page.getByLabel('Interval value (exact decimal)', { exact: true }).fill('1.2')
   await page.getByRole('button', { name: 'Equipment', exact: true }).click()

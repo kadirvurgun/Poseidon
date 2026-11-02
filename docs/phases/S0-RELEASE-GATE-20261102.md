@@ -1,0 +1,13 @@
+# S0-RELEASE-GATE-20261102 — authored engineering gate
+
+Status: **AUTHORED_UNVERIFIED / NOT ACCEPTED**. Parent-coordinated S0 continuation; this package is not completed S0, a production release or an accepted canonical sprint. [Exact source/task/acceptance record](../tasks/s0-release-gate-20261102.md), [source receipts](../tasks/s0-release-gate-20261102.sources.json), [gate usage and trust model](../../contracts/s0/README.md).
+
+Delivered behavior: machine-readable original13-task/53SP S0 scope, actual-source extraction and hashes, existing DoR/DoD reuse, complete range/dependency closure, distinct authored/executed/reviewed/accepted states, bounded immutable exact-git-target artifacts and receipts, source/engineering/acceptance review checks, fail-closed unresolved P0 and genuinely missing bindings. The trusted orchestration provider supports actual separate reviewer sessions; default author-controlled labels/hashes cannot self-approve. No mandatory new crypto rollout, future ERP/outbox implementation, live production deployment or invented human/safety authority is introduced.
+
+Independent-review correction: current-register explicit critical unresolvedSoftware for the original13 S0 tasks now blocks task/phase acceptance even if candidate.blockers is empty and all exact-target receipts are trusted PASS. Its source-derived count cannot be overwritten by the candidate. Noncritical future adapters, generic deferred/review markers and critical software belonging only to later foundation rows remain outside this specific coupling. Three real-source/register regression methods authored; execution is parent-owned and remains NOT RUN here.
+
+Exact verification: meaningful adversarial unit sources authored. **Tests0 run,0 passed; all suites/validators/build/typecheck/lint/security/browser/QA/CI DEFERRED / NOT RUN by this worker.** No publication, commit, PR or merge. No shared status, canonical ledger, existing task contract or graph mutation by this worker.
+
+Unresolved prerequisites: parent completes parallel original S0 work and source assessment, reconciles real P0/bindings, freezes a clean target, executes the combined suite and supplies actual independent exact-target review/provider evidence. Trust export integrity hashes are not identities; coordinator must use genuinely verified host observations. This software reports missing evidence instead of pretending to create those inputs.
+
+Current phase: S0 engineering closure in progress. Next step: parent integration and review, then one completed-package validation gate. Canonical8/970SP,2/121 tasks,0/196 accepted screens remain unchanged here;53SP is the original S0 denominator, not new accepted progress.

@@ -42,7 +42,7 @@ public static partial class TugEndpoints
         await Observe(h, code); return Results.Json(new { code, correlationId = h.TraceIdentifier }, statusCode: status);
     }
     private static IQueryable<Vessel> Tugs(PoseidonDbContext db, TrustedActor a) => a.Scope(db.Vessels).Where(v => v.Kind == VesselKind.Tug);
-    private static Guid[] Owners(HttpContext h, Guid vessel) => h.RequestServices.GetRequiredService<FederationSettings>().Memberships
+    internal static Guid[] Owners(HttpContext h, Guid vessel) => h.RequestServices.GetRequiredService<FederationSettings>().Memberships
         .Where(m => m.TenantId == Actor(h).TenantId && m.ActorId != Guid.Empty && m.Permissions.Contains("tug.owner.eligible") &&
             m.Permissions.Contains("tug.read") && m.Permissions.Contains("mode.tug") && m.Permissions.Contains("directory.read") &&
             (m.TenantWideManage || m.TenantWideRead || (m.VesselGrants ?? []).Any(g => g.VesselId == vessel)) && ActorResolver.TrustedRoleContext(m.RoleReferences) != null)
@@ -115,7 +115,7 @@ public static partial class TugEndpoints
                 var r = await db.TugDraftPlanRevisions.AsNoTracking().SingleAsync(r => r.JobId == j.Id && r.VesselId == vessel && r.Revision == p.Revision, h.RequestAborted);
                 if (await PlanVisible(h, db, r.Inputs())) {
                     draft = PlanDto(r, p.Version);
-                    planningEvidence = await TugPlanningEvidenceAdapter.Read(db, Actor(h), Planning(h), h.RequestServices.GetRequiredService<MaintenanceObservationSettings>(), j.Id, r.Inputs(), h.RequestAborted, h.RequestServices.GetRequiredService<FederationSettings>(), CrewFilePolicy.Current(h));
+                    planningEvidence = await TugPlanningEvidenceAdapter.Read(db, Actor(h), Planning(h), h.RequestServices.GetRequiredService<MaintenanceObservationSettings>(), j.Id, r.Inputs(), h.RequestAborted, h.RequestServices.GetRequiredService<FederationSettings>(), CrewFilePolicy.Current(h), h);
                 }
             }
             var actual = assignments.Where(x => x.JobId == j.Id && x.JobRevision == j.Revision).Select(x => x.TugId).Distinct().ToArray();
