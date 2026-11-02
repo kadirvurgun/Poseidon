@@ -1,9 +1,9 @@
-import { init, use } from 'echarts/core'
+import { init, use as registerECharts } from 'echarts/core'
 import { PieChart } from 'echarts/charts'
 import { AriaComponent, TooltipComponent } from 'echarts/components'
 import { SVGRenderer } from 'echarts/renderers'
 
-use([PieChart, AriaComponent, TooltipComponent, SVGRenderer])
+registerECharts([PieChart, AriaComponent, TooltipComponent, SVGRenderer])
 
 export function renderScopeChart(element: HTMLDivElement, data: { name: string; value: number; color: string }[]) {
   const chart = init(element, undefined, { renderer: 'svg' })

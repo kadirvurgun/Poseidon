@@ -3,6 +3,10 @@ import { expect, type Page } from '@playwright/test'
 // Genuine signed-host journeys. No request interception, test login or synthetic
 // successful authorization in runtime. Operator appointments are gate prerequisites.
 async function scopedTrace(page: Page) {
+  // A pending trace and the independently qualified evidence fixtures coexist.
+  // Require this case's actual command-produced identity, never an arbitrary row.
+  const fixtureId = process.env.POSEIDON_BROWSER_HUMAN_EVIDENCE
+  if (!fixtureId || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(fixtureId) || fixtureId === '00000000-0000-0000-0000-000000000000') throw new Error('human_evidence_fixture_uuid_required')
   await page.goto('/app/source-register?lang=en')
   await page.getByRole('button', { name: 'Controls and evidence', exact: true }).click()
   const region = page.getByRole('region', { name: 'Controls and evidence', exact: true })
@@ -11,7 +15,7 @@ async function scopedTrace(page: Page) {
   await region.getByLabel('Vessel context', { exact: true }).selectOption(vessel.id)
   await region.getByLabel('Register', { exact: true }).selectOption('Evidence')
   const response = await page.request.get(`/api/v1/evidence?vesselId=${vessel.id}&offset=0`); expect(response.status()).toBe(200)
-  const evidence = (await response.json()).items.find((e: { links: { kind: string }[] }) => e.links.some(l => l.kind === 'Control'))
+  const evidence = (await response.json()).items.find((e: { id: string; links: { kind: string }[] }) => e.id === fixtureId && e.links.some(l => l.kind === 'Control'))
   // Missing fixture is an unmet prerequisite, never a skip or fabricated green trace.
   expect(!!evidence).toBe(true)
   await region.getByRole('button', { name: new RegExp(evidence.content.title ?? evidence.id) }).first().click()

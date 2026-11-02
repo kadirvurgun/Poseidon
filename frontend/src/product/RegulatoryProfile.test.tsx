@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useState } from 'react'
@@ -8,6 +8,7 @@ import { ProductApp } from './ProductApp'
 import { loadProfile, loadProfileHistory, saveProfile, validDecimal } from './profile-api'
 import { profileFields } from './profile-contract'
 import type { Profile, ProfileContent } from './profile-contract'
+
 
 const vessel = { id: '10000000-0000-0000-0000-000000000001', companyId: '10000000-0000-0000-0000-000000000002', code: 'S1', name: 'Synthetic Ship', kind: 'Ship', version: 7, canEdit: true }
 const content = { ...Object.fromEntries(profileFields.map(([key]) => [key, { state: 'Missing', value: null }])), constructionRecord: null } as ProfileContent
@@ -132,18 +133,32 @@ describe('VESSEL-PROFILE-DRAFT-01 component and transport coverage (mocked API, 
   it('opens from fleet details and guards vessel/tab navigation while a profile draft is dirty', async () => {
     vi.stubGlobal('fetch', vi.fn((url: string) => Promise.resolve(reply(url.includes('/auth/session') ?
       { authenticated: true, canRead: true, canReadCompanies: false, canCreate: false, csrfToken: 'csrf', tenantId: '10000000-0000-0000-0000-000000000003' } :
+      url === '/api/v1/workspace' ? { destinations: [{ key: 'fleet', href: '/app/fleet' }], canSearch: false, canWriteRegulatory: false } :
       url.includes('/history?') ? history : url.includes('/regulatory-profile') ? profile :
       url.includes('/vessels?') ? { items: [vessel], offset: 0, limit: 25, hasMore: false } : vessel))))
     const user = userEvent.setup(); render(<ProductApp />); await user.click(screen.getByRole('button', { name: 'EN' }))
-    await user.click(await screen.findByRole('button', { name: 'Synthetic Ship' })); await user.click(await screen.findByRole('button', { name: 'Regulatory profile' }))
-    await screen.findByLabelText('Flag'); await user.selectOptions(screen.getByLabelText('Flag — Data state'), 'Unknown')
-    await user.click(screen.getByRole('button', { name: /^Close$/ }))
+    const fleet = await screen.findByRole('region', { name: 'Fleet' })
+    expect(fleet).toBeVisible()
+    const vesselButton = await within(fleet).findByRole('button', { name: 'Synthetic Ship' })
+    expect(vesselButton).toBeVisible(); expect(vesselButton).toBeEnabled()
+    await user.click(vesselButton)
+    const details = await screen.findByRole('region', { name: 'Details' })
+    expect(details).toBeVisible()
+    const profileButton = await within(details).findByRole('button', { name: 'Regulatory profile' })
+    expect(profileButton).toBeVisible(); expect(profileButton).toBeEnabled()
+    await user.click(profileButton)
+    const form = await screen.findByRole('region', { name: 'Regulatory profile draft' })
+    expect(form).toBeVisible()
+    await user.selectOptions(await within(form).findByLabelText('Flag — Data state'), 'Unknown')
+    const closeButton = within(details).getByRole('button', { name: /^Close$/ })
+    expect(closeButton).toBeVisible(); expect(closeButton).toBeEnabled()
+    await user.click(closeButton)
     expect(screen.getByRole('dialog')).toBeVisible()
     expect(screen.getByLabelText('Flag — Data state')).toHaveValue('Unknown')
     const event = new Event('beforeunload', { cancelable: true }); window.dispatchEvent(event); expect(event.defaultPrevented).toBe(true)
   })
 
-  it('preserves exact measurements on transport, unrelated save, typing, history and uncertain replay', async () => {
+  it('preserves exact measurements on transport, unrelated save and uncertain replay', async () => {
     const precise = { ...content, gt: { state: 'Known', value: '9007199254740993' }, nt: { state: 'Known', value: '0.1234567890123456789012345678' } }
     let lost = true
     const fetchMock = vi.fn(async (url: string, init: RequestInit) => {
@@ -166,15 +181,38 @@ describe('VESSEL-PROFILE-DRAFT-01 component and transport coverage (mocked API, 
     const saves = fetchMock.mock.calls.filter(([, init]) => init?.method === 'PUT')
     expect(saves[1][1].body).toBe(saves[0][1].body)
     expect(JSON.parse(saves[0][1].body as string).content).toMatchObject({ ...precise, flag: { state: 'Unknown', value: null } })
-    await user.clear(screen.getByLabelText('GT'))
-    await user.type(screen.getByLabelText('GT'), '7.9228162514264337593543950335')
-    expect(screen.getByLabelText('GT')).toHaveValue('7.9228162514264337593543950335')
-    await user.click(screen.getByRole('button', { name: 'Save draft' })); await screen.findByText('Draft saved.')
+    const gt = screen.getByLabelText('GT'), nt = screen.getByLabelText('NT')
+    expect(gt).toHaveValue('9007199254740993'); expect(nt).toHaveValue('0.1234567890123456789012345678')
+    expect(gt).toBeEnabled(); expect(nt).toBeEnabled()
+    await user.clear(gt); await user.type(gt, '7')
+    expect(gt).toHaveValue('7'); expect(nt).toHaveValue('0.1234567890123456789012345678')
+  })
+
+  it('preserves exact decimal typing through save and retains the original history snapshot', async () => {
+    const precise = { ...content, gt: { state: 'Known', value: '9007199254740993' }, nt: { state: 'Known', value: '0.1234567890123456789012345678' } }
+    const fetchMock = vi.fn(async (url: string, init?: RequestInit) => {
+      if (url.includes('/history?')) return reply({ ...history, items: [{ ...history.items[0], content: precise }] })
+      if (init?.method === 'PUT') return reply({ ...profile, content: JSON.parse(init.body as string).content })
+      return new Response(JSON.stringify({ ...profile, content: precise }))
+    })
+    vi.stubGlobal('fetch', fetchMock)
+    const user = userEvent.setup(); render(<RegulatoryProfile {...callbacks()} />)
+    const form = await screen.findByRole('region', { name: 'Regulatory profile draft' })
+    expect(await within(form).findByLabelText('GT')).toHaveValue('9007199254740993')
+    expect(within(form).getByLabelText('NT')).toHaveValue('0.1234567890123456789012345678')
+    await user.clear(within(form).getByLabelText('GT'))
+    await user.type(within(form).getByLabelText('GT'), '7.9228162514264337593543950335')
+    expect(within(form).getByLabelText('GT')).toHaveValue('7.9228162514264337593543950335')
+    await user.click(within(form).getByRole('button', { name: 'Save draft' })); await within(form).findByText('Draft saved.')
     const last = fetchMock.mock.calls.filter(([, init]) => init?.method === 'PUT').at(-1)!
-    expect(JSON.parse(last[1].body as string).content.gt.value).toBe('7.9228162514264337593543950335')
-    await user.click(screen.getByText(/Version 1 ·/))
-    expect(screen.getByText('9007199254740993')).toBeVisible()
-    expect(screen.getByText('0.1234567890123456789012345678')).toBeVisible()
+    const savedRequest = last[1]
+    expect(savedRequest).toBeDefined()
+    expect(JSON.parse(savedRequest!.body as string).content.gt.value).toBe('7.9228162514264337593543950335')
+    expect(JSON.parse(savedRequest!.body as string).content.nt.value).toBe('0.1234567890123456789012345678')
+    expect(within(form).getByLabelText('NT')).toHaveValue('0.1234567890123456789012345678')
+    await user.click(within(form).getByText(/Version 1 ·/))
+    expect(within(form).getByText('9007199254740993')).toBeVisible()
+    expect(within(form).getByText('0.1234567890123456789012345678')).toBeVisible()
   })
 
   const invalidFields = [

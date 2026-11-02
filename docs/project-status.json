@@ -4479,9 +4479,9 @@
     "next": "User reprioritized S0 closure; larger UI extension paused at authored checkpoint"
   },
   "s0_overnight_20261102": {
-    "status": "IN_PROGRESS",
+    "status": "PHASE_VERIFICATION_AND_REPAIR",
     "accepted": false,
-    "phase": "Exact-source S0 closure, user priority by morning",
+    "phase": "S0 authoring complete; actual combined verification and repair; not accepted",
     "accepted_sp": 8,
     "total_sp": 53,
     "percent": 15.09,
@@ -4498,7 +4498,33 @@
       "DEV012 actual evidence/independent-review closure gate authoring",
       "DEV003/004/005/006/008/009/011/116 current contract/engineering reconciliation"
     ],
-    "test_cadence": "Write tests now; run coordinated S0 phase gate after required authoring, no earlier suite runs or fake PASS",
-    "publication": false
+    "test_cadence": "Phase authoring finished; coordinated execution authorized at S0 phase gate; failures/interruption retained, no skipped checks presented as PASS",
+    "publication": false,
+    "phase_report": "docs/phases/S0-OVERNIGHT-20261102.md",
+    "initial_candidate_commit": "d0e6d0dbc2c2b5d3873d46ea4a405e176e772e3e",
+    "initial_candidate_tree": "b4c3876080a77c7fb17dc9b63b0c84351c0bad1b",
+    "initial_qa": "REJECTED_FOR_ACCEPTANCE_ON_THIS_TARGET; actual failures retained",
+    "current_target": "Frontend frozen/tested; API fixture repair and genuine signed-browser preparation; no final clean-target acceptance",
+    "verification": {
+      "python": "355/355 PASS on initial clean candidate",
+      "source_definitions": "6 PASS_DEFINITION_ONLY, not acceptance",
+      "backend_build": "Local dirty repair PASS, zero diagnostics",
+      "domain_unit": "566/566 PASS local dirty repair",
+      "persistence_unit": "27/27 PASS local dirty repair",
+      "api_unit": "91/91 PASS local dirty repair",
+      "persistence_postgres": "75/75 PASS, 598.174s local dirty repair",
+      "ef_model_parity": "PASS local dirty repair",
+      "actual_api_contract": "157 paths/185 schemas; actual host export and TypeScript generation PASS local dirty repair",
+      "frontend_typecheck_build_lint": "PASS on frozen lazy-chart fix; full lint198files zero errors/warnings",
+      "frontend_components": "923/923 PASS;0failed/pending/skipped/unhandled; exact stable frontend source snapshot f4dd8b9ad21b15c7c4081e8e55fd5ab83af48725f68a4564d58f83d95873c4f4; local dirty repair only",
+      "api_integration": "547 original cases completed by exact native partition,6Tugfixture failures retained; narrow13 reproduces7pass/6fail, helper resets synthetic mode; both baseline calls repaired, actual13 repair rerun pending",
+      "ordinary_browser": "50/50 PASS0skip/flaky on rebuilt lazy-chart production dist;20:25:43–20:28:48UTC; local dirty repair",
+      "security_preflight": "Repository staged1520 inputs/0 findings; built client5/0; actual164 protected independently reviewed source pins; final target scan pending",
+      "final_independent_qa_ci": "PENDING on repaired clean target",
+      "signed_provider": "Actual manager/restricted2/2+TLS3/3 PASS; new uniquely owned reviewer genuine login+distinctactor PASS; full61x2manifest fixture preparation pending",
+      "artifact": "Actual API development artifact publish PASS local dirty repair",
+      "source_lineage": "Fresh verify_sources.py PASS active byte/chunk lineage"
+    },
+    "next": "Verify the13 repaired APIcases and complete signed61x2manifest; finish isolated legacy fixture; normal clean commit, fresh security/required CI and independent exact-target S0 acceptance"
   }
 }

@@ -1,5 +1,13 @@
 # POSEIDON proje ilerleme raporu — 02.11.2026
 
+> **S0 yürütme güncellemesi:** Koordinatörün aktardığı gerçek birleşik gate
+> sonuçları bu belgenin sonundaki S0 execution ekindedir. Önceki DEFERRED
+> ifadeleri kendi authoring fotoğrafını korur; artık yürütülen kontrollerin
+> yerine kullanılmaz. Kabul hâlâ **8/53 S0 SP (%15,09), 8/970 genel SP (%0,82)**.
+> Son durum: S0 authoring tamamlandı, gerçek execution/repair sürüyor. PostgreSQL
+> persistence75/75 PASS; API integration547 discovery sonrası deadline ile
+> kesildi; son frontend921 koşusu aktif. [Güncel faz kaydı](../phases/S0-OVERNIGHT-20261102.md).
+
 Bu rapor, ürün geliştirmesi sürerken ayrı raporlama ajanı tarafından hazırlanmıştır.
 İncelenen dal `foundation/current-tug-today-20261102`, HEAD `610074e`; yerel ürün
 değişiklikleri bunun üzerindedir. Bu belge bir durum fotoğrafıdır; bağımsız ürün
@@ -175,3 +183,56 @@ test paketleri, gerçek tarayıcı/görsel/a11y regresyonu, bağımsız QA ve CI
 **DEFERRED / NOT RUN**. Kabul **8/970 SP (%0,82), 2/121 iş, 0/196 ekran** olarak
 değişmedi. Bu ek yalnız raporu günceller; ürün kodu veya merkezî durum kaydı
 değiştirilmedi, herhangi bir kontrol çalıştırılmadı.
+
+## S0 gece gate'i — güncel gerçek yürütme ve onarım durumu
+
+Bu ek koordinatörün bildirdiği gerçek çalıştırma sonuçlarını aktarır; rapor ajanı
+hiçbir kontrol çalıştırmadı. Önceki bölümlerdeki test erteleme/authoring durumu
+tarihsel fotoğraftır. **S0 yazımı tamamlandı; birleşik gate çalıştırılıyor ve
+gerçek bulgular onarılıyor.** Tam son gate ve bağımsız exact-target kabul
+tamamlanmadı. İlk temiz hedefin bağımsız QA sonucu **REJECTED** idi; sonraki
+statik bulguların onarılması yeni hedefi kendiliğinden onaylamaz.
+
+İlk temiz aday commit `d0e6d0dbc2c2b5d3873d46ea4a405e176e772e3e`, tree
+`b4c3876080a77c7fb17dc9b63b0c84351c0bad1b` olarak kaydedildi. Bu adaydan sonraki
+onarım ve başarılı yerel kontroller dirty çalışma ağacındadır; bunlar ilk temiz
+commit'in veya henüz oluşmamış son temiz hedefin kabul kanıtı sayılmaz.
+Yürütme özetleri ve önceki başarısızlıklar
+[yerel S0 evidence dizininde](../../.runtime/s0-overnight-20261102/) korunuyor.
+
+| Gerçek kontrol / olay | Aktarılan sonuç ve kapsam |
+|---|---|
+| Python testleri | **355/355 PASS,0 skip**. |
+| Altı S0 definition utility | **PASS_DEFINITION_ONLY**; kaynak/tanım yapısı kontrolü, bağımsız approval veya hukuki doğrulama değil. |
+| Security preflight staged repository | **1.520 girdi,0 bulgu**; korunan repository policy'sinin gerçek164 pin'i kullanıldı, gizli değerler rapora alınmadı. |
+| Post-build client security scan | **5 girdi,0 bulgu**. |
+| İlk full build | **FAIL MSB3027/MSB3021**: sahipliği doğrulanmış yerel önizleme süreci DLL dosyasını kilitliyordu. Yalnız doğrulanmış görev süreci durduruldu; private binary snapshot ile önizleme geri getirildi. |
+| Sonraki build analyzer bulguları | **8 xUnit2031 hata**; assertion anlamları korunarak predicate overload'a geçişle onarıldı. İlk başarısızlık kayıtları korunur. |
+| Onarımlı yerel full build | **PASS**, dirty çalışma ağacı; clean-target kabulü değil. |
+| Domain | **566/566 PASS**. |
+| Persistence unit | **27/27 PASS**; PostgreSQL integration koşusundan ayrı. |
+| Gerçek PostgreSQL persistence integration | **75/75 PASS**, yerel onarım hedefi kapsamında. |
+| API unit | **91/91 PASS**; aşağıdaki API/provider integration koşularından ayrı. |
+| EF model parity | **PASS**, onarımlı yerel hedef kapsamında. |
+| Frontend lint | İlk **2 sorun** giderildi; son full lint **197 dosya,0 hata/0 uyarı**. |
+| Frontend typecheck/production build | Son yerel onarımlı hedefte **PASS**. |
+| İlk component koşusu | **920 toplam:903 PASS,17 FAIL**. Onarımlar ve son tam koşu sürüyor; ilk sonuç full PASS diye sunulmuyor. |
+| Component bulgularının onarımı | Geçersiz route için fazladan Chrome read yapan gerçek güvenlik hatası, native focus helper ve geçerli DTO/disclosure selector'ları onarıldı; son typing düzeltmesi sonrası yeniden koşu aktif. |
+| Son component koşusu | **921 vakalık son koşu RUNNING**; typing düzeltmesinden önceki921 PASS güncel son hedefin sonucu sayılmıyor. |
+| API+PostgreSQL/S3/ClamAV integration | **547 vaka discovered; INTERRUPTED_DEADLINE,1808,177 saniye.** Tamamlanmış execution/pass/fail aggregate yok; bir test FAIL sonucu veya PASS diye sunulmuyor. Exact-class/cohort teşhisi ve bütün vakaların kapsanması sürüyor; skip/assertion gevşetme yok. |
+| Actual OpenAPI export / TS generation | Gerçek API **157 path/185 schema**,9 yeni TugCrew schema; actual-host export ve normal TS generation **PASS**, son clean-target parity ayrıca bağlanacak. |
+| Browser ve bağımsız son-hedef gate | Browser sonraki adım; son temiz hedefin bağımsız QA/CI ve kabulü **PENDING**. |
+
+Kaynak tüketimini sınırlamak için worker sayısı2'ye indirildi; deadline veya skip
+kuralları gevşetilmedi. Hiçbir devam eden koşunun sonucu varsayılmadı. Son temiz
+hedefte uygun evidence uzlaştırması, kalan kontroller, bağımsız kaynak/engineering/
+security QA ve gereken CI kapanışı bekliyor. **S0 %100 veya sabaha kesin teslim
+iddiası yok; kabul puanı değişmedi.**
+
+Güncel S0 source/process envanteri: DEV-007 **149** özgün alan zinciri ile Today
+projection ve mixed-fleet composition; DEV-008 **7 kategori/9 candidate source**
+typed sorumlu-rol planı ve bağımsız scope incelemesi; current-authoring register
+**17 kayıt**. İlk14-kayıtlı ve serbest metin ownership önerisi fotoğrafları
+tarihseldir. Plan live operasyonel kişi ataması veya legal publication değildir.
+Exact review/sonuç/hedef sınırları ve kalan işler:
+[S0 yürütme fazı](../phases/S0-OVERNIGHT-20261102.md).

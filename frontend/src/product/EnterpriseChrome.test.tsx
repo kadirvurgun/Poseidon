@@ -5,7 +5,7 @@ import { EnterpriseChrome } from './EnterpriseChrome'
 import type { Session } from './directory-contract'
 
 vi.mock('./WorkspaceContextBar', () => ({ WorkspaceContextBar: () => <div>Scoped context</div> }))
-vi.mock('./WorkspaceRoleNavigation', () => ({ WorkspaceRoleNavigation: () => <div>Scoped work view</div> }))
+vi.mock('./WorkspaceRoleNavigation', () => ({ WorkspaceRoleNavigation: () => <div>Scoped work view<button>Hidden work-view action</button></div> }))
 vi.mock('./WorkspaceSearch', () => ({ WorkspaceSearch: ({ onNavigate, onClose }: { onNavigate: (href: string) => void; onClose: () => void }) =>
   <div role="dialog" aria-label="Workspace search"><button onClick={() => onNavigate('/app/fleet')}>Go to fleet</button><button onClick={onClose}>Close search</button></div> }))
 const tenant = '10000000-0000-0000-0000-000000000001', actor = '20000000-0000-0000-0000-000000000001'
@@ -60,6 +60,17 @@ it('supports mobile menu focus containment, Escape dismissal and focus restorati
   const dialog = await screen.findByRole('dialog', { name: 'POSEIDON' })
   expect(dialog).toHaveAttribute('aria-modal', 'true')
   expect(document.getElementById('test-main')?.inert).toBe(true)
+  const brand = within(dialog).getByRole('link', { name: 'POSEIDON' })
+  const workView = within(dialog).getByText('Work view', { selector: 'summary' })
+  expect(brand).toHaveFocus()
+  expect(workView.closest('details')).not.toHaveAttribute('open')
+  // jsdom exposes closed-details descendants to role queries; the keyboard
+  // boundary must still exclude their controls from the actual focus targets.
+  const hiddenAction = within(dialog).getByRole('button', { name: 'Hidden work-view action' })
+  expect(hiddenAction.closest('details')).not.toHaveAttribute('open')
+  await user.tab({ shift: true }); expect(workView).toHaveFocus()
+  expect(hiddenAction).not.toHaveFocus()
+  await user.tab(); expect(brand).toHaveFocus()
   await user.keyboard('{Escape}')
   await waitFor(() => expect(screen.queryByRole('dialog', { name: 'POSEIDON' })).not.toBeInTheDocument())
   expect(trigger).toHaveFocus(); expect(document.getElementById('test-main')?.inert).toBe(false)

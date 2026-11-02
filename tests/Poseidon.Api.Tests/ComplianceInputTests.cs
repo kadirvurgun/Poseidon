@@ -157,9 +157,21 @@ public sealed partial class DirectoryWorkspaceTests
                 // A fictional fixture vessel is classified before any source/evaluation
                 // capture. All subsequent proof is created by ordinary HTTP commands.
                 await using var setup = Db(); var fixtureVessel = await setup.Vessels.SingleAsync(v => v.Id == SeedVessel.Id, Ct);
-                fixtureVessel.Kind = VesselKind.Tug; await setup.SaveChangesAsync(Ct);
+                fixtureVessel.Kind = VesselKind.Tug;
+                // The generic seed keeps another unqualified person in this
+                // position with an open period. Isolate this one-person scenario
+                // by declaring only that unrelated fixture outside the job
+                // window through audited setup; production still counts every
+                // overlapping unknown candidate and no seed proof is invented.
+                var unrelated = await setup.CrewAssignments.SingleAsync(a => a.Id == SeedVessel.Id &&
+                    a.VesselId == SeedVessel.Id && a.PositionId == SeedVessel.Id, Ct);
+                unrelated.From = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(2);
+                await setup.SaveChangesAsync(Ct);
             }
-            var (producer, _, baseline) = await AdmittedByCommands(c, host.Services, qualification: CompliancePolicy);
+            // Admission rebuilds synthetic graph permissions; pass the actual
+            // Tug evaluation scope so its helper provisions mode rights after
+            // that reset, for both the producer and consumer baselines.
+            var (producer, _, baseline) = await AdmittedByCommands(c, host.Services, qualification: CompliancePolicy, evaluationVessel: tugComposition ? SeedVessel.Id : null);
             var settings = host.Services.GetRequiredService<FederationSettings>(); CapacityRights(host.Services);
             settings.Memberships[0] = settings.Memberships[0] with { Permissions = [..settings.Memberships[0].Permissions, "crew.write", "crew.assignment.declare", "crew.identity.write", "crew.profile.identity.read", "crew.profile.identity.write", "crew.identity.read", "crew.profile.medical.read", "crew.assessment.read", "crew.documents.read", "crew.documents.write", "crew.certificate.write", "file.read", "file.write"] }; await Token(c);
             var today = DateOnly.FromDateTime(DateTime.UtcNow);
@@ -189,7 +201,7 @@ public sealed partial class DirectoryWorkspaceTests
             var msmd = await OwningDocument(c, host.Services, control, pin, baseline.Id, new(Msmd: new("FICTIONAL issued record", "FICTIONAL issuer", [new(position.Id, credentialCase == "tug-count-shortage" ? 2 : 1, "FICTIONAL/msmd/role")])), vessel: SeedVessel.Id);
             var assessment = await OwningDocument(c, host.Services, control, pin, baseline.Id, new(CrewRoleAssessment: new(assignment.Id, assignment.Revision, assignment.Version, position.Id, position.Version, today, declaration.To, "FICTIONAL-CRITERION", "FICTIONAL independently qualified assessment record", satisfied, credential)), verify, SeedVessel.Id);
             var retained = settings.Memberships.ToArray();
-            var (consumer, _, _) = await AdmittedByCommands(c, host.Services, qualification: q => CompliancePolicy(q) with { Eligibility = new(position.Id, "FICTIONAL/role/policy", [new("FICTIONAL-CRITERION", producer.Current.Id, producer.Current.Revision, "FICTIONAL/criterion/source", credentialCase != "none")]) });
+            var (consumer, _, _) = await AdmittedByCommands(c, host.Services, qualification: q => CompliancePolicy(q) with { Eligibility = new(position.Id, "FICTIONAL/role/policy", [new("FICTIONAL-CRITERION", producer.Current.Id, producer.Current.Revision, "FICTIONAL/criterion/source", credentialCase != "none")]) }, evaluationVessel: tugComposition ? SeedVessel.Id : null);
             settings.Memberships = [..settings.Memberships, ..retained.Where(m => !settings.Memberships.Any(n => n.ActorId == m.ActorId)).Select(m => m with { Subject = "fictional-retained-role-" + Guid.NewGuid().ToString("N") })];
             CapacityRights(host.Services); settings.Memberships[0] = settings.Memberships[0] with { Permissions = [..settings.Memberships[0].Permissions, "crew.identity.read", "crew.profile.medical.read", "crew.assessment.read", "crew.documents.read", "crew.write", "crew.assignment.declare", "crew.profile.identity.read", "crew.profile.identity.write", "crew.identity.write"] }; await Token(c);
             using var evaluated = await Send(c, "applicability/evaluate", new EvaluateCommand(SeedVessel.Id, [consumer.Current.Id], OwningInputs: new(MsmdId: msmd.Id, RoleAssessmentIds: [assessment.Id])));

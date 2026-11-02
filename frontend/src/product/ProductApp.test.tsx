@@ -1,9 +1,9 @@
-import { navigationTestIdentity, navigationTestRole } from './workspace-navigation.test-fixture'
+import { navigationTestIdentity, navigationTestRole, navigationTestWorkspace, openNavigationTestWorkView } from './workspace-navigation.test-fixture'
 vi.mock('./workspace-lens-api', async original => ({ ...await original<typeof import('./workspace-lens-api')>(),
   loadLenses: vi.fn(async (tenant: string, actor: string, vessel: string | null) => (await import('./workspace-navigation.test-fixture')).navigationTestLenses(tenant, actor, vessel)) }))
 vi.mock('./workspace-context-api', async original => ({ ...await original<typeof import('./workspace-context-api')>(),
   loadWorkspaceContext: (await import('./workspace-navigation.test-fixture')).navigationTestContext }))
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ProductApp } from './ProductApp'
@@ -47,7 +47,7 @@ describe('FOUNDATION-APP-01 product states (mocked HTTP, not backend acceptance)
     let attempts = 0
     const fetchMock = vi.fn(async (url: string) => {
       if (url.endsWith('auth/session')) return reply(signedIn)
-      if (url.endsWith('workspace')) return reply({ destinations: [], canWriteRegulatory: false })
+      if (url.endsWith('workspace')) return reply(navigationTestWorkspace())
       if (++attempts === 1) throw new TypeError('offline')
       return reply({ items: [], offset: 0, limit: 25, hasMore: false })
     })
@@ -60,6 +60,7 @@ describe('FOUNDATION-APP-01 product states (mocked HTTP, not backend acceptance)
   it('loads company detail and requests ship/tug filters from the API', async () => {
     const fetchMock = vi.fn(async (url: string) => {
       if (url.endsWith('auth/session')) return reply(signedIn)
+      if (url.endsWith('workspace')) return reply(navigationTestWorkspace())
       if (url.endsWith('companies/company-one')) return reply({ id: 'company-one', code: 'C1', name: 'Synthetic Company', version: 1, canEdit: false })
       if (url.includes('companies?')) return reply({ items: [{ id: 'company-one', code: 'C1', name: 'Synthetic Company', version: 1, canEdit: false }], offset: 0, limit: 25, hasMore: false })
       return reply({ items: [{ id: 'tug-one', companyId: 'company-one', code: 'T1', name: 'Synthetic Tug', kind: 'Tug', version: 1, canEdit: false }], offset: 0, limit: 25, hasMore: false })
@@ -68,8 +69,9 @@ describe('FOUNDATION-APP-01 product states (mocked HTTP, not backend acceptance)
     const user = userEvent.setup(); render(<ProductApp />)
     await user.click(await screen.findByRole('button', { name: 'Synthetic Company' }))
     expect(await screen.findByRole('region', { name: 'Ayrıntılar' })).toHaveTextContent('Synthetic Company')
+    await openNavigationTestWorkView(user)
     await user.selectOptions(await screen.findByLabelText('Menü merceği'), navigationTestRole)
-    await user.click(screen.getByRole('button', { name: 'Filo' }))
+    await user.click(within(screen.getByRole('navigation', { name: 'Günlük iş menüsü' })).getByRole('button', { name: 'Filo' }))
     await user.selectOptions(screen.getByLabelText('Araç türü'), 'Tug')
     expect(await screen.findByRole('button', { name: 'Synthetic Tug' })).toBeVisible()
     await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('/api/v1/vessels?offset=0&limit=25&kind=Tug', expect.objectContaining({ credentials: 'same-origin' })))
@@ -81,13 +83,14 @@ describe('FOUNDATION-APP-01 product states (mocked HTTP, not backend acceptance)
   ])('keeps the selected $tab detail visible after selecting its row again', async ({ tab, rowName, detailUrl, listUrl, item }) => {
     const fetchMock = vi.fn(async (url: string) => {
       if (url.endsWith('auth/session')) return reply(signedIn)
+      if (url.endsWith('workspace')) return reply(navigationTestWorkspace())
       if (url === detailUrl) return reply(item)
       if (url === listUrl) return reply({ items: [item], offset: 0, limit: 25, hasMore: false })
       return reply({ items: [], offset: 0, limit: 25, hasMore: false })
     })
     vi.stubGlobal('fetch', fetchMock)
     const user = userEvent.setup(); render(<ProductApp />)
-    if (tab === 'Filo') { await user.selectOptions(await screen.findByLabelText('Menü merceği'), navigationTestRole); await user.click(await screen.findByRole('button', { name: tab })) }
+    if (tab === 'Filo') { await openNavigationTestWorkView(user); await user.selectOptions(await screen.findByLabelText('Menü merceği'), navigationTestRole); await user.click(within(screen.getByRole('navigation', { name: 'Günlük iş menüsü' })).getByRole('button', { name: tab })) }
     const row = await screen.findByRole('button', { name: rowName })
     await user.click(row)
     const detail = await screen.findByRole('region', { name: 'Ayrıntılar' })

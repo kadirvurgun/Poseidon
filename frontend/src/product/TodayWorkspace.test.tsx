@@ -1,9 +1,10 @@
-import { act, render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, expect, it, vi } from 'vitest'
 import { TodayWorkspace } from './TodayWorkspace'
 import { decodeToday, decodeWhy, decodeTodayVessels, today, todayVessels, why as loadWhy } from './today-api'
 import { ProductApp } from './ProductApp'
+import { navigationTestWorkspace, openNavigationTestWorkView } from './workspace-navigation.test-fixture'
 
 const id = '10000000-0000-0000-0000-000000000001'
 const vessel = { id, companyId: '10000000-0000-0000-0000-000000000002', code: 'T1', name: 'Synthetic Tug', kind: 'Tug', version: 1, canEdit: true }
@@ -194,12 +195,13 @@ it('rejects foreign context, invented safe state, unsafe destinations and malfor
 })
 it('guards navigation from an unsaved directory draft into Today', async () => {
   window.history.replaceState(null, '', `/app/fleet/${id}`)
-  vi.stubGlobal('fetch', vi.fn(async (url: string) => response(url.includes('auth/session') ? { authenticated: true, canRead: true, canReadCompanies: false, canCreate: false, canSearch: false, tenantId: id, actorId: vessel.companyId, csrfToken: 'synthetic' } : url.includes('/workspace/lenses') ? { tenantId: id, actorId: vessel.companyId, vesselId: id, mode: 'Tug', state: 'Configured', version: 'synthetic-v1', canSearch: false, lenses: [{ reference: id, tr: 'KURGUSAL rol', en: 'FICTIONAL role', items: [{ key: 'today', href: `/app/today/${id}`, group: 'daily' }] }] } : url.includes('vessels?') ? { items: [vessel], offset: 0, limit: 25, hasMore: false } : vessel)))
+  vi.stubGlobal('fetch', vi.fn(async (url: string) => response(url.includes('auth/session') ? { authenticated: true, canRead: true, canReadCompanies: false, canCreate: false, canSearch: false, tenantId: id, actorId: vessel.companyId, csrfToken: 'synthetic' } : url === '/api/v1/workspace' ? navigationTestWorkspace(false, false) : url.includes('/workspace/lenses') ? { tenantId: id, actorId: vessel.companyId, vesselId: id, mode: 'Tug', state: 'Configured', version: 'synthetic-v1', canSearch: false, lenses: [{ reference: id, tr: 'KURGUSAL rol', en: 'FICTIONAL role', items: [{ key: 'today', href: `/app/today/${id}`, group: 'daily' }] }] } : url.includes('vessels?') ? { items: [vessel], offset: 0, limit: 25, hasMore: false } : vessel)))
   const user = userEvent.setup(); render(<ProductApp />)
   await user.click(await screen.findByRole('button', { name: /^Düzenle$/ }))
   await user.type(screen.getByLabelText('Ad *'), ' retained')
+  await openNavigationTestWorkView(user)
   await user.selectOptions(await screen.findByLabelText('Menü merceği'), id)
-  await user.click(screen.getByRole('button', { name: /^Bugün$/ }))
+  await user.click(within(screen.getByRole('navigation', { name: 'Günlük iş menüsü' })).getByRole('button', { name: /^Bugün$/ }))
   expect(await screen.findByRole('dialog')).toBeVisible()
   await user.click(screen.getByRole('button', { name: 'Düzenlemeye devam et' }))
   expect(screen.getByLabelText('Ad *')).toHaveValue('Synthetic Tug retained')

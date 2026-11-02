@@ -11196,6 +11196,46 @@
           }
         }
       },
+      "ManningRoleCoverage": {
+        "required": [
+          "positionId",
+          "required",
+          "declared",
+          "qualified",
+          "unknown",
+          "state",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "positionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "required": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "declared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "qualified": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unknown": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "state": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      },
       "MsmdReference": {
         "type": "object",
         "properties": {
@@ -13748,6 +13788,86 @@
           }
         }
       },
+      "TodayTugEvidenceDto": {
+        "required": [
+          "jobId",
+          "requestRevision",
+          "requestIncomplete",
+          "planRevision",
+          "plannedRequestRevision",
+          "plannedStart",
+          "plannedEnd",
+          "assignedTugs",
+          "currentOwnerRoleId",
+          "evidence"
+        ],
+        "type": "object",
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "requestRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "requestIncomplete": {
+            "type": "boolean"
+          },
+          "planRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "plannedRequestRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "plannedStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "plannedEnd": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "assignedTugs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "currentOwnerRoleId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "evidence": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/TugPlanningEvidence"
+              }
+            ]
+          }
+        }
+      },
       "TodayWhyDto": {
         "required": [
           "vesselId",
@@ -13840,6 +13960,16 @@
                 "$ref": "#/components/schemas/TodayMaintenanceEvidenceDto"
               }
             ]
+          },
+          "tug": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/TodayTugEvidenceDto"
+              }
+            ]
           }
         }
       },
@@ -13927,6 +14057,75 @@
               "string"
             ],
             "format": "uuid"
+          }
+        }
+      },
+      "TugBpEvidence": {
+        "required": [
+          "tugId",
+          "state",
+          "declaredValue",
+          "source",
+          "policyVersion",
+          "sourceRevision",
+          "observationId",
+          "observedAt",
+          "freshness",
+          "provenance"
+        ],
+        "type": "object",
+        "properties": {
+          "tugId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "declaredValue": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "source": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "policyVersion": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sourceRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "observationId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "observedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "freshness": {
+            "type": "string"
+          },
+          "provenance": {
+            "type": "string"
           }
         }
       },
@@ -14097,6 +14296,82 @@
         },
         "additionalProperties": false
       },
+      "TugCrewReadinessDto": {
+        "required": [
+          "tugId",
+          "state",
+          "reason",
+          "windowStart",
+          "windowEnd",
+          "assessedAt",
+          "msmdId",
+          "msmdRevision",
+          "roles",
+          "validUntil"
+        ],
+        "type": "object",
+        "properties": {
+          "tugId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "windowStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "windowEnd": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "assessedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "msmdId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "msmdRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ManningRoleCoverage"
+            }
+          },
+          "validUntil": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "coverage": {
+            "type": "string",
+            "default": "SourceQualifiedMinimumRolesOnly;OtherCrewGatesAndMasterDecisionSeparate"
+          }
+        }
+      },
       "TugOfflineContext": {
         "required": [
           "id",
@@ -14192,6 +14467,141 @@
           }
         }
       },
+      "TugOperationalConflict": {
+        "required": [
+          "tugId",
+          "kind",
+          "resourceId",
+          "revision",
+          "state",
+          "why",
+          "provenance",
+          "observedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "tugId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "resourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "state": {
+            "type": "string"
+          },
+          "why": {
+            "type": "string"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "observedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
+      "TugOwnedCapacity": {
+        "required": [
+          "tugId",
+          "state",
+          "tonnes",
+          "why"
+        ],
+        "type": "object",
+        "properties": {
+          "tugId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "tonnes": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "why": {
+            "type": "string"
+          },
+          "evidenceId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "evidenceRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "conditionId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "conditionRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "ruleId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "qualificationRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "qualificationHash": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "validUntil": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "observedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
       "TugPlanChange": {
         "required": [
           "operation"
@@ -14260,6 +14670,36 @@
           }
         },
         "additionalProperties": false
+      },
+      "TugPlanConflict": {
+        "required": [
+          "jobId",
+          "revision",
+          "relation",
+          "source",
+          "observedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "relation": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "observedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
       },
       "TugPlanDto": {
         "required": [
@@ -14348,6 +14788,140 @@
               "type": "string",
               "format": "uuid"
             }
+          }
+        }
+      },
+      "TugPlanningEvidence": {
+        "required": [
+          "availableBollardPull",
+          "capacityState",
+          "bp",
+          "conflictState",
+          "conflicts",
+          "coverage",
+          "readiness"
+        ],
+        "type": "object",
+        "properties": {
+          "availableBollardPull": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "capacityState": {
+            "type": "string"
+          },
+          "bp": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugBpEvidence"
+            }
+          },
+          "conflictState": {
+            "type": "string"
+          },
+          "conflicts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugPlanConflict"
+            }
+          },
+          "coverage": {
+            "type": "string"
+          },
+          "readiness": {
+            "type": "string"
+          },
+          "ownedBp": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/TugOwnedCapacity"
+            }
+          },
+          "readinessFacts": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/TugReadinessFact"
+            }
+          },
+          "operationalConflicts": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/TugOperationalConflict"
+            }
+          },
+          "crew": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/TugCrewReadinessDto"
+            }
+          }
+        }
+      },
+      "TugReadinessFact": {
+        "required": [
+          "tugId",
+          "source",
+          "id",
+          "revision",
+          "state",
+          "why"
+        ],
+        "type": "object",
+        "properties": {
+          "tugId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "source": {
+            "type": "string"
+          },
+          "id": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "revision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "state": {
+            "type": "string"
+          },
+          "why": {
+            "type": "string"
+          },
+          "observedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
           }
         }
       },

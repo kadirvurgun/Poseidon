@@ -4,9 +4,13 @@ import { expect, type Page } from '@playwright/test'
 // authored by a different synthetic human THROUGH the normal commands, and this
 // signed human must have a real exact reviewer assignment. Missing input fails.
 async function assignedQualification(page: Page) {
+  // The coordinator command-authors a distinct pending fixture per case. Other
+  // qualified source fixtures deliberately coexist and cannot stand in for it.
+  const fixtureId = process.env.POSEIDON_BROWSER_QUALIFICATION_RULE
+  if (!fixtureId || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(fixtureId) || fixtureId === '00000000-0000-0000-0000-000000000000') throw new Error('qualification_fixture_uuid_required')
   const rules = await page.request.get('/api/v1/rules'); expect(rules.status()).toBe(200)
   const rows = (await rules.json()).items
-  const selected = rows.find((r: { current: { rule?: { ruleId?: string } } }) => r.current.rule?.ruleId?.startsWith('SYNTHETIC-FOUNDATION-'))
+  const selected = rows.find((r: { current: { id: string; rule?: { ruleId?: string } } }) => r.current.id === fixtureId && r.current.rule?.ruleId?.startsWith('SYNTHETIC-FOUNDATION-'))
   expect(!!selected).toBe(true)
   const source = await page.request.get(`/api/v1/regulatory-source-governance/${selected.current.id}`); expect(source.status()).toBe(200)
   const q = await source.json(); expect(q.items[0].state).toBe('IN_REVIEW'); expect(q.actions).toContain('qualify')
@@ -54,7 +58,7 @@ async function owningProfileCapture(page: Page) {
   const saved = await waiting; expect(saved.status()).toBe(200)
   const result = await saved.json(); expect(result.content.mainPropulsionKw).toEqual({ state: 'Known', value: '3600.000001' })
   expect(result.content.contractForConstructionDate).toEqual({ state: 'Unknown', value: null })
-  await page.reload()
+  await page.reload(); await page.getByRole('button', { name: 'EN', exact: true }).click()
   await expect(profile.getByLabel('Main propulsion power (kW)', { exact: true })).toHaveValue('3600.000001')
   await expect(profile.getByLabel('Construction contract date (YYYY-MM-DD) — Data state', { exact: true })).toHaveValue('Unknown')
   const history = await page.request.get(`/api/v1/vessels/${vessel.id}/regulatory-profile/history?offset=0&limit=25`)

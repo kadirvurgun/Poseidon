@@ -1,5 +1,12 @@
 # S0 kapanış açığı ve uygulama planı — 02.11.2026
 
+> **Son yürütme durumu:** S0 birleşik gate'i artık koşuyor. Aşağıdaki ilk
+> denetim sırasında çalıştırılmamış olan kontrollerin yeni gerçek sonuçları
+> belgenin sonundaki execution ekindedir. Kabul **8/53 SP (%15,09)** değişmedi.
+> S0 authoring tamamlandı; aşağıdaki ilk yazım açıkları artık tarihsel denetimdir.
+> Güncel typed plan/register ve execution sınırı
+> [S0 faz raporunda](../phases/S0-OVERNIGHT-20261102.md) uzlaştırılmıştır.
+
 **Kaynaklara göre mevcut kabul: 8/53 SP (%15,09). Hedef: 53/53 SP (%100).**
 Kalan 11 işin 45 SP'si bağımsız kriter kabulü gerektirir. S0 tamamen kapanırsa
 genel proje kabulü 53/970 SP, yani **%5,46** olur. Büyük foundation paketinin
@@ -142,6 +149,15 @@ kriteridir, bütün sonraki capability'leri S0'da çalıştırma kriteri değild
 
 ### DEV-008 — en önemli literal kriter / yazılım kararı
 
+Güncel supersession: [bağımsız scope incelemesi](dev-008-source-scope-review-2026-11-02.md)
+reviewed sorumlu-rol planının S0 kapsamına uygun olduğunu belirledi; named live
+person/membership/operasyonel assignment API bu S0 kriterinin önkoşulu değil.
+[Typed plan](../../contracts/sources/pilot-ownership.v1.json) artık7 kategori/9
+candidate source için exact declared version/provenance, ayrı internal roller,
+UNVERIFIED/OPEN durum ve activation-blocked sınırıyla yazıldı. Definition kontrolü
+geçti; exact-target plan review/acceptance bununla otomatik oluşmadı. Aşağıdaki
+paragraflar ilk denetimin artık superseded karar açığını korur.
+
 Mevcut: [kategori bazlı ownership planı](../tasks/source-ownership-plan-01.md),
 [kaynak yorum kararı taslağı](../tasks/selected-source-reconciliation-2026-11-02.md),
 [gerçek register revision modeli](../../backend/Poseidon.Persistence/RegulatoryRegister.cs).
@@ -181,13 +197,13 @@ Dataset validator/domain test gate'i ve DEV-005/008 bağımlılık kabulü bekle
 ### DEV-010 — DoR/DoD template/register/validator vardır
 
 Mevcut: [template](../../contracts/tasks/task-template.v1.json),
-[14-row current register](../../contracts/tasks/current-authoring.v1.json),
+[17-row current register](../../contracts/tasks/current-authoring.v1.json),
 [task_contracts.py](../../scripts/task_contracts.py),
 [regresyonlar](../../scripts/test_task_contracts.py).
 7 impact alanı; source/AC/dependency/owner/T-ID, code/test/evidence ve authored/
 run/pass ayrımları tanımlıdır. DEFERRED draft authoring'e izin verir, kabul etmez.
 
-Somut kapanış: current register'daki 14 kaydın artık tamamlanan authoring
+Somut kapanış: current register'daki 17 kaydın artık tamamlanan authoring
 adımlarını, geçerli hedef/evidence ve kalan kararları doğru yansıttığını uzlaştır.
 Template'in gerçekten backlog/task iş akışında uygulandığını kaynakla göster.
 Validator/test gate'i ve DEV-007 dependency kabulü bekler. Hash/receipt alanı
@@ -269,3 +285,56 @@ deployment/legal/Marine/clinical/pilot otoritesini üretmez. ADR/schema teknik
 onayı ile gerçek operasyonel safety/legal imza ayrıdır. Mevcut dış girdilerin
 eksikliği yapılabilir sözleşme/kod/test yazımını durdurmak için genel mazeret
 olarak kullanılmaz; exact unresolved kriteri görünür tutulur.
+
+## Koordinatörün güncel gerçek S0 yürütme durumu
+
+İlk temiz aday `d0e6d0dbc2c2b5d3873d46ea4a405e176e772e3e`, tree
+`b4c3876080a77c7fb17dc9b63b0c84351c0bad1b` olarak kaydedildi. Daha sonraki
+onarımların başarılı yerel kontrolleri dirty çalışma ağacındadır; bunlar ilk
+commit veya son temiz hedef için acceptance receipt değildir. Rapor ajanı bu
+kontrolleri çalıştırmadı; sonuçlar koordinatör tarafından aktarıldı. Ham/safe
+özetler ve önceki başarısızlıklar
+[yerel evidence dizininde](../../.runtime/s0-overnight-20261102/) korunur.
+
+S0 authoring tamamlandı. İlk temiz adayın bağımsız QA sonucu **REJECTED** idi;
+statik bulgular sonraki yerel değişikliklerde onarıldı. Onarım, yeni exact-target
+bağımsız onay yerine geçmez. Güncel register17 kayıt, DEV-008 typed plan7 kategori/
+9 kaynak;149 alan zinciri/projection/composition korunuyor.
+
+- Python **355/355 PASS,0 skip**; altı definition utility
+  **PASS_DEFINITION_ONLY**. Bu utility sonucu DEV-004/005 bağımsız teknik
+  approval'ını, DEV-008 plan adoption/review'ünü veya DEV-012 kabulünü üretmez.
+- Security preflight staged repository **1.520 girdi/0 bulgu**; post-build client
+  **5 girdi/0 bulgu**, gerçek164 protected repository pin'i korunarak. Hiçbir
+  gizli değer bu rapora alınmadı.
+- İlk full build **MSB3027/MSB3021 FAIL**: doğrulanmış sahipli yerel preview DLL
+  kilidi. Yalnız ilgili süreç durduruldu; private binary snapshot ile preview
+  geri getirildi. Ardından **8 xUnit2031** bulgusu assertion anlamını değiştirmeyen
+  predicate overload düzeltmeleriyle giderildi; dirty full build **PASS**.
+- Dirty hedefte Domain **566/566**,Persistence unit **27/27**,API unit **91/91**
+  **PASS**; EF model parity **PASS**. Gerçek PostgreSQL persistence integration
+  **75/75 PASS**; API/provider integration kapsamı bunlardan ayrıdır.
+- Frontend ilk2 lint sorunu onarıldı; son full lint **197 dosya,0 hata/0 uyarı**.
+  İlk component koşusu **920:903 PASS/17 FAIL**. Gerçek invalid-route ek Chrome
+  read güvenlik hatası, native focus helper ve geçerli DTO/disclosure selector
+  onarımları ve son typing düzeltmesi sonrasında **921 vakalık güncel koşu aktif**.
+  Typing düzeltmesinden önceki921 PASS güncel son hedefe taşınmıyor. Son frontend
+  typecheck/production build ve197-dosyalık full lint **PASS**.
+- API+PostgreSQL/S3/ClamAV integration **547 vaka discovered** sonrasında
+  **1808,177 saniyede INTERRUPTED_DEADLINE** oldu. Tamamlanmış aggregate yok;
+  bir test FAIL veya PASS olarak yorumlanmıyor. Exact-class/cohort teşhisi ve
+  bütün vakaların gerçek coverage'ı sonraki adım; skip/loosening yok. Worker
+  limit2, deadline ve skip kuralları korunuyor. Browser sonraki aşama.
+- Actual API **157 path/185 schema**;9 yeni TugCrew schema için actual-host
+  export ve normal TS generation **PASS**. Son clean-target generation/parity
+  kanıtının bağlanması gerekir.
+
+Bu, önceki DEFERRED authoring fotoğrafından **gerçek execution/repair** aşamasına
+geçiştir. Son bütünleşik sonuçlar, bağımsız exact-target review ve gerekli CI
+beklenir. S0 kalan45 SP veya genel proje kabulü otomatik artmadı; mevcut
+**8/53 SP (%15,09) ve8/970 SP (%0,82)** korunuyor. Deadline garantisi ve S0 %100
+iddiası yapılmıyor.
+
+Bu belge ilk source-gap denetimini ve sonraki execution güncellemelerini birlikte
+korur. Güncel tam kontrol matrisi, ilk QA ret kaydı ve kapanış adımları
+[S0-OVERNIGHT-20261102](../phases/S0-OVERNIGHT-20261102.md) raporundadır.

@@ -6,6 +6,8 @@ async function english(page: Page) { await page.getByRole('button', { name: 'EN'
 async function menu(page: Page) {
   const drawer = page.getByRole('button', { name: 'Menu', exact: true })
   if (await drawer.isVisible() && await drawer.getAttribute('aria-expanded') === 'false') await drawer.click()
+  const workView = page.locator('summary').filter({ hasText: /^Work view$/ })
+  if (await workView.locator('..').getAttribute('open') === null) await workView.click()
   return page.getByRole('region', { name: 'Role navigation', exact: true })
 }
 async function projection(page: Page, vessel: string) {

@@ -16,6 +16,7 @@ import { TodayWorkspace } from './TodayWorkspace'
 import { isSeparateWorkspaceDestination } from './workspace-search-api'
 import { AuditWorkspace } from './AuditWorkspace'
 import { RegulatoryRegister } from './RegulatoryRegister'
+import { enterpriseFocusTargets } from './enterprise-focus'
 
 const copy = {
   tr: { audit: 'İşlem geçmişi', today: 'Bugün', companies: 'Şirketler', fleet: 'Filo', signin: 'Oturum aç', signout: 'Oturumu kapat', loading: 'Yükleniyor…', retry: 'Tekrar dene', empty: 'Kayıt bulunamadı.', unavailable: 'Hizmete ulaşılamıyor. Lütfen tekrar deneyin.', forbidden: 'Bu çalışma alanına erişim yetkiniz yok.', expired: 'Devam etmek için oturum açın.', setup: 'Kurumsal oturum açma henüz yapılandırılmadı. Kuruluş yöneticinizle iletişime geçin.', tenant: 'Çalışma alanı', identity: 'Oturum', ship: 'Gemi', tug: 'Römorkör', all: 'Tüm araçlar', name: 'Ad', code: 'Kod', kind: 'Tür', next: 'Sonraki', previous: 'Önceki', close: 'Kapat', details: 'Ayrıntılar', skip: 'Ana içeriğe geç', failed: 'Oturum açma tamamlanamadı. Lütfen tekrar deneyin.', intro: 'Yetkili olduğunuz kayıtları görüntüleyin.', language: 'Dil', filter: 'Araç türü', page: 'Sayfa', technical: 'Sistem bağlantısı' },
@@ -92,9 +93,10 @@ export function ProductApp() {
   }, [user?.canSearch])
   useEffect(() => {
     if (!drawer) return
-    const previous = document.activeElement as HTMLElement | null
+    // Native inert can withdraw focus from the header before this effect runs.
+    const previous = document.querySelector<HTMLElement>('button[aria-controls="workspace-navigation"]') ?? document.activeElement as HTMLElement | null
     const nav = document.getElementById('workspace-navigation')!
-    const elements = () => Array.from(nav.querySelectorAll<HTMLElement>('button:not(:disabled), a[href], select:not(:disabled), input:not(:disabled)'))
+    const elements = () => enterpriseFocusTargets(nav)
     elements()[0]?.focus()
     const trap = (event: KeyboardEvent) => {
       if (event.key !== 'Tab') return
@@ -165,7 +167,7 @@ export function ProductApp() {
       else guard(() => { window.location.assign(anchor.href) })
     }
   }}>
-    <EnterpriseChrome session={user} vessel={tab === 'fleet' || tab === 'today' ? selected : null} language={language} onLanguageChange={setLanguage}
+    <EnterpriseChrome session={route.invalid ? null : user} vessel={tab === 'fleet' || tab === 'today' ? selected : null} language={language} onLanguageChange={setLanguage}
       onNavigate={follow} title={heading} mainId="product-main" drawer={drawer} onDrawerChange={setDrawer} parentManagesFocus />
     <main id="product-main" tabIndex={-1} inert={drawer}>
 

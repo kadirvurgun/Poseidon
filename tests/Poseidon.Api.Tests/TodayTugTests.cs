@@ -78,7 +78,7 @@ public sealed partial class DirectoryWorkspaceTests
         await using (var db = Db()) before = await db.CommandReceipts.LongCountAsync(Ct);
         var page = (await client.GetFromJsonAsync<TodayDto>(TugTodayPath, Ct))!;
         Assert.Equal("Available", page.Coverage.Single(c => c.Source == "TugPlanning").Status);
-        var card = Assert.Single(page.Cards.Items.Where(c => c.Key == $"tug-job:{job.Id:D}"));
+        var card = Assert.Single(page.Cards.Items, c => c.Key == $"tug-job:{job.Id:D}");
         Assert.Equal("TugPlanMissing", card.Reason); Assert.Equal("Review", card.Priority); Assert.Null(card.Owner);
         Assert.Equal($"/app/tug-job-detail/{job.Id:D}?vessel={Tug.Id:D}", card.Href);
         var why = (await client.GetFromJsonAsync<TodayWhyDto>(TugWhyPath(job.Id), Ct))!;
@@ -185,15 +185,15 @@ public sealed partial class DirectoryWorkspaceTests
         var job = await PlanningJob(client);
         await ChangePlan(client, job, null, new("Assign", TugId: Tug.Id));
         var before = (await client.GetFromJsonAsync<TodayWhyDto>(TugWhyPath(job.Id), Ct))!;
-        var fact = Assert.Single(before.Tug!.Evidence!.ReadinessFacts!.Where(f => f.Id == command.Id));
+        var fact = Assert.Single(before.Tug!.Evidence!.ReadinessFacts!, f => f.Id == command.Id);
         Assert.Equal("Blocked", fact.State); Assert.Equal("CalendarBoundary", fact.Why);
         var settings = host.Services.GetRequiredService<FederationSettings>();
         settings.Memberships = settings.Memberships.Select(m => m with { Permissions = m.Permissions.Where(p => p != "maintenance.owner.eligible").ToArray() }).ToArray();
         var after = (await client.GetFromJsonAsync<TodayWhyDto>(TugWhyPath(job.Id), Ct))!;
-        var current = Assert.Single(after.Tug!.Evidence!.ReadinessFacts!.Where(f => f.Id == command.Id));
+        var current = Assert.Single(after.Tug!.Evidence!.ReadinessFacts!, f => f.Id == command.Id);
         Assert.Equal("Unknown", current.State); Assert.Equal("MaintenanceOwnerUnavailable", current.Why);
         var board = (await client.GetFromJsonAsync<PageDto<TugBoardRow>>($"/api/v1/tug-job-board?vessel={Tug.Id}", Ct))!;
-        var boardFact = Assert.Single(board.Items.Single(r => r.Request.Id == job.Id).PlanningEvidence!.ReadinessFacts!.Where(f => f.Id == command.Id));
+        var boardFact = Assert.Single(board.Items.Single(r => r.Request.Id == job.Id).PlanningEvidence!.ReadinessFacts!, f => f.Id == command.Id);
         Assert.Equal(current, boardFact);
         var history = (await client.GetFromJsonAsync<MaintenanceHistoryRow[]>($"/api/v1/maintenance-plan/{Tug.Id}/{command.Id}/history", Ct))!;
         Assert.Equal("NotDue", Assert.Single(history).Due.State);
@@ -210,7 +210,7 @@ public sealed partial class DirectoryWorkspaceTests
         var plan = await ChangePlan(client, job, null, new("Window", start, start.AddHours(1)));
         await ChangePlan(client, job, plan, new("Assign", TugId: Tug.Id));
         var why = (await client.GetFromJsonAsync<TodayWhyDto>(TugWhyPath(job.Id), Ct))!;
-        Assert.Equal("Blocked", Assert.Single(why.Tug!.Evidence!.ReadinessFacts!.Where(f => f.Id == command.Id)).State);
+        Assert.Equal("Blocked", Assert.Single(why.Tug!.Evidence!.ReadinessFacts!, f => f.Id == command.Id).State);
         var current = (await client.GetFromJsonAsync<MaintenancePage>($"/api/v1/maintenance-plan/{Tug.Id}", Ct))!;
         Assert.Equal("NotDue", current.Items.Single(p => p.Id == command.Id).Due.State);
         await using var db = Db(); Assert.Single(await db.MaintenancePlanRevisions.Where(p => p.PlanId == command.Id).ToArrayAsync(Ct));
@@ -228,7 +228,7 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Equal(HttpStatusCode.OK, (await Send(client, $"equipment-hierarchy/{Tug.Id}",
             NewEquipment() with { Id = asset.Id, BaseVersion = asset.Version, ParentId = asset.ParentId })).StatusCode);
         var why = (await client.GetFromJsonAsync<TodayWhyDto>(TugWhyPath(job.Id), Ct))!;
-        var fact = Assert.Single(why.Tug!.Evidence!.ReadinessFacts!.Where(f => f.Id == command.Id));
+        var fact = Assert.Single(why.Tug!.Evidence!.ReadinessFacts!, f => f.Id == command.Id);
         Assert.Equal("Unknown", fact.State); Assert.Equal("EquipmentRevisionChanged", fact.Why);
     }
 
@@ -257,7 +257,7 @@ public sealed partial class DirectoryWorkspaceTests
             await ChangePlan(client, job, plan, new("Window", start, start.AddHours(1)));
         } else Assert.Equal(HttpStatusCode.OK, (await Send(client, observationPath + $"/{reading.Id}/revoke", new { })).StatusCode);
         var why = (await client.GetFromJsonAsync<TodayWhyDto>(TugWhyPath(job.Id), Ct))!;
-        var fact = Assert.Single(why.Tug!.Evidence!.ReadinessFacts!.Where(f => f.Id == command.Id));
+        var fact = Assert.Single(why.Tug!.Evidence!.ReadinessFacts!, f => f.Id == command.Id);
         Assert.Equal("Unknown", fact.State); Assert.Equal(futureWindow ? "ObservationStale" : "ObservationRevoked", fact.Why);
         var history = (await client.GetFromJsonAsync<MaintenanceHistoryRow[]>($"/api/v1/maintenance-plan/{Tug.Id}/{command.Id}/history", Ct))!;
         Assert.Equal("Due", Assert.Single(history).Due.State); Assert.Equal("20", Assert.Single(history).Due.NextDueMeter);

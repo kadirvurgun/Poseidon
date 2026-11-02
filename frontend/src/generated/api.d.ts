@@ -4778,6 +4778,20 @@ export interface components {
             /** Format: date-time */
             observationAssessedAt?: null | string;
         };
+        ManningRoleCoverage: {
+            /** Format: uuid */
+            positionId: string;
+            /** Format: int32 */
+            required: number;
+            /** Format: int32 */
+            declared: number;
+            /** Format: int32 */
+            qualified: number;
+            /** Format: int32 */
+            unknown: number;
+            state: string;
+            reason: string;
+        };
         MsmdReference: {
             documentReference?: null | string;
             issuerReference?: null | string;
@@ -5443,6 +5457,25 @@ export interface components {
             calculation: components["schemas"]["MaintenanceDue"];
             observationState: string;
         };
+        TodayTugEvidenceDto: {
+            /** Format: uuid */
+            jobId: string;
+            /** Format: int64 */
+            requestRevision: number;
+            requestIncomplete: boolean;
+            /** Format: int64 */
+            planRevision: null | number;
+            /** Format: int64 */
+            plannedRequestRevision: null | number;
+            /** Format: date-time */
+            plannedStart: null | string;
+            /** Format: date-time */
+            plannedEnd: null | string;
+            assignedTugs: string[];
+            /** Format: uuid */
+            currentOwnerRoleId: null | string;
+            evidence: null | components["schemas"]["TugPlanningEvidence"];
+        };
         TodayWhyDto: {
             /** Format: uuid */
             vesselId: string;
@@ -5462,6 +5495,7 @@ export interface components {
             nextAction: string;
             href: string;
             maintenance?: null | components["schemas"]["TodayMaintenanceEvidenceDto"];
+            tug?: null | components["schemas"]["TodayTugEvidenceDto"];
         };
         TugAuditRevisionDto: {
             /** Format: uuid */
@@ -5484,6 +5518,22 @@ export interface components {
             priority: null | string;
             /** Format: uuid */
             ownerRoleReference: null | string;
+        };
+        TugBpEvidence: {
+            /** Format: uuid */
+            tugId: string;
+            state: string;
+            declaredValue: null | string;
+            source: null | string;
+            policyVersion: null | string;
+            /** Format: int64 */
+            sourceRevision: null | number;
+            /** Format: uuid */
+            observationId: null | string;
+            /** Format: date-time */
+            observedAt: null | string;
+            freshness: string;
+            provenance: string;
         };
         TugCalculationPolicy: {
             formula?: null | string;
@@ -5523,6 +5573,27 @@ export interface components {
             /** Format: uint32 */
             assetVersion?: null | number;
         };
+        TugCrewReadinessDto: {
+            /** Format: uuid */
+            tugId: string;
+            state: string;
+            reason: string;
+            /** Format: date-time */
+            windowStart: null | string;
+            /** Format: date-time */
+            windowEnd: null | string;
+            /** Format: date-time */
+            assessedAt: string;
+            /** Format: uuid */
+            msmdId: null | string;
+            /** Format: int64 */
+            msmdRevision: null | number;
+            roles: components["schemas"]["ManningRoleCoverage"][];
+            /** Format: date-time */
+            validUntil: null | string;
+            /** @default SourceQualifiedMinimumRolesOnly;OtherCrewGatesAndMasterDecisionSeparate */
+            coverage: string;
+        };
         TugOfflineContext: {
             /** Format: uuid */
             id: string;
@@ -5556,6 +5627,44 @@ export interface components {
             /** Format: date-time */
             expiresAt: string;
         };
+        TugOperationalConflict: {
+            /** Format: uuid */
+            tugId: string;
+            kind: string;
+            /** Format: uuid */
+            resourceId: string;
+            /** Format: int64 */
+            revision: number;
+            state: string;
+            why: string;
+            provenance: string;
+            /** Format: date-time */
+            observedAt: null | string;
+        };
+        TugOwnedCapacity: {
+            /** Format: uuid */
+            tugId: string;
+            state: string;
+            tonnes: null | string;
+            why: string;
+            /** Format: uuid */
+            evidenceId?: null | string;
+            /** Format: int64 */
+            evidenceRevision?: null | number;
+            /** Format: uuid */
+            conditionId?: null | string;
+            /** Format: int64 */
+            conditionRevision?: null | number;
+            /** Format: uuid */
+            ruleId?: null | string;
+            /** Format: int64 */
+            qualificationRevision?: null | number;
+            qualificationHash?: null | string;
+            /** Format: date-time */
+            validUntil?: null | string;
+            /** Format: date-time */
+            observedAt?: null | string;
+        };
         TugPlanChange: {
             operation: string;
             /** Format: date-time */
@@ -5574,6 +5683,16 @@ export interface components {
             requestVersion: number;
             policyVersion: string;
             change: components["schemas"]["TugPlanChange"];
+        };
+        TugPlanConflict: {
+            /** Format: uuid */
+            jobId: string;
+            /** Format: int64 */
+            revision: number;
+            relation: string;
+            source: string;
+            /** Format: date-time */
+            observedAt: string;
         };
         TugPlanDto: {
             /** Format: uuid */
@@ -5600,6 +5719,34 @@ export interface components {
             /** Format: date-time */
             plannedEnd: null | string;
             assignedTugs: string[];
+        };
+        TugPlanningEvidence: {
+            availableBollardPull: null | string;
+            capacityState: string;
+            bp: components["schemas"]["TugBpEvidence"][];
+            conflictState: string;
+            conflicts: components["schemas"]["TugPlanConflict"][];
+            coverage: string;
+            readiness: string;
+            ownedBp?: null | components["schemas"]["TugOwnedCapacity"][];
+            readinessFacts?: null | components["schemas"]["TugReadinessFact"][];
+            operationalConflicts?: null | components["schemas"]["TugOperationalConflict"][];
+            crew?: null | components["schemas"]["TugCrewReadinessDto"][];
+        };
+        TugReadinessFact: {
+            /** Format: uuid */
+            tugId: string;
+            source: string;
+            /** Format: uuid */
+            id: null | string;
+            /** Format: int64 */
+            revision: null | number;
+            state: string;
+            why: string;
+            /** Format: date-time */
+            observedAt?: null | string;
+            /** Format: date-time */
+            expiresAt?: null | string;
         };
         TugRequestDto: {
             /** Format: uuid */

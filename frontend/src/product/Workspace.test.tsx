@@ -1,4 +1,4 @@
-import { navigationTestIdentity, navigationTestRole } from './workspace-navigation.test-fixture'
+import { navigationTestIdentity, navigationTestRole, navigationTestWorkspace, openNavigationTestWorkView } from './workspace-navigation.test-fixture'
 import { loadLenses } from './workspace-lens-api'
 vi.mock('./workspace-lens-api', async original => ({ ...await original<typeof import('./workspace-lens-api')>(),
   loadLenses: vi.fn(async (tenant: string, actor: string, vessel: string | null) => (await import('./workspace-navigation.test-fixture')).navigationTestLenses(tenant, actor, vessel)) }))
@@ -21,6 +21,7 @@ function mock(overrides: Partial<typeof session> = {}, detailStatus = 200) {
   vi.mocked(loadLenses).mockImplementation(async (tenant, actor, vessel) => (await import('./workspace-navigation.test-fixture')).navigationTestLenses(tenant, actor, vessel, overrides.canSearch ?? false, overrides.canReadCompanies ?? true))
   const fetch = vi.fn(async (url: string) => {
     if (url.endsWith('auth/session')) return reply({ ...session, ...overrides })
+    if (url === '/api/v1/workspace') return reply(navigationTestWorkspace(overrides.canSearch ?? false, overrides.canReadCompanies ?? true))
     if (url.includes('workspace/search')) return reply({ items: [{ key: vessel.id, href: `/app/fleet/${vessel.id}`, label: vessel.name, kind: 'Ship' }], offset: 0, limit: 25, hasMore: false })
     if (url.includes('/history?')) return reply({ items: [], offset: 0, limit: 25, hasMore: false })
     if (url.endsWith('regulatory-profile')) return reply(profile)
@@ -55,7 +56,9 @@ describe('NAV-WORKSPACE-01 mocked component journeys, separate from real API/bro
   })
   it.each([401, 403, 404])('denies stale or wrong-scope vessel detail (%s) without opening a profile', async status => {
     history.replaceState(null, '', `/app/fleet/${vessel.id}/profile`); const fetch = mock({}, status); render(<ProductApp />)
-    expect(await screen.findByRole('alert')).toBeVisible()
+    const details = await screen.findByRole('region', { name: 'Ayrıntılar' })
+    const alert = await within(details).findByRole('alert')
+    expect(alert).toBeVisible()
     expect(screen.queryByLabelText('GT')).not.toBeInTheDocument()
     expect(fetch.mock.calls.some(([url]) => url.endsWith('regulatory-profile'))).toBe(false)
   })
@@ -74,8 +77,9 @@ describe('NAV-WORKSPACE-01 mocked component journeys, separate from real API/bro
   })
   it('guards Back repeatedly; cancel preserves draft and URL, discard and Forward reload saved state', async () => {
     mock(); const user = userEvent.setup(); render(<ProductApp />)
+    await openNavigationTestWorkView(user)
     await user.selectOptions(await screen.findByLabelText('Menü merceği'), navigationTestRole)
-    await user.click(await screen.findByRole('button', { name: 'Filo' }))
+    await user.click(await within(screen.getByRole('navigation', { name: 'Günlük iş menüsü' })).findByRole('button', { name: 'Filo' }))
     await user.click(await screen.findByRole('button', { name: vessel.name }))
     await user.click(await screen.findByRole('button', { name: 'Mevzuat profili' }))
     await user.selectOptions(await screen.findByLabelText('GT — Bilgi durumu'), 'Known')
@@ -118,8 +122,13 @@ describe('NAV-WORKSPACE-01 mocked component journeys, separate from real API/bro
     mock(); const user = userEvent.setup(); render(<ProductApp />)
     await screen.findByLabelText('Menü merceği')
     const menu = screen.getByRole('button', { name: 'Menü' }); await user.click(menu)
-    expect(screen.getByRole('button', { name: 'Kapat' })).toHaveFocus()
-    await user.tab({ shift: true }); expect(screen.getByRole('link', { name: 'Sistem bağlantısı' })).toHaveFocus()
+    const drawer = screen.getByRole('dialog', { name: 'POSEIDON' })
+    expect(within(drawer).getByRole('link', { name: 'POSEIDON' })).toHaveFocus()
+    await user.tab({ shift: true })
+    const workView = within(drawer).getByText('Çalışma görünümü', { selector: 'summary' })
+    expect(workView).toHaveFocus()
+    expect(workView.closest('details')).not.toHaveAttribute('open')
+    await user.tab(); expect(within(drawer).getByRole('link', { name: 'POSEIDON' })).toHaveFocus()
     await user.keyboard('{Escape}'); expect(menu).toHaveFocus(); expect(menu).toHaveAttribute('aria-expanded', 'false')
   })
   it('keeps directory unknown saves frozen, blocks history and links, and retries the same command', async () => {
@@ -138,8 +147,9 @@ describe('NAV-WORKSPACE-01 mocked component journeys, separate from real API/bro
     await user.click(screen.getByRole('button', { name: 'Kaydet' }))
     await screen.findByText(/sonucu doğrulanamadı/)
     const url = window.location.pathname
+    await openNavigationTestWorkView(user)
     await user.selectOptions(await screen.findByLabelText('Menü merceği'), navigationTestRole)
-    await user.click(screen.getByRole('button', { name: 'Filo' }))
+    await user.click(within(screen.getByRole('navigation', { name: 'Günlük iş menüsü' })).getByRole('button', { name: 'Filo' }))
     act(() => history.back()); await new Promise(resolve => setTimeout(resolve, 60))
     await waitFor(() => expect(window.location.pathname).toBe(url))
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()

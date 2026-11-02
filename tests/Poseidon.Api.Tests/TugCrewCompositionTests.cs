@@ -73,7 +73,7 @@ public sealed partial class DirectoryWorkspaceTests
         var evidence = (await client.GetFromJsonAsync<JsonElement>("/api/v1/" + PlanningUrl(job.Id), Ct)).GetProperty("evidence").Deserialize<TugPlanningEvidence>(RegulatoryQualificationEndpoints.Json)!;
         var crew = Assert.Single(evidence.Crew!); Assert.Equal("Unavailable", crew.State); Assert.Empty(crew.Roles);
         Assert.Null(crew.MsmdId); Assert.Null(crew.MsmdRevision); Assert.Null(crew.ValidUntil);
-        var fact = Assert.Single(evidence.ReadinessFacts!.Where(f => f.Source == "CrewMinimumManning"));
+        var fact = Assert.Single(evidence.ReadinessFacts!, f => f.Source == "CrewMinimumManning");
         Assert.Equal("Unavailable", fact.State); Assert.Null(fact.Id); Assert.Null(fact.Revision);
         var why = (await client.GetFromJsonAsync<TodayWhyDto>(TugWhyPath(job.Id), Ct))!;
         Assert.Equal(crew.State, Assert.Single(why.Tug!.Evidence!.Crew!).State);

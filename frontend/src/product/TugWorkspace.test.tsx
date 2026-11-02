@@ -22,6 +22,7 @@ beforeEach(() => {
     if (url.includes('/plan?')) return json({ state: 'Missing', plan: null, evidence: null })
     if (init?.method === 'POST' || init?.method === 'PUT') return mutate(init)
     if (url.endsWith('auth/session')) return json({ authenticated: true, canRead: true, csrfToken: 'synthetic-only' })
+    if (url === '/api/v1/workspace') return json({ destinations: [], canSearch: false, canWriteRegulatory: false })
     if (url.includes('tug-command')) return json(context)
     if (url.includes('tug-job-board')) return json({ items: [{ request: row, windowState: 'MissingStart', plannedTimeSource: 'RequestedWindowOnly;NoApprovedPlan', assignedTugs: [], assignmentCoverage: 'UnavailableControlledAssignmentAdapter', availableBollardPull: null, readiness: 'Unknown', conflict: 'Unknown', declaredComparisons: [], comparisonCoverage: 'VisiblePageEnteredDataOnly', blockingReasons: ['AssignmentCoverageUnavailable'], nextAction: 'CompleteDraft', detailHref: `/app/tug-job-detail/${id}?vessel=${vessel}` }], hasMore: false })
     return json(row)

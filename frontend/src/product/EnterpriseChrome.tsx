@@ -8,6 +8,7 @@ import { WorkspaceContextBar } from './WorkspaceContextBar'
 import { WorkspaceRoleNavigation } from './WorkspaceRoleNavigation'
 import { WorkspaceSearch } from './WorkspaceSearch'
 import { useEnterpriseNavigation } from './enterprise-navigation'
+import { enterpriseFocusTargets } from './enterprise-focus'
 import './enterprise.css'
 
 const labels: Record<string, { tr: string; en: string; icon: LucideIcon; group: string }> = {
@@ -36,9 +37,10 @@ export function EnterpriseChrome({ session, vessel = null, language, onLanguageC
   const move = (href: string, committed?: () => void) => { setDrawer(false); onNavigate(href, () => { setSearchOwner(null); committed?.() }) }
   useEffect(() => {
     if (!drawer || parentManagesFocus) return
+    const trigger = menuButton.current
     const nav = document.getElementById('workspace-navigation'); const main = document.getElementById(mainId)
     if (main) main.inert = true
-    const targets = () => Array.from(nav?.querySelectorAll<HTMLElement>('button:not(:disabled), a[href], select') ?? [])
+    const targets = () => enterpriseFocusTargets(nav)
     targets()[0]?.focus()
     const key = (event: KeyboardEvent) => {
       if (event.key === 'Escape') { event.preventDefault(); setLocalDrawer(false); onDrawerChange?.(false) }
@@ -49,7 +51,7 @@ export function EnterpriseChrome({ session, vessel = null, language, onLanguageC
       }
     }
     document.addEventListener('keydown', key)
-    return () => { if (main) main.inert = false; document.removeEventListener('keydown', key); menuButton.current?.focus() }
+    return () => { if (main) main.inert = false; document.removeEventListener('keydown', key); trigger?.focus() }
   }, [drawer, mainId, onDrawerChange, parentManagesFocus])
   useEffect(() => {
     const key = (event: KeyboardEvent) => {
@@ -85,7 +87,7 @@ export function EnterpriseChrome({ session, vessel = null, language, onLanguageC
             })}</div>
         })}
         {navigation.loading && <div className="enterprise-nav-loading" role="status">{en ? 'Loading navigation…' : 'Menü yükleniyor…'}</div>}
-        {navigation.failed && <div className="enterprise-nav-loading" role="status"><p>{en ? 'Navigation unavailable' : 'Menü kullanılamıyor'}</p><Button variant="ghost" onClick={navigation.retry}>{en ? 'Retry' : 'Tekrar dene'}</Button></div>}
+        {navigation.failed && <div className="enterprise-nav-loading" role="status"><p>{en ? 'Navigation unavailable' : 'Menü kullanılamıyor'}</p><Button variant="ghost" onClick={navigation.retry}>{en ? 'Retry navigation' : 'Menüyü tekrar yükle'}</Button></div>}
         <details className="enterprise-role-settings"><summary>{en ? 'Work view' : 'Çalışma görünümü'}</summary><WorkspaceRoleNavigation session={session} vessel={vessel} language={language} onNavigate={move} embedded /></details>
       </div>
       <div className="enterprise-sidebar-footer"><span className="enterprise-workspace-avatar">{session?.tenantName?.slice(0, 2).toLocaleUpperCase(language) ?? 'PO'}</span><div><strong>{session?.tenantName ?? (en ? 'Maritime workspace' : 'Denizcilik çalışma alanı')}</strong><span>{session?.authenticated ? (en ? 'Authorized workspace' : 'Yetkili çalışma alanı') : (en ? 'Secure workspace sign-in' : 'Güvenli çalışma alanı girişi')}</span></div><ArrowUpRight aria-hidden="true" /></div>

@@ -24,7 +24,7 @@ it('shows exact BP, UTC instants and Unknown without treating missing assignment
   expect(within(job).queryByText('Ready', { exact: true })).not.toBeInTheDocument()
   const metrics = screen.getByLabelText('Current job page overview')
   expect(within(metrics).getByText('Readiness unknown').parentElement).toHaveTextContent('1')
-  expect(screen.getByText('Counts cover this page only')).toBeVisible()
+  expect(screen.getByRole('navigation', { name: 'Job board pagination' })).toHaveTextContent('Counts cover this page only')
 })
 
 it('keeps search and priority together for server-side filtering, and preserves applied filters on pagination', async () => {
