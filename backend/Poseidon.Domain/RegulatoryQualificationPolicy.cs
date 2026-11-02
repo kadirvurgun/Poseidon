@@ -16,7 +16,9 @@ public sealed record QualificationContent(string? SourceBytesBase64 = null, stri
     Guid? OwnerId = null, Guid? OwnerRole = null, string? ValidationReview = null,
     QualifiedInputPolicy[]? Inputs = null, QualifiedControlPolicy? Control = null, string? Trigger = null, string? ImpactReview = null,
     Guid? SupersedingRuleId = null, long? SupersedingRuleRevision = null,
-    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] TugCalculationPolicy? TugCalculation = null);
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] TugCalculationPolicy? TugCalculation = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] QualifiedLiteralBinding[]? LiteralBindings = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] QualifiedOwningDocumentPolicy[]? OwningDocuments = null);
 
 public static class RegulatoryQualificationPolicy
 {
@@ -25,6 +27,11 @@ public static class RegulatoryQualificationPolicy
     public static readonly string[] VerifiedProfileFields = ["vessel.gt", "vessel.buildDate", "vessel.mainPropulsionKw", "vessel.contractForConstructionDate"];
     public static void Validate(QualificationContent c)
     {
+        OperationEquipmentInputs.ValidateBindings(c.LiteralBindings);
+        if (c.OwningDocuments is { } docs && (docs.Length > 4 || docs.Any(d => d == null || d.DocumentKind is not ("Operation" or "ServiceAuthorization" or "CargoPlan" or "WinchFitment") ||
+            d.AuthorRole == Guid.Empty || d.VerifierRole == Guid.Empty || !OperationEquipmentInputs.Text(d.SourceLocator)) || docs.Select(d => d.DocumentKind).Distinct().Count() != docs.Length)) throw new ArgumentException("invalid_owning_document_policy");
+        if (c.Inputs?.Any(p => OperationEquipmentInputs.Fields.Contains(p.Field) && p.Basis == "Declared") == true)
+            throw new ArgumentException("qualified_owning_record_required");
         if (c.TugCalculation != null) TugCapability.Validate(c.TugCalculation);
         foreach (var s in new[] { c.Publisher, c.Edition, c.ValidationReview, c.Trigger, c.ImpactReview, c.Control?.Frequency,
             c.Control?.EvidencePolicy, c.Control?.VerificationPolicy, c.Control?.SourceLocator, c.Control?.RequiredVerificationMechanism, c.Control?.VerificationMechanismSourceLocator })
@@ -43,6 +50,8 @@ public static class RegulatoryQualificationPolicy
         if (c.Control?.MaxAgeHours is <= 0 or > 87600) throw new ArgumentException("invalid_freshness_policy");
     }
     public static string[] Missing(QualificationContent c) => new[] {
+        c.OwningDocuments?.Any(p => p == null || p.AuthorRole == null || p.VerifierRole == null || p.SourceLocator == null) == true ? "OWNING_DOCUMENT_POLICY_MISSING" : null,
+        c.LiteralBindings?.Any(p => p == null || p.OwnerValue == null || p.RuleValue == null || p.SourceLocator == null) == true ? "OWNING_LITERAL_BINDING_MISSING" : null,
         c.TugCalculation != null && !TugCapability.Complete(c.TugCalculation) ? "TUG_CALCULATION_POLICY_MISSING" : null,
         c.SourceBytesBase64 == null ? "EXACT_SOURCE_BYTES_MISSING" : null,
         c.Publisher == null ? "PUBLISHER_MISSING" : null, c.Edition == null ? "EDITION_MISSING" : null,

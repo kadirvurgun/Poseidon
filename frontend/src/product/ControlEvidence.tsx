@@ -1,5 +1,6 @@
 import * as qualification from './qualification-api'
 import { TugCapabilityEditor } from './TugCapabilityEditor'
+import { OperationEquipmentEditor } from './OperationEquipmentEditor'
 import { useEffect, useState } from 'react'
 import * as service from './control-evidence-api'
 import * as directory from './api'
@@ -121,7 +122,8 @@ function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving, isTu
     {kind === 'Evidence' && selected && <button disabled={locked || dirty || uploadDirty} onClick={() => { const old = selected; setSelected(null); setContent(service.blank()); setFile(null); setRequirements(old.requirements); setLinks([{ kind: 'Evidence', id: old.id, revision: old.revision, expectedVersion: old.version }]); setDirty(true) }}>{t('New evidence superseding this revision', 'Bu sürümün yerine geçecek yeni kanıt')}</button>}
     <form onSubmit={e => { e.preventDefault(); void save() }}>
       <fieldset disabled={locked}><legend>{t('Draft authoring', 'Taslak yazımı')}</legend>
-        {kind === 'Evidence' && isTug && <TugCapabilityEditor vessel={vessel} language={language} offline={offline} value={content.tugCapability ?? null} onChange={v => { setContent(c => ({ ...c, tugCapability: v })); setDirty(true) }} />}
+        {kind === 'Evidence' && <OperationEquipmentEditor vessel={vessel} language={language} offline={offline} isTug={isTug} value={content} onChange={v => { setContent(v); setDirty(true) }} />}
+        {kind === 'Evidence' && isTug && ![content.operation, content.serviceAuthorization, content.cargoPlan, content.winchFitment].some(Boolean) && <TugCapabilityEditor vessel={vessel} language={language} offline={offline} value={content.tugCapability ?? null} onChange={v => { setContent(c => ({ ...c, tugCapability: v })); setDirty(true) }} />}
         <label>{t('Title', 'Başlık')}<input value={content.title ?? ''} maxLength={2000} onChange={e => mutate('title', e.target.value || null)} /></label>
         <label>{t('Actual owner and role', 'Gerçek sahip ve rol')}<select value={content.ownerId ? `${content.ownerId}/${content.ownerRole}` : ''} onChange={e => { const [ownerId, ownerRole] = e.target.value.split('/'); setContent(c => ({ ...c, ownerId: ownerId || null, ownerRole: ownerRole || null })); setDirty(true) }}><option value="">{t('Unassigned', 'Atanmamış')}</option>{content.ownerId && !owners.some(o => o.actorId === content.ownerId && o.roleId === content.ownerRole) && <option value={`${content.ownerId}/${content.ownerRole}`}>{t('Previous owner unavailable', 'Önceki sahip kullanılamıyor')}</option>}{owners.map(o => <option key={`${o.actorId}/${o.roleId}`} value={`${o.actorId}/${o.roleId}`}>{o.actorId} / {o.roleId}</option>)}</select></label>
         {kind === 'Control' ? <>

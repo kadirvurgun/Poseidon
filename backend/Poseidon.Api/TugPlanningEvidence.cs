@@ -60,6 +60,7 @@ public static class TugPlanningEvidenceAdapter
         var job = await db.TugJobs.AsNoTracking().SingleAsync(j => j.Id == jobId, ct);
         foreach (var tug in plan.AssignedTugs.Where(visible.Contains)) {
             var currentCapacity = await TugOwnedCapacityConsumer.Read(db, actor, federation ?? new(), tug, job, plan, now, ct);
+            readiness.Add(await OperationEquipmentContext.TugCurrent(db, actor, federation ?? new(), job, tug, now, ct));
             capacity.Add(currentCapacity);
             // These exact qualified facts cover BP and its owning equipment condition,
             // not all equipment, minimum manning, work/rest or a Master decision.

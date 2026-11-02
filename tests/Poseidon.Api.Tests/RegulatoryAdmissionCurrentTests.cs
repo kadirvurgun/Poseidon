@@ -36,14 +36,14 @@ public sealed partial class DirectoryWorkspaceTests
         using var response = await Send(c, $"regulatory-source-governance/{rule.Current.Id}/events", new QualificationCommand(prior?.Version ?? 0, rule.Current.Revision, grant.Id, state, content), key);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode); return (await response.Content.ReadFromJsonAsync<QualificationDto>(Ct))!;
     }
-    private async Task<(RuleDraftDto Rule, QualificationDto Qualification, EvaluationDto Evaluation)> AdmittedByCommands(HttpClient c, IServiceProvider services, JsonElement? document = null, QualifiedInputPolicy[]? inputs = null, string expected = "APPLICABLE", QualifiedControlPolicy? controlPolicy = null, TugCalculationPolicy? tugCalculation = null, Guid? evaluationVessel = null)
+    private async Task<(RuleDraftDto Rule, QualificationDto Qualification, EvaluationDto Evaluation)> AdmittedByCommands(HttpClient c, IServiceProvider services, JsonElement? document = null, QualifiedInputPolicy[]? inputs = null, string expected = "APPLICABLE", QualifiedControlPolicy? controlPolicy = null, TugCalculationPolicy? tugCalculation = null, Guid? evaluationVessel = null, QualifiedLiteralBinding[]? literalBindings = null)
     {
         GraphPermissionsForTest(services);
         var settings = services.GetRequiredService<FederationSettings>(); settings.Memberships[0] = settings.Memberships[0] with { Permissions = [..GraphPermissions, "rules.write", "applicability.evaluate"] };
         var (rule, source, _) = await AdmissionInputs(c, document);
         var author = Guid.NewGuid(); RegulatoryHuman(services, rule.Current.Id, source.Current.Id, source.Current.Revision, author); await Token(c);
         var content = new QualificationContent(Convert.ToBase64String("FICTIONAL source bytes, no maritime authority"u8.ToArray()), "FICTIONAL publisher", "1", author, ReviewRole,
-            "FICTIONAL software review", inputs ?? [new("vessel.flag", "Declared")], controlPolicy ?? new(ReviewRole, "FICTIONAL frequency", "FICTIONAL evidence policy", "FICTIONAL independent review", 24, false, false, "synthetic/policy"), TugCalculation: tugCalculation);
+            "FICTIONAL software review", inputs ?? [new("vessel.flag", "Declared")], controlPolicy ?? new(ReviewRole, "FICTIONAL frequency", "FICTIONAL evidence policy", "FICTIONAL independent review", 24, false, false, "synthetic/policy"), TugCalculation: tugCalculation, LiteralBindings: literalBindings, OwningDocuments: literalBindings == null ? null : new[] { "Operation", "ServiceAuthorization", "CargoPlan", "WinchFitment" }.Select(k => new QualifiedOwningDocumentPolicy(k, ReviewRole, ReviewRole, "FICTIONAL/owning-document-policy")).ToArray());
         var draft = await Qualify(c, services, rule, "DRAFT", content);
         var review = await Qualify(c, services, rule, "IN_REVIEW", prior: draft);
         // Retain the first owner's real synthetic server appointment while the reader changes.

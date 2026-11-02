@@ -80,7 +80,7 @@ public static class HumanReviewEndpoints
             g.Capability is "human.review.submit" or "human.verify" or "human.decide" && a.Permissions.Contains(g.Capability))
             .GroupBy(g => g.Id).Where(g => g.Count() == 1).Select(g => g.Single()).ToArray();
     }
-    private static IQueryable<ControlEvidenceRevision> Visible(PoseidonDbContext db, Guid vessel, TrustedActor actor) => db.ControlEvidenceRevisions.AsNoTracking().Where(r => r.VesselId == vessel &&
+    private static IQueryable<ControlEvidenceRevision> Visible(PoseidonDbContext db, Guid vessel, TrustedActor actor) => OperationEquipmentCommands.Visible(db, actor, db.ControlEvidenceRevisions.AsNoTracking()).Where(r => r.VesselId == vessel &&
         (!db.TugCapabilityBindings.Any(b => b.VesselId == vessel && b.Id == r.Id && b.Revision == r.Revision && b.Kind == r.Kind) || actor.CanReadTug && actor.Permissions.Contains("equipment.read")) &&
         (actor.CanReadTug && actor.Permissions.Contains("equipment.read") || !db.ControlEvidenceEdges.Any(edge => edge.VesselId == vessel && edge.Kind == r.Kind && edge.Id == r.Id && edge.Revision == r.Revision &&
             db.TugCapabilityBindings.Any(b => b.VesselId == vessel && b.Kind == edge.TargetKind && b.Id == edge.TargetId && b.Revision == edge.TargetRevision))) &&
@@ -160,7 +160,8 @@ public static class HumanReviewEndpoints
             }
         }
         var traceRuleIds = pins.Where(p => p.RuleId != null).Select(p => p.RuleId!.Value).ToArray();
-        var latestEvaluation = await db.ApplicabilityEvaluations.AsNoTracking().Where(e => e.VesselId == vessel && e.SavedAt <= asOf && db.EvaluationQualifications.Any(q => q.EvaluationId == e.Id && traceRuleIds.Contains(q.RuleId)))
+        var owningDocument = OperationEquipmentInputs.Present(JsonSerializer.Deserialize<ControlEvidenceContent>(ev.ContentJson, Json)!);
+        var latestEvaluation = await OperationEquipmentCommands.Evaluations(db, a).Where(e => e.VesselId == vessel && e.SavedAt <= asOf && (!owningDocument || !e.IncludesOwningInputs) && db.EvaluationQualifications.Any(q => q.EvaluationId == e.Id && traceRuleIds.Contains(q.RuleId)))
             .OrderByDescending(e => e.SavedAt).ThenBy(e => e.Id).FirstOrDefaultAsync(ct);
         var evaluationCauses = latestEvaluation == null ? new[] { "AUTHORITATIVE_EVALUATION_UNAVAILABLE" } : await CurrentRegulatoryContext.Stale(db, latestEvaluation.Id, vessel, DateTimeOffset.UtcNow, ct, h.RequestServices.GetRequiredService<FederationSettings>());
         segments.Add(latestEvaluation == null ? new("Applicability", null, null, "Unavailable", "REVIEW_REQUIRED", "AUTHORITATIVE_EVALUATION_UNAVAILABLE", null, null) :
@@ -279,7 +280,7 @@ public static class HumanReviewEndpoints
         var ev = await Visible(db, vessel, a).SingleOrDefaultAsync(x => x.Kind == "Evidence" && x.Id == cmd.EvidenceId && x.Revision == cmd.EvidenceRevision, ct);
         var co = await Visible(db, vessel, a).SingleOrDefaultAsync(x => x.Kind == "Control" && x.Id == cmd.ControlId && x.Revision == cmd.ControlRevision, ct);
         if (ev == null || co == null || !await db.ControlEvidenceEdges.AnyAsync(x => x.VesselId == vessel && x.Kind == "Evidence" && x.Id == ev.Id && x.Revision == ev.Revision && x.TargetKind == "Control" && x.TargetId == co.Id && x.TargetRevision == co.Revision, ct)) return await Fail(h, 404, "resource_not_found");
-        if (cmd.EvaluationId != null && !await db.ApplicabilityEvaluations.AnyAsync(x => x.Id == cmd.EvaluationId && x.VesselId == vessel, ct)) return await Fail(h, 404, "evaluation_unavailable");
+        if (cmd.EvaluationId != null && !await OperationEquipmentCommands.Evaluations(db, a).AnyAsync(x => x.Id == cmd.EvaluationId && x.VesselId == vessel, ct)) return await Fail(h, 404, "evaluation_unavailable");
         if (cmd.EvaluationId != null) {
             var pins = await db.ControlEvidenceRequirements.AsNoTracking().Where(x => x.VesselId == vessel && x.Kind == "Control" && x.Id == co.Id && x.Revision == co.Revision).ToArrayAsync(ct);
             if (pins.Length == 0 || pins.Any(x => x.RuleId == null)) return await Fail(h, 409, "evaluation_lineage_unavailable");
@@ -305,6 +306,8 @@ public static class HumanReviewEndpoints
         var fingerprint = RegisterStorage.Hash(JsonSerializer.Serialize(new { kind, id, vessel, body }));
         async Task<IResult?> Replay() {
             var liveGrant = Grant(); if (liveGrant == null) return await Fail(h, 403, "human_authority_required");
+            var currentActor = Actor(h);
+            if (!await Visible(db, vessel, currentActor).AnyAsync(e => e.Kind == "Evidence" && e.Id == ev.Id && e.Revision == ev.Revision, ct)) return await Fail(h, 404, "resource_not_found");
             var r = await db.HumanReviewReceipts.AsNoTracking().SingleOrDefaultAsync(x => x.ActorId == a.Id && x.Key == key, ct);
             if (r == null) return null;
             if (r.Fingerprint != fingerprint || r.VesselId != vessel) return await Fail(h, 409, "idempotency_key_reused");
@@ -325,7 +328,7 @@ public static class HumanReviewEndpoints
             await db.HumanReviewHeads.AnyAsync(x => x.VesselId == vessel && x.Id == cmd.VerificationId && x.Revision != cmd.VerificationRevision, ct);
         var replay = await Replay(); if (replay != null) return replay;
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "HumanReviewCommand", "Attempted", resourceId: id);
-        await using var tx = await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.RepeatableRead, ct);
+        await using var tx = await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable, ct);
         try {
             var head = id == null ? null : await db.HumanReviewHeads.SingleOrDefaultAsync(x => x.VesselId == vessel && x.Id == id, ct);
             if (id != null && head == null) return await Fail(h, 404, "resource_not_found");
@@ -337,6 +340,9 @@ public static class HumanReviewEndpoints
             var ch = await db.ControlEvidenceHeads.SingleAsync(x => x.VesselId == vessel && x.Kind == "Control" && x.Id == co.Id, ct);
             if (eh.Version != cmd.EvidenceVersion || ch.Version != cmd.ControlVersion) return await Fail(h, 409, "input_version_conflict");
             var content = JsonSerializer.Deserialize<ControlEvidenceContent>(ev.ContentJson, Json)!; var now = DateTimeOffset.UtcNow;
+            if (OperationEquipmentInputs.Present(content) && cmd.EvaluationId != null && await db.ApplicabilityEvaluations.AnyAsync(e => e.Id == cmd.EvaluationId && e.IncludesOwningInputs, ct)) return await Fail(h, 409, "owning_verification_requires_independent_evaluation");
+            if (OperationEquipmentInputs.Present(content) && (!await OperationEquipmentCommands.Check(db, a, vessel, ev.Id, content, ct) ||
+                (content.Operation?.JobId ?? content.ServiceAuthorization?.JobId) is { } owningJob && owningJob != cmd.OperationId)) return await Fail(h, 409, "owning_context_changed");
             var changed = Superseded(eh, ch, ev.Revision, co.Revision) || await LineageChanged(db, vessel, co.Id, co.Revision, cmd.EvaluationId, now, ct, h.RequestServices.GetRequiredService<FederationSettings>());
             if (cmd.Recording != null) {
                 var verificationHead = await db.HumanReviewHeads.SingleAsync(x => x.VesselId == vessel && x.Id == cmd.VerificationId, ct);
@@ -346,6 +352,9 @@ public static class HumanReviewEndpoints
             }
             var requirementPins = await db.ControlEvidenceRequirements.AsNoTracking().Where(x => x.VesselId == vessel && x.Kind == "Control" && x.Id == co.Id && x.Revision == co.Revision)
                 .Select(x => new RequirementPin(x.RequirementId, x.RequirementRevision, x.SourceId, x.SourceRevision, x.RuleId, x.RuleRevision)).ToArrayAsync(ct);
+            var owningVerificationPins = OperationEquipmentInputs.Present(content) ? await db.ControlEvidenceRequirements.AsNoTracking().Where(x => x.VesselId == vessel && x.Kind == "Evidence" && x.Id == ev.Id && x.Revision == ev.Revision)
+                .Select(x => new RequirementPin(x.RequirementId, x.RequirementRevision, x.SourceId, x.SourceRevision, x.RuleId, x.RuleRevision)).ToArrayAsync(ct) : requirementPins;
+            if (cmd.State == "VERIFIED" && !await OperationEquipmentCommands.VerificationAllowed(db, h.RequestServices.GetRequiredService<FederationSettings>(), content, owningVerificationPins, grant.RoleId, now, ct)) return await Fail(h, 403, "owning_document_verifier_required");
             var qualified = await QualifiedControlContext.Resolve(db, vessel, requirementPins, "Evidence", content, ev.FileId != null, now, ct, h.RequestServices.GetRequiredService<FederationSettings>());
             var fresh = qualified.Blockers.Length == 0;
             if (cmd.State == "VERIFIED") {
@@ -402,6 +411,8 @@ public static class HumanReviewEndpoints
             await db.SaveChangesAsync(ct);
             var commitGrant = Grant();
             if (commitGrant == null || AuthorityHash(commitGrant, a) != e.AuthorityHash) return await Fail(h, 403, "human_authority_required");
+            if (OperationEquipmentInputs.Present(content) && (!await OperationEquipmentCommands.Check(db, Actor(h), vessel, ev.Id, content, ct) ||
+                cmd.State == "VERIFIED" && !await OperationEquipmentCommands.VerificationAllowed(db, h.RequestServices.GetRequiredService<FederationSettings>(), content, owningVerificationPins, commitGrant.RoleId, DateTimeOffset.UtcNow, ct))) return await Fail(h, 403, "owning_document_verifier_required");
             await tx.CommitAsync(ct); return Results.Content(outcome, "application/json");
         } catch (DbUpdateConcurrencyException) {
             await tx.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear(); return await Replay() ?? await Fail(h, 409, "version_conflict");

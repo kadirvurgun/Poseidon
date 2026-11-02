@@ -196,3 +196,8 @@ pinned evaluation/rule fixture in the disposable owned database, then uses real 
 review commands and scanner/file transport. It is neither normal seed nor production
 source/sign-off evidence. All generation/migration/fixtures/tests remain DEFERRED to
 REGULATORY-CHAIN-BUNDLE-01. [Task](tasks/human-decision-trace-01.md).
+
+
+## RULE-OPERATION-EQUIPMENT-01 — AUTHORED / NOT RUN
+
+`OperationEquipmentFixtures.AddMissingAsync` is an optional administrative owned-lab fixture: deterministic incomplete CargoPlan/WinchFitment Evidence head/revision/binding per supplied synthetic vessel, plus Operation/ServiceAuthorization drafts for supplied Tugs. The caller uses an explicit transaction and ordinary attributed SaveChanges. It is not wired into normal import/startup, and no API exposes its context. Existing normal seed data/audit expectations are unchanged. Reseed preserves operator heads/revisions and does not backfill a missing relation on an operator record. No file, verified cargo/fitment, issued service authorization, active operation, qualification/catalog, appointment, review, receipt or approval is seeded. EvaluationOwningReferences record real evaluation commands and are never preseeded. Optional fixture idempotency/preservation, real PostgreSQL FK/immutability and command-driven positive/negative tests are authored only. All migration/seed/test execution is NOT RUN. [Exact task contract](tasks/rule-operation-equipment-01.md).

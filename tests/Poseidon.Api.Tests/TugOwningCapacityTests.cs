@@ -49,37 +49,37 @@ public sealed partial class DirectoryWorkspaceTests
         var s = services.GetRequiredService<FederationSettings>();
         s.Memberships = [s.Memberships[0], ..s.Memberships.Skip(1).Where(m => m.ActorId != s.Memberships[0].ActorId), s.Memberships[0] with { Subject = "fictional-retained-" + Guid.NewGuid().ToString("N") }];
     }
-    private void CapacityHuman(IServiceProvider services, ControlEvidenceDto evidence, ControlEvidenceDto control, bool independent = false) {
+    private void CapacityHuman(IServiceProvider services, ControlEvidenceDto evidence, ControlEvidenceDto control, bool independent = false, Guid? owningOperation = null, Guid? vessel = null) {
         var s = services.GetRequiredService<FederationSettings>(); var now = DateTimeOffset.UtcNow;
         if (independent) RetainCapacityHuman(services);
         s.Memberships[0] = s.Memberships[0] with { ActorKind = "Human", ActorId = independent ? Guid.NewGuid() : s.Memberships[0].ActorId,
-            HumanAuthorities = (independent ? Array.Empty<HumanAuthority>() : s.Memberships[0].HumanAuthorities.Where(g => g.EvidenceId != evidence.Id)).Concat(new[] { "human.review.submit", "human.verify" }.Select(cap => new HumanAuthority(Guid.NewGuid(), Tug.Id, evidence.Id, control.Id, ReviewOperation, ReviewRole, cap, now.AddDays(-1), now.AddDays(1)))).ToArray() };
+            HumanAuthorities = (independent ? Array.Empty<HumanAuthority>() : s.Memberships[0].HumanAuthorities.Where(g => g.EvidenceId != evidence.Id)).Concat(new[] { "human.review.submit", "human.verify" }.Select(cap => new HumanAuthority(Guid.NewGuid(), (vessel ?? Tug.Id), evidence.Id, control.Id, owningOperation ?? ReviewOperation, ReviewRole, cap, now.AddDays(-1), now.AddDays(1)))).ToArray() };
         CapacityRights(services);
     }
-    private async Task<ControlEvidenceDto> CapacitySave(HttpClient c, string route, ControlEvidenceCommand cmd, bool update = false, string? key = null) {
-        using var response = await Send(c, GraphRoute(route, Tug.Id), cmd, key, update);
+    private async Task<ControlEvidenceDto> CapacitySave(HttpClient c, string route, ControlEvidenceCommand cmd, bool update = false, string? key = null, Guid? vessel = null) {
+        using var response = await Send(c, GraphRoute(route, (vessel ?? Tug.Id)), cmd, key, update);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode); return (await response.Content.ReadFromJsonAsync<ControlEvidenceDto>(Ct))!;
     }
-    private async Task<ControlEvidenceDto> CapacityVerify(HttpClient c, IServiceProvider services, ControlEvidenceDto evidence, ControlEvidenceDto control, Guid evaluation) {
-        CapacityHuman(services, evidence, control); await Token(c);
+    private async Task<ControlEvidenceDto> CapacityVerify(HttpClient c, IServiceProvider services, ControlEvidenceDto evidence, ControlEvidenceDto control, Guid evaluation, Guid? owningOperation = null, Guid? vessel = null) {
+        CapacityHuman(services, evidence, control, owningOperation: owningOperation, vessel: vessel); await Token(c);
         var m = services.GetRequiredService<FederationSettings>().Memberships[0]; var grant = m.HumanAuthorities.Single(g => g.EvidenceId == evidence.Id && g.Capability == "human.review.submit");
-        var command = new HumanReviewCommand(0, grant.Id, ReviewOperation, evidence.Id, evidence.Revision, evidence.Version, control.Id, control.Revision, control.Version,
+        var command = new HumanReviewCommand(0, grant.Id, owningOperation ?? ReviewOperation, evidence.Id, evidence.Revision, evidence.Version, control.Id, control.Revision, control.Version,
             evaluation, null, null, "PENDING", "REQUEST_REVIEW", "FICTIONAL software verification request");
-        using var pendingResponse = await Send(c, GraphRoute("verifications", Tug.Id), command); Assert.Equal(HttpStatusCode.OK, pendingResponse.StatusCode);
+        using var pendingResponse = await Send(c, GraphRoute("verifications", (vessel ?? Tug.Id)), command); Assert.Equal(HttpStatusCode.OK, pendingResponse.StatusCode);
         var pending = (await pendingResponse.Content.ReadFromJsonAsync<HumanReviewDto>(Ct))!;
-        CapacityHuman(services, evidence, control, independent: true); await Token(c);
-        var trace = await c.GetFromJsonAsync<JsonElement>($"/api/v1/regulatory-trace?vesselId={Tug.Id}&evidenceId={evidence.Id}&evidenceRevision={evidence.Revision}&controlId={control.Id}&controlRevision={control.Revision}", Ct);
+        CapacityHuman(services, evidence, control, independent: true, owningOperation: owningOperation, vessel: vessel); await Token(c);
+        var trace = await c.GetFromJsonAsync<JsonElement>($"/api/v1/regulatory-trace?vesselId={(vessel ?? Tug.Id)}&evidenceId={evidence.Id}&evidenceRevision={evidence.Revision}&controlId={control.Id}&controlRevision={control.Revision}", Ct);
         grant = services.GetRequiredService<FederationSettings>().Memberships[0].HumanAuthorities.Single(g => g.EvidenceId == evidence.Id && g.Capability == "human.verify");
-        using var verified = await Send(c, GraphRoute($"verifications/{pending.Id}/events", Tug.Id), command with { ExpectedVersion = pending.Version, AuthorityId = grant.Id,
+        using var verified = await Send(c, GraphRoute($"verifications/{pending.Id}/events", (vessel ?? Tug.Id)), command with { ExpectedVersion = pending.Version, AuthorityId = grant.Id,
             EvidenceVersion = trace.GetProperty("evidenceVersion").GetUInt32(), ControlVersion = trace.GetProperty("controlVersion").GetUInt32(), State = "VERIFIED", ReasonCode = "HUMAN_VERIFIED", Rationale = "FICTIONAL independent software test review; no real certificate approval" });
         Assert.Equal(HttpStatusCode.OK, verified.StatusCode);
-        var current = await c.GetFromJsonAsync<JsonElement>("/api/v1/" + GraphRoute($"evidence/{evidence.Id}/versions", Tug.Id), Ct);
+        var current = await c.GetFromJsonAsync<JsonElement>("/api/v1/" + GraphRoute($"evidence/{evidence.Id}/versions", (vessel ?? Tug.Id)), Ct);
         return current.GetProperty("items")[0].Deserialize<ControlEvidenceDto>(new JsonSerializerOptions(JsonSerializerDefaults.Web))!;
     }
-    private async Task<FileDto> TugCertificateFile(HttpClient c) {
-        using var staged = await Send(c, $"vessels/{Tug.Id}/files", new { name = "fictional-certificate.png", mime = "image/png", length = Png.Length, checksum = Convert.ToHexString(SHA256.HashData(Png)) });
+    private async Task<FileDto> TugCertificateFile(HttpClient c, Guid? vessel = null) {
+        using var staged = await Send(c, $"vessels/{(vessel ?? Tug.Id)}/files", new { name = "fictional-certificate.png", mime = "image/png", length = Png.Length, checksum = Convert.ToHexString(SHA256.HashData(Png)) });
         Assert.Equal(HttpStatusCode.OK, staged.StatusCode); var file = (await staged.Content.ReadFromJsonAsync<FileDto>(Ct))!;
-        using var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/vessels/{Tug.Id}/files/{file.Id}/bytes") { Content = new ByteArrayContent(Png) };
+        using var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/vessels/{(vessel ?? Tug.Id)}/files/{file.Id}/bytes") { Content = new ByteArrayContent(Png) };
         request.Content.Headers.ContentType = new("image/png"); using var uploaded = await c.SendAsync(request, Ct);
         Assert.Equal(HttpStatusCode.OK, uploaded.StatusCode); return (await uploaded.Content.ReadFromJsonAsync<FileDto>(Ct))!;
     }

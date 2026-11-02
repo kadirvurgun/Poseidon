@@ -9,7 +9,11 @@ public sealed record ControlEvidenceContent(string? Title = null, Guid? OwnerId 
     string? Frequency = null, string? EvidencePolicy = null, string? VerificationPolicy = null, bool? Critical = null,
     string? Provenance = null, DateTimeOffset? ObservedAt = null, DateTimeOffset? ValidFrom = null,
     DateTimeOffset? ValidUntil = null, DateTimeOffset? FreshUntil = null, SourceAcknowledgment[]? Acknowledgments = null,
-    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] TugCapabilityStatement? TugCapability = null);
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] TugCapabilityStatement? TugCapability = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] OperationReference? Operation = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] ServiceAuthorizationReference? ServiceAuthorization = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] CargoPlanReference? CargoPlan = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] WinchFitmentReference? WinchFitment = null);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record SourceAcknowledgment(Guid RuleId, string QualificationHash, string SourceHash);
 
@@ -17,6 +21,7 @@ public static class ControlEvidencePolicy
 {
     public static void Validate(string kind, ControlEvidenceContent c, DateTimeOffset now)
     {
+        OperationEquipmentInputs.Validate(kind, c);
         if (c.TugCapability != null) {
             if (kind != "Evidence") throw new ArgumentException("invalid_tug_evidence_kind");
             TugCapability.Validate(c.TugCapability);
@@ -35,6 +40,7 @@ public static class ControlEvidencePolicy
     public static string[] Blockers(string kind, ControlEvidenceContent c, int requirements, bool file, int applicabilityLinks = 0)
     {
         var reasons = new List<string>();
+        if (OperationEquipmentInputs.Present(c) && !OperationEquipmentInputs.Complete(c)) reasons.Add("OWNING_INPUT_INCOMPLETE");
         if (c.TugCapability is { } capability && !TugCapability.Complete(capability)) reasons.Add("TUG_CAPABILITY_INCOMPLETE");
         if (c.Title == null) reasons.Add("TITLE_MISSING");
         if (c.OwnerId == null) reasons.Add("OWNER_MISSING");

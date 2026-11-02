@@ -46,8 +46,8 @@ export function decodePlanningEvidence(v: unknown, assigned: string[]): Planning
     if (millionths(v.availableBollardPull as string) !== sum) return invalid()
   }
   for (const f of v.readinessFacts) if (!exact(f, ['tugId', 'source', 'id', 'revision', 'state', 'why', 'observedAt', 'expiresAt']) || !assigned.includes(f.tugId as string) ||
-    !['Crew', 'CrewAssignment', 'CrewCertificate', 'Equipment', 'EquipmentPms', 'MaintenancePlan', 'BollardPullCertificate', 'CapabilityEquipmentCondition'].includes(f.source as string) || !pair(f.id, f.revision) || !['Unknown', 'Unavailable', 'Blocked', 'Current'].includes(f.state as string) || typeof f.why !== 'string' || !time(f.observedAt) || !time(f.expiresAt) ||
-    f.state === 'Current' && (!['BollardPullCertificate', 'CapabilityEquipmentCondition'].includes(f.source as string) || !f.id || !f.expiresAt)) return invalid()
+    !['OperationContext', 'Crew', 'CrewAssignment', 'CrewCertificate', 'Equipment', 'EquipmentPms', 'MaintenancePlan', 'BollardPullCertificate', 'CapabilityEquipmentCondition'].includes(f.source as string) || !pair(f.id, f.revision) || !['Unknown', 'Unavailable', 'Blocked', 'Current'].includes(f.state as string) || typeof f.why !== 'string' || !time(f.observedAt) || !time(f.expiresAt) ||
+    f.state === 'Current' && (!['OperationContext', 'BollardPullCertificate', 'CapabilityEquipmentCondition'].includes(f.source as string) || !f.id || !f.expiresAt)) return invalid()
   if ((v.readiness === 'Blocked') !== v.readinessFacts.some(f => f.state === 'Blocked')) return invalid()
   for (const b of v.bp) if (!exact(b, ['tugId', 'state', 'declaredValue', 'source', 'policyVersion', 'sourceRevision', 'observationId', 'observedAt', 'freshness', 'provenance']) || !assigned.includes(b.tugId as string) ||
     b.declaredValue !== null && !bpNumber(b.declaredValue) || !pair(b.observationId, b.sourceRevision) || !time(b.observedAt) || typeof b.state !== 'string' || typeof b.freshness !== 'string' || typeof b.provenance !== 'string') return invalid()

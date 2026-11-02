@@ -3,6 +3,7 @@ import { crewIdentityCases } from './crew-identity-cases.ts'
 import { humanReviewCases } from './human-review-cases.ts'
 import { controlEvidenceCases } from './control-evidence-cases.ts'
 import { lifecycleApplicabilityCases } from './lifecycle-applicability-cases.ts'
+import { operationEquipmentCases } from './operation-equipment-cases.ts'
 import { offlineApplicationCases } from './offline-application-cases.ts'
 import { crewLegacyCases } from './crew-legacy-cases.ts'
 import { personFileCases } from './person-file-cases.ts'
@@ -108,6 +109,7 @@ export async function restrictedRegister(page: Page) {
 }
 
 export const registerCases = [
+  ...operationEquipmentCases,
   ...lifecycleApplicabilityCases,
   ...controlEvidenceCases,
   ...humanReviewCases,

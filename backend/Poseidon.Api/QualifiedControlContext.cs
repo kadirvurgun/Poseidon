@@ -11,6 +11,10 @@ internal static class QualifiedControlContext
         RequirementPin[] pins, string kind, ControlEvidenceContent content, bool file, DateTimeOffset now, CancellationToken ct, FederationSettings settings)
     {
         var blockers = new HashSet<string>(); var policies = new List<QualifiedControlPolicy>();
+        if ((content.Operation?.JobId ?? content.ServiceAuthorization?.JobId) is { } jobId) {
+            var job = await db.TugJobs.AsNoTracking().SingleOrDefaultAsync(j => j.VesselId == vessel && j.Id == jobId, ct);
+            if (job == null || TugRequestPolicy.Missing(job.Inputs()).Length != 0) blockers.Add("OWNING_JOB_INCOMPLETE");
+        }
         if (content.TugCapability is { } capability) {
             if (!TugCapability.Complete(capability)) blockers.Add("TUG_CAPABILITY_INCOMPLETE");
             if (capability.TestAt > now) blockers.Add("TUG_CAPABILITY_TEST_FUTURE");
@@ -22,7 +26,9 @@ internal static class QualifiedControlContext
                 !await db.RuleDrafts.AnyAsync(x => x.Id == rule.Id && x.Revision == rule.Revision, ct)) { blockers.Add("APPLICABILITY_LINK_MISSING"); continue; }
             var q = await CurrentRegulatoryContext.Qualification(db, rule, ct);
             if (q?.State != "IN_FORCE") { blockers.Add("SOURCE_REVIEW_REQUIRED"); continue; }
+            if (OperationEquipmentInputs.Present(content) && !TugOwnedCapacityConsumer.CurrentQualifier(settings, q, now, now)) { blockers.Add("SOURCE_REVIEW_REQUIRED"); continue; }
             var policy = RegulatoryQualificationEndpoints.Content(q).Control;
+            if (OperationEquipmentInputs.Present(content) && RegulatoryQualificationEndpoints.Content(q).OwningDocuments?.Any(p => p.DocumentKind == OperationEquipmentInputs.Kind(content) && p.AuthorRole == content.OwnerRole) != true) blockers.Add("OWNING_DOCUMENT_POLICY_REQUIRED");
             if (policy == null) { blockers.Add("CONTROL_POLICY_MISSING"); continue; }
             policies.Add(policy);
             if (kind == "Control" && (content.OwnerRole != policy.OwnerRole || content.Frequency != policy.Frequency || content.EvidencePolicy != policy.EvidencePolicy || content.VerificationPolicy != policy.VerificationPolicy)) blockers.Add("QUALIFIED_CONTROL_POLICY_MISMATCH");
@@ -34,7 +40,13 @@ internal static class QualifiedControlContext
                 if (policy.RequireAcknowledgment == true && content.Acknowledgments?.Any(a => a.RuleId == rule.Id && a.QualificationHash == q.Hash && a.SourceHash == q.SourceHash) != true) blockers.Add("SOURCE_ACKNOWLEDGMENT_REQUIRED");
             }
         }
-        var evaluation = await db.ApplicabilityEvaluations.AsNoTracking().Where(x => x.VesselId == vessel && db.EvaluationQualifications.Any(q => q.EvaluationId == x.Id))
+        // Owning-document verification cannot depend on the facts it will produce.
+        // Its independently applicable source/control evaluation remains selectable
+        // after a later consumer evaluation has captured this document.
+        var owningDocument = OperationEquipmentInputs.Present(content);
+        var ruleIds = pins.Where(p => p.RuleId != null).Select(p => p.RuleId!.Value).Distinct().ToArray();
+        var evaluation = await db.ApplicabilityEvaluations.AsNoTracking().Where(x => x.VesselId == vessel && (!owningDocument || !x.IncludesOwningInputs) &&
+            db.EvaluationQualifications.Any(q => q.EvaluationId == x.Id) && db.EvaluationRules.Count(r => r.EvaluationId == x.Id && ruleIds.Contains(r.RuleId)) == ruleIds.Length)
             .OrderByDescending(x => x.SavedAt).ThenBy(x => x.Id).FirstOrDefaultAsync(ct);
         if (evaluation == null) blockers.Add("AUTHORITATIVE_EVALUATION_UNAVAILABLE");
         else {

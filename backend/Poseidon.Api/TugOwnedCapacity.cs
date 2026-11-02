@@ -104,10 +104,11 @@ internal static class TugOwnedCapacityConsumer
             grant.OperationId == e.OperationId && grant.ValidFrom <= now && now < grant.ValidUntil && through < grant.ValidUntil &&
             RegisterStorage.Hash(JsonSerializer.Serialize(new { grant, actorId = e.ActorId, tenantId = e.TenantId, actorKind = "Human" })) == e.AuthorityHash;
     }
-    private static bool CurrentQualifier(FederationSettings settings, RegulatoryQualificationEvent e, DateTimeOffset now, DateTimeOffset through) {
+    internal static bool CurrentQualifier(FederationSettings settings, RegulatoryQualificationEvent e, DateTimeOffset now, DateTimeOffset through) {
         var members = settings.Memberships.Where(m => m.ActorId == e.ActorId && m.TenantId == e.TenantId).ToArray();
         if (members.Length != 1 || members[0].ActorKind != "Human") return false;
         var m = members[0];
+        if (m.Issuer != settings.Issuer || string.IsNullOrWhiteSpace(m.Subject) || settings.Memberships.Count(x => x.Issuer == m.Issuer && x.Subject == m.Subject) != 1) return false;
         if (!new[] { "regulatory.qualify", "directory.read", "regulatory.draft.read" }.All(m.Permissions.Contains) || !(m.TenantWideRead || m.TenantWideManage) ||
             ActorResolver.TrustedRoleContext(m.RoleReferences)?.Split(',').Contains(e.RoleId.ToString("D")) != true) return false;
         var grants = m.RegulatoryAuthorities.Where(g => g.Id == e.AuthorityId && g.RuleId == e.RuleId && g.RoleId == e.RoleId && g.Actions.Contains("qualify") && g.ValidFrom <= now && now < g.ValidUntil && through < g.ValidUntil).ToArray();

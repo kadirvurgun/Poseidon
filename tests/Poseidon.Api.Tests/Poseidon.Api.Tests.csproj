@@ -10,4 +10,5 @@
   </ItemGroup>
   <ItemGroup><None Include="../../contracts/openapi.v1.json" Link="openapi.v1.json" CopyToOutputDirectory="PreserveNewest" /></ItemGroup>
   <ItemGroup><None Include="../../backend/seed/synthetic-demo.json" Link="synthetic-demo.json" CopyToOutputDirectory="PreserveNewest" /></ItemGroup>
+  <ItemGroup><Content Include="../../contracts/golden/applicability.sample-rules.json" Link="Fixtures/applicability.sample-rules.json" CopyToOutputDirectory="PreserveNewest" /></ItemGroup>
 </Project>

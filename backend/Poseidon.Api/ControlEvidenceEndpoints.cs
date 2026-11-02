@@ -83,7 +83,7 @@ public static class ControlEvidenceEndpoints
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "ControlOwners", "Success", resourceId: v);
         return Results.Ok(new { items = Eligible(h, await db.Vessels.AsNoTracking().SingleAsync(x => x.Id == v, h.RequestAborted)).SelectMany(m => m.RoleReferences!.Select(r => new { actorId = m.ActorId, roleId = Guid.Parse(r) })).ToArray() });
     }
-    private static IQueryable<ControlEvidenceRevision> Visible(PoseidonDbContext db, Guid vessel, TrustedActor actor) => db.ControlEvidenceRevisions.AsNoTracking().Where(r => r.VesselId == vessel &&
+    private static IQueryable<ControlEvidenceRevision> Visible(PoseidonDbContext db, Guid vessel, TrustedActor actor) => OperationEquipmentCommands.Visible(db, actor, db.ControlEvidenceRevisions.AsNoTracking()).Where(r => r.VesselId == vessel &&
         (!db.TugCapabilityBindings.Any(b => b.VesselId == vessel && b.Id == r.Id && b.Revision == r.Revision && b.Kind == r.Kind) || actor.CanReadTug && actor.Permissions.Contains("equipment.read")) &&
         (actor.CanReadTug && actor.Permissions.Contains("equipment.read") || !db.ControlEvidenceEdges.Any(edge => edge.VesselId == vessel && edge.Kind == r.Kind && edge.Id == r.Id && edge.Revision == r.Revision &&
             db.TugCapabilityBindings.Any(b => b.VesselId == vessel && b.Kind == edge.TargetKind && b.Id == edge.TargetId && b.Revision == edge.TargetRevision))) &&
@@ -107,6 +107,9 @@ public static class ControlEvidenceEndpoints
             !db.HumanReviewEvents.Any(later => later.VesselId == e.VesselId && later.Id == e.Id && later.Revision > e.Revision && later.SavedAt <= asOf))
             .OrderByDescending(e => e.SavedAt).ThenBy(e => e.Id).FirstOrDefaultAsync(ct);
         var verificationState = verification?.State == "VERIFIED" ? verification.ValidUntil > asOf && !superseded && qualified.Blockers.Length == 0 ? "VERIFIED" : "REVIEW_REQUIRED" : "UNVERIFIED";
+        if (OperationEquipmentInputs.Present(content) && verificationState == "VERIFIED" &&
+            (!OperationEquipmentContext.CurrentVerifier(settings, verification!, OperationEquipmentInputs.Kind(content), asOf) ||
+                !await OperationEquipmentCommands.VerificationAllowed(db, settings, content, requirements.Select(x => new RequirementPin(x.RequirementId, x.RequirementRevision, x.SourceId, x.SourceRevision, x.RuleId, x.RuleRevision)).ToArray(), verification!.RoleId, asOf, ct))) verificationState = "REVIEW_REQUIRED";
         return new(r.Id, r.VesselId, r.Kind, r.Revision, version, content, r.Hash, r.Lifecycle, r.Lifecycle == "COMPLETED" ? "COMPLETED" : "UNKNOWN", verificationState, "UNKNOWN",
             ControlEvidencePolicy.TimeState(content, asOf, superseded), r.FileId != null,
             r.FileId == null ? null : new(r.FileId.Value, r.FileRevision!.Value, r.Checksum!),
@@ -144,7 +147,7 @@ public static class ControlEvidenceEndpoints
             !db.ControlEvidenceRequirements.Any(l => l.VesselId == vessel && l.Kind == "Control" && l.Id == r.Id && l.Revision == r.Revision));
         var ids = await q.OrderBy(x => x.Id).Skip(offset).Take(26).Select(x => x.Id).ToArrayAsync(h.RequestAborted);
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "ControlOrphans", "Success", resourceId: vessel);
-        var evaluation = await db.ApplicabilityEvaluations.AsNoTracking().Where(e => e.VesselId == vessel && db.EvaluationQualifications.Any(q => q.EvaluationId == e.Id))
+        var evaluation = await OperationEquipmentCommands.Evaluations(db, a).Where(e => e.VesselId == vessel && db.EvaluationQualifications.Any(q => q.EvaluationId == e.Id))
             .OrderByDescending(e => e.SavedAt).ThenBy(e => e.Id).FirstOrDefaultAsync(h.RequestAborted);
         var causes = evaluation == null ? new[] { "AUTHORITATIVE_APPLICABILITY_UNAVAILABLE" } : await CurrentRegulatoryContext.Stale(db, evaluation.Id, vessel, DateTimeOffset.UtcNow, h.RequestAborted, h.RequestServices.GetRequiredService<FederationSettings>());
         var result = evaluation == null ? null : JsonSerializer.Deserialize<EvaluationDto>(evaluation.ResultJson, Json);
@@ -192,6 +195,9 @@ public static class ControlEvidenceEndpoints
             if (command.ReasonCode != (action == "submit" ? "SUBMIT" : action == "complete" ? "COMPLETE" : id == null ? "INITIAL_AUTHORING" : "AUTHORING_CORRECTION") || kind == "Control" && (command.File != null || command.Links.Length != 0)) throw new JsonException();
         } catch (Exception e) when (e is JsonException or ArgumentException or InvalidDataException) { return await Fail(h, 400, "invalid_request"); }
         if (id != null && !(a.CanReadTug && a.Permissions.Contains("equipment.read")) && await db.TugCapabilityBindings.AnyAsync(b => b.VesselId == vessel && b.Id == id, ct)) return await Fail(h, 403, "permission_denied");
+        if (OperationEquipmentInputs.Present(command.Content) && (!OperationEquipmentCommands.Read(a) ||
+            (command.Content.Operation != null || command.Content.ServiceAuthorization != null) && !a.CanReadTug)) return await Fail(h, 403, "permission_denied");
+        if (id != null && !await Visible(db, vessel, a).AnyAsync(r => r.Id == id && r.Kind == kind, ct)) return await Fail(h, 404, "resource_not_found");
         var fingerprint = RegisterStorage.Hash(JsonSerializer.Serialize(new { kind, id, vessel, action, body }));
         if (command.Content.TugCapability != null && !(a.CanReadTug && a.Permissions.Contains("equipment.read"))) return await Fail(h, 403, "permission_denied");
         if (command.Content.TugCapability is { } capability && !await TugCapabilityCommands.Check(db, a, vessel, id, capability, false, ct))
@@ -232,6 +238,7 @@ public static class ControlEvidenceEndpoints
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "ControlEvidenceCommand", "Attempted", resourceId: id);
         await using var tx = await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable, ct);
         try {
+            if (!await OperationEquipmentCommands.Check(db, a, vessel, id, command.Content, ct)) return await Fail(h, 409, "owning_context_changed");
             if (command.Content.TugCapability is { } currentCapability && !await TugCapabilityCommands.Check(db, a, vessel, id, currentCapability, true, ct))
                 return await Fail(h, 409, "tug_capability_context_unavailable");
             var head = id == null ? null : await db.ControlEvidenceHeads.SingleOrDefaultAsync(x => x.Kind == kind && x.VesselId == vessel && x.Id == id, ct);
@@ -249,6 +256,7 @@ public static class ControlEvidenceEndpoints
             head.Revision++;
             var now = DateTimeOffset.UtcNow;
             if (action != "save") {
+                if (!await OperationEquipmentCommands.SubmissionAllowed(db, h.RequestServices.GetRequiredService<FederationSettings>(), a, command.Content, command.Requirements, ct)) return await Fail(h, 403, "owning_document_author_required");
                 var basic = ControlEvidencePolicy.Blockers(kind, command.Content, command.Requirements.Length, file != null, command.Requirements.Count(p => p.RuleId != null))
                     .Where(x => x is not ("SOURCE_ADMISSION_UNAVAILABLE" or "VERIFICATION_NOT_PERFORMED" or "CLEAN_FILE_MISSING")).ToArray();
                 var qualified = await QualifiedControlContext.Resolve(db, vessel, command.Requirements, kind, command.Content, file != null, now, ct, h.RequestServices.GetRequiredService<FederationSettings>());
@@ -263,6 +271,7 @@ public static class ControlEvidenceEndpoints
                 ContentJson = JsonSerializer.Serialize(command.Content, Json), Hash = RegisterStorage.Hash(JsonSerializer.Serialize(new { command.Content, command.Requirements, command.Links, command.File, action }, Json)),
                 CriticalDeclaration = command.Content.Critical, FileId = file?.Id, FileRevision = file?.Revision, Checksum = file?.Checksum, ActorId = a.Id, RoleContext = a.RoleContext, ReasonCode = command.ReasonCode, Lifecycle = action == "submit" ? "SUBMITTED" : action == "complete" ? "COMPLETED" : "DRAFT", SavedAt = now };
             db.ControlEvidenceRevisions.Add(revision);
+            if (OperationEquipmentInputs.Present(command.Content)) db.OperationEquipmentBindings.Add(OperationEquipmentBinding.From(a.TenantId, vessel, head.Id, head.Revision, command.Content));
             if (command.Content.TugCapability is { } binding) db.TugCapabilityBindings.Add(new() {
                 TenantId = a.TenantId, VesselId = vessel, Id = head.Id, Revision = head.Revision,
                 AssetId = binding.AssetId, AssetRevision = binding.AssetRevision, ProfileVersion = binding.ProfileVersion,
@@ -275,6 +284,8 @@ public static class ControlEvidenceEndpoints
             db.ControlEvidenceReceipts.Add(new() { TenantId = a.TenantId, VesselId = vessel, Kind = kind, ResourceId = head.Id, ActorId = a.Id, Key = key, Fingerprint = fingerprint, OutcomeJson = outcome, SavedAt = now });
             await db.SaveChangesAsync(ct);
             var live = Actor(h); if (live == null || live.Id != a.Id || live.TenantId != a.TenantId || !Write(live, kind, vessel) || !await Scope(db, live, vessel, ct)) return await Fail(h, 403, "permission_denied");
+            if (!await OperationEquipmentCommands.Check(db, live, vessel, id, command.Content, ct)) return await Fail(h, 409, "owning_context_changed");
+            if (action != "save" && !await OperationEquipmentCommands.SubmissionAllowed(db, h.RequestServices.GetRequiredService<FederationSettings>(), live, command.Content, command.Requirements, ct)) return await Fail(h, 403, "owning_document_author_required");
             await tx.CommitAsync(ct);
             return Results.Content(outcome, "application/json");
         } catch (DbUpdateConcurrencyException) { await tx.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear(); return await Replay() ?? await Fail(h, 409, "version_conflict");

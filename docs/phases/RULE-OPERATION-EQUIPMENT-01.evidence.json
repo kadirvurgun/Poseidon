@@ -1,0 +1,63 @@
+{
+  "task": "docs/tasks/rule-operation-equipment-01.md",
+  "receipt_kind": "ordinary authoring checkpoint; no product execution evidence",
+  "status": "AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+  "accepted": false,
+  "accepted_sp_added": 0,
+  "task_id": "RULE-OPERATION-EQUIPMENT-01",
+  "phase": "FOUNDATION authoring before one combined gate",
+  "receiving_head": "d0b2513",
+  "initial_worktree": "clean; no predecessor partial changes to discard",
+  "report": "docs/phases/RULE-OPERATION-EQUIPMENT-01.md",
+  "sources": "docs/tasks/rule-operation-equipment-01.sources.json",
+  "source_baseline": "poseidon-v46.3-20261030",
+  "canonical_progress": "8/970SP;2/121tasks;0/196accepted",
+  "candidate_selection": "original 40 tasks/272SP unchanged",
+  "inputs": [
+    "vessel.operatingArea",
+    "operation.jobType",
+    "operation.profile",
+    "operation.serviceContext",
+    "cargo.packagedDangerousGoods",
+    "equipment.towingWinchFitted"
+  ],
+  "authored": [
+    "Typed document references through actual evidence/source/review commands; job/plan/asset/file lineage",
+    "Source-reviewed literal/document role policies; no implicit intake label alias",
+    "Current qualification, provenance, expiry and revocation consumers; immutable relational evaluation pins",
+    "TR/EN owning capture, reference evaluation, source-review UI and Tug OperationContext observation",
+    "Hand migration, optional incomplete operator-preserving fixtures and domain/API/PG/React/wire/registered signed-host tests"
+  ],
+  "verification": "NOT RUN: tests/suites/restore/build/lint/typecheck/generation/model/migration/seed/browser/lab/provider/scans/independent QA/CI",
+  "source_only_work": [
+    "Scoped Graphify discovery (MCP code graph unavailable)",
+    "Bounded query_sources and original source locator reads",
+    "Status/diff reconciliation and source/code/document authoring"
+  ],
+  "remaining_software": [
+    "RULE-COMPLIANCE-INPUTS-01 five exact remaining inputs",
+    "Full cross-owner golden and multi-human signed-host fixture stitching",
+    "Whole-branch generated EF/API/TS integration, combined gate and correction of actual findings"
+  ],
+  "external_inputs": [
+    "Actual service/operation/cargo/equipment/source document bytes",
+    "Source-reviewed mappings/roles/validity policies and legitimate appointed humans",
+    "Exact provider trust contracts where genuinely required, without invented protocols"
+  ],
+  "next": "RULE-COMPLIANCE-INPUTS-01 then one combined foundation gate after required authoring",
+  "publication": "Not performed; coordinator only",
+  "historical_independent80b": "Preserved historical evidence; not current acceptance",
+  "coordinator_source_maintenance": {
+    "at": "2026-11-02T04:18:06.259787+00:00",
+    "graphify_exit": 0,
+    "nodes": 8163,
+    "edges": 18335,
+    "communities": 522,
+    "zero_node_warnings": 59,
+    "html": "SKIPPED_SIZE_LIMIT",
+    "tests": "NOT_RUN",
+    "scope": "AST_ONLY",
+    "terminal_author_pid": 40024,
+    "preserved_path_count": 42
+  }
+}

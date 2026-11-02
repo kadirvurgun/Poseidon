@@ -68,6 +68,8 @@ public sealed class PoseidonDbContext(
     public DbSet<TugOfflineOutcome> TugOfflineOutcomes => Set<TugOfflineOutcome>();
     public DbSet<TugOfflineLifecycle> TugOfflineLifecycles => Set<TugOfflineLifecycle>();
     public DbSet<TugCapabilityBinding> TugCapabilityBindings => Set<TugCapabilityBinding>();
+    public DbSet<OperationEquipmentBinding> OperationEquipmentBindings => Set<OperationEquipmentBinding>();
+    public DbSet<EvaluationOwningReference> EvaluationOwningReferences => Set<EvaluationOwningReference>();
 
     public DbSet<HumanReviewHead> HumanReviewHeads => Set<HumanReviewHead>();
     public DbSet<HumanReviewEvent> HumanReviewEvents => Set<HumanReviewEvent>();
@@ -128,6 +130,9 @@ public sealed class PoseidonDbContext(
         model.Entity<TugOfflineOutcome>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<TugOfflineLifecycle>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         TugCapabilityBinding.Configure(model);
+        OperationEquipmentBinding.Configure(model);
+        model.Entity<EvaluationOwningReference>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<OperationEquipmentBinding>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<TugCapabilityBinding>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<TugJob>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<TugJobRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -317,7 +322,7 @@ public sealed class PoseidonDbContext(
             throw new InvalidOperationException("Human review history is immutable.");
         if (changes.Any(e => e.Entity is HumanReviewHead && (e.State == EntityState.Deleted || e.State == EntityState.Modified && e.Properties.Any(p => p.IsModified && p.Metadata.Name != "Revision"))))
             throw new InvalidOperationException("Human review scope is immutable.");
-        if (changes.Any(e => e.Entity is ControlEvidenceRevision or ControlEvidenceRequirement or ControlEvidenceEdge or ControlEvidenceReceipt or TugCapabilityBinding && e.State != EntityState.Added))
+        if (changes.Any(e => e.Entity is ControlEvidenceRevision or ControlEvidenceRequirement or ControlEvidenceEdge or ControlEvidenceReceipt or TugCapabilityBinding or OperationEquipmentBinding or EvaluationOwningReference && e.State != EntityState.Added))
             throw new InvalidOperationException("Control/evidence lineage is immutable.");
         if (changes.Any(e => e.Entity is ControlEvidenceHead && (e.State == EntityState.Deleted || e.State == EntityState.Modified && e.Properties.Any(p => p.IsModified && p.Metadata.Name != "Revision"))))
             throw new InvalidOperationException("Control/evidence ownership is immutable.");
