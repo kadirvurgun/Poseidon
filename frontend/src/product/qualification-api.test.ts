@@ -1,10 +1,38 @@
 import { describe, it, expect } from 'vitest'
-import { decodeQualification } from './qualification-api'
+import { decodeQualification, validContent } from './qualification-api'
 import { decodeTrace } from './human-review-api'
 import { reviewAnchor, reviewTrace } from './human-review.test-fixtures'
 
 import { qualifiedFixture } from './qualification.test-fixtures'
 describe('REGULATORY-ADMISSION-CURRENT-01 strict wire (authored, NOT RUN)', () => {
+  it.each(['requireFile', 'requireAcknowledgment'] as const)('keeps %s unknown in drafts, rejects wire absence and requires a known choice after review', field => {
+    const row = qualifiedFixture()
+    const missing: Record<string, unknown> = { ...row.content.control }
+    delete missing[field]
+    expect(validContent({ ...row.content, control: missing })).toBe(false)
+    for (const state of ['IN_REVIEW', 'ADOPTED', 'IN_FORCE']) {
+      const content = { ...row.content, control: { ...row.content.control, [field]: null } }
+      expect(() => decodeQualification({ ...row, state, content }, row.ruleId)).toThrow()
+      const draft = { ...row, state: 'DRAFT', content, blockers: ['CONTROL_POLICY_MISSING'] }
+      expect(decodeQualification(draft, row.ruleId).content.control?.[field]).toBeNull()
+    }
+    for (const choice of [false, true]) {
+      const content = { ...row.content, control: { ...row.content.control, [field]: choice, acknowledgmentRole: row.roleId } }
+      expect(decodeQualification({ ...row, content }, row.ruleId).content.control?.[field]).toBe(choice)
+    }
+    for (const choice of ['false', 0, '', undefined]) {
+      expect(validContent({ ...row.content, control: { ...row.content.control, [field]: choice } })).toBe(false)
+    }
+  })
+  it('requires a cited mechanism and an acknowledgment role only when their policy requires them', () => {
+    const row = qualifiedFixture()
+    const mechanism = { ...row.content.control, requiredVerificationMechanism: 'FICTIONAL_MECHANISM', verificationMechanismSourceLocator: null }
+    expect(() => decodeQualification({ ...row, content: { ...row.content, control: mechanism } }, row.ruleId)).toThrow()
+    expect(decodeQualification({ ...row, state: 'DRAFT', content: { ...row.content, control: mechanism }, blockers: ['CONTROL_POLICY_MISSING'] }, row.ruleId).state).toBe('DRAFT')
+    expect(decodeQualification({ ...row, content: { ...row.content, control: { ...mechanism, verificationMechanismSourceLocator: 'synthetic/mechanism' } } }, row.ruleId).state).toBe('IN_FORCE')
+    expect(() => decodeQualification({ ...row, content: { ...row.content, control: { ...row.content.control, requireAcknowledgment: true } } }, row.ruleId)).toThrow()
+    expect(decodeQualification(row, row.ruleId).content.control?.requireAcknowledgment).toBe(false)
+  })
   it('retains source and policy hashes and rejects expanded authority and hidden bytes', () => {
     const row = qualifiedFixture(); expect(decodeQualification(row, row.ruleId).state).toBe('IN_FORCE')
     expect(() => decodeQualification({ ...row, accepted: true }, row.ruleId)).toThrow()

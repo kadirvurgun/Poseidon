@@ -1,3 +1,5 @@
+> Current combined-gate disposition: [FOUNDATION receiving reconciliation](FOUNDATION-RECONCILIATION-2026-11-02.md) remains **INCOMPLETE / NOT RUN / NOT ACCEPTED**. This report supplies authored source to the same later full gate. No historical/authored checkpoint is current passing evidence; ordinary and register/direct-provider configurations remain mandatory.
+
 # REGULATORY-ADMISSION-CURRENT-01
 
 AUTHORED_UNVERIFIED_NOT_ACCEPTED. Local product-authoring checkpoint before the

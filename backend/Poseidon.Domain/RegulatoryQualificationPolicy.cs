@@ -6,6 +6,8 @@ namespace Poseidon.Domain;
 // A reviewed software policy is a recorded human qualification, never proof of legal truth.
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record QualifiedInputPolicy(string Field, string Basis, int? MaxAgeHours = null);
+// POL-DEFAULT-01: omitted/null choices stay unknown in a draft. Do not replace
+// these nullable flags with CLR false defaults; Missing gates review/adoption.
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record QualifiedControlPolicy(Guid? OwnerRole, string? Frequency, string? EvidencePolicy, string? VerificationPolicy,
     int? MaxAgeHours, bool? RequireFile, bool? RequireAcknowledgment, string? SourceLocator, Guid? AcknowledgmentRole = null, string? RequiredVerificationMechanism = null, string? VerificationMechanismSourceLocator = null);

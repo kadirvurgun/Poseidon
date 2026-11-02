@@ -1,3 +1,5 @@
+> Current combined-gate disposition: [FOUNDATION receiving reconciliation](FOUNDATION-RECONCILIATION-2026-11-02.md) remains **INCOMPLETE / NOT RUN / NOT ACCEPTED**. This report supplies authored source to the same later full gate. No historical/authored checkpoint is current passing evidence; ordinary and register/direct-provider configurations remain mandatory.
+
 > Current target continuation: [FOUNDATION-ACCEPTANCE-BUNDLE-01](FOUNDATION-ACCEPTANCE-BUNDLE-01.md) remains **SOFTWARE PRECONDITION INCOMPLETE / NOT RUN / NOT ACCEPTED**. [2026-11-02 readiness/code continuation](FOUNDATION-CONTINUATION-2026-11-02.md) records current base/history, new offline privacy regression source and remaining software. Results below retain historical scope; none validate the current target. Ordinary and separate register/direct-provider suites must both be included at the later single gate.
 
 # TODAY-WHY-01 — UNVERIFIED authored product checkpoint

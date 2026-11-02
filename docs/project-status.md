@@ -1,3 +1,9 @@
+# FOUNDATION receiving / qualification continuation — INCOMPLETE / NOT ACCEPTED
+
+Safety origin25f2845 received normally with -x as d52270f after receipt/content inspection. Preserved existing foundations and support receipts. Authored 12 actual-host/PG theory rows and 4 React/wire cases for unknown versus explicit qualification choices and downstream policy enforcement; strict reviewed consumer now requires a required mechanism source locator. All product execution remains **NOT RUN** because required software is unfinished. No clean validated candidate, independent/source acceptance or canonical progress.
+
+[Current delivered behavior, exact source/history observations, software blockers and next gate](phases/FOUNDATION-RECONCILIATION-2026-11-02.md). Current phase: prerequisite authoring. Continue owning regulatory/Tug/Crew integrations and full branch reconciliation before the one coherent combined gate. Coordinator owns independent exact-target QA/CI/publication; canonical8/970SP,2/121tasks,0/196accepted unchanged.
+
 # REGULATORY-ADMISSION-CURRENT-01 — AUTHORED / UNVERIFIED / NOT ACCEPTED
 
 Authored real human-scoped source/rule/policy qualification, immutable source
