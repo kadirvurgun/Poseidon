@@ -43,7 +43,10 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Equal(HttpStatusCode.OK,(await Send(client,PlansUrl,plan)).StatusCode);
         Assert.Equal(HttpStatusCode.OK,(await Send(client,ObservationPath+$"/{reading.Id}/revoke",new {})).StatusCode);
         var saved=(await client.GetFromJsonAsync<MaintenancePage>("/api/v1/"+PlansUrl,Ct))!.Items.Single(x=>x.Id==plan.Id);
-        Assert.Equal("ObservationRevoked",saved.ObservationState); Assert.Equal("20",saved.Due.NextDueMeter); Assert.Equal(1,saved.Revision);
+        Assert.Equal("ObservationRevoked",saved.ObservationState); Assert.Null(saved.Due.NextDueMeter); Assert.Equal(1,saved.Revision);
+        Assert.Equal("ReviewRequired",saved.Due.State); Assert.Equal("ObservationRevoked",saved.Due.Reason);
+        var history=(await client.GetFromJsonAsync<MaintenanceHistoryRow[]>("/api/v1/"+PlansUrl+$"/{plan.Id}/history",Ct))!;
+        Assert.Equal("20",Assert.Single(history).Due.NextDueMeter);
     }
     [Fact]
     public async Task Maintenance_observation_same_session_write_revocation_allows_reads_then_blocks_capture_retry() {

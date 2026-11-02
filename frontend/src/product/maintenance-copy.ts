@@ -1,4 +1,8 @@
 const reasons: Record<string, [string, string]> = {
+  EquipmentRevisionChanged: ['Equipment changed after this plan revision. Review the plan against current equipment.', 'Bu plan revizyonundan sonra ekipman değişti. Planı güncel ekipmana göre inceleyin.'],
+  MaintenanceJobUnavailable: ['The plan has no currently available maintenance job.', 'Planın güncel olarak kullanılabilir bakım işi yok.'],
+  MaintenanceOwnerUnavailable: ['The assigned role is no longer eligible for this vessel, or no role is assigned.', 'Atanan rol artık bu araç için uygun değil veya sorumlu rol atanmamış.'],
+  ObservationAssessmentUnavailable: ['The referenced observation has no current server assessment.', 'Referans verilen gözlemin güncel sunucu değerlendirmesi yok.'],
   ConfiguredDeclaredObservation: ['The observation matches configured freshness, source and unit policy; it remains unverified.', 'Gözlem yapılandırılmış güncellik, kaynak ve birim politikasına uyuyor; doğrulanmamış durumda.'],
   ObservationMissing: ['The normalized observation or its required value/time is missing.', 'Normalleştirilmiş gözlem veya gerekli değer/zaman eksik.'],
   ObservationRevoked: ['The observation has been revoked.', 'Gözlem iptal edilmiş.'],

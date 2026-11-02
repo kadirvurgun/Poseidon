@@ -464,3 +464,8 @@ PR12 security scan triage (02.11.2026): all164 identities now have source-bound 
 
 
 Foundation API/CI repair (02.11): source-built real S3 provisioning and safe discovery/execution-count gate authored;9helper tests and actual82API unit cases passed in their scopes. Release API-test build0warnings/errors; new and retained PostgreSQL fixture cases3/3,0skipped after an initial3-case failure during source build. Full594-case predecessor hit its1800second deadline, not PASS; optimized full595-case verification is next. No source waiver, independent approval, merge or canonical SP change. [Exact scope and preserved evidence](phases/FOUNDATION-API-CI-20261102.md).
+
+
+## 02.11.2026 current maintenance planning authoring
+
+The separate maintenance author branch now recomputes current draft planning at server read time with current observation, eligible owner and equipment revision context. Historic calculation/revision/receipts are preserved. Ten domain cases, three new API cases, one strengthened existing API case and one React case are authored; tests/build/typecheck are DEFERRED, not PASS. Syntax-only parsing found no errors in nine changed code/test files. See [maintenance current projection](phases/MAINTENANCE-CURRENT-READ-20261102.md). The preceding immutable e92581c full API run discovered595 cases but reached its1800-second execution deadline; no complete execution aggregate is proven. PR12 source review/CI and independent QA remain open; canonical8/970 is unchanged.

@@ -30,6 +30,28 @@ afterEach(() => { cleanup(); vi.unstubAllGlobals(); fetcher.mockReset() })
 async function english() { await userEvent.click(screen.getByRole('button', { name: 'EN' })); await screen.findByRole('button', { name: 'Add draft' }) }
 
 describe('DEV-052/053 authored product behavior (mock UI only; execution deferred)', () => {
+  it('explains a current equipment revision conflict separately from historical planning results', async () => {
+    const base = fetcher.getMockImplementation()!
+    fetcher.mockImplementation(async (url: string, init?: RequestInit) => {
+      if (!init?.method && url.endsWith('/history')) return json([{ revision: 1, savedAt: '2026-11-01T00:00:00Z',
+        referenceAt: '2026-11-01T00:00:00Z', due: { state: 'NotDue', reason: 'CalendarBoundary', nextDueDate: '2026-11-03', nextDueMeter: null, algorithm: 'planning-v1' } }])
+      if (!init?.method && url.endsWith(`/maintenance-plan/${vessel}`)) return json({ items: [{ id: child, assetId: id,
+        jobId: null, ownerRoleId: null, version: 1, revision: 1, assetRevision: 1, status: 'Draft', provenance: 'SyntheticUnverified',
+        inputs: { triggerType: 'Calendar', timeZone: 'UTC' }, referenceAt: '2026-11-02T00:00:00Z', savedAt: '2026-11-01T00:00:00Z',
+        due: { state: 'ReviewRequired', reason: 'EquipmentRevisionChanged', nextDueDate: null, nextDueMeter: null, algorithm: 'planning-current-v1' }
+      }], canWrite: true, canReadHistory: true })
+      return base(url, init)
+    })
+    window.history.replaceState({}, '', `/app/maintenance-plan/${vessel}?id=${child}`)
+    render(<TechnicalWorkspace />); await english()
+    await screen.findByText(/Equipment changed after this plan revision/)
+    expect(screen.getByText('Current calculation reference clock')).toBeVisible()
+    expect(screen.getByText(/Current planning calculation/)).toBeVisible()
+    expect(screen.queryByText('2026-11-03')).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'History' }))
+    await screen.findByText(/Not due at the reference time.*Calculated from the declared date/)
+    expect(screen.getByText(/Equipment changed after this plan revision/)).toBeVisible()
+  })
   it('connects the actual forest to deep-link selection and reveals selected ancestry', async () => {
     window.history.replaceState({}, '', `/app/equipment-hierarchy/${vessel}?id=${child}`)
     render(<TechnicalWorkspace />); await english()

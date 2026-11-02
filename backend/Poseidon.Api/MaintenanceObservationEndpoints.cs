@@ -88,11 +88,11 @@ public static class MaintenanceObservationEndpoints
         }
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "MaintenanceObservationRevoke", "Success", resourceId: asset); return Results.Ok(new { id, state = "Revoked" });
     }
-    internal static async Task<MaintenanceObservationAssessment> Resolve(Guid vessel, Guid asset, MaintenanceInputs inputs, HttpContext h, PoseidonDbContext db) {
+    internal static async Task<MaintenanceObservationAssessment> Resolve(Guid vessel, Guid asset, MaintenanceInputs inputs, HttpContext h, PoseidonDbContext db, DateTimeOffset? serverNow = null) {
         var row = await db.MaintenanceObservations.AsNoTracking().SingleOrDefaultAsync(x => x.Id == inputs.ObservationId && x.VesselId == vessel && x.AssetId == asset, h.RequestAborted);
         var rule = row == null ? null : h.RequestServices.GetRequiredService<MaintenanceObservationSettings>().Rule(db.TenantId, vessel, asset, row.Source);
         var observation = row == null ? null : new MaintenanceObservationValue(row.Id, row.TenantId, row.VesselId, row.AssetId, row.Source, row.PolicyVersion, row.SourceRevision,
             row.Kind, row.Unit, row.Value, row.ObservedAt, await db.MaintenanceObservationRevocations.AnyAsync(x => x.ObservationId == row.Id, h.RequestAborted));
-        return MaintenanceObservationPolicy.Assess(observation, rule, db.TenantId, vessel, asset, inputs, DateTimeOffset.UtcNow);
+        return MaintenanceObservationPolicy.Assess(observation, rule, db.TenantId, vessel, asset, inputs, serverNow ?? DateTimeOffset.UtcNow);
     }
 }
