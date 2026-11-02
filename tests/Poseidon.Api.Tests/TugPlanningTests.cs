@@ -184,7 +184,22 @@ public sealed partial class DirectoryWorkspaceTests
         if (expected != "Missing") {
             var observed = DateTimeOffset.UtcNow.AddSeconds(expected == "Stale" ? -7200 : expected == "Future" ? 3600 : -60);
             var reading = new MaintenanceObservationCommand(Guid.NewGuid(), "synthetic-bp", "bp-v1", 1, "Meter", "tonnes", expected == "Unknown" ? "0.001" : "45.01", observed);
-            Assert.Equal(HttpStatusCode.OK, (await Send(c, $"equipment-hierarchy/{Tug.Id}/{Tug.Id}/observations", reading)).StatusCode);
+            var captured = await Send(c, $"equipment-hierarchy/{Tug.Id}/{Tug.Id}/observations", reading);
+            Assert.Equal(expected == "Future" ? HttpStatusCode.BadRequest : HttpStatusCode.OK, captured.StatusCode);
+            if (expected == "Future") {
+                // Ordinary capture rejects future instants. Exercise the
+                // consumer against an unverified legacy/import declaration
+                // solely inside this fixture's owned, audited database.
+                await using var db = Db();
+                Assert.False(await db.MaintenanceObservations.AnyAsync(o => o.Id == reading.Id, Ct));
+                db.MaintenanceObservations.Add(new MaintenanceObservation {
+                    TenantId = Tug.TenantId, Id = reading.Id, VesselId = Tug.Id, AssetId = Tug.Id,
+                    Source = reading.Source, PolicyVersion = reading.PolicyVersion, SourceRevision = reading.SourceRevision,
+                    Kind = reading.Kind, Unit = reading.Unit, Value = reading.Value,
+                    ObservedAt = observed.ToUniversalTime(), RecordedAt = DateTimeOffset.UtcNow
+                });
+                await db.SaveChangesAsync(Ct);
+            }
         }
         if (expected == "PolicyChanged") {
             policy.BpSources = [policy.BpSources[0] with { PolicyVersion = "bp-v2" }];

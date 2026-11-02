@@ -90,10 +90,14 @@ public sealed partial class DirectoryWorkspaceTests
     {
         using var host = Host(crewRead: true, crewWrite: true, crewIdentity: true, certificateRead: true, certificateWrite: true);
         using var client = Client(host); await Token(client);
-        var path = $"{CrewUrl}/{SeedVessel.Id}/owning-inputs";
+        // The seeded assignment deliberately has a synthetic credential. Create
+        // an independent assignment/person to exercise the genuinely empty case.
+        var assignment = NewCrew();
+        Assert.Equal(HttpStatusCode.OK, (await Send(client, CrewUrl, assignment)).StatusCode);
+        var path = $"{CrewUrl}/{assignment.Id}/owning-inputs";
         var before = await client.GetStringAsync("/api/v1/" + path, Ct);
         Assert.Contains("no_credential_declaration", before);
-        Assert.Equal(HttpStatusCode.OK, (await Send(client, $"{CrewUrl}/{SeedVessel.Id}/certificates",
+        Assert.Equal(HttpStatusCode.OK, (await Send(client, $"{CrewUrl}/{assignment.Id}/certificates",
             new CredentialSaveCommand(Guid.NewGuid(), null, new(new(null, null, null, null, null, null))))).StatusCode);
         var observed = await client.GetStringAsync("/api/v1/" + path, Ct);
         Assert.Contains("DeclaredUnverified", observed); Assert.Contains("owning_evaluator_not_implemented", observed);
@@ -103,7 +107,7 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.DoesNotContain("DeclaredUnverified", masked); Assert.DoesNotContain("no_credential_declaration", masked);
         Assert.Contains("Withheld", masked);
         var foreign = seed.Vessels.First(v => v.TenantId != SeedVessel.TenantId);
-        Assert.Equal(HttpStatusCode.NotFound, (await client.GetAsync($"/api/v1/vessels/{foreign.Id}/crew/{SeedVessel.Id}/owning-inputs", Ct)).StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, (await client.GetAsync($"/api/v1/vessels/{foreign.Id}/crew/{assignment.Id}/owning-inputs", Ct)).StatusCode);
     }
 
     [Fact]

@@ -37,3 +37,11 @@ Maintenance observation replay compared incoming100ns timestamps with PostgreSQL
 The overlap test could select the seeded empty plan because both new jobs had null start times and UUID tie ordering. It now filters the two authored synthetic jobs, asserts a selected authored job and HasMore, and verifies the exact other conflicting job beyond page1. All human-review/no-clearance assertions remain.
 
 Latest serialized API Release build PASS0 warnings/errors; both affected real-API/PostgreSQL regressions PASS1/1 each,0 skipped. Triage independently reviewed all three source/test changes with no blocking findings. Final committed-target review and required full CI remain pending. No check bypass, operational sign-off or canonical acceptance is granted.
+
+## Full-CI reduction and final fixture isolation
+
+The complete95a2a18 GitHub API integration run executed524 cases:520 PASS,4 FAIL,0 skipped. This replaces the earlier46-failure result as the latest complete aggregate, not as a full PASS. Its exact failure locations identified the already-fixed observation replay/overlap cases and two remaining fixture mistakes.
+
+The crew owning-input test had assumed the seeded assignment had no credentials, but the idempotent seed intentionally provides an unverified credential. The test now creates a fresh person/assignment through the ordinary API and preserves the empty→declared→withheld, no-eligibility and foreign-tenant assertions. The capacity Future case incorrectly expected ordinary future capture to succeed. It now asserts400 and no saved row, then supplies an unverified legacy declaration only through the fixture's owned audited database to verify the consumer still reports Future with no usable BP. No production code or validator was weakened.
+
+Latest API Release build PASS0 warnings/errors. Crew fixture1/1 PASS; all capacity variants5/5 PASS; prior observation1/1 and overlap1/1 PASS. Independent review found no blocker in these test-only changes. A local broad Python preflight returned exit1 without a completed aggregate; safe diagnostics are being collected, and this is not represented as PASS. Final exact-head CI and committed-target review remain mandatory. Canonical8/970 is unchanged.
