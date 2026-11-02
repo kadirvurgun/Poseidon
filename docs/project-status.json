@@ -1009,7 +1009,7 @@
       "accepted": false
     }
   },
-  "as_of": "2026-11-02",
+  "as_of": "2026-11-03",
   "audit_trace_01": {
     "status": "combined_gate_executed_not_accepted",
     "accepted": false,
@@ -1114,7 +1114,7 @@
     "verification_record_scope": "Authored/deferred and original20f1198 results are historical;current rejection-repair evidence in core_bundle_01.verification"
   },
   "baseline": "POSEIDON v46.3 updated 2026-10-30 / Library26 candidate",
-  "current_stage": "S0 combined verification; exact-checkpoint source/engineering definitions independently adopted; signed-browser preparation and native-selector repair; not canonically accepted",
+  "current_stage": "S0 combined verification; confined Windows browser-profile ACL repair locally validated; next clean-target CI and full122 pending",
   "method": "accepted story points / total baseline story points * 100",
   "scope": "complete v46.3 Backlog sheet; duplicates in other sheets excluded",
   "total_tasks": 121,
@@ -4504,7 +4504,7 @@
     "initial_candidate_commit": "d0e6d0dbc2c2b5d3873d46ea4a405e176e772e3e",
     "initial_candidate_tree": "b4c3876080a77c7fb17dc9b63b0c84351c0bad1b",
     "initial_qa": "REJECTED_FOR_ACCEPTANCE_ON_THIS_TARGET; actual failures retained",
-    "current_target": "Clean1ab3fc4 CI4/4SUCCESS; subsequent registered-journey route/native-locator/fixture isolation repairs await next freeze and coherent final122",
+    "current_target": "Latest cleanD CI41537366424 all4SUCCESS; subsequent test-only confined profile ACL repair17unit/originaloffline case locallyPASS, next clean target and fresh122 pending",
     "verification": {
       "python": "355/355 PASS on initial clean candidate",
       "source_definitions": "6 PASS_DEFINITION_ONLY, not acceptance",
@@ -4520,24 +4520,25 @@
       "api_integration": "Historical original547/6 and repaired13/13 kept; clean9e and clean1ab3 actual CI native547/547PASS0fail/skip, separate exact targets",
       "ordinary_browser": "50/50 PASS0skip/flaky on rebuilt lazy-chart production dist;20:25:43–20:28:48UTC; local dirty repair",
       "security_preflight": "Actual final staged repository and production client scans PASS with164 externally fetched protected source-review pins; next changed-target CI pending",
-      "final_independent_qa_ci": "Both earlier push CI runs SUCCESS; new repaired target full122, currentP0 assessment, final required CI and authentic task acceptance PENDING",
+      "final_independent_qa_ci": "Three push CI targets SUCCESS; final current-target full122, independent P0 and authentic task acceptance remain PENDING",
       "signed_provider": "Actual manager/restricted login2/2+TLS3/3 PASS; diagnostic30/30 separate from final122; six genuine command-produced documents independently VERIFIED by distinct synthetic actors, current consumer assertions PASS; full baseline manager/restricted journeys and final fresh61x2 manifest pending",
       "artifact": "Actual API development artifact publish PASS local dirty repair",
       "source_lineage": "Fresh verify_sources.py PASS active byte/chunk lineage",
       "legacy_fixture_isolation": "Actual14/14unit+1/1PostgreSQL and7 guarded CLI outcomes PASS; Test-only isolated fixture identifiers; no seeded verified safety evidence",
       "mobile_navigation_repair": "Later dirty CSS stacking fix: actual production build PASS and real pointer/keyboard2/2 desktop/mobile regression PASS; fresh exact-target CI pending",
       "required_ci": {
-        "commit": "1ab3fc428ff333360236700799a0c6f1a3b7d8c3",
-        "tree": "747f96e01882f97fe0e6f0eac1238e9d476bcb88",
-        "run": 41530719216,
-        "url": "https://github.com/kadirvurgun/Poseidon/actions/runs/41530719216",
+        "commit": "52a2ccfdcbc263f43bda149d1baa7843967d684a",
+        "tree": "530738845efeeaee1794e9ca508d9a39204fdfb5",
+        "run": 41537366424,
+        "url": "https://github.com/kadirvurgun/Poseidon/actions/runs/41537366424",
         "conclusion": "SUCCESS",
         "jobs": "4/4SUCCESS",
-        "api_integration": "547/547PASS;0fail/skip;1037.473s",
-        "api_unit": "91/91PASS;0fail/skip;4.265s",
+        "api_integration": "547/547PASS;0fail/skip;734.937s",
+        "api_unit": "91/91PASS;0fail/skip;3.073s",
         "python": "355 native tests",
         "ordinary_browser": "50 planned/50 passed native cases",
         "other_native_counts": "UNAVAILABLE_NOT_INFERRED",
+        "published_artifacts": 2,
         "raw_logs_persisted": false
       },
       "required_ci_history": [
@@ -4551,14 +4552,54 @@
           "api_integration": "547/547PASS;0skip/fail",
           "api_unit": "91/91PASS;0skip/fail",
           "other_native_counts": "UNAVAILABLE_NOT_INFERRED"
+        },
+        {
+          "commit": "1ab3fc428ff333360236700799a0c6f1a3b7d8c3",
+          "tree": "747f96e01882f97fe0e6f0eac1238e9d476bcb88",
+          "run": 41530719216,
+          "url": "https://github.com/kadirvurgun/Poseidon/actions/runs/41530719216",
+          "conclusion": "SUCCESS",
+          "jobs": "4/4SUCCESS",
+          "api_integration": "547/547PASS;0fail/skip;1037.473s",
+          "api_unit": "91/91PASS;0fail/skip;4.265s",
+          "python": "355 native tests",
+          "ordinary_browser": "50 planned/50 passed native cases",
+          "other_native_counts": "UNAVAILABLE_NOT_INFERRED",
+          "raw_logs_persisted": false
         }
       ],
       "source_definitions_current_checkpoint": "Clean1ab3 actual6/6 definition commands exit0; PASS_DEFINITION_ONLY,0testcases claimed; no acceptance",
       "independent_definition_adoption": "Actual separate QA source/engineering adoption for13 original task definitions on clean1ab3 and62 gitblob inputs; technical plans only, runtimeP0 and final acceptance withheld",
-      "signed_provider_current_checkpoint": "Clean1ab3 actual full lab/run.ts managerJourney+restrictedJourney2/2PASS37s; strictTLS3/3PASS0skip, same actual API hash fdad58f44ebfccb485f322a7e6ab8bfa03bc6e7d57b4d344d01b863bc5c69d7a",
+      "signed_provider_current_checkpoint": "CleanD fullmanager/restricted2/2PASS33s andstrictTLS3/3PASS0skip; separate from122",
       "signed_diagnostic_after_checkpoint": "Dirty repaired diagnostic six owning/compliance consumers +desktop qualification PASS; human assigned/scoped cases4/4PASS ondesktop+narrow, actualdecisionHTTP200 RECORDED/UNASSESSED, offline noPOST and reconnectsamevalue. Selected fifth qualification remainsPENDING afterintentional safe-boundary stop; original failures retained. Mixed diagnostic, not coherent final122 or acceptance",
-      "registered_precondition_repairs": "Six invalid source-register navigations corrected to actualsources with explicit EN; exact native roles preserve accessible names across selects/textareas; native identity disclosure and Tug named-card selectors; dedicated ordinary-command no-evaluation Ship for unchanged orphan-negative assertion"
+      "registered_precondition_repairs": "Six invalid source-register navigations corrected to actualsources with explicit EN; exact native roles preserve accessible names across selects/textareas; native identity disclosure and Tug named-card selectors; dedicated ordinary-command no-evaluation Ship for unchanged orphan-negative assertion",
+      "signed_final_attempt_history": [
+        {
+          "target": "52a2ccfdcbc263f43bda149d1baa7843967d684a",
+          "attempt": 1,
+          "passed": 30,
+          "failed": 0,
+          "pending": 92,
+          "reason": "Real owning job window ended; stopped before setup, genuine ordinary successor within existing policy bounds; no partial reuse"
+        },
+        {
+          "target": "52a2ccfdcbc263f43bda149d1baa7843967d684a",
+          "attempt": 2,
+          "passed": 46,
+          "failed": 1,
+          "pending": 75,
+          "reason": "Native Firefox IndexedDB UnknownError/NS_ERROR_FILE_ACCESS_DENIED before upgrade; enrollment200/privacyPASS; preserved failed attempt"
+        }
+      ],
+      "offline_profile_acl_repair": {
+        "scope": "Test-only fresh owned profile; product/API/frontend/crypto/SW/TLS/sandbox unchanged",
+        "diagnosis": "All22context/identity predicatesPASS andSHA256PASS; harmless emptyDB failedbefore/afterlogin andshortinsideprofile66chars; longeroutsideprofile111charspassed; protected3privilegedprincipalinsideprofilepassesnativeopen/upgrade/delete",
+        "boundary": "Only CurrentUser/SYSTEM/Administrators FullControl on exact empty ownedouter/profile; exactACLreadback; original privateRoot SDDLhashunchanged; no broadergrants/newCAroots/NSScopy",
+        "unit": "Actual17/17PASS0fail/skip,.835s; includes realWindowsjunction, externalhardlink, wrongowner/nonempty/pathescape/broadACL/readback/racemarker negatives",
+        "original_case": "Actual protected-medical offline case PASS onDproductbits+dirtyhelper; enroll200/keybind200; nativeIDB14open/33transactions0errors; actualSWactivated; original offline/privacy/reconnect/conflict assertions retained; browser startedbeforefinalhardlinkguardedit, native-recoverydiagnosisonly; finalguardbytesrequirefreshE122",
+        "scope_limit": "Local narrow repair evidence only; no partial122 reuse or phase acceptance; new clean-target full122/CI pending"
+      }
     },
-    "next": "Finish narrow human diagnostics without assertion weakening; freeze repair; actual fresh final122 and required CI; final independent exact-target task decisions and S0 gate"
+    "next": "Freeze confined test-profile repair; new required CI and fresh122allPENDING; genuine independent task/P0 decisions and exit gate; canonical acceptance only after successful gate"
   }
 }
