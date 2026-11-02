@@ -4059,5 +4059,29 @@
       "Independent exact-target QA/CI and separate source acceptance"
     ],
     "next_step": "Continue dependent foundation/S0 software, then the single coordinator-owned combined gate"
+  },
+  "ci_repair_pr12": {
+    "status": "SOURCE_TRIAGE_PREPARED_REVIEW_BLOCKED",
+    "failed_step": "tracked-repository-security-scan",
+    "observed_head": "199899133431db13d3023f2874675a1dca20d104",
+    "findings": 164,
+    "author_proposals": {
+      "public-example": 60,
+      "synthetic-fixture": 58,
+      "formal-reference": 46
+    },
+    "independent_exception_approvals": 0,
+    "installed_exceptions": 0,
+    "focused_package_tests": {
+      "passed": 4,
+      "failed": 0
+    },
+    "review_account_gate": {
+      "esra_weekly_used_percent": 87,
+      "kadir_weekly_used_percent": 93,
+      "dispatch_threshold_percent": 85
+    },
+    "report": "docs/phases/PR12-SECURITY-TRIAGE-20261102.md",
+    "canonical_acceptance_changed": false
   }
 }
