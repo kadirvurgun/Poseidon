@@ -11,6 +11,7 @@ import json
 import os
 import re
 import subprocess
+import time
 
 from oidc_lab import ROOT, root_tool
 from codex_accounts import Workers
@@ -39,8 +40,24 @@ def normalized(output):
 
 def observations(output):
     text = normalized(output)
-    return {key: [int(value) for value in re.findall(r'(?im)^\s*' + key + r'\s*:\s*(\d+)\s*$', text)]
+    return {key: [int(value) for value in re.findall(r'(?im)^\s*' + key + r'\s*:\s*(\d{1,9})\s*$', text)]
             for key in ('total', 'failed', 'succeeded', 'skipped')}
+
+
+def deadline_diagnostics(output, discovered):
+    """Identifiers are diagnostic occurrences, never completed/running test claims."""
+    raw = output if isinstance(output, bytes) else b''
+    known = set(discovered)
+    seen = []
+    for name in re.findall(r'\bPoseidon\.Api\.Tests\.[A-Za-z0-9_.]+', normalized(raw)):
+        if name in known:
+            if name in seen:
+                seen.remove(name)
+            seen.append(name)
+    return {'output_sha256': hashlib.sha256(raw).hexdigest(),
+            'static_identifier_count': len(seen), 'last_static_identifiers': seen[-8:],
+            'identifier_semantics': 'diagnostic_occurrence_only',
+            'partial_count_observations': observations(raw)}
 
 
 def command(scope):
@@ -57,6 +74,8 @@ def run(scope, root=ROOT, timeout=1800):
     args = command(scope)
     evidence = {'scope': scope, 'status': 'FAILED_OR_UNPROVEN', 'raw_output_persisted': False,
                 'started_at': datetime.now(timezone.utc).isoformat()}
+    started = time.monotonic()
+    stage, discovered = 'discovery', []
     try:
         discovery = capture([*args, '--list-tests'], root, min(timeout, 120))
         discovered = re.findall(r'(?m)^\s*(Poseidon\.Api\.Tests\.[A-Za-z0-9_.]+)', normalized(discovery.stdout))
@@ -65,7 +84,8 @@ def run(scope, root=ROOT, timeout=1800):
         if discovery.returncode or not discovered:
             evidence['status'] = 'DISCOVERY_FAILED_OR_EMPTY'
             return 2, evidence
-        execution = capture(args, root, timeout)
+        stage = 'execution'
+        execution = capture([*args, '--output', 'Detailed'], root, timeout)
         counts = observations(execution.stdout)
         evidence.update(exit_code=execution.returncode, count_observations=counts,
                         output_sha256=hashlib.sha256(execution.stdout).hexdigest())
@@ -82,13 +102,16 @@ def run(scope, root=ROOT, timeout=1800):
             evidence['status'] = 'PASS_EXACT_DISCOVERED_SCOPE'
             return 0, evidence
         return execution.returncode or 2, evidence
-    except subprocess.TimeoutExpired:
+    except subprocess.TimeoutExpired as expired:
         evidence['status'] = 'INTERRUPTED_DEADLINE'
+        evidence['interrupted_stage'] = stage
+        evidence['deadline_diagnostics'] = deadline_diagnostics(expired.output, discovered)
         return 2, evidence
     except Exception:
         evidence['status'] = 'GATE_EXECUTION_FAILED'
         return 2, evidence
     finally:
+        evidence['elapsed_seconds'] = round(time.monotonic() - started, 3)
         evidence['finished_at'] = datetime.now(timezone.utc).isoformat()
 
 

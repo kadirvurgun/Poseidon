@@ -11,7 +11,7 @@ class ModelPolicy:
     def __init__(self, root):
         try:
             self.value = json.loads((Path(root) / 'automation/model-policy.json').read_text(encoding='utf-8'))
-            if (self.value['schemaVersion'] != 1 or self.value['speed'] != 'standard'
+            if (self.value['schemaVersion'] != 1 or self.value['speed'] not in {'standard', 'fast'}
                     or self.value['automaticEscalation'] is not False):
                 raise ValueError()
             roles = self.value['roles']
@@ -39,12 +39,16 @@ class ModelPolicy:
             # Unclassified/new tasks retain the stronger review until deliberately classified.
             role = ('security_qa' if task_id in self.value['criticalReviewTasks']
                     or task_id not in self.value['taskRoles'] else 'independent_qa')
-        return {'role': role, **self.value['roles'][role]}
+        return {'role': role, **self.value['roles'][role],
+                'service_tier': 'fast' if self.value['speed'] == 'fast' else 'default'}
 
     @staticmethod
     def arguments(choice):
+        tier = choice.get('service_tier', 'default')
+        if tier not in {'default', 'fast'}:
+            raise ModelPolicyError('unknown_service_tier')
         return ['--model', choice['model'], '-c', 'model_reasoning_effort="' + choice['effort'] + '"',
-                '-c', 'service_tier="default"']
+                '-c', 'service_tier="' + tier + '"']
 
     @staticmethod
     def advertised(home, choice):
@@ -57,8 +61,13 @@ class ModelPolicy:
             models = json.loads((Path(home) / 'models_cache.json').read_text(encoding='utf-8'))['models']
             for model in models:
                 if model.get('slug') == choice['model'] and model.get('visibility') == 'list':
-                    return choice['effort'] in [item.get('effort') for item in
-                                               model.get('supported_reasoning_levels', [])]
+                    effort_available = choice['effort'] in [item.get('effort') for item in
+                                                           model.get('supported_reasoning_levels', [])]
+                    tier = choice.get('service_tier', 'default')
+                    fast_available = ('fast' in model.get('additional_speed_tiers', [])
+                                      or any(item.get('id') in {'fast', 'priority'}
+                                             for item in model.get('service_tiers', []) if isinstance(item, dict)))
+                    return effort_available and (tier == 'default' or tier == 'fast' and fast_available)
         except (OSError, ValueError, KeyError, TypeError, AttributeError):
             pass
         return False

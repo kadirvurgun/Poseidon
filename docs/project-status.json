@@ -1114,7 +1114,7 @@
     "verification_record_scope": "Authored/deferred and original20f1198 results are historical;current rejection-repair evidence in core_bundle_01.verification"
   },
   "baseline": "POSEIDON v46.3 updated 2026-10-30 / Library26 candidate",
-  "current_stage": "Today/Why maintenance composition authored:4 domain,8 API,11 React/contract cases and1 browser journey; checks deferred.13 code/test files syntax-inspected. PR12 e92581c source scan164 pending genuine independent approval;595-case execution interrupted. Canonical8/970 unchanged.",
+  "current_stage": "PR12: Fast automation routing and bounded API timeout diagnostics authored; focused helper tests22/22PASS. Actual Esra native source review on9fb074e:1approved/163blocked because semantic evidence is insufficient; no exceptions, protected pin or merge. New exact-target CI and independent product QA remain required. Canonical8/970 unchanged.",
   "method": "accepted story points / total baseline story points * 100",
   "scope": "complete v46.3 Backlog sheet; duplicates in other sheets excluded",
   "total_tasks": 121,
@@ -4188,5 +4188,12 @@
       "docs/tasks/today-why-01.md": "79e1c76dfa6a4a993abb34a8d74882a8620a4a410b93f25008a64260596216a5",
       "docs/phases/TODAY-MAINTENANCE-20261102.md": "0de932f292124e64c3ece1c642f9decf070277ed58db126435bd853db67bdc01"
     }
+  },
+  "pr12_fast_diagnostics": {
+    "report": "docs/phases/PR12-FAST-DIAGNOSTICS-20261102.md",
+    "helper_tests_passed": 22,
+    "source_review_approved": 1,
+    "source_review_blocked": 163,
+    "canonical_acceptance_changed": false
   }
 }

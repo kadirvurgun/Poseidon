@@ -13,7 +13,12 @@ Esra meşgul/kimliği veya bağlantısı belirsizken Kadir'e geçilmez.
 | Dar kapsamlı rutin düzenleme, test yazımı, rutin bağımsız QA | GPT-6 Luna | medium |
 | Karmaşık geliştirme, güvenlik ve sınıflandırılmamış görev incelemesi | GPT-6.1 Sol | medium |
 
-Standart hız kullanılır. Yeni görevler açıkça sınıflandırılmadan ucuz inceleme
+02.11.2026 kullanıcı hız talebiyle Fast kullanılır; CLI çağrısına açıkça
+`service_tier="fast"` aktarılır ve çağrı kaydında seçilen hız saklanır. Modelin
+hesap kataloğunda Fast/priority desteği doğrulanmadan çağrı başlatılmaz. Bu tercih
+yerel istemci ayarını `default` ile ezmez. Fast kotayı daha hızlı tüketebilir;
+sunucunun fiilen uyguladığı hız bilinmiyorsa yalnız istenen hız olarak raporlanır.
+Yeni görevler açıkça sınıflandırılmadan ucuz inceleme
 yoluna alınmaz. Otomatik pahalı modele yükseltme yoktur. Erişim doğrulanamıyorsa
 görev bekler; farklı modele sessiz geçilmez. Bağımsız QA'nın bulguları somut
 kabul kriterleri ve test kanıtlarıyla değerlendirilir; daha ucuz model seçmek

@@ -71,6 +71,42 @@ class ApiTestGateTests(unittest.TestCase):
         stop.assert_called_once_with(process)
         process.stdout.close.assert_called_once()
 
+    def test_execution_deadline_exposes_only_discovered_identifiers_and_stays_nonpassing(self):
+        discovery = b'Poseidon.Api.Tests.Cases.Actual_case\n'
+        partial = (b'Poseidon.Api.Tests.Cases.Actual_case(private-parameter)\n'
+                   b'Poseidon.Api.Tests.Foreign.secret_name\nprivate-diagnostic-body\n'
+                   b'total: 1\nfailed: 0\nsucceeded: 1\nskipped: 0\n')
+        with patch.object(gate, 'root_tool', return_value='dotnet'), patch.object(gate, 'capture', side_effect=[
+                subprocess.CompletedProcess([], 0, discovery), subprocess.TimeoutExpired('dotnet', 1, output=partial)]) as capture:
+            code, evidence = gate.run('integration')
+        self.assertEqual(2, code)
+        self.assertEqual('INTERRUPTED_DEADLINE', evidence['status'])
+        self.assertEqual('execution', evidence['interrupted_stage'])
+        detail = evidence['deadline_diagnostics']
+        self.assertEqual(['Poseidon.Api.Tests.Cases.Actual_case'], detail['last_static_identifiers'])
+        self.assertEqual('diagnostic_occurrence_only', detail['identifier_semantics'])
+        self.assertEqual([1], detail['partial_count_observations']['succeeded'])
+        self.assertNotIn('private-', json.dumps(evidence))
+        self.assertNotIn('secret_name', json.dumps(evidence))
+        self.assertIn('--output', capture.call_args_list[1].args[0])
+        self.assertIn('Category=Integration', capture.call_args_list[1].args[0])
+
+    def test_discovery_deadline_cannot_authorize_output_names(self):
+        with patch.object(gate, 'root_tool', return_value='dotnet'), patch.object(gate, 'capture',
+                side_effect=subprocess.TimeoutExpired('dotnet', 1, output=b'Poseidon.Api.Tests.Cases.Untrusted')):
+            code, evidence = gate.run('all')
+        self.assertEqual(2, code)
+        self.assertEqual('discovery', evidence['interrupted_stage'])
+        self.assertEqual([], evidence['deadline_diagnostics']['last_static_identifiers'])
+
+    def test_partial_diagnostic_names_are_bounded_and_repeated_names_move_to_end(self):
+        names = ['Poseidon.Api.Tests.Cases.Test' + str(i) for i in range(12)]
+        output = ('\n'.join(names + [names[0]])).encode()
+        detail = gate.deadline_diagnostics(output, names)
+        self.assertEqual(12, detail['static_identifier_count'])
+        self.assertEqual(names[5:] + [names[0]], detail['last_static_identifiers'])
+        self.assertEqual([], gate.observations(b'total: ' + b'9' * 5000)['total'])
+
     def test_required_ci_uses_the_real_owned_provider_and_value_free_scope_gate(self):
         workflow = (gate.ROOT / '.github/workflows/backend-foundation.yml').read_text(encoding='utf-8')
         self.assertIn('docker build --iidfile .runtime/s3-gate-image-id --file infra/s3-gate/Dockerfile infra/s3-gate', workflow)

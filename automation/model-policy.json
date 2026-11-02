@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "speed": "standard",
+  "speed": "fast",
   "roles": {
     "routine": { "model": "gpt-6-luna", "effort": "medium" },
     "test-writing": { "model": "gpt-6-luna", "effort": "medium" },
