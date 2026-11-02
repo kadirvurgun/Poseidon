@@ -49,6 +49,70 @@ class SourceSemanticEvidenceTests(unittest.TestCase):
         self.assertEqual('Call', shape['kind'])
         self.assertIn('token_urlsafe', json.dumps(shape))
 
+    def test_exact_write_argument_and_generated_reference_are_bound_without_values(self):
+        marker = 'synthetic-' + 'withheld-marker'
+        assignment = 'password' + " = '" + marker + "'"
+        text = ('import secrets\ndef make_fixture():\n    generated = secrets.token_urlsafe(32)\n'
+                '    write_config(' + repr(assignment) + ' + generated)\n')
+        target = next(secret_scan.findings(text, 'fixture.py'))
+        evidence = semantic.exact_call_evidence(text, target)
+        self.assertEqual(secret_scan.object_hash(target), evidence['target_sha256'])
+        call = evidence['calls'][0]
+        self.assertLessEqual(call['start'], target['occurrence'])
+        self.assertGreaterEqual(call['end'], evidence['matched_end'])
+        self.assertEqual(2, call['scope_line'])
+        self.assertIn('token_urlsafe', json.dumps(call['reference_definitions']))
+        self.assertNotIn(marker, json.dumps(evidence))
+
+    def test_same_name_from_an_unrelated_function_is_not_generation_proof(self):
+        marker = 'synthetic-' + 'withheld-marker'
+        assignment = 'password' + " = '" + marker + "'"
+        text = ('def unrelated():\n    generated = secrets.token_urlsafe(32)\n'
+                'def actual():\n    write_config(' + repr(assignment) + ' + generated)\n')
+        target = next(secret_scan.findings(text, 'fixture.py'))
+        evidence = semantic.exact_call_evidence(text, target)
+        self.assertEqual([], evidence['calls'][0]['reference_definitions'])
+
+    def test_supplement_rejects_noncall_and_unknown_targets(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); pending = self.pending(root, ('a.py', 'b.py'))
+            # This fixture's match is an assignment, not a call: fail closed.
+            identity = secret_scan.object_hash(pending['entries'][0]['proposal']['target'])
+            with self.assertRaisesRegex(ValueError, 'exact-call-unresolved-or-budget'):
+                semantic.build_semantic_package(root, pending, [identity])
+            with self.assertRaisesRegex(ValueError, 'unknown-supplemental-target'):
+                semantic.build_semantic_package(root, pending, ['0' * 64])
+
+    def test_supplement_preserves_all_other_proposals_and_shared_bodies(self):
+        marker = 'synthetic-' + 'withheld-marker'
+        assignment = 'password' + " = '" + marker + "'"
+        text = 'def fixture():\n    generated = secrets.token_urlsafe(32)\n    write_config(' + repr(assignment) + ' + generated)\n'
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); targets, decisions = [], {}
+            for name in ('a.py', 'b.py'):
+                (root / name).write_text(text, encoding='utf-8')
+                target = next(secret_scan.findings(text, name)); targets.append(target)
+                decisions[secret_scan.object_hash(target)] = {
+                    'classification': 'synthetic-fixture',
+                    'rationale': 'Author proposal for an isolated synthetic writer fixture; independent approval remains required.',
+                    'provenance': [{'line': 1, 'role': 'fixture'}]}
+            pending = build_package(root, targets, decisions, 'fixture-author')
+            original = semantic.build_semantic_package(root, pending)
+            identity = secret_scan.object_hash(original['entries'][0]['proposal']['target'])
+            updated = semantic.build_semantic_package(root, pending, [identity])
+            self.assertEqual(original['semantic_bodies'], updated['semantic_bodies'])
+            self.assertEqual(original['entries'][1], updated['entries'][1])
+            self.assertNotEqual(original['entries'][0]['proposal_sha256'], updated['entries'][0]['proposal_sha256'])
+            self.assertEqual(original['entries'][0]['proposal']['target'], updated['entries'][0]['proposal']['target'])
+
+    def test_exact_call_offsets_convert_python_utf8_columns_to_source_characters(self):
+        marker = 'synthetic-' + 'withheld-marker'
+        assignment = 'password' + " = '" + marker + "'"
+        text = 'é = 1; write_config(' + repr(assignment) + ')\n'
+        target = next(secret_scan.findings(text, 'fixture.py'))
+        evidence = semantic.exact_call_evidence(text, target)
+        self.assertEqual(text.index('write_config('), evidence['calls'][0]['start'])
+
     def test_masking_precedes_cropping_at_both_sides_of_a_credential(self):
         marker = 'gh' + 'p_' + 'q' * 36
         text = 'prefix ' + marker + ' suffix'

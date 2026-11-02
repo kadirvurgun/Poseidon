@@ -110,9 +110,76 @@ def semantic_context(text):
                          'text': redacted_window(text, start, end, masks)} for start, end in merged]}
 
 
-def build_semantic_package(root, pending):
+def exact_call_evidence(text, target):
+    """Bind a withheld span to the actual call argument and its local definitions."""
+    matches = [m for m in secret_scan.RULES[target['rule']].finditer(text)
+               if m.start() == target['occurrence']
+               and secret_scan.digest(m.group().encode()) == target['fingerprint']]
+    if len(matches) != 1:
+        raise ValueError('exact-call-match-unresolved')
+    tree = ast.parse(text)
+    nodes = list(ast.walk(tree))
+    parents = {child: parent for parent in nodes for child in ast.iter_child_nodes(parent)}
+    lines = text.splitlines(keepends=True)
+    starts = [0]
+    for line in lines:
+        starts.append(starts[-1] + len(line))
+    def offset(line, column):
+        return starts[line - 1] + len(lines[line - 1].encode('utf-8')[:column].decode('utf-8'))
+    def enclosing(node):
+        while node in parents:
+            node = parents[node]
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda)):
+                return node
+        return None
+    match = matches[0]
+    calls = []
+    for node in nodes:
+        if not isinstance(node, ast.Call):
+            continue
+        start, end = offset(node.lineno, node.col_offset), offset(node.end_lineno, node.end_col_offset)
+        if not start <= match.start() < match.end() <= end:
+            continue
+        scope = enclosing(node)
+        names = {n.id for arg in [*node.args, *(k.value for k in node.keywords)]
+                 for n in ast.walk(arg) if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Load)}
+        selected, included = [], set()
+        # Resolve chains of local/module assignments; include all eligible
+        # definitions rather than silently selecting one conditional branch.
+        for _ in range(8):
+            added = False
+            for definition in nodes:
+                if not isinstance(definition, (ast.Assign, ast.AnnAssign)) or definition in included:
+                    continue
+                targets = definition.targets if isinstance(definition, ast.Assign) else [definition.target]
+                stored = {n.id for t in targets for n in ast.walk(t) if isinstance(n, ast.Name)}
+                if (not names.intersection(stored) or definition.lineno > node.end_lineno
+                    or enclosing(definition) not in (None, scope)):
+                    continue
+                included.add(definition); selected.append(definition); added = True
+                if definition.value is not None:
+                    names.update(n.id for n in ast.walk(definition.value)
+                                 if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Load))
+            if not added:
+                break
+        if len(selected) > 32:
+            raise ValueError('exact-call-binding-budget')
+        budget = [10000]
+        calls.append({'start': start, 'end': end, 'line': node.lineno,
+                      'scope_line': scope.lineno if scope is not None else None,
+                      'call_shape': ast_shape(node, budget),
+                      'reference_definitions': [ast_shape(n, budget) for n in sorted(selected, key=lambda n: n.lineno)]})
+    if not calls or len(calls) > 16:
+        raise ValueError('exact-call-unresolved-or-budget')
+    return {'target_sha256': secret_scan.object_hash(target), 'matched_start': match.start(),
+            'matched_end': match.end(), 'calls': sorted(calls, key=lambda c: c['end'] - c['start']),
+            'semantics': 'exact call argument and scope-bound reference shapes; constants withheld; not approval'}
+
+
+def build_semantic_package(root, pending, supplement_targets=()):
     root = Path(root).resolve()
     entries, bodies, contexts, presentations, identity_keys = [], {}, {}, {}, set()
+    supplement_targets = set(supplement_targets)
     for entry in pending['entries']:
         proposal = entry['proposal']
         target = proposal['target']
@@ -141,17 +208,21 @@ def build_semantic_package(root, pending):
                 bodies[body_hash] = shape
                 presentations[presentation_hash] = body_hash
             body_hash = presentations[presentation_hash]
-            contexts[target['path']] = actual, body_hash
-        actual, body_hash = contexts[target['path']]
+            contexts[target['path']] = actual, body_hash, text
+        actual, body_hash, text = contexts[target['path']]
         if target not in actual:
             raise ValueError('stale-source-binding')
         evidence = {'target': target, 'semantic_body_sha256': body_hash,
                     'provenance': entry['evidence']['provenance']}
+        if identity in supplement_targets:
+            evidence['exact_call_argument_evidence'] = exact_call_evidence(text, target)
         proposal = {**proposal, 'evidence_sha256': secret_scan.object_hash(evidence)}
         entries.append({'proposal': proposal, 'proposal_sha256': secret_scan.object_hash(proposal),
                         'evidence': evidence})
     if not entries:
         raise ValueError('empty-source-package')
+    if not supplement_targets <= identity_keys:
+        raise ValueError('unknown-supplemental-target')
     result = {'schema_version': 'source-semantic-review-v1', 'status': 'pending-independent-review',
               'is_exception_file': False, 'entries': entries, 'semantic_bodies': bodies,
               'receipts': [], 'exceptions': []}
@@ -174,8 +245,9 @@ def main():
     parser.add_argument('--root', type=Path, default=Path(__file__).resolve().parents[1])
     parser.add_argument('--input', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--supplement-target', action='append', default=[])
     args = parser.parse_args()
-    package = build_semantic_package(args.root, json.loads(args.input.read_text(encoding='utf-8')))
+    package = build_semantic_package(args.root, json.loads(args.input.read_text(encoding='utf-8')), args.supplement_target)
     args.output.write_text(json.dumps(package, ensure_ascii=False, separators=(',', ':')) + '\n', encoding='utf-8', newline='\n')
     print(json.dumps({'entries': len(package['entries']), 'semantic_bodies': len(package['semantic_bodies']),
                       'approved': 0, 'exceptions': 0}))

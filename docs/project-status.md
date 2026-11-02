@@ -1,5 +1,10 @@
 > Current: **FOUNDATION-ACCEPTANCE-BUNDLE-01 — INCOMPLETE / actual local execution / NOT ACCEPTED.** Release builds, actual API/TS generation, current EF check/model-seed regression,536Domain/14persistence-unit/82API-unit,821components,248Python and46ordinary Playwright cases pass. Full persistence fails3/74; API integration is executing with actual failures; lint/security/genuine-provider/full-selected-software gates remain open. No canonical SP, independent QA, CI or publication. [Current report](phases/FOUNDATION-ACCEPTANCE-BUNDLE-01.md) · [exact gate evidence](phases/foundation-acceptance-bundle-01.evidence.json) · [source/task mapping](tasks/foundation-acceptance-bundle-01.md).
 
+## 02.11 — Üç yazma çağrısının kanıtı
+
+Gerçek kaynak incelemesi161onay/3engel. Üç kayıt için exact-call/yerel referans kanıtı eklendi;161onaylı kayıt değişmedi.47/47odaklı test geçti. Tam bağımsız kapanış bekliyor, istisna/pin/merge yok. [Kanıt ve faz](phases/PR12-SEMANTIC-SOURCE-20261102.md). Canonical8/970SP (%0.82) korunuyor.
+
+
 ## 02.11 — Anlamı koruyan güvenlik kanıtı
 
 Kaynak eşleşmeleri için değerleri gizleyen okunabilir bağlam, Python scope ve RHS şekli eklendi. Odaklı testler42/42 geçti.164kaydın yeniden üretimi ve gerçek bağımsız incelemesi bekliyor; istisna/pin/merge/kabul yok. [Faz ve kapsam](phases/PR12-SEMANTIC-SOURCE-20261102.md). Canonical8/970SP (%0.82) korunuyor.
