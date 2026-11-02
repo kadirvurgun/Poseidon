@@ -177,7 +177,12 @@ public static class LifecycleApplicabilityEndpoints
                 if (revisions.Any(r => r.RuleJson == null)) return await Fail(h, 409, "incomplete_rule");
                 var (profileRevision, facts) = await ApplicabilityContextResolver.Resolve(db, vessel, asOf, ct);
                 var snapshot = JsonSerializer.SerializeToElement(new { adapterVersion = ApplicabilityEngine.AdapterVersion, vesselId = vessel.Id, vesselVersion = vessel.Version, profileRevision, asOf, facts }, Json);
-                var snapshotJson = snapshot.GetRawText(); var results = revisions.Select(r => new EvaluationPrediction(r.Id, r.Revision, r.Hash, r.SourceId, r.SourceRevision, r.RequirementId, r.RequirementRevision,
+                // Hash the same JsonElement representation emitted by the DTO.
+                // Typed DateTimeOffset serialization and subsequent JsonElement
+                // serialization can escape '+' differently without changing data.
+                var snapshotJson = JsonSerializer.Serialize(snapshot, Json);
+                snapshot = JsonSerializer.Deserialize<JsonElement>(snapshotJson, Json);
+                var results = revisions.Select(r => new EvaluationPrediction(r.Id, r.Revision, r.Hash, r.SourceId, r.SourceRevision, r.RequirementId, r.RequirementRevision,
                     ApplicabilityEngine.Preview(ApplicabilityEngine.Parse(r.RuleJson!), facts, asOf))).ToArray();
                 var ruleSetHash = RegisterStorage.Hash(JsonSerializer.Serialize(revisions.Select(r => new { r.Id, r.Revision, r.Hash, r.SourceId, r.SourceRevision, r.RequirementId, r.RequirementRevision }), Json));
                 resource = Guid.NewGuid();
@@ -223,7 +228,8 @@ public static class LifecycleApplicabilityEndpoints
                     var owningProvenance = await OperationEquipmentContext.Provenance(db, vessel.Id, evaluate.OwningInputs, ct, resource);
                     snapshot = JsonSerializer.SerializeToElement(new { adapterVersion = ApplicabilityEngine.AdapterVersion, vesselId = vessel.Id,
                         vesselVersion = vesselHead.Version, vesselContextHash = CurrentRegulatoryContext.VesselHash(vesselHead), profileRevision, asOf, facts, qualifications, owningInputs = evaluate.OwningInputs, owningProvenance }, Json);
-                    snapshotJson = snapshot.GetRawText();
+                    snapshotJson = JsonSerializer.Serialize(snapshot, Json);
+                    snapshot = JsonSerializer.Deserialize<JsonElement>(snapshotJson, Json);
                     conflicts = ApplicabilityEngine.Conflicts(revisions.Select((r, i) => new RuleCandidate($"{r.Id:D}/{r.Revision}", ApplicabilityEngine.Parse(r.RuleJson!), results[i].Prediction)));
                     outcome = new EvaluationDto(resource, vessel.Id, now, asOf, ApplicabilityEngine.AdapterVersion, profileRevision, RegisterStorage.Hash(snapshotJson), snapshot,
                         ruleSetHash, results, conflicts, Preview: false, Authoritative: true, CurrentResult: conflicts.Length > 0 || results.Any(x => x.Prediction.CurrentResult == "REVIEW_REQUIRED") ? "REVIEW_REQUIRED" : "CURRENT", Simulation: false);

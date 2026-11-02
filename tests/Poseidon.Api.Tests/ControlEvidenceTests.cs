@@ -85,7 +85,13 @@ public sealed partial class DirectoryWorkspaceTests
         var a = await GraphSave(c, "controls", GraphCommand() with { Requirements = [pin] });
         var b = await GraphSave(c, "controls", GraphCommand() with { Requirements = [pin2] });
         var evidence = await GraphSave(c, "evidence", GraphCommand(content: new(Title: "FICTIONAL incomplete evidence")) with { Requirements = [pin, pin2], Links = [new("Control", a.Id, 1, a.Version), new("Control", b.Id, 1, b.Version)] });
-        Assert.Equal(2, evidence.Links.Length); Assert.False(evidence.EvidenceExists); Assert.Contains("CLEAN_FILE_MISSING", evidence.Blockers);
+        Assert.Equal(2, evidence.Links.Length); Assert.False(evidence.EvidenceExists);
+        // RAC-05: a file is mandatory only when the qualified source policy
+        // requires one. These source/requirement-only pins have no admitted
+        // rule or authoritative evaluation; those unresolved gates stay visible.
+        Assert.Contains("APPLICABILITY_LINK_MISSING", evidence.Blockers);
+        Assert.Contains("AUTHORITATIVE_EVALUATION_UNAVAILABLE", evidence.Blockers);
+        Assert.DoesNotContain("CLEAN_FILE_MISSING", evidence.Blockers);
         var relink = await GraphSave(c, $"evidence/{evidence.Id}", GraphCommand(evidence.Version, evidence.Content) with { Requirements = [pin], Links = [new("Control", b.Id, 1, b.Version)] }, update: true);
         var history = await c.GetFromJsonAsync<JsonElement>("/api/v1/" + GraphRoute($"evidence/{evidence.Id}/versions"), Ct);
         var old = history.GetProperty("items").EnumerateArray().Single(x => x.GetProperty("revision").GetInt64() == 1); Assert.Equal(2, old.GetProperty("links").GetArrayLength()); Assert.Equal(2, old.GetProperty("requirements").GetArrayLength()); Assert.Equal("SUPERSEDED", old.GetProperty("timeState").GetString()); Assert.Single(relink.Links);

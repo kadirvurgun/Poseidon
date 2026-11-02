@@ -36,7 +36,7 @@ public sealed partial class DirectoryWorkspaceTests
             settings.Memberships[0] = settings.Memberships[0] with { Permissions = [..settings.Memberships[0].Permissions, "tug.owner.eligible"] };
             planning.Scopes = [new(Tug.TenantId, settings.Memberships[0].ActorId, Tug.Id, [Tug.Id])];
             var job = await PlanningJob(c);
-            using (var edited = await Send(c, $"tug-jobs/{job.Id}?vessel={Tug.Id}", new TugSaveCommand(job.Id, job.Version, job.Inputs with { JobType = "Harbour Towage", OperationArea = "FICTIONAL-AREA", RequestSource = "Internal", RequestedStart = DateTimeOffset.UtcNow.AddMinutes(-1), RequiredTugCount = 1, Priority = "Normal", RequestOwner = settings.Memberships[0].ActorId }), update: true)) {
+            using (var edited = await Send(c, $"tug-jobs/{job.Id}?vessel={Tug.Id}", new TugSaveCommand(job.Id, job.Version, job.Inputs with { JobType = "Harbour Towage", OperationArea = "FICTIONAL-AREA", RequestSource = "Internal", RequestedStart = DateTimeOffset.UtcNow.AddMinutes(-1), RequiredTugCount = 1, Priority = "Normal", RequestOwner = ReviewRole }), update: true)) {
                 Assert.Equal(HttpStatusCode.OK, edited.StatusCode); job = (await edited.Content.ReadFromJsonAsync<TugRequestDto>(Ct))!;
             }
             var plan = await ChangePlan(c, job, null, new("Window", DateTimeOffset.UtcNow.AddMinutes(-1), DateTimeOffset.UtcNow.AddHours(1)));

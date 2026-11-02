@@ -5,6 +5,14 @@ namespace Poseidon.Persistence.Tests;
 
 public sealed class SecurityEventWriterValidationTests
 {
+    [Theory]
+    [InlineData("catalog_incomplete")]
+    [InlineData("invalid_transition")]
+    public void Catalog_governance_rejections_are_fixed_auditable_results(string result)
+    {
+        Assert.True(SecurityEventCodes.Allows("CrewCatalog", result));
+        Assert.False(SecurityEventCodes.Allows("CrewCatalog", result + "-request-value"));
+    }
     [Fact]
     public async Task Append_rejects_unrecognized_action_or_result_before_database_access()
     {

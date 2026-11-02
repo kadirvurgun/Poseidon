@@ -144,7 +144,9 @@ public static class RegulatoryDraftEndpoints
             if (content.ConstructionRecord is { } record) {
                 var stage = await db.FileStages.SingleOrDefaultAsync(s => s.Id == record.Id && s.VesselId == id && s.PersonId == null && s.DocumentId == null && s.State == "CleanTransport", http.RequestAborted);
                 if (stage == null) return await Fail(403, "construction_record_unavailable");
-                db.Entry(stage).Property(s => s.State).IsModified = true;
+                // CleanTransport is terminal and database-immutable. A no-op
+                // UPDATE is forbidden by guard_stage; retain the exact read
+                // here and the live access check before commit instead.
             }
             if (draft == null)
             {

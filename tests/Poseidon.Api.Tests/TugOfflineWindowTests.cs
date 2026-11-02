@@ -74,7 +74,9 @@ public sealed partial class DirectoryWorkspaceTests
         using var host = PlanningHost(OfflinePlanningPolicy()); using var c = Client(host); await Token(c);
         var job = await PlanningJob(c); var plan = await ChangePlan(c, job, null, new("Window"));
         using var key = ECDsa.Create(ECCurve.NamedCurves.nistP256); var e = await EnrollTug(c, job.Id, key); var cmd = TugCaptured(e);
-        plan = await ChangePlan(c, job, plan, new("Window", null, DateTimeOffset.UtcNow.AddHours(2)));
+        // Match PostgreSQL's exact persisted microsecond precision before the
+        // command, retaining strict equality after keep-server resolution.
+        plan = await ChangePlan(c, job, plan, new("Window", null, PostgresInstant(DateTimeOffset.UtcNow.AddHours(2))));
         using var delivered = await DeliverTug(c, e, cmd, key); var conflict = (await delivered.Content.ReadFromJsonAsync<TugOfflineResult>(Ct))!;
         Assert.Equal("MaterialConflict", conflict.Result); Assert.Equal(plan.Version, conflict.ServerVersion);
         var detail = await c.GetFromJsonAsync<JsonElement>("/api/v1/" + PlanningUrl(job.Id, $"/offline/{e.Id}/conflicts/{cmd.CommandId}"), Ct);

@@ -15,3 +15,11 @@ Actual preceding GitHub head b7926a3: full tracked repository scan PASS; Release
 - The API gate exports only existing test source filenames/line numbers for failures, enabling diagnosis without persisting request, exception or SDK bodies.
 
 Verification so far: API gate helper13/13 PASS; API project Release build0 warnings/errors before final audit-test adjustment; maintenance historical-reference regression1/1 PASS. An incremental rebuild concurrent with an owned test failed from Windows apphost file locking; this is not a code/build PASS, and a serialized rebuild is required. Final targeted regressions, required exact-head CI and independent target review remain PENDING. No test removed, disabled or weakened; no check bypass. Canonical8/970 SP and operational/human approval gates unchanged.
+
+## Additional isolated failures found before the next CI round
+
+At f69d838 the focused Compliance6, Capacity7, Today1, maintenance-history1 and audit-scope1 cases passed (16 total). Four further isolated regressions failed: stale unconditional file blocker assertion, missing catalog audit result codes, simulation snapshot wire/hash escaping mismatch, and a second submicrosecond fixture timestamp. Construction-record and operation/service cases exposed a forbidden no-op update to immutable CleanTransport and a fixture passing an actor ID where the API requires a provisioned role ID. These failures were not counted as passing.
+
+The next delta keeps optional files source-policy dependent, adds only the two closed catalog governance audit codes (catalog_incomplete, invalid_transition) with negative-vocabulary coverage, normalizes the snapshot JsonElement to its actual emitted JSON before computing its exact hash, fixes the timestamp/role fixtures, and removes the invalid terminal-stage UPDATE. Real clean-stage lookup, exact file FK, transactional checks and post-write RecordAccess remain. CleanTransport is already immutable in the database; its trigger is unchanged. Prior immutable snapshot rows/hashes are not rewritten.
+
+Final serialized solution build, affected regressions and exact-head CI/independent review are pending for this additional delta. Autocomplete is temporarily disabled while the new delta awaits review. No gate, assertion of meaning, or privacy rule is removed; canonical8/970 remains unchanged.

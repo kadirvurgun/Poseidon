@@ -36,6 +36,7 @@ public static class SecurityEventCodes
         "Invalid", "NotFound", "SetupRequired", "Success",
         "Unauthenticated", "acknowledgment_role_required", "assignment_policy_denied", "attestation_authority_changed",
         "attestation_policy_mismatch", "authoritative_evaluation_unavailable", "catalog_authority_changed", "catalog_version_reused",
+        "catalog_incomplete", "invalid_transition",
         "clean_file_unavailable", "command_reuse_conflict", "conflict_changed", "construction_record_required",
         "construction_record_unavailable", "csrf_invalid", "current_evaluation_requires_server_time", "decision_content_required",
         "decision_type_gate_unavailable", "duplicate_code", "duplicate_lineage", "enrollment_limit",
