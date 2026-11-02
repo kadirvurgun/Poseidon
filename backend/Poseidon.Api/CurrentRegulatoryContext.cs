@@ -7,6 +7,13 @@ namespace Poseidon.Api;
 
 internal static class CurrentRegulatoryContext
 {
+    // Compare captures using the exact same JSON encoder as the emitted snapshot.
+    // Escape spelling cannot invalidate unchanged provenance; number lexemes,
+    // array order, property order and actual string values remain significant.
+    internal static bool MatchesCapturedJson(JsonElement current, JsonElement captured) =>
+        JsonSerializer.Serialize(current, RegulatoryQualificationEndpoints.Json) ==
+        JsonSerializer.Serialize(captured, RegulatoryQualificationEndpoints.Json);
+
     // Recheck a recorded profile attestation's real, current server appointment.
     // Historical author provenance is retained even after its grant is withdrawn.
     internal static bool AttestationCurrent(FederationSettings settings, RegulatoryFactAttestation e, DateTimeOffset now)
@@ -84,7 +91,7 @@ internal static class CurrentRegulatoryContext
                 var currentIds = ComplianceInputContext.DocumentIds(refs);
                 var available = await db.ControlEvidenceHeads.CountAsync(b => b.VesselId == vessel && b.Kind == "Evidence" && currentIds.Contains(b.Id), ct);
                 if (available != currentIds.Length) causes.Add("OWNING_INPUT_CHANGED");
-                else if (JsonSerializer.SerializeToElement(await OperationEquipmentContext.Provenance(db, vessel, refs, ct), RegulatoryQualificationEndpoints.Json).GetRawText() != provenance.GetRawText()) causes.Add("OWNING_INPUT_CHANGED");
+                else if (!MatchesCapturedJson(JsonSerializer.SerializeToElement(await OperationEquipmentContext.Provenance(db, vessel, refs, ct), RegulatoryQualificationEndpoints.Json), provenance)) causes.Add("OWNING_INPUT_CHANGED");
             }
             foreach (var capture in snapshot.RootElement.GetProperty("qualifications").EnumerateArray()) {
                 var q = await db.RegulatoryQualificationEvents.AsNoTracking().SingleAsync(x => x.RuleId == capture.GetProperty("ruleId").GetGuid() && x.Revision == capture.GetProperty("revision").GetInt64(), ct);
@@ -92,7 +99,7 @@ internal static class CurrentRegulatoryContext
                 var current = new SortedDictionary<string, ContextFact>(original, StringComparer.Ordinal);
                 foreach (var field in OperationEquipmentInputs.Fields.Concat(ComplianceInputs.Fields)) current[field] = new(ApplicabilityEngine.Fields[field], "Unknown", JsonSerializer.SerializeToElement<object?>(null), "OwningReferenceUnqualified", ApplicabilityEngine.AdapterVersion);
                 await OperationEquipmentContext.Apply(db, settings, vessel, q, refs, current, now, ct, path);
-                if (OperationEquipmentInputs.Fields.Concat(ComplianceInputs.Fields).Any(f => original[f].Knowledge != current[f].Knowledge || original[f].Value.GetRawText() != current[f].Value.GetRawText() || original[f].Revision != current[f].Revision)) causes.Add("OWNING_INPUT_CHANGED");
+                if (OperationEquipmentInputs.Fields.Concat(ComplianceInputs.Fields).Any(f => original[f].Knowledge != current[f].Knowledge || !MatchesCapturedJson(original[f].Value, current[f].Value) || original[f].Revision != current[f].Revision)) causes.Add("OWNING_INPUT_CHANGED");
             }
         }
         var captured = snapshot.RootElement.GetProperty("vesselVersion").GetUInt32();
