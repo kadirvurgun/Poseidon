@@ -38,7 +38,7 @@ Remaining software:3persistence regressions; actual API503/authority/replay/comp
 
 External inputs remain separate: Crew1615 DERIVATION_REQUIRES_SPECIFICATION, real source/issuer/Marine/clinical/privacy/provider/human/pilot inputs and independent security/trust/rotation review. No thresholds, legal purpose/retention, human signature or release inferred. UNKNOWN remains distinct. [Current security identity/provenance proposals](../security/foundation-acceptance-review.pending.json) contain no receipts/exceptions/trust and cannot waive scans; prior160pending/old rejected review remain historical.
 
-Candidate code commit: PENDING_ORDINARY_UNVERIFIED_CHECKPOINT. Exact code fingerprint: 0850bec20714463c2e90868b909176170e9badd119428d3b703f931d52806e7f. Exact client fingerprint: e979bfd0e82ffab97aaf8bf486775d503c53ff605decc578fe035c5eeea14653. Final local HEAD is reported separately from this code-candidate receipt; documentation-only receipt commits do not claim independent QA.
+Candidate code commit: 2080e88be91787e08584b1a2ed33cd243c97e8a0. Exact code fingerprint: 0850bec20714463c2e90868b909176170e9badd119428d3b703f931d52806e7f. Exact client fingerprint: e979bfd0e82ffab97aaf8bf486775d503c53ff605decc578fe035c5eeea14653. Final local HEAD is reported separately from this code-candidate receipt; documentation-only receipt commits do not claim independent QA.
 
 Next repair from the actual failed-gate ledger, complete selected software and genuine-provider setup, then coordinator exact-target independent QA/source review and required CI. Do not mark accepted or publish.
 

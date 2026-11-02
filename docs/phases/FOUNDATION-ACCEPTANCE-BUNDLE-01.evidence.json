@@ -6,7 +6,7 @@
   "ci_executed": false,
   "publication": false,
   "receiving_commit": "0c923ea33c644120878cade12ed1aabbc5aac450",
-  "candidate_code_commit": null,
+  "candidate_code_commit": "2080e88be91787e08584b1a2ed33cd243c97e8a0",
   "canonical_accepted_sp": 8,
   "total_sp": 970,
   "selected_tasks": 40,
@@ -617,6 +617,7 @@
     "at": "2026-11-02T06:18:59.180524+00:00",
     "quota_failure": false,
     "native_and_leftover_owned_processes_absent_before_preservation": true,
-    "approved": false
+    "approved": false,
+    "candidate_identity_scope": "Ordinary code checkpoint; raw execution fingerprints retained, not independent QA or canonical acceptance"
   }
 }
