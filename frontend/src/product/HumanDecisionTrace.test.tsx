@@ -2,7 +2,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { HumanDecisionTrace } from './HumanDecisionTrace'
-import { reviewAnchor, reviewRow, reviewTrace } from './human-review.test-fixtures'
+import { reviewAnchor, reviewRow, reviewTrace, recordingPolicy, recordedRow } from './human-review.test-fixtures'
 
 const response = (value: unknown, status = 200) => ({ ok: status < 300, status, json: async () => value }) as Response
 const props = () => ({ anchor: reviewAnchor, language: 'en' as const, csrf: 'synthetic-csrf', offline: false, onDirty: vi.fn(), onSaving: vi.fn() })
@@ -59,5 +59,34 @@ describe('human review accessible UI authored NOT RUN; mocked transport is UI ev
     await user.click(screen.getByRole('button', { name: 'Discard local review draft' }))
     await user.type(screen.getByLabelText('Trace as of with UTC offset'), '2026-11-01T00:00:00Z'); await user.click(screen.getByRole('button', { name: 'Read trace history' }))
     await waitFor(() => expect(screen.queryByLabelText('Bound review reason')).toBeNull())
+  })
+})
+
+describe('human decision recording EN/TR, authored NOT RUN', () => {
+  it.each(['en', 'tr'] as const)('records a complete human text command through the actual consumer in %s', async language => {
+    const fetch = vi.fn(async (_url: string, init?: RequestInit) => init?.method ? response({ ...recordedRow(), rationale: JSON.parse(init.body as string).rationale, recording: { ...recordedRow().recording, content: JSON.parse(init.body as string).recording } }) : response({ ...reviewTrace(), items: [reviewRow()], authorities: [{ ...reviewTrace().authorities[0], capability: 'human.decide', recording: recordingPolicy() }] }))
+    vi.stubGlobal('fetch', fetch); const user = userEvent.setup(); render(<HumanDecisionTrace {...props()} language={language} />)
+    await user.click(await screen.findByRole('button', { name: language === 'en' ? 'Record authorized human decision' : 'Yetkili insan kararını kaydet' }))
+    await user.selectOptions(screen.getByLabelText(language === 'en' ? 'Provisioned authority' : 'Sunucuda atanmış yetki'), reviewTrace().authorities[0].id)
+    const save = screen.getByRole('button', { name: language === 'en' ? 'Save human decision record' : 'İnsan karar kaydını sakla' }); expect(save).toBeDisabled()
+    await user.type(screen.getByLabelText(language === 'en' ? 'Bound review reason' : 'Bağlı inceleme gerekçesi'), 'FICTIONAL reason')
+    await user.type(screen.getByLabelText(language === 'en' ? 'Human decision text' : 'İnsan kararı metni'), 'FICTIONAL human text')
+    await user.type(screen.getByLabelText(language === 'en' ? 'Decision context' : 'Karar bağlamı'), 'Incomplete context retained')
+    await user.type(screen.getByLabelText(language === 'en' ? 'Trigger source' : 'Tetikleyici kaynak'), 'FICTIONAL trigger')
+    await user.click(save)
+    await waitFor(() => expect(fetch.mock.calls.some(([, init]) => init?.method === 'POST')).toBe(true))
+    const [url, init] = fetch.mock.calls.find(([, init]) => init?.method === 'POST')!
+    expect(url).toContain('/decisions?'); const cmd = JSON.parse(init!.body as string)
+    expect(cmd.state).toBe('RECORDED'); expect(cmd.reasonCode).toBe('HUMAN_DECIDED'); expect(cmd.expectedProfileRevision).toBe(1)
+    expect(cmd.recording.subjectId).toBe(reviewAnchor.controlId); expect(cmd.verificationRevision).toBe(1)
+    expect(cmd).not.toHaveProperty('actorRole'); expect(cmd.recording).not.toHaveProperty('policy')
+  })
+  it('keeps source-gated types blocked and shows the exact conditional source', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => response({ ...reviewTrace(), items: [reviewRow()], authorities: [{ ...reviewTrace().authorities[0], capability: 'human.decide', recording: { ...recordingPolicy(), requiredGate: 'QualifiedSignature', gateSourceLocator: '07.01/Master Register/row:71/TR-013' } }] })))
+    render(<HumanDecisionTrace {...props()} />); const user = userEvent.setup()
+    await user.click(await screen.findByRole('button', { name: 'Record authorized human decision' }))
+    await user.selectOptions(screen.getByLabelText('Provisioned authority'), reviewTrace().authorities[0].id)
+    expect(screen.getByRole('alert')).toHaveTextContent('07.01/Master Register/row:71/TR-013')
+    expect(screen.getByRole('button', { name: 'Save human decision record' })).toBeDisabled()
   })
 })

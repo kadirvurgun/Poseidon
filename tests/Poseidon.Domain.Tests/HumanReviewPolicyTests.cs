@@ -6,6 +6,14 @@ namespace Poseidon.Domain.Tests;
 public sealed class HumanReviewPolicyTests
 {
     [Theory]
+    [InlineData(null, true, "HUMAN_DECIDED", null)]
+    [InlineData("PENDING", true, "HUMAN_DECIDED", null)]
+    [InlineData("PENDING", false, "HUMAN_DECIDED", "input_review_required")]
+    [InlineData("RECORDED", true, "HUMAN_DECIDED", "terminal_review")]
+    [InlineData(null, true, "HUMAN_VERIFIED", "invalid_reason")]
+    public void Recording_finalizes_human_text_without_universal_signature_or_decision_maker_SoD(string? prior, bool current, string reason, string? failure) =>
+        Assert.Equal(failure, HumanReviewPolicy.Transition("Decision", prior, "RECORDED", reason, false, current, false, false, false));
+    [Theory]
     [InlineData(null, "VERIFIED", "HUMAN_VERIFIED", "pending_required")]
     [InlineData(null, "PENDING", "REQUEST_REVIEW", null)]
     [InlineData("PENDING", "VERIFIED", "HUMAN_VERIFIED", null)]

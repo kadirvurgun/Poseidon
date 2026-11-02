@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { decodeReview, decodeTrace } from './human-review-api'
 
-import { reviewAnchor, reviewRow, reviewTrace } from './human-review.test-fixtures'
+import { reviewAnchor, reviewRow, reviewTrace, recordedRow } from './human-review.test-fixtures'
 const actor = reviewRow().actorId
 describe('human trace closed wire boundary authored NOT RUN', () => {
   it('retains pending and unavailable instead of inferred success', () => {
@@ -13,5 +13,18 @@ describe('human trace closed wire boundary authored NOT RUN', () => {
   })
   it.each([{ complete: true }, { disposition: 'READY' }, { blockers: [] }, { hasMore: true }, { offset: 25 }, { historical: true }, { authorities: [{ clientRole: 'Master' }] }, { privateEvidenceCount: 0 }, { segments: [{ kind: 'Evidence', availability: 'Unavailable', id: actor, revision: 1, state: 'UNKNOWN', why: 'REVISION_UNAVAILABLE', hash: null, savedAt: null }] }])('rejects fabricated completeness, scope inference or invalid authority %j', patch => {
     expect(() => decodeTrace({ ...reviewTrace(), ...patch }, reviewAnchor, 0)).toThrow()
+  })
+})
+
+describe('authorized human recording wire boundary, NOT RUN', () => {
+  it('accepts human text while retaining pending qualification and rejects fabricated effects', () => {
+    expect(decodeReview(recordedRow(), reviewAnchor).recording?.qualification).toBe('UNASSESSED')
+    for (const patch of [{ qualification: 'VERIFIED' }, { signature: 'fake' }, { profileRevision: 0 }]) {
+      expect(() => decodeReview({ ...recordedRow(), recording: { ...recordedRow().recording, ...patch } }, reviewAnchor)).toThrow()
+    }
+    expect(() => decodeReview({ ...recordedRow(), recording: null }, reviewAnchor)).toThrow()
+    expect(() => decodeReview({ ...recordedRow(), currentState: 'Effective' }, reviewAnchor)).toThrow()
+    expect(() => decodeReview({ ...recordedRow(), recording: { ...recordedRow().recording, policy: { ...recordedRow().recording.policy, authorityRole: 'Admin' } } }, reviewAnchor)).toThrow()
+    expect(() => decodeReview({ ...recordedRow(), recording: { ...recordedRow().recording, content: { ...recordedRow().recording.content, subjectId: actor } } }, reviewAnchor)).toThrow()
   })
 })

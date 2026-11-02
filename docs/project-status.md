@@ -1,3 +1,26 @@
+# HUMAN-DECISION-RECORDING-01 — AUTHORED / UNVERIFIED / NOT ACCEPTED
+
+Actual POST decisions now records authorized human decision text/reason/context
+under exact live server role/type/subject/operation appointments. Immutable lineage,
+profile/verification guards, audited atomic receipts and TR/EN accessible strict
+consumer are authored with meaningful tests. Conditional type-specific gates stay
+denied with their source locator; recorded text does not activate source adoption,
+verified signature, readiness release or permit. No production catalog or actual
+human operational decision was created. Clean incoming f300d27 and predecessor
+code/tests are preserved. No agents, auth/account changes, publication or self-approval.
+
+All product checks are **NOT RUN / DEFERRED**. Only source inspection, Graphify AST
+maintenance and whitespace inspection occur here. Canonical8/970SP and194SP goal
+are unchanged. Current phase: authoring before **FOUNDATION-ACCEPTANCE-BUNDLE-01**.
+Next: combined generated parity/build/test/security, independent exact-target QA
+and required CI; coordinator owns publication/merge. Genuine operator appointments,
+source qualification and conditional gated adapters remain separate prerequisites.
+[Exact source, behavior and authored tests](tasks/human-decision-recording-01.md) ·
+[Phase report](phases/HUMAN-DECISION-RECORDING-01.md).
+
+Previous package reports below are historical; this successor removes their
+blanket signature/admission block only for supported human text recording.
+
 # HUMAN-DECISION-TRACE-01 — product authored, UNVERIFIED / NOT ACCEPTED
 
 Server-appointed human review, immutable verification/decision events, separation

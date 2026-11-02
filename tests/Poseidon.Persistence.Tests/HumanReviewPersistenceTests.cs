@@ -21,6 +21,34 @@ public sealed class HumanReviewPersistenceTests : IAsyncLifetime
         ControlId = ControlEvidenceFixtures.Id(h.VesselId, "Control"), ControlRevision = 1, ActorId = Guid.NewGuid(), SubmitterId = Guid.NewGuid(),
         AuthorityId = Guid.NewGuid(), RoleId = Guid.NewGuid(), OperationId = Guid.NewGuid(), ReasonCode = "REQUEST_REVIEW", Rationale = "FICTIONAL test draft; no sign-off", AuthorityHash = RegisterStorage.Hash("synthetic-authority"), ContextHash = RegisterStorage.Hash("synthetic-review"), SavedAt = DateTimeOffset.UtcNow };
     [Fact]
+    public async Task Recording_extension_preserves_legacy_events_and_reseed_never_creates_decisions()
+    {
+        await using var db = Db(); var verificationHead = Head(); var verification = Event(verificationHead);
+        db.HumanReviewHeads.Add(verificationHead); db.HumanReviewEvents.Add(verification); await db.SaveChangesAsync(Ct);
+        var decisionHead = Head(); var decision = Event(decisionHead); decision.Kind = "Decision"; decision.State = "RECORDED";
+        decision.VerificationId = verification.Id; decision.VerificationRevision = verification.Revision; decision.ReasonCode = "HUMAN_DECIDED";
+        decision.DecisionJson = "{\"fixture\":\"FICTIONAL storage-only record, no operational approval\"}";
+        db.HumanReviewHeads.Add(decisionHead); db.HumanReviewEvents.Add(decision); await db.SaveChangesAsync(Ct);
+        Assert.Null(verification.DecisionJson);
+        await using var import = Import(); var audits = await import.AuditEvents.CountAsync(Ct);
+        await SeedImporter.ImportAsync(import, seed, Ct); await SeedImporter.ImportAsync(import, seed, Ct);
+        Assert.Equal(audits, await import.AuditEvents.CountAsync(Ct)); Assert.Equal(2, await import.HumanReviewEvents.CountAsync(Ct));
+        Assert.Equal(decision.DecisionJson, (await import.HumanReviewEvents.SingleAsync(x => x.Id == decision.Id, Ct)).DecisionJson);
+        decision.DecisionJson = "{}"; await Assert.ThrowsAsync<InvalidOperationException>(() => db.SaveChangesAsync(Ct));
+    }
+    [Fact]
+    public async Task Recorded_state_requires_content_and_same_tenant_verification_reference_atomically()
+    {
+        await using var db = Db(); var h = Head(); var e = Event(h); e.Kind = "Decision"; e.State = "RECORDED";
+        e.VerificationId = Guid.NewGuid(); e.VerificationRevision = 1; e.ReasonCode = "HUMAN_DECIDED";
+        db.HumanReviewHeads.Add(h); db.HumanReviewEvents.Add(e);
+        await Assert.ThrowsAsync<DbUpdateException>(() => db.SaveChangesAsync(Ct));
+        db.ChangeTracker.Clear(); h = Head(); e = Event(h); e.Kind = "Decision"; e.State = "RECORDED";
+        e.VerificationId = Guid.NewGuid(); e.VerificationRevision = 1; e.ReasonCode = "HUMAN_DECIDED"; e.DecisionJson = "{}";
+        db.HumanReviewHeads.Add(h); db.HumanReviewEvents.Add(e); await Assert.ThrowsAsync<DbUpdateException>(() => db.SaveChangesAsync(Ct));
+        await using var check = Db(); Assert.Empty(await check.HumanReviewEvents.ToArrayAsync(Ct)); Assert.Empty(await check.HumanReviewHeads.ToArrayAsync(Ct));
+    }
+    [Fact]
     public async Task Seed_never_fabricates_human_events_and_reseed_preserves_actual_synthetic_session_event()
     {
         await using var db = Db(); Assert.Empty(await db.HumanReviewEvents.ToArrayAsync(Ct));

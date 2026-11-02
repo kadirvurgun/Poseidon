@@ -8,6 +8,9 @@ public static class HumanReviewPolicy
         bool evidenceCurrent, bool evidenceFresh, bool expired, bool superseded)
     {
         if (kind == "Decision") {
+            // RECORDED finalizes the human's text, never source adoption or release.
+            if (next == "RECORDED") return prior is not (null or "PENDING") ? "terminal_review" :
+                !evidenceCurrent ? "input_review_required" : reason == "HUMAN_DECIDED" ? null : "invalid_reason";
             if (next is not ("PENDING" or "REJECTED")) return "source_admission_and_signature_unavailable";
             if (prior == null && next != "PENDING") return "pending_required";
             if (prior is not (null or "PENDING")) return "terminal_review";

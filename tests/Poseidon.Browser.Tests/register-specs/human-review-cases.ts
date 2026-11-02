@@ -28,6 +28,27 @@ async function scopedTrace(page: Page) {
   finally { await page.context().setOffline(false) }
   await trace.getByRole('button', { name: 'Discard local review draft', exact: true }).click()
   await expect(trace.getByRole('button', { name: /approve|release permit/i })).toHaveCount(0)
+  return trace
+}
+async function assignedRecording(page: Page) {
+  // Later gate only: disposable synthetic evidence + genuine signed-host assigned
+  // human membership with exact recording policy. No operational decision fixture.
+  const trace = await scopedTrace(page)
+  const choose = trace.getByRole('button', { name: 'Record authorized human decision', exact: true }).first()
+  await expect(choose).toBeVisible(); await choose.click()
+  const authority = trace.getByLabel('Provisioned authority', { exact: true })
+  const option = authority.locator('option').filter({ hasText: 'human.decide' }).first()
+  await expect(option).toHaveCount(1) // Missing genuine assignment fails the gate.
+  await authority.selectOption(await option.getAttribute('value') ?? '')
+  await trace.getByLabel('Bound review reason', { exact: true }).fill('FICTIONAL bundle software journey only')
+  await trace.getByLabel('Human decision text', { exact: true }).fill('FICTIONAL assigned recording; no safety approval')
+  await trace.getByLabel('Decision context', { exact: true }).fill('Synthetic incomplete evidence, pending qualification')
+  await trace.getByLabel('Trigger source', { exact: true }).fill('FICTIONAL foundation gate fixture')
+  const saved = page.waitForResponse(r => r.request().method() === 'POST' && r.url().includes('/api/v1/decisions?'))
+  await trace.getByRole('button', { name: 'Save human decision record', exact: true }).click()
+  const response = await saved; expect(response.status()).toBe(200)
+  const row = await response.json(); expect(row.state).toBe('RECORDED'); expect(row.recording.qualification).toBe('UNASSESSED')
+  await expect(trace.getByText('Qualification pending. No legal signature, source adoption or permit activation.', { exact: true })).toBeVisible()
 }
 async function restrictedTrace(page: Page) {
   const query = '?vesselId=10000000-0000-4000-8000-000000000001&evidenceId=10000000-0000-4000-8000-000000000002&evidenceRevision=1&controlId=10000000-0000-4000-8000-000000000003&controlRevision=1'
@@ -37,6 +58,7 @@ async function restrictedTrace(page: Page) {
   }
 }
 export const humanReviewCases = [
+  { name: 'assigned-human-recording-signed-host-pending-qualification', run: assignedRecording, restricted: false },
   { name: 'human-scoped-trace-source-signature-blockers-keyboard-dirty-offline', run: scopedTrace, restricted: false },
   { name: 'human-trace-denied-before-object-inference', run: restrictedTrace, restricted: true },
 ] as const

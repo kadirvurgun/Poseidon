@@ -1,4 +1,31 @@
 {
+  "human_decision_recording_01": {
+    "status": "AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+    "accepted": false,
+    "foundation_ready": false,
+    "phase": "Product authoring before FOUNDATION-ACCEPTANCE-BUNDLE-01",
+    "receiving_head": "f300d27d44211e4264acd380f7893fa72033fafa",
+    "receiving_tree": "CLEAN; predecessor actual code/tests preserved",
+    "task": "docs/tasks/human-decision-recording-01.md",
+    "report": "docs/phases/HUMAN-DECISION-RECORDING-01.md",
+    "source_evidence": "docs/tasks/human-decision-recording-01.sources.json",
+    "delivered": [
+      "Actual authorized-human text recording through POST decisions and pending finalization",
+      "Exact trusted role/type/subject/operation policy; default-deny with conditional source-specific gate",
+      "Immutable reason/evidence/verification/profile/source lineage; no qualification or activation promotion",
+      "Audited transaction/xmin/receipt and live reauthorization before replay/history/commit",
+      "TR/EN accessible UI, strict wire and meaningful domain/host/PostgreSQL/React/signed-host test source"
+    ],
+    "verification": "DEFERRED_NOT_RUN: suites/build/lint/typecheck/restore/generation/migrations/browser/providers/scans/independent QA/CI",
+    "canonical_progress_unchanged": true,
+    "publication": "LOCAL UNVERIFIED ONLY; coordinator owns publishing/merge",
+    "remaining_gates": [
+      "Actual API/client/EF generated parity and migration application",
+      "Combined foundation build/tests/security and independent exact-target QA/required CI",
+      "Genuine operator appointments and conditional source-specific signature/admission/release adapters"
+    ],
+    "next_step": "FOUNDATION-ACCEPTANCE-BUNDLE-01"
+  },
   "human_decision_trace_01": {
     "status": "AUTHORED_UNVERIFIED_NOT_ACCEPTED",
     "accepted": false,

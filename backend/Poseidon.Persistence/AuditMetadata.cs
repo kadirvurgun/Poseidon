@@ -65,7 +65,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
                 new { field = "Outcome", before = (string?)null, after = outcome.Result, evidence = "Allowlisted" } }));
         }
         if (entry.Entity is HumanReviewEvent review) {
-            if (review.ReasonCode is not ("REQUEST_REVIEW" or "HUMAN_VERIFIED" or "HUMAN_REJECTED" or "VALIDITY_ELAPSED" or "INPUT_SUPERSEDED"))
+            if (review.ReasonCode is not ("REQUEST_REVIEW" or "HUMAN_VERIFIED" or "HUMAN_REJECTED" or "VALIDITY_ELAPSED" or "INPUT_SUPERSEDED" or "HUMAN_DECIDED"))
                 throw new InvalidOperationException("Invalid review metadata.");
             return new(vessel, resource, "HumanReview", null, review.Revision, JsonSerializer.Serialize(new[] {
                 new { field = "ReasonCode", before = (string?)null, after = review.ReasonCode, evidence = "Allowlisted" },
