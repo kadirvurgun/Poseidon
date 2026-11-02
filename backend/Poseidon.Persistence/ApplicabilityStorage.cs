@@ -62,6 +62,8 @@ public sealed class ApplicabilityReceipt : ITenantEntity
     public required string Action { get; set; }
     public required string Fingerprint { get; set; }
     public Guid ResourceId { get; set; }
+    public Guid? RuleResourceId { get; set; }
+    public Guid? EvaluationResourceId { get; set; }
     public Guid? VesselId { get; set; }
     public required string OutcomeJson { get; set; }
     public DateTimeOffset SavedAt { get; set; }
@@ -99,7 +101,8 @@ public static class ApplicabilityStorage
         model.Entity<ApplicabilityReceipt>(b => {
             b.HasKey(x => new { x.TenantId, x.ActorId, x.Key }); b.Property(x => x.Key).HasMaxLength(80);
             b.HasOne<Tenant>().WithMany().HasForeignKey(x => x.TenantId).OnDelete(DeleteBehavior.Restrict);
-            b.HasOne<RuleDraft>().WithMany().HasForeignKey(x => new { x.TenantId, Id = x.ResourceId }).OnDelete(DeleteBehavior.Restrict);
+            b.HasOne<RuleDraft>().WithMany().HasForeignKey(x => new { x.TenantId, Id = x.RuleResourceId }).OnDelete(DeleteBehavior.Restrict);
+            b.HasOne<ApplicabilityEvaluation>().WithMany().HasForeignKey(x => new { x.TenantId, Id = x.EvaluationResourceId }).OnDelete(DeleteBehavior.Restrict);
             b.HasOne<Vessel>().WithMany().HasForeignKey(x => new { x.TenantId, x.VesselId }).OnDelete(DeleteBehavior.Restrict);
         });
     }

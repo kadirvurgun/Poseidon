@@ -16,9 +16,9 @@ export type RuleVersion = { id: string; revision: number; contract: string; rule
 export type RuleDraft = { version: number; current: RuleVersion }
 export type Page<T> = { items: T[]; offset: number; limit: number; hasMore: boolean }
 export type Reason = { path: string; truth: 0 | 1 | 2; reason: string; field: string | null; operator: string | null; children: Reason[]; reviewRequired: boolean }
-export type Prediction = { result: string; currentResult: 'REVIEW_REQUIRED'; authoritative: false; lifecycle: string; reason: Reason; predictedActivations: { type: string; id: string }[]; blockers: string[] }
+export type Prediction = { result: string; currentResult: string; authoritative: boolean; lifecycle: string; reason: Reason; predictedActivations: { type: string; id: string }[]; blockers: string[] }
 export type EvaluationResult = { ruleId: string; revision: number; hash: string; sourceId: string | null; sourceRevision: number | null; requirementId: string | null; requirementRevision: number | null; prediction: Prediction }
-export type Evaluation = { id: string; vesselId: string; savedAt: string; asOf: string; adapterVersion: string; profileRevision: number | null; snapshotHash: string; snapshot: Obj; ruleSetHash: string; results: EvaluationResult[]; conflicts: { code: string; target: string; ruleReferences: string[]; status: 'REVIEW_REQUIRED' }[]; preview: true; authoritative: false; currentResult: 'REVIEW_REQUIRED'; simulation: true }
+export type Evaluation = { id: string; vesselId: string; savedAt: string; asOf: string; adapterVersion: string; profileRevision: number | null; snapshotHash: string; snapshot: Obj; ruleSetHash: string; results: EvaluationResult[]; conflicts: { code: string; target: string; ruleReferences: string[]; status: 'REVIEW_REQUIRED' }[]; preview: boolean; authoritative: boolean; currentResult: string; simulation: boolean }
 const link = (id: unknown, rev: unknown) => id === null && rev === null || isGuid(id) && integer(rev)
 const factTypes: Record<string, number> = {
   'context.mode': 0, evaluationDate: 2, 'vessel.flag': 0, 'vessel.type': 0, 'vessel.gt': 1, 'vessel.mainPropulsionKw': 1,
@@ -27,8 +27,9 @@ const factTypes: Record<string, number> = {
   'equipment.towingWinchFitted': 3, 'class.rulePack.IACS_M79': 3, 'regulatory.ismApplicable': 3, 'regulatory.msmdVerified': 3,
   'crew.requiredRoleEligible': 3, 'evidence.sourceVerified': 3, 'source.lifecycle': 0,
 }
-function snapshot(v: unknown, vessel: unknown, asOf: unknown, profile: unknown): boolean {
-  if (!exact(v, ['adapterVersion', 'vesselId', 'vesselVersion', 'profileRevision', 'asOf', 'facts']) || v.adapterVersion !== 'controlled-input-catalog-v1' || v.vesselId !== vessel || v.asOf !== asOf || v.profileRevision !== profile || !integer(v.vesselVersion) || !exact(v.facts, Object.keys(factTypes))) return false
+function snapshot(v: unknown, vessel: unknown, asOf: unknown, profile: unknown, authoritative = false): boolean {
+  if (!exact(v, ['adapterVersion', 'vesselId', 'vesselVersion', 'profileRevision', 'asOf', 'facts', ...(authoritative ? ['qualifications', 'vesselContextHash'] : [])]) || v.adapterVersion !== 'controlled-input-catalog-v1' || v.vesselId !== vessel || v.asOf !== asOf || v.profileRevision !== profile || !integer(v.vesselVersion) || !exact(v.facts, Object.keys(factTypes))) return false
+  if (authoritative && (!hash(v.vesselContextHash) || !Array.isArray(v.qualifications) || v.qualifications.length < 1 || v.qualifications.length > 64 || v.qualifications.some(q => !exact(q, ['ruleId', 'revision', 'hash', 'sourceHash', 'policyVersion', 'attestationId', 'facts']) || !isGuid(q.ruleId) || !integer(q.revision) || !hash(q.hash) || !hash(q.sourceHash) || q.policyVersion !== 'recorded-qualification-v1' || q.attestationId !== null && !isGuid(q.attestationId) || !snapshot({ adapterVersion: v.adapterVersion, vesselId: vessel, vesselVersion: v.vesselVersion, profileRevision: profile, asOf, facts: q.facts }, vessel, asOf, profile)))) return false
   return Object.entries(v.facts).every(([key, f]) => {
     if (!exact(f, ['type', 'knowledge', 'value', 'provenance', 'revision', 'observedAt', 'freshUntil', 'authoritativeEmpty']) || f.type !== factTypes[key] ||
       typeof f.knowledge !== 'string' || !['Known', 'Missing', 'Unknown', 'Stale', 'Unverified', 'Conflicting'].includes(f.knowledge) ||
@@ -63,14 +64,14 @@ export function decodeEvaluation(value: unknown): Evaluation {
   if (!exact(value, ['id', 'vesselId', 'savedAt', 'asOf', 'adapterVersion', 'profileRevision', 'snapshotHash', 'snapshot', 'ruleSetHash', 'results', 'conflicts', 'preview', 'authoritative', 'currentResult', 'simulation']) ||
     !isGuid(value.id) || !isGuid(value.vesselId) || !timestamp(value.savedAt) || !timestamp(value.asOf) || value.adapterVersion !== 'controlled-input-catalog-v1' ||
     value.profileRevision !== null && !integer(value.profileRevision) || !hash(value.snapshotHash) || !hash(value.ruleSetHash) || !obj(value.snapshot) ||
-    JSON.stringify(value.snapshot).length > 65536 || !Array.isArray(value.results) || value.results.length > 64 || value.preview !== true || value.simulation !== true || value.authoritative !== false || value.currentResult !== 'REVIEW_REQUIRED') return invalid()
-  if (!snapshot(value.snapshot, value.vesselId, value.asOf, value.profileRevision)) return invalid()
+    JSON.stringify(value.snapshot).length > 65536 || !Array.isArray(value.results) || value.results.length > 64 || typeof value.authoritative !== 'boolean' || value.preview !== !value.authoritative || value.simulation !== !value.authoritative || (value.authoritative ? !['CURRENT', 'REVIEW_REQUIRED'].includes(value.currentResult as string) : value.currentResult !== 'REVIEW_REQUIRED')) return invalid()
+  if (!snapshot(value.snapshot, value.vesselId, value.asOf, value.profileRevision, value.authoritative as boolean)) return invalid()
   if (!Array.isArray(value.conflicts) || value.conflicts.length > 4096 || value.conflicts.some(c => !exact(c, ['code', 'target', 'ruleReferences', 'status']) || !['CANDIDATE_SOURCE_CONTRADICTION', 'INPUT_SOURCE_CONFLICT'].includes(c.code as string) || typeof c.target !== 'string' || c.target.length > 500 || c.status !== 'REVIEW_REQUIRED' || !Array.isArray(c.ruleReferences) || c.ruleReferences.length > 64 || c.ruleReferences.some(r => typeof r !== 'string' || !/^[0-9a-f-]{36}\/[1-9][0-9]*$/.test(r)))) return invalid()
   for (const r of value.results) {
     if (!exact(r, ['ruleId', 'revision', 'hash', 'sourceId', 'sourceRevision', 'requirementId', 'requirementRevision', 'prediction']) || !isGuid(r.ruleId) || !integer(r.revision) || !hash(r.hash) || !link(r.sourceId, r.sourceRevision) || !link(r.requirementId, r.requirementRevision)) return invalid()
     const p = r.prediction
     if (!exact(p, ['result', 'currentResult', 'authoritative', 'lifecycle', 'reason', 'predictedActivations', 'blockers']) ||
-      typeof p.result !== 'string' || !['APPLICABLE', 'NOT_APPLICABLE', 'REVIEW_REQUIRED', 'NOT_CURRENT'].includes(p.result) || p.currentResult !== 'REVIEW_REQUIRED' || p.authoritative !== false ||
+      typeof p.result !== 'string' || !['APPLICABLE', 'NOT_APPLICABLE', 'REVIEW_REQUIRED', 'NOT_CURRENT'].includes(p.result) || p.authoritative !== value.authoritative || (value.authoritative ? p.currentResult !== p.result : p.currentResult !== 'REVIEW_REQUIRED') ||
       typeof p.lifecycle !== 'string' || !(lifecycleStates as readonly string[]).includes(p.lifecycle) || !Array.isArray(p.blockers) || p.blockers.length > 32 || p.blockers.some(v => typeof v !== 'string' || v.length > 100) ||
       !Array.isArray(p.predictedActivations) || p.predictedActivations.length > 64 || p.predictedActivations.some(a => !exact(a, ['type', 'id']) || typeof a.type !== 'string' || typeof a.id !== 'string')) return invalid()
     decodeReason(p.reason)

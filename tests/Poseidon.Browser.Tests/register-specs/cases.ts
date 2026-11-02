@@ -1,3 +1,4 @@
+import { regulatoryAdmissionCases } from './regulatory-admission-cases.ts'
 import { crewIdentityCases } from './crew-identity-cases.ts'
 import { humanReviewCases } from './human-review-cases.ts'
 import { controlEvidenceCases } from './control-evidence-cases.ts'
@@ -110,6 +111,7 @@ export const registerCases = [
   ...lifecycleApplicabilityCases,
   ...controlEvidenceCases,
   ...humanReviewCases,
+  ...regulatoryAdmissionCases,
   ...offlineApplicationCases,
   ...crewIdentityCases,
   ...crewLegacyCases,

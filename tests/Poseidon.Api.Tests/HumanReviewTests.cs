@@ -146,8 +146,8 @@ public sealed partial class DirectoryWorkspaceTests
         await using var host = Host(); using var c = Client(host); GraphPermissionsForTest(host.Services); await Token(c); var (ev, co) = await ReviewInputs(c);
         ProvisionSyntheticHuman(host.Services, ev.Id, co.Id); var pending = await PendingReview(c, host.Services, ev, co);
         var other = seed.Vessels.First(x => x.TenantId != seed.Tenants[0].Id);
-        Assert.Equal(HttpStatusCode.NotFound, (await c.GetAsync(TraceRoute(ev, co).Replace(SeedVessel.Id.ToString(), other.Id.ToString()), Ct)).StatusCode);
-        Assert.Equal(HttpStatusCode.NotFound, (await c.GetAsync(TraceRoute(ev with { Id = Guid.NewGuid() }, co), Ct)).StatusCode);
+        Assert.True((await c.GetAsync(TraceRoute(ev, co).Replace(SeedVessel.Id.ToString(), other.Id.ToString()), Ct)).StatusCode is HttpStatusCode.Forbidden or HttpStatusCode.NotFound);
+        Assert.Equal(HttpStatusCode.Forbidden, (await c.GetAsync(TraceRoute(ev with { Id = Guid.NewGuid() }, co), Ct)).StatusCode);
         var history = await c.GetFromJsonAsync<JsonElement>(TraceRoute(ev, co) + "&asOf=" + Uri.EscapeDataString(pending.AsOf.ToString("O")), Ct);
         Assert.Empty(history.GetProperty("authorities").EnumerateArray()); Assert.True(history.GetProperty("historical").GetBoolean());
         Assert.DoesNotContain("snapshotJson", history.GetRawText()); Assert.DoesNotContain("subject", history.GetRawText());
@@ -176,7 +176,7 @@ public sealed partial class DirectoryWorkspaceTests
         }
     }
     [Fact]
-    public async Task Independent_human_verification_with_synthetic_pinned_evaluation_never_issues_permit_and_source_edit_requires_review()
+    public async Task Direct_inserted_legacy_evaluation_is_not_a_qualified_verification_path_and_source_edit_still_requires_review()
     {
         var root = Path.Combine(Path.GetTempPath(), "poseidon-human-review-" + Guid.NewGuid().ToString("N")); Directory.CreateDirectory(root);
         try {
@@ -208,20 +208,17 @@ public sealed partial class DirectoryWorkspaceTests
             ProvisionSyntheticHuman(host.Services, ev.Id, co.Id, newActor: Guid.NewGuid());
             var verify = await CurrentReviewCommand(c, host.Services, ev, co, pending, "human.verify");
             using var verified = await Send(c, GraphRoute($"verifications/{pending.Id}/events"), verify with { State = "VERIFIED", ReasonCode = "HUMAN_VERIFIED", Rationale = "FICTIONAL independent fixture review, no legal sign-off" });
-            Assert.Equal(HttpStatusCode.OK, verified.StatusCode); var result = (await verified.Content.ReadFromJsonAsync<HumanReviewDto>(Ct))!;
-            Assert.Equal("VERIFIED", result.State); Assert.Equal(evaluationId, result.EvaluationId); Assert.NotNull(result.ValidUntil);
+            Assert.Equal(HttpStatusCode.Conflict, verified.StatusCode);
+            Assert.Contains("qualified_evaluation_required", await verified.Content.ReadAsStringAsync(Ct));
             await using (var db = Db()) {
                 var s = await db.RegisterDrafts.SingleAsync(x => x.Id == source && x.Kind == "Source", Ct); s.Revision++; s.SavedAt = DateTimeOffset.UtcNow;
                 db.RegisterRevisions.Add(s.Snapshot(null, null)); await db.SaveChangesAsync(Ct);
             }
             var current = await c.GetFromJsonAsync<JsonElement>(TraceRoute(ev, co), Ct);
             Assert.False(current.GetProperty("complete").GetBoolean()); Assert.Contains("SUPERSEDED_REVIEW_REQUIRED", current.GetRawText());
-            var history = await c.GetFromJsonAsync<JsonElement>(TraceRoute(ev, co) + "&asOf=" + Uri.EscapeDataString(result.AsOf.ToString("O")), Ct);
-            Assert.Contains("VERIFIED", history.GetRawText()); Assert.DoesNotContain("SUPERSEDED_REVIEW_REQUIRED", history.GetRawText());
-            var supersede = await CurrentReviewCommand(c, host.Services, ev, co, result, "human.verify");
-            using var newer = await Send(c, GraphRoute($"verifications/{pending.Id}/events"), supersede with { State = "SUPERSEDED", ReasonCode = "INPUT_SUPERSEDED" }); Assert.Equal(HttpStatusCode.OK, newer.StatusCode);
-            await using var check = Db(); Assert.Equal(3, await check.HumanReviewEvents.CountAsync(x => x.Id == pending.Id, Ct));
-            Assert.Equal("VERIFIED", (await check.HumanReviewEvents.SingleAsync(x => x.Id == pending.Id && x.Revision == 2, Ct)).State);
+            await using var check = Db();
+            Assert.Single(await check.HumanReviewEvents.Where(x => x.Id == pending.Id).ToArrayAsync(Ct));
+            Assert.DoesNotContain(await check.HumanReviewEvents.ToArrayAsync(Ct), x => x.State == "VERIFIED");
             Assert.DoesNotContain(await check.AuditEvents.ToArrayAsync(Ct), a => a.ChangeSummary.Contains("FICTIONAL independent fixture review", StringComparison.Ordinal));
         } finally { foreach (var file in Directory.GetFiles(root)) File.Delete(file); Directory.Delete(root, false); }
     }

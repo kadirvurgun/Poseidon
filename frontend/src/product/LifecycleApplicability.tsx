@@ -1,3 +1,5 @@
+import { RegulatoryQualification } from './RegulatoryQualification'
+import * as qualification from './qualification-api'
 import { useEffect, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import * as service from './applicability-api'
@@ -8,6 +10,8 @@ import type { Capabilities, Evaluation, FrozenCommand, Page, Reason, RuleDraft, 
 
 type Props = { language: 'tr' | 'en'; csrf: string; offline: boolean; onDirty: (v: boolean) => void; onSaving: (v: boolean) => void }
 export function LifecycleApplicability({ language, csrf, offline, onDirty, onSaving }: Props) {
+  const [qualificationDirty, setQualificationDirty] = useState(false), [qualificationSaving, setQualificationSaving] = useState(false)
+  const [currentState, setCurrentState] = useState<{ id: string; current: boolean; causes: string[] } | null>(null)
   const t = (en: string, tr: string) => language === 'en' ? en : tr
   const [caps, setCaps] = useState<Capabilities | null>(null), [rows, setRows] = useState<Page<RuleDraft> | null>(null)
   const [vessels, setVessels] = useState<directory.Vessel[]>([]), [vesselPage, setVesselPage] = useState(0), [moreVessels, setMoreVessels] = useState(false)
@@ -20,8 +24,8 @@ export function LifecycleApplicability({ language, csrf, offline, onDirty, onSav
   const [asOf, setAsOf] = useState('')
   const [history, setHistory] = useState<Page<HistoryItem> | null>(null), [historyOffset, setHistoryOffset] = useState(0), [notice, setNotice] = useState('')
   const liveVessel = useRef(vessel); liveVessel.current = vessel
-  useEffect(() => { onDirty(dirty || !!frozen || conflict) }, [dirty, frozen, conflict, onDirty])
-  useEffect(() => { onSaving(saving) }, [saving, onSaving])
+  useEffect(() => { onDirty(dirty || !!frozen || conflict || qualificationDirty) }, [dirty, frozen, conflict, qualificationDirty, onDirty])
+  useEffect(() => { onSaving(saving || qualificationSaving) }, [saving, qualificationSaving, onSaving])
   useEffect(() => {
     if (offline) return
     const c = new AbortController(); let active = true; const timer = setTimeout(() => c.abort(), 15000)
@@ -47,7 +51,7 @@ export function LifecycleApplicability({ language, csrf, offline, onDirty, onSav
     service.versions(selected.current.id, ruleHistoryOffset, c.signal).then(p => { if (active) setRuleHistory(p) }).catch(e => { if (active) setError(e instanceof directory.ApiError ? e.status : 0) })
     return () => { active = false; c.abort() }
   }, [selected, ruleHistoryOffset, offline])
-  const locked = saving || !!frozen || conflict || error === 401 || error === 403
+  const locked = qualificationDirty || qualificationSaving || saving || !!frozen || conflict || error === 401 || error === 403
   function choose(row: RuleDraft | null) {
     if (dirty || frozen) return
     setSelected(row); setRuleJson(row?.current.ruleJson ?? ''); setRuleHistoryOffset(0)
@@ -61,7 +65,7 @@ export function LifecycleApplicability({ language, csrf, offline, onDirty, onSav
     try {
       const result = await service.send(command, csrf, c.signal)
       if ('current' in result) { setSelected(result); setRuleJson(result.current.ruleJson ?? ''); setDirty(false) }
-      else { setEvaluation(result); setHistoryOffset(0) }
+      else { setEvaluation(result); setCurrentState(null); setHistoryOffset(0) }
       setFrozen(null); setAttempt(v => v + 1)
       setNotice(command.kind === 'review' ? t('Review request recorded: BLOCKED. Source admission and a qualified independent reviewer are pending.', 'İnceleme talebi kaydedildi: ENGELLİ. Kaynak kabulü ve yetkili bağımsız inceleyici bekleniyor.') : command.kind === 'evaluate' ? t('Preview computed without saving. Current obligations remain unavailable.', 'Önizleme kaydedilmeden hesaplandı. Güncel yükümlülükler kullanılamıyor.') : t('Saved as unverified preparation. Current obligations remain unavailable.', 'Doğrulanmamış hazırlık olarak kaydedildi. Güncel yükümlülükler kullanılamıyor.'))
     } catch (e) {
@@ -131,7 +135,10 @@ export function LifecycleApplicability({ language, csrf, offline, onDirty, onSav
           void freeze('evaluate', 'applicability/simulate', { vesselId: vessel, ruleIds: checked, asOf: asOf || null })
         }}>{t('Run preview without saving', 'Kaydetmeden önizle')}</button>
       </fieldset>
-      {evaluation && <section aria-label={t('Preview result', 'Önizleme sonucu')}><h3>{t('PREVIEW — review required for current obligations', 'ÖNİZLEME — güncel yükümlülükler için inceleme gerekli')}</h3><p>{evaluation.asOf} · {evaluation.snapshotHash}</p>{evaluation.conflicts.map(c => <p role="alert" key={`${c.code}:${c.target}`}>{t('Conflict requires source owner and reviewer. Both candidates retained.', 'Çatışma kaynak sahibi ve inceleyici gerektirir. İki aday da korundu.')} {c.target} · {c.ruleReferences.join(' · ')}</p>)}{evaluation.results.map(r => <details key={r.ruleId} open><summary>{r.ruleId} · {r.revision} · {r.prediction.result} · {t('Prediction only', 'Yalnız tahmin')}</summary><p>{r.sourceId ?? t('Missing source', 'Kaynak eksik')} / {r.sourceRevision ?? '—'}</p><ul>{tree(r.prediction.reason)}</ul><p>{r.prediction.blockers.join(' · ')}</p><ul>{r.prediction.predictedActivations.map(a => <li key={`${a.type}:${a.id}`}>{a.type}: {a.id} · {t('Projected need only', 'Yalnız öngörülen ihtiyaç')}</li>)}</ul></details>)}</section>}
+      {selected && <RegulatoryQualification key={selected.current.id} rule={selected.current.id} ruleRevision={selected.current.revision} vessel={vessel} language={language} csrf={csrf} offline={offline} onDirty={setQualificationDirty} onSaving={setQualificationSaving} />}
+      <button disabled={locked || dirty || offline || !vessel || checked.length === 0 || !caps?.canEvaluate} onClick={() => void freeze('evaluate', 'applicability/evaluate', { vesselId: vessel, ruleIds: checked, asOf: null })}>{t('Evaluate qualified current sources', 'Nitelendirilmiş güncel kaynakları değerlendir')}</button>
+      {evaluation?.authoritative && <><button disabled={offline || saving} onClick={() => { const c = new AbortController(); qualification.current(evaluation.id, c.signal).then(v => setCurrentState({ ...v, id: evaluation.id })).catch(() => setCurrentState({ id: evaluation.id, current: false, causes: ['EVALUATION_UNAVAILABLE'] })) }}>{t('Check current validity', 'Güncel geçerliliği denetle')}</button><p role="status">{currentState?.id === evaluation.id ? currentState.current ? t('Inputs remain current. This is not safety release.', 'Girdiler güncel. Bu bir emniyet serbest bırakması değildir.') : `${t('Review required', 'İnceleme gerekli')}: ${currentState.causes.join(' · ')}` : t('Current validity has not been checked.', 'Güncel geçerlilik denetlenmedi.')}</p></>}
+      {evaluation && <section aria-label={t('Preview result', 'Önizleme sonucu')}><h3>{evaluation.authoritative ? t('Recorded evaluation — see current validity separately', 'Kayıtlı değerlendirme — güncel geçerliliği ayrıca inceleyin') : t('PREVIEW — review required for current obligations', 'ÖNİZLEME — güncel yükümlülükler için inceleme gerekli')}</h3><p>{evaluation.asOf} · {evaluation.snapshotHash}</p>{evaluation.conflicts.map(c => <p role="alert" key={`${c.code}:${c.target}`}>{t('Conflict requires source owner and reviewer. Both candidates retained.', 'Çatışma kaynak sahibi ve inceleyici gerektirir. İki aday da korundu.')} {c.target} · {c.ruleReferences.join(' · ')}</p>)}{evaluation.results.map(r => <details key={r.ruleId} open><summary>{r.ruleId} · {r.revision} · {r.prediction.result} · {evaluation.authoritative ? t('Qualified input evaluation', 'Nitelendirilmiş girdi değerlendirmesi') : t('Prediction only', 'Yalnız tahmin')}</summary><p>{r.sourceId ?? t('Missing source', 'Kaynak eksik')} / {r.sourceRevision ?? '—'}</p><ul>{tree(r.prediction.reason)}</ul><p>{r.prediction.blockers.join(' · ')}</p><ul>{r.prediction.predictedActivations.map(a => <li key={`${a.type}:${a.id}`}>{a.type}: {a.id} · {t('Projected need only', 'Yalnız öngörülen ihtiyaç')}</li>)}</ul></details>)}</section>}
       {vessel && <section aria-label={t('Evaluation history', 'Değerlendirme geçmişi')}><h3>{t('Evaluation history', 'Değerlendirme geçmişi')}</h3>{!history ? <p role="status">{t('Loading history…', 'Geçmiş yükleniyor…')}</p> : history.items.length === 0 ? <p>{t('No evaluations.', 'Değerlendirme yok.')}</p> : history.items.map(row => <button type="button" disabled={saving || offline} key={row.id} onClick={() => {
         const c = new AbortController(); const timer = setTimeout(() => c.abort(), 15000)
         service.evaluation(row.id, c.signal).then(v => { if (v.vesselId === liveVessel.current) setEvaluation(v) }).catch(e => { if (row.vesselId === liveVessel.current) setError(e instanceof directory.ApiError ? e.status : 0) }).finally(() => clearTimeout(timer))

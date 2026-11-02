@@ -18,8 +18,9 @@ internal static class ApplicabilityContextResolver
         var profile = await db.RegulatoryDraftRevisions.AsNoTracking().Where(x => x.VesselId == vessel.Id && x.SavedAt <= asOf).OrderByDescending(x => x.Revision).FirstOrDefaultAsync(ct);
         if (profile == null) return (null, facts);
         var content = RegulatoryDraftStorage.Deserialize(profile.ContentJson);
+        DateTimeOffset? observed = content.SourceObservedAt.State == "Known" && DateTimeOffset.TryParse(content.SourceObservedAt.Value, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out var sourceObserved) ? sourceObserved : null;
         void Set(string name, string state, string? value) => facts[name] = new(ApplicabilityEngine.Fields[name], state == "Known" ? "Unverified" : state,
-            JsonSerializer.SerializeToElement(value), profile.Provenance, profile.Revision.ToString(System.Globalization.CultureInfo.InvariantCulture), profile.SavedAt);
+            JsonSerializer.SerializeToElement(value), profile.Provenance, profile.Revision.ToString(System.Globalization.CultureInfo.InvariantCulture), observed);
         Set("vessel.flag", content.Flag.State, content.Flag.Value); Set("vessel.type", content.ShipType.State, content.ShipType.Value);
         Set("vessel.gt", content.Gt.State, content.Gt.Value); Set("vessel.buildDate", content.BuildDate.State, content.BuildDate.Value);
         Set("vessel.classSociety", content.ClassSociety.State, content.ClassSociety.Value); Set("vessel.tradingArea", content.TradingArea.State, content.TradingArea.Value);

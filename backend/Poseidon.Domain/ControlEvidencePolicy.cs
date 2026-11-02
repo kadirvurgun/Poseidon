@@ -8,12 +8,17 @@ namespace Poseidon.Domain;
 public sealed record ControlEvidenceContent(string? Title = null, Guid? OwnerId = null, Guid? OwnerRole = null,
     string? Frequency = null, string? EvidencePolicy = null, string? VerificationPolicy = null, bool? Critical = null,
     string? Provenance = null, DateTimeOffset? ObservedAt = null, DateTimeOffset? ValidFrom = null,
-    DateTimeOffset? ValidUntil = null, DateTimeOffset? FreshUntil = null);
+    DateTimeOffset? ValidUntil = null, DateTimeOffset? FreshUntil = null, SourceAcknowledgment[]? Acknowledgments = null);
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
+public sealed record SourceAcknowledgment(Guid RuleId, string QualificationHash, string SourceHash);
 
 public static class ControlEvidencePolicy
 {
     public static void Validate(string kind, ControlEvidenceContent c, DateTimeOffset now)
     {
+        if (c.Acknowledgments is { } acknowledgments && (acknowledgments.Length > 32 || acknowledgments.Any(x => x == null || x.RuleId == Guid.Empty ||
+            !System.Text.RegularExpressions.Regex.IsMatch(x.QualificationHash ?? "", "\\A[A-F0-9]{64}\\z") ||
+            !System.Text.RegularExpressions.Regex.IsMatch(x.SourceHash ?? "", "\\A[A-F0-9]{64}\\z")) || acknowledgments.Select(x => x.RuleId).Distinct().Count() != acknowledgments.Length)) throw new ArgumentException("invalid_acknowledgment");
         if (kind is not ("Control" or "Evidence")) throw new ArgumentException("invalid_kind");
         foreach (var text in new[] { c.Title, c.Frequency, c.EvidencePolicy, c.VerificationPolicy, c.Provenance })
             if (text != null && (text.Length is < 1 or > 2000 || text != text.Trim() || text.Any(char.IsControl))) throw new ArgumentException("invalid_content");

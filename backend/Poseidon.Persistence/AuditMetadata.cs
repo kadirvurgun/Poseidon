@@ -11,6 +11,21 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
 {
     internal static AuditMetadata From(EntityEntry entry)
     {
+        // Do not put exact source bytes, validation rationale or actor-provided text in audit summaries.
+        if (entry.Entity is RegulatoryQualificationEvent qualification)
+            return new(null, qualification.RuleId, "RegulatoryQualification", null, qualification.Revision,
+                JsonSerializer.Serialize(new { qualification.State, qualification.RuleRevision, qualification.Hash, qualification.SourceHash, qualification.PolicyVersion, qualification.AuthorityId }));
+        if (entry.Entity is RegulatoryFactAttestation fact)
+            return new(fact.VesselId, fact.Id, "RegulatoryFactAttestation", null, fact.ProfileRevision,
+                JsonSerializer.Serialize(new { fact.RuleId, fact.QualificationRevision, fact.Hash, fact.AuthorityId }));
+        if (entry.Entity is RegulatoryQualificationHead head)
+            return new(null, head.RuleId, "RegulatoryQualificationHead", entry.State == EntityState.Added ? null : (long?)entry.Property("Revision").OriginalValue, head.Revision,
+                JsonSerializer.Serialize(new { head.Revision }));
+        if (entry.Entity is RegulatoryQualificationReceipt receipt)
+            return new(null, receipt.RuleId, "RegulatoryQualificationReceipt", null, null, "[]");
+        if (entry.Entity is EvaluationQualification binding)
+            return new(null, binding.EvaluationId, "EvaluationQualification", null, binding.QualificationRevision,
+                JsonSerializer.Serialize(new { binding.RuleId, binding.QualificationRevision, binding.AttestationId }));
         Guid? vessel = entry.Entity switch {
             HumanReviewHead e => e.VesselId, HumanReviewEvent e => e.VesselId, HumanReviewReceipt e => e.VesselId,
             ControlEvidenceHead e => e.VesselId, ControlEvidenceRevision e => e.VesselId, ControlEvidenceRequirement e => e.VesselId, ControlEvidenceEdge e => e.VesselId, ControlEvidenceReceipt e => e.VesselId,
@@ -73,10 +88,10 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             }));
         }
         if (entry.Entity is ControlEvidenceRevision ce) {
-            if (ce.Lifecycle != "DRAFT" || ce.ReasonCode is not ("INITIAL_AUTHORING" or "AUTHORING_CORRECTION" or "SYNTHETIC_INCOMPLETE_DRAFT")) throw new InvalidOperationException("Invalid control/evidence change metadata.");
+            if (ce.Lifecycle is not ("DRAFT" or "SUBMITTED" or "COMPLETED") || ce.ReasonCode is not ("INITIAL_AUTHORING" or "AUTHORING_CORRECTION" or "SYNTHETIC_INCOMPLETE_DRAFT" or "SUBMIT" or "COMPLETE")) throw new InvalidOperationException("Invalid control/evidence change metadata.");
             return new(vessel, resource, ce.Kind, null, ce.Revision, JsonSerializer.Serialize(new[] {
                 new { field = "ReasonCode", before = (string?)null, after = ce.ReasonCode, evidence = "Allowlisted" },
-                new { field = "Lifecycle", before = (string?)null, after = "DRAFT", evidence = "Allowlisted" }
+                new { field = "Lifecycle", before = (string?)null, after = ce.Lifecycle, evidence = "Allowlisted" }
             }));
         }
         if (entry.Entity is RuleRevision rule) {

@@ -14,7 +14,7 @@ function transport(write: (init: RequestInit) => Promise<Response> = async () =>
     if (url.includes('/vessels?')) return response({ items: [{ id: vessel, name: 'FICTIONAL vessel', companyId: id, code: 'F1', kind: 'Ship', version: 1, canEdit: true }], offset: 0, limit: 25, hasMore: false })
     if (denied) return response({}, 403)
     if (url.includes('/owners?')) return response({ items: [] })
-    if (url.includes('/orphans?')) return response({ available: false, reason: 'AUTHORITATIVE_APPLICABILITY_UNAVAILABLE', draftCriticalOrphans: [], offset: 0, hasMore: false })
+    if (url.includes('/orphans?')) return response({ available: false, reason: 'AUTHORITATIVE_APPLICABILITY_UNAVAILABLE', draftCriticalOrphans: [], uncontrolledObligations: [], offset: 0, hasMore: false })
     if (url.includes('/rules') || url.includes('/requirement-drafts')) return response({ items: [], offset: 0, limit: 25, hasMore: false })
     if (url.includes('/files')) return response({ items: [], offset: 0, hasMore: false, canWrite: false, available: false, maxBytes: 0, allowedTypes: ['image/png'] })
     return response({ items: [], offset: 0, hasMore: false, canWrite: true })

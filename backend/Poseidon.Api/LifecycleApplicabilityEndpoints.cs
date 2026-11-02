@@ -29,7 +29,7 @@ public static class LifecycleApplicabilityEndpoints
 {
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { MaxDepth = 24, PropertyNameCaseInsensitive = false };
     private static TrustedActor Actor(HttpContext h) => h.RequestServices.GetRequiredService<ActorResolver>().Resolve(h.User)!;
-    internal static bool Read(TrustedActor a) => a.CanReadRegulatory && a.Permissions.Contains("applicability.read");
+    internal static bool Read(TrustedActor a) => a.HasWriteAttribution && a.CanReadRegulatory && a.Permissions.Contains("applicability.read");
     internal static bool Write(TrustedActor a) => Read(a) && a.CanWriteRegulatory && a.Permissions.Contains("rules.write");
     internal static bool Review(TrustedActor a) => Read(a) && a.HasWriteAttribution && a.Permissions.Contains("rules.review");
     internal static bool Evaluate(TrustedActor a) => Read(a) && a.HasWriteAttribution && a.Permissions.Contains("applicability.evaluate");
@@ -59,6 +59,7 @@ public static class LifecycleApplicabilityEndpoints
         var eval = app.MapGroup("/api/v1/applicability").RequireAuthorization("DirectoryRead");
         eval.MapPost("/evaluate", (HttpContext h) => Command(h, "evaluate", null)).Accepts<EvaluateCommand>("application/json").Produces<EvaluationDto>();
         eval.MapPost("/simulate", (HttpContext h) => Command(h, "simulate", null)).Accepts<EvaluateCommand>("application/json").Produces<EvaluationDto>();
+        eval.MapGet("/evaluations/{id:guid}/current", Current);
         eval.MapGet("/evaluations/{id:guid}", Detail).Produces<EvaluationDto>();
         eval.MapGet("/evaluations", History);
     }
@@ -82,6 +83,16 @@ public static class LifecycleApplicabilityEndpoints
         var heads = await db.RuleDrafts.AsNoTracking().Where(x => ids.Contains(x.Id)).ToArrayAsync(h.RequestAborted);
         await audit.WriteAsync(h, "RulesRead", "Success", resourceId: id);
         return Results.Ok(new PageDto<RuleDraftDto>(rows.Take(25).Select(r => new RuleDraftDto(heads.Single(d => d.Id == r.Id).Version, Dto(r))).ToArray(), offset, 25, rows.Length > 25));
+    }
+    private static async Task<IResult> Current(Guid id, HttpContext h, PoseidonDbContext db) {
+        var a = Actor(h); if (!Read(a)) return await Fail(h, 403, "permission_denied");
+        if (h.Request.Query.Count != 0) return await Fail(h, 400, "invalid_query");
+        var vessels = a.Scope(db.Vessels);
+        var row = await db.ApplicabilityEvaluations.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id && vessels.Any(v => v.Id == x.VesselId), h.RequestAborted);
+        if (row == null) return await Fail(h, 404, "resource_not_found");
+        var causes = await CurrentRegulatoryContext.Stale(db, id, row.VesselId, DateTimeOffset.UtcNow, h.RequestAborted);
+        await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "ApplicabilityCurrentRead", "Success", resourceId: id);
+        return Results.Ok(new { id, current = causes.Length == 0, causes });
     }
     private static async Task<IResult> Detail(Guid id, HttpContext h, PoseidonDbContext db, SecurityAudit audit)
     {
@@ -131,8 +142,10 @@ public static class LifecycleApplicabilityEndpoints
         // 15.01 §104..108 and 09.03 publication boundary: draft/PENDING source
         // outputs are non-mutating simulation ONLY. No receipt, activation or saved
         // evaluation is manufactured while the admission/decision chain is absent.
-        if (action == "evaluate") return await Fail(h, 409, "source_admission_pending");
+
         async Task<IResult?> Replay() {
+            var live = Actor(h); if (live == null || live.Id != actor.Id || live.TenantId != actor.TenantId || !(action == "author" ? Write(live) : action == "review" ? Review(live) : Evaluate(live))) return await Fail(h, 403, "permission_denied");
+            if (evaluate != null && !await live.Scope(db.Vessels).AnyAsync(v => v.Id == evaluate.VesselId, ct)) return await Fail(h, 404, "resource_not_found");
             var r = await db.ApplicabilityReceipts.AsNoTracking().SingleOrDefaultAsync(x => x.ActorId == actor.Id && x.Key == key, ct);
             if (r == null) return null;
             if (r.Action != action || r.Fingerprint != fingerprint) return await Fail(h, 409, "idempotency_key_reused");
@@ -140,12 +153,13 @@ public static class LifecycleApplicabilityEndpoints
             h.Response.Headers["Idempotency-Replayed"] = "true"; return Results.Content(r.OutcomeJson, "application/json");
         }
         var replay = await Replay(); if (replay != null) return replay;
-        await using var tx = await db.Database.BeginTransactionAsync(ct);
+        await using var tx = await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.RepeatableRead, ct);
         try {
             object outcome; Guid resource; var now = h.RequestServices.GetRequiredService<TimeProvider>().GetUtcNow(); now = now.AddTicks(-(now.Ticks % 10));
             if (evaluate != null) {
                 if (evaluate.RuleIds == null || evaluate.RuleIds.Length is < 1 or > 64 || evaluate.RuleIds.Distinct().Count() != evaluate.RuleIds.Length || evaluate.RuleIds.Contains(Guid.Empty)) return await Fail(h, 400, "invalid_rule_set");
                 var asOf = now;
+                if (action == "evaluate" && evaluate.AsOf != null) return await Fail(h, 400, "current_evaluation_requires_server_time");
                 if (evaluate.AsOf != null && (!DateTimeOffset.TryParseExact(evaluate.AsOf, ["yyyy-MM-dd'T'HH:mm:ssK", "yyyy-MM-dd'T'HH:mm:ss.FFFFFFFK"], CultureInfo.InvariantCulture, DateTimeStyles.None, out asOf) || asOf > now)) return await Fail(h, 400, "invalid_as_of");
                 asOf = asOf.ToUniversalTime(); asOf = asOf.AddTicks(-(asOf.Ticks % 10));
                 var vessel = await actor.Scope(db.Vessels).AsNoTracking().SingleAsync(x => x.Id == evaluate.VesselId, ct);
@@ -160,7 +174,51 @@ public static class LifecycleApplicabilityEndpoints
                 var ruleSetHash = RegisterStorage.Hash(JsonSerializer.Serialize(revisions.Select(r => new { r.Id, r.Revision, r.Hash, r.SourceId, r.SourceRevision, r.RequirementId, r.RequirementRevision }), Json));
                 resource = Guid.NewGuid();
                 var conflicts = ApplicabilityEngine.Conflicts(revisions.Select((r, i) => new RuleCandidate($"{r.Id:D}/{r.Revision}", ApplicabilityEngine.Parse(r.RuleJson!), results[i].Prediction)));
-                outcome = new EvaluationDto(resource, vessel.Id, now, asOf, ApplicabilityEngine.AdapterVersion, profileRevision, RegisterStorage.Hash(snapshotJson), snapshot, ruleSetHash, results, conflicts);
+                if (action == "evaluate") {
+                    if (profileRevision == null) return await Fail(h, 409, "profile_unavailable");
+                    var qualifications = new List<object>(); var bindings = new List<EvaluationQualification>();
+                    for (var i = 0; i < revisions.Length; i++) {
+                        var rule = revisions[i];
+                        var ruleHead = await db.RuleDrafts.SingleAsync(x => x.Id == rule.Id, ct);
+                        var q = await CurrentRegulatoryContext.Qualification(db, rule, ct);
+                        if (q == null || ruleHead.Revision != rule.Revision) return await Fail(h, 409, "source_admission_pending");
+                        var qualifiedHead = await db.RegulatoryQualificationHeads.SingleAsync(x => x.RuleId == rule.Id, ct);
+                        db.Entry(qualifiedHead).Property(x => x.Revision).IsModified = true;
+                        db.Entry(ruleHead).Property(x => x.Revision).IsModified = true;
+                        foreach (var (kind, inputId) in new[] { ("Source", rule.SourceId), ("Requirement", rule.RequirementId) }) {
+                            var input = await db.RegisterDrafts.SingleAsync(x => x.Kind == kind && x.Id == inputId, ct);
+                            db.Entry(input).Property(x => x.Revision).IsModified = true;
+                        }
+                        var (qualifiedFacts, attestation) = await CurrentRegulatoryContext.Facts(db, q, vessel.Id, profileRevision, facts, asOf, ct);
+                        var parsed = ApplicabilityEngine.Parse(rule.RuleJson!);
+                        var prediction = ApplicabilityEngine.Preview(parsed with { Lifecycle = parsed.Lifecycle with { State = q.State, Supersedes = q.SupersedingRuleId == null ? parsed.Lifecycle.Supersedes : $"{q.SupersedingRuleId:D}/{q.SupersedingRuleRevision}" } }, qualifiedFacts, asOf);
+                        prediction = prediction with { Authoritative = true, CurrentResult = prediction.Result,
+                            Blockers = prediction.Reason.ReviewRequired ? ["INPUT_REVIEW_REQUIRED"] : [] };
+                        results[i] = results[i] with { Prediction = prediction };
+                        qualifications.Add(new { ruleId = rule.Id, revision = q.Revision, q.Hash, q.SourceHash, q.PolicyVersion,
+                            attestationId = attestation?.Id, facts = qualifiedFacts });
+                        bindings.Add(new() { TenantId = actor.TenantId, EvaluationId = resource, RuleId = rule.Id, QualificationRevision = q.Revision, AttestationId = attestation?.Id });
+                    }
+                    var profileHead = await db.RegulatoryDrafts.SingleAsync(x => x.VesselId == vessel.Id, ct);
+                    if (profileHead.Revision != profileRevision) return await Fail(h, 409, "profile_context_conflict");
+                    db.Entry(profileHead).Property(x => x.Revision).IsModified = true;
+
+                    var vesselHead = await db.Vessels.SingleAsync(x => x.Id == vessel.Id, ct);
+                    db.Entry(vesselHead).Property(x => x.Name).IsModified = true;
+                    await db.SaveChangesAsync(ct);
+                    snapshot = JsonSerializer.SerializeToElement(new { adapterVersion = ApplicabilityEngine.AdapterVersion, vesselId = vessel.Id,
+                        vesselVersion = vesselHead.Version, vesselContextHash = CurrentRegulatoryContext.VesselHash(vesselHead), profileRevision, asOf, facts, qualifications }, Json);
+                    snapshotJson = snapshot.GetRawText();
+                    conflicts = ApplicabilityEngine.Conflicts(revisions.Select((r, i) => new RuleCandidate($"{r.Id:D}/{r.Revision}", ApplicabilityEngine.Parse(r.RuleJson!), results[i].Prediction)));
+                    outcome = new EvaluationDto(resource, vessel.Id, now, asOf, ApplicabilityEngine.AdapterVersion, profileRevision, RegisterStorage.Hash(snapshotJson), snapshot,
+                        ruleSetHash, results, conflicts, Preview: false, Authoritative: true, CurrentResult: conflicts.Length > 0 || results.Any(x => x.Prediction.Result == "REVIEW_REQUIRED") ? "REVIEW_REQUIRED" : "CURRENT", Simulation: false);
+                    db.ApplicabilityEvaluations.Add(new() { TenantId = actor.TenantId, Id = resource, VesselId = vessel.Id, ActorId = actor.Id,
+                        ProfileRevision = profileRevision, SavedAt = now, AsOf = asOf, AdapterVersion = ApplicabilityEngine.AdapterVersion, SnapshotJson = snapshotJson,
+                        SnapshotHash = RegisterStorage.Hash(snapshotJson), RuleSetHash = ruleSetHash, ResultJson = JsonSerializer.Serialize(outcome, Json) });
+                    db.EvaluationRules.AddRange(revisions.Select(r => new EvaluationRule { TenantId = actor.TenantId, EvaluationId = resource, RuleId = r.Id, RuleRevision = r.Revision }));
+                    db.EvaluationQualifications.AddRange(bindings);
+                    await db.SaveChangesAsync(ct);
+                } else outcome = new EvaluationDto(resource, vessel.Id, now, asOf, ApplicabilityEngine.AdapterVersion, profileRevision, RegisterStorage.Hash(snapshotJson), snapshot, ruleSetHash, results, conflicts);
             } else {
                 var d = id == null ? null : await db.RuleDrafts.SingleOrDefaultAsync(x => x.Id == id, ct);
                 if (id != null && d == null) return await Fail(h, 404, "resource_not_found");
@@ -211,13 +269,21 @@ public static class LifecycleApplicabilityEndpoints
                 return Results.Content(outcomeJson, "application/json");
             }
             db.ApplicabilityReceipts.Add(new() { TenantId = actor.TenantId, ActorId = actor.Id, Key = key, Action = action, Fingerprint = fingerprint, ResourceId = resource,
+                RuleResourceId = action == "evaluate" ? null : resource, EvaluationResourceId = action == "evaluate" ? resource : null,
                 VesselId = evaluate?.VesselId, OutcomeJson = outcomeJson, SavedAt = now });
-            await db.SaveChangesAsync(ct); await tx.CommitAsync(ct);
+            await db.SaveChangesAsync(ct);
+            var live = Actor(h); if (live == null || live.Id != actor.Id || live.TenantId != actor.TenantId || !(action == "author" ? Write(live) : action == "review" ? Review(live) : Evaluate(live))) return await Fail(h, 403, "permission_denied");
+            if (evaluate != null && !await live.Scope(db.Vessels).AnyAsync(v => v.Id == evaluate.VesselId, ct)) return await Fail(h, 404, "resource_not_found");
+            await tx.CommitAsync(ct);
             return Results.Content(outcomeJson, "application/json");
         } catch (JsonException) { await tx.RollbackAsync(CancellationToken.None); return await Fail(h, 400, "invalid_rule");
         } catch (DbUpdateConcurrencyException) { await tx.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear(); return await Replay() ?? await Fail(h, 409, "version_conflict");
         } catch (DbUpdateException e) when (e.InnerException is PostgresException { SqlState: PostgresErrorCodes.UniqueViolation }) {
             await tx.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear(); return await Replay() ?? await Fail(h, 409, "version_conflict");
-        } catch (Exception e) when (e is DbUpdateException or NpgsqlException) { await tx.RollbackAsync(CancellationToken.None); return await Fail(h, 503, "service_unavailable"); }
+        } catch (Exception e) when (e is DbUpdateException or NpgsqlException) {
+            await tx.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear();
+            var state = e is PostgresException p ? p.SqlState : (e.InnerException as PostgresException)?.SqlState;
+            return await Replay() ?? await Fail(h, state is "40001" or "40P01" ? 409 : 503, state is "40001" or "40P01" ? "version_conflict" : "service_unavailable");
+        }
     }
 }

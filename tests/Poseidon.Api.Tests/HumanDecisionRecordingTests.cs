@@ -210,7 +210,7 @@ public sealed partial class DirectoryWorkspaceTests
         var trace = await c.GetFromJsonAsync<JsonElement>(TraceRoute(ev, co), Ct); Assert.Contains("SUPERSEDED_REVIEW_REQUIRED", trace.GetRawText());
         host.Services.GetRequiredService<FederationSettings>().Memberships[0].HumanAuthorities = [];
         using var revoked = await Send(c, GraphRoute("decisions"), cmd, key); Assert.Equal(HttpStatusCode.Forbidden, revoked.StatusCode);
-        var hidden = await c.GetFromJsonAsync<JsonElement>(TraceRoute(ev, co), Ct); Assert.DoesNotContain("FICTIONAL human decision text", hidden.GetRawText());
-        Assert.DoesNotContain("RECORDED", hidden.GetRawText());
+        using var hidden = await c.GetAsync(TraceRoute(ev, co), Ct); Assert.Equal(HttpStatusCode.Forbidden, hidden.StatusCode);
+        var hiddenBody = await hidden.Content.ReadAsStringAsync(Ct); Assert.DoesNotContain("FICTIONAL human decision text", hiddenBody); Assert.DoesNotContain("RECORDED", hiddenBody);
     }
 }

@@ -121,3 +121,9 @@
 .human-review select, .human-review textarea, .human-review input { max-width: 100%; min-width: 0; }
 .human-review textarea { min-height: 6rem; }
 .human-review button, .human-review a { margin-inline-end: .5rem; margin-block: .25rem; }
+.regulatory-qualification { border: 1px solid var(--border, #69788a); padding: 1rem; margin-block: 1rem; min-width: 0; }
+.regulatory-qualification fieldset { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); gap: .75rem; margin-block: 1rem; min-width: 0; }
+.regulatory-qualification label { display: flex; flex-direction: column; gap: .35rem; min-width: 0; }
+.regulatory-qualification input, .regulatory-qualification select { max-width: 100%; min-width: 0; }
+.regulatory-qualification p, .regulatory-qualification a { overflow-wrap: anywhere; }
+.regulatory-qualification :focus-visible { outline: 3px solid #2474ca; outline-offset: 3px; }

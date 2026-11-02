@@ -38,6 +38,7 @@ public sealed class HumanReviewEvent : ITenantEntity
     public required string ContextHash { get; set; }
     // Null for historical events. Never backfill human text or authority.
     public string? DecisionJson { get; set; }
+    public string? DecisionType { get; set; }
     public DateTimeOffset SavedAt { get; set; }
     public DateTimeOffset? ValidUntil { get; set; }
 }

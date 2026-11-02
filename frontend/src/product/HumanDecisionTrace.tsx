@@ -38,7 +38,7 @@ export function HumanDecisionTrace({ anchor, language, csrf, offline, onDirty, o
       expectedVersion: decision ? 0 : selected?.version ?? 0, authorityId: grant.id, operationId: grant.operationId,
       evidenceId: anchor.evidenceId, evidenceRevision: anchor.evidenceRevision, evidenceVersion: data!.evidenceVersion,
       controlId: anchor.controlId, controlRevision: anchor.controlRevision, controlVersion: data!.controlVersion,
-      evaluationId: selected?.evaluationId ?? null, verificationId: decision ? selected?.id : selected?.verificationId ?? null,
+      evaluationId: selected?.evaluationId ?? data?.evaluationId ?? null, verificationId: decision ? selected?.id : selected?.verificationId ?? null,
       verificationRevision: decision ? selected?.revision : selected?.verificationRevision ?? null, state, reasonCode, rationale,
       expectedProfileRevision: recordingMode ? data!.profileRevision : null,
       recording: recordingMode ? { decisionType: grant.recording!.decisionType, subjectType: grant.recording!.subjectType, subjectId: grant.recording!.subjectId, humanDecision, decisionContext, triggerSource } : null,
@@ -66,6 +66,8 @@ export function HumanDecisionTrace({ anchor, language, csrf, offline, onDirty, o
     EXPIRED_REVIEW_REQUIRED: t('Expired — review required', 'Süresi doldu — inceleme gerekli'), SUPERSEDED_REVIEW_REQUIRED: t('Inputs changed — review required', 'Girdiler değişti — inceleme gerekli'),
   }
   const why: Record<string, string> = {
+    CONTROL_COMPLETION_PENDING: t('Control completion pending', 'Kontrolün tamamlanması bekleniyor'), VERIFICATION_PENDING_OR_STALE: t('Verification pending or stale', 'Doğrulama bekleniyor veya güncel değil'), DECISION_RECORDING_PENDING: t('Human decision recording pending', 'İnsan karar kaydı bekleniyor'),
+    SOURCE_NOT_CURRENT: t('Source is outside current effect', 'Kaynak güncel yürürlük dışında'), PROFILE_CHANGED: t('Vessel profile changed', 'Araç profili değişti'), QUALIFICATION_CHANGED: t('Source qualification changed', 'Kaynak nitelendirmesi değişti'), INPUT_STALE: t('Input freshness elapsed', 'Girdi güncelliği sona erdi'),
     SOURCE_ADMISSION_UNAVAILABLE: t('Source admission unavailable', 'Kaynak kabulü kullanılamıyor'), AUTHORITATIVE_EVALUATION_UNAVAILABLE: t('Authoritative evaluation unavailable', 'Yetkili değerlendirme kullanılamıyor'),
     EXTERNAL_SIGNATURE_UNAVAILABLE: t('External signature mechanism unavailable', 'Harici imza mekanizması kullanılamıyor'), REQUIREMENT_LINK_MISSING: t('Requirement link missing', 'Gereksinim bağlantısı eksik'),
     REVISION_UNAVAILABLE: t('Revision unavailable', 'Sürüm kullanılamıyor'), COMPLETION_AND_EFFECTIVENESS_UNKNOWN: t('Completion and effectiveness unknown', 'Tamamlanma ve etkinlik bilinmiyor'), EXISTENCE_IS_NOT_VERIFICATION: t('Evidence presence is separate from verification', 'Kanıt varlığı doğrulamadan ayrıdır'), HISTORICAL_INPUTS_ONLY: t('Retained historical inputs only', 'Yalnız saklanan tarihsel girdiler'),
@@ -82,7 +84,7 @@ export function HumanDecisionTrace({ anchor, language, csrf, offline, onDirty, o
     <label>{t('Trace as of with UTC offset', 'UTC farkıyla iz zamanı')}<input value={asOf} disabled={dirty || busy} onChange={e => setAsOf(e.target.value)} /></label>
     <button disabled={offline || dirty || busy || !!asOf && !timestamp(asOf)} onClick={() => { setHistory(asOf); setOffset(0); setSelected(null); setAuthority('') }}>{t('Read trace history', 'İz geçmişini oku')}</button>
     {data && <>
-      <p>{t('Trace as of', 'İz zamanı')}: {data.asOf} · {data.historical ? t('Historical view', 'Tarihsel görünüm') : t('Current view', 'Güncel görünüm')}</p>
+      <p>{t('Trace as of', 'İz zamanı')}: {data.asOf} · {data.disposition} · {data.historical ? t('Historical view', 'Tarihsel görünüm') : t('Current view', 'Güncel görünüm')}</p>
       <p>{t('Declared provenance', 'Beyan edilen köken')}: {data.evidenceContext.provenance ?? t('Unknown', 'Bilinmiyor')}</p>
       <p>{t('Observed / declared validity / declared freshness', 'Gözlem / beyan edilen geçerlilik / beyan edilen güncellik')}: {data.evidenceContext.observedAt ?? t('Unknown', 'Bilinmiyor')} / {data.evidenceContext.validUntil ?? t('Unknown', 'Bilinmiyor')} / {data.evidenceContext.freshUntil ?? t('Unknown', 'Bilinmiyor')}</p>
       <ul>{data.blockers.map(b => <li key={b}>{why[b]}</li>)}</ul>
@@ -98,6 +100,7 @@ export function HumanDecisionTrace({ anchor, language, csrf, offline, onDirty, o
         {row.kind === 'Verification' && <button disabled={locked || dirty} onClick={() => choose(row, true, true)}>{t('Record authorized human decision', 'Yetkili insan kararını kaydet')}</button>}
         {row.kind === 'Decision' && row.state === 'PENDING' && <button disabled={locked || dirty} onClick={() => choose(row, false, true)}>{t('Record authorized human decision', 'Yetkili insan kararını kaydet')}</button>}
       </article>)}
+      {data.auditItems && <section aria-label={t('Assigned auditor history', 'Atanmış denetçi geçmişi')}><h4>{t('Assigned auditor history', 'Atanmış denetçi geçmişi')}</h4>{data.auditItems.map(e => <article key={`${e.id}/${e.revision}`}><p>{e.kind} · {e.state} · {e.currentState} · {e.savedAt} · {e.validUntil ?? '—'}</p><p>{e.id} / {e.revision} · {e.contextHash} · {e.authorityHash}</p></article>)}<button disabled={dirty || busy || !data.auditHasMore} onClick={() => setOffset(v => v + 25)}>{t('More audit metadata', 'Diğer denetim metaverileri')}</button></section>}
       <button disabled={dirty || busy || offset === 0} onClick={() => setOffset(v => v - 25)}>{t('Previous review events', 'Önceki inceleme olayları')}</button><button disabled={dirty || busy || !data.hasMore} onClick={() => setOffset(v => v + 25)}>{t('More review events', 'Diğer inceleme olayları')}</button>
       {!history && <fieldset disabled={locked || !!attempt}><legend>{t('Human review command', 'İnsan inceleme komutu')}</legend>
         <button disabled={dirty} onClick={() => choose(null)}>{t('New verification request', 'Yeni doğrulama isteği')}</button>

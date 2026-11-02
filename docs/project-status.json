@@ -1,4 +1,48 @@
 {
+  "regulatory_admission_current_01": {
+    "status": "AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+    "accepted": false,
+    "foundation_ready": false,
+    "phase": "Product authoring before the single FOUNDATION-ACCEPTANCE-BUNDLE-01",
+    "receiving_head": "95381a97c08f6a51b021c7a8f23947cef7c32bc1",
+    "receiving_tree": "CLEAN; existing foundations and historical independent baseline80b preserved",
+    "task": "docs/tasks/regulatory-admission-current-01.md",
+    "report": "docs/phases/REGULATORY-ADMISSION-CURRENT-01.md",
+    "source_evidence": "docs/tasks/regulatory-admission-current-01.sources.json",
+    "delivered": [
+      "Real server-appointed human source/rule/policy qualification and immutable exact source bytes/history",
+      "Explicit lifecycle and policy lineage; seven current profile adapters and guarded human attestations",
+      "Persisted server-built evaluation, immutable pins and independent current/stale projection",
+      "Qualified submit/complete, freshness/acknowledgment policies, current eligible obligation reporting and verification consumption",
+      "Independent assigned read-only Auditor trace metadata without private rationale or mutation authority",
+      "TR/EN accessible responsive UI, strict consumers, meaningful domain/actual-host/PostgreSQL/React/signed-host test source"
+    ],
+    "verification": "DEFERRED_NOT_RUN: suites/build/typecheck/lint/restore/generation/model parity/migrations/browser/provider/security/independent QA/CI",
+    "unfinished_software": [
+      "Other13 owning context adapters remain Unknown/unavailable; not completed by a blocker",
+      "ProviderVerified inputs and required external source/evidence mechanisms have no successful provider adapter",
+      "Missing full golden/operation/class/crew, provider-positive, remaining adversarial races/person-trace variants and multi-human signed-host stitching",
+      "Generated EF designer/snapshot/OpenAPI/consumer parity and actual whole-foundation integration are deferred"
+    ],
+    "external_prerequisites": [
+      "Actual controlled sources, legitimate scoped owner/reviewer appointments and real human attestations",
+      "Defined signature/provider contracts and real external validation evidence when required",
+      "Actual validated escort source for GOLD-005; source49/50 proposals supply no adopted rule"
+    ],
+    "canonical_progress_unchanged": true,
+    "publication": "Ordinary LOCAL UNVERIFIED checkpoint only; coordinator owns publishing and merge",
+    "next": "One FOUNDATION-ACCEPTANCE-BUNDLE-01 integration/generation/build/test/security gate, correction of real findings, independent exact-target QA, required CI, separate original-source acceptance without duplicate SP",
+    "source_only_observations": {
+      "whitespace_exit": 0,
+      "graphify_ast_exit": 0,
+      "graph_nodes": 7569,
+      "graph_edges": 16517,
+      "graph_communities": 496,
+      "zero_node_source_warnings": 53,
+      "semantic_api_calls": 0,
+      "product_verification": "DEFERRED_NOT_RUN"
+    }
+  },
   "human_decision_recording_01": {
     "status": "AUTHORED_UNVERIFIED_NOT_ACCEPTED",
     "accepted": false,

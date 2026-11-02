@@ -1,3 +1,31 @@
+# REGULATORY-ADMISSION-CURRENT-01 — AUTHORED / UNVERIFIED / NOT ACCEPTED
+
+Authored real human-scoped source/rule/policy qualification, immutable source
+bytes/revision history, explicit lifecycle, seven current profile adapters and
+current human attestations. Actual server-built evaluation now persists immutable
+source/rule/profile/policy/fact lineage with a separate stale/review projection.
+Qualified submit/complete and evidence/freshness/acknowledgment policy consumers,
+verification and independent assigned read-only Auditor trace metadata are wired.
+TR/EN accessible UI and meaningful actual-host/PostgreSQL/domain/React/signed-host
+sources are authored; none is an observed passing test or production sign-off.
+
+**Unfinished software remains:** the other13 owning context adapters, successful
+required provider/signature mechanisms, remaining golden/adversarial/person-trace/
+full multi-human journey cases, and generated EF/API/model parity/integration.
+They are not called complete because they fail closed. Actual sources/appointments/
+external proof are separate real authority inputs, not a substitute for that code.
+[Exact task/source/case mapping](tasks/regulatory-admission-current-01.md) and
+[phase report](phases/REGULATORY-ADMISSION-CURRENT-01.md).
+
+All suites/build/typecheck/lint/restore/generation/provider/browser/security scans
+remain **DEFERRED / NOT RUN**. Only source retrieval/authoring, source whitespace
+and Graphify AST maintenance are performed. Clean receiving95381a97, predecessor
+work, old truthful blockers and historical independent80b baseline are preserved.
+Canonical8/970 and194SP goal are unchanged. Current phase: authoring before the one
+**FOUNDATION-ACCEPTANCE-BUNDLE-01**, then real exact-target independent QA/CI and
+separate original-source acceptance. No extra agents, actual human appointments,
+accounts/private configuration, publication, merge or self acceptance.
+
 # HUMAN-DECISION-RECORDING-01 — AUTHORED / UNVERIFIED / NOT ACCEPTED
 
 Actual POST decisions now records authorized human decision text/reason/context

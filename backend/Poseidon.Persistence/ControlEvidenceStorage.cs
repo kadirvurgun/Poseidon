@@ -87,7 +87,7 @@ public static class ControlEvidenceStorage
             b.HasOne<ControlEvidenceHead>().WithMany().HasForeignKey(x => new { x.TenantId, x.VesselId, x.Kind, x.Id }).OnDelete(DeleteBehavior.Restrict);
             b.HasOne<StoredFile>().WithMany().HasForeignKey(x => new { x.TenantId, x.VesselId, Id = x.FileId, Revision = x.FileRevision, x.Checksum })
                 .HasPrincipalKey(x => new { x.TenantId, x.VesselId, x.Id, x.Revision, x.Checksum }).OnDelete(DeleteBehavior.Restrict);
-            b.ToTable("ControlEvidenceRevisions", t => t.HasCheckConstraint("CK_ControlEvidenceRevisions", "\"Revision\" > 0 AND \"Lifecycle\" = 'DRAFT' AND ((\"FileId\" IS NULL AND \"FileRevision\" IS NULL AND \"Checksum\" IS NULL) OR (\"Kind\" = 'Evidence' AND \"FileId\" IS NOT NULL AND \"FileRevision\" IS NOT NULL AND \"FileRevision\" > 0 AND \"Checksum\" IS NOT NULL))"));
+            b.ToTable("ControlEvidenceRevisions", t => t.HasCheckConstraint("CK_ControlEvidenceRevisions", "\"Revision\" > 0 AND \"Lifecycle\" IN ('DRAFT','SUBMITTED','COMPLETED') AND ((\"FileId\" IS NULL AND \"FileRevision\" IS NULL AND \"Checksum\" IS NULL) OR (\"Kind\" = 'Evidence' AND \"FileId\" IS NOT NULL AND \"FileRevision\" IS NOT NULL AND \"FileRevision\" > 0 AND \"Checksum\" IS NOT NULL))"));
         });
         model.Entity<ControlEvidenceRequirement>(b => {
             b.HasKey(x => new { x.TenantId, x.VesselId, x.Kind, x.Id, x.Revision, x.RequirementId, x.RequirementRevision });
