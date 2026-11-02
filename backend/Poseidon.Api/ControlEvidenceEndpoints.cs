@@ -194,6 +194,7 @@ public static class ControlEvidenceEndpoints
             ControlEvidencePolicy.Validate(kind, command.Content, DateTimeOffset.UtcNow);
             if (command.ReasonCode != (action == "submit" ? "SUBMIT" : action == "complete" ? "COMPLETE" : id == null ? "INITIAL_AUTHORING" : "AUTHORING_CORRECTION") || kind == "Control" && (command.File != null || command.Links.Length != 0)) throw new JsonException();
         } catch (Exception e) when (e is JsonException or ArgumentException or InvalidDataException) { return await Fail(h, 400, "invalid_request"); }
+        if (command.Content.CrewRoleAssessment != null && !ComplianceInputContext.CrewRead(a)) return await Fail(h, 403, "permission_denied");
         if (id != null && !(a.CanReadTug && a.Permissions.Contains("equipment.read")) && await db.TugCapabilityBindings.AnyAsync(b => b.VesselId == vessel && b.Id == id, ct)) return await Fail(h, 403, "permission_denied");
         if (OperationEquipmentInputs.Present(command.Content) && (!OperationEquipmentCommands.Read(a) ||
             (command.Content.Operation != null || command.Content.ServiceAuthorization != null) && !a.CanReadTug)) return await Fail(h, 403, "permission_denied");
@@ -225,8 +226,10 @@ public static class ControlEvidenceEndpoints
                 if (bytes.Length != file.Length || bytes.Length > h.RequestServices.GetRequiredService<SecureFileSettings>().MaxBytes || Convert.ToHexString(await SHA256.HashDataAsync(bytes, ct)) != file.Checksum) return await Fail(h, 503, "file_integrity_unavailable");
             } catch (Exception e) when (e is IOException or InvalidDataException or HttpRequestException or CryptographicException) { return await Fail(h, 503, "file_integrity_unavailable"); }
         }
+        if (ComplianceInputs.Present(command.Content) && !await OperationEquipmentCommands.Check(db, a, vessel, id, command.Content, ct)) return await Fail(h, 409, "owning_context_changed");
         async Task<IResult?> Replay() {
             var live = Actor(h); if (live == null || live.Id != a.Id || live.TenantId != a.TenantId || !Write(live, kind, vessel) || !await Scope(db, live, vessel, ct)) return await Fail(h, 403, "permission_denied");
+            if (ComplianceInputs.Present(command.Content) && !await OperationEquipmentCommands.Check(db, live, vessel, id, command.Content, ct)) return await Fail(h, 409, "owning_context_changed");
             var receipt = await db.ControlEvidenceReceipts.AsNoTracking().SingleOrDefaultAsync(r => r.ActorId == a.Id && r.Key == key, ct);
             if (receipt == null) return null;
             if (receipt.Fingerprint != fingerprint || receipt.VesselId != vessel || receipt.Kind != kind) return await Fail(h, 409, "idempotency_key_reused");
@@ -271,6 +274,7 @@ public static class ControlEvidenceEndpoints
                 ContentJson = JsonSerializer.Serialize(command.Content, Json), Hash = RegisterStorage.Hash(JsonSerializer.Serialize(new { command.Content, command.Requirements, command.Links, command.File, action }, Json)),
                 CriticalDeclaration = command.Content.Critical, FileId = file?.Id, FileRevision = file?.Revision, Checksum = file?.Checksum, ActorId = a.Id, RoleContext = a.RoleContext, ReasonCode = command.ReasonCode, Lifecycle = action == "submit" ? "SUBMITTED" : action == "complete" ? "COMPLETED" : "DRAFT", SavedAt = now };
             db.ControlEvidenceRevisions.Add(revision);
+            foreach (var role in command.Content.Msmd?.Roles ?? []) db.MsmdRoleBindings.Add(new() { TenantId = a.TenantId, VesselId = vessel, Id = head.Id, Revision = head.Revision, PositionId = role.PositionId, Count = role.Count, SourceLocator = role.SourceLocator });
             if (OperationEquipmentInputs.Present(command.Content)) db.OperationEquipmentBindings.Add(OperationEquipmentBinding.From(a.TenantId, vessel, head.Id, head.Revision, command.Content));
             if (command.Content.TugCapability is { } binding) db.TugCapabilityBindings.Add(new() {
                 TenantId = a.TenantId, VesselId = vessel, Id = head.Id, Revision = head.Revision,

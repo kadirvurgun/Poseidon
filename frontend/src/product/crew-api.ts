@@ -15,7 +15,7 @@ export type CrewRow = {
 export type CrewIdentityPolicy = { version: string; purpose: string; employeeNumberMode: string }
 export type CrewPage = { items: CrewRow[]; offset: number; hasMore: boolean; canWrite: boolean; canWriteIdentity: boolean; identityPolicy?: CrewIdentityPolicy | null; declarationPolicy?: { version: string; statuses: string[] } | null }
 export type CrewPosition = { id: string; code: string; rank: string | null; capacity: string | null; department: string | null; provenance: string }
-export type CrewProfile = { assignment: CrewRow; employmentState: string; fitnessState: string; identityStatus: string; contactStatus: string; healthStatus: string; personVersion: number | null; identityPolicy?: CrewIdentityPolicy | null; canConvertIdentity?: boolean }
+export type CrewProfile = { assignment: CrewRow; employmentState: string; fitnessState: string; identityStatus: string; contactStatus: string; healthStatus: string; personVersion: number | null; identityPolicy?: CrewIdentityPolicy | null; canConvertIdentity?: boolean; statusSpecification?: { state: 'DERIVATION_REQUIRES_SPECIFICATION'; field: 'crew-profile.status'; source: string; authority: 'SYSTEM_DERIVED;BA_DEFINITION_PENDING' } | null }
 export type CrewCommand = {
   id: string; personId: string | null; baseVersion: number | null; fullName: string | null; employeeNo: string | null;
   positionId: string | null; from: string | null; to: string | null; contractEndDate: string | null;
@@ -55,6 +55,7 @@ export const profile = async (vessel: string, assignment: string, signal: AbortS
   const v = await request<unknown>(`${crewPath(vessel)}/${encodeURIComponent(assignment)}`, signal)
   if (!obj(v) || !['employmentState', 'fitnessState', 'identityStatus', 'contactStatus', 'healthStatus'].every(k => text(v[k])) ||
     !(v.personVersion === null || uint(v.personVersion))) throw invalid()
+  if (v.statusSpecification != null && (!obj(v.statusSpecification) || Object.keys(v.statusSpecification).length !== 4 || v.statusSpecification.state !== 'DERIVATION_REQUIRES_SPECIFICATION' || v.statusSpecification.field !== 'crew-profile.status' || v.statusSpecification.source !== '14.02/Data Dictionary 2316/row:1615' || v.statusSpecification.authority !== 'SYSTEM_DERIVED;BA_DEFINITION_PENDING')) throw invalid()
   const row = decodeCrewRow(v.assignment, vessel); if (row.id !== assignment) throw invalid()
   return { ...v, assignment: row } as CrewProfile
 }
@@ -88,12 +89,12 @@ export async function history(vessel: string, assignment: string, signal: AbortS
   }
   return { items: v.items as CrewHistoryRow[], offset, hasMore: v.hasMore }
 }
-export type CrewOwningInput = { field: string; state: 'Withheld' | 'Missing' | 'DeclaredUnverified' | 'Unavailable' | 'EvaluationUnavailable'; ownerTask: string; reason: string }
+export type CrewOwningInput = { field: string; state: 'Withheld' | 'Missing' | 'DeclaredUnverified' | 'Unavailable' | 'EvaluationUnavailable' | 'Unknown' | 'QualifiedEligible' | 'QualifiedIneligible'; ownerTask: string; reason: string }
 export async function owningInputs(vessel: string, assignment: string, signal: AbortSignal): Promise<CrewOwningInput[]> {
   const v = await request<unknown>(`${crewPath(vessel)}/${encodeURIComponent(assignment)}/owning-inputs`, signal)
   const expected = ['certificate_state', 'contact_status', 'competence_state', 'work_rest_state', 'eligibility_state', 'fitness_state']
   if (!obj(v) || v.assignmentId !== assignment || v.authority !== 'InputObservationOnly' || !Array.isArray(v.inputs) || v.inputs.length !== expected.length ||
-    v.inputs.some((r, i) => !obj(r) || r.field !== expected[i] || !['Withheld', 'Missing', 'DeclaredUnverified', 'Unavailable', 'EvaluationUnavailable'].includes(r.state as string) ||
+    v.inputs.some((r, i) => !obj(r) || r.field !== expected[i] || !['Withheld', 'Missing', 'DeclaredUnverified', 'Unavailable', 'EvaluationUnavailable', ...(r.field === 'eligibility_state' ? ['Unknown', 'QualifiedEligible', 'QualifiedIneligible'] : [])].includes(r.state as string) ||
       !text(r.ownerTask) || !text(r.reason))) throw invalid()
   return v.inputs as CrewOwningInput[]
 }

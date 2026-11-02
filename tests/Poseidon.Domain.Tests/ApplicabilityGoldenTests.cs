@@ -48,7 +48,8 @@ public sealed class ApplicabilityGoldenTests
         var result = ApplicabilityEngine.Preview(Sample("RULE-TUG-MIN-MANNING-MSMD"), facts, AsOf);
         Assert.Equal("APPLICABLE", result.Result); Assert.Equal("REVIEW_REQUIRED", result.CurrentResult); Assert.False(result.Authoritative);
         Assert.Contains(result.PredictedActivations, x => x.GetProperty("id").GetString() == "tug-crew-readiness.minimum_manning_state");
-        // This fixture asserts projected need, not an implemented crew readiness evaluator.
+        Assert.True(ComplianceInputs.ManningReview(Sample("RULE-TUG-MIN-MANNING-MSMD"), facts));
+        // Owning MSMD/role consumers are separately authored; this is a domain case.
     }
     [Fact]
     public void GOLD_005_escort_overlay_stays_unavailable_without_validated_source() {

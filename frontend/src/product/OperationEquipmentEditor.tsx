@@ -24,7 +24,7 @@ export function OperationEquipmentEditor({ vessel, language, offline, isTug, val
     return () => { active = false; c.abort() }
   }, [vessel, offline, isTug, offset, evidenceOffset])
   const update = (v: OwningContent) => onChange({ ...value, ...v })
-  const choose = (k: string) => onChange({ ...value, tugCapability: null, operation: null, serviceAuthorization: null, cargoPlan: null, winchFitment: null,
+  const choose = (k: string) => onChange({ ...value, tugCapability: null, classPack: null, msmd: null, crewRoleAssessment: null, operation: null, serviceAuthorization: null, cargoPlan: null, winchFitment: null,
     ...(k === 'operation' ? { operation: { jobId: null, jobRevision: null, jobVersion: null, planRevision: null, planVersion: null, profile: null, serviceAuthorizationId: null, serviceAuthorizationRevision: null } } :
       k === 'serviceAuthorization' ? { serviceAuthorization: { jobId: null, jobRevision: null, jobVersion: null, planRevision: null, planVersion: null, serviceContext: null, issuerReference: null } } :
       k === 'cargoPlan' ? { cargoPlan: { planReference: null, packagedDangerousGoods: null } } : k === 'winchFitment' ? { winchFitment: { assetId: null, assetRevision: null, assetVersion: null, fitted: null, registerReference: null } } : {}) })

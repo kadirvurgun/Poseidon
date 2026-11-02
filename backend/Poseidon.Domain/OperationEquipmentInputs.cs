@@ -17,7 +17,9 @@ public sealed record CargoPlanReference(string? PlanReference = null, bool? Pack
 public sealed record WinchFitmentReference(Guid? AssetId = null, long? AssetRevision = null, uint? AssetVersion = null,
     bool? Fitted = null, string? RegisterReference = null);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
-public sealed record OwningInputReferences(Guid? OperationId = null, Guid? CargoPlanId = null, Guid? WinchFitmentId = null);
+public sealed record OwningInputReferences(Guid? OperationId = null, Guid? CargoPlanId = null, Guid? WinchFitmentId = null,
+    Guid? ClassPackId = null, Guid? MsmdId = null, Guid[]? RoleAssessmentIds = null,
+    Guid? SourceEvidenceId = null, EvaluationInputReference? Ism = null);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record QualifiedLiteralBinding(string Field, string? OwnerValue, string? RuleValue, string? SourceLocator);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
@@ -26,13 +28,14 @@ public sealed record QualifiedOwningDocumentPolicy(string DocumentKind, Guid? Au
 public static class OperationEquipmentInputs
 {
     public static readonly string[] Fields = ["vessel.operatingArea", "operation.jobType", "operation.profile", "operation.serviceContext", "cargo.packagedDangerousGoods", "equipment.towingWinchFitted"];
-    public static bool Present(ControlEvidenceContent c) => c.Operation != null || c.ServiceAuthorization != null || c.CargoPlan != null || c.WinchFitment != null;
-    public static string Kind(ControlEvidenceContent c) => c.Operation != null ? "Operation" : c.ServiceAuthorization != null ? "ServiceAuthorization" : c.CargoPlan != null ? "CargoPlan" : "WinchFitment";
+    public static bool Present(ControlEvidenceContent c) => c.Operation != null || c.ServiceAuthorization != null || c.CargoPlan != null || c.WinchFitment != null || ComplianceInputs.Present(c);
+    public static string Kind(ControlEvidenceContent c) => c.Operation != null ? "Operation" : c.ServiceAuthorization != null ? "ServiceAuthorization" : c.CargoPlan != null ? "CargoPlan" : c.WinchFitment != null ? "WinchFitment" : ComplianceInputs.Kind(c);
     public static bool Text(string? s) => s == null || s.Length is > 0 and <= 2000 && s.Trim() == s && !s.Any(char.IsControl);
     public static void Validate(string kind, ControlEvidenceContent c) {
         if (!Present(c)) return;
-        if (kind != "Evidence" || new object?[] { c.Operation, c.ServiceAuthorization, c.CargoPlan, c.WinchFitment, c.TugCapability }.Count(x => x != null) != 1)
+        if (kind != "Evidence" || new object?[] { c.Operation, c.ServiceAuthorization, c.CargoPlan, c.WinchFitment, c.ClassPack, c.Msmd, c.CrewRoleAssessment, c.TugCapability }.Count(x => x != null) != 1)
             throw new ArgumentException("invalid_owning_document_kind");
+        ComplianceInputs.Validate(c);
         var o = c.Operation; var s = c.ServiceAuthorization; var w = c.WinchFitment;
         var job = o?.JobId ?? s?.JobId; var revision = o?.JobRevision ?? s?.JobRevision; var version = o?.JobVersion ?? s?.JobVersion;
         var plan = o?.PlanRevision ?? s?.PlanRevision; var planVersion = o?.PlanVersion ?? s?.PlanVersion;
@@ -46,7 +49,7 @@ public static class OperationEquipmentInputs
     public static bool Complete(ControlEvidenceContent c) => c.Operation is { JobId: not null, PlanRevision: not null, Profile: not null, ServiceAuthorizationId: not null } ||
         c.ServiceAuthorization is { JobId: not null, PlanRevision: not null, ServiceContext: not null, IssuerReference: not null } ||
         c.CargoPlan is { PlanReference: not null, PackagedDangerousGoods: not null } ||
-        c.WinchFitment is { AssetId: not null, Fitted: not null, RegisterReference: not null };
+        c.WinchFitment is { AssetId: not null, Fitted: not null, RegisterReference: not null } || ComplianceInputs.Complete(c);
     public static void ValidateBindings(QualifiedLiteralBinding[]? bindings) {
         if (bindings == null) return;
         if (bindings.Length > 256 || bindings.Any(b => b == null || !Fields.Take(4).Contains(b.Field) ||

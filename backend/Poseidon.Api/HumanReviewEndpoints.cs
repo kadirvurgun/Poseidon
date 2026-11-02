@@ -80,7 +80,7 @@ public static class HumanReviewEndpoints
             g.Capability is "human.review.submit" or "human.verify" or "human.decide" && a.Permissions.Contains(g.Capability))
             .GroupBy(g => g.Id).Where(g => g.Count() == 1).Select(g => g.Single()).ToArray();
     }
-    private static IQueryable<ControlEvidenceRevision> Visible(PoseidonDbContext db, Guid vessel, TrustedActor actor) => OperationEquipmentCommands.Visible(db, actor, db.ControlEvidenceRevisions.AsNoTracking()).Where(r => r.VesselId == vessel &&
+    private static IQueryable<ControlEvidenceRevision> Visible(PoseidonDbContext db, Guid vessel, TrustedActor actor, bool assignedTraceReader = false) => OperationEquipmentCommands.Visible(db, actor, db.ControlEvidenceRevisions.AsNoTracking(), assignedTraceReader).Where(r => r.VesselId == vessel &&
         (!db.TugCapabilityBindings.Any(b => b.VesselId == vessel && b.Id == r.Id && b.Revision == r.Revision && b.Kind == r.Kind) || actor.CanReadTug && actor.Permissions.Contains("equipment.read")) &&
         (actor.CanReadTug && actor.Permissions.Contains("equipment.read") || !db.ControlEvidenceEdges.Any(edge => edge.VesselId == vessel && edge.Kind == r.Kind && edge.Id == r.Id && edge.Revision == r.Revision &&
             db.TugCapabilityBindings.Any(b => b.VesselId == vessel && b.Kind == edge.TargetKind && b.Id == edge.TargetId && b.Revision == edge.TargetRevision))) &&
@@ -140,8 +140,8 @@ public static class HumanReviewEndpoints
         var grants = Authorities(h, a, vessel, evidence, control, DateTimeOffset.UtcNow);
         if (reader == null && grants.Length == 0) return await Fail(h, 403, "trace_reader_required");
         if (!await a.Scope(db.Vessels).AnyAsync(v => v.Id == vessel, ct)) return await Fail(h, 404, "resource_not_found");
-        var ev = await Visible(db, vessel, a).SingleOrDefaultAsync(x => x.Kind == "Evidence" && x.Id == evidence && x.Revision == er && x.SavedAt <= asOf, ct);
-        var co = await Visible(db, vessel, a).SingleOrDefaultAsync(x => x.Kind == "Control" && x.Id == control && x.Revision == cr && x.SavedAt <= asOf, ct);
+        var ev = await Visible(db, vessel, a, reader != null).SingleOrDefaultAsync(x => x.Kind == "Evidence" && x.Id == evidence && x.Revision == er && x.SavedAt <= asOf, ct);
+        var co = await Visible(db, vessel, a, reader != null).SingleOrDefaultAsync(x => x.Kind == "Control" && x.Id == control && x.Revision == cr && x.SavedAt <= asOf, ct);
         if (ev == null || co == null || !await db.ControlEvidenceEdges.AnyAsync(x => x.VesselId == vessel && x.Kind == "Evidence" && x.Id == evidence && x.Revision == er && x.TargetKind == "Control" && x.TargetId == control && x.TargetRevision == cr, ct)) return await Fail(h, 404, "resource_not_found");
         var segments = new List<TraceSegment>();
         var pins = await db.ControlEvidenceRequirements.AsNoTracking().Where(x => x.VesselId == vessel && x.Kind == "Control" && x.Id == control && x.Revision == cr).OrderBy(x => x.RequirementId).Take(33).ToArrayAsync(ct);

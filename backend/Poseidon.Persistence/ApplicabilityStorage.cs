@@ -33,6 +33,7 @@ public sealed class RuleRevision : ITenantEntity
 }
 public sealed class ApplicabilityEvaluation : ITenantEntity
 {
+    public bool IncludesProtectedInputs { get; set; }
     public bool IncludesOwningInputs { get; set; }
     public bool IncludesOperationInputs { get; set; }
     public Guid TenantId { get; set; }
@@ -91,6 +92,7 @@ public static class ApplicabilityStorage
             b.ToTable("RuleRevisions", t => t.HasCheckConstraint("CK_RuleRevisions_Admission", "\"Revision\" > 0 AND \"Lifecycle\" = 'DRAFT' AND \"ReviewStatus\" IN ('NOT_REQUESTED','BLOCKED_SOURCE_ADMISSION') AND ((\"SourceKind\" IS NULL AND \"SourceId\" IS NULL AND \"SourceRevision\" IS NULL) OR (\"SourceKind\" IS NOT NULL AND \"SourceKind\" = 'Source' AND \"SourceId\" IS NOT NULL AND \"SourceRevision\" IS NOT NULL AND \"SourceRevision\" > 0)) AND ((\"RequirementKind\" IS NULL AND \"RequirementId\" IS NULL AND \"RequirementRevision\" IS NULL) OR (\"RequirementKind\" IS NOT NULL AND \"RequirementKind\" = 'Requirement' AND \"RequirementId\" IS NOT NULL AND \"RequirementRevision\" IS NOT NULL AND \"RequirementRevision\" > 0))"));
         });
         model.Entity<ApplicabilityEvaluation>(b => {
+            b.Property(x => x.IncludesProtectedInputs).HasDefaultValue(false);
             b.Property(x => x.IncludesOwningInputs).HasDefaultValue(false); b.Property(x => x.IncludesOperationInputs).HasDefaultValue(false);
             b.HasKey(x => new { x.TenantId, x.Id });
             b.HasOne<Vessel>().WithMany().HasForeignKey(x => new { x.TenantId, x.VesselId }).OnDelete(DeleteBehavior.Restrict);

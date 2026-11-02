@@ -33,7 +33,8 @@ public sealed record CrewDeclarationPolicyDto(string Version, string[] Statuses)
 public sealed record CrewIdentityPolicyDto(string Version, string Purpose, string EmployeeNumberMode);
 public sealed record CrewPage(CrewRow[] Items, int Offset, bool HasMore, bool CanWrite, bool CanWriteIdentity, CrewDeclarationPolicyDto? DeclarationPolicy = null, CrewIdentityPolicyDto? IdentityPolicy = null);
 public sealed record CrewProfile(CrewRow Assignment, string EmploymentState, string FitnessState,
-    string IdentityStatus, string ContactStatus, string HealthStatus, uint? PersonVersion, CrewIdentityPolicyDto? IdentityPolicy = null, bool CanConvertIdentity = false);
+    string IdentityStatus, string ContactStatus, string HealthStatus, uint? PersonVersion, CrewIdentityPolicyDto? IdentityPolicy = null, bool CanConvertIdentity = false, CrewStatusSpecification? StatusSpecification = null);
+public sealed record CrewStatusSpecification(string State = "DERIVATION_REQUIRES_SPECIFICATION", string Field = "crew-profile.status", string Source = "14.02/Data Dictionary 2316/row:1615", string Authority = "SYSTEM_DERIVED;BA_DEFINITION_PENDING");
 
 public static class CrewEndpoints
 {
@@ -122,7 +123,7 @@ public static class CrewEndpoints
         row = (await Identities(await Nationalities([row], h, db), h, db))[0];
         var personVersion = IdentityPolicy(h, true) != null ? await db.Persons.Where(x => x.Id == row.PersonId).Select(x => (uint?)x.Version).SingleAsync(h.RequestAborted) : null;
         await Observe(h, "CrewProfile", vessel);
-        return Results.Ok(new CrewProfile(row, "Unknown", "Unknown", row.PrivacyScope, "Withheld", "Withheld", personVersion, IdentityPolicy(h, true), a.Permissions.Contains("crew.identity.convert") && IdentityPolicy(h, true) != null));
+        return Results.Ok(new CrewProfile(row, "Unknown", "Unknown", row.PrivacyScope, "Withheld", "Withheld", personVersion, IdentityPolicy(h, true), a.Permissions.Contains("crew.identity.convert") && IdentityPolicy(h, true) != null, new CrewStatusSpecification()));
     }
     private static Task<IResult> SavePerson(Guid vessel, Guid id, CrewPersonCommand command, HttpContext h, PoseidonDbContext db) =>
         CrewIdentityEndpoints.Apply(vessel, id, command, h, db);

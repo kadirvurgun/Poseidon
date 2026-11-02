@@ -18,7 +18,10 @@ public sealed record QualificationContent(string? SourceBytesBase64 = null, stri
     Guid? SupersedingRuleId = null, long? SupersedingRuleRevision = null,
     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] TugCalculationPolicy? TugCalculation = null,
     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] QualifiedLiteralBinding[]? LiteralBindings = null,
-    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] QualifiedOwningDocumentPolicy[]? OwningDocuments = null);
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] QualifiedOwningDocumentPolicy[]? OwningDocuments = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] QualifiedClassPack? ClassPack = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] QualifiedEligibilityPolicy? Eligibility = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] QualifiedIsmDependency? IsmDependency = null);
 
 public static class RegulatoryQualificationPolicy
 {
@@ -27,10 +30,14 @@ public static class RegulatoryQualificationPolicy
     public static readonly string[] VerifiedProfileFields = ["vessel.gt", "vessel.buildDate", "vessel.mainPropulsionKw", "vessel.contractForConstructionDate"];
     public static void Validate(QualificationContent c)
     {
+        if (c.ClassPack is { } pack && new[] { pack.PackReference, pack.Edition, pack.SourceLocator }.Any(x => !OperationEquipmentInputs.Text(x))) throw new ArgumentException("invalid_class_pack_policy");
+        if (c.IsmDependency is { } ism && (ism.RuleId == Guid.Empty || ism.RuleRevision is <= 0 || (ism.RuleId == null) != (ism.RuleRevision == null) || !OperationEquipmentInputs.Text(ism.SourceLocator))) throw new ArgumentException("invalid_ism_dependency");
+        if (c.Eligibility is { } e && (e.PositionId == Guid.Empty || !OperationEquipmentInputs.Text(e.SourceLocator) || e.Criteria is { } criteria &&
+            (criteria.Length > 32 || criteria.Any(r => r == null || !OperationEquipmentInputs.Text(r.Code) || !OperationEquipmentInputs.Text(r.SourceLocator) || r.RuleId == Guid.Empty || r.RuleRevision is <= 0 || (r.RuleId == null) != (r.RuleRevision == null)) || criteria.Select(r => r.Code).Distinct().Count() != criteria.Length))) throw new ArgumentException("invalid_eligibility_policy");
         OperationEquipmentInputs.ValidateBindings(c.LiteralBindings);
-        if (c.OwningDocuments is { } docs && (docs.Length > 4 || docs.Any(d => d == null || d.DocumentKind is not ("Operation" or "ServiceAuthorization" or "CargoPlan" or "WinchFitment") ||
+        if (c.OwningDocuments is { } docs && (docs.Length > 7 || docs.Any(d => d == null || d.DocumentKind is not ("Operation" or "ServiceAuthorization" or "CargoPlan" or "WinchFitment" or "ClassPack" or "Msmd" or "CrewRoleAssessment") ||
             d.AuthorRole == Guid.Empty || d.VerifierRole == Guid.Empty || !OperationEquipmentInputs.Text(d.SourceLocator)) || docs.Select(d => d.DocumentKind).Distinct().Count() != docs.Length)) throw new ArgumentException("invalid_owning_document_policy");
-        if (c.Inputs?.Any(p => OperationEquipmentInputs.Fields.Contains(p.Field) && p.Basis == "Declared") == true)
+        if (c.Inputs?.Any(p => (OperationEquipmentInputs.Fields.Contains(p.Field) || ComplianceInputs.Fields.Contains(p.Field)) && p.Basis == "Declared") == true)
             throw new ArgumentException("qualified_owning_record_required");
         if (c.TugCalculation != null) TugCapability.Validate(c.TugCalculation);
         foreach (var s in new[] { c.Publisher, c.Edition, c.ValidationReview, c.Trigger, c.ImpactReview, c.Control?.Frequency,
@@ -50,6 +57,9 @@ public static class RegulatoryQualificationPolicy
         if (c.Control?.MaxAgeHours is <= 0 or > 87600) throw new ArgumentException("invalid_freshness_policy");
     }
     public static string[] Missing(QualificationContent c) => new[] {
+        c.ClassPack is { } cp && (cp.PackReference == null || cp.Edition == null || cp.SourceLocator == null) ? "CLASS_PACK_POLICY_MISSING" : null,
+        c.IsmDependency is { } ip && (ip.RuleId == null || ip.RuleRevision == null || ip.SourceLocator == null) ? "ISM_DEPENDENCY_MISSING" : null,
+        c.Eligibility is { } ep && (ep.PositionId == null || ep.SourceLocator == null || ep.Criteria is not { Length: > 0 } || ep.Criteria.Any(x => x.Code == null || x.RuleId == null || x.RuleRevision == null || x.SourceLocator == null || x.RequireCredential == null)) ? "ELIGIBILITY_POLICY_MISSING" : null,
         c.OwningDocuments?.Any(p => p == null || p.AuthorRole == null || p.VerifierRole == null || p.SourceLocator == null) == true ? "OWNING_DOCUMENT_POLICY_MISSING" : null,
         c.LiteralBindings?.Any(p => p == null || p.OwnerValue == null || p.RuleValue == null || p.SourceLocator == null) == true ? "OWNING_LITERAL_BINDING_MISSING" : null,
         c.TugCalculation != null && !TugCapability.Complete(c.TugCalculation) ? "TUG_CALCULATION_POLICY_MISSING" : null,

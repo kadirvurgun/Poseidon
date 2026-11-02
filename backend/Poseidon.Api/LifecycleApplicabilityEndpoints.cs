@@ -199,14 +199,15 @@ public static class LifecycleApplicabilityEndpoints
                         }
                         var (qualifiedFacts, attestation) = await CurrentRegulatoryContext.Facts(db, q, vessel.Id, profileRevision, facts, asOf, ct, h.RequestServices.GetRequiredService<FederationSettings>());
                         if (evaluate.OwningInputs != null) {
-                            foreach (var field in OperationEquipmentInputs.Fields) qualifiedFacts[field] = new(ApplicabilityEngine.Fields[field], "Unknown", JsonSerializer.SerializeToElement<object?>(null), "OwningReferenceUnqualified", ApplicabilityEngine.AdapterVersion);
+                            foreach (var field in OperationEquipmentInputs.Fields.Concat(ComplianceInputs.Fields)) qualifiedFacts[field] = new(ApplicabilityEngine.Fields[field], "Unknown", JsonSerializer.SerializeToElement<object?>(null), "OwningReferenceUnqualified", ApplicabilityEngine.AdapterVersion);
                             await OperationEquipmentContext.Apply(db, h.RequestServices.GetRequiredService<FederationSettings>(), vessel.Id, q, evaluate.OwningInputs, qualifiedFacts, asOf, ct);
                         }
                         if (attestation != null && qualifiedFacts.Values.Any(f => f.Provenance == "RecordedHumanAttestation")) usedAttestations.Add(attestation);
                         var parsed = ApplicabilityEngine.Parse(rule.RuleJson!);
                         var prediction = ApplicabilityEngine.Preview(parsed with { Lifecycle = parsed.Lifecycle with { State = q.State, Supersedes = q.SupersedingRuleId == null ? parsed.Lifecycle.Supersedes : $"{q.SupersedingRuleId:D}/{q.SupersedingRuleRevision}" } }, qualifiedFacts, asOf);
-                        prediction = prediction with { Authoritative = true, CurrentResult = prediction.Result,
-                            Blockers = prediction.Reason.ReviewRequired ? ["INPUT_REVIEW_REQUIRED"] : [] };
+                        var manningReview = prediction.Result == "APPLICABLE" && ComplianceInputs.ManningReview(parsed, qualifiedFacts);
+                        prediction = prediction with { Authoritative = true, CurrentResult = manningReview ? "REVIEW_REQUIRED" : prediction.Result,
+                            Blockers = prediction.Reason.ReviewRequired ? ["INPUT_REVIEW_REQUIRED"] : manningReview ? ["MSMD_READINESS_REVIEW_REQUIRED"] : [] };
                         results[i] = results[i] with { Prediction = prediction };
                         qualifications.Add(new { ruleId = rule.Id, revision = q.Revision, q.Hash, q.SourceHash, q.PolicyVersion,
                             attestationId = attestation?.Id, facts = qualifiedFacts });
@@ -225,9 +226,10 @@ public static class LifecycleApplicabilityEndpoints
                     snapshotJson = snapshot.GetRawText();
                     conflicts = ApplicabilityEngine.Conflicts(revisions.Select((r, i) => new RuleCandidate($"{r.Id:D}/{r.Revision}", ApplicabilityEngine.Parse(r.RuleJson!), results[i].Prediction)));
                     outcome = new EvaluationDto(resource, vessel.Id, now, asOf, ApplicabilityEngine.AdapterVersion, profileRevision, RegisterStorage.Hash(snapshotJson), snapshot,
-                        ruleSetHash, results, conflicts, Preview: false, Authoritative: true, CurrentResult: conflicts.Length > 0 || results.Any(x => x.Prediction.Result == "REVIEW_REQUIRED") ? "REVIEW_REQUIRED" : "CURRENT", Simulation: false);
+                        ruleSetHash, results, conflicts, Preview: false, Authoritative: true, CurrentResult: conflicts.Length > 0 || results.Any(x => x.Prediction.CurrentResult == "REVIEW_REQUIRED") ? "REVIEW_REQUIRED" : "CURRENT", Simulation: false);
                     db.ApplicabilityEvaluations.Add(new() { TenantId = actor.TenantId, Id = resource, VesselId = vessel.Id, ActorId = actor.Id,
-                        IncludesOwningInputs = evaluate.OwningInputs != null, IncludesOperationInputs = evaluate.OwningInputs?.OperationId != null,
+                        IncludesOwningInputs = evaluate.OwningInputs != null, IncludesOperationInputs = evaluate.OwningInputs?.OperationId != null || evaluate.OwningInputs?.Ism is { } upstreamOperation && await db.ApplicabilityEvaluations.AnyAsync(e => e.Id == upstreamOperation.EvaluationId && e.IncludesOperationInputs, ct),
+                        IncludesProtectedInputs = evaluate.OwningInputs?.RoleAssessmentIds?.Length > 0 || evaluate.OwningInputs?.SourceEvidenceId is { } sourceId && await db.OperationEquipmentBindings.AnyAsync(b => b.VesselId == vessel.Id && b.Id == sourceId && b.AssignmentId != null, ct) || evaluate.OwningInputs?.Ism is { } ismInput && await db.ApplicabilityEvaluations.AnyAsync(e => e.Id == ismInput.EvaluationId && e.IncludesProtectedInputs, ct),
                         ProfileRevision = profileRevision, SavedAt = now, AsOf = asOf, AdapterVersion = ApplicabilityEngine.AdapterVersion, SnapshotJson = snapshotJson,
                         SnapshotHash = RegisterStorage.Hash(snapshotJson), RuleSetHash = ruleSetHash, ResultJson = JsonSerializer.Serialize(outcome, Json) });
                     db.EvaluationRules.AddRange(revisions.Select(r => new EvaluationRule { TenantId = actor.TenantId, EvaluationId = resource, RuleId = r.Id, RuleRevision = r.Revision }));
@@ -293,6 +295,9 @@ public static class LifecycleApplicabilityEndpoints
             if (evaluate != null && !live.Permissions.Contains("file.read") && await db.RegulatoryDraftRevisions.AnyAsync(x => x.VesselId == evaluate.VesselId && x.ConstructionFileId != null, ct)) return await Fail(h, 403, "permission_denied");
             if (usedAttestations.Any(e => !CurrentRegulatoryContext.AttestationCurrent(h.RequestServices.GetRequiredService<FederationSettings>(), e, h.RequestServices.GetRequiredService<TimeProvider>().GetUtcNow())))
                 return await Fail(h, 409, "attestation_authority_changed");
+            if (evaluate?.OwningInputs != null && (await CurrentRegulatoryContext.Stale(db, resource, evaluate.VesselId,
+                h.RequestServices.GetRequiredService<TimeProvider>().GetUtcNow(), ct, h.RequestServices.GetRequiredService<FederationSettings>())).Length != 0)
+                return await Fail(h, 409, "owning_context_changed");
             await tx.CommitAsync(ct);
             return Results.Content(outcomeJson, "application/json");
         } catch (JsonException) { await tx.RollbackAsync(CancellationToken.None); return await Fail(h, 400, "invalid_rule");

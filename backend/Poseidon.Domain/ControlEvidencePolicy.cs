@@ -13,7 +13,10 @@ public sealed record ControlEvidenceContent(string? Title = null, Guid? OwnerId 
     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] OperationReference? Operation = null,
     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] ServiceAuthorizationReference? ServiceAuthorization = null,
     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] CargoPlanReference? CargoPlan = null,
-    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] WinchFitmentReference? WinchFitment = null);
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] WinchFitmentReference? WinchFitment = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] ClassPackReference? ClassPack = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] MsmdReference? Msmd = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] CrewRoleAssessmentReference? CrewRoleAssessment = null);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record SourceAcknowledgment(Guid RuleId, string QualificationHash, string SourceHash);
 

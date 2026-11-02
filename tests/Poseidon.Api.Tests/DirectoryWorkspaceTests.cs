@@ -140,7 +140,7 @@ public sealed partial class DirectoryWorkspaceTests(OwnedPostgresFixture fixture
                 var actor = sp.GetRequiredService<ActorResolver>().Resolve(http.User) ?? throw new UnauthorizedAccessException();
                 return new PoseidonDbContext(new DbContextOptionsBuilder<PoseidonDbContext>()
                     .UseNpgsql(postgres.GetConnectionString()).AddInterceptors(interceptor).Options,
-                    actor.TenantId, new ActorContext(actor.Id.ToString(), "User", http.TraceIdentifier, actor.AuditCapabilities, "WebCommand", actor.RoleContext));
+                    actor.TenantId, new ActorContext(actor.Id.ToString(), "User", http.TraceIdentifier, actor.AuditCapabilities, "WebCommand", actor.RoleContext), qualifiedInputs: sp.GetRequiredService<IQualifiedInputRuntime>());
             });
         });
     });

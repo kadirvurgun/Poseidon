@@ -60,7 +60,7 @@ public sealed partial class DirectoryWorkspaceTests
         using var response = await Send(c, GraphRoute(route, (vessel ?? Tug.Id)), cmd, key, update);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode); return (await response.Content.ReadFromJsonAsync<ControlEvidenceDto>(Ct))!;
     }
-    private async Task<ControlEvidenceDto> CapacityVerify(HttpClient c, IServiceProvider services, ControlEvidenceDto evidence, ControlEvidenceDto control, Guid evaluation, Guid? owningOperation = null, Guid? vessel = null) {
+    private async Task<ControlEvidenceDto> CapacityVerify(HttpClient c, IServiceProvider services, ControlEvidenceDto evidence, ControlEvidenceDto control, Guid evaluation, Guid? owningOperation = null, Guid? vessel = null, Action<HumanReviewDto>? captureVerification = null) {
         CapacityHuman(services, evidence, control, owningOperation: owningOperation, vessel: vessel); await Token(c);
         var m = services.GetRequiredService<FederationSettings>().Memberships[0]; var grant = m.HumanAuthorities.Single(g => g.EvidenceId == evidence.Id && g.Capability == "human.review.submit");
         var command = new HumanReviewCommand(0, grant.Id, owningOperation ?? ReviewOperation, evidence.Id, evidence.Revision, evidence.Version, control.Id, control.Revision, control.Version,
@@ -73,6 +73,7 @@ public sealed partial class DirectoryWorkspaceTests
         using var verified = await Send(c, GraphRoute($"verifications/{pending.Id}/events", (vessel ?? Tug.Id)), command with { ExpectedVersion = pending.Version, AuthorityId = grant.Id,
             EvidenceVersion = trace.GetProperty("evidenceVersion").GetUInt32(), ControlVersion = trace.GetProperty("controlVersion").GetUInt32(), State = "VERIFIED", ReasonCode = "HUMAN_VERIFIED", Rationale = "FICTIONAL independent software test review; no real certificate approval" });
         Assert.Equal(HttpStatusCode.OK, verified.StatusCode);
+        captureVerification?.Invoke((await verified.Content.ReadFromJsonAsync<HumanReviewDto>(Ct))!);
         var current = await c.GetFromJsonAsync<JsonElement>("/api/v1/" + GraphRoute($"evidence/{evidence.Id}/versions", (vessel ?? Tug.Id)), Ct);
         return current.GetProperty("items")[0].Deserialize<ControlEvidenceDto>(new JsonSerializerOptions(JsonSerializerDefaults.Web))!;
     }

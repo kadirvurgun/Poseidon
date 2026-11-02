@@ -81,8 +81,8 @@ internal static class CurrentRegulatoryContext
             var refs = owning.Deserialize<OwningInputReferences>(RegulatoryQualificationEndpoints.Json)!;
             if (snapshot.RootElement.TryGetProperty("owningProvenance", out var provenance)) {
                 // Changed heads/reviews also invalidate retained Unknown observations.
-                var currentIds = new[] { refs.OperationId, refs.CargoPlanId, refs.WinchFitmentId }.Where(x => x != null).Select(x => x!.Value).ToArray();
-                var available = await db.OperationEquipmentBindings.CountAsync(b => b.VesselId == vessel && currentIds.Contains(b.Id) && db.ControlEvidenceHeads.Any(h => h.VesselId == vessel && h.Kind == b.Kind && h.Id == b.Id && h.Revision == b.Revision), ct);
+                var currentIds = ComplianceInputContext.DocumentIds(refs);
+                var available = await db.ControlEvidenceHeads.CountAsync(b => b.VesselId == vessel && b.Kind == "Evidence" && currentIds.Contains(b.Id), ct);
                 if (available != currentIds.Length) causes.Add("OWNING_INPUT_CHANGED");
                 else if (JsonSerializer.SerializeToElement(await OperationEquipmentContext.Provenance(db, vessel, refs, ct), RegulatoryQualificationEndpoints.Json).GetRawText() != provenance.GetRawText()) causes.Add("OWNING_INPUT_CHANGED");
             }
@@ -90,9 +90,9 @@ internal static class CurrentRegulatoryContext
                 var q = await db.RegulatoryQualificationEvents.AsNoTracking().SingleAsync(x => x.RuleId == capture.GetProperty("ruleId").GetGuid() && x.Revision == capture.GetProperty("revision").GetInt64(), ct);
                 var original = capture.GetProperty("facts").Deserialize<SortedDictionary<string, ContextFact>>(RegulatoryQualificationEndpoints.Json)!;
                 var current = new SortedDictionary<string, ContextFact>(original, StringComparer.Ordinal);
-                foreach (var field in OperationEquipmentInputs.Fields) current[field] = new(ApplicabilityEngine.Fields[field], "Unknown", JsonSerializer.SerializeToElement<object?>(null), "OwningReferenceUnqualified", ApplicabilityEngine.AdapterVersion);
+                foreach (var field in OperationEquipmentInputs.Fields.Concat(ComplianceInputs.Fields)) current[field] = new(ApplicabilityEngine.Fields[field], "Unknown", JsonSerializer.SerializeToElement<object?>(null), "OwningReferenceUnqualified", ApplicabilityEngine.AdapterVersion);
                 await OperationEquipmentContext.Apply(db, settings, vessel, q, refs, current, now, ct, path);
-                if (OperationEquipmentInputs.Fields.Any(f => original[f].Knowledge != current[f].Knowledge || original[f].Value.GetRawText() != current[f].Value.GetRawText() || original[f].Revision != current[f].Revision)) causes.Add("OWNING_INPUT_CHANGED");
+                if (OperationEquipmentInputs.Fields.Concat(ComplianceInputs.Fields).Any(f => original[f].Knowledge != current[f].Knowledge || original[f].Value.GetRawText() != current[f].Value.GetRawText() || original[f].Revision != current[f].Revision)) causes.Add("OWNING_INPUT_CHANGED");
             }
         }
         var captured = snapshot.RootElement.GetProperty("vesselVersion").GetUInt32();

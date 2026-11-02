@@ -1,3 +1,4 @@
+import { validOwningReferences } from './compliance-input-contract'
 import { ApiError, request } from './api'
 import { isGuid } from './identifiers'
 import { calendar, timestamp } from './date-validation'
@@ -28,7 +29,15 @@ const factTypes: Record<string, number> = {
   'crew.requiredRoleEligible': 3, 'evidence.sourceVerified': 3, 'source.lifecycle': 0,
 }
 function owningProvenance(v: unknown): boolean {
-  if (!exact(v, ['id', 'revision', 'hash', 'fileId', 'fileRevision', 'checksum', 'documentKind', 'documentHeadRevision', 'job', 'plan', 'asset', 'assignmentHash', 'jobId', 'jobRevision', 'planRevision', 'assetId', 'assetRevision', 'serviceId', 'serviceRevision', 'reviews']) || !isGuid(v.id) || !integer(v.revision) || !hash(v.hash) || !integer(v.documentHeadRevision) || !hash(v.assignmentHash) || !['Operation', 'ServiceAuthorization', 'CargoPlan', 'WinchFitment'].includes(v.documentKind as string)) return false
+  if (exact(v, ['upstream', 'snapshotHash', 'ruleId', 'ruleRevision'])) return isGuid(v.upstream) && hash(v.snapshotHash) && isGuid(v.ruleId) && integer(v.ruleRevision)
+  if (exact(v, ['sourceEvidence', 'revision', 'hash', 'reviews'])) return isGuid(v.sourceEvidence) && integer(v.revision) && hash(v.hash) && Array.isArray(v.reviews) && v.reviews.length <= 128 && v.reviews.every(r => exact(r, ['id', 'revision', 'state', 'contextHash', 'authorityHash']) && isGuid(r.id) && integer(r.revision) && typeof r.state === 'string' && hash(r.contextHash) && hash(r.authorityHash))
+  if (exact(v, ['assessment', 'assignment', 'position', 'assignmentSetHash', 'credentialSetHash', 'policy'])) {
+    const a = v.assignment, p = v.position
+    return isGuid(v.assessment) && hash(v.assignmentSetHash) && hash(v.credentialSetHash) && (v.policy === null || typeof v.policy === 'string' && /^[A-F0-9]{64}:[A-F0-9]{64}$/.test(v.policy)) &&
+      (a === null || exact(a, ['id', 'revision', 'version', 'positionId', 'assignmentPolicyFingerprint', 'positionPolicyFingerprint']) && isGuid(a.id) && integer(a.revision) && integer(a.version) && (a.positionId === null || isGuid(a.positionId)) && [a.assignmentPolicyFingerprint, a.positionPolicyFingerprint].every(h => h === null || hash(h))) &&
+      (p === null || exact(p, ['id', 'version']) && isGuid(p.id) && integer(p.version))
+  }
+  if (!exact(v, ['id', 'revision', 'hash', 'fileId', 'fileRevision', 'checksum', 'documentKind', 'documentHeadRevision', 'job', 'plan', 'asset', 'assignmentHash', 'jobId', 'jobRevision', 'planRevision', 'assetId', 'assetRevision', 'serviceId', 'serviceRevision', 'reviews']) || !isGuid(v.id) || !integer(v.revision) || !hash(v.hash) || !integer(v.documentHeadRevision) || !hash(v.assignmentHash) || !['Operation', 'ServiceAuthorization', 'CargoPlan', 'WinchFitment', 'ClassPack', 'Msmd', 'CrewRoleAssessment'].includes(v.documentKind as string)) return false
   if (!(v.fileId === null && v.fileRevision === null && v.checksum === null || isGuid(v.fileId) && integer(v.fileRevision) && hash(v.checksum))) return false
   for (const k of ['job', 'plan', 'asset']) { const dependency = v[k]; if (dependency !== null && (!exact(dependency, ['revision', 'version']) || !integer(dependency.revision) || !integer(dependency.version) || Number(dependency.version) > 4294967295)) return false }
   for (const [id, revision] of [['jobId', 'jobRevision'], ['assetId', 'assetRevision'], ['serviceId', 'serviceRevision']]) if (!(v[id] === null && v[revision] === null || isGuid(v[id]) && integer(v[revision]))) return false
@@ -37,8 +46,8 @@ function owningProvenance(v: unknown): boolean {
 }
 function snapshot(v: unknown, vessel: unknown, asOf: unknown, profile: unknown, authoritative = false): boolean {
   if (!exact(v, ['adapterVersion', 'vesselId', 'vesselVersion', 'profileRevision', 'asOf', 'facts', ...(authoritative ? ['qualifications', 'vesselContextHash'] : []), ...(obj(v) && Object.hasOwn(v, 'owningInputs') ? ['owningInputs'] : []), ...(obj(v) && Object.hasOwn(v, 'owningProvenance') ? ['owningProvenance'] : [])]) || v.adapterVersion !== 'controlled-input-catalog-v1' || v.vesselId !== vessel || v.asOf !== asOf || v.profileRevision !== profile || !integer(v.vesselVersion) || !exact(v.facts, Object.keys(factTypes))) return false
-  if (v.owningProvenance !== undefined && (!Array.isArray(v.owningProvenance) || v.owningProvenance.length > 4 || !v.owningProvenance.every(owningProvenance))) return false
-  if (v.owningInputs != null && (!exact(v.owningInputs, ['operationId', 'cargoPlanId', 'winchFitmentId']) || Object.values(v.owningInputs).some(id => id !== null && !isGuid(id)))) return false
+  if (v.owningProvenance !== undefined && (!Array.isArray(v.owningProvenance) || v.owningProvenance.length > 72 || !v.owningProvenance.every(owningProvenance))) return false
+  if (v.owningInputs != null && !validOwningReferences(v.owningInputs)) return false
   if (authoritative && (!hash(v.vesselContextHash) || !Array.isArray(v.qualifications) || v.qualifications.length < 1 || v.qualifications.length > 64 || v.qualifications.some(q => !exact(q, ['ruleId', 'revision', 'hash', 'sourceHash', 'policyVersion', 'attestationId', 'facts']) || !isGuid(q.ruleId) || !integer(q.revision) || !hash(q.hash) || !hash(q.sourceHash) || q.policyVersion !== 'recorded-qualification-v1' || q.attestationId !== null && !isGuid(q.attestationId) || !snapshot({ adapterVersion: v.adapterVersion, vesselId: vessel, vesselVersion: v.vesselVersion, profileRevision: profile, asOf, facts: q.facts }, vessel, asOf, profile)))) return false
   return Object.entries(v.facts).every(([key, f]) => {
     if (!exact(f, ['type', 'knowledge', 'value', 'provenance', 'revision', 'observedAt', 'freshUntil', 'authoritativeEmpty']) || f.type !== factTypes[key] ||
@@ -81,7 +90,7 @@ export function decodeEvaluation(value: unknown): Evaluation {
     if (!exact(r, ['ruleId', 'revision', 'hash', 'sourceId', 'sourceRevision', 'requirementId', 'requirementRevision', 'prediction']) || !isGuid(r.ruleId) || !integer(r.revision) || !hash(r.hash) || !link(r.sourceId, r.sourceRevision) || !link(r.requirementId, r.requirementRevision)) return invalid()
     const p = r.prediction
     if (!exact(p, ['result', 'currentResult', 'authoritative', 'lifecycle', 'reason', 'predictedActivations', 'blockers']) ||
-      typeof p.result !== 'string' || !['APPLICABLE', 'NOT_APPLICABLE', 'REVIEW_REQUIRED', 'NOT_CURRENT'].includes(p.result) || p.authoritative !== value.authoritative || (value.authoritative ? p.currentResult !== p.result : p.currentResult !== 'REVIEW_REQUIRED') ||
+      typeof p.result !== 'string' || !['APPLICABLE', 'NOT_APPLICABLE', 'REVIEW_REQUIRED', 'NOT_CURRENT'].includes(p.result) || p.authoritative !== value.authoritative || (value.authoritative ? p.currentResult !== p.result && !(p.result === 'APPLICABLE' && p.currentResult === 'REVIEW_REQUIRED' && Array.isArray(p.blockers) && p.blockers.includes('MSMD_READINESS_REVIEW_REQUIRED')) : p.currentResult !== 'REVIEW_REQUIRED') ||
       typeof p.lifecycle !== 'string' || !(lifecycleStates as readonly string[]).includes(p.lifecycle) || !Array.isArray(p.blockers) || p.blockers.length > 32 || p.blockers.some(v => typeof v !== 'string' || v.length > 100) ||
       !Array.isArray(p.predictedActivations) || p.predictedActivations.length > 64 || p.predictedActivations.some(a => !exact(a, ['type', 'id']) || typeof a.type !== 'string' || typeof a.id !== 'string')) return invalid()
     decodeReason(p.reason)

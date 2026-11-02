@@ -1,3 +1,4 @@
+import { complianceInputCases } from './compliance-input-cases.ts'
 import { regulatoryAdmissionCases } from './regulatory-admission-cases.ts'
 import { crewIdentityCases } from './crew-identity-cases.ts'
 import { humanReviewCases } from './human-review-cases.ts'
@@ -110,6 +111,7 @@ export async function restrictedRegister(page: Page) {
 
 export const registerCases = [
   ...operationEquipmentCases,
+  ...complianceInputCases,
   ...lifecycleApplicabilityCases,
   ...controlEvidenceCases,
   ...humanReviewCases,

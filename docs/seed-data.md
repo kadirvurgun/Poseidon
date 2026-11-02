@@ -1,3 +1,7 @@
+## RULE-COMPLIANCE-INPUTS-01 — AUTHORED / NOT RUN
+
+Optional administrative `ComplianceInputFixtures.AddMissingAsync` adds only incomplete fictional ClassPack, Msmd and CrewRoleAssessment Evidence/head/binding records. It is not startup data or normal seed activation. Add-missing behavior preserves operator revisions and ordinary receipts. It supplies no files, class pack, role/count values, observed outcome, source qualification, authority, verification, approval or credential. MSMD role and upstream/evaluation references arise from ordinary commands only. Migration, reseed/operator-preservation and composite-FK/rollback test sources are authored; none executed. Normal seed evidence/totals remain historical until the combined gate.
+
 # RULE-OWNING-ADAPTERS-01 — AUTHORED / NOT RUN
 
 Existing incomplete profile fixtures acquire default Missing propulsion/contract-date/reference fields and null construction file only on fresh add-missing import. No extra entity, qualified profile, clean file, attestation or approval is seeded. Historical/operator JSON and immutable history are never reseeded over. Nullable file-binding and exact-outcome receipt columns remain empty for historical rows; no backfill. Actual commands alone create file relationships/receipts. Existing audit totals stay unchanged; PostgreSQL reseed/operator-preservation/immutability test source is authored, not executed.

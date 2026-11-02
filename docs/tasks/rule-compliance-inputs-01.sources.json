@@ -1,0 +1,770 @@
+{
+  "task": "RULE-COMPLIANCE-INPUTS-01",
+  "baseline": "poseidon-v46.3-20261030",
+  "source_class": "candidate-unverified",
+  "records": [
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+      "locator": "sheet:Input Catalog/row:19",
+      "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+      "text": "A19: class.rulePack.IACS_M79 | B19: Class | C19: Boolean | D19: Conditional | E19: True | F19: REVIEW_REQUIRED | G19: Class Rule Pack | H19: Do not infer from class name only",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+      "locator": "sheet:Input Catalog/row:20",
+      "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+      "text": "A20: regulatory.ismApplicable | B20: Regulatory | C20: Boolean/Derived | D20: Conditional | E20: True | F20: REVIEW_REQUIRED | G20: Applicability Engine upstream",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+      "locator": "sheet:Input Catalog/row:21",
+      "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+      "text": "A21: regulatory.msmdVerified | B21: Crew | C21: Boolean | D21: Conditional | E21: True | F21: REVIEW_REQUIRED / readiness degrade | G21: Crew Compliance",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+      "locator": "sheet:Input Catalog/row:22",
+      "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+      "text": "A22: crew.requiredRoleEligible | B22: Crew | C22: Boolean/Derived | D22: Conditional | E22: True | F22: REVIEW_REQUIRED / NOT_READY depending gate | G22: Eligibility Engine",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+      "locator": "sheet:Input Catalog/row:23",
+      "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+      "text": "A23: evidence.sourceVerified | B23: Evidence | C23: Boolean | D23: Conditional | E23: True | F23: REVIEW_REQUIRED | G23: Evidence Graph",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+      "locator": "sheet:Golden Tests/row:2",
+      "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+      "text": "A2: GOLD-001 | B2: GP-TUG-HARBOUR | C2: Normal verified inputs | D2: RULE-ISM-7-TUG | E2: APPLICABLE | F2: Towage workflow screens activated | G2: P0",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+      "locator": "sheet:Golden Tests/row:3",
+      "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+      "text": "A3: GOLD-002 | B3: GP-TUG-HARBOUR | C3: M79 pack TRUE + contract 2022 + winch fitted | D3: RULE-IACS-M79 | E3: APPLICABLE | F3: ERS field/control/verification | G3: P0",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+      "locator": "sheet:Golden Tests/row:4",
+      "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+      "text": "A4: GOLD-003 | B4: GP-TUG-HARBOUR | C4: Class pack unknown | D4: RULE-IACS-M79 | E4: REVIEW_REQUIRED | F4: No false READY; class review | G4: P0",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+      "locator": "sheet:Golden Tests/row:5",
+      "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+      "text": "A5: GOLD-004 | B5: GP-TUG-HARBOUR | C5: MSMD unverified | D5: RULE-TR-TUG-MSMD | E5: APPLICABLE + readiness review | F5: minimum_manning_state blocks full READY | G5: P0",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+      "locator": "sheet:Golden Tests/row:6",
+      "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+      "text": "A6: GOLD-005 | B6: GP-TUG-ESCORT | C6: Area=Istanbul Strait + Escort | D6: RULE-TR-TUG-ESCORT-EXTRA | E6: REVIEW_REQUIRED/APPLICABLE per validated source | F6: Extra Able Seaman requirement visible with source lifecycle | G6: P0",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+      "locator": "sheet:Golden Tests/row:7",
+      "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+      "text": "A7: GOLD-006 | B7: GP-TUG-OCEAN | C7: operation profile solely long-distance ocean towage | D7: RULE-IACS-M79 | E7: NOT_APPLICABLE | F7: Ocean towage pack considered separately | G7: P0",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+      "locator": "sheet:Golden Tests/row:8",
+      "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+      "text": "A8: GOLD-007 | B8: GP-SHIP-OIL-TR | C8: Oil tanker | D8: RULE-STCW-V-TANKER | E8: APPLICABLE | F8: Special tanker training controls | G8: P0",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+      "locator": "sheet:Golden Tests/row:9",
+      "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+      "text": "A9: GOLD-008 | B9: GP-SHIP-DG | C9: Packaged DG=true on 2026-10-04 | D9: RULE-IMDG-42-24 | E9: APPLICABLE | F9: IMDG control/evidence | G9: P0",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+      "locator": "sheet:Golden Tests/row:10",
+      "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+      "text": "A10: GOLD-009 | B10: GP-SHIP-DG | C10: Packaged DG unknown | D10: RULE-IMDG-42-24 | E10: REVIEW_REQUIRED | F10: Cargo data review | G10: P0",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+      "locator": "sheet:Golden Tests/row:11",
+      "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+      "text": "A11: GOLD-010 | B11: Any MLC applicable | C11: evaluationDate=2026-10-04 | D11: RULE-MLC-2025-FUTURE | E11: NOT_CURRENT | F11: Change Radar only; no current compliance state effect | G11: P0",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:1615",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A1615: Mürettebat ve Yetkinlik | B1615: Mürettebat Yönetimi | C1615: Personel, atama ve rotasyon | D1615: Ortak | E1615: crew-profile | F1615: Crew Profile | G1615: Crew Operations | H1615: status | I1615: Status | J1615: select | K1615: Seçim Listesi | L1615: State | M1615: Controlled Code / Enum | N1615: text / controlled-code FK — REVIEW | O1615: TBD | P1615: TBD | Q1615: Yes/Business rule | R1615: System | S1615: Sistem tarafından türetilir | T1615: Controlled list / state machine | U1615: Tanımlı | V1615: Master/Chief Officer/Crewing; crew own-scope where applicable | W1615: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1615: Allowed controlled-state transition only | Y1615: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1615: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1615: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1615: Offline capture allowed for supported mutable data; client UUID/base version; idempotent sync; material conflicts require human resolution | AC1615: /api/v1/crew-profile | AD1615: CrewProfile | AE1615: status | AF1615: UNCONFIRMED — physical schema review | AG1615: FR46-crew-profile-status | AH1615: TC46-crew-profile-status | AI1615: P1 | AJ1615: EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1615: UI/TRACE TAM — PROD REVIEW | AL1615: SOURCE + DERIVED GAP ANALYSIS | AM1615: ÖNERİ: Crew Profile bağlamında Status. İş anlamı/birim BA onayı bekler. | AN1615: Seçim Listesi | AO1615: SYSTEM_DERIVED | AQ1615: DERIVATION_REQUIRES_SPECIFICATION | AV1615: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1615: Status: Allowed controlled-state transition only | BE1615: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1615: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1615: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1615: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1615: DEC-DATA-01…06 | BO1615: REVIEW_REQUIRED",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Gap Register/row:1615",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A1615: crew-profile | B1615: status | C1615: Mürettebat ve Yetkinlik | D1615: Mürettebat Yönetimi | E1615: Status | F1615: Yes/Business rule | G1615: select | H1615: State | I1615: P1 | J1615: EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | K1615: Sprint 0 / schema-contract review",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:10",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A10: DEV-009 | B10: Story | C10: E20 Production Hardening | D10: Test Data | E10: Golden pilot test datasetini hazırla | F10: QA olarak deterministik regression testleri çalıştırmak istiyorum. | G10: En az tanker + genel cargo/tug profile; crew/certificate/asset/defect/evidence edge cases; expected applicability/readiness outcomes kayıtlıdır. | H10: Golden Dataset | I10: P0 | J10: S0 | K10: QA Lead | L10: DEV-005,DEV-008 | M10: T-S0-009 | N10: Not Started | O10: YES | P10: 5 | Q10: M",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:27",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A27: DEV-026 | B27: Story | C27: E03 Regulatory Core | D27: Requirement | E27: Requirement/source/version entity | F27: Regulatory admin olarak requirement'ları source/version lifecycle ile yönetmek istiyorum. | G27: Draft/adopted/future/in-force/superseded ayrımı vardır; current source silent overwrite edilmez. | H27: requirement-master / /api/v1/requirements | I27: P0 | J27: S3 | K27: Backend | L27: DEV-005,DEV-008 | M27: T-S3-001 | N27: Not Started | O27: YES | P27: 8 | Q27: H",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:28",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A28: DEV-027 | B28: Story | C28: E03 Regulatory Core | D28: Applicability | E28: Applicability evaluation engine v1 | F28: DPA olarak pilot gemiye hangi requirement'ın neden uygulandığını görmek istiyorum. | G28: Flag/type/GT/build/cargo/trading context predicate'leri versioned; result APPLICABLE/NOT_APPLICABLE/REVIEW_REQUIRED + reason döner. | H28: applicability / /api/v1/applicability/evaluate | I28: P0 | J28: S3 | K28: Backend | L28: DEV-020,DEV-026 | M28: T-S3-002 | N28: Not Started | O28: YES | P28: 13 | Q28: H",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:30",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A30: DEV-029 | B30: Story | C30: E04 Control & Evidence | D30: Evidence | E30: Evidence graph foundation | F30: Kullanıcı olarak bir kanıtı birden fazla gereksinimi desteklemek için kullanmak istiyorum. | G30: Evidence immutable metadata/checksum/provenance ile kaydedilir; many-to-many links; stale/expired/superseded durumu görünür. | H30: /api/v1/evidence | I30: P0 | J30: S3 | K30: Backend | L30: DEV-018,DEV-028 | M30: T-S3-004 | N30: Not Started | O30: YES | P30: 13 | Q30: H",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:31",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A31: DEV-030 | B31: Story | C31: E04 Control & Evidence | D31: Verification | E31: Verification record ve gate | F31: Verifier olarak kanıtı kabul/reject etmek ve gerekçe bırakmak istiyorum. | G31: Verifier authorization + separation-of-duties; PENDING/VERIFIED/REJECTED/EXPIRED/SUPERSEDED; evidence existence alone state'i kapatmaz. | H31: /api/v1/verifications | I31: P0 | J31: S3 | K31: Backend | L31: DEV-015,DEV-029 | M31: T-S3-005 | N31: Not Started | O31: YES | P31: 8 | Q31: H",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:48",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A48: DEV-047 | B48: Story | C48: E06 Crew & Competence | D48: Roster | E48: Crew roster + profile | F48: Master/Crewing olarak onboard/planned crew'yu görmek istiyorum. | G48: Person/assignment/rank/capacity/period scoped; privacy masking and vessel scope; offline supported read/capture as defined. | H48: crew-roster / crew-profile | I48: P0 | J48: S7 | K48: Full Stack | L48: DEV-020,DEV-015 | M48: T-S7-001 | N48: Not Started | O48: YES | P48: 8 | Q48: M",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:49",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A49: DEV-048 | B49: Story | C49: E06 Crew & Competence | D49: Credentials | E49: Crew certificates & endorsements | F49: Crewing olarak STCW/medical/endorsement kayıtlarını doğrulanmış şekilde tutmak istiyorum. | G49: Issue/expiry/issuer/endorsement/vessel scope/verification; expired/unverified positive eligibility üretmez. | H49: crew-certificates | I49: P0 | J49: S7 | K49: Full Stack | L49: DEV-047,DEV-030 | M49: T-S7-002 | N49: Not Started | O49: YES | P49: 8 | Q49: H",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:50",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A50: DEV-049 | B50: Story | C50: E06 Crew & Competence | D50: Competence | E50: Training-position/competence gate | F50: Crewing olarak pozisyon ve vessel type'a göre gerekli competence/training gap'lerini görmek istiyorum. | G50: Requirement type, mandatory, validity, vessel/cargo scope, competence/familiarization links; missing gap reason listesinde görünür. | H50: training-position-matrix | I50: P0 | J50: S7 | K50: Full Stack | L50: DEV-048,DEV-027 | M50: T-S7-003 | N50: Not Started | O50: YES | P50: 8 | Q50: H",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:51",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A51: DEV-050 | B51: Story | C51: E06 Crew & Competence | D51: Safe Manning | E51: Crew eligibility + Safe Manning evaluation | F51: Master olarak atamanın ve mevcut manning'in uygunluğunu açıklanabilir şekilde görmek istiyorum. | G51: Credential+competence+familiarization+work/rest+MSMD constraints değerlendirilir; ELIGIBLE/ATTENTION/NOT_ELIGIBLE/REVIEW_REQUIRED + reason. | H51: safe-manning / /api/v1/vessels/{id}/safe-manning/evaluate | I51: P0 | J51: S7 | K51: Backend+Frontend | L51: DEV-047:DEV-049 | M51: T-S7-004 | N51: Not Started | O51: YES | P51: 13 | Q51: H",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.01_POSEIDON_Dynamic_Applicability_Engine_Specification_TR.docx",
+      "locator": "paragraph:221",
+      "sha256": "8a338adb39f2ec62ff149d0c5e75c8df266f03107b7de5630b52685143bc3f0c",
+      "text": "Yalnız gerçek class/rule-pack doğrulanırsa aktive edilir.",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.01_POSEIDON_Dynamic_Applicability_Engine_Specification_TR.docx",
+      "locator": "paragraph:379",
+      "sha256": "8a338adb39f2ec62ff149d0c5e75c8df266f03107b7de5630b52685143bc3f0c",
+      "text": "└─ Action: Class rule pack doğrulaması gerekli",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:50",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Trust/signature provider optional",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:99",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Authorized human decision with reason/evidence context.",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:104",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "POST /applicability/simulate",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:108",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Persisted source/rule/input trace.",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:229",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "9. Offline-First Sözleşme",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:233",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Client UUID; same command replay = same server result.",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:235",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Every material command carries last-known aggregate version.",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:237",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Expired/stale regulatory/readiness snapshot cannot create READY.",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:239",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Non-material additive evidence can auto-merge; safety/legal material field conflict cannot.",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:241",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Captured local time + timezone/offset + server received UTC.",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:243",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Offline photo/file hash + device/source + later server verification.",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:298",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Credential title exists but limitations don't allow role → NOT_ELIGIBLE.",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:299",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Generic Çizelge 11 ile issued MSMD çelişirse → Regulatory Review; issued source silently overwritten olmaz.",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:300",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "8. Current Crew Eligibility Motoru",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:301",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Sıra",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:302",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Input",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:303",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Karar etkisi",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:304",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "1",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:305",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "MSMD",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:306",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Role/count requirement",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:307",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "2",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:308",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Sefer Bölgesi + GT + kW",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:309",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Reference rule consistency",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:310",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "3",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:311",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Yeterlik / Capacity",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:312",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Role entitlement",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:313",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "4",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:280",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "2019 note ile 2024 yeterlik tanımları arasında current-source review gerekir.",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:281",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Kabotajda sınırlı vardiya zabiti substitution",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:282",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "REVIEW_REQUIRED",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:283",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Certificate limitation + MSMD check.",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:284",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Liman <100 GT sınırlı vardiya zabiti kaptanlığı",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:285",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "REVIEW_REQUIRED",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:286",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Current applicability review.",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:287",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Liman <370 kW sınırlı makine zabiti başmakinistliği",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:288",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "REVIEW_REQUIRED",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:289",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Current applicability review.",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:290",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "İstanbul/Çanakkale eskort +1 Usta Gemici",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:291",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "AUTO_WHEN_CONTEXT_VERIFIED",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:292",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Operation area=Boğaz + job type=Escort ise activate.",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:293",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "7. Neden Asgari Emniyet Belgesi Primary Evidence?",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:294",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Donatım Yönergesi, 50 net tondan büyük gemiler için Asgari Emniyet Belgesi düzenlenmesini öngörür ve örnek belge gemi adı, GT, ana makine gücü, gemi tipi, sefer bölgesi, yeterlik/kapasite ve kişi sayılarını taşır. POSEIDON bu nedenle Safe Manning sonucunu yalnız bir generic table lookup olarak değil, vessel-specific authority-issued record ile doğrular.",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:295",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "MSMD exists + current + verified → role/count baseline loaded.",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:296",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "MSMD missing/expired/unverified → minimum_manning_state = REVIEW_REQUIRED.",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:297",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Actual assigned crew < required count → NOT_READY / NOT_ELIGIBLE assignment.",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:314",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Certificate limitations",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:315",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Actual permitted scope",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:316",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "5",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:317",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Medical",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:318",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Assignment-period validity",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:319",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "6",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:320",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "STCW/basic/special training",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:321",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Mandatory training validity",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:322",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "7",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:323",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Towage competence",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:324",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Job/tug-specific assessed competence",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:325",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "8",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:326",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Familiarization",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:327",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "New assignment equipment/SMS/emergency familiarity",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:328",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "9",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:329",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Work & Rest",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:330",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Operational fitness/watch legality signal",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:331",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "10",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:332",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Job briefing",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:333",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Towage-specific acknowledgement",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:334",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "11",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:335",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Master/Tug Master",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:336",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Final onboard operational decision",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:337",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "9. 2024 Yönetmelik ile Ürün Bağı",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:338",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Madde / konu",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:339",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Ürün etkisi",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:340",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Yeterlik sınıfları ve sınırlar",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:341",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Role/capacity model current regulation'a göre tutulur.",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:342",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Madde 57–58 Vardiya",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:343",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Work/rest/watchkeeping engine.",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:344",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Madde 59 İşletme sorumlulukları",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:345",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Health, credential, manning, documents, training, effective communication, fatigue controls.",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:346",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Madde 60 Yeni atanan personel",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:347",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Familiarization + understandable-language guidance + on-the-job familiarization gate.",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:348",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Madde 72 Alt düzenlemeler",
+      "original_locator_read": true
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:349",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Donatım rule pack source/version ile yönetilir.",
+      "original_locator_read": true
+    }
+  ]
+}

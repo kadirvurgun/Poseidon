@@ -23,6 +23,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         services.AddSingleton(configuration.GetSection("SecureFiles").Get<SecureFileSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<LocalFileObjects>();
         services.AddSingleton<FileObjects>();
+        services.AddScoped<IQualifiedInputRuntime, QualifiedInputRuntime>();
         services.AddSingleton<ClamdScanner>();
         services.AddSingleton<FileCapabilities>();
         services.AddFoundationIdentity(configuration, hostEnvironment);
@@ -36,7 +37,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             var connection = OperatorSecretReferences.Database(configuration, hostEnvironment);
             if (string.IsNullOrWhiteSpace(connection)) throw new AuditUnavailableException();
             return new PoseidonDbContext(new DbContextOptionsBuilder<PoseidonDbContext>().UseNpgsql(connection).Options,
-                actor.TenantId, new ActorContext(actor.Id.ToString(), "User", http.TraceIdentifier, actor.AuditCapabilities, "WebCommand", actor.RoleContext));
+                actor.TenantId, new ActorContext(actor.Id.ToString(), "User", http.TraceIdentifier, actor.AuditCapabilities, "WebCommand", actor.RoleContext), qualifiedInputs: sp.GetRequiredService<IQualifiedInputRuntime>());
         });
         services.AddProblemDetails();
         services.AddOpenApi(options => options.AddDocumentTransformer((document, _, _) =>

@@ -84,7 +84,7 @@ public sealed partial class DirectoryWorkspaceTests
         new("operation.profile", "CLOSE_QUARTERS_TOWAGE", "CLOSE_QUARTERS_TOWAGE", "FICTIONAL/operation/source"),
         new("operation.profile", "SOLELY_LONG_DISTANCE_OCEAN_TOWAGE", "SOLELY_LONG_DISTANCE_OCEAN_TOWAGE", "FICTIONAL/ocean-operation/source"),
         new("operation.serviceContext", "AUTHORIZED_TUG_SERVICE", "AUTHORIZED_TUG_SERVICE", "FICTIONAL/service/source") ];
-    private async Task<ControlEvidenceDto> OwningDocument(HttpClient c, IServiceProvider services, ControlEvidenceDto control, RequirementPin pin, Guid evaluation, ControlEvidenceContent content, bool verify = true, Guid? vessel = null) {
+    private async Task<ControlEvidenceDto> OwningDocument(HttpClient c, IServiceProvider services, ControlEvidenceDto control, RequirementPin pin, Guid evaluation, ControlEvidenceContent content, bool verify = true, Guid? vessel = null, Action<HumanReviewDto>? captureVerification = null) {
         var settings = services.GetRequiredService<FederationSettings>();
         var page = await c.GetFromJsonAsync<JsonElement>("/api/v1/" + GraphRoute($"controls/{control.Id}/versions", (vessel ?? Tug.Id)), Ct);
         control = page.GetProperty("items")[0].Deserialize<ControlEvidenceDto>(new JsonSerializerOptions(JsonSerializerDefaults.Web))!;
@@ -94,7 +94,7 @@ public sealed partial class DirectoryWorkspaceTests
                 Requirements = [pin], Links = [new("Control", control.Id, control.Revision, control.Version)], File = new(file.Id, file.Revision!.Value, file.Checksum!) };
         var draft = await CapacitySave(c, "evidence", command, vessel: vessel);
         var submitted = await CapacitySave(c, $"evidence/{draft.Id}/submit", command with { ExpectedVersion = draft.Version, ReasonCode = "SUBMIT" }, vessel: vessel);
-        return verify ? await CapacityVerify(c, services, submitted, control, evaluation, content.Operation?.JobId ?? content.ServiceAuthorization?.JobId, vessel) : submitted;
+        return verify ? await CapacityVerify(c, services, submitted, control, evaluation, content.Operation?.JobId ?? content.ServiceAuthorization?.JobId, vessel, captureVerification) : submitted;
     }
     [Theory]
     [InlineData(true, true, true)][InlineData(false, false, true)][InlineData(true, true, false)]
