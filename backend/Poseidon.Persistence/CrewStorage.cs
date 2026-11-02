@@ -47,6 +47,10 @@ public sealed class CrewPosition : ITenantEntity
 
 public sealed class CrewAssignment : ITenantEntity
 {
+    public string? AssignmentPolicyVersion { get; set; }
+    public string? AssignmentPolicyFingerprint { get; set; }
+    public string? PositionPolicyVersion { get; set; }
+    public string? PositionPolicyFingerprint { get; set; }
     public Guid TenantId { get; set; }
     public Guid Id { get; set; }
     public Guid VesselId { get; set; }
@@ -64,13 +68,19 @@ public sealed class CrewAssignment : ITenantEntity
     public CrewAssignmentRevision Snapshot() => new() {
         TenantId = TenantId, AssignmentId = Id, VesselId = VesselId, PersonId = PersonId,
         PositionId = PositionId, From = From, To = To, ContractEndDate = ContractEndDate,
-        Revision = Revision, Status = Status, Provenance = Provenance, SourceObservedAt = SourceObservedAt, SavedAt = DateTimeOffset.UtcNow
+        Revision = Revision, Status = Status, Provenance = Provenance, SourceObservedAt = SourceObservedAt, SavedAt = DateTimeOffset.UtcNow,
+        AssignmentPolicyVersion = AssignmentPolicyVersion, AssignmentPolicyFingerprint = AssignmentPolicyFingerprint,
+        PositionPolicyVersion = PositionPolicyVersion, PositionPolicyFingerprint = PositionPolicyFingerprint
     };
 }
 
 // No identity/contact/body snapshot. Historical watch text is deliberately unavailable.
 public sealed class CrewAssignmentRevision : ITenantEntity
 {
+    public string? AssignmentPolicyVersion { get; set; }
+    public string? AssignmentPolicyFingerprint { get; set; }
+    public string? PositionPolicyVersion { get; set; }
+    public string? PositionPolicyFingerprint { get; set; }
     public Guid TenantId { get; set; }
     public Guid AssignmentId { get; set; }
     public Guid VesselId { get; set; }
@@ -116,6 +126,8 @@ internal static class CrewStorage
             b.Property(x => x.Provenance).HasMaxLength(32); b.Property(x => x.Version).IsRowVersion();
         });
         model.Entity<CrewAssignment>(b => {
+            b.Property(x => x.AssignmentPolicyVersion).HasMaxLength(80); b.Property(x => x.AssignmentPolicyFingerprint).HasMaxLength(64);
+            b.Property(x => x.PositionPolicyVersion).HasMaxLength(80); b.Property(x => x.PositionPolicyFingerprint).HasMaxLength(64);
             b.ToTable("Assignments", "crew", t => t.HasCheckConstraint("CK_Assignment_Period", "\"To\" IS NULL OR (\"From\" IS NOT NULL AND \"To\" > \"From\")"));
             b.HasKey(x => new { x.TenantId, x.Id });
             b.HasAlternateKey(x => new { x.TenantId, x.Id, x.VesselId, x.PersonId });
@@ -129,6 +141,8 @@ internal static class CrewStorage
             b.Property(x => x.Provenance).HasMaxLength(32); b.Property(x => x.Version).IsRowVersion();
         });
         model.Entity<CrewAssignmentRevision>(b => {
+            b.Property(x => x.AssignmentPolicyVersion).HasMaxLength(80); b.Property(x => x.AssignmentPolicyFingerprint).HasMaxLength(64);
+            b.Property(x => x.PositionPolicyVersion).HasMaxLength(80); b.Property(x => x.PositionPolicyFingerprint).HasMaxLength(64);
             b.ToTable("AssignmentRevisions", "crew"); b.HasKey(x => new { x.TenantId, x.AssignmentId, x.Revision });
             b.HasOne<CrewAssignment>().WithMany().HasForeignKey(x => new { x.TenantId, x.AssignmentId, x.VesselId, x.PersonId })
                 .HasPrincipalKey(x => new { x.TenantId, x.Id, x.VesselId, x.PersonId }).OnDelete(DeleteBehavior.Restrict);

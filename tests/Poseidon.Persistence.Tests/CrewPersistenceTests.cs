@@ -59,7 +59,8 @@ public sealed class CrewPersistenceTests : IAsyncLifetime
         Assert.Equal(count, await verify.AuditEvents.CountAsync(Ct)); Assert.Equal(3, await verify.Persons.CountAsync(Ct));
         Assert.Equal("FICTIONAL operator edit", (await verify.Persons.SingleAsync(x => x.Id == vessel.Id, Ct)).FullName);
         Assert.Equal("Synthetic operator group", (await verify.CrewAssignments.SingleAsync(x => x.Id == vessel.Id, Ct)).WatchGroup);
-        Assert.All(await verify.CrewAssignments.ToArrayAsync(Ct), x => { Assert.Equal("Draft", x.Status); Assert.Equal("SyntheticUnverified", x.Provenance); Assert.Null(x.From); });
+        Assert.All(await verify.CrewAssignments.ToArrayAsync(Ct), x => { Assert.Equal("Draft", x.Status); Assert.Equal("SyntheticUnverified", x.Provenance); Assert.Null(x.From);
+            Assert.Null(x.AssignmentPolicyVersion); Assert.Null(x.AssignmentPolicyFingerprint); Assert.Null(x.PositionPolicyVersion); Assert.Null(x.PositionPolicyFingerprint); });
         Assert.Empty(await verify.CommandReceipts.ToArrayAsync(Ct));
     }
     [Fact]

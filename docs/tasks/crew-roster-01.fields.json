@@ -34,6 +34,28 @@
         },
         "verification": "DEFERRED_NOT_RUN",
         "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1572",
+        "fr": "FR46-crew-roster-vessel_id",
+        "tc": "TC46-crew-roster-vessel_id",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewEndpoints.cs::Scope,Rows,Save",
+          "backend/Poseidon.Persistence/CrewStorage.cs",
+          "tests/Poseidon.Api.Tests/CrewRosterTests.cs"
+        ],
+        "remaining": [],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
+        "accepted": false
       }
     },
     {
@@ -74,6 +96,28 @@
           "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
         },
         "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1573",
+        "fr": "FR46-crew-roster-person_id",
+        "tc": "TC46-crew-roster-person_id",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewEndpoints.cs::Rows,ApplyImport",
+          "backend/Poseidon.Api/CrewIdentityEndpoints.cs",
+          "tests/Poseidon.Api.Tests/CrewIdentityClosureTests.cs"
+        ],
+        "remaining": [],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
         "accepted": false
       }
     },
@@ -120,6 +164,32 @@
         },
         "verification": "DEFERRED_NOT_RUN",
         "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1574",
+        "fr": "FR46-crew-roster-employee_no",
+        "tc": "TC46-crew-roster-employee_no",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewIdentityEndpoints.cs",
+          "backend/Poseidon.Api/LegacyCrewImportEndpoints.cs",
+          "frontend/src/product/CrewWorkspace.tsx",
+          "docs/tasks/crew-identity-closure-01.trace.json",
+          "docs/tasks/crew-legacy-closure-01.trace.json"
+        ],
+        "remaining": [
+          "Production natural-key/lifecycle/purpose policy decisions and key custody are unverified; historical ciphertext/key availability may withhold data."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
+        "accepted": false
       }
     },
     {
@@ -163,6 +233,38 @@
           "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
         },
         "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1575",
+        "fr": "FR46-crew-roster-rank",
+        "tc": "TC46-crew-roster-rank",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewPositionPolicy.cs",
+          "backend/Poseidon.Api/CrewEndpoints.cs::Positions,Identities,AddPosition",
+          "frontend/src/product/CrewWorkspace.tsx",
+          "docs/tasks/crew-identity-closure-01.trace.json",
+          "backend/Poseidon.Domain/CrewRosterPresence.cs",
+          "backend/Poseidon.Api/CrewEndpoints.cs",
+          "backend/Poseidon.Api/CrewAssignmentPolicy.cs",
+          "backend/Poseidon.Persistence/CrewStorage.cs",
+          "tests/Poseidon.Api.Tests/CrewFullScopeTests.cs",
+          "frontend/src/product/CrewAssignmentHistory.tsx"
+        ],
+        "remaining": [
+          "Source-approved catalog and lifecycle decisions remain pending; independent position supersession/history administration is not implemented.",
+          "Original catalog/status/period semantics and assignment-vs-profile meaning remain independent semantic review inputs; qualified operational appointment is separate."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
         "accepted": false
       }
     },
@@ -208,6 +310,38 @@
         },
         "verification": "DEFERRED_NOT_RUN",
         "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1576",
+        "fr": "FR46-crew-roster-department",
+        "tc": "TC46-crew-roster-department",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewPositionPolicy.cs",
+          "backend/Poseidon.Api/CrewEndpoints.cs::Positions,Identities,AddPosition",
+          "frontend/src/product/CrewWorkspace.tsx",
+          "docs/tasks/crew-identity-closure-01.trace.json",
+          "backend/Poseidon.Domain/CrewRosterPresence.cs",
+          "backend/Poseidon.Api/CrewEndpoints.cs",
+          "backend/Poseidon.Api/CrewAssignmentPolicy.cs",
+          "backend/Poseidon.Persistence/CrewStorage.cs",
+          "tests/Poseidon.Api.Tests/CrewFullScopeTests.cs",
+          "frontend/src/product/CrewAssignmentHistory.tsx"
+        ],
+        "remaining": [
+          "Source-approved catalog and lifecycle decisions remain pending; independent position supersession/history administration is not implemented.",
+          "Original catalog/status/period semantics and assignment-vs-profile meaning remain independent semantic review inputs; qualified operational appointment is separate."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
+        "accepted": false
       }
     },
     {
@@ -249,6 +383,34 @@
         },
         "verification": "DEFERRED_NOT_RUN",
         "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1577",
+        "fr": "FR46-crew-roster-nationality",
+        "tc": "TC46-crew-roster-nationality",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewPersonalData.cs",
+          "backend/Poseidon.Api/CrewProfilePolicy.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "backend/Poseidon.Api/ImportTemplates.cs",
+          "frontend/src/product/CrewPersonalProfile.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "frontend/src/product/CrewPersonalProfile.test.tsx"
+        ],
+        "remaining": [
+          "Production purpose/classification/retention/key-custody and controlled catalog approval are pending."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
+        "accepted": false
       }
     },
     {
@@ -286,6 +448,37 @@
           "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
         },
         "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1578",
+        "fr": "FR46-crew-roster-sign_on_date",
+        "tc": "TC46-crew-roster-sign_on_date",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewEndpoints.cs",
+          "backend/Poseidon.Domain/CrewEffectiveAssignment.cs",
+          "frontend/src/product/CrewWorkspace.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "backend/Poseidon.Domain/CrewRosterPresence.cs",
+          "backend/Poseidon.Api/CrewAssignmentPolicy.cs",
+          "backend/Poseidon.Persistence/CrewStorage.cs",
+          "tests/Poseidon.Api.Tests/CrewFullScopeTests.cs",
+          "frontend/src/product/CrewAssignmentHistory.tsx"
+        ],
+        "remaining": [
+          "Operational appointment/sign-on/off approval is not implemented by declaration status. Source period/lifecycle review remains pending.",
+          "Original catalog/status/period semantics and assignment-vs-profile meaning remain independent semantic review inputs; qualified operational appointment is separate."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
         "accepted": false
       }
     },
@@ -325,6 +518,37 @@
         },
         "verification": "DEFERRED_NOT_RUN",
         "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1579",
+        "fr": "FR46-crew-roster-sign_off_date",
+        "tc": "TC46-crew-roster-sign_off_date",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewEndpoints.cs",
+          "backend/Poseidon.Domain/CrewEffectiveAssignment.cs",
+          "frontend/src/product/CrewWorkspace.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "backend/Poseidon.Domain/CrewRosterPresence.cs",
+          "backend/Poseidon.Api/CrewAssignmentPolicy.cs",
+          "backend/Poseidon.Persistence/CrewStorage.cs",
+          "tests/Poseidon.Api.Tests/CrewFullScopeTests.cs",
+          "frontend/src/product/CrewAssignmentHistory.tsx"
+        ],
+        "remaining": [
+          "Operational appointment/sign-on/off approval is not implemented by declaration status. Source period/lifecycle review remains pending.",
+          "Original catalog/status/period semantics and assignment-vs-profile meaning remain independent semantic review inputs; qualified operational appointment is separate."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
+        "accepted": false
       }
     },
     {
@@ -362,6 +586,31 @@
           "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
         },
         "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1580",
+        "fr": "FR46-crew-roster-contract_end_date",
+        "tc": "TC46-crew-roster-contract_end_date",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewEndpoints.cs",
+          "backend/Poseidon.Domain/CrewEffectiveAssignment.cs",
+          "frontend/src/product/CrewWorkspace.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs"
+        ],
+        "remaining": [
+          "Operational appointment/sign-on/off approval is not implemented by declaration status. Source period/lifecycle review remains pending."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
         "accepted": false
       }
     },
@@ -406,6 +655,31 @@
         },
         "verification": "DEFERRED_NOT_RUN",
         "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1581",
+        "fr": "FR46-crew-roster-watch_group",
+        "tc": "TC46-crew-roster-watch_group",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewEndpoints.cs",
+          "backend/Poseidon.Domain/CrewEffectiveAssignment.cs",
+          "frontend/src/product/CrewWorkspace.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs"
+        ],
+        "remaining": [
+          "Operational appointment/sign-on/off approval is not implemented by declaration status. Source period/lifecycle review remains pending."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
+        "accepted": false
       }
     },
     {
@@ -444,6 +718,37 @@
         },
         "verification": "DEFERRED_NOT_RUN",
         "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1582",
+        "fr": "FR46-crew-roster-assignment_status",
+        "tc": "TC46-crew-roster-assignment_status",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewEndpoints.cs",
+          "backend/Poseidon.Domain/CrewEffectiveAssignment.cs",
+          "frontend/src/product/CrewWorkspace.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "backend/Poseidon.Domain/CrewRosterPresence.cs",
+          "backend/Poseidon.Api/CrewAssignmentPolicy.cs",
+          "backend/Poseidon.Persistence/CrewStorage.cs",
+          "tests/Poseidon.Api.Tests/CrewFullScopeTests.cs",
+          "frontend/src/product/CrewAssignmentHistory.tsx"
+        ],
+        "remaining": [
+          "Operational appointment/sign-on/off approval is not implemented by declaration status. Source period/lifecycle review remains pending.",
+          "Original catalog/status/period semantics and assignment-vs-profile meaning remain independent semantic review inputs; qualified operational appointment is separate."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
+        "accepted": false
       }
     },
     {
@@ -479,6 +784,32 @@
           "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
         },
         "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1583",
+        "fr": "FR46-crew-roster-eligibility_state",
+        "tc": "TC46-crew-roster-eligibility_state",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-050",
+        "scope_decision": "Parent field is selected; actual owning evaluation belongs to DEV-050. Backlog49/50/51 are later stories, not additional predecessors of047. No evaluator implemented by an observation/status label.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewEndpoints.cs::CrewRow,CrewProfile",
+          "frontend/src/product/CrewWorkspace.tsx",
+          "backend/Poseidon.Api/CrewOwningInputEndpoints.cs",
+          "frontend/src/product/CrewOwningInputs.tsx"
+        ],
+        "remaining": [
+          "Actual owning workflow/evaluator adapters are unimplemented; source acceptance must determine selected DEV-047 dependencies without treating a label as implementation.",
+          "Actual qualified owning records/evaluation and exact-target semantic review remain open; current Unknown is not a positive result."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
         "accepted": false
       }
     },
@@ -516,6 +847,32 @@
         },
         "verification": "DEFERRED_NOT_RUN",
         "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1584",
+        "fr": "FR46-crew-roster-work_rest_state",
+        "tc": "TC46-crew-roster-work_rest_state",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-050",
+        "scope_decision": "Parent field is selected; actual owning evaluation belongs to DEV-050. Backlog49/50/51 are later stories, not additional predecessors of047. No evaluator implemented by an observation/status label.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewEndpoints.cs::CrewRow,CrewProfile",
+          "frontend/src/product/CrewWorkspace.tsx",
+          "backend/Poseidon.Api/CrewOwningInputEndpoints.cs",
+          "frontend/src/product/CrewOwningInputs.tsx"
+        ],
+        "remaining": [
+          "Actual owning workflow/evaluator adapters are unimplemented; source acceptance must determine selected DEV-047 dependencies without treating a label as implementation.",
+          "Actual qualified owning records/evaluation and exact-target semantic review remain open; current Unknown is not a positive result."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
+        "accepted": false
       }
     },
     {
@@ -551,6 +908,32 @@
           "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
         },
         "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1585",
+        "fr": "FR46-crew-roster-certificate_state",
+        "tc": "TC46-crew-roster-certificate_state",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-048",
+        "scope_decision": "Parent field is selected; actual owning evaluation belongs to DEV-048. Backlog49/50/51 are later stories, not additional predecessors of047. No evaluator implemented by an observation/status label.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewEndpoints.cs::CrewRow,CrewProfile",
+          "frontend/src/product/CrewWorkspace.tsx",
+          "backend/Poseidon.Api/CrewOwningInputEndpoints.cs",
+          "frontend/src/product/CrewOwningInputs.tsx"
+        ],
+        "remaining": [
+          "Actual owning workflow/evaluator adapters are unimplemented; source acceptance must determine selected DEV-047 dependencies without treating a label as implementation.",
+          "Actual qualified owning records/evaluation and exact-target semantic review remain open; current Unknown is not a positive result."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
         "accepted": false
       }
     },
@@ -588,6 +971,32 @@
         },
         "verification": "DEFERRED_NOT_RUN",
         "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1586",
+        "fr": "FR46-crew-roster-competence_state",
+        "tc": "TC46-crew-roster-competence_state",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-049",
+        "scope_decision": "Parent field is selected; actual owning evaluation belongs to DEV-049. Backlog49/50/51 are later stories, not additional predecessors of047. No evaluator implemented by an observation/status label.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewEndpoints.cs::CrewRow,CrewProfile",
+          "frontend/src/product/CrewWorkspace.tsx",
+          "backend/Poseidon.Api/CrewOwningInputEndpoints.cs",
+          "frontend/src/product/CrewOwningInputs.tsx"
+        ],
+        "remaining": [
+          "Actual owning workflow/evaluator adapters are unimplemented; source acceptance must determine selected DEV-047 dependencies without treating a label as implementation.",
+          "Actual qualified owning records/evaluation and exact-target semantic review remain open; current Unknown is not a positive result."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
+        "accepted": false
       }
     },
     {
@@ -623,6 +1032,31 @@
           "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
         },
         "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1587",
+        "fr": "FR46-crew-roster-contact_status",
+        "tc": "TC46-crew-roster-contact_status",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewEndpoints.cs::CrewRow,CrewProfile",
+          "frontend/src/product/CrewWorkspace.tsx",
+          "backend/Poseidon.Api/CrewOwningInputEndpoints.cs",
+          "frontend/src/product/CrewOwningInputs.tsx"
+        ],
+        "remaining": [
+          "Actual owning workflow/evaluator adapters are unimplemented; source acceptance must determine selected DEV-047 dependencies without treating a label as implementation."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
         "accepted": false
       }
     },
@@ -664,6 +1098,28 @@
           "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
         },
         "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1588",
+        "fr": "FR46-crew-profile-person_id",
+        "tc": "TC46-crew-profile-person_id",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewEndpoints.cs::Rows,ApplyImport",
+          "backend/Poseidon.Api/CrewIdentityEndpoints.cs",
+          "tests/Poseidon.Api.Tests/CrewIdentityClosureTests.cs"
+        ],
+        "remaining": [],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
         "accepted": false
       }
     },
@@ -710,6 +1166,32 @@
         },
         "verification": "DEFERRED_NOT_RUN",
         "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1589",
+        "fr": "FR46-crew-profile-employee_no",
+        "tc": "TC46-crew-profile-employee_no",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewIdentityEndpoints.cs",
+          "backend/Poseidon.Api/LegacyCrewImportEndpoints.cs",
+          "frontend/src/product/CrewWorkspace.tsx",
+          "docs/tasks/crew-identity-closure-01.trace.json",
+          "docs/tasks/crew-legacy-closure-01.trace.json"
+        ],
+        "remaining": [
+          "Production natural-key/lifecycle/purpose policy decisions and key custody are unverified; historical ciphertext/key availability may withhold data."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
+        "accepted": false
       }
     },
     {
@@ -755,6 +1237,32 @@
         },
         "verification": "DEFERRED_NOT_RUN",
         "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1590",
+        "fr": "FR46-crew-profile-full_name",
+        "tc": "TC46-crew-profile-full_name",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewIdentityEndpoints.cs",
+          "backend/Poseidon.Api/LegacyCrewImportEndpoints.cs",
+          "frontend/src/product/CrewWorkspace.tsx",
+          "docs/tasks/crew-identity-closure-01.trace.json",
+          "docs/tasks/crew-legacy-closure-01.trace.json"
+        ],
+        "remaining": [
+          "Production natural-key/lifecycle/purpose policy decisions and key custody are unverified; historical ciphertext/key availability may withhold data."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
+        "accepted": false
       }
     },
     {
@@ -795,6 +1303,34 @@
           "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
         },
         "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1591",
+        "fr": "FR46-crew-profile-date_of_birth",
+        "tc": "TC46-crew-profile-date_of_birth",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewPersonalData.cs",
+          "backend/Poseidon.Api/CrewProfilePolicy.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "backend/Poseidon.Api/ImportTemplates.cs",
+          "frontend/src/product/CrewPersonalProfile.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "frontend/src/product/CrewPersonalProfile.test.tsx"
+        ],
+        "remaining": [
+          "Production purpose/classification/retention/key-custody and controlled catalog approval are pending."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
         "accepted": false
       }
     },
@@ -837,6 +1373,34 @@
         },
         "verification": "DEFERRED_NOT_RUN",
         "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1592",
+        "fr": "FR46-crew-profile-nationality",
+        "tc": "TC46-crew-profile-nationality",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewPersonalData.cs",
+          "backend/Poseidon.Api/CrewProfilePolicy.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "backend/Poseidon.Api/ImportTemplates.cs",
+          "frontend/src/product/CrewPersonalProfile.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "frontend/src/product/CrewPersonalProfile.test.tsx"
+        ],
+        "remaining": [
+          "Production purpose/classification/retention/key-custody and controlled catalog approval are pending."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
+        "accepted": false
       }
     },
     {
@@ -877,6 +1441,34 @@
           "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
         },
         "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1593",
+        "fr": "FR46-crew-profile-passport_no",
+        "tc": "TC46-crew-profile-passport_no",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewPersonalData.cs",
+          "backend/Poseidon.Api/CrewProfilePolicy.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "backend/Poseidon.Api/ImportTemplates.cs",
+          "frontend/src/product/CrewPersonalProfile.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "frontend/src/product/CrewPersonalProfile.test.tsx"
+        ],
+        "remaining": [
+          "Production purpose/classification/retention/key-custody and controlled catalog approval are pending."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
         "accepted": false
       }
     },
@@ -919,6 +1511,34 @@
         },
         "verification": "DEFERRED_NOT_RUN",
         "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1594",
+        "fr": "FR46-crew-profile-passport_expiry",
+        "tc": "TC46-crew-profile-passport_expiry",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewPersonalData.cs",
+          "backend/Poseidon.Api/CrewProfilePolicy.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "backend/Poseidon.Api/ImportTemplates.cs",
+          "frontend/src/product/CrewPersonalProfile.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "frontend/src/product/CrewPersonalProfile.test.tsx"
+        ],
+        "remaining": [
+          "Production purpose/classification/retention/key-custody and controlled catalog approval are pending."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
+        "accepted": false
       }
     },
     {
@@ -959,6 +1579,34 @@
           "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
         },
         "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1595",
+        "fr": "FR46-crew-profile-seaman_book_no",
+        "tc": "TC46-crew-profile-seaman_book_no",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewPersonalData.cs",
+          "backend/Poseidon.Api/CrewProfilePolicy.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "backend/Poseidon.Api/ImportTemplates.cs",
+          "frontend/src/product/CrewPersonalProfile.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "frontend/src/product/CrewPersonalProfile.test.tsx"
+        ],
+        "remaining": [
+          "Production purpose/classification/retention/key-custody and controlled catalog approval are pending."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
         "accepted": false
       }
     },
@@ -1001,6 +1649,34 @@
         },
         "verification": "DEFERRED_NOT_RUN",
         "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1596",
+        "fr": "FR46-crew-profile-seaman_book_expiry",
+        "tc": "TC46-crew-profile-seaman_book_expiry",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewPersonalData.cs",
+          "backend/Poseidon.Api/CrewProfilePolicy.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "backend/Poseidon.Api/ImportTemplates.cs",
+          "frontend/src/product/CrewPersonalProfile.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "frontend/src/product/CrewPersonalProfile.test.tsx"
+        ],
+        "remaining": [
+          "Production purpose/classification/retention/key-custody and controlled catalog approval are pending."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
+        "accepted": false
       }
     },
     {
@@ -1041,6 +1717,34 @@
           "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
         },
         "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1597",
+        "fr": "FR46-crew-profile-medical_expiry",
+        "tc": "TC46-crew-profile-medical_expiry",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewPersonalData.cs",
+          "backend/Poseidon.Api/CrewProfilePolicy.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "frontend/src/product/CrewPersonalProfile.tsx",
+          "tests/Poseidon.Api.Tests/CrewMedicalExpiryTests.cs",
+          "tests/Poseidon.Domain.Tests/CrewMedicalExpiryTests.cs",
+          "tests/Poseidon.Browser.Tests/register-specs/crew-cases.ts"
+        ],
+        "remaining": [
+          "Migration/model/client generation and all execution deferred; minimum-data lawful purpose/retention/key policy and medical verification remain pending."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
         "accepted": false
       }
     },
@@ -1086,6 +1790,38 @@
         },
         "verification": "DEFERRED_NOT_RUN",
         "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1598",
+        "fr": "FR46-crew-profile-primary_rank",
+        "tc": "TC46-crew-profile-primary_rank",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewPositionPolicy.cs",
+          "backend/Poseidon.Api/CrewEndpoints.cs::Positions,Identities,AddPosition",
+          "frontend/src/product/CrewWorkspace.tsx",
+          "docs/tasks/crew-identity-closure-01.trace.json",
+          "backend/Poseidon.Domain/CrewRosterPresence.cs",
+          "backend/Poseidon.Api/CrewEndpoints.cs",
+          "backend/Poseidon.Api/CrewAssignmentPolicy.cs",
+          "backend/Poseidon.Persistence/CrewStorage.cs",
+          "tests/Poseidon.Api.Tests/CrewFullScopeTests.cs",
+          "frontend/src/product/CrewAssignmentHistory.tsx"
+        ],
+        "remaining": [
+          "Source-approved catalog and lifecycle decisions remain pending; independent position supersession/history administration is not implemented.",
+          "Original catalog/status/period semantics and assignment-vs-profile meaning remain independent semantic review inputs; qualified operational appointment is separate."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
+        "accepted": false
       }
     },
     {
@@ -1130,6 +1866,38 @@
         },
         "verification": "DEFERRED_NOT_RUN",
         "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1599",
+        "fr": "FR46-crew-profile-department",
+        "tc": "TC46-crew-profile-department",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewPositionPolicy.cs",
+          "backend/Poseidon.Api/CrewEndpoints.cs::Positions,Identities,AddPosition",
+          "frontend/src/product/CrewWorkspace.tsx",
+          "docs/tasks/crew-identity-closure-01.trace.json",
+          "backend/Poseidon.Domain/CrewRosterPresence.cs",
+          "backend/Poseidon.Api/CrewEndpoints.cs",
+          "backend/Poseidon.Api/CrewAssignmentPolicy.cs",
+          "backend/Poseidon.Persistence/CrewStorage.cs",
+          "tests/Poseidon.Api.Tests/CrewFullScopeTests.cs",
+          "frontend/src/product/CrewAssignmentHistory.tsx"
+        ],
+        "remaining": [
+          "Source-approved catalog and lifecycle decisions remain pending; independent position supersession/history administration is not implemented.",
+          "Original catalog/status/period semantics and assignment-vs-profile meaning remain independent semantic review inputs; qualified operational appointment is separate."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
+        "accepted": false
       }
     },
     {
@@ -1170,6 +1938,34 @@
           "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
         },
         "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1600",
+        "fr": "FR46-crew-profile-company_start_date",
+        "tc": "TC46-crew-profile-company_start_date",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewPersonalData.cs",
+          "backend/Poseidon.Api/CrewProfilePolicy.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "backend/Poseidon.Api/ImportTemplates.cs",
+          "frontend/src/product/CrewPersonalProfile.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "frontend/src/product/CrewPersonalProfile.test.tsx"
+        ],
+        "remaining": [
+          "Production purpose/classification/retention/key-custody and controlled catalog approval are pending."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
         "accepted": false
       }
     },
@@ -1212,6 +2008,34 @@
         },
         "verification": "DEFERRED_NOT_RUN",
         "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1601",
+        "fr": "FR46-crew-profile-sea_service_months",
+        "tc": "TC46-crew-profile-sea_service_months",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewPersonalData.cs",
+          "backend/Poseidon.Api/CrewProfilePolicy.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "backend/Poseidon.Api/ImportTemplates.cs",
+          "frontend/src/product/CrewPersonalProfile.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "frontend/src/product/CrewPersonalProfile.test.tsx"
+        ],
+        "remaining": [
+          "Production purpose/classification/retention/key-custody and controlled catalog approval are pending."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
+        "accepted": false
       }
     },
     {
@@ -1252,6 +2076,34 @@
           "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
         },
         "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1602",
+        "fr": "FR46-crew-profile-tanker_experience_months",
+        "tc": "TC46-crew-profile-tanker_experience_months",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewPersonalData.cs",
+          "backend/Poseidon.Api/CrewProfilePolicy.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "backend/Poseidon.Api/ImportTemplates.cs",
+          "frontend/src/product/CrewPersonalProfile.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "frontend/src/product/CrewPersonalProfile.test.tsx"
+        ],
+        "remaining": [
+          "Production purpose/classification/retention/key-custody and controlled catalog approval are pending."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
         "accepted": false
       }
     },
@@ -1294,6 +2146,34 @@
         },
         "verification": "DEFERRED_NOT_RUN",
         "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1603",
+        "fr": "FR46-crew-profile-vessel_type_experience",
+        "tc": "TC46-crew-profile-vessel_type_experience",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewPersonalData.cs",
+          "backend/Poseidon.Api/CrewProfilePolicy.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "backend/Poseidon.Api/ImportTemplates.cs",
+          "frontend/src/product/CrewPersonalProfile.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "frontend/src/product/CrewPersonalProfile.test.tsx"
+        ],
+        "remaining": [
+          "Production purpose/classification/retention/key-custody and controlled catalog approval are pending."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
+        "accepted": false
       }
     },
     {
@@ -1334,6 +2214,34 @@
           "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
         },
         "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1604",
+        "fr": "FR46-crew-profile-company_experience_months",
+        "tc": "TC46-crew-profile-company_experience_months",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewPersonalData.cs",
+          "backend/Poseidon.Api/CrewProfilePolicy.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "backend/Poseidon.Api/ImportTemplates.cs",
+          "frontend/src/product/CrewPersonalProfile.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "frontend/src/product/CrewPersonalProfile.test.tsx"
+        ],
+        "remaining": [
+          "Production purpose/classification/retention/key-custody and controlled catalog approval are pending."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
         "accepted": false
       }
     },
@@ -1376,6 +2284,34 @@
         },
         "verification": "DEFERRED_NOT_RUN",
         "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1605",
+        "fr": "FR46-crew-profile-emergency_contact",
+        "tc": "TC46-crew-profile-emergency_contact",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewPersonalData.cs",
+          "backend/Poseidon.Api/CrewProfilePolicy.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "backend/Poseidon.Api/ImportTemplates.cs",
+          "frontend/src/product/CrewPersonalProfile.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "frontend/src/product/CrewPersonalProfile.test.tsx"
+        ],
+        "remaining": [
+          "Production purpose/classification/retention/key-custody and controlled catalog approval are pending."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
+        "accepted": false
       }
     },
     {
@@ -1416,6 +2352,34 @@
           "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
         },
         "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1606",
+        "fr": "FR46-crew-profile-preferred_language",
+        "tc": "TC46-crew-profile-preferred_language",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewPersonalData.cs",
+          "backend/Poseidon.Api/CrewProfilePolicy.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "backend/Poseidon.Api/ImportTemplates.cs",
+          "frontend/src/product/CrewPersonalProfile.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "frontend/src/product/CrewPersonalProfile.test.tsx"
+        ],
+        "remaining": [
+          "Production purpose/classification/retention/key-custody and controlled catalog approval are pending."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
         "accepted": false
       }
     },
@@ -1458,6 +2422,34 @@
         },
         "verification": "DEFERRED_NOT_RUN",
         "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1607",
+        "fr": "FR46-crew-profile-contact_phone",
+        "tc": "TC46-crew-profile-contact_phone",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewPersonalData.cs",
+          "backend/Poseidon.Api/CrewProfilePolicy.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "backend/Poseidon.Api/ImportTemplates.cs",
+          "frontend/src/product/CrewPersonalProfile.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "frontend/src/product/CrewPersonalProfile.test.tsx"
+        ],
+        "remaining": [
+          "Production purpose/classification/retention/key-custody and controlled catalog approval are pending."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
+        "accepted": false
       }
     },
     {
@@ -1499,6 +2491,34 @@
         },
         "verification": "DEFERRED_NOT_RUN",
         "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1608",
+        "fr": "FR46-crew-profile-email",
+        "tc": "TC46-crew-profile-email",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewPersonalData.cs",
+          "backend/Poseidon.Api/CrewProfilePolicy.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "backend/Poseidon.Api/ImportTemplates.cs",
+          "frontend/src/product/CrewPersonalProfile.tsx",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "frontend/src/product/CrewPersonalProfile.test.tsx"
+        ],
+        "remaining": [
+          "Production purpose/classification/retention/key-custody and controlled catalog approval are pending."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
+        "accepted": false
       }
     },
     {
@@ -1539,6 +2559,34 @@
           "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
         },
         "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1609",
+        "fr": "FR46-crew-profile-photo_ref",
+        "tc": "TC46-crew-profile-photo_ref",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewPhotoEndpoints.cs",
+          "backend/Poseidon.Api/SecureFileEndpoints.cs",
+          "frontend/src/product/CrewPhotoSelection.tsx",
+          "frontend/src/product/CrewPersonalFiles.tsx",
+          "tests/Poseidon.Api.Tests/CrewPhotoTests.cs",
+          "frontend/src/product/CrewPhotoSelection.test.tsx",
+          "tests/Poseidon.Browser.Tests/register-specs/person-file-cases.ts"
+        ],
+        "remaining": [
+          "Provider/scanner/key/purpose qualification is unverified; offline binary capture is unimplemented."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
         "accepted": false
       }
     },
@@ -1584,6 +2632,31 @@
         },
         "verification": "DEFERRED_NOT_RUN",
         "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1610",
+        "fr": "FR46-crew-profile-privacy_scope",
+        "tc": "TC46-crew-profile-privacy_scope",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewEndpoints.cs::Identities",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs::Read",
+          "backend/Poseidon.Api/CrewIdentityEndpoints.cs",
+          "frontend/src/product/CrewWorkspace.tsx"
+        ],
+        "remaining": [
+          "Source placeholder does not define a writable privacy enum; approved legal processing matrix remains pending."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
+        "accepted": false
       }
     },
     {
@@ -1627,6 +2700,37 @@
           "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
         },
         "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1611",
+        "fr": "FR46-crew-profile-current_vessel",
+        "tc": "TC46-crew-profile-current_vessel",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewEffectiveAssignment.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "backend/Poseidon.Api/CrewAssignmentPolicy.cs",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "backend/Poseidon.Domain/CrewRosterPresence.cs",
+          "backend/Poseidon.Api/CrewEndpoints.cs",
+          "backend/Poseidon.Persistence/CrewStorage.cs",
+          "tests/Poseidon.Api.Tests/CrewFullScopeTests.cs",
+          "frontend/src/product/CrewAssignmentHistory.tsx"
+        ],
+        "remaining": [
+          "Current effective declaration is not an independently approved operational appointment.",
+          "Original catalog/status/period semantics and assignment-vs-profile meaning remain independent semantic review inputs; qualified operational appointment is separate."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
         "accepted": false
       }
     },
@@ -1672,6 +2776,37 @@
         },
         "verification": "DEFERRED_NOT_RUN",
         "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1612",
+        "fr": "FR46-crew-profile-current_assignment",
+        "tc": "TC46-crew-profile-current_assignment",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Selected DEV-047 field consumer; existing producer retained. No source acceptance or completed runtime inferred.",
+        "evidence": [
+          "backend/Poseidon.Domain/CrewEffectiveAssignment.cs",
+          "backend/Poseidon.Api/CrewProfileEndpoints.cs",
+          "backend/Poseidon.Api/CrewAssignmentPolicy.cs",
+          "tests/Poseidon.Api.Tests/CrewProfileTests.cs",
+          "backend/Poseidon.Domain/CrewRosterPresence.cs",
+          "backend/Poseidon.Api/CrewEndpoints.cs",
+          "backend/Poseidon.Persistence/CrewStorage.cs",
+          "tests/Poseidon.Api.Tests/CrewFullScopeTests.cs",
+          "frontend/src/product/CrewAssignmentHistory.tsx"
+        ],
+        "remaining": [
+          "Current effective declaration is not an independently approved operational appointment.",
+          "Original catalog/status/period semantics and assignment-vs-profile meaning remain independent semantic review inputs; qualified operational appointment is separate."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
+        "accepted": false
       }
     },
     {
@@ -1707,6 +2842,32 @@
           "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
         },
         "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1613",
+        "fr": "FR46-crew-profile-fitness_state",
+        "tc": "TC46-crew-profile-fitness_state",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-048",
+        "scope_decision": "Parent field is selected; actual owning evaluation belongs to DEV-048. Backlog49/50/51 are later stories, not additional predecessors of047. No evaluator implemented by an observation/status label.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewEndpoints.cs::CrewRow,CrewProfile",
+          "frontend/src/product/CrewWorkspace.tsx",
+          "backend/Poseidon.Api/CrewOwningInputEndpoints.cs",
+          "frontend/src/product/CrewOwningInputs.tsx"
+        ],
+        "remaining": [
+          "Actual owning workflow/evaluator adapters are unimplemented; source acceptance must determine selected DEV-047 dependencies without treating a label as implementation.",
+          "Actual qualified owning records/evaluation and exact-target semantic review remain open; current Unknown is not a positive result."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
         "accepted": false
       }
     },
@@ -1744,6 +2905,32 @@
         },
         "verification": "DEFERRED_NOT_RUN",
         "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1614",
+        "fr": "FR46-crew-profile-eligibility_state",
+        "tc": "TC46-crew-profile-eligibility_state",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-050",
+        "scope_decision": "Parent field is selected; actual owning evaluation belongs to DEV-050. Backlog49/50/51 are later stories, not additional predecessors of047. No evaluator implemented by an observation/status label.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewEndpoints.cs::CrewRow,CrewProfile",
+          "frontend/src/product/CrewWorkspace.tsx",
+          "backend/Poseidon.Api/CrewOwningInputEndpoints.cs",
+          "frontend/src/product/CrewOwningInputs.tsx"
+        ],
+        "remaining": [
+          "Actual owning workflow/evaluator adapters are unimplemented; source acceptance must determine selected DEV-047 dependencies without treating a label as implementation.",
+          "Actual qualified owning records/evaluation and exact-target semantic review remain open; current Unknown is not a positive result."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
+        "accepted": false
       }
     },
     {
@@ -1779,6 +2966,30 @@
           "meaning": "Only explicitly configured nonpersonal existing-Draft watch_group read/capture/restart/reauthorization/replay/conflict/history is implemented. Generic AB permission is not a mandatory universal PII cache or an approved production whitelist. Full macro offline scope remains source-review pending."
         },
         "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      "crew_full_scope_01": {
+        "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+        "source_locator": "sheet:Data Dictionary 2316/row:1615",
+        "fr": "FR46-crew-profile-status",
+        "tc": "TC46-crew-profile-status",
+        "selected_task": "DEV-047",
+        "selected_dependencies": [
+          "DEV-020",
+          "DEV-015"
+        ],
+        "owner_task": "DEV-047",
+        "scope_decision": "Original1615 R/S/AO/AQ is system-derived with derivation specification unresolved; no mapping to writable employment/assignment/approval status is asserted.",
+        "evidence": [
+          "backend/Poseidon.Api/CrewEndpoints.cs::CrewRow,CrewProfile",
+          "frontend/src/product/CrewWorkspace.tsx"
+        ],
+        "remaining": [
+          "Actual owning workflow/evaluator adapters are unimplemented; source acceptance must determine selected DEV-047 dependencies without treating a label as implementation.",
+          "Source-owned status derivation specification AND actual derivation software remain missing."
+        ],
+        "offline": "Existing explicitly configured encrypted watch_group only; no protected field or universal AB whitelist inferred. Other selected adapters remain unresolved.",
+        "verification": "NOT RUN",
         "accepted": false
       }
     }

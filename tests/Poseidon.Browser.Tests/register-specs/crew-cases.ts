@@ -96,8 +96,35 @@ async function medicalDeclaration(page: Page) {
   expect(!(await history.text()).includes('2031-02-03')).toBe(true)
 }
 export const crewCases = [
+  { name: 'crew-assignment-policy-history-and-owning-input-boundary', run: assignmentInputHistory, restricted: false },
   { name: 'crew-restricted-medical-declaration-reload-no-fitness-grant', run: medicalDeclaration, restricted: false },
   { name: 'crew-roster-profile-dirty', run: rosterCreateProfile, restricted: false },
   { name: 'crew-period-version-conflict', run: materialConflict, restricted: false },
   { name: 'crew-restricted-direct-url', run: restrictedCrew, restricted: true },
 ] as const
+
+// Real signed HTTPS host and ordinary commands. No API routes mocked, no provider started.
+async function assignmentInputHistory(page: Page) {
+  const vessel = await vesselFor(page), id = crypto.randomUUID()
+  const session = await (await page.request.get('/api/v1/auth/session')).json()
+  const created = await page.request.post(`/api/v1/vessels/${vessel}/crew`, {
+    headers: { 'X-CSRF-TOKEN': session.csrfToken, 'Idempotency-Key': crypto.randomUUID() },
+    data: { id, personId: null, baseVersion: null, fullName: null, employeeNo: null, positionId: null,
+      from: null, to: null, contractEndDate: null, watchGroup: null, sourceObservedAt: null },
+  })
+  expect(created.status()).toBe(200)
+  await page.goto(`/app/crew-roster/${vessel}/crew-profile/${id}`)
+  await page.getByRole('button', { name: 'EN', exact: true }).click()
+  await expect(page.getByText('Incomplete draft', { exact: true })).toBeVisible()
+  const history = page.getByRole('region', { name: 'Assignment history', exact: true })
+  await expect(history.getByText('Recorded at', { exact: true })).toBeVisible()
+  await expect(history.getByText('Historical policy unknown', { exact: true })).toHaveCount(2)
+  const inputs = page.getByRole('region', { name: 'Crew input status', exact: true })
+  await expect(inputs.getByText('Qualified evaluation unavailable; remains Unknown', { exact: true })).toHaveCount(4)
+  const raw = await page.request.get(`/api/v1/vessels/${vessel}/crew/${id}/history`)
+  expect(raw.status()).toBe(200); const revisions = await raw.json()
+  expect(revisions.items.length).toBe(1); expect(revisions.items[0].status).toBe('Draft')
+  expect(revisions.items[0].assignmentPolicyVersion).toBeNull()
+  await page.reload(); await page.getByRole('button', { name: 'EN', exact: true }).click()
+  await expect(page.getByText('Incomplete draft', { exact: true })).toBeVisible()
+}

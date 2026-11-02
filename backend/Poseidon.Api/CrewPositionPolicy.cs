@@ -24,6 +24,7 @@ public sealed class CrewPositionRule
 // Missing classifications stay null in permitted incomplete position declarations.
 public sealed class CrewPositionPolicy
 {
+    public string Fingerprint() => Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(this)));
     public string Version { get; set; } = "";
     public string SourceReference { get; set; } = "";
     public string TimeZone { get; set; } = "";

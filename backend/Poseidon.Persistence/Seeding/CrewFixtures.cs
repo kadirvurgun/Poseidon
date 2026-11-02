@@ -21,6 +21,8 @@ internal static class CrewFixtures
             if (await db.CrewAssignments.FindAsync([vessel.TenantId, vessel.Id], ct) != null) continue;
             var draft = new CrewAssignment { TenantId = vessel.TenantId, Id = vessel.Id, VesselId = vessel.Id,
                 PersonId = vessel.Id, PositionId = vessel.Id, Provenance = "SyntheticUnverified" };
+            // Policy lineage remains absent. Reseeding never
+            // assigns a catalog/status authority or rewrites an operator's declaration/revision.
             db.CrewAssignments.Add(draft); db.CrewAssignmentRevisions.Add(draft.Snapshot());
         }
     }

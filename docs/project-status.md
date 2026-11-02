@@ -1,3 +1,9 @@
+## CREW-FULL-SCOPE-01 — 2026-11-02 — INCOMPLETE / UNVERIFIED
+
+Authored scoped onboard/planned declaration presence, immutable declaration/position policy lineage, stale tuple masking, actual protected input observations, TR/EN assignment history/source-observation consumers and domain/real PostgreSQL/actual-host/wire/React/signed-host tests. Preserved all predecessor code and normal Safety receipt; received only six-file1f82b754 normally with-x as b568e9e. Today/mixed-fleet definition remains an unreviewed engineering association.
+
+All suites/validators/build/restore/lint/typecheck/generation/browser/provider/scans/QA/CI **NOT RUN**. Canonical8/970SP,2/121tasks,0/196accepted unchanged. No completed engineering package or acceptance. [Exact task/44-field reconciliation](tasks/crew-full-scope-01.md), [phase](phases/CREW-FULL-SCOPE-01.md). Remaining status derivation, selected offline adapters, qualified owning evaluators/catalog governance and generated integration are software/source gaps; external human/provider/legal/pilot authority remains separate. Next continue outstanding Crew and RULE-OWNING-ADAPTERS-01 before one combined gate. No publication/merge.
+
 # TUG-OWNING-CONSUMERS-01 — AUTHORED / UNVERIFIED / NOT ACCEPTED
 
 Preserved96c2901 and its dirty Tug continuation. Authored owning certified/test BP

@@ -143,11 +143,20 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Equal(HttpStatusCode.BadRequest, (await Send(client, $"{CrewUrl}/{another.Id}/certificates", command)).StatusCode);
         Assert.Equal(HttpStatusCode.OK, (await Send(client, endpoint, command, key)).StatusCode);
         Assert.Equal(HttpStatusCode.OK, (await Send(client, endpoint, command, key)).StatusCode);
+        var inputPath = $"/api/v1/{CrewUrl}/{SeedVessel.Id}/owning-inputs";
+        using (var observed = System.Text.Json.JsonDocument.Parse(await client.GetStringAsync(inputPath, Ct))) {
+            var certificate = observed.RootElement.GetProperty("inputs").EnumerateArray().Single(x => x.GetProperty("field").GetString() == "certificate_state");
+            Assert.Equal("DeclaredUnverified", certificate.GetProperty("state").GetString());
+        }
         var settings = host.Services.GetRequiredService<FederationSettings>();
         settings.Memberships[0] = settings.Memberships[0] with { Permissions = settings.Memberships[0].Permissions.Where(p => p != "crew.documents.read").ToArray() };
         Assert.Equal(HttpStatusCode.BadRequest, (await Send(client, endpoint, command, key)).StatusCode);
         var visible = await client.GetFromJsonAsync<CredentialDto[]>("/api/v1/" + endpoint, Ct);
         Assert.DoesNotContain(visible!, x => x.Id == command.Id);
+        using (var observed = System.Text.Json.JsonDocument.Parse(await client.GetStringAsync(inputPath, Ct))) {
+            var certificate = observed.RootElement.GetProperty("inputs").EnumerateArray().Single(x => x.GetProperty("field").GetString() == "certificate_state");
+            Assert.Equal("Withheld", certificate.GetProperty("state").GetString());
+        }
         await using var db = Db(); var stored = await db.Credentials.SingleAsync(x => x.Id == command.Id, Ct);
         Assert.Equal(stage.Id, stored.DocumentReference); Assert.Null(stored.LegacyDocumentReference);
         Assert.Single(await db.CommandReceipts.Where(x => x.ResourceId == command.Id).ToArrayAsync(Ct));

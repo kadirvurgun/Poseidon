@@ -8,7 +8,7 @@ const id = '22222222-2222-2222-2222-222222222222'
 const row = { id, vesselId: vessel, personId: id, version: 7, revision: 1, positionId: null,
   rank: null, capacity: null, department: null, from: null, to: null, contractEndDate: null,
   watchGroup: null, assignmentStatus: 'Draft', provenance: 'SyntheticUnverified', fullName: null,
-  employeeNo: null, privacyScope: 'Withheld', sourceObservedAt: null, eligibilityState: 'Unknown' }
+  employeeNo: null, privacyScope: 'Withheld', sourceObservedAt: null, eligibilityState: 'Unknown', workRestState: 'Unknown', certificateState: 'Unknown', competenceState: 'Unknown', contactStatus: 'Unavailable', nationality: null, nationalityState: 'Withheld', presenceState: 'Draft', presenceReason: 'incomplete_declaration', positionState: 'Missing' }
 const json = (data: unknown, status = 200) => new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json' } })
 const fetcher = vi.fn()
 let mutation: (init: RequestInit) => Promise<Response>
@@ -23,7 +23,7 @@ beforeEach(() => {
     if (path.includes('/personal-profile')) return json({ code: 'field_policy_denied' }, 403)
     if (path.endsWith('/position-policy')) return json({ state: 'Unavailable', version: null, items: [] })
     if (path.endsWith('/positions') || path.endsWith('/certificates')) return json([])
-    if (path.endsWith(`/${id}`)) return json({ assignment: row, personVersion: 12, employmentState: 'Unknown', fitnessState: 'Unknown', contactStatus: 'Withheld', healthStatus: 'Withheld' })
+    if (path.endsWith(`/${id}`)) return json({ assignment: row, personVersion: 12, identityStatus: 'Withheld', employmentState: 'Unknown', fitnessState: 'Unknown', contactStatus: 'Withheld', healthStatus: 'Withheld' })
     return json({ items: [row], offset: 0, hasMore: false, canWrite: true, canWriteIdentity: true, identityPolicy: { version: 'synthetic-v1', purpose: 'synthetic', employeeNumberMode: 'MutableDeclaration' } })
   })
   vi.stubGlobal('fetch', fetcher)
@@ -32,10 +32,34 @@ afterEach(() => { cleanup(); vi.unstubAllGlobals(); fetcher.mockReset() })
 const english = async () => { await userEvent.click(screen.getByRole('button', { name: 'EN', exact: true })); await screen.findByRole('button', { name: 'Add person and assignment' }) }
 
 describe('CREW-ROSTER-01 authored component behavior; no backend execution claim', () => {
+  it('shows server onboard and planned declarations without promoting them to eligibility', async () => {
+    const previous = fetcher.getMockImplementation()!
+    fetcher.mockImplementation(async (path: string, init?: RequestInit) => path.includes('/crew?offset=') ? json({
+      items: [{ ...row, presenceState: 'OnboardDeclaration', presenceReason: 'unverified_onboard_declaration' },
+        { ...row, id: vessel, presenceState: 'PlannedDeclaration', presenceReason: 'unverified_planned_declaration' }],
+      offset: 0, hasMore: false, canWrite: false, canWriteIdentity: false,
+    }) : previous(path, init))
+    render(<CrewWorkspace vessel={vessel} />)
+    await userEvent.click(screen.getByRole('button', { name: 'EN', exact: true }))
+    expect(await screen.findByText('Onboard · unverified declaration')).toBeVisible()
+    expect(screen.getByText('Planned · unverified declaration')).toBeVisible()
+    expect(screen.queryByText('ELIGIBLE')).not.toBeInTheDocument()
+  })
+  it('rejects a malformed response that exposes a stale rank', async () => {
+    const previous = fetcher.getMockImplementation()!
+    fetcher.mockImplementation(async (path: string, init?: RequestInit) => path.includes('/crew?offset=') ? json({
+      items: [{ ...row, positionState: 'Stale', rank: 'SYNTHETIC INVALID DISCLOSURE' }], offset: 0, hasMore: false, canWrite: false, canWriteIdentity: false,
+    }) : previous(path, init))
+    render(<CrewWorkspace vessel={vessel} />)
+    await userEvent.click(screen.getByRole('button', { name: 'EN', exact: true }))
+    expect(await screen.findByText('Crew service unavailable.')).toBeVisible()
+    expect(screen.queryByText('SYNTHETIC INVALID DISCLOSURE')).not.toBeInTheDocument()
+    expect(screen.queryByRole('table')).not.toBeInTheDocument()
+  })
   it('requires explicit conversion for legacy identity and retries an uncertain conversion without sending identity values', async () => {
     const previous = fetcher.getMockImplementation()!
     fetcher.mockImplementation(async (path: string, init?: RequestInit) => path.endsWith(`/${id}`) && !init?.method
-      ? json({ assignment: { ...row, privacyScope: 'LegacyUnavailable' }, personVersion: 12, canConvertIdentity: true,
+      ? json({ employmentState: 'Unknown', fitnessState: 'Unknown', identityStatus: 'LegacyUnavailable', contactStatus: 'Withheld', healthStatus: 'Withheld', assignment: { ...row, privacyScope: 'LegacyUnavailable' }, personVersion: 12, canConvertIdentity: true,
         identityPolicy: { version: 'synthetic-v1', purpose: 'synthetic', employeeNumberMode: 'ImmutableAfterCapture' } }) : previous(path, init))
     let count = 0; mutation = async () => { if (count++ === 0) throw new TypeError('synthetic interrupted conversion'); return json({ version: 13 }) }
     render(<CrewWorkspace vessel={vessel} assignment={id} />)
@@ -55,7 +79,7 @@ describe('CREW-ROSTER-01 authored component behavior; no backend execution claim
   it('keeps configured immutable employee identity while allowing ordinary name changes with the exact policy', async () => {
     const previous = fetcher.getMockImplementation()!
     fetcher.mockImplementation(async (path: string, init?: RequestInit) => path.endsWith(`/${id}`) && !init?.method
-      ? json({ assignment: { ...row, fullName: 'FICTIONAL original', employeeNo: '0001', privacyScope: 'IdentityPermitted' }, personVersion: 12,
+      ? json({ employmentState: 'Unknown', fitnessState: 'Unknown', identityStatus: 'IdentityPermitted', contactStatus: 'Withheld', healthStatus: 'Withheld', assignment: { ...row, fullName: 'FICTIONAL original', employeeNo: '0001', privacyScope: 'IdentityPermitted' }, personVersion: 12,
         identityPolicy: { version: 'synthetic-v1', purpose: 'synthetic', employeeNumberMode: 'ImmutableAfterCapture' } }) : previous(path, init))
     render(<CrewWorkspace vessel={vessel} assignment={id} />)
     await userEvent.click(screen.getByRole('button', { name: 'EN', exact: true }))
