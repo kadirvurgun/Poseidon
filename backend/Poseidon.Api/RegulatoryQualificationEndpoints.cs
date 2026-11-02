@@ -168,7 +168,8 @@ public static class RegulatoryQualificationEndpoints
                         db.FileStages.Any(s => s.Id == f.Id && s.VesselId == vessel.Id && s.PersonId == null && s.DocumentId == null && s.State == "CleanTransport"), ct);
                     if (file == null) return await Fail(h, 409, "construction_record_required");
                     var fileStage = await db.FileStages.SingleAsync(s => s.Id == file.Id && s.VesselId == vessel.Id && s.PersonId == null && s.DocumentId == null && s.State == "CleanTransport", ct);
-                    db.Entry(fileStage).Property(s => s.State).IsModified = true;
+                    // CleanTransport is terminal and database-immutable;
+                    // retain the exact read without a forbidden no-op UPDATE.
                     var settings = h.RequestServices.GetRequiredService<SecureFileSettings>();
                     if (!settings.Ready(h.RequestServices.GetRequiredService<IWebHostEnvironment>())) return await Fail(h, 503, "file_settings_unavailable");
                     try {
