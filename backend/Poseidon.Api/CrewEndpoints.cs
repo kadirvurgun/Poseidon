@@ -248,63 +248,74 @@ public static class CrewEndpoints
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "CrewSave", "Attempted", resourceId: vessel);
         // SERIALIZABLE plus DB exclusion constraint protects overlap and duplicate/restart races.
         await using var tx = db.Database.CurrentTransaction == null ? await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable, ct) : null;
-        var receipt = await db.CommandReceipts.AsNoTracking().SingleOrDefaultAsync(x => x.ActorId == a.Id && x.Key == key, ct);
-        if (receipt != null) {
+        async Task<IResult?> Replay()
+        {
+            var receipt = await db.CommandReceipts.AsNoTracking().SingleOrDefaultAsync(x => x.ActorId == a.Id && x.Key == key, ct);
+            if (receipt == null) return null;
             if (receipt.Action != "CrewSave" || receipt.Fingerprint != fingerprint) return await Fail(h, 409, "idempotency_key_reused");
             // Replay returns opaque committed reference only, never a stale personal snapshot.
             if (!await db.CrewAssignments.AnyAsync(x => x.Id == receipt.ResourceId && x.VesselId == vessel, ct)) return await Fail(h, 404, "resource_not_found");
             return Results.Ok(new { id = receipt.ResourceId, revision = receipt.RegisterRevision, version = receipt.RegisterVersion, replayed = true });
         }
-        var assignment = await db.CrewAssignments.SingleOrDefaultAsync(x => x.Id == command.Id && x.VesselId == vessel, ct);
-        if (assignment == null && command.BaseVersion != null || assignment != null && command.BaseVersion != assignment.Version)
-            return await Fail(h, 409, "version_conflict");
-        if (assignment != null && (command.PersonId != assignment.PersonId || command.FullName != null || command.EmployeeNo != null))
-            return await Fail(h, 400, "invalid_request");
-        var positionPolicy = await CrewPositionPolicy.Current(h, db, vessel);
-        if (!positionPolicy.AllowsReference(a.TenantId, vessel, command.PositionId, command.PositionPolicyVersion,
-            await db.CrewPositions.AsNoTracking().Where(x => x.VesselId == vessel).ToArrayAsync(ct))) return await Fail(h, 403, "field_policy_denied");
-        if (command.PositionId != null && !await db.CrewPositions.AnyAsync(x => x.Id == command.PositionId && x.VesselId == vessel, ct))
-            return await Fail(h, 404, "resource_not_found");
-        var personId = assignment?.PersonId ?? command.PersonId ?? Guid.NewGuid();
-        if (assignment == null && command.PersonId != null && !await db.CrewAssignments.AnyAsync(x => x.PersonId == personId && x.VesselId == vessel, ct))
-            return await Fail(h, 404, "resource_not_found");
-        if (assignment == null && command.PersonId != null && (command.FullName != null || command.EmployeeNo != null)) return await Fail(h, 400, "invalid_request");
-        // Do not expose other-vessel identifiers or periods in the conflict response.
-        if (command.From != null && await db.CrewAssignments.AnyAsync(x => x.PersonId == personId && x.Id != command.Id && x.From != null &&
-            (x.To == null || command.From < x.To) && (command.To == null || x.From < command.To), ct)) return await Fail(h, 409, "version_conflict");
-        if (assignment == null) {
-            if (command.PersonId == null) {
-                var person = new Person { TenantId = a.TenantId, Id = personId,
-                    Provenance = imported ? "ImportedDeclaredUnverified" : "UserDeclaredUnverified", SourceObservedAt = command.SourceObservedAt?.ToUniversalTime() };
-                try { CrewIdentityStorage.Capture(person, command.FullName, command.EmployeeNo, protection); }
-                catch (CryptographicException) { return await Fail(h, 503, "protected_storage_unavailable"); }
-                db.Persons.Add(person);
-                if (command.FullName != null || command.EmployeeNo != null) db.CrewIdentityRevisions.Add(new() { TenantId = a.TenantId, PersonId = person.Id, Revision = person.IdentityRevision,
-                    PolicyVersion = identityPolicy.Version, Purpose = identityPolicy.Purpose, Operation = "Declaration", SavedAt = DateTimeOffset.UtcNow });
-            }
-            assignment = new() { TenantId = a.TenantId, Id = command.Id, VesselId = vessel, PersonId = personId };
-            db.CrewAssignments.Add(assignment);
-        } else assignment.Revision = checked(assignment.Revision + 1);
-        if (command.DeclaredStatus != null) {
-            assignment.Status = command.DeclaredStatus;
-            assignment.AssignmentPolicyVersion = assignmentPolicy.Version;
-            assignment.AssignmentPolicyFingerprint = assignmentPolicy.Fingerprint();
-        }
-        if (!preservePositionLineage) {
-            assignment.PositionPolicyVersion = command.PositionId == null ? null : positionPolicy.Version;
-            assignment.PositionPolicyFingerprint = command.PositionId == null ? null : positionPolicy.Fingerprint();
-        }
-        assignment.PositionId = command.PositionId; assignment.From = command.From; assignment.To = command.To;
-        assignment.ContractEndDate = command.ContractEndDate; assignment.WatchGroup = command.WatchGroup; assignment.SourceObservedAt = command.SourceObservedAt?.ToUniversalTime();
-        assignment.Provenance = imported ? "ImportedDeclaredUnverified" : assignment.Provenance;
-        db.CrewAssignmentRevisions.Add(assignment.Snapshot());
+        // SSI may abort any statement (reads included) with 40001/40P01, possibly wrapped by the
+        // execution strategy; a concurrent duplicate must resolve to replay or 409, never 500.
         try {
+            var replay = await Replay(); if (replay != null) return replay;
+            var assignment = await db.CrewAssignments.SingleOrDefaultAsync(x => x.Id == command.Id && x.VesselId == vessel, ct);
+            if (assignment == null && command.BaseVersion != null || assignment != null && command.BaseVersion != assignment.Version)
+                return await Fail(h, 409, "version_conflict");
+            if (assignment != null && (command.PersonId != assignment.PersonId || command.FullName != null || command.EmployeeNo != null))
+                return await Fail(h, 400, "invalid_request");
+            var positionPolicy = await CrewPositionPolicy.Current(h, db, vessel);
+            if (!positionPolicy.AllowsReference(a.TenantId, vessel, command.PositionId, command.PositionPolicyVersion,
+                await db.CrewPositions.AsNoTracking().Where(x => x.VesselId == vessel).ToArrayAsync(ct))) return await Fail(h, 403, "field_policy_denied");
+            if (command.PositionId != null && !await db.CrewPositions.AnyAsync(x => x.Id == command.PositionId && x.VesselId == vessel, ct))
+                return await Fail(h, 404, "resource_not_found");
+            var personId = assignment?.PersonId ?? command.PersonId ?? Guid.NewGuid();
+            if (assignment == null && command.PersonId != null && !await db.CrewAssignments.AnyAsync(x => x.PersonId == personId && x.VesselId == vessel, ct))
+                return await Fail(h, 404, "resource_not_found");
+            if (assignment == null && command.PersonId != null && (command.FullName != null || command.EmployeeNo != null)) return await Fail(h, 400, "invalid_request");
+            // Do not expose other-vessel identifiers or periods in the conflict response.
+            if (command.From != null && await db.CrewAssignments.AnyAsync(x => x.PersonId == personId && x.Id != command.Id && x.From != null &&
+                (x.To == null || command.From < x.To) && (command.To == null || x.From < command.To), ct)) return await Fail(h, 409, "version_conflict");
+            if (assignment == null) {
+                if (command.PersonId == null) {
+                    var person = new Person { TenantId = a.TenantId, Id = personId,
+                        Provenance = imported ? "ImportedDeclaredUnverified" : "UserDeclaredUnverified", SourceObservedAt = command.SourceObservedAt?.ToUniversalTime() };
+                    try { CrewIdentityStorage.Capture(person, command.FullName, command.EmployeeNo, protection); }
+                    catch (CryptographicException) { return await Fail(h, 503, "protected_storage_unavailable"); }
+                    db.Persons.Add(person);
+                    if (command.FullName != null || command.EmployeeNo != null) db.CrewIdentityRevisions.Add(new() { TenantId = a.TenantId, PersonId = person.Id, Revision = person.IdentityRevision,
+                        PolicyVersion = identityPolicy.Version, Purpose = identityPolicy.Purpose, Operation = "Declaration", SavedAt = DateTimeOffset.UtcNow });
+                }
+                assignment = new() { TenantId = a.TenantId, Id = command.Id, VesselId = vessel, PersonId = personId };
+                db.CrewAssignments.Add(assignment);
+            } else assignment.Revision = checked(assignment.Revision + 1);
+            if (command.DeclaredStatus != null) {
+                assignment.Status = command.DeclaredStatus;
+                assignment.AssignmentPolicyVersion = assignmentPolicy.Version;
+                assignment.AssignmentPolicyFingerprint = assignmentPolicy.Fingerprint();
+            }
+            if (!preservePositionLineage) {
+                assignment.PositionPolicyVersion = command.PositionId == null ? null : positionPolicy.Version;
+                assignment.PositionPolicyFingerprint = command.PositionId == null ? null : positionPolicy.Fingerprint();
+            }
+            assignment.PositionId = command.PositionId; assignment.From = command.From; assignment.To = command.To;
+            assignment.ContractEndDate = command.ContractEndDate; assignment.WatchGroup = command.WatchGroup; assignment.SourceObservedAt = command.SourceObservedAt?.ToUniversalTime();
+            assignment.Provenance = imported ? "ImportedDeclaredUnverified" : assignment.Provenance;
+            db.CrewAssignmentRevisions.Add(assignment.Snapshot());
             await db.SaveChangesAsync(ct);
             db.CommandReceipts.Add(new() { TenantId = a.TenantId, ActorId = a.Id, Key = key, Action = "CrewSave", Fingerprint = fingerprint,
                 ResourceId = assignment.Id, RegisterRevision = assignment.Revision, RegisterVersion = assignment.Version, CommittedAt = DateTimeOffset.UtcNow });
             await db.SaveChangesAsync(ct); if (tx != null) await tx.CommitAsync(ct);
             return Results.Ok(new { id = assignment.Id, assignment.Revision, assignment.Version, replayed = false });
-        } catch (DbUpdateException) { if (tx != null) await tx.RollbackAsync(ct); return await Fail(h, 409, "version_conflict"); }
-        catch (Npgsql.PostgresException e) when (e.SqlState == "40001") { if (tx != null) await tx.RollbackAsync(ct); return await Fail(h, 409, "version_conflict"); }
+        } catch (Exception e) when (tx != null && PostgresFailure.IsDatabase(e)) {
+            await tx.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear();
+            var state = PostgresFailure.Provider(e)?.SqlState;
+            var conflict = e is DbUpdateException || state is "40001" or "40P01";
+            return await Replay() ?? await Fail(h, conflict ? 409 : 503, conflict ? "version_conflict" : "service_unavailable");
+        } catch (Exception e) when (tx == null && (e is DbUpdateException || PostgresFailure.IsSerialization(e))) {
+            return await Fail(h, 409, "version_conflict");
+        }
     }
 }
