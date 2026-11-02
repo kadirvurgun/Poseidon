@@ -12,6 +12,18 @@ Business mutations must pass the audited SaveChanges path. ExecuteUpdate/Execute
 
 At each completed phase or reviewable delivery package, report the delivered behavior, exact verification results, unresolved blockers, current phase and next step to the user. Update docs/project-status.md, docs/project-status.json and a phase report under docs/phases/. Clearly distinguish a locally validated subpackage from a completed canonical sprint or release gate. Do not wait for the user to request a status report at phase boundaries.
 
+## CI failure protocol (hard limits)
+
+A red CI run is diagnosed before any fix is pushed. These limits apply to every agent and override any cadence that would push faster.
+
+1. Read the cause first: the `Show failed API gate evidence` step / job summary, or the `api-test-counts` artifact (`.runtime/api-gate/*.json`). `exit_code: 2` from `s3_gate.py` alone is not a diagnosis. Name the failing step, test and `file:line` before editing.
+2. Reproduce narrowly: run only the failing test class/trait locally with the repo-local `.tools/dotnet` (`--filter-class`/`--filter-trait`). The deferred-test cadence above does not forbid this targeted reproduction of a CI failure.
+3. One push per diagnosis, then wait: do not push to a branch whose `Application foundation` run is still in progress (`cancel-in-progress` kills it and leaves no evidence). Batch fixes into one commit.
+4. Same commit both green and red (push vs pull_request) means a real race, not noise: fix the concurrency defect; never re-run or relax assertions to get green.
+5. Stop limit: after 2 consecutive pushed fix attempts that leave the same failing step red, or 3 red/cancelled runs on one branch in a row, stop pushing and report to the user the failing step, test names, `file:line`, what was tried and the hypothesis. Do not continue the loop unattended.
+
+SERIALIZABLE transactions classify failures only through `PostgresFailure` (any statement may raise 40001/40P01, possibly wrapped); `SerializableTransactionGuardTests` enforces this.
+
 ## Current analysis baseline
 
 Read docs/sources/active.json before selecting requirements. The user-supplied analiz/POSEIDON GUNCEL 30.10.2026 set supersedes changed prior documents; the prior sources/poseidon-v46.3 set remains immutable history. Use `py scripts/query_sources.py "exact phrase" --limit 4` for bounded local source retrieval, then read the cited locator. This makes no model calls. Do not read the whole chunks.jsonl into model context.
