@@ -75,7 +75,7 @@ class ApiTestGateTests(unittest.TestCase):
         workflow = (gate.ROOT / '.github/workflows/backend-foundation.yml').read_text(encoding='utf-8')
         self.assertIn('docker build --iidfile .runtime/s3-gate-image-id --file infra/s3-gate/Dockerfile infra/s3-gate', workflow)
         self.assertIn('python3 scripts/api_test_gate.py --scope unit', workflow)
-        self.assertIn('python3 scripts/s3_gate.py --image "$(cat .runtime/s3-gate-image-id)" --child-timeout 1860 -- python3 scripts/api_test_gate.py --scope integration', workflow)
+        self.assertIn('python3 scripts/s3_gate.py --image "$(cat .runtime/s3-gate-image-id)" --child-timeout 1980 -- python3 scripts/api_test_gate.py --scope integration', workflow)
         self.assertLess(workflow.index('Build pinned source S3 provider'), workflow.index('name: PostgreSQL integration tests'))
 
     def test_source_provider_build_has_byte_and_builder_pins_without_persisted_credentials(self):

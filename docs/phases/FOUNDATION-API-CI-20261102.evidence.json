@@ -110,9 +110,9 @@
   },
   "new_ci_source_hashes": {
     "scripts/api_test_gate.py": "89deb0ddc2b882dfb611cb786f0befd3c93358dc66607b2bff6ac4f366e0d534",
-    "scripts/test_api_test_gate.py": "a701381f41c148bf1371136461c1d4383d483551eeaa4c7c5d4e02e6dbc9d200",
+    "scripts/test_api_test_gate.py": "f735e96274a966d7ac101b5da58043ad82c35c7e9a214d871f6cd083fa283afc",
     "infra/s3-gate/Dockerfile": "96008abc827f78a9e5b99cbd2c0bb575ac95b0f48984ceb4184f852d88106c9c",
-    ".github/workflows/backend-foundation.yml": "1c5fd9987f80e3b1df6c07816d0fd95e071492474674ffc3a8572d52501d2d34"
+    ".github/workflows/backend-foundation.yml": "aba2d03c0d108b428f7edb7751c571476c47a73ad6273b5ba6855fc7ce1ca8e4"
   },
   "canonical_acceptance_changed": false,
   "independent_qa": "PENDING",

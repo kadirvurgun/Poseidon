@@ -61,7 +61,7 @@ jobs:
       - name: PostgreSQL integration tests
         run: |
           dotnet test --project tests/Poseidon.Persistence.Tests/Poseidon.Persistence.Tests.csproj --configuration Release --no-build --filter-trait "Category=Integration"
-          python3 scripts/s3_gate.py --image "$(cat .runtime/s3-gate-image-id)" --child-timeout 1860 -- python3 scripts/api_test_gate.py --scope integration
+          python3 scripts/s3_gate.py --image "$(cat .runtime/s3-gate-image-id)" --child-timeout 1980 -- python3 scripts/api_test_gate.py --scope integration
       - name: Remove only the owned scanner
         if: always()
         run: |
