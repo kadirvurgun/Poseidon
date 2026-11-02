@@ -6822,10 +6822,10 @@
           "inventoryRole": "retained-partial-implementation-inventory; canonical source identities are in definitionChains"
         },
         {
-          "id": "cap-9:screen:safety-inbox",
+          "id": "cap-9:screen:events-learning",
           "kind": "screen",
           "source": "trace",
-          "locator": "sheet:196 Ekran v46.3/row:2",
+          "locator": "sheet:196 Ekran v46.3/row:95",
           "state": "DEFINED",
           "files": [],
           "inventoryRole": "retained-partial-implementation-inventory; canonical source identities are in definitionChains"
@@ -6834,7 +6834,7 @@
       "edges": [
         [
           "cap-9:requirement:pilot-exit",
-          "cap-9:screen:safety-inbox"
+          "cap-9:screen:events-learning"
         ]
       ],
       "definedUat": {
@@ -6852,14 +6852,889 @@
         "column": "B",
         "value": "Safety event + evidence/audit + offline"
       },
-      "definitionChains": [],
-      "definitionGap": "SOURCE_DEFINITION_ABSENT: current2316 field sheet has no safety-inbox rows; screen/API definition exists but no field FR/entity/TC chain; independent source review required.",
+      "definitionChains": [
+        {
+          "state": "DEFINED",
+          "field": "record_id",
+          "requirement": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:424",
+            "column": "U",
+            "value": "FR-events-learning-record_id"
+          },
+          "screen": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:424",
+            "column": "A",
+            "value": "events-learning"
+          },
+          "api": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:424",
+            "column": "R",
+            "value": "/api/v1/events-learning"
+          },
+          "entity": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:424",
+            "column": "S",
+            "value": "EventsLearning"
+          },
+          "test": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:424",
+            "column": "V",
+            "value": "TC-events-learning-record_id"
+          },
+          "backlog": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "A",
+            "value": "DEV-060"
+          },
+          "backlogTest": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "M",
+            "value": "T-S9-003"
+          }
+        },
+        {
+          "state": "DEFINED",
+          "field": "vessel_imo",
+          "requirement": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:425",
+            "column": "U",
+            "value": "FR-events-learning-vessel_imo"
+          },
+          "screen": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:425",
+            "column": "A",
+            "value": "events-learning"
+          },
+          "api": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:425",
+            "column": "R",
+            "value": "/api/v1/events-learning"
+          },
+          "entity": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:425",
+            "column": "S",
+            "value": "EventsLearning"
+          },
+          "test": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:425",
+            "column": "V",
+            "value": "TC-events-learning-vessel_imo"
+          },
+          "backlog": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "A",
+            "value": "DEV-060"
+          },
+          "backlogTest": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "M",
+            "value": "T-S9-003"
+          }
+        },
+        {
+          "state": "DEFINED",
+          "field": "requirement_ref",
+          "requirement": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:426",
+            "column": "U",
+            "value": "FR-events-learning-requirement_ref"
+          },
+          "screen": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:426",
+            "column": "A",
+            "value": "events-learning"
+          },
+          "api": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:426",
+            "column": "R",
+            "value": "/api/v1/events-learning"
+          },
+          "entity": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:426",
+            "column": "S",
+            "value": "EventsLearning"
+          },
+          "test": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:426",
+            "column": "V",
+            "value": "TC-events-learning-requirement_ref"
+          },
+          "backlog": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "A",
+            "value": "DEV-060"
+          },
+          "backlogTest": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "M",
+            "value": "T-S9-003"
+          }
+        },
+        {
+          "state": "DEFINED",
+          "field": "responsible_role",
+          "requirement": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:427",
+            "column": "U",
+            "value": "FR-events-learning-responsible_role"
+          },
+          "screen": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:427",
+            "column": "A",
+            "value": "events-learning"
+          },
+          "api": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:427",
+            "column": "R",
+            "value": "/api/v1/events-learning"
+          },
+          "entity": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:427",
+            "column": "S",
+            "value": "EventsLearning"
+          },
+          "test": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:427",
+            "column": "V",
+            "value": "TC-events-learning-responsible_role"
+          },
+          "backlog": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "A",
+            "value": "DEV-060"
+          },
+          "backlogTest": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "M",
+            "value": "T-S9-003"
+          }
+        },
+        {
+          "state": "DEFINED",
+          "field": "record_datetime",
+          "requirement": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:428",
+            "column": "U",
+            "value": "FR-events-learning-record_datetime"
+          },
+          "screen": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:428",
+            "column": "A",
+            "value": "events-learning"
+          },
+          "api": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:428",
+            "column": "R",
+            "value": "/api/v1/events-learning"
+          },
+          "entity": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:428",
+            "column": "S",
+            "value": "EventsLearning"
+          },
+          "test": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:428",
+            "column": "V",
+            "value": "TC-events-learning-record_datetime"
+          },
+          "backlog": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "A",
+            "value": "DEV-060"
+          },
+          "backlogTest": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "M",
+            "value": "T-S9-003"
+          }
+        },
+        {
+          "state": "DEFINED",
+          "field": "status",
+          "requirement": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:429",
+            "column": "U",
+            "value": "FR-events-learning-status"
+          },
+          "screen": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:429",
+            "column": "A",
+            "value": "events-learning"
+          },
+          "api": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:429",
+            "column": "R",
+            "value": "/api/v1/events-learning"
+          },
+          "entity": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:429",
+            "column": "S",
+            "value": "EventsLearning"
+          },
+          "test": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:429",
+            "column": "V",
+            "value": "TC-events-learning-status"
+          },
+          "backlog": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "A",
+            "value": "DEV-060"
+          },
+          "backlogTest": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "M",
+            "value": "T-S9-003"
+          }
+        },
+        {
+          "state": "DEFINED",
+          "field": "evidence_ref",
+          "requirement": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:430",
+            "column": "U",
+            "value": "FR-events-learning-evidence_ref"
+          },
+          "screen": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:430",
+            "column": "A",
+            "value": "events-learning"
+          },
+          "api": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:430",
+            "column": "R",
+            "value": "/api/v1/events-learning"
+          },
+          "entity": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:430",
+            "column": "S",
+            "value": "EventsLearning"
+          },
+          "test": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:430",
+            "column": "V",
+            "value": "TC-events-learning-evidence_ref"
+          },
+          "backlog": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "A",
+            "value": "DEV-060"
+          },
+          "backlogTest": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "M",
+            "value": "T-S9-003"
+          }
+        },
+        {
+          "state": "DEFINED",
+          "field": "verifier",
+          "requirement": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:431",
+            "column": "U",
+            "value": "FR-events-learning-verifier"
+          },
+          "screen": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:431",
+            "column": "A",
+            "value": "events-learning"
+          },
+          "api": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:431",
+            "column": "R",
+            "value": "/api/v1/events-learning"
+          },
+          "entity": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:431",
+            "column": "S",
+            "value": "EventsLearning"
+          },
+          "test": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:431",
+            "column": "V",
+            "value": "TC-events-learning-verifier"
+          },
+          "backlog": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "A",
+            "value": "DEV-060"
+          },
+          "backlogTest": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "M",
+            "value": "T-S9-003"
+          }
+        },
+        {
+          "state": "DEFINED",
+          "field": "signal_type",
+          "requirement": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:432",
+            "column": "U",
+            "value": "FR-events-learning-signal_type"
+          },
+          "screen": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:432",
+            "column": "A",
+            "value": "events-learning"
+          },
+          "api": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:432",
+            "column": "R",
+            "value": "/api/v1/events-learning"
+          },
+          "entity": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:432",
+            "column": "S",
+            "value": "EventsLearning"
+          },
+          "test": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:432",
+            "column": "V",
+            "value": "TC-events-learning-signal_type"
+          },
+          "backlog": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "A",
+            "value": "DEV-060"
+          },
+          "backlogTest": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "M",
+            "value": "T-S9-003"
+          }
+        },
+        {
+          "state": "DEFINED",
+          "field": "affected_vessels",
+          "requirement": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:433",
+            "column": "U",
+            "value": "FR-events-learning-affected_vessels"
+          },
+          "screen": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:433",
+            "column": "A",
+            "value": "events-learning"
+          },
+          "api": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:433",
+            "column": "R",
+            "value": "/api/v1/events-learning"
+          },
+          "entity": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:433",
+            "column": "S",
+            "value": "EventsLearning"
+          },
+          "test": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:433",
+            "column": "V",
+            "value": "TC-events-learning-affected_vessels"
+          },
+          "backlog": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "A",
+            "value": "DEV-060"
+          },
+          "backlogTest": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "M",
+            "value": "T-S9-003"
+          }
+        },
+        {
+          "state": "DEFINED",
+          "field": "event_date",
+          "requirement": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:434",
+            "column": "U",
+            "value": "FR-events-learning-event_date"
+          },
+          "screen": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:434",
+            "column": "A",
+            "value": "events-learning"
+          },
+          "api": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:434",
+            "column": "R",
+            "value": "/api/v1/events-learning"
+          },
+          "entity": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:434",
+            "column": "S",
+            "value": "EventsLearning"
+          },
+          "test": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:434",
+            "column": "V",
+            "value": "TC-events-learning-event_date"
+          },
+          "backlog": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "A",
+            "value": "DEV-060"
+          },
+          "backlogTest": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "M",
+            "value": "T-S9-003"
+          }
+        },
+        {
+          "state": "DEFINED",
+          "field": "severity",
+          "requirement": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:435",
+            "column": "U",
+            "value": "FR-events-learning-severity"
+          },
+          "screen": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:435",
+            "column": "A",
+            "value": "events-learning"
+          },
+          "api": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:435",
+            "column": "R",
+            "value": "/api/v1/events-learning"
+          },
+          "entity": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:435",
+            "column": "S",
+            "value": "EventsLearning"
+          },
+          "test": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:435",
+            "column": "V",
+            "value": "TC-events-learning-severity"
+          },
+          "backlog": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "A",
+            "value": "DEV-060"
+          },
+          "backlogTest": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "M",
+            "value": "T-S9-003"
+          }
+        },
+        {
+          "state": "DEFINED",
+          "field": "what_happened",
+          "requirement": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:436",
+            "column": "U",
+            "value": "FR-events-learning-what_happened"
+          },
+          "screen": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:436",
+            "column": "A",
+            "value": "events-learning"
+          },
+          "api": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:436",
+            "column": "R",
+            "value": "/api/v1/events-learning"
+          },
+          "entity": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:436",
+            "column": "S",
+            "value": "EventsLearning"
+          },
+          "test": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:436",
+            "column": "V",
+            "value": "TC-events-learning-what_happened"
+          },
+          "backlog": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "A",
+            "value": "DEV-060"
+          },
+          "backlogTest": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "M",
+            "value": "T-S9-003"
+          }
+        },
+        {
+          "state": "DEFINED",
+          "field": "immediate_action",
+          "requirement": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:437",
+            "column": "U",
+            "value": "FR-events-learning-immediate_action"
+          },
+          "screen": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:437",
+            "column": "A",
+            "value": "events-learning"
+          },
+          "api": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:437",
+            "column": "R",
+            "value": "/api/v1/events-learning"
+          },
+          "entity": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:437",
+            "column": "S",
+            "value": "EventsLearning"
+          },
+          "test": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:437",
+            "column": "V",
+            "value": "TC-events-learning-immediate_action"
+          },
+          "backlog": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "A",
+            "value": "DEV-060"
+          },
+          "backlogTest": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "M",
+            "value": "T-S9-003"
+          }
+        },
+        {
+          "state": "DEFINED",
+          "field": "pattern_cause",
+          "requirement": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:438",
+            "column": "U",
+            "value": "FR-events-learning-pattern_cause"
+          },
+          "screen": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:438",
+            "column": "A",
+            "value": "events-learning"
+          },
+          "api": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:438",
+            "column": "R",
+            "value": "/api/v1/events-learning"
+          },
+          "entity": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:438",
+            "column": "S",
+            "value": "EventsLearning"
+          },
+          "test": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:438",
+            "column": "V",
+            "value": "TC-events-learning-pattern_cause"
+          },
+          "backlog": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "A",
+            "value": "DEV-060"
+          },
+          "backlogTest": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "M",
+            "value": "T-S9-003"
+          }
+        },
+        {
+          "state": "DEFINED",
+          "field": "fleet_change",
+          "requirement": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:439",
+            "column": "U",
+            "value": "FR-events-learning-fleet_change"
+          },
+          "screen": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:439",
+            "column": "A",
+            "value": "events-learning"
+          },
+          "api": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:439",
+            "column": "R",
+            "value": "/api/v1/events-learning"
+          },
+          "entity": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:439",
+            "column": "S",
+            "value": "EventsLearning"
+          },
+          "test": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:439",
+            "column": "V",
+            "value": "TC-events-learning-fleet_change"
+          },
+          "backlog": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "A",
+            "value": "DEV-060"
+          },
+          "backlogTest": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "M",
+            "value": "T-S9-003"
+          }
+        },
+        {
+          "state": "DEFINED",
+          "field": "effectiveness_metric",
+          "requirement": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:440",
+            "column": "U",
+            "value": "FR-events-learning-effectiveness_metric"
+          },
+          "screen": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:440",
+            "column": "A",
+            "value": "events-learning"
+          },
+          "api": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:440",
+            "column": "R",
+            "value": "/api/v1/events-learning"
+          },
+          "entity": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:440",
+            "column": "S",
+            "value": "EventsLearning"
+          },
+          "test": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:440",
+            "column": "V",
+            "value": "TC-events-learning-effectiveness_metric"
+          },
+          "backlog": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "A",
+            "value": "DEV-060"
+          },
+          "backlogTest": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "M",
+            "value": "T-S9-003"
+          }
+        },
+        {
+          "state": "DEFINED",
+          "field": "verify_date",
+          "requirement": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:441",
+            "column": "U",
+            "value": "FR-events-learning-verify_date"
+          },
+          "screen": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:441",
+            "column": "A",
+            "value": "events-learning"
+          },
+          "api": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:441",
+            "column": "R",
+            "value": "/api/v1/events-learning"
+          },
+          "entity": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:441",
+            "column": "S",
+            "value": "EventsLearning"
+          },
+          "test": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:441",
+            "column": "V",
+            "value": "TC-events-learning-verify_date"
+          },
+          "backlog": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "A",
+            "value": "DEV-060"
+          },
+          "backlogTest": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "M",
+            "value": "T-S9-003"
+          }
+        },
+        {
+          "state": "DEFINED",
+          "field": "notes",
+          "requirement": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:442",
+            "column": "U",
+            "value": "FR-events-learning-notes"
+          },
+          "screen": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:442",
+            "column": "A",
+            "value": "events-learning"
+          },
+          "api": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:442",
+            "column": "R",
+            "value": "/api/v1/events-learning"
+          },
+          "entity": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:442",
+            "column": "S",
+            "value": "EventsLearning"
+          },
+          "test": {
+            "source": "trace",
+            "locator": "sheet:2316 Alan v46.3/row:442",
+            "column": "V",
+            "value": "TC-events-learning-notes"
+          },
+          "backlog": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "A",
+            "value": "DEV-060"
+          },
+          "backlogTest": {
+            "source": "backlog",
+            "locator": "sheet:Backlog/row:61",
+            "column": "M",
+            "value": "T-S9-003"
+          }
+        }
+      ],
       "definitionScreen": {
         "source": "trace",
-        "locator": "sheet:196 Ekran v46.3/row:2",
+        "locator": "sheet:196 Ekran v46.3/row:95",
         "column": "A",
-        "value": "safety-inbox"
-      }
+        "value": "events-learning"
+      },
+      "definitionMappingNote": "Active18.01 Backlog row61 explicitly names events-learning for Safety event/near-miss capture. Active11.01 current196 row95/current2316 rows424–442 provide19 exact FR/screen/API/logical-entity/TC chains. Safety Inbox row2 is an overview with0 field rows and was the wrong capture-screen mapping. Source API alias difference (/events-learning vs backlog /safety-events) remains definition metadata, not implemented compatibility. Safety runtime/offline/UAT are still unimplemented/unexecuted; no acceptance is inferred."
     },
     {
       "number": 10,

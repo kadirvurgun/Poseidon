@@ -71,10 +71,43 @@ class CurrentSourceTraceTests(unittest.TestCase):
     def test_current_inventory_retains_ten_and_reports_actual_absent_definitions(self):
         result = validate(self.package, self.root)
         self.assertEqual([], result["structureErrors"])
-        for number in (3, 9, 10):
+        for number in (3, 10):
             self.assertIn(f"capability-{number}:source-definition-gap", result["criticalGaps"])
         self.assertEqual(10, len(result["executionGaps"]))
         self.assertFalse(result["accepted"])
+
+    def test_safety_capture_maps_real_source_fields_to_its_backlog_not_the_empty_inbox(self):
+        from source_contracts import SourceRecords
+        records = SourceRecords(self.package["sources"], self.root)
+        capability = self.package["capabilities"][8]
+        self.assertEqual("events-learning", capability["definitionScreen"]["value"])
+        records.resolve(capability["definitionScreen"])
+        backlog = records.resolve({"source": "backlog", "locator": "sheet:Backlog/row:61"})
+        self.assertIn("H61: events-learning / /api/v1/safety-events", backlog)
+        self.assertIn("M61: T-S9-003", backlog)
+        chains = capability["definitionChains"]
+        self.assertEqual(19, len(chains))
+        self.assertEqual({f"sheet:2316 Alan v46.3/row:{n}" for n in range(424, 443)},
+                         {chain["requirement"]["locator"] for chain in chains})
+        self.assertTrue(all(c["state"] == "DEFINED" and c["backlog"]["value"] == "DEV-060" for c in chains))
+        result = validate(self.package, self.root)
+        self.assertEqual([], result["structureErrors"])
+        self.assertNotIn("capability-9:source-definition-gap", result["criticalGaps"])
+        self.assertNotIn("capability-9:missing-critical-source-fields", result["criticalGaps"])
+        self.assertIn("capability-9:declared-implementation-gap", result["implementationGaps"])
+        self.assertIn("capability-9:no-passing-current-journey", result["executionGaps"])
+        self.assertFalse(result["accepted"])
+
+    def test_removing_a_safety_capture_field_is_still_a_critical_orphan(self):
+        self.package["capabilities"][8]["definitionChains"].pop()
+        self.assertIn("capability-9:missing-critical-source-fields", validate(self.package, self.root)["criticalGaps"])
+
+    def test_real_but_wrong_zero_field_inbox_cannot_replace_the_capture_screen(self):
+        self.package["capabilities"][8]["definitionScreen"] = {
+            "source": "trace", "locator": "sheet:196 Ekran v46.3/row:2", "column": "A", "value": "safety-inbox"}
+        result = validate(self.package, self.root)
+        self.assertIn("source_mismatched_capability_screen", result["structureErrors"])
+        self.assertIn("capability-9:missing-critical-source-fields", result["criticalGaps"])
 
     def test_invented_requirement_is_not_resolved_by_existing_file(self):
         self.package["capabilities"][0]["definitionChains"][0]["requirement"]["value"] = "FR-invented"
