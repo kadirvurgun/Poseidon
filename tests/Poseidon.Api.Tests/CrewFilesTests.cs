@@ -195,7 +195,7 @@ public sealed partial class DirectoryWorkspaceTests
         var path = PersonalVersion("CertificateDocument");
         var stage = (await (await Send(client, path, PersonalPng("CertificateDocument"))).Content.ReadFromJsonAsync<FileDto>(Ct))!;
         var id = Guid.NewGuid();
-        var batch = await UploadImport(client, "certificate", new() { ["record_key"] = id.ToString(), ["document_ref"] = stage.Id.ToString() });
+        var batch = await UploadImport(client, "certificate", new Dictionary<string, string>() { ["record_key"] = id.ToString(), ["document_ref"] = stage.Id.ToString() });
         var rejected = await PreviewImport(client, batch); Assert.Equal(1, rejected.RejectedRows);
         Assert.Contains(rejected.Rows.Single().Issues, x => x.Code == "unresolved_reference");
         Assert.Equal(HttpStatusCode.OK, (await PutPersonalPng(client, path, stage.Id)).StatusCode);

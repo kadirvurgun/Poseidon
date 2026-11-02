@@ -80,7 +80,7 @@ function ScopedRegulatoryProfile({ id, language, csrf, onDirty, onSaving }: Prop
   }, [dirty, uncertain])
   function change(key: keyof ProfileContent, value: ProfileContent[typeof key]) {
     if (saving || uncertain) return
-    setContent(current => ({ ...current, [key]: value })); setDirty(true); onDirty(true); setNotice(false)
+    setContent(current => current === null ? null : ({ ...current, [key]: value })); setDirty(true); onDirty(true); setNotice(false)
     setErrors(current => ({ ...current, [key]: [] }))
     // A stale base stays blocked until explicit reload, even if local fields change.
     if (failure?.code !== 'version_conflict') setFailure(null)

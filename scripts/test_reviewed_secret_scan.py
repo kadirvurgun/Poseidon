@@ -41,7 +41,7 @@ class ReviewedSecretScanTests(unittest.TestCase):
 
     def run_scan(self, root, trust='', mode='client'):
         output = io.StringIO()
-        with patch.dict(os.environ, {reviewed_secret_scan.TRUST_VARIABLE: trust}), contextlib.redirect_stdout(output):
+        with patch.object(reviewed_secret_scan.os, "environ", {reviewed_secret_scan.TRUST_VARIABLE: trust}), contextlib.redirect_stdout(output):
             result = reviewed_secret_scan.main(['--root', str(root), '--mode', mode])
         return result, output.getvalue()
 

@@ -18,7 +18,7 @@ public partial class DocumentObjectStorage : Migration
         migrationBuilder.CreateTable(name: "Documents", schema: "files", columns: table => new {
             TenantId = table.Column<Guid>(type: "uuid", nullable: false), Id = table.Column<Guid>(type: "uuid", nullable: false),
             VesselId = table.Column<Guid>(type: "uuid", nullable: false), Revision = table.Column<long>(type: "bigint", nullable: false),
-            Version = table.Column<uint>(type: "xid", rowVersion: true, nullable: false)
+            xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false)
         }, constraints: table => {
             table.PrimaryKey("PK_Documents", x => new { x.TenantId, x.Id });
             table.UniqueConstraint("AK_Documents_TenantId_Id_VesselId", x => new { x.TenantId, x.Id, x.VesselId });

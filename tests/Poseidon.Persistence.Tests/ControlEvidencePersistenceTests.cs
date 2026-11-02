@@ -51,9 +51,12 @@ public sealed class ControlEvidencePersistenceTests : IAsyncLifetime
     public async Task Append_only_history_edges_requirements_receipts_guard_all_database_mutations() {
         await using var db = Db(); var revision = await db.ControlEvidenceRevisions.FirstAsync(Ct); revision.ContentJson = "{\"forged\":true}";
         await Assert.ThrowsAsync<InvalidOperationException>(() => db.SaveChangesAsync(Ct)); db.ChangeTracker.Clear();
+        // Closed test-owned identifier/verb lists; deliberate trigger mutation probes.
+#pragma warning disable EF1002
         foreach (var table in new[] { "ControlEvidenceRevisions", "ControlEvidenceRequirements", "ControlEvidenceEdges", "ControlEvidenceReceipts" })
         foreach (var action in new[] { "DELETE FROM", "TRUNCATE" })
             await Assert.ThrowsAsync<Npgsql.PostgresException>(() => db.Database.ExecuteSqlRawAsync($"{action} core.\"{table}\"", Ct));
+#pragma warning restore EF1002
         await Assert.ThrowsAsync<Npgsql.PostgresException>(() => db.Database.ExecuteSqlRawAsync("UPDATE core.\"ControlEvidenceRevisions\" SET \"Hash\"='forged'", Ct));
     }
     [Fact]

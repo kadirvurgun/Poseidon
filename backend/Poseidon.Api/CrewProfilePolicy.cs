@@ -23,9 +23,9 @@ public sealed class CrewProfilePolicy
     public bool StorageConfigured => Version.Length is > 0 and <= 80 && ActiveKeyId.Length is > 0 and <= 40 &&
         ActiveKeyId.All(c => char.IsAsciiLetterOrDigit(c) || c is '-' or '_') && KeyReferences.ContainsKey(ActiveKeyId);
     public bool Valid => StorageConfigured &&
-        Fields.Length > 0 && Fields.All(f => f.Field is { } field && Enum.IsDefined(field) && f.Purpose.Length is > 0 and <= 80 &&
+        Fields.Length > 0 && Fields.All(f => f.Field is { } configuredField && Enum.IsDefined(configuredField) && f.Purpose.Length is > 0 and <= 80 &&
             f.ReadCapability.StartsWith("crew.profile.", StringComparison.Ordinal) && f.WriteCapability.StartsWith("crew.profile.", StringComparison.Ordinal) &&
-            (!Controlled(field) || f.ControlledValues is { Length: > 0 } values && values.All(v => CrewPersonalData.Valid(field, v)))) &&
+            (!Controlled(configuredField) || f.ControlledValues is { Length: > 0 } values && values.All(v => CrewPersonalData.Valid(configuredField, v)))) &&
         Fields.Select(f => f.Field).Distinct().Count() == Fields.Length;
     public static bool Controlled(CrewPersonalField f) => f is CrewPersonalField.Nationality or CrewPersonalField.PreferredLanguage or CrewPersonalField.VesselTypeExperience;
     public CrewProfileFieldRule? Rule(CrewPersonalField field, string purpose, IReadOnlyCollection<string> permissions, bool write) => !Valid ? null :

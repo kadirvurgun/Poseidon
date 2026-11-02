@@ -2,6 +2,7 @@
 from collections import Counter
 import hashlib
 import json
+import os
 from pathlib import Path
 
 from query_sources import ROOT, inside
@@ -9,6 +10,8 @@ from query_sources import ROOT, inside
 
 def verify(root=ROOT):
     root = Path(root).resolve()
+    if os.name == "nt" and not str(root).startswith("\\\\?\\"):
+        root = Path("\\\\?\\" + str(root))
     active = json.loads((root / 'docs/sources/active.json').read_text(encoding='utf-8'))
     source_root = inside(root, active['source_root'])
     manifest = json.loads(inside(root, active['manifest']).read_text(encoding='utf-8'))

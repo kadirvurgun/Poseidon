@@ -7841,9 +7841,23 @@
           "state": "DEFINED",
           "files": [],
           "inventoryRole": "retained-partial-implementation-inventory; canonical source identities are in definitionChains"
+        },
+        {
+          "id": "cap-10:test:mixed-fleet-definition",
+          "kind": "test",
+          "source": "backlog",
+          "locator": "sheet:Backlog/row:122",
+          "state": "DEFINED",
+          "files": [],
+          "inventoryRole": "T-V463-007 source test definition only; no executed daily journeys, measured value or signed UAT"
         }
       ],
-      "edges": [],
+      "edges": [
+        [
+          "cap-10:requirement:pilot-exit",
+          "cap-10:test:mixed-fleet-definition"
+        ]
+      ],
       "definedUat": {
         "id": "T-UAT-10",
         "source": "uat",

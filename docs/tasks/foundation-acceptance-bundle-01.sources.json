@@ -1,0 +1,74 @@
+{
+  "task": "FOUNDATION-ACCEPTANCE-BUNDLE-01",
+  "baseline": "poseidon-v46.3-20261030",
+  "records": [
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:3",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "source_class": "candidate-unverified",
+      "text": "A3: DEV-002 | B3: Task | C3: E01 Platform Foundation | D3: CI/CD | E3: CI pipeline iskeletini kur | F3: Ekip olarak her PR'da build ve test görmek istiyorum. | G3: Backend ve frontend build; unit test; lint; artifact üretimi; başarısız adım PR'ı bloklar. | H3: CI/CD | I3: P0 | J3: S0 | K3: DevOps | L3: DEV-001 | M3: T-S0-002 | N3: Not Started | O3: YES | P3: 5 | Q3: M",
+      "original_locator_read": true,
+      "task_id": "DEV-002",
+      "acceptance_criteria": "Backend ve frontend build; unit test; lint; artifact üretimi; başarısız adım PR'ı bloklar.",
+      "test_trace": "T-S0-002"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:6",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "source_class": "candidate-unverified",
+      "text": "A6: DEV-005 | B6: Story | C6: E01 Platform Foundation | D6: Data | E6: Physical schema normalization planını çıkar | F6: Backend ekibi olarak 1.900 field sözleşmesini production entity modeline bağlamak istiyorum. | G6: Core entity listesi, PK/FK, tenancy, versioning, audit columns, evidence object refs ve migration stratejisi approved olur. | H6: PostgreSQL Schema | I6: P0 | J6: S0 | K6: Backend Lead | L6: DEV-004 | M6: T-S0-005 | N6: Not Started | O6: YES | P6: 5 | Q6: H",
+      "original_locator_read": true,
+      "task_id": "DEV-005",
+      "acceptance_criteria": "Core entity listesi, PK/FK, tenancy, versioning, audit columns, evidence object refs ve migration stratejisi approved olur.",
+      "test_trace": "T-S0-005"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:17",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "source_class": "candidate-unverified",
+      "text": "A17: DEV-016 | B17: Story | C17: E01 Platform Foundation | D17: Audit | E17: Immutable audit event foundation | F17: Auditor olarak kritik değişikliklerin kim/ne zaman/neden geçmişini görmek istiyorum. | G17: Actor, role, tenant, vessel, before/after, reason, timestamp, correlation ID kaydedilir; kritik write coverage hedefi %100. | H17: /api/v1/audit | I17: P0 | J17: S1 | K17: Backend | L17: DEV-014,DEV-015 | M17: T-S1-004 | N17: Not Started | O17: YES | P17: 8 | Q17: H",
+      "original_locator_read": true,
+      "task_id": "DEV-016",
+      "acceptance_criteria": "Actor, role, tenant, vessel, before/after, reason, timestamp, correlation ID kaydedilir; kritik write coverage hedefi %100.",
+      "test_trace": "T-S1-004"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:18",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "source_class": "candidate-unverified",
+      "text": "A18: DEV-017 | B18: Story | C18: E20 Production Hardening | D18: Secrets | E18: Secret management foundation | F18: Ops olarak credential'ların kod/UI/log içinde bulunmamasını istiyorum. | G18: DB/OIDC/object storage secrets vault/reference ile sağlanır; repository ve client bundle secret scan PASS. | H18: Secrets | I18: P0 | J18: S1 | K18: DevOps | L18: DEV-003,DEV-006 | M18: T-S1-005 | N18: Not Started | O18: YES | P18: 5 | Q18: M",
+      "original_locator_read": true,
+      "task_id": "DEV-017",
+      "acceptance_criteria": "DB/OIDC/object storage secrets vault/reference ile sağlanır; repository ve client bundle secret scan PASS.",
+      "test_trace": "T-S1-005"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:10",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "source_class": "candidate-unverified",
+      "text": "A10: DEV-009 | B10: Story | C10: E20 Production Hardening | D10: Test Data | E10: Golden pilot test datasetini hazırla | F10: QA olarak deterministik regression testleri çalıştırmak istiyorum. | G10: En az tanker + genel cargo/tug profile; crew/certificate/asset/defect/evidence edge cases; expected applicability/readiness outcomes kayıtlıdır. | H10: Golden Dataset | I10: P0 | J10: S0 | K10: QA Lead | L10: DEV-005,DEV-008 | M10: T-S0-009 | N10: Not Started | O10: YES | P10: 5 | Q10: M",
+      "original_locator_read": true,
+      "task_id": "DEV-009",
+      "acceptance_criteria": "En az tanker + genel cargo/tug profile; crew/certificate/asset/defect/evidence edge cases; expected applicability/readiness outcomes kayıtlıdır.",
+      "test_trace": "T-S0-009"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:48",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "source_class": "candidate-unverified",
+      "text": "A48: DEV-047 | B48: Story | C48: E06 Crew & Competence | D48: Roster | E48: Crew roster + profile | F48: Master/Crewing olarak onboard/planned crew'yu görmek istiyorum. | G48: Person/assignment/rank/capacity/period scoped; privacy masking and vessel scope; offline supported read/capture as defined. | H48: crew-roster / crew-profile | I48: P0 | J48: S7 | K48: Full Stack | L48: DEV-020,DEV-015 | M48: T-S7-001 | N48: Not Started | O48: YES | P48: 8 | Q48: M",
+      "original_locator_read": true,
+      "task_id": "DEV-047",
+      "acceptance_criteria": "Person/assignment/rank/capacity/period scoped; privacy masking and vessel scope; offline supported read/capture as defined.",
+      "test_trace": "T-S7-001"
+    }
+  ],
+  "retained_detail_mapping": "docs/tasks/foundation-catalog-continuation-01.sources.json",
+  "scope_ledger": "docs/delivery-target-20.json"
+}

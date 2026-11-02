@@ -71,7 +71,7 @@ public sealed class TechnicalPersistenceTests : IAsyncLifetime
                 await db.SaveChangesAsync(Ct); await tx.CommitAsync(Ct); return true;
             } catch (Exception e) when (e is DbUpdateException || e is Npgsql.PostgresException { SqlState: "40001" or "40P01" }) { await tx.RollbackAsync(Ct); return false; }
         }
-        var result = await Task.WhenAll(Reparent(a.Id,b.Id), Reparent(b.Id,a.Id)); Assert.Single(result.Where(x => x));
+        var result = await Task.WhenAll(Reparent(a.Id,b.Id), Reparent(b.Id,a.Id)); Assert.Single(result, x => x);
         await using var verify = Db();
         var final = await verify.Assets.Where(x => x.VesselId == Vessel.Id).ToArrayAsync(Ct);
         Assert.Equal(EquipmentHierarchyValidation.Valid, EquipmentHierarchyPolicy.Validate(Vessel.TenantId, Vessel.Id, final.Select(x => new EquipmentHierarchyNode(x.TenantId,x.VesselId,x.Id,x.ParentId)).ToArray()));
@@ -102,7 +102,7 @@ public sealed class TechnicalPersistenceTests : IAsyncLifetime
                 Assert.Contains(state, new[] { "23514", "40P01" }); return false;
             }
         }
-        Assert.Single((await Task.WhenAll(Commit(first), Commit(second))).Where(x => x));
+        Assert.Single(await Task.WhenAll(Commit(first), Commit(second)), x => x);
         await using var verify = Db(); var rows = await verify.Assets.Where(x => x.VesselId == Vessel.Id).ToArrayAsync(Ct);
         Assert.Equal(EquipmentHierarchyValidation.Valid, EquipmentHierarchyPolicy.Validate(Vessel.TenantId, Vessel.Id,
             rows.Select(x => new EquipmentHierarchyNode(x.TenantId,x.VesselId,x.Id,x.ParentId)).ToArray()));

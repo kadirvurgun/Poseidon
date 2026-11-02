@@ -6,13 +6,18 @@ const ship = { id: 'vessel-1', companyId: 'company-1', code: 'S1', name: 'Synthe
 afterEach(() => vi.unstubAllGlobals())
 
 describe('product API vessel contract decoding', () => {
-  it('decodes valid detail and paged responses, including generated string pagination fields', async () => {
-    const fetchMock = vi.fn().mockResolvedValueOnce(response(ship)).mockResolvedValueOnce(response({ items: [ship], offset: '0', limit: '25', hasMore: false }))
+  it('decodes valid detail and paged responses, using the actual strict numeric pagination schema', async () => {
+    const fetchMock = vi.fn().mockResolvedValueOnce(response(ship)).mockResolvedValueOnce(response({ items: [ship], offset: 0, limit: 25, hasMore: false }))
     vi.stubGlobal('fetch', fetchMock)
     const signal = new AbortController().signal
 
     expect(await vessel('vessel-1', signal)).toEqual(ship)
-    expect(await vessels(0, '', signal)).toEqual({ items: [ship], offset: '0', limit: '25', hasMore: false })
+    expect(await vessels(0, '', signal)).toEqual({ items: [ship], offset: 0, limit: 25, hasMore: false })
+  })
+
+  it.each([{ offset: '0', limit: 25 }, { offset: 0, limit: '25' }, { offset: -1, limit: 25 }, { offset: 0, limit: 0 }])('rejects invalid pagination without coercion %j', async pagination => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response({ items: [ship], hasMore: false, ...pagination })))
+    await expect(vessels(0, '', new AbortController().signal)).rejects.toMatchObject({ status: 502 })
   })
 
   it.each([

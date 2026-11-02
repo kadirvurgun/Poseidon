@@ -75,8 +75,11 @@ public sealed class LifecycleApplicabilityPersistenceTests : IAsyncLifetime
             await db.SaveChangesAsync(Ct); await tx.RollbackAsync(Ct);
         }
         await using var verify = Db(); Assert.False(await verify.ApplicabilityEvaluations.AnyAsync(Ct)); Assert.Empty(await verify.EvaluationRules.ToArrayAsync(Ct)); Assert.Equal(before, await verify.AuditEvents.CountAsync(Ct));
+        // Closed test-owned identifier/verb lists; deliberate trigger mutation probes.
+#pragma warning disable EF1002
         foreach (var table in new[] { "ApplicabilityEvaluations", "EvaluationRules", "ApplicabilityReceipts" })
         foreach (var mutation in new[] { "DELETE FROM", "TRUNCATE" })
             await Assert.ThrowsAsync<Npgsql.PostgresException>(() => verify.Database.ExecuteSqlRawAsync($"{mutation} core.\"{table}\"", Ct));
+#pragma warning restore EF1002
     }
 }

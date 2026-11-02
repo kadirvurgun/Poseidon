@@ -108,8 +108,9 @@ public sealed partial class DirectoryWorkspaceTests
         using var host=Host(tugRead:true,tugWrite:true); using var c=Client(host); await Token(c); var cmd=Draft(); var key=Guid.NewGuid().ToString();
         Assert.Equal(HttpStatusCode.OK,(await Send(c,TugUrl,cmd,key)).StatusCode);
         await using var db=Db();var rows=await db.AuditEvents.Where(e=>e.ResourceId==cmd.ClientId).ToArrayAsync(Ct);
-        var write=Assert.Single(rows.Where(e=>e.EntityType==nameof(TugJob)));Assert.Equal(Tug.Id,write.VesselId); Assert.NotNull(write.RoleContext); Assert.Equal("WebCommand",write.Source); Assert.Equal(1,write.AfterRevision);
+        var write=Assert.Single(rows,e=>e.EntityType==nameof(TugJob));Assert.Equal(Tug.Id,write.VesselId); Assert.NotNull(write.RoleContext); Assert.Equal("WebCommand",write.Source); Assert.Equal(1,write.AfterRevision);
         Assert.All(rows,e=> {Assert.DoesNotContain(cmd.Inputs.AssistedVessel!,e.ChangeSummary??"");Assert.DoesNotContain(key,e.ChangeSummary??"");});
-        Assert.Contains(await db.SecurityEvents.ToArrayAsync(Ct),e=>e.Action=="TugSave"&&e.Result=="Attempted");
+        await using var security = new SecurityEventWriter(new DbContextOptionsBuilder<SecurityEventWriter>().UseNpgsql(postgres.GetConnectionString()).Options);
+        Assert.Contains(await security.Set<SecurityEvent>().ToArrayAsync(Ct),e=>e.Action=="TugSave"&&e.Result=="Attempted");
     }
 }

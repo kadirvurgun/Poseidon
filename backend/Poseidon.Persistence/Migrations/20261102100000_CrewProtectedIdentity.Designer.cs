@@ -829,6 +829,7 @@ namespace Poseidon.Persistence.Migrations
             });
             modelBuilder.Entity("Poseidon.Persistence.MaintenancePlan", b => {
                 b.Property<Guid?>("ObservationId").HasColumnType("uuid");
+                b.Property<Guid>("TenantId"); b.Property<Guid>("VesselId"); b.Property<Guid>("AssetId");
                 b.HasIndex("TenantId", "VesselId", "AssetId", "ObservationId").HasDatabaseName("IX_Plan_Observation");
             b.Property<Guid>("TenantId").HasColumnType("uuid");
             b.Property<Guid>("VesselId").HasColumnType("uuid");
@@ -852,6 +853,7 @@ namespace Poseidon.Persistence.Migrations
             });
             modelBuilder.Entity("Poseidon.Persistence.MaintenancePlanRevision", b => {
                 b.Property<Guid?>("ObservationId").HasColumnType("uuid");
+                b.Property<Guid>("TenantId"); b.Property<Guid>("VesselId"); b.Property<Guid>("AssetId");
                 b.HasIndex("TenantId", "VesselId", "AssetId", "ObservationId").HasDatabaseName("IX_PlanRevision_Observation");
             b.Property<Guid>("TenantId").HasColumnType("uuid");
             b.Property<Guid>("VesselId").HasColumnType("uuid");

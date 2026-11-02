@@ -1,4 +1,26 @@
 {
+  "foundation_acceptance_bundle_01_execution": {
+    "task_id": "FOUNDATION-ACCEPTANCE-BUNDLE-01",
+    "status": "INCOMPLETE",
+    "accepted": false,
+    "accepted_sp_added": 0,
+    "defer_tests": false,
+    "phase": "Actual combined local execution and repair; UNVERIFIED checkpoint",
+    "receiving_head": "0c923ea33c644120878cade12ed1aabbc5aac450",
+    "candidate_code_commit": null,
+    "code_tree_sha256": "0850bec20714463c2e90868b909176170e9badd119428d3b703f931d52806e7f",
+    "client_tree_sha256": "e979bfd0e82ffab97aaf8bf486775d503c53ff605decc578fe035c5eeea14653",
+    "task": "docs/tasks/foundation-acceptance-bundle-01.md",
+    "sources": "docs/tasks/foundation-acceptance-bundle-01.sources.json",
+    "report": "docs/phases/FOUNDATION-ACCEPTANCE-BUNDLE-01.md",
+    "evidence": "docs/phases/foundation-acceptance-bundle-01.evidence.json",
+    "canonical_progress": "8/970SP;2/121tasks;0/196accepted",
+    "selected_scope": "40tasks/272SP; target194/970 unchanged",
+    "independent_qa": false,
+    "ci": false,
+    "publication": false,
+    "next": "Repair actual failed gates and remaining selected software; coordinator independent exact-target QA/source/security review and required CI"
+  },
   "foundation_catalog_continuation_01": {
     "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
     "accepted": false,

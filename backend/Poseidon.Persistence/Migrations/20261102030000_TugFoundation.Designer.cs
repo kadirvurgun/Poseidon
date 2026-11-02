@@ -666,8 +666,8 @@ namespace Poseidon.Persistence.Migrations
             modelBuilder.Entity("Poseidon.Persistence.Person", b => {
                 b.Property<Guid>("TenantId").HasColumnType("uuid");
                 b.Property<Guid>("Id").HasColumnType("uuid");
-                b.Property<string?>("FullName").HasMaxLength(200).HasColumnType("character varying(200)");
-                b.Property<string?>("EmployeeNo").HasMaxLength(64).HasColumnType("character varying(64)");
+                b.Property<string>("FullName").HasMaxLength(200).HasColumnType("character varying(200)");
+                b.Property<string>("EmployeeNo").HasMaxLength(64).HasColumnType("character varying(64)");
                 b.Property<string>("EmploymentState").IsRequired().HasMaxLength(32).HasColumnType("character varying(32)");
                 b.Property<string>("Provenance").IsRequired().HasMaxLength(32).HasColumnType("character varying(32)");
                 b.Property<DateTimeOffset?>("SourceObservedAt").HasColumnType("timestamp with time zone");
@@ -681,9 +681,9 @@ namespace Poseidon.Persistence.Migrations
                 b.Property<Guid>("Id").HasColumnType("uuid");
                 b.Property<Guid>("VesselId").HasColumnType("uuid");
                 b.Property<string>("Code").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");
-                b.Property<string?>("Rank").HasMaxLength(100).HasColumnType("character varying(100)");
-                b.Property<string?>("Capacity").HasMaxLength(100).HasColumnType("character varying(100)");
-                b.Property<string?>("Department").HasMaxLength(100).HasColumnType("character varying(100)");
+                b.Property<string>("Rank").HasMaxLength(100).HasColumnType("character varying(100)");
+                b.Property<string>("Capacity").HasMaxLength(100).HasColumnType("character varying(100)");
+                b.Property<string>("Department").HasMaxLength(100).HasColumnType("character varying(100)");
                 b.Property<string>("Provenance").IsRequired().HasMaxLength(32).HasColumnType("character varying(32)");
                 b.Property<uint>("Version").IsConcurrencyToken().ValueGeneratedOnAddOrUpdate().HasColumnName("xmin").HasColumnType("xid");
                 b.HasKey("TenantId", "Id");
@@ -701,7 +701,7 @@ namespace Poseidon.Persistence.Migrations
                 b.Property<DateOnly?>("From").HasColumnType("date");
                 b.Property<DateOnly?>("To").HasColumnType("date");
                 b.Property<DateOnly?>("ContractEndDate").HasColumnType("date");
-                b.Property<string?>("WatchGroup").HasMaxLength(64).HasColumnType("character varying(64)");
+                b.Property<string>("WatchGroup").HasMaxLength(64).HasColumnType("character varying(64)");
                 b.Property<string>("Status").IsRequired().HasMaxLength(32).HasColumnType("character varying(32)");
                 b.Property<string>("Provenance").IsRequired().HasMaxLength(32).HasColumnType("character varying(32)");
                 b.Property<DateTimeOffset?>("SourceObservedAt").HasColumnType("timestamp with time zone");

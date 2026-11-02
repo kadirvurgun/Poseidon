@@ -89,7 +89,7 @@ public sealed partial class DirectoryWorkspaceTests
     {
         using var allowedHost = ImportHost(); using var allowed = ImportSessionClient(allowedHost);
         var session = await ImportSession(allowed);
-        var batch = await UploadImport(allowed, category, new() { ["record_key"] = "FICTIONAL INVALID KEY" });
+        var batch = await UploadImport(allowed, category, new Dictionary<string, string>() { ["record_key"] = "FICTIONAL INVALID KEY" });
         var preview = await PreviewImport(allowed, batch); Assert.Equal(1, preview.RejectedRows);
         using var deniedHost = Host(importRead: true, importWrite: true, crewIdentity: true,
             crewRead: category != "crew", crewWrite: category != "crew", technicalRead: category != "equipment",
@@ -116,7 +116,7 @@ public sealed partial class DirectoryWorkspaceTests
     public async Task Import_missing_or_invalid_csrf_cannot_change_mapping_preview_or_commit(bool invalid)
     {
         using var host = ImportHost(); using var client = ImportSessionClient(host); await ImportSession(client);
-        var id = Guid.NewGuid(); var batch = await UploadImport(client, "equipment", new() { ["record_key"] = id.ToString(), ["level"] = "Equipment" });
+        var id = Guid.NewGuid(); var batch = await UploadImport(client, "equipment", new Dictionary<string, string>() { ["record_key"] = id.ToString(), ["level"] = "Equipment" });
         var preview = await PreviewImport(client, batch);
         var fresh = (await client.GetFromJsonAsync<ImportBatchDto>("/api/v1/" + Imports + $"/{batch.Id}", Ct))!;
         client.DefaultRequestHeaders.Remove("X-CSRF-TOKEN");

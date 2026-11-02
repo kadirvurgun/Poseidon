@@ -98,7 +98,7 @@ public sealed partial class DirectoryWorkspaceTests
     [Fact]
     public async Task Crew_personal_import_same_session_field_revocation_hides_batch_and_history() {
         using var host = ProfileHost(); using var client = ImportSessionClient(host); var session = await ImportSession(client);
-        var batch = await UploadImport(client, "crew", new() { ["record_key"] = Guid.NewGuid().ToString(), ["profile_policy_version"] = "synthetic-profile-v1", ["email"] = "synthetic@example.invalid" });
+        var batch = await UploadImport(client, "crew", new Dictionary<string, string>() { ["record_key"] = Guid.NewGuid().ToString(), ["profile_policy_version"] = "synthetic-profile-v1", ["email"] = "synthetic@example.invalid" });
         var preview = await PreviewImport(client, batch); Assert.Equal(0, preview.RejectedRows);
         using var deniedHost = ProfileHost(contact: false); using var denied = ImportSessionClient(deniedHost, session.Cookie, session.Csrf);
         Assert.Equal(HttpStatusCode.NotFound, (await denied.GetAsync("/api/v1/" + Imports + $"/{batch.Id}", Ct)).StatusCode);
@@ -136,7 +136,7 @@ public sealed partial class DirectoryWorkspaceTests
     [Fact]
     public async Task Crew_personal_import_policy_version_change_precedes_historic_batch_receipt_recovery() {
         using var host=ProfileHost(); using var client=ImportSessionClient(host); var session=await ImportSession(client);
-        var batch=await UploadImport(client,"crew",new() { ["record_key"]=Guid.NewGuid().ToString(),["profile_policy_version"]="synthetic-profile-v1",["email"]="synthetic@example.invalid" });
+        var batch=await UploadImport(client,"crew",new Dictionary<string, string>() { ["record_key"]=Guid.NewGuid().ToString(),["profile_policy_version"]="synthetic-profile-v1",["email"]="synthetic@example.invalid" });
         var preview=await PreviewImport(client,batch); Assert.Equal(0,preview.RejectedRows);
         var command=new ImportCommitCommand(preview.PreviewId,long.Parse(preview.Revision),preview.TemplateFingerprint);var key=Guid.NewGuid().ToString();
         Assert.Equal(HttpStatusCode.OK,(await Send(client,Imports+$"/{batch.Id}/commit",command,key)).StatusCode);

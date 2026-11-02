@@ -7,6 +7,8 @@ import * as api from './profile-api'
 import { profileFields } from './profile-contract'
 import type { Profile, ProfileContent, ProfileHistory } from './profile-contract'
 
+vi.mock('./file-api', () => ({ filePage: vi.fn(async () => ({ items: [], offset: 0, hasMore: false, available: true, canWrite: false, maxBytes: 0, allowedTypes: [] })) }))
+
 vi.mock('./profile-api', () => ({ loadProfile: vi.fn(), loadProfileHistory: vi.fn(), saveProfile: vi.fn() }))
 
 const firstId = '10000000-0000-0000-0000-000000000001'

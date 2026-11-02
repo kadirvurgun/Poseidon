@@ -3,8 +3,8 @@ import { test, expect } from '@playwright/test'
 // Browser editor/transport contract with synthetic routed API; no external IdP claim.
 test('profile exact decimal save and malformed background history recovery retain edits', async ({ page }) => {
   const vessel = { id: '10000000-0000-0000-0000-000000000001', companyId: '10000000-0000-0000-0000-000000000002', code: 'S1', name: 'Synthetic Ship', kind: 'Ship', version: 1, canEdit: true }
-  const keys = ['imo', 'flag', 'shipType', 'classSociety', 'classNumber', 'gt', 'nt', 'dwt', 'loa', 'breadth', 'draft', 'buildDate', 'tradingArea', 'cargoContext', 'declaration', 'sourceReference', 'sourceObservedAt']
-  const content = Object.fromEntries(keys.map(key => [key, { state: 'Missing', value: null }]))
+  const keys = ['imo', 'flag', 'shipType', 'classSociety', 'classNumber', 'gt', 'nt', 'dwt', 'loa', 'breadth', 'draft', 'buildDate', 'tradingArea', 'cargoContext', 'declaration', 'sourceReference', 'sourceObservedAt', 'mainPropulsionKw', 'contractForConstructionDate', 'constructionRecordReference']
+  const content: Record<string, unknown> = { ...Object.fromEntries(keys.map(key => [key, { state: 'Missing', value: null }])), constructionRecord: null }
   content.gt = { state: 'Known', value: '9007199254740993' }
   content.nt = { state: 'Known', value: '0.1234567890123456789012345678' }
   const profile = { tenantId: '10000000-0000-0000-0000-000000000003', vessel, version: 19, revision: 1, savedAt: '2026-01-01T00:00:00Z', provenance: 'Synthetic', content }
@@ -15,6 +15,7 @@ test('profile exact decimal save and malformed background history recovery retai
     const url = route.request().url()
     let body: unknown
     if (url.includes('/auth/session')) body = { authenticated: true, canRead: true, canReadCompanies: false, canCreate: false, csrfToken: 'synthetic', tenantId: profile.tenantId }
+    else if (url.includes('/files?')) body = { items: [], offset: 0, hasMore: false, available: true, canWrite: false, maxBytes: 1048576, allowedTypes: ['image/png'] }
     else if (url.includes('/history?')) {
       if (++histories === 1) { await held; body = { items: [null], offset: 0, limit: 25, hasMore: false } }
       else body = { items: [{ revision: 1, savedAt: profile.savedAt, provenance: profile.provenance, content }], offset: 0, limit: 25, hasMore: false }

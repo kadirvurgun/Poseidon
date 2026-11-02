@@ -103,7 +103,7 @@ public sealed partial class DirectoryWorkspaceTests
         var time = DateTimeOffset.UtcNow.AddHours(2);
         var commands = new[] { new TugPlanCommand(null, job.Version, "synthetic-plan-v1", new("Window", time)), new TugPlanCommand(null, job.Version, "synthetic-plan-v1", new("Assign", TugId: Tug.Id)) };
         var results = await Task.WhenAll(Send(a, PlanningUrl(job.Id), commands[0], update: true), Send(b, PlanningUrl(job.Id), commands[1], update: true));
-        Assert.Single(results.Where(r => r.StatusCode == HttpStatusCode.OK)); Assert.Single(results.Where(r => r.StatusCode == HttpStatusCode.Conflict));
+        Assert.Single(results, r => r.StatusCode == HttpStatusCode.OK); Assert.Single(results, r => r.StatusCode == HttpStatusCode.Conflict);
         await using var db = Db(); Assert.Single(await db.TugDraftPlanRevisions.Where(p => p.JobId == job.Id).ToArrayAsync(Ct));
     }
     [Fact]

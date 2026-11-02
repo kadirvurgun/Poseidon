@@ -10,6 +10,9 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         // The generic host completes application configuration before invoking Startup.
         // OIDC scheme registration and membership resolution must share that final configuration.
         services.AddRouting();
+        // Numeric wire values remain numbers; do not advertise implicit string coercion.
+        services.ConfigureHttpJsonOptions(options => options.SerializerOptions.NumberHandling =
+            System.Text.Json.Serialization.JsonNumberHandling.Strict);
         services.AddDataProtection();
         services.AddSingleton(configuration.GetSection("TugPlanning").Get<TugPlanningPolicy>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<TimeProvider>(TimeProvider.System);

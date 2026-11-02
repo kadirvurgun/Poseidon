@@ -95,7 +95,7 @@ public sealed partial class DirectoryWorkspaceTests
     [Fact]
     public async Task Import_reject_report_uses_safe_codes_exact_revision_context_and_current_permissions() {
         using var host = ImportHost(); using var client = Client(host); await Token(client);
-        var b = await UploadImport(client, "equipment", new() { ["record_key"] = "PRIVATE MALFORMED KEY", ["level"] = "PRIVATE INVALID LEVEL" });
+        var b = await UploadImport(client, "equipment", new Dictionary<string, string>() { ["record_key"] = "PRIVATE MALFORMED KEY", ["level"] = "PRIVATE INVALID LEVEL" });
         var p = await PreviewImport(client, b); var report = await client.GetAsync(ExactImport(b, p, true), Ct);
         Assert.Equal(HttpStatusCode.OK, report.StatusCode); var csv = await report.Content.ReadAsStringAsync(Ct);
         Assert.StartsWith("row_number,field_ordinal,code\r\n", csv); Assert.DoesNotContain("PRIVATE", csv); Assert.Contains("invalid_format", csv);
@@ -117,7 +117,7 @@ public sealed partial class DirectoryWorkspaceTests
     [Fact]
     public async Task Import_mapping_changes_invalidate_old_preview_report_and_commit() {
         using var host = ImportHost(); using var client = Client(host); await Token(client);
-        var b = await UploadImport(client, "equipment", new() { ["record_key"] = Guid.NewGuid().ToString(), ["level"] = "Equipment" });
+        var b = await UploadImport(client, "equipment", new Dictionary<string, string>() { ["record_key"] = Guid.NewGuid().ToString(), ["level"] = "Equipment" });
         var p = await PreviewImport(client, b);
         var fresh = (await client.GetFromJsonAsync<ImportBatchDto>("/api/v1/" + Imports + $"/{b.Id}", Ct))!;
         Assert.Equal(HttpStatusCode.OK, (await Send(client, Imports + $"/{b.Id}/mapping", new ImportMappingCommand(fresh.Version, []), update: true)).StatusCode);
@@ -127,7 +127,7 @@ public sealed partial class DirectoryWorkspaceTests
     [Fact]
     public async Task Import_current_domain_change_after_preview_rolls_back_entire_batch_and_has_no_receipt() {
         using var host = ImportHost(); using var client = Client(host); await Token(client);
-        var id = Guid.NewGuid(); var b = await UploadImport(client, "equipment", new() { ["record_key"] = id.ToString(), ["level"] = "Equipment" });
+        var id = Guid.NewGuid(); var b = await UploadImport(client, "equipment", new Dictionary<string, string>() { ["record_key"] = id.ToString(), ["level"] = "Equipment" });
         var p = await PreviewImport(client, b);
         await using (var db = Db()) { db.Assets.Add(new() { TenantId = db.TenantId, Id = id, VesselId = SeedVessel.Id, Level = "Equipment" }); await db.SaveChangesAsync(Ct); }
         Assert.Equal(HttpStatusCode.Conflict, (await Send(client, Imports + $"/{b.Id}/commit", new ImportCommitCommand(p.PreviewId, long.Parse(p.Revision), p.TemplateFingerprint))).StatusCode);
@@ -162,7 +162,7 @@ public sealed partial class DirectoryWorkspaceTests
         var list = (await client.GetFromJsonAsync<CredentialDto[]>("/api/v1/" + path, Ct))!; var row = list.Single(x => x.Id == id);
         Assert.Equal("Unverified", row.VerificationState); Assert.Equal(DeclaredCredentialDateOrder.ExpiryBeforeIssue, row.Dates.Order);
         Assert.Equal(HttpStatusCode.BadRequest, (await Send(client, path, new CredentialSaveCommand(id, row.Version, metadata with { IssuingCountryNumeric = "TR" }))).StatusCode);
-        var b = await UploadImport(client, "certificate", new() { ["record_key"] = Guid.NewGuid().ToString(), ["issuing_country"] = "TR" });
+        var b = await UploadImport(client, "certificate", new Dictionary<string, string>() { ["record_key"] = Guid.NewGuid().ToString(), ["issuing_country"] = "TR" });
         Assert.Equal(1, (await PreviewImport(client, b)).RejectedRows);
     }
 
@@ -175,7 +175,7 @@ public sealed partial class DirectoryWorkspaceTests
             asset.Name = "FICTIONAL OPERATOR NAME"; asset.SerialNumber = "FICTIONAL OPERATOR SERIAL";
             await db.SaveChangesAsync(Ct); version = asset.Version;
         }
-        var b = await UploadImport(client, "equipment", new() { ["record_key"] = SeedVessel.Id.ToString(), ["base_version"] = version.ToString(System.Globalization.CultureInfo.InvariantCulture), ["level"] = "Equipment" });
+        var b = await UploadImport(client, "equipment", new Dictionary<string, string>() { ["record_key"] = SeedVessel.Id.ToString(), ["base_version"] = version.ToString(System.Globalization.CultureInfo.InvariantCulture), ["level"] = "Equipment" });
         var keep = b.Bindings.Where(x => x.TargetField is "record_key" or "base_version" or "level").ToArray();
         var saved = await Send(client, Imports + $"/{b.Id}/mapping", new ImportMappingCommand(b.Version, keep), update: true);
         b = (await saved.Content.ReadFromJsonAsync<ImportBatchDto>(Ct))!;
@@ -188,7 +188,7 @@ public sealed partial class DirectoryWorkspaceTests
     [Fact]
     public async Task Concurrent_commit_retry_converges_on_one_durable_batch_and_row_receipt() {
         using var host = ImportHost(); using var client = Client(host); await Token(client);
-        var id = Guid.NewGuid(); var b = await UploadImport(client, "equipment", new() { ["record_key"] = id.ToString(), ["level"] = "Equipment" });
+        var id = Guid.NewGuid(); var b = await UploadImport(client, "equipment", new Dictionary<string, string>() { ["record_key"] = id.ToString(), ["level"] = "Equipment" });
         var p = await PreviewImport(client, b); var body = new ImportCommitCommand(p.PreviewId, long.Parse(p.Revision), p.TemplateFingerprint); var key = Guid.NewGuid().ToString();
         var attempts = await Task.WhenAll(Send(client, Imports + $"/{b.Id}/commit", body, key), Send(client, Imports + $"/{b.Id}/commit", body, key));
         Assert.Contains(attempts, r => r.StatusCode == HttpStatusCode.OK);
@@ -209,7 +209,7 @@ public sealed partial class DirectoryWorkspaceTests
             var session = await client.GetAsync("/api/v1/auth/session", Ct); csrf = (await session.Content.ReadFromJsonAsync<SessionDto>(Ct))!.CsrfToken;
             cookie = string.Join("; ", session.Headers.GetValues("Set-Cookie").Select(x => x.Split(';')[0]));
             client.DefaultRequestHeaders.Add("Cookie", cookie); client.DefaultRequestHeaders.Add("X-CSRF-TOKEN", csrf);
-            b = await UploadImport(client, "equipment", new() { ["record_key"] = Guid.NewGuid().ToString(), ["level"] = "Equipment" }); p = await PreviewImport(client, b);
+            b = await UploadImport(client, "equipment", new Dictionary<string, string>() { ["record_key"] = Guid.NewGuid().ToString(), ["level"] = "Equipment" }); p = await PreviewImport(client, b);
             Assert.Equal(HttpStatusCode.OK, (await Send(client, Imports + $"/{b.Id}/commit", new ImportCommitCommand(p.PreviewId, long.Parse(p.Revision), p.TemplateFingerprint), key)).StatusCode);
         }
         using var restarted = ImportHost(); using var retry = restarted.CreateClient(new() { BaseAddress = new("https://localhost"), AllowAutoRedirect = false, HandleCookies = false });

@@ -27,38 +27,38 @@ beforeEach(() => {
   vi.stubGlobal('fetch', fetcher)
 })
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); fetcher.mockReset() })
-async function english() { await userEvent.click(screen.getByRole('button', { name: 'EN', exact: true })); await screen.findByRole('button', { name: 'Validate and preview', exact: true }) }
+async function english() { await userEvent.click(screen.getByRole('button', { name: 'EN' })); await screen.findByRole('button', { name: 'Validate and preview' }) }
 
 describe('DEV-069 connected importer (authored UI mocks; execution DEFERRED)', () => {
   it('makes both handoff components reachable and never commits during preview', async () => {
     render(<ImportWorkspace vessel={vessel} />); await english()
-    await userEvent.click(screen.getByRole('button', { name: 'Validate and preview', exact: true }))
+    await userEvent.click(screen.getByRole('button', { name: 'Validate and preview' }))
     await screen.findByRole('table', { name: 'Source row outcomes' })
     expect(fetcher.mock.calls.some(([url]) => String(url).endsWith('/mapping'))).toBe(true)
     expect(fetcher.mock.calls.some(([url]) => String(url).endsWith('/commit'))).toBe(false)
     expect(location.search).toContain(`preview=${previewId}`)
   })
   it('loads real offset pages with the exact schema and preview context', async () => {
-    render(<ImportWorkspace vessel={vessel} />); await english(); await userEvent.click(screen.getByRole('button', { name: 'Validate and preview', exact: true }))
-    await userEvent.click(await screen.findByRole('button', { name: 'Next page', exact: true }))
+    render(<ImportWorkspace vessel={vessel} />); await english(); await userEvent.click(screen.getByRole('button', { name: 'Validate and preview' }))
+    await userEvent.click(await screen.findByRole('button', { name: 'Next page' }))
     await waitFor(() => expect(fetcher.mock.calls.some(([url]) => String(url).includes('offset=25') && String(url).includes('fingerprint=ABC'))).toBe(true))
     expect(await screen.findByText('27', { selector: 'th' })).toBeVisible()
   })
   it('retains an uncertain commit key and does not enable mapping edits', async () => {
     const keys: unknown[] = []
     commit = async init => { keys.push((init.headers as Record<string, string>)['Idempotency-Key']); if (keys.length === 1) throw new TypeError('network'); return json({ batchId: id, state: 'Committed', importedRows: 26, previewId, replayed: true }) }
-    render(<ImportWorkspace vessel={vessel} />); await english(); await userEvent.click(screen.getByRole('button', { name: 'Validate and preview', exact: true }))
-    await userEvent.click(await screen.findByRole('button', { name: 'Commit atomic trial import', exact: true }))
-    await userEvent.click(await screen.findByRole('button', { name: 'Retry same commit', exact: true }))
+    render(<ImportWorkspace vessel={vessel} />); await english(); await userEvent.click(screen.getByRole('button', { name: 'Validate and preview' }))
+    await userEvent.click(await screen.findByRole('button', { name: 'Commit atomic trial import' }))
+    await userEvent.click(await screen.findByRole('button', { name: 'Retry same commit' }))
     expect(keys).toHaveLength(2); expect(keys[0]).toBe(keys[1]); expect(await screen.findByText(/Committed rows/)).toHaveTextContent('26')
   })
   it('clears result authorization on denied deep links without exposing headers', async () => {
     fetcher.mockImplementation(async (url: string) => url.endsWith('/auth/session') ? json({ authenticated: true, canRead: true, tenantId: vessel, actorId: id, csrfToken: 'SYNTHETIC' }) : json({ code: 'permission_denied', raw: 'PRIVATE SERVER CONTENT' }, 403))
-    render(<ImportWorkspace vessel={vessel} />); await userEvent.click(screen.getByRole('button', { name: 'EN', exact: true }))
+    render(<ImportWorkspace vessel={vessel} />); await userEvent.click(screen.getByRole('button', { name: 'EN' }))
     expect(await screen.findByText('Import access denied.')).toBeVisible(); expect(screen.queryByText(/PRIVATE/)).not.toBeInTheDocument(); expect(screen.queryByRole('table')).not.toBeInTheDocument()
   })
   it('invalidates preview immediately when the parent-controlled mapping changes', async () => {
-    render(<ImportWorkspace vessel={vessel} />); await english(); await userEvent.click(screen.getByRole('button', { name: 'Validate and preview', exact: true }))
+    render(<ImportWorkspace vessel={vessel} />); await english(); await userEvent.click(screen.getByRole('button', { name: 'Validate and preview' }))
     await screen.findByRole('table'); await userEvent.selectOptions(screen.getByLabelText('Record key (UUID) (required)'), '')
     expect(screen.queryByRole('table')).not.toBeInTheDocument(); expect(screen.queryByRole('button', { name: 'Commit atomic trial import' })).not.toBeInTheDocument()
   })

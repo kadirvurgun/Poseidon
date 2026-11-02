@@ -52,7 +52,7 @@ public sealed partial class DirectoryWorkspaceTests
         using var overwrite = await Send(c, GraphRoute($"decisions/{saved.Id}/events"), terminal with { State = "RECORDED", ReasonCode = "HUMAN_DECIDED", Recording = cmd.Recording });
         Assert.Equal(HttpStatusCode.Conflict, overwrite.StatusCode);
         await using var db = Db(); Assert.Single(await db.HumanReviewEvents.Where(x => x.Kind == "Decision").ToArrayAsync(Ct));
-        Assert.DoesNotContain(await db.AuditEvents.ToArrayAsync(Ct), x => x.ChangeSummary.Contains(cmd.Rationale) || x.ChangeSummary.Contains(cmd.Recording!.HumanDecision));
+        Assert.DoesNotContain(await db.AuditEvents.ToArrayAsync(Ct), x => (x.ChangeSummary ?? "").Contains(cmd.Rationale) || (x.ChangeSummary ?? "").Contains(cmd.Recording!.HumanDecision));
         Assert.Equal("PENDING", (await db.HumanReviewEvents.SingleAsync(x => x.Id == verification.Id, Ct)).State);
     }
     [Theory]

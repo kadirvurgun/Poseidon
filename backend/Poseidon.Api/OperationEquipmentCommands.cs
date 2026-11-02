@@ -39,7 +39,7 @@ internal static class OperationEquipmentCommands
         !db.EvaluationOwningReferences.Any(pin => pin.EvaluationId == e.Id && db.OperationEquipmentBindings.Any(b => b.VesselId == pin.VesselId && b.Id == pin.Id && b.Revision == pin.Revision && b.CredentialId != null &&
             !db.Credentials.Any(c => c.Id == b.CredentialId && c.VesselId == b.VesselId && c.AssignmentId == b.AssignmentId &&
                 (c.DocumentReference == null || a.Permissions.Contains("crew.documents.read") && documentVersion != null && db.FileStages.Any(f => f.Id == c.DocumentReference && f.VesselId == c.VesselId && f.PersonId == c.PersonId &&
-                    f.PersonalKind == "CertificateDocument" && f.PersonalPolicyVersion == documentVersion && f.PersonalPurpose == documentPurpose && f.State == "CleanTransport")))))) &&
+                    f.PersonalKind == "CertificateDocument" && f.PersonalPolicyVersion == documentVersion && f.PersonalPurpose == documentPurpose && f.State == "CleanTransport"))))) &&
         !db.EvaluationOwningReferences.Any(pin => pin.EvaluationId == e.Id && db.ControlEvidenceRevisions.Any(r => r.VesselId == pin.VesselId && r.Kind == pin.Kind && r.Id == pin.Id && r.Revision == pin.Revision && r.FileId != null &&
             !db.FileStages.Any(f => f.Id == r.FileId && f.VesselId == r.VesselId && f.PersonId == null && f.DocumentId == null && f.State == "CleanTransport"))) &&
         (!e.IncludesProtectedInputs || ComplianceInputContext.CrewRead(a)) && (!e.IncludesOwningInputs || Read(a)) && (!e.IncludesOperationInputs || a.CanReadTug) &&
@@ -55,7 +55,7 @@ internal static class OperationEquipmentCommands
         !db.OperationEquipmentBindings.Any(b => b.VesselId == r.VesselId && b.Kind == r.Kind && b.Id == r.Id && b.Revision == r.Revision && b.CredentialId != null &&
             !db.Credentials.Any(c => c.Id == b.CredentialId && c.VesselId == b.VesselId && c.AssignmentId == b.AssignmentId &&
                 (c.DocumentReference == null || a.Permissions.Contains("crew.documents.read") && documentVersion != null && db.FileStages.Any(f => f.Id == c.DocumentReference && f.VesselId == c.VesselId && f.PersonId == c.PersonId &&
-                    f.PersonalKind == "CertificateDocument" && f.PersonalPolicyVersion == documentVersion && f.PersonalPurpose == documentPurpose && f.State == "CleanTransport"))))) &&
+                    f.PersonalKind == "CertificateDocument" && f.PersonalPolicyVersion == documentVersion && f.PersonalPurpose == documentPurpose && f.State == "CleanTransport")))) &&
         !db.OperationEquipmentBindings.Any(b => b.VesselId == r.VesselId && b.Kind == r.Kind && b.Id == r.Id && b.Revision == r.Revision &&
             (db.TugDraftPlanTugs.Any(t => t.VesselId == b.VesselId && t.JobId == b.JobId && t.Revision == b.PlanRevision && !visible.Contains(t.TugId)) ||
                 db.TugAssignments.Any(t => t.VesselId == b.VesselId && t.JobId == b.JobId && !visible.Contains(t.TugId)))) &&

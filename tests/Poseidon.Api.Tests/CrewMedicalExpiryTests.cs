@@ -73,7 +73,7 @@ public sealed partial class DirectoryWorkspaceTests
         using var host = MedicalHost(); using var client = ImportSessionClient(host);
         var session = await ImportSession(client); var before = await Personal(client);
         var assignment = (await client.GetFromJsonAsync<CrewProfile>($"/api/v1/vessels/{SeedVessel.Id}/crew/{SeedVessel.Id}", Ct))!;
-        var batch = await UploadImport(client, "crew", new() {
+        var batch = await UploadImport(client, "crew", new Dictionary<string, string>() {
             ["record_key"] = SeedVessel.Id.ToString(), ["base_version"] = assignment.Assignment.Version.ToString(),
             ["profile_base_version"] = before.Version!.Value.ToString(), ["profile_policy_version"] = before.PolicyVersion,
             ["medical_expiry"] = "2031-02-03"

@@ -15,7 +15,7 @@ public sealed class ImportColumnMappingPolicyTests
     [Fact]
     public void Explicit_mapping_has_canonical_target_order_and_preserves_its_template_version()
     {
-        var result = Check(new(2, "declared_name"), new(1, "code"));
+        var result = Check(new ImportColumnBinding(2, "declared_name"), new(1, "code"));
         Assert.True(result.IsValid); Assert.Empty(result.Issues);
         Assert.Equal("synthetic-vessel-v1", result.Mapping!.TemplateVersion);
         Assert.Equal(new[] { new ValidatedImportColumn(1, 0, "code"), new ValidatedImportColumn(2, 1, "declared_name") }, result.Mapping.Columns);
@@ -24,15 +24,15 @@ public sealed class ImportColumnMappingPolicyTests
     [Fact]
     public void Reordering_equivalent_bindings_does_not_change_the_validated_plan()
     {
-        var first = Check(new(1, "code"), new(2, "declared_name"));
-        var second = Check(new(2, "declared_name"), new(1, "code"));
+        var first = Check(new ImportColumnBinding(1, "code"), new(2, "declared_name"));
+        var second = Check(new ImportColumnBinding(2, "declared_name"), new(1, "code"));
         Assert.Equal(first.Mapping!.Columns, second.Mapping!.Columns);
     }
 
     [Fact]
     public void Readonly_context_is_not_client_writable_even_when_it_is_in_the_template()
     {
-        var result = Check(new(0, "code"), new(1, "tenant_id"));
+        var result = Check(new ImportColumnBinding(0, "code"), new(1, "tenant_id"));
         Assert.False(result.IsValid); Assert.Null(result.Mapping);
         Assert.Contains(result.Issues, issue => issue.Code == ImportMappingIssueCode.ReadOnlyTarget);
     }
@@ -41,7 +41,7 @@ public sealed class ImportColumnMappingPolicyTests
     public void Unknown_target_and_its_private_value_are_never_echoed_in_a_diagnostic()
     {
         const string untrusted = "PRIVATE_CUSTOMER_MARKER";
-        var result = Check(new(0, "code"), new(1, untrusted));
+        var result = Check(new ImportColumnBinding(0, "code"), new(1, untrusted));
         Assert.Null(result.Mapping);
         Assert.Contains(result.Issues, issue => issue.Code == ImportMappingIssueCode.UnknownTarget);
         Assert.DoesNotContain(untrusted, JsonSerializer.Serialize(result));
@@ -51,7 +51,7 @@ public sealed class ImportColumnMappingPolicyTests
     [Fact]
     public void Unknown_case_alias_cannot_silently_map_to_a_whitelisted_target()
     {
-        var result = Check(new(0, "CODE"));
+        var result = Check(new ImportColumnBinding(0, "CODE"));
         Assert.Contains(result.Issues, issue => issue.Code == ImportMappingIssueCode.UnknownTarget);
         Assert.Contains(result.Issues, issue => issue.Code == ImportMappingIssueCode.MissingRequiredMapping);
         Assert.False(result.IsValid);
@@ -63,7 +63,7 @@ public sealed class ImportColumnMappingPolicyTests
     [InlineData(int.MaxValue)]
     public void Source_column_must_exist_in_the_actual_provider_projection(int column)
     {
-        var result = Check(new(column, "code"));
+        var result = Check(new ImportColumnBinding(column, "code"));
         Assert.Null(result.Mapping);
         Assert.Contains(result.Issues, issue => issue.Code == ImportMappingIssueCode.InvalidSourceColumn);
         Assert.Contains(result.Issues, issue => issue.Code == ImportMappingIssueCode.MissingRequiredMapping);
@@ -72,7 +72,7 @@ public sealed class ImportColumnMappingPolicyTests
     [Fact]
     public void Duplicate_targets_never_choose_first_or_last_writer()
     {
-        var result = Check(new(0, "code"), new(1, "code"));
+        var result = Check(new ImportColumnBinding(0, "code"), new(1, "code"));
         Assert.Null(result.Mapping);
         Assert.Contains(result.Issues, issue => issue.Code == ImportMappingIssueCode.DuplicateTarget);
     }
@@ -80,7 +80,7 @@ public sealed class ImportColumnMappingPolicyTests
     [Fact]
     public void Reusing_a_source_column_requires_an_explicit_trusted_template_policy()
     {
-        var denied = Check(new(0, "code"), new(0, "declared_name"));
+        var denied = Check(new ImportColumnBinding(0, "code"), new(0, "declared_name"));
         Assert.False(denied.IsValid);
         Assert.Contains(denied.Issues, issue => issue.Code == ImportMappingIssueCode.DuplicateSourceColumn);
         var allowed = ImportColumnMappingPolicy.Validate(Template(reuse: true), 1,
@@ -92,9 +92,9 @@ public sealed class ImportColumnMappingPolicyTests
     [Fact]
     public void Missing_required_mapping_is_distinct_from_optional_unmapped_columns()
     {
-        var optionalMissing = Check(new(0, "code"));
+        var optionalMissing = Check(new ImportColumnBinding(0, "code"));
         Assert.True(optionalMissing.IsValid);
-        var requiredMissing = Check(new(0, "declared_name"));
+        var requiredMissing = Check(new ImportColumnBinding(0, "declared_name"));
         Assert.False(requiredMissing.IsValid);
         Assert.Contains(requiredMissing.Issues, issue =>
             issue.Code == ImportMappingIssueCode.MissingRequiredMapping && issue.TemplateFieldOrdinal == 0);

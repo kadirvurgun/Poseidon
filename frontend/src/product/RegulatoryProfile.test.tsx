@@ -16,7 +16,7 @@ const history = { items: [{ revision: 1, savedAt: profile.savedAt, provenance: '
 const reply = (body: unknown, status = 200) => ({ ok: status >= 200 && status < 300, status, json: async () => body }) as Response
 const callbacks = () => ({ id: vessel.id, language: 'en' as const, csrf: 'synthetic-csrf', onDirty: vi.fn(), onSaving: vi.fn() })
 function mock(save: (init: RequestInit) => Promise<Response> = async () => reply({ ...profile, version: 20, revision: 2 })) {
-  const fetchMock = vi.fn((url: string, init: RequestInit) => url.endsWith('/history?offset=0&limit=25') ? Promise.resolve(reply(history)) : init?.method === 'PUT' ? save(init) : Promise.resolve(reply(profile)))
+  const fetchMock = vi.fn((url: string, init: RequestInit) => url.includes('/files?') ? Promise.resolve(reply({ items: [], offset: 0, hasMore: false, available: true, canWrite: false, maxBytes: 1048576, allowedTypes: ["image/png"] })) : url.endsWith('/history?offset=0&limit=25') ? Promise.resolve(reply(history)) : init?.method === 'PUT' ? save(init) : Promise.resolve(reply(profile)))
   vi.stubGlobal('fetch', fetchMock); return fetchMock
 }
 beforeEach(() => window.history.replaceState(null, '', '/app'))
@@ -227,7 +227,7 @@ describe('VESSEL-PROFILE-DRAFT-01 component and transport coverage (mocked API, 
   it('retains edits during background history contract failure and retries history independently', async () => {
     let finish!: (response: Response) => void
     let historyCalls = 0
-    vi.stubGlobal('fetch', vi.fn(async (url: string) => url.includes('/history?') ?
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => url.includes('/files?') ? reply({ items: [], offset: 0, hasMore: false, available: true, canWrite: false, maxBytes: 1048576, allowedTypes: ['image/png'] }) : url.includes('/history?') ?
       (++historyCalls === 1 ? new Promise<Response>(resolve => { finish = resolve }) : reply(history)) : reply(profile)))
     const user = userEvent.setup(); const props = callbacks(); render(<RegulatoryProfile {...props} />)
     await screen.findByLabelText('Flag'); await user.selectOptions(screen.getByLabelText('Flag — Data state'), 'Known')

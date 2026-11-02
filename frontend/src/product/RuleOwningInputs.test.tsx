@@ -28,7 +28,7 @@ it('saves power and a distinct contract date with an actual selected file refere
   await user.selectOptions(screen.getByLabelText('Construction contract date (YYYY-MM-DD) — Data state'), 'Known')
   await user.type(screen.getByLabelText('Construction contract date (YYYY-MM-DD)'), '2022-03-14')
   await user.selectOptions(screen.getByLabelText('Class / build record file'), fileId)
-  await user.click(screen.getByRole('button', { name: 'Save draft', exact: true })); await screen.findByText('Draft saved.')
+  await user.click(screen.getByRole('button', { name: 'Save draft' })); await screen.findByText('Draft saved.')
   const saved = fetch.mock.calls.find(([, init]) => init?.method === 'PUT')![1]!
   const body = JSON.parse(saved.body as string)
   expect(body.content.mainPropulsionKw).toEqual({ state: 'Known', value: '9007199254740993' })

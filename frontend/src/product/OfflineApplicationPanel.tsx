@@ -62,7 +62,7 @@ export function OfflineApplicationPanel({ vessel, assignment, language, onDirty 
     try { await prepareOfflineShell(signal); rows = await value.captures(); base = await value.snapshot() }
     catch (error) { value.close(); throw error }
     if (!fresh(current, signal)) { value.close(); return }
-    app.current?.close(); app.current = value; setSelected(value.context.id); setCaptures(rows); setSnapshot(base)
+    app.current = value; setSelected(value.context.id); setCaptures(rows); setSnapshot(base)
     value.onWithdraw(() => { if (app.current === value) withdraw() })
     setWatch(previous => dirty ? previous : base.watchGroup ?? ''); setActive(true); setLease(n => n + 1); setStatus('ready'); setUncertain(false); setConfirmDiscard(false)
   })

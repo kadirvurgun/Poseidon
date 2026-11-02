@@ -219,7 +219,7 @@ public sealed partial class DirectoryWorkspaceTests
             await using var check = Db();
             Assert.Single(await check.HumanReviewEvents.Where(x => x.Id == pending.Id).ToArrayAsync(Ct));
             Assert.DoesNotContain(await check.HumanReviewEvents.ToArrayAsync(Ct), x => x.State == "VERIFIED");
-            Assert.DoesNotContain(await check.AuditEvents.ToArrayAsync(Ct), a => a.ChangeSummary.Contains("FICTIONAL independent fixture review", StringComparison.Ordinal));
+            Assert.DoesNotContain(await check.AuditEvents.ToArrayAsync(Ct), a => (a.ChangeSummary ?? "").Contains("FICTIONAL independent fixture review", StringComparison.Ordinal));
         } finally { foreach (var file in Directory.GetFiles(root)) File.Delete(file); Directory.Delete(root, false); }
     }
 }

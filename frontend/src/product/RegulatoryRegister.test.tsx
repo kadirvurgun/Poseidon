@@ -21,10 +21,10 @@ describe('REG-SOURCE-DRAFT-01 authored component/transport tests; mocked transpo
   it('retains an unsaved new source before switching into lifecycle preparation', async () => {
     vi.stubGlobal('fetch', vi.fn(async () => response(page([]))))
     const p = props(); render(<RegulatoryRegister {...p} id={null} />); const user = userEvent.setup()
-    await screen.findByRole('button', { name: 'New draft', exact: true }); await user.click(screen.getByRole('button', { name: 'New draft', exact: true }))
+    await screen.findByRole('button', { name: 'New draft' }); await user.click(screen.getByRole('button', { name: 'New draft' }))
     await user.selectOptions(await screen.findByLabelText('Title · State'), 'Known'); await user.type(screen.getByLabelText('Title', { exact: true }), 'FICTIONAL retained source')
-    await user.click(screen.getByRole('button', { name: 'Lifecycle and applicability', exact: true })); await screen.findByRole('dialog')
-    await user.click(screen.getByRole('button', { name: 'Keep editing', exact: true }))
+    await user.click(screen.getByRole('button', { name: 'Lifecycle and applicability' })); await screen.findByRole('dialog')
+    await user.click(screen.getByRole('button', { name: 'Keep editing' }))
     expect(screen.getByLabelText('Title', { exact: true })).toHaveValue('FICTIONAL retained source')
     expect(screen.queryByRole('region', { name: 'Lifecycle and applicability preparation' })).not.toBeInTheDocument()
   })

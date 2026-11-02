@@ -1,3 +1,51 @@
+# FOUNDATION-ACCEPTANCE-BUNDLE-01 — actual combined execution
+
+Status: INCOMPLETE
+
+Current phase: local integration execution/repair; UNVERIFIED checkpoint for independent QA. The explicit `defer_tests=false` request supersedes historical scheduling and software-readiness preconditions below. No acceptance, independent QA, CI, publishing/PR/merge or SP added. Selected40tasks/272SP, target194/970 and canonical8/970SP remain unchanged.
+
+Receiving `0c923ea33c644120878cade12ed1aabbc5aac450` was clean. Whole normal history and prior ordinary support receipts were preserved. Backend/UI skills were read; no extra agents, force/reset/stash, private auth/account changes or fabricated appointments/approvals.
+
+Delivered repairs: actual Release compiler/integration fixes; NuGet-regenerated AWS lock hashes with official archive/cache provenance; real EF-generated current snapshot/designer with retained additive DDL reconciliation; audit kind/capacity and Document xmin fixes; built API OpenAPI export and deterministic locked TypeScript generation; strict numeric/date/null/trace boundaries; actual frontend/ordinary-browser fixture reconciliation; source verifier Windows long-path support; value-free exact-identity security proposals and regressions. [Literal current source/task/acceptance/test mapping and remaining software/external inputs](../tasks/foundation-acceptance-bundle-01.md).
+
+| Actual gate | Latest result |
+|---|---|
+|Locked tools/packages; full Release|PASS; SDK10.0.403/EF10.0.14/Node26.13.0/Python3.13.13;0warnings/0errors|
+|Built API OpenAPI + locked TS + reproduction|PASS;157paths/175schemas; no hand-edited generated schema|
+|Current EF snapshot check|PASS, no pending changes; not every historical designer/FK/index equivalence|
+|Actual PostgreSQL model columns/nullability/capacity + twice-audited seed|PASS1/1|
+|Domain / persistence unit / API unit|PASS536/536,14/14,82/82;0skipped|
+|Full PostgreSQL persistence|FAIL;71/74,3failed,0skipped|
+|Full API integration|INTERRUPTED / NO CAPTURED FINAL EXIT: native job timed out at09:18:59+03; owned processes later confirmed absent; partial log retained, no PASS/count inferred|
+|Frontend components / typecheck / build|PASS821/821 in62files; actual production client built|
+|Frontend lint|FAIL63errors/9warnings; no blanket lint waiver|
+|Windows scheduler/nightly/ops|PASS1/6/3 executed tests, Preview only|
+|Python313 source/task/trace/golden/ERP/security regressions|PASS248/248 after actual platform/fixture repairs|
+|Current source bytes/lineage|PASS269files/34958chunks/0mismatches|
+|Ordinary desktop/mobile Playwright|PASS46/46; genuine-provider results are separate|
+|Pinned owned ClamAV|Started successfully; actual API integration receives its loopback port|
+|Owned source-labelled S3 driver input|BLOCKED; no matching local immutable image available; no fabricated pin|
+|Genuine-provider prepare_humans/prepare_bundle/browser/register_browser|BLOCKED by inaccessible existing private lab state; PermissionError observed safely;60registered cases/two projects,0genuine execution|
+|Actual two-production-build signed-host worker lifecycle|BLOCKED; static-shell/unit harness is not this gate|
+|Mandatory actual built-client reviewed scan|PASS4files/0patterns|
+|Mandatory complete tracked repository reviewed scan|FAIL;164current findings in1384inputs at initial full current scan; final post-document coverage recorded separately; not164proven live credentials|
+|AST-only Graphify update|PASS; derived graph updated; warnings retained|
+|Independent exact-target QA/source review and required CI|Coordinator next; not performed/accepted|
+
+[Actual commands, exits, counts, raw-log hashes, earlier failures/interruption disposition and exact fingerprints](FOUNDATION-ACCEPTANCE-BUNDLE-01.evidence.json). Raw logs remain ignored locally. Earlier compiler/seed/zero-discovery/overlapping-restore failures are preserved; subsequent independent gate results were not erased.
+
+Remaining software:3persistence regressions; actual API503/authority/replay/compliance failures; lint; full historical migration/FK/index reconciliation; additional selected supported offline read/capture adapters; job-specific Credential/MSMD/golden and Tug/Today composition; full signed multi-human fixture orchestration. All13 owning adapters and durable governance/replay are preserved. No unselected048/049/050/083/084 prerequisite or universal44-field whitelist is introduced.
+
+External inputs remain separate: Crew1615 DERIVATION_REQUIRES_SPECIFICATION, real source/issuer/Marine/clinical/privacy/provider/human/pilot inputs and independent security/trust/rotation review. No thresholds, legal purpose/retention, human signature or release inferred. UNKNOWN remains distinct. [Current security identity/provenance proposals](../security/foundation-acceptance-review.pending.json) contain no receipts/exceptions/trust and cannot waive scans; prior160pending/old rejected review remain historical.
+
+Candidate code commit: PENDING_ORDINARY_UNVERIFIED_CHECKPOINT. Exact code fingerprint: 0850bec20714463c2e90868b909176170e9badd119428d3b703f931d52806e7f. Exact client fingerprint: e979bfd0e82ffab97aaf8bf486775d503c53ff605decc578fe035c5eeea14653. Final local HEAD is reported separately from this code-candidate receipt; documentation-only receipt commits do not claim independent QA.
+
+Next repair from the actual failed-gate ledger, complete selected software and genuine-provider setup, then coordinator exact-target independent QA/source review and required CI. Do not mark accepted or publish.
+
+---
+
+## Historical receiving reports (superseded scheduling, preserved evidence)
+
 # FOUNDATION-ACCEPTANCE-BUNDLE-01 — current receiving reconciliation
 
 Status: INCOMPLETE
@@ -132,3 +180,7 @@ acceptance or completion of the remaining S0/Domain/Tug operational scope. Curre
 phase: FOUNDATION authoring before S0 closure and the single combined gate.
 Canonical8/970SP,2/121tasks,0/196accepted unchanged. Coordinator owns later exact-target
 independent QA/CI/publication. [Exact source/FR/TC and remaining gates](../tasks/navigation-role-lens-01.md).
+
+## Coordinator preservation after actual timeout
+
+The one-hour native job actually ended with result timeout at2026-11-02T06:18:59Z. Native25576/parent28696 and leftover API-test47200/parent6736 were confirmed absent before preservation. This is not a quota failure. The already staged task-owned source and the existing unstaged gate ledger are preserved as an ordinary UNVERIFIED checkpoint; no acceptance/QA/CI or gate PASS is created. Full API final exit was not captured, so its old RUNNING label is superseded by INTERRUPTED. Root started a separate real pinned source-S3 build, exec session51206, still not provider success. The next bounded continuation repairs actual failures with all original acceptance criteria retained.

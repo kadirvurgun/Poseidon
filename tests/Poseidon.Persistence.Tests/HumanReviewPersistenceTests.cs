@@ -73,9 +73,12 @@ public sealed class HumanReviewPersistenceTests : IAsyncLifetime
     {
         await using var db = Db(); var h = Head(); var e = Event(h); db.HumanReviewHeads.Add(h); db.HumanReviewEvents.Add(e); await db.SaveChangesAsync(Ct);
         e.Rationale = "forged"; await Assert.ThrowsAsync<InvalidOperationException>(() => db.SaveChangesAsync(Ct)); db.ChangeTracker.Clear();
+        // Closed test-owned identifier/verb lists; deliberate trigger mutation probes.
+#pragma warning disable EF1002
         foreach (var table in new[] { "HumanReviewEvents", "HumanReviewReceipts" })
         foreach (var action in new[] { "DELETE FROM", "TRUNCATE" })
             await Assert.ThrowsAsync<Npgsql.PostgresException>(() => db.Database.ExecuteSqlRawAsync($"{action} core.\"{table}\"", Ct));
+#pragma warning restore EF1002
         await Assert.ThrowsAsync<Npgsql.PostgresException>(() => db.Database.ExecuteSqlRawAsync("UPDATE core.\"HumanReviewEvents\" SET \"State\"='VERIFIED'", Ct));
     }
     [Fact]

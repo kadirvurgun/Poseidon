@@ -53,7 +53,7 @@ export function OfflineConflictReview(props: Props) {
   if (props.state !== 'ready' || !conflict || !conflict.id || !conflict.revision || !Array.isArray(conflict.fields) ||
     conflict.fields.length === 0 || new Set(conflict.fields.map(field => field?.key)).size !== conflict.fields.length ||
     conflict.fields.some(field => !field || !field.key || !field.label || !validValue(field.captured) || !validValue(field.server) ||
-      !Array.isArray(field.choices) || field.choices.some(choice => !['keepServer', 'useCaptured'].includes(choice)))) return <div role="alert">
+      !Array.isArray(field.choices) || field.choices.some((choice: unknown) => !['keepServer', 'useCaptured'].includes(String(choice))))) return <div role="alert">
     <p>{en ? 'Conflict details could not be loaded.' : 'Çakışma ayrıntıları yüklenemedi.'}</p>
     {props.onRetry && <button type="button" onClick={props.onRetry}>{en ? 'Retry' : 'Tekrar dene'}</button>}
   </div>

@@ -51,7 +51,7 @@ export function CrewPersonalFiles(props: Props) {
       </form>}
       <ol>{source.items.map(row => <li key={row.id}>
         <button disabled={dirty || busy || photoDirty} onClick={() => setOwner({ scope, data: { type: 'Person', assignment: props.assignment, kind: row.kind, revision: row.revision, expiresOn: row.expiresOn } })}>{label(row.kind)} · {row.revision}</button>
-        {' · '}{row.expiresOn ?? (en ? 'Expiry unknown' : 'Bitiş tarihi bilinmiyor')}{' · '}{row.state === 'CleanTransport' ? (en ? 'Scanned, unverified' : 'Taranmış, doğrulanmamış') : (en ? 'Pending or quarantined' : 'Bekliyor veya karantinada')}
+        {' · '}<span>{row.expiresOn ?? (en ? 'Expiry unknown' : 'Bitiş tarihi bilinmiyor')}</span>{' · '}<span>{row.state === 'CleanTransport' ? (en ? 'Scanned, unverified' : 'Taranmış, doğrulanmamış') : (en ? 'Pending or quarantined' : 'Bekliyor veya karantinada')}</span>
       </li>)}</ol>
       {source.hasMore && <p role="status">{en ? 'Only the latest 100 declarations are shown.' : 'Son 100 beyan gösteriliyor.'}</p>}
       {selected && <VesselFiles key={`${scope}:${selected.kind}:${selected.revision}`} owner={selected} vessel={props.vessel} csrf={props.csrf} language={props.language}

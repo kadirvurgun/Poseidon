@@ -17,7 +17,7 @@ beforeAll(async () => { key = await provider.subtle.generateKey({ name: 'AES-GCM
 describe('bound offline capture encryption primitive (authored; execution deferred)', () => {
   it('roundtrips exact declared UTF-8 data under a nonextractable key without storing plaintext context', async () => {
     const sealed = await sealOfflineRecord(provider, key, context, data, limits)
-    expect(await openOfflineRecord(provider, key, context, sealed, limits)).toEqual(data)
+    expect(Array.from(await openOfflineRecord(provider, key, context, sealed, limits))).toEqual(Array.from(data))
     expect(sealed.iv.byteLength).toBe(12)
     expect(sealed.ciphertext.byteLength).toBe(data.byteLength + 16)
     expect(sealed.contextHash).toMatch(/^[a-f0-9]{64}$/)
@@ -30,12 +30,11 @@ describe('bound offline capture encryption primitive (authored; execution deferr
     const first = await sealOfflineRecord(provider, key, context, data, limits)
     const second = await sealOfflineRecord(provider, key, context, data, limits)
     expect(second.iv).not.toEqual(first.iv)
-    expect(second.ciphertext).not.toEqual(first.ciphertext)
+    expect(Array.from(new Uint8Array(second.ciphertext))).not.toEqual(Array.from(new Uint8Array(first.ciphertext)))
     expect(second.contextHash).toBe(first.contextHash)
   })
 
-  it.each(['tenantId', 'actorId', 'vesselId', 'deviceId', 'sessionBinding', 'policyVersion', 'commandId'] as const)
-    ('cannot open the record under a changed %s binding', async field => {
+  it.each(['tenantId', 'actorId', 'vesselId', 'deviceId', 'sessionBinding', 'policyVersion', 'commandId'] as const)('cannot open the record under a changed %s binding', async field => {
       const sealed = await sealOfflineRecord(provider, key, context, data, limits)
       await expect(openOfflineRecord(provider, key, { ...context, [field]: 'other-context' }, sealed, limits))
         .rejects.toMatchObject({ code: 'context_mismatch' })
@@ -115,6 +114,6 @@ describe('bound offline capture encryption primitive (authored; execution deferr
     await expect(openOfflineRecord(provider, key, context, { ...sealed, iv: new Uint8Array(11) }, limits))
       .rejects.toMatchObject({ code: 'invalid_envelope' })
     await expect(sealOfflineRecord({} as Crypto, key, context, data, limits)).rejects.toMatchObject({ code: 'crypto_unavailable' })
-    expect(await openOfflineRecord(provider, key, context, sealed, limits)).toEqual(data)
+    expect(Array.from(await openOfflineRecord(provider, key, context, sealed, limits))).toEqual(Array.from(data))
   })
 })

@@ -34,8 +34,8 @@ public partial class MaintenanceObservations : Migration
         migrationBuilder.AddColumn<Guid>("ObservationId", "PlanRevisions", schema: "technical", type: "uuid", nullable: true);
         migrationBuilder.CreateIndex("IX_Plan_Observation", "Plans", new[] { "TenantId", "VesselId", "AssetId", "ObservationId" }, "technical");
         migrationBuilder.CreateIndex("IX_PlanRevision_Observation", "PlanRevisions", new[] { "TenantId", "VesselId", "AssetId", "ObservationId" }, "technical");
-        migrationBuilder.AddForeignKey("FK_Plans_ObservationScope", "Plans", new[] { "TenantId", "VesselId", "AssetId", "ObservationId" }, "Observations", new[] { "TenantId", "VesselId", "AssetId", "Id" }, schema: "technical", principalSchema: "technical", onDelete: ReferentialAction.Restrict);
-        migrationBuilder.AddForeignKey("FK_PlanRevisions_ObservationScope", "PlanRevisions", new[] { "TenantId", "VesselId", "AssetId", "ObservationId" }, "Observations", new[] { "TenantId", "VesselId", "AssetId", "Id" }, schema: "technical", principalSchema: "technical", onDelete: ReferentialAction.Restrict);
+        migrationBuilder.AddForeignKey("FK_Plans_ObservationScope", "Plans", new[] { "TenantId", "VesselId", "AssetId", "ObservationId" }, "Observations", principalColumns: new[] { "TenantId", "VesselId", "AssetId", "Id" }, schema: "technical", principalSchema: "technical", onDelete: ReferentialAction.Restrict);
+        migrationBuilder.AddForeignKey("FK_PlanRevisions_ObservationScope", "PlanRevisions", new[] { "TenantId", "VesselId", "AssetId", "ObservationId" }, "Observations", principalColumns: new[] { "TenantId", "VesselId", "AssetId", "Id" }, schema: "technical", principalSchema: "technical", onDelete: ReferentialAction.Restrict);
         migrationBuilder.Sql("""
             CREATE FUNCTION technical.reject_observation_mutation() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'immutable_observation'; END $$;
             CREATE TRIGGER observation_immutable BEFORE UPDATE OR DELETE OR TRUNCATE ON technical."Observations" FOR EACH STATEMENT EXECUTE FUNCTION technical.reject_observation_mutation();

@@ -29,7 +29,7 @@ beforeEach(() => {
   vi.stubGlobal('fetch', fetcher)
 })
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); fetcher.mockReset() })
-const english = async () => { await userEvent.click(screen.getByRole('button', { name: 'EN', exact: true })); await screen.findByRole('button', { name: 'Add person and assignment' }) }
+const english = async () => { await userEvent.click(screen.getByRole('button', { name: 'EN' })); await screen.findByRole('button', { name: 'Add person and assignment' }) }
 
 describe('CREW-ROSTER-01 authored component behavior; no backend execution claim', () => {
   it('shows server onboard and planned declarations without promoting them to eligibility', async () => {
@@ -40,7 +40,7 @@ describe('CREW-ROSTER-01 authored component behavior; no backend execution claim
       offset: 0, hasMore: false, canWrite: false, canWriteIdentity: false,
     }) : previous(path, init))
     render(<CrewWorkspace vessel={vessel} />)
-    await userEvent.click(screen.getByRole('button', { name: 'EN', exact: true }))
+    await userEvent.click(screen.getByRole('button', { name: 'EN' }))
     expect(await screen.findByText('Onboard · unverified declaration')).toBeVisible()
     expect(screen.getByText('Planned · unverified declaration')).toBeVisible()
     expect(screen.queryByText('ELIGIBLE')).not.toBeInTheDocument()
@@ -51,7 +51,7 @@ describe('CREW-ROSTER-01 authored component behavior; no backend execution claim
       items: [{ ...row, positionState: 'Stale', rank: 'SYNTHETIC INVALID DISCLOSURE' }], offset: 0, hasMore: false, canWrite: false, canWriteIdentity: false,
     }) : previous(path, init))
     render(<CrewWorkspace vessel={vessel} />)
-    await userEvent.click(screen.getByRole('button', { name: 'EN', exact: true }))
+    await userEvent.click(screen.getByRole('button', { name: 'EN' }))
     expect(await screen.findByText('Crew service unavailable.')).toBeVisible()
     expect(screen.queryByText('SYNTHETIC INVALID DISCLOSURE')).not.toBeInTheDocument()
     expect(screen.queryByRole('table')).not.toBeInTheDocument()
@@ -63,14 +63,14 @@ describe('CREW-ROSTER-01 authored component behavior; no backend execution claim
         identityPolicy: { version: 'synthetic-v1', purpose: 'synthetic', employeeNumberMode: 'ImmutableAfterCapture' } }) : previous(path, init))
     let count = 0; mutation = async () => { if (count++ === 0) throw new TypeError('synthetic interrupted conversion'); return json({ version: 13 }) }
     render(<CrewWorkspace vessel={vessel} assignment={id} />)
-    await userEvent.click(screen.getByRole('button', { name: 'EN', exact: true }))
+    await userEvent.click(screen.getByRole('button', { name: 'EN' }))
     const convert = await screen.findByRole('button', { name: 'Convert legacy identity to protected storage' })
     expect(screen.getByRole('button', { name: 'Edit person' })).toBeDisabled()
     await userEvent.click(convert)
     expect(screen.queryByLabelText('Full name')).not.toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Save draft' }))
     await screen.findByText('Result uncertain. Retry the same attempt before editing.')
-    await userEvent.click(screen.getByRole('button', { name: 'Retry', exact: true }))
+    await userEvent.click(screen.getByRole('button', { name: 'Retry' }))
     await screen.findByText('Draft saved.')
     const calls = fetcher.mock.calls.filter(([path]) => path.endsWith('/person/convert'))
     expect(calls).toHaveLength(2); expect(calls[0][1].body).toEqual(calls[1][1].body); expect(calls[0][1].headers).toEqual(calls[1][1].headers)
@@ -82,7 +82,7 @@ describe('CREW-ROSTER-01 authored component behavior; no backend execution claim
       ? json({ employmentState: 'Unknown', fitnessState: 'Unknown', identityStatus: 'IdentityPermitted', contactStatus: 'Withheld', healthStatus: 'Withheld', assignment: { ...row, fullName: 'FICTIONAL original', employeeNo: '0001', privacyScope: 'IdentityPermitted' }, personVersion: 12,
         identityPolicy: { version: 'synthetic-v1', purpose: 'synthetic', employeeNumberMode: 'ImmutableAfterCapture' } }) : previous(path, init))
     render(<CrewWorkspace vessel={vessel} assignment={id} />)
-    await userEvent.click(screen.getByRole('button', { name: 'EN', exact: true }))
+    await userEvent.click(screen.getByRole('button', { name: 'EN' }))
     await userEvent.click(await screen.findByRole('button', { name: 'Edit person' }))
     expect(screen.getByLabelText('Employee number')).toBeDisabled()
     await userEvent.clear(screen.getByLabelText('Full name')); await userEvent.type(screen.getByLabelText('Full name'), 'FICTIONAL renamed')
@@ -131,7 +131,7 @@ describe('CREW-ROSTER-01 authored component behavior; no backend execution claim
     await userEvent.click(screen.getByRole('button', { name: 'Save draft' }))
     await screen.findByText('Result uncertain. Retry the same attempt before editing.')
     expect(screen.getByLabelText('Full name')).toBeDisabled()
-    await userEvent.click(screen.getByRole('button', { name: 'Retry', exact: true }))
+    await userEvent.click(screen.getByRole('button', { name: 'Retry' }))
     await screen.findByText('Draft saved.')
     const calls = fetcher.mock.calls.filter(([, init]) => init?.method === 'POST')
     expect(calls).toHaveLength(2); expect(calls[0][1].body).toEqual(calls[1][1].body)

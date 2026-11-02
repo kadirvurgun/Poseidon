@@ -24,10 +24,10 @@ export function OperationEquipmentEditor({ vessel, language, offline, isTug, val
     return () => { active = false; c.abort() }
   }, [vessel, offline, isTug, offset, evidenceOffset])
   const update = (v: OwningContent) => onChange({ ...value, ...v })
-  const choose = (k: string) => onChange({ ...value, tugCapability: null, classPack: null, msmd: null, crewRoleAssessment: null, operation: null, serviceAuthorization: null, cargoPlan: null, winchFitment: null,
-    ...(k === 'operation' ? { operation: { jobId: null, jobRevision: null, jobVersion: null, planRevision: null, planVersion: null, profile: null, serviceAuthorizationId: null, serviceAuthorizationRevision: null } } :
+  const choose = (k: string) => onChange(Object.assign({}, value, { tugCapability: null, classPack: null, msmd: null, crewRoleAssessment: null, operation: null, serviceAuthorization: null, cargoPlan: null, winchFitment: null },
+    (k === 'operation' ? { operation: { jobId: null, jobRevision: null, jobVersion: null, planRevision: null, planVersion: null, profile: null, serviceAuthorizationId: null, serviceAuthorizationRevision: null } } :
       k === 'serviceAuthorization' ? { serviceAuthorization: { jobId: null, jobRevision: null, jobVersion: null, planRevision: null, planVersion: null, serviceContext: null, issuerReference: null } } :
-      k === 'cargoPlan' ? { cargoPlan: { planReference: null, packagedDangerousGoods: null } } : k === 'winchFitment' ? { winchFitment: { assetId: null, assetRevision: null, assetVersion: null, fitted: null, registerReference: null } } : {}) })
+      k === 'cargoPlan' ? { cargoPlan: { planReference: null, packagedDangerousGoods: null } } : k === 'winchFitment' ? { winchFitment: { assetId: null, assetRevision: null, assetVersion: null, fitted: null, registerReference: null } } : {})))
   const bool = (label: string, v: boolean | null, change: (v: boolean | null) => void) => <label>{label}<select value={v == null ? '' : String(v)} onChange={e => change(e.target.value === '' ? null : e.target.value === 'true')}><option value="">{t('Unknown', 'Bilinmiyor')}</option><option value="true">{t('Yes', 'Evet')}</option><option value="false">{t('No', 'Hayır')}</option></select></label>
   const jobRef = value.operation ?? value.serviceAuthorization
   return <fieldset disabled={offline}><legend>{t('Owning operation, cargo or equipment document', 'Operasyon, yük veya donanım kaynak kaydı')}</legend>

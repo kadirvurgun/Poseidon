@@ -88,7 +88,7 @@ public sealed class CrewPersistenceTests : IAsyncLifetime
                 Assert.Equal("23P01", Assert.IsType<Npgsql.PostgresException>(e.InnerException).SqlState); return false;
             }
         }
-        var results = await Task.WhenAll(Reserve(), Reserve()); Assert.Single(results.Where(x => x));
+        var results = await Task.WhenAll(Reserve(), Reserve()); Assert.Single(results, x => x);
         await using var verify = Db(); Assert.Single(await verify.CrewAssignments.Where(x => x.From != null).ToArrayAsync(Ct));
         Assert.Equal(2, await verify.CrewAssignmentRevisions.CountAsync(x => x.VesselId == vessel.Id, Ct));
     }

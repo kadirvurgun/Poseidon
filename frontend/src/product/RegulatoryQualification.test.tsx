@@ -42,7 +42,7 @@ describe('Source qualification accessible command UI (authored, NOT RUN)', () =>
     vi.spyOn(api, 'load').mockResolvedValue({ hasMore: false, items: [row], owners: [], actions: ['qualify'], authorities: [{ action: 'qualify', authorityId: id }] })
     const sent = vi.spyOn(api, 'send').mockResolvedValue({ ...row, state: 'IN_FORCE' })
     render(<RegulatoryQualification {...props()} />)
-    await screen.findByText(/IN_REVIEW/)
+    await screen.findByText(/^IN_REVIEW/)
     fireEvent.change(screen.getByLabelText('Record lifecycle state'), { target: { value: 'IN_FORCE' } })
     fireEvent.click(screen.getByRole('button', { name: 'Record assigned human qualification' }))
     await waitFor(() => expect(sent).toHaveBeenCalledTimes(1))

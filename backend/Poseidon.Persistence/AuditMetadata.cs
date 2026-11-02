@@ -135,7 +135,13 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             // Text values, bodies, fingerprints, receipt keys and personal details are never copied.
             if (!AuditValuePolicy.Includes(name)) continue;
             if (entry.State == EntityState.Modified && !property.IsModified) continue;
-            string? Value(object? value) => AuditValuePolicy.Value(name, value);
+            string? Value(object? value) {
+                try { return AuditValuePolicy.Value(name, value); }
+                catch (InvalidOperationException) {
+                    // Fixed model/allowlist metadata only, never the rejected value.
+                    throw new InvalidOperationException($"Unsupported audit field type: {entry.Metadata.ClrType.Name}.{name} ({value?.GetType().Name}).");
+                }
+            }
             fields.Add(new { field = name, before = entry.State == EntityState.Added ? null : Value(property.OriginalValue),
                 after = entry.State == EntityState.Deleted ? null : Value(property.CurrentValue),
                 evidence = AuditValuePolicy.Evidence(name) });

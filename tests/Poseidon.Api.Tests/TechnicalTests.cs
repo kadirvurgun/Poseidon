@@ -96,7 +96,8 @@ public sealed partial class DirectoryWorkspaceTests
         var postpone = await Send(client, PlansUrl + $"/{cmd.Id}/postpone", new { reason = "synthetic", authority = "Chief Engineer", newDue = "2099-01-01" });
         Assert.Equal(HttpStatusCode.UnprocessableEntity, postpone.StatusCode);
         await using var verify = Db(); Assert.Equal(revisionCount, await verify.MaintenancePlanRevisions.CountAsync(Ct));
-        Assert.Contains(await verify.SecurityEvents.ToArrayAsync(Ct), x => x.Action == "MaintenanceSave" && x.Result == "validation_failed");
+        await using var security = new Poseidon.Persistence.SecurityEventWriter(new DbContextOptionsBuilder<Poseidon.Persistence.SecurityEventWriter>().UseNpgsql(postgres.GetConnectionString()).Options);
+        Assert.Contains(await security.Set<Poseidon.Persistence.SecurityEvent>().ToArrayAsync(Ct), x => x.Action == "MaintenanceSave" && x.Result == "validation_failed");
         var history = await client.GetFromJsonAsync<JsonElement>("/api/v1/" + PlansUrl + $"/{cmd.Id}/history", Ct);
         Assert.Equal("1", history[0].GetProperty("inputs").GetProperty("intervalValue").GetString());
     }
@@ -137,8 +138,8 @@ public sealed partial class DirectoryWorkspaceTests
         using var first = Client(host); using var second = Client(host); await Token(first); await Token(second);
         var results = await Task.WhenAll(Send(first, EquipmentUrl, a with { BaseVersion = av.Version, ParentId = b.Id }),
             Send(second, EquipmentUrl, b with { BaseVersion = bv.Version, ParentId = a.Id }));
-        Assert.Single(results.Where(r => r.StatusCode == HttpStatusCode.OK));
-        Assert.Single(results.Where(r => r.StatusCode == HttpStatusCode.Conflict));
+        Assert.Single(results, r => r.StatusCode == HttpStatusCode.OK);
+        Assert.Single(results, r => r.StatusCode == HttpStatusCode.Conflict);
         await using var verify = Db(); var rows = await verify.Assets.Where(x => x.VesselId == SeedVessel.Id).ToArrayAsync(Ct);
         Assert.Equal(EquipmentHierarchyValidation.Valid, EquipmentHierarchyPolicy.Validate(SeedVessel.TenantId, SeedVessel.Id,
             rows.Select(x => new EquipmentHierarchyNode(x.TenantId,x.VesselId,x.Id,x.ParentId)).ToArray()));

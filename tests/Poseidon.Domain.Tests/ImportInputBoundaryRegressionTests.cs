@@ -41,8 +41,8 @@ public sealed class ImportInputBoundaryRegressionTests
         XNamespace spreadsheet = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
         XNamespace relationships = "http://schemas.openxmlformats.org/package/2006/relationships";
         var workbookRels = Read("xl/_rels/workbook.xml.rels");
-        var stylesRelation = Assert.Single(workbookRels.Root!.Elements(relationships + "Relationship")
-            .Where(x => ((string?)x.Attribute("Type"))?.EndsWith("/styles", StringComparison.Ordinal) == true));
+        var stylesRelation = Assert.Single(workbookRels.Root!.Elements(relationships + "Relationship"),
+            x => ((string?)x.Attribute("Type"))?.EndsWith("/styles", StringComparison.Ordinal) == true);
         Assert.NotEqual("External", (string?)stylesRelation.Attribute("TargetMode"));
         var target = (string?)stylesRelation.Attribute("Target"); Assert.False(string.IsNullOrWhiteSpace(target));
         var stylesPath = new Uri(new Uri("https://fixture.invalid/xl/workbook.xml"), target!).AbsolutePath.TrimStart('/');
@@ -51,9 +51,9 @@ public sealed class ImportInputBoundaryRegressionTests
         var sheet = Read("xl/worksheets/sheet1.xml");
         var columns = sheet.Root!.Element(spreadsheet + "cols"); Assert.NotNull(columns);
         for (var position = 1; position <= fields.Length; position++) {
-            var column = Assert.Single(columns.Elements(spreadsheet + "col").Where(x =>
+            var column = Assert.Single(columns.Elements(spreadsheet + "col"), x =>
                 int.Parse(x.Attribute("min")!.Value, CultureInfo.InvariantCulture) <= position &&
-                int.Parse(x.Attribute("max")!.Value, CultureInfo.InvariantCulture) >= position));
+                int.Parse(x.Attribute("max")!.Value, CultureInfo.InvariantCulture) >= position);
             var style = int.Parse(column.Attribute("style")!.Value, CultureInfo.InvariantCulture);
             var numberFormat = formats.Elements(spreadsheet + "xf").ElementAt(style).Attribute("numFmtId")!.Value;
             var text = numberFormat == "49" || styles.Descendants(spreadsheet + "numFmt").Any(x =>

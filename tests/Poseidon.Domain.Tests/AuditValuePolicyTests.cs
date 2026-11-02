@@ -38,4 +38,25 @@ public sealed class AuditValuePolicyTests
             Assert.Throws<InvalidOperationException>(() => AuditValuePolicy.Value("Kind", "UnknownRole"));
         } finally { CultureInfo.CurrentCulture = original; }
     }
+    [Theory]
+    [InlineData("Source")]
+    [InlineData("Requirement")]
+    [InlineData("Control")]
+    [InlineData("Evidence")]
+    [InlineData("Verification")]
+    [InlineData("Decision")]
+    [InlineData("Meter")]
+    [InlineData("Condition")]
+    public void Persisted_graph_heads_keep_their_closed_nonpersonal_kind_in_audited_seed_and_commands(string kind)
+    {
+        Assert.Equal(kind, AuditValuePolicy.Value("Kind", kind));
+        Assert.Throws<InvalidOperationException>(() => AuditValuePolicy.Value("Kind", "untrusted-" + kind));
+    }
+    [Fact]
+    public void Draft_is_a_declaration_state_without_inventing_verification_or_effectiveness()
+    {
+        Assert.Equal("Draft", AuditValuePolicy.Value("State", "Draft"));
+        Assert.Throws<InvalidOperationException>(() => AuditValuePolicy.Value("State", "Ready"));
+    }
+
 }

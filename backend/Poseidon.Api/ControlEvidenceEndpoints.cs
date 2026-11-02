@@ -43,7 +43,7 @@ public static class ControlEvidenceEndpoints
             g.MapGet("/{id:guid}/versions", (Guid id, HttpContext h, PoseidonDbContext db) => List(h, db, kind, id));
             g.MapGet("/owners", Owners);
             g.MapGet("/orphans", Orphans);
-            g.MapPost("", (HttpContext h) => Save(h, kind, null)).Accepts<ControlEvidenceCommand>("application/json").Produces<ControlEvidenceDto>();
+            g.MapPost("", (Func<HttpContext, Task<IResult>>)((HttpContext h) => Save(h, kind, null))).Accepts<ControlEvidenceCommand>("application/json").Produces<ControlEvidenceDto>();
             g.MapPut("/{id:guid}", (Guid id, HttpContext h) => Save(h, kind, id)).Accepts<ControlEvidenceCommand>("application/json").Produces<ControlEvidenceDto>();
             g.MapPost("/{id:guid}/submit", (Guid id, HttpContext h) => Save(h, kind, id, "submit"));
             g.MapPost("/{id:guid}/complete", (Guid id, HttpContext h) => Save(h, kind, id, "complete"));

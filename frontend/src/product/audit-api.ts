@@ -24,11 +24,12 @@ export function changes(summary: string | null): Change[] {
     if (!object(v) || !keys(v, ['field', 'before', 'after', 'evidence']) || typeof v.field !== 'string' ||
       !['Code', 'Name', 'Kind', 'CompanyId', 'SourceVersion', 'RequiredBollardPull', 'RequiredTugCount', 'RequestOwner', 'PlannedStart', 'PlannedEnd', 'RequestedStart', 'RequestedEnd', 'GrossTonnage', 'BollardPullTonnes', 'Revision', 'ContentJson', 'State'].includes(v.field) ||
       (typeof v.evidence !== 'string' || !['ValuesWithheld', 'RevisionReference', 'Allowlisted'].includes(v.evidence))) return invalid()
-    const expected = v.field === 'ContentJson' ? 'RevisionReference' : ['Code', 'Name'].includes(v.field) ? 'ValuesWithheld' : 'Allowlisted'
+    const field = v.field
+    const expected = v.field === 'ContentJson' ? 'RevisionReference' : ['Code', 'Name'].includes(field) ? 'ValuesWithheld' : 'Allowlisted'
     if (v.evidence !== expected) return invalid()
     const safeValue = (x: unknown) => x === null || typeof x === 'string' && x.length <= 128 && (
-      v.field === 'State' ? ['Pending', 'Receiving', 'CleanTransport', 'Abandoned', 'SyntheticUnverified', 'Draft', 'Uploaded', 'MappingDraft', 'Previewed', 'Committed'].includes(x) : ['CompanyId', 'RequestOwner'].includes(v.field) ? isGuid(x) : ['PlannedStart', 'PlannedEnd', 'RequestedStart', 'RequestedEnd'].includes(v.field) ? timestamp(x) : v.field === 'SourceVersion' ? ['poseidon-v46.3-20261030/14.02/1914-1931/TUG-FOUNDATION-01', '14.02:2316:1932-1957:v46.3'].includes(x) : v.field === 'Kind' ? ['Ship', 'Tug', 'Source', 'Requirement'].includes(x) : (v.field === 'Revision' ? /^\d+$(?![\s\S])/.test(x) : /^\d+(?:\.\d+)?$(?![\s\S])/.test(x)) && !/[\r\n]/.test(x))
-    if (['Code', 'Name', 'ContentJson'].includes(v.field) ? v.before !== null || v.after !== null : !safeValue(v.before) || !safeValue(v.after)) return invalid()
+      v.field === 'State' ? ['Pending', 'Receiving', 'CleanTransport', 'Abandoned', 'SyntheticUnverified', 'Draft', 'Uploaded', 'MappingDraft', 'Previewed', 'Committed'].includes(x) : ['CompanyId', 'RequestOwner'].includes(field) ? isGuid(x) : ['PlannedStart', 'PlannedEnd', 'RequestedStart', 'RequestedEnd'].includes(field) ? timestamp(x) : v.field === 'SourceVersion' ? ['poseidon-v46.3-20261030/14.02/1914-1931/TUG-FOUNDATION-01', '14.02:2316:1932-1957:v46.3'].includes(x) : v.field === 'Kind' ? ['Ship', 'Tug', 'Source', 'Requirement'].includes(x) : (v.field === 'Revision' ? /^\d+$(?![\s\S])/.test(x) : /^\d+(?:\.\d+)?$(?![\s\S])/.test(x)) && !/[\r\n]/.test(x))
+    if (['Code', 'Name', 'ContentJson'].includes(field) ? v.before !== null || v.after !== null : !safeValue(v.before) || !safeValue(v.after)) return invalid()
     return v as Change
   })
 }

@@ -1,10 +1,11 @@
 import { readFileSync } from 'node:fs'
 import { webcrypto } from 'node:crypto'
+import { fileURLToPath } from 'node:url'
 import { runInNewContext } from 'node:vm'
 import { describe, expect, it, vi } from 'vitest'
 import { versionOfflineShell, type StaticArtifact } from './offline-shell-build'
 
-const template = readFileSync(new URL('../public/offline-shell.js', import.meta.url), 'utf8')
+const template = readFileSync(fileURLToPath(import.meta.url).replace(/scripts[\\/]offline-shell-build\.test\.ts$/, 'public/offline-shell.js'), 'utf8')
 const fixtures: StaticArtifact[] = [
   { fileName: 'index.html', bytes: '<!doctype html><div id="root"></div><script src="/assets/app-a1.js"></script>' },
   { fileName: 'assets/app-a1.js', bytes: 'export const publicBuild = 1' },

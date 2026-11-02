@@ -29,7 +29,7 @@ public sealed class ProfileOwningConstructionRecord : Migration
                 new[] { "TenantId", "ConstructionFileId", "VesselId", "ConstructionFileRevision", "ConstructionFileChecksum" }, "core");
             b.AddForeignKey("FK_" + table + "_ConstructionRecord", table,
                 new[] { "TenantId", "ConstructionFileId", "VesselId", "ConstructionFileRevision", "ConstructionFileChecksum" },
-                "StoredFiles", new[] { "TenantId", "Id", "VesselId", "Revision", "Checksum" }, "core", "files", onDelete: ReferentialAction.Restrict);
+                "StoredFiles", principalColumns: new[] { "TenantId", "Id", "VesselId", "Revision", "Checksum" }, schema: "core", principalSchema: "files", onDelete: ReferentialAction.Restrict);
         }
         // Existing rows remain null; no historical record, verification or source is invented.
     }

@@ -8,7 +8,7 @@ public sealed class ErpBoundaryArchitectureTests
     public void Actual_relational_model_has_no_PO_AP_AR_payroll_or_finance_ledger_aggregate_tables() {
         var options = new DbContextOptionsBuilder<PoseidonDbContext>()
             .UseNpgsql("Host=127.0.0.1;Database=synthetic_contract_model;Username=synthetic").Options;
-        using var db = new PoseidonDbContext(options, Guid.NewGuid(), ActorContext.User(Guid.NewGuid(), "synthetic-contract-model"));
+        using var db = new PoseidonDbContext(options, Guid.NewGuid(), new ActorContext("synthetic-contract-model", "User", "synthetic-contract-model"));
         var forbidden = new[] { "PURCHASEORDER", "REQUESTFORQUOTATION", "ACCOUNTSPAYABLE", "ACCOUNTPAYABLE", "ACCOUNTSRECEIVABLE",
             "ACCOUNTRECEIVABLE", "PAYROLL", "GENERALLEDGER", "FINANCELEDGER", "FINANCIALLEDGER", "CHARTERPARTY" };
         var tables = db.Model.GetEntityTypes().Select(t => t.GetTableName()).Where(t => t != null).Select(t => t!.Replace("_", "", StringComparison.Ordinal).ToUpperInvariant()).Distinct().ToArray();

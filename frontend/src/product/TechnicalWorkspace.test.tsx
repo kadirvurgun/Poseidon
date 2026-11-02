@@ -27,7 +27,7 @@ beforeEach(() => {
   vi.stubGlobal('fetch', fetcher)
 })
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); fetcher.mockReset() })
-async function english() { await userEvent.click(screen.getByRole('button', { name: 'EN', exact: true })); await screen.findByRole('button', { name: 'Add draft', exact: true }) }
+async function english() { await userEvent.click(screen.getByRole('button', { name: 'EN' })); await screen.findByRole('button', { name: 'Add draft' }) }
 
 describe('DEV-052/053 authored product behavior (mock UI only; execution deferred)', () => {
   it('connects the actual forest to deep-link selection and reveals selected ancestry', async () => {
@@ -41,27 +41,27 @@ describe('DEV-052/053 authored product behavior (mock UI only; execution deferre
   it('keeps the complete forest when filtering and selects matching records', async () => {
     render(<TechnicalWorkspace />); await english()
     await userEvent.type(screen.getByLabelText('Filter list by name or code'), 'pump')
-    await userEvent.click(screen.getByRole('button', { name: 'FICTIONAL pump', exact: true }))
+    await userEvent.click(screen.getByRole('button', { name: 'FICTIONAL pump' }))
     expect(screen.getByRole('treeitem', { name: 'FICTIONAL engine' })).toBeVisible()
     expect(location.search).toBe(`?id=${child}`)
   })
   it('preserves dirty drafts when navigation is declined', async () => {
     render(<TechnicalWorkspace />); await english()
-    await userEvent.click(screen.getByRole('button', { name: 'Add draft', exact: true }))
+    await userEvent.click(screen.getByRole('button', { name: 'Add draft' }))
     await userEvent.type(screen.getByLabelText('Equipment name'), 'FICTIONAL retained')
-    await userEvent.click(screen.getByRole('button', { name: 'Plans', exact: true }))
-    await userEvent.click(screen.getByRole('button', { name: 'Stay', exact: true }))
+    await userEvent.click(screen.getByRole('button', { name: 'Plans' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Stay' }))
     expect(screen.getByLabelText('Equipment name')).toHaveValue('FICTIONAL retained')
   })
   it('freezes uncertain payload and reuses exact command ID and idempotency key', async () => {
     let attempts = 0; mutate = async () => { if (attempts++ === 0) throw new TypeError('synthetic transport loss'); return json({ id, version: 8, revision: 2 }) }
     render(<TechnicalWorkspace />); await english()
-    await userEvent.click(screen.getByRole('button', { name: 'Add draft', exact: true }))
+    await userEvent.click(screen.getByRole('button', { name: 'Add draft' }))
     await userEvent.type(screen.getByLabelText('Equipment name'), 'FICTIONAL new')
-    await userEvent.click(screen.getByRole('button', { name: 'Save draft', exact: true }))
+    await userEvent.click(screen.getByRole('button', { name: 'Save draft' }))
     await screen.findByText('Result uncertain. Retry the same attempt before editing.')
     expect(screen.getByLabelText('Equipment name')).toBeDisabled()
-    await userEvent.click(screen.getByRole('button', { name: 'Retry same attempt', exact: true }))
+    await userEvent.click(screen.getByRole('button', { name: 'Retry same attempt' }))
     await screen.findByText('Draft saved.')
     const posts = fetcher.mock.calls.filter(([, init]) => init?.method === 'POST')
     expect(posts).toHaveLength(2); expect(posts[0][1].body).toBe(posts[1][1].body)
@@ -70,11 +70,11 @@ describe('DEV-052/053 authored product behavior (mock UI only; execution deferre
   it('blocks stale or revoked writes and retains entered values until discard', async () => {
     mutate = async () => json({ code: 'version_conflict' }, 409)
     render(<TechnicalWorkspace />); await english()
-    await userEvent.click(screen.getByRole('button', { name: 'Add draft', exact: true }))
+    await userEvent.click(screen.getByRole('button', { name: 'Add draft' }))
     await userEvent.type(screen.getByLabelText('Equipment name'), 'FICTIONAL conflict')
-    await userEvent.click(screen.getByRole('button', { name: 'Save draft', exact: true }))
+    await userEvent.click(screen.getByRole('button', { name: 'Save draft' }))
     await screen.findByText('The record changed. Reload and resolve your changes.')
-    expect(screen.getByRole('button', { name: 'Save draft', exact: true })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Save draft' })).toBeDisabled()
     expect(screen.getByLabelText('Equipment name')).toHaveValue('FICTIONAL conflict')
   })
   it('rejects incomplete/paged snapshots instead of fabricating a valid forest', async () => {
@@ -86,10 +86,10 @@ describe('DEV-052/053 authored product behavior (mock UI only; execution deferre
   it('uses exact strings for decimal declarations and does not fill missing readings with zero', async () => {
     window.history.replaceState({}, '', `/app/maintenance-plan/${vessel}`)
     render(<TechnicalWorkspace />); await english()
-    await userEvent.click(screen.getByRole('button', { name: 'Add draft', exact: true }))
+    await userEvent.click(screen.getByRole('button', { name: 'Add draft' }))
     await userEvent.selectOptions(screen.getByLabelText('Trigger', { exact: true }), 'Meter')
     await userEvent.type(screen.getByLabelText('Interval value (exact decimal)'), '0.100000000000000002')
-    await userEvent.click(screen.getByRole('button', { name: 'Save draft', exact: true }))
+    await userEvent.click(screen.getByRole('button', { name: 'Save draft' }))
     await waitFor(() => expect(fetcher.mock.calls.some(([, init]) => init?.method === 'POST')).toBe(true))
     const post = fetcher.mock.calls.find(([, init]) => init?.method === 'POST')!
     const body = JSON.parse(post[1].body)

@@ -151,7 +151,7 @@ public sealed partial class DirectoryWorkspaceTests
         var key = Guid.NewGuid().ToString(); var other = sameKey ? key : Guid.NewGuid().ToString();
         var race = await Task.WhenAll(Send(client, LegacyImportPath(b.Id), Protect(b), key), Send(client, LegacyImportPath(b.Id), Protect(b), other));
         Assert.Contains(race, r => r.StatusCode == HttpStatusCode.OK); Assert.All(race, r => Assert.True(r.StatusCode is HttpStatusCode.OK or HttpStatusCode.Conflict));
-        if (!sameKey) { Assert.Single(race.Where(r => r.StatusCode == HttpStatusCode.OK)); Assert.Single(race.Where(r => r.StatusCode == HttpStatusCode.Conflict)); }
+        if (!sameKey) { Assert.Single(race, r => r.StatusCode == HttpStatusCode.OK); Assert.Single(race, r => r.StatusCode == HttpStatusCode.Conflict); }
         var winner = race[0].StatusCode == HttpStatusCode.OK ? key : other;
         Assert.Equal(HttpStatusCode.OK, (await Send(client, LegacyImportPath(b.Id), Protect(b), winner)).StatusCode);
         await using var db = Db(); Assert.Equal(1, await db.CommandReceipts.CountAsync(x => x.ResourceId == b.Id, Ct));

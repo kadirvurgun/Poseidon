@@ -31,7 +31,7 @@ export function decodeCatalog(value: unknown, vessel: string): Catalog {
     for (const p of c.positions) {
       if (!keys(p, ['tenantId', 'vesselId', 'positionId', 'code', 'rank', 'capacity', 'department', 'provenance', 'from', 'to']) ||
         !isGuid(p.tenantId) || p.vesselId !== vessel || !isGuid(p.positionId) || !text(p.code, 64) || !text(p.provenance, 32) ||
-        !nullable(p.rank, 100) || !nullable(p.capacity, 100) || !nullable(p.department, 100) || p.from !== null && !calendar(p.from) || p.to !== null && !calendar(p.to)) return invalid()
+        !nullable(p.rank, 100) || !nullable(p.capacity, 100) || !nullable(p.department, 100) || p.from !== null && !(typeof p.from === "string" && calendar(p.from)) || p.to !== null && !(typeof p.to === "string" && calendar(p.to))) return invalid()
     }
     previous = Number(e.revision)
   }

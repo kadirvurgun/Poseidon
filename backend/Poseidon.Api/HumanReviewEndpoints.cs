@@ -90,7 +90,7 @@ public static class HumanReviewEndpoints
     {
         foreach (var (route, kind) in new[] { ("verifications", "Verification"), ("decisions", "Decision") }) {
             var g = app.MapGroup("/api/v1/" + route).RequireAuthorization("DirectoryRead");
-            g.MapPost("", (HttpContext h) => Save(h, kind, null)).Accepts<HumanReviewCommand>("application/json").Produces<HumanReviewDto>();
+            g.MapPost("", (Func<HttpContext, Task<IResult>>)((HttpContext h) => Save(h, kind, null))).Accepts<HumanReviewCommand>("application/json").Produces<HumanReviewDto>();
             g.MapPost("/{id:guid}/events", (Guid id, HttpContext h) => Save(h, kind, id)).Accepts<HumanReviewCommand>("application/json").Produces<HumanReviewDto>();
         }
         foreach (var route in new[] { "regulatory-trace", "verification-gates", "audit-ready" })

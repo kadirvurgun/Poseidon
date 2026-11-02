@@ -53,12 +53,12 @@ public static class LifecycleApplicabilityEndpoints
         });
         rules.MapGet("", (HttpContext h, PoseidonDbContext db, SecurityAudit a) => List(h, db, a, null));
         rules.MapGet("/{id:guid}/versions", (Guid id, HttpContext h, PoseidonDbContext db, SecurityAudit a) => List(h, db, a, id));
-        rules.MapPost("", (HttpContext h) => Command(h, "author", null)).Accepts<RuleAuthorCommand>("application/json").Produces<RuleDraftDto>();
+        rules.MapPost("", (Func<HttpContext, Task<IResult>>)((HttpContext h) => Command(h, "author", null))).Accepts<RuleAuthorCommand>("application/json").Produces<RuleDraftDto>();
         rules.MapPut("/{id:guid}", (Guid id, HttpContext h) => Command(h, "author", id)).Accepts<RuleAuthorCommand>("application/json").Produces<RuleDraftDto>();
         rules.MapPost("/{id:guid}/review", (Guid id, HttpContext h) => Command(h, "review", id)).Accepts<RuleReviewCommand>("application/json").Produces<RuleDraftDto>();
         var eval = app.MapGroup("/api/v1/applicability").RequireAuthorization("DirectoryRead");
-        eval.MapPost("/evaluate", (HttpContext h) => Command(h, "evaluate", null)).Accepts<EvaluateCommand>("application/json").Produces<EvaluationDto>();
-        eval.MapPost("/simulate", (HttpContext h) => Command(h, "simulate", null)).Accepts<EvaluateCommand>("application/json").Produces<EvaluationDto>();
+        eval.MapPost("/evaluate", (Func<HttpContext, Task<IResult>>)((HttpContext h) => Command(h, "evaluate", null))).Accepts<EvaluateCommand>("application/json").Produces<EvaluationDto>();
+        eval.MapPost("/simulate", (Func<HttpContext, Task<IResult>>)((HttpContext h) => Command(h, "simulate", null))).Accepts<EvaluateCommand>("application/json").Produces<EvaluationDto>();
         eval.MapGet("/evaluations/{id:guid}/current", Current);
         eval.MapGet("/evaluations/{id:guid}", Detail).Produces<EvaluationDto>();
         eval.MapGet("/evaluations", History);

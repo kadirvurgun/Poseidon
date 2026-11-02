@@ -13,13 +13,14 @@ afterEach(() => { vi.unstubAllGlobals(); vi.restoreAllMocks(); window.history.re
 it('guards the actual Tug workspace link and retains a cancelled unsaved vessel edit', async () => {
   window.history.replaceState(null, '', `/app/fleet/${id}`)
   vi.stubGlobal('fetch', vi.fn(async (url: string) => response(
-    url.includes('auth/session') ? { authenticated: true, canRead: true, canReadCompanies: false, canCreate: false, canSearch: false, csrfToken: 'synthetic' }
-      : url === '/api/v1/workspace' ? { destinations: [{ key: 'tug-command', href: '/app/tug-command' }], canSearch: false }
+    url.includes('auth/session') ? { authenticated: true, canRead: true, canReadCompanies: false, canCreate: false, canSearch: false, tenantId: id, actorId: vessel.companyId, csrfToken: 'synthetic' }
+      : url.includes('/workspace/lenses') ? { tenantId: id, actorId: vessel.companyId, vesselId: id, mode: 'Tug', state: 'Configured', version: 'synthetic-v1', canSearch: false, lenses: [{ reference: id, tr: 'KURGUSAL rol', en: 'FICTIONAL role', items: [{ key: 'tug-command', href: `/app/tug-command?vessel=${id}`, group: 'daily' }] }] } : url === '/api/v1/workspace' ? { destinations: [{ key: 'tug-command', href: `/app/tug-command?vessel=${id}` }], canSearch: false }
         : url.includes('vessels?') ? { items: [vessel], offset: 0, limit: 25, hasMore: false } : vessel)))
   const user = userEvent.setup(); render(<ProductApp />)
   await user.click(await screen.findByRole('button', { name: /^Düzenle$/ }))
   await user.type(screen.getByLabelText('Ad *'), ' retained')
-  await user.click(await screen.findByRole('link', { name: 'Römorkör operasyonları' }))
+  await user.selectOptions(await screen.findByLabelText('Menü merceği'), id)
+  await user.click(await screen.findByRole('button', { name: 'Römorkör bağlamı' }))
   expect(await screen.findByRole('dialog')).toBeVisible()
   expect(window.location.pathname).toBe(`/app/fleet/${id}`)
   await user.click(screen.getByRole('button', { name: 'Düzenlemeye devam et' }))

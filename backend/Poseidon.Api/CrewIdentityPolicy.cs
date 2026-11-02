@@ -24,7 +24,7 @@ public sealed class CrewIdentityPolicy
     public bool Configured => Version.Length is > 0 and <= 80 && Purpose.Length is > 0 and <= 80 &&
         SourceReference.Length is > 0 and <= 512 && TenantIds.Length > 0 && !TenantIds.Contains(Guid.Empty) &&
         (EmployeeNumberMode is "MutableDeclaration" or "ImmutableAfterCapture") &&
-        Fields.Length == 2 && Fields.All(f => f.Field is { } field && Enum.IsDefined(field) && f.Purpose == Purpose &&
+        Fields.Length == 2 && Fields.All(f => f.Field is { } configuredField && Enum.IsDefined(configuredField) && f.Purpose == Purpose &&
             f.ReadCapability == "crew.profile.identity.read" && f.WriteCapability == "crew.profile.identity.write") &&
         Fields.Select(f => f.Field).Distinct().Count() == 2;
     public bool Allows(TrustedActor a, bool write) => Configured && TenantIds.Contains(a.TenantId) &&

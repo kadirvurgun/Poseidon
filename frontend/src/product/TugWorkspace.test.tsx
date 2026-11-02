@@ -29,12 +29,12 @@ beforeEach(() => {
   vi.stubGlobal('fetch', fetcher)
 })
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); fetcher.mockReset() })
-async function english() { await userEvent.click(screen.getByRole('button', { name: 'EN', exact: true })); await screen.findByLabelText('Assisted vessel', { exact: true }) }
+async function english() { await userEvent.click(screen.getByRole('button', { name: 'EN' })); await screen.findByLabelText('Assisted vessel', { exact: true }) }
 describe('T-TUG-001/002/003 UI behavior; mocked API, all execution DEFERRED', () => {
   it('keeps exact BP and optional end in an explicitly incomplete draft request', async () => {
     render(<TugWorkspace />); await english()
     await userEvent.type(screen.getByLabelText('Required BP (tonnes, exact decimal)'), '45.01')
-    await userEvent.click(screen.getByRole('button', { name: 'Save draft', exact: true }))
+    await userEvent.click(screen.getByRole('button', { name: 'Save draft' }))
     await screen.findByText('Draft saved. Operational approval remains unavailable.')
     const write = fetcher.mock.calls.find(c => c[1]?.method === 'POST')!
     expect(JSON.parse(write[1].body).inputs.requiredBollardPull).toBe('45.01')
@@ -44,9 +44,9 @@ describe('T-TUG-001/002/003 UI behavior; mocked API, all execution DEFERRED', ()
     let count = 0; mutate = async init => { if (count++ === 0) throw new TypeError('synthetic transport loss'); return json({ ...row, id: JSON.parse(init.body as string).clientId }) }
     render(<TugWorkspace />); await english()
     await userEvent.type(screen.getByLabelText('Assisted vessel', { exact: true }), 'FICTIONAL retained')
-    await userEvent.click(screen.getByRole('button', { name: 'Save draft', exact: true }))
+    await userEvent.click(screen.getByRole('button', { name: 'Save draft' }))
     await screen.findByText(/Save outcome uncertain/); expect(screen.getByLabelText('Assisted vessel', { exact: true })).toBeDisabled()
-    await userEvent.click(screen.getByRole('button', { name: 'Retry', exact: true }))
+    await userEvent.click(screen.getByRole('button', { name: 'Retry' }))
     await screen.findByText('Draft saved. Operational approval remains unavailable.')
     const attempts = fetcher.mock.calls.filter(c => c[1]?.method === 'POST')
     expect(attempts).toHaveLength(2); expect(attempts[0][1].body).toBe(attempts[1][1].body)
@@ -55,14 +55,14 @@ describe('T-TUG-001/002/003 UI behavior; mocked API, all execution DEFERRED', ()
   it('protects dirty navigation and retains the draft when the user stays', async () => {
     render(<TugWorkspace />); await english()
     await userEvent.type(screen.getByLabelText('Assisted vessel', { exact: true }), 'FICTIONAL keep')
-    await userEvent.click(screen.getByRole('link', { name: 'Job board', exact: true }))
-    await userEvent.click(screen.getByRole('button', { name: 'Stay', exact: true }))
+    await userEvent.click(screen.getByRole('link', { name: 'Job board' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Keep editing' }))
     expect(screen.getByLabelText('Assisted vessel', { exact: true })).toHaveValue('FICTIONAL keep')
     expect(location.pathname).toBe('/app/tug-job-intake')
   })
   it('shows actual coverage and Unknown without claiming assigned tugs or approved planned times', async () => {
     history.replaceState(null, '', `/app/tug-job-board?vessel=${vessel}`)
-    render(<TugWorkspace />); await userEvent.click(screen.getByRole('button', { name: 'EN', exact: true }))
+    render(<TugWorkspace />); await userEvent.click(screen.getByRole('button', { name: 'EN' }))
     await screen.findByRole('link', { name: 'TUG-SYNTHETIC' })
     expect(screen.getByText('Controlled assignment data unavailable')).toBeVisible()
     expect(screen.getByText('Requested window only; no approved plan')).toBeVisible()
@@ -72,7 +72,7 @@ describe('T-TUG-001/002/003 UI behavior; mocked API, all execution DEFERRED', ()
   })
   it('denies malformed duplicate query selectors before fetching product data', async () => {
     history.replaceState(null, '', `/app/tug-job-board?vessel=${vessel}&vessel=${id}`)
-    render(<TugWorkspace />); await userEvent.click(screen.getByRole('button', { name: 'EN', exact: true }))
+    render(<TugWorkspace />); await userEvent.click(screen.getByRole('button', { name: 'EN' }))
     await screen.findByText('Data unavailable. Reconnect and retry.')
     expect(fetcher).not.toHaveBeenCalled()
   })
