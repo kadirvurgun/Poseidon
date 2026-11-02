@@ -68,12 +68,14 @@ class CurrentSourceTraceTests(unittest.TestCase):
         self.root = Path(__file__).resolve().parents[1]
         self.package = json.loads((self.root / "contracts/trace/pilot-capabilities.v1.json").read_text(encoding="utf-8"))
 
-    def test_current_inventory_retains_ten_and_reports_actual_absent_definitions(self):
+    def test_current_inventory_defines_ten_without_claiming_current_passing_journeys(self):
         result = validate(self.package, self.root)
         self.assertEqual([], result["structureErrors"])
-        for number in (3, 10):
-            self.assertIn(f"capability-{number}:source-definition-gap", result["criticalGaps"])
+        self.assertEqual([], result["criticalGaps"])
+        self.assertEqual(10, len(self.package["capabilities"]))
+        self.assertEqual(149, sum(len(c.get("definitionChains", [])) for c in self.package["capabilities"]))
         self.assertEqual(10, len(result["executionGaps"]))
+        self.assertTrue(result["implementationGaps"])
         self.assertFalse(result["accepted"])
 
     def test_safety_capture_maps_real_source_fields_to_its_backlog_not_the_empty_inbox(self):
@@ -108,6 +110,83 @@ class CurrentSourceTraceTests(unittest.TestCase):
         result = validate(self.package, self.root)
         self.assertIn("source_mismatched_capability_screen", result["structureErrors"])
         self.assertIn("capability-9:missing-critical-source-fields", result["criticalGaps"])
+
+    def test_zero_field_today_uses_existing_source_entities_and_original_backlog_test(self):
+        from source_contracts import SourceRecords
+        records = SourceRecords(self.package["sources"], self.root)
+        capability = self.package["capabilities"][2]
+        projection = capability["projectionDefinition"]
+        self.assertEqual([], capability["definitionChains"])
+        self.assertEqual("0", projection["fieldCount"]["value"])
+        records.resolve(projection["fieldCount"])
+        self.assertEqual({"Shared": "Vessel", "Ship": "VoyageContext", "Tug": "TugJob"},
+                         {entity["mode"]: entity["token"] for entity in projection["entities"]})
+        for entity in projection["entities"]:
+            self.assertIn(entity["token"], records.resolve(entity["ref"]).split(", "))
+        self.assertEqual("DEV-023", projection["backlog"]["value"])
+        self.assertEqual("T-S2-004", projection["backlogTest"]["value"])
+        records.resolve(projection["backlogTest"])
+
+    def test_projection_cannot_be_used_to_skip_a_field_bearing_screen(self):
+        capability = self.package["capabilities"][0]
+        capability["projectionDefinition"] = copy.deepcopy(self.package["capabilities"][2]["projectionDefinition"])
+        capability["definitionChains"] = []
+        result = validate(self.package, self.root)
+        self.assertIn("source_projection_or_composition_mismatch", result["structureErrors"])
+        self.assertIn("capability-1:missing-critical-source-fields", result["criticalGaps"])
+
+    def test_today_missing_tug_entity_or_wrong_original_mode_source_is_rejected(self):
+        baseline = copy.deepcopy(self.package)
+        del self.package["capabilities"][2]["projectionDefinition"]["entities"][2]
+        self.assertIn("source_projection_or_composition_mismatch", validate(self.package, self.root)["structureErrors"])
+        self.package = baseline
+        entities = self.package["capabilities"][2]["projectionDefinition"]["entities"]
+        entities[1]["ref"] = copy.deepcopy(entities[2]["ref"])
+        self.assertIn("source_projection_or_composition_mismatch", validate(self.package, self.root)["structureErrors"])
+
+    def test_today_wrong_backlog_test_or_real_but_wrong_screen_is_rejected(self):
+        baseline = copy.deepcopy(self.package)
+        self.package["capabilities"][2]["projectionDefinition"]["backlogTest"] = {
+            "source": "backlog", "locator": "sheet:Backlog/row:25", "column": "M", "value": "T-S2-005"}
+        self.assertIn("source_projection_or_composition_mismatch", validate(self.package, self.root)["structureErrors"])
+        self.package = baseline
+        self.package["capabilities"][2]["projectionDefinition"]["screen"] = {
+            "source": "trace", "locator": "sheet:196 Ekran v46.3/row:2", "column": "A", "value": "safety-inbox"}
+        self.assertIn("source_projection_or_composition_mismatch", validate(self.package, self.root)["structureErrors"])
+
+    def test_mixed_fleet_requires_every_original_ship_and_tug_uat_definition_and_value(self):
+        baseline = copy.deepcopy(self.package)
+        composition = self.package["capabilities"][9]["compositionDefinition"]
+        self.assertEqual(16, len(composition["mandatoryUat"]))
+        composition["mandatoryUat"] = [ref for ref in composition["mandatoryUat"] if ref["value"].startswith("S-UAT-")]
+        self.assertIn("source_projection_or_composition_mismatch", validate(self.package, self.root)["structureErrors"])
+        self.package = baseline
+        self.package["capabilities"][9]["compositionDefinition"]["valueProof"]["value"] = "Both modes passed"
+        self.assertIn("source_projection_or_composition_mismatch", validate(self.package, self.root)["structureErrors"])
+
+    def test_composite_cannot_hide_a_missing_safety_capture_field(self):
+        self.package["capabilities"][8]["definitionChains"].pop()
+        result = validate(self.package, self.root)
+        self.assertIn("capability-9:missing-critical-source-fields", result["criticalGaps"])
+        self.assertIn("capability-10:incomplete-composed-definition", result["criticalGaps"])
+
+    def test_composite_self_cycle_duplicate_or_boolean_identity_cannot_shrink_scope(self):
+        baseline = copy.deepcopy(self.package)
+        for invalid in ([1, 2, 3, 4, 5, 6, 7, 8, 10], [1] * 9, [True, 2, 3, 4, 5, 6, 7, 8, 9]):
+            with self.subTest(children=invalid):
+                self.package = copy.deepcopy(baseline)
+                self.package["capabilities"][9]["compositionDefinition"]["capabilities"] = invalid
+                self.assertIn("source_projection_or_composition_mismatch", validate(self.package, self.root)["structureErrors"])
+
+    def test_source_definition_forms_cannot_claim_a_passed_journey(self):
+        baseline = copy.deepcopy(self.package)
+        for number, field in ((3, "projectionDefinition"), (10, "compositionDefinition")):
+            self.package = copy.deepcopy(baseline)
+            self.package["capabilities"][number - 1][field]["state"] = "PASS"
+            result = validate(self.package, self.root)
+            self.assertIn("source_projection_or_composition_mismatch", result["structureErrors"])
+            self.assertEqual(10, len(result["executionGaps"]))
+            self.assertFalse(result["accepted"])
 
     def test_invented_requirement_is_not_resolved_by_existing_file(self):
         self.package["capabilities"][0]["definitionChains"][0]["requirement"]["value"] = "FR-invented"

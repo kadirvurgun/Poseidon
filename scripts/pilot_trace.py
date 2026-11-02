@@ -11,6 +11,82 @@ STATES = {"PLANNED", "DEFINED", "AUTHORED", "RUN", "PASS"}
 KINDS = {"requirement", "screen", "api", "entity", "backlog", "test"}
 
 
+def definition_ref(records, reference, source, locator, column=None, value=None):
+    """Require an exact original source address/value, not an invented canonical ID."""
+    if (not isinstance(reference, dict) or reference.get("source") != source or
+            reference.get("locator") != locator or reference.get("column") != column or
+            not isinstance(reference.get("value"), str) or
+            value is not None and reference["value"] != value):
+        raise ValueError("definition_reference")
+    return records.resolve(reference)
+
+
+def projection_definition(capability, records):
+    projection = capability.get("projectionDefinition")
+    if projection is None:
+        return False
+    if (capability.get("number") != 3 or not isinstance(projection, dict) or
+            projection.get("kind") != "SOURCE_PROJECTION" or projection.get("state") != "DEFINED"):
+        raise ValueError("projection_kind")
+    definition_ref(records, projection["requirement"], "trace", capability["locator"], "D", capability["exitProof"])
+    definition_ref(records, projection["scope"], "trace", capability["locator"], "C", "Ship + Tug / all roles")
+    screen = "sheet:196 Ekran v46.3/row:56"
+    definition_ref(records, projection["screen"], "trace", screen, "A", "poseidon-today")
+    if capability.get("definitionScreen") != projection["screen"]:
+        raise ValueError("projection_screen_binding")
+    definition_ref(records, projection["api"], "trace", screen, "G", "API /api/v1/poseidon-today")
+    definition_ref(records, projection["fieldCount"], "trace", screen, "D", "0")
+    principle = definition_ref(records, projection["projectionPrinciple"], "erd", "paragraph:6")
+    if "196 ekran" not in principle or "projection" not in principle:
+        raise ValueError("projection_principle")
+    required = {"Shared": ("Vessel", 26), "Ship": ("VoyageContext", 34), "Tug": ("TugJob", 38)}
+    entities = projection["entities"]
+    if not isinstance(entities, list) or len(entities) != 3 or {e["mode"] for e in entities} != set(required):
+        raise ValueError("projection_entity_inventory")
+    for entity in entities:
+        token, paragraph = required[entity["mode"]]
+        original = definition_ref(records, entity["ref"], "erd", f"paragraph:{paragraph}")
+        if entity.get("token") != token or token not in original.split(", "):
+            raise ValueError("projection_entity_source")
+    row = "sheet:Backlog/row:24"
+    definition_ref(records, projection["backlog"], "backlog", row, "A", "DEV-023")
+    definition_ref(records, projection["backlogTest"], "backlog", row, "M", "T-S2-004")
+    definition_ref(records, projection["backlogScreen"], "backlog", row, "H", "poseidon-today / /api/v1/today")
+    return True
+
+
+def composition_definition(capability, records):
+    composition = capability.get("compositionDefinition")
+    if composition is None:
+        return False
+    if (capability.get("number") != 10 or not isinstance(composition, dict) or
+            composition.get("kind") != "CAPABILITY_COMPOSITION" or composition.get("state") != "DEFINED"):
+        raise ValueError("composition_kind")
+    definition_ref(records, composition["requirement"], "trace", capability["locator"], "D", capability["exitProof"])
+    definition_ref(records, composition["scope"], "trace", capability["locator"], "C", "Mixed fleet")
+    children = composition["capabilities"]
+    if not isinstance(children, list) or any(type(n) is not int for n in children) or sorted(children) != list(range(1, 10)):
+        raise ValueError("composition_inventory")
+    row = "sheet:Backlog/row:122"
+    definition_ref(records, composition["backlog"], "backlog", row, "A", "DEV-121")
+    definition_ref(records, composition["backlogTest"], "backlog", row, "M", "T-V463-007")
+    acceptance = definition_ref(records, composition["acceptance"], "backlog", row, "G")
+    if not all(term in acceptance for term in ("1 ship + 1 tug", "time-to-complete", "signed UAT")):
+        raise ValueError("composition_value_scope")
+    expected = {loc: value for loc, value in records.records("uat").items()
+                if re.fullmatch(r"[ST]-UAT-[0-9]{2}", value)}
+    actual = composition["mandatoryUat"]
+    if (not isinstance(actual, list) or len(actual) != len(expected) or
+            {ref["locator"] for ref in actual} != set(expected) or
+            not any(value.startswith("S-UAT-") for value in expected.values()) or
+            not any(value.startswith("T-UAT-") for value in expected.values())):
+        raise ValueError("composition_uat_inventory")
+    for reference in actual:
+        definition_ref(records, reference, "uat", reference["locator"], value=expected[reference["locator"]])
+    definition_ref(records, composition["valueProof"], "uat", "paragraph:184", value="Measured evidence that both modes are used and useful.")
+    return True
+
+
 def validate(package, root):
     errors = set(); gaps = set(); implementation = set(); execution = set()
     sources = package.get("sources", {})
@@ -30,6 +106,7 @@ def validate(package, root):
     records = SourceRecords(sources, root)
     node_ids = set()
     definition_ids = set()
+    composed = set()
     for capability in capabilities:
         number = capability.get("number")
         if capability.get("source") not in sources or capability.get("locator") != f"sheet:Pilot Scope v46.2/row:{number + 1}":
@@ -48,7 +125,18 @@ def validate(package, root):
             except (OSError, ValueError, KeyError):
                 errors.add("source_definition_mismatch")
             chains = capability.get("definitionChains", [])
-            if not chains:
+            alternate = False
+            try:
+                projected = projection_definition(capability, records)
+                combined = composition_definition(capability, records)
+                if (projected or combined) and chains:
+                    raise ValueError("mixed_definition_forms")
+                alternate = projected or combined
+                if combined:
+                    composed.add(number)
+            except (OSError, ValueError, KeyError, TypeError, AttributeError):
+                errors.add("source_projection_or_composition_mismatch")
+            if not chains and not alternate:
                 gaps.add(f"capability-{number}:source-definition-gap")
                 if not capability.get("definitionGap"):
                     errors.add("undeclared_source_gap")
@@ -123,6 +211,12 @@ def validate(package, root):
                 implementation.add(f"capability-{number}:declared-implementation-gap")
         if not any(n.get("kind") == "test" and n.get("state") == "PASS" for n in nodes):
             execution.add(f"capability-{number}:no-passing-current-journey")
+    # The composite cannot hide a missing child field/path or replace its nine
+    # owning source inventories with one nominal mixed-fleet link.
+    for number in composed:
+        composition = next(c["compositionDefinition"] for c in capabilities if c["number"] == number)
+        if any(gap.startswith(f"capability-{child}:") for child in composition["capabilities"] for gap in gaps):
+            gaps.add(f"capability-{number}:incomplete-composed-definition")
     # DEV-007 is a trace-definition criterion, not a new demand to execute or
     # implement every future capability before defining its chain. Report those
     # real product/release gaps separately, without awarding trace acceptance.

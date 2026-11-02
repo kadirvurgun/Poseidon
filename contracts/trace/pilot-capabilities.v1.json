@@ -13,6 +13,10 @@
     "uat": {
       "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
       "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49"
+    },
+    "erd": {
+      "path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab"
     }
   },
   "capabilities": [
@@ -2149,12 +2153,98 @@
         "value": "Mode-aware POSEIDON Today"
       },
       "definitionChains": [],
-      "definitionGap": "SOURCE_DEFINITION_ABSENT: current2316 field sheet has no poseidon-today rows; screen/API definition exists but no field FR/entity/TC chain; independent source review required.",
       "definitionScreen": {
         "source": "trace",
         "locator": "sheet:196 Ekran v46.3/row:56",
         "column": "A",
         "value": "poseidon-today"
+      },
+      "projectionDefinition": {
+        "kind": "SOURCE_PROJECTION",
+        "state": "DEFINED",
+        "requirement": {
+          "source": "trace",
+          "locator": "sheet:Pilot Scope v46.2/row:4",
+          "column": "D",
+          "value": "Ship shows voyage tasks; tug shows next jobs/readiness"
+        },
+        "scope": {
+          "source": "trace",
+          "locator": "sheet:Pilot Scope v46.2/row:4",
+          "column": "C",
+          "value": "Ship + Tug / all roles"
+        },
+        "screen": {
+          "source": "trace",
+          "locator": "sheet:196 Ekran v46.3/row:56",
+          "column": "A",
+          "value": "poseidon-today"
+        },
+        "api": {
+          "source": "trace",
+          "locator": "sheet:196 Ekran v46.3/row:56",
+          "column": "G",
+          "value": "API /api/v1/poseidon-today"
+        },
+        "fieldCount": {
+          "source": "trace",
+          "locator": "sheet:196 Ekran v46.3/row:56",
+          "column": "D",
+          "value": "0"
+        },
+        "projectionPrinciple": {
+          "source": "erd",
+          "locator": "paragraph:6",
+          "value": "POSEIDON veri modeli ekran-merkezli değil, domain ve yaşam-döngüsü merkezli kurulacaktır. 196 ekran aynı entity'lerin farklı rol/context projection'larıdır; ekran başına ayrı tablo oluşturulmayacaktır. Gemi ve Römorkör aynı çekirdek Tenant/Company/Vessel/Person/Asset/Evidence/Audit altyapısını kullanır; TugJob/TowagePlan/TowageExecution gibi römorköre özgü aggregate'lar yalnız Tug Mode'da aktive olur."
+        },
+        "entities": [
+          {
+            "mode": "Shared",
+            "token": "Vessel",
+            "ref": {
+              "source": "erd",
+              "locator": "paragraph:26",
+              "value": "Vessel, VesselProfile, TugProfile, Registry, Capability"
+            }
+          },
+          {
+            "mode": "Ship",
+            "token": "VoyageContext",
+            "ref": {
+              "source": "erd",
+              "locator": "paragraph:34",
+              "value": "ShipOperation, VoyageContext, Permit, Bunkering, CargoOperation"
+            }
+          },
+          {
+            "mode": "Tug",
+            "token": "TugJob",
+            "ref": {
+              "source": "erd",
+              "locator": "paragraph:38",
+              "value": "TugJob, TugAssignment, TowagePlan, TowageBriefing, TowageExecution, TugDailyLog"
+            }
+          }
+        ],
+        "backlog": {
+          "source": "backlog",
+          "locator": "sheet:Backlog/row:24",
+          "column": "A",
+          "value": "DEV-023"
+        },
+        "backlogTest": {
+          "source": "backlog",
+          "locator": "sheet:Backlog/row:24",
+          "column": "M",
+          "value": "T-S2-004"
+        },
+        "backlogScreen": {
+          "source": "backlog",
+          "locator": "sheet:Backlog/row:24",
+          "column": "H",
+          "value": "poseidon-today / /api/v1/today"
+        },
+        "rationale": "Unreviewed engineering dependency association: the source explicitly has0 Today field rows, a shared screen/API and Ship/Tug daily scope;14.01 says196 screens are projections of existing shared/type-specific entities. Use original Vessel/VoyageContext/TugJob names, not invented Today FR/entity IDs. API alias difference remains stated; implementation and real UAT remain incomplete."
       }
     },
     {
@@ -7771,7 +7861,6 @@
         "value": "Dual-mode UAT and value proof"
       },
       "definitionChains": [],
-      "definitionGap": "SOURCE_MAPPING_ABSENT: Pilot capability10 is mixed-fleet daily/value proof, not T-UAT-10 mode switch alone. No unique screen/API/entity/FR/TC chain is defined in cited pilot row. Independent source mapping required; retain dual-mode UAT/value obligation.",
       "definedUats": [
         {
           "source": "uat",
@@ -7789,7 +7878,140 @@
           "state": "DEFINED"
         }
       ],
-      "definitionScreen": null
+      "definitionScreen": null,
+      "compositionDefinition": {
+        "kind": "CAPABILITY_COMPOSITION",
+        "state": "DEFINED",
+        "requirement": {
+          "source": "trace",
+          "locator": "sheet:Pilot Scope v46.2/row:11",
+          "column": "D",
+          "value": "At least one ship and one tug complete daily journeys"
+        },
+        "scope": {
+          "source": "trace",
+          "locator": "sheet:Pilot Scope v46.2/row:11",
+          "column": "C",
+          "value": "Mixed fleet"
+        },
+        "capabilities": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "backlog": {
+          "source": "backlog",
+          "locator": "sheet:Backlog/row:122",
+          "column": "A",
+          "value": "DEV-121"
+        },
+        "backlogTest": {
+          "source": "backlog",
+          "locator": "sheet:Backlog/row:122",
+          "column": "M",
+          "value": "T-V463-007"
+        },
+        "acceptance": {
+          "source": "backlog",
+          "locator": "sheet:Backlog/row:122",
+          "column": "G",
+          "value": "1 ship + 1 tug; time-to-complete; duplicate-entry reduction; evidence completeness; readiness accuracy; offline success; user adoption; signed UAT."
+        },
+        "mandatoryUat": [
+          {
+            "source": "uat",
+            "locator": "paragraph:72",
+            "value": "S-UAT-01"
+          },
+          {
+            "source": "uat",
+            "locator": "paragraph:75",
+            "value": "S-UAT-02"
+          },
+          {
+            "source": "uat",
+            "locator": "paragraph:78",
+            "value": "S-UAT-03"
+          },
+          {
+            "source": "uat",
+            "locator": "paragraph:81",
+            "value": "S-UAT-04"
+          },
+          {
+            "source": "uat",
+            "locator": "paragraph:84",
+            "value": "S-UAT-05"
+          },
+          {
+            "source": "uat",
+            "locator": "paragraph:87",
+            "value": "S-UAT-06"
+          },
+          {
+            "source": "uat",
+            "locator": "paragraph:94",
+            "value": "T-UAT-01"
+          },
+          {
+            "source": "uat",
+            "locator": "paragraph:97",
+            "value": "T-UAT-02"
+          },
+          {
+            "source": "uat",
+            "locator": "paragraph:100",
+            "value": "T-UAT-03"
+          },
+          {
+            "source": "uat",
+            "locator": "paragraph:103",
+            "value": "T-UAT-04"
+          },
+          {
+            "source": "uat",
+            "locator": "paragraph:106",
+            "value": "T-UAT-05"
+          },
+          {
+            "source": "uat",
+            "locator": "paragraph:109",
+            "value": "T-UAT-06"
+          },
+          {
+            "source": "uat",
+            "locator": "paragraph:112",
+            "value": "T-UAT-07"
+          },
+          {
+            "source": "uat",
+            "locator": "paragraph:115",
+            "value": "T-UAT-08"
+          },
+          {
+            "source": "uat",
+            "locator": "paragraph:118",
+            "value": "T-UAT-09"
+          },
+          {
+            "source": "uat",
+            "locator": "paragraph:121",
+            "value": "T-UAT-10"
+          }
+        ],
+        "valueProof": {
+          "source": "uat",
+          "locator": "paragraph:184",
+          "value": "Measured evidence that both modes are used and useful."
+        },
+        "rationale": "Unreviewed engineering composition of all nine P0 pilot capabilities and the16 original Ship/Tug UAT definitions, plus original DEV-121/T-V463-007 mixed-fleet metrics and19.01 value requirement. A single invented screen/entity or mode-switch test alone cannot prove both daily journeys or measured value. All execution/signature/value observations remain missing, never PASS."
+      }
     }
   ]
 }
