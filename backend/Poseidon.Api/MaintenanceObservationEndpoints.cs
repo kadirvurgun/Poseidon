@@ -64,6 +64,12 @@ public static class MaintenanceObservationEndpoints
         if (command.Id == Guid.Empty || command.SourceRevision <= 0 || command.ObservedAt > DateTimeOffset.UtcNow || command.Source.Length is 0 or > 80 ||
             command.PolicyVersion.Length is 0 or > 80 || command.Unit.Length is 0 or > 40 || command.Kind is not ("Meter" or "Condition") ||
             command.Kind == "Meter" && !CertificateMetadataPolicy.ExactNumeric(command.Value) || command.Kind == "Condition" && command.Value is not (null or "True" or "False")) return await Fail(h, 400, "validation_failed");
+        // Validate future instants above at the original precision, then use
+        // PostgreSQL's accepted microsecond precision for storage and replay.
+        if (command.ObservedAt is { } observed) {
+            var utc = observed.ToUniversalTime();
+            command = command with { ObservedAt = utc.AddTicks(-(utc.Ticks % 10)) };
+        }
         var old = await db.MaintenanceObservations.SingleOrDefaultAsync(x => x.Id == command.Id, h.RequestAborted);
         if (old != null) {
             if (old.VesselId != vessel || old.AssetId != asset || old.Source != command.Source || old.PolicyVersion != command.PolicyVersion || old.SourceRevision != command.SourceRevision ||

@@ -141,9 +141,14 @@ public sealed partial class DirectoryWorkspaceTests
         var time = DateTimeOffset.UtcNow.AddHours(2); var first = await PlanningJob(c); var second = await PlanningJob(c);
         var p = await ChangePlan(c, first, null, new("Window", time, time.AddHours(2))); await ChangePlan(c, first, p, new("Assign", TugId: Tug.Id));
         var q = await ChangePlan(c, second, null, new("Window", time.AddHours(1), time.AddHours(3))); await ChangePlan(c, second, q, new("Assign", TugId: Tug.Id));
-        var board = await c.GetFromJsonAsync<PageDto<TugBoardRow>>($"/api/v1/tug-job-board?vessel={Tug.Id}&limit=1", Ct);
-        var row = Assert.Single(board!.Items); Assert.Equal("HumanReviewRequired", row.PlanningEvidence!.ConflictState);
+        // Exclude the deliberately empty seeded job while retaining both actual
+        // command-created jobs, so the other overlapping plan is beyond this page.
+        var board = await c.GetFromJsonAsync<PageDto<TugBoardRow>>($"/api/v1/tug-job-board?vessel={Tug.Id}&limit=1&q={Uri.EscapeDataString("FICTIONAL assisted vessel")}", Ct);
+        var row = Assert.Single(board!.Items);
+        Assert.Contains(row.Request.Id, new[] { first.Id, second.Id }); Assert.True(board.HasMore);
+        Assert.Equal("HumanReviewRequired", row.PlanningEvidence!.ConflictState);
         Assert.Single(row.PlanningEvidence.Conflicts); Assert.Equal("Intersecting", row.PlanningEvidence.Conflicts[0].Relation);
+        Assert.Equal(row.Request.Id == first.Id ? second.Id : first.Id, row.PlanningEvidence.Conflicts[0].JobId);
         Assert.Null(row.AvailableBollardPull); Assert.Equal("ReviewRequired", row.Readiness);
         var detail = await c.GetFromJsonAsync<JsonElement>("/api/v1/" + PlanningUrl(first.Id), Ct);
         Assert.Equal("CurrentAuthorizedOwningFacts;DraftGeometry;MasterDecisionSeparate", detail.GetProperty("evidence").GetProperty("coverage").GetString());

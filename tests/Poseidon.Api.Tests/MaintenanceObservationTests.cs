@@ -25,15 +25,20 @@ public sealed partial class DirectoryWorkspaceTests
     [Fact]
     public async Task Maintenance_observation_actual_capture_replay_and_plan_adapter_ignore_client_echo_values() {
         using var host = ObservationHost(); using var client = Client(host); await Token(client); var reading = Reading();
+        var instant = reading.ObservedAt!.Value;
+        reading = reading with { ObservedAt = instant.AddTicks(7 - instant.Ticks % 10) };
         Assert.Equal(HttpStatusCode.OK, (await Send(client,ObservationPath,reading)).StatusCode);
         Assert.Equal(HttpStatusCode.OK, (await Send(client,ObservationPath,reading)).StatusCode);
-        var plan = new MaintenanceCommand(Guid.NewGuid(),null,SeedVessel.Id,SeedVessel.Id,null,
+        Assert.Equal(HttpStatusCode.Conflict, (await Send(client,ObservationPath,reading with { ObservedAt = reading.ObservedAt.Value.AddTicks(10) })).StatusCode);
+        var plan = new MaintenanceCommand(Guid.NewGuid(),null,SeedVessel.Id,SeedVessel.Id,ReviewRole,
             new(TriggerType: "Meter", IntervalValue: "10", IntervalUnit: "hours", LastDoneMeter: "10", CurrentMeter: "999", TimeZone: "UTC", ObservationId: reading.Id),DateTimeOffset.UtcNow);
         Assert.Equal(HttpStatusCode.OK, (await Send(client,PlansUrl,plan)).StatusCode);
         var saved = (await client.GetFromJsonAsync<MaintenancePage>("/api/v1/"+PlansUrl,Ct))!.Items.Single(x => x.Id == plan.Id);
         Assert.Equal("19.5000",saved.Inputs.CurrentMeter); Assert.Equal("20",saved.Due.NextDueMeter); Assert.Equal("ConfiguredDeclaredObservation",saved.ObservationState);
         await using var db=Db(); Assert.Single(await db.MaintenanceObservations.Where(x=>x.Id==reading.Id).ToArrayAsync(Ct));
-        var row=await db.MaintenanceObservations.SingleAsync(x=>x.Id==reading.Id,Ct); row.Value="mutated";
+        var row=await db.MaintenanceObservations.SingleAsync(x=>x.Id==reading.Id,Ct);
+        Assert.Equal(PostgresInstant(reading.ObservedAt.Value), row.ObservedAt);
+        row.Value="mutated";
         await Assert.ThrowsAsync<InvalidOperationException>(()=>db.SaveChangesAsync(Ct));
     }
     [Fact]
