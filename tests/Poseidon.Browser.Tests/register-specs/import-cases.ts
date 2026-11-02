@@ -30,7 +30,7 @@ async function vessel(page: Page) { const response = await page.request.get('/ap
 async function uploadAndMap(page: Page, invalid: boolean) {
   const id = await vessel(page); await page.goto(`/app/excel-migration/${id}`)
   await page.getByRole('button', { name: 'EN', exact: true }).click()
-  await page.getByLabel('Category', { exact: true }).selectOption('equipment')
+  await page.getByRole('combobox', { name: 'Category', exact: true }).selectOption('equipment')
   await page.getByLabel('Single-sheet XLSX source').setInputFiles({ name: 'synthetic-trial.xlsx', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', buffer: workbook(['record_key', 'level'], [invalid ? 'FICTIONAL PRIVATE BAD KEY' : crypto.randomUUID(), 'Equipment']) })
   await page.getByRole('button', { name: 'Upload for mapping', exact: true }).click()
   await page.getByLabel('Record key (UUID) (required)').selectOption('0')

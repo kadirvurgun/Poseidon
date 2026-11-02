@@ -41,6 +41,7 @@ async function identityEditorHistoryRetry(page: Page) {
   expect(stale.status()).toBe(409)
   await page.reload(); await page.getByRole('button', { name: 'EN', exact: true }).click()
   expect((await page.getByRole('heading', { level: 2 }).allTextContents()).includes(amended)).toBe(true)
+  await page.locator('summary').filter({ hasText: /^Identity change history$/ }).click()
   await page.getByRole('button', { name: 'Identity action history', exact: true }).click()
   await expect(page.getByText('Historical private values are unavailable.', { exact: true })).toBeVisible()
   const history = await page.request.get(`${c.root}/${c.id}/person/history`); expect(history.status()).toBe(200)
@@ -51,7 +52,7 @@ async function existingPersonImportParity(page: Page) {
   const headers = ['record_key', 'base_version', 'person_id', 'person_base_version', 'identity_policy_version', 'identity_purpose', 'full_name']
   const name = 'FICTIONAL-IMPORTED-' + crypto.randomUUID()
   await page.goto(`/app/excel-migration/${c.vessel}`); await page.getByRole('button', { name: 'EN', exact: true }).click()
-  await page.getByLabel('Category', { exact: true }).selectOption('crew')
+  await page.getByRole('combobox', { name: 'Category', exact: true }).selectOption('crew')
   await page.getByLabel('Single-sheet XLSX source').setInputFiles({ name: 'synthetic-identity.xlsx', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     buffer: workbook(headers, [c.id, String(profile.assignment.version), profile.assignment.personId, String(profile.personVersion), c.policy.version, c.policy.purpose, name]) })
   await page.getByRole('button', { name: 'Upload for mapping', exact: true }).click()

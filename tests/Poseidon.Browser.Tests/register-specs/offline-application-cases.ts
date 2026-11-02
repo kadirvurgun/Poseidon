@@ -45,7 +45,7 @@ async function recover(page: Page, enrollment: string) {
   const region = page.getByRole('region', { name: 'Durable offline drafts', exact: true })
   await region.getByRole('button', { name: 'Find retained contexts', exact: true }).click()
   await expect(region.getByRole('option', { name: 'Retained context 1', exact: true })).toBeAttached()
-  await region.getByLabel('Offline context', { exact: true }).selectOption(enrollment)
+  await region.getByRole('combobox', { name: 'Offline context', exact: true }).selectOption(enrollment)
   await region.getByRole('button', { name: 'Authorize / renew / recover', exact: true }).click()
   await expect(region.getByText('Encrypted capture available for this authorization.', { exact: true })).toBeVisible()
   return region
@@ -53,7 +53,7 @@ async function recover(page: Page, enrollment: string) {
 async function offlineCapture(page: Page) {
   const region = page.getByRole('region', { name: 'Durable offline drafts', exact: true })
   await page.context().setOffline(true)
-  await region.getByLabel('Offline draft watch group', { exact: true }).selectOption('SYNTHETIC-A')
+  await region.getByRole('combobox', { name: 'Offline draft watch group', exact: true }).selectOption('SYNTHETIC-A')
   await region.getByRole('button', { name: 'Capture encrypted draft', exact: true }).click()
   await expect(region.getByRole('list', { name: 'Stored capture status' })).toContainText('Unsent / outcome unknown')
   await expect(region.getByRole('button', { name: 'Replay / check original outcome', exact: true })).toBeDisabled()
@@ -244,7 +244,7 @@ async function lostKeyRetainsUntilDiscard(page: Page) {
   await page.goto(url); await page.getByRole('button', { name: 'EN', exact: true }).click()
   await region.getByRole('button', { name: 'Find retained contexts', exact: true }).click()
   await region.getByRole('option', { name: 'Retained context 1', exact: true }).waitFor({ state: 'attached' })
-  await region.getByLabel('Offline context', { exact: true }).selectOption(context.id)
+  await region.getByRole('combobox', { name: 'Offline context', exact: true }).selectOption(context.id)
   await region.getByRole('button', { name: 'Authorize / renew / recover', exact: true }).click()
   await expect(region.getByText(/Local key unavailable. Data retained/)).toBeVisible()
   const discard = region.getByRole('button', { name: 'Discard retained ciphertext and report key loss', exact: true })

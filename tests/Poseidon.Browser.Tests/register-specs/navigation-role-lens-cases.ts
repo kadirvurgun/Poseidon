@@ -34,7 +34,7 @@ async function sharedFamilies(page: Page) {
   ]) {
     const current = await projection(page, vessel)
     await page.goto(href); await english(page)
-    const region = await menu(page), select = region.getByLabel('Menu lens', { exact: true })
+    const region = await menu(page), select = region.getByRole('combobox', { name: 'Menu lens', exact: true })
     await expect(select).toHaveValue('')
     await select.selectOption(current.lenses[0].reference)
     await expect(region.getByRole('navigation', { name: 'Daily work menu', exact: true }).getByRole('button')).toHaveCount(current.lenses[0].items.length)
@@ -56,7 +56,7 @@ async function realDirtyGuard(page: Page) {
   const draft = 'FICTIONAL-UNSAVED-' + crypto.randomUUID()
   await page.getByLabel('Name *', { exact: true }).fill(draft)
   let region = await menu(page)
-  await region.getByLabel('Menu lens', { exact: true }).selectOption(daily!.reference)
+  await region.getByRole('combobox', { name: 'Menu lens', exact: true }).selectOption(daily!.reference)
   await region.getByRole('button', { name: 'Crew', exact: true }).click()
   const dialog = page.getByRole('dialog', { name: 'Discard the unsaved draft?', exact: true })
   await expect(dialog).toBeVisible()

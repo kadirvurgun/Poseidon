@@ -1114,7 +1114,7 @@
     "verification_record_scope": "Authored/deferred and original20f1198 results are historical;current rejection-repair evidence in core_bundle_01.verification"
   },
   "baseline": "POSEIDON v46.3 updated 2026-10-30 / Library26 candidate",
-  "current_stage": "Larger foundation authoring; job-window source-qualified minimum Crew role composition authored, all execution deferred",
+  "current_stage": "S0 combined verification; exact-checkpoint source/engineering definitions independently adopted; signed-browser preparation and native-selector repair; not canonically accepted",
   "method": "accepted story points / total baseline story points * 100",
   "scope": "complete v46.3 Backlog sheet; duplicates in other sheets excluded",
   "total_tasks": 121,
@@ -4504,40 +4504,61 @@
     "initial_candidate_commit": "d0e6d0dbc2c2b5d3873d46ea4a405e176e772e3e",
     "initial_candidate_tree": "b4c3876080a77c7fb17dc9b63b0c84351c0bad1b",
     "initial_qa": "REJECTED_FOR_ACCEPTANCE_ON_THIS_TARGET; actual failures retained",
-    "current_target": "9e982da clean-target required CI SUCCESS; later mobile stacking repair locally verified, next exact-target CI and final signed manifest pending",
+    "current_target": "Clean1ab3fc4 CI4/4SUCCESS; subsequent registered-journey route/native-locator/fixture isolation repairs await next freeze and coherent final122",
     "verification": {
       "python": "355/355 PASS on initial clean candidate",
       "source_definitions": "6 PASS_DEFINITION_ONLY, not acceptance",
       "backend_build": "Local dirty repair PASS, zero diagnostics",
       "domain_unit": "566/566 PASS local dirty repair",
       "persistence_unit": "27/27 PASS local dirty repair",
-      "api_unit": "Clean9e982da actual required CI native91/91 PASS,0skip/fail",
+      "api_unit": "Clean1ab3 actual CI native91/91PASS0fail/skip",
       "persistence_postgres": "75/75 PASS, 598.174s local dirty repair",
       "ef_model_parity": "PASS local dirty repair",
       "actual_api_contract": "157 paths/185 schemas; actual host export and TypeScript generation PASS local dirty repair",
       "frontend_typecheck_build_lint": "PASS on frozen lazy-chart fix; full lint198files zero errors/warnings",
       "frontend_components": "923/923 PASS;0failed/pending/skipped/unhandled; exact stable frontend source snapshot f4dd8b9ad21b15c7c4081e8e55fd5ab83af48725f68a4564d58f83d95873c4f4; local dirty repair only",
-      "api_integration": "Initial exact547 partition541pass/6fail retained; repaired13/13 PASS; clean9e982da actual required CI native547/547 PASS,0skip/fail",
+      "api_integration": "Historical original547/6 and repaired13/13 kept; clean9e and clean1ab3 actual CI native547/547PASS0fail/skip, separate exact targets",
       "ordinary_browser": "50/50 PASS0skip/flaky on rebuilt lazy-chart production dist;20:25:43–20:28:48UTC; local dirty repair",
       "security_preflight": "Actual final staged repository and production client scans PASS with164 externally fetched protected source-review pins; next changed-target CI pending",
-      "final_independent_qa_ci": "Earlier clean9e982da CI SUCCESS; final repaired target independent QA and required CI PENDING",
+      "final_independent_qa_ci": "Both earlier push CI runs SUCCESS; new repaired target full122, currentP0 assessment, final required CI and authentic task acceptance PENDING",
       "signed_provider": "Actual manager/restricted login2/2+TLS3/3 PASS; diagnostic30/30 separate from final122; six genuine command-produced documents independently VERIFIED by distinct synthetic actors, current consumer assertions PASS; full baseline manager/restricted journeys and final fresh61x2 manifest pending",
       "artifact": "Actual API development artifact publish PASS local dirty repair",
       "source_lineage": "Fresh verify_sources.py PASS active byte/chunk lineage",
       "legacy_fixture_isolation": "Actual14/14unit+1/1PostgreSQL and7 guarded CLI outcomes PASS; Test-only isolated fixture identifiers; no seeded verified safety evidence",
       "mobile_navigation_repair": "Later dirty CSS stacking fix: actual production build PASS and real pointer/keyboard2/2 desktop/mobile regression PASS; fresh exact-target CI pending",
       "required_ci": {
-        "commit": "9e982da0a134881a6f40752f4ab78c1883d021a0",
-        "tree": "c156c7064d36b37f0c31703b486dccf096bf72f1",
-        "run": 41523972791,
-        "url": "https://github.com/kadirvurgun/Poseidon/actions/runs/41523972791",
+        "commit": "1ab3fc428ff333360236700799a0c6f1a3b7d8c3",
+        "tree": "747f96e01882f97fe0e6f0eac1238e9d476bcb88",
+        "run": 41530719216,
+        "url": "https://github.com/kadirvurgun/Poseidon/actions/runs/41530719216",
         "conclusion": "SUCCESS",
         "jobs": "4/4SUCCESS",
-        "api_integration": "547/547PASS;0skip/fail",
-        "api_unit": "91/91PASS;0skip/fail",
-        "other_native_counts": "UNAVAILABLE_NOT_INFERRED"
-      }
+        "api_integration": "547/547PASS;0fail/skip;1037.473s",
+        "api_unit": "91/91PASS;0fail/skip;4.265s",
+        "python": "355 native tests",
+        "ordinary_browser": "50 planned/50 passed native cases",
+        "other_native_counts": "UNAVAILABLE_NOT_INFERRED",
+        "raw_logs_persisted": false
+      },
+      "required_ci_history": [
+        {
+          "commit": "9e982da0a134881a6f40752f4ab78c1883d021a0",
+          "tree": "c156c7064d36b37f0c31703b486dccf096bf72f1",
+          "run": 41523972791,
+          "url": "https://github.com/kadirvurgun/Poseidon/actions/runs/41523972791",
+          "conclusion": "SUCCESS",
+          "jobs": "4/4SUCCESS",
+          "api_integration": "547/547PASS;0skip/fail",
+          "api_unit": "91/91PASS;0skip/fail",
+          "other_native_counts": "UNAVAILABLE_NOT_INFERRED"
+        }
+      ],
+      "source_definitions_current_checkpoint": "Clean1ab3 actual6/6 definition commands exit0; PASS_DEFINITION_ONLY,0testcases claimed; no acceptance",
+      "independent_definition_adoption": "Actual separate QA source/engineering adoption for13 original task definitions on clean1ab3 and62 gitblob inputs; technical plans only, runtimeP0 and final acceptance withheld",
+      "signed_provider_current_checkpoint": "Clean1ab3 actual full lab/run.ts managerJourney+restrictedJourney2/2PASS37s; strictTLS3/3PASS0skip, same actual API hash fdad58f44ebfccb485f322a7e6ab8bfa03bc6e7d57b4d344d01b863bc5c69d7a",
+      "signed_diagnostic_after_checkpoint": "Dirty repaired diagnostic six owning/compliance consumers +desktop qualification PASS; human assigned/scoped cases4/4PASS ondesktop+narrow, actualdecisionHTTP200 RECORDED/UNASSESSED, offline noPOST and reconnectsamevalue. Selected fifth qualification remainsPENDING afterintentional safe-boundary stop; original failures retained. Mixed diagnostic, not coherent final122 or acceptance",
+      "registered_precondition_repairs": "Six invalid source-register navigations corrected to actualsources with explicit EN; exact native roles preserve accessible names across selects/textareas; native identity disclosure and Tug named-card selectors; dedicated ordinary-command no-evaluation Ship for unchanged orphan-negative assertion"
     },
-    "next": "Freeze mobile fix; fresh required CI; actual full baseline signed journeys and coherent final122; genuine independent exact-target S0 reviews and acceptance receipts"
+    "next": "Finish narrow human diagnostics without assertion weakening; freeze repair; actual fresh final122 and required CI; final independent exact-target task decisions and S0 gate"
   }
 }
