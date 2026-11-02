@@ -1,5 +1,10 @@
 > Current: **FOUNDATION-ACCEPTANCE-BUNDLE-01 — INCOMPLETE / actual local execution / NOT ACCEPTED.** Release builds, actual API/TS generation, current EF check/model-seed regression,536Domain/14persistence-unit/82API-unit,821components,248Python and46ordinary Playwright cases pass. Full persistence fails3/74; API integration is executing with actual failures; lint/security/genuine-provider/full-selected-software gates remain open. No canonical SP, independent QA, CI or publication. [Current report](phases/FOUNDATION-ACCEPTANCE-BUNDLE-01.md) · [exact gate evidence](phases/foundation-acceptance-bundle-01.evidence.json) · [source/task mapping](tasks/foundation-acceptance-bundle-01.md).
 
+## 02.11 — Kanıt dosyası tarama düzeltmesi
+
+İlk tam yerel tarama1427girdi/3ek eşleşme ile başarısızdı. İki JSON biçimlendirme eşleşmesi ve sentetik test başlığı düzeltildi;49/49test ve değişen10dosya taraması0eşleşme.164onaylı kaydın mantıksal kanıt/hashleri aynı. Yeni tam CI ve bağımsız ürün QA bekliyor; merge/kabul yok. [Faz](phases/PR12-SEMANTIC-SOURCE-20261102.md). Canonical8/970SP (%0.82) korunuyor.
+
+
 ## 02.11 — Kaynak sınıflandırması164/164 onaylandı
 
 Gerçek Esra incelemesi164onay/0engel; yalnız bağlama bağlı istisnalar hazırlandı.47/47odaklı test ve4af7713tam Release derlemesi geçti. Yerel tam tarama sürüyor; yeni CI ve bağımsız ürün QA olmadan merge/kabul yok. [Faz ve gerçek inceleme](phases/PR12-SEMANTIC-SOURCE-20261102.md). Canonical8/970SP (%0.82) korunuyor.

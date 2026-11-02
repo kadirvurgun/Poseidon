@@ -140,10 +140,28 @@ class SourceSemanticEvidenceTests(unittest.TestCase):
         key_body = 'opaque-private-' + 'body-data'
         email = 'person' + '@example.test'
         url = 'https://' + 'person:private@service.test/path'
-        text = email + '\n' + url + '\n-----BEGIN PRIVATE KEY-----\n' + key_body + '\n-----END PRIVATE KEY-----'
+        header = '-----BEGIN ' + 'PRIVATE KEY-----'
+        footer = '-----END ' + 'PRIVATE KEY-----'
+        text = email + '\n' + url + '\n' + header + '\n' + key_body + '\n' + footer
         result = semantic.redacted_window(text, 0, len(text))
         for marker in (email, url, key_body, 'person:private'):
             self.assertNotIn(marker, result)
+
+    def test_quote_encoding_prevents_cross_line_phantom_without_changing_evidence(self):
+        excerpt = 'password' + " = ' + marker):\nnext('literal')"
+        value = {'redacted_source': excerpt, 'quoted': 'backslash \\ and quote " and apostrophe \''}
+        ordinary = json.dumps(value)
+        self.assertTrue(any(p.search(ordinary) for p in secret_scan.RULES.values()))
+        self.assertFalse(any(p.search(excerpt) for p in secret_scan.RULES.values()))
+        encoded = semantic.safe_review_json(value)
+        self.assertEqual(value, json.loads(encoded))
+        self.assertEqual(secret_scan.object_hash(value), secret_scan.object_hash(json.loads(encoded)))
+        self.assertFalse(any(p.search(encoded) for p in secret_scan.RULES.values()))
+
+    def test_quote_encoding_cannot_hide_a_real_decoded_credential(self):
+        assignment = 'password' + " = '" + 'synthetic-' + 'private-marker' + "'"
+        with self.assertRaisesRegex(ValueError, 'unsafe-decoded-review-content'):
+            semantic.safe_review_json({'source': assignment})
 
     def test_package_shares_context_but_preserves_each_exact_locator_and_binding(self):
         with tempfile.TemporaryDirectory() as tmp:

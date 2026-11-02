@@ -1,0 +1,23 @@
+{
+  "wire_changes": [
+    {
+      "path": "docs/security/pr12-source-semantic-review.pending.json",
+      "previous_bytes_sha256": "5cfd4761b2b11b028dd631a1e01a44a1a59f33edafde075520b439dc57158297",
+      "new_bytes_sha256": "9510840cd3160fd47e7563263121d9c182dfca35933dcb55c93ce8e0b35afee2",
+      "canonical_object_sha256": "2496aea87901f2241b1915f11a8d9d28ed2bfa46774dcbbe9fe39527d800cfde",
+      "decoded_content_and_proposals_unchanged": true
+    },
+    {
+      "path": "docs/security/pr12-source-semantic-calls.pending.json",
+      "previous_bytes_sha256": "c223de59e1232a83fbfa78b8e3efea4a63da46813deee73888a5e8d42a03ae82",
+      "new_bytes_sha256": "31d7f4f940eb5b35ee19c1fe6c05f7470b2fe6a5f63d0e48f674d6e67c8e792a",
+      "canonical_object_sha256": "ab22fdcbd8ec255bee1508f74709c91420075ab08ccb2178c11b52bbf5fbdc49",
+      "decoded_content_and_proposals_unchanged": true
+    }
+  ],
+  "changed_files_scanned": 10,
+  "new_source_findings": [],
+  "detector_changed": false,
+  "original_source_carriers_changed": false,
+  "native_review_semantic_bindings_unchanged": true
+}

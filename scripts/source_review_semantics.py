@@ -24,6 +24,33 @@ EXTRA = (
 )
 
 
+def safe_review_json(value):
+    """HTML-safe quote encoding cannot turn safe multiline excerpts into findings.
+
+    Validate decoded content first, then serialized bytes. Encoding never grants
+    an exception: actual credentials in decoded strings are rejected outright.
+    The decoded object and its canonical proposal/evidence hashes stay identical.
+    """
+    def validate(node):
+        if isinstance(node, str) and any(p.search(node) for p in secret_scan.RULES.values()):
+            raise ValueError('unsafe-decoded-review-content')
+        if isinstance(node, dict):
+            for key, child in node.items():
+                validate(key); validate(child)
+        if isinstance(node, list):
+            for child in node:
+                validate(child)
+    validate(value)
+    encoded = json.dumps(value, ensure_ascii=False, separators=(',', ':'))
+    # Only quotes inside string content change; JSON delimiters stay intact.
+    encoded = encoded.replace('\\"', '\\u0022').replace("'", '\\u0027')
+    if json.loads(encoded) != value:
+        raise ValueError('review-serialization-roundtrip')
+    if any(p.search(encoded) for p in secret_scan.RULES.values()):
+        raise ValueError('unsafe-serialized-review-content')
+    return encoded
+
+
 def intervals(text):
     """Find full spans before cropping, so a window cannot expose a token suffix."""
     spans = sorted((m.start(), m.end()) for pattern in (*secret_scan.RULES.values(), *EXTRA)
@@ -248,7 +275,7 @@ def main():
     parser.add_argument('--supplement-target', action='append', default=[])
     args = parser.parse_args()
     package = build_semantic_package(args.root, json.loads(args.input.read_text(encoding='utf-8')), args.supplement_target)
-    args.output.write_text(json.dumps(package, ensure_ascii=False, separators=(',', ':')) + '\n', encoding='utf-8', newline='\n')
+    args.output.write_text(safe_review_json(package) + '\n', encoding='utf-8', newline='\n')
     print(json.dumps({'entries': len(package['entries']), 'semantic_bodies': len(package['semantic_bodies']),
                       'approved': 0, 'exceptions': 0}))
 
