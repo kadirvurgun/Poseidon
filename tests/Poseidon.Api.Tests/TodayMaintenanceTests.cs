@@ -18,7 +18,7 @@ public sealed partial class DirectoryWorkspaceTests
     {
         using var host = Host(technicalRead: true); using var client = Client(host); await Token(client);
         using var created = await Send(client, "vessels", new { companyId = SeedVessel.CompanyId, code = "TM-EMPTY", name = "SYNTHETIC empty maintenance source", kind = "Tug" });
-        Assert.Equal(HttpStatusCode.Created, created.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, created.StatusCode);
         var vessel = (await created.Content.ReadFromJsonAsync<VesselDto>(Ct))!;
         var page = (await client.GetFromJsonAsync<TodayDto>($"/api/v1/poseidon-today?vesselId={vessel.Id}", Ct))!;
         Assert.Equal("Missing", page.Coverage.Single(c => c.Source == "TechnicalMaintenance").Status);

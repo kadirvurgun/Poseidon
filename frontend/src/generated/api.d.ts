@@ -5427,13 +5427,29 @@ export interface components {
             coverage: components["schemas"]["TodayCoverageDto"][];
             cards: components["schemas"]["PageDtoOfTodayCardDto"];
         };
+        TodayMaintenanceEvidenceDto: {
+            /** Format: uuid */
+            planId: string;
+            /** Format: int64 */
+            planRevision: number;
+            /** Format: uuid */
+            assetId: string;
+            /** Format: int64 */
+            assetRevision: number;
+            /** Format: int64 */
+            currentAssetRevision: null | number;
+            jobAvailable: boolean;
+            ownerEligible: boolean;
+            calculation: components["schemas"]["MaintenanceDue"];
+            observationState: string;
+        };
         TodayWhyDto: {
             /** Format: uuid */
             vesselId: string;
             cardKey: string;
             rule: string;
             reason: string;
-            inputs: components["schemas"]["DraftObservation"];
+            inputs: null | components["schemas"]["DraftObservation"];
             /** Format: date-time */
             readAt: string;
             /** Format: date-time */
@@ -5445,6 +5461,7 @@ export interface components {
             owner: null | string;
             nextAction: string;
             href: string;
+            maintenance?: null | components["schemas"]["TodayMaintenanceEvidenceDto"];
         };
         TugAuditRevisionDto: {
             /** Format: uuid */

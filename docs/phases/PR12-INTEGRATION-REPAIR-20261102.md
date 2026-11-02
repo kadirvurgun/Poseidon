@@ -1,0 +1,17 @@
+# PR12 integration gate repair — 02.11.2026
+
+Requirement/traceability: FOUNDATION-ACCEPTANCE-BUNDLE-01, AUDIT-TRACE-01 AT-01..08, TODAY-MAINTENANCE-01 TM01..07; existing owning/qualified-capacity test contracts. Source authority remains docs/sources/active.json. This is a gate repair, not canonical sprint acceptance.
+
+Actual preceding GitHub head b7926a3: full tracked repository scan PASS; Release build PASS; persistence unit25/25, domain550/550, API unit82/82 PASS; persistence integration75/75 PASS. API integration524 discovered/executed,478 passed,46 failed,0 skipped. Frontend/browser check PASS. The S3 driver successfully launched its child; exit2 came from failed API tests. Raw child diagnostics remain unpersisted.
+
+## Repairs and acceptance
+
+- Multi-file qualification/owning fixtures explicitly opt into a repeating INSTREAM protocol peer. The ordinary one-shot peer, malware, truncation, unavailable-scanner tests and actual provider gates remain intact. Each connection still parses and validates the complete protocol. Fixture shutdown cancels and observes its owned receive task.
+- Historical timestamp fixtures use PostgreSQL microsecond precision or reload their persisted baseline before exact conversion comparisons. Assertions remain exact, without tolerances or skipped cases.
+- Empty-maintenance scenario expects the existing200 response from vessel creation, then still verifies missing coverage and absence of invented plans.
+- Audit expected counts enumerate the actor-visible entity contract; the complete page is additionally checked to prevent leaking newly seeded entities.
+- Exact assigned human trace readers no longer require tenant-wide regulatory privileges to read their assigned owning-document trace. Explicit regulatory/file/evidence/control permission, exact live reader assignment, vessel and protected crew checks remain. Added permission-removal404 and assignment-removal403 assertions; audit reader metadata uses auditItems with private items empty.
+- OpenAPI was exported from the actual Release host (157 paths,176 schemas), and TypeScript regenerated with the pinned7.13.0 generator.
+- The API gate exports only existing test source filenames/line numbers for failures, enabling diagnosis without persisting request, exception or SDK bodies.
+
+Verification so far: API gate helper13/13 PASS; API project Release build0 warnings/errors before final audit-test adjustment; maintenance historical-reference regression1/1 PASS. An incremental rebuild concurrent with an owned test failed from Windows apphost file locking; this is not a code/build PASS, and a serialized rebuild is required. Final targeted regressions, required exact-head CI and independent target review remain PENDING. No test removed, disabled or weakened; no check bypass. Canonical8/970 SP and operational/human approval gates unchanged.

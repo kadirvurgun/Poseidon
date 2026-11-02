@@ -224,8 +224,22 @@ public sealed partial class DirectoryWorkspaceTests
         private readonly CancellationTokenSource stop = new();
         public int Port => ((IPEndPoint)listener.LocalEndpoint).Port;
         public Task<byte[]> Bytes { get; }
-        public ScanPeer(string reply) { listener.Start(); Bytes = Receive(reply); }
-        private async Task<byte[]> Receive(string reply) {
+        public ScanPeer(string reply, bool repeat = false) { listener.Start(); Bytes = Receive(reply, repeat); }
+        private async Task<byte[]> Receive(string reply, bool repeat) {
+            byte[]? first = null;
+            try {
+                do {
+                    var received = await ReceiveOne(reply);
+                    first ??= received;
+                } while (repeat && !stop.IsCancellationRequested);
+                return first;
+            } catch (OperationCanceledException) when (stop.IsCancellationRequested) {
+                return first ?? [];
+            } catch (SocketException) when (stop.IsCancellationRequested) {
+                return first ?? [];
+            }
+        }
+        private async Task<byte[]> ReceiveOne(string reply) {
             using var client = await listener.AcceptTcpClientAsync(stop.Token); await using var stream = client.GetStream();
             var command = new byte[10]; await stream.ReadExactlyAsync(command, stop.Token); Assert.Equal("zINSTREAM\0", Encoding.ASCII.GetString(command));
             using var bytes = new MemoryStream(); var length = new byte[4];
@@ -233,6 +247,6 @@ public sealed partial class DirectoryWorkspaceTests
             if (reply.Length == 0) await Task.Delay(TimeSpan.FromSeconds(3), stop.Token); else await stream.WriteAsync(Encoding.ASCII.GetBytes(reply), stop.Token);
             return bytes.ToArray();
         }
-        public void Dispose() { stop.Cancel(); listener.Stop(); stop.Dispose(); }
+        public void Dispose() { stop.Cancel(); listener.Stop(); Bytes.GetAwaiter().GetResult(); stop.Dispose(); }
     }
 }

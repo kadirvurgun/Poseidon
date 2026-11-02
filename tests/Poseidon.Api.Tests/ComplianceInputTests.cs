@@ -27,7 +27,7 @@ public sealed partial class DirectoryWorkspaceTests
     public async Task Class_pack_msmd_and_source_evidence_require_current_independent_lineage(bool m79, bool verify, string change) {
         var root = Path.Combine(Path.GetTempPath(), "poseidon-compliance-" + Guid.NewGuid().ToString("N")); Directory.CreateDirectory(root);
         try {
-            using var scanner = new ScanPeer("stream: OK\0"); await using var host = FileHost(root, scanner.Port); using var c = Client(host); await Token(c);
+            using var scanner = new ScanPeer("stream: OK\0", repeat: true); await using var host = FileHost(root, scanner.Port); using var c = Client(host); await Token(c);
             var (rule, _, baseline) = await AdmittedByCommands(c, host.Services, qualification: CompliancePolicy);
             CapacityRights(host.Services); await Token(c); var settings = host.Services.GetRequiredService<FederationSettings>();
             var pin = new RequirementPin(rule.Current.RequirementId!.Value, rule.Current.RequirementRevision!.Value, rule.Current.SourceId!.Value, rule.Current.SourceRevision!.Value, rule.Current.Id, rule.Current.Revision);
@@ -58,8 +58,14 @@ public sealed partial class DirectoryWorkspaceTests
                 settings.Memberships[0] = writer with { ActorId = Guid.NewGuid(), Permissions = ["directory.read", "audit.read", "human.trace.read", "file.read", "evidence.read", "control.read", "regulatory.draft.read", "crew.read"], TenantWideManage = false, TenantWideRead = false,
                     VesselGrants = [new(SeedVessel.Id)], HumanAuthorities = [], HumanTraceReaders = [new(Guid.NewGuid(), SeedVessel.Id, msmd.Id, control.Id, ReviewRole, ["Verification", "Decision"], [decision.Recording.Content.DecisionType], now.AddHours(-1), now.AddHours(1))] };
                 await Token(c); var trace = await c.GetFromJsonAsync<JsonElement>(TraceRoute(msmd, currentControl), Ct);
-                Assert.Contains(trace.GetProperty("events").EnumerateArray(), e => e.GetProperty("id").GetGuid() == decision.Id);
+                Assert.Contains(trace.GetProperty("auditItems").EnumerateArray(), e => e.GetProperty("id").GetGuid() == decision.Id);
+                Assert.Empty(trace.GetProperty("items").EnumerateArray());
                 Assert.DoesNotContain("FICTIONAL private rationale", trace.GetRawText());
+                var reader = settings.Memberships[0];
+                settings.Memberships[0] = reader with { Permissions = reader.Permissions.Where(p => p != "regulatory.draft.read").ToArray() };
+                Assert.Equal(HttpStatusCode.NotFound, (await c.GetAsync(TraceRoute(msmd, currentControl), Ct)).StatusCode);
+                settings.Memberships[0] = reader with { HumanTraceReaders = [] };
+                Assert.Equal(HttpStatusCode.Forbidden, (await c.GetAsync(TraceRoute(msmd, currentControl), Ct)).StatusCode);
                 settings.Memberships[0] = writer; await Token(c);
             }
             // Current verifier appointment withdrawal invalidates current truth;
@@ -139,7 +145,7 @@ public sealed partial class DirectoryWorkspaceTests
     public async Task Command_qualified_role_criteria_pin_assignment_position_period_msmd_and_withdraw_after_noop(bool satisfied, bool verify, string credentialCase) {
         var root = Path.Combine(Path.GetTempPath(), "poseidon-role-input-" + Guid.NewGuid().ToString("N")); Directory.CreateDirectory(root);
         try {
-            using var scanner = new ScanPeer("stream: OK\0");
+            using var scanner = new ScanPeer("stream: OK\0", repeat: true);
             await using var host = PersonFileHost(root, scanner.Port).WithWebHostBuilder(b => b.ConfigureTestServices(s => s.AddSingleton(new CrewAssignmentPolicy {
                 Version = "FICTIONAL-role-assignment-v1", TimeZone = "UTC", EffectiveStatuses = ["FICTIONAL-onboard"], PlannedStatuses = ["FICTIONAL-planned"], Provenances = ["UserDeclaredUnverified"] })));
             using var c = Client(host); await Token(c);

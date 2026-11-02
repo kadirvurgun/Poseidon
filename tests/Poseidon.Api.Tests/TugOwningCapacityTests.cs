@@ -127,7 +127,7 @@ public sealed partial class DirectoryWorkspaceTests
     public async Task Qualified_commands_produce_current_exact_capacity_and_current_context_changes_withdraw_it(string change) {
         var root = Path.Combine(Path.GetTempPath(), "poseidon-tug-capacity-" + Guid.NewGuid().ToString("N")); Directory.CreateDirectory(root);
         try {
-            using var scanner = new ScanPeer("stream: OK\0");
+            using var scanner = new ScanPeer("stream: OK\0", repeat: true);
             var policy = SyntheticPlanning();
             await using var host = FileHost(root, scanner.Port).WithWebHostBuilder(b => b.ConfigureTestServices(s => s.AddSingleton(policy)));
             using var c = Client(host); GraphPermissionsForTest(host.Services); await Token(c);

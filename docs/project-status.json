@@ -4195,5 +4195,18 @@
     "source_review_approved": 1,
     "source_review_blocked": 163,
     "canonical_acceptance_changed": false
+  },
+  "pr12_integration_repair": {
+    "report": "docs/phases/PR12-INTEGRATION-REPAIR-20261102.md",
+    "source_classification_approved": 164,
+    "repository_source_scan": "PASS_CI_b7926a3",
+    "previous_api_integration": {
+      "total": 524,
+      "succeeded": 478,
+      "failed": 46,
+      "skipped": 0
+    },
+    "current_gate": "PENDING_CI_AND_INDEPENDENT_TARGET_REVIEW",
+    "canonical_acceptance_changed": false
   }
 }

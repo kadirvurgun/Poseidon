@@ -9,6 +9,15 @@ import api_test_gate as gate
 class ApiTestGateTests(unittest.TestCase):
     discovery = b'    Poseidon.Api.Tests.Cases.Actual_case(first)\n    Poseidon.Api.Tests.Cases.Actual_case(second)\n'
 
+    def test_failure_locations_only_emit_existing_test_filenames_and_line_numbers(self):
+        raw = (b'private/request/TodayMaintenanceTests.cs:line 21 secret request body\n'
+               b'unknown/ForeignDiagnostic.cs:12 private body\n'
+               b'private/TodayMaintenanceTests.cs:21\n')
+        result = gate.failure_locations(raw, gate.ROOT)
+        self.assertEqual([{'file': 'TodayMaintenanceTests.cs', 'line': 21}], result)
+        self.assertNotIn('private', json.dumps(result))
+        self.assertNotIn('secret', json.dumps(result))
+
     def execute(self, output, exit_code=0, discovery=None):
         results = [subprocess.CompletedProcess([], 0, self.discovery if discovery is None else discovery),
                    subprocess.CompletedProcess([], exit_code, output)]

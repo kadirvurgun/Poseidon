@@ -35,7 +35,10 @@ public sealed partial class DirectoryWorkspaceTests
             TableJson = table, BindingsJson = " [{\"sourceIndex\":0,\"targetField\":\"FICTIONAL UNKNOWN TARGET\"}] ", SourceHash = "FICTIONAL-HISTORICAL-SOURCE-HASH",
             SourceName = "FICTIONAL PRIVATE FILENAME.xlsx", SourceLocator = "FICTIONAL PRIVATE SOURCE LOCATOR", RowCount = 17, Revision = 4,
             State = committed ? "Committed" : "MappingDraft", CreatedAt = DateTimeOffset.UtcNow.AddDays(-10), CommittedAt = committed ? DateTimeOffset.UtcNow.AddDays(-9) : null };
-        db.ImportBatches.Add(b); await db.SaveChangesAsync(Ct); return b;
+        db.ImportBatches.Add(b); await db.SaveChangesAsync(Ct);
+        // Compare conversion against the actual historical database baseline,
+        // including PostgreSQL's microsecond timestamp representation.
+        await db.Entry(b).ReloadAsync(Ct); return b;
     }
     private static LegacyCrewImportCommand Protect(ImportBatch b) => new(b.Version, LegacyCrewImport.Reason);
 

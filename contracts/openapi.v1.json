@@ -13697,6 +13697,57 @@
           }
         }
       },
+      "TodayMaintenanceEvidenceDto": {
+        "required": [
+          "planId",
+          "planRevision",
+          "assetId",
+          "assetRevision",
+          "currentAssetRevision",
+          "jobAvailable",
+          "ownerEligible",
+          "calculation",
+          "observationState"
+        ],
+        "type": "object",
+        "properties": {
+          "planId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "planRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "assetId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "assetRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "currentAssetRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "jobAvailable": {
+            "type": "boolean"
+          },
+          "ownerEligible": {
+            "type": "boolean"
+          },
+          "calculation": {
+            "$ref": "#/components/schemas/MaintenanceDue"
+          },
+          "observationState": {
+            "type": "string"
+          }
+        }
+      },
       "TodayWhyDto": {
         "required": [
           "vesselId",
@@ -13730,7 +13781,14 @@
             "type": "string"
           },
           "inputs": {
-            "$ref": "#/components/schemas/DraftObservation"
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DraftObservation"
+              }
+            ]
           },
           "readAt": {
             "type": "string",
@@ -13772,6 +13830,16 @@
           },
           "href": {
             "type": "string"
+          },
+          "maintenance": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/TodayMaintenanceEvidenceDto"
+              }
+            ]
           }
         }
       },

@@ -35,9 +35,16 @@ public sealed partial class DirectoryWorkspaceTests
         await using var db = Db();
         var sameTenantOther = seed.Vessels.First(x => x.TenantId == SeedVessel.TenantId && x.Id != SeedVessel.Id);
         var otherTenant = seed.Vessels.First(x => x.TenantId != SeedVessel.TenantId);
-        var allowed = await db.AuditEvents.Where(x => x.VesselId == SeedVessel.Id && x.EntityType != nameof(CommandReceipt) && x.EntityType != nameof(FileStage) && x.EntityType != nameof(StoredFile)).CountAsync(Ct);
+        // This actor has audit access, but no file, tug-operation or catalog
+        // capability. Newly seeded operational entities are not automatically
+        // published by the audit workspace's explicit entity contract.
+        string[] visibleTypes = [nameof(Vessel), nameof(VesselProfile), nameof(TugProfile), nameof(RegulatoryDraft), nameof(RegulatoryDraftRevision)];
+        var allowed = await db.AuditEvents.Where(x => x.VesselId == SeedVessel.Id && visibleTypes.Contains(x.EntityType)).CountAsync(Ct);
         var page = (await client.GetFromJsonAsync<AuditPageDto>("/api/v1/audit?limit=1", Ct))!;
         Assert.Equal(allowed, page.Total); Assert.All(page.Items, x => Assert.Equal(SeedVessel.Id, x.VesselId));
+        var complete = (await client.GetFromJsonAsync<AuditPageDto>("/api/v1/audit?limit=100", Ct))!;
+        Assert.Equal(allowed, complete.Items.Length);
+        Assert.All(complete.Items, x => Assert.Contains(x.EntityType, visibleTypes));
         foreach (var vessel in new[] { sameTenantOther, otherTenant }) {
             var empty = (await client.GetFromJsonAsync<AuditPageDto>($"/api/v1/audit?vesselId={vessel.Id}", Ct))!;
             Assert.Empty(empty.Items); Assert.Equal(0, empty.Total); Assert.Null(empty.NextCursor);

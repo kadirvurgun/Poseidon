@@ -14,7 +14,11 @@ public sealed partial class DirectoryWorkspaceTests
         Guid.Parse("91c26eb5-cf16-4553-981d-1c275358c535"),
         new(TriggerType: "Calendar", IntervalValue: "1", IntervalUnit: "day",
             LastDoneDate: DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-2)), TimeZone: "UTC",
-            Provenance: "SyntheticUnverified", Criticality: "DeclaredCritical"), DateTimeOffset.UtcNow.AddDays(-2));
+            Provenance: "SyntheticUnverified", Criticality: "DeclaredCritical"), PostgresInstant(DateTimeOffset.UtcNow.AddDays(-2)));
+
+    // PostgreSQL timestamptz stores microseconds; pin the fixture at that exact
+    // precision so history equality still detects any persisted time change.
+    private static DateTimeOffset PostgresInstant(DateTimeOffset value) => new(value.Ticks - value.Ticks % 10, value.Offset);
 
     [Fact]
     public async Task Maintenance_current_read_recalculates_due_without_changing_historical_revision_or_receipts()

@@ -60,6 +60,16 @@ def deadline_diagnostics(output, discovered):
             'partial_count_observations': observations(raw)}
 
 
+def failure_locations(output, root):
+    """Only existing source filenames/line numbers; no exception or body text."""
+    known = {p.name for p in (root / 'tests/Poseidon.Api.Tests').glob('*.cs')}
+    locations = set()
+    for name, line in re.findall(r'([A-Za-z][A-Za-z0-9_]*\.cs):(?:line\s+)?([0-9]{1,7})', normalized(output)):
+        if name in known:
+            locations.add((name, int(line)))
+    return [{'file': name, 'line': line} for name, line in sorted(locations)][:100]
+
+
 def command(scope):
     args = [root_tool('dotnet'), 'test', '--project', 'tests/Poseidon.Api.Tests/Poseidon.Api.Tests.csproj',
             '--configuration', 'Release', '--no-build']
@@ -89,6 +99,8 @@ def run(scope, root=ROOT, timeout=1800):
         counts = observations(execution.stdout)
         evidence.update(exit_code=execution.returncode, count_observations=counts,
                         output_sha256=hashlib.sha256(execution.stdout).hexdigest())
+        if execution.returncode:
+            evidence['failure_source_locations'] = failure_locations(execution.stdout, root)
         # Only static identifiers already found in discovery may be emitted.
         # Parameters, request bodies, exception text and raw source paths never are.
         static_names = {name.split('.')[-1] for name in discovered}

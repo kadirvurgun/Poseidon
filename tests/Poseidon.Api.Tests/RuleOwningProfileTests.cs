@@ -64,7 +64,7 @@ public sealed partial class DirectoryWorkspaceTests
     {
         var root = Path.Combine(Path.GetTempPath(), "poseidon-owning-record-" + Guid.NewGuid().ToString("N")); Directory.CreateDirectory(root);
         try {
-            using var scanner = new ScanPeer("stream: OK\0"); await using var host = FileHost(root, scanner.Port); using var c = Client(host);
+            using var scanner = new ScanPeer("stream: OK\0", repeat: true); await using var host = FileHost(root, scanner.Port); using var c = Client(host);
             GraphPermissionsForTest(host.Services); await Token(c);
             var (rule, q, _) = await AdmittedByCommands(c, host.Services, OwningRule("vessel.contractForConstructionDate", "DATE_GTE", "2022-01-01"), [new("vessel.contractForConstructionDate", "HumanAttested", 24)], "REVIEW_REQUIRED");
             var profile = (await c.GetFromJsonAsync<RegulatoryDraftDto>($"/api/v1/vessels/{SeedVessel.Id}/regulatory-profile", Ct))!;
@@ -173,7 +173,7 @@ public sealed partial class DirectoryWorkspaceTests
     {
         var root = PersonFileRoot();
         try {
-            using var scanner = new ScanPeer("stream: OK\0"); await using var host = PersonFileHost(root, scanner.Port); using var c = Client(host);
+            using var scanner = new ScanPeer("stream: OK\0", repeat: true); await using var host = PersonFileHost(root, scanner.Port); using var c = Client(host);
             PersonFilePermissions(host.Services); await Token(c);
             using var stage = await Send(c, PersonalVersion(), PersonalPng()); Assert.Equal(HttpStatusCode.OK, stage.StatusCode);
             var staged = (await stage.Content.ReadFromJsonAsync<FileDto>(Ct))!;

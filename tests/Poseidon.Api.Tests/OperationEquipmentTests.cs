@@ -29,7 +29,7 @@ public sealed partial class DirectoryWorkspaceTests
     public async Task Operation_and_service_owning_commands_require_exact_current_relations_and_withdraw_on_changes(string change) {
         var root = Path.Combine(Path.GetTempPath(), "poseidon-operation-" + Guid.NewGuid().ToString("N")); Directory.CreateDirectory(root);
         try {
-            using var scanner = new ScanPeer("stream: OK\0"); var planning = SyntheticPlanning(); var clock = new OwningTimeShift();
+            using var scanner = new ScanPeer("stream: OK\0", repeat: true); var planning = SyntheticPlanning(); var clock = new OwningTimeShift();
             await using var host = FileHost(root, scanner.Port).WithWebHostBuilder(b => b.ConfigureTestServices(s => { s.AddSingleton(planning); s.AddSingleton<TimeProvider>(clock); })); using var c = Client(host); await Token(c);
             var (rule, _, baseline) = await AdmittedByCommands(c, host.Services, inputs: OwningPolicies, evaluationVessel: Tug.Id, literalBindings: change == "unmapped" ? [] : FictionalOperationBindings);
             CapacityRights(host.Services); await Token(c); var settings = host.Services.GetRequiredService<FederationSettings>();
@@ -101,7 +101,7 @@ public sealed partial class DirectoryWorkspaceTests
     public async Task Qualified_cargo_and_winch_facts_are_command_produced_with_positive_false_and_unverified_semantics(bool dg, bool fitted, bool verify) {
         var root = Path.Combine(Path.GetTempPath(), "poseidon-owning-inputs-" + Guid.NewGuid().ToString("N")); Directory.CreateDirectory(root);
         try {
-            using var scanner = new ScanPeer("stream: OK\0"); await using var host = FileHost(root, scanner.Port); using var c = Client(host); await Token(c);
+            using var scanner = new ScanPeer("stream: OK\0", repeat: true); await using var host = FileHost(root, scanner.Port); using var c = Client(host); await Token(c);
             var (rule, _, baseline) = await AdmittedByCommands(c, host.Services, inputs: OwningPolicies, evaluationVessel: SeedVessel.Id, literalBindings: FictionalOperationBindings);
             CapacityRights(host.Services); await Token(c);
             var settings = host.Services.GetRequiredService<FederationSettings>();

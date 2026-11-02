@@ -48,6 +48,9 @@ internal static class OperationEquipmentCommands
                 db.TugAssignments.Any(t => t.VesselId == b.VesselId && t.JobId == b.JobId && !visible.Contains(t.TugId))))));
     }
     // Apply before paging/history/receipt on every graph surface, including linked controls.
+    // Only the trace endpoint passes assignedTraceReader after validating its exact
+    // live object appointment and vessel scope. That reader needs the explicit
+    // source capability, without receiving tenant-wide catalog authority.
     internal static IQueryable<ControlEvidenceRevision> Visible(PoseidonDbContext db, TrustedActor a, IQueryable<ControlEvidenceRevision> rows, bool assignedTraceReader = false) {
         var visible = a.Scope(db.Vessels).Select(v => v.Id);
         var documentVersion = db.QualifiedInputs?.DocumentPolicyVersion; var documentPurpose = db.QualifiedInputs?.DocumentPurpose;
@@ -60,10 +63,10 @@ internal static class OperationEquipmentCommands
             (db.TugDraftPlanTugs.Any(t => t.VesselId == b.VesselId && t.JobId == b.JobId && t.Revision == b.PlanRevision && !visible.Contains(t.TugId)) ||
                 db.TugAssignments.Any(t => t.VesselId == b.VesselId && t.JobId == b.JobId && !visible.Contains(t.TugId)))) &&
         !db.OperationEquipmentBindings.Any(b => b.VesselId == r.VesselId && b.Kind == r.Kind && b.Id == r.Id && b.Revision == r.Revision &&
-            (!(Read(a) || assignedTraceReader && a.Permissions.Contains("file.read") && a.Permissions.Contains("evidence.read") && a.Permissions.Contains("control.read") && a.CanReadRegulatory) || b.DocumentKind == "Msmd" && !a.Permissions.Contains("crew.read") || b.DocumentKind == "CrewRoleAssessment" && !ComplianceInputContext.CrewRead(a) || (b.DocumentKind == "Operation" || b.DocumentKind == "ServiceAuthorization") && !a.CanReadTug)) &&
+            (!(Read(a) || assignedTraceReader && a.Permissions.Contains("file.read") && a.Permissions.Contains("evidence.read") && a.Permissions.Contains("control.read") && a.Permissions.Contains("regulatory.draft.read")) || b.DocumentKind == "Msmd" && !a.Permissions.Contains("crew.read") || b.DocumentKind == "CrewRoleAssessment" && !ComplianceInputContext.CrewRead(a) || (b.DocumentKind == "Operation" || b.DocumentKind == "ServiceAuthorization") && !a.CanReadTug)) &&
         !db.ControlEvidenceEdges.Any(edge => edge.VesselId == r.VesselId && edge.Kind == r.Kind && edge.Id == r.Id && edge.Revision == r.Revision &&
             db.OperationEquipmentBindings.Any(b => b.VesselId == edge.VesselId && b.Kind == edge.TargetKind && b.Id == edge.TargetId && b.Revision == edge.TargetRevision &&
-                (!(Read(a) || assignedTraceReader && a.Permissions.Contains("file.read") && a.Permissions.Contains("evidence.read") && a.Permissions.Contains("control.read") && a.CanReadRegulatory) || b.DocumentKind == "Msmd" && !a.Permissions.Contains("crew.read") || b.DocumentKind == "CrewRoleAssessment" && !ComplianceInputContext.CrewRead(a) || (b.DocumentKind == "Operation" || b.DocumentKind == "ServiceAuthorization") && !a.CanReadTug))));
+                (!(Read(a) || assignedTraceReader && a.Permissions.Contains("file.read") && a.Permissions.Contains("evidence.read") && a.Permissions.Contains("control.read") && a.Permissions.Contains("regulatory.draft.read")) || b.DocumentKind == "Msmd" && !a.Permissions.Contains("crew.read") || b.DocumentKind == "CrewRoleAssessment" && !ComplianceInputContext.CrewRead(a) || (b.DocumentKind == "Operation" || b.DocumentKind == "ServiceAuthorization") && !a.CanReadTug))));
     }
     internal static async Task<bool> Check(PoseidonDbContext db, TrustedActor a, Guid vessel, Guid? id, ControlEvidenceContent c, CancellationToken ct) {
         if (!OperationEquipmentInputs.Present(c)) return true;
