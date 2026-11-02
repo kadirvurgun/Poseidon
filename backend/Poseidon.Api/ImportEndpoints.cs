@@ -255,7 +255,7 @@ public static class ImportEndpoints
                         } catch (CryptographicException) { Issue("unsupported_value"); }
                     } else if (old == null && c.PersonId == null && (!identityPolicy.Allows(Actor(h), true) || c.IdentityPolicyVersion != identityPolicy.Version || c.IdentityPurpose != identityPolicy.Purpose)) Issue("unsupported_value");
                     if (old != null && c.PersonId != old.PersonId || old == null && c.PersonId != null && (r.HasIdentity || !assignments.Any(x => x.PersonId == c.PersonId))) Issue("unresolved_reference", "person_id");
-                    if (!CrewPositionPolicy.Current(h).AllowsReference(Actor(h).TenantId, b.VesselId, c.PositionId, c.PositionPolicyVersion, await db.CrewPositions.AsNoTracking().Where(x => x.VesselId == b.VesselId).ToArrayAsync(h.RequestAborted))) Issue("unresolved_reference", "position_ref");
+                    if (!(await CrewPositionPolicy.Current(h, db, b.VesselId)).AllowsReference(Actor(h).TenantId, b.VesselId, c.PositionId, c.PositionPolicyVersion, await db.CrewPositions.AsNoTracking().Where(x => x.VesselId == b.VesselId).ToArrayAsync(h.RequestAborted))) Issue("unresolved_reference", "position_ref");
                     if (c.PositionId != null && !await db.CrewPositions.AnyAsync(x => x.Id == c.PositionId && x.VesselId == b.VesselId, h.RequestAborted)) Issue("unresolved_reference", "position_ref");
                     if (c.From != null && old != null && await db.CrewAssignments.AnyAsync(x => x.PersonId == old.PersonId && x.Id != id && x.From != null &&
                         (x.To == null || c.From < x.To) && (c.To == null || x.From < c.To), h.RequestAborted)) Issue("conflict");
@@ -372,7 +372,7 @@ public static class ImportEndpoints
                     if (!identityPolicy.Allows(a, true) || row.HasIdentity && (row.Get("identity_policy_version") != identityPolicy.Version || row.Get("identity_purpose") != identityPolicy.Purpose)) return await Fail(h, 403, "field_policy_denied");
                     var assignment = await db.CrewAssignments.AsNoTracking().SingleOrDefaultAsync(x => x.VesselId == vessel && x.Id == row.Id("record_key", true), h.RequestAborted);
                     var crewCommand = row.Crew(assignment);
-                    if (!CrewPositionPolicy.Current(h).AllowsReference(a.TenantId, vessel, crewCommand.PositionId, crewCommand.PositionPolicyVersion,
+                    if (!(await CrewPositionPolicy.Current(h, db, vessel)).AllowsReference(a.TenantId, vessel, crewCommand.PositionId, crewCommand.PositionPolicyVersion,
                         await db.CrewPositions.AsNoTracking().Where(x => x.VesselId == vessel).ToArrayAsync(h.RequestAborted))) return await Fail(h, 403, "field_policy_denied");
                     var personal = row.PersonalProfile();
                     if (personal != null && !CrewProfileEndpoints.Valid(personal with { Purpose = profilePolicy.ImportPurpose }, a, profilePolicy)) return await Fail(h, 403, "field_policy_denied");

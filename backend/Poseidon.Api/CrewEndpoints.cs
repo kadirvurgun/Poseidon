@@ -40,7 +40,7 @@ public static class CrewEndpoints
 {
     public static void MapCrew(this IEndpointRouteBuilder app)
     {
-        app.MapCrewIdentity(); app.MapCrewPositionPolicy(); app.MapCrewOwningInputs();
+        app.MapCrewCatalog(); app.MapCrewIdentity(); app.MapCrewPositionPolicy(); app.MapCrewOwningInputs();
         var group = app.MapGroup("/api/v1/vessels/{vessel:guid}/crew").RequireAuthorization("DirectoryRead");
         group.MapGet("", List).WithName("CrewList").Produces<CrewPage>();
         group.MapGet("/{id:guid}", Profile).WithName("CrewProfile").Produces<CrewProfile>();
@@ -133,7 +133,7 @@ public static class CrewEndpoints
         return policy.Allows(Actor(h), write) ? new(policy.Version, policy.Purpose, policy.EmployeeNumberMode) : null;
     }
     private static async Task<CrewRow[]> Identities(CrewRow[] rows, HttpContext h, PoseidonDbContext db) {
-        var lookup = CrewPositionPolicy.Current(h);
+        var lookup = await CrewPositionPolicy.Current(h, db, rows.FirstOrDefault()?.VesselId ?? Guid.Empty);
         var declarationPolicy = h.RequestServices.GetRequiredService<CrewAssignmentPolicy>();
         var now = DateTimeOffset.UtcNow; var date = declarationPolicy.ReferenceDate(now);
         var assignmentIds = rows.Select(x => x.Id).ToArray();
@@ -188,7 +188,8 @@ public static class CrewEndpoints
         if (!Read(a)) return await Fail(h, 403, "permission_denied");
         if (!await Scope(db, a, vessel, h.RequestAborted)) return await Fail(h, 404, "resource_not_found");
         var stored = await db.CrewPositions.AsNoTracking().Where(x => x.VesselId == vessel).OrderBy(x => x.Code).ToArrayAsync(h.RequestAborted);
-        var rows = stored.Where(x => CrewPositionPolicy.Current(h).Allows(x)).Take(200)
+        var policy = await CrewPositionPolicy.Current(h, db, vessel);
+        var rows = stored.Where(x => policy.Allows(x)).Take(200)
             .Select(x => new { x.Id, x.Code, x.Rank, x.Capacity, x.Department, x.Provenance }).ToArray();
         await Observe(h, "CrewPositions", vessel); return Results.Ok(rows);
     }
@@ -200,7 +201,7 @@ public static class CrewEndpoints
         try { await csrf.ValidateRequestAsync(h); } catch (AntiforgeryValidationException) { return await Fail(h, 400, "csrf_invalid"); }
         if (command.Id == Guid.Empty || string.IsNullOrWhiteSpace(command.Code) || command.Code.Length > 64 ||
             command.Rank?.Length > 100 || command.Capacity?.Length > 100 || command.Department?.Length > 100) return await Fail(h, 400, "validation_failed");
-        var lookupPolicy = CrewPositionPolicy.Current(h);
+        var lookupPolicy = await CrewPositionPolicy.Current(h, db, vessel);
         if (!lookupPolicy.Configured) return await Fail(h, 403, "field_policy_denied");
         var rule = lookupPolicy.Positions.SingleOrDefault(x => x.TenantId == a.TenantId && x.VesselId == vessel && x.PositionId == command.Id);
         var proposed = new CrewPosition { TenantId = a.TenantId, Id = command.Id, VesselId = vessel, Code = command.Code,
@@ -259,7 +260,8 @@ public static class CrewEndpoints
             return await Fail(h, 409, "version_conflict");
         if (assignment != null && (command.PersonId != assignment.PersonId || command.FullName != null || command.EmployeeNo != null))
             return await Fail(h, 400, "invalid_request");
-        if (!CrewPositionPolicy.Current(h).AllowsReference(a.TenantId, vessel, command.PositionId, command.PositionPolicyVersion,
+        var positionPolicy = await CrewPositionPolicy.Current(h, db, vessel);
+        if (!positionPolicy.AllowsReference(a.TenantId, vessel, command.PositionId, command.PositionPolicyVersion,
             await db.CrewPositions.AsNoTracking().Where(x => x.VesselId == vessel).ToArrayAsync(ct))) return await Fail(h, 403, "field_policy_denied");
         if (command.PositionId != null && !await db.CrewPositions.AnyAsync(x => x.Id == command.PositionId && x.VesselId == vessel, ct))
             return await Fail(h, 404, "resource_not_found");
@@ -289,8 +291,8 @@ public static class CrewEndpoints
             assignment.AssignmentPolicyFingerprint = assignmentPolicy.Fingerprint();
         }
         if (!preservePositionLineage) {
-            assignment.PositionPolicyVersion = command.PositionId == null ? null : CrewPositionPolicy.Current(h).Version;
-            assignment.PositionPolicyFingerprint = command.PositionId == null ? null : CrewPositionPolicy.Current(h).Fingerprint();
+            assignment.PositionPolicyVersion = command.PositionId == null ? null : positionPolicy.Version;
+            assignment.PositionPolicyFingerprint = command.PositionId == null ? null : positionPolicy.Fingerprint();
         }
         assignment.PositionId = command.PositionId; assignment.From = command.From; assignment.To = command.To;
         assignment.ContractEndDate = command.ContractEndDate; assignment.WatchGroup = command.WatchGroup; assignment.SourceObservedAt = command.SourceObservedAt?.ToUniversalTime();

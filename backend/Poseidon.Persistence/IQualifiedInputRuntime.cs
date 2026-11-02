@@ -4,8 +4,8 @@ namespace Poseidon.Persistence;
 public interface IQualifiedInputRuntime
 {
     Task<bool> FileIntact(StoredFile file, CancellationToken ct);
-    bool AssignmentPolicyCurrent(CrewAssignment assignment, CrewPosition position, DateTimeOffset now);
+    Task<bool> AssignmentPolicyCurrent(PoseidonDbContext db, CrewAssignment assignment, CrewPosition position, DateTimeOffset now, CancellationToken ct);
     string? DocumentPolicyVersion { get; }
     string? DocumentPurpose { get; }
-    string PolicyFingerprint { get; }
+    Task<string> PolicyFingerprint(PoseidonDbContext db, Guid vessel, DateTimeOffset now, CancellationToken ct);
 }

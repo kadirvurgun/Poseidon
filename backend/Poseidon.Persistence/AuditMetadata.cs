@@ -11,6 +11,14 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
 {
     internal static AuditMetadata From(EntityEntry entry)
     {
+        if (entry.Entity is CommandReceipt { Action: "CrewCatalogSave" } catalogReceipt)
+            return new(catalogReceipt.ResourceId, catalogReceipt.ResourceId, "CrewCatalogReceipt", null, catalogReceipt.RegisterRevision, "[]");
+        if (entry.Entity is CrewCatalogEvent catalog)
+            return new(catalog.VesselId, catalog.VesselId, "CrewCatalog", null, catalog.Revision,
+                JsonSerializer.Serialize(new { catalog.State, catalog.Revision, catalog.AuthorityId, reason = "Recorded;ValueWithheld" }));
+        if (entry.Entity is CrewCatalogHead catalogHead)
+            return new(catalogHead.VesselId, catalogHead.VesselId, "CrewCatalogHead", entry.State == EntityState.Added ? null : (long?)entry.Property("Revision").OriginalValue,
+                catalogHead.Revision, JsonSerializer.Serialize(new { catalogHead.Revision, catalogHead.ActiveRevision }));
         // Do not put exact source bytes, validation rationale or actor-provided text in audit summaries.
         if (entry.Entity is RegulatoryQualificationEvent qualification)
             return new(null, qualification.RuleId, "RegulatoryQualification", null, qualification.Revision,

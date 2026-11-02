@@ -1,4 +1,37 @@
 {
+  "foundation_catalog_continuation_01": {
+    "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+    "accepted": false,
+    "accepted_sp_added": 0,
+    "task_id": "FOUNDATION-CATALOG-CONTINUATION-01",
+    "parent_task": "FOUNDATION-ACCEPTANCE-BUNDLE-01",
+    "receiving_head": "5d99f6d",
+    "initial_worktree": "clean; predecessor changes preserved",
+    "base_commit": "80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44",
+    "phase": "Prerequisite software authoring; original combined verification gate not started",
+    "task": "docs/tasks/foundation-catalog-continuation-01.md",
+    "report": "docs/phases/FOUNDATION-CATALOG-CONTINUATION-01.md",
+    "sources": "docs/tasks/foundation-catalog-continuation-01.sources.json",
+    "authored": [
+      "Durable Crew catalog draft/review/adoption/withdrawal, current authority, ordinary consumers, EF lineage and TR/EN UI",
+      "Explicit signed-host multi-human catalog fixture setup and registered real-login journey source",
+      "Preserve provisioned crew.assessment.read through trusted permission filter",
+      "Required-Credential command-produced criterion theory and credential/document-policy invalidation sources"
+    ],
+    "actual_history_results": "Current configured base ancestor exit0; eight support origins have normal -x receipts and exact origin changed-file content",
+    "verification": "NOT RUN: suites/restore/build/lint/typecheck/generation/model/contract/migration/seed/browser/provider/scans/Graphify/independent QA/CI; software precondition false",
+    "remaining_software": [
+      "Additional selected supported offline capture/read/restart/recovery and atomic ordinary replay reconciliation",
+      "Full job-specific criterion/Credential/MSMD/golden and Tug/Today readiness composition",
+      "Full signed multi-human compliance/source/verification fixture orchestration",
+      "Whole-branch generated/model integration and original combined gate repairs"
+    ],
+    "external_definition": "Crew1615 source-owned DERIVATION_REQUIRES_SPECIFICATION remains separate from implementable governance",
+    "canonical_progress": "8/970SP;2/121tasks;0/196accepted",
+    "candidate_selection": "Original 40 tasks/272SP unchanged",
+    "publication": "Not performed; coordinator only; uncommitted worktree continuation",
+    "next": "Finish original selected software, then one coherent full local gate, independent exact-target QA/source review and required CI"
+  },
   "rule_compliance_inputs_01": {
     "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
     "accepted": false,

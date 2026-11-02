@@ -88,8 +88,14 @@ public sealed class PoseidonDbContext(
     public DbSet<ControlEvidenceEdge> ControlEvidenceEdges => Set<ControlEvidenceEdge>();
     public DbSet<ControlEvidenceReceipt> ControlEvidenceReceipts => Set<ControlEvidenceReceipt>();
 
+    public DbSet<CrewCatalogHead> CrewCatalogHeads => Set<CrewCatalogHead>();
+    public DbSet<CrewCatalogEvent> CrewCatalogEvents => Set<CrewCatalogEvent>();
+
     protected override void OnModelCreating(ModelBuilder model)
     {
+        CrewCatalogStorage.Configure(model);
+        model.Entity<CrewCatalogHead>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<CrewCatalogEvent>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.HasDefaultSchema("core");
         ControlEvidenceStorage.Configure(model);
         HumanReviewStorage.Configure(model);
@@ -286,6 +292,7 @@ public sealed class PoseidonDbContext(
     private uint? CommittedVersion(CommandReceipt receipt)
     {
         var resource = ChangeTracker.Entries().FirstOrDefault(e => e.Entity switch {
+            CrewCatalogHead c => receipt.Action == "CrewCatalogSave" && c.VesselId == receipt.ResourceId && c.TenantId == receipt.TenantId,
             ImportBatch b => receipt.Action == "CrewImportLegacyConvert" && b.Id == receipt.ResourceId && b.TenantId == receipt.TenantId,
             TugDraftPlan p => receipt.Action == "TugPlanSave" && p.JobId == receipt.ResourceId && p.TenantId == receipt.TenantId,
             TugJob j => receipt.Action == "TugSave" && j.Id == receipt.ResourceId && j.TenantId == receipt.TenantId,
@@ -366,6 +373,10 @@ public sealed class PoseidonDbContext(
             throw new InvalidOperationException("Technical ownership is immutable.");
         if (changes.Any(e => e.Entity is CrewIdentityRevision && e.State != EntityState.Added))
             throw new InvalidOperationException("Crew identity lineage is immutable.");
+        if (changes.Any(e => e.Entity is CrewCatalogEvent && e.State != EntityState.Added))
+            throw new InvalidOperationException("Crew catalog lineage is immutable.");
+        if (changes.Any(e => e.Entity is CrewCatalogHead && (e.State == EntityState.Deleted || e.State == EntityState.Modified && e.Property("VesselId").IsModified)))
+            throw new InvalidOperationException("Crew catalog ownership is immutable.");
         if (changes.Any(e => e.Entity is CrewPosition && e.State != EntityState.Added))
             throw new InvalidOperationException("Crew position references are immutable; use a distinct configured reference.");
         if (changes.Any(e => e.Entity is CrewPersonalProfileRevision && e.State != EntityState.Added))

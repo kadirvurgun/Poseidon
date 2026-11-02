@@ -133,34 +133,62 @@ public sealed partial class DirectoryWorkspaceTests
     }
 
     [Theory]
-    [InlineData(true, true)] [InlineData(false, true)] [InlineData(true, false)]
-    public async Task Command_qualified_role_criteria_pin_assignment_position_period_msmd_and_withdraw_after_noop(bool satisfied, bool verify) {
+    [InlineData(true, true, "none")] [InlineData(false, true, "none")] [InlineData(true, false, "none")]
+    [InlineData(true, true, "current")] [InlineData(false, true, "current")]
+    [InlineData(true, true, "credential-noop")] [InlineData(true, true, "document-policy-revoked")]
+    public async Task Command_qualified_role_criteria_pin_assignment_position_period_msmd_and_withdraw_after_noop(bool satisfied, bool verify, string credentialCase) {
         var root = Path.Combine(Path.GetTempPath(), "poseidon-role-input-" + Guid.NewGuid().ToString("N")); Directory.CreateDirectory(root);
         try {
             using var scanner = new ScanPeer("stream: OK\0");
-            await using var host = FileHost(root, scanner.Port).WithWebHostBuilder(b => b.ConfigureTestServices(s => s.AddSingleton(new CrewAssignmentPolicy {
+            await using var host = PersonFileHost(root, scanner.Port).WithWebHostBuilder(b => b.ConfigureTestServices(s => s.AddSingleton(new CrewAssignmentPolicy {
                 Version = "FICTIONAL-role-assignment-v1", TimeZone = "UTC", EffectiveStatuses = ["FICTIONAL-onboard"], PlannedStatuses = ["FICTIONAL-planned"], Provenances = ["UserDeclaredUnverified"] })));
             using var c = Client(host); await Token(c);
             var (producer, _, baseline) = await AdmittedByCommands(c, host.Services, qualification: CompliancePolicy);
             var settings = host.Services.GetRequiredService<FederationSettings>(); CapacityRights(host.Services);
-            settings.Memberships[0] = settings.Memberships[0] with { Permissions = [..settings.Memberships[0].Permissions, "crew.write", "crew.assignment.declare", "crew.identity.write", "crew.profile.identity.read", "crew.profile.identity.write", "crew.identity.read", "crew.profile.medical.read", "crew.assessment.read", "crew.documents.read"] }; await Token(c);
+            settings.Memberships[0] = settings.Memberships[0] with { Permissions = [..settings.Memberships[0].Permissions, "crew.write", "crew.assignment.declare", "crew.identity.write", "crew.profile.identity.read", "crew.profile.identity.write", "crew.identity.read", "crew.profile.medical.read", "crew.assessment.read", "crew.documents.read", "crew.documents.write", "crew.certificate.write", "file.read", "file.write"] }; await Token(c);
             var today = DateOnly.FromDateTime(DateTime.UtcNow);
             var declaration = NewCrew() with { From = today, To = today.AddDays(1), PositionId = SeedVessel.Id, PositionPolicyVersion = "synthetic-position-v1", DeclaredStatus = "FICTIONAL-onboard", AssignmentPolicyVersion = "FICTIONAL-role-assignment-v1", SourceObservedAt = DateTimeOffset.UtcNow.AddSeconds(-1) };
             using var saved = await Send(c, CrewUrl, declaration); Assert.Equal(HttpStatusCode.OK, saved.StatusCode);
             CrewAssignment assignment; CrewPosition position;
             await using (var db = Db()) { assignment = await db.CrewAssignments.AsNoTracking().SingleAsync(a => a.Id == declaration.Id, Ct); position = await db.CrewPositions.AsNoTracking().SingleAsync(p => p.Id == SeedVessel.Id, Ct); }
+            CredentialInputReference? credential = null; CredentialSaveCommand? credentialCommand = null;
+            var certificatePath = $"{CrewUrl}/{assignment.Id}/certificates";
+            if (credentialCase != "none") {
+                // A real person-bound ordinary upload/scan/store + credential command, not a DB-only verified fixture.
+                // The scanner protocol peer proves software behavior only, not production scanner trust.
+                var filePath = $"{CrewUrl}/{assignment.Id}/personal-files/CertificateDocument/versions/1";
+                using var staged = await Send(c, filePath, PersonalPng("CertificateDocument")); Assert.Equal(HttpStatusCode.OK, staged.StatusCode);
+                var file = (await staged.Content.ReadFromJsonAsync<FileDto>(Ct))!;
+                using var uploaded = await PutPersonalPng(c, filePath, file.Id); Assert.Equal(HttpStatusCode.OK, uploaded.StatusCode);
+                credentialCommand = new(Guid.NewGuid(), null, new(new("FICTIONAL source-assessed type", "FICTIONAL", "FICTIONAL issuer; no real trust", today.AddDays(-1), today.AddDays(2), null), DocumentReference: file.Id));
+                using var recorded = await Send(c, certificatePath, credentialCommand); Assert.Equal(HttpStatusCode.OK, recorded.StatusCode);
+                var savedCredential = (await recorded.Content.ReadFromJsonAsync<CrewSavedDto>(Ct))!;
+                credential = new(savedCredential.Id, savedCredential.Revision, savedCredential.Version);
+            }
             var pin = new RequirementPin(producer.Current.RequirementId!.Value, producer.Current.RequirementRevision!.Value, producer.Current.SourceId!.Value, producer.Current.SourceRevision!.Value, producer.Current.Id, producer.Current.Revision);
             var control = await CapacitySave(c, "controls", GraphCommand(content: new(Title: "FICTIONAL source role control", OwnerId: settings.Memberships[0].ActorId, OwnerRole: ReviewRole, Frequency: "FICTIONAL frequency", EvidencePolicy: "FICTIONAL evidence policy", VerificationPolicy: "FICTIONAL independent review", Critical: true)) with { Requirements = [pin] }, vessel: SeedVessel.Id);
             var msmd = await OwningDocument(c, host.Services, control, pin, baseline.Id, new(Msmd: new("FICTIONAL issued record", "FICTIONAL issuer", [new(position.Id, 1, "FICTIONAL/msmd/role")])), vessel: SeedVessel.Id);
-            var assessment = await OwningDocument(c, host.Services, control, pin, baseline.Id, new(CrewRoleAssessment: new(assignment.Id, assignment.Revision, assignment.Version, position.Id, position.Version, today, today.AddDays(1), "FICTIONAL-CRITERION", "FICTIONAL independently qualified assessment record", satisfied)), verify, SeedVessel.Id);
+            var assessment = await OwningDocument(c, host.Services, control, pin, baseline.Id, new(CrewRoleAssessment: new(assignment.Id, assignment.Revision, assignment.Version, position.Id, position.Version, today, today.AddDays(1), "FICTIONAL-CRITERION", "FICTIONAL independently qualified assessment record", satisfied, credential)), verify, SeedVessel.Id);
             var retained = settings.Memberships.ToArray();
-            var (consumer, _, _) = await AdmittedByCommands(c, host.Services, qualification: q => CompliancePolicy(q) with { Eligibility = new(position.Id, "FICTIONAL/role/policy", [new("FICTIONAL-CRITERION", producer.Current.Id, producer.Current.Revision, "FICTIONAL/criterion/source", false)]) });
+            var (consumer, _, _) = await AdmittedByCommands(c, host.Services, qualification: q => CompliancePolicy(q) with { Eligibility = new(position.Id, "FICTIONAL/role/policy", [new("FICTIONAL-CRITERION", producer.Current.Id, producer.Current.Revision, "FICTIONAL/criterion/source", credentialCase != "none")]) });
             settings.Memberships = [..settings.Memberships, ..retained.Where(m => !settings.Memberships.Any(n => n.ActorId == m.ActorId)).Select(m => m with { Subject = "fictional-retained-role-" + Guid.NewGuid().ToString("N") })];
             CapacityRights(host.Services); settings.Memberships[0] = settings.Memberships[0] with { Permissions = [..settings.Memberships[0].Permissions, "crew.identity.read", "crew.profile.medical.read", "crew.assessment.read", "crew.documents.read", "crew.write", "crew.assignment.declare", "crew.profile.identity.read", "crew.profile.identity.write", "crew.identity.write"] }; await Token(c);
             using var evaluated = await Send(c, "applicability/evaluate", new EvaluateCommand(SeedVessel.Id, [consumer.Current.Id], OwningInputs: new(MsmdId: msmd.Id, RoleAssessmentIds: [assessment.Id])));
             Assert.Equal(HttpStatusCode.OK, evaluated.StatusCode); var result = (await evaluated.Content.ReadFromJsonAsync<EvaluationDto>(Ct))!;
             var fact = result.Snapshot.GetProperty("qualifications")[0].GetProperty("facts").GetProperty("crew.requiredRoleEligible");
             Assert.Equal(verify ? "Known" : "Unknown", fact.GetProperty("knowledge").GetString()); if (verify) Assert.Equal(satisfied, fact.GetProperty("value").GetBoolean());
+            if (credentialCase == "credential-noop") {
+                settings.Memberships[0] = settings.Memberships[0] with { Permissions = [..settings.Memberships[0].Permissions, "crew.certificate.write", "crew.documents.write"] }; await Token(c);
+                using var changedCredential = await Send(c, certificatePath, credentialCommand! with { BaseVersion = credential!.Version });
+                Assert.Equal(HttpStatusCode.OK, changedCredential.StatusCode);
+                Assert.False((await c.GetFromJsonAsync<JsonElement>($"/api/v1/applicability/evaluations/{result.Id}/current", Ct)).GetProperty("current").GetBoolean());
+            }
+            if (credentialCase == "document-policy-revoked") {
+                host.Services.GetRequiredService<Microsoft.Extensions.Configuration.IConfiguration>()["CrewFilePolicy:Version"] = "FICTIONAL-revoked-document-policy";
+                Assert.Equal(HttpStatusCode.NotFound, (await c.GetAsync($"/api/v1/applicability/evaluations/{result.Id}", Ct)).StatusCode);
+                // Restore the test's original explicit policy to continue unchanged assignment/revocation assertions.
+                host.Services.GetRequiredService<Microsoft.Extensions.Configuration.IConfiguration>()["CrewFilePolicy:Version"] = "synthetic-person-files-v1";
+            }
             using var changed = await Send(c, CrewUrl, declaration with { PersonId = assignment.PersonId, BaseVersion = assignment.Version }); Assert.Equal(HttpStatusCode.OK, changed.StatusCode);
             Assert.False((await c.GetFromJsonAsync<JsonElement>($"/api/v1/applicability/evaluations/{result.Id}/current", Ct)).GetProperty("current").GetBoolean());
             settings.Memberships[0] = settings.Memberships[0] with { Permissions = settings.Memberships[0].Permissions.Where(p => p != "crew.assessment.read").ToArray() };

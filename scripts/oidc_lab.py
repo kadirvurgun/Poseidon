@@ -19,6 +19,7 @@ import uuid
 import tempfile
 import shutil
 from copy import deepcopy
+from oidc_lab_humans import catalog_membership
 
 ROOT = Path(__file__).resolve().parents[1]
 PRIVATE = ROOT / '.runtime/oidc-lab'
@@ -79,11 +80,29 @@ def write(path, value):
         path.chmod(0o600)
 
 
+def atomic_private_json(path, value):
+    """Crash-safe update inside the existing restricted private directory only."""
+    path = Path(path)
+    if path.is_symlink() or not path.resolve().is_relative_to(PRIVATE.resolve()):
+        raise RuntimeError('lab_private_path_invalid')
+    descriptor, temporary = tempfile.mkstemp(prefix='.human-update-', dir=path.parent)
+    try:
+        with os.fdopen(descriptor, 'w', encoding='utf-8') as stream:
+            json.dump(value, stream)
+            stream.flush()
+            os.fsync(stream.fileno())
+        if os.name != 'nt':
+            os.chmod(temporary, 0o600)
+        os.replace(temporary, path)
+    finally:
+        Path(temporary).unlink(missing_ok=True)
+
+
 def make_configuration():
     """Pure synthetic input, used by tests as well as explicit provisioning."""
-    manager, restricted = str(uuid.uuid4()), str(uuid.uuid4())
+    manager, restricted, reviewer = str(uuid.uuid4()), str(uuid.uuid4()), str(uuid.uuid4())
     credentials = {name: {'username': name, 'password': secrets.token_urlsafe(32)}
-                   for name in ('lab-manager', 'lab-restricted')}
+                   for name in ('lab-manager', 'lab-restricted', 'lab-reviewer')}
     secret = secrets.token_urlsafe(48)
     realm = {
         'realm': 'poseidon-lab', 'enabled': True, 'sslRequired': 'all',
@@ -97,16 +116,16 @@ def make_configuration():
                      'attributes': {'pkce.code.challenge.method': 'S256',
                                     'post.logout.redirect.uris': APP + '/signout-callback-oidc'}}],
         'users': [{'id': subject, 'username': name, 'enabled': True,
-                   'firstName': 'Synthetic', 'lastName': 'Manager' if name == 'lab-manager' else 'Restricted',
+                   'firstName': 'Synthetic', 'lastName': {'lab-manager': 'Manager', 'lab-restricted': 'Restricted', 'lab-reviewer': 'Reviewer'}[name],
                    'email': name + '@example.invalid', 'emailVerified': False,
                    'credentials': [{'type': 'password', 'value': credentials[name]['password'], 'temporary': False}]}
-                  for name, subject in [('lab-manager', manager), ('lab-restricted', restricted)]]}
+                  for name, subject in [('lab-manager', manager), ('lab-restricted', restricted), ('lab-reviewer', reviewer)]]}
     tenant = '10000000-0000-0000-0000-000000000001'
     memberships = [{'Issuer': AUTHORITY, 'Subject': subject, 'ActorId': str(uuid.uuid4()),
                     'TenantId': tenant, 'Permissions': ['directory.read', 'directory.write', 'workspace.search'] if wide else ['directory.read'],
                     'TenantWideManage': wide, 'TenantWideRead': wide,
                     'VesselGrants': [] if wide else [{'VesselId': '30000000-0000-0000-0000-000000000001', 'CanEdit': False}]}
-                   for subject, wide in [(manager, True), (restricted, False)]]
+                   for subject, wide in [(manager, True), (restricted, False), (reviewer, False)]]
     database_password = secrets.token_urlsafe(48)
     config = {'ConnectionStrings': {'Poseidon': f'Host=localhost;Port=55432;Database=poseidon_lab;Username=poseidon_lab;Password={database_password};Include Error Detail=false'},
               'Authentication': {'Oidc': {'Authority': AUTHORITY, 'Issuer': AUTHORITY,
@@ -378,6 +397,7 @@ def prepare_bundle():
     if not member.get('RoleReferences'):
         member['RoleReferences'] = [str(uuid.uuid5(uuid.NAMESPACE_URL, PROJECT + '/synthetic-writer-assignment'))]
     config = navigation_membership(config, realm)
+    config = catalog_membership(config, realm, AUTHORITY, PROJECT)
     objects = Path(tempfile.gettempdir()) / (PROJECT + '-audit-files-objects')
     private_directory(objects)
     config['SecureFiles'] = {'Adapter': 'LocalDevelopment', 'Root': str(objects), 'MaxBytes': 1048576,
@@ -386,9 +406,100 @@ def prepare_bundle():
     write(path, json.dumps(config))
 
 
+def prepare_humans():
+    """Explicit real-provider reviewer setup; no session or source approval fabrication.
+
+    Existing labs are upgraded through their owned provider API, never by replacing
+    the realm/volume or converting the restricted actor. Diagnostics stay finite.
+    """
+    stage('explicit_lab_human_provider_setup')
+    init()
+    config_path, realm_path = PRIVATE / 'appsettings.json', PRIVATE / 'realm/poseidon-lab-realm.json'
+    config, realm = json.loads(config_path.read_text()), json.loads(realm_path.read_text())
+    credentials_path = PRIVATE / 'credentials.json'
+    credentials = json.loads(credentials_path.read_text())
+    federation = config.get('Authentication', {}).get('Oidc', {})
+    if (realm.get('realm') != 'poseidon-lab' or federation.get('Authority') != AUTHORITY or
+            federation.get('Issuer') != AUTHORITY or federation.get('ClientId') != 'poseidon-local'):
+        raise RuntimeError('lab_human_provider_invalid')
+    planned = [u for u in realm['users'] if u['username'] == 'lab-reviewer']
+    if len(planned) > 1:
+        raise RuntimeError('lab_human_user_ambiguous')
+    if not planned:
+        credentials['lab-reviewer'] = {'username': 'lab-reviewer', 'password': secrets.token_urlsafe(32)}
+        reviewer = {'id': str(uuid.uuid4()), 'username': 'lab-reviewer', 'enabled': True, 'firstName': 'Synthetic', 'lastName': 'Reviewer',
+                    'email': 'lab-reviewer@example.invalid', 'emailVerified': False,
+                    'attributes': {'poseidonFixture': [PROJECT + '/reviewer']},
+                    'credentials': [{'type': 'password', 'value': credentials['lab-reviewer']['password'], 'temporary': False}]}
+        realm['users'].append(reviewer)
+        # Persist random credentials before provider writes so interrupted retry recovers the same account.
+        atomic_private_json(credentials_path, credentials); atomic_private_json(realm_path, realm)
+    else:
+        reviewer = planned[0]
+    if (credentials.get('lab-reviewer', {}).get('username') != 'lab-reviewer' or
+            not credentials['lab-reviewer'].get('password') or reviewer.get('enabled') is not True):
+        raise RuntimeError('lab_human_private_identity_invalid')
+    compose('up', '-d')
+    wait_https(AUTHORITY + '/.well-known/openid-configuration')
+    import urllib.parse
+    context = ssl.create_default_context(cafile=str(PRIVATE / 'ca.pem'))
+    bootstrap = dict(line.split('=', 1) for line in (PRIVATE / 'provider.env').read_text().splitlines() if '=' in line)
+    class NoRedirect(urllib.request.HTTPRedirectHandler):
+        def redirect_request(self, request, peer, code, message, headers, target):
+            return None
+    opener = urllib.request.build_opener(NoRedirect(), urllib.request.HTTPSHandler(context=context))
+    def exchange(path, *, payload=None, token=None, form=False):
+        # Fixed loopback origin, verified private CA/hostname. Nothing from a response is logged.
+        raw = urllib.parse.urlencode(payload).encode() if form else json.dumps(payload).encode() if payload is not None else None
+        headers = {'Content-Type': 'application/x-www-form-urlencoded' if form else 'application/json'}
+        if token:
+            headers['Authorization'] = 'Bearer ' + token
+        request = urllib.request.Request('https://localhost:8443' + path, data=raw, headers=headers)
+        with opener.open(request, timeout=15) as response:
+            body = response.read(1048577)
+            if len(body) > 1048576:
+                raise RuntimeError('lab_human_provider_response_budget')
+            return json.loads(body) if body else None
+    token = exchange('/realms/master/protocol/openid-connect/token', form=True, payload={
+        'grant_type': 'password', 'client_id': 'admin-cli', 'username': bootstrap['KC_BOOTSTRAP_ADMIN_USERNAME'],
+        'password': bootstrap['KC_BOOTSTRAP_ADMIN_PASSWORD']})['access_token']
+    users_path = '/admin/realms/poseidon-lab/users'
+    query = users_path + '?username=lab-reviewer&exact=true'
+    found = exchange(query, token=token)
+    if len(found) == 0:
+        payload = deepcopy(reviewer)
+        payload['attributes'] = {'poseidonFixture': [PROJECT + '/reviewer']}
+        exchange(users_path, payload=payload, token=token)
+        found = exchange(query, token=token)
+    if len(found) != 1 or found[0].get('enabled') is not True or (found[0]['id'] != reviewer['id'] and
+            found[0].get('attributes', {}).get('poseidonFixture') != [PROJECT + '/reviewer']):
+        raise RuntimeError('lab_human_existing_provider_user_preserved')
+    actual_id = found[0]['id']
+    if str(uuid.UUID(actual_id)) != actual_id:
+        raise RuntimeError('lab_human_provider_identity_invalid')
+    old_id = reviewer['id']; reviewer['id'] = actual_id
+    members = federation['Memberships']
+    matching = [m for m in members if m.get('Issuer') == AUTHORITY and m.get('Subject') in (old_id, actual_id)]
+    if len(matching) > 1:
+        raise RuntimeError('lab_human_membership_ambiguous')
+    if matching:
+        matching[0]['Subject'] = actual_id
+    else:
+        members.append({'Issuer': AUTHORITY, 'Subject': actual_id, 'ActorId': str(uuid.uuid5(uuid.NAMESPACE_URL, PROJECT + '/reviewer-actor')),
+                        'TenantId': '10000000-0000-0000-0000-000000000001', 'Permissions': ['directory.read'],
+                        'TenantWideRead': False, 'TenantWideManage': False,
+                        'VesselGrants': [{'VesselId': '30000000-0000-0000-0000-000000000001', 'CanEdit': False}]})
+    config = catalog_membership(config, realm, AUTHORITY, PROJECT)
+    # Existing ownership marker controls app shutdown; provider volumes and other services are preserved.
+    owned_process('stop')
+    # Config first: interrupted retry can match either the planned or actual
+    # provider subject before the realm observation is updated, without a new actor.
+    atomic_private_json(config_path, config); atomic_private_json(realm_path, realm)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', choices=['init', 'start', 'stop', 'browser', 'prepare_register', 'prepare_bundle', 'register_browser'])
+    parser.add_argument('action', choices=['init', 'start', 'stop', 'browser', 'prepare_register', 'prepare_humans', 'prepare_bundle', 'register_browser'])
     action = parser.parse_args().action
     try:
         if sys.version_info[:3] != (3, 13, 13):

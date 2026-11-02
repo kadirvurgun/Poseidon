@@ -58,7 +58,7 @@ public static class CrewAssignmentSelectionEndpoints
             select p).SingleOrDefaultAsync(h.RequestAborted);
         if (position != null) {
             var declaration = await db.CrewAssignments.AsNoTracking().SingleAsync(x => x.Id == selection.AssignmentId, h.RequestAborted);
-            var lookup = CrewPositionPolicy.Current(h);
+            var lookup = await CrewPositionPolicy.Current(h, db, vessel);
             if (!lookup.Allows(position) || declaration.PositionPolicyVersion != lookup.Version || declaration.PositionPolicyFingerprint != lookup.Fingerprint()) position = null;
         }
         return Results.Ok(new { selection.State, selection.AssignmentId, selection.VesselId, position = position == null ? null : new { position.Id, position.Rank, position.Capacity, position.Department, position.Provenance }, policyVersion = policy.Version, referenceDate = date, timeZone = zone.Id,

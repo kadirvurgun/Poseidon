@@ -2,6 +2,7 @@ import { WorkspaceRoleNavigation } from './WorkspaceRoleNavigation'
 import { CrewIdentityHistory } from './CrewIdentityHistory'
 import { CrewAssignmentHistory } from './CrewAssignmentHistory'
 import { CrewOwningInputs } from './CrewOwningInputs'
+import { CrewCatalog } from './CrewCatalog'
 import { OfflineApplicationPanel } from './OfflineApplicationPanel'
 import { CrewPersonalFiles } from './CrewPersonalFiles'
 import { CrewPersonalProfile } from './CrewPersonalProfile'
@@ -50,7 +51,8 @@ export function CrewWorkspace({ vessel, assignment }: { vessel: string; assignme
   const [profileDirty, setProfileDirty] = useState(false)
   const [fileDirty, setFileDirty] = useState(false)
   const [offlineDirty, setOfflineDirty] = useState(false)
-  const childDirty = certificateDirty || profileDirty || fileDirty || offlineDirty
+  const [catalogDirty, setCatalogDirty] = useState(false), [catalogOpen, setCatalogOpen] = useState(false)
+  const childDirty = certificateDirty || profileDirty || fileDirty || offlineDirty || catalogDirty
   const [personMode, setPersonMode] = useState(false)
   const [conversion, setConversion] = useState(false)
   const [positionVersion, setPositionVersion] = useState<string | null>(null)
@@ -135,6 +137,10 @@ export function CrewWorkspace({ vessel, assignment }: { vessel: string; assignme
     <main id="crew-main" tabIndex={-1}>
       <nav><a href={`/app/fleet/${vessel}`} onClick={e => { e.preventDefault(); navigate(`/app/fleet/${vessel}`) }}>{t.fleet}</a>{assignment && <a href={rosterHref} onClick={e => { e.preventDefault(); navigate(rosterHref) }}>{t.roster}</a>}</nav>
       <h1>{assignment ? t.profile : t.title}</h1><p>{t.privacy}</p><p>{t.unverified}</p>
+      {!assignment && page && user && !paused && !editor && <>
+        <button disabled={catalogDirty} onClick={() => setCatalogOpen(v => !v)}>{language === 'tr' ? 'Pozisyon kataloğu yönetimi' : 'Position catalog governance'}</button>
+        {catalogOpen && <CrewCatalog key={`catalog:${user.actorId}:${user.tenantId}:${user.csrfToken}:${vessel}`} vessel={vessel} language={language} csrf={user.csrfToken} onDirty={setCatalogDirty} onChanged={() => setGeneration(v => v + 1)} />}
+      </>}
       {assignment && <OfflineApplicationPanel key={`offline:${vessel}:${assignment}`} vessel={vessel} assignment={assignment} language={language} onDirty={setOfflineDirty} />}
       {!online && <p role="alert">{t.offline}</p>}
       {loading && <p role="status">{t.loading}</p>}

@@ -43,7 +43,7 @@ internal static class ComplianceInputContext
             if (file == null || !await db.QualifiedInputs!.FileIntact(file, ct)) return false;
         }
         return a != null && p != null && r.From <= date && date < r.To && a.From <= r.From && (a.To == null || a.To >= r.To) &&
-            db.QualifiedInputs?.AssignmentPolicyCurrent(a, p, now) == true;
+            db.QualifiedInputs != null && await db.QualifiedInputs.AssignmentPolicyCurrent(db, a, p, now, ct);
     }
     internal static async Task<bool?> ManningCount(PoseidonDbContext db, Guid vessel, MsmdReference msmd, CrewRoleAssessmentReference subject, DateTimeOffset now, CancellationToken ct) {
         var requirement = msmd.Roles?.SingleOrDefault(r => r.PositionId == subject.PositionId);
@@ -52,7 +52,9 @@ internal static class ComplianceInputContext
         if (position == null) return null;
         var rows = await db.CrewAssignments.AsNoTracking().Where(a => a.VesselId == vessel && a.PositionId == subject.PositionId && a.From <= subject.From && (a.To == null || a.To >= subject.To)).Take(1001).ToArrayAsync(ct);
         if (rows.Length > 1000) return null;
-        return rows.Where(a => db.QualifiedInputs.AssignmentPolicyCurrent(a, position, now)).Select(a => a.PersonId).Distinct().Count() >= requirement.Count;
+        var current = new HashSet<Guid>();
+        foreach (var row in rows) if (await db.QualifiedInputs.AssignmentPolicyCurrent(db, row, position, now, ct)) current.Add(row.PersonId);
+        return current.Count >= requirement.Count;
     }
     internal static async Task<object[]> Provenance(PoseidonDbContext db, Guid vessel, OwningInputReferences refs, CancellationToken ct, Guid? evaluation) {
         var result = new List<object>();
@@ -77,7 +79,7 @@ internal static class ComplianceInputContext
             var position = await db.CrewPositions.AsNoTracking().Where(p => p.VesselId == vessel && p.Id == binding.PositionId).Select(p => new { p.Id, p.Version }).SingleOrDefaultAsync(ct);
             var credentials = await db.Credentials.AsNoTracking().Where(c => c.VesselId == vessel && c.AssignmentId == binding.AssignmentId).OrderBy(c => c.Id).Select(c => new { c.Id, c.Revision, c.Version }).ToArrayAsync(ct);
             var assignmentSet = await db.CrewAssignments.AsNoTracking().Where(a => a.VesselId == vessel && a.PositionId == binding.PositionId).OrderBy(a => a.Id).Select(a => new { a.Id, a.Version, a.Revision }).ToArrayAsync(ct);
-            result.Add(new { assessment = id, assignment, position, assignmentSetHash = RegisterStorage.Hash(JsonSerializer.Serialize(assignmentSet)), credentialSetHash = RegisterStorage.Hash(JsonSerializer.Serialize(credentials)), policy = db.QualifiedInputs?.PolicyFingerprint });
+            result.Add(new { assessment = id, assignment, position, assignmentSetHash = RegisterStorage.Hash(JsonSerializer.Serialize(assignmentSet)), credentialSetHash = RegisterStorage.Hash(JsonSerializer.Serialize(credentials)), policy = db.QualifiedInputs == null ? null : await db.QualifiedInputs.PolicyFingerprint(db, vessel, DateTimeOffset.UtcNow, ct) });
         }
         return result.ToArray();
     }

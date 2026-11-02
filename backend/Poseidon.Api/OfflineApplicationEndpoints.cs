@@ -279,7 +279,7 @@ public static class OfflineApplicationEndpoints
             // Copy only the supported field; current remaining domain fields and server source time are preserved.
             h.Request.Headers["Idempotency-Key"] = c.CommandId.ToString("D");
             var command = new CrewSaveCommand(owner.Id, owner.PersonId, owner.Version, null, null, owner.PositionId, owner.From, owner.To,
-                owner.ContractEndDate, local, owner.SourceObservedAt, PositionPolicyVersion: CrewPositionPolicy.Current(h).Version);
+                owner.ContractEndDate, local, owner.SourceObservedAt, PositionPolicyVersion: (await CrewPositionPolicy.Current(h, db, vessel)).Version);
             var result = await CrewEndpoints.ApplyImport(vessel, command, h, db, h.RequestServices.GetRequiredService<IAntiforgery>(), false, preservePositionLineage: true);
             if (result is not IStatusCodeHttpResult status || status.StatusCode != 200) return result; // disposal rolls back all saves
             outcome.ServerVersion = owner.Version; outcome.Revision = owner.Revision;
