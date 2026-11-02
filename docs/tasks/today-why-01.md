@@ -35,3 +35,7 @@ Source review confirmed the locators above with Python 3.13 bounded retrieval an
 Authored domain, actual-host/PostgreSQL API and contract, mocked React and mocked desktop/mobile Playwright regression coverage. All are DEFERRED/NOT RUN in this continuation. The previous worker/test tree was deliberately INTERRUPTED; it is not a product failure or test result. No test/build/lint/typecheck/restore/browser/lab/Python suite or host/contract generation was started. Existing OpenAPI and generated TypeScript additions are retained from the prior worker unchanged; generation provenance/parity is unverified and must be regenerated from the actual host at the combined gate. Generated artifacts were not hand-edited here.
 
 Next: local UNVERIFIED checkpoint, then coordinator-directed source-ready regulatory draft foundation work before one combined build/contract/regression gate and independent QA of the eventual exact target commit. No push, PR, merge or self-approval.
+
+## 02.11 maintenance composition continuation
+
+[TODAY-MAINTENANCE-01](today-maintenance-01.md) extends the earlier draft-only source decision with an actual permission-gated maintenance adapter and shared current planning calculation. The new six-source coverage, paged mixed feed, selected-card Why and strict authored extension are recorded in [the continuation phase report](../phases/TODAY-MAINTENANCE-20261102.md). The earlier implementation/evidence remains history; no claim of complete Today, generated contract parity, full tests or canonical acceptance is introduced.

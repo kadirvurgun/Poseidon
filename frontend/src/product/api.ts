@@ -30,7 +30,7 @@ function decodeVessel(value: unknown): Vessel {
 }
 function decodeVessels(value: unknown): Page<Vessel> {
   if (!value || typeof value !== 'object' || !('items' in value) || !Array.isArray(value.items) || !('offset' in value) || !('limit' in value) || !('hasMore' in value) ||
-      !(typeof value.offset === 'number' || typeof value.offset === 'string') || !(typeof value.limit === 'number' || typeof value.limit === 'string') || typeof value.hasMore !== 'boolean') throw new ApiError(502)
+      typeof value.offset !== 'number' || !Number.isSafeInteger(value.offset) || value.offset < 0 || typeof value.limit !== 'number' || !Number.isSafeInteger(value.limit) || value.limit < 1 || typeof value.hasMore !== 'boolean') throw new ApiError(502)
   return { offset: value.offset, limit: value.limit, hasMore: value.hasMore, items: value.items.map(decodeVessel) }
 }
 export const session = (signal: AbortSignal) => request<Session>('auth/session', signal)

@@ -1,0 +1,28 @@
+.equipment-hierarchy-tree {
+  display: grid;
+  gap: .25rem;
+  min-width: 0;
+}
+.equipment-hierarchy-row {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  min-height: 2.75rem;
+  border: 1px solid transparent;
+  border-radius: .4rem;
+  padding-block: .35rem;
+  padding-inline-end: .6rem;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+.equipment-hierarchy-row[aria-selected='true'] { border-color: currentColor; font-weight: 650; }
+.equipment-hierarchy-row:focus-visible { outline: 3px solid currentColor; outline-offset: 2px; }
+.equipment-hierarchy-toggle, .equipment-hierarchy-marker {
+  flex-shrink: 0;
+  inline-size: 2.75rem;
+  text-align: center;
+}
+.equipment-hierarchy-toggle { min-height: 2.75rem; padding: .25rem; }
+@media (forced-colors: active) {
+  .equipment-hierarchy-row[aria-selected='true'] { border-color: Highlight; }
+}

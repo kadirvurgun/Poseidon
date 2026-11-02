@@ -1,0 +1,256 @@
+{
+  "baseline": "poseidon-v46.3-20261030",
+  "authority": "Controlled candidate; not production or human acceptance",
+  "excerpts": [
+    {
+      "chunk_id": "c985d4c36f3a5c4fd8f8a7fe8a7c442fb2b5eaf7fb2cb53a13d1ef452099b847",
+      "source_id": "poseidon-v46.3-20261030:03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "source_sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "source_class": "candidate-unverified",
+      "locator": "sheet:2316 Alan v46.3/row:1459",
+      "text": "A1459: work-order-detail | B1459: Work Order Detail & Execution | C1459: Technical / PMS 2.0 | D1459: photo_evidence | E1459: Photo Evidence | F1459: lookup | G1459: Reference | H1459: Conditional | I1459: No | K1459: Chief Engineer/Technical Manager/Master; assigned crew execute; verifier read/verify as assigned | L1459: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M1459: Active authorized reference in tenant/vessel/source scope | N1459: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | O1459: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P1459: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | Q1459: Offline capture allowed for supported mutable data; client UUID/base version; idempotent sync; material conflicts require human resolution | R1459: /api/v1/work-order-detail | S1459: WorkOrderDetail | T1459: photo_evidence | U1459: FR46-work-order-detail-photo_evidence | V1459: TC46-work-order-detail-photo_evidence",
+      "content_sha256": "2759510e1692fdc09aa0ab4f2fc709e9010d086554c7ec92baca467396088682"
+    },
+    {
+      "chunk_id": "3171c2e8027073f695f1ba5f2f35c1de45482298ca37b88cf4e5d3bf09c443e8",
+      "source_id": "poseidon-v46.3-20261030:03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "source_sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "source_class": "candidate-unverified",
+      "locator": "sheet:2316 Alan v46.3/row:1460",
+      "text": "A1460: work-order-detail | B1460: Work Order Detail & Execution | C1460: Technical / PMS 2.0 | D1460: document_evidence | E1460: Document Evidence | F1460: lookup | G1460: Reference | H1460: Conditional | I1460: No | K1460: Chief Engineer/Technical Manager/Master; assigned crew execute; verifier read/verify as assigned | L1460: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M1460: Active authorized reference in tenant/vessel/source scope | N1460: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | O1460: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P1460: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | Q1460: Offline capture allowed for supported mutable data; client UUID/base version; idempotent sync; material conflicts require human resolution | R1460: /api/v1/work-order-detail | S1460: WorkOrderDetail | T1460: document_evidence | U1460: FR46-work-order-detail-document_evidence | V1460: TC46-work-order-detail-document_evidence",
+      "content_sha256": "cd427846a90d5d873936dc4651e3d3f4597235e01c1bc33b6ffa0d8ba5cca1bc"
+    },
+    {
+      "chunk_id": "6c571626d5df589ed43a56e8178b469a8b1ed780d494f13fd9db23460c5989d5",
+      "source_id": "poseidon-v46.3-20261030:04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "source_sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "source_class": "candidate-unverified",
+      "locator": "paragraph:639",
+      "text": "evidence-graph",
+      "content_sha256": "39ee1ddb9ae84a1522ef0d40c8605a6520b6913d44d186a6ef7ff1a16adf35ca"
+    },
+    {
+      "chunk_id": "ba1b7122fe85d401c729d8c5802d97b00191b25f3cc20b12b72690c06a2ce0af",
+      "source_id": "poseidon-v46.3-20261030:04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "source_sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "source_class": "candidate-unverified",
+      "locator": "paragraph:640",
+      "text": "Evidence Graph",
+      "content_sha256": "0b6d3f4845e5a14036c28347dacdeff71646253ef3926eb5fc9adc28841c9bc7"
+    },
+    {
+      "chunk_id": "ff37acc69e857b457ea55bd6b786058367b0bef24e2ddb8191371e8075cef755",
+      "source_id": "poseidon-v46.3-20261030:04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "source_sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "source_class": "candidate-unverified",
+      "locator": "paragraph:641",
+      "text": "Regulatory Control",
+      "content_sha256": "a10ccbcf210eb37939fc43e715531e9835ccdca5f654821e9f309815bdb2170e"
+    },
+    {
+      "chunk_id": "45126e1235f3d228ae7faffb10be4cf8fc983c3580a9493452f45085c78c7c43",
+      "source_id": "poseidon-v46.3-20261030:04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "source_sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "source_class": "candidate-unverified",
+      "locator": "paragraph:642",
+      "text": "21",
+      "content_sha256": "6f4b6612125fb3a0daecd2799dfd6c9c299424fd920f9b308110a2c1fbd8f443"
+    },
+    {
+      "chunk_id": "6f42d67ac519cd59bc925c6ab8074e3c9bdca34f810ac82424a752203293dd8c",
+      "source_id": "poseidon-v46.3-20261030:04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "source_sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "source_class": "candidate-unverified",
+      "locator": "paragraph:643",
+      "text": "6",
+      "content_sha256": "e7f6c011776e8db7cd330b54174fd76f7d0216b612387a5ffcfb81e6f0919683"
+    },
+    {
+      "chunk_id": "4d02f28caf94acff229ffd056cfa8221577617c6b5e0f73a6fef36a090759c0e",
+      "source_id": "poseidon-v46.3-20261030:04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "source_sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "source_class": "candidate-unverified",
+      "locator": "paragraph:644",
+      "text": "104",
+      "content_sha256": "5ef6fdf32513aa7cd11f72beccf132b9224d33f271471fff402742887a171edf"
+    },
+    {
+      "chunk_id": "8fd8366066412250c65426544374615e8839d18cfe435bc847d27e777c0b163e",
+      "source_id": "poseidon-v46.3-20261030:04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "source_sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "source_class": "candidate-unverified",
+      "locator": "paragraph:101",
+      "text": "Evidence upload'ta allowed type/size/malware/checksum state kullanıcıya anlaşılır biçimde gösterilir.",
+      "content_sha256": "65f057cff72e24757064cd9e8770a52231a5dbe37871abbb5c7f06b78852a347"
+    },
+    {
+      "chunk_id": "a02361e8117185c58f52fbb038c8c112c6b6bbebe3e3cc8a3106368c7ab9cf7a",
+      "source_id": "poseidon-v46.3-20261030:05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "source_sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "source_class": "candidate-unverified",
+      "locator": "paragraph:141",
+      "text": "AuditEvent append-only: actor, role, tenant, object, action, before/after summary, correlation_id, device/source, timestamp.",
+      "content_sha256": "32ab864e4e5f0f8df6f79d6a58ddcf2eabed9deaffab1ae5566aff127e8e7456"
+    },
+    {
+      "chunk_id": "a92404ccc20d0e24e6db81c9a312352115e8971f43ba5f774ee79a0a7ad0043c",
+      "source_id": "poseidon-v46.3-20261030:05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "source_sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "source_class": "candidate-unverified",
+      "locator": "paragraph:142",
+      "text": "Evidence binary içerik DB'de değil object storage'da; DB'de immutable metadata, hash, MIME, size, storage_ref.",
+      "content_sha256": "4471f77e122f315712555ac0fc924271276e0fe0489a32860457c5fd61e90675"
+    },
+    {
+      "chunk_id": "c850d68c0ccc48ea4eb0b07f56c7937054fef5cee812dcf02652ef473d0d1b27",
+      "source_id": "poseidon-v46.3-20261030:05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "source_sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "source_class": "candidate-unverified",
+      "locator": "sheet:Data Dictionary 2316/row:1459",
+      "text": "A1459: Teknik ve PMS | B1459: Planlı Bakım Sistemi (PMS) | C1459: Bakım planlama, yürütme ve analiz | D1459: Ortak | E1459: work-order-detail | F1459: Work Order Detail & Execution | G1459: Technical / PMS 2.0 | H1459: photo_evidence | I1459: Photo Evidence | J1459: lookup | K1459: Referans/Lookup | L1459: Reference | M1459: Reference | N1459: uuid or text FK — REVIEW | O1459: TBD | P1459: TBD | Q1459: Conditional | R1459: No | S1459: PLACEHOLDER — REVIEW_REQUIRED | U1459: KAYNAK EKSİK / TÜRÜ DOĞRULANACAK | V1459: Chief Engineer/Technical Manager/Master; assigned crew execute; verifier read/verify as assigned | W1459: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1459: Active authorized reference in tenant/vessel/source scope | Y1459: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1459: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1459: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1459: Offline capture allowed for supported mutable data; client UUID/base version; idempotent sync; material conflicts require human resolution | AC1459: /api/v1/work-order-detail | AD1459: WorkOrderDetail | AE1459: photo_evidence | AF1459: UNCONFIRMED — physical schema review | AG1459: FR46-work-order-detail-photo_evidence | AH1459: TC46-work-order-detail-photo_evidence | AI1459: P1 | AJ1459: DEFAULT_PLACEHOLDER; LOOKUP_SOURCE_MISSING; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1459: UI/TRACE TAM — PROD REVIEW | AL1459: SOURCE + DERIVED GAP ANALYSIS | AM1459: ÖNERİ: Work Order Detail & Execution bağlamında Photo Evidence. İş anlamı/birim BA onayı bekler. | AN1459: Referans/Lookup | AO1459: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ1459: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AV1459: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1459: Photo Evidence: geçerli ve bu bağlamda yetkili bir referans seçiniz. | BE1459: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1459: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1459: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1459: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1459: DEC-DATA-01…06 | BO1459: REVIEW_REQUIRED | BR1459: work-order-detail::photo_evidence | BT1459: RECOVERED_ENTITY_AND_READ_API",
+      "content_sha256": "0a26b4dd2448cbb17561cea0c7b0006a3889d76b2d8f812ebfc3340a5f0cb372"
+    },
+    {
+      "chunk_id": "8d2571ec0b222fb0d770072eb80ab9835a7dd91a40f47011c576c6a21daaa18d",
+      "source_id": "poseidon-v46.3-20261030:05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "source_sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "source_class": "candidate-unverified",
+      "locator": "sheet:Data Dictionary 2316/row:1460",
+      "text": "A1460: Teknik ve PMS | B1460: Planlı Bakım Sistemi (PMS) | C1460: Bakım planlama, yürütme ve analiz | D1460: Ortak | E1460: work-order-detail | F1460: Work Order Detail & Execution | G1460: Technical / PMS 2.0 | H1460: document_evidence | I1460: Document Evidence | J1460: lookup | K1460: Referans/Lookup | L1460: Reference | M1460: Reference | N1460: uuid or text FK — REVIEW | O1460: TBD | P1460: TBD | Q1460: Conditional | R1460: No | S1460: PLACEHOLDER — REVIEW_REQUIRED | U1460: KAYNAK EKSİK / TÜRÜ DOĞRULANACAK | V1460: Chief Engineer/Technical Manager/Master; assigned crew execute; verifier read/verify as assigned | W1460: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1460: Active authorized reference in tenant/vessel/source scope | Y1460: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1460: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1460: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1460: Offline capture allowed for supported mutable data; client UUID/base version; idempotent sync; material conflicts require human resolution | AC1460: /api/v1/work-order-detail | AD1460: WorkOrderDetail | AE1460: document_evidence | AF1460: UNCONFIRMED — physical schema review | AG1460: FR46-work-order-detail-document_evidence | AH1460: TC46-work-order-detail-document_evidence | AI1460: P1 | AJ1460: DEFAULT_PLACEHOLDER; LOOKUP_SOURCE_MISSING; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1460: UI/TRACE TAM — PROD REVIEW | AL1460: SOURCE + DERIVED GAP ANALYSIS | AM1460: ÖNERİ: Work Order Detail & Execution bağlamında Document Evidence. İş anlamı/birim BA onayı bekler. | AN1460: Referans/Lookup | AO1460: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ1460: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AV1460: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1460: Document Evidence: geçerli ve bu bağlamda yetkili bir referans seçiniz. | BE1460: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1460: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1460: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1460: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1460: DEC-DATA-01…06 | BO1460: REVIEW_REQUIRED | BR1460: work-order-detail::document_evidence | BT1460: RECOVERED_ENTITY_AND_READ_API",
+      "content_sha256": "2d8e06168672963d6ccf7ad3c2525295977f9af3985a39c8fe418dae16550986"
+    },
+    {
+      "chunk_id": "19c492fcb2fa5dcc09720b74557feb9114760db617f1610756448d575df2093d",
+      "source_id": "poseidon-v46.3-20261030:05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "source_sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "source_class": "candidate-unverified",
+      "locator": "sheet:Lookup Kaynak Çözümü/row:311",
+      "text": "A311: work-order-detail | B311: photo_evidence | C311: 1459 | D311: RECOVERED_ENTITY_AND_READ_API | E311: Evidence | F311: id | G311: /api/v1/evidence | I311: 11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx / 2316 Alan v46.3 / photo_evidence\n14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx / Data Dictionary 2316 / row 1459\n14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx / §6 / Evidence binary in object storage; immutable metadata/hash/MIME/size/storage_ref\n16.01_POSEIDON_v46.3_Product_Wide_API_OpenAPI_Skeleton.yaml / /paths/~1api~1v1~1evidence/get | J311: Selection query/label/filter/effective-date contract and physical FK are not established by a logical entity or generic GET endpoint. | K311: 0 | L311: 0 | M311: CONTROLLED CANDIDATE; source recovery is not production approval",
+      "content_sha256": "c5b6b912b1e53a21c81fa46ab55e68c3f8c4466fdf1722cb2fe37c5b12aa8440"
+    },
+    {
+      "chunk_id": "39d0427c54b6248b7e3ff0b042353f43a165a85a59c3351ca68819b340f808ee",
+      "source_id": "poseidon-v46.3-20261030:05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "source_sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "source_class": "candidate-unverified",
+      "locator": "sheet:Lookup Kaynak Çözümü/row:312",
+      "text": "A312: work-order-detail | B312: document_evidence | C312: 1460 | D312: RECOVERED_ENTITY_AND_READ_API | E312: Evidence | F312: id | G312: /api/v1/evidence | I312: 11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx / 2316 Alan v46.3 / document_evidence\n14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx / Data Dictionary 2316 / row 1460\n14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx / §6 / Evidence binary in object storage; immutable metadata/hash/MIME/size/storage_ref\n16.01_POSEIDON_v46.3_Product_Wide_API_OpenAPI_Skeleton.yaml / /paths/~1api~1v1~1evidence/get | J312: Selection query/label/filter/effective-date contract and physical FK are not established by a logical entity or generic GET endpoint. | K312: 0 | L312: 0 | M312: CONTROLLED CANDIDATE; source recovery is not production approval",
+      "content_sha256": "838b1c0649f64b1ef26969d49e285d0229c4298f84d60e6e5c7075ccb916b87a"
+    },
+    {
+      "chunk_id": "c0c47d59c108bf82ed54156694f55e8afde7ff78e26de5200c102b224315f3c2",
+      "source_id": "poseidon-v46.3-20261030:05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "source_sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "source_class": "candidate-unverified",
+      "locator": "paragraph:12",
+      "text": "Evidence upload is metadata-first + presigned/object-storage pattern; hashes/provenance server-side verified.",
+      "content_sha256": "9062b43ed1369314c301ab12ce7dec4712a36e6d95c8777618d0741a5f5d1f8c"
+    },
+    {
+      "chunk_id": "67adac6c93ddee35db354c9e40ac04603e3c16eafdf2427b147599e331a5ad0b",
+      "source_id": "poseidon-v46.3-20261030:06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "source_class": "candidate-unverified",
+      "locator": "sheet:Backlog/row:17",
+      "text": "A17: DEV-016 | B17: Story | C17: E01 Platform Foundation | D17: Audit | E17: Immutable audit event foundation | F17: Auditor olarak kritik değişikliklerin kim/ne zaman/neden geçmişini görmek istiyorum. | G17: Actor, role, tenant, vessel, before/after, reason, timestamp, correlation ID kaydedilir; kritik write coverage hedefi %100. | H17: /api/v1/audit | I17: P0 | J17: S1 | K17: Backend | L17: DEV-014,DEV-015 | M17: T-S1-004 | N17: Not Started | O17: YES | P17: 8 | Q17: H",
+      "content_sha256": "eac5dc19e1cc73cc394d65f9ee094e42281214886ca11ac973f3ead5ebebe817"
+    },
+    {
+      "chunk_id": "819f48faff83669e54d76a10209cacb861dd118527a89469d29fc28fed2f991a",
+      "source_id": "poseidon-v46.3-20261030:06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "source_class": "candidate-unverified",
+      "locator": "sheet:Backlog/row:18",
+      "text": "A18: DEV-017 | B18: Story | C18: E20 Production Hardening | D18: Secrets | E18: Secret management foundation | F18: Ops olarak credential'ların kod/UI/log içinde bulunmamasını istiyorum. | G18: DB/OIDC/object storage secrets vault/reference ile sağlanır; repository ve client bundle secret scan PASS. | H18: Secrets | I18: P0 | J18: S1 | K18: DevOps | L18: DEV-003,DEV-006 | M18: T-S1-005 | N18: Not Started | O18: YES | P18: 5 | Q18: M",
+      "content_sha256": "e5d0b6cde18e4f27f22c30fe99b9ed08e08a6bbed32f9ca82a50454ecd730d8f"
+    },
+    {
+      "chunk_id": "0fc3c3df65c8ad0f04eea148c23de169499b4a599884573bed397ce3db4a5082",
+      "source_id": "poseidon-v46.3-20261030:06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "source_class": "candidate-unverified",
+      "locator": "sheet:Backlog/row:19",
+      "text": "A19: DEV-018 | B19: Story | C19: E20 Production Hardening | D19: Files | E19: Secure file upload pipeline | F19: Kullanıcı olarak evidence dosyalarını güvenli yüklemek istiyorum. | G19: Type/size/checksum validation, malware hook, signed access, tenant scope ve audit uygulanır; rejected file state mutate etmez. | H19: /api/v1/files | I19: P0 | J19: S1 | K19: Backend | L19: DEV-017 | M19: T-S1-006 | N19: Not Started | O19: YES | P19: 8 | Q19: H",
+      "content_sha256": "5741374b218a3ac6b9605f1613a5e3b6f831e0ceb90829df545c0a00d4538169"
+    },
+    {
+      "chunk_id": "86fbca7c3d203dc7224b68339e13bed306e00c39facc9fa07fe077f991afdccb",
+      "source_id": "poseidon-v46.3-20261030:06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "source_class": "candidate-unverified",
+      "locator": "sheet:Backlog/row:20",
+      "text": "A20: DEV-019 | B20: Task | C20: E20 Production Hardening | D20: Security Test | E20: Tenant/RBAC automated tests | F20: QA olarak yetki regresyonunu otomatik görmek istiyorum. | G20: Cross-tenant, role escalation, vessel scope ve protected object negatif testleri CI'da koşar. | H20: Security Tests | I20: P0 | J20: S1 | K20: QA | L20: DEV-014,DEV-015 | M20: T-S1-007 | N20: Not Started | O20: YES | P20: 5 | Q20: H",
+      "content_sha256": "13bb5429f2af2cab20a02108f92e901907fab3a2fd3a9cf31e308f62060efe29"
+    },
+    {
+      "chunk_id": "edde1aa893b39f865d9dba6f0bd878825a1ba6b35f540bd2b5745c4fd945f9b1",
+      "source_id": "poseidon-v46.3-20261030:06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "source_class": "candidate-unverified",
+      "locator": "sheet:Backlog/row:30",
+      "text": "A30: DEV-029 | B30: Story | C30: E04 Control & Evidence | D30: Evidence | E30: Evidence graph foundation | F30: Kullanıcı olarak bir kanıtı birden fazla gereksinimi desteklemek için kullanmak istiyorum. | G30: Evidence immutable metadata/checksum/provenance ile kaydedilir; many-to-many links; stale/expired/superseded durumu görünür. | H30: /api/v1/evidence | I30: P0 | J30: S3 | K30: Backend | L30: DEV-018,DEV-028 | M30: T-S3-004 | N30: Not Started | O30: YES | P30: 13 | Q30: H",
+      "content_sha256": "63779fd1ca3353c00ee92d9dfe252d1231b3ada698ecf23c9425476bb7549f61"
+    },
+    {
+      "chunk_id": "f3e54b45ec678033b09ae7da20b56e59049067007854555e975a4c831c56c323",
+      "source_id": "poseidon-v46.3-20261030:06_DEVELOPMENT/18.04_POSEIDON_v46.3_Integration_Catalogue_TR.docx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.04_POSEIDON_v46.3_Integration_Catalogue_TR.docx",
+      "source_sha256": "e4d8a64f5daba06e3ccded37a726e0d5c9479243fcf119ecbd7781c67f48c73f",
+      "source_class": "candidate-unverified",
+      "locator": "paragraph:50",
+      "text": "Checksum/version/malware/type/retention",
+      "content_sha256": "c7f8bd8eb4cbf943fb01e973081b31b2e4bf6930e9f3f609ff601edb9cea8a36"
+    },
+    {
+      "chunk_id": "b54840b73ceab352bce7c464078dbd7411a12e8816c1161f993255786e222fbd",
+      "source_id": "poseidon-v46.3-20261030:07_TEST_PILOT_RELEASE/23.05_POSEIDON_v46.3_Production_Monitoring_Support_Runbook_TR.docx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/23.05_POSEIDON_v46.3_Production_Monitoring_Support_Runbook_TR.docx",
+      "source_sha256": "e416a0739c7935e2a006836410842a1c01bb8d39ca075fa68f7a3e98f36efa15",
+      "source_class": "candidate-unverified",
+      "locator": "paragraph:28",
+      "text": "Upload/download error, malware scan failure, checksum mismatch",
+      "content_sha256": "d27b8e5e247f313a1289052497c18bd23b965723ae30db46d09b697dc3abe7fc"
+    },
+    {
+      "chunk_id": "8a289d40d186cb57eeed5440bc6d5d3bf2d34d3e0aef28c4980e0e6c5a81a4b4",
+      "source_id": "poseidon-v46.3-20261030:07_TEST_PILOT_RELEASE/23.06_POSEIDON_v46.3_Security_Privacy_Operational_Pack_TR.docx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/23.06_POSEIDON_v46.3_Security_Privacy_Operational_Pack_TR.docx",
+      "source_sha256": "8251a89b2d3c73773689e4d87e6df99517a0d2d291bc4fafabdec70bfa6fc80b",
+      "source_class": "candidate-unverified",
+      "locator": "paragraph:51",
+      "text": "Allowed file type/size; malware scan; checksum; immutable/versioned object reference.",
+      "content_sha256": "12da75a3a679a68ac5a90ce472212d71bdacd5bdb40e796e13c34ff6158122ec"
+    },
+    {
+      "chunk_id": "5743473b64959043c2ebf4cacf8bce52f46422ab95cfae9fad4547b43368db26",
+      "source_id": "poseidon-v46.3-20261030:07_TEST_PILOT_RELEASE/23.06_POSEIDON_v46.3_Security_Privacy_Operational_Pack_TR.docx",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/23.06_POSEIDON_v46.3_Security_Privacy_Operational_Pack_TR.docx",
+      "source_sha256": "8251a89b2d3c73773689e4d87e6df99517a0d2d291bc4fafabdec70bfa6fc80b",
+      "source_class": "candidate-unverified",
+      "locator": "paragraph:83",
+      "text": "Critical auth/security alerts; failed integrations; malware failures",
+      "content_sha256": "8fb027862be2b5bd6b077b7d321bef68ae1a97ff44c56fdcef80760fe0ad3f02"
+    }
+  ]
+}

@@ -36,21 +36,56 @@ class ModelPolicyTests(unittest.TestCase):
             ModelPolicy(self.root)
 
     def test_explicit_standard_speed_model_and_effort(self):
+        data = json.loads(self.path.read_text())
+        data['speed'] = 'standard'
+        self.path.write_text(json.dumps(data))
         choice = ModelPolicy(self.root).select('S0-ADR-01', 'development')
         arguments = ModelPolicy.arguments(choice)
         self.assertEqual(['--model', 'gpt-6-luna'], arguments[:2])
         self.assertIn('model_reasoning_effort="medium"', arguments)
         self.assertIn('service_tier="default"', arguments)
 
+    def test_fast_selection_is_explicit_and_recorded_without_model_upgrade(self):
+        data = json.loads(self.path.read_text())
+        data['speed'] = 'fast'
+        self.path.write_text(json.dumps(data))
+        choice = ModelPolicy(self.root).select('S0-THREATS-01', 'independent_qa')
+        self.assertEqual('gpt-6.1-sol', choice['model'])
+        self.assertEqual('medium', choice['effort'])
+        self.assertEqual('fast', choice['service_tier'])
+        self.assertIn('service_tier="fast"', ModelPolicy.arguments(choice))
+
+    def test_unknown_speed_and_tier_are_rejected(self):
+        data = json.loads(self.path.read_text())
+        data['speed'] = 'ultrafast-unverified'
+        self.path.write_text(json.dumps(data))
+        with self.assertRaises(ModelPolicyError): ModelPolicy(self.root)
+        with self.assertRaises(ModelPolicyError):
+            ModelPolicy.arguments({'model': 'gpt-6.1-sol', 'effort': 'medium', 'service_tier': 'unknown'})
+
     def test_catalog_rejects_missing_hidden_or_unsupported_without_fallback(self):
         choice = ModelPolicy(self.root).select('S0-ADR-01', 'development')
         self.assertFalse(ModelPolicy.advertised(self.root, choice))
         path = self.root / 'models_cache.json'
         model = {'slug': 'gpt-6-luna', 'visibility': 'hidden',
-                 'supported_reasoning_levels': [{'effort': 'medium'}]}
+                 'supported_reasoning_levels': [{'effort': 'medium'}], 'additional_speed_tiers': ['fast']}
         path.write_text(json.dumps({'models': [model]}))
         self.assertFalse(ModelPolicy.advertised(self.root, choice))
         model['visibility'] = 'list'
+        path.write_text(json.dumps({'models': [model]}))
+        self.assertTrue(ModelPolicy.advertised(self.root, choice))
+        model['supported_reasoning_levels'] = [{'effort': 'high'}]
+        path.write_text(json.dumps({'models': [model]}))
+        self.assertFalse(ModelPolicy.advertised(self.root, choice))
+
+    def test_fast_catalog_is_required_and_priority_alias_is_supported(self):
+        choice = {'model': 'gpt-6-luna', 'effort': 'medium', 'service_tier': 'fast'}
+        model = {'slug': 'gpt-6-luna', 'visibility': 'list',
+                 'supported_reasoning_levels': [{'effort': 'medium'}]}
+        path = self.root / 'models_cache.json'
+        path.write_text(json.dumps({'models': [model]}))
+        self.assertFalse(ModelPolicy.advertised(self.root, choice))
+        model['service_tiers'] = [{'id': 'priority'}]
         path.write_text(json.dumps({'models': [model]}))
         self.assertTrue(ModelPolicy.advertised(self.root, choice))
         model['supported_reasoning_levels'] = [{'effort': 'high'}]
@@ -74,10 +109,12 @@ class ModelPolicyTests(unittest.TestCase):
         self.assertEqual(coordinator.state['model_calls'], 0)
         self.assertNotIn('calls', coordinator.job)
         (home / 'models_cache.json').write_text(json.dumps({'models': [{
-            'slug': 'gpt-6-luna', 'visibility': 'list', 'supported_reasoning_levels': [{'effort': 'medium'}]}]}))
+            'slug': 'gpt-6-luna', 'visibility': 'list', 'supported_reasoning_levels': [{'effort': 'medium'}],
+            'additional_speed_tiers': ['fast']}]}))
         coordinator.call_receipt('esra-pro', 'development')
         self.assertEqual(coordinator.job['calls'][0]['model'], 'gpt-6-luna')
         self.assertEqual(coordinator.job['calls'][0]['effort'], 'medium')
+        self.assertEqual(coordinator.job['calls'][0]['service_tier'], 'fast')
         with patch.object(Workers, 'command', return_value=['fake-codex']):
             command = workers.command()
         self.assertIn('--model', command)

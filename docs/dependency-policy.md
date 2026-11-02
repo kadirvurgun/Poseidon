@@ -1,5 +1,16 @@
 # Güncel sürüm politikası
 
+FILES-SOURCE-COMPLETION-01 authors official AWSSDK.S3 **4.0.104.8** and resolved
+AWSSDK.Core **4.0.102.14** using the official NuGet flat-container index/nuspec/package
+bytes on2026-11-01. Central version and both API/consumer locks include package SHA512.
+The compatible net8 asset is selected for the net10 target; actual locked restore, SDK/API
+compatibility and tests are **DEFERRED**, not established by metadata. No provider was set up.
+Primary references: [NuGet index](https://api.nuget.org/v3-flatcontainer/awssdk.s3/index.json),
+[official SDK PutObject](https://docs.aws.amazon.com/sdkfornet/v4/apidocs/items/S3/TPutObjectRequest.html),
+[official GetObject version/checksum contract](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObject.html).
+The owned S3 lab accepts only an explicitly reviewed local source-built immutable image;
+image selection/build/pinning and execution remain a later gate input, not a production vendor choice.
+
 Kullanıcı tercihi: yeni geliştirmelerde güncel **kararlı** ve karşılıklı uyumlu sürümler. Preview/RC sürümleri varsayılan değildir. Bu karar React 18/PostgreSQL 17+ başlangıç baseline'ından kontrollü teknik güncellemedir; iş kapsamını değiştirmez.
 
 30 Ekim 2026 tarihinde resmi release metadata, NuGet ve npm registry üzerinden doğrulanan sürümler:
@@ -35,3 +46,7 @@ DEV-OIDC-LAB-01 development fixture verification (2026-11-01): official [Keycloa
 - https://registry.npmjs.org/react/latest
 - https://registry.npmjs.org/typescript/latest
 - https://registry.npmjs.org/vite/latest
+
+## SECURE-FILES-01 authoring — NOT EXECUTED
+
+No SDK/library dependency or lock changes. A gate-only official ClamAV container is pinned to `clamav/clamav:1.5.4@sha256:bda39705e291105049c3936e2803ac90b955172af8030f94f05dce1252df6c6d`. Official registry stable/1.5.4 metadata matched this digest on2026-11-01. Protocol/image docs: https://docs.clamav.net/manual/Usage/ClamdProtocol.html and https://docs.clamav.net/manual/Installing/Docker.html . This is a development/CI integration fixture, not a production scanner choice or executed verification. No image was pulled or started; compatibility and real signature tests remain DEFERRED to AUDIT-FILES-BUNDLE-01.

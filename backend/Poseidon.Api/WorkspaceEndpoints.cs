@@ -13,7 +13,8 @@ public static class WorkspaceEndpoints
     public static NavigationDto[] Destinations(TrustedActor actor)
     {
         if (!actor.CanRead) return [];
-        var destinations = BaseDestinations(actor);
+        NavigationDto[] destinations = actor.CanReadAudit ? [.. BaseDestinations(actor), new NavigationDto("audit", "/app/audit")] : BaseDestinations(actor);
+        if (actor.CanReadTug) destinations = [.. destinations, new("tug-command", "/app/tug-command"), new("tug-job-board", "/app/tug-job-board"), new("tug-job-intake", "/app/tug-job-intake")];
         return actor.CanReadRegulatory ? [.. destinations, new("sources", "/app/sources"), new("requirements", "/app/requirements")] : destinations;
     }
     private static NavigationDto[] BaseDestinations(TrustedActor actor) =>
@@ -23,6 +24,8 @@ public static class WorkspaceEndpoints
 
     public static void MapWorkspace(this IEndpointRouteBuilder app)
     {
+        app.MapWorkspaceContext();
+        app.MapWorkspaceLenses();
         app.MapGet("/api/v1/workspace", async (HttpContext http, ActorResolver actors, SecurityAudit audit) =>
         {
             var actor = actors.Resolve(http.User)!;

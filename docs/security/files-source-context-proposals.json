@@ -1,0 +1,120 @@
+{
+  "ba88e04ef71db9778d19462264691b9410d3de033f7fa5b9430e62f4e6e52169": {
+    "classification": "public-example",
+    "rationale": "The historical README explicitly introduces the connection values as a template and warns against committing real passwords. Copies in derived text and archives retain separate member/context identities. Whether an operator reused this public value cannot be established: rotation/reuse assessment remains open.",
+    "inspected_context_sha256": [
+      "202f487dbd1791d61faad7e29b38b9a0a37fab7c81ed1c64f056deb92221bd77",
+      "5fd885f723a9c81b3cdf1269cc6919ff6dde0582e11c7f81c18e6d4c74434770",
+      "8ce9be8016d8f3e2a504c9ca09bdd9c53510c8bed0ccdb1066f4fe6e09291de1",
+      "be342cbf7378306dbd4aadf7e5df33c2cac6f45660936411f62ab1ad929ee5df",
+      "c980dcdf0fe93ab1c3bf0b39a8582d0d1b3681f36d13c210ceee1a34c0618160",
+      "eb6f6f8d23c78b96f3cfbf5a1b612b34efc3f5744442b67ceed753fe3977911d"
+    ]
+  },
+  "4d9306040a16096609833b64d259cc92c18e2941ae81dcfe9e3a49d0f6ec8ac8": {
+    "classification": "public-example",
+    "rationale": "Historical local database test command example, adjacent to the real-database test instructions and explicit synthetic/production separation. It is not a production operator reference. Public example reuse and rotation assessment remain open; originals are immutable.",
+    "inspected_context_sha256": [
+      "202f487dbd1791d61faad7e29b38b9a0a37fab7c81ed1c64f056deb92221bd77",
+      "5fd885f723a9c81b3cdf1269cc6919ff6dde0582e11c7f81c18e6d4c74434770",
+      "8ce9be8016d8f3e2a504c9ca09bdd9c53510c8bed0ccdb1066f4fe6e09291de1",
+      "be342cbf7378306dbd4aadf7e5df33c2cac6f45660936411f62ab1ad929ee5df",
+      "c980dcdf0fe93ab1c3bf0b39a8582d0d1b3681f36d13c210ceee1a34c0618160",
+      "eb6f6f8d23c78b96f3cfbf5a1b612b34efc3f5744442b67ceed753fe3977911d"
+    ]
+  },
+  "1f964eb604053be9992dfff90df36b85c9da9536c8efee1b81ca929b5e29ce29": {
+    "classification": "synthetic-fixture",
+    "rationale": "The exact assignment is in the mocked fetch response of the frontend component test, between fetcher.mockImplementation and base(input, init). The test renders App and exercises UI behavior; it does not provide a real provider credential. Review is bound to the complete member, not its test path.",
+    "inspected_context_sha256": [
+      "03575e1dd6c9c3214a1e0e8da62141fe1d2a2f6ff984cca1d0e911dfeef459b5",
+      "3044b7c34dbf6605c697bea09bd353026f123d5d70160d7610e8eb4e318bf3d8",
+      "46abe0af57f3cf571e46f4f32eabf2542dbfc0ecb882bdec690bd5310aaa2a6a"
+    ]
+  },
+  "d5b8de491c0f51a427dc26387498d579c8c3864cd08c491ce4ab48bac952e260": {
+    "classification": "synthetic-fixture",
+    "rationale": "The exact field is emitted by the test HTTP message handler constructing a synthetic token response with locally generated RSA and test issuer/claims. It is not an implementation credential source; the complete handler member and exact match are bound to review.",
+    "inspected_context_sha256": [
+      "14cd3132b67f23fb362a8a30a2674461d3cb487d516114c7f3e1f30c4efe1ddc",
+      "7b75b1e25db17c8529715270be5c802cab2ea7753e501a8125700bffc5b5c2c1",
+      "8120955e487da6328a6992ff4e587289211153725586964593cf86cb381e2493",
+      "a084ed780e0e43eb47ad053ed1737287ba29b8068d4d4ed6586e474fd9061f9b",
+      "a9b3d3b536464227d7f89195a6a0ed6f97cf90131d8a07596cf85cfff3afaa38",
+      "b7a9b04163c68655b39b408fce91b85cb7bc6cd79f958848465391b7095ddb61",
+      "dced35a6ada684165540d93de02f46c54648a35fc359d1d04b0b06d295375e67"
+    ]
+  },
+  "4ef28682a1c2d4bc63a8981e5616306ac8f854dd6e6813002852c979677bd39b": {
+    "classification": "formal-reference",
+    "rationale": "The exact match belongs to the restore driver mapping of configuration keys to inherited PostgreSQL environment variable names, followed by allowed/inherited validation. The mapped name is a reference consumed from private operator configuration, not a password value.",
+    "inspected_context_sha256": [
+      "13c31cac2212267266a60a476ede0de640d0485ac6416df25c95176e30213d53",
+      "8679cee691ddb05e56aa3be659d3db4d5ae1950e6743f0d43f31ff894f9c52d2"
+    ]
+  },
+  "129b97e4e86d668ca87ab74079e302208b16ecfb6541ff5f82875f05860d15f6": {
+    "classification": "formal-reference",
+    "rationale": "The exact match belongs to the restore driver connection-property name mapping. The subsequent join obtains values from self.cfg only after owned-database assertion. The matched property label is not a credential value; actual private resolution/rotation remains separate.",
+    "inspected_context_sha256": [
+      "13c31cac2212267266a60a476ede0de640d0485ac6416df25c95176e30213d53",
+      "8679cee691ddb05e56aa3be659d3db4d5ae1950e6743f0d43f31ff894f9c52d2"
+    ]
+  },
+  "cbc6748bea6f3dbe866b67ae7415a210c1f78a93cb566a157d6d34d970751651": {
+    "classification": "synthetic-fixture",
+    "rationale": "The exact literal is used by the archived diagnostic fixture in the owned temporary PostgreSQL invocation, with explicit start/try/finally close and stdout suppression. It is synthetic lab material, not an operational credential approval; context and lifecycle require independent review.",
+    "inspected_context_sha256": [
+      "806e2745e9891aab57fbca0029f2e0fd153f2964778cdba1a9c4259d9f6f36da"
+    ]
+  },
+  "a5adb9ad75fd63247fd612154d1ff3212653b03ac2b2fb3851b53b3a33b7b76f": {
+    "classification": "synthetic-fixture",
+    "rationale": "Exact test input in test_cli_environment_removes_api_keys_and_keeps_oauth_homes_separate. The test injects synthetic API-key environment values and asserts their absence from worker environments. This is a negative redaction/isolation fixture, never an implementation API-key source.",
+    "inspected_context_sha256": [
+      "7a1ff1980541261b75b5a273b3e7475baa891590b94a8d50d299572b7c501a9d"
+    ]
+  },
+  "528a287a79af1d7b7036ede68d2138a2e3d3a005d343c4c4b0642f9334791bd7": {
+    "classification": "synthetic-fixture",
+    "rationale": "Second exact synthetic API-key environment input in test_cli_environment_removes_api_keys_and_keeps_oauth_homes_separate. Subsequent assertNotIn checks require removal; each match retains its own fingerprint and exact containing-file hash.",
+    "inspected_context_sha256": [
+      "7a1ff1980541261b75b5a273b3e7475baa891590b94a8d50d299572b7c501a9d"
+    ]
+  },
+  "c0691eaeba1a9ca6bd2b10980dbb78507c455de2a566362f21010d5da7ca3ba9": {
+    "classification": "synthetic-fixture",
+    "rationale": "Exact synthetic response field in OidcProtocolTests test HttpMessageHandler.SendAsync. The handler serializes a controlled token-response body; it does not contact a production issuer. Pending independent review must inspect the bound handler and exact literal.",
+    "inspected_context_sha256": [
+      "2e6c6fc5a623b25c0bcb735c4b104ea8d68dd27aea8993cc4171269502f0f8c0"
+    ]
+  },
+  "436acb246e5049a233071085be7a2326903feedc07058c0c2f8556e968033dc2": {
+    "classification": "synthetic-fixture",
+    "rationale": "Exact password fixture in Hashes_are_salted_and_wrong_passwords_are_rejected. It is passed to the password hashing abstraction twice and verified for salt differences and wrong-password rejection. No seeded or implementation login account consumes it.",
+    "inspected_context_sha256": [
+      "1f7ae97e1702524b204ad89fd00d8ccad6b3cdbfebe2e6e2f8baaddcc174dc9b"
+    ]
+  },
+  "c0f8c1ef5bb2ef4234f9a18b1db4856b928a9e4d6fab3039d81b50807cfa86a8": {
+    "classification": "formal-reference",
+    "rationale": "The matched expression is the generated ephemeral browser-gate password assignment at the owned database setup boundary, not a fixed credential. Its source context binds the generated owner, private_directory setup and exact random-generation expression.",
+    "inspected_context_sha256": [
+      "657e918874cc17a6f2ab2131ba4bfac58dadbd9367a60ae418222cf8e563a63f"
+    ]
+  },
+  "e36822852c3d82910ff9929949142d3f6b8db74462c0a85621370255bcf4e408": {
+    "classification": "formal-reference",
+    "rationale": "Exact f-string substitution in browser-gate database connection configuration. The substituted value is generated in the same owned setup and passed privately to the child environment; no resolved value is present in the matched source text.",
+    "inspected_context_sha256": [
+      "657e918874cc17a6f2ab2131ba4bfac58dadbd9367a60ae418222cf8e563a63f"
+    ]
+  },
+  "f3e40245a4f1b28e0fb1570081d6b61f6fe99cfbee6eaa9da80abf240f92d124": {
+    "classification": "formal-reference",
+    "rationale": "Exact Docker environment argument references the local generated password variable in the owned browser-gate setup, rather than embedding a password. The private env-file construction and owned container binding are included in the context hash.",
+    "inspected_context_sha256": [
+      "657e918874cc17a6f2ab2131ba4bfac58dadbd9367a60ae418222cf8e563a63f"
+    ]
+  }
+}

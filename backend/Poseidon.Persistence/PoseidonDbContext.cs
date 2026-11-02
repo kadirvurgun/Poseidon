@@ -6,8 +6,9 @@ public sealed class PoseidonDbContext(
     DbContextOptions<PoseidonDbContext> options,
     Guid tenantId,
     ActorContext actor,
-    bool administrativeImport = false) : DbContext(options)
+    bool administrativeImport = false, IQualifiedInputRuntime? qualifiedInputs = null) : DbContext(options)
 {
+    public IQualifiedInputRuntime? QualifiedInputs { get; } = qualifiedInputs;
     public Guid TenantId { get; } = tenantId;
     public bool IsAdministrativeImport { get; } = administrativeImport;
     public DbSet<Tenant> Tenants => Set<Tenant>();
@@ -18,14 +19,163 @@ public sealed class PoseidonDbContext(
     public DbSet<AuditEvent> AuditEvents => Set<AuditEvent>();
 
     public DbSet<CommandReceipt> CommandReceipts => Set<CommandReceipt>();
+    public DbSet<OfflineEnrollment> OfflineEnrollments => Set<OfflineEnrollment>();
+    public DbSet<OfflineLifecycle> OfflineLifecycles => Set<OfflineLifecycle>();
+    public DbSet<OfflineOutcome> OfflineOutcomes => Set<OfflineOutcome>();
     public DbSet<RegulatoryDraft> RegulatoryDrafts => Set<RegulatoryDraft>();
     public DbSet<RegulatoryDraftRevision> RegulatoryDraftRevisions => Set<RegulatoryDraftRevision>();
     public DbSet<RegisterDraft> RegisterDrafts => Set<RegisterDraft>();
     public DbSet<RegisterRevision> RegisterRevisions => Set<RegisterRevision>();
+    public DbSet<RuleDraft> RuleDrafts => Set<RuleDraft>();
+    public DbSet<RuleRevision> RuleRevisions => Set<RuleRevision>();
+    public DbSet<ApplicabilityEvaluation> ApplicabilityEvaluations => Set<ApplicabilityEvaluation>();
+    public DbSet<EvaluationRule> EvaluationRules => Set<EvaluationRule>();
+    public DbSet<ApplicabilityReceipt> ApplicabilityReceipts => Set<ApplicabilityReceipt>();
+
+    public DbSet<FileStage> FileStages => Set<FileStage>();
+    public DbSet<StoredFile> StoredFiles => Set<StoredFile>();
+    public DbSet<Document> Documents => Set<Document>();
+    public DbSet<DocumentVersion> DocumentVersions => Set<DocumentVersion>();
+
+    public DbSet<Credential> Credentials => Set<Credential>();
+    public DbSet<CredentialRevision> CredentialRevisions => Set<CredentialRevision>();
+    public DbSet<ImportBatch> ImportBatches => Set<ImportBatch>();
+    public DbSet<ImportPreview> ImportPreviews => Set<ImportPreview>();
+    public DbSet<ImportRowResult> ImportRowResults => Set<ImportRowResult>();
+    public DbSet<CrewPersonalProfile> CrewPersonalProfiles => Set<CrewPersonalProfile>();
+    public DbSet<CrewIdentityRevision> CrewIdentityRevisions => Set<CrewIdentityRevision>();
+    public DbSet<CrewPersonalProfileRevision> CrewPersonalProfileRevisions => Set<CrewPersonalProfileRevision>();
+    public DbSet<MaintenanceObservation> MaintenanceObservations => Set<MaintenanceObservation>();
+    public DbSet<MaintenanceObservationRevocation> MaintenanceObservationRevocations => Set<MaintenanceObservationRevocation>();
+    public DbSet<Person> Persons => Set<Person>();
+    public DbSet<Asset> Assets => Set<Asset>();
+    public DbSet<AssetRevision> AssetRevisions => Set<AssetRevision>();
+    public DbSet<TechnicalOwner> TechnicalOwners => Set<TechnicalOwner>();
+    public DbSet<MaintenanceJob> MaintenanceJobs => Set<MaintenanceJob>();
+    public DbSet<MaintenancePlan> MaintenancePlans => Set<MaintenancePlan>();
+    public DbSet<MaintenancePlanRevision> MaintenancePlanRevisions => Set<MaintenancePlanRevision>();
+    public DbSet<CrewPosition> CrewPositions => Set<CrewPosition>();
+    public DbSet<CrewAssignment> CrewAssignments => Set<CrewAssignment>();
+    public DbSet<CrewAssignmentRevision> CrewAssignmentRevisions => Set<CrewAssignmentRevision>();
+
+    public DbSet<TugDraftPlan> TugDraftPlans => Set<TugDraftPlan>();
+    public DbSet<TugDraftPlanRevision> TugDraftPlanRevisions => Set<TugDraftPlanRevision>();
+    public DbSet<TugDraftPlanTug> TugDraftPlanTugs => Set<TugDraftPlanTug>();
+    public DbSet<TugJob> TugJobs => Set<TugJob>();
+    public DbSet<TugJobRevision> TugJobRevisions => Set<TugJobRevision>();
+    public DbSet<TugOwner> TugOwners => Set<TugOwner>();
+    public DbSet<TugAssignment> TugAssignments => Set<TugAssignment>();
+    public DbSet<TugOfflineEnrollment> TugOfflineEnrollments => Set<TugOfflineEnrollment>();
+    public DbSet<TugOfflineOutcome> TugOfflineOutcomes => Set<TugOfflineOutcome>();
+    public DbSet<TugOfflineLifecycle> TugOfflineLifecycles => Set<TugOfflineLifecycle>();
+    public DbSet<TugCapabilityBinding> TugCapabilityBindings => Set<TugCapabilityBinding>();
+    public DbSet<OperationEquipmentBinding> OperationEquipmentBindings => Set<OperationEquipmentBinding>();
+    public DbSet<MsmdRoleBinding> MsmdRoleBindings => Set<MsmdRoleBinding>();
+    public DbSet<EvaluationUpstreamReference> EvaluationUpstreamReferences => Set<EvaluationUpstreamReference>();
+    public DbSet<EvaluationOwningReference> EvaluationOwningReferences => Set<EvaluationOwningReference>();
+
+    public DbSet<HumanReviewHead> HumanReviewHeads => Set<HumanReviewHead>();
+    public DbSet<HumanReviewEvent> HumanReviewEvents => Set<HumanReviewEvent>();
+    public DbSet<HumanReviewReceipt> HumanReviewReceipts => Set<HumanReviewReceipt>();
+    public DbSet<RegulatoryQualificationHead> RegulatoryQualificationHeads => Set<RegulatoryQualificationHead>();
+    public DbSet<RegulatoryQualificationEvent> RegulatoryQualificationEvents => Set<RegulatoryQualificationEvent>();
+    public DbSet<RegulatoryFactAttestation> RegulatoryFactAttestations => Set<RegulatoryFactAttestation>();
+    public DbSet<EvaluationQualification> EvaluationQualifications => Set<EvaluationQualification>();
+    public DbSet<RegulatoryQualificationReceipt> RegulatoryQualificationReceipts => Set<RegulatoryQualificationReceipt>();
+    public DbSet<ControlEvidenceHead> ControlEvidenceHeads => Set<ControlEvidenceHead>();
+    public DbSet<ControlEvidenceRevision> ControlEvidenceRevisions => Set<ControlEvidenceRevision>();
+    public DbSet<ControlEvidenceRequirement> ControlEvidenceRequirements => Set<ControlEvidenceRequirement>();
+    public DbSet<ControlEvidenceEdge> ControlEvidenceEdges => Set<ControlEvidenceEdge>();
+    public DbSet<ControlEvidenceReceipt> ControlEvidenceReceipts => Set<ControlEvidenceReceipt>();
+
+    public DbSet<CrewCatalogHead> CrewCatalogHeads => Set<CrewCatalogHead>();
+    public DbSet<CrewCatalogEvent> CrewCatalogEvents => Set<CrewCatalogEvent>();
 
     protected override void OnModelCreating(ModelBuilder model)
     {
+        CrewCatalogStorage.Configure(model);
+        model.Entity<CrewCatalogHead>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<CrewCatalogEvent>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.HasDefaultSchema("core");
+        ControlEvidenceStorage.Configure(model);
+        HumanReviewStorage.Configure(model);
+        RegulatoryQualificationStorage.Configure(model);
+        model.Entity<RegulatoryQualificationHead>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<RegulatoryQualificationEvent>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<RegulatoryFactAttestation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<EvaluationQualification>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<RegulatoryQualificationReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<HumanReviewHead>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<HumanReviewEvent>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<HumanReviewReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ControlEvidenceHead>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ControlEvidenceRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ControlEvidenceRequirement>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ControlEvidenceEdge>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ControlEvidenceReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        ApplicabilityStorage.Configure(model);
+        model.Entity<RuleDraft>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<RuleRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ApplicabilityEvaluation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<EvaluationRule>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ApplicabilityReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        OfflineApplicationStorage.Configure(model);
+        model.Entity<OfflineEnrollment>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<OfflineLifecycle>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<OfflineOutcome>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        ImportStorage.Configure(model);
+        model.Entity<Credential>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<CredentialRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ImportBatch>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ImportPreview>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ImportRowResult>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        TugDraftPlanStorage.Configure(model);
+        model.Entity<TugDraftPlan>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<TugDraftPlanRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<TugDraftPlanTug>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        TugStorage.Configure(model);
+        TugOfflineStorage.Configure(model);
+        model.Entity<TugOfflineEnrollment>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<TugOfflineOutcome>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<TugOfflineLifecycle>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        TugCapabilityBinding.Configure(model);
+        OperationEquipmentBinding.Configure(model);
+        model.Entity<EvaluationUpstreamReference>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        EvaluationUpstreamReference.Configure(model);
+        MsmdRoleBinding.Configure(model);
+        model.Entity<MsmdRoleBinding>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<EvaluationOwningReference>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<OperationEquipmentBinding>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<TugCapabilityBinding>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<TugJob>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<TugJobRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<TugOwner>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<TugAssignment>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        MaintenanceObservationStorage.Configure(model);
+        model.Entity<MaintenanceObservation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<MaintenanceObservationRevocation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        TechnicalStorage.Configure(model);
+        model.Entity<Asset>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<AssetRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<TechnicalOwner>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<MaintenanceJob>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<MaintenancePlan>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<MaintenancePlanRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        CrewPersonalProfileStorage.Configure(model);
+        model.Entity<CrewPersonalProfile>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<CrewIdentityRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<CrewPersonalProfileRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        CrewStorage.Configure(model);
+        model.Entity<Person>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<CrewPosition>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<CrewAssignment>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<CrewAssignmentRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        SecureFileStorage.Configure(model);
+        DocumentStorage.Configure(model);
+        model.Entity<Document>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<DocumentVersion>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<FileStage>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<StoredFile>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         RegisterStorage.Configure(model);
         model.Entity<RegisterDraft>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<RegisterRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -38,6 +188,10 @@ public sealed class PoseidonDbContext(
             b.Property(x => x.Key).HasMaxLength(80);
             b.Property(x => x.Action).HasMaxLength(32);
             b.Property(x => x.Fingerprint).HasMaxLength(64);
+            b.ToTable("CommandReceipts", t => t.HasCheckConstraint("CK_CommandReceipts_ProfileOutcome", RegulatoryDraftStorage.ReceiptConstraint));
+            b.HasIndex(x => new { x.TenantId, x.ProfileVesselId, x.RegisterRevision }).HasDatabaseName("IX_CommandReceipts_ProfileOutcome");
+            b.HasOne<RegulatoryDraftRevision>().WithMany().HasForeignKey(x => new { x.TenantId, x.ProfileVesselId, x.RegisterRevision })
+                .HasPrincipalKey(x => new { x.TenantId, x.VesselId, x.Revision }).HasConstraintName("FK_CommandReceipts_ProfileOutcome").OnDelete(DeleteBehavior.Restrict);
             b.HasOne<Tenant>().WithMany().HasForeignKey(x => x.TenantId).OnDelete(DeleteBehavior.Restrict);
             b.HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         });
@@ -98,8 +252,16 @@ public sealed class PoseidonDbContext(
             b.Property(x => x.ActorType).HasMaxLength(32);
             b.Property(x => x.Action).HasMaxLength(32);
             b.Property(x => x.EntityType).HasMaxLength(128);
-            b.Property(x => x.EntityId).HasMaxLength(128);
+            b.Property(x => x.EntityId).HasMaxLength(512);
             b.Property(x => x.CorrelationId).HasMaxLength(128);
+            b.Property(x => x.RoleContext).HasMaxLength(600);
+            b.Property(x => x.CapabilityContext).HasMaxLength(2048);
+            b.Property(x => x.ChangeSummary).HasMaxLength(2048);
+            b.Property(x => x.ResourceKind).HasMaxLength(64);
+            b.Property(x => x.ReasonStatus).HasMaxLength(32);
+            b.Property(x => x.Source).HasMaxLength(32);
+            b.HasIndex(x => new { x.TenantId, x.ResourceId, x.CorrelationId });
+            b.HasIndex(x => new { x.TenantId, x.VesselId, x.OccurredAt, x.Id });
             b.HasIndex(x => new { x.TenantId, x.OccurredAt });
             b.HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         });
@@ -127,6 +289,36 @@ public sealed class PoseidonDbContext(
         }
     }
 
+    private uint? CommittedVersion(CommandReceipt receipt)
+    {
+        var resource = ChangeTracker.Entries().FirstOrDefault(e => e.Entity switch {
+            CrewCatalogHead c => receipt.Action == "CrewCatalogSave" && c.VesselId == receipt.ResourceId && c.TenantId == receipt.TenantId,
+            ImportBatch b => receipt.Action == "CrewImportLegacyConvert" && b.Id == receipt.ResourceId && b.TenantId == receipt.TenantId,
+            TugDraftPlan p => receipt.Action == "TugPlanSave" && p.JobId == receipt.ResourceId && p.TenantId == receipt.TenantId,
+            TugJob j => receipt.Action == "TugSave" && j.Id == receipt.ResourceId && j.TenantId == receipt.TenantId,
+            Asset a => receipt.Action == "EquipmentSave" && a.Id == receipt.ResourceId && a.TenantId == receipt.TenantId,
+            MaintenancePlan p => receipt.Action == "MaintenanceSave" && p.Id == receipt.ResourceId && p.TenantId == receipt.TenantId,
+            CrewPersonalProfile p => receipt.Action is "CrewProfileSave" or "CrewPhotoSave" && p.PersonId == receipt.ResourceId && p.TenantId == receipt.TenantId,
+            Person p => receipt.Action is "CrewPersonSave" or "CrewIdentityConvert" && p.Id == receipt.ResourceId && p.TenantId == receipt.TenantId,
+            CrewAssignment c => receipt.Action == "CrewSave" && c.Id == receipt.ResourceId && c.TenantId == receipt.TenantId,
+            Document d => receipt.Action == "DocumentDraftSave" && d.Id == receipt.ResourceId && d.TenantId == receipt.TenantId && d.Revision == receipt.RegisterRevision,
+            StoredFile f => receipt.Action == "FileFinalize" && f.Id == receipt.ResourceId && f.TenantId == receipt.TenantId,
+            Company c => receipt.Action.StartsWith("Company", StringComparison.Ordinal) && c.Id == receipt.ResourceId && c.TenantId == receipt.TenantId,
+            Vessel v => receipt.Action.StartsWith("Vessel", StringComparison.Ordinal) && v.Id == receipt.ResourceId && v.TenantId == receipt.TenantId,
+            RegulatoryDraft d => receipt.Action == "ProfileSave" && d.VesselId == receipt.ResourceId && d.TenantId == receipt.TenantId,
+            RegisterDraft d => receipt.Action == d.Kind + "DraftSave" && d.Id == receipt.ResourceId && d.TenantId == receipt.TenantId && d.Revision == receipt.RegisterRevision,
+            _ => false
+        });
+        return resource is { State: EntityState.Unchanged } && resource.Metadata.FindProperty("Version") != null &&
+            resource.Property("Version").CurrentValue is uint version && version > 0 ? version : null;
+    }
+
+    private uint? CommittedVersion(ApplicabilityReceipt receipt)
+    {
+        var head = ChangeTracker.Entries<RuleDraft>().SingleOrDefault(e => e.Entity.Id == receipt.ResourceId && e.Entity.TenantId == receipt.TenantId && e.State == EntityState.Unchanged);
+        return receipt.Action is "author" or "review" ? head?.Entity.Version : null;
+    }
+
     private List<AuditEvent> PrepareAudit()
     {
         ChangeTracker.DetectChanges();
@@ -136,6 +328,74 @@ public sealed class PoseidonDbContext(
             throw new InvalidOperationException("An authenticated or explicit system actor and correlation ID are required.");
         if (changes.Any(e => e.Entity is AuditEvent or SecurityEvent))
             throw new InvalidOperationException("Audit events are generated by the context and cannot be directly changed.");
+        if (changes.Any(e => e.Entity is RegulatoryQualificationEvent or RegulatoryFactAttestation or EvaluationQualification or RegulatoryQualificationReceipt && e.State != EntityState.Added))
+            throw new InvalidOperationException("Regulatory qualification lineage is immutable.");
+        if (changes.Any(e => e.Entity is RegulatoryQualificationHead && (e.State == EntityState.Deleted || e.State == EntityState.Modified && e.Properties.Any(p => p.IsModified && p.Metadata.Name != "Revision"))))
+            throw new InvalidOperationException("Regulatory qualification scope is immutable.");
+        if (changes.Any(e => e.Entity is HumanReviewEvent or HumanReviewReceipt && e.State != EntityState.Added))
+            throw new InvalidOperationException("Human review history is immutable.");
+        if (changes.Any(e => e.Entity is HumanReviewHead && (e.State == EntityState.Deleted || e.State == EntityState.Modified && e.Properties.Any(p => p.IsModified && p.Metadata.Name != "Revision"))))
+            throw new InvalidOperationException("Human review scope is immutable.");
+        if (changes.Any(e => e.Entity is ControlEvidenceRevision or ControlEvidenceRequirement or ControlEvidenceEdge or ControlEvidenceReceipt or TugCapabilityBinding or OperationEquipmentBinding or EvaluationOwningReference or EvaluationUpstreamReference or MsmdRoleBinding && e.State != EntityState.Added))
+            throw new InvalidOperationException("Control/evidence lineage is immutable.");
+        if (changes.Any(e => e.Entity is ControlEvidenceHead && (e.State == EntityState.Deleted || e.State == EntityState.Modified && e.Properties.Any(p => p.IsModified && p.Metadata.Name != "Revision"))))
+            throw new InvalidOperationException("Control/evidence ownership is immutable.");
+        if (changes.Any(e => e.Entity is RuleRevision or ApplicabilityEvaluation or EvaluationRule or ApplicabilityReceipt && e.State != EntityState.Added))
+            throw new InvalidOperationException("Applicability lineage is immutable.");
+        if (changes.Any(e => e.Entity is RuleDraft && e.State == EntityState.Deleted))
+            throw new InvalidOperationException("Rule history cannot be removed.");
+        if (changes.Any(e => e.Entity is TugOfflineOutcome or TugOfflineLifecycle && e.State != EntityState.Added))
+            throw new InvalidOperationException("Tug offline lineage is immutable.");
+        if (changes.Any(e => e.Entity is TugOfflineEnrollment && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
+            e.Properties.Any(p => p.IsModified && p.Metadata.Name is not "ExpiresAt" and not "RevokedAt" and not "PublicKey") ||
+            e.State == EntityState.Modified && e.Property("PublicKey").IsModified && e.Property("PublicKey").OriginalValue != null)))
+            throw new InvalidOperationException("Tug offline enrollment identity is immutable.");
+        if (changes.Any(e => e.Entity is OfflineOutcome or OfflineLifecycle && e.State != EntityState.Added))
+            throw new InvalidOperationException("Offline lineage is immutable.");
+        if (changes.Any(e => e.Entity is OfflineEnrollment && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
+            e.Properties.Any(p => p.IsModified && p.Metadata.Name is not "ExpiresAt" and not "RevokedAt" and not "PublicSigningKey") ||
+            e.State == EntityState.Modified && e.Property("PublicSigningKey").IsModified && e.Property("PublicSigningKey").OriginalValue != null)))
+            throw new InvalidOperationException("Offline capture context is immutable.");
+        if (changes.Any(e => e.Entity is TugJobRevision or TugOwner or TugAssignment or TugDraftPlanRevision or TugDraftPlanTug && e.State != EntityState.Added))
+            throw new InvalidOperationException("Tug lineage is immutable.");
+        if (changes.Any(e => e.Entity is TugDraftPlan && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
+            (e.Property("VesselId").IsModified || e.Property("JobId").IsModified))))
+            throw new InvalidOperationException("Draft plan ownership is immutable.");
+        if (changes.Any(e => e.Entity is TugJob && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
+            (e.Property("VesselId").IsModified || e.Property("JobNumber").IsModified))))
+            throw new InvalidOperationException("Tug request identity is immutable.");
+        if (changes.Any(e => e.Entity is MaintenanceObservation or MaintenanceObservationRevocation && e.State != EntityState.Added))
+            throw new InvalidOperationException("Observation lineage is immutable.");
+        if (changes.Any(e => e.Entity is AssetRevision or MaintenancePlanRevision or TechnicalOwner or MaintenanceJob && e.State != EntityState.Added))
+            throw new InvalidOperationException("Technical history and references are immutable.");
+        if (changes.Any(e => e.Entity is Asset or MaintenancePlan && (e.State == EntityState.Deleted ||
+            e.State == EntityState.Modified && e.Property("VesselId").IsModified)))
+            throw new InvalidOperationException("Technical ownership is immutable.");
+        if (changes.Any(e => e.Entity is CrewIdentityRevision && e.State != EntityState.Added))
+            throw new InvalidOperationException("Crew identity lineage is immutable.");
+        if (changes.Any(e => e.Entity is CrewCatalogEvent && e.State != EntityState.Added))
+            throw new InvalidOperationException("Crew catalog lineage is immutable.");
+        if (changes.Any(e => e.Entity is CrewCatalogHead && (e.State == EntityState.Deleted || e.State == EntityState.Modified && e.Property("VesselId").IsModified)))
+            throw new InvalidOperationException("Crew catalog ownership is immutable.");
+        if (changes.Any(e => e.Entity is CrewPosition && e.State != EntityState.Added))
+            throw new InvalidOperationException("Crew position references are immutable; use a distinct configured reference.");
+        if (changes.Any(e => e.Entity is CrewPersonalProfileRevision && e.State != EntityState.Added))
+            throw new InvalidOperationException("Crew profile lineage is immutable.");
+        if (changes.Any(e => e.Entity is CrewPersonalProfile && (e.State == EntityState.Deleted || e.State == EntityState.Modified && e.Property("PersonId").IsModified)))
+            throw new InvalidOperationException("Crew profile ownership is immutable.");
+        if (changes.Any(e => e.Entity is CrewAssignmentRevision && e.State != EntityState.Added))
+            throw new InvalidOperationException("Crew revisions are immutable.");
+        if (changes.Any(e => e.Entity is CrewAssignment && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
+            (e.Property(nameof(CrewAssignment.PersonId)).IsModified || e.Property(nameof(CrewAssignment.VesselId)).IsModified))))
+            throw new InvalidOperationException("Crew ownership is immutable.");
+        if (changes.Any(e => e.Entity is StoredFile && e.State != EntityState.Added))
+            throw new InvalidOperationException("Stored file revisions are immutable.");
+        if (changes.Any(e => e.Entity is DocumentVersion && e.State != EntityState.Added))
+            throw new InvalidOperationException("Document draft snapshots are immutable; append a revision.");
+        if (changes.Any(e => e.Entity is Document && (e.State == EntityState.Deleted || e.State == EntityState.Modified && e.Properties.Any(p => p.IsModified && p.Metadata.Name != nameof(Document.Revision)))))
+            throw new InvalidOperationException("Document ownership is immutable.");
+        if (changes.Any(e => e.Entity is FileStage && (e.State == EntityState.Deleted || e.State == EntityState.Modified && e.Properties.Any(p => p.IsModified && p.Metadata.Name != nameof(FileStage.State)))))
+            throw new InvalidOperationException("File intent and ownership are immutable.");
         if (changes.Any(e => e.Entity is CommandReceipt && e.State != EntityState.Added))
             throw new InvalidOperationException("Command receipts are immutable.");
         if (changes.Any(e => e.Entity is RegulatoryDraftRevision && e.State != EntityState.Added))
@@ -145,6 +405,14 @@ public sealed class PoseidonDbContext(
         if (changes.Any(e => e.Entity is RegisterDraft && (e.State == EntityState.Deleted ||
             e.State == EntityState.Modified && e.Property(nameof(RegisterDraft.Kind)).IsModified)))
             throw new InvalidOperationException("Register kind and history cannot be removed or reassigned.");
+        if (changes.Any(e => e.Entity is ImportPreview or ImportRowResult or CredentialRevision && e.State != EntityState.Added))
+            throw new InvalidOperationException("Import observations and credential history are immutable.");
+        if (changes.Any(e => e.Entity is Credential && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
+            new[] { "VesselId", "AssignmentId", "PersonId" }.Any(n => e.Property(n).IsModified))))
+            throw new InvalidOperationException("Credential ownership is immutable.");
+        if (changes.Any(e => e.Entity is ImportBatch && (e.State == EntityState.Deleted || e.State == EntityState.Modified && !LegacyImportStorage.IsConversion(e) &&
+            (LegacyImportStorage.Protected(e) || new[] { "VesselId", "ActorId", "SessionHash", "AssignmentId", "Category", "TemplateVersion", "TemplateFingerprint", "CrewIdentityPolicyVersion", "SourceHash", "TableJson", "SourceName", "SourceLocator", "LegacyProtectedAt", "LegacyProtectionPolicyVersion", "LegacyProtectionIdentityVersion", "LegacyProtectionPurpose" }.Any(n => e.Property(n).IsModified)))))
+            throw new InvalidOperationException("Import source and ownership are immutable.");
         var events = new List<AuditEvent>();
         foreach (var entry in changes)
         {
@@ -154,13 +422,26 @@ public sealed class PoseidonDbContext(
             if (entry.State == EntityState.Modified && entry.Entity is ITenantEntity && entry.Property(nameof(ITenantEntity.TenantId)).IsModified)
                 throw new UnauthorizedAccessException("Tenant ownership cannot be changed.");
             var key = entry.Metadata.FindPrimaryKey()!.Properties;
+            var metadata = AuditMetadata.From(entry);
             events.Add(new AuditEvent
             {
                 Id = Guid.NewGuid(), TenantId = scope, ActorId = actor.Id, ActorType = actor.Type,
                 Action = entry.State.ToString(), EntityType = entry.Metadata.ClrType.Name,
                 EntityId = entry.Entity is CommandReceipt receipt ? receipt.ResourceId.ToString() :
+                    entry.Entity is ApplicabilityReceipt applicabilityReceipt ? applicabilityReceipt.ResourceId.ToString() :
+                    entry.Entity is HumanReviewReceipt humanReceipt ? humanReceipt.ResourceId.ToString() :
+                    entry.Entity is RegulatoryQualificationReceipt regulatoryReceipt ? regulatoryReceipt.RuleId.ToString() :
+                    entry.Entity is ControlEvidenceReceipt controlReceipt ? controlReceipt.ResourceId.ToString() :
                     string.Join('/', key.Select(p => entry.Property(p.Name).CurrentValue)),
-                CorrelationId = actor.CorrelationId, OccurredAt = DateTimeOffset.UtcNow
+                CorrelationId = actor.CorrelationId, OccurredAt = DateTimeOffset.UtcNow,
+                VesselId = metadata.VesselId, ResourceId = metadata.ResourceId,
+                BeforeVersion = entry.State == EntityState.Modified && entry.Metadata.FindProperty("Version") != null ? (uint?)entry.Property("Version").OriginalValue : null,
+                // Receipt save happens after PostgreSQL returned the business xmin, inside the same transaction.
+                AfterVersion = entry.Entity is CommandReceipt command ? CommittedVersion(command) : entry.Entity is ApplicabilityReceipt applicability ? CommittedVersion(applicability) : entry.Entity is RegulatoryQualificationReceipt qr ? ChangeTracker.Entries<RegulatoryQualificationHead>().SingleOrDefault(e => e.Entity.TenantId == qr.TenantId && e.Entity.RuleId == qr.RuleId)?.Entity.Version : entry.Entity is HumanReviewReceipt hr ? ChangeTracker.Entries<HumanReviewHead>().SingleOrDefault(e => e.Entity.TenantId == hr.TenantId && e.Entity.VesselId == hr.VesselId && e.Entity.Id == hr.ResourceId)?.Entity.Version : entry.Entity is ControlEvidenceReceipt ce ? ChangeTracker.Entries<ControlEvidenceHead>().SingleOrDefault(e => e.Entity.TenantId == ce.TenantId && e.Entity.VesselId == ce.VesselId && e.Entity.Kind == ce.Kind && e.Entity.Id == ce.ResourceId)?.Entity.Version : null,
+                RoleContext = actor.RoleContext, CapabilityContext = actor.CapabilityContext, ChangeSummary = metadata.Summary,
+                BeforeRevision = metadata.BeforeRevision, AfterRevision = metadata.AfterRevision,
+                ResourceKind = metadata.Kind, ReasonStatus = entry.Entity is RuleRevision or ControlEvidenceRevision or HumanReviewEvent or TugOfflineOutcome { ParentCommandId: not null } ? "RecordedControlledCode" : entry.Entity is OfflineOutcome { ParentCommandId: not null }
+                    ? "RecordedProtected" : "NotRequiredForCommand", Source = actor.Source
             });
         }
         AuditEvents.AddRange(events);

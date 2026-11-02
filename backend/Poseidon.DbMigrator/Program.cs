@@ -5,6 +5,11 @@ using Poseidon.Persistence.Seeding;
 var environment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "Production";
 var connection = Environment.GetEnvironmentVariable("POSEIDON_DATABASE")
     ?? throw new InvalidOperationException("Set POSEIDON_DATABASE in the process environment.");
+if (args is ["--legacy-crew-browser-fixture"]) {
+    await LegacyCrewBrowserFixture.AddAsync(connection, environment, SeedData.Load("backend/seed/synthetic-demo.json"));
+    Console.WriteLine("Disposable synthetic legacy fixture preserved or authored; no checks executed.");
+    return;
+}
 SeedData? data = null;
 if (args.Length != 0)
 {

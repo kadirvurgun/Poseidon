@@ -13,6 +13,7 @@ public sealed class FederationSettings
     public string? Issuer { get; set; }
     public string? ClientId { get; set; }
     public string? ClientSecret { get; set; }
+    public string? ClientSecretReference { get; set; }
     public Membership[] Memberships { get; set; } = [];
     public bool Configured => Uri.TryCreate(Authority, UriKind.Absolute, out var uri) && uri.Scheme == "https" &&
         !string.IsNullOrWhiteSpace(Issuer) && !string.IsNullOrWhiteSpace(ClientId);
@@ -21,6 +22,13 @@ public sealed class FederationSettings
 // Provisioned by the server operator, never populated from request binding or IdP role claims.
 public sealed record Membership(string Issuer, string Subject, Guid ActorId, Guid TenantId, string[] Permissions, bool TenantWideRead = false, bool TenantWideManage = false, VesselGrant[]? VesselGrants = null)
 {
+    public string[]? RoleReferences { get; set; }
+    // Explicit operator appointments. No inference from administrator/IdP/client role names.
+    public string ActorKind { get; set; } = "Unspecified";
+    public HumanAuthority[] HumanAuthorities { get; set; } = [];
+    public RegulatoryAuthority[] RegulatoryAuthorities { get; set; } = [];
+    public HumanTraceReader[] HumanTraceReaders { get; set; } = [];
+    public CrewCatalogAuthority[] CrewCatalogAuthorities { get; set; } = [];
     // ConfigurationBinder must use property binding. Constructor binding can silently
     // omit an array member whose optional collection is an explicit empty JSON array.
     public Membership() : this("", "", Guid.Empty, Guid.Empty, []) { }
@@ -28,17 +36,26 @@ public sealed record Membership(string Issuer, string Subject, Guid ActorId, Gui
 public sealed record VesselGrant(Guid VesselId, bool CanEdit = false);
 public sealed record TrustedActor(Guid Id, Guid TenantId, string[] Permissions, bool TenantWideRead, bool TenantWideManage, VesselGrant[] VesselGrants)
 {
+    public string? RoleContext { get; init; }
+    public bool CanReadTug => CanRead && Permissions.Contains("mode.tug") && Permissions.Contains("tug.read");
+    public bool CanSeeShip => !Permissions.Contains("mode.tug") || Permissions.Contains("mode.cross");
+    public bool CanSeeTug => Permissions.Contains("mode.tug");
+    public bool CanAccessKind(Poseidon.Persistence.VesselKind kind) => kind == Poseidon.Persistence.VesselKind.Tug ? CanSeeTug : CanSeeShip;
+    public bool CanReadAudit => Permissions.Contains("audit.read") && CanRead;
+    public string AuditCapabilities => string.Join(',', Permissions.Order(StringComparer.Ordinal));
     // Explicit tenant-local capability. Vessel-only grants and directory writes confer no catalog authority.
     public bool CanReadRegulatory => CanRead && (TenantWideRead || TenantWideManage) && Permissions.Contains("regulatory.draft.read");
-    public bool CanWriteRegulatory => CanReadRegulatory && Permissions.Contains("regulatory.draft.write");
+    public bool HasWriteAttribution => RoleContext != null;
+    public bool CanWriteRegulatory => HasWriteAttribution && CanReadRegulatory && Permissions.Contains("regulatory.draft.write");
     public bool CanRead => Permissions.Contains("directory.read") && (TenantWideRead || TenantWideManage || VesselGrants.Length > 0);
-    public bool CanManage => CanRead && TenantWideManage && Permissions.Contains("directory.write");
+    public bool CanManage => HasWriteAttribution && CanRead && TenantWideManage && Permissions.Contains("directory.write");
     public bool CanSearch => CanRead && Permissions.Contains("workspace.search");
-    public bool CanEditVessel(Guid id) => CanRead && Permissions.Contains("directory.write") &&
+    public bool CanEditVessel(Guid id) => HasWriteAttribution && CanRead && Permissions.Contains("directory.write") &&
         (TenantWideManage || VesselGrants.Any(g => g.VesselId == id && g.CanEdit));
     public IQueryable<Poseidon.Persistence.Vessel> Scope(IQueryable<Poseidon.Persistence.Vessel> query)
     {
         if (!CanRead) return query.Where(_ => false);
+        query = query.Where(v => v.Kind == Poseidon.Persistence.VesselKind.Tug ? CanSeeTug : CanSeeShip);
         if (TenantWideRead || TenantWideManage) return query;
         var ids = VesselGrants.Select(g => g.VesselId).ToArray();
         return query.Where(v => ids.Contains(v.Id));
@@ -47,6 +64,11 @@ public sealed record TrustedActor(Guid Id, Guid TenantId, string[] Permissions, 
 
 public sealed class ActorResolver(FederationSettings settings)
 {
+    // Operator-assigned local role references are observations only: never permission grants or IdP labels.
+    public static string? TrustedRoleContext(string[]? refs) => refs is { Length: > 0 and <= 16 } &&
+        refs.All(x => x != null && x.Length == 36 && Guid.TryParseExact(x, "D", out var id) && id != Guid.Empty) &&
+        refs.Distinct(StringComparer.OrdinalIgnoreCase).Count() == refs.Length
+        ? string.Join(',', refs.Select(x => Guid.Parse(x).ToString("D")).Order(StringComparer.Ordinal)) : null;
     public TrustedActor? Resolve(ClaimsPrincipal principal)
     {
         if (principal.Identity?.IsAuthenticated != true) return null;
@@ -56,8 +78,8 @@ public sealed class ActorResolver(FederationSettings settings)
         var matches = settings.Memberships.Where(x => x.Issuer == issuers[0].Value && x.Subject == subjects[0].Value).ToArray();
         if (matches.Length != 1 || matches[0].ActorId == Guid.Empty || matches[0].TenantId == Guid.Empty) return null;
         var m = matches[0];
-        return new(m.ActorId, m.TenantId, (m.Permissions ?? []).Where(x => x is "directory.read" or "directory.write" or "workspace.search" or "regulatory.draft.read" or "regulatory.draft.write").Distinct().ToArray(),
-            m.TenantWideRead, m.TenantWideManage, (m.VesselGrants ?? []).Where(g => g.VesselId != Guid.Empty).ToArray());
+        return new TrustedActor(m.ActorId, m.TenantId, (m.Permissions ?? []).Where(x => x is "crew.catalog.govern" or "crew.assessment.read" or "regulatory.qualify" or "regulatory.facts.attest" or "human.trace.read" or "human.review.read" or "human.review.submit" or "human.verify" or "human.decide" or "control.read" or "control.write" or "control.owner.eligible" or "evidence.read" or "evidence.write" or "applicability.read" or "applicability.evaluate" or "rules.write" or "rules.review" or "import.legacy.convert" or "crew.identity.convert" or "crew.documents.read" or "crew.documents.write" or "crew.position.write" or "maintenance.observation.write" or "crew.assignment.declare" or "import.read" or "import.write" or "crew.certificate.read" or "crew.certificate.write" or "crew.profile.identity.read" or "crew.profile.identity.write" or "crew.profile.contact.read" or "crew.profile.contact.write" or "crew.profile.medical.read" or "crew.profile.medical.write" or "crew.profile.employment.read" or "crew.profile.employment.write" or "mode.tug" or "mode.cross" or "tug.read" or "tug.write" or "tug.plan.write" or "tug.owner.eligible" or "crew.read" or "crew.write" or "crew.identity.read" or "crew.identity.write" or "crew.history.read" or "directory.read" or "directory.write" or "workspace.search" or "regulatory.draft.read" or "regulatory.draft.write" or "audit.read" or "file.read" or "file.write" or "equipment.read" or "equipment.write" or "equipment.history.read" or "maintenance.read" or "maintenance.write" or "maintenance.history.read" or "maintenance.owner.eligible").Distinct().ToArray(),
+            m.TenantWideRead, m.TenantWideManage, (m.VesselGrants ?? []).Where(g => g.VesselId != Guid.Empty).ToArray()) { RoleContext = TrustedRoleContext(m.RoleReferences) };
     }
 }
 
@@ -73,6 +95,9 @@ public static class FoundationIdentity
     public static void AddFoundationIdentity(this IServiceCollection services, IConfiguration configuration, IHostEnvironment environment)
     {
         var settings = configuration.GetSection("Authentication:Oidc").Get<FederationSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new();
+        if (settings.ClientSecretReference != null)
+            settings.ClientSecret = OperatorSecretReferences.Resolve(settings.ClientSecretReference, Environment.GetEnvironmentVariable)
+                ?? throw new InvalidOperationException("Required operator secret is unavailable.");
         services.AddSingleton(settings);
         services.AddSingleton<ActorResolver>();
         services.AddAntiforgery(o =>
@@ -181,7 +206,9 @@ public static class FoundationIdentity
                 }
             };
         });
-        services.AddAuthorizationBuilder().AddPolicy("RegulatoryDraftRead", policy => policy.RequireAuthenticatedUser()
+        services.AddAuthorizationBuilder().AddPolicy("AuditRead", policy => policy.RequireAuthenticatedUser()
+            .RequireAssertion(c => c.Resource is HttpContext http && http.RequestServices.GetRequiredService<ActorResolver>()
+                .Resolve(c.User)?.CanReadAudit == true)).AddPolicy("RegulatoryDraftRead", policy => policy.RequireAuthenticatedUser()
             .RequireAssertion(c => c.Resource is HttpContext http && http.RequestServices.GetRequiredService<ActorResolver>()
                 .Resolve(c.User)?.CanReadRegulatory == true))
             .AddPolicy("DirectoryRead", policy => policy.RequireAuthenticatedUser()

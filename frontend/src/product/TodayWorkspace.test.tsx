@@ -10,8 +10,8 @@ const vessel = { id, companyId: '10000000-0000-0000-0000-000000000002', code: 'T
 const vesselPage = (count: number) => Array.from({ length: count }, (_, i) => ({ ...vessel, id: `10000000-0000-0000-0000-${String(i + 1).padStart(12, '0')}`, code: `T${i + 1}` }))
 const now = '2026-11-01T00:00:00Z'
 const href = `/app/fleet/${id}/profile`
-const data = { vessel, readAt: now, coverage: ['RegulatoryDraft', 'OperationalTasks', 'SafetyDecisions', 'Permits', 'EvidenceVerification'].map((source, i) => ({ source, status: i ? 'Unavailable' : 'Available' })), cards: { items: [{ key: 'regulatory-draft', priority: 'Advisory', source: 'RegulatoryDraft', reason: 'DraftUnverified', owner: null, nextAction: 'ReviewDraft', href }], offset: 0, limit: 25, hasMore: false } }
-const why = { vesselId: id, cardKey: 'regulatory-draft', rule: 'TW-DRAFT-01', reason: 'DraftUnverified', inputs: { known: 0, missing: 16, unknown: 1, reason: 'DraftUnverified' }, readAt: now, savedAt: now, sourceObservedAt: null, freshness: 'Unverified', provenance: 'Synthetic', blockers: ['VerificationUnavailable', 'OperationalSourcesUnavailable'], owner: null, nextAction: 'ReviewDraft', href }
+const data = { vessel, readAt: now, coverage: ['RegulatoryDraft', 'OperationalTasks', 'SafetyDecisions', 'Permits', 'EvidenceVerification', 'TechnicalMaintenance'].map((source, i) => ({ source, status: i ? 'Unavailable' : 'Available' })), cards: { items: [{ key: 'regulatory-draft', priority: 'Advisory', source: 'RegulatoryDraft', reason: 'DraftUnverified', owner: null, nextAction: 'ReviewDraft', href }], offset: 0, limit: 25, hasMore: false } }
+const why = { vesselId: id, cardKey: 'regulatory-draft', rule: 'TW-DRAFT-01', reason: 'DraftUnverified', inputs: { known: 0, missing: 19, unknown: 1, reason: 'DraftUnverified' }, readAt: now, savedAt: now, sourceObservedAt: null, freshness: 'Unverified', provenance: 'Synthetic', blockers: ['VerificationUnavailable', 'OperationalSourcesUnavailable'], owner: null, nextAction: 'ReviewDraft', href }
 const response = (body: unknown, status = 200) => ({ ok: status === 200, status, json: async () => body }) as Response
 afterEach(() => vi.restoreAllMocks())
 it('shows honest TR/EN coverage, keyboard disclosure and fresh authorized Why on every expansion', async () => {
@@ -21,9 +21,9 @@ it('shows honest TR/EN coverage, keyboard disclosure and fresh authorized Why on
   expect(await screen.findByText('Kayıtlı mevzuat taslağı doğrulanmamış.')).toBeVisible()
   expect(screen.getByText(/Etkin araç/)).toHaveTextContent('Römorkör')
   view.rerender(<TodayWorkspace id={id} language="en" offline={false} onNavigate={navigate} />)
-  expect(screen.getAllByText(/Unavailable: source not connected/)).toHaveLength(4)
+  expect(screen.getAllByText(/Unavailable in this context/)).toHaveLength(5)
   const button = screen.getByRole('button', { name: 'Why?' }); button.focus(); await user.keyboard('{Enter}')
-  expect(await screen.findByText(/Declared \/ missing \/ unknown inputs: 0 \/ 16 \/ 1/)).toBeVisible()
+  expect(await screen.findByText(/Declared \/ missing \/ unknown inputs: 0 \/ 19 \/ 1/)).toBeVisible()
   expect(screen.getByText(/Input source observation: Unknown/)).toBeVisible()
   expect(button).toHaveFocus()
   await user.click(screen.getByRole('button', { name: 'Close Why' })); await user.click(screen.getByRole('button', { name: 'Why?' }))
@@ -194,10 +194,11 @@ it('rejects foreign context, invented safe state, unsafe destinations and malfor
 })
 it('guards navigation from an unsaved directory draft into Today', async () => {
   window.history.replaceState(null, '', `/app/fleet/${id}`)
-  vi.stubGlobal('fetch', vi.fn(async (url: string) => response(url.includes('auth/session') ? { authenticated: true, canRead: true, canReadCompanies: false, canCreate: false, canSearch: false, csrfToken: 'synthetic' } : url.includes('vessels?') ? { items: [vessel], offset: 0, limit: 25, hasMore: false } : vessel)))
+  vi.stubGlobal('fetch', vi.fn(async (url: string) => response(url.includes('auth/session') ? { authenticated: true, canRead: true, canReadCompanies: false, canCreate: false, canSearch: false, tenantId: id, actorId: vessel.companyId, csrfToken: 'synthetic' } : url.includes('/workspace/lenses') ? { tenantId: id, actorId: vessel.companyId, vesselId: id, mode: 'Tug', state: 'Configured', version: 'synthetic-v1', canSearch: false, lenses: [{ reference: id, tr: 'KURGUSAL rol', en: 'FICTIONAL role', items: [{ key: 'today', href: `/app/today/${id}`, group: 'daily' }] }] } : url.includes('vessels?') ? { items: [vessel], offset: 0, limit: 25, hasMore: false } : vessel)))
   const user = userEvent.setup(); render(<ProductApp />)
   await user.click(await screen.findByRole('button', { name: /^Düzenle$/ }))
   await user.type(screen.getByLabelText('Ad *'), ' retained')
+  await user.selectOptions(await screen.findByLabelText('Menü merceği'), id)
   await user.click(screen.getByRole('button', { name: /^Bugün$/ }))
   expect(await screen.findByRole('dialog')).toBeVisible()
   await user.click(screen.getByRole('button', { name: 'Düzenlemeye devam et' }))

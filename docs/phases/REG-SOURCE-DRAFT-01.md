@@ -1,4 +1,9 @@
+> Current target continuation: [FOUNDATION-ACCEPTANCE-BUNDLE-01](FOUNDATION-ACCEPTANCE-BUNDLE-01.md) remains **SOFTWARE PRECONDITION INCOMPLETE / NOT RUN / NOT ACCEPTED**. [2026-11-02 readiness/code continuation](FOUNDATION-CONTINUATION-2026-11-02.md) records current base/history, new offline privacy regression source and remaining software. Results below retain historical scope; none validate the current target. Ordinary and separate register/direct-provider suites must both be included at the later single gate.
+
 # REG-SOURCE-DRAFT-01 phase handoff
+
+> Current verification: [AUDIT-FILES-BUNDLE-01](AUDIT-FILES-BUNDLE-01.md) executes the current app gate against approved80b057a. Scoped regressions pass after documented fixes; repository scan fails and the S3-compatible/API storage criterion is NOT MET. NOT ACCEPTED; canonical progress unchanged. Earlier authoring/CORE statements below retain historical scope.
+
 
 > Current follow-up: the [CORE-BUNDLE-01 rejection repair](CORE-BUNDLE-01.md) records exact replay/query/header fixes and actual affected-check reruns after rejected20f1198. Unchanged original results below are historical. Independent exact-commit QA/CI pending;NOT ACCEPTED.
 

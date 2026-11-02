@@ -1,0 +1,198 @@
+{
+  "task": "RULE-OWNING-ADAPTERS-01",
+  "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+  "receiving_head": "d01f52a",
+  "historical_independent_base": "80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44",
+  "source_only": {
+    "initial_worktree": "clean",
+    "historical_base_ancestor_exit": 0,
+    "tracked_whitespace_exit": 0,
+    "graphify_final": {
+      "exit": 0,
+      "nodes": 8017,
+      "edges": 17879,
+      "communities": 531,
+      "zero_node_warnings": 57,
+      "html": "omitted by graph size limit",
+      "model_calls": 0
+    },
+    "staged_whitespace_exit": 0
+  },
+  "verification": {
+    "suites": "NOT RUN",
+    "restore_build_lint_typecheck": "NOT RUN",
+    "generation_model_migrations": "NOT RUN",
+    "browser_provider": "NOT RUN",
+    "security_scans": "NOT RUN",
+    "independent_qa_ci_source_acceptance": "NOT RUN"
+  },
+  "accepted_sp_added": 0,
+  "canonical_progress": "8/970SP;2/121tasks;0/196accepted",
+  "notice": "Source fingerprints are authored-code observations, never product checks or approval. Two owning input paths authored; full task remains incomplete. No runtime credentials, actual approvals or customer/person data included.",
+  "authored_test_files": [
+    "frontend/src/product/RegulatoryProfile.test.tsx",
+    "frontend/src/product/RegulatoryProfilePrivacy.test.tsx",
+    "frontend/src/product/RuleOwningInputs.test.tsx",
+    "frontend/src/product/TodayWorkspace.test.tsx",
+    "frontend/src/product/Workspace.test.tsx",
+    "tests/Poseidon.Api.Tests/RegulatoryDraftTests.cs",
+    "tests/Poseidon.Api.Tests/RuleOwningProfileTests.cs",
+    "tests/Poseidon.Api.Tests/TodayTests.cs",
+    "tests/Poseidon.Browser.Tests/register-specs/regulatory-admission-cases.ts",
+    "tests/Poseidon.Domain.Tests/OwningProfileInputTests.cs",
+    "tests/Poseidon.Domain.Tests/TodayAdvisoryPolicyTests.cs",
+    "tests/Poseidon.Persistence.Tests/RegulatoryQualificationPersistenceTests.cs"
+  ],
+  "fingerprints": [
+    {
+      "path": "backend/Poseidon.Api/ApplicabilityContextResolver.cs",
+      "sha256": "fc369930e731799a30ec2d577b0bf486b8f90ded3463062c837699ffc2c6ff6c"
+    },
+    {
+      "path": "backend/Poseidon.Api/ControlEvidenceEndpoints.cs",
+      "sha256": "1da9ad91a6871afc732f10aaac1da306adf3b1724dfd965f0f9ae4c670431d5a"
+    },
+    {
+      "path": "backend/Poseidon.Api/CurrentRegulatoryContext.cs",
+      "sha256": "86bc48da437c9fd0091b301a52f19a8dd6b1b052ccb18ec37fcd51728dfd8dbf"
+    },
+    {
+      "path": "backend/Poseidon.Api/HumanReviewEndpoints.cs",
+      "sha256": "44b1badaadb916cdb1d9e822c9123e3ab0cb0fbea6f0e8b55aebc8230fd1a39e"
+    },
+    {
+      "path": "backend/Poseidon.Api/LifecycleApplicabilityEndpoints.cs",
+      "sha256": "7832df729d32eb93379e0ec984ca2c3870b01715601957867cab8f166881735b"
+    },
+    {
+      "path": "backend/Poseidon.Api/QualifiedControlContext.cs",
+      "sha256": "4b5de5686855a17ff3cd7ccb7548c41e873ecbc5741e77c6214d249a9bd365aa"
+    },
+    {
+      "path": "backend/Poseidon.Api/RegulatoryDraftEndpoints.cs",
+      "sha256": "9c3ec642084157093fb43c54a1d6617167fdecc29e233778d9f3e28a03048aa2"
+    },
+    {
+      "path": "backend/Poseidon.Api/RegulatoryQualificationEndpoints.cs",
+      "sha256": "a31534f2d46174f62dcd7ad7188eeec11ce066d0a1e987cec0b2457fe725a688"
+    },
+    {
+      "path": "backend/Poseidon.Api/TugOwnedCapacity.cs",
+      "sha256": "39300ffc4a231616a9648ecee24b205c442750dc31c6e52d96922bece2896dff"
+    },
+    {
+      "path": "backend/Poseidon.Domain/RegulatoryDraftPolicy.cs",
+      "sha256": "26fad575ab2aeff90b65ab15ce7bd42d47087fbfb531c1c5995ed1c7d9b7fe46"
+    },
+    {
+      "path": "backend/Poseidon.Domain/RegulatoryQualificationPolicy.cs",
+      "sha256": "63c23f9726556b6d5358c6d09243ac328d302f60257611d291591b2d8f1f2b58"
+    },
+    {
+      "path": "backend/Poseidon.Domain/TodayAdvisoryPolicy.cs",
+      "sha256": "a6af1ca7fe3854b17ce9b60559cb319a13815e3d4a32a450bb998e6127367721"
+    },
+    {
+      "path": "backend/Poseidon.Persistence/Entities.cs",
+      "sha256": "2107a3de08d7d978a6484e19bfd3b25a2e97ebe7a9833f24d999e9e96292f0e8"
+    },
+    {
+      "path": "backend/Poseidon.Persistence/Migrations/20261102233000_ProfileOwningConstructionRecord.cs",
+      "sha256": "d2fa9d123992902f1293e36f9bce578da8cc9ba8633fb16d8385519dd15722e5"
+    },
+    {
+      "path": "backend/Poseidon.Persistence/PoseidonDbContext.cs",
+      "sha256": "1cc22d3c46c777374c7417b930d51fd3cad7963c84f021fd58beca52bf257599"
+    },
+    {
+      "path": "backend/Poseidon.Persistence/RegulatoryDraft.cs",
+      "sha256": "14cbd17d39bf8feccf8568da2ba09db7cc1b65f72720dd749125cb5173a6b3ad"
+    },
+    {
+      "path": "docs/tasks/rule-owning-adapters-01.md",
+      "sha256": "37151c2e72144faaf0cdfb62703e3f26efbac3edbdbc3743813c08927b4628a9"
+    },
+    {
+      "path": "docs/tasks/rule-owning-adapters-01.sources.json",
+      "sha256": "186d1a6d0ac54d3f7844155fad598d60a65b0e301027bcd1e06d4a25b35c4f07"
+    },
+    {
+      "path": "frontend/src/product/ConstructionRecordPicker.tsx",
+      "sha256": "37cd58846a2743acce6143913c050953fb55c9e97ea3adc12b75b8290a95b657"
+    },
+    {
+      "path": "frontend/src/product/RegulatoryProfile.test.tsx",
+      "sha256": "cccd0ac8dc4cc6edafc2a09414267c0331a07cd01ce3d7ae455a611a848ef093"
+    },
+    {
+      "path": "frontend/src/product/RegulatoryProfile.tsx",
+      "sha256": "c7dff0f9b594e01128205aeb553271d85320b3efdd09fa1cce077649de3456c9"
+    },
+    {
+      "path": "frontend/src/product/RegulatoryProfilePrivacy.test.tsx",
+      "sha256": "a0818e09a6a65ac27a3ea6cd95bda83ed7e534fe6e66684e3b79436fc906fbb9"
+    },
+    {
+      "path": "frontend/src/product/RegulatoryQualification.tsx",
+      "sha256": "4c1f4417d7754523d3d970cb00aacfbd76e3ac445527f748f7f40ccff59ca6c7"
+    },
+    {
+      "path": "frontend/src/product/RuleOwningInputs.test.tsx",
+      "sha256": "11cca689328f3852705a8ccab708b9f7c5f88d04637ecfb208c15a621b66294b"
+    },
+    {
+      "path": "frontend/src/product/TodayWorkspace.test.tsx",
+      "sha256": "fc30e819e67f0c2785f3caacf7e454e8958846efea922558523dac01be9b80d0"
+    },
+    {
+      "path": "frontend/src/product/Workspace.test.tsx",
+      "sha256": "fc40c1b2868349100bd75354aa1667e7d009ad0f542c6d7c09862563caab20ca"
+    },
+    {
+      "path": "frontend/src/product/profile-api.ts",
+      "sha256": "30504af3981cc48b18667baaff33554ddbb2755b4774c14f19fb7033d0f04b82"
+    },
+    {
+      "path": "frontend/src/product/profile-contract.ts",
+      "sha256": "f33340f8c8a1244906c7daa342ba6f0fa351dce2e9fb64c20e60d583efce80ef"
+    },
+    {
+      "path": "frontend/src/product/qualification-api.ts",
+      "sha256": "76c383741be89b07bd0900317f2ad90f5b0061acc0b88d41e01c798fad70822f"
+    },
+    {
+      "path": "frontend/src/product/today-api.ts",
+      "sha256": "f9213939f20f0becf30d3ed56cfdc00a752808cfee64ccb9a10b9c6faa904988"
+    },
+    {
+      "path": "tests/Poseidon.Api.Tests/RegulatoryDraftTests.cs",
+      "sha256": "7d875d5672b694aa97c6a5f69cb713627984ad4d3a678600b241e5ad7b476240"
+    },
+    {
+      "path": "tests/Poseidon.Api.Tests/RuleOwningProfileTests.cs",
+      "sha256": "554047f863c127a730df668c01ef4abd596ec0b3e97797161de51942210d25a7"
+    },
+    {
+      "path": "tests/Poseidon.Api.Tests/TodayTests.cs",
+      "sha256": "ebf714fc211b3ff688b67f05ce780d4c2c3c1266b38f76d4aab3313db8fbce91"
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/register-specs/regulatory-admission-cases.ts",
+      "sha256": "8760bb2a044758c8ba3f3fceab9b10c064280037020c3d1f401043b9bf8bb30b"
+    },
+    {
+      "path": "tests/Poseidon.Domain.Tests/OwningProfileInputTests.cs",
+      "sha256": "3ac5803181a1e0815af8b70e18d3cbfcb4a7014862eb09d11d10dcf5abc9a1cc"
+    },
+    {
+      "path": "tests/Poseidon.Domain.Tests/TodayAdvisoryPolicyTests.cs",
+      "sha256": "3974a49179626802d7ece928c2e876abb359f495dd0037e8944060b95186d5f0"
+    },
+    {
+      "path": "tests/Poseidon.Persistence.Tests/RegulatoryQualificationPersistenceTests.cs",
+      "sha256": "48d2ab13fdf2f139201d817b15809adff42dfdb6d996c7dab07c13d90803b460"
+    }
+  ],
+  "fingerprint_kind": "SHA256 of staged Git blob bytes; generated artifacts unchanged; not execution evidence",
+  "observed_parent": "d01f52a91d21aa7fabac249c4efb1ea6d6c6f3dd"
+}

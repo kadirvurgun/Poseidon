@@ -60,11 +60,24 @@ public sealed class AuditEvent : ITenantEntity
     public required string EntityId { get; set; }
     public required string CorrelationId { get; set; }
     public DateTimeOffset OccurredAt { get; set; }
+    // Nullable means unavailable historical metadata, never guessed during migration.
+    public Guid? VesselId { get; set; }
+    public Guid? ResourceId { get; set; }
+    public string? RoleContext { get; set; }
+    public string? CapabilityContext { get; set; }
+    public string? ChangeSummary { get; set; }
+    public uint? BeforeVersion { get; set; }
+    public uint? AfterVersion { get; set; }
+    public long? BeforeRevision { get; set; }
+    public long? AfterRevision { get; set; }
+    public string? ResourceKind { get; set; }
+    public string? ReasonStatus { get; set; }
+    public string? Source { get; set; }
 }
 
-public sealed record ActorContext(string Id, string Type, string CorrelationId)
+public sealed record ActorContext(string Id, string Type, string CorrelationId, string? CapabilityContext = null, string? Source = null, string? RoleContext = null)
 {
-    public static ActorContext SeedImport() => new("system:seed-import", "System", Guid.NewGuid().ToString());
+    public static ActorContext SeedImport() => new("system:seed-import", "System", Guid.NewGuid().ToString(), Source: "SeedImport");
 }
 
 // Retry metadata only; register receipts pin the committed immutable revision and xmin.
@@ -79,4 +92,7 @@ public sealed class CommandReceipt : ITenantEntity
     public DateTimeOffset CommittedAt { get; set; }
     public long? RegisterRevision { get; set; }
     public uint? RegisterVersion { get; set; }
+    // Exact profile command outcome only; never a generic protected-data snapshot.
+    public string? ProfileOutcomeJson { get; set; }
+    public Guid? ProfileVesselId { get; set; }
 }

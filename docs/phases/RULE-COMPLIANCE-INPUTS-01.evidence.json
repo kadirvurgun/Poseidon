@@ -1,0 +1,39 @@
+{
+  "task": "RULE-COMPLIANCE-INPUTS-01",
+  "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+  "receiving_head": "8c1eb8b",
+  "accepted": false,
+  "accepted_sp_added": 0,
+  "phase": "FOUNDATION authoring before one combined gate",
+  "checks": "NOT RUN",
+  "performed": [
+    "Git status/diff inspection; initial clean worktree",
+    "Scoped Graphify query; no MCP code graph available",
+    "Bounded query_sources and exact original source extraction",
+    "Product/test/document authoring"
+  ],
+  "not_performed": "NOT RUN: tests/suites/restore/build/lint/typecheck/generation/model/contract/migration/seed/browser/lab/provider/scans/Graphify update/independent QA/CI",
+  "source_receipts": "docs/tasks/rule-compliance-inputs-01.sources.json",
+  "authored_test_sources": [
+    "tests/Poseidon.Domain.Tests/ComplianceInputTests.cs",
+    "tests/Poseidon.Domain.Tests/ApplicabilityGoldenTests.cs",
+    "tests/Poseidon.Api.Tests/ComplianceInputTests.cs",
+    "tests/Poseidon.Persistence.Tests/ComplianceInputPersistenceTests.cs",
+    "frontend/src/product/ComplianceInputs.test.tsx",
+    "tests/Poseidon.Browser.Tests/register-specs/compliance-input-cases.ts"
+  ],
+  "remaining_software": [
+    "Durable Crew catalog proposal/adoption governance",
+    "Additional selected supported offline capture/read adapters",
+    "Full job-specific criterion/credential/MSMD/golden and Tug readiness composition",
+    "Credential-positive and deeper upstream/authority/privacy test sources",
+    "Complete signed multi-human fixture setup and whole-branch generated/model integration"
+  ],
+  "external_definitions": [
+    "Crew1615 actual derivation specification",
+    "Legitimate source/pack/survey/MSMD/issuer/assessment bytes and source-qualified policies",
+    "Actual appointed humans and source-required provider/trust contracts",
+    "Operator privacy/purpose/retention/key custody"
+  ],
+  "notice": "No discovered/pass count, generated artifact parity, runtime success, source qualification, provider proof, independent QA, SP acceptance or production decision is asserted."
+}

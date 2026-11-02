@@ -35,7 +35,34 @@ public static class SeedImporter
             db.RegulatoryDrafts.Add(draft);
             db.RegulatoryDraftRevisions.Add(draft.Snapshot());
         }
+        await TugFixtures.AddMissingAsync(db, data.Vessels, cancellationToken).ConfigureAwait(false);
+        await TechnicalFixtures.AddMissingAsync(db, data.Vessels, cancellationToken).ConfigureAwait(false);
+        await CrewFixtures.AddMissingAsync(db, data.Vessels, cancellationToken).ConfigureAwait(false);
+        foreach (var vessel in data.Vessels) {
+            if (await db.Credentials.FindAsync([vessel.TenantId, vessel.Id], cancellationToken) != null) continue;
+            db.Credentials.Add(new Credential { TenantId = vessel.TenantId, Id = vessel.Id, VesselId = vessel.Id,
+                AssignmentId = vessel.Id, PersonId = vessel.Id, Provenance = "SyntheticUnverified" });
+            db.CredentialRevisions.Add(new CredentialRevision { TenantId = vessel.TenantId, CredentialId = vessel.Id,
+                VesselId = vessel.Id, Revision = 1, SavedAt = DateTimeOffset.UtcNow, Provenance = "SyntheticUnverified" });
+        }
         await RegulatoryRegisterFixtures.AddMissingAsync(db, data.Tenants, cancellationToken).ConfigureAwait(false);
+        await ControlEvidenceFixtures.AddMissingAsync(db, data.Vessels, cancellationToken).ConfigureAwait(false);
+        await TugCapabilityFixtures.AddMissingAsync(db, data.Vessels, cancellationToken).ConfigureAwait(false);
+        await ApplicabilityFixtures.AddMissingAsync(db, data.Tenants, cancellationToken).ConfigureAwait(false);
+        await RegulatoryQualificationFixtures.AddMissingAsync(db, data.Tenants, cancellationToken).ConfigureAwait(false);
+        foreach (var vessel in data.Vessels)
+        {
+            if (await db.Documents.FindAsync([vessel.TenantId, vessel.Id], cancellationToken).ConfigureAwait(false) == null) {
+                db.Documents.Add(new Document { TenantId = vessel.TenantId, Id = vessel.Id, VesselId = vessel.Id });
+                db.DocumentVersions.Add(new DocumentVersion { TenantId = vessel.TenantId, DocumentId = vessel.Id, VesselId = vessel.Id,
+                    Revision = 1, Title = "FICTIONAL unverified document draft", Provenance = "SyntheticUnverified", CreatedAt = DateTimeOffset.UtcNow });
+            }
+            if (await db.FileStages.FindAsync([vessel.TenantId, vessel.Id], cancellationToken).ConfigureAwait(false) != null) continue;
+            db.FileStages.Add(new FileStage { TenantId = vessel.TenantId, Id = vessel.Id, VesselId = vessel.Id,
+                ActorId = Guid.Empty, Key = "synthetic-unverified-" + vessel.Id.ToString("N"), Fingerprint = new string('0', 64),
+                Name = "synthetic-unverified.png", ExpectedChecksum = new string('0', 64), ExpectedLength = 0,
+                State = "SyntheticUnverified", CreatedAt = DateTimeOffset.UtcNow });
+        }
         await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         if (transaction is not null)
             await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);

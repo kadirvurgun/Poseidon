@@ -1,0 +1,112 @@
+{
+  "authority": "SYNTHETIC LAB ONLY; no legal, catalog, retention, employment or operational approval. Operator must supply an external 32-byte base64 key reference; no key included.",
+  "CrewProfilePolicy": {
+    "Version": "synthetic-profile-v1",
+    "ImportPurpose": "crew-profile",
+    "ActiveKeyId": "synthetic-key-v1",
+    "KeyReferences": {
+      "synthetic-key-v1": "POSEIDON_SYNTHETIC_PROFILE_KEY"
+    },
+    "Fields": [
+      {
+        "Field": "Nationality",
+        "Purpose": "crew-profile",
+        "ReadCapability": "crew.profile.identity.read",
+        "WriteCapability": "crew.profile.identity.write",
+        "ControlledValues": [
+          "SYNTHETIC-UNVERIFIED"
+        ]
+      },
+      {
+        "Field": "DateOfBirth",
+        "Purpose": "crew-profile",
+        "ReadCapability": "crew.profile.identity.read",
+        "WriteCapability": "crew.profile.identity.write"
+      },
+      {
+        "Field": "PassportNo",
+        "Purpose": "crew-profile",
+        "ReadCapability": "crew.profile.identity.read",
+        "WriteCapability": "crew.profile.identity.write"
+      },
+      {
+        "Field": "PassportExpiry",
+        "Purpose": "crew-profile",
+        "ReadCapability": "crew.profile.identity.read",
+        "WriteCapability": "crew.profile.identity.write"
+      },
+      {
+        "Field": "SeamanBookNo",
+        "Purpose": "crew-profile",
+        "ReadCapability": "crew.profile.identity.read",
+        "WriteCapability": "crew.profile.identity.write"
+      },
+      {
+        "Field": "SeamanBookExpiry",
+        "Purpose": "crew-profile",
+        "ReadCapability": "crew.profile.identity.read",
+        "WriteCapability": "crew.profile.identity.write"
+      },
+      {
+        "Field": "CompanyStartDate",
+        "Purpose": "crew-profile",
+        "ReadCapability": "crew.profile.employment.read",
+        "WriteCapability": "crew.profile.employment.write"
+      },
+      {
+        "Field": "SeaServiceMonths",
+        "Purpose": "crew-profile",
+        "ReadCapability": "crew.profile.employment.read",
+        "WriteCapability": "crew.profile.employment.write"
+      },
+      {
+        "Field": "TankerExperienceMonths",
+        "Purpose": "crew-profile",
+        "ReadCapability": "crew.profile.employment.read",
+        "WriteCapability": "crew.profile.employment.write"
+      },
+      {
+        "Field": "VesselTypeExperience",
+        "Purpose": "crew-profile",
+        "ReadCapability": "crew.profile.employment.read",
+        "WriteCapability": "crew.profile.employment.write",
+        "ControlledValues": [
+          "SYNTHETIC-UNVERIFIED"
+        ]
+      },
+      {
+        "Field": "CompanyExperienceMonths",
+        "Purpose": "crew-profile",
+        "ReadCapability": "crew.profile.employment.read",
+        "WriteCapability": "crew.profile.employment.write"
+      },
+      {
+        "Field": "EmergencyContact",
+        "Purpose": "crew-profile",
+        "ReadCapability": "crew.profile.contact.read",
+        "WriteCapability": "crew.profile.contact.write"
+      },
+      {
+        "Field": "PreferredLanguage",
+        "Purpose": "crew-profile",
+        "ReadCapability": "crew.profile.contact.read",
+        "WriteCapability": "crew.profile.contact.write",
+        "ControlledValues": [
+          "SYNTHETIC-UNVERIFIED"
+        ]
+      },
+      {
+        "Field": "ContactPhone",
+        "Purpose": "crew-profile",
+        "ReadCapability": "crew.profile.contact.read",
+        "WriteCapability": "crew.profile.contact.write"
+      },
+      {
+        "Field": "Email",
+        "Purpose": "crew-profile",
+        "ReadCapability": "crew.profile.contact.read",
+        "WriteCapability": "crew.profile.contact.write"
+      }
+    ]
+  }
+}

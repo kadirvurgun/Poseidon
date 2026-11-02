@@ -1,0 +1,73 @@
+{
+  "bundle": "FOUNDATION-ACCEPTANCE-BUNDLE-01",
+  "status": "INCOMPLETE",
+  "recorded_at_utc": "2026-11-01T22:40:22.864137+00:00",
+  "receiving_head": "0bf43bee2991c4c85618a23b81807ef91b9c4771",
+  "configured_base_commit": "80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44",
+  "working_tree_checkpoint": true,
+  "validated_candidate_commit": null,
+  "gate_executed": false,
+  "history_observation": {
+    "fetch_exit_code": 0,
+    "origin_main": "5a2930b17c3895f1d9d20212e0319fff37cf8cd2",
+    "upstream_only": 0,
+    "author_only": 64,
+    "base_ancestry_exit_code": 0,
+    "changed_head_files": 471,
+    "changed_head_path_inventory_sha256": "6097b9dddc3f3fdfa4e0b2b6f8e1e6f75ce28fe7157e4f513793a6f76b46f16e",
+    "head_diff_shortstat": "471 files changed,254491 insertions(+),161 deletions(-)",
+    "semantic_reconciliation": "INCOMPLETE"
+  },
+  "authored_inventory_not_discovery": {
+    "vitest_logical_cases": 10,
+    "additional_api_pg_facts": 1,
+    "additional_registered_signed_host_journeys": 1,
+    "offline_registered_journeys_total": 5,
+    "configured_register_projects": 2
+  },
+  "static_test_files": {
+    "backend_projects": [
+      "tests/Poseidon.Api.Tests/Poseidon.Api.Tests.csproj",
+      "tests/Poseidon.Domain.Tests/Poseidon.Domain.Tests.csproj",
+      "tests/Poseidon.Persistence.Tests/Poseidon.Persistence.Tests.csproj"
+    ],
+    "frontend_test_files": 41,
+    "python_regression_files": 24,
+    "browser_configs": [
+      "tests/Poseidon.Browser.Tests/playwright.config.ts",
+      "tests/Poseidon.Browser.Tests/register.playwright.config.ts"
+    ]
+  },
+  "changed_code_sha256": {
+    "frontend/src/product/offline-capture-contract.ts": "bb2f76082fb33512730de3c0030820d5d6e48050a0577acd97c0a44fa3368557",
+    "frontend/src/product/offline-capture-contract.test.ts": "4e80d3870820a9f0ee4b988ca6357d21aba0627b94ad5dc6d0927b47b87bcb91",
+    "frontend/src/product/offline-application.ts": "b2a8b8fc2f7c48f7032d8a9072514eaf6b6c8264e2a1f72faaa41cd0a3829d53",
+    "tests/Poseidon.Api.Tests/CrewMedicalExpiryTests.cs": "dd2a45f46bd12ceb64e84a2e23fa808d9e08bfb58985ae93297b4b52a8fcb69a",
+    "tests/Poseidon.Browser.Tests/register-specs/offline-application-cases.ts": "06a0c32880438b8645342c39dddc074b81afdbd68a9551d0c6c4b48ac2d5022b"
+  },
+  "all_required_software_gates": "NOT_RUN_SOFTWARE_PRECONDITION_INCOMPLETE",
+  "executed_test_counts": null,
+  "test_durations": null,
+  "current_repository_security_result": "NOT_RUN",
+  "current_built_client_security_result": "NOT_RUN_NO_CURRENT_BUILD",
+  "source_only_checks": {
+    "whitespace": {
+      "command": "git diff --check",
+      "exit_code": 0,
+      "meaning": "Tracked source whitespace inspection only; line-ending normalization warnings; not a build or test"
+    },
+    "graphify_ast": {
+      "command": "graphify update .",
+      "exit_code": 0,
+      "nodes": 6755,
+      "edges": 14117,
+      "communities": 472,
+      "zero_node_warnings": 44,
+      "html": "Omitted above5000 nodes",
+      "final_after_test_assertion_refinement": "exit0;no code-graph topology changes;outputs unchanged",
+      "meaning": "AST maintenance only; no model/API calls or product validation"
+    }
+  },
+  "report": "docs/phases/FOUNDATION-CONTINUATION-2026-11-02.md",
+  "publication": "NONE"
+}

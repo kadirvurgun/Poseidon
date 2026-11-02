@@ -19,43 +19,109 @@ using Microsoft.Extensions.Options;
 using Poseidon.Api;
 using Poseidon.Persistence;
 using Poseidon.Persistence.Seeding;
-using Testcontainers.PostgreSql;
 using Xunit;
 
 namespace Poseidon.Api.Tests;
 
 // DIR-WORKSPACE-01 / DEV-014/015/016/019; actual API, antiforgery and PostgreSQL, no production test login.
 [Trait("Category", "Integration")]
-public sealed partial class DirectoryWorkspaceTests : IAsyncLifetime
+[Collection("directory-postgres")]
+public sealed partial class DirectoryWorkspaceTests(OwnedPostgresFixture fixture) : IAsyncLifetime
 {
-    private readonly PostgreSqlContainer postgres = new PostgreSqlBuilder("postgres:18.6").Build();
+    private OwnedTestDatabase postgres = null!;
+    private static readonly string ProfileTestKeyReference = CreateProfileTestKey();
+    private static string CreateProfileTestKey() {
+        var reference = "POSEIDON_TEST_PROFILE_" + Guid.NewGuid().ToString("N").ToUpperInvariant();
+        Environment.SetEnvironmentVariable(reference, Convert.ToBase64String(System.Security.Cryptography.RandomNumberGenerator.GetBytes(32)));
+        return reference;
+    }
     private readonly Guid actorId = Guid.NewGuid();
     private SeedData seed = null!;
     private CancellationToken Ct => TestContext.Current.CancellationToken;
     public async ValueTask InitializeAsync()
     {
-        await postgres.StartAsync(Ct);
+        postgres = await fixture.CreateMigratedAsync(Ct);
         seed = SeedData.Load(Path.Combine(AppContext.BaseDirectory, "synthetic-demo.json"));
         await using var db = new PoseidonDbContext(SeedImporter.Options(postgres.GetConnectionString(), seed), Guid.Empty, ActorContext.SeedImport(), true);
-        await db.Database.MigrateAsync(Ct);
+        try { await db.Database.MigrateAsync(Ct); }
+        catch { await postgres.DisposeAsync(); throw; }
     }
-    public async ValueTask DisposeAsync() => await postgres.DisposeAsync();
+    public async ValueTask DisposeAsync() {
+        foreach (var key in offlineTestKeys.Values) key.Dispose();
+        await postgres.DisposeAsync();
+    }
     private Vessel SeedVessel => seed.Vessels.First(v => v.TenantId == seed.Tenants[0].Id);
-    private WebApplicationFactory<Program> Host(bool manage = true, bool read = true, bool edit = true, bool scope = true, DbCommandInterceptor? interceptor = null, bool search = false, bool regulatoryRead = false, bool regulatoryWrite = false) => new WebApplicationFactory<Program>().WithWebHostBuilder(b =>
+    private WebApplicationFactory<Program> Host(bool manage = true, bool read = true, bool edit = true, bool scope = true, DbCommandInterceptor? interceptor = null, bool search = false, bool regulatoryRead = false, bool regulatoryWrite = false, bool auditRead = false, bool crewRead = false, bool crewWrite = false, bool crewIdentity = false, bool technicalRead = false, bool technicalWrite = false, bool tugRead = false, bool tugWrite = false, bool tugOwner = false, bool tugMode = false, bool crossMode = true, bool importRead = false, bool importWrite = false, bool certificateRead = false, bool certificateWrite = false, bool applicabilityRead = false, bool applicabilityEvaluate = false, bool ruleWrite = false, bool ruleReview = false) => new WebApplicationFactory<Program>().WithWebHostBuilder(b =>
     {
         b.UseEnvironment("Test");
         b.ConfigureAppConfiguration((_, c) => c.AddInMemoryCollection(new Dictionary<string, string?>
         {
+            ["CrewPositionPolicy:TimeZone"] = "UTC",
+            ["CrewPositionPolicy:PeriodSemantics"] = "StartInclusiveEndExclusive",
+            ["CrewPositionPolicy:Version"] = "synthetic-position-v1",
+            ["CrewPositionPolicy:SourceReference"] = "Synthetic scope test, not an approved codebook",
+            ["CrewPositionPolicy:Positions:0:TenantId"] = seed.Tenants[0].Id.ToString(),
+            ["CrewPositionPolicy:Positions:0:VesselId"] = SeedVessel.Id.ToString(),
+            ["CrewPositionPolicy:Positions:0:PositionId"] = SeedVessel.Id.ToString(),
+            ["CrewPositionPolicy:Positions:0:Code"] = "SYNTHETIC-UNVERIFIED",
+            ["CrewPositionPolicy:Positions:0:Provenance"] = "SyntheticUnverified",
+            ["CrewIdentityPolicy:Version"] = "synthetic-identity-v1",
+            ["CrewIdentityPolicy:Purpose"] = "synthetic-crew-identity",
+            ["CrewIdentityPolicy:SourceReference"] = "Synthetic test contract; no production catalog approval",
+            ["CrewIdentityPolicy:EmployeeNumberMode"] = "MutableDeclaration",
+            ["CrewIdentityPolicy:TenantIds:0"] = seed.Tenants[0].Id.ToString(),
+            ["CrewIdentityPolicy:Fields:0:Field"] = "FullName",
+            ["CrewIdentityPolicy:Fields:1:Field"] = "EmployeeNo",
+            ["CrewIdentityPolicy:Fields:0:Purpose"] = "synthetic-crew-identity",
+            ["CrewIdentityPolicy:Fields:1:Purpose"] = "synthetic-crew-identity",
+            ["CrewIdentityPolicy:Fields:0:ReadCapability"] = "crew.profile.identity.read",
+            ["CrewIdentityPolicy:Fields:1:ReadCapability"] = "crew.profile.identity.read",
+            ["CrewIdentityPolicy:Fields:0:WriteCapability"] = "crew.profile.identity.write",
+            ["CrewIdentityPolicy:Fields:1:WriteCapability"] = "crew.profile.identity.write",
+            ["Authentication:Oidc:Memberships:0:Permissions:40"] = applicabilityRead ? "applicability.read" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:41"] = applicabilityEvaluate ? "applicability.evaluate" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:42"] = ruleWrite ? "rules.write" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:43"] = ruleReview ? "rules.review" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:35"] = crewIdentity ? "crew.profile.identity.read" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:36"] = crewIdentity ? "crew.profile.identity.write" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:37"] = crewIdentity ? "crew.identity.convert" : "unused",
+            ["CrewProfilePolicy:Version"] = "synthetic-profile-v1",
+            ["CrewProfilePolicy:ActiveKeyId"] = "synthetic-key-v1",
+            ["CrewProfilePolicy:KeyReferences:synthetic-key-v1"] = ProfileTestKeyReference,
             ["ConnectionStrings:Poseidon"] = postgres.GetConnectionString(),
             ["Authentication:Oidc:Memberships:0:Issuer"] = "https://directory-test.example",
             ["Authentication:Oidc:Memberships:0:Subject"] = "synthetic",
             ["Authentication:Oidc:Memberships:0:ActorId"] = actorId.ToString(),
             ["Authentication:Oidc:Memberships:0:TenantId"] = seed.Tenants[0].Id.ToString(),
+            ["Authentication:Oidc:Memberships:0:RoleReferences:0"] = "91c26eb5-cf16-4553-981d-1c275358c535", // Synthetic local assignment, no operational appointment.
             ["Authentication:Oidc:Memberships:0:Permissions:0"] = "directory.read",
             ["Authentication:Oidc:Memberships:0:Permissions:1"] = edit ? "directory.write" : "unused",
             ["Authentication:Oidc:Memberships:0:Permissions:2"] = search ? "workspace.search" : "unused",
             ["Authentication:Oidc:Memberships:0:Permissions:3"] = regulatoryRead ? "regulatory.draft.read" : "unused",
             ["Authentication:Oidc:Memberships:0:Permissions:4"] = regulatoryWrite ? "regulatory.draft.write" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:5"] = auditRead ? "audit.read" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:6"] = crewRead ? "crew.read" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:7"] = crewWrite ? "crew.write" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:8"] = crewIdentity ? "crew.identity.read" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:9"] = crewIdentity ? "crew.identity.write" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:10"] = crewRead ? "crew.history.read" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:11"] = technicalRead ? "equipment.read" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:12"] = technicalWrite ? "equipment.write" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:13"] = technicalRead ? "equipment.history.read" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:14"] = technicalRead ? "maintenance.read" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:15"] = technicalWrite ? "maintenance.write" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:16"] = technicalRead ? "maintenance.history.read" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:17"] = technicalWrite ? "maintenance.owner.eligible" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:18"] = (tugMode || crossMode) ? "mode.tug" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:19"] = crossMode ? "mode.cross" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:20"] = tugRead ? "tug.read" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:21"] = tugWrite ? "tug.write" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:23"] = importRead ? "import.read" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:24"] = importWrite ? "import.write" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:25"] = certificateRead ? "crew.certificate.read" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:26"] = certificateWrite ? "crew.certificate.write" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:34"] = crewWrite ? "crew.position.write" : "unused",
+            ["Authentication:Oidc:Memberships:0:Permissions:22"] = tugOwner ? "tug.owner.eligible" : "unused",
             ["Authentication:Oidc:Memberships:0:TenantWideManage"] = (scope && manage).ToString(),
             ["Authentication:Oidc:Memberships:0:TenantWideRead"] = (scope && read).ToString(),
             ["Authentication:Oidc:Memberships:0:VesselGrants:0:VesselId"] = scope ? SeedVessel.Id.ToString() : Guid.Empty.ToString(),
@@ -74,7 +140,7 @@ public sealed partial class DirectoryWorkspaceTests : IAsyncLifetime
                 var actor = sp.GetRequiredService<ActorResolver>().Resolve(http.User) ?? throw new UnauthorizedAccessException();
                 return new PoseidonDbContext(new DbContextOptionsBuilder<PoseidonDbContext>()
                     .UseNpgsql(postgres.GetConnectionString()).AddInterceptors(interceptor).Options,
-                    actor.TenantId, new ActorContext(actor.Id.ToString(), "User", http.TraceIdentifier));
+                    actor.TenantId, new ActorContext(actor.Id.ToString(), "User", http.TraceIdentifier, actor.AuditCapabilities, "WebCommand", actor.RoleContext), qualifiedInputs: sp.GetRequiredService<IQualifiedInputRuntime>());
             });
         });
     });

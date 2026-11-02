@@ -1,0 +1,40 @@
+{
+  "task": "CREW-LEGACY-CLOSURE-01",
+  "status": "AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+  "receiving_head": "03f2f5c",
+  "file_hash_kind": "SHA256 staged Git blob bytes; source fingerprints only, not generated/executed artifacts or product verification",
+  "verification": "DEFERRED_NOT_RUN: all suites/build/typecheck/generation/migration/browser/provider/independent QA/CI",
+  "source_only_observations": [
+    "git diff --cached --check exit0; source whitespace only",
+    "Final graphify update . exit0;5810 nodes/11834 edges/414 communities;32 zero-node source warnings and HTML omitted above5000-node limit; no product verification"
+  ],
+  "code_sha256": {
+    "backend/Poseidon.Api/ApiRequestTelemetry.cs": "a7aeb6e5abd0e34a8307e23ca1ded8384801b4b22f648b20283b447855f4cabb",
+    "backend/Poseidon.Api/CrewProfilePolicy.cs": "a2ffe0d40b1e2507dec48a2bad78edb3e3b5e1008a3477193ee84b04eb795163",
+    "backend/Poseidon.Api/FoundationIdentity.cs": "6787216a1b065f0b3ccca1b3ee64fa0136dd32a49e6127b10f07ffc714a32edf",
+    "backend/Poseidon.Api/ImportEndpoints.cs": "2bc5101318e7955d59d69f5cea093c6ea43ccbfe2c7c6e5062a57c4c3866a0f2",
+    "backend/Poseidon.Api/LegacyCrewImportEndpoints.cs": "44cb5bb3fc6d3f7d077f6fdda552d0be18858d7a5b085296f0d6be55f61746c8",
+    "backend/Poseidon.Api/Startup.cs": "0a2bcc9aa980d733eadb791816496d645f40e0df4e01feaeef10dc80648d00bc",
+    "backend/Poseidon.DbMigrator/Program.cs": "53b284392eab7d0ac085fe66a352bb21caf41228cf83ae6a592cbb7b8440891b",
+    "backend/Poseidon.Domain/LegacyCrewImport.cs": "f75e0f870b2b856b56c6b95affe78568faea0408996127d08df73722dfff2f81",
+    "backend/Poseidon.Persistence/ImportStorage.cs": "4fc29f0495837f4667416883166167f1c87d6f64bb4534324ea155287023955b",
+    "backend/Poseidon.Persistence/LegacyImportStorage.cs": "ac64ea0a70bc2386b1a44a051b0af928c51b04a5e3ce0dad1d84b8d05ae1a99a",
+    "backend/Poseidon.Persistence/Migrations/20261102110000_CrewLegacyImportProtection.Designer.cs": "7f778613a2c3d1b1ad6a9ae817bbe6a141029bb6a2c0dff3ef59463bc71e5dcc",
+    "backend/Poseidon.Persistence/Migrations/20261102110000_CrewLegacyImportProtection.cs": "b36ee604b4ed28ff6cc872a9bd41d6f1740173358a8f30be608f16a95796f074",
+    "backend/Poseidon.Persistence/Migrations/PoseidonDbContextModelSnapshot.cs": "ac14e5cb0e9c381c247d04f14401cb9e31181d8e51fb2ee5ac36065f0d50f9c1",
+    "backend/Poseidon.Persistence/PoseidonDbContext.cs": "c142d40788d2069d6a74a5566a43f8f0d9e1b14fa7a5988ff579d84f68f2a1c3",
+    "backend/Poseidon.Persistence/Seeding/LegacyCrewBrowserFixture.cs": "8015713aafbf1d2bb882f743e7b26ce72b40f2619e2c77b56e240cde86751ba2",
+    "frontend/src/product/CrewIdentityHistory.test.tsx": "71551dff9d31681e1d93e9c92b25a86f84aa1adf30748aa7aff62b9331317771",
+    "frontend/src/product/CrewIdentityHistory.tsx": "7a25721031403101e3952b75fd669069cc08907dbad2ea4a576c94538a99c367",
+    "frontend/src/product/audit-api.ts": "befb2fbf93f74556db09a7dd9b4bc6025cc891340bc67c9d5465af72ba807607",
+    "tests/Poseidon.Api.Tests/ApiRequestTelemetryTests.cs": "37c60d2850aa84a15ed4f169640d238a94f0682f03a01ecb52e91976091030a4",
+    "tests/Poseidon.Api.Tests/CrewLegacyImportProtectionTests.cs": "ec769ed7ccf1452c6893fc8c089007bd4ca8f33bca9301b22370c1d30bf6aae9",
+    "tests/Poseidon.Api.Tests/CrewLegacyImportTests.cs": "e9492d98f633aa18145dc8183e6245c5d0b8958f9b410b066555f987b648cad4",
+    "tests/Poseidon.Api.Tests/CrewProfileTests.cs": "69ce504acc51fbd585c5fe3ff0828e6146719a2e1376859361b6cf4803bc4143",
+    "tests/Poseidon.Api.Tests/ImportFoundationTests.cs": "a93f48331b6eedd312ee17ba9618420555df8d6e4e4eba7633aa4212d0572075",
+    "tests/Poseidon.Browser.Tests/register-specs/cases.ts": "1ebb999d4fa8d5760d6d065a3a327c47664fefad4d05e83413d4c4fd4f4bd715",
+    "tests/Poseidon.Browser.Tests/register-specs/crew-legacy-cases.ts": "678bb5466494da517f59670c2391cec6f67996f49a23fc2110a7294477762970",
+    "tests/Poseidon.Domain.Tests/LegacyCrewImportTests.cs": "434ca4f9b807224bd46c92c157794f494fb696b6d282c1da5d66880ef3dc7336",
+    "tests/Poseidon.Persistence.Tests/ImportPersistenceTests.cs": "1c5d71558a5c5c05f85d94f2913d460988c584104626114ec1ba9d2266f8b501"
+  }
+}

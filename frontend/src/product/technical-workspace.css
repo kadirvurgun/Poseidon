@@ -1,0 +1,10 @@
+.technical-workspace { padding: clamp(1rem, 3vw, 3rem); }
+.technical-workspace header, .technical-workspace nav { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; }
+.technical-columns { display: grid; grid-template-columns: minmax(15rem, 1fr) minmax(0, 2fr); gap: 2rem; margin-block: 1.5rem; }
+.technical-workspace form fieldset { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); gap: 1rem; }
+.technical-workspace label { display: flex; flex-direction: column; gap: .4rem; }
+.technical-workspace input, .technical-workspace select, .technical-workspace button { min-height: 2.75rem; max-width: 100%; }
+.technical-workspace dd { overflow-wrap: anywhere; margin-block-end: .75rem; }
+.technical-workspace pre { white-space: pre-wrap; overflow-wrap: anywhere; max-width: 100%; }
+.technical-workspace [role=dialog] { position: fixed; inset: 20% max(1rem, 15%); background: Canvas; color: CanvasText; border: 2px solid; padding: 2rem; z-index: 20; }
+@media (max-width: 48rem) { .technical-columns { grid-template-columns: minmax(0, 1fr); } }

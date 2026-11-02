@@ -1,0 +1,13 @@
+# API-REQUEST-TELEMETRY-01
+
+AUTHORED_UNVERIFIED / checks DEFERRED. Narrow real instrumentation for DEV-011/T-S0-011, active18.01 Backlog row12, SHA09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674. The complete source criterion also requires sync/conflict/retry/audit-health/freshness contracts; this HTTP slice is not the whole story or a passing operational gate.
+
+RQT-01: actual ASP.NET pipeline records request count, error count and elapsed duration using a built-in process meter, without adding an exporter/dependency or public diagnostic endpoint. Middleware surrounds the existing correlation/audit-unavailable response handler: ordinary503 outcomes remain503-class observations. Unhandled and request-cancelled outcomes remain distinct; mandatory failures propagate unchanged.
+
+RQT-02: only four bounded tags: closed HTTP method, status class, closed area selected from the registered route template, and closed failure kind. No actual URL/route parameter/query/body/header, actor/tenant/vessel/person/request/correlation IDs or exception messages in metric labels. Existing attributed audit/error-response correlation remains the diagnostic bridge; this does not create distributed trace-export proof. Unknown templates cannot create arbitrary dimensions. No zero backlog, verified freshness or ready/safe inference.
+
+RQT-03: a broken optional measurement listener cannot change an already completed response/domain operation. Mandatory security/business audit is outside that catch and remains fail-closed. Metrics are best-effort technical observations, never durable audit or GDPR compliance evidence. No live collector, retention or destination is invented. Actual configured observability standards/integration/offline/freshness instrumentation remain S0 work.
+
+Authored tests: registered route versus private context, unknown path/method cardinality, unhandled exception privacy/propagation, cancellation, optional sink failure, and actual API-host system-request duration/fresh correlation. Global failing listener lifetime is explicitly isolated from other collections; no skips. All tests/build/typecheck/provider/browser/QA/CI NOT RUN. No migration/entity/seed/credential/authority change. Later single foundation gate must build and execute these tests and independently review the complete DEV-011 scope.
+
+RQT-04: late stream/transport failure retains the already-sent HTTP status and increments the error observation with a separate closed failure kind; it never invents a different wire status. A meaningful framework-response-feature case is authored. Execution remains DEFERRED.

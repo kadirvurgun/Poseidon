@@ -1,0 +1,31 @@
+{
+  "schema_version": "pending-source-review-regeneration-v1",
+  "status": "UNRESOLVED_NOT_A_SCAN_OR_APPROVAL",
+  "accepted": false,
+  "previous_commit": "138a83c5660f70ec5739e2e204e78bf6d99d6823",
+  "artifacts": [
+    {
+      "path": "docs/security/files-source-classifications.pending.json",
+      "previous_git_blob_sha1": "295507ac1f37f97c1c151f4bd6c324da1e9e3fde",
+      "previous_canonical_json_sha256": "a9f68911e0cbec1970d952eecc516d9f7087a3d9e0ded904bf3d8f3b8b8fd9bc",
+      "current_canonical_json_sha256": "edee4e8f2a302067eb67ca6600293c3a52f3e5c3309e422715c41f3c2be5c25d",
+      "historical_locator": "138a83c5660f70ec5739e2e204e78bf6d99d6823:docs/security/files-source-classifications.pending.json"
+    },
+    {
+      "path": "docs/security/files-source-review-evidence.pending.json",
+      "previous_git_blob_sha1": "ee2affa3e07e2a838a515d64b631a62bc73a74a0",
+      "previous_canonical_json_sha256": "3040bac854f7d84afebaba8cf1ec3eae1acf0ffa7c590615db4b8c91b05f4adc",
+      "current_canonical_json_sha256": "3a16581d2a50b980ac378fc1987ce2d352d1d5fdb9c2998439c1575fabaac373",
+      "historical_locator": "138a83c5660f70ec5739e2e204e78bf6d99d6823:docs/security/files-source-review-evidence.pending.json"
+    }
+  ],
+  "target_identity_comparison": {
+    "previous_targets": 160,
+    "current_targets": 160,
+    "retained_exact_targets": 160,
+    "removed_targets": 0,
+    "added_targets": 0,
+    "changed_evidence_and_proposals": 47
+  },
+  "authority": "No trusted receipt pins, independent classifications, exceptions or external configuration provisioned. All current cases unresolved; prior159 waivers rejected."
+}

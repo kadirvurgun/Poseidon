@@ -1,3 +1,23 @@
+import { complianceInputCases } from './compliance-input-cases.ts'
+import { crewCatalogCases } from './crew-catalog-cases.ts'
+import { regulatoryAdmissionCases } from './regulatory-admission-cases.ts'
+import { crewIdentityCases } from './crew-identity-cases.ts'
+import { humanReviewCases } from './human-review-cases.ts'
+import { controlEvidenceCases } from './control-evidence-cases.ts'
+import { lifecycleApplicabilityCases } from './lifecycle-applicability-cases.ts'
+import { operationEquipmentCases } from './operation-equipment-cases.ts'
+import { offlineApplicationCases } from './offline-application-cases.ts'
+import { crewLegacyCases } from './crew-legacy-cases.ts'
+import { personFileCases } from './person-file-cases.ts'
+import { searchCases } from './search-cases.ts'
+import { contextCases } from './context-cases.ts'
+import { navigationRoleLensCases } from './navigation-role-lens-cases.ts'
+import { importCases } from './import-cases.ts'
+import { tugCases } from './tug-cases.ts'
+import { technicalCases } from './technical-cases.ts'
+import { crewCases } from './crew-cases.ts'
+import { fileCases } from './file-cases.ts'
+import { auditCases } from './audit-cases.ts'
 import { expect, type Page } from '@playwright/test'
 
 export async function draftCitation(page: Page) {
@@ -91,6 +111,26 @@ export async function restrictedRegister(page: Page) {
 }
 
 export const registerCases = [
+  ...operationEquipmentCases,
+  ...complianceInputCases,
+  ...crewCatalogCases,
+  ...lifecycleApplicabilityCases,
+  ...controlEvidenceCases,
+  ...humanReviewCases,
+  ...regulatoryAdmissionCases,
+  ...offlineApplicationCases,
+  ...crewIdentityCases,
+  ...crewLegacyCases,
+  ...personFileCases,
+  ...searchCases,
+  ...contextCases,
+  ...navigationRoleLensCases,
+  ...importCases,
+  ...tugCases,
+  ...technicalCases,
+  ...crewCases,
+  ...auditCases,
+  ...fileCases,
   { name: 'draft-citation', run: draftCitation, restricted: false },
   { name: 'response-loss-conflict', run: responseLossConflict, restricted: false },
   { name: 'restricted-membership', run: restrictedRegister, restricted: true },

@@ -1,0 +1,101 @@
+{
+  "schema_version": "foundation-repair-checkpoint-v1",
+  "at": "2026-11-02T08:09:49.648294+00:00",
+  "parent_checkpoint": "20725581c995fa8f28603271c48a34f5263eb1eb",
+  "approval": false,
+  "canonical_accepted_story_points": 8,
+  "target_accepted_story_points": 194,
+  "gates": [
+    {
+      "id": "lint-final",
+      "exit_code": 0,
+      "started_utc": "2026-11-02T07:07:37.350599+00:00",
+      "finished_utc": "2026-11-02T07:12:08.810629+00:00",
+      "duration_seconds": 271.458,
+      "log_sha256": "567a1c2a18419e64a31726d35b7fda0389c641e56cb7089fc30f6bb8bc1a7b22",
+      "log_bytes": 208
+    },
+    {
+      "id": "api-final",
+      "exit_code": 1,
+      "started_utc": "2026-11-02T07:11:35.341260+00:00",
+      "finished_utc": "2026-11-02T07:18:53.936619+00:00",
+      "duration_seconds": 438.593,
+      "log_sha256": "9b1c3cab2a7a0518313c45573add1c5662eb85881472b27f5ba060b7ac219414",
+      "log_bytes": 53907
+    },
+    {
+      "id": "api-s3-focused",
+      "exit_code": 0,
+      "started_utc": "2026-11-02T07:19:10.488267+00:00",
+      "finished_utc": "2026-11-02T07:21:02.285076+00:00",
+      "duration_seconds": 111.795,
+      "log_sha256": "2896f8df11927fe5a81fda482edd24e28de0fa6dc81c2f2fcefcfea2b37d4a90",
+      "log_bytes": 531
+    },
+    {
+      "id": "s3-focused-final",
+      "exit_code": 0,
+      "started_utc": "2026-11-02T07:18:47.765154+00:00",
+      "finished_utc": "2026-11-02T07:21:03.476205+00:00",
+      "duration_seconds": 135.705,
+      "log_sha256": "2d511840e150a571060c761aa3663a3511d02984f2edc82d52a99108c3c69700",
+      "log_bytes": 45
+    },
+    {
+      "id": "coordinator-solution-build",
+      "exit_code": 0,
+      "started_utc": "2026-11-02T07:56:13.061625+00:00",
+      "finished_utc": "2026-11-02T07:57:06.822651+00:00",
+      "duration_seconds": 53.74,
+      "log_sha256": "a030c91cbcbcfd9728b1826c73600d4c54f7896e1811cef79bcd03ca1ec45d59",
+      "log_bytes": 1704
+    },
+    {
+      "id": "coordinator-locked-restore",
+      "exit_code": 0,
+      "started_utc": "2026-11-02T08:02:07.280961+00:00",
+      "finished_utc": "2026-11-02T08:02:13.995724+00:00",
+      "duration_seconds": 6.708,
+      "log_sha256": "0d9fa3778287583b41e5e149b863608322783bd4141c293563d2322fe9e9cbe8",
+      "log_bytes": 1520
+    },
+    {
+      "id": "coordinator-migration-order-tests",
+      "exit_code": 0,
+      "started_utc": "2026-11-02T07:57:54.429594+00:00",
+      "finished_utc": "2026-11-02T07:58:14.991449+00:00",
+      "duration_seconds": 20.557,
+      "log_sha256": "37f06f21c5084e6079929100377300a2b0cd8fc57565f1893dc014958945cb7b",
+      "log_bytes": 556
+    },
+    {
+      "id": "coordinator-relational-parity-tests",
+      "exit_code": 0,
+      "started_utc": "2026-11-02T07:57:54.429988+00:00",
+      "finished_utc": "2026-11-02T07:58:57.873530+00:00",
+      "duration_seconds": 63.439,
+      "log_sha256": "b66a556dbe30967e65a63381a2d32cc63719167fe6bf82f9341211d31476ae78",
+      "log_bytes": 557
+    }
+  ],
+  "focused_python_observed": {
+    "passed": 16,
+    "failed": 0,
+    "skipped": 0,
+    "modules": [
+      "test_foundation_scan_review",
+      "test_source_review_evidence",
+      "test_s3_gate"
+    ],
+    "evidence_locator": "coordinator tool transcript; no synthetic log hash supplied"
+  },
+  "source_proposal": {
+    "findings": 164,
+    "contexts_supplied": 164,
+    "unresolved": 163,
+    "is_approval": false,
+    "exceptions_installed": false
+  },
+  "scope_note": "Runs span mutable authoring states; only their stated scopes passed. No full exact-final-commit regression or independent QA is inferred."
+}

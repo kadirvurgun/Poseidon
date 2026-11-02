@@ -8,6 +8,7 @@ from pathlib import Path
 import time
 
 from codex_accounts import BusyError, Workers, WorkerStillRunningError, exclusive, write_json
+from native_usage_observation import recent_usage, moment
 
 PROFILES = ('esra-pro', 'kadir-plus')
 INTERVAL = 3600
@@ -75,6 +76,13 @@ class Watch:
                 last = old if old.get('state') == 'known' else old.get('lastKnown', {})
                 if last.get('windows'):
                     current['lastKnown'] = {k: last[k] for k in ('windows', 'observedAt', 'plan') if k in last}
+                if current['state'] == 'busy':
+                    # CLI events are display-only last-known observations. They do
+                    # not establish complete eligibility or permit account handoff.
+                    native = recent_usage(self.workers.home(profile), self.wall())
+                    old_stamp = moment(last.get('observedAt'))
+                    if native and (old_stamp is None or moment(native['observedAt']) > old_stamp):
+                        current['lastKnown'] = native
         now = self.wall()
         snapshot = {'timestamp': timestamp(now), 'next_check': timestamp(now + INTERVAL), 'profiles': profiles,
                     'selected': next((p for p in PROFILES if profiles[p]['ready']), None)}

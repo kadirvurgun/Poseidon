@@ -1,25 +1,30 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-export type WorkspaceLocation = { tab: 'companies' | 'fleet' | 'today' | 'sources' | 'requirements'; selected: string | null; profile: boolean; invalid?: boolean }
+export type WorkspaceLocation = { tab: 'companies' | 'fleet' | 'today' | 'sources' | 'requirements' | 'audit'; query?: string; selected: string | null; profile: boolean; invalid?: boolean }
 const idPattern = /^[a-zA-Z0-9-]{1,64}$/
 export function loginHref() {
   const path = window.location.pathname
   return `/api/v1/auth/login?returnUrl=${encodeURIComponent(readLocation(path).invalid ? '/app' : path)}`
 }
-export function readLocation(path = window.location.pathname): WorkspaceLocation {
+export function readLocation(path = window.location.pathname + window.location.search): WorkspaceLocation {
+  const boundary = path.indexOf('?')
+  const pathname = boundary < 0 ? path : path.slice(0, boundary)
+  const query = boundary < 0 ? '' : path.slice(boundary + 1)
+  if ((pathname === '/app/audit' || pathname.startsWith('/app/audit/')) && (query.length > 1024 || [...query].some(c => c.charCodeAt(0) < 32))) return { tab: 'audit', selected: null, profile: false, invalid: true }
+  path = pathname
   if (path === '/app' || path === '/app/') return { tab: 'companies', selected: null, profile: false }
   // Reject encoded separators, malformed encodings and unknown routes without decoding into a new path.
-  const match = /^\/app\/(companies|fleet|today|sources|requirements)(?:\/([a-zA-Z0-9-]{1,64})(\/profile)?)?\/?$/.exec(path)
+  const match = /^\/app\/(companies|fleet|today|sources|requirements|audit)(?:\/([a-zA-Z0-9-]{1,64})(\/profile)?)?\/?$/.exec(path)
   if (!match || (match[3] && match[1] !== 'fleet')) return { tab: 'fleet', selected: null, profile: false, invalid: true }
-  return { tab: match[1] as WorkspaceLocation['tab'], selected: match[2] ?? null, profile: !!match[3] }
+  return { tab: match[1] as WorkspaceLocation['tab'], selected: match[2] ?? null, profile: !!match[3], ...(match[1] === 'audit' ? { query: query ?? '' } : {}) }
 }
 export function locationPath(route: WorkspaceLocation) {
-  return `/app/${route.tab}${route.selected && idPattern.test(route.selected) ? `/${route.selected}${route.profile ? '/profile' : ''}` : ''}`
+  return `/app/${route.tab}${route.selected && idPattern.test(route.selected) ? `/${route.selected}${route.profile ? '/profile' : ''}` : ''}${route.tab === 'audit' && route.query ? `?${route.query}` : ''}`
 }
 
 // Entries carry only an index, never tenant/account data or form contents. Nothing is persisted in storage.
 export function useWorkspaceLocation(guard: (action: () => void) => void, onMove: () => void) {
-  const [route, setRoute] = useState(readLocation)
+  const [route, setRoute] = useState(() => readLocation(window.location.pathname + window.location.search))
   const current = useRef({ index: Number(window.history.state?.poseidonIndex ?? 0), url: window.location.href })
   const callbacks = useRef({ guard, onMove })
   useEffect(() => { callbacks.current = { guard, onMove } })
@@ -42,7 +47,7 @@ export function useWorkspaceLocation(guard: (action: () => void) => void, onMove
       if (committed) {
         committed = false
         current.current = { index, url: window.location.href }
-        callbacks.current.onMove(); setRoute(readLocation()); return
+        callbacks.current.onMove(); setRoute(readLocation(window.location.pathname + window.location.search)); return
       }
       if (!delta) return
       pending = { index, url: window.location.href, delta }
@@ -54,7 +59,7 @@ export function useWorkspaceLocation(guard: (action: () => void) => void, onMove
   }, [])
   const move = useCallback((next: WorkspaceLocation, replace = false) => {
     const url = locationPath(next)
-    if (window.location.pathname !== url) {
+    if (window.location.pathname + window.location.search !== url) {
       const index = current.current.index + (replace ? 0 : 1)
       window.history[replace ? 'replaceState' : 'pushState']({ poseidonIndex: index }, '', url)
       current.current = { index, url: window.location.href }

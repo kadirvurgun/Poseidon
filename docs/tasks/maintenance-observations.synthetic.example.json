@@ -1,0 +1,18 @@
+{
+  "authority": "SYNTHETIC LAB ONLY; placeholders must be replaced with actual authorized lab tenant/vessel/asset IDs. 3600 seconds is a synthetic test policy, not a legal/calibration/production freshness decision. No verified observation or evidence is supplied.",
+  "MaintenanceObservations": {
+    "Sources": [
+      {
+        "TenantId": "00000000-0000-0000-0000-000000000000",
+        "VesselId": "00000000-0000-0000-0000-000000000000",
+        "AssetId": "00000000-0000-0000-0000-000000000000",
+        "Source": "synthetic-meter",
+        "Version": "synthetic-v1",
+        "Kind": "Meter",
+        "Unit": "hours",
+        "FreshnessSeconds": 3600,
+        "MaxScale": 4
+      }
+    ]
+  }
+}

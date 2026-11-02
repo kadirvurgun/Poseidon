@@ -55,9 +55,9 @@ public static class FoundationEndpoints
         companies.MapGet("", async (HttpContext http, PoseidonDbContext db, SecurityAudit audit, ActorResolver actors, int? offset, int? limit, string? q) =>
         {
             var (skip, take) = Bounds(offset, limit);
-            if (q is { Length: > 100 } || q?.Any(char.IsControl) == true) return Results.BadRequest(new { code = "invalid_search" });
+            if (q is { Length: > 100 } || q?.Any(char.IsControl) == true) { await audit.WriteAsync(http, "CompaniesRead", "Invalid"); return Results.BadRequest(new { code = "invalid_search" }); }
             var search = q?.Trim() ?? "";
-            if (skip < 0) return Results.BadRequest(new { code = "invalid_pagination" });
+            if (skip < 0) { await audit.WriteAsync(http, "CompaniesRead", "Invalid"); return Results.BadRequest(new { code = "invalid_pagination" }); }
             var actor = actors.Resolve(http.User)!;
             var rows = await db.Companies.AsNoTracking().Where(_ => actor.TenantWideRead || actor.TenantWideManage)
                 .Where(x => search == "" || x.Code.Contains(search) || x.Name.Contains(search)).OrderBy(x => x.Code).ThenBy(x => x.Id).Skip(skip).Take(take + 1)
@@ -77,9 +77,9 @@ public static class FoundationEndpoints
         vessels.MapGet("", async (HttpContext http, PoseidonDbContext db, SecurityAudit audit, ActorResolver actors, int? offset, int? limit, string? kind, string? q) =>
         {
             var (skip, take) = Bounds(offset, limit);
-            if (q is { Length: > 100 } || q?.Any(char.IsControl) == true) return Results.BadRequest(new { code = "invalid_search" });
+            if (q is { Length: > 100 } || q?.Any(char.IsControl) == true) { await audit.WriteAsync(http, "VesselsRead", "Invalid"); return Results.BadRequest(new { code = "invalid_search" }); }
             var search = q?.Trim() ?? "";
-            if (skip < 0 || (kind != null && kind is not ("Ship" or "Tug"))) return Results.BadRequest(new { code = "invalid_filter" });
+            if (skip < 0 || (kind != null && kind is not ("Ship" or "Tug"))) { await audit.WriteAsync(http, "VesselsRead", "Invalid"); return Results.BadRequest(new { code = "invalid_filter" }); }
             var actor = actors.Resolve(http.User)!;
             var query = actor.Scope(db.Vessels.AsNoTracking());
             query = query.Where(x => search == "" || x.Code.Contains(search) || x.Name.Contains(search));

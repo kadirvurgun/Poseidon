@@ -1,0 +1,604 @@
+[
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+    "locator": "sheet:Input Catalog/row:1",
+    "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+    "text": "A1: Input Path | B1: Domain | C1: Type | D1: Required? | E1: Example | F1: Unknown behavior | G1: Source/Owner | H1: Notes",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+    "locator": "sheet:Input Catalog/row:2",
+    "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+    "text": "A2: context.mode | B2: Context | C2: Enum SHIP/TUG | D2: Yes | E2: TUG | F2: Reject evaluation | G2: System | H2: Two first-class modes",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+    "locator": "sheet:Input Catalog/row:3",
+    "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+    "text": "A3: evaluationDate | B3: Context | C3: Date | D3: Yes | E3: 2026-10-04 | F3: Reject evaluation | G3: System | H3: Determines effective rule version",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+    "locator": "sheet:Input Catalog/row:4",
+    "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+    "text": "A4: vessel.flag | B4: Vessel | C4: ISO/Enum | D4: Yes | E4: TR | F4: REVIEW_REQUIRED for flag overlays | G4: Vessel Master",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+    "locator": "sheet:Input Catalog/row:5",
+    "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+    "text": "A5: vessel.type | B5: Vessel | C5: Enum | D5: Yes | E5: ASD_TUG | F5: REVIEW_REQUIRED for type-specific rules | G5: Vessel Master | H5: Ship subtype or tug subtype",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+    "locator": "sheet:Input Catalog/row:6",
+    "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+    "text": "A6: vessel.gt | B6: Vessel | C6: Numeric | D6: Conditional | E6: 420 | F6: REVIEW_REQUIRED if GT predicate material | G6: Verified vessel profile",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+    "locator": "sheet:Input Catalog/row:7",
+    "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+    "text": "A7: vessel.mainPropulsionKw | B7: Vessel | C7: Numeric | D7: Conditional | E7: 3600 | F7: REVIEW_REQUIRED if kW predicate material | G7: Verified vessel profile",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+    "locator": "sheet:Input Catalog/row:8",
+    "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+    "text": "A8: vessel.buildDate | B8: Vessel | C8: Date | D8: Conditional | E8: 2022-04-01 | F8: REVIEW_REQUIRED | G8: Verified vessel profile",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+    "locator": "sheet:Input Catalog/row:9",
+    "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+    "text": "A9: vessel.contractForConstructionDate | B9: Vessel | C9: Date | D9: Conditional | E9: 2022-03-14 | F9: REVIEW_REQUIRED | G9: Class/build records | H9: Important for class rules",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+    "locator": "sheet:Input Catalog/row:10",
+    "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+    "text": "A10: vessel.classSociety | B10: Vessel | C10: Reference | D10: Conditional | E10: DEMO_CLASS | F10: REVIEW_REQUIRED for class rules | G10: Class status",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+    "locator": "sheet:Input Catalog/row:11",
+    "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+    "text": "A11: vessel.tradingArea | B11: Operation Context | C11: Enum/Text | D11: Conditional | E11: International | F11: REVIEW_REQUIRED | G11: Vessel profile",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+    "locator": "sheet:Input Catalog/row:12",
+    "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+    "text": "A12: vessel.operatingArea | B12: Operation Context | C12: Text/Reference | D12: Conditional | E12: KOCAELI | F12: REVIEW_REQUIRED for local overlay | G12: Job/Vessel context",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+    "locator": "sheet:Input Catalog/row:13",
+    "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+    "text": "A13: operation.jobType | B13: Operation | C13: Enum | D13: Conditional | E13: HARBOUR_ASSIST | F13: REVIEW_REQUIRED for tug job rules | G13: Job Intake",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+    "locator": "sheet:Input Catalog/row:14",
+    "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+    "text": "A14: operation.profile | B14: Operation | C14: Enum | D14: Conditional | E14: CLOSE_QUARTERS_TOWAGE | F14: REVIEW_REQUIRED | G14: Job/Towage Plan",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+    "locator": "sheet:Input Catalog/row:15",
+    "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+    "text": "A15: operation.serviceContext | B15: Operation | C15: Enum | D15: Conditional | E15: AUTHORIZED_TUG_SERVICE | F15: REVIEW_REQUIRED for TR tug service overlay | G15: Shore Ops",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+    "locator": "sheet:Input Catalog/row:16",
+    "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+    "text": "A16: cargo.packagedDangerousGoods | B16: Cargo | C16: Boolean | D16: Conditional | E16: False | F16: FALSE if positively known false; UNKNOWN otherwise | G16: Cargo plan",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+    "locator": "sheet:Input Catalog/row:17",
+    "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+    "text": "A17: cargo.type | B17: Cargo | C17: Enum | D17: Conditional | E17: NLS | F17: REVIEW_REQUIRED | G17: Cargo plan",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+    "locator": "sheet:Input Catalog/row:18",
+    "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+    "text": "A18: equipment.towingWinchFitted | B18: Equipment | C18: Boolean | D18: Conditional | E18: True | F18: REVIEW_REQUIRED for winch rules | G18: Asset Register",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+    "locator": "sheet:Input Catalog/row:19",
+    "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+    "text": "A19: class.rulePack.IACS_M79 | B19: Class | C19: Boolean | D19: Conditional | E19: True | F19: REVIEW_REQUIRED | G19: Class Rule Pack | H19: Do not infer from class name only",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+    "locator": "sheet:Input Catalog/row:20",
+    "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+    "text": "A20: regulatory.ismApplicable | B20: Regulatory | C20: Boolean/Derived | D20: Conditional | E20: True | F20: REVIEW_REQUIRED | G20: Applicability Engine upstream",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+    "locator": "sheet:Input Catalog/row:21",
+    "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+    "text": "A21: regulatory.msmdVerified | B21: Crew | C21: Boolean | D21: Conditional | E21: True | F21: REVIEW_REQUIRED / readiness degrade | G21: Crew Compliance",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+    "locator": "sheet:Input Catalog/row:22",
+    "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+    "text": "A22: crew.requiredRoleEligible | B22: Crew | C22: Boolean/Derived | D22: Conditional | E22: True | F22: REVIEW_REQUIRED / NOT_READY depending gate | G22: Eligibility Engine",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+    "locator": "sheet:Input Catalog/row:23",
+    "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+    "text": "A23: evidence.sourceVerified | B23: Evidence | C23: Boolean | D23: Conditional | E23: True | F23: REVIEW_REQUIRED | G23: Evidence Graph",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+    "locator": "sheet:Input Catalog/row:24",
+    "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+    "text": "A24: source.lifecycle | B24: Regulatory | C24: Enum | D24: Yes | E24: IN_FORCE | F24: FUTURE/SUPERSEDED not current obligation | G24: Source Governance",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+    "locator": "sheet:Golden Tests/row:1",
+    "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+    "text": "A1: Test ID | B1: Profile | C1: Change / Condition | D1: Rule | E1: Expected Result | F1: Expected Activation / Blocker | G1: Priority",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+    "locator": "sheet:Golden Tests/row:2",
+    "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+    "text": "A2: GOLD-001 | B2: GP-TUG-HARBOUR | C2: Normal verified inputs | D2: RULE-ISM-7-TUG | E2: APPLICABLE | F2: Towage workflow screens activated | G2: P0",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+    "locator": "sheet:Golden Tests/row:3",
+    "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+    "text": "A3: GOLD-002 | B3: GP-TUG-HARBOUR | C3: M79 pack TRUE + contract 2022 + winch fitted | D3: RULE-IACS-M79 | E3: APPLICABLE | F3: ERS field/control/verification | G3: P0",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+    "locator": "sheet:Golden Tests/row:4",
+    "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+    "text": "A4: GOLD-003 | B4: GP-TUG-HARBOUR | C4: Class pack unknown | D4: RULE-IACS-M79 | E4: REVIEW_REQUIRED | F4: No false READY; class review | G4: P0",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+    "locator": "sheet:Golden Tests/row:5",
+    "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+    "text": "A5: GOLD-004 | B5: GP-TUG-HARBOUR | C5: MSMD unverified | D5: RULE-TR-TUG-MSMD | E5: APPLICABLE + readiness review | F5: minimum_manning_state blocks full READY | G5: P0",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+    "locator": "sheet:Golden Tests/row:6",
+    "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+    "text": "A6: GOLD-005 | B6: GP-TUG-ESCORT | C6: Area=Istanbul Strait + Escort | D6: RULE-TR-TUG-ESCORT-EXTRA | E6: REVIEW_REQUIRED/APPLICABLE per validated source | F6: Extra Able Seaman requirement visible with source lifecycle | G6: P0",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+    "locator": "sheet:Golden Tests/row:7",
+    "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+    "text": "A7: GOLD-006 | B7: GP-TUG-OCEAN | C7: operation profile solely long-distance ocean towage | D7: RULE-IACS-M79 | E7: NOT_APPLICABLE | F7: Ocean towage pack considered separately | G7: P0",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+    "locator": "sheet:Golden Tests/row:8",
+    "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+    "text": "A8: GOLD-007 | B8: GP-SHIP-OIL-TR | C8: Oil tanker | D8: RULE-STCW-V-TANKER | E8: APPLICABLE | F8: Special tanker training controls | G8: P0",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+    "locator": "sheet:Golden Tests/row:9",
+    "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+    "text": "A9: GOLD-008 | B9: GP-SHIP-DG | C9: Packaged DG=true on 2026-10-04 | D9: RULE-IMDG-42-24 | E9: APPLICABLE | F9: IMDG control/evidence | G9: P0",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+    "locator": "sheet:Golden Tests/row:10",
+    "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+    "text": "A10: GOLD-009 | B10: GP-SHIP-DG | C10: Packaged DG unknown | D10: RULE-IMDG-42-24 | E10: REVIEW_REQUIRED | F10: Cargo data review | G10: P0",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+    "locator": "sheet:Golden Tests/row:11",
+    "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69",
+    "text": "A11: GOLD-010 | B11: Any MLC applicable | C11: evaluationDate=2026-10-04 | D11: RULE-MLC-2025-FUTURE | E11: NOT_CURRENT | F11: Change Radar only; no current compliance state effect | G11: P0",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "locator": "sheet:Backlog/row:9",
+    "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "text": "A9: DEV-008 | B9: Story | C9: E03 Regulatory Core | D9: Regulatory Corpus | E9: Pilot regulatory source ownership planı | F9: Regulatory owner olarak pilotta hangi resmi kaynakların kullanılacağını bilmek istiyorum. | G9: ISM/SOLAS/STCW/MLC/MARPOL/Flag/Class pilot kapsamı için source owner, version, validation status ve reviewer atanır. | H9: Regulatory Source Register | I9: P0 | J9: S0 | K9: Regulatory Lead | L9: DEV-007 | M9: T-S0-008 | N9: Not Started | O9: YES | P9: 5 | Q9: H",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "locator": "sheet:Backlog/row:10",
+    "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "text": "A10: DEV-009 | B10: Story | C10: E20 Production Hardening | D10: Test Data | E10: Golden pilot test datasetini hazırla | F10: QA olarak deterministik regression testleri çalıştırmak istiyorum. | G10: En az tanker + genel cargo/tug profile; crew/certificate/asset/defect/evidence edge cases; expected applicability/readiness outcomes kayıtlıdır. | H10: Golden Dataset | I10: P0 | J10: S0 | K10: QA Lead | L10: DEV-005,DEV-008 | M10: T-S0-009 | N10: Not Started | O10: YES | P10: 5 | Q10: M",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "locator": "sheet:Backlog/row:16",
+    "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "text": "A16: DEV-015 | B16: Story | C16: E01 Platform Foundation | D16: Authorization | E16: Role + vessel + object scope authorization | F16: Yetkili kullanıcı olarak yalnız görev alanımdaki kayıtları görmek istiyorum. | G16: Server-side policy role/vessel/object scope uygular; menu hiding güvenlik sınırı değildir; unauthorized state change audit edilir. | H16: Authorization Policies | I16: P0 | J16: S1 | K16: Backend | L16: DEV-014 | M16: T-S1-003 | N16: Not Started | O16: YES | P16: 8 | Q16: H",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "locator": "sheet:Backlog/row:19",
+    "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "text": "A19: DEV-018 | B19: Story | C19: E20 Production Hardening | D19: Files | E19: Secure file upload pipeline | F19: Kullanıcı olarak evidence dosyalarını güvenli yüklemek istiyorum. | G19: Type/size/checksum validation, malware hook, signed access, tenant scope ve audit uygulanır; rejected file state mutate etmez. | H19: /api/v1/files | I19: P0 | J19: S1 | K19: Backend | L19: DEV-017 | M19: T-S1-006 | N19: Not Started | O19: YES | P19: 8 | Q19: H",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "locator": "sheet:Backlog/row:21",
+    "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "text": "A21: DEV-020 | B21: Story | C21: E02 Vessel & Fleet Context | D21: Vessel | E21: Vessel master ve regulatory profile | F21: DPA olarak pilot geminin tek kontrollü profile sahip olmasını istiyorum. | G21: IMO no, flag, class, ship type, GT, build/trading/cargo context versioned kaydedilir; provenance/freshness görünür. | H21: fleet-vessels / /api/v1/vessels | I21: P0 | J21: S2 | K21: Backend+Frontend | L21: DEV-005,DEV-014 | M21: T-S2-001 | N21: Not Started | O21: YES | P21: 8 | Q21: M",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "locator": "sheet:Backlog/row:27",
+    "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "text": "A27: DEV-026 | B27: Story | C27: E03 Regulatory Core | D27: Requirement | E27: Requirement/source/version entity | F27: Regulatory admin olarak requirement'ları source/version lifecycle ile yönetmek istiyorum. | G27: Draft/adopted/future/in-force/superseded ayrımı vardır; current source silent overwrite edilmez. | H27: requirement-master / /api/v1/requirements | I27: P0 | J27: S3 | K27: Backend | L27: DEV-005,DEV-008 | M27: T-S3-001 | N27: Not Started | O27: YES | P27: 8 | Q27: H",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "locator": "sheet:Backlog/row:28",
+    "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "text": "A28: DEV-027 | B28: Story | C28: E03 Regulatory Core | D28: Applicability | E28: Applicability evaluation engine v1 | F28: DPA olarak pilot gemiye hangi requirement'ın neden uygulandığını görmek istiyorum. | G28: Flag/type/GT/build/cargo/trading context predicate'leri versioned; result APPLICABLE/NOT_APPLICABLE/REVIEW_REQUIRED + reason döner. | H28: applicability / /api/v1/applicability/evaluate | I28: P0 | J28: S3 | K28: Backend | L28: DEV-020,DEV-026 | M28: T-S3-002 | N28: Not Started | O28: YES | P28: 13 | Q28: H",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "locator": "sheet:Backlog/row:29",
+    "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "text": "A29: DEV-028 | B29: Story | C29: E04 Control & Evidence | D29: Control | E29: Operational Control entity | F29: Regulatory/safety admin olarak requirement'ı operasyonel kontrole bağlamak istiyorum. | G29: Owner/frequency/evidence rule/verification rule/state ve requirement links kaydedilir; orphan critical control raporlanır. | H29: /api/v1/controls | I29: P0 | J29: S3 | K29: Backend | L29: DEV-026,DEV-027 | M29: T-S3-003 | N29: Not Started | O29: YES | P29: 8 | Q29: M",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "locator": "sheet:Backlog/row:30",
+    "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "text": "A30: DEV-029 | B30: Story | C30: E04 Control & Evidence | D30: Evidence | E30: Evidence graph foundation | F30: Kullanıcı olarak bir kanıtı birden fazla gereksinimi desteklemek için kullanmak istiyorum. | G30: Evidence immutable metadata/checksum/provenance ile kaydedilir; many-to-many links; stale/expired/superseded durumu görünür. | H30: /api/v1/evidence | I30: P0 | J30: S3 | K30: Backend | L30: DEV-018,DEV-028 | M30: T-S3-004 | N30: Not Started | O30: YES | P30: 13 | Q30: H",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "locator": "sheet:Backlog/row:31",
+    "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "text": "A31: DEV-030 | B31: Story | C31: E04 Control & Evidence | D31: Verification | E31: Verification record ve gate | F31: Verifier olarak kanıtı kabul/reject etmek ve gerekçe bırakmak istiyorum. | G31: Verifier authorization + separation-of-duties; PENDING/VERIFIED/REJECTED/EXPIRED/SUPERSEDED; evidence existence alone state'i kapatmaz. | H31: /api/v1/verifications | I31: P0 | J31: S3 | K31: Backend | L31: DEV-015,DEV-029 | M31: T-S3-005 | N31: Not Started | O31: YES | P31: 8 | Q31: H",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "locator": "sheet:Backlog/row:32",
+    "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "text": "A32: DEV-031 | B32: Story | C32: E05 Human Decision & Workflow | D32: Decision | E32: Authorized Human Decision foundation | F32: Master/DPA olarak kritik kararı gerekçesiyle vermek istiyorum. | G32: Authorized role + context + reason + decision lineage kaydedilir; AI veya generic admin final decision oluşturamaz. | H32: /api/v1/decisions | I32: P0 | J32: S3 | K32: Backend | L32: DEV-030 | M32: T-S3-006 | N32: Not Started | O32: YES | P32: 8 | Q32: H",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "locator": "sheet:Backlog/row:33",
+    "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "text": "A33: DEV-032 | B33: Task | C33: E17 Assurance & Audit | D33: Trace UI | E33: Requirement-to-decision trace görünümü | F33: Auditor olarak requirement'tan karara kadar tek trace görmek istiyorum. | G33: Requirement→control→evidence→verification→decision state ve timestamps source-grounded drill-down ile görünür. | H33: audit-ready | I33: P0 | J33: S3 | K33: Frontend | L33: DEV-027:DEV-031 | M33: T-S3-007 | N33: Not Started | O33: YES | P33: 8 | Q33: M",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "locator": "sheet:Backlog/row:48",
+    "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "text": "A48: DEV-047 | B48: Story | C48: E06 Crew & Competence | D48: Roster | E48: Crew roster + profile | F48: Master/Crewing olarak onboard/planned crew'yu görmek istiyorum. | G48: Person/assignment/rank/capacity/period scoped; privacy masking and vessel scope; offline supported read/capture as defined. | H48: crew-roster / crew-profile | I48: P0 | J48: S7 | K48: Full Stack | L48: DEV-020,DEV-015 | M48: T-S7-001 | N48: Not Started | O48: YES | P48: 8 | Q48: M",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "locator": "sheet:Backlog/row:49",
+    "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "text": "A49: DEV-048 | B49: Story | C49: E06 Crew & Competence | D49: Credentials | E49: Crew certificates & endorsements | F49: Crewing olarak STCW/medical/endorsement kayıtlarını doğrulanmış şekilde tutmak istiyorum. | G49: Issue/expiry/issuer/endorsement/vessel scope/verification; expired/unverified positive eligibility üretmez. | H49: crew-certificates | I49: P0 | J49: S7 | K49: Full Stack | L49: DEV-047,DEV-030 | M49: T-S7-002 | N49: Not Started | O49: YES | P49: 8 | Q49: H",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "locator": "sheet:Backlog/row:50",
+    "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "text": "A50: DEV-049 | B50: Story | C50: E06 Crew & Competence | D50: Competence | E50: Training-position/competence gate | F50: Crewing olarak pozisyon ve vessel type'a göre gerekli competence/training gap'lerini görmek istiyorum. | G50: Requirement type, mandatory, validity, vessel/cargo scope, competence/familiarization links; missing gap reason listesinde görünür. | H50: training-position-matrix | I50: P0 | J50: S7 | K50: Full Stack | L50: DEV-048,DEV-027 | M50: T-S7-003 | N50: Not Started | O50: YES | P50: 8 | Q50: H",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "locator": "sheet:Backlog/row:51",
+    "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "text": "A51: DEV-050 | B51: Story | C51: E06 Crew & Competence | D51: Safe Manning | E51: Crew eligibility + Safe Manning evaluation | F51: Master olarak atamanın ve mevcut manning'in uygunluğunu açıklanabilir şekilde görmek istiyorum. | G51: Credential+competence+familiarization+work/rest+MSMD constraints değerlendirilir; ELIGIBLE/ATTENTION/NOT_ELIGIBLE/REVIEW_REQUIRED + reason. | H51: safe-manning / /api/v1/vessels/{id}/safe-manning/evaluate | I51: P0 | J51: S7 | K51: Backend+Frontend | L51: DEV-047:DEV-049 | M51: T-S7-004 | N51: Not Started | O51: YES | P51: 13 | Q51: H",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "locator": "sheet:Backlog/row:53",
+    "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "text": "A53: DEV-052 | B53: Story | C53: E07 Technical Safety | D53: Equipment | E53: Equipment hierarchy pilot | F53: Chief Engineer olarak asset/system/equipment hiyerarşisini yönetmek istiyorum. | G53: Criticality, maker/model/serial/location/parent-child versioned; vessel scope; invalid cycle bloklanır. | H53: equipment-hierarchy | I53: P0 | J53: S8 | K53: Full Stack | L53: DEV-020 | M53: T-S8-001 | N53: Not Started | O53: YES | P53: 8 | Q53: M",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "locator": "sheet:Backlog/row:70",
+    "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "text": "A70: DEV-069 | B70: Story | C70: E14 Integration & Migration | D70: Import | E70: Pilot data import templates | F70: Implementation ekibi olarak vessel/crew/certificate/equipment verisini kontrollü taşımak istiyorum. | G70: Template mapping + validation + reject report + provenance; duplicate/key rules; no direct bypass of domain validation. | H70: Import/Migration | I70: P0 | J70: S11 | K70: Backend+Implementation | L70: DEV-020,DEV-047,DEV-052 | M70: T-S11-001 | N70: Not Started | O70: YES | P70: 8 | Q70: M",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "locator": "sheet:Backlog/row:81",
+    "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "text": "A81: DEV-080 | B81: Story | C81: E21 Tug Operations | D81: Tug Context | E81: Römorkör mode context ve profile root | F81: Römorkör Operasyon Sorumlusu olarak römorkörün operasyonel profile/role contextini görmek istiyorum. | G81: Tug profile bollard pull/type/equipment context + role lens; Ship Mode screens remain hidden unless cross-mode role. | H81: tug-command / /api/v1/tug-command | I81: P0 | J81: S5 | K81: Full Stack | L81: DEV-020,DEV-022 | M81: T-TUG-001 | N81: Not Started | O81: YES | P81: 8 | Q81: M | R81: v46.2",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "locator": "sheet:Backlog/row:82",
+    "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "text": "A82: DEV-081 | B82: Story | C82: E21 Tug Operations | D82: Job Intake | E82: Römorkör iş talebi kaydı | F82: Operasyon sorumlusu olarak yeni römorkaj işini assisted vessel, zaman, alan, BP ve özel gereksinimle açmak istiyorum. | G82: Job ID; assisted vessel; job type; time window; area; required tug count/BP; priority; owner; audited create. | H82: tug-job-intake / /api/v1/tug-jobs | I82: P0 | J82: S6 | K82: Full Stack | L82: DEV-080 | M82: T-TUG-002 | N82: Not Started | O82: YES | P82: 8 | Q82: M | R82: v46.2",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "locator": "sheet:Backlog/row:83",
+    "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "text": "A83: DEV-082 | B83: Story | C83: E21 Tug Operations | D83: Job Board | E83: Kısa ve sık römorkör iş panosu | F83: Operasyon sorumlusu olarak gün içi işleri zaman ve readiness ile görmek istiyorum. | G83: Job board shows planned window, assigned tugs, BP, readiness, conflict, priority and next action. | H83: tug-job-board | I83: P0 | J83: S6 | K83: Frontend+Backend | L83: DEV-081 | M83: T-TUG-003 | N83: Not Started | O83: YES | P83: 8 | Q83: M | R83: v46.2",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "locator": "sheet:Backlog/row:84",
+    "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "text": "A84: DEV-083 | B84: Story | C84: E21 Tug Operations | D84: Assignment | E84: Römorkör atama ve çakışma kontrolü | F84: Operasyon sorumlusu olarak işi uygun römorköre atarken overlap, crew, equipment, PMS ve certificate durumunu görmek istiyorum. | G84: Assignment checks time overlap + crew/equipment/PMS/cert; shore proposes; Master/Tug Master acknowledgement preserved. | H84: tug-assignment / /api/v1/tug-assignments | I84: P0 | J84: S7 | K84: Full Stack | L84: DEV-050,DEV-055,DEV-082 | M84: T-TUG-004 | N84: Not Started | O84: YES | P84: 13 | Q84: H | R84: v46.2",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "locator": "sheet:Backlog/row:85",
+    "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "text": "A85: DEV-084 | B85: Story | C85: E21 Tug Operations | D85: Readiness | E85: Römorkör operasyon readiness gate | F85: Master/Tug Master olarak işe çıkmadan crew, equipment, PMS, certificate, comms, weather ve BP margin görmek istiyorum. | G85: READY/CONDITIONAL/NOT_READY/REVIEW_REQUIRED; critical blocker cannot be averaged; Master decision and reason retained. | H85: tug-readiness / /api/v1/tug-readiness | I85: P0 | J85: S7 | K85: Full Stack | L85: DEV-083 | M85: T-TUG-005 | N85: Not Started | O85: YES | P85: 13 | Q85: H | R85: v46.2",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "locator": "sheet:Backlog/row:87",
+    "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "text": "A87: DEV-086 | B87: Story | C87: E21 Tug Operations | D87: Crew Readiness | E87: Römorkör crew/towage competence readiness | F87: Master/Crewing olarak minimum manning, credential, towage competence, familiarization ve work/rest durumunu görmek istiyorum. | G87: Shared crew engine + tug-specific towage competence; positive readiness blocked by missing/unverified credential/competence. | H87: tug-crew-readiness | I87: P0 | J87: S7 | K87: Full Stack | L87: DEV-048,DEV-050 | M87: T-TUG-007 | N87: Not Started | O87: YES | P87: 8 | Q87: H | R87: v46.2",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "locator": "sheet:Backlog/row:94",
+    "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "text": "A94: DEV-093 | B94: Task | C94: E21 Tug Operations | D94: Regulatory | E94: Tug regulatory source/applicability review | F94: Regulatory owner olarak tug operasyon limitlerinin kontrollü kaynağını doğrulamak istiyorum. | G94: Flag/class/company/local source ownership assigned; unknown rules remain REVIEW_REQUIRED; no unsupported legal claim. | H94: Regulatory Trace | I94: P0 | J94: S11 | K94: Regulatory Lead | L94: DEV-008,DEV-084,DEV-087 | M94: T-TUG-014 | N94: Not Started | O94: YES | P94: 8 | Q94: H | R94: v46.2",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "locator": "sheet:Backlog/row:99",
+    "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "text": "A99: DEV-098 | B99: Story | C99: E22 Ship Operations 2.0 | D99: Deck Daily Log | E99: Güverte günlük kayıt defterini dijitalleştir | F99: OOW olarak vardiya/pozisyon/nav status/port-cargo activity/handover kayıtlarını tek akışta tutmak istiyorum. | G99: Watch-period log, navigation status, port/cargo activity, pilot/tug activity, ballast, safety note, handover, officer/master review; audit/offline. | H99: deck-daily-log | I99: P0 | J99: S5 | K99: Full Stack | L99: DEV-097 | M99: T-OPS2-002 | N99: Not Started | O99: YES | P99: 8 | Q99: M | R99: v46.3",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "locator": "sheet:Backlog/row:102",
+    "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "text": "A102: DEV-101 | B102: Story | C102: E22 Ship Operations 2.0 | D102: Port Activity / SOF | E102: Port Activity & Statement of Facts kaydı | F102: Chief Officer/Master olarak arrival-pilot-tug-berthing-cargo-departure olaylarını timestamp ve eklerle kaydetmek istiyorum. | G102: Structured event timeline; cargo/draught/tug/pilot/delay; Letter of Protest/evidence; voyage link; finalization; not Port OS. | H102: port-activity-sof / /api/v1/port-activity-sof | I102: P1 | J102: S6 | K102: Full Stack | L102: DEV-097 | M102: T-OPS2-005 | N102: Not Started | O102: YES | P102: 8 | Q102: M | R102: v46.3",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "locator": "sheet:Backlog/row:117",
+    "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "text": "A117: DEV-116 | B117: Task | C117: E20 Production Hardening | D117: ERP Boundary | E117: ERP scope boundary integration contracts | F117: Architect olarak finance/payroll/full procurement/warehouse/chartering'in ürün içine sızmamasını istiyorum. | G117: Explicit OUT list; integration-only contracts; technical requisition/critical spares boundary; no accidental PO/AP/AR/payroll tables. | H117: Architecture / API | I117: P0 | J117: S0 | K117: Solution Architect | L117: DEV-004 | M117: T-V463-002 | N117: Not Started | O117: YES | P117: 5 | Q117: M | R117: Strategic guardrail",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+    "locator": "sheet:Data Dictionary 2316/row:1579",
+    "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+    "text": "A1579: Mürettebat ve Yetkinlik | B1579: Mürettebat Yönetimi | C1579: Personel, atama ve rotasyon | D1579: Ortak | E1579: crew-roster | F1579: Crew Roster | G1579: Crew Operations | H1579: sign_off_date | I1579: Sign-off Date | J1579: input/date | K1579: Tarih | L1579: Date/Time | M1579: Date | N1579: date | O1579: TBD | P1579: TBD | Q1579: Conditional | R1579: No | S1579: PLACEHOLDER — REVIEW_REQUIRED | U1579: N/A | V1579: Master/Chief Officer/Crewing; crew own-scope where applicable | W1579: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1579: Valid ISO/local date/time; chronology, expiry and business-window rules | Y1579: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1579: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1579: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1579: Offline capture allowed for supported mutable data; client UUID/base version; idempotent sync; material conflicts require human resolution | AC1579: /api/v1/crew-roster | AD1579: CrewRoster | AE1579: sign_off_date | AF1579: UNCONFIRMED — physical schema review | AG1579: FR46-crew-roster-sign_off_date | AH1579: TC46-crew-roster-sign_off_date | AI1579: P1 | AJ1579: DEFAULT_PLACEHOLDER; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1579: UI/TRACE TAM — PROD REVIEW | AL1579: SOURCE + DERIVED GAP ANALYSIS | AM1579: ÖNERİ: Crew Roster bağlamında Sign-off Date. İş anlamı/birim BA onayı bekler. | AN1579: Tarih | AO1579: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ1579: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AV1579: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1579: Sign-off Date: geçerli tarih/saat giriniz; kronoloji ve geçerlilik koşullarını kontrol ediniz. | BE1579: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1579: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1579: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1579: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1579: DEC-DATA-01…06 | BO1579: REVIEW_REQUIRED",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+    "locator": "sheet:Data Dictionary 2316/row:1580",
+    "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+    "text": "A1580: Mürettebat ve Yetkinlik | B1580: Mürettebat Yönetimi | C1580: Personel, atama ve rotasyon | D1580: Ortak | E1580: crew-roster | F1580: Crew Roster | G1580: Crew Operations | H1580: contract_end_date | I1580: Contract End | J1580: input/date | K1580: Tarih | L1580: Date/Time | M1580: Date | N1580: date | O1580: TBD | P1580: TBD | Q1580: Conditional | R1580: No | S1580: PLACEHOLDER — REVIEW_REQUIRED | U1580: N/A | V1580: Master/Chief Officer/Crewing; crew own-scope where applicable | W1580: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1580: Valid ISO/local date/time; chronology, expiry and business-window rules | Y1580: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1580: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1580: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1580: Offline capture allowed for supported mutable data; client UUID/base version; idempotent sync; material conflicts require human resolution | AC1580: /api/v1/crew-roster | AD1580: CrewRoster | AE1580: contract_end_date | AF1580: UNCONFIRMED — physical schema review | AG1580: FR46-crew-roster-contract_end_date | AH1580: TC46-crew-roster-contract_end_date | AI1580: P1 | AJ1580: DEFAULT_PLACEHOLDER; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1580: UI/TRACE TAM — PROD REVIEW | AL1580: SOURCE + DERIVED GAP ANALYSIS | AM1580: ÖNERİ: Crew Roster bağlamında Contract End. İş anlamı/birim BA onayı bekler. | AN1580: Tarih | AO1580: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ1580: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AV1580: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1580: Contract End: geçerli tarih/saat giriniz; kronoloji ve geçerlilik koşullarını kontrol ediniz. | BE1580: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1580: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1580: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1580: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1580: DEC-DATA-01…06 | BO1580: REVIEW_REQUIRED",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+    "locator": "sheet:Data Dictionary 2316/row:1581",
+    "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+    "text": "A1581: Mürettebat ve Yetkinlik | B1581: Mürettebat Yönetimi | C1581: Personel, atama ve rotasyon | D1581: Ortak | E1581: crew-roster | F1581: Crew Roster | G1581: Crew Operations | H1581: watch_group | I1581: Watch Group | J1581: select | K1581: Seçim Listesi | L1581: Enum | M1581: Controlled Code / Enum | N1581: text / controlled-code FK — REVIEW | O1581: TBD | P1581: TBD | Q1581: Conditional | R1581: No | S1581: PLACEHOLDER — REVIEW_REQUIRED | T1581: Controlled list / state machine | U1581: Tanımlı | V1581: Master/Chief Officer/Crewing; crew own-scope where applicable | W1581: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1581: Value must be from controlled list applicable to tenant/vessel/context | Y1581: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1581: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1581: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1581: Offline capture allowed for supported mutable data; client UUID/base version; idempotent sync; material conflicts require human resolution | AC1581: /api/v1/crew-roster | AD1581: CrewRoster | AE1581: watch_group | AF1581: UNCONFIRMED — physical schema review | AG1581: FR46-crew-roster-watch_group | AH1581: TC46-crew-roster-watch_group | AI1581: P1 | AJ1581: DEFAULT_PLACEHOLDER; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1581: UI/TRACE TAM — PROD REVIEW | AL1581: SOURCE + DERIVED GAP ANALYSIS | AM1581: ÖNERİ: Crew Roster bağlamında Watch Group. İş anlamı/birim BA onayı bekler. | AN1581: Seçim Listesi | AO1581: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ1581: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AV1581: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1581: Watch Group: Value must be from controlled list applicable to tenant/vessel/context | BE1581: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1581: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1581: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1581: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1581: DEC-DATA-01…06 | BO1581: REVIEW_REQUIRED",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+    "locator": "sheet:Data Dictionary 2316/row:1582",
+    "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+    "text": "A1582: Mürettebat ve Yetkinlik | B1582: Mürettebat Yönetimi | C1582: Personel, atama ve rotasyon | D1582: Ortak | E1582: crew-roster | F1582: Crew Roster | G1582: Crew Operations | H1582: assignment_status | I1582: Assignment Status | J1582: input/text | K1582: Metin Girişi | L1582: Text | M1582: Text | N1582: varchar/text — length TBD | O1582: TBD | P1582: TBD | Q1582: Yes/Business rule | R1582: No | S1582: PLACEHOLDER — REVIEW_REQUIRED | U1582: N/A | V1582: Master/Chief Officer/Crewing; crew own-scope where applicable | W1582: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1582: Type, length, format and contextual uniqueness rules | Y1582: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1582: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1582: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1582: Offline capture allowed for supported mutable data; client UUID/base version; idempotent sync; material conflicts require human resolution | AC1582: /api/v1/crew-roster | AD1582: CrewRoster | AE1582: assignment_status | AF1582: UNCONFIRMED — physical schema review | AG1582: FR46-crew-roster-assignment_status | AH1582: TC46-crew-roster-assignment_status | AI1582: P1 | AJ1582: DEFAULT_PLACEHOLDER; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1582: UI/TRACE TAM — PROD REVIEW | AL1582: SOURCE + DERIVED GAP ANALYSIS | AM1582: ÖNERİ: Crew Roster bağlamında Assignment Status. İş anlamı/birim BA onayı bekler. | AN1582: Metin Girişi | AO1582: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ1582: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AV1582: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1582: Assignment Status: Type, length, format and contextual uniqueness rules | BE1582: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1582: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1582: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1582: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1582: DEC-DATA-01…06 | BO1582: REVIEW_REQUIRED",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+    "locator": "sheet:Data Dictionary 2316/row:1583",
+    "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+    "text": "A1583: Mürettebat ve Yetkinlik | B1583: Mürettebat Yönetimi | C1583: Personel, atama ve rotasyon | D1583: Ortak | E1583: crew-roster | F1583: Crew Roster | G1583: Crew Operations | H1583: eligibility_state | I1583: Eligibility | J1583: select | K1583: Seçim Listesi | L1583: State | M1583: Controlled Code / Enum | N1583: text / controlled-code FK — REVIEW | O1583: TBD | P1583: TBD | Q1583: Yes/Business rule | R1583: System | S1583: Sistem tarafından türetilir | T1583: Controlled list / state machine | U1583: Tanımlı | V1583: Master/Chief Officer/Crewing; crew own-scope where applicable | W1583: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1583: Allowed controlled-state transition only | Y1583: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1583: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1583: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1583: Offline capture allowed for supported mutable data; client UUID/base version; idempotent sync; material conflicts require human resolution | AC1583: /api/v1/crew-roster | AD1583: CrewRoster | AE1583: eligibility_state | AF1583: UNCONFIRMED — physical schema review | AG1583: FR46-crew-roster-eligibility_state | AH1583: TC46-crew-roster-eligibility_state | AI1583: P1 | AJ1583: EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1583: UI/TRACE TAM — PROD REVIEW | AL1583: SOURCE + DERIVED GAP ANALYSIS | AM1583: ÖNERİ: Crew Roster bağlamında Eligibility. İş anlamı/birim BA onayı bekler. | AN1583: Seçim Listesi | AO1583: SYSTEM_DERIVED | AQ1583: DERIVATION_REQUIRES_SPECIFICATION | AV1583: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1583: Eligibility: Allowed controlled-state transition only | BE1583: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1583: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1583: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1583: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1583: DEC-DATA-01…06 | BO1583: REVIEW_REQUIRED",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+    "locator": "sheet:Data Dictionary 2316/row:1584",
+    "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+    "text": "A1584: Mürettebat ve Yetkinlik | B1584: Mürettebat Yönetimi | C1584: Personel, atama ve rotasyon | D1584: Ortak | E1584: crew-roster | F1584: Crew Roster | G1584: Crew Operations | H1584: work_rest_state | I1584: Work/Rest State | J1584: select | K1584: Seçim Listesi | L1584: State | M1584: Controlled Code / Enum | N1584: text / controlled-code FK — REVIEW | O1584: TBD | P1584: TBD | Q1584: Yes/Business rule | R1584: System | S1584: Sistem tarafından türetilir | T1584: Controlled list / state machine | U1584: Tanımlı | V1584: Master/Chief Officer/Crewing; crew own-scope where applicable | W1584: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1584: Allowed controlled-state transition only | Y1584: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1584: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1584: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1584: Offline capture allowed for supported mutable data; client UUID/base version; idempotent sync; material conflicts require human resolution | AC1584: /api/v1/crew-roster | AD1584: CrewRoster | AE1584: work_rest_state | AF1584: UNCONFIRMED — physical schema review | AG1584: FR46-crew-roster-work_rest_state | AH1584: TC46-crew-roster-work_rest_state | AI1584: P1 | AJ1584: EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1584: UI/TRACE TAM — PROD REVIEW | AL1584: SOURCE + DERIVED GAP ANALYSIS | AM1584: ÖNERİ: Crew Roster bağlamında Work/Rest State. İş anlamı/birim BA onayı bekler. | AN1584: Seçim Listesi | AO1584: SYSTEM_DERIVED | AQ1584: DERIVATION_REQUIRES_SPECIFICATION | AV1584: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1584: Work/Rest State: Allowed controlled-state transition only | BE1584: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1584: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1584: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1584: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1584: DEC-DATA-01…06 | BO1584: REVIEW_REQUIRED",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+    "locator": "sheet:Data Dictionary 2316/row:1585",
+    "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+    "text": "A1585: Mürettebat ve Yetkinlik | B1585: Mürettebat Yönetimi | C1585: Personel, atama ve rotasyon | D1585: Ortak | E1585: crew-roster | F1585: Crew Roster | G1585: Crew Operations | H1585: certificate_state | I1585: Certificate State | J1585: select | K1585: Seçim Listesi | L1585: State | M1585: Controlled Code / Enum | N1585: text / controlled-code FK — REVIEW | O1585: TBD | P1585: TBD | Q1585: Yes/Business rule | R1585: System | S1585: Sistem tarafından türetilir | T1585: Controlled list / state machine | U1585: Tanımlı | V1585: Master/Chief Officer/Crewing; crew own-scope where applicable | W1585: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1585: Allowed controlled-state transition only | Y1585: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1585: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1585: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1585: Offline capture allowed for supported mutable data; client UUID/base version; idempotent sync; material conflicts require human resolution | AC1585: /api/v1/crew-roster | AD1585: CrewRoster | AE1585: certificate_state | AF1585: UNCONFIRMED — physical schema review | AG1585: FR46-crew-roster-certificate_state | AH1585: TC46-crew-roster-certificate_state | AI1585: P1 | AJ1585: EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1585: UI/TRACE TAM — PROD REVIEW | AL1585: SOURCE + DERIVED GAP ANALYSIS | AM1585: ÖNERİ: Crew Roster bağlamında Certificate State. İş anlamı/birim BA onayı bekler. | AN1585: Seçim Listesi | AO1585: SYSTEM_DERIVED | AQ1585: DERIVATION_REQUIRES_SPECIFICATION | AV1585: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1585: Certificate State: Allowed controlled-state transition only | BE1585: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1585: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1585: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1585: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1585: DEC-DATA-01…06 | BO1585: REVIEW_REQUIRED",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+    "locator": "sheet:Data Dictionary 2316/row:1615",
+    "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+    "text": "A1615: Mürettebat ve Yetkinlik | B1615: Mürettebat Yönetimi | C1615: Personel, atama ve rotasyon | D1615: Ortak | E1615: crew-profile | F1615: Crew Profile | G1615: Crew Operations | H1615: status | I1615: Status | J1615: select | K1615: Seçim Listesi | L1615: State | M1615: Controlled Code / Enum | N1615: text / controlled-code FK — REVIEW | O1615: TBD | P1615: TBD | Q1615: Yes/Business rule | R1615: System | S1615: Sistem tarafından türetilir | T1615: Controlled list / state machine | U1615: Tanımlı | V1615: Master/Chief Officer/Crewing; crew own-scope where applicable | W1615: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1615: Allowed controlled-state transition only | Y1615: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1615: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1615: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1615: Offline capture allowed for supported mutable data; client UUID/base version; idempotent sync; material conflicts require human resolution | AC1615: /api/v1/crew-profile | AD1615: CrewProfile | AE1615: status | AF1615: UNCONFIRMED — physical schema review | AG1615: FR46-crew-profile-status | AH1615: TC46-crew-profile-status | AI1615: P1 | AJ1615: EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1615: UI/TRACE TAM — PROD REVIEW | AL1615: SOURCE + DERIVED GAP ANALYSIS | AM1615: ÖNERİ: Crew Profile bağlamında Status. İş anlamı/birim BA onayı bekler. | AN1615: Seçim Listesi | AO1615: SYSTEM_DERIVED | AQ1615: DERIVATION_REQUIRES_SPECIFICATION | AV1615: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1615: Status: Allowed controlled-state transition only | BE1615: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1615: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1615: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1615: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1615: DEC-DATA-01…06 | BO1615: REVIEW_REQUIRED",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.01_POSEIDON_Dynamic_Applicability_Engine_Specification_TR.docx",
+    "locator": "paragraph:85",
+    "sha256": "8a338adb39f2ec62ff149d0c5e75c8df266f03107b7de5630b52685143bc3f0c",
+    "text": "mainPropulsionKw",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.01_POSEIDON_Dynamic_Applicability_Engine_Specification_TR.docx",
+    "locator": "paragraph:221",
+    "sha256": "8a338adb39f2ec62ff149d0c5e75c8df266f03107b7de5630b52685143bc3f0c",
+    "text": "Yalnız gerçek class/rule-pack doğrulanırsa aktive edilir.",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.01_POSEIDON_Dynamic_Applicability_Engine_Specification_TR.docx",
+    "locator": "paragraph:379",
+    "sha256": "8a338adb39f2ec62ff149d0c5e75c8df266f03107b7de5630b52685143bc3f0c",
+    "text": "└─ Action: Class rule pack doğrulaması gerekli",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+    "locator": "paragraph:50",
+    "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+    "text": "Trust/signature provider optional",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+    "locator": "paragraph:99",
+    "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+    "text": "Authorized human decision with reason/evidence context.",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+    "locator": "paragraph:104",
+    "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+    "text": "POST /applicability/simulate",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+    "locator": "paragraph:108",
+    "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+    "text": "Persisted source/rule/input trace.",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+    "locator": "paragraph:229",
+    "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+    "text": "9. Offline-First Sözleşme",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+    "locator": "paragraph:233",
+    "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+    "text": "Client UUID; same command replay = same server result.",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+    "locator": "paragraph:235",
+    "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+    "text": "Every material command carries last-known aggregate version.",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+    "locator": "paragraph:237",
+    "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+    "text": "Expired/stale regulatory/readiness snapshot cannot create READY.",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+    "locator": "paragraph:239",
+    "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+    "text": "Non-material additive evidence can auto-merge; safety/legal material field conflict cannot.",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+    "locator": "paragraph:241",
+    "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+    "text": "Captured local time + timezone/offset + server received UTC.",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+    "locator": "paragraph:243",
+    "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+    "text": "Offline photo/file hash + device/source + later server verification.",
+    "original_locator_read": true
+  },
+  {
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/07.01_POSEIDON_Master_Yasal_Regulatif_Mevzuat_Register_TR.xlsx",
+    "locator": "sheet:Master Register/row:71",
+    "sha256": "e82429a3aea460149d58ccae8e81b4760263f7e64a2770ba716eadc5d790dc95",
+    "text": "A71: TR-013 | B71: Türkiye - E-signature | C71: 5070 Elektronik İmza Kanunu | D71: TBMM/BTK | E71: Electronic Signature Law | F71: ORTAK | G71: Conditional | H71: qualified/legal electronic signatures | I71: IN_FORCE | J71: P1 | K71: E-signature; Approvals; Evidence | L71: signature certificate/time stamp/e-signature audit | M71: Use when qualified e-signature is implemented. | N71: https://www5.tbmm.gov.tr/develop/owa/kanun_ss.durumu?kanun_no=5070 | O71: SOURCE_VERSION_REVIEW_REQUIRED",
+    "original_locator_read": true
+  }
+]

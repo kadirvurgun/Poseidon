@@ -1,11 +1,17 @@
-import { timestamp as date } from './date-validation'
+import { calendar, timestamp as date } from './date-validation'
 import { isGuid as guid } from './identifiers'
 import type { components } from '../generated/api'
 import type { Page, Vessel } from './directory-contract'
 import { ApiError, request } from './api'
 
 export type Today = components['schemas']['TodayDto']
-export type Why = components['schemas']['TodayWhyDto']
+// Authored extension until actual host/OpenAPI regeneration at the combined gate.
+// Existing generated artifacts are preserved; this is not generated parity evidence.
+type DraftWhy = components['schemas']['TodayWhyDto']
+export type MaintenanceEvidence = { planId: string; planRevision: number; assetId: string; assetRevision: number;
+  currentAssetRevision: number | null; jobAvailable: boolean; ownerEligible: boolean;
+  calculation: { state: string; reason: string; nextDueDate: string | null; nextDueMeter: string | null; algorithm: string }; observationState: string }
+export type Why = Omit<DraftWhy, 'inputs'> & { inputs: DraftWhy['inputs'] | null; maintenance?: MaintenanceEvidence }
 const pageLimit = 25
 const todayOffset = 0
 const object = (x: unknown): x is Record<string, unknown> => !!x && typeof x === 'object' && !Array.isArray(x)
@@ -14,6 +20,13 @@ const integer = (x: unknown) => typeof x === 'number' && Number.isSafeInteger(x)
 const one = (x: unknown, values: string[]) => typeof x === 'string' && values.includes(x)
 const text = (x: unknown, max: number) => typeof x === 'string' && x.length > 0 && x.length <= max && !Array.from(x).some(c => c.charCodeAt(0) < 32 || (c.charCodeAt(0) >= 127 && c.charCodeAt(0) <= 159))
 const href = (x: unknown, id: string) => x === `/app/fleet/${id}/profile`
+const planId = (key: unknown): string | null => {
+  if (typeof key !== 'string' || !key.startsWith('maintenance-plan:')) return null
+  const id = key.slice('maintenance-plan:'.length)
+  return guid(id) && id === id.toLowerCase() && id !== '00000000-0000-0000-0000-000000000000' ? id : null
+}
+const planHref = (x: unknown, vessel: string, key: unknown) => planId(key) !== null && x === `/app/maintenance-plan/${vessel}?id=${planId(key)}`
+const rank = (priority: unknown) => priority === 'Attention' ? 0 : priority === 'Review' ? 1 : 2
 function validVessel(x: unknown): x is Vessel {
   return object(x) && exact(x, ['id', 'companyId', 'code', 'name', 'kind', 'version', 'canEdit']) && guid(x.id) && guid(x.companyId) &&
     text(x.code, 64) && text(x.name, 200) && one(x.kind, ['Ship', 'Tug']) && integer(x.version) &&
@@ -26,27 +39,40 @@ export function decodeTodayVessels(x: unknown, offset: number): Page<Vessel> {
     new Set(x.items.map(v => v.id.toLowerCase())).size !== x.items.length) fail()
   return x as Page<Vessel>
 }
-export function decodeToday(x: unknown, id: string): Today {
+export function decodeToday(x: unknown, id: string, offset = todayOffset): Today {
   if (!object(x) || !exact(x, ['vessel', 'readAt', 'coverage', 'cards']) || !validVessel(x.vessel) || x.vessel.id !== id || !guid(id) || !date(x.readAt) ||
-    !Array.isArray(x.coverage) || x.coverage.length !== 5 || !object(x.cards) || !Array.isArray(x.cards.items) || x.cards.items.length > 1 ||
-    !exact(x.cards, ['items', 'offset', 'limit', 'hasMore']) || x.cards.offset !== todayOffset ||
-    x.cards.limit !== pageLimit || x.cards.hasMore !== false) fail()
-  const sources = ['RegulatoryDraft', 'OperationalTasks', 'SafetyDecisions', 'Permits', 'EvidenceVerification']
-  if (!x.coverage.every((c, i) => object(c) && exact(c, ['source', 'status']) && c.source === sources[i] && one(c.status, i === 0 ? ['Available', 'Missing'] : ['Unavailable']))) fail()
+    !integer(offset) || offset > 100000 || !Array.isArray(x.coverage) || x.coverage.length !== 6 || !object(x.cards) || !Array.isArray(x.cards.items) || x.cards.items.length > pageLimit ||
+    !exact(x.cards, ['items', 'offset', 'limit', 'hasMore']) || x.cards.offset !== offset ||
+    x.cards.limit !== pageLimit || typeof x.cards.hasMore !== 'boolean' || (x.cards.hasMore && x.cards.items.length !== pageLimit)) fail()
+  const sources = ['RegulatoryDraft', 'OperationalTasks', 'SafetyDecisions', 'Permits', 'EvidenceVerification', 'TechnicalMaintenance']
+  if (!x.coverage.every((c, i) => object(c) && exact(c, ['source', 'status']) && c.source === sources[i] && one(c.status,
+    i === 0 ? ['Available', 'Missing'] : i === 5 ? ['Available', 'Missing', 'Unavailable'] : ['Unavailable']))) fail()
   const draftMissing = x.coverage[0].status === 'Missing'
   const canEdit = x.vessel.canEdit
-  if (!x.cards.items.every(c => object(c) && exact(c, ['key', 'priority', 'source', 'reason', 'owner', 'nextAction', 'href']) &&
-    c.key === 'regulatory-draft' && c.priority === 'Advisory' && c.source === 'RegulatoryDraft' &&
-    c.reason === (draftMissing ? 'DraftAbsent' : 'DraftUnverified') && c.owner === null && c.nextAction === (canEdit ? 'ReviewDraft' : 'ViewDraft') && href(c.href, id))) fail()
+  const maintenanceAvailable = x.coverage[5].status === 'Available'
+  if (!x.cards.items.every(c => {
+    if (!object(c) || !exact(c, ['key', 'priority', 'source', 'reason', 'owner', 'nextAction', 'href'])) return false
+    if (c.key === 'regulatory-draft') return c.priority === 'Advisory' && c.source === 'RegulatoryDraft' &&
+      c.reason === (draftMissing ? 'DraftAbsent' : 'DraftUnverified') && c.owner === null && c.nextAction === (canEdit ? 'ReviewDraft' : 'ViewDraft') && href(c.href, id)
+    return maintenanceAvailable && planId(c.key) !== null && c.source === 'MaintenancePlan' &&
+      (c.reason === 'MaintenanceDue' && c.priority === 'Attention' || c.reason === 'MaintenanceReviewRequired' && c.priority === 'Review') &&
+      (c.owner === null || guid(c.owner)) && c.nextAction === 'ReviewMaintenancePlan' && planHref(c.href, id, c.key)
+  }) || new Set(x.cards.items.map(c => c.key)).size !== x.cards.items.length) fail()
+  for (let i = 1; i < x.cards.items.length; i++) {
+    const before = x.cards.items[i - 1], current = x.cards.items[i]
+    if (rank(before.priority) > rank(current.priority) || rank(before.priority) === rank(current.priority) && before.key >= current.key) fail()
+  }
   return x as Today
 }
-export function decodeWhy(x: unknown, id: string): Why {
+export function decodeWhy(x: unknown, id: string, cardKey = 'regulatory-draft'): Why {
+  if (planId(cardKey) !== null) return decodeMaintenanceWhy(x, id, cardKey)
+  if (cardKey !== 'regulatory-draft') fail()
   if (!object(x) || !guid(id) || !exact(x, ['vesselId', 'cardKey', 'rule', 'reason', 'inputs', 'readAt', 'savedAt', 'sourceObservedAt', 'freshness', 'provenance', 'blockers', 'owner', 'nextAction', 'href']) ||
     x.vesselId !== id || x.cardKey !== 'regulatory-draft' || x.rule !== 'TW-DRAFT-01' ||
     !one(x.reason, ['DraftAbsent', 'DraftUnverified']) || !object(x.inputs) || x.inputs.reason !== x.reason ||
     !exact(x.inputs, ['known', 'missing', 'unknown', 'reason']) ||
     ![x.inputs.known, x.inputs.missing, x.inputs.unknown].every(integer) ||
-    Number(x.inputs.known) + Number(x.inputs.missing) + Number(x.inputs.unknown) !== (x.reason === 'DraftAbsent' ? 0 : 17) ||
+    Number(x.inputs.known) + Number(x.inputs.missing) + Number(x.inputs.unknown) !== (x.reason === 'DraftAbsent' ? 0 : 20) ||
     !date(x.readAt) || !(x.savedAt === null || date(x.savedAt)) || !(x.sourceObservedAt === null || date(x.sourceObservedAt)) ||
     x.freshness !== 'Unverified' || (x.reason === 'DraftAbsent' ? x.provenance !== 'Missing' || x.savedAt !== null || x.sourceObservedAt !== null
       : !one(x.provenance, ['Unknown', 'Synthetic', 'DeclaredUnverified']) || x.savedAt === null) ||
@@ -54,6 +80,42 @@ export function decodeWhy(x: unknown, id: string): Why {
     x.blockers[1] !== 'OperationalSourcesUnavailable' || x.owner !== null || !one(x.nextAction, ['ViewDraft', 'ReviewDraft']) || !href(x.href, id)) fail()
   return x as Why
 }
-export const today = async (id: string, signal: AbortSignal) => decodeToday(await request<unknown>(`poseidon-today?vesselId=${encodeURIComponent(id)}&offset=${todayOffset}&limit=${pageLimit}`, signal), id)
-export const why = async (id: string, signal: AbortSignal) => decodeWhy(await request<unknown>(`why-engine?vesselId=${encodeURIComponent(id)}&cardKey=regulatory-draft`, signal), id)
+const observationStates = ['NotRequested', 'ConfiguredDeclaredObservation', 'ObservationMissing', 'ObservationRevoked', 'ObservationScopeMismatch',
+  'ObservationPolicyUnavailable', 'ObservationPolicyChanged', 'ObservationUnitOrKindMismatch', 'ObservationFuture', 'ObservationStale',
+  'ObservationPrecisionUnsupported', 'ObservationConditionUnknown']
+const calculationReasons = ['EquipmentRevisionChanged', 'MaintenanceJobUnavailable', 'MaintenanceOwnerUnavailable', 'ObservationAssessmentUnavailable',
+  'IncompletePlanContext', 'MissingProvenance', 'MissingTimeZone', 'MissingCalendarInputs', 'UnsupportedCalendarInterval', 'FutureBaseline', 'CalendarBoundary',
+  'MissingMeterAdapterOrReading', 'FutureObservation', 'ReadingFreshnessPolicyUnresolved', 'MissingOrResetMeterBaseline', 'DeclaredMeterBoundary',
+  'MeterPrecisionExceeded', 'MeterRangeExceeded', 'MissingConditionAdapterOrObservation', 'ConditionFreshnessPolicyUnresolved', 'DeclaredConditionObservation',
+  'MissingOrUnsupportedTrigger', ...observationStates.filter(s => s !== 'NotRequested' && s !== 'ConfiguredDeclaredObservation')]
+function decodeMaintenanceWhy(x: unknown, vessel: string, key: string): Why {
+  if (!guid(vessel) || !object(x) || !exact(x, ['vesselId', 'cardKey', 'rule', 'reason', 'inputs', 'readAt', 'savedAt', 'sourceObservedAt',
+    'freshness', 'provenance', 'blockers', 'owner', 'nextAction', 'href', 'maintenance']) || x.vesselId !== vessel || x.cardKey !== key ||
+    x.rule !== 'TW-MAINTENANCE-01' || !one(x.reason, ['MaintenanceDue', 'MaintenanceReviewRequired']) || x.inputs !== null || !date(x.readAt) ||
+    !date(x.savedAt) || !(x.sourceObservedAt === null || date(x.sourceObservedAt)) || x.freshness !== 'Unverified' || !text(x.provenance, 200) ||
+    !Array.isArray(x.blockers) || x.blockers.length !== 1 || x.blockers[0] !== 'PlanningDraftNotVerified' ||
+    !(x.owner === null || guid(x.owner)) || x.nextAction !== 'ReviewMaintenancePlan' || !planHref(x.href, vessel, key) || !object(x.maintenance)) fail()
+  const m = x.maintenance
+  if (!exact(m, ['planId', 'planRevision', 'assetId', 'assetRevision', 'currentAssetRevision', 'jobAvailable', 'ownerEligible', 'calculation', 'observationState']) ||
+    m.planId !== planId(key) || !guid(m.assetId) || !integer(m.planRevision) || m.planRevision === 0 || !integer(m.assetRevision) || m.assetRevision === 0 ||
+    !(m.currentAssetRevision === null || integer(m.currentAssetRevision) && Number(m.currentAssetRevision) > 0) ||
+    typeof m.jobAvailable !== 'boolean' || typeof m.ownerEligible !== 'boolean' || (m.ownerEligible ? x.owner === null : x.owner !== null) ||
+    !one(m.observationState, observationStates) || !object(m.calculation)) fail()
+  const c = m.calculation
+  if (!exact(c, ['state', 'reason', 'nextDueDate', 'nextDueMeter', 'algorithm']) ||
+    c.state !== (x.reason === 'MaintenanceDue' ? 'Due' : 'ReviewRequired') || !one(c.reason, calculationReasons) ||
+    !(c.nextDueDate === null || typeof c.nextDueDate === 'string' && calendar(c.nextDueDate)) ||
+    !(c.nextDueMeter === null || typeof c.nextDueMeter === 'string' && c.nextDueMeter.length <= 60 && !/[^0-9.]/.test(c.nextDueMeter) && /^[0-9]+(?:\.[0-9]+)?$/.test(c.nextDueMeter)) ||
+    !text(c.algorithm, 180) || !(c.algorithm === 'planning-current-v1' || typeof c.algorithm === 'string' && c.algorithm.startsWith('planning-current-v1/') && c.algorithm.length > 20)) fail()
+  if (c.state === 'Due' && (!m.jobAvailable || !m.ownerEligible || m.currentAssetRevision !== m.assetRevision ||
+    !one(c.reason, ['CalendarBoundary', 'DeclaredMeterBoundary', 'DeclaredConditionObservation']))) fail()
+  if (c.reason === 'CalendarBoundary' && c.nextDueDate === null || c.reason === 'DeclaredMeterBoundary' && c.nextDueMeter === null ||
+    c.reason === 'EquipmentRevisionChanged' && m.currentAssetRevision === m.assetRevision ||
+    c.reason === 'MaintenanceJobUnavailable' && m.jobAvailable || c.reason === 'MaintenanceOwnerUnavailable' && m.ownerEligible) fail()
+  if (one(c.reason, ['ObservationRevoked', 'ObservationStale', 'ObservationPolicyChanged']) &&
+    (c.reason !== m.observationState || c.nextDueDate !== null || c.nextDueMeter !== null)) fail()
+  return x as Why
+}
+export const today = async (id: string, signal: AbortSignal, offset = todayOffset) => decodeToday(await request<unknown>(`poseidon-today?vesselId=${encodeURIComponent(id)}&offset=${offset}&limit=${pageLimit}`, signal), id, offset)
+export const why = async (id: string, signal: AbortSignal, cardKey = 'regulatory-draft') => decodeWhy(await request<unknown>(`why-engine?vesselId=${encodeURIComponent(id)}&cardKey=${encodeURIComponent(cardKey)}`, signal), id, cardKey)
 export const todayVessels = async (offset: number, signal: AbortSignal) => decodeTodayVessels(await request<unknown>(`vessels?offset=${offset}&limit=${pageLimit}`, signal), offset)

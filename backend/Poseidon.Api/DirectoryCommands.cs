@@ -47,7 +47,8 @@ public static class DirectoryCommands
         Results.Problem(statusCode: status, title: code, extensions: new Dictionary<string, object?>
         { ["code"] = code, ["errors"] = errors ?? [], ["correlationId"] = http.TraceIdentifier });
 
-    private static async Task<IResult> Execute(HttpContext http, string action, Guid? id)
+    internal static Task<IResult> ApplyImport(HttpContext http, Guid vessel, VesselUpdateCommand command) => Execute(http, "VesselUpdate", vessel, command);
+    private static async Task<IResult> Execute(HttpContext http, string action, Guid? id, VesselUpdateCommand? imported = null)
     {
         var actor = http.RequestServices.GetRequiredService<ActorResolver>().Resolve(http.User)!;
         var audit = http.RequestServices.GetRequiredService<SecurityAudit>();
@@ -64,11 +65,13 @@ public static class DirectoryCommands
         if ((!update || company) && !actor.CanManage) return await Fail(403, "permission_denied");
         try { await http.RequestServices.GetRequiredService<IAntiforgery>().ValidateRequestAsync(http); }
         catch (AntiforgeryValidationException) { return await Fail(403, "csrf_invalid"); }
-        if (!http.Request.HasJsonContentType()) return await Fail(400, "invalid_request");
-        if (http.Request.ContentLength is > 4096) return await Fail(400, "invalid_request");
+        if (imported == null && !http.Request.HasJsonContentType()) return await Fail(400, "invalid_request");
+        if (imported == null && http.Request.ContentLength is > 4096) return await Fail(400, "invalid_request");
         string? code, name, kind = null; Guid? companyId = null; uint? version = null;
         try
         {
+            if (imported != null) { code = imported.Code; name = imported.Name; version = imported.ExpectedVersion; }
+            else {
             // Bound even chunked requests; JSON has no mass assignment path to persistence entities.
             using var buffer = new MemoryStream();
             var bytes = new byte[1024]; int read;
@@ -98,6 +101,7 @@ public static class DirectoryCommands
                 var body = JsonSerializer.Deserialize<VesselCreateCommand>(buffer.ToArray(), json) ?? throw new JsonException();
                 (code, name, kind, companyId) = (body.Code, body.Name, body.Kind, body.CompanyId);
             }
+            }
         }
         catch (JsonException) { return await Fail(400, "invalid_request"); }
         var errors = Poseidon.Domain.DirectoryInputPolicy.Validate(code, name, version, update);
@@ -107,6 +111,7 @@ public static class DirectoryCommands
             if (companyId is null || companyId == Guid.Empty) errors["companyId"] = ["required"];
         }
         if (errors.Count > 0) return await Fail(400, "validation_failed", errors);
+        if (!company && !update && !actor.CanAccessKind(kind == "Tug" ? VesselKind.Tug : VesselKind.Ship)) return await Fail(403, "permission_denied");
         code = code!.Trim(); name = name!.Trim();
         var keys = http.Request.Headers["Idempotency-Key"];
         var key = keys.Count == 1 ? keys[0] : null;
@@ -144,7 +149,7 @@ public static class DirectoryCommands
         }
         var replay = await Replay(); if (replay != null) return replay;
         if (update && (company ? targetCompany!.Version : targetVessel!.Version) != version) return await Fail(409, "version_conflict");
-        await using var transaction = await db.Database.BeginTransactionAsync(http.RequestAborted);
+        await using var transaction = db.Database.CurrentTransaction == null ? await db.Database.BeginTransactionAsync(http.RequestAborted) : null;
         try
         {
             var resource = id ?? Guid.NewGuid();
@@ -182,24 +187,24 @@ public static class DirectoryCommands
             db.CommandReceipts.Add(new CommandReceipt { TenantId = actor.TenantId, ActorId = actor.Id, Key = key, Action = action,
                 Fingerprint = fingerprint, ResourceId = resource, CommittedAt = DateTimeOffset.UtcNow });
             await db.SaveChangesAsync(http.RequestAborted);
-            await transaction.CommitAsync(http.RequestAborted);
+            if (transaction != null) await transaction.CommitAsync(http.RequestAborted);
             // No independent HTTP Success before commit, and no fallible audit write after commit.
             return company ? Results.Ok(new CompanyDto(resource, code, name, targetCompany!.Version, actor.CanManage)) :
                 Results.Ok(new VesselDto(resource, targetVessel!.CompanyId, code, name, targetVessel.Kind.ToString(), targetVessel.Version, actor.CanEditVessel(resource)));
         }
         catch (DbUpdateConcurrencyException)
         {
-            await transaction.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear();
+            if (transaction != null) await transaction.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear();
             return await Replay() ?? await Fail(409, "version_conflict");
         }
         catch (DbUpdateException ex) when (ex.InnerException is PostgresException { SqlState: PostgresErrorCodes.UniqueViolation })
         {
-            await transaction.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear();
+            if (transaction != null) await transaction.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear();
             return await Replay() ?? await Fail(409, "duplicate_code");
         }
-        catch (Exception ex) when (ex is DbUpdateException or NpgsqlException)
+        catch (Exception ex) when (PostgresFailure.IsDatabase(ex))
         {
-            await transaction.RollbackAsync(CancellationToken.None);
+            if (transaction != null) await transaction.RollbackAsync(CancellationToken.None);
             return await Fail(503, "service_unavailable");
         }
     }

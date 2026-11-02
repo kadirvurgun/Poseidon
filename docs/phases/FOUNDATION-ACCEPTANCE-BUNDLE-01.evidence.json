@@ -1,0 +1,623 @@
+{
+  "task": "FOUNDATION-ACCEPTANCE-BUNDLE-01",
+  "status": "INCOMPLETE",
+  "accepted": false,
+  "independent_qa": false,
+  "ci_executed": false,
+  "publication": false,
+  "receiving_commit": "0c923ea33c644120878cade12ed1aabbc5aac450",
+  "candidate_code_commit": "2080e88be91787e08584b1a2ed33cd243c97e8a0",
+  "canonical_accepted_sp": 8,
+  "total_sp": 970,
+  "selected_tasks": 40,
+  "selected_sp": 272,
+  "target_accepted_sp": 194,
+  "pinned_tools": {
+    "dotnet": "10.0.403",
+    "ef": "10.0.14",
+    "node": "26.13.0",
+    "python": "3.13.13",
+    "playwright": "1.64.1"
+  },
+  "environment": {
+    "DOTNET_PROCESSOR_COUNT": "8 for final backend tests; bounded local resources, no discovery/filter exclusion",
+    "POSEIDON_GATE_CLAMD_PORT": "read from owned scanner state; value-free report"
+  },
+  "code_inputs": 654,
+  "code_tree_sha256": "0850bec20714463c2e90868b909176170e9badd119428d3b703f931d52806e7f",
+  "client_tree_sha256": "e979bfd0e82ffab97aaf8bf486775d503c53ff605decc578fe035c5eeea14653",
+  "client_files": [
+    "frontend/dist/index.html",
+    "frontend/dist/offline-shell.js",
+    "frontend/dist/assets/index-BCgn-nm3.js",
+    "frontend/dist/assets/index-DwVxstdJ.css"
+  ],
+  "artifacts_sha256": {
+    "contracts/openapi.v1.json": "36c59f3698b998b8e00844e88c94a7aa18b8b3c957e2ab8fbd090770ed9dfc63",
+    "frontend/src/generated/api.d.ts": "8588231187b143c3a07a359ca349966aff9510ccbe1c3642fdfe4ddb2d777d0d",
+    "backend/Poseidon.Persistence/Migrations/PoseidonDbContextModelSnapshot.cs": "597416856808040877bdc39029bdd146f3d13e8f99ad6923798ddd9fca772848",
+    "docs/delivery-target-20.json": "43223e808eec8a5a334bbc2c618a76c205b3e1a952862cc77b6c04b73bec8091"
+  },
+  "gates": [
+    {
+      "id": "tools",
+      "command": "dotnet tool restore",
+      "exit_code": 0,
+      "status": "PASS",
+      "log": ".runtime/foundation-acceptance/tool-restore.log",
+      "log_sha256": "74cf97651e64f3a712eb18333bbe00303b6d92515a235191e7ff250731711dcd",
+      "log_bytes": 109,
+      "log_created_utc": "2026-11-02T05:19:32.839750+00:00"
+    },
+    {
+      "id": "locked-restore",
+      "command": "dotnet restore Poseidon.slnx --locked-mode",
+      "exit_code": 0,
+      "status": "PASS",
+      "log": ".runtime/foundation-acceptance/restore-2.log",
+      "log_sha256": "3c19f5aa08751450c993efc16dd44ef069ea05cd84a1c2bfe582108641916516",
+      "log_bytes": 1522,
+      "log_created_utc": "2026-11-02T05:21:35.799662+00:00"
+    },
+    {
+      "id": "release",
+      "command": "dotnet build Poseidon.slnx --configuration Release --no-restore",
+      "exit_code": 0,
+      "status": "PASS",
+      "log": ".runtime/foundation-acceptance/build-17.log",
+      "warnings": 0,
+      "errors": 0,
+      "log_sha256": "190b15294139e9fca1c61b7900e04a5a7850befb79e4b9bab87243e6eaa39b2e",
+      "log_bytes": 1704,
+      "log_created_utc": "2026-11-02T05:54:08.901801+00:00"
+    },
+    {
+      "id": "domain",
+      "command": "dotnet test --project tests/Poseidon.Domain.Tests/Poseidon.Domain.Tests.csproj --configuration Release --no-build",
+      "exit_code": 0,
+      "status": "PASS",
+      "log": ".runtime/foundation-acceptance/domain-final.log",
+      "log_sha256": "9fc305ae58f98cc406e193318e5f99c7338979a8c631d408e3a8fb6b71b4d960",
+      "log_bytes": 539,
+      "log_created_utc": "2026-11-02T05:54:58.919625+00:00",
+      "counts": {
+        "total": 536,
+        "failed": 0,
+        "succeeded": 536,
+        "skipped": 0
+      }
+    },
+    {
+      "id": "persistence-unit",
+      "command": "dotnet test --project tests/Poseidon.Persistence.Tests/Poseidon.Persistence.Tests.csproj --configuration Release --no-build --filter-not-trait Category=Integration",
+      "exit_code": 0,
+      "status": "PASS",
+      "log": ".runtime/foundation-acceptance/persistence-unit-final.log",
+      "log_sha256": "87133cffeaab9fb1eb40440e9f2e1a13feaa252a6a634f0818c968c4e2ebe03c",
+      "log_bytes": 557,
+      "log_created_utc": "2026-11-02T05:55:06.653169+00:00",
+      "counts": {
+        "total": 14,
+        "failed": 0,
+        "succeeded": 14,
+        "skipped": 0
+      }
+    },
+    {
+      "id": "api-unit",
+      "command": "dotnet test --project tests/Poseidon.Api.Tests/Poseidon.Api.Tests.csproj --configuration Release --no-build --filter-not-trait Category=Integration",
+      "exit_code": 0,
+      "status": "PASS",
+      "log": ".runtime/foundation-acceptance/api-unit-final.log",
+      "log_sha256": "5297e16281a4e13364fb0b680b479b6ca43675f46d88d6d75e1a91060b10991a",
+      "log_bytes": 525,
+      "log_created_utc": "2026-11-02T05:55:10.365985+00:00",
+      "counts": {
+        "total": 82,
+        "failed": 0,
+        "succeeded": 82,
+        "skipped": 0
+      }
+    },
+    {
+      "id": "persistence-postgres",
+      "command": "dotnet test --project tests/Poseidon.Persistence.Tests/Poseidon.Persistence.Tests.csproj --configuration Release --no-build --filter-trait Category=Integration",
+      "exit_code": 2,
+      "status": "FAIL",
+      "log": ".runtime/foundation-acceptance/persistence-integration-final.log",
+      "log_sha256": "9d049336f8f9dc701ebac7585c96ebb82f45ba56259c8171b53d9fb070b4f932",
+      "log_bytes": 250734,
+      "log_created_utc": "2026-11-02T05:55:15.710067+00:00",
+      "counts": {
+        "total": 74,
+        "failed": 3,
+        "succeeded": 71,
+        "skipped": 0
+      }
+    },
+    {
+      "id": "api-postgres",
+      "command": "dotnet test --project tests/Poseidon.Api.Tests/Poseidon.Api.Tests.csproj --configuration Release --no-build --filter-trait Category=Integration",
+      "exit_code": null,
+      "status": "INTERRUPTED",
+      "log": ".runtime/foundation-acceptance/api-integration-final.log",
+      "owned_clamd": true,
+      "owned_s3_input_available": false,
+      "log_sha256": "ee3c0296917941b4bec971fed91c81bc653a6d52643dda679709a9914d2841b5",
+      "log_bytes": 556576,
+      "log_created_utc": "2026-11-02T05:55:17.105520+00:00",
+      "disposition": "Native timeout; no captured final process exit; partial evidence is not full-gate PASS"
+    },
+    {
+      "id": "model-seed-columns",
+      "command": "dotnet test --project tests/Poseidon.Persistence.Tests/Poseidon.Persistence.Tests.csproj --configuration Release --no-build --filter-method *FoundationModelParityTests*",
+      "exit_code": 0,
+      "status": "PASS",
+      "log": ".runtime/foundation-acceptance/model-parity-5.log",
+      "scope": "actual PostgreSQL migrated columns/nullability/varchar capacity plus idempotent attributed seed; not full FK/index or every historical designer equivalence",
+      "log_sha256": "3b726007afa66b8a564773807e7dfc73559093bd7152f3a3f5e90894aeaf45a0",
+      "log_bytes": 557,
+      "log_created_utc": "2026-11-02T05:54:13.424288+00:00",
+      "counts": {
+        "total": 1,
+        "failed": 0,
+        "succeeded": 1,
+        "skipped": 0
+      }
+    },
+    {
+      "id": "ef-model",
+      "command": "dotnet ef migrations has-pending-model-changes --context PoseidonDbContext --project backend/Poseidon.Persistence --startup-project backend/Poseidon.DbMigrator --configuration Release --no-build",
+      "exit_code": 0,
+      "status": "PASS",
+      "log": ".runtime/foundation-acceptance/ef-pending-final.log",
+      "log_sha256": "c924da1693ad60eb6a78717ddd333946a8a61a056c2ce2868ae514384f01c866",
+      "log_bytes": 66,
+      "log_created_utc": "2026-11-02T05:59:30.101803+00:00"
+    },
+    {
+      "id": "openapi",
+      "command": "py -3.13 scripts/export_openapi.py",
+      "exit_code": 0,
+      "status": "PASS",
+      "log": ".runtime/foundation-acceptance/openapi-export-final.log",
+      "log_sha256": "c9ab6fa643104870123b4841452581ac0e6c89346fd7ad108dd3c399bc3a1ca0",
+      "log_bytes": 54,
+      "log_created_utc": "2026-11-02T06:07:35.172511+00:00",
+      "coverage": {
+        "status": "exported",
+        "paths": 157,
+        "schemas": 175
+      }
+    },
+    {
+      "id": "generated-types",
+      "command": "npm run generate:api --prefix frontend",
+      "exit_code": 0,
+      "status": "PASS",
+      "log": ".runtime/foundation-acceptance/typescript-generation-final.log",
+      "log_sha256": "8b903b8d8c3dfcd966ca7c2aba4b5881af706962f7759a75e0c0a7bd098c43fe",
+      "log_bytes": 372,
+      "log_created_utc": "2026-11-02T06:07:41.618007+00:00"
+    },
+    {
+      "id": "generation-reproducibility",
+      "command": "git diff --exit-code -- contracts/openapi.v1.json frontend/src/generated/api.d.ts",
+      "exit_code": 0,
+      "status": "PASS",
+      "log": ".runtime/foundation-acceptance/generation-reproducibility.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_bytes": 0,
+      "log_created_utc": "2026-11-02T06:07:47.794677+00:00"
+    },
+    {
+      "id": "frontend-restore",
+      "command": "npm ci --prefix frontend --fetch-timeout=30000 --fetch-retries=1",
+      "exit_code": 0,
+      "status": "PASS",
+      "log": ".runtime/foundation-acceptance/npm-frontend-2.log",
+      "log_sha256": "fc2d2057379e575436631735cd0cfc4166cfea36c632a47e176713f005d55686",
+      "log_bytes": 433,
+      "log_created_utc": "2026-11-02T05:25:10.418252+00:00"
+    },
+    {
+      "id": "browser-restore",
+      "command": "npm ci --prefix tests/Poseidon.Browser.Tests",
+      "exit_code": 0,
+      "status": "PASS",
+      "log": ".runtime/foundation-acceptance/npm-browser.log",
+      "log_sha256": "b9dff3e1a20bd566638126672066aa2549463daaa26bb914aa3fc91e56b6c12f",
+      "log_bytes": 231,
+      "log_created_utc": "2026-11-02T05:23:43.644839+00:00"
+    },
+    {
+      "id": "lint",
+      "command": "npm run lint --prefix frontend",
+      "exit_code": 1,
+      "status": "FAIL",
+      "log": ".runtime/foundation-acceptance/frontend-lint-final.log",
+      "errors": 63,
+      "warnings": 9,
+      "log_sha256": "b3348b537f41c3a5f4bde150ad65d8772021a82c4914af3a14dcedded81079f7",
+      "log_bytes": 109392,
+      "log_created_utc": "2026-11-02T05:54:34.807721+00:00"
+    },
+    {
+      "id": "typecheck",
+      "command": "npm run typecheck --prefix frontend",
+      "exit_code": 0,
+      "status": "PASS",
+      "log": ".runtime/foundation-acceptance/frontend-typecheck-final.log",
+      "log_sha256": "01d4ae725f698f74dba0d4ba45ee73cb1aafb39271c1ffeded09c619bfa3bca5",
+      "log_bytes": 214,
+      "log_created_utc": "2026-11-02T05:54:18.676752+00:00"
+    },
+    {
+      "id": "components",
+      "command": "npm test --prefix frontend -- --maxWorkers=4",
+      "exit_code": 0,
+      "status": "PASS",
+      "log": ".runtime/foundation-acceptance/frontend-tests-5.log",
+      "log_sha256": "db2465961b4c769d20294885f6626ef1beebad40e98eb5c7006d2f51ab059cc0",
+      "log_bytes": 16670,
+      "log_created_utc": "2026-11-02T05:51:04.867208+00:00",
+      "counts": {
+        "passed": 821,
+        "total": 821,
+        "files": 62
+      }
+    },
+    {
+      "id": "client-build",
+      "command": "npm run build --prefix frontend",
+      "exit_code": 0,
+      "status": "PASS",
+      "log": ".runtime/foundation-acceptance/frontend-build-final.log",
+      "log_sha256": "6bdfcd8fe735b950be79a80d21b633ad744c5f873b9724016326e8baf81fcbac",
+      "log_bytes": 1283,
+      "log_created_utc": "2026-11-02T05:55:08.041974+00:00"
+    },
+    {
+      "id": "client-secret-consumer",
+      "command": "py -3.13 scripts/reviewed_secret_scan.py --mode client --bundle frontend/dist",
+      "exit_code": 0,
+      "status": "PASS",
+      "log": ".runtime/foundation-acceptance/reviewed-client-final.log",
+      "log_sha256": "549ba498030b724392ef7779b11947ef74ec3d068a6240d4a0bb5d359428fde3",
+      "log_bytes": 55,
+      "log_created_utc": "2026-11-02T05:55:33.228509+00:00",
+      "coverage": {
+        "mode": "client",
+        "covered_files": 4,
+        "findings": 0
+      }
+    },
+    {
+      "id": "repository-secret-consumer",
+      "command": "py -3.13 scripts/reviewed_secret_scan.py --mode repository",
+      "exit_code": 1,
+      "status": "FAIL",
+      "log": ".runtime/foundation-acceptance/reviewed-repository-final.log",
+      "log_sha256": "9e17c4ec8c13a3834f78eb35cfc88bec0701390dabe8e23cdaacc2b4b22faafe",
+      "log_bytes": 35548,
+      "log_created_utc": "2026-11-02T06:00:43.102720+00:00",
+      "coverage": {
+        "mode": "repository",
+        "covered_files": 1384,
+        "findings": 164
+      }
+    },
+    {
+      "id": "python",
+      "command": "py -3.13 -m unittest discover -s scripts -p test_*.py -v",
+      "exit_code": 0,
+      "status": "PASS",
+      "log": ".runtime/foundation-acceptance/python-final-2.log",
+      "log_sha256": "253d0e9aaa10e2a901060acf1194c0d25f33d96f0c4c774a424075723f703ad3",
+      "log_bytes": 43076,
+      "log_created_utc": "2026-11-02T06:06:11.918498+00:00",
+      "counts": {
+        "executed": 248,
+        "seconds": 249.458
+      }
+    },
+    {
+      "id": "windows-scheduler",
+      "command": "py -3.13 -m unittest discover -s scripts -p windows_scheduler_checks.py -v",
+      "exit_code": 0,
+      "status": "PASS",
+      "log": ".runtime/foundation-acceptance/windows-scheduler.log",
+      "log_sha256": "a3c5742b300738bc5e78d520677247114b0b625b681c515bef1a47726a409889",
+      "log_bytes": 294,
+      "log_created_utc": "2026-11-02T05:27:20.485656+00:00",
+      "counts": {
+        "executed": 1,
+        "seconds": 1.383
+      }
+    },
+    {
+      "id": "windows-nightly",
+      "command": "py -3.13 scripts/windows_nightly_checks.py -v",
+      "exit_code": 0,
+      "status": "PASS",
+      "log": ".runtime/foundation-acceptance/windows-nightly.log",
+      "log_sha256": "08ffc6861cf4402648866eec52b3c0fae985d5e044ba327cab506b31c1be61d3",
+      "log_bytes": 918,
+      "log_created_utc": "2026-11-02T05:27:22.654679+00:00",
+      "counts": {
+        "executed": 6,
+        "seconds": 86.853
+      }
+    },
+    {
+      "id": "windows-ops",
+      "command": "py -3.13 scripts/windows_ops_checks.py -v",
+      "exit_code": 0,
+      "status": "PASS",
+      "log": ".runtime/foundation-acceptance/windows-ops.log",
+      "log_sha256": "3da7e2e915c21897c790226fcfd61c1de433dab99b9ddce07ea53c87c45a9056",
+      "log_bytes": 555,
+      "log_created_utc": "2026-11-02T05:28:50.217543+00:00",
+      "counts": {
+        "executed": 3,
+        "seconds": 23.377
+      }
+    },
+    {
+      "id": "source-bytes",
+      "command": "py -3.13 scripts/verify_sources.py",
+      "exit_code": 0,
+      "status": "PASS",
+      "log": ".runtime/foundation-acceptance/sources-2.log",
+      "log_sha256": "e262cf155ccfc61340c7bcf9803f92f9ae5c27294c0e9d55fbba6ce797fe87ae",
+      "log_bytes": 89,
+      "log_created_utc": "2026-11-02T05:36:47.450469+00:00",
+      "coverage": {
+        "baseline": "poseidon-v46.3-20261030",
+        "files": 269,
+        "chunks": 34958,
+        "mismatches": 0
+      }
+    },
+    {
+      "id": "browser-ordinary",
+      "command": "py -3.13 scripts/browser_gate.py",
+      "exit_code": 0,
+      "status": "PASS",
+      "log": ".runtime/foundation-acceptance/browser-ordinary-final.log",
+      "scope": "46 desktop/mobile Chromium cases; routed transport cases distinguish UI from real authorization",
+      "log_sha256": "96e07a6d7a86746a2dbd88a9c31028cea8397b94cca5604236d401c80fa0b6a1",
+      "log_bytes": 8992,
+      "log_created_utc": "2026-11-02T06:08:37.529171+00:00",
+      "counts": {
+        "passed": 46,
+        "total": 46
+      }
+    },
+    {
+      "id": "browser-discovery",
+      "command": "npm test --prefix tests/Poseidon.Browser.Tests -- --list",
+      "exit_code": 0,
+      "status": "PASS",
+      "log": ".runtime/foundation-acceptance/browser-discovery.log",
+      "discovered": 46,
+      "log_sha256": "1b54f28fb0572db82d91b6f80d52b37e2f5b797d4d5231e5c6fc26b2c35cff6b",
+      "log_bytes": 6283,
+      "log_created_utc": "2026-11-02T05:59:24.381006+00:00"
+    },
+    {
+      "id": "genuine-provider-prepare_humans",
+      "command": "py -3.13 scripts/oidc_lab.py prepare_humans",
+      "exit_code": 1,
+      "status": "BLOCKED",
+      "log": ".runtime/foundation-acceptance/lab-humans.log",
+      "executed_genuine_cases": 0,
+      "reason": "Existing private lab state inaccessible; PermissionError observed without raw diagnostics; private ACL/config/accounts/provider/operator volumes preserved",
+      "log_sha256": "e1d46c5da4835be6a7a9f6b50838602ac288a5f3d44cb6516936df04f15702fc",
+      "log_bytes": 118,
+      "log_created_utc": "2026-11-02T05:27:54.728427+00:00"
+    },
+    {
+      "id": "genuine-provider-prepare_bundle",
+      "command": "py -3.13 scripts/oidc_lab.py prepare_bundle",
+      "exit_code": 1,
+      "status": "BLOCKED",
+      "log": ".runtime/foundation-acceptance/lab-bundle.log",
+      "executed_genuine_cases": 0,
+      "reason": "Existing private lab state inaccessible; PermissionError observed without raw diagnostics; private ACL/config/accounts/provider/operator volumes preserved",
+      "log_sha256": "30409a96e707509ada176692deccf603cd76ec5931b160d1eab45a36656e67ef",
+      "log_bytes": 118,
+      "log_created_utc": "2026-11-02T05:39:32.778301+00:00"
+    },
+    {
+      "id": "genuine-provider-browser",
+      "command": "py -3.13 scripts/oidc_lab.py browser",
+      "exit_code": 1,
+      "status": "BLOCKED",
+      "log": ".runtime/foundation-acceptance/lab-browser.log",
+      "executed_genuine_cases": 0,
+      "reason": "Existing private lab state inaccessible; PermissionError observed without raw diagnostics; private ACL/config/accounts/provider/operator volumes preserved",
+      "log_sha256": "89909f8fd373b0d9dd558702f61d56f510748e03b75ab563f34ec43d39893ccf",
+      "log_bytes": 111,
+      "log_created_utc": "2026-11-02T05:41:15.319193+00:00"
+    },
+    {
+      "id": "genuine-provider-register_browser",
+      "command": "py -3.13 scripts/oidc_lab.py register_browser",
+      "exit_code": 1,
+      "status": "BLOCKED",
+      "log": ".runtime/foundation-acceptance/lab-register.log",
+      "executed_genuine_cases": 0,
+      "reason": "Existing private lab state inaccessible; PermissionError observed without raw diagnostics; private ACL/config/accounts/provider/operator volumes preserved",
+      "log_sha256": "10bbae8629231165860529df4b4c84880680ee8f3f95014b01f58821ece2bb86",
+      "log_bytes": 129,
+      "log_created_utc": "2026-11-02T05:39:38.816268+00:00"
+    },
+    {
+      "id": "register-manifest",
+      "command": "node --input-type=module -e <import registerCases and emit counts>",
+      "exit_code": 0,
+      "status": "PASS",
+      "log": ".runtime/foundation-acceptance/register-discovery.json",
+      "registered_cases": 60,
+      "declared_projects": 2,
+      "executed_cases": 0,
+      "scope": "registration/discovery only; never provider PASS",
+      "log_sha256": "0ccf14fdf30487a7a2d00709dabf3f076166fc840ca357872a7426b523417ded",
+      "log_bytes": 60,
+      "log_created_utc": "2026-11-02T05:59:28.416908+00:00"
+    },
+    {
+      "id": "clamd",
+      "command": "py -3.13 scripts/clamd_gate.py start --state .runtime/foundation-acceptance/clamd.json",
+      "exit_code": 0,
+      "status": "PASS",
+      "log": ".runtime/foundation-acceptance/clamd-start.log",
+      "log_sha256": "a76a753a8b32a2f76bb8a591011bd7b4b45d1476cd9654e66fc3754e5749ca3f",
+      "log_bytes": 140,
+      "log_created_utc": "2026-11-02T05:22:17.296710+00:00"
+    },
+    {
+      "id": "s3",
+      "command": "scripts/s3_gate.py requires --image <owned immutable source-labelled image ID>",
+      "exit_code": null,
+      "status": "BLOCKED",
+      "log": ".runtime/foundation-acceptance/s3-input-inventory.json",
+      "reason": "No locally available owned source-labelled immutable S3 image; no source/provider trust pin fabricated"
+    },
+    {
+      "id": "two-production-build-worker-lifecycle",
+      "command": "genuine-provider register lifecycle case",
+      "exit_code": 1,
+      "status": "BLOCKED",
+      "log": ".runtime/foundation-acceptance/lab-register.log",
+      "executed_cases": 0,
+      "log_sha256": "10bbae8629231165860529df4b4c84880680ee8f3f95014b01f58821ece2bb86",
+      "log_bytes": 129,
+      "log_created_utc": "2026-11-02T05:39:38.816268+00:00"
+    },
+    {
+      "id": "api-artifact",
+      "command": "dotnet publish backend/Poseidon.Api --configuration Release --no-build --no-restore --output .runtime/artifacts/api",
+      "exit_code": 0,
+      "status": "PASS",
+      "log": ".runtime/foundation-acceptance/api-artifact.log",
+      "scope": "local packaging only; no external publication",
+      "log_sha256": "6c4d2494bc89ce6959840d3c13b8f7e5ae0713803fae3e307983216b02926c58",
+      "log_bytes": 150,
+      "log_created_utc": "2026-11-02T05:59:41.326030+00:00"
+    },
+    {
+      "id": "graph",
+      "command": "graphify update .",
+      "exit_code": 0,
+      "status": "PASS",
+      "log": ".runtime/foundation-acceptance/graphify-update-final.log",
+      "scope": "AST only; derived local graph; zero-node warnings preserved in log",
+      "log_sha256": "33cf791a81fcf62ba7b45e4efc6519ad8612ed5394e69702cbd97faa3217a3af",
+      "log_bytes": 1077,
+      "log_created_utc": "2026-11-02T06:11:48.539637+00:00"
+    }
+  ],
+  "earlier_runs": [
+    {
+      "log": ".runtime/foundation-acceptance/restore.log",
+      "exit_code": 1,
+      "reason": "initial AWS lock content-hash disagreement",
+      "log_sha256": "008ee685a8eeb9a222eb0e39b0159e3996a646d520eab72a5e7a2dfa751aff7f"
+    },
+    {
+      "log": ".runtime/foundation-acceptance/build.log",
+      "exit_code": 1,
+      "reason": "initial compiler/integration errors",
+      "log_sha256": "1765bc81825785cb02b1b51754277fdf02bd43354dc73fa7a1045f97c3aa88ff"
+    },
+    {
+      "log": ".runtime/foundation-acceptance/build-8.log",
+      "exit_code": 1,
+      "reason": "build while an owned obsolete test process held copied DLL; interrupted run retained",
+      "log_sha256": "fc506361bd1eefc2de8a95012c90be9515e22a5962985bc81ddc0ea65853b9b7"
+    },
+    {
+      "log": ".runtime/foundation-acceptance/npm-frontend-public.log",
+      "exit_code": 1,
+      "reason": "retry overlapped unfinished npm restore and failed ENOTEMPTY; corrected by sequential npm ci",
+      "log_sha256": "1fbe844026bee812eed70cc009c99cd1356792fe98be1ad59f95027414f4ec1d"
+    },
+    {
+      "log": ".runtime/foundation-acceptance/seed-probe.log",
+      "exit_code": 8,
+      "reason": "zero discovered due incorrect method pattern; explicitly failed, not PASS",
+      "log_sha256": "0679ba2736983174ec16c8a25f947001e4ffddaa56be916087467ba778ac7583"
+    },
+    {
+      "log": ".runtime/foundation-acceptance/python.log",
+      "exit_code": 1,
+      "reason": "246 executed; one failure/one error",
+      "log_sha256": "9fbfc97f6288b758f32d028bb7e75327b487bc4a05b6e50fe75963d65bb5526f"
+    },
+    {
+      "log": ".runtime/foundation-acceptance/python-final.log",
+      "exit_code": 1,
+      "reason": "248 executed; one new test loaded before its temp-unborn-git fixture repair; targeted2 and final248 rerun pass",
+      "log_sha256": "b3dbe4b917d6f5b3b011e35e14594154b25bed4b9e93adeb8199b677ad32a31e"
+    },
+    {
+      "log": ".runtime/foundation-acceptance/browser-ordinary-2.log",
+      "exit_code": 1,
+      "reason": "46 executed;40 passed/6failed",
+      "log_sha256": "66bc0ba2b8074b9901200da549e1b8ad0da5642f0d2f7710fff5561023d47c8f"
+    },
+    {
+      "log": ".runtime/foundation-acceptance/browser-ordinary-3.log",
+      "exit_code": 1,
+      "reason": "46 executed;44 passed/2failed",
+      "log_sha256": "6ee8552026f922e6d31f490c8dbaf7f85843c59cabab3f1942cff01786b38b06"
+    },
+    {
+      "log": ".runtime/foundation-acceptance/persistence-integration.log",
+      "status": "INTERRUPTED",
+      "reason": "Repeated now-repaired model/audit/seed integration failure; owned obsolete process stopped, not a complete suite PASS",
+      "log_sha256": "893d1b1392fa3f89b0b75f39fe319edc45f264b8e661c16330722bfd15720cd6"
+    },
+    {
+      "log": ".runtime/foundation-acceptance/api-integration.log",
+      "status": "INTERRUPTED",
+      "reason": "Repeated now-repaired model/audit/seed integration failure; owned obsolete process stopped, not a complete suite PASS",
+      "log_sha256": "4247d4dcd675f74baa021b96959fc8a09e8fc4dd5a4751a5b9eaba3ba09c2eb9"
+    },
+    {
+      "log": ".runtime/foundation-acceptance/persistence-integration-2.log",
+      "status": "INTERRUPTED",
+      "reason": "Repeated now-repaired model/audit/seed integration failure; owned obsolete process stopped, not a complete suite PASS",
+      "log_sha256": "15b46f3e72d0212abd73c54f962d58f56c3a38b25161031bb7c098da2fddf91b"
+    },
+    {
+      "log": ".runtime/foundation-acceptance/api-integration-2.log",
+      "status": "INTERRUPTED",
+      "reason": "Repeated now-repaired model/audit/seed integration failure; owned obsolete process stopped, not a complete suite PASS",
+      "log_sha256": "04685bfb7cfa3fefe7fee7fd46defdf2e2db2c39f0d6ab82b1a96c72cc3ef25b"
+    },
+    {
+      "log": ".runtime/foundation-acceptance/persistence-integration-3.log",
+      "status": "INTERRUPTED",
+      "reason": "Repeated now-repaired model/audit/seed integration failure; owned obsolete process stopped, not a complete suite PASS",
+      "log_sha256": "3884a75f277ab953c4268eea543a364f027e49848b5a1b98159eb8771b99c84f"
+    },
+    {
+      "log": ".runtime/foundation-acceptance/api-integration-3.log",
+      "status": "INTERRUPTED",
+      "reason": "Repeated now-repaired model/audit/seed integration failure; owned obsolete process stopped, not a complete suite PASS",
+      "log_sha256": "719fcb3ac72684e92868b522c498dec8e10c83408f2d9837500aede1ae1e1951"
+    }
+  ],
+  "coordinator_execution_disposition": {
+    "job_id": "1a75188f393c4001914faefe3f8d32bf",
+    "result": "timeout",
+    "at": "2026-11-02T06:18:59.180524+00:00",
+    "quota_failure": false,
+    "native_and_leftover_owned_processes_absent_before_preservation": true,
+    "approved": false,
+    "candidate_identity_scope": "Ordinary code checkpoint; raw execution fingerprints retained, not independent QA or canonical acceptance"
+  }
+}

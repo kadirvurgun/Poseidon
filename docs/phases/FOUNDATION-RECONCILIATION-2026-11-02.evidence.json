@@ -1,0 +1,56 @@
+{
+  "status": "INCOMPLETE_AUTHORED_NOT_RUN_NOT_ACCEPTED",
+  "receiving_head": "43536c9",
+  "current_committed_head": "d52270f",
+  "checkpoint_kind": "UNCOMMITTED_WORKTREE_SOURCE_INVENTORY_NOT_TEST_EVIDENCE",
+  "configured_base_commit": "80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44",
+  "safety_origin": "25f2845afae99bd269152730f1ace67365c2d539",
+  "safety_receipt": "d52270f",
+  "safety_receipt_content_diff": "EMPTY: all five origin paths at receipt",
+  "source_hashes_sha256": {
+    "backend/Poseidon.Domain/RegulatoryQualificationPolicy.cs": "a580012906e7183c797c87c6db06ed26e018bc7a34c383b2bc88e1e671d91975",
+    "frontend/src/product/qualification-api.ts": "87f77e91839ad358b2ad253fbcb4bd7b384f1ac06fbd84aee0a25bd8ead1954f",
+    "frontend/src/product/qualification-api.test.ts": "93825ec69a2e7c8c485a197274e43f7f3d12fd8a96deedb27adecdd183ef9661",
+    "frontend/src/product/RegulatoryQualification.test.tsx": "29223d119861840ced96e7e8c7a5161e096596bd02515d52771a939cd1b50104",
+    "tests/Poseidon.Api.Tests/RegulatoryAdmissionCurrentTests.cs": "f1f1f68591e54715c962ae4532c17b6cc19e0e5a75df110c734aeef2ea80e9ab",
+    "tests/Poseidon.Api.Tests/QualificationWireAbsenceTests.cs": "d00fc94daa434e4d3b0a177b32189616c13f17f25ca2207a936fe94fddd5a5ce"
+  },
+  "static_additional_cases_not_discovered": {
+    "api_pg": 12,
+    "react_wire": 4
+  },
+  "test_discovery": null,
+  "executed_tests": null,
+  "passed_tests": null,
+  "suite_duration": null,
+  "all_required_software_gates": "NOT_RUN: software precondition false",
+  "source_only_observations": {
+    "tracked_git_diff_check_exit": 0,
+    "fetch_exit": 0,
+    "base_ancestor_exit": 0,
+    "origin_main": "5a2930b17c3895f1d9d20212e0319fff37cf8cd2",
+    "upstream_author_counts_at_receipt": [
+      0,
+      73
+    ],
+    "changed_paths_from_base_at_receipt": 562,
+    "ast": {
+      "tracked_whitespace_exit": 0,
+      "graphify_ast_exit": 0,
+      "nodes": 7596,
+      "edges": 16572,
+      "communities": 516,
+      "zero_node_warnings": 53,
+      "product_validation": "NOT_RUN"
+    }
+  },
+  "required_existing_inventory": [
+    "All3 backend projects",
+    "All frontend tests and current generated consumers",
+    "ordinary playwright.config.ts",
+    "register.playwright.config.ts/register-specs and common real-provider direct manifest",
+    "all Python/Windows/source/AST checks including Safety3/lab7/native8 regression source",
+    "mandatory repository and actual built-client reviewed_secret_scan.py consumer"
+  ],
+  "canonical_progress": "8/970SP;2/121tasks;0/196accepted"
+}

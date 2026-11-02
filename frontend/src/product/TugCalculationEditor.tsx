@@ -1,0 +1,18 @@
+import { blankCalculation, type CalculationPolicy } from './tug-capability-contract'
+
+export function TugCalculationEditor({ value, onChange, language }: { value: CalculationPolicy | null; onChange: (v: CalculationPolicy | null) => void; language: 'tr' | 'en' }) {
+  const t = (en: string, tr: string) => language === 'en' ? en : tr
+  const patch = (p: Partial<CalculationPolicy>) => onChange({ ...(value ?? blankCalculation()), ...p })
+  return <fieldset><legend>{t('Source qualified tug calculation', 'Kaynak nitelendirmeli römorkör hesabı')}</legend>
+    <label>{t('Calculation source scope', 'Hesap kaynak kapsamı')}<select value={value ? 'tug' : ''} onChange={e => onChange(e.target.value ? blankCalculation() : null)}><option value="">{t('No tug calculation policy', 'Römorkör hesap politikası yok')}</option><option value="tug">{t('Author tug calculation policy', 'Römorkör hesap politikası yaz')}</option></select></label>
+    {value && <>
+      <p>{t('No coefficient or formula is preapproved. Cite actual source authority; review is independent. Planning capacity never releases a job.', 'Ön onaylı katsayı veya formül yoktur. Gerçek kaynak yetkisini belirtin; inceleme bağımsızdır. Planlama kapasitesi işi serbest bırakmaz.')}</p>
+      <label>{t('Source formula', 'Kaynak formülü')}<select value={value.formula ?? ''} onChange={e => patch({ formula: e.target.value as CalculationPolicy['formula'] || null })}><option value="">{t('Unknown', 'Bilinmiyor')}</option><option value="MeasuredTimesVerifiedCondition">{t('Measured BP × verified condition factor', 'Ölçülen BP × doğrulanmış kondisyon katsayısı')}</option></select></label>
+      <label>{t('Source aggregation', 'Kaynak toplama kuralı')}<select value={value.aggregation ?? ''} onChange={e => patch({ aggregation: e.target.value as CalculationPolicy['aggregation'] || null })}><option value="">{t('Unknown', 'Bilinmiyor')}</option><option value="SumForPlanning">{t('Sum for planning context only', 'Yalnız planlama bağlamı için toplam')}</option></select></label>
+      <label>{t('Source rounding', 'Kaynak yuvarlama kuralı')}<select value={value.rounding ?? ''} onChange={e => patch({ rounding: e.target.value as CalculationPolicy['rounding'] || null })}><option value="">{t('Unknown', 'Bilinmiyor')}</option><option value="Floor">{t('Round down to qualified scale', 'Nitelendirilmiş basamağa aşağı yuvarla')}</option></select></label>
+      {(['sourceLocator', 'maxLossPercent'] as const).map((key, i) => <label key={key}>{[t('Exact formula / coefficient / unit source locator', 'Kesin formül / katsayı / birim kaynak konumu'), t('Source maximum certified-to-measured loss (%)', 'Kaynak azami sertifikalı-ölçülen kaybı (%)')][i]}<input value={value[key] ?? ''} onChange={e => patch({ [key]: e.target.value || null })} /></label>)}
+      {(['scale', 'maxTestAgeDays'] as const).map((key, i) => <label key={key}>{[t('Qualified decimal scale (0–6)', 'Nitelendirilmiş ondalık basamak (0–6)'), t('Source maximum test age (days)', 'Kaynak azami test yaşı (gün)')][i]}<input type="number" value={value[key] ?? ''} onChange={e => patch({ [key]: e.target.value === '' ? null : Number(e.target.value) })} /></label>)}
+      {(['jobTypes', 'areas'] as const).map((key, i) => <label key={key}>{[t('Exact job type codes, separated by semicolons', 'Kesin iş türü kodları, noktalı virgülle ayrı'), t('Exact operating areas, separated by semicolons', 'Kesin operasyon alanları, noktalı virgülle ayrı')][i]}<input value={value[key]?.join(';') ?? ''} onChange={e => patch({ [key]: e.target.value ? e.target.value.split(';') : null })} /></label>)}
+    </>}
+  </fieldset>
+}

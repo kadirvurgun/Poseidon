@@ -27,7 +27,7 @@ public sealed partial class DirectoryWorkspaceTests
         await SaveProfile(client, initial, new RegulatoryDraftContent { Gt = new("Known", "0.00000000000000000001"), Flag = new("Unknown"),
             SourceObservedAt = new("Known", "2001-01-01T00:00:00Z"), SourceReference = new("Known", "synthetic-private-reference") });
         var why = (await client.GetFromJsonAsync<TodayWhyDto>(WhyPath, Ct))!;
-        Assert.Equal(new DraftObservation(3, 13, 1, "DraftUnverified"), why.Inputs);
+        Assert.Equal(new DraftObservation(3, 16, 1, "DraftUnverified"), why.Inputs);
         Assert.Equal("Unverified", why.Freshness); Assert.Equal("DeclaredUnverified", why.Provenance);
         Assert.Equal(DateTimeOffset.Parse("2001-01-01T00:00:00Z"), DateTimeOffset.Parse(why.SourceObservedAt!));
         Assert.True(why.SavedAt > DateTimeOffset.Parse(why.SourceObservedAt!)); Assert.Null(why.Owner);
@@ -53,7 +53,7 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Null(absentWhy.SavedAt); Assert.Null(absentWhy.SourceObservedAt);
         Assert.Equal("Missing", absentWhy.Provenance); Assert.Equal("Unverified", absentWhy.Freshness);
         var empty = (await client.GetFromJsonAsync<TodayDto>(TodayPath + "&offset=1&limit=1", Ct))!;
-        Assert.Empty(empty.Cards.Items); Assert.False(empty.Cards.HasMore); Assert.Equal(5, empty.Coverage.Length);
+        Assert.Empty(empty.Cards.Items); Assert.False(empty.Cards.HasMore); Assert.Equal(6, empty.Coverage.Length);
         var again = (await client.GetFromJsonAsync<TodayDto>(TodayPath + "&offset=0&limit=1", Ct))!;
         Assert.Equal("regulatory-draft", Assert.Single(again.Cards.Items).Key);
     }

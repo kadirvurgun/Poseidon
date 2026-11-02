@@ -1,0 +1,46 @@
+{
+  "task": "TUG-FOUNDATION-01",
+  "kind": "developer_authored_source_mapping_not_independent_review",
+  "status": "UNVERIFIED_INCOMPLETE_NOT_ACCEPTED",
+  "accepted": false,
+  "baseline": "poseidon-v46.3-20261030",
+  "backlog_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+  "criteria": [
+    {
+      "locator": "18.01/Backlog/81",
+      "story": "DEV-080",
+      "test_id": "T-TUG-001",
+      "state": "AUTHORED_WITH_OPEN_ADAPTER_GAPS"
+    },
+    {
+      "locator": "18.01/Backlog/82",
+      "story": "DEV-081",
+      "test_id": "T-TUG-002",
+      "state": "DRAFT_AUTHORED_STATE_CONTRACT_OPEN"
+    },
+    {
+      "locator": "18.01/Backlog/83",
+      "story": "DEV-082",
+      "test_id": "T-TUG-003",
+      "state": "HONEST_BOARD_AUTHORED_OPERATIONAL_INPUTS_UNAVAILABLE"
+    }
+  ],
+  "field_locator": "14.02/Data Dictionary 2316/1914..1945; corresponding11.01/2316 Alan v46.3 FR/TC IDs",
+  "source_mapping": "docs/tasks/tug-foundation-01.md",
+  "checks": {
+    "domain": "DEFERRED",
+    "postgres_api": "DEFERRED",
+    "migration_snapshot": "DEFERRED",
+    "react": "DEFERRED",
+    "private_signed_provider_browser": "DEFERRED",
+    "build_typecheck_contracts": "DEFERRED",
+    "independent_qa": "DEFERRED",
+    "remote_ci": "DEFERRED"
+  },
+  "support": {
+    "origin": "40ec40cdef905ca3e7e0f0e5db56b0eb0ba76756",
+    "receipt": "c711fd8",
+    "status": "UNVERIFIED"
+  },
+  "canonical_acceptance_changed": false
+}

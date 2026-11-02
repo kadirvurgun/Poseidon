@@ -1,3 +1,5 @@
+import { WorkspaceContextBar } from './WorkspaceContextBar'
+import { VesselAttachments } from './VesselAttachments'
 import { useEffect, useState } from 'react'
 import * as api from './api'
 import './product.css'
@@ -8,12 +10,14 @@ import { RegulatoryProfile } from './RegulatoryProfile'
 import { editorCopy } from './editor-copy'
 import { loginHref, readLocation, useWorkspaceLocation } from './workspace-location'
 import { TodayWorkspace } from './TodayWorkspace'
-import { WorkspaceSearch } from './WorkspaceSearch'
+import { WorkspaceRoleNavigation } from './WorkspaceRoleNavigation'
+import { isSeparateWorkspaceDestination } from './workspace-search-api'
+import { AuditWorkspace } from './AuditWorkspace'
 import { RegulatoryRegister } from './RegulatoryRegister'
 
 const copy = {
-  tr: { today: 'Bugün', companies: 'Şirketler', fleet: 'Filo', signin: 'Oturum aç', signout: 'Oturumu kapat', loading: 'Yükleniyor…', retry: 'Tekrar dene', empty: 'Kayıt bulunamadı.', unavailable: 'Hizmete ulaşılamıyor. Lütfen tekrar deneyin.', forbidden: 'Bu çalışma alanına erişim yetkiniz yok.', expired: 'Devam etmek için oturum açın.', setup: 'Kurumsal oturum açma henüz yapılandırılmadı. Kuruluş yöneticinizle iletişime geçin.', tenant: 'Çalışma alanı', identity: 'Oturum', ship: 'Gemi', tug: 'Römorkör', all: 'Tüm araçlar', name: 'Ad', code: 'Kod', kind: 'Tür', next: 'Sonraki', previous: 'Önceki', close: 'Kapat', details: 'Ayrıntılar', skip: 'Ana içeriğe geç', failed: 'Oturum açma tamamlanamadı. Lütfen tekrar deneyin.', intro: 'Yetkili olduğunuz kayıtları görüntüleyin.', language: 'Dil', filter: 'Araç türü', page: 'Sayfa', technical: 'Sistem bağlantısı' },
-  en: { today: 'Today', companies: 'Companies', fleet: 'Fleet', signin: 'Sign in', signout: 'Sign out', loading: 'Loading…', retry: 'Retry', empty: 'No records found.', unavailable: 'The service is unavailable. Please try again.', forbidden: 'You do not have access to this workspace.', expired: 'Sign in to continue.', setup: 'Organization sign-in has not been configured. Contact your organization administrator.', tenant: 'Workspace', identity: 'Session', ship: 'Ship', tug: 'Tug', all: 'All vessels', name: 'Name', code: 'Code', kind: 'Type', next: 'Next', previous: 'Previous', close: 'Close', details: 'Details', skip: 'Skip to main content', failed: 'Sign-in could not be completed. Please try again.', intro: 'Browse the records available in your workspace.', language: 'Language', filter: 'Vessel type', page: 'Page', technical: 'System connection' },
+  tr: { audit: 'İşlem geçmişi', today: 'Bugün', companies: 'Şirketler', fleet: 'Filo', signin: 'Oturum aç', signout: 'Oturumu kapat', loading: 'Yükleniyor…', retry: 'Tekrar dene', empty: 'Kayıt bulunamadı.', unavailable: 'Hizmete ulaşılamıyor. Lütfen tekrar deneyin.', forbidden: 'Bu çalışma alanına erişim yetkiniz yok.', expired: 'Devam etmek için oturum açın.', setup: 'Kurumsal oturum açma henüz yapılandırılmadı. Kuruluş yöneticinizle iletişime geçin.', tenant: 'Çalışma alanı', identity: 'Oturum', ship: 'Gemi', tug: 'Römorkör', all: 'Tüm araçlar', name: 'Ad', code: 'Kod', kind: 'Tür', next: 'Sonraki', previous: 'Önceki', close: 'Kapat', details: 'Ayrıntılar', skip: 'Ana içeriğe geç', failed: 'Oturum açma tamamlanamadı. Lütfen tekrar deneyin.', intro: 'Yetkili olduğunuz kayıtları görüntüleyin.', language: 'Dil', filter: 'Araç türü', page: 'Sayfa', technical: 'Sistem bağlantısı' },
+  en: { audit: 'Action history', today: 'Today', companies: 'Companies', fleet: 'Fleet', signin: 'Sign in', signout: 'Sign out', loading: 'Loading…', retry: 'Retry', empty: 'No records found.', unavailable: 'The service is unavailable. Please try again.', forbidden: 'You do not have access to this workspace.', expired: 'Sign in to continue.', setup: 'Organization sign-in has not been configured. Contact your organization administrator.', tenant: 'Workspace', identity: 'Session', ship: 'Ship', tug: 'Tug', all: 'All vessels', name: 'Name', code: 'Code', kind: 'Type', next: 'Next', previous: 'Previous', close: 'Close', details: 'Details', skip: 'Skip to main content', failed: 'Sign-in could not be completed. Please try again.', intro: 'Browse the records available in your workspace.', language: 'Language', filter: 'Vessel type', page: 'Page', technical: 'System connection' },
 }
 type State<T> = { state: 'loading' } | { state: 'ok'; data: T } | { state: 'error'; status: number }
 const errorStatus = (error: unknown) => error instanceof api.ApiError ? error.status : 0
@@ -23,6 +27,7 @@ export function ProductApp() {
   const [identity, setIdentity] = useState<State<api.Session>>({ state: 'loading' })
   const [attempt, setAttempt] = useState(0)
   const [identityAttempt, setIdentityAttempt] = useState(0)
+  const [auditAllowed, setAuditAllowed] = useState(false)
   const [regulatory, setRegulatory] = useState(false)
   const [regulatoryWrite, setRegulatoryWrite] = useState(false)
   const [offset, setOffset] = useState(0)
@@ -34,7 +39,6 @@ export function ProductApp() {
   const [logoutError, setLogoutError] = useState(false)
   const [editor, setEditor] = useState<EditorTarget | null>(null)
   const [drawer, setDrawer] = useState(false)
-  const [powerSearch, setPowerSearch] = useState(false)
   const [offline, setOffline] = useState(!navigator.onLine)
   const [dirty, setDirty] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -49,7 +53,7 @@ export function ProductApp() {
     else action()
   }
   const closeEditor = () => { setEditor(null); setDirty(false); setProfileInstance(v => v + 1) }
-  const { route, move } = useWorkspaceLocation(guard, () => { closeEditor(); setDrawer(false); setPowerSearch(false); setDetail({ state: 'loading' }); setRecords({ state: 'loading' }); setOffset(0); setSearch(''); setSearchInput(''); setAttempt(v => v + 1); document.getElementById('product-main')?.focus() })
+  const { route, move } = useWorkspaceLocation(guard, () => { closeEditor(); setDrawer(false); setDetail({ state: 'loading' }); setRecords({ state: 'loading' }); setOffset(0); setSearch(''); setSearchInput(''); setAttempt(v => v + 1); document.getElementById('product-main')?.focus() })
   const tab = route.tab
   const selected = route.selected
   const profileOpen = route.profile
@@ -65,8 +69,8 @@ export function ProductApp() {
     const c = new AbortController(); let active = true
     const timer = setTimeout(() => c.abort(), 10000)
     api.request<{ destinations: { key: string; href: string }[]; canWriteRegulatory: boolean }>('workspace', c.signal).then(value => {
-      if (active) { setRegulatory(Array.isArray(value?.destinations) && value.destinations.some(d => d.key === 'sources' && d.href === '/app/sources')); setRegulatoryWrite(value.canWriteRegulatory === true) }
-    }).catch(() => { if (active) { setRegulatory(false); setRegulatoryWrite(false) } })
+      if (active) { setRegulatory(Array.isArray(value?.destinations) && value.destinations.some(d => d.key === 'sources' && d.href === '/app/sources')); setRegulatoryWrite(value.canWriteRegulatory === true); setAuditAllowed(Array.isArray(value?.destinations) && value.destinations.some(d => d.key === 'audit' && d.href === '/app/audit')) }
+    }).catch(() => { if (active) { setRegulatory(false); setRegulatoryWrite(false); setAuditAllowed(false) } })
     return () => { active = false; c.abort(); clearTimeout(timer) }
   }, [canRead, route.invalid, identityAttempt])
 
@@ -79,7 +83,6 @@ export function ProductApp() {
   }, [dirty, saving])
   useEffect(() => {
     const key = (event: KeyboardEvent) => {
-      if (user?.canSearch && (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); setDrawer(false); setPowerSearch(true) }
       if (event.key === 'Escape') setDrawer(false)
     }
     window.addEventListener('keydown', key)
@@ -89,7 +92,7 @@ export function ProductApp() {
     if (!drawer) return
     const previous = document.activeElement as HTMLElement | null
     const nav = document.getElementById('workspace-navigation')!
-    const elements = () => Array.from(nav.querySelectorAll<HTMLElement>('button:not(:disabled), a[href]'))
+    const elements = () => Array.from(nav.querySelectorAll<HTMLElement>('button:not(:disabled), a[href], select:not(:disabled), input:not(:disabled)'))
     elements()[0]?.focus()
     const trap = (event: KeyboardEvent) => {
       if (event.key !== 'Tab') return
@@ -110,7 +113,7 @@ export function ProductApp() {
     return () => { active = false; clearTimeout(timeout); controller.abort() }
   }, [identityAttempt, move])
   useEffect(() => {
-    if (tab === 'today' || registerTab || !canRead || route.invalid || (tab === 'companies' && !user?.canReadCompanies)) return
+    if (tab === 'audit' || tab === 'today' || registerTab || !canRead || route.invalid || (tab === 'companies' && !user?.canReadCompanies)) return
     const controller = new AbortController()
     let active = true
     const timeout = setTimeout(() => { controller.abort(); }, 10000)
@@ -119,7 +122,7 @@ export function ProductApp() {
     return () => { active = false; clearTimeout(timeout); controller.abort() }
   }, [canRead, user?.canReadCompanies, route.invalid, tab, registerTab, offset, kind, search, attempt])
   useEffect(() => {
-    if (tab === 'today' || registerTab || !selected || !canRead || (tab === 'companies' && !user?.canReadCompanies)) return
+    if (tab === 'audit' || tab === 'today' || registerTab || !selected || !canRead || (tab === 'companies' && !user?.canReadCompanies)) return
     const controller = new AbortController()
     let active = true
     const timeout = setTimeout(() => controller.abort(), 10000)
@@ -131,10 +134,14 @@ export function ProductApp() {
   const message = (status: number) => status === 401 ? t.expired : status === 403 ? t.forbidden : status === 404 ? t.empty : t.unavailable
   const retry = () => { setIdentity({ state: 'loading' }); setIdentityAttempt(v => v + 1); setRecords({ state: 'loading' }); setDetail({ state: 'loading' }); setAttempt(v => v + 1) }
   const navigate = (value: typeof tab) => { if (value === tab && !selected) { setDrawer(false); return }; guard(() => { closeEditor(); setDrawer(false); setNotice(''); setTab(value); setSearch(''); setSearchInput(''); setOffset(0); setRecords({ state: 'loading' }); setAttempt(v => v + 1); document.getElementById('product-main')?.focus() }) }
-  const follow = (href: string) => {
+  const follow = (href: string, committed?: () => void) => {
+    if (/^\/app\/maintenance-plan\/[0-9a-f-]{36}\?id=[0-9a-f-]{36}$/.test(href) || isSeparateWorkspaceDestination(href.split('?')[0]) || /^\/app\/(crew-roster|equipment-hierarchy|maintenance-plan|excel-migration)\/[0-9a-f-]{36}$/.test(href)) {
+      guard(() => { committed?.(); closeEditor(); window.location.assign(href) })
+      return
+    }
     const next = href === '/app' && !user?.canReadCompanies ? { tab: 'fleet' as const, selected: null, profile: false } : readLocation(href)
     if (next.invalid || (next.tab === 'companies' && !user?.canReadCompanies)) return
-    guard(() => { closeEditor(); move(next); setDrawer(false); setPowerSearch(false); setDetail({ state: 'loading' }); setRecords({ state: 'loading' }); setOffset(0); setSearch(''); setSearchInput(''); setAttempt(v => v + 1); document.getElementById('product-main')?.focus() })
+    guard(() => { committed?.(); closeEditor(); move(next); setDrawer(false); setDetail({ state: 'loading' }); setRecords({ state: 'loading' }); setOffset(0); setSearch(''); setSearchInput(''); setAttempt(v => v + 1); document.getElementById('product-main')?.focus() })
   }
   const signout = async () => {
     if (!user) return
@@ -148,21 +155,22 @@ export function ProductApp() {
 
   return <div className="product-shell" onClickCapture={event => {
     const anchor = (event.target as HTMLElement).closest('a')
+    if (anchor?.closest('.workspace-search')) return
     if (anchor && !anchor.getAttribute('href')?.startsWith('#') && (dirty || saving)) {
       event.preventDefault(); event.stopPropagation()
       const url = new URL(anchor.href)
-      if (url.origin === window.location.origin && !readLocation(url.pathname).invalid) follow(url.pathname)
+      if (url.origin === window.location.origin && !readLocation(url.pathname).invalid) follow(url.pathname + url.search)
       else guard(() => { window.location.assign(anchor.href) })
     }
   }}>
     <a className="skip-link" href="#product-main">{t.skip}</a>
-    <header className="product-header" inert={drawer}><a href="/app" className="product-brand">POSEIDON</a><button className="workspace-menu" aria-expanded={drawer} aria-controls="workspace-navigation" onClick={() => setDrawer(v => !v)}>{language === 'en' ? 'Menu' : 'Menü'}</button><span className="workspace-breadcrumb">{heading}</span>{user?.canSearch && <button onClick={() => setPowerSearch(true)}>{language === 'en' ? 'Search workspace' : 'Çalışma alanında ara'} <kbd>Ctrl K</kbd></button>}<div className="languages" role="group" aria-label={t.language}><button aria-pressed={language === 'tr'} onClick={() => setLanguage('tr')}>TR</button><button aria-pressed={language === 'en'} onClick={() => setLanguage('en')}>EN</button></div></header>
-    <nav id="workspace-navigation" className={`product-nav ${drawer ? 'is-open' : ''}`} aria-label="POSEIDON" role={drawer ? "dialog" : undefined} aria-modal={drawer ? true : undefined}>{drawer && <button onClick={() => setDrawer(false)}>{t.close}</button>}{user?.canReadCompanies && <button aria-current={tab === 'companies' ? 'page' : undefined} onClick={() => navigate('companies')}>{t.companies}</button>}{canRead && <button aria-current={tab === 'today' ? 'page' : undefined} onClick={() => navigate('today')}>{t.today}</button>}{canRead && <button aria-current={tab === 'fleet' ? 'page' : undefined} onClick={() => navigate('fleet')}>{t.fleet}</button>}<a href="/">{t.technical}</a></nav>
+    <header className="product-header" inert={drawer}><a href="/app" className="product-brand">POSEIDON</a><button className="workspace-menu" aria-expanded={drawer} aria-controls="workspace-navigation" onClick={() => setDrawer(v => !v)}>{language === 'en' ? 'Menu' : 'Menü'}</button><span className="workspace-breadcrumb">{heading}</span><div className="languages" role="group" aria-label={t.language}><button aria-pressed={language === 'tr'} onClick={() => setLanguage('tr')}>TR</button><button aria-pressed={language === 'en'} onClick={() => setLanguage('en')}>EN</button></div><WorkspaceContextBar session={user} vessel={tab === 'fleet' || tab === 'today' ? selected : null} language={language} /></header>
+    <nav id="workspace-navigation" className={`product-nav ${drawer ? 'is-open' : ''}`} aria-label="POSEIDON" role={drawer ? "dialog" : undefined} aria-modal={drawer ? true : undefined}>{drawer && <button onClick={() => setDrawer(false)}>{t.close}</button>}<WorkspaceRoleNavigation session={user} vessel={tab === 'fleet' || tab === 'today' ? selected : null} language={language} onNavigate={follow} onSearchOpen={() => setDrawer(false)} /><a href="/">{t.technical}</a></nav>
     <main id="product-main" tabIndex={-1} inert={drawer}>
-      {canRead && regulatory && <nav aria-label={language === 'en' ? 'Regulatory drafts' : 'Mevzuat taslakları'}><button aria-current={tab === 'sources' ? 'page' : undefined} onClick={() => navigate('sources')}>{language === 'en' ? 'Source drafts' : 'Kaynak taslakları'}</button><button aria-current={tab === 'requirements' ? 'page' : undefined} onClick={() => navigate('requirements')}>{language === 'en' ? 'Requirement drafts' : 'Gereksinim taslakları'}</button></nav>}
+
       <h1>{heading}</h1><p>{t.intro}</p>
       {offline && <p role="alert">{language === 'en' ? 'Offline. Displayed data is unverified; reconnect and retry.' : 'Çevrimdışı. Görüntülenen veriler doğrulanmadı; bağlanıp tekrar deneyin.'}</p>}
-      {powerSearch && user?.canSearch && <WorkspaceSearch language={language} onClose={() => setPowerSearch(false)} onNavigate={follow} />}
+
       {canRead && (route.invalid || (tab === 'companies' && !user?.canReadCompanies)) && <p role="alert">{t.forbidden}</p>}
       {canRead && tab === 'fleet' && selected && detail.state === 'ok' && 'kind' in detail.data && <div className="workspace-context"><span>{language === 'en' ? 'Current vessel' : 'Etkin araç'}: <strong>{detail.data.kind === 'Ship' ? t.ship : t.tug} · {detail.data.name}</strong></span><button disabled={saving} onClick={() => navigate('fleet')}>{language === 'en' ? 'Switch vessel' : 'Araç değiştir'}</button></div>}
       {identity.state === 'loading' && <p role="status">{t.loading}</p>}
@@ -176,10 +184,11 @@ export function ProductApp() {
       {pendingNavigation && <DraftConfirmation language={language} onStay={() => setPendingNavigation(null)} onDiscard={() => {
         const action = pendingNavigation; setPendingNavigation(null); closeEditor(); action()
       }} />}
+      {canRead && !route.invalid && tab === 'audit' && <AuditWorkspace key={`${user?.tenantId}:${user?.actorId}:${selected}:${route.query ?? ''}`} language={language} selected={selected} query={route.query} allowed={auditAllowed} onNavigate={follow} />}
       {canRead && !route.invalid && tab === 'today' && <TodayWorkspace key={selected ?? 'select'} id={selected} language={language} offline={offline} onNavigate={follow} />}
       {canRead && regulatory && tab === 'today' && <p><a href="/app/sources" onClick={e => { e.preventDefault(); follow('/app/sources') }}>{language === 'en' ? 'Review tenant source drafts (unverified)' : 'Kuruluş kaynak taslaklarını incele (doğrulanmamış)'}</a></p>}
       {canRead && !route.invalid && registerTab && <RegulatoryRegister key={`${tab}-${selected}-${profileInstance}`} kind={tab === 'sources' ? 'sources' : 'requirements'} id={selected} language={language} csrf={user!.csrfToken} canWrite={regulatoryWrite} offline={offline} onDirty={setDirty} onSaving={setSaving} onNavigate={follow} />}
-      {canRead && !registerTab && tab !== 'today' && !route.invalid && (tab !== 'companies' || user?.canReadCompanies) && <>
+      {canRead && !registerTab && tab !== 'audit' && tab !== 'today' && !route.invalid && (tab !== 'companies' || user?.canReadCompanies) && <>
         {notice && <p role="status" className="directory-notice">{notice}</p>}
         {user?.canCreate && <button className="primary-button" disabled={saving} onClick={() => guard(() => { closeEditor(); move({ tab, selected: null, profile: false }); setNotice(''); setEditor({ instanceKey: crypto.randomUUID(), resource: tab === 'companies' ? 'companies' : 'vessels' }) })}>{et.create}</button>}
         {editor && user && <DirectoryEditor key={editor.instanceKey} target={editor} language={language} csrf={user.csrfToken} onDirty={setDirty} onSaving={setSaving}
@@ -198,6 +207,10 @@ export function ProductApp() {
           {records.state === 'ok' && <div className="product-pagination"><button disabled={offset === 0} onClick={() => guard(() => { closeEditor(); setOffset(v => Math.max(0, v - 25)); setRecords({ state: 'loading' }); setSelected(null) })}>{t.previous}</button><span>{t.page} {offset / 25 + 1}</span><button disabled={!records.data.hasMore} onClick={() => guard(() => { closeEditor(); setOffset(v => v + 25); setRecords({ state: 'loading' }); setSelected(null) })}>{t.next}</button></div>}
         </section>
         {selected && <section className="product-detail" aria-label={t.details}><h2>{t.details}</h2><button onClick={() => guard(() => { closeEditor(); setSelected(null) })}>{t.close}</button>{detail.state === 'loading' ? <p role="status">{t.loading}</p> : detail.state === 'error' ? <div role="alert"><p>{message(detail.status)}</p><button onClick={() => guard(() => { closeEditor(); retry() })}>{t.retry}</button></div> : <>{'kind' in detail.data && <button disabled={saving} onClick={() => guard(() => { closeEditor(); move({ tab, selected, profile: true }) })}>{language === 'tr' ? 'Mevzuat profili' : 'Regulatory profile'}</button>}{detail.data.canEdit && <button disabled={saving} onClick={() => guard(() => { closeEditor(); move({ tab, selected, profile: false }); setEditor({ instanceKey: crypto.randomUUID(), resource: tab === 'companies' ? 'companies' : 'vessels', record: detail.data }) })}>{et.edit}</button>}<dl><dt>{t.code}</dt><dd>{detail.data.code}</dd><dt>{t.name}</dt><dd>{detail.data.name}</dd>{'kind' in detail.data && <><dt>{t.kind}</dt><dd>{detail.data.kind === 'Tug' ? t.tug : t.ship}</dd></>}</dl></>}</section>}
+        {selected && tab === 'fleet' && user && detail.state === 'ok' && <p><a href={`/app/excel-migration/${selected}`}>{language === 'en' ? 'Controlled import' : 'Kontrollü içe aktarma'}</a></p>}
+        {selected && tab === 'fleet' && user && detail.state === 'ok' && <p><a href={`/app/equipment-hierarchy/${selected}`}>{language === 'en' ? 'Equipment and maintenance' : 'Ekipman ve bakım'}</a></p>}
+        {selected && tab === 'fleet' && user && detail.state === 'ok' && <p><a href={`/app/crew-roster/${selected}`}>{language === 'en' ? 'Crew roster' : 'Mürettebat listesi'}</a></p>}
+        {selected && tab === 'fleet' && user && detail.state === 'ok' && !profileOpen && !editor && <VesselAttachments key={`${user.tenantId}:${user.actorId}:${selected}`} vessel={selected} language={language} csrf={user.csrfToken} onDirty={setDirty} onSaving={setSaving} />}
         {profileOpen && selected && tab === 'fleet' && user && detail.state === 'ok' && <RegulatoryProfile key={`${selected}-${profileInstance}`} id={selected} language={language} csrf={user.csrfToken} onDirty={setDirty} onSaving={setSaving} />}
       </>}
     </main>

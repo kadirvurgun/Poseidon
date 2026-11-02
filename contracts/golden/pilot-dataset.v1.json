@@ -1,0 +1,853 @@
+{
+  "schemaVersion": "poseidon.golden-pilot.v1",
+  "status": "AUTHORED_UNVERIFIED",
+  "referenceTime": "2026-10-04T00:00:00Z",
+  "syntheticOnly": true,
+  "sources": {
+    "spec": {
+      "path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.01_POSEIDON_Dynamic_Applicability_Engine_Specification_TR.docx",
+      "sha256": "8a338adb39f2ec62ff149d0c5e75c8df266f03107b7de5630b52685143bc3f0c"
+    },
+    "matrix": {
+      "path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/09.02_POSEIDON_Dynamic_Applicability_Engine_Decision_Matrix_TR.xlsx",
+      "sha256": "45c9c588574bb69454237c5450c3d7c865fb29b8144f9702600a7c81cf312c69"
+    },
+    "backlog": {
+      "path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674"
+    },
+    "uat": {
+      "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
+      "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49"
+    }
+  },
+  "profiles": [
+    {
+      "id": "GP-SHIP-OIL-TR",
+      "mode": "SHIP",
+      "facts": {
+        "A": "GP-SHIP-OIL-TR",
+        "B": "SHIP",
+        "C": "TR",
+        "D": "OIL_TANKER",
+        "E": "32000",
+        "F": "12000",
+        "G": "International",
+        "H": "Oil cargo",
+        "I": "N/A",
+        "J": "STCW special training; MARPOL I",
+        "K": "ISM; SOLAS; STCW; MARPOL; MLC; Tanker"
+      },
+      "source": {
+        "source": "matrix",
+        "locator": "sheet:Golden Profiles/row:2",
+        "column": "A",
+        "value": "GP-SHIP-OIL-TR"
+      },
+      "spec": {
+        "source": "spec",
+        "locator": "paragraph:450..452"
+      },
+      "readiness": "UNKNOWN_UNASSESSED"
+    },
+    {
+      "id": "GP-SHIP-CHEM",
+      "mode": "SHIP",
+      "facts": {
+        "A": "GP-SHIP-CHEM",
+        "B": "SHIP",
+        "C": "TR",
+        "D": "CHEMICAL_TANKER",
+        "E": "18000",
+        "F": "9000",
+        "G": "International",
+        "H": "NLS",
+        "I": "N/A",
+        "J": "IBC + MARPOL II",
+        "K": "ISM; SOLAS; STCW V; MARPOL II; IBC; MLC"
+      },
+      "source": {
+        "source": "matrix",
+        "locator": "sheet:Golden Profiles/row:3",
+        "column": "A",
+        "value": "GP-SHIP-CHEM"
+      },
+      "spec": {
+        "source": "spec",
+        "locator": "paragraph:453..455"
+      },
+      "readiness": "UNKNOWN_UNASSESSED"
+    },
+    {
+      "id": "GP-SHIP-DG",
+      "mode": "SHIP",
+      "facts": {
+        "A": "GP-SHIP-DG",
+        "B": "SHIP",
+        "C": "TR",
+        "D": "CONTAINER",
+        "E": "25000",
+        "F": "11000",
+        "G": "International",
+        "H": "Packaged DG",
+        "I": "N/A",
+        "J": "IMDG 42-24",
+        "K": "SOLAS VII; IMDG; other common ship packs"
+      },
+      "source": {
+        "source": "matrix",
+        "locator": "sheet:Golden Profiles/row:4",
+        "column": "A",
+        "value": "GP-SHIP-DG"
+      },
+      "spec": {
+        "source": "spec",
+        "locator": "paragraph:456..458"
+      },
+      "readiness": "UNKNOWN_UNASSESSED"
+    },
+    {
+      "id": "GP-TUG-HARBOUR",
+      "mode": "TUG",
+      "facts": {
+        "A": "GP-TUG-HARBOUR",
+        "B": "TUG",
+        "C": "TR",
+        "D": "ASD_TUG",
+        "E": "420",
+        "F": "3600",
+        "G": "Kocaeli",
+        "H": "HARBOUR_ASSIST",
+        "I": "Yes",
+        "J": "Contract date 2022; winch fitted; MSMD verified",
+        "K": "Tug common + TR service + M79 + BP + crew readiness"
+      },
+      "source": {
+        "source": "matrix",
+        "locator": "sheet:Golden Profiles/row:5",
+        "column": "A",
+        "value": "GP-TUG-HARBOUR"
+      },
+      "spec": {
+        "source": "spec",
+        "locator": "paragraph:459..461"
+      },
+      "readiness": "UNKNOWN_UNASSESSED"
+    },
+    {
+      "id": "GP-TUG-ESCORT",
+      "mode": "TUG",
+      "facts": {
+        "A": "GP-TUG-ESCORT",
+        "B": "TUG",
+        "C": "TR",
+        "D": "ASD_TUG",
+        "E": "450",
+        "F": "4000",
+        "G": "İstanbul Boğazı",
+        "H": "ESCORT",
+        "I": "Yes",
+        "J": "Escort extra crew note under monitored source",
+        "K": "Tug common + escort crew overlay + M79 + BP"
+      },
+      "source": {
+        "source": "matrix",
+        "locator": "sheet:Golden Profiles/row:6",
+        "column": "A",
+        "value": "GP-TUG-ESCORT"
+      },
+      "spec": {
+        "source": "spec",
+        "locator": "paragraph:462..464"
+      },
+      "readiness": "UNKNOWN_UNASSESSED"
+    },
+    {
+      "id": "GP-TUG-OCEAN",
+      "mode": "TUG",
+      "facts": {
+        "A": "GP-TUG-OCEAN",
+        "B": "TUG",
+        "C": "TR",
+        "D": "OCEAN_TUG",
+        "E": "850",
+        "F": "5000",
+        "G": "Sea/Ocean",
+        "H": "OCEAN_TOWAGE",
+        "I": "Class-specific",
+        "J": "M79 not auto-applied solely for long-distance ocean towage",
+        "K": "Tug common + ocean towage class/suitability pack"
+      },
+      "source": {
+        "source": "matrix",
+        "locator": "sheet:Golden Profiles/row:7",
+        "column": "A",
+        "value": "GP-TUG-OCEAN"
+      },
+      "spec": {
+        "source": "spec",
+        "locator": "paragraph:465..467"
+      },
+      "readiness": "UNKNOWN_UNASSESSED"
+    },
+    {
+      "id": "SYN-GENERAL-CARGO",
+      "mode": "SHIP",
+      "facts": {
+        "shipType": "GENERAL_CARGO",
+        "classification": "synthetic coverage category only; flag/class/cargo/ISM facts unknown"
+      },
+      "source": {
+        "source": "backlog",
+        "locator": "sheet:Backlog/row:10",
+        "column": "A",
+        "value": "DEV-009"
+      },
+      "readiness": "UNKNOWN_UNASSESSED"
+    }
+  ],
+  "sourceCases": [
+    {
+      "id": "GOLD-001",
+      "profile": "GP-TUG-HARBOUR",
+      "condition": "Normal verified inputs",
+      "rule": "RULE-ISM-7-TUG",
+      "expectedApplicability": "APPLICABLE",
+      "expectedControl": "Towage workflow screens activated",
+      "expectedReadiness": "UNASSESSED",
+      "source": {
+        "source": "matrix",
+        "locator": "sheet:Golden Tests/row:2",
+        "column": "A",
+        "value": "GOLD-001"
+      },
+      "expectedSource": {
+        "source": "matrix",
+        "locator": "sheet:Golden Tests/row:2",
+        "column": "E",
+        "value": "APPLICABLE"
+      },
+      "adapter": "UNAVAILABLE",
+      "execution": "NOT_RUN",
+      "readinessExpectationScope": "Source negative target only where explicit review/no-current-effect is stated; otherwise unassessed. Full readiness adapter unavailable; no executed readiness result.",
+      "positiveReadinessAllowed": false
+    },
+    {
+      "id": "GOLD-002",
+      "profile": "GP-TUG-HARBOUR",
+      "condition": "M79 pack TRUE + contract 2022 + winch fitted",
+      "rule": "RULE-IACS-M79",
+      "expectedApplicability": "APPLICABLE",
+      "expectedControl": "ERS field/control/verification",
+      "expectedReadiness": "UNASSESSED",
+      "source": {
+        "source": "matrix",
+        "locator": "sheet:Golden Tests/row:3",
+        "column": "A",
+        "value": "GOLD-002"
+      },
+      "expectedSource": {
+        "source": "matrix",
+        "locator": "sheet:Golden Tests/row:3",
+        "column": "E",
+        "value": "APPLICABLE"
+      },
+      "adapter": "UNAVAILABLE",
+      "execution": "NOT_RUN",
+      "readinessExpectationScope": "Source negative target only where explicit review/no-current-effect is stated; otherwise unassessed. Full readiness adapter unavailable; no executed readiness result.",
+      "positiveReadinessAllowed": false
+    },
+    {
+      "id": "GOLD-003",
+      "profile": "GP-TUG-HARBOUR",
+      "condition": "Class pack unknown",
+      "rule": "RULE-IACS-M79",
+      "expectedApplicability": "REVIEW_REQUIRED",
+      "expectedControl": "No false READY; class review",
+      "expectedReadiness": "REVIEW_REQUIRED",
+      "source": {
+        "source": "matrix",
+        "locator": "sheet:Golden Tests/row:4",
+        "column": "A",
+        "value": "GOLD-003"
+      },
+      "expectedSource": {
+        "source": "matrix",
+        "locator": "sheet:Golden Tests/row:4",
+        "column": "E",
+        "value": "REVIEW_REQUIRED"
+      },
+      "adapter": "UNAVAILABLE",
+      "execution": "NOT_RUN",
+      "readinessExpectationScope": "Source negative target only where explicit review/no-current-effect is stated; otherwise unassessed. Full readiness adapter unavailable; no executed readiness result.",
+      "positiveReadinessAllowed": false
+    },
+    {
+      "id": "GOLD-004",
+      "profile": "GP-TUG-HARBOUR",
+      "condition": "MSMD unverified",
+      "rule": "RULE-TR-TUG-MSMD",
+      "expectedApplicability": "APPLICABLE + readiness review",
+      "expectedControl": "minimum_manning_state blocks full READY",
+      "expectedReadiness": "REVIEW_REQUIRED",
+      "source": {
+        "source": "matrix",
+        "locator": "sheet:Golden Tests/row:5",
+        "column": "A",
+        "value": "GOLD-004"
+      },
+      "expectedSource": {
+        "source": "matrix",
+        "locator": "sheet:Golden Tests/row:5",
+        "column": "E",
+        "value": "APPLICABLE + readiness review"
+      },
+      "adapter": "UNAVAILABLE",
+      "execution": "NOT_RUN",
+      "readinessExpectationScope": "Source negative target only where explicit review/no-current-effect is stated; otherwise unassessed. Full readiness adapter unavailable; no executed readiness result.",
+      "positiveReadinessAllowed": false
+    },
+    {
+      "id": "GOLD-005",
+      "profile": "GP-TUG-ESCORT",
+      "condition": "Area=Istanbul Strait + Escort",
+      "rule": "RULE-TR-TUG-ESCORT-EXTRA",
+      "expectedApplicability": "REVIEW_REQUIRED/APPLICABLE per validated source",
+      "expectedControl": "Extra Able Seaman requirement visible with source lifecycle",
+      "expectedReadiness": "REVIEW_REQUIRED",
+      "source": {
+        "source": "matrix",
+        "locator": "sheet:Golden Tests/row:6",
+        "column": "A",
+        "value": "GOLD-005"
+      },
+      "expectedSource": {
+        "source": "matrix",
+        "locator": "sheet:Golden Tests/row:6",
+        "column": "E",
+        "value": "REVIEW_REQUIRED/APPLICABLE per validated source"
+      },
+      "adapter": "UNAVAILABLE",
+      "execution": "NOT_RUN",
+      "readinessExpectationScope": "Source negative target only where explicit review/no-current-effect is stated; otherwise unassessed. Full readiness adapter unavailable; no executed readiness result.",
+      "positiveReadinessAllowed": false
+    },
+    {
+      "id": "GOLD-006",
+      "profile": "GP-TUG-OCEAN",
+      "condition": "operation profile solely long-distance ocean towage",
+      "rule": "RULE-IACS-M79",
+      "expectedApplicability": "NOT_APPLICABLE",
+      "expectedControl": "Ocean towage pack considered separately",
+      "expectedReadiness": "UNASSESSED",
+      "source": {
+        "source": "matrix",
+        "locator": "sheet:Golden Tests/row:7",
+        "column": "A",
+        "value": "GOLD-006"
+      },
+      "expectedSource": {
+        "source": "matrix",
+        "locator": "sheet:Golden Tests/row:7",
+        "column": "E",
+        "value": "NOT_APPLICABLE"
+      },
+      "adapter": "UNAVAILABLE",
+      "execution": "NOT_RUN",
+      "readinessExpectationScope": "Source negative target only where explicit review/no-current-effect is stated; otherwise unassessed. Full readiness adapter unavailable; no executed readiness result.",
+      "positiveReadinessAllowed": false
+    },
+    {
+      "id": "GOLD-007",
+      "profile": "GP-SHIP-OIL-TR",
+      "condition": "Oil tanker",
+      "rule": "RULE-STCW-V-TANKER",
+      "expectedApplicability": "APPLICABLE",
+      "expectedControl": "Special tanker training controls",
+      "expectedReadiness": "UNASSESSED",
+      "source": {
+        "source": "matrix",
+        "locator": "sheet:Golden Tests/row:8",
+        "column": "A",
+        "value": "GOLD-007"
+      },
+      "expectedSource": {
+        "source": "matrix",
+        "locator": "sheet:Golden Tests/row:8",
+        "column": "E",
+        "value": "APPLICABLE"
+      },
+      "adapter": "UNAVAILABLE",
+      "execution": "NOT_RUN",
+      "readinessExpectationScope": "Source negative target only where explicit review/no-current-effect is stated; otherwise unassessed. Full readiness adapter unavailable; no executed readiness result.",
+      "positiveReadinessAllowed": false
+    },
+    {
+      "id": "GOLD-008",
+      "profile": "GP-SHIP-DG",
+      "condition": "Packaged DG=true on 2026-10-04",
+      "rule": "RULE-IMDG-42-24",
+      "expectedApplicability": "APPLICABLE",
+      "expectedControl": "IMDG control/evidence",
+      "expectedReadiness": "UNASSESSED",
+      "source": {
+        "source": "matrix",
+        "locator": "sheet:Golden Tests/row:9",
+        "column": "A",
+        "value": "GOLD-008"
+      },
+      "expectedSource": {
+        "source": "matrix",
+        "locator": "sheet:Golden Tests/row:9",
+        "column": "E",
+        "value": "APPLICABLE"
+      },
+      "adapter": "UNAVAILABLE",
+      "execution": "NOT_RUN",
+      "readinessExpectationScope": "Source negative target only where explicit review/no-current-effect is stated; otherwise unassessed. Full readiness adapter unavailable; no executed readiness result.",
+      "positiveReadinessAllowed": false
+    },
+    {
+      "id": "GOLD-009",
+      "profile": "GP-SHIP-DG",
+      "condition": "Packaged DG unknown",
+      "rule": "RULE-IMDG-42-24",
+      "expectedApplicability": "REVIEW_REQUIRED",
+      "expectedControl": "Cargo data review",
+      "expectedReadiness": "REVIEW_REQUIRED",
+      "source": {
+        "source": "matrix",
+        "locator": "sheet:Golden Tests/row:10",
+        "column": "A",
+        "value": "GOLD-009"
+      },
+      "expectedSource": {
+        "source": "matrix",
+        "locator": "sheet:Golden Tests/row:10",
+        "column": "E",
+        "value": "REVIEW_REQUIRED"
+      },
+      "adapter": "UNAVAILABLE",
+      "execution": "NOT_RUN",
+      "readinessExpectationScope": "Source negative target only where explicit review/no-current-effect is stated; otherwise unassessed. Full readiness adapter unavailable; no executed readiness result.",
+      "positiveReadinessAllowed": false
+    },
+    {
+      "id": "GOLD-010",
+      "profile": "Any MLC applicable",
+      "condition": "evaluationDate=2026-10-04",
+      "rule": "RULE-MLC-2025-FUTURE",
+      "expectedApplicability": "NOT_CURRENT",
+      "expectedControl": "Change Radar only; no current compliance state effect",
+      "expectedReadiness": "NO_CURRENT_STATE_EFFECT",
+      "source": {
+        "source": "matrix",
+        "locator": "sheet:Golden Tests/row:11",
+        "column": "A",
+        "value": "GOLD-010"
+      },
+      "expectedSource": {
+        "source": "matrix",
+        "locator": "sheet:Golden Tests/row:11",
+        "column": "E",
+        "value": "NOT_CURRENT"
+      },
+      "adapter": "UNAVAILABLE",
+      "execution": "NOT_RUN",
+      "readinessExpectationScope": "Source negative target only where explicit review/no-current-effect is stated; otherwise unassessed. Full readiness adapter unavailable; no executed readiness result.",
+      "positiveReadinessAllowed": false
+    }
+  ],
+  "consumerCases": [
+    {
+      "id": "SYN-APP-Missing",
+      "profile": "GP-TUG-HARBOUR",
+      "area": "applicability",
+      "engine": "Applicability",
+      "inputs": {
+        "knowledge": "Missing",
+        "currency": "Current"
+      },
+      "expected": "ReviewRequired",
+      "expectedReadiness": "NO_POSITIVE_READINESS_INFERRED",
+      "source": {
+        "source": "spec",
+        "locator": "paragraph:42..58"
+      },
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "SYN-APP-Unknown",
+      "profile": "GP-TUG-HARBOUR",
+      "area": "applicability",
+      "engine": "Applicability",
+      "inputs": {
+        "knowledge": "Unknown",
+        "currency": "Current"
+      },
+      "expected": "ReviewRequired",
+      "expectedReadiness": "NO_POSITIVE_READINESS_INFERRED",
+      "source": {
+        "source": "spec",
+        "locator": "paragraph:42..58"
+      },
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "SYN-APP-Stale",
+      "profile": "GP-TUG-HARBOUR",
+      "area": "applicability",
+      "engine": "Applicability",
+      "inputs": {
+        "knowledge": "Stale",
+        "currency": "Current"
+      },
+      "expected": "ReviewRequired",
+      "expectedReadiness": "NO_POSITIVE_READINESS_INFERRED",
+      "source": {
+        "source": "spec",
+        "locator": "paragraph:42..58"
+      },
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "SYN-APP-Unverified",
+      "profile": "GP-TUG-HARBOUR",
+      "area": "applicability",
+      "engine": "Applicability",
+      "inputs": {
+        "knowledge": "Unverified",
+        "currency": "Current"
+      },
+      "expected": "ReviewRequired",
+      "expectedReadiness": "NO_POSITIVE_READINESS_INFERRED",
+      "source": {
+        "source": "spec",
+        "locator": "paragraph:42..58"
+      },
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "SYN-APP-Conflicting",
+      "profile": "GP-TUG-HARBOUR",
+      "area": "applicability",
+      "engine": "Applicability",
+      "inputs": {
+        "knowledge": "Conflicting",
+        "currency": "Current"
+      },
+      "expected": "ReviewRequired",
+      "expectedReadiness": "NO_POSITIVE_READINESS_INFERRED",
+      "source": {
+        "source": "spec",
+        "locator": "paragraph:42..58"
+      },
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "SYN-APP-KnownFalse",
+      "profile": "GP-TUG-HARBOUR",
+      "area": "applicability",
+      "engine": "Applicability",
+      "inputs": {
+        "knowledge": "KnownFalse",
+        "currency": "Current"
+      },
+      "expected": "NotApplicable",
+      "expectedReadiness": "NO_POSITIVE_READINESS_INFERRED",
+      "source": {
+        "source": "spec",
+        "locator": "paragraph:42..58"
+      },
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "SYN-APP-KnownTrue",
+      "profile": "GP-TUG-HARBOUR",
+      "area": "applicability",
+      "engine": "Applicability",
+      "inputs": {
+        "knowledge": "KnownTrue",
+        "currency": "Current"
+      },
+      "expected": "Applicable",
+      "expectedReadiness": "NO_POSITIVE_READINESS_INFERRED",
+      "source": {
+        "source": "spec",
+        "locator": "paragraph:42..58"
+      },
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "SYN-FUTURE",
+      "profile": "GP-SHIP-DG",
+      "area": "applicability",
+      "engine": "Applicability",
+      "inputs": {
+        "knowledge": "KnownTrue",
+        "currency": "Future"
+      },
+      "expected": "NotCurrent",
+      "expectedReadiness": "NO_POSITIVE_READINESS_INFERRED",
+      "source": {
+        "source": "matrix",
+        "locator": "sheet:Golden Tests/row:11"
+      },
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "SYN-CLASS-UNKNOWN",
+      "profile": "GP-TUG-OCEAN",
+      "area": "applicability",
+      "engine": "Applicability",
+      "inputs": {
+        "knowledge": "KnownTrue",
+        "currency": "Unknown"
+      },
+      "expected": "ReviewRequired",
+      "expectedReadiness": "NO_POSITIVE_READINESS_INFERRED",
+      "source": {
+        "source": "spec",
+        "locator": "paragraph:219..236"
+      },
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "SYN-CREW-Missing",
+      "profile": "SYN-GENERAL-CARGO",
+      "area": "crew",
+      "engine": "RequiredData",
+      "inputs": {
+        "state": "Missing"
+      },
+      "expected": "MissingRequiredValue",
+      "expectedReadiness": "NO_POSITIVE_READINESS_INFERRED",
+      "source": {
+        "source": "uat",
+        "locator": "paragraph:75..77"
+      },
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "SYN-CREW-Unknown",
+      "profile": "SYN-GENERAL-CARGO",
+      "area": "crew",
+      "engine": "RequiredData",
+      "inputs": {
+        "state": "Unknown"
+      },
+      "expected": "UnknownRequiredValue",
+      "expectedReadiness": "NO_POSITIVE_READINESS_INFERRED",
+      "source": {
+        "source": "uat",
+        "locator": "paragraph:75..77"
+      },
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "SYN-CERT-EXPIRED",
+      "profile": "GP-SHIP-OIL-TR",
+      "area": "certificate",
+      "engine": "CredentialDates",
+      "inputs": {
+        "issue": "2025-01-01",
+        "expiry": "2026-10-03"
+      },
+      "expected": "BeforeReferenceDate/IssueBeforeExpiry",
+      "expectedReadiness": "NO_POSITIVE_READINESS_INFERRED",
+      "source": {
+        "source": "uat",
+        "locator": "paragraph:75..77"
+      },
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "SYN-CERT-CONFLICT",
+      "profile": "GP-SHIP-CHEM",
+      "area": "certificate",
+      "engine": "CredentialDates",
+      "inputs": {
+        "issue": "2026-10-05",
+        "expiry": "2026-10-03"
+      },
+      "expected": "BeforeReferenceDate/ExpiryBeforeIssue",
+      "expectedReadiness": "NO_POSITIVE_READINESS_INFERRED",
+      "source": {
+        "source": "uat",
+        "locator": "paragraph:75..77"
+      },
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "SYN-CERT-MISSING",
+      "profile": "GP-TUG-ESCORT",
+      "area": "certificate",
+      "engine": "CredentialDates",
+      "inputs": {
+        "issue": null,
+        "expiry": null
+      },
+      "expected": "NotDeclared/Incomplete",
+      "expectedReadiness": "NO_POSITIVE_READINESS_INFERRED",
+      "source": {
+        "source": "uat",
+        "locator": "paragraph:75..77"
+      },
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "SYN-EVIDENCE-STALE",
+      "profile": "GP-TUG-HARBOUR",
+      "area": "evidence",
+      "engine": "Freshness",
+      "inputs": {
+        "observed": "2026-10-03T00:00:00Z",
+        "maxAge": "60"
+      },
+      "expected": "Stale",
+      "expectedReadiness": "NO_POSITIVE_READINESS_INFERRED",
+      "source": {
+        "source": "spec",
+        "locator": "paragraph:42..58"
+      },
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "SYN-EVIDENCE-BOUNDARY",
+      "profile": "GP-TUG-HARBOUR",
+      "area": "evidence",
+      "engine": "Freshness",
+      "inputs": {
+        "observed": "2026-10-03T23:59:00Z",
+        "maxAge": "60"
+      },
+      "expected": "Current",
+      "expectedReadiness": "NO_POSITIVE_READINESS_INFERRED",
+      "source": {
+        "source": "spec",
+        "locator": "paragraph:42..58"
+      },
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "SYN-EVIDENCE-MISSING",
+      "profile": "GP-TUG-HARBOUR",
+      "area": "evidence",
+      "engine": "Freshness",
+      "inputs": {
+        "observed": null,
+        "maxAge": "60"
+      },
+      "expected": "Unknown",
+      "expectedReadiness": "NO_POSITIVE_READINESS_INFERRED",
+      "source": {
+        "source": "spec",
+        "locator": "paragraph:42..58"
+      },
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "SYN-EVIDENCE-POLICY-UNAVAILABLE",
+      "profile": "GP-TUG-HARBOUR",
+      "area": "evidence",
+      "engine": "Freshness",
+      "inputs": {
+        "observed": "2026-10-03T00:00:00Z",
+        "maxAge": null
+      },
+      "expected": "Unavailable",
+      "expectedReadiness": "NO_POSITIVE_READINESS_INFERRED",
+      "source": {
+        "source": "spec",
+        "locator": "paragraph:42..58"
+      },
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "SYN-ASSET-MISSING-PARENT",
+      "profile": "GP-TUG-HARBOUR",
+      "area": "asset",
+      "engine": "AssetHierarchy",
+      "inputs": {
+        "parent": "missing"
+      },
+      "expected": "MissingParent",
+      "expectedReadiness": "NO_POSITIVE_READINESS_INFERRED",
+      "source": {
+        "source": "uat",
+        "locator": "paragraph:78..80"
+      },
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "SYN-ASSET-CYCLE",
+      "profile": "GP-TUG-OCEAN",
+      "area": "asset",
+      "engine": "AssetHierarchy",
+      "inputs": {
+        "parent": "self"
+      },
+      "expected": "Cycle",
+      "expectedReadiness": "NO_POSITIVE_READINESS_INFERRED",
+      "source": {
+        "source": "uat",
+        "locator": "paragraph:78..80"
+      },
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "SYN-DEFECT-MISSING-EVIDENCE",
+      "profile": "GP-SHIP-OIL-TR",
+      "area": "defect",
+      "engine": "RequiredData",
+      "inputs": {
+        "state": "Missing"
+      },
+      "expected": "MissingRequiredValue",
+      "expectedReadiness": "NO_POSITIVE_READINESS_INFERRED",
+      "source": {
+        "source": "uat",
+        "locator": "paragraph:78..80"
+      },
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "SYN-PMS-MISSING-SOURCE",
+      "profile": "GP-SHIP-CHEM",
+      "area": "asset",
+      "engine": "Maintenance",
+      "inputs": {
+        "trigger": "Meter"
+      },
+      "expected": "ReviewRequired/MissingProvenance",
+      "expectedReadiness": "NO_POSITIVE_READINESS_INFERRED",
+      "source": {
+        "source": "uat",
+        "locator": "paragraph:78..80"
+      },
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "SYN-OFFLINE-MATERIAL-CONFLICT",
+      "profile": "GP-TUG-ESCORT",
+      "area": "evidence",
+      "engine": "OfflineConflict",
+      "inputs": {
+        "base": "1",
+        "current": "2"
+      },
+      "expected": "MaterialConflict",
+      "expectedReadiness": "NO_POSITIVE_READINESS_INFERRED",
+      "source": {
+        "source": "uat",
+        "locator": "paragraph:115..117"
+      },
+      "execution": "NOT_RUN"
+    }
+  ],
+  "productionAdapterGaps": [
+    "All named regulatory rule-to-authoritative-source/input adapters remain unavailable. Primitive synthetic facts do not qualify sources or implement a rule pack.",
+    "Crew eligibility/fitness/work-rest, certificate authenticity, operational asset/critical defect safeguards, verified evidence/decisions and full readiness aggregation remain unavailable.",
+    "No data is enrolled, seeded, signed, activated or published by this package."
+  ]
+}

@@ -44,6 +44,8 @@ public sealed class FoundationApiTests : IAsyncLifetime
             ["Authentication:Oidc:Memberships:0:ActorId"] = actorId.ToString(),
             ["Authentication:Oidc:Memberships:0:TenantId"] = seed.Tenants[0].Id.ToString(),
             ["Authentication:Oidc:Memberships:0:TenantWideRead"] = "true",
+            ["Authentication:Oidc:Memberships:0:Permissions:1"] = "mode.tug",
+            ["Authentication:Oidc:Memberships:0:Permissions:2"] = "mode.cross",
             ["Authentication:Oidc:Memberships:0:Permissions:0"] = permission ? "directory.read" : "unrecognized"
         }));
         b.ConfigureServices(services => services.AddAuthentication(o =>

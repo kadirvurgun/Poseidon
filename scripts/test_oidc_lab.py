@@ -10,6 +10,27 @@ import oidc_lab as lab
 
 
 class LabTests(unittest.TestCase):
+    def test_bundle_configuration_preserves_restricted_actor_and_private_credentials(self):
+        realm, _, _, config = lab.make_configuration()
+        original = json.loads(json.dumps(config))
+        with tempfile.TemporaryDirectory() as directory, patch.object(lab, 'PRIVATE', Path(directory)), \
+                patch.object(lab, 'prepare_register'), patch.object(lab, 'private_directory'), \
+                patch('oidc_lab.socket.create_connection') as connect, \
+                patch.dict(os.environ, {'POSEIDON_GATE_CLAMD_PORT': '12345'}):
+            (Path(directory) / 'realm').mkdir()
+            (Path(directory) / 'realm/poseidon-lab-realm.json').write_text(json.dumps(realm))
+            path = Path(directory) / 'appsettings.json'
+            path.write_text(json.dumps(config))
+            connect.return_value.__enter__.return_value.recv.return_value = b'PONG\0'
+            lab.prepare_bundle()
+            after = json.loads(path.read_text())
+            self.assertEqual(original['Authentication']['Oidc']['Memberships'][1], after['Authentication']['Oidc']['Memberships'][1])
+            self.assertEqual(original['ConnectionStrings'], after['ConnectionStrings'])
+            self.assertEqual(original['Authentication']['Oidc']['ClientSecret'], after['Authentication']['Oidc']['ClientSecret'])
+            self.assertIn('audit.read', after['Authentication']['Oidc']['Memberships'][0]['Permissions'])
+            self.assertEqual(12345, after['SecureFiles']['ClamdPort'])
+            self.assertFalse((Path(directory) / 'credentials.json').exists())
+
     def test_register_enrollment_is_explicit_server_owned_idempotent_and_preserves_other_members(self):
         realm, _, _, config = lab.make_configuration()
         with tempfile.TemporaryDirectory() as directory, patch.object(lab, 'PRIVATE', Path(directory)):
@@ -41,7 +62,9 @@ class LabTests(unittest.TestCase):
         for prefix in ('', 'DOTNET_', 'ASPNETCORE_', 'dotnet_', 'aspnetcore_'):
             for delimiter in ('__', ':'):
                 for key in ('Kestrel:Endpoints:Other:Url', 'Authentication:Oidc:Memberships:9:Subject',
-                            'ConnectionStrings:Other', 'DevelopmentLab:WebRoot', 'URLS', 'HTTP_PORTS', 'HTTPS_PORTS'):
+                            'ConnectionStrings:Other', 'DevelopmentLab:WebRoot',
+                            'WorkspaceContext:RoleCatalog:Roles:9:Reference',
+                            'WorkspaceNavigation:Mappings:9:Keys:0', 'URLS', 'HTTP_PORTS', 'HTTPS_PORTS'):
                     ambient_key = prefix + key.replace(':', delimiter)
                     with self.subTest(prefix=prefix, delimiter=delimiter, key=key), \
                          patch.dict(os.environ, {ambient_key: 'ambient', 'LAB_TEST_UNRELATED': 'preserved'}), \

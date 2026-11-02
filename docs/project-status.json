@@ -1,5 +1,1085 @@
 {
+  "foundation_acceptance_bundle_01_execution": {
+    "task_id": "FOUNDATION-ACCEPTANCE-BUNDLE-01",
+    "status": "INCOMPLETE",
+    "accepted": false,
+    "accepted_sp_added": 0,
+    "defer_tests": false,
+    "phase": "Actual combined local execution and repair; UNVERIFIED checkpoint",
+    "receiving_head": "0c923ea33c644120878cade12ed1aabbc5aac450",
+    "candidate_code_commit": null,
+    "code_tree_sha256": "0850bec20714463c2e90868b909176170e9badd119428d3b703f931d52806e7f",
+    "client_tree_sha256": "e979bfd0e82ffab97aaf8bf486775d503c53ff605decc578fe035c5eeea14653",
+    "task": "docs/tasks/foundation-acceptance-bundle-01.md",
+    "sources": "docs/tasks/foundation-acceptance-bundle-01.sources.json",
+    "report": "docs/phases/FOUNDATION-ACCEPTANCE-BUNDLE-01.md",
+    "evidence": "docs/phases/foundation-acceptance-bundle-01.evidence.json",
+    "canonical_progress": "8/970SP;2/121tasks;0/196accepted",
+    "selected_scope": "40tasks/272SP; target194/970 unchanged",
+    "independent_qa": false,
+    "ci": false,
+    "publication": false,
+    "next": "Repair actual failed gates and remaining selected software; coordinator independent exact-target QA/source/security review and required CI"
+  },
+  "foundation_catalog_continuation_01": {
+    "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+    "accepted": false,
+    "accepted_sp_added": 0,
+    "task_id": "FOUNDATION-CATALOG-CONTINUATION-01",
+    "parent_task": "FOUNDATION-ACCEPTANCE-BUNDLE-01",
+    "receiving_head": "5d99f6d",
+    "initial_worktree": "clean; predecessor changes preserved",
+    "base_commit": "80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44",
+    "phase": "Prerequisite software authoring; original combined verification gate not started",
+    "task": "docs/tasks/foundation-catalog-continuation-01.md",
+    "report": "docs/phases/FOUNDATION-CATALOG-CONTINUATION-01.md",
+    "sources": "docs/tasks/foundation-catalog-continuation-01.sources.json",
+    "authored": [
+      "Durable Crew catalog draft/review/adoption/withdrawal, current authority, ordinary consumers, EF lineage and TR/EN UI",
+      "Explicit signed-host multi-human catalog fixture setup and registered real-login journey source",
+      "Preserve provisioned crew.assessment.read through trusted permission filter",
+      "Required-Credential command-produced criterion theory and credential/document-policy invalidation sources"
+    ],
+    "actual_history_results": "Current configured base ancestor exit0; eight support origins have normal -x receipts and exact origin changed-file content",
+    "verification": "NOT RUN: suites/restore/build/lint/typecheck/generation/model/contract/migration/seed/browser/provider/scans/Graphify/independent QA/CI; software precondition false",
+    "remaining_software": [
+      "Additional selected supported offline capture/read/restart/recovery and atomic ordinary replay reconciliation",
+      "Full job-specific criterion/Credential/MSMD/golden and Tug/Today readiness composition",
+      "Full signed multi-human compliance/source/verification fixture orchestration",
+      "Whole-branch generated/model integration and original combined gate repairs"
+    ],
+    "external_definition": "Crew1615 source-owned DERIVATION_REQUIRES_SPECIFICATION remains separate from implementable governance",
+    "canonical_progress": "8/970SP;2/121tasks;0/196accepted",
+    "candidate_selection": "Original 40 tasks/272SP unchanged",
+    "publication": "Not performed; coordinator only; uncommitted worktree continuation",
+    "next": "Finish original selected software, then one coherent full local gate, independent exact-target QA/source review and required CI"
+  },
+  "rule_compliance_inputs_01": {
+    "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+    "accepted": false,
+    "accepted_sp_added": 0,
+    "task_id": "RULE-COMPLIANCE-INPUTS-01",
+    "phase": "FOUNDATION authoring before one combined gate",
+    "receiving_head": "8c1eb8b",
+    "initial_worktree": "clean; predecessor code and normal receipts preserved",
+    "task": "docs/tasks/rule-compliance-inputs-01.md",
+    "report": "docs/phases/RULE-COMPLIANCE-INPUTS-01.md",
+    "sources": "docs/tasks/rule-compliance-inputs-01.sources.json",
+    "canonical_progress": "8/970SP;2/121tasks;0/196accepted",
+    "candidate_selection": "original 40 tasks/272SP unchanged",
+    "inputs": [
+      "class.rulePack.IACS_M79",
+      "regulatory.ismApplicable",
+      "regulatory.msmdVerified",
+      "crew.requiredRoleEligible",
+      "evidence.sourceVerified"
+    ],
+    "verification": "NOT RUN: tests/suites/restore/build/lint/typecheck/generation/model/contract/migration/seed/browser/lab/provider/scans/Graphify update/independent QA/CI",
+    "remaining_software": [
+      "Durable Crew catalog proposal/adoption governance",
+      "Additional selected supported offline capture/read adapters",
+      "Full job-specific criterion/credential/MSMD/golden and Tug readiness composition",
+      "Credential-positive and deeper upstream/authority/privacy test sources",
+      "Complete signed multi-human fixture setup and whole-branch generated/model integration"
+    ],
+    "external_definitions": [
+      "Crew1615 actual derivation specification",
+      "Legitimate source/pack/survey/MSMD/issuer/assessment bytes and source-qualified policies",
+      "Actual appointed humans and source-required provider/trust contracts",
+      "Operator privacy/purpose/retention/key custody"
+    ],
+    "next": "Continue concrete authoring prerequisites; then original single combined foundation gate and independent exact-target QA/required CI",
+    "publication": "Not performed; coordinator only"
+  },
+  "rule_operation_equipment_01": {
+    "status": "AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+    "accepted": false,
+    "accepted_sp_added": 0,
+    "task_id": "RULE-OPERATION-EQUIPMENT-01",
+    "phase": "FOUNDATION authoring before one combined gate",
+    "receiving_head": "d0b2513",
+    "initial_worktree": "clean; no predecessor partial changes to discard",
+    "task": "docs/tasks/rule-operation-equipment-01.md",
+    "report": "docs/phases/RULE-OPERATION-EQUIPMENT-01.md",
+    "sources": "docs/tasks/rule-operation-equipment-01.sources.json",
+    "source_baseline": "poseidon-v46.3-20261030",
+    "canonical_progress": "8/970SP;2/121tasks;0/196accepted",
+    "candidate_selection": "original 40 tasks/272SP unchanged",
+    "inputs": [
+      "vessel.operatingArea",
+      "operation.jobType",
+      "operation.profile",
+      "operation.serviceContext",
+      "cargo.packagedDangerousGoods",
+      "equipment.towingWinchFitted"
+    ],
+    "authored": [
+      "Typed document references through actual evidence/source/review commands; job/plan/asset/file lineage",
+      "Source-reviewed literal/document role policies; no implicit intake label alias",
+      "Current qualification, provenance, expiry and revocation consumers; immutable relational evaluation pins",
+      "TR/EN owning capture, reference evaluation, source-review UI and Tug OperationContext observation",
+      "Hand migration, optional incomplete operator-preserving fixtures and domain/API/PG/React/wire/registered signed-host tests"
+    ],
+    "verification": "NOT RUN: tests/suites/restore/build/lint/typecheck/generation/model/migration/seed/browser/lab/provider/scans/Graphify update/independent QA/CI",
+    "source_only_work": [
+      "Scoped Graphify discovery (MCP code graph unavailable)",
+      "Bounded query_sources and original source locator reads",
+      "Status/diff reconciliation and source/code/document authoring"
+    ],
+    "remaining_software": [
+      "RULE-COMPLIANCE-INPUTS-01 five exact remaining inputs",
+      "Full cross-owner golden and multi-human signed-host fixture stitching",
+      "Whole-branch generated EF/API/TS integration, combined gate and correction of actual findings"
+    ],
+    "external_inputs": [
+      "Actual service/operation/cargo/equipment/source document bytes",
+      "Source-reviewed mappings/roles/validity policies and legitimate appointed humans",
+      "Exact provider trust contracts where genuinely required, without invented protocols"
+    ],
+    "next": "RULE-COMPLIANCE-INPUTS-01 then one combined foundation gate after required authoring",
+    "publication": "Not performed; coordinator only",
+    "historical_independent80b": "Preserved historical evidence; not current acceptance"
+  },
+  "rule_owning_adapters_01": {
+    "source_only_observations": {
+      "staged_whitespace_exit": 0,
+      "historical_base_ancestor_exit": 0,
+      "graphify_ast_exit": 0,
+      "nodes": 8017,
+      "edges": 17879,
+      "communities": 531,
+      "zero_node_warnings": 57,
+      "product_checks": "NOT RUN"
+    },
+    "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+    "accepted": false,
+    "foundation_ready": false,
+    "receiving_head": "d01f52a",
+    "independent_historical_base": "80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44",
+    "phase": "FOUNDATION product authoring before one combined gate",
+    "task": "docs/tasks/rule-owning-adapters-01.md",
+    "report": "docs/phases/RULE-OWNING-ADAPTERS-01.md",
+    "source_baseline": "poseidon-v46.3-20261030",
+    "accepted_sp_added": 0,
+    "canonical_progress": "8/970SP;2/121tasks;0/196accepted",
+    "verification": "NOT RUN: all suites/validators/restore/build/lint/typecheck/generation/model/migration/browser/provider/security/QA/CI",
+    "delivered_authored": [
+      "Exact versioned propulsion input and source-scoped verified profile consumer",
+      "Distinct construction contract date with actual non-person file revision/checksum/FK/byte integrity and human attestation",
+      "Current attestation expiry/withdrawal in evaluation/control/human/Tug consumers",
+      "Exact original profile receipt outcomes; current read/replay access; TR/EN strict profile/file UI",
+      "Domain/real PostgreSQL/actual-host/React/wire/signed-host test sources"
+    ],
+    "remaining_software": [
+      "Eleven owning-input paths enumerated by literal09.02 IDs in task; current operation/class/equipment/upstream/evidence consumers unfinished",
+      "Complete applicable golden and multi-human signed-host workflows",
+      "Crew source-defined status/catalog and genuinely selected defined offline adapters",
+      "Required provider success mechanisms where a usable contract exists; full generated/model/consumer reconciliation"
+    ],
+    "external_inputs": [
+      "Real source/role/review decisions, class/build/clinical/issuer/MSMD records and source-required provider contracts/anchors",
+      "Crew status semantics and controlled production policy/catalog/privacy decisions"
+    ],
+    "next": "Continue required authoring, then original single full foundation gate and independent exact-target QA/CI/source acceptance",
+    "publication": "None; coordinator-owned"
+  },
+  "crew_full_scope_01": {
+    "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+    "accepted": false,
+    "foundation_ready": false,
+    "task": "docs/tasks/crew-full-scope-01.md",
+    "report": "docs/phases/CREW-FULL-SCOPE-01.md",
+    "receiving_head": "57f1dc8",
+    "projection_origin": "1f82b75421097403c7fbdfadfd4aeed97b030b96",
+    "projection_receipt": "b568e9e",
+    "independent_historical_base": "80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44",
+    "phase": "FOUNDATION product authoring",
+    "verification": "NOT RUN: suites/validators/build/restore/lint/typecheck/generation/browser/provider/security/QA/CI",
+    "accepted_sp_added": 0,
+    "canonical_progress": "8/970SP;2/121tasks;0/196accepted",
+    "remaining": [
+      "System-derived profile status specification and software",
+      "Exact selected offline adapter reconciliation/extension",
+      "Qualified owning clinical/credential/competence/work-rest/MSMD/eligibility workflows",
+      "Catalog revision governance and whole-branch generated API/EF reconciliation"
+    ],
+    "next": "Continue unresolved Crew obligations and RULE-OWNING-ADAPTERS-01, then one combined foundation gate",
+    "publication": "None; coordinator-owned"
+  },
+  "tug_owning_consumers_01": {
+    "source_only_observations": {
+      "staged_whitespace_exit": 0,
+      "historical_base_ancestor_exit": 0,
+      "graphify_ast_exit": 0,
+      "nodes": 7859,
+      "edges": 17468,
+      "communities": 512,
+      "zero_node_warnings": 54,
+      "product_checks": "NOT RUN"
+    },
+    "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+    "accepted": false,
+    "foundation_ready": false,
+    "receiving_head": "96c2901ef5aaccbfbc716e49dec7c7a3456ef4c4",
+    "independent_historical_base": "80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44",
+    "phase": "FOUNDATION product authoring before one combined gate",
+    "task": "docs/tasks/tug-owning-consumers-01.md",
+    "report": "docs/phases/TUG-OWNING-CONSUMERS-01.md",
+    "source_baseline": "poseidon-v46.3-20261030",
+    "selected": [
+      "DEV-080",
+      "DEV-081",
+      "DEV-082"
+    ],
+    "verification": "NOT RUN: all suites/build/restore/lint/typecheck/generation/model/provider/browser/security/QA/CI",
+    "delivered_authored": [
+      "Owning certificate/condition/source-qualified BP workflow and board consumption",
+      "Current crew/certificate/equipment/PMS and recorded operational conflict facts",
+      "Separate enrolled encrypted Tug draft-window adapter, signed atomic replay, recovery/conflicts/revocation",
+      "EF migrations/models, incomplete idempotent fixture, TR/EN UI and domain/PG/actual-host/React/wire/signed-host test sources"
+    ],
+    "remaining_software": [
+      "Full Crew MSMD/qualification/fitness/rest/competence owning evaluators",
+      "Remaining rule inputs and required provider/source-specific calculation mechanisms",
+      "Broader source-authorized Tug offline fields",
+      "Multi-human signed-host positive BP/source workflow",
+      "Whole-branch generated API/EF/consumer reconciliation and one combined gate"
+    ],
+    "external_prerequisites": [
+      "Actual controlled source/SME coefficients and certificates",
+      "Provider trust deployment",
+      "Actual Master/safety/legal/pilot decisions"
+    ],
+    "canonical_progress": "8/970SP;2/121tasks;0/196accepted",
+    "accepted_sp_added": 0,
+    "next": "CREW-FULL-SCOPE-01, remaining rule owning inputs, one full foundation gate",
+    "publication": "None; local UNVERIFIED checkpoint only; coordinator owns publication/merge"
+  },
+  "foundation_receiving_qualification_2026_11_02": {
+    "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+    "accepted": false,
+    "foundation_ready": false,
+    "phase": "Required software authoring before the one combined foundation gate",
+    "receiving_head": "43536c9",
+    "safety_receipt": "d52270f",
+    "configured_base_commit": "80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44",
+    "report": "docs/phases/FOUNDATION-RECONCILIATION-2026-11-02.md",
+    "task": "docs/tasks/qualification-wire-absence-01.md",
+    "verification": "NOT_RUN: all generation/model/build/test/security/provider/browser gates; software precondition false",
+    "authored_cases_not_executed": {
+      "api_pg_theory_rows": 12,
+      "react_wire_cases": 4
+    },
+    "delivered": [
+      "Normal -x Safety trace origin receipt with exact five-file content",
+      "Raw omitted/null/false/true qualification and downstream evidence-policy regression source",
+      "Strict qualified consumer requires source locator for a required verification mechanism"
+    ],
+    "remaining_software": [
+      "13 regulatory owning input adapters",
+      "Required successful provider mechanisms and remaining chain/golden/adversarial/multi-human fixture journeys",
+      "Selected Tug authoritative BP/readiness/conflict integrations",
+      "Full selected Crew/input/offline source reconciliation and owning evaluators",
+      "Whole branch model/migration/generated API/TS/consumer integration"
+    ],
+    "canonical_progress": "8/970SP;2/121tasks;0/196accepted",
+    "publication": "None; uncommitted prerequisite changes preserved; coordinator owns publication/merge",
+    "next": "Continue required concrete software, then one complete foundation gate and independent exact-target QA/CI",
+    "source_only_observations": {
+      "tracked_whitespace_exit": 0,
+      "graphify_ast_exit": 0,
+      "nodes": 7596,
+      "edges": 16572,
+      "communities": 516,
+      "zero_node_warnings": 53,
+      "product_validation": "NOT_RUN"
+    }
+  },
+  "regulatory_admission_current_01": {
+    "status": "AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+    "accepted": false,
+    "foundation_ready": false,
+    "phase": "Product authoring before the single FOUNDATION-ACCEPTANCE-BUNDLE-01",
+    "receiving_head": "95381a97c08f6a51b021c7a8f23947cef7c32bc1",
+    "receiving_tree": "CLEAN; existing foundations and historical independent baseline80b preserved",
+    "task": "docs/tasks/regulatory-admission-current-01.md",
+    "report": "docs/phases/REGULATORY-ADMISSION-CURRENT-01.md",
+    "source_evidence": "docs/tasks/regulatory-admission-current-01.sources.json",
+    "delivered": [
+      "Real server-appointed human source/rule/policy qualification and immutable exact source bytes/history",
+      "Explicit lifecycle and policy lineage; seven current profile adapters and guarded human attestations",
+      "Persisted server-built evaluation, immutable pins and independent current/stale projection",
+      "Qualified submit/complete, freshness/acknowledgment policies, current eligible obligation reporting and verification consumption",
+      "Independent assigned read-only Auditor trace metadata without private rationale or mutation authority",
+      "TR/EN accessible responsive UI, strict consumers, meaningful domain/actual-host/PostgreSQL/React/signed-host test source"
+    ],
+    "verification": "DEFERRED_NOT_RUN: suites/build/typecheck/lint/restore/generation/model parity/migrations/browser/provider/security/independent QA/CI",
+    "unfinished_software": [
+      "Other13 owning context adapters remain Unknown/unavailable; not completed by a blocker",
+      "ProviderVerified inputs and required external source/evidence mechanisms have no successful provider adapter",
+      "Missing full golden/operation/class/crew, provider-positive, remaining adversarial races/person-trace variants and multi-human signed-host stitching",
+      "Generated EF designer/snapshot/OpenAPI/consumer parity and actual whole-foundation integration are deferred"
+    ],
+    "external_prerequisites": [
+      "Actual controlled sources, legitimate scoped owner/reviewer appointments and real human attestations",
+      "Defined signature/provider contracts and real external validation evidence when required",
+      "Actual validated escort source for GOLD-005; source49/50 proposals supply no adopted rule"
+    ],
+    "canonical_progress_unchanged": true,
+    "publication": "Ordinary LOCAL UNVERIFIED checkpoint only; coordinator owns publishing and merge",
+    "next": "One FOUNDATION-ACCEPTANCE-BUNDLE-01 integration/generation/build/test/security gate, correction of real findings, independent exact-target QA, required CI, separate original-source acceptance without duplicate SP",
+    "source_only_observations": {
+      "whitespace_exit": 0,
+      "graphify_ast_exit": 0,
+      "graph_nodes": 7569,
+      "graph_edges": 16517,
+      "graph_communities": 496,
+      "zero_node_source_warnings": 53,
+      "semantic_api_calls": 0,
+      "product_verification": "DEFERRED_NOT_RUN"
+    }
+  },
+  "human_decision_recording_01": {
+    "status": "AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+    "accepted": false,
+    "foundation_ready": false,
+    "phase": "Product authoring before FOUNDATION-ACCEPTANCE-BUNDLE-01",
+    "receiving_head": "f300d27d44211e4264acd380f7893fa72033fafa",
+    "receiving_tree": "CLEAN; predecessor actual code/tests preserved",
+    "task": "docs/tasks/human-decision-recording-01.md",
+    "report": "docs/phases/HUMAN-DECISION-RECORDING-01.md",
+    "source_evidence": "docs/tasks/human-decision-recording-01.sources.json",
+    "delivered": [
+      "Actual authorized-human text recording through POST decisions and pending finalization",
+      "Exact trusted role/type/subject/operation policy; default-deny with conditional source-specific gate",
+      "Immutable reason/evidence/verification/profile/source lineage; no qualification or activation promotion",
+      "Audited transaction/xmin/receipt and live reauthorization before replay/history/commit",
+      "TR/EN accessible UI, strict wire and meaningful domain/host/PostgreSQL/React/signed-host test source"
+    ],
+    "verification": "DEFERRED_NOT_RUN: suites/build/lint/typecheck/restore/generation/migrations/browser/providers/scans/independent QA/CI",
+    "canonical_progress_unchanged": true,
+    "publication": "LOCAL UNVERIFIED ONLY; coordinator owns publishing/merge",
+    "remaining_gates": [
+      "Actual API/client/EF generated parity and migration application",
+      "Combined foundation build/tests/security and independent exact-target QA/required CI",
+      "Genuine operator appointments and conditional source-specific signature/admission/release adapters"
+    ],
+    "next_step": "FOUNDATION-ACCEPTANCE-BUNDLE-01"
+  },
+  "human_decision_trace_01": {
+    "status": "AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+    "accepted": false,
+    "foundation_ready": false,
+    "phase": "Regulatory chain product authoring before REGULATORY-CHAIN-BUNDLE-01",
+    "task": "docs/tasks/human-decision-trace-01.md",
+    "report": "docs/phases/HUMAN-DECISION-TRACE-01.md",
+    "source_evidence": "docs/tasks/human-decision-trace-01.sources.json",
+    "evidence": "docs/phases/HUMAN-DECISION-TRACE-01.evidence.json",
+    "predecessor": "docs/phases/HUMAN-DECISION-TRACE-01.predecessor.json",
+    "delivered": [
+      "Exact server-appointed human role/tenant/vessel/evidence/control/operation and separation of duties",
+      "Immutable verification/rejection/expiry/supersession and non-approving human decision review streams",
+      "Audited atomic EF/xmin/input-head guards and immutable exact receipts",
+      "Filtered source/requirement/rule/control/evidence/review trace and real TR/EN accessible consumer",
+      "Domain/owned PostgreSQL/API/React/registered Playwright test sources"
+    ],
+    "verification": "DEFERRED_NOT_RUN: all suites/build/typecheck/restore/generation/migrations/provider/scanner/browser/lab/scans/independent QA/CI",
+    "remaining_software": [
+      "Admitted source/current obligation/authoritative evaluation integration",
+      "Qualified policy and source-specific acknowledgment/external signature validation/final decision adapter",
+      "Actual authority provisioning and broader screen/source gaps",
+      "Full generated model and consumer reconciliation at later combined gate"
+    ],
+    "canonical_progress_unchanged": true,
+    "publication": "LOCAL ONLY; coordinator owns publishing/merge; no agents/account/auth setup/self-approval",
+    "next_step": "Coordinator reviews local UNVERIFIED source and continues missing integrations, then REGULATORY-CHAIN-BUNDLE-01 and independent exact-target QA/CI"
+  },
+  "control_evidence_01": {
+    "status": "AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+    "accepted": false,
+    "foundation_ready": false,
+    "phase": "Regulatory chain product authoring before REGULATORY-CHAIN-BUNDLE-01",
+    "task": "docs/tasks/control-evidence-01.md",
+    "report": "docs/phases/CONTROL-EVIDENCE-01.md",
+    "source_evidence": "docs/tasks/control-evidence-01.sources.json",
+    "evidence": "docs/phases/CONTROL-EVIDENCE-01.evidence.json",
+    "receiving_head": "dc15b6fbed2ec2360200a7e7a2c779e70bb2e880",
+    "support_origin_receipt": {
+      "70756561f35e3be38ae34a122f7596defa5f8927": "46c08d5"
+    },
+    "delivered": [
+      "Scoped control/evidence draft APIs and real TR/EN screens",
+      "Immutable exact revision links, file/checksum/target xmin, tenant-vessel composite FKs",
+      "Live configured owner/role selection; audited atomic receipts/noop/version/race boundaries",
+      "Actual existing secure-file local/S3 OpenAsync integrity; protected/quarantine/missing references rejected",
+      "Declared time/history and honest unavailable authoritative orphan report; no verified/effective states",
+      "Meaningful tests and idempotent empty fictional fixtures authored"
+    ],
+    "verification": "DEFERRED_NOT_RUN: all suites/build/typecheck/generation/migrations/provider/scanner/browser/lab/scans/independent QA/CI",
+    "remaining_software": [
+      "Actual admitted source/policy/current obligation and qualified freshness integration",
+      "Authorized human verification/separation of duties and HUMAN-DECISION-TRACE-01",
+      "Full branch generated model/contract/consumer reconciliation and required combined gate"
+    ],
+    "canonical_progress_unchanged": true,
+    "publication": "LOCAL ONLY; coordinator owns publishing/merge; no extra agents/auth setup/self-approval",
+    "next_step": "Coordinator review and HUMAN-DECISION-TRACE-01 / remaining source-policy-foundation integrations before REGULATORY-CHAIN-BUNDLE-01"
+  },
+  "lifecycle_applicability_01": {
+    "status": "AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+    "accepted": false,
+    "foundation_ready": false,
+    "phase": "Regulatory chain software authoring before REGULATORY-CHAIN-BUNDLE-01",
+    "task": "docs/tasks/lifecycle-applicability-01.md",
+    "report": "docs/phases/LIFECYCLE-APPLICABILITY-01.md",
+    "source_evidence": "docs/tasks/lifecycle-applicability-01.sources.json",
+    "receiving_head": "8e069bcf3fa56bbf0696d788376c7fa266f31dd2",
+    "offline_correction": "af3c971 already integrated normal -x as8e069bc; actual string choice/shared calendar/two negatives preserved; not rerun",
+    "delivered": [
+      "Immutable tenant rule authoring/source and requirement revision lineage/xmin/noop/exact receipts",
+      "Explicit capability gated review requests recorded BLOCKED_SOURCE_ADMISSION with stored DRAFT",
+      "Bounded three-valued typed DSL and full reasons/critical review blockers",
+      "Server scoped versioned context and nonmutating simulation/conflict records",
+      "Configured-deny authoritative evaluate and immutable scoped history/storage foundation",
+      "TR/EN accessible preparation UI/strict consumers/synthetic incomplete fixtures/test source"
+    ],
+    "remaining_software": [
+      "Authoritative source admission and current-obligation projection/write integration",
+      "Qualified owner/reviewer/evidence/signed human-decision and separation-of-duties chain",
+      "Controlled collection adapter and missing owning input/readiness adapters",
+      "Actual migration/designer/snapshot/OpenAPI and full retained-branch reconciliation"
+    ],
+    "verification": "ALL product suites/build/typecheck/lint/restore/generation/scans/browser/provider/migration/QA/CI DEFERRED_NOT_RUN",
+    "canonical_progress": "8/970SP;2/121tasks;0/196screens",
+    "selected_scope": "40 tasks/272SP unchanged",
+    "open_dependencies": [
+      "DEV-005",
+      "DEV-008",
+      "DEV-020"
+    ],
+    "next": "CONTROL-EVIDENCE-01 then HUMAN-DECISION-TRACE-01 before one combined REGULATORY-CHAIN-BUNDLE-01 gate",
+    "publication": "NONE; local UNVERIFIED author checkpoint only; coordinator owns independent QA and publication",
+    "source_only_observations": {
+      "whitespace": {
+        "command": "git diff --cached --check",
+        "exit_code": 0,
+        "meaning": "Source whitespace only; not product verification"
+      },
+      "graphify_ast": {
+        "command": "graphify update .",
+        "exit_code": 0,
+        "nodes": 6990,
+        "edges": 14771,
+        "communities": 485,
+        "zero_node_warnings": 46,
+        "html": "omitted above5000 nodes",
+        "meaning": "AST maintenance only; no model/API calls or product validation"
+      }
+    }
+  },
+  "foundation_continuation_2026_11_02": {
+    "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+    "accepted": false,
+    "foundation_ready": false,
+    "phase": "FOUNDATION software authoring before the single combined gate",
+    "phase_report": "docs/phases/FOUNDATION-CONTINUATION-2026-11-02.md",
+    "task": "docs/tasks/offline-medical-exclusion-01.md",
+    "source_only_evidence": "docs/phases/FOUNDATION-ACCEPTANCE-BUNDLE-01.continuation-2026-11-02.json",
+    "receiving_head": "0bf43bee2991c4c85618a23b81807ef91b9c4771",
+    "configured_base_commit": "80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44",
+    "verification": "ALL software/generation/model/build/test/security/browser/provider/independent QA/CI DEFERRED_NOT_RUN; software precondition false",
+    "software": [
+      "Closed supported encrypted offline plaintext/response contracts",
+      "Exact persisted replay body/UUID/revision and outcome provenance binding",
+      "Calendar-valid UTC capture validation",
+      "Actual browser static-cache assertion reconciled with content-addressed public builds"
+    ],
+    "authored_not_executed": {
+      "vitest_logical_cases": 10,
+      "additional_api_pg_facts": 1,
+      "additional_registered_signed_host_journeys": 1,
+      "offline_registered_journeys_total": 5,
+      "configured_register_projects": 2
+    },
+    "remaining_software": [
+      "Selected Crew input/offline/evaluator scope reconciliation",
+      "Actual authoritative Tug BP/operational readiness/conflict consumers; Tug offline remains unsupported",
+      "Selected source lifecycle/applicability/control/evidence/verifier/authorized-decision/trace product workflows beyond draft preparation and primitives",
+      "S0 source chains/conditional owner assignments and unavailable delivery/backlog/trace integrations",
+      "Complete 471-file semantic/model/lock/OpenAPI/consumer reconciliation and all required execution"
+    ],
+    "security": "Prior160 unresolved proposals retained as historical; no current full scans, trusted receipt/pin/exception or verified protected CI trust",
+    "canonical_progress": "8/970SP;2/121tasks;0/196screens",
+    "publication": "NONE; no candidate commit without genuine gate evidence; coordinator owns independent review/CI/publication",
+    "source_only_observations": {
+      "whitespace": {
+        "command": "git diff --check",
+        "exit_code": 0,
+        "meaning": "Tracked source whitespace inspection only; line-ending normalization warnings; not a build or test"
+      },
+      "graphify_ast": {
+        "command": "graphify update .",
+        "exit_code": 0,
+        "nodes": 6755,
+        "edges": 14117,
+        "communities": 472,
+        "zero_node_warnings": 44,
+        "html": "Omitted above5000 nodes",
+        "final_after_test_assertion_refinement": "exit0;no code-graph topology changes;outputs unchanged",
+        "meaning": "AST maintenance only; no model/API calls or product validation"
+      }
+    }
+  },
+  "s0_foundation_remainder_01": {
+    "status": "AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+    "accepted": false,
+    "foundation_ready": false,
+    "phase": "FOUNDATION/S0 source authoring; coordinator must assess actual readiness before execution",
+    "task": "docs/tasks/s0-foundation-remainder-01.md",
+    "phase_report": "docs/phases/S0-FOUNDATION-REMAINDER-01.md",
+    "software": [
+      "7-profile/10-source-case/23-actual-policy-consumer golden dataset and bounded loaders/validators",
+      "Trusted DoR/DoD template/current14-task register and adversarial validator",
+      "All10 pilot capabilities retained;130 exact source-defined field chains; explicit unresolved source definitions",
+      "DEV004/005 engineering matrix and DEV011/116 literal-source versus future adapter reconciliation"
+    ],
+    "execution": "ALL validators/suites/build/restore/typecheck/lint/generation/migration/provider/browser/lab/full security scans/independent QA/CI DEFERRED_NOT_RUN",
+    "source_definition_gaps": [
+      "capability3 Today: no current2316 FR/entity/TC records",
+      "capability9 Safety Inbox: no current2316 FR/entity/TC records",
+      "capability10 mixed-fleet daily/value proof: no unique source chain; mode switch alone insufficient"
+    ],
+    "support_origin_receipts": {
+      "f184c7fea0a18d58cc97a377a3c3e8103e8d6663": "f995e10",
+      "14aa3a0d14ae0a6457d601b609e9ac80126627d4": "8224ba2",
+      "2bc093cbbdd9d37bc27d9379d935c46869f42b45": "0fe617b",
+      "c6ab89ac044a51f821348abd3a3166957b1ed76f": "6061f71"
+    },
+    "prior_evidence": "Original reports/44Crew records/selected-source interpretations and independent80b baseline retained; no retrospective acceptance",
+    "accounting": "Canonical8/970SP and40-task/272SP candidate ledger unchanged",
+    "publication": "NONE; coordinator owns push/PR/merge",
+    "source_only_observations": {
+      "whitespace": "git diff --check and git diff --cached --check exit0; no whitespace errors, line-ending normalization warnings only",
+      "graphify": "Final graphify update . exit0;6726 nodes/14037 edges/482 communities;43 zero-node warnings; HTML omitted for size; AST maintenance only",
+      "product_verification": "DEFERRED_NOT_RUN"
+    }
+  },
+  "s0_contract_continuation_2026_11_02": {
+    "status": "authored_unverified_incomplete_not_accepted",
+    "accepted": false,
+    "phase": "FOUNDATION/S0 source authoring; combined gate not ready",
+    "phase_report": "docs/phases/S0-CONTRACT-CONTINUATION-2026-11-02.md",
+    "task": "docs/tasks/s0-contract-closure-01.md",
+    "verification": "ALL suites/build/typecheck/EF/OpenAPI/client generation/migration/browser/provider/full security scans/independent QA/CI DEFERRED_NOT_RUN",
+    "software": [
+      "Restricted encrypted medical expiry ordinary/import/UI; crew template v4; migration140000",
+      "Actual fixed-cardinality freshness and offline committed/conflict/recovery counters",
+      "Environment contract/validator; bounded schema-source inventory; partial exact10-capability trace/validator"
+    ],
+    "crew_source_reconciliation": "All44 original locators retained; dated per-record current assessment and original reports superseded explicitly",
+    "support_origin_receipts": {
+      "139020af4041dfd96e78e623c6f20e444b7bfd17": "d92241a",
+      "7769367dd512a6f56e10fbe559fd230219322c64": "c92ab36",
+      "2f3213bd29356df3c698a7e840d16255b3214b82": "f94a59f",
+      "30200bf351bf08bd6e1dec946b0906109d70f60d": "8fb5751",
+      "62550c4070b37e090ddea58521a8ba0d7a365b7d": "4e7940a",
+      "3ee41e5a3771699f0ced13d2c2f5dd9b55039e90": "156805b",
+      "fef2e68bd244aa7df7639e531b8e59e6ce94b6ad": "138a83c"
+    },
+    "security": "160 targeted v2 unresolved;159 prior waiver proposals rejected; no real reviews/pins/exceptions/repository variables/approvals",
+    "remaining_software": "Final selected source/input/adapter/offline scope reconciliation; S0 DoR/DoD, golden dataset, complete trace definitions, source ownership software if required, ERP dependency/consumer matrix, broader observability",
+    "canonical_story_points": "8/970",
+    "accepted_tasks": "2/121",
+    "accepted_screens": "0/196",
+    "publishing": "None; coordinator owns publishing and merge",
+    "source_only_observations": {
+      "targeted_evidence_authoring": "exit0;160 occurrences;104 contexts;0 unresolved locators;0 approvals;NOT_A_FULL_SCAN",
+      "whitespace_inspection": "No whitespace errors; LF normalization warnings;not product verification",
+      "graphify": "exit0;6575 nodes;13794 edges;460 communities;39 zero-node warnings;oversized HTML omitted;AST maintenance only",
+      "immutable_finding_comparison": "160 exact targets retained;0 added/removed;47 evidence/proposal hashes regenerated;all unresolved;historical Git/object identities recorded in source-review-regeneration-2026-11-02.json"
+    }
+  },
+  "tug_planning_01": {
+    "status": "authored_unverified_incomplete_not_accepted",
+    "accepted": false,
+    "task": "docs/tasks/tug-planning-01.md",
+    "phase_report": "docs/phases/TUG-PLANNING-01.md",
+    "field_coverage": "docs/tasks/tug-planning-01.fields.json",
+    "phase": "FOUNDATION product authoring",
+    "support_origin": "8be19ed554d20b75429a919fe83e8fe9f151cdf4",
+    "support_receipt": "df96875",
+    "verification": "ALL suites/build/typecheck/EF/OpenAPI/contract generation/migration/browser/provider/security/independent QA/CI DEFERRED_NOT_RUN",
+    "behavior": [
+      "Separate versioned draft plan windows and explicit assign/reassign/remove",
+      "Current actor/mode/tenant/object/policy/eligible-Tug enforcement before recovery",
+      "Atomic audited revisions/references/receipts and scoped exact history",
+      "Real board/TR-EN editor and normalized BP declarations/all-visible-plan geometry"
+    ],
+    "remaining_software": [
+      "Authoritative verified available-BP integration",
+      "Operational conflict/readiness/authority evidence adapters",
+      "Durable Tug offline enrollment/capture/proof/replay/conflict workflow; predecessor command remains Crew watch-group only",
+      "Broader operational command/lifecycle source coverage"
+    ],
+    "canonical_story_points": "8/970",
+    "accepted_screens": "0/196",
+    "canonical_progress_unchanged": true
+  },
+  "offline_application_01": {
+    "status": "authored_unverified_not_accepted",
+    "accepted": false,
+    "task": "docs/tasks/offline-application-01.md",
+    "phase_report": "docs/phases/OFFLINE-APPLICATION-01.md",
+    "current_phase": "FOUNDATION authoring checkpoint I: configured durable Crew draft watch-group workflow",
+    "verification": "DEFERRED_NOT_RUN: all suites/build/typecheck/contract/EF generation/migration/browser/provider/independent QA/CI",
+    "supported_commands": [
+      "crew.draft.watch-group.v1"
+    ],
+    "canonical_progress_unchanged": true,
+    "canonical_story_points": "8/970",
+    "accepted_screens": "0/196",
+    "authored_source_counts_not_executed": {
+      "domain_theory_rows": 12,
+      "real_api_postgresql_facts": 16,
+      "react_behaviors": 11,
+      "registered_signed_host_cases": 4
+    },
+    "support_origin_receipts": {
+      "0952b2bad0412f5159bef9294a060ea05b4260a2": "7198a81",
+      "e722ba10454da43b1981324b0e5fb86249008b2d": "20892a2"
+    },
+    "remaining": "Other offline typed domains/binary evidence remain denied; Tug, real role lens and original S0 software; full generation/model/security/QA/CI gate",
+    "publishing": "None; coordinator owns publishing and merge",
+    "seed": "No manufactured enrollment/key/receipt/conflict authority; prior78/79 expectations unchanged and unobserved",
+    "source_only_observations": [
+      "git diff --cached --check exit0; not a product check",
+      "Graphify AST refresh exit0;34 zero-node warnings and oversized HTML omitted; no model/provider/test execution"
+    ],
+    "source_evidence": "docs/phases/OFFLINE-APPLICATION-01.evidence.json"
+  },
+  "domain_completion_01": {
+    "status": "authored_unverified_incomplete_not_accepted",
+    "accepted": false,
+    "task": "docs/tasks/domain-completion-01.md",
+    "phase_report": "docs/phases/DOMAIN-COMPLETION-01.md",
+    "current_phase": "FOUNDATION authoring checkpoint I: configured durable Crew draft watch-group workflow; larger foundation/S0 incomplete",
+    "verification": "DEFERRED: all suites/build/typecheck/migrations/contract/browser/independent QA/CI",
+    "canonical_progress_unchanged": true,
+    "new_personal_fields": 15,
+    "source_fields_traced_not_imported": 111,
+    "next_step": "Continue remaining required software; coordinator owns combined gate and publishing",
+    "technical_observation_adapter": "authored_configured_unverified",
+    "seed_audit_expectations_not_observed": [
+      78,
+      79
+    ],
+    "source_only_observations": [
+      "git diff --check exit0",
+      "Graphify AST update; graph refreshed, HTML visualization omitted for graph size; not a product test"
+    ],
+    "tug_audit_revision": "authored_scoped_exact_revision_unverified",
+    "committed_checkpoints": [
+      "13f532d",
+      "c3de584",
+      "ee707e9",
+      "f413c08"
+    ],
+    "publishing": "Not performed; coordinator owns publishing and merge",
+    "person_owned_scanned_files": "authored_configured_unverified; explicit active photo selection/clear/current exact-version consumer now authored; verification and full offline remain open",
+    "support_origin_receipts": {
+      "312999e55c6575927f894fc2239846a1d748f4af": "0ae9c70",
+      "f578f859c5e6fa1d7ae5e511a884afd6b9c8706f": "e3159c5",
+      "94c9c255193cc00405046b79b7abc0f5ffbf27b4": "27d08e7",
+      "2a6f6a544d44c3450c54d963795c654e6ef2c71d": "62b1587"
+    },
+    "checkpoint_e_authored_cases_not_run": {
+      "actual_api_postgresql": 9,
+      "react": 8,
+      "private_host_browser": 2
+    },
+    "shared_context_authored_not_run": 41,
+    "shared_context_react_authored_not_run": 10,
+    "profile_privacy_authored_not_run": 7,
+    "crew_identity_closure": "docs/phases/CREW-IDENTITY-CLOSURE-01.md; AUTHORED_UNVERIFIED; NOT ACCEPTED",
+    "crew_legacy_continuation": "docs/phases/CREW-LEGACY-CLOSURE-01.md; AUTHORED_UNVERIFIED_NOT_ACCEPTED; historical storage conversion authored, interpretation unavailable, lookup admin optional per literal source",
+    "offline_application_01": "docs/phases/OFFLINE-APPLICATION-01.md; configured watch-group source authored_unverified; other offline adapters denied"
+  },
+  "import_foundation_01": {
+    "status": "authored_unverified_incomplete_not_accepted",
+    "accepted": false,
+    "task": "docs/tasks/import-foundation-01.md",
+    "phase_report": "docs/phases/IMPORT-FOUNDATION-01.md",
+    "source_baseline": "poseidon-v46.3-20261030",
+    "source_locator": "18.01 Backlog row70 DEV-069/T-S11-001/8SP",
+    "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "receiving_head": "dd292d9",
+    "engineering_prerequisite": "docs/reviews/reg-boundary-tls-01-80b057a6d183.json; supplied committed PR11 proof reused",
+    "support_origins_in_order": [
+      "06740801246fde5b8182da51116c488c01a9e8f5",
+      "d6d20ad812b7559be16544016ee006211e0578cc",
+      "817a72931ed9044f93419684256cda936e6f2c19",
+      "a55e0f9328c8fab8e090e5ebca7f2042fe5448b2"
+    ],
+    "support_receipts_in_order": [
+      "0f5118b",
+      "e13e6c4",
+      "a124151",
+      "cc9a9d9"
+    ],
+    "canonical_progress_unchanged": true,
+    "canonical_progress": "8/970",
+    "canonical_total_story_points": 970,
+    "current_phase": "Larger domain foundation authoring; four-category trial import and private certificate declaration checkpoint",
+    "verification": "DEFERRED: every suite/build/typecheck/EF/OpenAPI generation/migration/browser/provider lab/independent exact-code QA/CI; no new PASS or accepted/skipped checks",
+    "source_only_observations": [
+      "Receiving git status clean; actual -x handoffs integrated in order",
+      "Source whitespace inspection git diff --check exit0 during authoring",
+      "Graphify AST maintenance completed; not product validation"
+    ],
+    "authored_new_cases": {
+      "domain": 28,
+      "real_postgres_api": 16,
+      "persistence": 5,
+      "react": 10,
+      "registered_actual_host_browser": 3
+    },
+    "preserved_support_authored_cases": 88,
+    "delivered": [
+      "Server-owned versioned four-category descriptors and actual downloadable XLSX templates",
+      "Bounded XLSX parse, draft mapping, nonmutating domain preview, safe scoped aggregate/page/reject APIs",
+      "Current-authorized atomic trial import through ordinary audited mutation/receipt paths with exact-source retry and durable replay",
+      "Normalized private source-complete declaration metadata, composite owner scope, migration/designer/snapshot and operator-preserving synthetic incomplete fixtures",
+      "Reachable TR/EN importer and private crew-profile certificate editor, actual API adapters, URL/session/context privacy and uncertain retry states"
+    ],
+    "open_gaps": [
+      "All actual execution, model/generated-contract parity, independent QA and CI",
+      "Approved precision/scale, lookup/key catalogs, conditional requiredness and complete four-category field/import whitelist; not all111 traced fields are imported",
+      "Full certificate/compliance verification and authorized human signature gates",
+      "Source-approved production reject/transaction/reviewer/disposition policy, DEV-070 owner reconciliation and environment rollback/pilot authorization",
+      "Retention/provider/privacy/session-history policy and canonical root API alias reconciliation"
+    ],
+    "next": "Coordinator continues larger bundle and exact-target gate; worker does not publish, merge or accept",
+    "crew_identity_parity": "Crew v3 existing-person ordinary identity handler, explicit person/base/policy/purpose and configured tuple reference parity authored; NOT RUN; historical plaintext batch storage conversion is authored separately in CREW-LEGACY-CLOSURE-01; interpretation and production activation remain unavailable",
+    "crew_legacy_continuation": "docs/phases/CREW-LEGACY-CLOSURE-01.md; AUTHORED_UNVERIFIED_NOT_ACCEPTED; historical storage conversion authored, interpretation unavailable, lookup admin optional per literal source"
+  },
+  "tug_foundation_01": {
+    "status": "authored_unverified_incomplete_not_accepted",
+    "accepted": false,
+    "task": "docs/tasks/tug-foundation-01.md",
+    "phase_report": "docs/phases/TUG-FOUNDATION-01.md",
+    "source_baseline": "poseidon-v46.3-20261030",
+    "receiving_head": "5cb416f",
+    "engineering_prerequisite": "80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44; supplied committed PR11 engineering receipt",
+    "support_origin": "40ec40cdef905ca3e7e0f0e5db56b0eb0ba76756",
+    "support_receipt": "c711fd8",
+    "canonical_progress_unchanged": true,
+    "target_story_points": 194,
+    "canonical_total_story_points": 970,
+    "verification": "DEFERRED: all suites/build/typecheck/contracts/migration/browser/independent QA/CI; no new PASS",
+    "current_phase": "Larger domain foundation product authoring; Tug draft checkpoint",
+    "delivered": [
+      "Trusted kind/mode/grant-scoped Tug context and mode-filtered shared reads/search",
+      "Normalized request EF aggregate; immutable source/revision/receipt lineage, authored migration/designer/snapshot and synthetic incomplete fixtures",
+      "Audited API with bounded duplicate-aware input, exact BP, xmin, serializable transaction and exact revision replay",
+      "Connected TR/EN intake/detail/context/board URLs with honest assignment/readiness/conflict coverage and retained uncertain attempts",
+      "Authored domain, real isolated PostgreSQL/API, React and registered private real-host browser cases"
+    ],
+    "open_gaps": [
+      "D-STATE-01 and approved conditional/stable-code contracts",
+      "Verified BP/type/certificate/crew/equipment and controlled assignment/dispatch adapters",
+      "Approved plan, available BP, readiness and operational conflict remain Unknown/Unavailable",
+      "Durable offline synchronization and dedicated Tug audit revision projection",
+      "All execution evidence and independent exact-target QA/CI"
+    ],
+    "next": "Coordinator continues larger bundle and later executes combined gate; no publication/merge by this worker"
+  },
+  "equipment_maintenance_01": {
+    "status": "authored_unverified_incomplete_not_accepted",
+    "accepted": false,
+    "task": "docs/tasks/equipment-maintenance-01.md",
+    "phase_report": "docs/phases/EQUIPMENT-MAINTENANCE-01.md",
+    "source_baseline": "poseidon-v46.3-20261030",
+    "receiving_head": "9c94f66",
+    "engineering_prerequisite": "80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44; supplied committed PR11 engineering review",
+    "support_origins_in_order": [
+      "dea9169d0eba123bf3d5cf469af3e97de68f5dc5",
+      "fa58d3ddb35f67970c75d8055fcc93a8a37c59a3",
+      "a6d6bd30d6e9ffdbabc9b5313262064a5e1af79d"
+    ],
+    "support_receipts_in_order": [
+      "3cae07d",
+      "4f8466a",
+      "ed9e9e1"
+    ],
+    "canonical_progress_unchanged": true,
+    "target_story_points": 194,
+    "canonical_total_story_points": 970,
+    "verification": "DEFERRED: all suites/build/typecheck/contracts/migration execution/browser/independent QA/CI; no new PASS",
+    "current_phase": "Larger domain foundation product authoring; actual technical draft implementation checkpoint",
+    "delivered": [
+      "Connected Asset hierarchy EF/API/TR-EN editor with actual supplied policy/tree",
+      "Authored transactional SSI + scoped database cycle trigger, composite FKs, xmin/revisions, attributed writes/receipts",
+      "Normalized Technical job/eligible role references and immutable plan calculation/input/asset lineage",
+      "Current and normalized API aliases share same storage/receipts",
+      "Synthetic add-missing unverified fixtures and domain/PostgreSQL/API/component/private real-host cases"
+    ],
+    "open_criteria": [
+      "Actual generated OpenAPI/consumer adapter parity at deferred bundle gate",
+      "Real race/model/migration/seed/audit/restart/backend/component/browser checks and fixes",
+      "Approved controlled catalogs/role lookup/freshness and meter-condition adapter contracts",
+      "DEV-109 WorkOrder deferral authority/reason/risk/evidence/max-extension/readiness rules; no activation or completion/verification",
+      "Durable offline support remains unavailable; current forms are online only",
+      "Fresh independent exact-target QA, required CI and separate source acceptance"
+    ],
+    "next_step": "Coordinator continues foundation bundle, provisions disposable technical fixture capabilities at gate, executes combined verification and obtains independent QA. Worker does not publish or merge."
+  },
+  "crew_roster_01": {
+    "status": "product_authoring_checkpoint_unverified_incomplete_not_accepted",
+    "accepted": false,
+    "task": "docs/tasks/crew-roster-01.md",
+    "phase_report": "docs/phases/CREW-ROSTER-01.md",
+    "source_baseline": "poseidon-v46.3-20261030",
+    "receiving_head": "67d25bc93d6d983ef4bef5ba8d935e9dadcca114",
+    "engineering_prerequisite": "80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44; supplied committed PR11 review",
+    "canonical_progress_unchanged": true,
+    "target_story_points": 194,
+    "verification": "DEFERRED: no suites/build/typecheck/contract generation/browser; no new PASS evidence",
+    "current_phase": "Larger domain foundation authoring; online crew draft slice authored, full DEV-047 incomplete",
+    "open_criteria": [
+      "Crew field classification and source-approved offline whitelist/device/session/expiry and durable READ/CAPTURE/reconnect conflict/cache-isolation implementation",
+      "Remaining personal/contact/identity and profile contracts, scoped current-effective selection and approved assignment-state/period conventions",
+      "Combined migration/model/contract and all product checks, fresh exact-target independent QA, remote CI and separate source acceptance"
+    ],
+    "next_step": "Continue source scope and larger foundation bundle; coordinator owns execution, fresh QA and publishing. No merge/publication by worker.",
+    "crew_identity_closure": "Protected identity/conversion/scoped lookup consumers authored; NOT RUN/NOT ACCEPTED; see CREW-IDENTITY-CLOSURE-01"
+  },
+  "files_source_completion_01_repair": {
+    "status": "bounded_repair_authored_unverified_not_accepted",
+    "accepted": false,
+    "receiving_head": "97a1500e937de43ca3e83d0c1e49e034c22f6af7",
+    "approved_base": "80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44",
+    "phase_report": "docs/phases/FILES-SOURCE-COMPLETION-01-REPAIR.md",
+    "contract": "docs/security/source-review-v2.md",
+    "prior_review_status": "rejected_all_159_proposed_waivers_not_proof_of_live_credentials",
+    "receipt_sha256": "02183cf634aff093beb33a8952db99b071ad02aa5f2ccd23967be2b2963bd523",
+    "source_checkpoint_and_failed_0bb_preserved": true,
+    "targeted_occurrences": 160,
+    "shared_contexts": 104,
+    "unresolved_archived_locators": 0,
+    "approved": 0,
+    "all_cases": "unresolved_pending_independent_review_and_operator_assessment",
+    "canonical_progress_unchanged": true,
+    "canonical_accepted_story_points": 8,
+    "canonical_total_story_points": 970,
+    "verification": "DEFERRED: no suites/build/typecheck/browser/provider/full scans executed; targeted authoring generation only",
+    "authored_check_ids": [
+      "FSC-REPAIR-ID-01",
+      "FSC-REPAIR-ID-02",
+      "FSC-REPAIR-BYTE-01",
+      "FSC-REPAIR-NL-01",
+      "FSC-REPAIR-ARCHIVE-01",
+      "FSC-REPAIR-SAFE-01",
+      "FSC-REPAIR-EVIDENCE-01",
+      "FSC-REPAIR-CI-01"
+    ],
+    "current_phase": "Foundation bounded implementation repair checkpoint UNVERIFIED",
+    "next_step": "Coordinator v2 adapter/protected-pin setup and independent safe classification; renewed combined gate and exact-target QA; no worker publication"
+  },
+  "files_source_completion_01": {
+    "status": "implementation_checkpoint_unverified_not_accepted",
+    "accepted": false,
+    "task": "docs/tasks/files-source-completion-01.md",
+    "phase_report": "docs/phases/FILES-SOURCE-COMPLETION-01.md",
+    "receiving_head": "0bb2492f8eff66e92109ebad18c8c8c55b64621b",
+    "approved_base": "80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44",
+    "canonical_progress_unchanged": true,
+    "canonical_accepted_story_points": 8,
+    "target_story_points": 194,
+    "canonical_total_story_points": 970,
+    "delivered": [
+      "Official-SDK S3 adapter, explicit secret references, provider version/ETag/checksum and actual-byte verification",
+      "Persistent document draft/revision ownership with audited append/replay and TR/EN attachment consumers",
+      "Migration/designer/snapshot and synthetic metadata-only seed additions",
+      "159 exact context-bound classification proposals with162 provenance observations;0 approvals",
+      "Domain/PostgreSQL/API/S3/clamd/React/signed-host-browser tests authored;owned real S3 driver authored"
+    ],
+    "verification": "DEFERRED: no restore/build/typecheck/suites/browser/lab/provider/scan execution; no new PASS receipts",
+    "open_gates": [
+      "All exact-target independent classifications and60 public-example reuse/rotation assessments",
+      "Reviewed source-built owned S3 image, real loopback scanner and explicit actual-host S3/browser bucket configuration",
+      "SDK locked restore/API compatibility, EF parity, generated contract refresh and all new/existing combined checks",
+      "Full repository and actual final built-client scans; prior failed gate remains immutable",
+      "Full Controlled Knowledge field/lifecycle/owner/approval source acceptance; no authority inferred from drafts",
+      "Independent exact-commit QA and coordinator CI before any publication"
+    ],
+    "current_phase": "Foundation authoring checkpoint UNVERIFIED",
+    "next_step": "Coordinator-owned renewed AUDIT-FILES-BUNDLE-01 execution and exact-target independent QA;no publication by worker"
+  },
+  "audit_files_bundle_01": {
+    "status": "executed_combined_gate_not_met_not_accepted",
+    "accepted": false,
+    "phase_report": "docs/phases/AUDIT-FILES-BUNDLE-01.md",
+    "evidence": "docs/phases/AUDIT-FILES-BUNDLE-01.evidence.json",
+    "approved_base": "80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44",
+    "receiving_head": "e764f96",
+    "canonical_progress_unchanged": true,
+    "canonical_accepted_story_points": 8,
+    "canonical_total_story_points": 970,
+    "canonical_accepted_tasks": 2,
+    "canonical_total_tasks": 121,
+    "canonical_accepted_screens": 0,
+    "canonical_total_screens": 196,
+    "verification": {
+      "domain": "83/83 PASS",
+      "persistence": "29/29 PASS real PostgreSQL",
+      "api": "full189/189 PASS; affected Diagnostics6/6 PASS including one new case;190 unique covered",
+      "frontend": "full380/380 PASS; affected45/45 then34/34 PASS; lint/typecheck/build PASS",
+      "ordinary_browser": "26 unique cases covered by initial full and affected repairs; no full26 green rerun claimed",
+      "signed_browser": "broad2/2 PASS; audit/REG/files13/14 initial then only affected1/1 PASS;14 unique covered",
+      "python": "initial141:140 PASS/1 ERROR; fixed affected modules/new cases cover144 current discovered cases",
+      "source_bytes": "269 files;34958 chunks;0 mismatches",
+      "ef": "no pending model changes",
+      "repository_scan": "FAIL;810 inputs;156 findings;safe ledger retained;final changed inputs supplemented separately;final changed-input supplement86 files/6 findings/0 input failures,also FAIL",
+      "actual_client_scan": "PASS;3 files;0 findings;final dist hashes retained",
+      "independent_exact_commit_qa_remote_ci": "NOT RUN;coordinator-owned",
+      "source_criteria_reconciliation": "NOT RUN;canonical counts unchanged"
+    },
+    "not_met": [
+      "Repository findings need actual classification/remediation/exact reviewed exceptions; controlled originals preserved",
+      "Missing configurable S3-compatible/API object-storage adapter and object-storage secret references",
+      "PNG-only transport does not complete broader evidence/document source contract;no mandatory PDF inferred",
+      "Entire-product critical audit/operational role appointments/retention/production/DEV-003/006 and source/expert gates remain open"
+    ],
+    "current_phase": "Executed local foundation gate; source/security gaps remain;NOT ACCEPTED",
+    "next_step": "Coordinator independent exact-commit review, actual remaining adapter/secret development and source reconciliation before any publication; no self approval"
+  },
+  "secure_files_01": {
+    "status": "combined_gate_executed_not_accepted",
+    "accepted": false,
+    "task": "docs/tasks/secure-files-01.md",
+    "phase_report": "docs/phases/SECURE-FILES-01.md",
+    "baseline_checkpoint": "3fd26e2",
+    "approved_ancestry_merge": "5a2930b17c3895f1d9d20212e0319fff37cf8cd2",
+    "predecessor_head": "80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44",
+    "predecessor_equal_tree": "868a966ab2ed0fd8816f8bc508569e554be69b35",
+    "predecessor_proof_scope": "Supplied QA4/4 and8 checks; predecessor only, no successor acceptance",
+    "delivered": [
+      "Explicit trusted file.read/file.write and vessel scope before file reads/mutations/capabilities",
+      "Metadata-first immutable UUID intent, bounded streamed bytes/checksum/passive PNG subset and real loopback clamd transport",
+      "Immutable file revision, audited DB finalization/receipt, quarantine and xmin-fenced explicit reconciliation",
+      "Actor/tenant/vessel/object/version/expiry-bound download capability with fresh membership and byte integrity",
+      "Accessible TR/EN real vessel file UI, progress/cancel/frozen retry/dirty guard and honest quarantine",
+      "Operator environment secret references; safe bounded tracked-repository/actual production-output scanner and CI authoring",
+      "Separate operator role-reference audit snapshot and complete wire-type/numeric-string regressions",
+      "Metadata-only SyntheticUnverified fixtures and meaningful Domain/PostgreSQL/API/component/browser tests"
+    ],
+    "canonical_progress_unchanged": true,
+    "canonical_accepted_story_points": 8,
+    "canonical_total_story_points": 970,
+    "user_delivery_target_story_points": 194,
+    "current_phase": "AUDIT-FILES-BUNDLE-01 executed;combined gate NOT MET;no canonical acceptance",
+    "open_gates": [
+      "AUDIT-FILES-BUNDLE-01 combined actual gate",
+      "Production object provider/secret references, scanner trust/signature/deployment, operator limits/type policy",
+      "Role catalog/actual configured assignments; no DEV-016100% acceptance from capability strings or references alone",
+      "Retention/legal hold/operator reconciliation scheduling/restore and privacy",
+      "Actual secret scan findings UNKNOWN; no DEV-017 PASS/closure claim",
+      "Independent exact-target review and coordinator-owned publication"
+    ],
+    "publication": "LOCAL UNVERIFIED COMMIT ONLY; no push/PR/new publication merge/self approval; only explicitly authorized predecessor ancestry merge",
+    "next_step": "Coordinator queues AUDIT-FILES-BUNDLE-01 then independent target QA; accepted counts unchanged",
+    "graph_maintenance": "AST-only final graphify update exit0;3604 nodes/6133 edges/294 communities;14 zero-node source warnings;not product verification",
+    "latest_gate": "docs/phases/AUDIT-FILES-BUNDLE-01.md",
+    "historical_authoring_verification": {
+      "build_restore": "DEFERRED / NOT RUN",
+      "domain": "DEFERRED / NOT RUN",
+      "postgresql_api_migrations_seed": "DEFERRED / NOT RUN",
+      "real_clamd": "DEFERRED / NOT RUN",
+      "repository_and_client_secret_scans": "DEFERRED / NOT RUN",
+      "frontend_components_lint_typecheck_build": "DEFERRED / NOT RUN",
+      "openapi_and_consumers": "DEFERRED / NOT RUN",
+      "playwright_private_provider_tls": "DEFERRED / NOT RUN",
+      "independent_exact_target_qa_ci": "DEFERRED / NOT RUN"
+    },
+    "historical_authoring_executed_product_checks": 0,
+    "historical_authoring_new_pass_receipts": 0,
+    "verification": {
+      "latest_gate": "docs/phases/AUDIT-FILES-BUNDLE-01.md",
+      "combined_result": "NOT MET",
+      "accepted": false
+    }
+  },
   "as_of": "2026-11-01",
+  "audit_trace_01": {
+    "status": "combined_gate_executed_not_accepted",
+    "accepted": false,
+    "baseline_commit": "473ced0",
+    "prerequisite_independent_proof": {
+      "path": "docs/reviews/reg-boundary-tls-01-80b057a6d183.json",
+      "exact_commit": "80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44",
+      "scope": "supplied independent local engineering approval; not successor acceptance"
+    },
+    "task": "docs/tasks/audit-trace-01.md",
+    "phase_report": "docs/phases/AUDIT-TRACE-01.md",
+    "sources": [
+      "active18.01 Backlog rows12,15,16,17 / DEV-011,014,015,016 / T-S0-011,T-S1-002,003,004",
+      "14.01 paragraph141",
+      "14.02 Read Model - Projection Gap row57; Screen Coverage196 row63",
+      "15.01 paragraphs61-81,296-310",
+      "13.02 paragraphs393-398;13.04 paragraphs19-25",
+      "11.01 2316 Alan v46.3 rows1066,1069 / FR-TC-auditor-mode-evidence_ref,scope"
+    ],
+    "delivered": [
+      "Explicit default-deny audit.read and tenant/vessel/object/catalog filtering before count/page/detail/revision/enrichment",
+      "Safe trusted capability/source/vessel/resource/before-xmin/committed-xmin/immutable-revision lineage without raw snapshots",
+      "Nullable hand-authored migration/designer/snapshot; no guessed historical backfill",
+      "Real TR/EN responsive workspace, URL filters/cursor/detail and error/denied states",
+      "Observed read/invalid/denial audit corrections and bounded metrics without identity labels",
+      "One actual PostgreSQL container per directory collection, fresh registered UUID database/current migrations/synthetic seed per test; isolated cleanup",
+      "Meaningful domain/PostgreSQL/API/React/real-host Playwright tests plus source-backed all-current-route/mutation coverage matrix"
+    ],
+    "graph_maintenance": "AST-only update completed exit0;3391 nodes/5627 edges/279 communities;13 zero-node source warnings;not product verification",
+    "canonical_progress_unchanged": true,
+    "canonical_accepted_story_points": 8,
+    "canonical_total_story_points": 970,
+    "publication": "LOCAL COMMIT ONLY; no push/PR/merge/self-approval; coordinator owns publication",
+    "current_phase": "AUDIT-FILES-BUNDLE-01 executed;combined gate NOT MET;no canonical acceptance",
+    "limitations": [
+      "SecurityEvents have no viewer; audit.read grants no security log/export authority",
+      "Historical missing metadata remains unavailable; unknown vessel scope withheld from vessel-only actors",
+      "Deterministic keyset is not a retained cross-request DB snapshot; late pre-cutoff transactions can appear",
+      "Generated OpenAPI/types intentionally unchanged pending actual-host combined generation",
+      "No full-product audit coverage or legal/GDPR/KVKK compliance claim"
+    ],
+    "open_gates": [
+      "AUDIT-FILES-BUNDLE-01 generation/checks, actual PostgreSQL isolation/timing and full preserved regression",
+      "Explicit gate-operator provision of audit.read for disposable real-host writer; restricted actor stays denied",
+      "Independent exact-target QA and coordinator CI",
+      "Production IdP/MFA/roles, source admission, retention/privacy/export/DB privileges",
+      "Expert/legal/permit/pilot/release and existing dependency advisory gates"
+    ],
+    "next_step": "Secure-files foundation authoring, then combined audit/files actual generation/checks, timing and independent exact-target review",
+    "latest_gate": "docs/phases/AUDIT-FILES-BUNDLE-01.md",
+    "historical_authoring_verification": {
+      "domain": "DEFERRED / NOT RUN",
+      "postgresql_persistence_migration_seed": "DEFERRED / NOT RUN",
+      "api_security_transactions_concurrency": "DEFERRED / NOT RUN",
+      "react_runtime_transport_ui": "DEFERRED / NOT RUN",
+      "playwright_signed_provider_tls": "DEFERRED / NOT RUN",
+      "restore_build_lint_typecheck": "DEFERRED / NOT RUN",
+      "actual_openapi_export_generated_consumers": "DEFERRED / NOT RUN",
+      "ef_model_designer_snapshot_parity": "DEFERRED / NOT RUN",
+      "timing_before_after": "DEFERRED / NOT RUN",
+      "independent_target_qa_ci": "DEFERRED / NOT RUN"
+    },
+    "historical_authoring_executed_product_checks": 0,
+    "historical_authoring_new_pass_receipts": 0,
+    "verification": {
+      "latest_gate": "docs/phases/AUDIT-FILES-BUNDLE-01.md",
+      "combined_result": "NOT MET",
+      "accepted": false
+    }
+  },
   "reg_source_draft_01": {
     "status": "whole318a147_rejected_new_bounded_boundary_tls_candidate_pending_independent_qa",
     "accepted": false,
@@ -34,7 +1114,7 @@
     "verification_record_scope": "Authored/deferred and original20f1198 results are historical;current rejection-repair evidence in core_bundle_01.verification"
   },
   "baseline": "POSEIDON v46.3 updated 2026-10-30 / Library26 candidate",
-  "current_stage": "S0; DEV-001 and DEV-002 accepted; remaining exit gates open",
+  "current_stage": "PR12:164 source classifications genuinely approved and externally pinned. First full reviewed scan1427inputs/3new artifact findingsFAIL; quote-safe evidence serialization and synthetic header construction corrected all3.49/49 focused testsPASS;10 changed files0findings. New full CI and independent product QA pending;canonical8/970 unchanged.",
   "method": "accepted story points / total baseline story points * 100",
   "scope": "complete v46.3 Backlog sheet; duplicates in other sheets excluded",
   "total_tasks": 121,
@@ -2410,7 +3490,8 @@
     "docs/phases/OPS-DASH-01.md",
     "docs/phases/FOUNDATION-APP-01.md",
     "docs/phases/DIR-WORKSPACE-01.md",
-    "docs/phases/VESSEL-PROFILE-DRAFT-01.md"
+    "docs/phases/VESSEL-PROFILE-DRAFT-01.md",
+    "docs/phases/CREW-IDENTITY-CLOSURE-01.md"
   ],
   "active_source": "docs/sources/active.json",
   "current_package": {
@@ -2858,5 +3939,274 @@
     "build_exit": 0,
     "independent_qa": "PENDING for the new exact commit",
     "canonical_accepted_story_points": 8
+  },
+  "s0_contract_closure_01": {
+    "status": "prerequisite_authoring_incomplete_not_accepted",
+    "accepted": false,
+    "task": "docs/tasks/s0-contract-closure-01.md",
+    "phase_report": "docs/phases/S0-CONTRACT-CLOSURE-01.md",
+    "verification": "DEFERRED_NOT_RUN",
+    "current_phase": "Foundation software continuation before S0 closure and combined gate",
+    "canonical_progress_unchanged": true,
+    "crew_identity_prerequisite": "Checkpoint G authored/unverified; full S0 criteria remain unfinished; see CREW-IDENTITY-CLOSURE-01 phase"
+  },
+  "foundation_acceptance_bundle_01": {
+    "status": "software_precondition_incomplete_not_run_not_accepted",
+    "accepted": false,
+    "ready_for_combined_gate": false,
+    "current_phase": "Foundation source authoring checkpoint G; Crew identity/conversion/import/configured lookups authored; incomplete/unverified",
+    "source_head": "70e578d5ca63581411ff0ed88868992c787c47b8",
+    "configured_base_commit": "80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44",
+    "phase_report": "docs/phases/FOUNDATION-ACCEPTANCE-BUNDLE-01.md",
+    "candidate_matrix": "docs/phases/FOUNDATION-ACCEPTANCE-BUNDLE-01.candidates.json",
+    "source_only_evidence": "docs/phases/FOUNDATION-ACCEPTANCE-BUNDLE-01.evidence.json",
+    "canonical_progress_unchanged": true,
+    "authored_logical_cases_not_run": {
+      "actual_host_postgresql": 6,
+      "react": 6,
+      "private_host": 1
+    },
+    "verification": "NOT RUN: software precondition false; no build/suite/generation/migration/browser/provider/independent QA/CI",
+    "candidate_commit": null,
+    "publishing": "None; coordinator-owned after independent exact-target QA/CI",
+    "next_step": "Crew legacy conversion authored and lookup admin scoped as optional in CREW-LEGACY-CLOSURE-01; continue full offline/Tug/S0 software; coordinator owns later combined gate and independent QA/CI",
+    "crew_identity_report": "docs/phases/CREW-IDENTITY-CLOSURE-01.md"
+  },
+  "crew_identity_closure_01": {
+    "status": "AUTHORED_UNVERIFIED_INCOMPLETE_NOT_ACCEPTED",
+    "accepted": false,
+    "task": "docs/tasks/crew-identity-closure-01.md",
+    "phase_report": "docs/phases/CREW-IDENTITY-CLOSURE-01.md",
+    "trace": "docs/tasks/crew-identity-closure-01.trace.json",
+    "current_phase": "Foundation source authoring; Crew identity checkpoint G; combined gate not started",
+    "verification": "DEFERRED_NOT_RUN: all suites/build/typecheck/EF-generation/migration/contract/browser/provider/QA/CI",
+    "support_origin_receipts": {
+      "45ae4791908b54deae2a165b589c116bcccb1654": "cb662c6",
+      "6d9874b3674a07689ae3b212729ca18ab0fabf35": "4341492",
+      "d5a3c714ecec6a7d7d97b9e0bc4406e3aacc719c": "0ea95d3",
+      "41e2924d67679973585251bbd0f2dbcb774abe1f": "88ca4fc"
+    },
+    "publishing": "Not performed; coordinator only",
+    "canonical_progress_unchanged": true,
+    "remaining_software": [
+      "Deferred actual model/generation and all consumers reconciliation",
+      "Complete durable offline application/domain+offline receipts/conflict/history",
+      "Tug versioned planning/assignment/type/context/board/BP/conflict/localization",
+      "Full original S0 criteria and remaining real-host journeys"
+    ],
+    "next_step": "Coordinator continues required source authoring; later one combined execution gate, exact-target independent QA/required CI and separate source acceptance",
+    "source_only_observations": [
+      "git diff --cached --check exit0; not product verification",
+      "Graphify AST final refresh exit0; zero-node warnings and size-related omitted HTML; not product verification"
+    ],
+    "source_hash_record": "docs/phases/CREW-IDENTITY-CLOSURE-01.evidence.json",
+    "continuation": "CREW-LEGACY-CLOSURE-01: historical batch conversion authored; broad catalog admin/history optional per literal selected sources; all NOT RUN"
+  },
+  "crew_legacy_closure_01": {
+    "status": "AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+    "accepted": false,
+    "task": "docs/tasks/crew-legacy-closure-01.md",
+    "phase_report": "docs/phases/CREW-LEGACY-CLOSURE-01.md",
+    "trace": "docs/tasks/crew-legacy-closure-01.trace.json",
+    "receiving_head": "03f2f5c",
+    "support_origin_receipts": {
+      "0952b2bad0412f5159bef9294a060ea05b4260a2": "7198a81",
+      "e722ba10454da43b1981324b0e5fb86249008b2d": "20892a2"
+    },
+    "verification": "DEFERRED_NOT_RUN: all test/build/typecheck/generation/migration/browser/provider/QA/CI",
+    "legacy_storage_conversion": "authored_controlled_current_policy_tenant_scope_lossless_authenticated_encryption_atomic_audit_receipt_unverified",
+    "historical_interpretation": "Unavailable; original capture authority Unknown; no current policy backfill or obsolete template writes",
+    "lookup_source_decision": "Selected scoped/effective controlled selection uses immutable configured tuples; broad catalog admin/history optional later scope; codebook/mapping warnings unresolved",
+    "required_software_remaining": [
+      "OFFLINE-APPLICATION-01 durable application/offline receipts/recovery/conflict/history",
+      "Tug planning/assignment/type/context/board/BP/conflict/localization",
+      "Real role lens and original S0 criteria",
+      "Later actual generation/model parity and full foundation gate/independent target QA/CI"
+    ],
+    "canonical_progress": "8/970SP,2/121tasks,0/196accepted",
+    "canonical_progress_unchanged": true,
+    "publishing": "Not performed; coordinator only",
+    "next_step": "Coordinator continues OFFLINE-APPLICATION-01, Tug planning, real role lens and original S0 before the single full foundation gate",
+    "source_only_observations": [
+      "git diff --check exit0; source whitespace only",
+      "Graphify AST update exit0; zero-node warnings and size-related omitted HTML; not product verification"
+    ]
+  },
+  "navigation_role_lens_01": {
+    "status": "AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+    "accepted": false,
+    "task": "docs/tasks/navigation-role-lens-01.md",
+    "phase_report": "docs/phases/NAVIGATION-ROLE-LENS-01.md",
+    "receiving_head": "dbf86e3",
+    "current_phase": "FOUNDATION software authoring before S0 closure and single combined gate",
+    "verification": "DEFERRED_NOT_RUN: all suites/build/typecheck/restore/contract-and-EF-generation/migration/browser/provider/security/independent-QA/CI",
+    "authored_cases_not_run": {
+      "pure_policy": 10,
+      "actual_api_postgresql": 8,
+      "role_menu_react": 11,
+      "wire_boundary": 8,
+      "parent_search_focus_revocation": 1,
+      "registered_signed_host": 3
+    },
+    "behavior": "Explicit versioned trusted tenant-local role lens over current endpoint/mode/authorized-vessel intersection; shared guarded TR/EN menu in five workspace families; no persistent cache or role assignment",
+    "configuration": "Explicit operator role-reference/label/presentation mapping; synthetic example never auto-loaded; private configuration unchanged",
+    "canonical_progress": "8/970SP,2/121tasks,0/196accepted",
+    "canonical_progress_unchanged": true,
+    "publishing": "None; coordinator-owned after later exact-target independent QA/required CI",
+    "remaining_gates": [
+      "Actual generation/model/consumer reconciliation and all deferred execution",
+      "Full original S0 criteria and current Domain/Tug broader operational scope",
+      "Independent exact-target QA/CI and separate source acceptance"
+    ],
+    "next_step": "Continue dependent foundation/S0 software, then the single coordinator-owned combined gate"
+  },
+  "ci_repair_pr12": {
+    "status": "SOURCE_TRIAGE_PREPARED_REVIEW_BLOCKED",
+    "failed_step": "tracked-repository-security-scan",
+    "observed_head": "199899133431db13d3023f2874675a1dca20d104",
+    "findings": 164,
+    "author_proposals": {
+      "public-example": 60,
+      "synthetic-fixture": 58,
+      "formal-reference": 46
+    },
+    "independent_exception_approvals": 0,
+    "installed_exceptions": 0,
+    "focused_package_tests": {
+      "passed": 4,
+      "failed": 0
+    },
+    "review_account_gate": {
+      "esra_weekly_used_percent": 87,
+      "kadir_weekly_used_percent": 93,
+      "dispatch_threshold_percent": 85
+    },
+    "report": "docs/phases/PR12-SECURITY-TRIAGE-20261102.md",
+    "canonical_acceptance_changed": false
+  },
+  "foundation_api_ci_repair": {
+    "status": "SCOPED_REPAIR_CHECKS_PASS_FULL_FOUNDATION_GATE_PENDING",
+    "report": "docs/phases/FOUNDATION-API-CI-20261102.md",
+    "full_predecessor_api": "INTERRUPTED_CHILD_DEADLINE_594_DISCOVERED",
+    "helper_tests_passed": 9,
+    "actual_api_unit_passed_before_fixture_change": 82,
+    "fixture_isolation_passed": 3,
+    "source_image_build_exit": 0,
+    "compile_warnings": 0,
+    "compile_errors": 0,
+    "canonical_acceptance_changed": false,
+    "optimized_gate_current_observation": {
+      "status": "FAIL_OR_UNPROVEN_SCOPE",
+      "started_at": "2026-11-02T09:59:15.405494+00:00",
+      "pid": 38416,
+      "commit": "e92581cddfffa15d9b9eb6711da73650ea5cfc21",
+      "scope": "unfiltered full API project with optimized isolated databases and real CI-built S3/ClamAV",
+      "binary_sha256": "2680816c3a9c5e9538ad480e30fe849fbac5ed5a3b9169c2df14f782e5d1c621",
+      "image_id": "sha256:d29cf68af86528039dd90210d08ce821a9b3d13159d8da674f1cbf738ff9595b",
+      "approved": false,
+      "raw_output_persisted": false,
+      "exit_code": 2,
+      "discovered_cases": 595,
+      "owned_clamd_removed": true,
+      "source_unchanged": true,
+      "binary_unchanged": true,
+      "finished_at": "2026-11-02T10:30:24.389092+00:00"
+    },
+    "optimized_gate_terminal_result": {
+      "scope": "all",
+      "status": "INTERRUPTED_DEADLINE",
+      "raw_output_persisted": false,
+      "started_at": "2026-11-02T09:59:58.452700+00:00",
+      "discovery": {
+        "exit_code": 0,
+        "cases": 595,
+        "output_sha256": "7916b22ea0b19e55ad3c06178254591e00972500bdce92252978c1de060d4c04"
+      },
+      "finished_at": "2026-11-02T10:30:14.985753+00:00"
+    }
+  },
+  "maintenance_current_read_authoring": {
+    "status": "AUTHORED_UNVERIFIED",
+    "base": "e92581cddfffa15d9b9eb6711da73650ea5cfc21",
+    "author_worktree": "C:\\Users\\avurgun\\source\\repos\\Poseidon\\.runtime\\today-maintenance-author",
+    "at": "2026-11-02T10:41:52.114831+00:00",
+    "canonical_story_points": 8,
+    "tests": "DEFERRED_NOT_RUN",
+    "syntax_only_files": 9,
+    "phase": "docs/phases/MAINTENANCE-CURRENT-READ-20261102.md",
+    "files": {
+      "backend/Poseidon.Domain/MaintenancePlanningPolicy.cs": "108900d6c34ed075bafa5f7e6f086d3a20aa4efe4057240886aa7ce7779ebb4c",
+      "backend/Poseidon.Api/TechnicalEndpoints.cs": "68cc7666a967b36c4602102aa80009cfaabe86a800fe2d7f7787f7e7b39bf351",
+      "backend/Poseidon.Api/MaintenanceObservationEndpoints.cs": "6d18f8d7998e8a987cd4a6eada4f21f8709d8d563578f95eb7a5285da333a391",
+      "tests/Poseidon.Domain.Tests/MaintenancePlanningPolicyTests.cs": "d05eed5302a52bc9be3b18675397ec8044d38b7738d64e2e5d89b20bf55acb96",
+      "tests/Poseidon.Api.Tests/MaintenanceCurrentReadTests.cs": "0062a8541d1069c1b5fa9baf32494f025c63bb342ccd8ef017ea899e035d99a9",
+      "tests/Poseidon.Api.Tests/MaintenanceObservationTests.cs": "00635df8fc0b24f5e7840d2d9f7a25646a9cb94b93f518264371c1e84541e648",
+      "frontend/src/product/TechnicalWorkspace.tsx": "defb54d7e398ef8f6c0508a2fe290ce86503a3fea67fc6a58252c0424e4d2a79",
+      "frontend/src/product/TechnicalWorkspace.test.tsx": "ceef03a32e448c6406371b80eb52a2b9f03743797464b40b6318b346d9af4a1b",
+      "frontend/src/product/maintenance-copy.ts": "f007746132b46328b4eeffb9681520e2b938791208094d476bf940c42126f1ff",
+      "docs/phases/MAINTENANCE-CURRENT-READ-20261102.md": "82cafdbc26432c7f2b3ce060696c0692fa673d7c48223ecc11552f4d82dba93f"
+    },
+    "full_api_predecessor": {
+      "commit": "e92581cddfffa15d9b9eb6711da73650ea5cfc21",
+      "status": "INTERRUPTED_DEADLINE",
+      "discovered": 595,
+      "complete_executed_count_proven": false
+    }
+  },
+  "today_maintenance_authoring": {
+    "status": "AUTHORED_UNVERIFIED",
+    "at": "2026-11-02T11:13:37.678408+00:00",
+    "base": "56b71a055b318bf4fc3f2ec4b6753924239f117d",
+    "author_worktree": "C:\\Users\\avurgun\\source\\repos\\Poseidon\\.runtime\\today-maintenance-author",
+    "author_branch": "feature/today-maintenance-advisories-20261102",
+    "phase": "docs/phases/TODAY-MAINTENANCE-20261102.md",
+    "canonical_story_points": 8,
+    "authored_cases": {
+      "domain": 4,
+      "api": 8,
+      "react_contract": 11,
+      "browser_journeys": 1
+    },
+    "syntax_only_files": 13,
+    "behavioral_checks": "DEFERRED_NOT_RUN",
+    "generated_contract_parity": "PENDING_ACTUAL_HOST_GENERATION",
+    "files": {
+      "backend/Poseidon.Api/MaintenanceCurrentReader.cs": "c0cf311519a3191d350b48c644c82f81dc5968ab8fd8548b18fe4fb4ea5f172a",
+      "backend/Poseidon.Api/TechnicalEndpoints.cs": "8adbec7f52f31459c0fd702e3d42cc3757155f41c61336cac11f996ce5edc6c9",
+      "backend/Poseidon.Api/TodayEndpoints.cs": "34d04cd13b357ce8edbf8d923589b1c90c71cb0508769095d3c8cf8c9d34c145",
+      "backend/Poseidon.Domain/TodayMaintenancePolicy.cs": "d151a6a05357836e53ad2d2053de0167f7b8c739ea79c6578dac7e8d1953d162",
+      "frontend/src/product/ProductApp.tsx": "ba49b8322cc7016bc73407b74ef97ad8528813a86623c2dffd337cfd572e4258",
+      "frontend/src/product/TodayWorkspace.test.tsx": "360cb3d2b01833d08e5cd94b16de68999d4fc6b7cb6473ec66e153358a050862",
+      "frontend/src/product/TodayWorkspace.tsx": "ef930496dad39285c680b2b2bc7e58042da8c6653df8b4c964c78c3616604c28",
+      "frontend/src/product/today-api.ts": "e5324e8cc38fcfc7517f28835c53c84fcfa25174731c886376ed86b44218363c",
+      "frontend/src/product/today-maintenance.test.tsx": "9ec06a91a5d31bdea2dedf13f91adaf0dd3749d6aaae9e3467738a6212c8483e",
+      "tests/Poseidon.Api.Tests/TodayMaintenanceTests.cs": "1f3b8ab42dd3c51e66eb6f143532f947e218e8ca8a3c547bd0cfaa2f53c7ecad",
+      "tests/Poseidon.Api.Tests/TodayTests.cs": "4a5e64f288acf09d18ca3c3033df42eb481501d56c5077ae3ed0c8a131a5b306",
+      "tests/Poseidon.Domain.Tests/TodayMaintenancePolicyTests.cs": "f00705ad5712c53c689be8e538e6755f835845e8046d44c454e70adb5691712a",
+      "tests/Poseidon.Browser.Tests/specs/today.spec.ts": "f8de786476eb70722d69c4c372cdd20d44ed8b0a1d7fc752dc780a10444ab164",
+      "docs/tasks/today-maintenance-01.md": "fe026d758e665716126cd73d2871ab730edc517dbd3bc754296ccb15a2505edb",
+      "docs/tasks/today-why-01.md": "79e1c76dfa6a4a993abb34a8d74882a8620a4a410b93f25008a64260596216a5",
+      "docs/phases/TODAY-MAINTENANCE-20261102.md": "0de932f292124e64c3ece1c642f9decf070277ed58db126435bd853db67bdc01"
+    }
+  },
+  "pr12_fast_diagnostics": {
+    "report": "docs/phases/PR12-FAST-DIAGNOSTICS-20261102.md",
+    "helper_tests_passed": 22,
+    "source_review_approved": 1,
+    "source_review_blocked": 163,
+    "canonical_acceptance_changed": false
+  },
+  "pr12_integration_repair": {
+    "report": "docs/phases/PR12-INTEGRATION-REPAIR-20261102.md",
+    "source_classification_approved": 164,
+    "repository_source_scan": "PASS_CI_b7926a3",
+    "previous_api_integration": {
+      "total": 524,
+      "succeeded": 478,
+      "failed": 46,
+      "skipped": 0
+    },
+    "current_gate": "PENDING_CI_AND_INDEPENDENT_TARGET_REVIEW",
+    "canonical_acceptance_changed": false
   }
 }
