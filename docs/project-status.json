@@ -1114,7 +1114,7 @@
     "verification_record_scope": "Authored/deferred and original20f1198 results are historical;current rejection-repair evidence in core_bundle_01.verification"
   },
   "baseline": "POSEIDON v46.3 updated 2026-10-30 / Library26 candidate",
-  "current_stage": "PR12 independent source review161approved/3blocked. Exact-call/reference evidence repairs all3 pending cases, preserves other161 bindings,47/47 focused testsPASS; complete native closure pending. No exception/pin/merge/canonical acceptance.",
+  "current_stage": "PR12 native source classification closure164approved/0blocked on4af7713. Context-bound exception receipts prepared for protected external trust; detector and source originals unchanged.47/47 focused scanner tests and locked restore/Release solution buildPASS. Local scan running; current publication CI and independent product QA pending. Canonical8/970 unchanged.",
   "method": "accepted story points / total baseline story points * 100",
   "scope": "complete v46.3 Backlog sheet; duplicates in other sheets excluded",
   "total_tasks": 121,

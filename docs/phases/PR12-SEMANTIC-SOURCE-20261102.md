@@ -24,3 +24,11 @@ The supplement now binds each exact matched interval to its containing call and 
 Focused final regression:47/47 PASS, same five source/privacy/scanner suites. Two newly authored call fixtures initially produced no scanner match due to escaped quotes; their construction was corrected before the47-case run. No detector threshold or product assertion was removed. Supplement tests include actual reference binding, unrelated scopes, Unicode offsets, unchanged-proposal preservation and invalid targets.
 
 A complete current independent closure is still pending. No exception or protected pin has been installed. Canonical acceptance remains8/970; PR12 remains unmerged.
+
+## Complete native source-classification closure
+
+The actual fresh Esra native review on4af7713 explicitly approved all164 exact source classifications with0 blocked, reconciling the unchanged161 prior approvals and inspecting the3 exact-call supplements. [Complete actual native verdict](../security/pr12-source-classification-closure-20261102.json). This is source-classification approval only, not product QA, operational approval or canonical acceptance.
+
+The separate coordinator created only those164 context-bound source exceptions and their per-proposal receipts. Trusted receipt hashes are provisioned outside the repository document through the protected Actions variable; the document cannot install its own trust. Original source/archive bytes, detector rules, source/client coverage and required jobs remain unchanged.
+
+The complete solution locked restore and Release build passed on4af7713, including test-project compilation. No product test cases were executed by this build. The full local repository scan is still in progress; no local PASS is claimed at publication. Required CI on the forthcoming publication commit and independent exact-commit product QA remain mandatory before merge. Canonical8/970SP (%0.82) remains unchanged.
