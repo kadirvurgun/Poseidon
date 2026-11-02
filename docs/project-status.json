@@ -1114,7 +1114,7 @@
     "verification_record_scope": "Authored/deferred and original20f1198 results are historical;current rejection-repair evidence in core_bundle_01.verification"
   },
   "baseline": "POSEIDON v46.3 updated 2026-10-30 / Library26 candidate",
-  "current_stage": "Current maintenance planning authoring:10 domain,3 new API,1 strengthened API and1 UI case authored; checks deferred. PR12 e92581c source scan164 pending independent native approval;595-case full API execution interrupted at1800seconds with no complete executed aggregate. Canonical8/970 unchanged.",
+  "current_stage": "Today/Why maintenance composition authored:4 domain,8 API,11 React/contract cases and1 browser journey; checks deferred.13 code/test files syntax-inspected. PR12 e92581c source scan164 pending genuine independent approval;595-case execution interrupted. Canonical8/970 unchanged.",
   "method": "accepted story points / total baseline story points * 100",
   "scope": "complete v46.3 Backlog sheet; duplicates in other sheets excluded",
   "total_tasks": 121,
@@ -4151,6 +4151,42 @@
       "status": "INTERRUPTED_DEADLINE",
       "discovered": 595,
       "complete_executed_count_proven": false
+    }
+  },
+  "today_maintenance_authoring": {
+    "status": "AUTHORED_UNVERIFIED",
+    "at": "2026-11-02T11:13:37.678408+00:00",
+    "base": "56b71a055b318bf4fc3f2ec4b6753924239f117d",
+    "author_worktree": "C:\\Users\\avurgun\\source\\repos\\Poseidon\\.runtime\\today-maintenance-author",
+    "author_branch": "feature/today-maintenance-advisories-20261102",
+    "phase": "docs/phases/TODAY-MAINTENANCE-20261102.md",
+    "canonical_story_points": 8,
+    "authored_cases": {
+      "domain": 4,
+      "api": 8,
+      "react_contract": 11,
+      "browser_journeys": 1
+    },
+    "syntax_only_files": 13,
+    "behavioral_checks": "DEFERRED_NOT_RUN",
+    "generated_contract_parity": "PENDING_ACTUAL_HOST_GENERATION",
+    "files": {
+      "backend/Poseidon.Api/MaintenanceCurrentReader.cs": "c0cf311519a3191d350b48c644c82f81dc5968ab8fd8548b18fe4fb4ea5f172a",
+      "backend/Poseidon.Api/TechnicalEndpoints.cs": "8adbec7f52f31459c0fd702e3d42cc3757155f41c61336cac11f996ce5edc6c9",
+      "backend/Poseidon.Api/TodayEndpoints.cs": "34d04cd13b357ce8edbf8d923589b1c90c71cb0508769095d3c8cf8c9d34c145",
+      "backend/Poseidon.Domain/TodayMaintenancePolicy.cs": "d151a6a05357836e53ad2d2053de0167f7b8c739ea79c6578dac7e8d1953d162",
+      "frontend/src/product/ProductApp.tsx": "ba49b8322cc7016bc73407b74ef97ad8528813a86623c2dffd337cfd572e4258",
+      "frontend/src/product/TodayWorkspace.test.tsx": "360cb3d2b01833d08e5cd94b16de68999d4fc6b7cb6473ec66e153358a050862",
+      "frontend/src/product/TodayWorkspace.tsx": "ef930496dad39285c680b2b2bc7e58042da8c6653df8b4c964c78c3616604c28",
+      "frontend/src/product/today-api.ts": "e5324e8cc38fcfc7517f28835c53c84fcfa25174731c886376ed86b44218363c",
+      "frontend/src/product/today-maintenance.test.tsx": "9ec06a91a5d31bdea2dedf13f91adaf0dd3749d6aaae9e3467738a6212c8483e",
+      "tests/Poseidon.Api.Tests/TodayMaintenanceTests.cs": "1f3b8ab42dd3c51e66eb6f143532f947e218e8ca8a3c547bd0cfaa2f53c7ecad",
+      "tests/Poseidon.Api.Tests/TodayTests.cs": "4a5e64f288acf09d18ca3c3033df42eb481501d56c5077ae3ed0c8a131a5b306",
+      "tests/Poseidon.Domain.Tests/TodayMaintenancePolicyTests.cs": "f00705ad5712c53c689be8e538e6755f835845e8046d44c454e70adb5691712a",
+      "tests/Poseidon.Browser.Tests/specs/today.spec.ts": "f8de786476eb70722d69c4c372cdd20d44ed8b0a1d7fc752dc780a10444ab164",
+      "docs/tasks/today-maintenance-01.md": "fe026d758e665716126cd73d2871ab730edc517dbd3bc754296ccb15a2505edb",
+      "docs/tasks/today-why-01.md": "79e1c76dfa6a4a993abb34a8d74882a8620a4a410b93f25008a64260596216a5",
+      "docs/phases/TODAY-MAINTENANCE-20261102.md": "0de932f292124e64c3ece1c642f9decf070277ed58db126435bd853db67bdc01"
     }
   }
 }

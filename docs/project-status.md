@@ -469,3 +469,8 @@ Foundation API/CI repair (02.11): source-built real S3 provisioning and safe dis
 ## 02.11.2026 current maintenance planning authoring
 
 The separate maintenance author branch now recomputes current draft planning at server read time with current observation, eligible owner and equipment revision context. Historic calculation/revision/receipts are preserved. Ten domain cases, three new API cases, one strengthened existing API case and one React case are authored; tests/build/typecheck are DEFERRED, not PASS. Syntax-only parsing found no errors in nine changed code/test files. See [maintenance current projection](phases/MAINTENANCE-CURRENT-READ-20261102.md). The preceding immutable e92581c full API run discovered595 cases but reached its1800-second execution deadline; no complete execution aggregate is proven. PR12 source review/CI and independent QA remain open; canonical8/970 is unchanged.
+
+
+## 02.11.2026 Today maintenance composition authoring
+
+The actual Today feed and Why now compose scoped maintenance draft exceptions through the same current reader as the maintenance module. Added stable priority/key paging, role/context/observation rechecks, lineage, per-card accessible disclosures, supported deep links and strict authored protocol validation. Four domain, eight API, eleven React/contract cases and one mocked browser journey are authored, not run. Thirteen code/test files have zero syntax parse errors; this is not build or behavioral evidence. [Current phase report](phases/TODAY-MAINTENANCE-20261102.md). Generated contract parity, combined gates, independent source/security/QA and PR12 merge remain open. Canonical8/970 (0.82%) and the194SP goal are unchanged.

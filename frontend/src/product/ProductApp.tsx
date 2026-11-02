@@ -135,7 +135,7 @@ export function ProductApp() {
   const retry = () => { setIdentity({ state: 'loading' }); setIdentityAttempt(v => v + 1); setRecords({ state: 'loading' }); setDetail({ state: 'loading' }); setAttempt(v => v + 1) }
   const navigate = (value: typeof tab) => { if (value === tab && !selected) { setDrawer(false); return }; guard(() => { closeEditor(); setDrawer(false); setNotice(''); setTab(value); setSearch(''); setSearchInput(''); setOffset(0); setRecords({ state: 'loading' }); setAttempt(v => v + 1); document.getElementById('product-main')?.focus() }) }
   const follow = (href: string, committed?: () => void) => {
-    if (isSeparateWorkspaceDestination(href.split('?')[0]) || /^\/app\/(crew-roster|equipment-hierarchy|maintenance-plan|excel-migration)\/[0-9a-f-]{36}$/.test(href)) {
+    if (/^\/app\/maintenance-plan\/[0-9a-f-]{36}\?id=[0-9a-f-]{36}$/.test(href) || isSeparateWorkspaceDestination(href.split('?')[0]) || /^\/app\/(crew-roster|equipment-hierarchy|maintenance-plan|excel-migration)\/[0-9a-f-]{36}$/.test(href)) {
       guard(() => { committed?.(); closeEditor(); window.location.assign(href) })
       return
     }

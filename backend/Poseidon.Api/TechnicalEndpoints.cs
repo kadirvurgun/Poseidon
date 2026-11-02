@@ -172,25 +172,10 @@ public static class TechnicalEndpoints
     }
     private static async Task<IResult> Plans(Guid vessel, HttpContext h, PoseidonDbContext db) {
         var failure = await Gate(h, db, vessel, "maintenance"); if (failure != null) return failure;
-        var readAt = DateTimeOffset.UtcNow;
-        var owners = EligibleOwners(h, vessel).ToHashSet();
-        var rows = await (from p in db.MaintenancePlans.AsNoTracking().Where(x => x.VesselId == vessel)
-            join r in db.MaintenancePlanRevisions.AsNoTracking() on new { p.TenantId, p.VesselId, PlanId = p.Id, p.Revision } equals new { r.TenantId, r.VesselId, r.PlanId, r.Revision }
-            orderby p.Id select new { p.Id, p.AssetId, p.JobId, p.OwnerRoleId, p.Version, p.Revision, p.Status, p.Provenance,
-                r.ContentJson, r.SavedAt, r.AssetRevision,
-                CurrentAssetRevision = db.Assets.Where(a => a.VesselId == vessel && a.Id == p.AssetId).Select(a => (long?)a.Revision).SingleOrDefault(),
-                JobAvailable = p.JobId != null && db.MaintenanceJobs.Any(j => j.VesselId == vessel && j.Id == p.JobId) }).ToArrayAsync(h.RequestAborted);
-        var result = new List<MaintenanceRow>();
-        foreach (var p in rows) {
-            var inputs = JsonSerializer.Deserialize<MaintenanceInputs>(p.ContentJson)!;
-            var observation = inputs.ObservationId == null ? null : await MaintenanceObservationEndpoints.Resolve(vessel, p.AssetId, inputs, h, db, readAt);
-            var due = MaintenancePlanningPolicy.Evaluate(inputs, readAt,
-                new(p.JobAvailable, p.OwnerRoleId != null && owners.Contains(p.OwnerRoleId.Value), p.CurrentAssetRevision == p.AssetRevision), observation);
-            result.Add(new(p.Id, p.AssetId, p.JobId, p.OwnerRoleId, p.Version, p.Revision, p.Status, p.Provenance, inputs,
-                due, readAt, p.SavedAt, p.AssetRevision, observation?.State ?? "NotRequested", observation == null ? null : readAt));
-        }
+        var rows = await MaintenanceCurrentReader.Read(vessel, h, db, Actor(h), DateTimeOffset.UtcNow);
+        if (rows == null) return await Fail(h, 403, "permission_denied");
         await Observe(h, vessel);
-        return Results.Ok(new MaintenancePage(result.ToArray(), Write(Actor(h), vessel, "maintenance"), Actor(h).Permissions.Contains("maintenance.history.read")));
+        return Results.Ok(new MaintenancePage(rows.Select(x => x.Row).ToArray(), Write(Actor(h), vessel, "maintenance"), Actor(h).Permissions.Contains("maintenance.history.read")));
     }
     private static async Task<IResult> References(Guid vessel, HttpContext h, PoseidonDbContext db) {
         var failure = await Gate(h, db, vessel, "maintenance"); if (failure != null) return failure;

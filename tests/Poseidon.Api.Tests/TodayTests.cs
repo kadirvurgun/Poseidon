@@ -53,7 +53,7 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Null(absentWhy.SavedAt); Assert.Null(absentWhy.SourceObservedAt);
         Assert.Equal("Missing", absentWhy.Provenance); Assert.Equal("Unverified", absentWhy.Freshness);
         var empty = (await client.GetFromJsonAsync<TodayDto>(TodayPath + "&offset=1&limit=1", Ct))!;
-        Assert.Empty(empty.Cards.Items); Assert.False(empty.Cards.HasMore); Assert.Equal(5, empty.Coverage.Length);
+        Assert.Empty(empty.Cards.Items); Assert.False(empty.Cards.HasMore); Assert.Equal(6, empty.Coverage.Length);
         var again = (await client.GetFromJsonAsync<TodayDto>(TodayPath + "&offset=0&limit=1", Ct))!;
         Assert.Equal("regulatory-draft", Assert.Single(again.Cards.Items).Key);
     }
