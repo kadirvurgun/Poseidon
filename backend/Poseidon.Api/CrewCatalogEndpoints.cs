@@ -173,6 +173,6 @@ public static class CrewCatalogEndpoints
             await db.SaveChangesAsync(ct); await tx.CommitAsync(ct);
             return Results.Ok(new { revision = head.Revision, version = head.Version, replayed = false });
         } catch (DbUpdateException) { await tx.RollbackAsync(ct); return await Fail(h, 409, "version_conflict"); }
-        catch (Npgsql.PostgresException ex) when (ex.SqlState == "40001") { await tx.RollbackAsync(ct); return await Fail(h, 409, "version_conflict"); }
+        catch (Exception ex) when (PostgresFailure.IsSerialization(ex)) { await tx.RollbackAsync(ct); return await Fail(h, 409, "version_conflict"); }
     }
 }

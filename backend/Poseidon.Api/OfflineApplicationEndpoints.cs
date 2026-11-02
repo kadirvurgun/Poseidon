@@ -295,7 +295,7 @@ public static class OfflineApplicationEndpoints
             await tx.CommitAsync(h.RequestAborted);
         }
         catch (DbUpdateException) { return await Fail(h, 409, "offline_retry"); }
-        catch (Npgsql.PostgresException ex) when (ex.SqlState == "40001") { return await Fail(h, 409, "offline_retry"); }
+        catch (Exception ex) when (PostgresFailure.IsSerialization(ex)) { return await Fail(h, 409, "offline_retry"); }
         OperationalTelemetry.ObserveReplay(outcome.Result == "Committed" ? ReplayObservation.Committed : ReplayObservation.MaterialConflict);
         return Results.Ok(Dto(outcome));
     }
