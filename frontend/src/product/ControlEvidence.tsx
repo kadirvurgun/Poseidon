@@ -1,4 +1,5 @@
 import * as qualification from './qualification-api'
+import { TugCapabilityEditor } from './TugCapabilityEditor'
 import { useEffect, useState } from 'react'
 import * as service from './control-evidence-api'
 import * as directory from './api'
@@ -32,10 +33,10 @@ export function ControlEvidence(props: Props) {
     <button disabled={saving || vesselOffset === 0} onClick={() => setVesselOffset(v => v - 25)}>{t('Previous vessels', 'Önceki araçlar')}</button><button disabled={saving || !more} onClick={() => setVesselOffset(v => v + 25)}>{t('More vessels', 'Diğer araçlar')}</button>
     <label>{t('Register', 'Kayıt türü')}<select disabled={saving} value={kind} onChange={e => change(vessel, e.target.value as service.Kind)}><option value="Control">{t('Operational controls', 'Operasyonel kontroller')}</option><option value="Evidence">{t('Evidence', 'Kanıtlar')}</option></select></label>
     {pending && <DraftConfirmation language={props.language} onStay={() => setPending(null)} onDiscard={() => { setVessel(pending.vessel); setKind(pending.kind); setPending(null); setDirty(false); props.onDirty(false) }} />}
-    {vessel && <Editor key={`${vessel}/${kind}`} {...props} vessel={vessel} kind={kind} onDirty={v => { setDirty(v); props.onDirty(v) }} onSaving={v => { setSaving(v); props.onSaving(v) }} />}
+    {vessel && <Editor key={`${vessel}/${kind}`} {...props} vessel={vessel} kind={kind} isTug={vessels.find(v => v.id === vessel)?.kind === 'Tug'} onDirty={v => { setDirty(v); props.onDirty(v) }} onSaving={v => { setSaving(v); props.onSaving(v) }} />}
   </section>
 }
-function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving }: Props & { vessel: string; kind: service.Kind }) {
+function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving, isTug }: Props & { vessel: string; kind: service.Kind; isTug: boolean }) {
   const t = (en: string, tr: string) => language === 'en' ? en : tr
   const [rows, setRows] = useState<service.Page | null>(null), [offset, setOffset] = useState(0), [reload, setReload] = useState(0), [error, setError] = useState<number | null>(null)
   const [selected, setSelected] = useState<service.Row | null>(null), [content, setContent] = useState(service.blank), [dirty, setDirty] = useState(false)
@@ -120,6 +121,7 @@ function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving }: Pr
     {kind === 'Evidence' && selected && <button disabled={locked || dirty || uploadDirty} onClick={() => { const old = selected; setSelected(null); setContent(service.blank()); setFile(null); setRequirements(old.requirements); setLinks([{ kind: 'Evidence', id: old.id, revision: old.revision, expectedVersion: old.version }]); setDirty(true) }}>{t('New evidence superseding this revision', 'Bu sürümün yerine geçecek yeni kanıt')}</button>}
     <form onSubmit={e => { e.preventDefault(); void save() }}>
       <fieldset disabled={locked}><legend>{t('Draft authoring', 'Taslak yazımı')}</legend>
+        {kind === 'Evidence' && isTug && <TugCapabilityEditor vessel={vessel} language={language} offline={offline} value={content.tugCapability ?? null} onChange={v => { setContent(c => ({ ...c, tugCapability: v })); setDirty(true) }} />}
         <label>{t('Title', 'Başlık')}<input value={content.title ?? ''} maxLength={2000} onChange={e => mutate('title', e.target.value || null)} /></label>
         <label>{t('Actual owner and role', 'Gerçek sahip ve rol')}<select value={content.ownerId ? `${content.ownerId}/${content.ownerRole}` : ''} onChange={e => { const [ownerId, ownerRole] = e.target.value.split('/'); setContent(c => ({ ...c, ownerId: ownerId || null, ownerRole: ownerRole || null })); setDirty(true) }}><option value="">{t('Unassigned', 'Atanmamış')}</option>{content.ownerId && !owners.some(o => o.actorId === content.ownerId && o.roleId === content.ownerRole) && <option value={`${content.ownerId}/${content.ownerRole}`}>{t('Previous owner unavailable', 'Önceki sahip kullanılamıyor')}</option>}{owners.map(o => <option key={`${o.actorId}/${o.roleId}`} value={`${o.actorId}/${o.roleId}`}>{o.actorId} / {o.roleId}</option>)}</select></label>
         {kind === 'Control' ? <>

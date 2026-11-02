@@ -51,7 +51,7 @@ public static partial class TugEndpoints
         await Observe(h, "Success", id);
         return Results.Ok(new { state = scope == null ? "Unavailable" : "Configured", policyVersion = scope == null ? null : policy.Version,
             canWrite = scope != null && PlanWrite(Actor(h), vessel), tugs, types = scope == null ? [] : policy.Types,
-            offline = "UnavailableForTug;ExistingOfflinePolicySupportsCrewWatchGroupOnly" });
+            offline = scope != null && PlanWrite(Actor(h), vessel) && policy.Offline.Configured ? "SupportedDraftWindowOnly" : "UnavailableForTug;ExplicitWindowDevicePolicyRequired" });
     }
     private static async Task<IResult> PlanDetail(Guid id, HttpContext h, PoseidonDbContext db) {
         var (vessel, failure) = await PlanningGate(h, db); if (failure != null) return failure;
@@ -61,7 +61,7 @@ public static partial class TugEndpoints
         if (p == null) { await Observe(h, "Success", id); return Results.Ok(new { state = "Missing", plan = (TugPlanDto?)null, evidence = (TugPlanningEvidence?)null }); }
         var r = await db.TugDraftPlanRevisions.AsNoTracking().SingleAsync(r => r.VesselId == vessel && r.JobId == id && r.Revision == p.Revision, h.RequestAborted);
         if (!await PlanVisible(h, db, r.Inputs())) return await Fail(h, 403, "permission_denied");
-        var evidence = await TugPlanningEvidenceAdapter.Read(db, Actor(h), Planning(h), h.RequestServices.GetRequiredService<MaintenanceObservationSettings>(), id, r.Inputs(), h.RequestAborted);
+        var evidence = await TugPlanningEvidenceAdapter.Read(db, Actor(h), Planning(h), h.RequestServices.GetRequiredService<MaintenanceObservationSettings>(), id, r.Inputs(), h.RequestAborted, h.RequestServices.GetRequiredService<FederationSettings>(), CrewFilePolicy.Current(h));
         await Observe(h, "Success", id); return Results.Ok(new { state = "DraftUnverified", requestState = job.Revision == p.RequestRevision ? "CurrentRequestRevision" : "RequestChangedSincePlan", plan = PlanDto(r, p.Version), evidence });
     }
     private static async Task<IResult> PlanHistory(Guid id, HttpContext h, PoseidonDbContext db) {
@@ -102,13 +102,21 @@ public static partial class TugEndpoints
             }
             command = doc.RootElement.Deserialize<TugPlanCommand>(new JsonSerializerOptions(JsonSerializerDefaults.Web) { PropertyNameCaseInsensitive = false }) ?? throw new JsonException();
         } catch (Exception e) when (e is JsonException or KeyNotFoundException or InvalidOperationException) { return await Fail(h, 400, "invalid_request"); }
+        return await ApplyPlan(id, vessel, command, keyId, h, db);
+    }
+    // Shared ordinary command path. Offline owns the outer serializable transaction
+    // so mutation, revision, receipt and replay outcome roll back together.
+    internal static async Task<IResult> ApplyPlan(Guid id, Guid vessel, TugPlanCommand command, Guid keyId, HttpContext h, PoseidonDbContext db) {
+        var a = Actor(h); var policy = Planning(h);
+        if (!PlanWrite(a, vessel) || policy.Scope(a, vessel) == null || !await Tugs(db, a).AnyAsync(v => v.Id == vessel, h.RequestAborted))
+            return await Fail(h, 403, "permission_denied");
         if (command.Change == null || command.RequestVersion == 0 || command.BaseVersion == 0 || command.PolicyVersion != policy.Version) return await Fail(h, 409, "version_conflict");
         var eligible = await Eligible(h, db, vessel);
         if (new[] { command.Change.TugId, command.Change.ReplacementTugId }.Any(t => t != null && !eligible.Contains(t.Value))) return await Fail(h, 403, "permission_denied");
         var key = keyId.ToString("D"); var ct = h.RequestAborted;
         var digest = Convert.ToHexString(SHA256.HashData(JsonSerializer.SerializeToUtf8Bytes(new { id, vessel, command })));
         await Observe(h, "Attempted", id);
-        await using var tx = await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable, ct);
+        await using var tx = db.Database.CurrentTransaction == null ? await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable, ct) : null;
         try {
             // Actual current object/mode/write/assignment eligibility precede recovery, including old receipts.
             var job = await db.TugJobs.SingleOrDefaultAsync(j => j.Id == id && j.VesselId == vessel, ct);
@@ -139,10 +147,10 @@ public static partial class TugEndpoints
             await db.SaveChangesAsync(ct);
             db.CommandReceipts.Add(new() { TenantId = a.TenantId, ActorId = a.Id, Key = key, Action = "TugPlanSave", Fingerprint = digest,
                 ResourceId = id, RegisterRevision = plan.Revision, RegisterVersion = plan.Version, CommittedAt = plan.SavedAt });
-            await db.SaveChangesAsync(ct); await tx.CommitAsync(ct); await Observe(h, "Success", id);
+            await db.SaveChangesAsync(ct); if (tx != null) await tx.CommitAsync(ct); await Observe(h, "Success", id);
             return Results.Ok(PlanDto(revision, plan.Version));
         } catch (Exception e) when (e is DbUpdateException || e is Npgsql.PostgresException { SqlState: "40001" or "40P01" }) {
-            await tx.RollbackAsync(ct); return await Fail(h, 409, "version_conflict");
+            if (tx != null) await tx.RollbackAsync(ct); return await Fail(h, 409, "version_conflict");
         }
     }
 }

@@ -9,12 +9,16 @@ public sealed record TugBpEvidence(Guid TugId, string State, string? DeclaredVal
     long? SourceRevision, Guid? ObservationId, DateTimeOffset? ObservedAt, string Freshness, string Provenance);
 public sealed record TugPlanConflict(Guid JobId, long Revision, string Relation, string Source, DateTimeOffset ObservedAt);
 public sealed record TugPlanningEvidence(string? AvailableBollardPull, string CapacityState, TugBpEvidence[] Bp,
-    string ConflictState, TugPlanConflict[] Conflicts, string Coverage, string Readiness);
+    string ConflictState, TugPlanConflict[] Conflicts, string Coverage, string Readiness,
+    TugOwnedCapacity[]? OwnedBp = null, TugReadinessFact[]? ReadinessFacts = null, TugOperationalConflict[]? OperationalConflicts = null);
+
+public sealed record TugReadinessFact(Guid TugId, string Source, Guid? Id, long? Revision, string State, string Why,
+    DateTimeOffset? ObservedAt = null, DateTimeOffset? ExpiresAt = null);
 
 public static class TugPlanningEvidenceAdapter
 {
     public static async Task<TugPlanningEvidence> Read(PoseidonDbContext db, TrustedActor actor, TugPlanningPolicy policy, MaintenanceObservationSettings observationSettings,
-        Guid jobId, TugPlanInputs plan, CancellationToken ct) {
+        Guid jobId, TugPlanInputs plan, CancellationToken ct, FederationSettings? federation = null, CrewFilePolicy? files = null) {
         var now = DateTimeOffset.UtcNow; var bp = new List<TugBpEvidence>();
         var visible = await actor.Scope(db.Vessels).Where(v => v.Kind == VesselKind.Tug).Select(v => v.Id).ToArrayAsync(ct);
         foreach (var tug in plan.AssignedTugs.Where(visible.Contains)) {
@@ -52,7 +56,30 @@ public static class TugPlanningEvidenceAdapter
             if (relation != TugPlanningWindowRelation.Separate) conflicts.Add(new(other.JobId, other.Revision, relation.ToString(), "CurrentDraftPlanGeometry", other.SavedAt));
         }
         var stateConflict = conflicts.Any(c => c.Relation == "Intersecting") ? "HumanReviewRequired" : conflicts.Any(c => c.Relation == "BoundaryTouch") ? "BoundaryReviewRequired" : "Unknown";
-        return new(null, bp.Count == 0 ? "Missing" : bp.Any(b => b.State == "Unavailable") ? "Unavailable" : bp.Select(b => b.State).Distinct().Count() == 1 ? bp[0].State : "UnverifiedOrIncomplete", bp.ToArray(), stateConflict, conflicts.ToArray(),
-            "CurrentVisibleDraftPlansOnly;OperationalEvidenceUnavailable;NoSafetyClearance", "Unknown");
+        var capacity = new List<TugOwnedCapacity>(); var readiness = new List<TugReadinessFact>();
+        var job = await db.TugJobs.AsNoTracking().SingleAsync(j => j.Id == jobId, ct);
+        foreach (var tug in plan.AssignedTugs.Where(visible.Contains)) {
+            var currentCapacity = await TugOwnedCapacityConsumer.Read(db, actor, federation ?? new(), tug, job, plan, now, ct);
+            capacity.Add(currentCapacity);
+            // These exact qualified facts cover BP and its owning equipment condition,
+            // not all equipment, minimum manning, work/rest or a Master decision.
+            if (currentCapacity.State == "CurrentPlanningCapacity") {
+                readiness.Add(new(tug, "BollardPullCertificate", currentCapacity.EvidenceId, currentCapacity.EvidenceRevision,
+                    "Current", "CurrentIndependentCertificateVerification;MasterDecisionSeparate", currentCapacity.ObservedAt, currentCapacity.ValidUntil));
+                readiness.Add(new(tug, "CapabilityEquipmentCondition", currentCapacity.ConditionId, currentCapacity.ConditionRevision,
+                    "Current", "ExactQualifiedCapabilityCondition;OtherEquipmentCoverageSeparate", ExpiresAt: currentCapacity.ValidUntil));
+            }
+            readiness.AddRange(await TugReadinessConsumer.Read(db, actor, tug, plan, now, ct, files));
+        }
+        // Aggregation is allowed only by one exact, currently qualified source policy.
+        // A missing/changed tug never contributes a partial sum that looks like total capacity.
+        var complete = capacity.Count > 0 && capacity.Count == plan.AssignedTugs.Length && capacity.All(c => c.State == "CurrentPlanningCapacity") &&
+            capacity.Select(c => c.QualificationHash).Distinct().Count() == 1;
+        var total = complete ? capacity.Sum(c => decimal.Parse(c.Tonnes!, CultureInfo.InvariantCulture)).ToString("0.######", CultureInfo.InvariantCulture) : null;
+        var readinessState = readiness.Any(f => f.State == "Blocked") ? "Blocked" : "ReviewRequired";
+        var operational = await TugOperationalConflicts.Read(db, actor, jobId, plan.AssignedTugs.Where(visible.Contains).ToArray(), plan.PlannedStart, plan.PlannedEnd, ct);
+        if (operational.Length != 0) stateConflict = "HumanReviewRequired";
+        return new(total, complete ? "CurrentPlanningCapacity" : capacity.Count == 0 ? "Missing" : "ReviewRequired", bp.ToArray(), stateConflict, conflicts.ToArray(),
+            "CurrentAuthorizedOwningFacts;DraftGeometry;MasterDecisionSeparate", readinessState, capacity.ToArray(), readiness.ToArray(), operational);
     }
 }

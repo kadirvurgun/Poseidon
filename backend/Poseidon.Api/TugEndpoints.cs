@@ -22,6 +22,7 @@ public static partial class TugEndpoints
 {
     public static void MapTug(this IEndpointRouteBuilder app) {
         MapPlanning(app);
+        MapTugOffline(app);
         var g = app.MapGroup("/api/v1").RequireAuthorization("DirectoryRead");
         g.MapGet("/tug-command", Context).WithName("TugContext");
         g.MapGet("/tug-job-board", Board).WithName("TugBoard");
@@ -114,17 +115,19 @@ public static partial class TugEndpoints
                 var r = await db.TugDraftPlanRevisions.AsNoTracking().SingleAsync(r => r.JobId == j.Id && r.VesselId == vessel && r.Revision == p.Revision, h.RequestAborted);
                 if (await PlanVisible(h, db, r.Inputs())) {
                     draft = PlanDto(r, p.Version);
-                    planningEvidence = await TugPlanningEvidenceAdapter.Read(db, Actor(h), Planning(h), h.RequestServices.GetRequiredService<MaintenanceObservationSettings>(), j.Id, r.Inputs(), h.RequestAborted);
+                    planningEvidence = await TugPlanningEvidenceAdapter.Read(db, Actor(h), Planning(h), h.RequestServices.GetRequiredService<MaintenanceObservationSettings>(), j.Id, r.Inputs(), h.RequestAborted, h.RequestServices.GetRequiredService<FederationSettings>(), CrewFilePolicy.Current(h));
                 }
             }
             var actual = assignments.Where(x => x.JobId == j.Id && x.JobRevision == j.Revision).Select(x => x.TugId).Distinct().ToArray();
             var missing = TugRequestPolicy.Missing(j.Inputs());
             if (draft != null) actual = draft.Inputs.AssignedTugs;
             rows.Add(new TugBoardRow(Dto(j), TugPlanningWindowPolicy.Assess(new(j.RequestedStart, j.RequestedEnd)).ToString(),
-                draft == null ? "RequestedWindowOnly;NoApprovedPlan" : "DraftPlanUnverified;NoOperationalApproval", actual, draft == null ? "UnavailableControlledAssignmentAdapter" : "CurrentDraftAssignmentsOnly", planningEvidence?.AvailableBollardPull, "Unknown", planningEvidence?.ConflictState ?? "Unknown",
+                draft == null ? "RequestedWindowOnly;NoApprovedPlan" : "DraftPlanUnverified;NoOperationalApproval", actual, draft == null ? "UnavailableControlledAssignmentAdapter" : "CurrentDraftAssignmentsOnly", planningEvidence?.AvailableBollardPull, planningEvidence?.Readiness ?? "Unknown", planningEvidence?.ConflictState ?? "Unknown",
                 jobs.Take(limit).Where(other => other.Id != j.Id).Select(other => new TugDeclaredComparison(other.Id, TugPlanningWindowPolicy.CompareDeclared(new(j.RequestedStart, j.RequestedEnd), new(other.RequestedStart, other.RequestedEnd)).ToString())).ToArray(), "VisiblePageEnteredDataOnly;NoBufferOrOperationalAssessment",
-                [.. missing.Select(x => "Missing:" + x), draft == null ? "AssignmentCoverageUnavailable" : "DraftAssignmentsUnverified", .. (draft != null && draft.RequestRevision != j.Revision ? new[] { "RequestChangedSincePlan" } : Array.Empty<string>()), "VerifiedBPCertificateCrewUnavailable", "OperationalConflictInputsUnavailable", .. (planningEvidence?.Conflicts.Length > 0 ? new[] { "AuthorizedHumanConflictReviewRequired" } : Array.Empty<string>()), "D-STATE-01"],
-                planningEvidence?.Conflicts.Length > 0 ? "AuthorizedHumanConflictReviewRequired" : draft != null && draft.RequestRevision != j.Revision ? "RequestChangedSincePlan" : missing.Length > 0 ? "CompleteDraft" : "AuthorizedPlanningReviewRequired", $"/app/tug-job-detail/{j.Id}?vessel={vessel}", draft, planningEvidence));
+                [.. missing.Select(x => "Missing:" + x), draft == null ? "AssignmentCoverageUnavailable" : "DraftAssignmentsUnverified", .. (draft != null && draft.RequestRevision != j.Revision ? new[] { "RequestChangedSincePlan" } : Array.Empty<string>()), .. (planningEvidence?.OwnedBp?.Where(c => c.State != "CurrentPlanningCapacity").Select(c => c.Why) ?? new[] { "OwningCapacityMissing" }), .. (planningEvidence?.ReadinessFacts?.Where(f => f.State != "Current").Select(f => f.Why).Distinct() ?? new[] { "OwningReadinessMissing" }), "OperationalConflictInputsIncomplete", .. (planningEvidence?.ConflictState == "HumanReviewRequired" ? new[] { "AuthorizedHumanConflictReviewRequired" } : Array.Empty<string>()), "D-STATE-01"],
+                planningEvidence?.ConflictState == "HumanReviewRequired" ? "AuthorizedHumanConflictReviewRequired" : draft != null && draft.RequestRevision != j.Revision ? "RequestChangedSincePlan" :
+                    planningEvidence?.Readiness == "Blocked" ? "ResolveOwningReadinessBlockers" : missing.Length > 0 ? "CompleteDraft" :
+                    draft?.Inputs.AssignedTugs.Length > 0 && planningEvidence?.CapacityState != "CurrentPlanningCapacity" ? "RefreshOwningCapacityEvidence" : "AuthorizedPlanningReviewRequired", $"/app/tug-job-detail/{j.Id}?vessel={vessel}", draft, planningEvidence));
         }
         await Observe(h, "Success", vessel); return Results.Ok(new PageDto<TugBoardRow>(rows.ToArray(), offset, limit, jobs.Length > limit));
     }

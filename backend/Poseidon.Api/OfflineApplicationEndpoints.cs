@@ -151,7 +151,7 @@ public static class OfflineApplicationEndpoints
     private static Task<IResult> Renew(Guid vessel, Guid assignment, Guid enrollment, HttpContext h, PoseidonDbContext db) => Lifecycle(vessel, assignment, enrollment, "Renewed", h, db);
     private static Task<IResult> Revoke(Guid vessel, Guid assignment, Guid enrollment, HttpContext h, PoseidonDbContext db) => Lifecycle(vessel, assignment, enrollment, "Revoked", h, db);
     private static Task<IResult> Lost(Guid vessel, Guid assignment, Guid enrollment, HttpContext h, PoseidonDbContext db) => Lifecycle(vessel, assignment, enrollment, "KeyLost", h, db);
-    private static bool VerifyKey(string? publicKey, string? proof, string message) {
+    internal static bool VerifyKey(string? publicKey, string? proof, string message) {
         if (publicKey is not { Length: > 0 and <= 256 } || proof is not { Length: > 0 and <= 128 }) return false;
         try {
             using var key = ECDsa.Create(); var bytes = Convert.FromBase64String(publicKey);

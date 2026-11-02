@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
+import { TugOwningEvidence } from './TugOwningEvidence'
+import { TugOfflinePanel } from './TugOfflinePanel'
 import { ApiError } from './api'
 import { planningApi, type Plan, type PlanAttempt, type PlanChange, type PlanHistory, type PlanningEvidence, type PlanningOptions } from './tug-planning-api'
 
@@ -21,8 +23,27 @@ export function TugPlanningPanel({ id, vessel, requestVersion, csrf, language, o
   const [evidence, setEvidence] = useState<PlanningEvidence | null>(null), [history, setHistory] = useState<PlanHistory | null>(null), [selected, setSelected] = useState<Plan | null>(null)
   const [start, setStart] = useState(''), [end, setEnd] = useState(''), [tug, setTug] = useState(''), [replacement, setReplacement] = useState('')
   const [attempt, setAttempt] = useState<PlanAttempt | null>(null), [notice, setNotice] = useState(''), [busy, setBusy] = useState(false), [dirty, setDirty] = useState(false), [generation, reload] = useState(0)
+  const [offlineDirty, setOfflineDirty] = useState(false)
   const active = useRef<AbortController | null>(null), review = useRef<AbortController | null>(null), loadedContext = useRef(''), changed = useRef(onDirty); changed.current = onDirty
-  useEffect(() => { changed.current(dirty || busy || !!attempt); return () => changed.current(false) }, [dirty, busy, attempt])
+  useEffect(() => { changed.current(dirty || busy || !!attempt || offlineDirty); return () => changed.current(false) }, [dirty, busy, attempt, offlineDirty])
+  useEffect(() => {
+    const c = new AbortController()
+    const refresh = () => {
+      setEvidence(null)
+      if (!navigator.onLine) return
+      planningApi.detail(id, vessel, c.signal).then(current => {
+        if (c.signal.aborted) return
+        if (current.plan?.revision !== plan?.revision) { setNotice('conflict'); return }
+        setEvidence(current.evidence); setRequestState(current.requestState ?? '')
+      }).catch(e => {
+        if (c.signal.aborted) return
+        if (e instanceof ApiError && [401, 403, 404].includes(e.status)) { setPlan(null); setOptions(null); setHistory(null); setSelected(null); setNotice('denial') }
+      })
+    }
+    const timer = window.setInterval(refresh, 30000)
+    window.addEventListener('focus', refresh); window.addEventListener('online', refresh); window.addEventListener('offline', refresh)
+    return () => { c.abort(); window.clearInterval(timer); window.removeEventListener('focus', refresh); window.removeEventListener('online', refresh); window.removeEventListener('offline', refresh) }
+  }, [id, vessel, plan?.revision])
   useEffect(() => {
     const c = new AbortController(), signal = AbortSignal.any([c.signal, AbortSignal.timeout(10000)])
     const key = `${id}/${vessel}/${requestVersion}`, sameContext = loadedContext.current === key; loadedContext.current = key
@@ -60,9 +81,10 @@ export function TugPlanningPanel({ id, vessel, requestVersion, csrf, language, o
     <ul aria-label={language === 'en' ? 'Current draft assignments' : 'Güncel taslak atamaları'}>{plan?.inputs.assignedTugs.map(id => <li key={id}>{options?.tugs.find(v => v.id === id)?.code ?? id}</li>)}</ul>
     {requestState && <p role={requestState === 'RequestChangedSincePlan' ? 'alert' : undefined}>{label(requestState)}</p>}
     <p>{t.bp}: {evidence?.availableBollardPull ?? t.unknown} · {label(evidence?.capacityState ?? 'Unknown')}</p>
+    <TugOwningEvidence value={evidence} language={language} />
     <ul aria-label={t.declared}>{evidence?.bp.map(b => <li key={b.tugId}>{b.tugId}: {b.declaredValue ?? '—'} · {label(b.state)}<p>{t.source}: {b.source ?? '—'} / {b.sourceRevision ?? '—'} / {b.observationId ?? '—'} / {b.observedAt ?? '—'} / {label(b.freshness)} · {b.policyVersion ?? '—'}</p></li>)}</ul>
     <p>{t.geometry}: {label(evidence?.conflictState ?? 'Unknown')}</p><ul>{evidence?.conflicts.map(c => <li key={`${c.jobId}/${c.revision}`}>{c.jobId} · r{c.revision} · {label(c.relation)} · {c.observedAt}</li>)}</ul>
-    <p>{t.offline}</p>
+    {options?.offline === 'SupportedDraftWindowOnly' && plan ? <TugOfflinePanel key={`${id}/${vessel}/${requestVersion}`} job={id} vessel={vessel} language={language} onDirty={setOfflineDirty} /> : <p>{t.offline}</p>}
     {!editable && <p>{options?.state === 'Unavailable' ? t.denial : t.read}</p>}
     {editable && <><form onSubmit={e => { e.preventDefault(); void save({ operation: 'Window', plannedStart: start ? `${start.length === 16 ? start + ':00' : start}Z` : null, plannedEnd: end ? `${end.length === 16 ? end + ':00' : end}Z` : null }) }}>
       <fieldset disabled={locked}><label>{t.start}<input type="datetime-local" step="1" value={start} onChange={e => { setStart(e.target.value); setDirty(true) }} /></label><label>{t.end}<input type="datetime-local" step="1" value={end} onChange={e => { setEnd(e.target.value); setDirty(true) }} /></label></fieldset><button disabled={locked}>{t.save}</button></form>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { TugCalculationEditor } from './TugCalculationEditor'
 import * as api from './qualification-api'
 import { ApiError } from './api'
 import { loadProfile } from './profile-api'
@@ -69,6 +70,7 @@ export function RegulatoryQualification({ rule, ruleRevision, vessel, language, 
       <label>{t('Verification mechanism source locator', 'Doğrulama mekanizması kaynak konumu')}<input value={control?.verificationMechanismSourceLocator ?? ''} onChange={e => controlEdit({ verificationMechanismSourceLocator: e.target.value || null })} /></label>
       <label>{t('Required acknowledgment role ID', 'Gerekli teyit rol kimliği')}<input value={control?.acknowledgmentRole ?? ''} onChange={e => controlEdit({ acknowledgmentRole: e.target.value || null })} /></label>
       {(['requireFile', 'requireAcknowledgment'] as const).map(key => <label key={key}>{key === 'requireFile' ? t('Source requires an immutable file', 'Kaynak değişmez dosya gerektiriyor') : t('Source requires exact revision acknowledgment', 'Kaynak tam sürüm teyidi gerektiriyor')}<select value={control?.[key] == null ? '' : String(control[key])} onChange={e => controlEdit({ [key]: e.target.value === '' ? null : e.target.value === 'true' })}><option value="">{t('Unknown', 'Bilinmiyor')}</option><option value="true">{t('Yes', 'Evet')}</option><option value="false">{t('No', 'Hayır')}</option></select></label>)}
+      <TugCalculationEditor language={language} value={content.tugCalculation ?? null} onChange={v => edit({ tugCalculation: v })} />
       <button type="button" onClick={() => transition('DRAFT')}>{t('Save qualification draft', 'Nitelendirme taslağını kaydet')}</button>
     </fieldset>
     <fieldset disabled={locked || dirty}><legend>{t('Human review and explicit lifecycle', 'İnsan incelemesi ve açık yaşam döngüsü')}</legend>

@@ -1,5 +1,16 @@
 # EF Core ve seed import
 
+## TUG-OWNING-CONSUMERS-01 — AUTHORED / NOT RUN
+
+Adds an incomplete fictional Tug capability Evidence draft/head/revision/binding
+through the existing attributed add-missing importer. Existing operator revisions
+are preserved. Exactly three new inserts are expected for the one synthetic Tug;
+existing100/101 audit expectations become103/104, unexecuted. Relational/idempotent/
+operator-preservation tests accompany it. No measurement, condition factor,
+source-qualified calculation policy, certificate file, independent verification,
+human authority/decision, device enrollment/key, replay receipt/outcome or lifecycle
+is seeded. Offline tables stay empty until genuine authenticated commands.
+
 ## REG-SOURCE-DRAFT-01 — AUTHORED / NOT RUN
 
 The existing synthetic import additionally authors one explicitly FICTIONAL Source draft and one FICTIONAL Requirement draft per tenant, each with an immutable initial revision. Deterministic tenant-derived IDs and add-missing behavior preserve operator edits/history. Requirement fixtures cite that tenant's source revision1; they never follow a later source edit. ObservedAt/declaration remain Unknown; provenance is SyntheticUnverified. There is no law text, signature, credential or approved catalog fixture. Eight actual additional entity imports produce eight attributed audit observations (initial total17→25); no-op reseed adds no audits/history/receipts. New PostgreSQL reseed/lineage/rollback tests and adjusted prior seed expectations are AUTHORED ONLY. Migration and test execution are deferred to CORE-BUNDLE-01.

@@ -1,3 +1,27 @@
+# TUG-OWNING-CONSUMERS-01 — AUTHORED / UNVERIFIED / NOT ACCEPTED
+
+Preserved96c2901 and its dirty Tug continuation. Authored owning certified/test BP
+and condition/source-qualified calculation commands/consumers, board evidence facts,
+separate operational conflict observations, EF models/migrations and incomplete
+idempotent synthetic fixture. Added the enrolled encrypted **Tug draft-window**
+adapter with current authorization, exact signed replay, atomic plan/receipt/outcome,
+history, conflict resolution, restart recovery and revoke/lost-key handling. Crew
+watch-group and protected medical exclusions remain separate. TR/EN UI and meaningful
+domain/PG/actual-host/React/strict-wire/signed-host test sources accompany code.
+
+All suites/build/restore/lint/typecheck/generation/browser/provider/security scans
+remain **NOT RUN**. No independent QA, complete engineering declaration, accepted
+SP or publication. Current phase is incomplete FOUNDATION authoring; canonical
+8/970SP,2/121tasks,0/196accepted unchanged. Remaining Crew/rule owning inputs,
+source-specific/provider mechanisms, broader offline fields, multi-human BP browser
+journeys and generated integration remain explicit software gaps; actual source/
+SME/evidence/production/pilot inputs remain external prerequisites.
+
+Next **CREW-FULL-SCOPE-01**, remaining rule owning inputs, then one combined
+foundation gate and coordinator-owned exact-target independent QA/CI/publication.
+[Task and source mapping](tasks/tug-owning-consumers-01.md) ·
+[Phase disposition](phases/TUG-OWNING-CONSUMERS-01.md).
+
 # FOUNDATION receiving / qualification continuation — INCOMPLETE / NOT ACCEPTED
 
 Safety origin25f2845 received normally with -x as d52270f after receipt/content inspection. Preserved existing foundations and support receipts. Authored 12 actual-host/PG theory rows and 4 React/wire cases for unknown versus explicit qualification choices and downstream policy enforcement; strict reviewed consumer now requires a required mechanism source locator. All product execution remains **NOT RUN** because required software is unfinished. No clean validated candidate, independent/source acceptance or canonical progress.

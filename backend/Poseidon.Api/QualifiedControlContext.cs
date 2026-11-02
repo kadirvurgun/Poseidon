@@ -11,6 +11,10 @@ internal static class QualifiedControlContext
         RequirementPin[] pins, string kind, ControlEvidenceContent content, bool file, DateTimeOffset now, CancellationToken ct)
     {
         var blockers = new HashSet<string>(); var policies = new List<QualifiedControlPolicy>();
+        if (content.TugCapability is { } capability) {
+            if (!TugCapability.Complete(capability)) blockers.Add("TUG_CAPABILITY_INCOMPLETE");
+            if (capability.TestAt > now) blockers.Add("TUG_CAPABILITY_TEST_FUTURE");
+        }
         if (pins.Length == 0) blockers.Add("REQUIREMENT_LINK_MISSING");
         foreach (var pin in pins) {
             var rule = await db.RuleRevisions.AsNoTracking().SingleOrDefaultAsync(x => x.Id == pin.RuleId && x.Revision == pin.RuleRevision, ct);

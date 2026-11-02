@@ -1,4 +1,44 @@
 {
+  "tug_owning_consumers_01": {
+    "source_only_observations": {"staged_whitespace_exit": 0, "historical_base_ancestor_exit": 0, "graphify_ast_exit": 0, "nodes": 7859, "edges": 17468, "communities": 512, "zero_node_warnings": 54, "product_checks": "NOT RUN"},
+    "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+    "accepted": false,
+    "foundation_ready": false,
+    "receiving_head": "96c2901ef5aaccbfbc716e49dec7c7a3456ef4c4",
+    "independent_historical_base": "80b057a6d1830eb6c5fe5e33fc0adfc7ca132c44",
+    "phase": "FOUNDATION product authoring before one combined gate",
+    "task": "docs/tasks/tug-owning-consumers-01.md",
+    "report": "docs/phases/TUG-OWNING-CONSUMERS-01.md",
+    "source_baseline": "poseidon-v46.3-20261030",
+    "selected": [
+      "DEV-080",
+      "DEV-081",
+      "DEV-082"
+    ],
+    "verification": "NOT RUN: all suites/build/restore/lint/typecheck/generation/model/provider/browser/security/QA/CI",
+    "delivered_authored": [
+      "Owning certificate/condition/source-qualified BP workflow and board consumption",
+      "Current crew/certificate/equipment/PMS and recorded operational conflict facts",
+      "Separate enrolled encrypted Tug draft-window adapter, signed atomic replay, recovery/conflicts/revocation",
+      "EF migrations/models, incomplete idempotent fixture, TR/EN UI and domain/PG/actual-host/React/wire/signed-host test sources"
+    ],
+    "remaining_software": [
+      "Full Crew MSMD/qualification/fitness/rest/competence owning evaluators",
+      "Remaining rule inputs and required provider/source-specific calculation mechanisms",
+      "Broader source-authorized Tug offline fields",
+      "Multi-human signed-host positive BP/source workflow",
+      "Whole-branch generated API/EF/consumer reconciliation and one combined gate"
+    ],
+    "external_prerequisites": [
+      "Actual controlled source/SME coefficients and certificates",
+      "Provider trust deployment",
+      "Actual Master/safety/legal/pilot decisions"
+    ],
+    "canonical_progress": "8/970SP;2/121tasks;0/196accepted",
+    "accepted_sp_added": 0,
+    "next": "CREW-FULL-SCOPE-01, remaining rule owning inputs, one full foundation gate",
+    "publication": "None; local UNVERIFIED checkpoint only; coordinator owns publication/merge"
+  },
   "foundation_receiving_qualification_2026_11_02": {
     "status": "INCOMPLETE_AUTHORED_UNVERIFIED_NOT_ACCEPTED",
     "accepted": false,

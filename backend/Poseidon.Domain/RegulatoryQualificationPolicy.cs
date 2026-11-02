@@ -15,7 +15,8 @@ public sealed record QualifiedControlPolicy(Guid? OwnerRole, string? Frequency, 
 public sealed record QualificationContent(string? SourceBytesBase64 = null, string? Publisher = null, string? Edition = null,
     Guid? OwnerId = null, Guid? OwnerRole = null, string? ValidationReview = null,
     QualifiedInputPolicy[]? Inputs = null, QualifiedControlPolicy? Control = null, string? Trigger = null, string? ImpactReview = null,
-    Guid? SupersedingRuleId = null, long? SupersedingRuleRevision = null);
+    Guid? SupersedingRuleId = null, long? SupersedingRuleRevision = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] TugCalculationPolicy? TugCalculation = null);
 
 public static class RegulatoryQualificationPolicy
 {
@@ -23,6 +24,7 @@ public static class RegulatoryQualificationPolicy
     public static readonly string[] ProfileFields = ["vessel.flag", "vessel.type", "vessel.gt", "vessel.buildDate", "vessel.classSociety", "vessel.tradingArea", "cargo.type"];
     public static void Validate(QualificationContent c)
     {
+        if (c.TugCalculation != null) TugCapability.Validate(c.TugCalculation);
         foreach (var s in new[] { c.Publisher, c.Edition, c.ValidationReview, c.Trigger, c.ImpactReview, c.Control?.Frequency,
             c.Control?.EvidencePolicy, c.Control?.VerificationPolicy, c.Control?.SourceLocator, c.Control?.RequiredVerificationMechanism, c.Control?.VerificationMechanismSourceLocator })
             if (s != null && (s.Length is < 1 or > 2000 || s != s.Trim() || s.Any(char.IsControl))) throw new ArgumentException("invalid_qualification");
@@ -40,6 +42,7 @@ public static class RegulatoryQualificationPolicy
         if (c.Control?.MaxAgeHours is <= 0 or > 87600) throw new ArgumentException("invalid_freshness_policy");
     }
     public static string[] Missing(QualificationContent c) => new[] {
+        c.TugCalculation != null && !TugCapability.Complete(c.TugCalculation) ? "TUG_CALCULATION_POLICY_MISSING" : null,
         c.SourceBytesBase64 == null ? "EXACT_SOURCE_BYTES_MISSING" : null,
         c.Publisher == null ? "PUBLISHER_MISSING" : null, c.Edition == null ? "EDITION_MISSING" : null,
         c.OwnerId == null || c.OwnerRole == null ? "SOURCE_OWNER_MISSING" : null,

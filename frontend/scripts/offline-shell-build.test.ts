@@ -56,6 +56,15 @@ function harness(worker = source(), stores = new Map<string, Map<string, Respons
 }
 
 describe('public offline shell build and safe update lifecycle', () => {
+  it('falls back to public bytes for exact Tug job/vessel navigation while never caching its API or query context', async () => {
+    const h = harness(); await h.lifecycle('install')
+    const id = '11111111-1111-4111-8111-111111111111'
+    const response = await h.request(`/app/tug-job-detail/${id}?vessel=${id}`)
+    expect(await response!.text()).toContain('<!doctype html>')
+    for (const path of [`/api/v1/tug-jobs/${id}/plan`, `/app/tug-job-detail/${id}?vessel=${id}&vessel=${id}`,
+      `/app/tug-job-detail/${id}?vessel=${id}&actor=forged`, `/app/tug-job-detail/${id}?vessel=invalid`]) expect(h.request(path)).toBeUndefined()
+    expect([...h.stores.get(cacheName(source()))!.keys()].some(k => k.includes('tug') || k.includes('?'))).toBe(false)
+  })
   it('versions the actual public bytes deterministically, independent of bundle enumeration', () => {
     expect(source([...fixtures].reverse())).toBe(source())
     expect(cacheName(source([{ ...fixtures[0], bytes: '<!doctype html>new shell' }, ...fixtures.slice(1)]))).not.toBe(cacheName(source()))

@@ -64,6 +64,10 @@ public sealed class PoseidonDbContext(
     public DbSet<TugJobRevision> TugJobRevisions => Set<TugJobRevision>();
     public DbSet<TugOwner> TugOwners => Set<TugOwner>();
     public DbSet<TugAssignment> TugAssignments => Set<TugAssignment>();
+    public DbSet<TugOfflineEnrollment> TugOfflineEnrollments => Set<TugOfflineEnrollment>();
+    public DbSet<TugOfflineOutcome> TugOfflineOutcomes => Set<TugOfflineOutcome>();
+    public DbSet<TugOfflineLifecycle> TugOfflineLifecycles => Set<TugOfflineLifecycle>();
+    public DbSet<TugCapabilityBinding> TugCapabilityBindings => Set<TugCapabilityBinding>();
 
     public DbSet<HumanReviewHead> HumanReviewHeads => Set<HumanReviewHead>();
     public DbSet<HumanReviewEvent> HumanReviewEvents => Set<HumanReviewEvent>();
@@ -119,6 +123,12 @@ public sealed class PoseidonDbContext(
         model.Entity<TugDraftPlanRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<TugDraftPlanTug>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         TugStorage.Configure(model);
+        TugOfflineStorage.Configure(model);
+        model.Entity<TugOfflineEnrollment>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<TugOfflineOutcome>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<TugOfflineLifecycle>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        TugCapabilityBinding.Configure(model);
+        model.Entity<TugCapabilityBinding>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<TugJob>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<TugJobRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<TugOwner>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -303,7 +313,7 @@ public sealed class PoseidonDbContext(
             throw new InvalidOperationException("Human review history is immutable.");
         if (changes.Any(e => e.Entity is HumanReviewHead && (e.State == EntityState.Deleted || e.State == EntityState.Modified && e.Properties.Any(p => p.IsModified && p.Metadata.Name != "Revision"))))
             throw new InvalidOperationException("Human review scope is immutable.");
-        if (changes.Any(e => e.Entity is ControlEvidenceRevision or ControlEvidenceRequirement or ControlEvidenceEdge or ControlEvidenceReceipt && e.State != EntityState.Added))
+        if (changes.Any(e => e.Entity is ControlEvidenceRevision or ControlEvidenceRequirement or ControlEvidenceEdge or ControlEvidenceReceipt or TugCapabilityBinding && e.State != EntityState.Added))
             throw new InvalidOperationException("Control/evidence lineage is immutable.");
         if (changes.Any(e => e.Entity is ControlEvidenceHead && (e.State == EntityState.Deleted || e.State == EntityState.Modified && e.Properties.Any(p => p.IsModified && p.Metadata.Name != "Revision"))))
             throw new InvalidOperationException("Control/evidence ownership is immutable.");
@@ -311,6 +321,12 @@ public sealed class PoseidonDbContext(
             throw new InvalidOperationException("Applicability lineage is immutable.");
         if (changes.Any(e => e.Entity is RuleDraft && e.State == EntityState.Deleted))
             throw new InvalidOperationException("Rule history cannot be removed.");
+        if (changes.Any(e => e.Entity is TugOfflineOutcome or TugOfflineLifecycle && e.State != EntityState.Added))
+            throw new InvalidOperationException("Tug offline lineage is immutable.");
+        if (changes.Any(e => e.Entity is TugOfflineEnrollment && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
+            e.Properties.Any(p => p.IsModified && p.Metadata.Name is not "ExpiresAt" and not "RevokedAt" and not "PublicKey") ||
+            e.State == EntityState.Modified && e.Property("PublicKey").IsModified && e.Property("PublicKey").OriginalValue != null)))
+            throw new InvalidOperationException("Tug offline enrollment identity is immutable.");
         if (changes.Any(e => e.Entity is OfflineOutcome or OfflineLifecycle && e.State != EntityState.Added))
             throw new InvalidOperationException("Offline lineage is immutable.");
         if (changes.Any(e => e.Entity is OfflineEnrollment && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
@@ -397,7 +413,7 @@ public sealed class PoseidonDbContext(
                 AfterVersion = entry.Entity is CommandReceipt command ? CommittedVersion(command) : entry.Entity is ApplicabilityReceipt applicability ? CommittedVersion(applicability) : entry.Entity is RegulatoryQualificationReceipt qr ? ChangeTracker.Entries<RegulatoryQualificationHead>().SingleOrDefault(e => e.Entity.TenantId == qr.TenantId && e.Entity.RuleId == qr.RuleId)?.Entity.Version : entry.Entity is HumanReviewReceipt hr ? ChangeTracker.Entries<HumanReviewHead>().SingleOrDefault(e => e.Entity.TenantId == hr.TenantId && e.Entity.VesselId == hr.VesselId && e.Entity.Id == hr.ResourceId)?.Entity.Version : entry.Entity is ControlEvidenceReceipt ce ? ChangeTracker.Entries<ControlEvidenceHead>().SingleOrDefault(e => e.Entity.TenantId == ce.TenantId && e.Entity.VesselId == ce.VesselId && e.Entity.Kind == ce.Kind && e.Entity.Id == ce.ResourceId)?.Entity.Version : null,
                 RoleContext = actor.RoleContext, CapabilityContext = actor.CapabilityContext, ChangeSummary = metadata.Summary,
                 BeforeRevision = metadata.BeforeRevision, AfterRevision = metadata.AfterRevision,
-                ResourceKind = metadata.Kind, ReasonStatus = entry.Entity is RuleRevision or ControlEvidenceRevision or HumanReviewEvent ? "RecordedControlledCode" : entry.Entity is OfflineOutcome { ParentCommandId: not null }
+                ResourceKind = metadata.Kind, ReasonStatus = entry.Entity is RuleRevision or ControlEvidenceRevision or HumanReviewEvent or TugOfflineOutcome { ParentCommandId: not null } ? "RecordedControlledCode" : entry.Entity is OfflineOutcome { ParentCommandId: not null }
                     ? "RecordedProtected" : "NotRequiredForCommand", Source = actor.Source
             });
         }

@@ -98,7 +98,7 @@ async function planningJourney(page: Page) {
   await page.reload(); await page.getByRole('button', { name: 'EN', exact: true }).click()
   const detail = await (await page.request.get(`/api/v1/tug-jobs/${job.id}/plan?vessel=${vessel}`)).json()
   expect(detail.plan.revision).toBe(4); expect(detail.plan.inputs.plannedEnd).toBeNull(); expect(detail.plan.inputs.assignedTugs).toEqual([])
-  expect(detail.evidence.availableBollardPull).toBeNull(); expect(detail.evidence.readiness).toBe('Unknown')
+  expect(detail.evidence.availableBollardPull).toBeNull(); expect(detail.evidence.readiness).toBe('ReviewRequired')
   const board = await (await page.request.get(`/api/v1/tug-job-board?vessel=${vessel}&q=${encodeURIComponent(job.jobNumber)}`)).json()
   expect(board.items[0].draftPlan.revision).toBe(4); expect(board.items[0].request.inputs.requestedStart).toBeNull()
   await page.getByRole('link', { name: 'Job board', exact: true }).click()
@@ -122,10 +122,49 @@ async function planningLoss(page: Page) {
   await expect(panel.getByRole('button', { name: 'Save planning window', exact: true })).toBeEnabled()
   expect(attempts).toHaveLength(2); expect(attempts[0]).toEqual(attempts[1])
 }
+async function offlineWindowJourney(page: Page) {
+  // Real signed session/device key/IDB/host/PG. The explicit FICTIONAL window policy
+  // must be provisioned by the later gate; missing enrollment support is a failure.
+  await planningJourney(page)
+  await page.getByRole('link', { name: /^TUG-/ }).first().click()
+  const panel = page.getByRole('region', { name: 'Offline tug draft window', exact: true })
+  await panel.getByRole('button', { name: 'Authorize encrypted capture', exact: true }).click()
+  await expect(panel.getByText('Enrolled encrypted device capture available')).toBeVisible()
+  const enrollment = await panel.getByLabel('Recover enrollment').count() // selector is absent while the handle is active
+  expect(enrollment).toBe(0)
+  const start = new Date(Date.now() + 86400000).toISOString().slice(0, 19)
+  await page.context().setOffline(true)
+  await panel.getByLabel('Offline planned start (UTC)', { exact: true }).fill(start)
+  await panel.getByLabel('Offline planned end (UTC)', { exact: true }).fill('')
+  await panel.getByRole('button', { name: 'Capture encrypted draft', exact: true }).click()
+  await expect(panel.getByText(/Encrypted capture; not committed/)).toBeVisible()
+  await expect(panel.getByRole('button', { name: 'Replay exact capture', exact: true })).toBeDisabled()
+  const url = page.url()
+  await page.reload({ waitUntil: 'domcontentloaded' })
+  await expect(page.getByLabel('Offline planned start (UTC)', { exact: true })).toHaveCount(0)
+  expect(await page.locator('body').innerText()).not.toContain(start)
+  await page.context().setOffline(false); await page.goto(url)
+  await page.getByRole('button', { name: 'EN', exact: true }).click()
+  const recovered = page.getByRole('region', { name: 'Offline tug draft window', exact: true })
+  await expect(recovered.getByLabel('Recover enrollment').getByRole('option')).toHaveCount(2)
+  const old = await recovered.getByLabel('Recover enrollment').getByRole('option').nth(1).getAttribute('value')
+  await recovered.getByLabel('Recover enrollment').selectOption(old!)
+  await recovered.getByRole('button', { name: 'Authorize encrypted capture', exact: true }).click()
+  await expect(recovered.getByText(/Encrypted capture; not committed/)).toBeVisible()
+  const replay = page.waitForResponse(r => r.url().includes('/replay?vessel=') && r.request().method() === 'POST')
+  await recovered.getByRole('button', { name: 'Replay exact capture', exact: true }).click()
+  const receipt = await replay; expect(receipt.status()).toBe(200); const result = await receipt.json(); expect(result.result).toBe('Committed')
+  const again = page.waitForResponse(r => r.url().includes('/replay?vessel=') && r.request().method() === 'POST')
+  await recovered.getByRole('button', { name: 'Replay exact capture', exact: true }).click()
+  expect(await (await again).json()).toEqual(result)
+  await recovered.getByRole('button', { name: 'Revoke device capture', exact: true }).click()
+  await expect(recovered.getByLabel('Offline planned start (UTC)', { exact: true })).toHaveCount(0)
+}
 export const tugCases = [
   { name: 'tug-intake-board-exact-bp-null-end-dirty-url-responsive', run: intakeBoard, restricted: false },
   { name: 'tug-restricted-direct-url-and-navigation', run: denied, restricted: true },
   { name: 'tug-controlled-response-loss-real-commit', run: lossReplay, restricted: false },
   { name: 'tug-versioned-draft-plan-assign-reassign-remove-exact-history-board', run: planningJourney, restricted: false },
   { name: 'tug-plan-controlled-response-loss-real-commit-recovery', run: planningLoss, restricted: false },
+  { name: 'tug-enrolled-encrypted-window-offline-restart-current-renew-replay-revoke', run: offlineWindowJourney, restricted: false },
 ] as const

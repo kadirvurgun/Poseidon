@@ -80,16 +80,16 @@ export async function inventory(vessel: string, assignment: string, signal: Abor
     !time(x.expiresAt) || x.revokedAt !== null && !time(x.revokedAt) || typeof x.policyVersion !== 'string')) return bad()
   return value as OfflineInventory
 }
-async function hash(value: string) {
+export async function hash(value: string) {
   return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value))), b => b.toString(16).padStart(2, '0')).join('')
 }
 
 // Keys are nonextractable structured-cloned CryptoKeys, not hardcoded/exported key bytes.
 // Only opaque context hashes identify local slots. Online current rights precede lookup.
 // Invocation reservations consume budget even when encryption/storage subsequently fails.
-type KeySlot = { id: string; key: CryptoKey; signing: CryptoKeyPair; invocations: number }
-const base64 = (bytes: ArrayBuffer) => btoa(String.fromCharCode(...new Uint8Array(bytes)))
-async function vault<T>(action: (store: IDBObjectStore, done: (value: T) => void) => void): Promise<T> {
+export type KeySlot = { id: string; key: CryptoKey; signing: CryptoKeyPair; invocations: number }
+export const base64 = (bytes: ArrayBuffer) => btoa(String.fromCharCode(...new Uint8Array(bytes)))
+export async function vault<T>(action: (store: IDBObjectStore, done: (value: T) => void) => void): Promise<T> {
   return new Promise((resolve, reject) => {
     const open = indexedDB.open('poseidon.offline.keys.v1', 1)
     let settled = false

@@ -8,6 +8,8 @@ const ownedCache = name => /^poseidon\.offline\.static\.(?:v1|[a-f0-9]{64})$/.te
 const inventory = Array.isArray(manifest) ? new Map(manifest.map(x => [x.path, x])) : new Map()
 const uuid = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 const crewPath = new RegExp(`^/app/crew-roster/${uuid}(?:/crew-profile/${uuid})?$`)
+const tugPath = new RegExp(`^/app/tug-job-detail/${uuid}$`)
+const vesselId = new RegExp(`^${uuid}$`)
 async function publicArtifact(entry) {
   const response = await fetch(entry.path, { credentials: 'omit', cache: 'no-cache', redirect: 'error' })
   if (!response.ok || response.redirected) throw new Error('static_shell_unavailable')
@@ -47,13 +49,18 @@ self.addEventListener('activate', event => event.waitUntil((async () => {
 })()))
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url)
-  if (event.request.method !== 'GET' || url.origin !== self.location.origin || url.search) return
+  if (event.request.method !== 'GET' || url.origin !== self.location.origin) return
+  // Only a syntactically scoped Tug detail navigation may carry one vessel ID.
+  // Query values never become cache keys; the fallback is the public index only.
+  const tug = event.request.mode === 'navigate' && tugPath.test(url.pathname) &&
+    [...url.searchParams.keys()].length === 1 && url.searchParams.has('vessel') && vesselId.test(url.searchParams.get('vessel'))
+  if (url.search && !tug) return
   const crew = event.request.mode === 'navigate' && crewPath.test(url.pathname)
   const entry = inventory.get(url.pathname)
-  if (!crew && (!entry || url.pathname === '/index.html')) return
+  if (!crew && !tug && (!entry || url.pathname === '/index.html')) return
   event.respondWith((async () => {
     const cache = await caches.open(shellCache)
-    if (crew) {
+    if (crew || tug) {
       try { return await fetch(event.request) }
       catch { const response = await cache.match('/index.html'); if (response) return response; throw new Error('static_shell_unavailable') }
     }

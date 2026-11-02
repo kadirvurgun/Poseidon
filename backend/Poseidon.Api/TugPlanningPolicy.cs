@@ -5,6 +5,7 @@ namespace Poseidon.Api;
 // Operator-controlled, versioned configuration. There is deliberately no built-in Tug catalog.
 public sealed class TugPlanningPolicy
 {
+    public TugOfflinePolicy Offline { get; set; } = new();
     public string Version { get; set; } = "";
     public string SourceVersion { get; set; } = "";
     public DateTimeOffset NotBefore { get; set; }

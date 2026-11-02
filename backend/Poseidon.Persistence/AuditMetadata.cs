@@ -27,6 +27,8 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             return new(null, binding.EvaluationId, "EvaluationQualification", null, binding.QualificationRevision,
                 JsonSerializer.Serialize(new { binding.RuleId, binding.QualificationRevision, binding.AttestationId }));
         Guid? vessel = entry.Entity switch {
+            TugCapabilityBinding e => e.VesselId,
+            TugOfflineEnrollment e => e.VesselId, TugOfflineOutcome e => e.VesselId, TugOfflineLifecycle e => e.VesselId,
             HumanReviewHead e => e.VesselId, HumanReviewEvent e => e.VesselId, HumanReviewReceipt e => e.VesselId,
             ControlEvidenceHead e => e.VesselId, ControlEvidenceRevision e => e.VesselId, ControlEvidenceRequirement e => e.VesselId, ControlEvidenceEdge e => e.VesselId, ControlEvidenceReceipt e => e.VesselId,
             ApplicabilityEvaluation e => e.VesselId, ApplicabilityReceipt r => r.VesselId,
@@ -46,6 +48,8 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             _ => null
         };
         Guid? resource = entry.Entity switch {
+            TugCapabilityBinding e => e.Id,
+            TugOfflineEnrollment e => e.JobId, TugOfflineOutcome e => e.JobId, TugOfflineLifecycle e => e.JobId,
             HumanReviewHead e => e.Id, HumanReviewEvent e => e.Id, HumanReviewReceipt e => e.ResourceId,
             ControlEvidenceHead e => e.Id, ControlEvidenceRevision e => e.Id, ControlEvidenceRequirement e => e.Id, ControlEvidenceEdge e => e.Id, ControlEvidenceReceipt e => e.ResourceId,
             RuleDraft d => d.Id, RuleRevision r => r.Id, ApplicabilityEvaluation e => e.Id,
@@ -66,6 +70,15 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             RegisterDraft d => d.Id, RegisterRevision r => r.Id, CommandReceipt r => r.ResourceId,
             _ => vessel
         };
+        if (entry.Entity is TugOfflineEnrollment) return new(vessel, resource, "TugOfflineEnrollment", null, null, "[]");
+        if (entry.Entity is TugOfflineLifecycle tl) {
+            if (tl.Action is not ("Enrolled" or "KeyEnrolled" or "Renewed" or "Revoked" or "KeyLost" or "CleanupAllowed")) throw new InvalidOperationException("Unsupported tug lifecycle event.");
+            return new(vessel, resource, "TugOfflineLifecycle", null, null, JsonSerializer.Serialize(new { tl.Action }));
+        }
+        if (entry.Entity is TugOfflineOutcome to) {
+            if (to.Result is not ("Committed" or "MaterialConflict")) throw new InvalidOperationException("Unsupported tug replay outcome.");
+            return new(vessel, resource, "TugOfflineOutcome", null, to.Revision, JsonSerializer.Serialize(new { to.Result, to.ServerVersion }));
+        }
         if (entry.Entity is OfflineLifecycle lifecycle) {
             if (lifecycle.Action is not ("Enrolled" or "KeyEnrolled" or "Renewed" or "Revoked" or "KeyLost" or "CleanupAllowed"))
                 throw new InvalidOperationException("Unsupported offline lifecycle event.");

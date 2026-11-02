@@ -8,7 +8,8 @@ namespace Poseidon.Domain;
 public sealed record ControlEvidenceContent(string? Title = null, Guid? OwnerId = null, Guid? OwnerRole = null,
     string? Frequency = null, string? EvidencePolicy = null, string? VerificationPolicy = null, bool? Critical = null,
     string? Provenance = null, DateTimeOffset? ObservedAt = null, DateTimeOffset? ValidFrom = null,
-    DateTimeOffset? ValidUntil = null, DateTimeOffset? FreshUntil = null, SourceAcknowledgment[]? Acknowledgments = null);
+    DateTimeOffset? ValidUntil = null, DateTimeOffset? FreshUntil = null, SourceAcknowledgment[]? Acknowledgments = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] TugCapabilityStatement? TugCapability = null);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record SourceAcknowledgment(Guid RuleId, string QualificationHash, string SourceHash);
 
@@ -16,6 +17,10 @@ public static class ControlEvidencePolicy
 {
     public static void Validate(string kind, ControlEvidenceContent c, DateTimeOffset now)
     {
+        if (c.TugCapability != null) {
+            if (kind != "Evidence") throw new ArgumentException("invalid_tug_evidence_kind");
+            TugCapability.Validate(c.TugCapability);
+        }
         if (c.Acknowledgments is { } acknowledgments && (acknowledgments.Length > 32 || acknowledgments.Any(x => x == null || x.RuleId == Guid.Empty ||
             !System.Text.RegularExpressions.Regex.IsMatch(x.QualificationHash ?? "", "\\A[A-F0-9]{64}\\z") ||
             !System.Text.RegularExpressions.Regex.IsMatch(x.SourceHash ?? "", "\\A[A-F0-9]{64}\\z")) || acknowledgments.Select(x => x.RuleId).Distinct().Count() != acknowledgments.Length)) throw new ArgumentException("invalid_acknowledgment");
@@ -30,6 +35,7 @@ public static class ControlEvidencePolicy
     public static string[] Blockers(string kind, ControlEvidenceContent c, int requirements, bool file, int applicabilityLinks = 0)
     {
         var reasons = new List<string>();
+        if (c.TugCapability is { } capability && !TugCapability.Complete(capability)) reasons.Add("TUG_CAPABILITY_INCOMPLETE");
         if (c.Title == null) reasons.Add("TITLE_MISSING");
         if (c.OwnerId == null) reasons.Add("OWNER_MISSING");
         if (requirements == 0) reasons.Add("REQUIREMENT_LINK_MISSING");

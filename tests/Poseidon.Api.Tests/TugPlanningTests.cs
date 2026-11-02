@@ -61,7 +61,7 @@ public sealed partial class DirectoryWorkspaceTests
         var board = await c.GetFromJsonAsync<PageDto<TugBoardRow>>($"/api/v1/tug-job-board?vessel={Tug.Id}", Ct);
         var actual = board!.Items.Single(r => r.Request.Id == job.Id); Assert.Equal(3, actual.DraftPlan!.Revision);
         Assert.Null(actual.Request.Inputs.RequestedStart); Assert.Equal(start, actual.DraftPlan.Inputs.PlannedStart);
-        Assert.Null(actual.AvailableBollardPull); Assert.Equal("Unknown", actual.Readiness); Assert.Contains("NoOperationalApproval", actual.PlannedTimeSource);
+        Assert.Null(actual.AvailableBollardPull); Assert.Equal("ReviewRequired", actual.Readiness); Assert.Contains("NoOperationalApproval", actual.PlannedTimeSource);
         await using var db = Db(); Assert.Equal(1, (await db.TugJobs.SingleAsync(j => j.Id == job.Id, Ct)).Revision);
         Assert.Equal(3, await db.TugDraftPlanRevisions.CountAsync(p => p.JobId == job.Id, Ct));
         Assert.Contains(await db.AuditEvents.ToArrayAsync(Ct), a => a.EntityType == nameof(TugDraftPlan) && a.ResourceId == job.Id && a.VesselId == Tug.Id && a.RoleContext != null);
@@ -144,9 +144,9 @@ public sealed partial class DirectoryWorkspaceTests
         var board = await c.GetFromJsonAsync<PageDto<TugBoardRow>>($"/api/v1/tug-job-board?vessel={Tug.Id}&limit=1", Ct);
         var row = Assert.Single(board!.Items); Assert.Equal("HumanReviewRequired", row.PlanningEvidence!.ConflictState);
         Assert.Single(row.PlanningEvidence.Conflicts); Assert.Equal("Intersecting", row.PlanningEvidence.Conflicts[0].Relation);
-        Assert.Null(row.AvailableBollardPull); Assert.Equal("Unknown", row.Readiness);
+        Assert.Null(row.AvailableBollardPull); Assert.Equal("ReviewRequired", row.Readiness);
         var detail = await c.GetFromJsonAsync<JsonElement>("/api/v1/" + PlanningUrl(first.Id), Ct);
-        Assert.Contains("OperationalEvidenceUnavailable", detail.GetProperty("evidence").GetProperty("coverage").GetString());
+        Assert.Equal("CurrentAuthorizedOwningFacts;DraftGeometry;MasterDecisionSeparate", detail.GetProperty("evidence").GetProperty("coverage").GetString());
     }
     [Fact]
     public async Task Bp_adapter_consumes_actual_normalized_observation_rechecks_revocation_and_never_sums_unverified_capacity() {

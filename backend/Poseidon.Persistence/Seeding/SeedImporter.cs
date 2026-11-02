@@ -47,6 +47,7 @@ public static class SeedImporter
         }
         await RegulatoryRegisterFixtures.AddMissingAsync(db, data.Tenants, cancellationToken).ConfigureAwait(false);
         await ControlEvidenceFixtures.AddMissingAsync(db, data.Vessels, cancellationToken).ConfigureAwait(false);
+        await TugCapabilityFixtures.AddMissingAsync(db, data.Vessels, cancellationToken).ConfigureAwait(false);
         await ApplicabilityFixtures.AddMissingAsync(db, data.Tenants, cancellationToken).ConfigureAwait(false);
         await RegulatoryQualificationFixtures.AddMissingAsync(db, data.Tenants, cancellationToken).ConfigureAwait(false);
         foreach (var vessel in data.Vessels)

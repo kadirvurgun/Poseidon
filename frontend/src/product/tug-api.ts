@@ -1,5 +1,6 @@
 import type { Plan, PlanningEvidence } from './tug-planning-api'
-import { request } from './api'
+import { decodePlanningEvidence } from './tug-planning-api'
+import { ApiError, request } from './api'
 
 export type TugInputs = {
   requestSource: string | null; customerRef: string | null; assistedVessel: string | null; assistedVesselImo: string | null; jobType: string | null
@@ -22,7 +23,18 @@ export const tugApi = {
   context: (vessel: string, signal: AbortSignal) => request<TugContext>(`tug-command?vessel=${vessel}`, signal),
   vessels: (signal: AbortSignal) => request<{ vessels: TugContext['vessel'][] }>('tug-command', signal),
   detail: (id: string, vessel: string, signal: AbortSignal) => request<TugRequest>(`tug-jobs/${id}?vessel=${vessel}`, signal),
-  board: (vessel: string, priority: string, q: string, offset: number, signal: AbortSignal) => request<TugBoard>(`tug-job-board?${new URLSearchParams({ vessel, priority, q, offset: String(offset), limit: '25' })}`, signal),
+  board: async (vessel: string, priority: string, q: string, offset: number, signal: AbortSignal) => {
+    const result = await request<TugBoard>(`tug-job-board?${new URLSearchParams({ vessel, priority, q, offset: String(offset), limit: '25' })}`, signal)
+    if (!result || !Array.isArray(result.items) || result.items.length > 25 || typeof result.hasMore !== 'boolean') throw new ApiError(502, 'invalid_tug_board_contract')
+    for (const row of result.items) {
+      if (row.request?.vesselId !== vessel || !Array.isArray(row.assignedTugs)) throw new ApiError(502, 'invalid_tug_board_contract')
+      if (row.planningEvidence != null) {
+        const current = decodePlanningEvidence(row.planningEvidence, row.assignedTugs)
+        if (row.availableBollardPull !== current.availableBollardPull || row.readiness !== current.readiness || row.conflict !== current.conflictState) throw new ApiError(502, 'invalid_tug_board_contract')
+      } else if (row.availableBollardPull !== null || row.readiness !== 'Unknown' || row.conflict !== 'Unknown') throw new ApiError(502, 'invalid_tug_board_contract')
+    }
+    return result
+  },
   save: (vessel: string, attempt: TugAttempt, csrf: string, signal: AbortSignal) => request<TugRequest>(`tug-jobs${attempt.update ? `/${attempt.body.clientId}` : ''}?vessel=${vessel}`, signal, {
     method: attempt.update ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf, 'Idempotency-Key': attempt.key }, body: JSON.stringify(attempt.body),
   }),
