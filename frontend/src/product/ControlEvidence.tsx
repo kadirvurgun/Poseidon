@@ -70,14 +70,28 @@ function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving, isTu
     }).catch(() => { if (active) { setPickerError(true); setOwners([]); setReqs(null); setControls(null); setRuleRows(null); setFiles([]); setOrphan(null) } })
     return () => { active = false; c.abort() }
   }, [vessel, rows, reqOffset, controlOffset, ruleOffset, fileOffset, orphanOffset, reload, offline])
+  const resetScope1 = [vessel, kind, selected, historyOffset, historyAsOf, offline] as const
+  const [previousScope1, setPreviousScope1] = useState(resetScope1)
+  // Withdraw stale state in the same render that changes the request scope.
+  if (!Object.is(previousScope1[0], vessel) || !Object.is(previousScope1[1], kind) || !Object.is(previousScope1[2], selected) || !Object.is(previousScope1[3], historyOffset) || !Object.is(previousScope1[4], historyAsOf) || !Object.is(previousScope1[5], offline)) {
+    setPreviousScope1(resetScope1)
+    setHistory(null);
+  }
   useEffect(() => {
-    setHistory(null); if (!selected || offline) return
+     if (!selected || offline) return
     let active = true; const c = new AbortController()
     service.page(vessel, kind, historyOffset, c.signal, selected.id, historyAsOf || undefined).then(p => { if (active) setHistory(p) }).catch(e => { if (active) setError(e instanceof directory.ApiError ? e.status : 0) })
     return () => { active = false; c.abort() }
   }, [vessel, kind, selected, historyOffset, historyAsOf, offline])
+  const resetScope2 = [sourceId, sourceOffset, offline] as const
+  const [previousScope2, setPreviousScope2] = useState(resetScope2)
+  // Withdraw stale state in the same render that changes the request scope.
+  if (!Object.is(previousScope2[0], sourceId) || !Object.is(previousScope2[1], sourceOffset) || !Object.is(previousScope2[2], offline)) {
+    setPreviousScope2(resetScope2)
+    setSource(null);
+  }
   useEffect(() => {
-    setSource(null); if (!sourceId || offline) return
+     if (!sourceId || offline) return
     const c = new AbortController(); let active = true
     registers.historyDraft('sources', sourceId, sourceOffset, c.signal).then(p => { if (active) setSource(p) }).catch(() => { if (active) setPickerError(true) })
     return () => { active = false; c.abort() }

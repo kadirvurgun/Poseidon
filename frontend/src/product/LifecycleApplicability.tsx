@@ -3,7 +3,7 @@ import type { OwningReferences } from './compliance-input-contract'
 import { RegulatoryQualification } from './RegulatoryQualification'
 import { OwningEvaluationSelector } from './OperationEquipmentEditor'
 import * as qualification from './qualification-api'
-import { useEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useEffect, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import * as service from './applicability-api'
 import * as directory from './api'
@@ -25,10 +25,17 @@ export function LifecycleApplicability({ language, csrf, offline, onDirty, onSav
   const [dirty, setDirty] = useState(false), [saving, setSaving] = useState(false), [frozen, setFrozen] = useState<FrozenCommand | null>(null), [conflict, setConflict] = useState(false)
   const [requested, setRequested] = useState('ADOPTED'), [ruleHistory, setRuleHistory] = useState<Page<RuleDraft> | null>(null), [ruleHistoryOffset, setRuleHistoryOffset] = useState(0)
   const [vessel, setVessel] = useState(''), [checked, setChecked] = useState<string[]>([]), [evaluation, setEvaluation] = useState<Evaluation | null>(null)
-  useEffect(() => { setOwningInputs(null) }, [vessel, offline])
+  const resetScope1 = [vessel, offline] as const
+  const [previousScope1, setPreviousScope1] = useState(resetScope1)
+  // Withdraw stale state in the same render that changes the request scope.
+  if (!Object.is(previousScope1[0], vessel) || !Object.is(previousScope1[1], offline)) {
+    setPreviousScope1(resetScope1)
+    setOwningInputs(null)
+  }
+  useEffect(() => {  }, [vessel, offline])
   const [asOf, setAsOf] = useState('')
   const [history, setHistory] = useState<Page<HistoryItem> | null>(null), [historyOffset, setHistoryOffset] = useState(0), [notice, setNotice] = useState('')
-  const liveVessel = useRef(vessel); liveVessel.current = vessel
+  const liveVessel = useRef(vessel); useLayoutEffect(() => { liveVessel.current = vessel }, [vessel])
   useEffect(() => { onDirty(dirty || !!frozen || conflict || qualificationDirty) }, [dirty, frozen, conflict, qualificationDirty, onDirty])
   useEffect(() => { onSaving(saving || qualificationSaving) }, [saving, qualificationSaving, onSaving])
   useEffect(() => {
@@ -42,15 +49,29 @@ export function LifecycleApplicability({ language, csrf, offline, onDirty, onSav
     }).catch(e => { if (active) setError(e instanceof directory.ApiError ? e.status : 0) })
     return () => { active = false; c.abort(); clearTimeout(timer) }
   }, [attempt, offset, vesselPage, offline])
-  useEffect(() => {
+  const resetScope2 = [vessel, historyOffset, attempt, offline, caps?.canRead] as const
+  const [previousScope2, setPreviousScope2] = useState(resetScope2)
+  // Withdraw stale state in the same render that changes the request scope.
+  if (!Object.is(previousScope2[0], vessel) || !Object.is(previousScope2[1], historyOffset) || !Object.is(previousScope2[2], attempt) || !Object.is(previousScope2[3], offline) || !Object.is(previousScope2[4], caps?.canRead)) {
+    setPreviousScope2(resetScope2)
     setHistory(null)
+  }
+  useEffect(() => {
+
     if (!vessel || offline || !caps?.canRead) return
     const c = new AbortController(); let active = true
     service.history(vessel, historyOffset, c.signal).then(p => { if (active) setHistory(p) }).catch(e => { if (active) setError(e instanceof directory.ApiError ? e.status : 0) })
     return () => { active = false; c.abort() }
   }, [vessel, historyOffset, attempt, offline, caps?.canRead])
-  useEffect(() => {
+  const resetScope3 = [selected, ruleHistoryOffset, offline] as const
+  const [previousScope3, setPreviousScope3] = useState(resetScope3)
+  // Withdraw stale state in the same render that changes the request scope.
+  if (!Object.is(previousScope3[0], selected) || !Object.is(previousScope3[1], ruleHistoryOffset) || !Object.is(previousScope3[2], offline)) {
+    setPreviousScope3(resetScope3)
     setRuleHistory(null)
+  }
+  useEffect(() => {
+
     if (!selected || offline) return
     const c = new AbortController(); let active = true
     service.versions(selected.current.id, ruleHistoryOffset, c.signal).then(p => { if (active) setRuleHistory(p) }).catch(e => { if (active) setError(e instanceof directory.ApiError ? e.status : 0) })

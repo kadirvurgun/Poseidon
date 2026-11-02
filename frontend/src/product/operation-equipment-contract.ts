@@ -10,7 +10,7 @@ export const owningFields = ['vessel.operatingArea', 'operation.jobType', 'opera
 type Obj = Record<string, unknown>
 const exact = (v: unknown, keys: string[]): v is Obj => !!v && typeof v === 'object' && !Array.isArray(v) && Object.keys(v).length === keys.length && keys.every(k => Object.hasOwn(v, k))
 const positive = (v: unknown): v is number => typeof v === 'number' && Number.isSafeInteger(v) && v > 0
-const text = (v: unknown) => v === null || typeof v === 'string' && v.length > 0 && v.length <= 2000 && v.trim() === v && !/[\u0000-\u001f\u007f-\u009f]/.test(v)
+const text = (v: unknown) => v === null || typeof v === 'string' && v.length > 0 && v.length <= 2000 && v.trim() === v && !Array.from(v).some(c => c.charCodeAt(0) < 32 || c.charCodeAt(0) >= 127 && c.charCodeAt(0) <= 159)
 export function validOwning(key: string, v: unknown): boolean {
   if (v === null) return true
   if (key === 'cargoPlan') return exact(v, ['planReference', 'packagedDangerousGoods']) && text(v.planReference) && (v.packagedDangerousGoods === null || typeof v.packagedDangerousGoods === 'boolean')

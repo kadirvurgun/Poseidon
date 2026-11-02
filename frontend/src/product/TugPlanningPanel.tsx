@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useEffect, useRef, useState } from 'react'
 import { TugOwningEvidence } from './TugOwningEvidence'
 import { TugOfflinePanel } from './TugOfflinePanel'
 import { ApiError } from './api'
@@ -24,7 +24,7 @@ export function TugPlanningPanel({ id, vessel, requestVersion, csrf, language, o
   const [start, setStart] = useState(''), [end, setEnd] = useState(''), [tug, setTug] = useState(''), [replacement, setReplacement] = useState('')
   const [attempt, setAttempt] = useState<PlanAttempt | null>(null), [notice, setNotice] = useState(''), [busy, setBusy] = useState(false), [dirty, setDirty] = useState(false), [generation, reload] = useState(0)
   const [offlineDirty, setOfflineDirty] = useState(false)
-  const active = useRef<AbortController | null>(null), review = useRef<AbortController | null>(null), loadedContext = useRef(''), changed = useRef(onDirty); changed.current = onDirty
+  const active = useRef<AbortController | null>(null), review = useRef<AbortController | null>(null), changed = useRef(onDirty); useLayoutEffect(() => { changed.current = onDirty }, [onDirty])
   useEffect(() => { changed.current(dirty || busy || !!attempt || offlineDirty); return () => changed.current(false) }, [dirty, busy, attempt, offlineDirty])
   useEffect(() => {
     const c = new AbortController()
@@ -44,10 +44,17 @@ export function TugPlanningPanel({ id, vessel, requestVersion, csrf, language, o
     window.addEventListener('focus', refresh); window.addEventListener('online', refresh); window.addEventListener('offline', refresh)
     return () => { c.abort(); window.clearInterval(timer); window.removeEventListener('focus', refresh); window.removeEventListener('online', refresh); window.removeEventListener('offline', refresh) }
   }, [id, vessel, plan?.revision])
+  const resetScope1 = [id, vessel, requestVersion, generation] as const
+  const [previousScope1, setPreviousScope1] = useState(resetScope1)
+  // Withdraw stale state in the same render that changes the request scope.
+  if (!Object.is(previousScope1[0], id) || !Object.is(previousScope1[1], vessel) || !Object.is(previousScope1[2], requestVersion) || !Object.is(previousScope1[3], generation)) {
+    const sameContext = previousScope1[0] === id && previousScope1[1] === vessel && previousScope1[2] === requestVersion
+    setPreviousScope1(resetScope1); setNotice(n => sameContext && n === 'saved' ? n : '')
+    setLoading(true); setBusy(false); setPlan(null); setOptions(null); setEvidence(null); setHistory(null); setSelected(null); setRequestState(''); setDirty(false); setAttempt(null)
+  }
   useEffect(() => {
     const c = new AbortController(), signal = AbortSignal.any([c.signal, AbortSignal.timeout(10000)])
-    const key = `${id}/${vessel}/${requestVersion}`, sameContext = loadedContext.current === key; loadedContext.current = key
-    active.current = c; setLoading(true); setBusy(false); setPlan(null); setOptions(null); setEvidence(null); setHistory(null); setSelected(null); setRequestState(''); setNotice(n => sameContext && n === 'saved' ? n : ''); setDirty(false); setAttempt(null)
+    active.current = c;
     Promise.all([planningApi.detail(id, vessel, signal), planningApi.options(id, vessel, signal), planningApi.history(id, vessel, signal)])
       .then(([detail, opts, h]) => { if (c.signal.aborted) return; setPlan(detail.plan); setRequestState(detail.requestState ?? ''); setEvidence(detail.evidence); setOptions(opts); setHistory(h); setStart(detail.plan?.inputs.plannedStart?.slice(0, 19) ?? ''); setEnd(detail.plan?.inputs.plannedEnd?.slice(0, 19) ?? '') })
       .catch(e => { if (!c.signal.aborted) setNotice(e instanceof ApiError && [401, 403, 404].includes(e.status) ? 'denial' : 'unavailable') })

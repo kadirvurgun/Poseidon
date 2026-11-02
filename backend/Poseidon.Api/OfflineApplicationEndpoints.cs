@@ -287,7 +287,13 @@ public static class OfflineApplicationEndpoints
         outcome.ProtectedContext = Protect(h, e, new(original.Base, local, serverWatch,
             outcome.Result == "Committed" ? local : null, c.Reason));
         db.OfflineOutcomes.Add(outcome);
-        try { await db.SaveChangesAsync(h.RequestAborted); await tx.CommitAsync(h.RequestAborted); }
+        try {
+            await db.SaveChangesAsync(h.RequestAborted);
+            // Return the durable PostgreSQL timestamp precision on first delivery too.
+            // Recovery must yield exactly the original persisted outcome.
+            await db.Entry(outcome).ReloadAsync(h.RequestAborted);
+            await tx.CommitAsync(h.RequestAborted);
+        }
         catch (DbUpdateException) { return await Fail(h, 409, "offline_retry"); }
         catch (Npgsql.PostgresException ex) when (ex.SqlState == "40001") { return await Fail(h, 409, "offline_retry"); }
         OperationalTelemetry.ObserveReplay(outcome.Result == "Committed" ? ReplayObservation.Committed : ReplayObservation.MaterialConflict);

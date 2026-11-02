@@ -111,7 +111,7 @@ function ScopedTree({ language, nodes, selectedId, onSelect, onRetry }: Props & 
     if (event.key.length !== 1) return
     event.preventDefault()
     const normalize = (value: string) => value.normalize('NFKC').toLocaleLowerCase(en ? 'en-US' : 'tr-TR')
-    const now = Date.now(), character = normalize(event.key)
+    const now = event.timeStamp, character = normalize(event.key)
     const text = now - buffer.current.at < 750 ? buffer.current.text + character : character
     buffer.current = { text, at: now }
     const query = [...text].every(c => c === character) ? character : text

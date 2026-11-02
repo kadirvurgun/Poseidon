@@ -252,7 +252,8 @@ public sealed partial class DirectoryWorkspaceTests
     }
     private sealed class OfflineTestClock : TimeProvider
     {
-        public DateTimeOffset Utc { get; set; } = DateTimeOffset.UtcNow;
+        // Browser capture uses millisecond ISO timestamps; keep the deterministic provider clock at that precision.
+        public DateTimeOffset Utc { get; set; } = DateTimeOffset.FromUnixTimeMilliseconds(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
         public override DateTimeOffset GetUtcNow() => Utc;
     }
     [Fact]

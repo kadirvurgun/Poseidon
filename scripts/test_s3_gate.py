@@ -5,6 +5,20 @@ import s3_gate
 
 
 class OwnedS3GateTests(unittest.TestCase):
+    def test_child_does_not_inherit_operator_lab_database_or_ambient_provider_authority(self):
+        inherited = dict(PATH='synthetic-tools', POSEIDON_LAB_CONFIG='private-config-selector',
+                         POSEIDON_DATABASE='private-database-selector', AWS_PROFILE='ambient',
+                         MINIO_ROOT_USER='ambient', POSEIDON_GATE_S3_OWNER='foreign')
+        with patch('s3_gate.environment', return_value=inherited):
+            self.assertEqual({'PATH': 'synthetic-tools'}, s3_gate.isolated_environment())
+
+    def test_invalid_child_deadlines_cannot_inspect_or_start_a_provider(self):
+        with patch('s3_gate.docker') as docker:
+            for deadline in [0, -1, 3601, 1.5, '900', True, False]:
+                with self.assertRaisesRegex(RuntimeError, 'invalid_child_deadline'):
+                    s3_gate.run('sha256:' + 'a' * 64, ['test'], deadline)
+            docker.assert_not_called()
+
     def test_mutable_images_and_missing_commands_cannot_start_a_provider(self):
         with patch('s3_gate.docker') as docker:
             for image, command in [('minio/minio:latest', ['test']), ('sha256:' + 'a' * 64, [])]:

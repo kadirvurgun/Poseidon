@@ -88,7 +88,7 @@ public static class CrewIdentityEndpoints
             await db.SaveChangesAsync(ct); if (tx != null) await tx.CommitAsync(ct);
             return Results.Ok(new { person.Version, revision = person.IdentityRevision, replayed = false });
         } catch (CryptographicException) { return await Fail(h, 503, "protected_storage_unavailable"); }
-        catch (Exception e) when (e is DbUpdateException || e is Npgsql.PostgresException { SqlState: "40001" or "40P01" }) {
+        catch (Exception e) when (e is DbUpdateException || PostgresFailure.IsSerialization(e)) {
             if (tx != null) await tx.RollbackAsync(CancellationToken.None);
             return await Fail(h, 409, "version_conflict");
         }

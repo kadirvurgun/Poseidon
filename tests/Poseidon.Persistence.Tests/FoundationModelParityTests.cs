@@ -49,5 +49,56 @@ public sealed class FoundationModelParityTests
             if (column.StoreType.StartsWith("character varying(", StringComparison.Ordinal))
                 Assert.Equal(int.Parse(column.StoreType[18..^1], System.Globalization.CultureInfo.InvariantCulture), nullable.Length);
         }
+        await reader.DisposeAsync();
+        await AssertRelations(connection, tables, ct);
+    }
+
+    private static async Task AssertRelations(NpgsqlConnection connection, ITable[] tables, CancellationToken ct)
+    {
+        // Compare ordered columns and referential actions, not just convention-derived names.
+        await using var command = new NpgsqlCommand("""
+            SELECT ns.nspname, t.relname,
+              array_to_string(ARRAY(SELECT a.attname FROM unnest(c.conkey) WITH ORDINALITY k(n,i)
+                JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attnum=k.n ORDER BY k.i), ','),
+              pns.nspname, p.relname,
+              array_to_string(ARRAY(SELECT a.attname FROM unnest(c.confkey) WITH ORDINALITY k(n,i)
+                JOIN pg_attribute a ON a.attrelid=c.confrelid AND a.attnum=k.n ORDER BY k.i), ','), c.confdeltype::text
+            FROM pg_constraint c JOIN pg_class t ON t.oid=c.conrelid JOIN pg_namespace ns ON ns.oid=t.relnamespace
+              JOIN pg_class p ON p.oid=c.confrelid JOIN pg_namespace pns ON pns.oid=p.relnamespace
+            WHERE c.contype='f' AND ns.nspname NOT IN ('pg_catalog','information_schema')
+            """, connection);
+        var foreignKeys = new HashSet<string>(StringComparer.Ordinal);
+        await using (var reader = await command.ExecuteReaderAsync(ct))
+            while (await reader.ReadAsync(ct)) foreignKeys.Add(string.Join('|', Enumerable.Range(0, 7).Select(reader.GetString)));
+        command.CommandText = """
+            SELECT ns.nspname, t.relname,
+              array_to_string(ARRAY(SELECT a.attname FROM unnest(i.indkey::smallint[]) WITH ORDINALITY k(n,j)
+                JOIN pg_attribute a ON a.attrelid=i.indrelid AND a.attnum=k.n WHERE k.j<=i.indnkeyatts ORDER BY k.j), ','),
+              i.indisunique, pg_get_expr(i.indpred,i.indrelid)
+            FROM pg_index i JOIN pg_class t ON t.oid=i.indrelid JOIN pg_namespace ns ON ns.oid=t.relnamespace
+            WHERE ns.nspname NOT IN ('pg_catalog','information_schema') AND i.indisvalid AND i.indisready
+            """;
+        var indexes = new HashSet<string>(StringComparer.Ordinal);
+        await using (var reader = await command.ExecuteReaderAsync(ct))
+            while (await reader.ReadAsync(ct)) indexes.Add(string.Join('|', reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetBoolean(3), reader.IsDBNull(4) ? "" : reader.GetString(4).Trim('(', ')')));
+        var missing = new List<string>();
+        foreach (var table in tables) {
+            foreach (var fk in table.ForeignKeyConstraints) {
+                var action = fk.OnDeleteAction switch {
+                    Microsoft.EntityFrameworkCore.Migrations.ReferentialAction.Restrict => "r",
+                    Microsoft.EntityFrameworkCore.Migrations.ReferentialAction.Cascade => "c",
+                    Microsoft.EntityFrameworkCore.Migrations.ReferentialAction.SetNull => "n",
+                    Microsoft.EntityFrameworkCore.Migrations.ReferentialAction.SetDefault => "d", _ => "a"
+                };
+                var key = string.Join('|', table.Schema, table.Name, string.Join(',', fk.Columns.Select(c => c.Name)),
+                    fk.PrincipalTable.Schema, fk.PrincipalTable.Name, string.Join(',', fk.PrincipalColumns.Select(c => c.Name)), action);
+                if (!foreignKeys.Contains(key)) missing.Add("FK|" + key);
+            }
+            foreach (var index in table.Indexes) {
+                var key = string.Join('|', table.Schema, table.Name, string.Join(',', index.Columns.Select(c => c.Name)), index.IsUnique, index.Filter ?? "");
+                if (!indexes.Contains(key)) missing.Add("INDEX|" + key);
+            }
+        }
+        Assert.True(missing.Count == 0, "Missing migrated relations:\n" + string.Join('\n', missing));
     }
 }

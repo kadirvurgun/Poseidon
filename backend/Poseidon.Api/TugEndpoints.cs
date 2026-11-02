@@ -189,7 +189,7 @@ public static partial class TugEndpoints
                 ResourceId = job.Id, RegisterRevision = job.Revision, RegisterVersion = job.Version, CommittedAt = job.SavedAt });
             await db.SaveChangesAsync(ct); await tx.CommitAsync(ct); await Observe(h, "Success", job.Id);
             return Results.Ok(Dto(snapshot, job.Version, false));
-        } catch (Exception e) when (e is DbUpdateException || e is Npgsql.PostgresException { SqlState: "40001" or "40P01" }) {
+        } catch (Exception e) when (e is DbUpdateException || PostgresFailure.IsSerialization(e)) {
             await tx.RollbackAsync(ct); return await Fail(h, 409, "version_conflict");
         }
     }

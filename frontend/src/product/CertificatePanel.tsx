@@ -31,15 +31,29 @@ export function CertificatePanel({ vessel, assignment, language, csrf, onDirty, 
   const [editor, setEditor] = useState<{ id: string; version: number | null; metadata: Metadata } | null>(null), [busy, setBusy] = useState(false), [uncertain, setUncertain] = useState(false)
   const [documentChoices, setDocumentChoices] = useState<CrewFileVersion[]>([])
   const [documentGeneration, refreshDocuments] = useState(0)
+  const resetScope1 = [person, vessel, assignment, csrf, documentGeneration] as const
+  const [previousScope1, setPreviousScope1] = useState(resetScope1)
+  // Withdraw stale state in the same render that changes the request scope.
+  if (!Object.is(previousScope1[0], person) || !Object.is(previousScope1[1], vessel) || !Object.is(previousScope1[2], assignment) || !Object.is(previousScope1[3], csrf) || !Object.is(previousScope1[4], documentGeneration)) {
+    setPreviousScope1(resetScope1)
+    setDocumentChoices([])
+  }
   useEffect(() => {
-    const c = new AbortController(); setDocumentChoices([])
+    const c = new AbortController();
     if (person) crewFileVersions(vessel, assignment, person, c.signal).then(data => {
       if (!c.signal.aborted) setDocumentChoices(data.items.filter(x => x.kind === 'CertificateDocument' && x.state === 'CleanTransport'))
     }).catch(() => { if (!c.signal.aborted) setDocumentChoices([]) })
     return () => c.abort()
   }, [person, vessel, assignment, csrf, documentGeneration])
   const attempt = useRef<string | null>(null), requestController = useRef<AbortController | null>(null)
-  useEffect(() => { const c = new AbortController(); setRows(null); setError(0)
+  const resetScope2 = [path, version, csrf] as const
+  const [previousScope2, setPreviousScope2] = useState(resetScope2)
+  // Withdraw stale state in the same render that changes the request scope.
+  if (!Object.is(previousScope2[0], path) || !Object.is(previousScope2[1], version) || !Object.is(previousScope2[2], csrf)) {
+    setPreviousScope2(resetScope2)
+    setRows(null); setError(0)
+  }
+  useEffect(() => { const c = new AbortController();
     request<Credential[]>(path, c.signal).then(data => { if (!Array.isArray(data) || data.some(r => !r || typeof r.id !== 'string' || !r.metadata?.declaration || !r.dates)) throw new ApiError(502); if (!c.signal.aborted) setRows(data) }).catch(e => { if (!c.signal.aborted) setError(e instanceof ApiError ? e.status : 503) })
     return () => { c.abort(); requestController.current?.abort() }
   }, [path, version, csrf])

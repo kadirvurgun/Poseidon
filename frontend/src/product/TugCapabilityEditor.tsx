@@ -9,14 +9,22 @@ export function TugCapabilityEditor({ vessel, language, offline, value, onChange
   const t = (en: string, tr: string) => language === 'en' ? en : tr
   const [assets, setAssets] = useState<equipment.Asset[]>([]), [conditions, setConditions] = useState<evidence.Row[]>([]), [offset, setOffset] = useState(0), [more, setMore] = useState(false)
   const [profileVersion, setProfileVersion] = useState<number | null>(null), [state, setState] = useState('idle')
+  const hasValue = value !== null
+  const resetScope1 = [vessel, hasValue, offline, offset] as const
+  const [previousScope1, setPreviousScope1] = useState(resetScope1)
+  // Withdraw stale state in the same render that changes the request scope.
+  if (!Object.is(previousScope1[0], vessel) || !Object.is(previousScope1[1], hasValue) || !Object.is(previousScope1[2], offline) || !Object.is(previousScope1[3], offset)) {
+    setPreviousScope1(resetScope1)
+    setState(hasValue && !offline ? 'loading' : 'idle'); setAssets([]); setConditions([]); setProfileVersion(null)
+  }
   useEffect(() => {
-    if (!value || offline) { setAssets([]); setConditions([]); setProfileVersion(null); return }
-    const c = new AbortController(); setState('loading')
+    if (!hasValue || offline) return
+    const c = new AbortController();
     Promise.all([equipment.snapshot(vessel, c.signal), tugApi.context(vessel, c.signal), evidence.page(vessel, 'Evidence', offset, c.signal)])
       .then(([a, p, e]) => { if (c.signal.aborted) return; setAssets(a.items); setProfileVersion(p.bollardPull.version); setConditions(e.items.filter(r => r.content.tugCapability?.kind === 'Condition')); setMore(e.hasMore); setState('loaded') })
       .catch(e => { if (!c.signal.aborted) { setAssets([]); setConditions([]); setProfileVersion(null); setState(e instanceof ApiError && [401, 403, 404].includes(e.status) ? 'denied' : 'unavailable') } })
     return () => c.abort()
-  }, [vessel, !!value, offline, offset])
+  }, [vessel, hasValue, offline, offset])
   const patch = (p: Partial<CapabilityStatement>) => { if (value) onChange({ ...value, ...p }) }
   return <fieldset aria-label={t('Owned tug capability evidence', 'Römorköre ait kapasite kanıtı')}>
     <legend>{t('Owned tug capability evidence', 'Römorköre ait kapasite kanıtı')}</legend>

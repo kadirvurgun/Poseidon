@@ -1,6 +1,6 @@
 import { WorkspaceRoleNavigation } from './WorkspaceRoleNavigation'
 import { WorkspaceContextBar } from './WorkspaceContextBar'
-import { useEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useEffect, useRef, useState } from 'react'
 import { ApiError, session } from './api'
 import type { Session } from './directory-contract'
 import * as api from './import-api'
@@ -14,10 +14,17 @@ export function ImportWorkspace({ vessel }: { vessel: string }) {
   const [href, setHref] = useState(window.location.href), [generation, setGeneration] = useState(0), [error, setError] = useState(0)
   const [dirty, setDirty] = useState(false), [pending, setPending] = useState<string | null>(null)
   const location = useRef(href), dirtyRef = useRef(false)
-  dirtyRef.current = dirty
+  useLayoutEffect(() => { dirtyRef.current = dirty }, [dirty])
   const en = language === 'en'
+  const resetScope1 = [generation] as const
+  const [previousScope1, setPreviousScope1] = useState(resetScope1)
+  // Withdraw stale state in the same render that changes the request scope.
+  if (!Object.is(previousScope1[0], generation)) {
+    setPreviousScope1(resetScope1)
+    setIdentity(null); setError(0)
+  }
   useEffect(() => {
-    const controller = new AbortController(); setIdentity(null); setError(0)
+    const controller = new AbortController();
     session(controller.signal).then(s => { if (!controller.signal.aborted) { if (s.authenticated && s.canRead) setIdentity(s); else setError(401) } })
       .catch(e => { if (!controller.signal.aborted) setError(e instanceof ApiError ? e.status : 503) })
     return () => controller.abort()
@@ -68,6 +75,7 @@ function Importer({ vessel, language, user, href, navigate, savedNavigate, onDir
   const [file, setFile] = useState<File | null>(null), [dirty, setDirty] = useState(false), [uncertain, setUncertain] = useState(false)
   const [historyRows, setHistoryRows] = useState<Awaited<ReturnType<typeof api.history>> | null>(null), [historyOffset, setHistoryOffset] = useState(0)
   const attempt = useRef<{ key: string; preview: api.Preview } | null>(null), operation = useRef<AbortController | null>(null), mounted = useRef(true)
+  const requestedAssignment = query.get('assignment')
   const selectedTemplate = batch?.template ?? templates.find(t => t.category === category)
   const contextKey = `${user.actorId}:${user.tenantId}:${user.csrfToken}:${vessel}:${batch?.id ?? 'new'}:${selectedTemplate?.version}:${selectedTemplate?.fingerprint}`
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; operation.current?.abort(); onDirty(false) } }, [onDirty])
@@ -93,11 +101,25 @@ function Importer({ vessel, language, user, href, navigate, savedNavigate, onDir
     // A new href or actor/session mounts a fresh private workspace.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-  useEffect(() => { const c = new AbortController(); setHistoryRows(null); api.history(vessel, historyOffset, c.signal).then(rows => { if (!c.signal.aborted) setHistoryRows(rows) }).catch(() => {})
+  const resetScope2 = [vessel, historyOffset, outcome] as const
+  const [previousScope2, setPreviousScope2] = useState(resetScope2)
+  // Withdraw stale state in the same render that changes the request scope.
+  if (!Object.is(previousScope2[0], vessel) || !Object.is(previousScope2[1], historyOffset) || !Object.is(previousScope2[2], outcome)) {
+    setPreviousScope2(resetScope2)
+    setHistoryRows(null);
+  }
+  useEffect(() => { const c = new AbortController();  api.history(vessel, historyOffset, c.signal).then(rows => { if (!c.signal.aborted) setHistoryRows(rows) }).catch(() => {})
     return () => c.abort() }, [vessel, historyOffset, outcome])
-  useEffect(() => { if (category !== 'certificate' || batch) return; const c = new AbortController(); setCrew(null); setAssignment('')
-    roster(vessel, crewOffset, c.signal).then(rows => { if (!c.signal.aborted) { setCrew(rows); if (rows.items.some(r => r.id === query.get('assignment'))) setAssignment(query.get('assignment')!) } }).catch(() => { if (!c.signal.aborted) setError(403) }); return () => c.abort()
-  }, [category, vessel, crewOffset, batch])
+  const resetScope3 = [category, vessel, crewOffset, batch, requestedAssignment] as const
+  const [previousScope3, setPreviousScope3] = useState(resetScope3)
+  // Withdraw stale state in the same render that changes the request scope.
+  if (!Object.is(previousScope3[0], category) || !Object.is(previousScope3[1], vessel) || !Object.is(previousScope3[2], crewOffset) || !Object.is(previousScope3[3], batch)) {
+    setPreviousScope3(resetScope3)
+    setCrew(null); setAssignment('')
+  }
+  useEffect(() => { if (category !== 'certificate' || batch) return; const c = new AbortController();
+    roster(vessel, crewOffset, c.signal).then(rows => { if (!c.signal.aborted) { setCrew(rows); if (rows.items.some(r => r.id === requestedAssignment)) setAssignment(requestedAssignment!) } }).catch(() => { if (!c.signal.aborted) setError(403) }); return () => c.abort()
+  }, [category, vessel, crewOffset, batch, requestedAssignment])
   function start() { operation.current?.abort(); const c = new AbortController(); operation.current = c; setBusy(true); setError(0); return c }
   function fail(e: unknown, c: AbortController) { if (!c.signal.aborted && mounted.current) {
     const status = e instanceof ApiError ? e.status : 503; setError(status)

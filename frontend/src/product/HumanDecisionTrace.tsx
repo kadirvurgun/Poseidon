@@ -17,13 +17,21 @@ export function HumanDecisionTrace({ anchor, language, csrf, offline, onDirty, o
   useEffect(() => { onDirty(dirty) }, [dirty, onDirty])
   useEffect(() => { onSaving(busy) }, [busy, onSaving])
   // Parent keys this component by the immutable anchor and guards context changes.
+  const { vesselId, evidenceId, evidenceRevision, controlId, controlRevision } = anchor
   const key = service.tracePath(anchor)
+  const resetScope1 = [key, offset, history, offline, reload] as const
+  const [previousScope1, setPreviousScope1] = useState(resetScope1)
+  // Withdraw stale state in the same render that changes the request scope.
+  if (!Object.is(previousScope1[0], key) || !Object.is(previousScope1[1], offset) || !Object.is(previousScope1[2], history) || !Object.is(previousScope1[3], offline) || !Object.is(previousScope1[4], reload)) {
+    setPreviousScope1(resetScope1)
+    setData(null);
+  }
   useEffect(() => {
-    setData(null); if (offline) return
+     if (offline) return
     const c = new AbortController(); let active = true; const timer = setTimeout(() => c.abort(), 15000)
-    service.trace(anchor, offset, history, c.signal).then(v => { if (active) { setData(v); setError(null) } }).catch(e => { if (active) setError(e instanceof ApiError ? e.status : 0) })
+    service.trace({ vesselId, evidenceId, evidenceRevision, controlId, controlRevision }, offset, history, c.signal).then(v => { if (active) { setData(v); setError(null) } }).catch(e => { if (active) setError(e instanceof ApiError ? e.status : 0) })
     return () => { active = false; c.abort(); clearTimeout(timer) }
-  }, [key, offset, history, offline, reload]) // immutable anchor values form key
+  }, [key, vesselId, evidenceId, evidenceRevision, controlId, controlRevision, offset, history, offline, reload]) // immutable anchor values form key
   const locked = offline || busy || conflict || !!history || !data || error !== null
   const grant = data?.authorities.find(g => g.id === authority)
   const capability = recordingMode ? 'human.decide' : decision ? 'human.review.submit' : selected ? (selected.kind === 'Decision' ? 'human.decide' : 'human.verify') : 'human.review.submit'

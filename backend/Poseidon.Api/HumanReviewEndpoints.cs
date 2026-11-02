@@ -355,6 +355,9 @@ public static class HumanReviewEndpoints
             var owningVerificationPins = OperationEquipmentInputs.Present(content) ? await db.ControlEvidenceRequirements.AsNoTracking().Where(x => x.VesselId == vessel && x.Kind == "Evidence" && x.Id == ev.Id && x.Revision == ev.Revision)
                 .Select(x => new RequirementPin(x.RequirementId, x.RequirementRevision, x.SourceId, x.SourceRevision, x.RuleId, x.RuleRevision)).ToArrayAsync(ct) : requirementPins;
             if (cmd.State == "VERIFIED" && !await OperationEquipmentCommands.VerificationAllowed(db, h.RequestServices.GetRequiredService<FederationSettings>(), content, owningVerificationPins, grant.RoleId, now, ct)) return await Fail(h, 403, "owning_document_verifier_required");
+            var independent = prior != null && prior.SubmitterId != a.Id && ev.ActorId != a.Id && co.ActorId != a.Id && ev.ActorId != null && co.ActorId != null;
+            if (cmd.State == "VERIFIED" && !independent) return await Fail(h, 409, "separation_of_duties");
+            if (cmd.State == "VERIFIED" && cmd.EvaluationId == null) return await Fail(h, 409, "authoritative_evaluation_unavailable");
             var qualified = await QualifiedControlContext.Resolve(db, vessel, requirementPins, "Evidence", content, ev.FileId != null, now, ct, h.RequestServices.GetRequiredService<FederationSettings>());
             var fresh = qualified.Blockers.Length == 0;
             if (cmd.State == "VERIFIED") {
@@ -365,9 +368,6 @@ public static class HumanReviewEndpoints
                 if (qualified.Policies.Any(p => p.RequireAcknowledgment == true && (p.AcknowledgmentRole == null || ev.RoleContext?.Split(',').Contains(p.AcknowledgmentRole.Value.ToString("D")) != true))) return await Fail(h, 409, "acknowledgment_role_required");
                 await QualifiedControlContext.GuardInputs(db, vessel, requirementPins, ct);
             }
-            var independent = prior != null && prior.SubmitterId != a.Id && ev.ActorId != a.Id && co.ActorId != a.Id && ev.ActorId != null && co.ActorId != null;
-            if (cmd.State == "VERIFIED" && !independent) return await Fail(h, 409, "separation_of_duties");
-            if (cmd.State == "VERIFIED" && cmd.EvaluationId == null) return await Fail(h, 409, "authoritative_evaluation_unavailable");
             var failure = HumanReviewPolicy.Transition(kind, prior?.State, cmd.State, cmd.ReasonCode, independent, !changed, fresh, prior?.ValidUntil <= now, changed);
             if (failure != null) return await Fail(h, 409, failure);
             // Serialize source/profile/rule changes with this review, without
@@ -416,9 +416,10 @@ public static class HumanReviewEndpoints
             await tx.CommitAsync(ct); return Results.Content(outcome, "application/json");
         } catch (DbUpdateConcurrencyException) {
             await tx.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear(); return await Replay() ?? await Fail(h, 409, "version_conflict");
-        } catch (Exception e) when (e is DbUpdateException or NpgsqlException) {
+        } catch (Exception e) when (PostgresFailure.IsDatabase(e)) {
+            DatabaseFailureObservation.Record(h, e);
             await tx.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear();
-            var state = e is PostgresException p ? p.SqlState : (e.InnerException as PostgresException)?.SqlState;
+            var state = PostgresFailure.Provider(e)?.SqlState;
             var conflict = state is PostgresErrorCodes.UniqueViolation or PostgresErrorCodes.SerializationFailure or PostgresErrorCodes.DeadlockDetected;
             return await Replay() ?? await Fail(h, conflict ? 409 : 503, conflict ? "version_conflict" : "service_unavailable");
         }

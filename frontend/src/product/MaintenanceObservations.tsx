@@ -10,9 +10,16 @@ export function MaintenanceObservations({ vessel, asset, csrf, en, onDirty, onUn
   const attempt = useRef<{ id: string; body: string; path: string } | null>(null), busy = useRef(false)
   const active = useRef<AbortController | null>(null)
   const path = `equipment-hierarchy/${encodeURIComponent(vessel)}/${encodeURIComponent(asset)}/observations`
+  const resetScope1 = [path, csrf, refresh, onDirty, onUncertain] as const
+  const [previousScope1, setPreviousScope1] = useState(resetScope1)
+  // Withdraw stale state in the same render that changes the request scope.
+  if (!Object.is(previousScope1[0], path) || !Object.is(previousScope1[1], csrf) || !Object.is(previousScope1[2], refresh) || !Object.is(previousScope1[3], onDirty) || !Object.is(previousScope1[4], onUncertain)) {
+    setPreviousScope1(resetScope1)
+    setSnapshot(null); setError(false); setSource(''); setValue(''); setTime(''); setRevision(''); setState('idle')
+  }
   useEffect(() => {
-    const controller = new AbortController(); active.current = controller; setSnapshot(null); setError(false)
-    setSource(''); setValue(''); setTime(''); setRevision(''); attempt.current = null; onDirty(false); onUncertain(false); setState('idle')
+    const controller = new AbortController(); active.current = controller;
+        attempt.current = null; onDirty(false); onUncertain(false);
     request<Snapshot>(path, controller.signal).then(result => { if (!Array.isArray(result?.sources) || !Array.isArray(result.items) || typeof result.canWrite !== 'boolean') throw new ApiError(502); if (!controller.signal.aborted) setSnapshot(result) })
       .catch(() => { if (!controller.signal.aborted) setError(true) })
     return () => { controller.abort(); active.current?.abort() }

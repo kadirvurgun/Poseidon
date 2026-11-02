@@ -1,5 +1,5 @@
 import { ApiError } from './api'
-import { useEffect, useRef, useState } from 'react'
+import { useEffectEvent, useEffect, useRef, useState } from 'react'
 import { downloadFile, fileDetail, filePage, stageFile, uploadFile, mimeForName, type FileOwner, type FileAttempt, type FilePage, type FileRecord } from './file-api'
 
 export function VesselFiles({ vessel, language, csrf, onDirty, onSaving, owner, onCommitted, offline = false }: { offline?: boolean; owner?: FileOwner; onCommitted?: () => void; vessel: string; language: 'tr' | 'en'; csrf: string; onDirty: (v: boolean) => void; onSaving: (v: boolean) => void }) {
@@ -21,7 +21,8 @@ export function VesselFiles({ vessel, language, csrf, onDirty, onSaving, owner, 
       setLoaded(null); setSelection(null); setFile(null); attempt.current = null; setFrozen(false); setNotice(''); onDirty(false)
     }
   }
-  useEffect(() => { if (offline) return; const c = new AbortController(); let active = true; filePage(vessel, offset, c.signal, owner).then(value => { if (active) { setLoaded({ key: pageKey, page: value }); setSelection(null); setError(false) } }).catch(e => { if (active && !c.signal.aborted) { denied(e); setError(true) } }); return () => { active = false; c.abort() } }, [vessel, owner, offset, reload, pageKey, offline])
+  const deniedInEffect = useEffectEvent(denied)
+  useEffect(() => { if (offline) return; const c = new AbortController(); let active = true; filePage(vessel, offset, c.signal, owner).then(value => { if (active) { setLoaded({ key: pageKey, page: value }); setSelection(null); setError(false) } }).catch(e => { if (active && !c.signal.aborted) { deniedInEffect(e); setError(true) } }); return () => { active = false; c.abort() } }, [vessel, owner, offset, reload, pageKey, offline])
   useEffect(() => () => controller.current?.abort(), [])
   useEffect(() => { if (offline) controller.current?.abort() }, [offline])
   const start = async () => {

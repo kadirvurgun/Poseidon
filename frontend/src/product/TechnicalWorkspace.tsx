@@ -96,24 +96,32 @@ export function TechnicalWorkspace() {
     window.addEventListener('online', network); window.addEventListener('offline', network)
     return () => { window.removeEventListener('popstate', pop); window.removeEventListener('beforeunload', unload); window.removeEventListener('online', network); window.removeEventListener('offline', network) }
   }, [])
-  useEffect(() => {
-    if (!route) return
-    const c = new AbortController(); let active = true; const timeout = setTimeout(() => c.abort(), 15000)
+  const routeVessel = route?.vessel, routePlan = route?.plan
+  const resetScope1 = [routeVessel, routePlan, attempt] as const
+  const [previousScope1, setPreviousScope1] = useState(resetScope1)
+  // Withdraw stale state in the same render that changes the request scope.
+  if (!Object.is(previousScope1[0], routeVessel) || !Object.is(previousScope1[1], routePlan) || !Object.is(previousScope1[2], attempt)) {
+    setPreviousScope1(resetScope1)
     setLoadedScope(null); setAssets(null); setPlans(null); setRefs(null); setOwners([]); setError(0); setFilter('')
+  }
+  useEffect(() => {
+    if (!routeVessel) return
+    const c = new AbortController(); let active = true; const timeout = setTimeout(() => c.abort(), 15000)
+
     session(c.signal).then(async u => {
       if (!active) return; setUser(u)
       if (!u.authenticated) throw new ApiError(401)
       // Equipment scope gates the complete forest; plan reads require an additional capability.
-      const a = await api.snapshot(route.vessel, c.signal); if (active) setAssets(a)
-      const o = await api.owners(route.vessel, c.signal); if (active) setOwners(o)
-      if (route.plan) {
-        const [p, r] = await Promise.all([api.plans(route.vessel, c.signal), api.references(route.vessel, c.signal)])
+      const a = await api.snapshot(routeVessel, c.signal); if (active) setAssets(a)
+      const o = await api.owners(routeVessel, c.signal); if (active) setOwners(o)
+      if (routePlan) {
+        const [p, r] = await Promise.all([api.plans(routeVessel, c.signal), api.references(routeVessel, c.signal)])
         if (active) { setPlans(p); setRefs(r) }
       }
-      if (active) setLoadedScope(`${route.vessel}:${route.plan}`)
+      if (active) setLoadedScope(`${routeVessel}:${routePlan}`)
     }).catch(e => { if (active) { setAssets(null); setPlans(null); setRefs(null); setError(e instanceof ApiError ? e.status : 503) } })
     return () => { active = false; c.abort(); clearTimeout(timeout) }
-  }, [route?.vessel, route?.plan, attempt])
+  }, [routeVessel, routePlan, attempt])
   const asset = assets?.items.find(a => a.id === route?.id), plan = plans?.items.find(p => p.id === route?.id)
   const canWrite = loadedScope !== `${route?.vessel}:${route?.plan}` ? false : route?.plan ? plans?.canWrite : assets?.canWrite
   const canHistory = route?.plan ? plans?.canReadHistory : assets?.canReadHistory

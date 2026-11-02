@@ -7,7 +7,7 @@ const revision = { kind: 'TugJob', profile: null, register: null, tug: { jobId: 
 const json = (data: unknown, status = 200) => new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json' } })
 afterEach(() => { vi.unstubAllGlobals(); vi.restoreAllMocks() })
 it('loads the exact requested immutable revision only on explicit review and labels it historical', async () => {
-  const fetcher = vi.fn(async (_path: string) => json(revision)); vi.stubGlobal('fetch', fetcher)
+  const fetcher = vi.fn(async (path: string) => { expect(path).toContain('/audit/'); return json(revision) }); vi.stubGlobal('fetch', fetcher)
   render(<TugAuditRevision auditId="synthetic-audit" language="en" />)
   expect(fetcher).not.toHaveBeenCalled()
   fireEvent.click(screen.getByRole('button', { name: 'Review exact immutable tug revision' }))
@@ -25,7 +25,7 @@ it('clears historic facts when an exact revision request is denied', async () =>
 })
 it('aborts a stale audit selection before accepting its delayed revision', async () => {
   let finish!: (value: Response) => void
-  const fetcher = vi.fn((_path: string, _init?: RequestInit) => new Promise<Response>(resolve => { finish = resolve })); vi.stubGlobal('fetch', fetcher)
+  const fetcher = vi.fn((path: string, init?: RequestInit) => { expect(path).toContain('/audit/'); expect(init?.signal).toBeDefined(); return new Promise<Response>(resolve => { finish = resolve }) }); vi.stubGlobal('fetch', fetcher)
   const view = render(<TugAuditRevision auditId="first" language="en" />)
   fireEvent.click(screen.getByRole('button', { name: 'Review exact immutable tug revision' }))
   const signal = fetcher.mock.calls[0][1]!.signal!

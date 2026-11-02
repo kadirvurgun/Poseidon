@@ -158,7 +158,7 @@ public static class ImportEndpoints
                 await Observe(h, vessel); return Results.Ok(Dto(old, h)); }
             db.ImportBatches.Add(b); await db.SaveChangesAsync(h.RequestAborted); await tx.CommitAsync(h.RequestAborted);
             await Observe(h, vessel, "ImportSave"); return Results.Ok(Dto(b, h));
-        } catch (Exception e) when (e is DbUpdateException || e is Npgsql.PostgresException { SqlState: "40001" }) {
+        } catch (Exception e) when (e is DbUpdateException || PostgresFailure.IsSerialization(e)) {
             await tx.RollbackAsync(CancellationToken.None); return await Fail(h, 409, "version_conflict");
         }
     }
@@ -304,7 +304,7 @@ public static class ImportEndpoints
             Outcome = row.Outcome, IssuesJson = JsonSerializer.Serialize(row.Issues, Json) });
         b.State = "Previewed"; db.Entry(b).Property(x => x.State).IsModified = true;
         try { await db.SaveChangesAsync(h.RequestAborted); await tx.CommitAsync(h.RequestAborted); }
-        catch (Exception e) when (e is DbUpdateException || e is Npgsql.PostgresException { SqlState: "40001" }) {
+        catch (Exception e) when (e is DbUpdateException || PostgresFailure.IsSerialization(e)) {
             await tx.RollbackAsync(CancellationToken.None); return await Fail(h, 409, "version_conflict");
         }
         await Observe(h, vessel); return Results.Ok(PageDto(p, b.TemplateVersion, rows.Take(25).ToArray(), 0));
@@ -434,7 +434,7 @@ public static class ImportEndpoints
                 ResourceId = batch, RegisterRevision = b.Revision, CommittedAt = b.CommittedAt.Value });
             await db.SaveChangesAsync(h.RequestAborted); await tx.CommitAsync(h.RequestAborted);
             return Results.Ok(new ImportCommittedDto(batch, "Committed", b.RowCount, p.Id, false));
-        } catch (Exception e) when (e is DbUpdateException || e is Npgsql.PostgresException { SqlState: "40001" or "40P01" }) {
+        } catch (Exception e) when (e is DbUpdateException || PostgresFailure.IsSerialization(e)) {
             await tx.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear(); return await Fail(h, 409, "version_conflict");
         } finally { h.Request.Headers["Idempotency-Key"] = originalKey; }
     }

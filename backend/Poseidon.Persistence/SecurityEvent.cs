@@ -21,8 +21,8 @@ public sealed class SecurityEvent
             b.ToTable("SecurityEvents", "audit");
             b.HasKey(x => x.Id);
             b.Property(x => x.ActorId).HasMaxLength(200);
-            b.Property(x => x.Action).HasMaxLength(32);
-            b.Property(x => x.Result).HasMaxLength(32);
+            b.Property(x => x.Action).HasMaxLength(64);
+            b.Property(x => x.Result).HasMaxLength(64);
             b.Property(x => x.CorrelationId).HasMaxLength(128);
             b.HasIndex(x => new { x.TenantId, x.OccurredAt });
             b.HasOne<Tenant>().WithMany().HasForeignKey(x => x.TenantId).OnDelete(DeleteBehavior.Restrict);
@@ -44,17 +44,7 @@ public sealed class SecurityEventWriter(DbContextOptions<SecurityEventWriter> op
     public async Task AppendAsync(SecurityEvent entry, CancellationToken cancellationToken = default)
     {
         if (ChangeTracker.HasChanges()) throw new InvalidOperationException("Only one security event may be appended at a time.");
-        if (entry.Action is not ("CrewProfileRead" or "CrewProfileSave" or "CrewProfileHistory" or "CrewCurrentAssignmentRead" or "MaintenanceObservation" or "MaintenanceObservationRead" or "MaintenanceObservationCapture" or "MaintenanceObservationRevoke" or "ImportRead" or "ImportSave" or "ImportReport" or "CredentialRead" or "CredentialSave" or "TugRead" or "TugSave" or "EquipmentRead" or "EquipmentSave" or "MaintenanceRead" or "MaintenanceSave" or "CrewRead" or "CrewProfile" or "CrewHistory" or "CrewSave" or "CrewPositions" or "Login" or "Logout" or "CompaniesRead" or "VesselsRead" or "AccessDenied" or "Session" or
-            "CompanyCreate" or "CompanyUpdate" or "VesselCreate" or "VesselUpdate" or "DirectoryWrite" or
-            "ProfileRead" or "ProfileHistory" or "ProfileSave" or "WorkspaceRead" or "WorkspaceSearch" or "TodayRead" or "TodayWhyRead" or
-            "AuditQuery" or "AuditDetail" or "AuditRevision" or "RegisterList" or "RegisterRead" or "RegisterHistory" or "RegisterSave" or
-            "FileRequest" or "FileList" or "FileDetail" or "FileAccessIssue" or "FileDownload") ||
-            entry.Result is not ("field_policy_denied" or "assignment_policy_denied" or "protected_storage_unavailable" or "observation_policy_denied" or "command_reuse_conflict" or "Success" or "Denied" or "Unauthenticated" or "Failed" or "SetupRequired" or "NotFound" or
-            "Attempted" or "Authorized" or "permission_denied" or "csrf_invalid" or "invalid_request" or "validation_failed" or
-            "invalid_idempotency_key" or "resource_not_found" or "idempotency_key_reused" or "version_conflict" or
-            "duplicate_code" or "service_unavailable" or "source_revision_unavailable" or "Invalid" or
-            "file_settings_unavailable" or "invalid_file_metadata" or "file_attempt_conflict" or "file_attempt_frozen" or
-            "file_type_or_size_invalid" or "file_quarantined_or_unknown" or "file_capability_invalid" or "file_bytes_unavailable"))
+        if (!SecurityEventCodes.Allows(entry.Action, entry.Result))
             throw new InvalidOperationException("Unknown security event code.");
         if (entry.TenantId == Guid.Empty || (entry.ActorId != null && entry.TenantId == null))
             throw new InvalidOperationException("Attributed events require trusted tenant scope.");

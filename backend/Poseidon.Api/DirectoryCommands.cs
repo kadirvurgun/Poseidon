@@ -202,7 +202,7 @@ public static class DirectoryCommands
             if (transaction != null) await transaction.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear();
             return await Replay() ?? await Fail(409, "duplicate_code");
         }
-        catch (Exception ex) when (ex is DbUpdateException or NpgsqlException)
+        catch (Exception ex) when (PostgresFailure.IsDatabase(ex))
         {
             if (transaction != null) await transaction.RollbackAsync(CancellationToken.None);
             return await Fail(503, "service_unavailable");

@@ -33,7 +33,7 @@ export function TugWorkspace() {
   const [board, setBoard] = useState<TugBoard | null>(null), [record, setRecord] = useState<TugRequest | null>(null)
   const [inputs, setInputs] = useState<TugInputs>(emptyTugInputs), [csrf, setCsrf] = useState('')
   const [loading, setLoading] = useState(true), [error, setError] = useState(0), [notice, setNotice] = useState('')
-  const [editing, setEditing] = useState(false), [dirty, setDirty] = useState(false), [busy, setBusy] = useState(false)
+  const [editing, setEditing] = useState(route.screen === 'tug-job-intake'), [dirty, setDirty] = useState(false), [busy, setBusy] = useState(false)
   const [attempt, setAttempt] = useState<TugAttempt | null>(null), [conflict, setConflict] = useState(false)
   const [pending, setPending] = useState<(() => void) | null>(null), [offline, setOffline] = useState(!navigator.onLine)
   const [planningDirty, setPlanningDirty] = useState(false)
@@ -58,9 +58,16 @@ export function TugWorkspace() {
   useEffect(() => {
     document.documentElement.lang = lang; document.title = `POSEIDON · ${t.title}`
   }, [lang, t.title])
+  const resetScope1 = [route, reload] as const
+  const [previousScope1, setPreviousScope1] = useState(resetScope1)
+  // Withdraw stale state in the same render that changes the request scope.
+  if (!Object.is(previousScope1[0], route) || !Object.is(previousScope1[1], reload)) {
+    setPreviousScope1(resetScope1)
+    setLoading(true); setError(0); setUser(null); context(null); setBoard(null); setRecord(null); setSearch(route.q); setEditing(route.screen === 'tug-job-intake'); setDirty(false); setAttempt(null); setConflict(false); setInputs(emptyTugInputs())
+  }
   useEffect(() => {
     const c = new AbortController(); let active = true; const timeout = setTimeout(() => c.abort(), 10000)
-    setLoading(true); setError(0); setUser(null); context(null); setBoard(null); setRecord(null); setSearch(route.q); setEditing(route.screen === 'tug-job-intake'); setDirty(false); setAttempt(null); setConflict(false); setInputs(emptyTugInputs())
+
     async function load() {
       if (route.invalid) throw new ApiError(400)
       const s = await session(c.signal)

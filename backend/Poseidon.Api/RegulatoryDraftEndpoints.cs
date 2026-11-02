@@ -187,11 +187,11 @@ public static class RegulatoryDraftEndpoints
             await transaction.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear();
             return await Replay() ?? await Fail(409, "version_conflict");
         }
-        catch (Exception ex) when (ex is DbUpdateException or NpgsqlException)
+        catch (Exception ex) when (PostgresFailure.IsDatabase(ex))
         {
             await transaction.RollbackAsync(CancellationToken.None);
             db.ChangeTracker.Clear();
-            var state = ex is PostgresException p ? p.SqlState : (ex.InnerException as PostgresException)?.SqlState;
+            var state = PostgresFailure.Provider(ex)?.SqlState;
             return await Replay() ?? await Fail(state is "40001" or "40P01" ? 409 : 503, state is "40001" or "40P01" ? "version_conflict" : "service_unavailable");
         }
     }

@@ -10,7 +10,7 @@ export type OwningReferences = { operationId: string | null; cargoPlanId: string
 export type CompliancePolicies = { classPack?: { packReference: string | null; edition: string | null; sourceLocator: string | null } | null; ismDependency?: { ruleId: string | null; ruleRevision: number | null; sourceLocator: string | null } | null; eligibility?: { positionId: string | null; sourceLocator: string | null; criteria: { code: string | null; ruleId: string | null; ruleRevision: number | null; sourceLocator: string | null; requireCredential: boolean | null }[] | null } | null }
 type Obj = Record<string, unknown>
 const exact = (v: unknown, keys: string[]): v is Obj => !!v && typeof v === 'object' && !Array.isArray(v) && Object.keys(v).length === keys.length && keys.every(k => Object.hasOwn(v, k))
-const text = (v: unknown) => v === null || typeof v === 'string' && v.length > 0 && v.length <= 2000 && v.trim() === v && !/[\u0000-\u001f\u007f-\u009f]/.test(v)
+const text = (v: unknown) => v === null || typeof v === 'string' && v.length > 0 && v.length <= 2000 && v.trim() === v && !Array.from(v).some(c => c.charCodeAt(0) < 32 || c.charCodeAt(0) >= 127 && c.charCodeAt(0) <= 159)
 const positive = (v: unknown): v is number => typeof v === 'number' && Number.isSafeInteger(v) && v > 0
 const bool = (v: unknown) => v === null || typeof v === 'boolean'
 export const complianceKeys = ['classPack', 'msmd', 'crewRoleAssessment'] as const

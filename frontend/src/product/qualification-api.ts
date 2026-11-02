@@ -14,7 +14,7 @@ export type Qualification = { ruleId: string; revision: number; version: number;
 export type Page = { hasMore: boolean; items: Qualification[]; actions: string[]; authorities: { action: string; authorityId: string }[]; owners: { actorId: string; roleId: string }[] }
 type Obj = Record<string, unknown>
 const exact = (v: unknown, keys: string[]): v is Obj => !!v && typeof v === 'object' && !Array.isArray(v) && Object.keys(v).length === keys.length && keys.every(k => Object.hasOwn(v, k))
-const text = (v: unknown) => typeof v === 'string' && v.length > 0 && v.length <= 2000 && v === v.trim() && !/[\u0000-\u001f\u007f-\u009f]/.test(v)
+const text = (v: unknown) => typeof v === 'string' && v.length > 0 && v.length <= 2000 && v === v.trim() && !Array.from(v).some(c => c.charCodeAt(0) < 32 || c.charCodeAt(0) >= 127 && c.charCodeAt(0) <= 159)
 const positive = (v: unknown): v is number => typeof v === 'number' && Number.isSafeInteger(v) && v > 0
 const age = (v: unknown) => v === null || positive(v) && v <= 87600
 const hash = (v: unknown) => typeof v === 'string' && /^[A-F0-9]{64}$/.test(v)

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useEffect, useRef, useState } from 'react'
 import { ApiError } from './api'
 import { filePage, type FileRecord } from './file-api'
 import type { ProfileContent } from './profile-contract'
@@ -11,18 +11,25 @@ export function ConstructionRecordPicker({ vessel, language, value, disabled, on
   const [rows, setRows] = useState<FileRecord[]>([]), [offset, setOffset] = useState(0), [more, setMore] = useState(false)
   const [loading, setLoading] = useState(true), [failure, setFailure] = useState(false), [attempt, setAttempt] = useState(0)
   const [offline, setOffline] = useState(!navigator.onLine)
-  const selected = useRef(value); selected.current = value
+  const selected = useRef(value); useLayoutEffect(() => { selected.current = value }, [value])
   const t = (en: string, tr: string) => language === 'en' ? en : tr
   useEffect(() => {
     const online = () => setOffline(false), offline = () => setOffline(true)
     window.addEventListener('online', online); window.addEventListener('offline', offline)
     return () => { window.removeEventListener('online', online); window.removeEventListener('offline', offline) }
   }, [])
+  const resetScope1 = [vessel, offset, attempt, offline, onDenied] as const
+  const [previousScope1, setPreviousScope1] = useState(resetScope1)
+  // Withdraw stale state in the same render that changes the request scope.
+  if (!Object.is(previousScope1[0], vessel) || !Object.is(previousScope1[1], offset) || !Object.is(previousScope1[2], attempt) || !Object.is(previousScope1[3], offline) || !Object.is(previousScope1[4], onDenied)) {
+    setPreviousScope1(resetScope1)
+    setRows([]); setMore(false); setFailure(false); setLoading(!offline)
+  }
   useEffect(() => {
-    setRows([]); setMore(false); setFailure(false)
-    if (offline) { setLoading(false); return }
+
+    if (offline) return
     const controller = new AbortController(); let active = true
-    const timer = setTimeout(() => controller.abort(), 10000); setLoading(true)
+    const timer = setTimeout(() => controller.abort(), 10000);
     filePage(vessel, offset, controller.signal).then(page => {
       if (active) { setRows(page.items.filter(f => f.state === 'CleanTransport')); setMore(page.hasMore); setFailure(!page.available) }
     }).catch(error => {

@@ -47,8 +47,14 @@ public sealed class OperationEquipmentPersistenceTests : IAsyncLifetime
         await using var check = Db(); var local = await check.OperationEquipmentBindings.Where(b => b.DocumentKind == "CargoPlan").FirstAsync(Ct);
         var other = await check.Assets.Where(a => a.VesselId != local.VesselId).FirstAsync(Ct);
         check.ControlEvidenceRevisions.Add(new() { TenantId = local.TenantId, VesselId = local.VesselId, Kind = local.Kind, Id = local.Id, Revision = 99,
-            ContentJson = "{}", Hash = RegisterStorage.Hash("FICTIONAL cross-vessel negative"), ReasonCode = "SYNTHETIC_NEGATIVE", SavedAt = DateTimeOffset.UtcNow });
+            ContentJson = "{}", Hash = RegisterStorage.Hash("FICTIONAL cross-vessel negative"), ReasonCode = "AUTHORING_CORRECTION", SavedAt = DateTimeOffset.UtcNow });
         check.OperationEquipmentBindings.Add(new() { TenantId = local.TenantId, VesselId = local.VesselId, Kind = local.Kind, Id = local.Id, Revision = 99, DocumentKind = "WinchFitment", AssetId = other.Id, AssetRevision = other.Revision });
-        await Assert.ThrowsAsync<DbUpdateException>(() => check.SaveChangesAsync(Ct));
+        var audits = await check.AuditEvents.CountAsync(Ct);
+        var error = await Assert.ThrowsAsync<DbUpdateException>(() => check.SaveChangesAsync(Ct));
+        Assert.Equal(Npgsql.PostgresErrorCodes.ForeignKeyViolation, Assert.IsType<Npgsql.PostgresException>(error.InnerException).SqlState);
+        await using var final = Db();
+        Assert.False(await final.ControlEvidenceRevisions.AnyAsync(r => r.Id == local.Id && r.Revision == 99, Ct));
+        Assert.False(await final.OperationEquipmentBindings.AnyAsync(r => r.Id == local.Id && r.Revision == 99, Ct));
+        Assert.Equal(audits, await final.AuditEvents.CountAsync(Ct));
     }
 }

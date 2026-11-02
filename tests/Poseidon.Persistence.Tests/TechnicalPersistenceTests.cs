@@ -69,7 +69,7 @@ public sealed class TechnicalPersistenceTests : IAsyncLifetime
                 if (Interlocked.Increment(ref count) == 2) ready.SetResult(); await ready.Task.WaitAsync(TimeSpan.FromSeconds(20), Ct);
                 var row = rows.Single(x => x.Id == id); row.ParentId = parent; row.Revision++; db.AssetRevisions.Add(row.Snapshot());
                 await db.SaveChangesAsync(Ct); await tx.CommitAsync(Ct); return true;
-            } catch (Exception e) when (e is DbUpdateException || e is Npgsql.PostgresException { SqlState: "40001" or "40P01" }) { await tx.RollbackAsync(Ct); return false; }
+            } catch (Exception e) when (SerializationFailure(e)) { await tx.RollbackAsync(Ct); return false; }
         }
         var result = await Task.WhenAll(Reparent(a.Id,b.Id), Reparent(b.Id,a.Id)); Assert.Single(result, x => x);
         await using var verify = Db();
@@ -77,6 +77,8 @@ public sealed class TechnicalPersistenceTests : IAsyncLifetime
         Assert.Equal(EquipmentHierarchyValidation.Valid, EquipmentHierarchyPolicy.Validate(Vessel.TenantId, Vessel.Id, final.Select(x => new EquipmentHierarchyNode(x.TenantId,x.VesselId,x.Id,x.ParentId)).ToArray()));
         Assert.Equal(4, await verify.AssetRevisions.CountAsync(x => x.VesselId == Vessel.Id, Ct));
     }
+    private static bool SerializationFailure(Exception error) => error is Npgsql.PostgresException { SqlState: "40001" or "40P01" }
+        || error.InnerException is { } inner && SerializationFailure(inner);
     [Fact]
     public async Task Direct_SaveChanges_cycle_and_orphan_are_rejected_by_database_not_just_api_policy() {
         await using var db = Db(); var a = Asset(); var b = Asset(); b.ParentId = a.Id;

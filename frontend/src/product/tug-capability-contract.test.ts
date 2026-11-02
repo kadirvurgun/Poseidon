@@ -26,7 +26,7 @@ describe('owned capability and source policy wire', () => {
     expect(validCapability({ ...blankCapability('Condition'), conditionFactor: raw })).toBe(false)
   })
   it('rejects missing nested fields, foreign kinds, zone-free dates and mismatched pins', () => {
-    const { measuredTonnes: _omitted, ...missing } = blankCapability('BollardPullTest')
+    const missing: Partial<ReturnType<typeof blankCapability>> = blankCapability('BollardPullTest'); delete missing.measuredTonnes
     expect(validCapability(missing)).toBe(false)
     expect(validCapability({ ...blankCapability('Condition'), measuredTonnes: '70' })).toBe(false)
     expect(validCapability({ ...blankCapability('BollardPullTest'), testAt: '2026-11-02T12:00:00' })).toBe(false)
@@ -40,7 +40,7 @@ describe('owned capability and source policy wire', () => {
       if ('ownedBp' in patch) expect(() => decodePlanningEvidence({ ...evidence(), ...patch, availableBollardPull: '70' }, [tug])).toThrow()
       else expect(() => decodePlanningEvidence({ ...evidence(), ...patch }, [tug])).toThrow()
     }
-    const { ownedBp: _omitted, ...missing } = evidence()
+    const missing: Partial<ReturnType<typeof evidence>> = evidence(); delete missing.ownedBp
     expect(() => decodePlanningEvidence(missing, [tug])).toThrow()
   })
 })

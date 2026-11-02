@@ -19,8 +19,15 @@ export function CrewIdentityHistory({ vessel, assignment, language }: { vessel: 
     window.addEventListener('offline', withdraw); window.addEventListener('online', refresh); document.addEventListener('visibilitychange', visibility)
     return () => { window.removeEventListener('offline', withdraw); window.removeEventListener('online', refresh); document.removeEventListener('visibilitychange', visibility) }
   }, [])
-  useEffect(() => {
+  const resetScope1 = [open, vessel, assignment, available, generation] as const
+  const [previousScope1, setPreviousScope1] = useState(resetScope1)
+  // Withdraw stale state in the same render that changes the request scope.
+  if (!Object.is(previousScope1[0], open) || !Object.is(previousScope1[1], vessel) || !Object.is(previousScope1[2], assignment) || !Object.is(previousScope1[3], available) || !Object.is(previousScope1[4], generation)) {
+    setPreviousScope1(resetScope1)
     setItems(null); setDenied(false)
+  }
+  useEffect(() => {
+
     if (!open || !available) return
     const c = new AbortController(); let active = true
     request<{ items: { revision: number; operation: string; savedAt: string }[] }>(`${crewPath(vessel)}/${encodeURIComponent(assignment)}/person/history`, c.signal)

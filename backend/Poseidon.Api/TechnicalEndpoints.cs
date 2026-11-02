@@ -166,7 +166,7 @@ public static class TechnicalEndpoints
             db.AssetRevisions.Add(asset.Snapshot()); await db.SaveChangesAsync(ct);
             await Receipt(db, h, key, fingerprint, "EquipmentSave", asset.Id, asset.Revision, asset.Version);
             if (tx != null) await tx.CommitAsync(ct); return Results.Ok(new TechnicalSaved(asset.Id, asset.Revision, asset.Version, false));
-        } catch (Exception e) when (e is DbUpdateException || e is Npgsql.PostgresException { SqlState: "40001" or "40P01" }) {
+        } catch (Exception e) when (e is DbUpdateException || PostgresFailure.IsSerialization(e)) {
             if (tx != null) await tx.RollbackAsync(ct); return await Fail(h, 409, "version_conflict");
         }
     }
@@ -249,7 +249,7 @@ public static class TechnicalEndpoints
             db.MaintenancePlanRevisions.Add(plan.Snapshot(command.ReferenceAt.ToUniversalTime(), asset.Revision, evaluated));
             await db.SaveChangesAsync(ct); await Receipt(db, h, key, fingerprint, "MaintenanceSave", plan.Id, plan.Revision, plan.Version);
             await tx.CommitAsync(ct); return Results.Ok(new TechnicalSaved(plan.Id, plan.Revision, plan.Version, false));
-        } catch (Exception e) when (e is DbUpdateException || e is Npgsql.PostgresException { SqlState: "40001" or "40P01" }) {
+        } catch (Exception e) when (e is DbUpdateException || PostgresFailure.IsSerialization(e)) {
             await tx.RollbackAsync(ct); return await Fail(h, 409, "version_conflict");
         }
     }

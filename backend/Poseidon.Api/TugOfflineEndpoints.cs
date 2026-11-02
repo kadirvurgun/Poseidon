@@ -89,7 +89,7 @@ public static partial class TugEndpoints
         e.ProtectedBase = TugProtector(h, e).Protect(JsonSerializer.Serialize(new TugOfflineValues(owner.Value.Plan.PlannedStart, owner.Value.Plan.PlannedEnd), OfflineJson));
         db.TugOfflineEnrollments.Add(e); TugOfflineEvent(db, e, "Enrolled", now);
         try { await db.SaveChangesAsync(h.RequestAborted); await tx.CommitAsync(h.RequestAborted); }
-        catch (Exception ex) when (ex is DbUpdateException or Npgsql.PostgresException { SqlState: "40001" }) { return await Fail(h, 409, "offline_retry"); }
+        catch (Exception ex) when (ex is DbUpdateException || PostgresFailure.IsSerialization(ex)) { return await Fail(h, 409, "offline_retry"); }
         return Results.Ok(TugContext(h, e));
     }
     private static async Task<IResult> TugInventory(Guid id, HttpContext h, PoseidonDbContext db) {
@@ -127,7 +127,7 @@ public static partial class TugEndpoints
             else return await Fail(h, 404, "resource_not_found");
         }
         try { await db.SaveChangesAsync(h.RequestAborted); await tx.CommitAsync(h.RequestAborted); }
-        catch (Exception ex) when (ex is DbUpdateException or Npgsql.PostgresException { SqlState: "40001" }) { return await Fail(h, 409, "offline_retry"); }
+        catch (Exception ex) when (ex is DbUpdateException || PostgresFailure.IsSerialization(ex)) { return await Fail(h, 409, "offline_retry"); }
         return action == "renew" ? Results.Ok(TugContext(h, e)) : Results.Ok(new { state = action == "key" ? "KeyEnrolled" : "RetainedLocked" });
     }
     private static async Task<IResult> TugReplay(TugOfflineEnrollment e, TugJob job, TugDraftPlan plan,
@@ -177,7 +177,7 @@ public static partial class TugEndpoints
                 JsonSerializer.Deserialize<TugOfflineValues>(TugProtector(h, e).Unprotect(e.ProtectedBase), OfflineJson)!, local, server, c.Reason), OfflineJson)) };
         db.TugOfflineOutcomes.Add(outcome);
         try { await db.SaveChangesAsync(h.RequestAborted); await tx.CommitAsync(h.RequestAborted); }
-        catch (Exception ex) when (ex is DbUpdateException or Npgsql.PostgresException { SqlState: "40001" or "40P01" }) { return await Fail(h, 409, "offline_retry"); }
+        catch (Exception ex) when (ex is DbUpdateException || PostgresFailure.IsSerialization(ex)) { return await Fail(h, 409, "offline_retry"); }
         return Results.Ok(TugResult(outcome));
     }
     private static async Task<IResult> TugOfflineHistory(Guid id, Guid enrollment, HttpContext h, PoseidonDbContext db) {

@@ -87,7 +87,13 @@ public sealed class HumanReviewPersistenceTests : IAsyncLifetime
         var h = Head(); await using (var initial = Db()) { initial.HumanReviewHeads.Add(h); initial.HumanReviewEvents.Add(Event(h)); await initial.SaveChangesAsync(Ct); }
         await using var a = Db(); await using var b = Db(); var x = await a.HumanReviewHeads.SingleAsync(Ct); var y = await b.HumanReviewHeads.SingleAsync(Ct);
         x.Revision++; a.HumanReviewEvents.Add(Event(x)); await a.SaveChangesAsync(Ct); y.Revision++;
-        b.Entry(y).Property(z => z.Revision).IsModified = true; b.HumanReviewEvents.Add(Event(y)); await Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => b.SaveChangesAsync(Ct));
+        // Match ordinary commands: acquire the head's xmin before inserting its revision.
+        // EF may otherwise order the duplicate immutable event insert before the stale update.
+        await using (var stale = await b.Database.BeginTransactionAsync(Ct)) {
+            b.Entry(y).Property(z => z.Revision).IsModified = true;
+            await Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => b.SaveChangesAsync(Ct));
+            await stale.RollbackAsync(Ct);
+        }
         await using var check = Db(); var audits = await check.AuditEvents.CountAsync(Ct); var head = await check.HumanReviewHeads.SingleAsync(Ct);
         await using (var tx = await check.Database.BeginTransactionAsync(Ct)) {
             head.Revision++; check.HumanReviewEvents.Add(Event(head)); await check.SaveChangesAsync(Ct);

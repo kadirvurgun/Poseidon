@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffectEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { ApiError } from './api'
 import { OfflineConflictReview, type OfflineConflictResolution } from './OfflineConflictReview'
 import { OfflineApplication, inventory, discardLostCaptures, prepareOfflineShell, type OfflineInventory, type PendingCapture, type OfflineConflictDetail, type OfflineOutcome } from './offline-application'
@@ -17,12 +17,14 @@ export function OfflineApplicationPanel({ vessel, assignment, language, onDirty 
   const [historyOffset, setHistoryOffset] = useState(0), [historyMore, setHistoryMore] = useState(false)
   const [confirmDiscard, setConfirmDiscard] = useState(false), [uncertain, setUncertain] = useState(false)
   const [lease, setLease] = useState(0)
+  const [authorizedContext, setAuthorizedContext] = useState<OfflineApplication['context'] | null>(null)
   const withdraw = useCallback(() => {
     generation.current++; request.current?.abort(); app.current?.close(); app.current = null
-    setActive(false); setBusy(false); setCaptures([]); setConflict(null); setHistory([]); setHistoryOffset(0); setHistoryMore(false); setSnapshot(null); setStatus('retained')
+    setActive(false); setAuthorizedContext(null); setBusy(false); setCaptures([]); setConflict(null); setHistory([]); setHistoryOffset(0); setHistoryMore(false); setSnapshot(null); setStatus('retained')
     // Unsaved in-memory editor is retained while hidden, but never exposed after scope remount.
   }, [])
   useEffect(() => { onDirty(dirty || busy); return () => onDirty(false) }, [dirty, busy, onDirty])
+  const closeScope = useEffectEvent(() => { generation.current++; request.current?.abort(); app.current?.close() })
   useEffect(() => {
     const hidden = () => { if (document.hidden) withdraw() }
     const changed = () => { setOnline(navigator.onLine); if (navigator.onLine) withdraw() }
@@ -30,7 +32,7 @@ export function OfflineApplicationPanel({ vessel, assignment, language, onDirty 
     window.addEventListener('online', changed); window.addEventListener('offline', changed)
     window.addEventListener('pagehide', pagehide); document.addEventListener('visibilitychange', hidden)
     return () => {
-      generation.current++; request.current?.abort(); app.current?.close()
+      closeScope()
       window.removeEventListener('online', changed); window.removeEventListener('offline', changed)
       window.removeEventListener('pagehide', pagehide); document.removeEventListener('visibilitychange', hidden)
     }
@@ -55,14 +57,14 @@ export function OfflineApplicationPanel({ vessel, assignment, language, onDirty 
   }
   const fresh = (current: number, signal: AbortSignal) => current === generation.current && !signal.aborted
   const authorize = () => run(async (signal, current) => {
-    const previous = app.current; app.current = null; previous?.close(); setActive(false); setCaptures([]); setSnapshot(null); setConflict(null); setHistory([])
+    const previous = app.current; app.current = null; previous?.close(); setActive(false); setAuthorizedContext(null); setCaptures([]); setSnapshot(null); setConflict(null); setHistory([])
     const value = await OfflineApplication.authorize(vessel, assignment, selected || null, signal)
     if (!fresh(current, signal)) { value.close(); return }
     let rows: PendingCapture[], base: { watchGroup: string | null; baseVersion: number; revision: number }
     try { await prepareOfflineShell(signal); rows = await value.captures(); base = await value.snapshot() }
     catch (error) { value.close(); throw error }
     if (!fresh(current, signal)) { value.close(); return }
-    app.current = value; setSelected(value.context.id); setCaptures(rows); setSnapshot(base)
+    app.current = value; setAuthorizedContext(value.context); setSelected(value.context.id); setCaptures(rows); setSnapshot(base)
     value.onWithdraw(() => { if (app.current === value) withdraw() })
     setWatch(previous => dirty ? previous : base.watchGroup ?? ''); setActive(true); setLease(n => n + 1); setStatus('ready'); setUncertain(false); setConfirmDiscard(false)
   })
@@ -99,7 +101,7 @@ export function OfflineApplicationPanel({ vessel, assignment, language, onDirty 
     const page = await value.history(signal, offset)
     if (fresh(current, signal)) { setHistory(page.items); setHistoryOffset(page.offset); setHistoryMore(page.hasMore) }
   })
-  const live = active && app.current?.active() === true
+  const live = active && authorizedContext !== null
   return <section aria-label={en ? 'Durable offline drafts' : 'Kalıcı çevrimdışı taslaklar'}>
     <h2>{en ? 'Durable offline drafts' : 'Kalıcı çevrimdışı taslaklar'}</h2>
     <p>{en ? 'Only configured draft watch groups can be cached and captured here. Identity, health, certificates and operational decisions are excluded. Drafts remain unverified.'
@@ -120,7 +122,7 @@ export function OfflineApplicationPanel({ vessel, assignment, language, onDirty 
     {live && snapshot && <>
       <p>{en ? 'Cached unverified base' : 'Saklanan doğrulanmamış temel'} · {snapshot.revision} · {snapshot.watchGroup ?? (en ? 'Unknown' : 'Bilinmiyor')}</p>
       <label>{en ? 'Offline draft watch group' : 'Çevrimdışı taslak vardiya grubu'}<select value={watch} disabled={busy} onChange={e => { setWatch(e.target.value); setDirty(true) }}>
-        <option value="">{en ? 'Unknown' : 'Bilinmiyor'}</option>{app.current?.context.watchGroups.map(v => <option key={v}>{v}</option>)}
+        <option value="">{en ? 'Unknown' : 'Bilinmiyor'}</option>{authorizedContext?.watchGroups.map(v => <option key={v}>{v}</option>)}
       </select></label>
       <button disabled={busy} onClick={() => void capture()}>{en ? 'Capture encrypted draft' : 'Şifreli taslak kaydet'}</button>
       <button disabled={busy} onClick={() => { setWatch(snapshot.watchGroup ?? ''); setDirty(false) }}>{en ? 'Discard unsaved editor' : 'Kaydedilmemiş düzenlemeyi bırak'}</button>
@@ -148,8 +150,8 @@ export function OfflineApplicationPanel({ vessel, assignment, language, onDirty 
     {live && conflict && <>
       <p>{en ? 'Authorized base value' : 'Yetkili temel değer'}: {conflict.base.kind === 'known' ? conflict.base.text : (en ? 'Unknown / withheld' : 'Bilinmiyor / gizli')}</p>
       {conflict.resolved && <p>{en ? 'Recorded resolution' : 'Kayıtlı çözüm'} · {conflict.resolvedValue?.kind === 'known' ? conflict.resolvedValue.text : (en ? 'Unknown / withheld' : 'Bilinmiyor / gizli')}
-        {conflict.resolvedBy === app.current?.context.actorId ? (en ? ' · attributed to this account' : ' · bu hesaba atfedildi') : ''} · {conflict.resolutionReason}</p>}
-      <OfflineConflictReview language={language} contextKey={app.current!.context.id} state="ready" conflict={conflict}
+        {conflict.resolvedBy === authorizedContext?.actorId ? (en ? ' · attributed to this account' : ' · bu hesaba atfedildi') : ''} · {conflict.resolutionReason}</p>}
+      <OfflineConflictReview language={language} contextKey={authorizedContext!.id} state="ready" conflict={conflict}
         canResolve={conflict.resolved === null && conflict.currentVersion === Number(conflict.revision)} online={online} operation={busy ? 'submitting' : uncertain ? 'outcomeUnknown' : 'idle'}
         reasonLimit={500} onResolve={r => void resolve(r)} onCheckOutcome={() => void review(conflict.id)} onRetry={() => void review(conflict.id)} />
     </>}

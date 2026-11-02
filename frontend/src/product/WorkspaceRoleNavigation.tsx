@@ -22,9 +22,16 @@ function RoleNavigation({ session, vessel = null, language, onNavigate, onSearch
   const en = language === 'en'
   const data = result?.owner === session && result.epoch === epoch ? result.data : null
   const chosen = selection && selection.owner === session ? data?.lenses.find(x => x.reference === selection.reference) : null
+  const resetScope1 = [session, vessel, epoch, attempt] as const
+  const [previousScope1, setPreviousScope1] = useState(resetScope1)
+  // Withdraw stale state in the same render that changes the request scope.
+  if (!Object.is(previousScope1[0], session) || !Object.is(previousScope1[1], vessel) || !Object.is(previousScope1[2], epoch) || !Object.is(previousScope1[3], attempt)) {
+    setPreviousScope1(resetScope1)
+    setResult(null); setError(false)
+  }
   useEffect(() => {
     const c = new AbortController(); let active = true
-    setResult(null); setError(false)
+
     const timer = setTimeout(() => c.abort(), 10000)
     if (navigator.onLine && document.visibilityState !== 'hidden') {
       loadLenses(session!.tenantId!, session!.actorId!, vessel, c.signal)

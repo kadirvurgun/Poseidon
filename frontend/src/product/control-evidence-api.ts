@@ -27,7 +27,7 @@ export function validContent(v: unknown): v is Content {
   if (complianceKeys.some(k => Object.hasOwn(v, k) && !validCompliance(k, v[k]))) return false
   if (v.tugCapability != null && !validCapability(v.tugCapability)) return false
   if (v.acknowledgments !== undefined && v.acknowledgments !== null && (!Array.isArray(v.acknowledgments) || v.acknowledgments.length > 32 || v.acknowledgments.some(a => !exact(a, ['ruleId', 'qualificationHash', 'sourceHash']) || !isGuid(a.ruleId) || !hash(a.qualificationHash) || !hash(a.sourceHash)))) return false
-  for (const k of ['title', 'frequency', 'evidencePolicy', 'verificationPolicy', 'provenance']) if (v[k] !== null && (typeof v[k] !== 'string' || !v[k].trim() || v[k] !== v[k].trim() || v[k].length > 2000 || /[\u0000-\u001f\u007f-\u009f]/.test(v[k]))) return false
+  for (const k of ['title', 'frequency', 'evidencePolicy', 'verificationPolicy', 'provenance']) if (v[k] !== null && (typeof v[k] !== 'string' || !v[k].trim() || v[k] !== v[k].trim() || v[k].length > 2000 || Array.from(v[k]).some(c => c.charCodeAt(0) < 32 || c.charCodeAt(0) >= 127 && c.charCodeAt(0) <= 159))) return false
   if (!(v.ownerId === null && v.ownerRole === null || isGuid(v.ownerId) && isGuid(v.ownerRole)) || v.critical !== null && typeof v.critical !== 'boolean') return false
   for (const k of ['observedAt', 'validFrom', 'validUntil', 'freshUntil']) if (v[k] !== null && !timestamp(v[k])) return false
   return !(v.validFrom && v.validUntil && Date.parse(v.validUntil as string) < Date.parse(v.validFrom as string) || v.observedAt && v.freshUntil && Date.parse(v.freshUntil as string) < Date.parse(v.observedAt as string))

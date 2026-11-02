@@ -105,7 +105,7 @@ public static class LegacyCrewImportEndpoints
             return Results.Ok(Dto(b));
         } catch (CryptographicException) {
             await tx.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear(); return await Fail(h, 503, "protected_storage_unavailable");
-        } catch (Exception e) when (e is DbUpdateException || e is Npgsql.PostgresException { SqlState: "40001" or "40P01" }) {
+        } catch (Exception e) when (e is DbUpdateException || PostgresFailure.IsSerialization(e)) {
             await tx.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear(); return await Fail(h, 409, "version_conflict");
         }
     }

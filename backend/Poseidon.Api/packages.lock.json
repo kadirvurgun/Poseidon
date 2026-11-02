@@ -49,14 +49,6 @@
         "resolved": "10.0.14",
         "contentHash": "gaANlGNTxkgODX2eeVT8jjd3AmlFilQV4DFf8qoW30+wUCm2o4N7nEHtZvnHIwfhaJni2DqcjE47Au7tC0Q5jA=="
       },
-      "Microsoft.EntityFrameworkCore.Relational": {
-        "type": "Transitive",
-        "resolved": "10.0.4",
-        "contentHash": "DOTjTHy93W3TwpMLM4SCm0n57Sc0Jj3+m2S6LSTstKyBB34eT1UouaMS19mpWwvtj42+sRiEjA3+rOTNoNzXFQ==",
-        "dependencies": {
-          "Microsoft.EntityFrameworkCore": "10.0.4"
-        }
-      },
       "Microsoft.IdentityModel.Abstractions": {
         "type": "Transitive",
         "resolved": "8.19.2",
@@ -130,6 +122,7 @@
         "type": "Project",
         "dependencies": {
           "Microsoft.EntityFrameworkCore": "[10.0.14, )",
+          "Microsoft.EntityFrameworkCore.Relational": "[10.0.14, )",
           "Npgsql.EntityFrameworkCore.PostgreSQL": "[10.0.3, )",
           "Poseidon.Domain": "[1.0.0, )"
         }
@@ -142,6 +135,15 @@
         "dependencies": {
           "Microsoft.EntityFrameworkCore.Abstractions": "10.0.14",
           "Microsoft.EntityFrameworkCore.Analyzers": "10.0.14"
+        }
+      },
+      "Microsoft.EntityFrameworkCore.Relational": {
+        "type": "CentralTransitive",
+        "requested": "[10.0.14, )",
+        "resolved": "10.0.14",
+        "contentHash": "Ut0kgtfoKX9QElQVEXSEAgdQc79jISWStVWSOhfPDDHNSKMwFzSXG3gtdYFTAbsBoV+8NtXdVaj4xwdqeky8UA==",
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore": "10.0.14"
         }
       },
       "Npgsql.EntityFrameworkCore.PostgreSQL": {

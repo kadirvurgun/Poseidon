@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useEffect, useRef, useState } from 'react'
 import { crewFileVersions, type CrewFileKind, type CrewFileManifest } from './crew-files-api'
 import type { PersonFileOwner } from './file-api'
 import { VesselFiles } from './VesselFiles'
@@ -18,11 +18,18 @@ export function CrewPersonalFiles(props: Props) {
   const source = loaded?.scope === scope ? loaded.data : null
   const selected = owner?.scope === scope ? owner.data : undefined
   const changeDirty = (value: boolean) => { setDirty(value); props.onDirty(value || photoDirty) }
-  const callbacks = useRef(props); callbacks.current = props
+  const callbacks = useRef(props); useLayoutEffect(() => { callbacks.current = props }, [props])
   useEffect(() => () => callbacks.current.onDirty(false), [])
+  const resetScope1 = [scope, generation, props.vessel, props.assignment, props.person] as const
+  const [previousScope1, setPreviousScope1] = useState(resetScope1)
+  // Withdraw stale state in the same render that changes the request scope.
+  if (!Object.is(previousScope1[0], scope) || !Object.is(previousScope1[1], generation) || !Object.is(previousScope1[2], props.vessel) || !Object.is(previousScope1[3], props.assignment) || !Object.is(previousScope1[4], props.person)) {
+    setPreviousScope1(resetScope1)
+    setLoaded(null); setError(false)
+  }
   useEffect(() => {
     const c = new AbortController(); let active = true
-    setLoaded(null); setError(false)
+
     crewFileVersions(props.vessel, props.assignment, props.person, c.signal).then(data => {
       if (active) { setLoaded({ scope, data }); setKind(old => data.kinds.includes(old) ? old : data.kinds[0]) }
     }).catch(() => {

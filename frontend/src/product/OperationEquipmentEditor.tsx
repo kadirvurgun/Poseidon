@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffectEvent, useEffect, useState } from 'react'
 import type { Content, Row } from './control-evidence-api'
 import * as graph from './control-evidence-api'
 import { tugApi, type TugBoard } from './tug-api'
@@ -10,8 +10,15 @@ export function OperationEquipmentEditor({ vessel, language, offline, isTug, val
   const [jobs, setJobs] = useState<TugBoard | null>(null), [offset, setOffset] = useState(0), [assets, setAssets] = useState<technical.Asset[]>([])
   const [evidence, setEvidence] = useState<graph.Page | null>(null), [evidenceOffset, setEvidenceOffset] = useState(0), [error, setError] = useState(false)
   const key = (['operation', 'serviceAuthorization', 'cargoPlan', 'winchFitment'] as const).find(k => value[k] != null)
-  useEffect(() => {
+  const resetScope1 = [vessel, offline, isTug, offset, evidenceOffset] as const
+  const [previousScope1, setPreviousScope1] = useState(resetScope1)
+  // Withdraw stale state in the same render that changes the request scope.
+  if (!Object.is(previousScope1[0], vessel) || !Object.is(previousScope1[1], offline) || !Object.is(previousScope1[2], isTug) || !Object.is(previousScope1[3], offset) || !Object.is(previousScope1[4], evidenceOffset)) {
+    setPreviousScope1(resetScope1)
     setJobs(null); setAssets([]); setEvidence(null); setError(false)
+  }
+  useEffect(() => {
+
     if (offline) return
     const c = new AbortController(); let active = true
     void Promise.allSettled([isTug ? tugApi.board(vessel, '', '', offset, c.signal) : Promise.resolve(null), technical.snapshot(vessel, c.signal), graph.page(vessel, 'Evidence', evidenceOffset, c.signal)]).then(([j, a, e]) => {
@@ -51,12 +58,27 @@ export function OperationEquipmentEditor({ vessel, language, offline, isTug, val
 export function OwningEvaluationSelector({ vessel, language, offline, disabled = false, onChange }: { vessel: string; language: 'tr' | 'en'; offline: boolean; disabled?: boolean; onChange: (refs: { operationId: string | null; cargoPlanId: string | null; winchFitmentId: string | null } | null) => void }) {
   const [rows, setRows] = useState<Row[]>([]), [offset, setOffset] = useState(0), [more, setMore] = useState(false), [error, setError] = useState(false)
   const [refs, setRefs] = useState({ operationId: null as string | null, cargoPlanId: null as string | null, winchFitmentId: null as string | null })
+  const notify = useEffectEvent(onChange)
   const t = (en: string, tr: string) => language === 'en' ? en : tr
-  useEffect(() => { setRefs({ operationId: null, cargoPlanId: null, winchFitmentId: null }); onChange(null) }, [vessel, offline])
+  const resetScope2 = [vessel, offline] as const
+  const [previousScope2, setPreviousScope2] = useState(resetScope2)
+  // Withdraw stale state in the same render that changes the request scope.
+  if (!Object.is(previousScope2[0], vessel) || !Object.is(previousScope2[1], offline)) {
+    setPreviousScope2(resetScope2)
+    setRefs({ operationId: null, cargoPlanId: null, winchFitmentId: null });
+  }
+  useEffect(() => {  notify(null) }, [vessel, offline])
+  const resetScope3 = [vessel, offline, offset] as const
+  const [previousScope3, setPreviousScope3] = useState(resetScope3)
+  // Withdraw stale state in the same render that changes the request scope.
+  if (!Object.is(previousScope3[0], vessel) || !Object.is(previousScope3[1], offline) || !Object.is(previousScope3[2], offset)) {
+    setPreviousScope3(resetScope3)
+    setRows([]);
+  }
   useEffect(() => {
-    setRows([]); if (!vessel || offline) { onChange(null); return }
+     if (!vessel || offline) { notify(null); return }
     const c = new AbortController(); let active = true
-    graph.page(vessel, 'Evidence', offset, c.signal).then(p => { if (active) { setRows(p.items); setMore(p.hasMore); setError(false) } }).catch(() => { if (active) { setError(true); setRefs({ operationId: null, cargoPlanId: null, winchFitmentId: null }); onChange(null) } })
+    graph.page(vessel, 'Evidence', offset, c.signal).then(p => { if (active) { setRows(p.items); setMore(p.hasMore); setError(false) } }).catch(() => { if (active) { setError(true); setRefs({ operationId: null, cargoPlanId: null, winchFitmentId: null }); notify(null) } })
     return () => { active = false; c.abort() }
   }, [vessel, offline, offset])
   return <fieldset disabled={offline || error || disabled}><legend>{t('Owning input references', 'Kaynak girdi referansları')}</legend>{error && <p role="alert">{t('Current evidence access unavailable', 'Güncel kanıt erişimi kullanılamıyor')}</p>}{(['operationId', 'cargoPlanId', 'winchFitmentId'] as const).map((k, i) => <label key={k}>{[t('Operation', 'Operasyon'), t('Cargo plan', 'Yük planı'), t('Winch fitment', 'Vinç donatımı')][i]}<select value={refs[k] ?? ''} onChange={e => { const next = { ...refs, [k]: e.target.value || null }; setRefs(next); onChange(Object.values(next).some(Boolean) ? next : null) }}><option value="">{t('Unknown / no reference', 'Bilinmiyor / referans yok')}</option>{refs[k] && !rows.some(r => r.id === refs[k]) && <option value={refs[k]!}>{t('Selected reference', 'Seçili referans')}</option>}{rows.filter(r => [r.content.operation, r.content.cargoPlan, r.content.winchFitment][i]).map(r => <option key={r.id} value={r.id}>{r.content.title} · {r.verification}</option>)}</select></label>)}<button type="button" disabled={offset === 0} onClick={() => setOffset(v => v - 25)}>{t('Previous references', 'Önceki referanslar')}</button><button type="button" disabled={!more} onClick={() => setOffset(v => v + 25)}>{t('More references', 'Diğer referanslar')}</button></fieldset>

@@ -4,9 +4,18 @@ from pathlib import Path
 import subprocess
 
 import secret_scan
+from classify_file_findings import source_context
 from source_review_evidence import context_evidence
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def bound_context(root, target):
+    """Reopen bounded archive/UTF16 locators and reject stale exact identities."""
+    text, raw, source = source_context(root, target['path'])
+    if target not in secret_scan.findings(text, target['path'], raw=raw, source=source):
+        raise ValueError('changed-during-review')
+    return context_evidence(text, target)
 
 
 def report(root=ROOT):
@@ -18,15 +27,9 @@ def report(root=ROOT):
     for target in sorted(findings, key=lambda t: (t['path'], t['occurrence'], t['rule'])):
         identity = secret_scan.object_hash(target)
         old = prior.get(identity)
-        evidence = None
-        # Nested/archive presentations retain their exact original-byte identities.
-        # Do not manufacture a context when its hashed locator cannot be reopened.
-        path = root / target['path']
-        if path.suffix.lower() in ('.cs', '.py', '.ts', '.tsx') and path.is_file():
-            raw = secret_scan.read_file(path, root)
-            if secret_scan.source_revision(raw) != target['immutable_source_revision']:
-                raise ValueError('changed-during-review')
-            evidence = context_evidence(secret_scan.presentation(raw), target)
+        # Evidence is needed for every locator, including Markdown, archive
+        # members and UTF16 presentations. This grants no classification/trust.
+        evidence = bound_context(root, target)
         classification = 'unresolved'
         rationale = 'Pattern identity requires exact-target independent classification and any applicable private trust/rotation remediation.'
         # This dedicated unit fixture consumes its constants only in local Identity

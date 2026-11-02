@@ -21,7 +21,11 @@ public sealed partial class DirectoryWorkspaceTests
 {
     private WebApplicationFactory<Program> LegacyImportHost(DbCommandInterceptor? interceptor = null) =>
         ProfileHost(interceptor: interceptor).WithWebHostBuilder(b => b.ConfigureAppConfiguration((_, c) => c.AddInMemoryCollection(new Dictionary<string, string?> {
-            ["Authentication:Oidc:Memberships:0:Permissions:38"] = "import.legacy.convert"
+            ["Authentication:Oidc:Memberships:0:Permissions:38"] = "import.legacy.convert",
+            ["Authentication:Oidc:Memberships:0:Permissions:44"] = "crew.profile.medical.read",
+            ["Authentication:Oidc:Memberships:0:Permissions:45"] = "crew.profile.medical.write",
+            [$"CrewProfilePolicy:Fields:{(int)CrewPersonalField.MedicalExpiry}:ReadCapability"] = "crew.profile.medical.read",
+            [$"CrewProfilePolicy:Fields:{(int)CrewPersonalField.MedicalExpiry}:WriteCapability"] = "crew.profile.medical.write"
         })));
     private string LegacyImportPath(Guid id) => Imports + $"/{id}/legacy-protection";
     private async Task<ImportBatch> HistoricalBatch(string table = " {\"headers\":[\"FICTIONAL PRIVATE HEADER\"],\"rows\":[[\"FICTIONAL PRIVATE CELL\"]],\"unknownOldField\":\"preserve me\"} ", bool committed = false) {

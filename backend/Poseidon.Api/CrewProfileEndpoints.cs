@@ -97,7 +97,7 @@ public static class CrewProfileEndpoints
             await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "CrewProfileSave", "Success", resourceId: owner.PersonId);
             return Results.Ok(new CrewSavedDto(owner.PersonId, row.Revision, row.Version, false));
         } catch (CryptographicException) { if (tx != null) await tx.RollbackAsync(CancellationToken.None); return await Fail(h, 503, "protected_storage_unavailable"); }
-        catch (Exception e) when (e is DbUpdateException || e is Npgsql.PostgresException { SqlState: "40001" or "40P01" }) {
+        catch (Exception e) when (e is DbUpdateException || PostgresFailure.IsSerialization(e)) {
             if (tx != null) await tx.RollbackAsync(CancellationToken.None); return await Fail(h, 409, "version_conflict");
         }
     }

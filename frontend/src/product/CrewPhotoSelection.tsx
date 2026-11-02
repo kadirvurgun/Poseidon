@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useEffect, useRef, useState } from 'react'
 import { ApiError } from './api'
 import { crewPhoto, saveCrewPhoto, type CrewPhoto, type PhotoAttempt } from './crew-photo-api'
 import type { CrewFileManifest, CrewFileVersion } from './crew-files-api'
@@ -11,7 +11,7 @@ export function CrewPhotoSelection(p: Props) {
   const [attempt, setAttempt] = useState<{ scope: string; data: PhotoAttempt } | null>(null)
   const [failure, setFailure] = useState<'load' | 'uncertain' | 'conflict' | null>(null)
   const [busy, setBusy] = useState(false); const [generation, reload] = useState(0)
-  const controller = useRef<AbortController | null>(null); const callbacks = useRef(p); callbacks.current = p
+  const controller = useRef<AbortController | null>(null); const callbacks = useRef(p); useLayoutEffect(() => { callbacks.current = p }, [p])
   const data = loaded?.scope === scope ? loaded.data : null
   const pending = attempt?.scope === scope ? attempt.data : null
   useEffect(() => {

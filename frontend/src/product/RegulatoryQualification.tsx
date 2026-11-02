@@ -18,11 +18,14 @@ export function RegulatoryQualification({ rule, ruleRevision, vessel, language, 
   const [attempt, setAttempt] = useState<Attempt | null>(null), [conflict, setConflict] = useState(false), [state, setState] = useState('ADOPTED'), [until, setUntil] = useState(''), [notice, setNotice] = useState('')
   useEffect(() => { onDirty(dirty || !!attempt || conflict) }, [dirty, attempt, conflict, onDirty])
   useEffect(() => { onSaving(busy) }, [busy, onSaving])
+  const profileScope = `${vessel}:${reload}:${offline}`
+  const [previousProfileScope, setPreviousProfileScope] = useState(profileScope)
+  if (previousProfileScope !== profileScope) { setPreviousProfileScope(profileScope); setProfile(null) }
   useEffect(() => {
     if (offline) return
     let active = true; const c = new AbortController(); const timer = setTimeout(() => c.abort(), 15000)
     api.load(rule, vessel, c.signal).then(p => { if (active) { setData(p); setHistoryRows(p.items); setHistoryMore(p.hasMore); setContent(p.items[0]?.content ?? api.blank()); setError(null) } }).catch(e => { if (active) { setData(null); setError(e instanceof ApiError ? e.status : 0) } })
-    if (vessel) loadProfile(vessel, c.signal).then(p => { if (active) setProfile(p) }).catch(() => { if (active) setProfile(null) }); else setProfile(null)
+    if (vessel) loadProfile(vessel, c.signal).then(p => { if (active) setProfile(p) }).catch(() => { if (active) setProfile(null) })
     return () => { active = false; c.abort(); clearTimeout(timer) }
   }, [rule, ruleRevision, vessel, reload, offline])
   const current = data?.items[0]

@@ -29,6 +29,20 @@ public sealed partial class DirectoryWorkspaceTests
         return (await response.Content.ReadFromJsonAsync<ControlEvidenceDto>(Ct))!;
     }
     [Fact]
+    public async Task Composite_graph_keys_keep_full_attributed_audit_identity_atomically()
+    {
+        await using var host = Host(); using var c = Client(host); GraphPermissionsForTest(host.Services); await Token(c);
+        var pin = new RequirementPin(RegulatoryRegisterFixtures.RequirementId(seed.Tenants[0].Id), 1, RegulatoryRegisterFixtures.SourceId(seed.Tenants[0].Id), 1);
+        var control = await GraphSave(c, "controls", GraphCommand() with { Requirements = [pin] });
+        var evidence = await GraphSave(c, "evidence", GraphCommand() with { Requirements = [pin], Links = [new("Control", control.Id, control.Revision, control.Version)] });
+        await using var db = Db();
+        var audit = Assert.Single(await db.AuditEvents.Where(x => x.EntityType == nameof(ControlEvidenceEdge) && x.ResourceId == evidence.Id).ToArrayAsync(Ct));
+        Assert.Equal(string.Join('/', seed.Tenants[0].Id, SeedVessel.Id, "Evidence", evidence.Id, 1, "Control", control.Id, 1), audit.EntityId);
+        Assert.True(audit.EntityId.Length > 128);
+        Assert.Equal(actorId.ToString(), audit.ActorId); Assert.Equal(SeedVessel.Id, audit.VesselId);
+        Assert.Single(await db.ControlEvidenceReceipts.Where(x => x.ResourceId == evidence.Id).ToArrayAsync(Ct));
+    }
+    [Fact]
     public async Task Graph_capabilities_default_deny_and_missing_scope_hides_all_lists_reports_and_owners() {
         await using var host = Host(regulatoryRead: true); using var c = Client(host); await Token(c);
         foreach (var route in new[] { "controls", "evidence", "controls/owners", "controls/orphans" })
@@ -58,7 +72,7 @@ public sealed partial class DirectoryWorkspaceTests
         var report = await c.GetFromJsonAsync<JsonElement>("/api/v1/" + GraphRoute("controls/orphans"), Ct);
         Assert.False(report.GetProperty("available").GetBoolean()); Assert.Equal("AUTHORITATIVE_APPLICABILITY_UNAVAILABLE", report.GetProperty("reason").GetString());
         var ids = report.GetProperty("draftCriticalOrphans").EnumerateArray().Select(x => x.GetGuid()).ToArray(); Assert.Contains(critical.Id, ids); Assert.DoesNotContain(unknown.Id, ids);
-        using var submit = await Send(c, GraphRoute($"controls/{critical.Id}/submit"), new { }); Assert.Equal(HttpStatusCode.Conflict, submit.StatusCode);
+        using var submit = await Send(c, GraphRoute($"controls/{critical.Id}/submit"), GraphCommand(critical.Version, critical.Content) with { ReasonCode = "SUBMIT" }); Assert.Equal(HttpStatusCode.Conflict, submit.StatusCode);
         Assert.Equal("UNKNOWN", critical.Completion); Assert.Equal("UNVERIFIED", critical.Verification); Assert.Equal("UNKNOWN", critical.Effectiveness);
     }
     [Fact]

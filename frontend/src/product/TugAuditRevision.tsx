@@ -5,7 +5,14 @@ type Revision = { jobId: string; revision: number; jobNumber: string; sourceVers
 export function TugAuditRevision({ auditId, language }: { auditId: string; language: 'tr' | 'en' }) {
   const [value, setValue] = useState<Revision | null>(null), [state, setState] = useState<'idle' | 'loading' | 'error'>('idle')
   const current = useRef<AbortController | null>(null), en = language === 'en'
-  useEffect(() => { setValue(null); setState('idle'); return () => current.current?.abort() }, [auditId])
+  const resetScope1 = [auditId] as const
+  const [previousScope1, setPreviousScope1] = useState(resetScope1)
+  // Withdraw stale state in the same render that changes the request scope.
+  if (!Object.is(previousScope1[0], auditId)) {
+    setPreviousScope1(resetScope1)
+    setValue(null); setState('idle');
+  }
+  useEffect(() => {   return () => current.current?.abort() }, [auditId])
   const load = async () => {
     current.current?.abort(); const controller = new AbortController(); current.current = controller; setValue(null); setState('loading')
     try {

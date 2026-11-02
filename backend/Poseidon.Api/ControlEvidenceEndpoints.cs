@@ -293,9 +293,10 @@ public static class ControlEvidenceEndpoints
             await tx.CommitAsync(ct);
             return Results.Content(outcome, "application/json");
         } catch (DbUpdateConcurrencyException) { await tx.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear(); return await Replay() ?? await Fail(h, 409, "version_conflict");
-        } catch (Exception e) when (e is DbUpdateException or NpgsqlException) {
+        } catch (Exception e) when (PostgresFailure.IsDatabase(e)) {
+            DatabaseFailureObservation.Record(h, e);
             await tx.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear();
-            var code = e is PostgresException p ? p.SqlState : (e.InnerException as PostgresException)?.SqlState;
+            var code = PostgresFailure.Provider(e)?.SqlState;
             return await Replay() ?? await Fail(h, code is PostgresErrorCodes.UniqueViolation or PostgresErrorCodes.SerializationFailure ? 409 : 503,
                 code is PostgresErrorCodes.UniqueViolation or PostgresErrorCodes.SerializationFailure ? "version_conflict" : "service_unavailable");
         }

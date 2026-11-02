@@ -16,7 +16,7 @@ const exact = (v: unknown, keys: string[]): v is Obj => !!v && typeof v === 'obj
 const positive = (v: unknown): v is number => typeof v === 'number' && Number.isSafeInteger(v) && v > 0
 const version = (v: unknown) => positive(v) && v <= 4294967295
 const hash = (v: unknown) => typeof v === 'string' && /^[A-F0-9]{64}$(?![\s\S])/.test(v)
-const text = (v: unknown): v is string => typeof v === 'string' && v.length > 0 && v.length <= 2000 && !/[\u0000-\u001f\u007f-\u009f]/.test(v)
+const text = (v: unknown): v is string => typeof v === 'string' && v.length > 0 && v.length <= 2000 && !Array.from(v).some(c => c.charCodeAt(0) < 32 || c.charCodeAt(0) >= 127 && c.charCodeAt(0) <= 159)
 const fail = (): never => { throw new ApiError(502, 'invalid_contract') }
 const anchorKeys = ['vesselId', 'evidenceId', 'evidenceRevision', 'controlId', 'controlRevision']
 const states = ['PENDING', 'VERIFIED', 'REJECTED', 'EXPIRED', 'SUPERSEDED', 'RECORDED']

@@ -305,8 +305,8 @@ namespace Poseidon.Persistence.Migrations
 
                     b.Property<string>("EntityId")
                         .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.Property<string>("EntityType")
                         .IsRequired()
@@ -3038,8 +3038,8 @@ namespace Poseidon.Persistence.Migrations
 
                     b.Property<string>("Action")
                         .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("character varying(32)");
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<string>("ActorId")
                         .HasMaxLength(200)
@@ -3058,8 +3058,8 @@ namespace Poseidon.Persistence.Migrations
 
                     b.Property<string>("Result")
                         .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("character varying(32)");
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<Guid?>("TenantId")
                         .HasColumnType("uuid");

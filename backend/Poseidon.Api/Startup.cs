@@ -68,6 +68,18 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
                     await context.RequestServices.GetRequiredService<SecurityAudit>().TryWriteAsync(context, "AccessDenied",
                         context.Response.StatusCode == 401 ? "Unauthenticated" : "Denied");
             }
+            catch (BadHttpRequestException exception) when (exception.StatusCode == 400)
+            {
+                if (context.Response.HasStarted) throw;
+                try {
+                    await context.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(context, "RequestValidation", "invalid_request");
+                    context.Response.StatusCode = 400;
+                    await context.Response.WriteAsJsonAsync(new { code = "invalid_request", correlationId = context.TraceIdentifier });
+                } catch (AuditUnavailableException) {
+                    context.Response.StatusCode = 503;
+                    await context.Response.WriteAsJsonAsync(new { code = "service_unavailable", correlationId = context.TraceIdentifier });
+                }
+            }
             catch (Exception exception) when (exception is AuditUnavailableException or Npgsql.NpgsqlException or System.Security.Cryptography.CryptographicException)
             {
                 if (context.Response.HasStarted) throw;

@@ -13,9 +13,16 @@ export function TugOfflinePanel({ job, vessel, language, onDirty }: { job: strin
   const scope = useRef(new AbortController()), handle = useRef<TugOfflineApplication | null>(null)
   const [dirty, setDirty] = useState(false)
   useEffect(() => { onDirty?.(busy || dirty); return () => onDirty?.(false) }, [busy, dirty, onDirty])
+  const resetScope1 = [job, vessel] as const
+  const [previousScope1, setPreviousScope1] = useState(resetScope1)
+  // Withdraw stale state in the same render that changes the request scope.
+  if (!Object.is(previousScope1[0], job) || !Object.is(previousScope1[1], vessel)) {
+    setPreviousScope1(resetScope1)
+    setApp(null); setPending([]); setConflict(null); setState('locked'); setStart(''); setEnd(''); setInventory([]); setEnrollment(''); setBusy(false); setDirty(false)
+  }
   useEffect(() => {
     const c = new AbortController(); scope.current = c
-    setApp(null); setPending([]); setConflict(null); setState('locked'); setStart(''); setEnd(''); setInventory([]); setEnrollment(''); setBusy(false); setDirty(false)
+
     if (navigator.onLine) tugOfflineInventory(job, vessel, c.signal).then(v => { if (!c.signal.aborted) setInventory(v) }).catch(() => { /* No cached inventory authority. */ })
     const timer = window.setInterval(() => { if (handle.current && !handle.current.active()) { handle.current.close(); handle.current = null; setApp(null); setPending([]); setConflict(null); setStart(''); setEnd(''); setState('locked') } }, 1000)
     const withdraw = () => {

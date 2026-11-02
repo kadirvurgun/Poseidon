@@ -18,6 +18,14 @@ from oidc_lab import ROOT, environment, private_directory, write
 LABEL = 'poseidon.files-source-s3-gate'
 
 
+def isolated_environment():
+    # A disposable actual-host test must never inherit an operator's lab config
+    # selector or database. Test hosts provision their own owned PostgreSQL scope.
+    return {k: v for k, v in environment().items()
+            if k not in ('POSEIDON_LAB_CONFIG', 'POSEIDON_DATABASE')
+            and not k.startswith(('AWS_', 'AMAZON_', 'MINIO_', 'POSEIDON_GATE_S3_'))}
+
+
 def docker(*args):
     result = subprocess.run(['docker', *args], capture_output=True, timeout=60)
     if result.returncode:
@@ -37,7 +45,9 @@ def owned(identity, owner, name, require_binding=True):
     return int(ports[0]['HostPort'])
 
 
-def run(image, command):
+def run(image, command, child_timeout=900):
+    if type(child_timeout) is not int or not 1 <= child_timeout <= 3600:
+        raise RuntimeError('invalid_child_deadline')
     if not re.fullmatch(r'sha256:[0-9a-f]{64}', image) or not command:
         raise RuntimeError('explicit_owned_image_and_command_required')
     record = json.loads(docker('image', 'inspect', image))[0]
@@ -68,11 +78,11 @@ def run(image, command):
                 raise RuntimeError('owned_s3_readiness_deadline')
             time.sleep(.5)
         owned(identity, owner, name)  # Reconfirm exact binding immediately before handing it to tests.
-        env = {k: v for k, v in environment().items() if not k.startswith(('AWS_', 'AMAZON_', 'MINIO_', 'POSEIDON_GATE_S3_'))}
+        env = isolated_environment()
         env.update({'POSEIDON_GATE_S3_ENDPOINT': endpoint, 'POSEIDON_GATE_S3_ACCESS': access,
                     'POSEIDON_GATE_S3_SECRET': credential, 'POSEIDON_GATE_S3_OWNER': owner})
         # Child logs may contain failed SDK request diagnostics; never echo them.
-        result = subprocess.run(command, cwd=ROOT, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=900)
+        result = subprocess.run(command, cwd=ROOT, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=child_timeout)
         return result.returncode
     finally:
         if identity:
@@ -84,11 +94,12 @@ def run(image, command):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--image', required=True)
+    parser.add_argument('--child-timeout', type=int, default=900, help='Explicit bounded child deadline, 1..3600 seconds; the full API bundle needs more than 15 minutes.')
     parser.add_argument('command', nargs=argparse.REMAINDER)
     args = parser.parse_args()
     try:
         command = args.command[1:] if args.command[:1] == ['--'] else args.command
-        code = run(args.image, command)
+        code = run(args.image, command, args.child_timeout)
         print(json.dumps({'stage': 'owned_s3_child', 'exit_code': code}))
         return code
     except Exception:

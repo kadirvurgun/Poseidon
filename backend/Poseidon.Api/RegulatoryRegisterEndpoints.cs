@@ -170,7 +170,7 @@ public static class RegulatoryRegisterEndpoints
             await transaction.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear(); return await Replay() ?? await Fail(409, "version_conflict");
         } catch (DbUpdateException e) when (e.InnerException is PostgresException { SqlState: PostgresErrorCodes.UniqueViolation }) {
             await transaction.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear(); return await Replay() ?? await Fail(409, "version_conflict");
-        } catch (Exception e) when (e is DbUpdateException or NpgsqlException) {
+        } catch (Exception e) when (PostgresFailure.IsDatabase(e)) {
             await transaction.RollbackAsync(CancellationToken.None); return await Fail(503, "service_unavailable");
         }
     }

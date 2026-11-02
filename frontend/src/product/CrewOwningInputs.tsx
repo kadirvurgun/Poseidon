@@ -4,8 +4,15 @@ import { owningInputs, type CrewOwningInput } from './crew-api'
 
 export function CrewOwningInputs({ vessel, assignment, language }: { vessel: string; assignment: string; language: 'tr' | 'en' }) {
   const en = language === 'en', [inputs, setInputs] = useState<CrewOwningInput[] | null>(null), [failed, setFailed] = useState(false), [denied, setDenied] = useState(false), [generation, reload] = useState(0)
+  const resetScope1 = [vessel, assignment, generation] as const
+  const [previousScope1, setPreviousScope1] = useState(resetScope1)
+  // Withdraw stale state in the same render that changes the request scope.
+  if (!Object.is(previousScope1[0], vessel) || !Object.is(previousScope1[1], assignment) || !Object.is(previousScope1[2], generation)) {
+    setPreviousScope1(resetScope1)
+    setInputs(null); setFailed(false); setDenied(false)
+  }
   useEffect(() => {
-    const c = new AbortController(); setInputs(null); setFailed(false); setDenied(false)
+    const c = new AbortController();
     owningInputs(vessel, assignment, c.signal).then(v => { if (!c.signal.aborted) setInputs(v) }).catch(e => {
       if (!c.signal.aborted) { setFailed(true); setDenied(e instanceof ApiError && [401, 403, 404].includes(e.status)) }
     })

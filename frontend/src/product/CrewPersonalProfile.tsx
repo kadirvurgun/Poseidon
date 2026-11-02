@@ -28,9 +28,16 @@ export function CrewPersonalProfile({ vessel, assignment, csrf, language, onDirt
   const inFlight = useRef(false)
   const active = useRef<AbortController | null>(null)
   const path = `vessels/${encodeURIComponent(vessel)}/crew/${encodeURIComponent(assignment)}/personal-profile`
+  const resetScope1 = [path, csrf, generation, onDirty] as const
+  const [previousScope1, setPreviousScope1] = useState(resetScope1)
+  // Withdraw stale state in the same render that changes the request scope.
+  if (!Object.is(previousScope1[0], path) || !Object.is(previousScope1[1], csrf) || !Object.is(previousScope1[2], generation) || !Object.is(previousScope1[3], onDirty)) {
+    setPreviousScope1(resetScope1)
+    setProfile(null); setChanges({}); setState('loading');
+  }
   useEffect(() => {
     const controller = new AbortController(); active.current = controller
-    setProfile(null); setChanges({}); attempt.current = null; setState('loading'); onDirty(false)
+      attempt.current = null;  onDirty(false)
     request<PersonalProfile>(`${path}?purpose=crew-profile`, controller.signal).then(value => {
       if (!value || !value.data || !Array.isArray(value.readable) || !Array.isArray(value.writable) || !Array.isArray(value.options) ||
         [...value.readable, ...value.writable].some(f => !Number.isInteger(f) || f < 0 || f >= fields.length) || value.writable.some(f => !value.readable.includes(f))) throw new ApiError(502)

@@ -304,9 +304,10 @@ public static class LifecycleApplicabilityEndpoints
         } catch (DbUpdateConcurrencyException) { await tx.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear(); return await Replay() ?? await Fail(h, 409, "version_conflict");
         } catch (DbUpdateException e) when (e.InnerException is PostgresException { SqlState: PostgresErrorCodes.UniqueViolation }) {
             await tx.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear(); return await Replay() ?? await Fail(h, 409, "version_conflict");
-        } catch (Exception e) when (e is DbUpdateException or NpgsqlException) {
+        } catch (Exception e) when (PostgresFailure.IsDatabase(e)) {
+            DatabaseFailureObservation.Record(h, e);
             await tx.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear();
-            var state = e is PostgresException p ? p.SqlState : (e.InnerException as PostgresException)?.SqlState;
+            var state = PostgresFailure.Provider(e)?.SqlState;
             return await Replay() ?? await Fail(h, state is "40001" or "40P01" ? 409 : 503, state is "40001" or "40P01" ? "version_conflict" : "service_unavailable");
         }
     }

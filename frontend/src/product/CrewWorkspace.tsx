@@ -66,10 +66,17 @@ export function CrewWorkspace({ vessel, assignment }: { vessel: string; assignme
   const dialog = useRef<HTMLDialogElement>(null)
   const rosterHref = `/app/crew-roster/${encodeURIComponent(vessel)}`
   const clear = () => { knownIdentity.current = null; setPage(null); setDetail(null); setPositions([]); setCurrent(null); setEditor(null); setUser(null) }
+  const resetScope1 = [vessel, assignment, offset, generation] as const
+  const [previousScope1, setPreviousScope1] = useState(resetScope1)
+  // Withdraw stale state in the same render that changes the request scope.
+  if (!Object.is(previousScope1[0], vessel) || !Object.is(previousScope1[1], assignment) || !Object.is(previousScope1[2], offset) || !Object.is(previousScope1[3], generation)) {
+    setPreviousScope1(resetScope1)
+    setLoading(true); setError(0); setPage(null); setDetail(null); setPositions([]); setCurrent(null)
+  }
   useEffect(() => {
     const c = new AbortController(); let active = true
     const timer = setTimeout(() => c.abort(), 10000)
-    setLoading(true); setError(0); setPage(null); setDetail(null); setPositions([]); setCurrent(null)
+
     session(c.signal).then(async identity => {
       if (!identity.authenticated) throw new ApiError(401)
       const value = await crew.roster(vessel, offset, c.signal)

@@ -88,7 +88,7 @@ public static class CredentialEndpoints
                 ResourceId = row.Id, RegisterRevision = row.Revision, RegisterVersion = row.Version, CommittedAt = DateTimeOffset.UtcNow });
             await db.SaveChangesAsync(ct); if (tx != null) await tx.CommitAsync(ct);
             return Results.Ok(new CrewSavedDto(row.Id, row.Revision, row.Version, false));
-        } catch (Exception e) when (e is DbUpdateException || e is Npgsql.PostgresException { SqlState: "40001" or "40P01" }) {
+        } catch (Exception e) when (e is DbUpdateException || PostgresFailure.IsSerialization(e)) {
             if (tx != null) await tx.RollbackAsync(CancellationToken.None);
             return await Fail(h, 409, "version_conflict");
         }

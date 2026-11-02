@@ -5,8 +5,15 @@ import { history, type CrewHistoryRow } from './crew-api'
 export function CrewAssignmentHistory({ vessel, assignment, language }: { vessel: string; assignment: string; language: 'tr' | 'en' }) {
   const en = language === 'en', [rows, setRows] = useState<CrewHistoryRow[] | null>(null), [error, setError] = useState(0), [generation, reload] = useState(0)
   const [offset, setOffset] = useState(0), [more, setMore] = useState(false)
+  const resetScope1 = [vessel, assignment, generation, offset] as const
+  const [previousScope1, setPreviousScope1] = useState(resetScope1)
+  // Withdraw stale state in the same render that changes the request scope.
+  if (!Object.is(previousScope1[0], vessel) || !Object.is(previousScope1[1], assignment) || !Object.is(previousScope1[2], generation) || !Object.is(previousScope1[3], offset)) {
+    setPreviousScope1(resetScope1)
+    setRows(null); setError(0)
+  }
   useEffect(() => {
-    const c = new AbortController(); setRows(null); setError(0)
+    const c = new AbortController();
     history(vessel, assignment, c.signal, offset).then(v => { if (!c.signal.aborted) { setRows(v.items); setMore(v.hasMore) } })
       .catch(e => { if (!c.signal.aborted) { setRows(null); setError(e instanceof ApiError ? e.status : 503) } })
     return () => c.abort()
