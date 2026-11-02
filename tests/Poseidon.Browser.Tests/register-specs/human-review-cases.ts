@@ -8,6 +8,7 @@ async function scopedTrace(page: Page) {
   const fixtureId = process.env.POSEIDON_BROWSER_HUMAN_EVIDENCE
   if (!fixtureId || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(fixtureId) || fixtureId === '00000000-0000-0000-0000-000000000000') throw new Error('human_evidence_fixture_uuid_required')
   await page.goto('/app/source-register?lang=en')
+  await page.getByRole('button', { name: 'EN', exact: true }).click()
   await page.getByRole('button', { name: 'Controls and evidence', exact: true }).click()
   const region = page.getByRole('region', { name: 'Controls and evidence', exact: true })
   const fleet = await page.request.get('/api/v1/vessels?offset=0&limit=25'); expect(fleet.status()).toBe(200)

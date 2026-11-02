@@ -4504,27 +4504,40 @@
     "initial_candidate_commit": "d0e6d0dbc2c2b5d3873d46ea4a405e176e772e3e",
     "initial_candidate_tree": "b4c3876080a77c7fb17dc9b63b0c84351c0bad1b",
     "initial_qa": "REJECTED_FOR_ACCEPTANCE_ON_THIS_TARGET; actual failures retained",
-    "current_target": "Frontend frozen/tested; API fixture repair and genuine signed-browser preparation; no final clean-target acceptance",
+    "current_target": "9e982da clean-target required CI SUCCESS; later mobile stacking repair locally verified, next exact-target CI and final signed manifest pending",
     "verification": {
       "python": "355/355 PASS on initial clean candidate",
       "source_definitions": "6 PASS_DEFINITION_ONLY, not acceptance",
       "backend_build": "Local dirty repair PASS, zero diagnostics",
       "domain_unit": "566/566 PASS local dirty repair",
       "persistence_unit": "27/27 PASS local dirty repair",
-      "api_unit": "91/91 PASS local dirty repair",
+      "api_unit": "Clean9e982da actual required CI native91/91 PASS,0skip/fail",
       "persistence_postgres": "75/75 PASS, 598.174s local dirty repair",
       "ef_model_parity": "PASS local dirty repair",
       "actual_api_contract": "157 paths/185 schemas; actual host export and TypeScript generation PASS local dirty repair",
       "frontend_typecheck_build_lint": "PASS on frozen lazy-chart fix; full lint198files zero errors/warnings",
       "frontend_components": "923/923 PASS;0failed/pending/skipped/unhandled; exact stable frontend source snapshot f4dd8b9ad21b15c7c4081e8e55fd5ab83af48725f68a4564d58f83d95873c4f4; local dirty repair only",
-      "api_integration": "547 original cases completed by exact native partition,6Tugfixture failures retained; narrow13 reproduces7pass/6fail, helper resets synthetic mode; both baseline calls repaired, actual13 repair rerun pending",
+      "api_integration": "Initial exact547 partition541pass/6fail retained; repaired13/13 PASS; clean9e982da actual required CI native547/547 PASS,0skip/fail",
       "ordinary_browser": "50/50 PASS0skip/flaky on rebuilt lazy-chart production dist;20:25:43–20:28:48UTC; local dirty repair",
-      "security_preflight": "Repository staged1520 inputs/0 findings; built client5/0; actual164 protected independently reviewed source pins; final target scan pending",
-      "final_independent_qa_ci": "PENDING on repaired clean target",
-      "signed_provider": "Actual manager/restricted2/2+TLS3/3 PASS; new uniquely owned reviewer genuine login+distinctactor PASS; full61x2manifest fixture preparation pending",
+      "security_preflight": "Actual final staged repository and production client scans PASS with164 externally fetched protected source-review pins; next changed-target CI pending",
+      "final_independent_qa_ci": "Earlier clean9e982da CI SUCCESS; final repaired target independent QA and required CI PENDING",
+      "signed_provider": "Actual manager/restricted login2/2+TLS3/3 PASS; diagnostic30/30 separate from final122; six genuine command-produced documents independently VERIFIED by distinct synthetic actors, current consumer assertions PASS; full baseline manager/restricted journeys and final fresh61x2 manifest pending",
       "artifact": "Actual API development artifact publish PASS local dirty repair",
-      "source_lineage": "Fresh verify_sources.py PASS active byte/chunk lineage"
+      "source_lineage": "Fresh verify_sources.py PASS active byte/chunk lineage",
+      "legacy_fixture_isolation": "Actual14/14unit+1/1PostgreSQL and7 guarded CLI outcomes PASS; Test-only isolated fixture identifiers; no seeded verified safety evidence",
+      "mobile_navigation_repair": "Later dirty CSS stacking fix: actual production build PASS and real pointer/keyboard2/2 desktop/mobile regression PASS; fresh exact-target CI pending",
+      "required_ci": {
+        "commit": "9e982da0a134881a6f40752f4ab78c1883d021a0",
+        "tree": "c156c7064d36b37f0c31703b486dccf096bf72f1",
+        "run": 41523972791,
+        "url": "https://github.com/kadirvurgun/Poseidon/actions/runs/41523972791",
+        "conclusion": "SUCCESS",
+        "jobs": "4/4SUCCESS",
+        "api_integration": "547/547PASS;0skip/fail",
+        "api_unit": "91/91PASS;0skip/fail",
+        "other_native_counts": "UNAVAILABLE_NOT_INFERRED"
+      }
     },
-    "next": "Verify the13 repaired APIcases and complete signed61x2manifest; finish isolated legacy fixture; normal clean commit, fresh security/required CI and independent exact-target S0 acceptance"
+    "next": "Freeze mobile fix; fresh required CI; actual full baseline signed journeys and coherent final122; genuine independent exact-target S0 reviews and acceptance receipts"
   }
 }

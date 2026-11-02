@@ -1,3 +1,76 @@
+# S0-OVERNIGHT-20261102 — 03.11.2026 durum güncellemesi
+
+**Durum: INCOMPLETE / NOT ACCEPTED.** S0'ın13/13 kaynak görevine ilişkin tanım/kod yazım paketi hazır; source/engineering adoption ve tüm son-hedef doğrulamaları henüz kapanmadı. Canonical kabul **8/53 S0 SP (%15,09)** ve **8/970 genel SP (%0,82)** olarak korundu. Bu raporlama görevi hiçbir yeni test/build/tarama veya yayın işlemi başlatmadı.
+
+[Genel ilerleme](../reports/project-progress-2026-11-02.md), [S0 kapanış açığı](../reports/s0-closure-gap-2026-11-02.md), [current register](../../contracts/tasks/current-authoring.v1.json), [engineering candidate](../architecture/s0-current-engineering-candidate-20261102.md), [S0 exit gate](../../contracts/s0/README.md).
+
+Yeni signed tanı deltası: üç pozitif consumer gerçek fixture/currentness kontrolünden sonra İngilizce giriş selector'unda durdu; kalan dokuz vaka PENDING korunarak tanı koşusu kapatıldı. Üç registered-case dosyasında beş navigasyon sonrası gerçek EN düğmesi seçimi eklendi. Tam baseline manager/restricted koşusu restricted PASS/manager FAIL verdi: manager, şirket/profil/history/dirty-guard/search kontrollerini geçtikten sonra iki farklı Today kartındaki `Why?` düğmelerinde ambiguity yaşadı. Gerçek finite tanı iki kart/iki düğmeyi doğruladı; özgün regulatory kartına scope eklendi, freshness ve exact API key doğrulamaları korundu. Bu onarımlar henüz son-hedef PASS/kabul değildir; tekrar yürütme bekler.
+
+## Hedef ve kanıt sınırı
+
+- **Temiz ve push edilmiş CI hedefi:** commit `9e982da0a134881a6f40752f4ab78c1883d021a0`, tree `c156c7064d36b37f0c31703b486dccf096bf72f1`.
+- **Gerçek CI:** [41523972791](https://github.com/kadirvurgun/Poseidon/actions/runs/41523972791), completed/SUCCESS; bütün4 iş başarılı. [Kapalı metadata](../../.runtime/s0-overnight-20261102/ci-41523972791-state.json).
+- **Daha yeni ürün deltası:** [enterprise CSS](../../frontend/src/product/enterprise.css) ve [pointer/mobile-menu regresyonu](../../tests/Poseidon.Browser.Tests/specs/product.spec.ts). Bunlar9e sonrasıdır. Yeni dirty build/2-case PASS,9e CI sonucuna veya son kabul kararına dönüştürülmedi.
+- **Önceki yerel hedef:** `d0e6d0d…` üzerindeki dirty repair sonuçları kendi scope'larında tutulur. İlk deadline, sonraki547/6 failure ve tüm ara13 failure kayıtları korunur.
+- Job/test raw logları okunmadı veya saklanmadı. Bu rapor CI state metadata, indirilen kapalı test-count artifact'ları ve görev sahiplerinin kapalı yerel sonuçlarını kullanır; kimlik bilgisi, token, rawHTTP/body/DOM/storageState içermez.
+
+## Gerçek yürütme sonuçları
+
+| Kontrol | Native sonuç | Gerçek kapsam / kanıt |
+|---|---|---|
+| CI windows-automation | **SUCCESS** |9e hedefi; job metadata. |
+| CI frontend-and-browser | **SUCCESS** |9e hedefi; job metadata. Sonraki CSS deltası dahil değil. |
+| CI persistence-and-security | **SUCCESS** |9e hedefi; gerçek provider, model, source ve artifact adımları başarılı. |
+| CI nightly-installer-construction | **SUCCESS** |Preview construction kapsamı; canlı görevin etkinleştirildiği iddiası yok. |
+| CI API integration | **547/547 PASS,0 fail/skip**,1.029,482s | [İndirilen integration artifact](../../.runtime/s0-overnight-20261102/ci-41523972791/api-test-counts/integration.json), PASS_EXACT_DISCOVERED_SCOPE. |
+| CI API unit | **91/91 PASS,0 fail/skip**,3,864s | [İndirilen unit artifact](../../.runtime/s0-overnight-20261102/ci-41523972791/api-test-counts/unit.json). |
+| Önceki yerel Python | **355/355 PASS,0 skip** | Kendi yerel hedefi; CI job metadata'dan yeni sayı türetilmedi. |
+| Önceki yerel definition utilities | **6 PASS_DEFINITION_ONLY** | Environment/core inventory/pilot trace/golden/task/source-role plan; approval değil. |
+| Önceki yerel domain / persistence | **566 domain,27 persistence unit,75 gerçekPG PASS** | Ayrı scope sayaçları; yeni legacy fixture14+1 bu sayılara sonradan eklenmedi. |
+| Yerel EF model / actual OpenAPI / normal TS generation | **PASS** | Önceki actual-host export157path/185schema; kendi artifact kapsamı korunur. |
+| Yerel frontend component | **923/923 PASS**,0fail/skip/unhandled | Aynı başlangıç/son `f4dd8b9ad21b15c7c4081e8e55fd5ab83af48725f68a4564d58f83d95873c4f4` source fingerprint; [tam sonuç](../../.runtime/s0-overnight-20261102/frontend-repair-components-full-2026-11-02T202713864315+0000.json). |
+| Yerel frontend lint / typecheck / build | **198 dosya,0 hata/uyarı; typecheck/build PASS** | Dondurulmuş frontend snapshot'ı; yeni CSS deltası için otomatik full PASS değil. |
+| Ordinary browser | **50/50 PASS,0skip/flaky** | [20:25:43 başlangıçlı rebuilt-dist sonuç](../../.runtime/s0-overnight-20261102/browser-2026-11-02T20-25-43.964625+00-00.json). |
+| Yeni mobil delta production build | **PASS**,31,356s | [Dirty onarım build'i](../../.runtime/s0-overnight-20261102/frontend-drawer-production-build.json). |
+| Yeni pointer/mobile-menu browser | **2/2 PASS,0fail/skip/flaky**,74,803s | [21:17:48.758164UTC gerçek sonuç](../../.runtime/s0-overnight-20261102/browser-2026-11-02T21-17-48.758164+00-00.json). Tam ordinary/signed koşu değil. |
+| Yeni legacy fixture unit | **14/14 PASS,0skip** | [Ayrı unit receipt](../../.runtime/s0-overnight-20261102/signed/legacy-fixture-unit.json). |
+| Yeni legacy fixture gerçekPG | **1/1 PASS,0skip** | [Ayrı PostgreSQL receipt](../../.runtime/s0-overnight-20261102/signed/legacy-fixture-postgres.json). |
+| Yeni legacy CLI guardları | **7/7 PASS** | Yalnız sahipliği belirli synthetic fixture/özel labDB kapsamı; üretim veri değişikliği değil. |
+| Gerçek signed login / TLS | Ayrı manager/restricted + yeni owned reviewer; **TLS3/3 PASS** | Önceki bilinmeyen reviewer korunur; secrets/kimlik payload'ları rapora alınmaz. |
+| Signed tanı ledger | **30 executed/30PASS/0fail/0skip;92pending** | [Native ledger](../../.runtime/s0-overnight-20261102/signed/manifest-ledger.json) mixed/önceki artifact'lı tanı kaydıdır. |
+| Final signed manifest | **61×2=122 vaka PENDING** | Son taze hedef/API/UI artifact üzerinde tamamının gerçek sonucu gerekiyor. Önceki30 bu yeni gate'i kısaltmaz. |
+| Bağımsız son-hedef adoption | **PENDING** | Son statik stacking review'de yeni blocker yok; final kabul kararı değil. |
+
+## API teşhisi ve kanıtların korunması
+
+İlk monolitik API547 discovery koşusu1.808,177s sonunda INTERRUPTED_DEADLINE oldu; tamamlanmış test aggregate'ı değildi. Sonra aynı özgün keşif kapsamı en fazla2 worker ile22 native cohort'a ayrıldı. Teori satırları korunarak identity-hash multiset eşitliği sağlandı: **547 executed/541PASS/6FAIL/0skip**, overlap veya eksik vaka yok. [Yerel aggregate](../../.runtime/s0-overnight-20261102/api-cohorts-summary.json).
+
+Altı hata aynı role-criteria yönteminin Tug satırlarıydı. Dar13 tekrarı baseline'da ExpectedOK/ActualNotFound gösterdi: producer/consumer admission helper'ı graph permissions'ı yeniden kuruyor, Tug mode kapsamı eski hazırlıkta kayboluyordu. Mevcut explicit evaluationVessel yolu iki çağrıya da verildi. Sonraki dar13'te state/count hatası görüldü: false/current ve count-shortage ExpectedBlocked/ActualReviewRequired; diğerleri ExpectedDeclared1/Actual2. Generic seed'deki ikinci, unqualified ve dönemi açık kişi aynı pozisyondaydı; ürün observer'ı doğru biçimde bilinmeyen aday olarak tutuyordu.
+
+Yalnız test fixture'ında, ilgili seed assignment kesinId+vessel+position scope'u ile seçilip From tarihi bu kısa iş penceresinin dışına audited SaveChanges ile taşındı. Satır ve unknown lineage korundu; üretim observer'ı, HTTP yetkileri ve bütün original baseline/count/endorsement/Why/private-policy/revocation/stale-noop assertion'ları değişmedi. Son gerçek dar koşu **13/13 PASS,0fail/skip**,395,867s: [onarım receipt](../../.runtime/s0-overnight-20261102/api-role-criteria-fixture-repair.json). Async stack'teki eski217/220 satırı tek başına production privacy kusuru diye sunulmadı. Ara failure'lar ayrı dosyalarda korunur; dar13 ile547 sayaçları toplanmaz. Sonraki9e CI547/547 kendi temiz hedefinin yeni, bağımsız yürütme kanıtıdır.
+
+## UI, signed-provider ve pozitif fixture çalışması
+
+Frozen frontend923 ve ordinary50 başarılarından sonra gerçek mobil ilk-pointer engeli bulundu: sidebar katmanı20, overlay25'ti. Açık sidebar30 yapıldı ve gerçek pointer/explicit mobile-menu regresyonu güçlendirildi. Yeni production build ve hedefli2 browser geçti. Statik stacking review blocker bulmadı; son delta için yeni hedefte required CI/tam kapsam/bağımsız kabul açık.
+
+Signed tanı sırasında iki EN reload düzeltmesi, dört fresh-relogin driver düzeltmesi ve bir CSS mobile fix yapıldı. Gerçek300 saniyelik ID-token expiry değiştirilmedi; yeni girişler gerçek IdP üzerinden yapıldı. Önceki7 failure kayıtları korunur. Native tanı30/30 mixed artifact'lıdır;122 final taze hedef/artifact sonucu üretilmiş sayılmaz.
+
+Gerçek signed HTTP hazırlığında source, bağımsız qualification, control, scanned file ve kısmi VERIFIED kanıtları ordinary komutlarla oluşturuluyor. Verified/legal/safety kayıtları seed edilmedi. Repo içi storageRoot503 ile doğru biçimde engellendi; yeni owned temporary root repo dışında kuruldu. Tug service trace hazırlığındaki404 nedeni araştırılıyor; henüz üretim kusuru veya çözülmüş gate diye sunulmadı.
+
+## Sonraki kapılar
+
+1. Pozitif signed fixture prerequisite zincirini ve gerçek404 teşhisini bitir.
+2. Mobil CSS/browser deltası ve raporlar dahil son temiz commit/tree/API/UI artifact'ını dondur.
+3. **Bütün122 signed vakayı** bu taze hedefte gerçek pozitif/olumsuz akışlarla sonuçlandır; actual-native scope sayaçlarını koru.
+4. Yeni temiz hedefin required CI'ını ve applicable security/source/model/contract kontrollerini tamamla.9e4/4SUCCESS kendi hedefinde saklı kalır.
+5. Bağımsız exact-target source/engineering/security review ve ADR/schema/typed-plan adoption ile gerçek unresolvedP0 değerlendirmesini tamamla; DEV012 ve ayrıDEV116 kabulünü değerlendir.
+6. Ancak gerçek kabulden sonra canonical ledger güncellensin. **Yeni PR/merge yok; S0 complete veya53/53 kabulü yok.**
+
+<details>
+<summary>Önceki rapor fotoğrafları — tarihsel; güncel durum yukarıdadır</summary>
+
+Önceki DEFERRED/RUNNING ve eski hedef ifadeleri yalnız kaydedildikleri kapsamda geçerlidir. Üstteki güncelleme güncel yürütme durumunu esas alır; eski failure/interrupted kayıtları korunur.
+
 # S0 overnight — 02.11.2026 gerçek gate ve onarım durumu
 
 **Durum: AUTHORING COMPLETE / LOCAL EXECUTION AND REPAIR / NOT ACCEPTED.**
@@ -129,3 +202,5 @@ API547 vaka bütün native partitionlarda çalıştı; özgün6Tug-tagged role-c
 Genuine Keycloak manager/restricted2/2, TLSreject3/3 ve yeni uniquely-owned sentetik reviewer ile distinct-actor login geçti. Bilinmeyen önceki reviewer hesabı korunur. Root private config/CA/credential kopyası owner-only; rawbody/DOM/token/storageState kanıt olarak kaydedilmez. Full61case×2Firefox manifest henüz bitmedi; gerekli positive source/evidence zincirleri gerçek signed HTTP commands ile hazırlanır, VERIFIED/safety/credential seed üretilmez. Her proje için ayrı legacy fixture kimliği ve Test-only audited/idempotent izolasyon tamamlanacak.
 
 Bağımsız dirty delta incelemesi yeni engelleyici statik bulgu bulmadı;[hazırlık raporu](../../.runtime/s0-overnight-20261102/qa/s0-dirty-repair-preparation-review.json) bir kabul değildir. Son temiz commit/tree, gerçek tüm applicable sonuçlar/security taramaları, required CI ve genuine source/engineering/acceptance kararları hâlâ gereklidir. Canonical8/53S0 ve8/970overall değişmedi.
+
+</details>

@@ -176,7 +176,7 @@
   .product-shell.enterprise-shell { display: block; }
   .product-shell.enterprise-shell > main { padding: 22px 18px 40px; }
   .enterprise-shell .enterprise-sidebar { display: none; }
-  .enterprise-shell .enterprise-sidebar.is-open { display: flex; width: min(290px, 85vw); box-shadow: 12px 0 60px #10203345; }
+  .enterprise-shell .enterprise-sidebar.is-open { display: flex; z-index: 30; width: min(290px, 85vw); box-shadow: 12px 0 60px #10203345; }
   .enterprise-shell .enterprise-topbar { padding: 0 18px; min-height: 68px; }
   .enterprise-shell .enterprise-topbar .workspace-menu { display: inline-flex; min-height: 40px; }
   .enterprise-breadcrumb { min-height: 48px; gap: 7px; }

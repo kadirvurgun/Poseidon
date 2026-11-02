@@ -4,6 +4,7 @@ import { expect, type Page } from '@playwright/test'
 // evidence/equipment/human-review rights. No fake provider, source approval or routes.
 async function incompleteCargo(page: Page) {
   await page.goto('/app/source-register?lang=en')
+  await page.getByRole('button', { name: 'EN', exact: true }).click()
   await page.getByRole('button', { name: 'Controls and evidence', exact: true }).click()
   const region = page.getByRole('region', { name: 'Controls and evidence', exact: true })
   const response = await page.request.get('/api/v1/vessels?offset=0&limit=25'); expect(response.status()).toBe(200)
@@ -33,6 +34,7 @@ async function qualifiedConsumer(page: Page, mode: 'Ship' | 'Tug') {
   const rules = await page.request.get('/api/v1/rules'); expect(rules.status()).toBe(200)
   const rule = (await rules.json()).items.find((r: { current: { rule: { ruleId: string } } }) => r.current.rule?.ruleId === `SYNTHETIC-FOUNDATION-OWNING-${mode.toUpperCase()}`); expect(!!rule).toBe(true)
   await page.goto('/app/source-register?lang=en')
+  await page.getByRole('button', { name: 'EN', exact: true }).click()
   await page.getByRole('button', { name: 'Lifecycle and applicability', exact: true }).click()
   const region = page.getByRole('region', { name: 'Lifecycle and applicability preparation', exact: true })
   await region.getByLabel('Vessel context', { exact: true }).selectOption(vessel.id)

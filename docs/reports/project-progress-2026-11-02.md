@@ -1,3 +1,69 @@
+# POSEIDON proje ilerlemesi — 03.11.2026 güncellemesi
+
+**S0 kabulü: %15,09 (8/53 SP). Genel proje kabulü: %0,82 (8/970 SP).**
+S0'ın **13/13 işlik tanım ve kod yazım paketi hazır**; gerçek doğrulama ve son hedefin bağımsız kabulü sürüyor. Temiz `9e982da` hedefinin dört CI işi başarılı. Bu hedeften sonra bulunan mobil menü düzeltmesi ile son signed-provider yolculukları henüz aynı yeni temiz hedefte bütünüyle doğrulanmadı. Kabul puanı artırılmadı.
+
+Bu güncelleme ayrı raporlama ajanı tarafından, kod ve gerçek fixture çalışmaları devam ederken hazırlandı. Ajan yalnız bu raporları güncelledi; yeni test, build, tarama, tarayıcı veya CI çalıştırmadı. Önceki fotoğraflar aşağıdaki tarihsel bölümde korunur. Güncel ayrıntılar: [S0 kapanış açığı](s0-closure-gap-2026-11-02.md), [gece faz kaydı](../phases/S0-OVERNIGHT-20261102.md).
+
+## Yüzdeler ve analizin geldiği yer
+
+| Gösterge | Güncel değer | Anlamı |
+|---|---:|---|
+| S0 tanım/kod yazım aşaması | **13/13 iş — %100** | Definition/authoring aşaması; bağımsız sprint kabulü bekliyor. |
+| S0 kabul edilmiş iş yükü | **8/53 SP — %15,09** | DEV-001 ve DEV-002'nin mevcut kabulü. Kalan 45 SP kapanmadı. |
+| Genel kabul edilmiş iş yükü | **8/970 SP — %0,82** | Canonical proje ilerleme ölçüsü. |
+| Kabul edilmiş işler | **2/121 — %1,65** | İş boyutları farklı; ana ilerleme ölçüsü SP. |
+| Kabul edilmiş ekranlar | **0/196 — %0** | Ürün ekranları mevcut; canonical ekran kabulü açık. |
+| Seçili büyük foundation paketi | **40 iş / 272 SP** | Çalışma kapsamı; tamamlanma sayısı değil. |
+| S0 bütünü kabul edilirse | **53/970 SP — %5,46** | Koşullu sonraki genel seviye; bugünkü kabul değil. |
+
+Etkin analiz [30.10.2026 baseline'ı](../sources/active.json): 121 iş, 970 SP, 196 ekran, 2.316 alan sözleşmesi. S0 kapsamı özgün 18.01 satırları 2–13 ve117'dir; DEV-116 dahil **13 iş / 53 SP**. Kabul kaydı [merkezî durum dosyasında](../project-status.json) tutulur.
+
+**Şu an analizin S0 çıkış kapısındayız.** Repo/CI, ortam, ADR/veri planı, tehdit modeli, 10 pilot capability/149 alan zinciri, 7 kategori/9 candidate kaynak sahiplik planı, golden dataset, DoR/DoD, observability ve ERP sınırı yazılmış durumda. Typed plan ve tanım kontrolleri, gerçek legal source doğrulaması veya operasyonel insan imzası üretmez.
+
+S1–S3 ortak çekirdeği ile seçili Crew, Technical, Import ve Tug ürün akışları da uygulamada mevcut: OIDC oturumu ve kapsam denetimi, filo/şirket, Today/Why, source/control/evidence zinciri, korumalı Crew belge/profil akışları, bakım girdileri, import ve taslak Tug plan/pano. React/shadcn tabanlı kurumsal kabuk ve gerçek yetkili sayfa verisinden ECharts grafikleri yazıldı. Bu geniş foundation uygulamasının kaynak kriterleri ve sprint kabulleri kendi kapılarıyla kapanacak; S0 yazım yüzdesine eklenmedi.
+
+## Gerçekte doğrulananlar
+
+| Kapsam | Gerçek sonuç | Hedef sınırı |
+|---|---|---|
+| GitHub CI | **4/4 iş SUCCESS**, run41523972791 | Temiz/push edilmiş `9e982da0a134881a6f40752f4ab78c1883d021a0`, tree `c156c7064d36b37f0c31703b486dccf096bf72f1`. |
+| CI API integration | **547/547 PASS; 0 fail/skip**, 1.029,482 saniye | İndirilen kapalı `api-test-counts` artifact'ı; exact discovered scope. |
+| CI API unit | **91/91 PASS; 0 fail/skip** | Aynı temiz CI hedefi. |
+| Yerel frontend component | **923/923 PASS; 0 fail/skip/unhandled** | Başlangıç/son aynı `f4dd8b9…` frontend source fingerprint'ı; sonraki mobil CSS düzeltmesini kapsamaz. |
+| Yerel frontend lint / typecheck / build | **198 dosyada 0 hata/uyarı; typecheck/build PASS** | İlgili dondurulmuş yerel frontend sürümü. |
+| Ordinary desktop/mobile browser | **50/50 PASS; 0 skip/flaky** | Önceki rebuilt dist; son iki dosyalık mobil onarımın tamamı için yeni full sonuç değildir. |
+| Yeni mobil menü onarımı | **Production build PASS; hedefli browser 2/2 PASS**, 0 fail/skip/flaky | `9e982da` sonrası dirty delta; 21:17:48.758 UTC başlangıçlı gerçek alt kapsam. |
+| Legacy fixture ekleri | **14/14 unit + 1/1 gerçek PostgreSQL + 7/7 CLI kontrolü PASS** | Ayrı sentetik fixture/CLI scope'u; signed final122 sonucu değildir. |
+| Gerçek IdP / TLS | Ayrı manager/restricted ve yeni sahipliği belirli reviewer girişleri; **TLS 3/3 PASS** | Gerçek sentetik lab kimlikleri; token/kimlik bilgileri rapora alınmadı. |
+| Signed-provider tanı defteri | **30 executed / 30 PASS / 0 fail/skip**, defterde92 pending | Eski/farklı artifact'lı tanı kayıtları; son hedefteki final122 kabulü değildir. |
+| Son signed-provider manifest | **61 × 2 = 122 vaka: final taze hedef/artifact koşusu PENDING** | Native manifest kapsamı; tanı30 + ordinary50 veya hedefli2 burada toplanmaz. |
+| Son hedefin bağımsız kaynak/engineering/security kabulü | **PENDING** | Son statik delta incelemesinde yeni blocker bulunmaması nihai kabul değildir. |
+
+CI: [Application foundation run41523972791](https://github.com/kadirvurgun/Poseidon/actions/runs/41523972791). Kapalı kanıtlar: [CI metadata](../../.runtime/s0-overnight-20261102/ci-41523972791-state.json), [547 integration](../../.runtime/s0-overnight-20261102/ci-41523972791/api-test-counts/integration.json), [91 unit](../../.runtime/s0-overnight-20261102/ci-41523972791/api-test-counts/unit.json), [signed tanı defteri](../../.runtime/s0-overnight-20261102/signed/manifest-ledger.json). Job/test raw logları okunmadı veya saklanmadı; metadata ve kapalı artifact sayaçları esas alındı.
+
+## Son bulunan sorunlar ve devam eden çalışma
+
+- **API fixture onarımı doğrulandı.** İlk yerel 547 vaka 541 PASS/6 FAIL verdi. Tug baseline'ının mode kapsamı iki producer/consumer helper çağrısında düzeltildi; aynı pozisyondaki ilgisiz sentetik seed kişinin dönemi, yalnız testte, audited SaveChanges ile iş penceresi dışına alındı. Üretim observer'ı bilinmeyen kişileri saymaya devam ediyor; tüm assertion'lar korundu. Son dar tekrar **13/13 PASS**, 395,867 saniye. İlk deadline, 547/6 ve ara13 başarısızlık kanıtları korunur. Sonraki temiz CI547/547 sonucu ayrı kanıttır.
+- **Mobil menüde gerçek pointer engeli bulundu.** Sidebar katmanı20, overlay25 olduğu için ilk tıklama örtülüyordu. Açık sidebar katmanı30 yapıldı; pointer/explicit mobile-menu regresyonu güçlendirildi. [CSS](../../frontend/src/product/enterprise.css) ve [browser regresyonu](../../tests/Poseidon.Browser.Tests/specs/product.spec.ts) iki dosyalık ürün deltasıdır. Gerçek build ve hedefli2/2 geçti; `9e982da` CI başarısı bu daha yeni koda taşınmadı.
+- **Gerçek signed-provider pozitif hazırlığı sürüyor.** Kaynak/bağımsız qualification/control, taranmış dosya ve kısmi VERIFIED kanıtları ordinary signed HTTP komutlarıyla hazırlanıyor. Verified/legal/safety kayıtları seed edilmedi. Repo içindeki storage root503 ile doğru biçimde reddedildi; sahipliği belirli repo dışı temporary root kullanıldı. Tug service trace hazırlığındaki404 hâlen teşhis ediliyor.
+- **Signed tanı düzeltmeleri ayrı tutuldu.** İki EN reload düzeltmesi, dört fresh-relogin driver düzeltmesi ve bir CSS menü düzeltmesi yapıldı. Gerçek300 saniyelik ID-token süresi korundu. Önceki7 failure kaydı silinmedi; mixed-artifact30/30 tanı sonucu final122 diye sunulmadı.
+
+## S0'ı kapatmak için kalanlar
+
+1. Pozitif signed fixture zincirini ve mevcut404 teşhisini tamamlamak; gerçek kimlik/rol ayrımı ve source lineage korumak.
+2. Yeni frontend deltası dahil aynı temiz commit/tree ve API/UI artifact'ını dondurmak; **122 signed vakanın tamamını** bu taze kapsamda sonuçlandırmak.
+3. Bu yeni hedefin gereken tam CI kontrollerini geçirmek. Mevcut9e CI başarı kaydı kendi hedefinde korunur.
+4. Bağımsız exact-target kaynak/engineering/security incelemesini ve ADR/schema/typed-plan adoption kararlarını tamamlamak; DEV-012 exit review ile DEV-116'yı ayrı değerlendirmek.
+5. Yalnız kabul gerçekten kapanırsa merkezî SP/sprint kaydını güncellemek. **Yeni PR veya merge yok; S0 complete kabulü yok.**
+
+Bu raporlama güncellemesi yalnız üç rapor dosyasına yazıldı. Ürün kodu, ortak durum kayıtları, kabul/SP değerleri ve yürüyen agent işlerine müdahale edilmedi.
+
+<details>
+<summary>Önceki rapor fotoğrafları — tarihsel; güncel durum yukarıdadır</summary>
+
+Önceki DEFERRED/RUNNING ve eski hedef ifadeleri yalnız kaydedildikleri kapsamda geçerlidir. Üstteki güncelleme güncel yürütme durumunu esas alır; eski failure/interrupted kayıtları korunur.
+
 # POSEIDON proje ilerleme raporu — 02.11.2026
 
 > **S0 yürütme güncellemesi:** Koordinatörün aktardığı gerçek birleşik gate
@@ -236,3 +302,5 @@ typed sorumlu-rol planı ve bağımsız scope incelemesi; current-authoring regi
 tarihseldir. Plan live operasyonel kişi ataması veya legal publication değildir.
 Exact review/sonuç/hedef sınırları ve kalan işler:
 [S0 yürütme fazı](../phases/S0-OVERNIGHT-20261102.md).
+
+</details>

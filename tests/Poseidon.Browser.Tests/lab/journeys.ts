@@ -86,8 +86,9 @@ export async function managerJourney(page: Page) {
   expect(new URL(page.url()).pathname === profile).toBe(true);
   await page.goto(`/app/today/${ship}`); await english(page);
   await expect(page.getByRole('heading', { name: /Current vessel: Ship/ })).toBeVisible();
-  await page.getByRole('button', { name: 'Why?', exact: true }).click();
-  await expect(page.getByText('Input freshness is unverified. Save/read time does not verify the source.', { exact: true })).toBeVisible();
+  const regulatory = page.getByRole('article').filter({ has: page.getByRole('heading', { name: 'Advisory · Regulatory draft', exact: true }) });
+  await regulatory.getByRole('button', { name: 'Why?', exact: true }).click();
+  await expect(regulatory.getByText('Input freshness is unverified. Save/read time does not verify the source.', { exact: true })).toBeVisible();
   const why = await (await page.request.get(`/api/v1/why-engine?vesselId=${ship}&cardKey=regulatory-draft`)).json();
   expect(why.freshness === 'Unverified' && why.inputs.known > 0).toBe(true);
   await page.goto(profile); await english(page);
