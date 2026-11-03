@@ -203,7 +203,7 @@ public sealed class OidcProtocolTests(OwnedPostgresFixture fixture)
             LastBody = await request.Content!.ReadAsStringAsync(cancellationToken);
             return new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(JsonSerializer.Serialize(new
             {
-                id_token = Token, access_token = "synthetic-access-token", token_type = "Bearer", expires_in = 600
+                id_token = Token, access_token = Convert.ToHexString(System.Security.Cryptography.RandomNumberGenerator.GetBytes(32)), token_type = "Bearer", expires_in = 600
             }), Encoding.UTF8, "application/json") };
         }
     }
