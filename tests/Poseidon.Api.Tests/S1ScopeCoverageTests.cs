@@ -123,9 +123,13 @@ public sealed partial class DirectoryWorkspaceTests
         // Use the real route's advertised media contract so routing selects the
         // authorized endpoint, rather than the framework's media-rejection endpoint.
         // The adversarial body stays unchanged even for a binary media contract.
-        var endpoint = Assert.Single(services.GetRequiredService<EndpointDataSource>().Endpoints.OfType<RouteEndpoint>(), route =>
-            route.RoutePattern.RawText == operation.RoutePattern &&
-            route.Metadata.GetMetadata<IHttpMethodMetadata>()?.HttpMethods.Contains(operation.Method, StringComparer.Ordinal) == true);
+        var vetted = Assert.Single(S1SecurityContract.Operations, item => item.OperationId == operation.OperationId);
+        var candidates = services.GetRequiredService<EndpointDataSource>().Endpoints.OfType<RouteEndpoint>().Where(route =>
+            route.RoutePattern.RawText?.TrimEnd('/') == vetted.RoutePattern.TrimEnd('/') &&
+            route.Metadata.GetMetadata<IHttpMethodMetadata>()?.HttpMethods.Contains(vetted.Method, StringComparer.Ordinal) == true).ToArray();
+        Assert.True(candidates.Length == 1,
+            $"S1 route {vetted.OperationId}: expected candidate count 1, actual candidate count {candidates.Length}.");
+        var endpoint = Assert.Single(candidates);
         var types = endpoint.Metadata.GetMetadata<IAcceptsMetadata>()?.ContentTypes;
         var media = types?.FirstOrDefault(x => string.Equals(x, "application/json", StringComparison.OrdinalIgnoreCase))
             ?? types?.FirstOrDefault() ?? "application/json";
