@@ -21,6 +21,12 @@ import { fileCases } from './file-cases.ts'
 import { auditCases } from './audit-cases.ts'
 import { expect, type Page } from '@playwright/test'
 
+async function openRequirements(page: Page) {
+  const menu = page.getByRole('button', { name: 'Menu', exact: true })
+  if (await menu.isVisible()) await menu.click()
+  await page.getByRole('button', { name: 'Requirements', exact: true }).click()
+}
+
 export async function draftCitation(page: Page) {
   await page.goto('/app/sources'); await page.getByRole('button', { name: 'EN', exact: true }).click()
   const capability = await (await page.request.get('/api/v1/workspace')).json()
@@ -31,7 +37,7 @@ export async function draftCitation(page: Page) {
   await page.getByLabel('Title', { exact: true }).fill(label)
   await page.getByLabel('Declared authority · State', { exact: true }).selectOption('Unknown')
   await page.getByLabel('Source observed at (with UTC offset) · State', { exact: true }).selectOption('Unknown')
-  await page.getByRole('button', { name: 'Requirement drafts', exact: true }).click()
+  await openRequirements(page)
   await expect(page.getByRole('dialog')).toBeVisible()
   await page.getByRole('button', { name: 'Keep editing', exact: true }).click()
   await expect(page.getByLabel('Title', { exact: true })).toHaveValue(label)
@@ -47,7 +53,7 @@ export async function draftCitation(page: Page) {
   await expect(page.getByText('Draft saved. Unverified.', { exact: true })).toBeVisible()
   const history = await (await page.request.get(`/api/v1/source-drafts/${sourceId}/history`)).json()
   expect(history.items.length === 2 && history.items[1].content.title.value === label).toBe(true)
-  await page.getByRole('button', { name: 'Requirement drafts', exact: true }).click()
+  await openRequirements(page)
   await page.getByRole('button', { name: 'New draft', exact: true }).click()
   await page.getByLabel('Find a source', { exact: true }).fill(label)
   await page.getByRole('button', { name: 'Search sources', exact: true }).click()

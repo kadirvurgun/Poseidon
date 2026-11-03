@@ -1,15 +1,21 @@
 import { ApiError, request } from './api'
+import type { components } from '../generated/api'
 import { isGuid } from './identifiers'
 
-// Generated OpenAPI refresh is deliberately deferred to the combined gate.
+// Closed public projection of DocumentEndpoints.DocumentDraftDto. A generated
+// schema change requires an explicit review of these runtime field boundaries.
 export type DocumentDraft = { id: string; vesselId: string; revision: number; version: number; title: string | null; status: 'DraftUnverified'; provenance: 'DeclaredUnverified' | 'SyntheticUnverified' }
 export type DocumentPage = { items: DocumentDraft[]; canWrite: boolean; offset: number; hasMore: boolean }
+const documentFields = { id: true, vesselId: true, revision: true, version: true, title: true, status: true, provenance: true } satisfies Record<keyof components['schemas']['DocumentDraftDto'], true>
+const documentFieldNames = Object.keys(documentFields)
 const bad = (): never => { throw new ApiError(502, 'invalid_document_contract') }
 const object = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v)
 const integer = (v: unknown, min: number): v is number => typeof v === 'number' && Number.isSafeInteger(v) && v >= min
 export function decodeDocument(v: unknown, vessel: string): DocumentDraft {
-  if (!object(v) || Object.keys(v).length !== 8 || !isGuid(v.id) || v.vesselId !== vessel || !integer(v.revision, 1) || !integer(v.version, 1) || v.version > 4294967295 ||
-    v.title !== null && (typeof v.title !== 'string' || v.title.length > 200) || v.status !== 'DraftUnverified' || !['DeclaredUnverified', 'SyntheticUnverified'].includes(String(v.provenance))) return bad()
+  if (!isGuid(vessel) || !object(v) || Object.keys(v).length !== documentFieldNames.length || !documentFieldNames.every(field => Object.hasOwn(v, field)) ||
+    !isGuid(v.id) || v.vesselId !== vessel || !integer(v.revision, 1) || !integer(v.version, 1) || v.version > 4294967295 ||
+    v.title !== null && (typeof v.title !== 'string' || v.title.length > 200) || v.status !== 'DraftUnverified' ||
+    typeof v.provenance !== 'string' || !['DeclaredUnverified', 'SyntheticUnverified'].includes(v.provenance)) return bad()
   return v as DocumentDraft
 }
 export async function documents(vessel: string, offset: number, signal: AbortSignal): Promise<DocumentPage> {

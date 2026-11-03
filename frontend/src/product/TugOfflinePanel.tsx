@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useEffectEvent, useRef, useState } from 'react'
 import { ApiError } from './api'
 import { prepareOfflineShell } from './offline-application'
 import { TugOfflineApplication, tugOfflineInventory, reportTugLostKey, type TugConflict, type TugPending } from './tug-offline'
@@ -11,6 +11,11 @@ export function TugOfflinePanel({ job, vessel, language, onDirty }: { job: strin
   const [conflict, setConflict] = useState<TugConflict | null>(null)
   const [online, setOnline] = useState(navigator.onLine)
   const scope = useRef(new AbortController()), handle = useRef<TugOfflineApplication | null>(null)
+  const generation = useRef(0)
+  const closeScope = useEffectEvent((bootstrap: AbortController) => {
+    generation.current++; bootstrap.abort(); scope.current.abort()
+    handle.current?.close(); handle.current = null
+  })
   const [dirty, setDirty] = useState(false)
   useEffect(() => { onDirty?.(busy || dirty); return () => onDirty?.(false) }, [busy, dirty, onDirty])
   const resetScope1 = [job, vessel] as const
@@ -24,33 +29,49 @@ export function TugOfflinePanel({ job, vessel, language, onDirty }: { job: strin
     const c = new AbortController(); scope.current = c
 
     if (navigator.onLine) tugOfflineInventory(job, vessel, c.signal).then(v => { if (!c.signal.aborted) setInventory(v) }).catch(() => { /* No cached inventory authority. */ })
-    const timer = window.setInterval(() => { if (handle.current && !handle.current.active()) { handle.current.close(); handle.current = null; setApp(null); setPending([]); setConflict(null); setStart(''); setEnd(''); setState('locked') } }, 1000)
     const withdraw = () => {
-      if (!handle.current) return
-      handle.current.close(); handle.current = null; setApp(null); setPending([]); setConflict(null); setStart(''); setEnd(''); setDirty(false); setState('locked')
+      generation.current++; scope.current.abort()
+      handle.current?.close(); handle.current = null; setApp(null); setPending([]); setConflict(null); setStart(''); setEnd(''); setBusy(false); setDirty(false); setState('locked')
     }
     const hidden = () => { if (document.hidden) withdraw() }
-    const changed = () => { setOnline(navigator.onLine); if (navigator.onLine) withdraw() }
+    let observedOnline = navigator.onLine
+    const changed = () => { observedOnline = navigator.onLine; setOnline(observedOnline); if (observedOnline) withdraw() }
+    // Reuse the existing local lease observer; this does not fetch inventory or
+    // authorize/decrypt any retained context when the native hint changes.
+    const timer = window.setInterval(() => {
+      const currentOnline = navigator.onLine
+      const reconnected = currentOnline && !observedOnline
+      observedOnline = currentOnline; setOnline(currentOnline)
+      if (reconnected) withdraw()
+      if (handle.current && !handle.current.active()) withdraw()
+    }, 1000)
     window.addEventListener('online', changed); window.addEventListener('offline', changed); window.addEventListener('pagehide', withdraw); document.addEventListener('visibilitychange', hidden)
-    return () => { c.abort(); handle.current?.close(); handle.current = null; window.clearInterval(timer); window.removeEventListener('online', changed); window.removeEventListener('offline', changed); window.removeEventListener('pagehide', withdraw); document.removeEventListener('visibilitychange', hidden) }
+    return () => { closeScope(c); window.clearInterval(timer); window.removeEventListener('online', changed); window.removeEventListener('offline', changed); window.removeEventListener('pagehide', withdraw); document.removeEventListener('visibilitychange', hidden) }
   }, [job, vessel])
-  async function work(action: () => Promise<void>) {
-    const c = scope.current; setBusy(true)
-    try { await action() }
+  async function work(action: (current: () => boolean) => Promise<void>) {
+    // A new signal is created only by a fresh explicit user action.
+    if (scope.current.signal.aborted) scope.current = new AbortController()
+    const c = scope.current, operation = ++generation.current
+    const current = () => !c.signal.aborted && operation === generation.current
+    setBusy(true)
+    try { await action(current) }
     catch (e) {
-      if (c.signal.aborted) return
+      if (!current()) return
       if (e instanceof ApiError && [401, 403, 404].includes(e.status)) {
         handle.current?.close(); handle.current = null; setApp(null); setPending([]); setConflict(null); setStart(''); setEnd(''); setState('denied')
       } else setState(e instanceof Error && e.message === 'key_lost_data_retained' ? 'keyLost' : 'uncertain')
-    } finally { if (!c.signal.aborted) setBusy(false) }
+    } finally { if (current()) setBusy(false) }
   }
-  async function authorize() {
+  async function authorize(current: () => boolean) {
     const c = scope.current
     handle.current?.close(); handle.current = null; setApp(null); setPending([]); setConflict(null)
     await prepareOfflineShell(c.signal)
+    if (!current()) return
     const next = await TugOfflineApplication.authorize(job, vessel, enrollment || null, c.signal)
-    if (c.signal.aborted) { next.close(); return }
-    const rows = await next.captures(); if (c.signal.aborted) { next.close(); return }
+    if (!current()) { next.close(); return }
+    let rows: TugPending[]
+    try { rows = await next.captures() } catch (error) { next.close(); throw error }
+    if (!current()) { next.close(); return }
     handle.current = next; setApp(next); setEnrollment(next.context.id); setPending(rows)
     setStart(next.context.plannedStart?.slice(0, 19) ?? ''); setEnd(next.context.plannedEnd?.slice(0, 19) ?? ''); setDirty(false); setState('active')
   }
@@ -61,22 +82,22 @@ export function TugOfflinePanel({ job, vessel, language, onDirty }: { job: strin
     <p role="status">{state === 'active' ? (en ? 'Enrolled encrypted device capture available' : 'Kayıtlı cihazda şifreli yakalama kullanılabilir') : state === 'denied' ? (en ? 'Current access denied; encrypted data retained locked' : 'Güncel erişim reddedildi; şifreli veri kilitli korundu') : state === 'uncertain' ? (en ? 'Outcome uncertain. Retained captures must be retried exactly or reviewed after reauthorization.' : 'Sonuç belirsiz. Korunan kayıtları aynen yineleyin veya yeniden yetkilendirmeden sonra inceleyin.') : (en ? 'Locked. Online authorization required after restart.' : 'Kilitli. Yeniden başlatma sonrası çevrimiçi yetkilendirme gerekir.')}</p>
     {!app && <><label>{en ? 'Recover enrollment' : 'Cihaz kaydını kurtar'}<select value={enrollment} disabled={busy} onChange={e => setEnrollment(e.target.value)}><option value="">{en ? 'New device enrollment' : 'Yeni cihaz kaydı'}</option>{inventory.filter(e => !e.revokedAt).map(e => <option key={e.id} value={e.id}>{e.id}</option>)}</select></label>
       <button disabled={busy || !online} onClick={() => void work(authorize)}>{en ? 'Authorize encrypted capture' : 'Şifreli yakalamayı yetkilendir'}</button>
-      {state === 'keyLost' && <><p role="alert">{en ? 'Device key unavailable. Encrypted captures remain locked; no replacement key is created.' : 'Cihaz anahtarı kullanılamıyor. Şifreli kayıtlar kilitli kalır; yerine yeni anahtar oluşturulmaz.'}</p><button disabled={busy || !online || !enrollment} onClick={() => void work(async () => { await reportTugLostKey(job, vessel, enrollment, scope.current.signal); setState('locked') })}>{en ? 'Report lost key' : 'Kayıp anahtarı bildir'}</button></>}
+      {state === 'keyLost' && <><p role="alert">{en ? 'Device key unavailable. Encrypted captures remain locked; no replacement key is created.' : 'Cihaz anahtarı kullanılamıyor. Şifreli kayıtlar kilitli kalır; yerine yeni anahtar oluşturulmaz.'}</p><button disabled={busy || !online || !enrollment} onClick={() => void work(async current => { await reportTugLostKey(job, vessel, enrollment, scope.current.signal); if (current()) setState('locked') })}>{en ? 'Report lost key' : 'Kayıp anahtarı bildir'}</button></>}
     </>}
-    {app && <><form onSubmit={e => { e.preventDefault(); void work(async () => { setPending(await app.capture({ plannedStart: iso(start), plannedEnd: iso(end) })); setDirty(false); setState('active') }) }}>
+    {app && <><form onSubmit={e => { e.preventDefault(); void work(async current => { const rows = await app.capture({ plannedStart: iso(start), plannedEnd: iso(end) }); if (current()) { setPending(rows); setDirty(false); setState('active') } }) }}>
       <fieldset disabled={busy}><label>{en ? 'Offline planned start (UTC)' : 'Çevrimdışı planlanan başlangıç (UTC)'}<input type="datetime-local" step="1" value={start} onChange={e => { setStart(e.target.value); setDirty(true) }} /></label>
         <label>{en ? 'Offline planned end (UTC)' : 'Çevrimdışı planlanan bitiş (UTC)'}<input type="datetime-local" step="1" value={end} onChange={e => { setEnd(e.target.value); setDirty(true) }} /></label></fieldset>
       <button disabled={busy}>{en ? 'Capture encrypted draft' : 'Şifreli taslağı yakala'}</button></form>
       {pending.length === 0 && <p>{en ? 'No device captures' : 'Cihaz kaydı yok'}</p>}
       <ol>{pending.map(p => <li key={p.commandId}>{p.commandId} · {p.outcome?.result === 'Committed' ? (en ? 'Committed' : 'Kaydedildi') : p.outcome ? (en ? 'Material conflict' : 'Maddi çatışma') : (en ? 'Encrypted capture; not committed' : 'Şifreli yakalama; kaydedilmedi')}
-        <button disabled={busy || !online} onClick={() => void work(async () => { await app.replay(p, scope.current.signal); if (!scope.current.signal.aborted) { setPending(await app.captures()); setState('active') } })}>{en ? 'Replay exact capture' : 'Aynı yakalamayı gönder'}</button>
-        {p.outcome?.result === 'MaterialConflict' && <button disabled={busy} onClick={() => void work(async () => { const v = await app.conflict(p.commandId, scope.current.signal); if (!scope.current.signal.aborted) setConflict(v) })}>{en ? 'Review conflict' : 'Çatışmayı incele'}</button>}
+        <button disabled={busy || !online} onClick={() => void work(async current => { await app.replay(p, scope.current.signal); if (!current()) return; const rows = await app.captures(); if (current()) { setPending(rows); setState('active') } })}>{en ? 'Replay exact capture' : 'Aynı yakalamayı gönder'}</button>
+        {p.outcome?.result === 'MaterialConflict' && <button disabled={busy} onClick={() => void work(async current => { const v = await app.conflict(p.commandId, scope.current.signal); if (current()) setConflict(v) })}>{en ? 'Review conflict' : 'Çatışmayı incele'}</button>}
       </li>)}</ol>
       {conflict && <article aria-label={en ? 'Window conflict review' : 'Zaman çatışması incelemesi'}><p>{en ? 'Base / captured / current server' : 'Temel / yakalanan / güncel sunucu'}</p>{[conflict.base, conflict.captured, conflict.server].map((v, i) => <p key={i}>{v.plannedStart ?? '—'} / {v.plannedEnd ?? '—'}</p>)}
-        {(['keepServer', 'useCaptured'] as const).filter(c => conflict.choices.includes(c)).map(choice => <button key={choice} disabled={busy} onClick={() => void work(async () => { setPending(await app.capture(choice === 'keepServer' ? conflict.server : conflict.captured, { conflict, choice })); setConflict(null) })}>{choice === 'keepServer' ? (en ? 'Retain current server times' : 'Güncel sunucu zamanlarını koru') : (en ? 'Propose captured times with reason' : 'Yakalanan zamanları gerekçeyle öner')}</button>)}
+        {(['keepServer', 'useCaptured'] as const).filter(c => conflict.choices.includes(c)).map(choice => <button key={choice} disabled={busy} onClick={() => void work(async current => { const rows = await app.capture(choice === 'keepServer' ? conflict.server : conflict.captured, { conflict, choice }); if (current()) { setPending(rows); setConflict(null) } })}>{choice === 'keepServer' ? (en ? 'Retain current server times' : 'Güncel sunucu zamanlarını koru') : (en ? 'Propose captured times with reason' : 'Yakalanan zamanları gerekçeyle öner')}</button>)}
       </article>}
-      <button disabled={busy} onClick={() => void work(async () => { await app.lifecycle('revoke', scope.current.signal); setApp(null); setPending([]); setConflict(null); setStart(''); setEnd(''); setState('locked') })}>{en ? 'Revoke device capture' : 'Cihaz yakalama yetkisini geri çek'}</button>
-      <button disabled={busy} onClick={() => { app.close(); handle.current = null; setApp(null); setPending([]); setConflict(null); setStart(''); setEnd(''); setState('locked') }}>{en ? 'Lock retained captures' : 'Korunan kayıtları kilitle'}</button>
+      <button disabled={busy} onClick={() => void work(async current => { await app.lifecycle('revoke', scope.current.signal); if (current()) { handle.current = null; setApp(null); setPending([]); setConflict(null); setStart(''); setEnd(''); setState('locked') } })}>{en ? 'Revoke device capture' : 'Cihaz yakalama yetkisini geri çek'}</button>
+      <button disabled={busy} onClick={() => { generation.current++; scope.current.abort(); app.close(); handle.current = null; setApp(null); setPending([]); setConflict(null); setStart(''); setEnd(''); setState('locked') }}>{en ? 'Lock retained captures' : 'Korunan kayıtları kilitle'}</button>
     </>}
   </section>
 }

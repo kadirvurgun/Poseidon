@@ -6,7 +6,8 @@ import { WorkspaceSearch } from './WorkspaceSearch'
 const item = { key: '10000000-0000-0000-0000-000000000001', href: '/app/fleet/10000000-0000-0000-0000-000000000001', label: 'Synthetic Tug', kind: 'Tug' }
 const page = (items: typeof item[] = [], offset = 0, hasMore = false) => ({ items, offset, limit: 25, hasMore })
 const reply = (body: unknown, status = 200) => ({ ok: status === 200, status, json: async () => body }) as Response
-const props = () => ({ language: 'en' as const, onNavigate: vi.fn(), onClose: vi.fn() })
+const grant = {}
+const props = () => ({ authorization: 'allowed' as const, grant, onRetryAuthorization: vi.fn(), language: 'en' as const, onNavigate: vi.fn(), onClose: vi.fn() })
 describe('NAV-02/05 authorized search UI, mocked API', () => {
   it('encodes bounded input and pages on the server before selecting an implemented result', async () => {
     const fetch = vi.fn(async (url: string) => reply(page(Array.from({ length: 25 }, (_, i) => ({ ...item, key: `10000000-0000-0000-0000-${String(i + 1).padStart(12, '0')}`, href: `/app/fleet/10000000-0000-0000-0000-${String(i + 1).padStart(12, '0')}`, label: i === 0 ? item.label : `Synthetic ${i}` })), url.includes('offset=25') ? 25 : 0, true))); vi.stubGlobal('fetch', fetch)

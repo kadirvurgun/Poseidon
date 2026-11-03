@@ -69,6 +69,6 @@ function RoleNavigation({ session, vessel = null, language, onNavigate, onSearch
         <button type="button" onClick={() => onNavigate(vessel ? `/app/fleet/${vessel}` : '/app/fleet')}>{en ? 'Vessel context' : 'Araç bağlamı'}</button>
         {data.canSearch && !embedded && <button type="button" onClick={() => { onSearchOpen?.(); showSearch(session) }}>{en ? 'Search workspace' : 'Çalışma alanında ara'}</button>}
       </>}
-    {search && search === session && createPortal(<WorkspaceSearch language={language} onClose={() => showSearch(null)} onNavigate={href => onNavigate(href, () => showSearch(null))} />, document.querySelector('.product-shell') ?? document.body)}
+    {search && search === session && createPortal(<WorkspaceSearch language={language} authorization={data ? (data.canSearch ? 'allowed' : 'denied') : error ? 'unavailable' : 'pending'} grant={data?.canSearch ? result : null} onRetryAuthorization={() => { setResult(null); retry(x => x + 1) }} onClose={() => showSearch(null)} onNavigate={href => onNavigate(href, () => showSearch(null))} />, document.querySelector('.product-shell') ?? document.body)}
   </section>
 }

@@ -49,6 +49,82 @@ describe('OFFLINE-APPLICATION-01 real workspace consumer (AUTHORED / NOT RUN)', 
     await screen.findByRole('option', { name: 'Retained context 1' }); await userEvent.selectOptions(screen.getByLabelText('Offline context'), enrollment)
     await authorize(); expect(mock.authorize).toHaveBeenCalledWith(vessel, assignment, enrollment, expect.any(AbortSignal))
   })
+  it('enables explicit recovery after offline bootstrap when the native hint changes without an event', async () => {
+    // Only the native-hint observer is advanced manually. RTL/userEvent drain
+    // asynchronous work with real timeouts, independently of this interval.
+    vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] })
+    let view: ReturnType<typeof render> | undefined
+    try {
+      Object.defineProperty(navigator, 'onLine', { configurable: true, value: false })
+      mock.inventory.mockResolvedValue({ items: [{ id: enrollment, revokedAt: null, expiresAt: '2026-11-02T00:00:00Z', policyVersion: 'synthetic' }] })
+      const user = userEvent.setup()
+      view = render(<OfflineApplicationPanel {...props} />)
+      const find = screen.getByRole('button', { name: 'Find retained contexts' })
+      const recover = screen.getByRole('button', { name: 'Authorize / renew / recover' })
+      expect(find).toBeDisabled(); expect(recover).toBeDisabled()
+      Object.defineProperty(navigator, 'onLine', { configurable: true, value: true })
+      // Deliberately no online event: this reproduces the real restarted document.
+      act(() => { vi.advanceTimersByTime(1000) })
+      expect(find).toBeEnabled(); expect(recover).toBeEnabled()
+      expect(mock.inventory).not.toHaveBeenCalled(); expect(mock.authorize).not.toHaveBeenCalled()
+      expect(mock.shell).not.toHaveBeenCalled(); expect(app.snapshot).not.toHaveBeenCalled()
+      expect(screen.queryByRole('button', { name: 'Capture encrypted draft' })).not.toBeInTheDocument()
+      await user.click(find)
+      await screen.findByRole('option', { name: 'Retained context 1' })
+      expect(mock.inventory).toHaveBeenCalledWith(vessel, assignment, expect.any(AbortSignal))
+      expect(mock.authorize).not.toHaveBeenCalled(); expect(app.snapshot).not.toHaveBeenCalled()
+      await user.selectOptions(screen.getByRole('combobox', { name: 'Offline context' }), enrollment)
+      await user.click(recover)
+      await screen.findByText('Encrypted capture available for this authorization.')
+      expect(mock.authorize).toHaveBeenCalledWith(vessel, assignment, enrollment, expect.any(AbortSignal))
+      expect(mock.authorize).toHaveBeenCalledOnce()
+      view.unmount(); view = undefined
+      expect(vi.getTimerCount()).toBe(0)
+    } finally { view?.unmount(); vi.useRealTimers() }
+  })
+  it('withdraws once on an eventless reconnect and preserves online handles between native events', async () => {
+    vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] })
+    let view: ReturnType<typeof render> | undefined
+    try {
+      app.captures.mockResolvedValue([pending])
+      const user = userEvent.setup()
+      view = render(<OfflineApplicationPanel {...props} />)
+      const recover = screen.getByRole('button', { name: 'Authorize / renew / recover' })
+      await user.click(recover)
+      await screen.findByText('Encrypted capture available for this authorization.')
+      const reads = app.snapshot.mock.calls.length
+      act(() => { vi.advanceTimersByTime(3000) })
+      expect(app.close).not.toHaveBeenCalled(); expect(app.snapshot).toHaveBeenCalledTimes(reads)
+      expect(mock.authorize).toHaveBeenCalledOnce(); expect(mock.inventory).not.toHaveBeenCalled()
+      Object.defineProperty(navigator, 'onLine', { configurable: true, value: false })
+      act(() => { vi.advanceTimersByTime(1000) })
+      expect(app.close).not.toHaveBeenCalled()
+      expect(screen.getByRole('button', { name: 'Capture encrypted draft' })).toBeEnabled()
+      expect(screen.getByRole('button', { name: 'Replay / check original outcome' })).toBeDisabled()
+      await user.click(screen.getByRole('button', { name: 'Capture encrypted draft' }))
+      expect(app.capture).toHaveBeenCalledWith(null)
+      Object.defineProperty(navigator, 'onLine', { configurable: true, value: true })
+      act(() => { vi.advanceTimersByTime(1000) })
+      expect(app.close).toHaveBeenCalledOnce()
+      expect(screen.queryByRole('button', { name: 'Capture encrypted draft' })).not.toBeInTheDocument()
+      expect(mock.authorize).toHaveBeenCalledOnce(); expect(mock.inventory).not.toHaveBeenCalled()
+      expect(app.snapshot).toHaveBeenCalledTimes(reads)
+      act(() => { vi.advanceTimersByTime(3000) })
+      expect(app.close).toHaveBeenCalledOnce(); expect(mock.authorize).toHaveBeenCalledOnce()
+      await user.click(recover)
+      await screen.findByText('Encrypted capture available for this authorization.')
+      expect(mock.authorize).toHaveBeenCalledTimes(2)
+      act(() => { vi.advanceTimersByTime(3000) })
+      expect(app.close).toHaveBeenCalledOnce()
+      // Unlike local same-value polling, an explicit online event still locks.
+      act(() => { fireEvent(window, new Event('online')) })
+      expect(app.close).toHaveBeenCalledTimes(2)
+      expect(screen.queryByRole('button', { name: 'Capture encrypted draft' })).not.toBeInTheDocument()
+      expect(mock.authorize).toHaveBeenCalledTimes(2); expect(app.discard).not.toHaveBeenCalled()
+      view.unmount(); view = undefined
+      expect(vi.getTimerCount()).toBe(0)
+    } finally { view?.unmount(); vi.useRealTimers() }
+  })
   it('retains the exact uncertain command and retries it without creating another capture', async () => {
     app.captures.mockResolvedValue([pending]); app.replay.mockRejectedValueOnce(new Error('network')).mockResolvedValueOnce({ result: 'Committed' })
     render(<OfflineApplicationPanel {...props} />); await authorize()

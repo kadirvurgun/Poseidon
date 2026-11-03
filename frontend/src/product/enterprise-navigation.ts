@@ -23,17 +23,18 @@ export function decodeEnterpriseNavigation(value: unknown): { destinations: Ente
 export function useEnterpriseNavigation(session: Session | null) {
   const epoch = useWorkspaceRevalidation()
   const [attempt, retry] = useState(0)
-  const [state, setState] = useState<{ owner: Session; epoch: number; destinations: EnterpriseDestination[]; canSearch: boolean; failed?: boolean } | null>(null)
+  const [state, setState] = useState<{ owner: Session; epoch: number; attempt: number; destinations: EnterpriseDestination[]; canSearch: boolean; failed?: boolean } | null>(null)
   useEffect(() => {
     if (!session?.authenticated || !session.canRead) return
     const controller = new AbortController(); let active = true
     const timer = setTimeout(() => controller.abort(), 10000)
     request<unknown>('workspace', controller.signal).then(decodeEnterpriseNavigation).then(value => {
-      if (active) setState({ owner: session, epoch, ...value })
-    }).catch(() => { if (active) setState({ owner: session, epoch, destinations: [], canSearch: false, failed: true }) })
+      if (active) setState({ owner: session, epoch, attempt, ...value })
+    }).catch(() => { if (active) setState({ owner: session, epoch, attempt, destinations: [], canSearch: false, failed: true }) })
     return () => { active = false; controller.abort(); clearTimeout(timer) }
   }, [session, epoch, attempt])
-  const current = state?.owner === session && state.epoch === epoch ? state : null
+  const current = state?.owner === session && state.epoch === epoch && state.attempt === attempt ? state : null
   return { destinations: current?.destinations ?? [], canSearch: current?.canSearch ?? false,
+    searchGrant: current?.canSearch && !current.failed ? current : null,
     epoch, loading: !!session?.authenticated && session.canRead && !current, failed: current?.failed ?? false, retry: () => retry(n => n + 1) }
 }

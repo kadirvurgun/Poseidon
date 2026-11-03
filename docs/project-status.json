@@ -1114,7 +1114,7 @@
     "verification_record_scope": "Authored/deferred and original20f1198 results are historical;current rejection-repair evidence in core_bundle_01.verification"
   },
   "baseline": "POSEIDON v46.3 updated 2026-10-30 / Library26 candidate",
-  "current_stage": "S0 combined verification; confined Windows browser-profile ACL repair locally validated; next clean-target CI and full122 pending",
+  "current_stage": "S0 local repairs complete; clean final implementation/CI/fresh122 and independent exit gate pending",
   "method": "accepted story points / total baseline story points * 100",
   "scope": "complete v46.3 Backlog sheet; duplicates in other sheets excluded",
   "total_tasks": 121,
@@ -3495,14 +3495,14 @@
   ],
   "active_source": "docs/sources/active.json",
   "current_package": {
-    "task": "TUG-CREW-COMPOSITION-01",
+    "task": "S0-OVERNIGHT-20261102",
     "branch": "foundation/current-tug-today-20261102",
-    "baseline": "610074e",
-    "state": "AUTHORED_UNVERIFIED",
-    "report": "docs/phases/TUG-CREW-COMPOSITION-01.md",
+    "baseline": "610074ef920b78da55cb68daa30e62e8d0b17766",
+    "state": "READY_FOR_CLEAN_TARGET_VERIFICATION",
+    "report": "docs/phases/S0-OVERNIGHT-20261102.md",
     "canonical_acceptance_changed": false,
-    "publication": "No push/PR/merge; larger bundle continues",
-    "next_step": "Continue remaining source-dependent foundation software in the same larger bundle; one integrated gate before PR, then independent exact-target QA and required CI"
+    "publication": "Four implementation push CI runs SUCCESS; no PR/merge",
+    "next_step": "Freeze clean F, required CI and fresh all122; independent exact-target source/engineering/P0 and authentic52-receipt exit gate"
   },
   "nav_workspace_01": {
     "status": "locally_validated_awaiting_independent_qa",
@@ -4504,7 +4504,7 @@
     "initial_candidate_commit": "d0e6d0dbc2c2b5d3873d46ea4a405e176e772e3e",
     "initial_candidate_tree": "b4c3876080a77c7fb17dc9b63b0c84351c0bad1b",
     "initial_qa": "REJECTED_FOR_ACCEPTANCE_ON_THIS_TARGET; actual failures retained",
-    "current_target": "Latest cleanD CI41537366424 all4SUCCESS; subsequent test-only confined profile ACL repair17unit/originaloffline case locallyPASS, next clean target and fresh122 pending",
+    "current_target": "F local source-backed repairs complete, frontend954 and final sixTug diagnosticsPASS; clean exact-target validation pending",
     "verification": {
       "python": "355/355 PASS on initial clean candidate",
       "source_definitions": "6 PASS_DEFINITION_ONLY, not acceptance",
@@ -4527,17 +4527,18 @@
       "legacy_fixture_isolation": "Actual14/14unit+1/1PostgreSQL and7 guarded CLI outcomes PASS; Test-only isolated fixture identifiers; no seeded verified safety evidence",
       "mobile_navigation_repair": "Later dirty CSS stacking fix: actual production build PASS and real pointer/keyboard2/2 desktop/mobile regression PASS; fresh exact-target CI pending",
       "required_ci": {
-        "commit": "52a2ccfdcbc263f43bda149d1baa7843967d684a",
-        "tree": "530738845efeeaee1794e9ca508d9a39204fdfb5",
-        "run": 41537366424,
-        "url": "https://github.com/kadirvurgun/Poseidon/actions/runs/41537366424",
+        "commit": "e29346642fb09f4cdddeff61846c1a4428179cb4",
+        "tree": "2a24504364ba16c3a6776f373bcf0f9ad0cee914",
+        "run": 41546921401,
+        "url": "https://github.com/kadirvurgun/Poseidon/actions/runs/41546921401",
         "conclusion": "SUCCESS",
         "jobs": "4/4SUCCESS",
-        "api_integration": "547/547PASS;0fail/skip;734.937s",
-        "api_unit": "91/91PASS;0fail/skip;3.073s",
-        "python": "355 native tests",
-        "ordinary_browser": "50 planned/50 passed native cases",
+        "api_integration": "547/547PASS;0fail/skip;845.465s",
+        "api_unit": "91/91PASS;0fail/skip;3.419s",
+        "python": "372 native tests",
+        "ordinary_browser": "50 planned/50 passed",
         "other_native_counts": "UNAVAILABLE_NOT_INFERRED",
+        "required_commands": 19,
         "published_artifacts": 2,
         "raw_logs_persisted": false
       },
@@ -4565,6 +4566,21 @@
           "python": "355 native tests",
           "ordinary_browser": "50 planned/50 passed native cases",
           "other_native_counts": "UNAVAILABLE_NOT_INFERRED",
+          "raw_logs_persisted": false
+        },
+        {
+          "commit": "52a2ccfdcbc263f43bda149d1baa7843967d684a",
+          "tree": "530738845efeeaee1794e9ca508d9a39204fdfb5",
+          "run": 41537366424,
+          "url": "https://github.com/kadirvurgun/Poseidon/actions/runs/41537366424",
+          "conclusion": "SUCCESS",
+          "jobs": "4/4SUCCESS",
+          "api_integration": "547/547PASS;0fail/skip;734.937s",
+          "api_unit": "91/91PASS;0fail/skip;3.073s",
+          "python": "355 native tests",
+          "ordinary_browser": "50 planned/50 passed native cases",
+          "other_native_counts": "UNAVAILABLE_NOT_INFERRED",
+          "published_artifacts": 2,
           "raw_logs_persisted": false
         }
       ],
@@ -4598,8 +4614,65 @@
         "unit": "Actual17/17PASS0fail/skip,.835s; includes realWindowsjunction, externalhardlink, wrongowner/nonempty/pathescape/broadACL/readback/racemarker negatives",
         "original_case": "Actual protected-medical offline case PASS onDproductbits+dirtyhelper; enroll200/keybind200; nativeIDB14open/33transactions0errors; actualSWactivated; original offline/privacy/reconnect/conflict assertions retained; browser startedbeforefinalhardlinkguardedit, native-recoverydiagnosisonly; finalguardbytesrequirefreshE122",
         "scope_limit": "Local narrow repair evidence only; no partial122 reuse or phase acceptance; new clean-target full122/CI pending"
+      },
+      "signed_final_E": {
+        "status": "CLOSED_INCOMPLETE",
+        "passed": 47,
+        "failed": 1,
+        "pending": 74,
+        "previous_diagnostic_reused": false
+      },
+      "signed_remaining_E_diagnostic": {
+        "scope": "SEPARATE_DIAGNOSTIC_NOT_ACCEPTANCE",
+        "planned": 74,
+        "completed": 72,
+        "passed": 45,
+        "failed": 27,
+        "infrastructure_pending": 2,
+        "previous_diagnostic_reused": false
+      },
+      "frontend_F_dirty": {
+        "scope": "LOCAL_DIRTY_REPAIR_NOT_ACCEPTANCE",
+        "build": "PASS",
+        "lint_errors": 0,
+        "lint_warnings": 0,
+        "total": 954,
+        "passed": 954,
+        "failed": 0,
+        "pending": 0,
+        "todo": 0,
+        "unhandled_errors": 0,
+        "module_errors": 0,
+        "source_stable": true,
+        "narrow_passed": 20,
+        "first_failure_retained": "954total/949PASS/5FAIL; buildTS2769 and lintwarning retained"
+      },
+      "signed_F_affected32": {
+        "scope": "CLOSED_DIAGNOSTIC_NOT_ACCEPTANCE",
+        "executed": 32,
+        "passed": 24,
+        "failed": 8,
+        "pending": 0,
+        "cause": "Two obsolete exact Stay labels; native Keepediting preserves draft; failure history retained"
+      },
+      "signed_F_tug8": {
+        "scope": "CLOSED_DIAGNOSTIC_NOT_ACCEPTANCE",
+        "executed": 8,
+        "passed": 2,
+        "failed": 6,
+        "pending": 0,
+        "cause": "Historical article selector ambiguous with newly composed crew evidence; exact historical name preserves same revision/reference assertion"
+      },
+      "signed_F_tug6": {
+        "scope": "CLOSED_DIAGNOSTIC_NOT_ACCEPTANCE",
+        "executed": 6,
+        "passed": 6,
+        "failed": 0,
+        "pending": 0,
+        "retries": 0,
+        "previous_results_reused": false
       }
     },
-    "next": "Freeze confined test-profile repair; new required CI and fresh122allPENDING; genuine independent task/P0 decisions and exit gate; canonical acceptance only after successful gate"
+    "next": "New clean F required CI/fresh122/baselineTLS; independent P0 and literal13 task decisions; authentic52receipts/exit gate before canonical acceptance"
   }
 }

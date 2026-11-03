@@ -29,11 +29,11 @@ export function EnterpriseChrome({ session, vessel = null, language, onLanguageC
   drawer: controlledDrawer, onDrawerChange, parentManagesFocus = false }: Props) {
   const en = language === 'en'; const navigation = useEnterpriseNavigation(session)
   const [localDrawer, setLocalDrawer] = useState(false)
-  const [searchOwner, setSearchOwner] = useState<{ owner: Session; epoch: number } | null>(null)
+  const [searchOwner, setSearchOwner] = useState<{ owner: Session } | null>(null)
   const menuButton = useRef<HTMLButtonElement>(null)
   const drawer = controlledDrawer ?? localDrawer
   const setDrawer = (open: boolean) => { setLocalDrawer(open); onDrawerChange?.(open) }
-  const searchOpen = searchOwner !== null && searchOwner.owner === session && searchOwner.epoch === navigation.epoch && navigation.canSearch
+  const searchOpen = searchOwner !== null && searchOwner.owner === session && !!session?.authenticated && session.canRead
   const move = (href: string, committed?: () => void) => { setDrawer(false); onNavigate(href, () => { setSearchOwner(null); committed?.() }) }
   useEffect(() => {
     if (!drawer || parentManagesFocus) return
@@ -56,7 +56,7 @@ export function EnterpriseChrome({ session, vessel = null, language, onLanguageC
   useEffect(() => {
     const key = (event: KeyboardEvent) => {
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k' && navigation.canSearch && session) {
-        event.preventDefault(); setLocalDrawer(false); onDrawerChange?.(false); setSearchOwner({ owner: session, epoch: navigation.epoch })
+        event.preventDefault(); setLocalDrawer(false); onDrawerChange?.(false); setSearchOwner({ owner: session })
       }
     }
     window.addEventListener('keydown', key); return () => window.removeEventListener('keydown', key)
@@ -70,7 +70,7 @@ export function EnterpriseChrome({ session, vessel = null, language, onLanguageC
       <Button ref={menuButton} variant="ghost" size="icon" className="workspace-menu" aria-expanded={drawer} aria-controls="workspace-navigation" aria-label={en ? 'Menu' : 'Menü'} onClick={() => setDrawer(!drawer)}><Menu /></Button>
       <div className="enterprise-breadcrumb">{vessel && <Button variant="ghost" size="icon-sm" asChild><a href={`/app/fleet/${vessel}`} aria-label={en ? 'Back to vessel' : 'Araca dön'} onClick={event => { event.preventDefault(); move(`/app/fleet/${vessel}`) }}><ArrowLeft aria-hidden="true" /></a></Button>}<span>POSEIDON</span><ChevronRight aria-hidden="true" /><strong>{title}</strong></div>
       <div className="enterprise-topbar-actions">
-        {navigation.canSearch && <Button variant="outline" className="enterprise-search-trigger" onClick={() => { if (session) setSearchOwner({ owner: session, epoch: navigation.epoch }) }}><Search /><span>{en ? 'Search workspace' : 'Çalışma alanında ara'}</span><kbd>⌘ / Ctrl K</kbd></Button>}
+        {navigation.canSearch && <Button variant="outline" className="enterprise-search-trigger" aria-label={en ? 'Search workspace' : 'Çalışma alanında ara'} onClick={() => { if (session) setSearchOwner({ owner: session }) }}><Search /><span>{en ? 'Search workspace' : 'Çalışma alanında ara'}</span><kbd>⌘ / Ctrl K</kbd></Button>}
         <div className="languages" role="group" aria-label={en ? 'Language' : 'Dil'}><button aria-pressed={!en} onClick={() => onLanguageChange('tr')}>TR</button><button aria-pressed={en} onClick={() => onLanguageChange('en')}>EN</button></div>
       </div>
       <WorkspaceContextBar session={session} vessel={vessel} language={language} />
@@ -92,6 +92,6 @@ export function EnterpriseChrome({ session, vessel = null, language, onLanguageC
       </div>
       <div className="enterprise-sidebar-footer"><span className="enterprise-workspace-avatar">{session?.tenantName?.slice(0, 2).toLocaleUpperCase(language) ?? 'PO'}</span><div><strong>{session?.tenantName ?? (en ? 'Maritime workspace' : 'Denizcilik çalışma alanı')}</strong><span>{session?.authenticated ? (en ? 'Authorized workspace' : 'Yetkili çalışma alanı') : (en ? 'Secure workspace sign-in' : 'Güvenli çalışma alanı girişi')}</span></div><ArrowUpRight aria-hidden="true" /></div>
     </nav>
-    {searchOpen && createPortal(<WorkspaceSearch language={language} onClose={() => setSearchOwner(null)} onNavigate={href => move(href, () => setSearchOwner(null))} />, document.querySelector('.product-shell') ?? document.body)}
+    {searchOpen && createPortal(<WorkspaceSearch language={language} authorization={navigation.loading ? 'pending' : navigation.failed ? 'unavailable' : navigation.canSearch ? 'allowed' : 'denied'} grant={navigation.searchGrant} onRetryAuthorization={navigation.retry} onClose={() => setSearchOwner(null)} onNavigate={href => move(href, () => setSearchOwner(null))} />, document.querySelector('.product-shell') ?? document.body)}
   </>
 }

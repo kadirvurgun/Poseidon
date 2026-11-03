@@ -14,6 +14,24 @@ const keys = (v: Record<string, unknown>, names: string[]) => Object.keys(v).len
 const integer = (v: unknown, min = 0): v is number => typeof v === 'number' && Number.isSafeInteger(v) && v >= min
 const nullableGuid = (v: unknown) => v === null || isGuid(v)
 const revision = (v: unknown) => v === null || integer(v, 1)
+// Metadata emitted by ActorResolver's closed permission filter through
+// TrustedActor.AuditCapabilities (FoundationIdentity.cs), not client authority.
+const auditCapabilities = new Set([
+  'crew.catalog.govern', 'crew.assessment.read', 'regulatory.qualify', 'regulatory.facts.attest',
+  'human.trace.read', 'human.review.read', 'human.review.submit', 'human.verify', 'human.decide',
+  'control.read', 'control.write', 'control.owner.eligible', 'evidence.read', 'evidence.write',
+  'applicability.read', 'applicability.evaluate', 'rules.write', 'rules.review',
+  'import.legacy.convert', 'crew.identity.convert', 'crew.documents.read', 'crew.documents.write',
+  'crew.position.write', 'maintenance.observation.write', 'crew.assignment.declare', 'import.read', 'import.write',
+  'crew.certificate.read', 'crew.certificate.write', 'crew.profile.identity.read', 'crew.profile.identity.write',
+  'crew.profile.contact.read', 'crew.profile.contact.write', 'crew.profile.medical.read', 'crew.profile.medical.write',
+  'crew.profile.employment.read', 'crew.profile.employment.write', 'mode.tug', 'mode.cross',
+  'tug.read', 'tug.write', 'tug.plan.write', 'tug.owner.eligible', 'crew.read', 'crew.write',
+  'crew.identity.read', 'crew.identity.write', 'crew.history.read', 'directory.read', 'directory.write',
+  'workspace.search', 'regulatory.draft.read', 'regulatory.draft.write', 'audit.read', 'file.read', 'file.write',
+  'equipment.read', 'equipment.write', 'equipment.history.read', 'maintenance.read', 'maintenance.write',
+  'maintenance.history.read', 'maintenance.owner.eligible',
+])
 function invalid(): never { throw new ApiError(502, 'invalid_audit_contract') }
 export function changes(summary: string | null): Change[] {
   if (summary === null) return []
@@ -43,7 +61,7 @@ export function decodeAuditRecord(v: unknown): AuditRecord {
     typeof v.metadataStatus !== 'string' || !['Recorded', 'HistoricalMetadataUnavailable', 'CapabilityContextUnavailable'].includes(v.metadataStatus) ||
     !(v.correlationId === null || isGuid(v.correlationId) || typeof v.correlationId === 'string' && v.correlationId.length === 32 && /^[0-9a-f]{32}$/i.test(v.correlationId)) || !(v.changeSummary === null || typeof v.changeSummary === 'string' && v.changeSummary.length <= 2048) ||
     !(v.roleContext === null || typeof v.roleContext === 'string' && v.roleContext.length <= 600 && v.roleContext.split(',').length <= 16 && v.roleContext.split(',').every(isGuid) && new Set(v.roleContext.split(',')).size === v.roleContext.split(',').length) ||
-    !(v.capabilityContext === null || typeof v.capabilityContext === 'string' && v.capabilityContext.length <= 2048 && v.capabilityContext.split(',').every(p => ['import.legacy.convert', 'crew.identity.convert', 'crew.position.write', 'maintenance.observation.write', 'crew.assignment.declare', 'import.read', 'import.write', 'crew.certificate.read', 'crew.certificate.write', 'crew.profile.identity.read', 'crew.profile.identity.write', 'crew.profile.contact.read', 'crew.profile.contact.write', 'crew.profile.employment.read', 'crew.profile.employment.write', 'mode.tug', 'mode.cross', 'tug.read', 'tug.write', 'tug.plan.write', 'tug.owner.eligible', 'crew.read', 'crew.write', 'crew.identity.read', 'crew.identity.write', 'crew.history.read', 'directory.read', 'directory.write', 'workspace.search', 'regulatory.draft.read', 'regulatory.draft.write', 'audit.read', 'file.read', 'file.write', 'equipment.read', 'equipment.write', 'equipment.history.read', 'maintenance.read', 'maintenance.write', 'maintenance.history.read', 'maintenance.owner.eligible'].includes(p))) ||
+    !(v.capabilityContext === null || typeof v.capabilityContext === 'string' && v.capabilityContext.length <= 2048 && v.capabilityContext.split(',').every(p => auditCapabilities.has(p))) ||
     !(v.revisionHref === null || v.revisionHref === `/api/v1/audit/${v.id}/revision` && integer(v.afterRevision, 1) && isGuid(v.resourceId))) return invalid()
   changes(v.changeSummary as string | null)
   return v as AuditRecord

@@ -75,3 +75,37 @@ it('supports mobile menu focus containment, Escape dismissal and focus restorati
   await waitFor(() => expect(screen.queryByRole('dialog', { name: 'POSEIDON' })).not.toBeInTheDocument())
   expect(trigger).toHaveFocus(); expect(document.getElementById('test-main')?.inert).toBe(false)
 })
+
+
+it.each([
+  { language: 'en' as const, label: 'Search workspace' },
+  { language: 'tr' as const, label: 'Çalışma alanında ara' },
+])('keeps the $language icon-only search trigger named and usable by pointer and keyboard', async ({ language, label }) => {
+  vi.stubGlobal('fetch', vi.fn(async () => response(menu)))
+  const user = userEvent.setup()
+  // The actual narrow layout hides both text and shortcut. Force that same
+  // visibility rule because jsdom does not evaluate viewport media queries.
+  render(<><style>{'.enterprise-search-trigger > span, .enterprise-search-trigger > kbd { display: none; }'}</style>
+    <div className="product-shell enterprise-shell"><EnterpriseChrome {...props} language={language} /><main id="test-main" /></div></>)
+  const trigger = await screen.findByRole('button', { name: label })
+  expect(within(trigger).getByText(label)).not.toBeVisible()
+  expect(within(trigger).getByText('⌘ / Ctrl K')).not.toBeVisible()
+  expect(trigger).toHaveAccessibleName(label)
+  await user.click(trigger)
+  expect(screen.getByRole('dialog', { name: 'Workspace search' })).toBeVisible()
+  await user.click(screen.getByRole('button', { name: 'Close search' }))
+  trigger.focus(); await user.keyboard('{Enter}')
+  expect(screen.getByRole('dialog', { name: 'Workspace search' })).toBeVisible()
+  await user.click(screen.getByRole('button', { name: 'Close search' }))
+  await user.keyboard('{Control>}k{/Control}')
+  expect(screen.getByRole('dialog', { name: 'Workspace search' })).toBeVisible()
+})
+
+it('keeps icon-only search and its keyboard shortcut unavailable when the server denies search', async () => {
+  vi.stubGlobal('fetch', vi.fn(async () => response({ ...menu, canSearch: false })))
+  const user = userEvent.setup(); render(view())
+  await screen.findByRole('button', { name: 'Fleet' })
+  expect(screen.queryByRole('button', { name: 'Search workspace' })).not.toBeInTheDocument()
+  await user.keyboard('{Control>}k{/Control}')
+  expect(screen.queryByRole('dialog', { name: 'Workspace search' })).not.toBeInTheDocument()
+})
