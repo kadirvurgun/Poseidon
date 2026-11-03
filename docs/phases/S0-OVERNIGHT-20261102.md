@@ -1,3 +1,75 @@
+# S0-OVERNIGHT-20261102 — faz raporu — 03.11.2026
+
+**S0 mühendislik fazı %100: 13 iş / 53 SP kabul edildi. Genel proje kabulü 53 / 970 SP ile %5,46; ekran kabulü 0 / 196.**
+
+[Canonical durum](../../docs/project-status.json) · [F kanıtları](../../docs/evidence/s0-20261103-3ca49a3/)
+
+## Kapsam ve yüzdeler
+
+| Gösterge | Güncel kabul | Açıklama |
+|---|---:|---|
+| S0 |53 / 53 SP — %100|13 kaynak görevi / 53 SP; DEV-001..012 ve DEV-116.|
+| Genel proje |53 / 970 SP — %5,46|970 SP'lik özgün analiz backlog'u.|
+| Kabul edilen işler |13 / 121|121 iş; SP ana ilerleme ölçüsüdür.|
+| Kabul edilen ekranlar |0 / 196|Mevcut ürün ekranlarının ayrı canonical kabulü açık.|
+| Seçili foundation paketi |40 iş / 272 SP|Çalışma kapsamı; tamamlanma yüzdesi değildir.|
+
+Etkin baseline poseidon-v46.3-20261030; 121 iş, 970 SP, 196 ekran, 2.316 alan sözleşmesi. S0 özgün 18.01 Backlog satırları 2–13 ve 117, DEV-001..012 + DEV-116; DEV-012 bütün 001..011 bağımlılıklarını kapsar ve DEV-116 ayrıca zorunludur.
+
+## Geliştirilen davranış
+
+- React/shadcn tabanlı kurumsal çalışma kabuğu, yetkili menü/arama, TR/EN, taslak koruması, mobil etkileşim ve gerçek sayfa verilerinden ECharts özetleri geliştirildi.
+- Tug pano/detay ve Today/Why; talep/plan, bakım, kaynak/kanıt ve Crew minimum-rol ilişkilerini iş penceresine göre açıklıyor. Farklı kişiler ve çakışan roller ayrılıyor; UNKNOWN otomatik Ready olmuyor. Master kararı ayrı.
+- Korumalı belge/medikal verisi, immutable evidence ve audit, offline reconnect/replay/conflict/recovery sınırları korundu; olay gelmeyen bağlantı değişimi otomatik HTTP/authority/key recovery üretmiyor. Geç yetki yanıtları kapanıyor; arama aynı oturum niyetini taze yetkiyle bağlıyor.
+- Ortam sözleşmesi, üç ADR, core schema planı, threat/mitigation ve metric sözleşmeleri; 10 pilot capability / 149 alan zinciri, golden veri, DoR/DoD, 7 kategori / 9 candidate kaynak sorumluluk planı ve ERP integration-only sınırı kaynak/trace/dependency ile bağlandı.
+
+## Gerçek doğrulama
+
+| Kontrol | Gerçek sonuç | Kapsam |
+|---|---|---|
+| [F CI41560927341](https://github.com/kadirvurgun/Poseidon/actions/runs/41560927341) |4 / 4 iş SUCCESS; 19 gereken komut|Commit `3ca49a30976afd7bb6b63531523a36df646b82dd`, tree `b63ee9cfcf31f1ba28770984b4194020dea91c03`.|
+| API integration |547 / 547 PASS; 0 fail / skip; 791,336 sn|Exact F native CI artifact'ı.|
+| API unit |91 / 91 PASS; 0 fail / skip; 2,863 sn|Ayrı exact F native unit kapsamı.|
+| Python / ordinary browser |372 Python testi plain OK; ordinary 50 / 50|Ayrı native kapsamlar; signed 122 ile toplanmaz.|
+| Diğer MTP / Vitest CI toplamları |UNAVAILABLE|Gerekli komutlar başarılı; eski toplam veya bilinmeyen skip için sıfır varsayılmadı.|
+| Gerçek artifact nesneleri |2 development-build + 1 API-count artifact|3 gerçek kayıt; 2 build artifact'ı. Üretim yayını değildir.|
+| Taze signed regresyon |122 / 122 PASS; 0 fail / pending / skip|61 vaka × 2 Firefox projesi; 10 grup exit 0, identity/fingerprint farkı 0.|
+| Gerçek manager / restricted baseline |2 / 2 PASS; 25 sn|Ayrı fresh baseline; skip sayacı verilmedi, türetilmedi.|
+| Strict TLS |3 / 3 PASS; 0 fail / skip|Ayrı güvenli taşıma kapsamı.|
+| S0 definition |6 / 6 komut PASS_DEFINITION_ONLY|0 test vakası iddiası; kendi başına authority veya kabul değildir.|
+| Yerel frontend aynı-kaynak desteği |954 / 954 PASS; 0 fail / pending / todo / unhandled / module-error|Clean F ile exact kaynak eşitliği; yeni CI native toplamı veya yeni koşu sayılmaz.|
+| Yerel build / lint aynı-kaynak desteği |Build 20,904 sn PASS; lint 31,818 sn, 0 hata / uyarı|Kaynak eşitliğiyle sınırlı önceki yerel sonuç.|
+| Bağımsız current P0 |0 mevcut unresolved P0|Özgün S0 ve incelenen açık foundation yüzeyleriyle sınırlı; evrensel kusursuzluk/compliance iddiası değildir.|
+
+## Bağımsız kabul ve teknik adoption
+
+Gerçek exit gate [arşiv kaydı](../../docs/evidence/s0-20261103-3ca49a3/gate-result.json) tüm 13 işi / 53 SP'yi accepted=true, errors=[], pendingGates=[] ile kabul etti. 52 issued receipt byte SHA'sı ve bağımsız oturum provenance'ı bu kaydın parçasıdır. Tarihsel 8 SP'ye 45 SP eklendi. Bu kayıt uygulama F'nin kabulüdür; sonraki metadata A kendi head QA/CI kapısını geçecektir.
+
+Üç ADR, core schema, threat ve source-role planı exact F Git girdileriyle gerçek bağımsız teknik incelemeye bağlandı. Bu tasarım kabulü legal edition, live kişi ataması veya operasyonel safety/pilot onayı değildir.
+
+## Önceki bulguların korunması
+
+İlk F final denemesi 30 PASS / 0 case FAIL / 92 PENDING iken son Withdrawn Test catalog başlığı altında positions 0 nedeniyle fixture hazırlığında kapandı. Ürün eski kataloğa düşmeyerek doğru davrandı. Aynı grant/expiry/sourceRef sınırında ordinary draft + ayrı peer review/adopt komutlarıyla yeni synthetic/unverified position sürümü oluşturuldu; eski zincir korundu. MSMD owning r6 ve diğer beş owning r4 ordinary ve bağımsız sentetik actor komutlarıyla üretildi. Önceki 30 sonuç yeni koşuya taşınmadı. Son taze koşu 122 / 122 olarak kapandı. Son catalog yolculukları iki projede de gerçek Withdrawn durumunu bekledi; hazırlık successor'u üretim onayı veya kalıcı adopted katalog diye sunulmaz.
+
+D ve E eski kısmi koşuları, ilk F frontend 954 / 949 / 5 hatası, native profile ACL/reconnect ve oracle tanıları tarihsel dosyalarında korunur. Aynı testin tekrarları veya ortak koşunun kategori/görevlerce paylaşılması toplam test sayısını artırmaz. CI ham logları bellekte native özet için okunmuş; ham çıktı ve HTTP/DOM/credentials saklanmamıştır.
+
+## Açık dış ve sonraki kapılar
+
+D-STATE-01 / üretim state-map, gerçek Marine/Tug SME ve pilot onayları, authoritative legal edition / source aktivasyonu, operator privacy/retention/key-custody ve production deployment/release kararları OPEN kalır. Typed kaynak planı UNVERIFIED / OPEN / activationBlocked sınırındadır. Sentetik fixture komutları gerçek insan yeterliği, üretim kataloğu, permit veya emniyet onayı değildir. AI değerlendirmeleri ve production/pilot DR/restore/RPO-RTO/rollback kapıları kendi sonraki kaynak kriterleriyle kapanır. ERP tam PO/AP/AR/payroll kapsamı OUT kalır.
+
+
+Sonraki kaynak kapsamı S1'in özgün 18.01 satırları 14–20, 7 iş / 50 SP'dir. OIDC, tenant/role/vessel/object izolasyonu, audit, S3 ve ClamAV yazılımı zaten mevcut; kaynak-original Not Started kod yokluğu değildir. Öncelikli adaylar kritik write-audit kapsamının somut paydası ve before/after/reason kanıtı, production OIDC secret-reference fallback sınırı ve rejected-file quarantine semantiğinin bağımsız kaynak uzlaştırmasıdır. Hiçbir S1 işi bu S0 kaydıyla kabul edilmiş sayılmaz.
+
+## Yayın yaşam döngüsü
+
+Bu belgedeki yayın bilgisi 2026-11-03T02:53:22.509167+00:00 mühendislik-kabul kontrol noktasına aittir. Sonraki gerçek PR, required-head check ve merge durumu [GitHub yaşam döngüsünde](https://github.com/kadirvurgun/Poseidon/pulls) izlenir. Gelecek PR numarası veya merge SHA'sı üretilmedi; kabul edilen uygulama F ve sonraki metadata A ayrıdır.
+
+
+<details>
+<summary>Önceki kontrol noktaları — tarihsel</summary>
+
+Aşağıdaki özgün kayıtlar kendi tarih/hedef/kapsamlarında geçerlidir. İçlerindeki Current, NOT RUN ve kabul edilmedi ifadeleri bugünkü sonucu değiştirmez; önceki başarısız/yarım koşular korunur.
+
 # S0-OVERNIGHT-20261102 — 03.11.2026 durum güncellemesi
 
 **Durum: INCOMPLETE / NOT ACCEPTED.** S0'ın13/13 kaynak görevine ilişkin tanım/kod yazım paketi hazır; source/engineering adoption ve tüm son-hedef doğrulamaları henüz kapanmadı. Canonical kabul **8/53 S0 SP (%15,09)** ve **8/970 genel SP (%0,82)** olarak korundu. Bu raporlama görevi hiçbir yeni test/build/tarama veya yayın işlemi başlatmadı.
@@ -245,5 +317,7 @@ API547 vaka bütün native partitionlarda çalıştı; özgün6Tug-tagged role-c
 Genuine Keycloak manager/restricted2/2, TLSreject3/3 ve yeni uniquely-owned sentetik reviewer ile distinct-actor login geçti. Bilinmeyen önceki reviewer hesabı korunur. Root private config/CA/credential kopyası owner-only; rawbody/DOM/token/storageState kanıt olarak kaydedilmez. Full61case×2Firefox manifest henüz bitmedi; gerekli positive source/evidence zincirleri gerçek signed HTTP commands ile hazırlanır, VERIFIED/safety/credential seed üretilmez. Her proje için ayrı legacy fixture kimliği ve Test-only audited/idempotent izolasyon tamamlanacak.
 
 Bağımsız dirty delta incelemesi yeni engelleyici statik bulgu bulmadı;[hazırlık raporu](../../.runtime/s0-overnight-20261102/qa/s0-dirty-repair-preparation-review.json) bir kabul değildir. Son temiz commit/tree, gerçek tüm applicable sonuçlar/security taramaları, required CI ve genuine source/engineering/acceptance kararları hâlâ gereklidir. Canonical8/53S0 ve8/970overall değişmedi.
+
+</details>
 
 </details>

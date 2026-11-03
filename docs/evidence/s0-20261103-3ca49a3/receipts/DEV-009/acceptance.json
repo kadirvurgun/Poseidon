@@ -1,0 +1,102 @@
+{
+  "schemaVersion": "poseidon.s0-receipt.v1",
+  "kind": "acceptance",
+  "taskId": "DEV-009",
+  "sessionId": "/root/s0_final_independent_qa",
+  "principal": "/root/s0_final_independent_qa",
+  "target": {
+    "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+    "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03"
+  },
+  "baseline": "poseidon-v46.3-20261030",
+  "sourceSha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+  "traceId": "T-S0-009",
+  "issuedAt": "2026-11-03T02:51:19.828929Z",
+  "outcome": "PASS",
+  "unresolvedP0": 0,
+  "artifacts": [
+    {
+      "path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674"
+    },
+    {
+      "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
+      "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49"
+    },
+    {
+      "path": "contracts/golden/pilot-dataset.v1.json",
+      "sha256": "8cbd10d6661b8ff2fb5909141c7f0766b416584430912e415c5e813a2bf6d530"
+    },
+    {
+      "path": "docs/tasks/s0-foundation-remainder-01.md",
+      "sha256": "e8e1f3e61ab4a882964c6ef0865f9a83697b315de09a229138859b968f4b83cd"
+    },
+    {
+      "path": "scripts/golden_dataset.py",
+      "sha256": "73f8b73d5758495bdb8b063ae311f7aa44ccb6c31f54c3eaba55204a04c14519"
+    },
+    {
+      "path": "tests/Poseidon.Domain.Tests/GoldenPilotDatasetTests.cs",
+      "sha256": "aa937c98116b997444981fa5c3f5e886b32905922f19785545fc4f13384f4da6"
+    }
+  ],
+  "acceptanceCriteria": "En az tanker + genel cargo/tug profile; crew/certificate/asset/defect/evidence edge cases; expected applicability/readiness outcomes kayıtlıdır.",
+  "dependencies": [
+    "DEV-005",
+    "DEV-008"
+  ],
+  "unresolvedBindings": [],
+  "sourceLocator": "sheet:Backlog/row:10",
+  "sourceOwnerRole": "QA Lead",
+  "reviewerRole": "Actual independent S0 software reviewer; no human operational/legal/Marine appointment claimed",
+  "evidenceDigests": {
+    "execution": "72d4aa823ea938f6a9bcf803d9f3980d36b3f34c80cf2d0c4afe12d93170ba28",
+    "source-review": "0829a53eac5123dd7e2faf668a89b5159872273c52afa82b5978185ee3809e67",
+    "engineering-review": "61311e4143b3ecb7b435a0e4fe7fd594a885ac2bc279907e4f551fc7f1890fc0"
+  },
+  "evidenceReceipts": {
+    "execution": {
+      "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/receipts/DEV-009.execution.json",
+      "sha256": "72d4aa823ea938f6a9bcf803d9f3980d36b3f34c80cf2d0c4afe12d93170ba28"
+    },
+    "source-review": {
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-009.source-review.json",
+      "sha256": "0829a53eac5123dd7e2faf668a89b5159872273c52afa82b5978185ee3809e67"
+    },
+    "engineering-review": {
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-009.engineering-review.final-successor.json",
+      "sha256": "61311e4143b3ecb7b435a0e4fe7fd594a885ac2bc279907e4f551fc7f1890fc0"
+    }
+  },
+  "dependencyAcceptance": {
+    "DEV-005": {
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-acceptance-receipts/DEV-005.acceptance.json",
+      "sha256": "9cfb1225f61aae6cc29a6d310dae2182e915c0a92936b6055e58c85a598b6bb3"
+    },
+    "DEV-008": {
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-acceptance-receipts/DEV-008.acceptance.json",
+      "sha256": "37d90db4fc28585f19f24b11ac8242f3b11c7103f5a4c4240443fe18d1e7350f"
+    }
+  },
+  "decisionReason": "I accept the deterministic seven-profile golden dataset covering tanker, general cargo and tug and the ten source scenarios with crew/certificate/asset/defect/evidence edge expectations. Source and engineering review approve the23 primitive-consumer definitions and recorded applicability/readiness expectations. Actual required definition and test commands plus current-input regressions completed;23 definitions are not23 new native executions. Unknown states, unavailable future adapters and synthetic unverified provenance remain intact.",
+  "p0Assessment": {
+    "path": ".runtime/s0-overnight-20261102/qa/final-F-current-P0-assessment.json",
+    "sha256": "f5ed479005904579ba94b303e1249024440746f2e8687c576ecaaa6b6da658d1"
+  },
+  "sourceApplicability": {
+    "path": ".runtime/s0-overnight-20261102/qa/final-F-source-applicability.json",
+    "sha256": "c1bf111b6b921b38998b68a11c74c7f4e040be27ef04b167f70ed50b55e2c67c"
+  },
+  "independentExecutionInspection": {
+    "path": ".runtime/s0-overnight-20261102/qa/final-F-execution-receipt-independent-inspection.json",
+    "sha256": "e7a835615e8517713afc28cd63745c42b8ec02be6dccb68bad1917e4e5e8eafe"
+  },
+  "scope": "Acceptance of this literal current S0 engineering task on exact F; authentic overall phase-gate evaluation remains a separate coordinator action.",
+  "futureReleaseGatesRemainOpen": [
+    "D-STATE-01 and real PO/BA/Architect/Marine/Tug SME/QA operational production state-map approval.",
+    "Authoritative legal editions, actual source reviewer qualification/appointments, Flag/Class applicability, source activation and lawful purpose/retention/key custody before real enablement.",
+    "Full future clinical/competence/work-rest/manning, operational Master safety decisions, actual pilot/UAT/value, production deployment and release approvals.",
+    "AI evaluations before model/provider/tool enablement and DEV-071 production/pilot backup/restore/RPO-RTO/signed rollback."
+  ],
+  "phaseAccepted": false
+}

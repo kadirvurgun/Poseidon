@@ -1,0 +1,156 @@
+{
+  "schemaVersion": "poseidon.completed-execution-receipts-index.v1",
+  "target": {
+    "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+    "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03"
+  },
+  "baseline": "poseidon-v46.3-20261030",
+  "sourceSha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+  "issuedAt": "2026-11-03T02:45:49.822212Z",
+  "collectorSession": "/root/s0_release_gate",
+  "collectorPrincipal": "/root/s0_release_gate",
+  "receiptCount": 13,
+  "taskCount": 13,
+  "storyPoints": 53,
+  "kind": "execution",
+  "unresolvedP0": 0,
+  "executionManifest": {
+    "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/execution-evidence-manifest.json",
+    "sha256": "9cf44a107d99e7a254f190c0697587b1e00c122dc68bee85ced3506755eee01d"
+  },
+  "independentReviewIndex": {
+    "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts-index-v2.json",
+    "sha256": "7affdb4b8893ed2c58e95571d26f6cfb76766de7d070417e0831cf85ec9d8ca6"
+  },
+  "p0Assessment": {
+    "path": ".runtime/s0-overnight-20261102/qa/final-F-current-P0-assessment.json",
+    "sha256": "f5ed479005904579ba94b303e1249024440746f2e8687c576ecaaa6b6da658d1"
+  },
+  "sourceApplicability": {
+    "path": ".runtime/s0-overnight-20261102/qa/final-F-source-applicability.json",
+    "sha256": "c1bf111b6b921b38998b68a11c74c7f4e040be27ef04b167f70ed50b55e2c67c"
+  },
+  "receipts": [
+    {
+      "taskId": "DEV-001",
+      "kind": "execution",
+      "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/receipts/DEV-001.execution.json",
+      "sha256": "27889256a9176e2d6b21047526c524e6a8e0f35ef2428ab17cea3eb1dc100c38",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_release_gate",
+      "principal": "/root/s0_release_gate"
+    },
+    {
+      "taskId": "DEV-002",
+      "kind": "execution",
+      "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/receipts/DEV-002.execution.json",
+      "sha256": "9d39124fd0c4266fc5417490405d5dba0c362fbb0c1c3b33c93ffc47705e1030",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_release_gate",
+      "principal": "/root/s0_release_gate"
+    },
+    {
+      "taskId": "DEV-003",
+      "kind": "execution",
+      "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/receipts/DEV-003.execution.json",
+      "sha256": "0c2a71b68dc4c2355bc55325bf02e4a0a5f517bbf7c201df0111e2e56b6acf4b",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_release_gate",
+      "principal": "/root/s0_release_gate"
+    },
+    {
+      "taskId": "DEV-004",
+      "kind": "execution",
+      "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/receipts/DEV-004.execution.json",
+      "sha256": "8ff9f951cb89f0f6d2cc33b33b89ed795cb02105624c5a27c885fc21f8f4be22",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_release_gate",
+      "principal": "/root/s0_release_gate"
+    },
+    {
+      "taskId": "DEV-005",
+      "kind": "execution",
+      "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/receipts/DEV-005.execution.json",
+      "sha256": "063843a9b08c970926c9bc1b139707cd858964fa6879c0f0fe3fd88a0675e21a",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_release_gate",
+      "principal": "/root/s0_release_gate"
+    },
+    {
+      "taskId": "DEV-006",
+      "kind": "execution",
+      "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/receipts/DEV-006.execution.json",
+      "sha256": "ba99765579184085916d224c1e2fedc79a4ade743df14bcf3817703cc67583ad",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_release_gate",
+      "principal": "/root/s0_release_gate"
+    },
+    {
+      "taskId": "DEV-007",
+      "kind": "execution",
+      "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/receipts/DEV-007.execution.json",
+      "sha256": "71556e1b1bab22199bc23439a4d76024d8e2406b6981078391c651fcc658d48f",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_release_gate",
+      "principal": "/root/s0_release_gate"
+    },
+    {
+      "taskId": "DEV-008",
+      "kind": "execution",
+      "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/receipts/DEV-008.execution.json",
+      "sha256": "90b095752353869fa7dd5d2d14857b111e7741314b0c97cc570519aea918bc87",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_release_gate",
+      "principal": "/root/s0_release_gate"
+    },
+    {
+      "taskId": "DEV-009",
+      "kind": "execution",
+      "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/receipts/DEV-009.execution.json",
+      "sha256": "72d4aa823ea938f6a9bcf803d9f3980d36b3f34c80cf2d0c4afe12d93170ba28",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_release_gate",
+      "principal": "/root/s0_release_gate"
+    },
+    {
+      "taskId": "DEV-010",
+      "kind": "execution",
+      "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/receipts/DEV-010.execution.json",
+      "sha256": "312091cfd5fb14be842ddf5b21e364da9a2692f76e4791dd6856cd24636dec28",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_release_gate",
+      "principal": "/root/s0_release_gate"
+    },
+    {
+      "taskId": "DEV-011",
+      "kind": "execution",
+      "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/receipts/DEV-011.execution.json",
+      "sha256": "1d2d8844e2f8a706a0c73b16da5c7c50782b04f64827c29eae1841a5c86745f3",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_release_gate",
+      "principal": "/root/s0_release_gate"
+    },
+    {
+      "taskId": "DEV-012",
+      "kind": "execution",
+      "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/receipts/DEV-012.execution.json",
+      "sha256": "3ff1cbb0446eb69142b9dbde6e0f0898e73a8a1d3fb2edbe76ebbd060b0dcb94",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_release_gate",
+      "principal": "/root/s0_release_gate"
+    },
+    {
+      "taskId": "DEV-116",
+      "kind": "execution",
+      "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/receipts/DEV-116.execution.json",
+      "sha256": "7aadc5b9fc55fce1837a66bd1cf61c52c69dec3fb4387f64de404855ab960525",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_release_gate",
+      "principal": "/root/s0_release_gate"
+    }
+  ],
+  "utf8LfOriginalBytes": true,
+  "phaseAccepted": false,
+  "acceptanceReceiptCountIssuedByCollector": 0,
+  "next": "Independent QA acceptance receipts must bind actual execution/source/engineering digests. Coordinator must observe genuine completed collector result before authenticating reports."
+}

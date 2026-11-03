@@ -1,0 +1,30 @@
+{
+  "scope": "integration",
+  "status": "PASS_EXACT_DISCOVERED_SCOPE",
+  "raw_output_persisted": false,
+  "started_at": "2026-11-03T01:42:59.217569+00:00",
+  "discovery": {
+    "exit_code": 0,
+    "cases": 547,
+    "output_sha256": "75235e0bfdaa7cbb23d88e98813300f86f302a229957eb50c80f3baf420b72b1"
+  },
+  "exit_code": 0,
+  "count_observations": {
+    "total": [
+      547
+    ],
+    "failed": [
+      0
+    ],
+    "succeeded": [
+      547
+    ],
+    "skipped": [
+      0
+    ]
+  },
+  "output_sha256": "285549b45324b0b15e79e17e99efb919a058b4d0bd1af0a3d4c1cdc45efc83df",
+  "failed_static_test_names": [],
+  "elapsed_seconds": 791.336,
+  "finished_at": "2026-11-03T01:56:10.553740+00:00"
+}

@@ -1,0 +1,1172 @@
+{
+  "schemaVersion": "poseidon.independent-final-F-literal-review.v1",
+  "reviewerSession": "/root/s0_final_independent_qa",
+  "reviewerPrincipal": "/root/s0_final_independent_qa",
+  "issuedAt": "2026-11-03T01:44:07.192595Z",
+  "reviewerAuthoredProductTestsOrGate": false,
+  "target": {
+    "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+    "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03"
+  },
+  "baseline": "poseidon-v46.3-20261030",
+  "freshSourcePinsReview": {
+    "path": "qa/final-F-fresh-source-pins.json",
+    "sha256": "9c20a5bca32337f0fb7da4793921c83257608e5497d0bd12f8476821a0f87468"
+  },
+  "tasks": [
+    {
+      "taskId": "DEV-001",
+      "definition": {
+        "id": "DEV-001",
+        "locator": "sheet:Backlog/row:2",
+        "acceptanceCriteria": "Backend/frontend/contracts/infra/docs klasörleri oluşturulur; main/develop politikası ve PR kontrolü tanımlıdır; protected branch kuralı dokümante edilir.",
+        "traceId": "T-S0-001",
+        "ownerRole": "Engineering Lead",
+        "storyPoints": 3,
+        "dependencies": [],
+        "registeredCriticalSoftwareCount": 0
+      },
+      "sourceDecision": "LITERAL_SCOPE_ADOPTED_REVIEW_RUNTIME_CLOSURE_PENDING",
+      "sourceReason": "The original row 2 requires repository structure and documented branch, PR and protection policy. The actual folders and failure-blocking workflow cover that definition scope.",
+      "engineeringDecision": "ACTUAL_BOUNDED_TECHNICAL_DESIGN_ADOPTED_NOT_TASK_ACCEPTANCE",
+      "engineeringReason": "I adopt the repository and policy design. Current required CI still must finish; this decision does not rewrite historical source status or accepted story points.",
+      "artifacts": [
+        {
+          "path": ".github/workflows/backend-foundation.yml",
+          "sha256": "5fbd245a37172f1d0c72a13362c19b3dd1311511147eb7fbd8fae6db04c5c2f1"
+        },
+        {
+          "path": "Poseidon.slnx",
+          "sha256": "4f6cd5624fef605f993c0f52e654187a64f18f4ae1f35683f7141040c6850e59"
+        },
+        {
+          "path": "README.md",
+          "sha256": "f2e982c11732b41479076fa7648810ef07745d77aaafff02cf2eef3ab82cdc3d"
+        },
+        {
+          "path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+          "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674"
+        },
+        {
+          "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
+          "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49"
+        },
+        {
+          "path": "docs/architecture.md",
+          "sha256": "18476f2205cf83a1276c892a2db2ae8df209aff3a591f4af7c83bfc60410c904"
+        },
+        {
+          "path": "docs/automation.md",
+          "sha256": "57fe9108affc8c60c6d2b07900170975b3abbc01141a787db9b55f9c5172011f"
+        },
+        {
+          "path": "global.json",
+          "sha256": "c01135e6969ef6fc8c24e12ae51c25db29b43b8cbb305288b2da738848397ee7"
+        },
+        {
+          "path": "scripts/test_task_contracts.py",
+          "sha256": "89a66b6cc8ead49ba9552181531fe791a240b7a5523cb1af01d43e04d738e8b5"
+        }
+      ],
+      "unresolvedBindingsAssessment": "No additional external binding is required for this literal engineering definition. Actual production, legal, source activation and pilot bindings remain open outside S0 technical adoption.",
+      "runtimeP0Assessment": "PENDING_ACTUAL_CLEAN_F_RUNTIME_CLOSURE",
+      "finalReceiptOutcome": "PENDING_NOT_ISSUED"
+    },
+    {
+      "taskId": "DEV-002",
+      "definition": {
+        "id": "DEV-002",
+        "locator": "sheet:Backlog/row:3",
+        "acceptanceCriteria": "Backend ve frontend build; unit test; lint; artifact üretimi; başarısız adım PR'ı bloklar.",
+        "traceId": "T-S0-002",
+        "ownerRole": "DevOps",
+        "storyPoints": 5,
+        "dependencies": [
+          "DEV-001"
+        ],
+        "registeredCriticalSoftwareCount": 0
+      },
+      "sourceDecision": "LITERAL_SCOPE_ADOPTED_REVIEW_RUNTIME_CLOSURE_PENDING",
+      "sourceReason": "The original row 3 requires actual backend/frontend builds, unit tests, lint, artifacts and blocking failed PR steps. These checks cannot be excluded.",
+      "engineeringDecision": "ACTUAL_BOUNDED_TECHNICAL_DESIGN_ADOPTED_NOT_TASK_ACCEPTANCE",
+      "engineeringReason": "I adopt the required workflow and guarded native browser harness, including profile ownership, hardlink/reparse rejection and exact ACL readback. Clean F CI and signed regressions remain pending; authored tests and dirty 954 results are not clean F results.",
+      "artifacts": [
+        {
+          "path": ".github/workflows/backend-foundation.yml",
+          "sha256": "5fbd245a37172f1d0c72a13362c19b3dd1311511147eb7fbd8fae6db04c5c2f1"
+        },
+        {
+          "path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+          "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674"
+        },
+        {
+          "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
+          "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49"
+        },
+        {
+          "path": "docs/automation.md",
+          "sha256": "57fe9108affc8c60c6d2b07900170975b3abbc01141a787db9b55f9c5172011f"
+        },
+        {
+          "path": "frontend/package.json",
+          "sha256": "096d4620da3227968723806de054f3fe8a695c3af6ef954d7ce7d42fa7297eeb"
+        },
+        {
+          "path": "scripts/lab_profile_acl.py",
+          "sha256": "8ecd2b31516a9c7c7b9fe869b9ef12b7780c7c186b2c5a5e0ef89f61cf86ec2d"
+        },
+        {
+          "path": "scripts/test_api_test_gate.py",
+          "sha256": "82a7b631b057a32c4f45c9167c0288d010d4a2830b99407253e79c869907b42f"
+        },
+        {
+          "path": "scripts/test_browser_gate.py",
+          "sha256": "85715c09f8caa533fade89a032f7494315decf52acc378c6031db7a1ebe8fa2b"
+        },
+        {
+          "path": "scripts/test_lab_profile_acl.py",
+          "sha256": "113a217f1e1cf5b7ac7af6da6610358ab88e3948768bddb4048f65d73b5825ce"
+        },
+        {
+          "path": "tests/Poseidon.Browser.Tests/lab/strict-browser.ts",
+          "sha256": "c42f5269f2eec85baf40561ee66d1e4e35dfa17112410b47d01672d709715a44"
+        }
+      ],
+      "unresolvedBindingsAssessment": "No additional external binding is required for this literal engineering definition. Actual production, legal, source activation and pilot bindings remain open outside S0 technical adoption.",
+      "runtimeP0Assessment": "PENDING_ACTUAL_CLEAN_F_RUNTIME_CLOSURE",
+      "finalReceiptOutcome": "PENDING_NOT_ISSUED"
+    },
+    {
+      "taskId": "DEV-003",
+      "definition": {
+        "id": "DEV-003",
+        "locator": "sheet:Backlog/row:4",
+        "acceptanceCriteria": "Her ortam için URL/secret/data/retention/deploy owner tanımlı; production datası DEV'e kopyalanmaz; environment promotion akışı yazılıdır.",
+        "traceId": "T-S0-003",
+        "ownerRole": "DevOps",
+        "storyPoints": 3,
+        "dependencies": [
+          "DEV-001"
+        ],
+        "registeredCriticalSoftwareCount": 0
+      },
+      "sourceDecision": "LITERAL_SCOPE_ADOPTED_REVIEW_RUNTIME_CLOSURE_PENDING",
+      "sourceReason": "The original row 4 freezes environment definitions and promotion. It does not require inventing live UAT/PILOT/PROD resources, secrets, retention periods or data-use authority.",
+      "engineeringDecision": "ACTUAL_BOUNDED_TECHNICAL_DESIGN_ADOPTED_NOT_TASK_ACCEPTANCE",
+      "engineeringReason": "I adopt the named origin, secret, data, retention, application/migrator, backup, rollback and deploy-owner references, production-copy prohibition and same-artifact promotion contract. Unresolved operator bindings must still block deployment.",
+      "artifacts": [
+        {
+          "path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+          "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674"
+        },
+        {
+          "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
+          "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49"
+        },
+        {
+          "path": "contracts/environments/environments.v1.json",
+          "sha256": "7c8a36f2aaee79d98cb55f365b24d2df79ff94308a6f7e85d24ad931f970db73"
+        },
+        {
+          "path": "docs/operations/environment-contract.md",
+          "sha256": "3eb95596e7ab9aed026561f75ee5103272311fd7dfb777feaeee0055b7eef375"
+        },
+        {
+          "path": "scripts/environment_contract.py",
+          "sha256": "2c781ec9ee9e9b5d7168324099508ffbc2112164dcc442dcff0e70f98dc7fe96"
+        },
+        {
+          "path": "scripts/test_environment_contract.py",
+          "sha256": "88fda257f954fcfbc5bd388398d933992b9b692c5f3b8aab113a48c28440dd78"
+        }
+      ],
+      "unresolvedBindingsAssessment": "No additional external binding is required for this literal engineering definition. Actual production, legal, source activation and pilot bindings remain open outside S0 technical adoption.",
+      "runtimeP0Assessment": "PENDING_ACTUAL_CLEAN_F_RUNTIME_CLOSURE",
+      "finalReceiptOutcome": "PENDING_NOT_ISSUED"
+    },
+    {
+      "taskId": "DEV-004",
+      "definition": {
+        "id": "DEV-004",
+        "locator": "sheet:Backlog/row:5",
+        "acceptanceCriteria": "Domain modülleri, dependency yönü, event/outbox yaklaşımı, object storage, offline sync ve AI boundary ADR'ları approved durumundadır.",
+        "traceId": "T-S0-004",
+        "ownerRole": "Solution Architect",
+        "storyPoints": 5,
+        "dependencies": [
+          "DEV-001"
+        ],
+        "registeredCriticalSoftwareCount": 0
+      },
+      "sourceDecision": "LITERAL_SCOPE_ADOPTED_REVIEW_RUNTIME_CLOSURE_PENDING",
+      "sourceReason": "The original row 5 requires approved architecture directions for modules, dependencies, events/outbox, storage, offline and AI. It does not require a completed future dispatcher or fabricated human appointment.",
+      "engineeringDecision": "ACTUAL_BOUNDED_TECHNICAL_DESIGN_ADOPTED_NOT_TASK_ACCEPTANCE",
+      "engineeringReason": "I independently approve all three exact F ADRs together with the current engineering candidate and reconciliation matrix. Adopt owned aggregates and inward Domain dependencies; explicitly accept current API/shared-context packaging for the foundation while application ports remain future work. Adopt proposed at-least-once transactional outbox, staged exact-version S3 objects, explicit current-authorized encrypted replay/material conflict and advisory scoped/cited AI. D-STATE-01 and operational safety decisions remain open.",
+      "artifacts": [
+        {
+          "path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+          "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674"
+        },
+        {
+          "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
+          "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49"
+        },
+        {
+          "path": "backend/Poseidon.Domain/Poseidon.Domain.csproj",
+          "sha256": "8d654c44b7bebb6b31a9f2f606927f45b5072193adc4eef8cce3f3cf3b278df3"
+        },
+        {
+          "path": "docs/architecture/s0-current-engineering-candidate-20261102.md",
+          "sha256": "7196faa3b5bb0b78819bf6b804bb5dfab3cc41546f17926bde9521b4ce089404"
+        },
+        {
+          "path": "docs/architecture/s0-remainder-reconciliation.md",
+          "sha256": "be80786652562de66708af1a0de0f42f58e5c90c2df1e3e37030936777322d98"
+        },
+        {
+          "path": "docs/decisions/s0-events-storage.md",
+          "sha256": "3d3c4023e25d6000c1ebdab38b11f0d658c686ca3095b0df7cf156b7cc8237da"
+        },
+        {
+          "path": "docs/decisions/s0-module-boundaries.md",
+          "sha256": "7fa0d1055ebc5e6c264b1a9babea272857533716956b507e9f733a266d21b288"
+        },
+        {
+          "path": "docs/decisions/s0-offline-ai.md",
+          "sha256": "0a69b2ac07b486a803ebfa477012c53a0cfd17aaaad47fa936029ae7c80e88de"
+        },
+        {
+          "path": "tests/Poseidon.Domain.Tests/OfflineReplayPolicyTests.cs",
+          "sha256": "51aba08a4d072c67772d661f7b0aa5096431fcfcf476ad0a6d3bf844386cb43b"
+        }
+      ],
+      "unresolvedBindingsAssessment": "No additional external binding is required for this literal engineering definition. Actual production, legal, source activation and pilot bindings remain open outside S0 technical adoption.",
+      "runtimeP0Assessment": "PENDING_ACTUAL_CLEAN_F_RUNTIME_CLOSURE",
+      "finalReceiptOutcome": "PENDING_NOT_ISSUED"
+    },
+    {
+      "taskId": "DEV-005",
+      "definition": {
+        "id": "DEV-005",
+        "locator": "sheet:Backlog/row:6",
+        "acceptanceCriteria": "Core entity listesi, PK/FK, tenancy, versioning, audit columns, evidence object refs ve migration stratejisi approved olur.",
+        "traceId": "T-S0-005",
+        "ownerRole": "Backend Lead",
+        "storyPoints": 5,
+        "dependencies": [
+          "DEV-004"
+        ],
+        "registeredCriticalSoftwareCount": 0
+      },
+      "sourceDecision": "LITERAL_SCOPE_ADOPTED_REVIEW_RUNTIME_CLOSURE_PENDING",
+      "sourceReason": "The original row 6 requires approval of the normalized core entity, key, tenancy, versioning, audit, object-reference and migration plan. It does not approve every future physical or legal meaning among 2316 fields.",
+      "engineeringDecision": "ACTUAL_BOUNDED_TECHNICAL_DESIGN_ADOPTED_NOT_TASK_ACCEPTANCE",
+      "engineeringReason": "I approve the core schema plan with its current engineering corrections: compound tenant keys/FKs, xmin and immutable lineage, audited writes separate from HTTP auditing, exact object references/staging and reviewed EF expand/backfill/contract and recovery strategy. The shared-context deviation is explicit; future clinical, operational, ERP and production recovery qualification remain separate.",
+      "artifacts": [
+        {
+          "path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+          "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674"
+        },
+        {
+          "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
+          "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49"
+        },
+        {
+          "path": "docs/architecture/core-schema-plan.md",
+          "sha256": "e99aabe5744495486649e567f08877537c5ea746109c4836d4a5a0491edd1a4c"
+        },
+        {
+          "path": "docs/architecture/s0-current-engineering-candidate-20261102.md",
+          "sha256": "7196faa3b5bb0b78819bf6b804bb5dfab3cc41546f17926bde9521b4ce089404"
+        },
+        {
+          "path": "scripts/core_schema_inventory.py",
+          "sha256": "0ac565bf183b992b8ddfb58a83bf1fc7876961d7ca08805cf7693e5e76ea06da"
+        },
+        {
+          "path": "scripts/test_core_schema_inventory.py",
+          "sha256": "718baf00c545cc25a8605480eabcc566f0b7e80dcb3d36e618b4acd146fc40d9"
+        }
+      ],
+      "unresolvedBindingsAssessment": "No additional external binding is required for this literal engineering definition. Actual production, legal, source activation and pilot bindings remain open outside S0 technical adoption.",
+      "runtimeP0Assessment": "PENDING_ACTUAL_CLEAN_F_RUNTIME_CLOSURE",
+      "finalReceiptOutcome": "PENDING_NOT_ISSUED"
+    },
+    {
+      "taskId": "DEV-006",
+      "definition": {
+        "id": "DEV-006",
+        "locator": "sheet:Backlog/row:7",
+        "acceptanceCriteria": "Tenant isolation, authn/authz, file upload, protected reporting, secrets, audit, offline device, AI prompt/data threats kayıtlı; P0 mitigations backlog'a bağlıdır.",
+        "traceId": "T-S0-006",
+        "ownerRole": "Security/Architect",
+        "storyPoints": 5,
+        "dependencies": [
+          "DEV-004"
+        ],
+        "registeredCriticalSoftwareCount": 0
+      },
+      "sourceDecision": "LITERAL_SCOPE_ADOPTED_REVIEW_RUNTIME_CLOSURE_PENDING",
+      "sourceReason": "The original row 7 requires eight threat areas and actual mitigation backlog links. Future enabling mitigations are not automatically S0 implementation predecessors.",
+      "engineeringDecision": "ACTUAL_BOUNDED_TECHNICAL_DESIGN_ADOPTED_NOT_TASK_ACCEPTANCE",
+      "engineeringReason": "I adopt TM-01 through TM-08 with assets, abuse cases, trust boundaries, controls, gaps, owners, tests and real DEV links, read with current corrections. Current exposed critical/high/P0 assessment still awaits actual security/runtime closure. This is not acceptance of future risks or GDPR/legal compliance.",
+      "artifacts": [
+        {
+          "path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+          "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674"
+        },
+        {
+          "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
+          "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49"
+        },
+        {
+          "path": "docs/architecture/s0-current-engineering-candidate-20261102.md",
+          "sha256": "7196faa3b5bb0b78819bf6b804bb5dfab3cc41546f17926bde9521b4ce089404"
+        },
+        {
+          "path": "docs/security-baseline.md",
+          "sha256": "f5c8ed4ed3d6a56453c5401736cf401f51e932fe30134848a9451dafa0f9d220"
+        },
+        {
+          "path": "docs/security/threat-model.md",
+          "sha256": "730760c9fe9df74b727365dbef4a6eba2e4bb48c12ee66b0c01ece15ae614935"
+        },
+        {
+          "path": "scripts/secret_scan.py",
+          "sha256": "825127917066bf3633e20c3331a58bbf018e465ef32a0363ab5029af0973c9f7"
+        },
+        {
+          "path": "scripts/test_secret_scan.py",
+          "sha256": "e48d390c76022f7e07e2bcb775e22c83aeeae82306f40dbb3bebc2e9af4e323b"
+        }
+      ],
+      "unresolvedBindingsAssessment": "No additional external binding is required for this literal engineering definition. Actual production, legal, source activation and pilot bindings remain open outside S0 technical adoption.",
+      "runtimeP0Assessment": "PENDING_ACTUAL_CLEAN_F_RUNTIME_CLOSURE",
+      "finalReceiptOutcome": "PENDING_NOT_ISSUED"
+    },
+    {
+      "taskId": "DEV-007",
+      "definition": {
+        "id": "DEV-007",
+        "locator": "sheet:Backlog/row:8",
+        "acceptanceCriteria": "10 pilot capability için orphan kritik öğe kalmaz; trace ID'leri backlog ve test case'lerine bağlıdır.",
+        "traceId": "T-S0-007",
+        "ownerRole": "BA/QA Lead",
+        "storyPoints": 5,
+        "dependencies": [],
+        "registeredCriticalSoftwareCount": 0
+      },
+      "sourceDecision": "LITERAL_SCOPE_ADOPTED_REVIEW_RUNTIME_CLOSURE_PENDING",
+      "sourceReason": "The original row 8 requires a trace package for ten original capabilities with no critical definition orphan and actual backlog/test links. It does not require future pilot implementation before its trace can be defined.",
+      "engineeringDecision": "ACTUAL_BOUNDED_TECHNICAL_DESIGN_ADOPTED_NOT_TASK_ACCEPTANCE",
+      "engineeringReason": "I adopt 149 original field chains across eight screens, the source-confirmed zero-field Today projection and mixed-fleet composition of all nine children with 16 original UAT/value definitions. No invented FR, implemented alias, runtime PASS or measured pilot value is inferred. Future implementation and execution gaps remain explicit.",
+      "artifacts": [
+        {
+          "path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+          "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674"
+        },
+        {
+          "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
+          "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49"
+        },
+        {
+          "path": "contracts/trace/pilot-capabilities.v1.json",
+          "sha256": "f68e1d017f9e528507af2f6519c5e156be8b973fdeed3cbf1c4e28442465b9e5"
+        },
+        {
+          "path": "docs/architecture/pilot-trace.md",
+          "sha256": "674ccd857a7b4d98729fe4a30acb188ec4a658fe36a80b17a3177912b575fd6a"
+        },
+        {
+          "path": "scripts/pilot_trace.py",
+          "sha256": "1dfb7b6995e9d8409ef28db470b0a52566e180d5ef1cbca8f40152c1801286f1"
+        },
+        {
+          "path": "scripts/test_pilot_trace.py",
+          "sha256": "6786af82b43f0d68d9a7c92fd6a02ea28ecb095203bb769d604ca1dc6b2f857d"
+        }
+      ],
+      "unresolvedBindingsAssessment": "No additional external binding is required for this literal engineering definition. Actual production, legal, source activation and pilot bindings remain open outside S0 technical adoption.",
+      "runtimeP0Assessment": "PENDING_ACTUAL_CLEAN_F_RUNTIME_CLOSURE",
+      "finalReceiptOutcome": "PENDING_NOT_ISSUED"
+    },
+    {
+      "taskId": "DEV-008",
+      "definition": {
+        "id": "DEV-008",
+        "locator": "sheet:Backlog/row:9",
+        "acceptanceCriteria": "ISM/SOLAS/STCW/MLC/MARPOL/Flag/Class pilot kapsamı için source owner, version, validation status ve reviewer atanır.",
+        "traceId": "T-S0-008",
+        "ownerRole": "Regulatory Lead",
+        "storyPoints": 5,
+        "dependencies": [
+          "DEV-007"
+        ],
+        "registeredCriticalSoftwareCount": 0
+      },
+      "sourceDecision": "LITERAL_SCOPE_ADOPTED_REVIEW_RUNTIME_CLOSURE_PENDING",
+      "sourceReason": "The original row 9 is a source ownership plan. Reviewed role responsibility, candidate version metadata and honest validation/reviewer status satisfy that engineering plan scope without fictitious people or current law editions.",
+      "engineeringDecision": "ACTUAL_BOUNDED_TECHNICAL_DESIGN_ADOPTED_NOT_TASK_ACCEPTANCE",
+      "engineeringReason": "I approve typed revision 1 for seven ISM/SOLAS/STCW/MLC/MARPOL/Flag/Class categories and nine original sources, with Regulatory Lead responsibility, a separately sourced Regulatory SME reviewer role and distinct external issuers. Candidate baseline/hash/locator/instrument declarations are pinned. Validation, edition/applicability/reviewer qualification remain UNVERIFIED/OPEN and activation blocked; actual appointments, DEV-073/093 and release refresh remain later gates.",
+      "artifacts": [
+        {
+          "path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+          "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674"
+        },
+        {
+          "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
+          "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49"
+        },
+        {
+          "path": "backend/Poseidon.Domain/RegulatoryRegisterPolicy.cs",
+          "sha256": "0c6efc51525a44a1e1d3b767393959f997ab2143c84634d0b5b33fc025375b66"
+        },
+        {
+          "path": "contracts/sources/pilot-ownership.v1.json",
+          "sha256": "027105a711941c3137fb191e4fc9efa4a30b77121e7707c8ba3c7190511cd7d5"
+        },
+        {
+          "path": "docs/reports/dev-008-source-scope-review-2026-11-02.md",
+          "sha256": "59dd1a17bf617ff8a7610311b20860e44cecf99a80f16d6b8b6526ee729fb45e"
+        },
+        {
+          "path": "docs/tasks/s0-source-plan-20261102.md",
+          "sha256": "f3978af5e48036c28d933faa22e0058878110fec82233afc56b18c18abf72115"
+        },
+        {
+          "path": "docs/tasks/source-ownership-plan-01.md",
+          "sha256": "393a0b14345f6514e4e25743851fa3a0e4480a7d13c56ed0c6f1cf4d31f702e4"
+        },
+        {
+          "path": "scripts/pilot_source_ownership.py",
+          "sha256": "08bd92f8cceec267c44ab8b6cffc4c6d5cf1d5e8c84cd2a7160226234f6e4022"
+        },
+        {
+          "path": "scripts/test_pilot_source_ownership.py",
+          "sha256": "9b466068295e3991ba0da31ac82e419e79f95e4e68e98537c8b640e5a48e84e7"
+        },
+        {
+          "path": "tests/Poseidon.Domain.Tests/RegulatoryRegisterPolicyTests.cs",
+          "sha256": "1497f15c3389a30d1eb6f3fb4fc60c0c18035c52a7dc9440cbc63adc6f45035d"
+        }
+      ],
+      "unresolvedBindingsAssessment": "No additional external binding is required for this literal engineering definition. Actual production, legal, source activation and pilot bindings remain open outside S0 technical adoption.",
+      "runtimeP0Assessment": "PENDING_ACTUAL_CLEAN_F_RUNTIME_CLOSURE",
+      "finalReceiptOutcome": "PENDING_NOT_ISSUED"
+    },
+    {
+      "taskId": "DEV-009",
+      "definition": {
+        "id": "DEV-009",
+        "locator": "sheet:Backlog/row:10",
+        "acceptanceCriteria": "En az tanker + genel cargo/tug profile; crew/certificate/asset/defect/evidence edge cases; expected applicability/readiness outcomes kayıtlıdır.",
+        "traceId": "T-S0-009",
+        "ownerRole": "QA Lead",
+        "storyPoints": 5,
+        "dependencies": [
+          "DEV-005",
+          "DEV-008"
+        ],
+        "registeredCriticalSoftwareCount": 0
+      },
+      "sourceDecision": "LITERAL_SCOPE_ADOPTED_REVIEW_RUNTIME_CLOSURE_PENDING",
+      "sourceReason": "The original row 10 requires tanker, general cargo and tug profiles, edge cases and recorded expected outcomes. Primitive observations must not become qualified production readiness.",
+      "engineeringDecision": "ACTUAL_BOUNDED_TECHNICAL_DESIGN_ADOPTED_NOT_TASK_ACCEPTANCE",
+      "engineeringReason": "I adopt seven profiles, ten original source scenarios and 23 actual primitive consumer definitions covering crew, certificate, asset, defect and evidence edges. Unknown outcomes and unavailable production adapters remain explicit. Actual required tests still must finish; 23 consumers are not fabricated native test counts.",
+      "artifacts": [
+        {
+          "path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+          "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674"
+        },
+        {
+          "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
+          "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49"
+        },
+        {
+          "path": "contracts/golden/pilot-dataset.v1.json",
+          "sha256": "8cbd10d6661b8ff2fb5909141c7f0766b416584430912e415c5e813a2bf6d530"
+        },
+        {
+          "path": "docs/tasks/s0-foundation-remainder-01.md",
+          "sha256": "e8e1f3e61ab4a882964c6ef0865f9a83697b315de09a229138859b968f4b83cd"
+        },
+        {
+          "path": "scripts/golden_dataset.py",
+          "sha256": "73f8b73d5758495bdb8b063ae311f7aa44ccb6c31f54c3eaba55204a04c14519"
+        },
+        {
+          "path": "tests/Poseidon.Domain.Tests/GoldenPilotDatasetTests.cs",
+          "sha256": "aa937c98116b997444981fa5c3f5e886b32905922f19785545fc4f13384f4da6"
+        }
+      ],
+      "unresolvedBindingsAssessment": "No additional external binding is required for this literal engineering definition. Actual production, legal, source activation and pilot bindings remain open outside S0 technical adoption.",
+      "runtimeP0Assessment": "PENDING_ACTUAL_CLEAN_F_RUNTIME_CLOSURE",
+      "finalReceiptOutcome": "PENDING_NOT_ISSUED"
+    },
+    {
+      "taskId": "DEV-010",
+      "definition": {
+        "id": "DEV-010",
+        "locator": "sheet:Backlog/row:11",
+        "acceptanceCriteria": "DoR/DoD; design, security, offline, audit, regulatory, docs ve test etkisini kapsar; backlog template'e uygulanır.",
+        "traceId": "T-S0-010",
+        "ownerRole": "Product Owner",
+        "storyPoints": 2,
+        "dependencies": [
+          "DEV-007"
+        ],
+        "registeredCriticalSoftwareCount": 0
+      },
+      "sourceDecision": "LITERAL_SCOPE_ADOPTED_REVIEW_RUNTIME_CLOSURE_PENDING",
+      "sourceReason": "The original row 11 requires an applied DoR/DoD with seven impacts. Authored or deferred checks cannot establish execution, passing results or acceptance.",
+      "engineeringDecision": "ACTUAL_BOUNDED_TECHNICAL_DESIGN_ADOPTED_NOT_TASK_ACCEPTANCE",
+      "engineeringReason": "I adopt the template and 17-row engineering register retaining all 13 literal S0 tasks, their criteria, trace IDs, expanded dependencies and real code/test references. The exit design rejects critical registered S0 gaps, dirty/stale targets, missing/failed/skipped/zero/reused evidence and author self-review. Historical pending markers require genuine later decisions.",
+      "artifacts": [
+        {
+          "path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+          "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674"
+        },
+        {
+          "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
+          "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49"
+        },
+        {
+          "path": "contracts/tasks/current-authoring.v1.json",
+          "sha256": "4c63a5d53a19a45c84ac6ece4d6b9c8e85ca5909b7dc16569ced1dee6e522e5e"
+        },
+        {
+          "path": "contracts/tasks/task-template.v1.json",
+          "sha256": "443dddbc31662b78b5d26d9b63d6e4472f2585fa4ef0da490dec8efd6b372fc2"
+        },
+        {
+          "path": "docs/tasks/task-definition-template.md",
+          "sha256": "9c32d70f55c40d93991e26dd79851ee3e54c294d42a952cb922f4b748397baaf"
+        },
+        {
+          "path": "scripts/task_contracts.py",
+          "sha256": "e85a21d4bc131b55be40c5132477634b09fc33e9cabd02533939c8c04dd17659"
+        },
+        {
+          "path": "scripts/test_task_contracts.py",
+          "sha256": "89a66b6cc8ead49ba9552181531fe791a240b7a5523cb1af01d43e04d738e8b5"
+        }
+      ],
+      "unresolvedBindingsAssessment": "No additional external binding is required for this literal engineering definition. Actual production, legal, source activation and pilot bindings remain open outside S0 technical adoption.",
+      "runtimeP0Assessment": "PENDING_ACTUAL_CLEAN_F_RUNTIME_CLOSURE",
+      "finalReceiptOutcome": "PENDING_NOT_ISSUED"
+    },
+    {
+      "taskId": "DEV-011",
+      "definition": {
+        "id": "DEV-011",
+        "locator": "sheet:Backlog/row:12",
+        "acceptanceCriteria": "Correlation/tenant/vessel/request IDs; API latency/error, sync backlog/conflict, integration retry, audit health ve data freshness metric sözleşmesi vardır.",
+        "traceId": "T-S0-011",
+        "ownerRole": "DevOps",
+        "storyPoints": 3,
+        "dependencies": [
+          "DEV-004"
+        ],
+        "registeredCriticalSoftwareCount": 0
+      },
+      "sourceDecision": "LITERAL_SCOPE_ADOPTED_REVIEW_RUNTIME_CLOSURE_PENDING",
+      "sourceReason": "The original row 12 requires a metric contract. It does not require future device-fleet/outbox/exporter adapters or permit fabricated healthy zeros.",
+      "engineeringDecision": "ACTUAL_BOUNDED_TECHNICAL_DESIGN_ADOPTED_NOT_TASK_ACCEPTANCE",
+      "engineeringReason": "I adopt minimal request/correlation and current-authorized diagnostics, closed latency/error/audit-health/freshness/replay dimensions and explicitly unavailable device backlog/integration retry contracts. IDs and private inputs are not metric labels. Optional telemetry cannot replace required audit or change committed outcomes.",
+      "artifacts": [
+        {
+          "path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+          "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674"
+        },
+        {
+          "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
+          "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49"
+        },
+        {
+          "path": "backend/Poseidon.Api/OperationalTelemetry.cs",
+          "sha256": "6141e20541bac77e3ba3fa5d6cf12d93411e5c50a45e1e5bedd2328a3c4e9e9e"
+        },
+        {
+          "path": "docs/architecture/s0-current-engineering-candidate-20261102.md",
+          "sha256": "7196faa3b5bb0b78819bf6b804bb5dfab3cc41546f17926bde9521b4ce089404"
+        },
+        {
+          "path": "docs/operations/observability-contract.md",
+          "sha256": "f5a31c73fa7d3797d35d53030b8ad9e960763d9769c1ad7eb6f90c3d2cc8a6a9"
+        },
+        {
+          "path": "tests/Poseidon.Domain.Tests/SourceFreshnessTests.cs",
+          "sha256": "849a7ca2f3f3eec811562d973e0afade03231d0f212ce47667a161e65b06b77d"
+        }
+      ],
+      "unresolvedBindingsAssessment": "No additional external binding is required for this literal engineering definition. Actual production, legal, source activation and pilot bindings remain open outside S0 technical adoption.",
+      "runtimeP0Assessment": "PENDING_ACTUAL_CLEAN_F_RUNTIME_CLOSURE",
+      "finalReceiptOutcome": "PENDING_NOT_ISSUED"
+    },
+    {
+      "taskId": "DEV-012",
+      "definition": {
+        "id": "DEV-012",
+        "locator": "sheet:Backlog/row:13",
+        "acceptanceCriteria": "Architecture, data, security, trace, environments, backlog ve pilot source ownership gate'leri PASS/accepted; unresolved P0 blocker yoktur.",
+        "traceId": "T-S0-012",
+        "ownerRole": "Product Owner",
+        "storyPoints": 2,
+        "dependencies": [
+          "DEV-001",
+          "DEV-002",
+          "DEV-003",
+          "DEV-004",
+          "DEV-005",
+          "DEV-006",
+          "DEV-007",
+          "DEV-008",
+          "DEV-009",
+          "DEV-010",
+          "DEV-011"
+        ],
+        "registeredCriticalSoftwareCount": 0
+      },
+      "sourceDecision": "LITERAL_SCOPE_ADOPTED_REVIEW_RUNTIME_CLOSURE_PENDING",
+      "sourceReason": "The original row 13 requires actual accepted DEV-001 through DEV-011 gates and no current P0. The complete eleven-task dependency range is mandatory, and DEV-116 remains a separate S0 task.",
+      "engineeringDecision": "ACTUAL_BOUNDED_TECHNICAL_DESIGN_ADOPTED_NOT_TASK_ACCEPTANCE",
+      "engineeringReason": "I approve the source-derived 13-task/53-SP evaluator and genuine completed independent-authority design. Actual exit acceptance remains pending F CI, all 122 cases, baseline/TLS/security, current P0 and the real 52 receipts with dependency acceptance. No exit acceptance is issued.",
+      "artifacts": [
+        {
+          "path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+          "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674"
+        },
+        {
+          "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
+          "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49"
+        },
+        {
+          "path": "contracts/s0/README.md",
+          "sha256": "9062863c3f177314349c201444e3592edd969ce5e7896238acda9610395d41c2"
+        },
+        {
+          "path": "contracts/s0/exit-policy.v1.json",
+          "sha256": "53fb11e9dd49345b2d9ba4c409521c1b51010d487807e8b49d1543ecff9f42d2"
+        },
+        {
+          "path": "docs/tasks/s0-release-gate-20261102.md",
+          "sha256": "7203a8ef88ec0c104d000091498781b7082ed1e272c298d9e4ee629942ea4e74"
+        },
+        {
+          "path": "scripts/s0_release_gate.py",
+          "sha256": "6b6b69d5138712f70929b83694807e6ab82a5dd19bfaa1cf9a4c4fd6f1e0ded1"
+        },
+        {
+          "path": "scripts/task_contracts.py",
+          "sha256": "e85a21d4bc131b55be40c5132477634b09fc33e9cabd02533939c8c04dd17659"
+        },
+        {
+          "path": "scripts/test_s0_release_gate.py",
+          "sha256": "3fa1d84365a0923271a833e3997b30d7b588dac54d006ab35da36dd61ab0c623"
+        },
+        {
+          "path": "scripts/test_task_contracts.py",
+          "sha256": "89a66b6cc8ead49ba9552181531fe791a240b7a5523cb1af01d43e04d738e8b5"
+        }
+      ],
+      "unresolvedBindingsAssessment": "No additional external binding is required for this literal engineering definition. Actual production, legal, source activation and pilot bindings remain open outside S0 technical adoption.",
+      "runtimeP0Assessment": "PENDING_ACTUAL_CLEAN_F_RUNTIME_CLOSURE",
+      "finalReceiptOutcome": "PENDING_NOT_ISSUED"
+    },
+    {
+      "taskId": "DEV-116",
+      "definition": {
+        "id": "DEV-116",
+        "locator": "sheet:Backlog/row:117",
+        "acceptanceCriteria": "Explicit OUT list; integration-only contracts; technical requisition/critical spares boundary; no accidental PO/AP/AR/payroll tables.",
+        "traceId": "T-V463-002",
+        "ownerRole": "Solution Architect",
+        "storyPoints": 5,
+        "dependencies": [
+          "DEV-004"
+        ],
+        "registeredCriticalSoftwareCount": 0
+      },
+      "sourceDecision": "LITERAL_SCOPE_ADOPTED_REVIEW_RUNTIME_CLOSURE_PENDING",
+      "sourceReason": "The original row 117 requires explicit ERP exclusions and integration-only technical-requisition/critical-spare references, without finance PO/AP/AR/payroll tables. Full ERP delivery is not S0 scope.",
+      "engineeringDecision": "ACTUAL_BOUNDED_TECHNICAL_DESIGN_ADOPTED_NOT_TASK_ACCEPTANCE",
+      "engineeringReason": "I adopt exact-context/version/revision/freshness reconciliation and the closed TechnicalRequisition/CriticalSpareReference schema/decoder, with finance, full procurement, warehouse and chartering excluded. The pure decoder does not authorize a runtime caller, persist or deliver provider transactions; those behaviors are not claimed.",
+      "artifacts": [
+        {
+          "path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+          "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674"
+        },
+        {
+          "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
+          "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49"
+        },
+        {
+          "path": "backend/Poseidon.Domain/ErpReferenceBoundary.cs",
+          "sha256": "14e0e27737f7160c1bb4ea60f2ed18d2760f1408e4fcf5066ded186e628f0fe1"
+        },
+        {
+          "path": "contracts/integration/erp-reference.v1.schema.json",
+          "sha256": "334f61da3ffa07309f2f38269a0915b6b086ed6c1af8db45dc99b5bc35df5eb3"
+        },
+        {
+          "path": "docs/architecture/s0-current-engineering-candidate-20261102.md",
+          "sha256": "7196faa3b5bb0b78819bf6b804bb5dfab3cc41546f17926bde9521b4ce089404"
+        },
+        {
+          "path": "docs/tasks/selected-source-reconciliation-2026-11-02.md",
+          "sha256": "17cf931c89e55f4c51f1e9748c1c62fb48aab0eab453a75604be54215b2bf49f"
+        },
+        {
+          "path": "tests/Poseidon.Domain.Tests/ErpReferenceBoundaryTests.cs",
+          "sha256": "dd72c9d74fc98c48c55386fbb56c66fd49b17d0156d52accb04453ca1e462e82"
+        }
+      ],
+      "unresolvedBindingsAssessment": "No additional external binding is required for this literal engineering definition. Actual production, legal, source activation and pilot bindings remain open outside S0 technical adoption.",
+      "runtimeP0Assessment": "PENDING_ACTUAL_CLEAN_F_RUNTIME_CLOSURE",
+      "finalReceiptOutcome": "PENDING_NOT_ISSUED"
+    }
+  ],
+  "reviewedUniqueInputs": [
+    {
+      "path": ".github/workflows/backend-foundation.yml",
+      "sha256": "5fbd245a37172f1d0c72a13362c19b3dd1311511147eb7fbd8fae6db04c5c2f1",
+      "bytes": 8028,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "Poseidon.slnx",
+      "sha256": "4f6cd5624fef605f993c0f52e654187a64f18f4ae1f35683f7141040c6850e59",
+      "bytes": 711,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "README.md",
+      "sha256": "f2e982c11732b41479076fa7648810ef07745d77aaafff02cf2eef3ab82cdc3d",
+      "bytes": 1484,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/architecture.md",
+      "sha256": "18476f2205cf83a1276c892a2db2ae8df209aff3a591f4af7c83bfc60410c904",
+      "bytes": 4087,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/automation.md",
+      "sha256": "57fe9108affc8c60c6d2b07900170975b3abbc01141a787db9b55f9c5172011f",
+      "bytes": 5914,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "global.json",
+      "sha256": "c01135e6969ef6fc8c24e12ae51c25db29b43b8cbb305288b2da738848397ee7",
+      "bytes": 149,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/test_task_contracts.py",
+      "sha256": "89a66b6cc8ead49ba9552181531fe791a240b7a5523cb1af01d43e04d738e8b5",
+      "bytes": 5497,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "frontend/package.json",
+      "sha256": "096d4620da3227968723806de054f3fe8a695c3af6ef954d7ce7d42fa7297eeb",
+      "bytes": 1410,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/lab_profile_acl.py",
+      "sha256": "8ecd2b31516a9c7c7b9fe869b9ef12b7780c7c186b2c5a5e0ef89f61cf86ec2d",
+      "bytes": 8221,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/test_api_test_gate.py",
+      "sha256": "82a7b631b057a32c4f45c9167c0288d010d4a2830b99407253e79c869907b42f",
+      "bytes": 8361,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/test_browser_gate.py",
+      "sha256": "85715c09f8caa533fade89a032f7494315decf52acc378c6031db7a1ebe8fa2b",
+      "bytes": 1034,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/test_lab_profile_acl.py",
+      "sha256": "113a217f1e1cf5b7ac7af6da6610358ab88e3948768bddb4048f65d73b5825ce",
+      "bytes": 8486,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/lab/strict-browser.ts",
+      "sha256": "c42f5269f2eec85baf40561ee66d1e4e35dfa17112410b47d01672d709715a44",
+      "bytes": 2810,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/operations/environment-contract.md",
+      "sha256": "3eb95596e7ab9aed026561f75ee5103272311fd7dfb777feaeee0055b7eef375",
+      "bytes": 3870,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/environment_contract.py",
+      "sha256": "2c781ec9ee9e9b5d7168324099508ffbc2112164dcc442dcff0e70f98dc7fe96",
+      "bytes": 7989,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/test_environment_contract.py",
+      "sha256": "88fda257f954fcfbc5bd388398d933992b9b692c5f3b8aab113a48c28440dd78",
+      "bytes": 4987,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "backend/Poseidon.Domain/Poseidon.Domain.csproj",
+      "sha256": "8d654c44b7bebb6b31a9f2f606927f45b5072193adc4eef8cce3f3cf3b278df3",
+      "bytes": 36,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/architecture/s0-current-engineering-candidate-20261102.md",
+      "sha256": "7196faa3b5bb0b78819bf6b804bb5dfab3cc41546f17926bde9521b4ce089404",
+      "bytes": 6303,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/architecture/s0-remainder-reconciliation.md",
+      "sha256": "be80786652562de66708af1a0de0f42f58e5c90c2df1e3e37030936777322d98",
+      "bytes": 6729,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/decisions/s0-events-storage.md",
+      "sha256": "3d3c4023e25d6000c1ebdab38b11f0d658c686ca3095b0df7cf156b7cc8237da",
+      "bytes": 9714,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/decisions/s0-module-boundaries.md",
+      "sha256": "7fa0d1055ebc5e6c264b1a9babea272857533716956b507e9f733a266d21b288",
+      "bytes": 9118,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/decisions/s0-offline-ai.md",
+      "sha256": "0a69b2ac07b486a803ebfa477012c53a0cfd17aaaad47fa936029ae7c80e88de",
+      "bytes": 10722,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "tests/Poseidon.Domain.Tests/OfflineReplayPolicyTests.cs",
+      "sha256": "51aba08a4d072c67772d661f7b0aa5096431fcfcf476ad0a6d3bf844386cb43b",
+      "bytes": 10334,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/architecture/core-schema-plan.md",
+      "sha256": "e99aabe5744495486649e567f08877537c5ea746109c4836d4a5a0491edd1a4c",
+      "bytes": 7002,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/core_schema_inventory.py",
+      "sha256": "0ac565bf183b992b8ddfb58a83bf1fc7876961d7ca08805cf7693e5e76ea06da",
+      "bytes": 5454,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/test_core_schema_inventory.py",
+      "sha256": "718baf00c545cc25a8605480eabcc566f0b7e80dcb3d36e618b4acd146fc40d9",
+      "bytes": 3514,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/security/threat-model.md",
+      "sha256": "730760c9fe9df74b727365dbef4a6eba2e4bb48c12ee66b0c01ece15ae614935",
+      "bytes": 28852,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/secret_scan.py",
+      "sha256": "825127917066bf3633e20c3331a58bbf018e465ef32a0363ab5029af0973c9f7",
+      "bytes": 13562,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/test_secret_scan.py",
+      "sha256": "e48d390c76022f7e07e2bcb775e22c83aeeae82306f40dbb3bebc2e9af4e323b",
+      "bytes": 14904,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/architecture/pilot-trace.md",
+      "sha256": "674ccd857a7b4d98729fe4a30acb188ec4a658fe36a80b17a3177912b575fd6a",
+      "bytes": 7578,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/pilot_trace.py",
+      "sha256": "1dfb7b6995e9d8409ef28db470b0a52566e180d5ef1cbca8f40152c1801286f1",
+      "bytes": 18174,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/test_pilot_trace.py",
+      "sha256": "6786af82b43f0d68d9a7c92fd6a02ea28ecb095203bb769d604ca1dc6b2f857d",
+      "bytes": 19169,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "backend/Poseidon.Domain/RegulatoryRegisterPolicy.cs",
+      "sha256": "0c6efc51525a44a1e1d3b767393959f997ab2143c84634d0b5b33fc025375b66",
+      "bytes": 2789,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "contracts/sources/pilot-ownership.v1.json",
+      "sha256": "027105a711941c3137fb191e4fc9efa4a30b77121e7707c8ba3c7190511cd7d5",
+      "bytes": 30002,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/reports/dev-008-source-scope-review-2026-11-02.md",
+      "sha256": "59dd1a17bf617ff8a7610311b20860e44cecf99a80f16d6b8b6526ee729fb45e",
+      "bytes": 10866,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/tasks/s0-source-plan-20261102.md",
+      "sha256": "f3978af5e48036c28d933faa22e0058878110fec82233afc56b18c18abf72115",
+      "bytes": 7129,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/tasks/source-ownership-plan-01.md",
+      "sha256": "393a0b14345f6514e4e25743851fa3a0e4480a7d13c56ed0c6f1cf4d31f702e4",
+      "bytes": 5408,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/pilot_source_ownership.py",
+      "sha256": "08bd92f8cceec267c44ab8b6cffc4c6d5cf1d5e8c84cd2a7160226234f6e4022",
+      "bytes": 10080,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/test_pilot_source_ownership.py",
+      "sha256": "9b466068295e3991ba0da31ac82e419e79f95e4e68e98537c8b640e5a48e84e7",
+      "bytes": 7945,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "tests/Poseidon.Domain.Tests/RegulatoryRegisterPolicyTests.cs",
+      "sha256": "1497f15c3389a30d1eb6f3fb4fc60c0c18035c52a7dc9440cbc63adc6f45035d",
+      "bytes": 2610,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/tasks/s0-foundation-remainder-01.md",
+      "sha256": "e8e1f3e61ab4a882964c6ef0865f9a83697b315de09a229138859b968f4b83cd",
+      "bytes": 9949,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/golden_dataset.py",
+      "sha256": "73f8b73d5758495bdb8b063ae311f7aa44ccb6c31f54c3eaba55204a04c14519",
+      "bytes": 4183,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "tests/Poseidon.Domain.Tests/GoldenPilotDatasetTests.cs",
+      "sha256": "aa937c98116b997444981fa5c3f5e886b32905922f19785545fc4f13384f4da6",
+      "bytes": 3467,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/tasks/task-definition-template.md",
+      "sha256": "9c32d70f55c40d93991e26dd79851ee3e54c294d42a952cb922f4b748397baaf",
+      "bytes": 2803,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/task_contracts.py",
+      "sha256": "e85a21d4bc131b55be40c5132477634b09fc33e9cabd02533939c8c04dd17659",
+      "bytes": 9705,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "backend/Poseidon.Api/OperationalTelemetry.cs",
+      "sha256": "6141e20541bac77e3ba3fa5d6cf12d93411e5c50a45e1e5bedd2328a3c4e9e9e",
+      "bytes": 1845,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/operations/observability-contract.md",
+      "sha256": "f5a31c73fa7d3797d35d53030b8ad9e960763d9769c1ad7eb6f90c3d2cc8a6a9",
+      "bytes": 4076,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "tests/Poseidon.Domain.Tests/SourceFreshnessTests.cs",
+      "sha256": "849a7ca2f3f3eec811562d973e0afade03231d0f212ce47667a161e65b06b77d",
+      "bytes": 973,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "contracts/s0/README.md",
+      "sha256": "9062863c3f177314349c201444e3592edd969ce5e7896238acda9610395d41c2",
+      "bytes": 10162,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "contracts/s0/exit-policy.v1.json",
+      "sha256": "53fb11e9dd49345b2d9ba4c409521c1b51010d487807e8b49d1543ecff9f42d2",
+      "bytes": 1453,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/tasks/s0-release-gate-20261102.md",
+      "sha256": "7203a8ef88ec0c104d000091498781b7082ed1e272c298d9e4ee629942ea4e74",
+      "bytes": 7173,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/s0_release_gate.py",
+      "sha256": "6b6b69d5138712f70929b83694807e6ab82a5dd19bfaa1cf9a4c4fd6f1e0ded1",
+      "bytes": 28860,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/test_s0_release_gate.py",
+      "sha256": "3fa1d84365a0923271a833e3997b30d7b588dac54d006ab35da36dd61ab0c623",
+      "bytes": 21134,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "backend/Poseidon.Domain/ErpReferenceBoundary.cs",
+      "sha256": "14e0e27737f7160c1bb4ea60f2ed18d2760f1408e4fcf5066ded186e628f0fe1",
+      "bytes": 8936,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/tasks/selected-source-reconciliation-2026-11-02.md",
+      "sha256": "17cf931c89e55f4c51f1e9748c1c62fb48aab0eab453a75604be54215b2bf49f",
+      "bytes": 5529,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "tests/Poseidon.Domain.Tests/ErpReferenceBoundaryTests.cs",
+      "sha256": "dd72c9d74fc98c48c55386fbb56c66fd49b17d0156d52accb04453ca1e462e82",
+      "bytes": 10401,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "bytes": 50596
+    },
+    {
+      "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
+      "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49",
+      "bytes": 45010
+    },
+    {
+      "path": "contracts/environments/environments.v1.json",
+      "sha256": "7c8a36f2aaee79d98cb55f365b24d2df79ff94308a6f7e85d24ad931f970db73",
+      "bytes": 7390
+    },
+    {
+      "path": "docs/security-baseline.md",
+      "sha256": "f5c8ed4ed3d6a56453c5401736cf401f51e932fe30134848a9451dafa0f9d220",
+      "bytes": 10393
+    },
+    {
+      "path": "contracts/trace/pilot-capabilities.v1.json",
+      "sha256": "f68e1d017f9e528507af2f6519c5e156be8b973fdeed3cbf1c4e28442465b9e5",
+      "bytes": 251944
+    },
+    {
+      "path": "contracts/golden/pilot-dataset.v1.json",
+      "sha256": "8cbd10d6661b8ff2fb5909141c7f0766b416584430912e415c5e813a2bf6d530",
+      "bytes": 25918
+    },
+    {
+      "path": "contracts/tasks/current-authoring.v1.json",
+      "sha256": "4c63a5d53a19a45c84ac6ece4d6b9c8e85ca5909b7dc16569ced1dee6e522e5e",
+      "bytes": 153206
+    },
+    {
+      "path": "contracts/tasks/task-template.v1.json",
+      "sha256": "443dddbc31662b78b5d26d9b63d6e4472f2585fa4ef0da490dec8efd6b372fc2",
+      "bytes": 2617
+    },
+    {
+      "path": "contracts/integration/erp-reference.v1.schema.json",
+      "sha256": "334f61da3ffa07309f2f38269a0915b6b086ed6c1af8db45dc99b5bc35df5eb3",
+      "bytes": 3653
+    }
+  ],
+  "allCandidate65ReferencesVerified56Unique": true,
+  "all56WorkingRawEqualsGitBlob": true,
+  "freshOriginal13LiteralCriteriaMatch": true,
+  "storyPoints": 53,
+  "actualFinalFDeltaReview": {
+    "files": 25,
+    "meaning": "Read the final product diff and supported Tug date/Keep editing/exact historical-article repairs; fresh medical exact-context GET, exact awaited identity headings, six-field Crew privacy oracle and responsive Requirements navigation. New component tests and timer/cleanup repairs preserve meaningful assertions and deadlines. Checkpoint docs retain failures/dirty evidence and canonical 8/53 SP. No skipped cases, removed assertions, increased deadlines or relaxed authority were adopted."
+  },
+  "independentSourceCheckApplicability": {
+    "excludedChecks": {
+      "aiEvaluation": "NOT_APPLICABLE only to S0 engineering definitions/adoption and currently exposed non-AI software. Original DEV-004 row 5 requires an AI-boundary ADR and DEV-006 row 7 requires AI threat/backlog registration. Actual OCR and evaluation are DEV-045/046, rows 46/47 in S6; voice evaluation is DEV-063, row 64 in S9. The product retrieval/provider/model/tool pipeline is absent. Controlled 17.01 advisory, grounding, scoped retrieval/privacy and human-authority gates, and 19.01 evaluations, remain mandatory before enabling AI. Existing human-authority/tenant/privacy regressions remain required. No AI quality or safety approval is granted.",
+      "disasterRecovery": "NOT_APPLICABLE only to S0 engineering contract/adoption, not production/pilot/release deployment. DEV-003 row 4 freezes environments and DEV-005 row 6 approves migration strategy. Actual DB/object backup, restore, measured RPO/RTO and signed rollback are DEV-071, row 72 in S11, dependent on DEV-003/018. Controlled 19.01 paragraphs 40–42/179–180 and 23.03 promotion/recovery gates remain mandatory later. Current EF/model/provider, transaction and object-error checks remain required. No production restore, retention, customer RPO or destructive deployment is approved."
+    },
+    "nonExcludable": [
+      "unit",
+      "backendBuild",
+      "frontendBuild",
+      "lint",
+      "artifact"
+    ],
+    "requiredExistingSurfaceChecks": [
+      "unit",
+      "integration",
+      "contract",
+      "shipE2E",
+      "tugE2E",
+      "security",
+      "offlineChaos",
+      "regulatoryRegression",
+      "usability",
+      "backendBuild",
+      "frontendBuild",
+      "lint",
+      "artifact"
+    ],
+    "nativeCountLimits": "Actual closed F CI commands and positive native witnesses must be read separately. Unavailable supporting Domain/Persistence/Vitest totals or skipped counters remain UNAVAILABLE. Prior target results cannot be relabeled or unknown counters filled with zero. A coherent 122-case run may support multiple categories without being counted as multiple runs."
+  },
+  "remainingGates": [
+    "ActualcleanFrequiredCIcompletedandimmutablebuildartifacts",
+    "Freshall122exactmultisetactualcompletionwithsame6harness/24registered/3PE/UI/provider/runnerfingerprints",
+    "CleanFmanager/restrictedbaseline2+strictTLS3freshclosedsourcebinding",
+    "Actualcurrentrepo/clientsecurity/sourcepinoutputs+independentcurrentP0assessment",
+    "Genuine26finalreviewreceipts then13execution then13acceptance, actualcompletedhostprovenance thenexitCLI"
+  ],
+  "mandatoryFutureBoundaries": [
+    "D-STATE-01 operational state maps and real PO/BA/Architect/Marine/Tug SME/QA production decisions remain open.",
+    "Legal/source editions, actual role appointments, source activation, pilot applicability, permits, safety, full pilot and production release remain open. Technical review creates no human sign-off.",
+    "Proposal artifacts retain their history. A separate dated adoption record must bind exact F bytes; no implementation edits are authorized by this review."
+  ],
+  "unresolvedStaticFindings": [],
+  "unresolvedP0": null,
+  "passReceiptsIssued": 0,
+  "acceptanceReceiptsIssued": 0,
+  "phaseAccepted": false,
+  "reviewerRanTestsBuildBrowserOrCiLogs": false,
+  "supersedesPendingNarrative": {
+    "path": ".runtime/s0-overnight-20261102/qa/final-F-literal-source-engineering-pending.json",
+    "sha256": "80567d06f43dbb537d70708540982287f8c6f1169d1bd3c84d85031a6f0f2204",
+    "meaning": "Earlier terse pending narrative remains unchanged. This version supplies readable reasons; definitions, pins and pending status are unchanged."
+  }
+}

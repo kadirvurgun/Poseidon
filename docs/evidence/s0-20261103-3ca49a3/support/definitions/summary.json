@@ -1,0 +1,49 @@
+{
+  "target": {
+    "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+    "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03"
+  },
+  "commandsExecuted": 6,
+  "commandsPassed": 6,
+  "testCasesClaimed": 0,
+  "acceptance": false,
+  "results": [
+    {
+      "commandId": "environment-definition",
+      "status": "PASS_DEFINITION_ONLY",
+      "exitCode": 0,
+      "durationSeconds": 0.834
+    },
+    {
+      "commandId": "core-schema-source-inventory",
+      "status": "PASS_DEFINITION_ONLY",
+      "exitCode": 0,
+      "durationSeconds": 1.642
+    },
+    {
+      "commandId": "pilot-trace-definition",
+      "status": "PASS_DEFINITION_ONLY",
+      "exitCode": 0,
+      "durationSeconds": 2.084
+    },
+    {
+      "commandId": "golden-dataset-definition",
+      "status": "PASS_DEFINITION_ONLY",
+      "exitCode": 0,
+      "durationSeconds": 1.229
+    },
+    {
+      "commandId": "task-definition-register",
+      "status": "PASS_DEFINITION_ONLY",
+      "exitCode": 0,
+      "durationSeconds": 1.39
+    },
+    {
+      "commandId": "pilot-source-role-plan",
+      "status": "PASS_DEFINITION_ONLY",
+      "exitCode": 0,
+      "durationSeconds": 1.234
+    }
+  ],
+  "rawOutputPersisted": false
+}

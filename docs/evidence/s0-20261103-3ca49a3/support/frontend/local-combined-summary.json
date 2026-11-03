@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "poseidon.local-ui-repair.v1",
+  "accepted": false,
+  "baseCommit": "e29346642fb09f4cdddeff61846c1a4428179cb4",
+  "scope": "dirty F repair only; not final phase acceptance",
+  "typecheckAndBuild": true,
+  "lint": true,
+  "components": true,
+  "sourceBeforeSha256": "66259e76ec00f2a68f20d25b8048c0fd8537cc6f85ba644f7c1a985a46cbfb52",
+  "sourceAfterSha256": "66259e76ec00f2a68f20d25b8048c0fd8537cc6f85ba644f7c1a985a46cbfb52",
+  "sourceStable": true,
+  "rawOutputPersisted": false
+}

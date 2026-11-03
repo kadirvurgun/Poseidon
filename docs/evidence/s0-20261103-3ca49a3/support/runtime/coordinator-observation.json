@@ -1,0 +1,43 @@
+{
+  "status": "ROOT_OBSERVED_CLOSED_EXACT_NATIVE_SCOPE_PENDING_INDEPENDENT_ACCEPTANCE",
+  "observedAt": "2026-11-03T02:37:23.214000+00:00",
+  "target": {
+    "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+    "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03"
+  },
+  "nativeProcess": {
+    "owner": "/root/project_progress_report",
+    "exec": 29945,
+    "observedSdkNotification": "CLOSEDexit0",
+    "rootStatusNotMarkedCompleted": true
+  },
+  "actual": {
+    "uniqueIdentities": 122,
+    "executed": 122,
+    "passed": 122,
+    "failed": 0,
+    "pending": 0,
+    "skipped": 0,
+    "duplicates": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "byProject": {
+      "firefox-desktop": 61,
+      "firefox-narrow-responsive": 61
+    },
+    "groups": 10,
+    "allGroupExitCodesZero": true
+  },
+  "rawDigests": {
+    "f-final-manifest-ledger.json": "ef4f45695f8a61edfba6177d79e088c6d70d2ef48aa88fa0fe15ffdde8ecbe6e",
+    "f-final-run-results.json": "b50805b7086aa127fc37edcb9434d0f0a56e1d82c7e1aa679c2b430c629e47c7",
+    "f-final-target.json": "b42c61f2765428f207091a6705228f81c2826c95fc5759cdf3ad935948d884a9",
+    "f-full-journeys.json": "9f55d39781f76f61734d3c1cf5208ee793db5445a4934f6a3a0224db27b6608a",
+    "f-tls-current.json": "81e6ae452b356b25e9c81c65605a0749deb090a60666428e71dd3438b13bc8e0"
+  },
+  "finishedAt": "2026-11-03T02:33:54.596121+00:00",
+  "sourceDifferences": [],
+  "gitClean": true,
+  "priorAttempt30Reused": false,
+  "acceptance": false
+}

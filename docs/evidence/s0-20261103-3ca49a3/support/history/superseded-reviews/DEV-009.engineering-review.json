@@ -1,0 +1,108 @@
+{
+  "schemaVersion": "poseidon.s0-receipt.v1",
+  "kind": "engineering-review",
+  "taskId": "DEV-009",
+  "sessionId": "/root/s0_final_independent_qa",
+  "principal": "/root/s0_final_independent_qa",
+  "target": {
+    "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+    "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03"
+  },
+  "baseline": "poseidon-v46.3-20261030",
+  "sourceSha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+  "traceId": "T-S0-009",
+  "issuedAt": "2026-11-03T02:41:37.752883Z",
+  "outcome": "PASS",
+  "unresolvedP0": 0,
+  "artifacts": [
+    {
+      "path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674"
+    },
+    {
+      "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
+      "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49"
+    },
+    {
+      "path": "contracts/golden/pilot-dataset.v1.json",
+      "sha256": "8cbd10d6661b8ff2fb5909141c7f0766b416584430912e415c5e813a2bf6d530"
+    },
+    {
+      "path": "docs/tasks/s0-foundation-remainder-01.md",
+      "sha256": "e8e1f3e61ab4a882964c6ef0865f9a83697b315de09a229138859b968f4b83cd"
+    },
+    {
+      "path": "scripts/golden_dataset.py",
+      "sha256": "73f8b73d5758495bdb8b063ae311f7aa44ccb6c31f54c3eaba55204a04c14519"
+    },
+    {
+      "path": "tests/Poseidon.Domain.Tests/GoldenPilotDatasetTests.cs",
+      "sha256": "aa937c98116b997444981fa5c3f5e886b32905922f19785545fc4f13384f4da6"
+    }
+  ],
+  "acceptanceCriteria": "En az tanker + genel cargo/tug profile; crew/certificate/asset/defect/evidence edge cases; expected applicability/readiness outcomes kayıtlıdır.",
+  "dependencies": [
+    "DEV-005",
+    "DEV-008"
+  ],
+  "unresolvedBindings": [],
+  "sourceLocator": "sheet:Backlog/row:10",
+  "sourceOwnerRole": "QA Lead",
+  "reviewerRole": "Independent software source and engineering reviewer; no human legal/Marine appointment claimed",
+  "decisionReason": "I adopt seven profiles, ten original source scenarios and 23 actual primitive consumer definitions covering crew, certificate, asset, defect and evidence edges. Unknown outcomes and unavailable production adapters remain explicit. Actual required tests still must finish; 23 consumers are not fabricated native test counts.",
+  "actualClosedRuntimeReview": "Required clean F CI completed all four jobs and all19 configured commands; actual API unit91 and integration547 passed with zero fail/skip, coherent signed122 passed with zero fail/pending/skip, fresh baseline2 and TLS3 completed. Root and execution owner confirmed closed tool29945 exit0; reviewer independently read raw-safe results, hashes, exact identity/fingerprint coverage and clean F.",
+  "p0Assessment": {
+    "path": ".runtime/s0-overnight-20261102/qa/final-F-current-P0-assessment.json",
+    "sha256": "f5ed479005904579ba94b303e1249024440746f2e8687c576ecaaa6b6da658d1"
+  },
+  "reviewEvidence": [
+    {
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-current-P0-assessment.json",
+      "sha256": "f5ed479005904579ba94b303e1249024440746f2e8687c576ecaaa6b6da658d1"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-source-applicability.json",
+      "sha256": "c1bf111b6b921b38998b68a11c74c7f4e040be27ef04b167f70ed50b55e2c67c"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-literal-source-engineering-pending-v2.json",
+      "sha256": "458e75fa87910f74f6c5685a5b6159be266bca2f7ade0b4aefc0d277393557e7"
+    }
+  ],
+  "limits": [
+    "This is an actual independent review decision, not an execution receipt, task acceptance or completed S0 gate.",
+    "Supporting CI native Domain/Persistence/Vitest totals/skips remain UNAVAILABLE. Same-input local954 is supporting evidence, not invented CI discovery.",
+    "Source/legal/clinical/Marine/pilot/production/D-STATE-01/AI/DR activation gates remain explicitly open as scoped in the source applicability report."
+  ],
+  "technicalAdoption": {
+    "decision": "APPROVED_EXACT_F_BOUNDED_TECHNICAL_DESIGN",
+    "reviewedAt": "2026-11-03T02:41:37.752883Z",
+    "artifactDigests": [
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+        "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674"
+      },
+      {
+        "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
+        "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49"
+      },
+      {
+        "path": "contracts/golden/pilot-dataset.v1.json",
+        "sha256": "8cbd10d6661b8ff2fb5909141c7f0766b416584430912e415c5e813a2bf6d530"
+      },
+      {
+        "path": "docs/tasks/s0-foundation-remainder-01.md",
+        "sha256": "e8e1f3e61ab4a882964c6ef0865f9a83697b315de09a229138859b968f4b83cd"
+      },
+      {
+        "path": "scripts/golden_dataset.py",
+        "sha256": "73f8b73d5758495bdb8b063ae311f7aa44ccb6c31f54c3eaba55204a04c14519"
+      },
+      {
+        "path": "tests/Poseidon.Domain.Tests/GoldenPilotDatasetTests.cs",
+        "sha256": "aa937c98116b997444981fa5c3f5e886b32905922f19785545fc4f13384f4da6"
+      }
+    ],
+    "meaning": "Actual adoption of the reviewed artifact bytes and stated limits. Historical proposal text remains intact; a later metadata record may bind this decision."
+  }
+}

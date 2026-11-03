@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "poseidon.frontend-source-equivalence.v1",
+  "status": "LOCAL_STABLE_INPUT_BYTES_MATCH_CLEAN_F",
+  "observedAt": "2026-11-03T02:27:16.440966+00:00",
+  "target": {
+    "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+    "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03"
+  },
+  "fingerprint": "66259e76ec00f2a68f20d25b8048c0fd8537cc6f85ba644f7c1a985a46cbfb52",
+  "scope": "Full frontend/src and scripts plus package lock/config inputs; same actual local954 run inputs, not a new execution or inferred CI native count",
+  "localComponents": {
+    "executed": 954,
+    "passed": 954,
+    "failed": 0,
+    "pending": 0,
+    "todo": 0,
+    "unhandled": 0,
+    "moduleErrors": 0,
+    "sourceStable": true
+  },
+  "localComponentOutputSha256": "204e32f8b9f62ef7e8ece543dd9bd51fc6c17e68a72baeda7c4a2ebf09f52363",
+  "componentResultRawSha256": "2891d96509a73f77089cdeef814b2951ef496d96d02f0b22ea12b7d6970175ea",
+  "combinedSummaryRawSha256": "e55b41d1e826671758a1634eca3ceff1ed85e23df33461d1eee3c574e708567d",
+  "ciNativeComponentTotal": "UNAVAILABLE_NOT_ASSUMED",
+  "ciComponentCommand": "ActualFrequiredmanifestSUCCESS",
+  "acceptance": false
+}

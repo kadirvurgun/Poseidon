@@ -1,0 +1,32 @@
+{
+  "status": "EXACT_CLEAN_F_INPUTS_VERIFIED",
+  "observedAt": "2026-11-03T01:42:34.556558+00:00",
+  "target": {
+    "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+    "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03"
+  },
+  "candidateSha256": "52d7ae086e6786574fa58ed8bc39dcc8fb6234c81c7bfd1b0b5df75bc545da52",
+  "artifactReferences": 65,
+  "uniqueExactGitBoundInputs": 56,
+  "gitIndexTreeMatchesTarget": true,
+  "gitClean": true,
+  "originalBacklogSourceUnchanged": true,
+  "oldEDraftWasUnaccepted": true,
+  "oldEAcceptanceCriteriaRepresentationFix": {
+    "affectedTaskCount": 10,
+    "mechanism": "Fresh original-workbook UTF8 output replaces earlier cp1254-decoded representation; exact reversed encoding equality verified for all13",
+    "semanticsChanged": false
+  },
+  "rootWorktreeEolCanonicalization": {
+    "affectedFiles": 11,
+    "onlyCRLFToExistingCommittedLFBytes": true,
+    "gitSemanticOrTreeChange": false,
+    "statCacheRefreshedByRenormalizingIdenticalBlobs": true,
+    "newCommitCreated": false,
+    "originalBeforeRawHashes": "UNAVAILABLE_NOT_FABRICATED"
+  },
+  "firstBaselineBinding": "INTERRUPTED_SEPARATE_FROM_NEW_CLEAN_BASELINE",
+  "newCleanBaseline": "Actual2/2PASS26s plusTLS3/3PASS; no reusedinterruptedbinding",
+  "acceptance": false,
+  "workingBytesMatchAll56CandidateGitDigests": true
+}

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "poseidon.coordinator-actual-sdk-observation.v1",
+  "observedAt": "2026-11-03T02:52:03.830349+00:00",
+  "actualHostInstanceId": "ahp-session:/5c0afcdc-488a-464a-b94a-486800b77263",
+  "hostIdentitySource": "Actual tools.get_current_session response, stable session identity only; stale descriptive Git metadata excluded",
+  "completionSource": "Actual collaboration.list_agents response after each issuing agents genuine FINAL_ANSWER",
+  "states": {
+    "/root": "running",
+    "/root/s0_release_gate": "completed",
+    "/root/s0_final_independent_qa": "completed"
+  },
+  "authorPrincipals": [
+    "/root",
+    "/root/crew_enterprise_ui",
+    "/root/project_progress_report",
+    "/root/s0_release_gate",
+    "/root/search_accessibility_fix"
+  ],
+  "actualReviewsIndexSha256": "7affdb4b8893ed2c58e95571d26f6cfb76766de7d070417e0831cf85ec9d8ca6",
+  "actualExecutionIndexSha256": "45c2d780ecc9959a3eea02e761db5113f6114dbf214b0d09a8b00b81e288a573",
+  "actualAcceptanceIndexSha256": "7454c023886e1623d1709ac9afb1405ac60133d48ee5685b26b8cd25348e9328",
+  "humanLegalMarineSafetyAuthority": false,
+  "acceptanceIssuedByObservation": false
+}
