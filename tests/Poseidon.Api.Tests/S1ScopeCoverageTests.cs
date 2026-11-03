@@ -83,8 +83,12 @@ public sealed partial class DirectoryWorkspaceTests
             Assert.DoesNotContain(seed.Tenants[1].Id.ToString(), content);
             var correlation = Assert.Single(response.Headers.GetValues("X-Correlation-ID"));
             Assert.NotEqual("untrusted-client-correlation", correlation);
-            await using var db = Db();
-            var security = await db.Set<SecurityEvent>().Where(e => e.CorrelationId == correlation).ToArrayAsync(Ct);
+            Assert.True(Guid.TryParseExact(correlation, "N", out _));
+            // Fixture-owned audit connection observes anonymous null-tenant rows
+            // and catches incorrectly attributed rows hidden by a tenant filter.
+            await using var auditDb = new SecurityEventWriter(new DbContextOptionsBuilder<SecurityEventWriter>()
+                .UseNpgsql(postgres.GetConnectionString()).Options);
+            var security = await auditDb.Set<SecurityEvent>().AsNoTracking().Where(e => e.CorrelationId == correlation).ToArrayAsync(Ct);
             Assert.NotEmpty(security);
             Assert.All(security, e =>
             {
