@@ -140,6 +140,14 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             // Do not copy declared Value/Source/Unit/PolicyVersion or imply verification.
             return new(observation.VesselId, observation.Id, "MaintenanceObservation", null, null,
                 Fields(Field("Kind", null, AuditValuePolicy.Value("Kind", observation.Kind)), Field("Binding", null, "OwnerReference")));
+        if (entry.Entity is Vessel fencedVessel && entry.State == EntityState.Modified &&
+            entry.Property(nameof(Vessel.Name)).IsModified && entry.Properties.Count(p => p.IsModified) == 1 &&
+            Equals(entry.Property(nameof(Vessel.Name)).OriginalValue, entry.Property(nameof(Vessel.Name)).CurrentValue))
+            // Qualified workflows perform a real SQL/xmin fence on an unchanged vessel
+            // name. Record the retained owner reference, not a semantic vessel edit or
+            // an invented revision/post-save xmin; actual original xmin is audited separately.
+            return new(fencedVessel.Id, fencedVessel.Id, "Vessel", null, null,
+                Fields(Field("Name", null, null, "ValuesWithheld"), Field("Binding", "OwnerReference", "OwnerReference")));
         if (entry.Entity is Person person)
             return new(vessel, resource, "Person", entry.State == EntityState.Added ? null : (long?)entry.Property("IdentityRevision").OriginalValue,
                 person.IdentityRevision, Fields(Field("Binding", entry.State == EntityState.Added ? null : "TenantPersonRecord", "TenantPersonRecord"),

@@ -24,7 +24,14 @@ public sealed partial class DirectoryWorkspaceTests
         await using var host = Host(); using var client = Client(host);
         GraphPermissionsForTest(host.Services); await Token(client);
         // Genuine ordinary draft/review/independent qualification/evaluation commands, all explicitly fictional.
-        var (rule, _, _) = await AdmittedByCommands(client, host.Services);
+        var beforeEvaluationFence = await S1VesselFenceSnapshot();
+        var (rule, _, evaluation) = await AdmittedByCommands(client, host.Services);
+        await using (var evaluationDb = Db())
+        {
+            var evaluationAudit = await evaluationDb.AuditEvents.AsNoTracking().SingleAsync(x => x.Source == "WebCommand" &&
+                x.EntityType == nameof(ApplicabilityEvaluation) && x.ResourceId == evaluation.Id, Ct);
+            await S1AssertVesselNoOpFence(beforeEvaluationFence, "ApplicabilityEvaluate", "REGULATORY_WORKFLOW", evaluationAudit.CorrelationId);
+        }
         var settings = host.Services.GetRequiredService<FederationSettings>();
         var member = settings.Memberships[0];
         var pin = new RequirementPin(rule.Current.RequirementId!.Value, rule.Current.RequirementRevision!.Value,
@@ -52,14 +59,17 @@ public sealed partial class DirectoryWorkspaceTests
         await S1AssertCommittedCommand(updatedResponse, operationPrefix + "Update", "PREPARATION_COMMAND", created.Id, SeedVessel.Id, member.ActorId);
 
         var submit = update with { ExpectedVersion = updated.Version, ReasonCode = "SUBMIT" };
+        var beforeSubmitFence = await S1VesselFenceSnapshot();
         using var submittedResponse = await Send(client, GraphRoute($"{route}/{created.Id}/submit"), submit);
         Assert.Equal(HttpStatusCode.OK, submittedResponse.StatusCode);
         var submitted = (await submittedResponse.Content.ReadFromJsonAsync<ControlEvidenceDto>(Ct))!;
         Assert.Equal("SUBMITTED", submitted.Lifecycle); Assert.Equal("UNVERIFIED", submitted.Verification);
         await S1AssertCommittedCommand(submittedResponse, operationPrefix + "Submit", "PREPARATION_COMMAND", created.Id, SeedVessel.Id, member.ActorId);
+        await S1AssertVesselNoOpFence(beforeSubmitFence, operationPrefix + "Submit", "PREPARATION_COMMAND", Assert.Single(submittedResponse.Headers.GetValues("X-Correlation-ID")));
 
         var complete = submit with { ExpectedVersion = submitted.Version, ReasonCode = "COMPLETE" };
         var key = Guid.NewGuid().ToString();
+        var beforeCompleteFence = await S1VesselFenceSnapshot();
         using var completedResponse = await Send(client, GraphRoute($"{route}/{created.Id}/complete"), complete, key);
         Assert.Equal(HttpStatusCode.OK, completedResponse.StatusCode);
         var exactOutcome = await completedResponse.Content.ReadAsStringAsync(Ct);
@@ -67,6 +77,7 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Equal("COMPLETED", completed.Lifecycle); Assert.Equal("COMPLETED", completed.Completion);
         Assert.Equal("UNVERIFIED", completed.Verification); Assert.Equal("UNKNOWN", completed.Effectiveness);
         await S1AssertCommittedCommand(completedResponse, operationPrefix + "Complete", "PREPARATION_COMMAND", created.Id, SeedVessel.Id, member.ActorId);
+        await S1AssertVesselNoOpFence(beforeCompleteFence, operationPrefix + "Complete", "PREPARATION_COMMAND", Assert.Single(completedResponse.Headers.GetValues("X-Correlation-ID")));
 
         await using var before = Db();
         var auditIds = await before.AuditEvents.Where(x => x.ResourceId == created.Id).OrderBy(x => x.Id).Select(x => x.Id).ToArrayAsync(Ct);
@@ -235,5 +246,39 @@ public sealed partial class DirectoryWorkspaceTests
             Assert.Equal("Vessel", Field("ScopeKind"));
             Assert.DoesNotContain("FICTIONAL", row.ChangeSummary);
         });
+    }
+
+    private async Task<Vessel> S1VesselFenceSnapshot()
+    {
+        await using var db = Db();
+        return await db.Vessels.AsNoTracking().SingleAsync(x => x.Id == SeedVessel.Id, Ct);
+    }
+
+    private async Task S1AssertVesselNoOpFence(Vessel before, string operation, string reason, string correlation)
+    {
+        await using var db = Db();
+        var current = await db.Vessels.AsNoTracking().SingleAsync(x => x.Id == before.Id, Ct);
+        Assert.Equal((before.Id, before.TenantId, before.CompanyId, before.Kind, before.Code, before.Name),
+            (current.Id, current.TenantId, current.CompanyId, current.Kind, current.Code, current.Name));
+        Assert.NotEqual(before.Version, current.Version); // Actual PostgreSQL xmin fence, not a semantic fact edit.
+        var rows = await db.AuditEvents.AsNoTracking().Where(x => x.CorrelationId == correlation).ToArrayAsync(Ct);
+        var audit = Assert.Single(rows, x => x.EntityType == nameof(Vessel) && x.ResourceId == before.Id);
+        Assert.Equal(before.Version, audit.BeforeVersion); Assert.Null(audit.AfterVersion);
+        Assert.Null(audit.BeforeRevision); Assert.Null(audit.AfterRevision);
+        Assert.Equal(before.Id, audit.VesselId); Assert.Equal(before.TenantId, audit.TenantId);
+        Assert.Equal("Vessel", audit.ResourceKind); Assert.Equal("Modified", audit.Action);
+        Assert.DoesNotContain(rows, x => x.ResourceId == before.Id && x.AfterVersion > 0);
+        using var summary = JsonDocument.Parse(audit.ChangeSummary!);
+        var fields = summary.RootElement.EnumerateArray().ToDictionary(x => x.GetProperty("field").GetString()!);
+        Assert.Equal(new[] { "Binding", "CommandName", "Name", "ScopeKind", "TechnicalReasonCode" }, fields.Keys.Order(StringComparer.Ordinal).ToArray());
+        Assert.Equal("OwnerReference", fields["Binding"].GetProperty("before").GetString());
+        Assert.Equal("OwnerReference", fields["Binding"].GetProperty("after").GetString());
+        Assert.Equal("ValuesWithheld", fields["Name"].GetProperty("evidence").GetString());
+        Assert.Equal(JsonValueKind.Null, fields["Name"].GetProperty("before").ValueKind);
+        Assert.Equal(JsonValueKind.Null, fields["Name"].GetProperty("after").ValueKind);
+        Assert.Equal(operation, fields["CommandName"].GetProperty("after").GetString());
+        Assert.Equal(reason, fields["TechnicalReasonCode"].GetProperty("after").GetString());
+        Assert.Equal("Vessel", fields["ScopeKind"].GetProperty("after").GetString());
+        Assert.DoesNotContain(before.Name, audit.ChangeSummary!);
     }
 }
