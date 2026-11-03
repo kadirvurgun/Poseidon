@@ -51,7 +51,17 @@ public sealed partial class DirectoryWorkspaceTests
             Content = new UnknownLengthContent(bytes)
         };
         put.Content.Headers.ContentType = new("image/png");
+        put.Headers.Add("X-Correlation-ID", "untrusted-file-correlation");
         using var rejected = await client.SendAsync(put, Ct); Assert.Equal(HttpStatusCode.ServiceUnavailable, rejected.StatusCode);
+        var problem = await rejected.Content.ReadFromJsonAsync<System.Text.Json.JsonElement>(Ct);
+        Assert.Equal("file_upload_not_accepted", problem.GetProperty("code").GetString());
+        var correlation = Assert.Single(rejected.Headers.GetValues("X-Correlation-ID"));
+        Assert.True(Guid.TryParseExact(correlation, "N", out _));
+        Assert.NotEqual("untrusted-file-correlation", correlation);
+        var rejectionEvent = Assert.Single(await db.Set<SecurityEvent>().Where(x => x.CorrelationId == correlation).ToArrayAsync(Ct));
+        Assert.Equal("FileRequest", rejectionEvent.Action); Assert.Equal("file_upload_not_accepted", rejectionEvent.Result);
+        Assert.Equal(actorId.ToString(), rejectionEvent.ActorId); Assert.Equal(acceptedFile.TenantId, rejectionEvent.TenantId);
+        Assert.Equal(stage.Id, rejectionEvent.ResourceId); Assert.NotEqual(default, rejectionEvent.OccurredAt);
         await AssertUnchangedRejectedIntent(db, stage);
         Assert.Equal(auditIds, await db.AuditEvents.OrderBy(x => x.Id).Select(x => x.Id).ToArrayAsync(Ct));
         var retained = await db.StoredFiles.AsNoTracking().SingleAsync(x => x.Id == accepted.Id, Ct);

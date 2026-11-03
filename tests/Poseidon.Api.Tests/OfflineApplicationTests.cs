@@ -179,7 +179,26 @@ public sealed partial class DirectoryWorkspaceTests
         settings.Memberships[0] = original with { ActorId = Guid.NewGuid() };
         Assert.Equal(HttpStatusCode.NotFound, (await Send(client, $"{OfflinePath}/{e.Id}/cleanup", new { })).StatusCode);
         settings.Memberships[0] = original with { RoleReferences = [] };
-        Assert.Equal(HttpStatusCode.NotFound, (await Send(client, OfflinePath, new { })).StatusCode);
+        var beforeRoleless = await S1BusinessSnapshot();
+        client.DefaultRequestHeaders.Add("X-Correlation-ID", "untrusted-offline-correlation");
+        using var roleless = await Send(client, OfflinePath, new { });
+        Assert.Equal(HttpStatusCode.Forbidden, roleless.StatusCode);
+        var problem = await roleless.Content.ReadFromJsonAsync<JsonElement>(Ct);
+        Assert.Equal("permission_denied", problem.GetProperty("code").GetString());
+        var correlation = Assert.Single(roleless.Headers.GetValues("X-Correlation-ID"));
+        Assert.True(Guid.TryParseExact(correlation, "N", out _));
+        Assert.NotEqual("untrusted-offline-correlation", correlation);
+        Assert.Equal(correlation, problem.GetProperty("correlationId").GetString());
+        await using var deniedDb = Db();
+        var denials = await deniedDb.Set<SecurityEvent>().Where(x => x.CorrelationId == correlation).ToArrayAsync(Ct);
+        Assert.NotEmpty(denials);
+        Assert.All(denials, denial =>
+        {
+            Assert.Equal("AccessDenied", denial.Action); Assert.Equal("Denied", denial.Result);
+            Assert.Equal(original.ActorId.ToString(), denial.ActorId); Assert.Equal(original.TenantId, denial.TenantId);
+            Assert.Null(denial.ResourceId); Assert.NotEqual(default, denial.OccurredAt);
+        });
+        S1AssertSameBusinessSnapshot(beforeRoleless, await S1BusinessSnapshot());
     }
     [Fact]
     public async Task Failure_in_offline_receipt_save_rolls_back_ordinary_mutation_receipt_and_audit()
