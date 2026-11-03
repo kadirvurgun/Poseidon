@@ -1,0 +1,12 @@
+{
+  "scope": "Working-copy line endings only; exact committed F blob restored, no source or issued-receipt edits",
+  "observedAt": "2026-11-03T02:49:53.968332+00:00",
+  "path": "contracts/tasks/current-authoring.v1.json",
+  "beforeSha256": "e18d1824d9cfb327c139ecf04669aeb8a88cd93a13bf0fac6c09d0294e005f8a",
+  "afterSha256": "4c63a5d53a19a45c84ac6ece4d6b9c8e85ca5909b7dc16569ced1dee6e522e5e",
+  "gitBlobSha256": "4c63a5d53a19a45c84ac6ece4d6b9c8e85ca5909b7dc16569ced1dee6e522e5e",
+  "crlfCount": 3740,
+  "crlfToLfExactlyEqualsGitBlob": true,
+  "history": ".runtime/s0-overnight-20261102/F-current-authoring-before-EOL-normalization.json",
+  "acceptanceIssued": false
+}

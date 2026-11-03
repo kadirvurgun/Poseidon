@@ -1,0 +1,249 @@
+{
+  "accepted": true,
+  "errors": [],
+  "pendingGates": [],
+  "phase": "S0",
+  "progress": {
+    "acceptedStoryPoints": 53,
+    "acceptedTasks": 13,
+    "authoredTasks": 13,
+    "totalStoryPoints": 53,
+    "totalTasks": 13
+  },
+  "schemaVersion": "poseidon.s0-result.v1",
+  "scope": "engineering exit only; no production, legal or safety authority",
+  "target": {
+    "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+    "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03"
+  },
+  "tasks": [
+    {
+      "acceptanceCriteria": "Backend/frontend/contracts/infra/docs klasörleri oluşturulur; main/develop politikası ve PR kontrolü tanımlıdır; protected branch kuralı dokümante edilir.",
+      "accepted": true,
+      "authored": true,
+      "dependencies": [],
+      "engineeringReviewed": true,
+      "executed": true,
+      "id": "DEV-001",
+      "locator": "sheet:Backlog/row:2",
+      "ownerRole": "Engineering Lead",
+      "registeredCriticalSoftwareCount": 0,
+      "sourceReviewed": true,
+      "storyPoints": 3,
+      "traceId": "T-S0-001"
+    },
+    {
+      "acceptanceCriteria": "Backend ve frontend build; unit test; lint; artifact üretimi; başarısız adım PR'ı bloklar.",
+      "accepted": true,
+      "authored": true,
+      "dependencies": [
+        "DEV-001"
+      ],
+      "engineeringReviewed": true,
+      "executed": true,
+      "id": "DEV-002",
+      "locator": "sheet:Backlog/row:3",
+      "ownerRole": "DevOps",
+      "registeredCriticalSoftwareCount": 0,
+      "sourceReviewed": true,
+      "storyPoints": 5,
+      "traceId": "T-S0-002"
+    },
+    {
+      "acceptanceCriteria": "Her ortam için URL/secret/data/retention/deploy owner tanımlı; production datası DEV'e kopyalanmaz; environment promotion akışı yazılıdır.",
+      "accepted": true,
+      "authored": true,
+      "dependencies": [
+        "DEV-001"
+      ],
+      "engineeringReviewed": true,
+      "executed": true,
+      "id": "DEV-003",
+      "locator": "sheet:Backlog/row:4",
+      "ownerRole": "DevOps",
+      "registeredCriticalSoftwareCount": 0,
+      "sourceReviewed": true,
+      "storyPoints": 3,
+      "traceId": "T-S0-003"
+    },
+    {
+      "acceptanceCriteria": "Domain modülleri, dependency yönü, event/outbox yaklaşımı, object storage, offline sync ve AI boundary ADR'ları approved durumundadır.",
+      "accepted": true,
+      "authored": true,
+      "dependencies": [
+        "DEV-001"
+      ],
+      "engineeringReviewed": true,
+      "executed": true,
+      "id": "DEV-004",
+      "locator": "sheet:Backlog/row:5",
+      "ownerRole": "Solution Architect",
+      "registeredCriticalSoftwareCount": 0,
+      "sourceReviewed": true,
+      "storyPoints": 5,
+      "traceId": "T-S0-004"
+    },
+    {
+      "acceptanceCriteria": "Core entity listesi, PK/FK, tenancy, versioning, audit columns, evidence object refs ve migration stratejisi approved olur.",
+      "accepted": true,
+      "authored": true,
+      "dependencies": [
+        "DEV-004"
+      ],
+      "engineeringReviewed": true,
+      "executed": true,
+      "id": "DEV-005",
+      "locator": "sheet:Backlog/row:6",
+      "ownerRole": "Backend Lead",
+      "registeredCriticalSoftwareCount": 0,
+      "sourceReviewed": true,
+      "storyPoints": 5,
+      "traceId": "T-S0-005"
+    },
+    {
+      "acceptanceCriteria": "Tenant isolation, authn/authz, file upload, protected reporting, secrets, audit, offline device, AI prompt/data threats kayıtlı; P0 mitigations backlog'a bağlıdır.",
+      "accepted": true,
+      "authored": true,
+      "dependencies": [
+        "DEV-004"
+      ],
+      "engineeringReviewed": true,
+      "executed": true,
+      "id": "DEV-006",
+      "locator": "sheet:Backlog/row:7",
+      "ownerRole": "Security/Architect",
+      "registeredCriticalSoftwareCount": 0,
+      "sourceReviewed": true,
+      "storyPoints": 5,
+      "traceId": "T-S0-006"
+    },
+    {
+      "acceptanceCriteria": "10 pilot capability için orphan kritik öğe kalmaz; trace ID'leri backlog ve test case'lerine bağlıdır.",
+      "accepted": true,
+      "authored": true,
+      "dependencies": [],
+      "engineeringReviewed": true,
+      "executed": true,
+      "id": "DEV-007",
+      "locator": "sheet:Backlog/row:8",
+      "ownerRole": "BA/QA Lead",
+      "registeredCriticalSoftwareCount": 0,
+      "sourceReviewed": true,
+      "storyPoints": 5,
+      "traceId": "T-S0-007"
+    },
+    {
+      "acceptanceCriteria": "ISM/SOLAS/STCW/MLC/MARPOL/Flag/Class pilot kapsamı için source owner, version, validation status ve reviewer atanır.",
+      "accepted": true,
+      "authored": true,
+      "dependencies": [
+        "DEV-007"
+      ],
+      "engineeringReviewed": true,
+      "executed": true,
+      "id": "DEV-008",
+      "locator": "sheet:Backlog/row:9",
+      "ownerRole": "Regulatory Lead",
+      "registeredCriticalSoftwareCount": 0,
+      "sourceReviewed": true,
+      "storyPoints": 5,
+      "traceId": "T-S0-008"
+    },
+    {
+      "acceptanceCriteria": "En az tanker + genel cargo/tug profile; crew/certificate/asset/defect/evidence edge cases; expected applicability/readiness outcomes kayıtlıdır.",
+      "accepted": true,
+      "authored": true,
+      "dependencies": [
+        "DEV-005",
+        "DEV-008"
+      ],
+      "engineeringReviewed": true,
+      "executed": true,
+      "id": "DEV-009",
+      "locator": "sheet:Backlog/row:10",
+      "ownerRole": "QA Lead",
+      "registeredCriticalSoftwareCount": 0,
+      "sourceReviewed": true,
+      "storyPoints": 5,
+      "traceId": "T-S0-009"
+    },
+    {
+      "acceptanceCriteria": "DoR/DoD; design, security, offline, audit, regulatory, docs ve test etkisini kapsar; backlog template'e uygulanır.",
+      "accepted": true,
+      "authored": true,
+      "dependencies": [
+        "DEV-007"
+      ],
+      "engineeringReviewed": true,
+      "executed": true,
+      "id": "DEV-010",
+      "locator": "sheet:Backlog/row:11",
+      "ownerRole": "Product Owner",
+      "registeredCriticalSoftwareCount": 0,
+      "sourceReviewed": true,
+      "storyPoints": 2,
+      "traceId": "T-S0-010"
+    },
+    {
+      "acceptanceCriteria": "Correlation/tenant/vessel/request IDs; API latency/error, sync backlog/conflict, integration retry, audit health ve data freshness metric sözleşmesi vardır.",
+      "accepted": true,
+      "authored": true,
+      "dependencies": [
+        "DEV-004"
+      ],
+      "engineeringReviewed": true,
+      "executed": true,
+      "id": "DEV-011",
+      "locator": "sheet:Backlog/row:12",
+      "ownerRole": "DevOps",
+      "registeredCriticalSoftwareCount": 0,
+      "sourceReviewed": true,
+      "storyPoints": 3,
+      "traceId": "T-S0-011"
+    },
+    {
+      "acceptanceCriteria": "Architecture, data, security, trace, environments, backlog ve pilot source ownership gate'leri PASS/accepted; unresolved P0 blocker yoktur.",
+      "accepted": true,
+      "authored": true,
+      "dependencies": [
+        "DEV-001",
+        "DEV-002",
+        "DEV-003",
+        "DEV-004",
+        "DEV-005",
+        "DEV-006",
+        "DEV-007",
+        "DEV-008",
+        "DEV-009",
+        "DEV-010",
+        "DEV-011"
+      ],
+      "engineeringReviewed": true,
+      "executed": true,
+      "id": "DEV-012",
+      "locator": "sheet:Backlog/row:13",
+      "ownerRole": "Product Owner",
+      "registeredCriticalSoftwareCount": 0,
+      "sourceReviewed": true,
+      "storyPoints": 2,
+      "traceId": "T-S0-012"
+    },
+    {
+      "acceptanceCriteria": "Explicit OUT list; integration-only contracts; technical requisition/critical spares boundary; no accidental PO/AP/AR/payroll tables.",
+      "accepted": true,
+      "authored": true,
+      "dependencies": [
+        "DEV-004"
+      ],
+      "engineeringReviewed": true,
+      "executed": true,
+      "id": "DEV-116",
+      "locator": "sheet:Backlog/row:117",
+      "ownerRole": "Solution Architect",
+      "registeredCriticalSoftwareCount": 0,
+      "sourceReviewed": true,
+      "storyPoints": 5,
+      "traceId": "T-V463-002"
+    }
+  ]
+}

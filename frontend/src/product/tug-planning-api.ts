@@ -2,6 +2,8 @@ import { ApiError, request } from './api'
 import { isGuid } from './identifiers'
 import { timestamp } from './date-validation'
 import { bpNumber } from './tug-capability-contract'
+import { decodeTugCrewCoverage } from './tug-crew-contract'
+import type { TugCrewCoverage } from './tug-crew-contract'
 
 export type PlanInputs = { plannedStart: string | null; plannedEnd: string | null; assignedTugs: string[] }
 export type Plan = { jobId: string; revision: number; version: number | null; requestRevision: number; policyVersion: string; sourceVersion: string
@@ -10,6 +12,7 @@ export type PlanChange = { operation: 'Window' | 'Assign' | 'Remove' | 'Reassign
 export type PlanCommand = { baseVersion: number | null; requestVersion: number; policyVersion: string; change: PlanChange }
 export type PlanAttempt = { key: string; body: PlanCommand }
 export type PlanningEvidence = { availableBollardPull: string | null; capacityState: string; readiness: string; conflictState: string; coverage: string
+  crew?: TugCrewCoverage[]
   ownedBp?: { tugId: string; state: string; tonnes: string | null; why: string; evidenceId: string | null; evidenceRevision: number | null; conditionId: string | null; conditionRevision: number | null; ruleId: string | null; qualificationRevision: number | null; qualificationHash: string | null; validUntil: string | null; observedAt: string | null }[]
   readinessFacts?: { tugId: string; source: string; id: string | null; revision: number | null; state: string; why: string; observedAt: string | null; expiresAt: string | null }[]
   operationalConflicts?: { tugId: string; kind: string; resourceId: string; revision: number; state: string; why: string; provenance: string; observedAt: string | null }[]
@@ -25,7 +28,8 @@ const positive = (v: unknown) => typeof v === 'number' && Number.isSafeInteger(v
 const pair = (id: unknown, revision: unknown) => id === null && revision === null || isGuid(id) && positive(revision)
 const time = (v: unknown) => v === null || timestamp(v)
 export function decodePlanningEvidence(v: unknown, assigned: string[]): PlanningEvidence {
-  if (!exact(v, ['availableBollardPull', 'capacityState', 'bp', 'conflictState', 'conflicts', 'coverage', 'readiness', 'ownedBp', 'readinessFacts', 'operationalConflicts']) ||
+  const keys = ['availableBollardPull', 'capacityState', 'bp', 'conflictState', 'conflicts', 'coverage', 'readiness', 'ownedBp', 'readinessFacts', 'operationalConflicts']
+  if (!exact(v, obj(v) && Object.hasOwn(v, 'crew') ? [...keys, 'crew'] : keys) ||
     !['Missing', 'ReviewRequired', 'CurrentPlanningCapacity'].includes(v.capacityState as string) || !['Blocked', 'ReviewRequired'].includes(v.readiness as string) ||
     !['Unknown', 'HumanReviewRequired', 'BoundaryReviewRequired'].includes(v.conflictState as string) || v.coverage !== 'CurrentAuthorizedOwningFacts;DraftGeometry;MasterDecisionSeparate' ||
     v.availableBollardPull !== null && !(typeof v.availableBollardPull === 'string' && /^(?:0|[1-9][0-9]{0,11})(?:\.[0-9]{1,6})?$/.test(v.availableBollardPull)) ||
@@ -46,8 +50,15 @@ export function decodePlanningEvidence(v: unknown, assigned: string[]): Planning
     if (millionths(v.availableBollardPull as string) !== sum) return invalid()
   }
   for (const f of v.readinessFacts) if (!exact(f, ['tugId', 'source', 'id', 'revision', 'state', 'why', 'observedAt', 'expiresAt']) || !assigned.includes(f.tugId as string) ||
-    !['OperationContext', 'Crew', 'CrewAssignment', 'CrewCertificate', 'Equipment', 'EquipmentPms', 'MaintenancePlan', 'BollardPullCertificate', 'CapabilityEquipmentCondition'].includes(f.source as string) || !pair(f.id, f.revision) || !['Unknown', 'Unavailable', 'Blocked', 'Current'].includes(f.state as string) || typeof f.why !== 'string' || !time(f.observedAt) || !time(f.expiresAt) ||
-    f.state === 'Current' && (!['OperationContext', 'BollardPullCertificate', 'CapabilityEquipmentCondition'].includes(f.source as string) || !f.id || !f.expiresAt)) return invalid()
+    !['OperationContext', 'Crew', 'CrewAssignment', 'CrewCertificate', 'CrewMinimumManning', 'Equipment', 'EquipmentPms', 'MaintenancePlan', 'BollardPullCertificate', 'CapabilityEquipmentCondition'].includes(f.source as string) || !pair(f.id, f.revision) || !['Unknown', 'Unavailable', 'Blocked', 'Current'].includes(f.state as string) || typeof f.why !== 'string' || !time(f.observedAt) || !time(f.expiresAt) ||
+    f.state === 'Current' && (!['OperationContext', 'CrewMinimumManning', 'BollardPullCertificate', 'CapabilityEquipmentCondition'].includes(f.source as string) || !f.id || !f.expiresAt)) return invalid()
+  const crew = Object.hasOwn(v, 'crew') ? decodeTugCrewCoverage(v.crew, assigned) : null
+  const crewFacts = v.readinessFacts.filter(f => f.source === 'CrewMinimumManning')
+  if (crew === null ? crewFacts.length !== 0 : crewFacts.length !== crew.length || crew.some(c => {
+    const facts = crewFacts.filter(f => f.tugId === c.tugId)
+    const state = c.state === 'CurrentMinimumRoleCoverage' ? 'Current' : c.state === 'Blocked' ? 'Blocked' : c.state === 'Unavailable' ? 'Unavailable' : 'Unknown'
+    return facts.length !== 1 || facts[0].state !== state || facts[0].why !== c.reason || facts[0].id !== c.msmdId || facts[0].revision !== c.msmdRevision || facts[0].expiresAt !== c.validUntil
+  })) return invalid()
   if ((v.readiness === 'Blocked') !== v.readinessFacts.some(f => f.state === 'Blocked')) return invalid()
   for (const b of v.bp) if (!exact(b, ['tugId', 'state', 'declaredValue', 'source', 'policyVersion', 'sourceRevision', 'observationId', 'observedAt', 'freshness', 'provenance']) || !assigned.includes(b.tugId as string) ||
     b.declaredValue !== null && !bpNumber(b.declaredValue) || !pair(b.observationId, b.sourceRevision) || !time(b.observedAt) || typeof b.state !== 'string' || typeof b.freshness !== 'string' || typeof b.provenance !== 'string') return invalid()

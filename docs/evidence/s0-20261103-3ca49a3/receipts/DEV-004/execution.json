@@ -1,0 +1,592 @@
+{
+  "schemaVersion": "poseidon.s0-receipt.v1",
+  "kind": "execution",
+  "taskId": "DEV-004",
+  "sessionId": "/root/s0_release_gate",
+  "principal": "/root/s0_release_gate",
+  "target": {
+    "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+    "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03"
+  },
+  "baseline": "poseidon-v46.3-20261030",
+  "sourceSha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+  "traceId": "T-S0-004",
+  "issuedAt": "2026-11-03T02:45:49.822212Z",
+  "outcome": "PASS",
+  "unresolvedP0": 0,
+  "artifacts": [
+    {
+      "path": "backend/Poseidon.Domain/Poseidon.Domain.csproj",
+      "sha256": "8d654c44b7bebb6b31a9f2f606927f45b5072193adc4eef8cce3f3cf3b278df3"
+    },
+    {
+      "path": "docs/architecture/s0-current-engineering-candidate-20261102.md",
+      "sha256": "7196faa3b5bb0b78819bf6b804bb5dfab3cc41546f17926bde9521b4ce089404"
+    },
+    {
+      "path": "docs/architecture/s0-remainder-reconciliation.md",
+      "sha256": "be80786652562de66708af1a0de0f42f58e5c90c2df1e3e37030936777322d98"
+    },
+    {
+      "path": "docs/decisions/s0-events-storage.md",
+      "sha256": "3d3c4023e25d6000c1ebdab38b11f0d658c686ca3095b0df7cf156b7cc8237da"
+    },
+    {
+      "path": "docs/decisions/s0-module-boundaries.md",
+      "sha256": "7fa0d1055ebc5e6c264b1a9babea272857533716956b507e9f733a266d21b288"
+    },
+    {
+      "path": "docs/decisions/s0-offline-ai.md",
+      "sha256": "0a69b2ac07b486a803ebfa477012c53a0cfd17aaaad47fa936029ae7c80e88de"
+    },
+    {
+      "path": "tests/Poseidon.Domain.Tests/OfflineReplayPolicyTests.cs",
+      "sha256": "51aba08a4d072c67772d661f7b0aa5096431fcfcf476ad0a6d3bf844386cb43b"
+    }
+  ],
+  "checks": {
+    "unit": {
+      "countSemantics": "native API unit test cases only",
+      "countScope": "Exact F API unit discovery; not an all-project unit total",
+      "narrative": "Positive API unit witness with explicit zero failure/skip. Completed required Domain, Persistence, Python and Vitest commands provide supporting scope. Unreadable supporting native totals/skips remain UNAVAILABLE.",
+      "evidence": [
+        {
+          "path": ".runtime/s0-overnight-20261102/ci-41560927341/verification-summary.json",
+          "sha256": "8cd2b801a58c26e53b00ff70c2194b2f042da72e5f546729ace6962bfcb54da5"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/required-command-manifest.json",
+          "sha256": "e2eed43cd87816b8debb593f0478ac5f69df995cdf0fb173a5cbf04a64ce79f8"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/ci-41560927341/native-run-log-observations.json",
+          "sha256": "5d186d565cea9c10b5e9cd03390a43a69cf38059febfcd1b8d49e726479d5e19"
+        }
+      ],
+      "commandId": "F-CI-API-unit-exact-discovery",
+      "sharedExecutionId": null,
+      "reuseOfSameNativeManifest": false,
+      "runCount": 91,
+      "passedCount": 91,
+      "failedCount": 0,
+      "skippedCount": 0,
+      "exitCode": 0,
+      "state": "PASS"
+    },
+    "integration": {
+      "countSemantics": "native API integration test cases only",
+      "countScope": "Exact F API integration discovery with real owned S3/Clam and PostgreSQL",
+      "narrative": "Exact discovered API suite completed. The separate Persistence PostgreSQL command completed successfully; its unreadable native total/skips remain UNAVAILABLE.",
+      "evidence": [
+        {
+          "path": ".runtime/s0-overnight-20261102/ci-41560927341/verification-summary.json",
+          "sha256": "8cd2b801a58c26e53b00ff70c2194b2f042da72e5f546729ace6962bfcb54da5"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/required-command-manifest.json",
+          "sha256": "e2eed43cd87816b8debb593f0478ac5f69df995cdf0fb173a5cbf04a64ce79f8"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/ci-41560927341/native-run-log-observations.json",
+          "sha256": "5d186d565cea9c10b5e9cd03390a43a69cf38059febfcd1b8d49e726479d5e19"
+        }
+      ],
+      "commandId": "F-CI-API-integration-exact-discovery",
+      "sharedExecutionId": null,
+      "reuseOfSameNativeManifest": false,
+      "runCount": 547,
+      "passedCount": 547,
+      "failedCount": 0,
+      "skippedCount": 0,
+      "exitCode": 0,
+      "state": "PASS"
+    },
+    "contract": {
+      "countSemantics": "definition command/check executions; not test cases",
+      "countScope": "The six once-only clean-F definition commands",
+      "narrative": "Six definition commands completed, preserving accepted=false, real pending gates, future implementation gaps and adapter gaps. Required generated-API drift, source byte/lineage and migration-model commands are supporting evidence. This is definition execution, not automatic source adoption.",
+      "evidence": [
+        {
+          "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/definitions/summary.json",
+          "sha256": "ab59908284853267f73c4afe8a52d8ebc178ad006e25273ccb7bbe72a4e947c3"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/required-command-manifest.json",
+          "sha256": "e2eed43cd87816b8debb593f0478ac5f69df995cdf0fb173a5cbf04a64ce79f8"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/ci-41560927341/verification-summary.json",
+          "sha256": "8cd2b801a58c26e53b00ff70c2194b2f042da72e5f546729ace6962bfcb54da5"
+        }
+      ],
+      "commandId": "F-six-definition-commands",
+      "sharedExecutionId": null,
+      "reuseOfSameNativeManifest": false,
+      "runCount": 6,
+      "passedCount": 6,
+      "failedCount": 0,
+      "skippedCount": 0,
+      "exitCode": 0,
+      "state": "PASS"
+    },
+    "shipE2E": {
+      "countSemantics": "native registered case/project executions; same complete shared run",
+      "countScope": "The identical complete F final attempt2 manifest: 61 cases per project, 122 unique identities once each, 10 nonoverlapping groups",
+      "narrative": "Implemented Ship/shared equipment, crew, source qualification and current consumer flows are included in the complete signed manifest. This does not claim a future departure release, production catalogue or Master/pilot sign-off. This check transparently reuses the same 122 executions; five category assessments do not mean 610 distinct executions.",
+      "evidence": [
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-final-run-results.json",
+          "sha256": "b50805b7086aa127fc37edcb9434d0f0a56e1d82c7e1aa679c2b430c629e47c7"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-final-manifest-ledger.json",
+          "sha256": "ef4f45695f8a61edfba6177d79e088c6d70d2ef48aa88fa0fe15ffdde8ecbe6e"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-final-target.json",
+          "sha256": "b42c61f2765428f207091a6705228f81c2826c95fc5759cdf3ad935948d884a9"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-final-manifest-inventory.json",
+          "sha256": "76fb50264fbcc2bdf18993bc71b1c7c06215f25346126657578b63f203f4afbf"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-final-run-plan.json",
+          "sha256": "bf56063f726ca7696460de4cba365ad5e1a42d8ca052864db70b35e28fea9760"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-full-journeys.json",
+          "sha256": "9f55d39781f76f61734d3c1cf5208ee793db5445a4934f6a3a0224db27b6608a"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-tls-current.json",
+          "sha256": "81e6ae452b356b25e9c81c65605a0749deb090a60666428e71dd3438b13bc8e0"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/ci-41560927341/verification-summary.json",
+          "sha256": "8cd2b801a58c26e53b00ff70c2194b2f042da72e5f546729ace6962bfcb54da5"
+        }
+      ],
+      "commandId": "F-final-registered-signed-manifest",
+      "sharedExecutionId": "F-signed-final-attempt2",
+      "reuseOfSameNativeManifest": true,
+      "runCount": 122,
+      "passedCount": 122,
+      "failedCount": 0,
+      "skippedCount": 0,
+      "exitCode": 0,
+      "state": "PASS"
+    },
+    "tugE2E": {
+      "countSemantics": "native registered case/project executions; same complete shared run",
+      "countScope": "The identical complete F final attempt2 manifest: 61 cases per project, 122 unique identities once each, 10 nonoverlapping groups",
+      "narrative": "Implemented Tug intake/board, versioned plans, assignments, current operating-equipment consumer and Today/Why flows are included in the complete signed manifest. No operational safety authority is inferred. This check transparently reuses the same 122 executions; five category assessments do not mean 610 distinct executions.",
+      "evidence": [
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-final-run-results.json",
+          "sha256": "b50805b7086aa127fc37edcb9434d0f0a56e1d82c7e1aa679c2b430c629e47c7"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-final-manifest-ledger.json",
+          "sha256": "ef4f45695f8a61edfba6177d79e088c6d70d2ef48aa88fa0fe15ffdde8ecbe6e"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-final-target.json",
+          "sha256": "b42c61f2765428f207091a6705228f81c2826c95fc5759cdf3ad935948d884a9"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-final-manifest-inventory.json",
+          "sha256": "76fb50264fbcc2bdf18993bc71b1c7c06215f25346126657578b63f203f4afbf"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-final-run-plan.json",
+          "sha256": "bf56063f726ca7696460de4cba365ad5e1a42d8ca052864db70b35e28fea9760"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-full-journeys.json",
+          "sha256": "9f55d39781f76f61734d3c1cf5208ee793db5445a4934f6a3a0224db27b6608a"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-tls-current.json",
+          "sha256": "81e6ae452b356b25e9c81c65605a0749deb090a60666428e71dd3438b13bc8e0"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/ci-41560927341/verification-summary.json",
+          "sha256": "8cd2b801a58c26e53b00ff70c2194b2f042da72e5f546729ace6962bfcb54da5"
+        }
+      ],
+      "commandId": "F-final-registered-signed-manifest",
+      "sharedExecutionId": "F-signed-final-attempt2",
+      "reuseOfSameNativeManifest": true,
+      "runCount": 122,
+      "passedCount": 122,
+      "failedCount": 0,
+      "skippedCount": 0,
+      "exitCode": 0,
+      "state": "PASS"
+    },
+    "offlineChaos": {
+      "countSemantics": "native registered case/project executions; same complete shared run",
+      "countScope": "The identical complete F final attempt2 manifest: 61 cases per project, 122 unique identities once each, 10 nonoverlapping groups",
+      "narrative": "Implemented enrolled offline restart, reconnect, lost response, exact replay, current-rights withdrawal, material conflict, protected medical exclusion, key loss and explicit discard are included. Later unsupported offline fields remain outside this evidence. This check transparently reuses the same 122 executions; five category assessments do not mean 610 distinct executions.",
+      "evidence": [
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-final-run-results.json",
+          "sha256": "b50805b7086aa127fc37edcb9434d0f0a56e1d82c7e1aa679c2b430c629e47c7"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-final-manifest-ledger.json",
+          "sha256": "ef4f45695f8a61edfba6177d79e088c6d70d2ef48aa88fa0fe15ffdde8ecbe6e"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-final-target.json",
+          "sha256": "b42c61f2765428f207091a6705228f81c2826c95fc5759cdf3ad935948d884a9"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-final-manifest-inventory.json",
+          "sha256": "76fb50264fbcc2bdf18993bc71b1c7c06215f25346126657578b63f203f4afbf"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-final-run-plan.json",
+          "sha256": "bf56063f726ca7696460de4cba365ad5e1a42d8ca052864db70b35e28fea9760"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-full-journeys.json",
+          "sha256": "9f55d39781f76f61734d3c1cf5208ee793db5445a4934f6a3a0224db27b6608a"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-tls-current.json",
+          "sha256": "81e6ae452b356b25e9c81c65605a0749deb090a60666428e71dd3438b13bc8e0"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/ci-41560927341/verification-summary.json",
+          "sha256": "8cd2b801a58c26e53b00ff70c2194b2f042da72e5f546729ace6962bfcb54da5"
+        }
+      ],
+      "commandId": "F-final-registered-signed-manifest",
+      "sharedExecutionId": "F-signed-final-attempt2",
+      "reuseOfSameNativeManifest": true,
+      "runCount": 122,
+      "passedCount": 122,
+      "failedCount": 0,
+      "skippedCount": 0,
+      "exitCode": 0,
+      "state": "PASS"
+    },
+    "regulatoryRegression": {
+      "countSemantics": "native registered case/project executions; same complete shared run",
+      "countScope": "The identical complete F final attempt2 manifest: 61 cases per project, 122 unique identities once each, 10 nonoverlapping groups",
+      "narrative": "Implemented source qualification, controls/evidence, MSMD/class and equipment consumer currentness, unknown/private boundaries and history are included. This does not adopt an approved production legal corpus or invent expert approvals. This check transparently reuses the same 122 executions; five category assessments do not mean 610 distinct executions.",
+      "evidence": [
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-final-run-results.json",
+          "sha256": "b50805b7086aa127fc37edcb9434d0f0a56e1d82c7e1aa679c2b430c629e47c7"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-final-manifest-ledger.json",
+          "sha256": "ef4f45695f8a61edfba6177d79e088c6d70d2ef48aa88fa0fe15ffdde8ecbe6e"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-final-target.json",
+          "sha256": "b42c61f2765428f207091a6705228f81c2826c95fc5759cdf3ad935948d884a9"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-final-manifest-inventory.json",
+          "sha256": "76fb50264fbcc2bdf18993bc71b1c7c06215f25346126657578b63f203f4afbf"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-final-run-plan.json",
+          "sha256": "bf56063f726ca7696460de4cba365ad5e1a42d8ca052864db70b35e28fea9760"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-full-journeys.json",
+          "sha256": "9f55d39781f76f61734d3c1cf5208ee793db5445a4934f6a3a0224db27b6608a"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-tls-current.json",
+          "sha256": "81e6ae452b356b25e9c81c65605a0749deb090a60666428e71dd3438b13bc8e0"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/ci-41560927341/verification-summary.json",
+          "sha256": "8cd2b801a58c26e53b00ff70c2194b2f042da72e5f546729ace6962bfcb54da5"
+        }
+      ],
+      "commandId": "F-final-registered-signed-manifest",
+      "sharedExecutionId": "F-signed-final-attempt2",
+      "reuseOfSameNativeManifest": true,
+      "runCount": 122,
+      "passedCount": 122,
+      "failedCount": 0,
+      "skippedCount": 0,
+      "exitCode": 0,
+      "state": "PASS"
+    },
+    "usability": {
+      "countSemantics": "native registered case/project executions; same complete shared run",
+      "countScope": "The identical complete F final attempt2 manifest: 61 cases per project, 122 unique identities once each, 10 nonoverlapping groups",
+      "narrative": "Both Firefox desktop and narrow responsive projects exercise implemented dirty guards, keyboard/trace/navigation, real destinations and data flows. Ordinary CI browser execution supports the result. This is automated usability regression, not a human pilot study. This check transparently reuses the same 122 executions; five category assessments do not mean 610 distinct executions.",
+      "evidence": [
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-final-run-results.json",
+          "sha256": "b50805b7086aa127fc37edcb9434d0f0a56e1d82c7e1aa679c2b430c629e47c7"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-final-manifest-ledger.json",
+          "sha256": "ef4f45695f8a61edfba6177d79e088c6d70d2ef48aa88fa0fe15ffdde8ecbe6e"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-final-target.json",
+          "sha256": "b42c61f2765428f207091a6705228f81c2826c95fc5759cdf3ad935948d884a9"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-final-manifest-inventory.json",
+          "sha256": "76fb50264fbcc2bdf18993bc71b1c7c06215f25346126657578b63f203f4afbf"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-final-run-plan.json",
+          "sha256": "bf56063f726ca7696460de4cba365ad5e1a42d8ca052864db70b35e28fea9760"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-full-journeys.json",
+          "sha256": "9f55d39781f76f61734d3c1cf5208ee793db5445a4934f6a3a0224db27b6608a"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-tls-current.json",
+          "sha256": "81e6ae452b356b25e9c81c65605a0749deb090a60666428e71dd3438b13bc8e0"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/ci-41560927341/verification-summary.json",
+          "sha256": "8cd2b801a58c26e53b00ff70c2194b2f042da72e5f546729ace6962bfcb54da5"
+        }
+      ],
+      "commandId": "F-final-registered-signed-manifest",
+      "sharedExecutionId": "F-signed-final-attempt2",
+      "reuseOfSameNativeManifest": true,
+      "runCount": 122,
+      "passedCount": 122,
+      "failedCount": 0,
+      "skippedCount": 0,
+      "exitCode": 0,
+      "state": "PASS"
+    },
+    "security": {
+      "countSemantics": "actual completed scan command checks; not test cases",
+      "countScope": "F CI repository scan and built-client scan",
+      "narrative": "Both required scans completed successfully. Native API isolation/authorization/file cases, signed restricted/privacy cases and actual strict TLS 3/3 provide supporting runtime evidence. No production security certification is claimed.",
+      "evidence": [
+        {
+          "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/required-command-manifest.json",
+          "sha256": "e2eed43cd87816b8debb593f0478ac5f69df995cdf0fb173a5cbf04a64ce79f8"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/ci-41560927341/verification-summary.json",
+          "sha256": "8cd2b801a58c26e53b00ff70c2194b2f042da72e5f546729ace6962bfcb54da5"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-final-manifest-ledger.json",
+          "sha256": "ef4f45695f8a61edfba6177d79e088c6d70d2ef48aa88fa0fe15ffdde8ecbe6e"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-final-target.json",
+          "sha256": "b42c61f2765428f207091a6705228f81c2826c95fc5759cdf3ad935948d884a9"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-tls-current.json",
+          "sha256": "81e6ae452b356b25e9c81c65605a0749deb090a60666428e71dd3438b13bc8e0"
+        }
+      ],
+      "commandId": "F-CI-two-security-scan-commands",
+      "sharedExecutionId": null,
+      "reuseOfSameNativeManifest": false,
+      "runCount": 2,
+      "passedCount": 2,
+      "failedCount": 0,
+      "skippedCount": 0,
+      "exitCode": 0,
+      "state": "PASS"
+    },
+    "aiEvaluation": {
+      "observedCounts": null,
+      "narrative": "Actual final independent source exclusion, bounded exactly by its original reason; not an execution or future activation approval.",
+      "sourceApprovedReason": "NOT_APPLICABLE only to S0 engineering definitions/adoption and currently exposed non-AI software. Original DEV-004 row 5 requires an AI-boundary ADR and DEV-006 row 7 requires AI threat/backlog registration. Actual OCR and evaluation are DEV-045/046, rows 46/47 in S6; voice evaluation is DEV-063, row 64 in S9. The product retrieval/provider/model/tool pipeline is absent. Controlled 17.01 advisory, grounding, scoped retrieval/privacy and human-authority gates, and 19.01 evaluations, remain mandatory before enabling AI. Existing human-authority/tenant/privacy regressions remain required. No AI quality or safety approval is granted.",
+      "evidence": [
+        {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-source-applicability.json",
+          "sha256": "c1bf111b6b921b38998b68a11c74c7f4e040be27ef04b167f70ed50b55e2c67c"
+        }
+      ],
+      "state": "NOT_APPLICABLE",
+      "runCount": 0,
+      "passedCount": 0,
+      "failedCount": 0,
+      "skippedCount": 0,
+      "exclusionEvidence": {
+        "path": ".runtime/s0-overnight-20261102/qa/final-F-source-applicability.json",
+        "sha256": "c1bf111b6b921b38998b68a11c74c7f4e040be27ef04b167f70ed50b55e2c67c"
+      }
+    },
+    "disasterRecovery": {
+      "observedCounts": null,
+      "narrative": "Actual final independent source exclusion, bounded exactly by its original reason; not an execution or future activation approval.",
+      "sourceApprovedReason": "NOT_APPLICABLE only to S0 engineering contract/adoption, not production/pilot/release deployment. DEV-003 row 4 freezes environments and DEV-005 row 6 approves migration strategy. Actual DB/object backup, restore, measured RPO/RTO and signed rollback are DEV-071, row 72 in S11, dependent on DEV-003/018. Controlled 19.01 paragraphs 40–42/179–180 and 23.03 promotion/recovery gates remain mandatory later. Current EF/model/provider, transaction and object-error checks remain required. No production restore, retention, customer RPO or destructive deployment is approved.",
+      "evidence": [
+        {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-source-applicability.json",
+          "sha256": "c1bf111b6b921b38998b68a11c74c7f4e040be27ef04b167f70ed50b55e2c67c"
+        }
+      ],
+      "state": "NOT_APPLICABLE",
+      "runCount": 0,
+      "passedCount": 0,
+      "failedCount": 0,
+      "skippedCount": 0,
+      "exclusionEvidence": {
+        "path": ".runtime/s0-overnight-20261102/qa/final-F-source-applicability.json",
+        "sha256": "c1bf111b6b921b38998b68a11c74c7f4e040be27ef04b167f70ed50b55e2c67c"
+      }
+    },
+    "backendBuild": {
+      "countSemantics": "actual full solution build command; not test cases",
+      "countScope": "F CI Release solution Build step",
+      "narrative": "Required full solution Release build completed after locked restore. Browser API/DbMigrator builds support their own execution paths and are not added as test cases.",
+      "evidence": [
+        {
+          "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/required-command-manifest.json",
+          "sha256": "e2eed43cd87816b8debb593f0478ac5f69df995cdf0fb173a5cbf04a64ce79f8"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/ci-41560927341/verification-summary.json",
+          "sha256": "8cd2b801a58c26e53b00ff70c2194b2f042da72e5f546729ace6962bfcb54da5"
+        }
+      ],
+      "commandId": "F-CI-backend-solution-build",
+      "sharedExecutionId": null,
+      "reuseOfSameNativeManifest": false,
+      "runCount": 1,
+      "passedCount": 1,
+      "failedCount": 0,
+      "skippedCount": 0,
+      "exitCode": 0,
+      "state": "PASS"
+    },
+    "frontendBuild": {
+      "countSemantics": "actual production frontend build command; not test cases",
+      "countScope": "F CI npm production build",
+      "narrative": "Required production frontend build completed. Reporter fingerprints pin the separately built Windows local host/UI used by signed runtime; CI Linux and local binary hashes are not falsely equated.",
+      "evidence": [
+        {
+          "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/required-command-manifest.json",
+          "sha256": "e2eed43cd87816b8debb593f0478ac5f69df995cdf0fb173a5cbf04a64ce79f8"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/ci-41560927341/verification-summary.json",
+          "sha256": "8cd2b801a58c26e53b00ff70c2194b2f042da72e5f546729ace6962bfcb54da5"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/signed/f-final-target.json",
+          "sha256": "b42c61f2765428f207091a6705228f81c2826c95fc5759cdf3ad935948d884a9"
+        }
+      ],
+      "commandId": "F-CI-frontend-production-build",
+      "sharedExecutionId": null,
+      "reuseOfSameNativeManifest": false,
+      "runCount": 1,
+      "passedCount": 1,
+      "failedCount": 0,
+      "skippedCount": 0,
+      "exitCode": 0,
+      "state": "PASS"
+    },
+    "lint": {
+      "countSemantics": "actual required lint command; not files or test cases",
+      "countScope": "F CI required eslint command with its configured zero-warning policy",
+      "narrative": "Required lint and supporting typecheck commands completed. Old local lint file totals are not relabeled as F CI counts.",
+      "evidence": [
+        {
+          "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/required-command-manifest.json",
+          "sha256": "e2eed43cd87816b8debb593f0478ac5f69df995cdf0fb173a5cbf04a64ce79f8"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/ci-41560927341/verification-summary.json",
+          "sha256": "8cd2b801a58c26e53b00ff70c2194b2f042da72e5f546729ace6962bfcb54da5"
+        }
+      ],
+      "commandId": "F-CI-frontend-lint",
+      "sharedExecutionId": null,
+      "reuseOfSameNativeManifest": false,
+      "runCount": 1,
+      "passedCount": 1,
+      "failedCount": 0,
+      "skippedCount": 0,
+      "exitCode": 0,
+      "state": "PASS"
+    },
+    "artifact": {
+      "countSemantics": "actual build artifact objects/checks; not test cases",
+      "countScope": "F API and frontend development build artifacts only",
+      "narrative": "Two unexpired build objects with exact F head, IDs, positive sizes and digests were observed. The third metadata record is api-test-counts and is not counted as a build artifact. Runtime outputs are not inserted into receipt.artifacts tracked-input lists.",
+      "evidence": [
+        {
+          "path": ".runtime/s0-overnight-20261102/ci-41560927341/artifact-metadata.json",
+          "sha256": "93d8dc3b6afb60e52b1d5878cf27e3863be5530a1524f9dc5868b9e96994b696"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/required-command-manifest.json",
+          "sha256": "e2eed43cd87816b8debb593f0478ac5f69df995cdf0fb173a5cbf04a64ce79f8"
+        },
+        {
+          "path": ".runtime/s0-overnight-20261102/ci-41560927341/verification-summary.json",
+          "sha256": "8cd2b801a58c26e53b00ff70c2194b2f042da72e5f546729ace6962bfcb54da5"
+        }
+      ],
+      "commandId": "F-CI-two-build-artifact-objects",
+      "sharedExecutionId": null,
+      "reuseOfSameNativeManifest": false,
+      "runCount": 2,
+      "passedCount": 2,
+      "failedCount": 0,
+      "skippedCount": 0,
+      "exitCode": 0,
+      "state": "PASS"
+    }
+  },
+  "acceptanceCriteria": "Domain modülleri, dependency yönü, event/outbox yaklaşımı, object storage, offline sync ve AI boundary ADR'ları approved durumundadır.",
+  "dependencies": [
+    "DEV-001"
+  ],
+  "sourceLocator": "sheet:Backlog/row:5",
+  "sourceOwnerRole": "Solution Architect",
+  "executionManifest": {
+    "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/execution-evidence-manifest.json",
+    "sha256": "9cf44a107d99e7a254f190c0697587b1e00c122dc68bee85ced3506755eee01d"
+  },
+  "executionManifestSha256": "9cf44a107d99e7a254f190c0697587b1e00c122dc68bee85ced3506755eee01d",
+  "independentReviewPrerequisites": {
+    "source-review": {
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-004.source-review.json",
+      "sha256": "03cb57ded3c64e589fab1615ad7d077421ad6996d0e459023796d3000af4ae25"
+    },
+    "engineering-review": {
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-004.engineering-review.json",
+      "sha256": "8393faa9440339a3877e04d625f8b540e7c3d28156791f3bd07c0b5fee6c28ce"
+    }
+  },
+  "p0Assessment": {
+    "path": ".runtime/s0-overnight-20261102/qa/final-F-current-P0-assessment.json",
+    "sha256": "f5ed479005904579ba94b303e1249024440746f2e8687c576ecaaa6b6da658d1"
+  },
+  "sourceApplicability": {
+    "path": ".runtime/s0-overnight-20261102/qa/final-F-source-applicability.json",
+    "sha256": "c1bf111b6b921b38998b68a11c74c7f4e040be27ef04b167f70ed50b55e2c67c"
+  },
+  "scope": "Shared completed foundation execution applied to this original S0 task definition. Reuse is explicit; this is not another suite run or independent acceptance.",
+  "collectorAuthoredGateOrFixtures": true,
+  "phaseAccepted": false,
+  "providerInstanceId": "ahp-session:/5c0afcdc-488a-464a-b94a-486800b77263",
+  "limits": [
+    "Author execution evidence only. Independent task acceptance must bind these exact bytes separately.",
+    "Supporting Domain/Persistence/Vitest native totals/skips remain UNAVAILABLE; API91 is not all-project unit total.",
+    "122 signed executions support five category assessments and all13 tasks transparently; never610 or1586 distinct runs.",
+    "Future source/legal/clinical/Marine/pilot/production/AI/DR activation gates remain open as scoped by the final source decision."
+  ]
+}

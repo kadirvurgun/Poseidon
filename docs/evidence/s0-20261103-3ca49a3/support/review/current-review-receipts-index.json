@@ -1,0 +1,377 @@
+{
+  "schemaVersion": "poseidon.independent-final-review-index.v1",
+  "reviewerSession": "/root/s0_final_independent_qa",
+  "reviewerPrincipal": "/root/s0_final_independent_qa",
+  "issuedAt": "2026-11-03T02:44:16.131371Z",
+  "target": {
+    "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+    "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03"
+  },
+  "baseline": "poseidon-v46.3-20261030",
+  "sourceSha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+  "taskCount": 13,
+  "storyPoints": 53,
+  "sourceReviewCount": 13,
+  "engineeringReviewCount": 13,
+  "unresolvedP0": 0,
+  "p0Assessment": {
+    "path": ".runtime/s0-overnight-20261102/qa/final-F-current-P0-assessment.json",
+    "sha256": "f5ed479005904579ba94b303e1249024440746f2e8687c576ecaaa6b6da658d1"
+  },
+  "sourceApplicability": {
+    "path": ".runtime/s0-overnight-20261102/qa/final-F-source-applicability.json",
+    "sha256": "c1bf111b6b921b38998b68a11c74c7f4e040be27ef04b167f70ed50b55e2c67c"
+  },
+  "receipts": [
+    {
+      "taskId": "DEV-001",
+      "kind": "source-review",
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-001.source-review.json",
+      "sha256": "394ec9845c86dbe964b75f3f8b27624df0d367ba3fe917caf58df8330f590687",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_final_independent_qa",
+      "principal": "/root/s0_final_independent_qa"
+    },
+    {
+      "taskId": "DEV-001",
+      "kind": "engineering-review",
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-001.engineering-review.final-successor.json",
+      "sha256": "352a29107f270d3df6e3763131aafa09fd1c61c1d479acb387be82656b5506bd",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_final_independent_qa",
+      "principal": "/root/s0_final_independent_qa"
+    },
+    {
+      "taskId": "DEV-002",
+      "kind": "source-review",
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-002.source-review.json",
+      "sha256": "c20e0a22cc41b1c040a9196cdc07e2641d2c3172efebee671bb5d561f8de8de3",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_final_independent_qa",
+      "principal": "/root/s0_final_independent_qa"
+    },
+    {
+      "taskId": "DEV-002",
+      "kind": "engineering-review",
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-002.engineering-review.final-successor.json",
+      "sha256": "89c3bea9f53e35d614fa701a088b19444980e2a25a908bdd2fcdda63ff092619",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_final_independent_qa",
+      "principal": "/root/s0_final_independent_qa"
+    },
+    {
+      "taskId": "DEV-003",
+      "kind": "source-review",
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-003.source-review.json",
+      "sha256": "25d78b73e48fd587dfd00f8563cdfe4baf5fbebde6e512e2cf90c795e2abe2bc",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_final_independent_qa",
+      "principal": "/root/s0_final_independent_qa"
+    },
+    {
+      "taskId": "DEV-003",
+      "kind": "engineering-review",
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-003.engineering-review.json",
+      "sha256": "2ab1f922bcfd0b8fe5aaf534ea97544fcc2a6db17fb8b8cba75312b1ef5f56b0",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_final_independent_qa",
+      "principal": "/root/s0_final_independent_qa"
+    },
+    {
+      "taskId": "DEV-004",
+      "kind": "source-review",
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-004.source-review.json",
+      "sha256": "03cb57ded3c64e589fab1615ad7d077421ad6996d0e459023796d3000af4ae25",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_final_independent_qa",
+      "principal": "/root/s0_final_independent_qa"
+    },
+    {
+      "taskId": "DEV-004",
+      "kind": "engineering-review",
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-004.engineering-review.json",
+      "sha256": "8393faa9440339a3877e04d625f8b540e7c3d28156791f3bd07c0b5fee6c28ce",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_final_independent_qa",
+      "principal": "/root/s0_final_independent_qa"
+    },
+    {
+      "taskId": "DEV-005",
+      "kind": "source-review",
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-005.source-review.json",
+      "sha256": "0ab05ee7369bef2efa032d07dc52a14a4ecf3608bb8ce9d33ddaa49aa8234132",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_final_independent_qa",
+      "principal": "/root/s0_final_independent_qa"
+    },
+    {
+      "taskId": "DEV-005",
+      "kind": "engineering-review",
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-005.engineering-review.json",
+      "sha256": "6bf96902692df79426599a2ed61943db6cbb853baf5705fbcc31ba61a4edcdd7",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_final_independent_qa",
+      "principal": "/root/s0_final_independent_qa"
+    },
+    {
+      "taskId": "DEV-006",
+      "kind": "source-review",
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-006.source-review.json",
+      "sha256": "4091255f0016b421ce0fc8503a2e798cea1771750f8f23c0b48bf7786734d784",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_final_independent_qa",
+      "principal": "/root/s0_final_independent_qa"
+    },
+    {
+      "taskId": "DEV-006",
+      "kind": "engineering-review",
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-006.engineering-review.final-successor.json",
+      "sha256": "ceafc9b875a1293903b5ff5737ee33df52dd539089ccf86e51146dd40711893a",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_final_independent_qa",
+      "principal": "/root/s0_final_independent_qa"
+    },
+    {
+      "taskId": "DEV-007",
+      "kind": "source-review",
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-007.source-review.json",
+      "sha256": "aa50ae9be62b53d795ea0ca3d1f7c963b0683a03fd17e85e543ea14761a67158",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_final_independent_qa",
+      "principal": "/root/s0_final_independent_qa"
+    },
+    {
+      "taskId": "DEV-007",
+      "kind": "engineering-review",
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-007.engineering-review.json",
+      "sha256": "69ec2821fa8178dc2c68f6c0f3dd01e8a6065c2b96a92f509f8f94d35f84af8e",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_final_independent_qa",
+      "principal": "/root/s0_final_independent_qa"
+    },
+    {
+      "taskId": "DEV-008",
+      "kind": "source-review",
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-008.source-review.json",
+      "sha256": "fb9274a9ff9bd555c64b67609fadd2aa435f6371c9687ce68b5d19e4a66b4c5c",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_final_independent_qa",
+      "principal": "/root/s0_final_independent_qa"
+    },
+    {
+      "taskId": "DEV-008",
+      "kind": "engineering-review",
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-008.engineering-review.json",
+      "sha256": "7ea1c9711480a860513b4dc87838e5aad4a85a4e5fffdacfdd39c8b8e3f74617",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_final_independent_qa",
+      "principal": "/root/s0_final_independent_qa"
+    },
+    {
+      "taskId": "DEV-009",
+      "kind": "source-review",
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-009.source-review.json",
+      "sha256": "0829a53eac5123dd7e2faf668a89b5159872273c52afa82b5978185ee3809e67",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_final_independent_qa",
+      "principal": "/root/s0_final_independent_qa"
+    },
+    {
+      "taskId": "DEV-009",
+      "kind": "engineering-review",
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-009.engineering-review.final-successor.json",
+      "sha256": "61311e4143b3ecb7b435a0e4fe7fd594a885ac2bc279907e4f551fc7f1890fc0",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_final_independent_qa",
+      "principal": "/root/s0_final_independent_qa"
+    },
+    {
+      "taskId": "DEV-010",
+      "kind": "source-review",
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-010.source-review.json",
+      "sha256": "9bf25f15b815a6f507cd29b2f3e45e7609622192f4e2b51c00d1b6e088c6b5b5",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_final_independent_qa",
+      "principal": "/root/s0_final_independent_qa"
+    },
+    {
+      "taskId": "DEV-010",
+      "kind": "engineering-review",
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-010.engineering-review.json",
+      "sha256": "66d8848334c23f07345295f34b9a70bdafac9aca8c0d330b06c2987e12f0a786",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_final_independent_qa",
+      "principal": "/root/s0_final_independent_qa"
+    },
+    {
+      "taskId": "DEV-011",
+      "kind": "source-review",
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-011.source-review.json",
+      "sha256": "2d125dea68978998638dd5ad0c727cee5cc3a8cc8d3ea90f42174e4ca3806411",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_final_independent_qa",
+      "principal": "/root/s0_final_independent_qa"
+    },
+    {
+      "taskId": "DEV-011",
+      "kind": "engineering-review",
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-011.engineering-review.json",
+      "sha256": "afc953ab8178b7ce8f792d939e34db0b0514f5415fc73b90600b1ca35a011c4c",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_final_independent_qa",
+      "principal": "/root/s0_final_independent_qa"
+    },
+    {
+      "taskId": "DEV-012",
+      "kind": "source-review",
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-012.source-review.json",
+      "sha256": "661b81f5dc4700bcd754431cecbf3626f7f7ffe91291f717faa753e0464e218c",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_final_independent_qa",
+      "principal": "/root/s0_final_independent_qa"
+    },
+    {
+      "taskId": "DEV-012",
+      "kind": "engineering-review",
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-012.engineering-review.final-successor.json",
+      "sha256": "3b6c0fcc557b29c0bfa5739689dfcaab9ea1b747b1ccacdb766a73792b4283eb",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_final_independent_qa",
+      "principal": "/root/s0_final_independent_qa"
+    },
+    {
+      "taskId": "DEV-116",
+      "kind": "source-review",
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-116.source-review.json",
+      "sha256": "224634ee54b0c1cbd4297dc5ccbbb6526a5865030d607dfc72073858f6179147",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_final_independent_qa",
+      "principal": "/root/s0_final_independent_qa"
+    },
+    {
+      "taskId": "DEV-116",
+      "kind": "engineering-review",
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-116.engineering-review.json",
+      "sha256": "9860f322cb521634add4f5fbe67f65eb6396c0705b32bb788be39854e3444d8d",
+      "outcome": "PASS",
+      "sessionId": "/root/s0_final_independent_qa",
+      "principal": "/root/s0_final_independent_qa"
+    }
+  ],
+  "utf8LfOriginalBytes": true,
+  "acceptanceReceiptCount": 0,
+  "phaseAccepted": false,
+  "next": "Actual execution collector reviews the closed evidence and these26/source exclusions, then issues13 genuine execution receipts. Independent acceptance remains a later per-task decision binding exact three receipt digests; root must observe actual completed reviewer provenance before authority export.",
+  "supersedesIndex": {
+    "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts-index.json",
+    "sha256": "da5676d69a54a6fe548096f7b2865858f6b38b666710e93855bd7a67968d1a5b"
+  },
+  "supersededEngineeringReceipts": [
+    {
+      "taskId": "DEV-001",
+      "superseded": {
+        "taskId": "DEV-001",
+        "kind": "engineering-review",
+        "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-001.engineering-review.json",
+        "sha256": "64aaf7ed97856e26a398bfa65df7dcbd7b7f97d69f83c1080b6194b1ed00d761",
+        "outcome": "PASS",
+        "sessionId": "/root/s0_final_independent_qa",
+        "principal": "/root/s0_final_independent_qa"
+      },
+      "successor": {
+        "taskId": "DEV-001",
+        "kind": "engineering-review",
+        "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-001.engineering-review.final-successor.json",
+        "sha256": "352a29107f270d3df6e3763131aafa09fd1c61c1d479acb387be82656b5506bd",
+        "outcome": "PASS",
+        "sessionId": "/root/s0_final_independent_qa",
+        "principal": "/root/s0_final_independent_qa"
+      }
+    },
+    {
+      "taskId": "DEV-002",
+      "superseded": {
+        "taskId": "DEV-002",
+        "kind": "engineering-review",
+        "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-002.engineering-review.json",
+        "sha256": "c9f6a0a3e26a363e7d7a0a1795e08ed2078bd87f8411307ed8a7b54208c2479c",
+        "outcome": "PASS",
+        "sessionId": "/root/s0_final_independent_qa",
+        "principal": "/root/s0_final_independent_qa"
+      },
+      "successor": {
+        "taskId": "DEV-002",
+        "kind": "engineering-review",
+        "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-002.engineering-review.final-successor.json",
+        "sha256": "89c3bea9f53e35d614fa701a088b19444980e2a25a908bdd2fcdda63ff092619",
+        "outcome": "PASS",
+        "sessionId": "/root/s0_final_independent_qa",
+        "principal": "/root/s0_final_independent_qa"
+      }
+    },
+    {
+      "taskId": "DEV-006",
+      "superseded": {
+        "taskId": "DEV-006",
+        "kind": "engineering-review",
+        "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-006.engineering-review.json",
+        "sha256": "9c1d68111ee01d6551e7d7beb6ee934f5671291d5760cb87b78f9115d28f256f",
+        "outcome": "PASS",
+        "sessionId": "/root/s0_final_independent_qa",
+        "principal": "/root/s0_final_independent_qa"
+      },
+      "successor": {
+        "taskId": "DEV-006",
+        "kind": "engineering-review",
+        "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-006.engineering-review.final-successor.json",
+        "sha256": "ceafc9b875a1293903b5ff5737ee33df52dd539089ccf86e51146dd40711893a",
+        "outcome": "PASS",
+        "sessionId": "/root/s0_final_independent_qa",
+        "principal": "/root/s0_final_independent_qa"
+      }
+    },
+    {
+      "taskId": "DEV-009",
+      "superseded": {
+        "taskId": "DEV-009",
+        "kind": "engineering-review",
+        "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-009.engineering-review.json",
+        "sha256": "f07d129d55c105ec02633e3655a51208d5cde423a95cc6ae50e7cd9c2ca5ee39",
+        "outcome": "PASS",
+        "sessionId": "/root/s0_final_independent_qa",
+        "principal": "/root/s0_final_independent_qa"
+      },
+      "successor": {
+        "taskId": "DEV-009",
+        "kind": "engineering-review",
+        "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-009.engineering-review.final-successor.json",
+        "sha256": "61311e4143b3ecb7b435a0e4fe7fd594a885ac2bc279907e4f551fc7f1890fc0",
+        "outcome": "PASS",
+        "sessionId": "/root/s0_final_independent_qa",
+        "principal": "/root/s0_final_independent_qa"
+      }
+    },
+    {
+      "taskId": "DEV-012",
+      "superseded": {
+        "taskId": "DEV-012",
+        "kind": "engineering-review",
+        "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-012.engineering-review.json",
+        "sha256": "705a3fa72286b1c4f60eeff6e4b28f0b63c67235114b6f3e20ea6493793e862c",
+        "outcome": "PASS",
+        "sessionId": "/root/s0_final_independent_qa",
+        "principal": "/root/s0_final_independent_qa"
+      },
+      "successor": {
+        "taskId": "DEV-012",
+        "kind": "engineering-review",
+        "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-012.engineering-review.final-successor.json",
+        "sha256": "3b6c0fcc557b29c0bfa5739689dfcaab9ea1b747b1ccacdb766a73792b4283eb",
+        "outcome": "PASS",
+        "sessionId": "/root/s0_final_independent_qa",
+        "principal": "/root/s0_final_independent_qa"
+      }
+    }
+  ],
+  "meaning": "Current26 decisions comprise21 unchanged original receipts and5 newly issued engineering successors. No issued bytes were rewritten. Final acceptance must bind the current successor raw digests."
+}

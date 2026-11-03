@@ -1,0 +1,97 @@
+{
+  "baseline_id": "poseidon-v46.3-20261030",
+  "authority": "controlled candidate; engineering gate only, no source/legal/safety admission",
+  "records": [
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:2",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A2: DEV-001 | B2: Story | C2: E01 Platform Foundation | D2: Repository | E2: Repository ve branch standardını kur | F2: Geliştirme ekibi olarak tek kontrollü kod tabanında çalışmak istiyorum. | G2: Backend/frontend/contracts/infra/docs klasörleri oluşturulur; main/develop politikası ve PR kontrolü tanımlıdır; protected branch kuralı dokümante edilir. | H2: Repo / CI | I2: P0 | J2: S0 | K2: Engineering Lead | M2: T-S0-001 | N2: Not Started | O2: YES | P2: 3 | Q2: L",
+      "source_class": "candidate-unverified"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:3",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A3: DEV-002 | B3: Task | C3: E01 Platform Foundation | D3: CI/CD | E3: CI pipeline iskeletini kur | F3: Ekip olarak her PR'da build ve test görmek istiyorum. | G3: Backend ve frontend build; unit test; lint; artifact üretimi; başarısız adım PR'ı bloklar. | H3: CI/CD | I3: P0 | J3: S0 | K3: DevOps | L3: DEV-001 | M3: T-S0-002 | N3: Not Started | O3: YES | P3: 5 | Q3: M",
+      "source_class": "candidate-unverified"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:4",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A4: DEV-003 | B4: Story | C4: E20 Production Hardening | D4: Environment | E4: DEV/TEST/UAT/PILOT ortam sözleşmesini dondur | F4: Ekip olarak hangi ortamın ne için kullanıldığını bilmek istiyorum. | G4: Her ortam için URL/secret/data/retention/deploy owner tanımlı; production datası DEV'e kopyalanmaz; environment promotion akışı yazılıdır. | H4: Environment Matrix | I4: P0 | J4: S0 | K4: DevOps | L4: DEV-001 | M4: T-S0-003 | N4: Not Started | O4: YES | P4: 3 | Q4: M",
+      "source_class": "candidate-unverified"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:5",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A5: DEV-004 | B5: Story | C5: E01 Platform Foundation | D5: Architecture | E5: Modular-monolith boundary ve ADR setini oluştur | F5: Mimar olarak domain sınırlarını implementation başlamadan kontrol etmek istiyorum. | G5: Domain modülleri, dependency yönü, event/outbox yaklaşımı, object storage, offline sync ve AI boundary ADR'ları approved durumundadır. | H5: Architecture / ADR | I5: P0 | J5: S0 | K5: Solution Architect | L5: DEV-001 | M5: T-S0-004 | N5: Not Started | O5: YES | P5: 5 | Q5: M",
+      "source_class": "candidate-unverified"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:6",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A6: DEV-005 | B6: Story | C6: E01 Platform Foundation | D6: Data | E6: Physical schema normalization planını çıkar | F6: Backend ekibi olarak 1.900 field sözleşmesini production entity modeline bağlamak istiyorum. | G6: Core entity listesi, PK/FK, tenancy, versioning, audit columns, evidence object refs ve migration stratejisi approved olur. | H6: PostgreSQL Schema | I6: P0 | J6: S0 | K6: Backend Lead | L6: DEV-004 | M6: T-S0-005 | N6: Not Started | O6: YES | P6: 5 | Q6: H",
+      "source_class": "candidate-unverified"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:7",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A7: DEV-006 | B7: Story | C7: E20 Production Hardening | D7: Security | E7: Threat model ve security baseline hazırla | F7: Security owner olarak pilot öncesi kritik güvenlik sınırlarını görmek istiyorum. | G7: Tenant isolation, authn/authz, file upload, protected reporting, secrets, audit, offline device, AI prompt/data threats kayıtlı; P0 mitigations backlog'a bağlıdır. | H7: Security Model | I7: P0 | J7: S0 | K7: Security/Architect | L7: DEV-004 | M7: T-S0-006 | N7: Not Started | O7: YES | P7: 5 | Q7: H",
+      "source_class": "candidate-unverified"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:8",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A8: DEV-007 | B8: Story | C8: E17 Assurance & Audit | D8: Traceability | E8: Pilot P0 trace paketini oluştur | F8: PO/QA olarak her pilot journey'yi requirement-screen-api-entity-test zincirinde görmek istiyorum. | G8: 10 pilot capability için orphan kritik öğe kalmaz; trace ID'leri backlog ve test case'lerine bağlıdır. | H8: RTM | I8: P0 | J8: S0 | K8: BA/QA Lead | M8: T-S0-007 | N8: Not Started | O8: YES | P8: 5 | Q8: M",
+      "source_class": "candidate-unverified"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:9",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A9: DEV-008 | B9: Story | C9: E03 Regulatory Core | D9: Regulatory Corpus | E9: Pilot regulatory source ownership planı | F9: Regulatory owner olarak pilotta hangi resmi kaynakların kullanılacağını bilmek istiyorum. | G9: ISM/SOLAS/STCW/MLC/MARPOL/Flag/Class pilot kapsamı için source owner, version, validation status ve reviewer atanır. | H9: Regulatory Source Register | I9: P0 | J9: S0 | K9: Regulatory Lead | L9: DEV-007 | M9: T-S0-008 | N9: Not Started | O9: YES | P9: 5 | Q9: H",
+      "source_class": "candidate-unverified"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:10",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A10: DEV-009 | B10: Story | C10: E20 Production Hardening | D10: Test Data | E10: Golden pilot test datasetini hazırla | F10: QA olarak deterministik regression testleri çalıştırmak istiyorum. | G10: En az tanker + genel cargo/tug profile; crew/certificate/asset/defect/evidence edge cases; expected applicability/readiness outcomes kayıtlıdır. | H10: Golden Dataset | I10: P0 | J10: S0 | K10: QA Lead | L10: DEV-005,DEV-008 | M10: T-S0-009 | N10: Not Started | O10: YES | P10: 5 | Q10: M",
+      "source_class": "candidate-unverified"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:11",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A11: DEV-010 | B11: Task | C11: E01 Platform Foundation | D11: Definition | E11: Definition of Ready / Done / Release Gate dondur | F11: Ekip olarak bir işin ne zaman başlanabilir ve tamamlanmış olduğunu aynı şekilde değerlendirmek istiyorum. | G11: DoR/DoD; design, security, offline, audit, regulatory, docs ve test etkisini kapsar; backlog template'e uygulanır. | H11: Team Process | I11: P0 | J11: S0 | K11: Product Owner | L11: DEV-007 | M11: T-S0-010 | N11: Not Started | O11: YES | P11: 2 | Q11: L",
+      "source_class": "candidate-unverified"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:12",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A12: DEV-011 | B12: Story | C12: E20 Production Hardening | D12: Observability | E12: Observability standardını tanımla | F12: Ops ekibi olarak pilotta hataları kök nedenle izlemek istiyorum. | G12: Correlation/tenant/vessel/request IDs; API latency/error, sync backlog/conflict, integration retry, audit health ve data freshness metric sözleşmesi vardır. | H12: Logging/Metrics/Tracing | I12: P0 | J12: S0 | K12: DevOps | L12: DEV-004 | M12: T-S0-011 | N12: Not Started | O12: YES | P12: 3 | Q12: M",
+      "source_class": "candidate-unverified"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:13",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A13: DEV-012 | B13: Story | C13: E01 Platform Foundation | D13: Kickoff | E13: Sprint 0 exit review yap | F13: Ekip olarak Foundation'a kontrollü geçmek istiyorum. | G13: Architecture, data, security, trace, environments, backlog ve pilot source ownership gate'leri PASS/accepted; unresolved P0 blocker yoktur. | H13: Sprint 0 Gate | I13: P0 | J13: S0 | K13: Product Owner | L13: DEV-001:DEV-011 | M13: T-S0-012 | N13: Not Started | O13: YES | P13: 2 | Q13: L",
+      "source_class": "candidate-unverified"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:117",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A117: DEV-116 | B117: Task | C117: E20 Production Hardening | D117: ERP Boundary | E117: ERP scope boundary integration contracts | F117: Architect olarak finance/payroll/full procurement/warehouse/chartering'in ürün içine sızmamasını istiyorum. | G117: Explicit OUT list; integration-only contracts; technical requisition/critical spares boundary; no accidental PO/AP/AR/payroll tables. | H117: Architecture / API | I117: P0 | J117: S0 | K117: Solution Architect | L117: DEV-004 | M117: T-V463-002 | N117: Not Started | O117: YES | P117: 5 | Q117: M | R117: Strategic guardrail",
+      "source_class": "candidate-unverified"
+    }
+  ]
+}

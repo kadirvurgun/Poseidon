@@ -61,7 +61,7 @@ public static partial class TugEndpoints
         if (p == null) { await Observe(h, "Success", id); return Results.Ok(new { state = "Missing", plan = (TugPlanDto?)null, evidence = (TugPlanningEvidence?)null }); }
         var r = await db.TugDraftPlanRevisions.AsNoTracking().SingleAsync(r => r.VesselId == vessel && r.JobId == id && r.Revision == p.Revision, h.RequestAborted);
         if (!await PlanVisible(h, db, r.Inputs())) return await Fail(h, 403, "permission_denied");
-        var evidence = await TugPlanningEvidenceAdapter.Read(db, Actor(h), Planning(h), h.RequestServices.GetRequiredService<MaintenanceObservationSettings>(), id, r.Inputs(), h.RequestAborted, h.RequestServices.GetRequiredService<FederationSettings>(), CrewFilePolicy.Current(h));
+        var evidence = await TugPlanningEvidenceAdapter.Read(db, Actor(h), Planning(h), h.RequestServices.GetRequiredService<MaintenanceObservationSettings>(), id, r.Inputs(), h.RequestAborted, h.RequestServices.GetRequiredService<FederationSettings>(), CrewFilePolicy.Current(h), h);
         await Observe(h, "Success", id); return Results.Ok(new { state = "DraftUnverified", requestState = job.Revision == p.RequestRevision ? "CurrentRequestRevision" : "RequestChangedSincePlan", plan = PlanDto(r, p.Version), evidence });
     }
     private static async Task<IResult> PlanHistory(Guid id, HttpContext h, PoseidonDbContext db) {

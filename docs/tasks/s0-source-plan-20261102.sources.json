@@ -1,0 +1,145 @@
+{
+  "task": "DEV-008/T-S0-008",
+  "baseline": "poseidon-v46.3-20261030",
+  "state": "bounded source receipts; not approval or acceptance",
+  "records": [
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:9",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A9: DEV-008 | B9: Story | C9: E03 Regulatory Core | D9: Regulatory Corpus | E9: Pilot regulatory source ownership planı | F9: Regulatory owner olarak pilotta hangi resmi kaynakların kullanılacağını bilmek istiyorum. | G9: ISM/SOLAS/STCW/MLC/MARPOL/Flag/Class pilot kapsamı için source owner, version, validation status ve reviewer atanır. | H9: Regulatory Source Register | I9: P0 | J9: S0 | K9: Regulatory Lead | L9: DEV-007 | M9: T-S0-008 | N9: Not Started | O9: YES | P9: 5 | Q9: H"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:74",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A74: DEV-073 | B74: Task | C74: E17 Assurance & Audit | D74: Regulatory Gate | E74: Pilot regulatory SME review | F74: PO olarak pilot applicability/control setinin uzman tarafından doğrulandığını bilmek istiyorum. | G74: Pilot vessel profile için authoritative source/version reviewer sign-off; open ambiguity REVIEW_REQUIRED ve tracked issue olarak kalır. | H74: Regulatory Review | I74: P0 | J74: S11 | K74: Regulatory Lead | L74: DEV-008,DEV-040,DEV-041 | M74: T-S11-005 | N74: Not Started | O74: YES | P74: 8 | Q74: H"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:94",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A94: DEV-093 | B94: Task | C94: E21 Tug Operations | D94: Regulatory | E94: Tug regulatory source/applicability review | F94: Regulatory owner olarak tug operasyon limitlerinin kontrollü kaynağını doğrulamak istiyorum. | G94: Flag/class/company/local source ownership assigned; unknown rules remain REVIEW_REQUIRED; no unsupported legal claim. | H94: Regulatory Trace | I94: P0 | J94: S11 | K94: Regulatory Lead | L94: DEV-008,DEV-084,DEV-087 | M94: T-TUG-014 | N94: Not Started | O94: YES | P94: 8 | Q94: H | R94: v46.2"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:RACI/row:1",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A1: Workstream | B1: PO | C1: BA | D1: Architect | E1: Backend | F1: Frontend | G1: QA | H1: DevOps | I1: Regulatory SME | J1: UX | K1: Pilot Customer"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:RACI/row:4",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A4: Regulatory applicability | B4: A | C4: R | D4: C | E4: I | F4: I | G4: C | H4: I | I4: A/R | J4: I | K4: C"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/08.01_POSEIDON_Regulatory_Requirement_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:Kaynak Register/row:1",
+      "sha256": "c36c72dec31efe45d1f894214b10708a017d0c8a5dfb96fe0d3e1498d44145da",
+      "text": "A1: Source ID | B1: Owner | C1: Instrument | D1: Legal Layer | E1: Mode | F1: Lifecycle | G1: Source URL | H1: Controlled Note"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/08.01_POSEIDON_Regulatory_Requirement_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:Kaynak Register/row:2",
+      "sha256": "c36c72dec31efe45d1f894214b10708a017d0c8a5dfb96fe0d3e1498d44145da",
+      "text": "A2: SRC-ISM | B2: IMO | C2: ISM Code / SOLAS IX | D2: Mandatory international | E2: ORTAK | F2: CURRENT | G2: https://www.imo.org/en/ourwork/humanelement/pages/ismcode.aspx | H2: ISM Code SOLAS IX ile mandatory; SMS çekirdeği."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/08.01_POSEIDON_Regulatory_Requirement_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:Kaynak Register/row:3",
+      "sha256": "c36c72dec31efe45d1f894214b10708a017d0c8a5dfb96fe0d3e1498d44145da",
+      "text": "A3: SRC-SOLAS | B3: IMO | C3: SOLAS 1974 as amended | D3: Mandatory international | E3: ORTAK | F3: CURRENT | G3: https://www.imo.org/en/About/Conventions/Pages/International-Convention-for-the-Safety-of-Life-at-Sea-%28SOLAS%29%2C-1974.aspx | H3: Ship type/size/voyage/applicability profile ile değerlendirilir."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/08.01_POSEIDON_Regulatory_Requirement_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:Kaynak Register/row:4",
+      "sha256": "c36c72dec31efe45d1f894214b10708a017d0c8a5dfb96fe0d3e1498d44145da",
+      "text": "A4: SRC-STCW | B4: IMO | C4: STCW Convention & Code | D4: Mandatory international | E4: ORTAK | F4: CURRENT | G4: https://www.imo.org/en/ourwork/humanelement/pages/stcw-convention.aspx | H4: Training/certification/watchkeeping minimum standards."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/08.01_POSEIDON_Regulatory_Requirement_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:Kaynak Register/row:5",
+      "sha256": "c36c72dec31efe45d1f894214b10708a017d0c8a5dfb96fe0d3e1498d44145da",
+      "text": "A5: SRC-MLC | B5: ILO | C5: MLC 2006 as amended | D5: Mandatory where applicable | E5: ORTAK | F5: CURRENT | G5: https://normlex.ilo.org/dyn/nrmlx_en/f?p=NORMLEXPUB:91:0::NO::P91_SECTION:MLC_N1 | H5: 2022 amendments in force; 2025 amendments future."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/08.01_POSEIDON_Regulatory_Requirement_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:Kaynak Register/row:6",
+      "sha256": "c36c72dec31efe45d1f894214b10708a017d0c8a5dfb96fe0d3e1498d44145da",
+      "text": "A6: SRC-MARPOL | B6: IMO | C6: MARPOL Annex I-VI | D6: Mandatory international | E6: ORTAK | F6: CURRENT | G6: https://www.imo.org/en/about/conventions/pages/international-convention-for-the-prevention-of-pollution-from-ships-%28marpol%29.aspx | H6: Annex-specific applicability."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/08.01_POSEIDON_Regulatory_Requirement_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:Kaynak Register/row:15",
+      "sha256": "c36c72dec31efe45d1f894214b10708a017d0c8a5dfb96fe0d3e1498d44145da",
+      "text": "A15: SRC-TR-ISM-2023-19 | B15: UAB DGM | C15: ISM Kod Gereklilikleri Hakkında Uygulama Talimatı 2023/19 | D15: Flag-state implementation instruction | E15: ORTAK | F15: CURRENT | G15: https://denizcilik.uab.gov.tr/uploads/pages/bayrak-ve-liman-devleti-uygulamalari-denetim-ve-be/uygulama-talimati-2023-19-ism-kod-gereklilikleri-hakkinda.pdf | H15: IMO A.1118(30) implementation guidance reference."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/08.01_POSEIDON_Regulatory_Requirement_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:Kaynak Register/row:17",
+      "sha256": "c36c72dec31efe45d1f894214b10708a017d0c8a5dfb96fe0d3e1498d44145da",
+      "text": "A17: SRC-IACS-M79 | B17: IACS / Türk Loydu mirror | C17: UR M79 - Towing winch emergency release systems | D17: Class unified requirement | E17: RÖMORKÖR | F17: CURRENT | G17: https://turkloydu.org/pdf-files/iacs-karar-ve-csr-degisimleri/iacs-es-gereklilikleri/UR_M79_New_TR_EN.pdf | H17: Minimum safety standards for towing winch emergency release systems."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/08.01_POSEIDON_Regulatory_Requirement_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:Kaynak Register/row:18",
+      "sha256": "c36c72dec31efe45d1f894214b10708a017d0c8a5dfb96fe0d3e1498d44145da",
+      "text": "A18: SRC-TL-OCEAN-TOW | B18: Türk Loydu | C18: Chapter 58 - Ocean Towage | D18: Class/towage assurance rule | E18: RÖMORKÖR | F18: CURRENT | G18: https://turkloydu.org/pdf-files/turk-loydu-kurallari/cilt-d/chapter-58-ocean-towage-2022.pdf | H18: Towage safety/suitability/certification context; controlled version must be checked."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/08.01_POSEIDON_Regulatory_Requirement_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:Kaynak Register/row:19",
+      "sha256": "c36c72dec31efe45d1f894214b10708a017d0c8a5dfb96fe0d3e1498d44145da",
+      "text": "A19: SRC-TL-BP | B19: Türk Loydu | C19: Bollard Pull Test Certification | D19: Class/conformity certification | E19: RÖMORKÖR | F19: CURRENT | G19: https://www.turkloydu.org/en-us/our-services/maritime/material-product-and-company-certification/bollard-pull-test-certification/ | H19: Measured bollard pull with dynamometer and surveyor attendance."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/08.01_POSEIDON_Regulatory_Requirement_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:Açık Hukuki Doğrulama/row:1",
+      "sha256": "c36c72dec31efe45d1f894214b10708a017d0c8a5dfb96fe0d3e1498d44145da",
+      "text": "A1: ID | B1: Open question | C1: Authoritative sources needed | D1: Owner | E1: Status | F1: Guardrail"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/08.01_POSEIDON_Regulatory_Requirement_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:Açık Hukuki Doğrulama/row:2",
+      "sha256": "c36c72dec31efe45d1f894214b10708a017d0c8a5dfb96fe0d3e1498d44145da",
+      "text": "A2: VAL-01 | B2: Türk römorkörlerinin ISM applicability eşiği ve operasyon tipine göre istisnalar | C2: TR-ISM + current flag-state text | D2: Regulatory SME/UAB | E2: OPEN | F2: Tug etiketi tek başına legal applicability üretmez."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/08.01_POSEIDON_Regulatory_Requirement_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:Açık Hukuki Doğrulama/row:3",
+      "sha256": "c36c72dec31efe45d1f894214b10708a017d0c8a5dfb96fe0d3e1498d44145da",
+      "text": "A3: VAL-02 | B3: 2025 Kılavuzluk ve Römorkörcülük Yönetmeliği clause-by-clause software impact | C3: Official regulation text / Resmî Gazete | D3: Legal/Regulatory SME | E3: OPEN | F3: Service authorization ile onboard tug safety controls ayrılmalı."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/08.01_POSEIDON_Regulatory_Requirement_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:Açık Hukuki Doğrulama/row:4",
+      "sha256": "c36c72dec31efe45d1f894214b10708a017d0c8a5dfb96fe0d3e1498d44145da",
+      "text": "A4: VAL-03 | B4: Römorkör crew certificate/competence exact Turkish flag requirements | C4: STCW + current Turkish seafarer rules/instructions | D4: Crewing SME | E4: OPEN | F4: Role/rank/tug-operation pack ayrıca doğrulanmalı."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/08.01_POSEIDON_Regulatory_Requirement_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:Açık Hukuki Doğrulama/row:5",
+      "sha256": "c36c72dec31efe45d1f894214b10708a017d0c8a5dfb96fe0d3e1498d44145da",
+      "text": "A5: VAL-04 | B5: Winch/tow hook/towline/emergency release/FiFi exact class applicability | C5: Applicable class society rules + class notation/build date | D5: Technical/Class SME | E5: OPEN | F5: Tek klas kuruluşunun kuralı evrenselleştirilemez."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/08.01_POSEIDON_Regulatory_Requirement_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:Açık Hukuki Doğrulama/row:6",
+      "sha256": "c36c72dec31efe45d1f894214b10708a017d0c8a5dfb96fe0d3e1498d44145da",
+      "text": "A6: VAL-05 | B6: Ocean towage vs harbour towage applicability separation | C6: Class/flag/company SMS/local operating rules | D6: Marine Ops SME | E6: OPEN | F6: İş tipi bazında farklı rule pack gerekir."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/08.01_POSEIDON_Regulatory_Requirement_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:Açık Hukuki Doğrulama/row:7",
+      "sha256": "c36c72dec31efe45d1f894214b10708a017d0c8a5dfb96fe0d3e1498d44145da",
+      "text": "A7: VAL-06 | B7: MLC applicability to specific tug operating patterns/sheltered waters | C7: MLC + flag-state declarations/current guidance | D7: MLC/Legal SME | E7: OPEN | F7: Tüm römorkör operasyonları otomatik MLC applicable işaretlenmez."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/00_START_HERE/00.01_POSEIDON_v46.3_START_HERE_Controlled_Candidate_TR.docx",
+      "locator": "paragraph:116",
+      "sha256": "4cf7f9872a50d81d7cbc15c748965e139555bdb3bc5b859706331fb273b683b0",
+      "text": "Regulatory source register release/final legal claim öncesinde source/version refresh gate'inden geçer."
+    }
+  ]
+}

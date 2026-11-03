@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, expect, it, vi } from 'vitest'
 import { ApiError } from './api'
@@ -41,4 +41,72 @@ it('guards dirty values and closes the old handle on object change without carry
   view.rerender(<TugOfflinePanel job={vessel} vessel={vessel} language="tr" onDirty={dirty} />)
   expect(app.close).toHaveBeenCalled(); expect(screen.queryByLabelText('Offline planned start (UTC)')).not.toBeInTheDocument()
   expect(screen.getByRole('status')).toHaveTextContent('Kilitli')
+})
+it('resynchronizes the native online hint after offline bootstrap without automatic inventory or key recovery', async () => {
+  // Preserve real async DOM/user interactions; advance only the hint/lease
+  // observer interval, leaving its authorization and expiry rules unchanged.
+  vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] })
+  let view: ReturnType<typeof render> | undefined
+  try {
+    Object.defineProperty(navigator, 'onLine', { configurable: true, value: false })
+    const user = userEvent.setup()
+    view = render(<TugOfflinePanel job={job} vessel={vessel} language="en" />)
+    const authorize = screen.getByRole('button', { name: 'Authorize encrypted capture' })
+    expect(authorize).toBeDisabled()
+    Object.defineProperty(navigator, 'onLine', { configurable: true, value: true })
+    act(() => { vi.advanceTimersByTime(1000) })
+    expect(authorize).toBeEnabled()
+    expect(mock.inventory).not.toHaveBeenCalled(); expect(mock.authorize).not.toHaveBeenCalled()
+    expect(mock.shell).not.toHaveBeenCalled(); expect(app.captures).not.toHaveBeenCalled()
+    await user.click(authorize)
+    await screen.findByText('Enrolled encrypted device capture available')
+    expect(mock.authorize).toHaveBeenCalledOnce()
+    act(() => { vi.advanceTimersByTime(3000) })
+    expect(app.close).not.toHaveBeenCalled(); expect(mock.inventory).not.toHaveBeenCalled()
+    expect(app.replay).not.toHaveBeenCalled(); expect(app.lifecycle).not.toHaveBeenCalled()
+    view.unmount(); view = undefined
+    expect(vi.getTimerCount()).toBe(0)
+  } finally { view?.unmount(); vi.useRealTimers() }
+})
+it('closes a late authorization after eventless reconnect before the handle materializes and requires a new explicit request', async () => {
+  vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] })
+  let view: ReturnType<typeof render> | undefined
+  try {
+    let finish!: (value: typeof app) => void
+    mock.authorize.mockReturnValueOnce(new Promise(resolve => { finish = resolve }))
+    const user = userEvent.setup()
+    view = render(<TugOfflinePanel job={job} vessel={vessel} language="en" />)
+    await user.click(screen.getByRole('button', { name: 'Authorize encrypted capture' }))
+    expect(mock.authorize).toHaveBeenCalledOnce()
+    const originalSignal = mock.authorize.mock.calls[0][3] as AbortSignal
+    expect(originalSignal.aborted).toBe(false)
+    Object.defineProperty(navigator, 'onLine', { configurable: true, value: false })
+    act(() => { vi.advanceTimersByTime(1000) })
+    expect(originalSignal.aborted).toBe(false)
+    Object.defineProperty(navigator, 'onLine', { configurable: true, value: true })
+    act(() => { vi.advanceTimersByTime(1000) })
+    expect(originalSignal.aborted).toBe(true)
+    await act(async () => { finish(app) })
+    expect(app.close).toHaveBeenCalledOnce(); expect(app.captures).not.toHaveBeenCalled()
+    expect(screen.queryByText('Enrolled encrypted device capture available')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Authorize encrypted capture' })).toBeEnabled()
+    expect(mock.authorize).toHaveBeenCalledOnce(); expect(mock.inventory).toHaveBeenCalledOnce()
+    expect(app.replay).not.toHaveBeenCalled(); expect(app.capture).not.toHaveBeenCalled(); expect(app.lifecycle).not.toHaveBeenCalled()
+    const currentApp = { ...app, close: vi.fn() }
+    mock.authorize.mockResolvedValueOnce(currentApp)
+    await user.click(screen.getByRole('button', { name: 'Authorize encrypted capture' }))
+    await screen.findByText('Enrolled encrypted device capture available')
+    expect(mock.authorize).toHaveBeenCalledTimes(2)
+    const currentSignal = mock.authorize.mock.calls[1][3] as AbortSignal
+    expect(currentSignal).not.toBe(originalSignal); expect(currentSignal.aborted).toBe(false)
+    act(() => { vi.advanceTimersByTime(3000) })
+    expect(currentApp.close).not.toHaveBeenCalled(); expect(mock.inventory).toHaveBeenCalledOnce()
+    act(() => { fireEvent(window, new Event('online')) })
+    expect(currentSignal.aborted).toBe(true)
+    expect(currentApp.close).toHaveBeenCalledOnce()
+    expect(screen.queryByText('Enrolled encrypted device capture available')).not.toBeInTheDocument()
+    expect(mock.authorize).toHaveBeenCalledTimes(2)
+    view.unmount(); view = undefined
+    expect(vi.getTimerCount()).toBe(0)
+  } finally { view?.unmount(); vi.useRealTimers() }
 })

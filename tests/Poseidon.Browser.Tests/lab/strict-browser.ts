@@ -22,6 +22,10 @@ export async function strictContext(options: BrowserContextOptions = {}, trust =
     rmSync(target, { recursive: true });
   };
   try {
+    // Keep credentials owner-only; only this empty disposable profile grants
+    // the normal privileged OS actors needed by Windows QuotaManager.
+    const acl = spawnSync(process.env.POSEIDON_LAB_PYTHON!, [resolve(import.meta.dirname, '../../../scripts/lab_profile_acl.py'), profile, owner], { stdio: 'ignore', windowsHide: true });
+    if (acl.status !== 0) throw new Error('profile_acl_unavailable');
     if (trust) {
       const result = spawnSync(process.env.POSEIDON_LAB_PYTHON!, [resolve(import.meta.dirname, '../../../scripts/lab_profile_ca.py'), profile, firefox.executablePath(), owner], { stdio: 'ignore', windowsHide: true });
       if (result.status !== 0) throw new Error('profile_ca_unavailable');

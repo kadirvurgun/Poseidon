@@ -37,7 +37,8 @@ internal static class ComplianceInputContext
         if (r.Credential is { } credential) {
             var version = db.QualifiedInputs?.DocumentPolicyVersion; var purpose = db.QualifiedInputs?.DocumentPurpose;
             if (version == null) return false;
-            var record = await db.Credentials.AsNoTracking().SingleOrDefaultAsync(c => c.VesselId == vessel && c.Id == credential.Id && c.AssignmentId == r.AssignmentId && c.PersonId == a.PersonId && c.Revision == credential.Revision && c.Version == credential.Version && c.IssueDate != null && c.IssueDate <= r.From && c.ExpiryDate != null && c.ExpiryDate >= r.To, ct);
+            var record = await db.Credentials.AsNoTracking().SingleOrDefaultAsync(c => c.VesselId == vessel && c.Id == credential.Id && c.AssignmentId == r.AssignmentId && c.PersonId == a.PersonId && c.Revision == credential.Revision && c.Version == credential.Version && c.IssueDate != null && c.IssueDate <= r.From && c.ExpiryDate != null && c.ExpiryDate >= r.To &&
+                (c.EndorsementRequired == false || c.EndorsementRequired == true && c.EndorsementNumber != null && c.EndorsementNumber.Trim() != "" && c.EndorsementExpiry != null && c.EndorsementExpiry >= r.To), ct);
             if (record?.DocumentReference == null) return false;
             var file = await db.StoredFiles.AsNoTracking().SingleOrDefaultAsync(f => f.VesselId == vessel && f.Id == record.DocumentReference && db.FileStages.Any(s => s.Id == f.Id && s.VesselId == vessel && s.PersonId == a.PersonId && s.PersonalKind == "CertificateDocument" && s.PersonalPolicyVersion == version && s.PersonalPurpose == purpose && s.State == "CleanTransport"), ct);
             if (file == null || !await db.QualifiedInputs!.FileIntact(file, ct)) return false;

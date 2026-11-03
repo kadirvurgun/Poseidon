@@ -1,0 +1,933 @@
+{
+  "schemaVersion": "poseidon.pilot-source-ownership.v1",
+  "baselineId": "poseidon-v46.3-20261030",
+  "planRevision": 1,
+  "status": "AUTHORED_UNVERIFIED",
+  "assignmentKind": "INTERNAL_ROLE_PLAN_ONLY",
+  "activationBlocked": true,
+  "review": {
+    "state": "SEPARATE_EXACT_TARGET_REVIEW_REQUIRED",
+    "decision": null,
+    "evidence": null
+  },
+  "sources": {
+    "register": {
+      "path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/08.01_POSEIDON_Regulatory_Requirement_Traceability_Matrix_TR.xlsx",
+      "sha256": "c36c72dec31efe45d1f894214b10708a017d0c8a5dfb96fe0d3e1498d44145da"
+    },
+    "backlog": {
+      "path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674"
+    },
+    "start": {
+      "path": "analiz/POSEIDON GUNCEL 30.10.2026/00_START_HERE/00.01_POSEIDON_v46.3_START_HERE_Controlled_Candidate_TR.docx",
+      "sha256": "4cf7f9872a50d81d7cbc15c748965e139555bdb3bc5b859706331fb273b683b0"
+    }
+  },
+  "requirement": {
+    "source": "backlog",
+    "locator": "sheet:Backlog/row:9",
+    "value": "DEV-008",
+    "column": "A"
+  },
+  "acceptance": {
+    "source": "backlog",
+    "locator": "sheet:Backlog/row:9",
+    "value": "ISM/SOLAS/STCW/MLC/MARPOL/Flag/Class pilot kapsamı için source owner, version, validation status ve reviewer atanır.",
+    "column": "G"
+  },
+  "test": {
+    "source": "backlog",
+    "locator": "sheet:Backlog/row:9",
+    "value": "T-S0-008",
+    "column": "M"
+  },
+  "laterGates": [
+    {
+      "source": "backlog",
+      "locator": "sheet:Backlog/row:74",
+      "value": "DEV-073",
+      "column": "A"
+    },
+    {
+      "source": "backlog",
+      "locator": "sheet:Backlog/row:94",
+      "value": "DEV-093",
+      "column": "A"
+    },
+    {
+      "source": "start",
+      "locator": "paragraph:116",
+      "value": "Regulatory source register release/final legal claim öncesinde source/version refresh gate'inden geçer."
+    }
+  ],
+  "scopes": [
+    {
+      "scope": "ISM",
+      "ownerRole": {
+        "role": "Regulatory Lead",
+        "assignmentKind": "PLAN_ROLE_ONLY",
+        "source": {
+          "source": "backlog",
+          "locator": "sheet:Backlog/row:9",
+          "value": "Regulatory Lead",
+          "column": "K"
+        }
+      },
+      "reviewerRole": {
+        "role": "Regulatory SME",
+        "assignmentKind": "PLAN_ROLE_ONLY",
+        "source": {
+          "source": "backlog",
+          "locator": "sheet:RACI/row:1",
+          "value": "Regulatory SME",
+          "column": "I"
+        },
+        "responsibility": {
+          "source": "backlog",
+          "locator": "sheet:RACI/row:4",
+          "value": "A/R",
+          "column": "I"
+        }
+      },
+      "selection": {
+        "kind": "PILOT_APPLICABILITY_REVIEW_REQUIRED",
+        "state": "UNRESOLVED",
+        "selectedOperationalContext": null
+      },
+      "validation": {
+        "state": "UNVERIFIED",
+        "editionResolution": "OPEN",
+        "applicabilityResolution": "OPEN",
+        "reviewerQualification": "UNVERIFIED",
+        "activationBlocked": true
+      },
+      "openWork": {
+        "identityKind": "DERIVED_PLAN_TRACKING_ONLY",
+        "items": [
+          "AUTHORITATIVE_EDITION",
+          "PILOT_APPLICABILITY",
+          "REVIEWER_QUALIFICATION"
+        ],
+        "nextGate": {
+          "source": "backlog",
+          "locator": "sheet:Backlog/row:74",
+          "value": "DEV-073",
+          "column": "A"
+        }
+      },
+      "candidateSources": [
+        {
+          "sourceId": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:2",
+            "value": "SRC-ISM",
+            "column": "A"
+          },
+          "issuer": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:2",
+            "value": "IMO",
+            "column": "B"
+          },
+          "instrument": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:2",
+            "value": "ISM Code / SOLAS IX",
+            "column": "C"
+          },
+          "lifecycleAssertion": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:2",
+            "value": "CURRENT",
+            "column": "F"
+          },
+          "sourceUrl": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:2",
+            "value": "https://www.imo.org/en/ourwork/humanelement/pages/ismcode.aspx",
+            "column": "G"
+          },
+          "controlledNote": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:2",
+            "value": "ISM Code SOLAS IX ile mandatory; SMS çekirdeği.",
+            "column": "H"
+          },
+          "version": {
+            "kind": "CANDIDATE_DECLARATION_AND_SNAPSHOT",
+            "baselineId": "poseidon-v46.3-20261030",
+            "snapshotSha256": "c36c72dec31efe45d1f894214b10708a017d0c8a5dfb96fe0d3e1498d44145da",
+            "locator": "sheet:Kaynak Register/row:2",
+            "declaration": {
+              "source": "register",
+              "locator": "sheet:Kaynak Register/row:2",
+              "value": "ISM Code / SOLAS IX",
+              "column": "C"
+            },
+            "authoritativeEdition": null,
+            "resolution": "OPEN"
+          }
+        }
+      ]
+    },
+    {
+      "scope": "SOLAS",
+      "ownerRole": {
+        "role": "Regulatory Lead",
+        "assignmentKind": "PLAN_ROLE_ONLY",
+        "source": {
+          "source": "backlog",
+          "locator": "sheet:Backlog/row:9",
+          "value": "Regulatory Lead",
+          "column": "K"
+        }
+      },
+      "reviewerRole": {
+        "role": "Regulatory SME",
+        "assignmentKind": "PLAN_ROLE_ONLY",
+        "source": {
+          "source": "backlog",
+          "locator": "sheet:RACI/row:1",
+          "value": "Regulatory SME",
+          "column": "I"
+        },
+        "responsibility": {
+          "source": "backlog",
+          "locator": "sheet:RACI/row:4",
+          "value": "A/R",
+          "column": "I"
+        }
+      },
+      "selection": {
+        "kind": "PILOT_APPLICABILITY_REVIEW_REQUIRED",
+        "state": "UNRESOLVED",
+        "selectedOperationalContext": null
+      },
+      "validation": {
+        "state": "UNVERIFIED",
+        "editionResolution": "OPEN",
+        "applicabilityResolution": "OPEN",
+        "reviewerQualification": "UNVERIFIED",
+        "activationBlocked": true
+      },
+      "openWork": {
+        "identityKind": "DERIVED_PLAN_TRACKING_ONLY",
+        "items": [
+          "AUTHORITATIVE_EDITION",
+          "PILOT_APPLICABILITY",
+          "REVIEWER_QUALIFICATION"
+        ],
+        "nextGate": {
+          "source": "backlog",
+          "locator": "sheet:Backlog/row:74",
+          "value": "DEV-073",
+          "column": "A"
+        }
+      },
+      "candidateSources": [
+        {
+          "sourceId": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:3",
+            "value": "SRC-SOLAS",
+            "column": "A"
+          },
+          "issuer": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:3",
+            "value": "IMO",
+            "column": "B"
+          },
+          "instrument": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:3",
+            "value": "SOLAS 1974 as amended",
+            "column": "C"
+          },
+          "lifecycleAssertion": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:3",
+            "value": "CURRENT",
+            "column": "F"
+          },
+          "sourceUrl": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:3",
+            "value": "https://www.imo.org/en/About/Conventions/Pages/International-Convention-for-the-Safety-of-Life-at-Sea-%28SOLAS%29%2C-1974.aspx",
+            "column": "G"
+          },
+          "controlledNote": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:3",
+            "value": "Ship type/size/voyage/applicability profile ile değerlendirilir.",
+            "column": "H"
+          },
+          "version": {
+            "kind": "CANDIDATE_DECLARATION_AND_SNAPSHOT",
+            "baselineId": "poseidon-v46.3-20261030",
+            "snapshotSha256": "c36c72dec31efe45d1f894214b10708a017d0c8a5dfb96fe0d3e1498d44145da",
+            "locator": "sheet:Kaynak Register/row:3",
+            "declaration": {
+              "source": "register",
+              "locator": "sheet:Kaynak Register/row:3",
+              "value": "SOLAS 1974 as amended",
+              "column": "C"
+            },
+            "authoritativeEdition": null,
+            "resolution": "OPEN"
+          }
+        }
+      ]
+    },
+    {
+      "scope": "STCW",
+      "ownerRole": {
+        "role": "Regulatory Lead",
+        "assignmentKind": "PLAN_ROLE_ONLY",
+        "source": {
+          "source": "backlog",
+          "locator": "sheet:Backlog/row:9",
+          "value": "Regulatory Lead",
+          "column": "K"
+        }
+      },
+      "reviewerRole": {
+        "role": "Regulatory SME",
+        "assignmentKind": "PLAN_ROLE_ONLY",
+        "source": {
+          "source": "backlog",
+          "locator": "sheet:RACI/row:1",
+          "value": "Regulatory SME",
+          "column": "I"
+        },
+        "responsibility": {
+          "source": "backlog",
+          "locator": "sheet:RACI/row:4",
+          "value": "A/R",
+          "column": "I"
+        }
+      },
+      "selection": {
+        "kind": "PILOT_APPLICABILITY_REVIEW_REQUIRED",
+        "state": "UNRESOLVED",
+        "selectedOperationalContext": null
+      },
+      "validation": {
+        "state": "UNVERIFIED",
+        "editionResolution": "OPEN",
+        "applicabilityResolution": "OPEN",
+        "reviewerQualification": "UNVERIFIED",
+        "activationBlocked": true
+      },
+      "openWork": {
+        "identityKind": "DERIVED_PLAN_TRACKING_ONLY",
+        "items": [
+          "AUTHORITATIVE_EDITION",
+          "PILOT_APPLICABILITY",
+          "REVIEWER_QUALIFICATION"
+        ],
+        "nextGate": {
+          "source": "backlog",
+          "locator": "sheet:Backlog/row:74",
+          "value": "DEV-073",
+          "column": "A"
+        }
+      },
+      "candidateSources": [
+        {
+          "sourceId": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:4",
+            "value": "SRC-STCW",
+            "column": "A"
+          },
+          "issuer": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:4",
+            "value": "IMO",
+            "column": "B"
+          },
+          "instrument": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:4",
+            "value": "STCW Convention & Code",
+            "column": "C"
+          },
+          "lifecycleAssertion": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:4",
+            "value": "CURRENT",
+            "column": "F"
+          },
+          "sourceUrl": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:4",
+            "value": "https://www.imo.org/en/ourwork/humanelement/pages/stcw-convention.aspx",
+            "column": "G"
+          },
+          "controlledNote": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:4",
+            "value": "Training/certification/watchkeeping minimum standards.",
+            "column": "H"
+          },
+          "version": {
+            "kind": "CANDIDATE_DECLARATION_AND_SNAPSHOT",
+            "baselineId": "poseidon-v46.3-20261030",
+            "snapshotSha256": "c36c72dec31efe45d1f894214b10708a017d0c8a5dfb96fe0d3e1498d44145da",
+            "locator": "sheet:Kaynak Register/row:4",
+            "declaration": {
+              "source": "register",
+              "locator": "sheet:Kaynak Register/row:4",
+              "value": "STCW Convention & Code",
+              "column": "C"
+            },
+            "authoritativeEdition": null,
+            "resolution": "OPEN"
+          }
+        }
+      ]
+    },
+    {
+      "scope": "MLC",
+      "ownerRole": {
+        "role": "Regulatory Lead",
+        "assignmentKind": "PLAN_ROLE_ONLY",
+        "source": {
+          "source": "backlog",
+          "locator": "sheet:Backlog/row:9",
+          "value": "Regulatory Lead",
+          "column": "K"
+        }
+      },
+      "reviewerRole": {
+        "role": "Regulatory SME",
+        "assignmentKind": "PLAN_ROLE_ONLY",
+        "source": {
+          "source": "backlog",
+          "locator": "sheet:RACI/row:1",
+          "value": "Regulatory SME",
+          "column": "I"
+        },
+        "responsibility": {
+          "source": "backlog",
+          "locator": "sheet:RACI/row:4",
+          "value": "A/R",
+          "column": "I"
+        }
+      },
+      "selection": {
+        "kind": "PILOT_APPLICABILITY_REVIEW_REQUIRED",
+        "state": "UNRESOLVED",
+        "selectedOperationalContext": null
+      },
+      "validation": {
+        "state": "UNVERIFIED",
+        "editionResolution": "OPEN",
+        "applicabilityResolution": "OPEN",
+        "reviewerQualification": "UNVERIFIED",
+        "activationBlocked": true
+      },
+      "openWork": {
+        "identityKind": "DERIVED_PLAN_TRACKING_ONLY",
+        "items": [
+          "AUTHORITATIVE_EDITION",
+          "PILOT_APPLICABILITY",
+          "REVIEWER_QUALIFICATION"
+        ],
+        "nextGate": {
+          "source": "backlog",
+          "locator": "sheet:Backlog/row:74",
+          "value": "DEV-073",
+          "column": "A"
+        }
+      },
+      "candidateSources": [
+        {
+          "sourceId": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:5",
+            "value": "SRC-MLC",
+            "column": "A"
+          },
+          "issuer": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:5",
+            "value": "ILO",
+            "column": "B"
+          },
+          "instrument": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:5",
+            "value": "MLC 2006 as amended",
+            "column": "C"
+          },
+          "lifecycleAssertion": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:5",
+            "value": "CURRENT",
+            "column": "F"
+          },
+          "sourceUrl": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:5",
+            "value": "https://normlex.ilo.org/dyn/nrmlx_en/f?p=NORMLEXPUB:91:0::NO::P91_SECTION:MLC_N1",
+            "column": "G"
+          },
+          "controlledNote": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:5",
+            "value": "2022 amendments in force; 2025 amendments future.",
+            "column": "H"
+          },
+          "version": {
+            "kind": "CANDIDATE_DECLARATION_AND_SNAPSHOT",
+            "baselineId": "poseidon-v46.3-20261030",
+            "snapshotSha256": "c36c72dec31efe45d1f894214b10708a017d0c8a5dfb96fe0d3e1498d44145da",
+            "locator": "sheet:Kaynak Register/row:5",
+            "declaration": {
+              "source": "register",
+              "locator": "sheet:Kaynak Register/row:5",
+              "value": "MLC 2006 as amended",
+              "column": "C"
+            },
+            "authoritativeEdition": null,
+            "resolution": "OPEN"
+          }
+        }
+      ]
+    },
+    {
+      "scope": "MARPOL",
+      "ownerRole": {
+        "role": "Regulatory Lead",
+        "assignmentKind": "PLAN_ROLE_ONLY",
+        "source": {
+          "source": "backlog",
+          "locator": "sheet:Backlog/row:9",
+          "value": "Regulatory Lead",
+          "column": "K"
+        }
+      },
+      "reviewerRole": {
+        "role": "Regulatory SME",
+        "assignmentKind": "PLAN_ROLE_ONLY",
+        "source": {
+          "source": "backlog",
+          "locator": "sheet:RACI/row:1",
+          "value": "Regulatory SME",
+          "column": "I"
+        },
+        "responsibility": {
+          "source": "backlog",
+          "locator": "sheet:RACI/row:4",
+          "value": "A/R",
+          "column": "I"
+        }
+      },
+      "selection": {
+        "kind": "PILOT_APPLICABILITY_REVIEW_REQUIRED",
+        "state": "UNRESOLVED",
+        "selectedOperationalContext": null
+      },
+      "validation": {
+        "state": "UNVERIFIED",
+        "editionResolution": "OPEN",
+        "applicabilityResolution": "OPEN",
+        "reviewerQualification": "UNVERIFIED",
+        "activationBlocked": true
+      },
+      "openWork": {
+        "identityKind": "DERIVED_PLAN_TRACKING_ONLY",
+        "items": [
+          "AUTHORITATIVE_EDITION",
+          "PILOT_APPLICABILITY",
+          "REVIEWER_QUALIFICATION"
+        ],
+        "nextGate": {
+          "source": "backlog",
+          "locator": "sheet:Backlog/row:74",
+          "value": "DEV-073",
+          "column": "A"
+        }
+      },
+      "candidateSources": [
+        {
+          "sourceId": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:6",
+            "value": "SRC-MARPOL",
+            "column": "A"
+          },
+          "issuer": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:6",
+            "value": "IMO",
+            "column": "B"
+          },
+          "instrument": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:6",
+            "value": "MARPOL Annex I-VI",
+            "column": "C"
+          },
+          "lifecycleAssertion": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:6",
+            "value": "CURRENT",
+            "column": "F"
+          },
+          "sourceUrl": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:6",
+            "value": "https://www.imo.org/en/about/conventions/pages/international-convention-for-the-prevention-of-pollution-from-ships-%28marpol%29.aspx",
+            "column": "G"
+          },
+          "controlledNote": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:6",
+            "value": "Annex-specific applicability.",
+            "column": "H"
+          },
+          "version": {
+            "kind": "CANDIDATE_DECLARATION_AND_SNAPSHOT",
+            "baselineId": "poseidon-v46.3-20261030",
+            "snapshotSha256": "c36c72dec31efe45d1f894214b10708a017d0c8a5dfb96fe0d3e1498d44145da",
+            "locator": "sheet:Kaynak Register/row:6",
+            "declaration": {
+              "source": "register",
+              "locator": "sheet:Kaynak Register/row:6",
+              "value": "MARPOL Annex I-VI",
+              "column": "C"
+            },
+            "authoritativeEdition": null,
+            "resolution": "OPEN"
+          }
+        }
+      ]
+    },
+    {
+      "scope": "Flag",
+      "ownerRole": {
+        "role": "Regulatory Lead",
+        "assignmentKind": "PLAN_ROLE_ONLY",
+        "source": {
+          "source": "backlog",
+          "locator": "sheet:Backlog/row:9",
+          "value": "Regulatory Lead",
+          "column": "K"
+        }
+      },
+      "reviewerRole": {
+        "role": "Regulatory SME",
+        "assignmentKind": "PLAN_ROLE_ONLY",
+        "source": {
+          "source": "backlog",
+          "locator": "sheet:RACI/row:1",
+          "value": "Regulatory SME",
+          "column": "I"
+        },
+        "responsibility": {
+          "source": "backlog",
+          "locator": "sheet:RACI/row:4",
+          "value": "A/R",
+          "column": "I"
+        }
+      },
+      "selection": {
+        "kind": "PILOT_FLAG_OR_CLASS_REQUIRED",
+        "state": "UNRESOLVED",
+        "selectedOperationalContext": null
+      },
+      "validation": {
+        "state": "UNVERIFIED",
+        "editionResolution": "OPEN",
+        "applicabilityResolution": "OPEN",
+        "reviewerQualification": "UNVERIFIED",
+        "activationBlocked": true
+      },
+      "openWork": {
+        "identityKind": "DERIVED_PLAN_TRACKING_ONLY",
+        "items": [
+          "AUTHORITATIVE_EDITION",
+          "PILOT_APPLICABILITY",
+          "REVIEWER_QUALIFICATION"
+        ],
+        "nextGate": {
+          "source": "backlog",
+          "locator": "sheet:Backlog/row:94",
+          "value": "DEV-093",
+          "column": "A"
+        }
+      },
+      "candidateSources": [
+        {
+          "sourceId": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:15",
+            "value": "SRC-TR-ISM-2023-19",
+            "column": "A"
+          },
+          "issuer": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:15",
+            "value": "UAB DGM",
+            "column": "B"
+          },
+          "instrument": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:15",
+            "value": "ISM Kod Gereklilikleri Hakkında Uygulama Talimatı 2023/19",
+            "column": "C"
+          },
+          "lifecycleAssertion": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:15",
+            "value": "CURRENT",
+            "column": "F"
+          },
+          "sourceUrl": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:15",
+            "value": "https://denizcilik.uab.gov.tr/uploads/pages/bayrak-ve-liman-devleti-uygulamalari-denetim-ve-be/uygulama-talimati-2023-19-ism-kod-gereklilikleri-hakkinda.pdf",
+            "column": "G"
+          },
+          "controlledNote": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:15",
+            "value": "IMO A.1118(30) implementation guidance reference.",
+            "column": "H"
+          },
+          "version": {
+            "kind": "CANDIDATE_DECLARATION_AND_SNAPSHOT",
+            "baselineId": "poseidon-v46.3-20261030",
+            "snapshotSha256": "c36c72dec31efe45d1f894214b10708a017d0c8a5dfb96fe0d3e1498d44145da",
+            "locator": "sheet:Kaynak Register/row:15",
+            "declaration": {
+              "source": "register",
+              "locator": "sheet:Kaynak Register/row:15",
+              "value": "ISM Kod Gereklilikleri Hakkında Uygulama Talimatı 2023/19",
+              "column": "C"
+            },
+            "authoritativeEdition": null,
+            "resolution": "OPEN"
+          }
+        }
+      ]
+    },
+    {
+      "scope": "Class",
+      "ownerRole": {
+        "role": "Regulatory Lead",
+        "assignmentKind": "PLAN_ROLE_ONLY",
+        "source": {
+          "source": "backlog",
+          "locator": "sheet:Backlog/row:9",
+          "value": "Regulatory Lead",
+          "column": "K"
+        }
+      },
+      "reviewerRole": {
+        "role": "Regulatory SME",
+        "assignmentKind": "PLAN_ROLE_ONLY",
+        "source": {
+          "source": "backlog",
+          "locator": "sheet:RACI/row:1",
+          "value": "Regulatory SME",
+          "column": "I"
+        },
+        "responsibility": {
+          "source": "backlog",
+          "locator": "sheet:RACI/row:4",
+          "value": "A/R",
+          "column": "I"
+        }
+      },
+      "selection": {
+        "kind": "PILOT_FLAG_OR_CLASS_REQUIRED",
+        "state": "UNRESOLVED",
+        "selectedOperationalContext": null
+      },
+      "validation": {
+        "state": "UNVERIFIED",
+        "editionResolution": "OPEN",
+        "applicabilityResolution": "OPEN",
+        "reviewerQualification": "UNVERIFIED",
+        "activationBlocked": true
+      },
+      "openWork": {
+        "identityKind": "DERIVED_PLAN_TRACKING_ONLY",
+        "items": [
+          "AUTHORITATIVE_EDITION",
+          "PILOT_APPLICABILITY",
+          "REVIEWER_QUALIFICATION"
+        ],
+        "nextGate": {
+          "source": "backlog",
+          "locator": "sheet:Backlog/row:94",
+          "value": "DEV-093",
+          "column": "A"
+        }
+      },
+      "candidateSources": [
+        {
+          "sourceId": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:17",
+            "value": "SRC-IACS-M79",
+            "column": "A"
+          },
+          "issuer": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:17",
+            "value": "IACS / Türk Loydu mirror",
+            "column": "B"
+          },
+          "instrument": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:17",
+            "value": "UR M79 - Towing winch emergency release systems",
+            "column": "C"
+          },
+          "lifecycleAssertion": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:17",
+            "value": "CURRENT",
+            "column": "F"
+          },
+          "sourceUrl": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:17",
+            "value": "https://turkloydu.org/pdf-files/iacs-karar-ve-csr-degisimleri/iacs-es-gereklilikleri/UR_M79_New_TR_EN.pdf",
+            "column": "G"
+          },
+          "controlledNote": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:17",
+            "value": "Minimum safety standards for towing winch emergency release systems.",
+            "column": "H"
+          },
+          "version": {
+            "kind": "CANDIDATE_DECLARATION_AND_SNAPSHOT",
+            "baselineId": "poseidon-v46.3-20261030",
+            "snapshotSha256": "c36c72dec31efe45d1f894214b10708a017d0c8a5dfb96fe0d3e1498d44145da",
+            "locator": "sheet:Kaynak Register/row:17",
+            "declaration": {
+              "source": "register",
+              "locator": "sheet:Kaynak Register/row:17",
+              "value": "UR M79 - Towing winch emergency release systems",
+              "column": "C"
+            },
+            "authoritativeEdition": null,
+            "resolution": "OPEN"
+          }
+        },
+        {
+          "sourceId": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:18",
+            "value": "SRC-TL-OCEAN-TOW",
+            "column": "A"
+          },
+          "issuer": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:18",
+            "value": "Türk Loydu",
+            "column": "B"
+          },
+          "instrument": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:18",
+            "value": "Chapter 58 - Ocean Towage",
+            "column": "C"
+          },
+          "lifecycleAssertion": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:18",
+            "value": "CURRENT",
+            "column": "F"
+          },
+          "sourceUrl": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:18",
+            "value": "https://turkloydu.org/pdf-files/turk-loydu-kurallari/cilt-d/chapter-58-ocean-towage-2022.pdf",
+            "column": "G"
+          },
+          "controlledNote": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:18",
+            "value": "Towage safety/suitability/certification context; controlled version must be checked.",
+            "column": "H"
+          },
+          "version": {
+            "kind": "CANDIDATE_DECLARATION_AND_SNAPSHOT",
+            "baselineId": "poseidon-v46.3-20261030",
+            "snapshotSha256": "c36c72dec31efe45d1f894214b10708a017d0c8a5dfb96fe0d3e1498d44145da",
+            "locator": "sheet:Kaynak Register/row:18",
+            "declaration": {
+              "source": "register",
+              "locator": "sheet:Kaynak Register/row:18",
+              "value": "Chapter 58 - Ocean Towage",
+              "column": "C"
+            },
+            "authoritativeEdition": null,
+            "resolution": "OPEN"
+          }
+        },
+        {
+          "sourceId": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:19",
+            "value": "SRC-TL-BP",
+            "column": "A"
+          },
+          "issuer": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:19",
+            "value": "Türk Loydu",
+            "column": "B"
+          },
+          "instrument": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:19",
+            "value": "Bollard Pull Test Certification",
+            "column": "C"
+          },
+          "lifecycleAssertion": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:19",
+            "value": "CURRENT",
+            "column": "F"
+          },
+          "sourceUrl": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:19",
+            "value": "https://www.turkloydu.org/en-us/our-services/maritime/material-product-and-company-certification/bollard-pull-test-certification/",
+            "column": "G"
+          },
+          "controlledNote": {
+            "source": "register",
+            "locator": "sheet:Kaynak Register/row:19",
+            "value": "Measured bollard pull with dynamometer and surveyor attendance.",
+            "column": "H"
+          },
+          "version": {
+            "kind": "CANDIDATE_DECLARATION_AND_SNAPSHOT",
+            "baselineId": "poseidon-v46.3-20261030",
+            "snapshotSha256": "c36c72dec31efe45d1f894214b10708a017d0c8a5dfb96fe0d3e1498d44145da",
+            "locator": "sheet:Kaynak Register/row:19",
+            "declaration": {
+              "source": "register",
+              "locator": "sheet:Kaynak Register/row:19",
+              "value": "Bollard Pull Test Certification",
+              "column": "C"
+            },
+            "authoritativeEdition": null,
+            "resolution": "OPEN"
+          }
+        }
+      ]
+    }
+  ]
+}

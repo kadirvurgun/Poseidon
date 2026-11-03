@@ -3,15 +3,22 @@ import { expect, type Page } from '@playwright/test'
 // Genuine signed host manifest; no route.fulfill, test login or fake success.
 // Coordinator must provision explicit graph/file permissions and real owned transport.
 async function writer(page: Page) {
-  await page.goto('/app/source-register?lang=en')
+  // Qualified positive consumers share this tenant. This negative needs its own
+  // real command-created Ship with no authoritative evaluation, not the first row.
+  const fixtureId = process.env.POSEIDON_BROWSER_NO_EVALUATION_VESSEL
+  if (!fixtureId || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(fixtureId) || fixtureId === '00000000-0000-0000-0000-000000000000') throw new Error('no_evaluation_ship_fixture_uuid_required')
+  await page.goto('/app/sources')
+  await page.getByRole('button', { name: 'EN', exact: true }).click()
   await page.getByRole('button', { name: 'Controls and evidence', exact: true }).click()
   const region = page.getByRole('region', { name: 'Controls and evidence', exact: true })
   const response = await page.request.get('/api/v1/vessels?offset=0&limit=25'); expect(response.status()).toBe(200)
-  const vessel = (await response.json()).items.find((v: { kind: string }) => v.kind === 'Ship'); expect(!!vessel).toBe(true)
-  await region.getByLabel('Vessel context', { exact: true }).selectOption(vessel.id)
+  const vessel = (await response.json()).items.find((v: { id: string; kind: string }) => v.id === fixtureId && v.kind === 'Ship'); expect(!!vessel).toBe(true)
+  const before = await page.request.get(`/api/v1/controls/orphans?vesselId=${vessel.id}&offset=0`); expect(before.status()).toBe(200)
+  const initial = await before.json(); expect(initial.available === false && initial.reason === 'AUTHORITATIVE_APPLICABILITY_UNAVAILABLE').toBe(true)
+  await region.getByRole('combobox', { name: 'Vessel context', exact: true }).selectOption(vessel.id)
   await expect(region.getByText('Draft authoring available', { exact: true })).toBeVisible()
   await region.getByLabel('Title', { exact: true }).fill('FICTIONAL CONTROL-EVIDENCE signed-host draft')
-  await region.getByLabel('Criticality', { exact: true }).selectOption('true')
+  await region.getByRole('combobox', { name: 'Criticality', exact: true }).selectOption('true')
   const [saved] = await Promise.all([page.waitForResponse(r => new URL(r.url()).pathname === '/api/v1/controls' && r.request().method() === 'POST'), region.getByRole('button', { name: 'Save incomplete draft', exact: true }).click()])
   expect(saved.status()).toBe(200); const first = await saved.json()
   expect(first.lifecycle === 'DRAFT' && first.verification === 'UNVERIFIED' && first.effectiveness === 'UNKNOWN' && !first.evidenceExists).toBe(true)
@@ -20,7 +27,7 @@ async function writer(page: Page) {
   const report = await page.request.get(`/api/v1/controls/orphans?vesselId=${vessel.id}&offset=0`); expect(report.status()).toBe(200)
   const value = await report.json(); expect(value.available === false && value.reason === 'AUTHORITATIVE_APPLICABILITY_UNAVAILABLE').toBe(true)
   await region.getByLabel('Title', { exact: true }).fill('retain this dirty draft')
-  await region.getByLabel('Register', { exact: true }).selectOption('Evidence')
+  await region.getByRole('combobox', { name: 'Register', exact: true }).selectOption('Evidence')
   await page.getByRole('dialog').getByRole('button', { name: 'Keep editing', exact: true }).click()
   await expect(region.getByLabel('Title', { exact: true })).toHaveValue('retain this dirty draft')
   await region.getByLabel('Title', { exact: true }).focus(); await expect(region.getByLabel('Title', { exact: true })).toBeFocused()

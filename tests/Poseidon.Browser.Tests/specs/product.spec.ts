@@ -26,15 +26,39 @@ test('product shell presents missing federation setup in both languages', async 
   expect((await request.put(profile, { data: { expectedVersion: 0, content: {} } })).status()).toBe(401)
 })
 
-test('product navigation is keyboard accessible and technical route is preserved', async ({ page }) => {
+test('product navigation is keyboard accessible and direct technical route is preserved', async ({ page }, testInfo) => {
   await page.goto('/app')
   await page.keyboard.press('Tab')
   await expect(page.getByRole('link', { name: 'Ana içeriğe geç' })).toBeFocused()
   await page.keyboard.press('Enter')
   await expect(page.locator('#product-main')).toBeFocused()
   const menu = page.getByRole('button', { name: 'Menü', exact: true })
-  if (await menu.isVisible()) await menu.click()
-  await page.getByRole('link', { name: 'Sistem bağlantısı' }).click()
+  if (testInfo.project.name === 'mobile-chromium') {
+    await expect(menu).toBeVisible()
+    await menu.click()
+    const drawer = page.getByRole('dialog', { name: 'POSEIDON', exact: true })
+    await expect(drawer).toHaveAttribute('aria-modal', 'true')
+    const brand = drawer.getByRole('link', { name: 'POSEIDON', exact: true })
+    await expect(brand).toBeFocused()
+    const workView = drawer.locator('summary').filter({ hasText: /^Çalışma görünümü$/ })
+    const workViewDisclosure = drawer.locator('details').filter({ has: page.locator('summary').filter({ hasText: /^Çalışma görünümü$/ }) })
+    await expect(workViewDisclosure).toHaveJSProperty('open', false)
+    // A real pointer must reach the summary above the mobile navigation overlay.
+    await workView.click()
+    await expect(workViewDisclosure).toHaveJSProperty('open', true)
+    await workView.click()
+    await expect(workViewDisclosure).toHaveJSProperty('open', false)
+    // Start the separate keyboard boundary check from its original first target.
+    await brand.focus()
+    await page.keyboard.press('Shift+Tab'); await expect(workView).toBeFocused()
+    await page.keyboard.press('Tab'); await expect(brand).toBeFocused()
+    await page.keyboard.press('Escape'); await expect(menu).toBeFocused()
+    await expect(menu).toHaveAttribute('aria-expanded', 'false')
+  } else {
+    await expect(menu).toBeHidden()
+  }
+  // Developer diagnostics remains a direct route alongside product navigation.
+  await page.goto('/')
   await expect(page.getByTestId('connection-card')).toHaveAttribute('data-state', 'available')
 })
 

@@ -1,0 +1,43 @@
+.enterprise-shell.crew-shell .crew-enterprise-page-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin:20px 0 24px}
+.enterprise-shell.crew-shell .crew-enterprise-page-heading h1{margin:6px 0 10px}
+.enterprise-shell.crew-shell .crew-enterprise-page-heading p{max-width:760px;color:var(--muted-foreground);margin:0 0 12px}
+.enterprise-shell.crew-shell .crew-enterprise-eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#4f719a}
+.enterprise-shell.crew-shell .crew-enterprise-breadcrumbs{display:flex;align-items:center;gap:14px;font-size:12px}
+.enterprise-shell.crew-shell .crew-enterprise-roster{display:grid;gap:20px;margin:22px 0}
+.enterprise-shell.crew-shell .crew-enterprise-filters{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;padding:0 0 16px;border-bottom:1px solid var(--border)}
+.enterprise-shell.crew-shell .crew-enterprise-filters label{display:grid;gap:5px;font-size:12px;color:var(--muted-foreground);min-width:200px}
+.enterprise-shell.crew-shell .crew-enterprise-filters select{margin:0;max-width:360px;background:white;color:var(--foreground);height:38px}
+.enterprise-shell.crew-shell .crew-enterprise-filter-label{display:flex;gap:7px;align-items:center;align-self:center;font-size:12px;font-weight:600;margin-right:auto}
+.enterprise-shell.crew-shell .crew-enterprise-result-count{font-size:12px;color:var(--muted-foreground);margin:14px 0}
+.enterprise-shell.crew-shell .crew-enterprise-table{margin:0;border:1px solid var(--border);border-radius:8px}
+.enterprise-shell.crew-shell .crew-enterprise-table table{min-width:950px}
+.enterprise-shell.crew-shell .crew-enterprise-table th{white-space:nowrap}
+.enterprise-shell.crew-shell .crew-enterprise-table td{vertical-align:middle}
+.enterprise-shell.crew-shell .crew-enterprise-table [data-slot=badge]{white-space:normal;max-width:235px;line-height:1.5}
+.enterprise-shell.crew-shell .crew-enterprise-period{font-variant-numeric:tabular-nums;white-space:nowrap}
+.enterprise-shell.crew-shell .crew-enterprise-period>svg{display:inline-block;vertical-align:top;margin:3px 7px 0 0;color:var(--muted-foreground)}
+.enterprise-shell.crew-shell .crew-enterprise-period>span{display:inline-block}
+.enterprise-shell.crew-shell .crew-enterprise-period-end{display:block;color:var(--muted-foreground);font-size:11px;margin-top:3px}
+.enterprise-shell.crew-shell .crew-enterprise-pagination{display:flex;justify-content:flex-end;align-items:center;gap:10px;margin-top:18px}
+.enterprise-shell.crew-shell .crew-enterprise-pagination>span{margin-right:auto;color:var(--muted-foreground);font-size:12px}
+.enterprise-shell.crew-shell .crew-enterprise-empty{text-align:center;padding:36px 20px;background:#f8fafc;border:1px dashed var(--border);border-radius:8px}
+.enterprise-shell.crew-shell .crew-enterprise-empty>svg{margin:0 auto 12px;color:#6d85a1;width:28px;height:28px}
+.enterprise-shell.crew-shell .crew-enterprise-empty h3{font-size:15px;margin:0 0 8px}
+.enterprise-shell.crew-shell .crew-enterprise-empty p{font-size:12px;color:var(--muted-foreground);margin:0}
+.enterprise-shell.crew-shell .crew-enterprise-tools{display:flex;gap:10px;justify-content:flex-end;margin:16px 0}
+.enterprise-shell.crew-shell .crew-enterprise-profile .crew-enterprise-profile-fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin:20px 0}
+.enterprise-shell.crew-shell .crew-enterprise-profile-fields dl{display:block;margin:0;padding:12px 0;border-bottom:1px solid var(--border)}
+.enterprise-shell.crew-shell .crew-enterprise-profile-fields dt{font-size:11px;color:var(--muted-foreground);margin-bottom:6px}
+.enterprise-shell.crew-shell .crew-enterprise-profile-fields dd{font-size:13px;font-weight:600;margin:0}
+.enterprise-shell.crew-shell .crew-enterprise-profile-actions{display:flex;flex-wrap:wrap;gap:10px;border-top:1px solid var(--border);padding-top:18px}
+.enterprise-shell.crew-shell .crew-enterprise-disclosure{margin:18px 0;background:white;border:1px solid var(--border);border-radius:10px}
+.enterprise-shell.crew-shell .crew-enterprise-disclosure>summary{padding:18px 22px;font-size:13px;font-weight:600;cursor:pointer}
+.enterprise-shell.crew-shell .crew-enterprise-disclosure>div{padding:0 22px 18px}
+.enterprise-shell.crew-shell .crew-enterprise-disclosure>div>section{border:0;padding:8px 0;margin:0;box-shadow:none}
+.enterprise-shell.crew-shell .crew-enterprise-editor{border-left:3px solid var(--primary);padding:24px;background:white;border-radius:10px}
+.enterprise-shell.crew-shell .crew-enterprise-editor fieldset{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 22px;margin-bottom:22px}
+.enterprise-shell.crew-shell .crew-enterprise-editor fieldset>p{grid-column:1/-1}
+@media(max-width:1100px){.enterprise-shell.crew-shell .crew-enterprise-profile .crew-enterprise-profile-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.enterprise-shell.crew-shell .crew-enterprise-page-heading{flex-direction:column;gap:14px}.enterprise-shell.crew-shell .crew-enterprise-filters{align-items:stretch}.enterprise-shell.crew-shell .crew-enterprise-filters label{min-width:0;width:100%}.enterprise-shell.crew-shell .crew-enterprise-filters select{max-width:none}.enterprise-shell.crew-shell .crew-enterprise-filter-label{width:100%}.enterprise-shell.crew-shell .crew-enterprise-pagination{flex-wrap:wrap}.enterprise-shell.crew-shell .crew-enterprise-pagination>span{width:100%}.enterprise-shell.crew-shell .crew-enterprise-editor fieldset,.enterprise-shell.crew-shell .crew-enterprise-profile .crew-enterprise-profile-fields{grid-template-columns:1fr}}
+@media(pointer:coarse){.enterprise-shell.crew-shell .crew-enterprise-disclosure>summary,.enterprise-shell.crew-shell .crew-enterprise-filters select{min-height:44px}}
+@media(max-width:650px){.enterprise-shell.crew-shell .crew-enterprise-table table{min-width:0;width:100%;table-layout:fixed}.enterprise-shell.crew-shell .crew-enterprise-table th,.enterprise-shell.crew-shell .crew-enterprise-table td{white-space:normal;overflow-wrap:anywhere;padding:10px 7px}.enterprise-shell.crew-shell .crew-enterprise-table th:nth-child(n+3):nth-child(-n+6),.enterprise-shell.crew-shell .crew-enterprise-table td:nth-child(n+3):nth-child(-n+6){display:none}.enterprise-shell.crew-shell .crew-enterprise-table th:first-child{width:32%}.enterprise-shell.crew-shell .crew-enterprise-table th:nth-child(2){width:25%}}

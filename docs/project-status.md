@@ -1,4 +1,102 @@
-> Current: **FOUNDATION-ACCEPTANCE-BUNDLE-01 — INCOMPLETE / actual local execution / NOT ACCEPTED.** Release builds, actual API/TS generation, current EF check/model-seed regression,536Domain/14persistence-unit/82API-unit,821components,248Python and46ordinary Playwright cases pass. Full persistence fails3/74; API integration is executing with actual failures; lint/security/genuine-provider/full-selected-software gates remain open. No canonical SP, independent QA, CI or publication. [Current report](phases/FOUNDATION-ACCEPTANCE-BUNDLE-01.md) · [exact gate evidence](phases/foundation-acceptance-bundle-01.evidence.json) · [source/task mapping](tasks/foundation-acceptance-bundle-01.md).
+# POSEIDON güncel durum — 03.11.2026
+
+**S0 mühendislik fazı %100: 13 iş / 53 SP kabul edildi. Genel proje kabulü 53 / 970 SP ile %5,46; ekran kabulü 0 / 196.**
+
+[Canonical durum](../docs/project-status.json) · [F kanıtları](../docs/evidence/s0-20261103-3ca49a3/)
+
+## Kapsam ve yüzdeler
+
+| Gösterge | Güncel kabul | Açıklama |
+|---|---:|---|
+| S0 |53 / 53 SP — %100|13 kaynak görevi / 53 SP; DEV-001..012 ve DEV-116.|
+| Genel proje |53 / 970 SP — %5,46|970 SP'lik özgün analiz backlog'u.|
+| Kabul edilen işler |13 / 121|121 iş; SP ana ilerleme ölçüsüdür.|
+| Kabul edilen ekranlar |0 / 196|Mevcut ürün ekranlarının ayrı canonical kabulü açık.|
+| Seçili foundation paketi |40 iş / 272 SP|Çalışma kapsamı; tamamlanma yüzdesi değildir.|
+
+Etkin baseline poseidon-v46.3-20261030; 121 iş, 970 SP, 196 ekran, 2.316 alan sözleşmesi. S0 özgün 18.01 Backlog satırları 2–13 ve 117, DEV-001..012 + DEV-116; DEV-012 bütün 001..011 bağımlılıklarını kapsar ve DEV-116 ayrıca zorunludur.
+
+## Geliştirilen davranış
+
+- React/shadcn tabanlı kurumsal çalışma kabuğu, yetkili menü/arama, TR/EN, taslak koruması, mobil etkileşim ve gerçek sayfa verilerinden ECharts özetleri geliştirildi.
+- Tug pano/detay ve Today/Why; talep/plan, bakım, kaynak/kanıt ve Crew minimum-rol ilişkilerini iş penceresine göre açıklıyor. Farklı kişiler ve çakışan roller ayrılıyor; UNKNOWN otomatik Ready olmuyor. Master kararı ayrı.
+- Korumalı belge/medikal verisi, immutable evidence ve audit, offline reconnect/replay/conflict/recovery sınırları korundu; olay gelmeyen bağlantı değişimi otomatik HTTP/authority/key recovery üretmiyor. Geç yetki yanıtları kapanıyor; arama aynı oturum niyetini taze yetkiyle bağlıyor.
+- Ortam sözleşmesi, üç ADR, core schema planı, threat/mitigation ve metric sözleşmeleri; 10 pilot capability / 149 alan zinciri, golden veri, DoR/DoD, 7 kategori / 9 candidate kaynak sorumluluk planı ve ERP integration-only sınırı kaynak/trace/dependency ile bağlandı.
+
+## Gerçek doğrulama
+
+| Kontrol | Gerçek sonuç | Kapsam |
+|---|---|---|
+| [F CI41560927341](https://github.com/kadirvurgun/Poseidon/actions/runs/41560927341) |4 / 4 iş SUCCESS; 19 gereken komut|Commit `3ca49a30976afd7bb6b63531523a36df646b82dd`, tree `b63ee9cfcf31f1ba28770984b4194020dea91c03`.|
+| API integration |547 / 547 PASS; 0 fail / skip; 791,336 sn|Exact F native CI artifact'ı.|
+| API unit |91 / 91 PASS; 0 fail / skip; 2,863 sn|Ayrı exact F native unit kapsamı.|
+| Python / ordinary browser |372 Python testi plain OK; ordinary 50 / 50|Ayrı native kapsamlar; signed 122 ile toplanmaz.|
+| Diğer MTP / Vitest CI toplamları |UNAVAILABLE|Gerekli komutlar başarılı; eski toplam veya bilinmeyen skip için sıfır varsayılmadı.|
+| Gerçek artifact nesneleri |2 development-build + 1 API-count artifact|3 gerçek kayıt; 2 build artifact'ı. Üretim yayını değildir.|
+| Taze signed regresyon |122 / 122 PASS; 0 fail / pending / skip|61 vaka × 2 Firefox projesi; 10 grup exit 0, identity/fingerprint farkı 0.|
+| Gerçek manager / restricted baseline |2 / 2 PASS; 25 sn|Ayrı fresh baseline; skip sayacı verilmedi, türetilmedi.|
+| Strict TLS |3 / 3 PASS; 0 fail / skip|Ayrı güvenli taşıma kapsamı.|
+| S0 definition |6 / 6 komut PASS_DEFINITION_ONLY|0 test vakası iddiası; kendi başına authority veya kabul değildir.|
+| Yerel frontend aynı-kaynak desteği |954 / 954 PASS; 0 fail / pending / todo / unhandled / module-error|Clean F ile exact kaynak eşitliği; yeni CI native toplamı veya yeni koşu sayılmaz.|
+| Yerel build / lint aynı-kaynak desteği |Build 20,904 sn PASS; lint 31,818 sn, 0 hata / uyarı|Kaynak eşitliğiyle sınırlı önceki yerel sonuç.|
+| Bağımsız current P0 |0 mevcut unresolved P0|Özgün S0 ve incelenen açık foundation yüzeyleriyle sınırlı; evrensel kusursuzluk/compliance iddiası değildir.|
+
+## Bağımsız kabul ve teknik adoption
+
+Gerçek exit gate [arşiv kaydı](../docs/evidence/s0-20261103-3ca49a3/gate-result.json) tüm 13 işi / 53 SP'yi accepted=true, errors=[], pendingGates=[] ile kabul etti. 52 issued receipt byte SHA'sı ve bağımsız oturum provenance'ı bu kaydın parçasıdır. Tarihsel 8 SP'ye 45 SP eklendi. Bu kayıt uygulama F'nin kabulüdür; sonraki metadata A kendi head QA/CI kapısını geçecektir.
+
+Üç ADR, core schema, threat ve source-role planı exact F Git girdileriyle gerçek bağımsız teknik incelemeye bağlandı. Bu tasarım kabulü legal edition, live kişi ataması veya operasyonel safety/pilot onayı değildir.
+
+## Önceki bulguların korunması
+
+İlk F final denemesi 30 PASS / 0 case FAIL / 92 PENDING iken son Withdrawn Test catalog başlığı altında positions 0 nedeniyle fixture hazırlığında kapandı. Ürün eski kataloğa düşmeyerek doğru davrandı. Aynı grant/expiry/sourceRef sınırında ordinary draft + ayrı peer review/adopt komutlarıyla yeni synthetic/unverified position sürümü oluşturuldu; eski zincir korundu. MSMD owning r6 ve diğer beş owning r4 ordinary ve bağımsız sentetik actor komutlarıyla üretildi. Önceki 30 sonuç yeni koşuya taşınmadı. Son taze koşu 122 / 122 olarak kapandı. Son catalog yolculukları iki projede de gerçek Withdrawn durumunu bekledi; hazırlık successor'u üretim onayı veya kalıcı adopted katalog diye sunulmaz.
+
+D ve E eski kısmi koşuları, ilk F frontend 954 / 949 / 5 hatası, native profile ACL/reconnect ve oracle tanıları tarihsel dosyalarında korunur. Aynı testin tekrarları veya ortak koşunun kategori/görevlerce paylaşılması toplam test sayısını artırmaz. CI ham logları bellekte native özet için okunmuş; ham çıktı ve HTTP/DOM/credentials saklanmamıştır.
+
+## Açık dış ve sonraki kapılar
+
+D-STATE-01 / üretim state-map, gerçek Marine/Tug SME ve pilot onayları, authoritative legal edition / source aktivasyonu, operator privacy/retention/key-custody ve production deployment/release kararları OPEN kalır. Typed kaynak planı UNVERIFIED / OPEN / activationBlocked sınırındadır. Sentetik fixture komutları gerçek insan yeterliği, üretim kataloğu, permit veya emniyet onayı değildir. AI değerlendirmeleri ve production/pilot DR/restore/RPO-RTO/rollback kapıları kendi sonraki kaynak kriterleriyle kapanır. ERP tam PO/AP/AR/payroll kapsamı OUT kalır.
+
+
+Sonraki kaynak kapsamı S1'in özgün 18.01 satırları 14–20, 7 iş / 50 SP'dir. OIDC, tenant/role/vessel/object izolasyonu, audit, S3 ve ClamAV yazılımı zaten mevcut; kaynak-original Not Started kod yokluğu değildir. Öncelikli adaylar kritik write-audit kapsamının somut paydası ve before/after/reason kanıtı, production OIDC secret-reference fallback sınırı ve rejected-file quarantine semantiğinin bağımsız kaynak uzlaştırmasıdır. Hiçbir S1 işi bu S0 kaydıyla kabul edilmiş sayılmaz.
+
+## Yayın yaşam döngüsü
+
+Bu belgedeki yayın bilgisi 2026-11-03T02:53:22.509167+00:00 mühendislik-kabul kontrol noktasına aittir. Sonraki gerçek PR, required-head check ve merge durumu [GitHub yaşam döngüsünde](https://github.com/kadirvurgun/Poseidon/pulls) izlenir. Gelecek PR numarası veya merge SHA'sı üretilmedi; kabul edilen uygulama F ve sonraki metadata A ayrıdır.
+
+
+<details>
+<summary>Önceki kontrol noktaları — tarihsel</summary>
+
+Aşağıdaki özgün kayıtlar kendi tarih/hedef/kapsamlarında geçerlidir. İçlerindeki Current, NOT RUN ve kabul edilmedi ifadeleri bugünkü sonucu değiştirmez; önceki başarısız/yarım koşular korunur.
+
+> Current priority: **S0 kapanışı — temiz son-hedef doğrulaması / NOT ACCEPTED.** Son F yerel arayüz kapısı **954/954 PASS**, TypeScript/build PASS, lint **0 hata/uyarı**. Gerçek signed 32 tanısı **24 PASS/8 FAIL** ve sonraki sekiz Tug tanısı **2 PASS/6 FAIL** kayıtları korunur; yalnız kesin seçiciler/tarih yazımı düzeltildi, son altı planlama senaryosu **6/6 PASS**. Bunlar final122 değildir. Temiz F CI/taze122 ve bağımsız exit gate bekler. Canonical **S0 8/53 SP (%15,09), genel8/970 SP (%0,82)** değişmedi. [Faz](phases/S0-OVERNIGHT-20261102.md) · [Açık işler](reports/s0-closure-gap-2026-11-02.md) · [İlerleme](reports/project-progress-2026-11-02.md).
+
+Crew/Technical enterprise devamı AUTHORED_UNVERIFIED: ortak önizleme TypeScript/Vite build geçti (main856.02kB uyarısı açık); test/QA/CI çalışmadı, yeni kabul veya PR yok. [Crew](phases/ENTERPRISE-CREW-WORKSPACE-01.md) · [Technical](phases/ENTERPRISE-TECHNICAL-WORKSPACE-01.md).
+
+Önceki ürün geliştirme kontrol noktaları:
+
+> Current: **ENTERPRISE-TUG-WORKSPACE-01 — AUTHORED_UNVERIFIED / NOT ACCEPTED.** Römorkör iş panosu responsive iş satırları, gerçek sayfa özeti, UTC talep/taslak ayrımı, kesin BP ve Neden/kanıt ayrıntılarıyla yenilendi. Sunucu arama/öncelik/sayfalama birlikte korunuyor; talep detayı gruplandı ve düzenleme mevcut yazma yetkisine bağlı. Yabancı iş hedefleri/tekrarlı referanslar reddediliyor. Bileşen/wire ve gerçek-host klavye/mobil test kaynakları yazıldı. **İstenen önizleme için TypeScript/Vite build PASS; tüm test paketleri, lint, generated/model/güvenlik, görsel/a11y, bağımsız QA ve CI DEFERRED / NOT RUN.** Main837.23kB uyarısı ve önceki13moderate advisory açık; push/PR yok. Büyük foundation yazımı sürüyor; canonical **8/970SP,2/121iş,0/196kabul edilmiş ekran** değişmedi. [Faz](phases/ENTERPRISE-TUG-WORKSPACE-01.md) · [Kaynak/kabul/test eşlemesi](tasks/enterprise-tug-workspace-01.md).
+
+Önceki kurumsal tasarım/yerel önizleme kontrol noktası:
+
+> Current: **ENTERPRISE-WORKSPACE-01 — AUTHORED_UNVERIFIED / NOT ACCEPTED.** Kullanıcının kurumsal ürün tasarımı isteği doğrultusunda React/shadcn-ui temeli, ortak lacivert sidebar/açık çalışma yüzeyi, yetkili menü/bağlam/arama, TR/EN ve gerçek sayfa verisinden ECharts filo özeti yazıldı. Directory/Crew/Technical/Tug/Import aynı kabuğa taşındı; mevcut kirli kayıt/yetki/offline korumalarıyla bağlandı. **İstenen yerel önizleme için API/DbMigrator locked restore ve Release build (0 uyarı/hata), frontend TypeScript/production build, yerel migration/sentetik seed ve TLS sağlık başlangıcı başarılı. Test paketleri, lint, generated/model parity, güvenlik, bağımsız QA ve CI DEFERRED / NOT RUN.** Otomatik görsel kabul yok. Önizleme: https://localhost:5443/app/fleet. Ana chunk >500kB ve install sırasında bildirilen13moderate advisory sonraki kapıda incelenecek. Push/PR yok; canonical **8/970SP,2/121iş,0/196kabul edilmiş ekran** değişmedi. [Faz](phases/ENTERPRISE-WORKSPACE-01.md) · [Kaynak/kabul/test eşlemesi](tasks/enterprise-workspace-01.md).
+
+Mevcut aşama: büyük foundation paketinin yazımı; sonraki adım kalan kaynak bağlantıları/fixture/offline/entegrasyon, ardından tek entegre kapı ve bağımsız hedef-commit QA/CI. Önizleme derlemeleri faz kabulü değildir.
+
+Önizleme talebinden önceki yazım kontrol noktası (aşağıdaki NOT RUN kayıtları o zamana aittir):
+
+> Current: **TUG-CREW-COMPOSITION-01 — AUTHORED_UNVERIFIED / NOT ACCEPTED.** Aynı büyük foundation dalında güncel MSMD rol/sayı profili, bağımsız kaynak/kanıt doğrulaması, atama/pozisyon ve sertifika girdileri işin başlangıç/bitiş aralığıyla birleştirildi. Kişisel ölçütler toplam personel sayısından ayrıldı; aynı kişi iki kez sayılmıyor, çakışan roller insan incelemesi gerektiriyor. Bilinmeyen endorsement seçimi No olmuyor. TR/EN pano/detay/Today Why ve anlamlı test kaynakları yazıldı. **Tüm test/build/typecheck/üretim/provider/QA/CI DEFERRED / NOT RUN; push/PR yok.** Klinik uygunluk, çalışma/dinlenme, brifing ve kaptan kararı ayrı; canonical kabul **8/970 SP,2/121 iş,0/196 ekran** değişmedi. [Faz](phases/TUG-CREW-COMPOSITION-01.md) · [kaynak/kabul/test eşlemesi](tasks/tug-crew-composition-01.md).
+
+Önceki aynı-dal kontrol noktası:
+
+> Current: **TODAY-TUG-CURRENT-01 — AUTHORED_UNVERIFIED / NOT ACCEPTED.** Büyük foundation paketi geliştirilmeye devam ediyor. Güncel Tug işleri ve talep/plan revizyonları Today/Why akışına bağlandı; yetkisiz bağlı römorkörler tüm karttan çıkarılıyor. Pano/detay ve Today, bakımın güncel ekipman/sorumlu/gözlem değerlendirmesini planlanan iş bitişine kadar kullanıyor. TR/EN erişilebilir açıklamalar ve ilgili işe geçiş ile domain/API/PostgreSQL/React/browser test kaynakları yazıldı. **Test/build/typecheck/üretim/lab/QA/CI bu devamda DEFERRED / NOT RUN.** Kaynak sözlüğündeki hazırlık türetim şartı açık; operasyon/kaptan onayı veya canonical kabul üretilmedi. [Faz kaydı](phases/TODAY-TUG-CURRENT-01.md) · [kaynak/kabul/test eşlemesi](tasks/today-tug-current-01.md).
+
+Başlangıç `610074e` (PR13 merge sonrası), geliştirme dalı `foundation/current-tug-today-20261102`. PR12/13 Git geçmişinde mevcuttur; aşağıdaki önceki kapı kayıtları tarihsel kanıttır ve güncel dalın doğrulaması değildir. Kullanıcının yenilenen kararı: anlamlı faz paketi bitmeden test/build veya yeni push/PR yok; daha sonra entegre kapı, bağımsız hedef-commit QA ve gereken CI. Canonical **8/970 SP (%0,82),2/121 iş,0/196 kabul edilmiş ekran** değişmedi. Sonraki adım: işe özel nitelendirilmiş Crew/Credential/MSMD/golden bileşimi ve diğer açık foundation yazılımını aynı büyük pakette sürdürmek.
+
+## Historical foundation execution checkpoint
+
+> **FOUNDATION-ACCEPTANCE-BUNDLE-01 — historical local execution / NOT ACCEPTED at that checkpoint.** Release builds, actual API/TS generation, current EF check/model-seed regression,536Domain/14persistence-unit/82API-unit,821components,248Python and46ordinary Playwright cases passed in that scope. Full persistence failed3/74; API integration had actual failures/interruption; other gates were open. These results do not validate the current continuation. [Historical report](phases/FOUNDATION-ACCEPTANCE-BUNDLE-01.md) · [exact gate evidence](phases/foundation-acceptance-bundle-01.evidence.json) · [source/task mapping](tasks/foundation-acceptance-bundle-01.md).
 
 ## 02.11 — Kanıt dosyası tarama düzeltmesi
 
@@ -504,3 +602,5 @@ The actual Today feed and Why now compose scoped maintenance draft exceptions th
 ## PR12 integration repair — 02.11.2026
 
 The mandatory full repository source scan passed on b7926a3 with all164 independently reviewed source bindings. API integration actually executed524 cases:478 passed,46 failed; child exit2 did not mean S3 setup failed. Repairs address the one-shot scanner peer reused for multiple file uploads, PostgreSQL timestamp precision in exact historical assertions, the existing200 vessel-create response, audit capability-specific entity visibility and generated real-host OpenAPI parity. See [integration repair](phases/PR12-INTEGRATION-REPAIR-20261102.md). Final required CI and independent target review remain pending; canonical8/970 is unchanged.
+
+</details>

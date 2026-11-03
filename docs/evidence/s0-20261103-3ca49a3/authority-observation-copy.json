@@ -1,0 +1,366 @@
+{
+  "schemaVersion": "poseidon.s0-orchestrator-authority.v1",
+  "provider": {
+    "kind": "trusted-orchestrator",
+    "instanceId": "ahp-session:/5c0afcdc-488a-464a-b94a-486800b77263",
+    "coordinatorSessionId": "/root"
+  },
+  "authorPrincipals": [
+    "/root",
+    "/root/crew_enterprise_ui",
+    "/root/project_progress_report",
+    "/root/s0_release_gate",
+    "/root/search_accessibility_fix"
+  ],
+  "authorSessionIds": [
+    "/root",
+    "/root/crew_enterprise_ui",
+    "/root/project_progress_report",
+    "/root/s0_release_gate",
+    "/root/search_accessibility_fix"
+  ],
+  "observedAt": "2026-11-03T02:52:17.734513Z",
+  "observationScope": "Actual coordinator-observed SDK completed sessions and independently verified raw reports; not human legal, Marine, safety, production or pilot authority.",
+  "sessions": [
+    {
+      "sessionId": "/root/s0_final_independent_qa",
+      "principal": "/root/s0_final_independent_qa",
+      "providerInstanceId": "ahp-session:/5c0afcdc-488a-464a-b94a-486800b77263",
+      "parentSessionId": "/root",
+      "state": "completed",
+      "target": {
+        "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+        "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03"
+      },
+      "baseline": "poseidon-v46.3-20261030",
+      "verifiedReports": [
+        {
+          "sha256": "394ec9845c86dbe964b75f3f8b27624df0d367ba3fe917caf58df8330f590687",
+          "kind": "source-review",
+          "taskId": "DEV-001",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "352a29107f270d3df6e3763131aafa09fd1c61c1d479acb387be82656b5506bd",
+          "kind": "engineering-review",
+          "taskId": "DEV-001",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "c20e0a22cc41b1c040a9196cdc07e2641d2c3172efebee671bb5d561f8de8de3",
+          "kind": "source-review",
+          "taskId": "DEV-002",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "89c3bea9f53e35d614fa701a088b19444980e2a25a908bdd2fcdda63ff092619",
+          "kind": "engineering-review",
+          "taskId": "DEV-002",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "25d78b73e48fd587dfd00f8563cdfe4baf5fbebde6e512e2cf90c795e2abe2bc",
+          "kind": "source-review",
+          "taskId": "DEV-003",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "2ab1f922bcfd0b8fe5aaf534ea97544fcc2a6db17fb8b8cba75312b1ef5f56b0",
+          "kind": "engineering-review",
+          "taskId": "DEV-003",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "03cb57ded3c64e589fab1615ad7d077421ad6996d0e459023796d3000af4ae25",
+          "kind": "source-review",
+          "taskId": "DEV-004",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "8393faa9440339a3877e04d625f8b540e7c3d28156791f3bd07c0b5fee6c28ce",
+          "kind": "engineering-review",
+          "taskId": "DEV-004",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "0ab05ee7369bef2efa032d07dc52a14a4ecf3608bb8ce9d33ddaa49aa8234132",
+          "kind": "source-review",
+          "taskId": "DEV-005",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "6bf96902692df79426599a2ed61943db6cbb853baf5705fbcc31ba61a4edcdd7",
+          "kind": "engineering-review",
+          "taskId": "DEV-005",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "4091255f0016b421ce0fc8503a2e798cea1771750f8f23c0b48bf7786734d784",
+          "kind": "source-review",
+          "taskId": "DEV-006",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "ceafc9b875a1293903b5ff5737ee33df52dd539089ccf86e51146dd40711893a",
+          "kind": "engineering-review",
+          "taskId": "DEV-006",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "aa50ae9be62b53d795ea0ca3d1f7c963b0683a03fd17e85e543ea14761a67158",
+          "kind": "source-review",
+          "taskId": "DEV-007",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "69ec2821fa8178dc2c68f6c0f3dd01e8a6065c2b96a92f509f8f94d35f84af8e",
+          "kind": "engineering-review",
+          "taskId": "DEV-007",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "fb9274a9ff9bd555c64b67609fadd2aa435f6371c9687ce68b5d19e4a66b4c5c",
+          "kind": "source-review",
+          "taskId": "DEV-008",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "7ea1c9711480a860513b4dc87838e5aad4a85a4e5fffdacfdd39c8b8e3f74617",
+          "kind": "engineering-review",
+          "taskId": "DEV-008",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "0829a53eac5123dd7e2faf668a89b5159872273c52afa82b5978185ee3809e67",
+          "kind": "source-review",
+          "taskId": "DEV-009",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "61311e4143b3ecb7b435a0e4fe7fd594a885ac2bc279907e4f551fc7f1890fc0",
+          "kind": "engineering-review",
+          "taskId": "DEV-009",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "9bf25f15b815a6f507cd29b2f3e45e7609622192f4e2b51c00d1b6e088c6b5b5",
+          "kind": "source-review",
+          "taskId": "DEV-010",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "66d8848334c23f07345295f34b9a70bdafac9aca8c0d330b06c2987e12f0a786",
+          "kind": "engineering-review",
+          "taskId": "DEV-010",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "2d125dea68978998638dd5ad0c727cee5cc3a8cc8d3ea90f42174e4ca3806411",
+          "kind": "source-review",
+          "taskId": "DEV-011",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "afc953ab8178b7ce8f792d939e34db0b0514f5415fc73b90600b1ca35a011c4c",
+          "kind": "engineering-review",
+          "taskId": "DEV-011",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "661b81f5dc4700bcd754431cecbf3626f7f7ffe91291f717faa753e0464e218c",
+          "kind": "source-review",
+          "taskId": "DEV-012",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "3b6c0fcc557b29c0bfa5739689dfcaab9ea1b747b1ccacdb766a73792b4283eb",
+          "kind": "engineering-review",
+          "taskId": "DEV-012",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "224634ee54b0c1cbd4297dc5ccbbb6526a5865030d607dfc72073858f6179147",
+          "kind": "source-review",
+          "taskId": "DEV-116",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "9860f322cb521634add4f5fbe67f65eb6396c0705b32bb788be39854e3444d8d",
+          "kind": "engineering-review",
+          "taskId": "DEV-116",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "35c4a1b4100c224095b92ba0ebe7b3d90e97cfca9e404272acd5923ca2333819",
+          "kind": "acceptance",
+          "taskId": "DEV-001",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "99fb9d8e0dcade204b4c94b10597006d8bec356d6bd8165e0f5277c0d453f045",
+          "kind": "acceptance",
+          "taskId": "DEV-002",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "f377437fad6535990860f3ac735e2aa27284063c35b8d35a96629a242e3eaba0",
+          "kind": "acceptance",
+          "taskId": "DEV-003",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "f0d70de252c55662e9e0a88a8afbcec7bf3323df229fe9c3d9f3ff25d54dde0c",
+          "kind": "acceptance",
+          "taskId": "DEV-004",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "9cfb1225f61aae6cc29a6d310dae2182e915c0a92936b6055e58c85a598b6bb3",
+          "kind": "acceptance",
+          "taskId": "DEV-005",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "5de6bf0b063f0f465893e62f86d64ff8c468aa9a2bdc55f5007de8e03f56e974",
+          "kind": "acceptance",
+          "taskId": "DEV-006",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "cb63d60e7ea6b1a90325c20e8f18accacff2362390b06dbcad9997fa20ad45a7",
+          "kind": "acceptance",
+          "taskId": "DEV-007",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "37d90db4fc28585f19f24b11ac8242f3b11c7103f5a4c4240443fe18d1e7350f",
+          "kind": "acceptance",
+          "taskId": "DEV-008",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "919618962e2fb7739c8f37dfa5eac36434968c3e77c4e0bd6753e71bd2a6851a",
+          "kind": "acceptance",
+          "taskId": "DEV-009",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "48d8e70a524f3014ab7bc4dee54081ff6229d1bd524f4666f83a5abd32983bcf",
+          "kind": "acceptance",
+          "taskId": "DEV-010",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "37b9d6d3b91db7d60b454d1f6850701dea6b530577ebddbf4eb2d6703f87873a",
+          "kind": "acceptance",
+          "taskId": "DEV-011",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "37c22766ef20b393d22abe47acab44a6368b0b9a712ac33c261c428d017da22e",
+          "kind": "acceptance",
+          "taskId": "DEV-116",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "18abce435489418ec9415d919582d04cfda89caebb9357d6b0784b2da696e20f",
+          "kind": "acceptance",
+          "taskId": "DEV-012",
+          "outcome": "PASS"
+        }
+      ]
+    },
+    {
+      "sessionId": "/root/s0_release_gate",
+      "principal": "/root/s0_release_gate",
+      "providerInstanceId": "ahp-session:/5c0afcdc-488a-464a-b94a-486800b77263",
+      "parentSessionId": "/root",
+      "state": "completed",
+      "target": {
+        "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+        "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03"
+      },
+      "baseline": "poseidon-v46.3-20261030",
+      "verifiedReports": [
+        {
+          "sha256": "27889256a9176e2d6b21047526c524e6a8e0f35ef2428ab17cea3eb1dc100c38",
+          "kind": "execution",
+          "taskId": "DEV-001",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "9d39124fd0c4266fc5417490405d5dba0c362fbb0c1c3b33c93ffc47705e1030",
+          "kind": "execution",
+          "taskId": "DEV-002",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "0c2a71b68dc4c2355bc55325bf02e4a0a5f517bbf7c201df0111e2e56b6acf4b",
+          "kind": "execution",
+          "taskId": "DEV-003",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "8ff9f951cb89f0f6d2cc33b33b89ed795cb02105624c5a27c885fc21f8f4be22",
+          "kind": "execution",
+          "taskId": "DEV-004",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "063843a9b08c970926c9bc1b139707cd858964fa6879c0f0fe3fd88a0675e21a",
+          "kind": "execution",
+          "taskId": "DEV-005",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "ba99765579184085916d224c1e2fedc79a4ade743df14bcf3817703cc67583ad",
+          "kind": "execution",
+          "taskId": "DEV-006",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "71556e1b1bab22199bc23439a4d76024d8e2406b6981078391c651fcc658d48f",
+          "kind": "execution",
+          "taskId": "DEV-007",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "90b095752353869fa7dd5d2d14857b111e7741314b0c97cc570519aea918bc87",
+          "kind": "execution",
+          "taskId": "DEV-008",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "72d4aa823ea938f6a9bcf803d9f3980d36b3f34c80cf2d0c4afe12d93170ba28",
+          "kind": "execution",
+          "taskId": "DEV-009",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "312091cfd5fb14be842ddf5b21e364da9a2692f76e4791dd6856cd24636dec28",
+          "kind": "execution",
+          "taskId": "DEV-010",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "1d2d8844e2f8a706a0c73b16da5c7c50782b04f64827c29eae1841a5c86745f3",
+          "kind": "execution",
+          "taskId": "DEV-011",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "3ff1cbb0446eb69142b9dbde6e0f0898e73a8a1d3fb2edbe76ebbd060b0dcb94",
+          "kind": "execution",
+          "taskId": "DEV-012",
+          "outcome": "PASS"
+        },
+        {
+          "sha256": "7aadc5b9fc55fce1837a66bd1cf61c52c69dec3fb4387f64de404855ab960525",
+          "kind": "execution",
+          "taskId": "DEV-116",
+          "outcome": "PASS"
+        }
+      ]
+    }
+  ]
+}

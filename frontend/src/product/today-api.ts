@@ -3,6 +3,8 @@ import { isGuid as guid } from './identifiers'
 import type { components } from '../generated/api'
 import type { Page, Vessel } from './directory-contract'
 import { ApiError, request } from './api'
+import { decodePlanningEvidence } from './tug-planning-api'
+import type { PlanningEvidence } from './tug-planning-api'
 
 export type Today = components['schemas']['TodayDto']
 // Authored extension until actual host/OpenAPI regeneration at the combined gate.
@@ -11,7 +13,10 @@ type DraftWhy = components['schemas']['TodayWhyDto']
 export type MaintenanceEvidence = { planId: string; planRevision: number; assetId: string; assetRevision: number;
   currentAssetRevision: number | null; jobAvailable: boolean; ownerEligible: boolean;
   calculation: { state: string; reason: string; nextDueDate: string | null; nextDueMeter: string | null; algorithm: string }; observationState: string }
-export type Why = Omit<DraftWhy, 'inputs'> & { inputs: DraftWhy['inputs'] | null; maintenance?: MaintenanceEvidence }
+export type TodayTugEvidence = { jobId: string; requestRevision: number; requestIncomplete: boolean;
+  planRevision: number | null; plannedRequestRevision: number | null; plannedStart: string | null; plannedEnd: string | null;
+  assignedTugs: string[]; currentOwnerRoleId: string | null; evidence: PlanningEvidence | null }
+export type Why = Omit<DraftWhy, 'inputs' | 'maintenance'> & { inputs: DraftWhy['inputs'] | null; maintenance?: MaintenanceEvidence; tug?: TodayTugEvidence }
 const pageLimit = 25
 const todayOffset = 0
 const object = (x: unknown): x is Record<string, unknown> => !!x && typeof x === 'object' && !Array.isArray(x)
@@ -26,6 +31,14 @@ const planId = (key: unknown): string | null => {
   return guid(id) && id === id.toLowerCase() && id !== '00000000-0000-0000-0000-000000000000' ? id : null
 }
 const planHref = (x: unknown, vessel: string, key: unknown) => planId(key) !== null && x === `/app/maintenance-plan/${vessel}?id=${planId(key)}`
+const tugJobId = (key: unknown): string | null => {
+  if (typeof key !== 'string' || !key.startsWith('tug-job:')) return null
+  const id = key.slice('tug-job:'.length)
+  return guid(id) && id === id.toLowerCase() && id !== '00000000-0000-0000-0000-000000000000' ? id : null
+}
+const tugHref = (x: unknown, vessel: string, key: unknown) => tugJobId(key) !== null && x === `/app/tug-job-detail/${tugJobId(key)}?vessel=${vessel}`
+const tugAttention = ['TugConflictReviewRequired', 'TugReadinessBlocked']
+const tugReview = ['TugRequestChanged', 'TugPlanMissing', 'TugBoundaryReviewRequired', 'TugRequestIncomplete', 'TugPlanningReviewRequired']
 const rank = (priority: unknown) => priority === 'Attention' ? 0 : priority === 'Review' ? 1 : 2
 function validVessel(x: unknown): x is Vessel {
   return object(x) && exact(x, ['id', 'companyId', 'code', 'name', 'kind', 'version', 'canEdit']) && guid(x.id) && guid(x.companyId) &&
@@ -41,19 +54,24 @@ export function decodeTodayVessels(x: unknown, offset: number): Page<Vessel> {
 }
 export function decodeToday(x: unknown, id: string, offset = todayOffset): Today {
   if (!object(x) || !exact(x, ['vessel', 'readAt', 'coverage', 'cards']) || !validVessel(x.vessel) || x.vessel.id !== id || !guid(id) || !date(x.readAt) ||
-    !integer(offset) || offset > 100000 || !Array.isArray(x.coverage) || x.coverage.length !== 6 || !object(x.cards) || !Array.isArray(x.cards.items) || x.cards.items.length > pageLimit ||
+    !integer(offset) || offset > 100000 || !Array.isArray(x.coverage) || x.coverage.length !== 7 || !object(x.cards) || !Array.isArray(x.cards.items) || x.cards.items.length > pageLimit ||
     !exact(x.cards, ['items', 'offset', 'limit', 'hasMore']) || x.cards.offset !== offset ||
     x.cards.limit !== pageLimit || typeof x.cards.hasMore !== 'boolean' || (x.cards.hasMore && x.cards.items.length !== pageLimit)) fail()
-  const sources = ['RegulatoryDraft', 'OperationalTasks', 'SafetyDecisions', 'Permits', 'EvidenceVerification', 'TechnicalMaintenance']
+  const sources = ['RegulatoryDraft', 'OperationalTasks', 'SafetyDecisions', 'Permits', 'EvidenceVerification', 'TechnicalMaintenance', 'TugPlanning']
+  const vesselKind = x.vessel.kind
   if (!x.coverage.every((c, i) => object(c) && exact(c, ['source', 'status']) && c.source === sources[i] && one(c.status,
-    i === 0 ? ['Available', 'Missing'] : i === 5 ? ['Available', 'Missing', 'Unavailable'] : ['Unavailable']))) fail()
+    i === 0 ? ['Available', 'Missing'] : i === 5 || i === 6 && vesselKind === 'Tug' ? ['Available', 'Missing', 'Unavailable'] : ['Unavailable']))) fail()
   const draftMissing = x.coverage[0].status === 'Missing'
   const canEdit = x.vessel.canEdit
   const maintenanceAvailable = x.coverage[5].status === 'Available'
+  const tugAvailable = x.coverage[6].status === 'Available'
   if (!x.cards.items.every(c => {
     if (!object(c) || !exact(c, ['key', 'priority', 'source', 'reason', 'owner', 'nextAction', 'href'])) return false
     if (c.key === 'regulatory-draft') return c.priority === 'Advisory' && c.source === 'RegulatoryDraft' &&
       c.reason === (draftMissing ? 'DraftAbsent' : 'DraftUnverified') && c.owner === null && c.nextAction === (canEdit ? 'ReviewDraft' : 'ViewDraft') && href(c.href, id)
+    if (tugJobId(c.key) !== null) return tugAvailable && c.source === 'TugJob' && (c.owner === null || guid(c.owner)) &&
+      (c.priority === 'Attention' && one(c.reason, tugAttention) || c.priority === 'Review' && one(c.reason, tugReview)) &&
+      c.nextAction === 'ReviewTugJob' && tugHref(c.href, id, c.key)
     return maintenanceAvailable && planId(c.key) !== null && c.source === 'MaintenancePlan' &&
       (c.reason === 'MaintenanceDue' && c.priority === 'Attention' || c.reason === 'MaintenanceReviewRequired' && c.priority === 'Review') &&
       (c.owner === null || guid(c.owner)) && c.nextAction === 'ReviewMaintenancePlan' && planHref(c.href, id, c.key)
@@ -65,6 +83,7 @@ export function decodeToday(x: unknown, id: string, offset = todayOffset): Today
   return x as Today
 }
 export function decodeWhy(x: unknown, id: string, cardKey = 'regulatory-draft'): Why {
+  if (tugJobId(cardKey) !== null) return decodeTugWhy(x, id, cardKey)
   if (planId(cardKey) !== null) return decodeMaintenanceWhy(x, id, cardKey)
   if (cardKey !== 'regulatory-draft') fail()
   if (!object(x) || !guid(id) || !exact(x, ['vesselId', 'cardKey', 'rule', 'reason', 'inputs', 'readAt', 'savedAt', 'sourceObservedAt', 'freshness', 'provenance', 'blockers', 'owner', 'nextAction', 'href']) ||
@@ -78,6 +97,35 @@ export function decodeWhy(x: unknown, id: string, cardKey = 'regulatory-draft'):
       : !one(x.provenance, ['Unknown', 'Synthetic', 'DeclaredUnverified']) || x.savedAt === null) ||
     !Array.isArray(x.blockers) || x.blockers.length !== 2 || x.blockers[0] !== (x.reason === 'DraftAbsent' ? 'DraftAbsent' : 'VerificationUnavailable') ||
     x.blockers[1] !== 'OperationalSourcesUnavailable' || x.owner !== null || !one(x.nextAction, ['ViewDraft', 'ReviewDraft']) || !href(x.href, id)) fail()
+  return x as Why
+}
+function decodeTugWhy(x: unknown, vessel: string, key: string): Why {
+  if (!guid(vessel) || !object(x) || !exact(x, ['vesselId', 'cardKey', 'rule', 'reason', 'inputs', 'readAt', 'savedAt', 'sourceObservedAt',
+    'freshness', 'provenance', 'blockers', 'owner', 'nextAction', 'href', 'tug']) || x.vesselId !== vessel || x.cardKey !== key ||
+    x.rule !== 'TW-TUG-01' || !one(x.reason, [...tugAttention, ...tugReview]) || x.inputs !== null || !date(x.readAt) || !date(x.savedAt) ||
+    x.sourceObservedAt !== null || x.freshness !== 'Unverified' || !text(x.provenance, 200) || !(x.owner === null || guid(x.owner)) ||
+    x.nextAction !== 'ReviewTugJob' || !tugHref(x.href, vessel, key) || !Array.isArray(x.blockers) || x.blockers.length !== 3 ||
+    x.blockers[0] !== 'DraftPlanningNotOperationalApproval' || x.blockers[1] !== 'OwningReadinessCoverageIncomplete' ||
+    x.blockers[2] !== 'MasterDecisionRequired' || !object(x.tug)) fail()
+  const p = x.tug
+  if (!exact(p, ['jobId', 'requestRevision', 'requestIncomplete', 'planRevision', 'plannedRequestRevision', 'plannedStart', 'plannedEnd', 'assignedTugs', 'currentOwnerRoleId', 'evidence']) ||
+    p.jobId !== tugJobId(key) || !integer(p.requestRevision) || p.requestRevision === 0 || typeof p.requestIncomplete !== 'boolean' ||
+    !(p.currentOwnerRoleId === null || guid(p.currentOwnerRoleId)) || x.owner !== p.currentOwnerRoleId ||
+    !Array.isArray(p.assignedTugs) || p.assignedTugs.length > 1000 || !p.assignedTugs.every(guid) ||
+    new Set(p.assignedTugs.map(t => t.toLowerCase())).size !== p.assignedTugs.length ||
+    !(p.plannedStart === null || date(p.plannedStart)) || !(p.plannedEnd === null || date(p.plannedEnd)) ||
+    p.plannedStart !== null && p.plannedEnd !== null && Date.parse(p.plannedStart as string) > Date.parse(p.plannedEnd as string)) fail()
+  if (p.planRevision === null) {
+    if (p.plannedRequestRevision !== null || p.plannedStart !== null || p.plannedEnd !== null || p.assignedTugs.length !== 0 || p.evidence !== null || x.reason !== 'TugPlanMissing') fail()
+  } else {
+    if (!integer(p.planRevision) || p.planRevision === 0 || !integer(p.plannedRequestRevision) || p.plannedRequestRevision === 0 ||
+      Number(p.plannedRequestRevision) > Number(p.requestRevision) || p.evidence === null) fail()
+    const evidence = decodePlanningEvidence(p.evidence, p.assignedTugs as string[])
+    const reason = evidence.conflictState === 'HumanReviewRequired' ? 'TugConflictReviewRequired' : evidence.readiness === 'Blocked' ? 'TugReadinessBlocked' :
+      p.plannedRequestRevision !== p.requestRevision ? 'TugRequestChanged' : evidence.conflictState === 'BoundaryReviewRequired' ? 'TugBoundaryReviewRequired' :
+      p.requestIncomplete ? 'TugRequestIncomplete' : 'TugPlanningReviewRequired'
+    if (x.reason !== reason) fail()
+  }
   return x as Why
 }
 const observationStates = ['NotRequested', 'ConfiguredDeclaredObservation', 'ObservationMissing', 'ObservationRevoked', 'ObservationScopeMismatch',

@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "poseidon.independent-fixture-catalog-recovery-review.v1",
+  "reviewerSession": "/root/s0_final_independent_qa",
+  "reviewerPrincipal": "/root/s0_final_independent_qa",
+  "issuedAt": "2026-11-03T01:51:50.676290Z",
+  "reviewerAuthoredProductTestsOrFixtureCode": false,
+  "target": {
+    "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+    "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03"
+  },
+  "reviewedPlan": {
+    "path": ".runtime/s0-overnight-20261102/signed/f-catalog-recovery-intent.json",
+    "sha256": "89e87ed6f4e15591dbe80f97669da37fae49ff7cc07d625ee573eb9fc3eaeb8c",
+    "statusAtReview": "PROPOSED_NOT_EXECUTED"
+  },
+  "actualReadOnlyDiagnosis": {
+    "path": ".runtime/s0-overnight-20261102/signed/f-catalog-position-diagnosis.json",
+    "sha256": "035794028a8714009efbe928f9fb957df27f79f1af4656a9d3e0c36ceedf5742",
+    "facts": [
+      "Positions GET200 is an empty array. Current policy GET200 has null version and zero items.",
+      "Durable catalog is Withdrawn revision8, activeRevision null, exact fictional DEV-047 software fixture source reference.",
+      "First full F attempt closed30PASS/0originalFAIL/92PENDING at actual nonempty-position setup guard; these30 results cannot be reused in a later final run."
+    ]
+  },
+  "sourceAndEngineeringDecision": "APPROVE_EXACT_ISOLATED_TEST_FIXTURE_SUCCESSOR_PREPARATION_ONLY",
+  "reason": "The product correctly filters positions through current policy and does not resurrect withdrawn configured catalogs. A new ordinary Draft/Reviewed/Adopted successor is an explicitly supported lifecycle, distinct from changing a withdrawn event or bypassing its fail-closed state. The reviewed content remains SyntheticUnverified and fictional, uses a fresh position identity/version and does not grant actual competence, capacity, fitness or operational authority.",
+  "immutableImplementationInputs": [
+    {
+      "path": "backend/Poseidon.Api/CrewCatalogEndpoints.cs",
+      "sha256": "7d355585afd7842e05abe636bb57b85b38af23129d7759210fa29df16cc3f8a6"
+    },
+    {
+      "path": "backend/Poseidon.Domain/CrewCatalogGovernance.cs",
+      "sha256": "0321b021eedddd33e44f52458e816dd9b4a5842b1f859239956d16f3a94e3844"
+    },
+    {
+      "path": "backend/Poseidon.Api/CrewEndpoints.cs",
+      "sha256": "2ee33d241286452fdb05db819f794f6279e45ff87c717d69dd9370b1d5a19842"
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/register-specs/crew-catalog-cases.ts",
+      "sha256": "bc7a5423ab28558ff2dc201ef920c3661f34f4a0589dcdeef6ea208b5181aaf7"
+    }
+  ],
+  "reviewedImplementation": [
+    "CrewEndpoints.Positions185..194 filters stored references through actual current policy.",
+    "CrewCatalogEndpoints.Resolve51..66 deliberately returns an empty policy after withdrawal; fallback must remain unchanged.",
+    "CrewCatalogGovernance permits a new Draft after Withdrawn, then requires complete Reviewed/Adopted transitions and independence.",
+    "Actual endpoints require current source/vessel/role/time-bound authority, CSRF, UUID idempotency and current head version. Review/adoption require a genuinely separate signed actor; adoption rechecks the entire three-event chain. Existing position IDs cannot be relabeled and an adopted version cannot be reused.",
+    "Adoption writes new immutable events and new position through audited SaveChanges/receipts in a transaction. Prior Withdrawn hash links remain retained.",
+    "The registered catalog regression intentionally finishes Withdrawn; recovery prepares a new fixture rather than weakening that test or resolving old withdrawal as false."
+  ],
+  "controlledSourceScope": [
+    "18.01 DEV-047 row48 and controlled Crew field references require scoped controlled declaration/lookup, not a fabricated production codebook or clinical sign-off.",
+    "14.01 Person/Position/CrewAssignment and paragraph97 keep reference positions separate from competence groups; current declaration observations grant no eligibility.",
+    "Previously reviewed 11.01/14.02 Crew privacy/effective reference boundaries and no-positive-eligibility rule remain unchanged."
+  ],
+  "mandatoryPlanBounds": [
+    "New unique fictional policy version and fresh position UUID; exact fixture tenant/vessel/source reference, UTC and StartInclusiveEndExclusive preserved; capacity/department null, provenance SyntheticUnverified.",
+    "Manager Draft and distinct genuinely signed owned synthetic reviewer Reviewed/Adopted through ordinary APIs only, using currently returned authority IDs/versions and CSRF/idempotency. Test accounts exercise human-type software guards; this is not an actual human expert, source-law, Marine or production approval.",
+    "No product/index/configuration/membership/permission/grant-expiry/window extension, fallback resurrection, raw SQL, seeded verification or forged decision. Existing04:30UTC boundary remains.",
+    "Read back exact successor policy and position; verify old immutable Withdrawn chain is retained. Rebuild affected MSMD/owning document and assignment pins through actual new ordinary revisions, submissions and distinct reviewer verification, not relabeled receipts.",
+    "Re-evaluate all six current owning documents against the new actual position/current versions. Preserve Unknown where facts or criteria remain incomplete; no forced eligible/ready or manufactured safety authority.",
+    "Freeze the actual updated preparation/runner evidence before starting fresh all122PENDING. Keep catalog withdrawal cases last; retain the prior30 attempt separately."
+  ],
+  "reviewerExecutedMutationsTestsBuildBrowserOrCiLogs": false,
+  "currentRuntimeEvidenceAccepted": false,
+  "unresolvedP0": null,
+  "finalReviewReceiptsIssued": 0,
+  "phaseAccepted": false,
+  "requiredNext": "Actual plan execution and safe closed postconditions, then coherent fresh full122/requiredCI/baselineTLS/security/currentP0 and genuine final reviews. No phase acceptance follows from this fixture decision."
+}

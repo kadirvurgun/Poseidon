@@ -13,3 +13,6 @@ playwright-report/
 test-results/
 graphify-out/
 .codex/hooks.json
+
+# Vitest 5 local reporter/cache output
+.vitest/

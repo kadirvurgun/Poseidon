@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "poseidon.independent-final-source-applicability.v1",
+  "reviewerSession": "/root/s0_final_independent_qa",
+  "reviewerPrincipal": "/root/s0_final_independent_qa",
+  "issuedAt": "2026-11-03T02:40:22.338795Z",
+  "target": {
+    "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+    "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03"
+  },
+  "baseline": "poseidon-v46.3-20261030",
+  "decision": "ADOPTED_EXACT_F_SOURCE_SCOPE_AFTER_ACTUAL_RUNTIME_CLOSURE",
+  "excludedChecks": {
+    "aiEvaluation": "NOT_APPLICABLE only to S0 engineering definitions/adoption and currently exposed non-AI software. Original DEV-004 row 5 requires an AI-boundary ADR and DEV-006 row 7 requires AI threat/backlog registration. Actual OCR and evaluation are DEV-045/046, rows 46/47 in S6; voice evaluation is DEV-063, row 64 in S9. The product retrieval/provider/model/tool pipeline is absent. Controlled 17.01 advisory, grounding, scoped retrieval/privacy and human-authority gates, and 19.01 evaluations, remain mandatory before enabling AI. Existing human-authority/tenant/privacy regressions remain required. No AI quality or safety approval is granted.",
+    "disasterRecovery": "NOT_APPLICABLE only to S0 engineering contract/adoption, not production/pilot/release deployment. DEV-003 row 4 freezes environments and DEV-005 row 6 approves migration strategy. Actual DB/object backup, restore, measured RPO/RTO and signed rollback are DEV-071, row 72 in S11, dependent on DEV-003/018. Controlled 19.01 paragraphs 40–42/179–180 and 23.03 promotion/recovery gates remain mandatory later. Current EF/model/provider, transaction and object-error checks remain required. No production restore, retention, customer RPO or destructive deployment is approved."
+  },
+  "nonExcludable": [
+    "unit",
+    "backendBuild",
+    "frontendBuild",
+    "lint",
+    "artifact"
+  ],
+  "requiredExistingSurfaceChecks": [
+    "unit",
+    "integration",
+    "contract",
+    "shipE2E",
+    "tugE2E",
+    "security",
+    "offlineChaos",
+    "regulatoryRegression",
+    "usability",
+    "backendBuild",
+    "frontendBuild",
+    "lint",
+    "artifact"
+  ],
+  "countSemantics": "Domain/Persistence/Vitest CI native totals and skipped counts remain UNAVAILABLE; no old counts or zero defaults substituted. API91 is a scoped unit witness, with all required other commands observed successful.",
+  "sharedRunSemantics": "The same genuine122-case run supports Ship/Tug/offline/regulatory/usability categories. It is122 executions, not122 multiplied by categories or tasks.",
+  "futureReleaseGatesRemainOpen": [
+    "D-STATE-01 and real PO/BA/Architect/Marine/Tug SME/QA operational production state-map approval.",
+    "Authoritative legal editions, actual source reviewer qualification/appointments, Flag/Class applicability, source activation and lawful purpose/retention/key custody before real enablement.",
+    "Full future clinical/competence/work-rest/manning, operational Master safety decisions, actual pilot/UAT/value, production deployment and release approvals.",
+    "AI evaluations before model/provider/tool enablement and DEV-071 production/pilot backup/restore/RPO-RTO/signed rollback."
+  ],
+  "p0Assessment": {
+    "path": ".runtime/s0-overnight-20261102/qa/final-F-current-P0-assessment.json",
+    "sha256": "f5ed479005904579ba94b303e1249024440746f2e8687c576ecaaa6b6da658d1"
+  },
+  "phaseAccepted": false,
+  "acceptanceReceiptsIssued": 0
+}

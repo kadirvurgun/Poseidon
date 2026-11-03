@@ -120,3 +120,26 @@ describe('NAVIGATION-ROLE-LENS-01 shared presentation shell; all authored unveri
     expect(within(screen.getByRole('navigation', { name: 'Daily work menu' })).getByText('Daily work')).toBeVisible()
   })
 })
+
+
+it('keeps only the owner-bound search shell while role navigation revalidates and binds its next page to a fresh grant', async () => {
+  vi.mocked(loadLenses).mockResolvedValue({ ...result(), canSearch: true })
+  const first = { key: vessel, href: `/app/fleet/${vessel}`, label: 'FICTIONAL old role-search result', kind: 'Ship' }
+  const fresh = { ...first, label: 'FICTIONAL refreshed role-search result' }
+  const reply = (item: typeof first) => ({ ok: true, json: async () => ({ items: [item], offset: 0, limit: 25, hasMore: false }) })
+  const fetch = vi.fn().mockResolvedValueOnce(reply(first)).mockResolvedValueOnce(reply(fresh))
+  vi.stubGlobal('fetch', fetch)
+  const user = userEvent.setup(); render(<WorkspaceRoleNavigation {...props} />)
+  await user.click(await screen.findByRole('button', { name: 'Search workspace' }))
+  await screen.findByRole('link', { name: /FICTIONAL old role-search result/ })
+  const pending = deferred<Lenses>(); vi.mocked(loadLenses).mockReturnValueOnce(pending.promise)
+  act(() => window.dispatchEvent(new Event('focus')))
+  expect(screen.getByRole('dialog')).toBeVisible()
+  expect(screen.queryByRole('link')).not.toBeInTheDocument()
+  expect(screen.getByRole('button', { name: 'Search' })).toBeDisabled()
+  expect(fetch).toHaveBeenCalledTimes(1)
+  await act(async () => { pending.resolve({ ...result(), canSearch: true }); await pending.promise })
+  expect(await screen.findByRole('link', { name: /FICTIONAL refreshed role-search result/ })).toBeVisible()
+  expect(screen.queryByRole('link', { name: /FICTIONAL old role-search result/ })).not.toBeInTheDocument()
+  expect(fetch).toHaveBeenCalledTimes(2)
+})

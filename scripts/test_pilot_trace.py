@@ -1,11 +1,14 @@
 import copy
+from contextlib import redirect_stdout
 import hashlib
+import io
 import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
-from pilot_trace import validate
+from pilot_trace import _validate_legacy_graph, main, validate
 
 
 class PilotTraceTests(unittest.TestCase):
@@ -22,11 +25,16 @@ class PilotTraceTests(unittest.TestCase):
                                                   "nodes": nodes, "edges": [[a["id"], b["id"]] for a, b in zip(nodes, nodes[1:])], "remaining": []})
 
     def test_defined_complete_chain_is_not_passing_evidence(self):
-        result = validate(self.package, self.root)
+        result = _validate_legacy_graph(self.package, self.root)
         self.assertEqual([], result["structureErrors"])
         self.assertEqual([], result["criticalGaps"])
         self.assertEqual(10, len(result["executionGaps"]))
         self.assertTrue(all("no-passing" in gap for gap in result["executionGaps"]))
+        self.assertFalse(result["accepted"])
+
+    def test_legacy_fixture_graph_is_not_a_supported_public_contract(self):
+        result = validate(self.package, self.root)
+        self.assertEqual(["schema_version"], result["structureErrors"])
         self.assertFalse(result["accepted"])
 
     def test_duplicate_capability_node_missing_authority_and_broken_reference_are_rejected(self):
@@ -35,7 +43,7 @@ class PilotTraceTests(unittest.TestCase):
         c = p["capabilities"][0]; c["nodes"].append(c["nodes"][0].copy())
         c["nodes"][0]["source"] = "author-comment"
         c["edges"][0][1] = "absent-screen"
-        errors = validate(p, self.root)["structureErrors"]
+        errors = _validate_legacy_graph(p, self.root)["structureErrors"]
         for error in ("capability_inventory", "duplicate_id", "node_source_locator", "broken_trace_reference"):
             self.assertIn(error, errors)
 
@@ -43,12 +51,12 @@ class PilotTraceTests(unittest.TestCase):
         p = copy.deepcopy(self.package); c = p["capabilities"][0]
         replacement = {**c["nodes"][1], "id": "unrelated-screen"}; c["nodes"].append(replacement)
         c["edges"][1][0] = "unrelated-screen"
-        self.assertIn("capability-1:disconnected-critical-chain", validate(p, self.root)["criticalGaps"])
+        self.assertIn("capability-1:disconnected-critical-chain", _validate_legacy_graph(p, self.root)["criticalGaps"])
 
     def test_missing_implementation_and_execution_receipt_cannot_be_claimed_as_pass(self):
         p = copy.deepcopy(self.package); node = p["capabilities"][0]["nodes"][-1]
         node["state"] = "PASS"; node["files"] = ["missing/test.cs"]
-        result = validate(p, self.root)
+        result = _validate_legacy_graph(p, self.root)
         self.assertIn("broken_code_reference", result["structureErrors"])
         self.assertIn("missing_execution_evidence", result["structureErrors"])
 
@@ -56,9 +64,16 @@ class PilotTraceTests(unittest.TestCase):
         p = copy.deepcopy(self.package)
         source = p["sources"]["trace"]
         (self.root / source["path"]).write_bytes(b"changed")
-        self.assertIn("source_bytes", validate(p, self.root)["structureErrors"])
+        self.assertIn("source_bytes", _validate_legacy_graph(p, self.root)["structureErrors"])
         source["path"] = "../outside.txt"
-        self.assertIn("source_identity", validate(p, self.root)["structureErrors"])
+        self.assertIn("source_identity", _validate_legacy_graph(p, self.root)["structureErrors"])
+
+    def test_boolean_or_noninteger_capability_number_cannot_alias_integer_identity(self):
+        for identity in (True, 1.0, "1", None):
+            with self.subTest(identity=identity):
+                p = copy.deepcopy(self.package)
+                p["capabilities"][0]["number"] = identity
+                self.assertIn("capability_inventory", _validate_legacy_graph(p, self.root)["structureErrors"])
 
 
 
@@ -77,6 +92,56 @@ class CurrentSourceTraceTests(unittest.TestCase):
         self.assertEqual(10, len(result["executionGaps"]))
         self.assertTrue(result["implementationGaps"])
         self.assertFalse(result["accepted"])
+
+    def test_missing_unknown_or_nonstring_schema_cannot_fall_back_to_weak_planned_graph(self):
+        original = copy.deepcopy(self.package)
+        for schema in (None, "poseidon.pilot-trace.v0", "unknown", True, {}):
+            with self.subTest(schema=schema):
+                self.package = copy.deepcopy(original)
+                if schema is None:
+                    self.package.pop("schemaVersion")
+                else:
+                    self.package["schemaVersion"] = schema
+                for capability in self.package["capabilities"]:
+                    capability.pop("sourceIdentity")
+                    capability["definitionChains"] = []
+                    number = capability["number"]
+                    capability["nodes"] = [{"id": f"{number}:{kind}", "kind": kind, "source": "trace", "locator": "paragraph:1",
+                                            "state": "PLANNED", "files": []}
+                                           for kind in ("requirement", "screen", "api", "entity", "backlog", "test")]
+                    capability["edges"] = [[a["id"], b["id"]] for a, b in zip(capability["nodes"], capability["nodes"][1:])]
+                result = validate(self.package, self.root)
+                self.assertEqual(["schema_version"], result["structureErrors"])
+                self.assertFalse(result["accepted"])
+
+    def test_exact_v1_still_requires_every_source_identity_after_generic_graph_replacement(self):
+        for capability in self.package["capabilities"]:
+            capability.pop("sourceIdentity")
+            capability["definitionChains"] = []
+        result = validate(self.package, self.root)
+        self.assertIn("missing_source_definition_inventory", result["structureErrors"])
+        self.assertFalse(result["accepted"])
+
+    def test_current_contract_sources_are_bound_to_the_active_manifest_pins(self):
+        source = self.package["sources"]["trace"]
+        source["sha256"] = "0" * 64
+        result = validate(self.package, self.root)
+        self.assertEqual(["source_baseline"], result["structureErrors"])
+        self.assertFalse(result["accepted"])
+
+    def test_cli_rejects_unknown_schema_instead_of_selecting_legacy_graphs(self):
+        self.package["schemaVersion"] = "unknown"
+        for capability in self.package["capabilities"]:
+            capability.pop("sourceIdentity")
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "trace.json"
+            path.write_text(json.dumps(self.package), encoding="utf-8")
+            output = io.StringIO()
+            with patch("sys.argv", ["pilot_trace.py", str(path)]), redirect_stdout(output):
+                code = main()
+            self.assertEqual(1, code)
+            self.assertEqual(["schema_version"], json.loads(output.getvalue())["structureErrors"])
+            self.assertFalse(json.loads(output.getvalue())["accepted"])
 
     def test_safety_capture_maps_real_source_fields_to_its_backlog_not_the_empty_inbox(self):
         from source_contracts import SourceRecords
@@ -217,6 +282,33 @@ class CurrentSourceTraceTests(unittest.TestCase):
         cap = self.package["capabilities"][0]
         cap["nodes"].append({**cap["nodes"][0], "id": "unlinked-critical"})
         self.assertIn("capability-1:orphan-critical-node", validate(self.package, self.root)["criticalGaps"])
+
+    def test_real_but_different_backlog_test_cannot_replace_the_owning_dev_test(self):
+        chain = self.package["capabilities"][8]["definitionChains"][0]
+        chain["backlogTest"] = copy.deepcopy(self.package["capabilities"][0]["definitionChains"][0]["backlogTest"])
+        result = validate(self.package, self.root)
+        self.assertIn("source_mismatched_backlog_chain", result["structureErrors"])
+        self.assertFalse(result["accepted"])
+
+    def test_actual_field_source_cannot_be_relabelled_as_another_field(self):
+        self.package["capabilities"][0]["definitionChains"][0]["field"] = "not-the-source-field"
+        result = validate(self.package, self.root)
+        self.assertIn("source_field_identity_mismatch", result["structureErrors"])
+        self.assertFalse(result["accepted"])
+
+    def test_capability_exit_proof_must_match_its_original_pilot_scope_row(self):
+        self.package["capabilities"][8]["exitProof"] = "Approved offline safety runtime"
+        result = validate(self.package, self.root)
+        self.assertIn("source_definition_mismatch", result["structureErrors"])
+        self.assertIn("capability-9:declared-implementation-gap", result["implementationGaps"])
+        self.assertIn("capability-9:no-passing-current-journey", result["executionGaps"])
+        self.assertFalse(result["accepted"])
+
+    def test_boolean_identity_is_rejected_even_with_real_source_identity_and_chains(self):
+        self.package["capabilities"][0]["number"] = True
+        result = validate(self.package, self.root)
+        self.assertIn("capability_inventory", result["structureErrors"])
+        self.assertFalse(result["accepted"])
 
 if __name__ == "__main__":
     unittest.main()

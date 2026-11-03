@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Poseidon.Domain;
 using Poseidon.Persistence;
@@ -10,7 +11,8 @@ public sealed record TugBpEvidence(Guid TugId, string State, string? DeclaredVal
 public sealed record TugPlanConflict(Guid JobId, long Revision, string Relation, string Source, DateTimeOffset ObservedAt);
 public sealed record TugPlanningEvidence(string? AvailableBollardPull, string CapacityState, TugBpEvidence[] Bp,
     string ConflictState, TugPlanConflict[] Conflicts, string Coverage, string Readiness,
-    TugOwnedCapacity[]? OwnedBp = null, TugReadinessFact[]? ReadinessFacts = null, TugOperationalConflict[]? OperationalConflicts = null);
+    TugOwnedCapacity[]? OwnedBp = null, TugReadinessFact[]? ReadinessFacts = null, TugOperationalConflict[]? OperationalConflicts = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] TugCrewReadinessDto[]? Crew = null);
 
 public sealed record TugReadinessFact(Guid TugId, string Source, Guid? Id, long? Revision, string State, string Why,
     DateTimeOffset? ObservedAt = null, DateTimeOffset? ExpiresAt = null);
@@ -18,8 +20,9 @@ public sealed record TugReadinessFact(Guid TugId, string Source, Guid? Id, long?
 public static class TugPlanningEvidenceAdapter
 {
     public static async Task<TugPlanningEvidence> Read(PoseidonDbContext db, TrustedActor actor, TugPlanningPolicy policy, MaintenanceObservationSettings observationSettings,
-        Guid jobId, TugPlanInputs plan, CancellationToken ct, FederationSettings? federation = null, CrewFilePolicy? files = null) {
-        var now = DateTimeOffset.UtcNow; var bp = new List<TugBpEvidence>();
+        Guid jobId, TugPlanInputs plan, CancellationToken ct, FederationSettings? federation = null, CrewFilePolicy? files = null,
+        HttpContext? http = null, DateTimeOffset? readAt = null) {
+        var now = readAt ?? DateTimeOffset.UtcNow; var bp = new List<TugBpEvidence>();
         var visible = await actor.Scope(db.Vessels).Where(v => v.Kind == VesselKind.Tug).Select(v => v.Id).ToArrayAsync(ct);
         foreach (var tug in plan.AssignedTugs.Where(visible.Contains)) {
             var source = policy.Current(now) ? policy.BpSources.SingleOrDefault(s => s.TenantId == actor.TenantId && s.VesselId == tug) : null;
@@ -56,7 +59,7 @@ public static class TugPlanningEvidenceAdapter
             if (relation != TugPlanningWindowRelation.Separate) conflicts.Add(new(other.JobId, other.Revision, relation.ToString(), "CurrentDraftPlanGeometry", other.SavedAt));
         }
         var stateConflict = conflicts.Any(c => c.Relation == "Intersecting") ? "HumanReviewRequired" : conflicts.Any(c => c.Relation == "BoundaryTouch") ? "BoundaryReviewRequired" : "Unknown";
-        var capacity = new List<TugOwnedCapacity>(); var readiness = new List<TugReadinessFact>();
+        var capacity = new List<TugOwnedCapacity>(); var readiness = new List<TugReadinessFact>(); var crew = new List<TugCrewReadinessDto>();
         var job = await db.TugJobs.AsNoTracking().SingleAsync(j => j.Id == jobId, ct);
         foreach (var tug in plan.AssignedTugs.Where(visible.Contains)) {
             var currentCapacity = await TugOwnedCapacityConsumer.Read(db, actor, federation ?? new(), tug, job, plan, now, ct);
@@ -70,7 +73,13 @@ public static class TugPlanningEvidenceAdapter
                 readiness.Add(new(tug, "CapabilityEquipmentCondition", currentCapacity.ConditionId, currentCapacity.ConditionRevision,
                     "Current", "ExactQualifiedCapabilityCondition;OtherEquipmentCoverageSeparate", ExpiresAt: currentCapacity.ValidUntil));
             }
-            readiness.AddRange(await TugReadinessConsumer.Read(db, actor, tug, plan, now, ct, files));
+            readiness.AddRange(await TugReadinessConsumer.Read(db, actor, tug, plan, now, ct, files, http));
+            var currentCrew = await TugCrewReadinessReader.Read(db, actor, federation ?? new(), tug, plan, now, ct,
+                http?.RequestServices.GetRequiredService<CrewAssignmentPolicy>(), files);
+            crew.Add(currentCrew);
+            readiness.Add(new(tug, "CrewMinimumManning", currentCrew.MsmdId, currentCrew.MsmdRevision,
+                currentCrew.State == "CurrentMinimumRoleCoverage" ? "Current" : currentCrew.State == "Blocked" ? "Blocked" : currentCrew.State == "Unavailable" ? "Unavailable" : "Unknown",
+                currentCrew.Reason, ExpiresAt: currentCrew.ValidUntil));
         }
         // Aggregation is allowed only by one exact, currently qualified source policy.
         // A missing/changed tug never contributes a partial sum that looks like total capacity.
@@ -81,6 +90,6 @@ public static class TugPlanningEvidenceAdapter
         var operational = await TugOperationalConflicts.Read(db, actor, jobId, plan.AssignedTugs.Where(visible.Contains).ToArray(), plan.PlannedStart, plan.PlannedEnd, ct);
         if (operational.Length != 0) stateConflict = "HumanReviewRequired";
         return new(total, complete ? "CurrentPlanningCapacity" : capacity.Count == 0 ? "Missing" : "ReviewRequired", bp.ToArray(), stateConflict, conflicts.ToArray(),
-            "CurrentAuthorizedOwningFacts;DraftGeometry;MasterDecisionSeparate", readinessState, capacity.ToArray(), readiness.ToArray(), operational);
+            "CurrentAuthorizedOwningFacts;DraftGeometry;MasterDecisionSeparate", readinessState, capacity.ToArray(), readiness.ToArray(), operational, crew.ToArray());
     }
 }

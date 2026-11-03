@@ -1,4 +1,16 @@
-# DEV-008 proposed pilot source responsibility plan — 2026-11-02
+# DEV-008 current typed plan — 2026-11-02
+
+Current state: AUTHORED_UNVERIFIED; pending separate exact-target plan review, not operational approval.
+
+The concrete responsibility/version/status plan now lives in [pilot-ownership.v1.json](../../contracts/sources/pilot-ownership.v1.json), with [source/acceptance/test mapping](s0-source-plan-20261102.md), strict local source validator and seventeen authored regression methods. Seven categories/nine actual candidate source rows are pinned; external issuers are separate from exact Regulatory Lead / Regulatory SME internal plan roles. Candidate declarations/snapshot versions are explicit; authoritative edition and pilot Flag/Class binding remain OPEN. Validation remains UNVERIFIED and activation blocked. No actual membership, source publication or legal approval is created.
+
+The [independent DEV-008 scope review](../reports/dev-008-source-scope-review-2026-11-02.md) resolves the earlier scope question below: a reviewed role responsibility plan can meet S0 without named live people or operational assignment API/UI. Its APPROACH ACCEPTABLE AS PLAN statement is not final review/adoption of this new artifact. Later source/version SME sign-off and release refresh remain DEV-073/093/00.01 paragraph116. All execution remains DEFERRED; canonical acceptance is unchanged.
+
+## Historical free-text proposal — superseded encoding and scope question
+
+The following proposal is retained as history. Its pending interpretation/named-assignment discussion is superseded by the independent scope decision above; its open legal/operational boundaries remain.
+
+### Earlier DEV-008 proposed pilot source responsibility plan — 2026-11-02
 
 AUTHORED_UNVERIFIED / pending independent source interpretation and engineering review. This is a concrete responsibility proposal on the existing source/revision chain, not a second operational registry or actual legal validation. Exact source/Owner/RACI interpretation is recorded in [selected reconciliation](selected-source-reconciliation-2026-11-02.md).
 

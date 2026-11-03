@@ -1,4 +1,3 @@
-using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Poseidon.Domain;
 using Poseidon.Persistence;
@@ -7,7 +6,8 @@ namespace Poseidon.Api;
 
 internal static class TugReadinessConsumer
 {
-    internal static async Task<TugReadinessFact[]> Read(PoseidonDbContext db, TrustedActor actor, Guid tug, TugPlanInputs plan, DateTimeOffset now, CancellationToken ct, CrewFilePolicy? files = null) {
+    internal static async Task<TugReadinessFact[]> Read(PoseidonDbContext db, TrustedActor actor, Guid tug, TugPlanInputs plan, DateTimeOffset now, CancellationToken ct,
+        CrewFilePolicy? files = null, HttpContext? http = null) {
         var result = new List<TugReadinessFact>();
         if (!await actor.Scope(db.Vessels).AnyAsync(v => v.Id == tug && v.Kind == VesselKind.Tug, ct)) return [];
         // No names, medical fields, certificate numbers or hidden counts in this projection.
@@ -33,18 +33,19 @@ internal static class TugReadinessConsumer
                     c.ExpiryDate < date || c.EndorsementRequired == true && c.EndorsementExpiry < date ? "DeclaredCertificateExpiresBeforeWindowEnd" : "CredentialQualificationRequired"));
             }
         }
-        if (!actor.Permissions.Contains("equipment.read") || !actor.Permissions.Contains("maintenance.read")) result.Add(new(tug, "EquipmentPms", null, null, "Unavailable", "CurrentEquipmentMaintenanceAccessRequired"));
+        if (!MaintenanceCurrentReader.Permitted(actor) || http == null) result.Add(new(tug, "EquipmentPms", null, null, "Unavailable", "CurrentEquipmentMaintenanceAccessRequired"));
         else {
+            // Reassess current rights/policy/revocation at read time, and calculate the
+            // declared planning boundary through the requested end of the job window.
+            var maintenance = await MaintenanceCurrentReader.Read(tug, http, db, actor, now, referenceAt: plan.PlannedEnd ?? now);
             var assets = await db.Assets.AsNoTracking().Where(a => a.VesselId == tug).ToArrayAsync(ct);
             if (assets.Length == 0) result.Add(new(tug, "Equipment", null, null, "Unknown", "EquipmentCoverageMissing"));
             foreach (var asset in assets) {
                 result.Add(new(tug, "Equipment", asset.Id, asset.Revision, "Unknown", "EquipmentConditionQualificationRequired"));
-                var plans = await db.MaintenancePlans.AsNoTracking().Where(p => p.VesselId == tug && p.AssetId == asset.Id).ToArrayAsync(ct);
-                foreach (var p in plans) {
-                    var inputs = JsonSerializer.Deserialize<MaintenanceInputs>(p.ContentJson)!;
-                    var due = MaintenanceCalculation.Evaluate(inputs, plan.PlannedEnd ?? now);
-                    result.Add(new(tug, "MaintenancePlan", p.Id, p.Revision, due.State is "Overdue" or "Due" ? "Blocked" : "Unknown", due.Reason,
-                        inputs.ObservedAt));
+                foreach (var current in (maintenance ?? []).Where(p => p.Row.AssetId == asset.Id)) {
+                    var p = current.Row;
+                    result.Add(new(tug, "MaintenancePlan", p.Id, p.Revision, p.Due.State == "Due" ? "Blocked" : "Unknown", p.Due.Reason,
+                        p.Inputs.ObservedAt));
                 }
             }
         }

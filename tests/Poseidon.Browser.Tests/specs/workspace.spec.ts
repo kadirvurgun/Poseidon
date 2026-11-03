@@ -6,6 +6,8 @@ test('workspace URL history, dirty cancel/discard and responsive drawer work wit
   await page.route('**/api/v1/**', async route => {
     const url = route.request().url()
     const body = url.includes('auth/session') ? { authenticated: true, canRead: true, canReadCompanies: false, canCreate: false, canSearch: true, tenantId: vessel.id, actorId: vessel.companyId, csrfToken: 'synthetic' }
+      : new URL(url).pathname === '/api/v1/workspace' ? { destinations: [{ key: 'fleet', href: '/app/fleet' }], canSearch: true, canWriteRegulatory: false }
+      : url.includes('workspace/context') ? { tenantId: vessel.id, actorId: vessel.companyId, roleContext: { state: 'Missing', catalogVersion: null, roles: [] }, vessel: url.includes('/context/' + vessel.id) ? vessel : null }
       : url.includes('workspace/lenses') ? { tenantId: vessel.id, actorId: vessel.companyId, vesselId: url.includes('/lenses/' + vessel.id) ? vessel.id : null, mode: url.includes('/lenses/' + vessel.id) ? 'Tug' : 'Fleet', state: 'Missing', version: null, lenses: [], canSearch: true }
       : url.includes('workspace/search') ? { items: [{ key: vessel.id, href: `/app/fleet/${vessel.id}`, label: vessel.name, kind: 'Tug' }], offset: 0, limit: 25, hasMore: false }
       : url.includes('vessels?') ? { items: [vessel], offset: 0, limit: 25, hasMore: false } : vessel

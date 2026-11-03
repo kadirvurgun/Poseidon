@@ -15,7 +15,8 @@ public sealed record TodayMaintenanceEvidenceDto(Guid PlanId, long PlanRevision,
 public sealed record TodayWhyDto(Guid VesselId, string CardKey, string Rule, string Reason, DraftObservation? Inputs,
     DateTimeOffset ReadAt, DateTimeOffset? SavedAt, string? SourceObservedAt, string Freshness,
     string Provenance, string[] Blockers, string? Owner, string NextAction, string Href,
-    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] TodayMaintenanceEvidenceDto? Maintenance = null);
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] TodayMaintenanceEvidenceDto? Maintenance = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] TodayTugEvidenceDto? Tug = null);
 
 public static class TodayEndpoints
 {
@@ -44,12 +45,13 @@ public static class TodayEndpoints
         var skip = 0; var take = 25;
         var cardKey = query["cardKey"].ToString();
         Guid? planId = null;
+        Guid? jobId = null;
         if (why && cardKey != "regulatory-draft") {
-            const string prefix = "maintenance-plan:";
+            var prefix = cardKey.StartsWith("tug-job:", StringComparison.Ordinal) ? "tug-job:" : "maintenance-plan:";
             if (!cardKey.StartsWith(prefix, StringComparison.Ordinal) ||
                 !Guid.TryParseExact(cardKey[prefix.Length..], "D", out var parsed) || parsed == Guid.Empty ||
                 cardKey != prefix + parsed.ToString("D")) return await Invalid();
-            planId = parsed;
+            if (prefix == "tug-job:") jobId = parsed; else planId = parsed;
         }
         if (!why && ((query.ContainsKey("offset") && (!int.TryParse(query["offset"], NumberStyles.None, CultureInfo.InvariantCulture, out skip) || skip > 100000)) ||
             (query.ContainsKey("limit") && (!int.TryParse(query["limit"], NumberStyles.None, CultureInfo.InvariantCulture, out take) || take is < 1 or > 25)))) return await Invalid();
@@ -62,6 +64,24 @@ public static class TodayEndpoints
             return Results.NotFound();
         }
         var readAt = DateTimeOffset.UtcNow;
+        if (why && jobId != null) {
+            var source = await TodayTugReader.Read(id, http, db, actor, readAt, jobId);
+            if (source == null) {
+                await audit.WriteAsync(http, action, "Denied");
+                return Results.StatusCode(403);
+            }
+            var current = source.SingleOrDefault();
+            if (current == null) {
+                await audit.WriteAsync(http, action, "NotFound");
+                return Results.NotFound();
+            }
+            var card = TugCard(id, current);
+            await audit.WriteAsync(http, action, "Success", resourceId: id);
+            return Results.Ok(new TodayWhyDto(id, card.Key, "TW-TUG-01", card.Reason, null,
+                readAt, current.SavedAt, null, "Unverified", current.Provenance,
+                ["DraftPlanningNotOperationalApproval", "OwningReadinessCoverageIncomplete", "MasterDecisionRequired"],
+                card.Owner, card.NextAction, card.Href, Tug: current.Detail));
+        }
         if (why && planId != null) {
             var source = await MaintenanceCurrentReader.Read(id, http, db, actor, readAt, planId);
             if (source == null) {
@@ -95,18 +115,21 @@ public static class TodayEndpoints
                 [draft == null ? "DraftAbsent" : "VerificationUnavailable", "OperationalSourcesUnavailable"], null, next, href));
         }
         var maintenance = await MaintenanceCurrentReader.Read(id, http, db, actor, readAt);
+        var tug = await TodayTugReader.Read(id, http, db, actor, readAt);
         var cards = new List<TodayCardDto> { new("regulatory-draft", "Advisory", "RegulatoryDraft", observation.Reason, null, next, href) };
         foreach (var current in maintenance ?? []) {
             var advice = TodayMaintenancePolicy.Observe(current.Row.Due);
             if (advice != null) cards.Add(MaintenanceCard(id, current, advice));
         }
+        cards.AddRange((tug ?? []).Select(current => TugCard(id, current)));
         cards = cards.OrderBy(c => c.Priority == "Attention" ? 0 : c.Priority == "Review" ? 1 : 2)
             .ThenBy(c => c.Key, StringComparer.Ordinal).ToList();
         await audit.WriteAsync(http, action, "Success", resourceId: id);
         return Results.Ok(new TodayDto(new(vessel.Id, vessel.CompanyId, vessel.Code, vessel.Name, vessel.Kind.ToString(), vessel.Version, actor.CanEditVessel(id)), readAt,
             [new("RegulatoryDraft", draft == null ? "Missing" : "Available"), new("OperationalTasks", "Unavailable"),
              new("SafetyDecisions", "Unavailable"), new("Permits", "Unavailable"), new("EvidenceVerification", "Unavailable"),
-             new("TechnicalMaintenance", maintenance == null ? "Unavailable" : maintenance.Length == 0 ? "Missing" : "Available")],
+             new("TechnicalMaintenance", maintenance == null ? "Unavailable" : maintenance.Length == 0 ? "Missing" : "Available"),
+             new("TugPlanning", tug == null ? "Unavailable" : tug.Length == 0 ? "Missing" : "Available")],
             new(cards.Skip(skip).Take(take).ToArray(), skip, take, cards.Count > skip + take)));
     }
 
@@ -114,4 +137,8 @@ public static class TodayEndpoints
         new($"maintenance-plan:{source.Row.Id:D}", advice.Priority, "MaintenancePlan", advice.Reason,
             source.OwnerEligible ? source.Row.OwnerRoleId?.ToString("D") : null,
             "ReviewMaintenancePlan", $"/app/maintenance-plan/{vessel:D}?id={source.Row.Id:D}");
+
+    private static TodayCardDto TugCard(Guid vessel, TodayTugProjection source) =>
+        new($"tug-job:{source.Detail.JobId:D}", source.Advice.Priority, "TugJob", source.Advice.Reason, source.Detail.CurrentOwnerRoleId?.ToString("D"),
+            "ReviewTugJob", $"/app/tug-job-detail/{source.Detail.JobId:D}?vessel={vessel:D}");
 }

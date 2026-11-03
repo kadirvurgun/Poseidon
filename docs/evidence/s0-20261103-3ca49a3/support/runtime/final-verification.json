@@ -1,0 +1,226 @@
+{
+  "schemaVersion": "poseidon.final-execution-verification.v1",
+  "status": "VERIFIED_LOCAL_122_PENDING_INDEPENDENT_QA",
+  "accepted": false,
+  "verifiedAt": "2026-11-03T02:37:27.510059+00:00",
+  "ownedExecution": {
+    "sessionId": 29945,
+    "closed": true,
+    "exitCode": 0
+  },
+  "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+  "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03",
+  "gitClean": true,
+  "attempt": 2,
+  "finishedAt": "2026-11-03T02:33:54.596121+00:00",
+  "passed": 122,
+  "failed": 0,
+  "pending": 0,
+  "skipped": 0,
+  "uniqueCaseNames": 61,
+  "projectCounts": {
+    "firefox-desktop": 61,
+    "firefox-narrow-responsive": 61
+  },
+  "identityMismatchCount": 0,
+  "inventoryIdentityMismatchCount": 0,
+  "duplicateIdentityCount": 0,
+  "fingerprintMismatchCount": 0,
+  "currentPinMismatchCount": 0,
+  "verifiedPinCounts": {
+    "sourceDigests": 24,
+    "harnessSourceDigests": 6,
+    "runnerDigests": 8,
+    "fixtureIntentDigests": 6,
+    "backendBinaryDigests": 3
+  },
+  "fingerprints": {
+    "uiSha256": "be09b9461f6129ade413d9155e8af23fceabd8a2bbf3a84fc252cfda68dd5e11",
+    "registerSourcesSha256": "d461219a3fb984abbc8ae142efcf6c4563e46ee1501b1f9f7d3972b6d5adca25",
+    "apiDllSha256": "565fdc9f311a99c0f913e7ef2b6fda448b04b096f6e6faeedce06ed614f464b0"
+  },
+  "genuineFixtureContextSha256": "905c2626a2d54de8444ff5c4ac2a67f26d1158c7e2e377f39582ab17a7ec68f1",
+  "baseline": {
+    "passed": 2,
+    "failed": 0,
+    "elapsedSeconds": 25
+  },
+  "tls": {
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0
+  },
+  "catalogBothProjectsLast": true,
+  "catalogFinalState": "Withdrawn by actual original final catalog journeys; successor adoption was preparation only",
+  "historicalAttempt1": {
+    "path": ".runtime/s0-overnight-20261102/signed/final-attempts/f-attempt-01-withdrawn-catalog-3ca49a30/history.json",
+    "sha256": "3379aa9d2450466f6ce77bab2c53960b31794506597d1df304b91ea171e46e99",
+    "passed": 30,
+    "testFailed": 0,
+    "pending": 92,
+    "accepted": false
+  },
+  "files": [
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/f-final-target.json",
+      "sha256": "b42c61f2765428f207091a6705228f81c2826c95fc5759cdf3ad935948d884a9"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/f-final-manifest-ledger.json",
+      "sha256": "ef4f45695f8a61edfba6177d79e088c6d70d2ef48aa88fa0fe15ffdde8ecbe6e"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/f-final-run-results.json",
+      "sha256": "b50805b7086aa127fc37edcb9434d0f0a56e1d82c7e1aa679c2b430c629e47c7"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/f-full-journeys.json",
+      "sha256": "9f55d39781f76f61734d3c1cf5208ee793db5445a4934f6a3a0224db27b6608a"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/f-tls-current.json",
+      "sha256": "81e6ae452b356b25e9c81c65605a0749deb090a60666428e71dd3438b13bc8e0"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/f-final-run-plan.json",
+      "sha256": "bf56063f726ca7696460de4cba365ad5e1a42d8ca052864db70b35e28fea9760"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/f-final-manifest-inventory.json",
+      "sha256": "76fb50264fbcc2bdf18993bc71b1c7c06215f25346126657578b63f203f4afbf"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/f-final-target-build.json",
+      "sha256": "98ad8e76f43c31446df2ea28bb8c9891c1663e1dd52a35fb5b5c4f21dedc499f"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/f-final-legacy-fixtures.json",
+      "sha256": "89ebabc467e047381df640444c0ce97f3e36f91ffe14abf22f60fe1e280831f0"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/f-fixture-preparation-intent.json",
+      "sha256": "3fa601d27a9a72db3fd9e3f31f712b4ceabe6ec7bf3167843f310177cb4f0351"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/f-catalog-recovery-intent.json",
+      "sha256": "89e87ed6f4e15591dbe80f97669da37fae49ff7cc07d625ee573eb9fc3eaeb8c"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/f-catalog-recovery-result.json",
+      "sha256": "16f2e4282608f2c6449c5de0f6512a78b744f7b4bcd57051399eb0029a345fb1"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/f-owning-currentness-proof.json",
+      "sha256": "9acd672bd72ae7e8d8fe4223eb616e8e49522783d13f3d9a20e98efa16684b30"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/manifest-final-ledger.json",
+      "sha256": "5fe33991087ca905e6b125f1248d6cbb199594882693cf4e5cbb4f5c68f47a9d"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/manifest-e-remaining-diagnostic.json",
+      "sha256": "0479687472130c2876f85f6324f0f7b40499516ea35062ced45bcaeeeefea845"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/manifest-f-dirty-narrow.json",
+      "sha256": "ddc27da19b4594a0914804c5c02094ab3affd05f69661639eb9200cb47a0557f"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/manifest-f-tug-repair.json",
+      "sha256": "12610c89d620e6f130412eda9fcbfe25c6ee38f0752888b1e36e990bb91d76e6"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/manifest-f-tug-history-repair.json",
+      "sha256": "63f74396585f3ff82f6150f670136b1ce1e5bd5d26217ce27aa1420a388752f5"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/final-attempts/f-attempt-01-withdrawn-catalog-3ca49a30/cohort-f-final-denials-results.json",
+      "sha256": "6dabc7b444b0525a96dc915261739afab0b8bd2fd646658e2282b1000c3a0fdf"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/final-attempts/f-attempt-01-withdrawn-catalog-3ca49a30/cohort-f-final-profile-results.json",
+      "sha256": "b736a24c09c17504174d7d22af89a0b483b8f037db38dcd45e0f6decf1201b6d"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/final-attempts/f-attempt-01-withdrawn-catalog-3ca49a30/cohort.mjs",
+      "sha256": "e7a80a0f5ab1b0844909a5619d116b35081c65041a2f657435a76207de91ed4f"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/final-attempts/f-attempt-01-withdrawn-catalog-3ca49a30/f-catalog-position-diagnosis.json",
+      "sha256": "035794028a8714009efbe928f9fb957df27f79f1af4656a9d3e0c36ceedf5742"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/final-attempts/f-attempt-01-withdrawn-catalog-3ca49a30/f-final-manifest-ledger.json",
+      "sha256": "e56fb7b13a64d2fcbf07d911dc9efa19997f8a86ceb6ec78c30978b89ffc6371"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/final-attempts/f-attempt-01-withdrawn-catalog-3ca49a30/f-final-run-plan.json",
+      "sha256": "bf56063f726ca7696460de4cba365ad5e1a42d8ca052864db70b35e28fea9760"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/final-attempts/f-attempt-01-withdrawn-catalog-3ca49a30/f-final-run-results.json",
+      "sha256": "4a26b11550c6c874764c5e60781ed7c2554b9f16d7d52e10eb6f56f92db2ef08"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/final-attempts/f-attempt-01-withdrawn-catalog-3ca49a30/f-final-target.json",
+      "sha256": "26fac668347bc885480b1adeadeac6908849b9473c0bd0c5cc2df3aa0cc966f0"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/final-attempts/f-attempt-01-withdrawn-catalog-3ca49a30/final-run.py",
+      "sha256": "3928959a8d6a252e8e950dc5247d3178a796bcf3b3c5d059ee35f40c5b8be392"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/final-attempts/f-attempt-01-withdrawn-catalog-3ca49a30/freeze-target.py",
+      "sha256": "bfc59422c0332fd5337856b450da0b0f34a018cfc5ca9f25f7c6a7e994cc3326"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/final-attempts/f-attempt-01-withdrawn-catalog-3ca49a30/history.json",
+      "sha256": "3379aa9d2450466f6ce77bab2c53960b31794506597d1df304b91ea171e46e99"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/final-attempts/f-attempt-01-withdrawn-catalog-3ca49a30/positive-prepare-results.json",
+      "sha256": "8f68f21eb7ffbcc19f3e6c50ad558ed8316575aa7b5d9d0f6346d5ea6abb41d8"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/cohort-f-final-catalog-results.json",
+      "sha256": "2f92466b766d1fc708a3c5e4a7569ce7e41db4da344dc98a414347b259f1f819"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/cohort-f-final-denials-results.json",
+      "sha256": "4a647fb9a2ae26ec3ff28c4548da30a5d5cb2c6227638b5a2e7868a46ceb7d12"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/cohort-f-final-ordinary-1-results.json",
+      "sha256": "896b7ad7f527f55bb46e4d64a7dd762419847ac244092a4eec242b802a8e89b6"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/cohort-f-final-ordinary-2-results.json",
+      "sha256": "9cd3aa81f34f64f5febdfa76dcaab504b023fb4899d7d7cd72f50f9f4e4c3d02"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/cohort-f-final-ordinary-3-results.json",
+      "sha256": "743cc94d69b9efd5a19e76c539c4e3dd51cf36b6e069d66943e21d392eae4364"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/cohort-f-final-ordinary-4-results.json",
+      "sha256": "6011a06754b5861bb31825e51309c7b4bf20781c29822f9b0208019336388299"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/cohort-f-final-ordinary-5-results.json",
+      "sha256": "f5578650ed413210ea9d76c83380a600b355cd111c4f2555bbd63c8d0e972ecf"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/cohort-f-final-ordinary-6-results.json",
+      "sha256": "9a223dbbb81f38b86209c933c3c7176ccd4e469dd1ae798cb1e5da1bd77d6f3d"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/cohort-f-final-positive-results.json",
+      "sha256": "6fc7783ac6f27e491b909d74af3ddae3ca4cd27889d5de8f1a57880ed2b1b3a1"
+    },
+    {
+      "path": ".runtime/s0-overnight-20261102/signed/cohort-f-final-profile-results.json",
+      "sha256": "13a1a7943a017ddca0473e4a05ef682a7751237990f627e38d428fd275fe0e02"
+    }
+  ],
+  "verificationScope": "Read-only post-execution identity, exact Git-blob/working/artifact/runner/intent/private-context parity; no test/browser rerun; raw secret context never persisted"
+}

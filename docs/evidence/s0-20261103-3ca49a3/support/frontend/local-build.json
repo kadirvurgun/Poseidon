@@ -1,0 +1,15 @@
+{
+  "exitCode": 0,
+  "status": "PASS",
+  "startedAt": "2026-11-03T01:00:25.695177+00:00",
+  "durationSeconds": 20.904,
+  "outputSha256": "9e19ecc11e306a1bd654e9d0825b4be71ab3222658058fd49d07477f2406a075",
+  "rawOutputPersisted": false,
+  "diagnostics": [],
+  "commandId": "frontend-F-build",
+  "targetCommit": null,
+  "targetTree": null,
+  "baseCommit": "e29346642fb09f4cdddeff61846c1a4428179cb4",
+  "cleanInput": false,
+  "evidenceScope": "local dirty repair only; not acceptance"
+}

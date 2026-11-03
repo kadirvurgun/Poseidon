@@ -1009,7 +1009,7 @@
       "accepted": false
     }
   },
-  "as_of": "2026-11-01",
+  "as_of": "2026-11-03",
   "audit_trace_01": {
     "status": "combined_gate_executed_not_accepted",
     "accepted": false,
@@ -1114,14 +1114,14 @@
     "verification_record_scope": "Authored/deferred and original20f1198 results are historical;current rejection-repair evidence in core_bundle_01.verification"
   },
   "baseline": "POSEIDON v46.3 updated 2026-10-30 / Library26 candidate",
-  "current_stage": "PR12:164 source classifications genuinely approved and externally pinned. First full reviewed scan1427inputs/3new artifact findingsFAIL; quote-safe evidence serialization and synthetic header construction corrected all3.49/49 focused testsPASS;10 changed files0findings. New full CI and independent product QA pending;canonical8/970 unchanged.",
+  "current_stage": "S0 engineering accepted at exact F; metadata release/head QA/CI lifecycle remains separately observed; next original S1 acceptance scope",
   "method": "accepted story points / total baseline story points * 100",
   "scope": "complete v46.3 Backlog sheet; duplicates in other sheets excluded",
   "total_tasks": 121,
   "total_story_points": 970,
-  "accepted_tasks": 2,
-  "accepted_story_points": 8,
-  "completion_percent": 0.82,
+  "accepted_tasks": 13,
+  "accepted_story_points": 53,
+  "completion_percent": 5.46,
   "screen_inventory": 196,
   "accepted_screens": 0,
   "field_contract_inventory": 2316,
@@ -1130,9 +1130,9 @@
       "sprint": "S0",
       "tasks": 13,
       "story_points": 53,
-      "accepted_tasks": 2,
-      "accepted_story_points": 8,
-      "completion_percent": 15.09
+      "accepted_tasks": 13,
+      "accepted_story_points": 53,
+      "completion_percent": 100
     },
     {
       "sprint": "S1",
@@ -1248,7 +1248,41 @@
         "https://github.com/kadirvurgun/Poseidon/actions/runs/41090658974",
         "GitHub main protection: strict two required checks, PR, admins included, no force push/deletion",
         "docs/repository-policy.md",
-        "docs/phases/APP-FOUNDATION-01.md"
+        "docs/phases/APP-FOUNDATION-01.md",
+        {
+          "delivery": "S0-OVERNIGHT-20261102",
+          "implementation_target": {
+            "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+            "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03"
+          },
+          "gate": "docs/evidence/s0-20261103-3ca49a3/gate-result.json",
+          "acceptance_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-001/acceptance.json",
+            "sha256": "35c4a1b4100c224095b92ba0ebe7b3d90e97cfca9e404272acd5923ca2333819",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "source_review_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-001/source-review.json",
+            "sha256": "394ec9845c86dbe964b75f3f8b27624df0d367ba3fe917caf58df8330f590687",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "engineering_review_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-001/engineering-review.json",
+            "sha256": "352a29107f270d3df6e3763131aafa09fd1c61c1d479acb387be82656b5506bd",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "execution_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-001/execution.json",
+            "sha256": "27889256a9176e2d6b21047526c524e6a8e0f35ef2428ab17cea3eb1dc100c38",
+            "sessionId": "/root/s0_release_gate",
+            "principal": "/root/s0_release_gate"
+          },
+          "required_ci": "https://github.com/kadirvurgun/Poseidon/actions/runs/41560927341",
+          "phase_report": "docs/phases/S0-OVERNIGHT-20261102.md"
+        }
       ],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
@@ -1272,7 +1306,41 @@
         "https://github.com/kadirvurgun/Poseidon/actions/runs/41090658974",
         "GitHub main protection: strict two required checks, PR, admins included, no force push/deletion",
         "docs/repository-policy.md",
-        "docs/phases/APP-FOUNDATION-01.md"
+        "docs/phases/APP-FOUNDATION-01.md",
+        {
+          "delivery": "S0-OVERNIGHT-20261102",
+          "implementation_target": {
+            "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+            "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03"
+          },
+          "gate": "docs/evidence/s0-20261103-3ca49a3/gate-result.json",
+          "acceptance_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-002/acceptance.json",
+            "sha256": "99fb9d8e0dcade204b4c94b10597006d8bec356d6bd8165e0f5277c0d453f045",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "source_review_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-002/source-review.json",
+            "sha256": "c20e0a22cc41b1c040a9196cdc07e2641d2c3172efebee671bb5d561f8de8de3",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "engineering_review_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-002/engineering-review.json",
+            "sha256": "89c3bea9f53e35d614fa701a088b19444980e2a25a908bdd2fcdda63ff092619",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "execution_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-002/execution.json",
+            "sha256": "9d39124fd0c4266fc5417490405d5dba0c362fbb0c1c3b33c93ffc47705e1030",
+            "sessionId": "/root/s0_release_gate",
+            "principal": "/root/s0_release_gate"
+          },
+          "required_ci": "https://github.com/kadirvurgun/Poseidon/actions/runs/41560927341",
+          "phase_report": "docs/phases/S0-OVERNIGHT-20261102.md"
+        }
       ],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
@@ -1287,9 +1355,44 @@
       "priority": "P0",
       "story_points": 3,
       "source_status": "Not Started",
-      "assessment": "not-started",
-      "accepted": false,
-      "acceptance_evidence": [],
+      "assessment": "accepted",
+      "accepted": true,
+      "acceptance_evidence": [
+        {
+          "delivery": "S0-OVERNIGHT-20261102",
+          "implementation_target": {
+            "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+            "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03"
+          },
+          "gate": "docs/evidence/s0-20261103-3ca49a3/gate-result.json",
+          "acceptance_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-003/acceptance.json",
+            "sha256": "f377437fad6535990860f3ac735e2aa27284063c35b8d35a96629a242e3eaba0",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "source_review_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-003/source-review.json",
+            "sha256": "25d78b73e48fd587dfd00f8563cdfe4baf5fbebde6e512e2cf90c795e2abe2bc",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "engineering_review_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-003/engineering-review.json",
+            "sha256": "2ab1f922bcfd0b8fe5aaf534ea97544fcc2a6db17fb8b8cba75312b1ef5f56b0",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "execution_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-003/execution.json",
+            "sha256": "0c2a71b68dc4c2355bc55325bf02e4a0a5f517bbf7c201df0111e2e56b6acf4b",
+            "sessionId": "/root/s0_release_gate",
+            "principal": "/root/s0_release_gate"
+          },
+          "required_ci": "https://github.com/kadirvurgun/Poseidon/actions/runs/41560927341",
+          "phase_report": "docs/phases/S0-OVERNIGHT-20261102.md"
+        }
+      ],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:4",
@@ -1303,9 +1406,44 @@
       "priority": "P0",
       "story_points": 5,
       "source_status": "Not Started",
-      "assessment": "partial-preparation",
-      "accepted": false,
-      "acceptance_evidence": [],
+      "assessment": "accepted",
+      "accepted": true,
+      "acceptance_evidence": [
+        {
+          "delivery": "S0-OVERNIGHT-20261102",
+          "implementation_target": {
+            "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+            "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03"
+          },
+          "gate": "docs/evidence/s0-20261103-3ca49a3/gate-result.json",
+          "acceptance_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-004/acceptance.json",
+            "sha256": "f0d70de252c55662e9e0a88a8afbcec7bf3323df229fe9c3d9f3ff25d54dde0c",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "source_review_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-004/source-review.json",
+            "sha256": "03cb57ded3c64e589fab1615ad7d077421ad6996d0e459023796d3000af4ae25",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "engineering_review_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-004/engineering-review.json",
+            "sha256": "8393faa9440339a3877e04d625f8b540e7c3d28156791f3bd07c0b5fee6c28ce",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "execution_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-004/execution.json",
+            "sha256": "8ff9f951cb89f0f6d2cc33b33b89ed795cb02105624c5a27c885fc21f8f4be22",
+            "sessionId": "/root/s0_release_gate",
+            "principal": "/root/s0_release_gate"
+          },
+          "required_ci": "https://github.com/kadirvurgun/Poseidon/actions/runs/41560927341",
+          "phase_report": "docs/phases/S0-OVERNIGHT-20261102.md"
+        }
+      ],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:5",
@@ -1319,9 +1457,44 @@
       "priority": "P0",
       "story_points": 5,
       "source_status": "Not Started",
-      "assessment": "not-started",
-      "accepted": false,
-      "acceptance_evidence": [],
+      "assessment": "accepted",
+      "accepted": true,
+      "acceptance_evidence": [
+        {
+          "delivery": "S0-OVERNIGHT-20261102",
+          "implementation_target": {
+            "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+            "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03"
+          },
+          "gate": "docs/evidence/s0-20261103-3ca49a3/gate-result.json",
+          "acceptance_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-005/acceptance.json",
+            "sha256": "9cfb1225f61aae6cc29a6d310dae2182e915c0a92936b6055e58c85a598b6bb3",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "source_review_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-005/source-review.json",
+            "sha256": "0ab05ee7369bef2efa032d07dc52a14a4ecf3608bb8ce9d33ddaa49aa8234132",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "engineering_review_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-005/engineering-review.json",
+            "sha256": "6bf96902692df79426599a2ed61943db6cbb853baf5705fbcc31ba61a4edcdd7",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "execution_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-005/execution.json",
+            "sha256": "063843a9b08c970926c9bc1b139707cd858964fa6879c0f0fe3fd88a0675e21a",
+            "sessionId": "/root/s0_release_gate",
+            "principal": "/root/s0_release_gate"
+          },
+          "required_ci": "https://github.com/kadirvurgun/Poseidon/actions/runs/41560927341",
+          "phase_report": "docs/phases/S0-OVERNIGHT-20261102.md"
+        }
+      ],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:6",
@@ -1335,9 +1508,44 @@
       "priority": "P0",
       "story_points": 5,
       "source_status": "Not Started",
-      "assessment": "not-started",
-      "accepted": false,
-      "acceptance_evidence": [],
+      "assessment": "accepted",
+      "accepted": true,
+      "acceptance_evidence": [
+        {
+          "delivery": "S0-OVERNIGHT-20261102",
+          "implementation_target": {
+            "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+            "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03"
+          },
+          "gate": "docs/evidence/s0-20261103-3ca49a3/gate-result.json",
+          "acceptance_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-006/acceptance.json",
+            "sha256": "5de6bf0b063f0f465893e62f86d64ff8c468aa9a2bdc55f5007de8e03f56e974",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "source_review_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-006/source-review.json",
+            "sha256": "4091255f0016b421ce0fc8503a2e798cea1771750f8f23c0b48bf7786734d784",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "engineering_review_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-006/engineering-review.json",
+            "sha256": "ceafc9b875a1293903b5ff5737ee33df52dd539089ccf86e51146dd40711893a",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "execution_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-006/execution.json",
+            "sha256": "ba99765579184085916d224c1e2fedc79a4ade743df14bcf3817703cc67583ad",
+            "sessionId": "/root/s0_release_gate",
+            "principal": "/root/s0_release_gate"
+          },
+          "required_ci": "https://github.com/kadirvurgun/Poseidon/actions/runs/41560927341",
+          "phase_report": "docs/phases/S0-OVERNIGHT-20261102.md"
+        }
+      ],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:7",
@@ -1351,9 +1559,44 @@
       "priority": "P0",
       "story_points": 5,
       "source_status": "Not Started",
-      "assessment": "not-started",
-      "accepted": false,
-      "acceptance_evidence": [],
+      "assessment": "accepted",
+      "accepted": true,
+      "acceptance_evidence": [
+        {
+          "delivery": "S0-OVERNIGHT-20261102",
+          "implementation_target": {
+            "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+            "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03"
+          },
+          "gate": "docs/evidence/s0-20261103-3ca49a3/gate-result.json",
+          "acceptance_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-007/acceptance.json",
+            "sha256": "cb63d60e7ea6b1a90325c20e8f18accacff2362390b06dbcad9997fa20ad45a7",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "source_review_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-007/source-review.json",
+            "sha256": "aa50ae9be62b53d795ea0ca3d1f7c963b0683a03fd17e85e543ea14761a67158",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "engineering_review_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-007/engineering-review.json",
+            "sha256": "69ec2821fa8178dc2c68f6c0f3dd01e8a6065c2b96a92f509f8f94d35f84af8e",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "execution_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-007/execution.json",
+            "sha256": "71556e1b1bab22199bc23439a4d76024d8e2406b6981078391c651fcc658d48f",
+            "sessionId": "/root/s0_release_gate",
+            "principal": "/root/s0_release_gate"
+          },
+          "required_ci": "https://github.com/kadirvurgun/Poseidon/actions/runs/41560927341",
+          "phase_report": "docs/phases/S0-OVERNIGHT-20261102.md"
+        }
+      ],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:8",
@@ -1367,9 +1610,44 @@
       "priority": "P0",
       "story_points": 5,
       "source_status": "Not Started",
-      "assessment": "not-started",
-      "accepted": false,
-      "acceptance_evidence": [],
+      "assessment": "accepted",
+      "accepted": true,
+      "acceptance_evidence": [
+        {
+          "delivery": "S0-OVERNIGHT-20261102",
+          "implementation_target": {
+            "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+            "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03"
+          },
+          "gate": "docs/evidence/s0-20261103-3ca49a3/gate-result.json",
+          "acceptance_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-008/acceptance.json",
+            "sha256": "37d90db4fc28585f19f24b11ac8242f3b11c7103f5a4c4240443fe18d1e7350f",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "source_review_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-008/source-review.json",
+            "sha256": "fb9274a9ff9bd555c64b67609fadd2aa435f6371c9687ce68b5d19e4a66b4c5c",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "engineering_review_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-008/engineering-review.json",
+            "sha256": "7ea1c9711480a860513b4dc87838e5aad4a85a4e5fffdacfdd39c8b8e3f74617",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "execution_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-008/execution.json",
+            "sha256": "90b095752353869fa7dd5d2d14857b111e7741314b0c97cc570519aea918bc87",
+            "sessionId": "/root/s0_release_gate",
+            "principal": "/root/s0_release_gate"
+          },
+          "required_ci": "https://github.com/kadirvurgun/Poseidon/actions/runs/41560927341",
+          "phase_report": "docs/phases/S0-OVERNIGHT-20261102.md"
+        }
+      ],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:9",
@@ -1383,9 +1661,44 @@
       "priority": "P0",
       "story_points": 5,
       "source_status": "Not Started",
-      "assessment": "not-started",
-      "accepted": false,
-      "acceptance_evidence": [],
+      "assessment": "accepted",
+      "accepted": true,
+      "acceptance_evidence": [
+        {
+          "delivery": "S0-OVERNIGHT-20261102",
+          "implementation_target": {
+            "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+            "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03"
+          },
+          "gate": "docs/evidence/s0-20261103-3ca49a3/gate-result.json",
+          "acceptance_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-009/acceptance.json",
+            "sha256": "919618962e2fb7739c8f37dfa5eac36434968c3e77c4e0bd6753e71bd2a6851a",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "source_review_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-009/source-review.json",
+            "sha256": "0829a53eac5123dd7e2faf668a89b5159872273c52afa82b5978185ee3809e67",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "engineering_review_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-009/engineering-review.json",
+            "sha256": "61311e4143b3ecb7b435a0e4fe7fd594a885ac2bc279907e4f551fc7f1890fc0",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "execution_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-009/execution.json",
+            "sha256": "72d4aa823ea938f6a9bcf803d9f3980d36b3f34c80cf2d0c4afe12d93170ba28",
+            "sessionId": "/root/s0_release_gate",
+            "principal": "/root/s0_release_gate"
+          },
+          "required_ci": "https://github.com/kadirvurgun/Poseidon/actions/runs/41560927341",
+          "phase_report": "docs/phases/S0-OVERNIGHT-20261102.md"
+        }
+      ],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:10",
@@ -1399,9 +1712,44 @@
       "priority": "P0",
       "story_points": 2,
       "source_status": "Not Started",
-      "assessment": "partial-preparation",
-      "accepted": false,
-      "acceptance_evidence": [],
+      "assessment": "accepted",
+      "accepted": true,
+      "acceptance_evidence": [
+        {
+          "delivery": "S0-OVERNIGHT-20261102",
+          "implementation_target": {
+            "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+            "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03"
+          },
+          "gate": "docs/evidence/s0-20261103-3ca49a3/gate-result.json",
+          "acceptance_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-010/acceptance.json",
+            "sha256": "48d8e70a524f3014ab7bc4dee54081ff6229d1bd524f4666f83a5abd32983bcf",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "source_review_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-010/source-review.json",
+            "sha256": "9bf25f15b815a6f507cd29b2f3e45e7609622192f4e2b51c00d1b6e088c6b5b5",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "engineering_review_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-010/engineering-review.json",
+            "sha256": "66d8848334c23f07345295f34b9a70bdafac9aca8c0d330b06c2987e12f0a786",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "execution_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-010/execution.json",
+            "sha256": "312091cfd5fb14be842ddf5b21e364da9a2692f76e4791dd6856cd24636dec28",
+            "sessionId": "/root/s0_release_gate",
+            "principal": "/root/s0_release_gate"
+          },
+          "required_ci": "https://github.com/kadirvurgun/Poseidon/actions/runs/41560927341",
+          "phase_report": "docs/phases/S0-OVERNIGHT-20261102.md"
+        }
+      ],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:11",
@@ -1415,9 +1763,44 @@
       "priority": "P0",
       "story_points": 3,
       "source_status": "Not Started",
-      "assessment": "not-started",
-      "accepted": false,
-      "acceptance_evidence": [],
+      "assessment": "accepted",
+      "accepted": true,
+      "acceptance_evidence": [
+        {
+          "delivery": "S0-OVERNIGHT-20261102",
+          "implementation_target": {
+            "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+            "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03"
+          },
+          "gate": "docs/evidence/s0-20261103-3ca49a3/gate-result.json",
+          "acceptance_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-011/acceptance.json",
+            "sha256": "37b9d6d3b91db7d60b454d1f6850701dea6b530577ebddbf4eb2d6703f87873a",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "source_review_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-011/source-review.json",
+            "sha256": "2d125dea68978998638dd5ad0c727cee5cc3a8cc8d3ea90f42174e4ca3806411",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "engineering_review_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-011/engineering-review.json",
+            "sha256": "afc953ab8178b7ce8f792d939e34db0b0514f5415fc73b90600b1ca35a011c4c",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "execution_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-011/execution.json",
+            "sha256": "1d2d8844e2f8a706a0c73b16da5c7c50782b04f64827c29eae1841a5c86745f3",
+            "sessionId": "/root/s0_release_gate",
+            "principal": "/root/s0_release_gate"
+          },
+          "required_ci": "https://github.com/kadirvurgun/Poseidon/actions/runs/41560927341",
+          "phase_report": "docs/phases/S0-OVERNIGHT-20261102.md"
+        }
+      ],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:12",
@@ -1431,9 +1814,44 @@
       "priority": "P0",
       "story_points": 2,
       "source_status": "Not Started",
-      "assessment": "not-started",
-      "accepted": false,
-      "acceptance_evidence": [],
+      "assessment": "accepted",
+      "accepted": true,
+      "acceptance_evidence": [
+        {
+          "delivery": "S0-OVERNIGHT-20261102",
+          "implementation_target": {
+            "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+            "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03"
+          },
+          "gate": "docs/evidence/s0-20261103-3ca49a3/gate-result.json",
+          "acceptance_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-012/acceptance.json",
+            "sha256": "18abce435489418ec9415d919582d04cfda89caebb9357d6b0784b2da696e20f",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "source_review_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-012/source-review.json",
+            "sha256": "661b81f5dc4700bcd754431cecbf3626f7f7ffe91291f717faa753e0464e218c",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "engineering_review_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-012/engineering-review.json",
+            "sha256": "3b6c0fcc557b29c0bfa5739689dfcaab9ea1b747b1ccacdb766a73792b4283eb",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "execution_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-012/execution.json",
+            "sha256": "3ff1cbb0446eb69142b9dbde6e0f0898e73a8a1d3fb2edbe76ebbd060b0dcb94",
+            "sessionId": "/root/s0_release_gate",
+            "principal": "/root/s0_release_gate"
+          },
+          "required_ci": "https://github.com/kadirvurgun/Poseidon/actions/runs/41560927341",
+          "phase_report": "docs/phases/S0-OVERNIGHT-20261102.md"
+        }
+      ],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:13",
@@ -3101,9 +3519,44 @@
       "priority": "P0",
       "story_points": 5,
       "source_status": "Not Started",
-      "assessment": "not-started",
-      "accepted": false,
-      "acceptance_evidence": [],
+      "assessment": "accepted",
+      "accepted": true,
+      "acceptance_evidence": [
+        {
+          "delivery": "S0-OVERNIGHT-20261102",
+          "implementation_target": {
+            "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+            "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03"
+          },
+          "gate": "docs/evidence/s0-20261103-3ca49a3/gate-result.json",
+          "acceptance_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-116/acceptance.json",
+            "sha256": "37c22766ef20b393d22abe47acab44a6368b0b9a712ac33c261c428d017da22e",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "source_review_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-116/source-review.json",
+            "sha256": "224634ee54b0c1cbd4297dc5ccbbb6526a5865030d607dfc72073858f6179147",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "engineering_review_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-116/engineering-review.json",
+            "sha256": "9860f322cb521634add4f5fbe67f65eb6396c0705b32bb788be39854e3444d8d",
+            "sessionId": "/root/s0_final_independent_qa",
+            "principal": "/root/s0_final_independent_qa"
+          },
+          "execution_receipt": {
+            "path": "docs/evidence/s0-20261103-3ca49a3/receipts/DEV-116/execution.json",
+            "sha256": "7aadc5b9fc55fce1837a66bd1cf61c52c69dec3fb4387f64de404855ab960525",
+            "sessionId": "/root/s0_release_gate",
+            "principal": "/root/s0_release_gate"
+          },
+          "required_ci": "https://github.com/kadirvurgun/Poseidon/actions/runs/41560927341",
+          "phase_report": "docs/phases/S0-OVERNIGHT-20261102.md"
+        }
+      ],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:117",
@@ -3192,291 +3645,99 @@
     }
   ],
   "limitations": [
-    "S0 exit gates remain open; local preparation does not automatically accept canonical story points",
-    "Read-only OIDC/tenant foundation locally validated; external IdP/TLS membership deployment, business mutations and privacy/retention release gates remain open",
-    "Hourly quota and metadata monitor active on awake logged-in host; persistent development/publish mode not activated during user-requested batched foundation work",
-    "Source originals preserved; assessment and execution evidence maintained separately",
-    "DIR-WORKSPACE-01 is authored and NOT RUN; full S1, regulatory vessel master, real IdP, operational authority catalog, privacy and expert gates remain open"
+    "S0 engineering acceptance does not accept all40 selected foundation tasks or196 screens; later sprint/source acceptance remains separate",
+    "D-STATE-01 and genuine Marine/Tug SME/pilot/production state-map gates remain OPEN",
+    "Typed legal/source plan remains UNVERIFIED/OPEN/activationBlocked; authoritative editions/appointments/purpose/retention/key custody require genuine external evidence",
+    "Existing signed synthetic provider, secure mutations, S3/Clam, audit and enterprise UI are implemented; production deployment/full S1 scope is not inferred",
+    "Full future operational/clinical/work-rest/competence/Master decisions, AI enablement evaluations and production/pilot DR/restore/release gates remain open",
+    "Supporting Domain/Persistence/Vitest native CI counts/skips UNAVAILABLE; successful required commands are not invented native totals"
   ],
   "verification": {
-    "release_build": "passed",
-    "backend_unit_guard_tests": {
-      "passed": 12,
+    "scope": "Current exact-F engineering acceptance evidence",
+    "target": {
+      "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+      "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03"
+    },
+    "required_ci": {
+      "run": 41560927341,
+      "url": "https://github.com/kadirvurgun/Poseidon/actions/runs/41560927341",
+      "conclusion": "SUCCESS",
+      "successful_jobs": 4,
+      "required_commands": 19,
+      "api_integration": {
+        "passed": 547,
+        "failed": 0,
+        "skipped": 0,
+        "seconds": 791.336
+      },
+      "api_unit": {
+        "passed": 91,
+        "failed": 0,
+        "skipped": 0,
+        "seconds": 2.863
+      },
+      "python_native": 372,
+      "ordinary_browser": "50/50",
+      "supporting_native_counts_and_skips": "UNAVAILABLE_NOT_INFERRED",
+      "published_build_artifacts": 2,
+      "published_count_artifacts": 1
+    },
+    "signed_final": {
+      "passed": 122,
+      "failed": 0,
+      "pending": 0,
+      "skipped": 0,
+      "projects": 2,
+      "cases_each": 61,
+      "groups": 10,
+      "identity_mismatches": 0,
+      "fingerprint_mismatches": 0,
+      "native_sha256": "1e295adbc728bf936043917a6444c56fbf5733b47b4fab7f79e65a7ca5cb287f",
+      "final_catalog_state": "Withdrawn as original final journeys require"
+    },
+    "baseline": {
+      "passed": 2,
+      "failed": 0,
+      "seconds": 25,
+      "skipped_count": "UNAVAILABLE_NOT_INFERRED"
+    },
+    "tls": {
+      "passed": 3,
       "failed": 0,
       "skipped": 0
     },
-    "postgresql_integration_tests": {
-      "passed": 10,
+    "definitions": {
+      "completed_commands": 6,
+      "passed_commands": 6,
+      "test_cases_claimed": 0,
+      "meaning": "PASS_DEFINITION_ONLY"
+    },
+    "local_frontend_same_source_support": {
+      "passed": 954,
       "failed": 0,
-      "skipped": 0,
-      "database": "PostgreSQL 18.6",
-      "runtime": "Docker; real containers"
+      "pending": 0,
+      "todo": 0,
+      "unhandled": 0,
+      "module_errors": 0,
+      "scope": "Earlier closed local run, exact source equality with F; not inferred CI native total"
     },
-    "document_import_tests": {
-      "passed": 11,
-      "failed": 0,
-      "skipped": 0
+    "independent_current_p0": {
+      "unresolved": 0,
+      "scope": "Original 13-task/53-SP S0 engineering adoption plus regressions of currently exposed foundation software. This is a bounded independent assessment, not proof of universal absence of defects or production/legal/safety compliance.",
+      "sha256": "f5ed479005904579ba94b303e1249024440746f2e8687c576ecaaa6b6da658d1"
     },
-    "remote_ci": "PRs #3, #4, #5 and #6 passed all their checks before merge",
-    "complete_identity_http_audit": "not-yet-implemented",
-    "independent_static_qa": "Exact target commits approved for merged subpackages",
-    "git_push": "Verified using repository-local kadirvurgun identity",
-    "api_host_integration_tests": {
-      "passed": 5,
-      "failed": 0,
-      "skipped": 0,
-      "contract": "committed OpenAPI snapshot matches real host"
+    "gate": {
+      "accepted": true,
+      "archive_path": "docs/evidence/s0-20261103-3ca49a3/gate-result.json",
+      "receipts": 52
     },
-    "frontend": {
-      "component_tests_passed": 12,
-      "lint": "passed",
-      "typecheck": "passed",
-      "build": "passed",
-      "typescript": "5.9.3 latest compatible with lint and OpenAPI generator"
-    },
-    "playwright": {
-      "passed": 4,
-      "failed": 0,
-      "skipped": 0,
-      "browser": "Chromium desktop + mobile viewport",
-      "backend": "real API; retry case injects first transport failure only",
-      "workers": 1
-    },
-    "continuous_service": "Poseidon-HourlyQuota registered, hourly metadata checks; development coordinator not yet activated",
-    "main_protection": {
-      "verified": true,
-      "strict": true,
-      "required_checks": [
-        "persistence-and-security",
-        "frontend-and-browser",
-        "windows-automation"
-      ],
-      "enforce_admins": true,
-      "allow_force_pushes": false,
-      "allow_deletions": false
-    },
-    "application_foundation": {
-      "code_commit": "1ab836e0309d573b259294cffa899cf66ea64a7c",
-      "pr": "https://github.com/kadirvurgun/Poseidon/pull/3",
-      "independent_qa": "approved exact code commit and DEV-001/DEV-002 source AC",
-      "remote_ci": [
-        "https://github.com/kadirvurgun/Poseidon/actions/runs/41090598675",
-        "https://github.com/kadirvurgun/Poseidon/actions/runs/41090658974"
-      ],
-      "conclusion": "success",
-      "artifacts": [
-        "api-development-build",
-        "frontend-development-build",
-        "playwright-evidence"
-      ]
-    },
-    "analysis_admission": {
-      "files": 269,
-      "text_files": 125,
-      "chunks": 34958,
-      "source_manifest_hashes_verified": 266,
-      "mismatches": 0,
-      "python_behavior_tests_passed": 11,
-      "embedded_history_adopted_as_runtime": false,
-      "independent_qa": "approved exact976b822 in kadir-plus profile",
-      "remote_ci": [
-        "https://github.com/kadirvurgun/Poseidon/actions/runs/41134312270",
-        "https://github.com/kadirvurgun/Poseidon/actions/runs/41134804125"
-      ],
-      "merge_commit": "e11828319c2e24e4712b04590e1f57c7cbf364a2"
-    },
-    "hourly_quota": {
-      "state": "installed; scheduled task LastTaskResult0",
-      "preferred": "esra-pro",
-      "reserve_used_percent": 85,
-      "interval_seconds": 3600,
-      "model_calls_per_metadata_check": 0,
-      "continuous_development": "separate coordinator package under implementation",
-      "task_name": "Poseidon-HourlyQuota",
-      "local_registration_verified": true,
-      "independent_qa": "approved exact06c916e",
-      "pr": "https://github.com/kadirvurgun/Poseidon/pull/5",
-      "merge_commit": "d295262dcb0886ed4fa9c0299361d67568b36aec"
-    },
-    "draft_required_data": {
-      "passed": 16,
-      "failed": 0,
-      "skipped": 0,
-      "commit": "acddf09c7d6138ea01f3c6146a726c6743393922",
-      "independent_qa": "approved exact commit",
-      "pr": "https://github.com/kadirvurgun/Poseidon/pull/6",
-      "remote_ci": [
-        "https://github.com/kadirvurgun/Poseidon/actions/runs/41136477687",
-        "https://github.com/kadirvurgun/Poseidon/actions/runs/41136647066"
-      ],
-      "scope": "pure draft-data library; no business submit authority"
-    },
-    "hourly_scheduler_actual": {
-      "task": "Poseidon-HourlyQuota",
-      "last_observed_run": "2026-10-31T11:10:23+03:00",
-      "last_exit_code": 0,
-      "interval_minutes": 60,
-      "profile_preference": "esra-pro",
-      "quota_reserve_percent": 85,
-      "requires": "logged-in awake Windows host"
-    },
-    "nightly_coordinator": {
-      "state": "Merged PR #7; first real ADR job passed local full gate, independent QA adapter reconciliation pending",
-      "task_limit": 4,
-      "model_call_limit": 8,
-      "maximum_hours": 8,
-      "publish_gate": "exact commit independent QA plus all expected CI checks",
-      "python": {
-        "passed": 94,
-        "failed": 0,
-        "skipped": 0
-      },
-      "windows_installer": {
-        "passed": 7,
-        "failed": 0,
-        "skipped": 0
-      },
-      "local_core": {
-        "backend": 43,
-        "component": 12,
-        "playwright": 4,
-        "failed": 0,
-        "skipped": 0
-      },
-      "followup": {
-        "initial_ci": "Linux tool-path fixture assumption failed, corrected without weakening assertion",
-        "independent_qa": "resolved; approved exact9d72897",
-        "focused_python_passed": 14,
-        "vitest_inverted_failure_probe_exit": 1,
-        "remote_ci": "all four checks passed on push and PR"
-      },
-      "commit": "9d72897b6c4de93cd6fb62686626742d1b9a2895",
-      "independent_qa": "approved exact commit",
-      "pr": "https://github.com/kadirvurgun/Poseidon/pull/7",
-      "merge_commit": "23a698eae690138fbebcd6833a2415bbf727ba00"
-    },
-    "ops_dashboard": {
-      "state": "Merged PR8 after exact96dd994 independent Esra QA and all4 push/PR CI checks",
-      "url": "http://127.0.0.1:5173/agents",
-      "backend_passed": 43,
-      "component_passed": 34,
-      "playwright_passed": 10,
-      "playwright_scope": "4 real .NET API smoke plus 6 synthetic ops UI contract tests",
-      "python_final": {
-        "passed": 122,
-        "failed": 0,
-        "skipped": 0
-      },
-      "windows_installer_passed": 10,
-      "pr": "https://github.com/kadirvurgun/Poseidon/pull/8",
-      "model_policy": "automation/model-policy.json",
-      "actual_model_review": "Kadir Plus: gpt-6-luna medium, two actual read-only reviews; neither approved",
-      "profiles_used": {
-        "esra-pro": "runtime implementation bb39655",
-        "kadir-plus": "UI implementation 024dc08"
-      },
-      "scheduler": "installer construction verified; actual persistent development registration pending",
-      "canonical_acceptance_changed": false,
-      "merge_commit": "cc92b744eb64b86b002f17d44b45b14cd4205653",
-      "independent_qa_commit": "96dd994182093647340ad4edde977e3599de7736",
-      "routing": "Esra primary for all roles; Kadir only on verified Esra quota reserve and own eligible quota"
-    },
-    "foundation_app": {
-      "state": "Merged PR #10 at 0bf7914; historical foundation evidence does not verify DIR-WORKSPACE-01",
-      "task": "FOUNDATION-APP-01",
-      "source": [
-        "18.01 Backlog row14 DEV013/T-S1-001",
-        "18.01 Backlog row15 DEV014/T-S1-002",
-        "14.01 ERD paragraph7"
-      ],
-      "profile": "esra-pro",
-      "model": "gpt-6.1-sol",
-      "effort": "medium",
-      "tests": {
-        "backend": {
-          "passed": 68,
-          "failed": 0,
-          "skipped": 0
-        },
-        "react": {
-          "passed": 48,
-          "failed": 0
-        },
-        "playwright": {
-          "passed": 14,
-          "failed": 0,
-          "skipped": 0,
-          "scope": "4 real API smoke + 6 synthetic ops UI + 4 real product setup/keyboard"
-        },
-        "build": "passed; zero warnings/errors",
-        "lint": "passed",
-        "typecheck": "passed",
-        "ef_model_parity": "passed; explicit PoseidonDbContext",
-        "python_gate_regression": 16,
-        "full_python": {
-          "passed": 127,
-          "failed": 0,
-          "skipped": 0
-        }
-      },
-      "canonical_acceptance_changed": false,
-      "report": "docs/phases/FOUNDATION-APP-01.md",
-      "qa_followup": "PR #10 merged; no new DIR target-commit acceptance inferred from historical foundation counts",
-      "pr": "https://github.com/kadirvurgun/Poseidon/pull/10",
-      "merge_commit": "0bf79141d1487621fd0124a330596e34cbce16e3"
-    },
-    "directory_workspace": {
-      "state": "integrated local gate passed; independent QA pending; publication deferred by user",
-      "tests": {
-        "backend": {
-          "domain": 22,
-          "persistence": 25,
-          "api": 51,
-          "passed": 98,
-          "failed": 0,
-          "skipped": 0
-        },
-        "react": {
-          "passed": 63,
-          "failed": 0
-        },
-        "playwright": {
-          "passed": 16,
-          "failed": 0,
-          "skipped": 0,
-          "scope": "4 real API smoke + 6 mock ops + 6 real API anonymous/setup/keyboard"
-        },
-        "python": {
-          "passed": 127,
-          "failed": 0,
-          "skipped": 0
-        },
-        "build": "Release passed; zero warnings/errors",
-        "lint": "passed",
-        "typecheck": "passed",
-        "frontend_build": "passed",
-        "ef_model_parity": "passed",
-        "source_verification": {
-          "files": 269,
-          "chunks": 34958,
-          "mismatches": 0
-        },
-        "unknown_audit_code_unit": "strengthened test rerun separately:1 pass with configured provider and exact error assertion",
-        "publication": "deferred by user; no push/PR/CI for this package",
-        "independent_qa": "pending exact target commit",
-        "noop_concurrency": "company+vessel forced audited xmin UPDATE;4 deterministic race/touch/replay cases;full API51 passed"
-      },
-      "build": "passed; zero warnings/errors",
-      "lint": "passed",
-      "typecheck": "passed",
-      "ef_cli": "model parity passed",
-      "restore_generation": "locked restore, actual host OpenAPI export and generated aliases passed",
-      "independent_qa": "pending exact target commit",
-      "contract_followup": "completed; generated schema aliases in directory-contract.ts",
-      "migration_followup": "model parity and actual PostgreSQL migrations passed",
-      "scope": "online company/fleet management engineering subpackage; canonical S1/regulatory/operational role acceptance remains open",
-      "implementation_checkpoint": "33b08929d2b81f2ef97b4537166609e9c6ec3f19",
-      "qa_followup": "Initial e7d5b83 security review rejected no-op concurrency;2443596 forces audited updates and adds4 deterministic regressions;API51 PASS;fresh review pending"
+    "historical_verification": "historical_verification_before_s0_F",
+    "publication_at_checkpoint": {
+      "acceptanceCheckpointTarget": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+      "observedAt": "2026-11-03T02:53:22.509167+00:00",
+      "stateAtCheckpoint": "Engineering acceptance recorded before PR creation",
+      "lifecycleUrl": "https://github.com/kadirvurgun/Poseidon/pulls",
+      "interpretation": "Historical checkpoint scope; later PR/head checks/merge lifecycle is reported by GitHub, not a permanent current-pending claim"
     }
   },
   "phase_reports": [
@@ -3491,124 +3752,28 @@
     "docs/phases/FOUNDATION-APP-01.md",
     "docs/phases/DIR-WORKSPACE-01.md",
     "docs/phases/VESSEL-PROFILE-DRAFT-01.md",
-    "docs/phases/CREW-IDENTITY-CLOSURE-01.md"
+    "docs/phases/CREW-IDENTITY-CLOSURE-01.md",
+    "docs/phases/S0-OVERNIGHT-20261102.md"
   ],
   "active_source": "docs/sources/active.json",
   "current_package": {
-    "task": "VESSEL-PROFILE-DRAFT-01",
-    "branch": "agents/9ff6b20f711a4809a7bf5a1a3ced7172",
-    "baseline": "abd9445",
-    "state": "QA repair locally validated; fresh independent target-commit QA pending; NOT ACCEPTED",
-    "report": "docs/phases/VESSEL-PROFILE-DRAFT-01.md",
-    "canonical_acceptance_changed": false,
-    "publication": "prohibited for this worker; local commits only; coordinator owns publication/merge",
-    "implementation_checkpoint": "40e5a11",
-    "verification": {
-      "domain": {
-        "passed": 46,
-        "failed": 0,
-        "skipped": 0
-      },
-      "persistence": {
-        "passed": 25,
-        "failed": 0,
-        "skipped": 0
-      },
-      "api": {
-        "passed": 67,
-        "failed": 0,
-        "skipped": 0,
-        "duration": "4m11.723s",
-        "initial": "No API failures in repair gate; prior package timestamp failures remain historical"
-      },
-      "backend_total": 138,
-      "react": {
-        "passed": 136,
-        "failed": 0,
-        "skipped": 0,
-        "initial": "131 passed/1 failed: new test expected Missing flag after deliberately changing it to Unknown; expectation corrected, decimal assertions retained. Then132 passed; final hardening regressions136 passed."
-      },
-      "playwright": {
-        "passed": 18,
-        "failed": 0,
-        "skipped": 0,
-        "scope": "4 real connection/retry +6 mocked ops +6 real anonymous/setup/keyboard +2 routed synthetic profile repair; no external IdP browser claim",
-        "duration": "36.2s"
-      },
-      "python": {
-        "passed": 127,
-        "failed": 0,
-        "skipped": 0,
-        "evidence": "Retained unchanged prior07125a0 evidence (127 passed), not rerun; scripts/dependencies unchanged"
-      },
-      "release_build": "PASS; 0 warnings/errors",
-      "locked_restore": "PASS; locked restore; no dependency or package-lock changes",
-      "lint": "PASS",
-      "typecheck": "PASS",
-      "frontend_build": "PASS",
-      "ef_model_parity": "PASS",
-      "openapi": "Actual built Development host export PASS; strict actual snapshot parity PASS within67/67 API suite; generated types unchanged on regeneration;host stopped",
-      "source_verification": {
-        "files": 269,
-        "chunks": 34958,
-        "mismatches": 0,
-        "windows_extended_root": true,
-        "ordinary_path": "failed path length; no source changes",
-        "evidence": "Retained unchanged prior07125a0 evidence;269 files/34958 chunks/0 mismatches; source artifacts unchanged"
-      },
-      "graphify": "PASS; final AST update no topology changes;2795 nodes/4319 edges/233 communities;9 existing config/data files yield zero nodes;no model call",
-      "logs": ".runtime/repair-*.log (local ignored diagnostics)",
-      "whitespace": "PASS;git diff --check",
-      "host_cleanup": "PASS;no task-owned listeners on5286/5288/4288"
+    "task": "S0-OVERNIGHT-20261102",
+    "branch": "foundation/current-tug-today-20261102",
+    "implementation_target": {
+      "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+      "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03"
     },
-    "unresolved": [
-      "Independent target-commit QA",
-      "Existing 13 moderate frontend npm advisories",
-      "Canonical dependencies and operational role catalogs",
-      "Approved lookups and mandatory/lifecycle policy",
-      "Real IdP/TLS and authenticated external IdP browser gate",
-      "Expert approvals and canonical acceptance"
-    ],
-    "repair_baseline": "07125a01870f147e7b914ac133efd14955ec87a4",
-    "historical_dir_review": "abd9445 independently approved; does not approve profile package",
-    "previous_qa": {
-      "approved": false,
-      "commit": "07125a01870f147e7b914ac133efd14955ec87a4",
-      "issues": [
-        "JavaScript Number precision loss corrupts regulatory measurements",
-        "Incomplete current validation and unvalidated history responses"
-      ]
+    "state": "S0_ENGINEERING_ACCEPTED",
+    "report": "docs/phases/S0-OVERNIGHT-20261102.md",
+    "canonical_acceptance_changed": true,
+    "publication_at_checkpoint": {
+      "acceptanceCheckpointTarget": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+      "observedAt": "2026-11-03T02:53:22.509167+00:00",
+      "stateAtCheckpoint": "Engineering acceptance recorded before PR creation",
+      "lifecycleUrl": "https://github.com/kadirvurgun/Poseidon/pulls",
+      "interpretation": "Historical checkpoint scope; later PR/head checks/merge lifecycle is reported by GitHub, not a permanent current-pending claim"
     },
-    "repair_behavior": [
-      "Exact invariant decimal string wire/editor/storage/fingerprints; bounded normalization without rounding",
-      "Complete current/history runtime validation with safe invalid_contract errors and dirty-edit history retry",
-      "Actual host OpenAPI export and generated consumer contracts; legacy numeric storage exact-token reader"
-    ],
-    "next_step": "Profile engineering accepted exact ee3339e; NAV implementation follows",
-    "independent_qa": {
-      "task": "VESSEL-PROFILE-DRAFT-01",
-      "commit": "ee3339e58747302c5effd9baef8f05b262c33e0e",
-      "approved": true,
-      "issues": [],
-      "reviewer": {
-        "profile": "esra-pro",
-        "role": "independent_qa",
-        "model": "gpt-6.1-sol",
-        "effort": "medium"
-      },
-      "scope": "Local profile engineering only. Future NAV code requires its own checks/review. Canonical, IdP, expert and release gates remain open.",
-      "verification": {
-        "domain": 46,
-        "persistence": 25,
-        "api": 67,
-        "react": 136,
-        "playwright": 18,
-        "failed": 0,
-        "skipped": 0,
-        "python": "Unchanged prior127 PASS evidence retained, not rerun"
-      },
-      "review_finished_at": 1793489633.4527755
-    }
+    "next_step": "Sonraki kaynak kapsamı S1'in özgün 18.01 satırları 14–20, 7 iş / 50 SP'dir. OIDC, tenant/role/vessel/object izolasyonu, audit, S3 ve ClamAV yazılımı zaten mevcut; kaynak-original Not Started kod yokluğu değildir. Öncelikli adaylar kritik write-audit kapsamının somut paydası ve before/after/reason kanıtı, production OIDC secret-reference fallback sınırı ve rejected-file quarantine semantiğinin bağımsız kaynak uzlaştırmasıdır. Hiçbir S1 işi bu S0 kaydıyla kabul edilmiş sayılmaz."
   },
   "nav_workspace_01": {
     "status": "locally_validated_awaiting_independent_qa",
@@ -4208,5 +4373,958 @@
     },
     "current_gate": "PENDING_CI_AND_INDEPENDENT_TARGET_REVIEW",
     "canonical_acceptance_changed": false
+  },
+  "today_tug_current_01": {
+    "task_id": "TODAY-TUG-CURRENT-01",
+    "status": "AUTHORED_UNVERIFIED",
+    "accepted": false,
+    "accepted_sp_added": 0,
+    "phase": "Larger foundation product authoring; tests deferred until intended phase is ready for a substantial PR",
+    "baseline_commit": "610074e",
+    "branch": "foundation/current-tug-today-20261102",
+    "source_baseline": "poseidon-v46.3-20261030",
+    "task": "docs/tasks/today-tug-current-01.md",
+    "sources": "docs/tasks/today-tug-current-01.sources.json",
+    "report": "docs/phases/TODAY-TUG-CURRENT-01.md",
+    "delivered": [
+      "Scoped current Tug jobs and exact request/plan Why lineage in mixed Today feed",
+      "Shared board/detail owning evidence consumer; inaccessible assigned Tug suppresses the whole job before paging",
+      "Current maintenance equipment/owner/job/observation assessment through declared job end",
+      "Accessible TR/EN Tug disclosures and exact guarded job navigation; strict authored wire validation",
+      "Domain, actual-host/PostgreSQL, React, mocked browser and registered signed-provider test sources authored",
+      "Current stored Tug request-owner role is rechecked through the ordinary owning scope/eligibility reader; withdrawal removes it"
+    ],
+    "verification": {
+      "tests": "DEFERRED / NOT RUN",
+      "build_restore_lint_typecheck": "DEFERRED / NOT RUN",
+      "model_openapi_generated_parity": "DEFERRED / NOT RUN; generated files preserved",
+      "browser_provider_lab": "DEFERRED / NOT RUN",
+      "security_scan": "DEFERRED / NOT RUN",
+      "independent_qa_ci": "NOT RUN",
+      "source_maintenance": {
+        "whitespace": "git diff --check exit0; line-ending normalization notices only; not behavioral validation",
+        "graphify": "AST-only graphify update . exit0; no model/API call",
+        "graph_nodes": 8907,
+        "graph_edges": 20035,
+        "graph_communities": 563,
+        "graph_limitations": "74 source/configuration files produced zero AST nodes; HTML omitted above5000 nodes"
+      }
+    },
+    "publication": false,
+    "canonical_progress": "8/970SP;2/121tasks;0/196accepted screens",
+    "next": "Continue source-qualified job-specific Crew/Credential/MSMD/golden composition, supported offline and provider fixture software in the larger bundle; integrated gate and independent exact-target QA/CI before PR/merge",
+    "limitations": [
+      "Canonical readiness derivation remains source-owned and requires specification; local advice is not an approved state machine",
+      "No source qualification, human appointment, operational release, canonical acceptance or provider success is created",
+      "No complete foundation phase or release gate is claimed"
+    ]
+  },
+  "historical_profile_package": {
+    "task": "VESSEL-PROFILE-DRAFT-01",
+    "branch": "agents/9ff6b20f711a4809a7bf5a1a3ced7172",
+    "baseline": "abd9445",
+    "state": "QA repair locally validated; fresh independent target-commit QA pending; NOT ACCEPTED",
+    "report": "docs/phases/VESSEL-PROFILE-DRAFT-01.md",
+    "canonical_acceptance_changed": false,
+    "publication": "prohibited for this worker; local commits only; coordinator owns publication/merge",
+    "implementation_checkpoint": "40e5a11",
+    "verification": {
+      "domain": {
+        "passed": 46,
+        "failed": 0,
+        "skipped": 0
+      },
+      "persistence": {
+        "passed": 25,
+        "failed": 0,
+        "skipped": 0
+      },
+      "api": {
+        "passed": 67,
+        "failed": 0,
+        "skipped": 0,
+        "duration": "4m11.723s",
+        "initial": "No API failures in repair gate; prior package timestamp failures remain historical"
+      },
+      "backend_total": 138,
+      "react": {
+        "passed": 136,
+        "failed": 0,
+        "skipped": 0,
+        "initial": "131 passed/1 failed: new test expected Missing flag after deliberately changing it to Unknown; expectation corrected, decimal assertions retained. Then132 passed; final hardening regressions136 passed."
+      },
+      "playwright": {
+        "passed": 18,
+        "failed": 0,
+        "skipped": 0,
+        "scope": "4 real connection/retry +6 mocked ops +6 real anonymous/setup/keyboard +2 routed synthetic profile repair; no external IdP browser claim",
+        "duration": "36.2s"
+      },
+      "python": {
+        "passed": 127,
+        "failed": 0,
+        "skipped": 0,
+        "evidence": "Retained unchanged prior07125a0 evidence (127 passed), not rerun; scripts/dependencies unchanged"
+      },
+      "release_build": "PASS; 0 warnings/errors",
+      "locked_restore": "PASS; locked restore; no dependency or package-lock changes",
+      "lint": "PASS",
+      "typecheck": "PASS",
+      "frontend_build": "PASS",
+      "ef_model_parity": "PASS",
+      "openapi": "Actual built Development host export PASS; strict actual snapshot parity PASS within67/67 API suite; generated types unchanged on regeneration;host stopped",
+      "source_verification": {
+        "files": 269,
+        "chunks": 34958,
+        "mismatches": 0,
+        "windows_extended_root": true,
+        "ordinary_path": "failed path length; no source changes",
+        "evidence": "Retained unchanged prior07125a0 evidence;269 files/34958 chunks/0 mismatches; source artifacts unchanged"
+      },
+      "graphify": "PASS; final AST update no topology changes;2795 nodes/4319 edges/233 communities;9 existing config/data files yield zero nodes;no model call",
+      "logs": ".runtime/repair-*.log (local ignored diagnostics)",
+      "whitespace": "PASS;git diff --check",
+      "host_cleanup": "PASS;no task-owned listeners on5286/5288/4288"
+    },
+    "unresolved": [
+      "Independent target-commit QA",
+      "Existing 13 moderate frontend npm advisories",
+      "Canonical dependencies and operational role catalogs",
+      "Approved lookups and mandatory/lifecycle policy",
+      "Real IdP/TLS and authenticated external IdP browser gate",
+      "Expert approvals and canonical acceptance"
+    ],
+    "repair_baseline": "07125a01870f147e7b914ac133efd14955ec87a4",
+    "historical_dir_review": "abd9445 independently approved; does not approve profile package",
+    "previous_qa": {
+      "approved": false,
+      "commit": "07125a01870f147e7b914ac133efd14955ec87a4",
+      "issues": [
+        "JavaScript Number precision loss corrupts regulatory measurements",
+        "Incomplete current validation and unvalidated history responses"
+      ]
+    },
+    "repair_behavior": [
+      "Exact invariant decimal string wire/editor/storage/fingerprints; bounded normalization without rounding",
+      "Complete current/history runtime validation with safe invalid_contract errors and dirty-edit history retry",
+      "Actual host OpenAPI export and generated consumer contracts; legacy numeric storage exact-token reader"
+    ],
+    "next_step": "Profile engineering accepted exact ee3339e; NAV implementation follows",
+    "independent_qa": {
+      "task": "VESSEL-PROFILE-DRAFT-01",
+      "commit": "ee3339e58747302c5effd9baef8f05b262c33e0e",
+      "approved": true,
+      "issues": [],
+      "reviewer": {
+        "profile": "esra-pro",
+        "role": "independent_qa",
+        "model": "gpt-6.1-sol",
+        "effort": "medium"
+      },
+      "scope": "Local profile engineering only. Future NAV code requires its own checks/review. Canonical, IdP, expert and release gates remain open.",
+      "verification": {
+        "domain": 46,
+        "persistence": 25,
+        "api": 67,
+        "react": 136,
+        "playwright": 18,
+        "failed": 0,
+        "skipped": 0,
+        "python": "Unchanged prior127 PASS evidence retained, not rerun"
+      },
+      "review_finished_at": 1793489633.4527755
+    }
+  },
+  "tug_crew_composition_01": {
+    "task_id": "TUG-CREW-COMPOSITION-01",
+    "status": "AUTHORED_UNVERIFIED",
+    "accepted": false,
+    "accepted_sp_added": 0,
+    "phase": "Larger foundation authoring; job-window source-qualified minimum Crew role composition authored, all execution deferred",
+    "branch": "foundation/current-tug-today-20261102",
+    "baseline_commit": "610074e",
+    "task": "docs/tasks/tug-crew-composition-01.md",
+    "sources": "docs/tasks/tug-crew-composition-01.sources.json",
+    "report": "docs/phases/TUG-CREW-COMPOSITION-01.md",
+    "delivered": [
+      "Shared current independent source/file/control/verification qualification reader",
+      "Personal source-defined criteria separated from MSMD aggregate role counts",
+      "Job start/end current assignment/position/credential/source coverage with distinct-person and cross-role review",
+      "Explicit unknown/false endorsement handling with current reference/expiry constraints",
+      "Permission-gated current minimum-role summaries in board/detail/Today Why and strict TR/EN UI",
+      "Domain, ordinary actual-host/PostgreSQL, React/wire and retained signed-provider browser test sources authored"
+    ],
+    "verification": {
+      "tests": "DEFERRED / NOT RUN",
+      "build_restore_lint_typecheck": "DEFERRED / NOT RUN",
+      "generated_model_api_parity": "DEFERRED / NOT RUN; generated output preserved",
+      "browser_provider_lab": "DEFERRED / NOT RUN",
+      "security_scan": "DEFERRED / NOT RUN",
+      "independent_qa_ci": "NOT RUN",
+      "source_maintenance": {
+        "whitespace": "git diff --check exit0; line-ending notices only",
+        "graphify": "Final AST-only graphify update . exit0; no model/API call",
+        "nodes": 8994,
+        "edges": 20248,
+        "communities": 541,
+        "limitations": "75 source/configuration files have zero AST nodes; HTML omitted above5000 nodes; no product validation"
+      }
+    },
+    "publication": false,
+    "canonical_progress": "8/970SP;2/121tasks;0/196accepted screens",
+    "selected_scope": "40tasks/272SP unchanged",
+    "remaining": [
+      "Remaining selected job-context criterion bindings and current source/credential consumers; later full clinical/training/work-rest/familiarization/briefing workflows are separate scope, not invented047 predecessors",
+      "Complete golden/multi-human/real-provider fixture composition",
+      "Additional defined offline adapters",
+      "Whole-branch generated/model/contract integration",
+      "External source specifications and real Marine/clinical/legal/privacy/provider/pilot decisions where required"
+    ],
+    "next": "Continue remaining source-dependent foundation software in the same larger bundle; one integrated gate before PR, then independent exact-target QA and required CI",
+    "preview_followup": {
+      "report": "docs/phases/ENTERPRISE-WORKSPACE-01.md",
+      "note": "Subsequent user-requested local preview required builds/migrations/seed/startup; successful API build includes explicit null/empty MSMD role guard. Original deferred test checkpoint retained; no suite or acceptance."
+    }
+  },
+  "enterprise_workspace_01": {
+    "task_id": "ENTERPRISE-WORKSPACE-01",
+    "status": "AUTHORED_UNVERIFIED",
+    "accepted": false,
+    "accepted_sp_added": 0,
+    "phase": "Larger foundation authoring; enterprise design and requested local preview; integrated gate deferred",
+    "branch": "foundation/current-tug-today-20261102",
+    "baseline_commit": "610074e",
+    "task": "docs/tasks/enterprise-workspace-01.md",
+    "sources": "docs/tasks/enterprise-workspace-01.sources.json",
+    "report": "docs/phases/ENTERPRISE-WORKSPACE-01.md",
+    "delivered": [
+      "Shared authorized sidebar/context topbar/search and TR/EN chrome across five workspace families",
+      "Manual shadcn/ui foundations, Tailwind4, Radix/CVA, Lucide and pinned dependency lock",
+      "Actual page-scoped directory/Today metrics and lazy SVG ECharts distribution with text fallback",
+      "Guarded dirty navigation, actor/scope invalidation, mobile focus/inert/Escape restoration",
+      "Meaningful component/contract test sources authored; no suites executed"
+    ],
+    "preview": {
+      "url": "https://localhost:5443/app/fleet",
+      "authorization": "Explicit user request to run the app for inspection; preview builds only",
+      "backend_api_dbmigrator": "Locked restore and Release builds PASS; 0 warnings/errors after nullable-role guard repair",
+      "frontend": "TypeScript and production build PASS; current static distribution served",
+      "runtime": "Local migration/idempotent synthetic seed and strict-TLS health startup succeeded",
+      "identity": "Owned synthetic provider/database reused; ignored private preview config adds ordinary module read access only",
+      "browser": "User reported viewing; automated sign-in not established; no automated visual acceptance"
+    },
+    "verification": {
+      "tests": "DEFERRED / NOT RUN",
+      "lint_generated_model_contract_parity": "DEFERRED / NOT RUN",
+      "security_scan": "DEFERRED / NOT RUN",
+      "independent_qa_ci": "NOT RUN",
+      "navigation_maintenance": {
+        "whitespace": "git diff --check exit0 after one trailing-space repair; line-ending notices only",
+        "graphify": "AST-only graphify update . exit0; no model/API calls",
+        "nodes": 9114,
+        "edges": 20475,
+        "communities": 550,
+        "limitations": "77 source/configuration files have zero AST nodes; HTML omitted above5000 nodes; navigation maintenance only"
+      },
+      "preview_health": "Strict TLS /health/live HTTP200; availability only, not a test suite"
+    },
+    "limitations": [
+      "Main frontend chunk exceeds500kB; later bundle review needed",
+      "Install reported13moderate advisories; full dependency/security review deferred",
+      "Existing family/dirty/offline/authority regression and visual/accessibility checks deferred",
+      "Broader selected foundation software and external authority gates remain open"
+    ],
+    "publication": false,
+    "canonical_progress": "8/970SP;2/121tasks;0/196accepted screens",
+    "selected_scope": "40tasks/272SP unchanged",
+    "next": "Continue source-supported workflows/fixtures/offline/integration; one integrated gate before substantial PR, then independent exact-target QA and required CI"
+  },
+  "enterprise_tug_workspace_01": {
+    "task_id": "ENTERPRISE-TUG-WORKSPACE-01",
+    "status": "AUTHORED_UNVERIFIED",
+    "accepted": false,
+    "accepted_sp_added": 0,
+    "phase": "Larger foundation authoring; enterprise Tug board/detail presentation authored; integrated gate deferred",
+    "branch": "foundation/current-tug-today-20261102",
+    "baseline_commit": "610074e",
+    "task": "docs/tasks/enterprise-tug-workspace-01.md",
+    "sources": "docs/tasks/enterprise-tug-workspace-01.sources.json",
+    "report": "docs/phases/ENTERPRISE-TUG-WORKSPACE-01.md",
+    "delivered": [
+      "Responsive job board with guarded job links, current-page metrics and progressive owning evidence",
+      "Requested UTC versus draft/approved times remain distinct; exact BP strings and Unknown assignment coverage retained",
+      "Combined server-side search/priority/pagination and offline refresh state",
+      "Grouped request detail, write-gated edit callback, draft completeness and revision lineage",
+      "Foreign job destinations, duplicate job/assignment IDs and malformed explanation arrays rejected",
+      "Component/wire tests and actual-host keyboard/mobile assertion sources authored"
+    ],
+    "verification": {
+      "preview_build": "PASS; TypeScript and Vite production build; 0 test execution",
+      "main_js_kb": 837.23,
+      "main_js_gzip_kb": 243.67,
+      "echarts_js_kb": 435.13,
+      "css_kb": 70.61,
+      "tests": "DEFERRED / NOT RUN",
+      "lint_generation_model_security": "DEFERRED / NOT RUN",
+      "browser_visual_a11y": "DEFERRED / NOT RUN",
+      "independent_qa_ci": "NOT RUN",
+      "navigation_maintenance": {
+        "whitespace": "git diff --check exit0 after one trailing-space repair; line-ending notices only",
+        "graphify": "AST-only graphify update . exit0; no model/API calls",
+        "nodes": 9114,
+        "edges": 20475,
+        "communities": 550,
+        "limitations": "77 source/configuration files have zero AST nodes; HTML omitted above5000 nodes; navigation maintenance only"
+      },
+      "preview_health": "Strict TLS /health/live HTTP200; availability only, not a test suite"
+    },
+    "limitations": [
+      "Main chunk>500kB and earlier install-reported13moderate advisories remain open",
+      "No automated visual/accessibility or full family regression evidence",
+      "No new canonical operational state/readiness derivation or production authority",
+      "Broader foundation software/fixture/offline/integration work remains incomplete"
+    ],
+    "publication": false,
+    "canonical_progress": "8/970SP;2/121tasks;0/196accepted screens",
+    "selected_scope": "40tasks/272SP unchanged",
+    "next": "Continue remaining source-supported owning workflows, fixtures/offline/integration; one integrated gate before substantial PR, then independent exact-target QA and required CI"
+  },
+  "enterprise_crew_workspace_01": {
+    "task_id": "ENTERPRISE-CREW-WORKSPACE-01",
+    "status": "AUTHORED_UNVERIFIED",
+    "accepted": false,
+    "accepted_sp_added": 0,
+    "phase": "Enterprise UI authoring checkpoint; current priority S0 closure",
+    "branch": "foundation/current-tug-today-20261102",
+    "baseline_commit": "610074e",
+    "task": "docs/tasks/enterprise-crew-workspace-01.md",
+    "sources": "docs/tasks/enterprise-crew-workspace-01.sources.json",
+    "report": "docs/phases/ENTERPRISE-CREW-WORKSPACE-01.md",
+    "verification": {
+      "preview_build": "PASS; coordinated TypeScript/Vite build after correcting two Testing Library exact-option type errors; no suite executed",
+      "main_js_kb": 856.02,
+      "main_js_gzip_kb": 249.72,
+      "echarts_js_kb": 435.13,
+      "css_kb": 81.36,
+      "tests_lint_browser_visual_a11y_generation_security_qa_ci": "DEFERRED / NOT RUN",
+      "source_maintenance": "git diff --check exit0; AST snapshot9171nodes/20641edges/594communities before S0 code continuation"
+    },
+    "limitations": [
+      "Current authored UI is not accepted canonical screen/sprint work",
+      "Main chunk>500kB; earlier13moderate npm advisories await phase dependency/security gate",
+      "Server-wide large-list search/pagination and remaining source-defined owning behavior not closed by local refinement"
+    ],
+    "publication": false,
+    "canonical_progress": "8/970SP;2/121tasks;0/196accepted screens",
+    "selected_scope": "40tasks/272SP unchanged",
+    "next": "User reprioritized S0 closure; larger UI extension paused at authored checkpoint"
+  },
+  "enterprise_technical_workspace_01": {
+    "task_id": "ENTERPRISE-TECHNICAL-WORKSPACE-01",
+    "status": "AUTHORED_UNVERIFIED",
+    "accepted": false,
+    "accepted_sp_added": 0,
+    "phase": "Enterprise UI authoring checkpoint; current priority S0 closure",
+    "branch": "foundation/current-tug-today-20261102",
+    "baseline_commit": "610074e",
+    "task": "docs/tasks/enterprise-technical-workspace-01.md",
+    "sources": "docs/tasks/enterprise-technical-workspace-01.sources.json",
+    "report": "docs/phases/ENTERPRISE-TECHNICAL-WORKSPACE-01.md",
+    "verification": {
+      "preview_build": "PASS; coordinated TypeScript/Vite build after correcting two Testing Library exact-option type errors; no suite executed",
+      "main_js_kb": 856.02,
+      "main_js_gzip_kb": 249.72,
+      "echarts_js_kb": 435.13,
+      "css_kb": 81.36,
+      "tests_lint_browser_visual_a11y_generation_security_qa_ci": "DEFERRED / NOT RUN",
+      "source_maintenance": "git diff --check exit0; AST snapshot9171nodes/20641edges/594communities before S0 code continuation"
+    },
+    "limitations": [
+      "Current authored UI is not accepted canonical screen/sprint work",
+      "Main chunk>500kB; earlier13moderate npm advisories await phase dependency/security gate",
+      "Server-wide large-list search/pagination and remaining source-defined owning behavior not closed by local refinement"
+    ],
+    "publication": false,
+    "canonical_progress": "8/970SP;2/121tasks;0/196accepted screens",
+    "selected_scope": "40tasks/272SP unchanged",
+    "next": "User reprioritized S0 closure; larger UI extension paused at authored checkpoint"
+  },
+  "s0_overnight_20261102": {
+    "status": "ACCEPTED_S0_ENGINEERING_ONLY",
+    "accepted": true,
+    "phase": "S0 engineering accepted; later production/legal/safety gates open",
+    "accepted_sp": 53,
+    "total_sp": 53,
+    "percent": 100,
+    "remaining_sp": 0,
+    "task_count": 13,
+    "accepted_tasks": 13,
+    "report": "docs/reports/s0-closure-gap-2026-11-02.md",
+    "user_progress_report": "docs/reports/project-progress-2026-11-02.md",
+    "scope": "DEV001..012 +DEV116; literal S0 contracts/gates, not entire40task272SP foundation or later production/pilot",
+    "work": [
+      "Independent exact-source gap audit",
+      "DEV007 actual149-chain validation hardening",
+      "DEV010 dependency-range parsing repair",
+      "DEV012 actual evidence/independent-review closure gate authoring",
+      "DEV003/004/005/006/008/009/011/116 current contract/engineering reconciliation"
+    ],
+    "test_cadence": "Phase authoring finished; coordinated execution authorized at S0 phase gate; failures/interruption retained, no skipped checks presented as PASS",
+    "publication": false,
+    "phase_report": "docs/phases/S0-OVERNIGHT-20261102.md",
+    "initial_candidate_commit": "d0e6d0dbc2c2b5d3873d46ea4a405e176e772e3e",
+    "initial_candidate_tree": "b4c3876080a77c7fb17dc9b63b0c84351c0bad1b",
+    "initial_qa": "REJECTED_FOR_ACCEPTANCE_ON_THIS_TARGET; actual failures retained",
+    "current_target": {
+      "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+      "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03"
+    },
+    "verification": {
+      "scope": "Current exact-F engineering acceptance evidence",
+      "target": {
+        "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+        "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03"
+      },
+      "required_ci": {
+        "run": 41560927341,
+        "url": "https://github.com/kadirvurgun/Poseidon/actions/runs/41560927341",
+        "conclusion": "SUCCESS",
+        "successful_jobs": 4,
+        "required_commands": 19,
+        "api_integration": {
+          "passed": 547,
+          "failed": 0,
+          "skipped": 0,
+          "seconds": 791.336
+        },
+        "api_unit": {
+          "passed": 91,
+          "failed": 0,
+          "skipped": 0,
+          "seconds": 2.863
+        },
+        "python_native": 372,
+        "ordinary_browser": "50/50",
+        "supporting_native_counts_and_skips": "UNAVAILABLE_NOT_INFERRED",
+        "published_build_artifacts": 2,
+        "published_count_artifacts": 1
+      },
+      "signed_final": {
+        "passed": 122,
+        "failed": 0,
+        "pending": 0,
+        "skipped": 0,
+        "projects": 2,
+        "cases_each": 61,
+        "groups": 10,
+        "identity_mismatches": 0,
+        "fingerprint_mismatches": 0,
+        "native_sha256": "1e295adbc728bf936043917a6444c56fbf5733b47b4fab7f79e65a7ca5cb287f",
+        "final_catalog_state": "Withdrawn as original final journeys require"
+      },
+      "baseline": {
+        "passed": 2,
+        "failed": 0,
+        "seconds": 25,
+        "skipped_count": "UNAVAILABLE_NOT_INFERRED"
+      },
+      "tls": {
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0
+      },
+      "definitions": {
+        "completed_commands": 6,
+        "passed_commands": 6,
+        "test_cases_claimed": 0,
+        "meaning": "PASS_DEFINITION_ONLY"
+      },
+      "local_frontend_same_source_support": {
+        "passed": 954,
+        "failed": 0,
+        "pending": 0,
+        "todo": 0,
+        "unhandled": 0,
+        "module_errors": 0,
+        "scope": "Earlier closed local run, exact source equality with F; not inferred CI native total"
+      },
+      "independent_current_p0": {
+        "unresolved": 0,
+        "scope": "Original 13-task/53-SP S0 engineering adoption plus regressions of currently exposed foundation software. This is a bounded independent assessment, not proof of universal absence of defects or production/legal/safety compliance.",
+        "sha256": "f5ed479005904579ba94b303e1249024440746f2e8687c576ecaaa6b6da658d1"
+      },
+      "gate": {
+        "accepted": true,
+        "archive_path": "docs/evidence/s0-20261103-3ca49a3/gate-result.json",
+        "receipts": 52
+      },
+      "historical_verification": "historical_verification_before_s0_F",
+      "publication_at_checkpoint": {
+        "acceptanceCheckpointTarget": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+        "observedAt": "2026-11-03T02:53:22.509167+00:00",
+        "stateAtCheckpoint": "Engineering acceptance recorded before PR creation",
+        "lifecycleUrl": "https://github.com/kadirvurgun/Poseidon/pulls",
+        "interpretation": "Historical checkpoint scope; later PR/head checks/merge lifecycle is reported by GitHub, not a permanent current-pending claim"
+      }
+    },
+    "next": "Sonraki kaynak kapsamı S1'in özgün 18.01 satırları 14–20, 7 iş / 50 SP'dir. OIDC, tenant/role/vessel/object izolasyonu, audit, S3 ve ClamAV yazılımı zaten mevcut; kaynak-original Not Started kod yokluğu değildir. Öncelikli adaylar kritik write-audit kapsamının somut paydası ve before/after/reason kanıtı, production OIDC secret-reference fallback sınırı ve rejected-file quarantine semantiğinin bağımsız kaynak uzlaştırmasıdır. Hiçbir S1 işi bu S0 kaydıyla kabul edilmiş sayılmaz.",
+    "verification_history_before_final_F": {
+      "python": "355/355 PASS on initial clean candidate",
+      "source_definitions": "6 PASS_DEFINITION_ONLY, not acceptance",
+      "backend_build": "Local dirty repair PASS, zero diagnostics",
+      "domain_unit": "566/566 PASS local dirty repair",
+      "persistence_unit": "27/27 PASS local dirty repair",
+      "api_unit": "Clean1ab3 actual CI native91/91PASS0fail/skip",
+      "persistence_postgres": "75/75 PASS, 598.174s local dirty repair",
+      "ef_model_parity": "PASS local dirty repair",
+      "actual_api_contract": "157 paths/185 schemas; actual host export and TypeScript generation PASS local dirty repair",
+      "frontend_typecheck_build_lint": "PASS on frozen lazy-chart fix; full lint198files zero errors/warnings",
+      "frontend_components": "923/923 PASS;0failed/pending/skipped/unhandled; exact stable frontend source snapshot f4dd8b9ad21b15c7c4081e8e55fd5ab83af48725f68a4564d58f83d95873c4f4; local dirty repair only",
+      "api_integration": "Historical original547/6 and repaired13/13 kept; clean9e and clean1ab3 actual CI native547/547PASS0fail/skip, separate exact targets",
+      "ordinary_browser": "50/50 PASS0skip/flaky on rebuilt lazy-chart production dist;20:25:43–20:28:48UTC; local dirty repair",
+      "security_preflight": "Actual final staged repository and production client scans PASS with164 externally fetched protected source-review pins; next changed-target CI pending",
+      "final_independent_qa_ci": "Three push CI targets SUCCESS; final current-target full122, independent P0 and authentic task acceptance remain PENDING",
+      "signed_provider": "Actual manager/restricted login2/2+TLS3/3 PASS; diagnostic30/30 separate from final122; six genuine command-produced documents independently VERIFIED by distinct synthetic actors, current consumer assertions PASS; full baseline manager/restricted journeys and final fresh61x2 manifest pending",
+      "artifact": "Actual API development artifact publish PASS local dirty repair",
+      "source_lineage": "Fresh verify_sources.py PASS active byte/chunk lineage",
+      "legacy_fixture_isolation": "Actual14/14unit+1/1PostgreSQL and7 guarded CLI outcomes PASS; Test-only isolated fixture identifiers; no seeded verified safety evidence",
+      "mobile_navigation_repair": "Later dirty CSS stacking fix: actual production build PASS and real pointer/keyboard2/2 desktop/mobile regression PASS; fresh exact-target CI pending",
+      "required_ci": {
+        "commit": "e29346642fb09f4cdddeff61846c1a4428179cb4",
+        "tree": "2a24504364ba16c3a6776f373bcf0f9ad0cee914",
+        "run": 41546921401,
+        "url": "https://github.com/kadirvurgun/Poseidon/actions/runs/41546921401",
+        "conclusion": "SUCCESS",
+        "jobs": "4/4SUCCESS",
+        "api_integration": "547/547PASS;0fail/skip;845.465s",
+        "api_unit": "91/91PASS;0fail/skip;3.419s",
+        "python": "372 native tests",
+        "ordinary_browser": "50 planned/50 passed",
+        "other_native_counts": "UNAVAILABLE_NOT_INFERRED",
+        "required_commands": 19,
+        "published_artifacts": 2,
+        "raw_logs_persisted": false
+      },
+      "required_ci_history": [
+        {
+          "commit": "9e982da0a134881a6f40752f4ab78c1883d021a0",
+          "tree": "c156c7064d36b37f0c31703b486dccf096bf72f1",
+          "run": 41523972791,
+          "url": "https://github.com/kadirvurgun/Poseidon/actions/runs/41523972791",
+          "conclusion": "SUCCESS",
+          "jobs": "4/4SUCCESS",
+          "api_integration": "547/547PASS;0skip/fail",
+          "api_unit": "91/91PASS;0skip/fail",
+          "other_native_counts": "UNAVAILABLE_NOT_INFERRED"
+        },
+        {
+          "commit": "1ab3fc428ff333360236700799a0c6f1a3b7d8c3",
+          "tree": "747f96e01882f97fe0e6f0eac1238e9d476bcb88",
+          "run": 41530719216,
+          "url": "https://github.com/kadirvurgun/Poseidon/actions/runs/41530719216",
+          "conclusion": "SUCCESS",
+          "jobs": "4/4SUCCESS",
+          "api_integration": "547/547PASS;0fail/skip;1037.473s",
+          "api_unit": "91/91PASS;0fail/skip;4.265s",
+          "python": "355 native tests",
+          "ordinary_browser": "50 planned/50 passed native cases",
+          "other_native_counts": "UNAVAILABLE_NOT_INFERRED",
+          "raw_logs_persisted": false
+        },
+        {
+          "commit": "52a2ccfdcbc263f43bda149d1baa7843967d684a",
+          "tree": "530738845efeeaee1794e9ca508d9a39204fdfb5",
+          "run": 41537366424,
+          "url": "https://github.com/kadirvurgun/Poseidon/actions/runs/41537366424",
+          "conclusion": "SUCCESS",
+          "jobs": "4/4SUCCESS",
+          "api_integration": "547/547PASS;0fail/skip;734.937s",
+          "api_unit": "91/91PASS;0fail/skip;3.073s",
+          "python": "355 native tests",
+          "ordinary_browser": "50 planned/50 passed native cases",
+          "other_native_counts": "UNAVAILABLE_NOT_INFERRED",
+          "published_artifacts": 2,
+          "raw_logs_persisted": false
+        }
+      ],
+      "source_definitions_current_checkpoint": "Clean1ab3 actual6/6 definition commands exit0; PASS_DEFINITION_ONLY,0testcases claimed; no acceptance",
+      "independent_definition_adoption": "Actual separate QA source/engineering adoption for13 original task definitions on clean1ab3 and62 gitblob inputs; technical plans only, runtimeP0 and final acceptance withheld",
+      "signed_provider_current_checkpoint": "CleanD fullmanager/restricted2/2PASS33s andstrictTLS3/3PASS0skip; separate from122",
+      "signed_diagnostic_after_checkpoint": "Dirty repaired diagnostic six owning/compliance consumers +desktop qualification PASS; human assigned/scoped cases4/4PASS ondesktop+narrow, actualdecisionHTTP200 RECORDED/UNASSESSED, offline noPOST and reconnectsamevalue. Selected fifth qualification remainsPENDING afterintentional safe-boundary stop; original failures retained. Mixed diagnostic, not coherent final122 or acceptance",
+      "registered_precondition_repairs": "Six invalid source-register navigations corrected to actualsources with explicit EN; exact native roles preserve accessible names across selects/textareas; native identity disclosure and Tug named-card selectors; dedicated ordinary-command no-evaluation Ship for unchanged orphan-negative assertion",
+      "signed_final_attempt_history": [
+        {
+          "target": "52a2ccfdcbc263f43bda149d1baa7843967d684a",
+          "attempt": 1,
+          "passed": 30,
+          "failed": 0,
+          "pending": 92,
+          "reason": "Real owning job window ended; stopped before setup, genuine ordinary successor within existing policy bounds; no partial reuse"
+        },
+        {
+          "target": "52a2ccfdcbc263f43bda149d1baa7843967d684a",
+          "attempt": 2,
+          "passed": 46,
+          "failed": 1,
+          "pending": 75,
+          "reason": "Native Firefox IndexedDB UnknownError/NS_ERROR_FILE_ACCESS_DENIED before upgrade; enrollment200/privacyPASS; preserved failed attempt"
+        }
+      ],
+      "offline_profile_acl_repair": {
+        "scope": "Test-only fresh owned profile; product/API/frontend/crypto/SW/TLS/sandbox unchanged",
+        "diagnosis": "All22context/identity predicatesPASS andSHA256PASS; harmless emptyDB failedbefore/afterlogin andshortinsideprofile66chars; longeroutsideprofile111charspassed; protected3privilegedprincipalinsideprofilepassesnativeopen/upgrade/delete",
+        "boundary": "Only CurrentUser/SYSTEM/Administrators FullControl on exact empty ownedouter/profile; exactACLreadback; original privateRoot SDDLhashunchanged; no broadergrants/newCAroots/NSScopy",
+        "unit": "Actual17/17PASS0fail/skip,.835s; includes realWindowsjunction, externalhardlink, wrongowner/nonempty/pathescape/broadACL/readback/racemarker negatives",
+        "original_case": "Actual protected-medical offline case PASS onDproductbits+dirtyhelper; enroll200/keybind200; nativeIDB14open/33transactions0errors; actualSWactivated; original offline/privacy/reconnect/conflict assertions retained; browser startedbeforefinalhardlinkguardedit, native-recoverydiagnosisonly; finalguardbytesrequirefreshE122",
+        "scope_limit": "Local narrow repair evidence only; no partial122 reuse or phase acceptance; new clean-target full122/CI pending"
+      },
+      "signed_final_E": {
+        "status": "CLOSED_INCOMPLETE",
+        "passed": 47,
+        "failed": 1,
+        "pending": 74,
+        "previous_diagnostic_reused": false
+      },
+      "signed_remaining_E_diagnostic": {
+        "scope": "SEPARATE_DIAGNOSTIC_NOT_ACCEPTANCE",
+        "planned": 74,
+        "completed": 72,
+        "passed": 45,
+        "failed": 27,
+        "infrastructure_pending": 2,
+        "previous_diagnostic_reused": false
+      },
+      "frontend_F_dirty": {
+        "scope": "LOCAL_DIRTY_REPAIR_NOT_ACCEPTANCE",
+        "build": "PASS",
+        "lint_errors": 0,
+        "lint_warnings": 0,
+        "total": 954,
+        "passed": 954,
+        "failed": 0,
+        "pending": 0,
+        "todo": 0,
+        "unhandled_errors": 0,
+        "module_errors": 0,
+        "source_stable": true,
+        "narrow_passed": 20,
+        "first_failure_retained": "954total/949PASS/5FAIL; buildTS2769 and lintwarning retained"
+      },
+      "signed_F_affected32": {
+        "scope": "CLOSED_DIAGNOSTIC_NOT_ACCEPTANCE",
+        "executed": 32,
+        "passed": 24,
+        "failed": 8,
+        "pending": 0,
+        "cause": "Two obsolete exact Stay labels; native Keepediting preserves draft; failure history retained"
+      },
+      "signed_F_tug8": {
+        "scope": "CLOSED_DIAGNOSTIC_NOT_ACCEPTANCE",
+        "executed": 8,
+        "passed": 2,
+        "failed": 6,
+        "pending": 0,
+        "cause": "Historical article selector ambiguous with newly composed crew evidence; exact historical name preserves same revision/reference assertion"
+      },
+      "signed_F_tug6": {
+        "scope": "CLOSED_DIAGNOSTIC_NOT_ACCEPTANCE",
+        "executed": 6,
+        "passed": 6,
+        "failed": 0,
+        "pending": 0,
+        "retries": 0,
+        "previous_results_reused": false
+      }
+    },
+    "gate_archive_path": "docs/evidence/s0-20261103-3ca49a3/gate-result.json",
+    "candidate_archive_path": "docs/evidence/s0-20261103-3ca49a3/candidate.json",
+    "publication_at_checkpoint": {
+      "acceptanceCheckpointTarget": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+      "observedAt": "2026-11-03T02:53:22.509167+00:00",
+      "stateAtCheckpoint": "Engineering acceptance recorded before PR creation",
+      "lifecycleUrl": "https://github.com/kadirvurgun/Poseidon/pulls",
+      "interpretation": "Historical checkpoint scope; later PR/head checks/merge lifecycle is reported by GitHub, not a permanent current-pending claim"
+    }
+  },
+  "historical_verification_before_s0_F": {
+    "release_build": "passed",
+    "backend_unit_guard_tests": {
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0
+    },
+    "postgresql_integration_tests": {
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0,
+      "database": "PostgreSQL 18.6",
+      "runtime": "Docker; real containers"
+    },
+    "document_import_tests": {
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0
+    },
+    "remote_ci": "PRs #3, #4, #5 and #6 passed all their checks before merge",
+    "complete_identity_http_audit": "not-yet-implemented",
+    "independent_static_qa": "Exact target commits approved for merged subpackages",
+    "git_push": "Verified using repository-local kadirvurgun identity",
+    "api_host_integration_tests": {
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "contract": "committed OpenAPI snapshot matches real host"
+    },
+    "frontend": {
+      "component_tests_passed": 12,
+      "lint": "passed",
+      "typecheck": "passed",
+      "build": "passed",
+      "typescript": "5.9.3 latest compatible with lint and OpenAPI generator"
+    },
+    "playwright": {
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "browser": "Chromium desktop + mobile viewport",
+      "backend": "real API; retry case injects first transport failure only",
+      "workers": 1
+    },
+    "continuous_service": "Poseidon-HourlyQuota registered, hourly metadata checks; development coordinator not yet activated",
+    "main_protection": {
+      "verified": true,
+      "strict": true,
+      "required_checks": [
+        "persistence-and-security",
+        "frontend-and-browser",
+        "windows-automation"
+      ],
+      "enforce_admins": true,
+      "allow_force_pushes": false,
+      "allow_deletions": false
+    },
+    "application_foundation": {
+      "code_commit": "1ab836e0309d573b259294cffa899cf66ea64a7c",
+      "pr": "https://github.com/kadirvurgun/Poseidon/pull/3",
+      "independent_qa": "approved exact code commit and DEV-001/DEV-002 source AC",
+      "remote_ci": [
+        "https://github.com/kadirvurgun/Poseidon/actions/runs/41090598675",
+        "https://github.com/kadirvurgun/Poseidon/actions/runs/41090658974"
+      ],
+      "conclusion": "success",
+      "artifacts": [
+        "api-development-build",
+        "frontend-development-build",
+        "playwright-evidence"
+      ]
+    },
+    "analysis_admission": {
+      "files": 269,
+      "text_files": 125,
+      "chunks": 34958,
+      "source_manifest_hashes_verified": 266,
+      "mismatches": 0,
+      "python_behavior_tests_passed": 11,
+      "embedded_history_adopted_as_runtime": false,
+      "independent_qa": "approved exact976b822 in kadir-plus profile",
+      "remote_ci": [
+        "https://github.com/kadirvurgun/Poseidon/actions/runs/41134312270",
+        "https://github.com/kadirvurgun/Poseidon/actions/runs/41134804125"
+      ],
+      "merge_commit": "e11828319c2e24e4712b04590e1f57c7cbf364a2"
+    },
+    "hourly_quota": {
+      "state": "installed; scheduled task LastTaskResult0",
+      "preferred": "esra-pro",
+      "reserve_used_percent": 85,
+      "interval_seconds": 3600,
+      "model_calls_per_metadata_check": 0,
+      "continuous_development": "separate coordinator package under implementation",
+      "task_name": "Poseidon-HourlyQuota",
+      "local_registration_verified": true,
+      "independent_qa": "approved exact06c916e",
+      "pr": "https://github.com/kadirvurgun/Poseidon/pull/5",
+      "merge_commit": "d295262dcb0886ed4fa9c0299361d67568b36aec"
+    },
+    "draft_required_data": {
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0,
+      "commit": "acddf09c7d6138ea01f3c6146a726c6743393922",
+      "independent_qa": "approved exact commit",
+      "pr": "https://github.com/kadirvurgun/Poseidon/pull/6",
+      "remote_ci": [
+        "https://github.com/kadirvurgun/Poseidon/actions/runs/41136477687",
+        "https://github.com/kadirvurgun/Poseidon/actions/runs/41136647066"
+      ],
+      "scope": "pure draft-data library; no business submit authority"
+    },
+    "hourly_scheduler_actual": {
+      "task": "Poseidon-HourlyQuota",
+      "last_observed_run": "2026-10-31T11:10:23+03:00",
+      "last_exit_code": 0,
+      "interval_minutes": 60,
+      "profile_preference": "esra-pro",
+      "quota_reserve_percent": 85,
+      "requires": "logged-in awake Windows host"
+    },
+    "nightly_coordinator": {
+      "state": "Merged PR #7; first real ADR job passed local full gate, independent QA adapter reconciliation pending",
+      "task_limit": 4,
+      "model_call_limit": 8,
+      "maximum_hours": 8,
+      "publish_gate": "exact commit independent QA plus all expected CI checks",
+      "python": {
+        "passed": 94,
+        "failed": 0,
+        "skipped": 0
+      },
+      "windows_installer": {
+        "passed": 7,
+        "failed": 0,
+        "skipped": 0
+      },
+      "local_core": {
+        "backend": 43,
+        "component": 12,
+        "playwright": 4,
+        "failed": 0,
+        "skipped": 0
+      },
+      "followup": {
+        "initial_ci": "Linux tool-path fixture assumption failed, corrected without weakening assertion",
+        "independent_qa": "resolved; approved exact9d72897",
+        "focused_python_passed": 14,
+        "vitest_inverted_failure_probe_exit": 1,
+        "remote_ci": "all four checks passed on push and PR"
+      },
+      "commit": "9d72897b6c4de93cd6fb62686626742d1b9a2895",
+      "independent_qa": "approved exact commit",
+      "pr": "https://github.com/kadirvurgun/Poseidon/pull/7",
+      "merge_commit": "23a698eae690138fbebcd6833a2415bbf727ba00"
+    },
+    "ops_dashboard": {
+      "state": "Merged PR8 after exact96dd994 independent Esra QA and all4 push/PR CI checks",
+      "url": "http://127.0.0.1:5173/agents",
+      "backend_passed": 43,
+      "component_passed": 34,
+      "playwright_passed": 10,
+      "playwright_scope": "4 real .NET API smoke plus 6 synthetic ops UI contract tests",
+      "python_final": {
+        "passed": 122,
+        "failed": 0,
+        "skipped": 0
+      },
+      "windows_installer_passed": 10,
+      "pr": "https://github.com/kadirvurgun/Poseidon/pull/8",
+      "model_policy": "automation/model-policy.json",
+      "actual_model_review": "Kadir Plus: gpt-6-luna medium, two actual read-only reviews; neither approved",
+      "profiles_used": {
+        "esra-pro": "runtime implementation bb39655",
+        "kadir-plus": "UI implementation 024dc08"
+      },
+      "scheduler": "installer construction verified; actual persistent development registration pending",
+      "canonical_acceptance_changed": false,
+      "merge_commit": "cc92b744eb64b86b002f17d44b45b14cd4205653",
+      "independent_qa_commit": "96dd994182093647340ad4edde977e3599de7736",
+      "routing": "Esra primary for all roles; Kadir only on verified Esra quota reserve and own eligible quota"
+    },
+    "foundation_app": {
+      "state": "Merged PR #10 at 0bf7914; historical foundation evidence does not verify DIR-WORKSPACE-01",
+      "task": "FOUNDATION-APP-01",
+      "source": [
+        "18.01 Backlog row14 DEV013/T-S1-001",
+        "18.01 Backlog row15 DEV014/T-S1-002",
+        "14.01 ERD paragraph7"
+      ],
+      "profile": "esra-pro",
+      "model": "gpt-6.1-sol",
+      "effort": "medium",
+      "tests": {
+        "backend": {
+          "passed": 68,
+          "failed": 0,
+          "skipped": 0
+        },
+        "react": {
+          "passed": 48,
+          "failed": 0
+        },
+        "playwright": {
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "scope": "4 real API smoke + 6 synthetic ops UI + 4 real product setup/keyboard"
+        },
+        "build": "passed; zero warnings/errors",
+        "lint": "passed",
+        "typecheck": "passed",
+        "ef_model_parity": "passed; explicit PoseidonDbContext",
+        "python_gate_regression": 16,
+        "full_python": {
+          "passed": 127,
+          "failed": 0,
+          "skipped": 0
+        }
+      },
+      "canonical_acceptance_changed": false,
+      "report": "docs/phases/FOUNDATION-APP-01.md",
+      "qa_followup": "PR #10 merged; no new DIR target-commit acceptance inferred from historical foundation counts",
+      "pr": "https://github.com/kadirvurgun/Poseidon/pull/10",
+      "merge_commit": "0bf79141d1487621fd0124a330596e34cbce16e3"
+    },
+    "directory_workspace": {
+      "state": "integrated local gate passed; independent QA pending; publication deferred by user",
+      "tests": {
+        "backend": {
+          "domain": 22,
+          "persistence": 25,
+          "api": 51,
+          "passed": 98,
+          "failed": 0,
+          "skipped": 0
+        },
+        "react": {
+          "passed": 63,
+          "failed": 0
+        },
+        "playwright": {
+          "passed": 16,
+          "failed": 0,
+          "skipped": 0,
+          "scope": "4 real API smoke + 6 mock ops + 6 real API anonymous/setup/keyboard"
+        },
+        "python": {
+          "passed": 127,
+          "failed": 0,
+          "skipped": 0
+        },
+        "build": "Release passed; zero warnings/errors",
+        "lint": "passed",
+        "typecheck": "passed",
+        "frontend_build": "passed",
+        "ef_model_parity": "passed",
+        "source_verification": {
+          "files": 269,
+          "chunks": 34958,
+          "mismatches": 0
+        },
+        "unknown_audit_code_unit": "strengthened test rerun separately:1 pass with configured provider and exact error assertion",
+        "publication": "deferred by user; no push/PR/CI for this package",
+        "independent_qa": "pending exact target commit",
+        "noop_concurrency": "company+vessel forced audited xmin UPDATE;4 deterministic race/touch/replay cases;full API51 passed"
+      },
+      "build": "passed; zero warnings/errors",
+      "lint": "passed",
+      "typecheck": "passed",
+      "ef_cli": "model parity passed",
+      "restore_generation": "locked restore, actual host OpenAPI export and generated aliases passed",
+      "independent_qa": "pending exact target commit",
+      "contract_followup": "completed; generated schema aliases in directory-contract.ts",
+      "migration_followup": "model parity and actual PostgreSQL migrations passed",
+      "scope": "online company/fleet management engineering subpackage; canonical S1/regulatory/operational role acceptance remains open",
+      "implementation_checkpoint": "33b08929d2b81f2ef97b4537166609e9c6ec3f19",
+      "qa_followup": "Initial e7d5b83 security review rejected no-op concurrency;2443596 forces audited updates and adds4 deterministic regressions;API51 PASS;fresh review pending"
+    }
   }
 }

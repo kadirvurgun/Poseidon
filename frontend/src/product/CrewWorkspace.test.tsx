@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { CrewWorkspace } from './CrewWorkspace'
 
@@ -95,7 +95,7 @@ describe('CREW-ROSTER-01 authored component behavior; no backend execution claim
     await userEvent.click(screen.getByRole('button', { name: 'Add person and assignment' }))
     expect(screen.getByText('Controlled position lookup unavailable. An incomplete draft may keep position unknown.')).toBeVisible()
     expect(screen.getByLabelText('Position / rank / capacity')).toHaveValue('')
-    expect(screen.getAllByRole('option').map(o => o.textContent)).toEqual(['Unknown'])
+    expect(within(screen.getByLabelText('Position / rank / capacity')).getAllByRole('option').map(o => o.textContent)).toEqual(['Unknown'])
   })
   it('selects a server configured position tuple with its department and freezes the exact lookup version in the command', async () => {
     const previous = fetcher.getMockImplementation()!
@@ -115,6 +115,34 @@ describe('CREW-ROSTER-01 authored component behavior; no backend execution claim
     expect(screen.getByText('Draft · unverified')).toBeVisible()
     expect(screen.getAllByText('Unknown').length).toBeGreaterThan(1)
     expect(screen.queryByText('READY')).not.toBeInTheDocument()
+  })
+  it('opens native profile history disclosures while retaining actual history contracts and on-demand identity access', async () => {
+    const previous = fetcher.getMockImplementation()!
+    fetcher.mockImplementation(async (path: string, init?: RequestInit) => {
+      if (path.endsWith('/person/history')) return json({ items: [{ revision: 1, operation: 'SyntheticDeclaration', savedAt: '2026-11-02T10:00:00Z' }] })
+      if (path.endsWith('/history?offset=0')) return json({
+        items: [{ revision: 1, from: null, to: null, contractEndDate: null, positionId: null, status: 'Draft', provenance: 'SyntheticUnverified',
+          savedAt: '2026-11-02T10:00:00Z', sourceObservedAt: null, assignmentPolicyVersion: null, positionPolicyVersion: null }],
+        historicalIdentity: 'Unavailable', offset: 0, hasMore: false,
+      })
+      return previous(path, init)
+    })
+    render(<CrewWorkspace vessel={vessel} assignment={id} />)
+    await userEvent.click(screen.getByRole('button', { name: 'EN' }))
+    const assignmentSummary = await screen.findByText('Assignment change history')
+    expect(assignmentSummary.closest('details')).not.toHaveAttribute('open')
+    await userEvent.click(assignmentSummary)
+    const history = screen.getByRole('region', { name: 'Assignment history' })
+    expect(await within(history).findByText('Recorded at')).toBeVisible()
+    expect(within(history).getAllByText('Historical policy unknown')).toHaveLength(2)
+    const identitySummary = screen.getByText('Identity change history')
+    expect(identitySummary.closest('details')).not.toHaveAttribute('open')
+    expect(fetcher.mock.calls.filter(([path]) => path.endsWith('/person/history'))).toHaveLength(0)
+    await userEvent.click(identitySummary)
+    await userEvent.click(screen.getByRole('button', { name: 'Identity action history' }))
+    expect(await screen.findByText('Historical private values are unavailable.')).toBeVisible()
+    await waitFor(() => expect(fetcher.mock.calls.filter(([path]) => path.endsWith('/person/history'))).toHaveLength(1))
+    expect(screen.queryByText(row.personId)).not.toBeInTheDocument()
   })
   it('denies direct profile without leaking a list or identifiers', async () => {
     fetcher.mockImplementation(async (path: string) => path.endsWith('/auth/session') ? json({ authenticated: true }) : json({ code: 'permission_denied' }, 403))

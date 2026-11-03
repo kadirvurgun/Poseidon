@@ -1,0 +1,145 @@
+{
+  "task": "DEV-007/T-S0-007",
+  "baseline": "poseidon-v46.3-20261030",
+  "state": "bounded source receipts; authored, not acceptance",
+  "records": [
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:8",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A8: DEV-007 | B8: Story | C8: E17 Assurance & Audit | D8: Traceability | E8: Pilot P0 trace paketini oluştur | F8: PO/QA olarak her pilot journey'yi requirement-screen-api-entity-test zincirinde görmek istiyorum. | G8: 10 pilot capability için orphan kritik öğe kalmaz; trace ID'leri backlog ve test case'lerine bağlıdır. | H8: RTM | I8: P0 | J8: S0 | K8: BA/QA Lead | M8: T-S0-007 | N8: Not Started | O8: YES | P8: 5 | Q8: M"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:24",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A24: DEV-023 | B24: Story | C24: E15 Search & Notifications | D24: Today | E24: POSEIDON Today shell | F24: Kullanıcı olarak bugünkü kritik işleri tek listede görmek istiyorum. | G24: Exception cards priority/source/Why/owner/next action taşır; loading/empty/error/offline states deterministiktir. | H24: poseidon-today / /api/v1/today | I24: P0 | J24: S2 | K24: Frontend+Backend | L24: DEV-021,DEV-022 | M24: T-S2-004 | N24: Not Started | O24: YES | P24: 8 | Q24: M"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:61",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A61: DEV-060 | B61: Story | C61: E10 Safety Events & Learning | D61: Event | E61: Safety event/near-miss capture | F61: Crew olarak olay veya near miss'i hızlı bildirmek istiyorum. | G61: Type/date/vessel/context/description/evidence; immediate action; protected mode separate where needed; offline capture supported. | H61: events-learning / /api/v1/safety-events | I61: P0 | J61: S9 | K61: Full Stack | L61: DEV-033,DEV-029 | M61: T-S9-003 | N61: Not Started | O61: YES | P61: 8 | Q61: M"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:122",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A122: DEV-121 | B122: Task | C122: E20 Production Hardening | D122: Pilot Proof | E122: v46.3 ship+tug pilot proof metrics | F122: PO olarak rakip analizinden eklenen işlevlerin sahada değerini kanıtlamak istiyorum. | G122: 1 ship + 1 tug; time-to-complete; duplicate-entry reduction; evidence completeness; readiness accuracy; offline success; user adoption; signed UAT. | H122: Pilot Metrics | I122: P0 | J122: PILOT-W4 | K122: Product+Pilot | L122: DEV-115,DEV-119,DEV-120 | M122: T-V463-007 | N122: Not Started | O122: YES | P122: 8 | Q122: H | R122: Feature list değil proof"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:Pilot Scope v46.2/row:2",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A2: 1 | B2: Ship onboarding + applicability | C2: Ship / DPA-Regulatory | D2: Ship profile generates reviewed applicable controls | E2: P0"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:Pilot Scope v46.2/row:3",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A3: 2 | B3: Tug onboarding + tug operational profile | C3: Tug / Ops-DPA-Master | D3: Bollard pull/towing equipment/crew context complete | E3: P0"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:Pilot Scope v46.2/row:4",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A4: 3 | B4: Mode-aware POSEIDON Today | C4: Ship + Tug / all roles | D4: Ship shows voyage tasks; tug shows next jobs/readiness | E4: P0"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:Pilot Scope v46.2/row:5",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A5: 4 | B5: Certificates + crew shared core | C5: Ship + Tug | D5: Invalid/expired state blocks positive readiness | E5: P0"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:Pilot Scope v46.2/row:6",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A6: 5 | B6: PMS + critical defect shared core | C6: Ship + Tug / C/E | D6: Tug winch/towline/emergency-release and ship critical assets trace | E6: P0"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:Pilot Scope v46.2/row:7",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A7: 6 | B7: Ship departure readiness | C7: Ship / Master | D7: Crew+technical+statutory+emergency blockers before sign-off | E7: P0"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:Pilot Scope v46.2/row:8",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A8: 7 | B8: Tug job assignment + readiness | C8: Tug / Ops+Master | D8: Assignment conflict and readiness checked before release | E8: P0"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:Pilot Scope v46.2/row:9",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A9: 8 | B9: Towage plan + risk/briefing + execution | C9: Tug / Master+Crew | D9: Plan, barriers, briefing and execution evidence complete | E9: P0"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:Pilot Scope v46.2/row:10",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A10: 9 | B10: Safety event + evidence/audit + offline | C10: Ship + Tug | D10: Offline onboard capture and auditable safety trace | E10: P0"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:Pilot Scope v46.2/row:11",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A11: 10 | B11: Dual-mode UAT and value proof | C11: Mixed fleet | D11: At least one ship and one tug complete daily journeys | E11: P0"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:196 Ekran v46.3/row:56",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A56: poseidon-today | B56: POSEIDON Today | C56: Core Safety Operations | D56: 0 | E56: 6 | G56: API /api/v1/poseidon-today | H56: Field rules + role/state + audit + offline + FR/Test IDs mapped | I56: READY FOR BA/DEV REVIEW"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:196 Ekran v46.3/row:95",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A95: events-learning | B95: Events & Learning | C95: Safety & Learning | D95: 19 | E95: 7 | F95: Controlled Decision; Controlled Reference; Date/Time; Enum; Identifier; Narrative/Reference; Reference; State; Text | G95: API /api/v1/events-learning | H95: Field rules + role/state + audit + offline + FR/Test IDs mapped | I95: READY FOR BA/DEV REVIEW"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:2316 Alan v46.3/row:251",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A251: fleet-vessels | B251: Fleet & Vessels | C251: Fleet Intelligence | D251: record_id | E251: Record ID | F251: input/text | G251: Text | H251: Conditional | I251: No | K251: Role + tenant + vessel scoped authorization | L251: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M251: Type, length, format and contextual uniqueness rules | N251: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | O251: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P251: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | Q251: Offline capture allowed for supported mutable data; client UUID/base version; idempotent sync; critical conflicts require human resolution. | R251: /api/v1/fleet-vessels | S251: FleetVessels | T251: record_id | U251: FR-fleet-vessels-record_id | V251: TC-fleet-vessels-record_id"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:2316 Alan v46.3/row:424",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A424: events-learning | B424: Events & Learning | C424: Safety & Learning | D424: record_id | E424: Record ID | F424: input/text | G424: Text | H424: Conditional | I424: No | K424: Role + tenant + vessel scoped authorization | L424: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M424: Type, length, format and contextual uniqueness rules | N424: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | O424: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P424: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | Q424: Offline capture allowed for supported mutable data; client UUID/base version; idempotent sync; critical conflicts require human resolution. | R424: /api/v1/events-learning | S424: EventsLearning | T424: record_id | U424: FR-events-learning-record_id | V424: TC-events-learning-record_id"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "locator": "paragraph:6",
+      "sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "text": "POSEIDON veri modeli ekran-merkezli değil, domain ve yaşam-döngüsü merkezli kurulacaktır. 196 ekran aynı entity'lerin farklı rol/context projection'larıdır; ekran başına ayrı tablo oluşturulmayacaktır. Gemi ve Römorkör aynı çekirdek Tenant/Company/Vessel/Person/Asset/Evidence/Audit altyapısını kullanır; TugJob/TowagePlan/TowageExecution gibi römorköre özgü aggregate'lar yalnız Tug Mode'da aktive olur."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "locator": "paragraph:26",
+      "sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "text": "Vessel, VesselProfile, TugProfile, Registry, Capability"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "locator": "paragraph:34",
+      "sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "text": "ShipOperation, VoyageContext, Permit, Bunkering, CargoOperation"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.01_POSEIDON_v46.3_Product_Wide_ERD_Data_Architecture_TR.docx",
+      "locator": "paragraph:38",
+      "sha256": "c3f5e612d69e33d2e5e3a1227644cb9a0ec8937bdcf74b20d2b5a60b968344ab",
+      "text": "TugJob, TugAssignment, TowagePlan, TowageBriefing, TowageExecution, TugDailyLog"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
+      "locator": "paragraph:184",
+      "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49",
+      "text": "Measured evidence that both modes are used and useful."
+    }
+  ]
+}

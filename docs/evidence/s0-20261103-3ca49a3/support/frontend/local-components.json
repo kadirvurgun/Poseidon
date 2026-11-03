@@ -1,0 +1,23 @@
+{
+  "exitCode": 0,
+  "status": "PASS",
+  "startedAt": "2026-11-03T01:01:18.973392+00:00",
+  "durationSeconds": 189.889,
+  "outputSha256": "204e32f8b9f62ef7e8ece543dd9bd51fc6c17e68a72baeda7c4a2ebf09f52363",
+  "rawOutputPersisted": false,
+  "runCount": 954,
+  "passedCount": 954,
+  "failedCount": 0,
+  "pendingCount": 0,
+  "todoCount": 0,
+  "unhandledErrorCount": 0,
+  "moduleErrorCount": 0,
+  "failedTests": [],
+  "failureDiagnostics": [],
+  "commandId": "frontend-F-components",
+  "targetCommit": null,
+  "targetTree": null,
+  "baseCommit": "e29346642fb09f4cdddeff61846c1a4428179cb4",
+  "cleanInput": false,
+  "evidenceScope": "local dirty repair only; not acceptance"
+}

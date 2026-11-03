@@ -4,9 +4,13 @@ import { expect, type Page } from '@playwright/test'
 // authored by a different synthetic human THROUGH the normal commands, and this
 // signed human must have a real exact reviewer assignment. Missing input fails.
 async function assignedQualification(page: Page) {
+  // The coordinator command-authors a distinct pending fixture per case. Other
+  // qualified source fixtures deliberately coexist and cannot stand in for it.
+  const fixtureId = process.env.POSEIDON_BROWSER_QUALIFICATION_RULE
+  if (!fixtureId || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(fixtureId) || fixtureId === '00000000-0000-0000-0000-000000000000') throw new Error('qualification_fixture_uuid_required')
   const rules = await page.request.get('/api/v1/rules'); expect(rules.status()).toBe(200)
   const rows = (await rules.json()).items
-  const selected = rows.find((r: { current: { rule?: { ruleId?: string } } }) => r.current.rule?.ruleId?.startsWith('SYNTHETIC-FOUNDATION-'))
+  const selected = rows.find((r: { current: { id: string; rule?: { ruleId?: string } } }) => r.current.id === fixtureId && r.current.rule?.ruleId?.startsWith('SYNTHETIC-FOUNDATION-'))
   expect(!!selected).toBe(true)
   const source = await page.request.get(`/api/v1/regulatory-source-governance/${selected.current.id}`); expect(source.status()).toBe(200)
   const q = await source.json(); expect(q.items[0].state).toBe('IN_REVIEW'); expect(q.actions).toContain('qualify')
@@ -17,11 +21,11 @@ async function assignedQualification(page: Page) {
   const lifecycle = page.getByRole('region', { name: 'Lifecycle and applicability preparation', exact: true })
   await lifecycle.getByRole('button', { name: new RegExp(selected.current.id) }).first().click()
   const review = page.getByRole('region', { name: 'Source qualification and policy review', exact: true })
-  await review.getByLabel('Record lifecycle state', { exact: true }).selectOption('IN_FORCE')
+  await review.getByRole('combobox', { name: 'Record lifecycle state', exact: true }).selectOption('IN_FORCE')
   const saved = page.waitForResponse(r => r.request().method() === 'POST' && r.url().includes(`/regulatory-source-governance/${selected.current.id}/events`))
   await review.getByRole('button', { name: 'Record assigned human qualification', exact: true }).click()
   expect((await saved).status()).toBe(200)
-  await lifecycle.getByLabel('Vessel context', { exact: true }).selectOption(vessel.id)
+  await lifecycle.getByRole('combobox', { name: 'Vessel context', exact: true }).selectOption(vessel.id)
   await lifecycle.getByRole('checkbox', { name: new RegExp(selected.current.id) }).check()
   const evaluated = page.waitForResponse(r => r.request().method() === 'POST' && r.url().endsWith('/applicability/evaluate'))
   await lifecycle.getByRole('button', { name: 'Evaluate qualified current sources', exact: true }).click()
@@ -54,7 +58,7 @@ async function owningProfileCapture(page: Page) {
   const saved = await waiting; expect(saved.status()).toBe(200)
   const result = await saved.json(); expect(result.content.mainPropulsionKw).toEqual({ state: 'Known', value: '3600.000001' })
   expect(result.content.contractForConstructionDate).toEqual({ state: 'Unknown', value: null })
-  await page.reload()
+  await page.reload(); await page.getByRole('button', { name: 'EN', exact: true }).click()
   await expect(profile.getByLabel('Main propulsion power (kW)', { exact: true })).toHaveValue('3600.000001')
   await expect(profile.getByLabel('Construction contract date (YYYY-MM-DD) — Data state', { exact: true })).toHaveValue('Unknown')
   const history = await page.request.get(`/api/v1/vessels/${vessel.id}/regulatory-profile/history?offset=0&limit=25`)

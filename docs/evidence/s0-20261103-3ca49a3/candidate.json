@@ -1,0 +1,782 @@
+{
+  "schemaVersion": "poseidon.s0-candidate.v1",
+  "baseline": "poseidon-v46.3-20261030",
+  "target": {
+    "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+    "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03"
+  },
+  "tasks": [
+    {
+      "id": "DEV-001",
+      "definition": {
+        "id": "DEV-001",
+        "locator": "sheet:Backlog/row:2",
+        "acceptanceCriteria": "Backend/frontend/contracts/infra/docs klasörleri oluşturulur; main/develop politikası ve PR kontrolü tanımlıdır; protected branch kuralı dokümante edilir.",
+        "traceId": "T-S0-001",
+        "ownerRole": "Engineering Lead",
+        "storyPoints": 3,
+        "dependencies": [],
+        "registeredCriticalSoftwareCount": 0
+      },
+      "authored": {
+        "state": "AUTHORED",
+        "artifacts": [
+          {
+            "path": ".github/workflows/backend-foundation.yml",
+            "sha256": "5fbd245a37172f1d0c72a13362c19b3dd1311511147eb7fbd8fae6db04c5c2f1"
+          },
+          {
+            "path": "Poseidon.slnx",
+            "sha256": "4f6cd5624fef605f993c0f52e654187a64f18f4ae1f35683f7141040c6850e59"
+          },
+          {
+            "path": "README.md",
+            "sha256": "f2e982c11732b41479076fa7648810ef07745d77aaafff02cf2eef3ab82cdc3d"
+          },
+          {
+            "path": "docs/architecture.md",
+            "sha256": "18476f2205cf83a1276c892a2db2ae8df209aff3a591f4af7c83bfc60410c904"
+          },
+          {
+            "path": "docs/automation.md",
+            "sha256": "57fe9108affc8c60c6d2b07900170975b3abbc01141a787db9b55f9c5172011f"
+          },
+          {
+            "path": "global.json",
+            "sha256": "c01135e6969ef6fc8c24e12ae51c25db29b43b8cbb305288b2da738848397ee7"
+          },
+          {
+            "path": "scripts/test_task_contracts.py",
+            "sha256": "89a66b6cc8ead49ba9552181531fe791a240b7a5523cb1af01d43e04d738e8b5"
+          }
+        ]
+      },
+      "evidence": {
+        "source-review": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-001.source-review.json",
+          "sha256": "394ec9845c86dbe964b75f3f8b27624df0d367ba3fe917caf58df8330f590687"
+        },
+        "engineering-review": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-001.engineering-review.final-successor.json",
+          "sha256": "352a29107f270d3df6e3763131aafa09fd1c61c1d479acb387be82656b5506bd"
+        },
+        "execution": {
+          "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/receipts/DEV-001.execution.json",
+          "sha256": "27889256a9176e2d6b21047526c524e6a8e0f35ef2428ab17cea3eb1dc100c38"
+        },
+        "acceptance": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-acceptance-receipts/DEV-001.acceptance.json",
+          "sha256": "35c4a1b4100c224095b92ba0ebe7b3d90e97cfca9e404272acd5923ca2333819"
+        }
+      }
+    },
+    {
+      "id": "DEV-002",
+      "definition": {
+        "id": "DEV-002",
+        "locator": "sheet:Backlog/row:3",
+        "acceptanceCriteria": "Backend ve frontend build; unit test; lint; artifact üretimi; başarısız adım PR'ı bloklar.",
+        "traceId": "T-S0-002",
+        "ownerRole": "DevOps",
+        "storyPoints": 5,
+        "dependencies": [
+          "DEV-001"
+        ],
+        "registeredCriticalSoftwareCount": 0
+      },
+      "authored": {
+        "state": "AUTHORED",
+        "artifacts": [
+          {
+            "path": ".github/workflows/backend-foundation.yml",
+            "sha256": "5fbd245a37172f1d0c72a13362c19b3dd1311511147eb7fbd8fae6db04c5c2f1"
+          },
+          {
+            "path": "docs/automation.md",
+            "sha256": "57fe9108affc8c60c6d2b07900170975b3abbc01141a787db9b55f9c5172011f"
+          },
+          {
+            "path": "frontend/package.json",
+            "sha256": "096d4620da3227968723806de054f3fe8a695c3af6ef954d7ce7d42fa7297eeb"
+          },
+          {
+            "path": "scripts/lab_profile_acl.py",
+            "sha256": "8ecd2b31516a9c7c7b9fe869b9ef12b7780c7c186b2c5a5e0ef89f61cf86ec2d"
+          },
+          {
+            "path": "scripts/test_api_test_gate.py",
+            "sha256": "82a7b631b057a32c4f45c9167c0288d010d4a2830b99407253e79c869907b42f"
+          },
+          {
+            "path": "scripts/test_browser_gate.py",
+            "sha256": "85715c09f8caa533fade89a032f7494315decf52acc378c6031db7a1ebe8fa2b"
+          },
+          {
+            "path": "scripts/test_lab_profile_acl.py",
+            "sha256": "113a217f1e1cf5b7ac7af6da6610358ab88e3948768bddb4048f65d73b5825ce"
+          },
+          {
+            "path": "tests/Poseidon.Browser.Tests/lab/strict-browser.ts",
+            "sha256": "c42f5269f2eec85baf40561ee66d1e4e35dfa17112410b47d01672d709715a44"
+          }
+        ]
+      },
+      "evidence": {
+        "source-review": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-002.source-review.json",
+          "sha256": "c20e0a22cc41b1c040a9196cdc07e2641d2c3172efebee671bb5d561f8de8de3"
+        },
+        "engineering-review": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-002.engineering-review.final-successor.json",
+          "sha256": "89c3bea9f53e35d614fa701a088b19444980e2a25a908bdd2fcdda63ff092619"
+        },
+        "execution": {
+          "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/receipts/DEV-002.execution.json",
+          "sha256": "9d39124fd0c4266fc5417490405d5dba0c362fbb0c1c3b33c93ffc47705e1030"
+        },
+        "acceptance": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-acceptance-receipts/DEV-002.acceptance.json",
+          "sha256": "99fb9d8e0dcade204b4c94b10597006d8bec356d6bd8165e0f5277c0d453f045"
+        }
+      }
+    },
+    {
+      "id": "DEV-003",
+      "definition": {
+        "id": "DEV-003",
+        "locator": "sheet:Backlog/row:4",
+        "acceptanceCriteria": "Her ortam için URL/secret/data/retention/deploy owner tanımlı; production datası DEV'e kopyalanmaz; environment promotion akışı yazılıdır.",
+        "traceId": "T-S0-003",
+        "ownerRole": "DevOps",
+        "storyPoints": 3,
+        "dependencies": [
+          "DEV-001"
+        ],
+        "registeredCriticalSoftwareCount": 0
+      },
+      "authored": {
+        "state": "AUTHORED",
+        "artifacts": [
+          {
+            "path": "docs/operations/environment-contract.md",
+            "sha256": "3eb95596e7ab9aed026561f75ee5103272311fd7dfb777feaeee0055b7eef375"
+          },
+          {
+            "path": "scripts/environment_contract.py",
+            "sha256": "2c781ec9ee9e9b5d7168324099508ffbc2112164dcc442dcff0e70f98dc7fe96"
+          },
+          {
+            "path": "scripts/test_environment_contract.py",
+            "sha256": "88fda257f954fcfbc5bd388398d933992b9b692c5f3b8aab113a48c28440dd78"
+          }
+        ]
+      },
+      "evidence": {
+        "source-review": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-003.source-review.json",
+          "sha256": "25d78b73e48fd587dfd00f8563cdfe4baf5fbebde6e512e2cf90c795e2abe2bc"
+        },
+        "engineering-review": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-003.engineering-review.json",
+          "sha256": "2ab1f922bcfd0b8fe5aaf534ea97544fcc2a6db17fb8b8cba75312b1ef5f56b0"
+        },
+        "execution": {
+          "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/receipts/DEV-003.execution.json",
+          "sha256": "0c2a71b68dc4c2355bc55325bf02e4a0a5f517bbf7c201df0111e2e56b6acf4b"
+        },
+        "acceptance": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-acceptance-receipts/DEV-003.acceptance.json",
+          "sha256": "f377437fad6535990860f3ac735e2aa27284063c35b8d35a96629a242e3eaba0"
+        }
+      }
+    },
+    {
+      "id": "DEV-004",
+      "definition": {
+        "id": "DEV-004",
+        "locator": "sheet:Backlog/row:5",
+        "acceptanceCriteria": "Domain modülleri, dependency yönü, event/outbox yaklaşımı, object storage, offline sync ve AI boundary ADR'ları approved durumundadır.",
+        "traceId": "T-S0-004",
+        "ownerRole": "Solution Architect",
+        "storyPoints": 5,
+        "dependencies": [
+          "DEV-001"
+        ],
+        "registeredCriticalSoftwareCount": 0
+      },
+      "authored": {
+        "state": "AUTHORED",
+        "artifacts": [
+          {
+            "path": "backend/Poseidon.Domain/Poseidon.Domain.csproj",
+            "sha256": "8d654c44b7bebb6b31a9f2f606927f45b5072193adc4eef8cce3f3cf3b278df3"
+          },
+          {
+            "path": "docs/architecture/s0-current-engineering-candidate-20261102.md",
+            "sha256": "7196faa3b5bb0b78819bf6b804bb5dfab3cc41546f17926bde9521b4ce089404"
+          },
+          {
+            "path": "docs/architecture/s0-remainder-reconciliation.md",
+            "sha256": "be80786652562de66708af1a0de0f42f58e5c90c2df1e3e37030936777322d98"
+          },
+          {
+            "path": "docs/decisions/s0-events-storage.md",
+            "sha256": "3d3c4023e25d6000c1ebdab38b11f0d658c686ca3095b0df7cf156b7cc8237da"
+          },
+          {
+            "path": "docs/decisions/s0-module-boundaries.md",
+            "sha256": "7fa0d1055ebc5e6c264b1a9babea272857533716956b507e9f733a266d21b288"
+          },
+          {
+            "path": "docs/decisions/s0-offline-ai.md",
+            "sha256": "0a69b2ac07b486a803ebfa477012c53a0cfd17aaaad47fa936029ae7c80e88de"
+          },
+          {
+            "path": "tests/Poseidon.Domain.Tests/OfflineReplayPolicyTests.cs",
+            "sha256": "51aba08a4d072c67772d661f7b0aa5096431fcfcf476ad0a6d3bf844386cb43b"
+          }
+        ]
+      },
+      "evidence": {
+        "source-review": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-004.source-review.json",
+          "sha256": "03cb57ded3c64e589fab1615ad7d077421ad6996d0e459023796d3000af4ae25"
+        },
+        "engineering-review": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-004.engineering-review.json",
+          "sha256": "8393faa9440339a3877e04d625f8b540e7c3d28156791f3bd07c0b5fee6c28ce"
+        },
+        "execution": {
+          "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/receipts/DEV-004.execution.json",
+          "sha256": "8ff9f951cb89f0f6d2cc33b33b89ed795cb02105624c5a27c885fc21f8f4be22"
+        },
+        "acceptance": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-acceptance-receipts/DEV-004.acceptance.json",
+          "sha256": "f0d70de252c55662e9e0a88a8afbcec7bf3323df229fe9c3d9f3ff25d54dde0c"
+        }
+      }
+    },
+    {
+      "id": "DEV-005",
+      "definition": {
+        "id": "DEV-005",
+        "locator": "sheet:Backlog/row:6",
+        "acceptanceCriteria": "Core entity listesi, PK/FK, tenancy, versioning, audit columns, evidence object refs ve migration stratejisi approved olur.",
+        "traceId": "T-S0-005",
+        "ownerRole": "Backend Lead",
+        "storyPoints": 5,
+        "dependencies": [
+          "DEV-004"
+        ],
+        "registeredCriticalSoftwareCount": 0
+      },
+      "authored": {
+        "state": "AUTHORED",
+        "artifacts": [
+          {
+            "path": "docs/architecture/core-schema-plan.md",
+            "sha256": "e99aabe5744495486649e567f08877537c5ea746109c4836d4a5a0491edd1a4c"
+          },
+          {
+            "path": "docs/architecture/s0-current-engineering-candidate-20261102.md",
+            "sha256": "7196faa3b5bb0b78819bf6b804bb5dfab3cc41546f17926bde9521b4ce089404"
+          },
+          {
+            "path": "scripts/core_schema_inventory.py",
+            "sha256": "0ac565bf183b992b8ddfb58a83bf1fc7876961d7ca08805cf7693e5e76ea06da"
+          },
+          {
+            "path": "scripts/test_core_schema_inventory.py",
+            "sha256": "718baf00c545cc25a8605480eabcc566f0b7e80dcb3d36e618b4acd146fc40d9"
+          }
+        ]
+      },
+      "evidence": {
+        "source-review": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-005.source-review.json",
+          "sha256": "0ab05ee7369bef2efa032d07dc52a14a4ecf3608bb8ce9d33ddaa49aa8234132"
+        },
+        "engineering-review": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-005.engineering-review.json",
+          "sha256": "6bf96902692df79426599a2ed61943db6cbb853baf5705fbcc31ba61a4edcdd7"
+        },
+        "execution": {
+          "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/receipts/DEV-005.execution.json",
+          "sha256": "063843a9b08c970926c9bc1b139707cd858964fa6879c0f0fe3fd88a0675e21a"
+        },
+        "acceptance": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-acceptance-receipts/DEV-005.acceptance.json",
+          "sha256": "9cfb1225f61aae6cc29a6d310dae2182e915c0a92936b6055e58c85a598b6bb3"
+        }
+      }
+    },
+    {
+      "id": "DEV-006",
+      "definition": {
+        "id": "DEV-006",
+        "locator": "sheet:Backlog/row:7",
+        "acceptanceCriteria": "Tenant isolation, authn/authz, file upload, protected reporting, secrets, audit, offline device, AI prompt/data threats kayıtlı; P0 mitigations backlog'a bağlıdır.",
+        "traceId": "T-S0-006",
+        "ownerRole": "Security/Architect",
+        "storyPoints": 5,
+        "dependencies": [
+          "DEV-004"
+        ],
+        "registeredCriticalSoftwareCount": 0
+      },
+      "authored": {
+        "state": "AUTHORED",
+        "artifacts": [
+          {
+            "path": "docs/architecture/s0-current-engineering-candidate-20261102.md",
+            "sha256": "7196faa3b5bb0b78819bf6b804bb5dfab3cc41546f17926bde9521b4ce089404"
+          },
+          {
+            "path": "docs/security/threat-model.md",
+            "sha256": "730760c9fe9df74b727365dbef4a6eba2e4bb48c12ee66b0c01ece15ae614935"
+          },
+          {
+            "path": "scripts/secret_scan.py",
+            "sha256": "825127917066bf3633e20c3331a58bbf018e465ef32a0363ab5029af0973c9f7"
+          },
+          {
+            "path": "scripts/test_secret_scan.py",
+            "sha256": "e48d390c76022f7e07e2bcb775e22c83aeeae82306f40dbb3bebc2e9af4e323b"
+          }
+        ]
+      },
+      "evidence": {
+        "source-review": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-006.source-review.json",
+          "sha256": "4091255f0016b421ce0fc8503a2e798cea1771750f8f23c0b48bf7786734d784"
+        },
+        "engineering-review": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-006.engineering-review.final-successor.json",
+          "sha256": "ceafc9b875a1293903b5ff5737ee33df52dd539089ccf86e51146dd40711893a"
+        },
+        "execution": {
+          "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/receipts/DEV-006.execution.json",
+          "sha256": "ba99765579184085916d224c1e2fedc79a4ade743df14bcf3817703cc67583ad"
+        },
+        "acceptance": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-acceptance-receipts/DEV-006.acceptance.json",
+          "sha256": "5de6bf0b063f0f465893e62f86d64ff8c468aa9a2bdc55f5007de8e03f56e974"
+        }
+      }
+    },
+    {
+      "id": "DEV-007",
+      "definition": {
+        "id": "DEV-007",
+        "locator": "sheet:Backlog/row:8",
+        "acceptanceCriteria": "10 pilot capability için orphan kritik öğe kalmaz; trace ID'leri backlog ve test case'lerine bağlıdır.",
+        "traceId": "T-S0-007",
+        "ownerRole": "BA/QA Lead",
+        "storyPoints": 5,
+        "dependencies": [],
+        "registeredCriticalSoftwareCount": 0
+      },
+      "authored": {
+        "state": "AUTHORED",
+        "artifacts": [
+          {
+            "path": "docs/architecture/pilot-trace.md",
+            "sha256": "674ccd857a7b4d98729fe4a30acb188ec4a658fe36a80b17a3177912b575fd6a"
+          },
+          {
+            "path": "scripts/pilot_trace.py",
+            "sha256": "1dfb7b6995e9d8409ef28db470b0a52566e180d5ef1cbca8f40152c1801286f1"
+          },
+          {
+            "path": "scripts/test_pilot_trace.py",
+            "sha256": "6786af82b43f0d68d9a7c92fd6a02ea28ecb095203bb769d604ca1dc6b2f857d"
+          }
+        ]
+      },
+      "evidence": {
+        "source-review": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-007.source-review.json",
+          "sha256": "aa50ae9be62b53d795ea0ca3d1f7c963b0683a03fd17e85e543ea14761a67158"
+        },
+        "engineering-review": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-007.engineering-review.json",
+          "sha256": "69ec2821fa8178dc2c68f6c0f3dd01e8a6065c2b96a92f509f8f94d35f84af8e"
+        },
+        "execution": {
+          "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/receipts/DEV-007.execution.json",
+          "sha256": "71556e1b1bab22199bc23439a4d76024d8e2406b6981078391c651fcc658d48f"
+        },
+        "acceptance": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-acceptance-receipts/DEV-007.acceptance.json",
+          "sha256": "cb63d60e7ea6b1a90325c20e8f18accacff2362390b06dbcad9997fa20ad45a7"
+        }
+      }
+    },
+    {
+      "id": "DEV-008",
+      "definition": {
+        "id": "DEV-008",
+        "locator": "sheet:Backlog/row:9",
+        "acceptanceCriteria": "ISM/SOLAS/STCW/MLC/MARPOL/Flag/Class pilot kapsamı için source owner, version, validation status ve reviewer atanır.",
+        "traceId": "T-S0-008",
+        "ownerRole": "Regulatory Lead",
+        "storyPoints": 5,
+        "dependencies": [
+          "DEV-007"
+        ],
+        "registeredCriticalSoftwareCount": 0
+      },
+      "authored": {
+        "state": "AUTHORED",
+        "artifacts": [
+          {
+            "path": "backend/Poseidon.Domain/RegulatoryRegisterPolicy.cs",
+            "sha256": "0c6efc51525a44a1e1d3b767393959f997ab2143c84634d0b5b33fc025375b66"
+          },
+          {
+            "path": "contracts/sources/pilot-ownership.v1.json",
+            "sha256": "027105a711941c3137fb191e4fc9efa4a30b77121e7707c8ba3c7190511cd7d5"
+          },
+          {
+            "path": "docs/reports/dev-008-source-scope-review-2026-11-02.md",
+            "sha256": "59dd1a17bf617ff8a7610311b20860e44cecf99a80f16d6b8b6526ee729fb45e"
+          },
+          {
+            "path": "docs/tasks/s0-source-plan-20261102.md",
+            "sha256": "f3978af5e48036c28d933faa22e0058878110fec82233afc56b18c18abf72115"
+          },
+          {
+            "path": "docs/tasks/source-ownership-plan-01.md",
+            "sha256": "393a0b14345f6514e4e25743851fa3a0e4480a7d13c56ed0c6f1cf4d31f702e4"
+          },
+          {
+            "path": "scripts/pilot_source_ownership.py",
+            "sha256": "08bd92f8cceec267c44ab8b6cffc4c6d5cf1d5e8c84cd2a7160226234f6e4022"
+          },
+          {
+            "path": "scripts/test_pilot_source_ownership.py",
+            "sha256": "9b466068295e3991ba0da31ac82e419e79f95e4e68e98537c8b640e5a48e84e7"
+          },
+          {
+            "path": "tests/Poseidon.Domain.Tests/RegulatoryRegisterPolicyTests.cs",
+            "sha256": "1497f15c3389a30d1eb6f3fb4fc60c0c18035c52a7dc9440cbc63adc6f45035d"
+          }
+        ]
+      },
+      "evidence": {
+        "source-review": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-008.source-review.json",
+          "sha256": "fb9274a9ff9bd555c64b67609fadd2aa435f6371c9687ce68b5d19e4a66b4c5c"
+        },
+        "engineering-review": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-008.engineering-review.json",
+          "sha256": "7ea1c9711480a860513b4dc87838e5aad4a85a4e5fffdacfdd39c8b8e3f74617"
+        },
+        "execution": {
+          "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/receipts/DEV-008.execution.json",
+          "sha256": "90b095752353869fa7dd5d2d14857b111e7741314b0c97cc570519aea918bc87"
+        },
+        "acceptance": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-acceptance-receipts/DEV-008.acceptance.json",
+          "sha256": "37d90db4fc28585f19f24b11ac8242f3b11c7103f5a4c4240443fe18d1e7350f"
+        }
+      }
+    },
+    {
+      "id": "DEV-009",
+      "definition": {
+        "id": "DEV-009",
+        "locator": "sheet:Backlog/row:10",
+        "acceptanceCriteria": "En az tanker + genel cargo/tug profile; crew/certificate/asset/defect/evidence edge cases; expected applicability/readiness outcomes kayıtlıdır.",
+        "traceId": "T-S0-009",
+        "ownerRole": "QA Lead",
+        "storyPoints": 5,
+        "dependencies": [
+          "DEV-005",
+          "DEV-008"
+        ],
+        "registeredCriticalSoftwareCount": 0
+      },
+      "authored": {
+        "state": "AUTHORED",
+        "artifacts": [
+          {
+            "path": "docs/tasks/s0-foundation-remainder-01.md",
+            "sha256": "e8e1f3e61ab4a882964c6ef0865f9a83697b315de09a229138859b968f4b83cd"
+          },
+          {
+            "path": "scripts/golden_dataset.py",
+            "sha256": "73f8b73d5758495bdb8b063ae311f7aa44ccb6c31f54c3eaba55204a04c14519"
+          },
+          {
+            "path": "tests/Poseidon.Domain.Tests/GoldenPilotDatasetTests.cs",
+            "sha256": "aa937c98116b997444981fa5c3f5e886b32905922f19785545fc4f13384f4da6"
+          }
+        ]
+      },
+      "evidence": {
+        "source-review": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-009.source-review.json",
+          "sha256": "0829a53eac5123dd7e2faf668a89b5159872273c52afa82b5978185ee3809e67"
+        },
+        "engineering-review": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-009.engineering-review.final-successor.json",
+          "sha256": "61311e4143b3ecb7b435a0e4fe7fd594a885ac2bc279907e4f551fc7f1890fc0"
+        },
+        "execution": {
+          "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/receipts/DEV-009.execution.json",
+          "sha256": "72d4aa823ea938f6a9bcf803d9f3980d36b3f34c80cf2d0c4afe12d93170ba28"
+        },
+        "acceptance": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-acceptance-receipts/DEV-009.acceptance.json",
+          "sha256": "919618962e2fb7739c8f37dfa5eac36434968c3e77c4e0bd6753e71bd2a6851a"
+        }
+      }
+    },
+    {
+      "id": "DEV-010",
+      "definition": {
+        "id": "DEV-010",
+        "locator": "sheet:Backlog/row:11",
+        "acceptanceCriteria": "DoR/DoD; design, security, offline, audit, regulatory, docs ve test etkisini kapsar; backlog template'e uygulanır.",
+        "traceId": "T-S0-010",
+        "ownerRole": "Product Owner",
+        "storyPoints": 2,
+        "dependencies": [
+          "DEV-007"
+        ],
+        "registeredCriticalSoftwareCount": 0
+      },
+      "authored": {
+        "state": "AUTHORED",
+        "artifacts": [
+          {
+            "path": "docs/tasks/task-definition-template.md",
+            "sha256": "9c32d70f55c40d93991e26dd79851ee3e54c294d42a952cb922f4b748397baaf"
+          },
+          {
+            "path": "scripts/task_contracts.py",
+            "sha256": "e85a21d4bc131b55be40c5132477634b09fc33e9cabd02533939c8c04dd17659"
+          },
+          {
+            "path": "scripts/test_task_contracts.py",
+            "sha256": "89a66b6cc8ead49ba9552181531fe791a240b7a5523cb1af01d43e04d738e8b5"
+          }
+        ]
+      },
+      "evidence": {
+        "source-review": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-010.source-review.json",
+          "sha256": "9bf25f15b815a6f507cd29b2f3e45e7609622192f4e2b51c00d1b6e088c6b5b5"
+        },
+        "engineering-review": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-010.engineering-review.json",
+          "sha256": "66d8848334c23f07345295f34b9a70bdafac9aca8c0d330b06c2987e12f0a786"
+        },
+        "execution": {
+          "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/receipts/DEV-010.execution.json",
+          "sha256": "312091cfd5fb14be842ddf5b21e364da9a2692f76e4791dd6856cd24636dec28"
+        },
+        "acceptance": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-acceptance-receipts/DEV-010.acceptance.json",
+          "sha256": "48d8e70a524f3014ab7bc4dee54081ff6229d1bd524f4666f83a5abd32983bcf"
+        }
+      }
+    },
+    {
+      "id": "DEV-011",
+      "definition": {
+        "id": "DEV-011",
+        "locator": "sheet:Backlog/row:12",
+        "acceptanceCriteria": "Correlation/tenant/vessel/request IDs; API latency/error, sync backlog/conflict, integration retry, audit health ve data freshness metric sözleşmesi vardır.",
+        "traceId": "T-S0-011",
+        "ownerRole": "DevOps",
+        "storyPoints": 3,
+        "dependencies": [
+          "DEV-004"
+        ],
+        "registeredCriticalSoftwareCount": 0
+      },
+      "authored": {
+        "state": "AUTHORED",
+        "artifacts": [
+          {
+            "path": "backend/Poseidon.Api/OperationalTelemetry.cs",
+            "sha256": "6141e20541bac77e3ba3fa5d6cf12d93411e5c50a45e1e5bedd2328a3c4e9e9e"
+          },
+          {
+            "path": "docs/architecture/s0-current-engineering-candidate-20261102.md",
+            "sha256": "7196faa3b5bb0b78819bf6b804bb5dfab3cc41546f17926bde9521b4ce089404"
+          },
+          {
+            "path": "docs/operations/observability-contract.md",
+            "sha256": "f5a31c73fa7d3797d35d53030b8ad9e960763d9769c1ad7eb6f90c3d2cc8a6a9"
+          },
+          {
+            "path": "tests/Poseidon.Domain.Tests/SourceFreshnessTests.cs",
+            "sha256": "849a7ca2f3f3eec811562d973e0afade03231d0f212ce47667a161e65b06b77d"
+          }
+        ]
+      },
+      "evidence": {
+        "source-review": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-011.source-review.json",
+          "sha256": "2d125dea68978998638dd5ad0c727cee5cc3a8cc8d3ea90f42174e4ca3806411"
+        },
+        "engineering-review": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-011.engineering-review.json",
+          "sha256": "afc953ab8178b7ce8f792d939e34db0b0514f5415fc73b90600b1ca35a011c4c"
+        },
+        "execution": {
+          "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/receipts/DEV-011.execution.json",
+          "sha256": "1d2d8844e2f8a706a0c73b16da5c7c50782b04f64827c29eae1841a5c86745f3"
+        },
+        "acceptance": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-acceptance-receipts/DEV-011.acceptance.json",
+          "sha256": "37b9d6d3b91db7d60b454d1f6850701dea6b530577ebddbf4eb2d6703f87873a"
+        }
+      }
+    },
+    {
+      "id": "DEV-012",
+      "definition": {
+        "id": "DEV-012",
+        "locator": "sheet:Backlog/row:13",
+        "acceptanceCriteria": "Architecture, data, security, trace, environments, backlog ve pilot source ownership gate'leri PASS/accepted; unresolved P0 blocker yoktur.",
+        "traceId": "T-S0-012",
+        "ownerRole": "Product Owner",
+        "storyPoints": 2,
+        "dependencies": [
+          "DEV-001",
+          "DEV-002",
+          "DEV-003",
+          "DEV-004",
+          "DEV-005",
+          "DEV-006",
+          "DEV-007",
+          "DEV-008",
+          "DEV-009",
+          "DEV-010",
+          "DEV-011"
+        ],
+        "registeredCriticalSoftwareCount": 0
+      },
+      "authored": {
+        "state": "AUTHORED",
+        "artifacts": [
+          {
+            "path": "contracts/s0/README.md",
+            "sha256": "9062863c3f177314349c201444e3592edd969ce5e7896238acda9610395d41c2"
+          },
+          {
+            "path": "contracts/s0/exit-policy.v1.json",
+            "sha256": "53fb11e9dd49345b2d9ba4c409521c1b51010d487807e8b49d1543ecff9f42d2"
+          },
+          {
+            "path": "docs/tasks/s0-release-gate-20261102.md",
+            "sha256": "7203a8ef88ec0c104d000091498781b7082ed1e272c298d9e4ee629942ea4e74"
+          },
+          {
+            "path": "scripts/s0_release_gate.py",
+            "sha256": "6b6b69d5138712f70929b83694807e6ab82a5dd19bfaa1cf9a4c4fd6f1e0ded1"
+          },
+          {
+            "path": "scripts/task_contracts.py",
+            "sha256": "e85a21d4bc131b55be40c5132477634b09fc33e9cabd02533939c8c04dd17659"
+          },
+          {
+            "path": "scripts/test_s0_release_gate.py",
+            "sha256": "3fa1d84365a0923271a833e3997b30d7b588dac54d006ab35da36dd61ab0c623"
+          },
+          {
+            "path": "scripts/test_task_contracts.py",
+            "sha256": "89a66b6cc8ead49ba9552181531fe791a240b7a5523cb1af01d43e04d738e8b5"
+          }
+        ]
+      },
+      "evidence": {
+        "source-review": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-012.source-review.json",
+          "sha256": "661b81f5dc4700bcd754431cecbf3626f7f7ffe91291f717faa753e0464e218c"
+        },
+        "engineering-review": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-012.engineering-review.final-successor.json",
+          "sha256": "3b6c0fcc557b29c0bfa5739689dfcaab9ea1b747b1ccacdb766a73792b4283eb"
+        },
+        "execution": {
+          "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/receipts/DEV-012.execution.json",
+          "sha256": "3ff1cbb0446eb69142b9dbde6e0f0898e73a8a1d3fb2edbe76ebbd060b0dcb94"
+        },
+        "acceptance": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-acceptance-receipts/DEV-012.acceptance.json",
+          "sha256": "18abce435489418ec9415d919582d04cfda89caebb9357d6b0784b2da696e20f"
+        }
+      }
+    },
+    {
+      "id": "DEV-116",
+      "definition": {
+        "id": "DEV-116",
+        "locator": "sheet:Backlog/row:117",
+        "acceptanceCriteria": "Explicit OUT list; integration-only contracts; technical requisition/critical spares boundary; no accidental PO/AP/AR/payroll tables.",
+        "traceId": "T-V463-002",
+        "ownerRole": "Solution Architect",
+        "storyPoints": 5,
+        "dependencies": [
+          "DEV-004"
+        ],
+        "registeredCriticalSoftwareCount": 0
+      },
+      "authored": {
+        "state": "AUTHORED",
+        "artifacts": [
+          {
+            "path": "backend/Poseidon.Domain/ErpReferenceBoundary.cs",
+            "sha256": "14e0e27737f7160c1bb4ea60f2ed18d2760f1408e4fcf5066ded186e628f0fe1"
+          },
+          {
+            "path": "docs/architecture/s0-current-engineering-candidate-20261102.md",
+            "sha256": "7196faa3b5bb0b78819bf6b804bb5dfab3cc41546f17926bde9521b4ce089404"
+          },
+          {
+            "path": "docs/tasks/selected-source-reconciliation-2026-11-02.md",
+            "sha256": "17cf931c89e55f4c51f1e9748c1c62fb48aab0eab453a75604be54215b2bf49f"
+          },
+          {
+            "path": "tests/Poseidon.Domain.Tests/ErpReferenceBoundaryTests.cs",
+            "sha256": "dd72c9d74fc98c48c55386fbb56c66fd49b17d0156d52accb04453ca1e462e82"
+          }
+        ]
+      },
+      "evidence": {
+        "source-review": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-116.source-review.json",
+          "sha256": "224634ee54b0c1cbd4297dc5ccbbb6526a5865030d607dfc72073858f6179147"
+        },
+        "engineering-review": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-116.engineering-review.json",
+          "sha256": "9860f322cb521634add4f5fbe67f65eb6396c0705b32bb788be39854e3444d8d"
+        },
+        "execution": {
+          "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/receipts/DEV-116.execution.json",
+          "sha256": "7aadc5b9fc55fce1837a66bd1cf61c52c69dec3fb4387f64de404855ab960525"
+        },
+        "acceptance": {
+          "path": ".runtime/s0-overnight-20261102/qa/final-F-acceptance-receipts/DEV-116.acceptance.json",
+          "sha256": "37c22766ef20b393d22abe47acab44a6368b0b9a712ac33c261c428d017da22e"
+        }
+      }
+    }
+  ],
+  "blockers": [
+    {
+      "id": "BLK-S0-ASSESSMENT-PENDING",
+      "severity": "P0",
+      "state": "RESOLVED",
+      "resolutionEvidence": ".runtime/s0-overnight-20261102/qa/final-F-current-P0-assessment.json"
+    }
+  ],
+  "externalBindings": [],
+  "status": "READY_FOR_EXTERNAL_EVALUATION",
+  "note": "Exact clean F draft with source-bound Git artifacts; no source/engineering/runtime/P0/acceptance decision issued."
+}

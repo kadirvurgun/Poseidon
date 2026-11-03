@@ -7,7 +7,7 @@ const id = '10000000-0000-0000-0000-000000000001'
 const item = { key: id, href: `/app/fleet/${id}`, label: 'T1 · Earlier private result', kind: 'Tug' }
 const page = (items: unknown[]) => ({ items, offset: 0, limit: 25, hasMore: false })
 const response = (body: unknown, status = 200) => ({ ok: status === 200, status, json: async () => body }) as Response
-const props = { language: 'en' as const, onClose: vi.fn(), onNavigate: vi.fn() }
+const props = { authorization: 'allowed' as const, grant: {}, onRetryAuthorization: vi.fn(), language: 'en' as const, onClose: vi.fn(), onNavigate: vi.fn() }
 afterEach(() => { vi.unstubAllGlobals(); vi.restoreAllMocks() })
 
 it('withdraws old search results immediately on focus before the current-session read denies revoked search', async () => {

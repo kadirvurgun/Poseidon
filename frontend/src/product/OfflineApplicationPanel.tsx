@@ -27,12 +27,29 @@ export function OfflineApplicationPanel({ vessel, assignment, language, onDirty 
   const closeScope = useEffectEvent(() => { generation.current++; request.current?.abort(); app.current?.close() })
   useEffect(() => {
     const hidden = () => { if (document.hidden) withdraw() }
-    const changed = () => { setOnline(navigator.onLine); if (navigator.onLine) withdraw() }
+    let observedOnline = navigator.onLine
+    const changed = () => {
+      observedOnline = navigator.onLine
+      setOnline(observedOnline)
+      // A real online event remains a conservative withdrawal signal.
+      if (observedOnline) withdraw()
+    }
+    const synchronizeHint = () => {
+      const currentOnline = navigator.onLine
+      const reconnected = currentOnline && !observedOnline
+      observedOnline = currentOnline
+      setOnline(currentOnline)
+      // Some browsers update the native hint after offline bootstrap without
+      // emitting online. This local check grants no authority or network read.
+      if (reconnected) withdraw()
+    }
     const pagehide = () => withdraw()
     window.addEventListener('online', changed); window.addEventListener('offline', changed)
     window.addEventListener('pagehide', pagehide); document.addEventListener('visibilitychange', hidden)
+    const networkHintTimer = window.setInterval(synchronizeHint, 1000)
     return () => {
       closeScope()
+      window.clearInterval(networkHintTimer)
       window.removeEventListener('online', changed); window.removeEventListener('offline', changed)
       window.removeEventListener('pagehide', pagehide); document.removeEventListener('visibilitychange', hidden)
     }

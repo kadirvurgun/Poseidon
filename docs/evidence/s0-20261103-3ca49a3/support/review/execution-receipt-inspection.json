@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "poseidon.s0-independent-execution-inspection.v1",
+  "reviewerSession": "/root/s0_final_independent_qa",
+  "reviewerPrincipal": "/root/s0_final_independent_qa",
+  "issuedAt": "2026-11-03T02:51:19.714165Z",
+  "target": {
+    "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+    "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03"
+  },
+  "decision": "PASS_FOR_LITERAL_TASK_ACCEPTANCE_ASSESSMENT",
+  "executionIndex": {
+    "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/execution-receipts-index.json",
+    "sha256": "45c2d780ecc9959a3eea02e761db5113f6114dbf214b0d09a8b00b81e288a573"
+  },
+  "executionManifest": {
+    "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/execution-evidence-manifest.json",
+    "sha256": "9cf44a107d99e7a254f190c0697587b1e00c122dc68bee85ced3506755eee01d"
+  },
+  "currentReviewIndex": {
+    "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts-index-v2.json",
+    "sha256": "7affdb4b8893ed2c58e95571d26f6cfb76766de7d070417e0831cf85ec9d8ca6"
+  },
+  "executionReceiptCount": 13,
+  "currentReviewReceiptCount": 26,
+  "verifiedReferencedRawFiles": 112,
+  "verifiedUniqueReviewGitInputs": 65,
+  "mismatches": [],
+  "lineEndingObservation": "One tracked authoring-contract working copy was found with CRLF; exact LF normalization equalled immutable F Git bytes. Root restored only those original bytes; my final raw-byte, Git-blob, clean-index and tree recheck passed. No issued receipt was rewritten.",
+  "assessment": "All13 original UTF-8 criteria, expanded dependencies, source locators, trace IDs, target and current v2 review prerequisites match. Five engineering successor receipts are correctly used. All15 category claims were independently read; counters distinguish native tests, definition/build/scan commands and build objects. Only the already source-approved AI/DR exclusions apply. Shared122 executions are not multiplied across five assessments or13 tasks. Supporting unavailable framework counters remain unavailable.",
+  "unresolvedP0": 0,
+  "phaseAccepted": false
+}

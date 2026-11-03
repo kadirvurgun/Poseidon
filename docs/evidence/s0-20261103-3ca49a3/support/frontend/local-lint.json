@@ -1,0 +1,17 @@
+{
+  "exitCode": 0,
+  "status": "PASS",
+  "startedAt": "2026-11-03T01:00:46.907893+00:00",
+  "durationSeconds": 31.818,
+  "outputSha256": "279372f70c4709775dd1b3d570cf0002c4f8bcf45c54e1029fc6343730db23eb",
+  "rawOutputPersisted": false,
+  "errors": 0,
+  "warnings": 0,
+  "findings": [],
+  "commandId": "frontend-F-lint",
+  "targetCommit": null,
+  "targetTree": null,
+  "baseCommit": "e29346642fb09f4cdddeff61846c1a4428179cb4",
+  "cleanInput": false,
+  "evidenceScope": "local dirty repair only; not acceptance"
+}

@@ -1,0 +1,439 @@
+{
+  "task": "TODAY-TUG-CURRENT-01",
+  "baseline": "poseidon-v46.3-20261030",
+  "status": "source-retrieval-only; not independent source acceptance",
+  "records": [
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "locator": "paragraph:350",
+      "sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "text": "55"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "locator": "paragraph:351",
+      "sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "text": "poseidon-today"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "locator": "paragraph:352",
+      "sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "text": "POSEIDON Today"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "locator": "paragraph:353",
+      "sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "text": "Core Safety Operations"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "locator": "paragraph:354",
+      "sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "text": "0"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.02_POSEIDON_v46.3_196_Ekran_Gorselli_Kullanim_Katalogu_TR.docx",
+      "locator": "paragraph:355",
+      "sha256": "b0b5e9fb3cad5137d76a4de912c3a60351b667d0aeb08252856e3a9445928b45",
+      "text": "6"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:18",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "1. UX İlkeleri"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:19",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "Role-first: kullanıcıya tüm sistemi değil, rolünün o anda yapması gereken işi göster."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:20",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "Mode-aware: Ship ve Tug ekranları ortak core'u paylaşır ancak operasyon ritmi ve terminoloji karıştırılmaz."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:21",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "Manage by Exception: normal durumlar geri planda, attention/blocker/decision önde."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:22",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "Explainability: readiness/compliance state tek renk veya puan değildir; Why görünümü source→control→evidence→owner→next action verir."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:23",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "Human authority: safety/legal kritik karar butonları yetkili rol ve state olmadan aktif olamaz."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/13.04_POSEIDON_v46.3_Design_System_ve_UX_Standartlari_TR.docx",
+      "locator": "paragraph:24",
+      "sha256": "83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c",
+      "text": "Progressive disclosure: yoğun tabloda kritik kolonlar sabit, ayrıntı drill-down ile açılır."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/06.01_POSEIDON_v46.3_PRD_SRS_Gemi_Romorkor_TR.docx",
+      "locator": "paragraph:199",
+      "sha256": "5e49f3e1313f83f6d8967cf66713b5c9a3b5174804a376367313b714a958e6c9",
+      "text": "Method"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/06.01_POSEIDON_v46.3_PRD_SRS_Gemi_Romorkor_TR.docx",
+      "locator": "paragraph:200",
+      "sha256": "5e49f3e1313f83f6d8967cf66713b5c9a3b5174804a376367313b714a958e6c9",
+      "text": "Endpoint"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/06.01_POSEIDON_v46.3_PRD_SRS_Gemi_Romorkor_TR.docx",
+      "locator": "paragraph:201",
+      "sha256": "5e49f3e1313f83f6d8967cf66713b5c9a3b5174804a376367313b714a958e6c9",
+      "text": "Purpose"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/06.01_POSEIDON_v46.3_PRD_SRS_Gemi_Romorkor_TR.docx",
+      "locator": "paragraph:202",
+      "sha256": "5e49f3e1313f83f6d8967cf66713b5c9a3b5174804a376367313b714a958e6c9",
+      "text": "POST"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/06.01_POSEIDON_v46.3_PRD_SRS_Gemi_Romorkor_TR.docx",
+      "locator": "paragraph:203",
+      "sha256": "5e49f3e1313f83f6d8967cf66713b5c9a3b5174804a376367313b714a958e6c9",
+      "text": "/api/v1/tug-jobs"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/06.01_POSEIDON_v46.3_PRD_SRS_Gemi_Romorkor_TR.docx",
+      "locator": "paragraph:204",
+      "sha256": "5e49f3e1313f83f6d8967cf66713b5c9a3b5174804a376367313b714a958e6c9",
+      "text": "Create tug job"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/06.01_POSEIDON_v46.3_PRD_SRS_Gemi_Romorkor_TR.docx",
+      "locator": "paragraph:205",
+      "sha256": "5e49f3e1313f83f6d8967cf66713b5c9a3b5174804a376367313b714a958e6c9",
+      "text": "GET"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/06.01_POSEIDON_v46.3_PRD_SRS_Gemi_Romorkor_TR.docx",
+      "locator": "paragraph:206",
+      "sha256": "5e49f3e1313f83f6d8967cf66713b5c9a3b5174804a376367313b714a958e6c9",
+      "text": "/api/v1/tug-job-board"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/06.01_POSEIDON_v46.3_PRD_SRS_Gemi_Romorkor_TR.docx",
+      "locator": "paragraph:207",
+      "sha256": "5e49f3e1313f83f6d8967cf66713b5c9a3b5174804a376367313b714a958e6c9",
+      "text": "Daily/shift job board"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/06.01_POSEIDON_v46.3_PRD_SRS_Gemi_Romorkor_TR.docx",
+      "locator": "paragraph:208",
+      "sha256": "5e49f3e1313f83f6d8967cf66713b5c9a3b5174804a376367313b714a958e6c9",
+      "text": "GET/PATCH"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/06.01_POSEIDON_v46.3_PRD_SRS_Gemi_Romorkor_TR.docx",
+      "locator": "paragraph:209",
+      "sha256": "5e49f3e1313f83f6d8967cf66713b5c9a3b5174804a376367313b714a958e6c9",
+      "text": "/api/v1/tug-jobs/{id}"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/06.01_POSEIDON_v46.3_PRD_SRS_Gemi_Romorkor_TR.docx",
+      "locator": "paragraph:210",
+      "sha256": "5e49f3e1313f83f6d8967cf66713b5c9a3b5174804a376367313b714a958e6c9",
+      "text": "Job detail/state"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/06.01_POSEIDON_v46.3_PRD_SRS_Gemi_Romorkor_TR.docx",
+      "locator": "paragraph:211",
+      "sha256": "5e49f3e1313f83f6d8967cf66713b5c9a3b5174804a376367313b714a958e6c9",
+      "text": "POST"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/06.01_POSEIDON_v46.3_PRD_SRS_Gemi_Romorkor_TR.docx",
+      "locator": "paragraph:212",
+      "sha256": "5e49f3e1313f83f6d8967cf66713b5c9a3b5174804a376367313b714a958e6c9",
+      "text": "/api/v1/tug-assignments"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/06.01_POSEIDON_v46.3_PRD_SRS_Gemi_Romorkor_TR.docx",
+      "locator": "paragraph:213",
+      "sha256": "5e49f3e1313f83f6d8967cf66713b5c9a3b5174804a376367313b714a958e6c9",
+      "text": "Assign tug to job"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/06.01_POSEIDON_v46.3_PRD_SRS_Gemi_Romorkor_TR.docx",
+      "locator": "paragraph:214",
+      "sha256": "5e49f3e1313f83f6d8967cf66713b5c9a3b5174804a376367313b714a958e6c9",
+      "text": "GET/POST"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/06.01_POSEIDON_v46.3_PRD_SRS_Gemi_Romorkor_TR.docx",
+      "locator": "paragraph:215",
+      "sha256": "5e49f3e1313f83f6d8967cf66713b5c9a3b5174804a376367313b714a958e6c9",
+      "text": "/api/v1/tug-readiness"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:1533",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Römorkör İş Talebi / Job Intake"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:1534",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Tug Operations"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:1535",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "/api/v1/tug-jobs"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:1536",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Tug Operations Service"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:1537",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "V46.2 NEW / DEV READY"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:1538",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "175"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:1539",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "tug-job-board"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:1540",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Römorkör İş Panosu"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:1541",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Tug Operations"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:1542",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "/api/v1/tug-job-board"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:1543",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Tug Operations Service"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:1544",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "V46.2 NEW / DEV READY"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:1545",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "176"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:1546",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "tug-job-detail"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:1547",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Römorkör İş Detayı"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:1548",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Tug Operations"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:1549",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "/api/v1/tug-jobs/{id}"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:1550",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Tug Operations Service"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:1551",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "V46.2 NEW / DEV READY"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:1552",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "177"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:1553",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "tug-assignment"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/15.01_POSEIDON_v46.3_Product_Wide_API_Integration_Specification_TR.docx",
+      "locator": "paragraph:1554",
+      "sha256": "68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837",
+      "text": "Römorkör Atama ve Çakışma Kontrolü"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.01_POSEIDON_Romorkor_Regulatory_Applicability_Pack_TR.docx",
+      "locator": "paragraph:290",
+      "sha256": "99b21d80faeb19905a0838839bd62c6db5b9d09523097bf4a7080a00d01494d5",
+      "text": "Shore planner cannot override Master/Tug Master onboard safety gate."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.01_POSEIDON_Romorkor_Regulatory_Applicability_Pack_TR.docx",
+      "locator": "paragraph:291",
+      "sha256": "99b21d80faeb19905a0838839bd62c6db5b9d09523097bf4a7080a00d01494d5",
+      "text": "Bollard pull value keeps source/provenance/test date; unverified value is not treated as trusted evidence."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.01_POSEIDON_Romorkor_Regulatory_Applicability_Pack_TR.docx",
+      "locator": "paragraph:292",
+      "sha256": "99b21d80faeb19905a0838839bd62c6db5b9d09523097bf4a7080a00d01494d5",
+      "text": "Emergency release test/defect state is traceable to equipment, job readiness and decision."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.01_POSEIDON_Romorkor_Regulatory_Applicability_Pack_TR.docx",
+      "locator": "paragraph:293",
+      "sha256": "99b21d80faeb19905a0838839bd62c6db5b9d09523097bf4a7080a00d01494d5",
+      "text": "Harbour/close-quarters and ocean towage profiles can activate different rule packs."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.01_POSEIDON_Romorkor_Regulatory_Applicability_Pack_TR.docx",
+      "locator": "paragraph:294",
+      "sha256": "99b21d80faeb19905a0838839bd62c6db5b9d09523097bf4a7080a00d01494d5",
+      "text": "Tug-specific records support offline capture where operationally required; material conflicts require human resolution."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.01_POSEIDON_Romorkor_Regulatory_Applicability_Pack_TR.docx",
+      "locator": "paragraph:295",
+      "sha256": "99b21d80faeb19905a0838839bd62c6db5b9d09523097bf4a7080a00d01494d5",
+      "text": "Every critical readiness state exposes Why → source/control/evidence/blocker/owner/next action."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:24",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A24: DEV-023 | B24: Story | C24: E15 Search & Notifications | D24: Today | E24: POSEIDON Today shell | F24: Kullanıcı olarak bugünkü kritik işleri tek listede görmek istiyorum. | G24: Exception cards priority/source/Why/owner/next action taşır; loading/empty/error/offline states deterministiktir. | H24: poseidon-today / /api/v1/today | I24: P0 | J24: S2 | K24: Frontend+Backend | L24: DEV-021,DEV-022 | M24: T-S2-004 | N24: Not Started | O24: YES | P24: 8 | Q24: M"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:25",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A25: DEV-024 | B25: Story | C25: E05 Human Decision & Workflow | D25: Why | E25: Why Engine temel kontratı | F25: Kullanıcı olarak bir state'in neden oluştuğunu görmek istiyorum. | G25: Critical state için source/reason/input freshness/blocker listesi döner; unauthorized source detail sızmaz. | H25: why-engine / /api/v1/why | I25: P0 | J25: S2 | K25: Backend | L25: DEV-016,DEV-023 | M25: T-S2-005 | N25: Not Started | O25: YES | P25: 8 | Q25: M"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:54",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A54: DEV-053 | B54: Story | C54: E07 Technical Safety | D54: PMS | E54: Maintenance plan + trigger | F54: Chief Engineer olarak calendar/meter/condition tetikli bakım planı oluşturmak istiyorum. | G54: Job/interval/meter/condition/criticality/owner; due calculation deterministic; invalid postponement blocked/audited. | H54: maintenance-plan | I54: P0 | J54: S8 | K54: Backend+Frontend | L54: DEV-052 | M54: T-S8-002 | N54: Not Started | O54: YES | P54: 13 | Q54: H"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:83",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A83: DEV-082 | B83: Story | C83: E21 Tug Operations | D83: Job Board | E83: Kısa ve sık römorkör iş panosu | F83: Operasyon sorumlusu olarak gün içi işleri zaman ve readiness ile görmek istiyorum. | G83: Job board shows planned window, assigned tugs, BP, readiness, conflict, priority and next action. | H83: tug-job-board | I83: P0 | J83: S6 | K83: Frontend+Backend | L83: DEV-081 | M83: T-TUG-003 | N83: Not Started | O83: YES | P83: 8 | Q83: M | R83: v46.2"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:1932",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A1932: Operasyonlar | B1932: Römorkör Operasyonları | C1932: İş talebinden tamamlanmaya römorkaj akışı | D1932: Römorkör | E1932: tug-job-board | F1932: Römorkör İş Panosu | G1932: Tug Operations | H1932: job_id | I1932: İş No | J1932: input/text | K1932: Metin Girişi | L1932: Identifier | M1932: Identifier | N1932: uuid/text — REVIEW | O1932: TBD | P1932: TBD | Q1932: System | R1932: System | S1932: Sistem tarafından türetilir | U1932: N/A | V1932: Römorkör Operasyon Sorumlusu; Master/Tug Master; Chief Engineer; DPA/Fleet Manager; assigned crew as scoped | W1932: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1932: Controlled type/state/context validation; critical transitions require authorized role and prerequisites. | Y1932: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1932: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1932: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1932: Offline capture supported for tugboard operational records; client UUID/base version; idempotent sync; material conflict requires human resolution. | AC1932: /api/v1/tug-job-board | AD1932: TugJobBoard | AE1932: job_id | AF1932: UNCONFIRMED — physical schema review | AG1932: FR-tug-job-board-job_id | AH1932: TC-tug-job-board-job_id | AI1932: P1 | AJ1932: EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1932: UI/TRACE TAM — PROD REVIEW | AL1932: SOURCE + DERIVED GAP ANALYSIS | AM1932: ÖNERİ: Römorkör İş Panosu bağlamında İş No. İş anlamı/birim BA onayı bekler. | AN1932: Metin Girişi | AO1932: SYSTEM_DERIVED | AQ1932: DERIVATION_REQUIRES_SPECIFICATION | AV1932: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1932: İş No: Controlled type/state/context validation; critical transitions require authorized role and prerequisites. | BE1932: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1932: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1932: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1932: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1932: DEC-DATA-01…06 | BO1932: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:1933",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A1933: Operasyonlar | B1933: Römorkör Operasyonları | C1933: İş talebinden tamamlanmaya römorkaj akışı | D1933: Römorkör | E1933: tug-job-board | F1933: Römorkör İş Panosu | G1933: Tug Operations | H1933: assisted_vessel | I1933: Gemi / İş | J1933: input/text | K1933: Metin Girişi | L1933: Text | M1933: Text | N1933: varchar/text — length TBD | O1933: TBD | P1933: TBD | Q1933: System | R1933: System | S1933: Sistem tarafından türetilir | U1933: N/A | V1933: Römorkör Operasyon Sorumlusu; Master/Tug Master; Chief Engineer; DPA/Fleet Manager; assigned crew as scoped | W1933: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1933: Controlled type/state/context validation; critical transitions require authorized role and prerequisites. | Y1933: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1933: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1933: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1933: Offline capture supported for tugboard operational records; client UUID/base version; idempotent sync; material conflict requires human resolution. | AC1933: /api/v1/tug-job-board | AD1933: TugJobBoard | AE1933: assisted_vessel | AF1933: UNCONFIRMED — physical schema review | AG1933: FR-tug-job-board-assisted_vessel | AH1933: TC-tug-job-board-assisted_vessel | AI1933: P1 | AJ1933: EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1933: UI/TRACE TAM — PROD REVIEW | AL1933: SOURCE + DERIVED GAP ANALYSIS | AM1933: ÖNERİ: Römorkör İş Panosu bağlamında Gemi / İş. İş anlamı/birim BA onayı bekler. | AN1933: Metin Girişi | AO1933: SYSTEM_DERIVED | AQ1933: DERIVATION_REQUIRES_SPECIFICATION | AV1933: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1933: Gemi / İş: Controlled type/state/context validation; critical transitions require authorized role and prerequisites. | BE1933: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1933: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1933: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1933: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1933: DEC-DATA-01…06 | BO1933: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:1935",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A1935: Operasyonlar | B1935: Römorkör Operasyonları | C1935: İş talebinden tamamlanmaya römorkaj akışı | D1935: Römorkör | E1935: tug-job-board | F1935: Römorkör İş Panosu | G1935: Tug Operations | H1935: planned_start | I1935: Planlanan Başlangıç | J1935: input/datetime | K1935: Tarih-Saat | L1935: Date/Time | M1935: DateTime | N1935: timestamptz | O1935: TBD | P1935: TBD | Q1935: System | R1935: System | S1935: Sistem tarafından türetilir | U1935: N/A | V1935: Römorkör Operasyon Sorumlusu; Master/Tug Master; Chief Engineer; DPA/Fleet Manager; assigned crew as scoped | W1935: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1935: Controlled type/state/context validation; critical transitions require authorized role and prerequisites. | Y1935: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1935: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1935: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1935: Offline capture supported for tugboard operational records; client UUID/base version; idempotent sync; material conflict requires human resolution. | AC1935: /api/v1/tug-job-board | AD1935: TugJobBoard | AE1935: planned_start | AF1935: UNCONFIRMED — physical schema review | AG1935: FR-tug-job-board-planned_start | AH1935: TC-tug-job-board-planned_start | AI1935: P1 | AJ1935: EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1935: UI/TRACE TAM — PROD REVIEW | AL1935: SOURCE + DERIVED GAP ANALYSIS | AM1935: ÖNERİ: Römorkör İş Panosu bağlamında Planlanan Başlangıç. İş anlamı/birim BA onayı bekler. | AN1935: Tarih-Saat | AO1935: SYSTEM_DERIVED | AQ1935: DERIVATION_REQUIRES_SPECIFICATION | AV1935: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1935: Planlanan Başlangıç: geçerli tarih/saat giriniz; kronoloji ve geçerlilik koşullarını kontrol ediniz. | BE1935: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1935: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1935: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1935: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1935: DEC-DATA-01…06 | BO1935: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:1940",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A1940: Operasyonlar | B1940: Römorkör Operasyonları | C1940: İş talebinden tamamlanmaya römorkaj akışı | D1940: Römorkör | E1940: tug-job-board | F1940: Römorkör İş Panosu | G1940: Tug Operations | H1940: readiness_state | I1940: Hazırlık | J1940: select/select | K1940: Seçim Listesi | L1940: State | M1940: Controlled Code / Enum | N1940: text / controlled-code FK — REVIEW | O1940: TBD | P1940: TBD | Q1940: System | R1940: System | S1940: Sistem tarafından türetilir | T1940: READY; CONDITIONAL; NOT_READY; REVIEW_REQUIRED | U1940: Tanımlı | V1940: Römorkör Operasyon Sorumlusu; Master/Tug Master; Chief Engineer; DPA/Fleet Manager; assigned crew as scoped | W1940: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1940: Controlled type/state/context validation; critical transitions require authorized role and prerequisites. | Y1940: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1940: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1940: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1940: Offline capture supported for tugboard operational records; client UUID/base version; idempotent sync; material conflict requires human resolution. | AC1940: /api/v1/tug-job-board | AD1940: TugJobBoard | AE1940: readiness_state | AF1940: UNCONFIRMED — physical schema review | AG1940: FR-tug-job-board-readiness_state | AH1940: TC-tug-job-board-readiness_state | AI1940: P1 | AJ1940: EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1940: UI/TRACE TAM — PROD REVIEW | AL1940: SOURCE + DERIVED GAP ANALYSIS | AM1940: ÖNERİ: Römorkör İş Panosu bağlamında Hazırlık. İş anlamı/birim BA onayı bekler. | AN1940: Seçim Listesi | AO1940: SYSTEM_DERIVED | AQ1940: DERIVATION_REQUIRES_SPECIFICATION | AU1940: INLINE_SOURCE_OPTIONS | AV1940: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1940: Hazırlık: tanımlı seçeneklerden birini seçiniz. | BE1940: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1940: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1940: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1940: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1940: DEC-DATA-01…06 | BO1940: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:1941",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A1941: Operasyonlar | B1941: Römorkör Operasyonları | C1941: İş talebinden tamamlanmaya römorkaj akışı | D1941: Römorkör | E1941: tug-job-board | F1941: Römorkör İş Panosu | G1941: Tug Operations | H1941: conflict_state | I1941: Çakışma | J1941: select/select | K1941: Seçim Listesi | L1941: State | M1941: Controlled Code / Enum | N1941: text / controlled-code FK — REVIEW | O1941: TBD | P1941: TBD | Q1941: System | R1941: System | S1941: Sistem tarafından türetilir | T1941: NONE; ATTENTION; CONFLICT | U1941: Tanımlı | V1941: Römorkör Operasyon Sorumlusu; Master/Tug Master; Chief Engineer; DPA/Fleet Manager; assigned crew as scoped | W1941: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1941: Controlled type/state/context validation; critical transitions require authorized role and prerequisites. | Y1941: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1941: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1941: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1941: Offline capture supported for tugboard operational records; client UUID/base version; idempotent sync; material conflict requires human resolution. | AC1941: /api/v1/tug-job-board | AD1941: TugJobBoard | AE1941: conflict_state | AF1941: UNCONFIRMED — physical schema review | AG1941: FR-tug-job-board-conflict_state | AH1941: TC-tug-job-board-conflict_state | AI1941: P1 | AJ1941: EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1941: UI/TRACE TAM — PROD REVIEW | AL1941: SOURCE + DERIVED GAP ANALYSIS | AM1941: ÖNERİ: Römorkör İş Panosu bağlamında Çakışma. İş anlamı/birim BA onayı bekler. | AN1941: Seçim Listesi | AO1941: SYSTEM_DERIVED | AQ1941: DERIVATION_REQUIRES_SPECIFICATION | AU1941: INLINE_SOURCE_OPTIONS | AV1941: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1941: Çakışma: tanımlı seçeneklerden birini seçiniz. | BE1941: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1941: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1941: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1941: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1941: DEC-DATA-01…06 | BO1941: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:1955",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A1955: Operasyonlar | B1955: Römorkör Operasyonları | C1955: İş talebinden tamamlanmaya römorkaj akışı | D1955: Römorkör | E1955: tug-job-detail | F1955: Römorkör İş Detayı | G1955: Tug Operations | H1955: required_tug_count | I1955: Gerekli Römorkör Sayısı | J1955: input/number | K1955: Sayısal Giriş | L1955: Numeric | M1955: Number | N1955: numeric — precision/scale TBD | O1955: TBD | P1955: TBD | Q1955: Yes | R1955: 1 | S1955: Kaynakta explicit — production doğrulaması gerekir | U1955: N/A | V1955: Römorkör Operasyon Sorumlusu; Master/Tug Master; Chief Engineer; DPA/Fleet Manager; assigned crew as scoped | W1955: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1955: Controlled type/state/context validation; critical transitions require authorized role and prerequisites. | Y1955: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1955: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1955: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1955: Offline capture supported for tugboard operational records; client UUID/base version; idempotent sync; material conflict requires human resolution. | AC1955: /api/v1/tug-jobs/{id} | AD1955: TugJobDetail | AE1955: required_tug_count | AF1955: UNCONFIRMED — physical schema review | AG1955: FR-tug-job-detail-required_tug_count | AH1955: TC-tug-job-detail-required_tug_count | AI1955: P1 | AJ1955: EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1955: UI/TRACE TAM — PROD REVIEW | AL1955: SOURCE + DERIVED GAP ANALYSIS | AM1955: ÖNERİ: Römorkör İş Detayı bağlamında Gerekli Römorkör Sayısı. İş anlamı/birim BA onayı bekler. | AN1955: Sayısal Giriş | AO1955: EXPLICIT_CANDIDATE | AP1955: 1 | AQ1955: NUMBER_CANDIDATE | AR1955: SOURCE: required | AV1955: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1955: Gerekli Römorkör Sayısı: geçerli sayısal değer giriniz; onaylı birim ve aralığı kullanınız. | BE1955: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1955: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1955: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1955: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1955: DEC-DATA-01…06 | BO1955: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:1956",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A1956: Operasyonlar | B1956: Römorkör Operasyonları | C1956: İş talebinden tamamlanmaya römorkaj akışı | D1956: Römorkör | E1956: tug-job-detail | F1956: Römorkör İş Detayı | G1956: Tug Operations | H1956: required_bollard_pull | I1956: Gerekli Bollard Pull | J1956: input/number | K1956: Sayısal Giriş | L1956: Numeric | M1956: Number | N1956: numeric — precision/scale TBD | O1956: TBD | P1956: TBD | Q1956: Conditional | R1956: No | S1956: PLACEHOLDER — REVIEW_REQUIRED | U1956: N/A | V1956: Römorkör Operasyon Sorumlusu; Master/Tug Master; Chief Engineer; DPA/Fleet Manager; assigned crew as scoped | W1956: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1956: Controlled type/state/context validation; critical transitions require authorized role and prerequisites. | Y1956: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1956: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1956: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1956: Offline capture supported for tugboard operational records; client UUID/base version; idempotent sync; material conflict requires human resolution. | AC1956: /api/v1/tug-jobs/{id} | AD1956: TugJobDetail | AE1956: required_bollard_pull | AF1956: UNCONFIRMED — physical schema review | AG1956: FR-tug-job-detail-required_bollard_pull | AH1956: TC-tug-job-detail-required_bollard_pull | AI1956: P1 | AJ1956: DEFAULT_PLACEHOLDER; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1956: UI/TRACE TAM — PROD REVIEW | AL1956: SOURCE + DERIVED GAP ANALYSIS | AM1956: ÖNERİ: Römorkör İş Detayı bağlamında Gerekli Bollard Pull. İş anlamı/birim BA onayı bekler. | AN1956: Sayısal Giriş | AO1956: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ1956: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AV1956: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1956: Gerekli Bollard Pull: geçerli sayısal değer giriniz; onaylı birim ve aralığı kullanınız. | BE1956: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1956: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1956: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1956: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1956: DEC-DATA-01…06 | BO1956: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:1957",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A1957: Operasyonlar | B1957: Römorkör Operasyonları | C1957: İş talebinden tamamlanmaya römorkaj akışı | D1957: Römorkör | E1957: tug-job-detail | F1957: Römorkör İş Detayı | G1957: Tug Operations | H1957: assigned_tugs | I1957: Atanan Römorkörler | J1957: input/text | K1957: Metin Girişi | L1957: Reference | M1957: Reference | N1957: uuid or text FK — REVIEW | O1957: TBD | P1957: TBD | Q1957: Conditional | R1957: No | S1957: PLACEHOLDER — REVIEW_REQUIRED | U1957: KAYNAK EKSİK / TÜRÜ DOĞRULANACAK | V1957: Römorkör Operasyon Sorumlusu; Master/Tug Master; Chief Engineer; DPA/Fleet Manager; assigned crew as scoped | W1957: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1957: Controlled type/state/context validation; critical transitions require authorized role and prerequisites. | Y1957: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1957: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1957: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1957: Offline capture supported for tugboard operational records; client UUID/base version; idempotent sync; material conflict requires human resolution. | AC1957: /api/v1/tug-jobs/{id} | AD1957: TugJobDetail | AE1957: assigned_tugs | AF1957: UNCONFIRMED — physical schema review | AG1957: FR-tug-job-detail-assigned_tugs | AH1957: TC-tug-job-detail-assigned_tugs | AI1957: P1 | AJ1957: DEFAULT_PLACEHOLDER; LOOKUP_SOURCE_MISSING; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1957: UI/TRACE TAM — PROD REVIEW | AL1957: SOURCE + DERIVED GAP ANALYSIS | AM1957: ÖNERİ: Römorkör İş Detayı bağlamında Atanan Römorkörler. İş anlamı/birim BA onayı bekler. | AN1957: ÖNERİ: yetkili referans seçici; free-text değil | AO1957: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ1957: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AV1957: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1957: Atanan Römorkörler: geçerli ve bu bağlamda yetkili bir referans seçiniz. | BE1957: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1957: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1957: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1957: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1957: DEC-DATA-01…06 | BO1957: REVIEW_REQUIRED | BR1957: tug-job-detail::assigned_tugs | BT1957: RECOVERED_ENTITY_AND_READ_API"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:2316 Alan v46.3/row:1940",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A1940: tug-job-board | B1940: Römorkör İş Panosu | C1940: Tug Operations | D1940: readiness_state | E1940: Hazırlık | F1940: select/select | G1940: State | H1940: System | I1940: System | J1940: READY; CONDITIONAL; NOT_READY; REVIEW_REQUIRED | K1940: Römorkör Operasyon Sorumlusu; Master/Tug Master; Chief Engineer; DPA/Fleet Manager; assigned crew as scoped | L1940: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M1940: Controlled type/state/context validation; critical transitions require authorized role and prerequisites. | N1940: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | O1940: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P1940: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | Q1940: Offline capture supported for tugboard operational records; client UUID/base version; idempotent sync; material conflict requires human resolution. | R1940: /api/v1/tug-job-board | S1940: TugJobBoard | T1940: readiness_state | U1940: FR-tug-job-board-readiness_state | V1940: TC-tug-job-board-readiness_state"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/11.01_POSEIDON_v46.3_Controlled_Implementation_Traceability_Matrix_TR.xlsx",
+      "locator": "sheet:2316 Alan v46.3/row:1941",
+      "sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+      "text": "A1941: tug-job-board | B1941: Römorkör İş Panosu | C1941: Tug Operations | D1941: conflict_state | E1941: Çakışma | F1941: select/select | G1941: State | H1941: System | I1941: System | J1941: NONE; ATTENTION; CONFLICT | K1941: Römorkör Operasyon Sorumlusu; Master/Tug Master; Chief Engineer; DPA/Fleet Manager; assigned crew as scoped | L1941: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | M1941: Controlled type/state/context validation; critical transitions require authorized role and prerequisites. | N1941: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | O1941: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | P1941: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | Q1941: Offline capture supported for tugboard operational records; client UUID/base version; idempotent sync; material conflict requires human resolution. | R1941: /api/v1/tug-job-board | S1941: TugJobBoard | T1941: conflict_state | U1941: FR-tug-job-board-conflict_state | V1941: TC-tug-job-board-conflict_state"
+    }
+  ]
+}

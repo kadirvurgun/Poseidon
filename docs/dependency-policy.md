@@ -1,5 +1,35 @@
 # Güncel sürüm politikası
 
+## ENTERPRISE-WORKSPACE-01 — 02.11.2026, authored / preview build only
+
+User-approved React/shadcn/ui/ECharts design work retains React19.3.1 and Vite8.3.5.
+Official npm stable metadata and peer ranges were inspected; exact versions and
+the npm lock are committed-source candidates:
+
+| Dependency | Exact version |
+|---|---|
+| @radix-ui/react-slot | 1.5.0 |
+| class-variance-authority | 0.7.1 |
+| clsx | 2.1.1 |
+| tailwind-merge | 3.7.0 |
+| lucide-react | 1.66.0 |
+| echarts | 6.1.0 |
+| tailwindcss / @tailwindcss/vite | 4.3.3 / 4.3.3 |
+
+Manual shadcn/ui component source is owned in the frontend; no shadcn runtime
+package is required. Pinned npm install and requested-preview TypeScript/Vite
+build succeeded without force/legacy peer overrides. Full regression, lint,
+security/dependency review and independent QA are **DEFERRED**, not compatibility
+acceptance. Install reported13moderate advisories; identities/fixes await that
+gate. ECharts is imported modularly into a lazy SVG-renderer chunk; the main
+application chunk remains above500kB and needs later bundle review.
+
+Primary metadata: [npm registry](https://registry.npmjs.org/),
+[shadcn manual installation](https://ui.shadcn.com/docs/installation/manual),
+[ECharts modular imports](https://echarts.apache.org/handbook/en/basics/import/).
+
+## Earlier dependency checkpoints
+
 FILES-SOURCE-COMPLETION-01 authors official AWSSDK.S3 **4.0.104.8** and resolved
 AWSSDK.Core **4.0.102.14** using the official NuGet flat-container index/nuspec/package
 bytes on2026-11-01. Central version and both API/consumer locks include package SHA512.

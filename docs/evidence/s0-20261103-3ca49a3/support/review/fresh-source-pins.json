@@ -1,0 +1,666 @@
+{
+  "schemaVersion": "poseidon.independent-final-fresh-source-pin-review.v1",
+  "reviewerSession": "/root/s0_final_independent_qa",
+  "reviewerPrincipal": "/root/s0_final_independent_qa",
+  "issuedAt": "2026-11-03T01:40:15.799409Z",
+  "reviewerAuthoredProductTestsOrGate": false,
+  "target": {
+    "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+    "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03"
+  },
+  "baseline": "poseidon-v46.3-20261030",
+  "backlogSource": {
+    "path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674"
+  },
+  "candidateSnapshot": {
+    "path": ".runtime/s0-overnight-20261102/candidate-3ca49a3.json",
+    "sha256": "52d7ae086e6786574fa58ed8bc39dcc8fb6234c81c7bfd1b0b5df75bc545da52",
+    "state": "13NOT_ASSESSED_0RECEIPTS_P0OPEN_NOT_ACCEPTED"
+  },
+  "literalTaskDefinitions": [
+    {
+      "id": "DEV-001",
+      "locator": "sheet:Backlog/row:2",
+      "acceptanceCriteria": "Backend/frontend/contracts/infra/docs klasörleri oluşturulur; main/develop politikası ve PR kontrolü tanımlıdır; protected branch kuralı dokümante edilir.",
+      "traceId": "T-S0-001",
+      "ownerRole": "Engineering Lead",
+      "storyPoints": 3,
+      "dependencies": [],
+      "registeredCriticalSoftwareCount": 0
+    },
+    {
+      "id": "DEV-002",
+      "locator": "sheet:Backlog/row:3",
+      "acceptanceCriteria": "Backend ve frontend build; unit test; lint; artifact üretimi; başarısız adım PR'ı bloklar.",
+      "traceId": "T-S0-002",
+      "ownerRole": "DevOps",
+      "storyPoints": 5,
+      "dependencies": [
+        "DEV-001"
+      ],
+      "registeredCriticalSoftwareCount": 0
+    },
+    {
+      "id": "DEV-003",
+      "locator": "sheet:Backlog/row:4",
+      "acceptanceCriteria": "Her ortam için URL/secret/data/retention/deploy owner tanımlı; production datası DEV'e kopyalanmaz; environment promotion akışı yazılıdır.",
+      "traceId": "T-S0-003",
+      "ownerRole": "DevOps",
+      "storyPoints": 3,
+      "dependencies": [
+        "DEV-001"
+      ],
+      "registeredCriticalSoftwareCount": 0
+    },
+    {
+      "id": "DEV-004",
+      "locator": "sheet:Backlog/row:5",
+      "acceptanceCriteria": "Domain modülleri, dependency yönü, event/outbox yaklaşımı, object storage, offline sync ve AI boundary ADR'ları approved durumundadır.",
+      "traceId": "T-S0-004",
+      "ownerRole": "Solution Architect",
+      "storyPoints": 5,
+      "dependencies": [
+        "DEV-001"
+      ],
+      "registeredCriticalSoftwareCount": 0
+    },
+    {
+      "id": "DEV-005",
+      "locator": "sheet:Backlog/row:6",
+      "acceptanceCriteria": "Core entity listesi, PK/FK, tenancy, versioning, audit columns, evidence object refs ve migration stratejisi approved olur.",
+      "traceId": "T-S0-005",
+      "ownerRole": "Backend Lead",
+      "storyPoints": 5,
+      "dependencies": [
+        "DEV-004"
+      ],
+      "registeredCriticalSoftwareCount": 0
+    },
+    {
+      "id": "DEV-006",
+      "locator": "sheet:Backlog/row:7",
+      "acceptanceCriteria": "Tenant isolation, authn/authz, file upload, protected reporting, secrets, audit, offline device, AI prompt/data threats kayıtlı; P0 mitigations backlog'a bağlıdır.",
+      "traceId": "T-S0-006",
+      "ownerRole": "Security/Architect",
+      "storyPoints": 5,
+      "dependencies": [
+        "DEV-004"
+      ],
+      "registeredCriticalSoftwareCount": 0
+    },
+    {
+      "id": "DEV-007",
+      "locator": "sheet:Backlog/row:8",
+      "acceptanceCriteria": "10 pilot capability için orphan kritik öğe kalmaz; trace ID'leri backlog ve test case'lerine bağlıdır.",
+      "traceId": "T-S0-007",
+      "ownerRole": "BA/QA Lead",
+      "storyPoints": 5,
+      "dependencies": [],
+      "registeredCriticalSoftwareCount": 0
+    },
+    {
+      "id": "DEV-008",
+      "locator": "sheet:Backlog/row:9",
+      "acceptanceCriteria": "ISM/SOLAS/STCW/MLC/MARPOL/Flag/Class pilot kapsamı için source owner, version, validation status ve reviewer atanır.",
+      "traceId": "T-S0-008",
+      "ownerRole": "Regulatory Lead",
+      "storyPoints": 5,
+      "dependencies": [
+        "DEV-007"
+      ],
+      "registeredCriticalSoftwareCount": 0
+    },
+    {
+      "id": "DEV-009",
+      "locator": "sheet:Backlog/row:10",
+      "acceptanceCriteria": "En az tanker + genel cargo/tug profile; crew/certificate/asset/defect/evidence edge cases; expected applicability/readiness outcomes kayıtlıdır.",
+      "traceId": "T-S0-009",
+      "ownerRole": "QA Lead",
+      "storyPoints": 5,
+      "dependencies": [
+        "DEV-005",
+        "DEV-008"
+      ],
+      "registeredCriticalSoftwareCount": 0
+    },
+    {
+      "id": "DEV-010",
+      "locator": "sheet:Backlog/row:11",
+      "acceptanceCriteria": "DoR/DoD; design, security, offline, audit, regulatory, docs ve test etkisini kapsar; backlog template'e uygulanır.",
+      "traceId": "T-S0-010",
+      "ownerRole": "Product Owner",
+      "storyPoints": 2,
+      "dependencies": [
+        "DEV-007"
+      ],
+      "registeredCriticalSoftwareCount": 0
+    },
+    {
+      "id": "DEV-011",
+      "locator": "sheet:Backlog/row:12",
+      "acceptanceCriteria": "Correlation/tenant/vessel/request IDs; API latency/error, sync backlog/conflict, integration retry, audit health ve data freshness metric sözleşmesi vardır.",
+      "traceId": "T-S0-011",
+      "ownerRole": "DevOps",
+      "storyPoints": 3,
+      "dependencies": [
+        "DEV-004"
+      ],
+      "registeredCriticalSoftwareCount": 0
+    },
+    {
+      "id": "DEV-012",
+      "locator": "sheet:Backlog/row:13",
+      "acceptanceCriteria": "Architecture, data, security, trace, environments, backlog ve pilot source ownership gate'leri PASS/accepted; unresolved P0 blocker yoktur.",
+      "traceId": "T-S0-012",
+      "ownerRole": "Product Owner",
+      "storyPoints": 2,
+      "dependencies": [
+        "DEV-001",
+        "DEV-002",
+        "DEV-003",
+        "DEV-004",
+        "DEV-005",
+        "DEV-006",
+        "DEV-007",
+        "DEV-008",
+        "DEV-009",
+        "DEV-010",
+        "DEV-011"
+      ],
+      "registeredCriticalSoftwareCount": 0
+    },
+    {
+      "id": "DEV-116",
+      "locator": "sheet:Backlog/row:117",
+      "acceptanceCriteria": "Explicit OUT list; integration-only contracts; technical requisition/critical spares boundary; no accidental PO/AP/AR/payroll tables.",
+      "traceId": "T-V463-002",
+      "ownerRole": "Solution Architect",
+      "storyPoints": 5,
+      "dependencies": [
+        "DEV-004"
+      ],
+      "registeredCriticalSoftwareCount": 0
+    }
+  ],
+  "storyPoints": 53,
+  "artifactReferenceCount": 65,
+  "uniqueArtifactCount": 56,
+  "rawInputPins": [
+    {
+      "path": ".github/workflows/backend-foundation.yml",
+      "sha256": "5fbd245a37172f1d0c72a13362c19b3dd1311511147eb7fbd8fae6db04c5c2f1",
+      "bytes": 8028,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "Poseidon.slnx",
+      "sha256": "4f6cd5624fef605f993c0f52e654187a64f18f4ae1f35683f7141040c6850e59",
+      "bytes": 711,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "README.md",
+      "sha256": "f2e982c11732b41479076fa7648810ef07745d77aaafff02cf2eef3ab82cdc3d",
+      "bytes": 1484,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/architecture.md",
+      "sha256": "18476f2205cf83a1276c892a2db2ae8df209aff3a591f4af7c83bfc60410c904",
+      "bytes": 4087,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/automation.md",
+      "sha256": "57fe9108affc8c60c6d2b07900170975b3abbc01141a787db9b55f9c5172011f",
+      "bytes": 5914,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "global.json",
+      "sha256": "c01135e6969ef6fc8c24e12ae51c25db29b43b8cbb305288b2da738848397ee7",
+      "bytes": 149,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/test_task_contracts.py",
+      "sha256": "89a66b6cc8ead49ba9552181531fe791a240b7a5523cb1af01d43e04d738e8b5",
+      "bytes": 5497,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "frontend/package.json",
+      "sha256": "096d4620da3227968723806de054f3fe8a695c3af6ef954d7ce7d42fa7297eeb",
+      "bytes": 1410,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/lab_profile_acl.py",
+      "sha256": "8ecd2b31516a9c7c7b9fe869b9ef12b7780c7c186b2c5a5e0ef89f61cf86ec2d",
+      "bytes": 8221,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/test_api_test_gate.py",
+      "sha256": "82a7b631b057a32c4f45c9167c0288d010d4a2830b99407253e79c869907b42f",
+      "bytes": 8361,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/test_browser_gate.py",
+      "sha256": "85715c09f8caa533fade89a032f7494315decf52acc378c6031db7a1ebe8fa2b",
+      "bytes": 1034,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/test_lab_profile_acl.py",
+      "sha256": "113a217f1e1cf5b7ac7af6da6610358ab88e3948768bddb4048f65d73b5825ce",
+      "bytes": 8486,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/lab/strict-browser.ts",
+      "sha256": "c42f5269f2eec85baf40561ee66d1e4e35dfa17112410b47d01672d709715a44",
+      "bytes": 2810,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/operations/environment-contract.md",
+      "sha256": "3eb95596e7ab9aed026561f75ee5103272311fd7dfb777feaeee0055b7eef375",
+      "bytes": 3870,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/environment_contract.py",
+      "sha256": "2c781ec9ee9e9b5d7168324099508ffbc2112164dcc442dcff0e70f98dc7fe96",
+      "bytes": 7989,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/test_environment_contract.py",
+      "sha256": "88fda257f954fcfbc5bd388398d933992b9b692c5f3b8aab113a48c28440dd78",
+      "bytes": 4987,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "backend/Poseidon.Domain/Poseidon.Domain.csproj",
+      "sha256": "8d654c44b7bebb6b31a9f2f606927f45b5072193adc4eef8cce3f3cf3b278df3",
+      "bytes": 36,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/architecture/s0-current-engineering-candidate-20261102.md",
+      "sha256": "7196faa3b5bb0b78819bf6b804bb5dfab3cc41546f17926bde9521b4ce089404",
+      "bytes": 6303,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/architecture/s0-remainder-reconciliation.md",
+      "sha256": "be80786652562de66708af1a0de0f42f58e5c90c2df1e3e37030936777322d98",
+      "bytes": 6729,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/decisions/s0-events-storage.md",
+      "sha256": "3d3c4023e25d6000c1ebdab38b11f0d658c686ca3095b0df7cf156b7cc8237da",
+      "bytes": 9714,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/decisions/s0-module-boundaries.md",
+      "sha256": "7fa0d1055ebc5e6c264b1a9babea272857533716956b507e9f733a266d21b288",
+      "bytes": 9118,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/decisions/s0-offline-ai.md",
+      "sha256": "0a69b2ac07b486a803ebfa477012c53a0cfd17aaaad47fa936029ae7c80e88de",
+      "bytes": 10722,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "tests/Poseidon.Domain.Tests/OfflineReplayPolicyTests.cs",
+      "sha256": "51aba08a4d072c67772d661f7b0aa5096431fcfcf476ad0a6d3bf844386cb43b",
+      "bytes": 10334,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/architecture/core-schema-plan.md",
+      "sha256": "e99aabe5744495486649e567f08877537c5ea746109c4836d4a5a0491edd1a4c",
+      "bytes": 7002,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/core_schema_inventory.py",
+      "sha256": "0ac565bf183b992b8ddfb58a83bf1fc7876961d7ca08805cf7693e5e76ea06da",
+      "bytes": 5454,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/test_core_schema_inventory.py",
+      "sha256": "718baf00c545cc25a8605480eabcc566f0b7e80dcb3d36e618b4acd146fc40d9",
+      "bytes": 3514,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/security/threat-model.md",
+      "sha256": "730760c9fe9df74b727365dbef4a6eba2e4bb48c12ee66b0c01ece15ae614935",
+      "bytes": 28852,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/secret_scan.py",
+      "sha256": "825127917066bf3633e20c3331a58bbf018e465ef32a0363ab5029af0973c9f7",
+      "bytes": 13562,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/test_secret_scan.py",
+      "sha256": "e48d390c76022f7e07e2bcb775e22c83aeeae82306f40dbb3bebc2e9af4e323b",
+      "bytes": 14904,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/architecture/pilot-trace.md",
+      "sha256": "674ccd857a7b4d98729fe4a30acb188ec4a658fe36a80b17a3177912b575fd6a",
+      "bytes": 7578,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/pilot_trace.py",
+      "sha256": "1dfb7b6995e9d8409ef28db470b0a52566e180d5ef1cbca8f40152c1801286f1",
+      "bytes": 18174,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/test_pilot_trace.py",
+      "sha256": "6786af82b43f0d68d9a7c92fd6a02ea28ecb095203bb769d604ca1dc6b2f857d",
+      "bytes": 19169,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "backend/Poseidon.Domain/RegulatoryRegisterPolicy.cs",
+      "sha256": "0c6efc51525a44a1e1d3b767393959f997ab2143c84634d0b5b33fc025375b66",
+      "bytes": 2789,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "contracts/sources/pilot-ownership.v1.json",
+      "sha256": "027105a711941c3137fb191e4fc9efa4a30b77121e7707c8ba3c7190511cd7d5",
+      "bytes": 30002,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/reports/dev-008-source-scope-review-2026-11-02.md",
+      "sha256": "59dd1a17bf617ff8a7610311b20860e44cecf99a80f16d6b8b6526ee729fb45e",
+      "bytes": 10866,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/tasks/s0-source-plan-20261102.md",
+      "sha256": "f3978af5e48036c28d933faa22e0058878110fec82233afc56b18c18abf72115",
+      "bytes": 7129,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/tasks/source-ownership-plan-01.md",
+      "sha256": "393a0b14345f6514e4e25743851fa3a0e4480a7d13c56ed0c6f1cf4d31f702e4",
+      "bytes": 5408,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/pilot_source_ownership.py",
+      "sha256": "08bd92f8cceec267c44ab8b6cffc4c6d5cf1d5e8c84cd2a7160226234f6e4022",
+      "bytes": 10080,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/test_pilot_source_ownership.py",
+      "sha256": "9b466068295e3991ba0da31ac82e419e79f95e4e68e98537c8b640e5a48e84e7",
+      "bytes": 7945,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "tests/Poseidon.Domain.Tests/RegulatoryRegisterPolicyTests.cs",
+      "sha256": "1497f15c3389a30d1eb6f3fb4fc60c0c18035c52a7dc9440cbc63adc6f45035d",
+      "bytes": 2610,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/tasks/s0-foundation-remainder-01.md",
+      "sha256": "e8e1f3e61ab4a882964c6ef0865f9a83697b315de09a229138859b968f4b83cd",
+      "bytes": 9949,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/golden_dataset.py",
+      "sha256": "73f8b73d5758495bdb8b063ae311f7aa44ccb6c31f54c3eaba55204a04c14519",
+      "bytes": 4183,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "tests/Poseidon.Domain.Tests/GoldenPilotDatasetTests.cs",
+      "sha256": "aa937c98116b997444981fa5c3f5e886b32905922f19785545fc4f13384f4da6",
+      "bytes": 3467,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/tasks/task-definition-template.md",
+      "sha256": "9c32d70f55c40d93991e26dd79851ee3e54c294d42a952cb922f4b748397baaf",
+      "bytes": 2803,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/task_contracts.py",
+      "sha256": "e85a21d4bc131b55be40c5132477634b09fc33e9cabd02533939c8c04dd17659",
+      "bytes": 9705,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "backend/Poseidon.Api/OperationalTelemetry.cs",
+      "sha256": "6141e20541bac77e3ba3fa5d6cf12d93411e5c50a45e1e5bedd2328a3c4e9e9e",
+      "bytes": 1845,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/operations/observability-contract.md",
+      "sha256": "f5a31c73fa7d3797d35d53030b8ad9e960763d9769c1ad7eb6f90c3d2cc8a6a9",
+      "bytes": 4076,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "tests/Poseidon.Domain.Tests/SourceFreshnessTests.cs",
+      "sha256": "849a7ca2f3f3eec811562d973e0afade03231d0f212ce47667a161e65b06b77d",
+      "bytes": 973,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "contracts/s0/README.md",
+      "sha256": "9062863c3f177314349c201444e3592edd969ce5e7896238acda9610395d41c2",
+      "bytes": 10162,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "contracts/s0/exit-policy.v1.json",
+      "sha256": "53fb11e9dd49345b2d9ba4c409521c1b51010d487807e8b49d1543ecff9f42d2",
+      "bytes": 1453,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/tasks/s0-release-gate-20261102.md",
+      "sha256": "7203a8ef88ec0c104d000091498781b7082ed1e272c298d9e4ee629942ea4e74",
+      "bytes": 7173,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/s0_release_gate.py",
+      "sha256": "6b6b69d5138712f70929b83694807e6ab82a5dd19bfaa1cf9a4c4fd6f1e0ded1",
+      "bytes": 28860,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "scripts/test_s0_release_gate.py",
+      "sha256": "3fa1d84365a0923271a833e3997b30d7b588dac54d006ab35da36dd61ab0c623",
+      "bytes": 21134,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "backend/Poseidon.Domain/ErpReferenceBoundary.cs",
+      "sha256": "14e0e27737f7160c1bb4ea60f2ed18d2760f1408e4fcf5066ded186e628f0fe1",
+      "bytes": 8936,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "docs/tasks/selected-source-reconciliation-2026-11-02.md",
+      "sha256": "17cf931c89e55f4c51f1e9748c1c62fb48aab0eab453a75604be54215b2bf49f",
+      "bytes": 5529,
+      "workingRawEqualsGitBlob": true
+    },
+    {
+      "path": "tests/Poseidon.Domain.Tests/ErpReferenceBoundaryTests.cs",
+      "sha256": "dd72c9d74fc98c48c55386fbb56c66fd49b17d0156d52accb04453ca1e462e82",
+      "bytes": 10401,
+      "workingRawEqualsGitBlob": true
+    }
+  ],
+  "inputMismatchCount": 0,
+  "freshLiteralMismatchCount": 0,
+  "deltaFromActualUnacceptedE": [
+    {
+      "path": "docs/phases/S0-OVERNIGHT-20261102.md",
+      "sha256": "a39f5741437c0a3ad92806c979a373f239ee949e80ca55938975c3e6b8e1bd6d",
+      "bytes": 34710
+    },
+    {
+      "path": "docs/project-status.json",
+      "sha256": "5e81b1e19d8d9cbffefdcd47123bb3aabed64ed8f6dbfb47cdfb0a8b23cdf85e",
+      "bytes": 237961
+    },
+    {
+      "path": "docs/project-status.md",
+      "sha256": "3b2bd6bdb7d38ed23165390cace9521f4c47faf3e10d5f626309382253c70a5a",
+      "bytes": 73589
+    },
+    {
+      "path": "frontend/src/product/EnterpriseChrome.test.tsx",
+      "sha256": "0bbb4a9e12078103f3b23d08c4d0372ed0e9e06ea03082a95bb59d2db8efa328",
+      "bytes": 7716
+    },
+    {
+      "path": "frontend/src/product/EnterpriseChrome.tsx",
+      "sha256": "81c88686850f62c5a53525f3e7e19dd35bdead2a055205b23935130e29a995db",
+      "bytes": 9753
+    },
+    {
+      "path": "frontend/src/product/EnterpriseChromeSearchAuthority.test.tsx",
+      "sha256": "aa1799e6ca24f6c9916607d75e029de295b413dcf3e637fa01d4ef79ba14f139",
+      "bytes": 4780
+    },
+    {
+      "path": "frontend/src/product/OfflineApplicationPanel.test.tsx",
+      "sha256": "3a534402d49abbc9ed55705dc5d4988505e21e27b7612f419919a5c675f9f547",
+      "bytes": 16192
+    },
+    {
+      "path": "frontend/src/product/OfflineApplicationPanel.tsx",
+      "sha256": "3883b4870ff5698e80f176640ef3df5ac3a67cae168c3e866fbe16792d7ad7c8",
+      "bytes": 15805
+    },
+    {
+      "path": "frontend/src/product/TugOfflinePanel.test.tsx",
+      "sha256": "81f361cc276e03271d283ae3828866a1350661f023201392096e522bc2e09750",
+      "bytes": 8692
+    },
+    {
+      "path": "frontend/src/product/TugOfflinePanel.tsx",
+      "sha256": "ecd8f906755bb4fee08a55ef2fa0508775ea23fb6471c361f019e96a5f2e4e72",
+      "bytes": 11057
+    },
+    {
+      "path": "frontend/src/product/WorkspaceRoleNavigation.test.tsx",
+      "sha256": "0393cb588882ac942317f8e803994fad90b13b61aef4c2bca0952a40101f32c7",
+      "bytes": 11258
+    },
+    {
+      "path": "frontend/src/product/WorkspaceRoleNavigation.tsx",
+      "sha256": "01597dd0dd0522694908b27a8acb7aad8ccfee119252c452ae77afc2359c0d2c",
+      "bytes": 6329
+    },
+    {
+      "path": "frontend/src/product/WorkspaceSearch.test.tsx",
+      "sha256": "e85ff3c02186e44e30b8ded0b6b6ca15495a88f408c9f9a8800145169783a926",
+      "bytes": 3330
+    },
+    {
+      "path": "frontend/src/product/WorkspaceSearch.tsx",
+      "sha256": "c0a9d0196a74d0d9bd5735b617560ae870d791085997dba440f9ac64c277c5cd",
+      "bytes": 6329
+    },
+    {
+      "path": "frontend/src/product/WorkspaceSearchAuthorization.test.tsx",
+      "sha256": "162cea1ca7ec5c5a22b18a826138de07040f37f458ada537199b681b5f88d07d",
+      "bytes": 5270
+    },
+    {
+      "path": "frontend/src/product/WorkspaceSearchBoundary.test.tsx",
+      "sha256": "c780a52fa90ce41c2c6ed4582761102e7a937e7e970dacfa0c1eade00ce32ca1",
+      "bytes": 6637
+    },
+    {
+      "path": "frontend/src/product/audit-api.test.ts",
+      "sha256": "5ee294a975a0626444f05aff4fc67f4aea054de89ddd6eca31cc9016d12d2662",
+      "bytes": 5782
+    },
+    {
+      "path": "frontend/src/product/audit-api.ts",
+      "sha256": "aa79034f1de59637abc9a2f25b25a449f55fd8efdd9da9efcdcf21f59bb7f065",
+      "bytes": 9127
+    },
+    {
+      "path": "frontend/src/product/document-api.test.ts",
+      "sha256": "e8333e8f41931f8429252d677bd56c9b65842a29e962d66ca0dad4b8d23f0fa9",
+      "bytes": 4100
+    },
+    {
+      "path": "frontend/src/product/document-api.ts",
+      "sha256": "670ea565a471532c53c90bdd3a0f494b99304f1aa453f7e73b96cbccc1e18a26",
+      "bytes": 3518
+    },
+    {
+      "path": "frontend/src/product/enterprise-navigation.ts",
+      "sha256": "b1f8ab2665fdc256c8eda7a3dd3ed538f8845acdffcd915d131128b88f7cd4d7",
+      "bytes": 2953
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/register-specs/cases.ts",
+      "sha256": "ba9467a4d4670fb6dfa4a6d4310b3f3a404a41dcb3593538f1a279b2c7a80bcc",
+      "bytes": 9192
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/register-specs/crew-cases.ts",
+      "sha256": "bd4558933c8e5c110665245138d917d8ed7c1c8b7ed3d284b80772d27c49cb88",
+      "bytes": 12045
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/register-specs/crew-identity-cases.ts",
+      "sha256": "247af8bb39fcf1088e0b6f324d9d59860c6e12d47251c3228cdbd783ce15a3f2",
+      "bytes": 6128
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/register-specs/tug-cases.ts",
+      "sha256": "21aa54d3e6d62ee607ed49cb6e0f40fe18745c1443fa6c91179f80cd194183c8",
+      "bytes": 15527
+    }
+  ],
+  "priorETextEncodingIssue": "OriginalsourceXLSXbyteSHAunchanged. Thisreview freshlyreadsUTF8candidate andoriginalworkbookcells, notcp1254-decoded oldEAC. All13literalAC/deps/T-ID/SP match independently; no criterionsemantics rewritten.",
+  "pendingReviewOrAcceptance": [
+    "Readcurrent3ADRs/coreplan/sourcecontracts andactualwholeFdelta beforefinalliteraldecisions.",
+    "RequiredactualcleanF CI/fresh122/baselineTLS/security andcurrentP0 remainpending.",
+    "Nofinalsource-engineeringPASS oracceptancereceiptsissued."
+  ],
+  "reviewerRanTestsBuildBrowserOrCiLogs": false,
+  "unresolvedP0": null,
+  "passReceiptsIssued": 0,
+  "phaseAccepted": false
+}

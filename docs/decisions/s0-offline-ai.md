@@ -1,5 +1,15 @@
 # S0 ADR: Offline replay and advisory AI boundaries
 
+## S0 closure candidate reconciliation — 2026-11-02, pending independent review
+
+This is the current engineering proposal for DEV-004/005/006; earlier dated
+implementation inventories below are historical. The requested morning S0 target
+does not approve it. [Exact current candidate](../architecture/s0-current-engineering-candidate-20261102.md)
+separates literal S0 contract approval from later operational deployment,
+source/Marine/legal authority and unimplemented future modules. No author approval,
+new accepted SP or passing suite is asserted here.
+
+
 Status: proposed engineering direction, awaiting review; offline sync and product AI are not implemented by this delivery.
 Date: 2026-10-31. Traceability: S0-ADR-01 / DEV-004 / T-S0-004.
 Owner role: Solution Architect. Approval identity/date/evidence: OPEN.

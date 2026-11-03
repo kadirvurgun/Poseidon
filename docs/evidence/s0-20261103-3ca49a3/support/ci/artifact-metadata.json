@@ -1,0 +1,35 @@
+{
+  "status": "ACTUAL_METADATA_READ",
+  "rawMetadataSha256": "f12e84e7b5ca247da06140a073ee479cff85ead6e140d9e040d3e924be07c7a7",
+  "records": [
+    {
+      "id": 13198066612,
+      "name": "api-test-counts",
+      "size_in_bytes": 1045,
+      "expired": false,
+      "digest": "sha256:db7a67c8b37b09c03cf6352d1585698b6728ceae89c80241802db33d1fd77e28",
+      "created_at": "2026-11-03T01:56:16Z",
+      "headSha": "3ca49a30976afd7bb6b63531523a36df646b82dd"
+    },
+    {
+      "id": 13197871884,
+      "name": "api-development-build",
+      "size_in_bytes": 5257185,
+      "expired": false,
+      "digest": "sha256:1720414137cce1330ff91d9c688c4826ab302896c48c98da7a175ae3baec356d",
+      "created_at": "2026-11-03T01:56:33Z",
+      "headSha": "3ca49a30976afd7bb6b63531523a36df646b82dd"
+    },
+    {
+      "id": 13196154845,
+      "name": "frontend-development-build",
+      "size_in_bytes": 415875,
+      "expired": false,
+      "digest": "sha256:79c228167babd692592d6f0081ec10a5d776ede2b181f7705adaf93df7d51009",
+      "created_at": "2026-11-03T01:41:26Z",
+      "headSha": "3ca49a30976afd7bb6b63531523a36df646b82dd"
+    }
+  ],
+  "rawLogsPersisted": false,
+  "acceptance": false
+}

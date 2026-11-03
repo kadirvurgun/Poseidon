@@ -9,6 +9,9 @@ from source_contracts import SourceRecords
 SHA = re.compile(r"\A[a-f0-9]{64}\Z")
 STATES = {"PLANNED", "DEFINED", "AUTHORED", "RUN", "PASS"}
 KINDS = {"requirement", "screen", "api", "entity", "backlog", "test"}
+SCHEMA = "poseidon.pilot-trace.v1"
+BASELINE = "poseidon-v46.3-20261030"
+SOURCE_DOCUMENTS = {"trace": "11.01", "backlog": "18.01", "uat": "19.01", "erd": "14.01"}
 
 
 def definition_ref(records, reference, source, locator, column=None, value=None):
@@ -87,7 +90,40 @@ def composition_definition(capability, records):
     return True
 
 
+def rejected(code):
+    return {"structureErrors": [code], "criticalGaps": [], "implementationGaps": [],
+            "executionGaps": [], "accepted": False}
+
+
 def validate(package, root):
+    """Public/current contract only. Schema removal never selects legacy graphs."""
+    if not isinstance(package, dict) or package.get("schemaVersion") != SCHEMA:
+        return rejected("schema_version")
+    try:
+        root = root.resolve()
+        active = json.loads((root / "docs/sources/active.json").read_text(encoding="utf-8"))
+        manifest_path = (root / active["manifest"]).resolve()
+        if (active["baseline_id"] != BASELINE or active["source_root"] != "analiz/POSEIDON GUNCEL 30.10.2026" or
+                not manifest_path.is_relative_to(root) or manifest_path.stat().st_size > 2 * 1024 * 1024):
+            return rejected("source_baseline")
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        if manifest["baseline_id"] != BASELINE or set(package.get("sources", {})) != set(SOURCE_DOCUMENTS):
+            return rejected("source_baseline")
+        for key, number in SOURCE_DOCUMENTS.items():
+            files = [entry for entry in manifest["files"] if entry["document_number"] == number]
+            if len(files) != 1 or package["sources"][key] != {"path": files[0]["source_path"], "sha256": files[0]["sha256"]}:
+                return rejected("source_baseline")
+    except (OSError, ValueError, KeyError, TypeError, AttributeError):
+        return rejected("source_baseline")
+    return _validate(package, root, require_source_inventory=True)
+
+
+def _validate_legacy_graph(package, root):
+    """Internal graph-invariant fixture helper; not a public or CLI input mode."""
+    return _validate(package, root, require_source_inventory=False)
+
+
+def _validate(package, root, *, require_source_inventory):
     errors = set(); gaps = set(); implementation = set(); execution = set()
     sources = package.get("sources", {})
     if not sources:
@@ -101,7 +137,8 @@ def validate(package, root):
             errors.add("source_bytes")
     capabilities = package.get("capabilities", [])
     ids = [c.get("number") for c in capabilities]
-    if sorted(ids) != list(range(1, 11)):
+    # Python bool is an int subclass; True must never stand in for capability 1.
+    if any(type(number) is not int for number in ids) or sorted(ids) != list(range(1, 11)):
         errors.add("capability_inventory")
     records = SourceRecords(sources, root)
     node_ids = set()
@@ -109,9 +146,12 @@ def validate(package, root):
     composed = set()
     for capability in capabilities:
         number = capability.get("number")
+        if type(number) is not int or not 1 <= number <= 10:
+            errors.add("capability_inventory")
+            continue
         if capability.get("source") not in sources or capability.get("locator") != f"sheet:Pilot Scope v46.2/row:{number + 1}":
             errors.add("capability_source_locator")
-        if package.get("schemaVersion") == "poseidon.pilot-trace.v1" and "sourceIdentity" not in capability:
+        if require_source_inventory and "sourceIdentity" not in capability:
             errors.add("missing_source_definition_inventory")
         if "sourceIdentity" in capability:
             try:
@@ -119,6 +159,10 @@ def validate(package, root):
                 if identity.get("source") != capability["source"] or identity.get("locator") != capability["locator"] or identity.get("column") != "B" or identity.get("value") != capability.get("title"):
                     raise ValueError("capability_identity_mismatch")
                 records.resolve(identity)
+                definition_ref(records, {
+                    "source": capability["source"], "locator": capability["locator"],
+                    "column": "D", "value": capability["exitProof"],
+                }, capability["source"], capability["locator"], "D")
                 if capability.get("definitionScreen"):
                     records.resolve(capability["definitionScreen"])
                 records.resolve(capability["definedUat"])
@@ -169,6 +213,21 @@ def validate(package, root):
                 refs = [chain[k] for k in ("requirement", "screen", "api", "entity", "test")]
                 if len({(r["source"], r["locator"]) for r in refs}) != 1:
                     errors.add("source_mismatched_chain")
+                try:
+                    # A real FR/TC row must also name this exact field; descriptive
+                    # labels cannot silently relabel one complete source chain.
+                    reference = chain["requirement"]
+                    definition_ref(records, {
+                        "source": reference["source"], "locator": reference["locator"],
+                        "column": "D", "value": chain["field"],
+                    }, "trace", reference["locator"], "D")
+                except (OSError, ValueError, KeyError):
+                    errors.add("source_field_identity_mismatch")
+                # Resolving each ID independently is insufficient: T-S2-001 is
+                # real, but it cannot replace the test owned by another DEV row.
+                if any(chain["backlog"].get(key) != chain["backlogTest"].get(key)
+                       for key in ("source", "locator")):
+                    errors.add("source_mismatched_backlog_chain")
         nodes = capability.get("nodes", [])
         local = {n.get("id"): n for n in nodes}
         if len(local) != len(nodes):
@@ -191,7 +250,7 @@ def validate(package, root):
         for a, b in edges:
             if a not in local or b not in local:
                 errors.add("broken_trace_reference")
-        if "sourceIdentity" not in capability:
+        if not require_source_inventory and "sourceIdentity" not in capability:
             for a_kind, b_kind in zip(("requirement", "screen", "api", "entity", "backlog"), ("screen", "api", "entity", "backlog", "test")):
                 if not any(a in local and b in local and local[a].get("kind") == a_kind and local[b].get("kind") == b_kind for a, b in edges):
                     gaps.add(f"capability-{number}:orphan-{a_kind}-{b_kind}")

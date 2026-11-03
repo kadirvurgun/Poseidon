@@ -1,0 +1,113 @@
+{
+  "schemaVersion": "poseidon.s0-receipt.v1",
+  "kind": "acceptance",
+  "taskId": "DEV-008",
+  "sessionId": "/root/s0_final_independent_qa",
+  "principal": "/root/s0_final_independent_qa",
+  "target": {
+    "commit": "3ca49a30976afd7bb6b63531523a36df646b82dd",
+    "tree": "b63ee9cfcf31f1ba28770984b4194020dea91c03"
+  },
+  "baseline": "poseidon-v46.3-20261030",
+  "sourceSha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+  "traceId": "T-S0-008",
+  "issuedAt": "2026-11-03T02:51:19.818502Z",
+  "outcome": "PASS",
+  "unresolvedP0": 0,
+  "artifacts": [
+    {
+      "path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674"
+    },
+    {
+      "path": "analiz/POSEIDON GUNCEL 30.10.2026/07_TEST_PILOT_RELEASE/19.01_POSEIDON_v46.3_Test_Pilot_UAT_Release_Gates_TR.docx",
+      "sha256": "063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49"
+    },
+    {
+      "path": "backend/Poseidon.Domain/RegulatoryRegisterPolicy.cs",
+      "sha256": "0c6efc51525a44a1e1d3b767393959f997ab2143c84634d0b5b33fc025375b66"
+    },
+    {
+      "path": "contracts/sources/pilot-ownership.v1.json",
+      "sha256": "027105a711941c3137fb191e4fc9efa4a30b77121e7707c8ba3c7190511cd7d5"
+    },
+    {
+      "path": "docs/reports/dev-008-source-scope-review-2026-11-02.md",
+      "sha256": "59dd1a17bf617ff8a7610311b20860e44cecf99a80f16d6b8b6526ee729fb45e"
+    },
+    {
+      "path": "docs/tasks/s0-source-plan-20261102.md",
+      "sha256": "f3978af5e48036c28d933faa22e0058878110fec82233afc56b18c18abf72115"
+    },
+    {
+      "path": "docs/tasks/source-ownership-plan-01.md",
+      "sha256": "393a0b14345f6514e4e25743851fa3a0e4480a7d13c56ed0c6f1cf4d31f702e4"
+    },
+    {
+      "path": "scripts/pilot_source_ownership.py",
+      "sha256": "08bd92f8cceec267c44ab8b6cffc4c6d5cf1d5e8c84cd2a7160226234f6e4022"
+    },
+    {
+      "path": "scripts/test_pilot_source_ownership.py",
+      "sha256": "9b466068295e3991ba0da31ac82e419e79f95e4e68e98537c8b640e5a48e84e7"
+    },
+    {
+      "path": "tests/Poseidon.Domain.Tests/RegulatoryRegisterPolicyTests.cs",
+      "sha256": "1497f15c3389a30d1eb6f3fb4fc60c0c18035c52a7dc9440cbc63adc6f45035d"
+    }
+  ],
+  "acceptanceCriteria": "ISM/SOLAS/STCW/MLC/MARPOL/Flag/Class pilot kapsamı için source owner, version, validation status ve reviewer atanır.",
+  "dependencies": [
+    "DEV-007"
+  ],
+  "unresolvedBindings": [],
+  "sourceLocator": "sheet:Backlog/row:9",
+  "sourceOwnerRole": "Regulatory Lead",
+  "reviewerRole": "Actual independent S0 software reviewer; no human operational/legal/Marine appointment claimed",
+  "evidenceDigests": {
+    "execution": "90b095752353869fa7dd5d2d14857b111e7741314b0c97cc570519aea918bc87",
+    "source-review": "fb9274a9ff9bd555c64b67609fadd2aa435f6371c9687ce68b5d19e4a66b4c5c",
+    "engineering-review": "7ea1c9711480a860513b4dc87838e5aad4a85a4e5fffdacfdd39c8b8e3f74617"
+  },
+  "evidenceReceipts": {
+    "execution": {
+      "path": ".runtime/s0-overnight-20261102/execution-3ca49a3/receipts/DEV-008.execution.json",
+      "sha256": "90b095752353869fa7dd5d2d14857b111e7741314b0c97cc570519aea918bc87"
+    },
+    "source-review": {
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-008.source-review.json",
+      "sha256": "fb9274a9ff9bd555c64b67609fadd2aa435f6371c9687ce68b5d19e4a66b4c5c"
+    },
+    "engineering-review": {
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-review-receipts/DEV-008.engineering-review.json",
+      "sha256": "7ea1c9711480a860513b4dc87838e5aad4a85a4e5fffdacfdd39c8b8e3f74617"
+    }
+  },
+  "dependencyAcceptance": {
+    "DEV-007": {
+      "path": ".runtime/s0-overnight-20261102/qa/final-F-acceptance-receipts/DEV-007.acceptance.json",
+      "sha256": "cb63d60e7ea6b1a90325c20e8f18accacff2362390b06dbcad9997fa20ad45a7"
+    }
+  },
+  "decisionReason": "I accept the typed engineering source-ownership plan for seven required regulatory categories and nine original sources, with source owner responsibility, candidate version/hash/locator, honest validation status and independently sourced reviewer role. Source and engineering review approve that plan and completed qualification-boundary regressions preserve its limits. Actual legal editions, reviewer qualification/appointments and applicability remain UNVERIFIED/OPEN, and activation remains blocked. This assigns role responsibility without fabricating named people or source-law approval.",
+  "p0Assessment": {
+    "path": ".runtime/s0-overnight-20261102/qa/final-F-current-P0-assessment.json",
+    "sha256": "f5ed479005904579ba94b303e1249024440746f2e8687c576ecaaa6b6da658d1"
+  },
+  "sourceApplicability": {
+    "path": ".runtime/s0-overnight-20261102/qa/final-F-source-applicability.json",
+    "sha256": "c1bf111b6b921b38998b68a11c74c7f4e040be27ef04b167f70ed50b55e2c67c"
+  },
+  "independentExecutionInspection": {
+    "path": ".runtime/s0-overnight-20261102/qa/final-F-execution-receipt-independent-inspection.json",
+    "sha256": "e7a835615e8517713afc28cd63745c42b8ec02be6dccb68bad1917e4e5e8eafe"
+  },
+  "scope": "Acceptance of this literal current S0 engineering task on exact F; authentic overall phase-gate evaluation remains a separate coordinator action.",
+  "futureReleaseGatesRemainOpen": [
+    "D-STATE-01 and real PO/BA/Architect/Marine/Tug SME/QA operational production state-map approval.",
+    "Authoritative legal editions, actual source reviewer qualification/appointments, Flag/Class applicability, source activation and lawful purpose/retention/key custody before real enablement.",
+    "Full future clinical/competence/work-rest/manning, operational Master safety decisions, actual pilot/UAT/value, production deployment and release approvals.",
+    "AI evaluations before model/provider/tool enablement and DEV-071 production/pilot backup/restore/RPO-RTO/signed rollback."
+  ],
+  "phaseAccepted": false
+}

@@ -1,0 +1,445 @@
+{
+  "task": "TUG-CREW-COMPOSITION-01",
+  "baseline": "poseidon-v46.3-20261030",
+  "status": "bounded local source receipts; not independent acceptance",
+  "records": [
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:293",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "7. Neden Asgari Emniyet Belgesi Primary Evidence?"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:294",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Donatım Yönergesi, 50 net tondan büyük gemiler için Asgari Emniyet Belgesi düzenlenmesini öngörür ve örnek belge gemi adı, GT, ana makine gücü, gemi tipi, sefer bölgesi, yeterlik/kapasite ve kişi sayılarını taşır. POSEIDON bu nedenle Safe Manning sonucunu yalnız bir generic table lookup olarak değil, vessel-specific authority-issued record ile doğrular."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:295",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "MSMD exists + current + verified → role/count baseline loaded."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:296",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "MSMD missing/expired/unverified → minimum_manning_state = REVIEW_REQUIRED."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:297",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Actual assigned crew < required count → NOT_READY / NOT_ELIGIBLE assignment."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:298",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Credential title exists but limitations don't allow role → NOT_ELIGIBLE."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:299",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Generic Çizelge 11 ile issued MSMD çelişirse → Regulatory Review; issued source silently overwritten olmaz."
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:300",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "8. Current Crew Eligibility Motoru"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:301",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Sıra"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:302",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Input"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:303",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Karar etkisi"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:304",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "1"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:305",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "MSMD"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:306",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Role/count requirement"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:307",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "2"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:308",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Sefer Bölgesi + GT + kW"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:309",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Reference rule consistency"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:310",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "3"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:311",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Yeterlik / Capacity"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:312",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Role entitlement"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:313",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "4"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:314",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Certificate limitations"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:315",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Actual permitted scope"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:316",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "5"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:317",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Medical"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:318",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Assignment-period validity"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:319",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "6"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:320",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "STCW/basic/special training"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:321",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Mandatory training validity"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:322",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "7"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:323",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Towage competence"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:324",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Job/tug-specific assessed competence"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:325",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "8"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:326",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Familiarization"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:327",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "New assignment equipment/SMS/emergency familiarity"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:328",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "9"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:329",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Work & Rest"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:330",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Operational fitness/watch legality signal"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:331",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "10"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:332",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Job briefing"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:333",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Towage-specific acknowledgement"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:334",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "11"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:335",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Master/Tug Master"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.02_POSEIDON_Romorkor_Crew_Minimum_Manning_ve_Towing_Equipment_Spesifikasyonu_TR.docx",
+      "locator": "paragraph:336",
+      "sha256": "a8f9e5b3990e89635d974222b811436db7e93fb8bf1577635d347ea48a6d27af",
+      "text": "Final onboard operational decision"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.03_POSEIDON_Romorkor_Crew_Minimum_Manning_Towing_Equipment_Rule_Pack_TR.xlsx",
+      "locator": "sheet:Eligibility Engine/row:2",
+      "sha256": "5b930d056e4a153d601360bab45528accf19776c909b03c03531dcd5a90d72ac",
+      "text": "A2: 1 | B2: MSMD / Asgari Emniyet Belgesi | C2: Vessel-specific issued document is primary minimum-manning evidence. | D2: Required role/count profile loaded. | E2: Missing/expired/unverified → REVIEW_REQUIRED. | F2: tug-crew-readiness / minimum_manning_state | G2: FR-tug-crew-readiness-minimum_manning_state | H2: TC-tug-crew-readiness-minimum_manning_state"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.03_POSEIDON_Romorkor_Crew_Minimum_Manning_Towing_Equipment_Rule_Pack_TR.xlsx",
+      "locator": "sheet:Eligibility Engine/row:3",
+      "sha256": "5b930d056e4a153d601360bab45528accf19776c909b03c03531dcd5a90d72ac",
+      "text": "A3: 2 | B3: Voyage area + GT + kW | C3: Compare current vessel profile to rule reference and MSMD. | D3: Profile consistent. | E3: Mismatch → ATTENTION/REVIEW_REQUIRED. | F3: tug-crew-readiness / tug_id | G3: FR-tug-crew-readiness-tug_id | H3: TC-tug-crew-readiness-tug_id"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.03_POSEIDON_Romorkor_Crew_Minimum_Manning_Towing_Equipment_Rule_Pack_TR.xlsx",
+      "locator": "sheet:Eligibility Engine/row:4",
+      "sha256": "5b930d056e4a153d601360bab45528accf19776c909b03c03531dcd5a90d72ac",
+      "text": "A4: 3 | B4: Certificate / capacity | C4: Credential must be current and role/capacity permitted. | D4: Credential pass. | E4: Expired/missing/not permitted → NOT_ELIGIBLE. | F4: crew-certificates; tug-crew-readiness / certificate_state | G4: FR-tug-crew-readiness-certificate_state | H4: TC-tug-crew-readiness-certificate_state"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.03_POSEIDON_Romorkor_Crew_Minimum_Manning_Towing_Equipment_Rule_Pack_TR.xlsx",
+      "locator": "sheet:Eligibility Engine/row:5",
+      "sha256": "5b930d056e4a153d601360bab45528accf19776c909b03c03531dcd5a90d72ac",
+      "text": "A5: 4 | B5: Certificate limitations | C5: Use current 'Uygulanan Sınırlamalar' / endorsements. | D5: Limitations allow assignment. | E5: Unclear/conflict → REVIEW_REQUIRED. | F5: crew-certificates / limitations | G5: FR-crew-certificates-limitations | H5: TC-crew-certificates-limitations"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.03_POSEIDON_Romorkor_Crew_Minimum_Manning_Towing_Equipment_Rule_Pack_TR.xlsx",
+      "locator": "sheet:Eligibility Engine/row:6",
+      "sha256": "5b930d056e4a153d601360bab45528accf19776c909b03c03531dcd5a90d72ac",
+      "text": "A6: 5 | B6: Medical | C6: Valid medical evidence for assignment period. | D6: Pass. | E6: Expired/invalid → NOT_ELIGIBLE. | F6: crew-certificates / medical_validity | G6: FR-crew-medical-validity | H6: TC-crew-medical-validity"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.03_POSEIDON_Romorkor_Crew_Minimum_Manning_Towing_Equipment_Rule_Pack_TR.xlsx",
+      "locator": "sheet:Eligibility Engine/row:7",
+      "sha256": "5b930d056e4a153d601360bab45528accf19776c909b03c03531dcd5a90d72ac",
+      "text": "A7: 6 | B7: STCW / required training | C7: Required basic/special training current. | D7: Pass. | E7: Missing mandatory → NOT_ELIGIBLE. | F7: training-position-matrix | G7: FR-training-position-matrix-required | H7: TC-training-position-matrix-required"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.03_POSEIDON_Romorkor_Crew_Minimum_Manning_Towing_Equipment_Rule_Pack_TR.xlsx",
+      "locator": "sheet:Eligibility Engine/row:8",
+      "sha256": "5b930d056e4a153d601360bab45528accf19776c909b03c03531dcd5a90d72ac",
+      "text": "A8: 7 | B8: Tug/towage competence | C8: Company/tug/job-specific competence and assessment. | D8: Verified. | E8: Not verified → ATTENTION/NOT_ELIGIBLE by criticality. | F8: tug-crew-readiness / towage_competence | G8: FR-tug-crew-readiness-towage_competence | H8: TC-tug-crew-readiness-towage_competence"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.03_POSEIDON_Romorkor_Crew_Minimum_Manning_Towing_Equipment_Rule_Pack_TR.xlsx",
+      "locator": "sheet:Eligibility Engine/row:9",
+      "sha256": "5b930d056e4a153d601360bab45528accf19776c909b03c03531dcd5a90d72ac",
+      "text": "A9: 8 | B9: Familiarization | C9: Newly assigned crew completes tug/equipment/emergency familiarization. | D9: Complete. | E9: Pending → readiness cannot be full READY. | F9: tug-crew-readiness / familiarization_state | G9: FR-tug-crew-readiness-familiarization_state | H9: TC-tug-crew-readiness-familiarization_state"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.03_POSEIDON_Romorkor_Crew_Minimum_Manning_Towing_Equipment_Rule_Pack_TR.xlsx",
+      "locator": "sheet:Eligibility Engine/row:10",
+      "sha256": "5b930d056e4a153d601360bab45528accf19776c909b03c03531dcd5a90d72ac",
+      "text": "A10: 9 | B10: Work/rest | C10: Current assignment/watch does not breach operational rest rules. | D10: Pass. | E10: Violation → ATTENTION/NOT_READY depending role/criticality. | F10: tug-crew-readiness / work_rest_state | G10: FR-tug-crew-readiness-work_rest_state | H10: TC-tug-crew-readiness-work_rest_state"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.03_POSEIDON_Romorkor_Crew_Minimum_Manning_Towing_Equipment_Rule_Pack_TR.xlsx",
+      "locator": "sheet:Eligibility Engine/row:11",
+      "sha256": "5b930d056e4a153d601360bab45528accf19776c909b03c03531dcd5a90d72ac",
+      "text": "A11: 10 | B11: Job briefing | C11: Job-specific towage briefing acknowledged. | D11: Complete. | E11: Missing before operation → NOT_READY. | F11: tug-crew-readiness / job_specific_briefing | G11: FR-tug-crew-readiness-job_specific_briefing | H11: TC-tug-crew-readiness-job_specific_briefing"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.03_POSEIDON_Romorkor_Crew_Minimum_Manning_Towing_Equipment_Rule_Pack_TR.xlsx",
+      "locator": "sheet:Eligibility Engine/row:12",
+      "sha256": "5b930d056e4a153d601360bab45528accf19776c909b03c03531dcd5a90d72ac",
+      "text": "A12: 11 | B12: Master/Tug Master review | C12: Authorized onboard human reviews material exceptions. | D12: Accept/conditional/reject decision stored. | E12: No authorized decision → operation cannot move to released. | F12: tug-readiness / master_decision | G12: FR-tug-readiness-master_decision | H12: TC-tug-readiness-master_decision"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.03_POSEIDON_Romorkor_Crew_Minimum_Manning_Towing_Equipment_Rule_Pack_TR.xlsx",
+      "locator": "sheet:FR Test Binding/row:2",
+      "sha256": "5b930d056e4a153d601360bab45528accf19776c909b03c03531dcd5a90d72ac",
+      "text": "A2: TRACE-CREW-01 | B2: MSMD + Donatım Çizelge 11 | C2: tug-crew-readiness | D2: minimum_manning_state | E2: FR-tug-crew-readiness-minimum_manning_state | F2: TC-tug-crew-readiness-minimum_manning_state | G2: Actual crew must meet verified MSMD; source mismatch → REVIEW_REQUIRED | H2: P0"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.03_POSEIDON_Romorkor_Crew_Minimum_Manning_Towing_Equipment_Rule_Pack_TR.xlsx",
+      "locator": "sheet:FR Test Binding/row:3",
+      "sha256": "5b930d056e4a153d601360bab45528accf19776c909b03c03531dcd5a90d72ac",
+      "text": "A3: TRACE-CREW-02 | B3: 2024 Gemiadamları Yön. Madde 59 | C3: tug-crew-readiness | D3: certificate_state | E3: FR-tug-crew-readiness-certificate_state | F3: TC-tug-crew-readiness-certificate_state | G3: Assigned crew credential/health/records available and valid | H3: P0"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.03_POSEIDON_Romorkor_Crew_Minimum_Manning_Towing_Equipment_Rule_Pack_TR.xlsx",
+      "locator": "sheet:FR Test Binding/row:4",
+      "sha256": "5b930d056e4a153d601360bab45528accf19776c909b03c03531dcd5a90d72ac",
+      "text": "A4: TRACE-CREW-03 | B4: 2024 Gemiadamları Yön. Madde 60 | C4: tug-crew-readiness | D4: familiarization_state | E4: FR-tug-crew-readiness-familiarization_state | F4: TC-tug-crew-readiness-familiarization_state | G4: New crew familiarization complete before full readiness | H4: P0"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.03_POSEIDON_Romorkor_Crew_Minimum_Manning_Towing_Equipment_Rule_Pack_TR.xlsx",
+      "locator": "sheet:FR Test Binding/row:5",
+      "sha256": "5b930d056e4a153d601360bab45528accf19776c909b03c03531dcd5a90d72ac",
+      "text": "A5: TRACE-CREW-04 | B5: 2024 Gemiadamları Yön. Madde 57/58 | C5: tug-crew-readiness | D5: work_rest_state | E5: FR-tug-crew-readiness-work_rest_state | F5: TC-tug-crew-readiness-work_rest_state | G5: Rest/watch violation cannot silently produce READY | H5: P0"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.03_POSEIDON_Romorkor_Crew_Minimum_Manning_Towing_Equipment_Rule_Pack_TR.xlsx",
+      "locator": "sheet:FR Test Binding/row:6",
+      "sha256": "5b930d056e4a153d601360bab45528accf19776c909b03c03531dcd5a90d72ac",
+      "text": "A6: TRACE-CREW-05 | B6: Çizelge 11 Note 7 | C6: tug-crew-readiness | D6: crew_count | E6: FR-tug-escort-extra-able-seaman | F6: TC-tug-escort-extra-able-seaman | G6: Istanbul/Dardanelles escort context adds one Able Seaman; current source version monitored | H6: P0"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/03_REQUIREMENTS_REGULATORY/10.03_POSEIDON_Romorkor_Crew_Minimum_Manning_Towing_Equipment_Rule_Pack_TR.xlsx",
+      "locator": "sheet:FR Test Binding/row:7",
+      "sha256": "5b930d056e4a153d601360bab45528accf19776c909b03c03531dcd5a90d72ac",
+      "text": "A7: TRACE-BP-01 | B7: 2025 Yönetmelik 24/18 | C7: tug-readiness | D7: bollard_pull_margin | E7: FR-tug-readiness-bollard_pull_margin | F7: TC-tug-readiness-bollard_pull_margin | G7: Unverified/expired BP evidence cannot be trusted for READY assignment | H7: P0"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:1640",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A1640: Mürettebat ve Yetkinlik | B1640: Mürettebat Yönetimi | C1640: Personel, atama ve rotasyon | D1640: Ortak | E1640: crew-certificates | F1640: Crew Certificates & Endorsements | G1640: Crew Operations | H1640: expiry_date | I1640: Expiry Date | J1640: input/date | K1640: Tarih | L1640: Date/Time | M1640: Date | N1640: date | O1640: TBD | P1640: TBD | Q1640: Conditional | R1640: No | S1640: PLACEHOLDER — REVIEW_REQUIRED | U1640: N/A | V1640: Master/Chief Officer/Crewing; crew own-scope where applicable | W1640: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1640: Valid ISO/local date/time; chronology, expiry and business-window rules | Y1640: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1640: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1640: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1640: Offline capture allowed for supported mutable data; client UUID/base version; idempotent sync; material conflicts require human resolution | AC1640: /api/v1/crew-certificates | AD1640: CrewCertificates | AE1640: expiry_date | AF1640: UNCONFIRMED — physical schema review | AG1640: FR46-crew-certificates-expiry_date | AH1640: TC46-crew-certificates-expiry_date | AI1640: P1 | AJ1640: DEFAULT_PLACEHOLDER; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1640: UI/TRACE TAM — PROD REVIEW | AL1640: SOURCE + DERIVED GAP ANALYSIS | AM1640: ÖNERİ: Crew Certificates & Endorsements bağlamında Expiry Date. İş anlamı/birim BA onayı bekler. | AN1640: Tarih | AO1640: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ1640: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AV1640: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1640: Expiry Date: geçerli tarih/saat giriniz; kronoloji ve geçerlilik koşullarını kontrol ediniz. | BE1640: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1640: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1640: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1640: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1640: DEC-DATA-01…06 | BO1640: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:1641",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A1641: Mürettebat ve Yetkinlik | B1641: Mürettebat Yönetimi | C1641: Personel, atama ve rotasyon | D1641: Ortak | E1641: crew-certificates | F1641: Crew Certificates & Endorsements | G1641: Crew Operations | H1641: endorsement_required | I1641: Endorsement Required | J1641: checkbox | K1641: Onay Kutusu | L1641: Enum | M1641: Boolean | N1641: boolean | O1641: TBD | P1641: TBD | Q1641: Conditional | R1641: No | S1641: Explicit false/no — doğrula | T1641: Controlled list / state machine | U1641: Tanımlı | V1641: Master/Chief Officer/Crewing; crew own-scope where applicable | W1641: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1641: Boolean value or controlled Yes/No/N/A rule | Y1641: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1641: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1641: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1641: Offline capture allowed for supported mutable data; client UUID/base version; idempotent sync; material conflicts require human resolution | AC1641: /api/v1/crew-certificates | AD1641: CrewCertificates | AE1641: endorsement_required | AF1641: UNCONFIRMED — physical schema review | AG1641: FR46-crew-certificates-endorsement_required | AH1641: TC46-crew-certificates-endorsement_required | AI1641: P1 | AJ1641: EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1641: UI/TRACE TAM — PROD REVIEW | AL1641: SOURCE + DERIVED GAP ANALYSIS | AM1641: ÖNERİ: Crew Certificates & Endorsements bağlamında Endorsement Required. İş anlamı/birim BA onayı bekler. | AN1641: Onay Kutusu | AO1641: EXPLICIT_CANDIDATE | AP1641: 0 | AQ1641: BOOLEAN_CANDIDATE | AV1641: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1641: Endorsement Required: Boolean value or controlled Yes/No/N/A rule | BE1641: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1641: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1641: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1641: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1641: DEC-DATA-01…06 | BO1641: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:1642",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A1642: Mürettebat ve Yetkinlik | B1642: Mürettebat Yönetimi | C1642: Personel, atama ve rotasyon | D1642: Ortak | E1642: crew-certificates | F1642: Crew Certificates & Endorsements | G1642: Crew Operations | H1642: endorsement_no | I1642: Endorsement No | J1642: input/text | K1642: Metin Girişi | L1642: Text | M1642: Text | N1642: varchar/text — length TBD | O1642: TBD | P1642: TBD | Q1642: Conditional | R1642: No | S1642: PLACEHOLDER — REVIEW_REQUIRED | U1642: N/A | V1642: Master/Chief Officer/Crewing; crew own-scope where applicable | W1642: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1642: Type, length, format and contextual uniqueness rules | Y1642: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1642: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1642: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1642: Offline capture allowed for supported mutable data; client UUID/base version; idempotent sync; material conflicts require human resolution | AC1642: /api/v1/crew-certificates | AD1642: CrewCertificates | AE1642: endorsement_no | AF1642: UNCONFIRMED — physical schema review | AG1642: FR46-crew-certificates-endorsement_no | AH1642: TC46-crew-certificates-endorsement_no | AI1642: P1 | AJ1642: DEFAULT_PLACEHOLDER; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1642: UI/TRACE TAM — PROD REVIEW | AL1642: SOURCE + DERIVED GAP ANALYSIS | AM1642: ÖNERİ: Crew Certificates & Endorsements bağlamında Endorsement No. İş anlamı/birim BA onayı bekler. | AN1642: Metin Girişi | AO1642: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ1642: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AV1642: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1642: Endorsement No: Type, length, format and contextual uniqueness rules | BE1642: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1642: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1642: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1642: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1642: DEC-DATA-01…06 | BO1642: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:1643",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A1643: Mürettebat ve Yetkinlik | B1643: Mürettebat Yönetimi | C1643: Personel, atama ve rotasyon | D1643: Ortak | E1643: crew-certificates | F1643: Crew Certificates & Endorsements | G1643: Crew Operations | H1643: endorsement_expiry | I1643: Endorsement Expiry | J1643: input/date | K1643: Tarih | L1643: Date/Time | M1643: Date | N1643: date | O1643: TBD | P1643: TBD | Q1643: Conditional | R1643: No | S1643: PLACEHOLDER — REVIEW_REQUIRED | U1643: N/A | V1643: Master/Chief Officer/Crewing; crew own-scope where applicable | W1643: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1643: Valid ISO/local date/time; chronology, expiry and business-window rules | Y1643: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1643: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1643: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1643: Offline capture allowed for supported mutable data; client UUID/base version; idempotent sync; material conflicts require human resolution | AC1643: /api/v1/crew-certificates | AD1643: CrewCertificates | AE1643: endorsement_expiry | AF1643: UNCONFIRMED — physical schema review | AG1643: FR46-crew-certificates-endorsement_expiry | AH1643: TC46-crew-certificates-endorsement_expiry | AI1643: P1 | AJ1643: DEFAULT_PLACEHOLDER; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1643: UI/TRACE TAM — PROD REVIEW | AL1643: SOURCE + DERIVED GAP ANALYSIS | AM1643: ÖNERİ: Crew Certificates & Endorsements bağlamında Endorsement Expiry. İş anlamı/birim BA onayı bekler. | AN1643: Tarih | AO1643: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ1643: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AV1643: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1643: Endorsement Expiry: geçerli tarih/saat giriniz; kronoloji ve geçerlilik koşullarını kontrol ediniz. | BE1643: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1643: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1643: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1643: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1643: DEC-DATA-01…06 | BO1643: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:1644",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A1644: Mürettebat ve Yetkinlik | B1644: Mürettebat Yönetimi | C1644: Personel, atama ve rotasyon | D1644: Ortak | E1644: crew-certificates | F1644: Crew Certificates & Endorsements | G1644: Crew Operations | H1644: stcw_reference | I1644: STCW Reference | J1644: lookup | K1644: Referans/Lookup | L1644: Reference | M1644: Reference | N1644: uuid or text FK — REVIEW | O1644: TBD | P1644: TBD | Q1644: Conditional | R1644: No | S1644: PLACEHOLDER — REVIEW_REQUIRED | U1644: KAYNAK EKSİK / TÜRÜ DOĞRULANACAK | V1644: Master/Chief Officer/Crewing; crew own-scope where applicable | W1644: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1644: Active authorized reference in tenant/vessel/source scope | Y1644: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1644: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1644: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1644: Offline capture allowed for supported mutable data; client UUID/base version; idempotent sync; material conflicts require human resolution | AC1644: /api/v1/crew-certificates | AD1644: CrewCertificates | AE1644: stcw_reference | AF1644: UNCONFIRMED — physical schema review | AG1644: FR46-crew-certificates-stcw_reference | AH1644: TC46-crew-certificates-stcw_reference | AI1644: P1 | AJ1644: DEFAULT_PLACEHOLDER; LOOKUP_SOURCE_MISSING; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1644: UI/TRACE TAM — PROD REVIEW | AL1644: SOURCE + DERIVED GAP ANALYSIS | AM1644: ÖNERİ: Crew Certificates & Endorsements bağlamında STCW Reference. İş anlamı/birim BA onayı bekler. | AN1644: Referans/Lookup | AO1644: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ1644: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AV1644: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1644: STCW Reference: geçerli ve bu bağlamda yetkili bir referans seçiniz. | BE1644: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1644: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1644: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1644: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1644: DEC-DATA-01…06 | BO1644: REVIEW_REQUIRED | BR1644: crew-certificates::stcw_reference | BT1644: UNRESOLVED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:1645",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A1645: Mürettebat ve Yetkinlik | B1645: Mürettebat Yönetimi | C1645: Personel, atama ve rotasyon | D1645: Ortak | E1645: crew-certificates | F1645: Crew Certificates & Endorsements | G1645: Crew Operations | H1645: tanker_relevance | I1645: Tanker Relevance | J1645: input/text | K1645: Metin Girişi | L1645: Text | M1645: Text | N1645: varchar/text — length TBD | O1645: TBD | P1645: TBD | Q1645: Conditional | R1645: No | S1645: PLACEHOLDER — REVIEW_REQUIRED | U1645: N/A | V1645: Master/Chief Officer/Crewing; crew own-scope where applicable | W1645: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1645: Type, length, format and contextual uniqueness rules | Y1645: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1645: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1645: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1645: Offline capture allowed for supported mutable data; client UUID/base version; idempotent sync; material conflicts require human resolution | AC1645: /api/v1/crew-certificates | AD1645: CrewCertificates | AE1645: tanker_relevance | AF1645: UNCONFIRMED — physical schema review | AG1645: FR46-crew-certificates-tanker_relevance | AH1645: TC46-crew-certificates-tanker_relevance | AI1645: P1 | AJ1645: DEFAULT_PLACEHOLDER; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1645: UI/TRACE TAM — PROD REVIEW | AL1645: SOURCE + DERIVED GAP ANALYSIS | AM1645: ÖNERİ: Crew Certificates & Endorsements bağlamında Tanker Relevance. İş anlamı/birim BA onayı bekler. | AN1645: Metin Girişi | AO1645: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ1645: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AV1645: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1645: Tanker Relevance: Type, length, format and contextual uniqueness rules | BE1645: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1645: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1645: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1645: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1645: DEC-DATA-01…06 | BO1645: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:1646",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A1646: Mürettebat ve Yetkinlik | B1646: Mürettebat Yönetimi | C1646: Personel, atama ve rotasyon | D1646: Ortak | E1646: crew-certificates | F1646: Crew Certificates & Endorsements | G1646: Crew Operations | H1646: vessel_type_scope | I1646: Vessel Type Scope | J1646: select | K1646: Seçim Listesi | L1646: Enum | M1646: Controlled Code / Enum | N1646: text / controlled-code FK — REVIEW | O1646: TBD | P1646: TBD | Q1646: Conditional | R1646: No | S1646: PLACEHOLDER — REVIEW_REQUIRED | T1646: Controlled list / state machine | U1646: Tanımlı | V1646: Master/Chief Officer/Crewing; crew own-scope where applicable | W1646: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1646: Value must be from controlled list applicable to tenant/vessel/context | Y1646: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1646: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1646: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1646: Offline capture allowed for supported mutable data; client UUID/base version; idempotent sync; material conflicts require human resolution | AC1646: /api/v1/crew-certificates | AD1646: CrewCertificates | AE1646: vessel_type_scope | AF1646: UNCONFIRMED — physical schema review | AG1646: FR46-crew-certificates-vessel_type_scope | AH1646: TC46-crew-certificates-vessel_type_scope | AI1646: P1 | AJ1646: DEFAULT_PLACEHOLDER; EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1646: UI/TRACE TAM — PROD REVIEW | AL1646: SOURCE + DERIVED GAP ANALYSIS | AM1646: ÖNERİ: Crew Certificates & Endorsements bağlamında Vessel Type Scope. İş anlamı/birim BA onayı bekler. | AN1646: Seçim Listesi | AO1646: NO_IMPLICIT_DEFAULT_APPROVED_POLICY | AQ1646: DO_NOT_SERIALIZE_SOURCE_PLACEHOLDER | AV1646: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1646: Vessel Type Scope: Value must be from controlled list applicable to tenant/vessel/context | BE1646: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1646: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1646: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1646: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1646: DEC-DATA-01…06 | BO1646: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "locator": "sheet:Data Dictionary 2316/row:1647",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "text": "A1647: Mürettebat ve Yetkinlik | B1647: Mürettebat Yönetimi | C1647: Personel, atama ve rotasyon | D1647: Ortak | E1647: crew-certificates | F1647: Crew Certificates & Endorsements | G1647: Crew Operations | H1647: verification_status | I1647: Verification Status | J1647: select | K1647: Seçim Listesi | L1647: State | M1647: Controlled Code / Enum | N1647: text / controlled-code FK — REVIEW | O1647: TBD | P1647: TBD | Q1647: Yes/Business rule | R1647: System | S1647: Sistem tarafından türetilir | T1647: Controlled list / state machine | U1647: Tanımlı | V1647: Master/Chief Officer/Crewing; crew own-scope where applicable | W1647: Editable while record/state and role policy allow; read-only after controlled finalization where applicable. | X1647: Allowed controlled-state transition only | Y1647: Alan değerini, bağlamını ve gerekli kanıtı kontrol ediniz. | Z1647: Visible when screen/context/feature flag and role permit; hide protected/irrelevant fields rather than expose disabled sensitive data. | AA1647: Persist critical change with actor, role, tenant, vessel/context, before/after, reason and correlation ID. | AB1647: Offline capture allowed for supported mutable data; client UUID/base version; idempotent sync; material conflicts require human resolution | AC1647: /api/v1/crew-certificates | AD1647: CrewCertificates | AE1647: verification_status | AF1647: UNCONFIRMED — physical schema review | AG1647: FR46-crew-certificates-verification_status | AH1647: TC46-crew-certificates-verification_status | AI1647: P1 | AJ1647: EDITABLE_STATE_GENERIC; ERROR_MESSAGE_GENERIC; VISIBILITY_RULE_GENERIC; AUDIT_RULE_GENERIC; PHYSICAL_DB_MAPPING_UNCONFIRMED | AK1647: UI/TRACE TAM — PROD REVIEW | AL1647: SOURCE + DERIVED GAP ANALYSIS | AM1647: ÖNERİ: Crew Certificates & Endorsements bağlamında Verification Status. İş anlamı/birim BA onayı bekler. | AN1647: Seçim Listesi | AO1647: SYSTEM_DERIVED | AQ1647: DERIVATION_REQUIRES_SPECIFICATION | AV1647: tenant + authorized vessel/context; effective-date where applicable (14.01 §1,6) | BD1647: Verification Status: Allowed controlled-state transition only | BE1647: PROPOSED_TEXT — rule source 11.01; UI/BA onayı bekler | BH1647: 14.01 §6: PII/health/protected fields require separate access and redaction; field class pending | BJ1647: 14.01 §9: material safety/legal conflict → human resolution; no silent last-write-wins | BK1647: 14.01 §6: actor/role/tenant/object/action/before-after/correlation/device/time | BN1647: DEC-DATA-01…06 | BO1647: REVIEW_REQUIRED"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:48",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A48: DEV-047 | B48: Story | C48: E06 Crew & Competence | D48: Roster | E48: Crew roster + profile | F48: Master/Crewing olarak onboard/planned crew'yu görmek istiyorum. | G48: Person/assignment/rank/capacity/period scoped; privacy masking and vessel scope; offline supported read/capture as defined. | H48: crew-roster / crew-profile | I48: P0 | J48: S7 | K48: Full Stack | L48: DEV-020,DEV-015 | M48: T-S7-001 | N48: Not Started | O48: YES | P48: 8 | Q48: M"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:49",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A49: DEV-048 | B49: Story | C49: E06 Crew & Competence | D49: Credentials | E49: Crew certificates & endorsements | F49: Crewing olarak STCW/medical/endorsement kayıtlarını doğrulanmış şekilde tutmak istiyorum. | G49: Issue/expiry/issuer/endorsement/vessel scope/verification; expired/unverified positive eligibility üretmez. | H49: crew-certificates | I49: P0 | J49: S7 | K49: Full Stack | L49: DEV-047,DEV-030 | M49: T-S7-002 | N49: Not Started | O49: YES | P49: 8 | Q49: H"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:50",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A50: DEV-049 | B50: Story | C50: E06 Crew & Competence | D50: Competence | E50: Training-position/competence gate | F50: Crewing olarak pozisyon ve vessel type'a göre gerekli competence/training gap'lerini görmek istiyorum. | G50: Requirement type, mandatory, validity, vessel/cargo scope, competence/familiarization links; missing gap reason listesinde görünür. | H50: training-position-matrix | I50: P0 | J50: S7 | K50: Full Stack | L50: DEV-048,DEV-027 | M50: T-S7-003 | N50: Not Started | O50: YES | P50: 8 | Q50: H"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:51",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "text": "A51: DEV-050 | B51: Story | C51: E06 Crew & Competence | D51: Safe Manning | E51: Crew eligibility + Safe Manning evaluation | F51: Master olarak atamanın ve mevcut manning'in uygunluğunu açıklanabilir şekilde görmek istiyorum. | G51: Credential+competence+familiarization+work/rest+MSMD constraints değerlendirilir; ELIGIBLE/ATTENTION/NOT_ELIGIBLE/REVIEW_REQUIRED + reason. | H51: safe-manning / /api/v1/vessels/{id}/safe-manning/evaluate | I51: P0 | J51: S7 | K51: Backend+Frontend | L51: DEV-047:DEV-049 | M51: T-S7-004 | N51: Not Started | O51: YES | P51: 13 | Q51: H"
+    }
+  ]
+}
