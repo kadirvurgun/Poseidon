@@ -20,7 +20,7 @@ it('renders honest TR/EN details, withheld values, resource versions and exact a
   expect(screen.getByText('21 → 22')).toBeVisible()
   expect(screen.getByRole('link', { name: 'Değişmez revizyonu aç' })).toHaveAttribute('href', record.revisionHref)
   view.rerender(<AuditWorkspace language="en" selected={id} allowed onNavigate={navigate} />)
-  expect(screen.getByText(/does not require a decision reason/)).toBeVisible()
+  expect(screen.getByText('Historical reason unavailable')).toBeVisible()
   const close = screen.getByRole('button', { name: 'Close' }); close.focus(); await user.keyboard('{Enter}')
   expect(navigate).toHaveBeenCalledWith('/app/audit')
 })

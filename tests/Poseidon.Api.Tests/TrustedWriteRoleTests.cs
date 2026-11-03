@@ -66,7 +66,10 @@ public sealed partial class DirectoryWorkspaceTests
                 Assert.Equal(actorId.ToString(), x.ActorId); Assert.Equal("User", x.ActorType);
                 Assert.Equal(seed.Tenants[0].Id, x.TenantId); Assert.Equal(role, x.RoleContext);
                 Assert.NotNull(x.ResourceId); Assert.NotEmpty(x.ChangeSummary!);
-                Assert.Equal("NotRequiredForCommand", x.ReasonStatus); Assert.NotEqual(default, x.OccurredAt);
+                Assert.Equal("RecordedControlledCode", x.ReasonStatus); Assert.NotEqual(default, x.OccurredAt);
+                using var summary = System.Text.Json.JsonDocument.Parse(x.ChangeSummary!);
+                Assert.Contains(summary.RootElement.EnumerateArray(), field => field.GetProperty("field").GetString() == "CommandName" && !string.IsNullOrEmpty(field.GetProperty("after").GetString()));
+                Assert.Contains(summary.RootElement.EnumerateArray(), field => field.GetProperty("field").GetString() == "TechnicalReasonCode" && !string.IsNullOrEmpty(field.GetProperty("after").GetString()));
                 if (x.EntityType is nameof(Vessel) or nameof(RegulatoryDraft) or nameof(FileStage)) Assert.NotNull(x.VesselId);
             });
         }

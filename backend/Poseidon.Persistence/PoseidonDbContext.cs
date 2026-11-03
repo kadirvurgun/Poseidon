@@ -519,8 +519,9 @@ public sealed class PoseidonDbContext(
                     ControlEvidenceReceipt r => ChangeTracker.Entries<ControlEvidenceHead>().SingleOrDefault(e => e.Entity.TenantId == r.TenantId && e.Entity.VesselId == r.VesselId && e.Entity.Kind == r.Kind && e.Entity.Id == r.ResourceId)?.Entity.Revision,
                     _ => metadata.AfterRevision
                 },
-                ResourceKind = metadata.Kind, ReasonStatus = entry.Entity is RuleRevision or ControlEvidenceRevision or HumanReviewEvent or TugOfflineOutcome { ParentCommandId: not null } ? "RecordedControlledCode" : entry.Entity is OfflineOutcome { ParentCommandId: not null }
-                    ? "RecordedProtected" : currentWebCommand ? "RecordedControlledCode" : actor.Type == "System" ? "SystemOperation" : "HistoricalUnavailable", Source = actor.Source
+                ResourceKind = metadata.Kind, ReasonStatus = actor.Type == "System" ? "SystemOperation" :
+                    entry.Entity is RuleRevision or ControlEvidenceRevision or HumanReviewEvent or TugOfflineOutcome { ParentCommandId: not null } ? "RecordedControlledCode" : entry.Entity is OfflineOutcome { ParentCommandId: not null }
+                    ? "RecordedProtected" : currentWebCommand ? "RecordedControlledCode" : "HistoricalUnavailable", Source = actor.Source
             });
         }
         AuditEvents.AddRange(events);

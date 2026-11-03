@@ -149,6 +149,25 @@ public sealed class AuditCommandContextTests
         }
     }
 
+    [Fact]
+    public void System_authored_controlled_draft_retains_system_origin_and_its_actual_controlled_reason()
+    {
+        using var db = Context(ActorContext.SeedImport(), true);
+        db.RuleRevisions.Add(new()
+        {
+            TenantId = db.TenantId, Id = Guid.NewGuid(), Revision = 1, Contract = "FICTIONAL draft",
+            Hash = new string('A', 64), RoleContext = "", ReasonCode = "INITIAL_AUTHORING", RequestedLifecycle = "DRAFT"
+        });
+        db.SaveChanges();
+        var audit = Assert.Single(db.ChangeTracker.Entries<AuditEvent>()).Entity;
+        Assert.Equal("SystemOperation", audit.ReasonStatus);
+        Assert.Equal("System", audit.ActorType); Assert.Null(audit.RoleContext);
+        using var summary = JsonDocument.Parse(audit.ChangeSummary!);
+        Assert.Equal("INITIAL_AUTHORING", Field(summary, "ReasonCode"));
+        Assert.DoesNotContain(summary.RootElement.EnumerateArray(), x =>
+            x.GetProperty("field").GetString() is "CommandName" or "TechnicalReasonCode");
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]

@@ -1,0 +1,1474 @@
+{
+  "schemaVersion": "poseidon.s1-current-security-scope.v1",
+  "baseline": "poseidon-v46.3-20261030",
+  "source": {
+    "path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "rows": [
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ]
+  },
+  "definitionState": "AUTHORED_NOT_RUNTIME_MEASURED_NOT_ACCEPTED",
+  "reasonCodes": [
+    "PREPARATION_COMMAND",
+    "FILE_TRANSPORT",
+    "OFFLINE_LIFECYCLE",
+    "REGULATORY_WORKFLOW",
+    "HUMAN_REVIEW_WORKFLOW",
+    "SOURCE_QUALIFICATION"
+  ],
+  "scopeKinds": [
+    "Vessel",
+    "Tenant",
+    "TenantPerson",
+    "Unresolved"
+  ],
+  "mutationRouteTemplates": 83,
+  "criticalRouteTemplates": 77,
+  "criticalOperations": 82,
+  "scopeMeaning": "Current exposed HTTP command surface, including aliases. Counts are authoring definitions until actual EndpointDataSource drift and real audit observations pass the phase gate. Technical codes describe accepted commands, never human justification or safety authority.",
+  "operations": [
+    {
+      "operationId": "ApplicabilityEvaluate",
+      "method": "POST",
+      "routePattern": "/api/v1/applicability/evaluate",
+      "family": "Applicability",
+      "scope": "CommandVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "REGULATORY_WORKFLOW",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "ApplicabilitySimulate",
+      "method": "POST",
+      "routePattern": "/api/v1/applicability/simulate",
+      "family": "Applicability",
+      "scope": "CommandVessel",
+      "kind": "SecurityObservation",
+      "reasonCode": null,
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "EquipmentAssetsSave",
+      "method": "POST",
+      "routePattern": "/api/v1/assets",
+      "family": "Equipment",
+      "scope": "CommandVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "EquipmentSave",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "Logout",
+      "method": "POST",
+      "routePattern": "/api/v1/auth/logout",
+      "family": "Authentication",
+      "scope": "Session",
+      "kind": "SecurityObservation",
+      "reasonCode": null,
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "CreateCompany",
+      "method": "POST",
+      "routePattern": "/api/v1/companies",
+      "family": "Directory",
+      "scope": "Tenant",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "DirectoryWrite",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "UpdateCompany",
+      "method": "PUT",
+      "routePattern": "/api/v1/companies/{id:guid}",
+      "family": "Directory",
+      "scope": "Tenant",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "DirectoryWrite",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "ControlCreate",
+      "method": "POST",
+      "routePattern": "/api/v1/controls",
+      "family": "ControlEvidence",
+      "scope": "CommandVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "ControlUpdate",
+      "method": "PUT",
+      "routePattern": "/api/v1/controls/{id:guid}",
+      "family": "ControlEvidence",
+      "scope": "CommandVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "ControlComplete",
+      "method": "POST",
+      "routePattern": "/api/v1/controls/{id:guid}/complete",
+      "family": "ControlEvidence",
+      "scope": "CommandVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "ControlSubmit",
+      "method": "POST",
+      "routePattern": "/api/v1/controls/{id:guid}/submit",
+      "family": "ControlEvidence",
+      "scope": "CommandVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "DecisionCreate",
+      "method": "POST",
+      "routePattern": "/api/v1/decisions",
+      "family": "HumanReview",
+      "scope": "CommandVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "HUMAN_REVIEW_WORKFLOW",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "DecisionEvent",
+      "method": "POST",
+      "routePattern": "/api/v1/decisions/{id:guid}/events",
+      "family": "HumanReview",
+      "scope": "ResolvedVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "HUMAN_REVIEW_WORKFLOW",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "EquipmentCanonicalSave",
+      "method": "POST",
+      "routePattern": "/api/v1/equipment-hierarchy",
+      "family": "Equipment",
+      "scope": "CommandVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "EquipmentSave",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "EquipmentSave",
+      "method": "POST",
+      "routePattern": "/api/v1/equipment-hierarchy/{vessel:guid}",
+      "family": "Equipment",
+      "scope": "Vessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "EquipmentSave",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "MaintenanceObservationCapture",
+      "method": "POST",
+      "routePattern": "/api/v1/equipment-hierarchy/{vessel:guid}/{asset:guid}/observations",
+      "family": "Maintenance",
+      "scope": "Vessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "MaintenanceSave",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "MaintenanceObservationRevoke",
+      "method": "POST",
+      "routePattern": "/api/v1/equipment-hierarchy/{vessel:guid}/{asset:guid}/observations/{id:guid}/revoke",
+      "family": "Maintenance",
+      "scope": "Vessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "MaintenanceSave",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "EvidenceCreate",
+      "method": "POST",
+      "routePattern": "/api/v1/evidence",
+      "family": "ControlEvidence",
+      "scope": "CommandVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "EvidenceGraphCreate",
+      "method": "POST",
+      "routePattern": "/api/v1/evidence-graph",
+      "family": "ControlEvidence",
+      "scope": "CommandVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "EvidenceGraphUpdate",
+      "method": "PUT",
+      "routePattern": "/api/v1/evidence-graph/{id:guid}",
+      "family": "ControlEvidence",
+      "scope": "CommandVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "EvidenceGraphComplete",
+      "method": "POST",
+      "routePattern": "/api/v1/evidence-graph/{id:guid}/complete",
+      "family": "ControlEvidence",
+      "scope": "CommandVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "EvidenceGraphSubmit",
+      "method": "POST",
+      "routePattern": "/api/v1/evidence-graph/{id:guid}/submit",
+      "family": "ControlEvidence",
+      "scope": "CommandVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "EvidenceUpdate",
+      "method": "PUT",
+      "routePattern": "/api/v1/evidence/{id:guid}",
+      "family": "ControlEvidence",
+      "scope": "CommandVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "EvidenceComplete",
+      "method": "POST",
+      "routePattern": "/api/v1/evidence/{id:guid}/complete",
+      "family": "ControlEvidence",
+      "scope": "CommandVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "EvidenceSubmit",
+      "method": "POST",
+      "routePattern": "/api/v1/evidence/{id:guid}/submit",
+      "family": "ControlEvidence",
+      "scope": "CommandVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "MaintenanceCanonicalSave",
+      "method": "POST",
+      "routePattern": "/api/v1/maintenance-plan",
+      "family": "Maintenance",
+      "scope": "CommandVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "MaintenanceSave",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "MaintenanceSave",
+      "method": "POST",
+      "routePattern": "/api/v1/maintenance-plan/{vessel:guid}",
+      "family": "Maintenance",
+      "scope": "Vessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "MaintenanceSave",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "MaintenanceJobSave",
+      "method": "POST",
+      "routePattern": "/api/v1/maintenance-plan/{vessel:guid}/jobs",
+      "family": "Maintenance",
+      "scope": "Vessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "MaintenanceSave",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "MaintenancePostpone",
+      "method": "POST",
+      "routePattern": "/api/v1/maintenance-plan/{vessel:guid}/{id:guid}/postpone",
+      "family": "Maintenance",
+      "scope": "Vessel",
+      "kind": "AlwaysDenied",
+      "reasonCode": null,
+      "denialAction": "MaintenanceSave",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "MaintenanceAliasSave",
+      "method": "POST",
+      "routePattern": "/api/v1/maintenance-plans",
+      "family": "Maintenance",
+      "scope": "CommandVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "MaintenanceSave",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "ControlLibraryCreate",
+      "method": "POST",
+      "routePattern": "/api/v1/operational-control-library",
+      "family": "ControlEvidence",
+      "scope": "CommandVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "ControlLibraryUpdate",
+      "method": "PUT",
+      "routePattern": "/api/v1/operational-control-library/{id:guid}",
+      "family": "ControlEvidence",
+      "scope": "CommandVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "ControlLibraryComplete",
+      "method": "POST",
+      "routePattern": "/api/v1/operational-control-library/{id:guid}/complete",
+      "family": "ControlEvidence",
+      "scope": "CommandVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "ControlLibrarySubmit",
+      "method": "POST",
+      "routePattern": "/api/v1/operational-control-library/{id:guid}/submit",
+      "family": "ControlEvidence",
+      "scope": "CommandVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "RegulatoryQualificationRecord",
+      "method": "POST",
+      "routePattern": "/api/v1/regulatory-source-governance/{rule:guid}/events",
+      "family": "Qualification",
+      "scope": "Tenant",
+      "kind": "CriticalWrite",
+      "reasonCode": "SOURCE_QUALIFICATION",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "RegulatoryFactAttest",
+      "method": "POST",
+      "routePattern": "/api/v1/regulatory-source-governance/{rule:guid}/fact-attestations",
+      "family": "Qualification",
+      "scope": "CommandVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "SOURCE_QUALIFICATION",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "CreateRequirementDraft",
+      "method": "POST",
+      "routePattern": "/api/v1/requirement-drafts",
+      "family": "Register",
+      "scope": "Tenant",
+      "kind": "CriticalWrite",
+      "reasonCode": "REGULATORY_WORKFLOW",
+      "denialAction": "RegisterSave",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "SaveRequirementDraft",
+      "method": "PUT",
+      "routePattern": "/api/v1/requirement-drafts/{id:guid}",
+      "family": "Register",
+      "scope": "Tenant",
+      "kind": "CriticalWrite",
+      "reasonCode": "REGULATORY_WORKFLOW",
+      "denialAction": "RegisterSave",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "RuleCreate",
+      "method": "POST",
+      "routePattern": "/api/v1/rules",
+      "family": "Applicability",
+      "scope": "Tenant",
+      "kind": "CriticalWrite",
+      "reasonCode": "REGULATORY_WORKFLOW",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "RuleUpdate",
+      "method": "PUT",
+      "routePattern": "/api/v1/rules/{id:guid}",
+      "family": "Applicability",
+      "scope": "Tenant",
+      "kind": "CriticalWrite",
+      "reasonCode": "REGULATORY_WORKFLOW",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "RuleReviewRequest",
+      "method": "POST",
+      "routePattern": "/api/v1/rules/{id:guid}/review",
+      "family": "Applicability",
+      "scope": "Tenant",
+      "kind": "CriticalWrite",
+      "reasonCode": "REGULATORY_WORKFLOW",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "CreateSourceDraft",
+      "method": "POST",
+      "routePattern": "/api/v1/source-drafts",
+      "family": "Register",
+      "scope": "Tenant",
+      "kind": "CriticalWrite",
+      "reasonCode": "REGULATORY_WORKFLOW",
+      "denialAction": "RegisterSave",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "SaveSourceDraft",
+      "method": "PUT",
+      "routePattern": "/api/v1/source-drafts/{id:guid}",
+      "family": "Register",
+      "scope": "Tenant",
+      "kind": "CriticalWrite",
+      "reasonCode": "REGULATORY_WORKFLOW",
+      "denialAction": "RegisterSave",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "TugSave",
+      "method": "POST",
+      "routePattern": "/api/v1/tug-jobs",
+      "family": "Tug",
+      "scope": "CommandVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "TugSave",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "TugUpdate",
+      "method": "PUT",
+      "routePattern": "/api/v1/tug-jobs/{id:guid}",
+      "family": "Tug",
+      "scope": "ResolvedVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "TugSave",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "TugPlanSave",
+      "method": "PUT",
+      "routePattern": "/api/v1/tug-jobs/{id:guid}/plan",
+      "family": "Tug",
+      "scope": "ResolvedVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "TugSave",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "TugOfflineEnroll",
+      "method": "POST",
+      "routePattern": "/api/v1/tug-jobs/{id:guid}/plan/offline",
+      "family": "Tug",
+      "scope": "ResolvedVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "OFFLINE_LIFECYCLE",
+      "denialAction": "TugSave",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "TugOfflineAction",
+      "method": "POST",
+      "routePattern": "/api/v1/tug-jobs/{id:guid}/plan/offline/{enrollment:guid}/{action}",
+      "family": "Tug",
+      "scope": "ResolvedVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "OFFLINE_LIFECYCLE",
+      "denialAction": "TugSave",
+      "variants": [
+        {
+          "routeValue": "renew",
+          "operationId": "TugOfflineActionRenew"
+        },
+        {
+          "routeValue": "key",
+          "operationId": "TugOfflineActionKey"
+        },
+        {
+          "routeValue": "revoke",
+          "operationId": "TugOfflineActionRevoke"
+        },
+        {
+          "routeValue": "lost",
+          "operationId": "TugOfflineActionLost"
+        },
+        {
+          "routeValue": "cleanup",
+          "operationId": "TugOfflineActionCleanup"
+        },
+        {
+          "routeValue": "replay",
+          "operationId": "TugOfflineActionReplay"
+        }
+      ],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "VerificationCreate",
+      "method": "POST",
+      "routePattern": "/api/v1/verifications",
+      "family": "HumanReview",
+      "scope": "CommandVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "HUMAN_REVIEW_WORKFLOW",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "VerificationEvent",
+      "method": "POST",
+      "routePattern": "/api/v1/verifications/{id:guid}/events",
+      "family": "HumanReview",
+      "scope": "ResolvedVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "HUMAN_REVIEW_WORKFLOW",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "CreateVessel",
+      "method": "POST",
+      "routePattern": "/api/v1/vessels",
+      "family": "Directory",
+      "scope": "Tenant",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "DirectoryWrite",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "UpdateVessel",
+      "method": "PUT",
+      "routePattern": "/api/v1/vessels/{id:guid}",
+      "family": "Directory",
+      "scope": "Vessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "DirectoryWrite",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "SaveRegulatoryDraft",
+      "method": "PUT",
+      "routePattern": "/api/v1/vessels/{id:guid}/regulatory-profile",
+      "family": "Profile",
+      "scope": "Vessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "ProfileSave",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "CrewSave",
+      "method": "POST",
+      "routePattern": "/api/v1/vessels/{vessel:guid}/crew",
+      "family": "Crew",
+      "scope": "Vessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "CrewSave",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "CrewCatalogSave",
+      "method": "POST",
+      "routePattern": "/api/v1/vessels/{vessel:guid}/crew/position-catalog/events",
+      "family": "Crew",
+      "scope": "Vessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "CrewSave",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "CrewPositionSave",
+      "method": "POST",
+      "routePattern": "/api/v1/vessels/{vessel:guid}/crew/positions",
+      "family": "Crew",
+      "scope": "Vessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "CrewSave",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "CredentialSave",
+      "method": "POST",
+      "routePattern": "/api/v1/vessels/{vessel:guid}/crew/{assignment:guid}/certificates",
+      "family": "Crew",
+      "scope": "Vessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "CrewSave",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "OfflineEnroll",
+      "method": "POST",
+      "routePattern": "/api/v1/vessels/{vessel:guid}/crew/{assignment:guid}/offline",
+      "family": "Offline",
+      "scope": "Vessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "OFFLINE_LIFECYCLE",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "OfflineCleanupAuthorization",
+      "method": "POST",
+      "routePattern": "/api/v1/vessels/{vessel:guid}/crew/{assignment:guid}/offline/{enrollment:guid}/cleanup",
+      "family": "Offline",
+      "scope": "Vessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "OFFLINE_LIFECYCLE",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "OfflineKeyEnroll",
+      "method": "POST",
+      "routePattern": "/api/v1/vessels/{vessel:guid}/crew/{assignment:guid}/offline/{enrollment:guid}/key",
+      "family": "Offline",
+      "scope": "Vessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "OFFLINE_LIFECYCLE",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "OfflineKeyLost",
+      "method": "POST",
+      "routePattern": "/api/v1/vessels/{vessel:guid}/crew/{assignment:guid}/offline/{enrollment:guid}/lost",
+      "family": "Offline",
+      "scope": "Vessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "OFFLINE_LIFECYCLE",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "OfflineRenew",
+      "method": "POST",
+      "routePattern": "/api/v1/vessels/{vessel:guid}/crew/{assignment:guid}/offline/{enrollment:guid}/renew",
+      "family": "Offline",
+      "scope": "Vessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "OFFLINE_LIFECYCLE",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "OfflineReplay",
+      "method": "POST",
+      "routePattern": "/api/v1/vessels/{vessel:guid}/crew/{assignment:guid}/offline/{enrollment:guid}/replay",
+      "family": "Offline",
+      "scope": "Vessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "OFFLINE_LIFECYCLE",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "OfflineRevoke",
+      "method": "POST",
+      "routePattern": "/api/v1/vessels/{vessel:guid}/crew/{assignment:guid}/offline/{enrollment:guid}/revoke",
+      "family": "Offline",
+      "scope": "Vessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "OFFLINE_LIFECYCLE",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "StageCrewFileVersion",
+      "method": "POST",
+      "routePattern": "/api/v1/vessels/{vessel:guid}/crew/{assignment:guid}/personal-files/{personalKind}/versions/{personalRevision:long}",
+      "family": "File",
+      "scope": "Vessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "FILE_TRANSPORT",
+      "denialAction": "FileRequest",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "IssueCrewFileVersionAccess",
+      "method": "POST",
+      "routePattern": "/api/v1/vessels/{vessel:guid}/crew/{assignment:guid}/personal-files/{personalKind}/versions/{personalRevision:long}/{id:guid}/access",
+      "family": "File",
+      "scope": "Vessel",
+      "kind": "SecurityObservation",
+      "reasonCode": null,
+      "denialAction": "FileRequest",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "UploadCrewFileVersion",
+      "method": "PUT",
+      "routePattern": "/api/v1/vessels/{vessel:guid}/crew/{assignment:guid}/personal-files/{personalKind}/versions/{personalRevision:long}/{id:guid}/bytes",
+      "family": "File",
+      "scope": "Vessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "FILE_TRANSPORT",
+      "denialAction": "FileRequest",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "CrewPersonalProfileSave",
+      "method": "PUT",
+      "routePattern": "/api/v1/vessels/{vessel:guid}/crew/{assignment:guid}/personal-profile",
+      "family": "Crew",
+      "scope": "TenantPerson",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "CrewSave",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "CrewPhotoSave",
+      "method": "PUT",
+      "routePattern": "/api/v1/vessels/{vessel:guid}/crew/{assignment:guid}/photo",
+      "family": "Crew",
+      "scope": "TenantPerson",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "CrewSave",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "CrewPersonSave",
+      "method": "PUT",
+      "routePattern": "/api/v1/vessels/{vessel:guid}/crew/{id:guid}/person",
+      "family": "Crew",
+      "scope": "TenantPerson",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "CrewSave",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "CrewIdentityConvert",
+      "method": "POST",
+      "routePattern": "/api/v1/vessels/{vessel:guid}/crew/{id:guid}/person/convert",
+      "family": "Crew",
+      "scope": "TenantPerson",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "CrewSave",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "DocumentCreate",
+      "method": "POST",
+      "routePattern": "/api/v1/vessels/{vessel:guid}/documents",
+      "family": "Document",
+      "scope": "Vessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "DocumentVersionAppend",
+      "method": "POST",
+      "routePattern": "/api/v1/vessels/{vessel:guid}/documents/{document:guid}/versions",
+      "family": "Document",
+      "scope": "Vessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "StageDocumentFile",
+      "method": "POST",
+      "routePattern": "/api/v1/vessels/{vessel:guid}/documents/{document:guid}/versions/{revision:long}/files",
+      "family": "File",
+      "scope": "Vessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "FILE_TRANSPORT",
+      "denialAction": "FileRequest",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "IssueDocumentFileAccess",
+      "method": "POST",
+      "routePattern": "/api/v1/vessels/{vessel:guid}/documents/{document:guid}/versions/{revision:long}/files/{id:guid}/access",
+      "family": "File",
+      "scope": "Vessel",
+      "kind": "SecurityObservation",
+      "reasonCode": null,
+      "denialAction": "FileRequest",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "UploadDocumentFile",
+      "method": "PUT",
+      "routePattern": "/api/v1/vessels/{vessel:guid}/documents/{document:guid}/versions/{revision:long}/files/{id:guid}/bytes",
+      "family": "File",
+      "scope": "Vessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "FILE_TRANSPORT",
+      "denialAction": "FileRequest",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "StageVesselFile",
+      "method": "POST",
+      "routePattern": "/api/v1/vessels/{vessel:guid}/files",
+      "family": "File",
+      "scope": "Vessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "FILE_TRANSPORT",
+      "denialAction": "FileRequest",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "IssueFileAccess",
+      "method": "POST",
+      "routePattern": "/api/v1/vessels/{vessel:guid}/files/{id:guid}/access",
+      "family": "File",
+      "scope": "Vessel",
+      "kind": "SecurityObservation",
+      "reasonCode": null,
+      "denialAction": "FileRequest",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "UploadVesselFile",
+      "method": "PUT",
+      "routePattern": "/api/v1/vessels/{vessel:guid}/files/{id:guid}/bytes",
+      "family": "File",
+      "scope": "Vessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "FILE_TRANSPORT",
+      "denialAction": "FileRequest",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "ImportUpload",
+      "method": "POST",
+      "routePattern": "/api/v1/vessels/{vessel:guid}/imports/uploads/{category}",
+      "family": "Import",
+      "scope": "Vessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "ImportCommit",
+      "method": "POST",
+      "routePattern": "/api/v1/vessels/{vessel:guid}/imports/{batch:guid}/commit",
+      "family": "Import",
+      "scope": "Vessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "LegacyCrewImportConvert",
+      "method": "POST",
+      "routePattern": "/api/v1/vessels/{vessel:guid}/imports/{batch:guid}/legacy-protection",
+      "family": "Import",
+      "scope": "Vessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "ImportMappingDraft",
+      "method": "PUT",
+      "routePattern": "/api/v1/vessels/{vessel:guid}/imports/{batch:guid}/mapping",
+      "family": "Import",
+      "scope": "Vessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "ImportPreview",
+      "method": "POST",
+      "routePattern": "/api/v1/vessels/{vessel:guid}/imports/{batch:guid}/preview",
+      "family": "Import",
+      "scope": "Vessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    }
+  ]
+}

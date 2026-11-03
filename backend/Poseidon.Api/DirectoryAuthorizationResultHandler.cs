@@ -9,6 +9,18 @@ public sealed class DirectoryAuthorizationResultHandler : IAuthorizationMiddlewa
     private readonly AuthorizationMiddlewareResultHandler fallback = new();
     public async Task HandleAsync(RequestDelegate next, HttpContext context, AuthorizationPolicy policy, PolicyAuthorizationResult result)
     {
+        // Cover every current critical command, including unnamed routes and
+        // aliases. A durable denied observation must precede its response.
+        var operation = S1SecurityContract.Match(context);
+        if (!result.Succeeded && operation?.IsCritical == true)
+        {
+            await context.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(context,
+                operation.DenialAction, result.Challenged ? "Unauthenticated" : "Denied");
+            var code = result.Challenged ? "authentication_required" : "permission_denied";
+            await Results.Problem(statusCode: result.Challenged ? 401 : 403, title: code,
+                extensions: new Dictionary<string, object?> { ["code"] = code, ["correlationId"] = context.TraceIdentifier }).ExecuteAsync(context);
+            return;
+        }
         var endpointName = context.GetEndpoint()?.Metadata.GetMetadata<Microsoft.AspNetCore.Routing.IEndpointNameMetadata>()?.EndpointName;
         if (!result.Succeeded && endpointName != null && (endpointName.Contains("SourceDraft", StringComparison.Ordinal) || endpointName.Contains("RequirementDraft", StringComparison.Ordinal)))
         {
