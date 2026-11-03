@@ -61,7 +61,7 @@ public sealed partial class DirectoryWorkspaceTests
         var row = await db.FileStages.SingleAsync(x => x.Id == stage.Id, Ct); Assert.Equal("Pending", row.State);
         Assert.Equal(stage.Version, row.Version);
         Assert.Single(await db.AuditEvents.Where(x => x.ResourceId == stage.Id && x.EntityType == nameof(FileStage)).ToArrayAsync(Ct));
-        Assert.Empty(Directory.GetFiles(root));
+        Assert.Single(Directory.GetFiles(root));
         await FileReconciliation.AbandonAsync(db, new LocalFileObjects(new() { Root = root }), DateTimeOffset.UtcNow, 10, Ct);
         Assert.False(File.Exists(Path.Combine(root, row.TenantId.ToString("N") + "-" + row.Id.ToString("N") + ".object")));
         Directory.Delete(root, false);
@@ -108,7 +108,7 @@ public sealed partial class DirectoryWorkspaceTests
         Directory.Delete(root, false);
     }
 
-    private Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory<Program> FileHost(string root, int port) => Host().WithWebHostBuilder(b => {
+    private Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory<Program> FileHost(string root, int port, Microsoft.EntityFrameworkCore.Diagnostics.DbCommandInterceptor? interceptor = null) => Host(interceptor: interceptor).WithWebHostBuilder(b => {
         b.UseEnvironment("Development");
         b.ConfigureServices(s => s.AddSingleton(new SecureFileSettings { Adapter = "LocalDevelopment", Root = root, MaxBytes = 1024 * 1024, MaxPixels = 1024 * 1024, ClamdPort = port, ScanSeconds = 1, CapabilitySeconds = 10, RetentionReference = "synthetic-policy", ScannerReference = "protocol-peer-test-only" }));
     });

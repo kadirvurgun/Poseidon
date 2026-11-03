@@ -20,6 +20,16 @@ public sealed class SecureFileSettings
     public string? ScannerReference { get; set; }
     public S3ObjectSettings S3 { get; set; } = new();
     public string[] AllowedTypes { get; set; } = ["image/png"];
+    // An upload must use one operator configuration even when a settings object
+    // changes while its audited claim/provider request is awaited. Only references
+    // are copied here; credentials are still resolved server-side by the adapter.
+    internal SecureFileSettings Snapshot() => new()
+    {
+        Adapter = Adapter, Root = Root, MaxBytes = MaxBytes, MaxPixels = MaxPixels,
+        ScanSeconds = ScanSeconds, ClamdPort = ClamdPort, CapabilitySeconds = CapabilitySeconds,
+        RetentionReference = RetentionReference, ScannerReference = ScannerReference,
+        AllowedTypes = AllowedTypes.ToArray(), S3 = S3.Snapshot()
+    };
     public bool Ready(IHostEnvironment environment) => (Adapter == "S3" && S3.Valid(environment) || environment.IsDevelopment() && Adapter == "LocalDevelopment") &&
         Root != null && Path.IsPathFullyQualified(Root) && !Path.GetFullPath(Root).Equals(Path.GetFullPath(environment.ContentRootPath), StringComparison.OrdinalIgnoreCase) && !Path.GetFullPath(Root).StartsWith(Path.GetFullPath(environment.ContentRootPath).TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase) && MaxBytes is > 0 and <= 5242880 && MaxPixels > 0 &&
         ScanSeconds is > 0 and <= 300 && ClamdPort is > 0 and <= 65535 && CapabilitySeconds is > 0 and <= 300 &&

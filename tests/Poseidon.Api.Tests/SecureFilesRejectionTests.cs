@@ -1,8 +1,10 @@
 using System.Net;
+using System.Data.Common;
 using System.Net.Http.Json;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Poseidon.Api;
 using Poseidon.Persistence;
@@ -63,6 +65,8 @@ public sealed partial class DirectoryWorkspaceTests
         client.DefaultRequestHeaders.Add("X-File-Capability", token);
         using var download = await client.GetAsync($"/api/v1/vessels/{SeedVessel.Id}/files/{accepted.Id}/bytes", Ct);
         Assert.Equal(HttpStatusCode.OK, download.StatusCode); Assert.Equal(Png, await download.Content.ReadAsByteArrayAsync(Ct));
+        Assert.Equal(2, Directory.GetFiles(root).Length);
+        await FileReconciliation.AbandonAsync(db, new LocalFileObjects(new() { Root = root }), DateTimeOffset.UtcNow, 10, Ct);
         var path = Assert.Single(Directory.GetFiles(root));
         Assert.EndsWith(accepted.Id.ToString("N") + ".object", path);
         File.Delete(path); Directory.Delete(root, false);
@@ -98,7 +102,7 @@ public sealed partial class DirectoryWorkspaceTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task Membership_or_type_policy_withdrawn_during_clean_scan_preserves_pending_state_and_owned_spool_cleanup(bool withdrawPolicy)
+    public async Task Membership_or_type_policy_withdrawn_during_clean_scan_preserves_pending_state_for_explicit_reconciliation(bool withdrawPolicy)
     {
         var root = Path.Combine(Path.GetTempPath(), "poseidon-files-" + Guid.NewGuid().ToString("N")); Directory.CreateDirectory(root);
         FederationSettings? federation = null; SecureFileSettings? settings = null;
@@ -112,7 +116,9 @@ public sealed partial class DirectoryWorkspaceTests
         var stage = await StagePng(client);
         using var response = await PutPng(client, stage.Id);
         Assert.Equal(withdrawPolicy ? HttpStatusCode.ServiceUnavailable : HttpStatusCode.Forbidden, response.StatusCode);
-        await using var db = Db(); await AssertUnchangedRejectedIntent(db, stage); Assert.Empty(Directory.GetFiles(root));
+        await using var db = Db(); await AssertUnchangedRejectedIntent(db, stage); Assert.Single(Directory.GetFiles(root));
+        await FileReconciliation.AbandonAsync(db, new LocalFileObjects(new() { Root = root }), DateTimeOffset.UtcNow, 10, Ct);
+        Assert.Empty(Directory.GetFiles(root));
         Directory.Delete(root, false);
     }
 
@@ -159,11 +165,12 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Equal("Abandoned", (await db.FileStages.AsNoTracking().SingleAsync(x => x.Id == stage.Id, Ct)).State);
         Assert.False(await db.StoredFiles.AnyAsync(x => x.Id == stage.Id, Ct));
         Assert.False(await db.CommandReceipts.AnyAsync(x => x.ResourceId == stage.Id, Ct));
+        await FileReconciliation.AbandonAsync(db, new LocalFileObjects(new() { Root = root }), DateTimeOffset.UtcNow, 10, Ct);
         Assert.Empty(Directory.GetFiles(root)); Directory.Delete(root, false);
     }
 
     [Fact]
-    public async Task Cancelled_stream_preserves_pending_intent_without_receipt_and_removes_only_its_unaccepted_spool()
+    public async Task Cancelled_stream_preserves_pending_intent_without_receipt_until_explicit_spool_reconciliation()
     {
         var root = Path.Combine(Path.GetTempPath(), "poseidon-files-" + Guid.NewGuid().ToString("N")); Directory.CreateDirectory(root);
         await using var host = FileHost(root, 1); using var client = Client(host); FilePermissions(host.Services); await Token(client);
@@ -177,9 +184,61 @@ public sealed partial class DirectoryWorkspaceTests
         try { await WaitForOwnedSpoolCount(root, 1); }
         finally { cancelled.Cancel(); }
         await Assert.ThrowsAnyAsync<OperationCanceledException>(async () => { using var result = await response; });
-        await WaitForOwnedSpoolCount(root, 0);
-        await using var db = Db(); await AssertUnchangedRejectedIntent(db, stage);
+        await using var db = Db();
+        using (var deadline = CancellationTokenSource.CreateLinkedTokenSource(Ct)) {
+            deadline.CancelAfter(TimeSpan.FromSeconds(10));
+            while (!await db.Set<SecurityEvent>().AnyAsync(x => x.Action == "FileRequest" && x.ResourceId == stage.Id, deadline.Token))
+                await Task.Delay(20, deadline.Token);
+        }
+        await AssertUnchangedRejectedIntent(db, stage); Assert.Single(Directory.GetFiles(root));
+        await FileReconciliation.AbandonAsync(db, new LocalFileObjects(new() { Root = root }), DateTimeOffset.UtcNow, 10, Ct);
+        Assert.Empty(Directory.GetFiles(root));
         Directory.Delete(root, false);
+    }
+
+    [Fact]
+    public async Task Late_xmin_conflict_does_not_unlink_a_recreated_spool_after_reconciliation()
+    {
+        var root = Path.Combine(Path.GetTempPath(), "poseidon-files-" + Guid.NewGuid().ToString("N")); Directory.CreateDirectory(root);
+        using var scanner = new ScanPeer("stream: OK\0"); var pause = new ReceivingClaimPause();
+        await using var host = FileHost(root, scanner.Port, pause); using var client = Client(host); FilePermissions(host.Services); await Token(client);
+        var stage = await StagePng(client); var pending = PutPng(client, stage.Id);
+        var replacement = Encoding.ASCII.GetBytes("FICTIONAL bytes owned by a different stale transport attempt");
+        try {
+            await pause.Entered.Task.WaitAsync(Ct);
+            await using var reconciler = Db();
+            await FileReconciliation.AbandonAsync(reconciler, new LocalFileObjects(new() { Root = root }), DateTimeOffset.UtcNow, 10, Ct);
+            Assert.Empty(Directory.GetFiles(root));
+            // Reproduce the real unlink/recreate ABA filesystem effect, rather than assuming
+            // FileShare.None prevents Unix deletion. This is no StoredFile/scan/receipt fixture.
+            await using var other = new LocalFileObjects(new() { Root = root }).Create(SeedVessel.TenantId, stage.Id);
+            await other.WriteAsync(replacement, Ct);
+        } finally { pause.Release.TrySetResult(); }
+        using var response = await pending; Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        Assert.Equal(replacement, await File.ReadAllBytesAsync(Assert.Single(Directory.GetFiles(root)), Ct));
+        await using var db = Db();
+        Assert.Equal("Abandoned", (await db.FileStages.AsNoTracking().SingleAsync(x => x.Id == stage.Id, Ct)).State);
+        Assert.False(await db.StoredFiles.AnyAsync(x => x.Id == stage.Id, Ct));
+        Assert.False(await db.CommandReceipts.AnyAsync(x => x.ResourceId == stage.Id, Ct));
+        await FileReconciliation.AbandonAsync(db, new LocalFileObjects(new() { Root = root }), DateTimeOffset.UtcNow, 10, Ct);
+        Assert.Empty(Directory.GetFiles(root)); Directory.Delete(root, false);
+    }
+
+    private sealed class ReceivingClaimPause : DbCommandInterceptor
+    {
+        private int intercepted;
+        public TaskCompletionSource Entered { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        public TaskCompletionSource Release { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        public override async ValueTask<InterceptionResult<DbDataReader>> ReaderExecutingAsync(DbCommand command,
+            CommandEventData eventData, InterceptionResult<DbDataReader> result, CancellationToken cancellationToken = default)
+        {
+            if (command.CommandText.Contains("UPDATE files.\"FileStages\"", StringComparison.Ordinal) &&
+                command.Parameters.Cast<DbParameter>().Any(x => x.Value is string state && state == "Receiving") &&
+                Interlocked.CompareExchange(ref intercepted, 1, 0) == 0) {
+                Entered.TrySetResult(); await Release.Task.WaitAsync(cancellationToken);
+            }
+            return result;
+        }
     }
 
     private async Task WaitForOwnedSpoolCount(string root, int expected)

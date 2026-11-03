@@ -17,6 +17,11 @@ public sealed class S3ObjectSettings
     public string? AccessKeyReference { get; set; }
     public string? SecretKeyReference { get; set; }
     public bool OwnedLoopback { get; set; }
+    internal S3ObjectSettings Snapshot() => new()
+    {
+        Endpoint = Endpoint, Bucket = Bucket, Region = Region, AccessKeyReference = AccessKeyReference,
+        SecretKeyReference = SecretKeyReference, OwnedLoopback = OwnedLoopback
+    };
     public bool Valid(IHostEnvironment environment)
     {
         if (!Uri.TryCreate(Endpoint, UriKind.Absolute, out var uri) || uri.UserInfo.Length != 0 || uri.AbsolutePath != "/" || uri.Query.Length != 0 || uri.Fragment.Length != 0 ||

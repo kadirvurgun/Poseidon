@@ -34,9 +34,9 @@ transport remains unverified evidence.
 |---|---|
 | S1-FILES-REJ-01 | Reject current MIME/size/header or provider-context mismatch before changing the Pending intent. Recheck current policy and trusted membership after scanning and before publishing. A MIME removed after staging cannot be accepted through its old declaration. |
 | S1-FILES-REJ-02 | Copy, bounded SHA256 validation, actual format validation and clamd scan use the same exclusively created local spool while durable state remains Pending. Deterministic rejection, unavailable scanner and cancellation leave state/xmin and business audit unchanged. A separate SecurityEvent observes the denied attempt. |
-| S1-FILES-REJ-03 | Only a request that successfully created its spool may clean that exact server-generated path before finalization. A competing CreateNew failure returns409 and cannot delete another request's spool. Unrelated I/O failures are not disguised as conflicts. |
+| S1-FILES-REJ-03 | Requests never delete a spool by filename. Unix reconciliation can unlink an open file and a stale request can recreate the same pathname; path reuse is not ownership. Failed byte/scanner attempts retain private Pending quarantine for the existing audited xmin reconciler. A competing CreateNew failure returns409 and cannot delete another request's spool. Unrelated I/O failures are not disguised as conflicts. |
 | S1-FILES-REJ-04 | After successful validation, current membership/policy is rechecked, then audited Pending→Receiving claims the original xmin. Concurrent reconciliation can win Pending→Abandoned; its xmin fence prevents the late uploader from committing provider bytes or accepted metadata. Existing reconciliation already handles orphan Pending spools after a process crash. |
-| S1-FILES-REJ-05 | Once Receiving has been saved and provider finalization can begin, do not remove bytes or guess whether acknowledgement succeeded. Provider failure/unknown acknowledgement or receipt rollback retain Receiving/quarantine for the existing bounded operator reconciliation. Final StoredFile and FileFinalize receipt remain one audited DB transaction. |
+| S1-FILES-REJ-05 | The actual scanner/storage operation uses one copied operator configuration with separate copied S3 settings and credential references. Live policy/context is checked again after awaited Receiving SaveChanges and before the provider call; an in-flight setting change cannot redirect bytes to a different endpoint/bucket. Once provider finalization can begin, do not remove bytes or guess whether acknowledgement succeeded. Provider failure/unknown acknowledgement or receipt rollback retain Receiving/quarantine for the existing bounded operator reconciliation. Final StoredFile and FileFinalize receipt remain one audited DB transaction. |
 | S1-FILES-REJ-06 | Failed new content cannot replace an earlier accepted file, receipt, document revision or evidence revision. The earlier capability-authorized download must return its exact original bytes. |
 
 Known pre-fence transport failures return the fixed safe code
@@ -49,16 +49,22 @@ no clean/verified transport, receipt or credential is fabricated.
 ## Authored checks, not executed results
 
 [SecureFilesRejectionTests](../../tests/Poseidon.Api.Tests/SecureFilesRejectionTests.cs)
-authors fifteen API/PostgreSQL cases: six content/scanner failures preserving
+authors sixteen API/PostgreSQL cases: six content/scanner failures preserving
 earlier accepted content, four header/current-policy failures, two mid-scan
 authority/policy withdrawals, one competing upload/spool-ownership race, one
-reconciliation/finalizer race and one real request cancellation.
+reconciliation/finalizer race, one real request cancellation and one explicit
+unlink/recreate ABA regression while the first request's xmin claim is paused.
 [S3DocumentIntegrationTests](../../tests/Poseidon.Api.Tests/S3DocumentIntegrationTests.cs)
-adds one real-provider context-change negative. These are **16 authored cases**,
+adds two real-provider context-change negatives, including a change during the
+awaited Receiving claim. These are **18 authored cases**,
 not an observed pass count.
 
 Existing protocol-error/FOUND/truncation/timeout regressions now assert original
-Pending/xmin, unchanged stage audit and removed unaccepted spool. Existing
+Pending/xmin, unchanged stage audit and private unaccepted spool retained until
+explicit reconciliation. Preflight rejects create no spool and may retry the
+same intent with corrected headers/current policy; actual byte/scanner failures
+need explicit reconciliation/new intent rather than speculative request cleanup.
+Existing
 successful concurrent upload, real S3 immutable-version download, receipt rollback
 and orphan reconciliation assertions remain. The exclusive local-object test now
 requires the narrow collision exception, preserving its reparse/foreign-root

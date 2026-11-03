@@ -194,32 +194,33 @@ public static class SecureFileEndpoints
         if (stage == null) return await Failure(h, 404, "resource_not_found", id);
         if (stage.State == "CleanTransport") return Results.Ok(Dto(stage, await db.StoredFiles.SingleAsync(x => x.Id == id, ct)));
         if (stage.State != "Pending") return await Failure(h, 409, "file_attempt_frozen", id);
-        var objects = h.RequestServices.GetRequiredService<FileObjects>();
         var settings = h.RequestServices.GetRequiredService<SecureFileSettings>();
-        if (!settings.AllowedTypes.Contains(stage.Mime) || stage.ExpectedLength > settings.MaxBytes ||
+        var pinned = settings.Snapshot();
+        var objects = new FileObjects(pinned, new LocalFileObjects(pinned), h.RequestServices.GetRequiredService<IWebHostEnvironment>());
+        if (!pinned.AllowedTypes.Contains(stage.Mime) || stage.ExpectedLength > pinned.MaxBytes ||
+            !settings.AllowedTypes.Contains(stage.Mime) || stage.ExpectedLength > settings.MaxBytes ||
             h.Request.ContentType != stage.Mime || h.Request.ContentLength.HasValue && h.Request.ContentLength != stage.ExpectedLength)
             return await Failure(h, 400, "file_type_or_size_invalid", id);
-        if (stage.StorageReference != (settings.Adapter == "S3" ? settings.S3.ContextHash() : null)) return await Failure(h, 503, "file_settings_unavailable", id);
-        string? ownedSpoolPath = null;
+        if (!objects.Owns(stage)) return await Failure(h, 503, "file_settings_unavailable", id);
         var finalizationStarted = false;
-        var root = settings.Root;
-        var adapter = settings.Adapter;
-        var maxPixels = settings.MaxPixels;
-        var scannerReference = settings.ScannerReference;
-        var scannerPort = settings.ClamdPort;
-        var retentionReference = settings.RetentionReference;
+        var root = pinned.Root;
+        var adapter = pinned.Adapter;
+        var maxPixels = pinned.MaxPixels;
+        var scannerReference = pinned.ScannerReference;
+        var scannerPort = pinned.ClamdPort;
+        var retentionReference = pinned.RetentionReference;
         bool PolicyUnchanged() => Ready(h) && settings.Root == root && settings.Adapter == adapter &&
             settings.AllowedTypes.Contains(stage.Mime) && stage.ExpectedLength <= settings.MaxBytes &&
             settings.MaxPixels == maxPixels && settings.ScannerReference == scannerReference && settings.ClamdPort == scannerPort &&
-            settings.RetentionReference == retentionReference && objects.Owns(stage);
+            settings.RetentionReference == retentionReference && stage.StorageReference == (settings.Adapter == "S3" ? settings.S3.ContextHash() : null);
+        if (!PolicyUnchanged()) return await Failure(h, 503, "file_settings_unavailable", id);
         try {
             await using (var stream = objects.Create(a.TenantId, id)) {
-                ownedSpoolPath = stream.Name;
-                var observed = await SecureFilePolicy.CopyAsync(h.Request.Body, stream, Math.Min(settings.MaxBytes, stage.ExpectedLength), ct);
+                var observed = await SecureFilePolicy.CopyAsync(h.Request.Body, stream, Math.Min(pinned.MaxBytes, stage.ExpectedLength), ct);
                 await stream.FlushAsync(ct);
                 if (observed.Length != stage.ExpectedLength || observed.Checksum != stage.ExpectedChecksum) throw new InvalidDataException("file_checksum_invalid");
                 stream.Position = 0; await DocumentBinaryPolicy.ValidateAsync(stream, stage.Mime, maxPixels, ct);
-                stream.Position = 0; await h.RequestServices.GetRequiredService<ClamdScanner>().ScanAsync(stream, ct);
+                stream.Position = 0; await new ClamdScanner(pinned).ScanAsync(stream, ct);
                 // Same exclusive immutable handle for validation and scan. No caller-provided clean assertion.
             }
             var current = h.RequestServices.GetRequiredService<ActorResolver>().Resolve(h.User);
@@ -235,6 +236,7 @@ public static class SecureFileEndpoints
             // From here acknowledgement can be ambiguous. Leave the fenced intent and bytes for
             // reconciliation even when a provider call or the database transaction fails.
             finalizationStarted = true;
+            if (!PolicyUnchanged()) return await Failure(h, 503, "file_settings_unavailable", id);
             var provider = await objects.CommitAsync(a.TenantId, id, stage.ExpectedChecksum, stage.ExpectedLength, stage.Mime, ct);
             current = h.RequestServices.GetRequiredService<ActorResolver>().Resolve(h.User);
             if (current == null || current.Id != a.Id || current.TenantId != a.TenantId || !Write(current, vessel, h) || !await Scope(db, current, vessel, h, ct))
@@ -262,14 +264,10 @@ public static class SecureFileEndpoints
             // The connection/context may be unusable; do not invent a rejected/successful business event.
             return await Failure(h, 503, finalizationStarted ? "file_quarantined_or_unknown" : "file_upload_not_accepted", id);
         }
-        finally
-        {
-            // No provider call has occurred before the fence. Remove only the spool this request
-            // exclusively created; never delete accepted/provider bytes after an uncertain commit.
-            if (ownedSpoolPath != null && !finalizationStarted)
-                try { File.Delete(ownedSpoolPath); }
-                catch (Exception e) when (e is IOException or UnauthorizedAccessException) { /* Pending plus orphan requires explicit reconciliation. */ }
-        }
+        // Do not unlink by filename from a request, even after a known rejection.
+        // On Unix a reconciler can unlink an open spool and another stale request
+        // can recreate that pathname. Only the existing audited xmin reconciler
+        // owns deletion; a Pending spool is private quarantine, never accepted bytes.
     }
     private static async Task<IResult> Access(Guid vessel, Guid id, HttpContext h, PoseidonDbContext db)
     {
