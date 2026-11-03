@@ -79,6 +79,14 @@ jobs:
               lines.append(f"counts: {json.dumps(e.get('count_observations'))}")
               lines += [f"- failed: `{n}`" for n in e.get('failed_static_test_names', [])]
               lines += [f"- at: `{l['file']}:{l['line']}`" for l in e.get('failure_source_locations', [])]
+              coverage = e.get('critical_write_coverage')
+              if coverage:
+                  lines.append(f"critical writes: {coverage.get('status')}; observed={coverage.get('observed_operations')}, required={coverage.get('required_operations')}")
+                  lines += [f"- coverage cause: `{code}`" for code in coverage.get('errors', [])]
+                  lines += [f"- audit field violation: `{code}`" for code in coverage.get('violations', [])]
+                  lines += [f"- coverage observation: `{source['method']}` at `{source['file']}:{source['line']}`" for source in coverage.get('audit_observation_diagnostics', [])]
+                  for missing in coverage.get('missing_operation_diagnostics', []):
+                      lines.append(f"- unobserved critical operation: `{missing['operation_id']}` at `{missing['contract_file']}:{missing['contract_line']}`; positive HTTP audit fixture: `{missing['test_fixture_file']}`")
               if e.get('interrupted_stage'):
                   lines.append(f"interrupted stage: {e['interrupted_stage']}")
           text = '\n'.join(lines) or 'No API gate evidence was written; the failure is outside api_test_gate.'
@@ -98,7 +106,9 @@ jobs:
         if: always()
         with:
           name: api-test-counts
-          path: .runtime/api-gate/*.json
+          path: |
+            .runtime/api-gate/*.json
+            .runtime/api-gate/critical-write-*/*.json
           if-no-files-found: ignore
       - name: Document import tests
         run: python3 -m unittest discover -s scripts -p 'test_*.py' -v

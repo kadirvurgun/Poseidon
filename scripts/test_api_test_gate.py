@@ -4,10 +4,17 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 import api_test_gate as gate
+from test_critical_write_coverage import CoverageFixture
 
 
 class ApiTestGateTests(unittest.TestCase):
     discovery = b'    Poseidon.Api.Tests.Cases.Actual_case(first)\n    Poseidon.Api.Tests.Cases.Actual_case(second)\n'
+
+    def setUp(self):
+        # Native runner output is mocked in these parser tests. Explicit synthetic
+        # temp observations exercise the REAL coverage evaluator, never a default bypass.
+        self.coverage = CoverageFixture(); self.addCleanup(self.coverage.close)
+        target = patch.object(gate.critical_write_coverage, 'verify_target'); target.start(); self.addCleanup(target.stop)
 
     def test_failure_locations_only_emit_existing_test_filenames_and_line_numbers(self):
         raw = (b'private/request/TodayMaintenanceTests.cs:line 21 secret request body\n'
@@ -21,7 +28,10 @@ class ApiTestGateTests(unittest.TestCase):
     def execute(self, output, exit_code=0, discovery=None):
         results = [subprocess.CompletedProcess([], 0, self.discovery if discovery is None else discovery),
                    subprocess.CompletedProcess([], exit_code, output)]
-        with patch.object(gate, 'root_tool', return_value='dotnet'), patch.object(gate, 'capture', side_effect=results) as run:
+        self.coverage.write(self.coverage.report())
+        with patch.object(gate, 'root_tool', return_value='dotnet'), \
+                patch.object(gate.critical_write_coverage, 'prepare', return_value=self.coverage.run), \
+                patch.object(gate, 'capture', side_effect=results) as run:
             code, evidence = gate.run('integration')
             return code, evidence, run
 
@@ -30,10 +40,46 @@ class ApiTestGateTests(unittest.TestCase):
         self.assertEqual(0, code)
         self.assertEqual('PASS_EXACT_DISCOVERED_SCOPE', evidence['status'])
         self.assertFalse(evidence['raw_output_persisted'])
+        self.assertEqual('PASS_ACTUAL_CURRENT_CRITICAL_SCOPE', evidence['critical_write_coverage']['status'])
         self.assertEqual(2, run.call_count)
         for call in run.call_args_list:
             self.assertIn('--filter-trait', call.args[0])
             self.assertIn('Category=Integration', call.args[0])
+        self.assertFalse(any(key.startswith(gate.critical_write_coverage.ENV_PREFIX) for key in run.call_args_list[0].kwargs['env']))
+        self.assertEqual(self.coverage.run.run_id, run.call_args_list[1].kwargs['env'][gate.critical_write_coverage.ENV_PREFIX + 'RUN_ID'])
+
+    def test_native_success_cannot_pass_when_actual_write_observations_are_missing(self):
+        results = [subprocess.CompletedProcess([], 0, self.discovery),
+                   subprocess.CompletedProcess([], 0, b'total: 2\nfailed: 0\nsucceeded: 2\nskipped: 0\n')]
+        with patch.object(gate, 'root_tool', return_value='dotnet'), \
+                patch.object(gate.critical_write_coverage, 'prepare', return_value=self.coverage.run), \
+                patch.object(gate, 'capture', side_effect=results):
+            code, evidence = gate.run('integration')
+        self.assertEqual(2, code)
+        self.assertEqual('CRITICAL_WRITE_COVERAGE_FAILED_OR_UNPROVEN', evidence['status'])
+        self.assertIn('MISSING_OR_EXCESSIVE_CAPTURE_REPORTS', evidence['critical_write_coverage']['errors'])
+
+    def test_unit_scope_cannot_inherit_stale_coverage_or_claim_integration_coverage(self):
+        results = [subprocess.CompletedProcess([], 0, self.discovery),
+                   subprocess.CompletedProcess([], 0, b'total: 2\nfailed: 0\nsucceeded: 2\nskipped: 0\n')]
+        prefix = gate.critical_write_coverage.ENV_PREFIX
+        with patch.dict(gate.os.environ, {prefix + 'DIRECTORY': 'stale-private-path'}), \
+                patch.object(gate, 'root_tool', return_value='dotnet'), \
+                patch.object(gate.critical_write_coverage, 'prepare') as prepare, \
+                patch.object(gate, 'capture', side_effect=results) as capture:
+            code, evidence = gate.run('unit')
+        self.assertEqual(0, code); prepare.assert_not_called()
+        self.assertNotIn('critical_write_coverage', evidence)
+        for call in capture.call_args_list:
+            self.assertFalse(any(key.startswith(prefix) for key in call.kwargs['env']))
+
+    def test_unsafe_or_unpinned_coverage_setup_cannot_launch_execution(self):
+        with patch.object(gate, 'root_tool', return_value='dotnet'), \
+                patch.object(gate.critical_write_coverage, 'prepare', side_effect=gate.critical_write_coverage.CoverageInputError('TARGET_NOT_CLEAN_AND_PINNED')), \
+                patch.object(gate, 'capture', return_value=subprocess.CompletedProcess([], 0, self.discovery)) as capture:
+            code, evidence = gate.run('integration')
+        self.assertEqual(2, code); self.assertEqual(1, capture.call_count)
+        self.assertEqual('CRITICAL_WRITE_COVERAGE_SETUP_FAILED', evidence['status'])
 
     def test_success_exit_does_not_hide_skipped_missing_duplicate_or_partial_summaries(self):
         for output in (b'', b'total: 1\nfailed: 0\nsucceeded: 1\nskipped: 0\n',
@@ -85,7 +131,9 @@ class ApiTestGateTests(unittest.TestCase):
         partial = (b'Poseidon.Api.Tests.Cases.Actual_case(private-parameter)\n'
                    b'Poseidon.Api.Tests.Foreign.secret_name\nprivate-diagnostic-body\n'
                    b'total: 1\nfailed: 0\nsucceeded: 1\nskipped: 0\n')
-        with patch.object(gate, 'root_tool', return_value='dotnet'), patch.object(gate, 'capture', side_effect=[
+        with patch.object(gate, 'root_tool', return_value='dotnet'), \
+                patch.object(gate.critical_write_coverage, 'prepare', return_value=self.coverage.run), \
+                patch.object(gate, 'capture', side_effect=[
                 subprocess.CompletedProcess([], 0, discovery), subprocess.TimeoutExpired('dotnet', 1, output=partial)]) as capture:
             code, evidence = gate.run('integration')
         self.assertEqual(2, code)

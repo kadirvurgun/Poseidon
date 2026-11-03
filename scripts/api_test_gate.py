@@ -13,15 +13,17 @@ import re
 import subprocess
 import time
 
+import critical_write_coverage
+
 from oidc_lab import ROOT, root_tool
 from codex_accounts import Workers
 
 
-def capture(args, root, timeout):
+def capture(args, root, timeout, env=None):
     # Keep the live parent until its owned process tree is stopped. run(timeout)
     # can kill only dotnet and leave its test executable alive on Windows.
     groups = {'creationflags': subprocess.CREATE_NEW_PROCESS_GROUP} if os.name == 'nt' else {'start_new_session': True}
-    process = subprocess.Popen(args, cwd=root, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, **groups)
+    process = subprocess.Popen(args, cwd=root, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=env, **groups)
     try:
         output, _ = process.communicate(timeout=timeout)
         return subprocess.CompletedProcess(args, process.returncode, output)
@@ -87,7 +89,8 @@ def run(scope, root=ROOT, timeout=1800):
     started = time.monotonic()
     stage, discovered = 'discovery', []
     try:
-        discovery = capture([*args, '--list-tests'], root, min(timeout, 120))
+        child_environment = critical_write_coverage.clean_environment(os.environ)
+        discovery = capture([*args, '--list-tests'], root, min(timeout, 120), env=child_environment)
         discovered = re.findall(r'(?m)^\s*(Poseidon\.Api\.Tests\.[A-Za-z0-9_.]+)', normalized(discovery.stdout))
         evidence['discovery'] = {'exit_code': discovery.returncode, 'cases': len(discovered),
                                  'output_sha256': hashlib.sha256(discovery.stdout).hexdigest()}
@@ -95,7 +98,13 @@ def run(scope, root=ROOT, timeout=1800):
             evidence['status'] = 'DISCOVERY_FAILED_OR_EMPTY'
             return 2, evidence
         stage = 'execution'
-        execution = capture([*args, '--output', 'Detailed'], root, timeout)
+        coverage_run = None
+        if scope in ('integration', 'all'):
+            stage = 'critical-write-coverage-setup'
+            coverage_run = critical_write_coverage.prepare(root, scope)
+            child_environment = coverage_run.environment(child_environment)
+        stage = 'execution'
+        execution = capture([*args, '--output', 'Detailed'], root, timeout, env=child_environment)
         counts = observations(execution.stdout)
         evidence.update(exit_code=execution.returncode, count_observations=counts,
                         output_sha256=hashlib.sha256(execution.stdout).hexdigest())
@@ -111,6 +120,12 @@ def run(scope, root=ROOT, timeout=1800):
         complete = (all(len(values) == 1 for values in counts.values()) and counts['failed'] == [0]
                     and counts['skipped'] == [0] and counts['total'] == counts['succeeded'] == [len(discovered)])
         if execution.returncode == 0 and complete:
+            if coverage_run is not None:
+                stage = 'critical-write-coverage-evaluation'
+                evidence['critical_write_coverage'] = critical_write_coverage.evaluate(coverage_run, native_scope_passed=True)
+                if evidence['critical_write_coverage']['status'] != 'PASS_ACTUAL_CURRENT_CRITICAL_SCOPE':
+                    evidence['status'] = 'CRITICAL_WRITE_COVERAGE_FAILED_OR_UNPROVEN'
+                    return 2, evidence
             evidence['status'] = 'PASS_EXACT_DISCOVERED_SCOPE'
             return 0, evidence
         return execution.returncode or 2, evidence
@@ -118,6 +133,10 @@ def run(scope, root=ROOT, timeout=1800):
         evidence['status'] = 'INTERRUPTED_DEADLINE'
         evidence['interrupted_stage'] = stage
         evidence['deadline_diagnostics'] = deadline_diagnostics(expired.output, discovered)
+        return 2, evidence
+    except critical_write_coverage.CoverageInputError as failure:
+        evidence['status'] = 'CRITICAL_WRITE_COVERAGE_SETUP_FAILED'
+        evidence['critical_write_coverage'] = {'status': 'FAILED_OR_UNPROVEN', 'errors': [str(failure)]}
         return 2, evidence
     except Exception:
         evidence['status'] = 'GATE_EXECUTION_FAILED'
