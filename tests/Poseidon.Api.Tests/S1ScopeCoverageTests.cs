@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Patterns;
 using Microsoft.AspNetCore.TestHost;
@@ -71,11 +72,12 @@ public sealed partial class DirectoryWorkspaceTests
             var path = S1ConcretePath(operation);
             using var request = new HttpRequestMessage(new HttpMethod(operation.Method), path)
             {
-                Content = new StringContent("{\"roles\":[\"administrator\"],\"permissions\":[\"*\"],\"name\":\"untrusted-request-marker\"}", Encoding.UTF8, "application/json")
+                Content = S1AdversarialContent(host.Services, operation,
+                    "{\"roles\":[\"administrator\"],\"permissions\":[\"*\"],\"name\":\"untrusted-request-marker\"}")
             };
             request.Headers.Add("X-Correlation-ID", "untrusted-client-correlation");
             using var response = await client.SendAsync(request, Ct);
-            Assert.Equal(forgedClaims ? HttpStatusCode.Forbidden : HttpStatusCode.Unauthorized, response.StatusCode);
+            S1AssertAuthorizationStatus(operation, forgedClaims ? HttpStatusCode.Forbidden : HttpStatusCode.Unauthorized, response.StatusCode);
             var content = await response.Content.ReadAsStringAsync(Ct);
             Assert.DoesNotContain("untrusted-request-marker", content);
             Assert.DoesNotContain(seed.Tenants[1].Id.ToString(), content);
@@ -104,15 +106,37 @@ public sealed partial class DirectoryWorkspaceTests
         foreach (var operation in S1SecurityContract.Operations.Where(x => x.IsCritical))
         {
             using var request = new HttpRequestMessage(new HttpMethod(operation.Method), S1ConcretePath(operation))
-            { Content = JsonContent.Create(new { roles = new[] { "owner" }, roleContext = actorId.ToString() }) };
+            { Content = S1AdversarialContent(host.Services, operation,
+                JsonSerializer.Serialize(new { roles = new[] { "owner" }, roleContext = actorId.ToString() })) };
             using var response = await client.SendAsync(request, Ct);
-            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            S1AssertAuthorizationStatus(operation, HttpStatusCode.Forbidden, response.StatusCode);
             var correlation = Assert.Single(response.Headers.GetValues("X-Correlation-ID"));
             await using var db = Db();
             Assert.True(await db.Set<SecurityEvent>().AnyAsync(e => e.CorrelationId == correlation &&
                 e.ActorId == actorId.ToString() && e.Result == "Denied", Ct));
         }
         S1AssertSameBusinessSnapshot(before, await S1BusinessSnapshot());
+    }
+
+    private static StringContent S1AdversarialContent(IServiceProvider services, SecurityOperation operation, string body)
+    {
+        // Use the real route's advertised media contract so routing selects the
+        // authorized endpoint, rather than the framework's media-rejection endpoint.
+        // The adversarial body stays unchanged even for a binary media contract.
+        var endpoint = Assert.Single(services.GetRequiredService<EndpointDataSource>().Endpoints.OfType<RouteEndpoint>(), route =>
+            route.RoutePattern.RawText == operation.RoutePattern &&
+            route.Metadata.GetMetadata<IHttpMethodMetadata>()?.HttpMethods.Contains(operation.Method, StringComparer.Ordinal) == true);
+        var types = endpoint.Metadata.GetMetadata<IAcceptsMetadata>()?.ContentTypes;
+        var media = types?.FirstOrDefault(x => string.Equals(x, "application/json", StringComparison.OrdinalIgnoreCase))
+            ?? types?.FirstOrDefault() ?? "application/json";
+        return new StringContent(body, Encoding.UTF8, media);
+    }
+
+    private static void S1AssertAuthorizationStatus(SecurityOperation operation, HttpStatusCode expected, HttpStatusCode actual)
+    {
+        var vetted = Assert.Single(S1SecurityContract.Operations, item => item.OperationId == operation.OperationId);
+        Assert.True(expected == actual,
+            $"S1 operation {vetted.OperationId}: expected HTTP {(int)expected}, actual HTTP {(int)actual}.");
     }
 
     private string S1ConcretePath(SecurityOperation operation) => Regex.Replace(operation.RoutePattern,
