@@ -46,8 +46,10 @@ public sealed partial class DirectoryWorkspaceTests
             var audit = Assert.Single(await db.AuditEvents.Where(x => x.EntityType == nameof(CrewPosition) && x.ResourceId == position.PositionId).ToArrayAsync(Ct));
             Assert.Equal("Added", audit.Action); Assert.Null(audit.BeforeVersion); Assert.Null(audit.BeforeRevision);
             Assert.False(audit.ChangeSummary!.Contains(position.Code, StringComparison.Ordinal), "Position values escaped the closed audit summary.");
-            Assert.True(CryptographicOperations.FixedTimeEquals(assignmentsBefore, await S1HashMappedRows<CrewAssignment>(db, Ct)), "Position insertion changed an assignment.");
-            Assert.True(CryptographicOperations.FixedTimeEquals(revisionsBefore, await S1HashMappedRows<CrewAssignmentRevision>(db, Ct)), "Position insertion changed assignment history.");
+            var assignmentsAfter = await S1HashMappedRows<CrewAssignment>(db, Ct);
+            var revisionsAfter = await S1HashMappedRows<CrewAssignmentRevision>(db, Ct);
+            Assert.True(CryptographicOperations.FixedTimeEquals(assignmentsBefore, assignmentsAfter), "Position insertion changed an assignment.");
+            Assert.True(CryptographicOperations.FixedTimeEquals(revisionsBefore, revisionsAfter), "Position insertion changed assignment history.");
         }
         var retained = await S1BusinessSnapshot();
         using var replay = await Send(client, path, command); Assert.Equal(HttpStatusCode.OK, replay.StatusCode);
@@ -103,10 +105,14 @@ public sealed partial class DirectoryWorkspaceTests
             var enrollmentAudit = Assert.Single(await db.AuditEvents.Where(x => x.CorrelationId == correlation &&
                 x.EntityType == nameof(OfflineEnrollment)).ToArrayAsync(Ct));
             Assert.Equal("Modified", enrollmentAudit.Action); Assert.Equal(original.Version, enrollmentAudit.BeforeVersion);
-            Assert.True(CryptographicOperations.FixedTimeEquals(assignmentsBefore, await S1HashMappedRows<CrewAssignment>(db, Ct)), "Revocation changed the ordinary assignment.");
-            Assert.True(CryptographicOperations.FixedTimeEquals(revisionsBefore, await S1HashMappedRows<CrewAssignmentRevision>(db, Ct)), "Revocation changed assignment history.");
-            Assert.True(CryptographicOperations.FixedTimeEquals(outcomesBefore, await S1HashMappedRows<OfflineOutcome>(db, Ct)), "Revocation changed immutable command outcomes.");
-            Assert.True(CryptographicOperations.FixedTimeEquals(receiptsBefore, await S1HashMappedRows<CommandReceipt>(db, Ct)), "Revocation changed ordinary command receipts.");
+            var assignmentsAfter = await S1HashMappedRows<CrewAssignment>(db, Ct);
+            var revisionsAfter = await S1HashMappedRows<CrewAssignmentRevision>(db, Ct);
+            var outcomesAfter = await S1HashMappedRows<OfflineOutcome>(db, Ct);
+            var receiptsAfter = await S1HashMappedRows<CommandReceipt>(db, Ct);
+            Assert.True(CryptographicOperations.FixedTimeEquals(assignmentsBefore, assignmentsAfter), "Revocation changed the ordinary assignment.");
+            Assert.True(CryptographicOperations.FixedTimeEquals(revisionsBefore, revisionsAfter), "Revocation changed assignment history.");
+            Assert.True(CryptographicOperations.FixedTimeEquals(outcomesBefore, outcomesAfter), "Revocation changed immutable command outcomes.");
+            Assert.True(CryptographicOperations.FixedTimeEquals(receiptsBefore, receiptsAfter), "Revocation changed ordinary command receipts.");
             foreach (var audit in await db.AuditEvents.Where(x => x.CorrelationId == correlation).ToArrayAsync(Ct))
                 Assert.False(audit.ChangeSummary!.Contains(original.KeyChallenge, StringComparison.Ordinal) ||
                     audit.ChangeSummary.Contains(original.ProtectedBase, StringComparison.Ordinal) ||
