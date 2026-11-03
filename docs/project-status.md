@@ -2,13 +2,16 @@
 
 **S0 mühendislik fazı %100: 13 iş / 53 SP kabul edildi. Genel proje kabulü 53 / 970 SP ile %5,46; ekran kabulü 0 / 196.**
 
-[Canonical durum](../docs/project-status.json) · [F kanıtları](../docs/evidence/s0-20261103-3ca49a3/)
+**Güncel faz S1: 7 iş / 50 SP üzerinde geliştirme sürüyor; kabul 0 / 50 SP. Yeni yazılım ve test kaynakları yazıldı, birleşik faz kontrolleri henüz çalıştırılmadı.**
+
+[Canonical durum](../docs/project-status.json) · [S1 faz raporu](phases/S1-FOUNDATION-20261103.md) · [S1 kaynak/kabul sözleşmesi](tasks/s1-foundation-closure-01.md) · [S0 F kanıtları](../docs/evidence/s0-20261103-3ca49a3/)
 
 ## Kapsam ve yüzdeler
 
 | Gösterge | Güncel kabul | Açıklama |
 |---|---:|---|
 | S0 |53 / 53 SP — %100|13 kaynak görevi / 53 SP; DEV-001..012 ve DEV-116.|
+| S1 |0 / 50 SP — %0 kabul|7 kaynak görevi; yazılım/test yazımı devam ediyor. Bu oran kodun hiç olmadığı anlamına gelmez.|
 | Genel proje |53 / 970 SP — %5,46|970 SP'lik özgün analiz backlog'u.|
 | Kabul edilen işler |13 / 121|121 iş; SP ana ilerleme ölçüsüdür.|
 | Kabul edilen ekranlar |0 / 196|Mevcut ürün ekranlarının ayrı canonical kabulü açık.|
@@ -16,14 +19,66 @@
 
 Etkin baseline poseidon-v46.3-20261030; 121 iş, 970 SP, 196 ekran, 2.316 alan sözleşmesi. S0 özgün 18.01 Backlog satırları 2–13 ve 117, DEV-001..012 + DEV-116; DEV-012 bütün 001..011 bağımlılıklarını kapsar ve DEV-116 ayrıca zorunludur.
 
-## Geliştirilen davranış
+## S1 yazım kontrol noktası — 03.11.2026
+
+S0 [PR #14](https://github.com/kadirvurgun/Poseidon/pull/14) ile birleştirildi;
+S1'in başlangıç commit'i `071fbc7c263d87186bde3c89cc7477d92bc63719`.
+Güncel geliştirme dalı `foundation/s1-security-foundation-20261103`;
+birleşik yazım hedefi henüz kabul edilmiş, doğrulanmış veya yayımlanmış değildir.
+Bu kayıt 2026-11-03T07:02:34.100980+00:00'de okunan kaynaklara dayanır; çalışan kodun
+test sonucu veya son hedef-commit QA kararı değildir.
+
+- Production OIDC literal secret kabulü kapatıldı; public code+PKCE istemcisi
+  korunuyor. Açık eksik/geçersiz secret reference, Dev/Test literal fallback'e
+  düşmüyor; çakışan literal/reference reddediliyor. Gerçek options registration,
+  rotation/revocation ve invalid/expired oturumun şirket/audit/receipt durumunu
+  değiştirmemesi için test kaynakları eklendi.
+- Sunucunun eşleşmiş route metadata'sından gelen kapalı command/reason bağlamı
+  ve gerçek role-reference snapshot'ı güncel web yazılarında zorunlu hale
+  getirildi. Audit parent/receipt kapsamı gerçek tenant-filtered ilişkiden
+  çözülüyor. Person/identity/personal-profile kendi tenant-person aggregate'ı;
+  ona hayali vessel atanmıyor. Before/after özetleri ve immutable revision/xmin
+  zinciri korunurken özel değerler, hash ve insan gerekçesi audit'e kopyalanmıyor.
+- Dosya byte/type/checksum/scanner doğrulaması durable Pending→Receiving
+  değişiminden önceye alındı. Deterministik ret, scanner unavailable/cancellation
+  mevcut state/xmin ve business audit'i değiştirmemeli. Request, eski pathname'i
+  sahiplik sayıp başka upload'ın spool'unu silmiyor; reconciler/xmin ve sabit
+  provider context yarışları için regresyon kaynakları eklendi. Accepted transport
+  hâlâ verified evidence veya operasyonel onay değildir.
+- Güncel sözleşme **83 mutation route template / 77 persistence-capable template /
+  82 concrete critical operation** tanımlıyor. Bu sayılar statik paydadır.
+  EndpointDataSource drift, gerçek iki-tenant durum karşılaştırmalı denial
+  matrisi, raw/bulk write bypass ve strict frontend audit contract testleri yazıldı.
+- Eksik pozitif alias/lifecycle kapsamına yönelik **8 yeni vaka / 15 operation ID**
+  yazıldı: control-library/evidence-graph yaşam döngüleri, evidence completion,
+  gerçek equipment/maintenance alias/job yazıları ve taze P256 Tug lost/cleanup.
+  Testler gerçek response correlation→committed audit, replay/stale/revocation ve
+  immutable geçmişi kontrol edecek. Gerçek 82-ID coverage capture henüz yok;
+  observer/evaluator ve fail-closed gate yazıldı. Test adı veya tanım sayısı,
+  ölçülmüş %100 kapsam değildir.
+
+**S1 için DEFERRED / NOT RUN:** restore/build, unit/domain/persistence/API/gerçek
+PostgreSQL/S3/ClamAV, migration/model/OpenAPI/type parity, frontend lint/typecheck/
+component/build, tarayıcı ve signed-provider yolculukları, repository ve gerçek
+built-client secret scan, bağımsız son-hedef QA, gereken CI, PR ve merge.
+Bağımsız kaynak/statik authoring incelemesi yapıldı; bulgulara yazılım ve test
+yanıtları yazılması, bağımsız engineering kabulü veya P0=0 kararı değildir.
+
+Sonraki adım: bütünleşen observer/parser dahil birleşik hedefi dondurmak,
+bütün S1 kapısını çalıştırmak ve gerçek sonuçlarla
+bağımlılık sırasına göre bağımsız kabul almaktır. DEV-013→014→015→016/019 ve
+DEV-017→018 kabul sırası henüz kapanmadı. **S1 kabulü %0, genel kabul %5,46**
+değişmedi; tahmini kod yüzdesi veya gelecekteki kabul, gerçekleşmiş ilerleme
+olarak gösterilmiyor.
+
+## S0'da kabul edilen davranış
 
 - React/shadcn tabanlı kurumsal çalışma kabuğu, yetkili menü/arama, TR/EN, taslak koruması, mobil etkileşim ve gerçek sayfa verilerinden ECharts özetleri geliştirildi.
 - Tug pano/detay ve Today/Why; talep/plan, bakım, kaynak/kanıt ve Crew minimum-rol ilişkilerini iş penceresine göre açıklıyor. Farklı kişiler ve çakışan roller ayrılıyor; UNKNOWN otomatik Ready olmuyor. Master kararı ayrı.
 - Korumalı belge/medikal verisi, immutable evidence ve audit, offline reconnect/replay/conflict/recovery sınırları korundu; olay gelmeyen bağlantı değişimi otomatik HTTP/authority/key recovery üretmiyor. Geç yetki yanıtları kapanıyor; arama aynı oturum niyetini taze yetkiyle bağlıyor.
 - Ortam sözleşmesi, üç ADR, core schema planı, threat/mitigation ve metric sözleşmeleri; 10 pilot capability / 149 alan zinciri, golden veri, DoR/DoD, 7 kategori / 9 candidate kaynak sorumluluk planı ve ERP integration-only sınırı kaynak/trace/dependency ile bağlandı.
 
-## Gerçek doğrulama
+## S0 kabulüne ait gerçek doğrulama — tarihsel F hedefi
 
 | Kontrol | Gerçek sonuç | Kapsam |
 |---|---|---|
@@ -43,7 +98,7 @@ Etkin baseline poseidon-v46.3-20261030; 121 iş, 970 SP, 196 ekran, 2.316 alan s
 
 ## Bağımsız kabul ve teknik adoption
 
-Gerçek exit gate [arşiv kaydı](../docs/evidence/s0-20261103-3ca49a3/gate-result.json) tüm 13 işi / 53 SP'yi accepted=true, errors=[], pendingGates=[] ile kabul etti. 52 issued receipt byte SHA'sı ve bağımsız oturum provenance'ı bu kaydın parçasıdır. Tarihsel 8 SP'ye 45 SP eklendi. Bu kayıt uygulama F'nin kabulüdür; sonraki metadata A kendi head QA/CI kapısını geçecektir.
+Gerçek exit gate [arşiv kaydı](../docs/evidence/s0-20261103-3ca49a3/gate-result.json) tüm 13 işi / 53 SP'yi accepted=true, errors=[], pendingGates=[] ile kabul etti. 52 issued receipt byte SHA'sı ve bağımsız oturum provenance'ı bu kaydın parçasıdır. Tarihsel 8 SP'ye 45 SP eklendi. Bu kayıt uygulama F'nin kabulüdür; metadata A'nın hedef-commit QA/CI ve yayın yaşam döngüsü ayrıdır. S0 sonuçları yeni S1 değişikliklerinin geçtiği anlamına gelmez.
 
 Üç ADR, core schema, threat ve source-role planı exact F Git girdileriyle gerçek bağımsız teknik incelemeye bağlandı. Bu tasarım kabulü legal edition, live kişi ataması veya operasyonel safety/pilot onayı değildir.
 
@@ -58,9 +113,9 @@ D ve E eski kısmi koşuları, ilk F frontend 954 / 949 / 5 hatası, native prof
 D-STATE-01 / üretim state-map, gerçek Marine/Tug SME ve pilot onayları, authoritative legal edition / source aktivasyonu, operator privacy/retention/key-custody ve production deployment/release kararları OPEN kalır. Typed kaynak planı UNVERIFIED / OPEN / activationBlocked sınırındadır. Sentetik fixture komutları gerçek insan yeterliği, üretim kataloğu, permit veya emniyet onayı değildir. AI değerlendirmeleri ve production/pilot DR/restore/RPO-RTO/rollback kapıları kendi sonraki kaynak kriterleriyle kapanır. ERP tam PO/AP/AR/payroll kapsamı OUT kalır.
 
 
-Sonraki kaynak kapsamı S1'in özgün 18.01 satırları 14–20, 7 iş / 50 SP'dir. OIDC, tenant/role/vessel/object izolasyonu, audit, S3 ve ClamAV yazılımı zaten mevcut; kaynak-original Not Started kod yokluğu değildir. Öncelikli adaylar kritik write-audit kapsamının somut paydası ve before/after/reason kanıtı, production OIDC secret-reference fallback sınırı ve rejected-file quarantine semantiğinin bağımsız kaynak uzlaştırmasıdır. Hiçbir S1 işi bu S0 kaydıyla kabul edilmiş sayılmaz.
+S0 kabul kontrol noktasındaki sonraki kaynak kapsamı S1'in özgün 18.01 satırları 14–20, 7 iş / 50 SP idi. OIDC, tenant/role/vessel/object izolasyonu, audit, S3 ve ClamAV yazılımı zaten mevcuttu; kaynak-original Not Started kod yokluğu değildir. Bu başlangıçtaki kritik audit paydası, secret-reference ve rejected-file önceliklerinin güncel yazımı yukarıdaki S1 bölümünde izlenir. Hiçbir S1 işi bu S0 kaydıyla kabul edilmiş sayılmaz.
 
-## Yayın yaşam döngüsü
+## S0 kabul kontrol noktasındaki yayın yaşam döngüsü — tarihsel
 
 Bu belgedeki yayın bilgisi 2026-11-03T02:53:22.509167+00:00 mühendislik-kabul kontrol noktasına aittir. Sonraki gerçek PR, required-head check ve merge durumu [GitHub yaşam döngüsünde](https://github.com/kadirvurgun/Poseidon/pulls) izlenir. Gelecek PR numarası veya merge SHA'sı üretilmedi; kabul edilen uygulama F ve sonraki metadata A ayrıdır.
 
