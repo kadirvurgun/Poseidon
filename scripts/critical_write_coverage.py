@@ -281,16 +281,18 @@ def evaluate(run, native_scope_passed):
                 raise CoverageInputError('MALFORMED_CAPTURE_REPORT')
             count, report_valid, report_ids = 0, 0, set()
             for item in data['observations']:
-                if not isinstance(item, dict) or set(item) != {'operationId', 'observedRows', 'validRows', 'successfulHttpRows', 'nonSuccessHttpRows', 'entityTypes'}:
+                if not isinstance(item, dict) or set(item) != {'operationId', 'observedRows', 'validRows', 'successfulHttpRows', 'nonSuccessHttpRows', 'validSuccessfulHttpRows', 'entityTypes'}:
                     raise CoverageInputError('MALFORMED_OPERATION_OBSERVATION')
                 operation, number, valid, entities = (item[k] for k in ('operationId', 'observedRows', 'validRows', 'entityTypes'))
                 success, non_success = item['successfulHttpRows'], item['nonSuccessHttpRows']
-                if operation not in expected or operation in report_ids or type(number) is not int or type(valid) is not int or not 1 <= number <= 100000 or not 0 <= valid <= number or type(success) is not int or type(non_success) is not int or success < 0 or non_success < 0 or success + non_success != number or not isinstance(entities, list) or not 0 <= len(entities) <= 256 or not entities and 'AUDIT_ENTITY_INVALID' not in violations or len(set(entities)) != len(entities) or any(not isinstance(e, str) or not ENTITY.fullmatch(e) for e in entities):
+                valid_success = item['validSuccessfulHttpRows']
+                if operation not in expected or operation in report_ids or type(number) is not int or type(valid) is not int or not 1 <= number <= 100000 or not 0 <= valid <= number or type(success) is not int or type(non_success) is not int or success < 0 or non_success < 0 or success + non_success != number or type(valid_success) is not int or not 0 <= valid_success <= min(valid, success) or valid_success < max(0, valid + success - number) or not isinstance(entities, list) or not 0 <= len(entities) <= 256 or not entities and 'AUDIT_ENTITY_INVALID' not in violations or len(set(entities)) != len(entities) or any(not isinstance(e, str) or not ENTITY.fullmatch(e) for e in entities):
                     raise CoverageInputError('MALFORMED_OPERATION_OBSERVATION')
                 report_ids.add(operation); count += number; report_valid += valid
-                current = observed.setdefault(operation, {'operation_id': operation, 'observed_rows': 0, 'valid_rows': 0, 'successful_http_rows': 0, 'non_success_http_rows': 0, 'entity_types': set()})
+                current = observed.setdefault(operation, {'operation_id': operation, 'observed_rows': 0, 'valid_rows': 0, 'successful_http_rows': 0, 'non_success_http_rows': 0, 'valid_successful_http_rows': 0, 'entity_types': set()})
                 current['observed_rows'] += number; current['valid_rows'] += valid; current['entity_types'].update(entities)
                 current['successful_http_rows'] += success; current['non_success_http_rows'] += non_success
+                current['valid_successful_http_rows'] += valid_success
             # Unknown command rows are counted in rowCount but omitted from operation buckets.
             # Their mandatory AUDIT_COMMAND_INVALID violation prevents them from becoming evidence.
             if count + data['excludedDirectFixtureRows'] > data['rowCount'] or count + data['excludedDirectFixtureRows'] < data['rowCount'] and 'AUDIT_COMMAND_INVALID' not in violations:
@@ -298,11 +300,13 @@ def evaluate(run, native_scope_passed):
             if report_valid != count and not violations:
                 raise CoverageInputError('INVALID_ROWS_WITHOUT_VIOLATION')
             rows += data['rowCount']; valid_rows += report_valid; excluded += data['excludedDirectFixtureRows']; invalid += data['rowCount'] - data['excludedDirectFixtureRows'] - report_valid
-        positive = {name for name, item in observed.items() if item['valid_rows'] > 0}
+        positive = {name for name, item in observed.items() if item['valid_successful_http_rows'] > 0}
         missing = sorted(set(expected) - positive)
         verify_target(run)
         report.update(capture_instances=len(seen), unavailable_instances=unavailable,
                       observed_rows=rows, excluded_direct_fixture_rows=excluded, valid_rows=valid_rows, invalid_rows=invalid,
+                      audited_operations=len(observed),
+                      valid_successful_http_rows=sum(item['valid_successful_http_rows'] for item in observed.values()),
                       observed_operations=len(positive), missing_operation_ids=missing,
                       capture_report_hashes=capture_hashes,
                       audit_observation_diagnostics=source_hints(run.root, affected_methods),

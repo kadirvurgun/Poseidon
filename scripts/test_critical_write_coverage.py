@@ -51,7 +51,8 @@ class CoverageFixture:
             'instanceId': uuid.uuid4().hex, 'fixture': 'DirectoryWorkspaceTests', 'testMethod': 'SyntheticCoverageCase', 'status': 'OBSERVED',
             'rowCount': len(operations), 'excludedDirectFixtureRows': 0,
             'observations': [{'operationId': name, 'observedRows': 1, 'validRows': 1,
-                'successfulHttpRows': 1, 'nonSuccessHttpRows': 0, 'entityTypes': ['SyntheticEntity']} for name in operations],
+                'successfulHttpRows': 1, 'nonSuccessHttpRows': 0, 'validSuccessfulHttpRows': 1,
+                'entityTypes': ['SyntheticEntity']} for name in operations],
             'violations': [], 'unavailableCause': None,
         }
 
@@ -106,13 +107,54 @@ class CriticalWriteCoverageTests(unittest.TestCase):
         self.assert_failure(result, 'CRITICAL_OPERATIONS_UNOBSERVED')
         self.assertEqual(50, result['excluded_direct_fixture_rows']); self.assertEqual(0, result['observed_operations'])
 
-    def test_partial_fence_writes_are_explicit_non_success_rows_not_business_acceptance(self):
+    def test_valid_partial_fence_rows_cannot_replace_a_positive_successful_http_witness(self):
         report = self.fixture.report()
-        report['observations'][0].update(successfulHttpRows=0, nonSuccessHttpRows=1)
+        report['observations'][0].update(successfulHttpRows=0, nonSuccessHttpRows=1, validSuccessfulHttpRows=0)
         result = self.evaluate(report)
-        self.assertEqual('PASS_ACTUAL_CURRENT_CRITICAL_SCOPE', result['status'])
+        self.assert_failure(result, 'CRITICAL_OPERATIONS_UNOBSERVED')
+        self.assertEqual(['SyntheticCreate'], result['missing_operation_ids'])
         first = next(x for x in result['observations'] if x['operation_id'] == 'SyntheticCreate')
         self.assertEqual(1, first['non_success_http_rows']); self.assertEqual(0, first['successful_http_rows'])
+        self.assertEqual(1, first['valid_rows']); self.assertEqual(0, first['valid_successful_http_rows'])
+
+    def test_valid_non_success_and_invalid_success_cannot_be_combined_into_a_valid_positive_witness(self):
+        report = self.fixture.report(); report['rowCount'] += 1
+        report['observations'][0].update(observedRows=2, validRows=1, successfulHttpRows=1,
+                                         nonSuccessHttpRows=1, validSuccessfulHttpRows=0)
+        report['violations'] = ['AUDIT_ROLE_INVALID']
+        result = self.evaluate(report)
+        self.assert_failure(result, 'CRITICAL_OPERATIONS_UNOBSERVED')
+        self.assertIn('AUDIT_CONTEXT_OR_BEFORE_AFTER_INVALID', result['errors'])
+        self.assertEqual(['SyntheticCreate'], result['missing_operation_ids'])
+
+    def test_only_the_actual_valid_success_intersection_contributes_positive_operation_coverage(self):
+        report = self.fixture.report(); report['rowCount'] += 1
+        report['observations'][0].update(observedRows=2, validRows=2, successfulHttpRows=1,
+                                         nonSuccessHttpRows=1, validSuccessfulHttpRows=1)
+        result = self.evaluate(report)
+        self.assertEqual('PASS_ACTUAL_CURRENT_CRITICAL_SCOPE', result['status'])
+        self.assertEqual(3, result['observed_operations'])
+
+    def test_separate_test_instances_cannot_supply_independent_valid_and_success_maxima(self):
+        valid_failure = self.fixture.report(['SyntheticCreate'])
+        valid_failure['observations'][0].update(successfulHttpRows=0, nonSuccessHttpRows=1, validSuccessfulHttpRows=0)
+        self.fixture.write(valid_failure)
+        invalid_success = self.fixture.report()
+        invalid_success['observations'][0].update(validRows=0, validSuccessfulHttpRows=0)
+        invalid_success['violations'] = ['AUDIT_ROLE_INVALID']
+        result = self.evaluate(invalid_success)
+        self.assert_failure(result, 'CRITICAL_OPERATIONS_UNOBSERVED')
+        self.assertEqual(['SyntheticCreate'], result['missing_operation_ids'])
+
+    def test_success_intersection_must_satisfy_actual_set_cardinality_bounds(self):
+        mutations = [lambda item: item.update(validSuccessfulHttpRows=True),
+                     lambda item: item.update(validSuccessfulHttpRows=-1),
+                     lambda item: item.update(validSuccessfulHttpRows=2),
+                     lambda item: item.update(validSuccessfulHttpRows=0),
+                     lambda item: item.pop('validSuccessfulHttpRows')]
+        for mutate in mutations:
+            report = self.fixture.report(); mutate(report['observations'][0]); path = self.fixture.write(report)
+            self.assert_failure(coverage.evaluate(self.fixture.run, True), 'MALFORMED_OPERATION_OBSERVATION'); path.unlink()
 
     def test_unavailable_query_has_null_counts_and_prevents_coverage_acceptance(self):
         report = self.fixture.report([])

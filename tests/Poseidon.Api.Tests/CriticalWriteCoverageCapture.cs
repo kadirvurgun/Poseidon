@@ -99,6 +99,7 @@ internal sealed class CriticalWriteCoverageCapture
                 if (!groups.TryGetValue(operation, out var observed)) groups[operation] = observed = new();
                 observed.Rows++;
                 if (violations.Count == 0) observed.Valid++;
+                if (violations.Count == 0 && request.SuccessStatus) observed.ValidSuccessStatusRows++;
                 if (request.SuccessStatus) observed.SuccessStatusRows++; else observed.NonSuccessStatusRows++;
                 if (entityTypes.Contains(row.EntityType)) observed.Entities.Add(row.EntityType);
             }
@@ -116,6 +117,7 @@ internal sealed class CriticalWriteCoverageCapture
             observations = groups.OrderBy(x => x.Key, StringComparer.Ordinal).Select(x => new {
                 operationId = x.Key, observedRows = x.Value.Rows, validRows = x.Value.Valid,
                 successfulHttpRows = x.Value.SuccessStatusRows, nonSuccessHttpRows = x.Value.NonSuccessStatusRows,
+                validSuccessfulHttpRows = x.Value.ValidSuccessStatusRows,
                 entityTypes = x.Value.Entities.Order(StringComparer.Ordinal).ToArray()
             }).ToArray(),
             violations = failures.Order(StringComparer.Ordinal).ToArray(),
@@ -190,17 +192,31 @@ internal sealed class CriticalWriteCoverageCapture
         return failures;
     }
 
-    private static bool BeforeAfter(AuditEvent row, IReadOnlySet<(string Correlation, Guid Tenant, Guid? Resource)> committedVersions, IReadOnlyDictionary<string, JsonElement> fields)
+    internal static bool BeforeAfter(AuditEvent row, IReadOnlySet<(string Correlation, Guid Tenant, Guid? Resource)> committedVersions, IReadOnlyDictionary<string, JsonElement> fields)
     {
         var business = fields.Where(x => x.Key is not ("CommandName" or "TechnicalReasonCode" or "ScopeKind")).Select(x => x.Value).ToArray();
         if (business.Length == 0) return false; // Provenance cannot stand in for a business summary.
         if (row.Action == "Added" && (row.BeforeVersion != null || row.BeforeRevision != null)) return false;
         if (row.BeforeVersion == 0 || row.AfterVersion == 0 || row.BeforeRevision < 0 || row.AfterRevision < 0) return false;
         var receiptVersion = committedVersions.Contains((row.CorrelationId, row.TenantId, row.ResourceId));
-        var revision = row.AfterRevision > 0 && (row.Action == "Added" || row.BeforeRevision > 0 && row.AfterRevision >= row.BeforeRevision);
-        var state = business.Any(x => (x.GetProperty("field").GetString() is "State" or "Lifecycle" or "Binding" or "Outcome") &&
+        var revision = row.AfterRevision > 0 && (row.Action == "Added" || row.BeforeRevision is >= 0 && row.AfterRevision >= row.BeforeRevision);
+        bool Closed(string field, string? value) => field switch {
+            "State" => value is "Draft" or "Uploaded" or "MappingDraft" or "Previewed" or "Committed" or "Pending" or
+                "Receiving" or "CleanTransport" or "Abandoned" or "SyntheticUnverified" or "Reviewed" or "Adopted" or "Withdrawn" or
+                "DRAFT" or "IN_REVIEW" or "ADOPTED" or "AWAITING" or "FUTURE_EFFECTIVE" or "IN_FORCE" or "SUPERSEDED",
+            "Lifecycle" => value is "DRAFT" or "SUBMITTED" or "COMPLETED" or "Enrolled" or "KeyEnrolled" or "Renewed" or "Revoked" or "KeyLost" or "CleanupAllowed",
+            "Binding" => value is "ServerOwnedContext" or "OwnerReference" or "ProtectedStorage" or "LegacyStorage" or
+                "TenantPersonRecord" or "PositionReference" or "JobReference" or "CommittedResource",
+            "Outcome" => value is "EvaluationRecorded" or "PreviewRecorded" or "valid" or "rejected" or "Committed" or "MaterialConflict",
+            _ => false
+        };
+        var state = business.Any(x =>
             x.GetProperty("evidence").GetString() == "Allowlisted" && x.GetProperty("after").ValueKind == JsonValueKind.String &&
-            (row.Action == "Added" || x.GetProperty("before").ValueKind == JsonValueKind.String));
+            Closed(x.GetProperty("field").GetString()!, x.GetProperty("after").GetString()) &&
+            (row.Action == "Added" || x.GetProperty("before").ValueKind == JsonValueKind.String &&
+                Closed(x.GetProperty("field").GetString()!, x.GetProperty("before").GetString())));
+        var before = row.BeforeVersion > 0 || row.BeforeRevision is >= 0 || state;
+        if (row.Action == "Modified" && !before) return false;
         return receiptVersion || revision || state;
     }
 
@@ -210,6 +226,7 @@ internal sealed class CriticalWriteCoverageCapture
         public int Valid { get; set; }
         public int SuccessStatusRows { get; set; }
         public int NonSuccessStatusRows { get; set; }
+        public int ValidSuccessStatusRows { get; set; }
         public HashSet<string> Entities { get; } = new(StringComparer.Ordinal);
     }
 
@@ -261,5 +278,79 @@ internal sealed class CriticalWriteCoverageCapture
             }
             catch { throw new InvalidOperationException("critical-write-coverage-write-unavailable"); }
         }
+    }
+}
+
+// Pure guard unit fixtures, not persisted audits or observations of actual HTTP coverage.
+public sealed class CriticalWriteBeforeAfterGuardTests
+{
+    private static AuditEvent Modified() => new()
+    {
+        TenantId = Guid.NewGuid(), ResourceId = Guid.NewGuid(), ActorId = "synthetic-unit-guard",
+        ActorType = "User", EntityType = nameof(Company), EntityId = "synthetic-unit-resource",
+        Action = "Modified", CorrelationId = "synthetic-unit-guard"
+    };
+    private static IReadOnlySet<(string Correlation, Guid Tenant, Guid? Resource)> Committed(AuditEvent row) =>
+        new HashSet<(string, Guid, Guid?)> { (row.CorrelationId, row.TenantId, row.ResourceId) };
+    private static IReadOnlyDictionary<string, JsonElement> Field(string field, string? before, string? after, string evidence = "Allowlisted") =>
+        new Dictionary<string, JsonElement> { [field] = JsonSerializer.SerializeToElement(new { field, before, after, evidence }) };
+
+    [Fact]
+    public void Receipt_after_xmin_cannot_replace_missing_original_before_evidence_on_modified_rows()
+    {
+        var row = Modified();
+        Assert.False(CriticalWriteCoverageCapture.BeforeAfter(row, Committed(row), Field("Name", null, null, "ValuesWithheld")));
+    }
+
+    [Theory]
+    [InlineData(7, null, true)]
+    [InlineData(null, 0L, true)]
+    [InlineData(null, 2L, true)]
+    [InlineData(null, null, false)]
+    [InlineData(0, null, false)]
+    public void Actual_original_xmin_or_honest_revision_is_required_separately_from_committed_after_xmin(int? beforeVersion, long? beforeRevision, bool expected)
+    {
+        var row = Modified(); row.BeforeVersion = beforeVersion is int version ? (uint)version : null; row.BeforeRevision = beforeRevision;
+        Assert.Equal(expected, CriticalWriteCoverageCapture.BeforeAfter(row, Committed(row), Field("Name", null, null, "ValuesWithheld")));
+    }
+
+    [Fact]
+    public void Before_xmin_without_after_lineage_or_effect_is_insufficient()
+    {
+        var row = Modified(); row.BeforeVersion = 7;
+        Assert.False(CriticalWriteCoverageCapture.BeforeAfter(row, new HashSet<(string, Guid, Guid?)>(), Field("Name", null, null, "ValuesWithheld")));
+    }
+
+    [Fact]
+    public void Allowed_closed_state_pair_can_prove_both_sides_without_exposing_private_values()
+    {
+        var row = Modified();
+        Assert.True(CriticalWriteCoverageCapture.BeforeAfter(row, new HashSet<(string, Guid, Guid?)>(), Field("State", "Pending", "Receiving")));
+        Assert.False(CriticalWriteCoverageCapture.BeforeAfter(row, new HashSet<(string, Guid, Guid?)>(), Field("State", null, "Receiving")));
+        Assert.False(CriticalWriteCoverageCapture.BeforeAfter(row, new HashSet<(string, Guid, Guid?)>(), Field("Binding", "arbitrary-label", "another-label")));
+    }
+
+    [Fact]
+    public void Added_rows_retain_honest_null_before_and_do_not_borrow_a_fabricated_before_version()
+    {
+        var row = Modified(); row.Action = "Added";
+        Assert.True(CriticalWriteCoverageCapture.BeforeAfter(row, Committed(row), Field("Name", null, null, "ValuesWithheld")));
+        row.BeforeVersion = 7;
+        Assert.False(CriticalWriteCoverageCapture.BeforeAfter(row, Committed(row), Field("Name", null, null, "ValuesWithheld")));
+    }
+
+    [Fact]
+    public void First_revision_edit_preserves_real_zero_before_revision()
+    {
+        var row = Modified(); row.BeforeRevision = 0; row.AfterRevision = 1;
+        Assert.True(CriticalWriteCoverageCapture.BeforeAfter(row, new HashSet<(string, Guid, Guid?)>(), Field("ContentJson", null, null, "RevisionReference")));
+    }
+
+    [Fact]
+    public void Receipt_from_another_correlation_or_scope_cannot_supply_after_xmin()
+    {
+        var row = Modified(); row.BeforeVersion = 7;
+        var other = Modified();
+        Assert.False(CriticalWriteCoverageCapture.BeforeAfter(row, Committed(other), Field("Name", null, null, "ValuesWithheld")));
     }
 }
