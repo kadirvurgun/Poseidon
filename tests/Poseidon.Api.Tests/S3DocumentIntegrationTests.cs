@@ -13,6 +13,24 @@ namespace Poseidon.Api.Tests;
 
 public sealed partial class DirectoryWorkspaceTests
 {
+    // S1-FILES-REJECTION-01: a new provider context cannot consume or freeze an old intent.
+    [Fact]
+    public async Task Changed_S3_context_rejects_before_claiming_pending_intent_or_touching_provider_bytes()
+    {
+        await using var lab = await OwnedS3Lab.CreateAsync(Ct); var config = lab.FileSettings(1);
+        await using var host = Host().WithWebHostBuilder(b => { b.UseEnvironment("Development"); b.ConfigureServices(s => s.AddSingleton(config)); });
+        using var client = Client(host); FilePermissions(host.Services); await Token(client);
+        var stage = await StagePng(client);
+        var originalBucket = config.S3.Bucket; config.S3.Bucket = "different-synthetic-bucket";
+        using var response = await PutPng(client, stage.Id); Assert.Equal(HttpStatusCode.ServiceUnavailable, response.StatusCode);
+        await using var db = Db(); await AssertUnchangedRejectedIntent(db, stage);
+        Assert.Empty(Directory.GetFiles(config.Root!));
+        config.S3.Bucket = originalBucket;
+        using var storage = lab.Settings.Client();
+        var versions = await storage.ListVersionsAsync(new ListVersionsRequest { BucketName = originalBucket, Prefix = $"poseidon/{SeedVessel.TenantId:N}/{stage.Id:N}" }, Ct);
+        Assert.Empty(versions.Versions ?? []);
+    }
+
     // FSC-S3-01: real PostgreSQL/API/S3/clamd with actual versioned document bytes.
     [Fact]
     public async Task Real_S3_document_upload_reads_exact_provider_version_and_reauthorizes_every_owner_access()
