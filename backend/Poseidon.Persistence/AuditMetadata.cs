@@ -9,32 +9,78 @@ namespace Poseidon.Persistence;
 internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? Kind,
     long? BeforeRevision, long? AfterRevision, string Summary)
 {
-    internal static AuditMetadata From(EntityEntry entry)
+    internal static AuditMetadata From(EntityEntry entry, Guid? parentVessel, AuditCommandContext? command, bool requireResolvedScope)
+    {
+        var metadata = Project(entry, parentVessel);
+        var scopeKind = metadata.VesselId is { } vessel && vessel != Guid.Empty ? "Vessel" : entry.Entity switch
+        {
+            Person or CrewIdentityRevision or CrewPersonalProfile or CrewPersonalProfileRevision => "TenantPerson",
+            CommandReceipt r when r.Action is "CrewPersonSave" or "CrewIdentityConvert" or "CrewProfileSave" or "CrewPhotoSave" => "TenantPerson",
+            Tenant or Company or RegisterDraft or RegisterRevision or RuleDraft or RuleRevision or
+                RegulatoryQualificationHead or RegulatoryQualificationEvent or RegulatoryQualificationReceipt => "Tenant",
+            CommandReceipt r when r.Action is "CompanyCreate" or "CompanyUpdate" or "SourceDraftSave" or "RequirementDraftSave" => "Tenant",
+            ApplicabilityReceipt r when r.Action is "author" or "review" => "Tenant",
+            _ => "Unresolved"
+        };
+        if (requireResolvedScope && scopeKind == "Unresolved")
+            throw new InvalidOperationException("Current command audit scope is unavailable.");
+        var fields = JsonSerializer.Deserialize<List<JsonElement>>(metadata.Summary) ?? [];
+        if (entry.Entity is CommandReceipt or ApplicabilityReceipt or HumanReviewReceipt or ControlEvidenceReceipt or RegulatoryQualificationReceipt)
+            fields.Add(JsonSerializer.SerializeToElement(Field("Binding", null, "CommittedResource")));
+        fields.Add(JsonSerializer.SerializeToElement(Field("ScopeKind", null, scopeKind)));
+        if (command != null)
+        {
+            if (!command.IsValid) throw new InvalidOperationException("Invalid audit command context.");
+            fields.Add(JsonSerializer.SerializeToElement(Field("CommandName", null, command.EndpointName)));
+            fields.Add(JsonSerializer.SerializeToElement(Field("TechnicalReasonCode", null, command.ReasonCode)));
+        }
+        var summary = JsonSerializer.Serialize(fields);
+        if (fields.Count > 20 || summary.Length > 2048)
+            throw new InvalidOperationException("Audit summary exceeds its controlled bounds.");
+        return metadata with { Summary = summary };
+    }
+
+    private static object Field(string field, string? before, string? after, string evidence = "Allowlisted") =>
+        new { field, before, after, evidence };
+    private static string Fields(params object[] fields) => JsonSerializer.Serialize(fields);
+    private static string Number(long value) => value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+
+    private static AuditMetadata Project(EntityEntry entry, Guid? parentVessel)
     {
         if (entry.Entity is CommandReceipt { Action: "CrewCatalogSave" } catalogReceipt)
             return new(catalogReceipt.ResourceId, catalogReceipt.ResourceId, "CrewCatalogReceipt", null, catalogReceipt.RegisterRevision, "[]");
         if (entry.Entity is CrewCatalogEvent catalog)
             return new(catalog.VesselId, catalog.VesselId, "CrewCatalog", null, catalog.Revision,
-                JsonSerializer.Serialize(new { catalog.State, catalog.Revision, catalog.AuthorityId, reason = "Recorded;ValueWithheld" }));
+                Fields(Field("State", null, Closed(catalog.State, "Draft", "Reviewed", "Adopted", "Withdrawn")),
+                    Field("Revision", null, Number(catalog.Revision)), Field("AuthorityId", null, catalog.AuthorityId.ToString("D")),
+                    Field("Reason", null, null, "ValuesWithheld")));
         if (entry.Entity is CrewCatalogHead catalogHead)
             return new(catalogHead.VesselId, catalogHead.VesselId, "CrewCatalogHead", entry.State == EntityState.Added ? null : (long?)entry.Property("Revision").OriginalValue,
-                catalogHead.Revision, JsonSerializer.Serialize(new { catalogHead.Revision, catalogHead.ActiveRevision }));
+                catalogHead.Revision, Fields(Field("Revision", entry.State == EntityState.Added ? null : Number((long)entry.Property("Revision").OriginalValue!), Number(catalogHead.Revision)),
+                    Field("ActiveRevision", entry.State == EntityState.Added ? null : entry.Property("ActiveRevision").OriginalValue is long prior ? Number(prior) : null,
+                        catalogHead.ActiveRevision is long active ? Number(active) : null)));
         // Do not put exact source bytes, validation rationale or actor-provided text in audit summaries.
         if (entry.Entity is RegulatoryQualificationEvent qualification)
             return new(null, qualification.RuleId, "RegulatoryQualification", null, qualification.Revision,
-                JsonSerializer.Serialize(new { qualification.State, qualification.RuleRevision, qualification.Hash, qualification.SourceHash, qualification.PolicyVersion, qualification.AuthorityId }));
+                Fields(Field("State", null, Closed(qualification.State, "DRAFT", "IN_REVIEW", "ADOPTED", "AWAITING", "FUTURE_EFFECTIVE", "IN_FORCE", "SUPERSEDED")),
+                    Field("RuleRevision", null, Number(qualification.RuleRevision)), Field("Revision", null, Number(qualification.Revision)),
+                    Field("AuthorityId", null, qualification.AuthorityId.ToString("D"))));
         if (entry.Entity is RegulatoryFactAttestation fact)
             return new(fact.VesselId, fact.Id, "RegulatoryFactAttestation", null, fact.ProfileRevision,
-                JsonSerializer.Serialize(new { fact.RuleId, fact.QualificationRevision, fact.Hash, fact.AuthorityId }));
+                Fields(Field("RuleId", null, fact.RuleId.ToString("D")), Field("QualificationRevision", null, Number(fact.QualificationRevision)),
+                    Field("AuthorityId", null, fact.AuthorityId.ToString("D"))));
         if (entry.Entity is RegulatoryQualificationHead head)
             return new(null, head.RuleId, "RegulatoryQualificationHead", entry.State == EntityState.Added ? null : (long?)entry.Property("Revision").OriginalValue, head.Revision,
-                JsonSerializer.Serialize(new { head.Revision }));
+                Fields(Field("Revision", entry.State == EntityState.Added ? null : Number((long)entry.Property("Revision").OriginalValue!), Number(head.Revision))));
         if (entry.Entity is RegulatoryQualificationReceipt receipt)
             return new(null, receipt.RuleId, "RegulatoryQualificationReceipt", null, null, "[]");
         if (entry.Entity is EvaluationQualification binding)
-            return new(null, binding.EvaluationId, "EvaluationQualification", null, binding.QualificationRevision,
-                JsonSerializer.Serialize(new { binding.RuleId, binding.QualificationRevision, binding.AttestationId }));
+            return new(parentVessel, binding.EvaluationId, "EvaluationQualification", null, binding.QualificationRevision,
+                Fields(Field("RuleId", null, binding.RuleId.ToString("D")), Field("QualificationRevision", null, Number(binding.QualificationRevision)),
+                    Field("AttestationId", null, binding.AttestationId?.ToString("D"))));
         Guid? vessel = entry.Entity switch {
+            OperationEquipmentBinding e => e.VesselId, EvaluationOwningReference e => e.VesselId,
+            EvaluationUpstreamReference e => e.VesselId, MsmdRoleBinding e => e.VesselId,
             TugCapabilityBinding e => e.VesselId,
             TugOfflineEnrollment e => e.VesselId, TugOfflineOutcome e => e.VesselId, TugOfflineLifecycle e => e.VesselId,
             HumanReviewHead e => e.VesselId, HumanReviewEvent e => e.VesselId, HumanReviewReceipt e => e.VesselId,
@@ -53,9 +99,11 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             Vessel v => v.Id, VesselProfile p => p.VesselId, TugProfile p => p.VesselId,
             RegulatoryDraft d => d.VesselId, RegulatoryDraftRevision r => r.VesselId,
             CommandReceipt r when r.Action is "ProfileSave" or "VesselCreate" or "VesselUpdate" => r.ResourceId,
-            _ => null
+            _ => parentVessel
         };
         Guid? resource = entry.Entity switch {
+            OperationEquipmentBinding e => e.Id, EvaluationOwningReference e => e.EvaluationId,
+            EvaluationUpstreamReference e => e.EvaluationId, MsmdRoleBinding e => e.Id,
             TugCapabilityBinding e => e.Id,
             TugOfflineEnrollment e => e.JobId, TugOfflineOutcome e => e.JobId, TugOfflineLifecycle e => e.JobId,
             HumanReviewHead e => e.Id, HumanReviewEvent e => e.Id, HumanReviewReceipt e => e.ResourceId,
@@ -78,14 +126,46 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             RegisterDraft d => d.Id, RegisterRevision r => r.Id, CommandReceipt r => r.ResourceId,
             _ => vessel
         };
-        if (entry.Entity is TugOfflineEnrollment) return new(vessel, resource, "TugOfflineEnrollment", null, null, "[]");
+        if (entry.Entity is TugOfflineEnrollment) return new(vessel, resource, "TugOfflineEnrollment", null, null,
+            Fields(Field("Binding", entry.State == EntityState.Added ? null : "ServerOwnedContext", "ServerOwnedContext")));
+        if (entry.Entity is TechnicalOwner or TugOwner)
+            return new(vessel, resource, "OwnerReference", null, null, Fields(Field("Binding", null, "OwnerReference")));
+        if (entry.Entity is CrewPosition)
+            return new(vessel, resource, "CrewPosition", null, null, Fields(Field("Binding", null, "PositionReference")));
+        if (entry.Entity is MaintenanceJob)
+            return new(vessel, resource, "MaintenanceJob", null, null, Fields(Field("Binding", null, "JobReference")));
+        if (entry.Entity is Person person)
+            return new(vessel, resource, "Person", entry.State == EntityState.Added ? null : (long?)entry.Property("IdentityRevision").OriginalValue,
+                person.IdentityRevision, Fields(Field("Binding", entry.State == EntityState.Added ? null : "TenantPersonRecord", "TenantPersonRecord"),
+                    Field("Revision", entry.State == EntityState.Added ? null : Number((long)entry.Property("IdentityRevision").OriginalValue!), Number(person.IdentityRevision))));
+        if (entry.Entity is ApplicabilityEvaluation)
+            return new(vessel, resource, "ApplicabilityEvaluation", null, null, Fields(Field("Outcome", null, "EvaluationRecorded")));
+        if (entry.Entity is ImportPreview)
+            return new(vessel, resource, "ImportPreview", null, null, Fields(Field("Outcome", null, "PreviewRecorded")));
+        if (entry.Entity is ImportRowResult rowResult)
+            return new(vessel, resource, "ImportRowResult", null, null,
+                Fields(Field("Outcome", null, Closed(rowResult.Outcome, "valid", "rejected"))));
+        if (entry.Entity is ImportBatch && entry.State == EntityState.Modified && LegacyImportStorage.IsConversion(entry))
+            return new(vessel, resource, "ImportBatch", (long?)entry.Property("Revision").OriginalValue, (long?)entry.Property("Revision").CurrentValue,
+                Fields(Field("Binding", "LegacyStorage", "ProtectedStorage")));
+        if (entry.Entity is MaintenanceObservationRevocation)
+            return new(vessel, resource, "MaintenanceObservationRevocation", null, null,
+                Fields(Field("Lifecycle", null, "Revoked")));
+        if (entry.Entity is EvaluationRule evaluatedRule)
+            return new(vessel, resource, "EvaluationRule", null, evaluatedRule.RuleRevision,
+                Fields(Field("RuleId", null, evaluatedRule.RuleId.ToString("D")), Field("RuleRevision", null, Number(evaluatedRule.RuleRevision))));
+        if (entry.Entity is EvaluationUpstreamReference upstream)
+            return new(vessel, resource, "EvaluationUpstreamReference", null, upstream.RuleRevision,
+                Fields(Field("RuleId", null, upstream.RuleId.ToString("D")), Field("RuleRevision", null, Number(upstream.RuleRevision)),
+                    Field("UpstreamId", null, upstream.UpstreamId.ToString("D"))));
         if (entry.Entity is TugOfflineLifecycle tl) {
             if (tl.Action is not ("Enrolled" or "KeyEnrolled" or "Renewed" or "Revoked" or "KeyLost" or "CleanupAllowed")) throw new InvalidOperationException("Unsupported tug lifecycle event.");
-            return new(vessel, resource, "TugOfflineLifecycle", null, null, JsonSerializer.Serialize(new { tl.Action }));
+            return new(vessel, resource, "TugOfflineLifecycle", null, null, Fields(Field("Lifecycle", null, tl.Action)));
         }
         if (entry.Entity is TugOfflineOutcome to) {
             if (to.Result is not ("Committed" or "MaterialConflict")) throw new InvalidOperationException("Unsupported tug replay outcome.");
-            return new(vessel, resource, "TugOfflineOutcome", null, to.Revision, JsonSerializer.Serialize(new { to.Result, to.ServerVersion }));
+            return new(vessel, resource, "TugOfflineOutcome", null, to.Revision,
+                Fields(Field("Outcome", null, to.Result), Field("ServerVersion", null, Number(to.ServerVersion))));
         }
         if (entry.Entity is OfflineLifecycle lifecycle) {
             if (lifecycle.Action is not ("Enrolled" or "KeyEnrolled" or "Renewed" or "Revoked" or "KeyLost" or "CleanupAllowed"))
@@ -94,7 +174,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
                 new { field = "Lifecycle", before = (string?)null, after = lifecycle.Action, evidence = "Allowlisted" } }));
         }
         if (entry.Entity is OfflineEnrollment) return new(vessel, resource, "OfflineEnrollment", null, null,
-            "[{\"field\":\"Binding\",\"before\":null,\"after\":\"ServerOwnedContext\",\"evidence\":\"Allowlisted\"}]");
+            Fields(Field("Binding", entry.State == EntityState.Added ? null : "ServerOwnedContext", "ServerOwnedContext")));
         if (entry.Entity is OfflineOutcome outcome) {
             if (outcome.Result is not ("Committed" or "MaterialConflict")) throw new InvalidOperationException("Unsupported offline outcome.");
             return new(vessel, resource, "OfflineOutcome", null, outcome.Revision, JsonSerializer.Serialize(new[] {
@@ -124,7 +204,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             }));
         }
         var kind = entry.Entity switch { RuleDraft => "RuleDraft", ApplicabilityEvaluation => "ApplicabilityEvaluation", EvaluationRule => "EvaluationRule", RegisterDraft d => d.Kind, RegisterRevision r => r.Kind, _ => null };
-        var revisionProperty = entry.Entity is Person ? "IdentityRevision" : "Revision";
+        var revisionProperty = entry.Entity is Person ? "IdentityRevision" : entry.Entity is CommandReceipt ? "RegisterRevision" : "Revision";
         var revision = entry.Metadata.FindProperty(revisionProperty) == null ? null : entry.Property(revisionProperty);
         long? before = revision != null && entry.State != EntityState.Added ? (long?)revision.OriginalValue : null;
         long? after = revision != null && entry.State != EntityState.Deleted ? (long?)revision.CurrentValue : null;
@@ -148,4 +228,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         }
         return new(vessel, resource, kind, before, after, JsonSerializer.Serialize(fields));
     }
+
+    private static string Closed(string value, params string[] allowed) => allowed.Contains(value, StringComparer.Ordinal)
+        ? value : throw new InvalidOperationException("Invalid controlled audit state.");
 }
