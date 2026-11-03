@@ -9,10 +9,10 @@ public sealed class DirectoryAuthorizationResultHandler : IAuthorizationMiddlewa
     private readonly AuthorizationMiddlewareResultHandler fallback = new();
     public async Task HandleAsync(RequestDelegate next, HttpContext context, AuthorizationPolicy policy, PolicyAuthorizationResult result)
     {
-        // Cover every current critical command, including unnamed routes and
-        // aliases. A durable denied observation must precede its response.
+        // Cover every classified mutation route, including security-only commands
+        // and aliases. A durable denied observation must precede its response.
         var operation = S1SecurityContract.Match(context);
-        if (!result.Succeeded && operation?.IsCritical == true)
+        if (!result.Succeeded && operation != null)
         {
             await context.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(context,
                 operation.DenialAction, result.Challenged ? "Unauthenticated" : "Denied");
