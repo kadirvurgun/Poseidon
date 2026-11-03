@@ -66,7 +66,7 @@ internal sealed class CriticalWriteCoverageCapture
                 // administrative import context, unfiltered query or external connection override.
                 await using var db = new PoseidonDbContext(SeedImporter.Options(database.GetConnectionString()), tenant,
                     new ActorContext("coverage-observer", "System", "coverage-observer"));
-                entityTypes.UnionWith(db.Model.GetEntityTypes().Select(x => x.ClrType.Name).Where(Identifier.IsMatch));
+                entityTypes.UnionWith(db.Model.GetEntityTypes().Select(x => x.ClrType.Name).Where(name => Identifier.IsMatch(name)));
                 var current = await db.AuditEvents.AsNoTracking().Where(x => x.Source == "WebCommand")
                     .Take(RowLimit + 1).ToArrayAsync(deadline.Token);
                 rows.AddRange(current);
