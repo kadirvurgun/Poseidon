@@ -44,6 +44,34 @@ public sealed class OidcProtocolTests(OwnedPostgresFixture fixture)
         var tenant = seed.Tenants[0].Id;
         await using var setup = new PoseidonDbContext(SeedImporter.Options(postgres.GetConnectionString(), seed), Guid.Empty, ActorContext.SeedImport(), true);
         await setup.Database.MigrateAsync(TestContext.Current.CancellationToken);
+        var options = SeedImporter.Options(postgres.GetConnectionString());
+        await using var invariantDb = new PoseidonDbContext(options, tenant, new("test", "User", "oidc-invariants"));
+        var originalCompanies = await CompanyStates(invariantDb);
+        var originalAuditIds = await invariantDb.AuditEvents.OrderBy(x => x.Id).Select(x => x.Id).ToArrayAsync(TestContext.Current.CancellationToken);
+        var originalReceiptCount = await invariantDb.CommandReceipts.CountAsync(TestContext.Current.CancellationToken);
+        async Task AssertRejectedCompanyMutation(HttpClient unauthenticated, string? csrfToken = null)
+        {
+            using var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/companies")
+            {
+                Content = JsonContent.Create(new CompanyCreateCommand("OIDC-DENIED", "Synthetic rejected identity command"))
+            };
+            request.Headers.Add("Idempotency-Key", Guid.NewGuid().ToString());
+            request.Headers.Add("X-CSRF-TOKEN", csrfToken ?? "synthetic-untrusted-token");
+            request.Headers.Add("X-Correlation-ID", "synthetic-client-correlation");
+            using var denied = await unauthenticated.SendAsync(request, TestContext.Current.CancellationToken);
+            Assert.Equal(HttpStatusCode.Unauthorized, denied.StatusCode);
+            var correlation = Assert.Single(denied.Headers.GetValues("X-Correlation-ID"));
+            Assert.True(Guid.TryParseExact(correlation, "N", out _));
+            Assert.NotEqual("synthetic-client-correlation", correlation);
+            Assert.Equal(originalCompanies, await CompanyStates(invariantDb));
+            Assert.Equal(originalAuditIds, await invariantDb.AuditEvents.OrderBy(x => x.Id).Select(x => x.Id).ToArrayAsync(TestContext.Current.CancellationToken));
+            Assert.Equal(originalReceiptCount, await invariantDb.CommandReceipts.CountAsync(TestContext.Current.CancellationToken));
+            // Intended denied-access observations remain durable and separate from business write audit.
+            await using var deniedEvents = new SecurityEventWriter(new DbContextOptionsBuilder<SecurityEventWriter>().UseNpgsql(postgres.GetConnectionString()).Options);
+            Assert.True(await deniedEvents.Set<SecurityEvent>().AnyAsync(x => x.CorrelationId == correlation &&
+                x.Action == "DirectoryWrite" && x.Result == "Unauthenticated" && x.ActorId == null && x.TenantId == null,
+                TestContext.Current.CancellationToken));
+        }
         using var rsa = RSA.Create(2048);
         var signingKey = new RsaSecurityKey(rsa) { KeyId = "synthetic-key" };
         var backchannel = new TokenEndpoint();
@@ -77,8 +105,12 @@ public sealed class OidcProtocolTests(OwnedPostgresFixture fixture)
             }));
         });
         using var client = host.CreateClient(new() { BaseAddress = new("https://localhost"), AllowAutoRedirect = false });
+        client.DefaultRequestHeaders.Add("X-Correlation-ID", "synthetic-client-correlation");
         using var challenge = await client.GetAsync("/api/v1/auth/login?returnUrl=https://evil.example", TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.Redirect, challenge.StatusCode);
+        var challengeCorrelation = Assert.Single(challenge.Headers.GetValues("X-Correlation-ID"));
+        Assert.True(Guid.TryParseExact(challengeCorrelation, "N", out _));
+        Assert.NotEqual("synthetic-client-correlation", challengeCorrelation);
         var query = QueryHelpers.ParseQuery(challenge.Headers.Location!.Query);
         Assert.Equal("code", query["response_type"].ToString());
         Assert.Equal("S256", query["code_challenge_method"].ToString());
@@ -98,6 +130,10 @@ public sealed class OidcProtocolTests(OwnedPostgresFixture fixture)
         });
         using var noCookies = host.CreateClient(new() { BaseAddress = new("https://localhost"), AllowAutoRedirect = false, HandleCookies = false });
         using var response = await (failure == "correlation" ? noCookies : client).GetAsync(callback, TestContext.Current.CancellationToken);
+        var callbackCorrelation = Assert.Single(response.Headers.GetValues("X-Correlation-ID"));
+        Assert.True(Guid.TryParseExact(callbackCorrelation, "N", out _));
+        Assert.NotEqual(challengeCorrelation, callbackCorrelation);
+        Assert.NotEqual("synthetic-client-correlation", callbackCorrelation);
         if (failure == "valid")
         {
             Assert.Equal("/app", response.Headers.Location?.OriginalString);
@@ -126,6 +162,12 @@ public sealed class OidcProtocolTests(OwnedPostgresFixture fixture)
             expiredClient.DefaultRequestHeaders.Add("Cookie", "__Host-poseidon-session=" + cookieOptions.TicketDataFormat.Protect(ticket));
             using var expiredMutation = await expiredClient.PostAsync("/api/v1/auth/logout", null, TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.Unauthorized, expiredMutation.StatusCode);
+            await AssertRejectedCompanyMutation(expiredClient, session.CsrfToken);
+            var forgedValue = protectedValue.ToCharArray();
+            forgedValue[forgedValue.Length / 2] = forgedValue[forgedValue.Length / 2] == 'A' ? 'B' : 'A';
+            using var forgedClient = host.CreateClient(new() { BaseAddress = new("https://localhost"), AllowAutoRedirect = false, HandleCookies = false });
+            forgedClient.DefaultRequestHeaders.Add("Cookie", "__Host-poseidon-session=" + new string(forgedValue));
+            await AssertRejectedCompanyMutation(forgedClient, session.CsrfToken);
             using var logout = await client.PostAsync("/api/v1/auth/logout", new FormUrlEncodedContent(new Dictionary<string, string> { ["__RequestVerificationToken"] = session.CsrfToken }), TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.Redirect, logout.StatusCode);
             Assert.StartsWith("https://idp.example/logout", logout.Headers.Location!.OriginalString);
@@ -141,10 +183,16 @@ public sealed class OidcProtocolTests(OwnedPostgresFixture fixture)
         Assert.Equal(HttpStatusCode.Unauthorized, mutation.StatusCode);
         using var protectedRead = await client.GetAsync("/api/v1/companies", TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.Unauthorized, protectedRead.StatusCode);
+        await AssertRejectedCompanyMutation(client);
         await using var observations = new SecurityEventWriter(new DbContextOptionsBuilder<SecurityEventWriter>().UseNpgsql(postgres.GetConnectionString()).Options);
         Assert.True(await observations.Set<SecurityEvent>().AnyAsync(x => x.Action == "CompaniesRead" && x.Result == "Unauthenticated" && x.TenantId == null && x.ActorId == null, TestContext.Current.CancellationToken));
         if (failure is not ("state" or "correlation")) Assert.Contains("code_verifier=", backchannel.LastBody);
     }
+
+    private sealed record CompanyState(Guid Id, Guid TenantId, string Code, string Name, uint Version);
+    private static Task<CompanyState[]> CompanyStates(PoseidonDbContext db) => db.Companies.AsNoTracking()
+        .OrderBy(x => x.Id).Select(x => new CompanyState(x.Id, x.TenantId, x.Code, x.Name, x.Version))
+        .ToArrayAsync(TestContext.Current.CancellationToken);
 
     private sealed class TokenEndpoint : HttpMessageHandler
     {
