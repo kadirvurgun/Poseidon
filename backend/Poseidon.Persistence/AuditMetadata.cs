@@ -134,6 +134,12 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             return new(vessel, resource, "CrewPosition", null, null, Fields(Field("Binding", null, "PositionReference")));
         if (entry.Entity is MaintenanceJob)
             return new(vessel, resource, "MaintenanceJob", null, null, Fields(Field("Binding", null, "JobReference")));
+        if (entry.Entity is MaintenanceObservation observation && entry.State == EntityState.Added)
+            // The immutable row itself is the anchor, with tenant/vessel/asset ownership
+            // enforced by its composite FK. SourceRevision is not an aggregate revision.
+            // Do not copy declared Value/Source/Unit/PolicyVersion or imply verification.
+            return new(observation.VesselId, observation.Id, "MaintenanceObservation", null, null,
+                Fields(Field("Kind", null, AuditValuePolicy.Value("Kind", observation.Kind)), Field("Binding", null, "OwnerReference")));
         if (entry.Entity is Person person)
             return new(vessel, resource, "Person", entry.State == EntityState.Added ? null : (long?)entry.Property("IdentityRevision").OriginalValue,
                 person.IdentityRevision, Fields(Field("Binding", entry.State == EntityState.Added ? null : "TenantPersonRecord", "TenantPersonRecord"),
