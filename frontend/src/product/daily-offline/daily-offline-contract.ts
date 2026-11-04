@@ -16,7 +16,7 @@ export type DailyOfflineContext = { id: string; tenantId: string; actorId: strin
 export type DailyCapture = { commandId: string; recordId: string; kind: DailyKind; keyId: string; deviceId: string; policyVersion: string; policyDigest: string;
   sourceVersion: string; schemaHash: string; operation: string; baseVersion: number; capturedAt: string; offsetMinutes: number; fields: DailyFields;
   parentCommandId?: string; expectedServerVersion?: number; choice?: 'keepServer' | 'useCaptured'; reasonCode?: 'CURRENT_SERVER_RETAINED' | 'INPUT_CORRECTED' }
-export type DailyOfflineOutcome = { commandId: string; result: 'Committed' | 'MaterialConflict'; recordId: string; kind: DailyKind; baseVersion: number;
+export type DailyOfflineOutcome = { commandId: string; result: 'Committed' | 'MaterialConflict' | 'ServerRetained'; recordId: string; kind: DailyKind; baseVersion: number;
   serverVersion: number; revision: number; parentCommandId: string | null; receivedAt: string }
 export type DailyPending = { commandId: string; revision: number; body: string; outcome?: DailyOfflineOutcome }
 export type DailyConflict = { commandId: string; enrollmentId: string; recordId: string; kind: DailyKind; currentVersion: number;
@@ -48,14 +48,14 @@ export function decodeDailyCapture(value: unknown, context: DailyOfflineContext,
     value.commandId !== id || !isGuid(id) || value.recordId !== context.recordId || value.kind !== context.kind || value.keyId !== context.keyId || value.deviceId !== context.deviceId ||
     value.policyVersion !== context.policyVersion || value.policyDigest !== context.policyDigest || value.sourceVersion !== context.sourceVersion || value.schemaHash !== context.schemaHash || value.operation !== context.operation || !utc(value.capturedAt) || !integer(value.offsetMinutes, -840, 840) ||
     (value.parentCommandId === undefined ? value.baseVersion !== context.baseVersion || !allowedValues(value.fields, context.allowedFields) || ['expectedServerVersion', 'choice', 'reasonCode'].some(k => Object.hasOwn(value, k)) :
-      !isGuid(value.parentCommandId) || !integer(value.baseVersion, 0, 4294967295) || value.expectedServerVersion !== value.baseVersion || !exact(value.fields, []) || !['keepServer', 'useCaptured'].includes(String(value.choice)) || value.reasonCode !== (value.choice === 'keepServer' ? 'CURRENT_SERVER_RETAINED' : 'INPUT_CORRECTED'))) return badDailyOffline()
+      !isGuid(value.parentCommandId) || value.parentCommandId === id || !integer(value.baseVersion, 0, 4294967295) || value.expectedServerVersion !== value.baseVersion || !exact(value.fields, []) || !['keepServer', 'useCaptured'].includes(String(value.choice)) || value.reasonCode !== (value.choice === 'keepServer' ? 'CURRENT_SERVER_RETAINED' : 'INPUT_CORRECTED'))) return badDailyOffline()
   return value as DailyCapture
 }
 export function decodeDailyOutcome(value: unknown, context: Pick<DailyOfflineContext, 'recordId' | 'kind'>, capture?: DailyCapture): DailyOfflineOutcome {
   if (!exact(value, ['commandId', 'result', 'recordId', 'kind', 'baseVersion', 'serverVersion', 'revision', 'parentCommandId', 'receivedAt']) ||
-    !isGuid(value.commandId) || value.recordId !== context.recordId || value.kind !== context.kind || !['Committed', 'MaterialConflict'].includes(String(value.result)) ||
+    !isGuid(value.commandId) || value.recordId !== context.recordId || value.kind !== context.kind || !['Committed', 'MaterialConflict', 'ServerRetained'].includes(String(value.result)) ||
     !integer(value.baseVersion, 0, 4294967295) || !integer(value.serverVersion, 0, 4294967295) || !integer(value.revision, 0, Number.MAX_SAFE_INTEGER) ||
-    value.result === 'Committed' && (!value.serverVersion || !value.revision) || value.parentCommandId !== null && !isGuid(value.parentCommandId) || !utc(value.receivedAt) ||
+    (value.serverVersion === 0) !== (value.revision === 0) || value.result === 'Committed' && (!value.serverVersion || !value.revision) || value.result === 'ServerRetained' && value.parentCommandId === null || value.parentCommandId !== null && !isGuid(value.parentCommandId) || !utc(value.receivedAt) ||
     capture && (value.commandId !== capture.commandId || value.baseVersion !== capture.baseVersion || value.parentCommandId !== (capture.parentCommandId ?? null))) return badDailyOffline()
   return value as DailyOfflineOutcome
 }
@@ -64,6 +64,6 @@ export function decodeDailyConflict(value: unknown, context: DailyOfflineContext
     !integer(value.currentVersion, 0, 4294967295) || !Array.isArray(value.fields) || value.fields.length !== context.allowedFields.length ||
     value.fields.some(f => !exact(f, ['key', 'base', 'captured', 'server']) || typeof f.key !== 'string' || !context.allowedFields.includes(f.key) || ![f.base, f.captured, f.server].every(dailyValue)) || new Set(value.fields.map(f => (f as { key: string }).key)).size !== value.fields.length ||
     !Array.isArray(value.choices) || value.choices.length > 2 || new Set(value.choices).size !== value.choices.length || value.choices.some(c => !['keepServer', 'useCaptured'].includes(String(c))) || value.resolved !== null && value.choices.length !== 0) return badDailyOffline()
-  if (value.resolved !== null) { const resolved = decodeDailyOutcome(value.resolved, context); if (resolved.parentCommandId !== id || resolved.result !== 'Committed') return badDailyOffline() }
+  if (value.resolved !== null) { const resolved = decodeDailyOutcome(value.resolved, context); if (resolved.parentCommandId !== id || !['Committed', 'ServerRetained'].includes(resolved.result)) return badDailyOffline() }
   return value as DailyConflict
 }

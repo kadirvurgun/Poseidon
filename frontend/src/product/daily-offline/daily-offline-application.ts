@@ -8,6 +8,11 @@ import type { DailyKind, DailyFields } from '../daily-report-fields'
 import { badDailyOffline as bad, decodeDailyOfflineContext, decodeDailyCapture, decodeDailyOutcome, decodeDailyConflict, utc,
   type DailyOfflineContext, type DailyPending, type DailyConflict, type DailyInventoryItem, type DailyOfflineOutcome } from './daily-offline-contract'
 
+export const dailyCipherContext = (context: DailyOfflineContext, commandId: string) => ({
+  tenantId: context.tenantId, actorId: context.actorId, vesselId: context.vesselId, deviceId: context.deviceId,
+  sessionBinding: `daily/${context.kind}/${context.recordId}/${context.id}`,
+  policyVersion: `${context.policyVersion}/${context.policyDigest}/${context.authorityDigest}/${context.sourceVersion}/${context.schemaHash}`, commandId,
+})
 const limits = { plaintextBytes: 131072, contextBytes: 4096 }
 const database = 'poseidon.offline.daily.v1'
 export function dailyOfflineRoot(kind: DailyKind, vessel: string, record: string, suffix = '') {
@@ -69,7 +74,7 @@ export class DailyOfflineApplication {
   active() { return !this.closed && performance.now() >= this.started && this.remaining() > 0 }
   remaining() { return Math.max(0, Math.min(Date.parse(this.context.expiresAt), Date.parse(this.context.retainUntil)) - Date.parse(this.context.serverTime) - (performance.now() - this.started)) }
   private requireActive() { if (!this.active()) throw new Error('reauthorization_required_data_retained') }
-  private aad(commandId: string) { return { ...this.context, sessionBinding: `daily/${this.context.kind}/${this.context.recordId}/${this.context.id}`, policyVersion: `${this.context.policyVersion}/${this.context.policyDigest}/${this.context.authorityDigest}/${this.context.sourceVersion}/${this.context.schemaHash}`, commandId } }
+  private aad(commandId: string) { return dailyCipherContext(this.context, commandId) }
   private async reserve() {
     this.requireActive()
     await vault<void>((s, done) => { const q = s.get(this.slot); q.onsuccess = () => { const row = q.result as KeySlot | undefined

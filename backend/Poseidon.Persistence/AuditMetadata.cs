@@ -55,7 +55,8 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
                 Fields(Field("Binding",null,"OwnerReference"),Field("Lifecycle",null,Closed(dailyLifecycle.Action,"Enrolled","Renewed","KeyEnrolled","Revoked","KeyLost","CleanupAllowed"))));
         if (entry.Entity is DailyOfflineOutcome dailyOutcome)
             return new(dailyOutcome.VesselId,dailyOutcome.RecordId,"DailyOfflineOutcome",null,dailyOutcome.Revision,
-                Fields(Field("Binding",null,"OwnerReference"),Field("Outcome",null,Closed(dailyOutcome.Result,"Committed","MaterialConflict"))));
+                Fields(Field("Binding",null,"OwnerReference"),Field("Outcome",null,Closed(dailyOutcome.Result,"Committed","MaterialConflict","ServerRetained")),
+                    Field("ReasonCode",null,dailyOutcome.ParentCommandId==null?null:dailyOutcome.Result=="ServerRetained"?"CURRENT_SERVER_RETAINED":"INPUT_CORRECTED")));
         if (entry.Entity is DailyReviewHead reviewHead)
             return new(reviewHead.VesselId, reviewHead.RecordId, "DailyReviewHead", entry.State == EntityState.Added ? null : (long?)entry.Property("Sequence").OriginalValue,
                 reviewHead.Sequence, Fields(Field("Revision", entry.State == EntityState.Added ? null : Number((long)entry.Property("Sequence").OriginalValue!), Number(reviewHead.Sequence)),Field("Binding",null,"OwnerReference")));

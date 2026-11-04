@@ -82,7 +82,7 @@ internal static class DailyOfflineStorage
                 .HasPrincipalKey(e=>new {e.TenantId,e.Id,e.ActorId,e.VesselId,e.Kind,e.RecordId}).HasConstraintName("FK_DailyOfflineLifecycle_Enrollment").OnDelete(DeleteBehavior.Restrict);
         });
         model.Entity<DailyOfflineOutcome>(b=> {
-            b.ToTable("DailyOutcomes","offline",t=>t.HasCheckConstraint("CK_DailyOfflineOutcome_State","\"Kind\" IN ('Noon','Deck','Engine') AND \"BaseVersion\" >= 0 AND \"ServerVersion\" >= 0 AND \"Revision\" >= 0 AND \"Result\" IN ('Committed','MaterialConflict') AND (\"Result\" <> 'Committed' OR (\"ServerVersion\" > 0 AND \"Revision\" > 0))")); b.HasKey(e=>new {e.TenantId,e.ActorId,e.CommandId});
+            b.ToTable("DailyOutcomes","offline",t=>t.HasCheckConstraint("CK_DailyOfflineOutcome_State","\"Kind\" IN ('Noon','Deck','Engine') AND \"BaseVersion\" >= 0 AND \"ServerVersion\" >= 0 AND \"Revision\" >= 0 AND \"Result\" IN ('Committed','MaterialConflict','ServerRetained') AND (\"Result\" <> 'ServerRetained' OR \"ParentCommandId\" IS NOT NULL) AND (\"Result\" <> 'Committed' OR (\"ServerVersion\" > 0 AND \"Revision\" > 0))")); b.HasKey(e=>new {e.TenantId,e.ActorId,e.CommandId});
             b.HasAlternateKey(e=>new {e.TenantId,e.ActorId,e.CommandId,e.EnrollmentId}).HasName("AK_DailyOfflineOutcome_ParentScope");
             b.HasIndex(e=>new {e.TenantId,e.EnrollmentId,e.ActorId,e.VesselId,e.Kind,e.RecordId}).HasDatabaseName("IX_DailyOfflineOutcome_Scope");
             b.HasIndex(e=>new {e.TenantId,e.ActorId,e.ParentCommandId,e.EnrollmentId}).HasDatabaseName("IX_DailyOfflineOutcome_ParentScope");
