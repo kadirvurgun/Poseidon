@@ -28,7 +28,7 @@ async function openDraft(page: Page) {
   const form = page.getByRole('form', { name: 'Daily declaration form' })
   await form.getByLabel('Weather / sea summary — Data state').selectOption('Known')
   await form.getByLabel('Weather / sea summary', { exact: true }).fill('Retained daily declaration')
-  return { form, writes: () => writes }
+  return { form, protectedUrl: page.url(), writes: () => writes }
 }
 
 test('daily Chrome navigation keeps edits or discards once without a second native unload prompt', async ({ page }) => {
@@ -45,11 +45,11 @@ test('daily Chrome navigation keeps edits or discards once without a second nati
 })
 
 test('daily browser Back restores the guarded entry and confirms keep or discard exactly once', async ({ page }) => {
-  const { form, writes } = await openDraft(page), unexpected: string[] = []
+  const { form, protectedUrl, writes } = await openDraft(page), unexpected: string[] = []
   page.on('dialog', async dialog => { unexpected.push(dialog.type()); await dialog.dismiss() })
   await page.goBack({ waitUntil: 'commit' })
   await page.getByRole('dialog').getByRole('button', { name: 'Keep editing', exact: true }).click()
-  await expect(page).toHaveURL(new RegExp(`/app/noon-report/${dailyVessel}$`))
+  await expect(page).toHaveURL(protectedUrl)
   await expect(form.getByLabel('Weather / sea summary', { exact: true })).toHaveValue('Retained daily declaration')
   await page.goBack({ waitUntil: 'commit' })
   await page.getByRole('dialog').getByRole('button', { name: 'Discard draft', exact: true }).click()
