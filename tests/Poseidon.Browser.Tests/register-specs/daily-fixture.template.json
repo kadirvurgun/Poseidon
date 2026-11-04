@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "poseidon.daily.signed-fixture.v1",
+  "sourceVersion": "14.02:3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018:2128-2185:v46.3",
+  "runId": "REPLACE_WITH_NEW_OWNED_RUN_UUID",
+  "tenantId": "REPLACE_WITH_ACTUAL_DISPOSABLE_TENANT_UUID",
+  "vesselId": "REPLACE_WITH_ACTUAL_AUTHORIZED_SYNTHETIC_SHIP_UUID",
+  "foreignTenantId": "REPLACE_WITH_ACTUAL_DISTINCT_DISPOSABLE_TENANT_UUID",
+  "foreignVesselId": "REPLACE_WITH_ACTUAL_FOREIGN_SYNTHETIC_SHIP_UUID",
+  "writerActorId": "REPLACE_WITH_ACTUAL_SIGNED_WRITER_ACTOR_UUID",
+  "reviewerActorId": "REPLACE_WITH_ACTUAL_SIGNED_HUMAN_REVIEWER_ACTOR_UUID",
+  "restrictedActorId": "REPLACE_WITH_ACTUAL_SIGNED_RESTRICTED_ACTOR_UUID",
+  "foreignActorId": "REPLACE_WITH_ACTUAL_SIGNED_FOREIGN_ACTOR_UUID",
+  "reviewerAccount": "lab-daily-reviewer",
+  "foreignAccount": "lab-daily-foreign"
+}
