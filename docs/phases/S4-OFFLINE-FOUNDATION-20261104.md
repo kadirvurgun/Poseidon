@@ -103,3 +103,58 @@ Scheduler commit12868e6 kaynak diff'i22 dosya+920/-93;10 Fact method kaynağı
 (birinde3 inline örnek) authored NOT RUN, native yürütme toplamı değildir.
 Root'un exact574f027 AST-only graph refresh'i15.783node/29.162edge/1.047community
 üretti; LLM çağrısı yok. Derived navigation çıktısı build/test/security QA değildir.
+
+
+## LastKnownActive ve canonical S5 devamı — 2026-11-04T21:55:12.289152Z
+
+Gözlenen kaynak `f905e125625b655fe590039b336413d97924d15d`, son onaylı kaynak checkpoint `f905e125625b655fe590039b336413d97924d15d`.
+eb77 source delta'sı bilinen inactive'i Unknown boyunca korur; kayıp source veya
+belirsiz current state false rearm üretmez. Migration/snapshot ve regresyon kaynakları
+NOT RUN. Bu düzeltme önceki scheduler-internal / maintenance / InAppOnly ve production
+activation / external delivery sınırlarını silmez. Exact kaynak/version/authority
+gerekleri durur; scheduler canlı veya teslim doğrulaması yapıldığı iddiası yok.
+
+S5 canonical sekiz iş/69SP için ordinary daily, exact human review ve dedicated
+encrypted offline kaynakları yazıldı. Daily offline UI panel/strict draft URL, KeepServer no-op ve central signed registry source devamı root tarafından bu checkpoint için doğrulandı; runtime kabulü verilmedi.
+Kaynak HTTP tanımı97/91/101; tarihsel82/85/native126 kendi hedefine bağlı kalır.
+Tüm yeni checks actual PR gate'ine DEFERRED; accepted103/970SP10.62%,20/121iş,0/196ekran.
+
+
+## Son kaynak handoff'u ve bounded source correction review
+
+Exact head `f905e125625b655fe590039b336413d97924d15d`, tree `8f13218629bdbec215ed9c188e20467ebae3647c`. Offline `a772c23ed013bd1ff2ef2ddc4f991a2728bf4c38`,
+UI `a5deb88bf72c5a429bedc858aa1b2bae0c35ab21` ve registry `a3e5a0a8e597959b0da1b92b9f801b50728cd5a5`
+normal merge ile entegre; aşağıdaki kapsamlar kaynak authoring'dir, execution değildir.
+
+**P1** backend `44df647f0d9eb44ace7099133100184372d6e253`: audit sonrasında exact enrollment
+eski SERIALIZABLE snapshot dışındaki yeni trusted context'te yeniden okunur. Revoke/lost,
+key/policy/source/authority/retention uyuşmazlığı private response veya exact receipt
+recovery'yi kapatır. Post-commit fence/audit failure503 unknown kalır; fake rollback
+iddiası yok. Own keybind/renew ve capture-lease/retention ayrımı korunur. Ek119 satırlık
+PostgreSQL regression kaynağı yazıldı; method/native toplamı veya test sonucu çıkarılmadı.
+
+**P2** UI `596d472c0c98eb7f9acae2514cec9edb6aa17d74`: yalnız aynı context/resource ve doğrulanmış
+terminal child lineage projected parent pending guard'ını kapatır. Immutable parent
+değişmez; unknown/mismatched child pending kalır. Bu düzeltme ordinary/review formu
+gereksiz kilitleyen source defect'ini ele alır; runtime davranışı henüz ölçülmedi.
+
+Reviewer `/root/s5_independent_source_review`; receipt locator
+`.runtime/s5-compliance-20261104/qa/independent-daily-source-review-299602.md`, SHA256 `fadd14fc7048eb4f0734585c10060ddfd8df829387dae597516e429b3451e760`.
+Her ikisi **SOURCE_CORRECTION_REVIEWED**. Bounded kaynak kapsamındaki gösterilmiş
+bulgulardan açık kalan yok; full implementation QA, test PASS, model parity,
+runtime güvenlik veya phase kabulü anlamına gelmez. Önceki299602/P2/P1 notları
+receipt içinde özgün sıralarıyla korunur.
+
+Genuine host kaynakları8 daily +3 offline =11; ordinary mocked daily2, önceki onboarding
+viewport2 ve static-route6 parameterized privacy kaynağı ayrıdır. Offline core14
+authored PG method ve ek P1 regression kaynakları native case sayısı değildir.
+Merkezi dedicated offline registry artık SOURCE düzeyinde tamam; hiçbir case çalışmadı.
+Static worker591095b yalnız strict3 daily app route ve tek id-or-draft UUID shell'ini
+destekler; user/query/API/navigation body cache yok, forced worker activation yok.
+Legacy activation readiness UNVERIFIED. 7e64 decimal-hint association yalnız kaynak
+erişilebilirlik düzeltmesidir; gözlenmiş UI/contrast/focus PASS'i değildir.
+
+Final f905 AST-only refresh root tarafından exit0,16.388node/31.175edge/1.070community
+olarak kaydedildi; LLM yok, HTML size limit nedeniyle atlandı. Derived navigation
+çıktısı validation/test/build/security QA değildir. Eski574 sayıları current diye
+kullanılmadı. Preview yeniden build/yayın edilmedi, eskiF değişmedi ve yeniPR yok.
