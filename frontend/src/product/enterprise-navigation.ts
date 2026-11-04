@@ -6,11 +6,11 @@ import { useWorkspaceRevalidation } from './use-workspace-revalidation'
 export type EnterpriseDestination = { key: string; href: string }
 const destinations: Record<string, string> = { today: '/app/today', fleet: '/app/fleet', companies: '/app/companies',
   sources: '/app/sources', requirements: '/app/requirements', audit: '/app/audit',
-  'tug-command': '/app/tug-command', 'tug-job-board': '/app/tug-job-board', 'tug-job-intake': '/app/tug-job-intake' }
+  'tug-command': '/app/tug-command', 'tug-job-board': '/app/tug-job-board', 'tug-job-intake': '/app/tug-job-intake', 'system-health': '/app/system-health' }
 export function decodeEnterpriseNavigation(value: unknown): { destinations: EnterpriseDestination[]; canSearch: boolean } {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new ApiError(502, 'invalid_navigation')
   const v = value as Record<string, unknown>
-  if (!Array.isArray(v.destinations) || v.destinations.length > 9 || typeof v.canSearch !== 'boolean' || typeof v.canWriteRegulatory !== 'boolean') throw new ApiError(502, 'invalid_navigation')
+  if (!Array.isArray(v.destinations) || v.destinations.length > Object.keys(destinations).length || typeof v.canSearch !== 'boolean' || typeof v.canWriteRegulatory !== 'boolean') throw new ApiError(502, 'invalid_navigation')
   const result: EnterpriseDestination[] = []
   for (const item of v.destinations) {
     if (!item || typeof item !== 'object' || Array.isArray(item) || Object.keys(item).length !== 2 || typeof item.key !== 'string' ||

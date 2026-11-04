@@ -18,6 +18,20 @@ const base = {
 }
 
 describe('15.01 material conflict review (authored; execution deferred)', () => {
+  it('DEV-035 displays before/local/server context while submitting only explicit choices and the human reason', async () => {
+    const resolve = vi.fn(), user = userEvent.setup()
+    const withBase: OfflineConflict = { ...conflict, fields: [{ ...conflict.fields[0], before: { kind: 'known', text: 'Retained base A' } }] }
+    render(<OfflineConflictReview {...base} language="en" conflict={withBase} onResolve={resolve} />)
+    expect(screen.getByText('Before capture').nextElementSibling).toHaveTextContent('Retained base A')
+    expect(screen.getByText('Captured').nextElementSibling).toHaveTextContent('Sentetik A')
+    expect(screen.getByText('Server').nextElementSibling).toHaveTextContent('Sentetik B')
+    expect(screen.getByRole('button', { name: 'Submit resolution' })).toBeDisabled()
+    await user.click(screen.getByRole('radio', { name: 'Keep server value' }))
+    await user.type(screen.getByRole('textbox', { name: 'Resolution reason (required)' }), 'Compare exact retained versions')
+    await user.click(screen.getByRole('button', { name: 'Submit resolution' }))
+    expect(resolve).toHaveBeenCalledWith({ conflictId: conflict.id, expectedRevision: conflict.revision, reason: 'Compare exact retained versions', decisions: [{ field: 'watchGroup', choice: 'keepServer' }] })
+    expect(JSON.stringify(resolve.mock.calls[0][0])).not.toContain('Retained base A')
+  })
   it('shows captured/server/resolved values without silently preselecting a resolution', () => {
     render(<OfflineConflictReview {...base} />)
     expect(screen.getByText('Sentetik A')).toBeInTheDocument()

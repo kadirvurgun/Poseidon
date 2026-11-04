@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { getSystemStatus } from './api'
 import { AgentsDashboard } from './agents/AgentsDashboard'
 import { ProductApp } from './product/ProductApp'
+import { SystemHealthWorkspace } from './product/SystemHealthWorkspace'
 
 type Language = 'tr' | 'en'
 type Connection = 'loading' | 'available' | 'error'
@@ -39,6 +40,7 @@ const content = {
 }
 
 export function App() {
+  if (window.location.pathname === '/app/system-health') return <SystemHealthWorkspace />
   const importer = /^\/app\/excel-migration\/([0-9a-fA-F-]{36})\/?$/.exec(window.location.pathname)
   if (importer) return <ImportWorkspace key={importer[1]} vessel={importer[1]} />
   if (/^\/app\/tug-(command|job-board|job-intake|job-detail)(?:\/|$)/.test(window.location.pathname)) return <TugWorkspace />

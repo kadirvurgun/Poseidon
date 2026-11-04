@@ -16,6 +16,7 @@ type Props = { session: Session; vessel: string | null; language: 'tr' | 'en'; o
 export function vesselContextHref(path: string, vessel: string, kind: 'Ship' | 'Tug') {
   if (!isGuid(vessel)) throw new api.ApiError(400, 'invalid_context')
   const id = vessel.toLowerCase()
+  if (path === '/app/system-health') return `/app/system-health?vessel=${id}`
   if (/^\/app\/today(?:\/|$)/.test(path)) return `/app/today/${id}`
   const family = /^\/app\/(crew-roster|equipment-hierarchy|maintenance-plan|excel-migration)(?:\/|$)/.exec(path)
   if (family) return `/app/${family[1]}/${id}`

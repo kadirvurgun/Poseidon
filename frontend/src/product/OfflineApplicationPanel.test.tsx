@@ -25,6 +25,26 @@ beforeEach(() => {
 })
 async function authorize() { await userEvent.click(screen.getByRole('button', { name: 'Authorize / renew / recover' })); await screen.findByText('Encrypted capture available for this authorization.') }
 describe('OFFLINE-APPLICATION-01 real workspace consumer (AUTHORED / NOT RUN)', () => {
+  it('DEV-033/038 keeps restart metadata locked until explicit recovery and never manufactures another command', async () => {
+    const capturedAt = '2026-11-04T12:00:00Z'
+    const retained = { ...pending, body: JSON.stringify({ commandId: command, baseVersion: 7, capturedAt }) }
+    app.captures.mockResolvedValue([retained])
+    const first = render(<OfflineApplicationPanel {...props} />); await authorize()
+    expect(screen.getByText(command)).toBeVisible()
+    expect(screen.getByText(capturedAt)).toHaveAttribute('datetime', capturedAt)
+    first.unmount()
+    Object.defineProperty(navigator, 'onLine', { configurable: true, value: false })
+    render(<OfflineApplicationPanel {...props} />)
+    expect(screen.queryByText(command)).not.toBeInTheDocument()
+    expect(screen.queryByRole('region', { name: 'Unlocked local queue overview' })).not.toBeInTheDocument()
+    expect(app.capture).not.toHaveBeenCalled(); expect(app.replay).not.toHaveBeenCalled()
+    Object.defineProperty(navigator, 'onLine', { configurable: true, value: true }); fireEvent(window, new Event('online'))
+    expect(mock.authorize).toHaveBeenCalledTimes(1)
+    await authorize()
+    expect(screen.getByText(command)).toBeVisible()
+    expect(app.capture).not.toHaveBeenCalled(); expect(app.replay).not.toHaveBeenCalled()
+    expect(app.captures).toHaveBeenCalledTimes(2)
+  })
   it('requires explicit enrollment and preserves incomplete unknown draft without producing readiness', async () => {
     render(<OfflineApplicationPanel {...props} />)
     expect(mock.authorize).not.toHaveBeenCalled(); expect(screen.queryByRole('button', { name: 'Capture encrypted draft' })).not.toBeInTheDocument()
