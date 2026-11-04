@@ -71,8 +71,9 @@ discovery; it is not requirement authority.
   lens does not confer that authority. Search and vessel-switch handling retain
   the new exact destination. No untrusted tenant/actor construction is accepted.
 - Three coordinated notification command reason mappings were added to the
-  frontend audit vocabulary. No notification mutation UI, public audit-type
-  expansion, scheduling or external message delivery was introduced here.
+  frontend audit vocabulary. The subsequent supporting inbox slice is described
+  below; no public audit-type expansion, scheduling or external message delivery
+  is introduced.
 
 ## Authored regression sources
 
@@ -100,3 +101,48 @@ coordinator owns AST graph refresh after integration. Actual encryption/restart,
 clock drift, duplicate delivery, stale base versions, attachment retry, attributed
 conflict resolution and health-source isolation still need integrated native
 evidence at that later gate. No source-only result accepts those criteria.
+
+## Supporting in-app notification inbox slice
+
+The user directed continued S4 authoring while the backend package was prepared.
+This is supporting DEV-036 UI, with **no new task/story-point acceptance**.
+Bounded retrieval was followed by direct reads of original 11.01 Traceability
+Matrix `196 Ekran v46.3` row 17 (`notification-escalation`, one action, ready for
+BA/dev review) and 13.02 Screen Catalog paragraphs 117–121. The actual authored
+backend NotificationEndpoints and NotificationPolicy were read, including the
+closed request bodies, permissions, visibility, expected-version/idempotency
+receipts and mandatory-routing rules.
+
+The backend author added actual required Inbox capability booleans
+`canManage`, `canAcknowledge` and `canWritePreference`. The
+[strict consumer](../../frontend/src/product/notification-inbox-api.ts) requires
+those values rather than deriving write authority from a role label. The
+[inbox workspace](../../frontend/src/product/NotificationWorkspace.tsx) provides
+bounded current-vessel pages, severity/state/source revision/due context, source
+plan navigation, explicit acknowledgement and an advisory-only preference.
+Only Open/Escalated rows may be acknowledged; terminal rows remain read-only.
+Mandatory/Critical routes visibly cannot be muted. Configured policy remains
+unverified; unavailable policy or a failed read is not interpreted as all clear.
+Delivery is explicitly in-app only. No management-refresh mutation UI is added.
+
+Ambiguous commands retain their exact original UUID/key and body in memory;
+there is no automatic mutation retry. Explicit retry uses the frozen bytes with
+current authorization and CSRF. New commands use the exact server version.
+Dirty preferences use the existing native discard guard before vessel/source
+navigation; uncertain commands lock context changes until outcome recovery.
+Network/focus/session revalidation withdraws private projections while retaining
+same-account unsaved state and frozen attempts. A different actor/tenant is a
+separate component scope and receives none of the former private projection.
+Server-granted utility navigation/search and the existing guarded vessel chooser
+include the exact new route.
+
+Authored sources:
+[contract tests](../../frontend/src/product/notification-inbox-api.test.ts) cover
+foreign context, forged capability, critical-route muting, fabricated delivery or
+approval, duplicate notices and exact CSRF/key/body transport.
+[interaction tests](../../frontend/src/product/NotificationWorkspace.test.tsx)
+cover advisory muting with mandatory routes still present, denied write
+capabilities, terminal states, frozen acknowledgement retry across translation,
+authorization withdrawal with an unsaved preference, and unavailable policy.
+All remain **NOT RUN / DEFERRED to actual PR preparation**. No native capability,
+idempotency, visual or notification-delivery acceptance is claimed by authoring.

@@ -21,5 +21,14 @@
 .enterprise-shell .health-observation-grid dl { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:10px 20px; margin:14px 0 0; }
 .enterprise-shell .health-observation-grid dl > div { display:contents; }
 .enterprise-shell .health-observation-grid dd { margin:0; text-align:end; font-variant-numeric:tabular-nums; }
+.enterprise-shell .notification-list { display:grid; gap:12px; list-style:none; margin:20px 0; padding:0; }
+.enterprise-shell .notification-list > li,.enterprise-shell .notification-preference { padding:18px; min-width:0; border:1px solid var(--border); border-radius:10px; background:var(--card); }
+.enterprise-shell .notification-list header { display:flex; flex-wrap:wrap; align-items:center; gap:10px; }
+.enterprise-shell .notification-list h2 { margin:0; flex:1 1 200px; overflow-wrap:anywhere; }
+.enterprise-shell .notification-list dl { display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr); gap:14px; margin:16px 0; }
+.enterprise-shell .notification-list dd { margin:5px 0 0; overflow-wrap:anywhere; }
+.enterprise-shell .notification-preference label { display:flex; align-items:flex-start; gap:10px; }
+.enterprise-shell .notification-preference input[type="checkbox"] { width:18px; min-height:18px; height:18px; flex:0 0 18px; margin-top:3px; }
 @media(max-width:700px) { .enterprise-shell .health-observation-grid,.enterprise-shell .offline-window-comparison { grid-template-columns:minmax(0,1fr); } }
+@media(max-width:700px) { .enterprise-shell .notification-list dl { grid-template-columns:minmax(0,1fr); } }
 @media(max-width:700px) { .enterprise-shell .offline-queue-summary dl { grid-template-columns:repeat(2,minmax(0,1fr)); }.enterprise-shell .offline-capture-metadata dl { grid-template-columns:minmax(0,1fr); }.enterprise-shell .offline-workspace { padding:16px; } }
