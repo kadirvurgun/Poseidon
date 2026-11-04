@@ -1,0 +1,23 @@
+.workspace-vessel-switcher { width:min(610px,calc(100vw - 28px)); max-height:calc(100dvh - 40px); overflow:auto; border:1px solid #bdcbdc; border-radius:14px; padding:24px; color:#263c56; background:#fff; box-shadow:0 24px 100px #12223c45; }
+.workspace-vessel-switcher::backdrop { background:#10203380; backdrop-filter:blur(3px); }
+.vessel-switch-heading { display:flex; justify-content:space-between; gap:16px; align-items:start; }
+.vessel-switch-heading h2 { font-size:20px; margin:4px 0 10px; color:#162840; }
+.vessel-switch-eyebrow { color:#526b89; font-size:10px; font-weight:650; letter-spacing:1.4px; }
+.workspace-vessel-switcher > p { color:#52677f; font-size:12px; line-height:1.6; }
+.workspace-vessel-switcher form { margin:20px 0; }
+.workspace-vessel-switcher label { display:block; font-size:12px; font-weight:600; margin-bottom:7px; }
+.vessel-switch-query { display:flex; gap:8px; }
+.vessel-switch-query input { flex:1; min-width:0; border:1px solid #aebed0; border-radius:7px; padding:9px; }
+.vessel-switch-results { list-style:none; padding:0; margin:14px 0; }
+.vessel-switch-results li+li { border-top:1px solid #e1e8f0; }
+.workspace-vessel-switcher .vessel-switch-results button { display:flex; align-items:center; gap:12px; width:100%; text-align:start; padding:14px 10px; background:white; color:#2c496b; border:0; border-radius:6px; }
+.vessel-switch-results button:hover:not(:disabled) { background:#f0f5fc; }
+.vessel-switch-results button:disabled { opacity:.65; }
+.vessel-switch-results button > svg { width:19px; height:19px; flex-shrink:0; }
+.vessel-switch-results button > svg:last-child { margin-inline-start:auto; width:15px; }
+.vessel-switch-results strong,.vessel-switch-results small { display:block; overflow-wrap:anywhere; }
+.vessel-switch-results strong { font-size:12px; }.vessel-switch-results small { color:#52677f; font-size:11px; margin-top:3px; }
+.vessel-switch-pagination { display:flex; gap:10px; justify-content:space-between; }
+.vessel-switch-state { display:flex; align-items:center; gap:8px; }
+.workspace-vessel-switcher :focus-visible { outline:3px solid #245fba; outline-offset:3px; }
+@media(max-width:580px) { .workspace-vessel-switcher { padding:18px; }.vessel-switch-query { flex-direction:column; }.workspace-vessel-switcher button,.workspace-vessel-switcher input { min-height:44px; } }

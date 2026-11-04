@@ -24,6 +24,18 @@ beforeEach(() => window.history.replaceState(null, '', '/app'))
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals() })
 
 describe('VESSEL-PROFILE-DRAFT-01 component and transport coverage (mocked API, no external IdP)', () => {
+  it('DEV-020 shows the saved source observation and keeps an unsaved timestamp out of its provenance context', async () => {
+    const observed = '2026-10-30T08:00:00Z'
+    const saved = { ...profile, content: { ...content, sourceObservedAt: { state: 'Known', value: observed } } }
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => url.includes('/history?') ? reply(history) : url.includes('/files?') ? reply({ items: [], offset: 0, hasMore: false, available: true, canWrite: false, maxBytes: 1048576, allowedTypes: ['image/png'] }) : reply(saved)))
+    const user = userEvent.setup(); render(<RegulatoryProfile {...callbacks()} />)
+    const source = await screen.findByRole('complementary', { name: 'Saved source context' })
+    expect(within(source).getByText(observed)).toHaveAttribute('datetime', observed)
+    expect(source).toHaveTextContent('Input freshness is unverified')
+    await user.clear(screen.getByLabelText('Source observed at (with timezone)'))
+    await user.type(screen.getByLabelText('Source observed at (with timezone)'), '2026-11-04T12:00:00Z')
+    expect(source).toHaveTextContent(observed); expect(source).not.toHaveTextContent('2026-11-04T12:00:00Z')
+  })
   it('renders accessible draft fields, server context, unknown provenance and saved history without readiness', async () => {
     mock(); render(<RegulatoryProfile {...callbacks()} />)
     expect(screen.getAllByRole('status')[0]).toHaveTextContent('Loading profile')

@@ -30,6 +30,13 @@ const blocked = { ...why, reason: 'TugReadinessBlocked', tug: { ...why.tug, plan
   plannedStart: now, plannedEnd: '2026-11-02T01:00:00Z', assignedTugs: [vesselId], evidence } }
 const blockedCard = { ...card, reason: 'TugReadinessBlocked', priority: 'Attention' }
 const response = (value: unknown, status = 200) => new Response(JSON.stringify(value), { status, headers: { 'Content-Type': 'application/json' } })
+
+it('DEV-024 binds optional tug source lineage to the request revision rather than a plan or another job', () => {
+  const source = { kind: 'TugJob', id: jobId, revision: 2 }
+  expect(decodeWhy({ ...blocked, source }, vesselId, card.key).source).toEqual(source)
+  for (const invalid of [{ ...source, id: planId }, { ...source, revision: 4 }, { ...source, kind: 'MaintenancePlan' }, { ...source, revision: null }])
+    expect(() => decodeWhy({ ...blocked, source: invalid }, vesselId, card.key)).toThrow()
+})
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals() })
 
 it('shows a real missing-plan explanation in TR/EN and follows only its scoped job destination', async () => {
