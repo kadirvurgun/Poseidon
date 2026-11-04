@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { DailyReportWorkspace } from './DailyReportWorkspace'
 import { dailyActor, dailyCapsFixture, dailyId, dailyPageFixture, dailyRecordFixture, dailyVessel } from './daily-test-fixtures'
-import { dailyRoutes } from './daily-operations-api'
+import { dailyRoutes, dailySourceVersion } from './daily-operations-api'
 import type { DailyKind } from './daily-report-fields'
 const json = (value: unknown, status = 200) => new Response(JSON.stringify(value), { status, headers: { 'Content-Type': 'application/json' } })
 const identity = (actor = dailyActor) => ({ authenticated: true, setupRequired: false, canRead: true, canReadCompanies: false, canCreate: false, canSearch: false, csrfToken: 'synthetic-daily-csrf', actorId: actor, tenantId: dailyVessel, tenantName: 'Synthetic workspace' })
@@ -17,6 +17,8 @@ function transport(kind: DailyKind, options: { writable?: boolean; row?: boolean
       return json({ ...row, id: body.id, revision: 2, version: 18, fields: { ...row.fields, ...body.fields } })
     }
     if (url.includes(`/${route}/capabilities?`)) return json(dailyCapsFixture(kind, options.writable !== false))
+    if (url.includes(`/${route}/${dailyId}/review-capabilities?`)) return json({ recordId: dailyId, vesselId: dailyVessel, kind, recordRevision: 1, recordVersion: 17, reviewVersion: 0, canRecord: false, authorities: [], blockers: ['HUMAN_REVIEW_AUTHORITY_UNAVAILABLE'], sourceVersion: dailySourceVersion })
+    if (url.includes(`/${route}/${dailyId}/reviews?`)) return json({ items: [], offset: 0, limit: 25, hasMore: false })
     if (url.includes(`/${route}/${dailyId}/history?`)) return json({ items: [dailyRecordFixture(kind)], offset: 0, limit: 25, hasMore: false })
     if (url.includes(`/${route}/${dailyId}?`)) return json(dailyRecordFixture(kind))
     if (url.includes(`/${route}?`)) return json({ ...dailyPageFixture(kind, options.row ? [dailyRecordFixture(kind)] : []), canWrite: options.writable !== false })
@@ -101,7 +103,8 @@ describe('T-OPS2 daily source interactions (authored; execution deferred)', () =
     await screen.findByText('Read-only access. Editing and saving are not granted.')
     expect(screen.getByLabelText('Log date')).toBeDisabled(); expect(screen.queryByRole('button', { name: 'Save draft' })).not.toBeInTheDocument()
     expect(screen.getByRole('region', { name: 'Daily immutable history' })).toBeVisible()
-    expect(screen.getByRole('button', { name: 'Submit / qualified review unavailable' })).toBeDisabled()
+    expect(await screen.findByText('No current source-authorized human appointment is available for this record.')).toBeVisible()
+    expect(screen.queryByRole('button', { name: 'Record review entry' })).not.toBeInTheDocument()
     expect(screen.getByText(/Crew and tug grants cannot authorize these fields/)).toBeVisible()
     expect(screen.queryByText('Ready', { exact: true })).not.toBeInTheDocument()
   })
