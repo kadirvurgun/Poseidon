@@ -30,7 +30,7 @@ it('does not infer acknowledgement or preference write authority from read acces
   expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
   expect(service.loadPreference).not.toHaveBeenCalled(); expect(service.sendNoticeCommand).not.toHaveBeenCalled()
 })
-it.each(['Acknowledged', 'SourceChanged'] as const)('keeps terminal %s notices read-only despite an acknowledgement capability', async state => {
+it.each(['Acknowledged', 'SourceChanged', 'SourceUnavailable'] as const)('keeps %s notices read-only despite an acknowledgement capability', async state => {
   vi.mocked(service.loadInbox).mockResolvedValue({ ...notificationInbox(), items: [{ ...notificationInbox().items[0], state }] })
   render(<NotificationInbox {...props()} />)
   expect(await screen.findByRole('button', { name: 'Acknowledge' })).toBeDisabled()
@@ -67,4 +67,14 @@ it('keeps unavailable policy explicit rather than describing an empty page as he
   render(<NotificationInbox {...props()} />)
   expect(await screen.findByText(/Notification policy unavailable/)).toHaveTextContent('does not mean all clear')
   expect(screen.getByText('No returned notifications on this page.')).toBeVisible()
+})
+
+it('shows unavailable source as unresolved recorded history without acknowledgement or a fabricated clear', async () => {
+  vi.mocked(service.loadInbox).mockResolvedValue({ ...notificationInbox(), items: [{ ...notificationInbox().items[0], state: 'SourceUnavailable' }] })
+  render(<NotificationInbox {...props()} />)
+  expect(await screen.findByText('Source unavailable')).toBeVisible()
+  expect(screen.getByText(/does not clear or rearm/)).toBeVisible()
+  expect(screen.queryByText('Source changed')).not.toBeInTheDocument()
+  expect(screen.getByRole('button', { name: 'Acknowledge' })).toBeDisabled()
+  expect(service.sendNoticeCommand).not.toHaveBeenCalled()
 })

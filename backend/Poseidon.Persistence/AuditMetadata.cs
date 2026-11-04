@@ -47,6 +47,14 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
 
     private static AuditMetadata Project(EntityEntry entry, Guid? parentVessel)
     {
+        if (entry.Entity is NotificationDispatchState dispatch)
+            return new(dispatch.VesselId, dispatch.VesselId, "NotificationDispatch", entry.State == EntityState.Added ? null : (long?)entry.Property("Revision").OriginalValue,
+                dispatch.Revision, Fields(Field("Revision", entry.State == EntityState.Added ? null : Number((long)entry.Property("Revision").OriginalValue!), Number(dispatch.Revision)),
+                    Field("Binding", entry.State == EntityState.Added ? null : "OwnerReference", "OwnerReference")));
+        if (entry.Entity is NotificationEpisode episode)
+            return new(episode.VesselId, episode.PlanId, "NotificationEpisode", entry.State == EntityState.Added ? null : (long?)entry.Property("Revision").OriginalValue,
+                episode.Revision, Fields(Field("Revision", entry.State == EntityState.Added ? null : Number((long)entry.Property("Revision").OriginalValue!), Number(episode.Revision)),
+                    Field("Binding", entry.State == EntityState.Added ? null : "OwnerReference", "OwnerReference")));
         if (entry.Entity is Notification notice)
             return new(notice.VesselId, notice.Id, "Notification", entry.State == EntityState.Added ? null : (long?)entry.Property("Revision").OriginalValue,
                 notice.Revision, Fields(Field("Binding", entry.State == EntityState.Added ? null : "OwnerReference", "OwnerReference"),

@@ -67,9 +67,38 @@ public static class NotificationEndpoints
     }
     private static async Task<bool> Scope(PoseidonDbContext db, TrustedActor actor, Guid vessel, CancellationToken ct) =>
         await actor.Scope(db.Vessels).AnyAsync(v => v.Id == vessel, ct);
-    private static NotificationDto Dto(Notification n) => new(n.Id, n.VesselId, n.PlanId, n.PlanRevision, n.RuleKey,
+    private static NotificationDto Dto(Notification n, bool sourceCurrent) => new(n.Id, n.VesselId, n.PlanId, n.PlanRevision, n.RuleKey,
         n.PolicyVersion, n.SourceState, n.Severity, n.Mandatory, n.RecipientRoleId, n.EscalationRoleId,
-        n.DueDate, n.CreatedAt, n.EscalateAt, n.State, n.Revision, n.Version);
+        n.DueDate, n.CreatedAt, n.EscalateAt, sourceCurrent || n.State == "SourceChanged" ? n.State : "SourceUnavailable", n.Revision, n.Version);
+
+    // Only re-resolve the bounded, already-authorized page. Missing heads or
+    // unresolved source/owner state project Unavailable, never a factual clear.
+    private static async Task<HashSet<Guid>> ConfirmedSources(HttpContext h, PoseidonDbContext db, Guid vessel, Notification[] notices)
+    {
+        if (notices.Length == 0) return [];
+        var tenant = db.TenantId; var rules = h.RequestServices.GetRequiredService<NotificationSettings>().For(tenant, vessel);
+        if (rules is not { Length: > 0 }) return [];
+        var owners = TechnicalEndpoints.EligibleOwners(h, vessel);
+        var ids = notices.Select(n => n.PlanId).Distinct().ToArray();
+        var sources = await MaintenanceCurrentReader.ReadOwned(vessel, db, owners,
+            h.RequestServices.GetRequiredService<MaintenanceObservationSettings>(),
+            h.RequestServices.GetRequiredService<TimeProvider>().GetUtcNow(), h.RequestAborted, limit: ids.Length, planIds: ids);
+        var episodes = await db.NotificationEpisodes.AsNoTracking().Where(e => e.VesselId == vessel && ids.Contains(e.PlanId))
+            .Take(4097).ToArrayAsync(h.RequestAborted);
+        if (episodes.Length > 4096 || !owners.Order().SequenceEqual(TechnicalEndpoints.EligibleOwners(h, vessel).Order())) return [];
+        var confirmed = new HashSet<Guid>();
+        foreach (var notice in notices) {
+            var source = sources.SingleOrDefault(s => s.Row.Id == notice.PlanId);
+            var rule = rules.SingleOrDefault(r => r.Key == notice.RuleKey && NotificationEngine.Digest(r) == notice.PolicyDigest);
+            if (source == null || rule == null || NotificationEngine.Active(rule, source, owners) != true ||
+                source.Row.Revision != notice.PlanRevision || source.Row.OwnerRoleId != notice.RecipientRoleId ||
+                NotificationEngine.SourceHash(source) != notice.SourceContextHash) continue;
+            if (episodes.Any(e => e.PlanId == notice.PlanId && e.RuleKey == notice.RuleKey && e.PolicyDigest == notice.PolicyDigest &&
+                e.Episode == notice.Episode && e.Active == true && e.SourceContextHash == notice.SourceContextHash)) confirmed.Add(notice.Id);
+        }
+        var current = h.RequestServices.GetRequiredService<NotificationSettings>().For(tenant, vessel);
+        return current != null && current.SequenceEqual(rules) ? confirmed : [];
+    }
 
     public static void MapNotifications(this IEndpointRouteBuilder app)
     {
@@ -92,10 +121,11 @@ public static class NotificationEndpoints
         var muted = await db.NotificationPreferences.Where(p => p.VesselId == vessel && p.ActorId == a.Id).Select(p => p.MutedAdvisory).SingleOrDefaultAsync(ct);
         var rows = await Visible(db, a, vessel).AsNoTracking().Where(n => !muted || n.Mandatory || n.Severity == "Critical")
             .OrderByDescending(n => n.CreatedAt).ThenBy(n => n.Id).Skip(offset).Take(26).ToArrayAsync(ct);
+        var confirmed = await ConfirmedSources(h, db, vessel, rows.Take(25).ToArray());
         if (!Current(h, a)) return await Fail(h, 403, "permission_denied");
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "NotificationRead", "Success", resourceId: vessel);
         if (!Current(h, a)) return await Fail(h, 403, "permission_denied");
-        return Results.Ok(new NotificationInboxDto(rows.Take(25).Select(Dto).ToArray(), offset, rows.Length > 25,
+        return Results.Ok(new NotificationInboxDto(rows.Take(25).Select(n => Dto(n, confirmed.Contains(n.Id))).ToArray(), offset, rows.Length > 25,
             settings.For(a.TenantId, vessel) is { Length: > 0 } ? "ConfiguredUnverified" : "Unavailable", "InAppOnly",
             Manage(a, vessel), a.Permissions.Contains("notification.acknowledge"), a.Permissions.Contains("notification.preference.write")));
     }
@@ -127,14 +157,7 @@ public static class NotificationEndpoints
         TenantId = n.TenantId, VesselId = n.VesselId, Id = Guid.NewGuid(), NotificationId = n.Id,
         Sequence = n.Revision, Kind = kind, ActorId = actor, RecordedAt = now
     };
-    private static string Digest(NotificationRule rule) => RegisterStorage.Hash(JsonSerializer.Serialize(rule, Json));
-    private static string SourceHash(MaintenanceCurrentProjection source) => RegisterStorage.Hash(JsonSerializer.Serialize(new {
-        source.Row.Id, source.Row.Revision, source.Row.Inputs.ObservationId, source.SourceObservedAt,
-        source.CurrentAssetRevision, source.JobAvailable, source.OwnerEligible, source.Row.OwnerRoleId,
-        source.Row.Due, source.Row.ObservationState
-    }, Json)); // Deliberately excludes read/assessment clocks and elapsed sampling time.
-
-    private static async Task<IResult> Refresh(HttpContext h, PoseidonDbContext db, NotificationSettings settings, TimeProvider time)
+    private static async Task<IResult> Refresh(HttpContext h, PoseidonDbContext db, NotificationEngine engine)
     {
         var a = Actor(h); var ct = h.RequestAborted;
         if (!Query(h, false, out var vessel, out _)) return await Fail(h, 400, "invalid_query");
@@ -150,62 +173,18 @@ public static class NotificationEndpoints
                 if (body.RootElement.ValueKind != JsonValueKind.Object || body.RootElement.EnumerateObject().Any()) throw new JsonException();
             }
         } catch (Exception e) when (e is JsonException or InvalidDataException) { return await Fail(h, 400, "invalid_request"); }
-        var rules = settings.For(a.TenantId, vessel);
-        if (rules is not { Length: > 0 }) return await Fail(h, 503, "source_contract_changed");
-        var policyHash = RegisterStorage.Hash(JsonSerializer.Serialize(rules, Json));
-        await using var tx = await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable, ct);
-        try {
-            var now = time.GetUtcNow();
-            var sources = await MaintenanceCurrentReader.Read(vessel, h, db, a, now) ?? [];
-            var notices = await db.Notifications.Where(n => n.VesselId == vessel && n.State != "SyntheticUnverified").Take(2001).ToArrayAsync(ct);
-            var created = 0; var escalated = 0; var changed = 0; var ownerUnavailable = 0;
-            var eligible = TechnicalEndpoints.EligibleOwners(h, vessel);
-            if (sources.Length > 500 || notices.Length > 2000) return await Fail(h, 503, "request_limit");
-            foreach (var notice in notices.Where(n => n.State is "Open" or "Escalated" or "Acknowledged")) {
-                var source = sources.SingleOrDefault(s => s.Row.Id == notice.PlanId);
-                var rule = rules.SingleOrDefault(r => r.Key == notice.RuleKey && Digest(r) == notice.PolicyDigest);
-                if (source == null || rule == null || source.Row.Revision != notice.PlanRevision || SourceHash(source) != notice.SourceContextHash ||
-                    !eligible.Contains(notice.RecipientRoleId) || !NotificationPolicy.Trigger(rule, source.Row.Due.State, source.OwnerEligible) || source.Row.OwnerRoleId != notice.RecipientRoleId) {
-                    notice.State = "SourceChanged"; notice.Revision++; db.NotificationEvents.Add(Event(notice, "SourceChanged", a.Id, now)); changed++; continue;
-                }
-                if (NotificationPolicy.EscalationDue(notice.State, notice.EscalateAt, now)) {
-                    if (notice.EscalationRoleId == null || !eligible.Contains(notice.EscalationRoleId.Value)) { ownerUnavailable++; continue; }
-                    notice.State = "Escalated"; notice.Revision++; db.NotificationEvents.Add(Event(notice, "Escalated", a.Id, now)); escalated++;
-                }
-            }
-            foreach (var source in sources) foreach (var rule in rules.Where(r => r.TriggerState == source.Row.Due.State)) {
-                if (!source.OwnerEligible || source.Row.OwnerRoleId == null || !eligible.Contains(source.Row.OwnerRoleId.Value)) { ownerUnavailable++; continue; }
-                var digest = Digest(rule);
-                var sourceHash = SourceHash(source);
-                if (notices.Any(n => n.PlanId == source.Row.Id && n.PlanRevision == source.Row.Revision && n.RuleKey == rule.Key && n.PolicyDigest == digest && n.SourceContextHash == sourceHash)) continue;
-                var head = await db.MaintenancePlans.SingleAsync(p => p.VesselId == vessel && p.Id == source.Row.Id, ct);
-                if (head.Revision != source.Row.Revision) return await Fail(h, 409, "input_version_conflict");
-                // Ordinary audited xmin fence on the existing owner; no invented revision.
-                db.Entry(head).Property(p => p.Revision).IsModified = true;
-                var notice = new Notification { TenantId = a.TenantId, VesselId = vessel, Id = Guid.NewGuid(),
-                    PlanId = source.Row.Id, PlanRevision = source.Row.Revision, RuleKey = rule.Key, PolicyVersion = rule.Version, PolicyDigest = digest, SourceContextHash = sourceHash,
-                    SourceState = source.Row.Due.State, Severity = rule.Severity, Mandatory = NotificationPolicy.IsMandatory(rule.Severity, rule.Mandatory),
-                    RecipientRoleId = source.Row.OwnerRoleId.Value, EscalationRoleId = rule.EscalationRoleId,
-                    DueDate = source.Row.Due.NextDueDate, EscalateAt = rule.EscalateAfterSeconds == null ? null : now.AddSeconds(rule.EscalateAfterSeconds.Value), CreatedAt = now };
-                db.Notifications.Add(notice); db.NotificationEvents.Add(Event(notice, "Raised", a.Id, now)); created++;
-            }
-            if (!Current(h, a) || !Manage(Actor(h), vessel) || settings.For(a.TenantId, vessel) is not { } current ||
-                RegisterStorage.Hash(JsonSerializer.Serialize(current, Json)) != policyHash ||
-                !eligible.Order().SequenceEqual(TechnicalEndpoints.EligibleOwners(h, vessel).Order())) return await Fail(h, 403, "permission_denied");
-            await db.SaveChangesAsync(ct);
-            if (!Current(h, a) || settings.For(a.TenantId, vessel) is not { } committed ||
-                RegisterStorage.Hash(JsonSerializer.Serialize(committed, Json)) != policyHash ||
-                !eligible.Order().SequenceEqual(TechnicalEndpoints.EligibleOwners(h, vessel).Order())) return await Fail(h, 403, "permission_denied");
-            await tx.CommitAsync(ct);
-            await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "NotificationCommand", "Success", resourceId: vessel);
-            return Results.Ok(new { created, escalated, sourceChanged = changed, ownerUnavailable, delivery = "InAppOnly", policyState = "ConfiguredUnverified" });
-        } catch (DbUpdateConcurrencyException) {
-            await tx.RollbackAsync(CancellationToken.None); return await Fail(h, 409, "version_conflict");
-        } catch (Exception e) when (PostgresFailure.IsDatabase(e)) {
-            await tx.RollbackAsync(CancellationToken.None);
-            var conflict = PostgresFailure.IsSerialization(e) || PostgresFailure.Provider(e)?.SqlState == "23505";
-            return await Fail(h, conflict ? 409 : 503, conflict ? "version_conflict" : "service_unavailable");
-        }
+        var result = await engine.EvaluateAsync(db, vessel, a.Id, () => TechnicalEndpoints.EligibleOwners(h, vessel),
+            () => Current(h, a) && Manage(Actor(h), vessel), ct);
+        if (result.Status != "Completed") return result.Status switch {
+            "Denied" => await Fail(h, 403, "permission_denied"),
+            "LeaseBusy" or "LeaseLost" or "Conflict" => await Fail(h, 409, "version_conflict"),
+            "CapacityUnavailable" => await Fail(h, 503, "request_limit"),
+            "Unavailable" => await Fail(h, 503, "source_contract_changed"),
+            _ => await Fail(h, 503, "service_unavailable")
+        };
+        await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "NotificationCommand", "Success", resourceId: vessel);
+        return Results.Ok(new { created = result.Created, escalated = result.Escalated, sourceChanged = result.SourceChanged,
+            ownerUnavailable = result.OwnerUnavailable, delivery = "InAppOnly", policyState = "ConfiguredUnverified" });
     }
     private static async Task<IResult> Command(Guid? id, HttpContext h, PoseidonDbContext db)
     {
@@ -248,6 +227,7 @@ public static class NotificationEndpoints
                 if (notice == null) return await Fail(h, 404, "resource_not_found");
                 if (notice.Version != expected) return await Fail(h, 409, "version_conflict");
                 if (notice.State is not ("Open" or "Escalated")) return await Fail(h, 409, "invalid_state");
+                if (!(await ConfirmedSources(h, db, vessel, [notice])).Contains(notice.Id)) return await Fail(h, 409, "input_review_required");
                 notice.State = "Acknowledged"; notice.Revision++;
                 db.NotificationEvents.Add(Event(notice, "Acknowledged", a.Id, h.RequestServices.GetRequiredService<TimeProvider>().GetUtcNow()));
                 await db.SaveChangesAsync(ct); result = new NotificationSavedDto(notice.Id, notice.Revision, notice.Version, notice.State);

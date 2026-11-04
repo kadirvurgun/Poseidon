@@ -30,3 +30,8 @@ it('sends the retained bytes and command UUID with CSRF on each explicitly reque
   expect(fetch).toHaveBeenLastCalledWith(`/api/v1/notification-escalation/${noticeId}/acknowledge?vesselId=${noticeVessel}`, expect.objectContaining({ method: 'POST', body: command.body, credentials: 'same-origin', headers: expect.objectContaining({ 'X-CSRF-TOKEN': 'synthetic-csrf', 'Idempotency-Key': command.key }) }))
   expect(JSON.parse(command.body)).not.toHaveProperty('actorId')
 })
+
+it('accepts the server source-unavailable projection without translating it into cleared or current state', () => {
+  const unavailable = { ...notificationInbox(), items: [{ ...notificationInbox().items[0], state: 'SourceUnavailable' }] }
+  expect(decodeInbox(unavailable, noticeVessel, 0).items[0].state).toBe('SourceUnavailable')
+})

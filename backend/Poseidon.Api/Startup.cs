@@ -17,6 +17,11 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         services.AddSingleton(configuration.GetSection("TugPlanning").Get<TugPlanningPolicy>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<TimeProvider>(TimeProvider.System);
         services.AddSingleton(configuration.GetSection("Notifications").Get<NotificationSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
+        services.AddScoped<NotificationEngine>();
+        services.AddSingleton(configuration.GetSection("NotificationScheduler").Get<NotificationSchedulerSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
+        services.AddSingleton<NotificationServiceContexts>();
+        services.AddSingleton<NotificationScheduler>();
+        services.AddHostedService(sp => sp.GetRequiredService<NotificationScheduler>());
         services.AddSingleton(configuration.GetSection("OfflineApplication").Get<OfflineApplicationPolicy>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton(configuration.GetSection("CrewPositionPolicy").Get<CrewPositionPolicy>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton(configuration.GetSection("CrewIdentityPolicy").Get<CrewIdentityPolicy>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
