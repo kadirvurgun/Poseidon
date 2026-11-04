@@ -2,20 +2,21 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { dailyRoutes } from './daily-operations-api'
 import { isGuid } from './identifiers'
 import type { DailyKind } from './daily-report-fields'
-export type DailyLocation = { kind: DailyKind; vessel: string | null; id: string | null; offset: number; invalid?: boolean }
+export type DailyLocation = { kind: DailyKind; vessel: string | null; id: string | null; draft?: string; offset: number; invalid?: boolean }
 export function readDailyLocation(path = window.location.pathname + window.location.search): DailyLocation {
   const invalid: DailyLocation = { kind: 'Noon', vessel: null, id: null, offset: 0, invalid: true }
   const [pathname, query = '', extra] = path.split('?')
   const match = /^\/app\/(noon-report|deck-daily-log|engine-daily-log)(?:\/([0-9a-f-]{36}))?\/?$/.exec(pathname)
   if (!match || extra !== undefined) return invalid
   const kind = (Object.entries(dailyRoutes).find(([, route]) => route.app === match[1])?.[0]) as DailyKind | undefined
-  const params = new URLSearchParams(query), vessel = match[2] ?? null, id = params.get('id'), rawOffset = params.get('offset') ?? '0'
-  if (!kind || vessel !== null && !isGuid(vessel) || id !== null && (!vessel || !isGuid(id)) || !/^(?:0|[1-9][0-9]*)$/.test(rawOffset) || Number(rawOffset) > 100000 || [...params.keys()].some(key => !['id', 'offset'].includes(key) || params.getAll(key).length !== 1)) return invalid
-  return { kind, vessel, id, offset: Number(rawOffset) }
+  const params = new URLSearchParams(query), vessel = match[2] ?? null, id = params.get('id'), draft = params.get('draft'), rawOffset = params.get('offset') ?? '0'
+  if (!kind || draft !== null && (!vessel || !isGuid(draft) || id !== null || params.has('offset')) || vessel !== null && !isGuid(vessel) || id !== null && (!vessel || !isGuid(id)) || !/^(?:0|[1-9][0-9]*)$/.test(rawOffset) || Number(rawOffset) > 100000 || [...params.keys()].some(key => !['id', 'draft', 'offset'].includes(key) || params.getAll(key).length !== 1)) return invalid
+  return { kind, vessel, id, ...(draft !== null ? { draft } : {}), offset: Number(rawOffset) }
 }
 export function dailyLocationPath(route: DailyLocation) {
   const query = new URLSearchParams()
   if (route.id) query.set('id', route.id)
+  else if (route.draft) query.set('draft', route.draft)
   if (route.offset) query.set('offset', String(route.offset))
   return `/app/${dailyRoutes[route.kind].app}${route.vessel ? `/${route.vessel}` : ''}${query.size ? `?${query}` : ''}`
 }

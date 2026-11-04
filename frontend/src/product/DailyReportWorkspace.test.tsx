@@ -3,19 +3,24 @@ import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { DailyReportWorkspace } from './DailyReportWorkspace'
 import { dailyActor, dailyCapsFixture, dailyId, dailyPageFixture, dailyRecordFixture, dailyVessel } from './daily-test-fixtures'
-import { dailyRoutes, dailySourceVersion } from './daily-operations-api'
+import { dailyRoutes, dailySourceVersion, type DailyRecord } from './daily-operations-api'
 import type { DailyKind } from './daily-report-fields'
 const json = (value: unknown, status = 200) => new Response(JSON.stringify(value), { status, headers: { 'Content-Type': 'application/json' } })
 const identity = (actor = dailyActor) => ({ authenticated: true, setupRequired: false, canRead: true, canReadCompanies: false, canCreate: false, canSearch: false, csrfToken: 'synthetic-daily-csrf', actorId: actor, tenantId: dailyVessel, tenantName: 'Synthetic workspace' })
 function transport(kind: DailyKind, options: { writable?: boolean; row?: boolean; user?: () => Promise<Response>; write?: (init: RequestInit) => Promise<Response> } = {}) {
-  const route = dailyRoutes[kind].api
+  const route = dailyRoutes[kind].api, saved = new Map<string, DailyRecord>()
   const fetch = vi.fn(async (url: string, init?: RequestInit) => {
     if (url.endsWith('/auth/session')) return options.user ? options.user() : json(identity())
     if (init?.method === 'POST' || init?.method === 'PUT') {
-      if (options.write) return options.write(init)
+      if (options.write) { const result = await options.write(init); if (result.ok) { const row = await result.clone().json() as DailyRecord; saved.set(row.id, row) } return result }
       const body = JSON.parse(init.body as string), row = dailyRecordFixture(kind)
-      return json({ ...row, id: body.id, revision: 2, version: 18, fields: { ...row.fields, ...body.fields } })
+      const written = { ...row, id: body.id, revision: 2, version: 18, fields: { ...row.fields, ...body.fields } }; saved.set(written.id, written); return json(written)
     }
+    const selected = [...saved.values()].find(row => url.includes(`/${route}/${row.id}`))
+    if (selected && url.includes('/history?')) return json({ items: [selected], offset: 0, limit: 25, hasMore: false })
+    if (selected && url.includes('/review-capabilities?')) return json({ recordId: selected.id, vesselId: dailyVessel, kind, recordRevision: selected.revision, recordVersion: selected.version, reviewVersion: 0, canRecord: false, authorities: [], blockers: ['HUMAN_REVIEW_AUTHORITY_UNAVAILABLE'], sourceVersion: dailySourceVersion })
+    if (selected && url.includes('/reviews?')) return json({ items: [], offset: 0, limit: 25, hasMore: false })
+    if (selected && !url.includes('/offline')) return json(selected)
     if (url.includes(`/${route}/capabilities?`)) return json(dailyCapsFixture(kind, options.writable !== false))
     if (url.includes(`/${route}/${dailyId}/review-capabilities?`)) return json({ recordId: dailyId, vesselId: dailyVessel, kind, recordRevision: 1, recordVersion: 17, reviewVersion: 0, canRecord: false, authorities: [], blockers: ['HUMAN_REVIEW_AUTHORITY_UNAVAILABLE'], sourceVersion: dailySourceVersion })
     if (url.includes(`/${route}/${dailyId}/reviews?`)) return json({ items: [], offset: 0, limit: 25, hasMore: false })
@@ -28,7 +33,7 @@ function transport(kind: DailyKind, options: { writable?: boolean; row?: boolean
   vi.stubGlobal('fetch', fetch); return fetch
 }
 async function english() { await userEvent.setup().click(screen.getByRole('button', { name: 'EN' })) }
-async function newDraft() { await userEvent.setup().click(await screen.findByRole('button', { name: 'New draft' })); return screen.getByRole('form', { name: 'Daily declaration form' }) }
+async function newDraft() { await userEvent.setup().click(await screen.findByRole('button', { name: 'New draft' })); return screen.findByRole('form', { name: 'Daily declaration form' }) }
 beforeEach(() => { window.history.replaceState(null, '', `/app/noon-report/${dailyVessel}`); vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(true) })
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals() })
 describe('T-OPS2 daily source interactions (authored; execution deferred)', () => {
@@ -105,7 +110,7 @@ describe('T-OPS2 daily source interactions (authored; execution deferred)', () =
     expect(screen.getByRole('region', { name: 'Daily immutable history' })).toBeVisible()
     expect(await screen.findByText('No current source-authorized human appointment is available for this record.')).toBeVisible()
     expect(screen.queryByRole('button', { name: 'Record review entry' })).not.toBeInTheDocument()
-    expect(screen.getByText(/Crew and tug grants cannot authorize these fields/)).toBeVisible()
+    expect(screen.getByRole('region', { name: 'Encrypted daily capture' })).toHaveTextContent('Only explicitly classified fields can be captured')
     expect(screen.queryByText('Ready', { exact: true })).not.toBeInTheDocument()
   })
   it('withdraws private inputs during a delayed identity change and never transfers an uncertain body to the new actor', async () => {

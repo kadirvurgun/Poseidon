@@ -47,6 +47,9 @@ describe('T-OPS2-001/002/003 exact owning boundaries (authored; execution deferr
       expect(readDailyLocation(dailyLocationPath(route))).toEqual(route)
     }
     for (const href of [`/app/noon-report/${dailyVessel}?id=${dailyId}&id=${dailyId}`, `/app/noon-report/${dailyVessel}?offset=-1`, `/app/noon-report/${dailyVessel}?vesselId=${dailyId}`, `/app/noon-report/${dailyVessel}%2F${dailyId}`, `/app/noon-report?id=${dailyId}`]) expect(readDailyLocation(href).invalid).toBe(true)
+    const draft = { kind: 'Engine' as const, vessel: dailyVessel, id: null, draft: dailyId, offset: 0 }
+    expect(readDailyLocation(dailyLocationPath(draft))).toEqual(draft)
+    for (const href of [`/app/noon-report/${dailyVessel}?draft=${dailyId}&draft=${dailyId}`, `/app/noon-report/${dailyVessel}?id=${dailyId}&draft=${dailyId}`, `/app/noon-report/${dailyVessel}?draft=${dailyId}&offset=25`, `/app/noon-report/${dailyVessel}?draft=${dailyId}&offset=0`, `/app/noon-report?draft=${dailyId}`, `/app/noon-report/${dailyVessel}?draft=not-a-uuid`]) expect(readDailyLocation(href).invalid).toBe(true)
     expect(dailyFields('Engine')).toHaveLength(18)
   })
 })
