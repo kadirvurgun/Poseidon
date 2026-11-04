@@ -167,3 +167,25 @@ yetkili tek read-only ordered-import probe sonucu veya causal fix PASS'i henüz
 yok. Minimal dependency alias incelemede;04 runtime/full126 yapılmadı.
 Yeni S3 backend/frontend kodu bu S2 sonuçlarının
 kapsamında değildir. Güncel genel kabul103/970SP10.62%,20/121iş,0/196ekran.
+
+
+## Native04 kapanışı ve daha sonraki kullanıcı cadence kararı — 2026-11-04T20:02:53.991719Z
+
+Üstteki önceki03 hata/hipotez anlatımı tarihsel kalır. Ordered duplicate-physical
+Playwright import nedeni daha sonra doğrulandı; minimal04 alias source68da49 ve
+positive1eca457 düzeltmesi bu prefix'i kapattı. Eski failure receipt'leri değişmedi.
+
+Native04 `PREFLIGHT_FROZEN_PENDING_INDEPENDENT_REVIEW` statüsüyle `2026-11-04T19:16:08.613356+00:00` tarihinde kapanmıştı:
+TLS 3 / 3 PASS, gerçek baseline 2 login PASS; bootstrap, discovery, freeze çıktıları
+issued. Discovery 63 tanım × 2 proje = 126 beklenen yürütme; **registeredExecutions=0**
+ve **fullMatrixExecuted=false**. Bu full126 veya bağımsız son S2 kabulü değildir.
+Native locator `.runtime/s2-enterprise-20261104/signed-attempt-04/s2-preflight-result.json`,
+SHA256 `47f75e702093cd5456e953627027704b5a28cbbde2eb7dea91c9dd5a7b976600`. Önceden kapanmış native sonuç failed/interrupted
+diye yeniden etiketlenmedi.
+
+Daha sonraki `.runtime/s2-enterprise-20261104/signed-preparation/user-cadence-stop04.json`
+workstate'i `INTERRUPTED_BY_USER_CADENCE`; yalnız kalan full gate work'ünü erteledi. Native04
+byte'ları aynen kaldı. Sekiz runner kapalı, F preview PID19856 / creation134382933639272220
+strict TLS health200, private12/user pointer/F binary korunmuş, exactowned04 PG
+stopped/retained. Full approval yok; S2 accepted0/42 ve noPR. Test/build/generation
+actual PR aşamasına ertelendi; S4 authoring ayrı başladı.

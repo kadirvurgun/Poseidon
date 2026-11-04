@@ -73,3 +73,16 @@ kanıtları,bağımsız exact-target QA ve gereken publication kontrolleri gerek
 [Backend sözleşmesi](../tasks/s3-regulatory-core-01.md) ve
 [UI sözleşmesi](../tasks/s3-regulatory-experience-01.md) daha ayrıntılı kaynak
 crosswalk/test sahipliğini tutar. Kabul toplamları değişmedi.
+
+
+## S4'e ayrı authoring geçişi — 2026-11-04T20:02:53.991719Z
+
+S3 kaynak implementation checkpoint'i8e5f83d7ae2e87258cdd02ffc4a3fca3981e075d ve
+metadata8f4a4b1b28d4013116843400488d930430d61239 olarak korunur. Altı UI ve14 PG,
+toplam20 vaka yalnız authored; tüm S3 kontrolleri DEFERRED / NOT RUN ve accepted0/66.
+Genel103/970SP10.62%,20/121iş,0/196ekran değişmedi. S4 altı iş/58SP için ayrı
+authoring dallarında sürüyor. Bu geçiş S3 gate/PR/kabul değildir. S2 native04 gerçek
+closed preflight'ı ve sonraki cadence-work stop'u ayrı; full126 çalıştırılmadı.
+Özgün S0/S1/source/sprint/task/acceptance ve native evidence hedefleri korunur.
+Sonraki kaynak entegrasyonu S4 `57e6427b356eb3880692db5baa9ba0d6aeb34257` oldu; tüm S4 kontrolleri NOT RUN. S5 row40
+yalnız sonraki kaynak sınırıdır; bu rapor onu başlatmaz veya kabul etmez.
