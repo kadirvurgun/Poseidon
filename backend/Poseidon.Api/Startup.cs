@@ -147,6 +147,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapSystemHealth();
             endpoints.MapNotifications();
             endpoints.MapDailyOperations();
+            endpoints.MapDailyReviews();
             endpoints.MapAuditHistory();
             endpoints.MapSecureFiles();
             endpoints.MapDocuments();
