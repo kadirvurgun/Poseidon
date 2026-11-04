@@ -23,6 +23,7 @@ const labels: Record<string, { tr: string; en: string; icon: LucideIcon; group: 
   audit: { tr: 'İşlem geçmişi', en: 'Action history', icon: Gauge, group: 'assurance' },
   companies: { tr: 'Şirketler', en: 'Companies', icon: Building2, group: 'workspace' },
   'system-health': { tr: 'Sistem sağlığı', en: 'System health', icon: Gauge, group: 'workspace' },
+  'notification-escalation': { tr: 'Bildirimler', en: 'Notifications', icon: ClipboardList, group: 'workspace' },
   crew: { tr: 'Mürettebat', en: 'Crew', icon: Users, group: 'operations' },
   equipment: { tr: 'Ekipman', en: 'Equipment', icon: Wrench, group: 'operations' },
   maintenance: { tr: 'Bakım planları', en: 'Maintenance plans', icon: ClipboardList, group: 'operations' },
@@ -41,7 +42,7 @@ export function EnterpriseChrome({ session, vessel = null, language, onLanguageC
   const currentLens = roleLens?.owner === session && roleLens.vessel === vessel && roleLens.epoch === navigation.epoch ? roleLens : null
   // A service-observation utility remains separately granted by the server;
   // selecting a role lens never grants it or hides it from an assigned operator.
-  const menuItems = currentLens ? [...currentLens.items, ...navigation.destinations.filter(item => item.key === 'system-health' && !currentLens.items.some(lens => lens.key === item.key))] : navigation.destinations
+  const menuItems = currentLens ? [...currentLens.items, ...navigation.destinations.filter(item => ['system-health', 'notification-escalation'].includes(item.key) && !currentLens.items.some(lens => lens.key === item.key))] : navigation.destinations
   const menuButton = useRef<HTMLButtonElement>(null)
   const drawer = controlledDrawer ?? localDrawer
   const setDrawer = (open: boolean) => { setLocalDrawer(open); onDrawerChange?.(open) }

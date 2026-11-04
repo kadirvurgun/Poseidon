@@ -6,7 +6,7 @@ import { useWorkspaceRevalidation } from './use-workspace-revalidation'
 export type EnterpriseDestination = { key: string; href: string }
 const destinations: Record<string, string> = { today: '/app/today', fleet: '/app/fleet', companies: '/app/companies',
   sources: '/app/sources', requirements: '/app/requirements', audit: '/app/audit',
-  'tug-command': '/app/tug-command', 'tug-job-board': '/app/tug-job-board', 'tug-job-intake': '/app/tug-job-intake', 'system-health': '/app/system-health' }
+  'tug-command': '/app/tug-command', 'tug-job-board': '/app/tug-job-board', 'tug-job-intake': '/app/tug-job-intake', 'system-health': '/app/system-health', 'notification-escalation': '/app/notification-escalation' }
 export function decodeEnterpriseNavigation(value: unknown): { destinations: EnterpriseDestination[]; canSearch: boolean } {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new ApiError(502, 'invalid_navigation')
   const v = value as Record<string, unknown>
