@@ -51,3 +51,18 @@ Missing certificate authority/catalog, source-authorized rule override and
 critical-obligation coverage remain visible product/source constraints, never
 fabricated approvals or zero counts. Existing S0/S1 and S2 scoped evidence is
 preserved separately and does not validate changed S4/S5 code.
+
+## Daily offline static-shell continuation
+
+The dedicated daily adapter also needs the public bootstrap after an offline
+restart. The static worker now accepts only the three exact daily resource
+routes and either no query or one noncredential `id`/`draft` UUID. Duplicate,
+mixed, unknown/private, mutation, cross-origin and non-navigation contexts are
+not intercepted. Only the integrity-pinned public index/assets enter its cache;
+authenticated navigation responses and context/query values do not.
+
+Six parameterized static-worker routing/privacy regression sources were added to
+the existing build-worker test file; none was run. The dedicated adapter prepares
+the shared shell explicitly before enabling local capture. Existing worker
+upgrade/activation readiness still requires the later real browser gate; no
+forced activation, client claim or automatic reload was added.
