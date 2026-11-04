@@ -80,12 +80,19 @@ export function HumanDecisionTrace({ anchor, language, csrf, offline, onDirty, o
   const why: Record<string, string> = {
     CONTROL_COMPLETION_PENDING: t('Control completion pending', 'Kontrolün tamamlanması bekleniyor'), VERIFICATION_PENDING_OR_STALE: t('Verification pending or stale', 'Doğrulama bekleniyor veya güncel değil'), DECISION_RECORDING_PENDING: t('Human decision recording pending', 'İnsan karar kaydı bekleniyor'),
     SOURCE_NOT_CURRENT: t('Source is outside current effect', 'Kaynak güncel yürürlük dışında'), PROFILE_CHANGED: t('Vessel profile changed', 'Araç profili değişti'), QUALIFICATION_CHANGED: t('Source qualification changed', 'Kaynak nitelendirmesi değişti'), INPUT_STALE: t('Input freshness elapsed', 'Girdi güncelliği sona erdi'),
+    QUALIFICATION_LINEAGE_UNAVAILABLE: t('Qualification lineage unavailable', 'Nitelendirme izi kullanılamıyor'), VESSEL_CHANGED: t('Vessel context changed', 'Araç bağlamı değişti'), RULE_CHANGED: t('Rule revision changed', 'Kural sürümü değişti'),
+    SOURCE_REVIEW_REQUIRED: t('Source review required', 'Kaynak incelemesi gerekli'), ATTESTATION_EXPIRED: t('Source attestation expired', 'Kaynak beyanının süresi doldu'), RECORDED_QUALIFICATION: t('Recorded source qualification', 'Kaydedilmiş kaynak nitelendirmesi'),
     SOURCE_ADMISSION_UNAVAILABLE: t('Source admission unavailable', 'Kaynak kabulü kullanılamıyor'), AUTHORITATIVE_EVALUATION_UNAVAILABLE: t('Authoritative evaluation unavailable', 'Yetkili değerlendirme kullanılamıyor'),
     EXTERNAL_SIGNATURE_UNAVAILABLE: t('External signature mechanism unavailable', 'Harici imza mekanizması kullanılamıyor'), REQUIREMENT_LINK_MISSING: t('Requirement link missing', 'Gereksinim bağlantısı eksik'),
     REVISION_UNAVAILABLE: t('Revision unavailable', 'Sürüm kullanılamıyor'), COMPLETION_AND_EFFECTIVENESS_UNKNOWN: t('Completion and effectiveness unknown', 'Tamamlanma ve etkinlik bilinmiyor'), EXISTENCE_IS_NOT_VERIFICATION: t('Evidence presence is separate from verification', 'Kanıt varlığı doğrulamadan ayrıdır'), HISTORICAL_INPUTS_ONLY: t('Retained historical inputs only', 'Yalnız saklanan tarihsel girdiler'),
   }
   const segmentKind: Record<string, string> = { Source: t('Source', 'Kaynak'), Requirement: t('Requirement', 'Gereksinim'), Rule: t('Rule', 'Kural'), Applicability: t('Applicability', 'Uygulanabilirlik'), Control: t('Control', 'Kontrol'), Evidence: t('Evidence', 'Kanıt'), Evaluation: t('Evaluation', 'Değerlendirme') }
-  const segmentState: Record<string, string> = { DRAFT: t('Draft', 'Taslak'), UNKNOWN: t('Unknown', 'Bilinmiyor'), REVIEW_REQUIRED: t('Review required', 'İnceleme gerekli'), RETAINED: t('Retained history', 'Saklanan geçmiş') }
+  const segmentState: Record<string, string> = {
+    DRAFT: t('Draft', 'Taslak'), ADOPTED: t('Adopted', 'Kabul edilmiş'), AWAITING: t('Awaiting effect', 'Yürürlük bekleniyor'),
+    FUTURE_EFFECTIVE: t('Future effective', 'Gelecekte yürürlüğe girecek'), IN_FORCE: t('In force', 'Yürürlükte'), SUPERSEDED: t('Superseded', 'Yeni sürüm var'),
+    SUBMITTED: t('Submitted', 'Gönderildi'), COMPLETED: t('Completed (verification separate)', 'Tamamlandı (doğrulama ayrı)'),
+    UNKNOWN: t('Unknown', 'Bilinmiyor'), REVIEW_REQUIRED: t('Review required', 'İnceleme gerekli'), RETAINED: t('Retained history', 'Saklanan geçmiş')
+  }
   return <section className="human-review regulatory-workspace" aria-label={t('Human review and decision trace', 'İnsan incelemesi ve karar izi')}>
     <h3>{t('Human review and decision trace', 'İnsan incelemesi ve karar izi')}</h3>
     <p>{t('Review required. Verification cannot activate a permit or replace a human safety decision.', 'İnceleme gerekli. Doğrulama izin etkinleştiremez veya insan emniyet kararının yerini alamaz.')}</p>

@@ -85,3 +85,15 @@ unobserved visual behavior is labeled PASS. Graph refresh is delegated to the
 coordinator after integration. Remaining acceptance requires original dependency
 review, integrated backend behavior, actual complete checks, desktop/mobile
 contrast/focus/geometry observations and independent target-commit QA.
+
+## Integrated source review correction
+
+The actual trace decoder admits eleven lifecycle states, but the former display
+dictionary covered only four. An authorized IN_FORCE source, FUTURE_EFFECTIVE
+rule or COMPLETED control therefore lost its known state in the presentation.
+The integrated UI now translates all admitted states and the missing source
+qualification, context-change and attestation blocker codes. Completed still
+explicitly remains separate from verification; neutral badges do not infer
+operational approval. Two authored EN/TR consumer regressions exercise real
+trace decoding and visible source/control states plus explicit qualification
+blockers. They are **DEFERRED / NOT RUN** with the rest of S3.
