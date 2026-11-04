@@ -146,6 +146,34 @@ test('old captures remain paginatable after a lower record quota and closed stor
   expect(result.paged).toEqual(result.ids); expect(result.end).toBe(0); expect(result.closedCode).toBe('storage_closed')
 })
 
+test('T-S4-006 lower quotas retain the complete bounded inventory without permitting new writes', async ({ page }) => {
+  await install(page)
+  const result = await page.evaluate(async () => {
+    const { __poseidonOfflineStore: Store } = globalThis as unknown as Fixture
+    const databaseName = `poseidon.offline.test.${crypto.randomUUID()}`
+    const ids = Array.from({ length: 5 }, () => crypto.randomUUID()).sort()
+    const envelope = { version: 1 as const, contextHash: 'b'.repeat(64), iv: new Uint8Array(12), ciphertext: new ArrayBuffer(32) }
+    const original = await Store.open(indexedDB, 'a'.repeat(64), { maxRecords: 8, maxEncryptedBytes: 8192, maxDeviceRecords: 64, maxDeviceEncryptedBytes: 65536 }, databaseName)
+    for (const id of ids) await original.put(id, envelope, null)
+    original.close()
+    const reduced = await Store.open(indexedDB, 'a'.repeat(64), { maxRecords: 2, maxEncryptedBytes: 8192, maxDeviceRecords: 64, maxDeviceEncryptedBytes: 65536 }, databaseName)
+    const bounded = await reduced.listRetained(5)
+    let overflowCode = '', writeCode = ''
+    try { await reduced.listRetained(4) } catch (error) { overflowCode = (error as { code: string }).code }
+    try { await reduced.put(crypto.randomUUID(), envelope, null) } catch (error) { writeCode = (error as { code: string }).code }
+    const retained = await reduced.listRetained(5)
+    const other = await Store.open(indexedDB, 'c'.repeat(64), { maxRecords: 2, maxEncryptedBytes: 8192, maxDeviceRecords: 64, maxDeviceEncryptedBytes: 65536 }, databaseName)
+    const foreignCount = (await other.listRetained(5)).length
+    reduced.close(); other.close()
+    return { ids, inventory: bounded.map(row => row.commandId), retained: retained.map(row => row.commandId), overflowCode, writeCode, foreignCount }
+  })
+  expect(result.inventory).toEqual(result.ids)
+  expect(result.retained).toEqual(result.ids)
+  expect(result.overflowCode).toBe('invalid_record')
+  expect(result.writeCode).toBe('quota_exceeded')
+  expect(result.foreignCount).toBe(0)
+})
+
 test('a schema upgrade closes stale connections and never resets the captured records', async ({ page }) => {
   await install(page)
   const result = await page.evaluate(async () => {
