@@ -63,6 +63,13 @@ public static class HumanReviewEndpoints
         (p.SubjectType == "Control" && p.SubjectId == g.ControlId || p.SubjectType == "Evidence" && p.SubjectId == g.EvidenceId);
     private static string AuthorityHash(HumanAuthority grant, TrustedActor a) =>
         RegisterStorage.Hash(JsonSerializer.Serialize(new { grant, actorId = a.Id, tenantId = a.TenantId, actorKind = "Human" }));
+    private static string TraceAccessHash(TrustedActor actor, HumanTraceReader? reader, HumanAuthority[] grants) =>
+        RegisterStorage.Hash(JsonSerializer.Serialize(new {
+            actor.Id, actor.TenantId, actor.RoleContext, actor.TenantWideRead, actor.TenantWideManage,
+            permissions = actor.Permissions.Order(StringComparer.Ordinal),
+            vessels = actor.VesselGrants.OrderBy(g => g.VesselId).ThenBy(g => g.CanEdit),
+            reader, grants = grants.OrderBy(g => g.Id)
+        }, Json));
     private static async Task<IResult> Fail(HttpContext h, int status, string code) {
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "HumanReview", code);
         return Results.Problem(statusCode: status, title: code, extensions: new Dictionary<string, object?> { ["code"] = code, ["traceId"] = h.TraceIdentifier });
@@ -139,6 +146,13 @@ public static class HumanReviewEndpoints
         var reader = Reader(h, a, vessel, evidence, control);
         var grants = Authorities(h, a, vessel, evidence, control, DateTimeOffset.UtcNow);
         if (reader == null && grants.Length == 0) return await Fail(h, 403, "trace_reader_required");
+        var accessHash = TraceAccessHash(a, reader, grants);
+        bool AccessCurrent() {
+            var live = h.RequestServices.GetRequiredService<ActorResolver>().Resolve(h.User);
+            return live != null && live.Id == a.Id && live.TenantId == a.TenantId &&
+                TraceAccessHash(live, Reader(h, live, vessel, evidence, control),
+                    Authorities(h, live, vessel, evidence, control, DateTimeOffset.UtcNow)) == accessHash;
+        }
         if (!await a.Scope(db.Vessels).AnyAsync(v => v.Id == vessel, ct)) return await Fail(h, 404, "resource_not_found");
         var ev = await Visible(db, vessel, a, reader != null).SingleOrDefaultAsync(x => x.Kind == "Evidence" && x.Id == evidence && x.Revision == er && x.SavedAt <= asOf, ct);
         var co = await Visible(db, vessel, a, reader != null).SingleOrDefaultAsync(x => x.Kind == "Control" && x.Id == control && x.Revision == cr && x.SavedAt <= asOf, ct);
@@ -170,6 +184,7 @@ public static class HumanReviewEndpoints
         segments.Add(new("Evidence", ev.Id, ev.Revision, "Available", ev.Lifecycle, "EXISTENCE_IS_NOT_VERIFICATION", ev.Hash, ev.SavedAt));
         // Reauthorize private decision history BEFORE paging/response. A receipt or
         // historical timestamp never retains a revoked role/type/subject binding.
+        if (!AccessCurrent()) return await Fail(h, 403, "trace_reader_required");
         var reviewOperations = grants.Where(g => g.Capability is "human.verify" or "human.review.submit").Select(g => g.OperationId).ToArray();
         var decisionHashes = grants.Where(g => g.Capability is "human.decide" or "human.review.submit").Select(g => AuthorityHash(g, a)).ToArray();
         var legacyIds = grants.Where(g => g.Capability is "human.decide" or "human.review.submit").Select(g => g.Id).ToArray();
@@ -208,7 +223,6 @@ public static class HumanReviewEndpoints
         }
         var eh = await db.ControlEvidenceHeads.SingleAsync(x => x.VesselId == vessel && x.Kind == "Evidence" && x.Id == evidence, ct);
         var ch = await db.ControlEvidenceHeads.SingleAsync(x => x.VesselId == vessel && x.Kind == "Control" && x.Id == control, ct);
-        await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "HumanTraceRead", "Success", resourceId: evidence);
         var content = JsonSerializer.Deserialize<ControlEvidenceContent>(ev.ContentJson, Json)!;
         var historicalSuperseded = await db.ControlEvidenceRevisions.AnyAsync(x => x.VesselId == vessel && x.SavedAt <= asOf &&
             (x.Kind == "Evidence" && x.Id == evidence && x.Revision > er || x.Kind == "Control" && x.Id == control && x.Revision > cr), ct);
@@ -222,12 +236,19 @@ public static class HumanReviewEndpoints
         var recordedChain = evaluationCauses.Length == 0 && pins.Length > 0 && co.Lifecycle == "COMPLETED" && !historicalSuperseded &&
             currentEvents.Any(v => v.Kind == "Verification" && v.State == "VERIFIED" && v.ValidUntil > DateTimeOffset.UtcNow && v.EvaluationId == latestEvaluation?.Id &&
                 currentEvents.Any(d => d.Kind == "Decision" && d.State == "RECORDED" && d.VerificationId == v.Id && d.VerificationRevision == v.Revision && d.EvaluationId == v.EvaluationId));
+        var profileRevision = await db.RegulatoryDraftRevisions.Where(x => x.VesselId == vessel && x.SavedAt <= asOf)
+            .OrderByDescending(x => x.Revision).Select(x => (long?)x.Revision).FirstOrDefaultAsync(ct);
+        if (!AccessCurrent()) return await Fail(h, 403, "trace_reader_required");
+        await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "HumanTraceRead", "Success", resourceId: evidence);
+        // Audit persistence is also asynchronous. Withdrawals during that await
+        // still deny response bytes; a final attributed denial follows the read event.
+        if (!AccessCurrent()) return await Fail(h, 403, "trace_reader_required");
         return Results.Ok(new { vesselId = vessel, evidenceId = evidence, evidenceRevision = er, evidenceVersion = eh.Version, controlId = control, controlRevision = cr, controlVersion = ch.Version,
             asOf, historical, evaluationId = latestEvaluation?.Id, disposition = recordedChain ? "RECORDED_CHAIN" : "REVIEW_REQUIRED", complete = recordedChain, segments, items, auditItems, auditHasMore, offset, hasMore = events.Length > 25,
             evidenceContext = new { content.Provenance, content.ObservedAt, content.ValidUntil, content.FreshUntil, timeState = ControlEvidencePolicy.TimeState(content, asOf, historicalSuperseded) },
             blockers = chainBlockers.Distinct().ToArray(),
-            profileRevision = await db.RegulatoryDraftRevisions.Where(x => x.VesselId == vessel && x.SavedAt <= asOf).OrderByDescending(x => x.Revision).Select(x => (long?)x.Revision).FirstOrDefaultAsync(ct),
-            authorities = (historical || Superseded(eh, ch, er, cr) ? [] : Authorities(h, a, vessel, evidence, control, DateTimeOffset.UtcNow))
+            profileRevision,
+            authorities = (historical || Superseded(eh, ch, er, cr) ? [] : grants)
                 .Select(g => new { g.Id, g.OperationId, g.RoleId, g.Capability, g.ValidUntil, g.Recording }).ToArray() });
     }
     private static async Task<IResult> Save(HttpContext h, string kind, Guid? id)
