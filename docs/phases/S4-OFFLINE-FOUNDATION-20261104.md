@@ -84,3 +84,22 @@ Scheduler/dış provider ve maintenance dışındaki adapter'lar açık; recurri
 retired source-context reopening politikası kaynak kararı bekliyor. Notice2001
 guard ve legacy maintenance500 post-read cap sınırı gizlenmedi. Bu yüzden altı
 kriterin tamamlandığı veya tüm otomasyonun geçtiği sonucu çıkarılamaz.
+
+
+## S5 entegrasyonu sırasında S4 scheduler devamı — 2026-11-04T20:42:48.912039Z
+
+Kaynak handoff checkpoint'i `574f027bd1c42d885289a58a95a39d2acf7e8ba3`. Önceki57e6427 raporundaki
+"scheduler yok / recurring policy açık" sözleri o tarihli kaynak fotoğrafıdır.
+Yeni devamın durumu: Bounded ortak engine ve varsayılan kapalı BackgroundService; exact Service/System tenant-vessel-role attribution, durable expiring lease/cursor ve immutable recurring episode kaynakları normal merge ile entegre. Eksik/Unknown source mevcut basis’i koruyup SourceUnavailable gösterir; acknowledgement kapanır. Değişmemiş source geri gelince sahte yeni episode açılmaz. Maintenance/InAppOnly sınırı sürer; production activation/routing, dış delivery ve polling aralarında görülmeyen döngüler sağlanmış değildir. Migration/snapshot ve worker/PG/UI test kaynakları yazıldı, çalıştırılmadı.
+Actual root handoff'u merged source kapsamını doğrular; source57'deki eski
+"scheduler yok / recurrence açık" sınırları yalnız yukarıdaki somut kaynak
+kapsamında supersede edildi. Runtime veya production activation tamamlanmadı.
+Scheduler internal'dır; public HTTP envanteri86/80/85 kalır. Üretim dış delivery,
+approved routing catalog veya insan karar onayı kaynak yazımıyla oluşmaz.
+S4 kabulü0/58 ve tüm yeni kontroller DEFERRED. S2 native04 closed TLS3/login2/matrix0
+kanıtı ve sonraki cadence-stop ayrı korunur. S5 read-only workspace'leri eski82
+native kanıtını yeni85 doğrulaması yapmaz. Global103/970SP10.62%,20/121iş,0/196ekran.
+Scheduler commit12868e6 kaynak diff'i22 dosya+920/-93;10 Fact method kaynağı
+(birinde3 inline örnek) authored NOT RUN, native yürütme toplamı değildir.
+Root'un exact574f027 AST-only graph refresh'i15.783node/29.162edge/1.047community
+üretti; LLM çağrısı yok. Derived navigation çıktısı build/test/security QA değildir.

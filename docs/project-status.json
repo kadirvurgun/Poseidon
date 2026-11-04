@@ -1009,7 +1009,7 @@
       "accepted": false
     }
   },
-  "as_of": "2026-11-04T20:02:53.991719Z",
+  "as_of": "2026-11-04T20:42:48.912039Z",
   "audit_trace_01": {
     "status": "combined_gate_executed_not_accepted",
     "accepted": false,
@@ -1114,7 +1114,7 @@
     "verification_record_scope": "Authored/deferred and original20f1198 results are historical;current rejection-repair evidence in core_bundle_01.verification"
   },
   "baseline": "POSEIDON v46.3 updated 2026-10-30 / Library26 candidate",
-  "current_stage": "S4 integrated SOURCE checkpoint57e6427:6 tasks/58SP,0accepted; backend23 authored cases and root3 browser case sources NOTRUN. Current inventory86/80/85 is source only; all checks DEFERRED until actualPRstage. S5 source beginsrow40,notstarted/accepted. Overall103/97010.62%,20/121,0screens.",
+  "current_stage": "S5 compliance4/32 and S4 scheduler continuation integrated at574f027; canonicalS5remainder DEV080/097-0994/37 sourceauthoringSTARTED separately, notintegrated/accepted. S5total8/69accepted0, allchecksDEFERRED. Overall103/97010.62%,20/121,0screens.",
   "method": "accepted story points / total baseline story points * 100",
   "scope": "complete v46.3 Backlog sheet; duplicates in other sheets excluded",
   "total_tasks": 121,
@@ -3942,231 +3942,247 @@
   ],
   "active_source": "docs/sources/active.json",
   "current_package": {
-    "task": "S4-OFFLINE-FOUNDATION-20261104",
-    "state": "INTEGRATED_SOURCE_CHECKPOINT_NOT_VALIDATED_NOT_ACCEPTED",
-    "observed_at_utc": "2026-11-04T20:02:53.991719Z",
-    "branch": "foundation/s4-offline-foundation-20261104",
-    "base_commit": "8f4a4b1b28d4013116843400488d930430d61239",
-    "base_tree": "f9b1ee582b29003c81c900b8bfa759913aeb3a20",
-    "source_checkpoint_kind": "REVIEWABLE_INTEGRATED_SOURCE_ONLY",
+    "task": "S5-COMPLIANCE-FOUNDATION-20261104",
+    "state": "SOURCE_AUTHORED_OPEN_GATES_NOT_ACCEPTED",
+    "observed_at_utc": "2026-11-04T20:42:48.912039Z",
+    "branch": "foundation/s5-compliance-foundation-20261104",
+    "source_checkpoint": {
+      "state": "ROOT_CONFIRMED_SOURCE_ONLY",
+      "commit": "574f027bd1c42d885289a58a95a39d2acf7e8ba3",
+      "tree": "b489940874a78bffd8e46eb1e88b8590dd38b0ba",
+      "observed_authoring_head": "574f027bd1c42d885289a58a95a39d2acf7e8ba3",
+      "observed_authoring_tree": "b489940874a78bffd8e46eb1e88b8590dd38b0ba",
+      "runtime_validation_or_acceptance": false
+    },
     "source_baseline": "poseidon-v46.3-20261030",
     "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
     "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
     "source_rows": [
-      34,
-      35,
-      36,
-      37,
-      38,
-      39
+      40,
+      41,
+      42,
+      43
     ],
     "source_scope": {
-      "tasks": 6,
-      "story_points": 58,
+      "tasks": 4,
+      "story_points": 32,
       "accepted_story_points": 0,
       "ids": [
-        "DEV-033",
-        "DEV-034",
-        "DEV-035",
-        "DEV-036",
-        "DEV-037",
-        "DEV-038"
+        "DEV-039",
+        "DEV-040",
+        "DEV-041",
+        "DEV-042"
       ]
     },
     "tasks": [
       {
-        "id": "DEV-033",
-        "title": "Durable offline queue",
-        "story_points": 13,
-        "source_locator": "sheet:Backlog/row:34",
-        "trace_id": "T-S4-001",
-        "literal_acceptance_criteria": "Client UUID/base version/timestamp ile queue restart sonrası korunur; encrypted local storage; pending state görünür.",
-        "dependencies": [
-          "DEV-021",
-          "DEV-029"
-        ],
-        "source_status": "Not Started",
-        "state": "INTEGRATED_SOURCE_CHECKPOINT_AUTHORED_ACCEPTANCE_OPEN",
-        "verification": "DEFERRED_UNTIL_ACTUAL_PR_GATE",
-        "accepted": false
-      },
-      {
-        "id": "DEV-034",
-        "title": "Idempotent sync API",
-        "story_points": 13,
-        "source_locator": "sheet:Backlog/row:35",
-        "trace_id": "T-S4-002",
-        "literal_acceptance_criteria": "Idempotency key + expected version; retry duplicate critical state yaratmaz; server authoritative result döner.",
-        "dependencies": [
-          "DEV-033"
-        ],
-        "source_status": "Not Started",
-        "state": "INTEGRATED_SOURCE_CHECKPOINT_AUTHORED_ACCEPTANCE_OPEN",
-        "verification": "DEFERRED_UNTIL_ACTUAL_PR_GATE",
-        "accepted": false
-      },
-      {
-        "id": "DEV-035",
-        "title": "Material conflict center",
+        "id": "DEV-039",
+        "title": "Pilot vessel onboarding wizard",
         "story_points": 8,
-        "source_locator": "sheet:Backlog/row:36",
-        "trace_id": "T-S4-003",
-        "literal_acceptance_criteria": "High-risk conflict auto overwrite olmaz; before/local/server context gösterilir; human resolution audit edilir.",
+        "source_locator": "sheet:Backlog/row:40",
+        "trace_id": "T-S5-001",
+        "literal_acceptance_criteria": "Identity/profile/flag/class/type/GT/cargo/trading context completeness kontrolü; missing critical field REVIEW_REQUIRED üretir.",
         "dependencies": [
-          "DEV-034",
-          "DEV-016"
+          "DEV-020",
+          "DEV-027"
         ],
         "source_status": "Not Started",
-        "state": "INTEGRATED_SOURCE_CHECKPOINT_AUTHORED_ACCEPTANCE_OPEN",
+        "state": "SOURCE_AUTHORED_WITH_OPEN_CRITERIA_NOT_ACCEPTED",
         "verification": "DEFERRED_UNTIL_ACTUAL_PR_GATE",
         "accepted": false
       },
       {
-        "id": "DEV-036",
-        "title": "Notification/escalation engine v1",
+        "id": "DEV-040",
+        "title": "Applicability reason review",
         "story_points": 8,
-        "source_locator": "sheet:Backlog/row:37",
-        "trace_id": "T-S4-004",
-        "literal_acceptance_criteria": "Severity/due/state trigger; dedupe; acknowledgement/escalation audit; mandatory critical route user preference ile susturulamaz.",
+        "source_locator": "sheet:Backlog/row:41",
+        "trace_id": "T-S5-002",
+        "literal_acceptance_criteria": "Rule version, inputs, source, result, reviewer state görünür; manual override controlled reason + audit gerektirir.",
         "dependencies": [
-          "DEV-016"
+          "DEV-027",
+          "DEV-039"
         ],
         "source_status": "Not Started",
-        "state": "INTEGRATED_SOURCE_CHECKPOINT_AUTHORED_ACCEPTANCE_OPEN",
+        "state": "SOURCE_AUTHORED_WITH_OPEN_CRITERIA_NOT_ACCEPTED",
         "verification": "DEFERRED_UNTIL_ACTUAL_PR_GATE",
         "accepted": false
       },
       {
-        "id": "DEV-037",
-        "title": "Health dashboard v1",
+        "id": "DEV-041",
+        "title": "Applicable controls oluştur",
         "story_points": 8,
-        "source_locator": "sheet:Backlog/row:38",
-        "trace_id": "T-S4-005",
-        "literal_acceptance_criteria": "API errors/latency, sync backlog/conflict, audit writer, file service ve data freshness metrikleri görünür.",
+        "source_locator": "sheet:Backlog/row:42",
+        "trace_id": "T-S5-003",
+        "literal_acceptance_criteria": "Applicable requirement'lar kontrollere bağlanır; owner/frequency/evidence/verification fields vardır; orphan critical requirement=0 hedeflenir.",
         "dependencies": [
-          "DEV-011",
-          "DEV-034"
+          "DEV-028",
+          "DEV-040"
         ],
         "source_status": "Not Started",
-        "state": "INTEGRATED_SOURCE_CHECKPOINT_AUTHORED_ACCEPTANCE_OPEN",
+        "state": "SOURCE_AUTHORED_WITH_OPEN_CRITERIA_NOT_ACCEPTED",
         "verification": "DEFERRED_UNTIL_ACTUAL_PR_GATE",
         "accepted": false
       },
       {
-        "id": "DEV-038",
-        "title": "Offline chaos regression pack",
+        "id": "DEV-042",
+        "title": "Digital Compliance Passport pilot view",
         "story_points": 8,
-        "source_locator": "sheet:Backlog/row:39",
-        "trace_id": "T-S4-006",
-        "literal_acceptance_criteria": "Network drop/reconnect, duplicate request, stale base version, attachment retry, conflict paths otomasyonda PASS.",
+        "source_locator": "sheet:Backlog/row:43",
+        "trace_id": "T-S5-004",
+        "literal_acceptance_criteria": "Current applicable requirements, certificates, evidence completeness, blockers ve source freshness drill-down ile görünür.",
         "dependencies": [
-          "DEV-033:DEV-035"
+          "DEV-032",
+          "DEV-041"
         ],
         "source_status": "Not Started",
-        "state": "INTEGRATED_SOURCE_CHECKPOINT_AUTHORED_ACCEPTANCE_OPEN",
+        "state": "SOURCE_AUTHORED_WITH_OPEN_CRITERIA_NOT_ACCEPTED",
         "verification": "DEFERRED_UNTIL_ACTUAL_PR_GATE",
         "accepted": false
       }
     ],
-    "authoring_owners": [
-      {
-        "owner": "UI",
-        "branch": "work/s4-offline-experience-20261104",
-        "scope": "Queue/conflict/health UI, source-grounded in-app notification consumer supporting DEV-036, authored component/chaos regressions"
-      },
-      {
-        "owner": "Backend",
-        "branch": "work/s4-sync-notification-20261104",
-        "scope": "Idempotent sync/conflict, notification escalation and truthful health API with authored tests"
-      }
-    ],
-    "plan": {
-      "path": ".runtime/s4-offline-20261104/work.json",
-      "sha256": "f723686f18120851ac91aa430fd76ff6146598fc5e462edc65315ce36afb2d42"
-    },
-    "dependency_mode": "Existing S2/S3 contracts source-ready for authoring; acceptance remains open, not accepted by this plan.",
-    "verification": {
-      "state": "DEFERRED_NOT_RUN",
-      "scope": "S4_AUTHORING_ONLY",
-      "observed_at_utc": "2026-11-04T20:02:53.991719Z",
-      "tests_build_typecheck_lint_generation_browser": "NOT_AUTHORIZED_UNTIL_ACTUAL_PR_STAGE",
-      "previous_phase_native_evidence_applies": false,
-      "independent_final_target_qa": "PENDING"
-    },
-    "report": "docs/phases/S4-OFFLINE-FOUNDATION-20261104.md",
-    "canonical_acceptance_changed": false,
-    "next_step": "Root reviews integrated S4 source and records current report; S5 source begins row40 only when assigned. S4 checks remain deferred until actual PR preparation.",
-    "integrated_source_checkpoint": "57e6427b356eb3880692db5baa9ba0d6aeb34257",
-    "integrated_source_tree": "9c3fc002011cb4db54c955a964bbcf192ec5b9ea",
     "source_contracts": [
       {
-        "path": "docs/tasks/s4-offline-experience-01.md",
-        "sha256": "fda3ded336d5daff84b5413014ecded2a986843a527a3423f039e235313c0b39"
+        "path": "docs/tasks/s5-compliance-core-01.md",
+        "sha256": "31583ce0290b25a0f5120567c846802f6a44fe803fe93876e76c96a1b18f1a0a"
       },
       {
-        "path": "docs/tasks/s4-sync-notification-01.md",
-        "sha256": "119dbbfbe66d01a6d7851db40afa9b7cd2c6a7409251ddb16cc7ad8aff4aaaeb"
+        "path": "docs/tasks/s5-compliance-experience-01.md",
+        "sha256": "84d509f6065d92c56b2a66fff069767418b3c4d2b3d34ae8f4a22f15b1b0fbb0"
       },
       {
-        "path": "docs/tasks/s4-retained-inventory-01.md",
-        "sha256": "cbb883d16fd25c78ee7688b7adbba502d800673e10cf662581fe8af1dd8574f0"
-      },
-      {
-        "path": "docs/tasks/s4-chaos-regressions-01.md",
-        "sha256": "7dd2315af614a95ee761c2dfb23fdfd456decaaaca51e373e9a1e519cabd735d"
+        "path": "docs/tasks/s5-integration-experience-01.md",
+        "sha256": "f0f57984687410a424458343c0080700e9b49906a26a5ae8399d51d92f77c373"
       }
     ],
-    "authored_commits": {
-      "UI_queue_conflict_health": "622f198",
-      "UI_source_grounded_inbox": "94e25614",
-      "backend_notification_health": "4116748",
-      "retained_inventory_and_chaos": [
-        "7181c0c",
-        "31eb1af",
-        "60c5a79"
-      ],
-      "explicit_discard_unload_guard": "57e6427"
+    "authored_checkpoints": {
+      "backend": "c9d96d1",
+      "UI": "5a437538",
+      "notification_titles": "f642712",
+      "two_viewport_browser_case_sources": "f5926a4",
+      "readable_blocker_consumer": "3105bdb",
+      "source_crosswalk": "d285f2c",
+      "final_live_revocation_and_paging": "c7c37dcf767b463183fbca4db57c78a5110d9a74",
+      "root_readable_blocker_wiring": "7dac4bfec4fb91ecc6a99eb1d429deedae88b970",
+      "canonical_scope_correction": "d939d7c10dcf1c6c37a5659c927ca04589e4839a",
+      "merged_scheduler": "12868e670f15194dc9df18373e72498dc59f145a"
     },
-    "authored_test_sources": {
-      "backend_cases": 23,
-      "UI_contract_and_interaction": "AUTHORED_COUNT_NOT_AGGREGATED",
-      "root_browser_case_sources": 3,
-      "browser_scope": "2 real IndexedDB driver cases + 1 mocked UI discard/navigation case; none executed",
-      "native_project_or_execution_count": "NOT_INFERRED"
+    "compliance_followup_summary": "Live response authorization and fresh owning SQL visibility fence run after composition and after audit; stale authorized capture remains Available=true/Current=false. Currentness alone drives requirement planning. HasMore represents pageable control/evidence rows, with link truncation explicit. Deterministic PG source/role/audit interleaving and paging test sources are authored, NOT RUN.",
+    "S4_continuation": {
+      "state": "SOURCE_CONTINUATION_MERGED_NOT_VALIDATED",
+      "observed_at_utc": "2026-11-04T20:42:48.912039Z",
+      "scheduler_summary": "Shared bounded engine, disabled-by-default configured BackgroundService, exact Service/System tenant-vessel-role attribution, durable expiring lease/cursor and immutable recurring source episodes are merged. Unknown/missing sources preserve basis and project SourceUnavailable with acknowledgement blocked; unchanged restoration does not invent a new episode. Maintenance adapter and InAppOnly remain; production routing/activation, external delivery and unseen between-poll cycles are not supplied. Migration/snapshot and meaningful worker/PG/UI regression sources are authored, NOT RUN.",
+      "root_confirmed_scheduler_commit": "12868e670f15194dc9df18373e72498dc59f145a",
+      "old_source57_constraints": "Historical checkpoint only; scheduler-absent/recurrence-open statements must be superseded only by the actual confirmed merged continuation, never guessed",
+      "scheduler_is_internal_not_new_HTTP_mutation": true,
+      "source_inventory": {
+        "mutation_templates": 86,
+        "critical_templates": 80,
+        "concrete_operations": 85,
+        "no_85_PASS": true
+      },
+      "verification": "DEFERRED_UNTIL_ACTUAL_PR_GATE"
     },
-    "current_security_inventory": {
-      "mutation_templates": 86,
-      "critical_templates": 80,
-      "concrete_operations": 85,
-      "added_operations": [
-        "NotificationRefresh",
-        "NotificationAcknowledge",
-        "NotificationPreference"
-      ],
-      "source_sha256": "cc601158be7e692f5b2b916dcd80ed87874dc34fef1acb67a8ae295e677bf133",
-      "status": "SOURCE_DEFINITION_NOT_RUNTIME_PROVEN",
-      "historical_S1_S2_native82_targets_unchanged": true,
-      "85_operation_pass_claimed": false
-    },
-    "operational_limits": [
-      "Explicit manager POST refresh only; no scheduler or external delivery; InAppOnly",
-      "Maintenance first owning source only; default policy Unavailable, configured policy ConfiguredUnverified",
-      "Identical retired source context does not reopen; recurring-episode policy remains open",
-      "Notification query Take2001 guard; existing maintenance reader still materializes before its 500-source guard",
-      "Migration/model parity and security/frontend/contract/browser checks all DEFERRED until actual PR gate"
+    "open_source_and_product_gates": [
+      "No authoritative vessel certificate catalog: UNAVAILABLE",
+      "Critical obligation universe not established: null/unavailable, never zero",
+      "No source-authorized RuleOverride appointment/type contract: manualOverrideAvailable=false",
+      "Four source rows are not four accepted/delivered criteria",
+      "Independent phase/dependency acceptance and actual PR checks remain open"
     ],
-    "source_diff_from_base": {
-      "files": 59,
-      "insertions": 2307,
-      "deletions": 65,
-      "meaning": "Source only, not execution evidence"
+    "verification": {
+      "state": "DEFERRED_NOT_RUN",
+      "scope": "S5_AND_PENDING_S4_SOURCE_CONTINUATION",
+      "tests_build_typecheck_lint_generation_browser": "DEFERRED_UNTIL_ACTUAL_PR_GATE",
+      "source_review_is_implementation_QA": false,
+      "new_runtime_pass_claimed": false
     },
-    "next_phase_source_only": {
-      "phase": "S5",
-      "first_locator": "sheet:Backlog/row:40",
-      "first_task_id": "DEV-039",
-      "first_task_title": "Pilot vessel onboarding wizard",
-      "state": "NOT_STARTED_OR_ACCEPTED_BY_THIS_CHECKPOINT"
+    "report": "docs/phases/S5-COMPLIANCE-FOUNDATION-20261104.md",
+    "canonical_acceptance_changed": false,
+    "no_new_public_HTTP_writes_in_S5": true,
+    "next": "Wait for exact root handoff, review source and keep checks deferred to actual PR stage. No S2/new PR or phase acceptance is asserted.",
+    "selected_subpackage_not_complete_canonical_sprint": true,
+    "canonical_S5_inventory_unchanged": {
+      "sprint": "S5",
+      "tasks": 8,
+      "story_points": 69,
+      "accepted_tasks": 0,
+      "accepted_story_points": 0,
+      "completion_percent": 0
+    },
+    "canonical_S5_remainder": {
+      "state": "SOURCE_AUTHORING_STARTED_NOT_INTEGRATED_NOT_ACCEPTED",
+      "source_plan": {
+        "path": ".runtime/s5-compliance-20261104/work.json",
+        "sha256": "4be90653c77b11f8c88f81d8ebc678e63d300873c36edac996155a1bdec8508c"
+      },
+      "authoring_base": "be3360e64fea3318c57bcf5c360225cfc5ffa325",
+      "tasks": [
+        {
+          "id": "DEV-080",
+          "story_points": 8,
+          "source_locator": "sheet:Backlog/row:81",
+          "trace_id": "T-TUG-001",
+          "literal_acceptance_criteria": "Tug profile bollard pull/type/equipment context + role lens; Ship Mode screens remain hidden unless cross-mode role.",
+          "dependencies": [
+            "DEV-020",
+            "DEV-022"
+          ],
+          "state": "CANONICAL_S5_REMAINDER_SOURCE_AUTHORING_STARTED_NOT_INTEGRATED_NOT_ACCEPTED",
+          "accepted": false,
+          "verification": "DEFERRED_UNTIL_ACTUAL_PR_GATE"
+        },
+        {
+          "id": "DEV-097",
+          "story_points": 13,
+          "source_locator": "sheet:Backlog/row:98",
+          "trace_id": "T-OPS2-001",
+          "literal_acceptance_criteria": "Position/voyage/activity/speed/weather/fuel/ROB/master review; data downstream voyage, emissions and dashboards tarafından tekrar kullanılabilir; offline save supported.",
+          "dependencies": [
+            "DEV-021",
+            "DEV-033"
+          ],
+          "state": "CANONICAL_S5_REMAINDER_SOURCE_AUTHORING_STARTED_NOT_INTEGRATED_NOT_ACCEPTED",
+          "accepted": false,
+          "verification": "DEFERRED_UNTIL_ACTUAL_PR_GATE"
+        },
+        {
+          "id": "DEV-098",
+          "story_points": 8,
+          "source_locator": "sheet:Backlog/row:99",
+          "trace_id": "T-OPS2-002",
+          "literal_acceptance_criteria": "Watch-period log, navigation status, port/cargo activity, pilot/tug activity, ballast, safety note, handover, officer/master review; audit/offline.",
+          "dependencies": [
+            "DEV-097"
+          ],
+          "state": "CANONICAL_S5_REMAINDER_SOURCE_AUTHORING_STARTED_NOT_INTEGRATED_NOT_ACCEPTED",
+          "accepted": false,
+          "verification": "DEFERRED_UNTIL_ACTUAL_PR_GATE"
+        },
+        {
+          "id": "DEV-099",
+          "story_points": 8,
+          "source_locator": "sheet:Backlog/row:100",
+          "trace_id": "T-OPS2-003",
+          "literal_acceptance_criteria": "Engine/aux hours, fuel/lube, measurements, alarms, defects, WO link, environmental check, C/E review; offline/audit.",
+          "dependencies": [
+            "DEV-052",
+            "DEV-097"
+          ],
+          "state": "CANONICAL_S5_REMAINDER_SOURCE_AUTHORING_STARTED_NOT_INTEGRATED_NOT_ACCEPTED",
+          "accepted": false,
+          "verification": "DEFERRED_UNTIL_ACTUAL_PR_GATE"
+        }
+      ],
+      "story_points": 37,
+      "accepted_story_points": 0
+    },
+    "remaining_source_inventory": {
+      "tasks_not_in_confirmed_compliance_slice": 78,
+      "SP_not_in_confirmed_compliance_slice": 669,
+      "other_S5_source_authoring_started_tasks": 4,
+      "other_S5_SP": 37,
+      "S6_plus_future_pilot_tasks": 74,
+      "S6_plus_future_pilot_SP": 632
     }
   },
   "nav_workspace_01": {
@@ -6005,7 +6021,7 @@
     "scope": "Unchanged /verification is accepted historical S1 implementation F evidence, not current S2 verification. Current S2 checks remain /current_package/verification DEFERRED.",
     "historical_s1_observed_at": "2026-11-04T15:52:45.449192+00:00",
     "previous_top_level_as_of": "2026-11-03",
-    "current_scope": "Unchanged /verification is historical S1 F only. CurrentS4checks at /current_package/verification are DEFERRED; S2 native04 status and later cadence workstate are separate."
+    "current_scope": "Old /verification is historical S1 F; current S5/S4 source checks are DEFERRED under /current_package/verification."
   },
   "s2_enterprise_context_20261104": {
     "status": "AUTHORING_UI_PATTERN_CORRECTIONS_AND_HISTORY_SCOPE_FIX",
@@ -7385,5 +7401,492 @@
       "first_task_title": "Pilot vessel onboarding wizard",
       "state": "NOT_STARTED_OR_ACCEPTED_BY_THIS_CHECKPOINT"
     }
+  },
+  "historical_s4_package_before_s5": {
+    "task": "S4-OFFLINE-FOUNDATION-20261104",
+    "state": "INTEGRATED_SOURCE_CHECKPOINT_NOT_VALIDATED_NOT_ACCEPTED",
+    "observed_at_utc": "2026-11-04T20:02:53.991719Z",
+    "branch": "foundation/s4-offline-foundation-20261104",
+    "base_commit": "8f4a4b1b28d4013116843400488d930430d61239",
+    "base_tree": "f9b1ee582b29003c81c900b8bfa759913aeb3a20",
+    "source_checkpoint_kind": "REVIEWABLE_INTEGRATED_SOURCE_ONLY",
+    "source_baseline": "poseidon-v46.3-20261030",
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "source_rows": [
+      34,
+      35,
+      36,
+      37,
+      38,
+      39
+    ],
+    "source_scope": {
+      "tasks": 6,
+      "story_points": 58,
+      "accepted_story_points": 0,
+      "ids": [
+        "DEV-033",
+        "DEV-034",
+        "DEV-035",
+        "DEV-036",
+        "DEV-037",
+        "DEV-038"
+      ]
+    },
+    "tasks": [
+      {
+        "id": "DEV-033",
+        "title": "Durable offline queue",
+        "story_points": 13,
+        "source_locator": "sheet:Backlog/row:34",
+        "trace_id": "T-S4-001",
+        "literal_acceptance_criteria": "Client UUID/base version/timestamp ile queue restart sonrası korunur; encrypted local storage; pending state görünür.",
+        "dependencies": [
+          "DEV-021",
+          "DEV-029"
+        ],
+        "source_status": "Not Started",
+        "state": "INTEGRATED_SOURCE_CHECKPOINT_AUTHORED_ACCEPTANCE_OPEN",
+        "verification": "DEFERRED_UNTIL_ACTUAL_PR_GATE",
+        "accepted": false
+      },
+      {
+        "id": "DEV-034",
+        "title": "Idempotent sync API",
+        "story_points": 13,
+        "source_locator": "sheet:Backlog/row:35",
+        "trace_id": "T-S4-002",
+        "literal_acceptance_criteria": "Idempotency key + expected version; retry duplicate critical state yaratmaz; server authoritative result döner.",
+        "dependencies": [
+          "DEV-033"
+        ],
+        "source_status": "Not Started",
+        "state": "INTEGRATED_SOURCE_CHECKPOINT_AUTHORED_ACCEPTANCE_OPEN",
+        "verification": "DEFERRED_UNTIL_ACTUAL_PR_GATE",
+        "accepted": false
+      },
+      {
+        "id": "DEV-035",
+        "title": "Material conflict center",
+        "story_points": 8,
+        "source_locator": "sheet:Backlog/row:36",
+        "trace_id": "T-S4-003",
+        "literal_acceptance_criteria": "High-risk conflict auto overwrite olmaz; before/local/server context gösterilir; human resolution audit edilir.",
+        "dependencies": [
+          "DEV-034",
+          "DEV-016"
+        ],
+        "source_status": "Not Started",
+        "state": "INTEGRATED_SOURCE_CHECKPOINT_AUTHORED_ACCEPTANCE_OPEN",
+        "verification": "DEFERRED_UNTIL_ACTUAL_PR_GATE",
+        "accepted": false
+      },
+      {
+        "id": "DEV-036",
+        "title": "Notification/escalation engine v1",
+        "story_points": 8,
+        "source_locator": "sheet:Backlog/row:37",
+        "trace_id": "T-S4-004",
+        "literal_acceptance_criteria": "Severity/due/state trigger; dedupe; acknowledgement/escalation audit; mandatory critical route user preference ile susturulamaz.",
+        "dependencies": [
+          "DEV-016"
+        ],
+        "source_status": "Not Started",
+        "state": "INTEGRATED_SOURCE_CHECKPOINT_AUTHORED_ACCEPTANCE_OPEN",
+        "verification": "DEFERRED_UNTIL_ACTUAL_PR_GATE",
+        "accepted": false
+      },
+      {
+        "id": "DEV-037",
+        "title": "Health dashboard v1",
+        "story_points": 8,
+        "source_locator": "sheet:Backlog/row:38",
+        "trace_id": "T-S4-005",
+        "literal_acceptance_criteria": "API errors/latency, sync backlog/conflict, audit writer, file service ve data freshness metrikleri görünür.",
+        "dependencies": [
+          "DEV-011",
+          "DEV-034"
+        ],
+        "source_status": "Not Started",
+        "state": "INTEGRATED_SOURCE_CHECKPOINT_AUTHORED_ACCEPTANCE_OPEN",
+        "verification": "DEFERRED_UNTIL_ACTUAL_PR_GATE",
+        "accepted": false
+      },
+      {
+        "id": "DEV-038",
+        "title": "Offline chaos regression pack",
+        "story_points": 8,
+        "source_locator": "sheet:Backlog/row:39",
+        "trace_id": "T-S4-006",
+        "literal_acceptance_criteria": "Network drop/reconnect, duplicate request, stale base version, attachment retry, conflict paths otomasyonda PASS.",
+        "dependencies": [
+          "DEV-033:DEV-035"
+        ],
+        "source_status": "Not Started",
+        "state": "INTEGRATED_SOURCE_CHECKPOINT_AUTHORED_ACCEPTANCE_OPEN",
+        "verification": "DEFERRED_UNTIL_ACTUAL_PR_GATE",
+        "accepted": false
+      }
+    ],
+    "authoring_owners": [
+      {
+        "owner": "UI",
+        "branch": "work/s4-offline-experience-20261104",
+        "scope": "Queue/conflict/health UI, source-grounded in-app notification consumer supporting DEV-036, authored component/chaos regressions"
+      },
+      {
+        "owner": "Backend",
+        "branch": "work/s4-sync-notification-20261104",
+        "scope": "Idempotent sync/conflict, notification escalation and truthful health API with authored tests"
+      }
+    ],
+    "plan": {
+      "path": ".runtime/s4-offline-20261104/work.json",
+      "sha256": "f723686f18120851ac91aa430fd76ff6146598fc5e462edc65315ce36afb2d42"
+    },
+    "dependency_mode": "Existing S2/S3 contracts source-ready for authoring; acceptance remains open, not accepted by this plan.",
+    "verification": {
+      "state": "DEFERRED_NOT_RUN",
+      "scope": "S4_AUTHORING_ONLY",
+      "observed_at_utc": "2026-11-04T20:02:53.991719Z",
+      "tests_build_typecheck_lint_generation_browser": "NOT_AUTHORIZED_UNTIL_ACTUAL_PR_STAGE",
+      "previous_phase_native_evidence_applies": false,
+      "independent_final_target_qa": "PENDING"
+    },
+    "report": "docs/phases/S4-OFFLINE-FOUNDATION-20261104.md",
+    "canonical_acceptance_changed": false,
+    "next_step": "Root reviews integrated S4 source and records current report; S5 source begins row40 only when assigned. S4 checks remain deferred until actual PR preparation.",
+    "integrated_source_checkpoint": "57e6427b356eb3880692db5baa9ba0d6aeb34257",
+    "integrated_source_tree": "9c3fc002011cb4db54c955a964bbcf192ec5b9ea",
+    "source_contracts": [
+      {
+        "path": "docs/tasks/s4-offline-experience-01.md",
+        "sha256": "fda3ded336d5daff84b5413014ecded2a986843a527a3423f039e235313c0b39"
+      },
+      {
+        "path": "docs/tasks/s4-sync-notification-01.md",
+        "sha256": "119dbbfbe66d01a6d7851db40afa9b7cd2c6a7409251ddb16cc7ad8aff4aaaeb"
+      },
+      {
+        "path": "docs/tasks/s4-retained-inventory-01.md",
+        "sha256": "cbb883d16fd25c78ee7688b7adbba502d800673e10cf662581fe8af1dd8574f0"
+      },
+      {
+        "path": "docs/tasks/s4-chaos-regressions-01.md",
+        "sha256": "7dd2315af614a95ee761c2dfb23fdfd456decaaaca51e373e9a1e519cabd735d"
+      }
+    ],
+    "authored_commits": {
+      "UI_queue_conflict_health": "622f198",
+      "UI_source_grounded_inbox": "94e25614",
+      "backend_notification_health": "4116748",
+      "retained_inventory_and_chaos": [
+        "7181c0c",
+        "31eb1af",
+        "60c5a79"
+      ],
+      "explicit_discard_unload_guard": "57e6427"
+    },
+    "authored_test_sources": {
+      "backend_cases": 23,
+      "UI_contract_and_interaction": "AUTHORED_COUNT_NOT_AGGREGATED",
+      "root_browser_case_sources": 3,
+      "browser_scope": "2 real IndexedDB driver cases + 1 mocked UI discard/navigation case; none executed",
+      "native_project_or_execution_count": "NOT_INFERRED"
+    },
+    "current_security_inventory": {
+      "mutation_templates": 86,
+      "critical_templates": 80,
+      "concrete_operations": 85,
+      "added_operations": [
+        "NotificationRefresh",
+        "NotificationAcknowledge",
+        "NotificationPreference"
+      ],
+      "source_sha256": "cc601158be7e692f5b2b916dcd80ed87874dc34fef1acb67a8ae295e677bf133",
+      "status": "SOURCE_DEFINITION_NOT_RUNTIME_PROVEN",
+      "historical_S1_S2_native82_targets_unchanged": true,
+      "85_operation_pass_claimed": false
+    },
+    "operational_limits": [
+      "Explicit manager POST refresh only; no scheduler or external delivery; InAppOnly",
+      "Maintenance first owning source only; default policy Unavailable, configured policy ConfiguredUnverified",
+      "Identical retired source context does not reopen; recurring-episode policy remains open",
+      "Notification query Take2001 guard; existing maintenance reader still materializes before its 500-source guard",
+      "Migration/model parity and security/frontend/contract/browser checks all DEFERRED until actual PR gate"
+    ],
+    "source_diff_from_base": {
+      "files": 59,
+      "insertions": 2307,
+      "deletions": 65,
+      "meaning": "Source only, not execution evidence"
+    },
+    "next_phase_source_only": {
+      "phase": "S5",
+      "first_locator": "sheet:Backlog/row:40",
+      "first_task_id": "DEV-039",
+      "first_task_title": "Pilot vessel onboarding wizard",
+      "state": "NOT_STARTED_OR_ACCEPTED_BY_THIS_CHECKPOINT"
+    }
+  },
+  "s5_compliance_foundation_20261104": {
+    "task": "S5-COMPLIANCE-FOUNDATION-20261104",
+    "state": "SOURCE_AUTHORED_OPEN_GATES_NOT_ACCEPTED",
+    "observed_at_utc": "2026-11-04T20:42:48.912039Z",
+    "branch": "foundation/s5-compliance-foundation-20261104",
+    "source_checkpoint": {
+      "state": "ROOT_CONFIRMED_SOURCE_ONLY",
+      "commit": "574f027bd1c42d885289a58a95a39d2acf7e8ba3",
+      "tree": "b489940874a78bffd8e46eb1e88b8590dd38b0ba",
+      "observed_authoring_head": "574f027bd1c42d885289a58a95a39d2acf7e8ba3",
+      "observed_authoring_tree": "b489940874a78bffd8e46eb1e88b8590dd38b0ba",
+      "runtime_validation_or_acceptance": false
+    },
+    "source_baseline": "poseidon-v46.3-20261030",
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "source_rows": [
+      40,
+      41,
+      42,
+      43
+    ],
+    "source_scope": {
+      "tasks": 4,
+      "story_points": 32,
+      "accepted_story_points": 0,
+      "ids": [
+        "DEV-039",
+        "DEV-040",
+        "DEV-041",
+        "DEV-042"
+      ]
+    },
+    "tasks": [
+      {
+        "id": "DEV-039",
+        "title": "Pilot vessel onboarding wizard",
+        "story_points": 8,
+        "source_locator": "sheet:Backlog/row:40",
+        "trace_id": "T-S5-001",
+        "literal_acceptance_criteria": "Identity/profile/flag/class/type/GT/cargo/trading context completeness kontrolü; missing critical field REVIEW_REQUIRED üretir.",
+        "dependencies": [
+          "DEV-020",
+          "DEV-027"
+        ],
+        "source_status": "Not Started",
+        "state": "SOURCE_AUTHORED_WITH_OPEN_CRITERIA_NOT_ACCEPTED",
+        "verification": "DEFERRED_UNTIL_ACTUAL_PR_GATE",
+        "accepted": false
+      },
+      {
+        "id": "DEV-040",
+        "title": "Applicability reason review",
+        "story_points": 8,
+        "source_locator": "sheet:Backlog/row:41",
+        "trace_id": "T-S5-002",
+        "literal_acceptance_criteria": "Rule version, inputs, source, result, reviewer state görünür; manual override controlled reason + audit gerektirir.",
+        "dependencies": [
+          "DEV-027",
+          "DEV-039"
+        ],
+        "source_status": "Not Started",
+        "state": "SOURCE_AUTHORED_WITH_OPEN_CRITERIA_NOT_ACCEPTED",
+        "verification": "DEFERRED_UNTIL_ACTUAL_PR_GATE",
+        "accepted": false
+      },
+      {
+        "id": "DEV-041",
+        "title": "Applicable controls oluştur",
+        "story_points": 8,
+        "source_locator": "sheet:Backlog/row:42",
+        "trace_id": "T-S5-003",
+        "literal_acceptance_criteria": "Applicable requirement'lar kontrollere bağlanır; owner/frequency/evidence/verification fields vardır; orphan critical requirement=0 hedeflenir.",
+        "dependencies": [
+          "DEV-028",
+          "DEV-040"
+        ],
+        "source_status": "Not Started",
+        "state": "SOURCE_AUTHORED_WITH_OPEN_CRITERIA_NOT_ACCEPTED",
+        "verification": "DEFERRED_UNTIL_ACTUAL_PR_GATE",
+        "accepted": false
+      },
+      {
+        "id": "DEV-042",
+        "title": "Digital Compliance Passport pilot view",
+        "story_points": 8,
+        "source_locator": "sheet:Backlog/row:43",
+        "trace_id": "T-S5-004",
+        "literal_acceptance_criteria": "Current applicable requirements, certificates, evidence completeness, blockers ve source freshness drill-down ile görünür.",
+        "dependencies": [
+          "DEV-032",
+          "DEV-041"
+        ],
+        "source_status": "Not Started",
+        "state": "SOURCE_AUTHORED_WITH_OPEN_CRITERIA_NOT_ACCEPTED",
+        "verification": "DEFERRED_UNTIL_ACTUAL_PR_GATE",
+        "accepted": false
+      }
+    ],
+    "source_contracts": [
+      {
+        "path": "docs/tasks/s5-compliance-core-01.md",
+        "sha256": "31583ce0290b25a0f5120567c846802f6a44fe803fe93876e76c96a1b18f1a0a"
+      },
+      {
+        "path": "docs/tasks/s5-compliance-experience-01.md",
+        "sha256": "84d509f6065d92c56b2a66fff069767418b3c4d2b3d34ae8f4a22f15b1b0fbb0"
+      },
+      {
+        "path": "docs/tasks/s5-integration-experience-01.md",
+        "sha256": "f0f57984687410a424458343c0080700e9b49906a26a5ae8399d51d92f77c373"
+      }
+    ],
+    "authored_checkpoints": {
+      "backend": "c9d96d1",
+      "UI": "5a437538",
+      "notification_titles": "f642712",
+      "two_viewport_browser_case_sources": "f5926a4",
+      "readable_blocker_consumer": "3105bdb",
+      "source_crosswalk": "d285f2c",
+      "final_live_revocation_and_paging": "c7c37dcf767b463183fbca4db57c78a5110d9a74",
+      "root_readable_blocker_wiring": "7dac4bfec4fb91ecc6a99eb1d429deedae88b970",
+      "canonical_scope_correction": "d939d7c10dcf1c6c37a5659c927ca04589e4839a",
+      "merged_scheduler": "12868e670f15194dc9df18373e72498dc59f145a"
+    },
+    "compliance_followup_summary": "Live response authorization and fresh owning SQL visibility fence run after composition and after audit; stale authorized capture remains Available=true/Current=false. Currentness alone drives requirement planning. HasMore represents pageable control/evidence rows, with link truncation explicit. Deterministic PG source/role/audit interleaving and paging test sources are authored, NOT RUN.",
+    "S4_continuation": {
+      "state": "SOURCE_CONTINUATION_MERGED_NOT_VALIDATED",
+      "observed_at_utc": "2026-11-04T20:42:48.912039Z",
+      "scheduler_summary": "Shared bounded engine, disabled-by-default configured BackgroundService, exact Service/System tenant-vessel-role attribution, durable expiring lease/cursor and immutable recurring source episodes are merged. Unknown/missing sources preserve basis and project SourceUnavailable with acknowledgement blocked; unchanged restoration does not invent a new episode. Maintenance adapter and InAppOnly remain; production routing/activation, external delivery and unseen between-poll cycles are not supplied. Migration/snapshot and meaningful worker/PG/UI regression sources are authored, NOT RUN.",
+      "root_confirmed_scheduler_commit": "12868e670f15194dc9df18373e72498dc59f145a",
+      "old_source57_constraints": "Historical checkpoint only; scheduler-absent/recurrence-open statements must be superseded only by the actual confirmed merged continuation, never guessed",
+      "scheduler_is_internal_not_new_HTTP_mutation": true,
+      "source_inventory": {
+        "mutation_templates": 86,
+        "critical_templates": 80,
+        "concrete_operations": 85,
+        "no_85_PASS": true
+      },
+      "verification": "DEFERRED_UNTIL_ACTUAL_PR_GATE"
+    },
+    "open_source_and_product_gates": [
+      "No authoritative vessel certificate catalog: UNAVAILABLE",
+      "Critical obligation universe not established: null/unavailable, never zero",
+      "No source-authorized RuleOverride appointment/type contract: manualOverrideAvailable=false",
+      "Four source rows are not four accepted/delivered criteria",
+      "Independent phase/dependency acceptance and actual PR checks remain open"
+    ],
+    "verification": {
+      "state": "DEFERRED_NOT_RUN",
+      "scope": "S5_AND_PENDING_S4_SOURCE_CONTINUATION",
+      "tests_build_typecheck_lint_generation_browser": "DEFERRED_UNTIL_ACTUAL_PR_GATE",
+      "source_review_is_implementation_QA": false,
+      "new_runtime_pass_claimed": false
+    },
+    "report": "docs/phases/S5-COMPLIANCE-FOUNDATION-20261104.md",
+    "canonical_acceptance_changed": false,
+    "no_new_public_HTTP_writes_in_S5": true,
+    "next": "Wait for exact root handoff, review source and keep checks deferred to actual PR stage. No S2/new PR or phase acceptance is asserted.",
+    "selected_subpackage_not_complete_canonical_sprint": true,
+    "canonical_S5_inventory_unchanged": {
+      "sprint": "S5",
+      "tasks": 8,
+      "story_points": 69,
+      "accepted_tasks": 0,
+      "accepted_story_points": 0,
+      "completion_percent": 0
+    },
+    "canonical_S5_remainder": {
+      "state": "SOURCE_AUTHORING_STARTED_NOT_INTEGRATED_NOT_ACCEPTED",
+      "source_plan": {
+        "path": ".runtime/s5-compliance-20261104/work.json",
+        "sha256": "4be90653c77b11f8c88f81d8ebc678e63d300873c36edac996155a1bdec8508c"
+      },
+      "authoring_base": "be3360e64fea3318c57bcf5c360225cfc5ffa325",
+      "tasks": [
+        {
+          "id": "DEV-080",
+          "story_points": 8,
+          "source_locator": "sheet:Backlog/row:81",
+          "trace_id": "T-TUG-001",
+          "literal_acceptance_criteria": "Tug profile bollard pull/type/equipment context + role lens; Ship Mode screens remain hidden unless cross-mode role.",
+          "dependencies": [
+            "DEV-020",
+            "DEV-022"
+          ],
+          "state": "CANONICAL_S5_REMAINDER_SOURCE_AUTHORING_STARTED_NOT_INTEGRATED_NOT_ACCEPTED",
+          "accepted": false,
+          "verification": "DEFERRED_UNTIL_ACTUAL_PR_GATE"
+        },
+        {
+          "id": "DEV-097",
+          "story_points": 13,
+          "source_locator": "sheet:Backlog/row:98",
+          "trace_id": "T-OPS2-001",
+          "literal_acceptance_criteria": "Position/voyage/activity/speed/weather/fuel/ROB/master review; data downstream voyage, emissions and dashboards tarafından tekrar kullanılabilir; offline save supported.",
+          "dependencies": [
+            "DEV-021",
+            "DEV-033"
+          ],
+          "state": "CANONICAL_S5_REMAINDER_SOURCE_AUTHORING_STARTED_NOT_INTEGRATED_NOT_ACCEPTED",
+          "accepted": false,
+          "verification": "DEFERRED_UNTIL_ACTUAL_PR_GATE"
+        },
+        {
+          "id": "DEV-098",
+          "story_points": 8,
+          "source_locator": "sheet:Backlog/row:99",
+          "trace_id": "T-OPS2-002",
+          "literal_acceptance_criteria": "Watch-period log, navigation status, port/cargo activity, pilot/tug activity, ballast, safety note, handover, officer/master review; audit/offline.",
+          "dependencies": [
+            "DEV-097"
+          ],
+          "state": "CANONICAL_S5_REMAINDER_SOURCE_AUTHORING_STARTED_NOT_INTEGRATED_NOT_ACCEPTED",
+          "accepted": false,
+          "verification": "DEFERRED_UNTIL_ACTUAL_PR_GATE"
+        },
+        {
+          "id": "DEV-099",
+          "story_points": 8,
+          "source_locator": "sheet:Backlog/row:100",
+          "trace_id": "T-OPS2-003",
+          "literal_acceptance_criteria": "Engine/aux hours, fuel/lube, measurements, alarms, defects, WO link, environmental check, C/E review; offline/audit.",
+          "dependencies": [
+            "DEV-052",
+            "DEV-097"
+          ],
+          "state": "CANONICAL_S5_REMAINDER_SOURCE_AUTHORING_STARTED_NOT_INTEGRATED_NOT_ACCEPTED",
+          "accepted": false,
+          "verification": "DEFERRED_UNTIL_ACTUAL_PR_GATE"
+        }
+      ],
+      "story_points": 37,
+      "accepted_story_points": 0
+    },
+    "remaining_source_inventory": {
+      "tasks_not_in_confirmed_compliance_slice": 78,
+      "SP_not_in_confirmed_compliance_slice": 669,
+      "other_S5_source_authoring_started_tasks": 4,
+      "other_S5_SP": 37,
+      "S6_plus_future_pilot_tasks": 74,
+      "S6_plus_future_pilot_SP": 632
+    }
+  },
+  "current_s4_scheduler_continuation": {
+    "state": "SOURCE_CONTINUATION_MERGED_NOT_VALIDATED",
+    "observed_at_utc": "2026-11-04T20:42:48.912039Z",
+    "scheduler_summary": "Shared bounded engine, disabled-by-default configured BackgroundService, exact Service/System tenant-vessel-role attribution, durable expiring lease/cursor and immutable recurring source episodes are merged. Unknown/missing sources preserve basis and project SourceUnavailable with acknowledgement blocked; unchanged restoration does not invent a new episode. Maintenance adapter and InAppOnly remain; production routing/activation, external delivery and unseen between-poll cycles are not supplied. Migration/snapshot and meaningful worker/PG/UI regression sources are authored, NOT RUN.",
+    "root_confirmed_scheduler_commit": "12868e670f15194dc9df18373e72498dc59f145a",
+    "old_source57_constraints": "Historical checkpoint only; scheduler-absent/recurrence-open statements must be superseded only by the actual confirmed merged continuation, never guessed",
+    "scheduler_is_internal_not_new_HTTP_mutation": true,
+    "source_inventory": {
+      "mutation_templates": 86,
+      "critical_templates": 80,
+      "concrete_operations": 85,
+      "no_85_PASS": true
+    },
+    "verification": "DEFERRED_UNTIL_ACTUAL_PR_GATE"
   }
 }
