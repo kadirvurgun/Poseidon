@@ -36,12 +36,35 @@ DEV-020 starts from accepted DEV-005/DEV-014 behavior. Dependent UI/Why work beg
 with contract preparation and follows the upstream contract; neither a contract
 agreement nor a local commit is independent acceptance.
 
-The first observed UI gaps are the absence of a vessel switch control in the global
+The first observed UI gaps were the absence of a vessel switch control in the global
 context bar and the absence of a role-lens filter in the primary enterprise menu.
 The existing Today feed already carries source, priority, owner, action and Why
 disclosures. Additional changes must preserve its permission withdrawal and offline
 invalidation behavior. Source coverage and unverified drafts must remain explicit;
 an empty feed never means operational approval.
+
+## Authored behavior, not yet validated
+
+The backend checkpoint adds an exact owning source kind/ID/revision to Why. The
+owning regulatory profile and Today/Why now use the same scoped, conditional SQL
+projection: a user without required file-read access receives no profile content,
+revision, observation time or provenance. The owning profile and Why return 403;
+Today uses generic Unavailable coverage and omits the restricted card. This also
+closes the former separate binding-check/content-read race. Maintenance Why now
+uses the selected observation's actual time, preserving Unknown when absent.
+
+New backend regression sources cover versioned master fields, exact current/history
+lineage, preservation by synthetic reseed, permission withdrawal for empty and
+populated profiles, and revoked/unknown observation timestamps. There are no new
+entities, migrations, seed records, mutation routes or critical-write denominator
+changes. See the [backend task](../tasks/s2-vessel-why-01.md).
+
+Three new mocked browser scenarios cover keyboard vessel switching with denied and
+mismatched-tenant responses, dirty-form cancellation/explicit discard, and primary
+role navigation without search escalation. The signed role-lens cases retain their
+five real workspace families, real dirty guard, server projection equality and
+restricted context assertions, and now assert the actual primary sidebar contents.
+All these tests are **AUTHORED / NOT RUN**, without new browser or QA acceptance.
 
 ## Required verification at the bundle gate
 
