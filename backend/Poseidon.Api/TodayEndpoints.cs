@@ -12,11 +12,15 @@ public sealed record TodayCardDto(string Key, string Priority, string Source, st
 public sealed record TodayDto(VesselDto Vessel, DateTimeOffset ReadAt, TodayCoverageDto[] Coverage, PageDto<TodayCardDto> Cards);
 public sealed record TodayMaintenanceEvidenceDto(Guid PlanId, long PlanRevision, Guid AssetId, long AssetRevision,
     long? CurrentAssetRevision, bool JobAvailable, bool OwnerEligible, MaintenanceDue Calculation, string ObservationState);
+// Safe owning-source lineage, not a source document, verification or authority.
+// A missing profile has no revision. Other sources name the exact revision read.
+public sealed record TodayWhySourceDto(string Kind, Guid Id, long? Revision);
 public sealed record TodayWhyDto(Guid VesselId, string CardKey, string Rule, string Reason, DraftObservation? Inputs,
     DateTimeOffset ReadAt, DateTimeOffset? SavedAt, string? SourceObservedAt, string Freshness,
     string Provenance, string[] Blockers, string? Owner, string NextAction, string Href,
     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] TodayMaintenanceEvidenceDto? Maintenance = null,
-    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] TodayTugEvidenceDto? Tug = null);
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] TodayTugEvidenceDto? Tug = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] TodayWhySourceDto? Source = null);
 
 public static class TodayEndpoints
 {
@@ -80,7 +84,8 @@ public static class TodayEndpoints
             return Results.Ok(new TodayWhyDto(id, card.Key, "TW-TUG-01", card.Reason, null,
                 readAt, current.SavedAt, null, "Unverified", current.Provenance,
                 ["DraftPlanningNotOperationalApproval", "OwningReadinessCoverageIncomplete", "MasterDecisionRequired"],
-                card.Owner, card.NextAction, card.Href, Tug: current.Detail));
+                card.Owner, card.NextAction, card.Href, Tug: current.Detail,
+                Source: new("TugJob", current.Detail.JobId, current.Detail.RequestRevision)));
         }
         if (why && planId != null) {
             var source = await MaintenanceCurrentReader.Read(id, http, db, actor, readAt, planId);
@@ -98,12 +103,19 @@ public static class TodayEndpoints
             var card = MaintenanceCard(id, current, advice);
             await audit.WriteAsync(http, action, "Success", resourceId: id);
             return Results.Ok(new TodayWhyDto(id, card.Key, "TW-MAINTENANCE-01", card.Reason, null,
-                readAt, row.SavedAt, row.Inputs.ObservedAt?.ToString("O", CultureInfo.InvariantCulture), "Unverified", row.Provenance,
+                readAt, row.SavedAt, current.SourceObservedAt?.ToString("O", CultureInfo.InvariantCulture), "Unverified", row.Provenance,
                 ["PlanningDraftNotVerified"], card.Owner, card.NextAction, card.Href,
                 new(row.Id, row.Revision, row.AssetId, row.AssetRevision, current.CurrentAssetRevision,
-                    current.JobAvailable, current.OwnerEligible, row.Due, row.ObservationState)));
+                    current.JobAvailable, current.OwnerEligible, row.Due, row.ObservationState),
+                Source: new("MaintenancePlan", row.Id, row.Revision)));
         }
-        var draft = await db.RegulatoryDrafts.AsNoTracking().SingleOrDefaultAsync(d => d.VesselId == id, http.RequestAborted);
+        var profileSource = await RegulatoryDraftEndpoints.ReadCurrent(actor, id, db, http.RequestAborted);
+        var profileReadable = profileSource.Readable;
+        if (why && !profileReadable) {
+            await audit.WriteAsync(http, action, "Denied");
+            return Results.StatusCode(403);
+        }
+        var draft = profileSource.Draft;
         var content = draft == null ? null : RegulatoryDraftStorage.Deserialize(draft.ContentJson);
         var observation = TodayAdvisoryPolicy.Observe(content);
         var href = $"/app/fleet/{id}/profile";
@@ -112,11 +124,13 @@ public static class TodayEndpoints
             await audit.WriteAsync(http, action, "Success", resourceId: id);
             return Results.Ok(new TodayWhyDto(id, "regulatory-draft", "TW-DRAFT-01", observation.Reason,
                 observation, readAt, draft?.SavedAt, content?.SourceObservedAt.Value, "Unverified", draft?.Provenance ?? "Missing",
-                [draft == null ? "DraftAbsent" : "VerificationUnavailable", "OperationalSourcesUnavailable"], null, next, href));
+                [draft == null ? "DraftAbsent" : "VerificationUnavailable", "OperationalSourcesUnavailable"], null, next, href,
+                Source: new("RegulatoryDraft", id, draft?.Revision)));
         }
         var maintenance = await MaintenanceCurrentReader.Read(id, http, db, actor, readAt);
         var tug = await TodayTugReader.Read(id, http, db, actor, readAt);
-        var cards = new List<TodayCardDto> { new("regulatory-draft", "Advisory", "RegulatoryDraft", observation.Reason, null, next, href) };
+        var cards = new List<TodayCardDto>();
+        if (profileReadable) cards.Add(new("regulatory-draft", "Advisory", "RegulatoryDraft", observation.Reason, null, next, href));
         foreach (var current in maintenance ?? []) {
             var advice = TodayMaintenancePolicy.Observe(current.Row.Due);
             if (advice != null) cards.Add(MaintenanceCard(id, current, advice));
@@ -126,7 +140,7 @@ public static class TodayEndpoints
             .ThenBy(c => c.Key, StringComparer.Ordinal).ToList();
         await audit.WriteAsync(http, action, "Success", resourceId: id);
         return Results.Ok(new TodayDto(new(vessel.Id, vessel.CompanyId, vessel.Code, vessel.Name, vessel.Kind.ToString(), vessel.Version, actor.CanEditVessel(id)), readAt,
-            [new("RegulatoryDraft", draft == null ? "Missing" : "Available"), new("OperationalTasks", "Unavailable"),
+            [new("RegulatoryDraft", !profileReadable ? "Unavailable" : draft == null ? "Missing" : "Available"), new("OperationalTasks", "Unavailable"),
              new("SafetyDecisions", "Unavailable"), new("Permits", "Unavailable"), new("EvidenceVerification", "Unavailable"),
              new("TechnicalMaintenance", maintenance == null ? "Unavailable" : maintenance.Length == 0 ? "Missing" : "Available"),
              new("TugPlanning", tug == null ? "Unavailable" : tug.Length == 0 ? "Missing" : "Available")],
