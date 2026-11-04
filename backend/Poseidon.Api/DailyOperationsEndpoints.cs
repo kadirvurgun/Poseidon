@@ -43,7 +43,7 @@ public static class DailyOperationsEndpoints
     private static TrustedActor? Actor(HttpContext h) => h.RequestServices.GetRequiredService<ActorResolver>().Resolve(h.User);
     private static string Permission(string kind,string action) => "daily." + kind.ToLowerInvariant() + "." + action;
     internal static bool CanRead(TrustedActor? a,string kind) => a?.CanRead == true && a.Permissions.Contains(Permission(kind,"read"));
-    internal static bool CanWrite(TrustedActor? a,string kind,Guid vessel) => CanRead(a,kind) && a!.HasWriteAttribution && a.CanEditVessel(vessel) && a.Permissions.Contains(Permission(kind,"write"));
+    internal static bool CanWrite(TrustedActor? a,string kind,Guid vessel) => a!=null && CanRead(a,kind) && a.HasWriteAttribution && a.CanEditVessel(vessel) && a.Permissions.Contains(Permission(kind,"write"));
     internal static string Rights(TrustedActor a) => RegisterStorage.Hash(JsonSerializer.Serialize(new {
         a.Id,a.TenantId,a.RoleContext,a.TenantWideRead,a.TenantWideManage,
         permissions=a.Permissions.Order(StringComparer.Ordinal), vessels=a.VesselGrants.OrderBy(v=>v.VesselId).ThenBy(v=>v.CanEdit)
@@ -56,7 +56,9 @@ public static class DailyOperationsEndpoints
         await using var scope = h.RequestServices.GetRequiredService<IServiceScopeFactory>().CreateAsyncScope();
         var resolver = scope.ServiceProvider.GetRequiredService<ActorResolver>(); var a = resolver.Resolve(h.User);
         if (!CanRead(a,kind) || Rights(a!) != rights || write && !CanWrite(a,kind,vessel)) return false;
-        var found = await Vessels(scope.ServiceProvider.GetRequiredService<PoseidonDbContext>(),a!,vessel).AnyAsync(h.RequestAborted);
+        var db=scope.ServiceProvider.GetRequiredService<PoseidonDbContext>();
+        if(db.TenantId!=a!.TenantId)return false;
+        var found = await Vessels(db,a,vessel).AnyAsync(h.RequestAborted);
         var after = resolver.Resolve(h.User);
         return found && CanRead(after,kind) && Rights(after!) == rights && (!write || CanWrite(after,kind,vessel));
     }
@@ -81,37 +83,42 @@ public static class DailyOperationsEndpoints
     private static async Task<IResult> Read(string kind,Guid? id,bool history,bool capabilities,HttpContext h,PoseidonDbContext db) {
         h.Response.Headers.CacheControl="no-store";
         if (!Query(h,history || id==null && !capabilities,out var vessel,out var offset)) return await Fail(h,400,"invalid_query");
-        var a=Actor(h); if (!CanRead(a,kind)) return await Fail(h,403,"permission_denied");
+        var a=Actor(h); if (a==null || !CanRead(a,kind)) return await Fail(h,403,"permission_denied");
         var rights=Rights(a!);
-        if (!await Vessels(db,a!,vessel).AnyAsync(h.RequestAborted)) return await Fail(h,404,"resource_not_found");
+        var vesselKind=await Vessels(db,a!,vessel).Select(v=>(VesselKind?)v.Kind).SingleOrDefaultAsync(h.RequestAborted);
+        if (vesselKind==null) return await Fail(h,404,"resource_not_found");
+        var canReview=vesselKind==VesselKind.Ship && DailyReviewEndpoints.Authorities(h,a,vessel,kind).Length>0;
+        var reviewBasis=DailyReviewEndpoints.CapabilityHash(h,a!,vessel,kind);
         object result;
         if (capabilities) {
             var destinations=Families.Where(f=>CanRead(a,f.Kind)).Select(f=>new DailyDestinationDto(f.Destination,$"/app/{f.Destination}/{vessel:D}")).ToArray();
-            result=new DailyCapabilitiesDto(vessel,kind,true,CanWrite(a,kind,vessel),false,false,DailyOperationsPolicy.Schema(kind),DailyOperationsPolicy.SourceVersion,Offline(kind),destinations);
+            result=new DailyCapabilitiesDto(vessel,kind,true,CanWrite(a,kind,vessel),canReview,false,DailyOperationsPolicy.Schema(kind),DailyOperationsPolicy.SourceVersion,Offline(kind),destinations);
         } else if (history) {
             if (!await db.DailyOperations.AnyAsync(r=>r.VesselId==vessel && r.Kind==kind && r.Id==id,h.RequestAborted)) return await Fail(h,404,"resource_not_found");
             var rows=await db.DailyOperationRevisions.AsNoTracking().Where(r=>r.VesselId==vessel && r.Kind==kind && r.RecordId==id)
                 .OrderByDescending(r=>r.Revision).Skip(offset).Take(26).ToArrayAsync(h.RequestAborted);
-            result=new DailyHistoryDto(rows.Take(25).Select(Dto).ToArray(),offset,25,rows.Length>25);
+            result=new DailyHistoryDto(await DailyReviewEndpoints.Decorate(db,vessel,kind,rows.Take(25).Select(Dto).ToArray(),h.RequestAborted),offset,25,rows.Length>25);
         } else {
             var query=db.DailyOperations.AsNoTracking().Where(r=>r.VesselId==vessel && r.Kind==kind);
             if (id!=null) {
                 var row=await query.SingleOrDefaultAsync(r=>r.Id==id,h.RequestAborted);
-                if(row==null) return await Fail(h,404,"resource_not_found"); result=Dto(row);
+                if(row==null) return await Fail(h,404,"resource_not_found"); result=(await DailyReviewEndpoints.Decorate(db,vessel,kind,[Dto(row)],h.RequestAborted))[0];
             } else {
                 var rows=await query.OrderByDescending(r=>r.SavedAt).ThenBy(r=>r.Id).Skip(offset).Take(26).ToArrayAsync(h.RequestAborted);
-                result=new DailyPageDto(rows.Take(25).Select(Dto).ToArray(),offset,25,rows.Length>25,CanWrite(a,kind,vessel),false,false,Offline(kind));
+                result=new DailyPageDto(await DailyReviewEndpoints.Decorate(db,vessel,kind,rows.Take(25).Select(Dto).ToArray(),h.RequestAborted),offset,25,rows.Length>25,CanWrite(a,kind,vessel),canReview,false,Offline(kind));
             }
         }
         if (!await Current(h,kind,vessel,rights)) return await Fail(h,403,"permission_denied");
+        if (DailyReviewEndpoints.CapabilityHash(h,Actor(h)!,vessel,kind)!=reviewBasis) return await Fail(h,403,"permission_denied");
         await Audit(h,"Success",id??vessel);
         if (!await Current(h,kind,vessel,rights)) return await Fail(h,403,"permission_denied");
+        if (DailyReviewEndpoints.CapabilityHash(h,Actor(h)!,vessel,kind)!=reviewBasis) return await Fail(h,403,"permission_denied");
         return Results.Ok(result);
     }
     private static async Task<IResult> Command(string kind,Guid? routeId,HttpContext h,PoseidonDbContext db) {
         h.Response.Headers.CacheControl="no-store"; var ct=h.RequestAborted;
         var a=Actor(h);
-        if (!CanRead(a,kind) || !a!.HasWriteAttribution || !a.Permissions.Contains(Permission(kind,"write"))) return await Fail(h,403,"permission_denied");
+        if (a==null || !CanRead(a,kind) || !a.HasWriteAttribution || !a.Permissions.Contains(Permission(kind,"write"))) return await Fail(h,403,"permission_denied");
         if (!Query(h,false,out var vessel,out _)) return await Fail(h,400,"invalid_query");
         if (!CanWrite(a,kind,vessel)) return await Fail(h,403,"permission_denied");
         var rights=Rights(a!);
