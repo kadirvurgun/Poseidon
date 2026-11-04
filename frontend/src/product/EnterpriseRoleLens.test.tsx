@@ -1,4 +1,5 @@
 import { act, render, screen, within } from '@testing-library/react'
+import type { ComponentProps } from 'react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { EnterpriseChrome } from './EnterpriseChrome'
@@ -15,7 +16,7 @@ const result = (): Lenses => ({ tenantId: tenant, actorId: actor, vesselId: vess
   lenses: [{ reference: deck, en: 'FICTIONAL deck', tr: 'KURGUSAL güverte', items: [{ key: 'crew', href: `/app/crew-roster/${vessel}`, group: 'daily' }] },
     { reference: engineer, en: 'FICTIONAL engineer', tr: 'KURGUSAL mühendis', items: [{ key: 'maintenance', href: `/app/maintenance-plan/${vessel}`, group: 'daily' }] }] })
 const props = { session, vessel, language: 'en' as const, onLanguageChange: vi.fn(), onNavigate: vi.fn(), title: 'Today', mainId: 'role-test-main' }
-const view = (value = props) => <div className="product-shell enterprise-shell"><EnterpriseChrome {...value} /><main id="role-test-main" /></div>
+const view = (value: ComponentProps<typeof EnterpriseChrome> = props) => <div className="product-shell enterprise-shell"><EnterpriseChrome {...value} /><main id="role-test-main" /></div>
 beforeEach(() => {
   vi.mocked(loadLenses).mockResolvedValue(result())
   vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify({ destinations: [{ key: 'today', href: '/app/today' }, { key: 'fleet', href: '/app/fleet' }], canSearch: false, canWriteRegulatory: false }), { headers: { 'Content-Type': 'application/json' } })))
