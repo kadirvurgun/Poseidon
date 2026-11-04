@@ -7,8 +7,8 @@ import { emptyTugInputs } from './tug-api'
 const vessel = '11111111-1111-1111-1111-111111111111', id = '22222222-2222-2222-2222-222222222222'
 const json = (value: unknown, status = 200) => new Response(JSON.stringify(value), { status, headers: { 'Content-Type': 'application/json' } })
 const context = { vessel: { id: vessel, code: 'FICTIONAL', name: 'Synthetic tug' }, mode: 'Tug', crossMode: false, roleReferences: null,
-  canWrite: true, owners: [], jobTypes: ['Harbour Towage'], priorities: ['Normal', 'High'], requestSources: ['Customer'], tugType: 'Unknown',
-  bollardPull: { value: '45.01', version: 7, provenance: 'LegacyMeasurementUnverified', freshness: 'Unknown', observedAt: null }, equipment: null, equipmentCoverage: 'Unavailable', readiness: 'Unknown', reason: 'VerifiedMeasurementCertificateCrewAndAssignmentAdaptersUnavailable' }
+  canWrite: true, owners: [], jobTypes: ['Harbour Towage'], priorities: ['Normal', 'High'], requestSources: ['Customer'], tugType: 'Unavailable', tugTypeContext: null, tugTypeOptions: [], tugTypePolicyVersion: null,
+  bollardPull: { value: '45.01', version: 7, provenance: 'LegacyMeasurementUnverified', freshness: 'Unknown', observedAt: null, source: 'TugProfile' }, equipment: null, equipmentCoverage: 'Unavailable', readiness: 'Unknown', reason: 'VerifiedMeasurementCertificateCrewAndAssignmentAdaptersUnavailable' }
 const row = { id, vesselId: vessel, jobNumber: 'TUG-SYNTHETIC', revision: 1, version: 8, inputs: emptyTugInputs(), provenance: 'UserDeclaredUnverified', savedAt: '2026-11-01T00:00:00Z', missing: ['requested_start'] }
 const fetcher = vi.fn()
 let mutate: (init: RequestInit) => Promise<Response>

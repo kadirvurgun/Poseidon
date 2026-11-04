@@ -1,5 +1,6 @@
 import { EnterpriseChrome } from './EnterpriseChrome'
 import { useEffect, useState } from 'react'
+import { TugProfileContext } from './TugProfileContext'
 import { TugBoardView, tugBoardHref } from './TugBoardView'
 import { TugRequestSummary } from './TugRequestSummary'
 import { Button } from '../components/ui/button'
@@ -43,7 +44,7 @@ export function TugWorkspace() {
   const move = (href: string) => guard(() => { history.pushState(null, '', href); setRoute(location()); setReload(n => n + 1) })
   const href = (screen: string) => `/app/${screen}${route.vessel ? `?vessel=${route.vessel}` : ''}`
   useEffect(() => {
-    if (route.screen !== 'tug-job-board' || dirty || planningDirty || busy || attempt) return
+    if (!['tug-job-board', 'tug-command'].includes(route.screen ?? '') || dirty || planningDirty || busy || attempt) return
     const refresh = () => { setBoard(null); if (navigator.onLine) setReload(n => n + 1) }
     const timer = window.setInterval(refresh, 30000)
     window.addEventListener('focus', refresh); window.addEventListener('online', refresh); window.addEventListener('offline', refresh)
@@ -75,7 +76,7 @@ export function TugWorkspace() {
       if (!s.authenticated || !s.canRead) throw new ApiError(403)
       if (active) { setCsrf(s.csrfToken); setUser(s) }
       if (!route.vessel) { const list = await tugApi.vessels(c.signal); if (active) setVessels(list.vessels); return }
-      const v = await tugApi.context(route.vessel, c.signal); if (!active) return; context(v)
+      const v = await tugApi.context(route.vessel, c.signal, s.tenantId ?? undefined); if (!active) return; context(v)
       if (route.screen === 'tug-job-board') { const b = await tugApi.board(route.vessel, route.priority, route.q, route.offset, c.signal); if (active) setBoard(b) }
       if (route.screen === 'tug-job-detail') { const r = await tugApi.detail(route.id, route.vessel, c.signal); if (active) { setRecord(r); setInputs(r.inputs) } }
     }
@@ -99,7 +100,6 @@ export function TugWorkspace() {
   }
   const formOpen = ctx?.canWrite && editing
   const label = (value: string) => tugLabel(value, lang)
-  const nullText = (value: string | null | undefined) => value ?? t.unknown
   const pageTitle = route.screen === 'tug-job-board' ? t.board : route.screen === 'tug-job-intake' ? t.intake : route.screen === 'tug-job-detail' ? t.detail : t.title
   return <div className="product-shell enterprise-shell tug-workspace">
     <EnterpriseChrome session={user} vessel={route.vessel || null} language={lang} onLanguageChange={language} onNavigate={(href, committed) => guard(() => { committed?.(); window.location.assign(href) })} title={pageTitle} mainId="tug-main" />
@@ -109,7 +109,7 @@ export function TugWorkspace() {
       {!loading && !error && !route.vessel && <section><h2>{t.select}</h2>{vessels.length === 0 && <p>{t.empty}</p>}{vessels.map(v => <p key={v.id}><a href={`/app/tug-command?vessel=${v.id}`} onClick={e => { e.preventDefault(); move(`/app/tug-command?vessel=${v.id}`) }}>{v.code} · {v.name}</a></p>)}</section>}
       {!loading && !error && ctx && <><p>{t.context}: <strong>{ctx.vessel.code} · {ctx.vessel.name}</strong> · {ctx.mode}</p>
         <nav aria-label={t.title}>{(['tug-command', 'tug-job-board', ...(ctx.canWrite ? ['tug-job-intake'] : [])] as const).map((s, i) => <a key={s} aria-current={route.screen === s ? 'page' : undefined} href={href(s)} onClick={e => { e.preventDefault(); move(href(s)) }}>{[t.context, t.board, t.intake][i]} </a>)}</nav>
-        {route.screen === 'tug-command' && <section><h2>{t.context}</h2><dl><dt>{lang === 'en' ? 'Role references' : 'Rol referansları'}</dt><dd>{ctx.roleReferences ?? t.unknown}</dd><dt>{lang === 'en' ? 'Tug type' : 'Römorkör tipi'}</dt><dd>{ctx.tugTypeOptions?.find(x => x.code === ctx.tugType)?.[lang] ?? t.unknown}</dd><dt>{lang === 'en' ? 'Configured type options' : 'Yapılandırılmış tip seçenekleri'}</dt><dd>{ctx.tugTypeOptions?.map(x => x[lang]).join(', ') || t.unknown} · {ctx.tugTypePolicyVersion ?? '—'}</dd><dt>{t.bpContext}</dt><dd>{nullText(ctx.bollardPull.value)}</dd><dt>{t.provenance}</dt><dd>{label(ctx.bollardPull.provenance)} · {ctx.bollardPull.version ?? '—'}</dd><dt>{t.freshness}</dt><dd>{t.unknown}</dd><dt>{t.readiness}</dt><dd>{t.unknown}</dd><dt>{t.why}</dt><dd>{label(ctx.reason)}</dd></dl><h3>{t.equipment}</h3><p>{label(ctx.equipmentCoverage)}</p><ul>{ctx.equipment?.map(a => <li key={a.id}>{a.equipmentType ?? t.unknown} · {a.level} · r{a.revision} · {label(a.provenance)}</li>)}</ul></section>}
+        {route.screen === 'tug-command' && <TugProfileContext context={ctx} language={lang} offline={offline} />}
         {notice && <p role="alert">{notice === 'saved' ? t.saved : notice === 'uncertain' ? t.uncertain : notice === 'conflict' ? t.conflict : `${lang === 'en' ? 'Check fields' : 'Alanları kontrol edin'} (${notice})`}</p>}
         {route.screen === 'tug-job-board' && <TugBoardView board={board} priorities={ctx.priorities} filter={{ q: route.q, priority: route.priority, offset: route.offset }} language={lang} offline={offline}
           onFilter={filter => move(tugBoardHref(route.vessel, filter))} onNavigate={move} onRefresh={() => guard(() => setReload(n => n + 1))} />}

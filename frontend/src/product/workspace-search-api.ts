@@ -7,6 +7,7 @@ export type SearchPage = { items: SearchItem[]; offset: number; limit: number; h
 export const searchPageSize = 25
 export const searchMaxOffset = 100000
 const destinations: Readonly<Record<string, string>> = {
+  'noon-report': '/app/noon-report', 'deck-daily-log': '/app/deck-daily-log', 'engine-daily-log': '/app/engine-daily-log',
   today: '/app/today', companies: '/app/companies', fleet: '/app/fleet',
   sources: '/app/sources', requirements: '/app/requirements', audit: '/app/audit',
   'tug-command': '/app/tug-command', 'tug-job-board': '/app/tug-job-board', 'tug-job-intake': '/app/tug-job-intake',
@@ -14,7 +15,7 @@ const destinations: Readonly<Record<string, string>> = {
   'notification-escalation': '/app/notification-escalation',
 }
 export const isSeparateWorkspaceDestination = (href: string) =>
-  href === '/app/tug-command' || href === '/app/tug-job-board' || href === '/app/tug-job-intake' || href === '/app/system-health' || href === '/app/notification-escalation'
+  href === '/app/noon-report' || href === '/app/deck-daily-log' || href === '/app/engine-daily-log' || /^\/app\/(noon-report|deck-daily-log|engine-daily-log)\/[0-9a-f-]{36}$/.test(href) || href === '/app/tug-command' || href === '/app/tug-job-board' || href === '/app/tug-job-intake' || href === '/app/system-health' || href === '/app/notification-escalation'
 const object = (value: unknown): value is Record<string, unknown> =>
   value !== null && typeof value === 'object' && !Array.isArray(value)
 const exact = (value: Record<string, unknown>, keys: string[]) =>
