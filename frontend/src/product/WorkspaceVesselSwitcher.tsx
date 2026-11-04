@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Anchor, ArrowUpRight, Search, Ship, WifiOff, X } from 'lucide-react'
 import { Button } from '../components/ui/button'
 import * as api from './api'
@@ -37,8 +37,11 @@ export function WorkspaceVesselSwitcher({ session, vessel, language, onClose, on
   const online = navigator.onLine; const visible = document.visibilityState !== 'hidden'
   const current = result?.owner === session && result.epoch === epoch && result.offset === offset && result.search === search && result.attempt === attempt ? result : null
   const choosing = selection?.owner === session && selection.scope === scope ? selection : null
-  const activeScope = useRef({ session, scope })
-  activeScope.current = { session, scope }
+  const activeScope = useRef<{ session: Session; scope: string } | null>(null)
+  useLayoutEffect(() => {
+    activeScope.current = { session, scope }
+    return () => { activeScope.current = null; check.current?.abort() }
+  }, [session, scope])
   useEffect(() => {
     alive.current = true
     const previous = document.activeElement as HTMLElement | null
@@ -58,7 +61,7 @@ export function WorkspaceVesselSwitcher({ session, vessel, language, onClose, on
   async function choose(id: string) {
     if (!online || !visible || choosing?.state === 'checking' || !current?.data?.items.some(row => row.id === id) || !session.tenantId || !session.actorId) return
     check.current?.abort(); const c = new AbortController(); check.current = c
-    const stillCurrent = () => alive.current && activeScope.current.session === session && activeScope.current.scope === scope
+    const stillCurrent = () => alive.current && activeScope.current?.session === session && activeScope.current.scope === scope
     const timer = setTimeout(() => { c.abort(); if (stillCurrent()) setSelection({ owner: session, scope, id, state: 'denied' }) }, 10000)
     setSelection({ owner: session, scope, id, state: 'checking' })
     try {

@@ -125,6 +125,8 @@ function ScopedRegulatoryProfile({ id, language, csrf, onDirty, onSaving }: Prop
   const status = failure?.status
   const errorText = failure?.code === 'version_conflict' ? t.conflict : uncertain ? t.uncertain : status === 401 ? t.expired : status === 403 ? t.denied : status === 404 ? t.missing : t.failed
   const provenance = (value: string) => ({ Synthetic: language === 'tr' ? 'Sentetik' : 'Synthetic', Missing: language === 'tr' ? 'Eksik' : 'Missing', Unknown: t.unknown, DeclaredUnverified: language === 'tr' ? 'Beyan — doğrulanmamış' : 'Declared — unverified' })[value] ?? t.unknown
+  const savedObservation = profile?.content.sourceObservedAt
+  const observedAt = savedObservation?.state === 'Known' && typeof savedObservation.value === 'string' ? savedObservation.value : null
   return <section className="regulatory-profile" aria-label={t.title}>
     <h2>{t.title}</h2><p className="profile-draft-note">{t.note}</p>
     {failure && <div role="alert"><p>{errorText}</p>{status === 401 && <a href={loginHref()}>{language === 'tr' ? 'Oturum aç' : 'Sign in'}</a>}
@@ -136,7 +138,7 @@ function ScopedRegulatoryProfile({ id, language, csrf, onDirty, onSaving }: Prop
       <p className="profile-context">{profile.tenantId} · <strong>{profile.vessel.code} · {profile.vessel.name}</strong> · {profile.vessel.kind === 'Ship' ? (language === 'tr' ? 'Gemi' : 'Ship') : (language === 'tr' ? 'Römorkör' : 'Tug')}</p>
       {!profile.revision && <p>{t.empty}</p>}
       <p>{t.provenance}: {provenance(profile.provenance)} · {t.revision}: {profile.revision} · {t.time}: {profile.savedAt ?? t.unknown}</p>
-      <aside className="profile-source-context" aria-label={language === 'en' ? 'Saved source context' : 'Kayıtlı kaynak bağlamı'}><strong>{t.observed}</strong><p>{profile.content.sourceObservedAt.state === 'Known' && profile.content.sourceObservedAt.value ? <time dateTime={profile.content.sourceObservedAt.value}>{profile.content.sourceObservedAt.value}</time> : profile.content.sourceObservedAt.state === 'Missing' ? (language === 'en' ? 'Missing' : 'Eksik') : t.unknown}</p><p>{language === 'en' ? 'Input freshness is unverified. Saving or reading a profile does not verify its source.' : 'Girdi güncelliği doğrulanmamış. Profili kaydetmek veya okumak kaynağını doğrulamaz.'}</p></aside>
+      <aside className="profile-source-context" aria-label={language === 'en' ? 'Saved source context' : 'Kayıtlı kaynak bağlamı'}><strong>{t.observed}</strong><p>{observedAt !== null ? <time dateTime={observedAt}>{observedAt}</time> : savedObservation?.state === 'Missing' ? (language === 'en' ? 'Missing' : 'Eksik') : t.unknown}</p><p>{language === 'en' ? 'Input freshness is unverified. Saving or reading a profile does not verify its source.' : 'Girdi güncelliği doğrulanmamış. Profili kaydetmek veya okumak kaynağını doğrulamaz.'}</p></aside>
       <p>{profileFields.filter(([key]) => content[key]?.state !== 'Known').length} {t.count}</p>
       {!profile.vessel.canEdit && <p>{t.readonly}</p>}
       <form noValidate aria-busy={saving} onSubmit={event => void submit(event)}>

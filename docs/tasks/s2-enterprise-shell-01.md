@@ -127,3 +127,30 @@ The coordinator owns actual desktop/mobile layout and keyboard browser checks.
 These checks, builds, lint and typechecks remain **DEFERRED**. No updated screen
 has been visually accepted from a rebuilt browser runtime in this authoring
 checkpoint; the live user preview and its configuration remain untouched.
+
+## First combined-gate diagnosis
+
+The coordinator subsequently opened the combined S2 gate on exact commit
+`5e40f18e4c5496f2012e8487de99c6d52d1c58ce`, tree
+`31765948ebcfc8a17b94df7a6ae1ccca3bdcbd31`. Its actual first frontend production
+build failed with `TS2322` at the bilingual role-lens test helper and five
+`TS18048` diagnostics in the saved profile observation display. Lint failed with
+`react-hooks/refs` for assigning the chooser's active request binding during
+render. The issued native results remain attached to that original target.
+
+The authored repair binds the test helper to the real component props type,
+checks the optional saved observation before displaying it, and moves request
+binding into a layout effect with synchronous cleanup/abort on scope changes.
+The actor/epoch guard and fresh authorization before guarded navigation remain
+in place. No type assertion, lint suppression or acceptance threshold is used
+to hide the failures. Retesting belongs to the coordinator on the subsequent
+frozen integration commit; this repair is not a passing gate result.
+
+The first whole component invocation exited 1 after 169.676 seconds without its
+structured reporter result: `FAILED_OR_UNPROVEN / structured_result_missing`.
+No total, failed-test name or full-suite acceptance is inferred from that missing
+result. The coordinator's subsequent closed lifecycle diagnostics on the same
+old target passed 14/14 chooser tests and 79/79 tests across the role-lens/profile
+files, with zero failures, pending cases, unhandled errors or module errors.
+Those are narrowly scoped diagnostic results, not acceptance of the full frontend
+or of this later repair commit.
