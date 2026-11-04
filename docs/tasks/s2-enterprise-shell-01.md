@@ -1,6 +1,6 @@
 # S2 enterprise shell — authored implementation package
 
-Status: AUTHORING COMPLETE / VERIFICATION DEFERRED. No S2 story points or canonical
+Status: COMBINED GATE OPEN / FAILURES DIAGNOSED / REVALIDATION PENDING. No S2 story points or canonical
 screens are accepted by this document. A local checkpoint is not a phase gate.
 
 ## Controlled sources and dependencies
@@ -75,9 +75,10 @@ keyboard focus and validation descriptions. Existing mobile focus and Today
 maintenance/tug lineage tests were extended. The coordinator separately owns
 real-browser shell scenarios and updates the existing signed role-lens journey.
 
-All frontend tests, lint, typecheck, builds, browser journeys and OpenAPI/type
-generation are **DEFERRED** until the combined S2 bundle gate, following the
-user's cadence. No live preview or provider fixture was rebuilt or changed.
+At the initial authoring checkpoint, frontend tests, lint, typecheck, builds,
+browser journeys and OpenAPI/type generation were **DEFERRED** until the combined
+S2 bundle gate, following the user's cadence. No live preview or provider fixture
+was rebuilt or changed by this UI author.
 `git diff --check` is an authoring whitespace check only; it is not test evidence.
 Graphify refresh is delegated to the coordinator after integration.
 
@@ -124,9 +125,9 @@ source so they do not style shared chrome or replace the explicit form grid.
 Additional component regressions assert TR/EN keyboard order, cancellation without
 HTTP submission, validation descriptions and removal of resolved error references.
 The coordinator owns actual desktop/mobile layout and keyboard browser checks.
-These checks, builds, lint and typechecks remain **DEFERRED**. No updated screen
-has been visually accepted from a rebuilt browser runtime in this authoring
-checkpoint; the live user preview and its configuration remain untouched.
+These checks, builds, lint and typechecks were **DEFERRED** at that authoring
+checkpoint. Subsequent actual gate results are recorded below; the live user
+preview and its configuration remain untouched by this UI author.
 
 ## First combined-gate diagnosis
 
@@ -154,3 +155,45 @@ old target passed 14/14 chooser tests and 79/79 tests across the role-lens/profi
 files, with zero failures, pending cases, unhandled errors or module errors.
 Those are narrowly scoped diagnostic results, not acceptance of the full frontend
 or of this later repair commit.
+
+## Closed component diagnosis and focused-form correction
+
+The complete native component run on commit
+`506d8269f4b864d862a72a89f11984048d41f87c`, tree
+`1736bdd2d9dbba6d282593f57b44e2c8c27b2c16`, subsequently closed with **1,010
+tests / 1,003 passed / 7 failed**, zero skipped, pending, todo, unhandled errors or
+module errors. Receipt SHA-256:
+`1add121aa128f4872670da308aed9c28ed96f9886711b906ee4afc9b450f2054`.
+These failures are retained as real results on their original target.
+
+The closed diagnosis identifies five obsolete secondary-navigation selectors in
+the ProductApp, TodayWorkspace and Workspace journeys, one obsolete secondary
+tug label in ProductTugNavigation, and one collapsed-role-disclosure/last-focus
+assumption in Workspace. Tests now target the actual authorized primary POSEIDON
+sidebar, its unchanged destination actions and the fixture's real last tabbable
+item. Dirty values, Back/Forward, cancellation/discard, unknown-save freezing,
+CSRF, retry and focus-wrap assertions remain; visible role-first controls and
+no-navigation assertions are added. No assertion is skipped or relaxed to accept
+an unrelated result.
+
+The coordinator's closed Chromium desktop/mobile shell run passed 8/8 scenarios
+on that older source. This author inspected both issued form PNGs: button and
+field alignment was improved, but browse KPI/chart content still pushed the edit
+form far down the page. The fixed chrome appearing mid-page was a scrolled
+full-page capture artifact and was not treated as a CSS defect.
+
+In the new authored form mode, editing or opening a regulatory profile suppresses
+the browse overview, search/filter toolbar, record table, unrelated details and
+workspace links. The form follows the page header and compact necessary context.
+The original guarded Switch vessel action and sign-out access remain available;
+profile mode also provides a guarded Back to vessel action. Normal browse mode
+keeps its overview and list. Existing save/cancel, selected-record and URL/history
+handlers are retained. Profile-access loading/denial stays explicit instead of
+being hidden with the browse detail panel.
+
+Additional component coverage checks that dirty-edit cancellation preserves the
+form, explicit discard restores the same selected browse context/URL, profile
+mode excludes browse content, and sign-out remains available. No test, build,
+browser journey or runtime mutation was run by this UI author for this update.
+The subsequent integration commit requires actual complete regression and fresh
+desktop/mobile viewport screenshots before acceptance.
