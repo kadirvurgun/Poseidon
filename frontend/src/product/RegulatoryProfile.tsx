@@ -7,6 +7,8 @@ import type { Profile, ProfileCommand, ProfileContent, ProfileHistory } from './
 import { RequiredDataField } from './RequiredDataField'
 import { loginHref } from './workspace-location'
 import { ConstructionRecordPicker } from './ConstructionRecordPicker'
+import { Button } from '../components/ui/button'
+import { EnterpriseActions, EnterprisePagination } from './EnterprisePatterns'
 
 const copy = {
   en: { title: 'Regulatory profile draft', note: 'Incomplete drafts can be saved. Declarations and reference values are unverified. This draft does not authorize submission or operations.', loading: 'Loading profile…', empty: 'No saved profile draft yet.', save: 'Save draft', saving: 'Saving…', saved: 'Draft saved.', retry: 'Retry same command', reload: 'Reload saved draft', conflict: 'The saved profile changed. Your draft is retained. Reload explicitly to discard it.', uncertain: 'The save outcome is unknown. Fields are frozen; retry the same command before leaving.', failed: 'Unable to load or save the profile.', denied: 'You do not have permission for this profile.', expired: 'Sign in to continue.', missing: 'Profile not found in your vessel scope.', history: 'Version history', noHistory: 'No saved versions.', observed: 'Source observation time', time: 'Saved at', provenance: 'Source status', revision: 'Version', unknown: 'Unknown', previous: 'Previous', next: 'Next', view: 'View saved values', count: 'fields have missing or unknown data. Mandatory submission policy is unresolved; draft only.', readonly: 'Read-only profile', reloadRead: 'Retry loading' },
@@ -144,14 +146,14 @@ function ScopedRegulatoryProfile({ id, language, csrf, onDirty, onSaving }: Prop
           return kind === 'number' ? <RequiredDataField key={key} {...common} kind="number" value={content[key] ?? { state: 'Missing' }} onChange={value => change(key, value)} /> :
             <RequiredDataField key={key} {...common} kind="text" value={content[key] ?? { state: 'Missing' }} onChange={value => change(key, value)} />
         })}</div>
-        {profile.vessel.canEdit && <div className="form-actions"><button type="submit" className="primary-button" disabled={saving || failure?.code === 'version_conflict'}>{saving ? t.saving : uncertain ? t.retry : t.save}</button></div>}
+        {profile.vessel.canEdit && <EnterpriseActions aria-label={language === 'en' ? 'Profile form actions' : 'Profil form işlemleri'}><Button type="submit" disabled={saving || failure?.code === 'version_conflict'}>{saving ? t.saving : uncertain ? t.retry : t.save}</Button></EnterpriseActions>}
       </form>
       <h3>{t.history}</h3>
       {historyFailure ? <div role="alert">{t.failed}<button onClick={() => setHistoryAttempt(v => v + 1)} disabled={saving || uncertain}>{t.reloadRead}</button></div> : !history ? <p role="status">{t.loading}</p> : <>
         {!history.items.length && <p>{t.noHistory}</p>}
         {history.items.map(row => <details key={row.revision}><summary>{t.revision} {row.revision} · {row.savedAt} · {provenance(row.provenance)}</summary>
           <dl>{profileFields.map(([key, , tr, en]) => <div key={key}><dt>{language === 'tr' ? tr : en}</dt><dd>{row.content[key]?.state === 'Known' ? String(row.content[key]?.value) : row.content[key]?.state === 'Unknown' ? t.unknown : (language === 'tr' ? 'Eksik' : 'Missing')}</dd></div>)}</dl></details>)}
-        <div className="form-actions"><button disabled={historyOffset === 0} onClick={() => { setHistory(null); setHistoryOffset(v => v - 25) }}>{t.previous}</button><button disabled={!history.hasMore} onClick={() => { setHistory(null); setHistoryOffset(v => v + 25) }}>{t.next}</button></div>
+        <EnterprisePagination label={language === 'en' ? 'Profile history pagination' : 'Profil geçmişi sayfalama'} previous={t.previous} next={t.next} previousDisabled={historyOffset === 0} nextDisabled={!history.hasMore} onPrevious={() => { setHistory(null); setHistoryOffset(v => v - 25) }} onNext={() => { setHistory(null); setHistoryOffset(v => v + 25) }} />
       </>}
     </>}
   </section>

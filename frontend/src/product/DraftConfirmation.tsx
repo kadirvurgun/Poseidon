@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react'
 import { editorCopy } from './editor-copy'
 import type { Language } from './editor-copy'
+import { Button } from '../components/ui/button'
+import { EnterpriseActions } from './EnterprisePatterns'
 
 export function DraftConfirmation({ language, onStay, onDiscard }: { language: Language; onStay: () => void; onDiscard: () => void }) {
   const dialog = useRef<HTMLDialogElement>(null)
@@ -13,6 +15,6 @@ export function DraftConfirmation({ language, onStay, onDiscard }: { language: L
   }, [])
   return <dialog ref={dialog} aria-labelledby="draft-title" onCancel={e => { e.preventDefault(); onStay() }}>
     <h2 id="draft-title">{t.discard}</h2>
-    <div className="form-actions"><button autoFocus onClick={onStay}>{t.stay}</button><button onClick={onDiscard}>{t.leave}</button></div>
+    <EnterpriseActions aria-label={language === 'en' ? 'Unsaved draft actions' : 'Kaydedilmemiş taslak işlemleri'}><Button variant="outline" autoFocus onClick={onStay}>{t.stay}</Button><Button variant="destructive" onClick={onDiscard}>{t.leave}</Button></EnterpriseActions>
   </dialog>
 }

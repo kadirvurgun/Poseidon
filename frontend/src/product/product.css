@@ -97,7 +97,7 @@
 .lifecycle-applicability button { min-height: 44px; max-width: 100%; white-space: normal; }
 .crew-shell { grid-template-columns: minmax(0, 1fr); }
 .crew-shell main { grid-column: 1; grid-row: 2; }
-.crew-shell nav { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem; }
+.crew-shell .crew-enterprise-breadcrumbs { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem; }
 .crew-shell form { margin-top: 1.5rem; }
 .crew-shell fieldset { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; min-width: 0; margin: 1rem 0; }
 .crew-shell label { display: flex; flex-direction: column; gap: .4rem; min-width: 0; }
