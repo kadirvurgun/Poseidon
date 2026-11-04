@@ -14,12 +14,13 @@ public static class WorkspaceLensPolicy
     public static WorkspaceLensItem[] Available(TrustedActor actor, Guid? vessel, VesselKind? kind)
     {
         var items = WorkspaceEndpoints.Destinations(actor)
+            .Where(x => x.Key is not ("noon-report" or "deck-daily-log" or "engine-daily-log") || kind != VesselKind.Tug || actor.Permissions.Contains("mode.cross"))
             .Where(x => !x.Key.StartsWith("tug-", StringComparison.Ordinal) || kind != VesselKind.Ship)
             .Where(x => x.Key != "tug-job-intake" || actor.HasWriteAttribution && actor.Permissions.Contains("tug.write") &&
                 (actor.TenantWideManage || vessel != null && actor.VesselGrants.Any(g => g.VesselId == vessel && g.CanEdit)))
             .Select(x => new WorkspaceLensItem(x.Key,
                 x.Key.StartsWith("tug-", StringComparison.Ordinal) && vessel != null ? x.Href + "?vessel=" + vessel :
-                x.Key == "today" && vessel != null ? x.Href + "/" + vessel : x.Href,
+                x.Key is "today" or "noon-report" or "deck-daily-log" or "engine-daily-log" && vessel != null ? x.Href + "/" + vessel : x.Href,
                 x.Key is "sources" or "requirements" or "audit" ? "review" : "daily")).ToList();
         if (!actor.CanRead || vessel == null) return items.ToArray();
         if (actor.Permissions.Contains("crew.read")) items.Add(new("crew", $"/app/crew-roster/{vessel}", "daily"));
@@ -45,13 +46,13 @@ public static class WorkspaceLensPolicy
         var rows = catalog.GetSection("Mappings").GetChildren().Take(4097).ToArray();
         if (rows.Length > 4096) return Empty("Unavailable");
         var mappings = new Dictionary<Guid, (string[] Keys, string[] Modes)>();
-        string[] known = ["today", "fleet", "companies", "crew", "equipment", "maintenance", "import", "audit", "sources", "requirements", "tug-command", "tug-job-board", "tug-job-intake"];
+        string[] known = ["today", "fleet", "companies", "crew", "equipment", "maintenance", "import", "audit", "sources", "requirements", "tug-command", "tug-job-board", "tug-job-intake", "noon-report", "deck-daily-log", "engine-daily-log"];
         foreach (var row in rows) {
             if (!Guid.TryParse(row["TenantId"], out var tenant) || tenant != actor.TenantId) continue;
             var keys = row.GetSection("Keys").GetChildren().Select(x => x.Value ?? "").ToArray();
             var modes = row.GetSection("Modes").GetChildren().Select(x => x.Value ?? "").ToArray();
             if (!Guid.TryParse(row["Reference"], out var reference) || reference == Guid.Empty ||
-                keys.Length is < 1 or > 13 || keys.Distinct().Count() != keys.Length || keys.Any(x => !known.Contains(x)) ||
+                keys.Length is < 1 or > 16 || keys.Distinct().Count() != keys.Length || keys.Any(x => !known.Contains(x)) ||
                 modes.Length is < 1 or > 3 || modes.Distinct().Count() != modes.Length || modes.Any(x => x is not ("Fleet" or "Ship" or "Tug")) ||
                 !mappings.TryAdd(reference, (keys, modes))) return Empty("Unavailable");
         }

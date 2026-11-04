@@ -30,11 +30,17 @@
     "TenantPerson",
     "Unresolved"
   ],
-  "mutationRouteTemplates": 86,
-  "criticalRouteTemplates": 80,
-  "criticalOperations": 85,
+  "mutationRouteTemplates": 92,
+  "criticalRouteTemplates": 86,
+  "criticalOperations": 91,
   "scopeMeaning": "Current exposed HTTP command surface, including aliases. Counts are authoring definitions until actual EndpointDataSource drift and real audit observations pass the phase gate. Technical codes describe accepted commands, never human justification or safety authority.",
   "operations": [
+    { "operationId": "NoonDailyCreate", "method": "POST", "routePattern": "/api/v1/noon-reports", "family": "DailyOperations", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "DailyOperationsCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "NoonDailyUpdate", "method": "PUT", "routePattern": "/api/v1/noon-reports/{id:guid}", "family": "DailyOperations", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "DailyOperationsCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "DeckDailyCreate", "method": "POST", "routePattern": "/api/v1/deck-daily-logs", "family": "DailyOperations", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "DailyOperationsCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "DeckDailyUpdate", "method": "PUT", "routePattern": "/api/v1/deck-daily-logs/{id:guid}", "family": "DailyOperations", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "DailyOperationsCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "EngineDailyCreate", "method": "POST", "routePattern": "/api/v1/engine-daily-logs", "family": "DailyOperations", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "DailyOperationsCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "EngineDailyUpdate", "method": "PUT", "routePattern": "/api/v1/engine-daily-logs/{id:guid}", "family": "DailyOperations", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "DailyOperationsCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     {
       "operationId": "ApplicabilityEvaluate",
       "method": "POST",
