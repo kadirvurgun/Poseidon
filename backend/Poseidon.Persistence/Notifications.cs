@@ -84,6 +84,8 @@ public sealed class NotificationEpisode : ITenantEntity
     public string PolicyDigest { get; set; } = "";
     public long Episode { get; set; }
     public bool? Active { get; set; }
+    // Current unavailability must not erase an observed inactive/active boundary.
+    public bool? LastKnownActive { get; set; }
     public string? SourceContextHash { get; set; }
     public long Revision { get; set; } = 1;
     public uint Version { get; set; }
@@ -139,7 +141,7 @@ internal static class NotificationStorage
         });
         model.Entity<NotificationEpisode>(b => {
             b.ToTable("NotificationEpisodes", "engagement", t => t.HasCheckConstraint("CK_NotificationEpisode_State",
-                "\"Revision\" > 0 AND \"Episode\" >= 0 AND (\"Active\" IS DISTINCT FROM TRUE OR (\"Episode\" > 0 AND \"SourceContextHash\" IS NOT NULL))"));
+                "\"Revision\" > 0 AND \"Episode\" >= 0 AND (\"Active\" IS NULL OR \"Active\" IS NOT DISTINCT FROM \"LastKnownActive\") AND (\"Active\" IS DISTINCT FROM TRUE OR (\"Episode\" > 0 AND \"SourceContextHash\" IS NOT NULL))"));
             b.HasKey(e => new { e.TenantId, e.VesselId, e.PlanId, e.RuleKey, e.PolicyDigest }); b.Property(e => e.Version).IsRowVersion();
             b.Property(e => e.RuleKey).HasMaxLength(64); b.Property(e => e.PolicyDigest).HasMaxLength(64); b.Property(e => e.SourceContextHash).HasMaxLength(64);
             b.HasOne<MaintenancePlan>().WithMany().HasForeignKey(e => new { e.TenantId, e.VesselId, e.PlanId })

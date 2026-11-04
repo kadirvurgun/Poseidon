@@ -421,7 +421,7 @@ public sealed class PoseidonDbContext(
                 (long)e.Property("Revision").CurrentValue! != (long)e.Property("Revision").OriginalValue! + 1))))
             throw new InvalidOperationException("Notification dispatch ownership is immutable.");
         if (changes.Any(e => e.Entity is NotificationEpisode && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
-            (e.Properties.Any(p => p.IsModified && p.Metadata.Name is not ("Active" or "Episode" or "SourceContextHash" or "Revision")) ||
+            (e.Properties.Any(p => p.IsModified && p.Metadata.Name is not ("Active" or "LastKnownActive" or "Episode" or "SourceContextHash" or "Revision")) ||
                 (long)e.Property("Revision").CurrentValue! != (long)e.Property("Revision").OriginalValue! + 1))))
             throw new InvalidOperationException("Notification episode ownership is immutable.");
         if (changes.Any(e => e.Entity is Notification && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&

@@ -87,7 +87,7 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.NotNull(state.LastCompletedAt); Assert.Equal(0, state.SourceOffset);
     }
     [Fact]
-    public async Task Observed_inactive_then_same_active_basis_creates_a_new_episode_without_reopening_the_prior_acknowledged_record()
+    public async Task Observed_inactive_then_unknown_then_same_active_basis_creates_one_new_episode_without_reopening_the_prior_acknowledged_record()
     {
         var clock = new NotificationClock(); await using var host = NotificationHost(clock); using var c = Client(host);
         NotificationPermissions(host.Services); await Token(c); var plan = CurrentCalendar(); Assert.Equal(HttpStatusCode.OK, (await Send(c, PlansUrl, plan)).StatusCode);
@@ -108,6 +108,27 @@ public sealed partial class DirectoryWorkspaceTests
             Assert.True((await db.NotificationEpisodes.SingleAsync(e => e.PlanId == plan.Id && e.RuleKey == "due-advisory", Ct)).Active);
         }
         routing.Rules = original;
+        var federation = host.Services.GetRequiredService<FederationSettings>(); var owner = federation.Memberships[0];
+        federation.Memberships[0] = owner with { Permissions = owner.Permissions.Where(p => p != "maintenance.owner.eligible").ToArray() };
+        clock.Current = clock.Current.AddSeconds(5); Assert.Equal(1, (await worker.RunBatchAsync(Ct)).Completed);
+        long unknownRevision;
+        await using (var db = Db()) {
+            var inactive = await db.NotificationEpisodes.SingleAsync(e => e.PlanId == plan.Id && e.RuleKey == "due-critical", Ct);
+            Assert.Null(inactive.Active); Assert.False(inactive.LastKnownActive); Assert.Equal(1, inactive.Episode);
+            unknownRevision = inactive.Revision;
+            var advisory = await db.NotificationEpisodes.SingleAsync(e => e.PlanId == plan.Id && e.RuleKey == "due-advisory", Ct);
+            Assert.Null(advisory.Active); Assert.True(advisory.LastKnownActive); Assert.Equal(1, advisory.Episode);
+            Assert.Equal(2, await db.NotificationEvents.CountAsync(e => e.Kind == "Raised", Ct));
+        }
+        // A repeated unknown poll is neither a new boundary nor a reason to
+        // erase the already observed inactive state of the critical route.
+        clock.Current = clock.Current.AddSeconds(5); Assert.Equal(1, (await worker.RunBatchAsync(Ct)).Completed);
+        await using (var db = Db()) {
+            var unchanged = await db.NotificationEpisodes.SingleAsync(e => e.PlanId == plan.Id && e.RuleKey == "due-critical", Ct);
+            Assert.Null(unchanged.Active); Assert.False(unchanged.LastKnownActive); Assert.Equal(unknownRevision, unchanged.Revision);
+            Assert.Equal(2, await db.Notifications.CountAsync(Ct));
+        }
+        federation.Memberships[0] = owner;
         clock.Current = clock.Current.AddSeconds(5); Assert.Equal(1, (await worker.RunBatchAsync(Ct)).Completed);
         clock.Current = clock.Current.AddSeconds(5); Assert.Equal(1, (await worker.RunBatchAsync(Ct)).Completed);
         await using (var db = Db()) {
@@ -122,6 +143,70 @@ public sealed partial class DirectoryWorkspaceTests
         }
         using var retry = await Send(c, NotificationPath($"/{critical.Id}/acknowledge"), ack, key);
         Assert.Equal(HttpStatusCode.OK, retry.StatusCode); Assert.Equal(receipt, await retry.Content.ReadAsStringAsync(Ct));
+    }
+    [Fact]
+    public async Task Observed_policy_withdrawal_while_source_already_unknown_preserves_a_real_inactive_boundary()
+    {
+        var clock = new NotificationClock(); await using var host = NotificationHost(clock); using var c = Client(host);
+        NotificationPermissions(host.Services); await Token(c); var plan = CurrentCalendar();
+        Assert.Equal(HttpStatusCode.OK, (await Send(c, PlansUrl, plan)).StatusCode);
+        clock.Current = DateTimeOffset.UtcNow; await ScheduleNotifications(host.Services);
+        var worker = host.Services.GetRequiredService<NotificationScheduler>(); Assert.Equal(1, (await worker.RunBatchAsync(Ct)).Completed);
+        var federation = host.Services.GetRequiredService<FederationSettings>(); var owner = federation.Memberships[0];
+        federation.Memberships[0] = owner with { Permissions = owner.Permissions.Where(p => p != "maintenance.owner.eligible").ToArray() };
+        clock.Current = clock.Current.AddSeconds(5); Assert.Equal(1, (await worker.RunBatchAsync(Ct)).Completed);
+        var routing = host.Services.GetRequiredService<NotificationSettings>(); var original = routing.Rules;
+        routing.Rules = original.Where(r => r.Key != "due-critical").ToArray();
+        clock.Current = clock.Current.AddSeconds(5); Assert.Equal(1, (await worker.RunBatchAsync(Ct)).Completed);
+        await using (var db = Db()) {
+            var retired = await db.NotificationEpisodes.SingleAsync(e => e.PlanId == plan.Id && e.RuleKey == "due-critical", Ct);
+            Assert.False(retired.Active); Assert.False(retired.LastKnownActive); Assert.Equal(1, retired.Episode);
+            Assert.Equal("SourceChanged", (await db.Notifications.SingleAsync(n => n.PlanId == plan.Id && n.RuleKey == "due-critical", Ct)).State);
+        }
+        routing.Rules = original;
+        clock.Current = clock.Current.AddSeconds(5); Assert.Equal(1, (await worker.RunBatchAsync(Ct)).Completed);
+        await using (var db = Db()) {
+            var unknown = await db.NotificationEpisodes.SingleAsync(e => e.PlanId == plan.Id && e.RuleKey == "due-critical", Ct);
+            Assert.Null(unknown.Active); Assert.False(unknown.LastKnownActive); Assert.Equal(2, await db.Notifications.CountAsync(Ct));
+        }
+        federation.Memberships[0] = owner;
+        clock.Current = clock.Current.AddSeconds(5); Assert.Equal(1, (await worker.RunBatchAsync(Ct)).Completed);
+        await using var verify = Db(); Assert.Equal(3, await verify.Notifications.CountAsync(Ct));
+        Assert.Equal(2, (await verify.NotificationEpisodes.SingleAsync(e => e.PlanId == plan.Id && e.RuleKey == "due-critical", Ct)).Episode);
+    }
+    [Fact]
+    public async Task Retained_retired_header_bootstraps_a_closed_episode_even_when_the_source_hash_is_identical()
+    {
+        var clock = new NotificationClock(); await using var host = NotificationHost(clock); using var c = Client(host);
+        NotificationPermissions(host.Services); await Token(c); var plan = CurrentCalendar();
+        Assert.Equal(HttpStatusCode.OK, (await Send(c, PlansUrl, plan)).StatusCode);
+        clock.Current = DateTimeOffset.UtcNow; await ScheduleNotifications(host.Services);
+        var worker = host.Services.GetRequiredService<NotificationScheduler>(); Assert.Equal(1, (await worker.RunBatchAsync(Ct)).Completed);
+        var routing = host.Services.GetRequiredService<NotificationSettings>();
+        var rule = routing.Rules.Single(r => r.Key == "due-advisory") with { Key = "fictional-retired-bootstrap" };
+        var retiredId = Guid.NewGuid(); string basis;
+        await using (var db = Db()) {
+            var current = await db.Notifications.SingleAsync(n => n.PlanId == plan.Id && n.RuleKey == "due-advisory", Ct);
+            basis = current.SourceContextHash;
+            // Explicit historical unverified fixture against the real current
+            // owning revision, not a delivered message or verified safety fact.
+            db.Notifications.Add(new() { TenantId = current.TenantId, VesselId = current.VesselId, Id = retiredId,
+                PlanId = current.PlanId, PlanRevision = current.PlanRevision, RuleKey = rule.Key, PolicyVersion = rule.Version,
+                PolicyDigest = NotificationEngine.Digest(rule), SourceContextHash = basis, Episode = 1, SourceState = current.SourceState,
+                Severity = rule.Severity, RecipientRoleId = current.RecipientRoleId, DueDate = current.DueDate,
+                State = "SourceChanged", CreatedAt = clock.Current });
+            db.NotificationEvents.Add(new() { TenantId = current.TenantId, VesselId = current.VesselId, Id = Guid.NewGuid(),
+                NotificationId = retiredId, Sequence = 1, Kind = "SourceChanged", RecordedAt = clock.Current });
+            await db.SaveChangesAsync(Ct);
+        }
+        routing.Rules = [..routing.Rules, rule];
+        clock.Current = clock.Current.AddSeconds(5); Assert.Equal(1, (await worker.RunBatchAsync(Ct)).Completed);
+        clock.Current = clock.Current.AddSeconds(5); Assert.Equal(1, (await worker.RunBatchAsync(Ct)).Completed);
+        await using var verify = Db(); var rows = await verify.Notifications.Where(n => n.RuleKey == rule.Key).ToArrayAsync(Ct);
+        Assert.Equal(2, rows.Length); Assert.Equal("SourceChanged", rows.Single(n => n.Id == retiredId).State);
+        var fresh = Assert.Single(rows, n => n.State == "Open"); Assert.Equal(2, fresh.Episode); Assert.Equal(basis, fresh.SourceContextHash);
+        Assert.Single(await verify.NotificationEvents.Where(e => e.NotificationId == fresh.Id && e.Kind == "Raised").ToArrayAsync(Ct));
+        Assert.Single(await verify.NotificationEvents.Where(e => e.NotificationId == retiredId).ToArrayAsync(Ct));
     }
     [Fact]
     public async Task Unresolved_owner_is_unavailable_not_a_false_boundary_and_restoration_keeps_the_same_episode()
@@ -141,7 +226,7 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Equal(HttpStatusCode.Conflict, blocked.StatusCode);
         clock.Current = clock.Current.AddSeconds(5); Assert.Equal(1, (await worker.RunBatchAsync(Ct)).Completed);
         await using (var db = Db()) {
-            Assert.All(await db.NotificationEpisodes.Where(e => e.PlanId == plan.Id).ToArrayAsync(Ct), e => { Assert.Null(e.Active); Assert.Equal(1, e.Episode); });
+            Assert.All(await db.NotificationEpisodes.Where(e => e.PlanId == plan.Id).ToArrayAsync(Ct), e => { Assert.Null(e.Active); Assert.True(e.LastKnownActive); Assert.Equal(1, e.Episode); });
             Assert.All(await db.Notifications.ToArrayAsync(Ct), n => Assert.Equal("Open", n.State));
             Assert.Empty(await db.NotificationEvents.Where(e => e.Kind != "Raised").ToArrayAsync(Ct));
             Assert.Empty(await db.NotificationReceipts.ToArrayAsync(Ct));

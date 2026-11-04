@@ -100,8 +100,8 @@ public sealed class NotificationEngine(NotificationSettings settings, Maintenanc
             var notices = live.Concat(bootstrap).DistinctBy(n => n.Id).ToArray();
             var expected = new Dictionary<(Guid Plan, string Rule, string Policy), (MaintenanceCurrentProjection Source, NotificationRule Rule, NotificationEpisode Episode)>();
             var unknown = new HashSet<(Guid Plan, string Rule, string Policy)>();
-            foreach (var old in episodes.Where(e => e.Active == true && !rules.Any(r => r.Key == e.RuleKey && Digest(r) == e.PolicyDigest))) {
-                old.Active = false; old.Revision++; // An observed configured policy withdrawal is a real boundary.
+            foreach (var old in episodes.Where(e => (e.Active != false || e.LastKnownActive != false) && !rules.Any(r => r.Key == e.RuleKey && Digest(r) == e.PolicyDigest))) {
+                old.Active = false; old.LastKnownActive = false; old.Revision++; // An observed configured policy withdrawal is a real boundary.
             }
             var ownerUnavailable = 0;
             foreach (var source in sources) foreach (var rule in rules) {
@@ -114,16 +114,18 @@ public sealed class NotificationEngine(NotificationSettings settings, Maintenanc
                         .OrderByDescending(n => n.Episode).ThenByDescending(n => n.CreatedAt).ThenBy(n => n.State == "SourceChanged").FirstOrDefault();
                     episode = new() { TenantId = db.TenantId, VesselId = vessel, PlanId = source.Row.Id, RuleKey = rule.Key,
                         PolicyDigest = digest, Episode = prior?.Episode ?? 0, Active = prior == null || prior.State == "SourceChanged" ? null : true,
-                        SourceContextHash = prior?.SourceContextHash };
+                        // A retained retirement is a known closed notification episode,
+                        // not proof that the maintenance source itself is NotDue.
+                        LastKnownActive = prior == null ? null : prior.State != "SourceChanged", SourceContextHash = prior?.SourceContextHash };
                     db.NotificationEpisodes.Add(episode);
                 }
-                var advance = active == true && (episode.Episode == 0 || episode.Active == false || episode.SourceContextHash != hash);
-                var changed = advance || episode.Active != active || active != null && episode.SourceContextHash != hash;
+                var advance = active == true && (episode.Episode == 0 || episode.LastKnownActive == false || episode.SourceContextHash != hash);
+                var changed = advance || episode.Active != active || active != null && (episode.LastKnownActive != active || episode.SourceContextHash != hash);
                 if (changed) {
                     if (db.Entry(episode).State != EntityState.Added) episode.Revision++;
                     if (advance) episode.Episode++;
                     episode.Active = active;
-                    if (active != null) episode.SourceContextHash = hash; // Keep the last known basis through unavailability.
+                    if (active != null) { episode.LastKnownActive = active; episode.SourceContextHash = hash; } // Preserve known facts through unavailability.
                 }
                 if (active == true) expected.Add((source.Row.Id, rule.Key, digest), (source, rule, episode));
                 if (active == null) unknown.Add((source.Row.Id, rule.Key, digest));
