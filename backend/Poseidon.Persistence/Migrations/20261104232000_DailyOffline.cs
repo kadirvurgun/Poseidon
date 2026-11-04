@@ -73,7 +73,7 @@ CREATE TABLE offline."DailyOutcomes" (
  CONSTRAINT "AK_DailyOfflineOutcome_ParentScope" UNIQUE ("TenantId","ActorId","CommandId","EnrollmentId"),
  CONSTRAINT "FK_DailyOfflineOutcome_Enrollment" FOREIGN KEY ("TenantId","EnrollmentId","ActorId","VesselId","Kind","RecordId") REFERENCES offline."DailyEnrollments" ("TenantId","Id","ActorId","VesselId","Kind","RecordId") ON DELETE RESTRICT,
  CONSTRAINT "FK_DailyOfflineOutcome_Parent" FOREIGN KEY ("TenantId","ActorId","ParentCommandId","EnrollmentId") REFERENCES offline."DailyOutcomes" ("TenantId","ActorId","CommandId","EnrollmentId") ON DELETE RESTRICT,
- CONSTRAINT "CK_DailyOfflineOutcome_State" CHECK ("Kind" IN ('Noon','Deck','Engine') AND "BaseVersion" >= 0 AND "ServerVersion" >= 0 AND "Revision" >= 0 AND "Result" IN ('Committed','MaterialConflict') AND ("Result" <> 'Committed' OR ("ServerVersion" > 0 AND "Revision" > 0)))
+ CONSTRAINT "CK_DailyOfflineOutcome_State" CHECK ("Kind" IN ('Noon','Deck','Engine') AND "BaseVersion" >= 0 AND "ServerVersion" >= 0 AND "Revision" >= 0 AND "Result" IN ('Committed','MaterialConflict','ServerRetained') AND ("Result" <> 'ServerRetained' OR "ParentCommandId" IS NOT NULL) AND ("Result" <> 'Committed' OR ("ServerVersion" > 0 AND "Revision" > 0)))
 );
 CREATE INDEX "IX_DailyOfflineOutcome_Scope" ON offline."DailyOutcomes" ("TenantId","EnrollmentId","ActorId","VesselId","Kind","RecordId");
 CREATE INDEX "IX_DailyOfflineOutcome_ParentScope" ON offline."DailyOutcomes" ("TenantId","ActorId","ParentCommandId","EnrollmentId");

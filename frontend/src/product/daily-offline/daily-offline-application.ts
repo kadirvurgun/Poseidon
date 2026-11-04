@@ -1,6 +1,6 @@
 import { ApiError, request, session } from '../api'
 import { isGuid } from '../identifiers'
-import { base64, hash, vault, type KeySlot } from '../offline-application'
+import { base64, hash, vault, prepareOfflineShell, type KeySlot } from '../offline-application'
 import { openOfflineRecord, sealOfflineRecord } from '../offline-cipher'
 import { OfflineEncryptedRecordStore } from '../offline-record-store'
 import { offlineKeys as exact } from '../offline-capture-contract'
@@ -8,6 +8,11 @@ import type { DailyKind, DailyFields } from '../daily-report-fields'
 import { badDailyOffline as bad, decodeDailyOfflineContext, decodeDailyCapture, decodeDailyOutcome, decodeDailyConflict, utc,
   type DailyOfflineContext, type DailyPending, type DailyConflict, type DailyInventoryItem, type DailyOfflineOutcome } from './daily-offline-contract'
 
+export const dailyCipherContext = (context: DailyOfflineContext, commandId: string) => ({
+  tenantId: context.tenantId, actorId: context.actorId, vesselId: context.vesselId, deviceId: context.deviceId,
+  sessionBinding: `daily/${context.kind}/${context.recordId}/${context.id}`,
+  policyVersion: `${context.policyVersion}/${context.policyDigest}/${context.authorityDigest}/${context.sourceVersion}/${context.schemaHash}`, commandId,
+})
 const limits = { plaintextBytes: 131072, contextBytes: 4096 }
 const database = 'poseidon.offline.daily.v1'
 export function dailyOfflineRoot(kind: DailyKind, vessel: string, record: string, suffix = '') {
@@ -39,6 +44,11 @@ export class DailyOfflineApplication {
     const ctx = decodeDailyOfflineContext(await request<unknown>(dailyOfflineRoot(kind, vessel, record, enrollment ? `/${enrollment}/renew` : ''), signal,
       { method: 'POST', headers: { 'X-CSRF-TOKEN': user.csrfToken } }), kind, vessel, record)
     if (ctx.actorId !== user.actorId || ctx.tenantId !== user.tenantId || signal.aborted) throw new ApiError(403)
+    // Prepare only the public static shell, before any local key/ciphertext
+    // access. This never activates a new worker forcibly or proves an older
+    // already-active worker implements this build's daily route contract.
+    await prepareOfflineShell(signal)
+    if (signal.aborted) throw new Error('authorization_withdrawn')
     const slot = await slotOf(ctx)
     let keys = await vault<KeySlot | null>((s, done) => { const q = s.get(slot); q.onsuccess = () => done(q.result ?? null) })
     if (!keys && enrollment) throw new Error('key_lost_data_retained')
@@ -69,7 +79,7 @@ export class DailyOfflineApplication {
   active() { return !this.closed && performance.now() >= this.started && this.remaining() > 0 }
   remaining() { return Math.max(0, Math.min(Date.parse(this.context.expiresAt), Date.parse(this.context.retainUntil)) - Date.parse(this.context.serverTime) - (performance.now() - this.started)) }
   private requireActive() { if (!this.active()) throw new Error('reauthorization_required_data_retained') }
-  private aad(commandId: string) { return { ...this.context, sessionBinding: `daily/${this.context.kind}/${this.context.recordId}/${this.context.id}`, policyVersion: `${this.context.policyVersion}/${this.context.policyDigest}/${this.context.authorityDigest}/${this.context.sourceVersion}/${this.context.schemaHash}`, commandId } }
+  private aad(commandId: string) { return dailyCipherContext(this.context, commandId) }
   private async reserve() {
     this.requireActive()
     await vault<void>((s, done) => { const q = s.get(this.slot); q.onsuccess = () => { const row = q.result as KeySlot | undefined

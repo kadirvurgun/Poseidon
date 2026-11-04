@@ -5129,7 +5129,7 @@ namespace Poseidon.Persistence.Migrations
                 b.HasIndex("TenantId","ActorId","ParentCommandId","EnrollmentId").HasDatabaseName("IX_DailyOfflineOutcome_ParentScope");
                 b.HasIndex("TenantId","ActorId","EnrollmentId","ReceivedAt","CommandId").HasDatabaseName("IX_DailyOfflineOutcome_History");
                 b.HasIndex("TenantId","ActorId","ParentCommandId").HasDatabaseName("UX_DailyOfflineOutcome_Resolution").IsUnique().HasFilter("\"ParentCommandId\" IS NOT NULL");
-                b.ToTable("DailyOutcomes","offline",t=>t.HasCheckConstraint("CK_DailyOfflineOutcome_State","\"Kind\" IN ('Noon','Deck','Engine') AND \"BaseVersion\" >= 0 AND \"ServerVersion\" >= 0 AND \"Revision\" >= 0 AND \"Result\" IN ('Committed','MaterialConflict') AND (\"Result\" <> 'Committed' OR (\"ServerVersion\" > 0 AND \"Revision\" > 0))"));
+                b.ToTable("DailyOutcomes","offline",t=>t.HasCheckConstraint("CK_DailyOfflineOutcome_State","\"Kind\" IN ('Noon','Deck','Engine') AND \"BaseVersion\" >= 0 AND \"ServerVersion\" >= 0 AND \"Revision\" >= 0 AND \"Result\" IN ('Committed','MaterialConflict','ServerRetained') AND (\"Result\" <> 'ServerRetained' OR \"ParentCommandId\" IS NOT NULL) AND (\"Result\" <> 'Committed' OR (\"ServerVersion\" > 0 AND \"Revision\" > 0))"));
             });
             modelBuilder.Entity("Poseidon.Persistence.DailyReviewHead",b=> {
                 b.Property<Guid>("TenantId").HasColumnType("uuid");b.Property<Guid>("VesselId").HasColumnType("uuid");b.Property<Guid>("RecordId").HasColumnType("uuid");

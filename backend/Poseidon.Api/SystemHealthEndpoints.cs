@@ -32,11 +32,15 @@ public static class SystemHealthEndpoints
             !Guid.TryParseExact(h.Request.Query["vesselId"], "D", out var vessel) || vessel == Guid.Empty) return await Fail(400, "Invalid");
         if (!await actor.Scope(db.Vessels).AnyAsync(v => v.Id == vessel, h.RequestAborted)) return await Fail(404, "NotFound");
         var committed = await db.OfflineOutcomes.LongCountAsync(o => o.VesselId == vessel && o.Result == "Committed", h.RequestAborted) +
-            await db.TugOfflineOutcomes.LongCountAsync(o => o.VesselId == vessel && o.Result == "Committed", h.RequestAborted);
+            await db.TugOfflineOutcomes.LongCountAsync(o => o.VesselId == vessel && o.Result == "Committed", h.RequestAborted) +
+            await db.DailyOfflineOutcomes.LongCountAsync(o => o.VesselId == vessel && o.Result == "Committed", h.RequestAborted);
         var conflicts = await db.OfflineOutcomes.LongCountAsync(o => o.VesselId == vessel && o.Result == "MaterialConflict" &&
             !db.OfflineOutcomes.Any(resolved => resolved.ActorId == o.ActorId && resolved.EnrollmentId == o.EnrollmentId && resolved.ParentCommandId == o.CommandId && resolved.Result == "Committed"), h.RequestAborted) +
             await db.TugOfflineOutcomes.LongCountAsync(o => o.VesselId == vessel && o.Result == "MaterialConflict" &&
-            !db.TugOfflineOutcomes.Any(resolved => resolved.ActorId == o.ActorId && resolved.EnrollmentId == o.EnrollmentId && resolved.ParentCommandId == o.CommandId && resolved.Result == "Committed"), h.RequestAborted);
+            !db.TugOfflineOutcomes.Any(resolved => resolved.ActorId == o.ActorId && resolved.EnrollmentId == o.EnrollmentId && resolved.ParentCommandId == o.CommandId && resolved.Result == "Committed"), h.RequestAborted) +
+            await db.DailyOfflineOutcomes.LongCountAsync(o => o.VesselId == vessel && o.Result == "MaterialConflict" &&
+            !db.DailyOfflineOutcomes.Any(resolved => resolved.ActorId == o.ActorId && resolved.EnrollmentId == o.EnrollmentId && resolved.ParentCommandId == o.CommandId &&
+                (resolved.Result == "Committed" || resolved.Result == "ServerRetained")), h.RequestAborted);
         var observed = OperationalHealthObservations.Read(actor.TenantId);
         var configured = files.Ready(environment);
         var fileState = new HealthFilesDto(configured ? "ConfiguredUnprobed" : "Unavailable",

@@ -65,6 +65,11 @@ public static class DailyOfflineEndpoints
         if(await db.DailyOperations.AnyAsync(r=>r.Id==record && (r.VesselId!=vessel || r.Kind!=kind),h.RequestAborted))return(null,Guid.Empty,"");
         return(a,vessel,DailyOperationsEndpoints.Rights(a));
     }
+    private static bool Human(HttpContext h,DailyOfflineEnrollment e) {
+        var actor=Actor(h);if(actor==null || actor.Id!=e.ActorId || actor.TenantId!=e.TenantId)return false;
+        var members=h.RequestServices.GetRequiredService<FederationSettings>().Memberships.Where(m=>m.ActorId==actor.Id && m.TenantId==actor.TenantId).Take(2).ToArray();
+        return members.Length==1 && members[0].ActorKind=="Human";
+    }
     private static bool CommandPermission(HttpContext h,string kind) => DailyOperationsPolicy.Kinds.Contains(kind) && Actor(h) is {} actor &&
         actor.HasWriteAttribution && DailyOperationsEndpoints.CanRead(actor,kind) && actor.Permissions.Contains("daily."+kind.ToLowerInvariant()+".write");
     private static Task<bool> Current(HttpContext h,string kind,Guid vessel,string rights)=>DailyOperationsEndpoints.Current(h,kind,vessel,rights,true);
@@ -175,7 +180,7 @@ public static class DailyOfflineEndpoints
     private static async Task<IResult> Replay(HttpContext h,PoseidonDbContext db,IDbContextTransaction tx,DailyOfflineEnrollment e,DailyOfflinePolicy p,string rights) {
         var bytes=await Body(h);var capture=JsonSerializer.Deserialize<DailyOfflineCapture>(bytes,Json);var now=Now(h);var ct=h.RequestAborted;
         using var parsed=JsonDocument.Parse(bytes);var capturedText=parsed.RootElement.TryGetProperty("capturedAt",out var at)&&at.ValueKind==JsonValueKind.String?at.GetString():null;
-        if(capture==null || capture.CommandId==Guid.Empty || capture.RecordId!=e.RecordId || capture.Kind!=e.Kind || capture.KeyId!=e.KeyId || capture.DeviceId!=e.DeviceId ||
+        if(capture==null || capture.CommandId==Guid.Empty || capture.ParentCommandId==capture.CommandId || capture.RecordId!=e.RecordId || capture.Kind!=e.Kind || capture.KeyId!=e.KeyId || capture.DeviceId!=e.DeviceId ||
             capture.PolicyVersion!=e.PolicyVersion || capture.PolicyDigest!=e.PolicyDigest || capture.SourceVersion!=e.SourceVersion || capture.SchemaHash!=e.SchemaHash ||
             capture.Operation!=DailyOfflinePolicy.Operation(e.Kind) || capturedText==null || !(capturedText.EndsWith('Z')||capturedText.EndsWith("+00:00",StringComparison.Ordinal)))
             return await Fail(h,400,"invalid_offline_command");
@@ -183,11 +188,12 @@ public static class DailyOfflineEndpoints
         var digest=Convert.ToHexString(SHA256.HashData(bytes));
         if(h.Request.Headers["X-Offline-Hash"].Count!=1 || !string.Equals(h.Request.Headers["X-Offline-Hash"],digest,StringComparison.Ordinal))return await Fail(h,400,"offline_hash_mismatch");
         if(h.Request.Headers["X-Offline-Signature"].Count!=1 || !OfflineApplicationEndpoints.VerifyKey(e.PublicKey,h.Request.Headers["X-Offline-Signature"],digest))return await Fail(h,403,"offline_key_proof_denied");
+        if(capture.ParentCommandId!=null && !Human(h,e))return await Fail(h,403,"human_authority_required");
         // Owning current scope, policy, device, exact source and proof precede recovery.
         var old=await Outcomes(db,e).AsNoTracking().SingleOrDefaultAsync(o=>o.CommandId==capture.CommandId,ct);
         if(old!=null) {
             if(old.Digest!=digest)return await Fail(h,409,"offline_command_reused");
-            if(!await Current(h,e.Kind,e.VesselId,rights) || !Matches(h,e,Policy(h,e.Kind,e.VesselId),Now(h)))return await Fail(h,403,"permission_denied");
+            if(!await Current(h,e.Kind,e.VesselId,rights) || !Matches(h,e,Policy(h,e.Kind,e.VesselId),Now(h)) || capture.ParentCommandId!=null && !Human(h,e))return await Fail(h,403,"permission_denied");
             return Results.Content(old.OutcomeJson,"application/json");
         }
         if(e.ExpiresAt<=now || !OfflineWatchCapture.ValidCaptureTime(capture.CapturedAt,capture.OffsetMinutes,e.CreatedAt,now,e.ExpiresAt))return await Fail(h,409,"offline_recovery_required");
@@ -207,7 +213,7 @@ public static class DailyOfflineEndpoints
             local=capture.Choice=="keepServer"?server:retained.Local!;
             if(!Fields(p,local.ToDictionary(),out local))return await Fail(h,403,"offline_policy_denied");
         }
-        var result=serverVersion==capture.BaseVersion?"Committed":"MaterialConflict";
+        var result=capture.ParentCommandId!=null && capture.Choice=="keepServer"?"ServerRetained":serverVersion==capture.BaseVersion?"Committed":"MaterialConflict";
         if(result=="Committed") {
             foreach(var field in local)full[field.Key]=field.Value;
             var ordinary=new DailyDraftCommand(e.RecordId,serverVersion,full.ToDictionary(),serverVersion==0?"INITIAL_AUTHORING":"AUTHORING_CORRECTION");
@@ -221,10 +227,10 @@ public static class DailyOfflineEndpoints
             ParentCommandId=capture.ParentCommandId,Digest=digest,Result=result,BaseVersion=capture.BaseVersion,ServerVersion=serverVersion,Revision=revision,OutcomeJson=json,
             ReceivedAt=now,ProtectedContext=Protect(h,e,new(before,local,server,capture.ReasonCode))});
         await db.SaveChangesAsync(ct);
-        if(!await Current(h,e.Kind,e.VesselId,rights) || !Matches(h,e,Policy(h,e.Kind,e.VesselId),Now(h)))return await Fail(h,403,"permission_denied");
+        if(!await Current(h,e.Kind,e.VesselId,rights) || !Matches(h,e,Policy(h,e.Kind,e.VesselId),Now(h)) || capture.ParentCommandId!=null && !Human(h,e))return await Fail(h,403,"permission_denied");
         await tx.CommitAsync(ct);
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h,"DailyOfflineRequest","Success",resourceId:e.RecordId);
-        if(!await Current(h,e.Kind,e.VesselId,rights) || !Matches(h,e,Policy(h,e.Kind,e.VesselId),Now(h)))return await Fail(h,503,"command_outcome_withheld");
+        if(!await Current(h,e.Kind,e.VesselId,rights) || !Matches(h,e,Policy(h,e.Kind,e.VesselId),Now(h)) || capture.ParentCommandId!=null && !Human(h,e))return await Fail(h,503,"command_outcome_withheld");
         return Results.Content(json,"application/json");
     }
     private static async Task<IResult> History(string kind,Guid record,Guid enrollment,HttpContext h,PoseidonDbContext db) {
@@ -253,6 +259,6 @@ public static class DailyOfflineEndpoints
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h,"DailyOfflineRead","Success",resourceId:record);
         if(!await Current(h,kind,gate.Vessel,gate.Rights) || !Matches(h,e,Policy(h,kind,gate.Vessel),Now(h)))return await Fail(h,403,"permission_denied");
         return Results.Ok(new DailyOfflineConflictDto(command,enrollment,record,kind,owner?.Version??0,fields,
-            resolved==null?["keepServer","useCaptured"]:[],resolved==null?null:JsonSerializer.Deserialize<DailyOfflineResult>(resolved.OutcomeJson,Json)));
+            resolved==null && Human(h,e)?["keepServer","useCaptured"]:[],resolved==null?null:JsonSerializer.Deserialize<DailyOfflineResult>(resolved.OutcomeJson,Json)));
     }
 }
