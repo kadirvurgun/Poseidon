@@ -5,7 +5,9 @@ import { cva } from 'class-variance-authority'
 import type { VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
 
-const buttonVariants = cva('inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-colors disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring [&_svg]:pointer-events-none [&_svg]:size-4', {
+// Outline changes must be immediate: animating outline-color can start a primary
+// button's focus indicator at its white currentColor on a white form surface.
+const buttonVariants = cva('inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-[background-color,border-color,color,box-shadow] disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring [&_svg]:pointer-events-none [&_svg]:size-4', {
   variants: {
     variant: { default: 'bg-primary text-primary-foreground shadow-xs hover:bg-primary/90', destructive: 'bg-destructive text-white hover:bg-destructive/90',
       outline: 'border border-input bg-background shadow-xs hover:bg-accent hover:text-accent-foreground', secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',

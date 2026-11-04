@@ -197,3 +197,40 @@ mode excludes browse content, and sign-out remains available. No test, build,
 browser journey or runtime mutation was run by this UI author for this update.
 The subsequent integration commit requires actual complete regression and fresh
 desktop/mobile viewport screenshots before acceptance.
+
+## Closed 080 frontend and visual findings
+
+The next exact candidate was `080a632fe5e36f1536b49491924bc30b2a1a5667`,
+tree `2453afcfe4721981ef8878cc05cdd7f731cbdd1d`. Its actual component run
+closed with **1,011 tests / 1,010 passed / 1 failed**, zero skip, pending,
+todo, unhandled or module errors; the previous seven failures were absent.
+Lint passed with zero errors/warnings. Production typecheck still failed on
+three unsupported Testing Library `ByRoleOptions.exact` properties. The sole
+runtime failure held a detached Details/Close node after entering focused profile
+mode. The repair removes only those unsupported options (string role names are
+already exact) and clicks the actual visible Back to vessel action. Existing
+dirty dialog, Unknown field and beforeunload assertions remain unchanged.
+
+The independent visual review (`f745a45aee7ce89f689209757fa5ac3a926b5d2d2519439c254b18ce0248f094`)
+and its native measurement (`df72ca09c94e97c78cf3737a277651524e48b39b1b49a08a6742b5713d0d1247`)
+also failed on that same older source. It recorded 66 failing contrast
+observations across 391 text observations/six scenes, including repeated text;
+the Save button's focused outline was white on its white card (1:1). Native
+geometry passed: desktop controls 40 px/gap 8 px, mobile 44 px/gap 10 px,
+aligned and without horizontal overflow. Keyboard focus movement and drawer
+Escape behavior passed. These scoped results do not accept the phase.
+
+The source repair centralizes light-surface muted text at `#526780`, uses separate
+sidebar text/focus tokens, and gives the dark role-disclosure summary an explicit
+scope that outranks the generic light-surface summary rule. Captured compiled
+CSS confirms that the Button's previous `transition-colors` utility included
+`outline-color`; transitioning from a primary button's white `currentColor`
+could hide the initial focus indicator on a white form. Button transitions now
+cover background, border, text and shadow only. The product focus rule has an
+explicit blue outline token and sufficient scope to outrank legacy form rules;
+the dark sidebar retains a separate light outline token. No geometry, business
+handler, dependency, contrast threshold or test assertion is weakened.
+
+This is a source-only correction. Its new commit has not been built, tested or
+visually measured by this author. Root owns the subsequent complete gate and
+independent actual desktop/mobile contrast and focus measurements.

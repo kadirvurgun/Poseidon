@@ -22,7 +22,9 @@
 .product-shell {
   --background: #f5f7fb; --foreground: #17263c; --card: #ffffff;
   --primary: #2363d7; --primary-foreground: #ffffff; --secondary: #eaf0f8;
-  --muted: #f1f4f8; --muted-foreground: #63758c; --accent: #e8f0fd;
-  --destructive: #c03d4c; --border: #e1e7ef; --input: #ccd7e4; --ring: #3479e4;
+  --muted: #f1f4f8; --muted-foreground: #526780; --accent: #e8f0fd;
+  --sidebar-foreground: #d0ddec; --sidebar-muted-foreground: #adbed3;
+  --focus-ring: #245fba; --focus-ring-on-dark: #a5d8ff; --ring: var(--focus-ring);
+  --destructive: #c03d4c; --border: #e1e7ef; --input: #ccd7e4;
   --radius: .65rem; color-scheme: light;
 }
