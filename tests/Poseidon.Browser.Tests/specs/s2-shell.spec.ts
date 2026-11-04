@@ -141,7 +141,7 @@ test('S2 primary menu follows the selected role lens without granting full produ
   await expect(page.getByRole('dialog', { name: 'Search workspace', exact: true })).toHaveCount(0)
 })
 
-test('existing vessel form actions align and remain keyboard accessible without horizontal overflow', async ({ page }) => {
+test('existing vessel form actions align and remain keyboard accessible without horizontal overflow', async ({ page }, testInfo) => {
   await mockShell(page)
   await page.goto(`/app/fleet/${vessels[0].id}`)
   await page.getByRole('button', { name: 'EN', exact: true }).click()
@@ -162,4 +162,7 @@ test('existing vessel form actions align and remain keyboard accessible without 
   expect(saveBox!.x + saveBox!.width).toBeLessThanOrEqual(actionsBox!.x + actionsBox!.width + 1)
   const width = await page.evaluate(() => ({ content: document.documentElement.scrollWidth, viewport: document.documentElement.clientWidth }))
   expect(width.content).toBeLessThanOrEqual(width.viewport + 1)
+  // Entire transport is synthetic; retain both viewport renders for visual
+  // inspection at the bundle gate without capturing IdP or real-person data.
+  await page.screenshot({ path: testInfo.outputPath('vessel-form-actions.png'), fullPage: true })
 })
