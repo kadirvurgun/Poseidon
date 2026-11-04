@@ -24,5 +24,7 @@ One authored real IndexedDB browser regression lowers the quota after reopening
 five stored records, observes all five in order, checks the overflow boundary,
 preserved write rejection and foreign namespace isolation. The fulfilled technical
 HTML harness is storage-driver evidence only; it is not a signed product journey.
-No test, browser, build, typecheck, lint or generation was executed. Actual results
+An additional real IndexedDB case closes storage after the first inventory page:
+the read must fail rather than return a partial queue, and reopening must retain
+every original record. No test, browser, build, typecheck, lint or generation was executed. Actual results
 and independent acceptance remain deferred to the larger PR gate.

@@ -174,6 +174,34 @@ test('T-S4-006 lower quotas retain the complete bounded inventory without permit
   expect(result.foreignCount).toBe(0)
 })
 
+test('T-S4-006 closing storage during retained inventory never returns a partial queue or removes captures', async ({ page }) => {
+  await install(page)
+  const result = await page.evaluate(async () => {
+    const { __poseidonOfflineStore: Store } = globalThis as unknown as Fixture
+    const databaseName = `poseidon.offline.test.${crypto.randomUUID()}`
+    const policy = { maxRecords: 3, maxEncryptedBytes: 8192, maxDeviceRecords: 64, maxDeviceEncryptedBytes: 65536 }
+    const ids = Array.from({ length: 3 }, () => crypto.randomUUID()).sort()
+    const store = await Store.open(indexedDB, 'a'.repeat(64), policy, databaseName)
+    const envelope = { version: 1 as const, contextHash: 'b'.repeat(64), iv: new Uint8Array(12), ciphertext: new ArrayBuffer(32) }
+    for (const id of ids) await store.put(id, envelope, null)
+    const originalList = store.list.bind(store)
+    store.list = async (...args: Parameters<typeof store.list>) => {
+      const headers = await originalList(...args)
+      store.close()
+      return headers
+    }
+    let failureCode = '', returnedPartial = false
+    try { await store.listRetained(5); returnedPartial = true } catch (error) { failureCode = (error as { code: string }).code }
+    const reopened = await Store.open(indexedDB, 'a'.repeat(64), policy, databaseName)
+    const retained = await reopened.listRetained(5)
+    reopened.close()
+    return { ids, retained: retained.map(row => row.commandId), failureCode, returnedPartial }
+  })
+  expect(result.failureCode).toBe('storage_closed')
+  expect(result.returnedPartial).toBe(false)
+  expect(result.retained).toEqual(result.ids)
+})
+
 test('a schema upgrade closes stale connections and never resets the captured records', async ({ page }) => {
   await install(page)
   const result = await page.evaluate(async () => {
