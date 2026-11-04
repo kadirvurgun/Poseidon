@@ -69,6 +69,23 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Equal(HttpStatusCode.Forbidden,response.StatusCode);await using var db=Db();Assert.Empty(await db.DailyReviewEvents.ToArrayAsync(Ct));
     }
     [Fact]
+    public async Task Current_qualified_appointment_renewal_can_recover_exact_historical_outcome_without_rewriting_its_original_authority() {
+        await using var host=Host();using var client=Client(host);DailyPermissions(host.Services);
+        var draft=new DailyDraftCommand(Guid.NewGuid(),0,new(),"INITIAL_AUTHORING");var created=await DailySend(client,"noon-reports",draft,Guid.NewGuid().ToString("D"));
+        var row=(await created.Content.ReadFromJsonAsync<DailyRecordDto>(Ct))!;var grant=DailyAppointment(host.Services,row.Id,"Noon","Master");
+        var command=new DailyReviewCommand(row.Version,0,row.Revision,grant.Id,"REVIEWED","REVIEW_RECORDED","FICTIONAL immutable historical review");
+        var key=Guid.NewGuid().ToString("D");var recorded=await ReviewSend(client,"noon-reports",row.Id,command,key);Assert.Equal(HttpStatusCode.OK,recorded.StatusCode);
+        var bytes=await recorded.Content.ReadAsStringAsync(Ct);var settings=host.Services.GetRequiredService<FederationSettings>();
+        string originalHash;string originalSnapshot;
+        await using(var before=Db()){var original=await before.DailyReviewEvents.SingleAsync(r=>r.RecordId==row.Id,Ct);originalHash=original.AuthorityHash;originalSnapshot=original.AuthorityJson;}
+        settings.Memberships[0].DailyReviewAuthorities=[grant with {ValidUntil=grant.ValidUntil.AddDays(1),AppointmentSource="FICTIONAL legitimate current appointment renewal"}];
+        var recovered=await ReviewSend(client,"noon-reports",row.Id,command,key);Assert.Equal(HttpStatusCode.OK,recovered.StatusCode);Assert.Equal(bytes,await recovered.Content.ReadAsStringAsync(Ct));
+        Assert.Equal(HttpStatusCode.Conflict,(await ReviewSend(client,"noon-reports",row.Id,command with{Rationale="different body"},key)).StatusCode);
+        settings.Memberships[0].DailyReviewAuthorities=[];Assert.Equal(HttpStatusCode.Forbidden,(await ReviewSend(client,"noon-reports",row.Id,command,key)).StatusCode);
+        await using var db=Db();var retained=await db.DailyReviewEvents.SingleAsync(r=>r.RecordId==row.Id,Ct);
+        Assert.Equal(originalHash,retained.AuthorityHash);Assert.Equal(originalSnapshot,retained.AuthorityJson);Assert.Equal(1,retained.Sequence);
+    }
+    [Fact]
     public async Task Review_history_retains_recorded_metadata_after_authority_expiry_without_renewing_its_permission() {
         await using var host=Host();using var client=Client(host);DailyPermissions(host.Services);
         var draft=new DailyDraftCommand(Guid.NewGuid(),0,new(),"INITIAL_AUTHORING");var created=await DailySend(client,"noon-reports",draft,Guid.NewGuid().ToString("D"));
