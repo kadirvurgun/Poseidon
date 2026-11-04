@@ -16,6 +16,21 @@ public sealed partial class DirectoryWorkspaceTests
     private string CompliancePath(string view, Guid? vessel = null) => $"/api/v1/vessels/{vessel ?? SeedVessel.Id}/compliance-{view}";
 
     [Fact]
+    public async Task Truncated_requirement_links_do_not_advertise_endless_control_record_pages() {
+        await using var host = Host(); using var client = Client(host); GraphPermissionsForTest(host.Services); await Token(client);
+        var (rule, _, _) = await AdmittedByCommands(client, host.Services);
+        var pin = new RequirementPin(rule.Current.RequirementId!.Value, rule.Current.RequirementRevision!.Value,
+            rule.Current.SourceId!.Value, rule.Current.SourceRevision!.Value, rule.Current.Id, rule.Current.Revision);
+        for (var i = 0; i < 26; i++) await GraphSave(client, "controls", GraphCommand() with { Requirements = [pin] });
+        var first = (await client.GetFromJsonAsync<ComplianceControlPlanDto>(CompliancePath("control-plan"), Ct))!;
+        Assert.True(first.HasMore); Assert.Equal(25, first.Controls.Length);
+        var last = (await client.GetFromJsonAsync<ComplianceControlPlanDto>(CompliancePath("control-plan") + "?offset=25", Ct))!;
+        Assert.False(last.HasMore); Assert.Single(last.Controls); Assert.Equal(25, Assert.Single(last.Requirements).ControlIds.Length);
+        Assert.Contains("CONTROL_LINKS_TRUNCATED", Assert.Single(last.Requirements).Blockers);
+        Assert.Contains("BOUNDED_PROJECTION", last.Blockers);
+    }
+
+    [Fact]
     public async Task Canonical_passport_alias_keeps_exact_vessel_scope_and_rejects_duplicate_selectors() {
         await using var host = Host(); using var client = Client(host); GraphPermissionsForTest(host.Services); await Token(client);
         var dto = (await client.GetFromJsonAsync<CompliancePassportDto>($"/api/v1/vessel-compliance-passport?vesselId={SeedVessel.Id}", Ct))!;
@@ -47,9 +62,11 @@ public sealed partial class DirectoryWorkspaceTests
         var original = await client.GetStringAsync($"/api/v1/applicability/evaluations/{evaluation.Id}", Ct);
         var profile = await Profile(client); await SaveProfile(client, profile, profile.Content with { Flag = new("Unknown") });
         var stale = (await client.GetFromJsonAsync<CompliancePassportDto>(CompliancePath("passport"), Ct))!;
-        Assert.False(stale.Applicability.Available); Assert.False(stale.Applicability.Current);
+        Assert.True(stale.Applicability.Available); Assert.False(stale.Applicability.Current);
         Assert.Contains("PROFILE_CHANGED", stale.Applicability.Blockers); Assert.Empty(stale.Plan.Requirements);
         Assert.Null(stale.Plan.UncontrolledRequirementCount); Assert.Equal(evaluation.Id, stale.Applicability.EvaluationId);
+        Assert.Equal(evaluation.SnapshotHash, stale.Applicability.InputHash);
+        Assert.Equal(JsonSerializer.Serialize(evaluation.Results), JsonSerializer.Serialize(stale.Applicability.Results));
         Assert.Equal(original, await client.GetStringAsync($"/api/v1/applicability/evaluations/{evaluation.Id}", Ct));
     }
 

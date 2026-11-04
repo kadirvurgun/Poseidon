@@ -1,6 +1,8 @@
 using System.Globalization;
+using System.Linq.Expressions;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Poseidon.Domain;
 using Poseidon.Persistence;
 
@@ -44,6 +46,54 @@ public static class ComplianceWorkspaceEndpoints
         h.Request.Query["vesselId"].Count == 1 && Guid.TryParseExact(h.Request.Query["vesselId"], "D", out var id) && id != Guid.Empty
             ? Workspace(id, h, db, "passport", true) : Fail(h, 400, "invalid_query");
     private static TrustedActor Actor(HttpContext h) => h.RequestServices.GetRequiredService<ActorResolver>().Resolve(h.User)!;
+    // Same live-response principle as the S3 private trace fence. Compare values,
+    // not membership/array identity: a reordered equivalent reload is harmless.
+    private static string AccessHash(TrustedActor actor) => RegisterStorage.Hash(JsonSerializer.Serialize(new {
+        actor.Id, actor.TenantId, actor.TenantWideRead, actor.TenantWideManage, actor.RoleContext,
+        permissions = actor.Permissions.Order(StringComparer.Ordinal),
+        vessels = actor.VesselGrants.OrderBy(g => g.VesselId).ThenBy(g => g.CanEdit)
+    }));
+    private static bool AccessCurrent(HttpContext h, string expected, bool graph) {
+        var live = h.RequestServices.GetRequiredService<ActorResolver>().Resolve(h.User);
+        return live?.CanRead == true && (!graph || ControlEvidenceEndpoints.Read(live)) && AccessHash(live) == expected;
+    }
+    private static Expression<Func<ControlEvidenceRevision, bool>> ReturnedGraph(ControlEvidenceDto[] rows) {
+        var item = Expression.Parameter(typeof(ControlEvidenceRevision), "row");
+        Expression body = Expression.Constant(false);
+        foreach (var row in rows) {
+            var match = Expression.AndAlso(Expression.Equal(Expression.Property(item, nameof(ControlEvidenceRevision.Kind)), Expression.Constant(row.Kind)),
+                Expression.AndAlso(Expression.Equal(Expression.Property(item, nameof(ControlEvidenceRevision.Id)), Expression.Constant(row.Id)),
+                    Expression.Equal(Expression.Property(item, nameof(ControlEvidenceRevision.Revision)), Expression.Constant(row.Revision))));
+            body = Expression.OrElse(body, match);
+        }
+        return Expression.Lambda<Func<ControlEvidenceRevision, bool>>(body, item);
+    }
+    private static async Task<bool> ResponseCurrent(HttpContext h, string expected, bool graph, Guid vessel,
+        long? profileRevision, Guid? evaluation, ComplianceControlPlanDto? plan) {
+        if (!AccessCurrent(h, expected, graph)) return false;
+        // A new DI scope creates a trusted, freshly tenant-bound DbContext outside
+        // the composition's RepeatableRead transaction. Reusing that transaction
+        // would keep seeing a withdrawn file binding as readable.
+        await using var scope = h.RequestServices.GetRequiredService<IServiceScopeFactory>().CreateAsyncScope();
+        var live = scope.ServiceProvider.GetRequiredService<ActorResolver>().Resolve(h.User);
+        if (live?.CanRead != true || AccessHash(live) != expected) return false;
+        var db = scope.ServiceProvider.GetRequiredService<PoseidonDbContext>();
+        var files = live.Permissions.Contains("file.read");
+        var returned = (plan?.Controls ?? []).Concat(plan?.Evidence ?? []).ToArray();
+        var matching = ControlEvidenceEndpoints.CurrentVisible(db, vessel, live).Where(ReturnedGraph(returned));
+        var controlIds = plan?.Requirements.SelectMany(r => r.ControlIds).Distinct().ToArray() ?? [];
+        var linked = ControlEvidenceEndpoints.CurrentVisible(db, vessel, live).Where(r => r.Kind == "Control" && controlIds.Contains(r.Id));
+        var evaluations = OperationEquipmentCommands.Evaluations(db, live);
+        // All final resource predicates share ONE fresh statement snapshot. Do
+        // not sequentially validate private rows and then await unrelated reads.
+        var visible = await live.Scope(db.Vessels.AsNoTracking()).Where(v => v.Id == vessel).Select(v =>
+            (files || !db.RegulatoryDrafts.Any(p => p.VesselId == vessel && p.ConstructionFileId != null) &&
+                !db.RegulatoryDraftRevisions.Any(p => p.VesselId == vessel && p.Revision == profileRevision && p.ConstructionFileId != null)) &&
+            (evaluation == null || evaluations.Any(e => e.Id == evaluation && e.VesselId == vessel)) &&
+            matching.Count() == returned.Length && linked.Select(r => r.Id).Distinct().Count() == controlIds.Length)
+            .SingleOrDefaultAsync(h.RequestAborted);
+        return visible && AccessCurrent(h, expected, graph);
+    }
     private static async Task<IResult> Fail(HttpContext h, int status, string result) {
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "ComplianceWorkspaceRead", result);
         return Results.Problem(statusCode: status, title: result, extensions: new Dictionary<string, object?> { ["code"] = result, ["correlationId"] = h.TraceIdentifier });
@@ -61,11 +111,14 @@ public static class ComplianceWorkspaceEndpoints
         h.Response.Headers.CacheControl = "no-store";
         if (h.Request.Query.Count != 0) return await Fail(h, 400, "invalid_query");
         var actor = Actor(h);
+        var access = AccessHash(actor);
         var vessel = await actor.Scope(db.Vessels.AsNoTracking()).SingleOrDefaultAsync(v => v.Id == id, h.RequestAborted);
         if (vessel == null) return await Fail(h, 404, "resource_not_found");
         var dto = await Assess(vessel, actor, db, h.RequestAborted);
         if (dto == null) return await Fail(h, 403, "permission_denied");
+        if (!await ResponseCurrent(h, access, false, id, dto.ProfileRevision, null, null)) return await Fail(h, 403, "permission_denied");
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "ComplianceWorkspaceRead", "Success", resourceId: id);
+        if (!await ResponseCurrent(h, access, false, id, dto.ProfileRevision, null, null)) return await Fail(h, 403, "permission_denied");
         return Results.Ok(dto);
     }
     private static async Task<ComplianceApplicabilityDto> Review(Guid vessel, TrustedActor actor, HttpContext h,
@@ -93,7 +146,7 @@ public static class ComplianceWorkspaceEndpoints
         var current = blockers.Count == 0;
         // Preserve the immutable rule/source/reason tree. Currentness is separate
         // from the recorded result; there is no generic admin override authority.
-        return new(current, row.Id, row.ProfileRevision, row.SavedAt, current, result.Results, result.Conflicts,
+        return new(true, row.Id, row.ProfileRevision, row.SavedAt, current, result.Results, result.Conflicts,
             blockers.Distinct().Order(StringComparer.Ordinal).ToArray(), current ? "QUALIFIED_CURRENT" : "REVIEW_REQUIRED", false, href,
             result.Snapshot.Clone(), row.SnapshotHash, row.RuleSetHash);
     }
@@ -115,7 +168,7 @@ public static class ComplianceWorkspaceEndpoints
         var controls = await Page("Control"); var evidence = await Page("Evidence");
         var requirements = new List<ComplianceRequirementPlanDto>();
         var incomplete = false;
-        if (review.Available) foreach (var result in review.Results.Where(r => r.Prediction.Result == "APPLICABLE")) {
+        if (review.Current) foreach (var result in review.Results.Where(r => r.Prediction.Result == "APPLICABLE")) {
             var linked = await db.ControlEvidenceRequirements.AsNoTracking().Where(p => p.VesselId == vessel && p.Kind == "Control" &&
                 p.RuleId == result.RuleId && p.RuleRevision == result.Revision && p.RequirementId == result.RequirementId &&
                 p.RequirementRevision == result.RequirementRevision && p.SourceId == result.SourceId && p.SourceRevision == result.SourceRevision &&
@@ -127,20 +180,21 @@ public static class ComplianceWorkspaceEndpoints
                 linked.Length == 0 ? ["CONTROL_PLAN_MISSING"] : linked.Length > 25 ? ["CONTROL_LINKS_TRUNCATED"] : []));
         }
         var blockers = new List<string>();
-        if (!review.Available) blockers.Add("CURRENT_APPLICABILITY_UNAVAILABLE");
+        if (!review.Current) blockers.Add("CURRENT_APPLICABILITY_UNAVAILABLE");
         if (requirements.Any(r => r.ControlIds.Length == 0)) blockers.Add("CONTROL_PLAN_MISSING");
         if (incomplete || controls.More || evidence.More) blockers.Add("BOUNDED_PROJECTION");
         // A completed control or a file is not verification. Missing criticality
         // and the absent certificate authority/catalog cannot become a zero.
         blockers.Add("CRITICAL_REQUIREMENT_COVERAGE_UNAVAILABLE");
-        return new(review.Available ? "CURRENT_QUALIFIED_CATALOG_ONLY" : "UNAVAILABLE", requirements.ToArray(), controls.Items,
-            evidence.Items, controls.More || evidence.More || incomplete,
-            review.Available ? requirements.Count(r => r.ControlIds.Length == 0) : null, null, blockers.ToArray());
+        return new(review.Current ? "CURRENT_QUALIFIED_CATALOG_ONLY" : "UNAVAILABLE", requirements.ToArray(), controls.Items,
+            evidence.Items, controls.More || evidence.More,
+            review.Current ? requirements.Count(r => r.ControlIds.Length == 0) : null, null, blockers.ToArray());
     }
     private static async Task<IResult> Workspace(Guid id, HttpContext h, PoseidonDbContext db, string view, bool canonicalAlias = false) {
         h.Response.Headers.CacheControl = "no-store";
         var actor = Actor(h); var ct = h.RequestAborted;
         if (!ControlEvidenceEndpoints.Read(actor)) return await Fail(h, 403, "permission_denied");
+        var access = AccessHash(actor);
         var offset = 0;
         if (h.Request.Query.Any(q => q.Key != "offset" && !(canonicalAlias && q.Key == "vesselId") || q.Value.Count != 1) ||
             h.Request.Query.ContainsKey("offset") && (!int.TryParse(h.Request.Query["offset"], NumberStyles.None, CultureInfo.InvariantCulture, out offset) || offset is < 0 or > 100000))
@@ -155,13 +209,17 @@ public static class ComplianceWorkspaceEndpoints
         var now = h.RequestServices.GetRequiredService<TimeProvider>().GetUtcNow();
         var review = await Review(id, actor, h, db, now);
         object outcome = review;
+        ComplianceControlPlanDto? responsePlan = null;
         if (view != "review") {
             var plan = await Plan(id, actor, h, db, now, offset, review);
+            responsePlan = plan;
             outcome = view == "plan" ? plan : new CompliancePassportDto(id, now, "REVIEW_REQUIRED", "Unverified", "UNAVAILABLE",
                 onboarding.Blockers.Concat(review.Blockers).Concat(plan.Blockers).Append("CERTIFICATE_CATALOG_UNAVAILABLE").Distinct().Order(StringComparer.Ordinal).ToArray(), onboarding, review, plan);
         }
         await transaction.CommitAsync(ct);
+        if (!await ResponseCurrent(h, access, true, id, onboarding.ProfileRevision, review.EvaluationId, responsePlan)) return await Fail(h, 403, "permission_denied");
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "ComplianceWorkspaceRead", "Success", resourceId: id);
+        if (!await ResponseCurrent(h, access, true, id, onboarding.ProfileRevision, review.EvaluationId, responsePlan)) return await Fail(h, 403, "permission_denied");
         return Results.Ok(outcome);
     }
 }
