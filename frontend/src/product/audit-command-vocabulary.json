@@ -85,7 +85,14 @@
     "RegulatoryFactAttest": "SOURCE_QUALIFICATION",
     "NotificationRefresh": "PREPARATION_COMMAND",
     "NotificationAcknowledge": "PREPARATION_COMMAND",
-    "NotificationPreference": "PREPARATION_COMMAND"
+    "NotificationPreference": "PREPARATION_COMMAND",
+    "DailyOfflineEnroll": "OFFLINE_LIFECYCLE",
+    "DailyOfflineRenew": "OFFLINE_LIFECYCLE",
+    "DailyOfflineKeyEnroll": "OFFLINE_LIFECYCLE",
+    "DailyOfflineRevoke": "OFFLINE_LIFECYCLE",
+    "DailyOfflineKeyLost": "OFFLINE_LIFECYCLE",
+    "DailyOfflineCleanup": "OFFLINE_LIFECYCLE",
+    "DailyOfflineReplay": "OFFLINE_LIFECYCLE"
   },
   "reasonCodes": [
     "PREPARATION_COMMAND",

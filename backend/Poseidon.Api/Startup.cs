@@ -18,6 +18,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         services.AddSingleton<TimeProvider>(TimeProvider.System);
         services.AddSingleton(configuration.GetSection("Notifications").Get<NotificationSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddScoped<NotificationEngine>();
+        services.AddSingleton(configuration.GetSection("DailyOffline").Get<DailyOfflineSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton(configuration.GetSection("NotificationScheduler").Get<NotificationSchedulerSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<NotificationServiceContexts>();
         services.AddSingleton<NotificationScheduler>();
@@ -147,6 +148,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapSystemHealth();
             endpoints.MapNotifications();
             endpoints.MapDailyOperations();
+            endpoints.MapDailyOffline();
             endpoints.MapDailyReviews();
             endpoints.MapAuditHistory();
             endpoints.MapSecureFiles();

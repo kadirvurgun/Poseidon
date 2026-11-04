@@ -73,7 +73,7 @@ public static class DailyOperationsEndpoints
     private static async Task<IResult> Fail(HttpContext h,int status,string code) {
         await Audit(h,code); return Results.Json(new {code},statusCode:status);
     }
-    private static DailyOfflineDto Offline(string kind) => new(false,"UNAVAILABLE_POLICY","daily-operations." + kind.ToLowerInvariant() + "-draft.v1");
+    private static DailyOfflineDto Offline(HttpContext h,TrustedActor actor,string kind,Guid vessel) => DailyOfflineEndpoints.Capability(h,actor,kind,vessel);
     internal static DailyRecordDto Dto(DailyOperation row) => Dto(row.Id,row.VesselId,row.Kind,row.Revision,row.Version,row.FieldsJson,row.Provenance,row.SavedAt,row.Hash);
     private static DailyRecordDto Dto(DailyOperationRevision row) => Dto(row.RecordId,row.VesselId,row.Kind,row.Revision,checked((uint)row.RecordVersion),row.FieldsJson,row.Provenance,row.SavedAt,row.Hash);
     private static DailyRecordDto Dto(Guid id,Guid vessel,string kind,long revision,uint version,string json,string provenance,DateTimeOffset saved,string hash) {
@@ -92,7 +92,7 @@ public static class DailyOperationsEndpoints
         object result;
         if (capabilities) {
             var destinations=Families.Where(f=>CanRead(a,f.Kind)).Select(f=>new DailyDestinationDto(f.Destination,$"/app/{f.Destination}/{vessel:D}")).ToArray();
-            result=new DailyCapabilitiesDto(vessel,kind,true,CanWrite(a,kind,vessel),canReview,false,DailyOperationsPolicy.Schema(kind),DailyOperationsPolicy.SourceVersion,Offline(kind),destinations);
+            result=new DailyCapabilitiesDto(vessel,kind,true,CanWrite(a,kind,vessel),canReview,false,DailyOperationsPolicy.Schema(kind),DailyOperationsPolicy.SourceVersion,Offline(h,a!,kind,vessel),destinations);
         } else if (history) {
             if (!await db.DailyOperations.AnyAsync(r=>r.VesselId==vessel && r.Kind==kind && r.Id==id,h.RequestAborted)) return await Fail(h,404,"resource_not_found");
             var rows=await db.DailyOperationRevisions.AsNoTracking().Where(r=>r.VesselId==vessel && r.Kind==kind && r.RecordId==id)
@@ -105,7 +105,7 @@ public static class DailyOperationsEndpoints
                 if(row==null) return await Fail(h,404,"resource_not_found"); result=(await DailyReviewEndpoints.Decorate(db,vessel,kind,[Dto(row)],h.RequestAborted))[0];
             } else {
                 var rows=await query.OrderByDescending(r=>r.SavedAt).ThenBy(r=>r.Id).Skip(offset).Take(26).ToArrayAsync(h.RequestAborted);
-                result=new DailyPageDto(await DailyReviewEndpoints.Decorate(db,vessel,kind,rows.Take(25).Select(Dto).ToArray(),h.RequestAborted),offset,25,rows.Length>25,CanWrite(a,kind,vessel),canReview,false,Offline(kind));
+                result=new DailyPageDto(await DailyReviewEndpoints.Decorate(db,vessel,kind,rows.Take(25).Select(Dto).ToArray(),h.RequestAborted),offset,25,rows.Length>25,CanWrite(a,kind,vessel),canReview,false,Offline(h,a!,kind,vessel));
             }
         }
         if (!await Current(h,kind,vessel,rights)) return await Fail(h,403,"permission_denied");

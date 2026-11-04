@@ -47,6 +47,15 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
 
     private static AuditMetadata Project(EntityEntry entry, Guid? parentVessel)
     {
+        if (entry.Entity is DailyOfflineEnrollment dailyEnrollment)
+            return new(dailyEnrollment.VesselId,dailyEnrollment.RecordId,"DailyOfflineEnrollment",null,null,
+                Fields(Field("Binding",entry.State==EntityState.Added?null:"OwnerReference","OwnerReference")));
+        if (entry.Entity is DailyOfflineLifecycle dailyLifecycle)
+            return new(dailyLifecycle.VesselId,dailyLifecycle.RecordId,"DailyOfflineLifecycle",null,null,
+                Fields(Field("Binding",null,"OwnerReference"),Field("Lifecycle",null,Closed(dailyLifecycle.Action,"Enrolled","Renewed","KeyEnrolled","Revoked","KeyLost","CleanupAllowed"))));
+        if (entry.Entity is DailyOfflineOutcome dailyOutcome)
+            return new(dailyOutcome.VesselId,dailyOutcome.RecordId,"DailyOfflineOutcome",null,dailyOutcome.Revision,
+                Fields(Field("Binding",null,"OwnerReference"),Field("Outcome",null,Closed(dailyOutcome.Result,"Committed","MaterialConflict"))));
         if (entry.Entity is DailyReviewHead reviewHead)
             return new(reviewHead.VesselId, reviewHead.RecordId, "DailyReviewHead", entry.State == EntityState.Added ? null : (long?)entry.Property("Sequence").OriginalValue,
                 reviewHead.Sequence, Fields(Field("Revision", entry.State == EntityState.Added ? null : Number((long)entry.Property("Sequence").OriginalValue!), Number(reviewHead.Sequence)),Field("Binding",null,"OwnerReference")));
