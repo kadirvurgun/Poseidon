@@ -9,18 +9,20 @@ import { loginHref } from './workspace-location'
 import { ConstructionRecordPicker } from './ConstructionRecordPicker'
 import { Button } from '../components/ui/button'
 import { EnterpriseActions, EnterprisePagination } from './EnterprisePatterns'
+import { OnboardingSteps, onboardingSteps, OnboardingAssessmentView } from './VesselOnboarding'
 
 const copy = {
   en: { title: 'Regulatory profile draft', note: 'Incomplete drafts can be saved. Declarations and reference values are unverified. This draft does not authorize submission or operations.', loading: 'Loading profile…', empty: 'No saved profile draft yet.', save: 'Save draft', saving: 'Saving…', saved: 'Draft saved.', retry: 'Retry same command', reload: 'Reload saved draft', conflict: 'The saved profile changed. Your draft is retained. Reload explicitly to discard it.', uncertain: 'The save outcome is unknown. Fields are frozen; retry the same command before leaving.', failed: 'Unable to load or save the profile.', denied: 'You do not have permission for this profile.', expired: 'Sign in to continue.', missing: 'Profile not found in your vessel scope.', history: 'Version history', noHistory: 'No saved versions.', observed: 'Source observation time', time: 'Saved at', provenance: 'Source status', revision: 'Version', unknown: 'Unknown', previous: 'Previous', next: 'Next', view: 'View saved values', count: 'fields have missing or unknown data. Mandatory submission policy is unresolved; draft only.', readonly: 'Read-only profile', reloadRead: 'Retry loading' },
   tr: { title: 'Mevzuat profili taslağı', note: 'Eksik taslaklar kaydedilebilir. Beyanlar ve referans değerleri doğrulanmamıştır. Bu taslak onaya gönderme veya operasyon yetkisi vermez.', loading: 'Profil yükleniyor…', empty: 'Henüz kaydedilmiş profil taslağı yok.', save: 'Taslağı kaydet', saving: 'Kaydediliyor…', saved: 'Taslak kaydedildi.', retry: 'Aynı komutu tekrar dene', reload: 'Kayıtlı taslağı yeniden yükle', conflict: 'Kayıtlı profil değişti. Taslağınız korundu. Silmek için yeniden yüklemeyi seçin.', uncertain: 'Kayıt sonucu bilinmiyor. Alanlar kilitli; ayrılmadan önce aynı komutu tekrar deneyin.', failed: 'Profil yüklenemedi veya kaydedilemedi.', denied: 'Bu profil için yetkiniz yok.', expired: 'Devam etmek için oturum açın.', missing: 'Yetkili tekne kapsamınızda profil bulunamadı.', history: 'Sürüm geçmişi', noHistory: 'Kayıtlı sürüm yok.', observed: 'Kaynak gözlem zamanı', time: 'Kayıt zamanı', provenance: 'Kaynak durumu', revision: 'Sürüm', unknown: 'Bilinmiyor', previous: 'Önceki', next: 'Sonraki', view: 'Kayıtlı değerleri görüntüle', count: 'alanda eksik veya bilinmeyen bilgi var. Zorunlu gönderim politikası açık; yalnız taslak.', readonly: 'Salt okunur profil', reloadRead: 'Yüklemeyi tekrar dene' },
 }
-type Props = { id: string; language: 'tr' | 'en'; csrf: string; onDirty: (value: boolean) => void; onSaving: (value: boolean) => void }
+type Props = { id: string; language: 'tr' | 'en'; csrf: string; onDirty: (value: boolean) => void; onSaving: (value: boolean) => void; journey?: 'profile' | 'onboarding' }
 export function RegulatoryProfile(props: Props) {
   // Scope changes discard the previous component before rendering the new scope,
   // rather than relying on every caller to remember a React key.
   return <ScopedRegulatoryProfile key={props.id} {...props} />
 }
-function ScopedRegulatoryProfile({ id, language, csrf, onDirty, onSaving }: Props) {
+function ScopedRegulatoryProfile({ id, language, csrf, onDirty, onSaving, journey = 'profile' }: Props) {
+  const onboarding = journey === 'onboarding', [step, setStep] = useState(0)
   const [profile, setProfile] = useState<Profile | null>(null)
   const [content, setContent] = useState<ProfileContent | null>(null)
   const [history, setHistory] = useState<ProfileHistory | null>(null)
@@ -127,8 +129,9 @@ function ScopedRegulatoryProfile({ id, language, csrf, onDirty, onSaving }: Prop
   const provenance = (value: string) => ({ Synthetic: language === 'tr' ? 'Sentetik' : 'Synthetic', Missing: language === 'tr' ? 'Eksik' : 'Missing', Unknown: t.unknown, DeclaredUnverified: language === 'tr' ? 'Beyan — doğrulanmamış' : 'Declared — unverified' })[value] ?? t.unknown
   const savedObservation = profile?.content.sourceObservedAt
   const observedAt = savedObservation?.state === 'Known' && typeof savedObservation.value === 'string' ? savedObservation.value : null
-  return <section className="regulatory-profile" aria-label={t.title}>
-    <h2>{t.title}</h2><p className="profile-draft-note">{t.note}</p>
+  const title = onboarding ? (language === 'en' ? 'Pilot vessel onboarding' : 'Pilot gemi ekleme') : t.title
+  return <section className="regulatory-profile" aria-label={title}>
+    <h2>{title}</h2><p className="profile-draft-note">{t.note}</p>
     {failure && <div role="alert"><p>{errorText}</p>{status === 401 && <a href={loginHref()}>{language === 'tr' ? 'Oturum aç' : 'Sign in'}</a>}
       {!profile && <button onClick={reload}>{t.reloadRead}</button>}
       {failure.code === 'version_conflict' && <button onClick={reload}>{t.reload}</button>}</div>}
@@ -139,15 +142,21 @@ function ScopedRegulatoryProfile({ id, language, csrf, onDirty, onSaving }: Prop
       {!profile.revision && <p>{t.empty}</p>}
       <p>{t.provenance}: {provenance(profile.provenance)} · {t.revision}: {profile.revision} · {t.time}: {profile.savedAt ?? t.unknown}</p>
       <aside className="profile-source-context" aria-label={language === 'en' ? 'Saved source context' : 'Kayıtlı kaynak bağlamı'}><strong>{t.observed}</strong><p>{observedAt !== null ? <time dateTime={observedAt}>{observedAt}</time> : savedObservation?.state === 'Missing' ? (language === 'en' ? 'Missing' : 'Eksik') : t.unknown}</p><p>{language === 'en' ? 'Input freshness is unverified. Saving or reading a profile does not verify its source.' : 'Girdi güncelliği doğrulanmamış. Profili kaydetmek veya okumak kaynağını doğrulamaz.'}</p></aside>
-      <p>{profileFields.filter(([key]) => content[key]?.state !== 'Known').length} {t.count}</p>
+      <p>{profileFields.filter(([key]) => content[key]?.state !== 'Known').length} {onboarding ? (language === 'en' ? 'profile fields have missing or unknown data. Critical completeness is assessed against the saved revision in the review step.' : 'profil alanında eksik veya bilinmeyen bilgi var. Kritik tamlık inceleme adımında kayıtlı sürüme göre değerlendirilir.') : t.count}</p>
       {!profile.vessel.canEdit && <p>{t.readonly}</p>}
+      {onboarding && step === 0 && <p>{language === 'en' ? 'Vessel identity comes from the selected vessel register record. Use Back to vessel to edit its code or name.' : 'Araç kimliği seçili filo kaydından gelir. Kod veya adı düzenlemek için Araca dön işlemini kullanın.'}</p>}
+      {onboarding && <OnboardingSteps step={step} language={language} disabled={saving || uncertain} onChange={setStep} />}
+      {onboarding && Object.keys(errors).length > 0 && <div role="alert"><p>{language === 'en' ? 'Review the fields marked in these steps.' : 'Bu adımlarda işaretli alanları kontrol edin.'}</p><ul>{onboardingSteps.slice(0, 3).map((item, index) => item.fields.some(field => errors[field]?.length) ? <li key={item.en}><Button variant="outline" disabled={saving || uncertain} onClick={() => setStep(index)}>{language === 'en' ? 'Review fields in' : 'Alanları kontrol et'}: {item[language]}</Button></li> : null)}</ul></div>}
       <form noValidate aria-busy={saving} onSubmit={event => void submit(event)}>
-        <ConstructionRecordPicker vessel={id} language={language} value={content.constructionRecord} disabled={!profile.vessel.canEdit || saving || uncertain} onChange={value => change('constructionRecord', value)} onDenied={invalidateAccess} />
-        <div className="profile-field-grid">{profileFields.map(([key, kind, tr, en]) => {
+        {(!onboarding || step === 1) && <ConstructionRecordPicker vessel={id} language={language} value={content.constructionRecord} disabled={!profile.vessel.canEdit || saving || uncertain} onChange={value => change('constructionRecord', value)} onDenied={invalidateAccess} />}
+        {onboarding && <h3>{onboardingSteps[step][language]}</h3>}
+        <div className="profile-field-grid">{profileFields.filter(([key]) => !onboarding || onboardingSteps[step].fields.some(field => field === key)).map(([key, kind, tr, en]) => {
           const common = { label: language === 'tr' ? tr : en, language, disabled: !profile.vessel.canEdit || saving || uncertain, error: !!errors[key]?.length }
           return kind === 'number' ? <RequiredDataField key={key} {...common} kind="number" value={content[key] ?? { state: 'Missing' }} onChange={value => change(key, value)} /> :
             <RequiredDataField key={key} {...common} kind="text" value={content[key] ?? { state: 'Missing' }} onChange={value => change(key, value)} />
         })}</div>
+        {onboarding && step === 3 && <><dl className="onboarding-review-values">{profileFields.map(([key, , tr, en]) => <div key={key}><dt>{language === 'en' ? en : tr}</dt><dd>{content[key]?.state === 'Known' ? String(content[key]?.value ?? t.unknown) : content[key]?.state === 'Unknown' ? t.unknown : (language === 'en' ? 'Missing' : 'Eksik')}</dd></div>)}</dl><OnboardingAssessmentView vessel={id} savedRevision={profile.revision > 0 ? profile.revision : null} dirty={dirty} language={language} /></>}
+        {onboarding && <EnterpriseActions aria-label={language === 'en' ? 'Onboarding step actions' : 'Gemi ekleme adım işlemleri'}><Button variant="outline" disabled={step === 0 || saving || uncertain} onClick={() => setStep(n => Math.max(0, n - 1))}>{language === 'en' ? 'Previous step' : 'Önceki adım'}</Button><Button variant="outline" disabled={step === 3 || saving || uncertain} onClick={() => setStep(n => Math.min(3, n + 1))}>{language === 'en' ? 'Next step' : 'Sonraki adım'}</Button></EnterpriseActions>}
         {profile.vessel.canEdit && <EnterpriseActions aria-label={language === 'en' ? 'Profile form actions' : 'Profil form işlemleri'}><Button type="submit" disabled={saving || failure?.code === 'version_conflict'}>{saving ? t.saving : uncertain ? t.retry : t.save}</Button></EnterpriseActions>}
       </form>
       <h3>{t.history}</h3>

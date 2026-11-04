@@ -1,18 +1,19 @@
+import { ApplicabilityReasonView, CapturedEvaluationInputs } from './ApplicabilityReasonView'
 import { Button } from '../components/ui/button'
 import { EnterpriseActions, EnterprisePagination } from './EnterprisePatterns'
 import './regulatory-enterprise.css'
+import './compliance-enterprise.css'
 import { ComplianceEvaluationSelector } from './ComplianceInputEditor'
 import type { OwningReferences } from './compliance-input-contract'
 import { RegulatoryQualification } from './RegulatoryQualification'
 import { OwningEvaluationSelector } from './OperationEquipmentEditor'
 import * as qualification from './qualification-api'
 import { useLayoutEffect, useEffect, useRef, useState } from 'react'
-import type { ReactNode } from 'react'
 import * as service from './applicability-api'
 import * as directory from './api'
 import { isGuid } from './identifiers'
 import { timestamp } from './date-validation'
-import type { Capabilities, Evaluation, FrozenCommand, Page, Reason, RuleDraft, HistoryItem } from './applicability-api'
+import type { Capabilities, Evaluation, FrozenCommand, Page, RuleDraft, HistoryItem } from './applicability-api'
 
 type Props = { language: 'tr' | 'en'; csrf: string; offline: boolean; onDirty: (v: boolean) => void; onSaving: (v: boolean) => void }
 export function LifecycleApplicability({ language, csrf, offline, onDirty, onSaving }: Props) {
@@ -120,9 +121,6 @@ export function LifecycleApplicability({ language, csrf, offline, onDirty, onSav
       body: `${JSON.stringify(metadata).slice(0, -1)},"rule":${ruleJson.trim() ? ruleJson : 'null'}}` })
   }
   const paging = (page: { hasMore: boolean } | null, value: number, change: (n: number) => void) => <EnterprisePagination label={t('Rule and context pages', 'Kural ve bağlam sayfaları')} previous={t('Previous', 'Önceki')} next={t('Next', 'Sonraki')} previousDisabled={saving || value === 0} nextDisabled={saving || !page?.hasMore} onPrevious={() => change(Math.max(0, value - 25))} onNext={() => change(value + 25)} />
-  function tree(reason: Reason): ReactNode {
-    return <li key={reason.path}>{reason.field ?? reason.operator ?? reason.path} · {reason.truth === 0 ? t('Unknown', 'Bilinmiyor') : reason.truth === 1 ? t('False', 'Yanlış') : t('True', 'Doğru')} · {reason.reason}{reason.reviewRequired && ` · ${t('Review required', 'İnceleme gerekli')}`}{reason.children.length > 0 && <ul>{reason.children.map(tree)}</ul>}</li>
-  }
   return <section className="lifecycle-applicability regulatory-workspace" aria-label={t('Lifecycle and applicability preparation', 'Yaşam döngüsü ve uygulanabilirlik hazırlığı')}>
     <h2>{t('Lifecycle and applicability', 'Yaşam döngüsü ve uygulanabilirlik')}</h2>
     <p>{t('PREVIEW / DRAFT. Predictions do not establish compliance, readiness, permits or legal approval. Current obligations require admitted sources and independent human authority.', 'ÖNİZLEME / TASLAK. Tahminler uyum, hazırlık, izin veya hukuki onay oluşturmaz. Güncel yükümlülükler kabul edilmiş kaynaklar ve bağımsız insan yetkisi gerektirir.')}</p>
@@ -169,7 +167,7 @@ export function LifecycleApplicability({ language, csrf, offline, onDirty, onSav
       <OwningEvaluationSelector key={vessel} vessel={vessel} language={language} offline={offline} disabled={locked} onChange={v => setOwningInputs(previous => v ? { ...previous, ...v } : previous ? { ...previous, operationId: null, cargoPlanId: null, winchFitmentId: null } : null)} />
       <Button disabled={locked || dirty || offline || !vessel || checked.length === 0 || !caps?.canEvaluate} onClick={() => void freeze('evaluate', 'applicability/evaluate', { vesselId: vessel, ruleIds: checked, asOf: null, owningInputs })}>{t('Evaluate qualified current sources', 'Nitelendirilmiş güncel kaynakları değerlendir')}</Button>
       {evaluation?.authoritative && <><Button disabled={offline || saving} onClick={() => { const c = new AbortController(); qualification.current(evaluation.id, c.signal).then(v => setCurrentState({ ...v, id: evaluation.id })).catch(() => setCurrentState({ id: evaluation.id, current: false, causes: ['EVALUATION_UNAVAILABLE'] })) }}>{t('Check current validity', 'Güncel geçerliliği denetle')}</Button><p role="status">{currentState?.id === evaluation.id ? currentState.current ? t('Inputs remain current. This is not safety release.', 'Girdiler güncel. Bu bir emniyet serbest bırakması değildir.') : `${t('Review required', 'İnceleme gerekli')}: ${currentState.causes.join(' · ')}` : t('Current validity has not been checked.', 'Güncel geçerlilik denetlenmedi.')}</p></>}
-      {evaluation && <section aria-label={t('Preview result', 'Önizleme sonucu')}><h3>{evaluation.authoritative ? t('Recorded evaluation — see current validity separately', 'Kayıtlı değerlendirme — güncel geçerliliği ayrıca inceleyin') : t('PREVIEW — review required for current obligations', 'ÖNİZLEME — güncel yükümlülükler için inceleme gerekli')}</h3><p>{evaluation.asOf} · {evaluation.snapshotHash}</p>{evaluation.conflicts.map(c => <p role="alert" key={`${c.code}:${c.target}`}>{t('Conflict requires source owner and reviewer. Both candidates retained.', 'Çatışma kaynak sahibi ve inceleyici gerektirir. İki aday da korundu.')} {c.target} · {c.ruleReferences.join(' · ')}</p>)}{evaluation.results.map(r => <details key={r.ruleId} open><summary>{r.ruleId} · {r.revision} · {r.prediction.result} · {evaluation.authoritative ? t('Qualified input evaluation', 'Nitelendirilmiş girdi değerlendirmesi') : t('Prediction only', 'Yalnız tahmin')}</summary><p>{r.sourceId ?? t('Missing source', 'Kaynak eksik')} / {r.sourceRevision ?? '—'}</p><ul>{tree(r.prediction.reason)}</ul><p>{r.prediction.blockers.join(' · ')}</p><ul>{r.prediction.predictedActivations.map(a => <li key={`${a.type}:${a.id}`}>{a.type}: {a.id} · {t('Projected need only', 'Yalnız öngörülen ihtiyaç')}</li>)}</ul></details>)}</section>}
+      {evaluation && <section aria-label={t('Preview result', 'Önizleme sonucu')}><h3>{evaluation.authoritative ? t('Recorded evaluation — see current validity separately', 'Kayıtlı değerlendirme — güncel geçerliliği ayrıca inceleyin') : t('PREVIEW — review required for current obligations', 'ÖNİZLEME — güncel yükümlülükler için inceleme gerekli')}</h3><p>{evaluation.asOf} · {evaluation.snapshotHash}</p>{evaluation.conflicts.map(c => <p role="alert" key={`${c.code}:${c.target}`}>{t('Conflict requires source owner and reviewer. Both candidates retained.', 'Çatışma kaynak sahibi ve inceleyici gerektirir. İki aday da korundu.')} {c.target} · {c.ruleReferences.join(' · ')}</p>)}<ApplicabilityReasonView results={evaluation.results} language={language} /><CapturedEvaluationInputs inputs={evaluation.snapshot} inputHash={evaluation.snapshotHash} ruleSetHash={evaluation.ruleSetHash} language={language} /></section>}
       {vessel && <section aria-label={t('Evaluation history', 'Değerlendirme geçmişi')}><h3>{t('Evaluation history', 'Değerlendirme geçmişi')}</h3>{!history ? <p role="status">{t('Loading history…', 'Geçmiş yükleniyor…')}</p> : history.items.length === 0 ? <p>{t('No evaluations.', 'Değerlendirme yok.')}</p> : history.items.map(row => <Button type="button" disabled={saving || offline} key={row.id} onClick={() => {
         const c = new AbortController(); const timer = setTimeout(() => c.abort(), 15000)
         service.evaluation(row.id, c.signal).then(v => { if (v.vesselId === liveVessel.current) setEvaluation(v) }).catch(e => { if (row.vesselId === liveVessel.current) setError(e instanceof directory.ApiError ? e.status : 0) }).finally(() => clearTimeout(timer))
