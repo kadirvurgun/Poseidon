@@ -26,7 +26,7 @@ public sealed class SecurityAudit(IConfiguration configuration, ActorResolver ac
             persisted = true;
         }
         catch (Exception) { throw new AuditUnavailableException(); }
-        finally { AuditTelemetry.Record(persisted, System.Diagnostics.Stopwatch.GetElapsedTime(started)); }
+        finally { AuditTelemetry.Record(persisted, System.Diagnostics.Stopwatch.GetElapsedTime(started), actor?.TenantId); }
     }
 
     public async Task TryWriteAsync(HttpContext http, string action, string result)

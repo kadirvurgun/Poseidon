@@ -47,6 +47,20 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
 
     private static AuditMetadata Project(EntityEntry entry, Guid? parentVessel)
     {
+        if (entry.Entity is Notification notice)
+            return new(notice.VesselId, notice.Id, "Notification", entry.State == EntityState.Added ? null : (long?)entry.Property("Revision").OriginalValue,
+                notice.Revision, Fields(Field("Binding", entry.State == EntityState.Added ? null : "OwnerReference", "OwnerReference"),
+                    Field("Revision", entry.State == EntityState.Added ? null : Number((long)entry.Property("Revision").OriginalValue!), Number(notice.Revision))));
+        if (entry.Entity is NotificationEvent notificationEvent)
+            return new(notificationEvent.VesselId, notificationEvent.NotificationId, "NotificationEvent", null, notificationEvent.Sequence,
+                Fields(Field("Revision", null, Number(notificationEvent.Sequence)), Field("Binding", null, "OwnerReference")));
+        if (entry.Entity is NotificationPreference preference)
+            return new(preference.VesselId, preference.ActorId, "NotificationPreference", entry.State == EntityState.Added ? null : (long?)entry.Property("Revision").OriginalValue,
+                preference.Revision, Fields(Field("Revision", entry.State == EntityState.Added ? null : Number((long)entry.Property("Revision").OriginalValue!), Number(preference.Revision)),
+                    Field("Binding", entry.State == EntityState.Added ? null : "OwnerReference", "OwnerReference")));
+        if (entry.Entity is NotificationReceipt notificationReceipt)
+            return new(notificationReceipt.VesselId, notificationReceipt.ResourceId, "NotificationReceipt", null, null,
+                Fields(Field("Binding", null, "CommittedResource")));
         if (entry.Entity is CommandReceipt { Action: "CrewCatalogSave" } catalogReceipt)
             return new(catalogReceipt.ResourceId, catalogReceipt.ResourceId, "CrewCatalogReceipt", null, catalogReceipt.RegisterRevision, "[]");
         if (entry.Entity is CrewCatalogEvent catalog)

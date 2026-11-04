@@ -11,7 +11,8 @@
       17,
       18,
       19,
-      20
+      20,
+      37
     ]
   },
   "definitionState": "AUTHORED_NOT_RUNTIME_MEASURED_NOT_ACCEPTED",
@@ -29,9 +30,9 @@
     "TenantPerson",
     "Unresolved"
   ],
-  "mutationRouteTemplates": 83,
-  "criticalRouteTemplates": 77,
-  "criticalOperations": 82,
+  "mutationRouteTemplates": 86,
+  "criticalRouteTemplates": 80,
+  "criticalOperations": 85,
   "scopeMeaning": "Current exposed HTTP command surface, including aliases. Counts are authoring definitions until actual EndpointDataSource drift and real audit observations pass the phase gate. Technical codes describe accepted commands, never human justification or safety authority.",
   "operations": [
     {
@@ -1462,6 +1463,57 @@
       "kind": "CriticalWrite",
       "reasonCode": "PREPARATION_COMMAND",
       "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "NotificationRefresh",
+      "method": "POST",
+      "routePattern": "/api/v1/notification-escalation/refresh",
+      "family": "Notification",
+      "scope": "CommandVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "NotificationCommand",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "NotificationAcknowledge",
+      "method": "POST",
+      "routePattern": "/api/v1/notification-escalation/{id:guid}/acknowledge",
+      "family": "Notification",
+      "scope": "CommandVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "NotificationCommand",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "NotificationPreference",
+      "method": "PUT",
+      "routePattern": "/api/v1/notification-escalation/preference",
+      "family": "Notification",
+      "scope": "CommandVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "NotificationCommand",
       "variants": [],
       "traceIds": [
         "T-S1-002",

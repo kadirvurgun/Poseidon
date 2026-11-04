@@ -16,6 +16,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         services.AddDataProtection();
         services.AddSingleton(configuration.GetSection("TugPlanning").Get<TugPlanningPolicy>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<TimeProvider>(TimeProvider.System);
+        services.AddSingleton(configuration.GetSection("Notifications").Get<NotificationSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton(configuration.GetSection("OfflineApplication").Get<OfflineApplicationPolicy>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton(configuration.GetSection("CrewPositionPolicy").Get<CrewPositionPolicy>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton(configuration.GetSection("CrewIdentityPolicy").Get<CrewIdentityPolicy>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
@@ -93,6 +94,8 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         app.UseAuthorization();
         app.Use(async (context, next) =>
         {
+            var observationActor = context.RequestServices.GetRequiredService<ActorResolver>().Resolve(context.User);
+            if (observationActor != null) context.Items[OperationalHealthObservations.TenantItem] = observationActor.TenantId;
             var operation = S1SecurityContract.Match(context);
             if (operation?.IsCritical == true)
             {
@@ -135,6 +138,8 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapControlEvidence();
             endpoints.MapHumanReviews();
             endpoints.MapToday();
+            endpoints.MapSystemHealth();
+            endpoints.MapNotifications();
             endpoints.MapAuditHistory();
             endpoints.MapSecureFiles();
             endpoints.MapDocuments();
