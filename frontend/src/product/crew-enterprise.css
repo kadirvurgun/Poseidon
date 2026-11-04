@@ -35,7 +35,7 @@
 .enterprise-shell.crew-shell .crew-enterprise-disclosure>div{padding:0 22px 18px}
 .enterprise-shell.crew-shell .crew-enterprise-disclosure>div>section{border:0;padding:8px 0;margin:0;box-shadow:none}
 .enterprise-shell.crew-shell .crew-enterprise-editor{border-left:3px solid var(--primary);padding:24px;background:white;border-radius:10px}
-.enterprise-shell.crew-shell .crew-enterprise-editor fieldset{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 22px;margin-bottom:22px}
+.enterprise-shell.crew-shell .crew-enterprise-editor fieldset:not(.enterprise-form-grid){display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 22px;margin-bottom:22px}
 .enterprise-shell.crew-shell .crew-enterprise-editor fieldset>p{grid-column:1/-1}
 @media(max-width:1100px){.enterprise-shell.crew-shell .crew-enterprise-profile .crew-enterprise-profile-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:650px){.enterprise-shell.crew-shell .crew-enterprise-page-heading{flex-direction:column;gap:14px}.enterprise-shell.crew-shell .crew-enterprise-filters{align-items:stretch}.enterprise-shell.crew-shell .crew-enterprise-filters label{min-width:0;width:100%}.enterprise-shell.crew-shell .crew-enterprise-filters select{max-width:none}.enterprise-shell.crew-shell .crew-enterprise-filter-label{width:100%}.enterprise-shell.crew-shell .crew-enterprise-pagination{flex-wrap:wrap}.enterprise-shell.crew-shell .crew-enterprise-pagination>span{width:100%}.enterprise-shell.crew-shell .crew-enterprise-editor fieldset,.enterprise-shell.crew-shell .crew-enterprise-profile .crew-enterprise-profile-fields{grid-template-columns:1fr}}

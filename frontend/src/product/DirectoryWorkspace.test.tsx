@@ -3,7 +3,7 @@ vi.mock('./workspace-lens-api', async original => ({ ...await original<typeof im
   loadLenses: vi.fn(async (tenant: string, actor: string, vessel: string | null) => (await import('./workspace-navigation.test-fixture')).navigationTestLenses(tenant, actor, vessel)) }))
 vi.mock('./workspace-context-api', async original => ({ ...await original<typeof import('./workspace-context-api')>(),
   loadWorkspaceContext: (await import('./workspace-navigation.test-fixture')).navigationTestContext }))
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { DirectoryEditor } from './DirectoryEditor'
@@ -20,6 +20,21 @@ beforeEach(() => window.history.replaceState(null, '', '/app'))
 afterEach(() => vi.restoreAllMocks())
 
 describe('DIR-WORKSPACE-01 mocked UI behavior (not real backend acceptance)', () => {
+  it.each([
+    { language: 'en' as const, group: 'Form actions', name: 'Name *', cancel: 'Cancel', save: 'Save' },
+    { language: 'tr' as const, group: 'Form işlemleri', name: 'Ad *', cancel: 'Vazgeç', save: 'Kaydet' },
+  ])('keeps $language form actions keyboard-ordered and cancellation separate from submission', async ({ language, group, name, cancel, save }) => {
+    const fetchMock = vi.fn(); vi.stubGlobal('fetch', fetchMock)
+    const callbacks = props(true); const user = userEvent.setup()
+    render(<DirectoryEditor {...callbacks} language={language} />)
+    const actions = screen.getByRole('group', { name: group })
+    expect(within(actions).getAllByRole('button').map(button => button.textContent)).toEqual([cancel, save])
+    await user.click(screen.getByLabelText(name)); await user.tab()
+    expect(within(actions).getByRole('button', { name: cancel })).toHaveFocus()
+    await user.keyboard('{Enter}')
+    expect(callbacks.onCancel).toHaveBeenCalledOnce(); expect(callbacks.onSaved).not.toHaveBeenCalled()
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
   it('validates required fields, associates errors and focuses the first invalid input', async () => {
     const fetchMock = vi.fn(); vi.stubGlobal('fetch', fetchMock)
     const user = userEvent.setup(); render(<DirectoryEditor {...props()} />)
@@ -27,6 +42,10 @@ describe('DIR-WORKSPACE-01 mocked UI behavior (not real backend acceptance)', ()
     expect(screen.getAllByText('This field is required.')).toHaveLength(2)
     expect(screen.getByLabelText('Code *')).toHaveFocus()
     expect(screen.getByLabelText('Name *')).toHaveAttribute('aria-invalid', 'true')
+    expect(screen.getByLabelText('Code *')).toHaveAccessibleDescription('This field is required.')
+    expect(screen.getByLabelText('Name *')).toHaveAccessibleDescription('This field is required.')
+    await user.type(screen.getByLabelText('Code *'), 'C2')
+    expect(screen.getByLabelText('Code *')).not.toHaveAttribute('aria-describedby')
     expect(fetchMock).not.toHaveBeenCalled()
   })
   it('saves real normalized HTTP input with CSRF and command key and blocks duplicate clicks', async () => {

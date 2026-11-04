@@ -11,6 +11,7 @@ import { Button } from '../components/ui/button'
 import { Plus, Search } from 'lucide-react'
 import * as api from './technical-api'
 import './technical-workspace.css'
+import { EnterpriseActions, EnterpriseFormGrid, EnterprisePageHeader } from './EnterprisePatterns'
 
 type Route = { vessel: string; plan: boolean; id: string | null }
 const guid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -159,9 +160,8 @@ export function TechnicalWorkspace() {
   }}>
 
     <EnterpriseChrome session={user} vessel={route.vessel} language={language} onLanguageChange={setLanguage} onNavigate={(href, committed) => guard(() => { committed?.(); window.location.assign(href) })} title={route.plan ? (en ? 'Maintenance plan' : 'Bakım planı') : (en ? 'Equipment hierarchy' : 'Ekipman hiyerarşisi')} mainId="technical-main" />
-    <main id="technical-main" tabIndex={-1}><div className="enterprise-page-heading"><div><p className="enterprise-page-eyebrow">{en ? 'TECHNICAL OPERATIONS' : 'TEKNİK OPERASYONLAR'}</p><h1>{route.plan ? (en ? 'Maintenance plan' : 'Bakım planı') : (en ? 'Equipment hierarchy' : 'Ekipman hiyerarşisi')}</h1><p>{en ? 'Equipment, current planning inputs and their owning records.' : 'Ekipman, güncel planlama girdileri ve sahip kayıtlar.'}</p></div>
-      {canWrite && !editor && !jobDraft && !error && <Button disabled={busy || uncertain || offline} onClick={() => start(true)}><Plus />{en ? 'Add draft' : 'Taslak ekle'}</Button>}</div>
-      <nav aria-label={en ? 'Technical' : 'Teknik'}><button aria-current={!route.plan ? 'page' : undefined} disabled={busy || uncertain} onClick={() => navigate({ ...route, plan: false, id: null })}>{en ? 'Equipment' : 'Ekipman'}</button><button aria-current={route.plan ? 'page' : undefined} disabled={busy || uncertain} onClick={() => navigate({ ...route, plan: true, id: null })}>{en ? 'Plans' : 'Planlar'}</button></nav>
+    <main id="technical-main" tabIndex={-1}><EnterprisePageHeader eyebrow={en ? 'TECHNICAL OPERATIONS' : 'TEKNİK OPERASYONLAR'} title={route.plan ? (en ? 'Maintenance plan' : 'Bakım planı') : (en ? 'Equipment hierarchy' : 'Ekipman hiyerarşisi')} description={en ? 'Equipment, current planning inputs and their owning records.' : 'Ekipman, güncel planlama girdileri ve sahip kayıtlar.'} actionsLabel={en ? 'Page actions' : 'Sayfa işlemleri'} actions={canWrite && !editor && !jobDraft && !error && <Button disabled={busy || uncertain || offline} onClick={() => start(true)}><Plus aria-hidden="true" />{en ? 'Add draft' : 'Taslak ekle'}</Button>} />
+      <nav className="enterprise-section-tabs" aria-label={en ? 'Technical' : 'Teknik'}><Button variant={!route.plan ? 'secondary' : 'ghost'} aria-current={!route.plan ? 'page' : undefined} disabled={busy || uncertain} onClick={() => navigate({ ...route, plan: false, id: null })}>{en ? 'Equipment' : 'Ekipman'}</Button><Button variant={route.plan ? 'secondary' : 'ghost'} aria-current={route.plan ? 'page' : undefined} disabled={busy || uncertain} onClick={() => navigate({ ...route, plan: true, id: null })}>{en ? 'Plans' : 'Planlar'}</Button></nav>
       {offline && <p role="alert">{en ? 'Offline. Reconnect before saving or refreshing.' : 'Çevrimdışı. Kaydetmek veya yenilemek için yeniden bağlanın.'}</p>}
       {error ? <div role="alert"><p>{error === 401 ? (en ? 'Sign in to continue.' : 'Devam etmek için oturum açın.') : error === 403 || error === 404 ? (en ? 'Access is not available.' : 'Erişim kullanılamıyor.') : (en ? 'Equipment could not be loaded.' : 'Ekipman yüklenemedi.')}</p><button onClick={() => guard(() => setAttempt(x => x + 1))}>{en ? 'Retry' : 'Tekrar dene'}</button></div> : !assets || loadedScope !== `${route.vessel}:${route.plan}` || route.plan && !plans ? <p role="status">{en ? 'Loading…' : 'Yükleniyor…'}</p> : <>
         <p className="technical-boundary">{en ? 'Draft declarations. Missing or unresolved inputs require review; maintenance records do not establish operational fitness.' : 'Taslak beyanlar. Eksik veya çözümlenmemiş girdiler inceleme gerektirir; bakım kayıtları operasyonel uygunluk belirtmez.'}</p>
@@ -176,25 +176,24 @@ export function TechnicalWorkspace() {
           {!route.id && !editor && <TechnicalEmptyDetail plan={route.plan} en={en} />}
           {!editor && asset && !route.plan && <EquipmentSummary asset={asset} en={en} />}
           {!editor && plan && route.plan && <MaintenancePlanSummary plan={plan} asset={assets.items.find(asset => asset.id === plan.assetId)} references={refs} en={en} />}
-          {canWrite && !editor && (asset || plan) && <div className="technical-actions"><Button variant="outline" disabled={busy || uncertain || offline} onClick={() => start(false)}>{en ? 'Edit draft' : 'Taslağı düzenle'}</Button></div>}
-          {canHistory && route.id && <button onClick={loadHistory}>{en ? 'History' : 'Geçmiş'}</button>}
+          {(canWrite && !editor && (asset || plan) || canHistory && route.id) && <EnterpriseActions align="start" aria-label={en ? 'Record actions' : 'Kayıt işlemleri'}>{canWrite && !editor && (asset || plan) && <Button variant="outline" disabled={busy || uncertain || offline} onClick={() => start(false)}>{en ? 'Edit draft' : 'Taslağı düzenle'}</Button>}{canHistory && route.id && <Button variant="outline" onClick={loadHistory}>{en ? 'History' : 'Geçmiş'}</Button>}</EnterpriseActions>}
           {historyError && <p role="alert">{en ? 'History could not be loaded.' : 'Geçmiş yüklenemedi.'}</p>}
           {!route.plan && route.id && user && !editor && loadedScope === `${route.vessel}:${route.plan}` && <MaintenanceObservations key={`${user.actorId}:${user.tenantId}:${user.csrfToken}:${route.vessel}:${route.id}`} vessel={route.vessel} asset={route.id} csrf={user.csrfToken} en={en} onDirty={setObservationDirty} onUncertain={setObservationUncertain} />}
           {history && <ol>{history.map((r, i) => { const record = r as { revision?: number; savedAt?: string; referenceAt?: string; inputs?: api.Inputs; due?: api.Due; asset?: api.Asset }; return <li key={i}><details><summary>{en ? 'Revision' : 'Revizyon'} {record.revision ?? '—'} · {record.savedAt ?? '—'}</summary>{record.due && <p>{dueState(record.due.state, en)} · {dueReason(record.due.reason, en)} · {record.referenceAt}</p>}<dl>{record.inputs && planFields.map(([key, english, turkish]) => <div key={key}><dt>{en ? english : turkish}</dt><dd>{record.inputs![key] ?? (en ? 'Unknown' : 'Bilinmiyor')}</dd></div>)}{record.asset && assetFields.map(([key, english, turkish]) => <div key={key}><dt>{en ? english : turkish}</dt><dd>{record.asset![key] ?? (en ? 'Unknown' : 'Bilinmiyor')}</dd></div>)}</dl></details></li> })}</ol>}
         </section></div>
       </>}
-      {route.plan && canWrite && !editor && <button disabled={busy || uncertain || offline} onClick={() => setJobDraft({ id: crypto.randomUUID(), code: '', title: '' })}>{en ? 'Add maintenance job' : 'Bakım işi ekle'}</button>}
-      {jobDraft && route.plan && <form onSubmit={async e => {
+      {route.plan && canWrite && !editor && <EnterpriseActions align="start" aria-label={en ? 'Maintenance job actions' : 'Bakım işi işlemleri'}><Button variant="outline" disabled={busy || uncertain || offline} onClick={() => setJobDraft({ id: crypto.randomUUID(), code: '', title: '' })}>{en ? 'Add maintenance job' : 'Bakım işi ekle'}</Button></EnterpriseActions>}
+      {jobDraft && route.plan && <form className="enterprise-editor-panel" onSubmit={async e => {
         e.preventDefault(); if (!user || offline || busy) return; setBusy(true)
         const c = new AbortController(), timeout = setTimeout(() => c.abort(), 15000)
         try { await api.addJob(route.vessel, jobDraft, user.csrfToken, c.signal); setJobDraft(null); setDirty(false); setUncertain(false); setAttempt(x => x + 1) }
         catch (error) { const ambiguous = !(error instanceof ApiError) || error.status >= 500; setUncertain(ambiguous); setNotice(en ? 'Job could not be saved. Retry the same job.' : 'Bakım işi kaydedilemedi. Aynı işi yineleyin.') }
         finally { clearTimeout(timeout); setBusy(false) }
-      }}><fieldset disabled={busy || uncertain || offline}><legend>{en ? 'Maintenance job' : 'Bakım işi'}</legend>
+      }}><EnterpriseFormGrid disabled={busy || uncertain || offline}><legend>{en ? 'Maintenance job' : 'Bakım işi'}</legend>
         <label>{en ? 'Job code' : 'İş kodu'}<input required maxLength={2000} value={jobDraft.code} onChange={e => { setJobDraft({ ...jobDraft, code: e.target.value }); setDirty(true) }} /></label>
         <label>{en ? 'Job title' : 'İş adı'}<input required maxLength={2000} value={jobDraft.title} onChange={e => { setJobDraft({ ...jobDraft, title: e.target.value }); setDirty(true) }} /></label>
-        </fieldset><button type="submit" disabled={busy || offline}>{en ? 'Save job' : 'İşi kaydet'}</button><button type="button" disabled={busy || uncertain} onClick={() => guard(clear)}>{en ? 'Discard changes' : 'Değişiklikleri bırak'}</button></form>}
-      {editor && <form onSubmit={e => { e.preventDefault(); void save() }}><fieldset disabled={busy || uncertain || conflict || offline}><legend>{en ? 'Draft data' : 'Taslak veriler'}</legend>
+        </EnterpriseFormGrid><EnterpriseActions aria-label={en ? 'Job form actions' : 'Bakım işi form işlemleri'}><Button variant="outline" disabled={busy || uncertain} onClick={() => guard(clear)}>{en ? 'Discard changes' : 'Değişiklikleri bırak'}</Button><Button type="submit" disabled={busy || offline}>{en ? 'Save job' : 'İşi kaydet'}</Button></EnterpriseActions></form>}
+      {editor && <form className="enterprise-editor-panel" onSubmit={e => { e.preventDefault(); void save() }}><EnterpriseFormGrid disabled={busy || uncertain || conflict || offline}><legend>{en ? 'Draft data' : 'Taslak veriler'}</legend>
         {'inputs' in editor ? <>
           <label>{en ? 'Equipment' : 'Ekipman'}<select required value={editor.assetId} onChange={e => change('assetId', e.target.value)}><option value="">{en ? 'Select' : 'Seçiniz'}</option>{assets?.items.map(a => <option key={a.id} value={a.id}>{a.name || a.code || a.id}</option>)}</select></label>
           <label>{en ? 'Maintenance job' : 'Bakım işi'}<select value={editor.jobId ?? ''} onChange={e => change('jobId', e.target.value)}><option value="">{en ? 'Unknown' : 'Bilinmiyor'}</option>{refs?.jobs.map(j => <option key={j.id} value={j.id}>{j.code} · {j.title}</option>)}</select></label>
@@ -209,7 +208,7 @@ export function TechnicalWorkspace() {
           <label>{en ? 'Responsible role reference' : 'Sorumlu rol referansı'}<select value={editor.responsibleRoleId ?? ''} onChange={e => change('responsibleRoleId', e.target.value)}><option value="">{en ? 'Unknown' : 'Bilinmiyor'}</option>{owners.map(o => <option key={o} value={o}>{o}</option>)}</select></label>
           {assetFields.map(([key, english, turkish]) => <label key={key}>{en ? english : turkish}<input maxLength={2000} type={key === 'commissionDate' ? 'date' : 'text'} value={editor[key] ?? ''} onChange={e => change(key, e.target.value)} /></label>)}
         </>}
-      </fieldset><button type="submit" disabled={busy || offline || conflict}>{uncertain ? (en ? 'Retry same attempt' : 'Aynı denemeyi yinele') : (en ? 'Save draft' : 'Taslağı kaydet')}</button><button type="button" disabled={busy || uncertain} onClick={() => guard(() => { clear(); setAttempt(x => x + 1) })}>{en ? 'Discard changes' : 'Değişiklikleri bırak'}</button></form>}
+      </EnterpriseFormGrid><EnterpriseActions aria-label={en ? 'Form actions' : 'Form işlemleri'}><Button variant="outline" disabled={busy || uncertain} onClick={() => guard(() => { clear(); setAttempt(x => x + 1) })}>{en ? 'Discard changes' : 'Değişiklikleri bırak'}</Button><Button type="submit" disabled={busy || offline || conflict}>{uncertain ? (en ? 'Retry same attempt' : 'Aynı denemeyi yinele') : (en ? 'Save draft' : 'Taslağı kaydet')}</Button></EnterpriseActions></form>}
       {notice && <p role="status">{notice}</p>}
       {pending && <TechnicalDiscard en={en} onStay={() => setPending(null)} onDiscard={() => { const action = pending; setPending(null); clear(); action() }} />}
     </main>
@@ -225,6 +224,6 @@ function TechnicalDiscard({ en, onStay, onDiscard }: { en: boolean; onStay: () =
   }, [])
   return <dialog ref={dialog} aria-label={en ? 'Unsaved changes' : 'Kaydedilmemiş değişiklikler'} onCancel={e => { e.preventDefault(); onStay() }}>
     <p>{en ? 'Discard unsaved changes?' : 'Kaydedilmemiş değişiklikler bırakılsın mı?'}</p>
-    <button autoFocus onClick={onStay}>{en ? 'Stay' : 'Kal'}</button><button onClick={onDiscard}>{en ? 'Discard' : 'Bırak'}</button>
+    <EnterpriseActions aria-label={en ? 'Unsaved draft actions' : 'Kaydedilmemiş taslak işlemleri'}><Button variant="outline" autoFocus onClick={onStay}>{en ? 'Stay' : 'Kal'}</Button><Button variant="destructive" onClick={onDiscard}>{en ? 'Discard' : 'Bırak'}</Button></EnterpriseActions>
   </dialog>
 }

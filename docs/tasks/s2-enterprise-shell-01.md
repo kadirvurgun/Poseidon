@@ -86,3 +86,44 @@ regenerate the actual API contract/types at the bundle gate, execute the require
 frontend/backend/browser/security checks, obtain independent target-commit QA,
 and record exact native results. Responsive contrast and keyboard behavior are
 authored here and must be measured/observed at that gate; no PASS is claimed.
+
+## User-directed correction of existing screens
+
+The user's subsequent instruction explicitly calls for correcting existing page
+and button layouts using consistent UI patterns. This work therefore extends the
+S2 accessibility/shell package into the already implemented core workspaces; it
+does not add new accepted tasks or story points.
+
+Concrete source findings: the old directory search and vessel-type filter occupied
+unrelated rows; detail actions and three workspace links were scattered across
+the page; directory labels, values and error text were separate grid children;
+legacy primary-button margins offset Save from Cancel; technical and crew forms
+placed native Save/Discard controls directly after fieldsets without a shared
+action layout. Broad crew navigation and technical header/fieldset selectors also
+reached the enterprise chrome or overrode its intended composition.
+
+[EnterprisePatterns](../../frontend/src/product/EnterprisePatterns.tsx) now provides
+explicit page/section headers, search/filter toolbars, semantic action groups,
+field grids and pagination. Patterns use the existing shadcn Button, product
+tokens, consistent control sizing and responsive wrapping without `!important`
+or new dependencies. Labels and event handlers are retained. Cancel/Discard is
+an explicit non-submit action; the save action follows it in keyboard order.
+
+Applied to existing [fleet/company pages](../../frontend/src/product/ProductApp.tsx),
+[directory editor](../../frontend/src/product/DirectoryEditor.tsx),
+[regulatory profile](../../frontend/src/product/RegulatoryProfile.tsx),
+[Today](../../frontend/src/product/TodayWorkspace.tsx),
+[technical workspace](../../frontend/src/product/TechnicalWorkspace.tsx),
+[crew workspace](../../frontend/src/product/CrewWorkspace.tsx) and the shared
+[discard confirmation](../../frontend/src/product/DraftConfirmation.tsx). Fleet
+search/filter/actions share a toolbar; detail actions and workspace links are
+grouped; technical mode navigation is a compact segmented group rather than two
+controls spread across the page. Legacy CSS selectors are narrowed at their
+source so they do not style shared chrome or replace the explicit form grid.
+
+Additional component regressions assert TR/EN keyboard order, cancellation without
+HTTP submission, validation descriptions and removal of resolved error references.
+The coordinator owns actual desktop/mobile layout and keyboard browser checks.
+These checks, builds, lint and typechecks remain **DEFERRED**. No updated screen
+has been visually accepted from a rebuilt browser runtime in this authoring
+checkpoint; the live user preview and its configuration remain untouched.
