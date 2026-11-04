@@ -1,26 +1,23 @@
-# POSEIDON güncel durum — S1 mühendislik kabulü
+# POSEIDON güncel durum — S2 birleşik paket
 
-**S0 ve S1 mühendislik kapsamı %100 kabul edildi. Genel proje: 103 / 970 SP = %10,62; 20 / 121 iş; ayrı ekran kabulü 0 / 196.**
 
-Kayıt: `2026-11-04T15:52:45.449192+00:00`. S1 uygulama hedefi `dc7f5117fb99a962d70a54b1f12f2c118f1cca66`, tree `e8843d8fb0bffd56a6d7955dfc286b8113a09bfd`; 7 özgün iş / 50 SP. Bağımsız inceleme mevcut S1 kapsamında 0 açık P0 buldu.
+**Güncel çalışma:** Kullanıcı geri bildirimi üzerine mevcut Filo/Directory, profil, Today, Teknik ve Crew ekranlarındaki buton hizaları, araç çubukları, form alanları ve mobil yerleşimler ortak UI kalıplarıyla düzeltiliyor. Bağımsız ön incelemenin bulduğu `S2-QA-001` geçmiş okuma yetki yarışı da kapatılıyor. Önceki yazım kilometre taşı korunur; birleşik test kapısı bu düzeltmeler bitene kadar **açılmadı**. Yeni test/build sonucu veya S2 kabulü yok.
 
-OIDC login/logout ve secret-reference sınırları, sunucu tarafında tenant/rol/gemi/nesne yetkisi, gerçek aktör ve correlation ile immutable audit, güvenli dosya kabulü ve yetkisiz erişim regresyonları teslim edildi. Dosya reddinde iş durumu korunuyor; audit özel veri değerlerini kopyalamıyor.
+**S0 ve S1 mühendislik kabulü tamamlandı. S2'nin 6 iş / 42 SP kapsamındaki kodu ve test kaynakları yazıldı; S2 kabulü 0 / 42 SP. Genel kabul %10,62: 103 / 970 SP, 20 / 121 iş; ayrı ekran kabulü 0 / 196.**
 
-| Doğrulama | Gerçek sonuç |
+Kayıt: `2026-11-04T16:46:07.951096Z`. S2 kaynak checkpoint'i `54679c560dc4ddad3c4ad21196090dd44f5f0e03`; dal `foundation/s2-enterprise-context-20261104`. Bu authoring kontrol noktası çalışma/test başarısı veya faz kabulü değildir.
+
+| Kapsam | Yazılan davranış |
 |---|---|
-| [Uygulama hedefi push CI](https://github.com/kadirvurgun/Poseidon/actions/runs/41617601700) | 4 / 4 iş, 19 / 19 gereken komut başarılı |
-| Native API unit / tam integration | 137 / 137 ve 582 / 582 PASS; her ikisinde 0 fail / skip |
-| Gerçek HTTP → committed audit | 82 / 82 kritik operasyon; 558 capture; 0 invalid / unavailable |
-| Taze signed-06 | 122 / 122 PASS, 10 grup; 0 fail / pending / skip / retry |
-| Ayrı login baseline / strict TLS / gerçek sağlayıcı logout | 2 gerçek login; 3 / 3 TLS; ayrı 1 / 1 logout PASS |
-| Build, frontend, model, contract, kaynak ve repository / gerçek client taraması | Gereken CI komutları PASS; verilmemiş native sayaçlar türetilmedi |
+| Gemi bağlamı | Sınırlı arama/sayfalama ile gemi seçimi; geçiş öncesi taze sunucu yetkisi ve kaydedilmemiş form uyarısı; geç/çevrimdışı yanıtların geri çekilmesi |
+| Kurumsal çalışma alanı | Atanmış rol lensine göre ana menü; ayrı search yetkisi; deterministik Today durumları, görünür odak ve erişilebilir form hata açıklamaları |
+| Why ve kaynak güvenliği | Gerçek kaynak kind/ID/revision bağı; kısıtlı profil bilgisinin tek SQL projection ile saklanması; seçili bakım gözleminin gerçek zamanı ve açık Unknown |
+| Test kaynakları | Backend/PostgreSQL, bileşen/contract ve 3 yeni mocked browser senaryosu; mevcut signed rol-lens senaryolarına ek assertion'lar. **Yazıldı, çalıştırılmadı.** |
 
-Önizleme geri yüklendi; önceki özel ayarlar ve **kadirvurgun** test kullanıcısı yapılandırması korundu. Test hesabının gerçek sağlayıcı girişi ve ordinary yetkileri ayrıca doğrulandı. Parola/private içerik kaynak veya raporda yok.
+S2 için restore/build, lint/typecheck, OpenAPI/type generation, backend/component/browser testleri, scan ve bağımsız son-hedef QA **DEFERRED / NOT RUN**. Önceki S1 sonuçları yeni S2'ye PASS olarak aktarılmaz. Rapor öncesi base→HEAD diff'i **32 dosya, +1111/−58 satır**; kaynak değişimi test sayısı değildir.
 
-Bu kabul uygulama hedefi F'nin mühendislik kabulüdür. Bu kayıt zamanında S1 PR'ı, PR hedefinin CI/bağımsız incelemesi, merge ve merged-main kontrolleri henüz yapılmadı. Sonraki adım büyük S1 PR'ı için kanıt/status paketini yayımlamak; gereken hedef kontrollerinden sonra normal merge ve main CI sonucunu izlemektir. Metadata commit'i F kanıtlarının hedefini değiştirmez.
+S1 [PR #15](https://github.com/kadirvurgun/Poseidon/pull/15), **04.11.2026 16:44:08 UTC** tarihinde normal expected-head merge ile `856f75e6a143fb81e4f41ddcb2a593185179618a` commit'inde birleştirildi. Metadata-head push ve PR kontrollerinin her biri **4 / 4 iş, 19 / 19 komut** ile başarılı; native API unit **137 / 137**, integration **582 / 582**, kritik audit **82 / 82**. Bağımsız exact-head incelemesi merge öncesinde tamamlandı. [Merged-main CI 41870412787](https://github.com/kadirvurgun/Poseidon/actions/runs/41870412787) son gözlemde sürüyor; main kontrolleri kapanana kadar publication complete sonucu yok. S1'in özgün F kabul kanıtları kendi hedefiyle korunuyor.
 
-Önceki 4978 hedefinin 580 total / 577 PASS / 3 FAIL ve tanısal 80 / 82 kaydı ile signed-05'in 104 PASS / 18 FAIL sonucu özgün hedefleriyle korunur. Bunlar güncel başarıya eklenmedi. [Bağımsız S1 kabul kanıtı](evidence/s1-20261104-dc7f511/qa/final-s1-independent-review-dc7f511-signed06.json) exact F'ye bağlıdır.
+Sonraki adım: S2 birleşik hedefini dondurmak, AST grafiğini güncellemek ve tek paket kapısında contract generation/build/test/browser/security kontrollerini çalıştırmak; gerçek sonuçlardan sonra bağımsız QA ve gereken CI. S2 kabul edilirse toplam145/970 SP = %14,95 olur; bu değer bugünkü kabul değildir.
 
-Production IdP/MFA/vault/storage/scanner rollout, privacy/retention/key custody, hukuk/source aktivasyonu, gerçek Marine/Tug uzmanı ve pilot/DR/release kararları ayrı açık kapılardır.
-
-[Faz raporu](phases/S1-FOUNDATION-20261103.md) · [Kabul sözleşmesi](tasks/s1-foundation-closure-01.md) · [Canonical kayıt](project-status.json)
+Etkin analiz [poseidon-v46.3-20261030](sources/active.json); özgün 18.01 Backlog satırları21–26, SHA256 `09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674`. [Altı literal kriter/trace/bağımlılık ve faz raporu](phases/S2-ENTERPRISE-CONTEXT-20261104.md) · [Backend sözleşmesi](tasks/s2-vessel-why-01.md) · [UI sözleşmesi](tasks/s2-enterprise-shell-01.md) · [S1 kabul raporu](phases/S1-FOUNDATION-20261103.md) · [Canonical durum](project-status.json). Gerçek pilot/uzman ve production rollout kapıları ayrı açık kalır.

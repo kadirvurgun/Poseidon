@@ -1009,7 +1009,7 @@
       "accepted": false
     }
   },
-  "as_of": "2026-11-03",
+  "as_of": "2026-11-04T16:50:32.271950Z",
   "audit_trace_01": {
     "status": "combined_gate_executed_not_accepted",
     "accepted": false,
@@ -1114,7 +1114,7 @@
     "verification_record_scope": "Authored/deferred and original20f1198 results are historical;current rejection-repair evidence in core_bundle_01.verification"
   },
   "baseline": "POSEIDON v46.3 updated 2026-10-30 / Library26 candidate",
-  "current_stage": "S1 ENGINEERING ACCEPTED: 7 tasks/50SP on dc7f511; large PR and external required-head publication lifecycle pending as timestamped",
+  "current_stage": "S2 authoring: correct existing enterprise UI patterns and close independent history authorization finding before the combined bundle gate",
   "method": "accepted story points / total baseline story points * 100",
   "scope": "complete v46.3 Backlog sheet; duplicates in other sheets excluded",
   "total_tasks": 121,
@@ -3942,32 +3942,118 @@
   ],
   "active_source": "docs/sources/active.json",
   "current_package": {
-    "task": "S1-FOUNDATION-CLOSURE-01",
-    "state": "ACCEPTED_IMPLEMENTATION_PENDING_EXTERNAL_PUBLICATION",
-    "branch": "foundation/s1-security-foundation-20261103",
-    "implementation_target": {
-      "commit": "dc7f5117fb99a962d70a54b1f12f2c118f1cca66",
-      "tree": "e8843d8fb0bffd56a6d7955dfc286b8113a09bfd"
+    "task": "S2-ENTERPRISE-CONTEXT-20261104",
+    "state": "AUTHORING_UI_PATTERN_CORRECTIONS_AND_HISTORY_SCOPE_FIX",
+    "branch": "foundation/s2-enterprise-context-20261104",
+    "base_commit": "8a18a436c0bff4caaf4d1117360d0fc2fe1842bc",
+    "integrated_source_checkpoint": "54679c560dc4ddad3c4ad21196090dd44f5f0e03",
+    "source_scope": {
+      "tasks": 6,
+      "story_points": 42,
+      "ids": [
+        "DEV-020",
+        "DEV-021",
+        "DEV-022",
+        "DEV-023",
+        "DEV-024",
+        "DEV-025"
+      ],
+      "accepted_story_points": 0
     },
-    "accepted_story_points": 50,
-    "report": "docs/phases/S1-FOUNDATION-20261103.md",
-    "contract": "docs/tasks/s1-foundation-closure-01.md",
+    "report": "docs/phases/S2-ENTERPRISE-CONTEXT-20261104.md",
+    "contracts": [
+      "docs/tasks/s2-vessel-why-01.md",
+      "docs/tasks/s2-enterprise-shell-01.md"
+    ],
+    "authored_checkpoints": {
+      "backend": "5157e422d11af3656a2c6c78ff5de8d9ca7c1574",
+      "ui": "08420153fd4080f9054b02c0f99fac2f8bf2ca12",
+      "browser": "d29eb15",
+      "phase": "876259b"
+    },
     "verification": {
-      "json_pointer": "/verification"
+      "state": "DEFERRED_NOT_RUN",
+      "scope": "S2_INTEGRATED_BUNDLE_ONLY",
+      "observed_at_utc": "2026-11-04T16:42:38.250849+00:00",
+      "backend_frontend_browser_build_typecheck_contract_generation_security_checks": "DEFERRED_UNTIL_SINGLE_COMPLETE_BUNDLE_GATE",
+      "independent_final_target_qa": "PENDING_NOT_ACCEPTED",
+      "runtime_pass_evidence_issued": false
     },
-    "publication": {
-      "state": "IMPLEMENTATION_F_ACCEPTED_EXTERNAL_PUBLICATION_PENDING",
-      "observed_at_utc": "2026-11-04T15:52:45.449192+00:00",
-      "implementation_target": {
-        "commit": "dc7f5117fb99a962d70a54b1f12f2c118f1cca66",
-        "tree": "e8843d8fb0bffd56a6d7955dfc286b8113a09bfd"
-      },
-      "implementation_push_ci": "41617601700_SUCCESS_4_JOBS_19_COMMANDS",
-      "pull_request": null,
-      "pull_request_required_head_ci": "NOT_PERFORMED_AT_THIS_TIMESTAMP",
-      "merge": "NOT_PERFORMED_AT_THIS_TIMESTAMP",
-      "merged_main_required_ci": "NOT_PERFORMED_AT_THIS_TIMESTAMP",
-      "next": "Root-reviewed archive/status metadata, normal large S1 PR, independent exact-head review and required CI before normal merge; observe merged-main CI"
+    "canonical_acceptance_changed": false,
+    "source_diff_from_base_before_reporting": {
+      "files": 32,
+      "insertions": 1111,
+      "deletions": 58,
+      "meaning": "Source diff only; never build/test or runtime evidence"
+    },
+    "s1_publication_observation": {
+      "observed_at_utc": "2026-11-04T16:46:07.951096Z",
+      "pr": 15,
+      "pr_url": "https://github.com/kadirvurgun/Poseidon/pull/15",
+      "head": "8a18a436c0bff4caaf4d1117360d0fc2fe1842bc",
+      "push_run": 41863704444,
+      "push_status": "PASS_4_JOBS_19_COMMANDS_NATIVE137_582_CRITICAL82",
+      "push_observation_sha256": "b891a74811ffd6318bc3e28e701c1aa777bb23d4302228d87417353ca334753f",
+      "independent_push_review": ".runtime/s1-foundation-20261103/qa/publication06-push-A8a18-required-ci-review.json",
+      "independent_push_review_sha256": "378b10cf5f7c1211feeefeb9613d9d7cbe232011face1adcc894235ef531bf31",
+      "pr_run": 41865316963,
+      "pr_state": "MERGED",
+      "merge": "NORMAL_EXPECTED_HEAD_MERGE_COMPLETED",
+      "publication_complete": false,
+      "pr_status": "PASS_4_JOBS_19_COMMANDS_NATIVE137_582_CRITICAL82",
+      "pr_observation_sha256": "688547be4d4a6156f6d6789b89c71b363f0111a63bb641400e07b05b6f09a9c2",
+      "independent_pr_required_head_review": ".runtime/s1-foundation-20261103/qa/publication06-PR15-required-head-independent-review.json",
+      "independent_pr_required_head_review_sha256": "78538646d9a7a19ff5ecd0d031665d9d8c5b5ead909e091be04c00deeece4316",
+      "merged_at_utc": "2026-11-04T16:44:08Z",
+      "merge_commit": "856f75e6a143fb81e4f41ddcb2a593185179618a",
+      "merge_receipt": ".runtime/s1-foundation-20261103/s1-pr15-normal-merge.json",
+      "merge_receipt_sha256": "254a60794936eaacc82acb27076781c314717e608c82178195b94c17efb03d0c",
+      "main_ci_run": 41870412787,
+      "main_ci_url": "https://github.com/kadirvurgun/Poseidon/actions/runs/41870412787",
+      "main_ci_head": "856f75e6a143fb81e4f41ddcb2a593185179618a",
+      "main_ci_state": "IN_PROGRESS_AS_LAST_OBSERVED_BY_CI_AGENT"
+    },
+    "s1_publication_observation_history": [
+      {
+        "observed_at_utc": "2026-11-04T16:42:38.250849+00:00",
+        "pr": 15,
+        "pr_url": "https://github.com/kadirvurgun/Poseidon/pull/15",
+        "head": "8a18a436c0bff4caaf4d1117360d0fc2fe1842bc",
+        "push_run": 41863704444,
+        "push_status": "PASS_4_JOBS_19_COMMANDS_NATIVE137_582_CRITICAL82",
+        "push_observation_sha256": "b891a74811ffd6318bc3e28e701c1aa777bb23d4302228d87417353ca334753f",
+        "independent_push_review": ".runtime/s1-foundation-20261103/qa/publication06-push-A8a18-required-ci-review.json",
+        "independent_push_review_sha256": "378b10cf5f7c1211feeefeb9613d9d7cbe232011face1adcc894235ef531bf31",
+        "pr_run": 41865316963,
+        "pr_state": "IN_PROGRESS_AS_LAST_REPORTED_BY_COORDINATOR",
+        "merge": "NOT_PERFORMED",
+        "publication_complete": false
+      }
+    ],
+    "observed_at_utc": "2026-11-04T16:50:32.271950Z",
+    "prior_authoring_milestone_state": "AUTHORED_READY_FOR_COMBINED_BUNDLE_GATE_NOT_ACCEPTED",
+    "quality_corrections": {
+      "observed_at_utc": "2026-11-04T16:50:32.271950Z",
+      "user_request": "Correct existing button alignment and page layouts using consistent UI patterns in the next PR.",
+      "ui_scope": [
+        "Directory/Fleet search and editor alignment",
+        "Regulatory profile and Today actions",
+        "Technical and Crew action groups",
+        "Scoped responsive enterprise styles"
+      ],
+      "verification": "DEFERRED_UNTIL_CORRECTIONS_COMPLETE",
+      "open_independent_findings": [
+        {
+          "id": "S2-QA-001",
+          "severity": "HIGH",
+          "file": "backend/Poseidon.Api/RegulatoryDraftEndpoints.cs",
+          "line": 82,
+          "summary": "History binding authorization and page content are separate statements; close the concurrent first restricted revision race.",
+          "status": "AUTHORING_FIX",
+          "review_sha256": "502ad9c52b29f54169a4f289e47e2af8592d07a9b4b4342ce2f4a5d38d3780b0"
+        }
+      ],
+      "accepted_story_points": 0
     }
   },
   "nav_workspace_01": {
@@ -5772,5 +5858,273 @@
     "canonical_progress": "S0 53/53; S1 50/50; overall103/97010.62%;20/121;0/196",
     "task": "docs/tasks/s1-foundation-closure-01.md",
     "report": "docs/phases/S1-FOUNDATION-20261103.md"
+  },
+  "historical_s1_accepted_package": {
+    "task": "S1-FOUNDATION-CLOSURE-01",
+    "state": "ACCEPTED_IMPLEMENTATION_PENDING_EXTERNAL_PUBLICATION",
+    "branch": "foundation/s1-security-foundation-20261103",
+    "implementation_target": {
+      "commit": "dc7f5117fb99a962d70a54b1f12f2c118f1cca66",
+      "tree": "e8843d8fb0bffd56a6d7955dfc286b8113a09bfd"
+    },
+    "accepted_story_points": 50,
+    "report": "docs/phases/S1-FOUNDATION-20261103.md",
+    "contract": "docs/tasks/s1-foundation-closure-01.md",
+    "verification": {
+      "json_pointer": "/verification"
+    },
+    "publication": {
+      "state": "IMPLEMENTATION_F_ACCEPTED_EXTERNAL_PUBLICATION_PENDING",
+      "observed_at_utc": "2026-11-04T15:52:45.449192+00:00",
+      "implementation_target": {
+        "commit": "dc7f5117fb99a962d70a54b1f12f2c118f1cca66",
+        "tree": "e8843d8fb0bffd56a6d7955dfc286b8113a09bfd"
+      },
+      "implementation_push_ci": "41617601700_SUCCESS_4_JOBS_19_COMMANDS",
+      "pull_request": null,
+      "pull_request_required_head_ci": "NOT_PERFORMED_AT_THIS_TIMESTAMP",
+      "merge": "NOT_PERFORMED_AT_THIS_TIMESTAMP",
+      "merged_main_required_ci": "NOT_PERFORMED_AT_THIS_TIMESTAMP",
+      "next": "Root-reviewed archive/status metadata, normal large S1 PR, independent exact-head review and required CI before normal merge; observe merged-main CI"
+    }
+  },
+  "verification_scope": {
+    "scope": "Unchanged /verification is accepted historical S1 implementation F evidence, not current S2 verification. Current S2 checks remain /current_package/verification DEFERRED.",
+    "historical_s1_observed_at": "2026-11-04T15:52:45.449192+00:00",
+    "previous_top_level_as_of": "2026-11-03"
+  },
+  "s2_enterprise_context_20261104": {
+    "status": "AUTHORING_UI_PATTERN_CORRECTIONS_AND_HISTORY_SCOPE_FIX",
+    "accepted": false,
+    "accepted_sp_added": 0,
+    "authored_tasks": 6,
+    "story_points": 42,
+    "observed_at_utc": "2026-11-04T16:50:32.271950Z",
+    "base_commit": "8a18a436c0bff4caaf4d1117360d0fc2fe1842bc",
+    "integrated_source_checkpoint": "54679c560dc4ddad3c4ad21196090dd44f5f0e03",
+    "source_baseline": "poseidon-v46.3-20261030",
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "source_locators": [
+      "sheet:Backlog/row:21",
+      "sheet:Backlog/row:22",
+      "sheet:Backlog/row:23",
+      "sheet:Backlog/row:24",
+      "sheet:Backlog/row:25",
+      "sheet:Backlog/row:26"
+    ],
+    "tasks": [
+      {
+        "id": "DEV-020",
+        "storyPoints": 8,
+        "dependencies": [
+          "DEV-005",
+          "DEV-014"
+        ],
+        "traceId": "T-S2-001",
+        "sourceStatus": "Not Started",
+        "sourceLocator": "sheet:Backlog/row:21",
+        "sourcePath": "analiz\\POSEIDON GUNCEL 30.10.2026\\06_DEVELOPMENT\\18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+        "sourceSha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+        "acceptanceCriteria": "IMO no, flag, class, ship type, GT, build/trading/cargo context versioned kaydedilir; provenance/freshness görünür.",
+        "owner": "backend",
+        "state": "AUTHORED_READY_FOR_COMBINED_BUNDLE_GATE",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false,
+        "authored_commits": [
+          "5157e422d11af3656a2c6c78ff5de8d9ca7c1574"
+        ]
+      },
+      {
+        "id": "DEV-021",
+        "storyPoints": 5,
+        "dependencies": [
+          "DEV-015",
+          "DEV-020"
+        ],
+        "traceId": "T-S2-002",
+        "sourceStatus": "Not Started",
+        "sourceLocator": "sheet:Backlog/row:22",
+        "sourcePath": "analiz\\POSEIDON GUNCEL 30.10.2026\\06_DEVELOPMENT\\18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+        "sourceSha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+        "acceptanceCriteria": "Context topbar görünür; vessel switch authorization check yapar; unsaved critical form context change'i uyarır.",
+        "owner": "ui",
+        "state": "AUTHORED_READY_FOR_COMBINED_BUNDLE_GATE",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false,
+        "authored_commits": [
+          "08420153fd4080f9054b02c0f99fac2f8bf2ca12"
+        ]
+      },
+      {
+        "id": "DEV-022",
+        "storyPoints": 8,
+        "dependencies": [
+          "DEV-015",
+          "DEV-021"
+        ],
+        "traceId": "T-S2-003",
+        "sourceStatus": "Not Started",
+        "sourceLocator": "sheet:Backlog/row:23",
+        "sourcePath": "analiz\\POSEIDON GUNCEL 30.10.2026\\06_DEVELOPMENT\\18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+        "sourceSha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+        "acceptanceCriteria": "Role lens ile sade menü gelir; Full product search authorized power users'a açıktır; 172 ekran düz menü olarak gösterilmez.",
+        "owner": "ui",
+        "state": "AUTHORED_READY_FOR_COMBINED_BUNDLE_GATE",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false,
+        "authored_commits": [
+          "08420153fd4080f9054b02c0f99fac2f8bf2ca12"
+        ]
+      },
+      {
+        "id": "DEV-023",
+        "storyPoints": 8,
+        "dependencies": [
+          "DEV-021",
+          "DEV-022"
+        ],
+        "traceId": "T-S2-004",
+        "sourceStatus": "Not Started",
+        "sourceLocator": "sheet:Backlog/row:24",
+        "sourcePath": "analiz\\POSEIDON GUNCEL 30.10.2026\\06_DEVELOPMENT\\18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+        "sourceSha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+        "acceptanceCriteria": "Exception cards priority/source/Why/owner/next action taşır; loading/empty/error/offline states deterministiktir.",
+        "owner": "ui",
+        "state": "AUTHORED_READY_FOR_COMBINED_BUNDLE_GATE",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false,
+        "authored_commits": [
+          "08420153fd4080f9054b02c0f99fac2f8bf2ca12"
+        ]
+      },
+      {
+        "id": "DEV-024",
+        "storyPoints": 8,
+        "dependencies": [
+          "DEV-016",
+          "DEV-023"
+        ],
+        "traceId": "T-S2-005",
+        "sourceStatus": "Not Started",
+        "sourceLocator": "sheet:Backlog/row:25",
+        "sourcePath": "analiz\\POSEIDON GUNCEL 30.10.2026\\06_DEVELOPMENT\\18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+        "sourceSha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+        "acceptanceCriteria": "Critical state için source/reason/input freshness/blocker listesi döner; unauthorized source detail sızmaz.",
+        "owner": "backend",
+        "state": "AUTHORED_READY_FOR_COMBINED_BUNDLE_GATE",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false,
+        "authored_commits": [
+          "5157e422d11af3656a2c6c78ff5de8d9ca7c1574"
+        ]
+      },
+      {
+        "id": "DEV-025",
+        "storyPoints": 5,
+        "dependencies": [
+          "DEV-022"
+        ],
+        "traceId": "T-S2-006",
+        "sourceStatus": "Not Started",
+        "sourceLocator": "sheet:Backlog/row:26",
+        "sourcePath": "analiz\\POSEIDON GUNCEL 30.10.2026\\06_DEVELOPMENT\\18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+        "sourceSha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+        "acceptanceCriteria": "Keyboard focus, contrast, status text/icon, responsive breakpoints ve form error semantics temel shell'de PASS.",
+        "owner": "ui",
+        "state": "AUTHORED_READY_FOR_COMBINED_BUNDLE_GATE",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false,
+        "authored_commits": [
+          "08420153fd4080f9054b02c0f99fac2f8bf2ca12"
+        ]
+      }
+    ],
+    "authored_behavior": [
+      "Authorized vessel chooser with bounded search, fresh server scope check, dirty-form cancellation/discard and late/offline response withdrawal",
+      "Assigned role lenses replace the primary sidebar; full product search remains controlled by its independent server capability",
+      "Today loading/empty/error/offline and unavailable-source states, saved incomplete-draft provenance, responsive role context, focus and form-error semantics",
+      "Exact optional Why source kind/ID/revision, conditional single-SQL owning-profile disclosure and actual selected maintenance-observation time",
+      "Actual-host PostgreSQL, component/contract and three mocked browser regression sources; existing signed role-lens source extended; all execution deferred"
+    ],
+    "verification": {
+      "state": "DEFERRED_NOT_RUN",
+      "scope": "S2_INTEGRATED_BUNDLE_ONLY",
+      "observed_at_utc": "2026-11-04T16:42:38.250849+00:00",
+      "backend_frontend_browser_build_typecheck_contract_generation_security_checks": "DEFERRED_UNTIL_SINGLE_COMPLETE_BUNDLE_GATE",
+      "independent_final_target_qa": "PENDING_NOT_ACCEPTED",
+      "runtime_pass_evidence_issued": false
+    },
+    "s1_publication_observation": {
+      "observed_at_utc": "2026-11-04T16:46:07.951096Z",
+      "pr": 15,
+      "pr_url": "https://github.com/kadirvurgun/Poseidon/pull/15",
+      "head": "8a18a436c0bff4caaf4d1117360d0fc2fe1842bc",
+      "push_run": 41863704444,
+      "push_status": "PASS_4_JOBS_19_COMMANDS_NATIVE137_582_CRITICAL82",
+      "push_observation_sha256": "b891a74811ffd6318bc3e28e701c1aa777bb23d4302228d87417353ca334753f",
+      "independent_push_review": ".runtime/s1-foundation-20261103/qa/publication06-push-A8a18-required-ci-review.json",
+      "independent_push_review_sha256": "378b10cf5f7c1211feeefeb9613d9d7cbe232011face1adcc894235ef531bf31",
+      "pr_run": 41865316963,
+      "pr_state": "MERGED",
+      "merge": "NORMAL_EXPECTED_HEAD_MERGE_COMPLETED",
+      "publication_complete": false,
+      "pr_status": "PASS_4_JOBS_19_COMMANDS_NATIVE137_582_CRITICAL82",
+      "pr_observation_sha256": "688547be4d4a6156f6d6789b89c71b363f0111a63bb641400e07b05b6f09a9c2",
+      "independent_pr_required_head_review": ".runtime/s1-foundation-20261103/qa/publication06-PR15-required-head-independent-review.json",
+      "independent_pr_required_head_review_sha256": "78538646d9a7a19ff5ecd0d031665d9d8c5b5ead909e091be04c00deeece4316",
+      "merged_at_utc": "2026-11-04T16:44:08Z",
+      "merge_commit": "856f75e6a143fb81e4f41ddcb2a593185179618a",
+      "merge_receipt": ".runtime/s1-foundation-20261103/s1-pr15-normal-merge.json",
+      "merge_receipt_sha256": "254a60794936eaacc82acb27076781c314717e608c82178195b94c17efb03d0c",
+      "main_ci_run": 41870412787,
+      "main_ci_url": "https://github.com/kadirvurgun/Poseidon/actions/runs/41870412787",
+      "main_ci_head": "856f75e6a143fb81e4f41ddcb2a593185179618a",
+      "main_ci_state": "IN_PROGRESS_AS_LAST_OBSERVED_BY_CI_AGENT"
+    },
+    "report": "docs/phases/S2-ENTERPRISE-CONTEXT-20261104.md",
+    "canonical_progress": "103/970SP10.62%;20/121tasks;0/196screens;S2accepted0/42SP",
+    "next": "Freeze integrated target, refresh AST-only graph, then one complete S2 bundle gate with contract generation/build/tests/browser/security and independent final-target QA; no S2 acceptance before actual evidence",
+    "s1_publication_observation_history": [
+      {
+        "observed_at_utc": "2026-11-04T16:42:38.250849+00:00",
+        "pr": 15,
+        "pr_url": "https://github.com/kadirvurgun/Poseidon/pull/15",
+        "head": "8a18a436c0bff4caaf4d1117360d0fc2fe1842bc",
+        "push_run": 41863704444,
+        "push_status": "PASS_4_JOBS_19_COMMANDS_NATIVE137_582_CRITICAL82",
+        "push_observation_sha256": "b891a74811ffd6318bc3e28e701c1aa777bb23d4302228d87417353ca334753f",
+        "independent_push_review": ".runtime/s1-foundation-20261103/qa/publication06-push-A8a18-required-ci-review.json",
+        "independent_push_review_sha256": "378b10cf5f7c1211feeefeb9613d9d7cbe232011face1adcc894235ef531bf31",
+        "pr_run": 41865316963,
+        "pr_state": "IN_PROGRESS_AS_LAST_REPORTED_BY_COORDINATOR",
+        "merge": "NOT_PERFORMED",
+        "publication_complete": false
+      }
+    ],
+    "prior_authoring_milestone_state": "AUTHORED_READY_FOR_COMBINED_BUNDLE_GATE_NOT_ACCEPTED",
+    "quality_corrections": {
+      "observed_at_utc": "2026-11-04T16:50:32.271950Z",
+      "user_request": "Correct existing button alignment and page layouts using consistent UI patterns in the next PR.",
+      "ui_scope": [
+        "Directory/Fleet search and editor alignment",
+        "Regulatory profile and Today actions",
+        "Technical and Crew action groups",
+        "Scoped responsive enterprise styles"
+      ],
+      "verification": "DEFERRED_UNTIL_CORRECTIONS_COMPLETE",
+      "open_independent_findings": [
+        {
+          "id": "S2-QA-001",
+          "severity": "HIGH",
+          "file": "backend/Poseidon.Api/RegulatoryDraftEndpoints.cs",
+          "line": 82,
+          "summary": "History binding authorization and page content are separate statements; close the concurrent first restricted revision race.",
+          "status": "AUTHORING_FIX",
+          "review_sha256": "502ad9c52b29f54169a4f289e47e2af8592d07a9b4b4342ce2f4a5d38d3780b0"
+        }
+      ],
+      "accepted_story_points": 0
+    }
   }
 }

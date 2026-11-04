@@ -92,8 +92,78 @@ async function restrictedContext(page: Page) {
   await expect(region.getByRole('combobox')).toHaveCount(0)
   await expect(region.getByRole('button', { name: 'Search workspace', exact: true })).toHaveCount(0)
 }
+async function contextTargets(page: Page) {
+  const response = await page.request.get('/api/v1/vessels?offset=0&limit=25')
+  expect(response.status()).toBe(200)
+  const rows = (await response.json()).items as { id: string; code: string; name: string; kind: 'Ship' | 'Tug'; canEdit: boolean }[]
+  const ship = rows.find(row => row.kind === 'Ship' && row.canEdit)
+  const tug = rows.find(row => row.kind === 'Tug')
+  expect(ship, 'The owned signed fixture must expose an editable ship').toBeTruthy()
+  expect(tug, 'The owned signed fixture must expose an authorized tug').toBeTruthy()
+  return { ship: ship!, tug: tug! }
+}
+async function contextChooser(page: Page) {
+  const trigger = page.getByRole('region', { name: 'Current workspace context', exact: true })
+    .getByRole('button', { name: 'Change vessel context', exact: true })
+  await trigger.focus(); await page.keyboard.press('Enter')
+  const chooser = page.getByRole('dialog', { name: 'Change vessel context', exact: true })
+  await expect(chooser.getByRole('searchbox', { name: 'Vessel name or code', exact: true })).toBeFocused()
+  return chooser
+}
+async function realGlobalContextSwitch(page: Page) {
+  const { ship, tug } = await contextTargets(page)
+  await page.goto(`/app/today/${ship.id}`); await english(page)
+  for (const target of [tug, ship]) {
+    const chooser = await contextChooser(page)
+    const button = chooser.getByRole('button', { name: `${target.code} · ${target.name} · ${target.kind}`, exact: true })
+    await button.focus()
+    const checked = page.waitForResponse(response => new URL(response.url()).pathname === `/api/v1/workspace/context/${target.id}`)
+    await page.keyboard.press('Enter')
+    const response = await checked
+    expect(response.status()).toBe(200)
+    const value = await response.json()
+    expect(value.vessel.id).toBe(target.id)
+    expect(value.vessel.kind).toBe(target.kind)
+    await expect(page).toHaveURL(new RegExp(`/app/today/${target.id}$`))
+    await expect(chooser).toHaveCount(0)
+    const context = page.getByRole('region', { name: 'Current workspace context', exact: true })
+    await expect(context).toContainText(`${target.code} · ${target.name}`)
+    await expect(context).toContainText('Role context:')
+  }
+}
+async function realGlobalContextDirtyGuard(page: Page) {
+  const { ship, tug } = await contextTargets(page)
+  const original = await (await page.request.get(`/api/v1/vessels/${ship.id}`)).json()
+  await page.goto(`/app/fleet/${ship.id}`); await english(page)
+  await page.getByRole('button', { name: 'Edit', exact: true }).click()
+  const draft = 'FICTIONAL-CONTEXT-DRAFT-' + crypto.randomUUID()
+  await page.getByLabel('Name *', { exact: true }).fill(draft)
+  let chooser = await contextChooser(page)
+  const targetName = `${tug.code} · ${tug.name} · Tug`
+  await chooser.getByRole('button', { name: targetName, exact: true }).click()
+  const confirmation = page.getByRole('dialog', { name: 'Discard the unsaved draft?', exact: true })
+  await expect(confirmation).toBeVisible()
+  await confirmation.getByRole('button', { name: 'Keep editing', exact: true }).click()
+  await expect(page).toHaveURL(new RegExp(`/app/fleet/${ship.id}$`))
+  await expect(chooser).toBeVisible()
+  // The older native chooser must become usable again after the newer native
+  // dirty confirmation closes; Escape returns to the untouched editor.
+  await page.keyboard.press('Escape')
+  await expect(chooser).toHaveCount(0)
+  await expect(page.getByLabel('Name *', { exact: true })).toHaveValue(draft)
+  chooser = await contextChooser(page)
+  await chooser.getByRole('button', { name: targetName, exact: true }).click()
+  await expect(confirmation).toBeVisible()
+  await confirmation.getByRole('button', { name: 'Discard draft', exact: true }).click()
+  await expect(page).toHaveURL(new RegExp(`/app/fleet/${tug.id}$`))
+  const after = await (await page.request.get(`/api/v1/vessels/${ship.id}`)).json()
+  expect(after.name).toBe(original.name)
+  expect(after.version).toBe(original.version)
+}
 export const navigationRoleLensCases = [
   { name: 'navigation-role-lens-five-real-workspace-families', run: sharedFamilies, restricted: false },
   { name: 'navigation-role-lens-real-dirty-cancel-and-discard', run: realDirtyGuard, restricted: false },
   { name: 'navigation-role-lens-restricted-context-and-selector-denial', run: restrictedContext, restricted: true },
+  { name: 'navigation-role-lens-global-context-ship-tug-keyboard-switch', run: realGlobalContextSwitch, restricted: false },
+  { name: 'navigation-role-lens-global-context-real-nested-dirty-guard', run: realGlobalContextDirtyGuard, restricted: false },
 ] as const

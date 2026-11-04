@@ -1,12 +1,18 @@
 # S2 — vessel context and enterprise workspace
 
-Status: **AUTHORING; verification DEFERRED; 0/42 SP accepted**.
+Status: **AUTHORING UI PATTERN CORRECTIONS AND HISTORY SCOPE FIX; verification DEFERRED; 0/42 SP accepted**.
+
+Reporter snapshot `2026-11-04T16:46:07.951096Z`; integrated source checkpoint `54679c560dc4ddad3c4ad21196090dd44f5f0e03`.
+General accepted progress remains **103/970 SP = 10.62%, 20/121 tasks, 0/196 screens**.
+This is an authoring milestone, not an independent phase acceptance.
 
 The user requested continuation after S1 and deferred test execution until the
 larger delivery package is ready. S1 engineering acceptance is recorded separately;
-its publication is [PR #15](https://github.com/kadirvurgun/Poseidon/pull/15), whose
-required checks must close before merge. S2 authoring does not imply S1 publication
-or acceptance of any S2 task.
+its [PR #15](https://github.com/kadirvurgun/Poseidon/pull/15) passed the required
+head checks and independent review and was normally merged at
+`2026-11-04T16:44:08Z` as `856f75e6a143fb81e4f41ddcb2a593185179618a`. Merged-main CI is
+still in progress as last observed; publication completion is not yet claimed.
+S2 authoring does not accept any S2 task.
 
 ## Controlled source
 
@@ -59,6 +65,24 @@ populated profiles, and revoked/unknown observation timestamps. There are no new
 entities, migrations, seed records, mutation routes or critical-write denominator
 changes. See the [backend task](../tasks/s2-vessel-why-01.md).
 
+The integrated UI checkpoint `08420153fd4080f9054b02c0f99fac2f8bf2ca12` adds an accessible, paginated vessel chooser.
+A fresh server-bound context read precedes navigation and the existing dirty-form
+guard; denied, malformed, late, hidden and offline results cannot commit a switch.
+Assigned role lenses now replace the primary sidebar; the independent current
+search capability remains necessary for full product search. Saved source timestamps
+and unverified provenance stay distinct from unsaved fields. Focus indicators,
+text/icon status, responsive role context and described validation controls are
+authored; contrast, keyboard and responsive acceptance await actual measurements.
+The additive Why source decoder checks exact kind/ID/revision and unavailable
+regulatory coverage. See the [UI task](../tasks/s2-enterprise-shell-01.md).
+
+Source checkpoints: backend `5157e422d11af3656a2c6c78ff5de8d9ca7c1574`, browser `d29eb15`,
+phase `876259b`. The read-only diff against `8a18a436c0bff4caaf4d1117360d0fc2fe1842bc` before this
+report contains **32 files, +1111/−58 lines**; these source counts are
+not executed test counts. No new restore/build/typecheck/OpenAPI generation,
+backend/component/browser suite, security scan or independent final-target QA has
+run for S2. All remain **DEFERRED / NOT RUN**; earlier S1 results are separate.
+
 Three new mocked browser scenarios cover keyboard vessel switching with denied and
 mismatched-tenant responses, dirty-form cancellation/explicit discard, and primary
 role navigation without search escalation. The signed role-lens cases retain their
@@ -89,3 +113,22 @@ No new dependencies, production provider choice, safety decision, verified evide
 human appointment or pilot sign-off is authorized by this work package. The next
 delivery report will identify actual changed behavior and exact executed results,
 including failures and unresolved gates.
+
+## Current delivery checkpoint
+
+At `2026-11-04T16:46:07.951096Z`, S1 [PR #15](https://github.com/kadirvurgun/Poseidon/pull/15)
+has been normally merged at `2026-11-04T16:44:08Z` as `856f75e6a143fb81e4f41ddcb2a593185179618a`.
+Both metadata-head [push CI41863704444](https://github.com/kadirvurgun/Poseidon/actions/runs/41863704444)
+and [PR CI41865316963](https://github.com/kadirvurgun/Poseidon/actions/runs/41865316963)
+passed all4 jobs/19 commands with native API137/582 and actual critical82 proof.
+Independent exact-head review preceded the normal merge. Original F acceptance
+receipts retain their original target. [Merged-main CI41870412787](https://github.com/kadirvurgun/Poseidon/actions/runs/41870412787)
+is still in progress as last observed by the CI agent; publication complete remains
+false until actual main checks close. S2 remains fully **DEFERRED / NOT RUN**.
+Its next step is to freeze the combined source target, refresh the AST-only graph
+and open one integrated generation/build/test/browser/security gate, then obtain
+independent exact-target QA and the required publication checks.
+
+## Quality correction continuation
+
+At `2026-11-04T16:50:32.271950Z`, the user requested consistent UI patterns and correction of existing button/page layout problems in the next delivery. Authoring continues across Directory/Fleet, profile, Today, Technical and Crew action layouts. The earlier 6-task authoring milestone is retained as history; the bundle gate has not opened. Independent source preflight found HIGH `S2-QA-001` in regulatory history authorization (separate binding gate and content page); a single-snapshot whole-history fix and deterministic interleaving regression are being authored. No test, build, type generation or visual acceptance is claimed.
