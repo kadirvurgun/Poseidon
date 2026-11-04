@@ -44,8 +44,9 @@ Documents49/50 proposals were not converted into approved catalogs or permits.
 - `GET /api/v1/vessels/{id}/compliance-passport?offset=0`
 - Canonical source alias: `GET /api/v1/vessel-compliance-passport?vesselId={id}&offset=0`.
 
-All are reads. The existing mutation inventory remains **86 route templates /
-85 critical operations**, unchanged from this worktree's base. Historical82
+All are reads. The existing mutation inventory remains **86 mutation route
+templates /80 critical route templates /85 concrete critical operations**,
+unchanged from this worktree's base. Historical82
 native evidence is neither retargeted nor presented as proof of these additions.
 
 [Onboarding policy](../../backend/Poseidon.Domain/ComplianceOnboardingPolicy.cs)
@@ -71,6 +72,23 @@ within the current qualified catalog scope, and stays null when unavailable.
 OrphanCriticalCount remains null because critical obligation completeness is
 not established. No all-clear follows an empty page.
 
+Current-response authorization additionally follows the S3 private-trace fence:
+the trusted actor/tenant/role/capability/vessel context is compared by canonical
+values after composition and after the asynchronous success audit. Each fence
+opens a new trusted DI database scope outside the RepeatableRead transaction.
+One fresh SQL statement checks live vessel scope, current and captured profile
+file visibility, exact current graph revisions, returned linked controls and the
+owning evaluation's protected file/crew/document visibility. A restriction added
+during the earlier snapshot cannot retain access through that old snapshot.
+Context changes during the final read also deny the response; denial audit uses
+the current trusted identity and contains no response payload values.
+
+A readable immutable evaluation remains `available=true` while `current=false`
+after profile/source staleness. Recorded results and inputs stay unchanged;
+current control-plan coverage and counts are withdrawn. Link truncation remains
+an explicit blocker, but only the pageable control/evidence record pages drive
+`hasMore`; a fixed truncated link set cannot advertise endless empty pages.
+
 An attributed `ComplianceWorkspaceRead` security observation must persist before
 success/denial response; no raw snapshot/value is put in that observation. No new
 entity, migration, seed record or fake signed/verified fixture is introduced.
@@ -91,6 +109,14 @@ file-bound profile denial, canonical alias/duplicate/foreign selectors, current
 graph heads, actual command-qualified exact requirement/source linkage, stale
 profile invalidation without rewriting the original evaluation, explicit missing
 certificate/critical coverage, and current permission withdrawal.
+[Response-fence tests](../../tests/Poseidon.Api.Tests/ComplianceResponseFenceTests.cs)
+author deterministic PostgreSQL statement barriers for actor/tenant/role/scope
+withdrawal and a new private profile binding. An owned-test-database advisory
+lock/insert trigger holds the real success-audit insert; permission or private
+binding changes during that await must still deny payload bytes. Trigger DDL is
+test infrastructure only; ordinary business mutations use the audited API.
+Equivalent reordered server memberships remain readable. These are authored
+regressions, not executed evidence.
 
 **NOT RUN:** every authored test; restore/build/lint/typecheck; model and generated
 contract parity; regression, source/security scans, ordinary/signed browser,
