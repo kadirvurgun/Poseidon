@@ -67,3 +67,26 @@ export function decodeDailyConflict(value: unknown, context: DailyOfflineContext
   if (value.resolved !== null) { const resolved = decodeDailyOutcome(value.resolved, context); if (resolved.parentCommandId !== id || !['Committed', 'ServerRetained'].includes(resolved.result)) return badDailyOffline() }
   return value as DailyConflict
 }
+
+// Retained parents are immutable history. Only an authenticated same-context
+// terminal child can settle their UI status; unknown or malformed children
+// conservatively remain pending. This never rewrites an outcome or body.
+export function projectDailyQueue(rows: readonly DailyPending[], context: DailyOfflineContext | null) {
+  const resolved = new Set<string>()
+  if (!context) return { resolved, pending: rows.length }
+  const duplicates = new Set(rows.filter((row, index) => rows.findIndex(other => other.commandId === row.commandId) !== index).map(row => row.commandId))
+  const admitted = rows.map(row => {
+    if (duplicates.has(row.commandId)) return null
+    try {
+      const body = decodeDailyCapture(JSON.parse(row.body), context, row.commandId)
+      return { row, body, outcome: row.outcome ? decodeDailyOutcome(row.outcome, context, body) : null }
+    } catch { return null }
+  })
+  const byId = new Map(admitted.flatMap(value => value ? [[value.row.commandId, value] as const] : []))
+  for (const value of admitted) {
+    if (!value?.outcome || !['Committed', 'ServerRetained'].includes(value.outcome.result) || !value.body.parentCommandId) continue
+    const parent = byId.get(value.body.parentCommandId)
+    if (parent?.outcome?.result === 'MaterialConflict' && value.outcome.parentCommandId === parent.row.commandId) resolved.add(parent.row.commandId)
+  }
+  return { resolved, pending: admitted.filter(value => !value?.outcome || value.outcome.result === 'MaterialConflict' && !resolved.has(value.row.commandId)).length }
+}
