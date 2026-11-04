@@ -1009,7 +1009,7 @@
       "accepted": false
     }
   },
-  "as_of": "2026-11-04T16:50:32.271950Z",
+  "as_of": "2026-11-04T19:03:15.495960Z",
   "audit_trace_01": {
     "status": "combined_gate_executed_not_accepted",
     "accepted": false,
@@ -1114,7 +1114,7 @@
     "verification_record_scope": "Authored/deferred and original20f1198 results are historical;current rejection-repair evidence in core_bundle_01.verification"
   },
   "baseline": "POSEIDON v46.3 updated 2026-10-30 / Library26 candidate",
-  "current_stage": "S2 authoring: correct existing enterprise UI patterns and close independent history authorization finding before the combined bundle gate",
+  "current_stage": "S3 separate source package authored on 8e5f83d: 7 tasks/66 SP, 20 authored cases, 0 accepted; all S3 checks DEFERRED. Frozen S2 accepted0/42, signed03 import failure causal probe pending. S0/S1 accepted103/97010.62%,20/121,0screens.",
   "method": "accepted story points / total baseline story points * 100",
   "scope": "complete v46.3 Backlog sheet; duplicates in other sheets excluded",
   "total_tasks": 121,
@@ -3942,119 +3942,193 @@
   ],
   "active_source": "docs/sources/active.json",
   "current_package": {
-    "task": "S2-ENTERPRISE-CONTEXT-20261104",
-    "state": "AUTHORING_UI_PATTERN_CORRECTIONS_AND_HISTORY_SCOPE_FIX",
-    "branch": "foundation/s2-enterprise-context-20261104",
-    "base_commit": "8a18a436c0bff4caaf4d1117360d0fc2fe1842bc",
-    "integrated_source_checkpoint": "54679c560dc4ddad3c4ad21196090dd44f5f0e03",
+    "task": "S3-REGULATORY-FOUNDATION-20261104",
+    "state": "SOURCE_PACKAGE_AUTHORED_NOT_ACCEPTED",
+    "observed_at_utc": "2026-11-04T19:03:15.495960Z",
+    "branch": "foundation/s3-regulatory-foundation-20261104",
+    "base_commit": "75d734285706848e55e9a6276aaa64ac789b8e59",
+    "integrated_source_checkpoint": "8e5f83d7ae2e87258cdd02ffc4a3fca3981e075d",
+    "integrated_source_tree": "148f1548a28d8ee7918de66ab87ae7f25885d899",
     "source_scope": {
-      "tasks": 6,
-      "story_points": 42,
+      "tasks": 7,
+      "story_points": 66,
+      "accepted_story_points": 0,
       "ids": [
-        "DEV-020",
-        "DEV-021",
-        "DEV-022",
-        "DEV-023",
-        "DEV-024",
-        "DEV-025"
-      ],
-      "accepted_story_points": 0
+        "DEV-026",
+        "DEV-027",
+        "DEV-028",
+        "DEV-029",
+        "DEV-030",
+        "DEV-031",
+        "DEV-032"
+      ]
     },
-    "report": "docs/phases/S2-ENTERPRISE-CONTEXT-20261104.md",
+    "source_baseline": "poseidon-v46.3-20261030",
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "source_rows": [
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33
+    ],
+    "tasks": [
+      {
+        "id": "DEV-026",
+        "title": "Requirement/source/version entity",
+        "story_points": 8,
+        "source_locator": "sheet:Backlog/row:27",
+        "trace_id": "T-S3-001",
+        "literal_acceptance_criteria": "Draft/adopted/future/in-force/superseded ayrımı vardır; current source silent overwrite edilmez.",
+        "dependencies": [
+          "DEV-005",
+          "DEV-008"
+        ],
+        "original_source_status": "Not Started",
+        "state": "SOURCE_PACKAGE_AUTHORED_NOT_ACCEPTED",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      {
+        "id": "DEV-027",
+        "title": "Applicability evaluation engine v1",
+        "story_points": 13,
+        "source_locator": "sheet:Backlog/row:28",
+        "trace_id": "T-S3-002",
+        "literal_acceptance_criteria": "Flag/type/GT/build/cargo/trading context predicate'leri versioned; result APPLICABLE/NOT_APPLICABLE/REVIEW_REQUIRED + reason döner.",
+        "dependencies": [
+          "DEV-020",
+          "DEV-026"
+        ],
+        "original_source_status": "Not Started",
+        "state": "SOURCE_PACKAGE_AUTHORED_NOT_ACCEPTED",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      {
+        "id": "DEV-028",
+        "title": "Operational Control entity",
+        "story_points": 8,
+        "source_locator": "sheet:Backlog/row:29",
+        "trace_id": "T-S3-003",
+        "literal_acceptance_criteria": "Owner/frequency/evidence rule/verification rule/state ve requirement links kaydedilir; orphan critical control raporlanır.",
+        "dependencies": [
+          "DEV-026",
+          "DEV-027"
+        ],
+        "original_source_status": "Not Started",
+        "state": "SOURCE_PACKAGE_AUTHORED_NOT_ACCEPTED",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      {
+        "id": "DEV-029",
+        "title": "Evidence graph foundation",
+        "story_points": 13,
+        "source_locator": "sheet:Backlog/row:30",
+        "trace_id": "T-S3-004",
+        "literal_acceptance_criteria": "Evidence immutable metadata/checksum/provenance ile kaydedilir; many-to-many links; stale/expired/superseded durumu görünür.",
+        "dependencies": [
+          "DEV-018",
+          "DEV-028"
+        ],
+        "original_source_status": "Not Started",
+        "state": "SOURCE_PACKAGE_AUTHORED_NOT_ACCEPTED",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      {
+        "id": "DEV-030",
+        "title": "Verification record ve gate",
+        "story_points": 8,
+        "source_locator": "sheet:Backlog/row:31",
+        "trace_id": "T-S3-005",
+        "literal_acceptance_criteria": "Verifier authorization + separation-of-duties; PENDING/VERIFIED/REJECTED/EXPIRED/SUPERSEDED; evidence existence alone state'i kapatmaz.",
+        "dependencies": [
+          "DEV-015",
+          "DEV-029"
+        ],
+        "original_source_status": "Not Started",
+        "state": "SOURCE_PACKAGE_AUTHORED_NOT_ACCEPTED",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      {
+        "id": "DEV-031",
+        "title": "Authorized Human Decision foundation",
+        "story_points": 8,
+        "source_locator": "sheet:Backlog/row:32",
+        "trace_id": "T-S3-006",
+        "literal_acceptance_criteria": "Authorized role + context + reason + decision lineage kaydedilir; AI veya generic admin final decision oluşturamaz.",
+        "dependencies": [
+          "DEV-030"
+        ],
+        "original_source_status": "Not Started",
+        "state": "SOURCE_PACKAGE_AUTHORED_NOT_ACCEPTED",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      {
+        "id": "DEV-032",
+        "title": "Requirement-to-decision trace görünümü",
+        "story_points": 8,
+        "source_locator": "sheet:Backlog/row:33",
+        "trace_id": "T-S3-007",
+        "literal_acceptance_criteria": "Requirement→control→evidence→verification→decision state ve timestamps source-grounded drill-down ile görünür.",
+        "dependencies": [
+          "DEV-027:DEV-031"
+        ],
+        "original_source_status": "Not Started",
+        "state": "SOURCE_PACKAGE_AUTHORED_NOT_ACCEPTED",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
+    ],
     "contracts": [
-      "docs/tasks/s2-vessel-why-01.md",
-      "docs/tasks/s2-enterprise-shell-01.md"
+      "docs/tasks/s3-regulatory-core-01.md",
+      "docs/tasks/s3-regulatory-experience-01.md"
+    ],
+    "contract_receipts": [
+      {
+        "path": "docs/tasks/s3-regulatory-core-01.md",
+        "sha256": "196bb923ef66476b5f59a90c5f0733f34e5bdf367a33694d8be8aecb3649209c"
+      },
+      {
+        "path": "docs/tasks/s3-regulatory-experience-01.md",
+        "sha256": "1c13e3ddb4f59fb23716cd3e2a544928b7a1e5a995654ef5b8d9fd1301119c25"
+      }
     ],
     "authored_checkpoints": {
-      "backend": "5157e422d11af3656a2c6c78ff5de8d9ca7c1574",
-      "ui": "08420153fd4080f9054b02c0f99fac2f8bf2ca12",
-      "browser": "d29eb15",
-      "phase": "876259b"
+      "UI": "3deaf593",
+      "backend": "4c4a8853",
+      "trace_state_mapping_correction": "8e5f83d7ae2e87258cdd02ffc4a3fca3981e075d"
+    },
+    "authored_source_scope": {
+      "UI": "4 existing regulatory surfaces aligned through common forms/actions/pagination; typed retained-source trace",
+      "backend": "Final live actor/permission/selected human or reader appointment fence before trace response",
+      "UI_test_cases_authored": 6,
+      "PG_interleaving_cases_authored": 14,
+      "test_counts_are_execution_results": false,
+      "source_diff_from_C6": "13 files +575/-77",
+      "total_test_cases_authored": 20,
+      "trace_state_mapping_correction": "All 11 admitted lifecycle states and 6 missing qualification/context/attestation blockers translated; Completed remains separate from verification; 2 additional EN/TR consumer regressions DEFERRED"
     },
     "verification": {
       "state": "DEFERRED_NOT_RUN",
-      "scope": "S2_INTEGRATED_BUNDLE_ONLY",
-      "observed_at_utc": "2026-11-04T16:42:38.250849+00:00",
-      "backend_frontend_browser_build_typecheck_contract_generation_security_checks": "DEFERRED_UNTIL_SINGLE_COMPLETE_BUNDLE_GATE",
-      "independent_final_target_qa": "PENDING_NOT_ACCEPTED",
-      "runtime_pass_evidence_issued": false
+      "scope": "S3_ONLY",
+      "observed_at_utc": "2026-11-04T19:03:15.495960Z",
+      "tests_build_typecheck_lint_generation_browser": "DEFERRED_UNTIL_LARGER_S3_BUNDLE_GATE",
+      "independent_final_target_qa": "PENDING",
+      "runtime_pass_claimed": false,
+      "S2_source_equivalence_to_S3": false
     },
+    "report": "docs/phases/S3-REGULATORY-FOUNDATION-20261104.md",
     "canonical_acceptance_changed": false,
-    "source_diff_from_base_before_reporting": {
-      "files": 32,
-      "insertions": 1111,
-      "deletions": 58,
-      "meaning": "Source diff only; never build/test or runtime evidence"
-    },
-    "s1_publication_observation": {
-      "observed_at_utc": "2026-11-04T16:46:07.951096Z",
-      "pr": 15,
-      "pr_url": "https://github.com/kadirvurgun/Poseidon/pull/15",
-      "head": "8a18a436c0bff4caaf4d1117360d0fc2fe1842bc",
-      "push_run": 41863704444,
-      "push_status": "PASS_4_JOBS_19_COMMANDS_NATIVE137_582_CRITICAL82",
-      "push_observation_sha256": "b891a74811ffd6318bc3e28e701c1aa777bb23d4302228d87417353ca334753f",
-      "independent_push_review": ".runtime/s1-foundation-20261103/qa/publication06-push-A8a18-required-ci-review.json",
-      "independent_push_review_sha256": "378b10cf5f7c1211feeefeb9613d9d7cbe232011face1adcc894235ef531bf31",
-      "pr_run": 41865316963,
-      "pr_state": "MERGED",
-      "merge": "NORMAL_EXPECTED_HEAD_MERGE_COMPLETED",
-      "publication_complete": false,
-      "pr_status": "PASS_4_JOBS_19_COMMANDS_NATIVE137_582_CRITICAL82",
-      "pr_observation_sha256": "688547be4d4a6156f6d6789b89c71b363f0111a63bb641400e07b05b6f09a9c2",
-      "independent_pr_required_head_review": ".runtime/s1-foundation-20261103/qa/publication06-PR15-required-head-independent-review.json",
-      "independent_pr_required_head_review_sha256": "78538646d9a7a19ff5ecd0d031665d9d8c5b5ead909e091be04c00deeece4316",
-      "merged_at_utc": "2026-11-04T16:44:08Z",
-      "merge_commit": "856f75e6a143fb81e4f41ddcb2a593185179618a",
-      "merge_receipt": ".runtime/s1-foundation-20261103/s1-pr15-normal-merge.json",
-      "merge_receipt_sha256": "254a60794936eaacc82acb27076781c314717e608c82178195b94c17efb03d0c",
-      "main_ci_run": 41870412787,
-      "main_ci_url": "https://github.com/kadirvurgun/Poseidon/actions/runs/41870412787",
-      "main_ci_head": "856f75e6a143fb81e4f41ddcb2a593185179618a",
-      "main_ci_state": "IN_PROGRESS_AS_LAST_OBSERVED_BY_CI_AGENT"
-    },
-    "s1_publication_observation_history": [
-      {
-        "observed_at_utc": "2026-11-04T16:42:38.250849+00:00",
-        "pr": 15,
-        "pr_url": "https://github.com/kadirvurgun/Poseidon/pull/15",
-        "head": "8a18a436c0bff4caaf4d1117360d0fc2fe1842bc",
-        "push_run": 41863704444,
-        "push_status": "PASS_4_JOBS_19_COMMANDS_NATIVE137_582_CRITICAL82",
-        "push_observation_sha256": "b891a74811ffd6318bc3e28e701c1aa777bb23d4302228d87417353ca334753f",
-        "independent_push_review": ".runtime/s1-foundation-20261103/qa/publication06-push-A8a18-required-ci-review.json",
-        "independent_push_review_sha256": "378b10cf5f7c1211feeefeb9613d9d7cbe232011face1adcc894235ef531bf31",
-        "pr_run": 41865316963,
-        "pr_state": "IN_PROGRESS_AS_LAST_REPORTED_BY_COORDINATOR",
-        "merge": "NOT_PERFORMED",
-        "publication_complete": false
-      }
-    ],
-    "observed_at_utc": "2026-11-04T16:50:32.271950Z",
-    "prior_authoring_milestone_state": "AUTHORED_READY_FOR_COMBINED_BUNDLE_GATE_NOT_ACCEPTED",
-    "quality_corrections": {
-      "observed_at_utc": "2026-11-04T16:50:32.271950Z",
-      "user_request": "Correct existing button alignment and page layouts using consistent UI patterns in the next PR.",
-      "ui_scope": [
-        "Directory/Fleet search and editor alignment",
-        "Regulatory profile and Today actions",
-        "Technical and Crew action groups",
-        "Scoped responsive enterprise styles"
-      ],
-      "verification": "DEFERRED_UNTIL_CORRECTIONS_COMPLETE",
-      "open_independent_findings": [
-        {
-          "id": "S2-QA-001",
-          "severity": "HIGH",
-          "file": "backend/Poseidon.Api/RegulatoryDraftEndpoints.cs",
-          "line": 82,
-          "summary": "History binding authorization and page content are separate statements; close the concurrent first restricted revision race.",
-          "status": "AUTHORING_FIX",
-          "review_sha256": "502ad9c52b29f54169a4f289e47e2af8592d07a9b4b4342ce2f4a5d38d3780b0"
-        }
-      ],
-      "accepted_story_points": 0
-    }
+    "publication": "NO_S3_PR_OR_MERGE",
+    "next_step": "Continue larger S3 package and source/dependency review; keep checks deferred until a concrete bundle gate. S2 signed setup diagnosis continues separately."
   },
   "nav_workspace_01": {
     "status": "locally_validated_awaiting_independent_qa",
@@ -5891,7 +5965,8 @@
   "verification_scope": {
     "scope": "Unchanged /verification is accepted historical S1 implementation F evidence, not current S2 verification. Current S2 checks remain /current_package/verification DEFERRED.",
     "historical_s1_observed_at": "2026-11-04T15:52:45.449192+00:00",
-    "previous_top_level_as_of": "2026-11-03"
+    "previous_top_level_as_of": "2026-11-03",
+    "current_scope": "Unchanged /verification is historical accepted S1 F. Current S3 checks at /current_package/verification are DEFERRED; current S2 observation is separate."
   },
   "s2_enterprise_context_20261104": {
     "status": "AUTHORING_UI_PATTERN_CORRECTIONS_AND_HISTORY_SCOPE_FIX",
@@ -6126,5 +6201,521 @@
       ],
       "accepted_story_points": 0
     }
+  },
+  "historical_s2_package_before_s3": {
+    "task": "S2-ENTERPRISE-CONTEXT-20261104",
+    "state": "AUTHORING_UI_PATTERN_CORRECTIONS_AND_HISTORY_SCOPE_FIX",
+    "branch": "foundation/s2-enterprise-context-20261104",
+    "base_commit": "8a18a436c0bff4caaf4d1117360d0fc2fe1842bc",
+    "integrated_source_checkpoint": "54679c560dc4ddad3c4ad21196090dd44f5f0e03",
+    "source_scope": {
+      "tasks": 6,
+      "story_points": 42,
+      "ids": [
+        "DEV-020",
+        "DEV-021",
+        "DEV-022",
+        "DEV-023",
+        "DEV-024",
+        "DEV-025"
+      ],
+      "accepted_story_points": 0
+    },
+    "report": "docs/phases/S2-ENTERPRISE-CONTEXT-20261104.md",
+    "contracts": [
+      "docs/tasks/s2-vessel-why-01.md",
+      "docs/tasks/s2-enterprise-shell-01.md"
+    ],
+    "authored_checkpoints": {
+      "backend": "5157e422d11af3656a2c6c78ff5de8d9ca7c1574",
+      "ui": "08420153fd4080f9054b02c0f99fac2f8bf2ca12",
+      "browser": "d29eb15",
+      "phase": "876259b"
+    },
+    "verification": {
+      "state": "DEFERRED_NOT_RUN",
+      "scope": "S2_INTEGRATED_BUNDLE_ONLY",
+      "observed_at_utc": "2026-11-04T16:42:38.250849+00:00",
+      "backend_frontend_browser_build_typecheck_contract_generation_security_checks": "DEFERRED_UNTIL_SINGLE_COMPLETE_BUNDLE_GATE",
+      "independent_final_target_qa": "PENDING_NOT_ACCEPTED",
+      "runtime_pass_evidence_issued": false
+    },
+    "canonical_acceptance_changed": false,
+    "source_diff_from_base_before_reporting": {
+      "files": 32,
+      "insertions": 1111,
+      "deletions": 58,
+      "meaning": "Source diff only; never build/test or runtime evidence"
+    },
+    "s1_publication_observation": {
+      "observed_at_utc": "2026-11-04T16:46:07.951096Z",
+      "pr": 15,
+      "pr_url": "https://github.com/kadirvurgun/Poseidon/pull/15",
+      "head": "8a18a436c0bff4caaf4d1117360d0fc2fe1842bc",
+      "push_run": 41863704444,
+      "push_status": "PASS_4_JOBS_19_COMMANDS_NATIVE137_582_CRITICAL82",
+      "push_observation_sha256": "b891a74811ffd6318bc3e28e701c1aa777bb23d4302228d87417353ca334753f",
+      "independent_push_review": ".runtime/s1-foundation-20261103/qa/publication06-push-A8a18-required-ci-review.json",
+      "independent_push_review_sha256": "378b10cf5f7c1211feeefeb9613d9d7cbe232011face1adcc894235ef531bf31",
+      "pr_run": 41865316963,
+      "pr_state": "MERGED",
+      "merge": "NORMAL_EXPECTED_HEAD_MERGE_COMPLETED",
+      "publication_complete": false,
+      "pr_status": "PASS_4_JOBS_19_COMMANDS_NATIVE137_582_CRITICAL82",
+      "pr_observation_sha256": "688547be4d4a6156f6d6789b89c71b363f0111a63bb641400e07b05b6f09a9c2",
+      "independent_pr_required_head_review": ".runtime/s1-foundation-20261103/qa/publication06-PR15-required-head-independent-review.json",
+      "independent_pr_required_head_review_sha256": "78538646d9a7a19ff5ecd0d031665d9d8c5b5ead909e091be04c00deeece4316",
+      "merged_at_utc": "2026-11-04T16:44:08Z",
+      "merge_commit": "856f75e6a143fb81e4f41ddcb2a593185179618a",
+      "merge_receipt": ".runtime/s1-foundation-20261103/s1-pr15-normal-merge.json",
+      "merge_receipt_sha256": "254a60794936eaacc82acb27076781c314717e608c82178195b94c17efb03d0c",
+      "main_ci_run": 41870412787,
+      "main_ci_url": "https://github.com/kadirvurgun/Poseidon/actions/runs/41870412787",
+      "main_ci_head": "856f75e6a143fb81e4f41ddcb2a593185179618a",
+      "main_ci_state": "IN_PROGRESS_AS_LAST_OBSERVED_BY_CI_AGENT"
+    },
+    "s1_publication_observation_history": [
+      {
+        "observed_at_utc": "2026-11-04T16:42:38.250849+00:00",
+        "pr": 15,
+        "pr_url": "https://github.com/kadirvurgun/Poseidon/pull/15",
+        "head": "8a18a436c0bff4caaf4d1117360d0fc2fe1842bc",
+        "push_run": 41863704444,
+        "push_status": "PASS_4_JOBS_19_COMMANDS_NATIVE137_582_CRITICAL82",
+        "push_observation_sha256": "b891a74811ffd6318bc3e28e701c1aa777bb23d4302228d87417353ca334753f",
+        "independent_push_review": ".runtime/s1-foundation-20261103/qa/publication06-push-A8a18-required-ci-review.json",
+        "independent_push_review_sha256": "378b10cf5f7c1211feeefeb9613d9d7cbe232011face1adcc894235ef531bf31",
+        "pr_run": 41865316963,
+        "pr_state": "IN_PROGRESS_AS_LAST_REPORTED_BY_COORDINATOR",
+        "merge": "NOT_PERFORMED",
+        "publication_complete": false
+      }
+    ],
+    "observed_at_utc": "2026-11-04T16:50:32.271950Z",
+    "prior_authoring_milestone_state": "AUTHORED_READY_FOR_COMBINED_BUNDLE_GATE_NOT_ACCEPTED",
+    "quality_corrections": {
+      "observed_at_utc": "2026-11-04T16:50:32.271950Z",
+      "user_request": "Correct existing button alignment and page layouts using consistent UI patterns in the next PR.",
+      "ui_scope": [
+        "Directory/Fleet search and editor alignment",
+        "Regulatory profile and Today actions",
+        "Technical and Crew action groups",
+        "Scoped responsive enterprise styles"
+      ],
+      "verification": "DEFERRED_UNTIL_CORRECTIONS_COMPLETE",
+      "open_independent_findings": [
+        {
+          "id": "S2-QA-001",
+          "severity": "HIGH",
+          "file": "backend/Poseidon.Api/RegulatoryDraftEndpoints.cs",
+          "line": 82,
+          "summary": "History binding authorization and page content are separate statements; close the concurrent first restricted revision race.",
+          "status": "AUTHORING_FIX",
+          "review_sha256": "502ad9c52b29f54169a4f289e47e2af8592d07a9b4b4342ce2f4a5d38d3780b0"
+        }
+      ],
+      "accepted_story_points": 0
+    }
+  },
+  "s1_publication_closure_20261104": {
+    "status": "S1_ENGINEERING_AND_NORMAL_PR_PUBLICATION_COMPLETE",
+    "observed_at_utc": "2026-11-04T18:31:01.619073Z",
+    "implementation_target": {
+      "commit": "dc7f5117fb99a962d70a54b1f12f2c118f1cca66",
+      "tree": "e8843d8fb0bffd56a6d7955dfc286b8113a09bfd"
+    },
+    "publication_head": "8a18a436c0bff4caaf4d1117360d0fc2fe1842bc",
+    "merged_main": {
+      "commit": "856f75e6a143fb81e4f41ddcb2a593185179618a",
+      "tree": "039486e1bf9bc0331b4602f940a24f9143a2e921",
+      "parents": [
+        "071fbc7c263d87186bde3c89cc7477d92bc63719",
+        "8a18a436c0bff4caaf4d1117360d0fc2fe1842bc"
+      ],
+      "remoteMainCurrent": true,
+      "treeExactlyEqualsReviewedA": true
+    },
+    "pr": 15,
+    "merged_at_utc": "2026-11-04T16:44:08Z",
+    "main_ci_run": 41870412787,
+    "main_ci_url": "https://github.com/kadirvurgun/Poseidon/actions/runs/41870412787",
+    "main_ci_jobs_passed": 4,
+    "main_ci_commands_passed": 19,
+    "native_unit_passed": 137,
+    "native_integration_passed": 582,
+    "critical_write_operations": 82,
+    "capture_instances": 558,
+    "publication_complete": true,
+    "independent_final_main_review": {
+      "path": ".runtime/s1-foundation-20261103/qa/final-main-856f75e-s1-publication-independent-review.json",
+      "sha256": "118d5b28befdbe5a71eb82870d197735b95b964a8737ef8bbfe495b6549b024f"
+    },
+    "F122_baseline2_TLS3_logout1_receipt_targets_unchanged": true,
+    "S2_source_or_checks_included": false
+  },
+  "current_s2_delivery_observation": {
+    "state": "PARTIAL_SCOPED_GATES_PASSED_SIGNED03_IMPORT_FAILURE_CAUSAL_PROBE_PENDING_NOT_ACCEPTED",
+    "observed_at_utc": "2026-11-04T19:03:15.495960Z",
+    "current_source_target": {
+      "commit": "75d734285706848e55e9a6276aaa64ac789b8e59",
+      "tree": "3dc0c3b1cd576a079197bc335e24624897e738c9"
+    },
+    "backend_native": {
+      "target": "506d8269f4b864d862a72a89f11984048d41f87c",
+      "api_unit": 137,
+      "api_integration": 589,
+      "failed": 0,
+      "skipped": 0,
+      "critical_operations": 82,
+      "capture_instances": 565,
+      "preserved_index": {
+        "path": ".runtime/s2-enterprise-20261104/backend-506-native/index.json",
+        "sha256": "25b4a5a779481100f1e1db4f60bf1e9f977785f6b8b632581e493feacaa8eb41"
+      },
+      "offline_replay": {
+        "path": ".runtime/s2-enterprise-20261104/backend-506-native/offline-replay.json",
+        "sha256": "949f1478bb8cfed1845f696d627c074ec95e3025ad1b164ff44396f46d3ab65e"
+      },
+      "same_source_objects_in_C5_C6": true,
+      "native_receipt_retargeted": false
+    },
+    "frontend_native": {
+      "target": "c5a042cbf0811a035b8e07e86ad55b53d752e8d0",
+      "components": {
+        "numTotalTests": 1011,
+        "numPassedTests": 1011,
+        "numFailedTests": 0,
+        "numPendingTests": 0,
+        "numSkippedTests": 0,
+        "numTodoTests": 0,
+        "unhandledErrors": 0,
+        "moduleErrors": 0,
+        "reason": "passed"
+      },
+      "build": "PASS",
+      "lint": "PASS",
+      "gate": {
+        "path": ".runtime/s2-enterprise-20261104/qa/frontend-c5a042c/frontend-gate-result.json",
+        "sha256": "5215222350cd003bbfb490e9ff956f02d9c112f41a110d7d92b284f88d178715"
+      },
+      "source_equivalence_to_C6": {
+        "path": ".runtime/s2-enterprise-20261104/qa/c6-source-equivalence-review.json",
+        "sha256": "e98d5b326c5d73f669160f3a20fc380fb32fbf433409ed5344486ff6e9de758b"
+      },
+      "native_receipt_retargeted": false
+    },
+    "visual": {
+      "target": "c5a042cbf0811a035b8e07e86ad55b53d752e8d0",
+      "status": "PASS_MOCKED_VISUAL_ONLY",
+      "text_observations": 569,
+      "enabled_text_observations": 559,
+      "failures": 0,
+      "focus_and_geometry": "PASS_SCOPED_MOCKED_BROWSER",
+      "real_server_authority_proven": false,
+      "receipt": {
+        "path": ".runtime/s2-enterprise-20261104/qa/visual-c5a042c/independent-visual-review.json",
+        "sha256": "ae02646d3c8378bd540575d100d976126931ae3169f6ecea7f605011cf3f96c2"
+      }
+    },
+    "scans": {
+      "repository-scan.json": {
+        "native_target": "c5a042cbf0811a035b8e07e86ad55b53d752e8d0",
+        "status": "PASS",
+        "receipt": {
+          "path": ".runtime/s2-enterprise-20261104/checks/scans-5ba460f2fd6c4402a8d3080db1d6b377/repository-scan.json",
+          "sha256": "7b4eed84a0d38a2e185826fba3065804469e53b7c3fc5970aff04a5b7493bed0"
+        }
+      },
+      "built-client-scan.json": {
+        "native_target": "c5a042cbf0811a035b8e07e86ad55b53d752e8d0",
+        "status": "PASS",
+        "receipt": {
+          "path": ".runtime/s2-enterprise-20261104/checks/scans-5ba460f2fd6c4402a8d3080db1d6b377/built-client-scan.json",
+          "sha256": "8d4ca55cad2b77bd9571c14516a442100b6f994ef1d26c7b4958dbaf0df691c9"
+        }
+      }
+    },
+    "ordinary_prior_C5": {
+      "passed": 57,
+      "total": 58,
+      "failed": 1,
+      "skipped": 0,
+      "receipt": {
+        "path": ".runtime/s2-enterprise-20261104/checks/ordinary-browser-c5a042cbf0811a035b8e07e86ad55b53d752e8d0-closed-v2.json",
+        "sha256": "cb6eace2c3129f4938e9da53b533a3be3778fec50c760b685d58967b652f8587"
+      },
+      "cause": "product.spec.ts45 stale default-closed expectation; C6 changes only this browser test"
+    },
+    "current_C6_full_ordinary_and_release_build": {
+      "ordinary": {
+        "status": "PASS",
+        "passed": 58,
+        "total": 58,
+        "skipped": 0,
+        "flaky": 0,
+        "native_errors": 0,
+        "native_unexpected": 0,
+        "clean_target_unchanged": true,
+        "receipt": {
+          "path": ".runtime/s2-enterprise-20261104/checks/ordinary-browser-75d734285706848e55e9a6276aaa64ac789b8e59-closed-v2.json",
+          "sha256": "0944ba3cb54716b4de9c84792cf4e24b9949a8a44c36080c0c95fb97fa77cab5"
+        },
+        "retries": 0
+      },
+      "release_build": {
+        "status": "PASS",
+        "seconds": 55.459,
+        "clean_input": true,
+        "receipt": {
+          "path": ".runtime/s2-enterprise-20261104/checks/build-e5c09e3c4e924097b84a590ad377d465/release-build.json",
+          "sha256": "9ccc87c11cfc99aeca2f509f8439006998a3968560a64b5327ac2833a7ba133f"
+        }
+      }
+    },
+    "signed_attempt01": {
+      "state": "FAILED_BEFORE_TLS_AND_GENUINE_LOGIN_BASELINE",
+      "cause": "physical helper AUTH root did not match isolated source root",
+      "signed126_result": "NOT_ISSUED",
+      "recovery_as_observed_by_coordinator": "Original F preview healthy PID23060; owned fresh PostgreSQL stopped and retained",
+      "private_or_session_values_exported": false
+    },
+    "fresh_signed02": {
+      "status": "FAILED_BEFORE_TLS3_AND_GENUINE_LOGIN_BASELINE",
+      "registered_cases_executed": 0,
+      "cause": "UNISOLATED",
+      "narrow_setup_and_first_reject_probes": "DID_NOT_REPRODUCE_FULL_ATTEMPT02_FAILURE; not preflight PASS, not flakiness classification",
+      "first_reject_diagnostic": {
+        "path": ".runtime/s2-enterprise-20261104/signed-preparation/failed02-first-reject-probe-7f5bc903/native-diagnostic.json",
+        "sha256": "91dbca2231773df434b02a2c3d415e1c7998d6cba79e6e6c48641e92ea1055f8"
+      },
+      "recovery": {
+        "path": ".runtime/s2-enterprise-20261104/signed-preparation/failed02-resource-closure.json",
+        "sha256": "f0c3da1f0cb485aae47a843012e3d7dd56962c28b262d7efb6a5c9849965d8f6"
+      },
+      "preview_pid": 2576,
+      "preview_creation_file_time": 134382912023864810,
+      "preview_health_200": true,
+      "owned_PG_stopped_retained": true
+    },
+    "independent_final_phase_qa": "PENDING",
+    "accepted_story_points": 0,
+    "s2_pr": "NOT_OPENED",
+    "fresh_signed03": {
+      "status": "FAILED_PREFLIGHT_BEFORE_CONTEXT_TLS_RESULTS_OR_LOGINS",
+      "registered_cases_executed": 0,
+      "full126_result": "NOT_ISSUED",
+      "observed_stages": "TLS_SERVER_CONSTRUCTOR_CREATED; HOST_PROXY_MODULE_IMPORT_line9_THREW",
+      "stage_diagnostic": {
+        "path": ".runtime/s2-enterprise-20261104/signed-attempt-03/tls-stage-diagnostic.json",
+        "sha256": "1a447a57b081b1ab5e575b17a4ff23b9948a973b184728c1df12a52b129540cf"
+      },
+      "preflight_receipt": {
+        "path": ".runtime/s2-enterprise-20261104/signed-attempt-03/s2-preflight-result.json",
+        "sha256": "7cf24082d3f423e9341c3e62f1d17e92c55ddf02b001d4fa9a56548d5efacd44"
+      },
+      "recovery": {
+        "path": ".runtime/s2-enterprise-20261104/signed-preparation/failed03-resource-closure.json",
+        "sha256": "d69665fb75cceab16a6034c1d00737c9e46ea8a6a4d0fa9f5d21939cec27df95"
+      },
+      "preview_pid": 35972,
+      "preview_creation_file_time": 134382923558803470,
+      "preview_health_200": true,
+      "owned_PG_stopped_retained": true,
+      "all_owned_runners_closed": true,
+      "strong_source_hypothesis": "SOURCE journey imports its own @playwright/test, then HOST strict helper imports a second physical copy and can trip the installed global guard",
+      "causal_probe_verdict": "NOT_ISSUED; one read-only ordered-import probe authorized, no PASS inferred",
+      "dependency_alias": "MINIMAL_FIX_UNDER_REVIEW_NOT_CAUSALLY_VALIDATED",
+      "attempt04_runtime_or_full126": "NOT_RUN"
+    },
+    "scope_limit": "Only frozen S2 C6/source-equal506/C5 evidence; S3 changes backend and frontend, so no S2 PASS applies to S3."
+  },
+  "s3_regulatory_foundation_20261104": {
+    "task": "S3-REGULATORY-FOUNDATION-20261104",
+    "state": "SOURCE_PACKAGE_AUTHORED_NOT_ACCEPTED",
+    "observed_at_utc": "2026-11-04T19:03:15.495960Z",
+    "branch": "foundation/s3-regulatory-foundation-20261104",
+    "base_commit": "75d734285706848e55e9a6276aaa64ac789b8e59",
+    "integrated_source_checkpoint": "8e5f83d7ae2e87258cdd02ffc4a3fca3981e075d",
+    "integrated_source_tree": "148f1548a28d8ee7918de66ab87ae7f25885d899",
+    "source_scope": {
+      "tasks": 7,
+      "story_points": 66,
+      "accepted_story_points": 0,
+      "ids": [
+        "DEV-026",
+        "DEV-027",
+        "DEV-028",
+        "DEV-029",
+        "DEV-030",
+        "DEV-031",
+        "DEV-032"
+      ]
+    },
+    "source_baseline": "poseidon-v46.3-20261030",
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "source_rows": [
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33
+    ],
+    "tasks": [
+      {
+        "id": "DEV-026",
+        "title": "Requirement/source/version entity",
+        "story_points": 8,
+        "source_locator": "sheet:Backlog/row:27",
+        "trace_id": "T-S3-001",
+        "literal_acceptance_criteria": "Draft/adopted/future/in-force/superseded ayrımı vardır; current source silent overwrite edilmez.",
+        "dependencies": [
+          "DEV-005",
+          "DEV-008"
+        ],
+        "original_source_status": "Not Started",
+        "state": "SOURCE_PACKAGE_AUTHORED_NOT_ACCEPTED",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      {
+        "id": "DEV-027",
+        "title": "Applicability evaluation engine v1",
+        "story_points": 13,
+        "source_locator": "sheet:Backlog/row:28",
+        "trace_id": "T-S3-002",
+        "literal_acceptance_criteria": "Flag/type/GT/build/cargo/trading context predicate'leri versioned; result APPLICABLE/NOT_APPLICABLE/REVIEW_REQUIRED + reason döner.",
+        "dependencies": [
+          "DEV-020",
+          "DEV-026"
+        ],
+        "original_source_status": "Not Started",
+        "state": "SOURCE_PACKAGE_AUTHORED_NOT_ACCEPTED",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      {
+        "id": "DEV-028",
+        "title": "Operational Control entity",
+        "story_points": 8,
+        "source_locator": "sheet:Backlog/row:29",
+        "trace_id": "T-S3-003",
+        "literal_acceptance_criteria": "Owner/frequency/evidence rule/verification rule/state ve requirement links kaydedilir; orphan critical control raporlanır.",
+        "dependencies": [
+          "DEV-026",
+          "DEV-027"
+        ],
+        "original_source_status": "Not Started",
+        "state": "SOURCE_PACKAGE_AUTHORED_NOT_ACCEPTED",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      {
+        "id": "DEV-029",
+        "title": "Evidence graph foundation",
+        "story_points": 13,
+        "source_locator": "sheet:Backlog/row:30",
+        "trace_id": "T-S3-004",
+        "literal_acceptance_criteria": "Evidence immutable metadata/checksum/provenance ile kaydedilir; many-to-many links; stale/expired/superseded durumu görünür.",
+        "dependencies": [
+          "DEV-018",
+          "DEV-028"
+        ],
+        "original_source_status": "Not Started",
+        "state": "SOURCE_PACKAGE_AUTHORED_NOT_ACCEPTED",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      {
+        "id": "DEV-030",
+        "title": "Verification record ve gate",
+        "story_points": 8,
+        "source_locator": "sheet:Backlog/row:31",
+        "trace_id": "T-S3-005",
+        "literal_acceptance_criteria": "Verifier authorization + separation-of-duties; PENDING/VERIFIED/REJECTED/EXPIRED/SUPERSEDED; evidence existence alone state'i kapatmaz.",
+        "dependencies": [
+          "DEV-015",
+          "DEV-029"
+        ],
+        "original_source_status": "Not Started",
+        "state": "SOURCE_PACKAGE_AUTHORED_NOT_ACCEPTED",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      {
+        "id": "DEV-031",
+        "title": "Authorized Human Decision foundation",
+        "story_points": 8,
+        "source_locator": "sheet:Backlog/row:32",
+        "trace_id": "T-S3-006",
+        "literal_acceptance_criteria": "Authorized role + context + reason + decision lineage kaydedilir; AI veya generic admin final decision oluşturamaz.",
+        "dependencies": [
+          "DEV-030"
+        ],
+        "original_source_status": "Not Started",
+        "state": "SOURCE_PACKAGE_AUTHORED_NOT_ACCEPTED",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      },
+      {
+        "id": "DEV-032",
+        "title": "Requirement-to-decision trace görünümü",
+        "story_points": 8,
+        "source_locator": "sheet:Backlog/row:33",
+        "trace_id": "T-S3-007",
+        "literal_acceptance_criteria": "Requirement→control→evidence→verification→decision state ve timestamps source-grounded drill-down ile görünür.",
+        "dependencies": [
+          "DEV-027:DEV-031"
+        ],
+        "original_source_status": "Not Started",
+        "state": "SOURCE_PACKAGE_AUTHORED_NOT_ACCEPTED",
+        "verification": "DEFERRED_NOT_RUN",
+        "accepted": false
+      }
+    ],
+    "contracts": [
+      "docs/tasks/s3-regulatory-core-01.md",
+      "docs/tasks/s3-regulatory-experience-01.md"
+    ],
+    "contract_receipts": [
+      {
+        "path": "docs/tasks/s3-regulatory-core-01.md",
+        "sha256": "196bb923ef66476b5f59a90c5f0733f34e5bdf367a33694d8be8aecb3649209c"
+      },
+      {
+        "path": "docs/tasks/s3-regulatory-experience-01.md",
+        "sha256": "1c13e3ddb4f59fb23716cd3e2a544928b7a1e5a995654ef5b8d9fd1301119c25"
+      }
+    ],
+    "authored_checkpoints": {
+      "UI": "3deaf593",
+      "backend": "4c4a8853",
+      "trace_state_mapping_correction": "8e5f83d7ae2e87258cdd02ffc4a3fca3981e075d"
+    },
+    "authored_source_scope": {
+      "UI": "4 existing regulatory surfaces aligned through common forms/actions/pagination; typed retained-source trace",
+      "backend": "Final live actor/permission/selected human or reader appointment fence before trace response",
+      "UI_test_cases_authored": 6,
+      "PG_interleaving_cases_authored": 14,
+      "test_counts_are_execution_results": false,
+      "source_diff_from_C6": "13 files +575/-77",
+      "total_test_cases_authored": 20,
+      "trace_state_mapping_correction": "All 11 admitted lifecycle states and 6 missing qualification/context/attestation blockers translated; Completed remains separate from verification; 2 additional EN/TR consumer regressions DEFERRED"
+    },
+    "verification": {
+      "state": "DEFERRED_NOT_RUN",
+      "scope": "S3_ONLY",
+      "observed_at_utc": "2026-11-04T19:03:15.495960Z",
+      "tests_build_typecheck_lint_generation_browser": "DEFERRED_UNTIL_LARGER_S3_BUNDLE_GATE",
+      "independent_final_target_qa": "PENDING",
+      "runtime_pass_claimed": false,
+      "S2_source_equivalence_to_S3": false
+    },
+    "report": "docs/phases/S3-REGULATORY-FOUNDATION-20261104.md",
+    "canonical_acceptance_changed": false,
+    "publication": "NO_S3_PR_OR_MERGE",
+    "next_step": "Continue larger S3 package and source/dependency review; keep checks deferred until a concrete bundle gate. S2 signed setup diagnosis continues separately."
   }
 }
