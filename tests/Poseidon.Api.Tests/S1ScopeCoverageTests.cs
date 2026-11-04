@@ -37,9 +37,11 @@ public sealed partial class DirectoryWorkspaceTests
         await using var host = Host();
         var endpoints = host.Services.GetRequiredService<EndpointDataSource>().Endpoints;
         var observed = S1SecurityContract.ValidateEndpointInventory(endpoints);
-        Assert.Equal(83, observed.Count);
-        Assert.Equal(77, observed.Count(x => x.IsCritical));
-        Assert.Equal(82, S1SecurityContract.CriticalOperationIds.Count);
+        // S4 adds three real notification commands. Historical S1 82-operation
+        // receipts remain unchanged; this is the new source-authored denominator.
+        Assert.Equal(86, observed.Count);
+        Assert.Equal(80, observed.Count(x => x.IsCritical));
+        Assert.Equal(85, S1SecurityContract.CriticalOperationIds.Count);
         Assert.Equal(6, observed.Count(x => !x.IsCritical));
         var extra = new RouteEndpoint(_ => Task.CompletedTask, RoutePatternFactory.Parse("/api/v1/unclassified-write"), 0,
             new EndpointMetadataCollection(new HttpMethodMetadata(["POST"]), new AuthorizeAttribute("DirectoryRead")), "unclassified");

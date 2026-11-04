@@ -49,7 +49,7 @@ public static class MaintenanceObservationEndpoints
         foreach (var row in rows) {
             var rule = settings.Rule(db.TenantId, vessel, asset, row.Source);
             var age = rule != null && rule.Version == row.PolicyVersion && !row.revoked ? TimeSpan.FromSeconds(rule.FreshnessSeconds) : (TimeSpan?)null;
-            OperationalTelemetry.ObserveFreshness(ObservationArea.Technical, SourceFreshnessPolicy.Assess(row.ObservedAt, now, age));
+            OperationalTelemetry.ObserveFreshness(ObservationArea.Technical, SourceFreshnessPolicy.Assess(row.ObservedAt, now, age), db.TenantId);
         }
         var actor = h.RequestServices.GetRequiredService<ActorResolver>().Resolve(h.User)!;
         return Results.Ok(new { sources, items = rows, canWrite = actor.Permissions.Contains("maintenance.observation.write") && actor.Permissions.Contains("maintenance.write") && actor.HasWriteAttribution &&

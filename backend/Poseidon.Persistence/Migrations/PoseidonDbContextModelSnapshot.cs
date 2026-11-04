@@ -4917,6 +4917,72 @@ namespace Poseidon.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
+            // S4 source-authored model additions. Actual EF scaffold/parity is deferred.
+            modelBuilder.Entity("Poseidon.Persistence.Notification", b => {
+                b.Property<Guid>("TenantId").HasColumnType("uuid"); b.Property<Guid>("Id").HasColumnType("uuid");
+                b.Property<Guid>("VesselId").HasColumnType("uuid"); b.Property<Guid>("PlanId").HasColumnType("uuid");
+                b.Property<long>("PlanRevision").HasColumnType("bigint");
+                b.Property<string>("RuleKey").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");
+                b.Property<string>("PolicyVersion").IsRequired().HasMaxLength(80).HasColumnType("character varying(80)");
+                b.Property<string>("PolicyDigest").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");
+                b.Property<string>("SourceContextHash").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");
+                b.Property<string>("SourceState").IsRequired().HasMaxLength(24).HasColumnType("character varying(24)");
+                b.Property<string>("Severity").IsRequired().HasMaxLength(16).HasColumnType("character varying(16)");
+                b.Property<bool>("Mandatory").HasColumnType("boolean"); b.Property<Guid>("RecipientRoleId").HasColumnType("uuid");
+                b.Property<Guid?>("EscalationRoleId").HasColumnType("uuid"); b.Property<DateOnly?>("DueDate").HasColumnType("date");
+                b.Property<DateTimeOffset?>("EscalateAt").HasColumnType("timestamp with time zone");
+                b.Property<DateTimeOffset>("CreatedAt").HasColumnType("timestamp with time zone");
+                b.Property<string>("State").IsRequired().HasMaxLength(24).HasColumnType("character varying(24)");
+                b.Property<long>("Revision").HasColumnType("bigint");
+                b.Property<uint>("Version").IsConcurrencyToken().ValueGeneratedOnAddOrUpdate().HasColumnType("xid").HasColumnName("xmin");
+                b.HasKey("TenantId", "Id"); b.HasAlternateKey("TenantId", "VesselId", "Id");
+                b.HasIndex("TenantId", "VesselId", "RuleKey", "PolicyDigest", "PlanId", "PlanRevision", "SourceContextHash").IsUnique().HasDatabaseName("UX_Notification_SourceTrigger");
+                b.HasIndex("TenantId", "VesselId", "PlanId", "PlanRevision").HasDatabaseName("IX_Notification_SourceRevision");
+                b.ToTable("Notifications", "engagement", t => t.HasCheckConstraint("CK_Notification_State",
+                    "\"State\" IN ('Open','Acknowledged','Escalated','SourceChanged','SyntheticUnverified') AND \"Revision\" > 0 AND \"PlanRevision\" > 0 AND \"Severity\" IN ('Info','Warning','Critical','Unknown') AND (\"Severity\" <> 'Critical' OR \"Mandatory\")"));
+                b.HasOne("Poseidon.Persistence.MaintenancePlanRevision", null).WithMany()
+                    .HasForeignKey("TenantId", "VesselId", "PlanId", "PlanRevision").HasPrincipalKey("TenantId", "VesselId", "PlanId", "Revision")
+                    .HasConstraintName("FK_Notification_SourceRevision").OnDelete(DeleteBehavior.Restrict).IsRequired();
+            });
+            modelBuilder.Entity("Poseidon.Persistence.NotificationEvent", b => {
+                b.Property<Guid>("TenantId").HasColumnType("uuid"); b.Property<Guid>("Id").HasColumnType("uuid");
+                b.Property<Guid>("VesselId").HasColumnType("uuid"); b.Property<Guid>("NotificationId").HasColumnType("uuid");
+                b.Property<long>("Sequence").HasColumnType("bigint"); b.Property<Guid?>("ActorId").HasColumnType("uuid");
+                b.Property<string>("Kind").IsRequired().HasMaxLength(24).HasColumnType("character varying(24)");
+                b.Property<DateTimeOffset>("RecordedAt").HasColumnType("timestamp with time zone");
+                b.HasKey("TenantId", "Id"); b.HasIndex("TenantId", "NotificationId", "Sequence").IsUnique().HasDatabaseName("UX_NotificationEvent_Sequence");
+                b.HasIndex("TenantId", "VesselId", "NotificationId").HasDatabaseName("IX_NotificationEvent_Notification"); b.ToTable("NotificationEvents", "engagement");
+                b.HasOne("Poseidon.Persistence.Notification", null).WithMany().HasForeignKey("TenantId", "VesselId", "NotificationId")
+                    .HasPrincipalKey("TenantId", "VesselId", "Id").HasConstraintName("FK_NotificationEvent_Notification").OnDelete(DeleteBehavior.Restrict).IsRequired();
+            });
+            modelBuilder.Entity("Poseidon.Persistence.NotificationPreference", b => {
+                b.Property<Guid>("TenantId").HasColumnType("uuid"); b.Property<Guid>("VesselId").HasColumnType("uuid");
+                b.Property<Guid>("ActorId").HasColumnType("uuid"); b.Property<bool>("MutedAdvisory").HasColumnType("boolean");
+                b.Property<long>("Revision").HasColumnType("bigint");
+                b.Property<uint>("Version").IsConcurrencyToken().ValueGeneratedOnAddOrUpdate().HasColumnType("xid").HasColumnName("xmin");
+                b.HasKey("TenantId", "VesselId", "ActorId"); b.ToTable("NotificationPreferences", "engagement");
+                b.HasOne("Poseidon.Persistence.Vessel", null).WithMany().HasForeignKey("TenantId", "VesselId")
+                    .HasConstraintName("FK_NotificationPreference_Vessel").OnDelete(DeleteBehavior.Restrict).IsRequired();
+            });
+            modelBuilder.Entity("Poseidon.Persistence.NotificationReceipt", b => {
+                b.Property<Guid>("TenantId").HasColumnType("uuid"); b.Property<Guid>("VesselId").HasColumnType("uuid");
+                b.Property<Guid>("ActorId").HasColumnType("uuid"); b.Property<Guid>("ResourceId").HasColumnType("uuid");
+                b.Property<Guid?>("NotificationId").HasColumnType("uuid"); b.Property<Guid?>("PreferenceActorId").HasColumnType("uuid");
+                b.Property<string>("Key").IsRequired().HasMaxLength(80).HasColumnType("character varying(80)");
+                b.Property<string>("Action").IsRequired().HasMaxLength(24).HasColumnType("character varying(24)");
+                b.Property<string>("Fingerprint").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");
+                b.Property<string>("OutcomeJson").IsRequired().HasColumnType("text");
+                b.Property<DateTimeOffset>("SavedAt").HasColumnType("timestamp with time zone");
+                b.HasKey("TenantId", "ActorId", "Key");
+                b.HasIndex("TenantId", "VesselId", "NotificationId").HasDatabaseName("IX_NotificationReceipt_Notification");
+                b.HasIndex("TenantId", "VesselId", "PreferenceActorId").HasDatabaseName("IX_NotificationReceipt_Preference");
+                b.ToTable("NotificationReceipts", "engagement", t => t.HasCheckConstraint("CK_Notification_Receipt",
+                    "(\"Action\" = 'Acknowledge' AND \"NotificationId\" IS NOT NULL AND \"ResourceId\" = \"NotificationId\" AND \"PreferenceActorId\" IS NULL) OR (\"Action\" = 'Preference' AND \"NotificationId\" IS NULL AND \"PreferenceActorId\" IS NOT NULL AND \"PreferenceActorId\" = \"ActorId\" AND \"ResourceId\" = \"ActorId\")"));
+                b.HasOne("Poseidon.Persistence.Notification", null).WithMany().HasForeignKey("TenantId", "VesselId", "NotificationId")
+                    .HasPrincipalKey("TenantId", "VesselId", "Id").HasConstraintName("FK_NotificationReceipt_Notification").OnDelete(DeleteBehavior.Restrict);
+                b.HasOne("Poseidon.Persistence.NotificationPreference", null).WithMany().HasForeignKey("TenantId", "VesselId", "PreferenceActorId")
+                    .HasPrincipalKey("TenantId", "VesselId", "ActorId").HasConstraintName("FK_NotificationReceipt_Preference").OnDelete(DeleteBehavior.Restrict);
+            });
 #pragma warning restore 612, 618
         }
     }
