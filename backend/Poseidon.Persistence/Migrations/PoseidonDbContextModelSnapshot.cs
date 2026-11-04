@@ -5058,6 +5058,79 @@ namespace Poseidon.Persistence.Migrations
                 b.HasOne("Poseidon.Persistence.DailyOperation",null).WithMany().HasForeignKey("TenantId","VesselId","Kind","RecordId")
                     .HasPrincipalKey("TenantId","VesselId","Kind","Id").HasConstraintName("FK_DailyReceipt_Head").OnDelete(DeleteBehavior.Restrict).IsRequired();
             });
+            modelBuilder.Entity("Poseidon.Persistence.DailyOfflineEnrollment", b => {
+                b.Property<Guid>("TenantId").HasColumnType("uuid");
+                b.Property<Guid>("Id").HasColumnType("uuid");
+                b.Property<Guid>("ActorId").HasColumnType("uuid");
+                b.Property<Guid>("VesselId").HasColumnType("uuid");
+                b.Property<string>("Kind").IsRequired().HasMaxLength(12).HasColumnType("character varying(12)");
+                b.Property<Guid>("RecordId").HasColumnType("uuid");
+                b.Property<Guid>("DeviceId").HasColumnType("uuid");
+                b.Property<Guid>("KeyId").HasColumnType("uuid");
+                b.Property<string>("Challenge").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");
+                b.Property<string>("PublicKey").HasMaxLength(256).HasColumnType("character varying(256)");
+                b.Property<string>("PolicyVersion").IsRequired().HasMaxLength(80).HasColumnType("character varying(80)");
+                b.Property<string>("PolicyDigest").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");
+                b.Property<string>("AuthorityDigest").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");
+                b.Property<string>("SourceVersion").IsRequired().HasMaxLength(192).HasColumnType("character varying(192)");
+                b.Property<string>("SchemaHash").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");
+                b.Property<uint>("BaseVersion").HasColumnType("bigint");
+                b.Property<long>("BaseRevision").HasColumnType("bigint");
+                b.Property<string>("ProtectedBase").IsRequired().HasColumnType("text");
+                b.Property<DateTimeOffset>("CreatedAt").HasColumnType("timestamp with time zone");
+                b.Property<DateTimeOffset>("ExpiresAt").HasColumnType("timestamp with time zone");
+                b.Property<DateTimeOffset>("RetainUntil").HasColumnType("timestamp with time zone");
+                b.Property<DateTimeOffset?>("RevokedAt").HasColumnType("timestamp with time zone");
+                b.Property<uint>("Version").IsConcurrencyToken().ValueGeneratedOnAddOrUpdate().HasColumnType("xid").HasColumnName("xmin");
+                b.HasKey("TenantId","Id");
+                b.HasAlternateKey("TenantId","Id","ActorId","VesselId","Kind","RecordId").HasName("AK_DailyOfflineEnrollment_Scope");
+                b.HasOne("Poseidon.Persistence.Vessel",null).WithMany().HasForeignKey("TenantId","VesselId").HasConstraintName("FK_DailyOffline_Vessel").OnDelete(DeleteBehavior.Restrict).IsRequired();
+                b.HasIndex("TenantId","ActorId","VesselId","Kind","RecordId","CreatedAt").HasDatabaseName("IX_DailyOfflineEnrollment_Owner");
+                b.HasIndex("TenantId","VesselId").HasDatabaseName("IX_DailyOfflineEnrollment_Vessel");
+                b.ToTable("DailyEnrollments","offline",t=>t.HasCheckConstraint("CK_DailyOfflineEnrollment_State","\"Kind\" IN ('Noon','Deck','Engine') AND \"BaseVersion\" >= 0 AND \"BaseRevision\" >= 0 AND ((\"BaseVersion\" = 0) = (\"BaseRevision\" = 0)) AND \"ExpiresAt\" > \"CreatedAt\" AND \"RetainUntil\" >= \"ExpiresAt\""));
+            });
+            modelBuilder.Entity("Poseidon.Persistence.DailyOfflineLifecycle", b => {
+                b.Property<Guid>("TenantId").HasColumnType("uuid");
+                b.Property<Guid>("Id").HasColumnType("uuid");
+                b.Property<Guid>("EnrollmentId").HasColumnType("uuid");
+                b.Property<Guid>("ActorId").HasColumnType("uuid");
+                b.Property<Guid>("VesselId").HasColumnType("uuid");
+                b.Property<string>("Kind").IsRequired().HasMaxLength(12).HasColumnType("character varying(12)");
+                b.Property<Guid>("RecordId").HasColumnType("uuid");
+                b.Property<string>("Action").IsRequired().HasMaxLength(24).HasColumnType("character varying(24)");
+                b.Property<DateTimeOffset>("RecordedAt").HasColumnType("timestamp with time zone");
+                b.HasKey("TenantId","Id");
+                b.HasOne("Poseidon.Persistence.DailyOfflineEnrollment",null).WithMany().HasForeignKey("TenantId","EnrollmentId","ActorId","VesselId","Kind","RecordId").HasPrincipalKey("TenantId","Id","ActorId","VesselId","Kind","RecordId").HasConstraintName("FK_DailyOfflineLifecycle_Enrollment").OnDelete(DeleteBehavior.Restrict).IsRequired();
+                b.HasIndex("TenantId","EnrollmentId","ActorId","VesselId","Kind","RecordId").HasDatabaseName("IX_DailyOfflineLifecycle_Scope");
+                b.ToTable("DailyLifecycle","offline");
+            });
+            modelBuilder.Entity("Poseidon.Persistence.DailyOfflineOutcome", b => {
+                b.Property<Guid>("TenantId").HasColumnType("uuid");
+                b.Property<Guid>("ActorId").HasColumnType("uuid");
+                b.Property<Guid>("CommandId").HasColumnType("uuid");
+                b.Property<Guid>("EnrollmentId").HasColumnType("uuid");
+                b.Property<Guid>("VesselId").HasColumnType("uuid");
+                b.Property<string>("Kind").IsRequired().HasMaxLength(12).HasColumnType("character varying(12)");
+                b.Property<Guid>("RecordId").HasColumnType("uuid");
+                b.Property<Guid?>("ParentCommandId").HasColumnType("uuid");
+                b.Property<string>("Digest").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");
+                b.Property<string>("Result").IsRequired().HasMaxLength(24).HasColumnType("character varying(24)");
+                b.Property<uint>("BaseVersion").HasColumnType("bigint");
+                b.Property<uint>("ServerVersion").HasColumnType("bigint");
+                b.Property<long>("Revision").HasColumnType("bigint");
+                b.Property<string>("OutcomeJson").IsRequired().HasColumnType("text");
+                b.Property<string>("ProtectedContext").IsRequired().HasColumnType("text");
+                b.Property<DateTimeOffset>("ReceivedAt").HasColumnType("timestamp with time zone");
+                b.HasKey("TenantId","ActorId","CommandId");
+                b.HasAlternateKey("TenantId","ActorId","CommandId","EnrollmentId").HasName("AK_DailyOfflineOutcome_ParentScope");
+                b.HasOne("Poseidon.Persistence.DailyOfflineEnrollment",null).WithMany().HasForeignKey("TenantId","EnrollmentId","ActorId","VesselId","Kind","RecordId").HasPrincipalKey("TenantId","Id","ActorId","VesselId","Kind","RecordId").HasConstraintName("FK_DailyOfflineOutcome_Enrollment").OnDelete(DeleteBehavior.Restrict).IsRequired();
+                b.HasOne("Poseidon.Persistence.DailyOfflineOutcome",null).WithMany().HasForeignKey("TenantId","ActorId","ParentCommandId","EnrollmentId").HasPrincipalKey("TenantId","ActorId","CommandId","EnrollmentId").HasConstraintName("FK_DailyOfflineOutcome_Parent").OnDelete(DeleteBehavior.Restrict);
+                b.HasIndex("TenantId","EnrollmentId","ActorId","VesselId","Kind","RecordId").HasDatabaseName("IX_DailyOfflineOutcome_Scope");
+                b.HasIndex("TenantId","ActorId","ParentCommandId","EnrollmentId").HasDatabaseName("IX_DailyOfflineOutcome_ParentScope");
+                b.HasIndex("TenantId","ActorId","EnrollmentId","ReceivedAt","CommandId").HasDatabaseName("IX_DailyOfflineOutcome_History");
+                b.HasIndex("TenantId","ActorId","ParentCommandId").HasDatabaseName("UX_DailyOfflineOutcome_Resolution").IsUnique().HasFilter("\"ParentCommandId\" IS NOT NULL");
+                b.ToTable("DailyOutcomes","offline",t=>t.HasCheckConstraint("CK_DailyOfflineOutcome_State","\"Kind\" IN ('Noon','Deck','Engine') AND \"BaseVersion\" >= 0 AND \"ServerVersion\" >= 0 AND \"Revision\" >= 0 AND \"Result\" IN ('Committed','MaterialConflict') AND (\"Result\" <> 'Committed' OR (\"ServerVersion\" > 0 AND \"Revision\" > 0))"));
+            });
 #pragma warning restore 612, 618
         }
     }
