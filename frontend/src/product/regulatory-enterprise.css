@@ -1,0 +1,36 @@
+.enterprise-shell .regulatory-workspace { min-width:0; margin:20px 0; }
+.enterprise-shell .regulatory-workspace > h2,.enterprise-shell .regulatory-workspace > h3 { margin-bottom:12px; }
+.enterprise-shell .regulatory-workspace > form,.enterprise-shell .regulatory-editor > form,.enterprise-shell .regulatory-workspace > fieldset { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:22px; margin:20px 0; }
+.enterprise-shell .regulatory-workspace form > fieldset { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px 24px; min-width:0; padding:0; border:0; }
+.enterprise-shell .regulatory-workspace form > fieldset > legend { margin-bottom:14px; }
+.enterprise-shell .regulatory-workspace form > fieldset > p,.enterprise-shell .regulatory-workspace form > fieldset > section,.enterprise-shell .regulatory-workspace form > fieldset > fieldset { grid-column:1/-1; }
+.enterprise-shell .regulatory-workspace label,.enterprise-shell .regulatory-workspace .profile-field { display:flex; flex-direction:column; gap:7px; min-width:0; }
+.enterprise-shell .regulatory-workspace input:not([type="checkbox"]),.enterprise-shell .regulatory-workspace select,.enterprise-shell .regulatory-workspace textarea { width:100%; min-width:0; margin:0; }
+.enterprise-shell .regulatory-workspace textarea { min-height:100px; resize:vertical; }
+.enterprise-shell .regulatory-workspace label:has(> input[type="checkbox"]) { flex-direction:row; align-items:flex-start; gap:10px; }
+.enterprise-shell .regulatory-workspace input[type="checkbox"] { flex:0 0 18px; width:18px; min-height:18px; height:18px; margin-top:2px; }
+.enterprise-shell .regulatory-workspace .enterprise-toolbar { padding:16px; }
+.enterprise-shell .regulatory-workspace > .regulatory-search-form { padding:0; border:0; background:transparent; }
+.enterprise-shell .regulatory-search-form > .enterprise-toolbar { margin:0; }
+.enterprise-shell .regulatory-register-list { display:grid; gap:10px; margin:18px 0; padding:0; list-style:none; }
+.enterprise-shell .regulatory-register-list > li { display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:14px 16px; border:1px solid var(--border); border-radius:9px; background:var(--card); overflow-wrap:anywhere; }
+.enterprise-shell .regulatory-register-list a { display:block; min-width:0; overflow-wrap:anywhere; }
+.enterprise-shell .regulatory-register-list > li > [data-slot="button"] { flex:1 1 220px; min-width:0; max-width:100%; height:auto; min-height:40px; padding:10px 12px; justify-content:flex-start; text-align:start; white-space:normal; overflow-wrap:anywhere; }
+.enterprise-shell .regulatory-workspace pre { white-space:pre-wrap; overflow-wrap:anywhere; }
+.enterprise-shell .regulatory-workspace code,.enterprise-shell .regulatory-workspace dd { overflow-wrap:anywhere; }
+.enterprise-shell .regulatory-workspace .enterprise-actions [data-slot="button"] { width:auto; }
+.enterprise-shell .regulatory-trace-lineage { display:grid; gap:12px; list-style:none; margin:20px 0; padding:0; }
+.enterprise-shell .regulatory-trace-lineage > li { position:relative; min-width:0; padding-inline-start:28px; }
+.enterprise-shell .regulatory-trace-lineage > li::before { content:''; position:absolute; left:9px; top:0; bottom:-12px; border-left:2px solid var(--border); }
+.enterprise-shell .regulatory-trace-lineage > li:last-child::before { bottom:50%; }
+.enterprise-shell .regulatory-trace-lineage article { padding:16px; border:1px solid var(--border); border-radius:9px; background:var(--card); }
+.enterprise-shell .regulatory-trace-lineage header { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-bottom:10px; }
+.enterprise-shell .regulatory-trace-lineage h4 { margin:0; flex:1; }
+.enterprise-shell .regulatory-trace-index { display:grid; place-items:center; position:absolute; left:0; width:20px; height:20px; border:1px solid var(--border); border-radius:50%; color:var(--foreground); background:var(--background); font-size:10px; }
+.enterprise-shell .regulatory-trace-lineage dl { display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr); gap:12px; margin:12px 0; }
+.enterprise-shell .regulatory-trace-lineage dd { margin:4px 0 0; overflow-wrap:anywhere; }
+.enterprise-shell .regulatory-trace-lineage code { display:block; overflow-wrap:anywhere; white-space:normal; font-size:11px; }
+.enterprise-shell .regulatory-review-command { display:grid; gap:16px; }
+.enterprise-shell .regulatory-review-command > legend { padding-bottom:12px; }
+.enterprise-shell .regulatory-review-command > p { color:var(--muted-foreground); }
+@media(max-width:650px) { .enterprise-shell .regulatory-workspace form > fieldset,.enterprise-shell .regulatory-trace-lineage dl { grid-template-columns:minmax(0,1fr); }.enterprise-shell .regulatory-workspace > form,.enterprise-shell .regulatory-editor > form,.enterprise-shell .regulatory-workspace > fieldset { padding:16px; }.enterprise-shell .regulatory-trace-lineage > li { padding-inline-start:24px; } }
