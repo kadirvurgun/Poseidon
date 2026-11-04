@@ -17,6 +17,11 @@ public static class WorkspaceEndpoints
         if (SystemHealthEndpoints.Permitted(actor)) destinations = [.. destinations, new("system-health", "/app/system-health")];
         if (NotificationEndpoints.CanRead(actor)) destinations = [.. destinations, new("notification-escalation", "/app/notification-escalation")];
         if (actor.CanReadTug) destinations = [.. destinations, new("tug-command", "/app/tug-command"), new("tug-job-board", "/app/tug-job-board"), new("tug-job-intake", "/app/tug-job-intake")];
+        if (actor.CanSeeShip) {
+            if (DailyOperationsEndpoints.CanRead(actor,"Noon")) destinations = [.. destinations,new("noon-report","/app/noon-report")];
+            if (DailyOperationsEndpoints.CanRead(actor,"Deck")) destinations = [.. destinations,new("deck-daily-log","/app/deck-daily-log")];
+            if (DailyOperationsEndpoints.CanRead(actor,"Engine")) destinations = [.. destinations,new("engine-daily-log","/app/engine-daily-log")];
+        }
         return actor.CanReadRegulatory ? [.. destinations, new("sources", "/app/sources"), new("requirements", "/app/requirements")] : destinations;
     }
     private static NavigationDto[] BaseDestinations(TrustedActor actor) =>
