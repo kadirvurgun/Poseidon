@@ -5,7 +5,7 @@ import { loginHref } from './workspace-location'
 import { dueReason, dueState } from './maintenance-copy'
 import { todayTugCopy } from './today-tug-copy'
 import { TodayTugExplanation } from './TodayTugExplanation'
-import { Anchor, ArrowLeft, ArrowUpRight, RefreshCw, Ship } from 'lucide-react'
+import { Anchor, ArrowLeft, ArrowUpRight, CircleHelp, Info, RefreshCw, Ship, TriangleAlert } from 'lucide-react'
 import { Button } from '../components/ui/button'
 import { Badge } from '../components/ui/badge'
 import { Card } from '../components/ui/card'
@@ -79,7 +79,8 @@ function TodayContext({ id, language, offline, onNavigate }: Props) {
       {data.data.cards.items.map(card => {
         const open = expanded === card.key
         const disclosureId = card.key === 'regulatory-draft' ? 'today-why' : `today-why-${card.key.replace(/[^a-z0-9-]/g, '-')}`
-        return <article key={card.key} className="product-detail today-feed-card" data-priority={card.priority} aria-label={card.source === 'TugJob' ? `${t.TugJob} ${card.key.slice('tug-job:'.length)}` : undefined}><div className="today-feed-card-header"><h3>{t[card.priority as keyof typeof t]} · {t[card.source as keyof typeof t]}</h3><Badge tone={card.priority === 'Attention' ? 'warning' : card.priority === 'Review' ? 'neutral' : 'info'}>{t[card.priority as keyof typeof t]}</Badge></div>
+        const PriorityIcon = card.priority === 'Attention' ? TriangleAlert : card.priority === 'Review' ? CircleHelp : Info
+        return <article key={card.key} className="product-detail today-feed-card" data-priority={card.priority} aria-label={card.source === 'TugJob' ? `${t.TugJob} ${card.key.slice('tug-job:'.length)}` : `${t[card.priority as keyof typeof t]} · ${t[card.source as keyof typeof t]}`}><div className="today-feed-card-header"><h3>{t[card.priority as keyof typeof t]} · {t[card.source as keyof typeof t]}</h3><Badge tone={card.priority === 'Attention' ? 'warning' : card.priority === 'Review' ? 'neutral' : 'info'}><PriorityIcon aria-hidden="true" />{t[card.priority as keyof typeof t]}</Badge></div>
           {card.source === 'TugJob' && <p>{t.jobReference}: {card.key.slice('tug-job:'.length)}</p>}
           <p>{t[card.reason as keyof typeof t]}</p><p>{card.owner ? `${t.ownerRole}: ${card.owner}` : t.owner}</p>
           <div className="today-feed-card-actions"><Button variant="outline" onClick={() => onNavigate(card.href)}>{t[card.nextAction as keyof typeof t]}<ArrowUpRight aria-hidden="true" /></Button>
@@ -101,6 +102,7 @@ function TodayError({ code, retry, offline, t }: { code: number; retry: () => vo
 
 function TodayExplanation({ why, language, t }: { why: service.Why; language: 'tr' | 'en'; t: Record<keyof typeof copy.en, string> }) {
   return <><p>{t[why.reason as keyof typeof t]}</p><p>{t.rule}: {why.rule}</p>
+    {why.source && <dl className="today-why-lineage" aria-label={language === 'en' ? 'Source lineage' : 'Kaynak sürüm bağı'}><div><dt>{language === 'en' ? 'Source' : 'Kaynak'}</dt><dd>{t[why.source.kind as keyof typeof t]}</dd></div><div><dt>{language === 'en' ? 'Source reference' : 'Kaynak referansı'}</dt><dd>{why.source.id}</dd></div><div><dt>{language === 'en' ? 'Source revision' : 'Kaynak sürümü'}</dt><dd>{why.source.revision ?? t.unknown}</dd></div></dl>}
     <p>{t.read}: <time dateTime={why.readAt}>{why.readAt}</time></p><p>{t.currentOwner}: {why.owner ?? t.unknown}</p>
     {why.inputs && <p>{t.counts}: {why.inputs.known} / {why.inputs.missing} / {why.inputs.unknown}</p>}
     {why.tug && <TodayTugExplanation detail={why.tug} language={language} />}

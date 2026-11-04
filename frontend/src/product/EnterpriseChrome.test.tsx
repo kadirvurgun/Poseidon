@@ -63,12 +63,14 @@ it('supports mobile menu focus containment, Escape dismissal and focus restorati
   const brand = within(dialog).getByRole('link', { name: 'POSEIDON' })
   const workView = within(dialog).getByText('Work view', { selector: 'summary' })
   expect(brand).toHaveFocus()
-  expect(workView.closest('details')).not.toHaveAttribute('open')
-  // jsdom exposes closed-details descendants to role queries; the keyboard
-  // boundary must still exclude their controls from the actual focus targets.
+  expect(workView.closest('details')).toHaveAttribute('open')
+  // The role lens is visible on entry; collapsed controls must still be
+  // excluded from the mobile keyboard loop after the user hides its settings.
+  await user.click(workView)
   const hiddenAction = within(dialog).getByRole('button', { name: 'Hidden work-view action' })
   expect(hiddenAction.closest('details')).not.toHaveAttribute('open')
-  await user.tab({ shift: true }); expect(workView).toHaveFocus()
+  brand.focus()
+  await user.tab({ shift: true }); expect(within(dialog).getByRole('button', { name: 'Fleet' })).toHaveFocus()
   expect(hiddenAction).not.toHaveFocus()
   await user.tab(); expect(brand).toHaveFocus()
   await user.keyboard('{Escape}')
