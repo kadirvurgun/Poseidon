@@ -5496,6 +5496,14 @@ export interface components {
             href: string;
             maintenance?: null | components["schemas"]["TodayMaintenanceEvidenceDto"];
             tug?: null | components["schemas"]["TodayTugEvidenceDto"];
+            source?: null | components["schemas"]["TodayWhySourceDto"];
+        };
+        TodayWhySourceDto: {
+            kind: string;
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: null | number;
         };
         TugAuditRevisionDto: {
             /** Format: uuid */

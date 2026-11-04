@@ -13970,6 +13970,40 @@
                 "$ref": "#/components/schemas/TodayTugEvidenceDto"
               }
             ]
+          },
+          "source": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/TodayWhySourceDto"
+              }
+            ]
+          }
+        }
+      },
+      "TodayWhySourceDto": {
+        "required": [
+          "kind",
+          "id",
+          "revision"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
           }
         }
       },
