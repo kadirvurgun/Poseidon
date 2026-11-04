@@ -28,6 +28,37 @@ public sealed partial class DirectoryWorkspaceTests
             return result;
         }
     }
+    private sealed class ConcurrentDailyCreateBarrier : DbCommandInterceptor
+    {
+        private readonly TaskCompletionSource bothRead=new(TaskCreationOptions.RunContinuationsAsynchronously);
+        private int readers;
+        public override async ValueTask<DbDataReader> ReaderExecutedAsync(DbCommand command,CommandExecutedEventData eventData,DbDataReader result,CancellationToken cancellationToken=default) {
+            if(command.CommandText.StartsWith("SELECT",StringComparison.Ordinal) && command.CommandText.Contains("operations.\"DailyOperations\"",StringComparison.Ordinal)) {
+                var count=Interlocked.Increment(ref readers);
+                if(count==2)bothRead.TrySetResult();
+                if(count<=2)await bothRead.Task.WaitAsync(TimeSpan.FromSeconds(30),cancellationToken);
+            }
+            return result;
+        }
+    }
+    [Fact]
+    public async Task Concurrent_identical_daily_creates_produce_one_revision_and_exact_recoverable_receipt() {
+        var barrier=new ConcurrentDailyCreateBarrier();await using var host=Host(interceptor:barrier);
+        using var first=Client(host);using var second=Client(host);DailyPermissions(host.Services);
+        var body=new DailyDraftCommand(Guid.NewGuid(),0,new(),"INITIAL_AUTHORING");var key=Guid.NewGuid().ToString("D");
+        // Both real SERIALIZABLE transactions have read the missing head before
+        // either inserts. No sleep chooses the collision or retries a write.
+        var results=await Task.WhenAll(DailySend(first,"noon-reports",body,key),DailySend(second,"noon-reports",body,key));
+        Assert.Contains(results,r=>r.StatusCode==HttpStatusCode.OK);
+        Assert.All(results,r=>Assert.True(r.StatusCode is HttpStatusCode.OK or HttpStatusCode.Conflict));
+        var expected=await results.First(r=>r.StatusCode==HttpStatusCode.OK).Content.ReadAsStringAsync(Ct);
+        foreach(var response in results)if(response.StatusCode==HttpStatusCode.OK)Assert.Equal(expected,await response.Content.ReadAsStringAsync(Ct));
+        var recovered=await DailySend(first,"noon-reports",body,key);Assert.Equal(HttpStatusCode.OK,recovered.StatusCode);
+        Assert.Equal(expected,await recovered.Content.ReadAsStringAsync(Ct));
+        await using var db=Db();Assert.Equal(1,await db.DailyOperations.CountAsync(r=>r.Id==body.Id,Ct));
+        Assert.Equal(1,await db.DailyOperationRevisions.CountAsync(r=>r.RecordId==body.Id,Ct));Assert.Equal(1,await db.DailyOperationReceipts.CountAsync(r=>r.RecordId==body.Id,Ct));
+        foreach(var response in results)response.Dispose();
+    }
     [Theory]
     [InlineData("read")] [InlineData("scope")] [InlineData("role")] [InlineData("tenant")] [InlineData("equivalent")]
     public async Task Daily_read_response_rechecks_trusted_scope_after_its_database_snapshot(string change) {

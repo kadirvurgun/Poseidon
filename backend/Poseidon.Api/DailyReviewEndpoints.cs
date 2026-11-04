@@ -139,7 +139,10 @@ public static class DailyReviewEndpoints
         var authority=Authorities(h,actor,vessel,kind,id).SingleOrDefault(g=>g.Id==command.AuthorityId);
         if(authority==null)return await Fail(h,403,"human_authority_required");
         var authorityHash=AuthorityHash(authority,actor);
-        var fingerprint=RegisterStorage.Hash(JsonSerializer.Serialize(new{kind,vessel,id,command,authorityHash},DailyOperationsEndpoints.Json));
+        // Exact command identity excludes mutable current authorization. A
+        // legitimate renewal may authorize recovery of a historical receipt;
+        // its original appointment snapshot/hash must remain unchanged.
+        var fingerprint=RegisterStorage.Hash(JsonSerializer.Serialize(new{kind,vessel,id,command},DailyOperationsEndpoints.Json));
         async Task<IResult?> Replay() {
             if(!await Current(h,kind,vessel,rights,id,authorityHash,authority.Id))return await Fail(h,403,"human_authority_required");
             var receipt=await db.DailyReviewReceipts.AsNoTracking().SingleOrDefaultAsync(r=>r.ActorId==actor.Id && r.Key==key,ct);
