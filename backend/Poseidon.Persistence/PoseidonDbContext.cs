@@ -33,6 +33,9 @@ public sealed class PoseidonDbContext(
     public DbSet<DailyOperation> DailyOperations => Set<DailyOperation>();
     public DbSet<DailyOperationRevision> DailyOperationRevisions => Set<DailyOperationRevision>();
     public DbSet<DailyOperationReceipt> DailyOperationReceipts => Set<DailyOperationReceipt>();
+    public DbSet<DailyReviewHead> DailyReviewHeads => Set<DailyReviewHead>();
+    public DbSet<DailyReviewEvent> DailyReviewEvents => Set<DailyReviewEvent>();
+    public DbSet<DailyReviewReceipt> DailyReviewReceipts => Set<DailyReviewReceipt>();
     public DbSet<OfflineEnrollment> OfflineEnrollments => Set<OfflineEnrollment>();
     public DbSet<OfflineLifecycle> OfflineLifecycles => Set<OfflineLifecycle>();
     public DbSet<OfflineOutcome> OfflineOutcomes => Set<OfflineOutcome>();
@@ -116,6 +119,10 @@ public sealed class PoseidonDbContext(
         model.Entity<DailyOfflineEnrollment>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<DailyOfflineLifecycle>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<DailyOfflineOutcome>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        DailyReviewStorage.Configure(model);
+        model.Entity<DailyReviewHead>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<DailyReviewEvent>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<DailyReviewReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<DailyOperation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<DailyOperationRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<DailyOperationReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -438,6 +445,12 @@ public sealed class PoseidonDbContext(
             throw new InvalidOperationException("Daily offline ownership and key identity are immutable.");
         if (changes.Any(e => e.Entity is DailyOperationRevision or DailyOperationReceipt && e.State != EntityState.Added))
             throw new InvalidOperationException("Daily operation history and command outcomes are immutable.");
+        if (changes.Any(e => e.Entity is DailyReviewEvent or DailyReviewReceipt && e.State != EntityState.Added))
+            throw new InvalidOperationException("Recorded daily human review provenance is immutable.");
+        if (changes.Any(e => e.Entity is DailyReviewHead && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
+            (e.Properties.Any(p => p.IsModified && p.Metadata.Name != "Sequence") ||
+                (long)e.Property("Sequence").CurrentValue! != (long)e.Property("Sequence").OriginalValue! + 1))))
+            throw new InvalidOperationException("Daily review ownership is immutable; append one event.");
         if (changes.Any(e => e.Entity is DailyOperation && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
             (e.Properties.Any(p => p.IsModified && p.Metadata.Name is not ("FieldsJson" or "Hash" or "Provenance" or "ActorId" or "SavedAt" or "Revision")) ||
                 (long)e.Property("Revision").CurrentValue! != (long)e.Property("Revision").OriginalValue! + 1))))
@@ -561,6 +574,7 @@ public sealed class PoseidonDbContext(
                 Action = entry.State.ToString(), EntityType = entry.Metadata.ClrType.Name,
                 EntityId = entry.Entity is CommandReceipt receipt ? receipt.ResourceId.ToString() :
                     entry.Entity is DailyOperationReceipt dailyReceipt ? dailyReceipt.RecordId.ToString() :
+                    entry.Entity is DailyReviewReceipt reviewReceipt ? reviewReceipt.RecordId.ToString() :
                     entry.Entity is ApplicabilityReceipt applicabilityReceipt ? applicabilityReceipt.ResourceId.ToString() :
                     entry.Entity is HumanReviewReceipt humanReceipt ? humanReceipt.ResourceId.ToString() :
                     entry.Entity is RegulatoryQualificationReceipt regulatoryReceipt ? regulatoryReceipt.RuleId.ToString() :
@@ -589,6 +603,13 @@ public sealed class PoseidonDbContext(
                     e.Entity.Kind == dailyOutcome.Kind && e.Entity.Id == dailyOutcome.RecordId)?.Entity;
                 events[^1].AfterVersion = saved?.Version;
                 events[^1].AfterRevision = saved?.Revision;
+            }
+            if (entry.Entity is DailyReviewReceipt reviewOutcome) {
+                var saved = ChangeTracker.Entries<DailyReviewHead>().SingleOrDefault(e => e.State == EntityState.Unchanged &&
+                    e.Entity.TenantId == reviewOutcome.TenantId && e.Entity.VesselId == reviewOutcome.VesselId &&
+                    e.Entity.Kind == reviewOutcome.Kind && e.Entity.RecordId == reviewOutcome.RecordId)?.Entity;
+                events[^1].AfterVersion = saved?.Version;
+                events[^1].AfterRevision = saved?.Sequence;
             }
         }
         AuditEvents.AddRange(events);

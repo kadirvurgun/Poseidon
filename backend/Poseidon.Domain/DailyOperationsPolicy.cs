@@ -86,5 +86,5 @@ public static class DailyOperationsPolicy
     }
     public static string[] Blockers(string kind, IReadOnlyDictionary<string, DailyValue> fields) =>
         Schema(kind).Where(f => f.Required && !f.ReadOnly && (!fields.TryGetValue(f.Key,out var value) || value.State != "Known"))
-            .Select(f => "REQUIRED_" + f.Key.ToUpperInvariant()).Concat(["UNVERIFIED_DECLARATION", "HUMAN_REVIEW_AUTHORITY_UNAVAILABLE", "OFFLINE_POLICY_UNAVAILABLE"]).ToArray();
+            .Select(f => "REQUIRED_" + f.Key.ToUpperInvariant()).Concat(["UNVERIFIED_DECLARATION", "HUMAN_REVIEW_NOT_RECORDED", "OFFLINE_POLICY_UNAVAILABLE"]).ToArray();
 }

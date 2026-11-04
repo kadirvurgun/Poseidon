@@ -37,11 +37,11 @@ public sealed partial class DirectoryWorkspaceTests
         await using var host = Host();
         var endpoints = host.Services.GetRequiredService<EndpointDataSource>().Endpoints;
         var observed = S1SecurityContract.ValidateEndpointInventory(endpoints);
-        // S5 adds six ordinary daily drafts and two daily offline templates (seven operations). Historical S1/S4 native
+        // S5 adds six ordinary drafts, three human reviews and two offline templates (seven operations). Historical S1/S4 native
         // receipts remain unchanged; this is the new source-authored denominator.
-        Assert.Equal(94, observed.Count);
-        Assert.Equal(88, observed.Count(x => x.IsCritical));
-        Assert.Equal(98, S1SecurityContract.CriticalOperationIds.Count);
+        Assert.Equal(97, observed.Count);
+        Assert.Equal(91, observed.Count(x => x.IsCritical));
+        Assert.Equal(101, S1SecurityContract.CriticalOperationIds.Count);
         Assert.Equal(6, observed.Count(x => !x.IsCritical));
         var extra = new RouteEndpoint(_ => Task.CompletedTask, RoutePatternFactory.Parse("/api/v1/unclassified-write"), 0,
             new EndpointMetadataCollection(new HttpMethodMetadata(["POST"]), new AuthorizeAttribute("DirectoryRead")), "unclassified");

@@ -5131,6 +5131,47 @@ namespace Poseidon.Persistence.Migrations
                 b.HasIndex("TenantId","ActorId","ParentCommandId").HasDatabaseName("UX_DailyOfflineOutcome_Resolution").IsUnique().HasFilter("\"ParentCommandId\" IS NOT NULL");
                 b.ToTable("DailyOutcomes","offline",t=>t.HasCheckConstraint("CK_DailyOfflineOutcome_State","\"Kind\" IN ('Noon','Deck','Engine') AND \"BaseVersion\" >= 0 AND \"ServerVersion\" >= 0 AND \"Revision\" >= 0 AND \"Result\" IN ('Committed','MaterialConflict') AND (\"Result\" <> 'Committed' OR (\"ServerVersion\" > 0 AND \"Revision\" > 0))"));
             });
+            modelBuilder.Entity("Poseidon.Persistence.DailyReviewHead",b=> {
+                b.Property<Guid>("TenantId").HasColumnType("uuid");b.Property<Guid>("VesselId").HasColumnType("uuid");b.Property<Guid>("RecordId").HasColumnType("uuid");
+                b.Property<string>("Kind").IsRequired().HasMaxLength(12).HasColumnType("character varying(12)");b.Property<long>("Sequence").HasColumnType("bigint");
+                b.Property<uint>("Version").IsConcurrencyToken().ValueGeneratedOnAddOrUpdate().HasColumnType("xid").HasColumnName("xmin");
+                b.HasKey("TenantId","RecordId");b.HasAlternateKey("TenantId","VesselId","Kind","RecordId");
+                b.ToTable("DailyReviewHeads","operations",t=>t.HasCheckConstraint("CK_DailyReviewHead_Sequence","\"Sequence\" > 0"));
+                b.HasOne("Poseidon.Persistence.DailyOperation",null).WithMany().HasForeignKey("TenantId","VesselId","Kind","RecordId")
+                    .HasPrincipalKey("TenantId","VesselId","Kind","Id").HasConstraintName("FK_DailyReviewHead_Record").OnDelete(DeleteBehavior.Restrict).IsRequired();
+            });
+            modelBuilder.Entity("Poseidon.Persistence.DailyReviewEvent",b=> {
+                b.Property<string>("AuthorityJson").IsRequired().HasColumnType("text");
+                b.Property<Guid>("TenantId").HasColumnType("uuid");b.Property<Guid>("VesselId").HasColumnType("uuid");b.Property<Guid>("RecordId").HasColumnType("uuid");b.Property<Guid>("Id").HasColumnType("uuid");
+                b.Property<string>("Kind").IsRequired().HasMaxLength(12).HasColumnType("character varying(12)");
+                b.Property<long>("RecordRevision").HasColumnType("bigint");b.Property<long>("Sequence").HasColumnType("bigint");
+                b.Property<long>("RecordVersion").HasColumnType("bigint");b.Property<long>("ReviewVersion").HasColumnType("bigint");
+                b.Property<Guid>("ActorId").HasColumnType("uuid");b.Property<Guid>("RoleId").HasColumnType("uuid");b.Property<Guid>("AuthorityId").HasColumnType("uuid");
+                b.Property<string>("Duty").IsRequired().HasMaxLength(24).HasColumnType("character varying(24)");
+                b.Property<string>("Decision").IsRequired().HasMaxLength(16).HasColumnType("character varying(16)");
+                b.Property<string>("ReasonCode").IsRequired().HasMaxLength(32).HasColumnType("character varying(32)");
+                b.Property<string>("Rationale").IsRequired().HasMaxLength(2000).HasColumnType("character varying(2000)");
+                b.Property<string>("SourceVersion").IsRequired().HasMaxLength(160).HasColumnType("character varying(160)");
+                b.Property<string>("AuthorityHash").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");
+                b.Property<string>("RecordHash").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");b.Property<DateTimeOffset>("SavedAt").HasColumnType("timestamp with time zone");
+                b.HasKey("TenantId","Id");b.HasAlternateKey("TenantId","VesselId","Kind","RecordId","Id");
+                b.HasIndex("TenantId","RecordId","Sequence").IsUnique();b.HasIndex("TenantId","RecordId","RecordRevision");
+                b.ToTable("DailyReviewEvents","operations",t=>t.HasCheckConstraint("CK_DailyReviewEvent_State",
+                    "\"Sequence\" > 0 AND \"RecordVersion\" > 0 AND \"ReviewVersion\" > 0 AND \"ActorId\" <> '00000000-0000-0000-0000-000000000000'::uuid AND ((\"Kind\" = 'Noon' AND \"Decision\" = 'REVIEWED' AND \"Duty\" = 'Master') OR (\"Kind\" = 'Deck' AND \"Decision\" IN ('REVIEWED','RETURNED') AND \"Duty\" IN ('Master','ChiefOfficer')) OR (\"Kind\" = 'Engine' AND \"Decision\" IN ('REVIEWED','RETURNED') AND \"Duty\" = 'ChiefEngineer'))"));
+                b.HasOne("Poseidon.Persistence.DailyReviewHead",null).WithMany().HasForeignKey("TenantId","VesselId","Kind","RecordId")
+                    .HasPrincipalKey("TenantId","VesselId","Kind","RecordId").HasConstraintName("FK_DailyReviewEvent_Head").OnDelete(DeleteBehavior.Restrict).IsRequired();
+                b.HasOne("Poseidon.Persistence.DailyOperationRevision",null).WithMany().HasForeignKey("TenantId","RecordId","RecordRevision")
+                    .HasPrincipalKey("TenantId","RecordId","Revision").HasConstraintName("FK_DailyReviewEvent_Revision").OnDelete(DeleteBehavior.Restrict).IsRequired();
+            });
+            modelBuilder.Entity("Poseidon.Persistence.DailyReviewReceipt",b=> {
+                b.Property<Guid>("TenantId").HasColumnType("uuid");b.Property<Guid>("VesselId").HasColumnType("uuid");b.Property<Guid>("ActorId").HasColumnType("uuid");b.Property<Guid>("RecordId").HasColumnType("uuid");b.Property<Guid>("EventId").HasColumnType("uuid");
+                b.Property<string>("Key").IsRequired().HasMaxLength(80).HasColumnType("character varying(80)");b.Property<string>("Kind").IsRequired().HasMaxLength(12).HasColumnType("character varying(12)");
+                b.Property<string>("Fingerprint").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");b.Property<string>("OutcomeJson").IsRequired().HasColumnType("text");
+                b.Property<DateTimeOffset>("SavedAt").HasColumnType("timestamp with time zone");b.HasKey("TenantId","ActorId","Key");b.HasIndex("TenantId","VesselId","Kind","RecordId","EventId");
+                b.ToTable("DailyReviewReceipts","operations");
+                b.HasOne("Poseidon.Persistence.DailyReviewEvent",null).WithMany().HasForeignKey("TenantId","VesselId","Kind","RecordId","EventId")
+                    .HasPrincipalKey("TenantId","VesselId","Kind","RecordId","Id").HasConstraintName("FK_DailyReviewReceipt_Event").OnDelete(DeleteBehavior.Restrict).IsRequired();
+            });
 #pragma warning restore 612, 618
         }
     }
