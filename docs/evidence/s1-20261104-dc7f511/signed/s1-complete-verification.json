@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "poseidon.s1-isolated-signed-verification.v1",
+  "status": "PASS_FRESH_122_PENDING_INDEPENDENT_QA",
+  "accepted": false,
+  "targetCommit": "dc7f5117fb99a962d70a54b1f12f2c118f1cca66",
+  "targetTree": "e8843d8fb0bffd56a6d7955dfc286b8113a09bfd",
+  "startedAt": "2026-11-04T15:21:42.994460+00:00",
+  "rawOutputPersisted": false,
+  "providerChanged": false,
+  "oldPrivateChanged": false,
+  "commands": [
+    {
+      "name": "run-login.py",
+      "exitCode": 0,
+      "seconds": 58.926,
+      "outputSha256": "818ce0f8d7bbc639238bca1546f364ba97887b63830d122e435427efaa37818f"
+    },
+    {
+      "name": "run-login.py",
+      "exitCode": 0,
+      "seconds": 35.142,
+      "outputSha256": "f6123892e5d25b9609f5b1aaa541f46c6c1ae578ef5ea828c6a2efbabf2475d4"
+    },
+    {
+      "name": "run-login.py",
+      "exitCode": 0,
+      "seconds": 19.334,
+      "outputSha256": "a246d886a47418e9cb3642a1195d246bd92b55b50b1cd6ff3761663bccc84407"
+    },
+    {
+      "name": "freeze_target.py",
+      "exitCode": 0,
+      "seconds": 4.976,
+      "outputSha256": "bccf9ae338a43b7805b65c335aab10f234659ecde51667659cc4578f7a010c77"
+    },
+    {
+      "name": "final-run.py",
+      "exitCode": 0,
+      "seconds": 1584.773,
+      "outputSha256": "48b57ed7735c429f2a299885b661786a1bb0fc703fbaf97de157cc72a8ebaad7"
+    }
+  ],
+  "passed": 122,
+  "failed": 0,
+  "pending": 0,
+  "skipped": 0,
+  "projects": {
+    "firefox-desktop": 61,
+    "firefox-narrow-responsive": 61
+  },
+  "baseline": "2_GENUINE_SIGNED_LOGINS",
+  "tls": "3_NATIVE_REJECTIONS",
+  "freshFixtureDatabase": true,
+  "finalCatalogState": "Original final catalog journeys withdraw both synthetic catalogs",
+  "ledgerSha256": "5ba90ac581dfd486985acfb5aea69ee977290b9b97676a36d22d758fb85e4e69",
+  "previewRestored": true,
+  "originalPrivatePreserved": true,
+  "requestedUserPreviewConfigurationPreserved": true,
+  "finishedAt": "2026-11-04T15:50:30.403563+00:00",
+  "seconds": 1727.389
+}

@@ -1,0 +1,106 @@
+{
+  "schemaVersion": "poseidon.s1-closed-api-artifact-verification.v1",
+  "target": {
+    "commit": "4978bee7c292858bf36a989c984ec5a31cc8abc4",
+    "tree": "f6fc292ad5d7e4402ab244c005567b6621614ade"
+  },
+  "githubRunId": 41609476218,
+  "branch": "foundation/s1-security-foundation-20261103",
+  "event": "push",
+  "status": "FAILED_OR_UNPROVEN_WITH_ACTUAL_ARTIFACT",
+  "nativeScopes": [
+    {
+      "scope": "unit",
+      "status": "PASS_EXACT_DISCOVERED_SCOPE",
+      "nativeDiscovered": 137,
+      "countObservations": {
+        "total": [
+          137
+        ],
+        "failed": [
+          0
+        ],
+        "succeeded": [
+          137
+        ],
+        "skipped": [
+          0
+        ]
+      },
+      "exactPass": true,
+      "elapsedSeconds": 2.449,
+      "failedStaticTestNames": [],
+      "failureSourceLocations": [],
+      "sha256": "ce16b188ca6dd88d4ba82125cc30aac4e430794952cc709d04bb8d030145c492"
+    },
+    {
+      "scope": "integration",
+      "status": "FAILED_OR_UNPROVEN",
+      "nativeDiscovered": 580,
+      "countObservations": {
+        "total": [
+          580
+        ],
+        "failed": [
+          3
+        ],
+        "succeeded": [
+          577
+        ],
+        "skipped": [
+          0
+        ]
+      },
+      "exactPass": false,
+      "elapsedSeconds": 726.676,
+      "failedStaticTestNames": [
+        "All_current_mutation_routes_deny_anonymous_or_forged_IdP_privileges_without_business_effects",
+        "Every_current_critical_write_requires_a_real_server_role_even_when_read_scope_is_valid"
+      ],
+      "failureSourceLocations": [
+        {
+          "file": "S1ScopeCoverageTests.cs",
+          "line": 78
+        },
+        {
+          "file": "S1ScopeCoverageTests.cs",
+          "line": 85
+        },
+        {
+          "file": "S1ScopeCoverageTests.cs",
+          "line": 94
+        },
+        {
+          "file": "S1ScopeCoverageTests.cs",
+          "line": 109
+        },
+        {
+          "file": "S1ScopeCoverageTests.cs",
+          "line": 115
+        }
+      ],
+      "sha256": "01d08dd3799b314248fbdd063c68f648de9725d107252e54c526d78f7aa8645a"
+    }
+  ],
+  "coverage": {},
+  "captureRunId": "c4d814b4a4b74486b38532c3b310050b",
+  "contractSha256": "5f308fe334162b5b9224476201c2c81e37dd815627168abb1b40f15435ec4429",
+  "captureCount": 556,
+  "allCaptureBindingsExact": true,
+  "sourceParserReplayEqual": false,
+  "sourceParserSha256": "b81bcb44cbde9fc9ade6ad7a20d47d72ecd3564e978d7ceeef455c2012f7eeb7",
+  "replaySha256": "23dfe79f173f1c3ddedafff8f07a838a9b5e22cc44583234df3fc37e74c9ce36",
+  "artifactMetadataSha256": "c7c37cf7f5c550cafec82eac417d6101fd751a5aabcf2e73d14fdf6f05d8599e",
+  "artifact": {
+    "id": 13218428850,
+    "name": "api-test-counts",
+    "size_in_bytes": 462647,
+    "digest": "sha256:370d55990530aa91faae0d0db559f34f9b1105bd3c186a48af088419c47fd205",
+    "expired": false
+  },
+  "archiveSha256": "370d55990530aa91faae0d0db559f34f9b1105bd3c186a48af088419c47fd205",
+  "rawValueFreeBytesPreserved": true,
+  "rawLogsOrAuditValuesPersisted": false,
+  "localTestsOrProvidersRun": false,
+  "accepted": false
+}

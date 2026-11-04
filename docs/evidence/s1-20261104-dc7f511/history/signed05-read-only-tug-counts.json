@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "poseidon.s1.failed-fixture-tug-row-diagnostic.v1",
+  "accepted": false,
+  "readOnly": true,
+  "oldAuthorityRenewed": false,
+  "rawOutputPersisted": false,
+  "status": "READ_ONLY_COUNTS_OBSERVED",
+  "counts": {
+    "configuredEligible": 2,
+    "existingEligible": 1
+  },
+  "productionRowsChanged": false,
+  "policySourceSha256": "d03e84cd540c72bda22ac07be86e87773e69e28bbf8076cc41e1c393eec306cc",
+  "failedScope": "9 case identities each in two projects;3Tug identities failplanningoptions same assertionline",
+  "ownedDatabaseRestopped": true,
+  "observedAt": "2026-11-04T15:11:17.202431+00:00"
+}

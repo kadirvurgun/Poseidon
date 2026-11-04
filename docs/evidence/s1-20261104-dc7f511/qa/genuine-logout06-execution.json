@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "poseidon.s1.genuine-logout-execution.v1",
+  "status": "PASS_ONE_GENUINE_PROVIDER_LOGOUT",
+  "startedAt": "2026-11-04T15:51:42.038198+00:00",
+  "target": {
+    "commit": "dc7f5117fb99a962d70a54b1f12f2c118f1cca66",
+    "tree": "e8843d8fb0bffd56a6d7955dfc286b8113a09bfd"
+  },
+  "separateFrom122": true,
+  "planned": 1,
+  "automaticRetries": 0,
+  "rawOutputPersisted": false,
+  "sourceSha256": {
+    "run_genuine_logout_once06.py": "1639db9798aa2ffd95200cb896c1ae9d2513fa18727a10e054400f3f01254530",
+    "genuine_logout_once06.mjs": "805c3081ef90183317070b598e4708c2507db3a03d23bb55267ff34b0c0e215b",
+    "api_partition.py": "2b650aff80c6e75183f86069d7beef9ed97125ebb9a078bfbea8664f931a9408",
+    "journeys.ts": "7ae36996d4462201d15fa9bbbeca657a4338e14435162f31a52fda3eea2677ad",
+    "strict-browser.ts": "c42f5269f2eec85baf40561ee66d1e4e35dfa17112410b47d01672d709715a44"
+  },
+  "signedCompleteSha256": "4f10f7286feab1ad64e89591f6d6a0e13126fcff809951ed610075f915035d24",
+  "exitCode": 0,
+  "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "ownedProcessTreeClosed": true,
+  "nativeEvidenceSha256": "6feeecaff599ccbe9ba69ceb24ef169cb5fd54f8988ba9cf4afbb27397e47569",
+  "originalPrivateAndRequestedUserConfigurationPreserved": true,
+  "finishedAt": "2026-11-04T15:52:01.205532+00:00",
+  "seconds": 19.159
+}

@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "poseidon.s1.independent-failed-fixture-diagnostic.v1",
+  "reviewer": "/root/s1_resume_evidence_qa",
+  "observedAt": "2026-11-03T20:09:50.985462+00:00",
+  "status": "ACTUAL_CONFIG_INVALID_FOR_UNCHANGED_PRODUCTION_KEY_ID_LIMIT",
+  "accepted": false,
+  "configurationSha256": "32d263a4170477e1e6a8b9eeea545c65b11cd0347ca670aba4afb1a1e915e8f5",
+  "sourceSha256": "6c4af60751fa69860b859519357cbdd6dd787ebc6d44cadd2daba38f61cb4d88",
+  "fixtureAuthorSourceSha256": "bcc6c838555e080896d0f9e413f0f59f90ad97d0f8807abe9737328423fb5e1e",
+  "facts": {
+    "actualActiveKeyIdLength": 45,
+    "productionMaximumLength": 40,
+    "keyReferenceContainsActiveId": true,
+    "productionStorageConfiguredExpressionResult": false,
+    "productionPolicyValidMustBeFalse": true,
+    "productionAllFieldRulesMustBeNull": true
+  },
+  "sourceLocators": {
+    "fixtureKeyConstruction": "signed-attempt-05/s1_session.py:364",
+    "productionStorageCondition": "backend/Poseidon.Api/CrewProfilePolicy.cs:23",
+    "productionPolicyCondition": "backend/Poseidon.Api/CrewProfilePolicy.cs:25",
+    "productionRuleDenial": "backend/Poseidon.Api/CrewProfilePolicy.cs:31",
+    "protectedReadNoFieldDenial": "backend/Poseidon.Api/CrewProfileEndpoints.cs:45"
+  },
+  "actualFailedHttpStatus": "UNAVAILABLE_IN_ISSUED_CASE_RECEIPT",
+  "diagnosis": "Fresh fixture creates45-character key IDs while unchanged production allows at most40. Correct a new isolated fixture ID, keep production limit and all signed05 issued outcomes unchanged.",
+  "reviewerExecutedTestsProvidersOrBrowser": false,
+  "privateValuesOrIdsExported": false
+}
