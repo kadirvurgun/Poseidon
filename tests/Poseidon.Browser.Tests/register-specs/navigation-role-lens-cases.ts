@@ -6,9 +6,21 @@ async function english(page: Page) { await page.getByRole('button', { name: 'EN'
 async function menu(page: Page) {
   const drawer = page.getByRole('button', { name: 'Menu', exact: true })
   if (await drawer.isVisible() && await drawer.getAttribute('aria-expanded') === 'false') await drawer.click()
-  const workView = page.locator('summary').filter({ hasText: /^Work view$/ })
-  if (await workView.locator('..').getAttribute('open') === null) await workView.click()
-  return page.getByRole('region', { name: 'Role navigation', exact: true })
+  return page.locator('#workspace-navigation')
+}
+const labels: Record<string, string> = {
+  today: 'Today', fleet: 'Fleet', companies: 'Companies', crew: 'Crew', equipment: 'Equipment',
+  maintenance: 'Maintenance plans', import: 'Controlled import', audit: 'Action history',
+  sources: 'Sources', requirements: 'Requirements', 'tug-command': 'Tug command',
+  'tug-job-board': 'Job board', 'tug-job-intake': 'Job intake',
+}
+async function expectPrimaryMenu(page: Page, items: { key: string; href: string }[]) {
+  const primary = page.locator('#workspace-navigation')
+  await expect(primary.locator('.enterprise-nav-item')).toHaveCount(items.length)
+  for (const item of items) {
+    expect(labels[item.key], `No controlled menu label for ${item.key}`).toBeTruthy()
+    await expect(primary.getByRole('button', { name: labels[item.key], exact: true })).toBeVisible()
+  }
 }
 async function projection(page: Page, vessel: string) {
   const response = await page.request.get(`/api/v1/workspace/lenses/${vessel}`)
@@ -35,12 +47,11 @@ async function sharedFamilies(page: Page) {
     const current = await projection(page, vessel)
     await page.goto(href); await english(page)
     const region = await menu(page), select = region.getByRole('combobox', { name: 'Menu lens', exact: true })
-    await expect(select).toHaveValue('')
-    await select.selectOption(current.lenses[0].reference)
-    await expect(region.getByRole('navigation', { name: 'Daily work menu', exact: true }).getByRole('button')).toHaveCount(current.lenses[0].items.length)
+    await expect(select).toHaveValue(current.lenses[0].reference)
+    await expectPrimaryMenu(page, current.lenses[0].items)
     if (current.mode === 'Ship') expect(current.lenses.every(l => l.items.every(i => !i.key.startsWith('tug-')))).toBe(true)
     await select.selectOption(current.lenses[1].reference)
-    await expect(region.getByRole('navigation', { name: 'Daily work menu', exact: true }).getByRole('button')).toHaveCount(current.lenses[1].items.length)
+    await expectPrimaryMenu(page, current.lenses[1].items)
     await select.focus(); await expect(select).toBeFocused()
     await page.keyboard.press('ArrowUp')
     // Reopening and presentation changes cannot alter scope at the server.
