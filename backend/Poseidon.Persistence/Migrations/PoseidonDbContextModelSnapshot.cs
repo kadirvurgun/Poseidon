@@ -5000,7 +5000,7 @@ namespace Poseidon.Persistence.Migrations
             modelBuilder.Entity("Poseidon.Persistence.NotificationEpisode", b => {
                 b.Property<Guid>("TenantId").HasColumnType("uuid"); b.Property<Guid>("VesselId").HasColumnType("uuid");
                 b.Property<Guid>("PlanId").HasColumnType("uuid"); b.Property<long>("Episode").HasColumnType("bigint");
-                b.Property<bool?>("Active").HasColumnType("boolean");
+                b.Property<bool?>("Active").HasColumnType("boolean"); b.Property<bool?>("LastKnownActive").HasColumnType("boolean");
                 b.Property<string>("RuleKey").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");
                 b.Property<string>("PolicyDigest").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");
                 b.Property<string>("SourceContextHash").HasMaxLength(64).HasColumnType("character varying(64)");
@@ -5008,7 +5008,7 @@ namespace Poseidon.Persistence.Migrations
                 b.Property<uint>("Version").IsConcurrencyToken().ValueGeneratedOnAddOrUpdate().HasColumnType("xid").HasColumnName("xmin");
                 b.HasKey("TenantId", "VesselId", "PlanId", "RuleKey", "PolicyDigest");
                 b.ToTable("NotificationEpisodes", "engagement", t => t.HasCheckConstraint("CK_NotificationEpisode_State",
-                    "\"Revision\" > 0 AND \"Episode\" >= 0 AND (\"Active\" IS DISTINCT FROM TRUE OR (\"Episode\" > 0 AND \"SourceContextHash\" IS NOT NULL))"));
+                    "\"Revision\" > 0 AND \"Episode\" >= 0 AND (\"Active\" IS NULL OR \"Active\" IS NOT DISTINCT FROM \"LastKnownActive\") AND (\"Active\" IS DISTINCT FROM TRUE OR (\"Episode\" > 0 AND \"SourceContextHash\" IS NOT NULL))"));
                 b.HasOne("Poseidon.Persistence.MaintenancePlan", null).WithMany().HasForeignKey("TenantId", "VesselId", "PlanId")
                     .HasPrincipalKey("TenantId", "VesselId", "Id").HasConstraintName("FK_NotificationEpisode_Plan").OnDelete(DeleteBehavior.Restrict).IsRequired();
             });
