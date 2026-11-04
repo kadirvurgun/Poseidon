@@ -22,3 +22,10 @@ it.each([
 ])('rejects forged, duplicate, foreign or untyped capability destinations %#', value => {
   expect(() => decodeEnterpriseNavigation(value)).toThrow()
 })
+
+it('admits only exact server granted daily workspace destinations', () => {
+  const value = { ...source, destinations: [{ key: 'noon-report', href: '/app/noon-report' }, { key: 'engine-daily-log', href: '/app/engine-daily-log' }] }
+  expect(decodeEnterpriseNavigation(value).destinations).toEqual(value.destinations)
+  expect(decodeEnterpriseNavigation(source).destinations.some(item => item.key === 'noon-report')).toBe(false)
+  expect(() => decodeEnterpriseNavigation({ ...value, destinations: [{ key: 'noon-report', href: '/app/noon-report?role=admin' }] })).toThrow()
+})

@@ -1,4 +1,5 @@
 import { ImportWorkspace } from './product/ImportWorkspace'
+import { DailyReportWorkspace } from './product/DailyReportWorkspace'
 import { TugWorkspace } from './product/TugWorkspace'
 import { TechnicalWorkspace } from './product/TechnicalWorkspace'
 import { CrewWorkspace } from './product/CrewWorkspace'
@@ -41,6 +42,7 @@ const content = {
 }
 
 export function App() {
+  if (/^\/app\/(noon-report|deck-daily-log|engine-daily-log)(?:\/|$)/.test(window.location.pathname)) return <DailyReportWorkspace />
   if (window.location.pathname === '/app/system-health') return <SystemHealthWorkspace />
   if (window.location.pathname === '/app/notification-escalation') return <NotificationWorkspace />
   const importer = /^\/app\/excel-migration\/([0-9a-fA-F-]{36})\/?$/.exec(window.location.pathname)

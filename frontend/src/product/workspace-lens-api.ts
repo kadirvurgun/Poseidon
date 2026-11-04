@@ -5,6 +5,7 @@ export type LensItem = { key: string; href: string; group: 'daily' | 'review' }
 export type Lens = { reference: string; tr: string; en: string; items: LensItem[] }
 export type Lenses = { tenantId: string; actorId: string; vesselId: string | null; mode: 'Fleet' | 'Ship' | 'Tug'; state: 'Configured' | 'Missing' | 'Unavailable'; version: string | null; lenses: Lens[]; canSearch: boolean }
 export const lensLabels: Record<string, readonly [string, string]> = {
+  'noon-report': ['Öğle raporu', 'Noon report'], 'deck-daily-log': ['Güverte günlük kaydı', 'Deck daily log'], 'engine-daily-log': ['Makine günlük kaydı', 'Engine daily log'],
   today: ['Bugün', 'Today'], fleet: ['Filo', 'Fleet'], companies: ['Şirketler', 'Companies'], crew: ['Mürettebat', 'Crew'],
   equipment: ['Ekipman', 'Equipment'], maintenance: ['Bakım planları', 'Maintenance plans'], import: ['Kontrollü içe aktarma', 'Controlled import'],
   audit: ['İşlem geçmişi', 'Action history'], sources: ['Kaynak taslakları', 'Source drafts'], requirements: ['Gereksinim taslakları', 'Requirement drafts'],
@@ -13,6 +14,7 @@ export const lensLabels: Record<string, readonly [string, string]> = {
 const root: Record<string, string> = { crew: 'crew-roster', equipment: 'equipment-hierarchy', maintenance: 'maintenance-plan', import: 'excel-migration' }
 export function lensHref(key: string, vessel: string | null) {
   if (!Object.hasOwn(lensLabels, key)) return null
+  if (['noon-report', 'deck-daily-log', 'engine-daily-log'].includes(key)) return vessel ? `/app/${key}/${vessel}` : `/app/${key}`
   if (Object.hasOwn(root, key)) return vessel ? `/app/${root[key]}/${vessel}` : null
   return `/app/${key}${vessel && key.startsWith('tug-') ? `?vessel=${vessel}` : vessel && key === 'today' ? `/${vessel}` : ''}`
 }
@@ -29,7 +31,7 @@ export function decodeLenses(value: unknown, tenant: string, actor: string, vess
   const lenses: Lens[] = []
   for (const row of value.lenses) {
     if (!object(row) || !isGuid(row.reference) || lenses.some(x => x.reference === String(row.reference).toLowerCase()) ||
-      !text(row.tr, 200) || !text(row.en, 200) || !Array.isArray(row.items) || row.items.length > 13) invalid()
+      !text(row.tr, 200) || !text(row.en, 200) || !Array.isArray(row.items) || row.items.length > 16) invalid()
     const items: LensItem[] = []
     for (const item of row.items) {
       if (!object(item) || typeof item.key !== 'string' || !Object.hasOwn(lensLabels, item.key) || typeof item.href !== 'string' || items.some(x => x.key === item.key) ||
