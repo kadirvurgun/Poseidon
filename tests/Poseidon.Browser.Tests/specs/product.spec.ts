@@ -42,8 +42,12 @@ test('product navigation is keyboard accessible and direct technical route is pr
     await expect(brand).toBeFocused()
     const workView = drawer.locator('summary').filter({ hasText: /^Çalışma görünümü$/ })
     const workViewDisclosure = drawer.locator('details').filter({ has: page.locator('summary').filter({ hasText: /^Çalışma görünümü$/ }) })
-    await expect(workViewDisclosure).toHaveJSProperty('open', false)
+    // The active menu lens stays visible by default; the disclosure must still
+    // support pointer interaction and close before the keyboard boundary check.
+    await expect(workViewDisclosure).toHaveJSProperty('open', true)
     // A real pointer must reach the summary above the mobile navigation overlay.
+    await workView.click()
+    await expect(workViewDisclosure).toHaveJSProperty('open', false)
     await workView.click()
     await expect(workViewDisclosure).toHaveJSProperty('open', true)
     await workView.click()
