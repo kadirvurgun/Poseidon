@@ -2,6 +2,7 @@ import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { ApiError } from '../api'
+import type { DailyPending, DailyOfflineOutcome } from './daily-offline-contract'
 import { DailyOfflinePanel } from './DailyOfflinePanel'
 import { dailyOfflineFixture, dailyCaptureFixture, offlineDailyCommand } from './daily-offline.test-fixture'
 const mock = vi.hoisted(() => ({ authorize: vi.fn(), inventory: vi.fn(), lifecycle: vi.fn(), cleanup: vi.fn(), shell: vi.fn() }))
@@ -94,8 +95,66 @@ it('holds never-captured edits privately through withdrawal and restores them on
   expect(await screen.findByDisplayValue('-0.001')).toBeVisible(); expect(app.capture).not.toHaveBeenCalled()
 })
 it('distinguishes an audited keep-server outcome from a newly committed report revision', async () => {
-  app.captures.mockResolvedValue([{ ...pending(), outcome: { result: 'ServerRetained' } }])
+  app.captures.mockResolvedValue(resolvedRows('ServerRetained'))
   render(<DailyOfflinePanel {...props()} />); await authorize()
   expect(await screen.findByText('Server retained · no report revision added')).toBeVisible()
   expect(screen.queryByText('Server committed')).not.toBeInTheDocument()
+})
+
+function resolvedRows(result: 'Committed' | 'ServerRetained'): DailyPending[] {
+  const context = dailyOfflineFixture(), parent = pending(), childId = '77777777-7777-4777-8777-777777777777'
+  const parentOutcome: DailyOfflineOutcome = { commandId: parent.commandId, recordId: context.recordId, kind: context.kind, result: 'MaterialConflict', baseVersion: 0, serverVersion: 7, revision: 1, parentCommandId: null, receivedAt: '2026-11-05T00:02:00Z' }
+  const childBody = { ...dailyCaptureFixture(), commandId: childId, fields: {}, baseVersion: 7, parentCommandId: parent.commandId, expectedServerVersion: 7,
+    choice: result === 'ServerRetained' ? 'keepServer' : 'useCaptured', reasonCode: result === 'ServerRetained' ? 'CURRENT_SERVER_RETAINED' : 'INPUT_CORRECTED' }
+  return [Object.freeze({ ...parent, outcome: Object.freeze(parentOutcome) }), { commandId: childId, revision: 2, body: JSON.stringify(childBody),
+    outcome: { ...parentOutcome, commandId: childId, result, baseVersion: 7, serverVersion: result === 'Committed' ? 8 : 7, revision: result === 'Committed' ? 2 : 1, parentCommandId: parent.commandId } }]
+}
+it.each(['Committed', 'ServerRetained'] as const)('settles the immutable parent with a retained %s child and releases the panel guard', async result => {
+  const rows = resolvedRows(result), original = JSON.stringify(rows[0]), p = props()
+  app.captures.mockResolvedValue(rows); render(<DailyOfflinePanel {...p} />); await authorize()
+  expect(screen.getByText('Pending daily commands: 0')).toBeVisible()
+  expect(screen.getByText('Conflict resolved · original outcome retained')).toBeVisible()
+  expect(screen.queryByText('Human conflict resolution required')).not.toBeInTheDocument()
+  expect(screen.queryByRole('button', { name: 'Review conflict' })).not.toBeInTheDocument()
+  await waitFor(() => expect(p.onDirty).toHaveBeenLastCalledWith(false))
+  expect(rows[0].outcome?.result).toBe('MaterialConflict'); expect(JSON.stringify(rows[0])).toBe(original)
+  await userEvent.click(screen.getByRole('button', { name: 'Lock retained data' }))
+  expect(p.onDirty).toHaveBeenLastCalledWith(false)
+})
+it('keeps an unresolved parent and its unconfirmed child pending, then settles only after that exact child commits', async () => {
+  const terminal = resolvedRows('Committed'), child = { ...terminal[1], outcome: undefined }, p = props()
+  app.captures.mockResolvedValue([terminal[0], child]); app.replay.mockResolvedValue(terminal[1].outcome)
+  render(<DailyOfflinePanel {...p} />); await authorize()
+  expect(screen.getByText('Pending daily commands: 2')).toBeVisible(); expect(p.onDirty).toHaveBeenLastCalledWith(true)
+  expect(screen.getByRole('button', { name: 'Review conflict' })).toBeVisible()
+  app.captures.mockResolvedValue(terminal)
+  await userEvent.click(screen.getByRole('button', { name: 'Send exact queued command' }))
+  await waitFor(() => expect(screen.getByText('Pending daily commands: 0')).toBeVisible())
+  expect(p.onDirty).toHaveBeenLastCalledWith(false); expect(terminal[0].outcome?.result).toBe('MaterialConflict')
+})
+it('a newly unconfirmed command remains pending after its unrelated retained conflict lineage is resolved', async () => {
+  const rows = resolvedRows('ServerRetained'), unknownId = '88888888-8888-4888-8888-888888888888', p = props()
+  app.captures.mockResolvedValue([...rows, { commandId: unknownId, revision: 1, body: JSON.stringify({ ...dailyCaptureFixture(), commandId: unknownId }) }])
+  render(<DailyOfflinePanel {...p} />); await authorize()
+  expect(screen.getByText('Pending daily commands: 1')).toBeVisible(); expect(p.onDirty).toHaveBeenLastCalledWith(true)
+  expect(screen.getByText('Conflict resolved · original outcome retained')).toBeVisible()
+})
+it('does not settle a parent using terminal metadata whose retained body belongs to another resource or device context', async () => {
+  const rows = resolvedRows('ServerRetained'), wrongBody = { ...JSON.parse(rows[1].body), deviceId: dailyOfflineFixture().id }, p = props()
+  app.captures.mockResolvedValue([rows[0], { ...rows[1], body: JSON.stringify(wrongBody) }])
+  render(<DailyOfflinePanel {...p} />); await authorize()
+  expect(screen.getByText('Pending daily commands: 2')).toBeVisible(); expect(p.onDirty).toHaveBeenLastCalledWith(true)
+  expect(screen.queryByText('Conflict resolved · original outcome retained')).not.toBeInTheDocument()
+  expect(screen.getByRole('button', { name: 'Review conflict' })).toBeVisible()
+})
+
+it('recovering a resolved original outcome preserves history without reopening a resolution command', async () => {
+  const rows = resolvedRows('ServerRetained'), p = props()
+  app.captures.mockResolvedValue(rows); app.replay.mockResolvedValue(rows[0].outcome)
+  render(<DailyOfflinePanel {...p} />); await authorize()
+  await userEvent.click(screen.getAllByRole('button', { name: 'Recover exact outcome' })[0])
+  await waitFor(() => expect(app.replay).toHaveBeenCalledTimes(1))
+  expect(app.conflict).not.toHaveBeenCalled(); expect(p.onDirty).toHaveBeenLastCalledWith(false)
+  expect(screen.queryByRole('region', { name: 'Daily material conflict' })).not.toBeInTheDocument()
+  expect(rows[0].outcome?.result).toBe('MaterialConflict')
 })
