@@ -5012,6 +5012,52 @@ namespace Poseidon.Persistence.Migrations
                 b.HasOne("Poseidon.Persistence.MaintenancePlan", null).WithMany().HasForeignKey("TenantId", "VesselId", "PlanId")
                     .HasPrincipalKey("TenantId", "VesselId", "Id").HasConstraintName("FK_NotificationEpisode_Plan").OnDelete(DeleteBehavior.Restrict).IsRequired();
             });
+            // Source-authored daily declarations. No generated snapshot command has run.
+            modelBuilder.Entity("Poseidon.Persistence.DailyOperation", b => {
+                b.Property<Guid>("TenantId").HasColumnType("uuid");
+                b.Property<Guid>("Id").HasColumnType("uuid");
+                b.Property<Guid>("VesselId").HasColumnType("uuid");
+                b.Property<string>("Kind").IsRequired().HasMaxLength(12).HasColumnType("character varying(12)");
+                b.Property<string>("SourceVersion").IsRequired().HasMaxLength(160).HasColumnType("character varying(160)");
+                b.Property<long>("Revision").HasColumnType("bigint");
+                b.Property<uint>("Version").IsConcurrencyToken().ValueGeneratedOnAddOrUpdate().HasColumnType("xid").HasColumnName("xmin");
+                b.Property<string>("FieldsJson").IsRequired().HasColumnType("text");
+                b.Property<string>("Hash").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");
+                b.Property<string>("Provenance").IsRequired().HasMaxLength(32).HasColumnType("character varying(32)");
+                b.Property<Guid>("ActorId").HasColumnType("uuid");
+                b.Property<DateTimeOffset>("SavedAt").HasColumnType("timestamp with time zone");
+                b.HasKey("TenantId","Id"); b.HasAlternateKey("TenantId","VesselId","Kind","Id");
+                b.HasIndex("TenantId","VesselId","Kind","SavedAt","Id");
+                b.ToTable("DailyOperations","operations",t => t.HasCheckConstraint("CK_DailyOperation_State",
+                    "\"Kind\" IN ('Noon','Deck','Engine') AND \"Revision\" > 0 AND \"Provenance\" IN ('UserDeclaredUnverified','SyntheticUnverified')"));
+                b.HasOne("Poseidon.Persistence.Vessel",null).WithMany().HasForeignKey("TenantId","VesselId").OnDelete(DeleteBehavior.Restrict).IsRequired();
+            });
+            modelBuilder.Entity("Poseidon.Persistence.DailyOperationRevision", b => {
+                b.Property<Guid>("TenantId").HasColumnType("uuid"); b.Property<Guid>("VesselId").HasColumnType("uuid");
+                b.Property<Guid>("RecordId").HasColumnType("uuid");
+                b.Property<string>("Kind").IsRequired().HasMaxLength(12).HasColumnType("character varying(12)");
+                b.Property<string>("SourceVersion").IsRequired().HasMaxLength(160).HasColumnType("character varying(160)");
+                b.Property<long>("Revision").HasColumnType("bigint"); b.Property<long>("RecordVersion").HasColumnType("bigint");
+                b.Property<string>("FieldsJson").IsRequired().HasColumnType("text");
+                b.Property<string>("Hash").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");
+                b.Property<string>("Provenance").IsRequired().HasMaxLength(32).HasColumnType("character varying(32)");
+                b.Property<Guid>("ActorId").HasColumnType("uuid"); b.Property<DateTimeOffset>("SavedAt").HasColumnType("timestamp with time zone");
+                b.HasKey("TenantId","RecordId","Revision"); b.HasIndex("TenantId","VesselId","Kind","RecordId");
+                b.ToTable("DailyOperationRevisions","operations",t => t.HasCheckConstraint("CK_DailyOperationRevision_State",
+                    "\"Revision\" > 0 AND \"RecordVersion\" > 0 AND \"Provenance\" IN ('UserDeclaredUnverified','SyntheticUnverified')"));
+                b.HasOne("Poseidon.Persistence.DailyOperation",null).WithMany().HasForeignKey("TenantId","VesselId","Kind","RecordId")
+                    .HasPrincipalKey("TenantId","VesselId","Kind","Id").HasConstraintName("FK_DailyRevision_Head").OnDelete(DeleteBehavior.Restrict).IsRequired();
+            });
+            modelBuilder.Entity("Poseidon.Persistence.DailyOperationReceipt", b => {
+                b.Property<Guid>("TenantId").HasColumnType("uuid"); b.Property<Guid>("VesselId").HasColumnType("uuid"); b.Property<Guid>("ActorId").HasColumnType("uuid");
+                b.Property<string>("Key").IsRequired().HasMaxLength(80).HasColumnType("character varying(80)");
+                b.Property<Guid>("RecordId").HasColumnType("uuid"); b.Property<string>("Kind").IsRequired().HasMaxLength(12).HasColumnType("character varying(12)");
+                b.Property<string>("Fingerprint").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)"); b.Property<string>("OutcomeJson").IsRequired().HasColumnType("text");
+                b.Property<DateTimeOffset>("SavedAt").HasColumnType("timestamp with time zone");
+                b.HasKey("TenantId","ActorId","Key"); b.HasIndex("TenantId","VesselId","Kind","RecordId"); b.ToTable("DailyOperationReceipts","operations");
+                b.HasOne("Poseidon.Persistence.DailyOperation",null).WithMany().HasForeignKey("TenantId","VesselId","Kind","RecordId")
+                    .HasPrincipalKey("TenantId","VesselId","Kind","Id").HasConstraintName("FK_DailyReceipt_Head").OnDelete(DeleteBehavior.Restrict).IsRequired();
+            });
 #pragma warning restore 612, 618
         }
     }
