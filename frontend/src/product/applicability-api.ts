@@ -44,11 +44,11 @@ function owningProvenance(v: unknown): boolean {
   if (v.planRevision !== null && (!integer(v.planRevision) || v.jobId === null)) return false
   return Array.isArray(v.reviews) && v.reviews.length <= 128 && v.reviews.every(e => exact(e, ['id', 'revision', 'state', 'authorityHash', 'contextHash', 'validUntil']) && isGuid(e.id) && integer(e.revision) && typeof e.state === 'string' && e.state.length <= 40 && hash(e.authorityHash) && hash(e.contextHash) && (e.validUntil === null || timestamp(e.validUntil)))
 }
-function snapshot(v: unknown, vessel: unknown, asOf: unknown, profile: unknown, authoritative = false): boolean {
+export function validEvaluationSnapshot(v: unknown, vessel: unknown, asOf: unknown, profile: unknown, authoritative = false): boolean {
   if (!exact(v, ['adapterVersion', 'vesselId', 'vesselVersion', 'profileRevision', 'asOf', 'facts', ...(authoritative ? ['qualifications', 'vesselContextHash'] : []), ...(obj(v) && Object.hasOwn(v, 'owningInputs') ? ['owningInputs'] : []), ...(obj(v) && Object.hasOwn(v, 'owningProvenance') ? ['owningProvenance'] : [])]) || v.adapterVersion !== 'controlled-input-catalog-v1' || v.vesselId !== vessel || v.asOf !== asOf || v.profileRevision !== profile || !integer(v.vesselVersion) || !exact(v.facts, Object.keys(factTypes))) return false
   if (v.owningProvenance !== undefined && (!Array.isArray(v.owningProvenance) || v.owningProvenance.length > 72 || !v.owningProvenance.every(owningProvenance))) return false
   if (v.owningInputs != null && !validOwningReferences(v.owningInputs)) return false
-  if (authoritative && (!hash(v.vesselContextHash) || !Array.isArray(v.qualifications) || v.qualifications.length < 1 || v.qualifications.length > 64 || v.qualifications.some(q => !exact(q, ['ruleId', 'revision', 'hash', 'sourceHash', 'policyVersion', 'attestationId', 'facts']) || !isGuid(q.ruleId) || !integer(q.revision) || !hash(q.hash) || !hash(q.sourceHash) || q.policyVersion !== 'recorded-qualification-v1' || q.attestationId !== null && !isGuid(q.attestationId) || !snapshot({ adapterVersion: v.adapterVersion, vesselId: vessel, vesselVersion: v.vesselVersion, profileRevision: profile, asOf, facts: q.facts }, vessel, asOf, profile)))) return false
+  if (authoritative && (!hash(v.vesselContextHash) || !Array.isArray(v.qualifications) || v.qualifications.length < 1 || v.qualifications.length > 64 || v.qualifications.some(q => !exact(q, ['ruleId', 'revision', 'hash', 'sourceHash', 'policyVersion', 'attestationId', 'facts']) || !isGuid(q.ruleId) || !integer(q.revision) || !hash(q.hash) || !hash(q.sourceHash) || q.policyVersion !== 'recorded-qualification-v1' || q.attestationId !== null && !isGuid(q.attestationId) || !validEvaluationSnapshot({ adapterVersion: v.adapterVersion, vesselId: vessel, vesselVersion: v.vesselVersion, profileRevision: profile, asOf, facts: q.facts }, vessel, asOf, profile)))) return false
   return Object.entries(v.facts).every(([key, f]) => {
     if (!exact(f, ['type', 'knowledge', 'value', 'provenance', 'revision', 'observedAt', 'freshUntil', 'authoritativeEmpty']) || f.type !== factTypes[key] ||
       typeof f.knowledge !== 'string' || !['Known', 'Missing', 'Unknown', 'Stale', 'Unverified', 'Conflicting'].includes(f.knowledge) ||
@@ -79,22 +79,27 @@ export function decodeReason(value: unknown, depth = 0, budget = { nodes: 0 }): 
     typeof value.reviewRequired !== 'boolean' || !Array.isArray(value.children) || value.children.length > 40) return invalid()
   value.children.forEach(v => decodeReason(v, depth + 1, budget)); return value as Reason
 }
+export function decodeEvaluationResults(value: unknown, authoritative: boolean): EvaluationResult[] {
+  if (!Array.isArray(value) || value.length > 64) return invalid()
+  for (const r of value) {
+    if (!exact(r, ['ruleId', 'revision', 'hash', 'sourceId', 'sourceRevision', 'requirementId', 'requirementRevision', 'prediction']) || !isGuid(r.ruleId) || !integer(r.revision) || !hash(r.hash) || !link(r.sourceId, r.sourceRevision) || !link(r.requirementId, r.requirementRevision)) return invalid()
+    const p = r.prediction
+    if (!exact(p, ['result', 'currentResult', 'authoritative', 'lifecycle', 'reason', 'predictedActivations', 'blockers']) ||
+      typeof p.result !== 'string' || !['APPLICABLE', 'NOT_APPLICABLE', 'REVIEW_REQUIRED', 'NOT_CURRENT'].includes(p.result) || p.authoritative !== authoritative || (authoritative ? p.currentResult !== p.result && !(p.result === 'APPLICABLE' && p.currentResult === 'REVIEW_REQUIRED' && Array.isArray(p.blockers) && p.blockers.includes('MSMD_READINESS_REVIEW_REQUIRED')) : p.currentResult !== 'REVIEW_REQUIRED') ||
+      typeof p.lifecycle !== 'string' || !(lifecycleStates as readonly string[]).includes(p.lifecycle) || !Array.isArray(p.blockers) || p.blockers.length > 32 || p.blockers.some(v => typeof v !== 'string' || v.length > 100) ||
+      !Array.isArray(p.predictedActivations) || p.predictedActivations.length > 64 || p.predictedActivations.some(a => !exact(a, ['type', 'id']) || typeof a.type !== 'string' || typeof a.id !== 'string')) return invalid()
+    decodeReason(p.reason)
+  }
+  return value as EvaluationResult[]
+}
 export function decodeEvaluation(value: unknown): Evaluation {
   if (!exact(value, ['id', 'vesselId', 'savedAt', 'asOf', 'adapterVersion', 'profileRevision', 'snapshotHash', 'snapshot', 'ruleSetHash', 'results', 'conflicts', 'preview', 'authoritative', 'currentResult', 'simulation']) ||
     !isGuid(value.id) || !isGuid(value.vesselId) || !timestamp(value.savedAt) || !timestamp(value.asOf) || value.adapterVersion !== 'controlled-input-catalog-v1' ||
     value.profileRevision !== null && !integer(value.profileRevision) || !hash(value.snapshotHash) || !hash(value.ruleSetHash) || !obj(value.snapshot) ||
     JSON.stringify(value.snapshot).length > 65536 || !Array.isArray(value.results) || value.results.length > 64 || typeof value.authoritative !== 'boolean' || value.preview !== !value.authoritative || value.simulation !== !value.authoritative || (value.authoritative ? !['CURRENT', 'REVIEW_REQUIRED'].includes(value.currentResult as string) : value.currentResult !== 'REVIEW_REQUIRED')) return invalid()
-  if (!snapshot(value.snapshot, value.vesselId, value.asOf, value.profileRevision, value.authoritative as boolean)) return invalid()
+  if (!validEvaluationSnapshot(value.snapshot, value.vesselId, value.asOf, value.profileRevision, value.authoritative as boolean)) return invalid()
   if (!Array.isArray(value.conflicts) || value.conflicts.length > 4096 || value.conflicts.some(c => !exact(c, ['code', 'target', 'ruleReferences', 'status']) || !['CANDIDATE_SOURCE_CONTRADICTION', 'INPUT_SOURCE_CONFLICT'].includes(c.code as string) || typeof c.target !== 'string' || c.target.length > 500 || c.status !== 'REVIEW_REQUIRED' || !Array.isArray(c.ruleReferences) || c.ruleReferences.length > 64 || c.ruleReferences.some(r => typeof r !== 'string' || !/^[0-9a-f-]{36}\/[1-9][0-9]*$/.test(r)))) return invalid()
-  for (const r of value.results) {
-    if (!exact(r, ['ruleId', 'revision', 'hash', 'sourceId', 'sourceRevision', 'requirementId', 'requirementRevision', 'prediction']) || !isGuid(r.ruleId) || !integer(r.revision) || !hash(r.hash) || !link(r.sourceId, r.sourceRevision) || !link(r.requirementId, r.requirementRevision)) return invalid()
-    const p = r.prediction
-    if (!exact(p, ['result', 'currentResult', 'authoritative', 'lifecycle', 'reason', 'predictedActivations', 'blockers']) ||
-      typeof p.result !== 'string' || !['APPLICABLE', 'NOT_APPLICABLE', 'REVIEW_REQUIRED', 'NOT_CURRENT'].includes(p.result) || p.authoritative !== value.authoritative || (value.authoritative ? p.currentResult !== p.result && !(p.result === 'APPLICABLE' && p.currentResult === 'REVIEW_REQUIRED' && Array.isArray(p.blockers) && p.blockers.includes('MSMD_READINESS_REVIEW_REQUIRED')) : p.currentResult !== 'REVIEW_REQUIRED') ||
-      typeof p.lifecycle !== 'string' || !(lifecycleStates as readonly string[]).includes(p.lifecycle) || !Array.isArray(p.blockers) || p.blockers.length > 32 || p.blockers.some(v => typeof v !== 'string' || v.length > 100) ||
-      !Array.isArray(p.predictedActivations) || p.predictedActivations.length > 64 || p.predictedActivations.some(a => !exact(a, ['type', 'id']) || typeof a.type !== 'string' || typeof a.id !== 'string')) return invalid()
-    decodeReason(p.reason)
-  }
+  decodeEvaluationResults(value.results, value.authoritative as boolean)
   return value as Evaluation
 }
 export function decodePage<T>(value: unknown, decode: (v: unknown) => T): Page<T> {
