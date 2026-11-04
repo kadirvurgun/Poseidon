@@ -83,12 +83,19 @@ not executed test counts. No new restore/build/typecheck/OpenAPI generation,
 backend/component/browser suite, security scan or independent final-target QA has
 run for S2. All remain **DEFERRED / NOT RUN**; earlier S1 results are separate.
 
-Three new mocked browser scenarios cover keyboard vessel switching with denied and
+Four new mocked browser scenarios cover keyboard vessel switching with denied and
 mismatched-tenant responses, dirty-form cancellation/explicit discard, and primary
-role navigation without search escalation. The signed role-lens cases retain their
+role navigation without search escalation, plus actual form-action alignment,
+keyboard order and horizontal overflow on desktop/mobile. The signed role-lens cases retain their
 five real workspace families, real dirty guard, server projection equality and
 restricted context assertions, and now assert the actual primary sidebar contents.
 All these tests are **AUTHORED / NOT RUN**, without new browser or QA acceptance.
+
+Two additional signed case sources exercise genuine Ship/Tug context changes and
+the nested native chooser/discard-confirmation cancel/commit flow. They use actual
+server context responses and verify that abandoning an edit does not mutate the
+original vessel. They have not run; the old S1 native 122-result ledger remains
+unchanged and is not evidence for this new S2 catalog.
 
 ## Required verification at the bundle gate
 
