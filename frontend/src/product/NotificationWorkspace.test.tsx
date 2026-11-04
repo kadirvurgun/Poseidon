@@ -17,6 +17,7 @@ it('shows scoped severity/source/due state and mandatory routing even when advis
   vi.mocked(service.loadPreference).mockResolvedValue({ ...notificationPreference(), mutedAdvisory: true })
   render(<NotificationInbox {...props()} />)
   expect(await screen.findByText('Critical')).toBeVisible()
+  expect(screen.getByRole('heading', { name: 'Maintenance due' })).toBeVisible()
   expect(screen.getByText('Mandatory route · cannot be muted')).toBeVisible()
   expect(screen.getByRole('checkbox')).toBeChecked()
   expect(screen.getByText('2026-11-05')).toBeVisible()
