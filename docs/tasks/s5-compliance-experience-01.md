@@ -1,6 +1,6 @@
 # S5 compliance experience — UI source package
 
-Status: **AUTHORED / UNVERIFIED**. S5 remains **0 accepted / 32 SP**. This is a locally reviewable source package, not a completed sprint or release. Test, build, typecheck, lint, browser and generated-contract execution is **DEFERRED until actual PR preparation**, following the user's larger-bundle cadence. No push, PR, runtime, provider or preview changes were made by this author.
+Status: **AUTHORED / UNVERIFIED**. This selected compliance subpackage remains **0 accepted / 32 SP**. Canonical S5 has **8 tasks / 69 SP**, including DEV-080 and DEV-097–099; canonical S5 acceptance remains **0/69 SP**. This is a locally reviewable source package, not a completed sprint or release. Test, build, typecheck, lint, browser and generated-contract execution is **DEFERRED until actual PR preparation**, following the user's larger-bundle cadence. No push, PR, runtime, provider or preview changes were made by this author.
 
 ## Controlled sources and trace
 

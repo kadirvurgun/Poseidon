@@ -1,6 +1,8 @@
 # S5 compliance owning-data workspace — backend authoring
 
-Status: AUTHORED / UNVERIFIED. S5 acceptance remains **0/32 SP**. All test,
+Status: AUTHORED / UNVERIFIED. This selected compliance subpackage remains
+**0/32 SP accepted**. The complete canonical S5 inventory has **8 tasks / 69 SP**,
+including DEV-080 and DEV-097–099; canonical S5 acceptance is **0/69 SP**. All test,
 build, lint, typecheck, generated-contract and browser execution is **DEFERRED
 UNTIL THE ACTUAL PR GATE**, as directed by the user. This author is not the
 independent QA reviewer of these changes. No push, PR or runtime/provider change.
