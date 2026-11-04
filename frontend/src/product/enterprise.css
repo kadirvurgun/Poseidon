@@ -128,7 +128,7 @@
 .enterprise-shell .workspace-search a { background: white; color: #2c4a70; }
 .enterprise-shell [data-slot="badge"][data-tone="neutral"] { background: #f3f6fa; color: var(--muted-foreground); border-color: #e2e9f1; }
 .enterprise-shell [data-slot="badge"][data-tone="info"] { background: #edf4ff; color: #2b65b8; border-color: #d3e4fb; }
-.enterprise-shell [data-slot="badge"][data-tone="warning"] { background: #fff8e9; color: #9a6b20; border-color: #f0dfb9; }
+.enterprise-shell [data-slot="badge"][data-tone="warning"] { background: var(--warning-background); color: var(--warning-foreground); border-color: var(--warning-border); }
 .enterprise-shell [data-slot="badge"][data-tone="danger"] { background: #fff0f1; color: #b54554; border-color: #f1d4d9; }
 
 /* Honest scoped summaries: counts and charts always describe the loaded page. */

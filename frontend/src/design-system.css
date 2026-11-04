@@ -25,6 +25,7 @@
   --muted: #f1f4f8; --muted-foreground: #526780; --accent: #e8f0fd;
   --sidebar-foreground: #d0ddec; --sidebar-muted-foreground: #adbed3;
   --focus-ring: #245fba; --focus-ring-on-dark: #a5d8ff; --ring: var(--focus-ring);
+  --warning-background: #fff8e9; --warning-foreground: #875c18; --warning-border: #f0dfb9;
   --destructive: #c03d4c; --border: #e1e7ef; --input: #ccd7e4;
   --radius: .65rem; color-scheme: light;
 }
