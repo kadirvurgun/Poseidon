@@ -1,6 +1,6 @@
 import { ApiError, request, session } from '../api'
 import { isGuid } from '../identifiers'
-import { base64, hash, vault, type KeySlot } from '../offline-application'
+import { base64, hash, vault, prepareOfflineShell, type KeySlot } from '../offline-application'
 import { openOfflineRecord, sealOfflineRecord } from '../offline-cipher'
 import { OfflineEncryptedRecordStore } from '../offline-record-store'
 import { offlineKeys as exact } from '../offline-capture-contract'
@@ -44,6 +44,11 @@ export class DailyOfflineApplication {
     const ctx = decodeDailyOfflineContext(await request<unknown>(dailyOfflineRoot(kind, vessel, record, enrollment ? `/${enrollment}/renew` : ''), signal,
       { method: 'POST', headers: { 'X-CSRF-TOKEN': user.csrfToken } }), kind, vessel, record)
     if (ctx.actorId !== user.actorId || ctx.tenantId !== user.tenantId || signal.aborted) throw new ApiError(403)
+    // Prepare only the public static shell, before any local key/ciphertext
+    // access. This never activates a new worker forcibly or proves an older
+    // already-active worker implements this build's daily route contract.
+    await prepareOfflineShell(signal)
+    if (signal.aborted) throw new Error('authorization_withdrawn')
     const slot = await slotOf(ctx)
     let keys = await vault<KeySlot | null>((s, done) => { const q = s.get(slot); q.onsuccess = () => done(q.result ?? null) })
     if (!keys && enrollment) throw new Error('key_lost_data_retained')

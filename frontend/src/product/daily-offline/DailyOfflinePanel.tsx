@@ -5,7 +5,6 @@ import { EnterpriseActions } from '../EnterprisePatterns'
 import { ApiError } from '../api'
 import { dailyFields, type DailyFields, type DailyKind, type DailyValue } from '../daily-report-fields'
 import type { DailyRecord } from '../daily-operations-api'
-import { prepareOfflineShell } from '../offline-application'
 import { DailyOfflineApplication, dailyOfflineInventory, dailyOfflineLifecycle, discardDailyLostCaptures } from './daily-offline-application'
 import type { DailyPending, DailyConflict, DailyInventoryItem, DailyOfflineContext } from './daily-offline-contract'
 import './daily-offline.css'
@@ -63,7 +62,7 @@ export function DailyOfflinePanel({ vessel, kind, recordId, record, fields, enab
     previous?.close(); app.current = null; setActive(false); setContext(null); setLocal({}); setCaptures([]); setConflict(null)
     const value = await DailyOfflineApplication.authorize(kind, vessel, recordId, selected || null, signal)
     try {
-      await prepareOfflineShell(signal); const rows = await value.captures()
+      const rows = await value.captures()
       if (!fresh(current, signal)) { value.close(); return }
       const held = retainedDraft.current
       const same = held && held.context.id === value.context.id && held.context.actorId === value.context.actorId && held.context.tenantId === value.context.tenantId && held.context.recordId === value.context.recordId && held.context.kind === value.context.kind && held.context.policyDigest === value.context.policyDigest && held.context.authorityDigest === value.context.authorityDigest && held.context.schemaHash === value.context.schemaHash
