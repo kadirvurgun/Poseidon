@@ -92,7 +92,16 @@
     "DailyOfflineRevoke": "OFFLINE_LIFECYCLE",
     "DailyOfflineKeyLost": "OFFLINE_LIFECYCLE",
     "DailyOfflineCleanup": "OFFLINE_LIFECYCLE",
-    "DailyOfflineReplay": "OFFLINE_LIFECYCLE"
+    "DailyOfflineReplay": "OFFLINE_LIFECYCLE",
+    "NoonDailyCreate": "PREPARATION_COMMAND",
+    "NoonDailyUpdate": "PREPARATION_COMMAND",
+    "DeckDailyCreate": "PREPARATION_COMMAND",
+    "DeckDailyUpdate": "PREPARATION_COMMAND",
+    "EngineDailyCreate": "PREPARATION_COMMAND",
+    "EngineDailyUpdate": "PREPARATION_COMMAND",
+    "NoonDailyReviewRecord": "HUMAN_REVIEW_WORKFLOW",
+    "DeckDailyReviewRecord": "HUMAN_REVIEW_WORKFLOW",
+    "EngineDailyReviewRecord": "HUMAN_REVIEW_WORKFLOW"
   },
   "reasonCodes": [
     "PREPARATION_COMMAND",

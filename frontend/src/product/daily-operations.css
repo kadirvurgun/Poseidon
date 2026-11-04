@@ -23,3 +23,12 @@
 .enterprise-shell .daily-record-list time,.enterprise-shell .daily-record-list span { font-size:12px; color:var(--muted-foreground); }
 .enterprise-shell .daily-measurement-boundary { color:var(--muted-foreground); font-size:12px; }
 @media(max-width:600px) { .enterprise-shell .daily-source-context,.enterprise-shell .daily-offline-boundary,.enterprise-shell .daily-record-context { padding:16px; } }
+.enterprise-shell .daily-review-panel { min-width:0; margin:20px 0; padding:22px; border:1px solid var(--border); border-radius:10px; background:var(--card); }
+.enterprise-shell .daily-review-panel h3 { margin-top:0; }
+.enterprise-shell .daily-review-panel form { display:grid; gap:14px; margin:20px 0; }
+.enterprise-shell .daily-review-panel .enterprise-form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+.enterprise-shell .daily-review-panel input,.enterprise-shell .daily-review-panel select,.enterprise-shell .daily-review-panel textarea { width:100%; min-width:0; margin:0; }
+.enterprise-shell .daily-review-panel textarea { resize:vertical; }
+.enterprise-shell .daily-review-entry { margin:12px 0; padding:14px; border:1px solid var(--border); border-radius:8px; overflow-wrap:anywhere; }
+.enterprise-shell .daily-review-rationale { white-space:pre-wrap; overflow-wrap:anywhere; }
+@media(max-width:600px) { .enterprise-shell .daily-review-panel { padding:16px; } .enterprise-shell .daily-review-panel .enterprise-form-grid { grid-template-columns:minmax(0,1fr); } }
