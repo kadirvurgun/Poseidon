@@ -10,6 +10,12 @@ public static class NotificationFixtures
     {
         if (!db.IsAdministrativeImport) throw new UnauthorizedAccessException("Synthetic fixture requires administrative import context.");
         foreach (var vessel in vessels) {
+            var digest = RegisterStorage.Hash("synthetic-incomplete-notification-fixture");
+            if (await db.NotificationDispatchStates.FindAsync([vessel.TenantId, vessel.Id], ct) == null)
+                db.NotificationDispatchStates.Add(new() { TenantId = vessel.TenantId, VesselId = vessel.Id });
+            if (await db.NotificationEpisodes.FindAsync([vessel.TenantId, vessel.Id, vessel.Id, "synthetic.fixture", digest], ct) == null)
+                db.NotificationEpisodes.Add(new() { TenantId = vessel.TenantId, VesselId = vessel.Id, PlanId = vessel.Id,
+                    RuleKey = "synthetic.fixture", PolicyDigest = digest }); // Active stays null/unobserved.
             if (await db.Notifications.FindAsync([vessel.TenantId, vessel.Id], ct) != null) continue;
             if (!await db.MaintenancePlanRevisions.AnyAsync(p => p.TenantId == vessel.TenantId && p.VesselId == vessel.Id && p.PlanId == vessel.Id && p.Revision == 1, ct))
                 throw new InvalidOperationException("Synthetic source revision is unavailable.");

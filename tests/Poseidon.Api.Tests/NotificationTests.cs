@@ -33,6 +33,7 @@ public sealed partial class DirectoryWorkspaceTests
     private WebApplicationFactory<Program> NotificationHost(NotificationClock? clock = null, DbCommandInterceptor? interceptor = null) =>
         Host(technicalRead: true, technicalWrite: true, interceptor: interceptor).WithWebHostBuilder(b => b.ConfigureTestServices(s => {
             s.RemoveAll<NotificationSettings>(); s.AddSingleton(NotificationTestSettings());
+            s.RemoveAll<NotificationSchedulerSettings>(); s.AddSingleton(new NotificationSchedulerSettings());
             s.RemoveAll<MaintenanceObservationSettings>(); s.AddSingleton(new MaintenanceObservationSettings { Sources = [
                 new(seed.Tenants[0].Id, SeedVessel.Id, SeedVessel.Id, "synthetic-meter", "synthetic-v1", "Meter", "hours", 3600, 4)
             ] });
@@ -189,6 +190,10 @@ public sealed partial class DirectoryWorkspaceTests
         NotificationPermissions(host.Services); await Token(c); Assert.Equal(HttpStatusCode.OK, (await Send(c, PlansUrl, CurrentCalendar())).StatusCode);
         await RefreshNotifications(c); clock.Current = clock.Current.AddSeconds(61); await RefreshNotifications(c);
         var settings = host.Services.GetRequiredService<FederationSettings>(); var member = settings.Memberships[0];
+        // Keep an actual eligible owner for the original plan while the current
+        // user changes to the escalation role. Role transfer is not source loss.
+        settings.Memberships = [..settings.Memberships, new(member.Issuer, "fictional-original-plan-owner", Guid.NewGuid(), member.TenantId,
+            ["directory.read", "maintenance.owner.eligible"], VesselGrants: [new(SeedVessel.Id)]) { RoleReferences = [ReviewRole.ToString("D")] }];
         settings.Memberships[0] = member with { Permissions = member.Permissions.Where(p => p != "notification.manage").ToArray(),
             RoleReferences = [NotificationEscalationRole.ToString("D")] };
         var notice = Assert.Single((await Inbox(c)).Items); Assert.Equal("Escalated", notice.State);
@@ -225,7 +230,7 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.True((await verify.Notifications.SingleAsync(n => n.Severity == "Critical", Ct)).Mandatory);
     }
     [Fact]
-    public async Task Notification_context_identity_keeps_the_exact_selected_reading_and_retires_changed_assessment_without_overwriting_its_basis()
+    public async Task Notification_context_identity_keeps_the_exact_selected_reading_and_marks_unknown_due_assessment_unavailable_without_overwriting_its_basis()
     {
         await using var host = NotificationHost(); using var c = Client(host); NotificationPermissions(host.Services); await Token(c);
         var selected = Reading("21"); Assert.Equal(HttpStatusCode.OK, (await Send(c, ObservationPath, selected)).StatusCode);
@@ -249,13 +254,14 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Equal(HttpStatusCode.OK, (await Send(c, ObservationPath + $"/{selected.Id}/revoke", new { })).StatusCode);
         await RefreshNotifications(c); await RefreshNotifications(c);
         var changed = await Inbox(c); Assert.Equal(3, changed.Items.Length);
-        Assert.All(changed.Items.Where(n => initial.Items.Any(old => old.Id == n.Id)), n => Assert.Equal("SourceChanged", n.State));
+        Assert.All(changed.Items.Where(n => initial.Items.Any(old => old.Id == n.Id)), n => Assert.Equal("SourceUnavailable", n.State));
         var replacement = Assert.Single(changed.Items, n => n.State == "Open"); Assert.Equal("ReviewRequired", replacement.SourceState);
         Assert.Equal(1, replacement.SourceRevision);
         await using var verify = Db(); var current = await verify.Notifications.SingleAsync(n => n.Id == replacement.Id, Ct);
         Assert.NotEqual(originalContext, current.SourceContextHash);
         Assert.All(await verify.Notifications.Where(n => n.Id != replacement.Id).ToArrayAsync(Ct), n => Assert.Equal(originalContext, n.SourceContextHash));
-        Assert.Equal(2, await verify.NotificationEvents.CountAsync(e => e.Kind == "SourceChanged", Ct));
+        Assert.Empty(await verify.NotificationEvents.Where(e => e.Kind == "SourceChanged").ToArrayAsync(Ct));
+        Assert.All(await verify.NotificationEpisodes.Where(e => e.RuleKey != "review-warning").ToArrayAsync(Ct), e => Assert.Null(e.Active));
         Assert.Equal(1, (await verify.MaintenancePlans.SingleAsync(p => p.Id == plan.Id, Ct)).Revision);
     }
 }

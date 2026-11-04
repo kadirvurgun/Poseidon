@@ -4926,6 +4926,7 @@ namespace Poseidon.Persistence.Migrations
                 b.Property<string>("PolicyVersion").IsRequired().HasMaxLength(80).HasColumnType("character varying(80)");
                 b.Property<string>("PolicyDigest").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");
                 b.Property<string>("SourceContextHash").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");
+                b.Property<long>("Episode").HasColumnType("bigint");
                 b.Property<string>("SourceState").IsRequired().HasMaxLength(24).HasColumnType("character varying(24)");
                 b.Property<string>("Severity").IsRequired().HasMaxLength(16).HasColumnType("character varying(16)");
                 b.Property<bool>("Mandatory").HasColumnType("boolean"); b.Property<Guid>("RecipientRoleId").HasColumnType("uuid");
@@ -4936,7 +4937,7 @@ namespace Poseidon.Persistence.Migrations
                 b.Property<long>("Revision").HasColumnType("bigint");
                 b.Property<uint>("Version").IsConcurrencyToken().ValueGeneratedOnAddOrUpdate().HasColumnType("xid").HasColumnName("xmin");
                 b.HasKey("TenantId", "Id"); b.HasAlternateKey("TenantId", "VesselId", "Id");
-                b.HasIndex("TenantId", "VesselId", "RuleKey", "PolicyDigest", "PlanId", "PlanRevision", "SourceContextHash").IsUnique().HasDatabaseName("UX_Notification_SourceTrigger");
+                b.HasIndex("TenantId", "VesselId", "RuleKey", "PolicyDigest", "PlanId", "PlanRevision", "SourceContextHash", "Episode").IsUnique().HasDatabaseName("UX_Notification_SourceTrigger");
                 b.HasIndex("TenantId", "VesselId", "PlanId", "PlanRevision").HasDatabaseName("IX_Notification_SourceRevision");
                 b.ToTable("Notifications", "engagement", t => t.HasCheckConstraint("CK_Notification_State",
                     "\"State\" IN ('Open','Acknowledged','Escalated','SourceChanged','SyntheticUnverified') AND \"Revision\" > 0 AND \"PlanRevision\" > 0 AND \"Severity\" IN ('Info','Warning','Critical','Unknown') AND (\"Severity\" <> 'Critical' OR \"Mandatory\")"));
@@ -4982,6 +4983,34 @@ namespace Poseidon.Persistence.Migrations
                     .HasPrincipalKey("TenantId", "VesselId", "Id").HasConstraintName("FK_NotificationReceipt_Notification").OnDelete(DeleteBehavior.Restrict);
                 b.HasOne("Poseidon.Persistence.NotificationPreference", null).WithMany().HasForeignKey("TenantId", "VesselId", "PreferenceActorId")
                     .HasPrincipalKey("TenantId", "VesselId", "ActorId").HasConstraintName("FK_NotificationReceipt_Preference").OnDelete(DeleteBehavior.Restrict);
+            });
+            modelBuilder.Entity("Poseidon.Persistence.NotificationDispatchState", b => {
+                b.Property<Guid>("TenantId").HasColumnType("uuid"); b.Property<Guid>("VesselId").HasColumnType("uuid");
+                b.Property<Guid?>("LeaseOwner").HasColumnType("uuid"); b.Property<DateTimeOffset?>("LeaseUntil").HasColumnType("timestamp with time zone");
+                b.Property<DateTimeOffset?>("NextRunAt").HasColumnType("timestamp with time zone");
+                b.Property<DateTimeOffset?>("LastCompletedAt").HasColumnType("timestamp with time zone");
+                b.Property<int>("SourceOffset").HasColumnType("integer"); b.Property<long>("Revision").HasColumnType("bigint");
+                b.Property<uint>("Version").IsConcurrencyToken().ValueGeneratedOnAddOrUpdate().HasColumnType("xid").HasColumnName("xmin");
+                b.HasKey("TenantId", "VesselId");
+                b.ToTable("NotificationDispatchStates", "engagement", t => t.HasCheckConstraint("CK_NotificationDispatch_State",
+                    "\"Revision\" > 0 AND \"SourceOffset\" >= 0 AND ((\"LeaseOwner\" IS NULL AND \"LeaseUntil\" IS NULL) OR (\"LeaseOwner\" IS NOT NULL AND \"LeaseUntil\" IS NOT NULL))"));
+                b.HasOne("Poseidon.Persistence.Vessel", null).WithMany().HasForeignKey("TenantId", "VesselId")
+                    .HasConstraintName("FK_NotificationDispatch_Vessel").OnDelete(DeleteBehavior.Restrict).IsRequired();
+            });
+            modelBuilder.Entity("Poseidon.Persistence.NotificationEpisode", b => {
+                b.Property<Guid>("TenantId").HasColumnType("uuid"); b.Property<Guid>("VesselId").HasColumnType("uuid");
+                b.Property<Guid>("PlanId").HasColumnType("uuid"); b.Property<long>("Episode").HasColumnType("bigint");
+                b.Property<bool?>("Active").HasColumnType("boolean");
+                b.Property<string>("RuleKey").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");
+                b.Property<string>("PolicyDigest").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");
+                b.Property<string>("SourceContextHash").HasMaxLength(64).HasColumnType("character varying(64)");
+                b.Property<long>("Revision").HasColumnType("bigint");
+                b.Property<uint>("Version").IsConcurrencyToken().ValueGeneratedOnAddOrUpdate().HasColumnType("xid").HasColumnName("xmin");
+                b.HasKey("TenantId", "VesselId", "PlanId", "RuleKey", "PolicyDigest");
+                b.ToTable("NotificationEpisodes", "engagement", t => t.HasCheckConstraint("CK_NotificationEpisode_State",
+                    "\"Revision\" > 0 AND \"Episode\" >= 0 AND (\"Active\" IS DISTINCT FROM TRUE OR (\"Episode\" > 0 AND \"SourceContextHash\" IS NOT NULL))"));
+                b.HasOne("Poseidon.Persistence.MaintenancePlan", null).WithMany().HasForeignKey("TenantId", "VesselId", "PlanId")
+                    .HasPrincipalKey("TenantId", "VesselId", "Id").HasConstraintName("FK_NotificationEpisode_Plan").OnDelete(DeleteBehavior.Restrict).IsRequired();
             });
 #pragma warning restore 612, 618
         }
