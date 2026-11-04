@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Button } from '../components/ui/button'
 import { Badge } from '../components/ui/badge'
 import * as api from './api'
@@ -20,16 +20,18 @@ export function NotificationWorkspace() {
   const [identity, setIdentity] = useState<{ epoch: number; user?: api.Session; failed?: boolean } | null>(null)
   const [retainedUser, setRetainedUser] = useState<api.Session | null>(null)
   const [vessels, setVessels] = useState<{ epoch: number; page?: api.Page<api.Vessel>; failed?: boolean } | null>(null)
-  const [dirty, setDirty] = useState(false), [saving, setSaving] = useState(false), [pending, setPending] = useState<(() => void) | null>(null)
+  const dirty = useRef(false)
+  const setDirty = useCallback((value: boolean) => { dirty.current = value }, [])
+  const [saving, setSaving] = useState(false), [pending, setPending] = useState<(() => void) | null>(null)
   const invalid = selected === null
   const online = navigator.onLine, visible = document.visibilityState !== 'hidden', lastUser = retainedUser
   const currentUser = identity?.epoch === epoch ? identity.user : null
   const authorized = selected !== null && online && visible && !!currentUser?.authenticated && currentUser.canRead && isGuid(currentUser.actorId) && isGuid(currentUser.tenantId) && currentUser.actorId === lastUser?.actorId && currentUser.tenantId === lastUser?.tenantId
-  const guard = (action: () => void) => { if (saving) return; if (dirty) setPending(() => action); else action() }
+  const guard = (action: () => void) => { if (saving) return; if (dirty.current) setPending(() => action); else action() }
   useEffect(() => {
-    const warn = (event: BeforeUnloadEvent) => { if (dirty || saving) event.preventDefault() }
+    const warn = (event: BeforeUnloadEvent) => { if (dirty.current || saving) event.preventDefault() }
     window.addEventListener('beforeunload', warn); return () => window.removeEventListener('beforeunload', warn)
-  }, [dirty, saving])
+  }, [saving])
   useEffect(() => {
     if (invalid || !online || !visible) return
     const c = new AbortController(); let active = true; const timer = setTimeout(() => c.abort(), 10000)
@@ -55,7 +57,7 @@ export function NotificationWorkspace() {
         {identity?.epoch === epoch && identity.failed && <p role="alert">{en ? 'Current session unavailable.' : 'Güncel oturum kullanılamıyor.'}</p>}
         {lastUser?.authenticated && lastUser.canRead && selected ? <NotificationInbox key={`${lastUser.tenantId}:${lastUser.actorId}:${selected}`} vessel={selected} session={lastUser} authorized={authorized} epoch={epoch} language={language} onDirty={setDirty} onSaving={setSaving} onNavigate={href => guard(() => location.assign(href))} /> : <p role="status">{en ? 'Choose an authorized vessel context.' : 'Yetkili araç bağlamı seçin.'}</p>}
       </>}
-      {pending && <DraftConfirmation language={language} onStay={() => setPending(null)} onDiscard={() => { const action = pending; setPending(null); action() }} />}
+      {pending && <DraftConfirmation language={language} onStay={() => setPending(null)} onDiscard={() => { const action = pending; setDirty(false); setPending(null); action() }} />}
     </main></div>
 }
 

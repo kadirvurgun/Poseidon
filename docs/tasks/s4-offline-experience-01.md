@@ -146,3 +146,15 @@ capabilities, terminal states, frozen acknowledgement retry across translation,
 authorization withdrawal with an unsaved preference, and unavailable policy.
 All remain **NOT RUN / DEFERRED to actual PR preparation**. No native capability,
 idempotency, visual or notification-delivery acceptance is claimed by authoring.
+
+## Integrated discard-navigation correction
+
+The notification workspace uses full-page links. Explicitly discarding an
+unsaved preference must clear its unload guard before navigation begins, rather
+than prompting a second time in the browser. The guard now reads a stable dirty
+reference and clears it synchronously only after explicit discard. Keeping edits
+or an unresolved command still protects navigation. An authored
+[browser regression](../../tests/Poseidon.Browser.Tests/specs/notification-navigation.spec.ts)
+covers keep-editing followed by discard/source navigation, no extra native unload
+dialog and no submitted mutation. Its transport is synthetic UI evidence only;
+execution is **DEFERRED** with the entire S4 package.
