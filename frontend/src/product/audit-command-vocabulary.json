@@ -94,7 +94,14 @@
     "EngineDailyUpdate": "PREPARATION_COMMAND",
     "NoonDailyReviewRecord": "HUMAN_REVIEW_WORKFLOW",
     "DeckDailyReviewRecord": "HUMAN_REVIEW_WORKFLOW",
-    "EngineDailyReviewRecord": "HUMAN_REVIEW_WORKFLOW"
+    "EngineDailyReviewRecord": "HUMAN_REVIEW_WORKFLOW",
+    "DailyOfflineEnroll": "OFFLINE_LIFECYCLE",
+    "DailyOfflineRenew": "OFFLINE_LIFECYCLE",
+    "DailyOfflineKeyEnroll": "OFFLINE_LIFECYCLE",
+    "DailyOfflineRevoke": "OFFLINE_LIFECYCLE",
+    "DailyOfflineKeyLost": "OFFLINE_LIFECYCLE",
+    "DailyOfflineCleanup": "OFFLINE_LIFECYCLE",
+    "DailyOfflineReplay": "OFFLINE_LIFECYCLE"
   },
   "reasonCodes": [
     "PREPARATION_COMMAND",
