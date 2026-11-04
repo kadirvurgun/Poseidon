@@ -79,17 +79,29 @@ public static class RegulatoryDraftEndpoints
         var actor = Actor(http);
         var allowed = await actor.Scope(db.Vessels.AsNoTracking()).AnyAsync(x => x.Id == id, http.RequestAborted);
         if (!allowed) { await audit.WriteAsync(http, "ProfileHistory", "NotFound", resourceId: id); return Results.NotFound(); }
-        if (!actor.Permissions.Contains("file.read") && await db.RegulatoryDraftRevisions.AnyAsync(x => x.VesselId == id && x.ConstructionFileId != null, http.RequestAborted)) {
+        var invalid = offset is < 0 or > 100000 || limit is < 1 or > 100;
+        var (skip, take) = invalid ? (0, 25) : (offset ?? 0, limit ?? 25);
+        var files = actor.Permissions.Contains("file.read");
+        // One statement snapshot covers the WHOLE history gate and the page.
+        // Rooting in the visible vessel retains the denial even for an empty or
+        // out-of-range page. The child filter withholds every content column if
+        // any history revision is restricted; do not filter just that revision.
+        var snapshot = await actor.Scope(db.Vessels.AsNoTracking()).Where(v => v.Id == id)
+            .Select(v => new {
+                Readable = files || !db.RegulatoryDraftRevisions.Any(r => r.VesselId == v.Id && r.ConstructionFileId != null),
+                Rows = db.RegulatoryDraftRevisions.AsNoTracking()
+                    .Where(r => !invalid && r.VesselId == v.Id && (files || !db.RegulatoryDraftRevisions.Any(blocked =>
+                        blocked.VesselId == v.Id && blocked.ConstructionFileId != null)))
+                    .OrderByDescending(r => r.Revision).Skip(skip).Take(take + 1)
+                    .Select(r => new { r.Revision, r.SavedAt, r.Provenance, r.ContentJson }).ToArray()
+            }).AsSingleQuery().SingleOrDefaultAsync(http.RequestAborted);
+        if (snapshot == null) { await audit.WriteAsync(http, "ProfileHistory", "NotFound", resourceId: id); return Results.NotFound(); }
+        if (!snapshot.Readable) {
             await audit.WriteAsync(http, "ProfileHistory", "permission_denied", resourceId: id); return Results.StatusCode(403);
         }
-        if (offset is < 0 or > 100000 || limit is < 1 or > 100) {
-            await audit.WriteAsync(http, "ProfileHistory", "Invalid", resourceId: id); return Results.BadRequest();
-        }
-        var (skip, take) = (offset ?? 0, limit ?? 25);
-        var rows = await db.RegulatoryDraftRevisions.AsNoTracking().Where(x => x.VesselId == id)
-            .OrderByDescending(x => x.Revision).Skip(skip).Take(take + 1).ToArrayAsync(http.RequestAborted);
-        var projection = new PageDto<RegulatoryRevisionDto>(rows.Take(take).Select(x =>
-            new RegulatoryRevisionDto(x.Revision, x.SavedAt, x.Provenance, RegulatoryDraftStorage.Deserialize(x.ContentJson))).ToArray(), skip, take, rows.Length > take);
+        if (invalid) { await audit.WriteAsync(http, "ProfileHistory", "Invalid", resourceId: id); return Results.BadRequest(); }
+        var projection = new PageDto<RegulatoryRevisionDto>(snapshot.Rows.Take(take).Select(x =>
+            new RegulatoryRevisionDto(x.Revision, x.SavedAt, x.Provenance, RegulatoryDraftStorage.Deserialize(x.ContentJson))).ToArray(), skip, take, snapshot.Rows.Length > take);
         await audit.WriteAsync(http, "ProfileHistory", "Success", resourceId: id);
         return Results.Ok(projection);
     }
