@@ -5,7 +5,8 @@ using Poseidon.Persistence;
 
 namespace Poseidon.Api;
 
-internal sealed record MaintenanceCurrentProjection(MaintenanceRow Row, long? CurrentAssetRevision, bool JobAvailable, bool OwnerEligible);
+internal sealed record MaintenanceCurrentProjection(MaintenanceRow Row, long? CurrentAssetRevision, bool JobAvailable, bool OwnerEligible,
+    DateTimeOffset? SourceObservedAt);
 
 internal static class MaintenanceCurrentReader
 {
@@ -27,13 +28,15 @@ internal static class MaintenanceCurrentReader
         var assessmentAt = referenceAt ?? readAt;
         foreach (var p in rows) {
             var inputs = JsonSerializer.Deserialize<MaintenanceInputs>(p.ContentJson)!;
-            var observation = inputs.ObservationId == null ? null : await MaintenanceObservationEndpoints.Resolve(vessel, p.AssetId, inputs, http, db, assessmentAt);
+            var resolved = inputs.ObservationId == null ? null : await MaintenanceObservationEndpoints.ResolveCurrent(vessel, p.AssetId, inputs, http, db, assessmentAt);
+            var observation = resolved?.Assessment;
             var ownerEligible = p.OwnerRoleId != null && owners.Contains(p.OwnerRoleId.Value);
             var due = MaintenancePlanningPolicy.Evaluate(inputs, assessmentAt,
                 new(p.JobAvailable, ownerEligible, p.CurrentAssetRevision == p.AssetRevision), observation);
             result.Add(new(new(p.Id, p.AssetId, p.JobId, p.OwnerRoleId, p.Version, p.Revision, p.Status, p.Provenance, inputs,
                 due, assessmentAt, p.SavedAt, p.AssetRevision, observation?.State ?? "NotRequested", observation == null ? null : assessmentAt),
-                p.CurrentAssetRevision, p.JobAvailable, ownerEligible));
+                p.CurrentAssetRevision, p.JobAvailable, ownerEligible,
+                inputs.ObservationId == null ? inputs.ObservedAt : resolved?.ObservedAt));
         }
         return result.ToArray();
     }

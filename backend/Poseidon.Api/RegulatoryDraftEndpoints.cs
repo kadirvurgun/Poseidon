@@ -16,6 +16,7 @@ public sealed record SaveRegulatoryDraft(uint? ExpectedVersion, RegulatoryDraftC
 public sealed record RegulatoryDraftDto(Guid TenantId, VesselDto Vessel, uint Version, long Revision,
     DateTimeOffset? SavedAt, string Provenance, RegulatoryDraftContent Content);
 public sealed record RegulatoryRevisionDto(long Revision, DateTimeOffset SavedAt, string Provenance, RegulatoryDraftContent Content);
+internal sealed record CurrentRegulatoryDraft(bool Readable, RegulatoryDraft? Draft);
 
 public static class RegulatoryDraftEndpoints
 {
@@ -39,15 +40,36 @@ public static class RegulatoryDraftEndpoints
         draft?.Version ?? 0, draft?.Revision ?? 0, draft?.SavedAt, draft?.Provenance ?? "Missing",
         draft == null ? new() : RegulatoryDraftStorage.Deserialize(draft.ContentJson));
 
+    // Shared by owning and cross-module reads after the vessel selector is scoped.
+    // Binding and content use ONE statement snapshot. SQL conditional projections
+    // withhold restricted values rather than loading them and redacting afterward.
+    internal static async Task<CurrentRegulatoryDraft> ReadCurrent(TrustedActor actor, Guid vessel, PoseidonDbContext db, CancellationToken ct)
+    {
+        var files = actor.Permissions.Contains("file.read");
+        var row = await db.RegulatoryDrafts.AsNoTracking().Where(x => x.VesselId == vessel).Select(x => new {
+            Readable = files || x.ConstructionFileId == null,
+            Content = files || x.ConstructionFileId == null ? x.ContentJson : null,
+            Revision = files || x.ConstructionFileId == null ? (long?)x.Revision : null,
+            Version = files || x.ConstructionFileId == null ? (uint?)x.Version : null,
+            SavedAt = files || x.ConstructionFileId == null ? (DateTimeOffset?)x.SavedAt : null,
+            Provenance = files || x.ConstructionFileId == null ? x.Provenance : null
+        }).SingleOrDefaultAsync(ct);
+        if (row == null) return new(true, null);
+        if (!row.Readable) return new(false, null);
+        return new(true, new() { TenantId = actor.TenantId, VesselId = vessel, ContentJson = row.Content!,
+            Revision = row.Revision!.Value, Version = row.Version!.Value, SavedAt = row.SavedAt!.Value, Provenance = row.Provenance! });
+    }
+
     private static async Task<IResult> Read(Guid id, HttpContext http, PoseidonDbContext db, SecurityAudit audit)
     {
         var actor = Actor(http);
         var vessel = await actor.Scope(db.Vessels.AsNoTracking()).SingleOrDefaultAsync(x => x.Id == id, http.RequestAborted);
         if (vessel == null) { await audit.WriteAsync(http, "ProfileRead", "NotFound", resourceId: id); return Results.NotFound(); }
-        if (!actor.Permissions.Contains("file.read") && await db.RegulatoryDrafts.AnyAsync(x => x.VesselId == id && x.ConstructionFileId != null, http.RequestAborted)) {
+        var source = await ReadCurrent(actor, id, db, http.RequestAborted);
+        if (!source.Readable) {
             await audit.WriteAsync(http, "ProfileRead", "permission_denied", resourceId: id); return Results.StatusCode(403);
         }
-        var projection = Dto(actor, vessel, await db.RegulatoryDrafts.AsNoTracking().SingleOrDefaultAsync(x => x.VesselId == id, http.RequestAborted));
+        var projection = Dto(actor, vessel, source.Draft);
         await audit.WriteAsync(http, "ProfileRead", "Success", resourceId: id);
         return Results.Ok(projection);
     }
