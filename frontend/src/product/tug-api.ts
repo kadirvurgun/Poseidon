@@ -2,6 +2,8 @@ import type { Plan, PlanningEvidence } from './tug-planning-api'
 import { decodePlanningEvidence } from './tug-planning-api'
 import { ApiError, request } from './api'
 import { isGuid } from './identifiers'
+import { timestamp } from './date-validation'
+import { validDecimal } from './profile-api'
 
 export type TugInputs = {
   requestSource: string | null; customerRef: string | null; assistedVessel: string | null; assistedVesselImo: string | null; jobType: string | null
@@ -12,16 +14,33 @@ export type TugInputs = {
 export type TugRequest = { id: string; vesselId: string; jobNumber: string; revision: number; version: number; inputs: TugInputs; provenance: string; savedAt: string; missing: string[]; replayed: boolean; sourceVersion: string }
 export type TugContext = {
   vessel: { id: string; code: string; name: string }; mode: 'Tug'; crossMode: boolean; roleReferences: string | null
+  tugTypeContext: { tenantId: string; vesselId: string; code: string; sourceReference: string; sourceRevision: number; observedAt: string } | null
   tugTypeOptions?: { code: string; tr: string; en: string }[]; tugTypePolicyVersion?: string | null; canWrite: boolean; owners: string[]; requestSources: string[]; jobTypes: string[]; priorities: string[]; tugType: string
-  bollardPull: { value: string | null; version: number | null; provenance: string; freshness: string; observedAt: string | null }
+  bollardPull: { value: string | null; version: number | null; provenance: string; freshness: string; observedAt: string | null; source: 'TugProfile' }
   equipment: { id: string; level: string; equipmentType: string | null; revision: number; provenance: string }[] | null
   equipmentCoverage: string; readiness: string; reason: string
 }
 export type TugBoard = { items: { draftPlan?: Plan | null; planningEvidence?: PlanningEvidence | null; request: TugRequest; windowState: string; plannedTimeSource: string; assignedTugs: string[]; assignmentCoverage: string; availableBollardPull: string | null; readiness: string; conflict: string; declaredComparisons: { jobId: string; relation: string }[]; comparisonCoverage: string; blockingReasons: string[]; nextAction: string; detailHref: string }[]; hasMore: boolean }
 export const emptyTugInputs = (): TugInputs => ({ requestSource: null, customerRef: null, assistedVessel: null, assistedVesselImo: null, jobType: null, requestedStart: null, requestedEnd: null, operationArea: null, pickupPoint: null, destinationPoint: null, requiredBollardPull: null, requiredTugCount: null, specialRequirements: null, priority: null, requestOwner: null, notes: null })
 export type TugAttempt = { key: string; body: { clientId: string; baseVersion: number | null; inputs: TugInputs }; update: boolean }
+const object = (value: unknown): value is Record<string, unknown> => !!value && typeof value === 'object' && !Array.isArray(value)
+const exact = (value: unknown, keys: string[]): value is Record<string, unknown> => object(value) && Object.keys(value).length === keys.length && keys.every(k => Object.hasOwn(value, k))
+const contextText = (value: unknown, max = 200) => typeof value === 'string' && value.length > 0 && value.length <= max && value.trim() === value && !/\p{Cc}/u.test(value)
+const positive = (value: unknown) => typeof value === 'number' && Number.isSafeInteger(value) && value > 0
+export function decodeTugContext(value: unknown, vessel: string, tenant?: string): TugContext {
+  function fail(): never { throw new ApiError(502, 'invalid_tug_context') }
+  if (!isGuid(vessel) || !exact(value, ['vessel', 'mode', 'crossMode', 'roleReferences', 'canWrite', 'owners', 'bollardPull', 'tugType', 'tugTypeContext', 'tugTypeOptions', 'tugTypePolicyVersion', 'equipment', 'equipmentCoverage', 'readiness', 'reason', 'jobTypes', 'priorities', 'requestSources']) || !exact(value.vessel, ['id', 'code', 'name']) || value.vessel.id !== vessel || !contextText(value.vessel.code) || !contextText(value.vessel.name) || value.mode !== 'Tug' || typeof value.crossMode !== 'boolean' || typeof value.canWrite !== 'boolean' || !(value.roleReferences === null || contextText(value.roleReferences, 4096)) || !Array.isArray(value.owners) || !value.owners.every(isGuid) || new Set(value.owners).size !== value.owners.length || value.readiness !== 'Unknown' || value.reason !== 'VerifiedMeasurementCertificateCrewAndAssignmentAdaptersUnavailable') fail()
+  const bp = value.bollardPull
+  if (!exact(bp, ['value', 'version', 'provenance', 'source', 'observedAt', 'freshness']) || bp.source !== 'TugProfile' || bp.freshness !== 'Unknown' || bp.observedAt !== null || !(bp.value === null && bp.version === null && bp.provenance === 'Missing' || validDecimal(bp.value) && positive(bp.version) && Number(bp.version) <= 4294967295 && bp.provenance === 'LegacyMeasurementUnverified')) fail()
+  if (!Array.isArray(value.tugTypeOptions) || value.tugTypeOptions.length > 128 || value.tugTypeOptions.some(option => !exact(option, ['code', 'tr', 'en']) || !contextText(option.code, 64) || !contextText(option.tr, 100) || !contextText(option.en, 100)) || new Set(value.tugTypeOptions.map(option => option.code)).size !== value.tugTypeOptions.length || !(value.tugTypePolicyVersion === null || contextText(value.tugTypePolicyVersion, 80))) fail()
+  const binding = value.tugTypeContext
+  if (binding === null ? value.tugType !== 'Unavailable' : !exact(binding, ['tenantId', 'vesselId', 'code', 'sourceReference', 'sourceRevision', 'observedAt']) || !isGuid(binding.tenantId) || tenant !== undefined && binding.tenantId !== tenant || binding.vesselId !== vessel || binding.code !== value.tugType || !value.tugTypeOptions.some(option => option.code === binding.code) || !contextText(binding.sourceReference, 80) || !positive(binding.sourceRevision) || !timestamp(binding.observedAt) || value.tugTypePolicyVersion === null) fail()
+  if (value.equipment === null ? value.equipmentCoverage !== 'Unavailable' : !Array.isArray(value.equipment) || value.equipmentCoverage !== 'DraftDeclarationsOnly' || value.equipment.some(asset => !exact(asset, ['id', 'level', 'equipmentType', 'revision', 'provenance']) || !isGuid(asset.id) || !contextText(asset.level, 64) || !(asset.equipmentType === null || contextText(asset.equipmentType, 200)) || !positive(asset.revision) || !contextText(asset.provenance, 100)) || new Set(value.equipment.map(asset => asset.id)).size !== value.equipment.length) fail()
+  for (const key of ['jobTypes', 'priorities', 'requestSources']) { const options = value[key]; if (!Array.isArray(options) || options.length > 128 || !options.every(item => contextText(item, 100)) || new Set(options).size !== options.length) fail() }
+  return value as TugContext
+}
 export const tugApi = {
-  context: (vessel: string, signal: AbortSignal) => request<TugContext>(`tug-command?vessel=${vessel}`, signal),
+  context: async (vessel: string, signal: AbortSignal, tenant?: string) => decodeTugContext(await request<unknown>(`tug-command?vessel=${vessel}`, signal), vessel, tenant),
   vessels: (signal: AbortSignal) => request<{ vessels: TugContext['vessel'][] }>('tug-command', signal),
   detail: (id: string, vessel: string, signal: AbortSignal) => request<TugRequest>(`tug-jobs/${id}?vessel=${vessel}`, signal),
   board: async (vessel: string, priority: string, q: string, offset: number, signal: AbortSignal) => {

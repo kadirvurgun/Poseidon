@@ -1,0 +1,25 @@
+.enterprise-shell .daily-source-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px 24px; }
+.enterprise-shell .daily-source-grid dd { margin:5px 0 0; overflow-wrap:anywhere; }
+.enterprise-shell .tug-profile-context { padding:22px; margin:20px 0; border:1px solid var(--border); border-radius:10px; background:var(--card); }
+.enterprise-shell .tug-profile-context small { display:block; color:var(--muted-foreground); overflow-wrap:anywhere; }
+@media(max-width:600px) { .enterprise-shell .daily-source-grid { grid-template-columns:minmax(0,1fr); } .enterprise-shell .tug-profile-context { padding:16px; } }
+.enterprise-shell .daily-field-group { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px 24px; padding:22px; margin:20px 0; border:1px solid var(--border); border-radius:10px; background:var(--card); min-width:0; }
+.enterprise-shell .daily-field-group legend { padding-inline:6px; font-weight:600; }
+.enterprise-shell .daily-field { display:grid; grid-template-columns:minmax(110px,140px) minmax(0,1fr); gap:8px; align-content:start; min-width:0; }
+.enterprise-shell .daily-field label,.enterprise-shell .daily-field p { grid-column:1/-1; margin:0; }
+.enterprise-shell .daily-field label { font-weight:600; }
+.enterprise-shell .daily-field input,.enterprise-shell .daily-field select,.enterprise-shell .daily-field textarea { width:100%; min-width:0; margin:0; }
+.enterprise-shell .daily-field textarea { resize:vertical; }
+.enterprise-shell .daily-field p { color:var(--muted-foreground); font-size:12px; }
+.enterprise-shell .daily-field .field-error { color:var(--destructive); }
+.enterprise-shell .daily-field-wide { grid-column:1/-1; }
+@media(max-width:800px) { .enterprise-shell .daily-field-group { grid-template-columns:minmax(0,1fr); padding:16px; } }
+@media(max-width:420px) { .enterprise-shell .daily-field { grid-template-columns:minmax(0,1fr); } }
+.enterprise-shell .daily-workspace,.daily-workspace main { min-width:0; }
+.enterprise-shell .daily-source-context,.enterprise-shell .daily-offline-boundary,.enterprise-shell .daily-record-context { padding:18px 20px; margin:18px 0; border:1px solid var(--border); border-radius:9px; background:var(--card); }
+.enterprise-shell .daily-workspace code { white-space:normal; overflow-wrap:anywhere; }
+.enterprise-shell .daily-record-list { list-style:none; padding:0; display:grid; gap:10px; }
+.enterprise-shell .daily-record-list li { display:flex; flex-wrap:wrap; gap:12px; align-items:center; padding:14px 16px; border:1px solid var(--border); border-radius:9px; }
+.enterprise-shell .daily-record-list time,.enterprise-shell .daily-record-list span { font-size:12px; color:var(--muted-foreground); }
+.enterprise-shell .daily-measurement-boundary { color:var(--muted-foreground); font-size:12px; }
+@media(max-width:600px) { .enterprise-shell .daily-source-context,.enterprise-shell .daily-offline-boundary,.enterprise-shell .daily-record-context { padding:16px; } }
