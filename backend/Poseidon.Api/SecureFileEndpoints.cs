@@ -194,45 +194,80 @@ public static class SecureFileEndpoints
         if (stage == null) return await Failure(h, 404, "resource_not_found", id);
         if (stage.State == "CleanTransport") return Results.Ok(Dto(stage, await db.StoredFiles.SingleAsync(x => x.Id == id, ct)));
         if (stage.State != "Pending") return await Failure(h, 409, "file_attempt_frozen", id);
-        if (h.Request.ContentType != stage.Mime || h.Request.ContentLength.HasValue && h.Request.ContentLength != stage.ExpectedLength)
-            return await Failure(h, 400, "file_type_or_size_invalid", id);
-        stage.State = "Receiving";
-        try { await db.SaveChangesAsync(ct); }
-        catch (DbUpdateConcurrencyException) { return await Failure(h, 409, "file_attempt_conflict", id); }
-        var objects = h.RequestServices.GetRequiredService<FileObjects>();
         var settings = h.RequestServices.GetRequiredService<SecureFileSettings>();
-        if (stage.StorageReference != (settings.Adapter == "S3" ? settings.S3.ContextHash() : null)) return await Failure(h, 503, "file_settings_unavailable", id);
+        var pinned = settings.Snapshot();
+        var objects = new FileObjects(pinned, new LocalFileObjects(pinned), h.RequestServices.GetRequiredService<IWebHostEnvironment>());
+        if (!pinned.AllowedTypes.Contains(stage.Mime) || stage.ExpectedLength > pinned.MaxBytes ||
+            !settings.AllowedTypes.Contains(stage.Mime) || stage.ExpectedLength > settings.MaxBytes ||
+            h.Request.ContentType != stage.Mime || h.Request.ContentLength.HasValue && h.Request.ContentLength != stage.ExpectedLength)
+            return await Failure(h, 400, "file_type_or_size_invalid", id);
+        if (!objects.Owns(stage)) return await Failure(h, 503, "file_settings_unavailable", id);
+        var finalizationStarted = false;
+        var root = pinned.Root;
+        var adapter = pinned.Adapter;
+        var maxPixels = pinned.MaxPixels;
+        var scannerReference = pinned.ScannerReference;
+        var scannerPort = pinned.ClamdPort;
+        var retentionReference = pinned.RetentionReference;
+        bool PolicyUnchanged() => Ready(h) && settings.Root == root && settings.Adapter == adapter &&
+            settings.AllowedTypes.Contains(stage.Mime) && stage.ExpectedLength <= settings.MaxBytes &&
+            settings.MaxPixels == maxPixels && settings.ScannerReference == scannerReference && settings.ClamdPort == scannerPort &&
+            settings.RetentionReference == retentionReference && stage.StorageReference == (settings.Adapter == "S3" ? settings.S3.ContextHash() : null);
+        if (!PolicyUnchanged()) return await Failure(h, 503, "file_settings_unavailable", id);
         try {
             await using (var stream = objects.Create(a.TenantId, id)) {
-                var observed = await SecureFilePolicy.CopyAsync(h.Request.Body, stream, Math.Min(settings.MaxBytes, stage.ExpectedLength), ct);
+                var observed = await SecureFilePolicy.CopyAsync(h.Request.Body, stream, Math.Min(pinned.MaxBytes, stage.ExpectedLength), ct);
                 await stream.FlushAsync(ct);
                 if (observed.Length != stage.ExpectedLength || observed.Checksum != stage.ExpectedChecksum) throw new InvalidDataException("file_checksum_invalid");
-                stream.Position = 0; await DocumentBinaryPolicy.ValidateAsync(stream, stage.Mime, settings.MaxPixels, ct);
-                stream.Position = 0; await h.RequestServices.GetRequiredService<ClamdScanner>().ScanAsync(stream, ct);
+                stream.Position = 0; await DocumentBinaryPolicy.ValidateAsync(stream, stage.Mime, maxPixels, ct);
+                stream.Position = 0; await new ClamdScanner(pinned).ScanAsync(stream, ct);
                 // Same exclusive immutable handle for validation and scan. No caller-provided clean assertion.
             }
-            var provider = await objects.CommitAsync(a.TenantId, id, stage.ExpectedChecksum, stage.ExpectedLength, stage.Mime, ct);
             var current = h.RequestServices.GetRequiredService<ActorResolver>().Resolve(h.User);
             if (current == null || current.Id != a.Id || current.TenantId != a.TenantId || !Write(current, vessel, h) || !await Scope(db, current, vessel, h, ct))
                 return await Failure(h, 403, "permission_denied", id);
+            // A rejected transport never advances the durable intent. Only validated/scanned bytes
+            // may claim its xmin fence; the exclusive create-new spool prevents parallel replacement.
+            if (!PolicyUnchanged())
+                return await Failure(h, 503, "file_settings_unavailable", id);
+            stage.State = "Receiving";
+            try { await db.SaveChangesAsync(ct); }
+            catch (DbUpdateConcurrencyException) { return await Failure(h, 409, "file_attempt_conflict", id); }
+            // From here acknowledgement can be ambiguous. Leave the fenced intent and bytes for
+            // reconciliation even when a provider call or the database transaction fails.
+            finalizationStarted = true;
+            if (!PolicyUnchanged()) return await Failure(h, 503, "file_settings_unavailable", id);
+            var provider = await objects.CommitAsync(a.TenantId, id, stage.ExpectedChecksum, stage.ExpectedLength, stage.Mime, ct);
+            current = h.RequestServices.GetRequiredService<ActorResolver>().Resolve(h.User);
+            if (current == null || current.Id != a.Id || current.TenantId != a.TenantId || !Write(current, vessel, h) || !await Scope(db, current, vessel, h, ct))
+                return await Failure(h, 403, "permission_denied", id);
+            if (!PolicyUnchanged()) return await Failure(h, 503, "file_settings_unavailable", id);
             // Bytes exist before committing accepted metadata; a failed commit leaves an orphan, never a downloadable row.
             await using var transaction = await db.Database.BeginTransactionAsync(ct);
             stage.State = "CleanTransport";
             var file = new StoredFile { TenantId = a.TenantId, Id = id, VesselId = vessel, Name = stage.Name, Mime = stage.Mime, ProviderVersion = provider.Version, ProviderETag = provider.ETag,
-                ProviderReference = settings.Adapter == "S3" ? settings.S3.ContextHash() : null,
-                Checksum = stage.ExpectedChecksum, Length = stage.ExpectedLength, RetentionReference = settings.RetentionReference!, ScannerReference = settings.ScannerReference!, ScannedAt = DateTimeOffset.UtcNow };
+                ProviderReference = stage.StorageReference,
+                Checksum = stage.ExpectedChecksum, Length = stage.ExpectedLength, RetentionReference = retentionReference!, ScannerReference = scannerReference!, ScannedAt = DateTimeOffset.UtcNow };
             db.StoredFiles.Add(file); await db.SaveChangesAsync(ct);
             db.CommandReceipts.Add(new() { TenantId = a.TenantId, ActorId = a.Id, Key = stage.Key, Action = "FileFinalize", Fingerprint = stage.Fingerprint, ResourceId = id, RegisterRevision = 1, RegisterVersion = file.Version, CommittedAt = DateTimeOffset.UtcNow });
             await db.SaveChangesAsync(ct); await transaction.CommitAsync(ct);
             return Results.Ok(Dto(stage, file));
+        }
+        catch (FileObjectBusyException)
+        {
+            return await Failure(h, 409, "file_attempt_conflict", id);
         }
         catch (Exception e) when (e is IOException or InvalidDataException or System.Net.Sockets.SocketException or OperationCanceledException or DbUpdateException)
         {
             // A commit acknowledgement can be ambiguous. Never delete bytes here: commit may have succeeded.
             // Receiving/unknown attempts remain quarantined; explicit reconciliation owns orphan cleanup.
             // The connection/context may be unusable; do not invent a rejected/successful business event.
-            return await Failure(h, 503, "file_quarantined_or_unknown", id);
+            return await Failure(h, 503, finalizationStarted ? "file_quarantined_or_unknown" : "file_upload_not_accepted", id);
         }
+        // Do not unlink by filename from a request, even after a known rejection.
+        // On Unix a reconciler can unlink an open spool and another stale request
+        // can recreate that pathname. Only the existing audited xmin reconciler
+        // owns deletion; a Pending spool is private quarantine, never accepted bytes.
     }
     private static async Task<IResult> Access(Guid vessel, Guid id, HttpContext h, PoseidonDbContext db)
     {

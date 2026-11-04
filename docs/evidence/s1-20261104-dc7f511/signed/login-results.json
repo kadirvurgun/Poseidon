@@ -1,0 +1,1 @@
+{"status":"PASS","tls":"PASS","accounts":[{"account":"lab-manager","passed":true,"genuineSignedProvider":true},{"account":"lab-restricted","passed":true,"genuineSignedProvider":true}],"failed":0}

@@ -20,6 +20,16 @@ public sealed class SecureFileSettings
     public string? ScannerReference { get; set; }
     public S3ObjectSettings S3 { get; set; } = new();
     public string[] AllowedTypes { get; set; } = ["image/png"];
+    // An upload must use one operator configuration even when a settings object
+    // changes while its audited claim/provider request is awaited. Only references
+    // are copied here; credentials are still resolved server-side by the adapter.
+    internal SecureFileSettings Snapshot() => new()
+    {
+        Adapter = Adapter, Root = Root, MaxBytes = MaxBytes, MaxPixels = MaxPixels,
+        ScanSeconds = ScanSeconds, ClamdPort = ClamdPort, CapabilitySeconds = CapabilitySeconds,
+        RetentionReference = RetentionReference, ScannerReference = ScannerReference,
+        AllowedTypes = AllowedTypes.ToArray(), S3 = S3.Snapshot()
+    };
     public bool Ready(IHostEnvironment environment) => (Adapter == "S3" && S3.Valid(environment) || environment.IsDevelopment() && Adapter == "LocalDevelopment") &&
         Root != null && Path.IsPathFullyQualified(Root) && !Path.GetFullPath(Root).Equals(Path.GetFullPath(environment.ContentRootPath), StringComparison.OrdinalIgnoreCase) && !Path.GetFullPath(Root).StartsWith(Path.GetFullPath(environment.ContentRootPath).TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase) && MaxBytes is > 0 and <= 5242880 && MaxPixels > 0 &&
         ScanSeconds is > 0 and <= 300 && ClamdPort is > 0 and <= 65535 && CapabilitySeconds is > 0 and <= 300 &&
@@ -28,6 +38,8 @@ public sealed class SecureFileSettings
 }
 
 // Only an explicitly configured development adapter. Production provider/credentials/retention are an open gate.
+public sealed class FileObjectBusyException() : IOException("file_attempt_conflict");
+
 public sealed class LocalFileObjects(SecureFileSettings settings)
 {
     private string PathFor(Guid tenant, Guid id)
@@ -41,7 +53,15 @@ public sealed class LocalFileObjects(SecureFileSettings settings)
         if (File.Exists(path) && (File.GetAttributes(path) & FileAttributes.ReparsePoint) != 0) throw new IOException("file_storage_unavailable");
         return path;
     }
-    public FileStream Create(Guid tenant, Guid id) => new(PathFor(tenant, id), FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None, 65536, FileOptions.Asynchronous);
+    public FileStream Create(Guid tenant, Guid id)
+    {
+        var path = PathFor(tenant, id);
+        try { return new(path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None, 65536, FileOptions.Asynchronous); }
+        // Only the OS create-new collision codes are a competing attempt. Permission, missing
+        // directories and unrelated I/O failures must not be reported as an ordinary conflict.
+        catch (IOException e) when (OperatingSystem.IsWindows() ? (e.HResult & 0xffff) is 80 or 183 : (e.HResult & 0xffff) == 17)
+        { throw new FileObjectBusyException(); }
+    }
     public FileStream Open(Guid tenant, Guid id) => new(PathFor(tenant, id), FileMode.Open, FileAccess.Read, FileShare.Read, 65536, FileOptions.Asynchronous);
     public void Remove(Guid tenant, Guid id) => File.Delete(PathFor(tenant, id));
 }

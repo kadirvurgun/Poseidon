@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "poseidon.s1.independent-actual-preview-user-review.v1",
+  "reviewer": "/root/s1_resume_evidence_qa",
+  "observedAt": "2026-11-03T19:53:55.901941+00:00",
+  "status": "PASS_ACTUAL_REQUESTED_PREVIEW_USER",
+  "username": "kadirvurgun",
+  "s1Accepted": false,
+  "runtimeP0VerdictIssued": false,
+  "testsProvidersBrowsersBuildsExecutedByReviewer": 0,
+  "target": {
+    "commit": "dc7f5117fb99a962d70a54b1f12f2c118f1cca66",
+    "tree": "e8843d8fb0bffd56a6d7955dfc286b8113a09bfd"
+  },
+  "evidence": [
+    {
+      "path": ".runtime/s1-foundation-20261103/preview-user-ready.json",
+      "sha256": "c4d9b95e025b0932524522f9d4fa80e37c05b4caeb914d10dba2c9362575091e"
+    },
+    {
+      "path": ".runtime/s1-foundation-20261103/preview-user-login.json",
+      "sha256": "5a14e05c72931c8f93254ab0498f3fe8952db0e69ecf835c8452a7240b62d965"
+    },
+    {
+      "path": ".runtime/s1-foundation-20261103/preview-user-active.json",
+      "sha256": "14f03a8c6db1f9bb0fc2241b3c9adb7edc25fe57481332915574066480a72e7c"
+    }
+  ],
+  "sourceReview": {
+    "path": ".runtime/s1-foundation-20261103/qa/review23-local-user-fresh-owned-scanner.json",
+    "sha256": "034c2452e267d25f3ffa51c9ec5550c6c654eae0d2d49972e6c1f0e17e8f035f"
+  },
+  "checkedActualFacts": {
+    "realStrictTlsProviderLoginClosed": true,
+    "independentOrdinaryActorRole": true,
+    "secureHttpOnlyCookie": true,
+    "ownVessel200ForeignTenant404": true,
+    "noTokenLocalStorage": true,
+    "noHumanExpertRegulatoryCatalogTraceAuthority": true,
+    "all11OriginalPrivateInputHashesUnchanged": true,
+    "oldMembershipsByteEquivalent": true,
+    "onlyConfigDifferencesNewOrdinaryMemberAndOwnedScannerPort": true,
+    "exactImplementationBinaryHashesUnchanged": true,
+    "existingProviderAccountsPreservedByReviewedProducer": true,
+    "passwordNotWrittenByReviewedProducer": true
+  },
+  "remainingS1Acceptance": [
+    "Fresh122 closed signed journeys",
+    "Exact preview restoration and private-byte preservation after signed run",
+    "Final independent phase and publication gates"
+  ]
+}

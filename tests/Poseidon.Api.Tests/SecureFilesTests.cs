@@ -58,8 +58,10 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.False(await db.CommandReceipts.AnyAsync(x => x.ResourceId == stage.Id, Ct));
         Assert.False(await db.AuditEvents.AnyAsync(x => x.ResourceId == stage.Id && x.EntityType == nameof(StoredFile), Ct));
         Assert.Equal(HttpStatusCode.NotFound, (await client.GetAsync($"/api/v1/vessels/{SeedVessel.Id}/files/{stage.Id}/bytes", Ct)).StatusCode);
-        var row = await db.FileStages.SingleAsync(x => x.Id == stage.Id, Ct); Assert.Equal("Receiving", row.State);
-        using var retry = await PutPng(client, stage.Id); Assert.Equal(HttpStatusCode.Conflict, retry.StatusCode);
+        var row = await db.FileStages.SingleAsync(x => x.Id == stage.Id, Ct); Assert.Equal("Pending", row.State);
+        Assert.Equal(stage.Version, row.Version);
+        Assert.Single(await db.AuditEvents.Where(x => x.ResourceId == stage.Id && x.EntityType == nameof(FileStage)).ToArrayAsync(Ct));
+        Assert.Single(Directory.GetFiles(root));
         await FileReconciliation.AbandonAsync(db, new LocalFileObjects(new() { Root = root }), DateTimeOffset.UtcNow, 10, Ct);
         Assert.False(File.Exists(Path.Combine(root, row.TenantId.ToString("N") + "-" + row.Id.ToString("N") + ".object")));
         Directory.Delete(root, false);
@@ -106,7 +108,7 @@ public sealed partial class DirectoryWorkspaceTests
         Directory.Delete(root, false);
     }
 
-    private Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory<Program> FileHost(string root, int port) => Host().WithWebHostBuilder(b => {
+    private Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory<Program> FileHost(string root, int port, Microsoft.EntityFrameworkCore.Diagnostics.DbCommandInterceptor? interceptor = null) => Host(interceptor: interceptor).WithWebHostBuilder(b => {
         b.UseEnvironment("Development");
         b.ConfigureServices(s => s.AddSingleton(new SecureFileSettings { Adapter = "LocalDevelopment", Root = root, MaxBytes = 1024 * 1024, MaxPixels = 1024 * 1024, ClamdPort = port, ScanSeconds = 1, CapabilitySeconds = 10, RetentionReference = "synthetic-policy", ScannerReference = "protocol-peer-test-only" }));
     });
@@ -168,7 +170,8 @@ public sealed partial class DirectoryWorkspaceTests
     {
         var role = Guid.NewGuid().ToString(); var tenant = SeedVessel.TenantId;
         await using (var writer = new PoseidonDbContext(Poseidon.Persistence.Seeding.SeedImporter.Options(postgres.GetConnectionString()), tenant,
-            new(actorId.ToString(), "User", "synthetic-role-snapshot", "directory.read,directory.write", "WebCommand", role)))
+            new(actorId.ToString(), "User", "synthetic-role-snapshot", "directory.read,directory.write", "WebCommand", role,
+                new AuditCommandContext("UpdateVessel", "PREPARATION_COMMAND"))))
         {
             var vessel = await writer.Vessels.SingleAsync(x => x.Id == SeedVessel.Id, Ct); vessel.Name = "Synthetic withheld name"; await writer.SaveChangesAsync(Ct);
         }
@@ -224,7 +227,8 @@ public sealed partial class DirectoryWorkspaceTests
         private readonly CancellationTokenSource stop = new();
         public int Port => ((IPEndPoint)listener.LocalEndpoint).Port;
         public Task<byte[]> Bytes { get; }
-        public ScanPeer(string reply, bool repeat = false) { listener.Start(); Bytes = Receive(reply, repeat); }
+        private readonly Func<Task>? beforeReply;
+        public ScanPeer(string reply, bool repeat = false, Func<Task>? beforeReply = null) { this.beforeReply = beforeReply; listener.Start(); Bytes = Receive(reply, repeat); }
         private async Task<byte[]> Receive(string reply, bool repeat) {
             byte[]? first = null;
             try {
@@ -244,6 +248,7 @@ public sealed partial class DirectoryWorkspaceTests
             var command = new byte[10]; await stream.ReadExactlyAsync(command, stop.Token); Assert.Equal("zINSTREAM\0", Encoding.ASCII.GetString(command));
             using var bytes = new MemoryStream(); var length = new byte[4];
             while (true) { await stream.ReadExactlyAsync(length, stop.Token); var n = BinaryPrimitives.ReadUInt32BigEndian(length); if (n == 0) break; Assert.True(n <= 65536); var chunk = new byte[(int)n]; await stream.ReadExactlyAsync(chunk, stop.Token); bytes.Write(chunk); }
+            if (beforeReply != null) await beforeReply();
             if (reply.Length == 0) await Task.Delay(TimeSpan.FromSeconds(3), stop.Token); else await stream.WriteAsync(Encoding.ASCII.GetBytes(reply), stop.Token);
             return bytes.ToArray();
         }

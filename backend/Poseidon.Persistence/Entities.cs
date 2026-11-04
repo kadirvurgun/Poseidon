@@ -75,7 +75,17 @@ public sealed class AuditEvent : ITenantEntity
     public string? Source { get; set; }
 }
 
-public sealed record ActorContext(string Id, string Type, string CorrelationId, string? CapabilityContext = null, string? Source = null, string? RoleContext = null)
+// Server-owned command provenance. A controlled technical reason is not a human safety justification.
+public sealed record AuditCommandContext(string EndpointName, string ReasonCode)
+{
+    public bool IsValid => EndpointName is { Length: > 0 and <= 80 } && char.IsAsciiLetter(EndpointName[0]) &&
+        EndpointName.All(c => char.IsAsciiLetterOrDigit(c) || c is '_' or '-' or '.') &&
+        ReasonCode is "PREPARATION_COMMAND" or "FILE_TRANSPORT" or "OFFLINE_LIFECYCLE" or
+            "REGULATORY_WORKFLOW" or "HUMAN_REVIEW_WORKFLOW" or "SOURCE_QUALIFICATION";
+}
+
+public sealed record ActorContext(string Id, string Type, string CorrelationId, string? CapabilityContext = null, string? Source = null, string? RoleContext = null,
+    AuditCommandContext? Command = null)
 {
     public static ActorContext SeedImport() => new("system:seed-import", "System", Guid.NewGuid().ToString(), Source: "SeedImport");
 }

@@ -116,7 +116,12 @@ public sealed partial class DirectoryWorkspaceTests
         var row = Assert.Single(await db.AuditEvents.Where(x => x.ActorId == actorId.ToString() && x.EntityType == nameof(Vessel)).ToArrayAsync(Ct));
         Assert.Equal(SeedVessel.Id, row.VesselId); Assert.Equal(SeedVessel.Id, row.ResourceId);
         Assert.Contains("audit.read", row.CapabilityContext); Assert.DoesNotContain("Synthetic withheld value", row.ChangeSummary);
-        Assert.Contains("ValuesWithheld", row.ChangeSummary); Assert.Equal("NotRequiredForCommand", row.ReasonStatus);
+        Assert.Contains("ValuesWithheld", row.ChangeSummary); Assert.Equal("RecordedControlledCode", row.ReasonStatus);
+        using (var summary = System.Text.Json.JsonDocument.Parse(row.ChangeSummary!))
+        {
+            Assert.Contains(summary.RootElement.EnumerateArray(), x => x.GetProperty("field").GetString() == "CommandName" && x.GetProperty("after").GetString() == "UpdateVessel");
+            Assert.Contains(summary.RootElement.EnumerateArray(), x => x.GetProperty("field").GetString() == "TechnicalReasonCode" && x.GetProperty("after").GetString() == "PREPARATION_COMMAND");
+        }
         var detail = (await client.GetFromJsonAsync<AuditRecordDto>($"/api/v1/audit/{row.Id}", Ct))!;
         Assert.Equal(before.Version, detail.BeforeVersion);
         var current = await DirectoryRow(client, $"vessels/{SeedVessel.Id}", false);

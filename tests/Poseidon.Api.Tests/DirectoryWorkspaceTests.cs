@@ -36,6 +36,7 @@ public sealed partial class DirectoryWorkspaceTests(OwnedPostgresFixture fixture
         return reference;
     }
     private readonly Guid actorId = Guid.NewGuid();
+    private readonly CriticalWriteCoverageCapture criticalWriteCoverage = new();
     private SeedData seed = null!;
     private CancellationToken Ct => TestContext.Current.CancellationToken;
     public async ValueTask InitializeAsync()
@@ -47,8 +48,11 @@ public sealed partial class DirectoryWorkspaceTests(OwnedPostgresFixture fixture
         catch { await postgres.DisposeAsync(); throw; }
     }
     public async ValueTask DisposeAsync() {
-        foreach (var key in offlineTestKeys.Values) key.Dispose();
-        await postgres.DisposeAsync();
+        try { await criticalWriteCoverage.WriteAsync(postgres, seed?.Tenants.Select(x => x.Id).ToArray() ?? []); }
+        finally {
+            foreach (var key in offlineTestKeys.Values) key.Dispose();
+            await postgres.DisposeAsync();
+        }
     }
     private Vessel SeedVessel => seed.Vessels.First(v => v.TenantId == seed.Tenants[0].Id);
     private WebApplicationFactory<Program> Host(bool manage = true, bool read = true, bool edit = true, bool scope = true, DbCommandInterceptor? interceptor = null, bool search = false, bool regulatoryRead = false, bool regulatoryWrite = false, bool auditRead = false, bool crewRead = false, bool crewWrite = false, bool crewIdentity = false, bool technicalRead = false, bool technicalWrite = false, bool tugRead = false, bool tugWrite = false, bool tugOwner = false, bool tugMode = false, bool crossMode = true, bool importRead = false, bool importWrite = false, bool certificateRead = false, bool certificateWrite = false, bool applicabilityRead = false, bool applicabilityEvaluate = false, bool ruleWrite = false, bool ruleReview = false) => new WebApplicationFactory<Program>().WithWebHostBuilder(b =>
@@ -127,6 +131,7 @@ public sealed partial class DirectoryWorkspaceTests(OwnedPostgresFixture fixture
             ["Authentication:Oidc:Memberships:0:VesselGrants:0:VesselId"] = scope ? SeedVessel.Id.ToString() : Guid.Empty.ToString(),
             ["Authentication:Oidc:Memberships:0:VesselGrants:0:CanEdit"] = edit.ToString()
         }));
+        b.ConfigureServices(s => s.AddSingleton(criticalWriteCoverage.StartupFilter()));
         b.ConfigureServices(s => s.AddAuthentication(o =>
         {
             o.DefaultAuthenticateScheme = "DirectorySynthetic"; o.DefaultChallengeScheme = "DirectorySynthetic"; o.DefaultForbidScheme = "DirectorySynthetic";
@@ -140,7 +145,8 @@ public sealed partial class DirectoryWorkspaceTests(OwnedPostgresFixture fixture
                 var actor = sp.GetRequiredService<ActorResolver>().Resolve(http.User) ?? throw new UnauthorizedAccessException();
                 return new PoseidonDbContext(new DbContextOptionsBuilder<PoseidonDbContext>()
                     .UseNpgsql(postgres.GetConnectionString()).AddInterceptors(interceptor).Options,
-                    actor.TenantId, new ActorContext(actor.Id.ToString(), "User", http.TraceIdentifier, actor.AuditCapabilities, "WebCommand", actor.RoleContext), qualifiedInputs: sp.GetRequiredService<IQualifiedInputRuntime>());
+                    actor.TenantId, new ActorContext(actor.Id.ToString(), "User", http.TraceIdentifier, actor.AuditCapabilities, "WebCommand", actor.RoleContext,
+                        Command: S1SecurityContract.Command(http)), qualifiedInputs: sp.GetRequiredService<IQualifiedInputRuntime>());
             });
         });
     });

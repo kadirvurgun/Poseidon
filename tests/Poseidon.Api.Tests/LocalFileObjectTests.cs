@@ -12,7 +12,7 @@ public sealed class LocalFileObjectTests
         var outside = Path.Combine(Path.GetTempPath(), "poseidon-outside-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(root); Directory.CreateDirectory(outside);
         var tenant = Guid.NewGuid(); var id = Guid.NewGuid(); var objects = new LocalFileObjects(new() { Root = root });
-        await using (var stream = objects.Create(tenant, id)) { await stream.WriteAsync(new byte[] {1,2,3}, TestContext.Current.CancellationToken); Assert.Throws<IOException>(() => objects.Create(tenant, id)); }
+        await using (var stream = objects.Create(tenant, id)) { await stream.WriteAsync(new byte[] {1,2,3}, TestContext.Current.CancellationToken); Assert.Throws<FileObjectBusyException>(() => objects.Create(tenant, id)); }
         await using (var read = objects.Open(tenant, id)) Assert.Equal(3, read.Length);
         objects.Remove(tenant, id);
         var path = Path.Combine(root, tenant.ToString("N") + "-" + id.ToString("N") + ".object");

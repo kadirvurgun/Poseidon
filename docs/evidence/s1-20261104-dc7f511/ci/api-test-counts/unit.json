@@ -1,0 +1,30 @@
+{
+  "scope": "unit",
+  "status": "PASS_EXACT_DISCOVERED_SCOPE",
+  "raw_output_persisted": false,
+  "started_at": "2026-11-03T10:16:01.122432+00:00",
+  "discovery": {
+    "exit_code": 0,
+    "cases": 137,
+    "output_sha256": "25befb0f387d1925e842c9b6eb651cda044b88bd869c1b2892d3a8739cf0c6de"
+  },
+  "exit_code": 0,
+  "count_observations": {
+    "total": [
+      137
+    ],
+    "failed": [
+      0
+    ],
+    "succeeded": [
+      137
+    ],
+    "skipped": [
+      0
+    ]
+  },
+  "output_sha256": "3a2a8d12676a7fd589a0fa1b546f87dcc7bb3dac4e768edf8aa4932faaeb638d",
+  "failed_static_test_names": [],
+  "elapsed_seconds": 2.695,
+  "finished_at": "2026-11-03T10:16:03.817532+00:00"
+}

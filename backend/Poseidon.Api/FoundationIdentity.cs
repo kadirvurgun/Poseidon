@@ -95,9 +95,7 @@ public static class FoundationIdentity
     public static void AddFoundationIdentity(this IServiceCollection services, IConfiguration configuration, IHostEnvironment environment)
     {
         var settings = configuration.GetSection("Authentication:Oidc").Get<FederationSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new();
-        if (settings.ClientSecretReference != null)
-            settings.ClientSecret = OperatorSecretReferences.Resolve(settings.ClientSecretReference, Environment.GetEnvironmentVariable)
-                ?? throw new InvalidOperationException("Required operator secret is unavailable.");
+        settings.ClientSecret = OperatorSecretReferences.Oidc(settings, environment);
         services.AddSingleton(settings);
         services.AddSingleton<ActorResolver>();
         services.AddAntiforgery(o =>

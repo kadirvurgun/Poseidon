@@ -1,0 +1,212 @@
+{
+  "schemaVersion": "poseidon.closed-ci-native-observations.v1",
+  "target": {
+    "commit": "dc7f5117fb99a962d70a54b1f12f2c118f1cca66",
+    "tree": "e8843d8fb0bffd56a6d7955dfc286b8113a09bfd"
+  },
+  "runId": 41617601700,
+  "status": "READ_SUCCESS_OBSERVATIONS_ONLY",
+  "readExitCode": 0,
+  "stdoutBytes": 409313,
+  "stdoutSha256": "21b3203857e8d80fb5a90bf416bb5e77c10368a9cd6a0405cec5030ed3d75985",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "parserSha256": "ec06e90c039e1d42be5b633c74cd97e0c0d5f83be0cf50494b65322f01696794",
+  "nativeObservations": {
+    "persistence-and-security|Unit tests": {
+      "dotnetNative": {
+        "total": [],
+        "failed": [
+          0,
+          0
+        ],
+        "succeeded": [],
+        "skipped": []
+      },
+      "vitestNative": [],
+      "pythonNativeRuns": [],
+      "pythonReportedSkipped": [],
+      "pythonExpectedFailures": [],
+      "pythonUnexpectedSuccesses": [],
+      "pythonPlainOKCount": 0,
+      "pythonFailedSummaryCount": 0,
+      "browserNative": {
+        "planned": [],
+        "passed": [],
+        "failed": [],
+        "skipped": [],
+        "flaky": []
+      }
+    },
+    "persistence-and-security|PostgreSQL integration tests": {
+      "dotnetNative": {
+        "total": [],
+        "failed": [
+          0
+        ],
+        "succeeded": [],
+        "skipped": []
+      },
+      "vitestNative": [],
+      "pythonNativeRuns": [],
+      "pythonReportedSkipped": [],
+      "pythonExpectedFailures": [],
+      "pythonUnexpectedSuccesses": [],
+      "pythonPlainOKCount": 0,
+      "pythonFailedSummaryCount": 0,
+      "browserNative": {
+        "planned": [],
+        "passed": [],
+        "failed": [],
+        "skipped": [],
+        "flaky": []
+      }
+    },
+    "persistence-and-security|Document import tests": {
+      "dotnetNative": {
+        "total": [],
+        "failed": [],
+        "succeeded": [],
+        "skipped": []
+      },
+      "vitestNative": [],
+      "pythonNativeRuns": [
+        407
+      ],
+      "pythonReportedSkipped": [],
+      "pythonExpectedFailures": [],
+      "pythonUnexpectedSuccesses": [],
+      "pythonPlainOKCount": 1,
+      "pythonFailedSummaryCount": 0,
+      "browserNative": {
+        "planned": [],
+        "passed": [],
+        "failed": [],
+        "skipped": [],
+        "flaky": []
+      }
+    },
+    "frontend-and-browser|Component tests": {
+      "dotnetNative": {
+        "total": [],
+        "failed": [],
+        "succeeded": [],
+        "skipped": []
+      },
+      "vitestNative": [],
+      "pythonNativeRuns": [],
+      "pythonReportedSkipped": [],
+      "pythonExpectedFailures": [],
+      "pythonUnexpectedSuccesses": [],
+      "pythonPlainOKCount": 0,
+      "pythonFailedSummaryCount": 0,
+      "browserNative": {
+        "planned": [],
+        "passed": [],
+        "failed": [],
+        "skipped": [],
+        "flaky": []
+      }
+    },
+    "frontend-and-browser|Real API browser smoke (desktop and mobile)": {
+      "dotnetNative": {
+        "total": [],
+        "failed": [],
+        "succeeded": [],
+        "skipped": []
+      },
+      "vitestNative": [],
+      "pythonNativeRuns": [],
+      "pythonReportedSkipped": [],
+      "pythonExpectedFailures": [],
+      "pythonUnexpectedSuccesses": [],
+      "pythonPlainOKCount": 0,
+      "pythonFailedSummaryCount": 0,
+      "browserNative": {
+        "planned": [
+          50
+        ],
+        "passed": [
+          50
+        ],
+        "failed": [],
+        "skipped": [],
+        "flaky": []
+      }
+    },
+    "windows-automation|Verify Windows scheduler construction without registration": {
+      "dotnetNative": {
+        "total": [],
+        "failed": [],
+        "succeeded": [],
+        "skipped": []
+      },
+      "vitestNative": [],
+      "pythonNativeRuns": [
+        1
+      ],
+      "pythonReportedSkipped": [],
+      "pythonExpectedFailures": [],
+      "pythonUnexpectedSuccesses": [],
+      "pythonPlainOKCount": 1,
+      "pythonFailedSummaryCount": 0,
+      "browserNative": {
+        "planned": [],
+        "passed": [],
+        "failed": [],
+        "skipped": [],
+        "flaky": []
+      }
+    },
+    "nightly-installer-construction|Construct nightly ScheduledTask in Preview only": {
+      "dotnetNative": {
+        "total": [],
+        "failed": [],
+        "succeeded": [],
+        "skipped": []
+      },
+      "vitestNative": [],
+      "pythonNativeRuns": [
+        6
+      ],
+      "pythonReportedSkipped": [],
+      "pythonExpectedFailures": [],
+      "pythonUnexpectedSuccesses": [],
+      "pythonPlainOKCount": 1,
+      "pythonFailedSummaryCount": 0,
+      "browserNative": {
+        "planned": [],
+        "passed": [],
+        "failed": [],
+        "skipped": [],
+        "flaky": []
+      }
+    },
+    "nightly-installer-construction|Construct persistent runtime and quota wake tasks in Preview only": {
+      "dotnetNative": {
+        "total": [],
+        "failed": [],
+        "succeeded": [],
+        "skipped": []
+      },
+      "vitestNative": [],
+      "pythonNativeRuns": [
+        3
+      ],
+      "pythonReportedSkipped": [],
+      "pythonExpectedFailures": [],
+      "pythonUnexpectedSuccesses": [],
+      "pythonPlainOKCount": 1,
+      "pythonFailedSummaryCount": 0,
+      "browserNative": {
+        "planned": [],
+        "passed": [],
+        "failed": [],
+        "skipped": [],
+        "flaky": []
+      }
+    }
+  },
+  "rawOutputPersisted": false,
+  "accepted": false,
+  "meaning": "Actual closed integer summaries only. Empty or absent fields mean UNAVAILABLE, never inferred zero or old scope counts."
+}

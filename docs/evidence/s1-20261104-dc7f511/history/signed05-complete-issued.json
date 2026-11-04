@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "poseidon.s1-isolated-signed-verification.v1",
+  "status": "FAILED_OR_INTERRUPTED_NOT_ACCEPTED",
+  "accepted": false,
+  "targetCommit": "dc7f5117fb99a962d70a54b1f12f2c118f1cca66",
+  "targetTree": "e8843d8fb0bffd56a6d7955dfc286b8113a09bfd",
+  "startedAt": "2026-11-03T19:53:59.838049+00:00",
+  "rawOutputPersisted": false,
+  "providerChanged": false,
+  "oldPrivateChanged": false,
+  "commands": [
+    {
+      "name": "run-login.py",
+      "exitCode": 0,
+      "seconds": 39.249,
+      "outputSha256": "818ce0f8d7bbc639238bca1546f364ba97887b63830d122e435427efaa37818f"
+    },
+    {
+      "name": "run-login.py",
+      "exitCode": 0,
+      "seconds": 20.96,
+      "outputSha256": "f6123892e5d25b9609f5b1aaa541f46c6c1ae578ef5ea828c6a2efbabf2475d4"
+    },
+    {
+      "name": "run-login.py",
+      "exitCode": 0,
+      "seconds": 20.015,
+      "outputSha256": "a246d886a47418e9cb3642a1195d246bd92b55b50b1cd6ff3761663bccc84407"
+    },
+    {
+      "name": "freeze_target.py",
+      "exitCode": 0,
+      "seconds": 5.498,
+      "outputSha256": "bccf9ae338a43b7805b65c335aab10f234659ecde51667659cc4578f7a010c77"
+    },
+    {
+      "name": "final-run.py",
+      "exitCode": 1,
+      "seconds": 1501.573,
+      "outputSha256": "65a781f5331538e872d6ffcc654defe25bbc8353d12e4cfb785a1a4a311b16c1"
+    }
+  ],
+  "failureType": "RuntimeError",
+  "previewRestored": true,
+  "originalPrivatePreserved": true,
+  "requestedUserPreviewConfigurationPreserved": true,
+  "finishedAt": "2026-11-03T20:20:55.299863+00:00",
+  "seconds": 1615.462
+}

@@ -5,6 +5,23 @@ import { auditDetail, auditPage, auditTypes, changes } from './audit-api'
 import type { AuditPage, AuditRecord } from './audit-api'
 
 type Load<T> = { state: 'loading' } | { state: 'ok'; data: T } | { state: 'error'; status: number }
+const reasons: Record<string, readonly [string, string]> = {
+  PREPARATION_COMMAND: ['Taslak ve kayıt düzenleme', 'Draft and record preparation'],
+  FILE_TRANSPORT: ['Güvenli dosya aktarımı', 'Secure file transport'],
+  OFFLINE_LIFECYCLE: ['Çevrimdışı kayıt yaşam döngüsü', 'Offline record lifecycle'],
+  REGULATORY_WORKFLOW: ['Mevzuat kayıt iş akışı', 'Regulatory record workflow'],
+  HUMAN_REVIEW_WORKFLOW: ['Yetkili inceleme iş akışı', 'Authorized review workflow'],
+  SOURCE_QUALIFICATION: ['Kaynak değerlendirme iş akışı', 'Source qualification workflow'],
+}
+function reasonText(row: AuditRecord, en: boolean) {
+  if (row.reasonStatus === 'SystemOperation') return en ? 'Attributed system operation' : 'İlişkilendirilmiş sistem işlemi'
+  if (row.reasonStatus === 'RecordedProtected') return en ? 'Original reason retained in the authorized source record.' : 'Özgün gerekçe yetkili kaynak kaydında saklanır.'
+  if (row.reasonStatus === 'RecordedControlledCode') {
+    const value = changes(row.changeSummary).find(x => x.field === 'TechnicalReasonCode')?.after
+    return value && reasons[value] ? reasons[value][en ? 1 : 0] : en ? 'Historical reason unavailable' : 'Tarihsel gerekçe mevcut değil'
+  }
+  return en ? 'Historical reason unavailable' : 'Tarihsel gerekçe mevcut değil'
+}
 export function AuditWorkspace({ language, selected, query = '', allowed, onNavigate }: {
   language: 'tr' | 'en'; selected: string | null; query?: string; allowed: boolean; onNavigate: (href: string) => void
 }) {
@@ -58,7 +75,7 @@ export function AuditWorkspace({ language, selected, query = '', allowed, onNavi
       <dt>{en ? 'Actor reference' : 'Aktör referansı'}</dt><dd>{detail.data.actorReference ?? (en ? 'Unavailable' : 'Mevcut değil')}</dd>
       <dt>{en ? 'Assigned role references' : 'Atanmış rol referansları'}</dt><dd>{detail.data.roleContext ?? (en ? 'Role assignment unavailable' : 'Rol ataması mevcut değil')}</dd>
       <dt>{en ? 'Trusted capabilities' : 'Güvenilir yetkiler'}</dt><dd>{detail.data.capabilityContext ?? (en ? 'Historical context unavailable' : 'Tarihsel bağlam mevcut değil')}</dd>
-      <dt>{en ? 'Reason' : 'Gerekçe'}</dt><dd>{detail.data.reasonStatus === 'NotRequiredForCommand' ? (en ? 'This draft/directory command does not require a decision reason.' : 'Bu taslak/dizin komutu karar gerekçesi gerektirmez.') : (en ? 'Historical reason unavailable' : 'Tarihsel gerekçe mevcut değil')}</dd>
+      <dt>{en ? 'Reason' : 'Gerekçe'}</dt><dd>{reasonText(detail.data, en)}</dd>
       <dt>{en ? 'Metadata' : 'Üst veri'}</dt><dd>{detail.data.metadataStatus === 'Recorded' ? (en ? 'Recorded' : 'Kaydedildi') : (en ? 'Historical metadata incomplete' : 'Tarihsel üst veri eksik')}</dd>
       <dt>{en ? 'Resource version' : 'Kaynak sürümü'}</dt><dd>{detail.data.beforeVersion ?? '—'} → {detail.data.afterVersion ?? (en ? 'Unavailable' : 'Mevcut değil')}</dd>
       <dt>{en ? 'Correlation' : 'Korelasyon'}</dt><dd>{detail.data.correlationId ?? '—'}</dd>

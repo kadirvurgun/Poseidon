@@ -1,0 +1,55 @@
+{
+  "scope": "integration",
+  "status": "FAILED_OR_UNPROVEN",
+  "raw_output_persisted": false,
+  "started_at": "2026-11-03T09:19:58.239330+00:00",
+  "discovery": {
+    "exit_code": 0,
+    "cases": 580,
+    "output_sha256": "3dbee64a3f4887fd23d04e63e13848420be90c9b530b7afeb8b7b46002a237b9"
+  },
+  "exit_code": 2,
+  "count_observations": {
+    "total": [
+      580
+    ],
+    "failed": [
+      3
+    ],
+    "succeeded": [
+      577
+    ],
+    "skipped": [
+      0
+    ]
+  },
+  "output_sha256": "0dc969a239fddb7ef208f9ccb41a0543a740356ca9232ed2fc227fd58d40a0c4",
+  "failure_source_locations": [
+    {
+      "file": "S1ScopeCoverageTests.cs",
+      "line": 78
+    },
+    {
+      "file": "S1ScopeCoverageTests.cs",
+      "line": 85
+    },
+    {
+      "file": "S1ScopeCoverageTests.cs",
+      "line": 94
+    },
+    {
+      "file": "S1ScopeCoverageTests.cs",
+      "line": 109
+    },
+    {
+      "file": "S1ScopeCoverageTests.cs",
+      "line": 115
+    }
+  ],
+  "failed_static_test_names": [
+    "All_current_mutation_routes_deny_anonymous_or_forged_IdP_privileges_without_business_effects",
+    "Every_current_critical_write_requires_a_real_server_role_even_when_read_scope_is_valid"
+  ],
+  "elapsed_seconds": 726.676,
+  "finished_at": "2026-11-03T09:32:04.915717+00:00"
+}

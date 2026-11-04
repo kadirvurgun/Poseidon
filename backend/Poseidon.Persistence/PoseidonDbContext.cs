@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.Linq.Expressions;
 
 namespace Poseidon.Persistence;
 
@@ -269,7 +271,7 @@ public sealed class PoseidonDbContext(
 
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
     {
-        var generated = PrepareAudit();
+        var generated = PrepareAudit(false, CancellationToken.None).GetAwaiter().GetResult();
         try { return base.SaveChanges(acceptAllChangesOnSuccess); }
         catch
         {
@@ -280,7 +282,7 @@ public sealed class PoseidonDbContext(
 
     public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
     {
-        var generated = PrepareAudit();
+        var generated = await PrepareAudit(true, cancellationToken);
         try { return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken); }
         catch
         {
@@ -293,7 +295,8 @@ public sealed class PoseidonDbContext(
     {
         var resource = ChangeTracker.Entries().FirstOrDefault(e => e.Entity switch {
             CrewCatalogHead c => receipt.Action == "CrewCatalogSave" && c.VesselId == receipt.ResourceId && c.TenantId == receipt.TenantId,
-            ImportBatch b => receipt.Action == "CrewImportLegacyConvert" && b.Id == receipt.ResourceId && b.TenantId == receipt.TenantId,
+            ImportBatch b => receipt.Action is "CrewImportLegacyConvert" or "ImportCommit" && b.Id == receipt.ResourceId && b.TenantId == receipt.TenantId,
+            Credential c => receipt.Action == "CredentialSave" && c.Id == receipt.ResourceId && c.TenantId == receipt.TenantId,
             TugDraftPlan p => receipt.Action == "TugPlanSave" && p.JobId == receipt.ResourceId && p.TenantId == receipt.TenantId,
             TugJob j => receipt.Action == "TugSave" && j.Id == receipt.ResourceId && j.TenantId == receipt.TenantId,
             Asset a => receipt.Action == "EquipmentSave" && a.Id == receipt.ResourceId && a.TenantId == receipt.TenantId,
@@ -319,13 +322,83 @@ public sealed class PoseidonDbContext(
         return receipt.Action is "author" or "review" ? head?.Entity.Version : null;
     }
 
-    private List<AuditEvent> PrepareAudit()
+    private async ValueTask<Guid?> OwnedVessel<T>(DbSet<T> set, Expression<Func<T, bool>> owner,
+        Expression<Func<T, Guid>> vessel, bool asynchronous, CancellationToken cancellationToken) where T : class
+    {
+        // A newly added or already loaded parent is authoritative in this same audited unit of work.
+        // Every predicate includes the actual child tenant; database fallback retains the context query filter.
+        var tracked = set.Local.SingleOrDefault(owner.Compile());
+        Guid? id = tracked != null ? vessel.Compile()(tracked) : asynchronous
+            ? await set.AsNoTracking().Where(owner).Select(vessel).Select(x => (Guid?)x).SingleOrDefaultAsync(cancellationToken)
+            : set.AsNoTracking().Where(owner).Select(vessel).Select(x => (Guid?)x).SingleOrDefault();
+        return id is { } value && value != Guid.Empty ? value
+            : throw new InvalidOperationException("Audit parent ownership is unavailable.");
+    }
+
+    private ValueTask<Guid?> ReceiptVessel(CommandReceipt r, bool asynchronous, CancellationToken ct) => r.Action switch
+    {
+        "CompanyCreate" or "CompanyUpdate" => TenantResource(Companies, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, asynchronous, ct),
+        "CrewPersonSave" or "CrewIdentityConvert" => TenantResource(Persons, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, asynchronous, ct),
+        "CrewProfileSave" or "CrewPhotoSave" => TenantResource(CrewPersonalProfiles, x => x.TenantId == r.TenantId && x.PersonId == r.ResourceId, asynchronous, ct),
+        "SourceDraftSave" => TenantResource(RegisterDrafts, x => x.TenantId == r.TenantId && x.Kind == "Source" && x.Id == r.ResourceId, asynchronous, ct),
+        "RequirementDraftSave" => TenantResource(RegisterDrafts, x => x.TenantId == r.TenantId && x.Kind == "Requirement" && x.Id == r.ResourceId, asynchronous, ct),
+        "VesselCreate" or "VesselUpdate" => OwnedVessel(Vessels, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, x => x.Id, asynchronous, ct),
+        "ProfileSave" => OwnedVessel(RegulatoryDrafts, x => x.TenantId == r.TenantId && x.VesselId == r.ResourceId, x => x.VesselId, asynchronous, ct),
+        "CrewCatalogSave" => OwnedVessel(CrewCatalogHeads, x => x.TenantId == r.TenantId && x.VesselId == r.ResourceId, x => x.VesselId, asynchronous, ct),
+        "CrewSave" => OwnedVessel(CrewAssignments, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, x => x.VesselId, asynchronous, ct),
+        "CredentialSave" => OwnedVessel(Credentials, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, x => x.VesselId, asynchronous, ct),
+        "ImportCommit" or "CrewImportLegacyConvert" => OwnedVessel(ImportBatches, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, x => x.VesselId, asynchronous, ct),
+        "EquipmentSave" => OwnedVessel(Assets, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, x => x.VesselId, asynchronous, ct),
+        "MaintenanceSave" => OwnedVessel(MaintenancePlans, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, x => x.VesselId, asynchronous, ct),
+        "TugSave" => OwnedVessel(TugJobs, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, x => x.VesselId, asynchronous, ct),
+        "TugPlanSave" => OwnedVessel(TugDraftPlans, x => x.TenantId == r.TenantId && x.JobId == r.ResourceId, x => x.VesselId, asynchronous, ct),
+        "DocumentDraftSave" => OwnedVessel(Documents, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, x => x.VesselId, asynchronous, ct),
+        "FileFinalize" => OwnedVessel(StoredFiles, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, x => x.VesselId, asynchronous, ct),
+        _ => new ValueTask<Guid?>((Guid?)null)
+    };
+
+    private async ValueTask<Guid?> TenantResource<T>(DbSet<T> set, Expression<Func<T, bool>> owner,
+        bool asynchronous, CancellationToken cancellationToken) where T : class
+    {
+        if (!set.Local.Any(owner.Compile()) && !(asynchronous
+            ? await set.AsNoTracking().AnyAsync(owner, cancellationToken) : set.AsNoTracking().Any(owner)))
+            throw new InvalidOperationException("Audit parent ownership is unavailable.");
+        // Actual tenant/person/catalog ownership is confirmed; it does not imply a vessel assignment.
+        return null;
+    }
+
+    private ValueTask<Guid?> ParentVessel(EntityEntry entry, bool asynchronous, CancellationToken ct) => entry.Entity switch
+    {
+        MaintenanceObservationRevocation r => OwnedVessel(MaintenanceObservations,
+            x => x.TenantId == r.TenantId && x.Id == r.ObservationId, x => x.VesselId, asynchronous, ct),
+        EvaluationRule r => OwnedVessel(ApplicabilityEvaluations,
+            x => x.TenantId == r.TenantId && x.Id == r.EvaluationId, x => x.VesselId, asynchronous, ct),
+        EvaluationQualification r => OwnedVessel(ApplicabilityEvaluations,
+            x => x.TenantId == r.TenantId && x.Id == r.EvaluationId, x => x.VesselId, asynchronous, ct),
+        CommandReceipt r => ReceiptVessel(r, asynchronous, ct),
+        _ => new ValueTask<Guid?>((Guid?)null)
+    };
+
+    private static bool TrustedRoleSnapshot(string? value)
+    {
+        if (value is not { Length: > 0 and <= 600 }) return false;
+        var roles = value.Split(',');
+        return roles.Length is > 0 and <= 16 && roles.All(x => x.Length == 36 && Guid.TryParseExact(x, "D", out var id) && id != Guid.Empty) &&
+            roles.Distinct(StringComparer.OrdinalIgnoreCase).Count() == roles.Length;
+    }
+
+    private async ValueTask<List<AuditEvent>> PrepareAudit(bool asynchronous, CancellationToken cancellationToken)
     {
         ChangeTracker.DetectChanges();
         var changes = ChangeTracker.Entries().Where(e => e.State is EntityState.Added or EntityState.Modified or EntityState.Deleted).ToList();
         if (changes.Count == 0) return [];
         if (string.IsNullOrWhiteSpace(actor.Id) || string.IsNullOrWhiteSpace(actor.Type) || string.IsNullOrWhiteSpace(actor.CorrelationId))
             throw new InvalidOperationException("An authenticated or explicit system actor and correlation ID are required.");
+        if (actor.Command != null && !actor.Command.IsValid)
+            throw new InvalidOperationException("Invalid audit command context.");
+        var currentWebCommand = actor.Source == "WebCommand";
+        if (currentWebCommand && (actor.Type != "User" || actor.Command == null || !TrustedRoleSnapshot(actor.RoleContext)))
+            throw new InvalidOperationException("Current web writes require trusted role and command provenance.");
         if (changes.Any(e => e.Entity is AuditEvent or SecurityEvent))
             throw new InvalidOperationException("Audit events are generated by the context and cannot be directly changed.");
         if (changes.Any(e => e.Entity is RegulatoryQualificationEvent or RegulatoryFactAttestation or EvaluationQualification or RegulatoryQualificationReceipt && e.State != EntityState.Added))
@@ -422,7 +495,7 @@ public sealed class PoseidonDbContext(
             if (entry.State == EntityState.Modified && entry.Entity is ITenantEntity && entry.Property(nameof(ITenantEntity.TenantId)).IsModified)
                 throw new UnauthorizedAccessException("Tenant ownership cannot be changed.");
             var key = entry.Metadata.FindPrimaryKey()!.Properties;
-            var metadata = AuditMetadata.From(entry);
+            var metadata = AuditMetadata.From(entry, await ParentVessel(entry, asynchronous, cancellationToken), actor.Command, currentWebCommand);
             events.Add(new AuditEvent
             {
                 Id = Guid.NewGuid(), TenantId = scope, ActorId = actor.Id, ActorType = actor.Type,
@@ -439,9 +512,16 @@ public sealed class PoseidonDbContext(
                 // Receipt save happens after PostgreSQL returned the business xmin, inside the same transaction.
                 AfterVersion = entry.Entity is CommandReceipt command ? CommittedVersion(command) : entry.Entity is ApplicabilityReceipt applicability ? CommittedVersion(applicability) : entry.Entity is RegulatoryQualificationReceipt qr ? ChangeTracker.Entries<RegulatoryQualificationHead>().SingleOrDefault(e => e.Entity.TenantId == qr.TenantId && e.Entity.RuleId == qr.RuleId)?.Entity.Version : entry.Entity is HumanReviewReceipt hr ? ChangeTracker.Entries<HumanReviewHead>().SingleOrDefault(e => e.Entity.TenantId == hr.TenantId && e.Entity.VesselId == hr.VesselId && e.Entity.Id == hr.ResourceId)?.Entity.Version : entry.Entity is ControlEvidenceReceipt ce ? ChangeTracker.Entries<ControlEvidenceHead>().SingleOrDefault(e => e.Entity.TenantId == ce.TenantId && e.Entity.VesselId == ce.VesselId && e.Entity.Kind == ce.Kind && e.Entity.Id == ce.ResourceId)?.Entity.Version : null,
                 RoleContext = actor.RoleContext, CapabilityContext = actor.CapabilityContext, ChangeSummary = metadata.Summary,
-                BeforeRevision = metadata.BeforeRevision, AfterRevision = metadata.AfterRevision,
-                ResourceKind = metadata.Kind, ReasonStatus = entry.Entity is RuleRevision or ControlEvidenceRevision or HumanReviewEvent or TugOfflineOutcome { ParentCommandId: not null } ? "RecordedControlledCode" : entry.Entity is OfflineOutcome { ParentCommandId: not null }
-                    ? "RecordedProtected" : "NotRequiredForCommand", Source = actor.Source
+                BeforeRevision = metadata.BeforeRevision, AfterRevision = entry.Entity switch
+                {
+                    RegulatoryQualificationReceipt r => ChangeTracker.Entries<RegulatoryQualificationHead>().SingleOrDefault(e => e.Entity.TenantId == r.TenantId && e.Entity.RuleId == r.RuleId)?.Entity.Revision,
+                    HumanReviewReceipt r => ChangeTracker.Entries<HumanReviewHead>().SingleOrDefault(e => e.Entity.TenantId == r.TenantId && e.Entity.VesselId == r.VesselId && e.Entity.Id == r.ResourceId)?.Entity.Revision,
+                    ControlEvidenceReceipt r => ChangeTracker.Entries<ControlEvidenceHead>().SingleOrDefault(e => e.Entity.TenantId == r.TenantId && e.Entity.VesselId == r.VesselId && e.Entity.Kind == r.Kind && e.Entity.Id == r.ResourceId)?.Entity.Revision,
+                    _ => metadata.AfterRevision
+                },
+                ResourceKind = metadata.Kind, ReasonStatus = actor.Type == "System" ? "SystemOperation" :
+                    entry.Entity is RuleRevision or ControlEvidenceRevision or HumanReviewEvent or TugOfflineOutcome { ParentCommandId: not null } ? "RecordedControlledCode" : entry.Entity is OfflineOutcome { ParentCommandId: not null }
+                    ? "RecordedProtected" : currentWebCommand ? "RecordedControlledCode" : "HistoricalUnavailable", Source = actor.Source
             });
         }
         AuditEvents.AddRange(events);

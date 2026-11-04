@@ -13,6 +13,49 @@ namespace Poseidon.Api.Tests;
 
 public sealed partial class DirectoryWorkspaceTests
 {
+    [Fact]
+    public async Task S3_context_changed_while_Receiving_claim_is_awaited_cannot_redirect_or_commit_provider_bytes()
+    {
+        await using var lab = await OwnedS3Lab.CreateAsync(Ct); using var scanner = new ScanPeer("stream: OK\0");
+        var config = lab.FileSettings(scanner.Port); var pause = new ReceivingClaimPause();
+        await using var host = Host(interceptor: pause).WithWebHostBuilder(b => {
+            b.UseEnvironment("Development"); b.ConfigureServices(s => s.AddSingleton(config));
+        });
+        using var client = Client(host); FilePermissions(host.Services); await Token(client);
+        var stage = await StagePng(client); var pending = PutPng(client, stage.Id); var bucket = config.S3.Bucket;
+        try {
+            await pause.Entered.Task.WaitAsync(Ct);
+            config.S3.Bucket = "different-synthetic-bucket";
+        } finally { pause.Release.TrySetResult(); }
+        using var response = await pending; Assert.Equal(HttpStatusCode.ServiceUnavailable, response.StatusCode);
+        await using var db = Db();
+        Assert.Equal("Receiving", (await db.FileStages.AsNoTracking().SingleAsync(x => x.Id == stage.Id, Ct)).State);
+        Assert.False(await db.StoredFiles.AnyAsync(x => x.Id == stage.Id, Ct));
+        Assert.False(await db.CommandReceipts.AnyAsync(x => x.ResourceId == stage.Id, Ct));
+        config.S3.Bucket = bucket;
+        using var storage = lab.Settings.Client();
+        var versions = await storage.ListVersionsAsync(new ListVersionsRequest { BucketName = bucket, Prefix = $"poseidon/{SeedVessel.TenantId:N}/{stage.Id:N}" }, Ct);
+        Assert.Empty(versions.Versions ?? []);
+    }
+
+    // S1-FILES-REJECTION-01: a new provider context cannot consume or freeze an old intent.
+    [Fact]
+    public async Task Changed_S3_context_rejects_before_claiming_pending_intent_or_touching_provider_bytes()
+    {
+        await using var lab = await OwnedS3Lab.CreateAsync(Ct); var config = lab.FileSettings(1);
+        await using var host = Host().WithWebHostBuilder(b => { b.UseEnvironment("Development"); b.ConfigureServices(s => s.AddSingleton(config)); });
+        using var client = Client(host); FilePermissions(host.Services); await Token(client);
+        var stage = await StagePng(client);
+        var originalBucket = config.S3.Bucket; config.S3.Bucket = "different-synthetic-bucket";
+        using var response = await PutPng(client, stage.Id); Assert.Equal(HttpStatusCode.ServiceUnavailable, response.StatusCode);
+        await using var db = Db(); await AssertUnchangedRejectedIntent(db, stage);
+        Assert.Empty(Directory.GetFiles(config.Root!));
+        config.S3.Bucket = originalBucket;
+        using var storage = lab.Settings.Client();
+        var versions = await storage.ListVersionsAsync(new ListVersionsRequest { BucketName = originalBucket, Prefix = $"poseidon/{SeedVessel.TenantId:N}/{stage.Id:N}" }, Ct);
+        Assert.Empty(versions.Versions ?? []);
+    }
+
     // FSC-S3-01: real PostgreSQL/API/S3/clamd with actual versioned document bytes.
     [Fact]
     public async Task Real_S3_document_upload_reads_exact_provider_version_and_reauthorizes_every_owner_access()

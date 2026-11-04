@@ -1,0 +1,865 @@
+{
+  "schemaVersion": "poseidon.signed-final-target.v1",
+  "scope": "ISOLATED_S1_FICTIONAL_SOFTWARE_REGRESSION",
+  "commit": "dc7f5117fb99a962d70a54b1f12f2c118f1cca66",
+  "tree": "e8843d8fb0bffd56a6d7955dfc286b8113a09bfd",
+  "createdAt": "2026-11-04T15:23:53.689750+00:00",
+  "accepted": false,
+  "fingerprints": {
+    "uiSha256": "7ab490cff6efac77a2acb27cba01b8d6a7eda94c462938f075577ea45b428c64",
+    "registerSourcesSha256": "d461219a3fb984abbc8ae142efcf6c4563e46ee1501b1f9f7d3972b6d5adca25",
+    "apiDllSha256": "f16ebbc5945d975febcfbd1524833bb684c499c237a620522016315f94535a70"
+  },
+  "sourceDigests": [
+    {
+      "path": "tests/Poseidon.Browser.Tests/register-specs/audit-cases.ts",
+      "sha256": "5f4c281b78a777d9b2b2408faa2d9927350647b7d857db297369b1332bf98891",
+      "gitBlobOid": "4d99aeb5543e655dbbd70fc79a72f8c475d2154c",
+      "gitBlobSha256": "5f4c281b78a777d9b2b2408faa2d9927350647b7d857db297369b1332bf98891",
+      "gitNormalizedWorkingParity": true,
+      "byteParity": true
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/register-specs/cases.ts",
+      "sha256": "ba9467a4d4670fb6dfa4a6d4310b3f3a404a41dcb3593538f1a279b2c7a80bcc",
+      "gitBlobOid": "4b5ec10b5bd41ffd95c955f4cd00072621f3352a",
+      "gitBlobSha256": "ba9467a4d4670fb6dfa4a6d4310b3f3a404a41dcb3593538f1a279b2c7a80bcc",
+      "gitNormalizedWorkingParity": true,
+      "byteParity": true
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/register-specs/compliance-input-cases.ts",
+      "sha256": "349f88389743f2d8325a03ee0dbae61c63bd606911c5232e9c795c2bca170253",
+      "gitBlobOid": "62608561efa6be23aaa681a6d4e56406af1cb99d",
+      "gitBlobSha256": "349f88389743f2d8325a03ee0dbae61c63bd606911c5232e9c795c2bca170253",
+      "gitNormalizedWorkingParity": true,
+      "byteParity": true
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/register-specs/context-cases.ts",
+      "sha256": "d69b9638671aa38fb18861229d48737d485b7c7b226353bb4352b2c91405891e",
+      "gitBlobOid": "22360c1d1ae27018fa79a3a29a237ebf70d50c5e",
+      "gitBlobSha256": "d69b9638671aa38fb18861229d48737d485b7c7b226353bb4352b2c91405891e",
+      "gitNormalizedWorkingParity": true,
+      "byteParity": true
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/register-specs/control-evidence-cases.ts",
+      "sha256": "25e07f718b136949d67c39bdbd3d379086c23a5231de53278f451469ed343c8c",
+      "gitBlobOid": "0da31908a81f4d934cf14ebfe59c8ba1e466fb88",
+      "gitBlobSha256": "25e07f718b136949d67c39bdbd3d379086c23a5231de53278f451469ed343c8c",
+      "gitNormalizedWorkingParity": true,
+      "byteParity": true
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/register-specs/crew-cases.ts",
+      "sha256": "bd4558933c8e5c110665245138d917d8ed7c1c8b7ed3d284b80772d27c49cb88",
+      "gitBlobOid": "e6623c9fa92a2c3e12b2ddc21b71039aee49699d",
+      "gitBlobSha256": "bd4558933c8e5c110665245138d917d8ed7c1c8b7ed3d284b80772d27c49cb88",
+      "gitNormalizedWorkingParity": true,
+      "byteParity": true
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/register-specs/crew-catalog-cases.ts",
+      "sha256": "bc7a5423ab28558ff2dc201ef920c3661f34f4a0589dcdeef6ea208b5181aaf7",
+      "gitBlobOid": "4908e989683fb132737131b3247d1d00a0d960e3",
+      "gitBlobSha256": "bc7a5423ab28558ff2dc201ef920c3661f34f4a0589dcdeef6ea208b5181aaf7",
+      "gitNormalizedWorkingParity": true,
+      "byteParity": true
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/register-specs/crew-identity-cases.ts",
+      "sha256": "247af8bb39fcf1088e0b6f324d9d59860c6e12d47251c3228cdbd783ce15a3f2",
+      "gitBlobOid": "d561f2cb78312bed7e0bb67b764133c7e96f071b",
+      "gitBlobSha256": "247af8bb39fcf1088e0b6f324d9d59860c6e12d47251c3228cdbd783ce15a3f2",
+      "gitNormalizedWorkingParity": true,
+      "byteParity": true
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/register-specs/crew-legacy-cases.ts",
+      "sha256": "678bb5466494da517f59670c2391cec6f67996f49a23fc2110a7294477762970",
+      "gitBlobOid": "0c87a219f0f994d347e9fb32621de268938b658c",
+      "gitBlobSha256": "678bb5466494da517f59670c2391cec6f67996f49a23fc2110a7294477762970",
+      "gitNormalizedWorkingParity": true,
+      "byteParity": true
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/register-specs/drafts.spec.ts",
+      "sha256": "00c354c60242a1c5301371ae6610089f8e62482cee39a1e83e6f9dda94bc033f",
+      "gitBlobOid": "746588b2abe22e9c0f69157ab960ce54df15c6bd",
+      "gitBlobSha256": "00c354c60242a1c5301371ae6610089f8e62482cee39a1e83e6f9dda94bc033f",
+      "gitNormalizedWorkingParity": true,
+      "byteParity": true
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/register-specs/file-cases.ts",
+      "sha256": "69fe92ac82839498729f6c735a85e6db71ea4df04cdb2c47b37e00af613da308",
+      "gitBlobOid": "6bdae0ba21367900e4887f9bf902b274fffe0d84",
+      "gitBlobSha256": "69fe92ac82839498729f6c735a85e6db71ea4df04cdb2c47b37e00af613da308",
+      "gitNormalizedWorkingParity": true,
+      "byteParity": true
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/register-specs/human-review-cases.ts",
+      "sha256": "d6ad03963fdeaa7a0df6bf6c43838971ef22e24d8b4bdf9235a9694838da2e7c",
+      "gitBlobOid": "11ee7d9a30d20d401758e7b8d0447693ec40c726",
+      "gitBlobSha256": "d6ad03963fdeaa7a0df6bf6c43838971ef22e24d8b4bdf9235a9694838da2e7c",
+      "gitNormalizedWorkingParity": true,
+      "byteParity": true
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/register-specs/import-cases.ts",
+      "sha256": "d305b6555aa784f982c3fc37ac64acc7911c2bf1b98e0446e0849e8a620cf27b",
+      "gitBlobOid": "2aa495bf3057885d525331adbea360927c5cc967",
+      "gitBlobSha256": "d305b6555aa784f982c3fc37ac64acc7911c2bf1b98e0446e0849e8a620cf27b",
+      "gitNormalizedWorkingParity": true,
+      "byteParity": true
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/register-specs/lifecycle-applicability-cases.ts",
+      "sha256": "a51de87c1ada518ee0eea4bec6db1ee917ba98a602ca724fa52a0eb80ca800ae",
+      "gitBlobOid": "9466ac4cbfcae5ce256f0450ef9328657729ef40",
+      "gitBlobSha256": "a51de87c1ada518ee0eea4bec6db1ee917ba98a602ca724fa52a0eb80ca800ae",
+      "gitNormalizedWorkingParity": true,
+      "byteParity": true
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/register-specs/navigation-role-lens-cases.ts",
+      "sha256": "83830d5c186a9f346844ad81b7ed1212a471cbcc80ae7010bb8a6d32ea5321df",
+      "gitBlobOid": "e7f7305fcb582ef0f87191d0b073cbdee43449e0",
+      "gitBlobSha256": "83830d5c186a9f346844ad81b7ed1212a471cbcc80ae7010bb8a6d32ea5321df",
+      "gitNormalizedWorkingParity": true,
+      "byteParity": true
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/register-specs/offline-application-cases.ts",
+      "sha256": "b9b4a9fdd91d25beeaa94f19b011977188410daa98e82a853bb41d1622ee7b54",
+      "gitBlobOid": "6b72bae3e1243b19d8b800eb840e818db64cae5a",
+      "gitBlobSha256": "b9b4a9fdd91d25beeaa94f19b011977188410daa98e82a853bb41d1622ee7b54",
+      "gitNormalizedWorkingParity": true,
+      "byteParity": true
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/register-specs/operation-equipment-cases.ts",
+      "sha256": "60cfc1e46d483697db22c0a206f8049c395a2c828a8cce2f586baed7742dc2b1",
+      "gitBlobOid": "ca12a335273dd7107638750631ba08c52d71b07b",
+      "gitBlobSha256": "60cfc1e46d483697db22c0a206f8049c395a2c828a8cce2f586baed7742dc2b1",
+      "gitNormalizedWorkingParity": true,
+      "byteParity": true
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/register-specs/person-file-cases.ts",
+      "sha256": "9392750bf20d1cdf5ea286022d6ac9cd00883f93b3d193d934c73e6f74ca1d63",
+      "gitBlobOid": "904d63336b26561cf764ce03b337282faea58b00",
+      "gitBlobSha256": "9392750bf20d1cdf5ea286022d6ac9cd00883f93b3d193d934c73e6f74ca1d63",
+      "gitNormalizedWorkingParity": true,
+      "byteParity": true
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/register-specs/regulatory-admission-cases.ts",
+      "sha256": "ee94de565e48faf4f479f10e53c6ea20135394e0792dcb651dafbf0b629e51e1",
+      "gitBlobOid": "cab3e4ce3ebfcd17242a4d0de2f822372881fa7f",
+      "gitBlobSha256": "ee94de565e48faf4f479f10e53c6ea20135394e0792dcb651dafbf0b629e51e1",
+      "gitNormalizedWorkingParity": true,
+      "byteParity": true
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/register-specs/search-cases.ts",
+      "sha256": "da440b6a5467100c9906e70552c31669559134e7d18ecccc9cb7cc0a94fbf1ae",
+      "gitBlobOid": "6516f70eba65f712722b5105a69485b5d1b548f8",
+      "gitBlobSha256": "da440b6a5467100c9906e70552c31669559134e7d18ecccc9cb7cc0a94fbf1ae",
+      "gitNormalizedWorkingParity": true,
+      "byteParity": true
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/register-specs/technical-cases.ts",
+      "sha256": "0caaaf72fffabdd1e6d8d46a96c6c722f0f44c19bb5b7c8d1665297864083285",
+      "gitBlobOid": "b90d2e071936f89f7f2502587a4b08e2d4165c41",
+      "gitBlobSha256": "0caaaf72fffabdd1e6d8d46a96c6c722f0f44c19bb5b7c8d1665297864083285",
+      "gitNormalizedWorkingParity": true,
+      "byteParity": true
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/register-specs/today-tug-cases.ts",
+      "sha256": "fdb91f996f39111fee381d52dd22652bfec2c8d690b4efc00cd7e1fc5f9bdc58",
+      "gitBlobOid": "3f08f8f6a1c8aff55ba417ee864ddd400adce705",
+      "gitBlobSha256": "fdb91f996f39111fee381d52dd22652bfec2c8d690b4efc00cd7e1fc5f9bdc58",
+      "gitNormalizedWorkingParity": true,
+      "byteParity": true
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/register-specs/tug-cases.ts",
+      "sha256": "21aa54d3e6d62ee607ed49cb6e0f40fe18745c1443fa6c91179f80cd194183c8",
+      "gitBlobOid": "2262a8555502f8489728c5da99aa232658c0db07",
+      "gitBlobSha256": "21aa54d3e6d62ee607ed49cb6e0f40fe18745c1443fa6c91179f80cd194183c8",
+      "gitNormalizedWorkingParity": true,
+      "byteParity": true
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/register.playwright.config.ts",
+      "sha256": "dc4a1b9cf6654b6996a83d1788855a4d97a9a23eba53f30d3757f654285a7845",
+      "gitBlobOid": "3963b215ce926be4aae8aa5e5bc9abf7dbc8f694",
+      "gitBlobSha256": "dc4a1b9cf6654b6996a83d1788855a4d97a9a23eba53f30d3757f654285a7845",
+      "gitNormalizedWorkingParity": true,
+      "byteParity": true
+    }
+  ],
+  "executionIdentities": [
+    {
+      "project": "firefox-desktop",
+      "name": "operation-equipment-incomplete-cargo-unknown-current-rights-history"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "operation-equipment-qualified-ship-dg-command-fixture-consumer"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "operation-equipment-qualified-tug-operation-winch-command-fixture-consumer"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "compliance-class-incomplete-unknown-command-history"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "compliance-qualified-class-msmd-source-command-fixture-consumer"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "crew-durable-catalog-independent-signed-humans-current-consumer-withdrawal"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "lifecycle-applicability-draft-review-nonmutating-preview-dirty-guard"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "lifecycle-applicability-restricted-no-detail-or-why"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "control-evidence-draft-history-unavailable-report-dirty-guard"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "control-evidence-denied-before-graph-file-owners-counts"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "assigned-human-recording-signed-host-pending-qualification"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "human-scoped-trace-source-signature-blockers-keyboard-dirty-offline"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "human-trace-denied-before-object-inference"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "owning-power-and-independent-construction-date-draft-signed-host"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "synthetic-assigned-human-source-qualification-current-evaluation-signed-host"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "source-qualification-denied-before-lineage-or-owner-disclosure"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "offline-protected-medical-excluded-from-device-snapshot-conflict-replay"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "offline-application-restart-reconnect-response-loss-idempotent-replay"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "offline-application-current-material-conflict-explicit-lineage"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "offline-application-signed-relogin-current-rights-withdrawal-recovery"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "offline-application-key-loss-retention-explicit-discard"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "crew-protected-identity-editor-history-exact-retry"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "crew-existing-person-import-ordinary-parity"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "crew-legacy-storage-conversion-exact-retry-retained-unsupported-schema"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "person-file-scanned-private-version-restart"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "person-file-restricted-owner-spoof"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "person-photo-explicit-selection-reload-clear"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "workspace-search-real-audit-and-tug-destinations"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "workspace-search-real-offline-reauthorized-reconnect"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "workspace-search-real-cross-workspace-dirty-guard"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "workspace-context-all-five-authorized-headers"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "workspace-context-restricted-direct-url-no-context"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "navigation-role-lens-five-real-workspace-families"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "navigation-role-lens-real-dirty-cancel-and-discard"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "navigation-role-lens-restricted-context-and-selector-denial"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "import-real-preview-atomic-commit-reload"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "import-real-private-reject-exact-context"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "import-restricted-direct-url-no-counts"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "tug-intake-board-exact-bp-null-end-dirty-url-responsive"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "tug-restricted-direct-url-and-navigation"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "tug-controlled-response-loss-real-commit"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "tug-versioned-draft-plan-assign-reassign-remove-exact-history-board"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "tug-plan-controlled-response-loss-real-commit-recovery"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "tug-enrolled-encrypted-window-offline-restart-current-renew-replay-revoke"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "today-tug-current-source-and-why"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "equipment-plan-tree-deep-url-keyboard-dirty-responsive"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "equipment-restricted-direct-url"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "equipment-controlled-response-loss-real-commit"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "crew-assignment-policy-history-and-owning-input-boundary"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "crew-restricted-medical-declaration-reload-no-fitness-grant"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "crew-roster-profile-dirty"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "crew-period-version-conflict"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "crew-restricted-direct-url"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "audit-history"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "audit-default-deny"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "document-owner-revision-real-attachments"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "file-transport-real-scanner"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "file-default-deny"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "draft-citation"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "response-loss-conflict"
+    },
+    {
+      "project": "firefox-desktop",
+      "name": "restricted-membership"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "operation-equipment-incomplete-cargo-unknown-current-rights-history"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "operation-equipment-qualified-ship-dg-command-fixture-consumer"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "operation-equipment-qualified-tug-operation-winch-command-fixture-consumer"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "compliance-class-incomplete-unknown-command-history"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "compliance-qualified-class-msmd-source-command-fixture-consumer"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "crew-durable-catalog-independent-signed-humans-current-consumer-withdrawal"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "lifecycle-applicability-draft-review-nonmutating-preview-dirty-guard"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "lifecycle-applicability-restricted-no-detail-or-why"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "control-evidence-draft-history-unavailable-report-dirty-guard"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "control-evidence-denied-before-graph-file-owners-counts"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "assigned-human-recording-signed-host-pending-qualification"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "human-scoped-trace-source-signature-blockers-keyboard-dirty-offline"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "human-trace-denied-before-object-inference"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "owning-power-and-independent-construction-date-draft-signed-host"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "synthetic-assigned-human-source-qualification-current-evaluation-signed-host"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "source-qualification-denied-before-lineage-or-owner-disclosure"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "offline-protected-medical-excluded-from-device-snapshot-conflict-replay"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "offline-application-restart-reconnect-response-loss-idempotent-replay"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "offline-application-current-material-conflict-explicit-lineage"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "offline-application-signed-relogin-current-rights-withdrawal-recovery"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "offline-application-key-loss-retention-explicit-discard"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "crew-protected-identity-editor-history-exact-retry"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "crew-existing-person-import-ordinary-parity"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "crew-legacy-storage-conversion-exact-retry-retained-unsupported-schema"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "person-file-scanned-private-version-restart"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "person-file-restricted-owner-spoof"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "person-photo-explicit-selection-reload-clear"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "workspace-search-real-audit-and-tug-destinations"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "workspace-search-real-offline-reauthorized-reconnect"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "workspace-search-real-cross-workspace-dirty-guard"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "workspace-context-all-five-authorized-headers"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "workspace-context-restricted-direct-url-no-context"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "navigation-role-lens-five-real-workspace-families"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "navigation-role-lens-real-dirty-cancel-and-discard"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "navigation-role-lens-restricted-context-and-selector-denial"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "import-real-preview-atomic-commit-reload"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "import-real-private-reject-exact-context"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "import-restricted-direct-url-no-counts"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "tug-intake-board-exact-bp-null-end-dirty-url-responsive"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "tug-restricted-direct-url-and-navigation"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "tug-controlled-response-loss-real-commit"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "tug-versioned-draft-plan-assign-reassign-remove-exact-history-board"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "tug-plan-controlled-response-loss-real-commit-recovery"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "tug-enrolled-encrypted-window-offline-restart-current-renew-replay-revoke"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "today-tug-current-source-and-why"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "equipment-plan-tree-deep-url-keyboard-dirty-responsive"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "equipment-restricted-direct-url"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "equipment-controlled-response-loss-real-commit"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "crew-assignment-policy-history-and-owning-input-boundary"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "crew-restricted-medical-declaration-reload-no-fitness-grant"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "crew-roster-profile-dirty"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "crew-period-version-conflict"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "crew-restricted-direct-url"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "audit-history"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "audit-default-deny"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "document-owner-revision-real-attachments"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "file-transport-real-scanner"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "file-default-deny"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "draft-citation"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "response-loss-conflict"
+    },
+    {
+      "project": "firefox-narrow-responsive",
+      "name": "restricted-membership"
+    }
+  ],
+  "genuineFixtureContextSha256": "cfd7609a23d7f4940d9fa30284037a7cf5373df86efb04d698a32d31a936229a",
+  "fixtureAuthorityAdditionsAllowed": "Exact fresh-ID fictional Human/Regulatory fixture appointments only in isolated S1 private configuration, within fixed session lease; old configuration/provider/IDs/expiry unchanged",
+  "executionPolicy": {
+    "ordinaryAssertionFailures": "CONTINUE_AND_FAIL_CLOSED_AT_END",
+    "targetContextInfrastructureFailures": "STOP_NO_ACCEPTANCE",
+    "exactRequiredIdentityMultiset": 122,
+    "automaticRetries": 0,
+    "catalogBothProjects": "LAST"
+  },
+  "backendBinaryDigests": [
+    {
+      "name": "Poseidon.Api.dll",
+      "sha256": "f16ebbc5945d975febcfbd1524833bb684c499c237a620522016315f94535a70"
+    },
+    {
+      "name": "Poseidon.Persistence.dll",
+      "sha256": "32ffb48097f35c47382e4ea5ab2be36b96d32ab60e53693b8fbc729aa7a3a52b"
+    },
+    {
+      "name": "Poseidon.Domain.dll",
+      "sha256": "0a72a03c3e629287abf2856fd59f6eacd7a19186491cf1a1c8af1d353701963b"
+    }
+  ],
+  "harnessSourceDigests": [
+    {
+      "path": "tests/Poseidon.Browser.Tests/lab/strict-browser.ts",
+      "sha256": "c42f5269f2eec85baf40561ee66d1e4e35dfa17112410b47d01672d709715a44",
+      "gitBlobSha256": "c42f5269f2eec85baf40561ee66d1e4e35dfa17112410b47d01672d709715a44"
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/lab/journeys.ts",
+      "sha256": "7ae36996d4462201d15fa9bbbeca657a4338e14435162f31a52fda3eea2677ad",
+      "gitBlobSha256": "7ae36996d4462201d15fa9bbbeca657a4338e14435162f31a52fda3eea2677ad"
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/lab/run.ts",
+      "sha256": "e01a113569073bd70c72055c0d8c677373eba38d78221c48f05f9394ebd92f57",
+      "gitBlobSha256": "e01a113569073bd70c72055c0d8c677373eba38d78221c48f05f9394ebd92f57"
+    },
+    {
+      "path": "tests/Poseidon.Browser.Tests/lab/tls-cases.ts",
+      "sha256": "39744bad3f8afdb04a4f5f0cecad1094c359cc2ed3d6e40f8e5d968f5084f026",
+      "gitBlobSha256": "39744bad3f8afdb04a4f5f0cecad1094c359cc2ed3d6e40f8e5d968f5084f026"
+    },
+    {
+      "path": "scripts/lab_profile_ca.py",
+      "sha256": "cb6a88a4432ef6e3feee84e300d6b2321d0ce43e8e30f0e7e3709c32a95c21e3",
+      "gitBlobSha256": "cb6a88a4432ef6e3feee84e300d6b2321d0ce43e8e30f0e7e3709c32a95c21e3"
+    },
+    {
+      "path": "scripts/lab_profile_acl.py",
+      "sha256": "8ecd2b31516a9c7c7b9fe869b9ef12b7780c7c186b2c5a5e0ef89f61cf86ec2d",
+      "gitBlobSha256": "8ecd2b31516a9c7c7b9fe869b9ef12b7780c7c186b2c5a5e0ef89f61cf86ec2d"
+    },
+    {
+      "path": "scripts/codex_accounts.py",
+      "sha256": "f597e9b223542071db27873ea01feafcfa906967792c703083340883061f3b66",
+      "gitBlobSha256": "f597e9b223542071db27873ea01feafcfa906967792c703083340883061f3b66"
+    }
+  ],
+  "runnerDigests": [
+    {
+      "path": "cohort.mjs",
+      "sha256": "b0f3cf7fa376639a7a95130b7fb3f3070fd7b15752219ddf89834242eab536cc"
+    },
+    {
+      "path": "positive-run.mjs",
+      "sha256": "64a2d4b7a966bf16250b80b8710e1bc7a165deacbde5e6ea7cfd7b7e280f24b0"
+    },
+    {
+      "path": "positive-fixtures.mjs",
+      "sha256": "7adea1016b052cc59ea360ae6c44d54a0548c64d98da40b3481b12d4622457bc"
+    },
+    {
+      "path": "authority-update.py",
+      "sha256": "e7f99be97d61851f9222b1d398b8baf61852cdac75c82323e73b94b70932d092"
+    },
+    {
+      "path": "restart.py",
+      "sha256": "74b24aefc86f44e41dd6ec23420a8f97d527f49f2dce9196e25c0274e87e24f5"
+    },
+    {
+      "path": "run-login.py",
+      "sha256": "f09057e2b256dcdfc2873f3f360589c9e51d0054ac45d9b38150b0be3a272ab8"
+    },
+    {
+      "path": "final-run.py",
+      "sha256": "b026ec103c691149555b63141bdccc3df0c9923e0e8b6c5b497c6446bc4933eb"
+    },
+    {
+      "path": "bootstrap-catalog.mjs",
+      "sha256": "ad685e4717ffc7048c361d76f8a592e427ab60b323172713092ee84c75133252"
+    },
+    {
+      "path": "no-evaluation-fixture.mjs",
+      "sha256": "4476cdea5e0c359b07393b6b2fa47df1b84c2c7c6f7d2ba3cc87963845f825e5"
+    },
+    {
+      "path": "tls-cases-s1.ts",
+      "sha256": "ace36d28354b44e7527beaee3165c8f6a6d3cc195f66c7ea69578b71f1a87a6a"
+    },
+    {
+      "path": "baseline.mjs",
+      "sha256": "8294471dad5a92e0b24e56af01e893311a6c77720c5edec57accbad806235f39"
+    },
+    {
+      "path": "s1_session.py",
+      "sha256": "019cb6d7d2c4c6ab75e691f4bb647218e69069929a7e3223fc15c2a1f97ce259"
+    },
+    {
+      "path": "freeze_target.py",
+      "sha256": "ee8bf2553a309c44e54f12da5dbe00f27331713ae3c4bccff88040aa5e8c0a1c"
+    },
+    {
+      "path": "run_full.py",
+      "sha256": "d2952b1d7cad6fbb2b3731706935333ac78ad56c9f097f36a39d3413c82ab119"
+    },
+    {
+      "path": "refresh-inventory.mjs",
+      "sha256": "b9cf13a4bd316de8b520ccb9adfc458635a2c95317aa17b12c6c7ed0542c0881"
+    },
+    {
+      "path": "owned_processes.py",
+      "sha256": "d8e234dd3d76c31a3c54cb20a0fe0ba0963186435eda746b223caa174a4b0d52"
+    },
+    {
+      "path": "runner-tree.ps1",
+      "sha256": "a0b49fba7515e576528daadabe2fb52ed39defc2ebcffdbfb4bf95a1a389306e"
+    },
+    {
+      "path": "restrict-private-owner.ps1",
+      "sha256": "ad7a58378749174441fba8069d02e612901d9a14bfd176312a06a15327b69eeb"
+    },
+    {
+      "path": "fixture_config.py",
+      "sha256": "694fd0c87e47f6a50a3e7b1b1636f820125697806200d9eb7ae46c6a5971bac9"
+    },
+    {
+      "path": "fixture-config.mjs",
+      "sha256": "e66f533d03afd250aeaddaaebbb8ad2d2febbc03f8267a020054a70948e8e99f"
+    }
+  ],
+  "fixtureIntentDigests": [
+    {
+      "path": "s1-final-legacy-fixtures.json",
+      "sha256": "34d12b3353d2a580b679bd972ff1cab5a15e51caa52817912052431ec8852573"
+    },
+    {
+      "path": "s1-catalog-intent.json",
+      "sha256": "e78eea8adea52f82d142dca5fb0a65013cfdf4b1ce4493d615d650d1dad5f73e"
+    },
+    {
+      "path": "s1-catalog-result.json",
+      "sha256": "2afbf3993abe5619e826376c8292485081c793238385022d08f352e6af9fde12"
+    },
+    {
+      "path": "no-evaluation-fixture.json",
+      "sha256": "3218eaab47515878c5e620a7bf2e750c8d2d3f183835affa1a0d2e541adb1d75"
+    },
+    {
+      "path": "s1-tug-fixture.json",
+      "sha256": "9601fd9769aa3ae035ca60fce9351173b5d4b26c85fca0ebeeeaeca3f44907e5"
+    },
+    {
+      "path": "fixture-preconditions.json",
+      "sha256": "3f5254240a0a1e3cd70cf0c9dee519a8284ccefb390bd57bbf2383c1c1fd081a"
+    }
+  ]
+}

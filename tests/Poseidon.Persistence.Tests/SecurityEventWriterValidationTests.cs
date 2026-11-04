@@ -13,6 +13,18 @@ public sealed class SecurityEventWriterValidationTests
         Assert.True(SecurityEventCodes.Allows("CrewCatalog", result));
         Assert.False(SecurityEventCodes.Allows("CrewCatalog", result + "-request-value"));
     }
+    [Theory]
+    [InlineData("file_upload_not_accepted")]
+    [InlineData("file_quarantined_or_unknown")]
+    public void File_rejection_results_remain_closed_and_auditable(string result)
+    {
+        // The six real byte/scanner rejection journeys also require this result
+        // from the actual producer and a durably persisted request-linked event.
+        Assert.True(SecurityEventCodes.Allows("FileRequest", result));
+        Assert.False(SecurityEventCodes.Allows("FileRequest", result + "-request-value"));
+        Assert.False(SecurityEventCodes.Allows("FileRequest", result.ToUpperInvariant()));
+        Assert.False(SecurityEventCodes.Allows("FileRequest-request-value", result));
+    }
     [Fact]
     public async Task Append_rejects_unrecognized_action_or_result_before_database_access()
     {

@@ -40,7 +40,11 @@ public static class FoundationEndpoints
         app.MapPost("/api/v1/auth/logout", async (HttpContext http, IAntiforgery csrf, SecurityAudit audit, FederationSettings settings) =>
         {
             try { await csrf.ValidateRequestAsync(http); }
-            catch (AntiforgeryValidationException) { return Results.StatusCode(403); }
+            catch (AntiforgeryValidationException)
+            {
+                await audit.WriteAsync(http, "Logout", "Denied");
+                return Results.StatusCode(403);
+            }
             await audit.WriteAsync(http, "Logout", "Success");
             await http.SignOutAsync(FoundationIdentity.Cookie);
             if (settings.Configured)

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "poseidon.s1.offline-archived-parser-observation.v1",
+  "status": "PASS_EXACT_SAME_SOURCE_PARSER_REPORT",
+  "target": {
+    "commit": "dc7f5117fb99a962d70a54b1f12f2c118f1cca66",
+    "tree": "e8843d8fb0bffd56a6d7955dfc286b8113a09bfd"
+  },
+  "actualOperations": 82,
+  "requiredOperations": 82,
+  "captureInstances": 558,
+  "invalidRows": 0,
+  "unavailableInstances": 0,
+  "errors": [],
+  "replayedOriginalReportEqual": true,
+  "applicationTestsExecuted": 0,
+  "sdkOrBrowserStarted": false,
+  "parserSha256": "b81bcb44cbde9fc9ade6ad7a20d47d72ecd3564e978d7ceeef455c2012f7eeb7",
+  "observedAt": "2026-11-04T15:56:19.968758+00:00"
+}

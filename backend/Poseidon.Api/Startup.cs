@@ -40,7 +40,8 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             var connection = OperatorSecretReferences.Database(configuration, hostEnvironment);
             if (string.IsNullOrWhiteSpace(connection)) throw new AuditUnavailableException();
             return new PoseidonDbContext(new DbContextOptionsBuilder<PoseidonDbContext>().UseNpgsql(connection).Options,
-                actor.TenantId, new ActorContext(actor.Id.ToString(), "User", http.TraceIdentifier, actor.AuditCapabilities, "WebCommand", actor.RoleContext), qualifiedInputs: sp.GetRequiredService<IQualifiedInputRuntime>());
+                actor.TenantId, new ActorContext(actor.Id.ToString(), "User", http.TraceIdentifier, actor.AuditCapabilities, "WebCommand", actor.RoleContext,
+                    S1SecurityContract.Command(http)), qualifiedInputs: sp.GetRequiredService<IQualifiedInputRuntime>());
         });
         services.AddProblemDetails();
         services.AddOpenApi(options => options.AddDocumentTransformer((document, _, _) =>
@@ -90,6 +91,24 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
+        app.Use(async (context, next) =>
+        {
+            var operation = S1SecurityContract.Match(context);
+            if (operation?.IsCritical == true)
+            {
+                var actor = context.RequestServices.GetRequiredService<ActorResolver>().Resolve(context.User);
+                if (actor?.HasWriteAttribution != true)
+                {
+                    await context.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(context,
+                        operation.DenialAction, actor == null ? "Unauthenticated" : "Denied");
+                    var code = actor == null ? "authentication_required" : "permission_denied";
+                    await Results.Problem(statusCode: actor == null ? 401 : 403, title: code,
+                        extensions: new Dictionary<string, object?> { ["code"] = code, ["correlationId"] = context.TraceIdentifier }).ExecuteAsync(context);
+                    return;
+                }
+            }
+            await next(context);
+        });
         app.Use(async (context, next) => {
             await next(context);
             // Invalid JSON/binding can end before the command handler. Record fixed metadata only.
