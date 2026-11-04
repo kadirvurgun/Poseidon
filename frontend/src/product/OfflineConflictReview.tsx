@@ -1,4 +1,6 @@
 import { useId, useState } from 'react'
+import { Button } from '../components/ui/button'
+import { EnterpriseActions, EnterpriseField } from './EnterprisePatterns'
 import './offline-conflict-review.css'
 
 export type OfflineConflictValue = Readonly<{ kind: 'unknown' | 'missing' | 'withheld' }> |
@@ -8,6 +10,7 @@ export type OfflineConflictField = Readonly<{
   key: string
   label: string
   captured: OfflineConflictValue
+  before?: OfflineConflictValue
   server: OfflineConflictValue
   choices: readonly OfflineConflictChoice[]
 }>
@@ -52,10 +55,10 @@ export function OfflineConflictReview(props: Props) {
   </p>
   if (props.state !== 'ready' || !conflict || !conflict.id || !conflict.revision || !Array.isArray(conflict.fields) ||
     conflict.fields.length === 0 || new Set(conflict.fields.map(field => field?.key)).size !== conflict.fields.length ||
-    conflict.fields.some(field => !field || !field.key || !field.label || !validValue(field.captured) || !validValue(field.server) ||
+    conflict.fields.some(field => !field || !field.key || !field.label || !validValue(field.captured) || !validValue(field.server) || field.before !== undefined && !validValue(field.before) ||
       !Array.isArray(field.choices) || field.choices.some((choice: unknown) => !['keepServer', 'useCaptured'].includes(String(choice))))) return <div role="alert">
     <p>{en ? 'Conflict details could not be loaded.' : 'Çakışma ayrıntıları yüklenemedi.'}</p>
-    {props.onRetry && <button type="button" onClick={props.onRetry}>{en ? 'Retry' : 'Tekrar dene'}</button>}
+    {props.onRetry && <Button variant="outline" onClick={props.onRetry}>{en ? 'Retry' : 'Tekrar dene'}</Button>}
   </div>
   return <Review key={`${props.contextKey}/${conflict.id}/${conflict.revision}`} {...props} conflict={conflict} />
 }
@@ -94,13 +97,14 @@ function Review({ language, conflict, canResolve, online, operation, reasonLimit
     {!configuredLimit && <p role="alert">{en ? 'Resolution policy is unavailable.' : 'Çözüm politikası kullanılamıyor.'}</p>}
     {operation === 'outcomeUnknown' && <div role="alert">
       <p>{en ? 'The submission outcome is unknown. Check the server record before submitting again.' : 'Gönderimin sonucu bilinmiyor. Yeniden göndermeden önce sunucu kaydını sorgulayın.'}</p>
-      <button type="button" disabled={!online} onClick={onCheckOutcome}>{en ? 'Check submission outcome' : 'Gönderim sonucunu sorgula'}</button>
+      <Button variant="outline" disabled={!online} onClick={onCheckOutcome}>{en ? 'Check submission outcome' : 'Gönderim sonucunu sorgula'}</Button>
     </div>}
     {operation === 'failed' && <p role="alert">{en ? 'The resolution was not accepted. Your choices are retained; review the current conflict.' : 'Çözüm kabul edilmedi. Seçimleriniz korunuyor; geçerli çakışmayı inceleyin.'}</p>}
     <div className="offline-conflict__fields">
       {conflict.fields.map((field, index) => <fieldset key={field.key} disabled={locked}>
         <legend>{field.label}</legend>
         <dl>
+          {field.before && <div><dt>{en ? 'Before capture' : 'Yakalama öncesi'}</dt><dd><bdi>{value(field.before)}</bdi></dd></div>}
           <div><dt>{en ? 'Captured' : 'Yakalanan'}</dt><dd><bdi>{value(field.captured)}</bdi></dd></div>
           <div><dt>{en ? 'Server' : 'Sunucu'}</dt><dd><bdi>{value(field.server)}</bdi></dd></div>
           <div><dt>{en ? 'Resolved' : 'Çözümlenen'}</dt><dd><bdi>{selected(field)
@@ -117,9 +121,9 @@ function Review({ language, conflict, canResolve, online, operation, reasonLimit
           ? <p>{en ? 'Resolution is unavailable under the current field policy.' : 'Geçerli alan politikasıyla çözüm yapılamıyor.'}</p> : null}
       </fieldset>)}
     </div>
-    <label htmlFor={`${prefix}-reason`}>{en ? 'Resolution reason (required)' : 'Çözüm gerekçesi (zorunlu)'}</label>
+    <EnterpriseField htmlFor={`${prefix}-reason`} label={en ? 'Resolution reason (required)' : 'Çözüm gerekçesi (zorunlu)'}>
     <textarea id={`${prefix}-reason`} value={reason} disabled={locked} aria-required="true"
       maxLength={configuredLimit ? reasonLimit : undefined} onChange={event => setReason(event.target.value)} />
-    <button type="button" disabled={locked || !complete} onClick={submit}>{en ? 'Submit resolution' : 'Çözümü gönder'}</button>
+    </EnterpriseField><EnterpriseActions aria-label={en ? 'Conflict resolution actions' : 'Çakışma çözüm işlemleri'}><Button disabled={locked || !complete} onClick={submit}>{en ? 'Submit resolution' : 'Çözümü gönder'}</Button></EnterpriseActions>
   </section>
 }

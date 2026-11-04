@@ -82,7 +82,10 @@
     "RuleReviewRequest": "REGULATORY_WORKFLOW",
     "ApplicabilityEvaluate": "REGULATORY_WORKFLOW",
     "RegulatoryQualificationRecord": "SOURCE_QUALIFICATION",
-    "RegulatoryFactAttest": "SOURCE_QUALIFICATION"
+    "RegulatoryFactAttest": "SOURCE_QUALIFICATION",
+    "NotificationRefresh": "PREPARATION_COMMAND",
+    "NotificationAcknowledge": "PREPARATION_COMMAND",
+    "NotificationPreference": "PREPARATION_COMMAND"
   },
   "reasonCodes": [
     "PREPARATION_COMMAND",

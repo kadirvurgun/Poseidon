@@ -10,9 +10,10 @@ const destinations: Readonly<Record<string, string>> = {
   today: '/app/today', companies: '/app/companies', fleet: '/app/fleet',
   sources: '/app/sources', requirements: '/app/requirements', audit: '/app/audit',
   'tug-command': '/app/tug-command', 'tug-job-board': '/app/tug-job-board', 'tug-job-intake': '/app/tug-job-intake',
+  'system-health': '/app/system-health',
 }
 export const isSeparateWorkspaceDestination = (href: string) =>
-  href === '/app/tug-command' || href === '/app/tug-job-board' || href === '/app/tug-job-intake'
+  href === '/app/tug-command' || href === '/app/tug-job-board' || href === '/app/tug-job-intake' || href === '/app/system-health'
 const object = (value: unknown): value is Record<string, unknown> =>
   value !== null && typeof value === 'object' && !Array.isArray(value)
 const exact = (value: Record<string, unknown>, keys: string[]) =>
