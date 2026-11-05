@@ -33,6 +33,9 @@ public sealed record ComplianceCertificatePageDto(string Coverage, ComplianceCer
 // It never claims inventory completeness, a qualified issuer or a readiness score.
 public static class ComplianceWorkspaceEndpoints
 {
+    // Full owning DTOs stay server-side for the source owner's exact response
+    // fence. Only the bounded scalar Page is serialized by the passport.
+    private sealed record CertificateProjection(ComplianceCertificatePageDto Page, CertificateDto[] Records);
     public static void MapComplianceWorkspaces(this IEndpointRouteBuilder app)
     {
         // 15.01/paragraph:597 canonical passport alias, with the same scope gate.
@@ -74,7 +77,7 @@ public static class ComplianceWorkspaceEndpoints
         return Expression.Lambda<Func<ControlEvidenceRevision, bool>>(body, item);
     }
     private static async Task<bool> ResponseCurrent(HttpContext h, string expected, bool graph, Guid vessel,
-        long? profileRevision, Guid? evaluation, ComplianceControlPlanDto? plan, ComplianceCertificatePageDto? certificates = null) {
+        long? profileRevision, Guid? evaluation, ComplianceControlPlanDto? plan, CertificateProjection? certificates = null) {
         if (!AccessCurrent(h, expected, graph)) return false;
         // A new DI scope creates a trusted, freshly tenant-bound DbContext outside
         // the composition's RepeatableRead transaction. Reusing that transaction
@@ -89,9 +92,9 @@ public static class ComplianceWorkspaceEndpoints
         var controlIds = plan?.Requirements.SelectMany(r => r.ControlIds).Distinct().ToArray() ?? [];
         var linked = ControlEvidenceEndpoints.CurrentVisible(db, vessel, live).Where(r => r.Kind == "Control" && controlIds.Contains(r.Id));
         var evaluations = OperationEquipmentCommands.Evaluations(db, live);
-        var certificateRows = certificates?.Items ?? [];
-        var certificateAccess = certificates?.Coverage != "AUTHORIZED_PAGE_ONLY" || CertificateReader.Read(live);
-        var matchingCertificates = CertificateReader.Visible(db, live, vessel).Where(ReturnedCertificates(certificateRows));
+        var certificateRows = certificates?.Records ?? [];
+        var certificateAccess = certificates?.Page.Coverage != "AUTHORIZED_PAGE_ONLY" || CertificateReader.Read(live);
+        var matchingCertificates = CertificateReader.ReturnedVisible(db, live, vessel, certificateRows);
         // All final resource predicates share ONE fresh statement snapshot. Do
         // not sequentially validate private rows and then await unrelated reads.
         var visible = await live.Scope(db.Vessels.AsNoTracking()).Where(v => v.Id == vessel).Select(v =>
@@ -103,33 +106,21 @@ public static class ComplianceWorkspaceEndpoints
             .SingleOrDefaultAsync(h.RequestAborted);
         return visible && AccessCurrent(h, expected, graph);
     }
-    private static Expression<Func<VesselCertificateRevision, bool>> ReturnedCertificates(ComplianceCertificateDto[] rows) {
-        var item = Expression.Parameter(typeof(VesselCertificateRevision), "certificate");
-        Expression body = Expression.Constant(false);
-        foreach (var row in rows) {
-            var match = Expression.AndAlso(Expression.Equal(Expression.Property(item, nameof(VesselCertificateRevision.CertificateId)), Expression.Constant(row.Id)),
-                Expression.AndAlso(Expression.Equal(Expression.Property(item, nameof(VesselCertificateRevision.Revision)), Expression.Constant(row.Revision)),
-                    Expression.AndAlso(Expression.Equal(Expression.Property(item, nameof(VesselCertificateRevision.RecordVersion)), Expression.Constant((long)row.Version)),
-                        Expression.Equal(Expression.Property(item, nameof(VesselCertificateRevision.Hash)), Expression.Constant(row.Hash)))));
-            body = Expression.OrElse(body, match);
-        }
-        return Expression.Lambda<Func<VesselCertificateRevision, bool>>(body, item);
-    }
-    private static async Task<ComplianceCertificatePageDto> Certificates(Guid vessel, TrustedActor actor,
+    private static async Task<CertificateProjection> Certificates(Guid vessel, TrustedActor actor,
         PoseidonDbContext db, DateTimeOffset now, int offset, CancellationToken ct) {
         var reference = DateOnly.FromDateTime(now.UtcDateTime);
-        if (!CertificateReader.Read(actor)) return new("UNAVAILABLE", [], offset, 25, false, reference,
-            ["CERTIFICATE_READ_ACCESS_UNAVAILABLE", "CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED"]);
+        if (!CertificateReader.Read(actor)) return new(new("UNAVAILABLE", [], offset, 25, false, reference,
+            ["CERTIFICATE_READ_ACCESS_UNAVAILABLE", "CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED"]), []);
         var rows = await CertificateReader.Visible(db, actor, vessel).OrderBy(r => r.CertificateId).Skip(offset).Take(26).ToArrayAsync(ct);
-        var items = rows.Take(25).Select(row => {
-            var dto = CertificateReader.Dto(row, actor, reference);
+        var records = rows.Take(25).Select(row => CertificateReader.Dto(row, actor, reference)).ToArray();
+        var items = records.Select(dto => {
             var declaration = dto.Content.Metadata.Declaration;
             return new ComplianceCertificateDto(dto.Id, dto.Revision, dto.Version, declaration.CertificateTypeReference,
                 declaration.CertificateNumber, declaration.Issuer, declaration.IssueDate, declaration.ExpiryDate,
-                dto.Calendar.State, dto.Qualification, dto.Content.Document, dto.SourceVersion, row.Hash, dto.Href);
+                dto.Calendar.State, dto.Qualification, dto.Content.Document, dto.SourceVersion, dto.Hash ?? throw new InvalidDataException("certificate_hash_unavailable"), dto.Href);
         }).ToArray();
-        return new("AUTHORIZED_PAGE_ONLY", items, offset, 25, rows.Length > 25, reference,
-            ["CERTIFICATE_QUALIFICATION_REQUIRED", "CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED"]);
+        return new(new("AUTHORIZED_PAGE_ONLY", items, offset, 25, rows.Length > 25, reference,
+            ["CERTIFICATE_QUALIFICATION_REQUIRED", "CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED"]), records);
     }
     private static async Task<IResult> Fail(HttpContext h, int status, string result) {
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "ComplianceWorkspaceRead", result);
@@ -247,16 +238,16 @@ public static class ComplianceWorkspaceEndpoints
         var review = await Review(id, actor, h, db, now);
         object outcome = review;
         ComplianceControlPlanDto? responsePlan = null;
-        ComplianceCertificatePageDto? responseCertificates = null;
+        CertificateProjection? responseCertificates = null;
         if (view != "review") {
             var plan = await Plan(id, actor, h, db, now, offset, review);
             responsePlan = plan;
             if (view == "plan") outcome = plan;
             else {
                 responseCertificates = await Certificates(id, actor, db, now, offset, ct);
-                outcome = new CompliancePassportDto(id, now, "REVIEW_REQUIRED", "Unverified", responseCertificates.Coverage,
-                    onboarding.Blockers.Concat(review.Blockers).Concat(plan.Blockers).Concat(responseCertificates.Blockers).Distinct().Order(StringComparer.Ordinal).ToArray(),
-                    onboarding, review, plan, responseCertificates);
+                outcome = new CompliancePassportDto(id, now, "REVIEW_REQUIRED", "Unverified", responseCertificates.Page.Coverage,
+                    onboarding.Blockers.Concat(review.Blockers).Concat(plan.Blockers).Concat(responseCertificates.Page.Blockers).Distinct().Order(StringComparer.Ordinal).ToArray(),
+                    onboarding, review, plan, responseCertificates.Page);
             }
         }
         await transaction.CommitAsync(ct);
