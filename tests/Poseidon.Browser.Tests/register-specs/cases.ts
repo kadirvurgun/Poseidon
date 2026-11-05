@@ -1,6 +1,7 @@
 import { complianceInputCases } from './compliance-input-cases.ts'
 import { dailyCases } from './daily-cases.ts'
 import { dailyOfflineCases } from './daily-offline-cases.ts'
+import { certificateExtractionCases } from './certificate-extraction-cases.ts'
 import { crewCatalogCases } from './crew-catalog-cases.ts'
 import { regulatoryAdmissionCases } from './regulatory-admission-cases.ts'
 import { crewIdentityCases } from './crew-identity-cases.ts'
@@ -122,6 +123,7 @@ export async function restrictedRegister(page: Page) {
 export const registerCases = [
   ...dailyCases,
   ...dailyOfflineCases,
+  ...certificateExtractionCases,
   ...operationEquipmentCases,
   ...complianceInputCases,
   ...crewCatalogCases,
