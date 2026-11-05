@@ -21,6 +21,9 @@ public sealed class PoseidonDbContext(
     public DbSet<CertificateAssertionHead> CertificateAssertionHeads => Set<CertificateAssertionHead>();
     public DbSet<CertificateAssertionEvent> CertificateAssertionEvents => Set<CertificateAssertionEvent>();
     public DbSet<CertificateCommandReceipt> CertificateCommandReceipts => Set<CertificateCommandReceipt>();
+    public DbSet<ShipOperation> ShipOperations => Set<ShipOperation>();
+    public DbSet<ShipOperationRevision> ShipOperationRevisions => Set<ShipOperationRevision>();
+    public DbSet<ShipOperationReceipt> ShipOperationReceipts => Set<ShipOperationReceipt>();
     public DbSet<Company> Companies => Set<Company>();
     public DbSet<Vessel> Vessels => Set<Vessel>();
     public DbSet<VesselProfile> VesselProfiles => Set<VesselProfile>();
@@ -122,6 +125,10 @@ public sealed class PoseidonDbContext(
         model.Entity<CrewCatalogEvent>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.HasDefaultSchema("core");
         VesselCertificateStorage.Configure(model);
+        ShipOperationsStorage.Configure(model);
+        model.Entity<ShipOperation>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<ShipOperationRevision>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<ShipOperationReceipt>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
         CertificateAssertionStorage.Configure(model);
         model.Entity<CertificateAssertionHead>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
         model.Entity<CertificateAssertionEvent>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
@@ -464,6 +471,12 @@ public sealed class PoseidonDbContext(
              (DateTimeOffset)e.Property("ExpiresAt").CurrentValue! < (DateTimeOffset)e.Property("ExpiresAt").OriginalValue! ||
              e.Property("PublicKey").OriginalValue != null && !Equals(e.Property("PublicKey").OriginalValue,e.Property("PublicKey").CurrentValue)))))
             throw new InvalidOperationException("Daily offline ownership and key identity are immutable.");
+        if(changes.Any(e=>e.Entity is ShipOperationRevision or ShipOperationReceipt && e.State!=EntityState.Added))
+            throw new InvalidOperationException("Ship operation history and outcomes are immutable.");
+        if(changes.Any(e=>e.Entity is ShipOperation && (e.State==EntityState.Deleted || e.State==EntityState.Modified &&
+            (e.Properties.Any(p=>p.IsModified && p.Metadata.Name is not("FieldsJson" or "OriginJson" or "SourceVersion" or "Hash" or "Provenance" or "ActorId" or "SavedAt" or "OccurredAt" or "EndedAt" or "Revision")) ||
+                (long)e.Property("Revision").CurrentValue! != (long)e.Property("Revision").OriginalValue!+1))))
+            throw new InvalidOperationException("Ship operation ownership is immutable; append one revision.");
         if (changes.Any(e => e.Entity is DailyOperationRevision or DailyOperationReceipt && e.State != EntityState.Added))
             throw new InvalidOperationException("Daily operation history and command outcomes are immutable.");
         if (changes.Any(e => e.Entity is DailyReviewEvent or DailyReviewReceipt && e.State != EntityState.Added))
@@ -633,6 +646,11 @@ public sealed class PoseidonDbContext(
                         e.Entity.VesselId==certificateOutcome.VesselId && e.Entity.Id==certificateOutcome.RenewalId)?.Entity;
                     events[^1].AfterVersion=saved?.Version;events[^1].AfterRevision=saved?.Revision;
                 }
+            }
+            if(entry.Entity is ShipOperationReceipt shipOutcome) {
+                var saved=ChangeTracker.Entries<ShipOperation>().SingleOrDefault(e=>e.State==EntityState.Unchanged && e.Entity.TenantId==shipOutcome.TenantId &&
+                    e.Entity.VesselId==shipOutcome.VesselId && e.Entity.Kind==shipOutcome.Kind && e.Entity.Id==shipOutcome.RecordId)?.Entity;
+                events[^1].AfterVersion=saved?.Version;events[^1].AfterRevision=saved?.Revision;
             }
             if (entry.Entity is DailyOperationReceipt dailyOutcome) {
                 var saved = ChangeTracker.Entries<DailyOperation>().SingleOrDefault(e => e.State == EntityState.Unchanged &&
