@@ -14,6 +14,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         services.ConfigureHttpJsonOptions(options => options.SerializerOptions.NumberHandling =
             System.Text.Json.Serialization.JsonNumberHandling.Strict);
         services.AddDataProtection();
+        services.AddCertificateExtraction(configuration);
         services.AddSingleton(configuration.GetSection("TugPlanning").Get<TugPlanningPolicy>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<TimeProvider>(TimeProvider.System);
         services.AddSingleton(configuration.GetSection("Notifications").Get<NotificationSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
@@ -149,6 +150,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapNotifications();
             endpoints.MapDailyOperations();
             endpoints.MapCertificates();
+            endpoints.MapCertificateExtraction();
             endpoints.MapDailyOffline();
             endpoints.MapDailyReviews();
             endpoints.MapAuditHistory();
