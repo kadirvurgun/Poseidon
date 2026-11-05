@@ -30,11 +30,13 @@
     "TenantPerson",
     "Unresolved"
   ],
-  "mutationRouteTemplates": 99,
-  "criticalRouteTemplates": 93,
-  "criticalOperations": 103,
+  "mutationRouteTemplates": 101,
+  "criticalRouteTemplates": 95,
+  "criticalOperations": 105,
   "scopeMeaning": "Current exposed HTTP command surface, including aliases. Counts are authoring definitions until actual EndpointDataSource drift and real audit observations pass the phase gate. Technical codes describe accepted commands, never human justification or safety authority.",
   "operations": [
+    { "operationId": "CertificateRenewalCreate", "method": "POST", "routePattern": "/api/v1/renewal-workflow", "family": "CertificateRenewal", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "CertificateCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "CertificateRenewalUpdate", "method": "PUT", "routePattern": "/api/v1/renewal-workflow/{id:guid}", "family": "CertificateRenewal", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "CertificateCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "VesselCertificateCreate", "method": "POST", "routePattern": "/api/v1/vessels/{vessel:guid}/certificates", "family": "Certificate", "scope": "Vessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "CertificateCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "VesselCertificateUpdate", "method": "PUT", "routePattern": "/api/v1/vessels/{vessel:guid}/certificates/{id:guid}", "family": "Certificate", "scope": "Vessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "CertificateCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     {"operationId":"DailyOfflineEnroll","method":"POST","routePattern":"/api/v1/daily-offline/{kind}/{record:guid}","family":"DailyOffline","scope":"CommandVessel","kind":"CriticalWrite","reasonCode":"OFFLINE_LIFECYCLE","denialAction":"DailyOfflineRequest","variants":[],"traceIds":["T-S1-002","T-S1-003","T-S1-004","T-S1-007"]},

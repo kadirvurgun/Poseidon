@@ -39,7 +39,7 @@ public sealed class VesselCertificates : Migration
         );
         CREATE TABLE assurance."RenewalRevisions" (
           "TenantId" uuid NOT NULL,"VesselId" uuid NOT NULL,"RenewalId" uuid NOT NULL,"CertificateId" uuid NOT NULL,"CertificateRevision" bigint NOT NULL,"CertificateVersion" bigint NOT NULL,
-          "Revision" bigint NOT NULL,"RecordVersion" bigint NOT NULL,"ContentJson" text NOT NULL,"Hash" varchar(64) NOT NULL,"SourceVersion" varchar(192) NOT NULL,
+          "Revision" bigint NOT NULL,"RecordVersion" bigint NOT NULL,"ContentJson" text NOT NULL,"Hash" varchar(64) NOT NULL,"SourceVersion" varchar(192) NOT NULL,"Provenance" varchar(32) NOT NULL,
           "NewCertificateId" uuid,"NewCertificateRevision" bigint,"NewCertificateVersion" bigint,"FileId" uuid,"FileRevision" bigint,"Checksum" varchar(64),"ActorId" uuid NOT NULL,"SavedAt" timestamptz NOT NULL,
           CONSTRAINT "PK_RenewalRevisions" PRIMARY KEY ("TenantId","RenewalId","Revision"),
           CONSTRAINT "FK_RenewalRevision_Head" FOREIGN KEY ("TenantId","VesselId","CertificateId","RenewalId") REFERENCES assurance."Renewals" ("TenantId","VesselId","CertificateId","Id") ON DELETE RESTRICT,
