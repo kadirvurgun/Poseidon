@@ -86,6 +86,21 @@ public sealed class WorkspaceLensPolicyTests
         Assert.Contains(WorkspaceLensPolicy.Available(Actor("maintenance.read", "equipment.read"), Vessel, VesselKind.Ship), i => i.Key == "maintenance");
         Assert.DoesNotContain(WorkspaceLensPolicy.Available(Actor("mode.tug", "tug.read", "tug.write"), Vessel, VesselKind.Tug), i => i.Key == "tug-job-intake");
     }
+    [Fact]
+    public void Certificate_lens_requires_current_read_permission_and_keeps_scoped_assurance_links_in_review_group() {
+        var config = Config();
+        config["WorkspaceNavigation:Mappings:0:Keys:0"] = "certificate-command-center";
+        config["WorkspaceNavigation:Mappings:0:Keys:1"] = "renewal-workflow";
+        config.Remove("WorkspaceNavigation:Mappings:0:Keys:2");
+        Assert.Empty(Assert.Single(Describe(Actor("certificate.write"), config).Lenses).Items);
+        var actor = Actor("certificate.read");
+        var items = Assert.Single(Describe(actor, config).Lenses).Items;
+        Assert.Equal(2, items.Length);
+        Assert.All(items, item => { Assert.Equal("review", item.Group); Assert.Equal($"/app/{item.Key}/{Vessel}", item.Href); });
+        Assert.DoesNotContain("certificate.write", actor.Permissions);
+        Assert.DoesNotContain("certificate.renewal.write", actor.Permissions);
+        Assert.Contains(WorkspaceEndpoints.Destinations(actor), item => item.Key == "certificate-command-center" && item.Href == "/app/certificate-command-center");
+    }
 }
 
 public sealed partial class DirectoryWorkspaceTests

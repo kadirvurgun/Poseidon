@@ -20,8 +20,8 @@ public static class WorkspaceLensPolicy
                 (actor.TenantWideManage || vessel != null && actor.VesselGrants.Any(g => g.VesselId == vessel && g.CanEdit)))
             .Select(x => new WorkspaceLensItem(x.Key,
                 x.Key.StartsWith("tug-", StringComparison.Ordinal) && vessel != null ? x.Href + "?vessel=" + vessel :
-                x.Key is "today" or "noon-report" or "deck-daily-log" or "engine-daily-log" && vessel != null ? x.Href + "/" + vessel : x.Href,
-                x.Key is "sources" or "requirements" or "audit" ? "review" : "daily")).ToList();
+                x.Key is "today" or "noon-report" or "deck-daily-log" or "engine-daily-log" or "certificate-command-center" or "renewal-workflow" && vessel != null ? x.Href + "/" + vessel : x.Href,
+                x.Key is "sources" or "requirements" or "audit" or "certificate-command-center" or "renewal-workflow" ? "review" : "daily")).ToList();
         if (!actor.CanRead || vessel == null) return items.ToArray();
         if (actor.Permissions.Contains("crew.read")) items.Add(new("crew", $"/app/crew-roster/{vessel}", "daily"));
         if (actor.Permissions.Contains("equipment.read")) items.Add(new("equipment", $"/app/equipment-hierarchy/{vessel}", "daily"));
@@ -46,7 +46,7 @@ public static class WorkspaceLensPolicy
         var rows = catalog.GetSection("Mappings").GetChildren().Take(4097).ToArray();
         if (rows.Length > 4096) return Empty("Unavailable");
         var mappings = new Dictionary<Guid, (string[] Keys, string[] Modes)>();
-        string[] known = ["today", "fleet", "companies", "crew", "equipment", "maintenance", "import", "audit", "sources", "requirements", "tug-command", "tug-job-board", "tug-job-intake", "noon-report", "deck-daily-log", "engine-daily-log"];
+        string[] known = ["today", "fleet", "companies", "crew", "equipment", "maintenance", "import", "audit", "sources", "requirements", "tug-command", "tug-job-board", "tug-job-intake", "noon-report", "deck-daily-log", "engine-daily-log", "certificate-command-center", "renewal-workflow"];
         foreach (var row in rows) {
             if (!Guid.TryParse(row["TenantId"], out var tenant) || tenant != actor.TenantId) continue;
             var keys = row.GetSection("Keys").GetChildren().Select(x => x.Value ?? "").ToArray();
