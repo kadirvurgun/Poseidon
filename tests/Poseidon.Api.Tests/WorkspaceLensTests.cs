@@ -101,6 +101,15 @@ public sealed class WorkspaceLensPolicyTests
         Assert.DoesNotContain("certificate.renewal.write", actor.Permissions);
         Assert.Contains(WorkspaceEndpoints.Destinations(actor), item => item.Key == "certificate-command-center" && item.Href == "/app/certificate-command-center");
     }
+    [Fact]
+    public void Ship_operational_destinations_preserve_ship_mode_and_do_not_appear_on_tug_context_even_with_cross_mode() {
+        var actor = Actor("operations.fuel.read", "operations.port.read", "mode.tug", "mode.cross", "tug.read");
+        var ship = WorkspaceLensPolicy.Available(actor, Vessel, VesselKind.Ship);
+        Assert.Contains(ship, item => item.Key == "fuel-bunker-log" && item.Group == "daily" && item.Href == $"/app/fuel-bunker-log/{Vessel}");
+        Assert.Contains(ship, item => item.Key == "port-activity-sof" && item.Href == $"/app/port-activity-sof/{Vessel}");
+        Assert.DoesNotContain(WorkspaceLensPolicy.Available(actor, Vessel, VesselKind.Tug), item => item.Key is "fuel-bunker-log" or "port-activity-sof");
+        Assert.DoesNotContain(WorkspaceEndpoints.Destinations(Actor("operations.fuel.write")), item => item.Key == "fuel-bunker-log");
+    }
 }
 
 public sealed partial class DirectoryWorkspaceTests
