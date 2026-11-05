@@ -24,3 +24,8 @@
 .enterprise-shell .certificate-calendar-counts dd { font-size:24px; font-weight:650; margin:8px 0 0; }
 .certificate-workspace code { white-space:normal; overflow-wrap:anywhere; }
 @media(max-width:600px) { .enterprise-shell .certificate-record-list > li { padding:14px; } }
+
+.enterprise-shell .certificate-assertion-panel { margin-block:24px; padding:22px; border:1px solid var(--border); border-radius:10px; background:var(--card); min-width:0; }
+.enterprise-shell .certificate-assertion-summary { margin-block:16px; padding:16px; border:1px solid var(--border); border-radius:8px; background:var(--muted); min-width:0; }
+.enterprise-shell .certificate-assertion-panel .enterprise-form-grid { background:var(--card); }
+@media(max-width:600px) { .enterprise-shell .certificate-assertion-panel { padding:16px; } .enterprise-shell .certificate-assertion-summary { padding:14px; } }

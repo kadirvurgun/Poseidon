@@ -1,3 +1,4 @@
+export const certificateSourceVersion = '14.02:3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018:33-40,1634-1657,1708-1755:v46.3'
 import { emptyCertificateMetadata, type CertificateMetadata } from './certificate-metadata'
 export type CertificateFilePin = { id: string; revision: number; checksum: string }
 export type VesselCertificateContent = { metadata: CertificateMetadata; documentName: string | null; regulatoryBasis: string | null; declaredFlag: string | null; availability: 'Available' | 'Missing' | 'Review' | null; surveyWindowStart: string | null; surveyWindowEnd: string | null; document: CertificateFilePin | null }

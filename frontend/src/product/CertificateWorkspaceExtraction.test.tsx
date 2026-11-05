@@ -16,6 +16,14 @@ vi.mock('./CertificateExtractionReview', () => ({ CertificateExtractionReview: f
     {!props.enabled && <p>Child source locked</p>}
   </section>
 } }))
+vi.mock('./CertificateAssertionPanel', () => ({ CertificateAssertionPanel: function Probe(props: { enabled: boolean; onDirty: (value: boolean) => void; onSaving: (value: boolean) => void }) {
+  const [retained, setRetained] = useState(false)
+  return <section aria-label="Assertion child boundary">
+    <button disabled={!props.enabled} onClick={() => { setRetained(true); props.onDirty(true) }}>Retain assertion reason</button>
+    <button disabled={!props.enabled} onClick={() => { setRetained(true); props.onDirty(true); props.onSaving(true) }}>Retain uncertain assertion</button>
+    {retained && props.enabled && <button onClick={() => { setRetained(false); props.onDirty(false) }}>Discard child assertion</button>}
+  </section>
+} }))
 const json = (value: unknown, status = 200) => new Response(JSON.stringify(value), { status })
 beforeEach(() => {
   history.replaceState(null, '', '/app/certificate-command-center/' + certificateVessel + '?id=' + certificateId)
@@ -36,6 +44,26 @@ async function open() {
   return user
 }
 describe('T-S6-001/003 child assistance ownership and independent guard', () => {
+  it('keeps human assertion inputs separate from ordinary and document authoring guards', async () => {
+    const user = await open()
+    await user.click(screen.getByRole('button', { name: 'Retain assertion reason' }))
+    expect(screen.getByLabelText('Certificate number')).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Retain document suggestions' })).toBeDisabled()
+    const unload = new Event('beforeunload', { cancelable: true }); window.dispatchEvent(unload)
+    expect(unload.defaultPrevented).toBe(true)
+    await user.click(screen.getByRole('button', { name: 'Discard child assertion' }))
+    expect(screen.getByLabelText('Certificate number')).not.toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Retain document suggestions' })).not.toBeDisabled()
+  })
+  it('retains an independent navigation lock for an uncertain human command', async () => {
+    const user = await open()
+    await user.click(screen.getByRole('button', { name: 'Retain uncertain assertion' }))
+    expect(screen.getByRole('button', { name: 'Back to records' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Save unverified draft' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Retain document suggestions' })).toBeDisabled()
+    const unload = new Event('beforeunload', { cancelable: true }); window.dispatchEvent(unload)
+    expect(unload.defaultPrevented).toBe(true)
+  })
   it('locks child confirmation while ordinary fields are dirty and keeps those fields unchanged', async () => {
     const user = await open()
     await user.type(screen.getByLabelText('Certificate number'), 'LOCAL untouched')
