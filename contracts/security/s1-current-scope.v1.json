@@ -30,14 +30,15 @@
     "TenantPerson",
     "Unresolved"
   ],
-  "mutationRouteTemplates": 104,
-  "criticalRouteTemplates": 96,
-  "criticalOperations": 106,
+  "mutationRouteTemplates": 105,
+  "criticalRouteTemplates": 97,
+  "criticalOperations": 107,
   "scopeMeaning": "Current exposed HTTP command surface, including aliases. Counts are authoring definitions until actual EndpointDataSource drift and real audit observations pass the phase gate. Technical codes describe accepted commands, never human justification or safety authority.",
   "operations": [
     { "operationId": "CertificateExtract", "method": "POST", "routePattern": "/api/v1/vessels/{vessel:guid}/certificates/{id:guid}/extractions", "family": "CertificateExtraction", "scope": "Vessel", "kind": "SecurityObservation", "reasonCode": null, "denialAction": "CertificateExtraction", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "CredentialExtract", "method": "POST", "routePattern": "/api/v1/vessels/{vessel:guid}/crew/{assignment:guid}/certificates/{id:guid}/extractions", "family": "CertificateExtraction", "scope": "Vessel", "kind": "SecurityObservation", "reasonCode": null, "denialAction": "CertificateExtraction", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "CertificateExtractionConfirm", "method": "POST", "routePattern": "/api/v1/vessels/{vessel:guid}/certificates/{id:guid}/extractions/confirm", "family": "CertificateExtraction", "scope": "Vessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "CertificateExtraction", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "CertificateAssertionRecord", "method": "POST", "routePattern": "/api/v1/vessels/{vessel:guid}/certificates/{id:guid}/verification-assertions", "family": "CertificateAssertion", "scope": "Vessel", "kind": "CriticalWrite", "reasonCode": "HUMAN_REVIEW_WORKFLOW", "denialAction": "CertificateCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "CertificateRenewalCreate", "method": "POST", "routePattern": "/api/v1/renewal-workflow", "family": "CertificateRenewal", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "CertificateCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "CertificateRenewalUpdate", "method": "PUT", "routePattern": "/api/v1/renewal-workflow/{id:guid}", "family": "CertificateRenewal", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "CertificateCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "VesselCertificateCreate", "method": "POST", "routePattern": "/api/v1/vessels/{vessel:guid}/certificates", "family": "Certificate", "scope": "Vessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "CertificateCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },

@@ -124,7 +124,7 @@ internal static class VesselCertificateStorage
         });
         model.Entity<CertificateCommandReceipt>(b=> {
             b.ToTable("CertificateReceipts","assurance",t=>t.HasCheckConstraint("CK_CertificateReceipt_Resource",
-                "(\"Action\"='CertificateSave' AND \"RenewalId\" IS NULL AND \"ResourceId\"=\"CertificateId\") OR (\"Action\"='RenewalSave' AND \"RenewalId\" IS NOT NULL AND \"ResourceId\"=\"RenewalId\")"));b.HasKey(r=>new{r.TenantId,r.ActorId,r.Key});
+                "(\"Action\" IN ('CertificateSave','CertificateAssertion') AND \"RenewalId\" IS NULL AND \"ResourceId\"=\"CertificateId\") OR (\"Action\"='RenewalSave' AND \"RenewalId\" IS NOT NULL AND \"ResourceId\"=\"RenewalId\")"));b.HasKey(r=>new{r.TenantId,r.ActorId,r.Key});
             b.HasOne<VesselCertificate>().WithMany().HasForeignKey(r=>new{r.TenantId,r.VesselId,r.CertificateId})
                 .HasPrincipalKey(r=>new{r.TenantId,r.VesselId,r.Id}).HasConstraintName("FK_CertificateReceipt_Certificate").OnDelete(DeleteBehavior.Restrict);
             b.HasOne<CertificateRenewal>().WithMany().HasForeignKey(r=>new{r.TenantId,r.VesselId,r.CertificateId,r.RenewalId})

@@ -37,11 +37,11 @@ public sealed partial class DirectoryWorkspaceTests
         await using var host = Host();
         var endpoints = host.Services.GetRequiredService<EndpointDataSource>().Endpoints;
         var observed = S1SecurityContract.ValidateEndpointInventory(endpoints);
-        // S6 adds ordinary certificates renewal drafts and extraction observations/confirmation.
+        // S6 adds certificate/renewal drafts, extraction and assigned Human assertion recording.
         // Historical native receipts remain unchanged; this is an authored denominator.
-        Assert.Equal(104, observed.Count);
-        Assert.Equal(96, observed.Count(x => x.IsCritical));
-        Assert.Equal(106, S1SecurityContract.CriticalOperationIds.Count);
+        Assert.Equal(105, observed.Count);
+        Assert.Equal(97, observed.Count(x => x.IsCritical));
+        Assert.Equal(107, S1SecurityContract.CriticalOperationIds.Count);
         Assert.Equal(8, observed.Count(x => !x.IsCritical));
         var extra = new RouteEndpoint(_ => Task.CompletedTask, RoutePatternFactory.Parse("/api/v1/unclassified-write"), 0,
             new EndpointMetadataCollection(new HttpMethodMetadata(["POST"]), new AuthorizeAttribute("DirectoryRead")), "unclassified");
