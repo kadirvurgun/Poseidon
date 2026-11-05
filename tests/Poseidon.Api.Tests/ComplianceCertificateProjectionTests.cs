@@ -102,12 +102,16 @@ public sealed partial class DirectoryWorkspaceTests
             var certificate = await CertificateWithScannedFile(client); var grant = AssertionAppointment(host.Services, certificate.Id);
             using var recorded = await Send(client, AssertionPath(certificate.Id), new CertificateAssertionCommand(certificate.Version, certificate.Revision, 0, grant.Id, "Verified", "FICTIONAL recorded assertion"));
             Assert.Equal(HttpStatusCode.OK, recorded.StatusCode); var eventRow = (await recorded.Content.ReadFromJsonAsync<CertificateVerificationDto>(Ct))!;
-            var passport = (await client.GetFromJsonAsync<CompliancePassportDto>(CompliancePath("passport"), Ct))!;
+            using var passportResponse = await client.GetAsync(CompliancePath("passport"), Ct); Assert.Equal(HttpStatusCode.OK, passportResponse.StatusCode);
+            var payload = await passportResponse.Content.ReadAsStringAsync(Ct);
+            var passport = System.Text.Json.JsonSerializer.Deserialize<CompliancePassportDto>(payload, new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web))!;
             var item = Assert.Single(passport.Certificates.Items, row => row.Id == certificate.Id); var assertion = item.Assertion!;
             Assert.Equal(eventRow.Id, assertion.Id); Assert.Equal(eventRow.Version, assertion.Version); Assert.Equal(eventRow.Revision, assertion.Revision);
             Assert.Equal("Verified", assertion.State); Assert.Equal("RECORDED_UNASSESSED", assertion.Qualification); Assert.True(assertion.Current);
             Assert.Equal("REVIEW_REQUIRED", item.Qualification); Assert.Equal("REVIEW_REQUIRED", passport.State);
-            var summary = System.Text.Json.JsonSerializer.SerializeToElement(assertion, new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web));
+            using var wire = System.Text.Json.JsonDocument.Parse(payload);
+            var summary = wire.RootElement.GetProperty("certificates").GetProperty("items").EnumerateArray()
+                .Single(row => row.GetProperty("id").GetGuid() == certificate.Id).GetProperty("assertion");
             Assert.False(summary.TryGetProperty("actorId", out _)); Assert.False(summary.TryGetProperty("roleId", out _));
             Assert.False(summary.TryGetProperty("authorityId", out _)); Assert.False(summary.TryGetProperty("rationale", out _));
             var settings = host.Services.GetRequiredService<FederationSettings>(); var member = settings.Memberships[0];
