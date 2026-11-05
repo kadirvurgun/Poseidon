@@ -101,7 +101,11 @@
     "EngineDailyUpdate": "PREPARATION_COMMAND",
     "NoonDailyReviewRecord": "HUMAN_REVIEW_WORKFLOW",
     "DeckDailyReviewRecord": "HUMAN_REVIEW_WORKFLOW",
-    "EngineDailyReviewRecord": "HUMAN_REVIEW_WORKFLOW"
+    "EngineDailyReviewRecord": "HUMAN_REVIEW_WORKFLOW",
+    "VesselCertificateCreate": "PREPARATION_COMMAND",
+    "VesselCertificateUpdate": "PREPARATION_COMMAND",
+    "CertificateRenewalCreate": "PREPARATION_COMMAND",
+    "CertificateRenewalUpdate": "PREPARATION_COMMAND"
   },
   "reasonCodes": [
     "PREPARATION_COMMAND",

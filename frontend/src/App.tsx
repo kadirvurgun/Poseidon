@@ -9,6 +9,7 @@ import { AgentsDashboard } from './agents/AgentsDashboard'
 import { ProductApp } from './product/ProductApp'
 import { SystemHealthWorkspace } from './product/SystemHealthWorkspace'
 import { NotificationWorkspace } from './product/NotificationWorkspace'
+import { CertificateWorkspace } from './product/CertificateWorkspace'
 
 type Language = 'tr' | 'en'
 type Connection = 'loading' | 'available' | 'error'
@@ -42,6 +43,7 @@ const content = {
 }
 
 export function App() {
+  if (/^\/app\/(certificate-command-center|renewal-workflow)(?:\/|$)/.test(window.location.pathname)) return <CertificateWorkspace />
   if (/^\/app\/(noon-report|deck-daily-log|engine-daily-log)(?:\/|$)/.test(window.location.pathname)) return <DailyReportWorkspace />
   if (window.location.pathname === '/app/system-health') return <SystemHealthWorkspace />
   if (window.location.pathname === '/app/notification-escalation') return <NotificationWorkspace />
