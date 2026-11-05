@@ -5,7 +5,7 @@ import { CompliancePassport } from './CompliancePassport'
 import { OnboardingAssessmentView } from './VesselOnboarding'
 import { ApplicabilityReasonView } from './ApplicabilityReasonView'
 import { decodeEvaluationResults } from './applicability-api'
-import { assessmentFixture, authorizedCertificatePageFixture, certificateDeclarationFixture, complianceVessel, otherComplianceVessel, passportFixture, recordedReviewFixture } from './compliance-test-fixtures'
+import { assessmentFixture, authorizedCertificatePageFixture, certificateDeclarationFixture, complianceVessel, otherComplianceVessel, passportFixture, recordedCertificatePageFixture, recordedReviewFixture } from './compliance-test-fixtures'
 const response = (value: unknown, status = 200) => ({ ok: status < 300, status, json: async () => value }) as Response
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals() })
 describe('S5-EXPERIENCE-01 honest source review (authored; execution deferred)', () => {
@@ -91,7 +91,7 @@ describe('S5-EXPERIENCE-01 honest source review (authored; execution deferred)',
     const navigate = vi.fn(); render(<CompliancePassport vessel={complianceVessel} language="en" onNavigate={navigate} />)
     const region = await screen.findByRole('region', { name: 'Vessel certificate declarations' })
     expect(within(region).getByText('Declared dates within calendar window')).toBeVisible()
-    expect(within(region).getByText('Verification required')).toBeVisible()
+    expect(within(region).getByText('Source qualification requires review')).toBeVisible()
     expect(within(region).getByText('No document linked')).toBeVisible()
     expect(within(region).getByText(/inventory completeness and legal verification are assessed separately/)).toBeVisible()
     expect(screen.queryByText('Ready', { exact: true })).not.toBeInTheDocument()
@@ -112,6 +112,18 @@ describe('S5-EXPERIENCE-01 honest source review (authored; execution deferred)',
     await userEvent.click(more)
     await waitFor(() => expect(screen.getAllByRole('button', { name: 'Open certificate record' })).toHaveLength(1))
     expect(screen.getByRole('button', { name: 'More passport records' })).toBeDisabled()
+  })
+  it.each([true, false])('shows an actual recorded human statement without promoting legal qualification (current=%s)', async current => {
+    const p = { ...passportFixture(), certificateCoverage: 'AUTHORIZED_PAGE_ONLY', certificates: recordedCertificatePageFixture(current) }
+    vi.stubGlobal('fetch', vi.fn(async () => response(p)))
+    render(<CompliancePassport vessel={complianceVessel} language="en" onNavigate={vi.fn()} />)
+    const region = await screen.findByRole('region', { name: 'Recorded human assertion' })
+    expect(within(region).getByText('Verified', { exact: true })).toBeVisible()
+    expect(within(region).getByText('Recorded · unassessed')).toBeVisible()
+    expect(within(region).getByText(current ? 'Current' : 'Historical or no longer current', { exact: true })).toBeVisible()
+    expect(within(region).getByText(/does not establish legal validity/)).toBeVisible()
+    expect(screen.getByText('Source qualification requires review')).toBeVisible()
+    expect(screen.queryByText('Ready', { exact: true })).not.toBeInTheDocument()
   })
   it('shows an Unknown predicate, pinned source, activations and rule integrity without granting current authority', async () => {
     const rows = decodeEvaluationResults([{ ruleId: otherComplianceVessel, revision: 2, hash: 'C'.repeat(64), sourceId: complianceVessel, sourceRevision: 3, requirementId: null, requirementRevision: null, prediction: { result: 'REVIEW_REQUIRED', currentResult: 'REVIEW_REQUIRED', authoritative: false, lifecycle: 'DRAFT', reason: { path: 'when', truth: 0, reason: 'Missing', field: 'vessel.flag', operator: 'EQ', children: [], reviewRequired: true }, predictedActivations: [{ type: 'Control', id: 'synthetic-control' }], blockers: ['preview_only'] } }], false)

@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest'
 import { decodePassport } from './compliance-api'
 import { decodePassportCertificates } from './compliance-certificate-contract'
-import { authorizedCertificatePageFixture, certificateDeclarationFixture, certificatePageFixture, complianceVessel, otherComplianceVessel, passportFixture } from './compliance-test-fixtures'
+import { authorizedCertificatePageFixture, certificateDeclarationFixture, certificatePageFixture, complianceVessel, otherComplianceVessel, passportFixture, recordedCertificatePageFixture } from './compliance-test-fixtures'
 
 it('keeps authorized empty pages distinct from unavailable access and inventory completeness', () => {
   expect(decodePassportCertificates(certificatePageFixture(), complianceVessel).coverage).toBe('UNAVAILABLE')
@@ -28,4 +28,16 @@ it('pins outer coverage and server calendar context to the owning projection', (
   expect(decodePassport(passport, complianceVessel).certificates.items).toHaveLength(1)
   expect(() => decodePassport({ ...passport, certificateCoverage: 'COMPLETE' }, complianceVessel)).toThrow()
   expect(() => decodePassport({ ...passport, certificates: { ...passport.certificates, referenceDate: '2026-11-03' } }, complianceVessel)).toThrow()
+})
+
+it('preserves exact recorded human statements with assessment separate from legal qualification', () => {
+  for (const current of [true, false]) {
+    const page = decodePassportCertificates(recordedCertificatePageFixture(current), complianceVessel)
+    expect(page.items[0].assertion).toMatchObject({ state: 'Verified', qualification: 'RECORDED_UNASSESSED', current })
+    expect(page.items[0].qualification).toBe('REVIEW_REQUIRED')
+  }
+  const page = recordedCertificatePageFixture(), row = page.items[0]
+  for (const assertion of [{ ...row.assertion, qualification: 'HUMAN_VERIFIED' }, { ...row.assertion, current: false }, { ...row.assertion, state: 'READY' }, { ...row.assertion, version: 0 }])
+    expect(() => decodePassportCertificates({ ...page, items: [{ ...row, assertion }] }, complianceVessel)).toThrow()
+  expect(() => decodePassportCertificates({ ...page, items: [{ ...row, document: null }] }, complianceVessel)).toThrow()
 })

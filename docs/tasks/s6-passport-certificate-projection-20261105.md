@@ -46,6 +46,14 @@ Authored criteria:
    file references, coverage and paging. Render calendar observation separately
    from verification, with responsive cards and shared actions. Passport next-page
    navigation considers certificate HasMore independently from graph paging.
+6. An actual assigned Human's recorded assertion is displayed as its exact state
+   and immutable event id/revision/version/time, with RECORDED_UNASSESSED and
+   current/historical context separate from certificate REVIEW_REQUIRED. Scalar
+   output omits actor/role/authority identifiers and rationale; complete owning
+   DTOs remain server-side for ReturnedVisible and synchronous CurrentPolicies
+   after the combined fresh SQL, before and after audit. Original row39 and
+   renewal1754/1755 transition approval fields remain unresolved; no legal
+   verification, completion or automatic supersession is inferred.
 
 ## Authored checks and limits
 

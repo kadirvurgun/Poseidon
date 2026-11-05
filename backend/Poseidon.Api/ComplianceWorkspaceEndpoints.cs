@@ -25,7 +25,10 @@ public sealed record CompliancePassportDto(Guid VesselId, DateTimeOffset ReadAt,
     ComplianceApplicabilityDto Applicability, ComplianceControlPlanDto Plan, ComplianceCertificatePageDto Certificates);
 public sealed record ComplianceCertificateDto(Guid Id, long Revision, uint Version, string? TypeReference,
     string? Number, string? Issuer, DateOnly? IssueDate, DateOnly? ExpiryDate, string TemporalState,
-    string Qualification, CertificateFilePin? Document, string SourceVersion, string Hash, string Href);
+    string Qualification, CertificateFilePin? Document, string SourceVersion, string Hash, string Href,
+    ComplianceCertificateAssertionDto? Assertion = null);
+public sealed record ComplianceCertificateAssertionDto(Guid Id, long Revision, uint Version, string State,
+    string Qualification, bool Current, DateTimeOffset RecordedAt, string SourceVersion, string[] Blockers);
 public sealed record ComplianceCertificatePageDto(string Coverage, ComplianceCertificateDto[] Items, int Offset,
     int Limit, bool HasMore, DateOnly ReferenceDate, string[] Blockers);
 
@@ -104,20 +107,23 @@ public static class ComplianceWorkspaceEndpoints
             matching.Count() == returned.Length && linked.Select(r => r.Id).Distinct().Count() == controlIds.Length &&
             certificateAccess && matchingCertificates.Count() == certificateRows.Length)
             .SingleOrDefaultAsync(h.RequestAborted);
-        return visible && AccessCurrent(h, expected, graph);
+        return visible && AccessCurrent(h, expected, graph) && CertificateAssertions.CurrentPolicies(h, certificateRows);
     }
     private static async Task<CertificateProjection> Certificates(Guid vessel, TrustedActor actor,
-        PoseidonDbContext db, DateTimeOffset now, int offset, CancellationToken ct) {
+        HttpContext h, PoseidonDbContext db, DateTimeOffset now, int offset, CancellationToken ct) {
         var reference = DateOnly.FromDateTime(now.UtcDateTime);
         if (!CertificateReader.Read(actor)) return new(new("UNAVAILABLE", [], offset, 25, false, reference,
             ["CERTIFICATE_READ_ACCESS_UNAVAILABLE", "CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED"]), []);
         var rows = await CertificateReader.Visible(db, actor, vessel).OrderBy(r => r.CertificateId).Skip(offset).Take(26).ToArrayAsync(ct);
-        var records = rows.Take(25).Select(row => CertificateReader.Dto(row, actor, reference)).ToArray();
+        var records = await CertificateAssertions.Decorate(h, db, actor,
+            rows.Take(25).Select(row => CertificateReader.Dto(row, actor, reference)).ToArray(), ct);
         var items = records.Select(dto => {
             var declaration = dto.Content.Metadata.Declaration;
             return new ComplianceCertificateDto(dto.Id, dto.Revision, dto.Version, declaration.CertificateTypeReference,
                 declaration.CertificateNumber, declaration.Issuer, declaration.IssueDate, declaration.ExpiryDate,
-                dto.Calendar.State, dto.Qualification, dto.Content.Document, dto.SourceVersion, dto.Hash ?? throw new InvalidDataException("certificate_hash_unavailable"), dto.Href);
+                dto.Calendar.State, dto.Qualification, dto.Content.Document, dto.SourceVersion, dto.Hash ?? throw new InvalidDataException("certificate_hash_unavailable"), dto.Href,
+                dto.Verification is { } assertion ? new(assertion.Id, assertion.Revision, assertion.Version, assertion.State,
+                    assertion.Qualification, assertion.Current, assertion.SavedAt, assertion.SourceVersion, assertion.Blockers) : null);
         }).ToArray();
         return new(new("AUTHORIZED_PAGE_ONLY", items, offset, 25, rows.Length > 25, reference,
             ["CERTIFICATE_QUALIFICATION_REQUIRED", "CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED"]), records);
@@ -244,7 +250,7 @@ public static class ComplianceWorkspaceEndpoints
             responsePlan = plan;
             if (view == "plan") outcome = plan;
             else {
-                responseCertificates = await Certificates(id, actor, db, now, offset, ct);
+                responseCertificates = await Certificates(id, actor, h, db, now, offset, ct);
                 outcome = new CompliancePassportDto(id, now, "REVIEW_REQUIRED", "Unverified", responseCertificates.Page.Coverage,
                     onboarding.Blockers.Concat(review.Blockers).Concat(plan.Blockers).Concat(responseCertificates.Page.Blockers).Distinct().Order(StringComparer.Ordinal).ToArray(),
                     onboarding, review, plan, responseCertificates.Page);

@@ -16,6 +16,8 @@ const labels: Record<string, [string, string]> = {
   CERTIFICATE_READ_ACCESS_UNAVAILABLE: ['Current certificate read access is unavailable', 'Güncel sertifika okuma erişimi kullanılamıyor'],
   CERTIFICATE_QUALIFICATION_REQUIRED: ['Certificate declarations require source and human verification', 'Sertifika beyanları kaynak ve insan doğrulaması gerektiriyor'],
   CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED: ['Certificate inventory completeness has not been established', 'Sertifika envanterinin tamlığı henüz kurulmadı'],
+  LEGAL_TRANSITION_SOURCE_UNAVAILABLE: ['An approved source for the legal transition is unavailable', 'Hukuki durum geçişi için onaylı kaynak kullanılamıyor'],
+  RECORDED_ASSERTION_NOT_CURRENT: ['The recorded assertion context is historical or no longer current', 'Kayıtlı beyan bağlamı tarihsel veya artık güncel değil'],
 }
 
 // Keep unknown owning-source reasons inspectable without inventing their meaning.
