@@ -19,3 +19,4 @@
 .tug-request-lineage dl { padding: 14px 18px; border: 1px solid var(--border); border-radius: 8px; background: #fff; }
 @media (max-width: 1050px) { .tug-request-grid { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 580px) { .enterprise-shell .tug-request-grid dl { grid-template-columns: minmax(0, 1fr); } }
+.tug-request-summary .tug-request-narrative { white-space: pre-wrap; overflow-wrap: anywhere; }
