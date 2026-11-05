@@ -59,6 +59,12 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         if(entry.Entity is CertificateRenewalRevision renewalRevision)
             return new(renewalRevision.VesselId,renewalRevision.RenewalId,"CertificateRenewalRevision",null,renewalRevision.Revision,
                 Fields(Field("Revision",null,Number(renewalRevision.Revision)),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is CertificateAssertionHead assertionHead)
+            return new(assertionHead.VesselId,assertionHead.CertificateId,"CertificateAssertionHead",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,assertionHead.Revision,
+                Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(assertionHead.Revision)),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is CertificateAssertionEvent assertion)
+            return new(assertion.VesselId,assertion.CertificateId,"CertificateAssertion",null,assertion.Revision,
+                Fields(Field("Revision",null,Number(assertion.Revision)),Field("Binding",null,"RecordedUnassessedAssertion")));
         if(entry.Entity is CertificateCommandReceipt certificateReceipt)
             return new(certificateReceipt.VesselId,certificateReceipt.ResourceId,"CertificateReceipt",null,null,Fields(Field("Binding",null,"CommittedResource")));
         if (entry.Entity is DailyOfflineEnrollment dailyEnrollment)
