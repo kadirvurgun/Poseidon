@@ -5172,6 +5172,62 @@ namespace Poseidon.Persistence.Migrations
                 b.HasOne("Poseidon.Persistence.DailyReviewEvent",null).WithMany().HasForeignKey("TenantId","VesselId","Kind","RecordId","EventId")
                     .HasPrincipalKey("TenantId","VesselId","Kind","RecordId","Id").HasConstraintName("FK_DailyReviewReceipt_Event").OnDelete(DeleteBehavior.Restrict).IsRequired();
             });
+            // S6 source-authored snapshot; model parity execution remains deferred.
+            modelBuilder.Entity("Poseidon.Persistence.VesselCertificate",b=> {
+                b.Property<Guid>("TenantId").HasColumnType("uuid");b.Property<Guid>("VesselId").HasColumnType("uuid");b.Property<Guid>("Id").HasColumnType("uuid");
+                b.Property<long>("Revision").HasColumnType("bigint");b.Property<uint>("Version").IsConcurrencyToken().ValueGeneratedOnAddOrUpdate().HasColumnType("xid").HasColumnName("xmin");
+                b.HasKey("TenantId","Id");b.HasAlternateKey("TenantId","VesselId","Id");b.HasIndex("TenantId","VesselId");
+                b.ToTable("Certificates","assurance",t=>t.HasCheckConstraint("CK_VesselCertificate_Revision","\"Revision\" > 0"));
+                b.HasOne("Poseidon.Persistence.Vessel",null).WithMany().HasForeignKey("TenantId","VesselId").OnDelete(DeleteBehavior.Restrict).IsRequired();
+            });
+            modelBuilder.Entity("Poseidon.Persistence.VesselCertificateRevision",b=> {
+                b.Property<Guid>("TenantId").HasColumnType("uuid");b.Property<Guid>("VesselId").HasColumnType("uuid");b.Property<Guid>("CertificateId").HasColumnType("uuid");
+                b.Property<long>("Revision").HasColumnType("bigint");b.Property<long>("RecordVersion").HasColumnType("bigint");
+                b.Property<string>("ContentJson").IsRequired().HasColumnType("text");b.Property<string>("Hash").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");
+                b.Property<string>("SourceVersion").IsRequired().HasMaxLength(192).HasColumnType("character varying(192)");b.Property<string>("Provenance").IsRequired().HasMaxLength(32).HasColumnType("character varying(32)");
+                b.Property<Guid?>("FileId").HasColumnType("uuid");b.Property<long?>("FileRevision").HasColumnType("bigint");b.Property<string>("Checksum").HasMaxLength(64).HasColumnType("character varying(64)");
+                b.Property<Guid>("ActorId").HasColumnType("uuid");b.Property<DateTimeOffset>("SavedAt").HasColumnType("timestamp with time zone");
+                b.Property<DateOnly?>("IssueDate").HasColumnType("date");b.Property<DateOnly?>("ExpiryDate").HasColumnType("date");b.Property<DateOnly?>("SurveyWindowStart").HasColumnType("date");b.Property<DateOnly?>("SurveyWindowEnd").HasColumnType("date");b.Property<bool>("SurveyWindowDeclared").HasColumnType("boolean");
+                b.HasKey("TenantId","CertificateId","Revision");b.HasAlternateKey("TenantId","VesselId","CertificateId","Revision").HasName("AK_CertificateRevision_Scope");
+                b.HasIndex("TenantId","VesselId","FileId","FileRevision","Checksum").HasDatabaseName("IX_CertificateRevision_FilePin");
+                b.ToTable("CertificateRevisions","assurance",t=>t.HasCheckConstraint("CK_VesselCertificateRevision_Binding",
+                    "\"Revision\" > 0 AND \"RecordVersion\" > 0 AND ((\"FileId\" IS NULL AND \"FileRevision\" IS NULL AND \"Checksum\" IS NULL) OR (\"FileId\" IS NOT NULL AND \"FileRevision\" > 0 AND \"Checksum\" IS NOT NULL))"));
+                b.HasOne("Poseidon.Persistence.VesselCertificate",null).WithMany().HasForeignKey("TenantId","VesselId","CertificateId").HasPrincipalKey("TenantId","VesselId","Id").HasConstraintName("FK_CertificateRevision_Head").OnDelete(DeleteBehavior.Restrict).IsRequired();
+                b.HasOne("Poseidon.Persistence.StoredFile",null).WithMany().HasForeignKey("TenantId","VesselId","FileId","FileRevision","Checksum").HasPrincipalKey("TenantId","VesselId","Id","Revision","Checksum").HasConstraintName("FK_CertificateRevision_File").OnDelete(DeleteBehavior.Restrict);
+            });
+            modelBuilder.Entity("Poseidon.Persistence.CertificateRenewal",b=> {
+                b.Property<Guid>("TenantId").HasColumnType("uuid");b.Property<Guid>("VesselId").HasColumnType("uuid");b.Property<Guid>("Id").HasColumnType("uuid");b.Property<Guid>("CertificateId").HasColumnType("uuid");
+                b.Property<long>("Revision").HasColumnType("bigint");b.Property<uint>("Version").IsConcurrencyToken().ValueGeneratedOnAddOrUpdate().HasColumnType("xid").HasColumnName("xmin");
+                b.HasKey("TenantId","Id");b.HasAlternateKey("TenantId","VesselId","CertificateId","Id");
+                b.ToTable("Renewals","assurance",t=>t.HasCheckConstraint("CK_CertificateRenewal_Revision","\"Revision\" > 0"));
+                b.HasOne("Poseidon.Persistence.VesselCertificate",null).WithMany().HasForeignKey("TenantId","VesselId","CertificateId").HasPrincipalKey("TenantId","VesselId","Id").HasConstraintName("FK_Renewal_Certificate").OnDelete(DeleteBehavior.Restrict).IsRequired();
+            });
+            modelBuilder.Entity("Poseidon.Persistence.CertificateRenewalRevision",b=> {
+                b.Property<Guid>("TenantId").HasColumnType("uuid");b.Property<Guid>("VesselId").HasColumnType("uuid");b.Property<Guid>("RenewalId").HasColumnType("uuid");b.Property<Guid>("CertificateId").HasColumnType("uuid");
+                b.Property<long>("CertificateRevision").HasColumnType("bigint");b.Property<long>("CertificateVersion").HasColumnType("bigint");b.Property<long>("Revision").HasColumnType("bigint");b.Property<long>("RecordVersion").HasColumnType("bigint");
+                b.Property<string>("ContentJson").IsRequired().HasColumnType("text");b.Property<string>("Hash").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");b.Property<string>("SourceVersion").IsRequired().HasMaxLength(192).HasColumnType("character varying(192)");
+                b.Property<Guid?>("NewCertificateId").HasColumnType("uuid");b.Property<long?>("NewCertificateRevision").HasColumnType("bigint");b.Property<long?>("NewCertificateVersion").HasColumnType("bigint");
+                b.Property<Guid?>("FileId").HasColumnType("uuid");b.Property<long?>("FileRevision").HasColumnType("bigint");b.Property<string>("Checksum").HasMaxLength(64).HasColumnType("character varying(64)");
+                b.Property<Guid>("ActorId").HasColumnType("uuid");b.Property<DateTimeOffset>("SavedAt").HasColumnType("timestamp with time zone");b.HasKey("TenantId","RenewalId","Revision");
+                b.HasIndex("TenantId","VesselId","CertificateId","RenewalId").HasDatabaseName("IX_RenewalRevision_Head");b.HasIndex("TenantId","VesselId","CertificateId","CertificateRevision").HasDatabaseName("IX_RenewalRevision_Original");
+                b.HasIndex("TenantId","VesselId","NewCertificateId","NewCertificateRevision").HasDatabaseName("IX_RenewalRevision_Replacement");b.HasIndex("TenantId","VesselId","FileId","FileRevision","Checksum").HasDatabaseName("IX_RenewalRevision_FilePin");
+                b.ToTable("RenewalRevisions","assurance",t=>t.HasCheckConstraint("CK_RenewalRevision_Binding",
+                    "\"Revision\" > 0 AND \"RecordVersion\" > 0 AND \"CertificateRevision\" > 0 AND \"CertificateVersion\" > 0 AND ((\"NewCertificateId\" IS NULL AND \"NewCertificateRevision\" IS NULL AND \"NewCertificateVersion\" IS NULL) OR (\"NewCertificateId\" IS NOT NULL AND \"NewCertificateRevision\" > 0 AND \"NewCertificateVersion\" > 0)) AND ((\"FileId\" IS NULL AND \"FileRevision\" IS NULL AND \"Checksum\" IS NULL) OR (\"FileId\" IS NOT NULL AND \"FileRevision\" > 0 AND \"Checksum\" IS NOT NULL))"));
+                b.HasOne("Poseidon.Persistence.CertificateRenewal",null).WithMany().HasForeignKey("TenantId","VesselId","CertificateId","RenewalId").HasPrincipalKey("TenantId","VesselId","CertificateId","Id").HasConstraintName("FK_RenewalRevision_Head").OnDelete(DeleteBehavior.Restrict).IsRequired();
+                b.HasOne("Poseidon.Persistence.VesselCertificateRevision",null).WithMany().HasForeignKey("TenantId","VesselId","CertificateId","CertificateRevision").HasPrincipalKey("TenantId","VesselId","CertificateId","Revision").HasConstraintName("FK_RenewalRevision_Original").OnDelete(DeleteBehavior.Restrict).IsRequired();
+                b.HasOne("Poseidon.Persistence.VesselCertificateRevision",null).WithMany().HasForeignKey("TenantId","VesselId","NewCertificateId","NewCertificateRevision").HasPrincipalKey("TenantId","VesselId","CertificateId","Revision").HasConstraintName("FK_RenewalRevision_Replacement").OnDelete(DeleteBehavior.Restrict);
+                b.HasOne("Poseidon.Persistence.StoredFile",null).WithMany().HasForeignKey("TenantId","VesselId","FileId","FileRevision","Checksum").HasPrincipalKey("TenantId","VesselId","Id","Revision","Checksum").HasConstraintName("FK_RenewalRevision_File").OnDelete(DeleteBehavior.Restrict);
+            });
+            modelBuilder.Entity("Poseidon.Persistence.CertificateCommandReceipt",b=> {
+                b.Property<Guid>("TenantId").HasColumnType("uuid");b.Property<Guid>("VesselId").HasColumnType("uuid");b.Property<Guid>("ActorId").HasColumnType("uuid");
+                b.Property<string>("Key").IsRequired().HasMaxLength(80).HasColumnType("character varying(80)");b.Property<Guid>("ResourceId").HasColumnType("uuid");b.Property<Guid>("CertificateId").HasColumnType("uuid");b.Property<Guid?>("RenewalId").HasColumnType("uuid");
+                b.Property<string>("Action").IsRequired().HasMaxLength(32).HasColumnType("character varying(32)");b.Property<string>("Fingerprint").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");
+                b.Property<string>("OutcomeJson").IsRequired().HasColumnType("text");b.Property<DateTimeOffset>("SavedAt").HasColumnType("timestamp with time zone");b.HasKey("TenantId","ActorId","Key");
+                b.HasIndex("TenantId","VesselId","CertificateId","RenewalId").HasDatabaseName("IX_CertificateReceipt_Owner");
+                b.ToTable("CertificateReceipts","assurance",t=>t.HasCheckConstraint("CK_CertificateReceipt_Resource","(\"Action\"='CertificateSave' AND \"RenewalId\" IS NULL AND \"ResourceId\"=\"CertificateId\") OR (\"Action\"='RenewalSave' AND \"RenewalId\" IS NOT NULL AND \"ResourceId\"=\"RenewalId\")"));
+                b.HasOne("Poseidon.Persistence.VesselCertificate",null).WithMany().HasForeignKey("TenantId","VesselId","CertificateId").HasPrincipalKey("TenantId","VesselId","Id").HasConstraintName("FK_CertificateReceipt_Certificate").OnDelete(DeleteBehavior.Restrict).IsRequired();
+                b.HasOne("Poseidon.Persistence.CertificateRenewal",null).WithMany().HasForeignKey("TenantId","VesselId","CertificateId","RenewalId").HasPrincipalKey("TenantId","VesselId","CertificateId","Id").HasConstraintName("FK_CertificateReceipt_Renewal").OnDelete(DeleteBehavior.Restrict);
+            });
 #pragma warning restore 612, 618
         }
     }

@@ -8,7 +8,7 @@ public static class SecurityEventCodes
 {
     public static IReadOnlySet<string> Actions { get; } = new string[]
     {
-        "RequestValidation", "AccessDenied", "Applicability", "ApplicabilityCommand", "ApplicabilityCurrentRead",
+        "RequestValidation", "AccessDenied", "Applicability", "ApplicabilityCommand", "ApplicabilityCurrentRead", "CertificateRead", "CertificateCommand", "CertificateExtraction",
         "ApplicabilityHistory", "ApplicabilityRead", "ApplicabilitySimulation", "AuditDetail",
         "AuditQuery", "AuditRevision", "CompaniesRead", "CompanyCreate",
         "CompanyUpdate", "ControlEvidence", "ControlEvidenceCommand", "ControlEvidenceRead",
