@@ -28,7 +28,7 @@ public static class SecurityEventCodes
         "RegulatorySourceBytesRead", "RuleCapabilities", "RulesRead", "Session",
         "TodayRead", "TodayWhyRead", "TugRead", "TugSave",
         "VesselCreate", "VesselUpdate", "VesselsRead", "WorkspaceRead",
-        "WorkspaceSearch", "SystemHealthRead", "NotificationRead", "NotificationCommand", "ComplianceWorkspaceRead", "DailyOfflineRead", "DailyOfflineRequest", "DailyOperationsRead", "DailyOperationsCommand", "DailyReviewRead", "DailyReviewCommand",
+        "WorkspaceSearch", "SystemHealthRead", "NotificationRead", "NotificationCommand", "ComplianceWorkspaceRead", "DailyOfflineRead", "DailyOfflineRequest", "DailyOperationsRead", "DailyOperationsCommand", "DailyReviewRead", "DailyReviewCommand", "ShipOperationsRead", "ShipOperationsCommand",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static IReadOnlySet<string> Results { get; } = new string[]
     {

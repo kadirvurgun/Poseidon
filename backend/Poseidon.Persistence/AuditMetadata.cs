@@ -47,6 +47,13 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
 
     private static AuditMetadata Project(EntityEntry entry, Guid? parentVessel)
     {
+        if(entry.Entity is ShipOperation shipOperation)
+            return new(shipOperation.VesselId,shipOperation.Id,"ShipOperation",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,shipOperation.Revision,
+                Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(shipOperation.Revision)),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is ShipOperationRevision shipRevision)
+            return new(shipRevision.VesselId,shipRevision.RecordId,"ShipOperationRevision",null,shipRevision.Revision,Fields(Field("Revision",null,Number(shipRevision.Revision)),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is ShipOperationReceipt shipReceipt)
+            return new(shipReceipt.VesselId,shipReceipt.RecordId,"ShipOperationReceipt",null,null,Fields(Field("Binding",null,"CommittedResource")));
         if(entry.Entity is VesselCertificate certificate)
             return new(certificate.VesselId,certificate.Id,"VesselCertificate",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,certificate.Revision,
                 Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(certificate.Revision)),Field("Binding",null,"OwnerReference")));
