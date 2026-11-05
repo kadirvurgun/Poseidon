@@ -151,6 +151,18 @@ describe('T-TUG-001/002/003 UI behavior; mocked API, all execution DEFERRED', ()
     await act(async () => { resolve(json({ ...row, id: JSON.parse(write[1].body).clientId })) })
     await screen.findByText('Draft saved. Operational approval remains unavailable.')
   })
+  it('explains that discarding an uncertain local draft cannot cancel an already submitted command', async () => {
+    mutate = async () => json({}, 503)
+    render(<TugWorkspace />); await english()
+    await userEvent.click(screen.getByRole('button', { name: 'Save draft' }))
+    await screen.findByText(/Save outcome uncertain/)
+    await userEvent.click(screen.getByRole('link', { name: 'Job board' }))
+    const dialog = screen.getByRole('dialog')
+    expect(dialog).toHaveAccessibleDescription(/does not cancel a command already sent/)
+    await userEvent.click(screen.getByRole('button', { name: 'Keep editing' }))
+    expect(screen.getByRole('button', { name: 'Retry' })).toBeEnabled()
+    expect(location.pathname).toBe('/app/tug-job-intake')
+  })
   it('withdraws retained inputs on focus identity change and recovers them only for the original actor', async () => {
     const original = actorId
     render(<TugWorkspace />); await english()

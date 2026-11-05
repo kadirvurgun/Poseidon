@@ -183,6 +183,6 @@ export function TugWorkspace() {
           </EnterpriseActions>
         </form>}
       </>}
-      {pending && <DraftConfirmation language={lang} onStay={() => setPending(null)} onDiscard={() => { const action = pending; setPending(null); markDirty(false); markAttempt(null); uncertain.current = false; action() }} />}
+      {pending && <DraftConfirmation language={lang} description={uncertain.current ? (lang === 'en' ? 'The save outcome is still unknown. Discarding local inputs does not cancel a command already sent to the server. Keep editing to retry the exact retained command.' : 'Kaydın sonucu hâlâ bilinmiyor. Yerel girdileri bırakmak sunucuya gönderilmiş komutu iptal etmez. Korunan aynı komutu tekrar denemek için düzenlemeye devam edin.') : undefined} onStay={() => setPending(null)} onDiscard={() => { const action = pending; setPending(null); markDirty(false); markAttempt(null); uncertain.current = false; action() }} />}
     </main></div>
 }
