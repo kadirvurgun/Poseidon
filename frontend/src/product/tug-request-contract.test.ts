@@ -21,3 +21,8 @@ it('pins both detail reads and save receipts to the requested resource before re
   await expect(tugApi.detail(id, vessel, signal)).rejects.toMatchObject({ status: 502, code: 'invalid_tug_request_contract' })
   await expect(tugApi.save(vessel, { key: crypto.randomUUID(), update: false, body: { clientId: id, baseVersion: null, inputs: emptyTugInputs() } }, 'synthetic-csrf', signal)).rejects.toMatchObject({ status: 502, code: 'invalid_tug_request_contract' })
 })
+
+it('does not silently relabel a non-UTC requested window as UTC in the editor', () => {
+  expect(() => decodeTugRequest({ ...row(), inputs: { ...emptyTugInputs(), requestedStart: '2026-11-05T12:00:00+03:00' } }, vessel, id)).toThrow()
+  expect(decodeTugRequest({ ...row(), inputs: { ...emptyTugInputs(), requestedStart: '2026-11-05T09:00:00+00:00' } }, vessel, id).inputs.requestedStart).toBe('2026-11-05T09:00:00+00:00')
+})

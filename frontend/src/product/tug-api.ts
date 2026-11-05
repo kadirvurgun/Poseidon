@@ -40,7 +40,7 @@ export function decodeTugRequest(value: unknown, vessel: string, id?: string): T
     if (input === null) continue
     if (key === 'requiredTugCount') { if (!positive(input) || Number(input) > 1000) fail() }
     else if (key === 'requestOwner') { if (!isGuid(input)) fail() }
-    else if (key === 'requestedStart' || key === 'requestedEnd') { if (!timestamp(input)) fail() }
+    else if (key === 'requestedStart' || key === 'requestedEnd') { if (!timestamp(input) || !/(?:Z|\+00:00)$/.test(String(input))) fail() }
     else if (key === 'requiredBollardPull') { if (typeof input !== 'string' || !/^(0|[1-9][0-9]{0,7})(\.[0-9]{1,2})?$/.test(input)) fail() }
     else if (typeof input !== 'string' || input.length === 0 || input.length > (['notes', 'specialRequirements'].includes(key) ? 2000 : 200) || /\p{Cc}/u.test(input)) fail()
   }
