@@ -26,3 +26,10 @@ it('does not silently relabel a non-UTC requested window as UTC in the editor', 
   expect(() => decodeTugRequest({ ...row(), inputs: { ...emptyTugInputs(), requestedStart: '2026-11-05T12:00:00+03:00' } }, vessel, id)).toThrow()
   expect(decodeTugRequest({ ...row(), inputs: { ...emptyTugInputs(), requestedStart: '2026-11-05T09:00:00+00:00' } }, vessel, id).inputs.requestedStart).toBe('2026-11-05T09:00:00+00:00')
 })
+
+it('preserves ordinary narrative line breaks while refusing control characters and multiline identifiers', () => {
+  const notes = 'FICTIONAL first line\nSecond line'
+  expect(decodeTugRequest({ ...row(), inputs: { ...emptyTugInputs(), notes } }, vessel, id).inputs.notes).toBe(notes)
+  expect(() => decodeTugRequest({ ...row(), inputs: { ...emptyTugInputs(), notes: 'FICTIONAL\0Hidden' } }, vessel, id)).toThrow()
+  expect(() => decodeTugRequest({ ...row(), inputs: { ...emptyTugInputs(), assistedVessel: notes } }, vessel, id)).toThrow()
+})

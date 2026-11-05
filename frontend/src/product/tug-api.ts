@@ -42,7 +42,8 @@ export function decodeTugRequest(value: unknown, vessel: string, id?: string): T
     else if (key === 'requestOwner') { if (!isGuid(input)) fail() }
     else if (key === 'requestedStart' || key === 'requestedEnd') { if (!timestamp(input) || !/(?:Z|\+00:00)$/.test(String(input))) fail() }
     else if (key === 'requiredBollardPull') { if (typeof input !== 'string' || !/^(0|[1-9][0-9]{0,7})(\.[0-9]{1,2})?$/.test(input)) fail() }
-    else if (typeof input !== 'string' || input.length === 0 || input.length > (['notes', 'specialRequirements'].includes(key) ? 2000 : 200) || /\p{Cc}/u.test(input)) fail()
+    else if (typeof input !== 'string' || input.length === 0 || input.length > (['notes', 'specialRequirements'].includes(key) ? 2000 : 200) ||
+      (['notes', 'specialRequirements'].includes(key) ? /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F]/.test(input) : /\p{Cc}/u.test(input))) fail()
   }
   return value as TugRequest
 }

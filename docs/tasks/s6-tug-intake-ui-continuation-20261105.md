@@ -52,6 +52,11 @@ Supporting sources:
    receipts to their original client resource ID; a malformed success response
    leaves the original command uncertain. Apply the same request decoder to
    board rows rather than accepting malformed nested editor data.
+8. Preserve line breaks in the two controlled narrative fields. Original 14.02
+   J1927/J1931 explicitly specify textarea/text. Domain and wire validation allow
+   CR/LF/TAB only in special requirements / notes, retain 2000-character technical
+   bounds and reject other controls and multiline short identifiers. Existing
+   write-audit withholding of these narrative contents remains in force.
 
 ## Verification and remaining limits
 

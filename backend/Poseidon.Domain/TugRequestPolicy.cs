@@ -32,7 +32,10 @@ public static class TugRequestPolicy
             ("customer_ref", x.CustomerRef, 200), ("assisted_vessel", x.AssistedVessel, 200),
             ("operation_area", x.OperationArea, 200), ("pickup_point", x.PickupPoint, 200),
             ("destination_point", x.DestinationPoint, 200), ("special_requirements", x.SpecialRequirements, 2000), ("notes", x.Notes, 2000) })
-            if (value != null && (value.Length > max || value.Any(char.IsControl) || string.IsNullOrWhiteSpace(value))) errors.Add(key);
+            // 14.02 rows1927/1931 explicitly declare textarea/text. Keep line
+            // breaks in narrative drafts; short identifiers remain single-line.
+            if (value != null && (value.Length > max || value.Any(c => char.IsControl(c) &&
+                    (!(key is "special_requirements" or "notes") || c is not ('\r' or '\n' or '\t'))) || string.IsNullOrWhiteSpace(value))) errors.Add(key);
         if (x.RequestSource != null && !RequestSources.Contains(x.RequestSource)) errors.Add("request_source");
         if (x.JobType != null && !JobTypes.Contains(x.JobType)) errors.Add("job_type");
         if (x.Priority != null && !Priorities.Contains(x.Priority)) errors.Add("priority");
