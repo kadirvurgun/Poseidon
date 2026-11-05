@@ -92,6 +92,10 @@ public static class DailyOperationsEndpoints
         object result;
         if (capabilities) {
             var destinations=Families.Where(f=>CanRead(a,f.Kind)).Select(f=>new DailyDestinationDto(f.Destination,$"/app/{f.Destination}/{vessel:D}")).ToArray();
+            if (vesselKind == VesselKind.Ship && (kind is "Noon" or "Engine") && ShipOperationsEndpoints.CanWrite(a,"Fuel",vessel))
+                destinations = [.. destinations,new("fuel-bunker-log",$"/app/fuel-bunker-log/{vessel:D}")];
+            if (vesselKind == VesselKind.Ship && kind == "Noon" && ShipOperationsEndpoints.CanWrite(a,"Port",vessel))
+                destinations = [.. destinations,new("port-activity-sof",$"/app/port-activity-sof/{vessel:D}")];
             result=new DailyCapabilitiesDto(vessel,kind,true,CanWrite(a,kind,vessel),canReview,false,DailyOperationsPolicy.Schema(kind),DailyOperationsPolicy.SourceVersion,Offline(h,a!,kind,vessel),destinations);
         } else if (history) {
             if (!await db.DailyOperations.AnyAsync(r=>r.VesselId==vessel && r.Kind==kind && r.Id==id,h.RequestAborted)) return await Fail(h,404,"resource_not_found");

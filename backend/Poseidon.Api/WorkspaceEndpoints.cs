@@ -20,6 +20,8 @@ public static class WorkspaceEndpoints
             new("certificate-command-center", "/app/certificate-command-center"), new("renewal-workflow", "/app/renewal-workflow")];
         if (actor.CanReadTug) destinations = [.. destinations, new("tug-command", "/app/tug-command"), new("tug-job-board", "/app/tug-job-board"), new("tug-job-intake", "/app/tug-job-intake")];
         if (actor.CanSeeShip) {
+            if (ShipOperationsEndpoints.CanRead(actor,"Fuel")) destinations = [.. destinations,new("fuel-bunker-log","/app/fuel-bunker-log")];
+            if (ShipOperationsEndpoints.CanRead(actor,"Port")) destinations = [.. destinations,new("port-activity-sof","/app/port-activity-sof")];
             if (DailyOperationsEndpoints.CanRead(actor,"Noon")) destinations = [.. destinations,new("noon-report","/app/noon-report")];
             if (DailyOperationsEndpoints.CanRead(actor,"Deck")) destinations = [.. destinations,new("deck-daily-log","/app/deck-daily-log")];
             if (DailyOperationsEndpoints.CanRead(actor,"Engine")) destinations = [.. destinations,new("engine-daily-log","/app/engine-daily-log")];

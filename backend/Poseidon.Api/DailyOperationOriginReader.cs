@@ -22,8 +22,7 @@ internal static class DailyOperationOriginReader
     {
         var noon = DailyOperationsEndpoints.CanRead(actor, "Noon");
         var engine = DailyOperationsEndpoints.CanRead(actor, "Engine");
-        var vessels = actor.Scope(db.Vessels.AsNoTracking()).Where(v => v.Id == vessel &&
-            (v.Kind == VesselKind.Ship || actor.Permissions.Contains("mode.cross")));
+        var vessels = actor.Scope(db.Vessels.AsNoTracking()).Where(v => v.Id == vessel && v.Kind == VesselKind.Ship);
         return db.DailyOperationRevisions.AsNoTracking().Where(row => row.VesselId == vessel &&
             row.SourceVersion == DailyOperationsPolicy.SourceVersion && vessels.Any() &&
             (row.Kind == "Noon" && noon || row.Kind == "Engine" && engine) &&
