@@ -49,6 +49,24 @@ public sealed partial class DirectoryWorkspaceTests
         var revision=await db.ShipOperationRevisions.SingleAsync(r=>r.RecordId==saved.Id && r.Revision==1,Ct);Assert.Equal(saved.Version,revision.RecordVersion);revision.FieldsJson="{}";
         await Assert.ThrowsAsync<InvalidOperationException>(()=>db.SaveChangesAsync(Ct));
     }
+    [Theory]
+    [InlineData("Fuel","bdn_no")][InlineData("Port","remarks")]
+    public async Task ShipOps_concurrent_duplicate_and_competing_expected_version_commands_have_one_effect_and_recover_exact_receipt(string kind,string field) {
+        await using var host=Host();using var first=Client(host);using var second=Client(host);ShipOpsPermissions(host.Services);
+        var command=new ShipOpsDraftCommand(Guid.NewGuid(),0,new(){[field]=new("Known","FICTIONAL duplicate race")},"INITIAL_AUTHORING");var key=Guid.NewGuid().ToString("D");
+        var duplicates=await Task.WhenAll(ShipOpsSend(first,kind,command,key),ShipOpsSend(second,kind,command,key));
+        try {
+            Assert.Contains(duplicates,r=>r.StatusCode==HttpStatusCode.OK);Assert.All(duplicates,r=>Assert.True(r.StatusCode is HttpStatusCode.OK or HttpStatusCode.Conflict));
+            var success=duplicates.First(r=>r.StatusCode==HttpStatusCode.OK);var bytes=await success.Content.ReadAsStringAsync(Ct);var saved=(await success.Content.ReadFromJsonAsync<ShipOpsRecordDto>(Ct))!;
+            using var recovered=await ShipOpsSend(second,kind,command,key);Assert.Equal(HttpStatusCode.OK,recovered.StatusCode);Assert.Equal(bytes,await recovered.Content.ReadAsStringAsync(Ct));
+            var update=command with{ExpectedVersion=saved.Version,ReasonCode="AUTHORING_CORRECTION"};
+            var edits=await Task.WhenAll(ShipOpsSend(first,kind,update with{Fields=new(){[field]=new("Known","FICTIONAL contender one")}},update:true),
+                ShipOpsSend(second,kind,update with{Fields=new(){[field]=new("Known","FICTIONAL contender two")}},update:true));
+            try{Assert.Single(edits.Where(r=>r.StatusCode==HttpStatusCode.OK));Assert.Single(edits.Where(r=>r.StatusCode==HttpStatusCode.Conflict));}
+            finally{foreach(var response in edits)response.Dispose();}
+            await using var db=Db();Assert.Equal(2,(await db.ShipOperations.SingleAsync(r=>r.Id==saved.Id,Ct)).Revision);Assert.Equal(2,await db.ShipOperationRevisions.CountAsync(r=>r.RecordId==saved.Id,Ct));Assert.Equal(2,await db.ShipOperationReceipts.CountAsync(r=>r.RecordId==saved.Id,Ct));
+        }finally{foreach(var response in duplicates)response.Dispose();}
+    }
     [Fact]
     public async Task ShipOps_authorization_denies_foreign_vessel_Tug_mode_unattributed_write_and_unresolved_known_references() {
         await using var host=Host();using var client=Client(host);
