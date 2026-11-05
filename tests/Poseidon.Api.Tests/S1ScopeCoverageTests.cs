@@ -39,9 +39,9 @@ public sealed partial class DirectoryWorkspaceTests
         var observed = S1SecurityContract.ValidateEndpointInventory(endpoints);
         // S5 adds six ordinary drafts, three human reviews and two offline templates (seven operations). Historical S1/S4 native
         // receipts remain unchanged; this is the new source-authored denominator.
-        Assert.Equal(99, observed.Count);
-        Assert.Equal(93, observed.Count(x => x.IsCritical));
-        Assert.Equal(103, S1SecurityContract.CriticalOperationIds.Count);
+        Assert.Equal(101, observed.Count);
+        Assert.Equal(95, observed.Count(x => x.IsCritical));
+        Assert.Equal(105, S1SecurityContract.CriticalOperationIds.Count);
         Assert.Equal(6, observed.Count(x => !x.IsCritical));
         var extra = new RouteEndpoint(_ => Task.CompletedTask, RoutePatternFactory.Parse("/api/v1/unclassified-write"), 0,
             new EndpointMetadataCollection(new HttpMethodMetadata(["POST"]), new AuthorizeAttribute("DirectoryRead")), "unclassified");
