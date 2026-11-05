@@ -6,7 +6,7 @@ import { certificateActor, certificateAssignment, certificateCapsFixture, certif
 import type { CertificateDto } from './certificates-api'
 const json = (value: unknown, status = 200) => new Response(JSON.stringify(value), { status })
 function transport() {
-  const state = { actor: certificateActor, writable: true, writeStatus: 200, crew: false }
+  const state = { actor: certificateActor, writable: true, writeStatus: 200, crew: false, readBarrier: null as Promise<void> | null }
   const records = new Map<string, CertificateDto>([[certificateFixture().id, certificateFixture()]])
   const fetch = vi.fn(async (url: string, init?: RequestInit) => {
     if (url.endsWith('/auth/session')) return json({ authenticated: true, canRead: true, canReadCompanies: false, canCreate: false, canSearch: false, actorId: state.actor, tenantId: certificateVessel, csrfToken: 'synthetic-certificate-csrf' })
@@ -29,7 +29,7 @@ function transport() {
     if (url.endsWith('/files?offset=0')) return json({ items: [], offset: 0, hasMore: false, available: true, canWrite: false, maxBytes: 1048576, allowedTypes: ['application/pdf'] })
     const row = [...records.values()].find(record => url.includes('/certificates/' + record.id))
     if (row && url.includes('/history?')) return json({ items: [{ ...row, canEdit: false }], offset: 0, limit: 25, hasMore: false })
-    if (row) return json({ ...row, canEdit: state.writable })
+    if (row) { await state.readBarrier; return json({ ...row, canEdit: state.writable }) }
     if (url.endsWith('/workspace')) return json({ destinations: [], canSearch: false, canWriteRegulatory: false })
     return json({}, 403)
   })
@@ -74,6 +74,19 @@ describe('T-S6-001 source-owned center interactions (authored; not executed)', (
     expect(screen.queryByDisplayValue('PRIVATE retained unknown body')).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Retry exact certificate command' })).not.toBeInTheDocument()
     expect(fetch.mock.calls.filter(([, init]) => init?.method === 'POST')).toHaveLength(1)
+  })
+  it('rejects a delayed source response when the identity changes before the projection is published', async () => {
+    history.replaceState(null, '', '/app/certificate-command-center/' + certificateVessel + '?id=' + certificateFixture().id)
+    const { state, fetch } = transport()
+    let release = () => {}
+    state.readBarrier = new Promise<void>(resolve => { release = resolve })
+    render(<CertificateWorkspace />); await english()
+    await waitFor(() => expect(fetch.mock.calls.some(([url]) => url.endsWith('/certificates/' + certificateFixture().id))).toBe(true))
+    state.actor = certificateAssignment
+    await act(async () => release())
+    await screen.findByText(/Certificate source or access unavailable/)
+    expect(screen.queryByLabelText('Certificate number')).not.toBeInTheDocument()
+    expect(screen.queryByDisplayValue('Synthetic certificate declaration')).not.toBeInTheDocument()
   })
   it('uses only current purpose capability for protected crew scope and never fetches a broad person record', async () => {
     const { state, fetch } = transport(); state.crew = true
