@@ -2,6 +2,7 @@
   "schemaVersion": "poseidon.s1-audit-vocabulary.v1",
   "operationReasons": {
     "CertificateExtractionConfirm": "PREPARATION_COMMAND",
+    "CertificateAssertionRecord": "HUMAN_REVIEW_WORKFLOW",
     "CreateCompany": "PREPARATION_COMMAND",
     "UpdateCompany": "PREPARATION_COMMAND",
     "CreateVessel": "PREPARATION_COMMAND",

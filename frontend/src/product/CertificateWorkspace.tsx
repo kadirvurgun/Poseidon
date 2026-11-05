@@ -9,6 +9,8 @@ import { certificatesApi, type CertificateCommand, type CertificateDto } from '.
 import { emptyCertificateRenewal, emptyVesselCertificate, type CertificateRenewalContent, type VesselCertificateContent } from './certificate-content'
 import { certificateLocationPath, readCertificateLocation, useCertificateLocation, type CertificateLocation } from './certificate-location'
 import { CertificateCenterView } from './CertificateCenterView'
+import { CertificateAssertionPanel } from './CertificateAssertionPanel'
+import type { CertificateVerification } from './certificate-assertion-contract'
 import { CertificateExtractionReview } from './CertificateExtractionReview'
 import { CertificateEditorView } from './CertificateEditorView'
 import { CertificateWorkflowHistory } from './CertificateWorkflowHistory'
@@ -43,11 +45,14 @@ function CertificateSurface({ route, language, onLanguage, onNavigate, onDirty, 
   const [busy, setBusy] = useState(false), [failure, setFailure] = useState<ApiError | null>(null), [saved, setSaved] = useState(false)
   const [frozen, setFrozen] = useState<{ owner: string; command: CertificateCommand; uncertain: boolean } | null>(null)
   const [extractionDirty, setExtractionDirty] = useState(false), [extractionSaving, setExtractionSaving] = useState(false)
-  const dirtyChannels = useRef({ form: false, extraction: false }), savingChannels = useRef({ form: false, extraction: false })
-  const formDirty = useCallback((value: boolean) => { dirtyChannels.current.form = value; onDirty(value || dirtyChannels.current.extraction) }, [onDirty])
-  const formSaving = useCallback((value: boolean) => { savingChannels.current.form = value; onSaving(value || savingChannels.current.extraction) }, [onSaving])
-  const documentDirty = useCallback((value: boolean) => { dirtyChannels.current.extraction = value; setExtractionDirty(value); onDirty(value || dirtyChannels.current.form) }, [onDirty])
-  const documentSaving = useCallback((value: boolean) => { savingChannels.current.extraction = value; setExtractionSaving(value); onSaving(value || savingChannels.current.form) }, [onSaving])
+  const [assertionDirty, setAssertionDirty] = useState(false), [assertionSaving, setAssertionSaving] = useState(false)
+  const dirtyChannels = useRef({ form: false, extraction: false, assertion: false }), savingChannels = useRef({ form: false, extraction: false, assertion: false })
+  const formDirty = useCallback((value: boolean) => { dirtyChannels.current.form = value; onDirty(value || dirtyChannels.current.extraction || dirtyChannels.current.assertion) }, [onDirty])
+  const formSaving = useCallback((value: boolean) => { savingChannels.current.form = value; onSaving(value || savingChannels.current.extraction || savingChannels.current.assertion) }, [onSaving])
+  const documentDirty = useCallback((value: boolean) => { dirtyChannels.current.extraction = value; setExtractionDirty(value); onDirty(value || dirtyChannels.current.form || dirtyChannels.current.assertion) }, [onDirty])
+  const documentSaving = useCallback((value: boolean) => { savingChannels.current.extraction = value; setExtractionSaving(value); onSaving(value || savingChannels.current.form || savingChannels.current.assertion) }, [onSaving])
+  const humanDirty = useCallback((value: boolean) => { dirtyChannels.current.assertion = value; setAssertionDirty(value); onDirty(value || dirtyChannels.current.form || dirtyChannels.current.extraction) }, [onDirty])
+  const humanSaving = useCallback((value: boolean) => { savingChannels.current.assertion = value; setAssertionSaving(value); onSaving(value || savingChannels.current.form || savingChannels.current.extraction) }, [onSaving])
   const running = useRef(false), mounted = useRef(false), writer = useRef<AbortController | null>(null), liveOwner = useRef<string | null>(null)
   const online = navigator.onLine, visible = document.visibilityState !== 'hidden', scope = epoch + '/' + attempt + '/' + historyOffset
   const current = source?.scope === scope && online && visible ? source : null, user = current?.user, owner = ownerOf(user)
@@ -119,7 +124,7 @@ function CertificateSurface({ route, language, onLanguage, onNavigate, onDirty, 
 
   const permitted = editor?.kind === 'certificate' ? !!current?.caps?.canWriteVessel : !!current?.renewalCaps?.canWrite
   const headEditable = !!editor && (!editor.record || editor.record.canEdit && editor.record.currentRevision && editor.record.state === 'DRAFT')
-  const editable = !!owner && !ownerChanged && permitted && headEditable && !busy && !frozen && !conflict && !denied && !extractionDirty && !extractionSaving
+  const editable = !!owner && !ownerChanged && permitted && headEditable && !busy && !frozen && !conflict && !denied && !extractionDirty && !extractionSaving && !assertionDirty && !assertionSaving
   const changeCertificate = (content: VesselCertificateContent) => { if (editor?.kind !== 'certificate' || !editable) return; setEditor({ ...editor, content, dirty: true }); formDirty(true); setSaved(false); setFailure(null) }
   const changeRenewal = (content: CertificateRenewalContent) => { if (editor?.kind !== 'renewal' || !editable) return; setEditor({ ...editor, content, dirty: true }); formDirty(true); setSaved(false); setFailure(null) }
   async function save() {
@@ -131,12 +136,14 @@ function CertificateSurface({ route, language, onLanguage, onNavigate, onDirty, 
     const command = frozen?.command ?? { key: crypto.randomUUID(), id: editor.id, vessel: route.vessel, expectedVersion, body: JSON.stringify(body) }, wasUnknown = frozen?.uncertain ?? false
     running.current = true; setBusy(true); formSaving(true); setFrozen({ owner, command, uncertain: wasUnknown }); setFailure(null); setSaved(false)
     const c = new AbortController(); writer.current = c; const timer = setTimeout(() => c.abort(), 15000)
-    let uncertain = false, confirmed = false
+    let uncertain = false, confirmed = false, receiptReceived = false
     try {
       const fresh = await session(c.signal)
       if (ownerOf(fresh) !== owner) { setSource({ scope, failed: true }); throw new ApiError(403, 'identity_changed') }
       if (editor.kind === 'certificate') {
         const receipt = await certificatesApi.save(command, fresh.csrfToken, c.signal)
+        receiptReceived = true
+        if (ownerOf(await session(c.signal)) !== owner) throw new ApiError(403, 'identity_changed')
         if (!mounted.current || liveOwner.current !== owner) { uncertain = true; return }
         confirmed = true; setFrozen(null); formDirty(false); setSaved(true)
         setEditor({ ...editor, record: receipt, content: receipt.content, dirty: false })
@@ -145,6 +152,8 @@ function CertificateSurface({ route, language, onLanguage, onNavigate, onDirty, 
         if (mounted.current && liveOwner.current === owner) setEditor({ ...editor, record: actual, content: actual.content, dirty: false })
       } else {
         const receipt = await certificatesApi.saveRenewal(command, fresh.csrfToken, c.signal)
+        receiptReceived = true
+        if (ownerOf(await session(c.signal)) !== owner) throw new ApiError(403, 'identity_changed')
         if (!mounted.current || liveOwner.current !== owner) { uncertain = true; return }
         confirmed = true; setFrozen(null); formDirty(false); setSaved(true)
         setEditor({ ...editor, record: receipt, content: receipt.content, dirty: false })
@@ -156,7 +165,7 @@ function CertificateSurface({ route, language, onLanguage, onNavigate, onDirty, 
     } catch (error) {
       if (!mounted.current) return
       const problem = error instanceof ApiError ? error : new ApiError(0)
-      uncertain = !confirmed && (wasUnknown || problem.status === 0 || problem.status >= 500)
+      uncertain = !confirmed && (wasUnknown || receiptReceived || problem.status === 0 || problem.status >= 500)
       setFrozen(uncertain ? { owner, command, uncertain: true } : null); setFailure(problem)
       if ([401, 403, 404].includes(problem.status)) { setSource({ scope, failed: true }); retry(n => n + 1) }
     } finally {
@@ -164,11 +173,11 @@ function CertificateSurface({ route, language, onLanguage, onNavigate, onDirty, 
       if (mounted.current) { setBusy(false); if (uncertain) { setFrozen({ owner, command, uncertain: true }); setFailure(new ApiError(0, 'outcome_unknown')) } formSaving(uncertain) }
     }
   }
-  async function documentApplied(receipt: CertificateDto) {
+  async function documentApplied(receipt: CertificateDto, draftOutcome = true) {
     if (!route.vessel || !editor || editor.kind !== 'certificate' || editor.id !== receipt.id || editor.owner !== owner || !owner) return
     const originalOwner = owner, c = new AbortController()
     // Confirmed child outcomes never clear another form or change its old base.
-    setSaved(true); setFailure(null)
+    setSaved(draftOutcome); setFailure(null)
     setEditor(previous => previous?.kind === 'certificate' && previous.id === receipt.id && previous.owner === originalOwner && !previous.dirty
       ? { ...previous, record: receipt, content: structuredClone(receipt.content) } : previous)
     try {
@@ -184,12 +193,16 @@ function CertificateSurface({ route, language, onLanguage, onNavigate, onDirty, 
       if (mounted.current && liveOwner.current === originalOwner) { setSource({ scope, failed: true }); setFailure(new ApiError(403, 'current_source_unavailable')) }
     }
   }
+  function humanRecorded(value: CertificateVerification) {
+    if (editor?.kind !== 'certificate' || !editor.record || editor.id !== value.certificateId || editor.record.revision !== value.certificateRevision || editor.record.version !== value.certificateVersion) return
+    void documentApplied({ ...editor.record, verification: value, currentRevision: false, canEdit: false }, false)
+  }
   const readCurrent = () => onNavigate(certificateLocationPath({ page: route.page, vessel: route.vessel, id: editor?.record?.id ?? route.id, offset: 0 }))
   return <div className="product-shell enterprise-shell certificate-workspace">
     <EnterpriseChrome session={user ?? null} vessel={route.vessel} language={language} onLanguageChange={onLanguage} onNavigate={onNavigate} title={title} mainId="certificate-main" />
     <main id="certificate-main" tabIndex={-1}>
       <EnterprisePageHeader eyebrow={en ? 'CERTIFICATES AND ASSURANCE' : 'SERTİFİKALAR VE GÜVENCE'} title={title} description={en ? 'Review declared calendar dates, source lineage and unresolved authority separately.' : 'Beyan edilen takvim tarihlerini, kaynak bağını ve açık yetki durumunu ayrı inceleyin.'} actionsLabel={en ? 'Page actions' : 'Sayfa işlemleri'} actions={editor
-        ? <Button variant="outline" disabled={busy || !!frozen || extractionSaving} onClick={() => onNavigate(base)}>{en ? 'Back to records' : 'Kayıtlara dön'}</Button>
+        ? <Button variant="outline" disabled={busy || !!frozen || extractionSaving || assertionSaving} onClick={() => onNavigate(base)}>{en ? 'Back to records' : 'Kayıtlara dön'}</Button>
         : current?.caps?.canWriteVessel && owner ? <Button onClick={() => { if (owner) setEditor({ kind: 'certificate', owner, id: crypto.randomUUID(), content: emptyVesselCertificate(), dirty: false }) }}>{en ? 'New certificate draft' : 'Yeni sertifika taslağı'}</Button> : undefined} />
       {route.invalid ? <p role="alert">{en ? 'Invalid certificate context.' : 'Sertifika bağlamı geçersiz.'}</p>
         : !online || !visible ? <p role="status">{en ? 'Current certificate sources unavailable offline or hidden. Local edits remain only in this open page; no offline grant is inferred.' : 'Çevrimdışı veya gizliyken güncel sertifika kaynakları kullanılamıyor. Yerel düzenlemeler yalnız açık sayfada korunur; çevrimdışı yetki türetilmez.'}</p>
@@ -202,7 +215,7 @@ function CertificateSurface({ route, language, onLanguage, onNavigate, onDirty, 
         : ownerChanged ? <p role="alert">{en ? 'Retained inputs belong to another verified identity. No values or uncertain commands transfer; only the original identity can resume.' : 'Korunan girdiler başka bir doğrulanmış kimliğe ait. Değerler veya belirsiz komut aktarılmaz; yalnız özgün kimlik sürdürebilir.'}</p>
         : editor ? <>
           <CertificateEditorView editor={editor} source={current} vessel={route.vessel} language={language} editable={editable} busy={busy} frozen={!!frozen} failure={failure} conflict={conflict} denied={denied} saved={saved} onCertificate={changeCertificate} onRenewal={changeRenewal} onSave={() => void save()} onCancel={readCurrent} onNavigate={onNavigate} />
-          {route.id && <CertificateWorkflowHistory source={current} language={language} offset={historyOffset} disabled={busy || !!frozen || editor.dirty || extractionDirty || extractionSaving} onOffset={setHistoryOffset} />}
+          {route.id && <CertificateWorkflowHistory source={current} language={language} offset={historyOffset} disabled={busy || !!frozen || editor.dirty || extractionDirty || extractionSaving || assertionDirty || assertionSaving} onOffset={setHistoryOffset} />}
         </>
         : route.page === 'center' && current.center && current.caps ? <CertificateCenterView page={current.center} caps={current.caps} route={route} language={language} onNavigate={onNavigate} />
         : route.page === 'renewal' && current.renewalPage ? <section aria-label={en ? 'Renewal records' : 'Yenileme kayıtları'}>
@@ -215,8 +228,14 @@ function CertificateSurface({ route, language, onLanguage, onNavigate, onDirty, 
       {editor?.kind === 'certificate' && editor.record && route.vessel && <CertificateExtractionReview
         key={editor.owner + '/' + route.vessel + '/' + editor.id}
         vessel={route.vessel} certificateId={editor.id} expectedVersion={editor.record.version}
-        enabled={!!owner && !ownerChanged && !!current?.caps?.canWriteVessel && !!current?.certificate?.canEdit && current.certificate.version === editor.record.version && headEditable && !editor.dirty && !busy && !frozen && !conflict && !denied}
+        enabled={!!owner && !ownerChanged && !!current?.caps?.canWriteVessel && !!current?.certificate?.canEdit && (current.certificate.version === editor.record.version || extractionSaving) && headEditable && !editor.dirty && !busy && !frozen && (!conflict || extractionSaving) && !denied && !assertionDirty && !assertionSaving}
         language={language} onDirty={documentDirty} onSaving={documentSaving} onApplied={receipt => void documentApplied(receipt)}
+      />}
+      {editor?.kind === 'certificate' && editor.record && route.vessel && <CertificateAssertionPanel
+        key={editor.owner + '/' + route.vessel + '/' + editor.id}
+        vessel={route.vessel} record={editor.record}
+        enabled={!!owner && !ownerChanged && !!current?.caps?.canReadVessel && (editor.record.currentRevision || assertionSaving) && !editor.dirty && !busy && !frozen && (!conflict || assertionSaving) && !denied && !extractionDirty && !extractionSaving}
+        language={language} onDirty={humanDirty} onSaving={humanSaving} onRecorded={humanRecorded}
       />}
       {!current && online && !route.invalid && <Button variant="outline" onClick={() => retry(n => n + 1)}>{en ? 'Retry source read' : 'Kaynak okumayı tekrar dene'}</Button>}
       <p className="certificate-field-hint">{en ? 'Unsupported offline capture, approval and issuer verification remain unavailable.' : 'Desteklenmeyen çevrimdışı kayıt, onay ve düzenleyen doğrulaması kullanılamaz durumda kalır.'}</p>
