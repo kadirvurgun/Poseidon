@@ -107,7 +107,11 @@
     "VesselCertificateCreate": "PREPARATION_COMMAND",
     "VesselCertificateUpdate": "PREPARATION_COMMAND",
     "CertificateRenewalCreate": "PREPARATION_COMMAND",
-    "CertificateRenewalUpdate": "PREPARATION_COMMAND"
+    "CertificateRenewalUpdate": "PREPARATION_COMMAND",
+    "FuelShipOpsCreate": "PREPARATION_COMMAND",
+    "FuelShipOpsUpdate": "PREPARATION_COMMAND",
+    "PortShipOpsCreate": "PREPARATION_COMMAND",
+    "PortShipOpsUpdate": "PREPARATION_COMMAND"
   },
   "reasonCodes": [
     "PREPARATION_COMMAND",
