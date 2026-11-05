@@ -27,6 +27,25 @@ const object = (value: unknown): value is Record<string, unknown> => !!value && 
 const exact = (value: unknown, keys: string[]): value is Record<string, unknown> => object(value) && Object.keys(value).length === keys.length && keys.every(k => Object.hasOwn(value, k))
 const contextText = (value: unknown, max = 200) => typeof value === 'string' && value.length > 0 && value.length <= max && value.trim() === value && !/\p{Cc}/u.test(value)
 const positive = (value: unknown) => typeof value === 'number' && Number.isSafeInteger(value) && value > 0
+export const tugRequestSource = 'poseidon-v46.3-20261030/14.02/1914-1931/TUG-FOUNDATION-01'
+export function decodeTugRequest(value: unknown, vessel: string, id?: string): TugRequest {
+  const fail = (): never => { throw new ApiError(502, 'invalid_tug_request_contract') }
+  if (!isGuid(vessel) || !exact(value, ['id', 'vesselId', 'jobNumber', 'revision', 'version', 'inputs', 'provenance', 'savedAt', 'missing', 'replayed', 'sourceVersion']) ||
+    !isGuid(value.id) || id !== undefined && value.id !== id || value.vesselId !== vessel || !contextText(value.jobNumber, 100) || !positive(value.revision) ||
+    !positive(value.version) || Number(value.version) > 4294967295 || !['UserDeclaredUnverified', 'SyntheticUnverified'].includes(String(value.provenance)) ||
+    !timestamp(value.savedAt) || typeof value.replayed !== 'boolean' || value.sourceVersion !== tugRequestSource || !Array.isArray(value.missing) || value.missing.length > 17 ||
+    !value.missing.every(key => typeof key === 'string' && /^[a-z_]{1,64}$/.test(key)) || new Set(value.missing).size !== value.missing.length ||
+    !exact(value.inputs, Object.keys(emptyTugInputs()))) fail()
+  for (const [key, input] of Object.entries(value.inputs as Record<string, unknown>)) {
+    if (input === null) continue
+    if (key === 'requiredTugCount') { if (!positive(input) || Number(input) > 1000) fail() }
+    else if (key === 'requestOwner') { if (!isGuid(input)) fail() }
+    else if (key === 'requestedStart' || key === 'requestedEnd') { if (!timestamp(input)) fail() }
+    else if (key === 'requiredBollardPull') { if (typeof input !== 'string' || !/^(0|[1-9][0-9]{0,7})(\.[0-9]{1,2})?$/.test(input)) fail() }
+    else if (typeof input !== 'string' || input.length === 0 || input.length > (['notes', 'specialRequirements'].includes(key) ? 2000 : 200) || /\p{Cc}/u.test(input)) fail()
+  }
+  return value as TugRequest
+}
 export function decodeTugContext(value: unknown, vessel: string, tenant?: string): TugContext {
   function fail(): never { throw new ApiError(502, 'invalid_tug_context') }
   if (!isGuid(vessel) || !exact(value, ['vessel', 'mode', 'crossMode', 'roleReferences', 'canWrite', 'owners', 'bollardPull', 'tugType', 'tugTypeContext', 'tugTypeOptions', 'tugTypePolicyVersion', 'equipment', 'equipmentCoverage', 'readiness', 'reason', 'jobTypes', 'priorities', 'requestSources']) || !exact(value.vessel, ['id', 'code', 'name']) || value.vessel.id !== vessel || !contextText(value.vessel.code) || !contextText(value.vessel.name) || value.mode !== 'Tug' || typeof value.crossMode !== 'boolean' || typeof value.canWrite !== 'boolean' || !(value.roleReferences === null || contextText(value.roleReferences, 4096)) || !Array.isArray(value.owners) || !value.owners.every(isGuid) || new Set(value.owners).size !== value.owners.length || value.readiness !== 'Unknown' || value.reason !== 'VerifiedMeasurementCertificateCrewAndAssignmentAdaptersUnavailable') fail()
@@ -42,12 +61,13 @@ export function decodeTugContext(value: unknown, vessel: string, tenant?: string
 export const tugApi = {
   context: async (vessel: string, signal: AbortSignal, tenant?: string) => decodeTugContext(await request<unknown>(`tug-command?vessel=${vessel}`, signal), vessel, tenant),
   vessels: (signal: AbortSignal) => request<{ vessels: TugContext['vessel'][] }>('tug-command', signal),
-  detail: (id: string, vessel: string, signal: AbortSignal) => request<TugRequest>(`tug-jobs/${id}?vessel=${vessel}`, signal),
+  detail: async (id: string, vessel: string, signal: AbortSignal) => decodeTugRequest(await request<unknown>(`tug-jobs/${id}?vessel=${vessel}`, signal), vessel, id),
   board: async (vessel: string, priority: string, q: string, offset: number, signal: AbortSignal) => {
     const result = await request<TugBoard>(`tug-job-board?${new URLSearchParams({ vessel, priority, q, offset: String(offset), limit: '25' })}`, signal)
     if (!result || !Array.isArray(result.items) || result.items.length > 25 || typeof result.hasMore !== 'boolean') throw new ApiError(502, 'invalid_tug_board_contract')
     const ids = new Set<string>()
     for (const row of result.items) {
+      decodeTugRequest(row?.request, vessel)
       if (!row || !isGuid(row.request?.id) || row.request.vesselId !== vessel || ids.has(row.request.id) ||
         row.detailHref !== `/app/tug-job-detail/${row.request.id}?vessel=${vessel}` ||
         !Array.isArray(row.assignedTugs) || !row.assignedTugs.every(isGuid) || new Set(row.assignedTugs).size !== row.assignedTugs.length ||
@@ -61,7 +81,7 @@ export const tugApi = {
     }
     return result
   },
-  save: (vessel: string, attempt: TugAttempt, csrf: string, signal: AbortSignal) => request<TugRequest>(`tug-jobs${attempt.update ? `/${attempt.body.clientId}` : ''}?vessel=${vessel}`, signal, {
+  save: async (vessel: string, attempt: TugAttempt, csrf: string, signal: AbortSignal) => decodeTugRequest(await request<unknown>(`tug-jobs${attempt.update ? `/${attempt.body.clientId}` : ''}?vessel=${vessel}`, signal, {
     method: attempt.update ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf, 'Idempotency-Key': attempt.key }, body: JSON.stringify(attempt.body),
-  }),
+  }), vessel, attempt.body.clientId),
 }

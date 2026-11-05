@@ -2,14 +2,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { TugWorkspace } from './TugWorkspace'
-import { emptyTugInputs } from './tug-api'
+import { emptyTugInputs, tugRequestSource } from './tug-api'
 
 const vessel = '11111111-1111-1111-1111-111111111111', id = '22222222-2222-2222-2222-222222222222'
 const json = (value: unknown, status = 200) => new Response(JSON.stringify(value), { status, headers: { 'Content-Type': 'application/json' } })
 const context = { vessel: { id: vessel, code: 'FICTIONAL', name: 'Synthetic tug' }, mode: 'Tug', crossMode: false, roleReferences: null,
   canWrite: true, owners: [], jobTypes: ['Harbour Towage'], priorities: ['Normal', 'High'], requestSources: ['Customer'], tugType: 'Unavailable', tugTypeContext: null, tugTypeOptions: [], tugTypePolicyVersion: null,
   bollardPull: { value: '45.01', version: 7, provenance: 'LegacyMeasurementUnverified', freshness: 'Unknown', observedAt: null, source: 'TugProfile' }, equipment: null, equipmentCoverage: 'Unavailable', readiness: 'Unknown', reason: 'VerifiedMeasurementCertificateCrewAndAssignmentAdaptersUnavailable' }
-const row = { id, vesselId: vessel, jobNumber: 'TUG-SYNTHETIC', revision: 1, version: 8, inputs: emptyTugInputs(), provenance: 'UserDeclaredUnverified', savedAt: '2026-11-01T00:00:00Z', missing: ['requested_start'] }
+const row = { id, vesselId: vessel, jobNumber: 'TUG-SYNTHETIC', revision: 1, version: 8, inputs: emptyTugInputs(), provenance: 'UserDeclaredUnverified', savedAt: '2026-11-01T00:00:00Z', missing: ['requested_start'], replayed: false, sourceVersion: tugRequestSource }
 const fetcher = vi.fn()
 let mutate: (init: RequestInit) => Promise<Response>
 let actorId: string, tenantId: string, canWrite: boolean
@@ -147,7 +147,8 @@ describe('T-TUG-001/002/003 UI behavior; mocked API, all execution DEFERRED', ()
     const form = screen.getByRole('form', { name: 'Job intake' })
     act(() => { fireEvent.submit(form); fireEvent.submit(form) })
     await waitFor(() => expect(fetcher.mock.calls.filter(c => c[1]?.method === 'POST')).toHaveLength(1))
-    await act(async () => { resolve(json(row)) })
+    const write = fetcher.mock.calls.find(c => c[1]?.method === 'POST')!
+    await act(async () => { resolve(json({ ...row, id: JSON.parse(write[1].body).clientId })) })
     await screen.findByText('Draft saved. Operational approval remains unavailable.')
   })
   it('withdraws retained inputs on focus identity change and recovers them only for the original actor', async () => {

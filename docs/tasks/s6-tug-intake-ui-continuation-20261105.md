@@ -47,6 +47,11 @@ Supporting sources:
    Navigation, unload, board refresh and save guards consult synchronous flags.
 6. Associate server field validation with its input and accessible description;
    preserve input for correction when an initial validation failure is definite.
+7. Decode owning request responses before rendering: exact resource/vessel IDs,
+   source version, draft provenance, version bounds and field shape. Pin save
+   receipts to their original client resource ID; a malformed success response
+   leaves the original command uncertain. Apply the same request decoder to
+   board rows rather than accepting malformed nested editor data.
 
 ## Verification and remaining limits
 
@@ -55,6 +60,8 @@ actor and tenant changes before send, identity change after a successful HTTP
 write, retained 503→403→exact-retry, duplicate submits, and focus identity changes.
 The existing intake/board/decimal/navigation cases are retained and adapted to
 explicit synthetic actor and tenant references.
+Contract regression sources additionally reject cross-resource receipts,
+cross-vessel responses, malformed field values and fabricated verified provenance.
 
 All component/backend/real-browser tests, build/typecheck/lint, generated contract
 parity and regression execution are DEFERRED until the actual larger PR bundle
