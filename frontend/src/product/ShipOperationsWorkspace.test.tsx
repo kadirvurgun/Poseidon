@@ -7,7 +7,7 @@ import type { ShipOpsRecord } from './ship-operations-api'
 import { shipOpsActor, shipOpsCapsFixture, shipOpsOriginFixture, shipOpsOriginPinFixture, shipOpsRecordFixture, shipOpsRecordId, shipOpsTenant, shipOpsVessel } from './ship-operation-test-fixtures'
 const json = (value: unknown, status = 200) => new Response(JSON.stringify(value), { status })
 function transport(kind: ShipOpsKind = 'Fuel') {
-  const state = { actor: shipOpsActor, writable: true, writeStatus: 200, sessionDenied: false, denyAfterReceipt: false, originCurrent: true }
+  const state = { actor: shipOpsActor, writable: true, writeStatus: 200, sessionDenied: false, denyAfterReceipt: false, originCurrent: true, readStatus: 200 }
   const rows = new Map<string, ShipOpsRecord>([[shipOpsRecordId, shipOpsRecordFixture(kind)]]), receipts = new Map<string, ShipOpsRecord>()
   const api = kind === 'Fuel' ? '/api/v1/fuel-bunker-logs' : '/api/v1/port-activity-sof'
   const fetch = vi.fn(async (url: string, init?: RequestInit) => {
@@ -27,7 +27,7 @@ function transport(kind: ShipOpsKind = 'Fuel') {
     if (path === api) return json({ items: [...rows.values()], offset: 0, limit: 25, hasMore: false, canWrite: state.writable, sourceVersion: shipOpsSourceVersion, offline: shipOpsCapsFixture(kind).offline })
     const record = [...rows.values()].find(row => path === api + '/' + row.id || path === api + '/' + row.id + '/history')
     if (record && path.endsWith('/history')) return json({ items: [record], offset: 0, limit: 25, hasMore: false })
-    if (record) return json({ ...record, canEdit: state.writable })
+    if (record) return state.readStatus === 200 ? json({ ...record, canEdit: state.writable }) : json({ code: 'service_unavailable' }, state.readStatus)
     return json({}, 403)
   })
   vi.stubGlobal('fetch', fetch); return { state, fetch }
@@ -49,6 +49,21 @@ describe('T-OPS2-004/005 scoped operational workspace — sources only', () => {
     await waitFor(() => expect(screen.getByLabelText('Quantity received (mt)')).not.toBeDisabled())
     expect(window.location.search).toBe('?id=' + body.id)
     expect(fetch.mock.calls.some(([url, init]) => url.includes('/fuel-bunker-logs/' + body.id + '?') && !init?.method)).toBe(true)
+  })
+  it('pins a confirmed origin-created id before failed readback and reopens it without another create', async () => {
+    const origin = shipOpsOriginPinFixture(); history.replaceState(null, '', '/app/fuel-bunker-log/' + shipOpsVessel + '?originKind=Noon&originId=' + origin.id + '&originRevision=2')
+    const { state, fetch } = transport(); state.readStatus = 503
+    const first = render(<ShipOperationsWorkspace />), user = userEvent.setup(); await user.click(screen.getByRole('button', { name: 'EN' }))
+    await user.click(await screen.findByRole('button', { name: 'Save unverified draft' }))
+    await screen.findByText(/Operational source or access unavailable/)
+    const body = JSON.parse(writes(fetch)[0][1]!.body as string)
+    expect(window.location.search).toBe('?id=' + body.id); expect(body.origin).toEqual(origin); expect(writes(fetch)).toHaveLength(1)
+    first.unmount(); render(<ShipOperationsWorkspace />); await user.click(screen.getByRole('button', { name: 'EN' }))
+    await screen.findByText(/Operational source or access unavailable/)
+    expect(window.location.search).toBe('?id=' + body.id); expect(writes(fetch)).toHaveLength(1)
+    state.readStatus = 200; await user.click(screen.getByRole('button', { name: 'Retry source read' }))
+    await waitFor(() => expect(screen.getByLabelText('BDN number value state')).toBeEnabled())
+    expect(window.location.search).toBe('?id=' + body.id); expect(writes(fetch)).toHaveLength(1)
   })
   it('keeps and explicitly discards local form edits through the shared guard without auto saving', async () => {
     const { fetch } = transport(), user = await open(); await newFuel(user)

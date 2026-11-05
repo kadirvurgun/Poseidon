@@ -65,7 +65,7 @@ function ShipOpsSurface({ route, language, onLanguage, onNavigate, onCanonical, 
         const [record, history] = await Promise.all([shipOperationsApi.read(route.kind, route.vessel, route.id, c.signal), shipOperationsApi.history(route.kind, route.vessel, route.id, historyOffset, c.signal)])
         const origin = record.origin ? await readShipOpsOrigin(route.vessel, route.kind, { kind: record.origin.kind, id: record.origin.id, revision: record.origin.revision }, c.signal, record.origin) : undefined
         await ensureOwner()
-        if (active) { setSource({ scope, user, vessel, caps, record, history, origin }); setEditor(previous => previous ?? { owner: original, id: record.id, fields: mutable(record), record, origin: record.origin, dirty: false }) }
+        if (active) { setSource({ scope, user, vessel, caps, record, history, origin }); setEditor(previous => !previous ? { owner: original, id: record.id, fields: mutable(record), record, origin: record.origin, dirty: false } : previous.owner === original && previous.id === record.id && !previous.dirty && previous.record && !previous.record.currentRevision ? { ...previous, record, fields: mutable(record), origin: record.origin } : previous) }
       } else if (route.origin) {
         const origin = await readShipOpsOrigin(route.vessel, route.kind, route.origin, c.signal)
         await ensureOwner()
@@ -100,9 +100,11 @@ function ShipOpsSurface({ route, language, onLanguage, onNavigate, onCanonical, 
       if (!mounted.current || committed.current.scope !== originalScope || committed.current.owner !== command.owner) { uncertain = true; return }
       confirmed = true; uncertain = false; setFrozen(null); onDirty(false); setReceipt({ owner: command.owner, value: outcome })
       setEditor({ ...editor, record: outcome, fields: mutable(outcome), origin: outcome.origin, dirty: false })
-      const actual = await shipOperationsApi.read(route.kind, route.vessel, editor.id, c.signal)
-      if (identity(await session(c.signal)) !== command.owner) throw new ApiError(403, 'identity_changed')
-      if (mounted.current && committed.current.owner === command.owner && committed.current.scope === originalScope) { setEditor({ ...editor, record: actual, fields: mutable(actual), origin: actual.origin, dirty: false }); onCanonical(actual.id); retry(n => n + 1) }
+      // Persist the confirmed resource identity before optional readback. A
+      // failed current GET must never reopen as a different new draft UUID.
+      // The canonical source loader alone establishes fresh current/edit rights.
+      onCanonical(outcome.id)
+      retry(n => n + 1)
     } catch (error) {
       if (!mounted.current) return
       const problem = error instanceof ApiError ? error : new ApiError(0)
