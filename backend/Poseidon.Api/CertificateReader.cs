@@ -11,7 +11,7 @@ public sealed record CertificateSupersessionDto(Guid CertificateId,long Certific
 public sealed record CertificateDto(Guid Id,Guid VesselId,string Scope,Guid? AssignmentId,Guid? PersonId,long Revision,uint Version,
     VesselCertificateContent Content,string SourceVersion,string Provenance,DateTimeOffset? SavedAt,string? Hash,
     CertificateCalendarDto Calendar,string Qualification,string State,string[] Blockers,bool CanEdit,string Href,
-    bool CurrentRevision,CertificateSupersessionDto? SupersededBy=null);
+    bool CurrentRevision,CertificateSupersessionDto? SupersededBy=null,CertificateVerificationDto? Verification=null);
 public sealed record CertificateCountsDto(int Valid,int Due90,int Due60,int Due30,int Expired,int SurveyWindow,int ReviewRequired);
 public sealed record CertificateCenterDto(CertificateDto[] Items,int Offset,int Limit,bool HasMore,string Scope,string Coverage,
     string CrewCoverage,CertificateCountsDto Counts,int? CriticalGapCount,string State,DateOnly ReferenceDate);
@@ -89,8 +89,18 @@ internal static class CertificateReader
     internal static IQueryable<VesselCertificateRevision> ReturnedVisible(PoseidonDbContext db,TrustedActor actor,Guid vessel,CertificateDto[] records) {
         var heads=db.VesselCertificates.Where(c=>c.VesselId==vessel);
         Expression<Func<VesselCertificateRevision,bool>> pairs=r=>false;
-        foreach(var row in records.Where(r=>r.Scope=="Vessel"))pairs=Or(pairs,r=>r.CertificateId==row.Id && r.Revision==row.Revision &&
-            r.RecordVersion==row.Version && r.Hash==row.Hash && (!row.CurrentRevision || heads.Any(c=>c.Id==r.CertificateId && c.Revision==r.Revision)));
+        foreach(var row in records.Where(r=>r.Scope=="Vessel")) {
+            var assertion=row.Verification;
+            Expression<Func<VesselCertificateRevision,bool>> pin=r=>r.CertificateId==row.Id && r.Revision==row.Revision && r.RecordVersion==row.Version && r.Hash==row.Hash &&
+                (!row.CurrentRevision || heads.Any(c=>c.Id==r.CertificateId && c.Revision==r.Revision));
+            if(assertion!=null)pin=And(pin,r=>db.CertificateAssertionEvents.Any(e=>e.Id==assertion.Id && e.VesselId==vessel && e.CertificateId==r.CertificateId &&
+                    e.CertificateRevision==r.Revision && e.CertificateVersion==r.RecordVersion && e.Revision==assertion.Revision && e.RecordVersion==assertion.Version &&
+                    e.FileId==assertion.FileId && e.FileRevision==assertion.FileRevision && e.Checksum==assertion.Checksum && e.State==assertion.State &&
+                    e.AuthorityHash==assertion.AuthorityHash && e.AuthorityBindingHash==assertion.AuthorityBindingHash && e.ActorId==assertion.ActorId && e.RoleId==assertion.RoleId && e.AuthorityId==assertion.AuthorityId &&
+                    (!assertion.Current || heads.Any(head=>head.Id==r.CertificateId && head.Revision==r.Revision) &&
+                        db.CertificateAssertionHeads.Any(head=>head.CertificateId==r.CertificateId && head.VesselId==vessel && head.Revision==e.Revision && head.Version==assertion.Version))));
+            pairs=Or(pairs,pin);
+        }
         return Visible(db,actor,vessel,false).Where(pairs);
     }
     internal static async Task<bool> Current(HttpContext h,Guid vessel,string rights,CertificateDto[] records,bool write=false,
@@ -116,7 +126,7 @@ internal static class CertificateReader
             visible.Count()==expectedVessels && returnedCrew.Count()==expectedCrew &&
             (fileIds.Length==0 || a.Permissions.Contains("file.read") && allowedFiles.Select(f=>f.Id).Distinct().Count()==fileIds.Length)).SingleOrDefaultAsync(h.RequestAborted);
         var live=resolver.Resolve(h.User);
-        return ok && live!=null && Read(live) && Rights(live)==rights && (!write || Write(live,vessel)) &&
+        return ok && live!=null && Read(live) && Rights(live)==rights && (!write || Write(live,vessel)) && CertificateAssertions.CurrentPolicies(h,records) &&
             (crewIds.Length==0 || crewPolicyHash==RegisterStorage.Hash(JsonSerializer.Serialize(CrewFilePolicy.Current(h),Json)) && CrewRead(live,vessel,CrewFilePolicy.Current(h),purpose));
     }
     private sealed class ReplaceParameter(ParameterExpression from,ParameterExpression to):ExpressionVisitor {
@@ -125,5 +135,9 @@ internal static class CertificateReader
     private static Expression<Func<T,bool>> Or<T>(Expression<Func<T,bool>> left,Expression<Func<T,bool>> right) {
         var body=new ReplaceParameter(right.Parameters[0],left.Parameters[0]).Visit(right.Body)!;
         return Expression.Lambda<Func<T,bool>>(Expression.OrElse(left.Body,body),left.Parameters);
+    }
+    private static Expression<Func<T,bool>> And<T>(Expression<Func<T,bool>> left,Expression<Func<T,bool>> right) {
+        var body=new ReplaceParameter(right.Parameters[0],left.Parameters[0]).Visit(right.Body)!;
+        return Expression.Lambda<Func<T,bool>>(Expression.AndAlso(left.Body,body),left.Parameters);
     }
 }

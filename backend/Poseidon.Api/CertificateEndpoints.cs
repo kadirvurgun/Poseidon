@@ -56,7 +56,7 @@ public static class CertificateEndpoints
         var rows=new List<CertificateDto>();
         if(selection!="Crew")rows.AddRange((await certificates.OrderBy(r=>r.CertificateId).Skip(offset).Take(26).ToArrayAsync(h.RequestAborted)).Select(r=>CertificateReader.Dto(r,actor,date)));
         if(selection!="Vessel" && crewAllowed && rows.Count<26)rows.AddRange((await crew.OrderBy(r=>r.Id).Skip(Math.Max(0,offset-vesselCount)).Take(26-rows.Count).ToArrayAsync(h.RequestAborted)).Select(r=>CertificateReader.CrewDto(r,date)));
-        var returned=rows.Take(25).ToArray();var result=new CertificateCenterDto(returned,offset,25,rows.Count>25,selection,"AUTHORIZED_PAGE_ONLY",
+        var returned=await CertificateAssertions.Decorate(h,db,actor,rows.Take(25).ToArray(),h.RequestAborted);var result=new CertificateCenterDto(returned,offset,25,rows.Count>25,selection,"AUTHORIZED_PAGE_ONLY",
             selection=="Vessel"?"NOT_REQUESTED":crewAllowed?"AVAILABLE":"UNAVAILABLE_POLICY_OR_AUTHORITY",CertificateReader.Counts(returned),null,"REVIEW_REQUIRED",date);
         if(!await CertificateReader.Current(h,vessel,rights,returned,purpose:purpose))return await Fail(h,403,"permission_denied");
         if(selection!="Vessel" && policyHash!=RegisterStorage.Hash(JsonSerializer.Serialize(CrewFilePolicy.Current(h),CertificateReader.Json)))return await Fail(h,403,"permission_denied");
@@ -89,7 +89,7 @@ public static class CertificateEndpoints
         if(head==null)return await Fail(h,404,"resource_not_found");
         var rows=await CertificateReader.Visible(db,a,vessel,!history).Where(r=>r.CertificateId==id).OrderByDescending(r=>r.Revision).Skip(offset).Take(history?26:1).ToArrayAsync(h.RequestAborted);
         if(rows.Length==0)return await Fail(h,404,"resource_not_found");var date=DateOnly.FromDateTime(Now(h).UtcDateTime);
-        var returned=rows.Take(25).Select(r=>CertificateReader.Dto(r,a,date,r.Revision==head.Revision)).ToArray();
+        var returned=await CertificateAssertions.Decorate(h,db,a,rows.Take(25).Select(r=>CertificateReader.Dto(r,a,date,r.Revision==head.Revision)).ToArray(),h.RequestAborted);
         if(!await CertificateReader.Current(h,vessel,rights,returned))return await Fail(h,403,"permission_denied");
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h,"CertificateRead","Success",resourceId:id);
         if(!await CertificateReader.Current(h,vessel,rights,returned))return await Fail(h,403,"permission_denied");
