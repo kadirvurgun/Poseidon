@@ -30,11 +30,13 @@
     "TenantPerson",
     "Unresolved"
   ],
-  "mutationRouteTemplates": 97,
-  "criticalRouteTemplates": 91,
-  "criticalOperations": 101,
+  "mutationRouteTemplates": 99,
+  "criticalRouteTemplates": 93,
+  "criticalOperations": 103,
   "scopeMeaning": "Current exposed HTTP command surface, including aliases. Counts are authoring definitions until actual EndpointDataSource drift and real audit observations pass the phase gate. Technical codes describe accepted commands, never human justification or safety authority.",
   "operations": [
+    { "operationId": "VesselCertificateCreate", "method": "POST", "routePattern": "/api/v1/vessels/{vessel:guid}/certificates", "family": "Certificate", "scope": "Vessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "CertificateCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "VesselCertificateUpdate", "method": "PUT", "routePattern": "/api/v1/vessels/{vessel:guid}/certificates/{id:guid}", "family": "Certificate", "scope": "Vessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "CertificateCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     {"operationId":"DailyOfflineEnroll","method":"POST","routePattern":"/api/v1/daily-offline/{kind}/{record:guid}","family":"DailyOffline","scope":"CommandVessel","kind":"CriticalWrite","reasonCode":"OFFLINE_LIFECYCLE","denialAction":"DailyOfflineRequest","variants":[],"traceIds":["T-S1-002","T-S1-003","T-S1-004","T-S1-007"]},
     {"operationId":"DailyOfflineAction","method":"POST","routePattern":"/api/v1/daily-offline/{kind}/{record:guid}/{enrollment:guid}/{action}","family":"DailyOffline","scope":"CommandVessel","kind":"CriticalWrite","reasonCode":"OFFLINE_LIFECYCLE","denialAction":"DailyOfflineRequest","variants":[{"routeValue":"renew","operationId":"DailyOfflineRenew"},{"routeValue":"key","operationId":"DailyOfflineKeyEnroll"},{"routeValue":"revoke","operationId":"DailyOfflineRevoke"},{"routeValue":"lost","operationId":"DailyOfflineKeyLost"},{"routeValue":"cleanup","operationId":"DailyOfflineCleanup"},{"routeValue":"replay","operationId":"DailyOfflineReplay"}],"traceIds":["T-S1-002","T-S1-003","T-S1-004","T-S1-007"]},
     { "operationId": "NoonDailyReviewRecord", "method": "POST", "routePattern": "/api/v1/noon-reports/{id:guid}/reviews", "family": "DailyReview", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "HUMAN_REVIEW_WORKFLOW", "denialAction": "DailyReviewCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },

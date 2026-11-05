@@ -47,6 +47,20 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
 
     private static AuditMetadata Project(EntityEntry entry, Guid? parentVessel)
     {
+        if(entry.Entity is VesselCertificate certificate)
+            return new(certificate.VesselId,certificate.Id,"VesselCertificate",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,certificate.Revision,
+                Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(certificate.Revision)),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is VesselCertificateRevision certificateRevision)
+            return new(certificateRevision.VesselId,certificateRevision.CertificateId,"VesselCertificateRevision",null,certificateRevision.Revision,
+                Fields(Field("Revision",null,Number(certificateRevision.Revision)),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is CertificateRenewal renewal)
+            return new(renewal.VesselId,renewal.Id,"CertificateRenewal",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,renewal.Revision,
+                Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(renewal.Revision)),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is CertificateRenewalRevision renewalRevision)
+            return new(renewalRevision.VesselId,renewalRevision.RenewalId,"CertificateRenewalRevision",null,renewalRevision.Revision,
+                Fields(Field("Revision",null,Number(renewalRevision.Revision)),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is CertificateCommandReceipt certificateReceipt)
+            return new(certificateReceipt.VesselId,certificateReceipt.ResourceId,"CertificateReceipt",null,null,Fields(Field("Binding",null,"CommittedResource")));
         if (entry.Entity is DailyOfflineEnrollment dailyEnrollment)
             return new(dailyEnrollment.VesselId,dailyEnrollment.RecordId,"DailyOfflineEnrollment",null,null,
                 Fields(Field("Binding",entry.State==EntityState.Added?null:"OwnerReference","OwnerReference")));
