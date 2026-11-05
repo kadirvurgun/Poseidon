@@ -1,21 +1,24 @@
-# POSEIDON güncel durum — S6 kaynak geliştirmesi
+# POSEIDON güncel durum — S6 Fuel / Port devamı
 
-**Genel kabul %10,62 — 103 / 970 SP, 20 / 121 iş; ayrı ekran kabulü 0 / 196.** S0/S1 kabul edildi. S2–S6 kaynak geliştirmesi kabul yüzdesi üretmez.
+**Genel kabul %10,62 — 103 / 970 SP, 20 / 121 iş; ayrı ekran kabulü 0 / 196.** S0/S1 kabul edildi. Yeni kaynak kodu ve seçilen SP, kabul yüzdesini artırmaz.
 
-Şu anda S6 üzerinde çalışılıyor. Canonical S6 **9 iş / 87 SP**; bu paketin seçimi sertifika/OCR ve Tug devamı olmak üzere **6 iş / 58 SP**. Bu sayı tamamlanan iş veya kabul değildir; S6 kabulü **0 / 87 SP**. Fuel/Bunker/BDN/ROB, Port Activity/SOF ve Downtime/LoH için kalan 3 iş / 29 SP bu seçimde yok.
+S6’nın Fuel/Bunker/BDN/ROB ve Port Activity/SOF bölümündeyiz. Bu devam paketi **2 iş / 21 SP**; önceki sertifika/OCR/Tug seçimiyle toplam seçili kapsam **8 iş / 79 SP**. Canonical S6 **9 iş / 87 SP**, kabul **0 / 87 SP**. Seçim kapsamı tamamlanma oranı değildir.
 
-Kaynak checkpoint `e3e5c739efdec16a25ca511e9c4a5d724402cbf4`; kayıt `2026-11-05T20:38:04.988646Z` (UTC).
+**DEV-102 Downtime/LoH (8 SP) bağımlılığı hazır değil:** özgün Backlog row56, DEV-055 critical defect lifecycle işini S8’de konumlandırıyor; DEV-102 bu işin owning uygulamasına bağımlı. Owning defect/work-order ve verified closure kaynağı sınırlı keşifte bulunmadı; bunlar mevcut varsayılamaz. Bu nedenle S6’nın tamamı kapanmış veya tamamlanmaya hazır gösterilmez.
 
-- Gerçek vessel certificate kayıt/sürüm/geçmişi, mevcut crew credential kaynaklarından yetkili görünüm, kapsam filtreleri ve issuer/source/document bağları yazıldı. Takvim gözlemi ile hukuki doğrulama ayrı; eksik/belirsiz veri REVIEW_REQUIRED kalır.
-- Renewal taslaklarında owner/action/due/survey/replacement/evidence pinleri ve immutable geçmiş var. Tamamlama/supersession kapısı açık; yeni belge bağlantısı eski sertifikayı kendiliğinden değiştirmez.
-- Kaynak görevlendirmesi bulunan Human için ayrı immutable assertion kaydı yazıldı. İnsanın seçtiği beyan değeri aynen korunur; kayıt değerlendirmesi RECORDED_UNASSESSED, sertifika nitelendirmesi REVIEW_REQUIRED kalır. Passport, kayıt/event kimliklerini içeren scalar özeti, güncel/tarihsel ayrımını ve kaynak engellerini gösterir; Human actor/role/authority kimliklerini ve rationale alanını dışarıda bırakır. Literal Verified beyanı gösterilebilir; bundan hukuki nitelendirme, Ready durumu veya durum geçişi onayı çıkarılmaz.
-- OCR için mevcut yetkili dosya baytlarını kullanan kapalı varsayılanlı provider protokolü ve seçili vessel alanlarını kullanıcının açık onayıyla kaydetme yazıldı. Crew tarafı review-only; güvenli owning confirm ve tam crew aday UI akışı hâlâ eksik. Üç sentetik masked örnek scorer yazılımını besler; gerçek corpus, provider koşusu veya doğruluk sonucu yok.
-- Tug intake/board için gruplu kurumsal form, actor/tenant sınırı, exact retry ve güvenilir yanıt decode devamı; S5 passport için aynı fresh SQL/audit sınırında gerçek vessel certificate kaynağı bağlantısı entegre. Sertifika merkezi/yenileme arayüzü kaynak düzeyinde entegre; gözlenmiş UI sonucu yok. OCR review paneli kaynak düzeyinde bağlı; çalıştırılmadı.
+Kaynak `69b2072bf73db6b4a055be3c155357bc37feda66`, kayıt `2026-11-05T21:15:16.398743Z` (UTC). Final kaynak handoff’u kaydedildi; bu kayıt source-only metadata uygulaması içindir.
 
-**Yeni test/build/typecheck/lint/contract-generation/browser/CI çalıştırılmadı: DEFERRED / NOT RUN.** Test kaynakları ürün koduyla yazılıyor; daha büyük PR hazırlanırken koşulacak. 105 mutation template / 97 critical template / 107 operation yalnız kaynak envanteridir; PASS veya ölçülmüş coverage değildir. Bu bağımsız rapor uygulama QA’sı değildir.
+- Fuel 22 / Port 18 olmak üzere 40 özgün alanın sözleşmesi kaynak düzeyinde entegre; 4 server-owned alan çıkarılınca 36 alan düzenlenebilir. Known/Missing/Unknown ve lexical sayılar korunur; eksik taslak mümkündür.
+- Genel opaque voyage/port/supplier/tank/protest/evidence referansları Known yapılamaz. Conditional koşul kaynağı boşsa açık review blocker kalır. Yalnız açık `_mt` ve `sulphur_pct` % etiketleri gösterilir; diğer birimler ve hukuki eşikler uydurulmaz.
+- Gerçek Noon/Engine sürümünü pinleyen ayrı origin reader yazıldı; Ship vessel/rol sınırı, fresh SQL ve audit sonrası hak kontrolü kullanır. Origin, 40 alanın dışındaki lineage metadata’sıdır; kaynak bağlamını salt okunur gösterir, özet/ölçümleri hedef miktar alanlarına kopyalamaz veya mt’ye dönüştürmez. Fuel Noon/Engine, Port yalnız Noon bağlamını kullanır.
+- Owning kayıt/sürüm/geçmiş/exact receipt/audited EF ve kurumsal Fuel/Port form/timeline arayüzü ayrı agentlarca geliştirildi ve entegre edildi. Entegrasyon durumu canonical kayıtta açık tutulur; runtime doğrulaması yapılmadı.
 
-Kaynak yetkili certificate verification/approval ve durum geçişi, gerçek provider/processing/privacy/retention/storage/model/prompt ayarları, uzman ground truth ve pilot kararları açık. Human assertion içinde seçilen literal State korunur ve gösterilebilir; kayıt değerlendirmesi RECORDED_UNASSESSED, sertifika nitelendirmesi REVIEW_REQUIRED kalır. Bu kayıt hukuki nitelendirme, Ready durumu veya durum geçişi onayı sağlamaz. S5’in 8 iş / 69 SP kaynak paketi ve eski kanıtlar tarihsel olarak aynen korunur; authoritative issuer catalog, kritik gereksinim evreni, manual RuleOverride ve owning lookup açıkları kapanmış sayılmaz.
+**Yeni test/build/typecheck/lint/contract-generation/browser/CI: DEFERRED / NOT RUN.** Test kaynakları kodla birlikte yazılıyor; actual büyük PR hazırlanırken çalıştırılacak. Bu bağımsız ilerleme raporu implementation QA veya PASS değildir. 109 mutation template / 101 critical template / 111 operation yalnız kaynak envanteridir; PASS veya ölçülmüş coverage değildir.
 
-Yeni PR, provider aktivasyonu veya preview yayını yok; eski F preview değişmedi. Sonraki adım açık certificate/crew/UI kriterlerini sürdürmek ve kalan29SP Fuel/Port/Downtime işleri için kaynak, bağımlılık ve lease seçimini yapmak. DEV102’nin DEV055 bağımlılığı ve owning work-order lookup’ları hâlâ açık; üç işin tamamının hazır olduğu iddia edilmez. Actual PR aşamasında toplu doğrulama ve bağımsız exact-target QA/CI kapısı çalıştırılacak.
+İki yeni gerçek-host ShipOps journey kaynağı merkezi registry’ye eklendi; çalıştırılmadı ve required private fixtures provision edilmedi.
 
-[S6 kaynak/kriter fazı](phases/S6-CERTIFICATE-FOUNDATION-20261105.md) · [S5 tarihsel kaynak checkpoint’i](phases/S5-COMPLIANCE-FOUNDATION-20261104.md) · [Canonical kayıt](project-status.json)
+Draft kaydı compliance/verification/finalization, Human onayı veya generic offline yetkisi üretmez. Kaynak geçiş matrisi, lookup/evidence bağları, conditional kuralları ve classification/purpose/retention/key/storage kapıları açık. Önceki S6 ürün hedefi e3e5c739 / metadataac06 ve tüm tarihsel kanıtlar aynen korunur. Yeni PR, preview/runtime/provider aktivasyonu yok.
+
+Sonraki adım açık Fuel/Port kabul kaynaklarını sürdürmek; DEV-102 seçilmeden önce DEV-055/S8 owning defect/work-order lifecycle için kaynak, bağımlılık ve lease seçimini değerlendirmek. Bu paket DEV-055’in hazır olduğunu göstermez. Generation/build/test/bağımsız exact-target QA/CI kapısı actual büyük PR hazırlığında çalışır.
+
+[Fuel/Port kaynak fazı](phases/S6-SHIP-OPERATIONS-CONTINUATION-20261105.md) · [Önceki S6 sertifika kaynak paketi](phases/S6-CERTIFICATE-FOUNDATION-20261105.md) · [Canonical kayıt](project-status.json)
