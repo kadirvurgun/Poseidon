@@ -13,6 +13,9 @@ const labels: Record<string, [string, string]> = {
   BOUNDED_PROJECTION: ['The returned view covers part of the available records', 'Dönen görünüm mevcut kayıtların bir bölümünü kapsıyor'],
   CRITICAL_REQUIREMENT_COVERAGE_UNAVAILABLE: ['Critical requirement coverage is unavailable', 'Kritik gereksinim kapsamı kullanılamıyor'],
   CERTIFICATE_CATALOG_UNAVAILABLE: ['An authoritative vessel certificate catalog is unavailable', 'Yetkili araç sertifika kataloğu kullanılamıyor'],
+  CERTIFICATE_READ_ACCESS_UNAVAILABLE: ['Current certificate read access is unavailable', 'Güncel sertifika okuma erişimi kullanılamıyor'],
+  CERTIFICATE_QUALIFICATION_REQUIRED: ['Certificate declarations require source and human verification', 'Sertifika beyanları kaynak ve insan doğrulaması gerektiriyor'],
+  CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED: ['Certificate inventory completeness has not been established', 'Sertifika envanterinin tamlığı henüz kurulmadı'],
 }
 
 // Keep unknown owning-source reasons inspectable without inventing their meaning.

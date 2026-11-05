@@ -115,7 +115,9 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Null(dto.Plan.UncontrolledRequirementCount); Assert.Null(dto.Plan.OrphanCriticalCount);
         Assert.Equal(current.Revision, Assert.Single(dto.Plan.Controls, c => c.Id == current.Id).Revision);
         Assert.DoesNotContain(dto.Plan.Controls, c => c.Id == first.Id && c.Revision == first.Revision);
-        Assert.Contains("CERTIFICATE_CATALOG_UNAVAILABLE", dto.Blockers);
+        Assert.Contains("CERTIFICATE_READ_ACCESS_UNAVAILABLE", dto.Blockers);
+        Assert.Empty(dto.Certificates.Items); Assert.False(dto.Certificates.HasMore);
+        Assert.Contains("CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED", dto.Blockers);
         await using var verify = Db(); Assert.Equal(writes, await verify.AuditEvents.LongCountAsync(Ct));
         Assert.Equal(receipts, await verify.ControlEvidenceReceipts.LongCountAsync(Ct));
     }

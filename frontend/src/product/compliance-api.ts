@@ -1,6 +1,7 @@
 import { ApiError, request } from './api'
 import { isGuid } from './identifiers'
 import { timestamp } from './date-validation'
+import { decodePassportCertificates, type PassportCertificates } from './compliance-certificate-contract'
 import { decodeRow, type Row } from './control-evidence-api'
 import { decodeEvaluationResults, validEvaluationSnapshot, type EvaluationResult, type Evaluation } from './applicability-api'
 
@@ -25,7 +26,7 @@ export const loadOnboarding = async (vessel: string, signal: AbortSignal) => {
 
 export type ApplicabilityReview = { available: boolean; evaluationId: string | null; profileRevision: number | null; evaluatedAt: string | null; current: boolean; results: EvaluationResult[]; conflicts: Evaluation['conflicts']; blockers: string[]; reviewerState: 'QUALIFIED_CURRENT' | 'REVIEW_REQUIRED'; manualOverrideAvailable: false; href: string; inputs: Record<string, unknown> | null; inputHash: string | null; ruleSetHash: string | null }
 export type ControlPlan = { coverage: 'CURRENT_QUALIFIED_CATALOG_ONLY' | 'UNAVAILABLE'; requirements: { ruleId: string; ruleRevision: number; requirementId: string | null; requirementRevision: number | null; sourceId: string | null; sourceRevision: number | null; controlIds: string[]; state: 'LINKED' | 'REVIEW_REQUIRED'; blockers: string[] }[]; controls: Row[]; evidence: Row[]; hasMore: boolean; uncontrolledRequirementCount: number | null; orphanCriticalCount: null; blockers: string[] }
-export type CompliancePassport = { vesselId: string; readAt: string; state: 'REVIEW_REQUIRED'; freshness: 'Unverified'; certificateCoverage: 'UNAVAILABLE'; blockers: string[]; onboarding: OnboardingAssessment; applicability: ApplicabilityReview; plan: ControlPlan }
+export type CompliancePassport = { vesselId: string; readAt: string; state: 'REVIEW_REQUIRED'; freshness: 'Unverified'; certificateCoverage: PassportCertificates['coverage']; certificates: PassportCertificates; blockers: string[]; onboarding: OnboardingAssessment; applicability: ApplicabilityReview; plan: ControlPlan }
 const codes = (v: unknown): v is string[] => Array.isArray(v) && v.length <= 4096 && v.every(code => typeof code === 'string' && code.length > 0 && code.length <= 200 && !/\p{Cc}/u.test(code))
 export function decodeApplicabilityReview(value: unknown, vessel: string): ApplicabilityReview {
   if (!exact(value, ['available', 'evaluationId', 'profileRevision', 'evaluatedAt', 'current', 'results', 'conflicts', 'blockers', 'reviewerState', 'manualOverrideAvailable', 'href', 'inputs', 'inputHash', 'ruleSetHash']) || typeof value.available !== 'boolean' || typeof value.current !== 'boolean' || value.manualOverrideAvailable !== false || value.href !== `/app/fleet/${vessel}/passport#applicability` || !codes(value.blockers) || !Array.isArray(value.results) || !Array.isArray(value.conflicts) || value.conflicts.length > 4096 ||
@@ -43,11 +44,13 @@ function decodePlan(value: unknown, vessel: string): ControlPlan {
   for (const row of value.requirements) if (!exact(row, ['ruleId', 'ruleRevision', 'requirementId', 'requirementRevision', 'sourceId', 'sourceRevision', 'controlIds', 'state', 'blockers']) || !isGuid(row.ruleId) || !positive(row.ruleRevision) || !(row.requirementId === null && row.requirementRevision === null || isGuid(row.requirementId) && positive(row.requirementRevision)) || !(row.sourceId === null && row.sourceRevision === null || isGuid(row.sourceId) && positive(row.sourceRevision)) || !Array.isArray(row.controlIds) || row.controlIds.length > 25 || !row.controlIds.every(isGuid) || new Set(row.controlIds).size !== row.controlIds.length || typeof row.state !== 'string' || !['LINKED', 'REVIEW_REQUIRED'].includes(row.state) || row.state === 'LINKED' && row.controlIds.length === 0 || !codes(row.blockers)) fail()
   return { ...value, controls: value.controls.map(row => decodeRow(row, vessel, 'Control')), evidence: value.evidence.map(row => decodeRow(row, vessel, 'Evidence')) } as ControlPlan
 }
-export function decodePassport(value: unknown, vessel: string): CompliancePassport {
-  if (!isGuid(vessel) || !exact(value, ['vesselId', 'readAt', 'state', 'freshness', 'certificateCoverage', 'blockers', 'onboarding', 'applicability', 'plan']) || value.vesselId !== vessel || !timestamp(value.readAt) || value.state !== 'REVIEW_REQUIRED' || value.freshness !== 'Unverified' || value.certificateCoverage !== 'UNAVAILABLE' || !codes(value.blockers)) fail()
-  return { ...value, onboarding: decodeOnboarding(value.onboarding, vessel), applicability: decodeApplicabilityReview(value.applicability, vessel), plan: decodePlan(value.plan, vessel) } as CompliancePassport
+export function decodePassport(value: unknown, vessel: string, expectedOffset?: number): CompliancePassport {
+  if (!isGuid(vessel) || !exact(value, ['vesselId', 'readAt', 'state', 'freshness', 'certificateCoverage', 'blockers', 'onboarding', 'applicability', 'plan', 'certificates']) || value.vesselId !== vessel || !timestamp(value.readAt) || value.state !== 'REVIEW_REQUIRED' || value.freshness !== 'Unverified' || !codes(value.blockers)) fail()
+  const certificates = decodePassportCertificates(value.certificates, vessel, expectedOffset)
+  if (certificates.coverage !== value.certificateCoverage || certificates.referenceDate !== String(value.readAt).slice(0, 10)) fail()
+  return { ...value, certificates, onboarding: decodeOnboarding(value.onboarding, vessel), applicability: decodeApplicabilityReview(value.applicability, vessel), plan: decodePlan(value.plan, vessel) } as CompliancePassport
 }
 export const loadPassport = async (vessel: string, offset: number, signal: AbortSignal) => {
   if (!isGuid(vessel) || !Number.isSafeInteger(offset) || offset < 0 || offset > 100000) throw new ApiError(400, 'invalid_context')
-  return decodePassport(await request<unknown>(`vessels/${vessel}/compliance-passport?offset=${offset}`, signal), vessel)
+  return decodePassport(await request<unknown>(`vessels/${vessel}/compliance-passport?offset=${offset}`, signal), vessel, offset)
 }
