@@ -5203,6 +5203,7 @@ namespace Poseidon.Persistence.Migrations
                 b.HasOne("Poseidon.Persistence.VesselCertificate",null).WithMany().HasForeignKey("TenantId","VesselId","CertificateId").HasPrincipalKey("TenantId","VesselId","Id").HasConstraintName("FK_Renewal_Certificate").OnDelete(DeleteBehavior.Restrict).IsRequired();
             });
             modelBuilder.Entity("Poseidon.Persistence.CertificateRenewalRevision",b=> {
+                b.Property<string>("Provenance").IsRequired().HasMaxLength(32).HasColumnType("character varying(32)");
                 b.Property<Guid>("TenantId").HasColumnType("uuid");b.Property<Guid>("VesselId").HasColumnType("uuid");b.Property<Guid>("RenewalId").HasColumnType("uuid");b.Property<Guid>("CertificateId").HasColumnType("uuid");
                 b.Property<long>("CertificateRevision").HasColumnType("bigint");b.Property<long>("CertificateVersion").HasColumnType("bigint");b.Property<long>("Revision").HasColumnType("bigint");b.Property<long>("RecordVersion").HasColumnType("bigint");
                 b.Property<string>("ContentJson").IsRequired().HasColumnType("text");b.Property<string>("Hash").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");b.Property<string>("SourceVersion").IsRequired().HasMaxLength(192).HasColumnType("character varying(192)");

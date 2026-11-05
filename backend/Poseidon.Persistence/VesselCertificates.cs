@@ -54,6 +54,7 @@ public sealed class CertificateRenewalRevision : ITenantEntity
     public string ContentJson {get;set;}="{}";
     public string Hash {get;set;}="";
     public string SourceVersion {get;set;}="";
+    public string Provenance {get;set;}="UserDeclaredUnverified";
     public Guid? NewCertificateId {get;set;}
     public long? NewCertificateRevision {get;set;}
     public long? NewCertificateVersion {get;set;}
@@ -115,7 +116,7 @@ internal static class VesselCertificateStorage
                 .HasPrincipalKey(r=>new{r.TenantId,r.VesselId,r.CertificateId,r.Revision}).HasConstraintName("FK_RenewalRevision_Replacement").OnDelete(DeleteBehavior.Restrict);
             b.HasOne<StoredFile>().WithMany().HasForeignKey(r=>new{r.TenantId,r.VesselId,r.FileId,r.FileRevision,r.Checksum})
                 .HasPrincipalKey(f=>new{f.TenantId,f.VesselId,f.Id,f.Revision,f.Checksum}).HasConstraintName("FK_RenewalRevision_File").OnDelete(DeleteBehavior.Restrict);
-            b.Property(r=>r.ContentJson).HasColumnType("text");b.Property(r=>r.Hash).HasMaxLength(64);b.Property(r=>r.SourceVersion).HasMaxLength(192);b.Property(r=>r.Checksum).HasMaxLength(64);
+            b.Property(r=>r.ContentJson).HasColumnType("text");b.Property(r=>r.Hash).HasMaxLength(64);b.Property(r=>r.SourceVersion).HasMaxLength(192);b.Property(r=>r.Provenance).HasMaxLength(32);b.Property(r=>r.Checksum).HasMaxLength(64);
             b.HasIndex(r=>new{r.TenantId,r.VesselId,r.CertificateId,r.RenewalId}).HasDatabaseName("IX_RenewalRevision_Head");
             b.HasIndex(r=>new{r.TenantId,r.VesselId,r.CertificateId,r.CertificateRevision}).HasDatabaseName("IX_RenewalRevision_Original");
             b.HasIndex(r=>new{r.TenantId,r.VesselId,r.NewCertificateId,r.NewCertificateRevision}).HasDatabaseName("IX_RenewalRevision_Replacement");

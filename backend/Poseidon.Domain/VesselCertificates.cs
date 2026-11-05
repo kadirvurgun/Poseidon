@@ -55,14 +55,15 @@ public static class VesselCertificatePolicy
 public sealed record CertificateRenewalContent(string? RenewalType=null,DateOnly? TriggerDate=null,string? LeadDaysNumeric=null,Guid? OwnerRoleId=null,
     bool? RequiredSurvey=null,bool? RequiredDocuments=null,bool? RequiredActions=null,string? PlannedLocation=null,DateOnly? ApplicationDate=null,
     string? AuthorityReference=null,DateOnly? NewIssueDate=null,DateOnly? NewExpiryDate=null,Guid? NewCertificateId=null,
-    long? NewCertificateRevision=null,uint? NewCertificateVersion=null,CertificateFilePin? NewDocument=null)
+    long? NewCertificateRevision=null,uint? NewCertificateVersion=null,CertificateFilePin? NewDocument=null,
+    DateOnly? DueDate=null,DateOnly? SurveyWindowStart=null,string? SurveyWindowEnd=null)
 {
     public override string ToString()=>nameof(CertificateRenewalContent);
 }
 public static class CertificateRenewalPolicy
 {
     public static bool Valid(CertificateRenewalContent? c)=>c!=null && CertificateMetadataPolicy.ExactNumeric(c.LeadDaysNumeric) &&
-        new[]{c.RenewalType,c.PlannedLocation,c.AuthorityReference}.All(s=>s==null || s.Length<=4096 && !s.Any(char.IsControl)) && c.OwnerRoleId!=Guid.Empty && c.NewCertificateId!=Guid.Empty &&
+        new[]{c.RenewalType,c.PlannedLocation,c.AuthorityReference,c.SurveyWindowEnd}.All(s=>s==null || s.Length<=4096 && !s.Any(char.IsControl)) && c.OwnerRoleId!=Guid.Empty && c.NewCertificateId!=Guid.Empty &&
         (c.NewCertificateId==null && c.NewCertificateRevision==null && c.NewCertificateVersion==null || c.NewCertificateId!=null && c.NewCertificateRevision>0 && c.NewCertificateVersion>0) &&
         (c.NewDocument==null || c.NewDocument.Id!=Guid.Empty && c.NewDocument.Revision>0 && c.NewDocument.Checksum is {Length:64} && c.NewDocument.Checksum.All(char.IsAsciiHexDigit));
 }
