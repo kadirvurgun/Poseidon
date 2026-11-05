@@ -42,3 +42,9 @@ The signed case is deliberately prerequisite-strict: `POSEIDON_BROWSER_CERTIFICA
 - Real masked operational golden corpus, expert ground truth and an actual model/prompt run remain external quality gates. No accuracy target or score is invented. Synthetic scorer source does not satisfy those operational gates by itself.
 - Existing file scanner/object transport and core certificate source remain dependencies; `CleanTransport` never means verified certificate evidence.
 - All new checks remain deferred to the actual PR preparation bundle. Independent QA, generated contract synchronization, real PostgreSQL/component/signed browser execution and any resulting fixes are still required. S6 canonical completion/accepted SP are not advanced by this source checkpoint.
+
+## Narrow source correction — receipt followed by session failure
+
+Manual source review identified that a first confirmation could receive its owning receipt, then lose the subsequent session fence with 401/403 and accidentally clear the frozen command as though the write itself had been rejected. Confirmation now records receipt arrival before that await and retains the original attempt across every later session/transport failure. `onApplied` remains suppressed until the original identity and response fence hold; original-owner reauthorization permits only exact receipt retry. Parameterized component regression sources cover post-receipt 401, 403 and network loss, private-value withdrawal under another identity, persistent dirty/saving guards and identical retry bytes/key. All are **AUTHORED / NOT RUN**; no execution or acceptance is inferred from this correction.
+
+The same bounded source review corrected this panel's two badge calls to the actual shared `tone` API (`info` for human-confirmation context, `warning` for required review), without modifying the shared component or executing a typecheck.
