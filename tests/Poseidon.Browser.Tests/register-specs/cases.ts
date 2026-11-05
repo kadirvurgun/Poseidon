@@ -3,6 +3,7 @@ import { dailyCases } from './daily-cases.ts'
 import { dailyOfflineCases } from './daily-offline-cases.ts'
 import { certificateExtractionCases } from './certificate-extraction-cases.ts'
 import { certificateCases } from './certificate-cases.ts'
+import { shipOperationsCases } from './ship-operations-cases.ts'
 import { crewCatalogCases } from './crew-catalog-cases.ts'
 import { regulatoryAdmissionCases } from './regulatory-admission-cases.ts'
 import { crewIdentityCases } from './crew-identity-cases.ts'
@@ -126,6 +127,7 @@ export const registerCases = [
   ...dailyOfflineCases,
   ...certificateExtractionCases,
   ...certificateCases,
+  ...shipOperationsCases,
   ...operationEquipmentCases,
   ...complianceInputCases,
   ...crewCatalogCases,
