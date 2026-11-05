@@ -1,13 +1,14 @@
 # S5 passport / S6 owning certificate projection
 
-State: SOURCE_AUTHORED / DEPENDENCY_INTEGRATION_PENDING / UNVERIFIED. No canonical
+State: SOURCE_AUTHORED / CORE_SOURCE_INTEGRATED / UNVERIFIED. No canonical
 S5 or S6 acceptance, runtime evidence or story points are awarded by this source.
 
 Owner: root, branch `foundation/s6-certificate-foundation-20261105`. Dependency:
 the S6 owning vessel certificate model, `CertificateReader.Visible` / `Dto`,
 audited writer, EF migration and current read permission from DEV-043. This source
-is authored against the concrete backend-owner seam and must be integrated with
-its coherent checkpoint before any later gate.
+is integrated with backend core `c64c9cb4871ab030a099fb47d402b8e884c97a5a` via normal
+merge `e3ccca4d33f45220bcb71e517f4b3136394eff85`. This is source integration, with
+all model/contract/build/runtime checks still deferred to the later bundle gate.
 
 ## Source and acceptance criteria
 
