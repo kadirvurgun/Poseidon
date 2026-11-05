@@ -5,9 +5,9 @@ import { CertificateExtractionReview, type CertificateExtractionReviewProps } fr
 import { extractionActor, extractionFixture, extractionId, extractionSavedFixture, extractionVessel } from './certificate-extraction-test-fixtures'
 const json = (value: unknown, status = 200) => new Response(JSON.stringify(value), { status, headers: { 'Content-Type': 'application/json' } })
 function transport() {
-  const state = { actor: extractionActor, configured: true, confirm: undefined as ((init: RequestInit) => Promise<Response>) | undefined }
+  const state = { actor: extractionActor, configured: true, confirm: undefined as ((init: RequestInit) => Promise<Response>) | undefined, session: undefined as (() => Promise<Response>) | undefined }
   const fetch = vi.fn(async (url: string, init?: RequestInit) => {
-    if (url.endsWith('/auth/session')) return json({ authenticated: true, canRead: true, actorId: state.actor, tenantId: extractionVessel, csrfToken: 'synthetic-csrf-only' })
+    if (url.endsWith('/auth/session')) return state.session ? state.session() : json({ authenticated: true, canRead: true, actorId: state.actor, tenantId: extractionVessel, csrfToken: 'synthetic-csrf-only' })
     if (url.endsWith(`/certificates/${extractionId}`)) return json({ ...extractionSavedFixture(), currentRevision: true, canEdit: true })
     if (url.endsWith('/confirm')) return state.confirm ? state.confirm(init!) : json(extractionSavedFixture())
     return state.configured ? json(extractionFixture()) : json({ code: 'source_contract_changed' }, 503)
@@ -50,6 +50,44 @@ describe('DEV045 human confirmation interaction source, not executed', () => {
     view.rerender(<CertificateExtractionReview {...p} />); act(() => { window.dispatchEvent(new Event('focus')) }); await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('original identity'))
     expect(screen.queryByDisplayValue('MASKED-CORRECTED')).not.toBeInTheDocument(); expect(p.onDirty).toHaveBeenLastCalledWith(true)
     state.actor = extractionActor; act(() => { window.dispatchEvent(new Event('focus')) }); expect(await screen.findByDisplayValue('MASKED-CORRECTED')).toBeDisabled(); expect(p.onSaving).toHaveBeenLastCalledWith(true)
+  })
+  it.each([401, 403, 'network'] as const)('retains a received owning receipt when its subsequent session fence fails with %s', async fault => {
+    const { state, fetch } = transport(), p = props(); let receiptDelivered = false, fenceFailed = false
+    state.confirm = async () => { receiptDelivered = true; return json(extractionSavedFixture()) }
+    state.session = async () => {
+      if (receiptDelivered && !fenceFailed) {
+        fenceFailed = true
+        if (fault === 'network') throw new TypeError('Synthetic session transport loss after real-shaped receipt')
+        return json({ code: 'permission_denied' }, fault)
+      }
+      return json({ authenticated: true, canRead: true, actorId: state.actor, tenantId: extractionVessel, csrfToken: 'synthetic-csrf-only' })
+    }
+    render(<CertificateExtractionReview {...p} />); const user = await selectFact()
+    await user.click(screen.getByRole('button', { name: 'Confirm selected facts and save draft' }))
+    await waitFor(() => expect(fenceFailed).toBe(true))
+    if (fault === 'network') {
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Retry exact confirmation' })).toBeEnabled())
+      expect(screen.getByLabelText('Reviewed value · Certificate number')).toBeDisabled()
+    } else {
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Reauthorize original context' })).toBeEnabled())
+      expect(screen.queryByDisplayValue('MASKED-CORRECTED')).not.toBeInTheDocument()
+    }
+    expect(p.onApplied).not.toHaveBeenCalled(); expect(p.onDirty).toHaveBeenLastCalledWith(true); expect(p.onSaving).toHaveBeenLastCalledWith(true)
+    expect(fetch.mock.calls.filter(([url]) => url.endsWith('/confirm'))).toHaveLength(1)
+    // A later different authenticated owner may not acquire the committed
+    // command or its private values. Only the original owner may retry it.
+    state.actor = extractionId; act(() => { window.dispatchEvent(new Event('focus')) })
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Reauthorize original context' })).toBeEnabled())
+    expect(screen.queryByDisplayValue('MASKED-CORRECTED')).not.toBeInTheDocument(); expect(screen.queryByRole('button', { name: 'Retry exact confirmation' })).not.toBeInTheDocument()
+    state.actor = extractionActor; await user.click(screen.getByRole('button', { name: 'Reauthorize original context' }))
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Retry exact confirmation' })).toBeEnabled())
+    expect(screen.getByLabelText('Reviewed value · Certificate number')).toBeDisabled(); expect(screen.getByRole('button', { name: 'Discard suggestions' })).toBeDisabled()
+    expect(p.onApplied).not.toHaveBeenCalled(); expect(p.onSaving).toHaveBeenLastCalledWith(true)
+    await user.click(screen.getByRole('button', { name: 'Retry exact confirmation' })); await waitFor(() => expect(p.onApplied).toHaveBeenCalledTimes(1))
+    const calls = fetch.mock.calls.filter(([url]) => url.endsWith('/confirm')); expect(calls).toHaveLength(2)
+    expect(calls[1][1]?.body).toBe(calls[0][1]?.body)
+    expect((calls[1][1]?.headers as Record<string, string>)['Idempotency-Key']).toBe((calls[0][1]?.headers as Record<string, string>)['Idempotency-Key'])
+    expect(p.onDirty).toHaveBeenLastCalledWith(false); expect(p.onSaving).toHaveBeenLastCalledWith(false)
   })
   it('keeps missing processing configuration unavailable with no invented candidates', async () => {
     const { state, fetch } = transport(); state.configured = false; render(<CertificateExtractionReview {...props()} />)

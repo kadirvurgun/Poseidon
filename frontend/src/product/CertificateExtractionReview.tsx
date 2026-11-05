@@ -70,12 +70,13 @@ export function CertificateExtractionReview({ vessel, certificateId, expectedVer
     // be discarded, edited, replayed as another actor or automatically retried.
     setPending(command); setBusy(true); setFailure(null); setValidation(false); running.current = true
     const c = new AbortController(); writer.current = c; const originalScope = scope, timer = setTimeout(() => c.abort(), 20000)
-    let sent = false
+    let sent = false, receiptReceived = false
     try {
       const fresh = await readSession(c.signal)
       if (boundary(fresh) !== command.owner) throw new ApiError(403, 'identity_boundary_changed')
       sent = true
       const saved = await certificateExtractionApi.confirm(command, fresh.csrfToken, c.signal)
+      receiptReceived = true
       const after = await readSession(c.signal)
       if (!mounted.current || committed.current.scope !== originalScope || committed.current.owner !== command.owner || boundary(after) !== command.owner) { if (mounted.current) setFailure(new ApiError(0, 'identity_boundary_changed')); return }
       setPending(null); setPreview(null); setValues({}); setSelected([]); setContextConfirmed(false); onApplied(saved)
@@ -83,14 +84,16 @@ export function CertificateExtractionReview({ vessel, certificateId, expectedVer
       if (!mounted.current) return
       const problem = error instanceof ApiError ? error : new ApiError(0); setFailure(problem)
       if ([401, 403, 404].includes(problem.status)) setAuth({ scope })
-      // A previously unknown command stays frozen even if later authorization
-      // fails. A first definitive 4xx permits explicit preview discard/review.
-      if (!pending && (!sent || problem.status > 0 && problem.status < 500)) setPending(null)
+      // A received owning receipt establishes a committed outcome even when
+      // the following session fence fails. Preserve its original key/body,
+      // just as for any previously unknown command. Only a first definitive
+      // rejection before receiving a receipt permits preview discard/review.
+      if (!pending && !receiptReceived && (!sent || problem.status > 0 && problem.status < 500)) setPending(null)
     } finally { clearTimeout(timer); writer.current = null; running.current = false; if (mounted.current) setBusy(false) }
   }
   const show = mayRead && !!owner && (!retained || !!current) && (!pending || samePending)
   return <section className="certificate-extraction" aria-label={en ? 'Certificate document assistance' : 'Sertifika belge asistanı'} aria-busy={busy}>
-    <div className="enterprise-section-header"><div><h3>{en ? 'Review document facts' : 'Belge bilgilerini incele'}</h3><p>{en ? 'Extract suggestions from the currently linked document. Each fact requires your confirmation; confidence never verifies a certificate or authorizes an operation.' : 'Güncel bağlı belgeden öneriler çıkarın. Her bilgi onayınızı gerektirir; güven skoru sertifika doğrulaması veya operasyon yetkisi oluşturmaz.'}</p></div><Badge variant="outline">{en ? 'Human confirmation' : 'İnsan onayı'}</Badge></div>
+    <div className="enterprise-section-header"><div><h3>{en ? 'Review document facts' : 'Belge bilgilerini incele'}</h3><p>{en ? 'Extract suggestions from the currently linked document. Each fact requires your confirmation; confidence never verifies a certificate or authorizes an operation.' : 'Güncel bağlı belgeden öneriler çıkarın. Her bilgi onayınızı gerektirir; güven skoru sertifika doğrulaması veya operasyon yetkisi oluşturmaz.'}</p></div><Badge tone="info">{en ? 'Human confirmation' : 'İnsan onayı'}</Badge></div>
     {!show ? <><p role="status">{en ? 'Private document suggestions are locked until the original identity and context are reauthorized online. Any uncertain save remains protected.' : 'Özel belge önerileri, özgün kimlik ve bağlam çevrimiçi tekrar yetkilendirilene kadar kilitlidir. Belirsiz kayıt korunur.'}</p><Button type="button" variant="outline" disabled={!mayRead || busy} onClick={() => reauthorize(n => n + 1)}>{en ? 'Reauthorize original context' : 'Özgün bağlamı tekrar yetkilendir'}</Button></> : <>
       {failure && <p role="alert">{pending ? (en ? 'Save outcome unknown. Retry only the same protected command after reauthorization.' : 'Kayıt sonucu bilinmiyor. Yetkilendirme sonrası yalnız aynı korunan komutu tekrar deneyin.') : failure.status === 409 ? (en ? 'The saved version or review context changed. Read the current certificate before extracting again.' : 'Kayıtlı sürüm veya inceleme bağlamı değişti. Yeniden çıkarmadan önce güncel sertifikayı okuyun.') : (en ? 'Extraction or confirmation is unavailable. Processing policy, current source, permissions and provider response must all be available.' : 'Çıkarım veya onay kullanılamıyor. İşleme politikası, güncel kaynak, yetkiler ve sağlayıcı yanıtı kullanılabilir olmalıdır.')}</p>}
       {!current ? <Button variant="outline" disabled={!canExtract} onClick={() => void extract()}>{busy ? (en ? 'Reading linked document…' : 'Bağlı belge okunuyor…') : (en ? 'Extract from linked document' : 'Bağlı belgeden bilgileri çıkar')}</Button> : <>
@@ -99,7 +102,7 @@ export function CertificateExtractionReview({ vessel, certificateId, expectedVer
           <div className="certificate-extraction-facts">{current.candidates.map(field => {
             const writable = field.key !== 'person_reference' && field.key !== 'vessel_reference', key = field.key as ConfirmableField, label = labels[field.key][en ? 0 : 1]
             return <div className={`certificate-extraction-fact${field.lowConfidence ? ' certificate-extraction-review' : ''}`} key={field.key}>
-              <div><strong>{label}</strong><span>{field.confidence === null ? (en ? 'Confidence unavailable' : 'Güven skoru yok') : `${Math.round(field.confidence * 100)}%`}{field.page !== null && ` · ${en ? 'Page' : 'Sayfa'} ${field.page}`}</span><Badge variant="outline">{field.lowConfidence ? (en ? 'Low confidence · review' : 'Düşük güven · incele') : (en ? 'Review required' : 'İnceleme gerekli')}</Badge></div>
+              <div><strong>{label}</strong><span>{field.confidence === null ? (en ? 'Confidence unavailable' : 'Güven skoru yok') : `${Math.round(field.confidence * 100)}%`}{field.page !== null && ` · ${en ? 'Page' : 'Sayfa'} ${field.page}`}</span><Badge tone="warning">{field.lowConfidence ? (en ? 'Low confidence · review' : 'Düşük güven · incele') : (en ? 'Review required' : 'İnceleme gerekli')}</Badge></div>
               {writable ? <><label htmlFor={`${id}-${field.key}`}>{en ? 'Reviewed value' : 'İncelenen değer'} · {label}</label><input id={`${id}-${field.key}`} value={values[key] ?? ''} maxLength={512} disabled={busy || !!pending || !current.canConfirm} onChange={event => { setValues(previous => ({ ...previous, [key]: event.target.value })); setSelected(previous => previous.filter(f => f !== key)) }} /><label><input type="checkbox" checked={selected.includes(key)} disabled={busy || !!pending || !current.canConfirm} onChange={event => setSelected(previous => event.target.checked ? [...previous, key] : previous.filter(f => f !== key))} />{en ? 'I checked this fact against the source' : 'Bu bilgiyi kaynakla karşılaştırdım'} · {label}</label></> : <p>{field.value ?? (en ? 'Not extracted' : 'Çıkarılmadı')} · {en ? 'Context only; cannot change ownership' : 'Yalnız bağlam; sahipliği değiştirmez'}</p>}
               <details><summary>{en ? 'Review reasons' : 'İnceleme nedenleri'}</summary><ul>{field.reasons.map(reason => <li key={reason}><code>{reason}</code></li>)}</ul></details>
             </div>
