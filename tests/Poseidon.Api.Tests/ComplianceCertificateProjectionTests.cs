@@ -92,4 +92,70 @@ public sealed partial class DirectoryWorkspaceTests
             response ??= await pending.WaitAsync(TimeSpan.FromSeconds(30), Ct); response.Dispose(); await RemoveComplianceAuditPause();
         }
     }
+
+    [Fact]
+    public async Task Passport_preserves_recorded_human_assertion_without_exposing_human_identifiers_or_promoting_qualification() {
+        var root = Path.Combine(Path.GetTempPath(), "poseidon-s6-passport-assertion-" + Guid.NewGuid().ToString("N")); Directory.CreateDirectory(root);
+        try {
+            using var scanner = new ScanPeer("stream: OK\0", repeat: true); await using var host = FileHost(root, scanner.Port); using var client = Client(host);
+            FilePermissions(host.Services); GraphPermissionsForTest(host.Services); CertificatePermissions(host.Services); await Token(client);
+            var certificate = await CertificateWithScannedFile(client); var grant = AssertionAppointment(host.Services, certificate.Id);
+            using var recorded = await Send(client, AssertionPath(certificate.Id), new CertificateAssertionCommand(certificate.Version, certificate.Revision, 0, grant.Id, "Verified", "FICTIONAL recorded assertion"));
+            Assert.Equal(HttpStatusCode.OK, recorded.StatusCode); var eventRow = (await recorded.Content.ReadFromJsonAsync<CertificateVerificationDto>(Ct))!;
+            var passport = (await client.GetFromJsonAsync<CompliancePassportDto>(CompliancePath("passport"), Ct))!;
+            var item = Assert.Single(passport.Certificates.Items, row => row.Id == certificate.Id); var assertion = item.Assertion!;
+            Assert.Equal(eventRow.Id, assertion.Id); Assert.Equal(eventRow.Version, assertion.Version); Assert.Equal(eventRow.Revision, assertion.Revision);
+            Assert.Equal("Verified", assertion.State); Assert.Equal("RECORDED_UNASSESSED", assertion.Qualification); Assert.True(assertion.Current);
+            Assert.Equal("REVIEW_REQUIRED", item.Qualification); Assert.Equal("REVIEW_REQUIRED", passport.State);
+            var summary = System.Text.Json.JsonSerializer.SerializeToElement(assertion, new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web));
+            Assert.False(summary.TryGetProperty("actorId", out _)); Assert.False(summary.TryGetProperty("roleId", out _));
+            Assert.False(summary.TryGetProperty("authorityId", out _)); Assert.False(summary.TryGetProperty("rationale", out _));
+            var settings = host.Services.GetRequiredService<FederationSettings>(); var member = settings.Memberships[0];
+            settings.Memberships[0] = member with { CertificateAssertionAuthorities = [grant with { AssignmentReference = "DIFFERENT FICTIONAL source assignment" }] };
+            var historical = (await client.GetFromJsonAsync<CompliancePassportDto>(CompliancePath("passport"), Ct))!;
+            var retained = Assert.Single(historical.Certificates.Items, row => row.Id == certificate.Id).Assertion!;
+            Assert.False(retained.Current); Assert.Equal(eventRow.Id, retained.Id); Assert.Equal("Verified", retained.State);
+            Assert.Contains("RECORDED_ASSERTION_NOT_CURRENT", retained.Blockers);
+        }
+        finally { if (Directory.Exists(root)) Directory.Delete(root, true); }
+    }
+
+    [Theory]
+    [InlineData("assertion-head")]
+    [InlineData("appointment-source")]
+    public async Task Passport_rechecks_assertion_head_and_synchronous_appointment_policy_after_parent_audit(string change) {
+        var root = Path.Combine(Path.GetTempPath(), "poseidon-s6-passport-assertion-fence-" + Guid.NewGuid().ToString("N")); Directory.CreateDirectory(root);
+        try {
+            using var scanner = new ScanPeer("stream: OK\0", repeat: true); await using var host = FileHost(root, scanner.Port); using var client = Client(host);
+            FilePermissions(host.Services); GraphPermissionsForTest(host.Services); CertificatePermissions(host.Services); await Token(client);
+            var certificate = await CertificateWithScannedFile(client); var grant = AssertionAppointment(host.Services, certificate.Id);
+            var command = new CertificateAssertionCommand(certificate.Version, certificate.Revision, 0, grant.Id, "Verified", "FICTIONAL first assertion");
+            using var recorded = await Send(client, AssertionPath(certificate.Id), command); Assert.Equal(HttpStatusCode.OK, recorded.StatusCode);
+            var first = (await recorded.Content.ReadFromJsonAsync<CertificateVerificationDto>(Ct))!;
+            var key = (long)Random.Shared.Next(1, int.MaxValue);
+            await using var blocker = new NpgsqlConnection(postgres.GetConnectionString()); await blocker.OpenAsync(Ct);
+            await using (var acquire = new NpgsqlCommand("SELECT pg_advisory_lock(@key)", blocker)) { acquire.Parameters.AddWithValue("key", key); await acquire.ExecuteNonQueryAsync(Ct); }
+            await InstallComplianceAuditPause(key);
+            var pending = client.GetAsync(CompliancePath("passport"), Ct); HttpResponseMessage? response = null;
+            try {
+                await WaitForComplianceAuditLock(key);
+                if (change == "assertion-head") {
+                    using var newer = await Send(client, AssertionPath(certificate.Id), command with { ExpectedAssertionVersion = first.Version, State = "Suspicious" });
+                    Assert.Equal(HttpStatusCode.OK, newer.StatusCode);
+                }
+                else {
+                    var settings = host.Services.GetRequiredService<FederationSettings>(); var member = settings.Memberships[0];
+                    settings.Memberships[0] = member with { CertificateAssertionAuthorities = [grant with { AssignmentReference = "REPLACED FICTIONAL source assignment" }] };
+                }
+                await using (var release = new NpgsqlCommand("SELECT pg_advisory_unlock(@key)", blocker)) { release.Parameters.AddWithValue("key", key); await release.ExecuteNonQueryAsync(Ct); }
+                response = await pending.WaitAsync(TimeSpan.FromSeconds(30), Ct); Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+                var withheld = await response.Content.ReadAsStringAsync(Ct); Assert.DoesNotContain(first.Id.ToString(), withheld); Assert.DoesNotContain(certificate.Id.ToString(), withheld);
+            }
+            finally {
+                await using (var release = new NpgsqlCommand("SELECT pg_advisory_unlock(@key)", blocker)) { release.Parameters.AddWithValue("key", key); await release.ExecuteNonQueryAsync(Ct); }
+                response ??= await pending.WaitAsync(TimeSpan.FromSeconds(30), Ct); response.Dispose(); await RemoveComplianceAuditPause();
+            }
+        }
+        finally { if (Directory.Exists(root)) Directory.Delete(root, true); }
+    }
 }
