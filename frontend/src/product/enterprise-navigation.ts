@@ -4,7 +4,7 @@ import type { Session } from './directory-contract'
 import { useWorkspaceRevalidation } from './use-workspace-revalidation'
 
 export type EnterpriseDestination = { key: string; href: string }
-const destinations: Record<string, string> = { 'certificate-command-center': '/app/certificate-command-center', 'renewal-workflow': '/app/renewal-workflow', 'noon-report': '/app/noon-report', 'deck-daily-log': '/app/deck-daily-log', 'engine-daily-log': '/app/engine-daily-log', today: '/app/today', fleet: '/app/fleet', companies: '/app/companies',
+const destinations: Record<string, string> = { 'fuel-bunker-log': '/app/fuel-bunker-log', 'port-activity-sof': '/app/port-activity-sof', 'certificate-command-center': '/app/certificate-command-center', 'renewal-workflow': '/app/renewal-workflow', 'noon-report': '/app/noon-report', 'deck-daily-log': '/app/deck-daily-log', 'engine-daily-log': '/app/engine-daily-log', today: '/app/today', fleet: '/app/fleet', companies: '/app/companies',
   sources: '/app/sources', requirements: '/app/requirements', audit: '/app/audit',
   'tug-command': '/app/tug-command', 'tug-job-board': '/app/tug-job-board', 'tug-job-intake': '/app/tug-job-intake', 'system-health': '/app/system-health', 'notification-escalation': '/app/notification-escalation' }
 export function decodeEnterpriseNavigation(value: unknown): { destinations: EnterpriseDestination[]; canSearch: boolean } {

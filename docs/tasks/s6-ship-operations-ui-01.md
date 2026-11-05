@@ -28,3 +28,21 @@ Root owns backend navigation/lens admission, Daily source launch links, central 
 All DEV-100/101 acceptance criteria remain OPEN. Applicability, approved reference mappings, evidence adoption, Human review/finalization and offline policy remain owning source gates. Saving a draft cannot create READY, VERIFIED, FINAL, operating instructions, financial results or legal validity.
 
 Tests/build/typecheck/lint/browser/generation/lab/provider/private/runtime/push/PR operations have NOT RUN. Local source/whitespace review alone is not passing QA, canonical completion or delivery acceptance.
+
+## Owning API and workspace source checkpoint
+
+The actual consumer now follows backend checkpoint 7f4c16b44ba0d21ebfc2e887a971170f1fd7aff0, domain checkpoint 6bb244a6760a9a34b9c30da5cce8ef48d37b6142 and root origin reader 763d5b3. Root's follow-up Ship-only visibility does not change the public DTO. Canonical API routes are `fuel-bunker-logs` and `port-activity-sof`; list/history accept only vesselId/offset. Current-page filters are explicitly local to returned rows and never sent as unsupported server queries.
+
+The new standalone workspace includes authorized Ship selection, scoped human-readable vessel context, task-focused draft editor, browse list/recorded Port timeline, source facts and immutable revision history. Editing omits the browse list and uses a compact saved-source header. Actual server schemas retain unresolved source conditional predicates. Source calendar instants preserve their lexical explicit offset and seven fractional digits; validation compares event ordering without rounding to browser milliseconds. No quantities are converted, rounded, added or used to infer compliance. Missing and Unknown stay separate from zero.
+
+Strict decoding requires all 22/18 read fields, actual source metadata and server-owned Fuel review/pending / Port draft states. Write bodies contain only 19/17 mutable fields and optional exact origin metadata. Actor/tenant boundaries are checked before publishing source data and before/after writes. Unknown commands retain exact original body/key/base/identity after late denial or a received receipt followed by session failure. The immutable outcome is not editable until a separate authorized owning current GET succeeds. Incomplete drafts remain allowed; no review/submit/finalization workflow is enabled.
+
+Daily origin URL context consists only of originKind/originId/originRevision and is rejected with a saved id, duplicates, unsupported kinds, missing triplet members or private field values. Fuel may link Noon/Engine and Port only Noon. The owning exact revision/hash/version/source pin is read under current rights and never autofills a target fact. New commands cannot adopt historical source pins; existing unchanged historical lineage remains readable and unchanged. Source reloads do not generate a second logical new record: the editor uses one per-surface UUID, and confirmed creation replaces its URL with the actual saved id after the current read.
+
+| Trace | Authored source evidence | State |
+| --- | --- | --- |
+| T-OPS2-004/005-API-01 | `ship-operations-api.test.ts`: closed fields/scope/capabilities, no READY/VERIFIED/FINAL, exact numeric/zero text, seven-digit event ordering, unavailable references and strict URLs/navigation | OPEN / NOT RUN |
+| T-OPS2-004-UI-02 | `ShipOperationsWorkspace.test.tsx`: incomplete save, exact key/body, current GET, keep/discard, identity withdrawal and post-receipt403 retention | OPEN / NOT RUN |
+| T-OPS2-004/005-ORIGIN-01 | Workspace source tests: exact read-only origin, no summary/unit copying, historical-source create blocking | OPEN / NOT RUN |
+
+Root owns actual server navigation and Daily launch admission. Frontend closed App/navigation/search/lens consumers include both operational destinations as daily items and reject them in a Tug projection. Ordinary audited operation reason labels add only the four actual Fuel/Port create/update names. No real role mapping or provider is changed.

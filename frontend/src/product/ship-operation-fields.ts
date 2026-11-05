@@ -73,3 +73,9 @@ export const mutableShipOpsFields = (kind: ShipOpsKind) => shipOpsFields(kind).f
 export const emptyShipOpsFields = (kind: ShipOpsKind): ShipOpsFields => Object.fromEntries(mutableShipOpsFields(kind).map(field => [field.key, { state: 'Missing', value: null }]))
 export const shipOpsTitle = (kind: ShipOpsKind, language: 'en' | 'tr') => ({ Fuel: { en: 'Fuel, bunker and ROB', tr: 'Yakıt, ikmal ve ROB' }, Port: { en: 'Port activity and SOF', tr: 'Liman faaliyeti ve SOF' } })[kind][language]
 export const shipOpsScreen = (kind: ShipOpsKind) => kind === 'Fuel' ? 'fuel-bunker-log' : 'port-activity-sof'
+export const shipOpsRequired: Record<ShipOpsKind, string[]> = { Fuel: ['record_date', 'vessel_id', 'record_type', 'fuel_type', 'compliance_state', 'verification_state'], Port: ['voyage_id', 'port_call_id', 'port', 'activity_type', 'event_start', 'sof_state'] }
+export const shipOpsCodeOptions: Record<string, readonly string[]> = {
+  record_type: ['Consumption', 'Delivery/BDN', 'Transfer', 'ROB', 'Tank Sounding'], fuel_type: ['VLSFO', 'HFO', 'MGO', 'LNG', 'Methanol', 'Other'], delivery_discrepancy: ['NONE', 'ATTENTION', 'DISPUTED'],
+  compliance_state: ['READY', 'CONDITIONAL', 'REVIEW_REQUIRED', 'NOT_READY'], verification_state: ['PENDING', 'VERIFIED', 'REJECTED'], sof_state: ['DRAFT', 'REVIEWED', 'FINAL'],
+  activity_type: ['Arrival', 'NOR', 'Pilot Onboard', 'Tug Made Fast', 'Berthing', 'Loading', 'Discharging', 'Shifting', 'Tug Let Go', 'Pilot Off', 'Departure', 'Other'],
+}
