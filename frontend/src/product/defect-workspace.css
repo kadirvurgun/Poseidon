@@ -16,3 +16,5 @@
 .enterprise-shell .defect-timeline ol { padding-inline-start:22px; display:grid; gap:16px; }
 .defect-workspace code { white-space:normal; overflow-wrap:anywhere; }
 @media(max-width:600px) { .enterprise-shell .defect-summary-grid { grid-template-columns:minmax(0,1fr); } .enterprise-shell .defect-fields .enterprise-form-grid,.enterprise-shell .defect-source,.enterprise-shell .defect-asset-context,.enterprise-shell .defect-timeline { padding:16px; } .enterprise-shell .defect-field { padding:14px; } }
+
+.enterprise-shell .defect-declared-text { white-space:pre-wrap; overflow-wrap:anywhere; }

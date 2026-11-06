@@ -24,3 +24,22 @@ T-S8-004-UI-01: `DefectFieldsForm.test.tsx` authors unknown expiry, multiline sa
 The dedicated workspace, root vessel selector, list/current detail/history, restriction/expiry observations, current asset aside, dirty/unknown command guards and genuine browser source journeys follow this shared checkpoint. Root owns App/global navigation/equipment launch and central browser registration; this author edits only the new defect modules/tests and this task document.
 
 No tests, build, typecheck, lint, generation, browser, lab, provider, runtime, CI, push or PR executed. Only source and whitespace review support this checkpoint. Closure, verification, effectiveness, return-to-service and canonical phase acceptance remain OPEN and unavailable.
+
+## Owning workspace source slice
+
+`DefectWorkspace` now provides `/app/defects` authorized Ship/Tug selection and scoped declaration list/editor/exact immutable history. Editing omits the browse list and places compact source identity above grouped fields; detailed restriction/expiry observations follow the form. Shared enterprise actions, accessible labels/errors, TR/EN and responsive source styles are used. Common declaration guidance appears once; only instant/phase fields carry specific hints.
+
+The actual consumer follows backend freeze 09c75847875cab91b86e62a514f957d5768d547d: vessel query key, eleven mutable facts, explicit nullable asset, mandatory sourceVersion, actual per-record current flags and false authority capabilities. Every history entry stays read-only. Temporal enrichment is rendered from the actual saved/current/history response and its server assessedAt; local unsaved fields are not presented as assessed. Unknown measure, missing/unknown deadline and declared expiry remain distinct. No browser countdown or computed service clearance is introduced.
+
+Actor/tenant identity fences precede source publication and follow owning receipts. Unknown commands retain the original body/key/base through source withdrawal or later denial; they never move to another identity or trigger automatic retry. After a same-owner confirmed receipt, canonical id is history-replaced before optional current reads; readonly receipts become editable only after a separate owning current GET. A failed current GET/reopen therefore cannot create another logical draft UUID.
+
+Equipment current-context409 is rendered as source changed. Established old pins remain visible and unchanged during ordinary defect edits; a new stale-context launch is blocked from saving until a genuine current context is chosen or the user explicitly leaves that context. Captured pins are never rebased to current metadata, and source criticality is never autofilled. Context metadata for a different pin is withheld from the retained editor.
+
+| Trace | Authored source cases | Status |
+| --- | --- | --- |
+| T-S8-004-UI-02 | `DefectWorkspace.test.tsx`: incomplete save/current GET, canonical id before readback503/reopen, dirty keep/discard, exact original identity retry, post-receipt403 preservation | OPEN / NOT RUN |
+| T-S8-004-ASSET-01 | Workspace sources: existing asset409 keeps old pin editable; new stale launch cannot invent xmin or save; root picker supports Ship/Tug | OPEN / NOT RUN |
+| T-S8-004-TIME-01 | `DefectTemporalTimeline.test.tsx`: browser clock cannot overwrite server observation; unknown restriction/expiry cannot become clear | OPEN / NOT RUN |
+| T-S8-004-ROUTE-01 | `defect-location.test.ts`: paired assetId/revision, bare selection, duplicate/private/saved-id override rejection | OPEN / NOT RUN |
+
+Root owns App/main discovery/equipment launch, common audit vocabulary and central browser registration. Dedicated genuine signed journeys remain a following source-only slice. These modules and authored tests are not passing evidence or canonical task acceptance.
