@@ -43,3 +43,15 @@ Equipment current-context409 is rendered as source changed. Established old pins
 | T-S8-004-ROUTE-01 | `defect-location.test.ts`: paired assetId/revision, bare selection, duplicate/private/saved-id override rejection | OPEN / NOT RUN |
 
 Root owns App/main discovery/equipment launch, common audit vocabulary and central browser registration. Dedicated genuine signed journeys remain a following source-only slice. These modules and authored tests are not passing evidence or canonical task acceptance.
+
+## Genuine signed journey source handoff
+
+Backend core 09c75847875cab91b86e62a514f957d5768d547d was merged normally after the UI checkpoint; its domain and actual current asset reader are ancestors. Public wire was reread directly. No runtime result is attributed to this merge.
+
+The isolated [defect-cases.ts](../../tests/Poseidon.Browser.Tests/register-specs/defect-cases.ts) exports `defectCases` with two distinct actual-host journeys. T-S8-004-BROWSER-01 creates a genuinely scoped incomplete critical declaration with a declared Verify phase/unknown deadline, verifies no controlling authority, forwards a real PUT then loses only its transport, and explicitly recovers the exact body/key and unchanged immutable outcome properties. Fresh temporal.assessedAt is deliberately not asserted byte-identical; history remains readonly. T-S8-004-BROWSER-02 launches from an actual current asset context, checks no criticality autofill/dirty keep, lets a real create complete, aborts only current GET transport, then reloads the canonical id without a new POST and recovers from the actual current API. It authors desktop/mobile action alignment, hit-target and overflow assertions.
+
+The strict [fixture helper](../../tests/Poseidon.Browser.Tests/register-specs/defect-fixture.ts) requires `POSEIDON_BROWSER_DEFECT_FIXTURE` under `POSEIDON_LAB_PRIVATE`, schema `poseidon.defect.signed-fixture.v1`, run/tenant/vessel/actor/asset UUIDs and current assetRevision. Actual signed identity/capabilities/context must match; absent or stale prerequisites fail, never skip. No fixture/provider/runtime is provisioned here. No business response is fabricated or fulfilled; mutations go to the real host and transport loss uses abort only. Root owns central case registration and later operator preparation.
+
+Final product copy uses Arıza consistently in Turkish. Stale equipment messaging describes the retained revision in ordinary language; technical hashes/versions remain collapsed details. Common safety/declaration guidance appears once, with only relevant instant/phase help on individual fields.
+
+All developer, contract, component, genuine browser, build, lint, typecheck, generation and independent acceptance checks remain DEFERRED / NOT RUN. Source and whitespace review alone support this handoff. DEV-055 remains 0/13 SP accepted; closure/verification/effectiveness/return-to-service remain unavailable and canonical S8 completion is not claimed.

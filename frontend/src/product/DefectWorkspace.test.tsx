@@ -85,7 +85,7 @@ describe('T-S8-004 defect workspace — authored, not executed', () => {
   it('retains an old asset pin on context409 while allowing another declaration edit, without source criticality autofill', async () => {
     history.replaceState(null, '', '/app/defects/' + defectVessel + '?id=' + defectId)
     const { state, fetch } = transport(); state.linked = true; state.assetStatus = 409
-    render(<DefectWorkspace />); const user = userEvent.setup(); await user.click(screen.getByRole('button', { name: 'EN' })); await screen.findByText(/Equipment source changed/)
+    render(<DefectWorkspace />); const user = userEvent.setup(); await user.click(screen.getByRole('button', { name: 'EN' })); await screen.findByText(/Linked equipment changed after this declaration/)
     expect(screen.getByLabelText('Declared criticality value state')).toHaveValue('Missing'); expect(screen.queryByText('Synthetic equipment')).not.toBeInTheDocument()
     await user.selectOptions(screen.getByLabelText('Declaration notes value state'), 'Known'); await user.type(screen.getByLabelText('Declaration notes'), 'Retain exact equipment provenance')
     await user.click(screen.getByRole('button', { name: 'Save unassessed declaration' })); await screen.findByText(/Declaration outcome recorded for revision/)
