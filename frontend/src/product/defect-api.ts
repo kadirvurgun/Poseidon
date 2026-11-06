@@ -55,7 +55,7 @@ export function decodeDefectCapabilities(value: unknown, vessel: string): Defect
 }
 export function decodeDefectAssetContext(value: unknown, vessel: string, id: string, revision?: number, expected?: DefectAssetPin): DefectAssetContext {
   if (!exact(value, ['vesselId', 'pin', 'current', 'qualification', 'provenance', 'savedAt', 'asset', 'href']) || value.vesselId !== vessel || !validDefectAssetPin(value.pin) || value.pin.id !== id || revision !== undefined && value.pin.revision !== revision || expected && (value.pin.id !== expected.id || value.pin.revision !== expected.revision || value.pin.version !== expected.version || value.pin.hash !== expected.hash) || value.current !== true || value.qualification !== 'REVIEW_REQUIRED' || !text(value.provenance) || !timestamp(value.savedAt) || !exact(value.asset, ['code', 'name', 'level', 'criticality', 'maker', 'model', 'location']) || (typeof value.asset.level !== 'string' || !['System', 'Equipment', 'Component'].includes(value.asset.level)) || value.href !== '/app/equipment-hierarchy/' + vessel + '?id=' + id) fail()
-  for (const key of ['code', 'name', 'criticality', 'maker', 'model', 'location']) if (value.asset[key] !== null && !text(value.asset[key], 4096)) fail()
+  for (const key of ['code', 'name', 'criticality', 'maker', 'model', 'location']) { const entry = value.asset[key]; if (entry !== null && !(typeof entry === 'string' && entry.length <= 4096 && !/\p{Cc}/u.test(entry))) fail() }
   return value as DefectAssetContext
 }
 function history(value: unknown, vessel: string, offset: number, id?: string): DefectHistory {
