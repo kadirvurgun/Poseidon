@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using Poseidon.Api;
@@ -54,7 +55,15 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Equal(HttpStatusCode.Forbidden, (await client.GetAsync(DefectAssetPath(SeedVessel.Id), Ct)).StatusCode);
         EnableDefectContext(host.Services);
         var foreign = seed.Vessels.First(v => v.TenantId != SeedVessel.TenantId);
-        Assert.Equal(HttpStatusCode.NotFound, (await client.GetAsync(DefectAssetPath(SeedVessel.Id, foreign.Id), Ct)).StatusCode);
+        // TechnicalFixtures creates a real root asset with the vessel UUID in
+        // each tenant. Prove existence before checking isolation: a random or
+        // mismatched nonexistent asset would make this denial vacuous.
+        await using (var foreignDb = Db(foreign.TenantId))
+            Assert.True(await foreignDb.Assets.AnyAsync(a => a.VesselId == foreign.Id && a.Id == foreign.Id, Ct));
+        using var foreignContext = await client.GetAsync(DefectAssetPath(foreign.Id, foreign.Id), Ct);
+        Assert.Equal(HttpStatusCode.NotFound, foreignContext.StatusCode);
+        Assert.DoesNotContain("pin", await foreignContext.Content.ReadAsStringAsync(Ct));
+        Assert.Equal(HttpStatusCode.NotFound, (await client.GetAsync(DefectAssetPath(foreign.Id), Ct)).StatusCode);
         foreach (var suffix in new[] { "?tenantId=" + foreign.TenantId, "?revision=1&revision=1", "?revision=0", "?revision=-1", "?revision=1&actorId=" + SeedVessel.Id })
             Assert.Equal(HttpStatusCode.BadRequest, (await client.GetAsync(DefectAssetPath(SeedVessel.Id) + suffix, Ct)).StatusCode);
         var settings = host.Services.GetRequiredService<FederationSettings>(); var member = settings.Memberships[0];
