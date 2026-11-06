@@ -2,7 +2,7 @@
 // asset-reliability schema and does not grant a safety decision workflow.
 export const defectGroups = [
   { en: 'Declaration and failure context', tr: 'Beyan ve arıza bağlamı', fields: [
-    { key: 'defect_no', en: 'Defect number', tr: 'Kusur numarası' },
+    { key: 'defect_no', en: 'Defect number', tr: 'Arıza numarası' },
     { key: 'record_datetime', en: 'Declared record time', tr: 'Beyan edilen kayıt zamanı' },
     { key: 'criticality', en: 'Declared criticality', tr: 'Beyan edilen kritiklik' },
     { key: 'lifecycle_stage', en: 'Declared workflow phase', tr: 'Beyan edilen iş akışı aşaması' },
