@@ -11,6 +11,7 @@ import { SystemHealthWorkspace } from './product/SystemHealthWorkspace'
 import { NotificationWorkspace } from './product/NotificationWorkspace'
 import { ShipOperationsWorkspace } from './product/ShipOperationsWorkspace'
 import { CertificateWorkspace } from './product/CertificateWorkspace'
+import { DefectWorkspace } from './product/DefectWorkspace'
 
 type Language = 'tr' | 'en'
 type Connection = 'loading' | 'available' | 'error'
@@ -53,6 +54,7 @@ export function App() {
   if (importer) return <ImportWorkspace key={importer[1]} vessel={importer[1]} />
   if (/^\/app\/tug-(command|job-board|job-intake|job-detail)(?:\/|$)/.test(window.location.pathname)) return <TugWorkspace />
   if (/^\/app\/(equipment-hierarchy|maintenance-plan)\//.test(window.location.pathname)) return <TechnicalWorkspace />
+  if (/^\/app\/defects(?:\/|$)/.test(window.location.pathname)) return <DefectWorkspace />
   const crew = /^\/app\/crew-roster\/([0-9a-fA-F-]{36})(?:\/crew-profile\/([0-9a-fA-F-]{36}))?\/?$/.exec(window.location.pathname)
   if (crew) return <CrewWorkspace key={`${crew[1]}:${crew[2] ?? ''}`} vessel={crew[1]} assignment={crew[2]} />
   if (window.location.pathname === '/app' || window.location.pathname.startsWith('/app/')) return <ProductApp />

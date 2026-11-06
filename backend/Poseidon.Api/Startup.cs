@@ -168,6 +168,8 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapImports();
             endpoints.MapLegacyCrewImports();
             endpoints.MapTechnical();
+            endpoints.MapDefects();
+            endpoints.MapDefectAssetContexts();
             endpoints.MapMaintenanceObservations();
             endpoints.MapTug();
             endpoints.MapGet("/health/live", () => Results.Text("alive"))

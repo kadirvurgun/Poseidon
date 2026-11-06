@@ -1,5 +1,6 @@
 import { EnterpriseChrome } from './EnterpriseChrome'
 import { MaintenanceObservations } from './MaintenanceObservations'
+import { DefectEquipmentLaunch } from './DefectEquipmentLaunch'
 import { dueReason, dueState } from './maintenance-copy'
 import { useEffect, useRef, useState } from 'react'
 import { ApiError, session } from './api'
@@ -175,6 +176,7 @@ export function TechnicalWorkspace() {
           {route.id && !(route.plan ? plan : asset) && <p role="alert">{en ? 'The selected record is unavailable.' : 'Seçilen kayıt kullanılamıyor.'}</p>}
           {!route.id && !editor && <TechnicalEmptyDetail plan={route.plan} en={en} />}
           {!editor && asset && !route.plan && <EquipmentSummary asset={asset} en={en} />}
+          {!editor && asset && !route.plan && user && <DefectEquipmentLaunch session={user} vessel={route.vessel} assetId={asset.id} revision={asset.revision} language={language} disabled={dirty || observationDirty || busy || uncertain || observationUncertain || offline} onNavigate={href => guard(() => window.location.assign(href))} />}
           {!editor && plan && route.plan && <MaintenancePlanSummary plan={plan} asset={assets.items.find(asset => asset.id === plan.assetId)} references={refs} en={en} />}
           {(canWrite && !editor && (asset || plan) || canHistory && route.id) && <EnterpriseActions align="start" aria-label={en ? 'Record actions' : 'Kayıt işlemleri'}>{canWrite && !editor && (asset || plan) && <Button variant="outline" disabled={busy || uncertain || offline} onClick={() => start(false)}>{en ? 'Edit draft' : 'Taslağı düzenle'}</Button>}{canHistory && route.id && <Button variant="outline" onClick={loadHistory}>{en ? 'History' : 'Geçmiş'}</Button>}</EnterpriseActions>}
           {historyError && <p role="alert">{en ? 'History could not be loaded.' : 'Geçmiş yüklenemedi.'}</p>}

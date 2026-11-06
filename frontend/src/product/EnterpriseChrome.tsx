@@ -13,6 +13,7 @@ import { enterpriseFocusTargets } from './enterprise-focus'
 import './enterprise.css'
 
 const labels: Record<string, { tr: string; en: string; icon: LucideIcon; group: string }> = {
+  defects: { tr: 'Arızalar ve önlemler', en: 'Defects and safeguards', icon: Wrench, group: 'operations' },
   'fuel-bunker-log': { tr: 'Yakıt, ikmal ve ROB', en: 'Fuel, bunker and ROB', icon: Gauge, group: 'operations' },
   'port-activity-sof': { tr: 'Liman faaliyeti ve SOF', en: 'Port activity and SOF', icon: Anchor, group: 'operations' },
   'certificate-command-center': { tr: 'Sertifika merkezi', en: 'Certificate center', icon: FileCheck2, group: 'assurance' },

@@ -7,6 +7,7 @@ export type SearchPage = { items: SearchItem[]; offset: number; limit: number; h
 export const searchPageSize = 25
 export const searchMaxOffset = 100000
 const destinations: Readonly<Record<string, string>> = {
+  defects: '/app/defects',
   'fuel-bunker-log': '/app/fuel-bunker-log', 'port-activity-sof': '/app/port-activity-sof',
   'certificate-command-center': '/app/certificate-command-center', 'renewal-workflow': '/app/renewal-workflow',
   'noon-report': '/app/noon-report', 'deck-daily-log': '/app/deck-daily-log', 'engine-daily-log': '/app/engine-daily-log',
@@ -17,6 +18,7 @@ const destinations: Readonly<Record<string, string>> = {
   'notification-escalation': '/app/notification-escalation',
 }
 export const isSeparateWorkspaceDestination = (href: string) =>
+  href === '/app/defects' || /^\/app\/defects\/[0-9a-f-]{36}$/.test(href) ||
   href === '/app/fuel-bunker-log' || href === '/app/port-activity-sof' || /^\/app\/(fuel-bunker-log|port-activity-sof)\/[0-9a-f-]{36}$/.test(href) || href === '/app/certificate-command-center' || href === '/app/renewal-workflow' || /^\/app\/(certificate-command-center|renewal-workflow)\/[0-9a-f-]{36}$/.test(href) || href === '/app/noon-report' || href === '/app/deck-daily-log' || href === '/app/engine-daily-log' || /^\/app\/(noon-report|deck-daily-log|engine-daily-log)\/[0-9a-f-]{36}$/.test(href) || href === '/app/tug-command' || href === '/app/tug-job-board' || href === '/app/tug-job-intake' || href === '/app/system-health' || href === '/app/notification-escalation'
 const object = (value: unknown): value is Record<string, unknown> =>
   value !== null && typeof value === 'object' && !Array.isArray(value)
