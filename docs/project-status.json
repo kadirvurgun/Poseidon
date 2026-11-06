@@ -1009,7 +1009,7 @@
       "accepted": false
     }
   },
-  "as_of": "2026-11-05T21:15:16.398743Z",
+  "as_of": "2026-11-06T04:55:27.187698Z",
   "audit_trace_01": {
     "status": "combined_gate_executed_not_accepted",
     "accepted": false,
@@ -1114,7 +1114,7 @@
     "verification_record_scope": "Authored/deferred and original20f1198 results are historical;current rejection-repair evidence in core_bundle_01.verification"
   },
   "baseline": "POSEIDON v46.3 updated 2026-10-30 / Library26 candidate",
-  "current_stage": "S6 Fuel/Port kaynak geliştirmesi: bu pakette 2 iş / 21 SP; toplam seçili kapsam 8 iş / 79 SP, canonical S6 9 iş / 87 SP. DEV-102 (8 SP), DEV-055 / S8 bağımlılığı nedeniyle hazır değil. Seçim tamamlanma veya kabul değildir. Kabul 103 / 970 SP (%10,62), 20 / 121 iş, ayrı ekran kabulü 0; yeni doğrulama kapıları DEFERRED.",
+  "current_stage": "S6 DEV-102 bağımlılığı için S8 DEV-055 kaynak temeli: 1 iş / 13 SP seçildi; tam critical lifecycle veya kabul değildir. S6 seçili 8 iş / 79 SP, canonical 9 iş / 87 SP ve kabul 0 değişmedi. Genel kabul 103 / 970 SP (%10,62), 20 / 121 iş, ayrı ekran kabulü 0. Yeni ürün kapıları DEFERRED.",
   "method": "accepted story points / total baseline story points * 100",
   "scope": "complete v46.3 Backlog sheet; duplicates in other sheets excluded",
   "total_tasks": 121,
@@ -3942,167 +3942,119 @@
   ],
   "active_source": "docs/sources/active.json",
   "current_package": {
-    "task": "S6-SHIP-OPERATIONS-CONTINUATION-20261105",
+    "task": "S8-DEFECT-FOUNDATION-20261106",
     "state": "READY_FOR_ROOT_METADATA_APPLICATION_SOURCE_ONLY",
     "accepted": false,
     "accepted_story_points_added": 0,
-    "observed_at_utc": "2026-11-05T21:15:16.398743Z",
+    "observed_at_utc": "2026-11-06T04:55:27.187698Z",
     "branch": "foundation/s6-certificate-foundation-20261105",
-    "source_checkpoint": "69b2072bf73db6b4a055be3c155357bc37feda66",
-    "source_tree": "21ec1f1eb19649e870f11a156e96202aef273aaf",
+    "source_checkpoint": "dd46c369ce0380fc4bebbb389c4ca9c7cbaee08b",
+    "source_tree": "f66c815c1fc4da95e86bcd4c4c63ae10f2560e37",
     "checkpoint_is_final": true,
-    "base_commit": "ac06f7276805ed1e325b7102535753997fe43a13",
+    "base_commit": "b2a509336bab5ed2de46d29d13627e130ea298f2",
     "source_baseline": "poseidon-v46.3-20261030",
     "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
     "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-    "source_rows": [
-      101,
-      102
+    "tasks": [
+      {
+        "id": "DEV-055",
+        "title": "Critical defect lifecycle",
+        "sprint": "S8",
+        "story_points": 13,
+        "trace_id": "T-S8-004",
+        "source_status": "Not Started",
+        "source_locator": "sheet:Backlog/row:56",
+        "literal_acceptance_criteria": "Detect→Assess→Safeguard→Action→Verify→Effectiveness; critical defect without safeguard cannot close; temporary measure expiry monitored.",
+        "dependencies": [
+          "DEV-030",
+          "DEV-052"
+        ],
+        "accepted": false,
+        "state": "SOURCE_FOUNDATION_WITH_OPEN_CRITERIA_NOT_ACCEPTED"
+      }
     ],
-    "canonical_S6_scope": {
-      "tasks": 9,
-      "story_points": 87,
-      "accepted_story_points": 0
-    },
-    "current_selected_scope": {
-      "tasks": 2,
-      "story_points": 21,
+    "selected_scope": {
+      "tasks": 1,
+      "story_points": 13,
       "ids": [
-        "DEV-100",
-        "DEV-101"
+        "DEV-055"
       ],
       "is_completion_or_acceptance": false
     },
-    "previous_selected_scope": {
-      "tasks": 6,
-      "story_points": 58
+    "canonical_S8_scope": {
+      "tasks": 13,
+      "story_points": 124,
+      "accepted_story_points": 0
     },
-    "cumulative_selected_scope": {
-      "tasks": 8,
-      "story_points": 79,
-      "is_completion_or_acceptance": false
+    "S6_context": {
+      "canonical_tasks": 9,
+      "canonical_story_points": 87,
+      "accepted_story_points": 0,
+      "selected_tasks": 8,
+      "selected_story_points": 79,
+      "DEV102_selected_or_accepted_by_this_package": false,
+      "DEV102_verified_closure_and_full_gate_ready": false
     },
-    "unselected_not_dependency_ready": {
-      "id": "DEV-102",
-      "story_points": 8,
-      "dependency": "DEV-055",
-      "dependency_sprint": "S8",
-      "source_locator": "sheet:Backlog/row:56",
-      "state": "NOT_DEPENDENCY_READY"
-    },
-    "tasks": [
-      {
-        "id": "DEV-100",
-        "title": "Fuel, Bunker, BDN ve ROB kayıtlarını birleştir",
-        "sprint": "S6",
-        "story_points": 13,
-        "trace_id": "T-OPS2-004",
-        "source_locator": "sheet:Backlog/row:101",
-        "source_status": "Not Started",
-        "literal_acceptance_criteria": "Consumption/delivery/transfer/ROB; fuel type; supplier/BDN; quantity; sulphur/viscosity; discrepancy; compliance/verification/evidence; applicability-aware.",
-        "dependencies": [
-          "DEV-097",
-          "DEV-099",
-          "DEV-030"
-        ],
-        "accepted": false
-      },
-      {
-        "id": "DEV-101",
-        "title": "Port Activity & Statement of Facts kaydı",
-        "sprint": "S6",
-        "story_points": 8,
-        "trace_id": "T-OPS2-005",
-        "source_locator": "sheet:Backlog/row:102",
-        "source_status": "Not Started",
-        "literal_acceptance_criteria": "Structured event timeline; cargo/draught/tug/pilot/delay; Letter of Protest/evidence; voyage link; finalization; not Port OS.",
-        "dependencies": [
-          "DEV-097"
-        ],
-        "accepted": false
-      }
-    ],
-    "source_contracts": [
-      {
-        "path": "docs/tasks/S6-SHIP-OPERATIONS-DOMAIN-01.md",
-        "sha256": "6c78d24e8ee8c564d3d04f87d8b7ead8d37df2ebdd66b6309cd8b0d9c217ee6a"
-      },
-      {
-        "path": "docs/tasks/S6-SHIP-OPERATIONS-CORE-01.md",
-        "sha256": "7fd021cd567555320ab7f8fd2e9d90e030c44c11e6c02d3573fdf37161178e64"
-      },
-      {
-        "path": "docs/tasks/S6-SHIP-OPERATIONS-ORIGINS-01.md",
-        "sha256": "a5204f2f11ce701c6661a90f0b477545d818ca596bba4236d673f222ba1a4724"
-      },
-      {
-        "path": "docs/tasks/s6-ship-operations-ui-01.md",
-        "sha256": "14c39ecfe474f9b0bd040ef1f48c0147566b665fd82fe74ef9644c5e88e8791c"
-      },
-      {
-        "path": "contracts/ship-operations/ship-operations.draft.v1.json",
-        "sha256": "ac59e8afc05f46b27bc2b0b48314651524586d38a87b65bbe0d537db2c90f07b"
-      }
-    ],
-    "source_dictionary": {
+    "supporting_dictionary": {
       "path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
       "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
-      "rows": "2186-2225",
-      "total_fields": 40,
-      "Fuel": 22,
-      "Port": 18,
-      "readonly": 4,
-      "mutable": 36
+      "rows": "443-465",
+      "screen": "asset-reliability",
+      "supporting_rows_only": true,
+      "complete23field_screen_claimed": false,
+      "engineering_fact_count": 11
+    },
+    "source_contracts": [
+      {
+        "path": "docs/tasks/S8-DEFECT-DOMAIN-01.md",
+        "sha256": "2808a1b12cf923080638336d013b0712081db86ce9e8866ea4247c6a7a8a0ed2"
+      },
+      {
+        "path": "docs/tasks/S8-DEFECT-CORE-01.md",
+        "sha256": "a6362d7782dc0e70b6c53aa73b2a3d2a485c11c319e1d58d7a744b00514345dd"
+      },
+      {
+        "path": "docs/tasks/S8-DEFECT-CONTEXT-01.md",
+        "sha256": "0322aed2a897b84a8d4ef286af7107748e99ed494673402f5de44f055457f8f9"
+      },
+      {
+        "path": "docs/tasks/S8-DEFECT-UI-01.md",
+        "sha256": "91c1b43a418a7411715a35e76fc685ad6af89da1c045051f6481002602c39c85"
+      },
+      {
+        "path": "contracts/technical/defect.draft.v1.json",
+        "sha256": "461a945426371f20315776f50166ef4333d12649fab6dfa4794751a71dee20cf"
+      }
+    ],
+    "authored_checkpoints": {
+      "domain_checkpoint": "3252656",
+      "asset_context_checkpoint": "8d0bc55",
+      "context_navigation_checkpoint": "83fb997",
+      "core_checkpoint": "09c75847875cab91b86e62a514f957d5768d547d",
+      "UI_workspace_checkpoint": "98373d33bc6b5dad0a191d12bff401da591e037d"
+    },
+    "UI_workspace_integrated": true,
+    "genuine_case_sources": {
+      "count": 2,
+      "centrally_registered": true,
+      "registry_checkpoint": "dd46c369ce0380fc4bebbb389c4ca9c7cbaee08b",
+      "executed": false,
+      "private_fixture_provisioned": false
     },
     "source_behavior": [
-      "Domain/source policy checkpoint defines lexical Known/Missing/Unknown drafts, opaque lookup denial and explicit unresolved conditional review. Four server-owned fields are excluded from caller mutations.",
-      "Explicit *_mt and sulphur_pct % source labels do not approve legal thresholds or ranges; tank capacity/viscosity/density/cargo/draught units remain unapproved/null.",
-      "Root daily-origin reader pins actual Noon/Engine revisions and MVCC/hash/source, Ship-only current vessel/role fences and fresh exact SQL before/after attributed audit. Fuel uses Noon/Engine; Port uses Noon only. Read-only source context is shown; no source values are copied into target quantity fields, aggregated as mass or converted into another unit, and no operational approval is inferred.",
-      "Backend owning ledger/revisions/receipts/audited EF migration/optional incomplete synthetic fixtures and UI enterprise workspace were authored separately and source-integrated; runtime verification remains deferred."
+      "Eleven optional Known/Missing/Unknown engineering facts preserve source locators and lexical offset/narrative text. Literal Verify/Effectiveness remains unassessed capture; outer Stage DECLARATION and Qualification REVIEW_REQUIRED never authorize closure.",
+      "Temporal measure/deadline states compare exact explicit-offset instants at actual server time; equality is EXPIRED_DECLARED. Declared NOT_DUE is not effective safeguard, readiness or closure.",
+      "Actual current Asset head xmin plus exact immutable ContentJson hash establish new/changed pins. Context excludes explicit source Notes/role/user/serial members and does not fabricate committed historical xmin from preSave JSON.",
+      "Owning attributed EF head/revision/receipt ledger uses serializable SaveChanges, safe HTTP audit and same freshSQL returned/current-head/asset predicate composition, with live rights checks after awaits/audit.",
+      "Durable committed effect/facts/hash/OutcomeJson remain immutable, while separately assessed-at Temporal response metadata refreshes with current TimeProvider time on each delivery/replay. Whole response byte equality is not promised.",
+      "Same actor/key/body recovery, source expected versions, read-only history and optional incomplete SyntheticUnverified add-missing fixtures are source-authored. Fixture import is not activated and creates no user receipts or verified decisions."
     ],
-    "integration": {
-      "domain": true,
-      "backend": true,
-      "UI_workspace": true
-    },
-    "authored_checkpoints": {
-      "domain": "6bb244a",
-      "backend": "7f4c16b44ba0d21ebfc2e887a971170f1fd7aff0",
-      "UI_initial": "eb9ad03",
-      "UI_workspace": "78a0208dd4631817144bf0c8148c3386ebded3bb",
-      "root_origin": "556c6d8"
-    },
     "current_security_inventory": {
-      "mutation_templates": 109,
-      "critical_templates": 101,
-      "concrete_critical_operations": 111,
+      "mutation_templates": 111,
+      "critical_templates": 103,
+      "concrete_critical_operations": 113,
       "state": "SOURCE_DEFINITIONS_NOT_EXECUTED"
     },
-    "source_diff": {
-      "base": "ac06f7276805ed1e325b7102535753997fe43a13",
-      "files": 58,
-      "insertions": 2380,
-      "deletions": 18,
-      "is_completion_or_test_metric": false
-    },
-    "genuine_browser_case_sources": {
-      "count": 2,
-      "centrally_registered_at": "69b2072bf73db6b4a055be3c155357bc37feda66",
-      "executed": false,
-      "private_fixtures_provisioned": false
-    },
-    "metadata_only_followup_paths": [
-      ".agents/skills/poseidon-ui/SKILL.md"
-    ],
-    "open_criteria": [
-      "DEV102 is not dependency-ready: DEV055 critical defect lifecycle belongs to S8; bounded source discovery found no owning Defect/WorkOrder lifecycle implementation. Verified closure is not inferred from unrelated technical observations.",
-      "Known opaque voyage/port-call/port/supplier/tank/protest/evidence references remain unavailable; Missing/Unknown drafts are allowed. General evidence reading is not source-authorized ShipOps evidence adoption.",
-      "Conditional source AR cells are blank; approved unit/range/edit-transition/approval source cells remain unresolved. Conditional review blockers cannot be silently cleared.",
-      "Compliance, verification and SOF finalization are source-gated. Draft persistence creates neither legal compliance, verified evidence, FINAL state nor authorized human decisions.",
-      "Origin pins are engineering metadata outside the 40 source fields; current authorized daily declarations are not converted/copied into mass fields. The integrated source implementation preserves both current and historical owning source privacy checks; runtime behavior remains unverified.",
-      "No generic daily offline grant is reused. Independent field classification, purpose, retention, storage/key policy and dedicated admission remain unavailable.",
-      "Generated contract/model parity, backend/domain/real PostgreSQL, UI/component/browser, independent exact-target QA and CI must run only at actual larger PR preparation."
-    ],
     "verification": {
       "tests": "DEFERRED_NOT_RUN",
       "build": "DEFERRED_NOT_RUN",
@@ -4114,66 +4066,86 @@
       "CI": "DEFERRED_NOT_RUN",
       "independent_implementation_QA": "DEFERRED_NOT_RUN",
       "state": "DEFERRED_UNTIL_ACTUAL_LARGER_PR_GATE",
-      "reporter_role": "INDEPENDENT_SOURCE_PROGRESS_REPORTER_NOT_IMPLEMENTATION_QA",
-      "new_native_totals_accuracy_or_measured_coverage": false,
+      "reporter_role": "INDEPENDENT_SOURCE_PROGRESS_AND_BOUNDED_MANUAL_REVIEW_NOT_IMPLEMENTATION_QA",
+      "new_native_totals_measured_coverage_or_accuracy": false,
       "historical_evidence_retargeted": false,
       "provider_private_runtime_preview_or_PR_activated": false
     },
+    "open_criteria": [
+      "This is an incomplete DEV055 engineering declaration foundation, not the complete Detect/Assess/Safeguard/Action/Verify/Effectiveness lifecycle or accepted S8.",
+      "Approved Human authority, legal/source transitions, safeguard efficacy, operational restrictions, verification/effectiveness and closure/return-to-service policies remain unavailable. Literal Verify/Effectiveness declarations do not establish those decisions.",
+      "DD443-465 belongs to asset-reliability and supplies supporting rows only; the11-fact engineering subset does not implement the full23-field screen or silently adopt its unresolved required/lookup mappings.",
+      "Asset lineage is optional engineering metadata, not an approved physical mapping of asset_name or evidence adoption. Equipment read permission remains mandatory even when the pin is null.",
+      "New/changed asset links require current head revision/xmin and exact immutable JSON hash; historical embedded preSave Version is not a committed historical xmin. Already established historical pins require current owning scope.",
+      "DEV102 is outside this package. The new owning dependency source can support later engineering integration, but verified closure, WorkOrder/claim/evidence adoption and full S6 acceptance gates remain unresolved.",
+      "Dedicated offline field classification/purpose/retention/key/storage and admission remain unavailable; no generic offline grants or approved safety catalogs are activated.",
+      "Expiry observation is recomputed on reads and response delivery. This source package does not implement or activate a background expiry-notification scheduler.",
+      "All new generation/model/build/domain/API/real PostgreSQL/component/browser/independent exact-target QA/CI gates remain deferred until actual larger PR preparation."
+    ],
+    "bounded_independent_source_review": {
+      "receipt": ".runtime/s8-defect-foundation-20261106/status-drafts/independent-source-review.json",
+      "sha256": "6aa61e4bf497aabc4aa55c70da6ee63581dfcfecbb68288e4cb94b55fda3d234",
+      "state": "BOUNDED_SOURCE_REVIEW_WITH_SOURCE_CORRECTIONS_ONLY",
+      "findings": [
+        {
+          "id": "DEFECT-CONTEXT-FOREIGN-EXISTENCE-COVERAGE",
+          "severity": "P2 coverage gap (not product isolation failure)",
+          "original": "DefectAssetContextTests.cs55-57 used mismatched nonexisting asset ID, vacuous404",
+          "correction": "c1bea22",
+          "state": "SOURCE_CORRECTION_REVIEWED_ONLY",
+          "details": "Actual foreign seed root asset existence is asserted under foreign tenant Db; actual foreign asset/vessel and wrong-vessel foreign asset cases check404/no pin. No test executed."
+        },
+        {
+          "id": "DEFECT-COMMAND-ASSET-PRESENCE-CONTRACT",
+          "severity": "P2 source wire parity",
+          "original": "DefectEndpoints.cs22 Asset=null default lacks JsonRequired while contracts/technical/defect.draft.v1.json required includes asset. null allowed, omission differs.",
+          "state": "SOURCE_CORRECTION_REVIEWED_ONLY",
+          "reportedBy": "Reporter and root independently; core adding JsonRequired nullable defaultnull per root",
+          "correction": "09c75847875cab91b86e62a514f957d5768d547d",
+          "details": "JsonRequired added while Asset remains nullable/defaultnull. Authored missing-member400 test and existing explicit-null draft sources read, NOT RUN."
+        },
+        {
+          "id": "DEFECT-WRITER-CROSS-VESSEL-CREATE-COLLISION",
+          "severity": "P2 bounded object-scope response",
+          "original": "In-flight DefectWriter.cs17 classified create row!=null as409 before row.VesselId mismatch404 at18; same-tenant foreign-vessel record UUID exposed different collision behavior.",
+          "reportedBy": "Root manual source review; reporter confirmed original ordering from source",
+          "state": "SOURCE_CORRECTION_REVIEWED_ONLY",
+          "limits": "Not an unauthorized write or a claim of complete global UUID anti-enumeration. Correction read in 09c75847875cab91b86e62a514f957d5768d547d; actual API negative case authored, NOT RUN.",
+          "correction": "09c75847875cab91b86e62a514f957d5768d547d",
+          "details": "Foreign-vessel404 guard precedes create/own conflict classification. Authored actual other-vessel row negative case reads/no mutation assertions, NOT RUN."
+        }
+      ],
+      "implementationQAOrPASSOrAcceptance": false
+    },
     "derived_navigation_graph": {
       "state": "AST_ONLY_COMPLETED_NAVIGATION_NOT_QA",
-      "source_head": "69b2072bf73db6b4a055be3c155357bc37feda66",
-      "source_tree": "21ec1f1eb19649e870f11a156e96202aef273aaf",
+      "source_head": "dd46c369ce0380fc4bebbb389c4ca9c7cbaee08b",
+      "source_tree": "f66c815c1fc4da95e86bcd4c4c63ae10f2560e37",
       "mode": "AST_ONLY_NO_LLM_NO_API_COST",
       "exit_code_reported_by_root": 0,
-      "nodes": 17522,
-      "edges": 34464,
-      "communities": 1103,
+      "nodes": 17926,
+      "edges": 35465,
+      "communities": 1131,
       "zero_node_config_noncode_warnings": 731,
       "HTML": "SKIPPED_GT5000_THRESHOLD",
       "is_validation_test_build_or_securityQA": false
     },
-    "bounded_independent_source_review": {
-      "state": "NO_DEMONSTRATED_NEW_DEFECT_IN_BOUNDED_MANUAL_SOURCE_REVIEW",
-      "receipt": ".runtime/s6-ship-operations-20261105/status-drafts/root-origin-source-review.json",
-      "sha256": "44d97babb7131764046d8dd6e3d4959e1b4c2a79e7f7b589fba25b42a3010e41",
-      "implementationQAOrPASSOrCanonicalAcceptance": false,
-      "scope": "Root origin reader/launch and core owning privacy/currentness source at stated anchors; not full UI/future-module QA"
+    "source_diff": {
+      "base": "b2a509336bab5ed2de46d29d13627e130ea298f2",
+      "files": 55,
+      "insertions": 2195,
+      "deletions": 14,
+      "is_completion_or_test_metric": false
     },
-    "source_findings_and_corrections": [
-      {
-        "id": "SHIPOPS-CONFIRMED-RECEIPT-CANONICAL-ID-READBACK",
-        "state": "SOURCE_CORRECTION_REVIEWED_ONLY",
-        "origin": "Root manual source review; reporter also read the narrow save handler, not runtime discovery",
-        "path": "frontend/src/product/ShipOperationsWorkspace.tsx",
-        "line": 105,
-        "description": "Confirmed same-owner receipt only canonicalizes its actual record ID after a later current GET succeeds. A503/403 current read leaves an origin-only/list URL; hard refresh loses the actual record pointer and creates a new draft UUID. Canonicalize metadata immediately after confirmed receipt and post-session identity fence, while requiring a fresh current GET before editability.",
-        "correction_commit": "78a0208dd4631817144bf0c8148c3386ebded3bb",
-        "independent_correction_review": {
-          "state": "SOURCE_CORRECTION_REVIEWED_ONLY",
-          "reviewers": [
-            "Root, independent of UI author",
-            "/root/s6_independent_progress_report: narrow correction diff and canonical loader source re-read"
-          ],
-          "confirmed_source_behavior": [
-            "onCanonical(outcome.id) runs immediately after actual receipt plus same-owner post-session and component-scope fence, before any optional readback.",
-            "Canonical loader alone can hydrate the clean immutable receipt after current GET;503/403 readback retains the actual record ID and cannot revert to a new draft UUID.",
-            "Authored regression source simulates503 readback, component remount/hard refresh, later current read recovery and exactly one POST."
-          ],
-          "runtimeTestsOrFullImplementationQA": false,
-          "atUtc": "2026-11-05T21:11:56.516759+00:00"
-        },
-        "executedTestsOrRuntimeQA": false,
-        "finding_source_checkpoint": "dc4d32c918668e13dc7d0bfb1edb580712ba5cdc"
-      }
-    ],
-    "prior_S6_certificate_package_pointer": "/historical_s6_certificate_ac06_package",
-    "report": "docs/phases/S6-SHIP-OPERATIONS-CONTINUATION-20261105.md",
-    "next": "Continue open Fuel/Port acceptance-source work; review sources, dependencies and leases for the DEV055/S8 owning defect/work-order lifecycle before any DEV102 selection. Do not infer DEV055 readiness or canonical completion from this integrated source package. Run deferred gates only at actual larger PR preparation.",
+    "prior_S6_ship_operations_package_pointer": "/historical_s6_ship_operations_b2a5093_package",
+    "report": "docs/phases/S8-DEFECT-FOUNDATION-20261106.md",
+    "next": "Continue open defect/DEV102 engineering-source work with explicit source/dependency/lease selection. Do not infer verified closure, complete DEV055 lifecycle or accepted S6/S8. Execute deferred gates only at actual larger PR preparation.",
     "canonical_acceptance_changed": false,
+    "metadata_only_followup_paths": [],
     "root_notes": [
-      "Frozen ürün kaynağı 69b2072bf73db6b4a055be3c155357bc37feda66 / tree 21ec1f1eb19649e870f11a156e96202aef273aaf; ac06 bazına göre 58 dosya,+2380/-18 yalnız kaynak boyutudur, completion veya test metriği değildir.",
-      "İki yeni gerçek-host ShipOps journey kaynağı merkezi registry’ye kaydedildi; çalışmadı, prerequisite private fixtures provision edilmedi.",
-      "Root, frozen ürün checkpoint’inde clean worktree ve tracked whitespace exit0 bildirdi. Sonraki ayrı skill metadata öğrenimi ürün kaynak hedefini değiştirmez; kaynak hijyeni runtime QA kapısı değildir."
+      "Frozen product dd46c369ce0380fc4bebbb389c4ca9c7cbaee08b / tree f66c815c1fc4da95e86bcd4c4c63ae10f2560e37. b2a5093 bazına göre55 dosya,+2195/-14 yalnız kaynak boyutudur; completion veya test metriği değildir.",
+      "Root final source checkpoint için clean working tree ve tracked whitespace exit0 bildirdi; bu kontroller runtime QA yerine geçmez.",
+      "İki gerçek-host defect journey kaynağı merkezi registry’ye kaydedildi. Export sayısı source tanımıdır; runner çalışmadı, private fixture provision edilmedi."
     ]
   },
   "nav_workspace_01": {
@@ -9815,6 +9787,448 @@
       "Frozen ürün kaynağı 69b2072bf73db6b4a055be3c155357bc37feda66 / tree 21ec1f1eb19649e870f11a156e96202aef273aaf; ac06 bazına göre 58 dosya,+2380/-18 yalnız kaynak boyutudur, completion veya test metriği değildir.",
       "İki yeni gerçek-host ShipOps journey kaynağı merkezi registry’ye kaydedildi; çalışmadı, prerequisite private fixtures provision edilmedi.",
       "Root, frozen ürün checkpoint’inde clean worktree ve tracked whitespace exit0 bildirdi. Sonraki ayrı skill metadata öğrenimi ürün kaynak hedefini değiştirmez; kaynak hijyeni runtime QA kapısı değildir."
+    ]
+  },
+  "historical_s6_ship_operations_b2a5093_package": {
+    "task": "S6-SHIP-OPERATIONS-CONTINUATION-20261105",
+    "state": "READY_FOR_ROOT_METADATA_APPLICATION_SOURCE_ONLY",
+    "accepted": false,
+    "accepted_story_points_added": 0,
+    "observed_at_utc": "2026-11-05T21:15:16.398743Z",
+    "branch": "foundation/s6-certificate-foundation-20261105",
+    "source_checkpoint": "69b2072bf73db6b4a055be3c155357bc37feda66",
+    "source_tree": "21ec1f1eb19649e870f11a156e96202aef273aaf",
+    "checkpoint_is_final": true,
+    "base_commit": "ac06f7276805ed1e325b7102535753997fe43a13",
+    "source_baseline": "poseidon-v46.3-20261030",
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "source_rows": [
+      101,
+      102
+    ],
+    "canonical_S6_scope": {
+      "tasks": 9,
+      "story_points": 87,
+      "accepted_story_points": 0
+    },
+    "current_selected_scope": {
+      "tasks": 2,
+      "story_points": 21,
+      "ids": [
+        "DEV-100",
+        "DEV-101"
+      ],
+      "is_completion_or_acceptance": false
+    },
+    "previous_selected_scope": {
+      "tasks": 6,
+      "story_points": 58
+    },
+    "cumulative_selected_scope": {
+      "tasks": 8,
+      "story_points": 79,
+      "is_completion_or_acceptance": false
+    },
+    "unselected_not_dependency_ready": {
+      "id": "DEV-102",
+      "story_points": 8,
+      "dependency": "DEV-055",
+      "dependency_sprint": "S8",
+      "source_locator": "sheet:Backlog/row:56",
+      "state": "NOT_DEPENDENCY_READY"
+    },
+    "tasks": [
+      {
+        "id": "DEV-100",
+        "title": "Fuel, Bunker, BDN ve ROB kayıtlarını birleştir",
+        "sprint": "S6",
+        "story_points": 13,
+        "trace_id": "T-OPS2-004",
+        "source_locator": "sheet:Backlog/row:101",
+        "source_status": "Not Started",
+        "literal_acceptance_criteria": "Consumption/delivery/transfer/ROB; fuel type; supplier/BDN; quantity; sulphur/viscosity; discrepancy; compliance/verification/evidence; applicability-aware.",
+        "dependencies": [
+          "DEV-097",
+          "DEV-099",
+          "DEV-030"
+        ],
+        "accepted": false
+      },
+      {
+        "id": "DEV-101",
+        "title": "Port Activity & Statement of Facts kaydı",
+        "sprint": "S6",
+        "story_points": 8,
+        "trace_id": "T-OPS2-005",
+        "source_locator": "sheet:Backlog/row:102",
+        "source_status": "Not Started",
+        "literal_acceptance_criteria": "Structured event timeline; cargo/draught/tug/pilot/delay; Letter of Protest/evidence; voyage link; finalization; not Port OS.",
+        "dependencies": [
+          "DEV-097"
+        ],
+        "accepted": false
+      }
+    ],
+    "source_contracts": [
+      {
+        "path": "docs/tasks/S6-SHIP-OPERATIONS-DOMAIN-01.md",
+        "sha256": "6c78d24e8ee8c564d3d04f87d8b7ead8d37df2ebdd66b6309cd8b0d9c217ee6a"
+      },
+      {
+        "path": "docs/tasks/S6-SHIP-OPERATIONS-CORE-01.md",
+        "sha256": "7fd021cd567555320ab7f8fd2e9d90e030c44c11e6c02d3573fdf37161178e64"
+      },
+      {
+        "path": "docs/tasks/S6-SHIP-OPERATIONS-ORIGINS-01.md",
+        "sha256": "a5204f2f11ce701c6661a90f0b477545d818ca596bba4236d673f222ba1a4724"
+      },
+      {
+        "path": "docs/tasks/s6-ship-operations-ui-01.md",
+        "sha256": "14c39ecfe474f9b0bd040ef1f48c0147566b665fd82fe74ef9644c5e88e8791c"
+      },
+      {
+        "path": "contracts/ship-operations/ship-operations.draft.v1.json",
+        "sha256": "ac59e8afc05f46b27bc2b0b48314651524586d38a87b65bbe0d537db2c90f07b"
+      }
+    ],
+    "source_dictionary": {
+      "path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "rows": "2186-2225",
+      "total_fields": 40,
+      "Fuel": 22,
+      "Port": 18,
+      "readonly": 4,
+      "mutable": 36
+    },
+    "source_behavior": [
+      "Domain/source policy checkpoint defines lexical Known/Missing/Unknown drafts, opaque lookup denial and explicit unresolved conditional review. Four server-owned fields are excluded from caller mutations.",
+      "Explicit *_mt and sulphur_pct % source labels do not approve legal thresholds or ranges; tank capacity/viscosity/density/cargo/draught units remain unapproved/null.",
+      "Root daily-origin reader pins actual Noon/Engine revisions and MVCC/hash/source, Ship-only current vessel/role fences and fresh exact SQL before/after attributed audit. Fuel uses Noon/Engine; Port uses Noon only. Read-only source context is shown; no source values are copied into target quantity fields, aggregated as mass or converted into another unit, and no operational approval is inferred.",
+      "Backend owning ledger/revisions/receipts/audited EF migration/optional incomplete synthetic fixtures and UI enterprise workspace were authored separately and source-integrated; runtime verification remains deferred."
+    ],
+    "integration": {
+      "domain": true,
+      "backend": true,
+      "UI_workspace": true
+    },
+    "authored_checkpoints": {
+      "domain": "6bb244a",
+      "backend": "7f4c16b44ba0d21ebfc2e887a971170f1fd7aff0",
+      "UI_initial": "eb9ad03",
+      "UI_workspace": "78a0208dd4631817144bf0c8148c3386ebded3bb",
+      "root_origin": "556c6d8"
+    },
+    "current_security_inventory": {
+      "mutation_templates": 109,
+      "critical_templates": 101,
+      "concrete_critical_operations": 111,
+      "state": "SOURCE_DEFINITIONS_NOT_EXECUTED"
+    },
+    "source_diff": {
+      "base": "ac06f7276805ed1e325b7102535753997fe43a13",
+      "files": 58,
+      "insertions": 2380,
+      "deletions": 18,
+      "is_completion_or_test_metric": false
+    },
+    "genuine_browser_case_sources": {
+      "count": 2,
+      "centrally_registered_at": "69b2072bf73db6b4a055be3c155357bc37feda66",
+      "executed": false,
+      "private_fixtures_provisioned": false
+    },
+    "metadata_only_followup_paths": [
+      ".agents/skills/poseidon-ui/SKILL.md"
+    ],
+    "open_criteria": [
+      "DEV102 is not dependency-ready: DEV055 critical defect lifecycle belongs to S8; bounded source discovery found no owning Defect/WorkOrder lifecycle implementation. Verified closure is not inferred from unrelated technical observations.",
+      "Known opaque voyage/port-call/port/supplier/tank/protest/evidence references remain unavailable; Missing/Unknown drafts are allowed. General evidence reading is not source-authorized ShipOps evidence adoption.",
+      "Conditional source AR cells are blank; approved unit/range/edit-transition/approval source cells remain unresolved. Conditional review blockers cannot be silently cleared.",
+      "Compliance, verification and SOF finalization are source-gated. Draft persistence creates neither legal compliance, verified evidence, FINAL state nor authorized human decisions.",
+      "Origin pins are engineering metadata outside the 40 source fields; current authorized daily declarations are not converted/copied into mass fields. The integrated source implementation preserves both current and historical owning source privacy checks; runtime behavior remains unverified.",
+      "No generic daily offline grant is reused. Independent field classification, purpose, retention, storage/key policy and dedicated admission remain unavailable.",
+      "Generated contract/model parity, backend/domain/real PostgreSQL, UI/component/browser, independent exact-target QA and CI must run only at actual larger PR preparation."
+    ],
+    "verification": {
+      "tests": "DEFERRED_NOT_RUN",
+      "build": "DEFERRED_NOT_RUN",
+      "typecheck": "DEFERRED_NOT_RUN",
+      "lint": "DEFERRED_NOT_RUN",
+      "contract_generation": "DEFERRED_NOT_RUN",
+      "migration_model_parity": "DEFERRED_NOT_RUN",
+      "browser": "DEFERRED_NOT_RUN",
+      "CI": "DEFERRED_NOT_RUN",
+      "independent_implementation_QA": "DEFERRED_NOT_RUN",
+      "state": "DEFERRED_UNTIL_ACTUAL_LARGER_PR_GATE",
+      "reporter_role": "INDEPENDENT_SOURCE_PROGRESS_REPORTER_NOT_IMPLEMENTATION_QA",
+      "new_native_totals_accuracy_or_measured_coverage": false,
+      "historical_evidence_retargeted": false,
+      "provider_private_runtime_preview_or_PR_activated": false
+    },
+    "derived_navigation_graph": {
+      "state": "AST_ONLY_COMPLETED_NAVIGATION_NOT_QA",
+      "source_head": "69b2072bf73db6b4a055be3c155357bc37feda66",
+      "source_tree": "21ec1f1eb19649e870f11a156e96202aef273aaf",
+      "mode": "AST_ONLY_NO_LLM_NO_API_COST",
+      "exit_code_reported_by_root": 0,
+      "nodes": 17522,
+      "edges": 34464,
+      "communities": 1103,
+      "zero_node_config_noncode_warnings": 731,
+      "HTML": "SKIPPED_GT5000_THRESHOLD",
+      "is_validation_test_build_or_securityQA": false
+    },
+    "bounded_independent_source_review": {
+      "state": "NO_DEMONSTRATED_NEW_DEFECT_IN_BOUNDED_MANUAL_SOURCE_REVIEW",
+      "receipt": ".runtime/s6-ship-operations-20261105/status-drafts/root-origin-source-review.json",
+      "sha256": "44d97babb7131764046d8dd6e3d4959e1b4c2a79e7f7b589fba25b42a3010e41",
+      "implementationQAOrPASSOrCanonicalAcceptance": false,
+      "scope": "Root origin reader/launch and core owning privacy/currentness source at stated anchors; not full UI/future-module QA"
+    },
+    "source_findings_and_corrections": [
+      {
+        "id": "SHIPOPS-CONFIRMED-RECEIPT-CANONICAL-ID-READBACK",
+        "state": "SOURCE_CORRECTION_REVIEWED_ONLY",
+        "origin": "Root manual source review; reporter also read the narrow save handler, not runtime discovery",
+        "path": "frontend/src/product/ShipOperationsWorkspace.tsx",
+        "line": 105,
+        "description": "Confirmed same-owner receipt only canonicalizes its actual record ID after a later current GET succeeds. A503/403 current read leaves an origin-only/list URL; hard refresh loses the actual record pointer and creates a new draft UUID. Canonicalize metadata immediately after confirmed receipt and post-session identity fence, while requiring a fresh current GET before editability.",
+        "correction_commit": "78a0208dd4631817144bf0c8148c3386ebded3bb",
+        "independent_correction_review": {
+          "state": "SOURCE_CORRECTION_REVIEWED_ONLY",
+          "reviewers": [
+            "Root, independent of UI author",
+            "/root/s6_independent_progress_report: narrow correction diff and canonical loader source re-read"
+          ],
+          "confirmed_source_behavior": [
+            "onCanonical(outcome.id) runs immediately after actual receipt plus same-owner post-session and component-scope fence, before any optional readback.",
+            "Canonical loader alone can hydrate the clean immutable receipt after current GET;503/403 readback retains the actual record ID and cannot revert to a new draft UUID.",
+            "Authored regression source simulates503 readback, component remount/hard refresh, later current read recovery and exactly one POST."
+          ],
+          "runtimeTestsOrFullImplementationQA": false,
+          "atUtc": "2026-11-05T21:11:56.516759+00:00"
+        },
+        "executedTestsOrRuntimeQA": false,
+        "finding_source_checkpoint": "dc4d32c918668e13dc7d0bfb1edb580712ba5cdc"
+      }
+    ],
+    "prior_S6_certificate_package_pointer": "/historical_s6_certificate_ac06_package",
+    "report": "docs/phases/S6-SHIP-OPERATIONS-CONTINUATION-20261105.md",
+    "next": "Continue open Fuel/Port acceptance-source work; review sources, dependencies and leases for the DEV055/S8 owning defect/work-order lifecycle before any DEV102 selection. Do not infer DEV055 readiness or canonical completion from this integrated source package. Run deferred gates only at actual larger PR preparation.",
+    "canonical_acceptance_changed": false,
+    "root_notes": [
+      "Frozen ürün kaynağı 69b2072bf73db6b4a055be3c155357bc37feda66 / tree 21ec1f1eb19649e870f11a156e96202aef273aaf; ac06 bazına göre 58 dosya,+2380/-18 yalnız kaynak boyutudur, completion veya test metriği değildir.",
+      "İki yeni gerçek-host ShipOps journey kaynağı merkezi registry’ye kaydedildi; çalışmadı, prerequisite private fixtures provision edilmedi.",
+      "Root, frozen ürün checkpoint’inde clean worktree ve tracked whitespace exit0 bildirdi. Sonraki ayrı skill metadata öğrenimi ürün kaynak hedefini değiştirmez; kaynak hijyeni runtime QA kapısı değildir."
+    ]
+  },
+  "s8_defect_source_continuation_20261106": {
+    "task": "S8-DEFECT-FOUNDATION-20261106",
+    "state": "READY_FOR_ROOT_METADATA_APPLICATION_SOURCE_ONLY",
+    "accepted": false,
+    "accepted_story_points_added": 0,
+    "observed_at_utc": "2026-11-06T04:55:27.187698Z",
+    "branch": "foundation/s6-certificate-foundation-20261105",
+    "source_checkpoint": "dd46c369ce0380fc4bebbb389c4ca9c7cbaee08b",
+    "source_tree": "f66c815c1fc4da95e86bcd4c4c63ae10f2560e37",
+    "checkpoint_is_final": true,
+    "base_commit": "b2a509336bab5ed2de46d29d13627e130ea298f2",
+    "source_baseline": "poseidon-v46.3-20261030",
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "tasks": [
+      {
+        "id": "DEV-055",
+        "title": "Critical defect lifecycle",
+        "sprint": "S8",
+        "story_points": 13,
+        "trace_id": "T-S8-004",
+        "source_status": "Not Started",
+        "source_locator": "sheet:Backlog/row:56",
+        "literal_acceptance_criteria": "Detect→Assess→Safeguard→Action→Verify→Effectiveness; critical defect without safeguard cannot close; temporary measure expiry monitored.",
+        "dependencies": [
+          "DEV-030",
+          "DEV-052"
+        ],
+        "accepted": false,
+        "state": "SOURCE_FOUNDATION_WITH_OPEN_CRITERIA_NOT_ACCEPTED"
+      }
+    ],
+    "selected_scope": {
+      "tasks": 1,
+      "story_points": 13,
+      "ids": [
+        "DEV-055"
+      ],
+      "is_completion_or_acceptance": false
+    },
+    "canonical_S8_scope": {
+      "tasks": 13,
+      "story_points": 124,
+      "accepted_story_points": 0
+    },
+    "S6_context": {
+      "canonical_tasks": 9,
+      "canonical_story_points": 87,
+      "accepted_story_points": 0,
+      "selected_tasks": 8,
+      "selected_story_points": 79,
+      "DEV102_selected_or_accepted_by_this_package": false,
+      "DEV102_verified_closure_and_full_gate_ready": false
+    },
+    "supporting_dictionary": {
+      "path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "rows": "443-465",
+      "screen": "asset-reliability",
+      "supporting_rows_only": true,
+      "complete23field_screen_claimed": false,
+      "engineering_fact_count": 11
+    },
+    "source_contracts": [
+      {
+        "path": "docs/tasks/S8-DEFECT-DOMAIN-01.md",
+        "sha256": "2808a1b12cf923080638336d013b0712081db86ce9e8866ea4247c6a7a8a0ed2"
+      },
+      {
+        "path": "docs/tasks/S8-DEFECT-CORE-01.md",
+        "sha256": "a6362d7782dc0e70b6c53aa73b2a3d2a485c11c319e1d58d7a744b00514345dd"
+      },
+      {
+        "path": "docs/tasks/S8-DEFECT-CONTEXT-01.md",
+        "sha256": "0322aed2a897b84a8d4ef286af7107748e99ed494673402f5de44f055457f8f9"
+      },
+      {
+        "path": "docs/tasks/S8-DEFECT-UI-01.md",
+        "sha256": "91c1b43a418a7411715a35e76fc685ad6af89da1c045051f6481002602c39c85"
+      },
+      {
+        "path": "contracts/technical/defect.draft.v1.json",
+        "sha256": "461a945426371f20315776f50166ef4333d12649fab6dfa4794751a71dee20cf"
+      }
+    ],
+    "authored_checkpoints": {
+      "domain_checkpoint": "3252656",
+      "asset_context_checkpoint": "8d0bc55",
+      "context_navigation_checkpoint": "83fb997",
+      "core_checkpoint": "09c75847875cab91b86e62a514f957d5768d547d",
+      "UI_workspace_checkpoint": "98373d33bc6b5dad0a191d12bff401da591e037d"
+    },
+    "UI_workspace_integrated": true,
+    "genuine_case_sources": {
+      "count": 2,
+      "centrally_registered": true,
+      "registry_checkpoint": "dd46c369ce0380fc4bebbb389c4ca9c7cbaee08b",
+      "executed": false,
+      "private_fixture_provisioned": false
+    },
+    "source_behavior": [
+      "Eleven optional Known/Missing/Unknown engineering facts preserve source locators and lexical offset/narrative text. Literal Verify/Effectiveness remains unassessed capture; outer Stage DECLARATION and Qualification REVIEW_REQUIRED never authorize closure.",
+      "Temporal measure/deadline states compare exact explicit-offset instants at actual server time; equality is EXPIRED_DECLARED. Declared NOT_DUE is not effective safeguard, readiness or closure.",
+      "Actual current Asset head xmin plus exact immutable ContentJson hash establish new/changed pins. Context excludes explicit source Notes/role/user/serial members and does not fabricate committed historical xmin from preSave JSON.",
+      "Owning attributed EF head/revision/receipt ledger uses serializable SaveChanges, safe HTTP audit and same freshSQL returned/current-head/asset predicate composition, with live rights checks after awaits/audit.",
+      "Durable committed effect/facts/hash/OutcomeJson remain immutable, while separately assessed-at Temporal response metadata refreshes with current TimeProvider time on each delivery/replay. Whole response byte equality is not promised.",
+      "Same actor/key/body recovery, source expected versions, read-only history and optional incomplete SyntheticUnverified add-missing fixtures are source-authored. Fixture import is not activated and creates no user receipts or verified decisions."
+    ],
+    "current_security_inventory": {
+      "mutation_templates": 111,
+      "critical_templates": 103,
+      "concrete_critical_operations": 113,
+      "state": "SOURCE_DEFINITIONS_NOT_EXECUTED"
+    },
+    "verification": {
+      "tests": "DEFERRED_NOT_RUN",
+      "build": "DEFERRED_NOT_RUN",
+      "typecheck": "DEFERRED_NOT_RUN",
+      "lint": "DEFERRED_NOT_RUN",
+      "contract_generation": "DEFERRED_NOT_RUN",
+      "migration_model_parity": "DEFERRED_NOT_RUN",
+      "browser": "DEFERRED_NOT_RUN",
+      "CI": "DEFERRED_NOT_RUN",
+      "independent_implementation_QA": "DEFERRED_NOT_RUN",
+      "state": "DEFERRED_UNTIL_ACTUAL_LARGER_PR_GATE",
+      "reporter_role": "INDEPENDENT_SOURCE_PROGRESS_AND_BOUNDED_MANUAL_REVIEW_NOT_IMPLEMENTATION_QA",
+      "new_native_totals_measured_coverage_or_accuracy": false,
+      "historical_evidence_retargeted": false,
+      "provider_private_runtime_preview_or_PR_activated": false
+    },
+    "open_criteria": [
+      "This is an incomplete DEV055 engineering declaration foundation, not the complete Detect/Assess/Safeguard/Action/Verify/Effectiveness lifecycle or accepted S8.",
+      "Approved Human authority, legal/source transitions, safeguard efficacy, operational restrictions, verification/effectiveness and closure/return-to-service policies remain unavailable. Literal Verify/Effectiveness declarations do not establish those decisions.",
+      "DD443-465 belongs to asset-reliability and supplies supporting rows only; the11-fact engineering subset does not implement the full23-field screen or silently adopt its unresolved required/lookup mappings.",
+      "Asset lineage is optional engineering metadata, not an approved physical mapping of asset_name or evidence adoption. Equipment read permission remains mandatory even when the pin is null.",
+      "New/changed asset links require current head revision/xmin and exact immutable JSON hash; historical embedded preSave Version is not a committed historical xmin. Already established historical pins require current owning scope.",
+      "DEV102 is outside this package. The new owning dependency source can support later engineering integration, but verified closure, WorkOrder/claim/evidence adoption and full S6 acceptance gates remain unresolved.",
+      "Dedicated offline field classification/purpose/retention/key/storage and admission remain unavailable; no generic offline grants or approved safety catalogs are activated.",
+      "Expiry observation is recomputed on reads and response delivery. This source package does not implement or activate a background expiry-notification scheduler.",
+      "All new generation/model/build/domain/API/real PostgreSQL/component/browser/independent exact-target QA/CI gates remain deferred until actual larger PR preparation."
+    ],
+    "bounded_independent_source_review": {
+      "receipt": ".runtime/s8-defect-foundation-20261106/status-drafts/independent-source-review.json",
+      "sha256": "6aa61e4bf497aabc4aa55c70da6ee63581dfcfecbb68288e4cb94b55fda3d234",
+      "state": "BOUNDED_SOURCE_REVIEW_WITH_SOURCE_CORRECTIONS_ONLY",
+      "findings": [
+        {
+          "id": "DEFECT-CONTEXT-FOREIGN-EXISTENCE-COVERAGE",
+          "severity": "P2 coverage gap (not product isolation failure)",
+          "original": "DefectAssetContextTests.cs55-57 used mismatched nonexisting asset ID, vacuous404",
+          "correction": "c1bea22",
+          "state": "SOURCE_CORRECTION_REVIEWED_ONLY",
+          "details": "Actual foreign seed root asset existence is asserted under foreign tenant Db; actual foreign asset/vessel and wrong-vessel foreign asset cases check404/no pin. No test executed."
+        },
+        {
+          "id": "DEFECT-COMMAND-ASSET-PRESENCE-CONTRACT",
+          "severity": "P2 source wire parity",
+          "original": "DefectEndpoints.cs22 Asset=null default lacks JsonRequired while contracts/technical/defect.draft.v1.json required includes asset. null allowed, omission differs.",
+          "state": "SOURCE_CORRECTION_REVIEWED_ONLY",
+          "reportedBy": "Reporter and root independently; core adding JsonRequired nullable defaultnull per root",
+          "correction": "09c75847875cab91b86e62a514f957d5768d547d",
+          "details": "JsonRequired added while Asset remains nullable/defaultnull. Authored missing-member400 test and existing explicit-null draft sources read, NOT RUN."
+        },
+        {
+          "id": "DEFECT-WRITER-CROSS-VESSEL-CREATE-COLLISION",
+          "severity": "P2 bounded object-scope response",
+          "original": "In-flight DefectWriter.cs17 classified create row!=null as409 before row.VesselId mismatch404 at18; same-tenant foreign-vessel record UUID exposed different collision behavior.",
+          "reportedBy": "Root manual source review; reporter confirmed original ordering from source",
+          "state": "SOURCE_CORRECTION_REVIEWED_ONLY",
+          "limits": "Not an unauthorized write or a claim of complete global UUID anti-enumeration. Correction read in 09c75847875cab91b86e62a514f957d5768d547d; actual API negative case authored, NOT RUN.",
+          "correction": "09c75847875cab91b86e62a514f957d5768d547d",
+          "details": "Foreign-vessel404 guard precedes create/own conflict classification. Authored actual other-vessel row negative case reads/no mutation assertions, NOT RUN."
+        }
+      ],
+      "implementationQAOrPASSOrAcceptance": false
+    },
+    "derived_navigation_graph": {
+      "state": "AST_ONLY_COMPLETED_NAVIGATION_NOT_QA",
+      "source_head": "dd46c369ce0380fc4bebbb389c4ca9c7cbaee08b",
+      "source_tree": "f66c815c1fc4da95e86bcd4c4c63ae10f2560e37",
+      "mode": "AST_ONLY_NO_LLM_NO_API_COST",
+      "exit_code_reported_by_root": 0,
+      "nodes": 17926,
+      "edges": 35465,
+      "communities": 1131,
+      "zero_node_config_noncode_warnings": 731,
+      "HTML": "SKIPPED_GT5000_THRESHOLD",
+      "is_validation_test_build_or_securityQA": false
+    },
+    "source_diff": {
+      "base": "b2a509336bab5ed2de46d29d13627e130ea298f2",
+      "files": 55,
+      "insertions": 2195,
+      "deletions": 14,
+      "is_completion_or_test_metric": false
+    },
+    "prior_S6_ship_operations_package_pointer": "/historical_s6_ship_operations_b2a5093_package",
+    "report": "docs/phases/S8-DEFECT-FOUNDATION-20261106.md",
+    "next": "Continue open defect/DEV102 engineering-source work with explicit source/dependency/lease selection. Do not infer verified closure, complete DEV055 lifecycle or accepted S6/S8. Execute deferred gates only at actual larger PR preparation.",
+    "canonical_acceptance_changed": false,
+    "metadata_only_followup_paths": [],
+    "root_notes": [
+      "Frozen product dd46c369ce0380fc4bebbb389c4ca9c7cbaee08b / tree f66c815c1fc4da95e86bcd4c4c63ae10f2560e37. b2a5093 bazına göre55 dosya,+2195/-14 yalnız kaynak boyutudur; completion veya test metriği değildir.",
+      "Root final source checkpoint için clean working tree ve tracked whitespace exit0 bildirdi; bu kontroller runtime QA yerine geçmez.",
+      "İki gerçek-host defect journey kaynağı merkezi registry’ye kaydedildi. Export sayısı source tanımıdır; runner çalışmadı, private fixture provision edilmedi."
     ]
   }
 }

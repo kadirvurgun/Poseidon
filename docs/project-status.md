@@ -1,24 +1,25 @@
-# POSEIDON güncel durum — S6 Fuel / Port devamı
+# POSEIDON güncel durum — S8 kritik defect kaynak temeli
 
-**Genel kabul %10,62 — 103 / 970 SP, 20 / 121 iş; ayrı ekran kabulü 0 / 196.** S0/S1 kabul edildi. Yeni kaynak kodu ve seçilen SP, kabul yüzdesini artırmaz.
+**Genel kabul %10,62 — 103 / 970 SP, 20 / 121 iş; ayrı ekran kabulü 0 / 196.** S0/S1 kabulü değişmedi. Yeni kod veya seçilen SP kabul yüzdesi değildir.
 
-S6’nın Fuel/Bunker/BDN/ROB ve Port Activity/SOF bölümündeyiz. Bu devam paketi **2 iş / 21 SP**; önceki sertifika/OCR/Tug seçimiyle toplam seçili kapsam **8 iş / 79 SP**. Canonical S6 **9 iş / 87 SP**, kabul **0 / 87 SP**. Seçim kapsamı tamamlanma oranı değildir.
+S6’daki DEV-102 Downtime/LoH bağımlılığı için S8’deki **DEV-055 / T-S8-004, 1 iş / 13 SP** kaynak temeli yazıldı ve entegre edildi. Canonical S8 **13 iş / 124 SP**, kabul **0**. S6 seçili kapsam **8 iş / 79 SP**, canonical **9 iş / 87 SP**, kabul **0** olarak korunuyor.
 
-**DEV-102 Downtime/LoH (8 SP) bağımlılığı hazır değil:** özgün Backlog row56, DEV-055 critical defect lifecycle işini S8’de konumlandırıyor; DEV-102 bu işin owning uygulamasına bağımlı. Owning defect/work-order ve verified closure kaynağı sınırlı keşifte bulunmadı; bunlar mevcut varsayılamaz. Bu nedenle S6’nın tamamı kapanmış veya tamamlanmaya hazır gösterilmez.
+Bu paket full critical-defect lifecycle veya DEV-102 teslimi değildir. Owning defect declaration kaynağı artık var; doğrulanmış closure, WorkOrder/claim/evidence adoption ve full S6/S8 kapıları hâlâ açık. Önceki 'owning kaynak bulunmadı' gözlemi kendi b2a5093 tarihsel bağlamında aynen korunur.
 
-Kaynak `69b2072bf73db6b4a055be3c155357bc37feda66`, kayıt `2026-11-05T21:15:16.398743Z` (UTC). Final kaynak handoff’u kaydedildi; bu kayıt source-only metadata uygulaması içindir.
+Ürün kaynağı `dd46c369ce0380fc4bebbb389c4ca9c7cbaee08b`, kayıt `2026-11-06T04:55:27.187698Z` (UTC). Final source handoff’u kaydedildi; bu kayıt metadata uygulaması içindir, canonical kabul değildir.
 
-- Fuel 22 / Port 18 olmak üzere 40 özgün alanın sözleşmesi kaynak düzeyinde entegre; 4 server-owned alan çıkarılınca 36 alan düzenlenebilir. Known/Missing/Unknown ve lexical sayılar korunur; eksik taslak mümkündür.
-- Genel opaque voyage/port/supplier/tank/protest/evidence referansları Known yapılamaz. Conditional koşul kaynağı boşsa açık review blocker kalır. Yalnız açık `_mt` ve `sulphur_pct` % etiketleri gösterilir; diğer birimler ve hukuki eşikler uydurulmaz.
-- Gerçek Noon/Engine sürümünü pinleyen ayrı origin reader yazıldı; Ship vessel/rol sınırı, fresh SQL ve audit sonrası hak kontrolü kullanır. Origin, 40 alanın dışındaki lineage metadata’sıdır; kaynak bağlamını salt okunur gösterir, özet/ölçümleri hedef miktar alanlarına kopyalamaz veya mt’ye dönüştürmez. Fuel Noon/Engine, Port yalnız Noon bağlamını kullanır.
-- Owning kayıt/sürüm/geçmiş/exact receipt/audited EF ve kurumsal Fuel/Port form/timeline arayüzü ayrı agentlarca geliştirildi ve entegre edildi. Entegrasyon durumu canonical kayıtta açık tutulur; runtime doğrulaması yapılmadı.
+- 11 optional mühendislik fact’i Known/Missing/Unknown ile yazıldı. DD443–465 yalnız destekleyici asset-reliability kaynaklarıdır; tüm 23 alanın veya onaylı lifecycle’ın tamamlandığı iddia edilmez.
+- Literal lifecycle_stage=Verify/Effectiveness aynen tutulabilir; outer Stage DECLARATION, Qualification REVIEW_REQUIRED ve ClosureAvailable=false kalır. Yazılı safeguard veya NOT_DUE_DECLARED gözlemi etkin önlem/operasyon hazırlığı/onay değildir.
+- Yeni/değişen asset pini gerçek current head xmin + immutable JSON hash kullanır. Eski preSave JSON Version’dan historical committed xmin uydurulmaz; önceden kurulmuş eski pinler current scope altında korunur.
+- Owning EF head/revision/receipt, safe attributed HTTP+EF audit ve fresh SQL’de ortak returned/current-head/asset kontrolleri kaynakta entegre. Optional incomplete SyntheticUnverified fixture import’u aktive edilmedi; doğrulama veya user receipt seed edilmez.
+- Durable effect/facts/hash/OutcomeJson değişmez; Temporal.AssessedAt ve declared expiry gözlemi gerçek server clock ile her okuma/yanıt delivery’sinde tazelenir. Tüm response byte’larının aynı olduğu iddia edilmez. Background notification scheduler bu pakette uygulanmadı. Kurumsal UI workspace kaynak düzeyinde entegre; gözlenmiş visual/browser sonucu yok.
 
-**Yeni test/build/typecheck/lint/contract-generation/browser/CI: DEFERRED / NOT RUN.** Test kaynakları kodla birlikte yazılıyor; actual büyük PR hazırlanırken çalıştırılacak. Bu bağımsız ilerleme raporu implementation QA veya PASS değildir. 109 mutation template / 101 critical template / 111 operation yalnız kaynak envanteridir; PASS veya ölçülmüş coverage değildir.
+**Yeni test/build/typecheck/lint/contract-generation/browser/CI: DEFERRED / NOT RUN.** Anlamlı test kaynakları kodla birlikte yazıldı; actual büyük PR hazırlanırken çalıştırılacak. 111 mutation template / 103 critical template / 113 operation yalnız kaynak envanteridir; PASS veya ölçülmüş coverage değildir.
 
-İki yeni gerçek-host ShipOps journey kaynağı merkezi registry’ye eklendi; çalıştırılmadı ve required private fixtures provision edilmedi.
+İki gerçek-host defect journey kaynağı merkezi registry’ye kaydedildi; çalıştırılmadı ve gerekli private fixture provision edilmedi.
 
-Draft kaydı compliance/verification/finalization, Human onayı veya generic offline yetkisi üretmez. Kaynak geçiş matrisi, lookup/evidence bağları, conditional kuralları ve classification/purpose/retention/key/storage kapıları açık. Önceki S6 ürün hedefi e3e5c739 / metadataac06 ve tüm tarihsel kanıtlar aynen korunur. Yeni PR, preview/runtime/provider aktivasyonu yok.
+Dar bağımsız kaynak incelemesindeki üç gözlem düzeltme zinciriyle korunuyor: foreign test’in gerçek kayıt varlığını kanıtlaması, nullable asset üyesinin explicit-presence contract’ı ve foreign-vessel create collision’ın own-version conflict gibi sınıflanmaması. Düzeltmeler SOURCE_CORRECTION_REVIEWED_ONLY; implementation QA veya test PASS değildir.
 
-Sonraki adım açık Fuel/Port kabul kaynaklarını sürdürmek; DEV-102 seçilmeden önce DEV-055/S8 owning defect/work-order lifecycle için kaynak, bağımlılık ve lease seçimini değerlendirmek. Bu paket DEV-055’in hazır olduğunu göstermez. Generation/build/test/bağımsız exact-target QA/CI kapısı actual büyük PR hazırlığında çalışır.
+Human/evidence/transition/verification/effectiveness/closure/return-to-service ve dedicated offline classification/purpose/retention/key/storage kapıları açık. Yeni PR, private fixture/provider/runtime/preview aktivasyonu yok. Sonraki adım açık defect/DEV-102 kaynaklarını dependency/lease seçimiyle sürdürmek; tüm deferred kapıları actual büyük PR aşamasında çalıştırmak.
 
-[Fuel/Port kaynak fazı](phases/S6-SHIP-OPERATIONS-CONTINUATION-20261105.md) · [Önceki S6 sertifika kaynak paketi](phases/S6-CERTIFICATE-FOUNDATION-20261105.md) · [Canonical kayıt](project-status.json)
+[S8 defect kaynak fazı](phases/S8-DEFECT-FOUNDATION-20261106.md) · [Önceki Fuel/Port kaynak checkpoint’i](phases/S6-SHIP-OPERATIONS-CONTINUATION-20261105.md) · [Canonical kayıt](project-status.json)
