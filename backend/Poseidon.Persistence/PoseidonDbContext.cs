@@ -24,6 +24,9 @@ public sealed class PoseidonDbContext(
     public DbSet<ShipOperation> ShipOperations => Set<ShipOperation>();
     public DbSet<ShipOperationRevision> ShipOperationRevisions => Set<ShipOperationRevision>();
     public DbSet<ShipOperationReceipt> ShipOperationReceipts => Set<ShipOperationReceipt>();
+    public DbSet<Defect> Defects => Set<Defect>();
+    public DbSet<DefectRevision> DefectRevisions => Set<DefectRevision>();
+    public DbSet<DefectReceipt> DefectReceipts => Set<DefectReceipt>();
     public DbSet<Company> Companies => Set<Company>();
     public DbSet<Vessel> Vessels => Set<Vessel>();
     public DbSet<VesselProfile> VesselProfiles => Set<VesselProfile>();
@@ -214,6 +217,10 @@ public sealed class PoseidonDbContext(
         model.Entity<MaintenanceObservation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<MaintenanceObservationRevocation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         TechnicalStorage.Configure(model);
+        DefectStorage.Configure(model);
+        model.Entity<Defect>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<DefectRevision>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<DefectReceipt>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
         model.Entity<Asset>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<AssetRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<TechnicalOwner>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -471,6 +478,12 @@ public sealed class PoseidonDbContext(
              (DateTimeOffset)e.Property("ExpiresAt").CurrentValue! < (DateTimeOffset)e.Property("ExpiresAt").OriginalValue! ||
              e.Property("PublicKey").OriginalValue != null && !Equals(e.Property("PublicKey").OriginalValue,e.Property("PublicKey").CurrentValue)))))
             throw new InvalidOperationException("Daily offline ownership and key identity are immutable.");
+        if(changes.Any(e=>e.Entity is DefectRevision or DefectReceipt && e.State!=EntityState.Added))
+            throw new InvalidOperationException("Defect history and outcomes are immutable.");
+        if(changes.Any(e=>e.Entity is Defect && (e.State==EntityState.Deleted || e.State==EntityState.Modified &&
+            (e.Properties.Any(p=>p.IsModified && p.Metadata.Name is not("FieldsJson" or "AssetId" or "AssetRevision" or "AssetVersion" or "AssetHash" or "SourceVersion" or "Hash" or "Provenance" or "ActorId" or "SavedAt" or "Revision")) ||
+                (long)e.Property("Revision").CurrentValue! != (long)e.Property("Revision").OriginalValue!+1))))
+            throw new InvalidOperationException("Defect ownership is immutable; append one revision.");
         if(changes.Any(e=>e.Entity is ShipOperationRevision or ShipOperationReceipt && e.State!=EntityState.Added))
             throw new InvalidOperationException("Ship operation history and outcomes are immutable.");
         if(changes.Any(e=>e.Entity is ShipOperation && (e.State==EntityState.Deleted || e.State==EntityState.Modified &&
@@ -646,6 +659,9 @@ public sealed class PoseidonDbContext(
                         e.Entity.VesselId==certificateOutcome.VesselId && e.Entity.Id==certificateOutcome.RenewalId)?.Entity;
                     events[^1].AfterVersion=saved?.Version;events[^1].AfterRevision=saved?.Revision;
                 }
+            }
+            if(entry.Entity is DefectReceipt defectOutcome) {
+                events[^1].AfterVersion=checked((uint)defectOutcome.RecordVersion);events[^1].AfterRevision=defectOutcome.Revision;
             }
             if(entry.Entity is ShipOperationReceipt shipOutcome) {
                 var saved=ChangeTracker.Entries<ShipOperation>().SingleOrDefault(e=>e.State==EntityState.Unchanged && e.Entity.TenantId==shipOutcome.TenantId &&
