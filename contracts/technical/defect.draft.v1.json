@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "poseidon.defect.draft.v1",
+  "title": "Incomplete critical-defect declaration command",
+  "description": "Engineering capture for DEV-055/T-S8-004. Declaration stages never authorize a safeguard, verification, closure or return to service. Server owning records control actor, tenant, state and temporal projection.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "expectedVersion", "fields", "asset", "sourceVersion"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "expectedVersion": { "type": "integer", "minimum": 0, "maximum": 4294967295 },
+    "sourceVersion": { "const": "18.01:09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674:56;14.02:3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018:443-465:v46.3" },
+    "asset": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["id", "revision", "version", "hash"],
+          "properties": {
+            "id": { "type": "string", "format": "uuid" },
+            "revision": { "type": "integer", "minimum": 1 },
+            "version": { "type": "integer", "minimum": 1, "maximum": 4294967295 },
+            "hash": { "type": "string", "pattern": "^[A-F0-9]{64}$" }
+          }
+        }
+      ]
+    },
+    "fields": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "defect_no": { "$ref": "#/$defs/fact" },
+        "record_datetime": { "$ref": "#/$defs/instant" },
+        "criticality": { "$ref": "#/$defs/criticality" },
+        "failure_consequence": { "$ref": "#/$defs/narrative" },
+        "safeguard": { "$ref": "#/$defs/narrative" },
+        "restriction": { "$ref": "#/$defs/narrative" },
+        "temporary_measure": { "$ref": "#/$defs/narrative" },
+        "temporary_measure_expires_at": { "$ref": "#/$defs/instant" },
+        "action": { "$ref": "#/$defs/narrative" },
+        "lifecycle_stage": { "$ref": "#/$defs/stage" },
+        "notes": { "$ref": "#/$defs/narrative" }
+      }
+    }
+  },
+  "$defs": {
+    "uncertain": {
+      "type": "object", "additionalProperties": false, "required": ["state", "value"],
+      "properties": { "state": { "enum": ["Missing", "Unknown"] }, "value": { "type": "null" } }
+    },
+    "known": {
+      "type": "object", "additionalProperties": false, "required": ["state", "value"],
+      "properties": { "state": { "const": "Known" }, "value": { "type": "string", "minLength": 1, "maxLength": 256 } }
+    },
+    "fact": { "oneOf": [{ "$ref": "#/$defs/uncertain" }, { "$ref": "#/$defs/known" }] },
+    "instant": { "oneOf": [
+      { "$ref": "#/$defs/uncertain" },
+      { "allOf": [{ "$ref": "#/$defs/known" }, { "properties": { "value": { "format": "date-time", "maxLength": 40, "pattern": "(Z|[+-][0-9]{2}:[0-9]{2})$", "not": { "pattern": "-00:00$" } } } }] }
+    ] },
+    "narrative": { "oneOf": [
+      { "$ref": "#/$defs/uncertain" },
+      { "type": "object", "additionalProperties": false, "required": ["state", "value"],
+        "properties": { "state": { "const": "Known" }, "value": { "type": "string", "minLength": 1, "maxLength": 4000 } } }
+    ] },
+    "criticality": { "oneOf": [
+      { "$ref": "#/$defs/uncertain" },
+      { "allOf": [{ "$ref": "#/$defs/known" }, { "properties": { "value": { "enum": ["Critical", "High", "Medium", "Low"] } } }] }
+    ] },
+    "stage": { "oneOf": [
+      { "$ref": "#/$defs/uncertain" },
+      { "allOf": [{ "$ref": "#/$defs/known" }, { "properties": { "value": { "enum": ["Detect", "Assess", "Safeguard", "Action", "Verify", "Effectiveness"] } } }] }
+    ] }
+  }
+}
