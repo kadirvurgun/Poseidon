@@ -10,6 +10,7 @@ async function menu(page: Page) {
   return page.locator('#workspace-navigation')
 }
 const labels: Record<string, string> = {
+  'operational-downtime': 'Operational downtime',
   defects: 'Defects and safeguards', 'work-order-center': 'Work orders', 'fuel-bunker-log': 'Fuel, bunker and ROB', 'port-activity-sof': 'Port activity and SOF',
   'certificate-command-center': 'Certificate center', 'renewal-workflow': 'Certificate renewal', 'noon-report': 'Noon report', 'deck-daily-log': 'Deck daily log', 'engine-daily-log': 'Engine daily log',
   'system-health': 'System health', 'notification-escalation': 'Notifications',

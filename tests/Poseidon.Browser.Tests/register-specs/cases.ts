@@ -6,6 +6,7 @@ import { certificateCases } from './certificate-cases.ts'
 import { shipOperationsCases } from './ship-operations-cases.ts'
 import { defectCases } from './defect-cases.ts'
 import { workOrderCases } from './work-order-cases.ts'
+import { downtimeCases } from './downtime-cases.ts'
 import { enterpriseShellCases } from './enterprise-shell-cases.ts'
 import { crewCatalogCases } from './crew-catalog-cases.ts'
 import { regulatoryAdmissionCases } from './regulatory-admission-cases.ts'
@@ -133,6 +134,7 @@ export const registerCases = [
   ...shipOperationsCases,
   ...defectCases,
   ...workOrderCases,
+  ...downtimeCases,
   ...enterpriseShellCases,
   ...operationEquipmentCases,
   ...complianceInputCases,
