@@ -61,6 +61,13 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             return new(work_orderRevision.VesselId,work_orderRevision.WorkOrderId,"WorkOrderRevision",null,work_orderRevision.Revision,Fields(Field("Revision",null,Number(work_orderRevision.Revision)),Field("Binding",null,"OwnerReference")));
         if(entry.Entity is WorkOrderReceipt work_orderReceipt)
             return new(work_orderReceipt.VesselId,work_orderReceipt.WorkOrderId,"WorkOrderReceipt",null,work_orderReceipt.Revision,Fields(Field("Binding",null,"CommittedResource")));
+        if(entry.Entity is Downtime downtime)
+            return new(downtime.VesselId,downtime.Id,"Downtime",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,downtime.Revision,
+                Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(downtime.Revision)),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is DowntimeRevision downtimeRevision)
+            return new(downtimeRevision.VesselId,downtimeRevision.DowntimeId,"DowntimeRevision",null,downtimeRevision.Revision,Fields(Field("Revision",null,Number(downtimeRevision.Revision)),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is DowntimeReceipt downtimeReceipt)
+            return new(downtimeReceipt.VesselId,downtimeReceipt.DowntimeId,"DowntimeReceipt",null,downtimeReceipt.Revision,Fields(Field("Binding",null,"CommittedResource")));
         if(entry.Entity is ShipOperation shipOperation)
             return new(shipOperation.VesselId,shipOperation.Id,"ShipOperation",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,shipOperation.Revision,
                 Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(shipOperation.Revision)),Field("Binding",null,"OwnerReference")));

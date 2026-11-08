@@ -5340,6 +5340,34 @@ namespace Poseidon.Persistence.Migrations
                 b.HasOne("Poseidon.Persistence.WorkOrder",null).WithMany().HasForeignKey("TenantId","VesselId","WorkOrderId").HasPrincipalKey("TenantId","VesselId","Id").HasConstraintName("FK_WorkOrderReceipt_Head").OnDelete(DeleteBehavior.Restrict).IsRequired();
                 b.HasOne("Poseidon.Persistence.WorkOrderRevision",null).WithMany().HasForeignKey("TenantId","WorkOrderId","Revision","RecordVersion").HasPrincipalKey("TenantId","WorkOrderId","Revision","RecordVersion").HasConstraintName("FK_WorkOrderReceipt_Revision").OnDelete(DeleteBehavior.Restrict).IsRequired();
             });
+            modelBuilder.Entity("Poseidon.Persistence.Downtime",b=> {
+                b.Property<Guid>("TenantId").HasColumnType("uuid");b.Property<Guid>("VesselId").HasColumnType("uuid");b.Property<Guid>("Id").HasColumnType("uuid");
+                b.Property<long>("Revision").HasColumnType("bigint");b.Property<uint>("Version").IsConcurrencyToken().ValueGeneratedOnAddOrUpdate().HasColumnType("xid").HasColumnName("xmin");
+                b.Property<string>("FieldsJson").IsRequired().HasColumnType("text");b.Property<DateTimeOffset?>("StartedAt").HasColumnType("timestamp with time zone");b.Property<string>("OriginJson").HasColumnType("text");
+                b.Property<string>("SourceVersion").IsRequired().HasMaxLength(192).HasColumnType("character varying(192)");
+                b.Property<string>("Hash").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");b.Property<string>("Provenance").IsRequired().HasMaxLength(32).HasColumnType("character varying(32)");b.Property<Guid>("ActorId").HasColumnType("uuid");b.Property<DateTimeOffset>("SavedAt").HasColumnType("timestamp with time zone");
+                b.HasKey("TenantId","Id");b.HasAlternateKey("TenantId","VesselId","Id");b.HasIndex("TenantId","VesselId","SavedAt","Id");
+                b.ToTable("Downtimes","operations",t=>t.HasCheckConstraint("CK_Downtime_Draft","\"Revision\">0 AND \"Provenance\" IN ('UserDeclaredUnverified','SyntheticUnverified')"));
+                b.HasOne("Poseidon.Persistence.Vessel",null).WithMany().HasForeignKey("TenantId","VesselId").OnDelete(DeleteBehavior.Restrict).IsRequired();
+            });
+            modelBuilder.Entity("Poseidon.Persistence.DowntimeRevision",b=> {
+                b.Property<Guid>("TenantId").HasColumnType("uuid");b.Property<Guid>("VesselId").HasColumnType("uuid");b.Property<Guid>("DowntimeId").HasColumnType("uuid");
+                b.Property<long>("Revision").HasColumnType("bigint");b.Property<long>("RecordVersion").HasColumnType("bigint");b.Property<string>("FieldsJson").IsRequired().HasColumnType("text");
+                b.Property<string>("OriginJson").HasColumnType("text");
+                b.Property<string>("SourceVersion").IsRequired().HasMaxLength(192).HasColumnType("character varying(192)");b.Property<string>("Hash").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");
+                b.Property<string>("Provenance").IsRequired().HasMaxLength(32).HasColumnType("character varying(32)");b.Property<Guid>("ActorId").HasColumnType("uuid");b.Property<DateTimeOffset>("SavedAt").HasColumnType("timestamp with time zone");
+                b.HasKey("TenantId","DowntimeId","Revision");b.HasAlternateKey("TenantId","DowntimeId","Revision","RecordVersion").HasName("AK_DowntimeRevision_Version");b.HasIndex("TenantId","VesselId","DowntimeId");
+                b.ToTable("DowntimeRevisions","operations",t=>t.HasCheckConstraint("CK_DowntimeRevision_Draft","\"Revision\">0 AND \"RecordVersion\">0 AND \"Provenance\" IN ('UserDeclaredUnverified','SyntheticUnverified')"));
+                b.HasOne("Poseidon.Persistence.Downtime",null).WithMany().HasForeignKey("TenantId","VesselId","DowntimeId").HasPrincipalKey("TenantId","VesselId","Id").HasConstraintName("FK_DowntimeRevision_Head").OnDelete(DeleteBehavior.Restrict).IsRequired();
+            });
+            modelBuilder.Entity("Poseidon.Persistence.DowntimeReceipt",b=> {
+                b.Property<Guid>("TenantId").HasColumnType("uuid");b.Property<Guid>("VesselId").HasColumnType("uuid");b.Property<Guid>("ActorId").HasColumnType("uuid");b.Property<Guid>("DowntimeId").HasColumnType("uuid");
+                b.Property<string>("Key").IsRequired().HasMaxLength(80).HasColumnType("character varying(80)");b.Property<long>("Revision").HasColumnType("bigint");b.Property<long>("RecordVersion").HasColumnType("bigint");
+                b.Property<string>("Fingerprint").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");b.Property<string>("OutcomeJson").IsRequired().HasColumnType("text");b.Property<DateTimeOffset>("SavedAt").HasColumnType("timestamp with time zone");
+                b.HasKey("TenantId","ActorId","Key");b.HasIndex("TenantId","VesselId","DowntimeId");b.HasIndex("TenantId","DowntimeId","Revision","RecordVersion");b.ToTable("DowntimeReceipts","operations",t=>t.HasCheckConstraint("CK_DowntimeReceipt_Version","\"Revision\">0 AND \"RecordVersion\">0"));
+                b.HasOne("Poseidon.Persistence.Downtime",null).WithMany().HasForeignKey("TenantId","VesselId","DowntimeId").HasPrincipalKey("TenantId","VesselId","Id").HasConstraintName("FK_DowntimeReceipt_Head").OnDelete(DeleteBehavior.Restrict).IsRequired();
+                b.HasOne("Poseidon.Persistence.DowntimeRevision",null).WithMany().HasForeignKey("TenantId","DowntimeId","Revision","RecordVersion").HasPrincipalKey("TenantId","DowntimeId","Revision","RecordVersion").HasConstraintName("FK_DowntimeReceipt_Revision").OnDelete(DeleteBehavior.Restrict).IsRequired();
+            });
 #pragma warning restore 612, 618
         }
     }
