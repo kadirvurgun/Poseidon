@@ -5,6 +5,7 @@ export type LensItem = { key: string; href: string; group: 'daily' | 'review' }
 export type Lens = { reference: string; tr: string; en: string; items: LensItem[] }
 export type Lenses = { tenantId: string; actorId: string; vesselId: string | null; mode: 'Fleet' | 'Ship' | 'Tug'; state: 'Configured' | 'Missing' | 'Unavailable'; version: string | null; lenses: Lens[]; canSearch: boolean }
 export const lensLabels: Record<string, readonly [string, string]> = {
+  'operational-downtime': ['Operasyonel duruşlar', 'Operational downtime'],
   'work-order-center': ['İş emirleri', 'Work orders'],
   defects: ['Arızalar ve önlemler', 'Defects and safeguards'],
   'fuel-bunker-log': ['Yakıt, ikmal ve ROB', 'Fuel, bunker and ROB'], 'port-activity-sof': ['Liman faaliyeti ve SOF', 'Port activity and SOF'],
@@ -18,7 +19,7 @@ export const lensLabels: Record<string, readonly [string, string]> = {
 const root: Record<string, string> = { crew: 'crew-roster', equipment: 'equipment-hierarchy', maintenance: 'maintenance-plan', import: 'excel-migration' }
 export function lensHref(key: string, vessel: string | null) {
   if (!Object.hasOwn(lensLabels, key)) return null
-  if (['work-order-center', 'defects', 'fuel-bunker-log', 'port-activity-sof', 'noon-report', 'deck-daily-log', 'engine-daily-log', 'certificate-command-center', 'renewal-workflow'].includes(key)) return vessel ? `/app/${key}/${vessel}` : `/app/${key}`
+  if (['operational-downtime', 'work-order-center', 'defects', 'fuel-bunker-log', 'port-activity-sof', 'noon-report', 'deck-daily-log', 'engine-daily-log', 'certificate-command-center', 'renewal-workflow'].includes(key)) return vessel ? `/app/${key}/${vessel}` : `/app/${key}`
   if (Object.hasOwn(root, key)) return vessel ? `/app/${root[key]}/${vessel}` : null
   return `/app/${key}${vessel && key.startsWith('tug-') ? `?vessel=${vessel}` : vessel && key === 'today' ? `/${vessel}` : ''}`
 }
@@ -41,7 +42,7 @@ export function decodeLenses(value: unknown, tenant: string, actor: string, vess
       if (!object(item) || typeof item.key !== 'string' || !Object.hasOwn(lensLabels, item.key) || typeof item.href !== 'string' || items.some(x => x.key === item.key) ||
         item.href !== lensHref(item.key, vessel) || (item.group !== 'daily' && item.group !== 'review') ||
         item.group !== (['audit', 'sources', 'requirements', 'import', 'certificate-command-center', 'renewal-workflow'].includes(item.key) ? 'review' : 'daily') ||
-        (value.mode === 'Ship' && item.key.startsWith('tug-')) || (value.mode === 'Tug' && ['fuel-bunker-log', 'port-activity-sof'].includes(item.key))) invalid()
+        (value.mode === 'Ship' && item.key.startsWith('tug-')) || (value.mode === 'Tug' && ['fuel-bunker-log', 'port-activity-sof', 'operational-downtime'].includes(item.key))) invalid()
       items.push({ key: item.key, href: item.href as string, group: item.group })
     }
     lenses.push({ reference: row.reference.toLowerCase(), tr: row.tr, en: row.en, items })

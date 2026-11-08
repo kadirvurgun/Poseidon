@@ -96,6 +96,8 @@ public static class DailyOperationsEndpoints
                 destinations = [.. destinations,new("fuel-bunker-log",$"/app/fuel-bunker-log/{vessel:D}")];
             if (vesselKind == VesselKind.Ship && kind == "Noon" && ShipOperationsEndpoints.CanWrite(a,"Port",vessel))
                 destinations = [.. destinations,new("port-activity-sof",$"/app/port-activity-sof/{vessel:D}")];
+            if (vesselKind == VesselKind.Ship && kind == "Engine" && OperationalDowntimeEndpoints.CanWrite(a,vessel))
+                destinations = [.. destinations,new("operational-downtime",$"/app/operational-downtime/{vessel:D}")];
             result=new DailyCapabilitiesDto(vessel,kind,true,CanWrite(a,kind,vessel),canReview,false,DailyOperationsPolicy.Schema(kind),DailyOperationsPolicy.SourceVersion,Offline(h,a!,kind,vessel),destinations);
         } else if (history) {
             if (!await db.DailyOperations.AnyAsync(r=>r.VesselId==vessel && r.Kind==kind && r.Id==id,h.RequestAborted)) return await Fail(h,404,"resource_not_found");

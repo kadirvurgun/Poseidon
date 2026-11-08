@@ -19,6 +19,7 @@ export function vesselContextHref(path: string, vessel: string, kind: 'Ship' | '
   if (path === '/app/system-health') return `/app/system-health?vessel=${id}`
   if (path === '/app/notification-escalation') return `/app/notification-escalation?vessel=${id}`
   if (/^\/app\/today(?:\/|$)/.test(path)) return `/app/today/${id}`
+  if (/^\/app\/operational-downtime(?:\/|$)/.test(path)) return kind === 'Ship' ? `/app/operational-downtime/${id}` : `/app/fleet/${id}`
   const family = /^\/app\/(work-order-center|defects|crew-roster|equipment-hierarchy|maintenance-plan|excel-migration)(?:\/|$)/.exec(path)
   if (family) return `/app/${family[1]}/${id}`
   const tug = /^\/app\/(tug-command|tug-job-board|tug-job-intake)(?:\/|$)/.exec(path)

@@ -13,6 +13,7 @@ import { ShipOperationsWorkspace } from './product/ShipOperationsWorkspace'
 import { CertificateWorkspace } from './product/CertificateWorkspace'
 import { DefectWorkspace } from './product/DefectWorkspace'
 import { WorkOrderWorkspace } from './product/WorkOrderWorkspace'
+import { DowntimeWorkspace } from './product/DowntimeWorkspace'
 
 type Language = 'tr' | 'en'
 type Connection = 'loading' | 'available' | 'error'
@@ -57,6 +58,7 @@ export function App() {
   if (/^\/app\/(equipment-hierarchy|maintenance-plan)\//.test(window.location.pathname)) return <TechnicalWorkspace />
   if (/^\/app\/defects(?:\/|$)/.test(window.location.pathname)) return <DefectWorkspace />
   if (/^\/app\/work-order-center(?:\/|$)/.test(window.location.pathname)) return <WorkOrderWorkspace />
+  if (/^\/app\/operational-downtime(?:\/|$)/.test(window.location.pathname)) return <DowntimeWorkspace />
   const crew = /^\/app\/crew-roster\/([0-9a-fA-F-]{36})(?:\/crew-profile\/([0-9a-fA-F-]{36}))?\/?$/.exec(window.location.pathname)
   if (crew) return <CrewWorkspace key={`${crew[1]}:${crew[2] ?? ''}`} vessel={crew[1]} assignment={crew[2]} />
   if (window.location.pathname === '/app' || window.location.pathname.startsWith('/app/')) return <ProductApp />

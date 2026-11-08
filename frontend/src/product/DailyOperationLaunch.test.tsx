@@ -35,3 +35,14 @@ it('keeps Engine origins out of port events and rejects forged scoped capability
   expect(() => decodeDailyCapabilities({ ...caps, destinations: [{ ...destinations[0], href: destinations[0].href + '?actorId=forged' }] }, dailyVessel, 'Noon')).toThrow()
   expect(() => decodeDailyCapabilities({ ...dailyCapsFixture('Engine'), destinations: [destinations[1]] }, dailyVessel, 'Engine')).toThrow()
 })
+
+it('launches downtime only from the saved Engine context and rejects Noon or Deck capability injection', async () => {
+  const destination = { key: 'operational-downtime', href: `/app/operational-downtime/${dailyVessel}` }, navigate = vi.fn()
+  const engine = dailyRecordFixture('Engine')
+  render(<DailyOperationLaunch record={engine} destinations={[destination]} disabled={false} language="en" onNavigate={navigate} />)
+  await userEvent.click(screen.getByRole('button', { name: 'Open downtime record from saved source' }))
+  expect(navigate).toHaveBeenCalledWith(`${destination.href}?originKind=Engine&originId=${engine.id}&originRevision=${engine.revision}`)
+  expect(decodeDailyCapabilities({ ...dailyCapsFixture('Engine'), destinations: [destination] }, dailyVessel, 'Engine').destinations).toEqual([destination])
+  for (const kind of ['Noon', 'Deck'] as const)
+    expect(() => decodeDailyCapabilities({ ...dailyCapsFixture(kind), destinations: [destination] }, dailyVessel, kind)).toThrow()
+})

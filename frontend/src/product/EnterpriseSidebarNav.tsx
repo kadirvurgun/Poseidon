@@ -5,7 +5,7 @@ import { Button } from '../components/ui/button'
 export type SidebarDestination = { key: string; href: string; label: string; icon: LucideIcon }
 const sections = [
   { key: 'overview', tr: 'Genel bakış', en: 'Overview', keys: ['today', 'fleet'] },
-  { key: 'operations', tr: 'Gemi operasyonları', en: 'Ship operations', keys: ['noon-report', 'deck-daily-log', 'engine-daily-log', 'fuel-bunker-log', 'port-activity-sof'] },
+  { key: 'operations', tr: 'Gemi operasyonları', en: 'Ship operations', keys: ['noon-report', 'deck-daily-log', 'engine-daily-log', 'fuel-bunker-log', 'port-activity-sof', 'operational-downtime'] },
   { key: 'technical', tr: 'Teknik ve bakım', en: 'Technical and maintenance', keys: ['equipment', 'maintenance', 'defects', 'work-order-center'] },
   { key: 'crew', tr: 'Mürettebat', en: 'Crew management', keys: ['crew'] },
   { key: 'tug', tr: 'Römorkör operasyonları', en: 'Tug operations', keys: ['tug-command', 'tug-job-board', 'tug-job-intake'] },

@@ -172,6 +172,8 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapDefectAssetContexts();
             endpoints.MapWorkOrders();
             endpoints.MapWorkOrderPlanOrigins();
+            endpoints.MapOperationalDowntime();
+            endpoints.MapDowntimeOrigins();
             endpoints.MapMaintenanceObservations();
             endpoints.MapTug();
             endpoints.MapGet("/health/live", () => Results.Text("alive"))
