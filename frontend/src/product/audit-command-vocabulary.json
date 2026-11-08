@@ -1,6 +1,8 @@
 {
   "schemaVersion": "poseidon.s1-audit-vocabulary.v1",
   "operationReasons": {
+    "WorkOrderCreate": "PREPARATION_COMMAND",
+    "WorkOrderUpdate": "PREPARATION_COMMAND",
     "DefectCreate": "PREPARATION_COMMAND",
     "DefectUpdate": "PREPARATION_COMMAND",
     "CertificateExtractionConfirm": "PREPARATION_COMMAND",

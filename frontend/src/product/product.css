@@ -94,7 +94,7 @@
 .lifecycle-applicability textarea { width: 100%; }
 .lifecycle-applicability pre { white-space: pre-wrap; overflow-wrap: anywhere; }
 .lifecycle-applicability p, .lifecycle-applicability li, .lifecycle-applicability button, .lifecycle-applicability summary { overflow-wrap: anywhere; }
-.lifecycle-applicability button { min-height: 44px; max-width: 100%; white-space: normal; }
+.lifecycle-applicability button:not([data-slot="button"]) { min-height: 44px; max-width: 100%; white-space: normal; }
 .crew-shell { grid-template-columns: minmax(0, 1fr); }
 .crew-shell main { grid-column: 1; grid-row: 2; }
 .crew-shell .crew-enterprise-breadcrumbs { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem; }
@@ -111,7 +111,7 @@
 .control-evidence input, .control-evidence select, .control-evidence textarea { width: 100%; min-width: 0; max-width: 100%; min-height: 44px; box-sizing: border-box; padding: .6rem; font: inherit; }
 .control-evidence input[type=checkbox] { width: 1.5rem; }
 .control-evidence p, .control-evidence li, .control-evidence button, .control-evidence summary { overflow-wrap: anywhere; }
-.control-evidence button { min-height: 44px; max-width: 100%; white-space: normal; }
+.control-evidence button:not([data-slot="button"]) { min-height: 44px; max-width: 100%; white-space: normal; }
 .control-evidence :focus-visible { outline: 3px solid #126b94; outline-offset: 3px; }
 .control-evidence article { padding: 1rem; margin-block: 1rem; border: 1px solid #9eb3c0; }
 .human-review { border-block-start: 1px solid var(--border, #718096); margin-block-start: 1rem; padding-block-start: 1rem; min-width: 0; }

@@ -5,6 +5,7 @@ export type LensItem = { key: string; href: string; group: 'daily' | 'review' }
 export type Lens = { reference: string; tr: string; en: string; items: LensItem[] }
 export type Lenses = { tenantId: string; actorId: string; vesselId: string | null; mode: 'Fleet' | 'Ship' | 'Tug'; state: 'Configured' | 'Missing' | 'Unavailable'; version: string | null; lenses: Lens[]; canSearch: boolean }
 export const lensLabels: Record<string, readonly [string, string]> = {
+  'work-order-center': ['İş emirleri', 'Work orders'],
   defects: ['Arızalar ve önlemler', 'Defects and safeguards'],
   'fuel-bunker-log': ['Yakıt, ikmal ve ROB', 'Fuel, bunker and ROB'], 'port-activity-sof': ['Liman faaliyeti ve SOF', 'Port activity and SOF'],
   'certificate-command-center': ['Sertifika merkezi', 'Certificate center'], 'renewal-workflow': ['Sertifika yenileme', 'Certificate renewal'],
@@ -17,7 +18,7 @@ export const lensLabels: Record<string, readonly [string, string]> = {
 const root: Record<string, string> = { crew: 'crew-roster', equipment: 'equipment-hierarchy', maintenance: 'maintenance-plan', import: 'excel-migration' }
 export function lensHref(key: string, vessel: string | null) {
   if (!Object.hasOwn(lensLabels, key)) return null
-  if (['defects', 'fuel-bunker-log', 'port-activity-sof', 'noon-report', 'deck-daily-log', 'engine-daily-log', 'certificate-command-center', 'renewal-workflow'].includes(key)) return vessel ? `/app/${key}/${vessel}` : `/app/${key}`
+  if (['work-order-center', 'defects', 'fuel-bunker-log', 'port-activity-sof', 'noon-report', 'deck-daily-log', 'engine-daily-log', 'certificate-command-center', 'renewal-workflow'].includes(key)) return vessel ? `/app/${key}/${vessel}` : `/app/${key}`
   if (Object.hasOwn(root, key)) return vessel ? `/app/${root[key]}/${vessel}` : null
   return `/app/${key}${vessel && key.startsWith('tug-') ? `?vessel=${vessel}` : vessel && key === 'today' ? `/${vessel}` : ''}`
 }

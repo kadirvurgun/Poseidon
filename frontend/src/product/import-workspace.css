@@ -3,6 +3,6 @@
 .import-workspace section { padding-block: 1.5rem; border-block-end: 1px solid var(--line, #ccd3dc); }
 .import-workspace label { display: grid; gap: .4rem; margin-block: 1rem; max-width: 40rem; }
 .import-workspace select, .import-workspace input { width: 100%; min-height: 2.75rem; }
-.import-workspace button { min-height: 2.75rem; margin: .25rem; }
+.import-workspace button:not([data-slot="button"]) { min-height: 2.75rem; margin: .25rem; }
 .import-hash { overflow-wrap: anywhere; }
 .import-workspace [role=dialog] { position: fixed; inset: 25% 10% auto; padding: 2rem; background: var(--surface, white); border: 2px solid currentColor; z-index: 20; }

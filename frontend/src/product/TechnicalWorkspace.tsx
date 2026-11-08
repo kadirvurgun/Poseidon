@@ -1,6 +1,7 @@
 import { EnterpriseChrome } from './EnterpriseChrome'
 import { MaintenanceObservations } from './MaintenanceObservations'
 import { DefectEquipmentLaunch } from './DefectEquipmentLaunch'
+import { WorkOrderPlanLaunch } from './WorkOrderPlanLaunch'
 import { dueReason, dueState } from './maintenance-copy'
 import { useEffect, useRef, useState } from 'react'
 import { ApiError, session } from './api'
@@ -178,6 +179,7 @@ export function TechnicalWorkspace() {
           {!editor && asset && !route.plan && <EquipmentSummary asset={asset} en={en} />}
           {!editor && asset && !route.plan && user && <DefectEquipmentLaunch session={user} vessel={route.vessel} assetId={asset.id} revision={asset.revision} language={language} disabled={dirty || observationDirty || busy || uncertain || observationUncertain || offline} onNavigate={href => guard(() => window.location.assign(href))} />}
           {!editor && plan && route.plan && <MaintenancePlanSummary plan={plan} asset={assets.items.find(asset => asset.id === plan.assetId)} references={refs} en={en} />}
+          {!editor && plan && route.plan && user && <WorkOrderPlanLaunch session={user} vessel={route.vessel} planId={plan.id} revision={plan.revision} language={language} disabled={dirty || observationDirty || busy || uncertain || observationUncertain || offline} onNavigate={href => guard(() => window.location.assign(href))} />}
           {(canWrite && !editor && (asset || plan) || canHistory && route.id) && <EnterpriseActions align="start" aria-label={en ? 'Record actions' : 'Kayıt işlemleri'}>{canWrite && !editor && (asset || plan) && <Button variant="outline" disabled={busy || uncertain || offline} onClick={() => start(false)}>{en ? 'Edit draft' : 'Taslağı düzenle'}</Button>}{canHistory && route.id && <Button variant="outline" onClick={loadHistory}>{en ? 'History' : 'Geçmiş'}</Button>}</EnterpriseActions>}
           {historyError && <p role="alert">{en ? 'History could not be loaded.' : 'Geçmiş yüklenemedi.'}</p>}
           {!route.plan && route.id && user && !editor && loadedScope === `${route.vessel}:${route.plan}` && <MaintenanceObservations key={`${user.actorId}:${user.tenantId}:${user.csrfToken}:${route.vessel}:${route.id}`} vessel={route.vessel} asset={route.id} csrf={user.csrfToken} en={en} onDirty={setObservationDirty} onUncertain={setObservationUncertain} />}

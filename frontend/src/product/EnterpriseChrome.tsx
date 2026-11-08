@@ -14,6 +14,7 @@ import { EnterpriseSidebarNav } from './EnterpriseSidebarNav'
 import './enterprise.css'
 
 const labels: Record<string, { tr: string; en: string; icon: LucideIcon; group: string }> = {
+  'work-order-center': { tr: 'İş emirleri', en: 'Work orders', icon: ClipboardList, group: 'operations' },
   defects: { tr: 'Arızalar ve önlemler', en: 'Defects and safeguards', icon: Wrench, group: 'operations' },
   'fuel-bunker-log': { tr: 'Yakıt, ikmal ve ROB', en: 'Fuel, bunker and ROB', icon: Gauge, group: 'operations' },
   'port-activity-sof': { tr: 'Liman faaliyeti ve SOF', en: 'Port activity and SOF', icon: Anchor, group: 'operations' },
