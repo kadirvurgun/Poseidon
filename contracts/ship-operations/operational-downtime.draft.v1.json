@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "poseidon.operational-downtime.draft.v1",
+  "sourceVersion": "14.02:3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018:2226-2239:v46.3",
+  "definitionState": "AUTHORED_NOT_RUN_NOT_ACCEPTED",
+  "source": {
+    "baseline": "poseidon-v46.3-20261030",
+    "backlogSha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "backlogRow": 103, "task": "DEV-102", "traceId": "T-OPS2-006", "sprint": "S6", "storyPoints": 8,
+    "dependencies": ["DEV-055", "DEV-099"],
+    "dictionarySha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+    "dictionarySheet": "Data Dictionary 2316", "dictionaryRows": [2226, 2239], "vesselModeD": "Gemi",
+    "typeColumns": ["L", "M", "N"], "requiredColumns": ["Q", "AR"], "optionColumn": "T",
+    "defaultAO": "NO_DEFAULT_DECLARED", "approvedRangeUnitBB": null,
+    "approvedEditReadonlyBF_BG": null, "reviewBO": "REVIEW_REQUIRED", "approvalEvidenceBQ": null,
+    "mutableReferencesAS_AT": null
+  },
+  "api": "/api/v1/operational-downtime", "screen": "operational-downtime", "readCount": 14, "mutableCount": 11,
+  "fact": {"requiredMembers":["state","value"],"states":["Known","Missing","Unknown"],"knownValue":"Nonempty lexical string","missingUnknownValue":null,"additionalMembers":false},
+  "normalization": {"omittedMutableField":{"state":"Missing","value":null},"nullFact":"REJECT","readonlyOrUnknownKey":"REJECT","knownUnresolvedReference":"REJECT_DOWNTIME_LOOKUP_SOURCE_UNAVAILABLE","conditionalPredicate":"SOURCE_CONDITIONAL_UNRESOLVED","sourceOptionsAreApprovedCatalog":false},
+  "readonly": {
+    "vessel_id": "CURRENT_AUTHORIZED_SHIP",
+    "loss_of_hire_flag": {"state":"Unknown","value":null},
+    "closure_state": {"state":"Unknown","value":null}
+  },
+  "fields": [
+    {"key":"vessel_id","type":"Reference","row":2226,"required":true,"readOnly":true},
+    {"key":"voyage_id","type":"Reference","row":2227,"referenceUnavailable":true},
+    {"key":"downtime_type","type":"Code","row":2228,"required":true,"options":["Technical Failure","Planned Maintenance","Weather","Port Delay","Crew","Regulatory","Commercial","Other"]},
+    {"key":"start_at","type":"Instant","row":2229,"required":true},
+    {"key":"end_at","type":"Instant","row":2230},
+    {"key":"duration_minutes","type":"Number","row":2231,"unit":"min"},
+    {"key":"cause","type":"Narrative","row":2232,"required":true},
+    {"key":"linked_defect","type":"Reference","row":2233,"referenceUnavailable":true},
+    {"key":"linked_work_order","type":"Reference","row":2234,"referenceUnavailable":true},
+    {"key":"linked_event","type":"Reference","row":2235,"referenceUnavailable":true},
+    {"key":"operational_impact","type":"Narrative","row":2236,"required":true},
+    {"key":"loss_of_hire_flag","type":"Code","sourceTypeL":"State","row":2237,"options":["YES","NO","REVIEW_REQUIRED"],"readOnly":true},
+    {"key":"claim_evidence","type":"Reference","row":2238,"referenceUnavailable":true},
+    {"key":"closure_state","type":"Code","sourceTypeL":"State","row":2239,"required":true,"options":["OPEN","VERIFIED","CLOSED"],"readOnly":true}
+  ],
+  "fieldExpansion": "Absent required/readOnly/referenceUnavailable expands false; absent options expands []; absent unit expands null. Required source fields have requiredWhen null; all other fields retain SOURCE_CONDITIONAL_UNRESOLVED. Schema type Code on two server-only states describes lexical source options, never an editable or assessed state. Readonly Unknown states are not validated as a Known enum or silently defaulted.",
+  "technicalBounds": {
+    "textCharacters":512,"narrativeCharacters":4000,"numberCharacters":48,
+    "numberGrammar":"Optional minus, ASCII digits, optional dot plus digits; retain lexical sign, zeros and precision",
+    "numberBusinessPrecisionSignednessRange":"REVIEW_REQUIRED",
+    "dateSource":"L Date/Time; M Text; N varchar/text; explicit-offset instant is a recorded technical boundary",
+    "instantGrammar":"ISO date T hour:minute:second, optional 1-7 fractional digits, explicit Z or offset; -00:00 rejected",
+    "instantProjection":"UTC DateTimeOffset; original lexical offset retained; known end must be >= known start",
+    "declaredDuration":"Source label min only; never auto-computed, rounded, overridden, reconciled to end/start or converted to claim time"
+  },
+  "interval": {
+    "members":["state","elapsedTicks","unit","qualification"],"states":["KNOWN","UNAVAILABLE"],
+    "elapsedTicks":"Nonnegative invariant integer STRING only when both instants Known and ordered; otherwise null",
+    "unit":"tick","tickSeconds":"0.0000001","qualification":"UNASSESSED",
+    "purpose":"Read-only engineering observation from exact stored instants; not source duration_minutes, running-clock duration, legal hire period or Loss of Hire determination"
+  },
+  "origin": {
+    "requiredMembers":["kind","id","revision","version","hash","sourceVersion"],
+    "kinds":["Defect","WorkOrder","Engine"],"id":"nonempty UUID","revision":"positive int64",
+    "version":"positive actual uint32 owning concurrency token","hash":"exact immutable source revision hash",
+    "sourceVersion":"exact owning source revision contract","additionalMembers":false,
+    "meaning":"Optional engineering provenance outside DD fields; actual backend must prove same ship, exact revision, current permissions and current source on new pin. No copied facts or approved lookup equivalence."
+  },
+  "authority": {
+    "engineeringState":"DRAFT","qualification":"REVIEW_REQUIRED","clientMaySetVesselOrAssessmentState":false,
+    "offlineGrant":null,"submission":"UNAVAILABLE","verifiedClosure":"UNAVAILABLE_SOURCE_AND_HUMAN_WORKFLOW",
+    "lossOfHireDetermination":"UNAVAILABLE","claimEvidenceAdoption":"UNAVAILABLE","financialCalculation":false,
+    "incompleteDraftAllowed":true,"canonicalDependenciesAccepted":false
+  }
+}
