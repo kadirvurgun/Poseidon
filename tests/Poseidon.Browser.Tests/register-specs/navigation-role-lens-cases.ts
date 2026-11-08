@@ -1,3 +1,4 @@
+import { openWorkView, revealEnterpriseDestination } from './enterprise-shell-navigation.ts'
 import { expect, type Page } from '@playwright/test'
 
 // Genuine signed HTTPS host cases; no route fulfillment, invented login, provider
@@ -9,6 +10,9 @@ async function menu(page: Page) {
   return page.locator('#workspace-navigation')
 }
 const labels: Record<string, string> = {
+  defects: 'Defects and safeguards', 'work-order-center': 'Work orders', 'fuel-bunker-log': 'Fuel, bunker and ROB', 'port-activity-sof': 'Port activity and SOF',
+  'certificate-command-center': 'Certificate center', 'renewal-workflow': 'Certificate renewal', 'noon-report': 'Noon report', 'deck-daily-log': 'Deck daily log', 'engine-daily-log': 'Engine daily log',
+  'system-health': 'System health', 'notification-escalation': 'Notifications',
   today: 'Today', fleet: 'Fleet', companies: 'Companies', crew: 'Crew', equipment: 'Equipment',
   maintenance: 'Maintenance plans', import: 'Controlled import', audit: 'Action history',
   sources: 'Sources', requirements: 'Requirements', 'tug-command': 'Tug command',
@@ -16,10 +20,13 @@ const labels: Record<string, string> = {
 }
 async function expectPrimaryMenu(page: Page, items: { key: string; href: string }[]) {
   const primary = page.locator('#workspace-navigation')
-  await expect(primary.locator('.enterprise-nav-item')).toHaveCount(items.length)
-  for (const item of items) {
+  const response = await page.request.get('/api/v1/workspace'); expect(response.status()).toBe(200)
+  const utilities = (await response.json()).destinations.filter((item: { key: string }) => ['system-health', 'notification-escalation'].includes(item.key)) as { key: string; href: string }[]
+  const expected = [...items, ...utilities.filter(item => !items.some(candidate => candidate.key === item.key))]
+  await expect(primary.locator('.enterprise-nav-item')).toHaveCount(expected.length)
+  for (const item of expected) {
     expect(labels[item.key], `No controlled menu label for ${item.key}`).toBeTruthy()
-    await expect(primary.getByRole('button', { name: labels[item.key], exact: true })).toBeVisible()
+    await expect(await revealEnterpriseDestination(page, labels[item.key])).toBeVisible()
   }
 }
 async function projection(page: Page, vessel: string) {
@@ -46,7 +53,7 @@ async function sharedFamilies(page: Page) {
   ]) {
     const current = await projection(page, vessel)
     await page.goto(href); await english(page)
-    const region = await menu(page), select = region.getByRole('combobox', { name: 'Menu lens', exact: true })
+    const region = await openWorkView(page), select = region.getByRole('combobox', { name: 'Menu lens', exact: true })
     await expect(select).toHaveValue(current.lenses[0].reference)
     await expectPrimaryMenu(page, current.lenses[0].items)
     if (current.mode === 'Ship') expect(current.lenses.every(l => l.items.every(i => !i.key.startsWith('tug-')))).toBe(true)
@@ -66,16 +73,16 @@ async function realDirtyGuard(page: Page) {
   await page.getByRole('button', { name: 'Edit', exact: true }).click()
   const draft = 'FICTIONAL-UNSAVED-' + crypto.randomUUID()
   await page.getByLabel('Name *', { exact: true }).fill(draft)
-  let region = await menu(page)
+  let region = await openWorkView(page)
   await region.getByRole('combobox', { name: 'Menu lens', exact: true }).selectOption(daily!.reference)
-  await region.getByRole('button', { name: 'Crew', exact: true }).click()
+  await (await revealEnterpriseDestination(page, 'Crew')).click()
   const dialog = page.getByRole('dialog', { name: 'Discard the unsaved draft?', exact: true })
   await expect(dialog).toBeVisible()
   await dialog.getByRole('button', { name: 'Keep editing', exact: true }).click()
   await expect(page.getByLabel('Name *', { exact: true })).toHaveValue(draft)
   expect(new URL(page.url()).pathname === `/app/fleet/${ship.id}`).toBe(true)
   region = await menu(page)
-  await region.getByRole('button', { name: 'Crew', exact: true }).click()
+  await (await revealEnterpriseDestination(page, 'Crew')).click()
   await dialog.getByRole('button', { name: 'Discard draft', exact: true }).click()
   await expect(page).toHaveURL(new RegExp(`/app/crew-roster/${ship.id}$`))
   expect((await (await page.request.get(`/api/v1/vessels/${ship.id}`)).json()).name === draft).toBe(false)

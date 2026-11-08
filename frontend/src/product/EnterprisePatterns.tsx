@@ -10,8 +10,8 @@ export function EnterpriseSectionHeader({ title, description, actions, headingId
   return <div className="enterprise-section-header"><div className="enterprise-heading-copy"><h2 id={headingId}>{title}</h2>{description && <p>{description}</p>}</div>{actions && <div className="enterprise-heading-actions">{actions}</div>}</div>
 }
 
-export function EnterpriseActions({ children, align = 'end', ...props }: ComponentProps<'div'> & { align?: 'start' | 'end' | 'between' }) {
-  return <div {...props} role={props['aria-label'] ? 'group' : props.role} className={`enterprise-actions enterprise-actions-${align}${props.className ? ` ${props.className}` : ''}`}>{children}</div>
+export function EnterpriseActions({ children, align = 'end', layout = 'wrap', ...props }: ComponentProps<'div'> & { align?: 'start' | 'end' | 'between'; layout?: 'wrap' | 'form' }) {
+  return <div {...props} data-layout={layout} role={props['aria-label'] ? 'group' : props.role} className={`enterprise-actions enterprise-actions-${align}${props.className ? ` ${props.className}` : ''}`}>{children}</div>
 }
 
 export function EnterpriseToolbar({ children, ...props }: ComponentProps<'div'>) {

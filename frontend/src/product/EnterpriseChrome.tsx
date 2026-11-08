@@ -10,6 +10,7 @@ import type { RoleLensProjection } from './WorkspaceRoleNavigation'
 import { WorkspaceSearch } from './WorkspaceSearch'
 import { useEnterpriseNavigation } from './enterprise-navigation'
 import { enterpriseFocusTargets } from './enterprise-focus'
+import { EnterpriseSidebarNav } from './EnterpriseSidebarNav'
 import './enterprise.css'
 
 const labels: Record<string, { tr: string; en: string; icon: LucideIcon; group: string }> = {
@@ -57,6 +58,19 @@ export function EnterpriseChrome({ session, vessel = null, language, onLanguageC
   const searchOpen = searchOwner !== null && searchOwner.owner === session && !!session?.authenticated && session.canRead
   const move = (href: string, committed?: () => void) => { setDrawer(false); onNavigate(href, () => { setSearchOwner(null); committed?.() }) }
   useEffect(() => {
+    if (!drawer) return
+    const previous = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = previous }
+  }, [drawer])
+  useEffect(() => {
+    if (typeof window.matchMedia !== 'function') return
+    const desktop = window.matchMedia('(min-width: 901px)')
+    const closeOnDesktop = () => { if (desktop.matches) { setLocalDrawer(false); onDrawerChange?.(false) } }
+    desktop.addEventListener('change', closeOnDesktop)
+    return () => desktop.removeEventListener('change', closeOnDesktop)
+  }, [onDrawerChange])
+  useEffect(() => {
     if (!drawer || parentManagesFocus) return
     const trigger = menuButton.current
     const nav = document.getElementById('workspace-navigation'); const main = document.getElementById(mainId)
@@ -92,7 +106,7 @@ export function EnterpriseChrome({ session, vessel = null, language, onLanguageC
       <div className="enterprise-breadcrumb">{vessel && <Button variant="ghost" size="icon-sm" asChild><a href={`/app/fleet/${vessel}`} aria-label={en ? 'Back to vessel' : 'Araca dön'} onClick={event => { event.preventDefault(); move(`/app/fleet/${vessel}`) }}><ArrowLeft aria-hidden="true" /></a></Button>}<span>POSEIDON</span><ChevronRight aria-hidden="true" /><strong>{title}</strong></div>
       <div className="enterprise-topbar-actions">
         {navigation.canSearch && <Button variant="outline" className="enterprise-search-trigger" aria-label={en ? 'Search workspace' : 'Çalışma alanında ara'} onClick={() => { if (session) setSearchOwner({ owner: session }) }}><Search /><span>{en ? 'Search workspace' : 'Çalışma alanında ara'}</span><kbd>⌘ / Ctrl K</kbd></Button>}
-        <div className="languages" role="group" aria-label={en ? 'Language' : 'Dil'}><button aria-pressed={!en} onClick={() => onLanguageChange('tr')}>TR</button><button aria-pressed={en} onClick={() => onLanguageChange('en')}>EN</button></div>
+        <div className="languages" role="group" aria-label={en ? 'Language' : 'Dil'}><Button variant="ghost" size="sm" aria-pressed={!en} onClick={() => onLanguageChange('tr')}>TR</Button><Button variant="ghost" size="sm" aria-pressed={en} onClick={() => onLanguageChange('en')}>EN</Button></div>
       </div>
       <WorkspaceContextBar session={session} vessel={vessel} language={language} onNavigate={move} />
     </header>
@@ -100,14 +114,11 @@ export function EnterpriseChrome({ session, vessel = null, language, onLanguageC
     <nav id="workspace-navigation" className={`product-nav enterprise-sidebar ${drawer ? 'is-open' : ''}`} aria-label="POSEIDON" role={drawer ? 'dialog' : undefined} aria-modal={drawer ? true : undefined}>
       <div className="enterprise-brand-row"><a className="enterprise-brand" href="/app" aria-label="POSEIDON" onClick={event => { event.preventDefault(); move('/app') }}><span className="enterprise-brand-mark"><Waves aria-hidden="true" /></span><span>POSEIDON<small>MARITIME OPERATIONS</small></span></a>{drawer && <Button variant="ghost" size="icon" aria-label={en ? 'Close' : 'Kapat'} onClick={() => setDrawer(false)}><X /></Button>}</div>
       <div className="enterprise-nav-scroll">
-        <details className="enterprise-role-settings" open><summary>{en ? 'Work view' : 'Çalışma görünümü'}</summary><WorkspaceRoleNavigation session={session} vessel={vessel} language={language} onNavigate={move} embedded primary scopeEpoch={navigation.epoch} onProjection={projectLens} /></details>
-        {(['operations', 'assurance', 'workspace'] as const).map(group => {
-          const items = menuItems.filter(item => labels[item.key]?.group === group)
-          return items.length > 0 && <div className="enterprise-nav-group" key={group}><p>{group === 'operations' ? (en ? 'OPERATIONS' : 'OPERASYON') : group === 'assurance' ? (en ? 'ASSURANCE' : 'GÜVENCE') : (en ? 'WORKSPACE' : 'ÇALIŞMA ALANI')}</p>
-            {items.map(item => { const label = labels[item.key]; const Icon = label.icon
-              return <Button variant="ghost" className="enterprise-nav-item" key={item.key} aria-current={item.key === currentKey ? 'page' : undefined} onClick={() => move(item.href)}><Icon aria-hidden="true" /><span>{en ? label.en : label.tr}</span>{item.key === currentKey && <span className="enterprise-nav-indicator" />}</Button>
-            })}</div>
-        })}
+        <details className="enterprise-role-settings"><summary>{en ? 'Work view' : 'Çalışma görünümü'}</summary><WorkspaceRoleNavigation session={session} vessel={vessel} language={language} onNavigate={move} embedded primary scopeEpoch={navigation.epoch} onProjection={projectLens} /></details>
+        <EnterpriseSidebarNav key={`${session?.tenantId}:${session?.actorId}:${vessel}`} items={menuItems.flatMap(item => {
+          const label = labels[item.key]
+          return label ? [{ ...item, label: en ? label.en : label.tr, icon: label.icon }] : []
+        })} currentKey={currentKey} language={language} onNavigate={href => move(href)} />
         {navigation.loading && <div className="enterprise-nav-loading" role="status">{en ? 'Loading navigation…' : 'Menü yükleniyor…'}</div>}
         {navigation.failed && <div className="enterprise-nav-loading" role="status"><p>{en ? 'Navigation unavailable' : 'Menü kullanılamıyor'}</p><Button variant="ghost" onClick={navigation.retry}>{en ? 'Retry navigation' : 'Menüyü tekrar yükle'}</Button></div>}
         {currentLens && menuItems.length === 0 && <p className="enterprise-nav-loading" role="status">{en ? 'No available work in this lens and context.' : 'Bu mercek ve bağlamda kullanılabilir iş yok.'}</p>}

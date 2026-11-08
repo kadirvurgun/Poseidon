@@ -85,7 +85,7 @@ export function DirectoryEditor({ target, language, csrf, onDirty, onSaving, onC
   return <section className="directory-editor" aria-labelledby="editor-heading">
     <h2 id="editor-heading" ref={heading} tabIndex={-1}>{initial ? t.edit : t.create}</h2>
     <p>{t.requiredNote}</p>
-    <form noValidate onSubmit={e => void submit(e)} aria-busy={saving}>
+    <form noValidate aria-label={language === 'en' ? 'Directory record form' : 'Kayıt formu'} onSubmit={e => void submit(e)} aria-busy={saving}>
       <EnterpriseFormGrid disabled={saving || uncertain}>
         <EnterpriseField label={`${t.code} *`} htmlFor="dir-code"><input id="dir-code" value={code} maxLength={64} required aria-invalid={!!errors.code?.length} aria-describedby={errors.code?.length ? 'dir-code-error' : undefined} onChange={e => change('code', e.target.value)} />{fieldError('code')}</EnterpriseField>
         <EnterpriseField label={`${t.name} *`} htmlFor="dir-name"><input id="dir-name" value={name} maxLength={200} required aria-invalid={!!errors.name?.length} aria-describedby={errors.name?.length ? 'dir-name-error' : undefined} onChange={e => change('name', e.target.value)} />{fieldError('name')}</EnterpriseField>
@@ -98,8 +98,8 @@ export function DirectoryEditor({ target, language, csrf, onDirty, onSaving, onC
         </>}
       </EnterpriseFormGrid>
       {initial && 'kind' in initial && <p>{t.immutable} {initial.kind === 'Ship' ? t.ship : t.tug}</p>}
-      {failure && <div role="alert"><p>{errorText}</p>{failure.correlationId && <p>{t.reference}: <code>{failure.correlationId}</code></p>}{failure.code === 'version_conflict' && <button type="button" onClick={onReload}>{t.reload}</button>}</div>}
-      <EnterpriseActions aria-label={language === 'en' ? 'Form actions' : 'Form işlemleri'}><Button variant="outline" disabled={saving} onClick={onCancel}>{t.cancel}</Button><Button type="submit" disabled={saving || failure?.code === 'version_conflict'}>{saving ? t.saving : uncertain ? t.retry : t.save}</Button></EnterpriseActions>
+      {failure && <div role="alert"><p>{errorText}</p>{failure.correlationId && <p>{t.reference}: <code>{failure.correlationId}</code></p>}{failure.code === 'version_conflict' && <Button variant="outline" onClick={onReload}>{t.reload}</Button>}</div>}
+      <EnterpriseActions layout="form" aria-label={language === 'en' ? 'Form actions' : 'Form işlemleri'}><Button variant="outline" disabled={saving} onClick={onCancel}>{t.cancel}</Button><Button type="submit" disabled={saving || failure?.code === 'version_conflict'}>{saving ? t.saving : uncertain ? t.retry : t.save}</Button></EnterpriseActions>
     </form>
   </section>
 }

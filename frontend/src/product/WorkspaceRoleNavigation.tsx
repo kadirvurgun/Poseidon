@@ -1,3 +1,4 @@
+import { Button } from '../components/ui/button'
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import type { Session } from './directory-contract'
@@ -59,7 +60,7 @@ function RoleNavigation({ session, vessel = null, language, onNavigate, onSearch
   }, [data, onSearchOpen, session, embedded])
   return <section className="workspace-role-navigation" aria-label={en ? 'Role navigation' : 'Rol menüsü'}>
     {!embedded && <p>{en ? 'Menu lens changes presentation only.' : 'Menü merceği yalnızca görünümü değiştirir.'}</p>}
-    {!data ? <><span role={error ? 'alert' : 'status'}>{error ? (en ? 'Navigation unavailable.' : 'Menü kullanılamıyor.') : (en ? 'Navigation needs current online context.' : 'Menü için güncel çevrimiçi bağlam gerekli.')}</span><button type="button" disabled={!navigator.onLine} onClick={() => { setResult(null); retry(x => x + 1) }}>{en ? 'Reload menu' : 'Menüyü yeniden yükle'}</button></>
+    {!data ? <><span role={error ? 'alert' : 'status'}>{error ? (en ? 'Navigation unavailable.' : 'Menü kullanılamıyor.') : (en ? 'Navigation needs current online context.' : 'Menü için güncel çevrimiçi bağlam gerekli.')}</span><Button variant="outline" size="sm" disabled={!navigator.onLine} onClick={() => { setResult(null); retry(x => x + 1) }}>{en ? 'Reload menu' : 'Menüyü yeniden yükle'}</Button></>
       : <>
         <span>{data.mode === 'Fleet' ? (en ? 'Fleet context' : 'Filo bağlamı') : data.mode === 'Ship' ? (en ? 'Ship' : 'Gemi') : (en ? 'Tug' : 'Römorkör')}</span>
         {data.state === 'Configured' && data.lenses.length > 0 ? <>
@@ -69,11 +70,11 @@ function RoleNavigation({ session, vessel = null, language, onNavigate, onSearch
           </select></label>
           {chosen && !primary && <nav aria-label={en ? 'Daily work menu' : 'Günlük iş menüsü'}>{(['daily', 'review'] as const).map(group => {
             const items = chosen.items.filter(i => i.group === group)
-            return items.length > 0 && <div key={group}><strong>{group === 'daily' ? (en ? 'Daily work' : 'Günlük iş') : (en ? 'Review' : 'İnceleme')}</strong>{items.map(i => <button key={i.key} type="button" aria-current={window.location.pathname + window.location.search === i.href ? 'page' : undefined} onClick={() => onNavigate(i.href)}>{lensLabels[i.key][en ? 1 : 0]}</button>)}</div>
+            return items.length > 0 && <div key={group}><strong>{group === 'daily' ? (en ? 'Daily work' : 'Günlük iş') : (en ? 'Review' : 'İnceleme')}</strong>{items.map(i => <Button key={i.key} variant="ghost" size="sm" aria-current={window.location.pathname + window.location.search === i.href ? 'page' : undefined} onClick={() => onNavigate(i.href)}>{lensLabels[i.key][en ? 1 : 0]}</Button>)}</div>
           })}{chosen.items.length === 0 && <p role="status">{en ? 'No available work in this lens and context.' : 'Bu mercek ve bağlamda kullanılabilir iş yok.'}</p>}</nav>}
         </> : <span role="status">{data.state === 'Missing' ? (en ? 'No assigned role context.' : 'Atanmış rol bağlamı yok.') : data.state === 'Unavailable' ? (en ? 'Role menu configuration unavailable.' : 'Rol menüsü yapılandırması kullanılamıyor.') : (en ? 'No role lens for this mode.' : 'Bu mod için rol merceği yok.')}</span>}
-        {!primary && <button type="button" onClick={() => onNavigate(vessel ? `/app/fleet/${vessel}` : '/app/fleet')}>{en ? 'Vessel context' : 'Araç bağlamı'}</button>}
-        {data.canSearch && !embedded && <button type="button" onClick={() => { onSearchOpen?.(); showSearch(session) }}>{en ? 'Search workspace' : 'Çalışma alanında ara'}</button>}
+        {!primary && <Button variant="outline" size="sm" onClick={() => onNavigate(vessel ? `/app/fleet/${vessel}` : '/app/fleet')}>{en ? 'Vessel context' : 'Araç bağlamı'}</Button>}
+        {data.canSearch && !embedded && <Button variant="outline" size="sm" onClick={() => { onSearchOpen?.(); showSearch(session) }}>{en ? 'Search workspace' : 'Çalışma alanında ara'}</Button>}
       </>}
     {search && search === session && createPortal(<WorkspaceSearch language={language} authorization={data ? (data.canSearch ? 'allowed' : 'denied') : error ? 'unavailable' : 'pending'} grant={data?.canSearch ? result : null} onRetryAuthorization={() => { setResult(null); retry(x => x + 1) }} onClose={() => showSearch(null)} onNavigate={href => onNavigate(href, () => showSearch(null))} />, document.querySelector('.product-shell') ?? document.body)}
   </section>

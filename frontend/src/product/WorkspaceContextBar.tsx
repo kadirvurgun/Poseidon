@@ -1,3 +1,4 @@
+import { Button } from '../components/ui/button'
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { ArrowLeftRight, Wifi, WifiOff } from 'lucide-react'
@@ -46,14 +47,14 @@ function ScopedWorkspaceContextBar({ session, vessel = null, language, onNavigat
     <span className="context-workspace">{current?.data && session?.tenantName || (en ? 'Current workspace' : 'Geçerli çalışma alanı')}</span>
     {!online ? <span role="status">{en ? 'Offline · reconnect to load context.' : 'Çevrimdışı · bağlamı yüklemek için yeniden bağlanın.'}</span> : document.visibilityState === 'hidden' ? <span role="status">{en ? 'Context paused while this window is hidden.' : 'Pencere gizliyken bağlam duraklatıldı.'}</span> : !current ? <span role="status">{en ? 'Loading context…' : 'Bağlam yükleniyor…'}</span> : !current.data ? <>
       <span role="alert">{current.error === 401 || current.error === 403 || current.error === 404 ? (en ? 'Context access unavailable.' : 'Bağlam erişimi kullanılamıyor.') : (en ? 'Context could not be loaded.' : 'Bağlam yüklenemedi.')}</span>
-      <button type="button" disabled={!online} onClick={() => { setResult(null); retry(n => n + 1) }}>{en ? 'Retry context' : 'Bağlamı tekrar yükle'}</button>
+      <Button variant="outline" size="sm" disabled={!online} onClick={() => { setResult(null); retry(n => n + 1) }}>{en ? 'Retry context' : 'Bağlamı tekrar yükle'}</Button>
     </> : <>
       <span>{current.data.vessel ? `${current.data.vessel.code} · ${current.data.vessel.name} · ${current.data.vessel.kind === 'Ship' ? (en ? 'Ship' : 'Gemi') : (en ? 'Tug' : 'Römorkör')}` : (en ? 'No vessel selected' : 'Araç seçilmedi')}</span>
       <span className="context-role">{en ? 'Role context' : 'Rol bağlamı'}: {current.data.roleContext.state === 'Configured'
         ? current.data.roleContext.roles.map(role => en ? role.en : role.tr).join(' · ')
         : current.data.roleContext.state === 'Missing' ? (en ? 'Not assigned' : 'Atanmamış') : (en ? 'Unavailable' : 'Kullanılamıyor')}</span>
     </>}
-    {onNavigate && current?.data && online && session && <button type="button" className="context-switch-trigger" onClick={() => setChooser({ owner: session, epoch })}><ArrowLeftRight aria-hidden="true" />{en ? 'Change vessel context' : 'Araç bağlamını değiştir'}</button>}
+    {onNavigate && current?.data && online && session && <Button variant="outline" size="sm" className="context-switch-trigger" onClick={() => setChooser({ owner: session, epoch })}><ArrowLeftRight aria-hidden="true" />{en ? 'Change vessel context' : 'Araç bağlamını değiştir'}</Button>}
     <span className="context-connection">{online ? <Wifi aria-hidden="true" /> : <WifiOff aria-hidden="true" />}{online ? (en ? 'Online' : 'Çevrimiçi') : (en ? 'Offline · context may be stale' : 'Çevrimdışı · bağlam eski olabilir')}</span>
     {chooser?.owner === session && chooser.epoch === epoch && session && onNavigate && createPortal(<WorkspaceVesselSwitcher session={session} vessel={vessel} language={language} onClose={() => setChooser(null)} onNavigate={onNavigate} />, document.querySelector('.product-shell') ?? document.body)}
   </section>

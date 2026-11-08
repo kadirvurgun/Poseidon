@@ -177,7 +177,7 @@ export function TugWorkspace() {
         {route.screen === 'tug-job-intake' && !ctx.canWrite && <p role="alert">{t.denied}</p>}
         {formOpen && <form className="tug-intake-form" noValidate aria-busy={busy} onSubmit={e => { e.preventDefault(); void save() }} aria-label={t.intake}>
           <TugRequestFields inputs={inputs} context={ctx} language={lang} disabled={busy || !!attempt || conflict} errors={fieldErrors} onChange={change} />
-          <EnterpriseActions aria-label={lang === 'en' ? 'Request actions' : 'Talep işlemleri'}>
+          <EnterpriseActions layout="form" aria-label={lang === 'en' ? 'Request actions' : 'Talep işlemleri'}>
             <Button type="button" variant="outline" disabled={busy} onClick={() => guard(() => { markDirty(false); markAttempt(null); uncertain.current = false; setReload(n => n + 1) })}>{t.discard}</Button>
             <Button type="submit" disabled={busy || offline || conflict}>{busy ? (lang === 'en' ? 'Saving…' : 'Kaydediliyor…') : attempt ? t.retry : t.save}</Button>
           </EnterpriseActions>
