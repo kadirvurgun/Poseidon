@@ -5,7 +5,7 @@ Status: IMPLEMENTED_SOURCE_ONLY / verification DEFERRED. This is not canonical D
 ## Controlled sources and scope
 
 - Active baseline: `poseidon-v46.3-20261030`, [active source](../sources/active.json).
-- DEV-054 / T-S8-003: 18.01 Backlog row 55, SHA256 `09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674`; dependencies DEV-053 and DEV-013 remain subject to the owning package gate.
+- DEV-054 / T-S8-003: 18.01 Backlog row 55, SHA256 `09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674`; dependencies DEV-053 and DEV-029 remain subject to the owning package gate.
 - 14.02 Data Dictionary 2316 rows 1426–1463, SHA256 `3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018`: 38 occurrences / 29 unique dictionary keys; 24 client facts after excluding trusted vessel context and four server-state fields, plus backlog execution phase = 25 facts.
 - 13.04 design system paragraphs 10–25 and 26–34, SHA256 `83489a0f0752e22410d7534cdbe0b89726f00012d869e1b868e8127f5bcc573c`: one primary question, current role/vessel context, full-page complex editor, human authority, progressive disclosure and no silent loss. Existing shared Button, EnterpriseActions, EnterpriseFormGrid, EnterpriseField and EnterprisePagination provide geometry; the form primary action is at the top right.
 
