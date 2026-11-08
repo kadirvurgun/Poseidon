@@ -56,7 +56,7 @@ function DowntimeSurface({ route, language, onLanguage, onNavigate, onCanonical,
       const user = await session(c.signal), original = identity(user)
       if (!original) throw new ApiError(403)
       const ensureOwner = async () => { if (identity(await session(c.signal)) !== original) throw new ApiError(403, 'identity_changed') }
-      if (!route.vessel) { const page = await vessels(route.offset, 'Ship', c.signal); await ensureOwner(); if (active) setSource({ scope, user, vessels: page.items, hasMore: page.hasMore }); return }
+      if (!route.vessel) { const page = await vessels(route.offset, 'Ship', c.signal); await ensureOwner(); if (active) setSource({ scope, user, vessels: page.items.filter(item => item.kind === 'Ship'), hasMore: page.hasMore }); return }
       const [caps, vessel] = await Promise.all([downtimeApi.capabilities(route.vessel, c.signal), readVessel(route.vessel, c.signal)])
       if (!caps.canRead || vessel.id !== route.vessel || vessel.kind !== 'Ship') throw new ApiError(403)
       async function context(pin: DowntimeOriginSelector, expected?: DowntimeOriginPin): Promise<{ originContext?: DowntimeOriginContext; originIssue?: 'stale' | 'unavailable' }> {
