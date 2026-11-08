@@ -8,7 +8,7 @@ public static class SecurityEventCodes
 {
     public static IReadOnlySet<string> Actions { get; } = new string[]
     {
-        "RequestValidation", "AccessDenied", "Applicability", "ApplicabilityCommand", "ApplicabilityCurrentRead", "CertificateRead", "CertificateCommand", "CertificateExtraction", "DefectRead", "DefectCommand", "DefectAssetContextRead",
+        "RequestValidation", "AccessDenied", "Applicability", "ApplicabilityCommand", "ApplicabilityCurrentRead", "CertificateRead", "CertificateCommand", "CertificateExtraction", "WorkOrderRead", "WorkOrderCommand", "WorkOrderPlanOriginRead", "DefectRead", "DefectCommand", "DefectAssetContextRead",
         "ApplicabilityHistory", "ApplicabilityRead", "ApplicabilitySimulation", "AuditDetail",
         "AuditQuery", "AuditRevision", "CompaniesRead", "CompanyCreate",
         "CompanyUpdate", "ControlEvidence", "ControlEvidenceCommand", "ControlEvidenceRead",
@@ -32,7 +32,7 @@ public static class SecurityEventCodes
     }.ToFrozenSet(StringComparer.Ordinal);
     public static IReadOnlySet<string> Results { get; } = new string[]
     {
-        "Attempted", "Authorized", "Denied", "Failed", "asset_context_stale",
+        "Attempted", "Authorized", "Denied", "Failed", "asset_context_stale", "plan_context_stale",
         "Invalid", "NotFound", "SetupRequired", "Success",
         "Unauthenticated", "acknowledgment_role_required", "assignment_policy_denied", "attestation_authority_changed",
         "attestation_policy_mismatch", "authoritative_evaluation_unavailable", "catalog_authority_changed", "catalog_version_reused",

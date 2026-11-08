@@ -54,6 +54,13 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             return new(defectRevision.VesselId,defectRevision.DefectId,"DefectRevision",null,defectRevision.Revision,Fields(Field("Revision",null,Number(defectRevision.Revision)),Field("Binding",null,"OwnerReference")));
         if(entry.Entity is DefectReceipt defectReceipt)
             return new(defectReceipt.VesselId,defectReceipt.DefectId,"DefectReceipt",null,defectReceipt.Revision,Fields(Field("Binding",null,"CommittedResource")));
+        if(entry.Entity is WorkOrder work_order)
+            return new(work_order.VesselId,work_order.Id,"WorkOrder",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,work_order.Revision,
+                Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(work_order.Revision)),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is WorkOrderRevision work_orderRevision)
+            return new(work_orderRevision.VesselId,work_orderRevision.WorkOrderId,"WorkOrderRevision",null,work_orderRevision.Revision,Fields(Field("Revision",null,Number(work_orderRevision.Revision)),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is WorkOrderReceipt work_orderReceipt)
+            return new(work_orderReceipt.VesselId,work_orderReceipt.WorkOrderId,"WorkOrderReceipt",null,work_orderReceipt.Revision,Fields(Field("Binding",null,"CommittedResource")));
         if(entry.Entity is ShipOperation shipOperation)
             return new(shipOperation.VesselId,shipOperation.Id,"ShipOperation",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,shipOperation.Revision,
                 Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(shipOperation.Revision)),Field("Binding",null,"OwnerReference")));
