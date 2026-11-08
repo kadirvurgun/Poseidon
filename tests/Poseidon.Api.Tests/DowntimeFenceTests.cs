@@ -98,6 +98,26 @@ public sealed partial class DirectoryWorkspaceTests
         await using var db=Db();Assert.Empty(await db.Downtimes.Where(r=>r.Id==command.Id).ToArrayAsync(Ct));Assert.Empty(await db.DowntimeReceipts.Where(r=>r.DowntimeId==command.Id).ToArrayAsync(Ct));Assert.Empty(await db.DowntimeRevisions.Where(r=>r.DowntimeId==command.Id).ToArrayAsync(Ct));
     }
     [Fact]
+    public async Task Downtime_retained_Engine_pin_rechecks_fresh_head_without_rebasing_immutable_history() {
+        await using var host=Host();using var client=Client(host);DowntimePermissions(host.Services);DailyPermissions(host.Services);
+        var command=new DailyDraftCommand(Guid.NewGuid(),0,new(),"INITIAL_AUTHORING");
+        using var created=await DailySend(client,"engine-daily-logs",command,Guid.NewGuid().ToString("D"));Assert.Equal(HttpStatusCode.OK,created.StatusCode);
+        var first=(await created.Content.ReadFromJsonAsync<DailyRecordDto>(Ct))!;
+        var origin=(await client.GetFromJsonAsync<DowntimeOriginDto>(DowntimeOriginPath("Engine",first.Id),Ct))!;
+        var actor=new TrustedActor(actorId,SeedVessel.TenantId,["directory.read","daily.engine.read"],true,false,[]);
+        await using var db=Db();
+        var captured=await DowntimeOriginReader.CaptureFence(db,actor,SeedVessel.Id,[origin.Pin],false,Ct);Assert.NotNull(captured);
+        Assert.True(await actor.Scope(db.Vessels).Where(v=>v.Id==SeedVessel.Id).Where(captured!).AnyAsync(Ct));
+        using var updated=await DailySend(client,"engine-daily-logs",command with{ExpectedVersion=first.Version,ReasonCode="AUTHORING_CORRECTION"},Guid.NewGuid().ToString("D"),true);
+        Assert.Equal(HttpStatusCode.OK,updated.StatusCode);
+        Assert.False(await actor.Scope(db.Vessels).Where(v=>v.Id==SeedVessel.Id).Where(captured!).AnyAsync(Ct));
+        var refreshed=await DowntimeOriginReader.CaptureFence(db,actor,SeedVessel.Id,[origin.Pin],false,Ct);Assert.NotNull(refreshed);
+        Assert.True(await actor.Scope(db.Vessels).Where(v=>v.Id==SeedVessel.Id).Where(refreshed!).AnyAsync(Ct));
+        var currentOnly=await DowntimeOriginReader.CaptureFence(db,actor,SeedVessel.Id,[origin.Pin],true,Ct);Assert.NotNull(currentOnly);
+        Assert.False(await actor.Scope(db.Vessels).Where(v=>v.Id==SeedVessel.Id).Where(currentOnly!).AnyAsync(Ct));
+        Assert.Equal(1,origin.Pin.Revision);Assert.Equal(first.Version,origin.Pin.Version);
+    }
+    [Fact]
     public async Task Downtime_relational_scope_and_immutable_database_retention_guards_reject_cross_tenant_history_removal_and_head_reparenting() {
         await using var host=Host();using var client=Client(host);DowntimePermissions(host.Services);var command=DowntimeDraft();Assert.Equal(HttpStatusCode.OK,(await DowntimeSend(client,command)).StatusCode);
         foreach(var sql in new[]{"""UPDATE operations."DowntimeRevisions" SET "FieldsJson"='{}';""","""DELETE FROM operations."DowntimeRevisions";""","""TRUNCATE operations."DowntimeReceipts";""","""UPDATE operations."Downtimes" SET "VesselId"='00000000-0000-0000-0000-000000000001',"Revision"="Revision"+1;"""}) {

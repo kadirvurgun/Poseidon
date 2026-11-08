@@ -89,7 +89,11 @@ internal static class DowntimeOriginReader
                 fence=And(And(fence,match),nested);
             }else {
                 var visible=DailyOperationOriginReader.ReturnedVisible(db,actor,vessel,[new("Engine",pin.Id,pin.Revision,pin.Version,pin.Hash,pin.SourceVersion)],currentOnly);
-                Expression<Func<Vessel,bool>> match=v=>visible.Any();fence=And(fence,match);
+                var head=await db.DailyOperations.AsNoTracking().SingleOrDefaultAsync(h=>h.Id==pin.Id && h.VesselId==vessel && h.Kind=="Engine",ct);
+                if(head==null || head.SourceVersion!=Source(pin.Kind))return null;
+                Expression<Func<Vessel,bool>> match=v=>visible.Any() && db.DailyOperations.Any(h=>h.Id==head.Id && h.VesselId==vessel && h.Kind=="Engine" &&
+                    h.Revision==head.Revision && h.Version==head.Version && h.Hash==head.Hash && h.SourceVersion==head.SourceVersion);
+                fence=And(fence,match);
             }
         }
         return fence;
@@ -118,7 +122,7 @@ internal static class DowntimeOriginReader
             if(row!=null) {
                 var fields=DefectPolicy.ReadFields(row.FieldsJson);string[] keys=["record_datetime","criticality","failure_consequence","restriction","temporary_measure"];
                 result=new(vessel,new(kind,id,row.Revision,row.Version,row.Hash,row.SourceVersion),true,"DECLARATION","REVIEW_REQUIRED",row.Provenance,row.SavedAt,
-                    DefectPolicy.Schema().Where(f=>keys.Contains(f.Key)).Select(f=>new DowntimeOriginFieldDto(f.Key,f.Type,new(fields[f.Key].State,fields[f.Key].Value),int.Parse(f.SourceLocator[(f.SourceLocator.LastIndexOf(':')+1)..],CultureInfo.InvariantCulture),null)).ToArray(),$"/app/defect-register/{vessel:D}?id={id:D}");
+                    DefectPolicy.Schema().Where(f=>keys.Contains(f.Key)).Select(f=>new DowntimeOriginFieldDto(f.Key,f.Type,new(fields[f.Key].State,fields[f.Key].Value),int.Parse(f.SourceLocator[(f.SourceLocator.LastIndexOf(':')+1)..],CultureInfo.InvariantCulture),null)).ToArray(),$"/app/defects/{vessel:D}?id={id:D}");
             }
         }else if(kind=="WorkOrder") {
             var row=await db.WorkOrders.AsNoTracking().SingleOrDefaultAsync(r=>r.VesselId==vessel && r.Id==id,h.RequestAborted);
@@ -132,7 +136,7 @@ internal static class DowntimeOriginReader
             if(row!=null) {
                 var fields=DailyOperationsPolicy.ReadFields("Engine",vessel,row.FieldsJson);string[] keys=["log_date","watch_period","defects","alarms","handover_note"];
                 result=new(vessel,new(kind,id,row.Revision,row.Version,row.Hash,row.SourceVersion),true,"DRAFT","REVIEW_REQUIRED",row.Provenance,row.SavedAt,
-                    DailyOperationsPolicy.Schema("Engine").Where(f=>keys.Contains(f.Key)).Select(f=>new DowntimeOriginFieldDto(f.Key,f.Type,new(fields[f.Key].State,fields[f.Key].Value),f.SourceRow,f.Unit)).ToArray(),$"/app/engine-log/{vessel:D}?id={id:D}");
+                    DailyOperationsPolicy.Schema("Engine").Where(f=>keys.Contains(f.Key)).Select(f=>new DowntimeOriginFieldDto(f.Key,f.Type,new(fields[f.Key].State,fields[f.Key].Value),f.SourceRow,f.Unit)).ToArray(),$"/app/engine-daily-log/{vessel:D}?id={id:D}");
             }
         }
         if(result==null)return await Fail(h,404,"resource_not_found");if(revision>0 && revision!=result.Pin.Revision)return await Fail(h,409,"origin_context_stale");

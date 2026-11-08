@@ -22,3 +22,9 @@ The existing shared Button, compact module sidebar and explicit form-action layo
 [Target/source capability component cases](../../frontend/src/product/DowntimeSourceLaunch.test.tsx), [Engine source launch cases](../../frontend/src/product/DailyOperationLaunch.test.tsx), [scoped frontend navigation cases](../../frontend/src/product/downtime-navigation.test.ts) and [actual API/policy navigation cases](../../tests/Poseidon.Api.Tests/DowntimeNavigationTests.cs) accompany the implementation. The owning domain/backend/UI packages supply their own domain, actual API/PostgreSQL, protocol/component and signed journey sources. None ran; no build, typecheck, lint, generated contract, migration parity, browser, provider or CI result is claimed.
 
 Actual larger PR preparation must validate all integrated sources on its frozen target, including current/historical/transitive permission races and the still-open approval/evidence/closure gates. No private fixture, running preview, provider or publication is activated by this source package.
+
+## Final source review corrections — execution deferred
+
+DOWNTIME-SRC-001: source review found Defect/Engine origin hrefs using nonexistent aliases. The API and strict frontend decoder now agree with implemented `/app/defects` and `/app/engine-daily-log` routes; Work Order remains `/app/work-order-center`. The actual API three-kind theory asserts canonical hrefs, and the protocol source rejects the obsolete Defect alias. This is a source correction, not rendered navigation evidence.
+
+Retained Engine lineage now captures exact current head revision/xmin/hash/source alongside the immutable requested revision in the final vessel predicate. A real PostgreSQL/API test source captures a fence, advances Engine through its owning command, checks the captured fence is stale, then refreshes while preserving the old immutable pin; current-only access still rejects that old pin. Authored only, not executed.
