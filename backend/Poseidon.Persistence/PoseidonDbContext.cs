@@ -24,6 +24,9 @@ public sealed class PoseidonDbContext(
     public DbSet<ShipOperation> ShipOperations => Set<ShipOperation>();
     public DbSet<ShipOperationRevision> ShipOperationRevisions => Set<ShipOperationRevision>();
     public DbSet<ShipOperationReceipt> ShipOperationReceipts => Set<ShipOperationReceipt>();
+    public DbSet<WorkOrder> WorkOrders => Set<WorkOrder>();
+    public DbSet<WorkOrderRevision> WorkOrderRevisions => Set<WorkOrderRevision>();
+    public DbSet<WorkOrderReceipt> WorkOrderReceipts => Set<WorkOrderReceipt>();
     public DbSet<Defect> Defects => Set<Defect>();
     public DbSet<DefectRevision> DefectRevisions => Set<DefectRevision>();
     public DbSet<DefectReceipt> DefectReceipts => Set<DefectReceipt>();
@@ -221,6 +224,10 @@ public sealed class PoseidonDbContext(
         model.Entity<Defect>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
         model.Entity<DefectRevision>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
         model.Entity<DefectReceipt>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        WorkOrderStorage.Configure(model);
+        model.Entity<WorkOrder>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<WorkOrderRevision>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<WorkOrderReceipt>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
         model.Entity<Asset>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<AssetRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<TechnicalOwner>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -484,6 +491,12 @@ public sealed class PoseidonDbContext(
             (e.Properties.Any(p=>p.IsModified && p.Metadata.Name is not("FieldsJson" or "AssetId" or "AssetRevision" or "AssetVersion" or "AssetHash" or "SourceVersion" or "Hash" or "Provenance" or "ActorId" or "SavedAt" or "Revision")) ||
                 (long)e.Property("Revision").CurrentValue! != (long)e.Property("Revision").OriginalValue!+1))))
             throw new InvalidOperationException("Defect ownership is immutable; append one revision.");
+        if(changes.Any(e=>e.Entity is WorkOrderRevision or WorkOrderReceipt && e.State!=EntityState.Added))
+            throw new InvalidOperationException("WorkOrder history and outcomes are immutable.");
+        if(changes.Any(e=>e.Entity is WorkOrder && (e.State==EntityState.Deleted || e.State==EntityState.Modified &&
+            (e.Properties.Any(p=>p.IsModified && p.Metadata.Name is not("FieldsJson" or "PlanId" or "PlanRevision" or "PlanVersion" or "PlanHash" or "PlanSourceVersion" or "SourceVersion" or "Hash" or "Provenance" or "ActorId" or "SavedAt" or "Revision")) ||
+                (long)e.Property("Revision").CurrentValue! != (long)e.Property("Revision").OriginalValue!+1))))
+            throw new InvalidOperationException("WorkOrder ownership is immutable; append one revision.");
         if(changes.Any(e=>e.Entity is ShipOperationRevision or ShipOperationReceipt && e.State!=EntityState.Added))
             throw new InvalidOperationException("Ship operation history and outcomes are immutable.");
         if(changes.Any(e=>e.Entity is ShipOperation && (e.State==EntityState.Deleted || e.State==EntityState.Modified &&
@@ -662,6 +675,9 @@ public sealed class PoseidonDbContext(
             }
             if(entry.Entity is DefectReceipt defectOutcome) {
                 events[^1].AfterVersion=checked((uint)defectOutcome.RecordVersion);events[^1].AfterRevision=defectOutcome.Revision;
+            }
+            if(entry.Entity is WorkOrderReceipt work_orderOutcome) {
+                events[^1].AfterVersion=checked((uint)work_orderOutcome.RecordVersion);events[^1].AfterRevision=work_orderOutcome.Revision;
             }
             if(entry.Entity is ShipOperationReceipt shipOutcome) {
                 var saved=ChangeTracker.Entries<ShipOperation>().SingleOrDefault(e=>e.State==EntityState.Unchanged && e.Entity.TenantId==shipOutcome.TenantId &&
