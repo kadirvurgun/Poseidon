@@ -1,0 +1,19 @@
+.work-order-workspace main { min-width:0; }
+.enterprise-shell .work-order-fields .enterprise-form-grid { margin-block:20px; padding:22px; border:1px solid var(--border); border-radius:10px; background:var(--card); }
+.enterprise-shell .work-order-fields legend { padding-inline:6px; font-weight:650; }
+.enterprise-shell .work-order-field { display:grid; gap:12px; padding:16px; min-width:0; border:1px solid var(--border); border-radius:8px; }
+.enterprise-shell .work-order-field-wide { grid-column:1/-1; }
+.enterprise-shell .work-order-field input,.enterprise-shell .work-order-field select,.enterprise-shell .work-order-field textarea { min-width:0; width:100%; margin:0; }
+.enterprise-shell .work-order-field textarea { resize:vertical; }
+.enterprise-shell .work-order-hint { color:var(--muted-foreground); font-size:12px; margin:0; }
+.enterprise-shell .work-order-status { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+.enterprise-shell .work-order-summary-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px 24px; }
+.enterprise-shell .work-order-summary-grid dd { margin:6px 0 0; overflow-wrap:anywhere; white-space:pre-wrap; }
+.enterprise-shell .work-order-source,.enterprise-shell .work-order-plan-context,.enterprise-shell .work-order-timeline { margin-block:16px; padding:20px; border:1px solid var(--border); border-radius:10px; background:var(--card); min-width:0; }
+.enterprise-shell .work-order-records { list-style:none; padding:0; display:grid; gap:16px; }
+.enterprise-shell .work-order-records > li { min-width:0; padding:18px; border:1px solid var(--border); border-radius:10px; background:var(--card); }
+.enterprise-shell .work-order-records .work-order-source { padding:0; border:0; }
+.work-order-workspace code { white-space:normal; overflow-wrap:anywhere; }
+@media(max-width:600px) { .enterprise-shell .work-order-summary-grid { grid-template-columns:minmax(0,1fr); } .enterprise-shell .work-order-fields .enterprise-form-grid,.enterprise-shell .work-order-source,.enterprise-shell .work-order-plan-context,.enterprise-shell .work-order-timeline { padding:16px; } .enterprise-shell .work-order-field { padding:14px; } }
+
+.enterprise-shell .work-order-declared-text { white-space:pre-wrap; overflow-wrap:anywhere; }
