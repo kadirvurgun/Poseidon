@@ -1009,7 +1009,7 @@
       "accepted": false
     }
   },
-  "as_of": "2026-11-06T04:55:27.187698Z",
+  "as_of": "2026-11-08T21:09:18.729140+00:00",
   "audit_trace_01": {
     "status": "combined_gate_executed_not_accepted",
     "accepted": false,
@@ -1114,7 +1114,7 @@
     "verification_record_scope": "Authored/deferred and original20f1198 results are historical;current rejection-repair evidence in core_bundle_01.verification"
   },
   "baseline": "POSEIDON v46.3 updated 2026-10-30 / Library26 candidate",
-  "current_stage": "S6 DEV-102 bağımlılığı için S8 DEV-055 kaynak temeli: 1 iş / 13 SP seçildi; tam critical lifecycle veya kabul değildir. S6 seçili 8 iş / 79 SP, canonical 9 iş / 87 SP ve kabul 0 değişmedi. Genel kabul 103 / 970 SP (%10,62), 20 / 121 iş, ayrı ekran kabulü 0. Yeni ürün kapıları DEFERRED.",
+  "current_stage": "S8 DEV-054 Work Order kaynak temeli ve 08.11 kurumsal shell/sidebar/ortak buton düzeltmesi: bu paket1iş/13SP; S8 kümülatif seçili2iş/26SP, canonical13iş/124SP kabul0. S6 seçili8iş/79SP, canonical9iş/87SP kabul0; genel kabul103/970SP (%10,62),20/121iş değişmedi. Ürün kapıları DEFERRED.",
   "method": "accepted story points / total baseline story points * 100",
   "scope": "complete v46.3 Backlog sheet; duplicates in other sheets excluded",
   "total_tasks": 121,
@@ -3942,42 +3942,57 @@
   ],
   "active_source": "docs/sources/active.json",
   "current_package": {
-    "task": "S8-DEFECT-FOUNDATION-20261106",
+    "task": "S8-WORK-ORDER-SHELL-20261108",
     "state": "READY_FOR_ROOT_METADATA_APPLICATION_SOURCE_ONLY",
     "accepted": false,
     "accepted_story_points_added": 0,
-    "observed_at_utc": "2026-11-06T04:55:27.187698Z",
+    "observed_at_utc": "2026-11-08T21:09:18.729140+00:00",
     "branch": "foundation/s6-certificate-foundation-20261105",
-    "source_checkpoint": "dd46c369ce0380fc4bebbb389c4ca9c7cbaee08b",
-    "source_tree": "f66c815c1fc4da95e86bcd4c4c63ae10f2560e37",
+    "source_checkpoint": "8e1271034420321b8320cc99aad8227d066a65c2",
+    "source_tree": "95ef54ac092448cdd19ced80ec5a5facad1dab7c",
     "checkpoint_is_final": true,
-    "base_commit": "b2a509336bab5ed2de46d29d13627e130ea298f2",
+    "base_commit": "0cbb36eb838bdc74810830530af3b94eb79f5de1",
     "source_baseline": "poseidon-v46.3-20261030",
     "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
     "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
     "tasks": [
       {
-        "id": "DEV-055",
-        "title": "Critical defect lifecycle",
+        "id": "DEV-054",
+        "title": "Work order execution + evidence",
         "sprint": "S8",
         "story_points": 13,
-        "trace_id": "T-S8-004",
+        "trace_id": "T-S8-003",
         "source_status": "Not Started",
-        "source_locator": "sheet:Backlog/row:56",
-        "literal_acceptance_criteria": "Detect→Assess→Safeguard→Action→Verify→Effectiveness; critical defect without safeguard cannot close; temporary measure expiry monitored.",
+        "source_locator": "sheet:Backlog/row:55",
+        "literal_acceptance_criteria": "RELEASED→IN_PROGRESS→EVIDENCE_SUBMITTED; readings/spares/photo/doc; required evidence yoksa verification/close olmaz.",
         "dependencies": [
-          "DEV-030",
-          "DEV-052"
+          "DEV-029",
+          "DEV-053"
         ],
         "accepted": false,
         "state": "SOURCE_FOUNDATION_WITH_OPEN_CRITERIA_NOT_ACCEPTED"
       }
     ],
+    "additional_user_feedback_task": {
+      "id": "UI-SHELL-CONSISTENCY-20261108",
+      "source": "2026-11-08 user feedback +13.04 paragraphs12,31-34,47-55",
+      "story_points_added_to_canonical": 0,
+      "scope": "Remove unnecessary sidebar vertical scroll; shared professional buttons/action patterns; preserve accessible navigation/current permission boundaries."
+    },
     "selected_scope": {
       "tasks": 1,
       "story_points": 13,
       "ids": [
-        "DEV-055"
+        "DEV-054"
+      ],
+      "is_completion_or_acceptance": false
+    },
+    "cumulative_selected_S8_scope": {
+      "tasks": 2,
+      "story_points": 26,
+      "ids": [
+        "DEV-055",
+        "DEV-054"
       ],
       "is_completion_or_acceptance": false
     },
@@ -3998,62 +4013,48 @@
     "supporting_dictionary": {
       "path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
       "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
-      "rows": "443-465",
-      "screen": "asset-reliability",
-      "supporting_rows_only": true,
-      "complete23field_screen_claimed": false,
-      "engineering_fact_count": 11
-    },
-    "source_contracts": [
-      {
-        "path": "docs/tasks/S8-DEFECT-DOMAIN-01.md",
-        "sha256": "2808a1b12cf923080638336d013b0712081db86ce9e8866ea4247c6a7a8a0ed2"
-      },
-      {
-        "path": "docs/tasks/S8-DEFECT-CORE-01.md",
-        "sha256": "a6362d7782dc0e70b6c53aa73b2a3d2a485c11c319e1d58d7a744b00514345dd"
-      },
-      {
-        "path": "docs/tasks/S8-DEFECT-CONTEXT-01.md",
-        "sha256": "0322aed2a897b84a8d4ef286af7107748e99ed494673402f5de44f055457f8f9"
-      },
-      {
-        "path": "docs/tasks/S8-DEFECT-UI-01.md",
-        "sha256": "91c1b43a418a7411715a35e76fc685ad6af89da1c045051f6481002602c39c85"
-      },
-      {
-        "path": "contracts/technical/defect.draft.v1.json",
-        "sha256": "461a945426371f20315776f50166ef4333d12649fab6dfa4794751a71dee20cf"
-      }
-    ],
-    "authored_checkpoints": {
-      "domain_checkpoint": "3252656",
-      "asset_context_checkpoint": "8d0bc55",
-      "context_navigation_checkpoint": "83fb997",
-      "core_checkpoint": "09c75847875cab91b86e62a514f957d5768d547d",
-      "UI_workspace_checkpoint": "98373d33bc6b5dad0a191d12bff401da591e037d"
-    },
-    "UI_workspace_integrated": true,
-    "genuine_case_sources": {
-      "count": 2,
-      "centrally_registered": true,
-      "registry_checkpoint": "dd46c369ce0380fc4bebbb389c4ca9c7cbaee08b",
-      "executed": false,
-      "private_fixture_provisioned": false
+      "locators": [
+        "Data Dictionary 2316 rows1426-1463",
+        "Lookup Kaynak Çözümü rows304-313"
+      ],
+      "field_occurrences": 38,
+      "unique_source_keys": 29,
+      "mutable_dictionary_facts": 24,
+      "backlog_stage_declaration_facts": 1,
+      "owning_facts": 25,
+      "full_screens_or_transitions_accepted": false
     },
     "source_behavior": [
-      "Eleven optional Known/Missing/Unknown engineering facts preserve source locators and lexical offset/narrative text. Literal Verify/Effectiveness remains unassessed capture; outer Stage DECLARATION and Qualification REVIEW_REQUIRED never authorize closure.",
-      "Temporal measure/deadline states compare exact explicit-offset instants at actual server time; equality is EXPIRED_DECLARED. Declared NOT_DUE is not effective safeguard, readiness or closure.",
-      "Actual current Asset head xmin plus exact immutable ContentJson hash establish new/changed pins. Context excludes explicit source Notes/role/user/serial members and does not fabricate committed historical xmin from preSave JSON.",
-      "Owning attributed EF head/revision/receipt ledger uses serializable SaveChanges, safe HTTP audit and same freshSQL returned/current-head/asset predicate composition, with live rights checks after awaits/audit.",
-      "Durable committed effect/facts/hash/OutcomeJson remain immutable, while separately assessed-at Temporal response metadata refreshes with current TimeProvider time on each delivery/replay. Whole response byte equality is not promised.",
-      "Same actor/key/body recovery, source expected versions, read-only history and optional incomplete SyntheticUnverified add-missing fixtures are source-authored. Fixture import is not activated and creates no user receipts or verified decisions."
+      "Owning work order draft API, EF head/revision/receipt, migration/snapshot and optional incomplete SyntheticUnverified fixture authoring; attributed audited SERIALIZABLE writes, exact current xmin, immutable history and same-owner exact idempotent receipts.",
+      "Actual current maintenance plan/asset lineage pin is engineering context only. Fresh combined returned/current-head/source SQL checks and synchronous current rights guard reads and postcommit delivery; no historic xmin invented from presave JSON.",
+      "Owning 25 facts preserve Known/Missing/Unknown and calendar/lexical numeric semantics. Unresolved equipment/job/evidence/catalog/person references remain Known unavailable; assigned_to source Date/person conflict is explicit.",
+      "Execution stage literals and verification_result remain unassessed declarations. DRAFT / REVIEW_REQUIRED is the owning state; no release, evidence submission, verification, risk/permit approval, effectiveness or closure authority is inferred.",
+      "Enterprise work order center/detail/history/editor, source plan context and safe navigation use shared controls; page-only search, stable UUID/key/body/base and original actor/tenant recovery; canonical identity persisted after same-owner receipt before optional readback.",
+      "Shared sidebar uses one native inner scroll region with min-height0 and nonshrinking brand/footer; initially collapsed but mounted work-view settings and one expanded authorized module. Short viewports retain accessible native scrolling.",
+      "Shared Button geometry is default40/small36, 44 on narrow/coarse input, square icons and wrapping labels. Explicit responsive form action composition is used across the changed workspaces.",
+      "Seven implementation presentation groups do not complete the canonical 11 menus/39 modules/196 screens."
     ],
+    "UI_workspace_integrated": true,
+    "genuine_case_sources": {
+      "work_order_cases": [
+        "work-order-signed-unassessed-phase-exact-receipt",
+        "work-order-signed-confirmed-id-reopen-after-readback-loss"
+      ],
+      "central_registration": "FOUR_NEW_CASE_EXPORTS_ACTUALLY_REGISTERED_SOURCE_ONLY",
+      "private_fixture": "POSEIDON_BROWSER_WORK_ORDER_FIXTURE under POSEIDON_LAB_PRIVATE, schema poseidon.work-order.signed-fixture.v1",
+      "private_fixture_provisioned": false,
+      "executed": false,
+      "shell_geometry_cases": [
+        "enterprise-shell-signed-single-scroll-and-group-navigation",
+        "enterprise-shell-signed-shared-form-control-geometry"
+      ],
+      "shell_prerequisites": "Actual signed dense menu at least12destinations across5groups and real editable vessel; missing fixture/authority fails, no fake business responses."
+    },
     "current_security_inventory": {
-      "mutation_templates": 111,
-      "critical_templates": 103,
-      "concrete_critical_operations": 113,
-      "state": "SOURCE_DEFINITIONS_NOT_EXECUTED"
+      "mutation_templates": 113,
+      "critical_templates": 105,
+      "concrete_critical_operations": 115,
+      "definition_only_not_coverage_or_PASS": true
     },
     "verification": {
       "tests": "DEFERRED_NOT_RUN",
@@ -4072,81 +4073,69 @@
       "provider_private_runtime_preview_or_PR_activated": false
     },
     "open_criteria": [
-      "This is an incomplete DEV055 engineering declaration foundation, not the complete Detect/Assess/Safeguard/Action/Verify/Effectiveness lifecycle or accepted S8.",
-      "Approved Human authority, legal/source transitions, safeguard efficacy, operational restrictions, verification/effectiveness and closure/return-to-service policies remain unavailable. Literal Verify/Effectiveness declarations do not establish those decisions.",
-      "DD443-465 belongs to asset-reliability and supplies supporting rows only; the11-fact engineering subset does not implement the full23-field screen or silently adopt its unresolved required/lookup mappings.",
-      "Asset lineage is optional engineering metadata, not an approved physical mapping of asset_name or evidence adoption. Equipment read permission remains mandatory even when the pin is null.",
-      "New/changed asset links require current head revision/xmin and exact immutable JSON hash; historical embedded preSave Version is not a committed historical xmin. Already established historical pins require current owning scope.",
-      "DEV102 is outside this package. The new owning dependency source can support later engineering integration, but verified closure, WorkOrder/claim/evidence adoption and full S6 acceptance gates remain unresolved.",
-      "Dedicated offline field classification/purpose/retention/key/storage and admission remain unavailable; no generic offline grants or approved safety catalogs are activated.",
-      "Expiry observation is recomputed on reads and response delivery. This source package does not implement or activate a background expiry-notification scheduler.",
-      "All new generation/model/build/domain/API/real PostgreSQL/component/browser/independent exact-target QA/CI gates remain deferred until actual larger PR preparation."
+      "Approved release/transition/assignment and permit/risk policy",
+      "Required evidence selection/adoption and evidence-gated verification/closure",
+      "Assigned_to type/source conflict and approved catalogs/references",
+      "Qualified attributed human verification, effectiveness and safe return to service",
+      "Dedicated privacy/classification/purpose/retention/key/offline execution/replay policy",
+      "Actual integrated build/type/lint/test/model/migration/browser and independent target-commit QA at larger PR gate",
+      "DEV-055 full critical-defect lifecycle and DEV-102 owning downtime linkage remain open"
     ],
     "bounded_independent_source_review": {
-      "receipt": ".runtime/s8-defect-foundation-20261106/status-drafts/independent-source-review.json",
-      "sha256": "6aa61e4bf497aabc4aa55c70da6ee63581dfcfecbb68288e4cb94b55fda3d234",
-      "state": "BOUNDED_SOURCE_REVIEW_WITH_SOURCE_CORRECTIONS_ONLY",
+      "path": "C:\\Users\\avurgun\\source\\repos\\Poseidon\\.runtime\\s8-work-order-shell-20261108\\status-drafts\\shell-source-review.json",
+      "state": "SOURCE_CORRECTIONS_REVIEWED_ONLY_FROZEN_SOURCE",
       "findings": [
-        {
-          "id": "DEFECT-CONTEXT-FOREIGN-EXISTENCE-COVERAGE",
-          "severity": "P2 coverage gap (not product isolation failure)",
-          "original": "DefectAssetContextTests.cs55-57 used mismatched nonexisting asset ID, vacuous404",
-          "correction": "c1bea22",
-          "state": "SOURCE_CORRECTION_REVIEWED_ONLY",
-          "details": "Actual foreign seed root asset existence is asserted under foreign tenant Db; actual foreign asset/vessel and wrong-vessel foreign asset cases check404/no pin. No test executed."
-        },
-        {
-          "id": "DEFECT-COMMAND-ASSET-PRESENCE-CONTRACT",
-          "severity": "P2 source wire parity",
-          "original": "DefectEndpoints.cs22 Asset=null default lacks JsonRequired while contracts/technical/defect.draft.v1.json required includes asset. null allowed, omission differs.",
-          "state": "SOURCE_CORRECTION_REVIEWED_ONLY",
-          "reportedBy": "Reporter and root independently; core adding JsonRequired nullable defaultnull per root",
-          "correction": "09c75847875cab91b86e62a514f957d5768d547d",
-          "details": "JsonRequired added while Asset remains nullable/defaultnull. Authored missing-member400 test and existing explicit-null draft sources read, NOT RUN."
-        },
-        {
-          "id": "DEFECT-WRITER-CROSS-VESSEL-CREATE-COLLISION",
-          "severity": "P2 bounded object-scope response",
-          "original": "In-flight DefectWriter.cs17 classified create row!=null as409 before row.VesselId mismatch404 at18; same-tenant foreign-vessel record UUID exposed different collision behavior.",
-          "reportedBy": "Root manual source review; reporter confirmed original ordering from source",
-          "state": "SOURCE_CORRECTION_REVIEWED_ONLY",
-          "limits": "Not an unauthorized write or a claim of complete global UUID anti-enumeration. Correction read in 09c75847875cab91b86e62a514f957d5768d547d; actual API negative case authored, NOT RUN.",
-          "correction": "09c75847875cab91b86e62a514f957d5768d547d",
-          "details": "Foreign-vessel404 guard precedes create/own conflict classification. Authored actual other-vessel row negative case reads/no mutation assertions, NOT RUN."
-        }
+        "SHELL-SRC-001 mismatched JSX opener/closer corrected",
+        "SHELL-SRC-002 native button cascade overriding mobile backdrop corrected"
       ],
-      "implementationQAOrPASSOrAcceptance": false
+      "full_backend_or_runtime_QA": false,
+      "sha256": "b010b381f54179964281f6c57100dc9fed53eddff4ccebd0cda120a77fe8db54"
     },
     "derived_navigation_graph": {
       "state": "AST_ONLY_COMPLETED_NAVIGATION_NOT_QA",
-      "source_head": "dd46c369ce0380fc4bebbb389c4ca9c7cbaee08b",
-      "source_tree": "f66c815c1fc4da95e86bcd4c4c63ae10f2560e37",
+      "source_head": "8e1271034420321b8320cc99aad8227d066a65c2",
+      "source_tree": "95ef54ac092448cdd19ced80ec5a5facad1dab7c",
       "mode": "AST_ONLY_NO_LLM_NO_API_COST",
       "exit_code_reported_by_root": 0,
-      "nodes": 17926,
-      "edges": 35465,
-      "communities": 1131,
+      "nodes": 18368,
+      "edges": 36516,
+      "communities": 1130,
       "zero_node_config_noncode_warnings": 731,
       "HTML": "SKIPPED_GT5000_THRESHOLD",
       "is_validation_test_build_or_securityQA": false
     },
     "source_diff": {
-      "base": "b2a509336bab5ed2de46d29d13627e130ea298f2",
-      "files": 55,
-      "insertions": 2195,
-      "deletions": 14,
+      "base": "0cbb36eb838bdc74810830530af3b94eb79f5de1",
+      "files": 82,
+      "insertions": 2674,
+      "deletions": 114,
       "is_completion_or_test_metric": false
     },
-    "prior_S6_ship_operations_package_pointer": "/historical_s6_ship_operations_b2a5093_package",
-    "report": "docs/phases/S8-DEFECT-FOUNDATION-20261106.md",
-    "next": "Continue open defect/DEV102 engineering-source work with explicit source/dependency/lease selection. Do not infer verified closure, complete DEV055 lifecycle or accepted S6/S8. Execute deferred gates only at actual larger PR preparation.",
+    "prior_S8_defect_package_pointer": "historical_s8_defect_0cbb36e_package",
+    "report": "docs/phases/S8-WORK-ORDER-SHELL-20261108.md",
+    "next": "Continue dependency-ready owning technical/defect/downtime work; execute deferred gates only when actual larger PR is prepared.",
     "canonical_acceptance_changed": false,
-    "metadata_only_followup_paths": [],
+    "metadata_only_followup_paths": [
+      "docs/project-status.md",
+      "docs/project-status.json",
+      "docs/phases/S8-WORK-ORDER-SHELL-20261108.md"
+    ],
     "root_notes": [
-      "Frozen product dd46c369ce0380fc4bebbb389c4ca9c7cbaee08b / tree f66c815c1fc4da95e86bcd4c4c63ae10f2560e37. b2a5093 bazına göre55 dosya,+2195/-14 yalnız kaynak boyutudur; completion veya test metriği değildir.",
-      "Root final source checkpoint için clean working tree ve tracked whitespace exit0 bildirdi; bu kontroller runtime QA yerine geçmez.",
-      "İki gerçek-host defect journey kaynağı merkezi registry’ye kaydedildi. Export sayısı source tanımıdır; runner çalışmadı, private fixture provision edilmedi."
-    ]
+      "Root reports frozen clean product and git diff base..HEAD --check exit0. These source observations are not product validation.",
+      "Four genuine case exports registered centrally; NOT RUN, private WorkOrder fixture not provisioned, dense-menu/editable-vessel shell prerequisites not provisioned by this package.",
+      "Latest bounded source reads include SourceDraftLaunch and its actual Defect/WorkOrder wrappers; no additional demonstrated defect. Full product/backend/runtime/visual QA remains open.",
+      "Root final bounded backend/wire/UI manual read reported no demonstrated new gap; not full implementation QA.",
+      "Running preview unchanged and unbuilt. New sidebar/button behavior exists in source only; no user-observed rendered fix claimed."
+    ],
+    "authored_checkpoints": {
+      "root_shell": "1487624",
+      "domain": "d13ef11",
+      "backend": "3640eb3",
+      "ui_product": "469a344",
+      "ui_final": "1233977",
+      "root_integration": "8e1271034420321b8320cc99aad8227d066a65c2",
+      "normal_local_commits_not_test_evidence": true
+    }
   },
   "nav_workspace_01": {
     "status": "locally_validated_awaiting_independent_qa",
@@ -10230,5 +10219,408 @@
       "Root final source checkpoint için clean working tree ve tracked whitespace exit0 bildirdi; bu kontroller runtime QA yerine geçmez.",
       "İki gerçek-host defect journey kaynağı merkezi registry’ye kaydedildi. Export sayısı source tanımıdır; runner çalışmadı, private fixture provision edilmedi."
     ]
+  },
+  "historical_s8_defect_0cbb36e_package": {
+    "task": "S8-DEFECT-FOUNDATION-20261106",
+    "state": "READY_FOR_ROOT_METADATA_APPLICATION_SOURCE_ONLY",
+    "accepted": false,
+    "accepted_story_points_added": 0,
+    "observed_at_utc": "2026-11-06T04:55:27.187698Z",
+    "branch": "foundation/s6-certificate-foundation-20261105",
+    "source_checkpoint": "dd46c369ce0380fc4bebbb389c4ca9c7cbaee08b",
+    "source_tree": "f66c815c1fc4da95e86bcd4c4c63ae10f2560e37",
+    "checkpoint_is_final": true,
+    "base_commit": "b2a509336bab5ed2de46d29d13627e130ea298f2",
+    "source_baseline": "poseidon-v46.3-20261030",
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "tasks": [
+      {
+        "id": "DEV-055",
+        "title": "Critical defect lifecycle",
+        "sprint": "S8",
+        "story_points": 13,
+        "trace_id": "T-S8-004",
+        "source_status": "Not Started",
+        "source_locator": "sheet:Backlog/row:56",
+        "literal_acceptance_criteria": "Detect→Assess→Safeguard→Action→Verify→Effectiveness; critical defect without safeguard cannot close; temporary measure expiry monitored.",
+        "dependencies": [
+          "DEV-030",
+          "DEV-052"
+        ],
+        "accepted": false,
+        "state": "SOURCE_FOUNDATION_WITH_OPEN_CRITERIA_NOT_ACCEPTED"
+      }
+    ],
+    "selected_scope": {
+      "tasks": 1,
+      "story_points": 13,
+      "ids": [
+        "DEV-055"
+      ],
+      "is_completion_or_acceptance": false
+    },
+    "canonical_S8_scope": {
+      "tasks": 13,
+      "story_points": 124,
+      "accepted_story_points": 0
+    },
+    "S6_context": {
+      "canonical_tasks": 9,
+      "canonical_story_points": 87,
+      "accepted_story_points": 0,
+      "selected_tasks": 8,
+      "selected_story_points": 79,
+      "DEV102_selected_or_accepted_by_this_package": false,
+      "DEV102_verified_closure_and_full_gate_ready": false
+    },
+    "supporting_dictionary": {
+      "path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "rows": "443-465",
+      "screen": "asset-reliability",
+      "supporting_rows_only": true,
+      "complete23field_screen_claimed": false,
+      "engineering_fact_count": 11
+    },
+    "source_contracts": [
+      {
+        "path": "docs/tasks/S8-DEFECT-DOMAIN-01.md",
+        "sha256": "2808a1b12cf923080638336d013b0712081db86ce9e8866ea4247c6a7a8a0ed2"
+      },
+      {
+        "path": "docs/tasks/S8-DEFECT-CORE-01.md",
+        "sha256": "a6362d7782dc0e70b6c53aa73b2a3d2a485c11c319e1d58d7a744b00514345dd"
+      },
+      {
+        "path": "docs/tasks/S8-DEFECT-CONTEXT-01.md",
+        "sha256": "0322aed2a897b84a8d4ef286af7107748e99ed494673402f5de44f055457f8f9"
+      },
+      {
+        "path": "docs/tasks/S8-DEFECT-UI-01.md",
+        "sha256": "91c1b43a418a7411715a35e76fc685ad6af89da1c045051f6481002602c39c85"
+      },
+      {
+        "path": "contracts/technical/defect.draft.v1.json",
+        "sha256": "461a945426371f20315776f50166ef4333d12649fab6dfa4794751a71dee20cf"
+      }
+    ],
+    "authored_checkpoints": {
+      "domain_checkpoint": "3252656",
+      "asset_context_checkpoint": "8d0bc55",
+      "context_navigation_checkpoint": "83fb997",
+      "core_checkpoint": "09c75847875cab91b86e62a514f957d5768d547d",
+      "UI_workspace_checkpoint": "98373d33bc6b5dad0a191d12bff401da591e037d"
+    },
+    "UI_workspace_integrated": true,
+    "genuine_case_sources": {
+      "count": 2,
+      "centrally_registered": true,
+      "registry_checkpoint": "dd46c369ce0380fc4bebbb389c4ca9c7cbaee08b",
+      "executed": false,
+      "private_fixture_provisioned": false
+    },
+    "source_behavior": [
+      "Eleven optional Known/Missing/Unknown engineering facts preserve source locators and lexical offset/narrative text. Literal Verify/Effectiveness remains unassessed capture; outer Stage DECLARATION and Qualification REVIEW_REQUIRED never authorize closure.",
+      "Temporal measure/deadline states compare exact explicit-offset instants at actual server time; equality is EXPIRED_DECLARED. Declared NOT_DUE is not effective safeguard, readiness or closure.",
+      "Actual current Asset head xmin plus exact immutable ContentJson hash establish new/changed pins. Context excludes explicit source Notes/role/user/serial members and does not fabricate committed historical xmin from preSave JSON.",
+      "Owning attributed EF head/revision/receipt ledger uses serializable SaveChanges, safe HTTP audit and same freshSQL returned/current-head/asset predicate composition, with live rights checks after awaits/audit.",
+      "Durable committed effect/facts/hash/OutcomeJson remain immutable, while separately assessed-at Temporal response metadata refreshes with current TimeProvider time on each delivery/replay. Whole response byte equality is not promised.",
+      "Same actor/key/body recovery, source expected versions, read-only history and optional incomplete SyntheticUnverified add-missing fixtures are source-authored. Fixture import is not activated and creates no user receipts or verified decisions."
+    ],
+    "current_security_inventory": {
+      "mutation_templates": 111,
+      "critical_templates": 103,
+      "concrete_critical_operations": 113,
+      "state": "SOURCE_DEFINITIONS_NOT_EXECUTED"
+    },
+    "verification": {
+      "tests": "DEFERRED_NOT_RUN",
+      "build": "DEFERRED_NOT_RUN",
+      "typecheck": "DEFERRED_NOT_RUN",
+      "lint": "DEFERRED_NOT_RUN",
+      "contract_generation": "DEFERRED_NOT_RUN",
+      "migration_model_parity": "DEFERRED_NOT_RUN",
+      "browser": "DEFERRED_NOT_RUN",
+      "CI": "DEFERRED_NOT_RUN",
+      "independent_implementation_QA": "DEFERRED_NOT_RUN",
+      "state": "DEFERRED_UNTIL_ACTUAL_LARGER_PR_GATE",
+      "reporter_role": "INDEPENDENT_SOURCE_PROGRESS_AND_BOUNDED_MANUAL_REVIEW_NOT_IMPLEMENTATION_QA",
+      "new_native_totals_measured_coverage_or_accuracy": false,
+      "historical_evidence_retargeted": false,
+      "provider_private_runtime_preview_or_PR_activated": false
+    },
+    "open_criteria": [
+      "This is an incomplete DEV055 engineering declaration foundation, not the complete Detect/Assess/Safeguard/Action/Verify/Effectiveness lifecycle or accepted S8.",
+      "Approved Human authority, legal/source transitions, safeguard efficacy, operational restrictions, verification/effectiveness and closure/return-to-service policies remain unavailable. Literal Verify/Effectiveness declarations do not establish those decisions.",
+      "DD443-465 belongs to asset-reliability and supplies supporting rows only; the11-fact engineering subset does not implement the full23-field screen or silently adopt its unresolved required/lookup mappings.",
+      "Asset lineage is optional engineering metadata, not an approved physical mapping of asset_name or evidence adoption. Equipment read permission remains mandatory even when the pin is null.",
+      "New/changed asset links require current head revision/xmin and exact immutable JSON hash; historical embedded preSave Version is not a committed historical xmin. Already established historical pins require current owning scope.",
+      "DEV102 is outside this package. The new owning dependency source can support later engineering integration, but verified closure, WorkOrder/claim/evidence adoption and full S6 acceptance gates remain unresolved.",
+      "Dedicated offline field classification/purpose/retention/key/storage and admission remain unavailable; no generic offline grants or approved safety catalogs are activated.",
+      "Expiry observation is recomputed on reads and response delivery. This source package does not implement or activate a background expiry-notification scheduler.",
+      "All new generation/model/build/domain/API/real PostgreSQL/component/browser/independent exact-target QA/CI gates remain deferred until actual larger PR preparation."
+    ],
+    "bounded_independent_source_review": {
+      "receipt": ".runtime/s8-defect-foundation-20261106/status-drafts/independent-source-review.json",
+      "sha256": "6aa61e4bf497aabc4aa55c70da6ee63581dfcfecbb68288e4cb94b55fda3d234",
+      "state": "BOUNDED_SOURCE_REVIEW_WITH_SOURCE_CORRECTIONS_ONLY",
+      "findings": [
+        {
+          "id": "DEFECT-CONTEXT-FOREIGN-EXISTENCE-COVERAGE",
+          "severity": "P2 coverage gap (not product isolation failure)",
+          "original": "DefectAssetContextTests.cs55-57 used mismatched nonexisting asset ID, vacuous404",
+          "correction": "c1bea22",
+          "state": "SOURCE_CORRECTION_REVIEWED_ONLY",
+          "details": "Actual foreign seed root asset existence is asserted under foreign tenant Db; actual foreign asset/vessel and wrong-vessel foreign asset cases check404/no pin. No test executed."
+        },
+        {
+          "id": "DEFECT-COMMAND-ASSET-PRESENCE-CONTRACT",
+          "severity": "P2 source wire parity",
+          "original": "DefectEndpoints.cs22 Asset=null default lacks JsonRequired while contracts/technical/defect.draft.v1.json required includes asset. null allowed, omission differs.",
+          "state": "SOURCE_CORRECTION_REVIEWED_ONLY",
+          "reportedBy": "Reporter and root independently; core adding JsonRequired nullable defaultnull per root",
+          "correction": "09c75847875cab91b86e62a514f957d5768d547d",
+          "details": "JsonRequired added while Asset remains nullable/defaultnull. Authored missing-member400 test and existing explicit-null draft sources read, NOT RUN."
+        },
+        {
+          "id": "DEFECT-WRITER-CROSS-VESSEL-CREATE-COLLISION",
+          "severity": "P2 bounded object-scope response",
+          "original": "In-flight DefectWriter.cs17 classified create row!=null as409 before row.VesselId mismatch404 at18; same-tenant foreign-vessel record UUID exposed different collision behavior.",
+          "reportedBy": "Root manual source review; reporter confirmed original ordering from source",
+          "state": "SOURCE_CORRECTION_REVIEWED_ONLY",
+          "limits": "Not an unauthorized write or a claim of complete global UUID anti-enumeration. Correction read in 09c75847875cab91b86e62a514f957d5768d547d; actual API negative case authored, NOT RUN.",
+          "correction": "09c75847875cab91b86e62a514f957d5768d547d",
+          "details": "Foreign-vessel404 guard precedes create/own conflict classification. Authored actual other-vessel row negative case reads/no mutation assertions, NOT RUN."
+        }
+      ],
+      "implementationQAOrPASSOrAcceptance": false
+    },
+    "derived_navigation_graph": {
+      "state": "AST_ONLY_COMPLETED_NAVIGATION_NOT_QA",
+      "source_head": "dd46c369ce0380fc4bebbb389c4ca9c7cbaee08b",
+      "source_tree": "f66c815c1fc4da95e86bcd4c4c63ae10f2560e37",
+      "mode": "AST_ONLY_NO_LLM_NO_API_COST",
+      "exit_code_reported_by_root": 0,
+      "nodes": 17926,
+      "edges": 35465,
+      "communities": 1131,
+      "zero_node_config_noncode_warnings": 731,
+      "HTML": "SKIPPED_GT5000_THRESHOLD",
+      "is_validation_test_build_or_securityQA": false
+    },
+    "source_diff": {
+      "base": "b2a509336bab5ed2de46d29d13627e130ea298f2",
+      "files": 55,
+      "insertions": 2195,
+      "deletions": 14,
+      "is_completion_or_test_metric": false
+    },
+    "prior_S6_ship_operations_package_pointer": "/historical_s6_ship_operations_b2a5093_package",
+    "report": "docs/phases/S8-DEFECT-FOUNDATION-20261106.md",
+    "next": "Continue open defect/DEV102 engineering-source work with explicit source/dependency/lease selection. Do not infer verified closure, complete DEV055 lifecycle or accepted S6/S8. Execute deferred gates only at actual larger PR preparation.",
+    "canonical_acceptance_changed": false,
+    "metadata_only_followup_paths": [],
+    "root_notes": [
+      "Frozen product dd46c369ce0380fc4bebbb389c4ca9c7cbaee08b / tree f66c815c1fc4da95e86bcd4c4c63ae10f2560e37. b2a5093 bazına göre55 dosya,+2195/-14 yalnız kaynak boyutudur; completion veya test metriği değildir.",
+      "Root final source checkpoint için clean working tree ve tracked whitespace exit0 bildirdi; bu kontroller runtime QA yerine geçmez.",
+      "İki gerçek-host defect journey kaynağı merkezi registry’ye kaydedildi. Export sayısı source tanımıdır; runner çalışmadı, private fixture provision edilmedi."
+    ]
+  },
+  "s8_work_order_shell_source_continuation_20261108": {
+    "task": "S8-WORK-ORDER-SHELL-20261108",
+    "state": "READY_FOR_ROOT_METADATA_APPLICATION_SOURCE_ONLY",
+    "accepted": false,
+    "accepted_story_points_added": 0,
+    "observed_at_utc": "2026-11-08T21:09:18.729140+00:00",
+    "branch": "foundation/s6-certificate-foundation-20261105",
+    "source_checkpoint": "8e1271034420321b8320cc99aad8227d066a65c2",
+    "source_tree": "95ef54ac092448cdd19ced80ec5a5facad1dab7c",
+    "checkpoint_is_final": true,
+    "base_commit": "0cbb36eb838bdc74810830530af3b94eb79f5de1",
+    "source_baseline": "poseidon-v46.3-20261030",
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "tasks": [
+      {
+        "id": "DEV-054",
+        "title": "Work order execution + evidence",
+        "sprint": "S8",
+        "story_points": 13,
+        "trace_id": "T-S8-003",
+        "source_status": "Not Started",
+        "source_locator": "sheet:Backlog/row:55",
+        "literal_acceptance_criteria": "RELEASED→IN_PROGRESS→EVIDENCE_SUBMITTED; readings/spares/photo/doc; required evidence yoksa verification/close olmaz.",
+        "dependencies": [
+          "DEV-029",
+          "DEV-053"
+        ],
+        "accepted": false,
+        "state": "SOURCE_FOUNDATION_WITH_OPEN_CRITERIA_NOT_ACCEPTED"
+      }
+    ],
+    "additional_user_feedback_task": {
+      "id": "UI-SHELL-CONSISTENCY-20261108",
+      "source": "2026-11-08 user feedback +13.04 paragraphs12,31-34,47-55",
+      "story_points_added_to_canonical": 0,
+      "scope": "Remove unnecessary sidebar vertical scroll; shared professional buttons/action patterns; preserve accessible navigation/current permission boundaries."
+    },
+    "selected_scope": {
+      "tasks": 1,
+      "story_points": 13,
+      "ids": [
+        "DEV-054"
+      ],
+      "is_completion_or_acceptance": false
+    },
+    "cumulative_selected_S8_scope": {
+      "tasks": 2,
+      "story_points": 26,
+      "ids": [
+        "DEV-055",
+        "DEV-054"
+      ],
+      "is_completion_or_acceptance": false
+    },
+    "canonical_S8_scope": {
+      "tasks": 13,
+      "story_points": 124,
+      "accepted_story_points": 0
+    },
+    "S6_context": {
+      "canonical_tasks": 9,
+      "canonical_story_points": 87,
+      "accepted_story_points": 0,
+      "selected_tasks": 8,
+      "selected_story_points": 79,
+      "DEV102_selected_or_accepted_by_this_package": false,
+      "DEV102_verified_closure_and_full_gate_ready": false
+    },
+    "supporting_dictionary": {
+      "path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locators": [
+        "Data Dictionary 2316 rows1426-1463",
+        "Lookup Kaynak Çözümü rows304-313"
+      ],
+      "field_occurrences": 38,
+      "unique_source_keys": 29,
+      "mutable_dictionary_facts": 24,
+      "backlog_stage_declaration_facts": 1,
+      "owning_facts": 25,
+      "full_screens_or_transitions_accepted": false
+    },
+    "source_behavior": [
+      "Owning work order draft API, EF head/revision/receipt, migration/snapshot and optional incomplete SyntheticUnverified fixture authoring; attributed audited SERIALIZABLE writes, exact current xmin, immutable history and same-owner exact idempotent receipts.",
+      "Actual current maintenance plan/asset lineage pin is engineering context only. Fresh combined returned/current-head/source SQL checks and synchronous current rights guard reads and postcommit delivery; no historic xmin invented from presave JSON.",
+      "Owning 25 facts preserve Known/Missing/Unknown and calendar/lexical numeric semantics. Unresolved equipment/job/evidence/catalog/person references remain Known unavailable; assigned_to source Date/person conflict is explicit.",
+      "Execution stage literals and verification_result remain unassessed declarations. DRAFT / REVIEW_REQUIRED is the owning state; no release, evidence submission, verification, risk/permit approval, effectiveness or closure authority is inferred.",
+      "Enterprise work order center/detail/history/editor, source plan context and safe navigation use shared controls; page-only search, stable UUID/key/body/base and original actor/tenant recovery; canonical identity persisted after same-owner receipt before optional readback.",
+      "Shared sidebar uses one native inner scroll region with min-height0 and nonshrinking brand/footer; initially collapsed but mounted work-view settings and one expanded authorized module. Short viewports retain accessible native scrolling.",
+      "Shared Button geometry is default40/small36, 44 on narrow/coarse input, square icons and wrapping labels. Explicit responsive form action composition is used across the changed workspaces.",
+      "Seven implementation presentation groups do not complete the canonical 11 menus/39 modules/196 screens."
+    ],
+    "UI_workspace_integrated": true,
+    "genuine_case_sources": {
+      "work_order_cases": [
+        "work-order-signed-unassessed-phase-exact-receipt",
+        "work-order-signed-confirmed-id-reopen-after-readback-loss"
+      ],
+      "central_registration": "FOUR_NEW_CASE_EXPORTS_ACTUALLY_REGISTERED_SOURCE_ONLY",
+      "private_fixture": "POSEIDON_BROWSER_WORK_ORDER_FIXTURE under POSEIDON_LAB_PRIVATE, schema poseidon.work-order.signed-fixture.v1",
+      "private_fixture_provisioned": false,
+      "executed": false,
+      "shell_geometry_cases": [
+        "enterprise-shell-signed-single-scroll-and-group-navigation",
+        "enterprise-shell-signed-shared-form-control-geometry"
+      ],
+      "shell_prerequisites": "Actual signed dense menu at least12destinations across5groups and real editable vessel; missing fixture/authority fails, no fake business responses."
+    },
+    "current_security_inventory": {
+      "mutation_templates": 113,
+      "critical_templates": 105,
+      "concrete_critical_operations": 115,
+      "definition_only_not_coverage_or_PASS": true
+    },
+    "verification": {
+      "tests": "DEFERRED_NOT_RUN",
+      "build": "DEFERRED_NOT_RUN",
+      "typecheck": "DEFERRED_NOT_RUN",
+      "lint": "DEFERRED_NOT_RUN",
+      "contract_generation": "DEFERRED_NOT_RUN",
+      "migration_model_parity": "DEFERRED_NOT_RUN",
+      "browser": "DEFERRED_NOT_RUN",
+      "CI": "DEFERRED_NOT_RUN",
+      "independent_implementation_QA": "DEFERRED_NOT_RUN",
+      "state": "DEFERRED_UNTIL_ACTUAL_LARGER_PR_GATE",
+      "reporter_role": "INDEPENDENT_SOURCE_PROGRESS_AND_BOUNDED_MANUAL_REVIEW_NOT_IMPLEMENTATION_QA",
+      "new_native_totals_measured_coverage_or_accuracy": false,
+      "historical_evidence_retargeted": false,
+      "provider_private_runtime_preview_or_PR_activated": false
+    },
+    "open_criteria": [
+      "Approved release/transition/assignment and permit/risk policy",
+      "Required evidence selection/adoption and evidence-gated verification/closure",
+      "Assigned_to type/source conflict and approved catalogs/references",
+      "Qualified attributed human verification, effectiveness and safe return to service",
+      "Dedicated privacy/classification/purpose/retention/key/offline execution/replay policy",
+      "Actual integrated build/type/lint/test/model/migration/browser and independent target-commit QA at larger PR gate",
+      "DEV-055 full critical-defect lifecycle and DEV-102 owning downtime linkage remain open"
+    ],
+    "bounded_independent_source_review": {
+      "path": "C:\\Users\\avurgun\\source\\repos\\Poseidon\\.runtime\\s8-work-order-shell-20261108\\status-drafts\\shell-source-review.json",
+      "state": "SOURCE_CORRECTIONS_REVIEWED_ONLY_FROZEN_SOURCE",
+      "findings": [
+        "SHELL-SRC-001 mismatched JSX opener/closer corrected",
+        "SHELL-SRC-002 native button cascade overriding mobile backdrop corrected"
+      ],
+      "full_backend_or_runtime_QA": false,
+      "sha256": "b010b381f54179964281f6c57100dc9fed53eddff4ccebd0cda120a77fe8db54"
+    },
+    "derived_navigation_graph": {
+      "state": "AST_ONLY_COMPLETED_NAVIGATION_NOT_QA",
+      "source_head": "8e1271034420321b8320cc99aad8227d066a65c2",
+      "source_tree": "95ef54ac092448cdd19ced80ec5a5facad1dab7c",
+      "mode": "AST_ONLY_NO_LLM_NO_API_COST",
+      "exit_code_reported_by_root": 0,
+      "nodes": 18368,
+      "edges": 36516,
+      "communities": 1130,
+      "zero_node_config_noncode_warnings": 731,
+      "HTML": "SKIPPED_GT5000_THRESHOLD",
+      "is_validation_test_build_or_securityQA": false
+    },
+    "source_diff": {
+      "base": "0cbb36eb838bdc74810830530af3b94eb79f5de1",
+      "files": 82,
+      "insertions": 2674,
+      "deletions": 114,
+      "is_completion_or_test_metric": false
+    },
+    "prior_S8_defect_package_pointer": "historical_s8_defect_0cbb36e_package",
+    "report": "docs/phases/S8-WORK-ORDER-SHELL-20261108.md",
+    "next": "Continue dependency-ready owning technical/defect/downtime work; execute deferred gates only when actual larger PR is prepared.",
+    "canonical_acceptance_changed": false,
+    "metadata_only_followup_paths": [
+      "docs/project-status.md",
+      "docs/project-status.json",
+      "docs/phases/S8-WORK-ORDER-SHELL-20261108.md"
+    ],
+    "root_notes": [
+      "Root reports frozen clean product and git diff base..HEAD --check exit0. These source observations are not product validation.",
+      "Four genuine case exports registered centrally; NOT RUN, private WorkOrder fixture not provisioned, dense-menu/editable-vessel shell prerequisites not provisioned by this package.",
+      "Latest bounded source reads include SourceDraftLaunch and its actual Defect/WorkOrder wrappers; no additional demonstrated defect. Full product/backend/runtime/visual QA remains open.",
+      "Root final bounded backend/wire/UI manual read reported no demonstrated new gap; not full implementation QA.",
+      "Running preview unchanged and unbuilt. New sidebar/button behavior exists in source only; no user-observed rendered fix claimed."
+    ],
+    "authored_checkpoints": {
+      "root_shell": "1487624",
+      "domain": "d13ef11",
+      "backend": "3640eb3",
+      "ui_product": "469a344",
+      "ui_final": "1233977",
+      "root_integration": "8e1271034420321b8320cc99aad8227d066a65c2",
+      "normal_local_commits_not_test_evidence": true
+    }
   }
 }
