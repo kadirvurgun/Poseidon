@@ -11,6 +11,7 @@ internal static class DowntimeWriter
     internal static async Task<DowntimeApply> Apply(PoseidonDbContext db,TrustedActor actor,Guid vessel,DowntimeDraftCommand command,bool create,DateTimeOffset now,CancellationToken ct) {
         if(db.Database.CurrentTransaction==null || actor.Id==Guid.Empty || vessel==Guid.Empty || command.Id==Guid.Empty)throw new InvalidOperationException("Downtime apply requires an attributed scoped transaction.");
         if(db.TenantId!=actor.TenantId || !OperationalDowntimeEndpoints.CanWrite(actor,vessel))return new(null,403,"permission_denied");
+        if(!await actor.Scope(db.Vessels.AsNoTracking()).AnyAsync(v=>v.Id==vessel && v.Kind==VesselKind.Ship,ct))return new(null,404,"resource_not_found");
         if(!DowntimePolicy.TryNormalize(command.Fields,out var fields,out _))return new(null,400,"invalid_request");
         if(command.SourceVersion!=DowntimePolicy.SourceVersion)return new(null,409,"source_contract_changed");
         var row=await db.Downtimes.SingleOrDefaultAsync(r=>r.Id==command.Id,ct);

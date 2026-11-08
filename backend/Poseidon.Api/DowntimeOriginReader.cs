@@ -30,6 +30,33 @@ internal static class DowntimeOriginReader
     private static DefectAssetPin? Asset(Guid? id,long? rev,long? version,string? hash)=>id==null?null:new(id.Value,rev!.Value,checked((uint)version!.Value),hash!);
     private static WorkOrderPlanPin? Plan(Guid? id,long? rev,long? version,string? hash,string? source)=>id==null?null:new(id.Value,rev!.Value,checked((uint)version!.Value),hash!,source!);
 
+    // Observe the actual current equipment metadata as well as the immutable
+    // historical equipment snapshot already pinned by the owning source reader.
+    // This is authorization composition, never a claim that the old source is current.
+    private static async Task<Expression<Func<Vessel,bool>>?> CurrentAssetFence(PoseidonDbContext db,Guid vessel,IEnumerable<Guid> ids,CancellationToken ct) {
+        Expression<Func<Vessel,bool>> fence=v=>true;
+        foreach(var id in ids.Distinct()) {
+            var asset=await db.Assets.AsNoTracking().SingleOrDefaultAsync(a=>a.Id==id && a.VesselId==vessel,ct);if(asset==null)return null;
+            var raw=await db.AssetRevisions.AsNoTracking().Where(a=>a.AssetId==id && a.VesselId==vessel && a.Revision==asset.Revision).Select(a=>a.ContentJson).SingleOrDefaultAsync(ct);if(raw==null)return null;
+            Expression<Func<Vessel,bool>> exact=v=>db.AssetRevisions.Any(a=>a.VesselId==vessel && a.AssetId==id && a.Revision==asset.Revision && a.ContentJson==raw) &&
+                db.Assets.Any(a=>a.Id==id && a.VesselId==vessel && a.Revision==asset.Revision && a.Version==asset.Version);
+            fence=And(fence,exact);
+        }
+        return fence;
+    }
+    private static async Task<Expression<Func<Vessel,bool>>?> CurrentPlanFence(PoseidonDbContext db,Guid vessel,WorkOrderPlanPin[] pins,CancellationToken ct) {
+        Expression<Func<Vessel,bool>> fence=v=>true;
+        foreach(var id in pins.Select(p=>p.Id).Distinct()) {
+            var head=await db.MaintenancePlans.AsNoTracking().SingleOrDefaultAsync(p=>p.Id==id && p.VesselId==vessel,ct);if(head==null)return null;
+            var revisions=pins.Where(p=>p.Id==id).Select(p=>p.Revision).Distinct().ToArray();
+            var assets=await db.MaintenancePlanRevisions.AsNoTracking().Where(p=>p.PlanId==id && p.VesselId==vessel && revisions.Contains(p.Revision)).Select(p=>p.AssetId).ToArrayAsync(ct);
+            var nested=await CurrentAssetFence(db,vessel,assets.Append(head.AssetId),ct);if(nested==null)return null;
+            Expression<Func<Vessel,bool>> exact=v=>db.MaintenancePlans.Any(p=>p.Id==id && p.VesselId==vessel && p.Revision==head.Revision && p.Version==head.Version &&
+                p.AssetId==head.AssetId && p.ContentJson==head.ContentJson && p.Status==head.Status && p.Provenance==head.Provenance && p.OwnerRoleId==head.OwnerRoleId && p.JobId==head.JobId && p.ObservationId==head.ObservationId);
+            fence=And(And(fence,exact),nested);
+        }
+        return fence;
+    }
     // Each requested immutable source AND its freshly captured current source head
     // contributes to one expression. Nested asset/plan contexts from BOTH snapshots
     // are composed into that same final SQL; awaiting two boolean fences is unsafe.
@@ -43,6 +70,7 @@ internal static class DowntimeOriginReader
                 var head=await db.Defects.AsNoTracking().SingleOrDefaultAsync(r=>r.VesselId==vessel && r.Id==pin.Id,ct);if(row==null || head==null || head.SourceVersion!=Source(pin.Kind))return null;
                 var assets=new[]{Asset(row.AssetId,row.AssetRevision,row.AssetVersion,row.AssetHash),Asset(head.AssetId,head.AssetRevision,head.AssetVersion,head.AssetHash)}.Where(p=>p!=null).Cast<DefectAssetPin>().Distinct().ToArray();
                 var nested=await DefectAssetContextReader.CaptureFence(db,actor,vessel,assets,false,ct);if(nested==null)return null;
+                var currentAssets=await CurrentAssetFence(db,vessel,assets.Select(p=>p.Id),ct);if(currentAssets==null)return null;nested=And(nested,currentAssets);
                 Expression<Func<Vessel,bool>> match=v=>db.DefectRevisions.Any(r=>r.VesselId==vessel && r.DefectId==pin.Id && r.Revision==pin.Revision && r.RecordVersion==pin.Version && r.Hash==pin.Hash && r.SourceVersion==pin.SourceVersion) &&
                     db.Defects.Any(h=>h.VesselId==vessel && h.Id==head.Id && h.Revision==head.Revision && h.Version==head.Version && h.Hash==head.Hash && h.SourceVersion==head.SourceVersion &&
                         h.AssetId==head.AssetId && h.AssetRevision==head.AssetRevision && h.AssetVersion==head.AssetVersion && h.AssetHash==head.AssetHash &&
@@ -53,6 +81,7 @@ internal static class DowntimeOriginReader
                 var head=await db.WorkOrders.AsNoTracking().SingleOrDefaultAsync(r=>r.VesselId==vessel && r.Id==pin.Id,ct);if(row==null || head==null || head.SourceVersion!=Source(pin.Kind))return null;
                 var plans=new[]{Plan(row.PlanId,row.PlanRevision,row.PlanVersion,row.PlanHash,row.PlanSourceVersion),Plan(head.PlanId,head.PlanRevision,head.PlanVersion,head.PlanHash,head.PlanSourceVersion)}.Where(p=>p!=null).Cast<WorkOrderPlanPin>().Distinct().ToArray();
                 var nested=await WorkOrderPlanOriginReader.CaptureFence(db,actor,vessel,plans,false,ct);if(nested==null)return null;
+                var currentPlans=await CurrentPlanFence(db,vessel,plans,ct);if(currentPlans==null)return null;nested=And(nested,currentPlans);
                 Expression<Func<Vessel,bool>> match=v=>db.WorkOrderRevisions.Any(r=>r.VesselId==vessel && r.WorkOrderId==pin.Id && r.Revision==pin.Revision && r.RecordVersion==pin.Version && r.Hash==pin.Hash && r.SourceVersion==pin.SourceVersion) &&
                     db.WorkOrders.Any(h=>h.VesselId==vessel && h.Id==head.Id && h.Revision==head.Revision && h.Version==head.Version && h.Hash==head.Hash && h.SourceVersion==head.SourceVersion &&
                         h.PlanId==head.PlanId && h.PlanRevision==head.PlanRevision && h.PlanVersion==head.PlanVersion && h.PlanHash==head.PlanHash && h.PlanSourceVersion==head.PlanSourceVersion &&

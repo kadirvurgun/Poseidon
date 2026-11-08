@@ -77,7 +77,7 @@ public static class OperationalDowntimeEndpoints
         var planFence=await DowntimeOriginReader.CaptureFence(db,actor,vessel,pins,false,h.RequestAborted);if(planFence==null)return false;
         var proposedFence=await DowntimeOriginReader.CaptureFence(db,actor,vessel,proposed==null?[]:[proposed],proposedCurrent,h.RequestAborted);if(proposedFence==null)return false;
         var returned=db.DowntimeRevisions.AsNoTracking().Where(pairs);var currentHeads=db.Downtimes.AsNoTracking().Where(headPairs);
-        // Captured plan JSON matches and actual current xmin, if required, are
+        // Exact source, nested context and actual current xmin, if required, are
         // observed with every downtime/head pin in ONE final fresh SQL statement.
         var found=await Vessels(db,actor,vessel).Where(planFence).Where(proposedFence).Select(_=>returned.Count()==records.Length && currentHeads.Count()==ids.Length).SingleOrDefaultAsync(h.RequestAborted);
         var live=resolver.Resolve(h.User);return found && CanRead(live) && Rights(live!)==rights && (!write || CanWrite(live,vessel));
@@ -138,15 +138,15 @@ public static class OperationalDowntimeEndpoints
         var replay=await Replay();if(replay!=null)return replay;
         var existing=routeId==null?null:await db.Downtimes.AsNoTracking().SingleOrDefaultAsync(r=>r.Id==command.Id && r.VesselId==vessel,ct);
         if(routeId!=null && existing==null)return await Fail(h,404,"resource_not_found");DowntimeRecordDto[] previous=existing==null?[]:[Dto(existing,true,true,Now(h))];
-        var unchangedPlan=existing!=null && existing.Version==command.ExpectedVersion && Origin(existing.OriginJson)==command.Origin;
-        if(!await Current(h,vessel,rights,previous,true,command.Origin,!unchangedPlan))return await Fail(h,403,"linked_resource_unavailable");
+        var unchangedOrigin=existing!=null && existing.Version==command.ExpectedVersion && Origin(existing.OriginJson)==command.Origin;
+        if(!await Current(h,vessel,rights,previous,true,command.Origin,!unchangedOrigin))return await Fail(h,403,"linked_resource_unavailable");
         await Audit(h,"Attempted",command.Id);IDbContextTransaction? tx=null;string? outcome=null;
         try {
             tx=await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable,ct);var now=Now(h);
             var applied=await DowntimeWriter.Apply(db,actor,vessel,command,routeId==null,now,ct);if(applied.Record==null)return await Fail(h,applied.Status,applied.Code!);
             outcome=JsonSerializer.Serialize(applied.Record,Json);db.DowntimeReceipts.Add(new(){TenantId=actor.TenantId,VesselId=vessel,ActorId=actor.Id,Key=key,DowntimeId=command.Id,Revision=applied.Record.Revision,
                 RecordVersion=applied.Record.Version,Fingerprint=fingerprint,OutcomeJson=outcome,SavedAt=now});await db.SaveChangesAsync(ct);
-            if(!await Current(h,vessel,rights,previous,true,command.Origin,!unchangedPlan))return await Fail(h,403,"permission_denied");await tx.CommitAsync(ct);
+            if(!await Current(h,vessel,rights,previous,true,command.Origin,!unchangedOrigin))return await Fail(h,403,"permission_denied");await tx.CommitAsync(ct);
         }catch(DbUpdateConcurrencyException){if(tx!=null)await tx.RollbackAsync(CancellationToken.None);db.ChangeTracker.Clear();return await Replay()??await Fail(h,409,"version_conflict");}
         catch(Exception ex)when(PostgresFailure.IsDatabase(ex)){if(tx!=null)await tx.RollbackAsync(CancellationToken.None);db.ChangeTracker.Clear();var conflict=PostgresFailure.IsSerialization(ex)||PostgresFailure.Provider(ex)?.SqlState=="23505";return await Replay()??await Fail(h,conflict?409:503,conflict?"version_conflict":"service_unavailable");}
         finally{if(tx!=null)await tx.DisposeAsync();}

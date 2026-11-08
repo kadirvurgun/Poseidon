@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Poseidon.Persistence;
 
-// Owning operations work order draft declarations. No closure, service verification,
+// Owning operational downtime draft declarations. No financial claim, closure or verification,
 // effectiveness assessment or safety decision is represented by these rows.
 public sealed class Downtime : ITenantEntity
 {

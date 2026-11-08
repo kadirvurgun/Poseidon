@@ -30,13 +30,15 @@
     "TenantPerson",
     "Unresolved"
   ],
-  "mutationRouteTemplates": 113,
-  "criticalRouteTemplates": 105,
-  "criticalOperations": 115,
+  "mutationRouteTemplates": 115,
+  "criticalRouteTemplates": 107,
+  "criticalOperations": 117,
   "scopeMeaning": "Current exposed HTTP command surface, including aliases. Counts are authoring definitions until actual EndpointDataSource drift and real audit observations pass the phase gate. Technical codes describe accepted commands, never human justification or safety authority.",
   "operations": [
     { "operationId": "DefectCreate", "method": "POST", "routePattern": "/api/v1/defects", "family": "Defect", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "DefectCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "DefectUpdate", "method": "PUT", "routePattern": "/api/v1/defects/{id:guid}", "family": "Defect", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "DefectCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "DowntimeCreate", "method": "POST", "routePattern": "/api/v1/operational-downtime", "family": "Downtime", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "DowntimeCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "DowntimeUpdate", "method": "PUT", "routePattern": "/api/v1/operational-downtime/{id:guid}", "family": "Downtime", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "DowntimeCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "WorkOrderCreate", "method": "POST", "routePattern": "/api/v1/work-orders", "family": "WorkOrder", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "WorkOrderCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "WorkOrderUpdate", "method": "PUT", "routePattern": "/api/v1/work-orders/{id:guid}", "family": "WorkOrder", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "WorkOrderCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "FuelShipOpsCreate", "method": "POST", "routePattern": "/api/v1/fuel-bunker-logs", "family": "ShipOperations", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "ShipOperationsCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
