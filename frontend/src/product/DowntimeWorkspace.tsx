@@ -23,7 +23,7 @@ export function DowntimeWorkspace() {
   const guard = (action: () => void) => { if (saving.current) return; if (dirty.current) setPending(() => action); else action() }
   const { route, move } = useDowntimeLocation(guard, clear)
   const navigate = (href: string, committed?: () => void) => {
-    if (href !== '/app' && !href.startsWith('/app/') || /[\\\u0000-\u001f]/u.test(href)) return
+    if (href !== '/app' && !href.startsWith('/app/') || /[\\\p{Cc}]/u.test(href)) return
     const next = readDowntimeLocation(href)
     guard(() => { committed?.(); clear(); if (next.invalid) window.location.assign(href); else move(next) })
   }

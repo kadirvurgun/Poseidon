@@ -36,10 +36,11 @@ export function DailyOfflinePanel({ vessel, kind, recordId, record, fields, enab
   useEffect(() => { callbacks.current.onDirty(dirty || retained || queue.pending > 0); return () => callbacks.current.onDirty(false) }, [dirty, retained, queue.pending])
   useEffect(() => { callbacks.current.onSaving(busy); return () => callbacks.current.onSaving(false) }, [busy])
   useEffect(() => {
+    const lifetime = epoch
     const network = () => { setOnline(navigator.onLine); if (navigator.onLine) withdraw() }
     const hidden = () => { if (document.hidden) withdraw() }
     window.addEventListener('online', network); window.addEventListener('offline', network); window.addEventListener('pagehide', withdraw); document.addEventListener('visibilitychange', hidden)
-    return () => { epoch.current++; request.current?.abort(); app.current?.close(); window.removeEventListener('online', network); window.removeEventListener('offline', network); window.removeEventListener('pagehide', withdraw); document.removeEventListener('visibilitychange', hidden); callbacks.current.onDirty(false); callbacks.current.onSaving(false) }
+    return () => { lifetime.current++; request.current?.abort(); app.current?.close(); window.removeEventListener('online', network); window.removeEventListener('offline', network); window.removeEventListener('pagehide', withdraw); document.removeEventListener('visibilitychange', hidden); callbacks.current.onDirty(false); callbacks.current.onSaving(false) }
   }, [withdraw, vessel, kind, recordId])
   useEffect(() => { if (!enabled) withdraw() }, [enabled, withdraw])
   useEffect(() => { if (!active || !app.current) return; const timer = setTimeout(withdraw, app.current.remaining()); return () => clearTimeout(timer) }, [active, withdraw])

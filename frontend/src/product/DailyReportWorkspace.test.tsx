@@ -132,7 +132,7 @@ describe('T-OPS2 daily source interactions (authored; execution deferred)', () =
     expect(fetch.mock.calls.filter(([, init]) => init?.method === 'POST')).toHaveLength(1)
   })
   it('does not convert failure or offline state into an empty healthy record set', async () => {
-    const fetch = transport('Noon'); const user = userEvent.setup(); render(<DailyReportWorkspace />); await english(); await newDraft()
+    const fetch = transport('Noon'); render(<DailyReportWorkspace />); await english(); await newDraft()
     vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(false); act(() => { window.dispatchEvent(new Event('offline')) })
     await screen.findByText(/Current daily sources unavailable while offline or hidden/)
     expect(screen.queryByRole('form')).not.toBeInTheDocument()

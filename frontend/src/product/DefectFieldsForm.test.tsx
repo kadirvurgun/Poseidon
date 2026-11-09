@@ -17,7 +17,7 @@ describe('T-S8-004 enterprise declaration fields — source only', () => {
     render(<Harness />); const user = userEvent.setup()
     await user.selectOptions(screen.getByLabelText('Declared workflow phase value state'), 'Known'); await user.selectOptions(screen.getByLabelText('Declared workflow phase'), 'Verify')
     expect(JSON.parse(screen.getByLabelText('Declared defect fields').textContent!).lifecycle_stage).toEqual({ state: 'Known', value: 'Verify' })
-    for (const name of ['Closed', 'Verified', 'Effective', 'Ready']) expect(screen.queryByRole('option', { name, exact: true })).not.toBeInTheDocument()
+    for (const name of ['Closed', 'Verified', 'Effective', 'Ready']) expect(screen.queryByRole('option', { name })).not.toBeInTheDocument()
     expect(screen.getByLabelText('Declared criticality value state')).toHaveValue('Missing')
   })
   it('associates explicit value errors and keeps readonly fields keyboard-ineligible', () => {

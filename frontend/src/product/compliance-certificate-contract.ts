@@ -10,10 +10,10 @@ const object = (value: unknown): value is Record<string, unknown> => !!value && 
 const exact = (value: unknown, keys: string[]): value is Record<string, unknown> => object(value) && Object.keys(value).length === keys.length && keys.every(key => Object.hasOwn(value, key))
 const positive = (value: unknown) => typeof value === 'number' && Number.isSafeInteger(value) && value > 0
 const hash = (value: unknown) => typeof value === 'string' && /^[A-Fa-f0-9]{64}$/.test(value)
-const nullableText = (value: unknown) => value === null || typeof value === 'string' && value.length <= 4096 && !/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F]/.test(value)
+const nullableText = (value: unknown) => value === null || typeof value === 'string' && value.length <= 4096 && !/\p{Cc}/u.test(value.replace(/[\r\n\t]/g, ''))
 
 export function decodePassportCertificates(value: unknown, vessel: string, expectedOffset?: number): PassportCertificates {
-  const fail = (): never => { throw new ApiError(502, 'invalid_passport_certificate_contract') }
+  function fail(): never { throw new ApiError(502, 'invalid_passport_certificate_contract') }
   if (!isGuid(vessel) || !exact(value, ['coverage', 'items', 'offset', 'limit', 'hasMore', 'referenceDate', 'blockers']) ||
     !['UNAVAILABLE', 'AUTHORIZED_PAGE_ONLY'].includes(String(value.coverage)) || !Array.isArray(value.items) || value.items.length > 25 ||
     typeof value.offset !== 'number' || !Number.isSafeInteger(value.offset) || value.offset < 0 || value.offset > 100000 || expectedOffset !== undefined && value.offset !== expectedOffset ||

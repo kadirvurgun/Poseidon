@@ -15,7 +15,7 @@ const props = { items, currentKey: 'defects', language: 'en' as const, onNavigat
 it('opens the current module and keeps the other authorized destinations in collapsed, keyboard-safe groups', () => {
   const view = render(<nav aria-label="Test sidebar"><EnterpriseSidebarNav {...props} /></nav>)
   expect(screen.getByRole('button', { name: 'Technical and maintenance' })).toHaveAttribute('aria-expanded', 'true')
-  expect(screen.getByRole('button', { name: 'Defects', exact: true })).toHaveAttribute('aria-current', 'page')
+  expect(screen.getByRole('button', { name: 'Defects' })).toHaveAttribute('aria-current', 'page')
   expect(screen.getByRole('button', { name: 'Overview' })).toHaveAttribute('aria-expanded', 'false')
   expect(screen.getByText('Fleet')).not.toBeVisible()
   expect(enterpriseFocusTargets(view.container).some(node => node.textContent === 'Fleet')).toBe(false)
@@ -27,7 +27,7 @@ it('uses one expanded module at a time without changing the owning page or its p
   expect(screen.getByRole('button', { name: 'Technical and maintenance' })).toHaveAttribute('aria-expanded', 'false')
   expect(screen.getByText('Defects')).not.toBeVisible()
   expect(onNavigate).not.toHaveBeenCalled()
-  await user.click(screen.getByRole('button', { name: 'Crew', exact: true }))
+  await user.click(screen.getByRole('button', { name: 'Crew' }))
   expect(onNavigate).toHaveBeenCalledWith('/app/crew')
 })
 
