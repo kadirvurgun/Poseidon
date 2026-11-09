@@ -11,13 +11,13 @@ import os
 from pathlib import Path
 import re
 import secrets
-import signal
 import subprocess
 import time
 import urllib.request
 import uuid
 from oidc_lab import ROOT, environment, private_directory, write
 from codex_accounts import Workers
+from posix_owned_tree import PosixOwnedTree
 
 LABEL = 'poseidon.files-source-s3-gate'
 
@@ -182,7 +182,8 @@ def launch_owned_child(command, env):
         try: return tree.start(command,env),tree
         except BaseException:
             tree.close();raise
-    return subprocess.Popen(command,cwd=ROOT,env=env,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,start_new_session=True),None
+    tree=PosixOwnedTree(command,env,ROOT)
+    return tree,tree
 
 
 def finish_owned_tree(process, tree, force=False):
@@ -193,14 +194,7 @@ def finish_owned_tree(process, tree, force=False):
             return active>0
         finally:
             tree.close()
-    # The session belongs to this invocation, even after its leader exits.
-    try: os.killpg(process.pid,0)
-    except ProcessLookupError: return False
-    if process.poll() is None: Workers.stop(process)
-    else:
-        try: os.killpg(process.pid,signal.SIGKILL)
-        except ProcessLookupError: pass
-    return True
+    raise RuntimeError('owned_child_containment_unproven')
 
 
 def owned_child(command, env, timeout, evidence):

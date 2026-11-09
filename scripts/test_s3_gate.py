@@ -202,13 +202,9 @@ class OwnedTreeContainmentTests(unittest.TestCase):
             self.assertEqual('EXITED_WITH_LIVE_DESCENDANTS',evidence['child_status'])
             self.assertEqual('STOPPED_BEFORE_PROVIDER_CLEANUP',evidence['child_tree_status'])
 
-    def test_posix_leader_exit_still_kills_only_its_owned_process_group(self):
-        process=MagicMock();process.pid=234567;process.poll.return_value=7
-        with patch.object(s3_gate.os,'killpg',create=True) as kill,patch.object(s3_gate.Workers,'stop') as stop, \
-                patch.object(s3_gate.signal,'SIGKILL',9,create=True):
-            self.assertTrue(s3_gate.finish_owned_tree(process,None))
-        self.assertEqual([((234567,0),),((234567,9),)],[(x.args,) for x in kill.call_args_list])
-        stop.assert_not_called()
+    def test_missing_containment_never_claims_posix_tree_stop(self):
+        with self.assertRaisesRegex(RuntimeError,'owned_child_containment_unproven'):
+            s3_gate.finish_owned_tree(MagicMock(),None)
 
     def test_actual_owned_tree_contains_parent_exit_with_live_descendant(self):
         import sys
