@@ -236,6 +236,20 @@ class ApiShardGateTests(unittest.TestCase):
         self.assertEqual({self.coverage.run.run_id}, {run_id for _, run_id in executions})
         prepare.assert_called_once(); evaluate.assert_called_once()
 
+    def test_complete_sharded_evidence_is_accepted_by_the_independent_native_scope_validator(self):
+        from copy import deepcopy
+        code, report, _, _, _ = self.execute_shards()
+        self.assertEqual(0, code)
+        self.assertEqual(0, report['exit_code'])
+        self.assertTrue(gate.critical_write_coverage.native_scope_complete(report, self.coverage.run))
+        for exit_code in (None, True, 1, 2):
+            altered = deepcopy(report); altered['exit_code'] = exit_code
+            self.assertFalse(gate.critical_write_coverage.native_scope_complete(altered, self.coverage.run))
+        altered = deepcopy(report); altered.pop('exit_code')
+        self.assertFalse(gate.critical_write_coverage.native_scope_complete(altered, self.coverage.run))
+        altered = deepcopy(report); altered['count_observations']['skipped'] = [1]
+        self.assertFalse(gate.critical_write_coverage.native_scope_complete(altered, self.coverage.run))
+
     def test_partial_overlap_foreign_empty_and_theory_multiplicity_fail_before_execution(self):
         def missing(groups): groups[0].pop()
         def overlap(groups): groups[1].append(groups[0][0])
@@ -256,6 +270,7 @@ class ApiShardGateTests(unittest.TestCase):
                 code, report, executions, _, evaluate = self.execute_shards(
                     outputs={0: subprocess.CompletedProcess([], exit_code, output)})
                 self.assertNotEqual(0, code); self.assertEqual(3, len(executions))
+                self.assertNotEqual(0, report['exit_code'])
                 self.assertNotEqual('PASS_EXACT_DISCOVERED_SCOPE', report['status']); evaluate.assert_not_called()
                 if output in (b'', self.summary(2)*2): self.assertNotIn('count_observations', report)
 

@@ -224,6 +224,10 @@ def run(scope, root=ROOT, timeout=1800, shards=1):
                         if len(values) == 1: totals[key] += values[0]
                 complete = complete and passed
                 evidence['shards'].append(report)
+            # Native evidence replay requires a closed aggregate exit status as
+            # well as counts. Never infer native success from counts alone.
+            evidence['exit_code'] = 0 if complete else 2
+            native_code = evidence['exit_code'] or 2
             evidence['failed_static_test_names'] = sorted({name for report in evidence['shards']
                 for name in report.get('failed_static_test_names', [])})
             evidence['failure_source_locations'] = [location for report in evidence['shards']
