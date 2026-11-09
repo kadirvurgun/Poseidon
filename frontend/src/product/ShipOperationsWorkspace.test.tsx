@@ -40,7 +40,10 @@ async function newFuel(user: ReturnType<typeof userEvent.setup>) { await user.cl
 describe('T-OPS2-004/005 scoped operational workspace — sources only', () => {
   it('saves an incomplete declaration with exact values then reads current source before another edit', async () => {
     const { fetch } = transport(), user = await open(); await newFuel(user)
-    await user.selectOptions(screen.getByLabelText('Quantity received (mt) value state'), 'Known'); await user.type(screen.getByLabelText('Quantity received (mt)'), '9007199254740993.123456789')
+    await user.selectOptions(screen.getByLabelText('Quantity received (mt) value state'), 'Known')
+    await user.click(screen.getByLabelText('Quantity received (mt)'))
+    await user.paste('9007199254740993.123456789')
+    expect(screen.getByLabelText('Quantity received (mt)')).toHaveValue('9007199254740993.123456789')
     await user.click(screen.getByRole('button', { name: 'Save unverified draft' }))
     await screen.findByText(/Command outcome recorded for revision/)
     const request = writes(fetch)[0], body = JSON.parse(request[1]!.body as string)

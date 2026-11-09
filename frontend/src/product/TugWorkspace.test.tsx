@@ -13,7 +13,9 @@ const row = { id, vesselId: vessel, jobNumber: 'TUG-SYNTHETIC', revision: 1, ver
 const fetcher = vi.fn()
 let mutate: (init: RequestInit) => Promise<Response>
 let actorId: string, tenantId: string, canWrite: boolean
+let savedRow: typeof row | null
 beforeEach(() => {
+  savedRow = null
   actorId = '33333333-3333-3333-3333-333333333333'; tenantId = '44444444-4444-4444-4444-444444444444'; canWrite = true
   history.replaceState(null, '', `/app/tug-job-intake?vessel=${vessel}`)
   Object.defineProperty(navigator, 'onLine', { value: true, configurable: true })
@@ -22,12 +24,16 @@ beforeEach(() => {
     if (url.includes('/plan/options')) return json({ state: 'Unavailable', policyVersion: null, canWrite: false, tugs: [], types: [], offline: 'UnavailableForTug' })
     if (url.includes('/plan/history')) return json({ items: [], coverage: 'Latest100CurrentlyAuthorizedRevisions' })
     if (url.includes('/plan?')) return json({ state: 'Missing', plan: null, evidence: null })
-    if (init?.method === 'POST' || init?.method === 'PUT') return mutate(init)
+    if (init?.method === 'POST' || init?.method === 'PUT') {
+      const response = await mutate(init)
+      if (response.ok) savedRow = await response.clone().json() as typeof row
+      return response
+    }
     if (url.endsWith('auth/session')) return json({ authenticated: true, canRead: true, actorId, tenantId, csrfToken: 'synthetic-only' })
     if (url === '/api/v1/workspace') return json({ destinations: [], canSearch: false, canWriteRegulatory: false })
     if (url.includes('tug-command')) return json({ ...context, canWrite })
     if (url.includes('tug-job-board')) return json({ items: [{ request: row, windowState: 'MissingStart', plannedTimeSource: 'RequestedWindowOnly;NoApprovedPlan', assignedTugs: [], assignmentCoverage: 'UnavailableControlledAssignmentAdapter', availableBollardPull: null, readiness: 'Unknown', conflict: 'Unknown', declaredComparisons: [], comparisonCoverage: 'VisiblePageEnteredDataOnly', blockingReasons: ['AssignmentCoverageUnavailable'], nextAction: 'CompleteDraft', detailHref: `/app/tug-job-detail/${id}?vessel=${vessel}` }], hasMore: false })
-    return json(row)
+    return json(savedRow ?? row)
   })
   vi.stubGlobal('fetch', fetcher)
 })

@@ -29,7 +29,7 @@ const contextText = (value: unknown, max = 200) => typeof value === 'string' && 
 const positive = (value: unknown) => typeof value === 'number' && Number.isSafeInteger(value) && value > 0
 export const tugRequestSource = 'poseidon-v46.3-20261030/14.02/1914-1931/TUG-FOUNDATION-01'
 export function decodeTugRequest(value: unknown, vessel: string, id?: string): TugRequest {
-  const fail = (): never => { throw new ApiError(502, 'invalid_tug_request_contract') }
+  function fail(): never { throw new ApiError(502, 'invalid_tug_request_contract') }
   if (!isGuid(vessel) || !exact(value, ['id', 'vesselId', 'jobNumber', 'revision', 'version', 'inputs', 'provenance', 'savedAt', 'missing', 'replayed', 'sourceVersion']) ||
     !isGuid(value.id) || id !== undefined && value.id !== id || value.vesselId !== vessel || !contextText(value.jobNumber, 100) || !positive(value.revision) ||
     !positive(value.version) || Number(value.version) > 4294967295 || !['UserDeclaredUnverified', 'SyntheticUnverified'].includes(String(value.provenance)) ||
@@ -43,7 +43,7 @@ export function decodeTugRequest(value: unknown, vessel: string, id?: string): T
     else if (key === 'requestedStart' || key === 'requestedEnd') { if (!timestamp(input) || !/(?:Z|\+00:00)$/.test(String(input))) fail() }
     else if (key === 'requiredBollardPull') { if (typeof input !== 'string' || !/^(0|[1-9][0-9]{0,7})(\.[0-9]{1,2})?$/.test(input)) fail() }
     else if (typeof input !== 'string' || input.length === 0 || input.length > (['notes', 'specialRequirements'].includes(key) ? 2000 : 200) ||
-      (['notes', 'specialRequirements'].includes(key) ? /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F]/.test(input) : /\p{Cc}/u.test(input))) fail()
+      (['notes', 'specialRequirements'].includes(key) ? /\p{Cc}/u.test(input.replace(/[\r\n\t]/g, '')) : /\p{Cc}/u.test(input))) fail()
   }
   return value as TugRequest
 }

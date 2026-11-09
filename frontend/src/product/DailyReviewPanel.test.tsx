@@ -7,7 +7,7 @@ import { dailyActor, dailyId, dailyRecordFixture, dailyVessel } from './daily-te
 import { dailyReviewCapsFixture, dailyReviewFixture, reviewAuthorityId } from './daily-review-test-fixtures'
 import type { DailyReview } from './daily-review-api'
 const json = (value: unknown, status = 200) => new Response(JSON.stringify(value), { status, headers: { 'Content-Type': 'application/json' } })
-const userIdentity = (actor = dailyActor) => ({ ...navigationTestIdentity, authenticated: true, canRead: true, actorId: actor, tenantId: dailyVessel, csrfToken: 'synthetic-review-csrf' })
+const userIdentity = (actor = dailyActor) => ({ ...navigationTestIdentity, authenticated: true, setupRequired: false, canReadCompanies: false, canCreate: false, canSearch: false, canRead: true, actorId: actor, tenantId: dailyVessel, csrfToken: 'synthetic-review-csrf' })
 const props = (): DailyReviewPanelProps => ({ owner: `${dailyVessel}/${dailyActor}`, session: userIdentity(), record: dailyRecordFixture('Noon'), language: 'en', enabled: true, onDirty: vi.fn(), onSaving: vi.fn(), onCommitted: vi.fn(), onReloadRecord: vi.fn() })
 function transport(configured = true) {
   const state = { actor: dailyActor, caps: dailyReviewCapsFixture('Noon', configured), history: [] as DailyReview[], readFailed: false, write: undefined as ((init: RequestInit) => Promise<Response>) | undefined }

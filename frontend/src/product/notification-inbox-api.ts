@@ -11,7 +11,7 @@ const exact = (v: unknown, keys: string[]): v is Record<string, unknown> => obje
 const integer = (v: unknown, min = 0, max = Number.MAX_SAFE_INTEGER) => typeof v === 'number' && Number.isSafeInteger(v) && v >= min && v <= max
 const one = (v: unknown, choices: string[]) => typeof v === 'string' && choices.includes(v)
 const text = (v: unknown, max: number) => typeof v === 'string' && v.length > 0 && v.length <= max && v.trim() === v && !/\p{Cc}/u.test(v)
-const invalid = (): never => { throw new ApiError(502, 'invalid_notification_contract') }
+function invalid(): never { throw new ApiError(502, 'invalid_notification_contract') }
 const fields = ['id', 'vesselId', 'sourceId', 'sourceRevision', 'ruleKey', 'policyVersion', 'sourceState', 'severity', 'mandatory', 'recipientRoleId', 'escalationRoleId', 'dueDate', 'createdAt', 'escalateAt', 'state', 'revision', 'version', 'provenance']
 export function decodeInbox(value: unknown, vessel: string, offset: number): Inbox {
   if (!isGuid(vessel) || !integer(offset, 0, 100000) || !exact(value, ['items', 'offset', 'hasMore', 'policyState', 'delivery', 'canManage', 'canAcknowledge', 'canWritePreference']) || value.offset !== offset || typeof value.hasMore !== 'boolean' || value.delivery !== 'InAppOnly' || !one(value.policyState, ['ConfiguredUnverified', 'Unavailable']) || !['canManage', 'canAcknowledge', 'canWritePreference'].every(k => typeof value[k] === 'boolean') || !Array.isArray(value.items) || value.items.length > 25 || value.hasMore && value.items.length !== 25) invalid()

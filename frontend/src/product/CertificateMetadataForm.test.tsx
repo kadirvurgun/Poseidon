@@ -11,7 +11,11 @@ function Harness({ scope = 'Vessel', disabled = false, language = 'en' }: { scop
 describe('T-S6-001 declared certificate fields (authored; not executed)', () => {
   it('retains exact numeric planning text and leaves undeclared dates/document/crew-only members null', async () => {
     const user = userEvent.setup(); render(<Harness />)
-    await user.type(screen.getByLabelText('Declared renewal lead days'), '9007199254740993.123456789012345678901')
+    // Long exact source declarations are commonly pasted. Exercise the real
+    // clipboard/input path without a scheduling round trip for every digit.
+    await user.click(screen.getByLabelText('Declared renewal lead days'))
+    await user.paste('9007199254740993.123456789012345678901')
+    expect(screen.getByLabelText('Declared renewal lead days')).toHaveValue('9007199254740993.123456789012345678901')
     await user.type(screen.getByLabelText('Declared issuer'), 'Synthetic issuer declaration')
     const value = JSON.parse(screen.getByLabelText('Declared metadata fixture').textContent ?? '{}')
     expect(value.renewalLeadDaysNumeric).toBe('9007199254740993.123456789012345678901')

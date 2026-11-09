@@ -28,7 +28,7 @@ export function DailyReportWorkspace() {
   const clear = () => { setSavedNotice(false); setDirty(false); setInstance(n => n + 1) }
   const { route, move } = useDailyLocation(guard, clear)
   const navigate = (href: string, committed?: () => void) => {
-    if (href !== '/app' && !href.startsWith('/app/') || href.startsWith('//') || /[\\\u0000-\u001f]/u.test(href)) return
+    if (href !== '/app' && !href.startsWith('/app/') || href.startsWith('//') || /[\\\p{Cc}]/u.test(href)) return
     const next = readDailyLocation(href)
     guard(() => { committed?.(); clear(); if (!next.invalid) move(next); else window.location.assign(href) })
   }
