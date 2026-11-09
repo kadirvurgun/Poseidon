@@ -1,9 +1,15 @@
 import '@testing-library/jest-dom/vitest'
 import { cleanup } from '@testing-library/react'
 import { afterEach, beforeEach, vi } from 'vitest'
+import { changeAppLanguage, localeStorageKey } from './i18n'
 
 // Each mounted application starts with its own browser location, as a fresh page would.
-beforeEach(() => window.history.replaceState(null, '', '/'))
+beforeEach(async () => {
+  window.history.replaceState(null, '', '/')
+  // A test is a fresh browser page; production keeps this preference on navigation.
+  window.localStorage.removeItem(localeStorageKey)
+  await changeAppLanguage('tr', false)
+})
 
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); vi.useRealTimers() })
 

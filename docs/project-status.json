@@ -11816,5 +11816,46 @@
       "cause_not_established": "No model or native-process memory leak diagnosis; each native child reported approximately240MB private bytes by Root, not causal attribution.",
       "response": "Stopped only four exact worktree native children after their parent ended; no other process stopped. No new local wide native jobs; final complete scope remains open for CI."
     }
+  },
+  "localization_17_20261109": {
+    "state": "AUTHORING_IN_PROGRESS_NOT_ACCEPTED",
+    "accepted": false,
+    "accepted_story_points_added": 0,
+    "observed_at_utc": "2026-11-09T18:02:09.929886+00:00",
+    "branch": "foundation/enterprise-localization-20261109",
+    "task": "docs/tasks/LOCALIZATION-17-01.md",
+    "report": "docs/phases/LOCALIZATION-17-20261109.md",
+    "source_constraint": "15.01 paragraph1626; explicit user17locale image andAIJSONinstruction",
+    "source_catalog_sha256": "a555c082fcdbecb4836be6d3734eaf7587230ce0a463dd8274bffd59e6123203",
+    "string_leaves": 3169,
+    "distinct_values": 2991,
+    "common_locales_authored": 17,
+    "product_locales_authored": [
+      "tr",
+      "en",
+      "en-GB",
+      "ar",
+      "de",
+      "fr",
+      "hi",
+      "cs",
+      "ru"
+    ],
+    "product_locales_in_progress": [
+      "hu",
+      "it"
+    ],
+    "product_locales_remaining": [
+      "sk",
+      "fi",
+      "es",
+      "pt-BR",
+      "zh-Hans",
+      "zh-Hant"
+    ],
+    "worker_limit": "Actual usage limit reported; partial authoring retained; no account/model rotation",
+    "verification": "DEFERRED_NEW_BUNDLE_GATE; source AST authoring only, no build/typecheck/component/browser run",
+    "canonical_acceptance_changed": false,
+    "pr16_merge_status": "Still open; requiredCI317704f passed both runs; updated fixture helper and genuine signed gate remain"
   }
 }

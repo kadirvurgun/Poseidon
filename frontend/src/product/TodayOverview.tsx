@@ -1,16 +1,20 @@
-import { useMemo } from 'react'
-import { CircleHelp, ClipboardList, Layers3, TriangleAlert } from 'lucide-react'
-import { ScopeMetric } from './DirectoryOverview'
-import type { Today } from './today-api'
-
-export function TodayOverview({ data, language }: { data: Today; language: 'tr' | 'en' }) {
-  const en = language === 'en'
-  const counts = useMemo(() => ({ attention: data.cards.items.filter(c => c.priority === 'Attention').length,
-    review: data.cards.items.filter(c => c.priority === 'Review').length, available: data.coverage.filter(c => c.status === 'Available').length }), [data])
-  return <section className="enterprise-metrics enterprise-page-summary" aria-label={en ? 'Current alert page overview' : 'Geçerli uyarı sayfası özeti'}>
-    <ScopeMetric title={en ? 'Returned cards' : 'Dönen kartlar'} value={data.cards.items.length} note={en ? 'This page only' : 'Yalnız bu sayfa'} icon={ClipboardList} />
-    <ScopeMetric title={en ? 'Planning attention' : 'Planlama uyarıları'} value={counts.attention} note={en ? 'This page only' : 'Yalnız bu sayfa'} icon={TriangleAlert} />
-    <ScopeMetric title={en ? 'Review required' : 'İnceleme gerekenler'} value={counts.review} note={en ? 'This page only' : 'Yalnız bu sayfa'} icon={CircleHelp} />
-    <ScopeMetric title={en ? 'Available sources' : 'Kullanılabilir kaynaklar'} value={`${counts.available} / ${data.coverage.length}`} note={en ? 'Availability is not verification' : 'Kullanılabilirlik doğrulama değildir'} icon={Layers3} />
-  </section>
+import { localizedText } from "../i18n/messages";
+import { type Locale as AppLocale } from "../i18n";
+import { useMemo } from 'react';
+import { CircleHelp, ClipboardList, Layers3, TriangleAlert } from 'lucide-react';
+import { ScopeMetric } from './DirectoryOverview';
+import type { Today } from './today-api';
+export function TodayOverview({ data, language }: {
+    data: Today;
+    language: AppLocale;
+}) {
+    const en = language === 'en';
+    const counts = useMemo(() => ({ attention: data.cards.items.filter(c => c.priority === 'Attention').length,
+        review: data.cards.items.filter(c => c.priority === 'Review').length, available: data.coverage.filter(c => c.status === 'Available').length }), [data]);
+    return <section className="enterprise-metrics enterprise-page-summary" aria-label={localizedText(en, "pairs.m_ea0a1686863d5709")}>
+    <ScopeMetric title={localizedText(en, "pairs.m_0fbc6d3d6400b38f")} value={data.cards.items.length} note={localizedText(en, "pairs.m_738a2f08cd443b4a")} icon={ClipboardList}/>
+    <ScopeMetric title={localizedText(en, "pairs.m_e33d51673162a1ab")} value={counts.attention} note={localizedText(en, "pairs.m_738a2f08cd443b4a")} icon={TriangleAlert}/>
+    <ScopeMetric title={localizedText(en, "pairs.m_8c4a941699614abb")} value={counts.review} note={localizedText(en, "pairs.m_738a2f08cd443b4a")} icon={CircleHelp}/>
+    <ScopeMetric title={localizedText(en, "pairs.m_20a864600d8d23eb")} value={`${counts.available} / ${data.coverage.length}`} note={localizedText(en, "pairs.m_4e269ec06d16bb2d")} icon={Layers3}/>
+  </section>;
 }

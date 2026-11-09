@@ -1,39 +1,44 @@
-const reasons: Record<string, [string, string]> = {
-  EquipmentRevisionChanged: ['Equipment changed after this plan revision. Review the plan against current equipment.', 'Bu plan revizyonundan sonra ekipman değişti. Planı güncel ekipmana göre inceleyin.'],
-  MaintenanceJobUnavailable: ['The plan has no currently available maintenance job.', 'Planın güncel olarak kullanılabilir bakım işi yok.'],
-  MaintenanceOwnerUnavailable: ['The assigned role is no longer eligible for this vessel, or no role is assigned.', 'Atanan rol artık bu araç için uygun değil veya sorumlu rol atanmamış.'],
-  ObservationAssessmentUnavailable: ['The referenced observation has no current server assessment.', 'Referans verilen gözlemin güncel sunucu değerlendirmesi yok.'],
-  ConfiguredDeclaredObservation: ['The observation matches configured freshness, source and unit policy; it remains unverified.', 'Gözlem yapılandırılmış güncellik, kaynak ve birim politikasına uyuyor; doğrulanmamış durumda.'],
-  ObservationMissing: ['The normalized observation or its required value/time is missing.', 'Normalleştirilmiş gözlem veya gerekli değer/zaman eksik.'],
-  ObservationRevoked: ['The observation has been revoked.', 'Gözlem iptal edilmiş.'],
-  ObservationPolicyUnavailable: ['A scoped source, unit or freshness policy is unavailable.', 'Kapsamlı kaynak, birim veya güncellik politikası kullanılamıyor.'],
-  ObservationPolicyChanged: ['The observation belongs to a different policy version.', 'Gözlem farklı bir politika sürümüne ait.'],
-  ObservationUnitOrKindMismatch: ['Observation unit or kind does not match this plan and configured source.', 'Gözlem birimi veya türü bu planla ve yapılandırılmış kaynakla eşleşmiyor.'],
-  ObservationFuture: ['The observation is after the current server clock.', 'Gözlem güncel sunucu zamanından sonra.'],
-  ObservationStale: ['The observation exceeds the configured freshness interval.', 'Gözlem yapılandırılmış güncellik aralığını aşmış.'],
-  ObservationPrecisionUnsupported: ['The exact observation exceeds configured calculation precision; it was not rounded.', 'Kesin gözlem yapılandırılmış hesaplama hassasiyetini aşıyor; yuvarlanmadı.'],
-  ObservationConditionUnknown: ['The condition value is unknown or unsupported.', 'Koşul değeri bilinmiyor veya desteklenmiyor.'],
-  ObservationScopeMismatch: ['The observation does not belong to this authorized equipment context.', 'Gözlem bu yetkili ekipman bağlamına ait değil.'],
-  MissingProvenance: ['Record the source of these inputs.', 'Bu girdilerin kaynağını kaydedin.'],
-  MissingTimeZone: ['Select a valid reference time zone.', 'Geçerli bir referans saat dilimi seçin.'],
-  MissingCalendarInputs: ['Calendar baseline or interval is missing or invalid.', 'Takvim başlangıcı veya aralığı eksik ya da geçersiz.'],
-  UnsupportedCalendarInterval: ['This calendar unit or date range is not supported.', 'Bu takvim birimi veya tarih aralığı desteklenmiyor.'],
-  FutureBaseline: ['The declared baseline is after the reference date.', 'Beyan edilen başlangıç, referans tarihinden sonra.'],
-  CalendarBoundary: ['Calculated from the declared date and calendar interval.', 'Beyan edilen tarih ve takvim aralığı ile hesaplandı.'],
-  MissingMeterAdapterOrReading: ['A meter source, reading or observation version is missing.', 'Sayaç kaynağı, okuması veya gözlem sürümü eksik.'],
-  FutureObservation: ['The observation is after the reference clock.', 'Gözlem, referans zamanından sonra.'],
-  ReadingFreshnessPolicyUnresolved: ['The reading is historical; its freshness policy needs review.', 'Okuma geçmiş bir zamana ait; güncellik politikası incelenmeli.'],
-  MissingOrResetMeterBaseline: ['Check the meter baseline, interval and any meter reset.', 'Sayaç başlangıcını, aralığını ve olası sayaç sıfırlamasını kontrol edin.'],
-  DeclaredMeterBoundary: ['Calculated from the declared reading, baseline and interval in the same unit.', 'Aynı birimde beyan edilen okuma, başlangıç ve aralık ile hesaplandı.'],
-  MeterRangeExceeded: ['The meter result exceeds the supported numeric range.', 'Sayaç sonucu desteklenen sayısal aralığı aşıyor.'],
-  MeterPrecisionExceeded: ['The meter result needs greater precision than can be stored.', 'Sayaç sonucu, saklanabilenden daha fazla hassasiyet gerektiriyor.'],
-  MissingConditionAdapterOrObservation: ['A condition observation or its version is missing or unknown.', 'Koşul gözlemi veya sürümü eksik ya da bilinmiyor.'],
-  ConditionFreshnessPolicyUnresolved: ['The condition is historical; its freshness policy needs review.', 'Koşul geçmiş bir zamana ait; güncellik politikası incelenmeli.'],
-  DeclaredConditionObservation: ['Calculated from the explicitly declared condition observation.', 'Açıkça beyan edilen koşul gözlemi ile hesaplandı.'],
-  MissingOrUnsupportedTrigger: ['Select a supported trigger and provide its inputs.', 'Desteklenen bir tetikleyici seçip girdilerini sağlayın.'],
-  IncompletePlanContext: ['Job, eligible owner or criticality information needs review.', 'İş, yetkili sorumlu veya kritiklik bilgileri incelenmeli.'],
-}
-export const dueReason = (code: string, en: boolean) => reasons[code]?.[en ? 0 : 1] ?? (en ? 'Calculation inputs need review.' : 'Hesaplama girdileri incelenmeli.')
-export const dueState = (state: string, en: boolean) => state === 'Due' ? (en ? 'Due' : 'Bakım zamanı geldi')
-  : state === 'NotDue' ? (en ? 'Not due at the reference time' : 'Referans zamanında bakım zamanı gelmedi')
-    : (en ? 'Review required' : 'İnceleme gerekli')
+import { sourceText, localizedTuple } from "../i18n/messages";
+import { localizedText } from "../i18n/messages";
+const reasons: Record<string, [
+    string,
+    string
+]> = {
+    EquipmentRevisionChanged: [sourceText("en", "pairs.m_6b9a8e6e7e9dbecb"), sourceText("tr", "pairs.m_6b9a8e6e7e9dbecb")],
+    MaintenanceJobUnavailable: [sourceText("en", "pairs.m_5ebcef767c33418a"), sourceText("tr", "pairs.m_5ebcef767c33418a")],
+    MaintenanceOwnerUnavailable: [sourceText("en", "pairs.m_221fc8d62349cb00"), sourceText("tr", "pairs.m_221fc8d62349cb00")],
+    ObservationAssessmentUnavailable: [sourceText("en", "pairs.m_260125a865560131"), sourceText("tr", "pairs.m_260125a865560131")],
+    ConfiguredDeclaredObservation: [sourceText("en", "pairs.m_9e02bcae4ad01d44"), sourceText("tr", "pairs.m_9e02bcae4ad01d44")],
+    ObservationMissing: [sourceText("en", "pairs.m_a9da6c9d7483d126"), sourceText("tr", "pairs.m_a9da6c9d7483d126")],
+    ObservationRevoked: [sourceText("en", "pairs.m_02216d27b8d2833a"), sourceText("tr", "pairs.m_02216d27b8d2833a")],
+    ObservationPolicyUnavailable: [sourceText("en", "pairs.m_b37b42f8a48305ef"), sourceText("tr", "pairs.m_b37b42f8a48305ef")],
+    ObservationPolicyChanged: [sourceText("en", "pairs.m_8abc1bae0426026d"), sourceText("tr", "pairs.m_8abc1bae0426026d")],
+    ObservationUnitOrKindMismatch: [sourceText("en", "pairs.m_ce44df62a1a585fd"), sourceText("tr", "pairs.m_ce44df62a1a585fd")],
+    ObservationFuture: [sourceText("en", "pairs.m_f500510ad7ca5c2e"), sourceText("tr", "pairs.m_f500510ad7ca5c2e")],
+    ObservationStale: [sourceText("en", "pairs.m_a9e3427c3e277cfb"), sourceText("tr", "pairs.m_a9e3427c3e277cfb")],
+    ObservationPrecisionUnsupported: [sourceText("en", "pairs.m_bb9211adccb7ebf0"), sourceText("tr", "pairs.m_bb9211adccb7ebf0")],
+    ObservationConditionUnknown: [sourceText("en", "pairs.m_95e868832206a40d"), sourceText("tr", "pairs.m_95e868832206a40d")],
+    ObservationScopeMismatch: [sourceText("en", "pairs.m_08db9e29023605fd"), sourceText("tr", "pairs.m_08db9e29023605fd")],
+    MissingProvenance: [sourceText("en", "pairs.m_99d34a716270a9af"), sourceText("tr", "pairs.m_99d34a716270a9af")],
+    MissingTimeZone: [sourceText("en", "pairs.m_0f8992ad858645e2"), sourceText("tr", "pairs.m_0f8992ad858645e2")],
+    MissingCalendarInputs: [sourceText("en", "pairs.m_280bef79a8b8ff4d"), sourceText("tr", "pairs.m_280bef79a8b8ff4d")],
+    UnsupportedCalendarInterval: [sourceText("en", "pairs.m_973190daad6767ed"), sourceText("tr", "pairs.m_973190daad6767ed")],
+    FutureBaseline: [sourceText("en", "pairs.m_9745008dc19f0e82"), sourceText("tr", "pairs.m_9745008dc19f0e82")],
+    CalendarBoundary: [sourceText("en", "pairs.m_2ef1832e50b29c3b"), sourceText("tr", "pairs.m_2ef1832e50b29c3b")],
+    MissingMeterAdapterOrReading: [sourceText("en", "pairs.m_24f69688f5e25a1d"), sourceText("tr", "pairs.m_24f69688f5e25a1d")],
+    FutureObservation: [sourceText("en", "pairs.m_9478ca5842569acd"), sourceText("tr", "pairs.m_9478ca5842569acd")],
+    ReadingFreshnessPolicyUnresolved: [sourceText("en", "pairs.m_f6ae3b6ee0d91c55"), sourceText("tr", "pairs.m_f6ae3b6ee0d91c55")],
+    MissingOrResetMeterBaseline: [sourceText("en", "pairs.m_144ef1c79e4e1968"), sourceText("tr", "pairs.m_144ef1c79e4e1968")],
+    DeclaredMeterBoundary: [sourceText("en", "pairs.m_b90f46969a9e0271"), sourceText("tr", "pairs.m_b90f46969a9e0271")],
+    MeterRangeExceeded: [sourceText("en", "pairs.m_3d0cde24d8e53e76"), sourceText("tr", "pairs.m_3d0cde24d8e53e76")],
+    MeterPrecisionExceeded: [sourceText("en", "pairs.m_74122b012de518c6"), sourceText("tr", "pairs.m_74122b012de518c6")],
+    MissingConditionAdapterOrObservation: [sourceText("en", "pairs.m_681af67a3f4b20f9"), sourceText("tr", "pairs.m_681af67a3f4b20f9")],
+    ConditionFreshnessPolicyUnresolved: [sourceText("en", "pairs.m_54e4dbfd1a6bd622"), sourceText("tr", "pairs.m_54e4dbfd1a6bd622")],
+    DeclaredConditionObservation: [sourceText("en", "pairs.m_b466d5918f65ef0c"), sourceText("tr", "pairs.m_b466d5918f65ef0c")],
+    MissingOrUnsupportedTrigger: [sourceText("en", "pairs.m_e7d95af1fca7ea21"), sourceText("tr", "pairs.m_e7d95af1fca7ea21")],
+    IncompletePlanContext: [sourceText("en", "pairs.m_f0a168b27301d2c2"), sourceText("tr", "pairs.m_f0a168b27301d2c2")],
+};
+export const dueReason = (code: string, en: boolean) => localizedTuple(reasons[code], en, 0) ?? (localizedText(en, "pairs.m_5a882288d4543644"));
+export const dueState = (state: string, en: boolean) => state === 'Due' ? (localizedText(en, "pairs.m_48783fc51c2104ed"))
+    : state === 'NotDue' ? (localizedText(en, "pairs.m_c2460821157f62f7"))
+        : (localizedText(en, "pairs.m_6edb7d9a4aca3fd7"));

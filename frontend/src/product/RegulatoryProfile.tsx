@@ -1,171 +1,252 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-import type { FormEvent } from 'react'
-import { ApiError } from './api'
-import * as api from './profile-api'
-import { profileFields } from './profile-contract'
-import type { Profile, ProfileCommand, ProfileContent, ProfileHistory } from './profile-contract'
-import { RequiredDataField } from './RequiredDataField'
-import { loginHref } from './workspace-location'
-import { ConstructionRecordPicker } from './ConstructionRecordPicker'
-import { Button } from '../components/ui/button'
-import { EnterpriseActions, EnterprisePagination } from './EnterprisePatterns'
-import { OnboardingSteps, onboardingSteps, OnboardingAssessmentView } from './VesselOnboarding'
-
-const copy = {
-  en: { title: 'Regulatory profile draft', note: 'Incomplete drafts can be saved. Declarations and reference values are unverified. This draft does not authorize submission or operations.', loading: 'Loading profile…', empty: 'No saved profile draft yet.', save: 'Save draft', saving: 'Saving…', saved: 'Draft saved.', retry: 'Retry same command', reload: 'Reload saved draft', conflict: 'The saved profile changed. Your draft is retained. Reload explicitly to discard it.', uncertain: 'The save outcome is unknown. Fields are frozen; retry the same command before leaving.', failed: 'Unable to load or save the profile.', denied: 'You do not have permission for this profile.', expired: 'Sign in to continue.', missing: 'Profile not found in your vessel scope.', history: 'Version history', noHistory: 'No saved versions.', observed: 'Source observation time', time: 'Saved at', provenance: 'Source status', revision: 'Version', unknown: 'Unknown', previous: 'Previous', next: 'Next', view: 'View saved values', count: 'fields have missing or unknown data. Mandatory submission policy is unresolved; draft only.', readonly: 'Read-only profile', reloadRead: 'Retry loading' },
-  tr: { title: 'Mevzuat profili taslağı', note: 'Eksik taslaklar kaydedilebilir. Beyanlar ve referans değerleri doğrulanmamıştır. Bu taslak onaya gönderme veya operasyon yetkisi vermez.', loading: 'Profil yükleniyor…', empty: 'Henüz kaydedilmiş profil taslağı yok.', save: 'Taslağı kaydet', saving: 'Kaydediliyor…', saved: 'Taslak kaydedildi.', retry: 'Aynı komutu tekrar dene', reload: 'Kayıtlı taslağı yeniden yükle', conflict: 'Kayıtlı profil değişti. Taslağınız korundu. Silmek için yeniden yüklemeyi seçin.', uncertain: 'Kayıt sonucu bilinmiyor. Alanlar kilitli; ayrılmadan önce aynı komutu tekrar deneyin.', failed: 'Profil yüklenemedi veya kaydedilemedi.', denied: 'Bu profil için yetkiniz yok.', expired: 'Devam etmek için oturum açın.', missing: 'Yetkili tekne kapsamınızda profil bulunamadı.', history: 'Sürüm geçmişi', noHistory: 'Kayıtlı sürüm yok.', observed: 'Kaynak gözlem zamanı', time: 'Kayıt zamanı', provenance: 'Kaynak durumu', revision: 'Sürüm', unknown: 'Bilinmiyor', previous: 'Önceki', next: 'Sonraki', view: 'Kayıtlı değerleri görüntüle', count: 'alanda eksik veya bilinmeyen bilgi var. Zorunlu gönderim politikası açık; yalnız taslak.', readonly: 'Salt okunur profil', reloadRead: 'Yüklemeyi tekrar dene' },
-}
-type Props = { id: string; language: 'tr' | 'en'; csrf: string; onDirty: (value: boolean) => void; onSaving: (value: boolean) => void; journey?: 'profile' | 'onboarding' }
+import { localizedLabel } from "../i18n/messages";
+import { localizedCopy, localizedText } from "../i18n/messages";
+import { type Locale as AppLocale } from "../i18n";
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type { FormEvent } from 'react';
+import { ApiError } from './api';
+import * as api from './profile-api';
+import { profileFields } from './profile-contract';
+import type { Profile, ProfileCommand, ProfileContent, ProfileHistory } from './profile-contract';
+import { RequiredDataField } from './RequiredDataField';
+import { loginHref } from './workspace-location';
+import { ConstructionRecordPicker } from './ConstructionRecordPicker';
+import { Button } from '../components/ui/button';
+import { EnterpriseActions, EnterprisePagination } from './EnterprisePatterns';
+import { OnboardingSteps, onboardingSteps, OnboardingAssessmentView } from './VesselOnboarding';
+const copy = localizedCopy("RegulatoryProfile_tsx_copy");
+type Props = {
+    id: string;
+    language: AppLocale;
+    csrf: string;
+    onDirty: (value: boolean) => void;
+    onSaving: (value: boolean) => void;
+    journey?: 'profile' | 'onboarding';
+};
 export function RegulatoryProfile(props: Props) {
-  // Scope changes discard the previous component before rendering the new scope,
-  // rather than relying on every caller to remember a React key.
-  return <ScopedRegulatoryProfile key={props.id} {...props} />
+    // Scope changes discard the previous component before rendering the new scope,
+    // rather than relying on every caller to remember a React key.
+    return <ScopedRegulatoryProfile key={props.id} {...props}/>;
 }
 function ScopedRegulatoryProfile({ id, language, csrf, onDirty, onSaving, journey = 'profile' }: Props) {
-  const onboarding = journey === 'onboarding', [step, setStep] = useState(0)
-  const [profile, setProfile] = useState<Profile | null>(null)
-  const [content, setContent] = useState<ProfileContent | null>(null)
-  const [history, setHistory] = useState<ProfileHistory | null>(null)
-  const [historyAttempt, setHistoryAttempt] = useState(0)
-  const [historyOffset, setHistoryOffset] = useState(0)
-  const [historyFailure, setHistoryFailure] = useState(false)
-  const [failure, setFailure] = useState<ApiError | null>(null)
-  const [errors, setErrors] = useState<Record<string, string[]>>({})
-  const [attempt, setAttempt] = useState(0)
-  const [saving, setSaving] = useState(false)
-  const [uncertain, setUncertain] = useState(false)
-  const [dirty, setDirty] = useState(false)
-  const [notice, setNotice] = useState(false)
-  const busy = useRef(false)
-  const frozen = useRef<{ key: string; body: ProfileCommand } | null>(null)
-  const abort = useRef<AbortController | null>(null)
-  const mounted = useRef(true)
-  const accessRevoked = useRef(false)
-  const t = copy[language]
-  useEffect(() => {
-    mounted.current = true
-    return () => { mounted.current = false; abort.current?.abort() }
-  }, [])
-  const invalidateAccess = useCallback((error: ApiError) => {
-    if (![401, 403, 404].includes(error.status)) return false
-    // Gate late reads as well as rendering: a delayed history response cannot
-    // restore private state after the server withdraws current access.
-    accessRevoked.current = true; abort.current?.abort()
-    setProfile(null); setContent(null); setHistory(null); setNotice(false)
-    setErrors({}); setFailure(error); setUncertain(false); frozen.current = null
-    setDirty(false); onDirty(false)
-    return true
-  }, [onDirty])
-  useEffect(() => {
-    const controller = new AbortController(); let active = true
-    const timeout = setTimeout(() => controller.abort(), 10000)
-    api.loadProfile(id, controller.signal).then(value => { if (active && !accessRevoked.current) { setProfile(value); setContent(value.content) } })
-      .catch(error => {
-        if (!active || accessRevoked.current) return
-        const value = error instanceof ApiError ? error : new ApiError(0)
-        if (!invalidateAccess(value)) setFailure(value)
-      })
-    return () => { active = false; clearTimeout(timeout); controller.abort(); abort.current?.abort() }
-  }, [id, attempt, invalidateAccess])
-  useEffect(() => {
-    const controller = new AbortController(); let active = true
-    const timeout = setTimeout(() => controller.abort(), 10000)
-    api.loadProfileHistory(id, historyOffset, controller.signal).then(value => { if (active && !accessRevoked.current) { setHistory(value); setHistoryFailure(false) } })
-      .catch(error => {
-        if (!active || accessRevoked.current) return
-        if (!(error instanceof ApiError) || !invalidateAccess(error)) setHistoryFailure(true)
-      })
-    return () => { active = false; clearTimeout(timeout); controller.abort() }
-  }, [id, historyOffset, attempt, historyAttempt, invalidateAccess])
-  useEffect(() => {
-    const prevent = (event: BeforeUnloadEvent) => { if (dirty || busy.current || uncertain) event.preventDefault() }
-    window.addEventListener('beforeunload', prevent)
-    return () => window.removeEventListener('beforeunload', prevent)
-  }, [dirty, uncertain])
-  function change(key: keyof ProfileContent, value: ProfileContent[typeof key]) {
-    if (saving || uncertain) return
-    setContent(current => current === null ? null : ({ ...current, [key]: value })); setDirty(true); onDirty(true); setNotice(false)
-    setErrors(current => ({ ...current, [key]: [] }))
-    // A stale base stays blocked until explicit reload, even if local fields change.
-    if (failure?.code !== 'version_conflict') setFailure(null)
-    frozen.current = null
-  }
-  function reload() {
-    if (busy.current || uncertain) return
-    accessRevoked.current = false; setHistoryFailure(false)
-    setProfile(null); setContent(null); setFailure(null); setErrors({}); setDirty(false); onDirty(false)
-    setNotice(false); setHistory(null); setHistoryOffset(0); frozen.current = null; setAttempt(v => v + 1)
-  }
-  async function submit(event: FormEvent) {
-    event.preventDefault()
-    if (busy.current || !profile || !content || !profile.vessel.canEdit || failure?.code === 'version_conflict') return
-    if (!frozen.current) frozen.current = { key: crypto.randomUUID(), body: { expectedVersion: profile.version, content: structuredClone(content) } }
-    const command = frozen.current
-    busy.current = true; setSaving(true); onSaving(true); onDirty(true); setDirty(true); setNotice(false)
-    const controller = new AbortController(); abort.current = controller
-    const timeout = setTimeout(() => controller.abort(), 15000)
-    let navigationFrozen = false
-    try {
-      const result = await api.saveProfile(id, command.body, csrf, command.key, controller.signal)
-      if (!mounted.current || accessRevoked.current) return
-      setProfile(result); setContent(result.content); setFailure(null); setErrors({}); setUncertain(false)
-      setDirty(false); onDirty(false); frozen.current = null; setNotice(true)
-      setHistoryOffset(0); setHistoryAttempt(v => v + 1)
-    } catch (error) {
-      if (!mounted.current || accessRevoked.current) return
-      const value = error instanceof ApiError ? error : new ApiError(0)
-      if (invalidateAccess(value)) return
-      setFailure(value); setErrors(value.errors)
-      const unknown = value.status === 0 || value.status >= 500
-      setUncertain(unknown); navigationFrozen = unknown
-      if (!unknown) frozen.current = null
-    } finally {
-      clearTimeout(timeout); busy.current = false
-      if (mounted.current) { setSaving(false); onSaving(navigationFrozen) }
+    const onboarding = journey === 'onboarding', [step, setStep] = useState(0);
+    const [profile, setProfile] = useState<Profile | null>(null);
+    const [content, setContent] = useState<ProfileContent | null>(null);
+    const [history, setHistory] = useState<ProfileHistory | null>(null);
+    const [historyAttempt, setHistoryAttempt] = useState(0);
+    const [historyOffset, setHistoryOffset] = useState(0);
+    const [historyFailure, setHistoryFailure] = useState(false);
+    const [failure, setFailure] = useState<ApiError | null>(null);
+    const [errors, setErrors] = useState<Record<string, string[]>>({});
+    const [attempt, setAttempt] = useState(0);
+    const [saving, setSaving] = useState(false);
+    const [uncertain, setUncertain] = useState(false);
+    const [dirty, setDirty] = useState(false);
+    const [notice, setNotice] = useState(false);
+    const busy = useRef(false);
+    const frozen = useRef<{
+        key: string;
+        body: ProfileCommand;
+    } | null>(null);
+    const abort = useRef<AbortController | null>(null);
+    const mounted = useRef(true);
+    const accessRevoked = useRef(false);
+    const t = copy[language];
+    useEffect(() => {
+        mounted.current = true;
+        return () => { mounted.current = false; abort.current?.abort(); };
+    }, []);
+    const invalidateAccess = useCallback((error: ApiError) => {
+        if (![401, 403, 404].includes(error.status))
+            return false;
+        // Gate late reads as well as rendering: a delayed history response cannot
+        // restore private state after the server withdraws current access.
+        accessRevoked.current = true;
+        abort.current?.abort();
+        setProfile(null);
+        setContent(null);
+        setHistory(null);
+        setNotice(false);
+        setErrors({});
+        setFailure(error);
+        setUncertain(false);
+        frozen.current = null;
+        setDirty(false);
+        onDirty(false);
+        return true;
+    }, [onDirty]);
+    useEffect(() => {
+        const controller = new AbortController();
+        let active = true;
+        const timeout = setTimeout(() => controller.abort(), 10000);
+        api.loadProfile(id, controller.signal).then(value => {
+            if (active && !accessRevoked.current) {
+                setProfile(value);
+                setContent(value.content);
+            }
+        })
+            .catch(error => {
+            if (!active || accessRevoked.current)
+                return;
+            const value = error instanceof ApiError ? error : new ApiError(0);
+            if (!invalidateAccess(value))
+                setFailure(value);
+        });
+        return () => { active = false; clearTimeout(timeout); controller.abort(); abort.current?.abort(); };
+    }, [id, attempt, invalidateAccess]);
+    useEffect(() => {
+        const controller = new AbortController();
+        let active = true;
+        const timeout = setTimeout(() => controller.abort(), 10000);
+        api.loadProfileHistory(id, historyOffset, controller.signal).then(value => {
+            if (active && !accessRevoked.current) {
+                setHistory(value);
+                setHistoryFailure(false);
+            }
+        })
+            .catch(error => {
+            if (!active || accessRevoked.current)
+                return;
+            if (!(error instanceof ApiError) || !invalidateAccess(error))
+                setHistoryFailure(true);
+        });
+        return () => { active = false; clearTimeout(timeout); controller.abort(); };
+    }, [id, historyOffset, attempt, historyAttempt, invalidateAccess]);
+    useEffect(() => {
+        const prevent = (event: BeforeUnloadEvent) => {
+            if (dirty || busy.current || uncertain)
+                event.preventDefault();
+        };
+        window.addEventListener('beforeunload', prevent);
+        return () => window.removeEventListener('beforeunload', prevent);
+    }, [dirty, uncertain]);
+    function change(key: keyof ProfileContent, value: ProfileContent[typeof key]) {
+        if (saving || uncertain)
+            return;
+        setContent(current => current === null ? null : ({ ...current, [key]: value }));
+        setDirty(true);
+        onDirty(true);
+        setNotice(false);
+        setErrors(current => ({ ...current, [key]: [] }));
+        // A stale base stays blocked until explicit reload, even if local fields change.
+        if (failure?.code !== 'version_conflict')
+            setFailure(null);
+        frozen.current = null;
     }
-  }
-  const status = failure?.status
-  const errorText = failure?.code === 'version_conflict' ? t.conflict : uncertain ? t.uncertain : status === 401 ? t.expired : status === 403 ? t.denied : status === 404 ? t.missing : t.failed
-  const provenance = (value: string) => ({ Synthetic: language === 'tr' ? 'Sentetik' : 'Synthetic', Missing: language === 'tr' ? 'Eksik' : 'Missing', Unknown: t.unknown, DeclaredUnverified: language === 'tr' ? 'Beyan — doğrulanmamış' : 'Declared — unverified' })[value] ?? t.unknown
-  const savedObservation = profile?.content.sourceObservedAt
-  const observedAt = savedObservation?.state === 'Known' && typeof savedObservation.value === 'string' ? savedObservation.value : null
-  const title = onboarding ? (language === 'en' ? 'Pilot vessel onboarding' : 'Pilot gemi ekleme') : t.title
-  return <section className="regulatory-profile" aria-label={title}>
+    function reload() {
+        if (busy.current || uncertain)
+            return;
+        accessRevoked.current = false;
+        setHistoryFailure(false);
+        setProfile(null);
+        setContent(null);
+        setFailure(null);
+        setErrors({});
+        setDirty(false);
+        onDirty(false);
+        setNotice(false);
+        setHistory(null);
+        setHistoryOffset(0);
+        frozen.current = null;
+        setAttempt(v => v + 1);
+    }
+    async function submit(event: FormEvent) {
+        event.preventDefault();
+        if (busy.current || !profile || !content || !profile.vessel.canEdit || failure?.code === 'version_conflict')
+            return;
+        if (!frozen.current)
+            frozen.current = { key: crypto.randomUUID(), body: { expectedVersion: profile.version, content: structuredClone(content) } };
+        const command = frozen.current;
+        busy.current = true;
+        setSaving(true);
+        onSaving(true);
+        onDirty(true);
+        setDirty(true);
+        setNotice(false);
+        const controller = new AbortController();
+        abort.current = controller;
+        const timeout = setTimeout(() => controller.abort(), 15000);
+        let navigationFrozen = false;
+        try {
+            const result = await api.saveProfile(id, command.body, csrf, command.key, controller.signal);
+            if (!mounted.current || accessRevoked.current)
+                return;
+            setProfile(result);
+            setContent(result.content);
+            setFailure(null);
+            setErrors({});
+            setUncertain(false);
+            setDirty(false);
+            onDirty(false);
+            frozen.current = null;
+            setNotice(true);
+            setHistoryOffset(0);
+            setHistoryAttempt(v => v + 1);
+        }
+        catch (error) {
+            if (!mounted.current || accessRevoked.current)
+                return;
+            const value = error instanceof ApiError ? error : new ApiError(0);
+            if (invalidateAccess(value))
+                return;
+            setFailure(value);
+            setErrors(value.errors);
+            const unknown = value.status === 0 || value.status >= 500;
+            setUncertain(unknown);
+            navigationFrozen = unknown;
+            if (!unknown)
+                frozen.current = null;
+        }
+        finally {
+            clearTimeout(timeout);
+            busy.current = false;
+            if (mounted.current) {
+                setSaving(false);
+                onSaving(navigationFrozen);
+            }
+        }
+    }
+    const status = failure?.status;
+    const errorText = failure?.code === 'version_conflict' ? t.conflict : uncertain ? t.uncertain : status === 401 ? t.expired : status === 403 ? t.denied : status === 404 ? t.missing : t.failed;
+    const provenance = (value: string) => ({ Synthetic: localizedText(language, "pairs.m_195b868f709e8de4"), Missing: localizedText(language, "pairs.m_a5bd35d90de7c160"), Unknown: t.unknown, DeclaredUnverified: localizedText(language, "pairs.m_e043dea57f9e1669") })[value] ?? t.unknown;
+    const savedObservation = profile?.content.sourceObservedAt;
+    const observedAt = savedObservation?.state === 'Known' && typeof savedObservation.value === 'string' ? savedObservation.value : null;
+    const title = onboarding ? (localizedText(language, "pairs.m_372d69a18a20b71d")) : t.title;
+    return <section className="regulatory-profile" aria-label={title}>
     <h2>{title}</h2><p className="profile-draft-note">{t.note}</p>
-    {failure && <div role="alert"><p>{errorText}</p>{status === 401 && <a href={loginHref()}>{language === 'tr' ? 'Oturum aç' : 'Sign in'}</a>}
+    {failure && <div role="alert"><p>{errorText}</p>{status === 401 && <a href={loginHref()}>{localizedText(language, "pairs.m_16505c0ee5e527ad")}</a>}
       {!profile && <button onClick={reload}>{t.reloadRead}</button>}
       {failure.code === 'version_conflict' && <button onClick={reload}>{t.reload}</button>}</div>}
     {!profile && !failure && <p role="status">{t.loading}</p>}
     {notice && <p role="status">{t.saved}</p>}
     {profile && content && <>
-      <p className="profile-context">{profile.tenantId} · <strong>{profile.vessel.code} · {profile.vessel.name}</strong> · {profile.vessel.kind === 'Ship' ? (language === 'tr' ? 'Gemi' : 'Ship') : (language === 'tr' ? 'Römorkör' : 'Tug')}</p>
+      <p className="profile-context">{profile.tenantId} · <strong>{profile.vessel.code} · {profile.vessel.name}</strong> · {profile.vessel.kind === 'Ship' ? (localizedText(language, "pairs.m_bb1dbfbac5d5c650")) : (localizedText(language, "pairs.m_306aaabcb4e04a9f"))}</p>
       {!profile.revision && <p>{t.empty}</p>}
       <p>{t.provenance}: {provenance(profile.provenance)} · {t.revision}: {profile.revision} · {t.time}: {profile.savedAt ?? t.unknown}</p>
-      <aside className="profile-source-context" aria-label={language === 'en' ? 'Saved source context' : 'Kayıtlı kaynak bağlamı'}><strong>{t.observed}</strong><p>{observedAt !== null ? <time dateTime={observedAt}>{observedAt}</time> : savedObservation?.state === 'Missing' ? (language === 'en' ? 'Missing' : 'Eksik') : t.unknown}</p><p>{language === 'en' ? 'Input freshness is unverified. Saving or reading a profile does not verify its source.' : 'Girdi güncelliği doğrulanmamış. Profili kaydetmek veya okumak kaynağını doğrulamaz.'}</p></aside>
-      <p>{profileFields.filter(([key]) => content[key]?.state !== 'Known').length} {onboarding ? (language === 'en' ? 'profile fields have missing or unknown data. Critical completeness is assessed against the saved revision in the review step.' : 'profil alanında eksik veya bilinmeyen bilgi var. Kritik tamlık inceleme adımında kayıtlı sürüme göre değerlendirilir.') : t.count}</p>
+      <aside className="profile-source-context" aria-label={localizedText(language, "pairs.m_e263b98182c6b18a")}><strong>{t.observed}</strong><p>{observedAt !== null ? <time dateTime={observedAt}>{observedAt}</time> : savedObservation?.state === 'Missing' ? (localizedText(language, "pairs.m_a5bd35d90de7c160")) : t.unknown}</p><p>{localizedText(language, "pairs.m_bdf69e4bcf117eaa")}</p></aside>
+      <p>{profileFields.filter(([key]) => content[key]?.state !== 'Known').length} {onboarding ? (localizedText(language, "pairs.m_344296b81dee2be9")) : t.count}</p>
       {!profile.vessel.canEdit && <p>{t.readonly}</p>}
-      {onboarding && step === 0 && <p>{language === 'en' ? 'Vessel identity comes from the selected vessel register record. Use Back to vessel to edit its code or name.' : 'Araç kimliği seçili filo kaydından gelir. Kod veya adı düzenlemek için Araca dön işlemini kullanın.'}</p>}
-      {onboarding && <OnboardingSteps step={step} language={language} disabled={saving || uncertain} onChange={setStep} />}
-      {onboarding && Object.keys(errors).length > 0 && <div role="alert"><p>{language === 'en' ? 'Review the fields marked in these steps.' : 'Bu adımlarda işaretli alanları kontrol edin.'}</p><ul>{onboardingSteps.slice(0, 3).map((item, index) => item.fields.some(field => errors[field]?.length) ? <li key={item.en}><Button variant="outline" disabled={saving || uncertain} onClick={() => setStep(index)}>{language === 'en' ? 'Review fields in' : 'Alanları kontrol et'}: {item[language]}</Button></li> : null)}</ul></div>}
+      {onboarding && step === 0 && <p>{localizedText(language, "pairs.m_2557e1055098f1ce")}</p>}
+      {onboarding && <OnboardingSteps step={step} language={language} disabled={saving || uncertain} onChange={setStep}/>}
+      {onboarding && Object.keys(errors).length > 0 && <div role="alert"><p>{localizedText(language, "pairs.m_a775986543772964")}</p><ul>{onboardingSteps.slice(0, 3).map((item, index) => item.fields.some(field => errors[field]?.length) ? <li key={item.en}><Button variant="outline" disabled={saving || uncertain} onClick={() => setStep(index)}>{localizedText(language, "pairs.m_c58ded00c56a8b4b")}: {localizedLabel(item, language)}</Button></li> : null)}</ul></div>}
       <form noValidate aria-busy={saving} onSubmit={event => void submit(event)}>
-        {(!onboarding || step === 1) && <ConstructionRecordPicker vessel={id} language={language} value={content.constructionRecord} disabled={!profile.vessel.canEdit || saving || uncertain} onChange={value => change('constructionRecord', value)} onDenied={invalidateAccess} />}
-        {onboarding && <h3>{onboardingSteps[step][language]}</h3>}
+        {(!onboarding || step === 1) && <ConstructionRecordPicker vessel={id} language={language} value={content.constructionRecord} disabled={!profile.vessel.canEdit || saving || uncertain} onChange={value => change('constructionRecord', value)} onDenied={invalidateAccess}/>}
+        {onboarding && <h3>{localizedLabel(onboardingSteps[step], language)}</h3>}
         <div className="profile-field-grid">{profileFields.filter(([key]) => !onboarding || onboardingSteps[step].fields.some(field => field === key)).map(([key, kind, tr, en]) => {
-          const common = { label: language === 'tr' ? tr : en, language, disabled: !profile.vessel.canEdit || saving || uncertain, error: !!errors[key]?.length }
-          return kind === 'number' ? <RequiredDataField key={key} {...common} kind="number" value={content[key] ?? { state: 'Missing' }} onChange={value => change(key, value)} /> :
-            <RequiredDataField key={key} {...common} kind="text" value={content[key] ?? { state: 'Missing' }} onChange={value => change(key, value)} />
-        })}</div>
-        {onboarding && step === 3 && <><dl className="onboarding-review-values">{profileFields.map(([key, , tr, en]) => <div key={key}><dt>{language === 'en' ? en : tr}</dt><dd>{content[key]?.state === 'Known' ? String(content[key]?.value ?? t.unknown) : content[key]?.state === 'Unknown' ? t.unknown : (language === 'en' ? 'Missing' : 'Eksik')}</dd></div>)}</dl><OnboardingAssessmentView vessel={id} savedRevision={profile.revision > 0 ? profile.revision : null} dirty={dirty} language={language} /></>}
-        {onboarding && <EnterpriseActions aria-label={language === 'en' ? 'Onboarding step actions' : 'Gemi ekleme adım işlemleri'}><Button variant="outline" disabled={step === 0 || saving || uncertain} onClick={() => setStep(n => Math.max(0, n - 1))}>{language === 'en' ? 'Previous step' : 'Önceki adım'}</Button><Button variant="outline" disabled={step === 3 || saving || uncertain} onClick={() => setStep(n => Math.min(3, n + 1))}>{language === 'en' ? 'Next step' : 'Sonraki adım'}</Button></EnterpriseActions>}
-        {profile.vessel.canEdit && <EnterpriseActions aria-label={language === 'en' ? 'Profile form actions' : 'Profil form işlemleri'}><Button type="submit" disabled={saving || failure?.code === 'version_conflict'}>{saving ? t.saving : uncertain ? t.retry : t.save}</Button></EnterpriseActions>}
+                const common = { label: localizedLabel({ en: en, tr: tr }, language), language, disabled: !profile.vessel.canEdit || saving || uncertain, error: !!errors[key]?.length };
+                return kind === 'number' ? <RequiredDataField key={key} {...common} kind="number" value={content[key] ?? { state: 'Missing' }} onChange={value => change(key, value)}/> :
+                    <RequiredDataField key={key} {...common} kind="text" value={content[key] ?? { state: 'Missing' }} onChange={value => change(key, value)}/>;
+            })}</div>
+        {onboarding && step === 3 && <><dl className="onboarding-review-values">{profileFields.map(([key, , tr, en]) => <div key={key}><dt>{localizedLabel({ en: en, tr: tr }, language)}</dt><dd>{content[key]?.state === 'Known' ? String(content[key]?.value ?? t.unknown) : content[key]?.state === 'Unknown' ? t.unknown : (localizedText(language, "pairs.m_a5bd35d90de7c160"))}</dd></div>)}</dl><OnboardingAssessmentView vessel={id} savedRevision={profile.revision > 0 ? profile.revision : null} dirty={dirty} language={language}/></>}
+        {onboarding && <EnterpriseActions aria-label={localizedText(language, "pairs.m_69b974dc1090cab4")}><Button variant="outline" disabled={step === 0 || saving || uncertain} onClick={() => setStep(n => Math.max(0, n - 1))}>{localizedText(language, "pairs.m_11b5b0852be5c621")}</Button><Button variant="outline" disabled={step === 3 || saving || uncertain} onClick={() => setStep(n => Math.min(3, n + 1))}>{localizedText(language, "pairs.m_892b82e46cfa25df")}</Button></EnterpriseActions>}
+        {profile.vessel.canEdit && <EnterpriseActions aria-label={localizedText(language, "pairs.m_7207e9da6d60a23c")}><Button type="submit" disabled={saving || failure?.code === 'version_conflict'}>{saving ? t.saving : uncertain ? t.retry : t.save}</Button></EnterpriseActions>}
       </form>
       <h3>{t.history}</h3>
       {historyFailure ? <div role="alert">{t.failed}<button onClick={() => setHistoryAttempt(v => v + 1)} disabled={saving || uncertain}>{t.reloadRead}</button></div> : !history ? <p role="status">{t.loading}</p> : <>
         {!history.items.length && <p>{t.noHistory}</p>}
         {history.items.map(row => <details key={row.revision}><summary>{t.revision} {row.revision} · {row.savedAt} · {provenance(row.provenance)}</summary>
-          <dl>{profileFields.map(([key, , tr, en]) => <div key={key}><dt>{language === 'tr' ? tr : en}</dt><dd>{row.content[key]?.state === 'Known' ? String(row.content[key]?.value) : row.content[key]?.state === 'Unknown' ? t.unknown : (language === 'tr' ? 'Eksik' : 'Missing')}</dd></div>)}</dl></details>)}
-        <EnterprisePagination label={language === 'en' ? 'Profile history pagination' : 'Profil geçmişi sayfalama'} previous={t.previous} next={t.next} previousDisabled={historyOffset === 0} nextDisabled={!history.hasMore} onPrevious={() => { setHistory(null); setHistoryOffset(v => v - 25) }} onNext={() => { setHistory(null); setHistoryOffset(v => v + 25) }} />
+          <dl>{profileFields.map(([key, , tr, en]) => <div key={key}><dt>{localizedLabel({ en: en, tr: tr }, language)}</dt><dd>{row.content[key]?.state === 'Known' ? String(row.content[key]?.value) : row.content[key]?.state === 'Unknown' ? t.unknown : (localizedText(language, "pairs.m_a5bd35d90de7c160"))}</dd></div>)}</dl></details>)}
+        <EnterprisePagination label={localizedText(language, "pairs.m_8f426e60b0953c8c")} previous={t.previous} next={t.next} previousDisabled={historyOffset === 0} nextDisabled={!history.hasMore} onPrevious={() => { setHistory(null); setHistoryOffset(v => v - 25); }} onNext={() => { setHistory(null); setHistoryOffset(v => v + 25); }}/>
       </>}
     </>}
-  </section>
+  </section>;
 }
