@@ -46,8 +46,8 @@ public sealed partial class DirectoryWorkspaceTests
         await using var db=Db();var receipts=await db.DefectReceipts.Where(r=>r.DefectId==saved.Id).OrderBy(r=>r.Revision).ToArrayAsync(Ct);Assert.Equal(2,receipts.Length);Assert.Equal(saved.Version,receipts[0].RecordVersion);
         var audit=await db.AuditEvents.Where(e=>e.ResourceId==saved.Id).ToArrayAsync(Ct);Assert.DoesNotContain("FICTIONAL",JsonSerializer.Serialize(audit));
         Assert.Contains(audit,e=>e.ResourceKind=="DefectReceipt" && e.AfterVersion==saved.Version && e.AfterRevision==saved.Revision);
-        Assert.Contains(audit,e=>e.ChangeSummary.Contains("DefectCreate") && e.ChangeSummary.Contains("PREPARATION_COMMAND") && e.VesselId==SeedVessel.Id && e.ActorId==actorId.ToString());
-        Assert.Contains(audit,e=>e.ChangeSummary.Contains("DefectUpdate") && e.BeforeVersion==saved.Version && e.AfterRevision==2);
+        Assert.Contains(audit,e=>e.ChangeSummary != null && e.ChangeSummary.Contains("DefectCreate") && e.ChangeSummary.Contains("PREPARATION_COMMAND") && e.VesselId==SeedVessel.Id && e.ActorId==actorId.ToString());
+        Assert.Contains(audit,e=>e.ChangeSummary != null && e.ChangeSummary.Contains("DefectUpdate") && e.BeforeVersion==saved.Version && e.AfterRevision==2);
         Assert.All(audit,e=>{Assert.Equal("User",e.ActorType);Assert.Equal("WebCommand",e.Source);Assert.NotNull(e.RoleContext);Assert.Contains("Vessel",e.ChangeSummary);Assert.Equal(SeedVessel.TenantId,e.TenantId);});
         var immutable=await db.DefectRevisions.SingleAsync(r=>r.DefectId==saved.Id && r.Revision==1,Ct);immutable.FieldsJson="{}";await Assert.ThrowsAsync<InvalidOperationException>(()=>db.SaveChangesAsync(Ct));
     }
@@ -64,7 +64,7 @@ public sealed partial class DirectoryWorkspaceTests
             var saved=(await duplicates.First(r=>r.StatusCode==HttpStatusCode.OK).Content.ReadFromJsonAsync<DefectRecordDto>(Ct))!;
             using var recovered=await DefectSend(second,command,key);Assert.Equal(HttpStatusCode.OK,recovered.StatusCode);Assert.Equal(DefectFacts(saved),DefectFacts((await recovered.Content.ReadFromJsonAsync<DefectRecordDto>(Ct))!));
             var edit=command with{ExpectedVersion=saved.Version};var candidates=await Task.WhenAll(DefectSend(first,edit with{Fields=new(){["notes"]=new("Known","FICTIONAL contender one")}},update:true),DefectSend(second,edit with{Fields=new(){["notes"]=new("Known","FICTIONAL contender two")}},update:true));
-            try{Assert.Single(candidates.Where(r=>r.StatusCode==HttpStatusCode.OK));Assert.Single(candidates.Where(r=>r.StatusCode==HttpStatusCode.Conflict));}
+            try{Assert.Single(candidates,r=>r.StatusCode==HttpStatusCode.OK);Assert.Single(candidates,r=>r.StatusCode==HttpStatusCode.Conflict);}
             finally{foreach(var response in candidates)response.Dispose();}
             await using var db=Db();Assert.Equal(2,(await db.Defects.SingleAsync(r=>r.Id==command.Id,Ct)).Revision);Assert.Equal(2,await db.DefectRevisions.CountAsync(r=>r.DefectId==command.Id,Ct));Assert.Equal(2,await db.DefectReceipts.CountAsync(r=>r.DefectId==command.Id,Ct));
         }finally{foreach(var response in duplicates)response.Dispose();}

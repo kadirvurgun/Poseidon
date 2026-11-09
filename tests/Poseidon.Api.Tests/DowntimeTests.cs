@@ -40,7 +40,7 @@ public sealed partial class DirectoryWorkspaceTests
         var history=(await client.GetFromJsonAsync<DowntimeHistoryDto>(DowntimePath(saved.Id,"/history"),Ct))!;Assert.Equal(2,history.Items.Length);Assert.All(history.Items,r=>Assert.False(r.CanEdit));Assert.Equal(saved.Hash,history.Items.Single(r=>r.Revision==1).Hash);
         await using var db=Db();Assert.Equal(2,await db.DowntimeReceipts.CountAsync(r=>r.DowntimeId==saved.Id,Ct));var audit=await db.AuditEvents.Where(e=>e.ResourceId==saved.Id).ToArrayAsync(Ct);
         Assert.DoesNotContain("FICTIONAL",JsonSerializer.Serialize(audit));Assert.Contains(audit,e=>e.ResourceKind=="DowntimeReceipt" && e.AfterVersion==saved.Version && e.AfterRevision==1);
-        Assert.Contains(audit,e=>e.ChangeSummary.Contains("DowntimeCreate") && e.ActorId==actorId.ToString() && e.VesselId==SeedVessel.Id);Assert.Contains(audit,e=>e.ChangeSummary.Contains("DowntimeUpdate") && e.BeforeVersion==saved.Version);
+        Assert.Contains(audit,e=>e.ChangeSummary != null && e.ChangeSummary.Contains("DowntimeCreate") && e.ActorId==actorId.ToString() && e.VesselId==SeedVessel.Id);Assert.Contains(audit,e=>e.ChangeSummary != null && e.ChangeSummary.Contains("DowntimeUpdate") && e.BeforeVersion==saved.Version);
         var ledger=await db.DowntimeRevisions.FirstAsync(r=>r.DowntimeId==saved.Id,Ct);ledger.FieldsJson="{}";await Assert.ThrowsAsync<InvalidOperationException>(()=>db.SaveChangesAsync(Ct));
     }
     [Fact]
@@ -99,7 +99,7 @@ public sealed partial class DirectoryWorkspaceTests
             var saved=(await duplicates.First(r=>r.StatusCode==HttpStatusCode.OK).Content.ReadFromJsonAsync<DowntimeRecordDto>(Ct))!;
             using var recovered=await DowntimeSend(second,command,key);Assert.Equal(HttpStatusCode.OK,recovered.StatusCode);Assert.Equal(DowntimeFacts(saved),DowntimeFacts((await recovered.Content.ReadFromJsonAsync<DowntimeRecordDto>(Ct))!));
             var edit=command with{ExpectedVersion=saved.Version};var candidates=await Task.WhenAll(DowntimeSend(first,edit with{Fields=new(){["cause"]=new("Known","FICTIONAL contender one")}},update:true),DowntimeSend(second,edit with{Fields=new(){["cause"]=new("Known","FICTIONAL contender two")}},update:true));
-            try{Assert.Single(candidates.Where(r=>r.StatusCode==HttpStatusCode.OK));Assert.Single(candidates.Where(r=>r.StatusCode==HttpStatusCode.Conflict));}
+            try{Assert.Single(candidates,r=>r.StatusCode==HttpStatusCode.OK);Assert.Single(candidates,r=>r.StatusCode==HttpStatusCode.Conflict);}
             finally{foreach(var response in candidates)response.Dispose();}
             await using var db=Db();Assert.Equal(2,(await db.Downtimes.SingleAsync(r=>r.Id==command.Id,Ct)).Revision);Assert.Equal(2,await db.DowntimeRevisions.CountAsync(r=>r.DowntimeId==command.Id,Ct));Assert.Equal(2,await db.DowntimeReceipts.CountAsync(r=>r.DowntimeId==command.Id,Ct));
         }finally{foreach(var response in duplicates)response.Dispose();}

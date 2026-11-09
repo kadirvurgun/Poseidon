@@ -51,9 +51,9 @@ public sealed partial class DirectoryWorkspaceTests
     }
     private async Task<CertificateDto> ExtractionSource(HttpClient client) {
         var staged=await StagePng(client);using var accepted=await PutPng(client,staged.Id);Assert.Equal(HttpStatusCode.OK,accepted.StatusCode);
-        var file=(await accepted.Content.ReadFromJsonAsync<FileDto>(Ct))!;
+        var file=(await accepted.Content.ReadFromJsonAsync<FileDto>(Ct))!;var fileRevision=Assert.IsType<long>(file.Revision);var fileChecksum=Assert.IsType<string>(file.Checksum);
         var metadata=new CertificateMetadata(new(CertificateTypeReference:"MASKED-TYPE",CertificateNumber:"MASKED-OLD",Issuer:"MASKED-ORIGINAL-ISSUER"),DocumentReference:file.Id,Notes:"MASKED-PRESERVED-NOTE");
-        var body=new CertificateSaveCommand(Guid.NewGuid(),0,new(metadata,DocumentName:"SYNTHETIC accepted PNG",Document:new(file.Id,file.Revision,file.Checksum)),"INITIAL_AUTHORING");
+        var body=new CertificateSaveCommand(Guid.NewGuid(),0,new(metadata,DocumentName:"SYNTHETIC accepted PNG",Document:new(file.Id,fileRevision,fileChecksum)),"INITIAL_AUTHORING");
         using var saved=await Send(client,CertificatePath(),body);Assert.Equal(HttpStatusCode.OK,saved.StatusCode);return (await saved.Content.ReadFromJsonAsync<CertificateDto>(Ct))!;
     }
     private string ExtractionPath(CertificateDto row)=>CertificatePath(row.Id)+"/extractions";
