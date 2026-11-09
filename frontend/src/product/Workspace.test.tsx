@@ -1,4 +1,4 @@
-import { navigationTestIdentity, navigationTestRole, navigationTestWorkspace, openNavigationTestWorkView } from './workspace-navigation.test-fixture'
+import { navigationTestIdentity, navigationTestRole, navigationTestWorkspace, openNavigationTestWorkView, openNavigationTestOverview } from './workspace-navigation.test-fixture'
 import { loadLenses } from './workspace-lens-api'
 vi.mock('./workspace-lens-api', async original => ({ ...await original<typeof import('./workspace-lens-api')>(),
   loadLenses: vi.fn(async (tenant: string, actor: string, vessel: string | null) => (await import('./workspace-navigation.test-fixture')).navigationTestLenses(tenant, actor, vessel)) }))
@@ -83,6 +83,7 @@ describe('NAV-WORKSPACE-01 mocked component journeys, separate from real API/bro
     mock(); const user = userEvent.setup(); render(<ProductApp />)
     await openNavigationTestWorkView(user)
     await user.selectOptions(await screen.findByLabelText('Menü merceği'), navigationTestRole)
+    await openNavigationTestOverview(user)
     await user.click(await within(screen.getByRole('navigation', { name: 'POSEIDON' })).findByRole('button', { name: 'Filo' }))
     await user.click(await screen.findByRole('button', { name: vessel.name }))
     await user.click(await screen.findByRole('button', { name: 'Mevzuat profili' }))
@@ -157,8 +158,11 @@ describe('NAV-WORKSPACE-01 mocked component journeys, separate from real API/bro
     const url = window.location.pathname
     expect(within(drawer).getByRole('link', { name: 'POSEIDON' })).toHaveFocus()
     const workView = within(drawer).getByText('Çalışma görünümü', { selector: 'summary' })
+    expect(workView.closest('details')).not.toHaveAttribute('open')
+    await user.click(workView)
     expect(workView.closest('details')).toHaveAttribute('open')
     expect(within(drawer).getByRole('combobox', { name: 'Menü merceği' })).toBeVisible()
+    within(drawer).getByRole('link', { name: 'POSEIDON' }).focus()
     await user.tab({ shift: true })
     // This fixture's workspace group follows its daily items. The actual final
     // tabbable destination is Companies, after the visible role controls.
@@ -185,6 +189,7 @@ describe('NAV-WORKSPACE-01 mocked component journeys, separate from real API/bro
     const url = window.location.pathname
     await openNavigationTestWorkView(user)
     await user.selectOptions(await screen.findByLabelText('Menü merceği'), navigationTestRole)
+    await openNavigationTestOverview(user)
     await user.click(within(screen.getByRole('navigation', { name: 'POSEIDON' })).getByRole('button', { name: 'Filo' }))
     act(() => history.back()); await new Promise(resolve => setTimeout(resolve, 60))
     await waitFor(() => expect(window.location.pathname).toBe(url))

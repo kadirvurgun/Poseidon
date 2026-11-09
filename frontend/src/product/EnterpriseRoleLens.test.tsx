@@ -1,3 +1,4 @@
+import { openNavigationTestWorkView } from './workspace-navigation.test-fixture'
 import { act, render, screen, within } from '@testing-library/react'
 import type { ComponentProps } from 'react'
 import userEvent from '@testing-library/user-event'
@@ -29,6 +30,7 @@ it('DEV-022 selects the first genuine role and replaces the primary sidebar when
   const nav = screen.getByRole('navigation', { name: 'POSEIDON' })
   const crew = await within(nav).findByRole('button', { name: 'Crew' })
   expect(crew).toHaveAttribute('aria-current', 'page')
+  await openNavigationTestWorkView(user)
   const lens = within(nav).getByRole('combobox', { name: 'Menu lens' })
   expect(lens).toHaveValue(deck); expect(lens).toBeVisible()
   expect(within(nav).queryByRole('button', { name: 'Fleet' })).not.toBeInTheDocument()
@@ -47,6 +49,7 @@ it('DEV-022 selects the first genuine role and replaces the primary sidebar when
 it('a presentation lens never grants full product search when the current workspace denies it', async () => {
   const user = userEvent.setup(); render(view())
   await screen.findByRole('button', { name: 'Crew' })
+  await openNavigationTestWorkView(user)
   await user.selectOptions(screen.getByRole('combobox', { name: 'Menu lens' }), engineer)
   expect(screen.queryByRole('button', { name: 'Search workspace' })).not.toBeInTheDocument()
   await user.keyboard('{Control>}k{/Control}')

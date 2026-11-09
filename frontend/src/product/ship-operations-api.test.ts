@@ -48,7 +48,7 @@ describe('T-OPS2-004/005 strict ordinary declaration contracts (source only)', (
   it('keeps origin selectors nonprivate, exact-revision and distinct from saved record identifiers', () => {
     const base = '/app/fuel-bunker-log/' + shipOpsVessel, query = '?originKind=Noon&originId=' + shipOpsRecordId + '&originRevision=2'
     expect(shipOpsLocationPath(readShipOpsLocation(base + query))).toBe(base + query)
-    for (const bad of [query + '&originRevision=3', query + '&id=' + shipOpsRecordId, '?originKind=Noon&originId=' + shipOpsRecordId, '?supplier=private-name', query.replace('=2', '=0')]) expect(readShipOpsLocation(base + bad).invalid).toBe(true)
+    for (const bad of [query + '&originRevision=3', query + '&id=' + shipOpsRecordId, '?originKind=Noon&originId=' + shipOpsRecordId, '?supplier=private-name', query.replace('originRevision=2', 'originRevision=0')]) expect(readShipOpsLocation(base + bad).invalid).toBe(true)
     expect(readShipOpsLocation('/app/port-activity-sof/' + shipOpsVessel + query.replace('Noon', 'Engine')).invalid).toBe(true)
   })
   it('accepts actual scoped daily navigation and rejects an operational item projected into Tug mode', () => {

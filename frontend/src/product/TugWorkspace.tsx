@@ -1,5 +1,5 @@
 import { EnterpriseChrome } from './EnterpriseChrome'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { EnterpriseActions } from './EnterprisePatterns'
 import { isGuid } from './identifiers'
 import { TugRequestFields } from './TugRequestFields'
@@ -43,6 +43,8 @@ export function TugWorkspace() {
   const [planningDirty, setPlanningDirty] = useState(false)
   const locks = useRef({ dirty: false, planning: false, busy: false, attempt: false })
   const uncertain = useRef(false)
+  const [uncertainOutcome, setUncertainOutcome] = useState(false)
+  const markUncertain = (value: boolean) => { uncertain.current = value; setUncertainOutcome(value) }
   const active = useRef(false), writer = useRef<AbortController | null>(null)
   const authorityGeneration = useRef(0), editorOwner = useRef<string | null>(null)
   const authorityReady = useRef(false)
@@ -70,7 +72,7 @@ export function TugWorkspace() {
     window.addEventListener('popstate', pop); window.addEventListener('beforeunload', unload); window.addEventListener('online', network); window.addEventListener('offline', network)
     return () => { window.removeEventListener('popstate', pop); window.removeEventListener('beforeunload', unload); window.removeEventListener('online', network); window.removeEventListener('offline', network) }
   }, [dirty, planningDirty, busy, attempt, route])
-  useEffect(() => { active.current = true; return () => { active.current = false; writer.current?.abort(); authorityGeneration.current++ } }, [])
+  useEffect(() => { const epoch = authorityGeneration; active.current = true; return () => { active.current = false; writer.current?.abort(); epoch.current++ } }, [])
   useEffect(() => {
     document.documentElement.lang = lang; document.title = `POSEIDON · ${t.title}`
   }, [lang, t.title])
@@ -79,10 +81,15 @@ export function TugWorkspace() {
   // Withdraw stale state in the same render that changes the request scope.
   if (!Object.is(previousScope1[0], route) || !Object.is(previousScope1[1], reload)) {
     setPreviousScope1(resetScope1)
-    authorityGeneration.current++; editorOwner.current = null; locks.current.dirty = false; locks.current.attempt = false; uncertain.current = false
+    setUncertainOutcome(false)
     setFieldErrors({})
-    markAuthority(false); setLoading(true); setError(0); setUser(null); context(null); setBoard(null); setRecord(null); setEditing(route.screen === 'tug-job-intake'); setDirty(false); setAttempt(null); setConflict(false); setInputs(emptyTugInputs())
+    setAuthorityAvailable(false); setLoading(true); setError(0); setUser(null); context(null); setBoard(null); setRecord(null); setEditing(route.screen === 'tug-job-intake'); setDirty(false); setAttempt(null); setConflict(false); setInputs(emptyTugInputs())
   }
+  // Hide projections synchronously above; reset event guards after commit, before paint.
+  useLayoutEffect(() => {
+    authorityGeneration.current++; editorOwner.current = null; authorityReady.current = false
+    locks.current.dirty = false; locks.current.attempt = false; uncertain.current = false
+  }, [route, reload])
   useEffect(() => {
     const c = new AbortController(); let active = true; const timeout = setTimeout(() => c.abort(), 10000)
 
@@ -102,7 +109,7 @@ export function TugWorkspace() {
   // Recheck identity without replacing the retained editor or its original base version.
   useEffect(() => {
     if (!route.vessel || loading || error || !editing) return
-    const c = new AbortController()
+    const c = new AbortController(), epoch = authorityGeneration
     const refresh = async () => {
       if (locks.current.busy || !editorOwner.current) return
       const generation = ++authorityGeneration.current, expected = editorOwner.current
@@ -119,7 +126,7 @@ export function TugWorkspace() {
     const timer = window.setInterval(() => { void refresh() }, 30000)
     if (authorityRetry) void refresh()
     window.addEventListener('focus', refresh); window.addEventListener('online', refresh); window.addEventListener('offline', refresh)
-    return () => { c.abort(); authorityGeneration.current++; window.clearInterval(timer); window.removeEventListener('focus', refresh); window.removeEventListener('online', refresh); window.removeEventListener('offline', refresh) }
+    return () => { c.abort(); epoch.current++; window.clearInterval(timer); window.removeEventListener('focus', refresh); window.removeEventListener('online', refresh); window.removeEventListener('offline', refresh) }
   }, [route.vessel, loading, error, editing, authorityRetry])
   const change = (key: keyof TugInputs, value: string | number | null) => { if (locks.current.busy || locks.current.attempt || !authorityReady.current || conflict) return; setInputs(x => ({ ...x, [key]: value })); markDirty(true); setNotice(''); setFieldErrors({}) }
   const save = async () => {
@@ -143,13 +150,13 @@ export function TugWorkspace() {
       // A successful HTTP response is shown only to the same currently authorized editor.
       await checkIdentity()
       if (!active.current) return
-      uncertain.current = false; markAttempt(null); markDirty(false); setEditing(false); setRecord(r); setInputs(r.inputs); setNotice('saved')
+      markUncertain(false); markAttempt(null); markDirty(false); setEditing(false); setRecord(r); setInputs(r.inputs); setNotice('saved')
       history.pushState(null, '', `/app/tug-job-detail/${r.id}?vessel=${route.vessel}`); setRoute(location())
     } catch (e) {
       if (!active.current) return
       const rejected = e instanceof ApiError && [400, 401, 403, 404, 409].includes(e.status)
       // A later denial/validation response cannot erase a prior potentially committed attempt.
-      uncertain.current ||= responseReceived || sent && !rejected
+      markUncertain(uncertain.current || responseReceived || sent && !rejected)
       if (e instanceof ApiError && [401, 403, 404].includes(e.status)) markAuthority(false)
       if (uncertain.current) setNotice('uncertain')
       else if (e instanceof ApiError && e.status === 400) { markAttempt(null); setFieldErrors(e.errors); setNotice(e.code) }
@@ -173,16 +180,16 @@ export function TugWorkspace() {
         {route.screen === 'tug-job-board' && <TugBoardView board={board} priorities={ctx.priorities} filter={{ q: route.q, priority: route.priority, offset: route.offset }} language={lang} offline={offline}
           onFilter={filter => move(tugBoardHref(route.vessel, filter))} onNavigate={move} onRefresh={() => guard(() => setReload(n => n + 1))} />}
         {route.screen === 'tug-job-detail' && record && <TugRequestSummary record={record} language={lang} editing={editing} onEdit={ctx.canWrite ? () => guard(() => setEditing(true)) : undefined} />}
-        {route.screen === 'tug-job-detail' && record && !editing && <TugPlanningPanel key={`${editorOwner.current}/${record.id}`} id={record.id} vessel={route.vessel} requestVersion={record.version} csrf={csrf} language={lang} onDirty={markPlanning} />}
+        {route.screen === 'tug-job-detail' && record && !editing && <TugPlanningPanel key={`${user?.tenantId}/${user?.actorId}/${record.id}`} id={record.id} vessel={route.vessel} requestVersion={record.version} csrf={csrf} language={lang} onDirty={markPlanning} />}
         {route.screen === 'tug-job-intake' && !ctx.canWrite && <p role="alert">{t.denied}</p>}
         {formOpen && <form className="tug-intake-form" noValidate aria-busy={busy} onSubmit={e => { e.preventDefault(); void save() }} aria-label={t.intake}>
           <TugRequestFields inputs={inputs} context={ctx} language={lang} disabled={busy || !!attempt || conflict} errors={fieldErrors} onChange={change} />
           <EnterpriseActions layout="form" aria-label={lang === 'en' ? 'Request actions' : 'Talep işlemleri'}>
-            <Button type="button" variant="outline" disabled={busy} onClick={() => guard(() => { markDirty(false); markAttempt(null); uncertain.current = false; setReload(n => n + 1) })}>{t.discard}</Button>
+            <Button type="button" variant="outline" disabled={busy} onClick={() => guard(() => { markDirty(false); markAttempt(null); markUncertain(false); setReload(n => n + 1) })}>{t.discard}</Button>
             <Button type="submit" disabled={busy || offline || conflict}>{busy ? (lang === 'en' ? 'Saving…' : 'Kaydediliyor…') : attempt ? t.retry : t.save}</Button>
           </EnterpriseActions>
         </form>}
       </>}
-      {pending && <DraftConfirmation language={lang} description={uncertain.current ? (lang === 'en' ? 'The save outcome is still unknown. Discarding local inputs does not cancel a command already sent to the server. Keep editing to retry the exact retained command.' : 'Kaydın sonucu hâlâ bilinmiyor. Yerel girdileri bırakmak sunucuya gönderilmiş komutu iptal etmez. Korunan aynı komutu tekrar denemek için düzenlemeye devam edin.') : undefined} onStay={() => setPending(null)} onDiscard={() => { const action = pending; setPending(null); markDirty(false); markAttempt(null); uncertain.current = false; action() }} />}
+      {pending && <DraftConfirmation language={lang} description={uncertainOutcome ? (lang === 'en' ? 'The save outcome is still unknown. Discarding local inputs does not cancel a command already sent to the server. Keep editing to retry the exact retained command.' : 'Kaydın sonucu hâlâ bilinmiyor. Yerel girdileri bırakmak sunucuya gönderilmiş komutu iptal etmez. Korunan aynı komutu tekrar denemek için düzenlemeye devam edin.') : undefined} onStay={() => setPending(null)} onDiscard={() => { const action = pending; setPending(null); markDirty(false); markAttempt(null); markUncertain(false); action() }} />}
     </main></div>
 }

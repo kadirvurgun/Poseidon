@@ -32,7 +32,7 @@ describe('DEV100/101 source declaration form — authored, not executed', () => 
     expect(JSON.parse(screen.getByLabelText('Declared operational fields').textContent!).supplier).toEqual({ state: 'Unknown', value: null })
     expect(screen.queryByLabelText('Compliance review state')).not.toBeInTheDocument()
     expect(screen.queryByLabelText('Verification review state')).not.toBeInTheDocument()
-    expect(screen.queryByRole('option', { name: 'READY', exact: true })).not.toBeInTheDocument()
+    expect(screen.queryByRole('option', { name: 'READY' })).not.toBeInTheDocument()
   })
   it('retains explicit offset timestamp text and multiline port remarks without guessing cargo/draught units', async () => {
     render(<Harness kind="Port" />); const user = userEvent.setup()

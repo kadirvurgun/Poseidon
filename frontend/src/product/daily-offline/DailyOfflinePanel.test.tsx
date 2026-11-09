@@ -20,11 +20,11 @@ afterEach(() => vi.restoreAllMocks())
 async function authorize() { await userEvent.click(screen.getByRole('button', { name: 'Authorize encrypted capture' })); await screen.findByText('Explicit bounded authorization') }
 it('keeps restart locked until explicit online authorization and renders only classified fields', async () => {
   const p = props(); const first = render(<DailyOfflinePanel {...p} />)
-  expect(mock.authorize).not.toHaveBeenCalled(); expect(screen.queryByLabelText('Latitude')).not.toBeInTheDocument()
-  await authorize(); expect(screen.getByLabelText('Latitude')).toBeVisible(); expect(screen.queryByText('UNCLASSIFIED ordinary text')).not.toBeInTheDocument()
+  expect(mock.authorize).not.toHaveBeenCalled(); expect(screen.queryByLabelText('Latitude', { exact: true })).not.toBeInTheDocument()
+  await authorize(); expect(screen.getByLabelText('Latitude', { exact: true })).toBeVisible(); expect(screen.queryByText('UNCLASSIFIED ordinary text')).not.toBeInTheDocument()
   expect(screen.queryByLabelText('Weather / sea summary')).not.toBeInTheDocument(); expect(screen.queryByText('REVIEWED')).not.toBeInTheDocument()
   first.unmount(); render(<DailyOfflinePanel {...p} />)
-  expect(screen.getByText('Locked · online authorization required')).toBeVisible(); expect(screen.queryByLabelText('Latitude')).not.toBeInTheDocument()
+  expect(screen.getByText('Locked · online authorization required')).toBeVisible(); expect(screen.queryByLabelText('Latitude', { exact: true })).not.toBeInTheDocument()
   expect(mock.authorize).toHaveBeenCalledTimes(1); expect(app.replay).not.toHaveBeenCalled()
 })
 it('captures Unknown during a bounded offline handle and withdraws on reconnect without automatic replay or renewal', async () => {
@@ -34,7 +34,7 @@ it('captures Unknown during a bounded offline handle and withdraws on reconnect 
   expect(app.capture).toHaveBeenCalledWith({ position_lat: { state: 'Unknown', value: null } })
   expect(screen.getByRole('button', { name: 'Send exact queued command' })).toBeDisabled()
   Object.defineProperty(navigator, 'onLine', { configurable: true, value: true }); fireEvent(window, new Event('online'))
-  expect(app.close).toHaveBeenCalled(); expect(screen.queryByLabelText('Latitude')).not.toBeInTheDocument()
+  expect(app.close).toHaveBeenCalled(); expect(screen.queryByLabelText('Latitude', { exact: true })).not.toBeInTheDocument()
   expect(mock.authorize).toHaveBeenCalledTimes(1); expect(app.replay).not.toHaveBeenCalled()
 })
 it('retains the original envelope after an uncertain delivery and retries the exact queued object', async () => {
@@ -50,7 +50,7 @@ it('retains the original envelope after an uncertain delivery and retries the ex
 it('removes private display on known denial or hidden state while preserving encrypted retention', async () => {
   const p = props(), view = render(<DailyOfflinePanel {...p} />); await authorize()
   view.rerender(<DailyOfflinePanel {...p} enabled={false} />)
-  expect(screen.queryByLabelText('Latitude')).not.toBeInTheDocument(); expect(app.close).toHaveBeenCalled()
+  expect(screen.queryByLabelText('Latitude', { exact: true })).not.toBeInTheDocument(); expect(app.close).toHaveBeenCalled()
   expect(mock.cleanup).not.toHaveBeenCalled(); expect(app.replay).not.toHaveBeenCalled()
 })
 it('shows current policy unavailability and never substitutes crew/tug authority or manufactures a capture', async () => {
@@ -79,7 +79,7 @@ it('an explicit elapsed authorization timer closes the handle without a renewal 
   vi.useFakeTimers({ shouldAdvanceTime: true }); app.remaining.mockReturnValue(100)
   render(<DailyOfflinePanel {...props()} />); await authorize()
   await act(async () => { await vi.advanceTimersByTimeAsync(101) })
-  expect(screen.queryByLabelText('Latitude')).not.toBeInTheDocument(); expect(app.close).toHaveBeenCalled(); expect(mock.authorize).toHaveBeenCalledTimes(1)
+  expect(screen.queryByLabelText('Latitude', { exact: true })).not.toBeInTheDocument(); expect(app.close).toHaveBeenCalled(); expect(mock.authorize).toHaveBeenCalledTimes(1)
   vi.useRealTimers()
 })
 
