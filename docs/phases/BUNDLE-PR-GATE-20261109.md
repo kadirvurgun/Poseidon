@@ -43,3 +43,5 @@ Bu checkpoint’te yeni dal CI çalışması veya PR URL’si yok; draft PR haz�
 Reviewable draft PR’ı yayımlamak, gerçek kalan test/fixture/CI hatalarını gidermek ve tam kapıları bitirmek; sonraDEV-056 PMS Command Center adayı (18.01 Backlog57,T-S8-005,8SP,depsDEV-053/054/055) üzerinden dependency-ready geliştirmeye devam etmek. S6 seçili87SP tamamlandı/kabul edildi yazılmaz. Kanıt, closure, LoH, qualified human kararları veya pilot/SME imzaları uydurulmaz.
 
 Son kaynak güncellemesi:229c764 hedefinde exact-owned süreç temizliği sonrası entegre repository scan350,965s,exit0,2640dosya,0bulgu; önceki exit2 kanıtı korunur. Yeni kod değişiklikleri ve CI ayrıca doğrulanacaktır.
+
+S3 test lifecycle düzeltmesi5b048db:20dar test/2gerçek Windows process-tree senaryosu ve28API protocol testi geçti; değişen2kod dosyası taramada0bulgu. Windows atomic Job kill-on-close ile ebeveyn sonlanması/zaman aşımında owned çocuklar temizlenir. POSIX farklı session oluşturan alt süreçlerde aynı crash-containment kanıtı yoktur; Linux CI ve bağımsız son hedef QA açıktır.

@@ -3947,7 +3947,7 @@
     "accepted": false,
     "accepted_story_points_added": 0,
     "defer_tests": false,
-    "observed_at_utc": "2026-11-09T08:40:11.177022+00:00",
+    "observed_at_utc": "2026-11-09T08:42:00.271673+00:00",
     "branch": "foundation/s6-certificate-foundation-20261105",
     "source_checkpoint": "1e40b39f3f44c469604876fe9a77599c1f296f9f",
     "source_tree": "70c15e7667bb4c6d2c38b12d3dc22f76eda1794a",
@@ -4284,6 +4284,17 @@
         "commit": "6904393a8238c6ff960214baaa61a214fb3bc064",
         "state": "SOURCE_REVIEWED_BOUNDED_REAL_ISOLATION6_AND_BEHAVIOR5_PASS",
         "behavior": "Exact UUID lease pool16/session reset; clear template before clone and precise lease before drop. Same10reads30SQL observed30->1backends747->137ms single profile; no full-suite speedup claim."
+      },
+      {
+        "id": "OWNED-S3-CHILD-LIFECYCLE",
+        "commit": "5b048db967e765af3ad25b9a7faca0ee8f08308f",
+        "state": "LOCAL_FOCUSED_20_PASS_WINDOWS_REAL_TREE_2_CASES_PROTOCOL28_PASS",
+        "behavior": "Windows atomic Job assignment before initial execution with kill-on-close; verify owned tree gone before provider cleanup, distinct closed failure statuses. No broad process kill.",
+        "limitation": "POSIX group cleanup covers same session; no cross-session abnormal-parent containment proof for native workers creating their own sessions. Linux CI and independent QA remain required.",
+        "changed_file_scan": {
+          "files": 2,
+          "findings": 0
+        }
       }
     ],
     "warnings": [
@@ -4304,7 +4315,8 @@
       "url": null,
       "ready_for_merge": false,
       "all_checks_passed": false,
-      "no_external_signoffs": true
+      "no_external_signoffs": true,
+      "source_changes_since_scan": "Only S3 lifecycle scripts plus status metadata; two changed code files scanned0findings; final CI still required."
     },
     "open_gates": [
       "Final changed-file/repository scan on publication target; actual229c integrated retry passed2640files0findings after exact owned cleanup; original exit2 retained",
@@ -11400,7 +11412,7 @@
     "accepted": false,
     "accepted_story_points_added": 0,
     "defer_tests": false,
-    "observed_at_utc": "2026-11-09T08:40:11.177022+00:00",
+    "observed_at_utc": "2026-11-09T08:42:00.271673+00:00",
     "branch": "foundation/s6-certificate-foundation-20261105",
     "source_checkpoint": "1e40b39f3f44c469604876fe9a77599c1f296f9f",
     "source_tree": "70c15e7667bb4c6d2c38b12d3dc22f76eda1794a",
@@ -11737,6 +11749,17 @@
         "commit": "6904393a8238c6ff960214baaa61a214fb3bc064",
         "state": "SOURCE_REVIEWED_BOUNDED_REAL_ISOLATION6_AND_BEHAVIOR5_PASS",
         "behavior": "Exact UUID lease pool16/session reset; clear template before clone and precise lease before drop. Same10reads30SQL observed30->1backends747->137ms single profile; no full-suite speedup claim."
+      },
+      {
+        "id": "OWNED-S3-CHILD-LIFECYCLE",
+        "commit": "5b048db967e765af3ad25b9a7faca0ee8f08308f",
+        "state": "LOCAL_FOCUSED_20_PASS_WINDOWS_REAL_TREE_2_CASES_PROTOCOL28_PASS",
+        "behavior": "Windows atomic Job assignment before initial execution with kill-on-close; verify owned tree gone before provider cleanup, distinct closed failure statuses. No broad process kill.",
+        "limitation": "POSIX group cleanup covers same session; no cross-session abnormal-parent containment proof for native workers creating their own sessions. Linux CI and independent QA remain required.",
+        "changed_file_scan": {
+          "files": 2,
+          "findings": 0
+        }
       }
     ],
     "warnings": [
@@ -11757,7 +11780,8 @@
       "url": null,
       "ready_for_merge": false,
       "all_checks_passed": false,
-      "no_external_signoffs": true
+      "no_external_signoffs": true,
+      "source_changes_since_scan": "Only S3 lifecycle scripts plus status metadata; two changed code files scanned0findings; final CI still required."
     },
     "open_gates": [
       "Final changed-file/repository scan on publication target; actual229c integrated retry passed2640files0findings after exact owned cleanup; original exit2 retained",

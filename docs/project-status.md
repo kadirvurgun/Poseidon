@@ -31,3 +31,5 @@ Sonraki adım draft PR’ı açmak, tam native/signed/CI kapılarını bitirip g
 [Ayrıntılı PR-kapısı raporu](phases/BUNDLE-PR-GATE-20261109.md) · [Canonical kayıt](project-status.json) · [Önceki downtime checkpoint’i](phases/S6-DOWNTIME-CONTINUATION-20261109.md)
 
 Son kaynak güncellemesi:229c764 hedefinde exact-owned süreç temizliği sonrası entegre repository scan350,965s,exit0,2640dosya,0bulgu; önceki exit2 kanıtı korunur. Yeni kod değişiklikleri ve CI ayrıca doğrulanacaktır.
+
+S3 test lifecycle düzeltmesi5b048db:20dar test/2gerçek Windows process-tree senaryosu ve28API protocol testi geçti; değişen2kod dosyası taramada0bulgu. Windows atomic Job kill-on-close ile ebeveyn sonlanması/zaman aşımında owned çocuklar temizlenir. POSIX farklı session oluşturan alt süreçlerde aynı crash-containment kanıtı yoktur; Linux CI ve bağımsız son hedef QA açıktır.
