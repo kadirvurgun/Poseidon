@@ -48,8 +48,8 @@ public sealed partial class DirectoryWorkspaceTests
         await using var db=Db();var receipts=await db.WorkOrderReceipts.Where(r=>r.WorkOrderId==saved.Id).OrderBy(r=>r.Revision).ToArrayAsync(Ct);Assert.Equal(2,receipts.Length);Assert.Equal(saved.Version,receipts[0].RecordVersion);
         var audit=await db.AuditEvents.Where(e=>e.ResourceId==saved.Id).ToArrayAsync(Ct);Assert.DoesNotContain("FICTIONAL",JsonSerializer.Serialize(audit));
         Assert.Contains(audit,e=>e.ResourceKind=="WorkOrderReceipt" && e.AfterVersion==saved.Version && e.AfterRevision==saved.Revision);
-        Assert.Contains(audit,e=>e.ChangeSummary.Contains("WorkOrderCreate") && e.ChangeSummary.Contains("PREPARATION_COMMAND") && e.VesselId==SeedVessel.Id && e.ActorId==actorId.ToString());
-        Assert.Contains(audit,e=>e.ChangeSummary.Contains("WorkOrderUpdate") && e.BeforeVersion==saved.Version && e.AfterRevision==2);
+        Assert.Contains(audit,e=>e.ChangeSummary != null && e.ChangeSummary.Contains("WorkOrderCreate") && e.ChangeSummary.Contains("PREPARATION_COMMAND") && e.VesselId==SeedVessel.Id && e.ActorId==actorId.ToString());
+        Assert.Contains(audit,e=>e.ChangeSummary != null && e.ChangeSummary.Contains("WorkOrderUpdate") && e.BeforeVersion==saved.Version && e.AfterRevision==2);
         Assert.All(audit,e=>{Assert.Equal("User",e.ActorType);Assert.Equal("WebCommand",e.Source);Assert.NotNull(e.RoleContext);Assert.Contains("Vessel",e.ChangeSummary);Assert.Equal(SeedVessel.TenantId,e.TenantId);});
         var immutable=await db.WorkOrderRevisions.SingleAsync(r=>r.WorkOrderId==saved.Id && r.Revision==1,Ct);immutable.FieldsJson="{}";await Assert.ThrowsAsync<InvalidOperationException>(()=>db.SaveChangesAsync(Ct));
     }
@@ -110,7 +110,7 @@ public sealed partial class DirectoryWorkspaceTests
             var saved=(await duplicates.First(r=>r.StatusCode==HttpStatusCode.OK).Content.ReadFromJsonAsync<WorkOrderRecordDto>(Ct))!;
             using var recovered=await WorkOrderSend(second,command,key);Assert.Equal(HttpStatusCode.OK,recovered.StatusCode);Assert.Equal(WorkOrderFacts(saved),WorkOrderFacts((await recovered.Content.ReadFromJsonAsync<WorkOrderRecordDto>(Ct))!));
             var edit=command with{ExpectedVersion=saved.Version};var candidates=await Task.WhenAll(WorkOrderSend(first,edit with{Fields=new(){["findings"]=new("Known","FICTIONAL contender one")}},update:true),WorkOrderSend(second,edit with{Fields=new(){["findings"]=new("Known","FICTIONAL contender two")}},update:true));
-            try{Assert.Single(candidates.Where(r=>r.StatusCode==HttpStatusCode.OK));Assert.Single(candidates.Where(r=>r.StatusCode==HttpStatusCode.Conflict));}
+            try{Assert.Single(candidates,r=>r.StatusCode==HttpStatusCode.OK);Assert.Single(candidates,r=>r.StatusCode==HttpStatusCode.Conflict);}
             finally{foreach(var response in candidates)response.Dispose();}
             await using var db=Db();Assert.Equal(2,(await db.WorkOrders.SingleAsync(r=>r.Id==command.Id,Ct)).Revision);Assert.Equal(2,await db.WorkOrderRevisions.CountAsync(r=>r.WorkOrderId==command.Id,Ct));Assert.Equal(2,await db.WorkOrderReceipts.CountAsync(r=>r.WorkOrderId==command.Id,Ct));
         }finally{foreach(var response in duplicates)response.Dispose();}

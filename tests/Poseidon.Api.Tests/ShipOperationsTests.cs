@@ -62,7 +62,7 @@ public sealed partial class DirectoryWorkspaceTests
             var update=command with{ExpectedVersion=saved.Version,ReasonCode="AUTHORING_CORRECTION"};
             var edits=await Task.WhenAll(ShipOpsSend(first,kind,update with{Fields=new(){[field]=new("Known","FICTIONAL contender one")}},update:true),
                 ShipOpsSend(second,kind,update with{Fields=new(){[field]=new("Known","FICTIONAL contender two")}},update:true));
-            try{Assert.Single(edits.Where(r=>r.StatusCode==HttpStatusCode.OK));Assert.Single(edits.Where(r=>r.StatusCode==HttpStatusCode.Conflict));}
+            try{Assert.Single(edits,r=>r.StatusCode==HttpStatusCode.OK);Assert.Single(edits,r=>r.StatusCode==HttpStatusCode.Conflict);}
             finally{foreach(var response in edits)response.Dispose();}
             await using var db=Db();Assert.Equal(2,(await db.ShipOperations.SingleAsync(r=>r.Id==saved.Id,Ct)).Revision);Assert.Equal(2,await db.ShipOperationRevisions.CountAsync(r=>r.RecordId==saved.Id,Ct));Assert.Equal(2,await db.ShipOperationReceipts.CountAsync(r=>r.RecordId==saved.Id,Ct));
         }finally{foreach(var response in duplicates)response.Dispose();}

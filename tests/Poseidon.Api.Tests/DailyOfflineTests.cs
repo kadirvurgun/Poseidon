@@ -230,7 +230,7 @@ public sealed partial class DirectoryWorkspaceTests
         await using var verify=Db();var header=await verify.DailyOfflineEnrollments.SingleAsync(r=>r.Id==e.Id,Ct);header.Kind="Engine";await Assert.ThrowsAsync<InvalidOperationException>(()=>verify.SaveChangesAsync(Ct));verify.ChangeTracker.Clear();
         var lifecycle=await verify.DailyOfflineLifecycles.FirstAsync(Ct);lifecycle.Action="Forged";await Assert.ThrowsAsync<InvalidOperationException>(()=>verify.SaveChangesAsync(Ct));verify.ChangeTracker.Clear();
         // Expected-to-fail immutable database guard probe, never a successful raw business write.
-        await Assert.ThrowsAsync<Npgsql.PostgresException>(()=>verify.Database.ExecuteSqlRawAsync("""DELETE FROM offline."DailyLifecycle"""",Ct));
+        await Assert.ThrowsAsync<Npgsql.PostgresException>(()=>verify.Database.ExecuteSqlRawAsync("""DELETE FROM offline."DailyLifecycle";""",Ct));
     }
 
     [Fact]

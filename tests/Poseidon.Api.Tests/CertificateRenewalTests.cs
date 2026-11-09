@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Poseidon.Api;
 using Poseidon.Domain;
 using Poseidon.Persistence;
+using Poseidon.Persistence.Seeding;
 using Xunit;
 
 namespace Poseidon.Api.Tests;

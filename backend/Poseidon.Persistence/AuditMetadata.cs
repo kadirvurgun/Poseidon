@@ -117,11 +117,11 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             return new(daily.VesselId, daily.Id, "DailyOperation", entry.State == EntityState.Added ? null : (long?)entry.Property("Revision").OriginalValue,
                 daily.Revision, Fields(Field("Binding", entry.State == EntityState.Added ? null : "OwnerReference", "OwnerReference"),
                     Field("Revision", entry.State == EntityState.Added ? null : Number((long)entry.Property("Revision").OriginalValue!), Number(daily.Revision))));
-        if (entry.Entity is DailyOperationRevision revision)
-            return new(revision.VesselId, revision.RecordId, "DailyOperationRevision", null, revision.Revision,
-                Fields(Field("Revision", null, Number(revision.Revision)), Field("Binding", null, "OwnerReference")));
-        if (entry.Entity is DailyOperationReceipt receipt)
-            return new(receipt.VesselId, receipt.RecordId, "DailyOperationReceipt", null, null, Fields(Field("Binding", null, "CommittedResource")));
+        if (entry.Entity is DailyOperationRevision dailyRevision)
+            return new(dailyRevision.VesselId, dailyRevision.RecordId, "DailyOperationRevision", null, dailyRevision.Revision,
+                Fields(Field("Revision", null, Number(dailyRevision.Revision)), Field("Binding", null, "OwnerReference")));
+        if (entry.Entity is DailyOperationReceipt dailyReceipt)
+            return new(dailyReceipt.VesselId, dailyReceipt.RecordId, "DailyOperationReceipt", null, null, Fields(Field("Binding", null, "CommittedResource")));
         if (entry.Entity is NotificationDispatchState dispatch)
             return new(dispatch.VesselId, dispatch.VesselId, "NotificationDispatch", entry.State == EntityState.Added ? null : (long?)entry.Property("Revision").OriginalValue,
                 dispatch.Revision, Fields(Field("Revision", entry.State == EntityState.Added ? null : Number((long)entry.Property("Revision").OriginalValue!), Number(dispatch.Revision)),
