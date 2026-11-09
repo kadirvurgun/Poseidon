@@ -91,7 +91,14 @@ internal static class CertificateExtractionRegistration
         services.AddSingleton(configuration.GetSection("CertificateExtraction").Get<CertificateExtractionSettings>(o=>o.ErrorOnUnknownConfiguration=true)??new());
         services.AddSingleton<CertificateExtractionProvider>();
         services.AddHttpClient("CertificateExtraction",client=>client.Timeout=Timeout.InfiniteTimeSpan)
-            .ConfigurePrimaryHttpMessageHandler(()=>new SocketsHttpHandler{AllowAutoRedirect=false,UseCookies=false,UseProxy=false,AutomaticDecompression=System.Net.DecompressionMethods.None,ConnectTimeout=TimeSpan.FromSeconds(10)})
+            .ConfigurePrimaryHttpMessageHandler(sp=> {
+                var caPath=configuration["DevelopmentLab:CertificateExtractionCaPath"];
+                if(caPath!=null) {
+                    var policy=sp.GetRequiredService<CertificateExtractionSettings>();
+                    return DevelopmentCertificateExtractionTransport.Create(sp.GetRequiredService<IHostEnvironment>(),policy.Endpoint,policy.AllowedHost,caPath);
+                }
+                return new SocketsHttpHandler{AllowAutoRedirect=false,UseCookies=false,UseProxy=false,AutomaticDecompression=System.Net.DecompressionMethods.None,ConnectTimeout=TimeSpan.FromSeconds(10)};
+            })
             .RedactLoggedHeaders(_=>true);
     }
 }
