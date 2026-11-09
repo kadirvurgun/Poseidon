@@ -242,7 +242,8 @@ public sealed partial class DirectoryWorkspaceTests
         await using (var db = Db()) originalContext = (await db.Notifications.FirstAsync(Ct)).SourceContextHash;
         // Append another actual reading that is also over the threshold. The
         // owning plan pins the old immutable observation; it does not follow latest.
-        var later = Reading("25"); Assert.Equal(HttpStatusCode.OK, (await Send(c, ObservationPath, later)).StatusCode);
+        var later = Reading("25") with { SourceRevision = selected.SourceRevision + 1 };
+        Assert.Equal(HttpStatusCode.OK, (await Send(c, ObservationPath, later)).StatusCode);
         await RefreshNotifications(c); await RefreshNotifications(c);
         Assert.Equal(initial.Items, (await Inbox(c)).Items);
         await using (var db = Db()) {
