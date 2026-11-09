@@ -3943,11 +3943,11 @@
   "active_source": "docs/sources/active.json",
   "current_package": {
     "task": "BUNDLE-PR-GATE-20261109",
-    "state": "REVIEWABLE_DRAFT_PR_PREPARATION_FULL_GATES_IN_PROGRESS",
+    "state": "REVIEWABLE_DRAFT_PR_PREPARATION_FULL_GATES_OPEN",
     "accepted": false,
     "accepted_story_points_added": 0,
     "defer_tests": false,
-    "observed_at_utc": "2026-11-09T08:21:38.199743+00:00",
+    "observed_at_utc": "2026-11-09T08:40:11.177022+00:00",
     "branch": "foundation/s6-certificate-foundation-20261105",
     "source_checkpoint": "1e40b39f3f44c469604876fe9a77599c1f296f9f",
     "source_tree": "70c15e7667bb4c6d2c38b12d3dc22f76eda1794a",
@@ -4138,6 +4138,17 @@
           "evidence_sha256": "5b13ab96cb81aa0547bd96851f1493052c00d25e38a27207c62e699d41688eff",
           "secret_finding_diagnosis": false,
           "historical_b536_scan_pass_retained_not_retargeted": true
+        },
+        "integrated_retry": {
+          "state": "LOCAL_PASS_AT_229C764",
+          "tested_source": "229c7641b0e6625d38f0b4144c16a88cbe2a67a8",
+          "exit_code": 0,
+          "seconds": 350.965,
+          "covered_files": 2640,
+          "findings": 0,
+          "output_sha256": "bdb3ff8f531ed8b5cf6594e12b49fe860d22164f6e9d3eb7b816aa74572d43a9",
+          "evidence": ".runtime/bundle-pr-gate-20261109/repository-scan-after-admission-cleanup.json",
+          "prior_failure_retained": true
         }
       },
       "api_gate_protocol": {
@@ -4146,7 +4157,7 @@
         "covers": "Exact disjoint full theory discovery, all strict shard counts, failures/skips/partial/deadline/PII, independent native_scope_complete and tampered exit/status negatives."
       },
       "full_api_postgresql_s3_clamav": {
-        "state": "RUNNING_NOT_ALL_PASS",
+        "state": "INTERRUPTED_NO_FINAL_NATIVE_EVIDENCE",
         "frozen_source": "84ba7187a79b1ad88e1769fc04e36ec43b919bcb",
         "discovered_cases": 822,
         "methods": 536,
@@ -4159,12 +4170,16 @@
         "strict_partition": "EXACT_DISJOINT_COMPLETE_MULTISET",
         "completed_bounded_smoke_cases": 3,
         "coverage_definitions": 117,
-        "actual_critical_coverage_result": "PENDING",
+        "actual_critical_coverage_result": "UNPROVEN",
         "original_old_runner_evidence_not_repaired_or_retargeted": true,
-        "later_runner_fix": "QA-GATE-003 corrected in1e40b39; required final updated runner execution/CI remains"
+        "later_runner_fix": "QA-GATE-003 corrected in1e40b39; required final updated runner execution/CI remains",
+        "native_final_counts": null,
+        "exact_owned_orphan_children_stopped": 4,
+        "evidence": ".runtime/bundle-pr-gate-20261109/backend/parallel-84-interrupted-resource-and-cleanup.json",
+        "cause": "UNKNOWN_GENERIC_SETUP_OR_CLEANUP_FAILURE; separate host OOM observed, not causal proof"
       },
       "signed_lab": {
-        "state": "FAILED_PREPARATION_NOT_EXECUTED",
+        "state": "REAL_FIXTURE_PREPARATION_RETRY_IN_PROGRESS",
         "completed_reported": [
           "Fresh owned genesis init",
           "Real ClamAV preparation",
@@ -4173,7 +4188,7 @@
           "Actual application start"
         ],
         "pending": [
-          "Diagnose genuine writer login failure without auth bypass or leaking secrets",
+          "Complete real API fixture preparation and full registered signed journeys",
           "Four genuine OIDC accounts",
           "Seven API-backed private fixture families",
           "Legacy scalar lane fixtures",
@@ -4185,12 +4200,13 @@
         "failed_owned_genesis_archived_files": 13,
         "immutable_named_configuration_generations": "Windows os.replace access denied; new-name atomic publishing without replacement; no silent overwrite of operator config",
         "first_failed_stage": "writer_login",
-        "safe_source_locator": "tests/Poseidon.Browser.Tests/lab/journeys.ts:39 (coordinator reported)",
+        "safe_source_locator": "scripts/bundle_fixture_provision.ts:39 (writer_login)",
         "business_fixture_writes_before_failure": 0,
         "full_genuine_manifest_executed": false,
-        "diagnosis_in_progress": true,
+        "diagnosis_in_progress": false,
         "first_failed_stage_cause": "UNKNOWN; not diagnosed as credential or UI failure",
-        "subsequent_reprobe": "BLOCKED_BEFORE_NODE_BY_POWERSHELL_SYSTEM_OUT_OF_MEMORY_EXCEPTION"
+        "subsequent_reprobe": "PASS_REAL_EXISTING_OIDC_LOGIN_AFTER_OWNED_NATIVE_CLEANUP",
+        "first_failure_retained": true
       },
       "ci": {
         "state": "NOT_STARTED_FOR_NEW_BRANCH",
@@ -4236,6 +4252,13 @@
         "seconds": 231.92,
         "output_sha256": "0703a31e52e2cc027691e95a7cd4fc5feb7c4179875520d07e58a43c182fb19c",
         "not_secret_finding_diagnosis": true
+      },
+      {
+        "scope": "Root four-shard full API at84ba718",
+        "state": "INTERRUPTED_NO_FINAL_NATIVE_EVIDENCE",
+        "native_final_counts": null,
+        "exact_owned_orphan_children_stopped": 4,
+        "cause": "UNKNOWN_GENERIC_SETUP_OR_CLEANUP_FAILURE; separate host OOM observed"
       }
     ],
     "corrective_work": [
@@ -4284,7 +4307,7 @@
       "no_external_signoffs": true
     },
     "open_gates": [
-      "Resolve host resource pressure and rerun exact integrated repository scan; current exit2 required-input-or-coverage-failure is UNPROVEN, not secretfinding or PASS",
+      "Final changed-file/repository scan on publication target; actual229c integrated retry passed2640files0findings after exact owned cleanup; original exit2 retained",
       "Complete full native scope with real providers and117 actual critical operations",
       "Complete genuine two-lane signed journeys and actual fixture setup",
       "Final integrated source proof plus required push/PR CI",
@@ -4314,7 +4337,7 @@
         "gh repository read could not initialize: Go fatal OOM heap arena"
       ],
       "cause_not_established": "No model or native-process memory leak diagnosis; each native child reported approximately240MB private bytes by Root, not causal attribution.",
-      "response": "No new wide jobs; retain running root-held native scope and its eventual actual evidence; diagnose resources without weakening gates."
+      "response": "Stopped only four exact worktree native children after their parent ended; no other process stopped. No new local wide native jobs; final complete scope remains open for CI."
     }
   },
   "nav_workspace_01": {
@@ -11373,11 +11396,11 @@
   },
   "bundle_pr_gate_20261109": {
     "task": "BUNDLE-PR-GATE-20261109",
-    "state": "REVIEWABLE_DRAFT_PR_PREPARATION_FULL_GATES_IN_PROGRESS",
+    "state": "REVIEWABLE_DRAFT_PR_PREPARATION_FULL_GATES_OPEN",
     "accepted": false,
     "accepted_story_points_added": 0,
     "defer_tests": false,
-    "observed_at_utc": "2026-11-09T08:21:38.199743+00:00",
+    "observed_at_utc": "2026-11-09T08:40:11.177022+00:00",
     "branch": "foundation/s6-certificate-foundation-20261105",
     "source_checkpoint": "1e40b39f3f44c469604876fe9a77599c1f296f9f",
     "source_tree": "70c15e7667bb4c6d2c38b12d3dc22f76eda1794a",
@@ -11568,6 +11591,17 @@
           "evidence_sha256": "5b13ab96cb81aa0547bd96851f1493052c00d25e38a27207c62e699d41688eff",
           "secret_finding_diagnosis": false,
           "historical_b536_scan_pass_retained_not_retargeted": true
+        },
+        "integrated_retry": {
+          "state": "LOCAL_PASS_AT_229C764",
+          "tested_source": "229c7641b0e6625d38f0b4144c16a88cbe2a67a8",
+          "exit_code": 0,
+          "seconds": 350.965,
+          "covered_files": 2640,
+          "findings": 0,
+          "output_sha256": "bdb3ff8f531ed8b5cf6594e12b49fe860d22164f6e9d3eb7b816aa74572d43a9",
+          "evidence": ".runtime/bundle-pr-gate-20261109/repository-scan-after-admission-cleanup.json",
+          "prior_failure_retained": true
         }
       },
       "api_gate_protocol": {
@@ -11576,7 +11610,7 @@
         "covers": "Exact disjoint full theory discovery, all strict shard counts, failures/skips/partial/deadline/PII, independent native_scope_complete and tampered exit/status negatives."
       },
       "full_api_postgresql_s3_clamav": {
-        "state": "RUNNING_NOT_ALL_PASS",
+        "state": "INTERRUPTED_NO_FINAL_NATIVE_EVIDENCE",
         "frozen_source": "84ba7187a79b1ad88e1769fc04e36ec43b919bcb",
         "discovered_cases": 822,
         "methods": 536,
@@ -11589,12 +11623,16 @@
         "strict_partition": "EXACT_DISJOINT_COMPLETE_MULTISET",
         "completed_bounded_smoke_cases": 3,
         "coverage_definitions": 117,
-        "actual_critical_coverage_result": "PENDING",
+        "actual_critical_coverage_result": "UNPROVEN",
         "original_old_runner_evidence_not_repaired_or_retargeted": true,
-        "later_runner_fix": "QA-GATE-003 corrected in1e40b39; required final updated runner execution/CI remains"
+        "later_runner_fix": "QA-GATE-003 corrected in1e40b39; required final updated runner execution/CI remains",
+        "native_final_counts": null,
+        "exact_owned_orphan_children_stopped": 4,
+        "evidence": ".runtime/bundle-pr-gate-20261109/backend/parallel-84-interrupted-resource-and-cleanup.json",
+        "cause": "UNKNOWN_GENERIC_SETUP_OR_CLEANUP_FAILURE; separate host OOM observed, not causal proof"
       },
       "signed_lab": {
-        "state": "FAILED_PREPARATION_NOT_EXECUTED",
+        "state": "REAL_FIXTURE_PREPARATION_RETRY_IN_PROGRESS",
         "completed_reported": [
           "Fresh owned genesis init",
           "Real ClamAV preparation",
@@ -11603,7 +11641,7 @@
           "Actual application start"
         ],
         "pending": [
-          "Diagnose genuine writer login failure without auth bypass or leaking secrets",
+          "Complete real API fixture preparation and full registered signed journeys",
           "Four genuine OIDC accounts",
           "Seven API-backed private fixture families",
           "Legacy scalar lane fixtures",
@@ -11615,12 +11653,13 @@
         "failed_owned_genesis_archived_files": 13,
         "immutable_named_configuration_generations": "Windows os.replace access denied; new-name atomic publishing without replacement; no silent overwrite of operator config",
         "first_failed_stage": "writer_login",
-        "safe_source_locator": "tests/Poseidon.Browser.Tests/lab/journeys.ts:39 (coordinator reported)",
+        "safe_source_locator": "scripts/bundle_fixture_provision.ts:39 (writer_login)",
         "business_fixture_writes_before_failure": 0,
         "full_genuine_manifest_executed": false,
-        "diagnosis_in_progress": true,
+        "diagnosis_in_progress": false,
         "first_failed_stage_cause": "UNKNOWN; not diagnosed as credential or UI failure",
-        "subsequent_reprobe": "BLOCKED_BEFORE_NODE_BY_POWERSHELL_SYSTEM_OUT_OF_MEMORY_EXCEPTION"
+        "subsequent_reprobe": "PASS_REAL_EXISTING_OIDC_LOGIN_AFTER_OWNED_NATIVE_CLEANUP",
+        "first_failure_retained": true
       },
       "ci": {
         "state": "NOT_STARTED_FOR_NEW_BRANCH",
@@ -11666,6 +11705,13 @@
         "seconds": 231.92,
         "output_sha256": "0703a31e52e2cc027691e95a7cd4fc5feb7c4179875520d07e58a43c182fb19c",
         "not_secret_finding_diagnosis": true
+      },
+      {
+        "scope": "Root four-shard full API at84ba718",
+        "state": "INTERRUPTED_NO_FINAL_NATIVE_EVIDENCE",
+        "native_final_counts": null,
+        "exact_owned_orphan_children_stopped": 4,
+        "cause": "UNKNOWN_GENERIC_SETUP_OR_CLEANUP_FAILURE; separate host OOM observed"
       }
     ],
     "corrective_work": [
@@ -11714,7 +11760,7 @@
       "no_external_signoffs": true
     },
     "open_gates": [
-      "Resolve host resource pressure and rerun exact integrated repository scan; current exit2 required-input-or-coverage-failure is UNPROVEN, not secretfinding or PASS",
+      "Final changed-file/repository scan on publication target; actual229c integrated retry passed2640files0findings after exact owned cleanup; original exit2 retained",
       "Complete full native scope with real providers and117 actual critical operations",
       "Complete genuine two-lane signed journeys and actual fixture setup",
       "Final integrated source proof plus required push/PR CI",
@@ -11744,7 +11790,7 @@
         "gh repository read could not initialize: Go fatal OOM heap arena"
       ],
       "cause_not_established": "No model or native-process memory leak diagnosis; each native child reported approximately240MB private bytes by Root, not causal attribution.",
-      "response": "No new wide jobs; retain running root-held native scope and its eventual actual evidence; diagnose resources without weakening gates."
+      "response": "Stopped only four exact worktree native children after their parent ended; no other process stopped. No new local wide native jobs; final complete scope remains open for CI."
     }
   }
 }
