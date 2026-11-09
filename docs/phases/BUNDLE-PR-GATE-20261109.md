@@ -45,3 +45,15 @@ Reviewable draft PR’ı yayımlamak, gerçek kalan test/fixture/CI hatalarını
 Son kaynak güncellemesi:229c764 hedefinde exact-owned süreç temizliği sonrası entegre repository scan350,965s,exit0,2640dosya,0bulgu; önceki exit2 kanıtı korunur. Yeni kod değişiklikleri ve CI ayrıca doğrulanacaktır.
 
 S3 test lifecycle düzeltmesi5b048db:20dar test/2gerçek Windows process-tree senaryosu ve28API protocol testi geçti; değişen2kod dosyası taramada0bulgu. Windows atomic Job kill-on-close ile ebeveyn sonlanması/zaman aşımında owned çocuklar temizlenir. POSIX farklı session oluşturan alt süreçlerde aynı crash-containment kanıtı yoktur; Linux CI ve bağımsız son hedef QA açıktır.
+
+## PR16 gerçek CI ve önizleme güncellemesi
+
+[PR16](https://github.com/kadirvurgun/Poseidon/pull/16) draft olarak açık; hedef54489d6. Hem push42588135002 hem PR42588177260 tamamlandı:822gerçek API integration testinden816PASS/6FAIL/0skip. Başarısız adım persistence-and-security / PostgreSQL integration tests; test adları ve dosya/satırları canonical kayda eklendi. İki koşunun başarısız ad kümeleri farklıdır; gerçek hatalar dar yeniden üretimle incelenir, retry/skip/eşik gevşetme uygulanmaz. Frontend/browser ve Windows işleri geçti. Yeni pushed-fix denemesi0; çalışan CI varken push yapılmaz.
+
+Önizleme için istenen kadirvurgun hesabı bu yeni disposable provider ortamında eksikti; gerçek provider hesabı ve ayrı ordinary actor/config ile oluşturuldu. Gerçek strict-TLS browser login, secure HttpOnly cookie, kendi tenant erişimi ve foreign tenant404 doğrulandı. Eski private inputlar, generation zinciri, üyelikler ve provider hesapları korunur; parola dosyaya yazılmaz. Human/expert yetkisi yaratılmaz. Kullanıcı önizlemesi açık bırakılır; tam signed gate öncesi özgün immutable config seçilerek owned restart gerekir.
+
+## Toplu ilk CI düzeltmesi
+
+6abbe829 entegre kaynak: aa21d122 gerçek receipt snapshot yarışları ve exact seed-ID assertionları9/9PG;494e04f fixture/immutable source/OpenAPI düzeltmeleri5/5PG. Generatedconsumer typecheck geçti. d0e269e Linux reservedSID/pidfd lifecycle: author31Linux/24Windows; bağımsız7Linux0skip ile QA-GATE-004 kapandı.2643trackedinput repo scan0bulgu. Bu sonuçlar yeni tam CI/signed kabulü değildir; tek toplu ilk fix push ardından iki CI koşusu beklenir.
+
+Yeni kullanıcı talimatı: greenrequiredgates+QA sonrası PR16 merge; ardından17dilli AI/JSON i18n önceliği. Yeni yerelleştirme ayrı dalda, testler yeni büyük paket kapısına DEFERRED; canonical kabul puanı eklenmez. Ayrıntıları project-status.json.localization_17_20261109 alanında.

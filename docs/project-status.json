@@ -3943,11 +3943,11 @@
   "active_source": "docs/sources/active.json",
   "current_package": {
     "task": "BUNDLE-PR-GATE-20261109",
-    "state": "REVIEWABLE_DRAFT_PR_PREPARATION_FULL_GATES_OPEN",
+    "state": "DRAFT_PR_OPEN_FIRST_COMBINED_CI_REPAIR_READY",
     "accepted": false,
     "accepted_story_points_added": 0,
     "defer_tests": false,
-    "observed_at_utc": "2026-11-09T08:42:00.271673+00:00",
+    "observed_at_utc": "2026-11-09T16:19:00.923593+00:00",
     "branch": "foundation/s6-certificate-foundation-20261105",
     "source_checkpoint": "1e40b39f3f44c469604876fe9a77599c1f296f9f",
     "source_tree": "70c15e7667bb4c6d2c38b12d3dc22f76eda1794a",
@@ -4149,6 +4149,15 @@
           "output_sha256": "bdb3ff8f531ed8b5cf6594e12b49fe860d22164f6e9d3eb7b816aa74572d43a9",
           "evidence": ".runtime/bundle-pr-gate-20261109/repository-scan-after-admission-cleanup.json",
           "prior_failure_retained": true
+        },
+        "combined_fix": {
+          "source": "6abbe829e085a5de17f0229f60ba55f2d496f0fc",
+          "state": "LOCAL_PASS_TRACKED_INPUTS_STATUS_METADATA_DIRTY",
+          "exit_code": 0,
+          "covered_files": 2643,
+          "findings": 0,
+          "seconds": 93.689,
+          "output_sha256": "b2a144ca9d0958121bf350d8c108bc498846d81a9dc39961e61f1c99065a4227"
         }
       },
       "api_gate_protocol": {
@@ -4176,7 +4185,15 @@
         "native_final_counts": null,
         "exact_owned_orphan_children_stopped": 4,
         "evidence": ".runtime/bundle-pr-gate-20261109/backend/parallel-84-interrupted-resource-and-cleanup.json",
-        "cause": "UNKNOWN_GENERIC_SETUP_OR_CLEANUP_FAILURE; separate host OOM observed, not causal proof"
+        "cause": "UNKNOWN_GENERIC_SETUP_OR_CLEANUP_FAILURE; separate host OOM observed, not causal proof",
+        "latest_ci": {
+          "state": "FAILED_REAL_FULL_822_SCOPE",
+          "passed": 816,
+          "failed": 6,
+          "skipped": 0,
+          "push_and_pr_failed_names_differ": true,
+          "original_local_interruptions_preserved": true
+        }
       },
       "signed_lab": {
         "state": "REAL_FIXTURE_PREPARATION_RETRY_IN_PROGRESS",
@@ -4209,14 +4226,196 @@
         "first_failure_retained": true
       },
       "ci": {
-        "state": "NOT_STARTED_FOR_NEW_BRANCH",
-        "pull_request_url": null
+        "state": "BOTH_COMPLETED_API_INTEGRATION_FAILED",
+        "pull_request_url": "https://github.com/kadirvurgun/Poseidon/pull/16",
+        "runs": {
+          "push": {
+            "run_id": 42588135002,
+            "state": "FAILED",
+            "target": "54489d6ea2ed54a093815ab455ad19d5079ded78",
+            "counts": {
+              "total": [
+                822
+              ],
+              "failed": [
+                6
+              ],
+              "succeeded": [
+                816
+              ],
+              "skipped": [
+                0
+              ]
+            },
+            "failed_tests": [
+              "Current_source_and_authority_are_reloaded_after_provider_await_and_no_private_candidate_or_token_escapes",
+              "Notification_context_identity_keeps_the_exact_selected_reading_and_marks_unknown_due_assessment_unavailable_without_overwriting_its_basis",
+              "OpenApi_matches_the_real_response_contract_in_development",
+              "Qualified_requirements_plan_uses_exact_rule_source_pins_then_withdraws_currentness_after_profile_change",
+              "Required_source_mechanism_blocks_only_its_type_and_noop_receipt_race_is_atomic",
+              "Truncated_requirement_links_do_not_advertise_endless_control_record_pages"
+            ],
+            "failure_source_locations": [
+              {
+                "file": "ComplianceWorkspaceTests.cs",
+                "line": 61
+              },
+              {
+                "file": "ComplianceWorkspaceTests.cs",
+                "line": 70
+              },
+              {
+                "file": "ComplianceWorkspaceTests.cs",
+                "line": 28
+              },
+              {
+                "file": "ComplianceWorkspaceTests.cs",
+                "line": 30
+              },
+              {
+                "file": "CertificateExtractionApiTests.cs",
+                "line": 118
+              },
+              {
+                "file": "CertificateExtractionApiTests.cs",
+                "line": 122
+              },
+              {
+                "file": "DiagnosticsTests.cs",
+                "line": 78
+              },
+              {
+                "file": "DiagnosticsTests.cs",
+                "line": 101
+              },
+              {
+                "file": "NotificationTests.cs",
+                "line": 245
+              },
+              {
+                "file": "NotificationTests.cs",
+                "line": 265
+              },
+              {
+                "file": "RegulatoryAdmissionCurrentTests.cs",
+                "line": 144
+              },
+              {
+                "file": "RegulatoryAdmissionCurrentTests.cs",
+                "line": 146
+              }
+            ],
+            "seconds": 789.366,
+            "evidence": "C:\\Users\\avurgun\\source\\repos\\Poseidon\\.runtime\\bundle-pr-gate-20261109\\ci\\push-42588135002\\integration.json",
+            "sha256": "9d4a6e0e944f1ec0cd947642ffa1d2a58653b7e36be9b3a1e062b60d11b75af3"
+          },
+          "pull_request": {
+            "run_id": 42588177260,
+            "state": "FAILED",
+            "target": "54489d6ea2ed54a093815ab455ad19d5079ded78",
+            "counts": {
+              "total": [
+                822
+              ],
+              "failed": [
+                6
+              ],
+              "succeeded": [
+                816
+              ],
+              "skipped": [
+                0
+              ]
+            },
+            "failed_tests": [
+              "Current_source_and_authority_are_reloaded_after_provider_await_and_no_private_candidate_or_token_escapes",
+              "Notification_context_identity_keeps_the_exact_selected_reading_and_marks_unknown_due_assessment_unavailable_without_overwriting_its_basis",
+              "OpenApi_matches_the_real_response_contract_in_development",
+              "Qualified_requirements_plan_uses_exact_rule_source_pins_then_withdraws_currentness_after_profile_change",
+              "Recording_race_rollback_revoked_history_and_stale_verification_replay_are_bound",
+              "Truncated_requirement_links_do_not_advertise_endless_control_record_pages"
+            ],
+            "failure_source_locations": [
+              {
+                "file": "ComplianceWorkspaceTests.cs",
+                "line": 61
+              },
+              {
+                "file": "ComplianceWorkspaceTests.cs",
+                "line": 70
+              },
+              {
+                "file": "HumanDecisionRecordingTests.cs",
+                "line": 200
+              },
+              {
+                "file": "HumanDecisionRecordingTests.cs",
+                "line": 214
+              },
+              {
+                "file": "ComplianceWorkspaceTests.cs",
+                "line": 28
+              },
+              {
+                "file": "ComplianceWorkspaceTests.cs",
+                "line": 30
+              },
+              {
+                "file": "CertificateExtractionApiTests.cs",
+                "line": 118
+              },
+              {
+                "file": "CertificateExtractionApiTests.cs",
+                "line": 122
+              },
+              {
+                "file": "DiagnosticsTests.cs",
+                "line": 78
+              },
+              {
+                "file": "DiagnosticsTests.cs",
+                "line": 101
+              },
+              {
+                "file": "NotificationTests.cs",
+                "line": 245
+              },
+              {
+                "file": "NotificationTests.cs",
+                "line": 265
+              }
+            ],
+            "seconds": 590.344,
+            "evidence": "C:\\Users\\avurgun\\source\\repos\\Poseidon\\.runtime\\bundle-pr-gate-20261109\\ci\\pr-42588177260\\integration.json",
+            "sha256": "e4eb01d87b48e47d4462f9493bb905845246212d5c1c340db2c2c46556acb68f"
+          }
+        },
+        "frontend_browser_and_windows_jobs": "SUCCESS_BOTH_RUNS",
+        "no_test_waivers": true,
+        "pushed_fix_attempts": 0,
+        "next_action": "One combined first fix push, then await both push and PR runs; no pushes while Application foundation active"
       },
       "independent_final_target_QA": {
-        "state": "NOT_ACCEPTED_PENDING_FULL_EVIDENCE",
-        "source_reviews_available": true
+        "state": "SOURCE_CORRECTIONS_REVIEWED_FULL_CI_SIGNED_ACCEPTANCE_PENDING",
+        "source_reviews_available": true,
+        "source": "6abbe829e085a5de17f0229f60ba55f2d496f0fc",
+        "source_blockers": 0,
+        "independent_linux_lifecycle_cases": 7
       },
-      "all_tests_passed": false
+      "all_tests_passed": false,
+      "preview_user": {
+        "state": "READY_REAL_BROWSER_LOGIN",
+        "username": "kadirvurgun",
+        "genuine_provider_login": true,
+        "strict_tls": true,
+        "original_private_inputs_preserved": true,
+        "existing_accounts_preserved": true,
+        "separate_preview_configuration": true,
+        "human_authority_created": false,
+        "password_persisted": false,
+        "evidence": ".runtime/preview-user/ready.json",
+        "signed_gate_config_restore_required": true
+      }
     },
     "retained_failures": [
       {
@@ -4295,6 +4494,24 @@
           "files": 2,
           "findings": 0
         }
+      },
+      {
+        "id": "CI16-RECEIPT-WINDOWS",
+        "commit": "aa21d12217801dde9dd83d013375933d0c0be3c8",
+        "state": "LOCAL_REAL_PG9_PASS_SOURCE_REVIEWED",
+        "behavior": "Actual two409 receipt races reproduced before correction; transaction snapshot replay precedes mutable version checks and retains live authority. Exact seed+created compliance ID sets.4new theory cases; complete integration discovery expected826."
+      },
+      {
+        "id": "CI16-FIXTURE-AND-OPENAPI",
+        "commit": "494e04fdcb3031146b4848e08a91cdb5780fc8fe",
+        "state": "LOCAL_REAL_PG5_PASS_GENERATED_CONSUMER_TYPECHECK_PASS",
+        "behavior": "Distinct actual observation source revisions; invalidate extraction by owning certificate replacement instead of illegal immutable-file rewrite; actual runtime OpenAPI228paths293schemas."
+      },
+      {
+        "id": "QA-GATE-004",
+        "commit": "d0e269e406fc4ec5aa881356efb68885b1db5a92",
+        "state": "CLOSED_SOURCE_AND_INDEPENDENT_ACTUAL_LINUX7_PASS",
+        "behavior": "Reserved unreaped SID, inherited native subgroups, exact pidfd session cleanup proof before provider removal; unproven stop retains provider. Author31Linux/24Windows0skip; independent7Linux0skip. Unsupported POSIX fails closed."
       }
     ],
     "warnings": [
@@ -4311,12 +4528,13 @@
       }
     ],
     "publication": {
-      "state": "PREPARING_REVIEWABLE_DRAFT_PR",
-      "url": null,
+      "state": "DRAFT_PR_OPEN",
+      "url": "https://github.com/kadirvurgun/Poseidon/pull/16",
       "ready_for_merge": false,
       "all_checks_passed": false,
       "no_external_signoffs": true,
-      "source_changes_since_scan": "Only S3 lifecycle scripts plus status metadata; two changed code files scanned0findings; final CI still required."
+      "source_changes_since_scan": "Only S3 lifecycle scripts plus status metadata; two changed code files scanned0findings; final CI still required.",
+      "published_source": "54489d6ea2ed54a093815ab455ad19d5079ded78"
     },
     "open_gates": [
       "Final changed-file/repository scan on publication target; actual229c integrated retry passed2640files0findings after exact owned cleanup; original exit2 retained",
@@ -4324,10 +4542,11 @@
       "Complete genuine two-lane signed journeys and actual fixture setup",
       "Final integrated source proof plus required push/PR CI",
       "Independent final-target implementation QA before ready/merge",
-      "All original canonical S6/S8 field/default/catalog/evidence/LoH/closure/authority/offline policies and external human approvals remain open"
+      "All original canonical S6/S8 field/default/catalog/evidence/LoH/closure/authority/offline policies and external human approvals remain open",
+      "Fix actual full-scope CI failures, batch one push then await Application foundation, independent exact-target QA remains required"
     ],
     "next": {
-      "action": "Open an honestly scoped reviewable draft PR, finish required gates and repairs, then resume dependency-ready product development. Do not declare S6 complete.",
+      "action": "Finish required CI and genuine signed scenarios, independent exact-target QA then merge PR16 as requested. Enterprise i18n begins on separate branch; PMS candidate deferred behind localization.",
       "candidate": "DEV-056 PMS Command Center",
       "trace_id": "T-S8-005",
       "source_locator": "18.01 sheet:Backlog/row:57",
@@ -11408,11 +11627,11 @@
   },
   "bundle_pr_gate_20261109": {
     "task": "BUNDLE-PR-GATE-20261109",
-    "state": "REVIEWABLE_DRAFT_PR_PREPARATION_FULL_GATES_OPEN",
+    "state": "DRAFT_PR_OPEN_FIRST_COMBINED_CI_REPAIR_READY",
     "accepted": false,
     "accepted_story_points_added": 0,
     "defer_tests": false,
-    "observed_at_utc": "2026-11-09T08:42:00.271673+00:00",
+    "observed_at_utc": "2026-11-09T16:19:00.923593+00:00",
     "branch": "foundation/s6-certificate-foundation-20261105",
     "source_checkpoint": "1e40b39f3f44c469604876fe9a77599c1f296f9f",
     "source_tree": "70c15e7667bb4c6d2c38b12d3dc22f76eda1794a",
@@ -11614,6 +11833,15 @@
           "output_sha256": "bdb3ff8f531ed8b5cf6594e12b49fe860d22164f6e9d3eb7b816aa74572d43a9",
           "evidence": ".runtime/bundle-pr-gate-20261109/repository-scan-after-admission-cleanup.json",
           "prior_failure_retained": true
+        },
+        "combined_fix": {
+          "source": "6abbe829e085a5de17f0229f60ba55f2d496f0fc",
+          "state": "LOCAL_PASS_TRACKED_INPUTS_STATUS_METADATA_DIRTY",
+          "exit_code": 0,
+          "covered_files": 2643,
+          "findings": 0,
+          "seconds": 93.689,
+          "output_sha256": "b2a144ca9d0958121bf350d8c108bc498846d81a9dc39961e61f1c99065a4227"
         }
       },
       "api_gate_protocol": {
@@ -11641,7 +11869,15 @@
         "native_final_counts": null,
         "exact_owned_orphan_children_stopped": 4,
         "evidence": ".runtime/bundle-pr-gate-20261109/backend/parallel-84-interrupted-resource-and-cleanup.json",
-        "cause": "UNKNOWN_GENERIC_SETUP_OR_CLEANUP_FAILURE; separate host OOM observed, not causal proof"
+        "cause": "UNKNOWN_GENERIC_SETUP_OR_CLEANUP_FAILURE; separate host OOM observed, not causal proof",
+        "latest_ci": {
+          "state": "FAILED_REAL_FULL_822_SCOPE",
+          "passed": 816,
+          "failed": 6,
+          "skipped": 0,
+          "push_and_pr_failed_names_differ": true,
+          "original_local_interruptions_preserved": true
+        }
       },
       "signed_lab": {
         "state": "REAL_FIXTURE_PREPARATION_RETRY_IN_PROGRESS",
@@ -11674,14 +11910,196 @@
         "first_failure_retained": true
       },
       "ci": {
-        "state": "NOT_STARTED_FOR_NEW_BRANCH",
-        "pull_request_url": null
+        "state": "BOTH_COMPLETED_API_INTEGRATION_FAILED",
+        "pull_request_url": "https://github.com/kadirvurgun/Poseidon/pull/16",
+        "runs": {
+          "push": {
+            "run_id": 42588135002,
+            "state": "FAILED",
+            "target": "54489d6ea2ed54a093815ab455ad19d5079ded78",
+            "counts": {
+              "total": [
+                822
+              ],
+              "failed": [
+                6
+              ],
+              "succeeded": [
+                816
+              ],
+              "skipped": [
+                0
+              ]
+            },
+            "failed_tests": [
+              "Current_source_and_authority_are_reloaded_after_provider_await_and_no_private_candidate_or_token_escapes",
+              "Notification_context_identity_keeps_the_exact_selected_reading_and_marks_unknown_due_assessment_unavailable_without_overwriting_its_basis",
+              "OpenApi_matches_the_real_response_contract_in_development",
+              "Qualified_requirements_plan_uses_exact_rule_source_pins_then_withdraws_currentness_after_profile_change",
+              "Required_source_mechanism_blocks_only_its_type_and_noop_receipt_race_is_atomic",
+              "Truncated_requirement_links_do_not_advertise_endless_control_record_pages"
+            ],
+            "failure_source_locations": [
+              {
+                "file": "ComplianceWorkspaceTests.cs",
+                "line": 61
+              },
+              {
+                "file": "ComplianceWorkspaceTests.cs",
+                "line": 70
+              },
+              {
+                "file": "ComplianceWorkspaceTests.cs",
+                "line": 28
+              },
+              {
+                "file": "ComplianceWorkspaceTests.cs",
+                "line": 30
+              },
+              {
+                "file": "CertificateExtractionApiTests.cs",
+                "line": 118
+              },
+              {
+                "file": "CertificateExtractionApiTests.cs",
+                "line": 122
+              },
+              {
+                "file": "DiagnosticsTests.cs",
+                "line": 78
+              },
+              {
+                "file": "DiagnosticsTests.cs",
+                "line": 101
+              },
+              {
+                "file": "NotificationTests.cs",
+                "line": 245
+              },
+              {
+                "file": "NotificationTests.cs",
+                "line": 265
+              },
+              {
+                "file": "RegulatoryAdmissionCurrentTests.cs",
+                "line": 144
+              },
+              {
+                "file": "RegulatoryAdmissionCurrentTests.cs",
+                "line": 146
+              }
+            ],
+            "seconds": 789.366,
+            "evidence": "C:\\Users\\avurgun\\source\\repos\\Poseidon\\.runtime\\bundle-pr-gate-20261109\\ci\\push-42588135002\\integration.json",
+            "sha256": "9d4a6e0e944f1ec0cd947642ffa1d2a58653b7e36be9b3a1e062b60d11b75af3"
+          },
+          "pull_request": {
+            "run_id": 42588177260,
+            "state": "FAILED",
+            "target": "54489d6ea2ed54a093815ab455ad19d5079ded78",
+            "counts": {
+              "total": [
+                822
+              ],
+              "failed": [
+                6
+              ],
+              "succeeded": [
+                816
+              ],
+              "skipped": [
+                0
+              ]
+            },
+            "failed_tests": [
+              "Current_source_and_authority_are_reloaded_after_provider_await_and_no_private_candidate_or_token_escapes",
+              "Notification_context_identity_keeps_the_exact_selected_reading_and_marks_unknown_due_assessment_unavailable_without_overwriting_its_basis",
+              "OpenApi_matches_the_real_response_contract_in_development",
+              "Qualified_requirements_plan_uses_exact_rule_source_pins_then_withdraws_currentness_after_profile_change",
+              "Recording_race_rollback_revoked_history_and_stale_verification_replay_are_bound",
+              "Truncated_requirement_links_do_not_advertise_endless_control_record_pages"
+            ],
+            "failure_source_locations": [
+              {
+                "file": "ComplianceWorkspaceTests.cs",
+                "line": 61
+              },
+              {
+                "file": "ComplianceWorkspaceTests.cs",
+                "line": 70
+              },
+              {
+                "file": "HumanDecisionRecordingTests.cs",
+                "line": 200
+              },
+              {
+                "file": "HumanDecisionRecordingTests.cs",
+                "line": 214
+              },
+              {
+                "file": "ComplianceWorkspaceTests.cs",
+                "line": 28
+              },
+              {
+                "file": "ComplianceWorkspaceTests.cs",
+                "line": 30
+              },
+              {
+                "file": "CertificateExtractionApiTests.cs",
+                "line": 118
+              },
+              {
+                "file": "CertificateExtractionApiTests.cs",
+                "line": 122
+              },
+              {
+                "file": "DiagnosticsTests.cs",
+                "line": 78
+              },
+              {
+                "file": "DiagnosticsTests.cs",
+                "line": 101
+              },
+              {
+                "file": "NotificationTests.cs",
+                "line": 245
+              },
+              {
+                "file": "NotificationTests.cs",
+                "line": 265
+              }
+            ],
+            "seconds": 590.344,
+            "evidence": "C:\\Users\\avurgun\\source\\repos\\Poseidon\\.runtime\\bundle-pr-gate-20261109\\ci\\pr-42588177260\\integration.json",
+            "sha256": "e4eb01d87b48e47d4462f9493bb905845246212d5c1c340db2c2c46556acb68f"
+          }
+        },
+        "frontend_browser_and_windows_jobs": "SUCCESS_BOTH_RUNS",
+        "no_test_waivers": true,
+        "pushed_fix_attempts": 0,
+        "next_action": "One combined first fix push, then await both push and PR runs; no pushes while Application foundation active"
       },
       "independent_final_target_QA": {
-        "state": "NOT_ACCEPTED_PENDING_FULL_EVIDENCE",
-        "source_reviews_available": true
+        "state": "SOURCE_CORRECTIONS_REVIEWED_FULL_CI_SIGNED_ACCEPTANCE_PENDING",
+        "source_reviews_available": true,
+        "source": "6abbe829e085a5de17f0229f60ba55f2d496f0fc",
+        "source_blockers": 0,
+        "independent_linux_lifecycle_cases": 7
       },
-      "all_tests_passed": false
+      "all_tests_passed": false,
+      "preview_user": {
+        "state": "READY_REAL_BROWSER_LOGIN",
+        "username": "kadirvurgun",
+        "genuine_provider_login": true,
+        "strict_tls": true,
+        "original_private_inputs_preserved": true,
+        "existing_accounts_preserved": true,
+        "separate_preview_configuration": true,
+        "human_authority_created": false,
+        "password_persisted": false,
+        "evidence": ".runtime/preview-user/ready.json",
+        "signed_gate_config_restore_required": true
+      }
     },
     "retained_failures": [
       {
@@ -11760,6 +12178,24 @@
           "files": 2,
           "findings": 0
         }
+      },
+      {
+        "id": "CI16-RECEIPT-WINDOWS",
+        "commit": "aa21d12217801dde9dd83d013375933d0c0be3c8",
+        "state": "LOCAL_REAL_PG9_PASS_SOURCE_REVIEWED",
+        "behavior": "Actual two409 receipt races reproduced before correction; transaction snapshot replay precedes mutable version checks and retains live authority. Exact seed+created compliance ID sets.4new theory cases; complete integration discovery expected826."
+      },
+      {
+        "id": "CI16-FIXTURE-AND-OPENAPI",
+        "commit": "494e04fdcb3031146b4848e08a91cdb5780fc8fe",
+        "state": "LOCAL_REAL_PG5_PASS_GENERATED_CONSUMER_TYPECHECK_PASS",
+        "behavior": "Distinct actual observation source revisions; invalidate extraction by owning certificate replacement instead of illegal immutable-file rewrite; actual runtime OpenAPI228paths293schemas."
+      },
+      {
+        "id": "QA-GATE-004",
+        "commit": "d0e269e406fc4ec5aa881356efb68885b1db5a92",
+        "state": "CLOSED_SOURCE_AND_INDEPENDENT_ACTUAL_LINUX7_PASS",
+        "behavior": "Reserved unreaped SID, inherited native subgroups, exact pidfd session cleanup proof before provider removal; unproven stop retains provider. Author31Linux/24Windows0skip; independent7Linux0skip. Unsupported POSIX fails closed."
       }
     ],
     "warnings": [
@@ -11776,12 +12212,13 @@
       }
     ],
     "publication": {
-      "state": "PREPARING_REVIEWABLE_DRAFT_PR",
-      "url": null,
+      "state": "DRAFT_PR_OPEN",
+      "url": "https://github.com/kadirvurgun/Poseidon/pull/16",
       "ready_for_merge": false,
       "all_checks_passed": false,
       "no_external_signoffs": true,
-      "source_changes_since_scan": "Only S3 lifecycle scripts plus status metadata; two changed code files scanned0findings; final CI still required."
+      "source_changes_since_scan": "Only S3 lifecycle scripts plus status metadata; two changed code files scanned0findings; final CI still required.",
+      "published_source": "54489d6ea2ed54a093815ab455ad19d5079ded78"
     },
     "open_gates": [
       "Final changed-file/repository scan on publication target; actual229c integrated retry passed2640files0findings after exact owned cleanup; original exit2 retained",
@@ -11789,10 +12226,11 @@
       "Complete genuine two-lane signed journeys and actual fixture setup",
       "Final integrated source proof plus required push/PR CI",
       "Independent final-target implementation QA before ready/merge",
-      "All original canonical S6/S8 field/default/catalog/evidence/LoH/closure/authority/offline policies and external human approvals remain open"
+      "All original canonical S6/S8 field/default/catalog/evidence/LoH/closure/authority/offline policies and external human approvals remain open",
+      "Fix actual full-scope CI failures, batch one push then await Application foundation, independent exact-target QA remains required"
     ],
     "next": {
-      "action": "Open an honestly scoped reviewable draft PR, finish required gates and repairs, then resume dependency-ready product development. Do not declare S6 complete.",
+      "action": "Finish required CI and genuine signed scenarios, independent exact-target QA then merge PR16 as requested. Enterprise i18n begins on separate branch; PMS candidate deferred behind localization.",
       "candidate": "DEV-056 PMS Command Center",
       "trace_id": "T-S8-005",
       "source_locator": "18.01 sheet:Backlog/row:57",
@@ -11816,5 +12254,26 @@
       "cause_not_established": "No model or native-process memory leak diagnosis; each native child reported approximately240MB private bytes by Root, not causal attribution.",
       "response": "Stopped only four exact worktree native children after their parent ended; no other process stopped. No new local wide native jobs; final complete scope remains open for CI."
     }
+  },
+  "localization_17_20261109": {
+    "state": "AUTHORED_UNVERIFIED_TRANSLATION_IN_PROGRESS",
+    "accepted": false,
+    "accepted_story_points_added": 0,
+    "branch": "foundation/enterprise-localization-20261109",
+    "user_source": "User supplied17-language selector screenshot and explicit JSON i18n AI translation instruction",
+    "canonical_source_constraint": "15.01 paragraph1626: localization does not change canonical enum/code values",
+    "core_commit": "5a87136",
+    "common_locales": 17,
+    "common_keys_per_locale": 38,
+    "product_catalog_frozen_sha256": "a555c082fcdbecb4836be6d3734eaf7587230ce0a463dd8274bffd59e6123203",
+    "product_string_leaves": 3169,
+    "product_distinct_strings": 2991,
+    "translation_locales_in_progress": [
+      "ar",
+      "de",
+      "fr"
+    ],
+    "test_execution": "DEFERRED_NEW_BUNDLE_GATE; tests authored, no PASS claimed",
+    "not_in_PR16": true
   }
 }
