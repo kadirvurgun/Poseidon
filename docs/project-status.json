@@ -1009,7 +1009,7 @@
       "accepted": false
     }
   },
-  "as_of": "2026-11-08T21:35:55.931862+00:00",
+  "as_of": "2026-11-09T08:21:38.199743+00:00",
   "audit_trace_01": {
     "status": "combined_gate_executed_not_accepted",
     "accepted": false,
@@ -1114,7 +1114,7 @@
     "verification_record_scope": "Authored/deferred and original20f1198 results are historical;current rejection-repair evidence in core_bundle_01.verification"
   },
   "baseline": "POSEIDON v46.3 updated 2026-10-30 / Library26 candidate",
-  "current_stage": "S6 DEV-102 operasyon kesintisi kaynak temeli: bu paket1iş/8SP; S6 kümülatif seçili9iş/87SP, canonical9iş/87SP kabul0. Tüm işlerin seçilmiş olması S6 tamamlandı anlamına gelmez; özgün kabul ölçütleri açık. S8 seçili2iş/26SP, canonical13iş/124SP kabul0; genel kabul103/970SP (%10,62),20/121iş değişmedi. Ürün kapıları DEFERRED.",
+  "current_stage": "Büyük ürün paketi draft PR hazırlığı: yerel kapsamlı test sonuçları korunuyor; tam API/provider koşusu sürüyor. Genuine login hazırlığı nedeni belirsiz başarısız, yeniden tanı host bellek baskısında engellendi; exact integrated repo scan UNPROVEN. Genel kabul103/970SP %10,62,20/121iş,0/196ekran değişmedi.",
   "method": "accepted story points / total baseline story points * 100",
   "scope": "complete v46.3 Backlog sheet; duplicates in other sheets excluded",
   "total_tasks": 121,
@@ -3942,190 +3942,380 @@
   ],
   "active_source": "docs/sources/active.json",
   "current_package": {
-    "task": "S6-DOWNTIME-CONTINUATION-20261109",
-    "state": "READY_FOR_ROOT_METADATA_APPLICATION_SOURCE_ONLY",
+    "task": "BUNDLE-PR-GATE-20261109",
+    "state": "REVIEWABLE_DRAFT_PR_PREPARATION_FULL_GATES_IN_PROGRESS",
     "accepted": false,
     "accepted_story_points_added": 0,
-    "observed_at_utc": "2026-11-08T21:35:55.931862+00:00",
+    "defer_tests": false,
+    "observed_at_utc": "2026-11-09T08:21:38.199743+00:00",
     "branch": "foundation/s6-certificate-foundation-20261105",
-    "source_checkpoint": "13b3d5313f182bbc73c9279527ec4fc14c470295",
-    "source_tree": "49bcd0891255a74cfceffd4cfbb87b9853490a1a",
-    "checkpoint_is_final": true,
-    "base_commit": "f747d9cf2ec5902216afb771bb2cc8f27878eb00",
+    "source_checkpoint": "1e40b39f3f44c469604876fe9a77599c1f296f9f",
+    "source_tree": "70c15e7667bb4c6d2c38b12d3dc22f76eda1794a",
+    "base_commit": "856f75e6a143fb81e4f41ddcb2a593185179618a",
     "source_baseline": "poseidon-v46.3-20261030",
-    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
-    "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
-    "tasks": [
-      {
-        "id": "DEV-102",
-        "title": "Operational Downtime / Loss of Hire record",
-        "sprint": "S6",
-        "story_points": 8,
-        "trace_id": "T-OPS2-006",
-        "source_status": "Not Started",
-        "source_locator": "sheet:Backlog/row:103",
-        "literal_acceptance_criteria": "Start/end/duration/cause; defect/WO/event links; operational impact; Loss of Hire candidate; claim evidence; verified closure.",
-        "dependencies": [
-          "DEV-055",
-          "DEV-099"
-        ],
-        "accepted": false,
-        "state": "SOURCE_FOUNDATION_WITH_OPEN_CRITERIA_NOT_ACCEPTED"
-      }
-    ],
-    "selected_scope": {
-      "tasks": 1,
-      "story_points": 8,
-      "ids": [
-        "DEV-102"
-      ],
-      "is_completion_or_acceptance": false
+    "final_target_acceptance": false,
+    "delivery": "Unmerged S2/S3/S4/S5/S6/S8 foundations: server-scoped enterprise context/navigation and shared controls, regulatory/catalog/authority source lineage, encrypted offline/retry/conflict drafts, compliance projections, certificate/calendar/extraction declarations and explicit human confirmation, Noon/Deck/Engine/Fuel/Port/Downtime owning drafts, Defect/WorkOrder lineage, audit/security/migrations and authored tests. Open source/closure/qualified decision criteria remain.",
+    "source_diff": {
+      "files": 494,
+      "insertions": 35335,
+      "deletions": 543,
+      "not_completion_or_coverage": true
     },
-    "cumulative_selected_S6_scope": {
-      "tasks": 9,
-      "story_points": 87,
-      "ids": [
-        "DEV-043",
-        "DEV-044",
-        "DEV-045",
-        "DEV-046",
-        "DEV-081",
-        "DEV-082",
-        "DEV-100",
-        "DEV-101",
-        "DEV-102"
-      ],
-      "is_completion_or_acceptance": false
-    },
-    "canonical_S6_scope": {
-      "tasks": 9,
-      "story_points": 87,
-      "accepted_story_points": 0
-    },
-    "S8_context": {
-      "canonical_tasks": 13,
-      "canonical_story_points": 124,
-      "accepted_story_points": 0,
-      "selected_tasks": 2,
-      "selected_story_points": 26
-    },
-    "dependency_readiness": "Existing owning DEV-055 Defect, DEV-099 Engine and additional DEV-054 WorkOrder declarations enable bounded engineering lineage authoring. Canonical dependency acceptance, verified closure, qualified decisions, adopted evidence and claim policy remain open.",
-    "supporting_dictionary": {
-      "path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
-      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
-      "locators": [
-        "Data Dictionary 2316 rows2226-2239"
-      ],
-      "source_fields": 14,
-      "mutable_facts": 11,
-      "readonly_fields": 3,
-      "opaque_reference_fields_known_unavailable": 5,
-      "full_screen_or_transitions_accepted": false
-    },
-    "source_behavior": [
-      "Owning Ship-only downtime API capabilities/list/detail/history/create/update; audited SERIALIZABLE EF head/revision/actor receipt storage, migration/snapshot and optional idempotent incomplete SyntheticUnverified fixture.",
-      "14 source fields/11 mutable facts preserve Known/Missing/Unknown. Trusted vessel scope is readonly. Loss of Hire and closure source facts are Unknown/null because AO NO_DEFAULT_DECLARED and approved policy cells are blank; top-level DRAFT/REVIEW_REQUIRED is separate.",
-      "Explicit-offset lexical start/end values retain source representation; typed UTC ordering and known reversed-range rejection. Declared duration is opaque lexical minutes. Separate exact 100ns tick string is unassessed, unavailable without known endpoints, never overwrites minutes or settles hire.",
-      "Optional engineering source pin Defect/WorkOrder/Engine is outside five unresolved DD references. New or changed pins require exact actual current source; established historical pins require current rights. No evidence/source summary auto-adoption.",
-      "Fresh one-statement returned/current-own-head/source-context fencing and synchronous live actor rights before/after audit protect actual reads, updates and immutable receipt replay. Current WorkOrder plan/asset contexts are composed; no unrelated defect permission borrowed.",
-      "Enterprise downtime center/detail/history/editor uses shared professional controls and action geometry. Page-only search, readonly source context, exact original-actor command recovery and canonical identity persistence precede optional readback.",
-      "Saved source launches use actual current target write capabilities, exact saved origin identifiers/revision and shared pending/identity guards; no private source facts copied into URLs or drafts.",
-      "Prior single-scroll sidebar and shared button/action patterns are preserved in source. Running preview was not rebuilt or activated; no rendered observation claimed."
-    ],
-    "current_security_inventory": {
-      "mutation_templates": 115,
-      "critical_templates": 107,
-      "concrete_critical_operations": 117,
-      "definition_only_not_coverage_or_PASS": true
-    },
-    "genuine_case_sources": {
-      "ids": [
-        "downtime-signed-loss-exact-draft-receipt",
-        "downtime-signed-source-pinned-declared-interval"
-      ],
-      "central_registration": "TWO_NEW_CASE_EXPORTS_ACTUALLY_REGISTERED_SOURCE_ONLY",
-      "private_fixture": "POSEIDON_BROWSER_DOWNTIME_FIXTURE under POSEIDON_LAB_PRIVATE; schema poseidon.downtime.signed-fixture.v1",
-      "private_fixture_provisioned": false,
-      "executed": false
+    "canonical_progress": {
+      "accepted_story_points": 103,
+      "total_story_points": 970,
+      "accepted_tasks": 20,
+      "total_tasks": 121,
+      "completion_percent": 10.62,
+      "accepted_screens": 0,
+      "total_screens": 196,
+      "S6_selected_tasks": 9,
+      "S6_selected_story_points": 87,
+      "S6_accepted_story_points": 0,
+      "S8_selected_tasks": 2,
+      "S8_selected_story_points": 26,
+      "S8_accepted_story_points": 0,
+      "selection_is_not_completion": true
     },
     "verification": {
-      "tests": "DEFERRED_NOT_RUN",
-      "build": "DEFERRED_NOT_RUN",
-      "typecheck": "DEFERRED_NOT_RUN",
-      "lint": "DEFERRED_NOT_RUN",
-      "contract_generation": "DEFERRED_NOT_RUN",
-      "migration_model_parity": "DEFERRED_NOT_RUN",
-      "browser": "DEFERRED_NOT_RUN",
-      "CI": "DEFERRED_NOT_RUN",
-      "independent_implementation_QA": "DEFERRED_NOT_RUN",
-      "state": "DEFERRED_UNTIL_ACTUAL_LARGER_PR_GATE",
-      "reporter_role": "INDEPENDENT_SOURCE_PROGRESS_AND_BOUNDED_MANUAL_REVIEW_NOT_IMPLEMENTATION_QA",
-      "new_native_totals_measured_coverage_or_accuracy": false,
-      "historical_evidence_retargeted": false,
-      "provider_private_runtime_preview_or_PR_activated": false
-    },
-    "open_criteria": [
-      "Canonical full DEV-102 start/end/duration/cause/linkage/impact/LoH/evidence/verified-closure acceptance, and all original criteria across selected S6 tasks",
-      "Source-qualified lookup/semantic mapping for voyage, defect, work order, event and claim evidence; engineering pin does not satisfy these DD fields",
-      "Approved conditional predicates, duration formula/ranges/units/precision, Loss of Hire claim policy and defaults/transitions/authority for source states",
-      "Qualified attributed human verification, adopted required evidence, actual defect/WO closure and safe return-to-service decisions",
-      "Dedicated privacy/classification/purpose/retention/key/offline capture/replay policy and actual execution",
-      "Actual integrated build/type/lint/test/model/migration/browser and independent exact-target QA at larger PR gate"
-    ],
-    "bounded_independent_source_review": {
-      "path": "C:\\Users\\avurgun\\source\\repos\\Poseidon\\.runtime\\s6-downtime-20261109\\status-drafts\\downtime-source-review.json",
-      "state": "SOURCE_CORRECTION_REVIEWED_ONLY_FROZEN_SOURCE",
-      "findings": [
-        {
-          "id": "DOWNTIME-SRC-001",
-          "severity": "P1",
-          "reported_by": "Root bounded source review",
-          "location": "backend/Poseidon.Api/DowntimeOriginReader.cs pre-correction121,135;frontend/src/product/downtime-api.ts:39;frontend/src/product/downtime-test-fixtures.ts",
-          "observed": "Origin context backend and frontend decoder used /app/defect-register and /app/engine-log aliases instead of actual App routes /app/defects and /app/engine-daily-log; frontend Defect test fixture repeated the obsolete alias.",
-          "expected": "Actual owning canonical Defect/Engine routes in backend, decoder, fixture and meaningful assertions.",
-          "state": "SOURCE_CORRECTION_REVIEWED_ONLY",
-          "correction_commit": "13b3d5313f182bbc73c9279527ec4fc14c470295",
-          "correction": "Independently read actual App routes and corrective backend/frontend/fixture diff. API three-kind theory asserts canonical href, frontend protocol rejects obsolete Defect alias. Meaningful source assertions only; no runtime execution."
+      "domain": {
+        "state": "LOCAL_PASS_SCOPED_INPUTS",
+        "passed": 756,
+        "failed": 0,
+        "skipped": 0,
+        "tested_source": "7810ede17e31d95d164ca0a4630a13b462daef97",
+        "evidence": ".runtime/bundle-pr-gate-20261109/backend/domain.json"
+      },
+      "persistence_unit": {
+        "state": "LOCAL_PASS_SCOPED_INPUTS",
+        "passed": 75,
+        "failed": 0,
+        "skipped": 0,
+        "tested_source": "7810ede17e31d95d164ca0a4630a13b462daef97"
+      },
+      "persistence_postgresql": {
+        "state": "LOCAL_PASS_REAL_POSTGRES_SCOPED_INPUTS",
+        "passed": 79,
+        "failed": 0,
+        "skipped": 0,
+        "seconds": 521.766,
+        "tested_source": "7810ede17e31d95d164ca0a4630a13b462daef97"
+      },
+      "initial_native_subtree_comparison": {
+        "backend/Poseidon.Domain": {
+          "tested_7810ede_tree": "3abfc79214cc8636c53b5ba1102113c3212df694",
+          "checkpoint_tree": "3abfc79214cc8636c53b5ba1102113c3212df694",
+          "identical": true
+        },
+        "backend/Poseidon.Persistence": {
+          "tested_7810ede_tree": "39ad0a4c0d90f7cba27bf4d3881d9d7ccfe0d949",
+          "checkpoint_tree": "39ad0a4c0d90f7cba27bf4d3881d9d7ccfe0d949",
+          "identical": true
+        },
+        "tests/Poseidon.Domain.Tests": {
+          "tested_7810ede_tree": "89a2cc988842bb90beafa4df8c39638d5090a4fd",
+          "checkpoint_tree": "89a2cc988842bb90beafa4df8c39638d5090a4fd",
+          "identical": true
+        },
+        "tests/Poseidon.Persistence.Tests": {
+          "tested_7810ede_tree": "cca31d0af100ac5f531fdfc464164bbe7f104647",
+          "checkpoint_tree": "cca31d0af100ac5f531fdfc464164bbe7f104647",
+          "identical": true
         }
-      ],
-      "full_backend_or_runtime_QA": false,
-      "sha256": "f0147519c1349f8dd4522c28d6cc64dd4dd1d9388ecec33c4e415b43ea7e1d80"
+      },
+      "api_unit": {
+        "state": "LOCAL_PASS_EXACT_BACKEND_AND_API_TEST_INPUTS_COMPILED_PROVENANCE",
+        "passed": 176,
+        "failed": 0,
+        "skipped": 0,
+        "seconds": 32.03,
+        "tested_source": null,
+        "evidence": ".runtime/bundle-pr-gate-20261109/backend/api-unit-integrated-176.json",
+        "not_final_integration_acceptance": true,
+        "harness_captured_commit": false,
+        "compiled_assembly_source_revision": "7b2abc5f9a9b33cd5242ac9b53e5ef657e5e0555",
+        "source_binding_note": "Original unit harness did not capture commit. Existing Release API/API-test generated AssemblyInfo both encode7b2abc5. Backend/APItest subtrees are equal7b2->1e40; this is scoped compiled-input provenance, not original whole-target commit capture.",
+        "input_comparison": {
+          "backend/Poseidon.Api": {
+            "compiled_source_tree": "f4c77e99f8f820d0c93a4ffcc8711b3f24a659dd",
+            "checkpoint_tree": "f4c77e99f8f820d0c93a4ffcc8711b3f24a659dd",
+            "identical": true
+          },
+          "tests/Poseidon.Api.Tests": {
+            "compiled_source_tree": "9ad03faef180c0542aa98054a30194595868838c",
+            "checkpoint_tree": "9ad03faef180c0542aa98054a30194595868838c",
+            "identical": true
+          }
+        },
+        "compiled_provenance_hashes": {
+          "backend/Poseidon.Api/obj/Release/net10.0/Poseidon.Api.AssemblyInfo.cs": "e1c9b97aa651837b13226c81553b3925d613d2317a47e383b31563b99f9ac913",
+          "tests/Poseidon.Api.Tests/obj/Release/net10.0/Poseidon.Api.Tests.AssemblyInfo.cs": "31a4ce638904a540573980c36ebdf15dc3a19a964203c14e668aeb1f172886f7",
+          "backend/Poseidon.Api/bin/Release/net10.0/Poseidon.Api.dll": "40666da2a2d0f66fcc9ff9ea98667f4017f8a8deae16ad68d3a8b9e83ea64d52",
+          "tests/Poseidon.Api.Tests/bin/Release/net10.0/Poseidon.Api.Tests.dll": "84b699fc5e4e491b1d5e74e667746186889b5e8275a81eddaa2bfab38c2cb1d1"
+        }
+      },
+      "build": {
+        "state": "LOCAL_RELEASE_BUILD_REPORTED_WITH_COMPILED_PROVENANCE",
+        "errors": 0,
+        "warnings": 0,
+        "exact_source_binding_pending": false,
+        "compiled_source_revision": "7b2abc5f9a9b33cd5242ac9b53e5ef657e5e0555",
+        "whole_target_commit_captured_by_original_harness": false
+      },
+      "frontend_component": {
+        "state": "LOCAL_PASS_EXACT_SUBTREE",
+        "passed": 1337,
+        "failed": 0,
+        "skipped": 0,
+        "tested_source": "823a14e629a1947f6354583bb9a0cf3755f3f172",
+        "frontend_tree": "4ee5933f61b18c073eda197706f088ce216df4d8",
+        "checkpoint_subtree_identical": true
+      },
+      "ordinary_browser": {
+        "state": "LOCAL_PASS_ORDINARY_REAL_API_DESKTOP_MOBILE",
+        "passed": 72,
+        "failed": 0,
+        "skipped": 0,
+        "tested_source": "a4f32afd9894cd83afcb959e4cd656953bc23835",
+        "ordinary_specs_tree": "702f00b25e8f8421344f36fd2740fab8986412f0",
+        "checkpoint_specs_identical": true,
+        "not_genuine_signed_acceptance": true
+      },
+      "frontend_lint_type_build_generated_scan": {
+        "state": "LOCAL_PASS_SCOPED_FRONTEND_MANIFEST",
+        "manifest_sha256": "cd582c8c26cacaf5b7e4544346f8a0be854fd5119dc57dbcbe3f7ca264154829",
+        "input_scope_not_whole_target": true,
+        "node_lane_tests": {
+          "passed": 18,
+          "failed": 0,
+          "skipped": 0,
+          "tested_source": "a0b6df09f8e572420048a122354350bc675770d0"
+        }
+      },
+      "python": {
+        "state": "LOCAL_PASS_AT_ORIGINAL_B536_INPUTS",
+        "passed": 440,
+        "failed": 0,
+        "skipped": 0,
+        "tested_source": "b536e8d2ab53927ca386fd163b632b57c36dca35",
+        "scope_note": "Later api gate protocol28 overlaps the full Python suite; totals are not added.",
+        "artifact": "C:\\Users\\avurgun\\source\\repos\\Poseidon\\.runtime\\bundle-pr-gate-20261109\\python\\fixture-runtime-fix\\aggregate.json",
+        "artifact_sha256": "7389ae2caedf785b53e17e72545a2185e580154ee83997d6f5fc9041d3d6d2ae",
+        "duration_seconds": 805.81,
+        "independently_read_artifact": true,
+        "final_changed_python_gate_scope_not_retargeted": true
+      },
+      "windows_preview": {
+        "state": "LOCAL_PASS_CONSTRUCTION_ONLY",
+        "tests": 10,
+        "scheduler_registration_or_activation": false,
+        "tested_source": "b536e8d2ab53927ca386fd163b632b57c36dca35",
+        "aggregate_sha256": "7389ae2caedf785b53e17e72545a2185e580154ee83997d6f5fc9041d3d6d2ae"
+      },
+      "controlled_sources": {
+        "state": "LOCAL_PASS_HASH_AND_LINEAGE",
+        "files": 269,
+        "chunks": 34958,
+        "mismatches": 0,
+        "tested_source": "b536e8d2ab53927ca386fd163b632b57c36dca35",
+        "aggregate_sha256": "7389ae2caedf785b53e17e72545a2185e580154ee83997d6f5fc9041d3d6d2ae"
+      },
+      "repository_scan": {
+        "state": "LOCAL_PASS_APPROVED_EXTERNAL_SOURCE_PIN_AT_B536",
+        "tested_source": "b536e8d2ab53927ca386fd163b632b57c36dca35",
+        "latest_artifact_pending": false,
+        "initial_trusted_pin_sha256": "ccdfc0247a11324ae58ec3f41a061bf86747da54a56c2852ddf5efc68846ef31",
+        "aggregate_sha256": "7389ae2caedf785b53e17e72545a2185e580154ee83997d6f5fc9041d3d6d2ae",
+        "whole_later_target_scan_not_retargeted": true,
+        "final_integrated_attempt": {
+          "state": "UNPROVEN_REQUIRED_INPUT_OR_COVERAGE_FAILURE",
+          "tested_source": "1e40b39f3f44c469604876fe9a77599c1f296f9f",
+          "exit_code": 2,
+          "seconds": 231.92,
+          "rule": "required-input-or-coverage-failure",
+          "output_sha256": "0703a31e52e2cc027691e95a7cd4fc5feb7c4179875520d07e58a43c182fb19c",
+          "evidence": "C:\\Users\\avurgun\\source\\repos\\Poseidon\\.runtime\\bundle-pr-gate-20261109\\integrated-repository-scan.json",
+          "evidence_sha256": "5b13ab96cb81aa0547bd96851f1493052c00d25e38a27207c62e699d41688eff",
+          "secret_finding_diagnosis": false,
+          "historical_b536_scan_pass_retained_not_retargeted": true
+        }
+      },
+      "api_gate_protocol": {
+        "state": "ROOT_REPORTED_28_PASS",
+        "tested_source": "1e40b39f3f44c469604876fe9a77599c1f296f9f",
+        "covers": "Exact disjoint full theory discovery, all strict shard counts, failures/skips/partial/deadline/PII, independent native_scope_complete and tampered exit/status negatives."
+      },
+      "full_api_postgresql_s3_clamav": {
+        "state": "RUNNING_NOT_ALL_PASS",
+        "frozen_source": "84ba7187a79b1ad88e1769fc04e36ec43b919bcb",
+        "discovered_cases": 822,
+        "methods": 536,
+        "shard_discovery_cases": [
+          206,
+          206,
+          205,
+          205
+        ],
+        "strict_partition": "EXACT_DISJOINT_COMPLETE_MULTISET",
+        "completed_bounded_smoke_cases": 3,
+        "coverage_definitions": 117,
+        "actual_critical_coverage_result": "PENDING",
+        "original_old_runner_evidence_not_repaired_or_retargeted": true,
+        "later_runner_fix": "QA-GATE-003 corrected in1e40b39; required final updated runner execution/CI remains"
+      },
+      "signed_lab": {
+        "state": "FAILED_PREPARATION_NOT_EXECUTED",
+        "completed_reported": [
+          "Fresh owned genesis init",
+          "Real ClamAV preparation",
+          "Local TLS peer/private CA/hostname checks",
+          "Provider and database start",
+          "Actual application start"
+        ],
+        "pending": [
+          "Diagnose genuine writer login failure without auth bypass or leaking secrets",
+          "Four genuine OIDC accounts",
+          "Seven API-backed private fixture families",
+          "Legacy scalar lane fixtures",
+          "Full registered desktop/narrow manifest"
+        ],
+        "genuine_manifest_pass": false,
+        "main_private_profile_untouched": true,
+        "no_acl_weakening": true,
+        "failed_owned_genesis_archived_files": 13,
+        "immutable_named_configuration_generations": "Windows os.replace access denied; new-name atomic publishing without replacement; no silent overwrite of operator config",
+        "first_failed_stage": "writer_login",
+        "safe_source_locator": "tests/Poseidon.Browser.Tests/lab/journeys.ts:39 (coordinator reported)",
+        "business_fixture_writes_before_failure": 0,
+        "full_genuine_manifest_executed": false,
+        "diagnosis_in_progress": true,
+        "first_failed_stage_cause": "UNKNOWN; not diagnosed as credential or UI failure",
+        "subsequent_reprobe": "BLOCKED_BEFORE_NODE_BY_POWERSHELL_SYSTEM_OUT_OF_MEMORY_EXCEPTION"
+      },
+      "ci": {
+        "state": "NOT_STARTED_FOR_NEW_BRANCH",
+        "pull_request_url": null
+      },
+      "independent_final_target_QA": {
+        "state": "NOT_ACCEPTED_PENDING_FULL_EVIDENCE",
+        "source_reviews_available": true
+      },
+      "all_tests_passed": false
     },
-    "derived_navigation_graph": {
-      "state": "AST_ONLY_COMPLETED_NAVIGATION_NOT_QA",
-      "source_head": "13b3d5313f182bbc73c9279527ec4fc14c470295",
-      "source_tree": "49bcd0891255a74cfceffd4cfbb87b9853490a1a",
-      "mode": "AST_ONLY_NO_LLM_NO_API_COST",
-      "exit_code_reported_by_root": 0,
-      "nodes": 18688,
-      "edges": 37525,
-      "communities": 1164,
-      "zero_node_config_noncode_warnings": 732,
-      "HTML": "SKIPPED_GT5000_THRESHOLD",
-      "is_validation_test_build_or_securityQA": false
-    },
-    "source_diff": {
-      "base": "f747d9cf2ec5902216afb771bb2cc8f27878eb00",
-      "files": 58,
-      "insertions": 2106,
-      "deletions": 19,
-      "is_completion_or_test_metric": false
-    },
-    "prior_work_order_shell_package_pointer": "historical_s8_work_order_shell_f747d9c_package",
-    "report": "docs/phases/S6-DOWNTIME-CONTINUATION-20261109.md",
-    "next": "Continue remaining source-qualified S6/S8 criteria and dependency-ready product work; execute deferred gates only at actual larger PR preparation, then independent exact-target QA and required CI before acceptance.",
-    "canonical_acceptance_changed": false,
-    "metadata_only_followup_paths": [
-      "docs/project-status.md",
-      "docs/project-status.json",
-      "docs/phases/S6-DOWNTIME-CONTINUATION-20261109.md"
+    "retained_failures": [
+      {
+        "scope": "Initial full serial API",
+        "state": "INTERRUPTED_DEADLINE",
+        "seconds": 1813,
+        "discovered_cases": 815,
+        "not_pass_or_skipped": true
+      },
+      {
+        "scope": "Worker pooled full API",
+        "state": "LOST_EXECUTION_NO_FINAL_EVIDENCE",
+        "capture_files": 148,
+        "capture_file_count_is_not_test_count": true
+      },
+      {
+        "scope": "API unit before logical deadline seam",
+        "state": "FAILED_173_OF174",
+        "location": "tests/Poseidon.Api.Tests/CertificateExtractionProviderTests.cs:51",
+        "narrow_unchanged_protocol_tests": "7/7 passed",
+        "original_cause": "UNCONFIRMED; retained as actual failure, not dismissed as flaky"
+      },
+      {
+        "scope": "Frontend strict before clipboard entry correction",
+        "state": "1335_OF1337_TWO_TIMEOUTS",
+        "later_full_pass": "1337/1337",
+        "thresholds_unchanged": true
+      },
+      {
+        "scope": "Exact integrated repository scan1e40b39",
+        "state": "UNPROVEN_REQUIRED_INPUT_OR_COVERAGE_FAILURE",
+        "exit_code": 2,
+        "seconds": 231.92,
+        "output_sha256": "0703a31e52e2cc027691e95a7cd4fc5feb7c4179875520d07e58a43c182fb19c",
+        "not_secret_finding_diagnosis": true
+      }
     ],
-    "root_notes": [
-      "Root frozen clean product and source diff58files+2106/-19 reported; source size not test result.",
-      "Independent bounded corrected delta reread; canonical href and Engine fresh current-head composition correction recorded; SOURCE_CORRECTION_REVIEWED_ONLY.",
-      "No product tests/build/type/lint/gen/model/browser/provider/runtime/CI/PR/preview activation; historical accepted evidence unchanged.",
-      "Root reports explicit graphify update . exit0 on frozen product:18688nodes37525edges1164communities732config/noncode warnings;HTMLskip>5000;derived navigation only, no product validation."
-    ]
+    "corrective_work": [
+      {
+        "id": "QA-SRC-002",
+        "state": "SOURCE_CORRECTION_REVIEWED_BOUNDED_API4_PASS_FINAL_GATE_PENDING",
+        "behavior": "Final single SQL observes owning current certificate/credential plus file/stage bindings; actual pre/post-provider Vessel/Crew races authored and executed."
+      },
+      {
+        "id": "QA-GATE-003",
+        "state": "SOURCE_CORRECTION_REVIEWED_PROTOCOL28_PASS_FINAL_RUN_PENDING",
+        "commit": "1e40b39f3f44c469604876fe9a77599c1f296f9f",
+        "behavior": "All strict native shards produce aggregate exit_code only when complete; existing independent validator positive and tampered negatives."
+      },
+      {
+        "id": "PROVIDER-DEADLINE",
+        "commit": "d153e8e19985fd5a90fb24e2dc2ded944eddcc83",
+        "state": "LOCAL_9_PROVIDER_TESTS_PASS_WITHIN176_SCOPE",
+        "behavior": "System TimeProvider production default; test logical one-second999/1000ms and caller cancellation assertions, no policy timeout increase."
+      },
+      {
+        "id": "OWNED-PG-POOL",
+        "commit": "6904393a8238c6ff960214baaa61a214fb3bc064",
+        "state": "SOURCE_REVIEWED_BOUNDED_REAL_ISOLATION6_AND_BEHAVIOR5_PASS",
+        "behavior": "Exact UUID lease pool16/session reset; clear template before clone and precise lease before drop. Same10reads30SQL observed30->1backends747->137ms single profile; no full-suite speedup claim."
+      }
+    ],
+    "warnings": [
+      {
+        "scope": "frontend npm ci developer dependencies",
+        "moderate_advisories": 10,
+        "high": 0,
+        "critical": 0,
+        "claim_scope": "Only supplied actual frontend manifest; not a general security certification"
+      },
+      {
+        "scope": "production frontend build",
+        "warning": "Existing chunks >500kB; large initial bundle remains optimization work."
+      }
+    ],
+    "publication": {
+      "state": "PREPARING_REVIEWABLE_DRAFT_PR",
+      "url": null,
+      "ready_for_merge": false,
+      "all_checks_passed": false,
+      "no_external_signoffs": true
+    },
+    "open_gates": [
+      "Resolve host resource pressure and rerun exact integrated repository scan; current exit2 required-input-or-coverage-failure is UNPROVEN, not secretfinding or PASS",
+      "Complete full native scope with real providers and117 actual critical operations",
+      "Complete genuine two-lane signed journeys and actual fixture setup",
+      "Final integrated source proof plus required push/PR CI",
+      "Independent final-target implementation QA before ready/merge",
+      "All original canonical S6/S8 field/default/catalog/evidence/LoH/closure/authority/offline policies and external human approvals remain open"
+    ],
+    "next": {
+      "action": "Open an honestly scoped reviewable draft PR, finish required gates and repairs, then resume dependency-ready product development. Do not declare S6 complete.",
+      "candidate": "DEV-056 PMS Command Center",
+      "trace_id": "T-S8-005",
+      "source_locator": "18.01 sheet:Backlog/row:57",
+      "story_points": 8,
+      "dependencies": [
+        "DEV-053",
+        "DEV-054",
+        "DEV-055"
+      ],
+      "state": "CANDIDATE_ONLY_NOT_STARTED_OR_ACCEPTED"
+    },
+    "historical_package_pointer": "historical_s6_downtime_8a98087_package",
+    "report": "docs/phases/BUNDLE-PR-GATE-20261109.md",
+    "canonical_acceptance_changed": false,
+    "host_resource_observation": {
+      "state": "CONFIRMED_HOST_RESOURCE_PRESSURE_BOUNDED_DIAGNOSTICS_BLOCKED",
+      "observed": [
+        "PowerShell Utility module System.OutOfMemoryException before Node reprobe",
+        "gh repository read could not initialize: Go fatal OOM heap arena"
+      ],
+      "cause_not_established": "No model or native-process memory leak diagnosis; each native child reported approximately240MB private bytes by Root, not causal attribution.",
+      "response": "No new wide jobs; retain running root-held native scope and its eventual actual evidence; diagnose resources without weakening gates."
+    }
   },
   "nav_workspace_01": {
     "status": "locally_validated_awaiting_independent_qa",
@@ -10994,5 +11184,567 @@
       "No product tests/build/type/lint/gen/model/browser/provider/runtime/CI/PR/preview activation; historical accepted evidence unchanged.",
       "Root reports explicit graphify update . exit0 on frozen product:18688nodes37525edges1164communities732config/noncode warnings;HTMLskip>5000;derived navigation only, no product validation."
     ]
+  },
+  "historical_s6_downtime_8a98087_package": {
+    "task": "S6-DOWNTIME-CONTINUATION-20261109",
+    "state": "READY_FOR_ROOT_METADATA_APPLICATION_SOURCE_ONLY",
+    "accepted": false,
+    "accepted_story_points_added": 0,
+    "observed_at_utc": "2026-11-08T21:35:55.931862+00:00",
+    "branch": "foundation/s6-certificate-foundation-20261105",
+    "source_checkpoint": "13b3d5313f182bbc73c9279527ec4fc14c470295",
+    "source_tree": "49bcd0891255a74cfceffd4cfbb87b9853490a1a",
+    "checkpoint_is_final": true,
+    "base_commit": "f747d9cf2ec5902216afb771bb2cc8f27878eb00",
+    "source_baseline": "poseidon-v46.3-20261030",
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+    "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+    "tasks": [
+      {
+        "id": "DEV-102",
+        "title": "Operational Downtime / Loss of Hire record",
+        "sprint": "S6",
+        "story_points": 8,
+        "trace_id": "T-OPS2-006",
+        "source_status": "Not Started",
+        "source_locator": "sheet:Backlog/row:103",
+        "literal_acceptance_criteria": "Start/end/duration/cause; defect/WO/event links; operational impact; Loss of Hire candidate; claim evidence; verified closure.",
+        "dependencies": [
+          "DEV-055",
+          "DEV-099"
+        ],
+        "accepted": false,
+        "state": "SOURCE_FOUNDATION_WITH_OPEN_CRITERIA_NOT_ACCEPTED"
+      }
+    ],
+    "selected_scope": {
+      "tasks": 1,
+      "story_points": 8,
+      "ids": [
+        "DEV-102"
+      ],
+      "is_completion_or_acceptance": false
+    },
+    "cumulative_selected_S6_scope": {
+      "tasks": 9,
+      "story_points": 87,
+      "ids": [
+        "DEV-043",
+        "DEV-044",
+        "DEV-045",
+        "DEV-046",
+        "DEV-081",
+        "DEV-082",
+        "DEV-100",
+        "DEV-101",
+        "DEV-102"
+      ],
+      "is_completion_or_acceptance": false
+    },
+    "canonical_S6_scope": {
+      "tasks": 9,
+      "story_points": 87,
+      "accepted_story_points": 0
+    },
+    "S8_context": {
+      "canonical_tasks": 13,
+      "canonical_story_points": 124,
+      "accepted_story_points": 0,
+      "selected_tasks": 2,
+      "selected_story_points": 26
+    },
+    "dependency_readiness": "Existing owning DEV-055 Defect, DEV-099 Engine and additional DEV-054 WorkOrder declarations enable bounded engineering lineage authoring. Canonical dependency acceptance, verified closure, qualified decisions, adopted evidence and claim policy remain open.",
+    "supporting_dictionary": {
+      "path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/14.02_POSEIDON_v46.3_Product_Wide_Data_Dictionary_TR.xlsx",
+      "sha256": "3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018",
+      "locators": [
+        "Data Dictionary 2316 rows2226-2239"
+      ],
+      "source_fields": 14,
+      "mutable_facts": 11,
+      "readonly_fields": 3,
+      "opaque_reference_fields_known_unavailable": 5,
+      "full_screen_or_transitions_accepted": false
+    },
+    "source_behavior": [
+      "Owning Ship-only downtime API capabilities/list/detail/history/create/update; audited SERIALIZABLE EF head/revision/actor receipt storage, migration/snapshot and optional idempotent incomplete SyntheticUnverified fixture.",
+      "14 source fields/11 mutable facts preserve Known/Missing/Unknown. Trusted vessel scope is readonly. Loss of Hire and closure source facts are Unknown/null because AO NO_DEFAULT_DECLARED and approved policy cells are blank; top-level DRAFT/REVIEW_REQUIRED is separate.",
+      "Explicit-offset lexical start/end values retain source representation; typed UTC ordering and known reversed-range rejection. Declared duration is opaque lexical minutes. Separate exact 100ns tick string is unassessed, unavailable without known endpoints, never overwrites minutes or settles hire.",
+      "Optional engineering source pin Defect/WorkOrder/Engine is outside five unresolved DD references. New or changed pins require exact actual current source; established historical pins require current rights. No evidence/source summary auto-adoption.",
+      "Fresh one-statement returned/current-own-head/source-context fencing and synchronous live actor rights before/after audit protect actual reads, updates and immutable receipt replay. Current WorkOrder plan/asset contexts are composed; no unrelated defect permission borrowed.",
+      "Enterprise downtime center/detail/history/editor uses shared professional controls and action geometry. Page-only search, readonly source context, exact original-actor command recovery and canonical identity persistence precede optional readback.",
+      "Saved source launches use actual current target write capabilities, exact saved origin identifiers/revision and shared pending/identity guards; no private source facts copied into URLs or drafts.",
+      "Prior single-scroll sidebar and shared button/action patterns are preserved in source. Running preview was not rebuilt or activated; no rendered observation claimed."
+    ],
+    "current_security_inventory": {
+      "mutation_templates": 115,
+      "critical_templates": 107,
+      "concrete_critical_operations": 117,
+      "definition_only_not_coverage_or_PASS": true
+    },
+    "genuine_case_sources": {
+      "ids": [
+        "downtime-signed-loss-exact-draft-receipt",
+        "downtime-signed-source-pinned-declared-interval"
+      ],
+      "central_registration": "TWO_NEW_CASE_EXPORTS_ACTUALLY_REGISTERED_SOURCE_ONLY",
+      "private_fixture": "POSEIDON_BROWSER_DOWNTIME_FIXTURE under POSEIDON_LAB_PRIVATE; schema poseidon.downtime.signed-fixture.v1",
+      "private_fixture_provisioned": false,
+      "executed": false
+    },
+    "verification": {
+      "tests": "DEFERRED_NOT_RUN",
+      "build": "DEFERRED_NOT_RUN",
+      "typecheck": "DEFERRED_NOT_RUN",
+      "lint": "DEFERRED_NOT_RUN",
+      "contract_generation": "DEFERRED_NOT_RUN",
+      "migration_model_parity": "DEFERRED_NOT_RUN",
+      "browser": "DEFERRED_NOT_RUN",
+      "CI": "DEFERRED_NOT_RUN",
+      "independent_implementation_QA": "DEFERRED_NOT_RUN",
+      "state": "DEFERRED_UNTIL_ACTUAL_LARGER_PR_GATE",
+      "reporter_role": "INDEPENDENT_SOURCE_PROGRESS_AND_BOUNDED_MANUAL_REVIEW_NOT_IMPLEMENTATION_QA",
+      "new_native_totals_measured_coverage_or_accuracy": false,
+      "historical_evidence_retargeted": false,
+      "provider_private_runtime_preview_or_PR_activated": false
+    },
+    "open_criteria": [
+      "Canonical full DEV-102 start/end/duration/cause/linkage/impact/LoH/evidence/verified-closure acceptance, and all original criteria across selected S6 tasks",
+      "Source-qualified lookup/semantic mapping for voyage, defect, work order, event and claim evidence; engineering pin does not satisfy these DD fields",
+      "Approved conditional predicates, duration formula/ranges/units/precision, Loss of Hire claim policy and defaults/transitions/authority for source states",
+      "Qualified attributed human verification, adopted required evidence, actual defect/WO closure and safe return-to-service decisions",
+      "Dedicated privacy/classification/purpose/retention/key/offline capture/replay policy and actual execution",
+      "Actual integrated build/type/lint/test/model/migration/browser and independent exact-target QA at larger PR gate"
+    ],
+    "bounded_independent_source_review": {
+      "path": "C:\\Users\\avurgun\\source\\repos\\Poseidon\\.runtime\\s6-downtime-20261109\\status-drafts\\downtime-source-review.json",
+      "state": "SOURCE_CORRECTION_REVIEWED_ONLY_FROZEN_SOURCE",
+      "findings": [
+        {
+          "id": "DOWNTIME-SRC-001",
+          "severity": "P1",
+          "reported_by": "Root bounded source review",
+          "location": "backend/Poseidon.Api/DowntimeOriginReader.cs pre-correction121,135;frontend/src/product/downtime-api.ts:39;frontend/src/product/downtime-test-fixtures.ts",
+          "observed": "Origin context backend and frontend decoder used /app/defect-register and /app/engine-log aliases instead of actual App routes /app/defects and /app/engine-daily-log; frontend Defect test fixture repeated the obsolete alias.",
+          "expected": "Actual owning canonical Defect/Engine routes in backend, decoder, fixture and meaningful assertions.",
+          "state": "SOURCE_CORRECTION_REVIEWED_ONLY",
+          "correction_commit": "13b3d5313f182bbc73c9279527ec4fc14c470295",
+          "correction": "Independently read actual App routes and corrective backend/frontend/fixture diff. API three-kind theory asserts canonical href, frontend protocol rejects obsolete Defect alias. Meaningful source assertions only; no runtime execution."
+        }
+      ],
+      "full_backend_or_runtime_QA": false,
+      "sha256": "f0147519c1349f8dd4522c28d6cc64dd4dd1d9388ecec33c4e415b43ea7e1d80"
+    },
+    "derived_navigation_graph": {
+      "state": "AST_ONLY_COMPLETED_NAVIGATION_NOT_QA",
+      "source_head": "13b3d5313f182bbc73c9279527ec4fc14c470295",
+      "source_tree": "49bcd0891255a74cfceffd4cfbb87b9853490a1a",
+      "mode": "AST_ONLY_NO_LLM_NO_API_COST",
+      "exit_code_reported_by_root": 0,
+      "nodes": 18688,
+      "edges": 37525,
+      "communities": 1164,
+      "zero_node_config_noncode_warnings": 732,
+      "HTML": "SKIPPED_GT5000_THRESHOLD",
+      "is_validation_test_build_or_securityQA": false
+    },
+    "source_diff": {
+      "base": "f747d9cf2ec5902216afb771bb2cc8f27878eb00",
+      "files": 58,
+      "insertions": 2106,
+      "deletions": 19,
+      "is_completion_or_test_metric": false
+    },
+    "prior_work_order_shell_package_pointer": "historical_s8_work_order_shell_f747d9c_package",
+    "report": "docs/phases/S6-DOWNTIME-CONTINUATION-20261109.md",
+    "next": "Continue remaining source-qualified S6/S8 criteria and dependency-ready product work; execute deferred gates only at actual larger PR preparation, then independent exact-target QA and required CI before acceptance.",
+    "canonical_acceptance_changed": false,
+    "metadata_only_followup_paths": [
+      "docs/project-status.md",
+      "docs/project-status.json",
+      "docs/phases/S6-DOWNTIME-CONTINUATION-20261109.md"
+    ],
+    "root_notes": [
+      "Root frozen clean product and source diff58files+2106/-19 reported; source size not test result.",
+      "Independent bounded corrected delta reread; canonical href and Engine fresh current-head composition correction recorded; SOURCE_CORRECTION_REVIEWED_ONLY.",
+      "No product tests/build/type/lint/gen/model/browser/provider/runtime/CI/PR/preview activation; historical accepted evidence unchanged.",
+      "Root reports explicit graphify update . exit0 on frozen product:18688nodes37525edges1164communities732config/noncode warnings;HTMLskip>5000;derived navigation only, no product validation."
+    ]
+  },
+  "bundle_pr_gate_20261109": {
+    "task": "BUNDLE-PR-GATE-20261109",
+    "state": "REVIEWABLE_DRAFT_PR_PREPARATION_FULL_GATES_IN_PROGRESS",
+    "accepted": false,
+    "accepted_story_points_added": 0,
+    "defer_tests": false,
+    "observed_at_utc": "2026-11-09T08:21:38.199743+00:00",
+    "branch": "foundation/s6-certificate-foundation-20261105",
+    "source_checkpoint": "1e40b39f3f44c469604876fe9a77599c1f296f9f",
+    "source_tree": "70c15e7667bb4c6d2c38b12d3dc22f76eda1794a",
+    "base_commit": "856f75e6a143fb81e4f41ddcb2a593185179618a",
+    "source_baseline": "poseidon-v46.3-20261030",
+    "final_target_acceptance": false,
+    "delivery": "Unmerged S2/S3/S4/S5/S6/S8 foundations: server-scoped enterprise context/navigation and shared controls, regulatory/catalog/authority source lineage, encrypted offline/retry/conflict drafts, compliance projections, certificate/calendar/extraction declarations and explicit human confirmation, Noon/Deck/Engine/Fuel/Port/Downtime owning drafts, Defect/WorkOrder lineage, audit/security/migrations and authored tests. Open source/closure/qualified decision criteria remain.",
+    "source_diff": {
+      "files": 494,
+      "insertions": 35335,
+      "deletions": 543,
+      "not_completion_or_coverage": true
+    },
+    "canonical_progress": {
+      "accepted_story_points": 103,
+      "total_story_points": 970,
+      "accepted_tasks": 20,
+      "total_tasks": 121,
+      "completion_percent": 10.62,
+      "accepted_screens": 0,
+      "total_screens": 196,
+      "S6_selected_tasks": 9,
+      "S6_selected_story_points": 87,
+      "S6_accepted_story_points": 0,
+      "S8_selected_tasks": 2,
+      "S8_selected_story_points": 26,
+      "S8_accepted_story_points": 0,
+      "selection_is_not_completion": true
+    },
+    "verification": {
+      "domain": {
+        "state": "LOCAL_PASS_SCOPED_INPUTS",
+        "passed": 756,
+        "failed": 0,
+        "skipped": 0,
+        "tested_source": "7810ede17e31d95d164ca0a4630a13b462daef97",
+        "evidence": ".runtime/bundle-pr-gate-20261109/backend/domain.json"
+      },
+      "persistence_unit": {
+        "state": "LOCAL_PASS_SCOPED_INPUTS",
+        "passed": 75,
+        "failed": 0,
+        "skipped": 0,
+        "tested_source": "7810ede17e31d95d164ca0a4630a13b462daef97"
+      },
+      "persistence_postgresql": {
+        "state": "LOCAL_PASS_REAL_POSTGRES_SCOPED_INPUTS",
+        "passed": 79,
+        "failed": 0,
+        "skipped": 0,
+        "seconds": 521.766,
+        "tested_source": "7810ede17e31d95d164ca0a4630a13b462daef97"
+      },
+      "initial_native_subtree_comparison": {
+        "backend/Poseidon.Domain": {
+          "tested_7810ede_tree": "3abfc79214cc8636c53b5ba1102113c3212df694",
+          "checkpoint_tree": "3abfc79214cc8636c53b5ba1102113c3212df694",
+          "identical": true
+        },
+        "backend/Poseidon.Persistence": {
+          "tested_7810ede_tree": "39ad0a4c0d90f7cba27bf4d3881d9d7ccfe0d949",
+          "checkpoint_tree": "39ad0a4c0d90f7cba27bf4d3881d9d7ccfe0d949",
+          "identical": true
+        },
+        "tests/Poseidon.Domain.Tests": {
+          "tested_7810ede_tree": "89a2cc988842bb90beafa4df8c39638d5090a4fd",
+          "checkpoint_tree": "89a2cc988842bb90beafa4df8c39638d5090a4fd",
+          "identical": true
+        },
+        "tests/Poseidon.Persistence.Tests": {
+          "tested_7810ede_tree": "cca31d0af100ac5f531fdfc464164bbe7f104647",
+          "checkpoint_tree": "cca31d0af100ac5f531fdfc464164bbe7f104647",
+          "identical": true
+        }
+      },
+      "api_unit": {
+        "state": "LOCAL_PASS_EXACT_BACKEND_AND_API_TEST_INPUTS_COMPILED_PROVENANCE",
+        "passed": 176,
+        "failed": 0,
+        "skipped": 0,
+        "seconds": 32.03,
+        "tested_source": null,
+        "evidence": ".runtime/bundle-pr-gate-20261109/backend/api-unit-integrated-176.json",
+        "not_final_integration_acceptance": true,
+        "harness_captured_commit": false,
+        "compiled_assembly_source_revision": "7b2abc5f9a9b33cd5242ac9b53e5ef657e5e0555",
+        "source_binding_note": "Original unit harness did not capture commit. Existing Release API/API-test generated AssemblyInfo both encode7b2abc5. Backend/APItest subtrees are equal7b2->1e40; this is scoped compiled-input provenance, not original whole-target commit capture.",
+        "input_comparison": {
+          "backend/Poseidon.Api": {
+            "compiled_source_tree": "f4c77e99f8f820d0c93a4ffcc8711b3f24a659dd",
+            "checkpoint_tree": "f4c77e99f8f820d0c93a4ffcc8711b3f24a659dd",
+            "identical": true
+          },
+          "tests/Poseidon.Api.Tests": {
+            "compiled_source_tree": "9ad03faef180c0542aa98054a30194595868838c",
+            "checkpoint_tree": "9ad03faef180c0542aa98054a30194595868838c",
+            "identical": true
+          }
+        },
+        "compiled_provenance_hashes": {
+          "backend/Poseidon.Api/obj/Release/net10.0/Poseidon.Api.AssemblyInfo.cs": "e1c9b97aa651837b13226c81553b3925d613d2317a47e383b31563b99f9ac913",
+          "tests/Poseidon.Api.Tests/obj/Release/net10.0/Poseidon.Api.Tests.AssemblyInfo.cs": "31a4ce638904a540573980c36ebdf15dc3a19a964203c14e668aeb1f172886f7",
+          "backend/Poseidon.Api/bin/Release/net10.0/Poseidon.Api.dll": "40666da2a2d0f66fcc9ff9ea98667f4017f8a8deae16ad68d3a8b9e83ea64d52",
+          "tests/Poseidon.Api.Tests/bin/Release/net10.0/Poseidon.Api.Tests.dll": "84b699fc5e4e491b1d5e74e667746186889b5e8275a81eddaa2bfab38c2cb1d1"
+        }
+      },
+      "build": {
+        "state": "LOCAL_RELEASE_BUILD_REPORTED_WITH_COMPILED_PROVENANCE",
+        "errors": 0,
+        "warnings": 0,
+        "exact_source_binding_pending": false,
+        "compiled_source_revision": "7b2abc5f9a9b33cd5242ac9b53e5ef657e5e0555",
+        "whole_target_commit_captured_by_original_harness": false
+      },
+      "frontend_component": {
+        "state": "LOCAL_PASS_EXACT_SUBTREE",
+        "passed": 1337,
+        "failed": 0,
+        "skipped": 0,
+        "tested_source": "823a14e629a1947f6354583bb9a0cf3755f3f172",
+        "frontend_tree": "4ee5933f61b18c073eda197706f088ce216df4d8",
+        "checkpoint_subtree_identical": true
+      },
+      "ordinary_browser": {
+        "state": "LOCAL_PASS_ORDINARY_REAL_API_DESKTOP_MOBILE",
+        "passed": 72,
+        "failed": 0,
+        "skipped": 0,
+        "tested_source": "a4f32afd9894cd83afcb959e4cd656953bc23835",
+        "ordinary_specs_tree": "702f00b25e8f8421344f36fd2740fab8986412f0",
+        "checkpoint_specs_identical": true,
+        "not_genuine_signed_acceptance": true
+      },
+      "frontend_lint_type_build_generated_scan": {
+        "state": "LOCAL_PASS_SCOPED_FRONTEND_MANIFEST",
+        "manifest_sha256": "cd582c8c26cacaf5b7e4544346f8a0be854fd5119dc57dbcbe3f7ca264154829",
+        "input_scope_not_whole_target": true,
+        "node_lane_tests": {
+          "passed": 18,
+          "failed": 0,
+          "skipped": 0,
+          "tested_source": "a0b6df09f8e572420048a122354350bc675770d0"
+        }
+      },
+      "python": {
+        "state": "LOCAL_PASS_AT_ORIGINAL_B536_INPUTS",
+        "passed": 440,
+        "failed": 0,
+        "skipped": 0,
+        "tested_source": "b536e8d2ab53927ca386fd163b632b57c36dca35",
+        "scope_note": "Later api gate protocol28 overlaps the full Python suite; totals are not added.",
+        "artifact": "C:\\Users\\avurgun\\source\\repos\\Poseidon\\.runtime\\bundle-pr-gate-20261109\\python\\fixture-runtime-fix\\aggregate.json",
+        "artifact_sha256": "7389ae2caedf785b53e17e72545a2185e580154ee83997d6f5fc9041d3d6d2ae",
+        "duration_seconds": 805.81,
+        "independently_read_artifact": true,
+        "final_changed_python_gate_scope_not_retargeted": true
+      },
+      "windows_preview": {
+        "state": "LOCAL_PASS_CONSTRUCTION_ONLY",
+        "tests": 10,
+        "scheduler_registration_or_activation": false,
+        "tested_source": "b536e8d2ab53927ca386fd163b632b57c36dca35",
+        "aggregate_sha256": "7389ae2caedf785b53e17e72545a2185e580154ee83997d6f5fc9041d3d6d2ae"
+      },
+      "controlled_sources": {
+        "state": "LOCAL_PASS_HASH_AND_LINEAGE",
+        "files": 269,
+        "chunks": 34958,
+        "mismatches": 0,
+        "tested_source": "b536e8d2ab53927ca386fd163b632b57c36dca35",
+        "aggregate_sha256": "7389ae2caedf785b53e17e72545a2185e580154ee83997d6f5fc9041d3d6d2ae"
+      },
+      "repository_scan": {
+        "state": "LOCAL_PASS_APPROVED_EXTERNAL_SOURCE_PIN_AT_B536",
+        "tested_source": "b536e8d2ab53927ca386fd163b632b57c36dca35",
+        "latest_artifact_pending": false,
+        "initial_trusted_pin_sha256": "ccdfc0247a11324ae58ec3f41a061bf86747da54a56c2852ddf5efc68846ef31",
+        "aggregate_sha256": "7389ae2caedf785b53e17e72545a2185e580154ee83997d6f5fc9041d3d6d2ae",
+        "whole_later_target_scan_not_retargeted": true,
+        "final_integrated_attempt": {
+          "state": "UNPROVEN_REQUIRED_INPUT_OR_COVERAGE_FAILURE",
+          "tested_source": "1e40b39f3f44c469604876fe9a77599c1f296f9f",
+          "exit_code": 2,
+          "seconds": 231.92,
+          "rule": "required-input-or-coverage-failure",
+          "output_sha256": "0703a31e52e2cc027691e95a7cd4fc5feb7c4179875520d07e58a43c182fb19c",
+          "evidence": "C:\\Users\\avurgun\\source\\repos\\Poseidon\\.runtime\\bundle-pr-gate-20261109\\integrated-repository-scan.json",
+          "evidence_sha256": "5b13ab96cb81aa0547bd96851f1493052c00d25e38a27207c62e699d41688eff",
+          "secret_finding_diagnosis": false,
+          "historical_b536_scan_pass_retained_not_retargeted": true
+        }
+      },
+      "api_gate_protocol": {
+        "state": "ROOT_REPORTED_28_PASS",
+        "tested_source": "1e40b39f3f44c469604876fe9a77599c1f296f9f",
+        "covers": "Exact disjoint full theory discovery, all strict shard counts, failures/skips/partial/deadline/PII, independent native_scope_complete and tampered exit/status negatives."
+      },
+      "full_api_postgresql_s3_clamav": {
+        "state": "RUNNING_NOT_ALL_PASS",
+        "frozen_source": "84ba7187a79b1ad88e1769fc04e36ec43b919bcb",
+        "discovered_cases": 822,
+        "methods": 536,
+        "shard_discovery_cases": [
+          206,
+          206,
+          205,
+          205
+        ],
+        "strict_partition": "EXACT_DISJOINT_COMPLETE_MULTISET",
+        "completed_bounded_smoke_cases": 3,
+        "coverage_definitions": 117,
+        "actual_critical_coverage_result": "PENDING",
+        "original_old_runner_evidence_not_repaired_or_retargeted": true,
+        "later_runner_fix": "QA-GATE-003 corrected in1e40b39; required final updated runner execution/CI remains"
+      },
+      "signed_lab": {
+        "state": "FAILED_PREPARATION_NOT_EXECUTED",
+        "completed_reported": [
+          "Fresh owned genesis init",
+          "Real ClamAV preparation",
+          "Local TLS peer/private CA/hostname checks",
+          "Provider and database start",
+          "Actual application start"
+        ],
+        "pending": [
+          "Diagnose genuine writer login failure without auth bypass or leaking secrets",
+          "Four genuine OIDC accounts",
+          "Seven API-backed private fixture families",
+          "Legacy scalar lane fixtures",
+          "Full registered desktop/narrow manifest"
+        ],
+        "genuine_manifest_pass": false,
+        "main_private_profile_untouched": true,
+        "no_acl_weakening": true,
+        "failed_owned_genesis_archived_files": 13,
+        "immutable_named_configuration_generations": "Windows os.replace access denied; new-name atomic publishing without replacement; no silent overwrite of operator config",
+        "first_failed_stage": "writer_login",
+        "safe_source_locator": "tests/Poseidon.Browser.Tests/lab/journeys.ts:39 (coordinator reported)",
+        "business_fixture_writes_before_failure": 0,
+        "full_genuine_manifest_executed": false,
+        "diagnosis_in_progress": true,
+        "first_failed_stage_cause": "UNKNOWN; not diagnosed as credential or UI failure",
+        "subsequent_reprobe": "BLOCKED_BEFORE_NODE_BY_POWERSHELL_SYSTEM_OUT_OF_MEMORY_EXCEPTION"
+      },
+      "ci": {
+        "state": "NOT_STARTED_FOR_NEW_BRANCH",
+        "pull_request_url": null
+      },
+      "independent_final_target_QA": {
+        "state": "NOT_ACCEPTED_PENDING_FULL_EVIDENCE",
+        "source_reviews_available": true
+      },
+      "all_tests_passed": false
+    },
+    "retained_failures": [
+      {
+        "scope": "Initial full serial API",
+        "state": "INTERRUPTED_DEADLINE",
+        "seconds": 1813,
+        "discovered_cases": 815,
+        "not_pass_or_skipped": true
+      },
+      {
+        "scope": "Worker pooled full API",
+        "state": "LOST_EXECUTION_NO_FINAL_EVIDENCE",
+        "capture_files": 148,
+        "capture_file_count_is_not_test_count": true
+      },
+      {
+        "scope": "API unit before logical deadline seam",
+        "state": "FAILED_173_OF174",
+        "location": "tests/Poseidon.Api.Tests/CertificateExtractionProviderTests.cs:51",
+        "narrow_unchanged_protocol_tests": "7/7 passed",
+        "original_cause": "UNCONFIRMED; retained as actual failure, not dismissed as flaky"
+      },
+      {
+        "scope": "Frontend strict before clipboard entry correction",
+        "state": "1335_OF1337_TWO_TIMEOUTS",
+        "later_full_pass": "1337/1337",
+        "thresholds_unchanged": true
+      },
+      {
+        "scope": "Exact integrated repository scan1e40b39",
+        "state": "UNPROVEN_REQUIRED_INPUT_OR_COVERAGE_FAILURE",
+        "exit_code": 2,
+        "seconds": 231.92,
+        "output_sha256": "0703a31e52e2cc027691e95a7cd4fc5feb7c4179875520d07e58a43c182fb19c",
+        "not_secret_finding_diagnosis": true
+      }
+    ],
+    "corrective_work": [
+      {
+        "id": "QA-SRC-002",
+        "state": "SOURCE_CORRECTION_REVIEWED_BOUNDED_API4_PASS_FINAL_GATE_PENDING",
+        "behavior": "Final single SQL observes owning current certificate/credential plus file/stage bindings; actual pre/post-provider Vessel/Crew races authored and executed."
+      },
+      {
+        "id": "QA-GATE-003",
+        "state": "SOURCE_CORRECTION_REVIEWED_PROTOCOL28_PASS_FINAL_RUN_PENDING",
+        "commit": "1e40b39f3f44c469604876fe9a77599c1f296f9f",
+        "behavior": "All strict native shards produce aggregate exit_code only when complete; existing independent validator positive and tampered negatives."
+      },
+      {
+        "id": "PROVIDER-DEADLINE",
+        "commit": "d153e8e19985fd5a90fb24e2dc2ded944eddcc83",
+        "state": "LOCAL_9_PROVIDER_TESTS_PASS_WITHIN176_SCOPE",
+        "behavior": "System TimeProvider production default; test logical one-second999/1000ms and caller cancellation assertions, no policy timeout increase."
+      },
+      {
+        "id": "OWNED-PG-POOL",
+        "commit": "6904393a8238c6ff960214baaa61a214fb3bc064",
+        "state": "SOURCE_REVIEWED_BOUNDED_REAL_ISOLATION6_AND_BEHAVIOR5_PASS",
+        "behavior": "Exact UUID lease pool16/session reset; clear template before clone and precise lease before drop. Same10reads30SQL observed30->1backends747->137ms single profile; no full-suite speedup claim."
+      }
+    ],
+    "warnings": [
+      {
+        "scope": "frontend npm ci developer dependencies",
+        "moderate_advisories": 10,
+        "high": 0,
+        "critical": 0,
+        "claim_scope": "Only supplied actual frontend manifest; not a general security certification"
+      },
+      {
+        "scope": "production frontend build",
+        "warning": "Existing chunks >500kB; large initial bundle remains optimization work."
+      }
+    ],
+    "publication": {
+      "state": "PREPARING_REVIEWABLE_DRAFT_PR",
+      "url": null,
+      "ready_for_merge": false,
+      "all_checks_passed": false,
+      "no_external_signoffs": true
+    },
+    "open_gates": [
+      "Resolve host resource pressure and rerun exact integrated repository scan; current exit2 required-input-or-coverage-failure is UNPROVEN, not secretfinding or PASS",
+      "Complete full native scope with real providers and117 actual critical operations",
+      "Complete genuine two-lane signed journeys and actual fixture setup",
+      "Final integrated source proof plus required push/PR CI",
+      "Independent final-target implementation QA before ready/merge",
+      "All original canonical S6/S8 field/default/catalog/evidence/LoH/closure/authority/offline policies and external human approvals remain open"
+    ],
+    "next": {
+      "action": "Open an honestly scoped reviewable draft PR, finish required gates and repairs, then resume dependency-ready product development. Do not declare S6 complete.",
+      "candidate": "DEV-056 PMS Command Center",
+      "trace_id": "T-S8-005",
+      "source_locator": "18.01 sheet:Backlog/row:57",
+      "story_points": 8,
+      "dependencies": [
+        "DEV-053",
+        "DEV-054",
+        "DEV-055"
+      ],
+      "state": "CANDIDATE_ONLY_NOT_STARTED_OR_ACCEPTED"
+    },
+    "historical_package_pointer": "historical_s6_downtime_8a98087_package",
+    "report": "docs/phases/BUNDLE-PR-GATE-20261109.md",
+    "canonical_acceptance_changed": false,
+    "host_resource_observation": {
+      "state": "CONFIRMED_HOST_RESOURCE_PRESSURE_BOUNDED_DIAGNOSTICS_BLOCKED",
+      "observed": [
+        "PowerShell Utility module System.OutOfMemoryException before Node reprobe",
+        "gh repository read could not initialize: Go fatal OOM heap arena"
+      ],
+      "cause_not_established": "No model or native-process memory leak diagnosis; each native child reported approximately240MB private bytes by Root, not causal attribution.",
+      "response": "No new wide jobs; retain running root-held native scope and its eventual actual evidence; diagnose resources without weakening gates."
+    }
   }
 }
