@@ -58,7 +58,7 @@ class ExtractionProtocolPeerTests(unittest.TestCase):
     def test_policy_only_binds_actual_planned_actor_ship_and_synthetic_loopback_endpoint(self):
         plan={'schemaVersion':'poseidon.bundle-fixture-plan.v1',**{key:str(uuid.uuid4()) for key in ('tenantId','writerActorId','vesselId')}}
         policy=peer.fixture_policy(plan,55123)
-        self.assertEqual('https://localhost:55123/extract',policy['Endpoint'])
+        self.assertEqual('https://localhost:55123/v1/extract',policy['Endpoint'])
         self.assertEqual('localhost',policy['AllowedHost'])
         self.assertEqual([{'TenantId':plan['tenantId'],'ActorId':plan['writerActorId'],'VesselId':plan['vesselId'],'Scope':'Vessel'}],policy['Scopes'])
         self.assertTrue(policy['ProcessingReference'].startswith('SYNTHETIC'))
@@ -71,7 +71,7 @@ class ExtractionProtocolPeerTests(unittest.TestCase):
         thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start()
         try:
             kind,body=multipart()
-            for path,auth,expected in [('/extract',None,403),('/other','Bearer '+secret,403),('/extract','Bearer wrong',403),('/extract','Bearer '+secret,200)]:
+            for path,auth,expected in [('/v1/extract',None,403),('/other','Bearer '+secret,403),('/v1/extract','Bearer wrong',403),('/v1/extract','Bearer '+secret,200)]:
                 client=http.client.HTTPConnection('127.0.0.1',server.server_port,timeout=5)
                 headers={'Content-Type':kind}
                 if auth:headers['Authorization']=auth

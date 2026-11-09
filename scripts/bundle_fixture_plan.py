@@ -17,7 +17,7 @@ DAILY_SOURCE = '14.02:3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f
 FAMILIES = {'Noon': ('Master', 'position_lat'), 'Deck': ('ChiefOfficer', 'handover_note'), 'Engine': ('ChiefEngineer', 'alarms')}
 WRITER_PERMISSIONS = ('equipment.read', 'equipment.write', 'equipment.history.read', 'maintenance.read',
     'maintenance.write', 'maintenance.history.read', 'maintenance.owner.eligible', 'certificate.read',
-    'certificate.write', 'certificate.extract', 'defect.read', 'defect.write', 'workorder.read',
+    'certificate.write', 'certificate.renewal.write', 'certificate.extract', 'defect.read', 'defect.write', 'workorder.read',
     'workorder.write', 'operations.fuel.read', 'operations.fuel.write', 'operations.port.read',
     'operations.port.write', 'operations.downtime.read', 'operations.downtime.write')
 

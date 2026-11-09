@@ -136,31 +136,15 @@ def make_configuration():
     return realm, credentials, database_password, config
 
 
-def init(source_bundle=False):
+def init():
     stage('private_configuration')
     if (PRIVATE / 'ready').exists():
-        if source_bundle:
-            raise RuntimeError('fresh_disposable_bundle_profile_required')
         return # Never rotate credentials or overwrite operator edits on restart.
     if PRIVATE.exists() and any(PRIVATE.iterdir()):
         raise RuntimeError('partial_configuration_preserved')
     private_directory(PRIVATE)
     (PRIVATE / 'realm').mkdir()
     realm, credentials, password, config = make_configuration()
-    if source_bundle:
-        from bundle_fixture_plan import configure, FOREIGN_TENANT, FOREIGN_SHIP
-        foreign_subject, foreign_actor = str(uuid.uuid4()), str(uuid.uuid4())
-        credentials['lab-foreign'] = {'username': 'lab-foreign', 'password': secrets.token_urlsafe(32)}
-        realm['users'].append({'id': foreign_subject, 'username': 'lab-foreign', 'enabled': True,
-            'firstName': 'Synthetic', 'lastName': 'Foreign', 'email': 'lab-foreign@example.invalid',
-            'emailVerified': False, 'credentials': [{'type': 'password', 'value': credentials['lab-foreign']['password'], 'temporary': False}]})
-        config['Authentication']['Oidc']['Memberships'].append({'Issuer': AUTHORITY, 'Subject': foreign_subject,
-            'ActorId': foreign_actor, 'TenantId': FOREIGN_TENANT, 'Permissions': ['directory.read', 'directory.write'],
-            'TenantWideRead': False, 'TenantWideManage': False, 'VesselGrants': [{'VesselId': FOREIGN_SHIP, 'CanEdit': True}]})
-        config = navigation_membership(config, realm, source_bundle=True)
-        config = catalog_membership(config, realm, AUTHORITY, PROJECT)
-        config, plan = configure(config, realm, AUTHORITY, PROJECT, str(uuid.uuid4()))
-        write(PRIVATE / 'source-bundle-plan.json', json.dumps(plan))
     write(PRIVATE / 'realm/poseidon-lab-realm.json', json.dumps(realm))
     write(PRIVATE / 'credentials.json', json.dumps(credentials))
     write(PRIVATE / 'database-password', password)
@@ -169,24 +153,6 @@ def init(source_bundle=False):
     stage('certificate_generation')
     run(['pwsh', '-NoProfile', '-File', str(ROOT / 'scripts/oidc-lab-certificates.ps1'), '-Directory', str(PRIVATE)])
     write(PRIVATE / 'ready', 'DEV-OIDC-LAB-01\n')
-
-
-def init_source_bundle():
-    """Explicit NEW disposable profile only; preserves every existing operator profile."""
-    init(source_bundle=True)
-
-
-def prepare_source_fixtures():
-    """Real signed login + audited HTTP fixture creation after isolated host startup."""
-    stage('real_signed_source_fixture_preparation')
-    if not (PRIVATE / 'source-bundle-plan.json').is_file():
-        raise RuntimeError('fresh_disposable_bundle_plan_required')
-    env = environment()
-    env['POSEIDON_LAB_PRIVATE'] = str(PRIVATE)
-    env['POSEIDON_LAB_PYTHON'] = sys.executable
-    env['NODE_EXTRA_CA_CERTS'] = str(PRIVATE / 'ca.pem')
-    env.pop('NODE_TLS_REJECT_UNAUTHORIZED', None)
-    run([root_tool('node'), str(ROOT / 'scripts/bundle_fixture_provision.ts')], env=env, timeout=600)
 
 
 def compose(*args):
@@ -214,7 +180,7 @@ def environment():
     # configuration into app configuration. Compare their effective keys too;
     # JSON overrides values, but cannot remove additional endpoint/array entries.
     blocked = ('authentication:oidc:', 'connectionstrings:', 'kestrel:', 'developmentlab:', 'securefiles:', 'secretreferences:',
-               'workspacecontext:', 'workspacenavigation:', 'dailyoffline:', 'certificateextraction:')
+               'workspacecontext:', 'workspacenavigation:')
     exact = {'poseidon_database', 'poseidon_lab_config', 'urls', 'http_ports', 'https_ports'}
 
     def isolated(key):
@@ -230,14 +196,6 @@ def environment():
     env.update({'ASPNETCORE_ENVIRONMENT': 'Development', 'DOTNET_ENVIRONMENT': 'Development',
                 'POSEIDON_LAB_CONFIG': str(PRIVATE / 'appsettings.json'),
                 'DOTNET_ROOT': str(Path(root_tool('dotnet')).parent)})
-    peer_secret = PRIVATE / 'extraction-peer-secret'
-    if (PRIVATE / 'source-bundle-plan.json').is_file() and peer_secret.exists():
-        if peer_secret.is_symlink() or peer_secret.stat().st_size > 256:
-            raise RuntimeError('synthetic_peer_secret_boundary')
-        value = peer_secret.read_text(encoding='utf-8')
-        if not value or len(value) > 256 or any(c not in 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_' for c in value):
-            raise RuntimeError('synthetic_peer_secret_invalid')
-        env['POSEIDON_BUNDLE_EXTRACTION_SECRET'] = value
     return env
 
 
@@ -332,30 +290,9 @@ def prepare_register():
     write(path, json.dumps(config))
 
 
-def source_fixture_environment():
-    path = PRIVATE / 'source-bundle-environment.json'
-    if not path.exists():
-        return {}
-    if path.is_symlink() or path.stat().st_size > 16384 or not path.resolve().is_relative_to(PRIVATE.resolve()):
-        raise RuntimeError('source_fixture_environment_boundary')
-    values = json.loads(path.read_text(encoding='utf-8'))
-    allowed = {'POSEIDON_BROWSER_' + name + '_FIXTURE' for name in (
-        'DAILY', 'CERTIFICATE', 'CERTIFICATE_EXTRACTION', 'SHIP_OPERATIONS', 'DEFECT', 'WORK_ORDER', 'DOWNTIME')}
-    if not isinstance(values, dict) or set(values) != allowed:
-        raise RuntimeError('source_fixture_environment_incomplete')
-    for value in values.values():
-        if not isinstance(value, str):
-            raise RuntimeError('source_fixture_environment_invalid')
-        file = Path(value)
-        if not file.is_absolute() or file.is_symlink() or not file.is_file() or not file.resolve().is_relative_to(PRIVATE.resolve()) or file.stat().st_size > 8192:
-            raise RuntimeError('source_fixture_environment_boundary')
-    return values
-
-
 def register_browser():
     stage('real_provider_register_browser')
     env = environment()
-    env.update(source_fixture_environment())
     env['POSEIDON_LAB_PRIVATE'] = str(PRIVATE)
     env['POSEIDON_LAB_PYTHON'] = sys.executable
     env['NODE_EXTRA_CA_CERTS'] = str(PRIVATE / 'ca.pem')
@@ -363,7 +300,7 @@ def register_browser():
     run([root_tool('node'), str(ROOT / 'tests/Poseidon.Browser.Tests/lab/register-run.ts')], env=env, timeout=600)
 
 
-def navigation_membership(config, realm, source_bundle=False):
+def navigation_membership(config, realm):
     """Explicit synthetic signed-host setup; labels/mappings never grant runtime authority.
 
     Work on a copy so a conflicting operator catalog cannot partially enroll roles.
@@ -412,10 +349,7 @@ def navigation_membership(config, realm, source_bundle=False):
             raise RuntimeError('lab_navigation_catalog_invalid')
     for ref, tr, en, keys in (
         (daily, 'KURGUSAL günlük iş rolü', 'FICTIONAL daily work role',
-         ['today', 'fleet', 'crew', 'equipment', 'maintenance', 'tug-command', 'tug-job-board'] + (
-             ['noon-report', 'deck-daily-log', 'engine-daily-log', 'fuel-bunker-log', 'port-activity-sof',
-              'operational-downtime', 'defects', 'work-order-center', 'certificate-command-center',
-              'renewal-workflow', 'audit', 'import', 'sources', 'requirements'] if source_bundle else [])),
+         ['today', 'fleet', 'crew', 'equipment', 'maintenance', 'tug-command', 'tug-job-board']),
         (review, 'KURGUSAL inceleme rolü', 'FICTIONAL review role',
          ['fleet', 'import', 'audit', 'sources', 'requirements']),
     ):
@@ -462,7 +396,7 @@ def prepare_bundle():
             member['Permissions'].append(permission)
     if not member.get('RoleReferences'):
         member['RoleReferences'] = [str(uuid.uuid5(uuid.NAMESPACE_URL, PROJECT + '/synthetic-writer-assignment'))]
-    config = navigation_membership(config, realm, source_bundle=(PRIVATE / 'source-bundle-plan.json').is_file())
+    config = navigation_membership(config, realm)
     config = catalog_membership(config, realm, AUTHORITY, PROJECT)
     objects = Path(tempfile.gettempdir()) / (PROJECT + '-audit-files-objects')
     private_directory(objects)
@@ -565,7 +499,7 @@ def prepare_humans():
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', choices=['init', 'init_source_bundle', 'prepare_source_fixtures', 'start', 'stop', 'browser', 'prepare_register', 'prepare_humans', 'prepare_bundle', 'register_browser'])
+    parser.add_argument('action', choices=['init', 'start', 'stop', 'browser', 'prepare_register', 'prepare_humans', 'prepare_bundle', 'register_browser'])
     action = parser.parse_args().action
     try:
         if sys.version_info[:3] != (3, 13, 13):

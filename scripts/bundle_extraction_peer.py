@@ -72,7 +72,7 @@ def fixture_policy(plan,port):
     if (plan.get('schemaVersion')!='poseidon.bundle-fixture-plan.v1' or not isinstance(port,int) or not 1<=port<=65535 or
             any(str(uuid.UUID(plan[key]))!=plan[key] or uuid.UUID(plan[key]).int==0 for key in ('tenantId','writerActorId','vesselId'))):
         raise ValueError('fixture_plan_invalid')
-    return {'Enabled':True,'Endpoint':f'https://localhost:{port}/extract','AllowedHost':'localhost',
+    return {'Enabled':True,'Endpoint':f'https://localhost:{port}/v1/extract','AllowedHost':'localhost',
         'SecretReference':SECRET_REFERENCE,'PolicyVersion':'SYNTHETIC-protocol-only-v1',
         'ProcessingReference':'SYNTHETIC local protocol test; no OCR or external processing',
         'StorageReference':'SYNTHETIC disposable transport only','Region':'SYNTHETIC loopback',
@@ -95,7 +95,7 @@ def handler(secret,vessel):
             self.send_response(status);self.send_header('Content-Type','application/json');self.send_header('Content-Length',str(len(payload)));self.send_header('Connection','close');self.end_headers();self.wfile.write(payload);self.close_connection=True
         def do_POST(self):
             try:
-                if self.path!='/extract' or self.headers.get('Transfer-Encoding') or len(self.headers.get_all('Authorization',[]))!=1 or not hmac.compare_digest(self.headers.get('Authorization',''),'Bearer '+secret):
+                if self.path!='/v1/extract' or self.headers.get('Transfer-Encoding') or len(self.headers.get_all('Authorization',[]))!=1 or not hmac.compare_digest(self.headers.get('Authorization',''),'Bearer '+secret):
                     return self.reply(403)
                 lengths=self.headers.get_all('Content-Length',[])
                 if len(lengths)!=1 or not lengths[0].isdigit() or not 1<=int(lengths[0])<=MAX_REQUEST_BYTES:

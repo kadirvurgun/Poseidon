@@ -11,6 +11,7 @@ import uuid
 
 import bundle_fixture_plan as plan
 import oidc_lab as lab
+import bundle_oidc_lab as bundle
 
 
 class BundleFixturePlanTests(unittest.TestCase):
@@ -99,12 +100,12 @@ class BundleFixturePlanTests(unittest.TestCase):
             (Path(directory)/'ready').write_text('operator-owned')
             (Path(directory)/'appsettings.json').write_text('preserve')
             with self.assertRaisesRegex(RuntimeError, 'fresh_disposable_bundle_profile_required'):
-                lab.init_source_bundle()
+                bundle.init_source_bundle()
             self.assertEqual('preserve', (Path(directory)/'appsettings.json').read_text())
 
     def test_fresh_source_profile_plan_has_matching_four_provider_subjects_without_provider_calls(self):
         with tempfile.TemporaryDirectory() as directory, patch.object(lab, 'PRIVATE', Path(directory)), patch.object(lab, 'private_directory'), patch.object(lab, 'run') as child:
-            lab.init_source_bundle()
+            bundle.init_source_bundle()
             root=Path(directory); metadata=json.loads((root/'source-bundle-plan.json').read_text())
             realm=json.loads((root/'realm/poseidon-lab-realm.json').read_text())
             config=json.loads((root/'appsettings.json').read_text())
@@ -117,20 +118,20 @@ class BundleFixturePlanTests(unittest.TestCase):
             self.assertNotIn('DailyReviewAuthorities',members[1])
             mappings=config['WorkspaceNavigation']['Mappings']
             self.assertTrue(any('operational-downtime' in row['Keys'] and len(row['Keys']) >=12 for row in mappings))
-            self.assertEqual(config,lab.navigation_membership(config,realm,source_bundle=True))
+            self.assertTrue(any('certificate-command-center' in row['Keys'] for row in config['WorkspaceNavigation']['Mappings']))
 
     def test_fixture_environment_requires_all_seven_private_bounded_files(self):
         with tempfile.TemporaryDirectory() as directory, patch.object(lab, 'PRIVATE', Path(directory)):
             root=Path(directory)
-            self.assertEqual({},lab.source_fixture_environment())
+            self.assertEqual({},bundle.source_fixture_environment())
             values={}
             for name in ('DAILY','CERTIFICATE','CERTIFICATE_EXTRACTION','SHIP_OPERATIONS','DEFECT','WORK_ORDER','DOWNTIME'):
                 file=root/(name.lower()+'.json');file.write_text('{}')
                 values['POSEIDON_BROWSER_'+name+'_FIXTURE']=str(file.resolve())
             env=root/'source-bundle-environment.json';env.write_text(json.dumps(values))
-            self.assertEqual(values,lab.source_fixture_environment())
+            self.assertEqual(values,bundle.source_fixture_environment())
             values.pop('POSEIDON_BROWSER_DOWNTIME_FIXTURE');env.write_text(json.dumps(values))
-            with self.assertRaisesRegex(RuntimeError,'incomplete'):lab.source_fixture_environment()
+            with self.assertRaisesRegex(RuntimeError,'incomplete'):bundle.source_fixture_environment()
 
     def test_fixture_environment_rejects_path_escape_extra_env_and_oversized_files(self):
         for change in ('escape','extra','oversize'):
@@ -141,7 +142,7 @@ class BundleFixturePlanTests(unittest.TestCase):
                 if change=='extra':values['NODE_TLS_REJECT_UNAUTHORIZED']='0'
                 if change=='oversize':file.write_text('a'*8193)
                 (root/'source-bundle-environment.json').write_text(json.dumps(values))
-                with self.assertRaises(RuntimeError):lab.source_fixture_environment()
+                with self.assertRaises(RuntimeError):bundle.source_fixture_environment()
 
     def test_source_policy_ambient_overrides_are_removed_and_owned_peer_secret_is_explicit(self):
         import os
@@ -149,14 +150,14 @@ class BundleFixturePlanTests(unittest.TestCase):
             root=Path(directory)
             ambient={'CertificateExtraction__Endpoint':'https://external.invalid','DOTNET_DailyOffline__Policies__0__Kind':'Engine'}
             with patch.dict(os.environ,ambient):
-                env=lab.environment()
+                env=bundle.environment()
             self.assertFalse(any(key in env for key in ambient))
             (root/'extraction-peer-secret').write_text('synthetic_fixture_secret')
-            self.assertNotIn('POSEIDON_BUNDLE_EXTRACTION_SECRET',lab.environment())
+            self.assertNotIn('POSEIDON_BUNDLE_EXTRACTION_SECRET',bundle.environment())
             (root/'source-bundle-plan.json').write_text('{}')
-            self.assertEqual('synthetic_fixture_secret',lab.environment()['POSEIDON_BUNDLE_EXTRACTION_SECRET'])
+            self.assertEqual('synthetic_fixture_secret',bundle.environment()['POSEIDON_BUNDLE_EXTRACTION_SECRET'])
             (root/'extraction-peer-secret').write_text('bad\nsecret')
-            with self.assertRaisesRegex(RuntimeError,'synthetic_peer_secret_invalid'):lab.environment()
+            with self.assertRaisesRegex(RuntimeError,'synthetic_peer_secret_invalid'):bundle.environment()
 
     def test_noncanonical_run_and_naive_clock_fail_before_any_result(self):
         realm, config = self.setup_fixture()
