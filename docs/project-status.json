@@ -3943,11 +3943,11 @@
   "active_source": "docs/sources/active.json",
   "current_package": {
     "task": "BUNDLE-PR-GATE-20261109",
-    "state": "DRAFT_PR_OPEN_FIRST_COMBINED_CI_REPAIR_READY",
+    "state": "CI317_GREEN_FULL_SIGNED_EXECUTION_IN_PROGRESS_NOT_ACCEPTED",
     "accepted": false,
     "accepted_story_points_added": 0,
     "defer_tests": false,
-    "observed_at_utc": "2026-11-09T16:19:00.923593+00:00",
+    "observed_at_utc": "2026-11-09T18:16:19.965255+00:00",
     "branch": "foundation/s6-certificate-foundation-20261105",
     "source_checkpoint": "1e40b39f3f44c469604876fe9a77599c1f296f9f",
     "source_tree": "70c15e7667bb4c6d2c38b12d3dc22f76eda1794a",
@@ -4158,6 +4158,13 @@
           "findings": 0,
           "seconds": 93.689,
           "output_sha256": "b2a144ca9d0958121bf350d8c108bc498846d81a9dc39961e61f1c99065a4227"
+        },
+        "fixture_resume": {
+          "source": "69bc92cffc12ee5c5f5821c494d255a22d821a31",
+          "state": "LOCAL_PASS",
+          "covered_files": 2650,
+          "findings": 0,
+          "seconds": 84.898
         }
       },
       "api_gate_protocol": {
@@ -4196,7 +4203,7 @@
         }
       },
       "signed_lab": {
-        "state": "REAL_FIXTURE_PREPARATION_RETRY_IN_PROGRESS",
+        "state": "FULL174_DESKTOP_NARROW_RUNNING_NOT_ALL_PASS",
         "completed_reported": [
           "Fresh owned genesis init",
           "Real ClamAV preparation",
@@ -4219,14 +4226,39 @@
         "first_failed_stage": "writer_login",
         "safe_source_locator": "scripts/bundle_fixture_provision.ts:39 (writer_login)",
         "business_fixture_writes_before_failure": 0,
-        "full_genuine_manifest_executed": false,
+        "full_genuine_manifest_executed": true,
         "diagnosis_in_progress": false,
         "first_failed_stage_cause": "UNKNOWN; not diagnosed as credential or UI failure",
         "subsequent_reprobe": "PASS_REAL_EXISTING_OIDC_LOGIN_AFTER_OWNED_NATIVE_CLEANUP",
-        "first_failure_retained": true
+        "first_failure_retained": true,
+        "source": "69bc92cffc12ee5c5f5821c494d255a22d821a31",
+        "fixture_families": 7,
+        "source_provision": "PRECONDITIONS_ONLY_REAL_API_WRITES_AND_READS_SUCCEEDED",
+        "legacy_preconditions": "PRECONDITIONS_ONLY_REAL_SIGNED_READS10_SUCCEEDED_NO_DECISIONS",
+        "external_objects_root": true,
+        "all_previous_failures_retained": true,
+        "fixture_corrections": {
+          "source": "69bc92cffc12ee5c5f5821c494d255a22d821a31",
+          "python_crew_fixture": {
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0
+          },
+          "python_plan": {
+            "passed": 18,
+            "failed": 0,
+            "skipped": 0
+          },
+          "node_journal_and_history": {
+            "passed": 13,
+            "failed": 0,
+            "skipped": 0
+          },
+          "independent_review": "8da127c earlierhelper independently reviewed; later69bc92c amendments pending final review"
+        }
       },
       "ci": {
-        "state": "BOTH_COMPLETED_API_INTEGRATION_FAILED",
+        "state": "317704F_GREEN_BOTH_EVENTS_LATER_FIXTURE_SOURCE_NOT_YET_PUSHED",
         "pull_request_url": "https://github.com/kadirvurgun/Poseidon/pull/16",
         "runs": {
           "push": {
@@ -4392,8 +4424,58 @@
         },
         "frontend_browser_and_windows_jobs": "SUCCESS_BOTH_RUNS",
         "no_test_waivers": true,
-        "pushed_fix_attempts": 0,
-        "next_action": "One combined first fix push, then await both push and PR runs; no pushes while Application foundation active"
+        "pushed_fix_attempts": 1,
+        "next_action": "One combined first fix push, then await both push and PR runs; no pushes while Application foundation active",
+        "green_checkpoint": {
+          "push": {
+            "run_id": 42653576164,
+            "state": "SUCCESS_ALL4JOBS",
+            "source": "317704f1e99e7a7a79189df65506a1e84d13b7ff",
+            "api_integration": {
+              "passed": 826,
+              "failed": 0,
+              "skipped": 0
+            },
+            "api_unit": {
+              "passed": 176,
+              "failed": 0,
+              "skipped": 0
+            },
+            "critical_write_coverage": {
+              "status": "PASS_ACTUAL_CURRENT_CRITICAL_SCOPE",
+              "required_operations": 117,
+              "observed_operations": 117,
+              "coverage_percent": 100,
+              "errors": [],
+              "violations": []
+            },
+            "duration_seconds": 532.154
+          },
+          "pull_request": {
+            "run_id": 42653615048,
+            "state": "SUCCESS_ALL4JOBS",
+            "source": "317704f1e99e7a7a79189df65506a1e84d13b7ff",
+            "api_integration": {
+              "passed": 826,
+              "failed": 0,
+              "skipped": 0
+            },
+            "api_unit": {
+              "passed": 176,
+              "failed": 0,
+              "skipped": 0
+            },
+            "critical_write_coverage": {
+              "status": "PASS_ACTUAL_CURRENT_CRITICAL_SCOPE",
+              "required_operations": 117,
+              "observed_operations": 117,
+              "coverage_percent": 100,
+              "errors": [],
+              "violations": []
+            },
+            "duration_seconds": 645.91
+          }
+        }
       },
       "independent_final_target_QA": {
         "state": "SOURCE_CORRECTIONS_REVIEWED_FULL_CI_SIGNED_ACCEPTANCE_PENDING",
@@ -4528,7 +4610,7 @@
       }
     ],
     "publication": {
-      "state": "DRAFT_PR_OPEN",
+      "state": "DRAFT_PR_OPEN_CI_GREEN_CHECKPOINT_FULL_SIGNED_PENDING",
       "url": "https://github.com/kadirvurgun/Poseidon/pull/16",
       "ready_for_merge": false,
       "all_checks_passed": false,
@@ -4546,7 +4628,7 @@
       "Fix actual full-scope CI failures, batch one push then await Application foundation, independent exact-target QA remains required"
     ],
     "next": {
-      "action": "Finish required CI and genuine signed scenarios, independent exact-target QA then merge PR16 as requested. Enterprise i18n begins on separate branch; PMS candidate deferred behind localization.",
+      "action": "Complete actual174 signed cases; diagnose failed cases without waivers; finalupdated source CI and independentQA before merge. Continue separate17-locale bundle.",
       "candidate": "DEV-056 PMS Command Center",
       "trace_id": "T-S8-005",
       "source_locator": "18.01 sheet:Backlog/row:57",
@@ -11627,11 +11709,11 @@
   },
   "bundle_pr_gate_20261109": {
     "task": "BUNDLE-PR-GATE-20261109",
-    "state": "DRAFT_PR_OPEN_FIRST_COMBINED_CI_REPAIR_READY",
+    "state": "CI317_GREEN_FULL_SIGNED_EXECUTION_IN_PROGRESS_NOT_ACCEPTED",
     "accepted": false,
     "accepted_story_points_added": 0,
     "defer_tests": false,
-    "observed_at_utc": "2026-11-09T16:19:00.923593+00:00",
+    "observed_at_utc": "2026-11-09T18:16:19.965255+00:00",
     "branch": "foundation/s6-certificate-foundation-20261105",
     "source_checkpoint": "1e40b39f3f44c469604876fe9a77599c1f296f9f",
     "source_tree": "70c15e7667bb4c6d2c38b12d3dc22f76eda1794a",
@@ -11842,6 +11924,13 @@
           "findings": 0,
           "seconds": 93.689,
           "output_sha256": "b2a144ca9d0958121bf350d8c108bc498846d81a9dc39961e61f1c99065a4227"
+        },
+        "fixture_resume": {
+          "source": "69bc92cffc12ee5c5f5821c494d255a22d821a31",
+          "state": "LOCAL_PASS",
+          "covered_files": 2650,
+          "findings": 0,
+          "seconds": 84.898
         }
       },
       "api_gate_protocol": {
@@ -11880,7 +11969,7 @@
         }
       },
       "signed_lab": {
-        "state": "REAL_FIXTURE_PREPARATION_RETRY_IN_PROGRESS",
+        "state": "FULL174_DESKTOP_NARROW_RUNNING_NOT_ALL_PASS",
         "completed_reported": [
           "Fresh owned genesis init",
           "Real ClamAV preparation",
@@ -11903,14 +11992,39 @@
         "first_failed_stage": "writer_login",
         "safe_source_locator": "scripts/bundle_fixture_provision.ts:39 (writer_login)",
         "business_fixture_writes_before_failure": 0,
-        "full_genuine_manifest_executed": false,
+        "full_genuine_manifest_executed": true,
         "diagnosis_in_progress": false,
         "first_failed_stage_cause": "UNKNOWN; not diagnosed as credential or UI failure",
         "subsequent_reprobe": "PASS_REAL_EXISTING_OIDC_LOGIN_AFTER_OWNED_NATIVE_CLEANUP",
-        "first_failure_retained": true
+        "first_failure_retained": true,
+        "source": "69bc92cffc12ee5c5f5821c494d255a22d821a31",
+        "fixture_families": 7,
+        "source_provision": "PRECONDITIONS_ONLY_REAL_API_WRITES_AND_READS_SUCCEEDED",
+        "legacy_preconditions": "PRECONDITIONS_ONLY_REAL_SIGNED_READS10_SUCCEEDED_NO_DECISIONS",
+        "external_objects_root": true,
+        "all_previous_failures_retained": true,
+        "fixture_corrections": {
+          "source": "69bc92cffc12ee5c5f5821c494d255a22d821a31",
+          "python_crew_fixture": {
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0
+          },
+          "python_plan": {
+            "passed": 18,
+            "failed": 0,
+            "skipped": 0
+          },
+          "node_journal_and_history": {
+            "passed": 13,
+            "failed": 0,
+            "skipped": 0
+          },
+          "independent_review": "8da127c earlierhelper independently reviewed; later69bc92c amendments pending final review"
+        }
       },
       "ci": {
-        "state": "BOTH_COMPLETED_API_INTEGRATION_FAILED",
+        "state": "317704F_GREEN_BOTH_EVENTS_LATER_FIXTURE_SOURCE_NOT_YET_PUSHED",
         "pull_request_url": "https://github.com/kadirvurgun/Poseidon/pull/16",
         "runs": {
           "push": {
@@ -12076,8 +12190,58 @@
         },
         "frontend_browser_and_windows_jobs": "SUCCESS_BOTH_RUNS",
         "no_test_waivers": true,
-        "pushed_fix_attempts": 0,
-        "next_action": "One combined first fix push, then await both push and PR runs; no pushes while Application foundation active"
+        "pushed_fix_attempts": 1,
+        "next_action": "One combined first fix push, then await both push and PR runs; no pushes while Application foundation active",
+        "green_checkpoint": {
+          "push": {
+            "run_id": 42653576164,
+            "state": "SUCCESS_ALL4JOBS",
+            "source": "317704f1e99e7a7a79189df65506a1e84d13b7ff",
+            "api_integration": {
+              "passed": 826,
+              "failed": 0,
+              "skipped": 0
+            },
+            "api_unit": {
+              "passed": 176,
+              "failed": 0,
+              "skipped": 0
+            },
+            "critical_write_coverage": {
+              "status": "PASS_ACTUAL_CURRENT_CRITICAL_SCOPE",
+              "required_operations": 117,
+              "observed_operations": 117,
+              "coverage_percent": 100,
+              "errors": [],
+              "violations": []
+            },
+            "duration_seconds": 532.154
+          },
+          "pull_request": {
+            "run_id": 42653615048,
+            "state": "SUCCESS_ALL4JOBS",
+            "source": "317704f1e99e7a7a79189df65506a1e84d13b7ff",
+            "api_integration": {
+              "passed": 826,
+              "failed": 0,
+              "skipped": 0
+            },
+            "api_unit": {
+              "passed": 176,
+              "failed": 0,
+              "skipped": 0
+            },
+            "critical_write_coverage": {
+              "status": "PASS_ACTUAL_CURRENT_CRITICAL_SCOPE",
+              "required_operations": 117,
+              "observed_operations": 117,
+              "coverage_percent": 100,
+              "errors": [],
+              "violations": []
+            },
+            "duration_seconds": 645.91
+          }
+        }
       },
       "independent_final_target_QA": {
         "state": "SOURCE_CORRECTIONS_REVIEWED_FULL_CI_SIGNED_ACCEPTANCE_PENDING",
@@ -12212,7 +12376,7 @@
       }
     ],
     "publication": {
-      "state": "DRAFT_PR_OPEN",
+      "state": "DRAFT_PR_OPEN_CI_GREEN_CHECKPOINT_FULL_SIGNED_PENDING",
       "url": "https://github.com/kadirvurgun/Poseidon/pull/16",
       "ready_for_merge": false,
       "all_checks_passed": false,
@@ -12230,7 +12394,7 @@
       "Fix actual full-scope CI failures, batch one push then await Application foundation, independent exact-target QA remains required"
     ],
     "next": {
-      "action": "Finish required CI and genuine signed scenarios, independent exact-target QA then merge PR16 as requested. Enterprise i18n begins on separate branch; PMS candidate deferred behind localization.",
+      "action": "Complete actual174 signed cases; diagnose failed cases without waivers; finalupdated source CI and independentQA before merge. Continue separate17-locale bundle.",
       "candidate": "DEV-056 PMS Command Center",
       "trace_id": "T-S8-005",
       "source_locator": "18.01 sheet:Backlog/row:57",

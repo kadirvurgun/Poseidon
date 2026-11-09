@@ -57,3 +57,9 @@ S3 test lifecycle düzeltmesi5b048db:20dar test/2gerçek Windows process-tree se
 6abbe829 entegre kaynak: aa21d122 gerçek receipt snapshot yarışları ve exact seed-ID assertionları9/9PG;494e04f fixture/immutable source/OpenAPI düzeltmeleri5/5PG. Generatedconsumer typecheck geçti. d0e269e Linux reservedSID/pidfd lifecycle: author31Linux/24Windows; bağımsız7Linux0skip ile QA-GATE-004 kapandı.2643trackedinput repo scan0bulgu. Bu sonuçlar yeni tam CI/signed kabulü değildir; tek toplu ilk fix push ardından iki CI koşusu beklenir.
 
 Yeni kullanıcı talimatı: greenrequiredgates+QA sonrası PR16 merge; ardından17dilli AI/JSON i18n önceliği. Yeni yerelleştirme ayrı dalda, testler yeni büyük paket kapısına DEFERRED; canonical kabul puanı eklenmez. Ayrıntıları project-status.json.localization_17_20261109 alanında.
+
+## 317704f yeşil CI ve 69bc92c gerçek signed kapısı
+
+Her ikiCIolayında API826/826integration+176/176unit,0skip;4/4işSUCCESS.69bc92c test yardımcıları eski salt-status hata kaydını korur, dış repo objectroot, immutable intent/receiptjournal, exact mevcutDRAFT/IN_REVIEW geçmiş kontrolü, kurgusalwriteriçin açık legacy privacy kapsamı ve yalnız aynı kurgusalrun’ın tarihlerini yenileyen pencere ekler.4Pythoncrew+18Pythonplan+13Nodejournal/historyPASS. Kaynak taraması2650dosya0bulgu.
+
+Gerçek signed source provision dört hesabı ve yedi gerçekAPIverigrubunu hazırladı; legacydevamı10gerçekyetkiliread ilePRECONDITIONS_ONLY tamamlandı,decisionsRecorded0,canonicalSourceApprovedfalse.174desktop/narrow manifesti şimdi çalışıyor; başarısız vakalar var ve genelPASS yok. Sonraki kaynak içinCI/bağımsızfinalQA ve tamamlanan gerçekmanifest kanıtı olmadanmerge yapılmaz.
