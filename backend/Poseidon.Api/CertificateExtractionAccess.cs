@@ -57,7 +57,29 @@ internal static class CertificateExtractionAccess
         bool found;
         if(sameCertificate) {
             var current=await Read(db,h,original.VesselId,original.CertificateId,original.AssignmentId,original.CertificateVersion,purpose,h.RequestAborted);
-            found=current?.Binding==original;
+            if(current?.Binding!=original)return false;
+            // Read captures owning content before asynchronous transport reads.
+            // Observe that same owning head and its exact transport together in
+            // one final statement; an intervening writer must invalidate it.
+            var policy=CrewFilePolicy.Current(h);
+            var vesselCertificates=CertificateReader.Visible(db,a,original.VesselId).Where(r=>
+                r.CertificateId==original.CertificateId && r.Revision==original.CertificateRevision && r.RecordVersion==original.CertificateVersion &&
+                r.Hash==original.CertificateHash && r.SourceVersion==VesselCertificatePolicy.SourceVersion && r.FileId==original.FileId &&
+                r.FileRevision==original.FileRevision && r.Checksum==original.Checksum &&
+                db.VesselCertificates.Any(head=>head.Id==r.CertificateId && head.VesselId==r.VesselId && head.Revision==r.Revision && head.Version==original.CertificateVersion));
+            var credentials=CertificateReader.CrewVisible(db,a,original.VesselId,policy,purpose).Where(r=>
+                r.Id==original.CertificateId && r.AssignmentId==original.AssignmentId && r.PersonId==original.PersonId &&
+                r.Revision==original.CertificateRevision && r.Version==original.CertificateVersion && r.DocumentReference==original.FileId);
+            var crew=original.Scope=="Crew" && original.AssignmentId!=null && original.PersonId!=null;
+            var vesselCertificate=original.Scope=="Vessel" && original.AssignmentId==null && original.PersonId==null;
+            found=await a.Scope(db.Vessels.AsNoTracking()).AnyAsync(v=>v.Id==original.VesselId &&
+                (vesselCertificate && vesselCertificates.Any() || crew && credentials.Any()) &&
+                db.StoredFiles.Any(f=>f.Id==original.FileId && f.VesselId==v.Id && f.Revision==original.FileRevision && f.Checksum==original.Checksum &&
+                    f.Version==original.StoredVersion && (f.Mime=="image/png" || f.Mime=="image/jpeg" || f.Mime=="application/pdf") &&
+                    db.FileStages.Any(s=>s.Id==f.Id && s.VesselId==v.Id && s.Version==original.StageVersion && s.State=="CleanTransport" &&
+                        (vesselCertificate && s.PersonId==null && s.DocumentId==null || crew && s.PersonId==original.PersonId &&
+                            s.PersonalKind=="CertificateDocument" && s.PersonalRevision>0 && s.PersonalPolicyVersion==policy.Version &&
+                            s.PersonalPurpose==purpose && s.PersonalSourceVersion==policy.SourceVersion))),h.RequestAborted);
         }else {
             // Receipt/just-applied response fence: the original current version
             // legitimately changed, but source transport and access must remain.
