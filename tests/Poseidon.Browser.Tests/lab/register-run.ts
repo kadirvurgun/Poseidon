@@ -4,6 +4,7 @@ import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { login } from './journeys.ts';
 import { registerCases } from '../register-specs/cases.ts';
+import { loadRegisterLaneFixture, registerLaneEnvironment } from './register-lane-fixture.ts';
 
 // Direct library execution of the SAME manifest used by drafts.spec.ts. Never
 // serialize exceptions, DOM, network data, tokens or storage into diagnostics.
@@ -23,6 +24,7 @@ const persist = () => writeFileSync(resolve(directory, 'register-counts.json'), 
 persist();
 const sessions = new Map<string, Awaited<ReturnType<import('@playwright/test').BrowserContext['storageState']>>>();
 try {
+  const laneFixture = loadRegisterLaneFixture(process.env);
   await tlsCases();
   if (!selectedCases.length || !selectedProjects.length) throw new Error('Unknown case or project selection');
   for (const [account, path] of [['lab-manager', writer], ['lab-restricted', restricted]]) {
@@ -35,6 +37,7 @@ try {
     } finally { await owned.close(); }
   }
   for (const project of selectedProjects) {
+    Object.assign(process.env, registerLaneEnvironment(laneFixture, project.use?.viewport?.width));
     for (const entry of selectedCases) {
       const owned = await strictContext({ ...project.use, baseURL: config.use!.baseURL });
       const { context } = owned;
