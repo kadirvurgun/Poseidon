@@ -7,9 +7,9 @@ yükleme başarısızlığında önceki dili koruyan akış yazıldı. Arapça R
 yerleşim ve ekipman ağacı klavye yönleri uyarlandı. Dil değişimi taslakları veya
 canonical API kodlarını değiştirmemeli.
 
-17 ortak katalog hazır.3169metin alanlı ürün kataloğunun9dili tamamen yazıldı:
-Türkçe,İngilizce,İngiliz İngilizcesi,Arapça,Almanca,Fransızca,Hintçe,Çekçe,Rusça.
-Macarca ve İtalyanca kısmi çalışmaları korunuyor; kalan diller tamamlanmadı.
+17 ortak katalog hazır.3169metin alanlı ürün kataloğunun10dili tamamen yazıldı:
+Türkçe,İngilizce,İngiliz İngilizcesi,Arapça,Almanca,Fransızca,Hintçe,Çekçe,Rusça,Macarca.
+İtalyanca kısmi çalışması korunuyor; kalan diller tamamlanmadı.
 Çeviri ajanları gerçek kullanım sınırı bildirdi; hesap/model rotasyonu yapılmadı.
 
 Kaynak AST ayrıştırması kod yazımını destekledi; full build/typecheck/test

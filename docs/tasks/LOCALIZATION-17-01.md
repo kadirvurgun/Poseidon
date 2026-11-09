@@ -37,8 +37,8 @@ Product source SHA256:
 There are3169string leaves/2991distinct values, including2794paired message keys
 and11nested dictionaries. These counts are catalog size, not acceptance coverage.
 
-Complete authored product JSONs at this checkpoint: TR,EN,EN-GB,AR,DE,FR,HI,CS,RU.
-HU/IT have preserved partial authoring; SK/FI/ES/PT-BR/ZH-HANS/ZH-HANT remain.
+Complete authored product JSONs at this checkpoint: TR,EN,EN-GB,AR,DE,FR,HI,CS,RU,HU.
+IT has preserved partial authoring; SK/FI/ES/PT-BR/ZH-HANS/ZH-HANT remain.
 The loader refuses unavailable catalogs; complete17-language product acceptance
 has not been claimed. AI translation workers reported a usage limit; partial
 authoring is preserved and no account/model rotation was attempted.

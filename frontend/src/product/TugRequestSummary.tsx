@@ -25,7 +25,7 @@ export function TugRequestSummary({ record, language, editing, onEdit }: {
     const unknown = localizedText(en, "pairs.m_a5a7675bd7000dbd");
     const value = (raw: string | number | null) => raw === null ? unknown : raw;
     const choice = (raw: string | null) => raw === null ? unknown : label(raw);
-    const date = (raw: string | null) => raw && Number.isFinite(Date.parse(raw)) ? <time dateTime={raw}>{new Intl.DateTimeFormat(en ? 'en-GB' : 'tr-TR', { timeZone: 'UTC', year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(raw))}</time> : unknown;
+    const date = (raw: string | null) => raw && Number.isFinite(Date.parse(raw)) ? <time dateTime={raw}>{new Intl.DateTimeFormat(language, { calendar: 'gregory', timeZone: 'UTC', year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(raw))}</time> : unknown;
     return <section className="tug-request-summary" aria-label={localizedText(en, "pairs.m_4edde3f86c681c86")}>
     <div className="tug-request-heading"><div><div><Badge>{localizedText(en, "pairs.m_6f7b0af9992cd6bf")} · r{record.revision}</Badge><Badge tone={['Critical', 'Emergency'].includes(i.priority ?? '') ? 'danger' : i.priority === 'High' ? 'warning' : 'neutral'}>{choice(i.priority)}</Badge></div><h2>{record.jobNumber}</h2><p>{choice(i.jobType)} · {label(record.provenance)}</p></div>
       {!editing && onEdit && <Button onClick={onEdit}><Pencil />{localizedText(en, "pairs.m_2a8233db25e97857")}</Button>}

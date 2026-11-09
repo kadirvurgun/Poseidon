@@ -106,7 +106,7 @@ function Results({ language, page, fieldLabels, busy, canDownloadRejectReport, o
     page: ImportValidationPage;
 }) {
     const prefix = useId(), en = language === 'en';
-    const format = (value: number) => value.toLocaleString(en ? 'en-GB' : 'tr-TR');
+    const format = (value: number) => value.toLocaleString(language);
     return <section className="import-results" aria-label={localizedText(en, "pairs.m_ff295213612daaca")} aria-busy={busy || undefined}>
     <h3>{localizedText(en, "pairs.m_cfa1aa6d2a83459f")}</h3>
     <p id={`${prefix}-notice`}>{localizedText(en, "pairs.m_9a8d49b29d4cc3b4")}</p>

@@ -38,7 +38,7 @@ export function TugBoardView({ board, priorities, filter, language, offline, onF
     const en = language === 'en', label = (code: string) => tugLabel(code, language);
     const [query, setQuery] = useState(filter.q);
     const unknown = localizedText(en, "pairs.m_a5a7675bd7000dbd");
-    const format = new Intl.DateTimeFormat(en ? 'en-GB' : 'tr-TR', { timeZone: 'UTC', day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', year: 'numeric', hourCycle: 'h23' });
+    const format = new Intl.DateTimeFormat(language, { calendar: 'gregory', timeZone: 'UTC', day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', year: 'numeric', hourCycle: 'h23' });
     const time = (value: string | null) => value && Number.isFinite(Date.parse(value)) ? <time dateTime={value}>{format.format(new Date(value))}</time> : unknown;
     const apply = (patch: Partial<TugBoardFilter>) => onFilter({ ...filter, q: query, offset: 0, ...patch });
     return <section className="tug-board-view" aria-label={localizedText(en, "pairs.m_882498b813c3ee10")}>

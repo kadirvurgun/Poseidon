@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { EquipmentHierarchyTree } from './EquipmentHierarchyTree'
 import type { EquipmentHierarchyItem } from './EquipmentHierarchyTree'
+import { changeAppLanguage } from '../i18n'
 
 const forest: EquipmentHierarchyItem[] = [
   { id: 'system', parentId: null, label: 'Ana makine' },
@@ -13,6 +14,26 @@ const forest: EquipmentHierarchyItem[] = [
 const base = { scopeKey: 'synthetic-actor/vessel-A', language: 'tr' as const, nodes: forest, selectedId: null, onSelect: vi.fn() }
 
 describe('T-S8-001 hierarchy presentation (authored; real API/browser coverage remains separate)', () => {
+  it('mirrors branch keys in Arabic without translating or changing the selected equipment identity', async () => {
+    await changeAppLanguage('ar', false)
+    const user = userEvent.setup(), select = vi.fn()
+    render(<EquipmentHierarchyTree {...base} language="ar" onSelect={select} />)
+    const root = screen.getByRole('treeitem', { name: 'Ana makine' })
+    await user.tab()
+    expect(root).toHaveFocus()
+    await user.keyboard('{ArrowLeft}')
+    expect(root).toHaveAttribute('aria-expanded', 'true')
+    await user.keyboard('{ArrowLeft}')
+    const pump = screen.getByRole('treeitem', { name: 'Pompa' })
+    expect(pump).toHaveFocus()
+    expect(select).not.toHaveBeenCalled()
+    await user.keyboard('{Enter}')
+    expect(select).toHaveBeenCalledExactlyOnceWith('pump')
+    await user.keyboard('{ArrowRight}')
+    expect(root).toHaveFocus()
+    expect(document.documentElement.dir).toBe('rtl')
+  })
+
   it('reveals the initial selected ancestry and declares explicit tree/group ownership', () => {
     render(<EquipmentHierarchyTree {...base} selectedId="valve" />)
     const root = screen.getByRole('treeitem', { name: 'Ana makine' })
