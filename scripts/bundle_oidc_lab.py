@@ -129,6 +129,32 @@ def prepare_source_fixtures():
     if not (lab.PRIVATE/'source-bundle-plan.json').is_file():
         raise RuntimeError('fresh_disposable_bundle_plan_required')
     lab.run([lab.root_tool('node'),str(lab.ROOT/'scripts/bundle_fixture_provision.ts')],env=environment(),timeout=600)
+    lab.stage('exact_observed_source_appointments')
+    observed_path=lab.PRIVATE/'source-bundle-observed.json'
+    if observed_path.is_symlink() or observed_path.stat().st_size>32768:
+        raise RuntimeError('observed_source_boundary')
+    metadata=json.loads((lab.PRIVATE/'source-bundle-plan.json').read_text())
+    observed=json.loads(observed_path.read_text())
+    config=json.loads((lab.PRIVATE/'appsettings.json').read_text())
+    configured=plan.configure_observed(config,metadata,observed)
+    # The established explicit helper is Test-only and attributed EF; no request
+    # selects tenant/actor/content and no normal seed invents historical authority.
+    for lane in ('desktop','narrow'):
+        batch=metadata['legacyBatches'][lane]
+        if str(uuid.UUID(batch))!=batch or uuid.UUID(batch).int==0:
+            raise RuntimeError('legacy_batch_uuid_invalid')
+        env=environment();env['DOTNET_ENVIRONMENT']='Test';env['ASPNETCORE_ENVIRONMENT']='Test'
+        env['POSEIDON_DATABASE']=config['ConnectionStrings']['Poseidon']
+        lab.stage('explicit_'+lane+'_legacy_storage_fixture')
+        lab.run([lab.root_tool('dotnet'),'run','--project','backend/Poseidon.DbMigrator','-c','Release','--no-build',
+                 '--','--legacy-crew-browser-fixture',batch],env=env,timeout=120)
+    lab.atomic_private_json(lab.PRIVATE/'appsettings.json',configured)
+    lab.stage('owned_source_fixture_host_restart')
+    if not lab.owned_process('stop'):
+        raise RuntimeError('owned_fixture_host_required')
+    start()
+    lab.stage('real_signed_pending_source_fixture_preparation')
+    lab.run([lab.root_tool('node'),str(lab.ROOT/'scripts/bundle_fixture_legacy_finish.ts')],env=environment(),timeout=600)
 
 
 def start():
@@ -142,10 +168,16 @@ def start():
 
 def register_browser():
     lab.stage('real_provider_source_bundle_browser')
+    if any(os.environ.get(key) for key in ('POSEIDON_REGISTER_CASE','POSEIDON_REGISTER_PROJECT')):
+        raise RuntimeError('full_bundle_manifest_required')
     env=environment();fixtures=source_fixture_environment()
     if len(fixtures)!=len(FIXTURE_NAMES):
         raise RuntimeError('source_fixture_environment_required')
     env.update(fixtures)
+    lane_file=lab.PRIVATE/'source-bundle-lane-environment.json'
+    if lane_file.is_symlink() or not lane_file.is_file() or lane_file.stat().st_size>8192:
+        raise RuntimeError('source_lane_fixture_required')
+    env['POSEIDON_BROWSER_LANE_FIXTURE']=str(lane_file.resolve())
     lab.run([lab.root_tool('node'),str(lab.ROOT/'tests/Poseidon.Browser.Tests/lab/register-run.ts')],env=env,timeout=1800)
 
 

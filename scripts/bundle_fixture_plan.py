@@ -19,7 +19,10 @@ WRITER_PERMISSIONS = ('equipment.read', 'equipment.write', 'equipment.history.re
     'maintenance.write', 'maintenance.history.read', 'maintenance.owner.eligible', 'certificate.read',
     'certificate.write', 'certificate.renewal.write', 'certificate.extract', 'defect.read', 'defect.write', 'workorder.read',
     'workorder.write', 'operations.fuel.read', 'operations.fuel.write', 'operations.port.read',
-    'operations.port.write', 'operations.downtime.read', 'operations.downtime.write')
+    'operations.port.write', 'operations.downtime.read', 'operations.downtime.write', 'control.read', 'control.write',
+    'evidence.read', 'evidence.write', 'applicability.read', 'applicability.evaluate', 'rules.write',
+    'rules.review', 'regulatory.qualify', 'human.review.read', 'human.decide', 'import.read', 'import.write',
+    'import.legacy.convert', 'crew.identity.convert')
 
 
 def scoped_id(run_id, lane, kind, purpose):
@@ -97,6 +100,11 @@ def configure(config, realm, authority, project, run_id, now=None):
     for permission in WRITER_PERMISSIONS:
         if permission not in writer['Permissions']:
             writer['Permissions'].append(permission)
+    # Tenant-wide regulatory source authoring is explicit to this fresh synthetic reviewer.
+    reviewer['TenantWideRead'] = True
+    for permission in ('regulatory.draft.read', 'regulatory.draft.write', 'applicability.read', 'rules.write', 'regulatory.qualify'):
+        if permission not in reviewer['Permissions']:
+            reviewer['Permissions'].append(permission)
     reviewer_role = reviewer['RoleReferences'][0]
     grants = reviewer.setdefault('VesselGrants', [])
     existing = [g for g in grants if g.get('VesselId') == SHIP]
@@ -135,5 +143,60 @@ def configure(config, realm, authority, project, run_id, now=None):
         'writerActorId': writer['ActorId'], 'reviewerActorId': reviewer['ActorId'],
         'restrictedActorId': restricted['ActorId'], 'foreignActorId': foreign['ActorId'],
         'reviewerAccount': 'lab-reviewer', 'foreignAccount': 'lab-foreign',
+        'reviewerRoleId': reviewer_role, 'writerRoleId': writer['RoleReferences'][0],
+        'legacyBatches': {lane: str(uuid.uuid4()) for lane in ('desktop', 'narrow')},
         'state': 'CONFIGURATION_ONLY_REQUIRES_REAL_LOGIN_AND_HTTP', 'extraction': 'UNCONFIGURED_REQUIRES_EXPLICIT_PROTOCOL_PEER'}
     return candidate, plan
+
+
+def configure_observed(config, metadata, observed, now=None):
+    """Exact-object synthetic recording/source-review appointments after real HTTP authoring.
+
+    Only metadata from the disposable real API provisioner is accepted. This
+    records no decisions/verification and never installs a production catalog.
+    """
+    now=now or datetime.now(timezone.utc)
+    if now.tzinfo is None or now.utcoffset()!=timedelta(0):raise RuntimeError('bundle_fixture_utc_required')
+    if (metadata.get('tenantId')!=TENANT or metadata.get('vesselId')!=SHIP or observed.get('schemaVersion')!='poseidon.bundle-observed-sources.v1' or
+        observed.get('runId')!=metadata.get('runId') or set(observed.get('lanes',{}))!={'desktop','narrow'}):
+        raise RuntimeError('bundle_observed_scope_invalid')
+    candidate=deepcopy(config);members=candidate['Authentication']['Oidc']['Memberships']
+    selected={}
+    for name,actor in (('writer',metadata['writerActorId']),('reviewer',metadata['reviewerActorId'])):
+        matches=[m for m in members if m.get('ActorId')==actor and m.get('TenantId')==TENANT and m.get('ActorKind')=='Human']
+        if len(matches)!=1:raise RuntimeError('bundle_observed_actor_invalid')
+        expected_role=metadata[name+'RoleId']
+        _uuid(expected_role)
+        if expected_role not in (matches[0].get('RoleReferences') or []):raise RuntimeError('bundle_observed_role_invalid')
+        selected[name]=matches[0]
+        if matches[0].get('RegulatoryAuthorities') or name=='writer' and matches[0].get('HumanAuthorities'):
+            raise RuntimeError('bundle_observed_existing_appointments_preserved')
+        matches[0]['RegulatoryAuthorities']=[]
+    writer=selected['writer'];reviewer=selected['reviewer'];writer['HumanAuthorities']=[]
+    from_at=(now-timedelta(minutes=1)).isoformat();until=(now+timedelta(hours=8)).isoformat()
+    contract={'SourceLocator':'FICTIONAL/bundle/source-contract; software test only','Type':'FICTIONAL_DECLARATION'}
+    ids=set()
+    for lane,values in observed['lanes'].items():
+        if not isinstance(values,dict) or set(values)!={'noEvaluationVesselId','control','evidence','rule'}:
+            raise RuntimeError('bundle_observed_shape_invalid')
+        for key in ('noEvaluationVesselId','control','evidence','rule'):
+            value=values.get(key)
+            identifier=value.get('id') if isinstance(value,dict) else value
+            _uuid(identifier)
+            if identifier in ids:raise RuntimeError('bundle_observed_object_reused')
+            ids.add(identifier)
+        rule=values['rule'];_uuid(rule.get('sourceId'))
+        if set(rule)!={'id','revision','version','sourceId','sourceRevision'} or any(set(values[k])!={'id','revision','version'} for k in ('control','evidence')):
+            raise RuntimeError('bundle_observed_shape_invalid')
+        if (type(rule.get('sourceRevision')) is not int or not 1<=rule['sourceRevision']<=9007199254740991 or
+                any(type(values[k].get('revision')) is not int or not 1<=values[k]['revision']<=9007199254740991 or type(values[k].get('version')) is not int or not 1<=values[k]['version']<=4294967295 for k in ('control','evidence','rule'))):
+            raise RuntimeError('bundle_observed_pin_invalid')
+        evidence=values['evidence']['id'];control=values['control']['id'];role=metadata['writerRoleId']
+        writer['HumanAuthorities'].append({'Id':str(uuid.uuid4()),'VesselId':SHIP,'EvidenceId':evidence,'ControlId':control,
+            'OperationId':str(uuid.uuid4()),'RoleId':role,'Capability':'human.decide','ValidFrom':from_at,'ValidUntil':until,
+            'Recording':{'DecisionType':'SYNTHETIC-BUNDLE-RECORDING','SubjectType':'Evidence','SubjectId':evidence,
+                'AuthorityRole':'DPA','Semantics':'HumanRecording','SourceLocator':'15.01/paragraph:99;18.01/Backlog/row:32'}})
+        for member,role,actions in ((reviewer,metadata['reviewerRoleId'],['draft','review','own']),(writer,metadata['writerRoleId'],['qualify'])):
+            member['RegulatoryAuthorities'].append({'Id':str(uuid.uuid4()),'RuleId':rule['id'],'SourceId':rule['sourceId'],
+                'SourceRevision':rule['sourceRevision'],'RoleId':role,'Actions':actions,'ValidFrom':from_at,'ValidUntil':until,'Contract':contract})
+    return candidate

@@ -159,6 +159,65 @@ class BundleFixturePlanTests(unittest.TestCase):
             (root/'extraction-peer-secret').write_text('bad\nsecret')
             with self.assertRaisesRegex(RuntimeError,'synthetic_peer_secret_invalid'):bundle.environment()
 
+    def test_all_new_policy_arrays_and_host_prefixes_cannot_extend_private_scopes(self):
+        import os
+        sections=('DailyOffline:Policies:9:Fields:9:Key','CertificateExtraction:Scopes:9:ActorId',
+            'CrewFilePolicy:Scopes:9:ActorId','CrewProfilePolicy:FieldPolicies:9:Key',
+            'CrewAssignmentPolicy:Scopes:9:ActorId','MaintenanceObservations:Sources:9:Kind',
+            'TugPlanning:Owners:9:RoleId','OfflineApplication:Scopes:9:ActorId',
+            'Authentication:Oidc:Memberships:9:HumanAuthorities:9:RoleId')
+        with tempfile.TemporaryDirectory() as directory, patch.object(lab,'PRIVATE',Path(directory)), patch.object(lab,'root_tool',return_value=str(Path('test-dotnet.exe').resolve())):
+            for prefix in ('','DOTNET_','ASPNETCORE_','dotnet_','aspnetcore_'):
+                for delimiter in (':','__'):
+                    ambient={prefix+key.replace(':',delimiter):'untrusted-extra-array-member' for key in sections}
+                    with patch.dict(os.environ,ambient):env=bundle.environment()
+                    self.assertFalse(any(key in env for key in ambient))
+
+    def observed(self, metadata):
+        return {'schemaVersion':'poseidon.bundle-observed-sources.v1','runId':metadata['runId'],
+            'lanes':{lane:{'noEvaluationVesselId':str(uuid.uuid4()),
+                'control':{'id':str(uuid.uuid4()),'revision':1,'version':3},
+                'evidence':{'id':str(uuid.uuid4()),'revision':1,'version':4},
+                'rule':{'id':str(uuid.uuid4()),'revision':1,'version':5,'sourceId':str(uuid.uuid4()),'sourceRevision':1}}
+                for lane in ('desktop','narrow')}}
+
+    def test_actual_observed_object_tuples_bound_to_recording_and_distinct_source_reviewer_only(self):
+        realm,config=self.setup_fixture();before,metadata=self.configure(realm,config)
+        observed=self.observed(metadata);original=deepcopy(before)
+        after=plan.configure_observed(before,metadata,observed)
+        self.assertEqual(original,before)
+        writer,restricted,reviewer,foreign=after['Authentication']['Oidc']['Memberships']
+        self.assertEqual(original['Authentication']['Oidc']['Memberships'][1],restricted)
+        self.assertEqual(original['Authentication']['Oidc']['Memberships'][-1],foreign)
+        self.assertEqual(2,len(writer['HumanAuthorities']))
+        for lane in ('desktop','narrow'):
+            row=observed['lanes'][lane]
+            appointment=next(a for a in writer['HumanAuthorities'] if a['EvidenceId']==row['evidence']['id'])
+            self.assertEqual(row['control']['id'],appointment['ControlId'])
+            self.assertEqual('human.decide',appointment['Capability'])
+            self.assertEqual('HumanRecording',appointment['Recording']['Semantics'])
+            self.assertEqual('SYNTHETIC-BUNDLE-RECORDING',appointment['Recording']['DecisionType'])
+            self.assertNotIn('RequiredGate',appointment['Recording'])
+            own=next(a for a in reviewer['RegulatoryAuthorities'] if a['RuleId']==row['rule']['id'])
+            qualify=next(a for a in writer['RegulatoryAuthorities'] if a['RuleId']==row['rule']['id'])
+            self.assertEqual(['draft','review','own'],own['Actions']);self.assertEqual(['qualify'],qualify['Actions'])
+            self.assertEqual(own['Contract'],qualify['Contract'])
+            self.assertTrue(own['Contract']['SourceLocator'].startswith('FICTIONAL'))
+        self.assertNotIn('HumanAuthorities',reviewer)
+
+    def test_observed_scope_reuse_existing_appointments_and_invalid_pin_never_overwrite(self):
+        for change in ('run','lane','reuse','pin','role','existing'):
+            realm,config=self.setup_fixture();before,meta=self.configure(realm,config);observed=self.observed(meta)
+            if change=='run':observed['runId']=str(uuid.uuid4())
+            if change=='lane':observed['lanes'].pop('narrow')
+            if change=='reuse':observed['lanes']['narrow']['rule']['id']=observed['lanes']['desktop']['rule']['id']
+            if change=='pin':observed['lanes']['desktop']['rule']['sourceRevision']=True
+            if change=='role':meta['writerRoleId']=str(uuid.uuid4())
+            if change=='existing':before['Authentication']['Oidc']['Memberships'][0]['HumanAuthorities']=[{'Id':'operator-owned'}]
+            original=deepcopy(before)
+            with self.assertRaises(RuntimeError):plan.configure_observed(before,meta,observed)
+            self.assertEqual(original,before)
+
     def test_noncanonical_run_and_naive_clock_fail_before_any_result(self):
         realm, config = self.setup_fixture()
         for run in ('not-a-uuid', '00000000-0000-0000-0000-000000000000', str(uuid.uuid4()).upper()):
