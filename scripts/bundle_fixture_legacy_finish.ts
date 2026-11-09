@@ -1,6 +1,7 @@
 // DEV-BUNDLE-FIXTURE-01. Real signed fixture draft/review, never operational approval.
 import {randomUUID} from 'node:crypto'
-import {readFileSync,realpathSync,writeFileSync,renameSync} from 'node:fs'
+import {spawnSync} from 'node:child_process'
+import {readFileSync,realpathSync,writeFileSync} from 'node:fs'
 import {resolve} from 'node:path'
 import {strictContext} from '../tests/Poseidon.Browser.Tests/lab/strict-browser.ts'
 import {login} from '../tests/Poseidon.Browser.Tests/lab/journeys.ts'
@@ -11,7 +12,7 @@ const observed=JSON.parse(readFileSync(resolve(privateRoot,'source-bundle-observ
 if(observed.schemaVersion!=='poseidon.bundle-observed-sources.v1'||observed.runId!==plan.runId)throw new Error('fixture_scope_invalid')
 const evidence={schemaVersion:'poseidon.bundle-legacy-preconditions.v1',status:'RUNNING',stage:'begin',checks:[] as {stage:string;status:number}[],accepted:false,canonicalSourceApproved:false,decisionsRecorded:0}
 const lanes:Record<string,Record<string,string>>={}
-const persist=(name:string,value:unknown)=>{const temp=resolve(privateRoot,'.'+randomUUID()+'.json');writeFileSync(temp,JSON.stringify(value),{flag:'wx',mode:0o600});renameSync(temp,resolve(privateRoot,name))}
+const persist=(name:string,value:unknown)=>{const temp=resolve(privateRoot,'.'+randomUUID()+'.json');writeFileSync(temp,JSON.stringify(value),{flag:'wx',mode:0o600});const published=spawnSync(process.env.POSEIDON_LAB_PYTHON!,[resolve(import.meta.dirname,'bundle_private.py'),'publish-temp','--source',temp,'--target',resolve(privateRoot,name)],{stdio:'ignore',windowsHide:true,timeout:30000});if(published.status!==0)throw new Error('fixture_new_publication_failed')}
 try{
   const reviewer=await strictContext({baseURL:'https://localhost:5443'})
   try{

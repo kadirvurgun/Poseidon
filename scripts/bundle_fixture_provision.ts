@@ -1,7 +1,8 @@
 // DEV-BUNDLE-FIXTURE-01; actual isolated HTTPS + provider + audited API only.
 // No copied sessions, fulfilled responses, verified evidence or production approvals.
 import { createHash, randomUUID } from 'node:crypto'
-import { readFileSync, realpathSync, renameSync, writeFileSync } from 'node:fs'
+import {spawnSync} from 'node:child_process'
+import { readFileSync, realpathSync, writeFileSync } from 'node:fs'
 import { isAbsolute, relative, resolve, sep } from 'node:path'
 import { strictContext } from '../tests/Poseidon.Browser.Tests/lab/strict-browser.ts'
 import { login } from '../tests/Poseidon.Browser.Tests/lab/journeys.ts'
@@ -10,7 +11,9 @@ const privateRoot = realpathSync(process.env.POSEIDON_LAB_PRIVATE!)
 const expectedRoot = realpathSync(resolve(import.meta.dirname, '../.runtime/oidc-lab'))
 if (privateRoot !== expectedRoot) throw new Error('fixture_boundary')
 const plan = JSON.parse(readFileSync(resolve(privateRoot, 'source-bundle-plan.json'), 'utf8'))
-const config = JSON.parse(readFileSync(resolve(privateRoot, 'appsettings.json'), 'utf8'))
+const configPath=realpathSync(process.env.POSEIDON_LAB_CONFIG!)
+if(!configPath.startsWith(privateRoot+sep))throw new Error('fixture_config_boundary')
+const config = JSON.parse(readFileSync(configPath, 'utf8'))
 const uuid = (v: unknown): v is string => typeof v === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(v) && v !== '00000000-0000-0000-0000-000000000000'
 if (plan.schemaVersion !== 'poseidon.bundle-fixture-plan.v1' || !['runId','tenantId','vesselId','foreignTenantId','foreignVesselId','writerActorId','reviewerActorId','restrictedActorId','foreignActorId'].every(k => uuid(plan[k]))) throw new Error('fixture_plan_invalid')
 const environment: Record<string,string> = {}
@@ -23,7 +26,9 @@ const persist = (name: string, value: unknown) => {
   const file = resolve(privateRoot, name), child = relative(privateRoot, file)
   if (!child || isAbsolute(child) || child.startsWith('..' + sep)) throw new Error('fixture_path_invalid')
   const pending = resolve(privateRoot, '.' + randomUUID() + '.json')
-  writeFileSync(pending, JSON.stringify(value), { flag: 'wx', mode: 0o600 }); renameSync(pending, file)
+  writeFileSync(pending, JSON.stringify(value), { flag: 'wx', mode: 0o600 });
+  const published=spawnSync(process.env.POSEIDON_LAB_PYTHON!,[resolve(import.meta.dirname,'bundle_private.py'),'publish-temp','--source',pending,'--target',file],{stdio:'ignore',windowsHide:true,timeout:30000})
+  if(published.status!==0)throw new Error('fixture_new_publication_failed')
   return file
 }
 const fixture = (key: string, file: string, value: unknown) => { environment[key] = persist(file, value); evidence.fixtureCount++ }
