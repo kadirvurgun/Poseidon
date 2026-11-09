@@ -10,6 +10,7 @@ from pathlib import Path
 import secrets
 import socket
 import sys
+import tempfile
 import uuid
 
 import oidc_lab as lab
@@ -82,11 +83,29 @@ def prepare_bundle():
     for permission in ('audit.read','file.read','file.write'):
         if permission not in members[0]['Permissions']:
             members[0]['Permissions'].append(permission)
-    objects=lab.PRIVATE/'source-bundle-objects';lab.private_directory(objects)
+    objects=source_object_root()
     config['SecureFiles']={'Adapter':'LocalDevelopment','Root':str(objects),'MaxBytes':1048576,
         'MaxPixels':1048576,'ScanSeconds':15,'ClamdPort':port,'CapabilitySeconds':60,
         'RetentionReference':'synthetic-lab-only','ScannerReference':'pinned-ephemeral-clamd'}
     private_io.publish_config(config)
+
+
+def source_object_root():
+    """The unchanged file adapter forbids repository/content/web-root storage."""
+    objects=Path(tempfile.gettempdir())/(lab.PROJECT+'-source-bundle-objects')
+    if not objects.is_absolute() or objects.is_symlink() or objects.is_junction():
+        raise RuntimeError('source_bundle_object_boundary')
+    resolved=objects.resolve()
+    if resolved==lab.ROOT.resolve() or resolved.is_relative_to(lab.ROOT.resolve()):
+        raise RuntimeError('source_bundle_object_boundary')
+    for directory in (objects,*objects.parents):
+        if directory.is_symlink() or directory.is_junction() or (directory/'.git').exists():
+            raise RuntimeError('source_bundle_object_boundary')
+    # Existing objects are retained; this only enforces the established owner ACL.
+    lab.private_directory(objects)
+    if objects.resolve()!=resolved:
+        raise RuntimeError('source_bundle_object_boundary')
+    return objects
 
 
 def environment():
