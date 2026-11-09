@@ -1,3 +1,4 @@
+import { openNavigationTestOverview } from './workspace-navigation.test-fixture'
 import { navigationTestIdentity, navigationTestRole } from './workspace-navigation.test-fixture'
 vi.mock('./workspace-lens-api', async original => ({ ...await original<typeof import('./workspace-lens-api')>(),
   loadLenses: vi.fn(async (tenant: string, actor: string, vessel: string | null) => (await import('./workspace-navigation.test-fixture')).navigationTestLenses(tenant, actor, vessel)) }))
@@ -129,9 +130,11 @@ describe('DIR-WORKSPACE-01 mocked UI behavior (not real backend acceptance)', ()
     await user.click(await screen.findByRole('button', { name: 'Yeni kayıt' }))
     await user.selectOptions(await screen.findByLabelText('Menü merceği'), navigationTestRole)
     await user.type(screen.getByLabelText('Ad *'), 'Korunan taslak')
+    await openNavigationTestOverview(user)
     await user.click(screen.getByRole('button', { name: 'Filo' }))
     await user.click(screen.getByRole('button', { name: 'Düzenlemeye devam et' }))
     expect(screen.getByLabelText('Ad *')).toHaveValue('Korunan taslak')
+    await openNavigationTestOverview(user)
     await user.click(screen.getByRole('button', { name: 'Filo' }))
     await user.click(screen.getByRole('button', { name: /^Taslağı bırak$/ }))
     expect(screen.queryByLabelText('Ad *')).not.toBeInTheDocument()
