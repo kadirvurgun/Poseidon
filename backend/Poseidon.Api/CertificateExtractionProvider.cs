@@ -52,7 +52,7 @@ public sealed class CertificateExtractionUnavailableException : Exception
 }
 // Explicit provider protocol, not an OCR-success stub. No provider is selected or
 // activated by default, and only the caller's pinned current file bytes are sent.
-public sealed class CertificateExtractionProvider(IHttpClientFactory clients,IHostEnvironment environment)
+public sealed class CertificateExtractionProvider(IHttpClientFactory clients,IHostEnvironment environment,TimeProvider? timeProvider=null)
 {
     private static readonly JsonSerializerOptions Json=new(JsonSerializerDefaults.Web){PropertyNameCaseInsensitive=false,MaxDepth=5,UnmappedMemberHandling=System.Text.Json.Serialization.JsonUnmappedMemberHandling.Disallow};
     internal async Task<CertificateRawExtraction> Extract(CertificateExtractionSettings policy,byte[] bytes,string mime,string checksum,CancellationToken ct)
@@ -61,7 +61,8 @@ public sealed class CertificateExtractionProvider(IHttpClientFactory clients,IHo
         string? secret;
         try{secret=OperatorSecretReferences.Resolve(policy.SecretReference,Environment.GetEnvironmentVariable);}catch(InvalidOperationException){throw new CertificateExtractionUnavailableException();}
         if(secret==null || secret.Length>8192 || secret.Any(c=>!char.IsAsciiLetterOrDigit(c) && c is not ('-' or '.' or '_' or '~' or '+' or '/' or '=')))throw new CertificateExtractionUnavailableException();
-        using var deadline=CancellationTokenSource.CreateLinkedTokenSource(ct);deadline.CancelAfter(TimeSpan.FromSeconds(policy.TimeoutSeconds));
+        using var timeout=new CancellationTokenSource(TimeSpan.FromSeconds(policy.TimeoutSeconds),timeProvider??TimeProvider.System);
+        using var deadline=CancellationTokenSource.CreateLinkedTokenSource(ct,timeout.Token);
         using var message=new HttpRequestMessage(HttpMethod.Post,policy.Endpoint);
         message.Headers.Authorization=new AuthenticationHeaderValue("Bearer",secret);message.Headers.Accept.Add(new("application/json"));
         using var content=new MultipartFormDataContent();
