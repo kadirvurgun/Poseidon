@@ -1,0 +1,14 @@
+# S6 certificate extraction: PR-gate source freshness and isolated TLS transport
+
+- Traceability: DEV-045 / T-S6-003; QA-SRC-002.
+- Source: active 14.02 SHA `3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018`, certificate fields rows 33–40, 1634–1657, 1708–1755; source policy remains `REVIEW_REQUIRED`.
+- Scope: prevent an owning certificate or crew credential change during asynchronous source transport reads from reaching an extraction provider or escaping as candidates. A final composed scoped SQL statement observes the exact current owning revision/xmin and immutable source/file/stage binding, followed by live actor/config checks. Exact committed confirmation receipts retain their separate transport/access fence semantics.
+- Acceptance: real API commands advance vessel certificates and crew credentials during the intercepted awaited stage read; before provider no bytes reach the protocol peer; after provider no candidates or review context escape. Four PostgreSQL/API regression cases passed on local commit `e836702`; no independent release acceptance is implied.
+
+## Disposable loopback extraction peer
+
+`DevelopmentLab:CertificateExtractionCaPath` is optional and absent by default. It authorizes a private root only for the configured `CertificateExtraction:Endpoint` when the host environment is `Development`, the URL is HTTPS with hostname `localhost`, a non-root path and no user info/query/fragment, and `CertificateExtraction:AllowedHost` is exactly `localhost`.
+
+Only POST requests to that exact configured URI can pass this named-client handler. Redirects, cookies, proxies and automatic decompression are disabled. The socket connects directly to IPv4 loopback, independent of DNS or hosts-file resolution. Platform hostname validation and server-authentication EKU, validity and custom-root chain checks remain required. No machine/user root-store changes occur. `Production` and `Test` cannot enable this trust path. The extraction policy itself remains independently disabled unless explicitly configured; this transport is no OCR-quality, privacy-policy or processing-arrangement approval.
+
+Transport tests exercise an actual disposable loopback TLS peer, valid and invalid certificate chains, hostname mismatch, client-only EKU, expiry, absent explicit trust, redirects and endpoint/environment guards. The narrow command `dotnet run --project tests/Poseidon.Api.Tests -- -class '*DevelopmentCertificateExtractionTransportTests' -noLogo` passed **22/22**, failed 0, skipped 0, in 6.645 seconds on this local delivery tree. Initial valid/redirect cases exposed Windows Schannel's rejection of ephemeral fixture private keys; the test peer uses a disposable PFX roundtrip with `DefaultKeySet`, preserving all certificate assertions. No synthetic peer result proves external provider operation. Full final-target QA/CI remains the integrating coordinator's gate.
