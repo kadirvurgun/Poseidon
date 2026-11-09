@@ -14,6 +14,7 @@ import uuid
 
 import oidc_lab as lab
 import bundle_fixture_plan as plan
+import bundle_private as private_io
 
 BASE_ENVIRONMENT = lab.environment
 FIXTURE_NAMES = ('DAILY','CERTIFICATE','CERTIFICATE_EXTRACTION','SHIP_OPERATIONS','DEFECT','WORK_ORDER','DOWNTIME')
@@ -26,10 +27,9 @@ def init_source_bundle():
     lab.stage('fresh_disposable_source_bundle')
     if lab.PRIVATE.exists() and any(lab.PRIVATE.iterdir()):
         raise RuntimeError('fresh_disposable_bundle_profile_required')
-    lab.init()
-    realm = json.loads((lab.PRIVATE/'realm/poseidon-lab-realm.json').read_text())
-    credentials = json.loads((lab.PRIVATE/'credentials.json').read_text())
-    config = json.loads((lab.PRIVATE/'appsettings.json').read_text())
+    lab.private_directory(lab.PRIVATE)
+    (lab.PRIVATE/'realm').mkdir()
+    realm,credentials,database_password,config=lab.make_configuration()
     foreign_subject, foreign_actor = str(uuid.uuid4()),str(uuid.uuid4())
     credentials['lab-foreign']={'username':'lab-foreign','password':secrets.token_urlsafe(32)}
     realm['users'].append({'id':foreign_subject,'username':'lab-foreign','enabled':True,
@@ -46,9 +46,20 @@ def init_source_bundle():
     if len(mappings)!=1:
         raise RuntimeError('synthetic_navigation_mapping_invalid')
     mappings[0]['Keys']=list(dict.fromkeys([*mappings[0]['Keys'],*NAVIGATION_KEYS]))
-    for name,value in [('realm/poseidon-lab-realm.json',realm),('credentials.json',credentials),
-                       ('appsettings.json',config),('source-bundle-plan.json',metadata)]:
-        lab.atomic_private_json(lab.PRIVATE/name,value)
+    # Build the complete four-identity genesis before the first file is written.
+    # No generic three-identity ready marker is ever published first.
+    for name,value in [('realm/poseidon-lab-realm.json',realm),('credentials.json',credentials),('appsettings.json',config)]:
+        private_io.publish_json(lab.PRIVATE/name,value)
+    private_io.publish_bytes(lab.PRIVATE/'database-password',database_password.encode('utf-8'))
+    bootstrap={'KC_BOOTSTRAP_ADMIN_USERNAME':'lab-bootstrap','KC_BOOTSTRAP_ADMIN_'+'PASSWORD':secrets.token_urlsafe(48)}
+    private_io.publish_bytes(lab.PRIVATE/'provider.env',('\n'.join(key+'='+value for key,value in bootstrap.items())+'\n').encode())
+    private_io.publish_config(config)
+    lab.stage('source_bundle_certificate_generation')
+    lab.run(['pwsh','-NoProfile','-File',str(lab.ROOT/'scripts/oidc-lab-certificates.ps1'),'-Directory',str(lab.PRIVATE)])
+    if any(not (lab.PRIVATE/name).is_file() or (lab.PRIVATE/name).is_symlink() or (lab.PRIVATE/name).stat().st_size==0 for name in ('ca.pem','tls.pem','tls.key')):
+        raise RuntimeError('source_bundle_tls_missing')
+    private_io.publish_json(lab.PRIVATE/'source-bundle-plan.json',metadata)
+    private_io.publish_bytes(lab.PRIVATE/'ready',b'DEV-OIDC-LAB-01\n')
 
 
 def prepare_bundle():
@@ -63,8 +74,8 @@ def prepare_bundle():
         peer.sendall(b'zPING\0')
         if peer.recv(5)!=b'PONG\0':
             raise RuntimeError('real_scanner_unready')
-    path=lab.PRIVATE/'appsettings.json'
-    config=lab.register_membership(json.loads(path.read_text()))
+    config,_=private_io.selected()
+    config=lab.register_membership(config)
     members=[m for m in config['Authentication']['Oidc']['Memberships'] if m.get('ActorId')==metadata['writerActorId'] and m.get('TenantId')==metadata['tenantId']]
     if len(members)!=1:
         raise RuntimeError('source_bundle_writer_invalid')
@@ -75,7 +86,7 @@ def prepare_bundle():
     config['SecureFiles']={'Adapter':'LocalDevelopment','Root':str(objects),'MaxBytes':1048576,
         'MaxPixels':1048576,'ScanSeconds':15,'ClamdPort':port,'CapabilitySeconds':60,
         'RetentionReference':'synthetic-lab-only','ScannerReference':'pinned-ephemeral-clamd'}
-    lab.atomic_private_json(path,config)
+    private_io.publish_config(config)
 
 
 def environment():
@@ -90,6 +101,9 @@ def environment():
     env.pop('POSEIDON_BUNDLE_EXTRACTION_SECRET', None)
     for name in FIXTURE_NAMES:
         env.pop('POSEIDON_BROWSER_'+name+'_FIXTURE', None)
+    if (lab.PRIVATE/'source-bundle-plan.json').is_file():
+        _,selected_config=private_io.selected()
+        env['POSEIDON_LAB_CONFIG']=str(selected_config)
     secret=lab.PRIVATE/'extraction-peer-secret'
     if (lab.PRIVATE/'source-bundle-plan.json').is_file() and secret.exists():
         if secret.is_symlink() or secret.stat().st_size>256:
@@ -135,7 +149,7 @@ def prepare_source_fixtures():
         raise RuntimeError('observed_source_boundary')
     metadata=json.loads((lab.PRIVATE/'source-bundle-plan.json').read_text())
     observed=json.loads(observed_path.read_text())
-    config=json.loads((lab.PRIVATE/'appsettings.json').read_text())
+    config,_=private_io.selected()
     configured=plan.configure_observed(config,metadata,observed)
     # The established explicit helper is Test-only and attributed EF; no request
     # selects tenant/actor/content and no normal seed invents historical authority.
@@ -148,7 +162,7 @@ def prepare_source_fixtures():
         lab.stage('explicit_'+lane+'_legacy_storage_fixture')
         lab.run([lab.root_tool('dotnet'),'run','--project','backend/Poseidon.DbMigrator','-c','Release','--no-build',
                  '--','--legacy-crew-browser-fixture',batch],env=env,timeout=120)
-    lab.atomic_private_json(lab.PRIVATE/'appsettings.json',configured)
+    private_io.publish_config(configured)
     lab.stage('owned_source_fixture_host_restart')
     if not lab.owned_process('stop'):
         raise RuntimeError('owned_fixture_host_required')
@@ -158,6 +172,10 @@ def prepare_source_fixtures():
 
 
 def start():
+    metadata=private_io.read_json(lab.PRIVATE/'source-bundle-plan.json')
+    if metadata.get('schemaVersion')!='poseidon.bundle-fixture-plan.v1' or not (lab.PRIVATE/'ready').is_file():
+        raise RuntimeError('coherent_source_bundle_genesis_required')
+    private_io.selected()
     original=lab.environment
     try:
         lab.environment=environment

@@ -12,6 +12,7 @@ import uuid
 import bundle_fixture_plan as plan
 import oidc_lab as lab
 import bundle_oidc_lab as bundle
+import bundle_private as private_io
 
 
 class BundleFixturePlanTests(unittest.TestCase):
@@ -105,6 +106,7 @@ class BundleFixturePlanTests(unittest.TestCase):
 
     def test_fresh_source_profile_plan_has_matching_four_provider_subjects_without_provider_calls(self):
         with tempfile.TemporaryDirectory() as directory, patch.object(lab, 'PRIVATE', Path(directory)), patch.object(lab, 'private_directory'), patch.object(lab, 'run') as child:
+            child.side_effect=lambda *args,**kwargs:[(Path(directory)/name).write_text('SYNTHETIC unit path fixture; not a trusted certificate') for name in ('ca.pem','tls.pem','tls.key')]
             bundle.init_source_bundle()
             root=Path(directory); metadata=json.loads((root/'source-bundle-plan.json').read_text())
             realm=json.loads((root/'realm/poseidon-lab-realm.json').read_text())
@@ -119,6 +121,13 @@ class BundleFixturePlanTests(unittest.TestCase):
             mappings=config['WorkspaceNavigation']['Mappings']
             self.assertTrue(any('operational-downtime' in row['Keys'] and len(row['Keys']) >=12 for row in mappings))
             self.assertTrue(any('certificate-command-center' in row['Keys'] for row in config['WorkspaceNavigation']['Mappings']))
+
+    def test_incomplete_certificate_generation_never_publishes_source_plan_or_ready(self):
+        with tempfile.TemporaryDirectory() as directory, patch.object(lab,'PRIVATE',Path(directory)), patch.object(lab,'private_directory'), patch.object(lab,'run'):
+            with self.assertRaisesRegex(RuntimeError,'source_bundle_tls_missing'):bundle.init_source_bundle()
+            self.assertFalse((Path(directory)/'ready').exists())
+            self.assertFalse((Path(directory)/'source-bundle-plan.json').exists())
+            self.assertTrue((Path(directory)/'source-bundle-host-000001.json').exists())
 
     def test_fixture_environment_requires_all_seven_private_bounded_files(self):
         with tempfile.TemporaryDirectory() as directory, patch.object(lab, 'PRIVATE', Path(directory)):
@@ -154,6 +163,8 @@ class BundleFixturePlanTests(unittest.TestCase):
             self.assertFalse(any(key in env for key in ambient))
             (root/'extraction-peer-secret').write_text('synthetic_fixture_secret')
             self.assertNotIn('POSEIDON_BUNDLE_EXTRACTION_SECRET',bundle.environment())
+            _,_,_,configuration=lab.make_configuration()
+            private_io.publish_config(configuration)
             (root/'source-bundle-plan.json').write_text('{}')
             self.assertEqual('synthetic_fixture_secret',bundle.environment()['POSEIDON_BUNDLE_EXTRACTION_SECRET'])
             (root/'extraction-peer-secret').write_text('bad\nsecret')

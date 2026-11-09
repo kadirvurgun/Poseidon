@@ -120,12 +120,13 @@ def main(argv=None):
     args=parser.parse_args(argv)
     server=None
     try:
-        from oidc_lab import PRIVATE, atomic_private_json, write
+        from oidc_lab import PRIVATE
+        import bundle_private as private_io
         private=args.private.resolve()
         if args.private.is_symlink() or private!=PRIVATE.resolve() or str(uuid.UUID(args.owner))!=args.owner:
             raise ValueError('private_boundary')
         plan=json.loads((private/'source-bundle-plan.json').read_text())
-        config=json.loads((private/'appsettings.json').read_text())
+        config,_=private_io.selected()
         if config.get('CertificateExtraction') or (private/'extraction-peer-ready.json').exists():
             raise ValueError('existing_operator_policy_preserved')
         secret=secrets.token_urlsafe(48)
@@ -136,9 +137,9 @@ def main(argv=None):
         extraction=fixture_policy(plan,server.server_port)
         config['CertificateExtraction']=extraction
         config.setdefault('DevelopmentLab',{})['CertificateExtractionCaPath']=str(private/'ca.pem')
-        write(private/'extraction-peer-secret',secret)
-        atomic_private_json(private/'appsettings.json',config)
-        atomic_private_json(private/'extraction-peer-ready.json',{'schemaVersion':'poseidon.synthetic-extraction-peer.v1',
+        private_io.publish_bytes(private/'extraction-peer-secret',secret.encode('utf-8'))
+        private_io.publish_config(config)
+        private_io.publish_json(private/'extraction-peer-ready.json',{'schemaVersion':'poseidon.synthetic-extraction-peer.v1',
             'owner':args.owner,'pid':os.getpid(),'port':server.server_port,'modelVersion':MODEL,'promptVersion':PROMPT,
             'protocolOnly':True,'ocrAccuracyAsserted':False,'productionApproval':False,
             'startedAt':datetime.now(timezone.utc).isoformat()})
