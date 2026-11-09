@@ -16,6 +16,7 @@ import uuid
 import oidc_lab as lab
 import bundle_fixture_plan as plan
 import bundle_private as private_io
+import bundle_crew_fixture as crew_fixture
 
 BASE_ENVIRONMENT = lab.environment
 FIXTURE_NAMES = ('DAILY','CERTIFICATE','CERTIFICATE_EXTRACTION','SHIP_OPERATIONS','DEFECT','WORK_ORDER','DOWNTIME')
@@ -108,6 +109,35 @@ def source_object_root():
     return objects
 
 
+def prepare_crew_fixture():
+    """Explicit isolated legacy-storage fixture; no production privacy policy."""
+    import base64
+    lab.stage('explicit_synthetic_crew_storage_fixture')
+    metadata = private_io.read_json(lab.PRIVATE/'source-bundle-plan.json')
+    config, _ = private_io.selected()
+    configured = crew_fixture.configure(config, metadata)
+    key = lab.PRIVATE/'source-bundle-crew-storage-key'
+    if key.exists():
+        if key.is_symlink() or not key.is_file() or key.stat().st_size != 44:
+            raise RuntimeError('bundle_crew_fixture_key_invalid')
+        crew_fixture.validate_key(key.read_text(encoding='ascii'))
+    else:
+        if config.get('CrewProfilePolicy'):
+            raise RuntimeError('bundle_crew_fixture_key_missing')
+        private_io.publish_bytes(key, base64.b64encode(secrets.token_bytes(32)))
+    if configured != config:
+        private_io.publish_config(configured)
+
+
+def renew_fixture_window():
+    lab.stage('explicit_synthetic_daily_fixture_window')
+    metadata = private_io.read_json(lab.PRIVATE/'source-bundle-plan.json')
+    realm = private_io.read_json(lab.PRIVATE/'realm/poseidon-lab-realm.json')
+    config, _ = private_io.selected()
+    configured = plan.renew_synthetic_window(config, realm, lab.AUTHORITY, lab.PROJECT, metadata)
+    private_io.publish_config(configured)
+
+
 def environment():
     env=BASE_ENVIRONMENT()
     for key in list(env):
@@ -121,8 +151,14 @@ def environment():
     for name in FIXTURE_NAMES:
         env.pop('POSEIDON_BROWSER_'+name+'_FIXTURE', None)
     if (lab.PRIVATE/'source-bundle-plan.json').is_file():
-        _,selected_config=private_io.selected()
+        selected,selected_config=private_io.selected()
         env['POSEIDON_LAB_CONFIG']=str(selected_config)
+        env.pop(crew_fixture.REFERENCE, None)
+        if selected.get('CrewProfilePolicy',{}).get('KeyReferences',{}).get('synthetic-bundle-v1') == crew_fixture.REFERENCE:
+            key = lab.PRIVATE/'source-bundle-crew-storage-key'
+            if key.is_symlink() or not key.is_file() or key.stat().st_size != 44:
+                raise RuntimeError('bundle_crew_fixture_key_missing')
+            env[crew_fixture.REFERENCE] = crew_fixture.validate_key(key.read_text(encoding='ascii'))
     secret=lab.PRIVATE/'extraction-peer-secret'
     if (lab.PRIVATE/'source-bundle-plan.json').is_file() and secret.exists():
         if secret.is_symlink() or secret.stat().st_size>256:
@@ -223,7 +259,7 @@ def stop():lab.stop()
 
 def main(argv=None):
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action',choices=['init_source_bundle','prepare_bundle','prepare_source_fixtures','start','stop','register_browser'])
+    parser.add_argument('action',choices=['init_source_bundle','prepare_bundle','prepare_crew_fixture','renew_fixture_window','prepare_source_fixtures','start','stop','register_browser'])
     args=parser.parse_args(argv)
     try:
         if sys.version_info[:3]!=(3,13,13):raise RuntimeError('pinned_python_required')

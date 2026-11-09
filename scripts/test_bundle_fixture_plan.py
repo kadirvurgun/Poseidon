@@ -16,6 +16,34 @@ import bundle_private as private_io
 
 
 class BundleFixturePlanTests(unittest.TestCase):
+    def test_window_renewal_only_changes_known_run_dates_and_preserves_other_source_appointments(self):
+        realm, config = self.setup_fixture(); enrolled, metadata = self.configure(realm, config)
+        original = deepcopy(enrolled)
+        enrolled['Authentication']['Oidc']['Memberships'][0]['RegulatoryAuthorities'] = [{'Id':'preserved-source-appointment'}]
+        renewed = plan.renew_synthetic_window(enrolled, realm, lab.AUTHORITY, lab.PROJECT, metadata,
+            datetime(2026,11,10,0,0,tzinfo=timezone.utc))
+        self.assertNotEqual(enrolled['DailyOffline']['Policies'][0]['ExpiresAt'], renewed['DailyOffline']['Policies'][0]['ExpiresAt'])
+        self.assertEqual([{'Id':'preserved-source-appointment'}], renewed['Authentication']['Oidc']['Memberships'][0]['RegulatoryAuthorities'])
+        self.assertEqual(original['DailyOffline'], enrolled['DailyOffline'])
+        for index, before in enumerate(enrolled['Authentication']['Oidc']['Memberships']):
+            if before['ActorId'] != metadata['reviewerActorId']:
+                self.assertEqual(before, renewed['Authentication']['Oidc']['Memberships'][index])
+
+    def test_window_renewal_rejects_operator_edited_fields_or_different_run_without_mutating_them(self):
+        for change in ('field','scope','appointment','run'):
+            realm, config = self.setup_fixture(); enrolled, metadata = self.configure(realm, config)
+            if change == 'field': enrolled['DailyOffline']['Policies'][0]['Fields'][0]['Purpose']='operator-purpose'
+            if change == 'scope': enrolled['DailyOffline']['Policies'][0]['Scopes'][0]['VesselId']=str(uuid.uuid4())
+            if change == 'appointment':
+                member=next(m for m in enrolled['Authentication']['Oidc']['Memberships'] if m['ActorId']==metadata['reviewerActorId'])
+                member['DailyReviewAuthorities'][0]['AppointmentSource']='operator-owned'
+            if change == 'run': metadata['runId']=str(uuid.uuid4())
+            before=deepcopy(enrolled)
+            with self.assertRaises(RuntimeError):
+                plan.renew_synthetic_window(enrolled, realm, lab.AUTHORITY, lab.PROJECT, metadata,
+                    datetime(2026,11,10,0,0,tzinfo=timezone.utc))
+            self.assertEqual(before,enrolled)
+
     def setup_fixture(self):
         realm, _, _, config = lab.make_configuration()
         realm['users'].append({'id': str(uuid.uuid4()), 'username': 'lab-foreign', 'enabled': True})

@@ -1,10 +1,12 @@
 // DEV-BUNDLE-FIXTURE-01. Real signed fixture draft/review, never operational approval.
 import {randomUUID} from 'node:crypto'
 import {spawnSync} from 'node:child_process'
-import {readFileSync,realpathSync,writeFileSync} from 'node:fs'
+import {existsSync,lstatSync,readFileSync,realpathSync,writeFileSync} from 'node:fs'
 import {resolve} from 'node:path'
 import {strictContext} from '../tests/Poseidon.Browser.Tests/lab/strict-browser.ts'
 import {login} from '../tests/Poseidon.Browser.Tests/lab/journeys.ts'
+import {canonical,fixtureUuid} from './bundle_fixture_journal.ts'
+import {qualificationFixtureState} from './bundle_legacy_context.ts'
 const privateRoot=realpathSync(process.env.POSEIDON_LAB_PRIVATE!)
 if(privateRoot!==realpathSync(resolve(import.meta.dirname,'../.runtime/oidc-lab')))throw new Error('fixture_boundary')
 const plan=JSON.parse(readFileSync(resolve(privateRoot,'source-bundle-plan.json'),'utf8'))
@@ -12,7 +14,15 @@ const observed=JSON.parse(readFileSync(resolve(privateRoot,'source-bundle-observ
 if(observed.schemaVersion!=='poseidon.bundle-observed-sources.v1'||observed.runId!==plan.runId)throw new Error('fixture_scope_invalid')
 const evidence={schemaVersion:'poseidon.bundle-legacy-preconditions.v1',status:'RUNNING',stage:'begin',checks:[] as {stage:string;status:number}[],accepted:false,canonicalSourceApproved:false,decisionsRecorded:0}
 const lanes:Record<string,Record<string,string>>={}
-const persist=(name:string,value:unknown)=>{const temp=resolve(privateRoot,'.'+randomUUID()+'.json');writeFileSync(temp,JSON.stringify(value),{flag:'wx',mode:0o600});const published=spawnSync(process.env.POSEIDON_LAB_PYTHON!,[resolve(import.meta.dirname,'bundle_private.py'),'publish-temp','--source',temp,'--target',resolve(privateRoot,name)],{stdio:'ignore',windowsHide:true,timeout:30000});if(published.status!==0)throw new Error('fixture_new_publication_failed')}
+const persist=(name:string,value:unknown)=>{
+  if(!/^[a-z][a-z0-9-]*\.json$/.test(name))throw new Error('fixture_publication_boundary')
+  const target=resolve(privateRoot,name)
+  if(existsSync(target)){
+    if(lstatSync(target).isSymbolicLink()||!lstatSync(target).isFile()||lstatSync(target).size>2097152||canonical(JSON.parse(readFileSync(target,'utf8')))!==canonical(value))throw new Error('fixture_publication_changed')
+    return
+  }
+  const temp=resolve(privateRoot,'.'+randomUUID()+'.json');writeFileSync(temp,JSON.stringify(value),{flag:'wx',mode:0o600,flush:true});const published=spawnSync(process.env.POSEIDON_LAB_PYTHON!,[resolve(import.meta.dirname,'bundle_private.py'),'publish-temp','--source',temp,'--target',target],{stdio:'ignore',windowsHide:true,timeout:30000});if(published.status!==0)throw new Error('fixture_new_publication_failed')
+}
 try{
   const reviewer=await strictContext({baseURL:'https://localhost:5443'})
   try{
@@ -23,17 +33,22 @@ try{
       const source=observed.lanes[lane].rule,root='/api/v1/regulatory-source-governance/'+source.id
       evidence.stage='read_actual_'+lane+'_source_authority'
       const current=await page.request.get(root);evidence.checks.push({stage:evidence.stage,status:current.status()});if(current.status()!==200)throw new Error('fixture_source_unavailable')
-      const context=await current.json();if(context.items.length!==0)throw new Error('fixture_rule_reused')
+      const context=await current.json()
       const draftAuthority=context.authorities.find((a:{action:string;authorityId:string})=>a.action==='draft')?.authorityId
       const reviewAuthority=context.authorities.find((a:{action:string;authorityId:string})=>a.action==='review')?.authorityId
       if(!draftAuthority||!reviewAuthority)throw new Error('fixture_exact_source_assignment_required')
       const content={sourceBytesBase64:Buffer.from('FICTIONAL '+plan.runId+' '+lane+' software source; no maritime authority').toString('base64'),publisher:'FICTIONAL software fixture publisher',edition:'1',ownerId:plan.reviewerActorId,ownerRole:plan.reviewerRoleId,validationReview:'FICTIONAL software source review only',inputs:[{field:'context.mode',basis:'Declared'}],control:null}
+      const state=qualificationFixtureState(context,{ruleId:source.id,ruleRevision:source.revision,actorId:plan.reviewerActorId,roleId:plan.reviewerRoleId,draftAuthority,reviewAuthority,content})
+      if(state==='IN_REVIEW')continue
+      let draft=context.items[0]
+      if(state==='NEW'){
       evidence.stage='author_actual_'+lane+'_qualification_draft'
-      const saved=await page.request.post(root+'/events',{headers:{'X-CSRF-TOKEN':user.csrfToken,'Idempotency-Key':randomUUID()},data:{expectedVersion:0,ruleRevision:source.revision,authorityId:draftAuthority,state:'DRAFT',content}})
+      const saved=await page.request.post(root+'/events',{headers:{'X-CSRF-TOKEN':user.csrfToken,'Idempotency-Key':fixtureUuid(plan.runId,lane+'-qualification-draft')},data:{expectedVersion:0,ruleRevision:source.revision,authorityId:draftAuthority,state:'DRAFT',content}})
       evidence.checks.push({stage:evidence.stage,status:saved.status()});if(saved.status()!==200)throw new Error('fixture_qualification_draft_failed')
-      const draft=await saved.json();if(draft.state!=='DRAFT'||draft.blockers.length)throw new Error('fixture_incomplete_review_source')
+      draft=await saved.json();if(draft.state!=='DRAFT'||draft.blockers.length)throw new Error('fixture_incomplete_review_source')
+      }
       evidence.stage='request_actual_'+lane+'_qualification_review'
-      const review=await page.request.post(root+'/events',{headers:{'X-CSRF-TOKEN':user.csrfToken,'Idempotency-Key':randomUUID()},data:{expectedVersion:draft.version,ruleRevision:source.revision,authorityId:reviewAuthority,state:'IN_REVIEW'}})
+      const review=await page.request.post(root+'/events',{headers:{'X-CSRF-TOKEN':user.csrfToken,'Idempotency-Key':fixtureUuid(plan.runId,lane+'-qualification-review')},data:{expectedVersion:draft.version,ruleRevision:source.revision,authorityId:reviewAuthority,state:'IN_REVIEW'}})
       evidence.checks.push({stage:evidence.stage,status:review.status()});if(review.status()!==200||(await review.json()).state!=='IN_REVIEW')throw new Error('fixture_review_failed')
     }
   }finally{await reviewer.close()}
@@ -60,5 +75,5 @@ try{
   persist('source-bundle-lane-environment.json',{schemaVersion:'poseidon.bundle.signed-lane-fixtures.v1',runId:plan.runId,lanes})
   evidence.status='PRECONDITIONS_ONLY';evidence.stage='complete'
 }catch{evidence.status='FAILED'}
-finally{persist('source-bundle-legacy-preconditions.json',evidence)}
+finally{persist('source-bundle-legacy-report-'+randomUUID()+'.json',evidence);if(!existsSync(resolve(privateRoot,'source-bundle-legacy-preconditions.json')))persist('source-bundle-legacy-preconditions.json',evidence)}
 process.exitCode=evidence.status==='PRECONDITIONS_ONLY'?0:1
