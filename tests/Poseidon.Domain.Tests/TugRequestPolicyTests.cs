@@ -27,4 +27,10 @@ public sealed class TugRequestPolicyTests
         var errors = TugRequestPolicy.Invalid(new(JobType: "Ready", RequiredTugCount: 0, Priority: "No", RequestOwner: Guid.Empty, AssistedVesselImo: "https://outside.invalid"));
         Assert.Equal(5, errors.Length);
     }
+    [Fact]
+    public void Controlled_narrative_fields_preserve_lines_without_allowing_controls_in_short_identity_fields() {
+        Assert.Empty(TugRequestPolicy.Invalid(new(Notes: "FICTIONAL first line\r\nSecond line", SpecialRequirements: "FICTIONAL first\n\tSecond")));
+        Assert.Contains("assisted_vessel", TugRequestPolicy.Invalid(new(AssistedVessel: "FICTIONAL\nUnexpected identity line")));
+        Assert.Contains("notes", TugRequestPolicy.Invalid(new(Notes: "FICTIONAL\0Hidden control")));
+    }
 }

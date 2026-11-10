@@ -14,7 +14,21 @@ public static class WorkspaceEndpoints
     {
         if (!actor.CanRead) return [];
         NavigationDto[] destinations = actor.CanReadAudit ? [.. BaseDestinations(actor), new NavigationDto("audit", "/app/audit")] : BaseDestinations(actor);
+        if (SystemHealthEndpoints.Permitted(actor)) destinations = [.. destinations, new("system-health", "/app/system-health")];
+        if (NotificationEndpoints.CanRead(actor)) destinations = [.. destinations, new("notification-escalation", "/app/notification-escalation")];
+        if (DefectAssetContextReader.CanRead(actor)) destinations = [.. destinations, new("defects", "/app/defects")];
+        if (WorkOrderEndpoints.CanRead(actor)) destinations = [.. destinations, new("work-order-center", "/app/work-order-center")];
+        if (OperationalDowntimeEndpoints.CanRead(actor)) destinations = [.. destinations, new("operational-downtime", "/app/operational-downtime")];
+        if (CertificateReader.Read(actor)) destinations = [.. destinations,
+            new("certificate-command-center", "/app/certificate-command-center"), new("renewal-workflow", "/app/renewal-workflow")];
         if (actor.CanReadTug) destinations = [.. destinations, new("tug-command", "/app/tug-command"), new("tug-job-board", "/app/tug-job-board"), new("tug-job-intake", "/app/tug-job-intake")];
+        if (actor.CanSeeShip) {
+            if (ShipOperationsEndpoints.CanRead(actor,"Fuel")) destinations = [.. destinations,new("fuel-bunker-log","/app/fuel-bunker-log")];
+            if (ShipOperationsEndpoints.CanRead(actor,"Port")) destinations = [.. destinations,new("port-activity-sof","/app/port-activity-sof")];
+            if (DailyOperationsEndpoints.CanRead(actor,"Noon")) destinations = [.. destinations,new("noon-report","/app/noon-report")];
+            if (DailyOperationsEndpoints.CanRead(actor,"Deck")) destinations = [.. destinations,new("deck-daily-log","/app/deck-daily-log")];
+            if (DailyOperationsEndpoints.CanRead(actor,"Engine")) destinations = [.. destinations,new("engine-daily-log","/app/engine-daily-log")];
+        }
         return actor.CanReadRegulatory ? [.. destinations, new("sources", "/app/sources"), new("requirements", "/app/requirements")] : destinations;
     }
     private static NavigationDto[] BaseDestinations(TrustedActor actor) =>

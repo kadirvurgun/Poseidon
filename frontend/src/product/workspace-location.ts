@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-export type WorkspaceLocation = { tab: 'companies' | 'fleet' | 'today' | 'sources' | 'requirements' | 'audit'; query?: string; selected: string | null; profile: boolean; invalid?: boolean }
+export type WorkspaceLocation = { tab: 'companies' | 'fleet' | 'today' | 'sources' | 'requirements' | 'audit'; query?: string; selected: string | null; profile: boolean; onboarding?: boolean; passport?: boolean; invalid?: boolean }
 const idPattern = /^[a-zA-Z0-9-]{1,64}$/
 export function loginHref() {
   const path = window.location.pathname
@@ -14,12 +14,12 @@ export function readLocation(path = window.location.pathname + window.location.s
   path = pathname
   if (path === '/app' || path === '/app/') return { tab: 'companies', selected: null, profile: false }
   // Reject encoded separators, malformed encodings and unknown routes without decoding into a new path.
-  const match = /^\/app\/(companies|fleet|today|sources|requirements|audit)(?:\/([a-zA-Z0-9-]{1,64})(\/profile)?)?\/?$/.exec(path)
-  if (!match || (match[3] && match[1] !== 'fleet')) return { tab: 'fleet', selected: null, profile: false, invalid: true }
-  return { tab: match[1] as WorkspaceLocation['tab'], selected: match[2] ?? null, profile: !!match[3], ...(match[1] === 'audit' ? { query: query ?? '' } : {}) }
+  const match = /^\/app\/(companies|fleet|today|sources|requirements|audit)(?:\/([a-zA-Z0-9-]{1,64})(\/(?:profile|onboarding|passport))?)?\/?$/.exec(path)
+  if (!match || (match[3] && match[1] !== 'fleet') || ((match[3] === '/onboarding' || match[3] === '/passport') && query.length > 0)) return { tab: 'fleet', selected: null, profile: false, invalid: true }
+  return { tab: match[1] as WorkspaceLocation['tab'], selected: match[2] ?? null, profile: match[3] === '/profile', ...(match[3] === '/onboarding' ? { onboarding: true } : {}), ...(match[3] === '/passport' ? { passport: true } : {}), ...(match[1] === 'audit' ? { query: query ?? '' } : {}) }
 }
 export function locationPath(route: WorkspaceLocation) {
-  return `/app/${route.tab}${route.selected && idPattern.test(route.selected) ? `/${route.selected}${route.profile ? '/profile' : ''}` : ''}${route.tab === 'audit' && route.query ? `?${route.query}` : ''}`
+  return `/app/${route.tab}${route.selected && idPattern.test(route.selected) ? `/${route.selected}${route.onboarding ? '/onboarding' : route.passport ? '/passport' : route.profile ? '/profile' : ''}` : ''}${route.tab === 'audit' && route.query ? `?${route.query}` : ''}`
 }
 
 // Entries carry only an index, never tenant/account data or form contents. Nothing is persisted in storage.

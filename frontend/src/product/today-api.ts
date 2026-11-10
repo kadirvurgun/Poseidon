@@ -16,7 +16,8 @@ export type MaintenanceEvidence = { planId: string; planRevision: number; assetI
 export type TodayTugEvidence = { jobId: string; requestRevision: number; requestIncomplete: boolean;
   planRevision: number | null; plannedRequestRevision: number | null; plannedStart: string | null; plannedEnd: string | null;
   assignedTugs: string[]; currentOwnerRoleId: string | null; evidence: PlanningEvidence | null }
-export type Why = Omit<DraftWhy, 'inputs' | 'maintenance'> & { inputs: DraftWhy['inputs'] | null; maintenance?: MaintenanceEvidence; tug?: TodayTugEvidence }
+export type WhySource = { kind: 'RegulatoryDraft' | 'MaintenancePlan' | 'TugJob'; id: string; revision: number | null }
+export type Why = Omit<DraftWhy, 'inputs' | 'maintenance' | 'source'> & { inputs: DraftWhy['inputs'] | null; maintenance?: MaintenanceEvidence; tug?: TodayTugEvidence; source?: WhySource }
 const pageLimit = 25
 const todayOffset = 0
 const object = (x: unknown): x is Record<string, unknown> => !!x && typeof x === 'object' && !Array.isArray(x)
@@ -60,14 +61,15 @@ export function decodeToday(x: unknown, id: string, offset = todayOffset): Today
   const sources = ['RegulatoryDraft', 'OperationalTasks', 'SafetyDecisions', 'Permits', 'EvidenceVerification', 'TechnicalMaintenance', 'TugPlanning']
   const vesselKind = x.vessel.kind
   if (!x.coverage.every((c, i) => object(c) && exact(c, ['source', 'status']) && c.source === sources[i] && one(c.status,
-    i === 0 ? ['Available', 'Missing'] : i === 5 || i === 6 && vesselKind === 'Tug' ? ['Available', 'Missing', 'Unavailable'] : ['Unavailable']))) fail()
+    i === 0 ? ['Available', 'Missing', 'Unavailable'] : i === 5 || i === 6 && vesselKind === 'Tug' ? ['Available', 'Missing', 'Unavailable'] : ['Unavailable']))) fail()
   const draftMissing = x.coverage[0].status === 'Missing'
+  const draftUnavailable = x.coverage[0].status === 'Unavailable'
   const canEdit = x.vessel.canEdit
   const maintenanceAvailable = x.coverage[5].status === 'Available'
   const tugAvailable = x.coverage[6].status === 'Available'
   if (!x.cards.items.every(c => {
     if (!object(c) || !exact(c, ['key', 'priority', 'source', 'reason', 'owner', 'nextAction', 'href'])) return false
-    if (c.key === 'regulatory-draft') return c.priority === 'Advisory' && c.source === 'RegulatoryDraft' &&
+    if (c.key === 'regulatory-draft') return !draftUnavailable && c.priority === 'Advisory' && c.source === 'RegulatoryDraft' &&
       c.reason === (draftMissing ? 'DraftAbsent' : 'DraftUnverified') && c.owner === null && c.nextAction === (canEdit ? 'ReviewDraft' : 'ViewDraft') && href(c.href, id)
     if (tugJobId(c.key) !== null) return tugAvailable && c.source === 'TugJob' && (c.owner === null || guid(c.owner)) &&
       (c.priority === 'Attention' && one(c.reason, tugAttention) || c.priority === 'Review' && one(c.reason, tugReview)) &&
@@ -83,6 +85,18 @@ export function decodeToday(x: unknown, id: string, offset = todayOffset): Today
   return x as Today
 }
 export function decodeWhy(x: unknown, id: string, cardKey = 'regulatory-draft'): Why {
+  if (!object(x) || !Object.hasOwn(x, 'source')) return decodeWhyPayload(x, id, cardKey)
+  const { source, ...payload } = x
+  const result = decodeWhyPayload(payload, id, cardKey)
+  if (!object(source) || !exact(source, ['kind', 'id', 'revision']) || !guid(source.id)) fail()
+  const kind = result.maintenance ? 'MaintenancePlan' : result.tug ? 'TugJob' : 'RegulatoryDraft'
+  const expectedId = result.maintenance?.planId ?? result.tug?.jobId ?? id
+  const expectedRevision = result.maintenance?.planRevision ?? result.tug?.requestRevision
+  if (source.kind !== kind || source.id !== expectedId ||
+    (expectedRevision !== undefined ? source.revision !== expectedRevision : result.reason === 'DraftAbsent' ? source.revision !== null : !integer(source.revision) || source.revision === 0)) fail()
+  return { ...result, source: source as WhySource }
+}
+function decodeWhyPayload(x: unknown, id: string, cardKey: string): Why {
   if (tugJobId(cardKey) !== null) return decodeTugWhy(x, id, cardKey)
   if (planId(cardKey) !== null) return decodeMaintenanceWhy(x, id, cardKey)
   if (cardKey !== 'regulatory-draft') fail()
@@ -94,7 +108,7 @@ export function decodeWhy(x: unknown, id: string, cardKey = 'regulatory-draft'):
     Number(x.inputs.known) + Number(x.inputs.missing) + Number(x.inputs.unknown) !== (x.reason === 'DraftAbsent' ? 0 : 20) ||
     !date(x.readAt) || !(x.savedAt === null || date(x.savedAt)) || !(x.sourceObservedAt === null || date(x.sourceObservedAt)) ||
     x.freshness !== 'Unverified' || (x.reason === 'DraftAbsent' ? x.provenance !== 'Missing' || x.savedAt !== null || x.sourceObservedAt !== null
-      : !one(x.provenance, ['Unknown', 'Synthetic', 'DeclaredUnverified']) || x.savedAt === null) ||
+      : !one(x.provenance, ['Missing', 'Unknown', 'Synthetic', 'DeclaredUnverified']) || x.savedAt === null) ||
     !Array.isArray(x.blockers) || x.blockers.length !== 2 || x.blockers[0] !== (x.reason === 'DraftAbsent' ? 'DraftAbsent' : 'VerificationUnavailable') ||
     x.blockers[1] !== 'OperationalSourcesUnavailable' || x.owner !== null || !one(x.nextAction, ['ViewDraft', 'ReviewDraft']) || !href(x.href, id)) fail()
   return x as Why

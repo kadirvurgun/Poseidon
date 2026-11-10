@@ -4,7 +4,7 @@
 .product-nav { display: flex; flex-wrap: wrap; align-items: center; gap: .7rem; padding: 1rem; border-bottom: 1px solid #d1dce3; background: white; }
 .product-nav a { margin-left: auto; color: #25556c; }
 .product-shell main { max-width: 1120px; margin: auto; padding: clamp(1rem, 4vw, 3rem); }
-.product-shell button:not([data-slot="button"]), .product-shell select { min-height: 44px; border: 1px solid #9eb3c0; border-radius: 6px; padding: .55rem 1rem; background: white; color: #193344; cursor: pointer; font: inherit; }
+.product-shell button:not([data-slot="button"]):not(.enterprise-nav-overlay), .product-shell select { min-height: 44px; border: 1px solid #9eb3c0; border-radius: 6px; padding: .55rem 1rem; background: white; color: #193344; cursor: pointer; font: inherit; }
 .product-shell button[aria-current=page] { background: #193e52; color: white; }
 .product-shell button:disabled { opacity: .55; cursor: default; }
 .product-shell :focus-visible { outline: 3px solid #c77616; outline-offset: 3px; }
@@ -94,10 +94,10 @@
 .lifecycle-applicability textarea { width: 100%; }
 .lifecycle-applicability pre { white-space: pre-wrap; overflow-wrap: anywhere; }
 .lifecycle-applicability p, .lifecycle-applicability li, .lifecycle-applicability button, .lifecycle-applicability summary { overflow-wrap: anywhere; }
-.lifecycle-applicability button { min-height: 44px; max-width: 100%; white-space: normal; }
+.lifecycle-applicability button:not([data-slot="button"]) { min-height: 44px; max-width: 100%; white-space: normal; }
 .crew-shell { grid-template-columns: minmax(0, 1fr); }
 .crew-shell main { grid-column: 1; grid-row: 2; }
-.crew-shell nav { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem; }
+.crew-shell .crew-enterprise-breadcrumbs { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem; }
 .crew-shell form { margin-top: 1.5rem; }
 .crew-shell fieldset { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; min-width: 0; margin: 1rem 0; }
 .crew-shell label { display: flex; flex-direction: column; gap: .4rem; min-width: 0; }
@@ -111,7 +111,7 @@
 .control-evidence input, .control-evidence select, .control-evidence textarea { width: 100%; min-width: 0; max-width: 100%; min-height: 44px; box-sizing: border-box; padding: .6rem; font: inherit; }
 .control-evidence input[type=checkbox] { width: 1.5rem; }
 .control-evidence p, .control-evidence li, .control-evidence button, .control-evidence summary { overflow-wrap: anywhere; }
-.control-evidence button { min-height: 44px; max-width: 100%; white-space: normal; }
+.control-evidence button:not([data-slot="button"]) { min-height: 44px; max-width: 100%; white-space: normal; }
 .control-evidence :focus-visible { outline: 3px solid #126b94; outline-offset: 3px; }
 .control-evidence article { padding: 1rem; margin-block: 1rem; border: 1px solid #9eb3c0; }
 .human-review { border-block-start: 1px solid var(--border, #718096); margin-block-start: 1rem; padding-block-start: 1rem; min-width: 0; }

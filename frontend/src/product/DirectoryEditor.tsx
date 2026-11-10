@@ -3,6 +3,8 @@ import type { FormEvent } from 'react'
 import * as api from './api'
 import { editorCopy } from './editor-copy'
 import type { Language } from './editor-copy'
+import { Button } from '../components/ui/button'
+import { EnterpriseActions, EnterpriseField, EnterpriseFormGrid } from './EnterprisePatterns'
 
 export type EditorTarget = { instanceKey?: string; resource: 'companies' | 'vessels'; record?: api.DirectoryRecord }
 type Props = { target: EditorTarget; language: Language; csrf: string; onDirty: (dirty: boolean) => void; onSaving: (saving: boolean) => void; onCancel: () => void; onReload: () => void; onSaved: (record: api.DirectoryRecord) => void }
@@ -83,21 +85,21 @@ export function DirectoryEditor({ target, language, csrf, onDirty, onSaving, onC
   return <section className="directory-editor" aria-labelledby="editor-heading">
     <h2 id="editor-heading" ref={heading} tabIndex={-1}>{initial ? t.edit : t.create}</h2>
     <p>{t.requiredNote}</p>
-    <form noValidate onSubmit={e => void submit(e)} aria-busy={saving}>
-      <fieldset disabled={saving || uncertain}>
-        <label htmlFor="dir-code">{t.code} *</label><input id="dir-code" value={code} maxLength={64} required aria-invalid={!!errors.code?.length} aria-describedby="dir-code-error" onChange={e => change('code', e.target.value)} />{fieldError('code')}
-        <label htmlFor="dir-name">{t.name} *</label><input id="dir-name" value={name} maxLength={200} required aria-invalid={!!errors.name?.length} aria-describedby="dir-name-error" onChange={e => change('name', e.target.value)} />{fieldError('name')}
+    <form noValidate aria-label={language === 'en' ? 'Directory record form' : 'Kayıt formu'} onSubmit={e => void submit(e)} aria-busy={saving}>
+      <EnterpriseFormGrid disabled={saving || uncertain}>
+        <EnterpriseField label={`${t.code} *`} htmlFor="dir-code"><input id="dir-code" value={code} maxLength={64} required aria-invalid={!!errors.code?.length} aria-describedby={errors.code?.length ? 'dir-code-error' : undefined} onChange={e => change('code', e.target.value)} />{fieldError('code')}</EnterpriseField>
+        <EnterpriseField label={`${t.name} *`} htmlFor="dir-name"><input id="dir-name" value={name} maxLength={200} required aria-invalid={!!errors.name?.length} aria-describedby={errors.name?.length ? 'dir-name-error' : undefined} onChange={e => change('name', e.target.value)} />{fieldError('name')}</EnterpriseField>
         {vesselCreate && <>
-          <label htmlFor="dir-kind">{t.kind} *</label><select id="dir-kind" required value={kind} aria-invalid={!!errors.kind?.length} aria-describedby="dir-kind-error" onChange={e => change('kind', e.target.value)}><option value="">{t.choose}</option><option value="Ship">{t.ship}</option><option value="Tug">{t.tug}</option></select>{fieldError('kind')}
-          <label htmlFor="dir-companyId">{t.company} *</label><select id="dir-companyId" required value={companyId} aria-invalid={!!errors.companyId?.length} aria-describedby="dir-companyId-error" onChange={e => change('companyId', e.target.value)}><option value="">{t.choose}</option>{companyId && !choices?.items.some(c => c.id === companyId) && <option value={companyId}>{companyId}</option>}{choices?.items.map(c => <option key={c.id} value={c.id}>{c.code} · {c.name}</option>)}</select>{fieldError('companyId')}
-          {!choices && !choiceError && <p role="status">{t.loading}</p>}
-          {choiceError && <p role="alert">{t.failed} <button type="button" onClick={() => { setChoiceError(false); setChoiceAttempt(v => v + 1) }}>{t.reloadCompanies}</button></p>}
-          {choices && <div className="form-actions"><button type="button" disabled={choiceOffset === 0} onClick={() => { setChoices(null); setChoiceOffset(v => v - 25) }}>{t.previous}</button><button type="button" disabled={!choices.hasMore} onClick={() => { setChoices(null); setChoiceOffset(v => v + 25) }}>{t.next}</button></div>}
+          <EnterpriseField label={`${t.kind} *`} htmlFor="dir-kind"><select id="dir-kind" required value={kind} aria-invalid={!!errors.kind?.length} aria-describedby={errors.kind?.length ? 'dir-kind-error' : undefined} onChange={e => change('kind', e.target.value)}><option value="">{t.choose}</option><option value="Ship">{t.ship}</option><option value="Tug">{t.tug}</option></select>{fieldError('kind')}</EnterpriseField>
+          <EnterpriseField label={`${t.company} *`} htmlFor="dir-companyId"><select id="dir-companyId" required value={companyId} aria-invalid={!!errors.companyId?.length} aria-describedby={errors.companyId?.length ? 'dir-companyId-error' : undefined} onChange={e => change('companyId', e.target.value)}><option value="">{t.choose}</option>{companyId && !choices?.items.some(c => c.id === companyId) && <option value={companyId}>{companyId}</option>}{choices?.items.map(c => <option key={c.id} value={c.id}>{c.code} · {c.name}</option>)}</select>{fieldError('companyId')}</EnterpriseField>
+          {!choices && !choiceError && <p className="enterprise-form-full" role="status">{t.loading}</p>}
+          {choiceError && <div className="enterprise-form-full" role="alert"><p>{t.failed}</p><Button variant="outline" onClick={() => { setChoiceError(false); setChoiceAttempt(v => v + 1) }}>{t.reloadCompanies}</Button></div>}
+          {choices && <EnterpriseActions className="enterprise-form-full" aria-label={language === 'en' ? 'Company choices pagination' : 'Şirket seçenekleri sayfalama'}><Button variant="outline" disabled={choiceOffset === 0} onClick={() => { setChoices(null); setChoiceOffset(v => v - 25) }}>{t.previous}</Button><Button variant="outline" disabled={!choices.hasMore} onClick={() => { setChoices(null); setChoiceOffset(v => v + 25) }}>{t.next}</Button></EnterpriseActions>}
         </>}
-      </fieldset>
+      </EnterpriseFormGrid>
       {initial && 'kind' in initial && <p>{t.immutable} {initial.kind === 'Ship' ? t.ship : t.tug}</p>}
-      {failure && <div role="alert"><p>{errorText}</p>{failure.correlationId && <p>{t.reference}: <code>{failure.correlationId}</code></p>}{failure.code === 'version_conflict' && <button type="button" onClick={onReload}>{t.reload}</button>}</div>}
-      <div className="form-actions"><button className="primary-button" type="submit" disabled={saving || failure?.code === 'version_conflict'}>{saving ? t.saving : uncertain ? t.retry : t.save}</button><button type="button" disabled={saving} onClick={onCancel}>{t.cancel}</button></div>
+      {failure && <div role="alert"><p>{errorText}</p>{failure.correlationId && <p>{t.reference}: <code>{failure.correlationId}</code></p>}{failure.code === 'version_conflict' && <Button variant="outline" onClick={onReload}>{t.reload}</Button>}</div>}
+      <EnterpriseActions layout="form" aria-label={language === 'en' ? 'Form actions' : 'Form işlemleri'}><Button variant="outline" disabled={saving} onClick={onCancel}>{t.cancel}</Button><Button type="submit" disabled={saving || failure?.code === 'version_conflict'}>{saving ? t.saving : uncertain ? t.retry : t.save}</Button></EnterpriseActions>
     </form>
   </section>
 }

@@ -8,7 +8,7 @@ public static class SecurityEventCodes
 {
     public static IReadOnlySet<string> Actions { get; } = new string[]
     {
-        "RequestValidation", "AccessDenied", "Applicability", "ApplicabilityCommand", "ApplicabilityCurrentRead",
+        "RequestValidation", "AccessDenied", "Applicability", "ApplicabilityCommand", "ApplicabilityCurrentRead", "CertificateRead", "CertificateCommand", "CertificateExtraction", "DowntimeRead", "DowntimeCommand", "DowntimeOriginRead", "WorkOrderRead", "WorkOrderCommand", "WorkOrderPlanOriginRead", "DefectRead", "DefectCommand", "DefectAssetContextRead",
         "ApplicabilityHistory", "ApplicabilityRead", "ApplicabilitySimulation", "AuditDetail",
         "AuditQuery", "AuditRevision", "CompaniesRead", "CompanyCreate",
         "CompanyUpdate", "ControlEvidence", "ControlEvidenceCommand", "ControlEvidenceRead",
@@ -28,15 +28,15 @@ public static class SecurityEventCodes
         "RegulatorySourceBytesRead", "RuleCapabilities", "RulesRead", "Session",
         "TodayRead", "TodayWhyRead", "TugRead", "TugSave",
         "VesselCreate", "VesselUpdate", "VesselsRead", "WorkspaceRead",
-        "WorkspaceSearch",
+        "WorkspaceSearch", "SystemHealthRead", "NotificationRead", "NotificationCommand", "ComplianceWorkspaceRead", "DailyOfflineRead", "DailyOfflineRequest", "DailyOperationsRead", "DailyOperationsCommand", "DailyReviewRead", "DailyReviewCommand", "ShipOperationsRead", "ShipOperationsCommand",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static IReadOnlySet<string> Results { get; } = new string[]
     {
-        "Attempted", "Authorized", "Denied", "Failed",
+        "Attempted", "Authorized", "Denied", "Failed", "asset_context_stale", "plan_context_stale", "origin_context_stale",
         "Invalid", "NotFound", "SetupRequired", "Success",
         "Unauthenticated", "acknowledgment_role_required", "assignment_policy_denied", "attestation_authority_changed",
         "attestation_policy_mismatch", "authoritative_evaluation_unavailable", "catalog_authority_changed", "catalog_version_reused",
-        "catalog_incomplete", "invalid_transition",
+        "catalog_incomplete", "invalid_transition", "command_outcome_withheld",
         "clean_file_unavailable", "command_reuse_conflict", "conflict_changed", "construction_record_required",
         "construction_record_unavailable", "csrf_invalid", "current_evaluation_requires_server_time", "decision_content_required",
         "decision_type_gate_unavailable", "duplicate_code", "duplicate_lineage", "enrollment_limit",

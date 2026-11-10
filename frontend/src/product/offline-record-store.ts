@@ -141,6 +141,24 @@ export class OfflineEncryptedRecordStore {
     })
   }
 
+  // A lower write quota does not truncate the inventory of retained captures.
+  // Bound the full read by the caller's protocol ceiling, including an extra
+  // sentinel read at that ceiling; never return a falsely complete first page.
+  async listRetained(maximumRecords: number): Promise<readonly OfflineStoredHeader[]> {
+    if (!Number.isSafeInteger(maximumRecords) || maximumRecords < 1 || maximumRecords > 512)
+      throw new OfflineStoreError('invalid_configuration')
+    const headers: OfflineStoredHeader[] = []
+    let after: string | undefined
+    for (;;) {
+      const requested = Math.min(this.limits.maxRecords, maximumRecords - headers.length + 1)
+      const page = await this.list(requested, after)
+      if (headers.length + page.length > maximumRecords) throw new OfflineStoreError('invalid_record')
+      headers.push(...page)
+      if (page.length < requested) return headers
+      after = page[page.length - 1].commandId
+    }
+  }
+
   async put(commandId: string, sealed: OfflineSealedRecord, expectedRevision: number | null): Promise<OfflineStoredHeader> {
     const canonicalId = identifier(commandId), key = this.key(canonicalId)
     if (expectedRevision !== null && (!Number.isSafeInteger(expectedRevision) || expectedRevision < 1 || expectedRevision >= Number.MAX_SAFE_INTEGER))

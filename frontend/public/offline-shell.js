@@ -9,6 +9,7 @@ const inventory = Array.isArray(manifest) ? new Map(manifest.map(x => [x.path, x
 const uuid = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 const crewPath = new RegExp(`^/app/crew-roster/${uuid}(?:/crew-profile/${uuid})?$`)
 const tugPath = new RegExp(`^/app/tug-job-detail/${uuid}$`)
+const dailyPath = new RegExp(`^/app/(?:noon-report|deck-daily-log|engine-daily-log)/${uuid}/?$`)
 const vesselId = new RegExp(`^${uuid}$`)
 async function publicArtifact(entry) {
   const response = await fetch(entry.path, { credentials: 'omit', cache: 'no-cache', redirect: 'error' })
@@ -50,17 +51,21 @@ self.addEventListener('activate', event => event.waitUntil((async () => {
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url)
   if (event.request.method !== 'GET' || url.origin !== self.location.origin) return
-  // Only a syntactically scoped Tug detail navigation may carry one vessel ID.
+  // Scoped navigation may carry only its closed, noncredential context IDs.
   // Query values never become cache keys; the fallback is the public index only.
   const tug = event.request.mode === 'navigate' && tugPath.test(url.pathname) &&
     [...url.searchParams.keys()].length === 1 && url.searchParams.has('vessel') && vesselId.test(url.searchParams.get('vessel'))
-  if (url.search && !tug) return
+  const dailyKeys = [...url.searchParams.keys()]
+  const daily = event.request.mode === 'navigate' && dailyPath.test(url.pathname) &&
+    (dailyKeys.length === 0 || dailyKeys.length === 1 && ['id', 'draft'].includes(dailyKeys[0]) &&
+      vesselId.test(url.searchParams.get(dailyKeys[0])))
+  if (url.search && !tug && !daily) return
   const crew = event.request.mode === 'navigate' && crewPath.test(url.pathname)
   const entry = inventory.get(url.pathname)
-  if (!crew && !tug && (!entry || url.pathname === '/index.html')) return
+  if (!crew && !tug && !daily && (!entry || url.pathname === '/index.html')) return
   event.respondWith((async () => {
     const cache = await caches.open(shellCache)
-    if (crew || tug) {
+    if (crew || tug || daily) {
       try { return await fetch(event.request) }
       catch { const response = await cache.match('/index.html'); if (response) return response; throw new Error('static_shell_unavailable') }
     }

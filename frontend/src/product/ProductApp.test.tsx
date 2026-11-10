@@ -1,4 +1,4 @@
-import { navigationTestIdentity, navigationTestRole, navigationTestWorkspace, openNavigationTestWorkView } from './workspace-navigation.test-fixture'
+import { navigationTestIdentity, navigationTestRole, navigationTestWorkspace, openNavigationTestWorkView, openNavigationTestOverview } from './workspace-navigation.test-fixture'
 vi.mock('./workspace-lens-api', async original => ({ ...await original<typeof import('./workspace-lens-api')>(),
   loadLenses: vi.fn(async (tenant: string, actor: string, vessel: string | null) => (await import('./workspace-navigation.test-fixture')).navigationTestLenses(tenant, actor, vessel)) }))
 vi.mock('./workspace-context-api', async original => ({ ...await original<typeof import('./workspace-context-api')>(),
@@ -71,7 +71,8 @@ describe('FOUNDATION-APP-01 product states (mocked HTTP, not backend acceptance)
     expect(await screen.findByRole('region', { name: 'Ayrıntılar' })).toHaveTextContent('Synthetic Company')
     await openNavigationTestWorkView(user)
     await user.selectOptions(await screen.findByLabelText('Menü merceği'), navigationTestRole)
-    await user.click(within(screen.getByRole('navigation', { name: 'Günlük iş menüsü' })).getByRole('button', { name: 'Filo' }))
+    await openNavigationTestOverview(user)
+    await user.click(within(screen.getByRole('navigation', { name: 'POSEIDON' })).getByRole('button', { name: 'Filo' }))
     await user.selectOptions(screen.getByLabelText('Araç türü'), 'Tug')
     expect(await screen.findByRole('button', { name: 'Synthetic Tug' })).toBeVisible()
     await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('/api/v1/vessels?offset=0&limit=25&kind=Tug', expect.objectContaining({ credentials: 'same-origin' })))
@@ -90,7 +91,7 @@ describe('FOUNDATION-APP-01 product states (mocked HTTP, not backend acceptance)
     })
     vi.stubGlobal('fetch', fetchMock)
     const user = userEvent.setup(); render(<ProductApp />)
-    if (tab === 'Filo') { await openNavigationTestWorkView(user); await user.selectOptions(await screen.findByLabelText('Menü merceği'), navigationTestRole); await user.click(within(screen.getByRole('navigation', { name: 'Günlük iş menüsü' })).getByRole('button', { name: tab })) }
+    if (tab === 'Filo') { await openNavigationTestWorkView(user); await user.selectOptions(await screen.findByLabelText('Menü merceği'), navigationTestRole); await openNavigationTestOverview(user); await user.click(within(screen.getByRole('navigation', { name: 'POSEIDON' })).getByRole('button', { name: tab })) }
     const row = await screen.findByRole('button', { name: rowName })
     await user.click(row)
     const detail = await screen.findByRole('region', { name: 'Ayrıntılar' })

@@ -1,6 +1,9 @@
+import { Button } from '../components/ui/button'
+import { EnterpriseActions, EnterprisePagination, EnterpriseToolbar } from './EnterprisePatterns'
+import { OfflineCaptureMetadata, OfflineQueueSummary } from './OfflineQueueSummary'
 import { useEffectEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { ApiError } from './api'
-import { OfflineConflictReview, type OfflineConflictResolution } from './OfflineConflictReview'
+import { OfflineConflictReview, type OfflineConflictResolution, type OfflineConflictValue } from './OfflineConflictReview'
 import { OfflineApplication, inventory, discardLostCaptures, prepareOfflineShell, type OfflineInventory, type PendingCapture, type OfflineConflictDetail, type OfflineOutcome } from './offline-application'
 
 export function OfflineApplicationPanel({ vessel, assignment, language, onDirty }: {
@@ -119,7 +122,10 @@ export function OfflineApplicationPanel({ vessel, assignment, language, onDirty 
     if (fresh(current, signal)) { setHistory(page.items); setHistoryOffset(page.offset); setHistoryMore(page.hasMore) }
   })
   const live = active && authorizedContext !== null
-  return <section aria-label={en ? 'Durable offline drafts' : 'Kalıcı çevrimdışı taslaklar'}>
+  const before: OfflineConflictValue = conflict?.base.kind === 'known' && typeof conflict.base.text === 'string' ? { kind: 'known', text: conflict.base.text }
+    : conflict?.base.kind === 'missing' ? { kind: 'missing' } : conflict?.base.kind === 'withheld' ? { kind: 'withheld' } : { kind: 'unknown' }
+  const displayedConflict = conflict ? { ...conflict, fields: conflict.fields.map(field => field.key === 'watch_group' ? { ...field, before } : field) } : null
+  return <section className="offline-workspace" aria-label={en ? 'Durable offline drafts' : 'Kalıcı çevrimdışı taslaklar'}>
     <h2>{en ? 'Durable offline drafts' : 'Kalıcı çevrimdışı taslaklar'}</h2>
     <p>{en ? 'Only configured draft watch groups can be cached and captured here. Identity, health, certificates and operational decisions are excluded. Drafts remain unverified.'
       : 'Burada yalnız yapılandırılmış taslak vardiya grupları saklanabilir. Kimlik, sağlık, belgeler ve operasyonel kararlar kapsam dışıdır. Taslaklar doğrulanmamıştır.'}</p>
@@ -129,46 +135,44 @@ export function OfflineApplicationPanel({ vessel, assignment, language, onDirty 
       : status === 'failed' ? (en ? 'Request failed or outcome unknown. Stored captures retained. Reauthorize and retry the same command.' : 'İstek başarısız veya sonuç belirsiz. Kayıtlar korunuyor. Yeniden yetkilendirip aynı komutu deneyin.')
       : (en ? 'Stored drafts are locked. Connect and explicitly authorize recovery.' : 'Saklanan taslaklar kilitli. Bağlanıp kurtarmayı açıkça yetkilendirin.')}</p>
     <a href={`/api/v1/auth/login?returnUrl=${encodeURIComponent(`/app/crew-roster/${vessel}/crew-profile/${assignment}`)}`}>{en ? 'Sign in again' : 'Yeniden oturum aç'}</a>
-    <button disabled={!online || busy || dirty} onClick={() => void refresh()}>{en ? 'Find retained contexts' : 'Korunan bağlamları bul'}</button>
-    <label>{en ? 'Offline context' : 'Çevrimdışı bağlam'}<select value={selected} disabled={busy || dirty} onChange={e => { withdraw(); setSelected(e.target.value) }}>
+    <Button variant="outline" disabled={!online || busy || dirty} onClick={() => void refresh()}>{en ? 'Find retained contexts' : 'Korunan bağlamları bul'}</Button>
+    <EnterpriseToolbar><label>{en ? 'Offline context' : 'Çevrimdışı bağlam'}<select value={selected} disabled={busy || dirty} onChange={e => { withdraw(); setSelected(e.target.value) }}>
       <option value="">{en ? 'Enroll new device key' : 'Yeni cihaz anahtarı kaydet'}</option>
       {selected && !contexts.some(x => x.id === selected) && <option value={selected}>{en ? 'Current retained context' : 'Geçerli korunan bağlam'}</option>}
       {contexts.map((c, index) => <option key={c.id} value={c.id}>{en ? 'Retained context' : 'Korunan bağlam'} {index + 1}{c.revokedAt ? (en ? ' · revoked' : ' · iptal edildi') : ''}</option>)}
     </select></label>
-    <button disabled={!online || busy} onClick={() => void authorize()}>{en ? 'Authorize / renew / recover' : 'Yetkilendir / yenile / kurtar'}</button>
+    <Button variant="outline" disabled={!online || busy} onClick={() => void authorize()}>{en ? 'Authorize / renew / recover' : 'Yetkilendir / yenile / kurtar'}</Button></EnterpriseToolbar>
     {live && snapshot && <>
       <p>{en ? 'Cached unverified base' : 'Saklanan doğrulanmamış temel'} · {snapshot.revision} · {snapshot.watchGroup ?? (en ? 'Unknown' : 'Bilinmiyor')}</p>
       <label>{en ? 'Offline draft watch group' : 'Çevrimdışı taslak vardiya grubu'}<select value={watch} disabled={busy} onChange={e => { setWatch(e.target.value); setDirty(true) }}>
         <option value="">{en ? 'Unknown' : 'Bilinmiyor'}</option>{authorizedContext?.watchGroups.map(v => <option key={v}>{v}</option>)}
       </select></label>
-      <button disabled={busy} onClick={() => void capture()}>{en ? 'Capture encrypted draft' : 'Şifreli taslak kaydet'}</button>
-      <button disabled={busy} onClick={() => { setWatch(snapshot.watchGroup ?? ''); setDirty(false) }}>{en ? 'Discard unsaved editor' : 'Kaydedilmemiş düzenlemeyi bırak'}</button>
-      <ul aria-label={en ? 'Stored capture status' : 'Saklanan kayıt durumu'}>{captures.map((row, index) => <li key={row.commandId}>
+      <EnterpriseActions aria-label={en ? 'Local capture actions' : 'Yerel yakalama işlemleri'}><Button variant="outline" disabled={busy} onClick={() => { setWatch(snapshot.watchGroup ?? ''); setDirty(false) }}>{en ? 'Discard unsaved editor' : 'Kaydedilmemiş düzenlemeyi bırak'}</Button><Button disabled={busy} onClick={() => void capture()}>{en ? 'Capture encrypted draft' : 'Şifreli taslak kaydet'}</Button></EnterpriseActions>
+      <OfflineQueueSummary captures={captures} language={language} /><ul className="offline-capture-list" aria-label={en ? 'Stored capture status' : 'Saklanan kayıt durumu'}>{captures.map((row, index) => <li key={row.commandId}>
         {en ? 'Capture' : 'Kayıt'} {index + 1} · {row.outcome?.result ?? (en ? 'Unsent / outcome unknown' : 'Gönderilmemiş / sonuç belirsiz')}
-        <button disabled={busy || !online} onClick={() => void replay(row)}>{en ? 'Replay / check original outcome' : 'Tekrarla / özgün sonucu sorgula'}</button>
-        {row.outcome?.result === 'MaterialConflict' && <button disabled={busy || !online} onClick={() => void review(row.commandId)}>{en ? 'Review material conflict' : 'Maddi çakışmayı incele'}</button>}
-        <button disabled={busy || !confirmDiscard} onClick={() => void run(async (signal, current) => {
+        <OfflineCaptureMetadata capture={row} language={language} /><EnterpriseActions align="start" aria-label={en ? 'Capture actions' : 'Yakalama işlemleri'}>
+        <Button variant="outline" disabled={busy || !online} onClick={() => void replay(row)}>{en ? 'Replay / check original outcome' : 'Tekrarla / özgün sonucu sorgula'}</Button>
+        {row.outcome?.result === 'MaterialConflict' && <Button variant="outline" disabled={busy || !online} onClick={() => void review(row.commandId)}>{en ? 'Review material conflict' : 'Maddi çakışmayı incele'}</Button>}
+        <Button variant="outline" disabled={busy || !confirmDiscard} onClick={() => void run(async (signal, current) => {
           const value = app.current; if (!value) return
           await value.discard(row, confirmDiscard); const rows = await value.captures()
           if (fresh(current, signal)) { setCaptures(rows); setConfirmDiscard(false) }
-        })}>{en ? 'Discard this stored capture' : 'Bu saklanan kaydı sil'}</button>
+        })}>{en ? 'Discard this stored capture' : 'Bu saklanan kaydı sil'}</Button></EnterpriseActions>
       </li>)}</ul>
-      <button disabled={busy || !online} onClick={() => void loadHistory(0)}>{en ? 'Load synchronization history' : 'Eşitleme geçmişini yükle'}</button>
+      <Button variant="outline" disabled={busy || !online} onClick={() => void loadHistory(0)}>{en ? 'Load synchronization history' : 'Eşitleme geçmişini yükle'}</Button>
       <ul aria-label={en ? 'Synchronization history' : 'Eşitleme geçmişi'}>{history.map((o, i) => <li key={o.commandId}>{i + 1} · {o.result} · {o.revision} · {o.receivedAt}{o.parentCommandId ? (en ? ' · explicit resolution lineage' : ' · açık çözüm bağı') : ''}</li>)}</ul>
-      <button disabled={busy || !online || historyOffset === 0} onClick={() => void loadHistory(Math.max(0, historyOffset - 25))}>{en ? 'Previous synchronization history' : 'Önceki eşitleme geçmişi'}</button>
-      <button disabled={busy || !online || !historyMore} onClick={() => void loadHistory(historyOffset + 25)}>{en ? 'Next synchronization history' : 'Sonraki eşitleme geçmişi'}</button>
-      <button disabled={busy || !online || !confirmDiscard} onClick={() => void run(async signal => { await app.current?.revoke(false, signal); withdraw() })}>{en ? 'Revoke device context and retain data' : 'Cihaz bağlamını iptal et ve veriyi koru'}</button>
+      <EnterprisePagination label={en ? 'Synchronization history pages' : 'Eşitleme geçmişi sayfaları'} previous={en ? 'Previous synchronization history' : 'Önceki eşitleme geçmişi'} next={en ? 'Next synchronization history' : 'Sonraki eşitleme geçmişi'} previousDisabled={busy || !online || historyOffset === 0} nextDisabled={busy || !online || !historyMore} onPrevious={() => void loadHistory(Math.max(0, historyOffset - 25))} onNext={() => void loadHistory(historyOffset + 25)} />
+      <Button variant="outline" disabled={busy || !online || !confirmDiscard} onClick={() => void run(async signal => { await app.current?.revoke(false, signal); withdraw() })}>{en ? 'Revoke device context and retain data' : 'Cihaz bağlamını iptal et ve veriyi koru'}</Button>
     </>}
     <label><input type="checkbox" checked={confirmDiscard} onChange={e => setConfirmDiscard(e.target.checked)} />{en ? 'I confirm the selected discard or revocation; unsent data may be irrecoverable.' : 'Seçilen silme veya iptali onaylıyorum; gönderilmemiş veri kurtarılamayabilir.'}</label>
-    {selected && !live && <button disabled={!online || busy || !confirmDiscard} onClick={() => void run(async (signal, current) => {
+    {selected && !live && <Button variant="outline" disabled={!online || busy || !confirmDiscard} onClick={() => void run(async (signal, current) => {
       await discardLostCaptures(vessel, assignment, selected, confirmDiscard, signal)
       if (fresh(current, signal)) { setSelected(''); setStatus('retained'); setConfirmDiscard(false) }
-    })}>{en ? 'Discard retained ciphertext and report key loss' : 'Korunan şifreli veriyi sil ve anahtar kaybını bildir'}</button>}
+    })}>{en ? 'Discard retained ciphertext and report key loss' : 'Korunan şifreli veriyi sil ve anahtar kaybını bildir'}</Button>}
     {live && conflict && <>
-      <p>{en ? 'Authorized base value' : 'Yetkili temel değer'}: {conflict.base.kind === 'known' ? conflict.base.text : (en ? 'Unknown / withheld' : 'Bilinmiyor / gizli')}</p>
       {conflict.resolved && <p>{en ? 'Recorded resolution' : 'Kayıtlı çözüm'} · {conflict.resolvedValue?.kind === 'known' ? conflict.resolvedValue.text : (en ? 'Unknown / withheld' : 'Bilinmiyor / gizli')}
         {conflict.resolvedBy === authorizedContext?.actorId ? (en ? ' · attributed to this account' : ' · bu hesaba atfedildi') : ''} · {conflict.resolutionReason}</p>}
-      <OfflineConflictReview language={language} contextKey={authorizedContext!.id} state="ready" conflict={conflict}
+      <OfflineConflictReview language={language} contextKey={authorizedContext!.id} state="ready" conflict={displayedConflict}
         canResolve={conflict.resolved === null && conflict.currentVersion === Number(conflict.revision)} online={online} operation={busy ? 'submitting' : uncertain ? 'outcomeUnknown' : 'idle'}
         reasonLimit={500} onResolve={r => void resolve(r)} onCheckOutcome={() => void review(conflict.id)} onRetry={() => void review(conflict.id)} />
     </>}

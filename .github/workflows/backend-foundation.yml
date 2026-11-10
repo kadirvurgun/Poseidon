@@ -59,6 +59,8 @@ jobs:
               output.write(f"POSEIDON_GATE_CLAMD_PORT={state['port']}\n")
           PY
       - name: PostgreSQL integration tests
+        env:
+          POSEIDON_API_GATE_SHARDS: 4
         run: |
           dotnet test --project tests/Poseidon.Persistence.Tests/Poseidon.Persistence.Tests.csproj --configuration Release --no-build --filter-trait "Category=Integration"
           python3 scripts/s3_gate.py --image "$(cat .runtime/s3-gate-image-id)" --child-timeout 1980 -- python3 scripts/api_test_gate.py --scope integration
@@ -147,6 +149,10 @@ jobs:
           git diff --exit-code -- frontend/src/generated/api.d.ts
           npm run lint --prefix frontend
           npm run typecheck --prefix frontend
+      - name: Signed lane fixture protocol unit tests
+        run: node --test tests/Poseidon.Browser.Tests/lab/register-lane-fixture.test.ts tests/Poseidon.Browser.Tests/lab/signed-case.test.ts
+      - name: Source fixture journal fault and restart unit tests
+        run: node --test scripts/test_bundle_fixture_journal.ts scripts/test_bundle_legacy_context.ts
       - name: Component tests
         run: npm test --prefix frontend
       - name: Build frontend and real API

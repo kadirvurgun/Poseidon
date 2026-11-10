@@ -1,0 +1,22 @@
+.enterprise-shell .ship-operations-fields .enterprise-form-grid { margin-block:20px; padding:22px; border:1px solid var(--border); border-radius:10px; background:var(--card); }
+.enterprise-shell .ship-operations-fields legend { padding-inline:6px; font-weight:650; }
+.enterprise-shell .ship-operations-field { min-width:0; display:grid; gap:12px; padding:16px; border:1px solid var(--border); border-radius:8px; }
+.enterprise-shell .ship-operations-field-wide { grid-column:1/-1; }
+.enterprise-shell .ship-operations-field-heading { display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:6px 16px; font-weight:600; }
+.enterprise-shell .ship-operations-field-heading small,.enterprise-shell .ship-operations-hint { color:var(--muted-foreground); font-size:12px; font-weight:400; }
+.enterprise-shell .ship-operations-hint { margin:0; }
+.enterprise-shell .ship-operations-field input,.enterprise-shell .ship-operations-field select,.enterprise-shell .ship-operations-field textarea { width:100%; min-width:0; margin:0; }
+.enterprise-shell .ship-operations-field textarea { resize:vertical; }
+@media(max-width:600px) { .enterprise-shell .ship-operations-fields .enterprise-form-grid { padding:16px; } .enterprise-shell .ship-operations-field { padding:14px; } }
+
+.ship-operations-workspace main { min-width:0; }
+.enterprise-shell .ship-operations-status-line { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+.enterprise-shell .ship-operations-record-list,.enterprise-shell .ship-operations-vessels { display:grid; gap:16px; list-style:none; padding:0; }
+.enterprise-shell .ship-operations-record-list > li,.enterprise-shell .ship-operations-origin,.enterprise-shell .ship-operations-record-summary { min-width:0; padding:20px; border:1px solid var(--border); border-radius:10px; background:var(--card); margin-block:16px; }
+.enterprise-shell .ship-operations-record-list > li .ship-operations-record-summary { border:0; padding:0; margin-block:16px 0; }
+.enterprise-shell .ship-operations-summary-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px 24px; }
+.enterprise-shell .ship-operations-summary-grid dd { margin:6px 0 0; overflow-wrap:anywhere; }
+.enterprise-shell .ship-operations-declared-text { white-space:pre-wrap; }
+.ship-operations-workspace code { white-space:normal; overflow-wrap:anywhere; }
+.enterprise-shell .ship-operations-timeline { border-inline-start:2px solid var(--border); padding-inline-start:18px; }
+@media(max-width:600px) { .enterprise-shell .ship-operations-summary-grid { grid-template-columns:minmax(0,1fr); } .enterprise-shell .ship-operations-record-list > li,.enterprise-shell .ship-operations-origin,.enterprise-shell .ship-operations-record-summary { padding:16px; } }

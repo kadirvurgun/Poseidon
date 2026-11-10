@@ -1,15 +1,19 @@
+import { ApplicabilityReasonView, CapturedEvaluationInputs } from './ApplicabilityReasonView'
+import { Button } from '../components/ui/button'
+import { EnterpriseActions, EnterprisePagination } from './EnterprisePatterns'
+import './regulatory-enterprise.css'
+import './compliance-enterprise.css'
 import { ComplianceEvaluationSelector } from './ComplianceInputEditor'
 import type { OwningReferences } from './compliance-input-contract'
 import { RegulatoryQualification } from './RegulatoryQualification'
 import { OwningEvaluationSelector } from './OperationEquipmentEditor'
 import * as qualification from './qualification-api'
 import { useLayoutEffect, useEffect, useRef, useState } from 'react'
-import type { ReactNode } from 'react'
 import * as service from './applicability-api'
 import * as directory from './api'
 import { isGuid } from './identifiers'
 import { timestamp } from './date-validation'
-import type { Capabilities, Evaluation, FrozenCommand, Page, Reason, RuleDraft, HistoryItem } from './applicability-api'
+import type { Capabilities, Evaluation, FrozenCommand, Page, RuleDraft, HistoryItem } from './applicability-api'
 
 type Props = { language: 'tr' | 'en'; csrf: string; offline: boolean; onDirty: (v: boolean) => void; onSaving: (v: boolean) => void }
 export function LifecycleApplicability({ language, csrf, offline, onDirty, onSaving }: Props) {
@@ -116,11 +120,8 @@ export function LifecycleApplicability({ language, csrf, offline, onDirty, onSav
     void send({ kind: 'author', path: selected ? `rules/${selected.current.id}` : 'rules', method: selected ? 'PUT' : 'POST', key: crypto.randomUUID(),
       body: `${JSON.stringify(metadata).slice(0, -1)},"rule":${ruleJson.trim() ? ruleJson : 'null'}}` })
   }
-  const paging = (page: { hasMore: boolean } | null, value: number, change: (n: number) => void) => <div className="form-actions"><button type="button" disabled={saving || value === 0} onClick={() => change(Math.max(0, value - 25))}>{t('Previous', 'Önceki')}</button><button type="button" disabled={saving || !page?.hasMore} onClick={() => change(value + 25)}>{t('Next', 'Sonraki')}</button></div>
-  function tree(reason: Reason): ReactNode {
-    return <li key={reason.path}>{reason.field ?? reason.operator ?? reason.path} · {reason.truth === 0 ? t('Unknown', 'Bilinmiyor') : reason.truth === 1 ? t('False', 'Yanlış') : t('True', 'Doğru')} · {reason.reason}{reason.reviewRequired && ` · ${t('Review required', 'İnceleme gerekli')}`}{reason.children.length > 0 && <ul>{reason.children.map(tree)}</ul>}</li>
-  }
-  return <section className="lifecycle-applicability" aria-label={t('Lifecycle and applicability preparation', 'Yaşam döngüsü ve uygulanabilirlik hazırlığı')}>
+  const paging = (page: { hasMore: boolean } | null, value: number, change: (n: number) => void) => <EnterprisePagination label={t('Rule and context pages', 'Kural ve bağlam sayfaları')} previous={t('Previous', 'Önceki')} next={t('Next', 'Sonraki')} previousDisabled={saving || value === 0} nextDisabled={saving || !page?.hasMore} onPrevious={() => change(Math.max(0, value - 25))} onNext={() => change(value + 25)} />
+  return <section className="lifecycle-applicability regulatory-workspace" aria-label={t('Lifecycle and applicability preparation', 'Yaşam döngüsü ve uygulanabilirlik hazırlığı')}>
     <h2>{t('Lifecycle and applicability', 'Yaşam döngüsü ve uygulanabilirlik')}</h2>
     <p>{t('PREVIEW / DRAFT. Predictions do not establish compliance, readiness, permits or legal approval. Current obligations require admitted sources and independent human authority.', 'ÖNİZLEME / TASLAK. Tahminler uyum, hazırlık, izin veya hukuki onay oluşturmaz. Güncel yükümlülükler kabul edilmiş kaynaklar ve bağımsız insan yetkisi gerektirir.')}</p>
     {offline && <p role="status">{t('Offline. Retained edits are available; commands need a connection.', 'Çevrimdışı. Düzenlemeler korunuyor; komutlar bağlantı gerektirir.')}</p>}
@@ -128,24 +129,24 @@ export function LifecycleApplicability({ language, csrf, offline, onDirty, onSav
     {notice && <p role="status">{notice}</p>}
     {!caps ? <p role="status">{t('Loading permissions…', 'Yetkiler yükleniyor…')}</p> : !caps.canRead ? <p role="status">{t('No applicability read permission.', 'Uygulanabilirlik okuma yetkisi yok.')}</p> : <>
       <h3>{t('Versioned rule drafts', 'Sürümlü kural taslakları')}</h3>
-      {!rows ? <p role="status">{t('Loading rules…', 'Kurallar yükleniyor…')}</p> : rows.items.length === 0 ? <p>{t('No rule drafts.', 'Kural taslağı yok.')}</p> : <ul>{rows.items.map(row => <li key={row.current.id}><button type="button" disabled={locked || dirty} onClick={() => choose(row)}>{row.current.id} · {row.current.revision} · DRAFT</button></li>)}</ul>}
+      {!rows ? <p role="status">{t('Loading rules…', 'Kurallar yükleniyor…')}</p> : rows.items.length === 0 ? <p>{t('No rule drafts.', 'Kural taslağı yok.')}</p> : <ul className="regulatory-register-list">{rows.items.map(row => <li key={row.current.id}><Button type="button" disabled={locked || dirty} onClick={() => choose(row)}>{row.current.id} · {row.current.revision} · DRAFT</Button></li>)}</ul>}
       {paging(rows, offset, setOffset)}
-      {caps.canWrite && <button type="button" disabled={locked || dirty} onClick={() => choose(null)}>{t('New incomplete draft', 'Yeni eksik taslak')}</button>}
+      {caps.canWrite && <Button variant="outline" type="button" disabled={locked || dirty} onClick={() => choose(null)}>{t('New incomplete draft', 'Yeni eksik taslak')}</Button>}
       <form onSubmit={e => { e.preventDefault(); save() }}><fieldset disabled={locked || !caps.canWrite}>
         <legend>{t('Immutable authoring revision', 'Değişmez yazım sürümü')} {selected?.current.revision ?? 0}</legend>
         <p>{t('An empty document can be saved as an incomplete draft. Evaluation requires a valid versioned rule. Declared lifecycle is a proposal; stored lifecycle stays DRAFT.', 'Boş belge eksik taslak olarak kaydedilebilir. Değerlendirme geçerli sürümlü kural gerektirir. Beyan edilen yaşam döngüsü öneridir; kayıtlı durum DRAFT kalır.')}</p>
-        <label>{t('Rule document', 'Kural belgesi')}<textarea rows={12} maxLength={32768} value={ruleJson} onChange={e => { setRuleJson(e.target.value); setDirty(true) }} /></label>
+        <label className="enterprise-form-full">{t('Rule document', 'Kural belgesi')}<textarea rows={12} maxLength={32768} value={ruleJson} onChange={e => { setRuleJson(e.target.value); setDirty(true) }} /></label>
         <label>{t('Source record ID', 'Kaynak kayıt kimliği')}<input value={source} onChange={e => { setSource(e.target.value); setDirty(true) }} maxLength={36} /></label>
         <label>{t('Exact source revision', 'Kesin kaynak sürümü')}<input inputMode="numeric" value={sourceRevision} onChange={e => { setSourceRevision(e.target.value); setDirty(true) }} /></label>
         <label>{t('Requirement record ID', 'Gereksinim kayıt kimliği')}<input value={requirement} onChange={e => { setRequirement(e.target.value); setDirty(true) }} maxLength={36} /></label>
         <label>{t('Exact requirement revision', 'Kesin gereksinim sürümü')}<input inputMode="numeric" value={requirementRevision} onChange={e => { setRequirementRevision(e.target.value); setDirty(true) }} /></label>
-        <button type="submit" disabled={offline}>{t('Save draft revision', 'Taslak sürümünü kaydet')}</button>
+        <EnterpriseActions className="enterprise-form-full" aria-label={t('Rule draft actions', 'Kural taslağı işlemleri')}><Button type="submit" disabled={offline}>{t('Save draft revision', 'Taslak sürümünü kaydet')}</Button></EnterpriseActions>
       </fieldset></form>
       {selected && <>
         <p>{t('Stored lifecycle', 'Kayıtlı yaşam döngüsü')}: DRAFT · {selected.current.reviewStatus}</p>
         <fieldset disabled={locked || dirty || offline || !caps.canReview}><legend>{t('Request human review', 'İnsan incelemesi talep et')}</legend>
           <label>{t('Requested lifecycle', 'Talep edilen yaşam döngüsü')}<select value={requested} onChange={e => setRequested(e.target.value)}>{service.lifecycleStates.map(s => <option key={s}>{s}</option>)}</select></label>
-          <button type="button" onClick={() => void freeze('review', `rules/${selected.current.id}/review`, { expectedVersion: selected.version, requestedLifecycle: requested, reasonCode: 'REQUEST_REVIEW' })}>{t('Record review request', 'İnceleme talebini kaydet')}</button>
+          <Button type="button" onClick={() => void freeze('review', `rules/${selected.current.id}/review`, { expectedVersion: selected.version, requestedLifecycle: requested, reasonCode: 'REQUEST_REVIEW' })}>{t('Record review request', 'İnceleme talebini kaydet')}</Button>
         </fieldset>
         <h3>{t('Immutable rule history', 'Değişmez kural geçmişi')}</h3>
         {ruleHistory?.items.map(row => <details key={row.current.revision}><summary>{row.current.revision} · {row.current.lifecycle} · {row.current.requestedLifecycle} · {row.current.reviewStatus}</summary><p>{row.current.savedAt}</p><pre className="register-hash">{row.current.hash}</pre><pre>{row.current.ruleJson ?? '—'}</pre></details>)}
@@ -156,24 +157,24 @@ export function LifecycleApplicability({ language, csrf, offline, onDirty, onSav
         {paging({ hasMore: moreVessels }, vesselPage, setVesselPage)}
         {rows?.items.map(row => <label key={row.current.id}><input type="checkbox" disabled={!row.current.rule} checked={checked.includes(row.current.id)} onChange={e => setChecked(v => e.target.checked ? [...v, row.current.id] : v.filter(id => id !== row.current.id))} />{row.current.id}</label>)}
         <label>{t('As-of time (with UTC offset; blank uses server time)', 'Değerlendirme zamanı (UTC farkı ile; boşsa sunucu zamanı)')}<input value={asOf} maxLength={40} onChange={e => setAsOf(e.target.value)} /></label>
-        <button type="button" disabled={!vessel || checked.length === 0} onClick={() => {
+        <Button type="button" disabled={!vessel || checked.length === 0} onClick={() => {
           if (asOf && !timestamp(asOf)) { setError(400); return }
           void freeze('evaluate', 'applicability/simulate', { vesselId: vessel, ruleIds: checked, asOf: asOf || null })
-        }}>{t('Run preview without saving', 'Kaydetmeden önizle')}</button>
+        }}>{t('Run preview without saving', 'Kaydetmeden önizle')}</Button>
       </fieldset>
       {selected && <RegulatoryQualification key={selected.current.id} rule={selected.current.id} ruleRevision={selected.current.revision} vessel={vessel} language={language} csrf={csrf} offline={offline} onDirty={setQualificationDirty} onSaving={setQualificationSaving} />}
       <ComplianceEvaluationSelector value={owningInputs} onChange={setOwningInputs} offline={offline || locked || dirty} language={language} />
       <OwningEvaluationSelector key={vessel} vessel={vessel} language={language} offline={offline} disabled={locked} onChange={v => setOwningInputs(previous => v ? { ...previous, ...v } : previous ? { ...previous, operationId: null, cargoPlanId: null, winchFitmentId: null } : null)} />
-      <button disabled={locked || dirty || offline || !vessel || checked.length === 0 || !caps?.canEvaluate} onClick={() => void freeze('evaluate', 'applicability/evaluate', { vesselId: vessel, ruleIds: checked, asOf: null, owningInputs })}>{t('Evaluate qualified current sources', 'Nitelendirilmiş güncel kaynakları değerlendir')}</button>
-      {evaluation?.authoritative && <><button disabled={offline || saving} onClick={() => { const c = new AbortController(); qualification.current(evaluation.id, c.signal).then(v => setCurrentState({ ...v, id: evaluation.id })).catch(() => setCurrentState({ id: evaluation.id, current: false, causes: ['EVALUATION_UNAVAILABLE'] })) }}>{t('Check current validity', 'Güncel geçerliliği denetle')}</button><p role="status">{currentState?.id === evaluation.id ? currentState.current ? t('Inputs remain current. This is not safety release.', 'Girdiler güncel. Bu bir emniyet serbest bırakması değildir.') : `${t('Review required', 'İnceleme gerekli')}: ${currentState.causes.join(' · ')}` : t('Current validity has not been checked.', 'Güncel geçerlilik denetlenmedi.')}</p></>}
-      {evaluation && <section aria-label={t('Preview result', 'Önizleme sonucu')}><h3>{evaluation.authoritative ? t('Recorded evaluation — see current validity separately', 'Kayıtlı değerlendirme — güncel geçerliliği ayrıca inceleyin') : t('PREVIEW — review required for current obligations', 'ÖNİZLEME — güncel yükümlülükler için inceleme gerekli')}</h3><p>{evaluation.asOf} · {evaluation.snapshotHash}</p>{evaluation.conflicts.map(c => <p role="alert" key={`${c.code}:${c.target}`}>{t('Conflict requires source owner and reviewer. Both candidates retained.', 'Çatışma kaynak sahibi ve inceleyici gerektirir. İki aday da korundu.')} {c.target} · {c.ruleReferences.join(' · ')}</p>)}{evaluation.results.map(r => <details key={r.ruleId} open><summary>{r.ruleId} · {r.revision} · {r.prediction.result} · {evaluation.authoritative ? t('Qualified input evaluation', 'Nitelendirilmiş girdi değerlendirmesi') : t('Prediction only', 'Yalnız tahmin')}</summary><p>{r.sourceId ?? t('Missing source', 'Kaynak eksik')} / {r.sourceRevision ?? '—'}</p><ul>{tree(r.prediction.reason)}</ul><p>{r.prediction.blockers.join(' · ')}</p><ul>{r.prediction.predictedActivations.map(a => <li key={`${a.type}:${a.id}`}>{a.type}: {a.id} · {t('Projected need only', 'Yalnız öngörülen ihtiyaç')}</li>)}</ul></details>)}</section>}
-      {vessel && <section aria-label={t('Evaluation history', 'Değerlendirme geçmişi')}><h3>{t('Evaluation history', 'Değerlendirme geçmişi')}</h3>{!history ? <p role="status">{t('Loading history…', 'Geçmiş yükleniyor…')}</p> : history.items.length === 0 ? <p>{t('No evaluations.', 'Değerlendirme yok.')}</p> : history.items.map(row => <button type="button" disabled={saving || offline} key={row.id} onClick={() => {
+      <Button disabled={locked || dirty || offline || !vessel || checked.length === 0 || !caps?.canEvaluate} onClick={() => void freeze('evaluate', 'applicability/evaluate', { vesselId: vessel, ruleIds: checked, asOf: null, owningInputs })}>{t('Evaluate qualified current sources', 'Nitelendirilmiş güncel kaynakları değerlendir')}</Button>
+      {evaluation?.authoritative && <><Button disabled={offline || saving} onClick={() => { const c = new AbortController(); qualification.current(evaluation.id, c.signal).then(v => setCurrentState({ ...v, id: evaluation.id })).catch(() => setCurrentState({ id: evaluation.id, current: false, causes: ['EVALUATION_UNAVAILABLE'] })) }}>{t('Check current validity', 'Güncel geçerliliği denetle')}</Button><p role="status">{currentState?.id === evaluation.id ? currentState.current ? t('Inputs remain current. This is not safety release.', 'Girdiler güncel. Bu bir emniyet serbest bırakması değildir.') : `${t('Review required', 'İnceleme gerekli')}: ${currentState.causes.join(' · ')}` : t('Current validity has not been checked.', 'Güncel geçerlilik denetlenmedi.')}</p></>}
+      {evaluation && <section aria-label={t('Preview result', 'Önizleme sonucu')}><h3>{evaluation.authoritative ? t('Recorded evaluation — see current validity separately', 'Kayıtlı değerlendirme — güncel geçerliliği ayrıca inceleyin') : t('PREVIEW — review required for current obligations', 'ÖNİZLEME — güncel yükümlülükler için inceleme gerekli')}</h3><p>{evaluation.asOf} · {evaluation.snapshotHash}</p>{evaluation.conflicts.map(c => <p role="alert" key={`${c.code}:${c.target}`}>{t('Conflict requires source owner and reviewer. Both candidates retained.', 'Çatışma kaynak sahibi ve inceleyici gerektirir. İki aday da korundu.')} {c.target} · {c.ruleReferences.join(' · ')}</p>)}<ApplicabilityReasonView results={evaluation.results} language={language} /><CapturedEvaluationInputs inputs={evaluation.snapshot} inputHash={evaluation.snapshotHash} ruleSetHash={evaluation.ruleSetHash} language={language} /></section>}
+      {vessel && <section aria-label={t('Evaluation history', 'Değerlendirme geçmişi')}><h3>{t('Evaluation history', 'Değerlendirme geçmişi')}</h3>{!history ? <p role="status">{t('Loading history…', 'Geçmiş yükleniyor…')}</p> : history.items.length === 0 ? <p>{t('No evaluations.', 'Değerlendirme yok.')}</p> : history.items.map(row => <Button type="button" disabled={saving || offline} key={row.id} onClick={() => {
         const c = new AbortController(); const timer = setTimeout(() => c.abort(), 15000)
         service.evaluation(row.id, c.signal).then(v => { if (v.vesselId === liveVessel.current) setEvaluation(v) }).catch(e => { if (row.vesselId === liveVessel.current) setError(e instanceof directory.ApiError ? e.status : 0) }).finally(() => clearTimeout(timer))
-      }}>{row.asOf} · {t('Read retained snapshot', 'Korunan anlık kaydı oku')}</button>)}{paging(history, historyOffset, setHistoryOffset)}</section>}
+      }}>{row.asOf} · {t('Read retained snapshot', 'Korunan anlık kaydı oku')}</Button>)}{paging(history, historyOffset, setHistoryOffset)}</section>}
     </>}
-    {frozen && <button type="button" disabled={offline || saving || conflict} onClick={() => void send(frozen)}>{t('Retry exact retained command', 'Korunan aynı komutu tekrar dene')}</button>}
-    {(dirty || frozen || conflict) && <><p role="status">{t('Edits retained in this tab. Discarding an ambiguous command does not undo a possible commit; reload history before further editing.', 'Düzenlemeler bu sekmede korunuyor. Belirsiz komuttan vazgeçmek olası kaydı geri almaz; düzenlemeye devam etmeden geçmişi yeniden yükleyin.')}</p><button type="button" disabled={saving} onClick={() => { setDirty(false); setFrozen(null); setConflict(false); setSelected(null); setRuleJson(''); setSource(''); setSourceRevision(''); setRequirement(''); setRequirementRevision(''); setAttempt(v => v + 1); setError(null) }}>{t('Discard edits and reload', 'Düzenlemelerden vazgeç ve yeniden yükle')}</button></>}
-    {!frozen && <button type="button" disabled={offline || saving} onClick={() => { setError(null); setAttempt(v => v + 1) }}>{t('Refresh permissions and lists', 'Yetkileri ve listeleri yenile')}</button>}
+    {frozen && <Button type="button" disabled={offline || saving || conflict} onClick={() => void send(frozen)}>{t('Retry exact retained command', 'Korunan aynı komutu tekrar dene')}</Button>}
+    {(dirty || frozen || conflict) && <><p role="status">{t('Edits retained in this tab. Discarding an ambiguous command does not undo a possible commit; reload history before further editing.', 'Düzenlemeler bu sekmede korunuyor. Belirsiz komuttan vazgeçmek olası kaydı geri almaz; düzenlemeye devam etmeden geçmişi yeniden yükleyin.')}</p><Button type="button" disabled={saving} onClick={() => { setDirty(false); setFrozen(null); setConflict(false); setSelected(null); setRuleJson(''); setSource(''); setSourceRevision(''); setRequirement(''); setRequirementRevision(''); setAttempt(v => v + 1); setError(null) }}>{t('Discard edits and reload', 'Düzenlemelerden vazgeç ve yeniden yükle')}</Button></>}
+    {!frozen && <Button type="button" disabled={offline || saving} onClick={() => { setError(null); setAttempt(v => v + 1) }}>{t('Refresh permissions and lists', 'Yetkileri ve listeleri yenile')}</Button>}
   </section>
 }

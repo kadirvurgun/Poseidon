@@ -1,0 +1,28 @@
+/* One control scale for shared shadcn buttons, including slotted links. */
+[data-slot="button"] {
+  box-sizing: border-box;
+  --button-height: max(40px, 2.5rem);
+  --button-padding-inline: 1rem;
+  --button-padding-block: .5rem;
+  min-block-size: var(--button-height);
+  block-size: auto;
+  max-inline-size: 100%;
+  padding: var(--button-padding-block) var(--button-padding-inline);
+  line-height: 1.25rem;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+[data-slot="button"][data-size="sm"], [data-slot="button"][data-size="icon-sm"] { --button-height: max(36px, 2.25rem); --button-padding-inline: .75rem; --button-padding-block: .375rem; }
+[data-slot="button"][data-size="lg"] { --button-height: max(44px, 2.75rem); --button-padding-inline: 1.5rem; --button-padding-block: .625rem; }
+[data-slot="button"][data-size="icon"], [data-slot="button"][data-size="icon-sm"] {
+  inline-size: var(--button-height);
+  block-size: var(--button-height);
+  min-inline-size: var(--button-height);
+  padding: 0;
+}
+[data-slot="button"] > svg { flex: 0 0 auto; }
+@media (max-width: 650px), (pointer: coarse) {
+  [data-slot="button"] { --button-height: max(44px, 2.75rem); }
+  [data-slot="button"][data-size="sm"], [data-slot="button"][data-size="icon-sm"] { --button-height: max(44px, 2.75rem); }
+}

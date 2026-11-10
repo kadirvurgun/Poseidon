@@ -24,6 +24,18 @@ beforeEach(() => window.history.replaceState(null, '', '/app'))
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals() })
 
 describe('VESSEL-PROFILE-DRAFT-01 component and transport coverage (mocked API, no external IdP)', () => {
+  it('DEV-020 shows the saved source observation and keeps an unsaved timestamp out of its provenance context', async () => {
+    const observed = '2026-10-30T08:00:00Z'
+    const saved = { ...profile, content: { ...content, sourceObservedAt: { state: 'Known', value: observed } } }
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => url.includes('/history?') ? reply(history) : url.includes('/files?') ? reply({ items: [], offset: 0, hasMore: false, available: true, canWrite: false, maxBytes: 1048576, allowedTypes: ['image/png'] }) : reply(saved)))
+    const user = userEvent.setup(); render(<RegulatoryProfile {...callbacks()} />)
+    const source = await screen.findByRole('complementary', { name: 'Saved source context' })
+    expect(within(source).getByText(observed)).toHaveAttribute('datetime', observed)
+    expect(source).toHaveTextContent('Input freshness is unverified')
+    await user.clear(screen.getByLabelText('Source observed at (with timezone)'))
+    await user.type(screen.getByLabelText('Source observed at (with timezone)'), '2026-11-04T12:00:00Z')
+    expect(source).toHaveTextContent(observed); expect(source).not.toHaveTextContent('2026-11-04T12:00:00Z')
+  })
   it('renders accessible draft fields, server context, unknown provenance and saved history without readiness', async () => {
     mock(); render(<RegulatoryProfile {...callbacks()} />)
     expect(screen.getAllByRole('status')[0]).toHaveTextContent('Loading profile')
@@ -150,9 +162,9 @@ describe('VESSEL-PROFILE-DRAFT-01 component and transport coverage (mocked API, 
     const form = await screen.findByRole('region', { name: 'Regulatory profile draft' })
     expect(form).toBeVisible()
     await user.selectOptions(await within(form).findByLabelText('Flag — Data state'), 'Unknown')
-    const closeButton = within(details).getByRole('button', { name: /^Close$/ })
-    expect(closeButton).toBeVisible(); expect(closeButton).toBeEnabled()
-    await user.click(closeButton)
+    const backButton = screen.getByRole('button', { name: 'Back to vessel' })
+    expect(backButton).toBeVisible(); expect(backButton).toBeEnabled()
+    await user.click(backButton)
     expect(screen.getByRole('dialog')).toBeVisible()
     expect(screen.getByLabelText('Flag — Data state')).toHaveValue('Unknown')
     const event = new Event('beforeunload', { cancelable: true }); window.dispatchEvent(event); expect(event.defaultPrevented).toBe(true)
@@ -280,5 +292,81 @@ describe('VESSEL-PROFILE-DRAFT-01 component and transport coverage (mocked API, 
   })
   it.each(['0', '9007199254740993', '0.1234567890123456789012345678', '79228162514264337593543950335'])('accepts exact bounded decimal %s', value => {
     expect(validDecimal(value)).toBe(true)
+  })
+})
+
+
+describe('S5-ONBOARDING-01 guided real profile commands (authored; execution deferred)', () => {
+  it('retains edits across steps and saves an incomplete draft using the existing owning command', async () => {
+    const fetch = mock(async init => reply({ ...profile, content: JSON.parse(init.body as string).content, version: 20, revision: 2 }))
+    const user = userEvent.setup(), p = callbacks(); render(<RegulatoryProfile {...p} journey="onboarding" />)
+    await screen.findByLabelText('Flag — Data state')
+    expect(screen.queryByLabelText('GT')).not.toBeInTheDocument()
+    await user.selectOptions(screen.getByLabelText('Flag — Data state'), 'Unknown')
+    await user.click(screen.getByRole('button', { name: 'Next step' }))
+    expect(screen.getByRole('button', { name: /Technical particulars/ })).toHaveAttribute('aria-current', 'step')
+    await user.selectOptions(screen.getByLabelText('GT — Data state'), 'Known')
+    await user.type(screen.getByLabelText('GT'), '9007199254740993')
+    await user.click(screen.getByRole('button', { name: 'Previous step' }))
+    expect(screen.getByLabelText('Flag — Data state')).toHaveValue('Unknown')
+    await user.click(screen.getByRole('button', { name: 'Save draft' }))
+    await screen.findByText('Draft saved.')
+    const call = fetch.mock.calls.find(([, init]) => init?.method === 'PUT')!
+    expect(JSON.parse(call[1].body as string)).toMatchObject({ expectedVersion: 19, content: { flag: { state: 'Unknown', value: null }, gt: { state: 'Known', value: '9007199254740993' }, cargoContext: { state: 'Missing', value: null } } })
+    expect(call[0]).toBe(`/api/v1/vessels/${vessel.id}/regulatory-profile`)
+    expect(call[1]).toMatchObject({ credentials: 'same-origin', headers: { 'X-CSRF-TOKEN': p.csrf, 'Idempotency-Key': expect.any(String) } })
+    expect(p.onDirty).toHaveBeenLastCalledWith(false)
+  })
+  it('freezes step navigation after an uncertain save and retries the exact owning bytes/key', async () => {
+    let lost = true
+    const fetch = mock(async () => { if (lost) { lost = false; throw new TypeError('lost reply') } return reply({ ...profile, version: 20, revision: 2 }) })
+    const user = userEvent.setup(); render(<RegulatoryProfile {...callbacks()} journey="onboarding" />)
+    await screen.findByLabelText('Flag'); await user.selectOptions(screen.getByLabelText('Flag — Data state'), 'Unknown')
+    await user.click(screen.getByRole('button', { name: 'Save draft' }))
+    await screen.findByText(/Fields are frozen/)
+    expect(screen.getByRole('button', { name: 'Next step' })).toBeDisabled()
+    for (const b of within(screen.getByRole('navigation', { name: 'Onboarding steps' })).getAllByRole('button')) expect(b).toBeDisabled()
+    await user.click(screen.getByRole('button', { name: 'Retry same command' }))
+    await screen.findByText('Draft saved.')
+    const calls = fetch.mock.calls.filter(([, init]) => init?.method === 'PUT')
+    expect(calls).toHaveLength(2); expect(calls[0][1].body).toBe(calls[1][1].body); expect(calls[0][1].headers).toEqual(calls[1][1].headers)
+  })
+  it('keeps read-only onboarding fields disabled and does not offer a save command', async () => {
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => reply(url.includes('/history?') ? history : { ...profile, vessel: { ...vessel, canEdit: false } })))
+    render(<RegulatoryProfile {...callbacks()} journey="onboarding" />)
+    await screen.findByLabelText('Flag')
+    expect(screen.getByLabelText('Flag — Data state')).toBeDisabled()
+    expect(screen.queryByRole('button', { name: 'Save draft' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Next step' })).toBeEnabled()
+  })
+  it('makes a server error on another step discoverable without discarding local input', async () => {
+    mock(async () => reply({ code: 'validation_failed', errors: { gt: ['unsafe server detail'] } }, 400))
+    const user = userEvent.setup(); render(<RegulatoryProfile {...callbacks()} journey="onboarding" />)
+    await screen.findByLabelText('Flag'); await user.selectOptions(screen.getByLabelText('Flag — Data state'), 'Unknown')
+    await user.click(screen.getByRole('button', { name: 'Save draft' }))
+    await user.click(await screen.findByRole('button', { name: 'Review fields in: Technical particulars' }))
+    expect(screen.getByLabelText('GT')).toHaveAttribute('aria-invalid', 'true')
+    expect(screen.queryByText('unsafe server detail')).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Previous step' }))
+    expect(screen.getByLabelText('Flag — Data state')).toHaveValue('Unknown')
+  })
+  it('routes to the guided form and keeps the existing back action behind the dirty guard', async () => {
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => reply(url.includes('/auth/session') ?
+      { authenticated: true, canRead: true, canReadCompanies: false, canCreate: false, csrfToken: 'csrf', tenantId: profile.tenantId } :
+      url === '/api/v1/workspace' ? { destinations: [{ key: 'fleet', href: '/app/fleet' }], canSearch: false, canWriteRegulatory: false } :
+      url.includes('/history?') ? history : url.includes('/regulatory-profile') ? profile :
+      url.includes('/vessels?') ? { items: [vessel], offset: 0, limit: 25, hasMore: false } : vessel)))
+    const user = userEvent.setup(); render(<ProductApp />)
+    await user.click(screen.getByRole('button', { name: 'EN' }))
+    const fleet = await screen.findByRole('region', { name: 'Fleet' }); await user.click(await within(fleet).findByRole('button', { name: vessel.name }))
+    await user.click(await screen.findByRole('button', { name: 'Pilot vessel onboarding' }))
+    const form = await screen.findByRole('region', { name: 'Pilot vessel onboarding' })
+    expect(window.location.pathname).toBe(`/app/fleet/${vessel.id}/onboarding`)
+    expect(screen.queryByRole('region', { name: 'Current page overview' })).not.toBeInTheDocument()
+    await user.selectOptions(await within(form).findByLabelText('Flag — Data state'), 'Unknown')
+    await user.click(screen.getByRole('button', { name: 'Back to vessel' }))
+    expect(screen.getByRole('dialog')).toBeVisible()
+    expect(screen.getByLabelText('Flag — Data state')).toHaveValue('Unknown')
+    const unload = new Event('beforeunload', { cancelable: true }); window.dispatchEvent(unload); expect(unload.defaultPrevented).toBe(true)
   })
 })

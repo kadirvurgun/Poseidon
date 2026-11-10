@@ -47,6 +47,103 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
 
     private static AuditMetadata Project(EntityEntry entry, Guid? parentVessel)
     {
+        if(entry.Entity is Defect defect)
+            return new(defect.VesselId,defect.Id,"Defect",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,defect.Revision,
+                Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(defect.Revision)),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is DefectRevision defectRevision)
+            return new(defectRevision.VesselId,defectRevision.DefectId,"DefectRevision",null,defectRevision.Revision,Fields(Field("Revision",null,Number(defectRevision.Revision)),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is DefectReceipt defectReceipt)
+            return new(defectReceipt.VesselId,defectReceipt.DefectId,"DefectReceipt",null,defectReceipt.Revision,Fields(Field("Binding",null,"CommittedResource")));
+        if(entry.Entity is WorkOrder work_order)
+            return new(work_order.VesselId,work_order.Id,"WorkOrder",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,work_order.Revision,
+                Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(work_order.Revision)),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is WorkOrderRevision work_orderRevision)
+            return new(work_orderRevision.VesselId,work_orderRevision.WorkOrderId,"WorkOrderRevision",null,work_orderRevision.Revision,Fields(Field("Revision",null,Number(work_orderRevision.Revision)),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is WorkOrderReceipt work_orderReceipt)
+            return new(work_orderReceipt.VesselId,work_orderReceipt.WorkOrderId,"WorkOrderReceipt",null,work_orderReceipt.Revision,Fields(Field("Binding",null,"CommittedResource")));
+        if(entry.Entity is Downtime downtime)
+            return new(downtime.VesselId,downtime.Id,"Downtime",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,downtime.Revision,
+                Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(downtime.Revision)),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is DowntimeRevision downtimeRevision)
+            return new(downtimeRevision.VesselId,downtimeRevision.DowntimeId,"DowntimeRevision",null,downtimeRevision.Revision,Fields(Field("Revision",null,Number(downtimeRevision.Revision)),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is DowntimeReceipt downtimeReceipt)
+            return new(downtimeReceipt.VesselId,downtimeReceipt.DowntimeId,"DowntimeReceipt",null,downtimeReceipt.Revision,Fields(Field("Binding",null,"CommittedResource")));
+        if(entry.Entity is ShipOperation shipOperation)
+            return new(shipOperation.VesselId,shipOperation.Id,"ShipOperation",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,shipOperation.Revision,
+                Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(shipOperation.Revision)),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is ShipOperationRevision shipRevision)
+            return new(shipRevision.VesselId,shipRevision.RecordId,"ShipOperationRevision",null,shipRevision.Revision,Fields(Field("Revision",null,Number(shipRevision.Revision)),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is ShipOperationReceipt shipReceipt)
+            return new(shipReceipt.VesselId,shipReceipt.RecordId,"ShipOperationReceipt",null,null,Fields(Field("Binding",null,"CommittedResource")));
+        if(entry.Entity is VesselCertificate certificate)
+            return new(certificate.VesselId,certificate.Id,"VesselCertificate",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,certificate.Revision,
+                Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(certificate.Revision)),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is VesselCertificateRevision certificateRevision)
+            return new(certificateRevision.VesselId,certificateRevision.CertificateId,"VesselCertificateRevision",null,certificateRevision.Revision,
+                Fields(Field("Revision",null,Number(certificateRevision.Revision)),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is CertificateRenewal renewal)
+            return new(renewal.VesselId,renewal.Id,"CertificateRenewal",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,renewal.Revision,
+                Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(renewal.Revision)),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is CertificateRenewalRevision renewalRevision)
+            return new(renewalRevision.VesselId,renewalRevision.RenewalId,"CertificateRenewalRevision",null,renewalRevision.Revision,
+                Fields(Field("Revision",null,Number(renewalRevision.Revision)),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is CertificateAssertionHead assertionHead)
+            return new(assertionHead.VesselId,assertionHead.CertificateId,"CertificateAssertionHead",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,assertionHead.Revision,
+                Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(assertionHead.Revision)),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is CertificateAssertionEvent assertion)
+            return new(assertion.VesselId,assertion.CertificateId,"CertificateAssertion",null,assertion.Revision,
+                Fields(Field("Revision",null,Number(assertion.Revision)),Field("Binding",null,"RecordedUnassessedAssertion")));
+        if(entry.Entity is CertificateCommandReceipt certificateReceipt)
+            return new(certificateReceipt.VesselId,certificateReceipt.ResourceId,"CertificateReceipt",null,null,Fields(Field("Binding",null,"CommittedResource")));
+        if (entry.Entity is DailyOfflineEnrollment dailyEnrollment)
+            return new(dailyEnrollment.VesselId,dailyEnrollment.RecordId,"DailyOfflineEnrollment",null,null,
+                Fields(Field("Binding",entry.State==EntityState.Added?null:"OwnerReference","OwnerReference")));
+        if (entry.Entity is DailyOfflineLifecycle dailyLifecycle)
+            return new(dailyLifecycle.VesselId,dailyLifecycle.RecordId,"DailyOfflineLifecycle",null,null,
+                Fields(Field("Binding",null,"OwnerReference"),Field("Lifecycle",null,Closed(dailyLifecycle.Action,"Enrolled","Renewed","KeyEnrolled","Revoked","KeyLost","CleanupAllowed"))));
+        if (entry.Entity is DailyOfflineOutcome dailyOutcome)
+            return new(dailyOutcome.VesselId,dailyOutcome.RecordId,"DailyOfflineOutcome",null,dailyOutcome.Revision,
+                Fields(Field("Binding",null,"OwnerReference"),Field("Outcome",null,Closed(dailyOutcome.Result,"Committed","MaterialConflict","ServerRetained")),
+                    Field("ReasonCode",null,dailyOutcome.ParentCommandId==null?null:dailyOutcome.Result=="ServerRetained"?"CURRENT_SERVER_RETAINED":"INPUT_CORRECTED")));
+        if (entry.Entity is DailyReviewHead reviewHead)
+            return new(reviewHead.VesselId, reviewHead.RecordId, "DailyReviewHead", entry.State == EntityState.Added ? null : (long?)entry.Property("Sequence").OriginalValue,
+                reviewHead.Sequence, Fields(Field("Revision", entry.State == EntityState.Added ? null : Number((long)entry.Property("Sequence").OriginalValue!), Number(reviewHead.Sequence)),Field("Binding",null,"OwnerReference")));
+        if (entry.Entity is DailyReviewEvent reviewEvent)
+            return new(reviewEvent.VesselId,reviewEvent.RecordId,"DailyReviewEvent",null,reviewEvent.Sequence,
+                Fields(Field("Revision",null,Number(reviewEvent.Sequence)),Field("Binding",null,"OwnerReference")));
+        if (entry.Entity is DailyReviewReceipt reviewReceipt)
+            return new(reviewReceipt.VesselId,reviewReceipt.RecordId,"DailyReviewReceipt",null,null,Fields(Field("Binding",null,"CommittedResource")));
+        if (entry.Entity is DailyOperation daily)
+            return new(daily.VesselId, daily.Id, "DailyOperation", entry.State == EntityState.Added ? null : (long?)entry.Property("Revision").OriginalValue,
+                daily.Revision, Fields(Field("Binding", entry.State == EntityState.Added ? null : "OwnerReference", "OwnerReference"),
+                    Field("Revision", entry.State == EntityState.Added ? null : Number((long)entry.Property("Revision").OriginalValue!), Number(daily.Revision))));
+        if (entry.Entity is DailyOperationRevision dailyRevision)
+            return new(dailyRevision.VesselId, dailyRevision.RecordId, "DailyOperationRevision", null, dailyRevision.Revision,
+                Fields(Field("Revision", null, Number(dailyRevision.Revision)), Field("Binding", null, "OwnerReference")));
+        if (entry.Entity is DailyOperationReceipt dailyReceipt)
+            return new(dailyReceipt.VesselId, dailyReceipt.RecordId, "DailyOperationReceipt", null, null, Fields(Field("Binding", null, "CommittedResource")));
+        if (entry.Entity is NotificationDispatchState dispatch)
+            return new(dispatch.VesselId, dispatch.VesselId, "NotificationDispatch", entry.State == EntityState.Added ? null : (long?)entry.Property("Revision").OriginalValue,
+                dispatch.Revision, Fields(Field("Revision", entry.State == EntityState.Added ? null : Number((long)entry.Property("Revision").OriginalValue!), Number(dispatch.Revision)),
+                    Field("Binding", entry.State == EntityState.Added ? null : "OwnerReference", "OwnerReference")));
+        if (entry.Entity is NotificationEpisode episode)
+            return new(episode.VesselId, episode.PlanId, "NotificationEpisode", entry.State == EntityState.Added ? null : (long?)entry.Property("Revision").OriginalValue,
+                episode.Revision, Fields(Field("Revision", entry.State == EntityState.Added ? null : Number((long)entry.Property("Revision").OriginalValue!), Number(episode.Revision)),
+                    Field("Binding", entry.State == EntityState.Added ? null : "OwnerReference", "OwnerReference")));
+        if (entry.Entity is Notification notice)
+            return new(notice.VesselId, notice.Id, "Notification", entry.State == EntityState.Added ? null : (long?)entry.Property("Revision").OriginalValue,
+                notice.Revision, Fields(Field("Binding", entry.State == EntityState.Added ? null : "OwnerReference", "OwnerReference"),
+                    Field("Revision", entry.State == EntityState.Added ? null : Number((long)entry.Property("Revision").OriginalValue!), Number(notice.Revision))));
+        if (entry.Entity is NotificationEvent notificationEvent)
+            return new(notificationEvent.VesselId, notificationEvent.NotificationId, "NotificationEvent", null, notificationEvent.Sequence,
+                Fields(Field("Revision", null, Number(notificationEvent.Sequence)), Field("Binding", null, "OwnerReference")));
+        if (entry.Entity is NotificationPreference preference)
+            return new(preference.VesselId, preference.ActorId, "NotificationPreference", entry.State == EntityState.Added ? null : (long?)entry.Property("Revision").OriginalValue,
+                preference.Revision, Fields(Field("Revision", entry.State == EntityState.Added ? null : Number((long)entry.Property("Revision").OriginalValue!), Number(preference.Revision)),
+                    Field("Binding", entry.State == EntityState.Added ? null : "OwnerReference", "OwnerReference")));
+        if (entry.Entity is NotificationReceipt notificationReceipt)
+            return new(notificationReceipt.VesselId, notificationReceipt.ResourceId, "NotificationReceipt", null, null,
+                Fields(Field("Binding", null, "CommittedResource")));
         if (entry.Entity is CommandReceipt { Action: "CrewCatalogSave" } catalogReceipt)
             return new(catalogReceipt.ResourceId, catalogReceipt.ResourceId, "CrewCatalogReceipt", null, catalogReceipt.RegisterRevision, "[]");
         if (entry.Entity is CrewCatalogEvent catalog)

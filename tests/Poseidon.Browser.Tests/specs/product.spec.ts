@@ -42,6 +42,7 @@ test('product navigation is keyboard accessible and direct technical route is pr
     await expect(brand).toBeFocused()
     const workView = drawer.locator('summary').filter({ hasText: /^Çalışma görünümü$/ })
     const workViewDisclosure = drawer.locator('details').filter({ has: page.locator('summary').filter({ hasText: /^Çalışma görünümü$/ }) })
+    // Work-view settings start collapsed while the current module stays visible.
     await expect(workViewDisclosure).toHaveJSProperty('open', false)
     // A real pointer must reach the summary above the mobile navigation overlay.
     await workView.click()

@@ -26,6 +26,13 @@ const draftWhy = { vesselId, cardKey: draft.key, rule: 'TW-DRAFT-01', reason: dr
   sourceObservedAt: null, freshness: 'Unverified', provenance: 'Synthetic', blockers: ['VerificationUnavailable', 'OperationalSourcesUnavailable'],
   owner: null, nextAction: draft.nextAction, href: draft.href }
 const response = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } })
+
+it('DEV-024 binds optional maintenance source lineage to the selected plan and exact revision', () => {
+  const source = { kind: 'MaintenancePlan', id: planId, revision: 2 }
+  expect(decodeWhy({ ...why, source }, vesselId, card.key).source).toEqual(source)
+  for (const invalid of [{ ...source, id: assetId }, { ...source, revision: 1 }, { ...source, kind: 'TugJob' }, { ...source, revision: null }])
+    expect(() => decodeWhy({ ...why, source: invalid }, vesselId, card.key)).toThrow()
+})
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals() })
 
 it('binds every Why to its selected card, explains current lineage and navigates to the supported selected plan', async () => {

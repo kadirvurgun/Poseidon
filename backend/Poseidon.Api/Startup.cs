@@ -14,8 +14,16 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         services.ConfigureHttpJsonOptions(options => options.SerializerOptions.NumberHandling =
             System.Text.Json.Serialization.JsonNumberHandling.Strict);
         services.AddDataProtection();
+        services.AddCertificateExtraction(configuration);
         services.AddSingleton(configuration.GetSection("TugPlanning").Get<TugPlanningPolicy>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<TimeProvider>(TimeProvider.System);
+        services.AddSingleton(configuration.GetSection("Notifications").Get<NotificationSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
+        services.AddScoped<NotificationEngine>();
+        services.AddSingleton(configuration.GetSection("DailyOffline").Get<DailyOfflineSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
+        services.AddSingleton(configuration.GetSection("NotificationScheduler").Get<NotificationSchedulerSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
+        services.AddSingleton<NotificationServiceContexts>();
+        services.AddSingleton<NotificationScheduler>();
+        services.AddHostedService(sp => sp.GetRequiredService<NotificationScheduler>());
         services.AddSingleton(configuration.GetSection("OfflineApplication").Get<OfflineApplicationPolicy>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton(configuration.GetSection("CrewPositionPolicy").Get<CrewPositionPolicy>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton(configuration.GetSection("CrewIdentityPolicy").Get<CrewIdentityPolicy>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
@@ -93,6 +101,8 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         app.UseAuthorization();
         app.Use(async (context, next) =>
         {
+            var observationActor = context.RequestServices.GetRequiredService<ActorResolver>().Resolve(context.User);
+            if (observationActor != null) context.Items[OperationalHealthObservations.TenantItem] = observationActor.TenantId;
             var operation = S1SecurityContract.Match(context);
             if (operation?.IsCritical == true)
             {
@@ -133,8 +143,20 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapLifecycleApplicability();
             endpoints.MapRegulatoryQualifications();
             endpoints.MapControlEvidence();
+            endpoints.MapComplianceWorkspaces();
             endpoints.MapHumanReviews();
             endpoints.MapToday();
+            endpoints.MapSystemHealth();
+            endpoints.MapNotifications();
+            endpoints.MapDailyOperations();
+            endpoints.MapCertificates();
+            endpoints.MapCertificateRenewals();
+            endpoints.MapCertificateExtraction();
+            endpoints.MapCertificateAssertions();
+            endpoints.MapShipOperations();
+            endpoints.MapDailyOperationOrigins();
+            endpoints.MapDailyOffline();
+            endpoints.MapDailyReviews();
             endpoints.MapAuditHistory();
             endpoints.MapSecureFiles();
             endpoints.MapDocuments();
@@ -146,6 +168,12 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapImports();
             endpoints.MapLegacyCrewImports();
             endpoints.MapTechnical();
+            endpoints.MapDefects();
+            endpoints.MapDefectAssetContexts();
+            endpoints.MapWorkOrders();
+            endpoints.MapWorkOrderPlanOrigins();
+            endpoints.MapOperationalDowntime();
+            endpoints.MapDowntimeOrigins();
             endpoints.MapMaintenanceObservations();
             endpoints.MapTug();
             endpoints.MapGet("/health/live", () => Results.Text("alive"))
