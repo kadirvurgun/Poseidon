@@ -36,3 +36,5 @@ S3 test lifecycle düzeltmesi5b048db:20dar test/2gerçek Windows process-tree se
 
 
 17 dil geliştirme kontrol noktası: ortak17katalog, ürün10tamkatalog;3169metin alanı. Yeni i18n/RTL/katalog ve taslak koruma testleri yazıldı; yürütme DEFERRED. [Görev](tasks/LOCALIZATION-17-01.md) ve [faz raporu](phases/LOCALIZATION-17-20261109.md). Canonical kabul değişmedi.
+
+11.11yerelleştirme:10tamana katalogya ek17×31durum/görev/beyan etiketiJSON’a taşındı.7ana katalog ve bazınonliteralmetindalları açık. YeniürünkontrolleriDEFERRED.

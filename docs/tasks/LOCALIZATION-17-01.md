@@ -56,3 +56,9 @@ frontend lint/typecheck/build/generated-contract parity, all component tests,
 real desktop/narrow journeys, explicit locale-switch/RTL/dirty-draft scenarios,
 repository and built-client scans, then independent exact-target QA and CI.
 PR16 verification remains a separate earlier bundle.
+
+
+11.11 presentation namespace:17×31fully-authored labels for duties, calendar
+ordering, daily statuses and certificate declarations. Original option values
+remain canonical. Seven main catalogs and remaining nonliteral label branches
+are still open; new-bundle execution remains deferred.

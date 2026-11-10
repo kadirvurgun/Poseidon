@@ -18,3 +18,13 @@ sonuçları **DEFERRED**, PASS değil. Yeni ürün paketi PR16’dan ayrı tutul
 Canonical103/970SP,%10,62 kabul değişmedi.
 
 [Görev ve kabul koşulları](../tasks/LOCALIZATION-17-01.md).
+
+
+11.11güncellemesi:950c412 ile günlük görev, tarih sırası, beyan ve durum etiketleri
+ayrı JSON namespace’e taşındı;17dil×31etiket. Canonical seçenek değerleri
+ve komut gövdeleri korunur. Arapça “beyan edilmedi” erişim reddiyle karıştırılmaz;
+sertifika durumu açıkça beyan olarak gösterilir. Kaynak3169metinlik ana katalog
+hash’i değişmedi.10tamana katalog ve7eksik ana katalog vardır;17tamüründili
+iddiası yoktur. Kalan dictionary/array/template kullanımları da kapatılacak.
+Yeni label/RTL/taslak/locale testleri yazıldı; build/typecheck/component/browser
+kontrolleri yeni paket kapısına DEFERRED, PASS değil. PR16 recovery ayrı daldadır.
