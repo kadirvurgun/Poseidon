@@ -1,9 +1,10 @@
 import { test } from '@playwright/test'
 import { registerCases } from './cases.ts'
+import { runSignedCase } from '../lab/signed-case.ts'
+import { login } from '../lab/journeys.ts'
 
 for (const entry of registerCases) {
   test.describe(entry.name, () => {
-    if (entry.restricted) test.use({ storageState: process.env.POSEIDON_REGISTER_RESTRICTED_STATE })
-    test(entry.name, async ({ page }) => entry.run(page))
+    test(entry.name, async ({ page }) => runSignedCase(page, entry, login))
   })
 }
