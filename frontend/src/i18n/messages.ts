@@ -53,7 +53,7 @@ registerLocaleLoader(async locale => {
   try { await pending } finally { if (loading.get(locale) === pending) loading.delete(locale) }
 })
 
-function resolveLanguage(value: LanguageInput): Locale {
+export function resolveMessageLocale(value: LanguageInput): Locale {
   if (typeof value !== 'boolean') return value
   const current = i18n.resolvedLanguage ?? i18n.language
   // Legacy helpers accept an English flag. Their isolated TR/EN behavior stays
@@ -62,13 +62,13 @@ function resolveLanguage(value: LanguageInput): Locale {
 }
 
 export function sourceText(locale: 'en' | 'tr', key: string): string { return text(locale, `messages:${key}`) }
-export function localizedText(language: LanguageInput, key: string, options?: TOptions): string { return text(resolveLanguage(language), `messages:${key}`, options) }
+export function localizedText(language: LanguageInput, key: string, options?: TOptions): string { return text(resolveMessageLocale(language), `messages:${key}`, options) }
 
 export function localizedLabel(label: { en: string; tr: string }, language: LanguageInput): string
 export function localizedLabel(label: { en: string; tr: string } | undefined, language: LanguageInput): string | undefined
 export function localizedLabel(label: { en: string; tr: string } | undefined, language: LanguageInput): string | undefined {
   if (!label) return undefined
-  const locale = resolveLanguage(language), key = pairs.get(`${label.en}\0${label.tr}`)
+  const locale = resolveMessageLocale(language), key = pairs.get(`${label.en}\0${label.tr}`)
   return key ? text(locale, `messages:pairs.${key}`) : locale === 'tr' ? label.tr : label.en
 }
 export function localizedTuple(label: readonly string[], language: LanguageInput, englishIndex: 0 | 1): string

@@ -1,4 +1,5 @@
 import { localizedText } from "../i18n/messages";
+import { presentationLabel } from '../i18n/labels'
 import { type Locale as AppLocale } from "../i18n";
 import { useEffect, useRef, useState } from 'react';
 import { ApiError, request } from './api';
@@ -57,9 +58,9 @@ const fields: [
 function calendarFact(value: string | number, order: boolean, en: boolean) {
     const keys = order ? ['Incomplete', 'ExpiryBeforeIssue', 'SameDate', 'IssueBeforeExpiry'] : ['NotDeclared', 'BeforeReferenceDate', 'OnReferenceDate', 'AfterReferenceDate'];
     const index = typeof value === 'number' ? value : keys.indexOf(value);
-    const words = order ? (en ? ['Incomplete', 'Expiry before issue', 'Same date', 'Issue before expiry'] : ['Eksik', 'Bitiş düzenlemeden önce', 'Aynı tarih', 'Düzenleme bitişten önce'])
-        : (en ? ['Not declared', 'Before observation date', 'On observation date', 'After observation date'] : ['Beyan edilmedi', 'Gözlem tarihinden önce', 'Gözlem tarihinde', 'Gözlem tarihinden sonra']);
-    return Number.isInteger(index) && index >= 0 && index < words.length ? words[index] : (localizedText(en, "pairs.m_a5a7675bd7000dbd"));
+    const labels = order ? ['incomplete', 'expiryBeforeIssue', 'sameDate', 'issueBeforeExpiry'] as const
+        : ['notDeclared', 'beforeObservationDate', 'onObservationDate', 'afterObservationDate'] as const;
+    return Number.isInteger(index) && index >= 0 && index < labels.length ? presentationLabel(en, labels[index]) : (localizedText(en, "pairs.m_a5a7675bd7000dbd"));
 }
 // Mounted only inside the current authorized crew profile. No global cache/storage.
 export function CertificatePanel({ vessel, assignment, language, csrf, onDirty, person }: {

@@ -1,5 +1,6 @@
 import { localizedText } from "../i18n/messages";
 import type { DailyReviewChoice, DailyReviewDuty } from './daily-review-api';
-export const dailyReviewDuty = (duty: DailyReviewDuty, en: boolean) => en ? ({ Master: 'Master', ChiefOfficer: 'Chief officer', ChiefEngineer: 'Chief engineer' })[duty] : ({ Master: 'Kaptan', ChiefOfficer: 'Başzabit', ChiefEngineer: 'Başmühendis' })[duty];
+import { presentationLabel } from '../i18n/labels'
+export const dailyReviewDuty = (duty: DailyReviewDuty, en: boolean) => presentationLabel(en, ({ Master: 'master', ChiefOfficer: 'chiefOfficer', ChiefEngineer: 'chiefEngineer' } as const)[duty]);
 export function reviewBlocker(code: string, en: boolean) { const labels: Record<string, string> = { HUMAN_REVIEW_AUTHORITY_UNAVAILABLE: localizedText(en, "pairs.m_810160de669c59a6"), HUMAN_REVIEW_NOT_RECORDED: localizedText(en, "pairs.m_ce0edfaeac442ca8"), REVIEW_RECORDING_IS_NOT_VERIFICATION: localizedText(en, "pairs.m_ab201ebbfbbcff44") }; return labels[code] ?? (localizedText(en, "pairs.m_42672fc96170234a")); }
 export function dailyReviewChoiceLabel(choice: DailyReviewChoice, en: boolean) { return choice === 'RETURNED' ? (localizedText(en, "pairs.m_278bde5aab54dc71")) : (localizedText(en, "pairs.m_fb3c1974e8603e56")); }
