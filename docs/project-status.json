@@ -1009,7 +1009,7 @@
       "accepted": false
     }
   },
-  "as_of": "2026-11-09T08:21:38.199743+00:00",
+  "as_of": "2026-11-11",
   "audit_trace_01": {
     "status": "combined_gate_executed_not_accepted",
     "accepted": false,
@@ -3943,11 +3943,11 @@
   "active_source": "docs/sources/active.json",
   "current_package": {
     "task": "BUNDLE-PR-GATE-20261109",
-    "state": "CI317_GREEN_FULL_SIGNED_EXECUTION_IN_PROGRESS_NOT_ACCEPTED",
+    "state": "FULL_SIGNED_FAILED_RECOVERY_AUTHORED_FINAL_GATES_OPEN",
     "accepted": false,
     "accepted_story_points_added": 0,
     "defer_tests": false,
-    "observed_at_utc": "2026-11-09T18:16:19.965255+00:00",
+    "observed_at_utc": "2026-11-10T22:04:20.300463+00:00",
     "branch": "foundation/s6-certificate-foundation-20261105",
     "source_checkpoint": "1e40b39f3f44c469604876fe9a77599c1f296f9f",
     "source_tree": "70c15e7667bb4c6d2c38b12d3dc22f76eda1794a",
@@ -4203,7 +4203,7 @@
         }
       },
       "signed_lab": {
-        "state": "FULL174_DESKTOP_NARROW_RUNNING_NOT_ALL_PASS",
+        "state": "FAILED_FULL174_ORIGINAL_RESULTS_RETAINED",
         "completed_reported": [
           "Fresh owned genesis init",
           "Real ClamAV preparation",
@@ -4255,10 +4255,32 @@
             "skipped": 0
           },
           "independent_review": "8da127c earlierhelper independently reviewed; later69bc92c amendments pending final review"
+        },
+        "passed": 15,
+        "failed": 159,
+        "skipped": 0,
+        "seconds": 1659.909,
+        "tested_source": "69bc92cffc12ee5c5f5821c494d255a22d821a31",
+        "result_evidence": ".runtime/bundle-pr-gate-20261109/signed/full-signed-run-result.json",
+        "failures_not_assumed_independent": true,
+        "recovery": {
+          "source": "0fb4bee778213b08731e055c94908f228952b271",
+          "state": "LOCAL_BOUNDED_PASS_FULL_GATE_PENDING",
+          "node_protocol_passed": 36,
+          "node_protocol_failed": 0,
+          "node_protocol_skipped": 0,
+          "new_auth_cases_within36": 5,
+          "real_oidc_deep_login_accounts": 2,
+          "real_oidc_deep_login_passed": 2,
+          "production_cookie_lifetime_unchanged": true,
+          "full174_reexecuted": false,
+          "no_failed_case_retry_or_skip": true,
+          "source_scan_files": 2652,
+          "source_scan_findings": 0
         }
       },
       "ci": {
-        "state": "317704F_GREEN_BOTH_EVENTS_LATER_FIXTURE_SOURCE_NOT_YET_PUSHED",
+        "state": "8E0523D_GITHUB_INTERNAL_SERVER_ERROR_MISSING_REQUIRED_JOBS",
         "pull_request_url": "https://github.com/kadirvurgun/Poseidon/pull/16",
         "runs": {
           "push": {
@@ -4475,14 +4497,29 @@
             },
             "duration_seconds": 645.91
           }
+        },
+        "latest_external_diagnosis": {
+          "evidence": ".runtime/bundle-pr-gate-20261109/ci/github-admission-8e0523d.json",
+          "api_unit_passed": 176,
+          "api_integration_passed": 826,
+          "failed": 0,
+          "skipped": 0,
+          "critical_write_operations": 117,
+          "pr_run": 42672636808,
+          "push_run": 42672628162,
+          "pr_correlation_id": "3d8fabb1-54b2-42b1-a3be-5f8a0917e542",
+          "push_correlation_id": "f6aa1c5a-c25e-460c-9630-1e6bc28e34fe",
+          "failed_application_test": null,
+          "missing_jobs_not_passed": true
         }
       },
       "independent_final_target_QA": {
-        "state": "SOURCE_CORRECTIONS_REVIEWED_FULL_CI_SIGNED_ACCEPTANCE_PENDING",
+        "state": "CURRENT_AUTH_RECOVERY_REVIEW_PENDING_NOT_ACCEPTED",
         "source_reviews_available": true,
         "source": "6abbe829e085a5de17f0229f60ba55f2d496f0fc",
         "source_blockers": 0,
-        "independent_linux_lifecycle_cases": 7
+        "independent_linux_lifecycle_cases": 7,
+        "historical_source_reviews_retained": true
       },
       "all_tests_passed": false,
       "preview_user": {
@@ -4610,7 +4647,7 @@
       }
     ],
     "publication": {
-      "state": "DRAFT_PR_OPEN_CI_GREEN_CHECKPOINT_FULL_SIGNED_PENDING",
+      "state": "DRAFT_OPEN_FULL_SIGNED_FAILED_UPDATED_TARGET_CHECKS_PENDING",
       "url": "https://github.com/kadirvurgun/Poseidon/pull/16",
       "ready_for_merge": false,
       "all_checks_passed": false,
@@ -4628,7 +4665,7 @@
       "Fix actual full-scope CI failures, batch one push then await Application foundation, independent exact-target QA remains required"
     ],
     "next": {
-      "action": "Complete actual174 signed cases; diagnose failed cases without waivers; finalupdated source CI and independentQA before merge. Continue separate17-locale bundle.",
+      "action": "Review auth-recovery source and run required CI once; finish missing genuine fixture/flow requirements and provision fresh isolated run IDs before full174gate; merge only after independent current-target QA and all required checks.",
       "candidate": "DEV-056 PMS Command Center",
       "trace_id": "T-S8-005",
       "source_locator": "18.01 sheet:Backlog/row:57",
@@ -4651,7 +4688,8 @@
       ],
       "cause_not_established": "No model or native-process memory leak diagnosis; each native child reported approximately240MB private bytes by Root, not causal attribution.",
       "response": "Stopped only four exact worktree native children after their parent ended; no other process stopped. No new local wide native jobs; final complete scope remains open for CI."
-    }
+    },
+    "latest_report": "docs/phases/BUNDLE-SIGNED-RECOVERY-20261111.md"
   },
   "nav_workspace_01": {
     "status": "locally_validated_awaiting_independent_qa",
@@ -11709,11 +11747,11 @@
   },
   "bundle_pr_gate_20261109": {
     "task": "BUNDLE-PR-GATE-20261109",
-    "state": "CI317_GREEN_FULL_SIGNED_EXECUTION_IN_PROGRESS_NOT_ACCEPTED",
+    "state": "FULL_SIGNED_FAILED_RECOVERY_AUTHORED_FINAL_GATES_OPEN",
     "accepted": false,
     "accepted_story_points_added": 0,
     "defer_tests": false,
-    "observed_at_utc": "2026-11-09T18:16:19.965255+00:00",
+    "observed_at_utc": "2026-11-10T22:04:20.300463+00:00",
     "branch": "foundation/s6-certificate-foundation-20261105",
     "source_checkpoint": "1e40b39f3f44c469604876fe9a77599c1f296f9f",
     "source_tree": "70c15e7667bb4c6d2c38b12d3dc22f76eda1794a",
@@ -11969,7 +12007,7 @@
         }
       },
       "signed_lab": {
-        "state": "FULL174_DESKTOP_NARROW_RUNNING_NOT_ALL_PASS",
+        "state": "FAILED_FULL174_ORIGINAL_RESULTS_RETAINED",
         "completed_reported": [
           "Fresh owned genesis init",
           "Real ClamAV preparation",
@@ -12021,10 +12059,32 @@
             "skipped": 0
           },
           "independent_review": "8da127c earlierhelper independently reviewed; later69bc92c amendments pending final review"
+        },
+        "passed": 15,
+        "failed": 159,
+        "skipped": 0,
+        "seconds": 1659.909,
+        "tested_source": "69bc92cffc12ee5c5f5821c494d255a22d821a31",
+        "result_evidence": ".runtime/bundle-pr-gate-20261109/signed/full-signed-run-result.json",
+        "failures_not_assumed_independent": true,
+        "recovery": {
+          "source": "0fb4bee778213b08731e055c94908f228952b271",
+          "state": "LOCAL_BOUNDED_PASS_FULL_GATE_PENDING",
+          "node_protocol_passed": 36,
+          "node_protocol_failed": 0,
+          "node_protocol_skipped": 0,
+          "new_auth_cases_within36": 5,
+          "real_oidc_deep_login_accounts": 2,
+          "real_oidc_deep_login_passed": 2,
+          "production_cookie_lifetime_unchanged": true,
+          "full174_reexecuted": false,
+          "no_failed_case_retry_or_skip": true,
+          "source_scan_files": 2652,
+          "source_scan_findings": 0
         }
       },
       "ci": {
-        "state": "317704F_GREEN_BOTH_EVENTS_LATER_FIXTURE_SOURCE_NOT_YET_PUSHED",
+        "state": "8E0523D_GITHUB_INTERNAL_SERVER_ERROR_MISSING_REQUIRED_JOBS",
         "pull_request_url": "https://github.com/kadirvurgun/Poseidon/pull/16",
         "runs": {
           "push": {
@@ -12241,14 +12301,29 @@
             },
             "duration_seconds": 645.91
           }
+        },
+        "latest_external_diagnosis": {
+          "evidence": ".runtime/bundle-pr-gate-20261109/ci/github-admission-8e0523d.json",
+          "api_unit_passed": 176,
+          "api_integration_passed": 826,
+          "failed": 0,
+          "skipped": 0,
+          "critical_write_operations": 117,
+          "pr_run": 42672636808,
+          "push_run": 42672628162,
+          "pr_correlation_id": "3d8fabb1-54b2-42b1-a3be-5f8a0917e542",
+          "push_correlation_id": "f6aa1c5a-c25e-460c-9630-1e6bc28e34fe",
+          "failed_application_test": null,
+          "missing_jobs_not_passed": true
         }
       },
       "independent_final_target_QA": {
-        "state": "SOURCE_CORRECTIONS_REVIEWED_FULL_CI_SIGNED_ACCEPTANCE_PENDING",
+        "state": "CURRENT_AUTH_RECOVERY_REVIEW_PENDING_NOT_ACCEPTED",
         "source_reviews_available": true,
         "source": "6abbe829e085a5de17f0229f60ba55f2d496f0fc",
         "source_blockers": 0,
-        "independent_linux_lifecycle_cases": 7
+        "independent_linux_lifecycle_cases": 7,
+        "historical_source_reviews_retained": true
       },
       "all_tests_passed": false,
       "preview_user": {
@@ -12376,7 +12451,7 @@
       }
     ],
     "publication": {
-      "state": "DRAFT_PR_OPEN_CI_GREEN_CHECKPOINT_FULL_SIGNED_PENDING",
+      "state": "DRAFT_OPEN_FULL_SIGNED_FAILED_UPDATED_TARGET_CHECKS_PENDING",
       "url": "https://github.com/kadirvurgun/Poseidon/pull/16",
       "ready_for_merge": false,
       "all_checks_passed": false,
@@ -12394,7 +12469,7 @@
       "Fix actual full-scope CI failures, batch one push then await Application foundation, independent exact-target QA remains required"
     ],
     "next": {
-      "action": "Complete actual174 signed cases; diagnose failed cases without waivers; finalupdated source CI and independentQA before merge. Continue separate17-locale bundle.",
+      "action": "Review auth-recovery source and run required CI once; finish missing genuine fixture/flow requirements and provision fresh isolated run IDs before full174gate; merge only after independent current-target QA and all required checks.",
       "candidate": "DEV-056 PMS Command Center",
       "trace_id": "T-S8-005",
       "source_locator": "18.01 sheet:Backlog/row:57",
@@ -12417,7 +12492,8 @@
       ],
       "cause_not_established": "No model or native-process memory leak diagnosis; each native child reported approximately240MB private bytes by Root, not causal attribution.",
       "response": "Stopped only four exact worktree native children after their parent ended; no other process stopped. No new local wide native jobs; final complete scope remains open for CI."
-    }
+    },
+    "latest_report": "docs/phases/BUNDLE-SIGNED-RECOVERY-20261111.md"
   },
   "localization_17_20261109": {
     "state": "AUTHORED_UNVERIFIED_TRANSLATION_IN_PROGRESS",
