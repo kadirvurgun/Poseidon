@@ -1,5 +1,14 @@
 # POSEIDON güncel durum — büyük paket PR kapısı
 
+Güncel yerelleştirme kaynak kontrol noktası `16fdc90`: **11/17 tam ana katalog**, 17 ortak katalog ve **17 × 81 sunum etiketi** yazıldı. İtalyanca tamamlandı; Fransızca karakter bozulmaları düzeltildi. Mürettebat, mevzuat, sağlık ve çevrimdışı çatışma metinleri JSON kaynaklarına taşındı; ek dosya düğmeleri ortak bileşenlere alındı. Altı ana katalog ve kaynak sunum incelemesi açık. Yeni paket testleri **DEFERRED**, çalıştırılmadı; bu bir sprint kabulü değildir.
+
+Ayrı [PR16](https://github.com/kadirvurgun/Poseidon/pull/16) hedefi `32ff1d0` için iki CI koşusunda dört zorunlu iş de geçti: her olayda API 826/826 integration, 176/176 unit, hata/skip 0 ve 117/117 kritik işlem. Önceki tam signed sonuç 15 PASS / 159 FAIL olarak korunur; güncel tam signed ve bağımsız son QA olmadan merge yoktur. Canonical kabul **103/970 SP (%10,62)** olarak değişmedi.
+
+[11.11 yerelleştirme raporu](phases/LOCALIZATION-17-20261109.md) · [Görev ve kabul koşulları](tasks/LOCALIZATION-17-01.md)
+
+Aşağıdaki önceki kontrol noktaları kendi kaynak ve test kapsamlarıyla tarihsel kayıt olarak korunur.
+
+
 **Genel kabul %10,62: 103/970 SP, 20/121 iş, ayrı ekran kabulü0/196.** S0/S1 kabulü ve bütün tarihsel kayıtlar korunuyor. S6 seçili9iş/87SP ve S8 seçili2iş/26SP, tamamlanmış veya kabul edilmiş faz değildir.
 
 Son kullanıcı talimatıyla test ertelemesi kaldırıldı. S2/S3/S4/S5/S6/S8 boyunca biriken ürün paketi için **incelemeye açık draft PR hazırlanıyor**; henüz PR/CI sonucu yok. Çalışma yalnız downtime değildir: kurumsal menü ve ortak kontroller, yetkili kaynak/rol bağlamı, regulatory/catalog akışları, şifreli offline taslak ve conflict/retry, compliance, sertifika/günlük/operasyon kayıtları, Defect/WorkOrder lineage, EF migration ve audit kapsamını içerir. Kaynakta açık kalan kapanış/kanıt/insan yetkisi kararları tamamlandı sayılmaz.

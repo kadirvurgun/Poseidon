@@ -11821,7 +11821,7 @@
     "state": "AUTHORING_IN_PROGRESS_NOT_ACCEPTED",
     "accepted": false,
     "accepted_story_points_added": 0,
-    "observed_at_utc": "2026-11-10T22:04:57.312906+00:00",
+    "observed_at_utc": "2026-11-11T07:05:42.179437+00:00",
     "branch": "foundation/enterprise-localization-20261109",
     "task": "docs/tasks/LOCALIZATION-17-01.md",
     "report": "docs/phases/LOCALIZATION-17-20261109.md",
@@ -11840,32 +11840,48 @@
       "hi",
       "cs",
       "ru",
-      "hu"
-    ],
-    "product_locales_in_progress": [
+      "hu",
       "it"
     ],
+    "product_locales_in_progress": [],
     "product_locales_remaining": [
-      "sk",
       "fi",
+      "sk",
       "es",
       "pt-BR",
       "zh-Hans",
       "zh-Hant"
     ],
     "worker_limit": "Actual usage limit reported; partial authoring retained; no account/model rotation",
-    "verification": "DEFERRED_NEW_BUNDLE_GATE; source AST authoring only, no build/typecheck/component/browser run",
+    "verification": "DEFERRED_NEW_BUNDLE_GATE; meaningful tests authored, no build/typecheck/component/browser run or new-package PASS",
     "canonical_acceptance_changed": false,
-    "pr16_merge_status": "Still open; requiredCI317704f passed both runs; updated fixture helper and genuine signed gate remain",
-    "source_checkpoint": "950c412",
+    "pr16_merge_status": "32ff1d0: all4requiredCIjobs passed both push42911160703 and PR42911168567; full174signed gate and independent final-target QA remain open",
+    "source_checkpoint": "16fdc90",
     "status_label_locales_authored": 17,
-    "status_label_keys_per_locale": 31,
+    "status_label_keys_per_locale": 81,
     "main_catalog_string_leaves": 3169,
     "remaining_work": [
-      "Complete7remaining main catalogs",
-      "Migrate remaining dictionary/array/template label branches",
+      "Complete6remaining main catalogs",
+      "Finish source-level review of variable/dictionary/format display paths",
       "Execute deferred full new-bundle checks",
       "Independent exact-target QA before publication"
-    ]
+    ],
+    "delivered_since_950c412": [
+      "Complete Italian3169leaf catalog",
+      "Strict reversible repair of347Italian and2378French corrupted text leaves",
+      "17locale crew states and scoped counter",
+      "59regulatory copy calls, language-live saved notice, unchanged command bytes",
+      "Health freshness and tug conflict labels",
+      "Shared attachment controls preserve dirty/busy locks",
+      "Selected-locale case folding preserves source names and IDs"
+    ],
+    "source_authoring_assistance": {
+      "scope": "NOT build/typecheck/test execution",
+      "last_changed_typescript_files": 10,
+      "syntax_diagnostics": 0,
+      "unresolved_literal_keys": 0,
+      "limited_locale_branch_query_matches": 0,
+      "does_not_establish_complete_migration": true
+    }
   }
 }

@@ -62,3 +62,39 @@ PR16 verification remains a separate earlier bundle.
 ordering, daily statuses and certificate declarations. Original option values
 remain canonical. Seven main catalogs and remaining nonliteral label branches
 are still open; new-bundle execution remains deferred.
+
+
+## 11.11 continuation — source16fdc90
+
+Complete main catalogs:11/17, now including Italian. The remaining six are
+fi,sk,es,pt-BR,zh-Hans,zh-Hant. All seventeen presentation resources contain81keys;
+this is distinct from the3169-leaf frozen main catalog. French Unicode corruption
+was repaired by a strict reversible conversion; valid `Âge` remains valid text.
+Earlier10-catalog/31-label checkpoints above are retained as history.
+
+Additional traceable acceptance cases (authored, execution DEFERRED):
+
+- L17-AC-UNICODE: every authored main catalog retains source structure,
+  placeholders and valid Unicode; Italian accents and French `Âge` render intact.
+  [Catalog tests](../../frontend/src/i18n/messages.test.ts).
+- L17-AC-CREW: changing locale retains the same state filter and visible page,
+  does not fetch owning input again and preserves qualified-ineligible, withheld,
+  unverified and unknown distinctions.
+  [Owning input tests](../../frontend/src/product/CrewOwningInputs.test.tsx),
+  [roster tests](../../frontend/src/product/CrewEnterpriseRoster.test.tsx).
+- L17-AC-REGULATORY: an uncertain command preserves identical body/headers and
+  the existing editor nodes through Italian; the saved notice follows the locale.
+  [Register tests](../../frontend/src/product/RegulatoryRegister.test.tsx).
+- L17-AC-ATTACHMENT: standard mode controls retain the owning draft node and
+  remain disabled while dirty/busy; no automatic mode switch follows translation.
+  [Attachment tests](../../frontend/src/product/VesselAttachments.test.tsx).
+- L17-AC-OBSERVATION: localized freshness categories preserve absent telemetry;
+  source-name filtering follows the selected locale without mutating identifiers.
+  [Health tests](../../frontend/src/product/SystemHealthWorkspace.test.tsx),
+  [technical tests](../../frontend/src/product/TechnicalReadViews.test.tsx).
+- L17-AC-OFFLINE: translated conflict columns retain the same frozen attempt;
+  no replay or new capture occurs before an explicit operator choice.
+  [Offline tests](../../frontend/src/product/TugOfflinePanel.test.tsx).
+
+These tests have not run. Required new-bundle checks and independent exact-target
+QA remain open; canonical accepted story points remain unchanged.
