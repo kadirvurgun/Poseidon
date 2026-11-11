@@ -184,8 +184,158 @@ async function controlledResponseLoss(page: Page) {
         await page.unroute(routeUrl, equipmentTransport);
     }
 }
+
+async function observationControlledResponseLoss(page: Page) {
+    // MAINTENANCE-OBSERVATION-OWNER-RECOVERY-01 AC2/3/4/5.
+    // PREREQUISITE_OPEN: the disposable genuine-host writer needs
+    // maintenance.observation.write and an actual synthetic observation source
+    // configured on the seed root asset (asset id = vessel id). This case fails
+    // when that fixture is absent; it never provisions or fabricates a policy.
+    // AUTHORED ONLY; no new bundle execution or historical manifest acceptance.
+    const vessel = await context(page);
+    const path = `/api/v1/equipment-hierarchy/${vessel}/${vessel}/observations`;
+    const prerequisite = await page.request.get(path);
+    expect(prerequisite.status(), 'PREREQUISITE_OPEN: actual scoped observation fixture must be readable').toBe(200);
+    const initial = await prerequisite.json();
+    expect(initial.canWrite === true && initial.state === 'ConfiguredDeclarationsOnly' &&
+        Array.isArray(initial.sources) && Array.isArray(initial.items),
+    'PREREQUISITE_OPEN: genuine writer and configured synthetic observation source are required').toBe(true);
+    type ConfiguredSource = { source: string; version: string; kind: 'Meter' | 'Condition'; unit: string;
+        freshnessSeconds: number; maxScale: number; vesselId: string; assetId: string };
+    const source: ConfiguredSource | undefined = initial.sources.find((rule: ConfiguredSource) => rule &&
+        typeof rule.source === 'string' && rule.source.length > 0 && typeof rule.version === 'string' && rule.version.length > 0 &&
+        (rule.kind === 'Meter' || rule.kind === 'Condition') && typeof rule.unit === 'string' && rule.unit.length > 0 &&
+        rule.vesselId === vessel && rule.assetId === vessel && Number.isSafeInteger(rule.freshnessSeconds) && rule.freshnessSeconds > 0 &&
+        Number.isSafeInteger(rule.maxScale) && rule.maxScale >= 0 && rule.maxScale <= 28);
+    expect(source !== undefined, 'PREREQUISITE_OPEN: a real scoped Meter or Condition source is required').toBe(true);
+    if (!source) throw new Error('PREREQUISITE_OPEN: configured observation source unavailable');
+    const scale = Math.min(source.maxScale, 4);
+    const declaredValue = source.kind === 'Condition' ? 'False' : scale ? `19.${'5'.padEnd(scale, '0')}` : '19';
+    const existingRevisions = new Set(initial.items.filter((row: { source: string }) => row.source === source.source)
+        .map((row: { sourceRevision: number }) => row.sourceRevision));
+    let revision = Date.now();
+    while (existingRevisions.has(revision)) revision++;
+    expect(Number.isSafeInteger(revision) && revision > 0).toBe(true);
+    const instant = new Date(Date.now() - 60_000).toISOString(); // Explicit UTC offset, never a future declaration.
+    const attempts: { key: string | undefined; body: string | null; sessionReads: number }[] = [];
+    let sessionReads = 0, lostWrite = false, replayConfirmed = false, lostReadback = false, committedId = '';
+    const observeSession = (request: Request) => {
+        if (new URL(request.url()).pathname === '/api/v1/auth/session') sessionReads++;
+    };
+    const routeUrl = `**${path}`;
+    const observationTransport = async (route: Route) => {
+        if (route.request().method() !== 'POST') {
+            if (route.request().method() === 'GET' && replayConfirmed && !lostReadback) {
+                lostReadback = true;
+                return route.abort('connectionreset');
+            }
+            return route.continue();
+        }
+        attempts.push({ key: route.request().headers()['idempotency-key'], body: route.request().postData(), sessionReads });
+        const actual = await route.fetch(); // Actual TLS, current server authority and PostgreSQL commit/replay.
+        expect(actual.status() === 200).toBe(true);
+        const result = await actual.json();
+        if (!lostWrite) {
+            lostWrite = true;
+            committedId = result.id;
+            expect(typeof committedId === 'string' && result.replayed === false).toBe(true);
+            return route.abort('connectionreset');
+        }
+        expect(result.id === committedId && result.replayed === true).toBe(true);
+        replayConfirmed = true;
+        return route.fulfill({ response: actual }); // Forward only the real response; no invented success.
+    };
+    page.on('request', observeSession);
+    try {
+        await page.route(routeUrl, observationTransport);
+        await page.goto(`/app/equipment-hierarchy/${vessel}?id=${vessel}`);
+        await page.getByRole('combobox', { name: /^(Dil seçin|Choose language)$/ }).selectOption('en');
+        const observations = page.getByRole('region', { name: 'Meter and condition observations', exact: true });
+        const configured = observations.getByLabel('Configured source', { exact: true });
+        const sourceRevision = observations.getByLabel('Source revision', { exact: true });
+        const value = observations.getByLabel('Observed value (exact declaration)', { exact: true });
+        const observedAt = observations.getByLabel('Observation instant (ISO with offset)', { exact: true });
+        const record = observations.getByRole('button', { name: 'Record observation', exact: true });
+        const reload = observations.getByRole('button', { name: 'Retry source read', exact: true });
+        const discard = observations.getByRole('button', { name: 'Discard and reload', exact: true });
+        await configured.selectOption(source.source);
+        await sourceRevision.fill(String(revision));
+        if (source.kind === 'Condition') await value.selectOption('False');
+        else await value.fill(declaredValue);
+        await observedAt.fill(instant);
+        const beforeCapture = sessionReads;
+        await record.click();
+        await expect(observations.getByText('Outcome uncertain. The exact original attempt is locked until retry.', { exact: true })).toBeVisible();
+        await expect(configured).toHaveCount(0);
+        await expect(value).toHaveCount(0);
+        await expect(discard).toBeDisabled();
+        expect(attempts.length === 1 && attempts[0].sessionReads > beforeCapture).toBe(true);
+
+        // An explicit current-source read restores only the original frozen form.
+        // It does not replay the capture or turn unknown into a fresh attempt.
+        await reload.click();
+        await expect(configured).toHaveValue(source.source);
+        await expect(configured).toBeDisabled();
+        await expect(sourceRevision).toHaveValue(String(revision));
+        await expect(sourceRevision).toBeDisabled();
+        await expect(value).toHaveValue(declaredValue);
+        await expect(value).toBeDisabled();
+        await expect(observedAt).toHaveValue(instant);
+        await expect(observedAt).toBeDisabled();
+        await expect(record).toBeDisabled();
+        expect(attempts.length).toBe(1);
+        const beforeRetry = sessionReads;
+        await observations.getByRole('button', { name: 'Retry same attempt', exact: true }).click();
+        await expect(observations.getByText('Draft saved.', { exact: true })).toBeVisible();
+        await expect(observations.getByText('Observation service unavailable.', { exact: true })).toBeVisible();
+        expect(lostReadback && attempts.length === 2 && attempts[1].sessionReads > beforeRetry).toBe(true);
+        // The existing client header is compared only as retained attempt metadata.
+        // Backend replay identity remains observation UUID/body, not an actor receipt.
+        expect(typeof attempts[0].key === 'string' && attempts[0].key === attempts[1].key &&
+            attempts[0].body !== null && attempts[0].body === attempts[1].body).toBe(true);
+        const sent = JSON.parse(attempts[0].body!);
+        expect(sent.id === committedId && sent.source === source.source && sent.policyVersion === source.version &&
+            sent.kind === source.kind && sent.unit === source.unit && sent.sourceRevision === revision &&
+            sent.value === declaredValue && sent.observedAt === instant).toBe(true);
+        await expect(configured).toHaveCount(0);
+        await expect(record).toHaveCount(0);
+        await expect(observations.getByRole('button', { name: 'Retry same attempt', exact: true })).toHaveCount(0);
+
+        const persistedResponse = await page.request.get(path);
+        expect(persistedResponse.status() === 200).toBe(true);
+        const persisted = await persistedResponse.json();
+        const rows = persisted.items.filter((row: { id: string }) => row.id === committedId);
+        expect(rows.length === 1 && rows[0].value === declaredValue && rows[0].source === source.source &&
+            rows[0].policyVersion === source.version && rows[0].sourceRevision === revision &&
+            rows[0].kind === source.kind && rows[0].unit === source.unit && Date.parse(rows[0].observedAt) === Date.parse(instant) &&
+            rows[0].provenance === 'UserDeclaredUnverified' && rows[0].revoked === false).toBe(true);
+
+        await reload.click();
+        await expect(observations.getByRole('status').getByText(committedId, { exact: true })).toBeVisible();
+        await expect(configured).toHaveValue(source.source);
+        await expect(configured).toBeDisabled();
+        await expect(sourceRevision).toBeDisabled();
+        await expect(value).toHaveValue(declaredValue);
+        await expect(value).toBeDisabled();
+        await expect(observedAt).toBeDisabled();
+        await expect(record).toBeDisabled();
+        expect(attempts.length).toBe(2);
+        await expect(discard).toBeEnabled();
+        await discard.click();
+        await expect(configured).toBeEnabled();
+        await expect(configured).toHaveValue('');
+        await expect(sourceRevision).toHaveValue('');
+        await expect(value).toHaveValue('');
+        await expect(observedAt).toHaveValue('');
+        expect(attempts.length).toBe(2); // Neither source reload nor explicit discard silently resends.
+    } finally {
+        page.off('request', observeSession);
+        await page.unroute(routeUrl, observationTransport);
+    }
+}
 export const technicalCases = [
     { name: 'equipment-plan-tree-deep-url-keyboard-dirty-responsive', run: hierarchyPlan, restricted: false },
     { name: 'equipment-restricted-direct-url', run: denied, restricted: true },
     { name: 'equipment-controlled-response-loss-real-commit', run: controlledResponseLoss, restricted: false },
+    { name: 'maintenance-observation-controlled-response-loss-real-commit', run: observationControlledResponseLoss, restricted: false },
 ] as const;
