@@ -121,5 +121,21 @@
   "workspaceCaption": "ESPACE DE TRAVAIL",
   "developmentCaption": "DÉVELOPPEMENT",
   "foundationCaption": "SOCLE APPLICATIF",
-  "maritimeOperations": "OPÉRATIONS MARITIMES"
+  "maritimeOperations": "OPÉRATIONS MARITIMES",
+  "compliancePackReference": "Référence du recueil de règles de classe",
+  "compliancePackEdition": "Édition du recueil",
+  "complianceSurveyReference": "Référence du dossier de visite",
+  "complianceM79Statement": "Déclaration M79 dans la source",
+  "complianceMsmdDocumentReference": "Référence du document MSMD",
+  "complianceIssuerReference": "Référence de l’émetteur",
+  "complianceAssignmentReference": "Référence de l’affectation",
+  "complianceAssignmentRevision": "Révision de l’affectation",
+  "complianceAssignmentVersion": "Version de l’affectation",
+  "compliancePositionReference": "Référence du poste",
+  "compliancePositionVersion": "Version du poste",
+  "complianceAssessmentFrom": "Début de la période d’évaluation",
+  "complianceAssessmentTo": "Fin de la période d’évaluation (exclue)",
+  "complianceSourceCriterion": "Code du critère de la source",
+  "complianceAssessmentSource": "Référence de la source d’évaluation qualifiée",
+  "complianceCriterionOutcome": "Résultat du critère de la source"
 }

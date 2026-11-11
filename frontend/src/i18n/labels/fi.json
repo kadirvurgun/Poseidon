@@ -121,5 +121,21 @@
   "workspaceCaption": "TYÖTILA",
   "developmentCaption": "KEHITYS",
   "foundationCaption": "PERUSINFRASTRUKTUURI",
-  "maritimeOperations": "MERENKULUN TOIMINNOT"
+  "maritimeOperations": "MERENKULUN TOIMINNOT",
+  "compliancePackReference": "Luokitusmääräyspaketin viite",
+  "compliancePackEdition": "Paketin painos",
+  "complianceSurveyReference": "Katsastustietueen viite",
+  "complianceM79Statement": "Lähteen M79-ilmoitus",
+  "complianceMsmdDocumentReference": "MSMD-asiakirjan viite",
+  "complianceIssuerReference": "Myöntäjän viite",
+  "complianceAssignmentReference": "Tehtäväjaon viite",
+  "complianceAssignmentRevision": "Tehtäväjaon revisio",
+  "complianceAssignmentVersion": "Tehtäväjaon versio",
+  "compliancePositionReference": "Toimen viite",
+  "compliancePositionVersion": "Toimen versio",
+  "complianceAssessmentFrom": "Arviointijakson alku",
+  "complianceAssessmentTo": "Arviointijakson loppu (ei sisälly)",
+  "complianceSourceCriterion": "Lähdekriteerin koodi",
+  "complianceAssessmentSource": "Kelpuutetun arvioinnin lähdeviite",
+  "complianceCriterionOutcome": "Lähdekriteerin tulos"
 }

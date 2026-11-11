@@ -121,5 +121,21 @@
   "workspaceCaption": "РАБОЧАЯ ОБЛАСТЬ",
   "developmentCaption": "РАЗРАБОТКА",
   "foundationCaption": "БАЗОВАЯ ИНФРАСТРУКТУРА",
-  "maritimeOperations": "МОРСКИЕ ОПЕРАЦИИ"
+  "maritimeOperations": "МОРСКИЕ ОПЕРАЦИИ",
+  "compliancePackReference": "Ссылка на пакет правил класса",
+  "compliancePackEdition": "Издание пакета",
+  "complianceSurveyReference": "Ссылка на запись освидетельствования",
+  "complianceM79Statement": "Заявление M79 в источнике",
+  "complianceMsmdDocumentReference": "Ссылка на документ MSMD",
+  "complianceIssuerReference": "Ссылка на издателя",
+  "complianceAssignmentReference": "Ссылка на назначение",
+  "complianceAssignmentRevision": "Редакция назначения",
+  "complianceAssignmentVersion": "Версия назначения",
+  "compliancePositionReference": "Ссылка на должность",
+  "compliancePositionVersion": "Версия должности",
+  "complianceAssessmentFrom": "Начало периода оценки",
+  "complianceAssessmentTo": "Конец периода оценки (не включается)",
+  "complianceSourceCriterion": "Код критерия источника",
+  "complianceAssessmentSource": "Ссылка на источник квалифицированной оценки",
+  "complianceCriterionOutcome": "Результат критерия источника"
 }

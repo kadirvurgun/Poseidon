@@ -121,5 +121,21 @@
   "workspaceCaption": "PRACOVNÍ PROSTOR",
   "developmentCaption": "VÝVOJ",
   "foundationCaption": "ZÁKLADNÍ INFRASTRUKTURA",
-  "maritimeOperations": "NÁMOŘNÍ OPERACE"
+  "maritimeOperations": "NÁMOŘNÍ OPERACE",
+  "compliancePackReference": "Odkaz na balíček klasifikačních pravidel",
+  "compliancePackEdition": "Vydání balíčku",
+  "complianceSurveyReference": "Odkaz na záznam prohlídky",
+  "complianceM79Statement": "Prohlášení M79 ve zdroji",
+  "complianceMsmdDocumentReference": "Odkaz na dokument MSMD",
+  "complianceIssuerReference": "Odkaz na vydavatele",
+  "complianceAssignmentReference": "Odkaz na přiřazení",
+  "complianceAssignmentRevision": "Revize přiřazení",
+  "complianceAssignmentVersion": "Verze přiřazení",
+  "compliancePositionReference": "Odkaz na pozici",
+  "compliancePositionVersion": "Verze pozice",
+  "complianceAssessmentFrom": "Začátek období hodnocení",
+  "complianceAssessmentTo": "Konec období hodnocení (nezahrnutý)",
+  "complianceSourceCriterion": "Kód kritéria zdroje",
+  "complianceAssessmentSource": "Odkaz na zdroj kvalifikovaného hodnocení",
+  "complianceCriterionOutcome": "Výsledek kritéria zdroje"
 }

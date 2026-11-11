@@ -121,5 +121,21 @@
   "workspaceCaption": "工作区",
   "developmentCaption": "开发",
   "foundationCaption": "基础架构",
-  "maritimeOperations": "海事运营"
+  "maritimeOperations": "海事运营",
+  "compliancePackReference": "船级规则包引用",
+  "compliancePackEdition": "规则包版次",
+  "complianceSurveyReference": "检验记录引用",
+  "complianceM79Statement": "来源中的M79声明",
+  "complianceMsmdDocumentReference": "MSMD文件引用",
+  "complianceIssuerReference": "签发方引用",
+  "complianceAssignmentReference": "任命引用",
+  "complianceAssignmentRevision": "任命修订",
+  "complianceAssignmentVersion": "任命版本",
+  "compliancePositionReference": "岗位引用",
+  "compliancePositionVersion": "岗位版本",
+  "complianceAssessmentFrom": "评估期间开始",
+  "complianceAssessmentTo": "评估期间结束（不含）",
+  "complianceSourceCriterion": "来源标准代码",
+  "complianceAssessmentSource": "经资格确认的评估来源引用",
+  "complianceCriterionOutcome": "来源标准结果"
 }

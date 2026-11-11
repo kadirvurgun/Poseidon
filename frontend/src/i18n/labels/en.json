@@ -121,5 +121,21 @@
   "workspaceCaption": "WORKSPACE",
   "developmentCaption": "DEVELOPMENT",
   "foundationCaption": "FOUNDATION",
-  "maritimeOperations": "MARITIME OPERATIONS"
+  "maritimeOperations": "MARITIME OPERATIONS",
+  "compliancePackReference": "Class rule pack reference",
+  "compliancePackEdition": "Pack edition",
+  "complianceSurveyReference": "Survey record reference",
+  "complianceM79Statement": "M79 statement in source",
+  "complianceMsmdDocumentReference": "MSMD document reference",
+  "complianceIssuerReference": "Issuer reference",
+  "complianceAssignmentReference": "Assignment reference",
+  "complianceAssignmentRevision": "Assignment revision",
+  "complianceAssignmentVersion": "Assignment version",
+  "compliancePositionReference": "Position reference",
+  "compliancePositionVersion": "Position version",
+  "complianceAssessmentFrom": "Assessment period start",
+  "complianceAssessmentTo": "Assessment period end (exclusive)",
+  "complianceSourceCriterion": "Source criterion code",
+  "complianceAssessmentSource": "Qualified assessment source reference",
+  "complianceCriterionOutcome": "Source criterion outcome"
 }

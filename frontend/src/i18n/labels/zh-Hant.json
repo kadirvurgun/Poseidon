@@ -121,5 +121,21 @@
   "workspaceCaption": "工作區",
   "developmentCaption": "開發",
   "foundationCaption": "基礎架構",
-  "maritimeOperations": "海事營運"
+  "maritimeOperations": "海事營運",
+  "compliancePackReference": "船級規則套件引用",
+  "compliancePackEdition": "規則套件版次",
+  "complianceSurveyReference": "檢驗紀錄引用",
+  "complianceM79Statement": "來源中的M79聲明",
+  "complianceMsmdDocumentReference": "MSMD文件引用",
+  "complianceIssuerReference": "簽發方引用",
+  "complianceAssignmentReference": "任命引用",
+  "complianceAssignmentRevision": "任命修訂",
+  "complianceAssignmentVersion": "任命版本",
+  "compliancePositionReference": "職位引用",
+  "compliancePositionVersion": "職位版本",
+  "complianceAssessmentFrom": "評估期間開始",
+  "complianceAssessmentTo": "評估期間結束（不含）",
+  "complianceSourceCriterion": "來源準則代碼",
+  "complianceAssessmentSource": "經資格確認的評估來源引用",
+  "complianceCriterionOutcome": "來源準則結果"
 }

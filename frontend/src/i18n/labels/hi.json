@@ -121,5 +121,21 @@
   "workspaceCaption": "कार्यक्षेत्र",
   "developmentCaption": "विकास",
   "foundationCaption": "आधारभूत संरचना",
-  "maritimeOperations": "समुद्री संचालन"
+  "maritimeOperations": "समुद्री संचालन",
+  "compliancePackReference": "वर्ग नियम पैक का संदर्भ",
+  "compliancePackEdition": "पैक संस्करण",
+  "complianceSurveyReference": "सर्वेक्षण रिकॉर्ड संदर्भ",
+  "complianceM79Statement": "स्रोत में M79 घोषणा",
+  "complianceMsmdDocumentReference": "MSMD दस्तावेज़ संदर्भ",
+  "complianceIssuerReference": "जारीकर्ता संदर्भ",
+  "complianceAssignmentReference": "नियुक्ति संदर्भ",
+  "complianceAssignmentRevision": "नियुक्ति संशोधन",
+  "complianceAssignmentVersion": "नियुक्ति संस्करण",
+  "compliancePositionReference": "पद संदर्भ",
+  "compliancePositionVersion": "पद संस्करण",
+  "complianceAssessmentFrom": "मूल्यांकन अवधि की शुरुआत",
+  "complianceAssessmentTo": "मूल्यांकन अवधि का अंत (शामिल नहीं)",
+  "complianceSourceCriterion": "स्रोत मानदंड कोड",
+  "complianceAssessmentSource": "योग्य मूल्यांकन का स्रोत संदर्भ",
+  "complianceCriterionOutcome": "स्रोत मानदंड का परिणाम"
 }

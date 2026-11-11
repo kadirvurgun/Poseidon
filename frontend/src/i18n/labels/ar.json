@@ -121,5 +121,21 @@
   "workspaceCaption": "مساحة العمل",
   "developmentCaption": "التطوير",
   "foundationCaption": "البنية الأساسية",
-  "maritimeOperations": "العمليات البحرية"
+  "maritimeOperations": "العمليات البحرية",
+  "compliancePackReference": "مرجع حزمة قواعد التصنيف",
+  "compliancePackEdition": "إصدار الحزمة",
+  "complianceSurveyReference": "مرجع سجل المعاينة",
+  "complianceM79Statement": "إقرار M79 في المصدر",
+  "complianceMsmdDocumentReference": "مرجع وثيقة MSMD",
+  "complianceIssuerReference": "مرجع الجهة المصدرة",
+  "complianceAssignmentReference": "مرجع التكليف",
+  "complianceAssignmentRevision": "مراجعة التكليف",
+  "complianceAssignmentVersion": "نسخة التكليف",
+  "compliancePositionReference": "مرجع المنصب",
+  "compliancePositionVersion": "نسخة المنصب",
+  "complianceAssessmentFrom": "بداية فترة التقييم",
+  "complianceAssessmentTo": "نهاية فترة التقييم (غير شاملة)",
+  "complianceSourceCriterion": "رمز معيار المصدر",
+  "complianceAssessmentSource": "مرجع مصدر التقييم المؤهل",
+  "complianceCriterionOutcome": "نتيجة معيار المصدر"
 }

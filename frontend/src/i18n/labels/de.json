@@ -121,5 +121,21 @@
   "workspaceCaption": "ARBEITSBEREICH",
   "developmentCaption": "ENTWICKLUNG",
   "foundationCaption": "GRUNDINFRASTRUKTUR",
-  "maritimeOperations": "MARITIME VORGÄNGE"
+  "maritimeOperations": "MARITIME VORGÄNGE",
+  "compliancePackReference": "Referenz des Klassifikationsregelpakets",
+  "compliancePackEdition": "Paketausgabe",
+  "complianceSurveyReference": "Referenz des Besichtigungsdatensatzes",
+  "complianceM79Statement": "M79-Erklärung in der Quelle",
+  "complianceMsmdDocumentReference": "MSMD-Dokumentreferenz",
+  "complianceIssuerReference": "Ausstellerreferenz",
+  "complianceAssignmentReference": "Zuweisungsreferenz",
+  "complianceAssignmentRevision": "Zuweisungsrevision",
+  "complianceAssignmentVersion": "Zuweisungsversion",
+  "compliancePositionReference": "Positionsreferenz",
+  "compliancePositionVersion": "Positionsversion",
+  "complianceAssessmentFrom": "Beginn des Bewertungszeitraums",
+  "complianceAssessmentTo": "Ende des Bewertungszeitraums (ausschließlich)",
+  "complianceSourceCriterion": "Code des Quellenkriteriums",
+  "complianceAssessmentSource": "Quellenreferenz der qualifizierten Bewertung",
+  "complianceCriterionOutcome": "Ergebnis des Quellenkriteriums"
 }

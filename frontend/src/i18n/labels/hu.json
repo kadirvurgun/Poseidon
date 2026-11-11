@@ -121,5 +121,21 @@
   "workspaceCaption": "MUNKATERÜLET",
   "developmentCaption": "FEJLESZTÉS",
   "foundationCaption": "ALAPINFRASTRUKTÚRA",
-  "maritimeOperations": "TENGERÉSZETI MŰVELETEK"
+  "maritimeOperations": "TENGERÉSZETI MŰVELETEK",
+  "compliancePackReference": "Osztályozási szabálycsomag hivatkozása",
+  "compliancePackEdition": "Csomagkiadás",
+  "complianceSurveyReference": "Szemlebejegyzés hivatkozása",
+  "complianceM79Statement": "M79-nyilatkozat a forrásban",
+  "complianceMsmdDocumentReference": "MSMD-dokumentum hivatkozása",
+  "complianceIssuerReference": "Kibocsátó hivatkozása",
+  "complianceAssignmentReference": "Beosztás hivatkozása",
+  "complianceAssignmentRevision": "Beosztás revíziója",
+  "complianceAssignmentVersion": "Beosztás verziója",
+  "compliancePositionReference": "Pozíció hivatkozása",
+  "compliancePositionVersion": "Pozíció verziója",
+  "complianceAssessmentFrom": "Értékelési időszak kezdete",
+  "complianceAssessmentTo": "Értékelési időszak vége (kizárólagos)",
+  "complianceSourceCriterion": "Forráskritérium kódja",
+  "complianceAssessmentSource": "Minősített értékelés forráshivatkozása",
+  "complianceCriterionOutcome": "Forráskritérium eredménye"
 }

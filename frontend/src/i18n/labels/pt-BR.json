@@ -121,5 +121,21 @@
   "workspaceCaption": "ESPAÇO DE TRABALHO",
   "developmentCaption": "DESENVOLVIMENTO",
   "foundationCaption": "INFRAESTRUTURA BÁSICA",
-  "maritimeOperations": "OPERAÇÕES MARÍTIMAS"
+  "maritimeOperations": "OPERAÇÕES MARÍTIMAS",
+  "compliancePackReference": "Referência do pacote de regras de classe",
+  "compliancePackEdition": "Edição do pacote",
+  "complianceSurveyReference": "Referência do registro de vistoria",
+  "complianceM79Statement": "Declaração M79 na fonte",
+  "complianceMsmdDocumentReference": "Referência do documento MSMD",
+  "complianceIssuerReference": "Referência do emissor",
+  "complianceAssignmentReference": "Referência da designação",
+  "complianceAssignmentRevision": "Revisão da designação",
+  "complianceAssignmentVersion": "Versão da designação",
+  "compliancePositionReference": "Referência do cargo",
+  "compliancePositionVersion": "Versão do cargo",
+  "complianceAssessmentFrom": "Início do período de avaliação",
+  "complianceAssessmentTo": "Fim do período de avaliação (exclusivo)",
+  "complianceSourceCriterion": "Código do critério da fonte",
+  "complianceAssessmentSource": "Referência da fonte da avaliação qualificada",
+  "complianceCriterionOutcome": "Resultado do critério da fonte"
 }

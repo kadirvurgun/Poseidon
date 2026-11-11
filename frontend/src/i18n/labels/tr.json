@@ -121,5 +121,21 @@
   "workspaceCaption": "ÇALIŞMA ALANI",
   "developmentCaption": "GELİŞTİRME",
   "foundationCaption": "TEMEL ALTYAPI",
-  "maritimeOperations": "DENİZCİLİK OPERASYONLARI"
+  "maritimeOperations": "DENİZCİLİK OPERASYONLARI",
+  "compliancePackReference": "Klas kural paketi referansı",
+  "compliancePackEdition": "Paket sürümü",
+  "complianceSurveyReference": "Sörvey kayıt referansı",
+  "complianceM79Statement": "Kaynakta M79 beyanı",
+  "complianceMsmdDocumentReference": "MSMD belge referansı",
+  "complianceIssuerReference": "Düzenleyen referansı",
+  "complianceAssignmentReference": "Atama referansı",
+  "complianceAssignmentRevision": "Atama revizyonu",
+  "complianceAssignmentVersion": "Atama sürümü",
+  "compliancePositionReference": "Pozisyon referansı",
+  "compliancePositionVersion": "Pozisyon sürümü",
+  "complianceAssessmentFrom": "Değerlendirme dönemi başlangıcı",
+  "complianceAssessmentTo": "Değerlendirme dönemi sonu (hariç)",
+  "complianceSourceCriterion": "Kaynak kriter kodu",
+  "complianceAssessmentSource": "Nitelikli değerlendirme kaynak referansı",
+  "complianceCriterionOutcome": "Kaynak kriter sonucu"
 }
