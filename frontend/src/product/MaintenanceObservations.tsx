@@ -69,15 +69,18 @@ export function MaintenanceObservations({ vessel, asset, csrf, en, onDirty, onUn
         setState('idle');
     }
     useEffect(() => {
+        // Layout withdrawal also covers an initially suspended mount, before
+        // this passive effect has had a controller to abort.
+        if (withdrawn.current) return;
         const controller = new AbortController();
         active.current = controller;
         attempt.current = null;
         onDirty(false);
         onUncertain(false);
         request<Snapshot>(path, controller.signal).then(result => { if (!Array.isArray(result?.sources) || !Array.isArray(result.items) || typeof result.canWrite !== 'boolean')
-            throw new ApiError(502); if (!controller.signal.aborted)
+            throw new ApiError(502); if (!controller.signal.aborted && !withdrawn.current)
             setSnapshot(result); })
-            .catch(() => { if (!controller.signal.aborted)
+            .catch(() => { if (!controller.signal.aborted && !withdrawn.current)
             setError(true); });
         return () => { controller.abort(); active.current?.abort(); };
     }, [path, csrf, refresh, onDirty, onUncertain]);
