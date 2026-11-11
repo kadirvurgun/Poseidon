@@ -11841,7 +11841,8 @@
       "cs",
       "ru",
       "hu",
-      "it"
+      "it",
+      "zh-Hans"
     ],
     "product_locales_in_progress": [],
     "product_locales_remaining": [
@@ -11849,19 +11850,18 @@
       "sk",
       "es",
       "pt-BR",
-      "zh-Hans",
       "zh-Hant"
     ],
     "worker_limit": "Actual usage limit reported; partial authoring retained; no account/model rotation",
     "verification": "DEFERRED_NEW_BUNDLE_GATE; meaningful tests authored, no build/typecheck/component/browser run or new-package PASS",
     "canonical_acceptance_changed": false,
     "pr16_merge_status": "32ff1d0: all4requiredCIjobs passed both push42911160703 and PR42911168567; full174signed gate and independent final-target QA remain open",
-    "source_checkpoint": "b172b5d",
+    "source_checkpoint": "a843f80",
     "status_label_locales_authored": 17,
     "status_label_keys_per_locale": 123,
     "main_catalog_string_leaves": 3169,
     "remaining_work": [
-      "Complete and integrate6main catalogs from separate authoring leases",
+      "Complete and integrate5remaining main catalogs from separate authoring leases",
       "Complete source-level semantic display review",
       "Execute deferred full new-bundle checks",
       "Independent exact-target QA before publication"
@@ -11970,6 +11970,13 @@
         "fi_and_sk_distinct_values_authored_each": 1020,
         "required_distinct_values_each": 2991,
         "scope": "Preserved incomplete scratch; not committed product catalogs or acceptance"
+      },
+      "first_completed_catalog": {
+        "locale": "zh-Hans",
+        "author_commit": "d0bc628e37b5e7528b5c7dcfa45f391354487b08",
+        "integration_commit": "a843f80",
+        "string_leaves": 3169,
+        "state": "AUTHORED_NOT_TESTED_NOT_ACCEPTED"
       }
     },
     "rtl_layout_continuation": {

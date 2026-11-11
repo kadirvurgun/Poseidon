@@ -2,14 +2,14 @@
 
 Durum: **YAZILDI / ÇEVİRİ DEVAM EDİYOR / TESTLER ERTELENDİ / KABUL EDİLMEDİ**.
 
-## Güncel kaynak — b172b5d
+## Güncel kaynak — a843f80
 
-Ana katalogların **11/17** dili tamamen yazıldı: Türkçe, İngilizce, İngiliz
-İngilizcesi, Arapça, Almanca, Fransızca, Hintçe, Çekçe, Rusça, Macarca ve İtalyanca.
+Ana katalogların **12/17** dili tamamen yazıldı: Türkçe, İngilizce, İngiliz
+İngilizcesi, Arapça, Almanca, Fransızca, Hintçe, Çekçe, Rusça, Macarca, İtalyanca ve Basitleştirilmiş Çince.
 Her katalog 3169 metin alanı içerir; kaynakta 2991 benzersiz değer vardır.
 Bu oran yalnız yazılan katalog dosyası sayısıdır; ekran kapsamı, çeviri kalitesi
-veya kabul yüzdesi değildir. **Altı ana katalog açık:** Fince, Slovakça,
-İspanyolca, Brezilya Portekizcesi, Basitleştirilmiş ve Geleneksel Çince.
+veya kabul yüzdesi değildir. **Beş ana katalog açık:** Fince, Slovakça,
+İspanyolca, Brezilya Portekizcesi ve Geleneksel Çince.
 
 17 ortak katalog ve ayrıca **17 × 123 sunum etiketi** yazıldı. İtalyanca
 `6c5df69` ile tamamlandı; `d8cfde6` mürettebat ve Unicode düzeltmelerini,
@@ -165,3 +165,12 @@ boşluğunu ve aynı canonical heartbeat içeriğini kontrol edecek.
 Son ara kayıt: ES/PT-BR için dil başına1450, FI/SK için1020benzersiz metin
 sahipli scratch içinde korunmuştur. Her dil için2991değer gerekir. Kısmi üretim
 11tam katalog sayısına eklenmez. ZH üretimi ayrı ajanda devam eder.
+
+
+### İlk tam katalog entegrasyonu — a843f80
+
+ZH-Hans, ayrı yazarın `d0bc628` commit'inden normal cherry-pick ile `a843f80`
+olarak alındı. Tek katalog dosyası,3169metin alanı ve2991benzersiz kaynak değeri
+kapsar. Kaynak hash'i sabit kaldı. Üretim sırasında yapı/değişken/Unicode
+kontrolleri yazımı destekledi; test/build/typecheck veya bağımsız kabul değildir.
+Tam yazılmış ana katalog sayısı12/17; kalan beş dil yazılmaktadır.
