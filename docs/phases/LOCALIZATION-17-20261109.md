@@ -2,14 +2,14 @@
 
 Durum: **YAZILDI / ÇEVİRİ DEVAM EDİYOR / TESTLER ERTELENDİ / KABUL EDİLMEDİ**.
 
-## Güncel kaynak — 2187e1d
+## Güncel kaynak — 981dae4
 
-Ana katalogların **12/17** dili tamamen yazıldı: Türkçe, İngilizce, İngiliz
-İngilizcesi, Arapça, Almanca, Fransızca, Hintçe, Çekçe, Rusça, Macarca, İtalyanca ve Basitleştirilmiş Çince.
+Ana katalogların **13/17** dili tamamen yazıldı: Türkçe, İngilizce, İngiliz
+İngilizcesi, Arapça, Almanca, Fransızca, Hintçe, Çekçe, Rusça, Macarca, İtalyanca, Basitleştirilmiş Çince ve Geleneksel Çince.
 Her katalog 3169 metin alanı içerir; kaynakta 2991 benzersiz değer vardır.
 Bu oran yalnız yazılan katalog dosyası sayısıdır; ekran kapsamı, çeviri kalitesi
-veya kabul yüzdesi değildir. **Beş ana katalog açık:** Fince, Slovakça,
-İspanyolca, Brezilya Portekizcesi ve Geleneksel Çince.
+veya kabul yüzdesi değildir. **Dört ana katalog açık:** Fince, Slovakça,
+İspanyolca ve Brezilya Portekizcesi.
 
 17 ortak katalog ve ayrıca **17 × 123 sunum etiketi** yazıldı. İtalyanca
 `6c5df69` ile tamamlandı; `d8cfde6` mürettebat ve Unicode düzeltmelerini,
@@ -197,3 +197,19 @@ ile yeni locale özeti korundu; genuine login yardımcısında her vaka için ge
 giriş ve tam güvenli hedef davranışı,17dil native selector ile birleştirildi.
 Canonical kabul artmadı. PR16 uzaktan merge edilmedi; güncel tam signed/bağımsız
 QA kapıları açıktır. Kalan kataloglar yalnız tam dosya commit'leriyle alınır.
+
+
+### İki Çince varyantı ve bağımsız kaynak incelemesi
+
+Hans terim düzeltmesi `e578dfa` → `8a3cfd7`; Hant ayrı tam kataloğu `08986b5` →
+`981dae4`. Her katalog3169metin alanı kapsar. Hant ayrı sözlük/kelime kullanımı ve
+92cümle düzeltmesiyle yazıldı. Son SHA256: Hans
+`32b083cf3b1421d11918f87c387645f85942a31661d9290bb113d764120dd637`, Hant
+`5d1f0e8cb0c121fe5bc6a6a0f92b81ae1dd49db29acf4bf1e18612dc0babe9c1`.
+Üretim denetimi bağımsız test/kalite kabulü değildir. Tam ana katalog13/17.
+
+L17-QA-SOURCE-01, `981dae4` hedefinde Root'un UI/i18n ve genuine login selector
+birleşimini ayrı ajanın statik kaynak incelemesine verir. İnceleyici kendi yazdığı
+Çince kataloglarını bağımsız kabul etmez. Test/build/typecheck/browser yürütmesi
+DEFERRED; kaynak incelemesi final QA veya faz kabulü değildir. Kalan dört ana
+katalog ES/PT-BR ve FI/SK sahipli dallarında yazılmaktadır.
