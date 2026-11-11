@@ -2,6 +2,7 @@ import { LanguageSelector } from "../components/LanguageSelector";
 import { localizedText } from "../i18n/messages";
 import { useAppLanguage } from "../i18n";
 import { presentationLabel } from '../i18n/labels';
+import { Button } from '../components/ui/button';
 import { useEffect, useState } from 'react';
 import { profileName, profiles, quotaFresh } from './contract';
 import { useOpsStatus } from './useOpsStatus';
@@ -38,10 +39,10 @@ export function AgentsDashboard() {
     </nav>
     <main id="ops-main" className="ops-main" tabIndex={-1}>
       <header className="ops-heading"><div><p className="ops-kicker">OPS / 01 · {localizedText(language, "pairs.m_c2e1aaea2163a587")}</p><h1>{localizedText(language, "pairs.m_acbe201bbe455558")}</h1><p>{localizedText(language, "pairs.m_6099246924366da3")}</p></div>
-        <div className="ops-tools"><LanguageSelector locale={language} onChange={setLanguage} /><button onClick={retry} disabled={loading}>{loading ? localizedText(language, "pairs.m_68f365bcf102d90e") : localizedText(language, "pairs.m_ae83b5ec8597dbb9")}</button></div>
+        <div className="ops-tools"><LanguageSelector locale={language} onChange={setLanguage} /><Button type="button" variant="outline" onClick={retry} disabled={loading}>{loading ? localizedText(language, "pairs.m_68f365bcf102d90e") : localizedText(language, "pairs.m_ae83b5ec8597dbb9")}</Button></div>
       </header>
       <div className="ops-feed"><span role="status">{error ? localizedText(language, "pairs.m_23493d5886cfc26a") : !data ? localizedText(language, "pairs.m_6503d65c1320e738") : feedFresh ? localizedText(language, "pairs.m_42022f6857625409") : localizedText(language, "pairs.m_e9fd0bfca623163f")}</span><span>{localizedText(language, "pairs.m_b346131002c53903")}: {receivedAt === null ? '—' : `${Math.max(0, Math.floor((now - receivedAt) / 1000))} ${localizedText(language, "pairs.m_df664a0f8ff6f30e")}`}</span></div>
-      {!data && <section className="ops-panel ops-empty"><h2>{localizedText(language, "pairs.m_6086c6255c22550b")}</h2><p>{localizedText(language, "pairs.m_80ba2ae70893bbba")}</p>{error && <button onClick={retry}>{localizedText(language, "pairs.m_044bf27da41fda96")}</button>}</section>}
+      {!data && <section className="ops-panel ops-empty"><h2>{localizedText(language, "pairs.m_6086c6255c22550b")}</h2><p>{localizedText(language, "pairs.m_80ba2ae70893bbba")}</p>{error && <Button type="button" variant="outline" onClick={retry}>{localizedText(language, "pairs.m_044bf27da41fda96")}</Button>}</section>}
       {data && <>
         <div className="ops-meta"><span>{localizedText(language, "pairs.m_769e6e3ac33e2196")}: {date(data.quota.timestamp)} · {fresh ? localizedText(language, "pairs.m_e175dc632067f200") : localizedText(language, "pairs.m_a06d77cf96dd1698")}</span><span>{localizedText(language, "pairs.m_85a6edb6e81a13ca")}: {date(data.quota.next_check)}</span></div>
         <div className="ops-profiles">{profiles.map(id => {

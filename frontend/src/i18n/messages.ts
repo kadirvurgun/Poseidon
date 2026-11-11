@@ -19,7 +19,7 @@ for (const key of Object.keys(en.pairs) as (keyof typeof en.pairs)[]) {
 // a partial catalog must not silently mix languages in operational forms.
 export function assertCompleteCatalog(candidate: unknown, basis: unknown = en): asserts candidate is Catalog {
   if (typeof basis === 'string') {
-    if (typeof candidate !== 'string' || candidate.length === 0) throw new Error('incomplete_locale_catalog')
+    if (typeof candidate !== 'string' || candidate.trim().length === 0) throw new Error('incomplete_locale_catalog')
     const tokens = (value: string) => [...value.matchAll(/\{\{\s*([^{}]+?)\s*\}\}/g)].map(match => match[1]).sort().join('\0')
     if (tokens(candidate) !== tokens(basis)) throw new Error('invalid_locale_interpolation')
     return

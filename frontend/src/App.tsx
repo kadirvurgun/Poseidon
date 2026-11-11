@@ -2,6 +2,7 @@ import { LanguageSelector } from "./components/LanguageSelector";
 import { localizedCopy, localizedText } from "./i18n/messages";
 import { useAppLanguage } from "./i18n";
 import { presentationLabel } from './i18n/labels';
+import { Button } from './components/ui/button';
 import { ImportWorkspace } from './product/ImportWorkspace';
 import { DailyReportWorkspace } from './product/DailyReportWorkspace';
 import { TugWorkspace } from './product/TugWorkspace';
@@ -91,7 +92,7 @@ export function ExistingApp() {
             <div className="connection-top"><span className={`connection-icon ${connection === 'loading' ? 'spinning' : ''}`} aria-hidden="true">{connection === 'loading' ? '◌' : connection === 'available' ? '↗' : '!'}</span><span className="card-tag">API / HTTP</span></div>
             <div role="status" aria-live="polite" aria-atomic="true"><h2 id="connection-title">{t[connection]}</h2><p className="connection-detail">{connection === 'loading' ? t.loadingDetail : connection === 'available' ? t.availableDetail : t.errorDetail}</p></div>
             <div className="endpoint"><span>{t.endpoint}</span><code>/api/v1/system/status</code></div>
-            <button className="primary-button" type="button" onClick={retry} disabled={connection === 'loading'} data-testid="connection-retry">{connection === 'loading' ? t.loading : connection === 'error' ? t.retry : t.check}<span aria-hidden="true">↻</span></button>
+            <Button className="primary-button" type="button" onClick={retry} disabled={connection === 'loading'} data-testid="connection-retry">{connection === 'loading' ? t.loading : connection === 'error' ? t.retry : t.check}<span aria-hidden="true">↻</span></Button>
           </section>
           <div className="context-grid"><section className="scope-note" aria-labelledby="scope-title"><span className="info-mark" aria-hidden="true">i</span><div><h2 id="scope-title">{t.technical}</h2><p>{t.scope}</p></div></section><section className="contract" aria-labelledby="contract-title"><h2 id="contract-title">{t.protocol}</h2><p>{t.expected}</p><code>poseidon <span>/</span> available</code></section></div>
           <div className="phase-note"><span aria-hidden="true">↳</span><p><strong>{t.phase}.</strong> {t.phaseDetail}</p></div>

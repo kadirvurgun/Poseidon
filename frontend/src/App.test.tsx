@@ -69,7 +69,7 @@ describe('APP-FOUNDATION-01 technical connection', () => {
         const fetchMock = vi.fn().mockResolvedValue(response());
         vi.stubGlobal('fetch', fetchMock);
         const user = userEvent.setup();
-        render(<App />);
+        const { container } = render(<App />);
         await screen.findByRole('heading', { name: 'API bağlantısı kuruldu' });
         const selector = screen.getByRole('combobox', { name: 'Dil seçin' });
         const retry = screen.getByTestId('connection-retry');
@@ -77,9 +77,10 @@ describe('APP-FOUNDATION-01 technical connection', () => {
         await waitFor(() => expect(selector).toHaveValue('ar'));
         expect(screen.getByText('المنصة البحرية')).toBeVisible();
         expect(screen.getByText('مساحة العمل')).toBeVisible();
-        expect(screen.getByText(/التطوير/)).toHaveTextContent('v0.1');
+        expect(container.querySelector('.sidebar-bottom small')).toHaveTextContent('v0.1 · التطوير');
         expect(document.documentElement.dir).toBe('rtl');
         expect(retry).toBeInTheDocument();
+        expect(retry).toHaveAttribute('data-slot', 'button');
         expect(retry).toBeEnabled();
         expect(screen.getByText('available')).toBeVisible();
         expect(screen.getByText('/api/v1/system/status')).toBeVisible();

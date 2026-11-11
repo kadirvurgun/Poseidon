@@ -166,6 +166,7 @@ describe('OPS-DASH-UI-01 development operations (mock API)', () => {
     const progress = screen.getByRole('progressbar', { name: 'Kabul edilen proje ilerlemesi' })
     const dataBefore = progress.getAttribute('value')
     expect(screen.getByText('YEREL OPERASYONLAR')).toBeVisible()
+    expect(screen.getByRole('button', { name: 'Yenile' })).toHaveAttribute('data-slot', 'button')
     await act(async () => { fireEvent.change(screen.getByRole('combobox'), { target: { value: 'fr' } }) })
     expect(screen.getByText('OPÉRATIONS LOCALES')).toBeVisible()
     expect(progress).toBeInTheDocument()

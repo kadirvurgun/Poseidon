@@ -1,11 +1,17 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import en from './messages/en.json'
-import { changeAppLanguage, i18n } from './index'
+import { changeAppLanguage, i18n, locales, registerLocaleLoader } from './index'
 import { assertCompleteCatalog, localizedCopy, localizedLabel, localizedText, localizedTuple, sourceText } from './messages'
 
 beforeEach(async () => { await changeAppLanguage('tr', false) })
 
 describe('operational interface catalogs', () => {
+  it('requires a complete distinct main resource for every offered language at the bundle gate', () => {
+    const catalogs = import.meta.glob<{ default: unknown }>('./messages/*.json', { eager: true })
+    expect(Object.keys(catalogs).sort()).toEqual(locales.map(locale => `./messages/${locale}.json`).sort())
+    for (const locale of locales) expect(() => assertCompleteCatalog(catalogs[`./messages/${locale}.json`]?.default)).not.toThrow()
+  })
+
   it('preserves the source structure and valid Unicode in every authored product catalog', () => {
     const catalogs = import.meta.glob<{ default: unknown }>('./messages/*.json', { eager: true })
     const inspectText = (value: unknown): void => {
@@ -40,6 +46,23 @@ describe('operational interface catalogs', () => {
     expect(() => assertCompleteCatalog(missing)).toThrow('incomplete_locale_catalog')
     expect(() => assertCompleteCatalog({ ...en, unexpected: 'injected namespace' })).toThrow('incomplete_locale_catalog')
     expect(() => assertCompleteCatalog({ ...en, pairs: [] })).toThrow('incomplete_locale_catalog')
+  })
+
+  it.each(['', ' ', '\t\n', '\u00a0'])('rejects a visually empty declaration label before activation: %j', value => {
+    expect(() => assertCompleteCatalog({ declaration: value }, { declaration: 'Unverified declaration' })).toThrow('incomplete_locale_catalog')
+  })
+
+  it('retains the committed locale, direction and preference when an exact-shape catalog contains a blank safety label', async () => {
+    await changeAppLanguage('en', true)
+    const remove = registerLocaleLoader(async locale => {
+      if (locale === 'ar') assertCompleteCatalog({ state: ' \t ' }, { state: 'Unknown' })
+    })
+    try {
+      await changeAppLanguage('ar', true)
+      expect(i18n.language).toBe('en')
+      expect(document.documentElement.dir).toBe('ltr')
+      expect(localStorage.getItem('poseidon.locale')).toBe('en')
+    } finally { remove() }
   })
 
   it('requires the exact interpolation variables and leaves canonical nonstring values unchanged', () => {
