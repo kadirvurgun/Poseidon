@@ -137,9 +137,14 @@ test('S2 global context change preserves a dirty form until explicit discard', a
 
 test('L17-AC-RTL: Arabic navigation indents from the inline start while retaining a dirty vessel form', async ({ page }) => {
     const control = await mockShell(page);
-    await page.goto(`/app/fleet/${vessels[0].id}`);
+    await page.goto(`/app/today/${vessels[0].id}`);
     const selector = page.locator('.language-selector select');
+    await selector.selectOption('ar');
+    const back = page.locator('.today-card-toolbar [data-inline-navigation-icon]');
+    await expect(back).toHaveCSS('transform', 'matrix(-1, 0, 0, -1, 0, 0)');
     await selector.selectOption('en');
+    await expect(back).toHaveCSS('transform', 'none');
+    await page.goto(`/app/fleet/${vessels[0].id}`);
     await page.getByRole('button', { name: 'Edit', exact: true }).click();
     const name = page.getByLabel('Name *', { exact: true });
     await name.fill('SYNTHETIC retained RTL draft');

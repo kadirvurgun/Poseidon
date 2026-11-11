@@ -33,6 +33,7 @@
 /* Locale presentation never changes canonical source strings or input values. */
 :root[dir="rtl"] .enterprise-breadcrumb > svg,
 :root[dir="rtl"] .enterprise-breadcrumb a > svg { transform: rotate(180deg); }
+:root[dir="rtl"] [data-inline-navigation-icon] { transform: rotate(180deg); }
 :root[dir="rtl"] .enterprise-sidebar.is-open { box-shadow: -12px 0 60px #10203345; }
 code, pre, [data-canonical-value] { direction: ltr; unicode-bidi: isolate; }
 input[type="number"], .ops-countdown { direction: ltr; unicode-bidi: isolate; }
