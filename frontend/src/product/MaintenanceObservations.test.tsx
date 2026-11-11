@@ -55,6 +55,28 @@ it('keeps missing policy unavailable instead of making an approved capture form'
   expect(await screen.findByText('Source, unit and freshness policy unavailable.')).toBeInTheDocument()
   expect(screen.queryByRole('button', { name: 'Record observation' })).not.toBeInTheDocument()
 })
+it('withdraws a fresh rejected command while retaining its editable draft after an explicit owning read', async () => {
+  mocked.mockImplementation(async (_path, _signal, init) => { if (init?.method === 'POST') throw new ApiError(403); return fixture() })
+  render(<MaintenanceObservations {...props} />); await fill()
+  fireEvent.click(screen.getByRole('button', { name: 'Record observation' }))
+  await waitFor(() => expect(props.onAccessLost).toHaveBeenCalledTimes(1))
+  expect(screen.queryByLabelText('Observed value (exact declaration)')).not.toBeInTheDocument()
+  expect(props.onUncertain).toHaveBeenLastCalledWith(false)
+  await refreshAccess()
+  expect(screen.getByLabelText('Observed value (exact declaration)')).toHaveValue('19.5000')
+  expect(screen.getByRole('button', { name: 'Record observation' })).toBeEnabled()
+  expect(posts()).toHaveLength(1)
+})
+it('does not issue an observation read after an obsolete initial session lookup completes', async () => {
+  const initial = deferred<Awaited<ReturnType<typeof session>>>()
+  sessions.mockReturnValue(initial.promise)
+  const view = render(<MaintenanceObservations {...props} />)
+  expect(sessions).toHaveBeenCalledTimes(1)
+  view.unmount()
+  await act(async () => initial.resolve(currentSession))
+  expect(mocked).not.toHaveBeenCalled()
+  expect(props.onDirty).not.toHaveBeenCalled()
+})
 it.each([401, 403, 404, 400, 409])('retains an earlier unknown capture through later%s and retries original bytes after reauthorization', async status => {
   await loseFirstResponse()
   const original = posts()[0]

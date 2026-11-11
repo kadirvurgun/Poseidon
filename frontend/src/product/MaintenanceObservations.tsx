@@ -47,6 +47,7 @@ export function MaintenanceObservations({ vessel, asset, owner, en, onDirty, onU
     let active = true
     const freshOwner = async () => {
       const user = await session(c.signal)
+      if (!active || c.signal.aborted || committed.current !== scope) throw new ApiError(0, 'obsolete_scope')
       if (observationOwner(user) !== bound.owner) throw new ApiError(403, 'identity_changed')
     }
     async function load() {
@@ -90,6 +91,7 @@ export function MaintenanceObservations({ vessel, asset, owner, en, onDirty, onU
     setBusy(true); callbacks.current.onBusy?.(true); changeDirty(true); setDenied(false)
     let sent = false, received = false, accepted = false
     const ensureOwner = async () => {
+      if (!active() || c.signal.aborted) throw new ApiError(0, 'obsolete_scope')
       const user = await session(c.signal)
       if (!active() || c.signal.aborted) throw new ApiError(0, 'obsolete_scope')
       if (observationOwner(user) !== command.owner) throw new ApiError(403, 'identity_changed')
