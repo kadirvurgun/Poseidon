@@ -307,3 +307,26 @@ Yeni hedef `5ae621a`: lint25,108s exit0, hata/uyarı0; typecheck15,722s exit0 ge
 Tüm component suite bağımsız QA dalında tek koşuyla çalışıyor, sonuç henüz yok.
 API üretim/parity kaydı aynı kaynak blob'ları ile önceki hedefe bağlı olarak
 korunur. Tam paket/browser/signed/CI kabulü hâlâ açık.
+
+
+## 11 Kasım — ilk toplu sonuç, düzeltmeler ve yeni hedef
+
+`5ae621a` tam component koşusu: **1435 test,1430 PASS/5 FAIL,0 pending/todo**;
+305,849s. Beş neden: insan-beyan metni, izinli locale depolama beklentisi,
+birleşik ekipman/iş metni, en/en-GB UTC gösterimi ve gerçek çatışma düğmesi adı.
+`152fb0a` test sözleşmelerini düzeltti; dar beş dosya **36/36 PASS**, hata/skip/
+unhandled0. Önceki başarısız koşu silinmedi ve başarıya çevrilmedi.
+
+Kaynak incelemesinde katalog dışındaki compliance alanları tespit edildi.
+`721cf0b` açık tipli16alan etiketini17dile ekledi: güncel **17×139 sunum anahtarı**.
+Gerçek form testi Fransızcaya geçerken aynı DOM/taslak baytlarını, false/Unknown
+ayrımını ve offline kilidini kapsar. Eski yardımcı satırın lint hatası12:11,
+`23b87d4` ile giderildi. Bağımsız272etiket kaynak incelemesi bu bulguyu
+RESOLVED_SOURCE_ONLY kapattı; runtime kabulü değildir, İngilizce ana hash sabit.
+
+`23b87d4` bağımsız ön yüz kapısı: lint17,128s exit0,hata/uyarı0;
+typecheck12,525s exit0; ComplianceInputs3/3,hata/pending/todo/unhandled0,
+12,464s. Tam component koşusu sürüyor; build/browser/signed/finalQA/CI açık.
+API üretim/parity kanıtı değişmeyen kaynak blobları için özgün hedefe bağlıdır.
+Yeni teknik owner-recovery paketi ayrı dalda yazılır; onun yeni testleri DEFERRED.
+Canonical kabul ve PR16 merge durumu değişmedi.
