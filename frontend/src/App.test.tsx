@@ -82,7 +82,7 @@ describe('APP-FOUNDATION-01 technical connection', () => {
         expect(retry).toBeInTheDocument();
         expect(retry).toHaveAttribute('data-slot', 'button');
         expect(retry).toBeEnabled();
-        expect(screen.getByText('available')).toBeVisible();
+        expect(container.querySelector('.contract code')).toHaveTextContent('poseidon / available');
         expect(screen.getByText('/api/v1/system/status')).toBeVisible();
         await user.selectOptions(selector, 'it');
         await waitFor(() => expect(selector).toHaveValue('it'));

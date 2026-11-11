@@ -4,6 +4,7 @@ import { AgentsDashboard } from './AgentsDashboard'
 import { App } from '../App'
 import { parseStatus } from './contract'
 import type { OpsStatus } from './contract'
+import { changeAppLanguage } from '../i18n'
 
 // OPS-DASH-UI-01: mocked /ops/status verifies frontend behavior only.
 const instant = '2026-10-31T15:00:00Z'
@@ -167,7 +168,7 @@ describe('OPS-DASH-UI-01 development operations (mock API)', () => {
     const dataBefore = progress.getAttribute('value')
     expect(screen.getByText('YEREL OPERASYONLAR')).toBeVisible()
     expect(screen.getByRole('button', { name: 'Yenile' })).toHaveAttribute('data-slot', 'button')
-    await act(async () => { fireEvent.change(screen.getByRole('combobox'), { target: { value: 'fr' } }) })
+    await act(async () => { await changeAppLanguage('fr') })
     expect(screen.getByText('OPÉRATIONS LOCALES')).toBeVisible()
     expect(progress).toBeInTheDocument()
     expect(progress).toHaveAttribute('value', dataBefore)
