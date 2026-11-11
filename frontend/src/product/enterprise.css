@@ -102,7 +102,7 @@
 .enterprise-shell .product-session .primary-button { margin: 0; }
 .enterprise-shell .product-detail, .enterprise-shell .regulatory-profile, .enterprise-shell .directory-editor, .enterprise-shell .control-evidence article, .enterprise-shell .regulatory-qualification { border: 1px solid var(--border); border-radius: 11px; background: #fff; box-shadow: 0 2px 6px #1b355106; padding: 22px; margin: 20px 0; }
 .enterprise-shell .product-detail > h2, .enterprise-shell .product-detail > h3 { margin-bottom: 12px; }
-.enterprise-shell .product-detail > button { margin: 8px 8px 8px 0; }
+.enterprise-shell .product-detail > button { margin-block:8px; margin-inline:0 8px; }
 .enterprise-shell dl { color: #31475f; font-size: 12px; }
 .enterprise-shell dt { font-weight: 600; color: var(--muted-foreground); font-size: 11px; }
 .enterprise-shell dd { overflow-wrap: anywhere; }
