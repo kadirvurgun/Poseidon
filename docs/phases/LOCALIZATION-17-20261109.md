@@ -2,7 +2,7 @@
 
 Durum: **YAZILDI / ÇEVİRİ DEVAM EDİYOR / TESTLER ERTELENDİ / KABUL EDİLMEDİ**.
 
-## Güncel kaynak — a843f80
+## Güncel kaynak — 2187e1d
 
 Ana katalogların **12/17** dili tamamen yazıldı: Türkçe, İngilizce, İngiliz
 İngilizcesi, Arapça, Almanca, Fransızca, Hintçe, Çekçe, Rusça, Macarca, İtalyanca ve Basitleştirilmiş Çince.
@@ -174,3 +174,11 @@ olarak alındı. Tek katalog dosyası,3169metin alanı ve2991benzersiz kaynak de
 kapsar. Kaynak hash'i sabit kaldı. Üretim sırasında yapı/değişken/Unicode
 kontrolleri yazımı destekledi; test/build/typecheck veya bağımsız kabul değildir.
 Tam yazılmış ana katalog sayısı12/17; kalan beş dil yazılmaktadır.
+
+
+`2187e1d`: Bugün/römorkör geri-ileri ve sayfalama ikonları açık inline-navigation
+işaretiyle RTL'de yön değiştirir. Hedef adresi, sayfa offset'i veya kayıt içeriği
+çeviriden etkilenmez. L17-AC-RTL testi gerçek derlenmiş CSS dönüşümünü ve İngilizceye
+dönüşte aynı form verisinin korunmasını da sınayacak. Test yürütmesi yine DEFERRED.
+Bu devamın13değişen TypeScript kaynağına uygulanan dar AST ayrıştırması sözdizimi
+tanısı bildirmedi; typecheck/build veya test PASS yerine kullanılamaz.
