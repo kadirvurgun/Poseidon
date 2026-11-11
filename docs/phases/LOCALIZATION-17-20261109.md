@@ -103,3 +103,14 @@ monolingual/format metinlerinin tamamlandığını kanıtlamaz.
 Graphify güncellemesi türetilmiş kod grafiğini yeniledi; çok sayıda JSON/config
 kaynağının düğüm üretmediği uyarısı vardır. Bu dosyalar ve canonical belgeler
 ancak doğrudan kaynaklarıyla değerlendirilir; grafiğin kapsamı test kabulü değildir.
+
+
+Son kaynak incelemesi, eski başlangıç ve shell ekranlarında yedi sabit başlık/durum
+metnini ayrıca açık iş olarak kaydetti: LOCAL OPERATIONS, MARITIME PLATFORM,
+WORKSPACE, DEVELOPMENT, available, FOUNDATION ve MARITIME OPERATIONS.
+Sahipleri [başlangıç ekranı](../../frontend/src/App.tsx),
+[geliştirme görünümü](../../frontend/src/agents/AgentsDashboard.tsx) ve
+[ortak shell](../../frontend/src/product/EnterpriseChrome.tsx).
+Aynı dar sorgunun bulduğu sürüm işaretleri, açık saatler, API yolu, hash algoritması,
+birimler ve canonical DRAFT kodları kaynak anlamlarına göre değerlendirilir.
+Bu yedi başlık ve altı ana katalog tamamlanmadan tüm çeviriler hazır denmez.

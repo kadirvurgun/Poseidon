@@ -11886,6 +11886,24 @@
       "variable_condition_product_matches": 0,
       "variable_condition_core_fallback_matches": 1,
       "graphify_note": "Derived AST graph; zero-node configuration/JSON warning does not establish complete code or requirement coverage"
+    },
+    "remaining_static_caption_inventory": {
+      "scope": "source navigation candidates; not test or coverage evidence",
+      "captions": [
+        "LOCAL OPERATIONS",
+        "MARITIME PLATFORM",
+        "WORKSPACE",
+        "v0.1 · DEVELOPMENT",
+        "available",
+        "01 / FOUNDATION",
+        "MARITIME OPERATIONS"
+      ],
+      "owners": [
+        "frontend/src/agents/AgentsDashboard.tsx",
+        "frontend/src/App.tsx",
+        "frontend/src/product/EnterpriseChrome.tsx"
+      ],
+      "noncaption_candidates": "revision markers, exact dates, API path, file hash algorithm, units and canonical DRAFT codes require source semantics; not a blanket translation queue"
     }
   }
 }
