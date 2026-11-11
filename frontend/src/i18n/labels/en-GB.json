@@ -115,5 +115,11 @@
   "shifting": "Shifting",
   "tugLetGo": "Tug Let Go",
   "pilotOff": "Pilot Off",
-  "departure": "Departure"
+  "departure": "Departure",
+  "localOperations": "LOCAL OPERATIONS",
+  "maritimePlatform": "MARITIME PLATFORM",
+  "workspaceCaption": "WORKSPACE",
+  "developmentCaption": "DEVELOPMENT",
+  "foundationCaption": "FOUNDATION",
+  "maritimeOperations": "MARITIME OPERATIONS"
 }

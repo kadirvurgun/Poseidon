@@ -38,7 +38,7 @@ function transport() {
 }
 beforeEach(() => { history.replaceState(null, '', '/app/certificate-command-center/' + certificateVessel); vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(true) })
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals() })
-async function english() { await userEvent.setup().click(screen.getByRole('button', { name: 'EN' })) }
+async function english() { await userEvent.setup().selectOptions(screen.getByRole('combobox', { name: /^(Dil seçin|Choose language)$/ }), 'en'); await waitFor(() => expect(screen.getByRole('combobox', { name: 'Choose language' })).toHaveValue('en')) }
 describe('T-S6-001 source-owned center interactions (authored; not executed)', () => {
   it('saves an incomplete owning declaration with exact planning text and rereads current head after immutable receipt', async () => {
     const { fetch } = transport(), user = userEvent.setup(); render(<CertificateWorkspace />); await english()

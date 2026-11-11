@@ -115,5 +115,11 @@
   "shifting": "تغيير الموقع",
   "tugLetGo": "فك ربط القاطرة",
   "pilotOff": "نزول المرشد",
-  "departure": "مغادرة"
+  "departure": "مغادرة",
+  "localOperations": "العمليات المحلية",
+  "maritimePlatform": "المنصة البحرية",
+  "workspaceCaption": "مساحة العمل",
+  "developmentCaption": "التطوير",
+  "foundationCaption": "البنية الأساسية",
+  "maritimeOperations": "العمليات البحرية"
 }

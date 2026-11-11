@@ -13,6 +13,8 @@ h1,h2,p{margin:0}
 .sidebar{width:250px;flex-shrink:0;background:#091421;border-inline-end:1px solid #213045;padding:34px 22px;display:flex;flex-direction:column;position:fixed;inset-block:0;inset-inline:0 auto}
 .brand{display:flex;align-items:center;gap:12px;font-size:18px;font-weight:750;letter-spacing:2.8px}
 .brand small{display:block;font-size:8px;font-weight:500;letter-spacing:2px;color:#8094aa;margin-top:2px}
+.brand>span:last-child{min-inline-size:0;overflow-wrap:anywhere}
+.brand:lang(ar) small,.sidebar-section:lang(ar),.sidebar-bottom:lang(ar) small{letter-spacing:normal}
 .brand-mark{font-size:35px;line-height:1;color:#83cad2;font-weight:400;position:relative}
 .brand-mark span{position:absolute;width:23px;border-top:1px solid #83cad2;transform:rotate(-32deg);bottom:1px;inset-inline-start:-1px}
 .sidebar-rule{height:1px;background:#223044;margin:34px 0}

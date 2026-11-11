@@ -51,7 +51,7 @@ describe('APP-FOUNDATION-01 technical connection', () => {
         await user.selectOptions(screen.getByRole("combobox", { name: /^(Dil seçin|Choose language)$/ }), "en");
         expect(screen.getByRole('heading', { name: 'API connection established' })).toBeVisible();
         expect(document.documentElement.lang).toBe('en');
-        expect(screen.getByRole('button', { name: 'EN' })).toHaveAttribute('aria-pressed', 'true');
+        expect(screen.getByRole('combobox', { name: 'Choose language' })).toHaveValue('en');
         expect(fetchMock).toHaveBeenCalledTimes(1);
     });
     it('aborts pending requests when unmounted', async () => {
@@ -64,6 +64,32 @@ describe('APP-FOUNDATION-01 technical connection', () => {
         ])[1].signal;
         view.unmount();
         await waitFor(() => expect(signal?.aborted).toBe(true));
+    });
+    it('localizes the shell through Arabic and Italian while retaining the heartbeat contract and retry control', async () => {
+        const fetchMock = vi.fn().mockResolvedValue(response());
+        vi.stubGlobal('fetch', fetchMock);
+        const user = userEvent.setup();
+        render(<App />);
+        await screen.findByRole('heading', { name: 'API bağlantısı kuruldu' });
+        const selector = screen.getByRole('combobox', { name: 'Dil seçin' });
+        const retry = screen.getByTestId('connection-retry');
+        await user.selectOptions(selector, 'ar');
+        await waitFor(() => expect(selector).toHaveValue('ar'));
+        expect(screen.getByText('المنصة البحرية')).toBeVisible();
+        expect(screen.getByText('مساحة العمل')).toBeVisible();
+        expect(screen.getByText(/التطوير/)).toHaveTextContent('v0.1');
+        expect(document.documentElement.dir).toBe('rtl');
+        expect(retry).toBeInTheDocument();
+        expect(retry).toBeEnabled();
+        expect(screen.getByText('available')).toBeVisible();
+        expect(screen.getByText('/api/v1/system/status')).toBeVisible();
+        await user.selectOptions(selector, 'it');
+        await waitFor(() => expect(selector).toHaveValue('it'));
+        expect(screen.getByText('PIATTAFORMA MARITTIMA')).toBeVisible();
+        expect(screen.getByText('SPAZIO DI LAVORO')).toBeVisible();
+        expect(document.documentElement.dir).toBe('ltr');
+        expect(fetchMock).toHaveBeenCalledTimes(1);
+        expect(retry).toBeInTheDocument();
     });
     it('times out a hanging request and exposes retry', async () => {
         vi.useFakeTimers();

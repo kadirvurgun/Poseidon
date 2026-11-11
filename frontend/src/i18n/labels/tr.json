@@ -115,5 +115,11 @@
   "shifting": "Yer değiştirme",
   "tugLetGo": "Römorkör bağlantısının bırakılması",
   "pilotOff": "Kılavuzun ayrılması",
-  "departure": "Ayrılış"
+  "departure": "Ayrılış",
+  "localOperations": "YEREL OPERASYONLAR",
+  "maritimePlatform": "DENİZCİLİK PLATFORMU",
+  "workspaceCaption": "ÇALIŞMA ALANI",
+  "developmentCaption": "GELİŞTİRME",
+  "foundationCaption": "TEMEL ALTYAPI",
+  "maritimeOperations": "DENİZCİLİK OPERASYONLARI"
 }

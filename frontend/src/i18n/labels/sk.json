@@ -115,5 +115,11 @@
   "shifting": "Premiestnenie",
   "tugLetGo": "Remorkér odpojený",
   "pilotOff": "Lodivod vystúpil",
-  "departure": "Odchod"
+  "departure": "Odchod",
+  "localOperations": "MIESTNE OPERÁCIE",
+  "maritimePlatform": "NÁMORNÁ PLATFORMA",
+  "workspaceCaption": "PRACOVNÝ PRIESTOR",
+  "developmentCaption": "VÝVOJ",
+  "foundationCaption": "ZÁKLADNÁ INFRAŠTRUKTÚRA",
+  "maritimeOperations": "NÁMORNÉ OPERÁCIE"
 }

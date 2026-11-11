@@ -152,13 +152,29 @@ describe('OPS-DASH-UI-01 development operations (mock API)', () => {
 
   it('switches TR/EN without fetching or losing data', async () => {
     const { fetchMock } = await mount()
-    fireEvent.click(screen.getByRole('button', { name: 'EN' }))
+    await act(async () => { fireEvent.change(screen.getByRole('combobox', { name: 'Dil seçin' }), { target: { value: 'en' } }) })
     expect(screen.getByRole('heading', { name: 'Two accounts. One view.' })).toBeVisible()
     expect(screen.getByText('No history records')).toBeVisible()
     expect(document.documentElement.lang).toBe('en')
     expect(fetchMock).toHaveBeenCalledTimes(1)
-    fireEvent.click(screen.getByRole('button', { name: 'TR' }))
+    await act(async () => { fireEvent.change(screen.getByRole('combobox', { name: 'Choose language' }), { target: { value: 'tr' } }) })
     expect(screen.getByRole('heading', { name: 'İki hesap. Tek görünüm.' })).toBeVisible()
+  })
+
+  it('translates local operations branding while preserving the same accepted progress and polling lifecycle', async () => {
+    const { fetchMock } = await mount()
+    const progress = screen.getByRole('progressbar', { name: 'Kabul edilen proje ilerlemesi' })
+    const dataBefore = progress.getAttribute('value')
+    expect(screen.getByText('YEREL OPERASYONLAR')).toBeVisible()
+    await act(async () => { fireEvent.change(screen.getByRole('combobox'), { target: { value: 'fr' } }) })
+    expect(screen.getByText('OPÉRATIONS LOCALES')).toBeVisible()
+    expect(progress).toBeInTheDocument()
+    expect(progress).toHaveAttribute('value', dataBefore)
+    expect(screen.getByText('Review pending')).toBeVisible()
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+    await act(async () => { await vi.advanceTimersByTimeAsync(5000) })
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+    expect(screen.getByText('OPÉRATIONS LOCALES')).toBeVisible()
   })
 
   it.each([null, {}, { ...fixture(), schemaVersion: 2 }, { ...fixture(), alarms: [{ state: 'ready' }] }])('rejects invalid schema and supports manual retry', async payload => {

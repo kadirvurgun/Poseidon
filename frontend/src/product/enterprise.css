@@ -20,10 +20,12 @@
 /* Shared sidebar and context topbar across every implemented workspace family. */
 .product-shell.enterprise-shell .enterprise-sidebar { overflow:hidden; min-height:0; box-sizing:border-box; position: fixed; inset-block: 0; inset-inline: 0 auto; z-index: 30; width: var(--sidebar-width); height: 100dvh; padding: 0; margin: 0; border: 0; color: #d6e0ed; background: var(--sidebar-bg); display: flex; flex-direction: column; flex-wrap: nowrap; justify-content: flex-start; align-items: stretch; gap: 0; }
 .enterprise-brand-row { flex:0 0 auto; min-height:64px; display: flex; align-items: center; justify-content: space-between; padding: 0 22px; border-bottom: 1px solid #26354c; }
-.enterprise-shell .enterprise-brand { display: flex; align-items: center; gap: 11px; color: #f4f8ff; margin: 0; padding: 0; font-size: 17px; font-weight: 720; letter-spacing: 1.8px; text-decoration: none; }
-.enterprise-brand-mark { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; color: #8bd4f4; background: #1c3854; border: 1px solid #2c4c69; }
+.enterprise-shell .enterprise-brand { display: flex; flex:1 1 auto; min-inline-size:0; align-items: center; gap: 11px; color: #f4f8ff; margin: 0; padding: 0; font-size: 17px; font-weight: 720; letter-spacing: 1.8px; text-decoration: none; }
+.enterprise-brand > span:last-child { min-inline-size:0; overflow-wrap:anywhere; }
+.enterprise-brand-mark { flex:0 0 36px; width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; color: #8bd4f4; background: #1c3854; border: 1px solid #2c4c69; }
 .enterprise-brand-mark svg { width: 23px; height: 23px; }
 .enterprise-brand small { display: block; font-size: 8px; font-weight: 500; letter-spacing: 1.5px; color: #94a6be; margin-top: 1px; }
+.enterprise-brand:lang(ar) small { letter-spacing:normal; }
 .enterprise-nav-scroll { flex:1 1 0; min-height:0; min-width:0; overflow-x:hidden; overflow-y:auto; overscroll-behavior:contain; scrollbar-width:thin; scrollbar-color:#435b77 transparent; padding:8px 10px 12px; }
 .enterprise-nav-group { margin:0; min-width:0; }
 .enterprise-sidebar-nav { display:grid; gap:4px; }

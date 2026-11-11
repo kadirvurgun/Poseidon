@@ -115,5 +115,11 @@
   "shifting": "Siirtyminen",
   "tugLetGo": "Hinaaja irrotettu",
   "pilotOff": "Luotsi poistunut",
-  "departure": "Lähtö"
+  "departure": "Lähtö",
+  "localOperations": "PAIKALLISET TOIMINNOT",
+  "maritimePlatform": "MERENKULKUALUSTA",
+  "workspaceCaption": "TYÖTILA",
+  "developmentCaption": "KEHITYS",
+  "foundationCaption": "PERUSINFRASTRUKTUURI",
+  "maritimeOperations": "MERENKULUN TOIMINNOT"
 }

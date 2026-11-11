@@ -115,5 +115,11 @@
   "shifting": "Spostamento",
   "tugLetGo": "Rimorchiatore scollegato",
   "pilotOff": "Pilota sbarcato",
-  "departure": "Partenza"
+  "departure": "Partenza",
+  "localOperations": "OPERAZIONI LOCALI",
+  "maritimePlatform": "PIATTAFORMA MARITTIMA",
+  "workspaceCaption": "SPAZIO DI LAVORO",
+  "developmentCaption": "SVILUPPO",
+  "foundationCaption": "INFRASTRUTTURA DI BASE",
+  "maritimeOperations": "OPERAZIONI MARITTIME"
 }

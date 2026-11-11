@@ -115,5 +115,11 @@
   "shifting": "Déplacement",
   "tugLetGo": "Remorqueur largué",
   "pilotOff": "Pilote débarqué",
-  "departure": "Départ"
+  "departure": "Départ",
+  "localOperations": "OPÉRATIONS LOCALES",
+  "maritimePlatform": "PLATEFORME MARITIME",
+  "workspaceCaption": "ESPACE DE TRAVAIL",
+  "developmentCaption": "DÉVELOPPEMENT",
+  "foundationCaption": "SOCLE APPLICATIF",
+  "maritimeOperations": "OPÉRATIONS MARITIMES"
 }

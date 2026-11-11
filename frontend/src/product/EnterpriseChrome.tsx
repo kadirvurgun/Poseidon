@@ -1,4 +1,5 @@
 import { LanguageSelector } from "../components/LanguageSelector";
+import { presentationLabel } from '../i18n/labels';
 import { localizedLabel, localizedText, sourceText } from "../i18n/messages";
 import { type Locale as AppLocale } from "../i18n";
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -158,7 +159,7 @@ export function EnterpriseChrome({ session, vessel = null, language, onLanguageC
     </header>
     {drawer && <button type="button" className="enterprise-nav-overlay" aria-label={localizedText(en, "pairs.m_7cf3ab76311a388d")} onClick={() => setDrawer(false)}/>}
     <nav id="workspace-navigation" className={`product-nav enterprise-sidebar ${drawer ? 'is-open' : ''}`} aria-label="POSEIDON" role={drawer ? 'dialog' : undefined} aria-modal={drawer ? true : undefined}>
-      <div className="enterprise-brand-row"><a className="enterprise-brand" href="/app" aria-label="POSEIDON" onClick={event => { event.preventDefault(); move('/app'); }}><span className="enterprise-brand-mark"><Waves aria-hidden="true"/></span><span>POSEIDON<small>MARITIME OPERATIONS</small></span></a>{drawer && <Button variant="ghost" size="icon" aria-label={localizedText(en, "pairs.m_99627faa6a096fa8")} onClick={() => setDrawer(false)}><X /></Button>}</div>
+      <div className="enterprise-brand-row"><a className="enterprise-brand" href="/app" aria-label="POSEIDON" onClick={event => { event.preventDefault(); move('/app'); }}><span className="enterprise-brand-mark"><Waves aria-hidden="true"/></span><span>POSEIDON<small>{presentationLabel(language, 'maritimeOperations')}</small></span></a>{drawer && <Button variant="ghost" size="icon" aria-label={localizedText(en, "pairs.m_99627faa6a096fa8")} onClick={() => setDrawer(false)}><X /></Button>}</div>
       <div className="enterprise-nav-scroll">
         <details className="enterprise-role-settings"><summary>{localizedText(en, "pairs.m_10b48db6980a8159")}</summary><WorkspaceRoleNavigation session={session} vessel={vessel} language={language} onNavigate={move} embedded primary scopeEpoch={navigation.epoch} onProjection={projectLens}/></details>
         <EnterpriseSidebarNav key={`${session?.tenantId}:${session?.actorId}:${vessel}`} items={menuItems.flatMap(item => {

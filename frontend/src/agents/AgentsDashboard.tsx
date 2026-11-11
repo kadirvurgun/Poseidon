@@ -1,6 +1,7 @@
 import { LanguageSelector } from "../components/LanguageSelector";
 import { localizedText } from "../i18n/messages";
 import { useAppLanguage } from "../i18n";
+import { presentationLabel } from '../i18n/labels';
 import { useEffect, useState } from 'react';
 import { profileName, profiles, quotaFresh } from './contract';
 import { useOpsStatus } from './useOpsStatus';
@@ -31,7 +32,7 @@ export function AgentsDashboard() {
     return <div className="ops-shell">
     <a className="skip-link" href="#ops-main">{localizedText(language, "pairs.m_c5380d7bc08b74cb")}</a>
     <nav className="ops-nav" aria-label={localizedText(language, "pairs.m_8bd42749f119c07d")}>
-      <a className="ops-brand" href="/">P<span>POSEIDON<small>LOCAL OPERATIONS</small></span></a>
+      <a className="ops-brand" href="/">P<span>POSEIDON<small>{presentationLabel(language, 'localOperations')}</small></span></a>
       <div><a href="/">{localizedText(language, "pairs.m_d8afd34c0d19a4c7")}</a><a href="/agents" aria-current="page">{localizedText(language, "pairs.m_7c98a73bc97d1a74")}</a></div>
       <span className="ops-local">{localizedText(language, "pairs.m_a17676cba090ee7a")}</span>
     </nav>

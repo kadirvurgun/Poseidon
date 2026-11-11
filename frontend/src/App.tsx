@@ -1,6 +1,7 @@
 import { LanguageSelector } from "./components/LanguageSelector";
 import { localizedCopy, localizedText } from "./i18n/messages";
 import { useAppLanguage } from "./i18n";
+import { presentationLabel } from './i18n/labels';
 import { ImportWorkspace } from './product/ImportWorkspace';
 import { DailyReportWorkspace } from './product/DailyReportWorkspace';
 import { TugWorkspace } from './product/TugWorkspace';
@@ -74,13 +75,13 @@ export function ExistingApp() {
     return (<div className="app-shell">
       <a className="skip-link" href="#main">{t.skip}</a>
       <aside className="sidebar" aria-label="POSEIDON">
-        <a className="brand" href="#main" aria-label="POSEIDON"><span className="brand-mark" aria-hidden="true">P<span /></span><span>POSEIDON<small>MARITIME PLATFORM</small></span></a>
+        <a className="brand" href="#main" aria-label="POSEIDON"><span className="brand-mark" aria-hidden="true">P<span /></span><span>POSEIDON<small>{presentationLabel(language, 'maritimePlatform')}</small></span></a>
         <div className="sidebar-rule"/>
-        <div className="sidebar-section">WORKSPACE</div>
+        <div className="sidebar-section">{presentationLabel(language, 'workspaceCaption')}</div>
         <a className="nav-item" href="#main" aria-current="page"><span aria-hidden="true">◈</span>{t.page}</a>
         <a className="nav-item" href="/app">{localizedText(language, "pairs.m_dcf657183d7745b8")}</a>
         <a className="nav-item" href="/agents">{localizedText(language, "pairs.m_7c98a73bc97d1a74")}</a>
-        <div className="sidebar-bottom"><span className="compass" aria-hidden="true">✧</span><p>{t.phase}</p><small>v0.1 · DEVELOPMENT</small></div>
+        <div className="sidebar-bottom"><span className="compass" aria-hidden="true">✧</span><p>{t.phase}</p><small><bdi dir="ltr">v0.1</bdi> · {presentationLabel(language, 'developmentCaption')}</small></div>
       </aside>
       <div className="workspace">
         <header className="topbar"><span className="breadcrumb">POSEIDON <span aria-hidden="true">/</span> {t.page}</span><div className="topbar-actions"><span className="environment"><span />{t.environment}</span><LanguageSelector locale={language} onChange={setLanguage} /></div></header>
@@ -95,7 +96,7 @@ export function ExistingApp() {
           <div className="context-grid"><section className="scope-note" aria-labelledby="scope-title"><span className="info-mark" aria-hidden="true">i</span><div><h2 id="scope-title">{t.technical}</h2><p>{t.scope}</p></div></section><section className="contract" aria-labelledby="contract-title"><h2 id="contract-title">{t.protocol}</h2><p>{t.expected}</p><code>poseidon <span>/</span> available</code></section></div>
           <div className="phase-note"><span aria-hidden="true">↳</span><p><strong>{t.phase}.</strong> {t.phaseDetail}</p></div>
         </main>
-        <footer><span>{t.footer}</span><span className="footer-marker" aria-hidden="true">01 / FOUNDATION</span></footer>
+        <footer><span>{t.footer}</span><span className="footer-marker" aria-hidden="true"><bdi dir="ltr">01</bdi> / {presentationLabel(language, 'foundationCaption')}</span></footer>
       </div>
     </div>);
 }

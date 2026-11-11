@@ -115,5 +115,11 @@
   "shifting": "Verholen",
   "tugLetGo": "Schlepper losgemacht",
   "pilotOff": "Lotse von Bord",
-  "departure": "Abfahrt"
+  "departure": "Abfahrt",
+  "localOperations": "LOKALE VORGÄNGE",
+  "maritimePlatform": "MARITIME PLATTFORM",
+  "workspaceCaption": "ARBEITSBEREICH",
+  "developmentCaption": "ENTWICKLUNG",
+  "foundationCaption": "GRUNDINFRASTRUKTUR",
+  "maritimeOperations": "MARITIME VORGÄNGE"
 }

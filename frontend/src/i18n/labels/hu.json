@@ -115,5 +115,11 @@
   "shifting": "Áthelyezés",
   "tugLetGo": "Vontató elengedve",
   "pilotOff": "Révkalauz távozott",
-  "departure": "Indulás"
+  "departure": "Indulás",
+  "localOperations": "HELYI MŰVELETEK",
+  "maritimePlatform": "TENGERÉSZETI PLATFORM",
+  "workspaceCaption": "MUNKATERÜLET",
+  "developmentCaption": "FEJLESZTÉS",
+  "foundationCaption": "ALAPINFRASTRUKTÚRA",
+  "maritimeOperations": "TENGERÉSZETI MŰVELETEK"
 }

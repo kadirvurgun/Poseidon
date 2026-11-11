@@ -115,5 +115,11 @@
   "shifting": "स्थान परिवर्तन",
   "tugLetGo": "टग अलग हुआ",
   "pilotOff": "पायलट उतरा",
-  "departure": "प्रस्थान"
+  "departure": "प्रस्थान",
+  "localOperations": "स्थानीय संचालन",
+  "maritimePlatform": "समुद्री प्लेटफ़ॉर्म",
+  "workspaceCaption": "कार्यक्षेत्र",
+  "developmentCaption": "विकास",
+  "foundationCaption": "आधारभूत संरचना",
+  "maritimeOperations": "समुद्री संचालन"
 }

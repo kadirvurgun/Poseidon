@@ -115,5 +115,11 @@
   "shifting": "Přemístění",
   "tugLetGo": "Vlečná loď odpojena",
   "pilotOff": "Lodivod vystoupil",
-  "departure": "Odjezd"
+  "departure": "Odjezd",
+  "localOperations": "MÍSTNÍ OPERACE",
+  "maritimePlatform": "NÁMOŘNÍ PLATFORMA",
+  "workspaceCaption": "PRACOVNÍ PROSTOR",
+  "developmentCaption": "VÝVOJ",
+  "foundationCaption": "ZÁKLADNÍ INFRASTRUKTURA",
+  "maritimeOperations": "NÁMOŘNÍ OPERACE"
 }

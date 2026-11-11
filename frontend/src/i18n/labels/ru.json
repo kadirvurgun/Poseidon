@@ -115,5 +115,11 @@
   "shifting": "Перемещение",
   "tugLetGo": "Буксир отсоединён",
   "pilotOff": "Лоцман сошёл",
-  "departure": "Отправление"
+  "departure": "Отправление",
+  "localOperations": "ЛОКАЛЬНЫЕ ОПЕРАЦИИ",
+  "maritimePlatform": "МОРСКАЯ ПЛАТФОРМА",
+  "workspaceCaption": "РАБОЧАЯ ОБЛАСТЬ",
+  "developmentCaption": "РАЗРАБОТКА",
+  "foundationCaption": "БАЗОВАЯ ИНФРАСТРУКТУРА",
+  "maritimeOperations": "МОРСКИЕ ОПЕРАЦИИ"
 }

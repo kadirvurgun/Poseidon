@@ -115,5 +115,11 @@
   "shifting": "移泊",
   "tugLetGo": "拖轮解缆",
   "pilotOff": "引航员离船",
-  "departure": "离港"
+  "departure": "离港",
+  "localOperations": "本地运营",
+  "maritimePlatform": "海事平台",
+  "workspaceCaption": "工作区",
+  "developmentCaption": "开发",
+  "foundationCaption": "基础架构",
+  "maritimeOperations": "海事运营"
 }
