@@ -1,5 +1,14 @@
 # POSEIDON — PR16 ve yerelleştirme durumu
 
+**Analizden yeni geliştirme:** DEV-052/053 ekipman/bakım temeli içinde asıl
+kullanıcıya bağlı taslak ve belirsiz komut kurtarması yazıldı: güncel oturum/yetki
+kontrolü, aynı anahtar/gövdeyle açık retry, kayıt kimliğinin URL'de korunması ve
+gözlem formunun taslağı kaybetmeden askıya alınması. Yeni UI/API/PG/browser test
+kaynakları yazıldı; **yürütme kendi teknik paket kapısına ertelendi**.
+[Teknik ilerleme raporu](phases/TECHNICAL-COMMAND-OWNER-RECOVERY-20261111.md).
+Tam gözlem komut kurtarması ve canonical teknik kapsam açıktır; resmî yüzde artmadı.
+
+
 **Tahmini termin:** mevcut paket/PR hazırlığı **20 Kasım 2026**; uçtan uca gemi+römorkör MVP **26 Şubat 2027**; dört haftalık gerçek pilot ve teslim hazırlığı **30 Nisan 2027**. Bunlar sabit kapsam, düzenli kapasite ve zamanında uzman/pilot erişimi varsayan planlama hedefleridir; ölçülmüş SP hızına dayalı kesin taahhüt değildir. Resmî kabul **20/121 iş ve 103/970 SP = %10,62**; kalan 101 iş/867 SP, yazılmamış kod yüzdesi değildir. [Durum ve takvim raporu](phases/DELIVERY-FORECAST-20261111.md).
 
 
