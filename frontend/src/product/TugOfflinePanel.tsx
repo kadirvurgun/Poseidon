@@ -1,4 +1,5 @@
 import { localizedText } from "../i18n/messages";
+import { presentationLabel } from "../i18n/labels";
 import { type Locale as AppLocale } from "../i18n";
 import { Button } from '../components/ui/button';
 import { EnterpriseActions, EnterpriseFormGrid } from './EnterprisePatterns';
@@ -187,7 +188,7 @@ export function TugOfflinePanel({ job, vessel, language, onDirty }: {
         {p.outcome?.result === 'MaterialConflict' && <Button variant="outline" disabled={busy} onClick={() => void work(async (current) => { const v = await app.conflict(p.commandId, scope.current.signal); if (current())
                 setConflict(v); })}>{localizedText(en, "pairs.m_72beb0ccb90927ac")}</Button>}</EnterpriseActions>
       </li>)}</ol>
-      {conflict && <article aria-label={localizedText(en, "pairs.m_18a5e934d3ff952e")}><p>{localizedText(en, "pairs.m_79776c1186a28b3b")}</p><dl className="offline-window-comparison">{[conflict.base, conflict.captured, conflict.server].map((v, i) => <div key={i}><dt>{(en ? ['Before capture', 'Captured', 'Current server'] : ['Yakalama öncesi', 'Yakalanan', 'Güncel sunucu'])[i]}</dt><dd>{v.plannedStart ?? '—'} / {v.plannedEnd ?? '—'}</dd></div>)}</dl><EnterpriseActions align="start" aria-label={localizedText(en, "pairs.m_3f91f6fcc0796342")}>
+      {conflict && <article aria-label={localizedText(en, "pairs.m_18a5e934d3ff952e")}><p>{localizedText(en, "pairs.m_79776c1186a28b3b")}</p><dl className="offline-window-comparison">{[conflict.base, conflict.captured, conflict.server].map((v, i) => <div key={i}><dt>{[localizedText(language, 'pairs.m_5eb8aabea964097a'), localizedText(language, 'pairs.m_b9441f91545d6179'), presentationLabel(language, 'currentServer')][i]}</dt><dd>{v.plannedStart ?? '—'} / {v.plannedEnd ?? '—'}</dd></div>)}</dl><EnterpriseActions align="start" aria-label={localizedText(en, "pairs.m_3f91f6fcc0796342")}>
         {(['keepServer', 'useCaptured'] as const).filter(c => conflict.choices.includes(c)).map(choice => <Button variant="outline" key={choice} disabled={busy} onClick={() => void work(async (current) => { const rows = await app.capture(choice === 'keepServer' ? conflict.server : conflict.captured, { conflict, choice }); if (current()) {
                 setPending(rows);
                 setConflict(null);

@@ -5,6 +5,7 @@ import * as api from './api'
 import { SystemHealthWorkspace } from './SystemHealthWorkspace'
 import { loadSystemHealth } from './system-health-api'
 import { healthVessel, unobservedHealth } from './system-health.test-fixture'
+import { changeAppLanguage } from '../i18n'
 
 vi.mock('./EnterpriseChrome', () => ({ EnterpriseChrome: ({ onLanguageChange }: { onLanguageChange: (value: 'en' | 'tr') => void }) => <button onClick={() => onLanguageChange('en')}>EN</button> }))
 vi.mock('./api', async original => ({ ...await original<typeof import('./api')>(), session: vi.fn(), vessels: vi.fn() }))
@@ -19,6 +20,19 @@ beforeEach(() => {
   vi.mocked(loadSystemHealth).mockResolvedValue(unobservedHealth())
 })
 afterEach(() => { vi.resetAllMocks(); vi.restoreAllMocks(); history.replaceState(null, '', '/') })
+
+it('localizes the freshness categories without re-reading observations or turning missing telemetry into zero', async () => {
+  await changeAppLanguage('de', false)
+  const user = userEvent.setup()
+  render(<SystemHealthWorkspace />)
+  const future = await screen.findByText('Zukünftig datiert')
+  expect(future.nextElementSibling).toHaveTextContent('Nicht verfügbar')
+  expect(loadSystemHealth).toHaveBeenCalledTimes(1)
+  await user.click(screen.getByRole('button', { name: 'EN' }))
+  expect(await screen.findByText('Future dated')).toBeVisible()
+  expect(screen.getByText('Future dated').nextElementSibling).toHaveTextContent('Unavailable')
+  expect(loadSystemHealth).toHaveBeenCalledTimes(1)
+})
 
 it('DEV-037 shows unobserved signals and unprobed configuration without fabricated API zeroes or green health', async () => {
   const user = userEvent.setup(); render(<SystemHealthWorkspace />)

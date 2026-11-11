@@ -1,4 +1,4 @@
-import { localizedLabel } from "../i18n/messages";
+import { localizedLabel, resolveMessageLocale } from "../i18n/messages";
 import { localizedText } from "../i18n/messages";
 import type { ReactNode } from 'react';
 import { Box, CalendarClock, CircleHelp, ClipboardList, Layers3, ListTree, Settings2, TriangleAlert, Wrench } from 'lucide-react';
@@ -45,7 +45,7 @@ export function TechnicalPlanList({ plans, assets, references, filter, selectedI
     en: boolean;
     onSelect: (id: string) => void;
 }) {
-    const locale = en ? 'en' : 'tr', query = filter.toLocaleLowerCase(locale);
+    const locale = resolveMessageLocale(en), query = filter.toLocaleLowerCase(locale);
     const rows = plans.map(plan => ({ plan, asset: assets.find(asset => asset.id === plan.assetId), job: references?.jobs.find(job => job.id === plan.jobId) }))
         .filter(({ plan, asset, job }) => `${job?.title ?? ''} ${job?.code ?? ''} ${asset?.name ?? ''} ${asset?.code ?? ''} ${plan.id}`.toLocaleLowerCase(locale).includes(query));
     return <div className="technical-plan-list">

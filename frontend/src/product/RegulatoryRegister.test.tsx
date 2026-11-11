@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { RegulatoryRegister } from './RegulatoryRegister'
 import { blankContent, decodeDraft, decodeRevision, saveDraft } from './register-api'
 import type { Draft } from './register-api'
+import { changeAppLanguage } from '../i18n'
 
 const id = '10000000-0000-0000-0000-000000000001'
 const source = '10000000-0000-0000-0000-000000000002'
@@ -18,6 +19,35 @@ function mock(save: (init: RequestInit) => Promise<Response> = async () => respo
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals() })
 
 describe('REG-SOURCE-DRAFT-01 authored component/transport tests; mocked transport only, NOT RUN', () => {
+  it('retains exact frozen command bytes and editor nodes through Italian and updates the saved notice on return', async () => {
+    let attempt = 0
+    const fetch = mock(async () => ++attempt === 1 ? Promise.reject(new TypeError('synthetic transport loss')) : response({ ...draft, version: 20 }))
+    const p = props(), user = userEvent.setup()
+    const { rerender } = render(<RegulatoryRegister {...p} />)
+    const state = await screen.findByLabelText('Title · State')
+    await user.selectOptions(state, 'Known')
+    const title = screen.getByLabelText('Title', { exact: true })
+    await user.type(title, 'SYNTHETIC retained source')
+    await user.click(screen.getByRole('button', { name: 'Save draft' }))
+    await screen.findByRole('button', { name: 'Retry frozen command' })
+    await changeAppLanguage('it', false)
+    rerender(<RegulatoryRegister {...p} language="it" />)
+    expect(state).toBeInTheDocument()
+    expect(state).toHaveValue('Known')
+    expect(title).toHaveValue('SYNTHETIC retained source')
+    expect(title).toBeDisabled()
+    await user.click(screen.getByRole('button', { name: 'Riprova il comando congelato' }))
+    expect(await screen.findByText('Bozza salvata. Non verificata.')).toBeVisible()
+    const saves = fetch.mock.calls.filter(([, init]) => init?.method === 'PUT')
+    expect(saves).toHaveLength(2)
+    expect(saves[1][1].body).toBe(saves[0][1].body)
+    expect(saves[1][1].headers).toEqual(saves[0][1].headers)
+    await changeAppLanguage('en', false)
+    rerender(<RegulatoryRegister {...p} language="en" />)
+    expect(screen.getByText('Draft saved. Unverified.')).toBeVisible()
+    expect(screen.queryByText('Bozza salvata. Non verificata.')).not.toBeInTheDocument()
+  })
+
   it('keeps register navigation separate from the explicitly submitted draft command', async () => {
     const fetch = mock(); const p = props(); const user = userEvent.setup()
     render(<RegulatoryRegister {...p} />)
