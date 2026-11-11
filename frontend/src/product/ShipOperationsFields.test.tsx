@@ -5,11 +5,38 @@ import { describe, expect, it } from 'vitest'
 import { ShipOperationsFields } from './ShipOperationsFields'
 import { emptyShipOpsFields, type ShipOpsKind } from './ship-operation-fields'
 import { shipOpsSchemaFixture } from './ship-operation-test-fixtures'
+import { changeAppLanguage, type Locale } from '../i18n'
 function Harness({ kind = 'Fuel' }: { kind?: ShipOpsKind }) {
   const [fields, setFields] = useState(() => emptyShipOpsFields(kind))
   return <><ShipOperationsFields kind={kind} fields={fields} schema={shipOpsSchemaFixture(kind)} language="en" disabled={false} onChange={setFields} /><output aria-label="Declared operational fields">{JSON.stringify(fields)}</output></>
 }
 describe('DEV100/101 source declaration form — authored, not executed', () => {
+  it('retains explicit no-discrepancy as Known/NONE across language changes and clears it only on explicit Unknown', async () => {
+    function LocalizedFuel({ language }: { language: Locale }) {
+      const [fields, setFields] = useState(() => emptyShipOpsFields('Fuel'))
+      return <><ShipOperationsFields kind="Fuel" fields={fields} schema={shipOpsSchemaFixture('Fuel')} language={language} disabled={false} onChange={setFields} />
+        <output aria-label="Canonical discrepancy">{JSON.stringify(fields.delivery_discrepancy)}</output></>
+    }
+    const user = userEvent.setup(), { rerender } = render(<LocalizedFuel language="en" />)
+    const state = screen.getByLabelText('Delivery discrepancy declaration value state')
+    expect(state).toHaveValue('Missing')
+    await user.selectOptions(state, 'Known')
+    const discrepancy = screen.getByLabelText('Delivery discrepancy declaration')
+    await user.selectOptions(discrepancy, 'NONE')
+    expect(screen.getByRole('option', { name: 'Declared no discrepancy' })).toHaveValue('NONE')
+    expect(JSON.parse(screen.getByLabelText('Canonical discrepancy').textContent!)).toEqual({ state: 'Known', value: 'NONE' })
+    await changeAppLanguage('tr', false)
+    rerender(<LocalizedFuel language="tr" />)
+    expect(discrepancy).toBeInTheDocument()
+    expect(discrepancy).toHaveValue('NONE')
+    expect(screen.getByRole('option', { name: 'Fark yok (beyan)' })).toHaveValue('NONE')
+    expect(screen.queryByRole('option', { name: 'Fark beyan edilmedi' })).not.toBeInTheDocument()
+    expect(JSON.parse(screen.getByLabelText('Canonical discrepancy').textContent!)).toEqual({ state: 'Known', value: 'NONE' })
+    await user.selectOptions(state, 'Unknown')
+    expect(discrepancy).toBeDisabled()
+    expect(JSON.parse(screen.getByLabelText('Canonical discrepancy').textContent!)).toEqual({ state: 'Unknown', value: null })
+  })
+
   it('preserves zero and long lexical decimal text separately from missing or unknown', async () => {
     render(<Harness />); const user = userEvent.setup()
     await user.selectOptions(screen.getByLabelText('Quantity received (mt) value state'), 'Known')

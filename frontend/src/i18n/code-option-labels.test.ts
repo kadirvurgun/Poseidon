@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { changeAppLanguage } from './index'
-import { codeOptionLabel } from './labels'
+import { changeAppLanguage, locales } from './index'
+import { codeOptionLabel, presentationLabel } from './labels'
 import { defectCodeLabel, defectSchema } from '../product/defect-fields'
 import { downtimeCodeLabel, downtimeTypeOptions } from '../product/downtime-fields'
-import { shipOpsOptionLabel } from '../product/ship-operation-copy'
+import { shipOpsFactLabel, shipOpsOptionLabel } from '../product/ship-operation-copy'
 import { workOrderCodeLabel, workOrderSchema } from '../product/work-order-fields'
 
 describe('canonical operational option presentation; execution deferred', () => {
@@ -38,6 +38,21 @@ describe('canonical operational option presentation; execution deferred', () => 
     expect(defectCodeLabel('Verify', false)).toBe('Doğrulama aşaması')
     expect(workOrderCodeLabel('RELEASED', true)).toBe('Released phase declaration')
     expect(workOrderCodeLabel('RELEASED', false)).toBe('Serbest bırakma aşaması beyanı')
-    expect(shipOpsOptionLabel('NONE', false)).toBe('Fark beyan edilmedi')
+    expect(shipOpsOptionLabel('NONE', false)).toBe('Fark yok (beyan)')
+  })
+
+  it('distinguishes an explicit NONE declaration from Missing, Unknown and Not declared in all offered locales', async () => {
+    for (const locale of locales) {
+      await changeAppLanguage(locale, false)
+      const none = shipOpsOptionLabel('NONE', locale === 'en')
+      expect(none).toBe(presentationLabel(locale, 'differenceNone'))
+      expect(none).not.toBe(shipOpsFactLabel('Missing', locale === 'en'))
+      expect(none).not.toBe(shipOpsFactLabel('Unknown', locale === 'en'))
+      expect(none).not.toBe(presentationLabel(locale, 'notDeclared'))
+    }
+    expect(presentationLabel('tr', 'differenceNone')).toBe('Fark yok (beyan)')
+    expect(presentationLabel('ru', 'differenceNone')).toBe('Заявлено отсутствие расхождений')
+    expect(presentationLabel('zh-Hans', 'differenceNone')).toBe('申报无差异')
+    expect(presentationLabel('zh-Hant', 'differenceNone')).toBe('申報無差異')
   })
 })
