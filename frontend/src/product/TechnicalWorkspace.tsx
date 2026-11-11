@@ -6,7 +6,7 @@ import { MaintenanceObservations } from './MaintenanceObservations';
 import { DefectEquipmentLaunch } from './DefectEquipmentLaunch';
 import { WorkOrderPlanLaunch } from './WorkOrderPlanLaunch';
 import { dueReason, dueState } from './maintenance-copy';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { ApiError, session } from './api';
 import type { Session } from './directory-contract';
 import { EquipmentHierarchyTree } from './EquipmentHierarchyTree';
@@ -53,7 +53,8 @@ export function TechnicalWorkspace() {
     const [confirmed, setConfirmed] = useState<{ owner: string; vessel: string; plan: boolean; id: string } | null>(null);
     const [observationDirty, setObservationDirty] = useState(false);
     const [observationUncertain, setObservationUncertain] = useState(false);
-    const [observationContext, setObservationContext] = useState<{ owner: string; vessel: string; asset: string; csrf: string } | null>(null);
+    const [observationBusy, setObservationBusy] = useState(false);
+    const [observationContext, setObservationContext] = useState<{ owner: string; vessel: string; asset: string } | null>(null);
     const [conflict, setConflict] = useState(false);
     const [history, setHistory] = useState<unknown[] | null>(null), [historyError, setHistoryError] = useState(false);
     const [dirty, setDirty] = useState(false), [busy, setBusy] = useState(false), [uncertain, setUncertain] = useState(false);
@@ -65,7 +66,8 @@ export function TechnicalWorkspace() {
     const committed = useRef({ scope: '', location: '', owner: null as string | null });
     const current = useRef({ url: location.href, index: Number(window.history.state?.technicalIndex ?? 0) });
     const guards = useRef({ dirty: dirty || observationDirty, busy, uncertain: uncertain || observationUncertain, protected: false });
-    const clear = () => { historyGeneration.current++; setEditor(null); setJobDraft(null); setDraftContext(null); setConfirmed(null); setObservationDirty(false); setObservationUncertain(false); setDirty(false); setUncertain(false); setHistory(null); setHistoryError(false); setNotice(''); setConflict(false); savedAttempt.current = null; };
+    const clear = () => { historyGeneration.current++; setEditor(null); setJobDraft(null); setDraftContext(null); setConfirmed(null); setObservationContext(null); setObservationDirty(false); setObservationUncertain(false); setObservationBusy(false); setDirty(false); setUncertain(false); setHistory(null); setHistoryError(false); setNotice(''); setConflict(false); savedAttempt.current = null; };
+    const recheckObservationAccess = useCallback(() => setAttempt(value => value + 1), []);
     const guard = (action: () => void) => {
         const state = guards.current;
         if (state.busy || state.uncertain || state.protected || running.current)
@@ -136,13 +138,15 @@ export function TechnicalWorkspace() {
     const owner = identity(user), online = !offline && navigator.onLine, visible = document.visibilityState !== 'hidden';
     const ready = loadedScope === scope && loadedOwner === owner && !!owner && online && visible;
     const sameOwner = !draftContext || draftContext.owner === owner && draftContext.vessel === routeVessel && draftContext.plan === routePlan;
-    const canShowPrivate = ready && sameOwner;
+    const sameObservationOwner = !observationContext || !(observationDirty || observationUncertain || observationBusy) ||
+        observationContext.owner === owner && observationContext.vessel === routeVessel && !routePlan && observationContext.asset === route?.id;
+    const canShowPrivate = ready && sameOwner && sameObservationOwner;
     useLayoutEffect(() => {
         if (committed.current.scope !== scope || !online || !visible) writer.current?.abort();
         committed.current = { scope, location: route ? path(route) : '', owner };
-        guards.current = { dirty: dirty || observationDirty, busy, uncertain: uncertain || observationUncertain,
-            protected: !!draftContext && !canShowPrivate || !!observationContext && (observationDirty || observationUncertain) && (!ready || observationContext.owner !== owner) };
-    }, [scope, route, owner, online, visible, ready, dirty, observationDirty, busy, uncertain, observationUncertain, draftContext, canShowPrivate, observationContext]);
+        guards.current = { dirty: dirty || observationDirty, busy: busy || observationBusy, uncertain: uncertain || observationUncertain,
+            protected: !!draftContext && !canShowPrivate || !!observationContext && (observationDirty || observationUncertain || observationBusy) && !canShowPrivate };
+    }, [scope, route, owner, online, visible, ready, dirty, observationDirty, busy, uncertain, observationUncertain, observationBusy, draftContext, canShowPrivate, observationContext]);
     useEffect(() => { mounted.current = true; return () => { mounted.current = false; writer.current?.abort(); }; }, []);
     const resetScope1 = [scope, online, visible] as const;
     const [previousScope1, setPreviousScope1] = useState(resetScope1);
@@ -210,11 +214,11 @@ export function TechnicalWorkspace() {
     useEffect(() => {
         if (!canShowPrivate || !user || !owner || !route || route.plan || !route.id || editor || !assets?.items.some(item => item.id === route.id)) return;
         setObservationContext(previous => {
-            if (previous && (observationDirty || observationUncertain)) return previous;
-            if (previous?.owner === owner && previous.vessel === route.vessel && previous.asset === route.id && previous.csrf === user.csrfToken) return previous;
-            return { owner, vessel: route.vessel, asset: route.id!, csrf: user.csrfToken };
+            if (previous && (observationDirty || observationUncertain || observationBusy)) return previous;
+            if (previous?.owner === owner && previous.vessel === route.vessel && previous.asset === route.id) return previous;
+            return { owner, vessel: route.vessel, asset: route.id! };
         });
-    }, [canShowPrivate, user, owner, route, editor, assets, observationDirty, observationUncertain]);
+    }, [canShowPrivate, user, owner, route, editor, assets, observationDirty, observationUncertain, observationBusy]);
     const start = (create: boolean) => guard(() => {
         if (!route || !owner || !canWrite) return;
         clear();
@@ -356,7 +360,7 @@ export function TechnicalWorkspace() {
             // Intercepting its anchors here would leave the dirty dialog inside inert main.
             if (a?.closest('.workspace-search, .enterprise-sidebar, .enterprise-topbar') || a?.getAttribute('href')?.startsWith('#'))
                 return;
-            if (a && (dirty || observationDirty || busy || uncertain || observationUncertain)) {
+            if (a && (dirty || observationDirty || busy || observationBusy || uncertain || observationUncertain)) {
                 e.preventDefault();
                 e.stopPropagation();
                 guard(() => { window.location.assign(a.href); });
@@ -364,11 +368,11 @@ export function TechnicalWorkspace() {
         }}>
 
     <EnterpriseChrome session={user} vessel={route.vessel} language={language} onLanguageChange={setLanguage} onNavigate={(href, committed) => guard(() => { committed?.(); window.location.assign(href); })} title={route.plan ? (localizedText(en, "pairs.m_2546e6e66d60b12f")) : (localizedText(en, "pairs.m_d0517aed8e15637a"))} mainId="technical-main"/>
-    <main id="technical-main" tabIndex={-1}><EnterprisePageHeader eyebrow={localizedText(en, "pairs.m_3f733356f26f9757")} title={route.plan ? (localizedText(en, "pairs.m_2546e6e66d60b12f")) : (localizedText(en, "pairs.m_d0517aed8e15637a"))} description={localizedText(en, "pairs.m_c75e40d5e0f8d2bc")} actionsLabel={localizedText(en, "pairs.m_18eedcbac7ec94d9")} actions={canWrite && !editor && !jobDraft && !error && <Button disabled={busy || uncertain || offline} onClick={() => start(true)}><Plus aria-hidden="true"/>{localizedText(en, "pairs.m_9b0263faba2b6d6f")}</Button>}/>
-      <nav className="enterprise-section-tabs" aria-label={localizedText(en, "pairs.m_3c3c7be095bfceaa")}><Button variant={!route.plan ? 'secondary' : 'ghost'} aria-current={!route.plan ? 'page' : undefined} disabled={busy || uncertain || !!draftContext && !canShowPrivate} onClick={() => navigate({ ...route, plan: false, id: null })}>{localizedText(en, "pairs.m_77e9d3d4c2e4b44f")}</Button><Button variant={route.plan ? 'secondary' : 'ghost'} aria-current={route.plan ? 'page' : undefined} disabled={busy || uncertain || !!draftContext && !canShowPrivate} onClick={() => navigate({ ...route, plan: true, id: null })}>{localizedText(en, "pairs.m_aa23756ffbae97e7")}</Button></nav>
+    <main id="technical-main" tabIndex={-1}><EnterprisePageHeader eyebrow={localizedText(en, "pairs.m_3f733356f26f9757")} title={route.plan ? (localizedText(en, "pairs.m_2546e6e66d60b12f")) : (localizedText(en, "pairs.m_d0517aed8e15637a"))} description={localizedText(en, "pairs.m_c75e40d5e0f8d2bc")} actionsLabel={localizedText(en, "pairs.m_18eedcbac7ec94d9")} actions={canWrite && !editor && !jobDraft && !error && <Button disabled={busy || uncertain || observationBusy || observationUncertain || offline} onClick={() => start(true)}><Plus aria-hidden="true"/>{localizedText(en, "pairs.m_9b0263faba2b6d6f")}</Button>}/>
+      <nav className="enterprise-section-tabs" aria-label={localizedText(en, "pairs.m_3c3c7be095bfceaa")}><Button variant={!route.plan ? 'secondary' : 'ghost'} aria-current={!route.plan ? 'page' : undefined} disabled={busy || uncertain || observationBusy || observationUncertain || (!!draftContext || observationDirty) && !canShowPrivate} onClick={() => navigate({ ...route, plan: false, id: null })}>{localizedText(en, "pairs.m_77e9d3d4c2e4b44f")}</Button><Button variant={route.plan ? 'secondary' : 'ghost'} aria-current={route.plan ? 'page' : undefined} disabled={busy || uncertain || observationBusy || observationUncertain || (!!draftContext || observationDirty) && !canShowPrivate} onClick={() => navigate({ ...route, plan: true, id: null })}>{localizedText(en, "pairs.m_aa23756ffbae97e7")}</Button></nav>
       {offline && <p role="alert">{localizedText(en, "pairs.m_20305c523753febe")}</p>}
-      {draftContext && owner && !sameOwner && <p role="alert">{localizedText(en, 'pairs.m_1110a2b47b9eb7dd')}</p>}
-      {(error || uncertain || observationUncertain || draftContext && !canShowPrivate) && <EnterpriseActions align="start" aria-label={localizedText(en, 'pairs.m_79b34eda155292bd')}><Button variant="outline" disabled={busy || offline || !visible} onClick={() => setAttempt(x => x + 1)}>{localizedText(en, 'pairs.m_542619365a11df9d')}</Button></EnterpriseActions>}
+      {owner && (!sameOwner || !sameObservationOwner) && <p role="alert">{localizedText(en, 'pairs.m_1110a2b47b9eb7dd')}</p>}
+      {(error || uncertain || draftContext && !canShowPrivate || (observationDirty || observationUncertain) && !canShowPrivate) && <EnterpriseActions align="start" aria-label={localizedText(en, 'pairs.m_79b34eda155292bd')}><Button variant="outline" disabled={busy || observationBusy || offline || !visible} onClick={() => setAttempt(x => x + 1)}>{localizedText(en, 'pairs.m_542619365a11df9d')}</Button></EnterpriseActions>}
       {confirmed && confirmed.owner === owner && confirmed.vessel === route.vessel && confirmed.plan === route.plan && route.id === confirmed.id && <div role="status"><p>{localizedText(en, 'pairs.m_79054af08f971230')}</p><code>{confirmed.id}</code></div>}
       {error ? <div role="alert"><p>{error === 401 ? (localizedText(en, "pairs.m_a5811cfb5b422a85")) : error === 403 || error === 404 ? (localizedText(en, "pairs.m_37decc04e315e7ef")) : (localizedText(en, "pairs.m_45f069187f5778f4"))}</p></div> : !canShowPrivate || !assets || route.plan && !plans ? <p role="status">{localizedText(en, "pairs.m_c9914bd9caad7a7f")}</p> : <>
         <p className="technical-boundary">{localizedText(en, "pairs.m_4bef44fe990058ed")}</p>
@@ -382,10 +386,10 @@ export function TechnicalWorkspace() {
           {route.id && !(route.plan ? plan : asset) && <p role="alert">{localizedText(en, "pairs.m_d3956072850197af")}</p>}
           {!route.id && !editor && <TechnicalEmptyDetail plan={route.plan} en={en}/>}
           {!editor && asset && !route.plan && <EquipmentSummary asset={asset} en={en}/>}
-          {!editor && asset && !route.plan && user && <DefectEquipmentLaunch session={user} vessel={route.vessel} assetId={asset.id} revision={asset.revision} language={language} disabled={dirty || observationDirty || busy || uncertain || observationUncertain || offline} onNavigate={href => guard(() => window.location.assign(href))}/>}
+          {!editor && asset && !route.plan && user && <DefectEquipmentLaunch session={user} vessel={route.vessel} assetId={asset.id} revision={asset.revision} language={language} disabled={dirty || observationDirty || busy || observationBusy || uncertain || observationUncertain || offline} onNavigate={href => guard(() => window.location.assign(href))}/>}
           {!editor && plan && route.plan && <MaintenancePlanSummary plan={plan} asset={assets.items.find(asset => asset.id === plan.assetId)} references={refs} en={en}/>}
-          {!editor && plan && route.plan && user && <WorkOrderPlanLaunch session={user} vessel={route.vessel} planId={plan.id} revision={plan.revision} language={language} disabled={dirty || observationDirty || busy || uncertain || observationUncertain || offline} onNavigate={href => guard(() => window.location.assign(href))}/>}
-          {(canWrite && !editor && (asset || plan) || canHistory && route.id) && <EnterpriseActions align="start" aria-label={localizedText(en, "pairs.m_2ce1bd8b350fd2a6")}>{canWrite && !editor && (asset || plan) && <Button variant="outline" disabled={busy || uncertain || offline} onClick={() => start(false)}>{localizedText(en, "pairs.m_2a8233db25e97857")}</Button>}{canHistory && route.id && <Button variant="outline" onClick={loadHistory}>{localizedText(en, "pairs.m_247303d64af5e1f0")}</Button>}</EnterpriseActions>}
+          {!editor && plan && route.plan && user && <WorkOrderPlanLaunch session={user} vessel={route.vessel} planId={plan.id} revision={plan.revision} language={language} disabled={dirty || observationDirty || busy || observationBusy || uncertain || observationUncertain || offline} onNavigate={href => guard(() => window.location.assign(href))}/>}
+          {(canWrite && !editor && (asset || plan) || canHistory && route.id) && <EnterpriseActions align="start" aria-label={localizedText(en, "pairs.m_2ce1bd8b350fd2a6")}>{canWrite && !editor && (asset || plan) && <Button variant="outline" disabled={busy || uncertain || observationBusy || observationUncertain || offline} onClick={() => start(false)}>{localizedText(en, "pairs.m_2a8233db25e97857")}</Button>}{canHistory && route.id && <Button variant="outline" disabled={observationBusy || observationUncertain} onClick={loadHistory}>{localizedText(en, "pairs.m_247303d64af5e1f0")}</Button>}</EnterpriseActions>}
           {historyError && <p role="alert">{localizedText(en, "pairs.m_8918abcb6db89258")}</p>}
           {history && <ol>{history.map((r, i) => {
                     const record = r as {
@@ -402,9 +406,9 @@ export function TechnicalWorkspace() {
       </>}
       {/* Suspension removes private DOM without discarding the separately owned
           observation component's in-memory attempt during access revalidation. */}
-      {observationContext && !editor && <MaintenanceObservations key={`${observationContext.owner}:${observationContext.vessel}:${observationContext.asset}`} vessel={observationContext.vessel} asset={observationContext.asset} csrf={observationContext.csrf} en={en} onDirty={setObservationDirty} onUncertain={setObservationUncertain}
+      {observationContext && !editor && <MaintenanceObservations key={`${observationContext.owner}:${observationContext.vessel}:${observationContext.asset}`} vessel={observationContext.vessel} asset={observationContext.asset} owner={observationContext.owner} en={en} onDirty={setObservationDirty} onUncertain={setObservationUncertain} onBusy={setObservationBusy} onAccessLost={recheckObservationAccess}
           suspended={!canShowPrivate || observationContext.owner !== owner || route.plan || observationContext.vessel !== route.vessel || observationContext.asset !== route.id}/>}
-      {route.plan && canWrite && !editor && !jobDraft && <EnterpriseActions align="start" aria-label={localizedText(en, "pairs.m_b5993fcb908c17b7")}><Button variant="outline" disabled={busy || uncertain || offline} onClick={() => guard(() => { if (!owner) return; setDraftContext({ owner, vessel: route.vessel, plan: true }); setJobDraft({ id: crypto.randomUUID(), code: '', title: '' }); })}>{localizedText(en, "pairs.m_dcc7486f86fd92d9")}</Button></EnterpriseActions>}
+      {route.plan && canWrite && !editor && !jobDraft && <EnterpriseActions align="start" aria-label={localizedText(en, "pairs.m_b5993fcb908c17b7")}><Button variant="outline" disabled={busy || uncertain || observationBusy || observationUncertain || offline} onClick={() => guard(() => { if (!owner) return; setDraftContext({ owner, vessel: route.vessel, plan: true }); setJobDraft({ id: crypto.randomUUID(), code: '', title: '' }); })}>{localizedText(en, "pairs.m_dcc7486f86fd92d9")}</Button></EnterpriseActions>}
       {canShowPrivate && jobDraft && route.plan && <form className="enterprise-editor-panel" onSubmit={e => { e.preventDefault(); saveJob(); }}><EnterpriseFormGrid disabled={busy || uncertain || conflict || offline || !canWrite}><legend>{localizedText(en, "pairs.m_519c4012eb685675")}</legend>
         <label>{localizedText(en, "pairs.m_060d3419b817d68d")}<input required maxLength={2000} value={jobDraft.code} onChange={e => { setJobDraft({ ...jobDraft, code: e.target.value }); setDirty(true); }}/></label>
         <label>{localizedText(en, "pairs.m_1581566562f17d98")}<input required maxLength={2000} value={jobDraft.title} onChange={e => { setJobDraft({ ...jobDraft, title: e.target.value }); setDirty(true); }}/></label>

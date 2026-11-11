@@ -436,3 +436,83 @@ describe('TECHNICAL-COMMAND-OWNER-RECOVERY-01 (authored UI cases; execution defe
         expect(posts()).toHaveLength(0);
     });
 });
+
+// MAINTENANCE-OBSERVATION-OWNER-RECOVERY-01: authored, execution deferred.
+function observationFixture() {
+    return { sources: [{ tenantId: vessel, vesselId: vessel, assetId: id, source: 'synthetic-meter', version: 'synthetic-v1', kind: 'Meter', unit: 'hours', freshnessSeconds: 3600, maxScale: 4 }], items: [], canWrite: true, state: 'ConfiguredDeclarationsOnly' };
+}
+function actualObservationTransport() {
+    const base = fetcher.getMockImplementation()!;
+    fetcher.mockImplementation(async (url: string, init?: RequestInit) => !init?.method && url.endsWith('/observations') ? json(observationFixture()) : base(url, init));
+    window.history.replaceState({}, '', `/app/equipment-hierarchy/${vessel}?id=${id}`);
+}
+async function fillObservationDraft() {
+    await userEvent.selectOptions(await screen.findByLabelText('Configured source'), 'synthetic-meter');
+    await userEvent.type(screen.getByLabelText('Source revision'), '17');
+    await userEvent.type(screen.getByLabelText('Observed value (exact declaration)'), '19.5000');
+}
+describe('owning observation recovery inside the actual technical workspace', () => {
+    it('discards observation inputs only after explicit dirty-navigation confirmation and never resurrects them on return', async () => {
+        actualObservationTransport();
+        render(<TechnicalWorkspace />); await english(); await fillObservationDraft();
+        await userEvent.click(screen.getByRole('button', { name: 'Plans', exact: true }));
+        await userEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Discard', exact: true }));
+        await screen.findByRole('heading', { name: 'Maintenance plan', exact: true });
+        await userEvent.click(screen.getByRole('button', { name: 'Equipment', exact: true }));
+        await userEvent.click(await screen.findByRole('treeitem', { name: 'FICTIONAL engine', exact: true }));
+        expect(await screen.findByLabelText('Observed value (exact declaration)')).toHaveValue('');
+        expect(screen.getByLabelText('Source revision')).toHaveValue('');
+        expect(posts()).toHaveLength(0);
+    });
+    it('blocks parent navigation and discard while an observation POST is in flight', async () => {
+        actualObservationTransport();
+        const outcome = deferred<Response>();
+        mutate = async () => outcome.promise;
+        render(<TechnicalWorkspace />); await english(); await fillObservationDraft();
+        await userEvent.click(screen.getByRole('button', { name: 'Record observation' }));
+        await waitFor(() => expect(posts()).toHaveLength(1));
+        expect(screen.getByRole('button', { name: 'Plans', exact: true })).toBeDisabled();
+        expect(screen.getByRole('button', { name: 'Add draft', exact: true })).toBeDisabled();
+        await userEvent.click(screen.getByRole('button', { name: 'Plans', exact: true }));
+        expect(location.pathname).toBe(`/app/equipment-hierarchy/${vessel}`);
+        expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+        const body = JSON.parse(posts()[0][1].body);
+        await act(async () => outcome.resolve(json({ id: body.id, replayed: false })));
+        await screen.findByText('Draft saved.');
+        await waitFor(() => expect(screen.getByRole('button', { name: 'Plans', exact: true })).toBeEnabled());
+    });
+    it('withdraws the entire former-owner private workspace and restores the same uncertain observation only for that owner', async () => {
+        actualObservationTransport();
+        const original = { ...currentSession }; let count = 0;
+        mutate = async init => { if (++count === 1) throw new TypeError('synthetic observation response loss'); return json({ id: JSON.parse(init.body as string).id, replayed: true }); };
+        render(<TechnicalWorkspace />); await english(); await fillObservationDraft();
+        await userEvent.click(screen.getByRole('button', { name: 'Record observation' }));
+        await screen.findByText('Outcome uncertain. The exact original attempt is locked until retry.');
+        currentSession = { ...original, actorId: child };
+        await act(async () => fireEvent(window, new Event('focus')));
+        await screen.findByText(/Only the original account can continue/);
+        expect(screen.queryByLabelText('Observed value (exact declaration)')).not.toBeInTheDocument();
+        expect(screen.queryByText('FICTIONAL engine')).not.toBeInTheDocument();
+        expect(posts()).toHaveLength(1);
+        currentSession = { ...original, csrfToken: 'synthetic-restored-observation-owner' };
+        await userEvent.click(screen.getByRole('button', { name: 'Retry source read' }));
+        expect(await screen.findByLabelText('Observed value (exact declaration)')).toHaveValue('19.5000');
+        expect(screen.getByLabelText('Observed value (exact declaration)')).toBeDisabled();
+        expect(posts()).toHaveLength(1);
+        await userEvent.click(screen.getByRole('button', { name: 'Retry same attempt' }));
+        await screen.findByText('Draft saved.');
+        expect(posts()).toHaveLength(2);
+        expect(posts()[1][1].body).toBe(posts()[0][1].body);
+        expect(posts()[1][1].headers['Idempotency-Key']).toBe(posts()[0][1].headers['Idempotency-Key']);
+        expect(posts()[1][1].headers['X-CSRF-TOKEN']).toBe('synthetic-restored-observation-owner');
+    });
+    it('keeps a dirty observation through same-owner focus revalidation and rotated CSRF without sending it', async () => {
+        actualObservationTransport();
+        render(<TechnicalWorkspace />); await english(); await fillObservationDraft();
+        currentSession = { ...currentSession, csrfToken: 'synthetic-rotated-observation-csrf' };
+        await act(async () => fireEvent(window, new Event('focus')));
+        expect(await screen.findByLabelText('Observed value (exact declaration)')).toHaveValue('19.5000');
+        expect(screen.getByLabelText('Source revision')).toHaveValue('17');
+        expect(posts()).toHaveLength(0);
+    });
+});
