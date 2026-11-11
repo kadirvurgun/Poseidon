@@ -1,13 +1,13 @@
+import { codeOptionLabel, type PresentationLabel } from '../i18n/labels';
 import { sourceText, localizedTuple } from "../i18n/messages";
 import { localizedText } from "../i18n/messages";
-const options: Record<string, string> = {
-    Consumption: 'Tüketim', 'Delivery/BDN': 'İkmal / BDN', Transfer: 'Transfer', ROB: 'ROB', 'Tank Sounding': 'Tank ölçümü',
-    VLSFO: 'VLSFO', HFO: 'HFO', MGO: 'MGO', LNG: 'LNG', Methanol: 'Metanol', Other: 'Diğer',
-    NONE: 'Fark beyan edilmedi', ATTENTION: 'Dikkat gerektiren beyan', DISPUTED: 'İhtilaf beyanı',
-    Arrival: 'Varış', NOR: 'NOR kaydı', 'Pilot Onboard': 'Kılavuzun gemiye çıkışı', 'Tug Made Fast': 'Römorkör bağlantısı',
-    Berthing: 'Yanaşma', Loading: 'Yükleme', Discharging: 'Tahliye', Shifting: 'Yer değiştirme', 'Tug Let Go': 'Römorkör bağlantısının bırakılması', 'Pilot Off': 'Kılavuzun ayrılması', Departure: 'Ayrılış',
+const options: Readonly<Record<string, PresentationLabel>> = {
+    Consumption: 'consumption', 'Delivery/BDN': 'deliveryBdn', Transfer: 'transfer', 'Tank Sounding': 'tankSounding',
+    Methanol: 'methanol', Other: 'other', NONE: 'differenceNone', ATTENTION: 'differenceAttention', DISPUTED: 'differenceDisputed',
+    Arrival: 'arrival', NOR: 'norRecord', 'Pilot Onboard': 'pilotOnboard', 'Tug Made Fast': 'tugMadeFast',
+    Berthing: 'berthing', Loading: 'loading', Discharging: 'discharging', Shifting: 'shifting', 'Tug Let Go': 'tugLetGo', 'Pilot Off': 'pilotOff', Departure: 'departure',
 };
-export const shipOpsOptionLabel = (value: string, en: boolean) => en ? value : options[value] ?? value;
+export const shipOpsOptionLabel = (value: string, en: boolean) => codeOptionLabel(value, en, options);
 export const shipOpsFactLabel = (state: 'Known' | 'Missing' | 'Unknown', en: boolean) => state === 'Known' ? (localizedText(en, "pairs.m_c2e9e0b3ab9f0e8c")) : state === 'Missing' ? (localizedText(en, "pairs.m_a5bd35d90de7c160")) : (localizedText(en, "pairs.m_a5a7675bd7000dbd"));
 export function shipOpsBlockerLabel(code: string, en: boolean) {
     const labels: Record<string, [

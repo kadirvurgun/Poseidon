@@ -1,3 +1,4 @@
+import { codeOptionLabel, type PresentationLabel } from '../i18n/labels';
 import { localizedText, sourceText } from "../i18n/messages";
 // DEV-054 / T-S8-003. Source declarations only; execution literals never grant authority.
 export const workOrderGroups = [
@@ -51,8 +52,8 @@ export function workOrderFieldInfo(): {
     for (const field of group.fields)
         fields.push(field); return fields; }
 export const emptyWorkOrderFields = (): WorkOrderFields => Object.fromEntries(workOrderFieldInfo().map(field => [field.key, { state: 'Missing', value: null }])) as WorkOrderFields;
-const codeEn: Record<string, string> = { RELEASED: 'Released phase declaration', IN_PROGRESS: 'In progress phase declaration', EVIDENCE_SUBMITTED: 'Evidence submitted phase declaration' }, codeTr: Record<string, string> = { RELEASED: 'Serbest bırakma aşaması beyanı', IN_PROGRESS: 'Devam eden aşama beyanı', EVIDENCE_SUBMITTED: 'Kanıt sunma aşaması beyanı' };
-export const workOrderCodeLabel = (value: string, en: boolean) => (en ? codeEn : codeTr)[value] ?? value;
+const phaseLabels: Readonly<Record<string, PresentationLabel>> = { RELEASED: 'releasedPhaseDeclaration', IN_PROGRESS: 'inProgressPhaseDeclaration', EVIDENCE_SUBMITTED: 'evidenceSubmittedPhaseDeclaration' };
+export const workOrderCodeLabel = (value: string, en: boolean) => codeOptionLabel(value, en, phaseLabels);
 export const workOrderFactLabel = (state: WorkOrderFact['state'], en: boolean) => state === 'Known' ? (localizedText(en, "pairs.m_c2e9e0b3ab9f0e8c")) : state === 'Missing' ? (localizedText(en, "pairs.m_a5bd35d90de7c160")) : (localizedText(en, "pairs.m_a5a7675bd7000dbd"));
 export function workOrderSchema(): WorkOrderFieldDefinition[] {
     const f = (key: WorkOrderFieldKey, type: WorkOrderFieldDefinition['type'], row: number, required = false, knownUnavailable = false): WorkOrderFieldDefinition => ({ key, type, required, options: [], sourceLocator: '14.02/sheet:Data Dictionary 2316/row:' + row, requiredWhen: required ? null : 'SOURCE_CONDITIONAL_UNRESOLVED', knownUnavailable });

@@ -22,3 +22,10 @@ for (const locale of locales) {
 export function presentationLabel(language: Locale | boolean, key: PresentationLabel, options?: TOptions): string {
   return text(resolveMessageLocale(language), `labels:${key}`, options)
 }
+
+export function codeOptionLabel(value: string, language: Locale | boolean, labels: Readonly<Record<string, PresentationLabel>>): string {
+  const key = Object.hasOwn(labels, value) ? labels[value] : undefined
+  // An unknown server code remains source data; a translation never converts
+  // it into a supported choice or an approval. Prototype members are not codes.
+  return key === undefined ? value : presentationLabel(language, key)
+}

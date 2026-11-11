@@ -1,3 +1,4 @@
+import { codeOptionLabel, type PresentationLabel } from '../i18n/labels';
 import { localizedText, sourceText } from "../i18n/messages";
 // DEV-102 / T-OPS2-006. Source declarations retain uncertainty and never settle hire claims.
 export const downtimeGroups = [
@@ -38,8 +39,8 @@ export function downtimeFieldInfo(): {
         result.push(field); return result; }
 export function emptyDowntimeFields(): DowntimeFields { return Object.fromEntries(downtimeFieldInfo().map(field => [field.key, { state: 'Missing', value: null }])) as DowntimeFields; }
 export const downtimeFactLabel = (state: DowntimeFact['state'], en: boolean) => state === 'Known' ? (localizedText(en, "pairs.m_c2e9e0b3ab9f0e8c")) : state === 'Missing' ? (localizedText(en, "pairs.m_a5bd35d90de7c160")) : (localizedText(en, "pairs.m_a5a7675bd7000dbd"));
-const labels: Record<string, string> = { 'Technical Failure': 'Teknik arıza', 'Planned Maintenance': 'Planlı bakım', 'Weather': 'Hava durumu', 'Port Delay': 'Liman gecikmesi', 'Crew': 'Mürettebat', 'Regulatory': 'Mevzuat', 'Commercial': 'Ticari', 'Other': 'Diğer' };
-export const downtimeCodeLabel = (value: string, en: boolean) => en ? value : labels[value] ?? value;
+const labels: Readonly<Record<string, PresentationLabel>> = { 'Technical Failure': 'technicalFailure', 'Planned Maintenance': 'plannedMaintenance', Weather: 'weather', 'Port Delay': 'portDelay', Crew: 'crewCategory', Regulatory: 'regulatoryCategory', Commercial: 'commercialCategory', Other: 'other' };
+export const downtimeCodeLabel = (value: string, en: boolean) => codeOptionLabel(value, en, labels);
 export function downtimeSchema(): DowntimeFieldDefinition[] {
     const f = (key: DowntimeFieldDefinition['key'], type: DowntimeFieldDefinition['type'], sourceRow: number, required = false, readOnly = false): DowntimeFieldDefinition => ({ key, type, sourceRow, required, readOnly, options: key === 'downtime_type' ? [...downtimeTypeOptions] : key === 'loss_of_hire_flag' ? ['YES', 'NO', 'REVIEW_REQUIRED'] : key === 'closure_state' ? ['OPEN', 'VERIFIED', 'CLOSED'] : [], referenceUnavailable: type === 'Reference' && !readOnly, unit: key === 'duration_minutes' ? 'min' : null, requiredWhen: required ? null : 'SOURCE_CONDITIONAL_UNRESOLVED' });
     return [f('vessel_id', 'Reference', 2226, true, true), f('voyage_id', 'Reference', 2227), f('downtime_type', 'Code', 2228, true), f('start_at', 'Instant', 2229, true), f('end_at', 'Instant', 2230), f('duration_minutes', 'Number', 2231), f('cause', 'Narrative', 2232, true), f('linked_defect', 'Reference', 2233), f('linked_work_order', 'Reference', 2234), f('linked_event', 'Reference', 2235), f('operational_impact', 'Narrative', 2236, true), f('loss_of_hire_flag', 'Code', 2237, false, true), f('claim_evidence', 'Reference', 2238), f('closure_state', 'Code', 2239, true, true)];

@@ -1,3 +1,4 @@
+import { codeOptionLabel, type PresentationLabel } from '../i18n/labels';
 import { localizedText, sourceText } from "../i18n/messages";
 // DEV-055 / Backlog56. Supporting DD443–465 is not the complete owning
 // asset-reliability schema and does not grant a safety decision workflow.
@@ -67,6 +68,6 @@ export function defectFieldInfo(): {
     return fields;
 }
 export const emptyDefectFields = (): DefectFields => Object.fromEntries(defectFieldInfo().map(field => [field.key, { state: 'Missing', value: null }])) as DefectFields;
-const codeLabels: Record<string, string> = { Critical: 'Kritik', High: 'Yüksek', Medium: 'Orta', Low: 'Düşük', Detect: 'Tespit', Assess: 'Değerlendirme', Safeguard: 'Koruyucu tedbir', Action: 'İşlem', Verify: 'Doğrulama aşaması', Effectiveness: 'Etkinlik inceleme aşaması' };
-export const defectCodeLabel = (value: string, en: boolean) => en ? value : codeLabels[value] ?? value;
+const codeLabels: Readonly<Record<string, PresentationLabel>> = { Critical: 'critical', High: 'high', Medium: 'medium', Low: 'low', Detect: 'detect', Assess: 'assess', Safeguard: 'safeguardPhase', Action: 'actionPhase', Verify: 'verifyPhase', Effectiveness: 'effectivenessPhase' };
+export const defectCodeLabel = (value: string, en: boolean) => codeOptionLabel(value, en, codeLabels);
 export const defectFactLabel = (value: DefectFact['state'], en: boolean) => value === 'Known' ? (localizedText(en, "pairs.m_c2e9e0b3ab9f0e8c")) : value === 'Missing' ? (localizedText(en, "pairs.m_a5bd35d90de7c160")) : (localizedText(en, "pairs.m_a5a7675bd7000dbd"));
