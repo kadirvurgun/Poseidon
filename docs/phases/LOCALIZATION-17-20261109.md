@@ -2,14 +2,13 @@
 
 Durum: **YAZILDI / ÇEVİRİ DEVAM EDİYOR / TESTLER ERTELENDİ / KABUL EDİLMEDİ**.
 
-## Güncel kaynak — 981dae4
+## Güncel kaynak — 786a0b9
 
-Ana katalogların **13/17** dili tamamen yazıldı: Türkçe, İngilizce, İngiliz
-İngilizcesi, Arapça, Almanca, Fransızca, Hintçe, Çekçe, Rusça, Macarca, İtalyanca, Basitleştirilmiş Çince ve Geleneksel Çince.
+Ana katalogların **15/17** dili tamamen yazıldı: Türkçe, İngilizce, İngiliz
+İngilizcesi, Arapça, Almanca, Fransızca, Hintçe, Çekçe, Rusça, Macarca, İtalyanca, Basitleştirilmiş Çince, Geleneksel Çince, İspanyolca ve Brezilya Portekizcesi.
 Her katalog 3169 metin alanı içerir; kaynakta 2991 benzersiz değer vardır.
 Bu oran yalnız yazılan katalog dosyası sayısıdır; ekran kapsamı, çeviri kalitesi
-veya kabul yüzdesi değildir. **Dört ana katalog açık:** Fince, Slovakça,
-İspanyolca ve Brezilya Portekizcesi.
+veya kabul yüzdesi değildir. **İki ana katalog açık:** Fince ve Slovakça.
 
 17 ortak katalog ve ayrıca **17 × 123 sunum etiketi** yazıldı. İtalyanca
 `6c5df69` ile tamamlandı; `d8cfde6` mürettebat ve Unicode düzeltmelerini,
@@ -213,3 +212,20 @@ birleşimini ayrı ajanın statik kaynak incelemesine verir. İnceleyici kendi y
 Çince kataloglarını bağımsız kabul etmez. Test/build/typecheck/browser yürütmesi
 DEFERRED; kaynak incelemesi final QA veya faz kabulü değildir. Kalan dört ana
 katalog ES/PT-BR ve FI/SK sahipli dallarında yazılmaktadır.
+
+
+### İspanyolca / Brezilya Portekizcesi — 4fa3c74 / 786a0b9
+
+Tam ES `d3762ae` ve PT-BR `365fc2f` katalogları ayrı commit'lerden alındı; her
+biri3169metin alanı ve2991benzersiz kaynak değeri kapsar. Repository LF SHA256
+ES `a5bd66b17d02cdec08058037421cf1d01e934f5b68f04fac6183792f25790f05`,
+PT-BR `47868a1bf54590d0d602c37bc28f6f665d651e5b51ef31422c5fb4139c7366b2`.
+Yazarın çalışma kopyası CRLF hash'leri ile repository LF hash'leri farklı
+baytları tanımlar; kaynak İngilizce hash'i değişmedi. Tam ana katalog15/17.
+
+L17-QA-COPY-01, başka yazarların kataloglarında ve Root sunum etiketlerinde
+Unknown/Missing/beyan/insan-yetkisi olumsuzlukları ve Unicode için sınırlı statik
+anlam incelemesi yapar. İnceleyicinin kendi ES/PT ana katalogları bağımsız kabul
+kapsamına alınmaz. Bu bir dil kalitesi sertifikası, test yürütmesi veya faz kabulü
+değildir. UI kaynak incelemesi başka ajanda ayrı sürer; FI/SK son491'er kaynak
+metni yazılmaktadır. Bütün yeni paket testleri DEFERRED kalır.
