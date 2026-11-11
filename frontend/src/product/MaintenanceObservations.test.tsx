@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { act, render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { beforeEach, expect, it, vi } from 'vitest'
 import { MaintenanceObservations } from './MaintenanceObservations'
 import { ApiError, request } from './api'
@@ -44,4 +44,54 @@ it('clears the scoped observation projection on current permission denial', asyn
   fireEvent.click(screen.getByRole('button', { name: 'Record observation' }))
   expect(await screen.findByText('Observation access unavailable.')).toBeInTheDocument()
   expect(screen.queryByLabelText('Observed value (exact declaration)')).not.toBeInTheDocument()
+})
+it('withdraws private observation DOM while suspended and resumes the exact unsent draft without posting', async () => {
+  const view = render(<MaintenanceObservations {...props} />)
+  fireEvent.change(await screen.findByLabelText('Configured source'), { target: { value: 'synthetic-meter' } })
+  fireEvent.change(screen.getByLabelText('Source revision'), { target: { value: '17' } })
+  fireEvent.change(screen.getByLabelText('Observed value (exact declaration)'), { target: { value: '19.5000' } })
+  const oldSubmit = screen.getByRole('button', { name: 'Record observation' })
+  view.rerender(<MaintenanceObservations {...props} suspended />)
+  expect(screen.queryByLabelText('Observed value (exact declaration)')).not.toBeInTheDocument()
+  expect(screen.queryByRole('button', { name: 'Record observation' })).not.toBeInTheDocument()
+  fireEvent.click(oldSubmit)
+  expect(mocked.mock.calls.filter(call => call[2]?.method === 'POST')).toHaveLength(0)
+  view.rerender(<MaintenanceObservations {...props} suspended={false} />)
+  expect(screen.getByLabelText('Observed value (exact declaration)')).toHaveValue('19.5000')
+  expect(screen.getByLabelText('Source revision')).toHaveValue('17')
+  expect(mocked.mock.calls.filter(call => call[2]?.method === 'POST')).toHaveLength(0)
+})
+it('keeps an uncertain observation UUID/body through suspension and resumes only on explicit retry', async () => {
+  mocked.mockImplementation(async (_path, _signal, init) => { if (init?.method === 'POST') throw new Error('lost acknowledgement'); return value })
+  const view = render(<MaintenanceObservations {...props} />)
+  fireEvent.change(await screen.findByLabelText('Configured source'), { target: { value: 'synthetic-meter' } })
+  fireEvent.change(screen.getByLabelText('Source revision'), { target: { value: '17' } })
+  fireEvent.click(screen.getByRole('button', { name: 'Record observation' }))
+  await screen.findByRole('button', { name: 'Retry same attempt' })
+  const original = mocked.mock.calls.find(call => call[2]?.method === 'POST')!
+  view.rerender(<MaintenanceObservations {...props} suspended />)
+  expect(screen.queryByText('synthetic-meter')).not.toBeInTheDocument()
+  expect(screen.queryByRole('button', { name: 'Retry same attempt' })).not.toBeInTheDocument()
+  view.rerender(<MaintenanceObservations {...props} suspended={false} />)
+  expect(mocked.mock.calls.filter(call => call[2]?.method === 'POST')).toHaveLength(1)
+  fireEvent.click(screen.getByRole('button', { name: 'Retry same attempt' }))
+  await waitFor(() => expect(mocked.mock.calls.filter(call => call[2]?.method === 'POST')).toHaveLength(2))
+  const retry = mocked.mock.calls.filter(call => call[2]?.method === 'POST')[1]
+  expect(retry[0]).toBe(original[0])
+  expect(retry[2]).toEqual(original[2])
+})
+it('does not consume a late observation success while suspended', async () => {
+  let complete!: (value: unknown) => void
+  const response = new Promise(done => { complete = done })
+  mocked.mockImplementation(async (_path, _signal, init) => init?.method === 'POST' ? response : value)
+  const view = render(<MaintenanceObservations {...props} />)
+  fireEvent.change(await screen.findByLabelText('Configured source'), { target: { value: 'synthetic-meter' } })
+  fireEvent.change(screen.getByLabelText('Source revision'), { target: { value: '1' } })
+  fireEvent.click(screen.getByRole('button', { name: 'Record observation' }))
+  await waitFor(() => expect(mocked.mock.calls.filter(call => call[2]?.method === 'POST')).toHaveLength(1))
+  view.rerender(<MaintenanceObservations {...props} suspended />)
+  await act(async () => complete({ id: 'synthetic-receipt' }))
+  view.rerender(<MaintenanceObservations {...props} suspended={false} />)
+  expect(screen.getByRole('button', { name: 'Retry same attempt' })).toBeInTheDocument()
+  expect(mocked.mock.calls.filter(call => call[2]?.method === 'POST')).toHaveLength(1)
 })
