@@ -29,5 +29,20 @@
   "verifiedDeclaration": "Déclaré vérifié",
   "notVerifiedDeclaration": "Déclaré non vérifié",
   "suspiciousDeclaration": "Déclaré suspect",
-  "suspendedDeclaration": "Déclaré suspendu / révoqué"
+  "suspendedDeclaration": "Déclaré suspendu / révoqué",
+  "crewCertificateInput": "Données du certificat",
+  "crewContactInput": "Coordonnées",
+  "crewCompetenceInput": "Compétence",
+  "crewWorkRestInput": "Travail/repos",
+  "crewEligibilityInput": "Admissibilité",
+  "crewFitnessInput": "Aptitude médicale",
+  "crewCriteriaUnresolved": "Critères actuels non résolus",
+  "crewEligibleCriteriaSatisfied": "Critères actuels de la source satisfaits pour cette affectation et cette période",
+  "crewEligibleCriteriaUnsatisfied": "Critères actuels de la source non satisfaits",
+  "crewAccessWithheld": "Accès masqué",
+  "crewNoVisibleDeclaration": "Aucune déclaration visible",
+  "crewDeclaredUnverified": "Déclaré, non vérifié",
+  "crewProtectedUnavailable": "Données protégées indisponibles",
+  "crewEvaluationUnavailable": "Évaluation qualifiée indisponible ; le statut reste Inconnu",
+  "crewRosterCount": "{{visible}} affectations sur {{total}} sur cette page"
 }

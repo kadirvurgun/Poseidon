@@ -29,5 +29,20 @@
   "verifiedDeclaration": "Ilmoitettu todennetuksi",
   "notVerifiedDeclaration": "Ilmoitettu todentamattomaksi",
   "suspiciousDeclaration": "Ilmoitettu epäilyttäväksi",
-  "suspendedDeclaration": "Ilmoitettu keskeytetyksi / peruutetuksi"
+  "suspendedDeclaration": "Ilmoitettu keskeytetyksi / peruutetuksi",
+  "crewCertificateInput": "Todistuksen lähtötiedot",
+  "crewContactInput": "Yhteystiedot",
+  "crewCompetenceInput": "Pätevyys",
+  "crewWorkRestInput": "Työ/lepo",
+  "crewEligibilityInput": "Kelpoisuus",
+  "crewFitnessInput": "Terveydellinen soveltuvuus",
+  "crewCriteriaUnresolved": "Nykyisiä kriteerejä ei ole ratkaistu",
+  "crewEligibleCriteriaSatisfied": "Nykyiset lähdekriteerit täyttyvät tässä tehtävässä ja ajanjaksossa",
+  "crewEligibleCriteriaUnsatisfied": "Nykyiset lähdekriteerit eivät täyty",
+  "crewAccessWithheld": "Pääsy pidätetty",
+  "crewNoVisibleDeclaration": "Ei näkyvää ilmoitusta",
+  "crewDeclaredUnverified": "Ilmoitettu, vahvistamaton",
+  "crewProtectedUnavailable": "Suojatut lähtötiedot eivät ole saatavilla",
+  "crewEvaluationUnavailable": "Kelpuutettu arviointi ei ole saatavilla; tila pysyy tuntemattomana",
+  "crewRosterCount": "Tämän sivun tehtäväjaot: {{visible}} / {{total}}"
 }

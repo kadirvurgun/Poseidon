@@ -6,6 +6,33 @@ import { assertCompleteCatalog, localizedCopy, localizedLabel, localizedText, lo
 beforeEach(async () => { await changeAppLanguage('tr', false) })
 
 describe('operational interface catalogs', () => {
+  it('preserves the source structure and valid Unicode in every authored product catalog', () => {
+    const catalogs = import.meta.glob<{ default: unknown }>('./messages/*.json', { eager: true })
+    const inspectText = (value: unknown): void => {
+      if (typeof value === 'string') {
+        expect(value).not.toMatch(/Ã[\u0080-\u00bf\u201a\u0192\u201e]|Â[\u0080-\u00bf]|â€™|â€¦|\ufffd/u)
+      } else if (value && typeof value === 'object') {
+        for (const item of Object.values(value)) inspectText(item)
+      }
+    }
+    for (const catalog of Object.values(catalogs)) {
+      expect(() => assertCompleteCatalog(catalog.default)).not.toThrow()
+      inspectText(catalog.default)
+    }
+  })
+
+  it('loads separate Italian and French catalogs with intact accents instead of corrupted source bytes', async () => {
+    await changeAppLanguage('it', false)
+    expect(i18n.language).toBe('it')
+    expect(localizedText('it', 'pairs.m_ae6748989fdd2ee8')).toBe('Più candidati: revisione necessaria')
+    expect(localizedText('it', 'pairs.m_c9914bd9caad7a7f')).toBe('Caricamento…')
+    await changeAppLanguage('fr', false)
+    expect(i18n.language).toBe('fr')
+    expect(localizedCopy('App_tsx_content').fr.page).toBe('Connexion au système')
+    expect(localizedText('fr', 'pairs.m_366251a94a7dee3c')).toBe('Âge maximal source de l’essai (jours)')
+    expect(document.documentElement.dir).toBe('ltr')
+  })
+
   it('rejects incomplete or structurally changed catalogs before a locale can be selected', () => {
     const missing = structuredClone(en)
     const first = Object.keys(missing.pairs)[0] as keyof typeof missing.pairs

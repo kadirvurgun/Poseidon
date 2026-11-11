@@ -29,5 +29,20 @@
   "verifiedDeclaration": "申報為已核實",
   "notVerifiedDeclaration": "申報為未核實",
   "suspiciousDeclaration": "申報為可疑",
-  "suspendedDeclaration": "申報為暫停／撤銷"
+  "suspendedDeclaration": "申報為暫停／撤銷",
+  "crewCertificateInput": "證書輸入",
+  "crewContactInput": "聯絡資訊輸入",
+  "crewCompetenceInput": "勝任能力",
+  "crewWorkRestInput": "工作/休息",
+  "crewEligibilityInput": "資格",
+  "crewFitnessInput": "健康適任性",
+  "crewCriteriaUnresolved": "目前標準尚未解決",
+  "crewEligibleCriteriaSatisfied": "此任命和期間符合目前來源標準",
+  "crewEligibleCriteriaUnsatisfied": "不符合目前來源標準",
+  "crewAccessWithheld": "存取已隱藏",
+  "crewNoVisibleDeclaration": "無可見申報",
+  "crewDeclaredUnverified": "已申報，未經核實",
+  "crewProtectedUnavailable": "受保護的輸入無法使用",
+  "crewEvaluationUnavailable": "經資格確認的評估無法使用；狀態仍為未知",
+  "crewRosterCount": "本頁任命：顯示 {{visible}} 筆，共 {{total}} 筆"
 }

@@ -29,5 +29,20 @@
   "verifiedDeclaration": "Declared verified",
   "notVerifiedDeclaration": "Declared not verified",
   "suspiciousDeclaration": "Declared suspicious",
-  "suspendedDeclaration": "Declared suspended / revoked"
+  "suspendedDeclaration": "Declared suspended / revoked",
+  "crewCertificateInput": "Certificate input",
+  "crewContactInput": "Contact input",
+  "crewCompetenceInput": "Competence",
+  "crewWorkRestInput": "Work/rest",
+  "crewEligibilityInput": "Eligibility",
+  "crewFitnessInput": "Fitness",
+  "crewCriteriaUnresolved": "Current criteria unresolved",
+  "crewEligibleCriteriaSatisfied": "Current source criteria satisfied for this assignment and period",
+  "crewEligibleCriteriaUnsatisfied": "Current source criteria not satisfied",
+  "crewAccessWithheld": "Access withheld",
+  "crewNoVisibleDeclaration": "No visible declaration",
+  "crewDeclaredUnverified": "Declared, unverified",
+  "crewProtectedUnavailable": "Protected input unavailable",
+  "crewEvaluationUnavailable": "Qualified evaluation unavailable; remains Unknown",
+  "crewRosterCount": "{{visible}} of {{total}} assignments on this page"
 }

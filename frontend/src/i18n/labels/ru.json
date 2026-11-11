@@ -29,5 +29,20 @@
   "verifiedDeclaration": "Заявлено как проверенное",
   "notVerifiedDeclaration": "Заявлено как непроверенное",
   "suspiciousDeclaration": "Заявлено как подозрительное",
-  "suspendedDeclaration": "Заявлено как приостановленное / отозванное"
+  "suspendedDeclaration": "Заявлено как приостановленное / отозванное",
+  "crewCertificateInput": "Данные сертификата",
+  "crewContactInput": "Контактные данные",
+  "crewCompetenceInput": "Компетентность",
+  "crewWorkRestInput": "Работа/отдых",
+  "crewEligibilityInput": "Соответствие критериям",
+  "crewFitnessInput": "Пригодность по здоровью",
+  "crewCriteriaUnresolved": "Текущие критерии не определены",
+  "crewEligibleCriteriaSatisfied": "Текущие критерии источника соблюдены для этого назначения и периода",
+  "crewEligibleCriteriaUnsatisfied": "Текущие критерии источника не соблюдены",
+  "crewAccessWithheld": "Доступ скрыт",
+  "crewNoVisibleDeclaration": "Нет видимой декларации",
+  "crewDeclaredUnverified": "Заявлено, не проверено",
+  "crewProtectedUnavailable": "Защищённые данные недоступны",
+  "crewEvaluationUnavailable": "Квалифицированная оценка недоступна; состояние остаётся Неизвестно",
+  "crewRosterCount": "Назначения на этой странице: {{visible}} из {{total}}"
 }

@@ -29,5 +29,20 @@
   "verifiedDeclaration": "مصرح بأنه متحقق منه",
   "notVerifiedDeclaration": "مصرح بأنه غير متحقق منه",
   "suspiciousDeclaration": "مصرح بأنه مشبوه",
-  "suspendedDeclaration": "مصرح بأنه معلق / ملغى"
+  "suspendedDeclaration": "مصرح بأنه معلق / ملغى",
+  "crewCertificateInput": "بيانات الشهادات",
+  "crewContactInput": "بيانات الاتصال",
+  "crewCompetenceInput": "الكفاءة",
+  "crewWorkRestInput": "العمل/الراحة",
+  "crewEligibilityInput": "الأهلية",
+  "crewFitnessInput": "اللياقة",
+  "crewCriteriaUnresolved": "المعايير الحالية غير محسومة",
+  "crewEligibleCriteriaSatisfied": "معايير المصدر الحالية مستوفاة لهذا التكليف وهذه الفترة",
+  "crewEligibleCriteriaUnsatisfied": "معايير المصدر الحالية غير مستوفاة",
+  "crewAccessWithheld": "الوصول محجوب",
+  "crewNoVisibleDeclaration": "لا يوجد إقرار مرئي",
+  "crewDeclaredUnverified": "مُصرَّح به، غير متحقق منه",
+  "crewProtectedUnavailable": "البيانات المحمية غير متاحة",
+  "crewEvaluationUnavailable": "التقييم المؤهل غير متاح؛ تبقى الحالة غير معروفة",
+  "crewRosterCount": "{{visible}} من أصل {{total}} تكليفًا في هذه الصفحة"
 }

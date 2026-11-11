@@ -2,6 +2,7 @@ import { afterEach, expect, it, vi } from 'vitest'
 import { cleanup, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { CrewOwningInputs } from './CrewOwningInputs'
+import { changeAppLanguage } from '../i18n'
 const vessel = '11111111-1111-4111-8111-111111111111', assignment = '22222222-2222-4222-8222-222222222222'
 const fields = ['certificate_state', 'contact_status', 'competence_state', 'work_rest_state', 'eligibility_state', 'fitness_state']
 const response = (v: unknown, status = 200) => new Response(JSON.stringify(v), { status, headers: { 'Content-Type': 'application/json' } })
@@ -22,4 +23,25 @@ it('rejects a wrong-person/context observation without rendering a positive stat
   render(<CrewOwningInputs vessel={vessel} assignment={assignment} language="tr" />)
   expect(await screen.findByText('Mürettebat girdi durumu kullanılamıyor.')).toBeVisible()
   expect(screen.queryByRole('definition')).not.toBeInTheDocument()
+})
+
+it('switches protected input labels to Italian without fetching again or changing the source assessment', async () => {
+  const inputs = fields.map((field, i) => ({ field,
+    state: i === 0 ? 'DeclaredUnverified' : i === 1 ? 'Withheld' : i === 4 ? 'QualifiedIneligible' : 'EvaluationUnavailable',
+    ownerTask: 'DEV-048', reason: 'synthetic-test',
+  }))
+  const fetcher = vi.fn().mockResolvedValue(response({ assignmentId: assignment, authority: 'InputObservationOnly', inputs }))
+  vi.stubGlobal('fetch', fetcher)
+  const { rerender } = render(<CrewOwningInputs vessel={vessel} assignment={assignment} language="en" />)
+  expect(await screen.findByText('Current source criteria not satisfied')).toBeVisible()
+  await changeAppLanguage('it', false)
+  rerender(<CrewOwningInputs vessel={vessel} assignment={assignment} language="it" />)
+  expect(screen.getByText('Dati del certificato')).toBeVisible()
+  expect(screen.getByText('Dichiarato, non verificato')).toBeVisible()
+  expect(screen.getByText('Accesso nascosto')).toBeVisible()
+  expect(screen.getByText('Criteri attuali della fonte non soddisfatti')).toBeVisible()
+  expect(screen.getAllByText('Valutazione qualificata non disponibile; rimane Sconosciuto')).toHaveLength(3)
+  expect(screen.queryByText('Current source criteria not satisfied')).not.toBeInTheDocument()
+  expect(fetcher).toHaveBeenCalledTimes(1)
+  expect(inputs[4].state).toBe('QualifiedIneligible')
 })

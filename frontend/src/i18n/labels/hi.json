@@ -29,5 +29,20 @@
   "verifiedDeclaration": "सत्यापित होने की घोषणा",
   "notVerifiedDeclaration": "सत्यापित न होने की घोषणा",
   "suspiciousDeclaration": "संदिग्ध होने की घोषणा",
-  "suspendedDeclaration": "निलंबित / निरस्त होने की घोषणा"
+  "suspendedDeclaration": "निलंबित / निरस्त होने की घोषणा",
+  "crewCertificateInput": "प्रमाणपत्र इनपुट",
+  "crewContactInput": "संपर्क इनपुट",
+  "crewCompetenceInput": "दक्षता",
+  "crewWorkRestInput": "कार्य/विश्राम",
+  "crewEligibilityInput": "पात्रता",
+  "crewFitnessInput": "स्वास्थ्य उपयुक्तता",
+  "crewCriteriaUnresolved": "वर्तमान मानदंड अनिर्णीत हैं",
+  "crewEligibleCriteriaSatisfied": "इस नियुक्ति और अवधि के लिए वर्तमान स्रोत मानदंड पूरे हैं",
+  "crewEligibleCriteriaUnsatisfied": "वर्तमान स्रोत मानदंड पूरे नहीं हैं",
+  "crewAccessWithheld": "पहुँच छिपाई गई है",
+  "crewNoVisibleDeclaration": "कोई दृश्य घोषणा नहीं है",
+  "crewDeclaredUnverified": "घोषित, असत्यापित",
+  "crewProtectedUnavailable": "संरक्षित इनपुट अनुपलब्ध है",
+  "crewEvaluationUnavailable": "योग्य मूल्यांकन अनुपलब्ध है; स्थिति अज्ञात बनी रहती है",
+  "crewRosterCount": "इस पृष्ठ पर {{total}} में से {{visible}} नियुक्तियाँ"
 }

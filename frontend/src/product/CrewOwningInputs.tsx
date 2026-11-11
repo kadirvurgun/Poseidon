@@ -1,5 +1,7 @@
 import { localizedText } from "../i18n/messages";
+import { presentationLabel } from '../i18n/labels';
 import { type Locale as AppLocale } from "../i18n";
+import { Button } from '../components/ui/button';
 import { useEffect, useState } from 'react';
 import { ApiError } from './api';
 import { owningInputs, type CrewOwningInput } from './crew-api';
@@ -8,7 +10,7 @@ export function CrewOwningInputs({ vessel, assignment, language }: {
     assignment: string;
     language: AppLocale;
 }) {
-    const en = language === 'en', [inputs, setInputs] = useState<CrewOwningInput[] | null>(null), [failed, setFailed] = useState(false), [denied, setDenied] = useState(false), [generation, reload] = useState(0);
+    const [inputs, setInputs] = useState<CrewOwningInput[] | null>(null), [failed, setFailed] = useState(false), [denied, setDenied] = useState(false), [generation, reload] = useState(0);
     const resetScope1 = [vessel, assignment, generation] as const;
     const [previousScope1, setPreviousScope1] = useState(resetScope1);
     // Withdraw stale state in the same render that changes the request scope.
@@ -29,15 +31,29 @@ export function CrewOwningInputs({ vessel, assignment, language }: {
         });
         return () => c.abort();
     }, [vessel, assignment, generation]);
-    const label: Record<string, string> = en ? { certificate_state: 'Certificate input', contact_status: 'Contact input', competence_state: 'Competence', work_rest_state: 'Work/rest', eligibility_state: 'Eligibility', fitness_state: 'Fitness' }
-        : { certificate_state: 'Belge girdisi', contact_status: 'İletişim girdisi', competence_state: 'Yetkinlik', work_rest_state: 'Çalışma/dinlenme', eligibility_state: 'Uygunluk', fitness_state: 'Sağlık uygunluğu' };
-    const states = en ? { Unknown: 'Current criteria unresolved', QualifiedEligible: 'Current source criteria satisfied for this assignment and period', QualifiedIneligible: 'Current source criteria not satisfied', Withheld: 'Access withheld', Missing: 'No visible declaration', DeclaredUnverified: 'Declared, unverified', Unavailable: 'Protected input unavailable', EvaluationUnavailable: 'Qualified evaluation unavailable; remains Unknown' }
-        : { Unknown: 'Güncel kriterler çözümlenmemiş', QualifiedEligible: 'Bu atama ve dönem için güncel kaynak kriterleri sağlanmış', QualifiedIneligible: 'Güncel kaynak kriterleri sağlanmamış', Withheld: 'Erişim gizli', Missing: 'Görünür beyan yok', DeclaredUnverified: 'Beyan edilmiş, doğrulanmamış', Unavailable: 'Korumalı girdi kullanılamıyor', EvaluationUnavailable: 'Yetkili değerlendirme kullanılamıyor; Bilinmiyor olarak kalır' };
-    return <section aria-label={localizedText(en, "pairs.m_417e6f415e738092")}><h2>{localizedText(en, "pairs.m_417e6f415e738092")}</h2>
-    <p>{localizedText(en, "pairs.m_b6a9d6adae7da178")}</p>
-    {!inputs && !failed && <p role="status">{localizedText(en, "pairs.m_42b97f8d749a53c4")}</p>}
-    {failed && <p role="alert">{denied ? (localizedText(en, "pairs.m_844f3ae7f83a4dd4")) : (localizedText(en, "pairs.m_2e55a0e830f5cc65"))}</p>}
-    <button onClick={() => reload(x => x + 1)}>{localizedText(en, "pairs.m_15e0a9cd9a01c66e")}</button>
+    const label: Record<string, string> = {
+        certificate_state: presentationLabel(language, 'crewCertificateInput'),
+        contact_status: presentationLabel(language, 'crewContactInput'),
+        competence_state: presentationLabel(language, 'crewCompetenceInput'),
+        work_rest_state: presentationLabel(language, 'crewWorkRestInput'),
+        eligibility_state: presentationLabel(language, 'crewEligibilityInput'),
+        fitness_state: presentationLabel(language, 'crewFitnessInput'),
+    };
+    const states: Record<CrewOwningInput['state'], string> = {
+        Unknown: presentationLabel(language, 'crewCriteriaUnresolved'),
+        QualifiedEligible: presentationLabel(language, 'crewEligibleCriteriaSatisfied'),
+        QualifiedIneligible: presentationLabel(language, 'crewEligibleCriteriaUnsatisfied'),
+        Withheld: presentationLabel(language, 'crewAccessWithheld'),
+        Missing: presentationLabel(language, 'crewNoVisibleDeclaration'),
+        DeclaredUnverified: presentationLabel(language, 'crewDeclaredUnverified'),
+        Unavailable: presentationLabel(language, 'crewProtectedUnavailable'),
+        EvaluationUnavailable: presentationLabel(language, 'crewEvaluationUnavailable'),
+    };
+    return <section aria-label={localizedText(language, "pairs.m_417e6f415e738092")}><h2>{localizedText(language, "pairs.m_417e6f415e738092")}</h2>
+    <p>{localizedText(language, "pairs.m_b6a9d6adae7da178")}</p>
+    {!inputs && !failed && <p role="status">{localizedText(language, "pairs.m_42b97f8d749a53c4")}</p>}
+    {failed && <p role="alert">{denied ? (localizedText(language, "pairs.m_844f3ae7f83a4dd4")) : (localizedText(language, "pairs.m_2e55a0e830f5cc65"))}</p>}
+    <Button type="button" variant="outline" onClick={() => reload(x => x + 1)}>{localizedText(language, "pairs.m_15e0a9cd9a01c66e")}</Button>
     {inputs && <dl>{inputs.map(v => <div key={v.field}><dt>{label[v.field]}</dt><dd>{states[v.state]}</dd></div>)}</dl>}
   </section>;
 }

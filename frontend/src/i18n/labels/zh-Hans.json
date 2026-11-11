@@ -29,5 +29,20 @@
   "verifiedDeclaration": "申报为已核实",
   "notVerifiedDeclaration": "申报为未核实",
   "suspiciousDeclaration": "申报为可疑",
-  "suspendedDeclaration": "申报为暂停／撤销"
+  "suspendedDeclaration": "申报为暂停／撤销",
+  "crewCertificateInput": "证书输入",
+  "crewContactInput": "联系信息输入",
+  "crewCompetenceInput": "胜任能力",
+  "crewWorkRestInput": "工作/休息",
+  "crewEligibilityInput": "资格",
+  "crewFitnessInput": "健康适任性",
+  "crewCriteriaUnresolved": "当前标准尚未解决",
+  "crewEligibleCriteriaSatisfied": "此任命和期间满足当前来源标准",
+  "crewEligibleCriteriaUnsatisfied": "不满足当前来源标准",
+  "crewAccessWithheld": "访问已隐藏",
+  "crewNoVisibleDeclaration": "无可见申报",
+  "crewDeclaredUnverified": "已申报，未经核实",
+  "crewProtectedUnavailable": "受保护的输入不可用",
+  "crewEvaluationUnavailable": "经资格确认的评估不可用；状态仍为未知",
+  "crewRosterCount": "本页任命：显示 {{visible}} 条，共 {{total}} 条"
 }

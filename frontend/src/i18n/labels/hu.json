@@ -29,5 +29,20 @@
   "verifiedDeclaration": "Ellenőrzöttnek bejelentve",
   "notVerifiedDeclaration": "Nem ellenőrzöttnek bejelentve",
   "suspiciousDeclaration": "Gyanúsnak bejelentve",
-  "suspendedDeclaration": "Felfüggesztettnek / visszavontnak bejelentve"
+  "suspendedDeclaration": "Felfüggesztettnek / visszavontnak bejelentve",
+  "crewCertificateInput": "Tanúsítványadat",
+  "crewContactInput": "Kapcsolattartási adat",
+  "crewCompetenceInput": "Kompetencia",
+  "crewWorkRestInput": "Munka/pihenés",
+  "crewEligibilityInput": "Jogosultság",
+  "crewFitnessInput": "Egészségi alkalmasság",
+  "crewCriteriaUnresolved": "A jelenlegi feltételek tisztázatlanok",
+  "crewEligibleCriteriaSatisfied": "A jelenlegi forrásfeltételek teljesülnek ehhez a beosztáshoz és időszakhoz",
+  "crewEligibleCriteriaUnsatisfied": "A jelenlegi forrásfeltételek nem teljesülnek",
+  "crewAccessWithheld": "Hozzáférés visszatartva",
+  "crewNoVisibleDeclaration": "Nincs látható nyilatkozat",
+  "crewDeclaredUnverified": "Bejelentett, nem ellenőrzött",
+  "crewProtectedUnavailable": "Védett adat nem érhető el",
+  "crewEvaluationUnavailable": "Minősített értékelés nem érhető el; az állapot Ismeretlen marad",
+  "crewRosterCount": "Beosztások ezen az oldalon: {{visible}} / {{total}}"
 }

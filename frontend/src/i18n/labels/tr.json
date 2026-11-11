@@ -29,5 +29,20 @@
   "verifiedDeclaration": "Doğrulandığı beyan edildi",
   "notVerifiedDeclaration": "Doğrulanmadığı beyan edildi",
   "suspiciousDeclaration": "Şüpheli olduğu beyan edildi",
-  "suspendedDeclaration": "Askıya alındığı / iptal edildiği beyan edildi"
+  "suspendedDeclaration": "Askıya alındığı / iptal edildiği beyan edildi",
+  "crewCertificateInput": "Belge girdisi",
+  "crewContactInput": "İletişim girdisi",
+  "crewCompetenceInput": "Yetkinlik",
+  "crewWorkRestInput": "Çalışma/dinlenme",
+  "crewEligibilityInput": "Uygunluk",
+  "crewFitnessInput": "Sağlık uygunluğu",
+  "crewCriteriaUnresolved": "Güncel kriterler çözümlenmemiş",
+  "crewEligibleCriteriaSatisfied": "Bu atama ve dönem için güncel kaynak kriterleri sağlanmış",
+  "crewEligibleCriteriaUnsatisfied": "Güncel kaynak kriterleri sağlanmamış",
+  "crewAccessWithheld": "Erişim gizli",
+  "crewNoVisibleDeclaration": "Görünür beyan yok",
+  "crewDeclaredUnverified": "Beyan edilmiş, doğrulanmamış",
+  "crewProtectedUnavailable": "Korumalı girdi kullanılamıyor",
+  "crewEvaluationUnavailable": "Yetkili değerlendirme kullanılamıyor; Bilinmiyor olarak kalır",
+  "crewRosterCount": "Bu sayfadaki {{total}} atamadan {{visible}} kayıt"
 }

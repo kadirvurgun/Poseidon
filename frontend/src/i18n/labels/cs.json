@@ -29,5 +29,20 @@
   "verifiedDeclaration": "Deklarováno jako ověřené",
   "notVerifiedDeclaration": "Deklarováno jako neověřené",
   "suspiciousDeclaration": "Deklarováno jako podezřelé",
-  "suspendedDeclaration": "Deklarováno jako pozastavené / zrušené"
+  "suspendedDeclaration": "Deklarováno jako pozastavené / zrušené",
+  "crewCertificateInput": "Údaje o osvědčení",
+  "crewContactInput": "Kontaktní údaje",
+  "crewCompetenceInput": "Způsobilost",
+  "crewWorkRestInput": "Práce/odpočinek",
+  "crewEligibilityInput": "Oprávněnost",
+  "crewFitnessInput": "Zdravotní způsobilost",
+  "crewCriteriaUnresolved": "Aktuální kritéria nejsou vyřešena",
+  "crewEligibleCriteriaSatisfied": "Aktuální kritéria zdroje jsou pro toto přiřazení a období splněna",
+  "crewEligibleCriteriaUnsatisfied": "Aktuální kritéria zdroje nejsou splněna",
+  "crewAccessWithheld": "Přístup odepřen",
+  "crewNoVisibleDeclaration": "Žádné viditelné prohlášení",
+  "crewDeclaredUnverified": "Deklarováno, neověřeno",
+  "crewProtectedUnavailable": "Chráněné údaje nejsou dostupné",
+  "crewEvaluationUnavailable": "Kvalifikované vyhodnocení není dostupné; stav zůstává Neznámý",
+  "crewRosterCount": "Přiřazení na této stránce: {{visible}} z {{total}}"
 }

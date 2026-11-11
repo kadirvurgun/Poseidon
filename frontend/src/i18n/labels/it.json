@@ -29,5 +29,20 @@
   "verifiedDeclaration": "Dichiarato verificato",
   "notVerifiedDeclaration": "Dichiarato non verificato",
   "suspiciousDeclaration": "Dichiarato sospetto",
-  "suspendedDeclaration": "Dichiarato sospeso / revocato"
+  "suspendedDeclaration": "Dichiarato sospeso / revocato",
+  "crewCertificateInput": "Dati del certificato",
+  "crewContactInput": "Dati di contatto",
+  "crewCompetenceInput": "Competenza",
+  "crewWorkRestInput": "Lavoro/riposo",
+  "crewEligibilityInput": "Idoneità ai criteri",
+  "crewFitnessInput": "Idoneità medica",
+  "crewCriteriaUnresolved": "Criteri attuali non risolti",
+  "crewEligibleCriteriaSatisfied": "Criteri attuali della fonte soddisfatti per questa assegnazione e questo periodo",
+  "crewEligibleCriteriaUnsatisfied": "Criteri attuali della fonte non soddisfatti",
+  "crewAccessWithheld": "Accesso nascosto",
+  "crewNoVisibleDeclaration": "Nessuna dichiarazione visibile",
+  "crewDeclaredUnverified": "Dichiarato, non verificato",
+  "crewProtectedUnavailable": "Dati protetti non disponibili",
+  "crewEvaluationUnavailable": "Valutazione qualificata non disponibile; rimane Sconosciuto",
+  "crewRosterCount": "Assegnazioni in questa pagina: {{visible}} su {{total}}"
 }

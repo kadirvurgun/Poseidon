@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { changeAppLanguage, locales } from './index'
 import { presentationLabel } from './labels'
 import english from './labels/en.json'
+import { assertCompleteCatalog } from './messages'
 import { assertionStateLabel } from '../product/certificate-copy'
 import { dailyReviewDuty } from '../product/daily-review-copy'
 
@@ -12,6 +13,7 @@ describe('operational label presentation', () => {
       const labels = catalogs[`./labels/${locale}.json`].default
       expect(Object.keys(labels).sort()).toEqual(Object.keys(english).sort())
       expect(Object.values(labels).every(value => typeof value === 'string' && value.trim().length > 0)).toBe(true)
+      expect(() => assertCompleteCatalog(labels, english)).not.toThrow()
     }
   })
 
@@ -30,5 +32,13 @@ describe('operational label presentation', () => {
     expect(presentationLabel('en', 'declaredOk')).toBe('Declared OK (unverified)')
     expect(assertionStateLabel('Verified', true)).toBe('Declared verified')
     expect(presentationLabel('tr', 'reviewRequired')).toBe('İnceleme gerekli')
+  })
+
+  it('keeps page counters scoped, supports reordered variables and never loses zero counts', () => {
+    expect(presentationLabel('it', 'crewRosterCount', { visible: '0', total: '2' })).toBe('Assegnazioni in questa pagina: 0 su 2')
+    expect(presentationLabel('tr', 'crewRosterCount', { visible: '1', total: '3' })).toBe('Bu sayfadaki 3 atamadan 1 kayıt')
+    const incomplete = { ...english, crewRosterCount: '{{visible}} assignments' }
+    expect(() => assertCompleteCatalog(incomplete, english)).toThrow('invalid_locale_interpolation')
+    expect(presentationLabel('ar', 'crewCriteriaUnresolved')).not.toBe(presentationLabel('ar', 'crewEligibleCriteriaSatisfied'))
   })
 })

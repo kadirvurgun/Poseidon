@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { CrewEnterpriseRoster } from './CrewEnterpriseRoster'
 import { CrewEnterpriseProfileFields } from './CrewEnterpriseProfile'
 import type { CrewPage, CrewRow } from './crew-api'
+import { changeAppLanguage } from '../i18n'
 
 const vessel = '11111111-1111-1111-1111-111111111111'
 const row: CrewRow = {
@@ -107,5 +108,26 @@ describe('ENTERPRISE-CREW-WORKSPACE-01 authored UI behavior; execution deferred'
     expect(screen.getByRole('button', { name: 'Önceki' })).toBeDisabled()
     expect(screen.getByRole('button', { name: 'Sonraki' })).toBeDisabled()
     expect(screen.queryByRole('table')).not.toBeInTheDocument()
+  })
+
+  it('retains the selected canonical state and visible rows when switching to Italian', async () => {
+    const user = userEvent.setup()
+    const data = page([
+      { ...row, fullName: 'SYNTHETIC A', privacyScope: 'IdentityPermitted' },
+      { ...row, id: '44444444-4444-4444-4444-444444444444', fullName: 'SYNTHETIC B', privacyScope: 'IdentityPermitted',
+        presenceState: 'OnboardDeclaration', presenceReason: 'unverified_onboard_declaration' },
+    ])
+    const { rerender, onNavigate, onPage } = renderRoster(data)
+    const filter = screen.getByRole('combobox', { name: 'Assignment state' })
+    await user.selectOptions(filter, 'OnboardDeclaration')
+    await changeAppLanguage('it', false)
+    rerender(<CrewEnterpriseRoster page={data} language="it" locked={false} rosterHref={rosterHref} onNavigate={onNavigate} onPage={onPage} />)
+    expect(filter).toBeInTheDocument()
+    expect(filter).toHaveValue('OnboardDeclaration')
+    expect(screen.getByText('Assegnazioni in questa pagina: 1 su 2')).toBeVisible()
+    expect(screen.getByRole('link', { name: 'SYNTHETIC B' })).toBeVisible()
+    expect(screen.queryByRole('link', { name: 'SYNTHETIC A' })).not.toBeInTheDocument()
+    expect(onNavigate).not.toHaveBeenCalled()
+    expect(onPage).not.toHaveBeenCalled()
   })
 })
