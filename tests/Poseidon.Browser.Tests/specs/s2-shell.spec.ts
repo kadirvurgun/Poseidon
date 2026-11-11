@@ -134,6 +134,34 @@ test('S2 global context change preserves a dirty form until explicit discard', a
     await expect(page.getByRole('region', { name: 'Details', exact: true })).toContainText('FICTIONAL Beta');
     expect(control.writes).toBe(0);
 });
+
+test('L17-AC-RTL: Arabic navigation indents from the inline start while retaining a dirty vessel form', async ({ page }) => {
+    const control = await mockShell(page);
+    await page.goto(`/app/fleet/${vessels[0].id}`);
+    const selector = page.locator('.language-selector select');
+    await selector.selectOption('en');
+    await page.getByRole('button', { name: 'Edit', exact: true }).click();
+    const name = page.getByLabel('Name *', { exact: true });
+    await name.fill('SYNTHETIC retained RTL draft');
+    await selector.selectOption('ar');
+    await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
+    await expect(name).toHaveValue('SYNTHETIC retained RTL draft');
+    const trigger = page.locator('.workspace-menu');
+    if (await trigger.isVisible()) await trigger.click();
+    const group = page.locator('.enterprise-nav-group-content').filter({ has: page.locator('[data-navigation-key="fleet"]') });
+    await expect(group).toBeVisible();
+    await expect(group).toHaveCSS('padding-right', '8px');
+    await expect(group).toHaveCSS('padding-left', '0px');
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    if (await trigger.isVisible()) await page.keyboard.press('Escape');
+    await selector.selectOption('en');
+    await expect(page.locator('html')).toHaveAttribute('dir', 'ltr');
+    await expect(name).toHaveValue('SYNTHETIC retained RTL draft');
+    const current = page.locator('.enterprise-nav-group-content').filter({ has: page.locator('[data-navigation-key="fleet"]') });
+    await expect(current).toHaveCSS('padding-left', '8px');
+    await expect(current).toHaveCSS('padding-right', '0px');
+    expect(control.writes).toBe(0);
+});
 test('S2 primary menu follows the selected role lens without granting full product search', async ({ page }) => {
     await mockShell(page);
     await page.goto(`/app/today/${vessels[0].id}`);

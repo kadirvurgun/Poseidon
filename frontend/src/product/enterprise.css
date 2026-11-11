@@ -29,7 +29,7 @@
 .enterprise-nav-scroll { flex:1 1 0; min-height:0; min-width:0; overflow-x:hidden; overflow-y:auto; overscroll-behavior:contain; scrollbar-width:thin; scrollbar-color:#435b77 transparent; padding:8px 10px 12px; }
 .enterprise-nav-group { margin:0; min-width:0; }
 .enterprise-sidebar-nav { display:grid; gap:4px; }
-.enterprise-nav-group-content { display:grid; gap:2px; padding:2px 0 6px 8px; }
+.enterprise-nav-group-content { display:grid; gap:2px; padding-block:2px 6px; padding-inline:8px 0; }
 .enterprise-nav-group-content[hidden] { display:none; }
 .enterprise-shell .enterprise-nav-group-trigger[data-slot="button"] { width:100%; margin:0; padding-inline:10px; justify-content:flex-start; gap:10px; border:1px solid transparent; color:#c0cfe1; border-radius:8px; text-align:start; background:transparent; font-size:12px; box-shadow:none; }
 .enterprise-nav-group-trigger > span { min-width:0; flex:1; text-align:start; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
