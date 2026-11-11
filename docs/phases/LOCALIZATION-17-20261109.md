@@ -2,7 +2,7 @@
 
 Durum: **YAZILDI / ÇEVİRİ DEVAM EDİYOR / TESTLER ERTELENDİ / KABUL EDİLMEDİ**.
 
-## Güncel kaynak — 0a3f292
+## Güncel kaynak — d2eac62
 
 Ana katalogların **11/17** dili tamamen yazıldı: Türkçe, İngilizce, İngiliz
 İngilizcesi, Arapça, Almanca, Fransızca, Hintçe, Çekçe, Rusça, Macarca ve İtalyanca.
@@ -11,7 +11,7 @@ Bu oran yalnız yazılan katalog dosyası sayısıdır; ekran kapsamı, çeviri 
 veya kabul yüzdesi değildir. **Altı ana katalog açık:** Fince, Slovakça,
 İspanyolca, Brezilya Portekizcesi, Basitleştirilmiş ve Geleneksel Çince.
 
-17 ortak katalog ve ayrıca **17 × 117 sunum etiketi** yazıldı. İtalyanca
+17 ortak katalog ve ayrıca **17 × 123 sunum etiketi** yazıldı. İtalyanca
 `6c5df69` ile tamamlandı; `d8cfde6` mürettebat ve Unicode düzeltmelerini,
 `16fdc90` mevzuat/sağlık/çevrimdışı sunum devamını içerir:
 
@@ -114,3 +114,35 @@ Sahipleri [başlangıç ekranı](../../frontend/src/App.tsx),
 Aynı dar sorgunun bulduğu sürüm işaretleri, açık saatler, API yolu, hash algoritması,
 birimler ve canonical DRAFT kodları kaynak anlamlarına göre değerlendirilir.
 Bu yedi başlık ve altı ana katalog tamamlanmadan tüm çeviriler hazır denmez.
+
+
+## Shell devamı — b3a2966 / d2eac62
+
+Önceki envanterdeki altı sabit başlık 17 dilde JSON kaynağına taşındı: yerel
+operasyonlar, denizcilik platformu, çalışma alanı, geliştirme, temel altyapı ve
+denizcilik operasyonları. Yedinci aday `available`, public heartbeat'in doğrulanan
+canonical yanıt değeridir; protokol örneği ve API decoder aynı değeri korur.
+Bu ayrım bir çevirinin API sözleşmesini değiştirmesini önler.
+
+Uzun marka başlıkları dar alanın içinde sarılır; Arapça başlıkların harf aralıkları
+normaldir. Başlangıç ve geliştirme görünümündeki retry düğmeleri ortak Button'a
+geçti. Aktif istek, poll sırası, aynı form/düğme kimliği ve tenant/actor/navigation
+sınırları korunur. Eski TR/EN düğmelerini arayan gerçek selector yardımcıları
+native17dil seçiciye uyarlandı; ayrı mocked health düğmesi kendi fixture'ıdır.
+
+Sadece boşluk içeren kaynak etiketleri etkinleştirilmez. Önceki dil, yön ve kayıtlı
+tercihin tutulması;17ayrı tam ürün kataloğunun bulunması; aynı DOM ve source enum
+korunması için ek component testleri yazıldı. Gerçek public API'yi kullanan17dil
+shell matrisi masaüstü/dar ekran projeleri için yazıldı: focus, RTL, kalıcı locale,
+route/reload, canonical heartbeat ve yatay taşma. Altı eksik ana katalog tamamlanmadan
+bu matris geçemez. **Hiçbiri çalıştırılmadı: DEFERRED_NEW_BUNDLE_GATE.**
+
+11.11 saat18:09yerel UTC-saat kontrolü, önceki gerçek18:04kota sıfırlanmasından
+sonradır. Kalan altı katalog üç ajanla ve ayrı dosya/dal sahipliğiyle yazılıyor:
+L17-ES-PT-01 (İspanyolca/Brezilya Portekizcesi), L17-FI-SK-01 (Fince/Slovakça),
+L17-ZH-01 (iki Çince varyantı). Yeni kota hatasında ilerleme korunup durulur;
+hesap/model rotasyonu veya sürekli tekrar yoktur. **Tam ana katalog sayısı hâlâ
+11/17**; gönderilmiş görev, çeviri veya bağımsız kabul kanıtı değildir.
+
+Yeni kod canlıya derlenmedi, yeni PR açılmadı. PR16'nın32ff1d0CIsonucu kendi
+kapsamındadır; tam signed ve bağımsız son QA açık kalır. Canonical kabul değişmedi.

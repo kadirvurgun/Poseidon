@@ -108,3 +108,22 @@ resolved as declared choices. Seventeen presentation catalogs now contain117keys
 [Option tests](../../frontend/src/i18n/code-option-labels.test.ts),
 [real form tests](../../frontend/src/product/DefectFieldsForm.test.tsx).
 Execution remains DEFERRED; six main catalogs and full bundle checks are open.
+
+
+L17-AC-SHELL (`b3a2966`, `d2eac62`): all six shell captions are authored in17locales
+(123presentationkeys each). The canonical heartbeat literal `available` stays
+unchanged. Locale switching preserves focus, same retry/editor nodes, poll/API
+request state, source identity and guarded navigation. Long captions wrap; Arabic
+caption letter spacing is normal. A whitespace-only translated safety label must
+reject activation and retain the committed language/direction/preference.
+[App tests](../../frontend/src/App.test.tsx),
+[operations tests](../../frontend/src/agents/AgentsDashboard.test.tsx),
+[shell tests](../../frontend/src/product/EnterpriseChrome.test.tsx),
+[catalog tests](../../frontend/src/i18n/messages.test.ts),
+[17locale browser matrix](../../tests/Poseidon.Browser.Tests/specs/localized-shell.spec.ts).
+Execution DEFERRED;17locale product existence is an explicit gate, not a claim.
+
+Remaining translation leases after the previously reported reset: L17-ES-PT-01,
+L17-FI-SK-01,L17-ZH-01. Each owns two locale files in a separate worktree and
+normal branch. Root integrates only complete catalogs; source hash remains frozen.
+No partial catalog is committed as complete; no push until the larger package gate.
