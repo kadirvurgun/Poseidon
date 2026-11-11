@@ -127,3 +127,13 @@ Remaining translation leases after the previously reported reset: L17-ES-PT-01,
 L17-FI-SK-01,L17-ZH-01. Each owns two locale files in a separate worktree and
 normal branch. Root integrates only complete catalogs; source hash remains frozen.
 No partial catalog is committed as complete; no push until the larger package gate.
+
+
+L17-AC-RTL (`3219461`,`f4c00a3`,`b172b5d`): inline-start/end spacing follows
+selected direction across crew controls, regulatory source lineage, tug search,
+sidebar indentation and the public protocol card. The retained dirty vessel form
+must survive Arabic→English, with no business writes. The existing synthetic
+shell fixture tests presentation only; genuine server authority is separate.
+[Authored browser case](../../tests/Poseidon.Browser.Tests/specs/s2-shell.spec.ts),
+[public17locale matrix](../../tests/Poseidon.Browser.Tests/specs/localized-shell.spec.ts).
+Execution remains DEFERRED; no acceptance added.

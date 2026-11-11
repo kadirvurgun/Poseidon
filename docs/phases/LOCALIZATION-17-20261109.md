@@ -2,7 +2,7 @@
 
 Durum: **YAZILDI / ÇEVİRİ DEVAM EDİYOR / TESTLER ERTELENDİ / KABUL EDİLMEDİ**.
 
-## Güncel kaynak — d2eac62
+## Güncel kaynak — b172b5d
 
 Ana katalogların **11/17** dili tamamen yazıldı: Türkçe, İngilizce, İngiliz
 İngilizcesi, Arapça, Almanca, Fransızca, Hintçe, Çekçe, Rusça, Macarca ve İtalyanca.
@@ -146,3 +146,22 @@ hesap/model rotasyonu veya sürekli tekrar yoktur. **Tam ana katalog sayısı h�
 
 Yeni kod canlıya derlenmedi, yeni PR açılmadı. PR16'nın32ff1d0CIsonucu kendi
 kapsamındadır; tam signed ve bağımsız son QA açık kalır. Canonical kabul değişmedi.
+
+
+### RTL yerleşim devamı — 3219461 / f4c00a3 / b172b5d
+
+Mürettebat filtre/sayfalama boşlukları ve editör kenarı, mevzuat kaynak-zinciri
+çizgisi/indeksi, römorkör arama ikonu ve engel kenarı mantıksal yön özelliklerine
+geçti. İç menü girintisi, geliştirme zaman çizgisi, public protokol kutusu ve
+ayrıntı aksiyonlarının asimetrik boşlukları da yazı yönünü izler. Canonical kod,
+zaman ve miktar içerikleri değişmez.
+
+S2'nin mevcut sentetik scoped API fixture'ı üzerinden Arapça menü girintisini,
+açık kirli gemi formunun korunmasını ve sıfır business write davranışını sınayan
+L17-AC-RTL tarayıcı testi yazıldı. Bu, gerçek sunucu yetkisi kanıtı değildir ve
+**çalıştırılmadı**. Public17dil matrisi de protokol kutusunun desktop/narrow
+boşluğunu ve aynı canonical heartbeat içeriğini kontrol edecek.
+
+Son ara kayıt: ES/PT-BR için dil başına1450, FI/SK için1020benzersiz metin
+sahipli scratch içinde korunmuştur. Her dil için2991değer gerekir. Kısmi üretim
+11tam katalog sayısına eklenmez. ZH üretimi ayrı ajanda devam eder.

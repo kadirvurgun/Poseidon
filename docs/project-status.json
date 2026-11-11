@@ -11821,7 +11821,7 @@
     "state": "AUTHORING_IN_PROGRESS_NOT_ACCEPTED",
     "accepted": false,
     "accepted_story_points_added": 0,
-    "observed_at_utc": "2026-11-11T15:14:42.769072+00:00",
+    "observed_at_utc": "2026-11-11T15:20:43.381913+00:00",
     "branch": "foundation/enterprise-localization-20261109",
     "task": "docs/tasks/LOCALIZATION-17-01.md",
     "report": "docs/phases/LOCALIZATION-17-20261109.md",
@@ -11856,7 +11856,7 @@
     "verification": "DEFERRED_NEW_BUNDLE_GATE; meaningful tests authored, no build/typecheck/component/browser run or new-package PASS",
     "canonical_acceptance_changed": false,
     "pr16_merge_status": "32ff1d0: all4requiredCIjobs passed both push42911160703 and PR42911168567; full174signed gate and independent final-target QA remain open",
-    "source_checkpoint": "d2eac62",
+    "source_checkpoint": "b172b5d",
     "status_label_locales_authored": 17,
     "status_label_keys_per_locale": 123,
     "main_catalog_string_leaves": 3169,
@@ -11925,7 +11925,7 @@
         "Long brand captions wrap; Arabic letter spacing normal",
         "Blank declaration labels reject activation and retain preference",
         "Shared retry buttons retain same DOM and ongoing requests",
-        "No model calls or test execution in source generation"
+        "No external model API calls by generation scripts; test execution deferred"
       ]
     },
     "translation_dispatch_20261111": {
@@ -11963,7 +11963,25 @@
         }
       ],
       "completion_claim": false,
-      "instruction_on_new_limit": "Preserve partial progress and stop; no repeated retry or rotation"
+      "instruction_on_new_limit": "Preserve partial progress and stop; no repeated retry or rotation",
+      "last_partial_authoring_observation": {
+        "observed_at_utc": "2026-11-11T15:20:43.381913+00:00",
+        "es_and_pt_distinct_values_authored_each": 1450,
+        "fi_and_sk_distinct_values_authored_each": 1020,
+        "required_distinct_values_each": 2991,
+        "scope": "Preserved incomplete scratch; not committed product catalogs or acceptance"
+      }
+    },
+    "rtl_layout_continuation": {
+      "commits": [
+        "3219461",
+        "f4c00a3",
+        "b172b5d"
+      ],
+      "behavior": "Logical crew filter/pagination/editor accents, regulatory lineage/index, tug search/blocked accent, nested sidebar padding, ops timeline and public protocol/detail-action spacing",
+      "authored_test": "tests/Poseidon.Browser.Tests/specs/s2-shell.spec.ts L17-AC-RTL",
+      "test_scope": "Synthetic scoped API UI behavior, retained dirty input, actual CSS RTL/LTR indentation; not real server authorization",
+      "execution": "DEFERRED_NOT_RUN"
     }
   }
 }
