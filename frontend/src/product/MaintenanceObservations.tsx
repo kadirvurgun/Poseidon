@@ -1,6 +1,8 @@
 import { localizedText } from "../i18n/messages";
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { ApiError, request } from './api';
+import { Button } from '../components/ui/button';
+import { EnterpriseActions } from './EnterprisePatterns';
 type Source = {
     source: string;
     version: string;
@@ -27,13 +29,14 @@ type Snapshot = {
     canWrite: boolean;
     state: string;
 };
-export function MaintenanceObservations({ vessel, asset, csrf, en, onDirty, onUncertain }: {
+export function MaintenanceObservations({ vessel, asset, csrf, en, onDirty, onUncertain, suspended = false }: {
     vessel: string;
     asset: string;
     csrf: string;
     en: boolean;
     onDirty: (value: boolean) => void;
     onUncertain: (value: boolean) => void;
+    suspended?: boolean;
 }) {
     const [snapshot, setSnapshot] = useState<Snapshot | null>(null), [error, setError] = useState(false), [refresh, setRefresh] = useState(0);
     const [source, setSource] = useState(''), [value, setValue] = useState(''), [time, setTime] = useState(''), [revision, setRevision] = useState('');
@@ -44,6 +47,13 @@ export function MaintenanceObservations({ vessel, asset, csrf, en, onDirty, onUn
         path: string;
     } | null>(null), busy = useRef(false);
     const active = useRef<AbortController | null>(null);
+    const withdrawn = useRef(suspended);
+    useLayoutEffect(() => {
+        const wasWithdrawn = withdrawn.current;
+        withdrawn.current = suspended;
+        if (suspended) active.current?.abort();
+        else if (wasWithdrawn && !snapshot && !attempt.current) setRefresh(value => value + 1);
+    }, [suspended, snapshot]);
     const path = `equipment-hierarchy/${encodeURIComponent(vessel)}/${encodeURIComponent(asset)}/observations`;
     const resetScope1 = [path, csrf, refresh, onDirty, onUncertain] as const;
     const [previousScope1, setPreviousScope1] = useState(resetScope1);
@@ -59,20 +69,23 @@ export function MaintenanceObservations({ vessel, asset, csrf, en, onDirty, onUn
         setState('idle');
     }
     useEffect(() => {
+        // Layout withdrawal also covers an initially suspended mount, before
+        // this passive effect has had a controller to abort.
+        if (withdrawn.current) return;
         const controller = new AbortController();
         active.current = controller;
         attempt.current = null;
         onDirty(false);
         onUncertain(false);
         request<Snapshot>(path, controller.signal).then(result => { if (!Array.isArray(result?.sources) || !Array.isArray(result.items) || typeof result.canWrite !== 'boolean')
-            throw new ApiError(502); if (!controller.signal.aborted)
+            throw new ApiError(502); if (!controller.signal.aborted && !withdrawn.current)
             setSnapshot(result); })
-            .catch(() => { if (!controller.signal.aborted)
+            .catch(() => { if (!controller.signal.aborted && !withdrawn.current)
             setError(true); });
         return () => { controller.abort(); active.current?.abort(); };
     }, [path, csrf, refresh, onDirty, onUncertain]);
     const run = async (revokeId?: string) => {
-        if (!snapshot || busy.current)
+        if (withdrawn.current || !snapshot || busy.current)
             return;
         if (!attempt.current) {
             const selected = snapshot.sources.find(s => s.source === source);
@@ -90,6 +103,7 @@ export function MaintenanceObservations({ vessel, asset, csrf, en, onDirty, onUn
         const timeout = setTimeout(() => controller.abort(), 15000);
         try {
             await request(frozen.path, controller.signal, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf, 'Idempotency-Key': frozen.id }, body: frozen.body });
+            if (withdrawn.current || controller.signal.aborted) throw new ApiError(0, 'outcome_unknown');
             attempt.current = null;
             onDirty(false);
             onUncertain(false);
@@ -115,6 +129,9 @@ export function MaintenanceObservations({ vessel, asset, csrf, en, onDirty, onUn
             busy.current = false;
         }
     };
+    // Keep state and any original uncertain attempt, but expose no private DOM
+    // while the parent revalidates its exact owner and vessel scope.
+    if (suspended) return null;
     if (error)
         return <p role="alert">{localizedText(en, "pairs.m_598312c777f972b4")}</p>;
     if (!snapshot)
@@ -124,16 +141,18 @@ export function MaintenanceObservations({ vessel, asset, csrf, en, onDirty, onUn
     <p>{localizedText(en, "pairs.m_be21a46099a0c3f2")}</p>
     {!snapshot.sources.length && <p>{localizedText(en, "pairs.m_0c6beadce286b699")}</p>}
     <ul>{snapshot.items.map(item => <li key={item.id}>{item.source} · {item.kind === 'Meter' ? (localizedText(en, "pairs.m_896af24280cadb66")) : (localizedText(en, "pairs.m_6867907ad1d51eb8"))} · {item.value ?? (localizedText(en, "pairs.m_a5bd35d90de7c160"))} {item.unit} · {item.observedAt ?? (localizedText(en, "pairs.m_691ebb5fec500494"))} · {item.revoked ? (localizedText(en, "pairs.m_ed83bf5770ddaa2a")) : (localizedText(en, "pairs.m_b980704b1fa89cd9"))}
-      <code>{item.id}</code>{snapshot.canWrite && !item.revoked && <button type="button" disabled={locked} onClick={() => void run(item.id)}>{localizedText(en, "pairs.m_3c2e6369288f5c4c")}</button>}</li>)}</ul>
+      <code>{item.id}</code>{snapshot.canWrite && !item.revoked && <Button variant="outline" size="sm" type="button" disabled={locked} onClick={() => void run(item.id)}>{localizedText(en, "pairs.m_3c2e6369288f5c4c")}</Button>}</li>)}</ul>
     {snapshot.canWrite && snapshot.sources.length > 0 && <form onSubmit={e => { e.preventDefault(); void run(); }}><fieldset disabled={locked}>
       <label>{localizedText(en, "pairs.m_aa06fe636f46b76e")}<select required value={source} onChange={e => { setSource(e.target.value); setValue(''); onDirty(true); }}><option value="">{localizedText(en, "pairs.m_01b23fcd15621f8f")}</option>{snapshot.sources.map(s => <option key={s.source} value={s.source}>{s.source} · {s.unit} · {s.version}</option>)}</select></label>
       <label>{localizedText(en, "pairs.m_b307fec7870b283f")}<input required inputMode="numeric" value={revision} onChange={e => { setRevision(e.target.value); onDirty(true); }}/></label>
       <label>{localizedText(en, "pairs.m_fb01fb6b8a066134")}{selected?.kind === 'Condition' ? <select value={value} onChange={e => { setValue(e.target.value); onDirty(true); }}><option value="">{localizedText(en, "pairs.m_a5a7675bd7000dbd")}</option><option value="True">{localizedText(en, "pairs.m_129a7406352aa95e")}</option><option value="False">{localizedText(en, "pairs.m_f2b1c53b82a3e806")}</option></select> : <input maxLength={1024} value={value} onChange={e => { setValue(e.target.value); onDirty(true); }}/>}</label>
       <label>{localizedText(en, "pairs.m_1ba7a501acd86ead")}<input value={time} onChange={e => { setTime(e.target.value); onDirty(true); }}/></label>
-    </fieldset><button disabled={locked}>{localizedText(en, "pairs.m_c57f0b5c072259d7")}</button></form>}
-    {state === 'uncertain' && <button type="button" onClick={() => void run()}>{localizedText(en, "pairs.m_7231b768ded13bd5")}</button>}
+    </fieldset><EnterpriseActions layout="form" aria-label={localizedText(en, 'pairs.m_79b34eda155292bd')}><Button type="submit" disabled={locked}>{localizedText(en, "pairs.m_c57f0b5c072259d7")}</Button></EnterpriseActions></form>}
     {state === 'uncertain' && <p role="alert">{localizedText(en, "pairs.m_62930366e47b200e")}</p>}
     {state === 'denied' && <p role="alert">{localizedText(en, "pairs.m_c12f4ab7b5b4e04d")}</p>}
-    <button disabled={locked} type="button" onClick={() => { onDirty(false); setRefresh(r => r + 1); }}>{localizedText(en, "pairs.m_301d18c5de7d235b")}</button>
+    <EnterpriseActions align="start" aria-label={localizedText(en, 'pairs.m_79b34eda155292bd')}>
+      {state === 'uncertain' && <Button variant="outline" type="button" onClick={() => void run()}>{localizedText(en, "pairs.m_7231b768ded13bd5")}</Button>}
+      <Button variant="outline" disabled={locked} type="button" onClick={() => { onDirty(false); setRefresh(r => r + 1); }}>{localizedText(en, "pairs.m_301d18c5de7d235b")}</Button>
+    </EnterpriseActions>
   </section>;
 }
