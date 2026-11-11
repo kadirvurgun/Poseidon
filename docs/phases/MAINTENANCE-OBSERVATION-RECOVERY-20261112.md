@@ -63,3 +63,5 @@ komut paketini gerçek fixture ile toplu teslim kapısına hazırlamaktır.
 Canonical kabul **20/121iş,103/970SP=%10,62;0/196ayrıekran** olarak değişmedi.
 
 Güncel14.02 Data Dictionary2316/row1413 sayısal precision/physical-mapping taslağı REVIEW_REQUIRED kalır. Mevcut gözlem taşımasının kurtarılması bu alanın lookup/birim/üretim politika onayı değildir. Bağımsız UI/browser kaynak incelemesi kapsam içi açık0; API kaynak incelemesinde somut engelleyici bulgu yok. İkisi de test yürütmesi veya final kabul değildir.
+
+AST Graphify bakım güncellemesi exit0:19.310düğüm,39.860kenar.783sıfır-düğümlü kaynak graf dışında kaldı; HTML büyük grafik sınırında atlandı. Bu türetilmiş metadata ürün testi/derlemesi veya kabul kanıtı değildir.

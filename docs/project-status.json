@@ -13348,7 +13348,15 @@
       "authored_api_cases": 6,
       "new_registered_browser_cases": 1,
       "browser_fixture": "PREREQUISITE_OPEN: genuine disposable writer observation.write and actual configured synthetic source on rootasset=vessel; hard failure if missing, no skip/fake policy",
-      "prior_localization_gate": "1437/1437 pluslint/typecheck/build PASS23b87d4 only; not carried to new technical source"
+      "prior_localization_gate": "1437/1437 pluslint/typecheck/build PASS23b87d4 only; not carried to new technical source",
+      "graphify_ast_maintenance": {
+        "exit_code": 0,
+        "nodes": 19310,
+        "edges": 39860,
+        "zero_node_source_files": 783,
+        "scope": "AST_ONLY_DERIVED_NOT_RUNTIME_PROOF",
+        "html": "SKIPPED_ABOVE_5000_NODES"
+      }
     },
     "retained_findings": [
       {
