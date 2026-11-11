@@ -1114,7 +1114,7 @@
     "verification_record_scope": "Authored/deferred and original20f1198 results are historical;current rejection-repair evidence in core_bundle_01.verification"
   },
   "baseline": "POSEIDON v46.3 updated 2026-10-30 / Library26 candidate",
-  "current_stage": "S0/S1accepted.17locale catalogs plus17x139presentationlabels authored.23b87d4 lint/typecheck+3narrowPASS;fullcomponentsRUNNING. Technical owner recovery authoring isolated;newtestsDEFERRED. Canonical103/970SP10.62%unchanged.",
+  "current_stage": "S0/S1accepted.17locale frontend subgatePASS23b87d4(1437/1437components); integratedgatesOPEN. Technicalownerrecoverycodeauthoring separatebranch;newchecksDEFERRED. Canonical103/970SP10.62%unchanged.",
   "method": "accepted story points / total baseline story points * 100",
   "scope": "complete v46.3 Backlog sheet; duplicates in other sheets excluded",
   "total_tasks": 121,
@@ -12566,7 +12566,7 @@
     "state": "CATALOG_AUTHORING_COMPLETE_PR_PREPARATION_FRONTEND_GATE_RUNNING_NOT_ACCEPTED",
     "accepted": false,
     "accepted_story_points_added": 0,
-    "observed_at_utc": "2026-11-11T19:13:04.736549+00:00",
+    "observed_at_utc": "2026-11-11T19:17:23.959010+00:00",
     "branch": "foundation/enterprise-localization-20261109",
     "task": "docs/tasks/LOCALIZATION-17-01.md",
     "report": "docs/phases/LOCALIZATION-17-20261109.md",
@@ -12597,7 +12597,7 @@
     "product_locales_in_progress": [],
     "product_locales_remaining": [],
     "worker_limit": "Actual usage limit reported; partial authoring retained; no account/model rotation",
-    "verification": "23b87d4 lint/typecheck and3/3ComplianceInputs passed; fullcomponent suite running. Earlier1430/1435 result and36/36narrow corrections retained. Browser/signed/finalQA/CI open.",
+    "verification": "Exact23b87d4 frontend subgate PASS:contractparity(sourcebound),lint,typecheck,3/3narrow,1437/1437components,productionbuild. No skipped/pending/todo/unhandled. Integratedbrowser/backend/signed/finalQA/CIremainOPEN; acceptancefalse.",
     "canonical_acceptance_changed": false,
     "pr16_merge_status": "32ff1d0: all4requiredCIjobs passed both push42911160703 and PR42911168567; full174signed gate and independent final-target QA remain open",
     "source_checkpoint": "23b87d47de56ed5015032dd6a21a00ee92a1a1e6",
@@ -12985,7 +12985,7 @@
       "target": "23b87d47de56ed5015032dd6a21a00ee92a1a1e6",
       "agent": "/root/frontend_gate_20261111",
       "worktree": "frontend-bundle-gate",
-      "state": "LINT_TYPECHECK_AND_NARROW_PASSED_FULL_COMPONENT_SUITE_RUNNING",
+      "state": "FRONTEND_SUBGATE_PASS_INTEGRATED_GATES_OPEN",
       "authorization": "Larger17locale package source authored; current user cadence allows full checks at PRpreparation",
       "steps": [
         "generatedconsumerparity",
@@ -13014,37 +13014,67 @@
         {
           "stage": "generate-api",
           "status": "PASS_REUSED_IDENTICAL_SOURCES",
-          "original_target": "1ff65b9e686b7a807ff30d75c4fab22c2c4baeff",
-          "exit_code": 0
+          "exit_code": 0,
+          "duration_seconds": 3.34,
+          "original_target_commit": "1ff65b9e686b7a807ff30d75c4fab22c2c4baeff"
         },
         {
           "stage": "lint",
-          "target": "23b87d47de56ed5015032dd6a21a00ee92a1a1e6",
           "status": "PASS",
           "exit_code": 0,
-          "errors": 0,
-          "warnings": 0,
-          "seconds": 17.128
+          "duration_seconds": 17.128,
+          "error_count": 0,
+          "warning_count": 0
         },
         {
           "stage": "typecheck",
-          "target": "23b87d47de56ed5015032dd6a21a00ee92a1a1e6",
           "status": "PASS",
           "exit_code": 0,
-          "seconds": 12.525
+          "duration_seconds": 12.525
         },
         {
-          "stage": "ComplianceInputs",
-          "target": "23b87d47de56ed5015032dd6a21a00ee92a1a1e6",
+          "stage": "components-narrow",
           "status": "PASS",
           "exit_code": 0,
-          "tests": 3,
-          "passed": 3,
-          "failed": 0,
-          "pending": 0,
-          "todo": 0,
-          "unhandled": 0,
-          "seconds": 12.464
+          "duration_seconds": 12.464,
+          "counts": {
+            "numTotalTestSuites": 2,
+            "numPassedTestSuites": 2,
+            "numFailedTestSuites": 0,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 3,
+            "numPassedTests": 3,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "success": true
+          },
+          "component_file_count": 1
+        },
+        {
+          "stage": "components",
+          "status": "PASS",
+          "exit_code": 0,
+          "duration_seconds": 259.826,
+          "counts": {
+            "numTotalTestSuites": 235,
+            "numPassedTestSuites": 235,
+            "numFailedTestSuites": 0,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 1437,
+            "numPassedTests": 1437,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "success": true
+          },
+          "component_file_count": 144
+        },
+        {
+          "stage": "build",
+          "status": "PASS",
+          "exit_code": 0,
+          "duration_seconds": 8.47
         }
       ],
       "5ae621a_component_attempt": {
@@ -13084,6 +13114,30 @@
         "fix": "23b87d47de56ed5015032dd6a21a00ee92a1a1e6",
         "later_stages": "NOT_RUN_FAILFAST",
         "acceptance": false
+      },
+      "frontend_subgate_pass": true,
+      "evidence": {
+        "filename": "frontend-gate.json",
+        "sha256": "e8d0bb9a570a4ad887b1e5dad7d08d60e0ccaa3388fc915431e96fdf7c9a1bd6",
+        "target": "23b87d47de56ed5015032dd6a21a00ee92a1a1e6",
+        "tree": "2de37edd1edf3463928d47a61b9065784d1113bf",
+        "tracked_status": [],
+        "component_test_counts": {
+          "numTotalTestSuites": 235,
+          "numPassedTestSuites": 235,
+          "numFailedTestSuites": 0,
+          "numPendingTestSuites": 0,
+          "numTotalTests": 1437,
+          "numPassedTests": 1437,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "numTodoTests": 0,
+          "success": true
+        },
+        "unhandled_error_count": 0,
+        "build_artifact_count": 20,
+        "build_artifact_bytes": 5512879,
+        "default_raw_report_exists": false
       }
     }
   },

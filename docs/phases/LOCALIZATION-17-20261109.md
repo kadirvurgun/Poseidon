@@ -330,3 +330,18 @@ typecheck12,525s exit0; ComplianceInputs3/3,hata/pending/todo/unhandled0,
 API üretim/parity kanıtı değişmeyen kaynak blobları için özgün hedefe bağlıdır.
 Yeni teknik owner-recovery paketi ayrı dalda yazılır; onun yeni testleri DEFERRED.
 Canonical kabul ve PR16 merge durumu değişmedi.
+
+
+### Sonuç — ön yüz alt kapısı PASS, bütünleşik kabul açık
+
+Bağımsız dalın tam `23b87d47de56ed5015032dd6a21a00ee92a1a1e6` hedefi,
+tree `2de37edd1edf3463928d47a61b9065784d1113bf`, temiz çalışma kopyası:
+**1437/1437 test**,144dosya,235suite düğümü,259,826s; failed/pending/todo/
+unhandled0. Üretim Vite derlemesi exit0,8,470s; yeni sahipli çıktı20artifact,
+5.512.879bayt. Önceki dist/kanıtlar korunur. Build stderr yalnız byte/hash olarak
+tutuldu; sıfır build uyarısı iddia edilmez. Lint hata/uyarı0 ve typecheck geçişi
+aynı hedefe aittir. API üretim/parity aynı dört source blobu için özgün hedefe bağlı.
+
+Bu **yalnız yerel ön yüz alt kapısıdır**; backend/browser/signed, bağımsız final
+hedef QA ve requiredCI yerine geçmez. Yeni teknik paketin testleri çalışmadı.
+Canonical103/970SP,20/121iş,0/196ayrıekran kabulü ve PR16 durumu değişmedi.
