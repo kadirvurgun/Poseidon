@@ -257,7 +257,7 @@ NONE kodu değişmedi. Gerçek kontrollü yakıt formu ve17dil ayrımı testleri
 İnceleyici düzeltmeyi **RESOLVED_SOURCE_ONLY** olarak tekrar değerlendirdi.
 
 FI/SK için `4a253fb` üzerinde16anahtar girdisinin ek statik incelemesi somut hata
-bildirmedi. ES/PT'nin başka yazardan16girdilik ek incelemesi sürer. Bunlar sınırlı
+bildirmedi. ES/PT'nin başka yazardan16girdilik ek incelemesi de somut hata bildirmeden tamamlandı. Bunlar sınırlı
 örneklerdir; tam dil kalitesi sertifikası veya final QA değildir. Önceki bulgu ve
 hedef-commit kayıtları silinmedi. Hiçbir yeni test yürütülmedi.
 
@@ -269,3 +269,19 @@ Ardından bağımsız final hedef QA ve required CI gerekir. Yeni kod önizlemey
 alınmadı, yeni PR açılmadı. PR16 tam signed/bağımsızQA kapısı ayrı açıktır; eski
 174koşu15PASS/159FAIL ve32ff1d0CIkanıtı kendi hedeflerinde korunur. Canonical
 **103/970SP(%10,62),20/121iş,0/196ayrıekran** kabul değişmedi.
+
+
+### Bağımsız kaynak inceleme kapanışı — yürütme kabulü değildir
+
+| İnceleme | Hedef / kapsam | Somut kaynak sonucu |
+|---|---|---|
+| Root UI/i18n/auth selector |981dae4;60dosya; inceleyicinin kendiÇincecatalogları hariç|Somut kaynak bulgusu yok|
+| Anlam/Unicode ilk örnek|786a0b9;40ana girdi+408sunumetiketi|P2 L17-COPY-01;3c30144ileRESOLVED_SOURCE_ONLY|
+| Fince/Slovakça ek örnek|4a253fb;16girdi; farklı yazar|Somut anlam/Unicode bulgusu yok|
+| İspanyolca/Portekizce ek örnek|4a253fb;16girdi; farklı yazar|Somut anlam/Unicode bulgusu yok|
+
+Her kayıt kendi hedefi ve sınırlı örneğiyle geçerlidir. Rapor JSON hash'leri
+[durum kaydına](../project-status.json) işlendi. **Hiçbir test/build/typecheck/lint/
+browser çalıştırılmadı; acceptance=false.** Bütün dillerin tam dil kalitesi veya
+bütün ürünün uzman/pilot kabulü ilan edilmez. Sonraki iş PR hazırlığında toplu
+paket yürütmesi ve bağımsız son hedef QA'dır; yeni kaynak önizlemede değildir.

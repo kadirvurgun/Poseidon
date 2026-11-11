@@ -12849,10 +12849,11 @@
       "task": "L17-QA-COPY-ESPT-01",
       "agent": "/root/locale_fi_sk",
       "target": "4a253fbd45afa3a46d1e1ac9e6069928373d7a05",
-      "state": "IN_PROGRESS",
+      "state": "NO_MATERIAL_FINDINGS_IN_BOUNDED_STATIC_SAMPLE",
       "sample_entries": 16,
       "execution": "DEFERRED",
-      "acceptance": false
+      "acceptance": false,
+      "concrete_findings": 0
     },
     "catalog_source_inventory": {
       "ar": {
@@ -12939,6 +12940,33 @@
         "sha256": "5d1f0e8cb0c121fe5bc6a6a0f92b81ae1dd49db29acf4bf1e18612dc0babe9c1",
         "string_leaves": 3169,
         "claim": "Authored source inventory only; not runtime or translation-quality acceptance"
+      }
+    },
+    "planned_bounded_source_reviews_completed": true,
+    "bounded_source_review_evidence": {
+      "ui": {
+        "sha256": "61cb66298a512fcc05306cb3b4fb97eb77f660ddfc1e4c5b52b8a9c2cad438bb",
+        "filename": "source-review-l17-981dae4.json",
+        "execution": "DEFERRED",
+        "acceptance": false
+      },
+      "copy_and_fix": {
+        "sha256": "99b970f17053898cade5b4c2143306de70fb18f6988cc5755e3141ef47205f2d",
+        "filename": "source-copy-review-l17-786a0b9.json",
+        "execution": "DEFERRED",
+        "acceptance": false
+      },
+      "fi_sk_copy": {
+        "sha256": "8a24885038439e473a635f5cc2f3ff3ae91a572ccdff9c43b827e501692903cc",
+        "filename": "source-copy-review-l17-4a253fb-fi-sk.json",
+        "execution": "DEFERRED",
+        "acceptance": false
+      },
+      "es_pt_copy": {
+        "sha256": "0f469d6b0364ecb74be5317aaec19354bcea8413324ed70d14832f26bd238bb1",
+        "filename": "source-copy-review-espt-4a253fb.json",
+        "execution": "DEFERRED",
+        "acceptance": false
       }
     }
   }
