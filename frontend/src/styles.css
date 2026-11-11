@@ -60,7 +60,7 @@ h1{font-size:clamp(25px,3vw,36px);font-weight:500;letter-spacing:-1.05px;line-he
 .info-mark{display:grid;place-items:center;border:1px solid #61778b;border-radius:50%;width:17px;height:17px;flex-shrink:0;color:#98adbf;font-size:10px;font-family:Georgia,serif;margin-top:3px}
 .context-grid h2{font-size:12px;color:#c5d3e1;font-weight:550}
 .scope-note p{font-size:12px;line-height:1.8;color:#94a7bc;margin-top:7px;max-width:400px}
-.contract{border-inline-start:1px solid #2d3d50;padding:19px 0 19px 26px}
+.contract{border-inline-start:1px solid #2d3d50;padding-block:19px;padding-inline:26px 0}
 .contract p{font-size:10px;color:#94a7bc;margin-top:9px}
 .contract code{display:block;font-size:12px;color:#bfcedd;margin-top:7px}
 .contract code span{color:#697e93;margin:0 9px}

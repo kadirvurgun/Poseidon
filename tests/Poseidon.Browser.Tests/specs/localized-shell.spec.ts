@@ -45,6 +45,8 @@ for (const locale of locales) {
     // The protocol literal remains unchanged in every language.
     await expect(page.locator('.contract code')).toHaveText('poseidon / available');
     await expect(page.locator('.endpoint code')).toHaveText('/api/v1/system/status');
+    const compact = (page.viewportSize()?.width ?? 1280) <= 760;
+    await expect(page.locator('.contract')).toHaveCSS(locale === 'ar' ? 'padding-right' : 'padding-left', compact ? '0px' : '26px');
     expect(heartbeatRequests).toBe(1);
     expect(await page.evaluate(key => localStorage.getItem(key), localeStorageKey)).toBe(locale);
     await fitsVisibleContainer(page.locator('.brand small'), page.locator('.sidebar'));
