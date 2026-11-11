@@ -452,6 +452,21 @@ async function fillObservationDraft() {
     await userEvent.type(screen.getByLabelText('Observed value (exact declaration)'), '19.5000');
 }
 describe('owning observation recovery inside the actual technical workspace', () => {
+    it('withdraws cached parent equipment after a child-only source refresh detects a denied session', async () => {
+        actualObservationTransport();
+        const base = fetcher.getMockImplementation()!; let deniedSession = false;
+        fetcher.mockImplementation(async (url: string, init?: RequestInit) => url.endsWith('/auth/session') && deniedSession ? json({}, 401) : base(url, init));
+        render(<TechnicalWorkspace />); await english(); await fillObservationDraft();
+        deniedSession = true;
+        await userEvent.click(screen.getByRole('button', { name: 'Retry source read' }));
+        await waitFor(() => expect(screen.queryByText('FICTIONAL engine')).not.toBeInTheDocument());
+        expect(screen.queryByLabelText('Observed value (exact declaration)')).not.toBeInTheDocument();
+        expect(posts()).toHaveLength(0);
+        deniedSession = false;
+        await userEvent.click(screen.getByRole('button', { name: 'Retry source read' }));
+        expect(await screen.findByLabelText('Observed value (exact declaration)')).toHaveValue('19.5000');
+        expect(posts()).toHaveLength(0);
+    });
     it('discards observation inputs only after explicit dirty-navigation confirmation and never resurrects them on return', async () => {
         actualObservationTransport();
         render(<TechnicalWorkspace />); await english(); await fillObservationDraft();

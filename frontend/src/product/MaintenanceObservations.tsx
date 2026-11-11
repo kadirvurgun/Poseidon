@@ -25,7 +25,7 @@ export function MaintenanceObservations({ vessel, asset, owner, en, onDirty, onU
   const frozen = useRef<ObservationAttempt | null>(null), uncertain = useRef(false), running = useRef(false)
   const mounted = useRef(false), writer = useRef<AbortController | null>(null), committed = useRef('')
   const callbacks = useRef({ onDirty, onUncertain, onBusy, onAccessLost })
-  const ownerLossNotified = useRef(false)
+  const accessLossNotified = useRef(false)
   const sameScope = validObservationScope(bound) && owner.toLowerCase() === bound.owner && vessel.toLowerCase() === bound.vessel && asset.toLowerCase() === bound.asset
   const available = sameScope && !suspended && navigator.onLine && document.visibilityState !== 'hidden'
   const scope = `${bound.owner}/${bound.vessel}/${bound.asset}/${epoch}/${refresh}/${available}`
@@ -57,14 +57,14 @@ export function MaintenanceObservations({ vessel, asset, owner, en, onDirty, onU
       if (!active || c.signal.aborted || committed.current !== scope) return
       setProjection({ scope, kind: 'ready', snapshot })
       setDenied(false)
-      ownerLossNotified.current = false
+      accessLossNotified.current = false
     }
     load().catch(problem => {
       if (!active || c.signal.aborted || committed.current !== scope) return
       const code = problem instanceof ApiError ? problem.status : 0
       setProjection({ scope, kind: problem instanceof ApiError && problem.code === 'identity_changed' ? 'other-owner' : [401, 403, 404].includes(code) ? 'denied' : 'unavailable' })
-      if (problem instanceof ApiError && problem.code === 'identity_changed' && !ownerLossNotified.current) {
-        ownerLossNotified.current = true
+      if ((problem instanceof ApiError && problem.code === 'identity_changed' || [401, 403, 404].includes(code)) && !accessLossNotified.current) {
+        accessLossNotified.current = true
         callbacks.current.onAccessLost?.()
       }
     }).finally(() => clearTimeout(timer))
@@ -123,7 +123,10 @@ export function MaintenanceObservations({ vessel, asset, owner, en, onDirty, onU
         setDenied(!outcomeUnknown)
         setProjection({ scope: originalScope, kind: problem instanceof ApiError && problem.code === 'identity_changed' ? 'other-owner' : [401, 403, 404].includes(status) ? 'denied' : 'unavailable' })
         if (problem instanceof ApiError && problem.code === 'identity_changed' || [401, 403, 404].includes(status)) {
-          callbacks.current.onAccessLost?.()
+          if (!accessLossNotified.current) {
+            accessLossNotified.current = true
+            callbacks.current.onAccessLost?.()
+          }
         }
       }
     } finally {
