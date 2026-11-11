@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { CrewWorkspace } from './CrewWorkspace';
+import { localeStorageKey } from '../i18n';
 const vessel = '11111111-1111-1111-1111-111111111111';
 const id = '22222222-2222-2222-2222-222222222222';
 const row = { id, vesselId: vessel, personId: id, version: 7, revision: 1, positionId: null,
@@ -209,7 +210,8 @@ describe('CREW-ROSTER-01 authored component behavior; no backend execution claim
         await screen.findByText('Ordinary forms require a connection. Use Durable offline drafts for explicitly configured capture.');
         expect(screen.getByRole('button', { name: 'Save draft' })).toBeDisabled();
         expect(fetcher.mock.calls.filter(([, init]) => init?.method === 'POST')).toHaveLength(0);
-        expect(localStorage.length).toBe(0);
+        expect(Object.keys(localStorage)).toEqual([localeStorageKey]);
+        expect(localStorage.getItem(localeStorageKey)).toBe('en');
         expect(sessionStorage.length).toBe(0);
     });
     it('clears a revoked projection on reauthentication failure', async () => {

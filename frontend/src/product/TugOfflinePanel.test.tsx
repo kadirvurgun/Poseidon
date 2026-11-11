@@ -31,7 +31,7 @@ it('retains the exact offline conflict across a locale change and requires an ex
   app.conflict.mockResolvedValue(conflict)
   const { rerender } = render(<TugOfflinePanel job={job} vessel={vessel} language="en" />)
   await authorize()
-  await userEvent.click(screen.getByRole('button', { name: 'Window conflict review' }))
+  await userEvent.click(screen.getByRole('button', { name: 'Review conflict' }))
   expect(await screen.findByText('Current server')).toBeVisible()
   await changeAppLanguage('it', false)
   rerender(<TugOfflinePanel job={job} vessel={vessel} language="it" />)

@@ -55,7 +55,8 @@ describe('S6 exact human assertion workflow — authored, not run', () => {
     await user.click(screen.getByRole('button', { name: 'Record unassessed assertion' }))
     await waitFor(() => expect(onRecorded).toHaveBeenCalledWith(assertionReceipt()))
     expect(JSON.parse(posts(fetch)[0][1]!.body as string)).toMatchObject({ expectedVersion: 19, certificateRevision: 1, expectedAssertionVersion: 0, authorityId: assertionAuthority, state: 'Verified' })
-    expect((await screen.findAllByText('Human assertion: Verified'))[0]).toBeVisible()
+    expect((await screen.findAllByText('Human assertion: Declared verified'))[0]).toBeVisible()
+    expect(screen.queryByText('Human assertion: Verified', { exact: true })).not.toBeInTheDocument()
     expect(screen.getAllByText(/does not establish legal validity/).length).toBeGreaterThan(0)
   })
   it('retains the original unknown command across a later403 and reauthorization, with no automatic retry', async () => {

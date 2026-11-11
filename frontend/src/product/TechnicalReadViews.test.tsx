@@ -19,7 +19,7 @@ it('uses selected-language case folding for source names without changing names 
   await changeAppLanguage('de', false)
   const onSelect = vi.fn(), user = userEvent.setup()
   render(<TechnicalPlanList plans={[plan]} assets={[{ ...asset, name: 'SYNTHETIC MACHINE' }]} references={references} filter="machine" selectedId={plan.id} en={false} onSelect={onSelect} />)
-  expect(screen.getByText('SYNTHETIC MACHINE')).toBeVisible()
+  expect(screen.getByText('SYNTHETIC MACHINE · DEMO-LUBE')).toBeVisible()
   await user.click(screen.getByRole('button'))
   expect(onSelect).toHaveBeenCalledWith(plan.id)
 })
