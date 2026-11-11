@@ -1,5 +1,6 @@
-import { expect, type Page } from '@playwright/test';
-// Real private HTTPS/signed-provider/PostgreSQL runner; no mocked routes in these cases.
+import { expect, type Page, type Request, type Route } from '@playwright/test';
+// Real private HTTPS/signed-provider/PostgreSQL runner. The explicitly named
+// response-loss case injects transport faults only after actual host responses.
 // At the bundle gate, provision the disposable writer's explicit equipment/maintenance
 // read/write/history and maintenance.owner.eligible capabilities. Restricted user has none.
 async function context(page: Page) {
@@ -105,35 +106,83 @@ async function controlledResponseLoss(page: Page) {
     const vessel = await context(page), attempts: {
         key: string | undefined;
         body: string | null;
+        sessionReads: number;
     }[] = [];
-    let lost = false;
-    await page.route(`**/api/v1/equipment-hierarchy/${vessel}`, async (route) => {
-        if (route.request().method() !== 'POST')
+    let lost = false, replayConfirmed = false, readbackLost = false;
+    let committedId = '', sessionReads = 0;
+    const label = 'FICTIONAL lost response ' + crypto.randomUUID();
+    const observeSession = (request: Request) => {
+        if (new URL(request.url()).pathname === '/api/v1/auth/session') sessionReads++;
+    };
+    const routeUrl = `**/api/v1/equipment-hierarchy/${vessel}`;
+    const equipmentTransport = async (route: Route) => {
+        if (route.request().method() !== 'POST') {
+            if (route.request().method() === 'GET' && replayConfirmed && !readbackLost) {
+                // Optional readback fails after the known original-owner receipt.
+                // No fabricated server row, session or authorization is supplied.
+                readbackLost = true;
+                return route.abort('connectionreset');
+            }
             return route.continue();
-        attempts.push({ key: route.request().headers()['idempotency-key'], body: route.request().postData() });
+        }
+        attempts.push({ key: route.request().headers()['idempotency-key'], body: route.request().postData(), sessionReads });
+        const actual = await route.fetch();
+        expect(actual.status() === 200).toBe(true);
+        const result = await actual.json();
         if (!lost) {
             lost = true;
-            const committed = await route.fetch();
-            expect(committed.status() === 200).toBe(true);
+            committedId = result.id;
+            expect(result.replayed === false).toBe(true);
             return route.abort('failed');
         }
-        return route.continue();
-    });
-    await page.goto(`/app/equipment-hierarchy/${vessel}`);
-    await page.getByRole("combobox", { name: /^(Dil seçin|Choose language)$/ }).selectOption("en");
-    await page.getByRole('button', { name: 'Add draft', exact: true }).click();
-    await page.getByLabel('Equipment name', { exact: true }).fill('FICTIONAL lost response ' + crypto.randomUUID());
-    await page.getByRole('button', { name: 'Save draft', exact: true }).click();
-    await expect(page.getByText('Result uncertain. Retry the same attempt before editing.', { exact: true })).toBeVisible();
-    await expect(page.getByLabel('Equipment name', { exact: true })).toBeDisabled();
-    await page.getByRole('button', { name: 'Retry same attempt', exact: true }).click();
-    await expect(page.getByText('Draft saved.', { exact: true })).toBeVisible();
-    expect(attempts.length === 2 && attempts[0].key === attempts[1].key && attempts[0].body === attempts[1].body).toBe(true);
-    const id = JSON.parse(attempts[0].body!).id;
-    const snapshot = await (await page.request.get(`/api/v1/equipment-hierarchy/${vessel}`)).json();
-    expect(snapshot.items.filter((a: {
-        id: string;
-    }) => a.id === id).length === 1).toBe(true);
+        expect(result.id === committedId && result.replayed === true).toBe(true);
+        replayConfirmed = true;
+        return route.fulfill({ response: actual });
+    };
+    page.on('request', observeSession);
+    try {
+        await page.route(routeUrl, equipmentTransport);
+        await page.goto(`/app/equipment-hierarchy/${vessel}`);
+        await page.getByRole("combobox", { name: /^(Dil seçin|Choose language)$/ }).selectOption("en");
+        await page.getByRole('button', { name: 'Add draft', exact: true }).click();
+        await page.getByLabel('Equipment name', { exact: true }).fill(label);
+        await page.getByRole('button', { name: 'Save draft', exact: true }).click();
+        await expect(page.getByText('Result uncertain. Retry the same attempt before editing.', { exact: true })).toBeVisible();
+        await expect(page.getByLabel('Equipment name', { exact: true })).toBeDisabled();
+        const beforeRetrySessionReads = sessionReads;
+        await page.getByRole('button', { name: 'Retry same attempt', exact: true }).click();
+        await expect(page.getByText('Draft saved.', { exact: true })).toBeVisible();
+        expect(attempts.length === 2 && attempts[0].key === attempts[1].key && attempts[0].body === attempts[1].body).toBe(true);
+        // Capture the counter at POST dispatch: a later post-write identity check
+        // cannot satisfy this requirement for a fresh pre-send session read.
+        expect(attempts[1].sessionReads > beforeRetrySessionReads).toBe(true);
+        const id = JSON.parse(attempts[0].body!).id;
+        expect(id === committedId).toBe(true);
+        await expect(page).toHaveURL(new RegExp(`/app/equipment-hierarchy/${vessel}\\?id=${id}$`));
+        const retryRead = page.getByRole('button', { name: 'Retry source read', exact: true });
+        await expect(retryRead).toBeVisible();
+        expect(readbackLost).toBe(true);
+        // A receipt plus failed current read must not unlock editing or a new UUID.
+        await expect(page.getByRole('button', { name: 'Save draft', exact: true })).toHaveCount(0);
+        await expect(page.getByRole('button', { name: 'Edit draft', exact: true })).toHaveCount(0);
+        await expect(page.getByRole('button', { name: 'Add draft', exact: true })).toHaveCount(0);
+        const snapshot = await (await page.request.get(`/api/v1/equipment-hierarchy/${vessel}`)).json();
+        expect(snapshot.items.filter((a: {
+            id: string;
+        }) => a.id === id).length === 1).toBe(true);
+        const historyResponse = await page.request.get(`/api/v1/equipment-hierarchy/${vessel}/${id}/history`);
+        expect(historyResponse.status() === 200).toBe(true);
+        const history = await historyResponse.json();
+        expect(history.length === 1 && history[0].revision === 1).toBe(true);
+        await retryRead.click();
+        await expect(page.getByRole('treeitem', { name: label, exact: true })).toBeVisible();
+        await expect(page.getByRole('button', { name: 'Edit draft', exact: true })).toBeVisible();
+        await expect(page).toHaveURL(new RegExp(`/app/equipment-hierarchy/${vessel}\\?id=${id}$`));
+        expect(attempts.length).toBe(2); // Explicit source recovery never resends the mutation.
+    } finally {
+        page.off('request', observeSession);
+        await page.unroute(routeUrl, equipmentTransport);
+    }
 }
 export const technicalCases = [
     { name: 'equipment-plan-tree-deep-url-keyboard-dirty-responsive', run: hierarchyPlan, restricted: false },
