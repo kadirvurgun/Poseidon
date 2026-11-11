@@ -1,8 +1,11 @@
 # POSEIDON — PR16 ve yerelleştirme durumu
 
+**Tahmini termin:** mevcut paket/PR hazırlığı **20 Kasım 2026**; uçtan uca gemi+römorkör MVP **26 Şubat 2027**; dört haftalık gerçek pilot ve teslim hazırlığı **30 Nisan 2027**. Bunlar sabit kapsam, düzenli kapasite ve zamanında uzman/pilot erişimi varsayan planlama hedefleridir; ölçülmüş SP hızına dayalı kesin taahhüt değildir. Resmî kabul **20/121 iş ve 103/970 SP = %10,62**; kalan 101 iş/867 SP, yazılmamış kod yüzdesi değildir. [Durum ve takvim raporu](phases/DELIVERY-FORECAST-20261111.md).
+
+
 Güncel yerelleştirme kaynak kontrol noktası `4a253fb`: **17/17 tam ana katalog**, 17 ortak katalog ve **17 × 123 sunum etiketi** yazıldı ve aynı dala entegre edildi. Her ana katalog 3169 metin alanı kapsar. Arapça RTL yerleşimi, ortak düğmeler ve source code/değer koruması uyarlandı. Bağımsız statik incelemede bulunan NONE/eksik-beyan metin ayrımı `3c30144` ile düzeltildi ve kaynak düzeyinde tekrar incelendi.
 
-**Yeni paket testleri DEFERRED; çalıştırılmadı.** 17 katalog dosyasının yazılması, bütün ekranların runtime doğrulaması veya sprint kabulü değildir. Yeni kod canlı önizlemeye derlenmedi; yeni PR açılmadı. Sonraki adım bu paketin PR hazırlığındaki toplu yürütme, bağımsız son hedef QA ve required CI'dır.
+**11 Kasım PR hazırlığı: toplu ön yüz kapısı başlatıldı; sonuçlar bekleniyor.** 17 katalog dosyasının yazılması, bütün ekranların runtime doğrulaması veya sprint kabulü değildir. Yeni kod canlı önizlemeye derlenmedi; yeni PR açılmadı. Sonraki adım bu paketin PR hazırlığındaki toplu yürütme, bağımsız son hedef QA ve required CI'dır.
 
 Ayrı [PR16](https://github.com/kadirvurgun/Poseidon/pull/16) hedefi `32ff1d0` için iki CI koşusunda dört zorunlu iş de geçti: her olayda API 826/826 integration, 176/176 unit, hata/skip 0 ve 117/117 kritik işlem. Önceki tam signed sonuç 15 PASS / 159 FAIL olarak korunur; güncel tam signed ve bağımsız son QA olmadan merge yoktur. Canonical kabul **103/970 SP (%10,62)** olarak değişmedi.
 
