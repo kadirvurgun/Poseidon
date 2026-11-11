@@ -1,6 +1,8 @@
 # POSEIDON — PR16 ve yerelleştirme durumu
 
-Güncel yerelleştirme kaynak kontrol noktası `786a0b9`: **15/17 tam ana katalog**, 17 ortak katalog ve **17 × 123 sunum etiketi** yazıldı. İtalyanca tamamlandı; Fransızca karakter bozulmaları düzeltildi. Mürettebat, mevzuat, sağlık ve çevrimdışı çatışma metinleri JSON kaynaklarına taşındı; ek dosya düğmeleri ortak bileşenlere alındı. İki Çince varyantı, İspanyolca ve Brezilya Portekizcesi entegre edildi; Fince/Slovakça son metinleri yazılıyor. Sabit başlıklar yerelleştirildi, protokoldeki `available` canonical değer olarak korundu. Kaynak sunum incelemesi ve test kapısı açık. Yeni paket testleri **DEFERRED**, çalıştırılmadı; bu bir sprint kabulü değildir.
+Güncel yerelleştirme kaynak kontrol noktası `4a253fb`: **17/17 tam ana katalog**, 17 ortak katalog ve **17 × 123 sunum etiketi** yazıldı ve aynı dala entegre edildi. Her ana katalog 3169 metin alanı kapsar. Arapça RTL yerleşimi, ortak düğmeler ve source code/değer koruması uyarlandı. Bağımsız statik incelemede bulunan NONE/eksik-beyan metin ayrımı `3c30144` ile düzeltildi ve kaynak düzeyinde tekrar incelendi.
+
+**Yeni paket testleri DEFERRED; çalıştırılmadı.** 17 katalog dosyasının yazılması, bütün ekranların runtime doğrulaması veya sprint kabulü değildir. Yeni kod canlı önizlemeye derlenmedi; yeni PR açılmadı. Sonraki adım bu paketin PR hazırlığındaki toplu yürütme, bağımsız son hedef QA ve required CI'dır.
 
 Ayrı [PR16](https://github.com/kadirvurgun/Poseidon/pull/16) hedefi `32ff1d0` için iki CI koşusunda dört zorunlu iş de geçti: her olayda API 826/826 integration, 176/176 unit, hata/skip 0 ve 117/117 kritik işlem. Önceki tam signed sonuç 15 PASS / 159 FAIL olarak korunur; güncel tam signed ve bağımsız son QA olmadan merge yoktur. Canonical kabul **103/970 SP (%10,62)** olarak değişmedi.
 

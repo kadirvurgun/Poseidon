@@ -1,14 +1,15 @@
 # 17 dil — 11.11.2026 geliştirme kontrol noktası
 
-Durum: **YAZILDI / ÇEVİRİ DEVAM EDİYOR / TESTLER ERTELENDİ / KABUL EDİLMEDİ**.
+Durum: **17 KATALOG YAZILDI / TEST YÜRÜTMESİ ERTELENDİ / KABUL EDİLMEDİ**.
 
-## Güncel kaynak — 786a0b9
+## Güncel kaynak — 4a253fb
 
-Ana katalogların **15/17** dili tamamen yazıldı: Türkçe, İngilizce, İngiliz
-İngilizcesi, Arapça, Almanca, Fransızca, Hintçe, Çekçe, Rusça, Macarca, İtalyanca, Basitleştirilmiş Çince, Geleneksel Çince, İspanyolca ve Brezilya Portekizcesi.
-Her katalog 3169 metin alanı içerir; kaynakta 2991 benzersiz değer vardır.
-Bu oran yalnız yazılan katalog dosyası sayısıdır; ekran kapsamı, çeviri kalitesi
-veya kabul yüzdesi değildir. **İki ana katalog açık:** Fince ve Slovakça.
+Ana katalogların **17/17** dili tamamen yazıldı: Arapça, Çekçe, Macarca,
+Fransızca, İngilizce, Fince, İngiliz İngilizcesi, Basitleştirilmiş Çince, Hintçe,
+Slovakça, Türkçe, Rusça, Brezilya Portekizcesi, İtalyanca, İspanyolca, Almanca ve
+Geleneksel Çince. Her katalog3169metin alanı içerir; İngilizce kaynakta2991benzersiz
+değer vardır. Bu yalnız kaynak yazımı tamamlanmasıdır; ekran kapsamı, runtime,
+çeviri kalite sertifikası veya kabul yüzdesi değildir.
 
 17 ortak katalog ve ayrıca **17 × 123 sunum etiketi** yazıldı. İtalyanca
 `6c5df69` ile tamamlandı; `d8cfde6` mürettebat ve Unicode düzeltmelerini,
@@ -229,3 +230,42 @@ anlam incelemesi yapar. İnceleyicinin kendi ES/PT ana katalogları bağımsız 
 kapsamına alınmaz. Bu bir dil kalitesi sertifikası, test yürütmesi veya faz kabulü
 değildir. UI kaynak incelemesi başka ajanda ayrı sürer; FI/SK son491'er kaynak
 metni yazılmaktadır. Bütün yeni paket testleri DEFERRED kalır.
+
+
+## 17/17 katalog yazımı tamamlandı — 4a253fb
+
+FI `d4f4c42` → `9e195dd`; SK `32d98c2` → `4a253fb` ile kalan iki tam katalog da
+alındı. Her biri3169metin alanı kapsar. Repository SHA256 FI
+`136c16793766349e967adad3f5af1eef17b1f575f223fde3e1149a063ca21fde`, SK
+`201f279fc4155535af5bc6e58678d0d67397fbd23069c1b0745df23b9d300d7e`.
+17dosya,17×38ortak anahtar ve17×123sunum anahtarı aynı geliştirme dalındadır.
+İngilizce kaynak hash'i sabit; canonical enum/kimlik/zaman/komut değerleri korunur.
+
+### Bağımsız statik inceleme ve somut düzeltme
+
+L17-QA-SOURCE-01, `981dae4` üzerinde60dosya içeren Root UI/i18n ve genuine
+login/selector birleşimini inceledi; somut kaynak hatası bildirmedi. İnceleyicinin
+kendi Çince katalogları bu bağımsız kabul kapsamına alınmadı. OpenCC0.1.7/s2tw
+geçici yerel yazım aracıdır, uygulama bağımlılığı değildir.
+
+L17-QA-COPY-01, `786a0b9` üzerinde40ana katalog girdisi ve408sunum etiketiyle
+sınırlı anlam/Unicode incelemesinde P2 L17-COPY-01 buldu. TR/RU/ikiÇince'de NONE
+seçeneği eksik beyanı çağrıştırıyordu. Aktif11.01/2316Alanv46.3/row2204, açık
+NONE;ATTENTION;DISPUTED seçeneklerini dış Missing/Unknown durumundan ayrı tanımlar.
+`3c30144` tüm17sunum etiketini açık “fark yok (beyan)” anlamına çekti; gönderilen
+NONE kodu değişmedi. Gerçek kontrollü yakıt formu ve17dil ayrımı testleri yazıldı.
+İnceleyici düzeltmeyi **RESOLVED_SOURCE_ONLY** olarak tekrar değerlendirdi.
+
+FI/SK için `4a253fb` üzerinde16anahtar girdisinin ek statik incelemesi somut hata
+bildirmedi. ES/PT'nin başka yazardan16girdilik ek incelemesi sürer. Bunlar sınırlı
+örneklerdir; tam dil kalitesi sertifikası veya final QA değildir. Önceki bulgu ve
+hedef-commit kayıtları silinmedi. Hiçbir yeni test yürütülmedi.
+
+### Açık kapılar ve sonraki adım
+
+Paket, PR hazırlığında tek toplu lint/typecheck/contract/build, component, gerçek
+API desktop/narrow dil/RTL/taslak yolculukları ve kaynak/client taramasını bekler.
+Ardından bağımsız final hedef QA ve required CI gerekir. Yeni kod önizlemeye
+alınmadı, yeni PR açılmadı. PR16 tam signed/bağımsızQA kapısı ayrı açıktır; eski
+174koşu15PASS/159FAIL ve32ff1d0CIkanıtı kendi hedeflerinde korunur. Canonical
+**103/970SP(%10,62),20/121iş,0/196ayrıekran** kabul değişmedi.

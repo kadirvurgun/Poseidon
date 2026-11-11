@@ -1,6 +1,6 @@
 # LOCALIZATION-17-01 — JSON interface catalogs and persistent locale
 
-State: AUTHORED / IN PROGRESS / NOT ACCEPTED. No canonical story points added.
+State: ALL17CATALOGS AUTHORED / EXECUTION DEFERRED / NOT ACCEPTED. No canonical story points added.
 
 Source: user's explicit 17-language menu image and AI-authored JSON/i18n request,
 09.11.2026. This extends the earlier TR/EN presentation scope. The active source
@@ -137,3 +137,24 @@ shell fixture tests presentation only; genuine server authority is separate.
 [Authored browser case](../../tests/Poseidon.Browser.Tests/specs/s2-shell.spec.ts),
 [public17locale matrix](../../tests/Poseidon.Browser.Tests/specs/localized-shell.spec.ts).
 Execution remains DEFERRED; no acceptance added.
+
+
+## Full authoring checkpoint — 4a253fb
+
+All17main catalogs exist at3169string leaves each;17common×38keys and
+17presentation×123keys. Six remaining translation leases completed without
+quota/account/model rotation; each complete file was committed independently
+and integrated normally. Frozen English source remains unchanged. Full UI
+runtime, language quality, bundle gate and phase acceptance are still unproven.
+
+L17-COPY-01 (P2) source: active11.01/2316Alanv46.3/row2204, SHA
+bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9.
+Explicit delivery_discrepancy=NONE must not read as a missing declaration.
+Fix3c30144retainsKnown/NONE through locale changes and permitsUnknown/null only
+on explicit selection. Added [real form regression](../../frontend/src/product/ShipOperationsFields.test.tsx)
+and [alllocale label distinction](../../frontend/src/i18n/code-option-labels.test.ts).
+Independent result RESOLVED_SOURCE_ONLY; executionDEFERRED,acceptancefalse.
+
+Required next action: execute one full new-package gate duringPRpreparation,
+then independent exact-targetQA andrequiredCI. No declaration that17translated
+catalogs alone complete the canonical sprint, signed gate or release.
