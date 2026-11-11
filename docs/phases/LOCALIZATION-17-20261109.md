@@ -2,7 +2,7 @@
 
 Durum: **YAZILDI / ÇEVİRİ DEVAM EDİYOR / TESTLER ERTELENDİ / KABUL EDİLMEDİ**.
 
-## Güncel kaynak — 16fdc90
+## Güncel kaynak — 0a3f292
 
 Ana katalogların **11/17** dili tamamen yazıldı: Türkçe, İngilizce, İngiliz
 İngilizcesi, Arapça, Almanca, Fransızca, Hintçe, Çekçe, Rusça, Macarca ve İtalyanca.
@@ -11,7 +11,7 @@ Bu oran yalnız yazılan katalog dosyası sayısıdır; ekran kapsamı, çeviri 
 veya kabul yüzdesi değildir. **Altı ana katalog açık:** Fince, Slovakça,
 İspanyolca, Brezilya Portekizcesi, Basitleştirilmiş ve Geleneksel Çince.
 
-17 ortak katalog ve ayrıca **17 × 81 sunum etiketi** yazıldı. İtalyanca
+17 ortak katalog ve ayrıca **17 × 117 sunum etiketi** yazıldı. İtalyanca
 `6c5df69` ile tamamlandı; `d8cfde6` mürettebat ve Unicode düzeltmelerini,
 `16fdc90` mevzuat/sağlık/çevrimdışı sunum devamını içerir:
 
@@ -38,7 +38,7 @@ Yeni paket build/typecheck/component/browser/regresyonu **ÇALIŞTIRILMADI**;
 aynı form düğümleri, filtreler, dosya modu kilitleri, sabit komut içeriği ve
 çevrimdışı açık çözüm seçimi için anlamlı testler kodla birlikte yazıldı.
 
-Kaynak yazımına yardımcı dar AST ayrıştırması son değişen 10 TypeScript dosyasında
+Kaynak yazımına yardımcı dar AST ayrıştırması son değişen 7 TypeScript dosyasında
 sözdizimi tanısı veya çözümlenmeyen literal kaynak anahtarı bildirmedi. Sınırlı
 dil-koşulu AST sorgusu 0 eşleşme döndürdü; bütün sunumun çevrildiğini, typecheck
 veya test başarısını kanıtlamaz. Graphify yalnız türetilmiş keşif grafiğidir.
@@ -83,3 +83,23 @@ hash’i değişmedi.10tamana katalog ve7eksik ana katalog vardır;17tamüründi
 iddiası yoktur. Kalan dictionary/array/template kullanımları da kapatılacak.
 Yeni label/RTL/taslak/locale testleri yazıldı; build/typecheck/component/browser
 kontrolleri yeni paket kapısına DEFERRED, PASS değil. PR16 recovery ayrı daldadır.
+
+
+### Son sözlük devamı — 0a3f292
+
+Arıza, duruş, iş emri ve yakıt/liman seçeneklerindeki dört değişken sözlük de
+ortak sunum kaynaklarına taşındı. 17 dil için 36 ek etiketle toplam 117 anahtar
+vardır. Kaynak enumları, ROB/VLSFO/HFO/MGO/LNG kısaltmaları ve desteklenmeyen
+kaynak değerleri korunur; prototype üyeleri bir seçenek olarak çözümlenmez.
+İş emri aşamaları açıkça beyan olarak çevrilir, izin/kapama yetkisi oluşmaz.
+
+Gerçek arıza formunda Arapça dil değişiminde aynı alan düğümünün, seçili `Verify`
+değerinin ve JSON gövdesinin korunmasını sınayan test ile dört sözlük için
+anlamlı kaynak/enum testleri yazıldı. **Çalıştırılmadı, DEFERRED.** Genişletilmiş
+kaynak sorgusunda ürünün bu dört değişken dalı kalmadı; i18n çekirdeğinin açık
+TR/EN kaynak-fallback dalı beklenen ayrı davranıştır. Bu sınırlı sorgu bütün
+monolingual/format metinlerinin tamamlandığını kanıtlamaz.
+
+Graphify güncellemesi türetilmiş kod grafiğini yeniledi; çok sayıda JSON/config
+kaynağının düğüm üretmediği uyarısı vardır. Bu dosyalar ve canonical belgeler
+ancak doğrudan kaynaklarıyla değerlendirilir; grafiğin kapsamı test kabulü değildir.

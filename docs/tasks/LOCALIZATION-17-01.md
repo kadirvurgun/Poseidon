@@ -98,3 +98,13 @@ Additional traceable acceptance cases (authored, execution DEFERRED):
 
 These tests have not run. Required new-bundle checks and independent exact-target
 QA remain open; canonical accepted story points remain unchanged.
+
+
+L17-AC-OPTION-CODES (`0a3f292`): the four operational code dictionaries use the
+selected language while retaining exact enum choices, fuel abbreviations and
+unknown source codes. Real controlled defect fields retain their node, selected
+`Verify` value and original JSON through Arabic. Prototype properties are never
+resolved as declared choices. Seventeen presentation catalogs now contain117keys.
+[Option tests](../../frontend/src/i18n/code-option-labels.test.ts),
+[real form tests](../../frontend/src/product/DefectFieldsForm.test.tsx).
+Execution remains DEFERRED; six main catalogs and full bundle checks are open.
