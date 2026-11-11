@@ -1,6 +1,6 @@
 # MAINTENANCE-OBSERVATION-OWNER-RECOVERY-01
 
-State: AUTHORING; acceptance=false. New technical bundle, all execution DEFERRED.
+State: AUTHORED_UNVERIFIED; acceptance=false. New technical bundle, all execution DEFERRED.
 Baseline: poseidon-v46.3-20261030. Starting checkpoint:8955d5c.
 Coordinator/UI owner: root, foundation/enterprise-localization-20261109 in s8-pms-command-center.
 API-test author: separate observation-recovery-tests-20261112 branch/worktree.
@@ -8,7 +8,7 @@ Independent source review: separate reviewer after authoring; no execution accep
 
 ## Source and dependency boundary
 
-DEV-053/T-S8-002,18.01 Backlog row54; existing equipment-maintenance-01 and DOMAIN-COMPLETION-01 observation integration. Current11.01 field contracts meter_source/last_done_meter/current reading, FR46-maintenance-plan-meter_source / TC46-maintenance-plan-meter_source; traceability row1413 and dictionary1411–1415.15.01 paragraphs67/71/73 tenant authority/idempotent retries/version;13.04 paragraphs10–24 enterprise explicit blockers and authority. DEV-014/015/019 accepted cross-cutting protections. Existing APIs authorize, persist/audit immutable observation UUID/body and separate revocation rows. No new policy, approved source catalog or safety sign-off.
+DEV-053/T-S8-002,18.01 Backlog row54; existing equipment-maintenance-01 and DOMAIN-COMPLETION-01 observation integration. Current11.01 field contracts meter_source/last_done_meter/current reading, FR46-maintenance-plan-meter_source / TC46-maintenance-plan-meter_source; traceability sheet2316 Alan v46.3 row1413 and Data Dictionary2316 rows1411–1415.15.01 paragraphs67/71/73 tenant authority/idempotent retries/version;13.04 paragraphs10–24 enterprise explicit blockers and authority. DEV-014/015/019 accepted cross-cutting protections. Existing APIs authorize, persist/audit immutable observation UUID/body and separate revocation rows. No new policy, approved source catalog or safety sign-off.
 
 The original TOCR-OBS-EXISTING-DENIAL issue is open at MaintenanceObservations401/403 handling. Frontend owner binding is not a server actor-scoped receipt contract: capture uses observation UUID/body equality, revocation uses observation UUID/current authorization. Do not invent generic CommandReceipts or actor-specific replay semantics.
 
@@ -26,3 +26,5 @@ The original TOCR-OBS-EXISTING-DENIAL issue is open at MaintenanceObservations40
 Root owns MaintenanceObservations.tsx/test, small observation API adapter/test and TechnicalWorkspace integration/test. API-test author owns only new MaintenanceObservationRecoveryTests.cs, no backend changes presumed. Author actual-host API/PG regressions for permission/policy denial then original-byte reauthorization replay, fresh CSRF, foreign tenant/asset denial, idempotent revocation and single business audit. Existing genuine-host sources may be extended only with real configured fixture support; unavailable source fixture remains explicitly open.
 
 All new test/build/typecheck/lint/browser execution DEFERRED until larger technical bundle gate. Static source review and Git/AST metadata are not PASS. Later independent final-target QA, actual PostgreSQL/UI/browser and required CI precede publication/merge. Canonical tasks/SP/screens unchanged.
+
+Source constraint: current14.02 row1413 still declares numeric precision/physical mapping PLACEHOLDER/REVIEW_REQUIRED. This task repairs existing observation transport/ownership only; it does not approve that field mapping, lookup semantics, production source/unit/freshness catalog or operational policy.

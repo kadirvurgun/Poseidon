@@ -1,5 +1,13 @@
 # POSEIDON — PR16 ve yerelleştirme durumu
 
+**12 Kasım — S8/PMS gözlem komutları:** 401/403 sonrası belirsiz capture/revoke
+komutunu koruma, asıl kullanıcıyla güncel CSRF üzerinden açık retry, private
+DOM/üst ekran erişim çekilmesi ve işlem sürerken navigasyon koruması yazıldı.
+Yeni UI/adapter,6API/PG vakası ve1gerçek-host browser senaryosu kaynakta mevcut;
+**bütün yeni yürütmeler DEFERRED**. Gerçek gözlem source/yetki fixture'ı ve toplu
+kapılar açık; resmî kabul artmadı. [Güncel teknik rapor](phases/MAINTENANCE-OBSERVATION-RECOVERY-20261112.md).
+
+
 **Analizden yeni geliştirme:** DEV-052/053 ekipman/bakım temeli içinde asıl
 kullanıcıya bağlı taslak ve belirsiz komut kurtarması yazıldı: güncel oturum/yetki
 kontrolü, aynı anahtar/gövdeyle açık retry, kayıt kimliğinin URL'de korunması ve
