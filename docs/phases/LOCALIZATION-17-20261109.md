@@ -1,6 +1,6 @@
 # 17 dil — 11.11.2026 geliştirme kontrol noktası
 
-Durum: **17 KATALOG YAZILDI / TEST YÜRÜTMESİ ERTELENDİ / KABUL EDİLMEDİ**.
+Durum: **17 KATALOG YAZILDI / PR ÖNCESİ TOPLU DOĞRULAMA BAŞLADI / KABUL EDİLMEDİ**.
 
 ## Güncel kaynak — 4a253fb
 
@@ -285,3 +285,19 @@ Her kayıt kendi hedefi ve sınırlı örneğiyle geçerlidir. Rapor JSON hash'l
 browser çalıştırılmadı; acceptance=false.** Bütün dillerin tam dil kalitesi veya
 bütün ürünün uzman/pilot kabulü ilan edilmez. Sonraki iş PR hazırlığında toplu
 paket yürütmesi ve bağımsız son hedef QA'dır; yeni kaynak önizlemede değildir.
+
+
+## 11 Kasım — PR hazırlığı toplu yürütme başladı
+
+Paket kaynak yazımı tamamlandıktan sonra kullanıcı teslim ritmine uygun toplu
+ön yüz kapısı bağımsız QA dalında başlatıldı. `1ff65b9` hedefinde API consumer
+üretimi ve generated-contract parity exit0 ile geçti. İlk lint exit1: tek
+`@typescript-eslint/no-unused-vars`, `ComplianceInputEditor.tsx:34:11`.
+Kullanılmayan selector yardımcı fonksiyonu `5ae621a` ile kaldırıldı; kullanılan
+etiket yardımcı fonksiyonu ve iş davranışı korunur. Özgün başarısız sonuç/hashi
+saklandı. Yeni hedefte lint→typecheck→component→productionbuild kapısı tekrar
+başlatıldı; sonuçlar henüz yok. İlk hedefte sonraki adımlar failfast nedeniyle
+çalışmadı, test sayısı0. Önceki DEFERRED kayıtları tarihsel yazım kapsamıdır.
+
+Güncel durum ve koşullu tarihler [teslim tahmin raporunda](./DELIVERY-FORECAST-20261111.md).
+Tam signed, gerçek browser ve bağımsız son hedef kabul kapıları ayrı açıktır.

@@ -91,3 +91,11 @@ bağımsız sertifikasyon taahhüdü değildir.
   çıkarılmış metin SHA256 `5c4c11c0bcc07b75d06ff676024ab36b4c79864636d96adbdc9d27aabb6aedb1`.
 - [Mimari ve test sözleşmesi](../architecture.md),
   [teslim ritmi ve dış kapılar](../automation.md).
+
+
+### İlk kapı gözlemi
+
+`1ff65b9` için API üretimi/parity geçti; lint, `ComplianceInputEditor.tsx:34:11`
+kullanılmayan yardımcı nedeniyle tek hata verdi. `5ae621a` düzeltmesi alındı ve
+yeni hedefte kapı sürdürülüyor. Bu ilk dar kaynak bulgusu planlama tarihlerinin
+yeniden kalibre edildiği veya paketin kabul edildiği anlamına gelmez.
