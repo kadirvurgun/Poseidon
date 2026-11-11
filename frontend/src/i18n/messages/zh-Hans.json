@@ -221,7 +221,7 @@
       "CapabilityEquipmentCondition": "能力设备状况"
     },
     "TodayWorkspace_tsx_copy": {
-      "currentOwner": "当前来源归属角色",
+      "currentOwner": "当前来源负责人角色",
       "planReference": "计划参考编号",
       "assetReference": "设备参考编号",
       "observationAssessment": "当前观测评估",
@@ -300,7 +300,7 @@
       "valid": "来源有效期截止时间",
       "unknown": "未知",
       "role": "职位参考编号",
-      "required": "必填",
+      "required": "必需",
       "declared": "声明的不同人员",
       "qualified": "经来源确认",
       "unresolved": "未解决",
@@ -3150,7 +3150,7 @@
     "m_a995d42ca27deb9a": "确切公式 / 系数 / 单位来源定位",
     "m_21249e9ca17d6ce1": "来源规定的认证值至实测值最大损失（%）",
     "m_f83d7b6a1d1dea3d": "经确认的小数位数（0–6）",
-    "m_366251a94a7dee3c": "来源规定的最长测试年限（天）",
+    "m_366251a94a7dee3c": "来源规定的测试最大距今天数（天）",
     "m_4308c017e7c4759f": "确切任务类型代码，以分号分隔",
     "m_ea68e7e1177a4599": "确切作业区域，以分号分隔",
     "m_7286ccd5a4c33b97": "权属拖轮能力证据",
