@@ -9,7 +9,6 @@ export function ComplianceInputEditor({ value, onChange, offline, language }: {
     offline: boolean;
     language: AppLocale;
 }) {
-    const t = (en: string, tr: string) => localizedLabel({ en: en, tr: tr }, language);
     const key = complianceKeys.find(k => value[k] != null);
     const choose = (k: string) => onChange(Object.assign({}, value, { tugCapability: null, operation: null, serviceAuthorization: null, cargoPlan: null, winchFitment: null, classPack: null, msmd: null, crewRoleAssessment: null }, (k === 'classPack' ? { classPack: { packReference: null, edition: null, surveyReference: null, iacsM79: null } } : k === 'msmd' ? { msmd: { documentReference: null, issuerReference: null, roles: null } } : k === 'crewRoleAssessment' ? { crewRoleAssessment: { assignmentId: null, assignmentRevision: null, assignmentVersion: null, positionId: null, positionVersion: null, from: null, to: null, criterion: null, recordReference: null, satisfied: null, credential: null } } : {})));
     const record = key ? value[key] : null;
