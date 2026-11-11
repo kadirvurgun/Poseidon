@@ -31,7 +31,6 @@ export function ComplianceEvaluationSelector({ value, onChange, offline, languag
     offline: boolean;
     language: AppLocale;
 }) {
-    const t = (en: string, tr: string) => localizedLabel({ en: en, tr: tr }, language);
     const update = (v: Partial<OwningReferences>) => onChange({ operationId: null, cargoPlanId: null, winchFitmentId: null, ...value, ...v });
     return <fieldset disabled={offline}><legend>{localizedText(language, "pairs.m_a1160f55ab8a5c71")}</legend><p>{localizedText(language, "pairs.m_4828caa5d42e78d5")}</p>
     {(['classPackId', 'msmdId', 'sourceEvidenceId'] as const).map((k, i) => <label key={k}>{[localizedText(language, "pairs.m_f8813d03b08a0846"), localizedText(language, "pairs.m_a9a23777c88bf89e"), localizedText(language, "pairs.m_b8fbfac99a3660f1")][i]}<input value={value?.[k] ?? ''} onChange={e => update({ [k]: e.target.value || null })}/></label>)}
