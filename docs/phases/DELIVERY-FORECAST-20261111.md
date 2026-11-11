@@ -99,3 +99,9 @@ bağımsız sertifikasyon taahhüdü değildir.
 kullanılmayan yardımcı nedeniyle tek hata verdi. `5ae621a` düzeltmesi alındı ve
 yeni hedefte kapı sürdürülüyor. Bu ilk dar kaynak bulgusu planlama tarihlerinin
 yeniden kalibre edildiği veya paketin kabul edildiği anlamına gelmez.
+
+
+Son gözlem: `5ae621a` hedefinde tam lint exit0, hata/uyarı0; tam typecheck exit0
+ile geçti. Component suite tek tam koşuyla bağımsız QA dalında sürüyor; sonuç
+henüz yok. Bu ara başarılar canonical kabul oranını veya diğer açık kapıları
+kapatmaz. Takvim hedefleri bu aşamada değişmedi.
