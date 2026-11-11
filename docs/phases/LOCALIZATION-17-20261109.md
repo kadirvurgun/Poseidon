@@ -182,3 +182,18 @@ işaretiyle RTL'de yön değiştirir. Hedef adresi, sayfa offset'i veya kayıt i
 dönüşte aynı form verisinin korunmasını da sınayacak. Test yürütmesi yine DEFERRED.
 Bu devamın13değişen TypeScript kaynağına uygulanan dar AST ayrıştırması sözdizimi
 tanısı bildirmedi; typecheck/build veya test PASS yerine kullanılamaz.
+
+
+### Foundation kaynak hizalaması — yerel normal merge
+
+Yerelleştirme dalı `52c1181` foundation ucu ile normal merge edildi. Bu kaynak,
+`32ff1d0` için iki olayda geçen required CI ile daha sonraki kanıt metadata'sını
+içerir. Yeni birleşik hedefin testleri DEFERRED'dır; geçmiş CI yeni hedefe PASS
+olarak taşınmaz. Backend, API testleri, OpenAPI ve generated consumer alt ağaçları
+foundation ile aynıdır; bu yalnız kaynak karşılaştırmasıdır.
+
+İki metin çatışması çözüldü: durum raporunda foundation'ın güncel kanıt geçmişi
+ile yeni locale özeti korundu; genuine login yardımcısında her vaka için gerçek
+giriş ve tam güvenli hedef davranışı,17dil native selector ile birleştirildi.
+Canonical kabul artmadı. PR16 uzaktan merge edilmedi; güncel tam signed/bağımsız
+QA kapıları açıktır. Kalan kataloglar yalnız tam dosya commit'leriyle alınır.

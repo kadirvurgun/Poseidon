@@ -200,3 +200,40 @@ def configure_observed(config, metadata, observed, now=None):
             member['RegulatoryAuthorities'].append({'Id':str(uuid.uuid4()),'RuleId':rule['id'],'SourceId':rule['sourceId'],
                 'SourceRevision':rule['sourceRevision'],'RoleId':role,'Actions':actions,'ValidFrom':from_at,'ValidUntil':until,'Contract':contract})
     return candidate
+
+
+def renew_synthetic_window(config, realm, authority, project, metadata, now=None):
+    """Renew only the exact run-owned daily software fixtures, never other grants.
+
+    Long verification sessions can outlive the initial eight-hour lab window.
+    Operator edits or a different run require manual reconciliation rather than
+    extending them. Old immutable configuration generations remain retained.
+    """
+    current = deepcopy(config)
+    members = current.get('Authentication', {}).get('Oidc', {}).get('Memberships', [])
+    reviewers = [m for m in members if m.get('ActorId') == metadata.get('reviewerActorId') and m.get('TenantId') == TENANT]
+    if len(reviewers) != 1 or not isinstance(current.get('DailyOffline'), dict):
+        raise RuntimeError('bundle_fixture_window_scope_invalid')
+    old_daily = deepcopy(current['DailyOffline'])
+    old_review = deepcopy(reviewers[0].get('DailyReviewAuthorities'))
+    if not isinstance(old_review, list):
+        raise RuntimeError('bundle_fixture_window_scope_invalid')
+    del current['DailyOffline']
+    reviewers[0].pop('DailyReviewAuthorities', None)
+    expected, expected_metadata = configure(current, realm, authority, project, metadata['runId'], now)
+    if any(expected_metadata[key] != metadata.get(key) for key in
+            ('tenantId','vesselId','writerActorId','reviewerActorId','reviewerRoleId','writerRoleId','sourceVersion')):
+        raise RuntimeError('bundle_fixture_window_scope_invalid')
+    expected_review = next(m['DailyReviewAuthorities'] for m in expected['Authentication']['Oidc']['Memberships']
+        if m.get('ActorId') == metadata['reviewerActorId'])
+    def without_dates(value, dates):
+        return [{key: item for key,item in row.items() if key not in dates} for row in value]
+    if (set(old_daily) != {'Policies'} or
+            without_dates(old_daily.get('Policies', []), {'NotBefore','ExpiresAt'}) !=
+            without_dates(expected['DailyOffline']['Policies'], {'NotBefore','ExpiresAt'}) or
+            without_dates(old_review, {'ValidFrom','ValidUntil'}) != without_dates(expected_review, {'ValidFrom','ValidUntil'})):
+        raise RuntimeError('bundle_fixture_operator_window_preserved')
+    result = deepcopy(config)
+    result['DailyOffline'] = expected['DailyOffline']
+    next(m for m in result['Authentication']['Oidc']['Memberships'] if m.get('ActorId') == metadata['reviewerActorId'])['DailyReviewAuthorities'] = expected_review
+    return result

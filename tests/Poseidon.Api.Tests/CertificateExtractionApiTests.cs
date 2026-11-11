@@ -108,14 +108,24 @@ public sealed partial class DirectoryWorkspaceTests
     [Theory]
     [InlineData("permission")][InlineData("file")][InlineData("processing")]
     public async Task Current_source_and_authority_are_reloaded_after_provider_await_and_no_private_candidate_or_token_escapes(string boundary) {
-        var root=ExtractionRoot();var secret=ExtractionSecret();using var scanner=new ScanPeer("stream: OK\0");var p=ExtractionPolicy(secret);using var peer=new ExtractionPeer{Policy=p};
+        var root=ExtractionRoot();var secret=ExtractionSecret();using var scanner=new ScanPeer("stream: OK\0",repeat:true);var p=ExtractionPolicy(secret);using var peer=new ExtractionPeer{Policy=p};
         var entered=new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);var release=new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         peer.BeforeReply=async ct=>{entered.TrySetResult();await release.Task.WaitAsync(ct);};
         try {
             await using var host=ExtractionHost(root,scanner.Port,p,peer);using var client=Client(host);ExtractionPermissions(host.Services);await Token(client);var row=await ExtractionSource(client);
             var request=Send(client,ExtractionPath(row),new CertificateExtractCommand(row.Version));await entered.Task.WaitAsync(TimeSpan.FromSeconds(15),Ct);
             if(boundary=="permission"){var f=host.Services.GetRequiredService<FederationSettings>();f.Memberships[0]=f.Memberships[0] with{Permissions=f.Memberships[0].Permissions.Where(x=>x!="certificate.extract").ToArray()};}
-            if(boundary=="file"){await using var db=Db();var stage=await db.FileStages.SingleAsync(s=>s.Id==row.Content.Document!.Id,Ct);stage.State="Pending";await db.SaveChangesAsync(Ct);}
+            if(boundary=="file"){
+                // Accepted transport is immutable. Replace the owning document
+                // through its ordinary audited writer while the provider waits.
+                var staged=await StagePng(client);using var accepted=await PutPng(client,staged.Id);Assert.Equal(HttpStatusCode.OK,accepted.StatusCode);
+                var replacement=(await accepted.Content.ReadFromJsonAsync<FileDto>(Ct))!;Assert.NotEqual(row.Content.Document!.Id,replacement.Id);
+                var content=row.Content with{Metadata=row.Content.Metadata with{DocumentReference=replacement.Id},
+                    Document=new(replacement.Id,Assert.IsType<long>(replacement.Revision),Assert.IsType<string>(replacement.Checksum))};
+                using var saved=await Send(client,CertificatePath(row.Id),new CertificateSaveCommand(row.Id,row.Version,content,"AUTHORING_CORRECTION"),update:true);
+                Assert.Equal(HttpStatusCode.OK,saved.StatusCode);
+                await using var db=Db();Assert.Equal("CleanTransport",(await db.FileStages.SingleAsync(s=>s.Id==row.Content.Document.Id,Ct)).State);
+            }
             if(boundary=="processing")p.PrivacyReference=null;
             release.TrySetResult();using var response=await request.WaitAsync(TimeSpan.FromSeconds(15),Ct);Assert.Equal(HttpStatusCode.Forbidden,response.StatusCode);
             var bytes=await response.Content.ReadAsStringAsync(Ct);Assert.DoesNotContain("MASKED",bytes);Assert.DoesNotContain("reviewContext",bytes);Assert.DoesNotContain(row.Content.Document!.Id.ToString(),bytes);

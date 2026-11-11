@@ -10,11 +10,13 @@ from pathlib import Path
 import secrets
 import socket
 import sys
+import tempfile
 import uuid
 
 import oidc_lab as lab
 import bundle_fixture_plan as plan
 import bundle_private as private_io
+import bundle_crew_fixture as crew_fixture
 
 BASE_ENVIRONMENT = lab.environment
 FIXTURE_NAMES = ('DAILY','CERTIFICATE','CERTIFICATE_EXTRACTION','SHIP_OPERATIONS','DEFECT','WORK_ORDER','DOWNTIME')
@@ -82,11 +84,58 @@ def prepare_bundle():
     for permission in ('audit.read','file.read','file.write'):
         if permission not in members[0]['Permissions']:
             members[0]['Permissions'].append(permission)
-    objects=lab.PRIVATE/'source-bundle-objects';lab.private_directory(objects)
+    objects=source_object_root()
     config['SecureFiles']={'Adapter':'LocalDevelopment','Root':str(objects),'MaxBytes':1048576,
         'MaxPixels':1048576,'ScanSeconds':15,'ClamdPort':port,'CapabilitySeconds':60,
         'RetentionReference':'synthetic-lab-only','ScannerReference':'pinned-ephemeral-clamd'}
     private_io.publish_config(config)
+
+
+def source_object_root():
+    """The unchanged file adapter forbids repository/content/web-root storage."""
+    objects=Path(tempfile.gettempdir())/(lab.PROJECT+'-source-bundle-objects')
+    if not objects.is_absolute() or objects.is_symlink() or objects.is_junction():
+        raise RuntimeError('source_bundle_object_boundary')
+    resolved=objects.resolve()
+    if resolved==lab.ROOT.resolve() or resolved.is_relative_to(lab.ROOT.resolve()):
+        raise RuntimeError('source_bundle_object_boundary')
+    for directory in (objects,*objects.parents):
+        if directory.is_symlink() or directory.is_junction() or (directory/'.git').exists():
+            raise RuntimeError('source_bundle_object_boundary')
+    # Existing objects are retained; this only enforces the established owner ACL.
+    lab.private_directory(objects)
+    if objects.resolve()!=resolved:
+        raise RuntimeError('source_bundle_object_boundary')
+    return objects
+
+
+def prepare_crew_fixture():
+    """Explicit isolated legacy-storage fixture; no production privacy policy."""
+    import base64
+    lab.stage('explicit_synthetic_crew_storage_fixture')
+    metadata = private_io.read_json(lab.PRIVATE/'source-bundle-plan.json')
+    config, _ = private_io.selected()
+    configured = crew_fixture.configure(config, metadata)
+    key = lab.PRIVATE/'source-bundle-crew-storage-key'
+    if key.exists():
+        if key.is_symlink() or not key.is_file() or key.stat().st_size != 44:
+            raise RuntimeError('bundle_crew_fixture_key_invalid')
+        crew_fixture.validate_key(key.read_text(encoding='ascii'))
+    else:
+        if config.get('CrewProfilePolicy'):
+            raise RuntimeError('bundle_crew_fixture_key_missing')
+        private_io.publish_bytes(key, base64.b64encode(secrets.token_bytes(32)))
+    if configured != config:
+        private_io.publish_config(configured)
+
+
+def renew_fixture_window():
+    lab.stage('explicit_synthetic_daily_fixture_window')
+    metadata = private_io.read_json(lab.PRIVATE/'source-bundle-plan.json')
+    realm = private_io.read_json(lab.PRIVATE/'realm/poseidon-lab-realm.json')
+    config, _ = private_io.selected()
+    configured = plan.renew_synthetic_window(config, realm, lab.AUTHORITY, lab.PROJECT, metadata)
+    private_io.publish_config(configured)
 
 
 def environment():
@@ -102,8 +151,14 @@ def environment():
     for name in FIXTURE_NAMES:
         env.pop('POSEIDON_BROWSER_'+name+'_FIXTURE', None)
     if (lab.PRIVATE/'source-bundle-plan.json').is_file():
-        _,selected_config=private_io.selected()
+        selected,selected_config=private_io.selected()
         env['POSEIDON_LAB_CONFIG']=str(selected_config)
+        env.pop(crew_fixture.REFERENCE, None)
+        if selected.get('CrewProfilePolicy',{}).get('KeyReferences',{}).get('synthetic-bundle-v1') == crew_fixture.REFERENCE:
+            key = lab.PRIVATE/'source-bundle-crew-storage-key'
+            if key.is_symlink() or not key.is_file() or key.stat().st_size != 44:
+                raise RuntimeError('bundle_crew_fixture_key_missing')
+            env[crew_fixture.REFERENCE] = crew_fixture.validate_key(key.read_text(encoding='ascii'))
     secret=lab.PRIVATE/'extraction-peer-secret'
     if (lab.PRIVATE/'source-bundle-plan.json').is_file() and secret.exists():
         if secret.is_symlink() or secret.stat().st_size>256:
@@ -204,7 +259,7 @@ def stop():lab.stop()
 
 def main(argv=None):
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action',choices=['init_source_bundle','prepare_bundle','prepare_source_fixtures','start','stop','register_browser'])
+    parser.add_argument('action',choices=['init_source_bundle','prepare_bundle','prepare_crew_fixture','renew_fixture_window','prepare_source_fixtures','start','stop','register_browser'])
     args=parser.parse_args(argv)
     try:
         if sys.version_info[:3]!=(3,13,13):raise RuntimeError('pinned_python_required')

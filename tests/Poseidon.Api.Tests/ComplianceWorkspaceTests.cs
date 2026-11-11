@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Poseidon.Api;
 using Poseidon.Domain;
 using Poseidon.Persistence;
+using Poseidon.Persistence.Seeding;
 using Xunit;
 
 namespace Poseidon.Api.Tests;
@@ -21,11 +22,21 @@ public sealed partial class DirectoryWorkspaceTests
         var (rule, _, _) = await AdmittedByCommands(client, host.Services);
         var pin = new RequirementPin(rule.Current.RequirementId!.Value, rule.Current.RequirementRevision!.Value,
             rule.Current.SourceId!.Value, rule.Current.SourceRevision!.Value, rule.Current.Id, rule.Current.Revision);
-        for (var i = 0; i < 26; i++) await GraphSave(client, "controls", GraphCommand() with { Requirements = [pin] });
+        var created = new List<Guid>();
+        for (var i = 0; i < 26; i++) created.Add((await GraphSave(client, "controls", GraphCommand() with { Requirements = [pin] })).Id);
         var first = (await client.GetFromJsonAsync<ComplianceControlPlanDto>(CompliancePath("control-plan"), Ct))!;
         Assert.True(first.HasMore); Assert.Equal(25, first.Controls.Length);
         var last = (await client.GetFromJsonAsync<ComplianceControlPlanDto>(CompliancePath("control-plan") + "?offset=25", Ct))!;
-        Assert.False(last.HasMore); Assert.Single(last.Controls); Assert.Equal(25, Assert.Single(last.Requirements).ControlIds.Length);
+        // The seed's incomplete draft is a real visible control. Account for it
+        // without deleting it or excluding unlinked controls from the product.
+        var seeded = ControlEvidenceFixtures.Id(SeedVessel.Id, "Control");
+        Assert.False(last.HasMore); Assert.Equal(2, last.Controls.Length);
+        var returned = first.Controls.Concat(last.Controls).Select(c => c.Id).ToArray();
+        Assert.Equal(27, returned.Length); Assert.Equal(27, returned.Distinct().Count());
+        Assert.Equal(created.Append(seeded).Order(), returned.Order());
+        Assert.Contains(last.Controls, c => c.Id == seeded && c.Verification == "UNVERIFIED");
+        Assert.Equal(25, Assert.Single(last.Requirements).ControlIds.Length);
+        Assert.All(Assert.Single(last.Requirements).ControlIds, id => Assert.Contains(id, created));
         Assert.Contains("CONTROL_LINKS_TRUNCATED", Assert.Single(last.Requirements).Blockers);
         Assert.Contains("BOUNDED_PROJECTION", last.Blockers);
     }
@@ -49,6 +60,8 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Equal(evaluation.SnapshotHash, before.Applicability.InputHash); Assert.Equal(evaluation.RuleSetHash, before.Applicability.RuleSetHash);
         Assert.Equal(JsonSerializer.Serialize(evaluation.Snapshot), JsonSerializer.Serialize(before.Applicability.Inputs!.Value));
         Assert.Equal(1, before.Plan.UncontrolledRequirementCount); Assert.Null(before.Plan.OrphanCriticalCount);
+        var seeded = ControlEvidenceFixtures.Id(SeedVessel.Id, "Control");
+        Assert.Equal(seeded, Assert.Single(before.Plan.Controls).Id);
         var pin = new RequirementPin(rule.Current.RequirementId!.Value, rule.Current.RequirementRevision!.Value,
             rule.Current.SourceId!.Value, rule.Current.SourceRevision!.Value, rule.Current.Id, rule.Current.Revision);
         var control = await GraphSave(client, "controls", GraphCommand() with { Requirements = [pin] });
@@ -58,7 +71,9 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Equal(pin.RequirementId, requirement.RequirementId); Assert.Equal(pin.SourceRevision, requirement.SourceRevision);
         Assert.Equal(control.Id, Assert.Single(requirement.ControlIds)); Assert.Equal("LINKED", requirement.State);
         Assert.Equal(0, linked.Plan.UncontrolledRequirementCount); Assert.Equal("REVIEW_REQUIRED", linked.State);
-        Assert.Equal("UNVERIFIED", Assert.Single(linked.Plan.Controls).Verification);
+        Assert.Equal(new[] { seeded, control.Id }.Order(), linked.Plan.Controls.Select(c => c.Id).Order());
+        Assert.Equal("UNVERIFIED", Assert.Single(linked.Plan.Controls, c => c.Id == control.Id).Verification);
+        Assert.Equal("UNVERIFIED", Assert.Single(linked.Plan.Controls, c => c.Id == seeded).Verification);
         var original = await client.GetStringAsync($"/api/v1/applicability/evaluations/{evaluation.Id}", Ct);
         var profile = await Profile(client); await SaveProfile(client, profile, profile.Content with { Flag = new("Unknown") });
         var stale = (await client.GetFromJsonAsync<CompliancePassportDto>(CompliancePath("passport"), Ct))!;

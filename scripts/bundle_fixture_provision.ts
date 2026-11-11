@@ -2,10 +2,11 @@
 // No copied sessions, fulfilled responses, verified evidence or production approvals.
 import { createHash, randomUUID } from 'node:crypto'
 import {spawnSync} from 'node:child_process'
-import { readFileSync, realpathSync, writeFileSync } from 'node:fs'
+import { existsSync, lstatSync, readFileSync, realpathSync, writeFileSync } from 'node:fs'
 import { isAbsolute, relative, resolve, sep } from 'node:path'
 import { strictContext } from '../tests/Poseidon.Browser.Tests/lab/strict-browser.ts'
 import { login } from '../tests/Poseidon.Browser.Tests/lab/journeys.ts'
+import {canonical, FixtureJournal, verifyFixtureReceipt} from './bundle_fixture_journal.ts'
 
 const privateRoot = realpathSync(process.env.POSEIDON_LAB_PRIVATE!)
 const expectedRoot = realpathSync(resolve(import.meta.dirname, '../.runtime/oidc-lab'))
@@ -20,17 +21,25 @@ const environment: Record<string,string> = {}
 type FixturePin={id:string;revision:number;version:number}
 type ObservedLane={noEvaluationVesselId:string;control:FixturePin;evidence:FixturePin;rule?:FixturePin&{sourceId:string;sourceRevision:number}}
 const observed = {schemaVersion:'poseidon.bundle-observed-sources.v1',runId:plan.runId,lanes:{} as Record<string,ObservedLane>}
-const evidence = { schemaVersion: 'poseidon.bundle-fixture-preparation.v1', status: 'RUNNING', stage: 'begin', httpChecks: [] as { stage: string; status: number }[], fixtureCount: 0, blockers: [] as string[], accepted: false }
+const evidence = { schemaVersion: 'poseidon.bundle-fixture-preparation.v1', attemptId:'', status: 'RUNNING', stage: 'begin', httpChecks: [] as { stage: string; status: number }[], fixtureCount: 0, blockers: [] as string[], accepted: false }
 const persist = (name: string, value: unknown) => {
   if (!/^[a-z][a-z0-9-]*\.json$/.test(name)) throw new Error('fixture_name_invalid')
   const file = resolve(privateRoot, name), child = relative(privateRoot, file)
   if (!child || isAbsolute(child) || child.startsWith('..' + sep)) throw new Error('fixture_path_invalid')
+  if(existsSync(file)){
+    if(lstatSync(file).isSymbolicLink()||!lstatSync(file).isFile()||lstatSync(file).size>2097152||!realpathSync(file).startsWith(privateRoot+sep))throw new Error('fixture_publication_boundary')
+    if(canonical(JSON.parse(readFileSync(file,'utf8')))!==canonical(value))throw new Error('fixture_publication_changed')
+    return file
+  }
   const pending = resolve(privateRoot, '.' + randomUUID() + '.json')
-  writeFileSync(pending, JSON.stringify(value), { flag: 'wx', mode: 0o600 });
+  writeFileSync(pending, JSON.stringify(value), { flag: 'wx', mode: 0o600, flush:true });
   const published=spawnSync(process.env.POSEIDON_LAB_PYTHON!,[resolve(import.meta.dirname,'bundle_private.py'),'publish-temp','--source',pending,'--target',file],{stdio:'ignore',windowsHide:true,timeout:30000})
   if(published.status!==0)throw new Error('fixture_new_publication_failed')
   return file
 }
+const journal=new FixtureJournal(privateRoot,{plan,origin:'https://localhost:5443'},persist,process.env.POSEIDON_BUNDLE_BEGIN_FIXTURE_ATTEMPT)
+evidence.attemptId=journal.manifest.attemptId
+const attemptTag=journal.manifest.attemptId.replaceAll('-','')
 const fixture = (key: string, file: string, value: unknown) => { environment[key] = persist(file, value); evidence.fixtureCount++ }
 const common = { runId: plan.runId, tenantId: plan.tenantId, vesselId: plan.vesselId, actorId: plan.writerActorId }
 const owned = await strictContext({ baseURL: 'https://localhost:5443' })
@@ -46,18 +55,27 @@ try {
   if (user.authenticated !== true || user.actorId !== plan.writerActorId || user.tenantId !== plan.tenantId || typeof user.csrfToken !== 'string' || user.csrfToken.length < 16) throw new Error('fixture_actual_actor_mismatch')
   const vessel = await read('/api/v1/vessels/' + plan.vesselId, 'actual_ship')
   if (vessel.id !== plan.vesselId || vessel.kind !== 'Ship') throw new Error('fixture_actual_ship_required')
-  const post = async (path: string, body: unknown, stage: string) => {
-    evidence.stage = stage
-    const r = await page.request.post(path, {headers:{'X-CSRF-TOKEN':user.csrfToken,'Idempotency-Key':randomUUID()},data:body})
-    evidence.httpChecks.push({stage,status:r.status()}); if (r.status() !== 200) throw new Error('fixture_http_failed')
-    return await r.json()
+  const command = async (api:typeof page.request, identity:{actorId:string;tenantId:string;csrfToken:string}, path:string, body:unknown, stage:string, method='POST', idempotent=true) => {
+    evidence.stage=stage
+    return journal.command(stage,{actorId:identity.actorId,tenantId:identity.tenantId},method,path,body,idempotent,async intent=>{
+      const response=method==='PUT'
+        ? await api.put(path,{headers:{'X-CSRF-TOKEN':identity.csrfToken,'Content-Type':'image/png'},data:Buffer.from((intent.body as {base64:string}).base64,'base64')})
+        : await api.post(path,{headers:{'X-CSRF-TOKEN':identity.csrfToken,'Idempotency-Key':intent.key},data:intent.body})
+      evidence.httpChecks.push({stage,status:response.status()})
+      return {status:response.status(),body:response.status()===200?await response.json():null}
+    },async receipt=>verifyFixtureReceipt(path,receipt,body,plan.vesselId,async source=>{
+      const response=await api.get(source);evidence.httpChecks.push({stage:'confirm_'+stage,status:response.status()})
+      if(response.status()!==200)throw new Error('fixture_current_source_unavailable')
+      return response.json()
+    }))
   }
+  const post=(path:string,body:unknown,stage:string)=>command(page.request,user,path,body,stage) as Promise<any>
   for(const [route,key,query] of [['certificate-command-center','canWriteVessel','vesselId'],['renewal-workflow','canWrite','vesselId'],['operational-downtime','canWrite','vessel'],['defects','canWrite','vessel'],['work-orders','canWrite','vessel'],['fuel-bunker-logs','canWrite','vesselId'],['port-activity-sof','canWrite','vesselId']] as const) {
     const caps=await read('/api/v1/'+route+'/capabilities?'+query+'='+plan.vesselId,'actual_'+route+'_writer_capability')
     if(caps[key]!==true)throw new Error('fixture_writer_capability_required')
   }
   for(const lane of ['desktop','narrow']) {
-    const extra=await post('/api/v1/vessels',{code:'SYNTHETIC-'+lane+'-'+plan.runId.slice(0,8),name:'FICTIONAL no-evaluation '+lane+' software fixture',kind:'Ship',companyId:vessel.companyId},'create_actual_'+lane+'_unevaluated_ship')
+    const extra=await post('/api/v1/vessels',{code:'SYNTHETIC-'+lane+'-'+attemptTag,name:'FICTIONAL no-evaluation '+lane+' software fixture',kind:'Ship',companyId:vessel.companyId},'create_actual_'+lane+'_unevaluated_ship')
     const actual=await read('/api/v1/vessels/'+extra.id,'read_actual_'+lane+'_unevaluated_ship')
     const orphans=await read('/api/v1/controls/orphans?vesselId='+actual.id+'&offset=0','actual_'+lane+'_unevaluated_orphans')
     if(actual.kind!=='Ship'||orphans.available!==false||orphans.reason!=='AUTHORITATIVE_APPLICABILITY_UNAVAILABLE')throw new Error('fixture_unqualified_ship_required')
@@ -66,11 +84,12 @@ try {
     if(control.lifecycle!=='DRAFT'||evidence.verification!=='UNVERIFIED')throw new Error('fixture_unverified_draft_required')
     observed.lanes[lane]={noEvaluationVesselId:actual.id,control:{id:control.id,revision:control.revision,version:control.version},evidence:{id:evidence.id,revision:evidence.revision,version:evidence.version}}
   }
-  const id = () => randomUUID()
-  const assetId = id(), asset = await post('/api/v1/equipment-hierarchy/'+plan.vesselId, {id:assetId,baseVersion:null,parentId:null,code:'SYNTHETIC-FIXTURE',name:'FICTIONAL software fixture equipment',level:'Equipment',systemFamily:null,equipmentType:null,criticality:null,maker:null,model:null,serialNumber:null,location:null,commissionDate:null,responsibleRoleId:null,notes:'FICTIONAL unverified test declaration'}, 'create_actual_asset')
+  let resourceSequence=0
+  const id = () => journal.id('resource-'+(++resourceSequence))
+  const assetId = id(), asset = await post('/api/v1/equipment-hierarchy/'+plan.vesselId, {id:assetId,baseVersion:null,parentId:null,code:'SYNTHETIC-'+attemptTag,name:'FICTIONAL software fixture equipment',level:'Equipment',systemFamily:null,equipmentType:null,criticality:null,maker:null,model:null,serialNumber:null,location:null,commissionDate:null,responsibleRoleId:null,notes:'FICTIONAL unverified test declaration'}, 'create_actual_asset')
   const assetContext = await read('/api/v1/vessels/'+plan.vesselId+'/defect-asset-context/'+assetId+'?revision='+asset.revision,'actual_asset_context')
   if (assetContext.current !== true || assetContext.pin.id !== assetId || assetContext.pin.revision !== asset.revision || assetContext.qualification !== 'REVIEW_REQUIRED') throw new Error('fixture_asset_pin_invalid')
-  const planId = id(), maintenance = await post('/api/v1/maintenance-plan/'+plan.vesselId,{id:planId,baseVersion:null,assetId,jobId:null,ownerRoleId:null,inputs:{triggerType:null,timeZone:'UTC',provenance:'FICTIONAL incomplete software fixture'},referenceAt:new Date().toISOString()},'create_actual_maintenance_plan')
+  const planId = id(), maintenance = await post('/api/v1/maintenance-plan/'+plan.vesselId,{id:planId,baseVersion:null,assetId,jobId:null,ownerRoleId:null,inputs:{triggerType:null,timeZone:'UTC',provenance:'FICTIONAL incomplete software fixture'},referenceAt:journal.manifest.createdAt},'create_actual_maintenance_plan')
   const planContext = await read('/api/v1/vessels/'+plan.vesselId+'/work-order-plan-origins/'+planId+'?revision='+maintenance.revision,'actual_plan_context')
   if (planContext.current !== true || planContext.pin.id !== planId || planContext.pin.revision !== maintenance.revision) throw new Error('fixture_plan_pin_invalid')
   let noon: unknown, engine: unknown
@@ -88,8 +107,7 @@ try {
     const root='/api/v1/vessels/'+plan.vesselId+'/files'
     const staged=await post(root,{name:'synthetic-'+plan.runId+'-'+lane+'.png',mime:'image/png',length:bytes.length,checksum},'stage_actual_'+lane+'_file')
     evidence.stage='upload_actual_'+lane+'_file'
-    const upload=await page.request.put(root+'/'+staged.id+'/bytes',{headers:{'X-CSRF-TOKEN':user.csrfToken,'Content-Type':'image/png'},data:bytes})
-    evidence.httpChecks.push({stage:evidence.stage,status:upload.status()});if(upload.status()!==200)throw new Error('fixture_file_upload_failed')
+    await command(page.request,user,root+'/'+staged.id+'/bytes',{base64:bytes.toString('base64'),checksum},evidence.stage,'PUT',false)
     const file=await read(root+'/'+staged.id,'read_actual_'+lane+'_clean_file')
     if(file.state!=='CleanTransport'||file.checksum!==checksum||file.revision!==1||!uuid(file.id))throw new Error('fixture_clean_file_required')
     files[lane]={id:file.id,revision:file.revision,checksum:file.checksum}
@@ -112,7 +130,7 @@ try {
       if(response.status()!==200)throw new Error('fixture_session_failed');const actual=await response.json()
       if(actual.authenticated!==true||actual.actorId!==actor||actual.tenantId!==tenant)throw new Error('fixture_actual_actor_mismatch')
       if(account===plan.reviewerAccount) {
-        const author=async(path:string,data:unknown,stage:string)=>{evidence.stage=stage;const r=await signed.request.post('/api/v1/'+path,{headers:{'X-CSRF-TOKEN':actual.csrfToken,'Idempotency-Key':randomUUID()},data});evidence.httpChecks.push({stage,status:r.status()});if(r.status()!==200)throw new Error('fixture_reviewer_authoring_failed');return r.json()}
+        const author=(path:string,data:unknown,stage:string)=>command(signed.request,actual,'/api/v1/'+path,data,stage) as Promise<any>
         for(const lane of ['desktop','narrow']) {
           const known=(value:string)=>({state:'Known',value})
           const source=await author('source-drafts',{expectedVersion:0,content:{title:known('FICTIONAL '+lane+' software source '+plan.runId),authority:known('FICTIONAL publisher; no maritime authority'),locator:known('FICTIONAL/'+plan.runId+'/'+lane)}},'create_actual_'+lane+'_source')
@@ -128,5 +146,5 @@ try {
   persist('source-bundle-environment.json',environment)
   evidence.status=evidence.blockers.length?'BLOCKED':'PRECONDITIONS_ONLY';evidence.stage='complete'
 } catch {evidence.status='FAILED'}
-finally {await owned.close();persist('source-bundle-preparation.json',evidence)}
+finally {await owned.close();persist('source-bundle-provision-report-'+randomUUID()+'.json',evidence);if(!existsSync(resolve(privateRoot,'source-bundle-preparation.json')))persist('source-bundle-preparation.json',evidence)}
 process.exitCode=evidence.status==='PRECONDITIONS_ONLY'?0:1

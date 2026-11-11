@@ -351,6 +351,12 @@ public static class HumanReviewEndpoints
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "HumanReviewCommand", "Attempted", resourceId: id);
         await using var tx = await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable, ct);
         try {
+            // A duplicate may commit after the outside receipt lookup and before
+            // this snapshot starts. Consult its receipt before stale editor tokens.
+            // Replay rechecks the same live actor, authority and material inputs.
+            // A winner after this lookup instead conflicts on the guarded heads;
+            // the existing rollback path reads its receipt outside this snapshot.
+            var transactionReplay = await Replay(); if (transactionReplay != null) return transactionReplay;
             var head = id == null ? null : await db.HumanReviewHeads.SingleOrDefaultAsync(x => x.VesselId == vessel && x.Id == id, ct);
             if (id != null && head == null) return await Fail(h, 404, "resource_not_found");
             if (cmd.ExpectedVersion != (head?.Version ?? 0)) return await Fail(h, 409, "version_conflict");

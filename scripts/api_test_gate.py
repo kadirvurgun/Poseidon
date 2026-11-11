@@ -19,12 +19,13 @@ import critical_write_coverage
 
 from oidc_lab import ROOT, root_tool
 from codex_accounts import Workers
+from posix_owned_tree import native_group_options
 
 
 def capture(args, root, timeout, env=None):
     # Keep the live parent until its owned process tree is stopped. run(timeout)
     # can kill only dotnet and leave its test executable alive on Windows.
-    groups = {'creationflags': subprocess.CREATE_NEW_PROCESS_GROUP} if os.name == 'nt' else {'start_new_session': True}
+    groups = {'creationflags': subprocess.CREATE_NEW_PROCESS_GROUP} if os.name == 'nt' else native_group_options(env)
     process = subprocess.Popen(args, cwd=root, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=env, **groups)
     try:
         output, _ = process.communicate(timeout=timeout)
