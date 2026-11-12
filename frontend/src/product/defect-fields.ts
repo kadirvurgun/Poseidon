@@ -37,7 +37,7 @@ export type DefectFieldDefinition = {
     sourceLocator: string;
     requiredWhen: 'SOURCE_CONDITIONAL_UNRESOLVED' | null;
 };
-export const defectSourceVersion = '18.01:09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674:56;14.02:3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018:443-465:v46.3';
+export { defectSourceVersion } from '../contracts/operational-source-pins';
 export const defectSchema = (): DefectFieldDefinition[] => {
     const dictionary = '14.02/sheet:Data Dictionary 2316/row:', backlog = '18.01/sheet:Backlog/row:56', conditional = 'SOURCE_CONDITIONAL_UNRESOLVED' as const;
     return [

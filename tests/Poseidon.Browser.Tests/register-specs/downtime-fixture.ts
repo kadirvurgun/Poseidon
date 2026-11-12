@@ -2,9 +2,7 @@ import { createHash } from 'node:crypto'
 import { readFileSync,realpathSync,statSync } from 'node:fs'
 import { isAbsolute,relative,sep } from 'node:path'
 import { expect,type Page } from '@playwright/test'
-import { downtimeSourceVersion } from '../../../frontend/src/product/downtime-fields.ts'
-import { defectSourceVersion } from '../../../frontend/src/product/defect-fields.ts'
-import { workOrderSourceVersion } from '../../../frontend/src/product/work-order-fields.ts'
+import { downtimeSourceVersion, defectSourceVersion, workOrderSourceVersion } from '../../../frontend/src/contracts/operational-source-pins.ts'
 export type DowntimeSignedFixture={schemaVersion:'poseidon.downtime.signed-fixture.v1';runId:string;tenantId:string;vesselId:string;actorId:string;origin:{kind:'Defect'|'WorkOrder'|'Engine';id:string;revision:number;version:number;hash:string;sourceVersion:string}}
 const object=(v:unknown):v is Record<string,unknown>=>!!v&&typeof v==='object'&&!Array.isArray(v)
 const exact=(v:unknown,keys:string[]):v is Record<string,unknown>=>object(v)&&Object.keys(v).length===keys.length&&keys.every(key=>Object.hasOwn(v,key))
