@@ -356,6 +356,10 @@ describe('TECHNICAL-COMMAND-OWNER-RECOVERY-01 (authored UI cases; execution defe
         fetcher.mockImplementation(async (url: string, init?: RequestInit) => url.endsWith('/history') ? pending.promise : base(url, init));
         render(<TechnicalWorkspace />); await english();
         await userEvent.click(screen.getByRole('button', { name: 'History' }));
+        const root = screen.getByRole('treeitem', { name: 'FICTIONAL engine' });
+        await act(async () => root.focus());
+        await userEvent.keyboard('{ArrowRight}');
+        expect(root).toHaveAttribute('aria-expanded', 'true');
         await userEvent.click(screen.getByRole('treeitem', { name: 'FICTIONAL pump' }));
         await act(async () => pending.resolve(json([{ revision: 91, savedAt: '2026-11-01T00:00:00Z', asset: { name: 'FORMER PRIVATE HISTORY' } }])));
         expect(location.search).toBe(`?id=${child}`);

@@ -135,7 +135,7 @@ public sealed partial class DirectoryWorkspaceTests
             using var current = await client.GetAsync("/api/v1/" + ObservationPath, Ct);
             Assert.Equal(HttpStatusCode.OK, current.StatusCode);
             var projection = await current.Content.ReadFromJsonAsync<JsonElement>(Ct);
-            Assert.True(projection.GetProperty("items").EnumerateArray().Any(x => x.GetProperty("id").GetGuid() == command.Id));
+            Assert.Contains(projection.GetProperty("items").EnumerateArray(), x => x.GetProperty("id").GetGuid() == command.Id);
             if (denial.EndsWith("-write", StringComparison.Ordinal)) Assert.False(projection.GetProperty("canWrite").GetBoolean());
             if (denial == "policy-missing") Assert.Equal("PolicyUnavailable", projection.GetProperty("state").GetString());
             using var denied = await ObservationRecoverySend(client, ObservationPath, body);
