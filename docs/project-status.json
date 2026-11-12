@@ -1009,7 +1009,7 @@
       "accepted": false
     }
   },
-  "as_of": "2026-11-12",
+  "as_of": "2026-11-13",
   "audit_trace_01": {
     "status": "combined_gate_executed_not_accepted",
     "accepted": false,
@@ -1114,7 +1114,7 @@
     "verification_record_scope": "Authored/deferred and original20f1198 results are historical;current rejection-repair evidence in core_bundle_01.verification"
   },
   "baseline": "POSEIDON v46.3 updated 2026-10-30 / Library26 candidate",
-  "current_stage": "S0/S1accepted. S8equipment/plan/job+observationownerrecovery AUTHORED_UNVERIFIED;newexecutionDEFERRED;staticreviewsseparate.17locale1437/1437PASS23b87d4historicaltargetonly. Genuinebrowser/signed/finalQA/CIopen. Canonical103/970SP10.62%unchanged.",
+  "current_stage": "S8 technical+17locale native bundle gates passed: frontend1524/build, backend1007unit/79PG/837API, critical117; repository2736/client20 scans0findings. Exactexecution5e and explicit8a unchanged-input bindings; signedfixture/browser/finalQA/CI open. Separateownedport-isolation task authoring; canonical103/970SP10.62% unchanged.",
   "method": "accepted story points / total baseline story points * 100",
   "scope": "complete v46.3 Backlog sheet; duplicates in other sheets excluded",
   "total_tasks": 121,
@@ -3940,7 +3940,8 @@
     "docs/phases/S0-OVERNIGHT-20261102.md",
     "docs/phases/S1-FOUNDATION-20261103.md",
     "docs/phases/TECHNICAL-COMMAND-OWNER-RECOVERY-20261111.md",
-    "docs/phases/MAINTENANCE-OBSERVATION-RECOVERY-20261112.md"
+    "docs/phases/MAINTENANCE-OBSERVATION-RECOVERY-20261112.md",
+    "docs/phases/OBSERVATION-SIGNED-FIXTURE-20261112.md"
   ],
   "active_source": "docs/sources/active.json",
   "current_package": {
@@ -4693,12 +4694,11 @@
     },
     "latest_report": "docs/phases/BUNDLE-SIGNED-RECOVERY-20261111.md",
     "parallel_product_development": {
-      "task": "MAINTENANCE-OBSERVATION-OWNER-RECOVERY-01",
-      "state": "AUTHORED_UNVERIFIED",
-      "source_checkpoint": "972d40ed1b92e7864c09d927886ec3be96c52f4e",
-      "verification": "DEFERRED_NEW_PACKAGE",
+      "task": "OBSERVATION-SIGNED-FIXTURE-01",
+      "state": "NATIVE_BUNDLE_GATES_PASS_GENUINE_GATES_OPEN",
+      "source_checkpoint": "8a9462d5f86ee114e3083e2904a93142f3936e64",
       "accepted": false,
-      "report": "docs/phases/MAINTENANCE-OBSERVATION-RECOVERY-20261112.md"
+      "report": "docs/phases/OBSERVATION-SIGNED-FIXTURE-20261112.md"
     }
   },
   "nav_workspace_01": {
@@ -13356,6 +13356,12 @@
         "zero_node_source_files": 783,
         "scope": "AST_ONLY_DERIVED_NOT_RUNTIME_PROOF",
         "html": "SKIPPED_ABOVE_5000_NODES"
+      },
+      "followup_bundle_gate": {
+        "target": "8a9462d5f86ee114e3083e2904a93142f3936e64",
+        "state": "NATIVE_BUNDLE_GATES_PASS_GENUINE_GATES_OPEN",
+        "integrated_acceptance": false,
+        "report": "docs/phases/OBSERVATION-SIGNED-FIXTURE-20261112.md"
       }
     },
     "retained_findings": [
@@ -13380,5 +13386,326 @@
     "publication": "LOCAL_ONLY_NO_PUSH_OR_NEW_PR",
     "next": "Prepare the larger technical bundle gate against the integrated owning-command package; provision actual disposable observation fixture and retain original failures before any PR/merge.",
     "source_constraints": "Current14.02 Data Dictionary2316 row1413 remains numeric/precision/physical-mapping placeholder underreview; existing observation transport recovery doesnotapproveproductioncatalog/mapping/precision or operationalpolicy."
+  },
+  "observation_signed_fixture_20261112": {
+    "task": "OBSERVATION-SIGNED-FIXTURE-01",
+    "state": "NATIVE_BUNDLE_GATES_PASS_GENUINE_GATES_OPEN",
+    "observed_at_utc": "2026-11-12T21:32:10.613716+00:00",
+    "source_checkpoint": "3d7b5bf9cbc56ff73edc1d8f053759929e38e3a4",
+    "accepted": false,
+    "accepted_story_points_added": 0,
+    "baseline": "poseidon-v46.3-20261030",
+    "report": "docs/phases/OBSERVATION-SIGNED-FIXTURE-20261112.md",
+    "task_file": "docs/tasks/OBSERVATION-SIGNED-FIXTURE-01.md",
+    "sources": [
+      "DEV-053/T-S8-00218.01Backlog54",
+      "19.01paragraph26/29/30",
+      "15.01actualauthority/idempotency",
+      "14.02mapping/precision remainsREVIEW_REQUIRED"
+    ],
+    "delivered": [
+      "Pure isolated localhost/run configuration: only exact writer observation capability and one synthetic rootasset source; operator/different-run configuration rejected",
+      "Fresh genesis and explicit immutable selected-generation preparation wired; no production defaults or current private runtime changed",
+      "Actual signed session/observation GET/session fence before publishing a closed twelve-field descriptor; no token/row values copied",
+      "Strict bounded private descriptor loader and fixed vessel/asset/source browser context replacing first-vessel selection",
+      "Required eighth source fixture environment key and explicit new Python/Node CI regression gates"
+    ],
+    "source_findings": [
+      {
+        "id": "OBS-CFG-S01",
+        "original_target": "b301b29",
+        "fix": "66d5ee0",
+        "status": "CORRECTED_SOURCE_ONLY",
+        "cause": "Match actual maximum16trustedroles"
+      },
+      {
+        "id": "OBS-CFG-S02",
+        "original_target": "b301b29",
+        "fix": "66d5ee0",
+        "status": "CORRECTED_SOURCE_ONLY",
+        "cause": "Reject float-typed operator edits rather than normalize exact policy"
+      }
+    ],
+    "verification": {
+      "authorization": "Larger technical owning-command plus17locale bundle source authored and independentlysource-reviewed; userdeliverycadence permits fullPRpreparation gate",
+      "target": "8a9462d5f86ee114e3083e2904a93142f3936e64",
+      "frontend": "PASS_ON_5e17850_REUSE_REQUIRES_IDENTICAL_INPUTS",
+      "protocols": "NODE54_PASS_66f613c_PY56_PASS_3d7b5bf_PY8_PASS_8a9462d",
+      "integrated_acceptance": false,
+      "actual_fixture_application": "NOT_APPLIED",
+      "genuine_provider_browser_backend_ci": "OPEN",
+      "prior_passes": "1437/1437 frontend23b87d4 and PR16CI32ff1d0 retained on originaltargets only",
+      "retained_attempts": [
+        {
+          "target": "3d7b5bf9cbc56ff73edc1d8f053759929e38e3a4",
+          "frontend": {
+            "lint_exit": 1,
+            "rule": "react-hooks/set-state-in-effect",
+            "file": "frontend/src/product/TechnicalWorkspace.tsx",
+            "line": 216,
+            "tests_executed": 0,
+            "later_stages": "NOT_RUN_FAILFAST"
+          },
+          "protocol": {
+            "python_passed": 56,
+            "python_failed": 0,
+            "python_skipped": 0,
+            "node_tests": 41,
+            "node_passed": 33,
+            "node_failed": 8,
+            "node_skipped": 0,
+            "not_run": [
+              "test_bundle_fixture_journal.ts",
+              "test_bundle_legacy_context.ts"
+            ]
+          },
+          "diagnosis": {
+            "first_failing_test": "loads only the twelve run-bound references from a private regular descriptor",
+            "test_file": "tests/Poseidon.Browser.Tests/lab/observation-fixture.test.ts",
+            "test_line": 61,
+            "source_file": "tests/Poseidon.Browser.Tests/register-specs/observation-fixture.ts",
+            "source_line": 21,
+            "cause": "UUIDregexmissingone4character group;31characterregexcombinedwith36lengthrejectsvalidUUID"
+          },
+          "fix": "66f613c55b6eeac8b06b42eba897404ffb563ba7",
+          "acceptance": false
+        },
+        {
+          "target": "66f613c55b6eeac8b06b42eba897404ffb563ba7",
+          "frontend": {
+            "lint": "PASS",
+            "lint_seconds": 24.884,
+            "typecheck_exit": 1,
+            "typecheck_seconds": 15.382,
+            "diagnostic": "TS2769",
+            "count": 9,
+            "file": "frontend/src/product/TechnicalWorkspace.test.tsx",
+            "lines": [
+              473,
+              474,
+              475,
+              476,
+              477,
+              489,
+              490,
+              491,
+              497
+            ],
+            "tests_executed": 0,
+            "cause": "PlaywrightexactoptionunsupportedbyTestingLibraryByRoleOptions",
+            "fix": "597cafae981a28a396c152a0e620bde36faf5f1a"
+          },
+          "protocol": {
+            "node_tests": 54,
+            "node_passed": 54,
+            "node_failed": 0,
+            "node_skipped": 0,
+            "node_todo": 0,
+            "python_reused": 56,
+            "python_executed_now": 0,
+            "python_original_target": "3d7b5bf9cbc56ff73edc1d8f053759929e38e3a4",
+            "identical_source_blobs": 88
+          },
+          "acceptance": false
+        },
+        {
+          "target": "597cafae981a28a396c152a0e620bde36faf5f1a",
+          "frontend": {
+            "lint": "PASS",
+            "typecheck": "PASS",
+            "components_total": 1524,
+            "components_passed": 1523,
+            "components_failed": 1,
+            "pending": 0,
+            "todo": 0,
+            "unhandled": 0,
+            "seconds": 277.263,
+            "failed_test": "ignores a history completion from a previously selected resource",
+            "file": "frontend/src/product/TechnicalWorkspace.test.tsx",
+            "line": 359,
+            "cause": "Testqueriedcollapseddescendantwithoutopeningroot",
+            "build": "NOT_RUN_FAILFAST"
+          },
+          "backend": {
+            "restore": "PASS",
+            "release_build": "FAIL",
+            "file": "tests/Poseidon.Api.Tests/MaintenanceObservationRecoveryTests.cs",
+            "line": 138,
+            "code": "xUnit2012",
+            "narrow_compile_confirmed": true,
+            "tests_executed": 0,
+            "docker_at_first_preflight": "UNAVAILABLE"
+          },
+          "fix": "5e1785041dfb438c4db304dffac6c5ac3bd0b13f",
+          "acceptance": false
+        }
+      ],
+      "backend": "PASS_ON_5e17850_BUILD_UNIT1007_PERSISTENCE_PG79_API837_CRITICAL117",
+      "current_frontend_observations": {
+        "lint_exit": 0,
+        "errors": 0,
+        "warnings": 0,
+        "lint_seconds": 31.864,
+        "typecheck_exit": 0,
+        "typecheck_seconds": 25.599,
+        "technical_file_tests": 31,
+        "technical_file_passed": 31,
+        "technical_file_seconds": 29.551,
+        "components": "PASS",
+        "build": "PASS",
+        "execution_target": "5e1785041dfb438c4db304dffac6c5ac3bd0b13f",
+        "component_files": 146,
+        "component_tests": 1524,
+        "component_passed": 1524,
+        "component_failed": 0,
+        "component_pending": 0,
+        "component_todo": 0,
+        "component_unhandled": 0,
+        "component_seconds": 306.484,
+        "technical_file_tests_are_subset": true,
+        "build_exit": 0,
+        "build_seconds": 5.878,
+        "build_warning_categories": [
+          "large_chunk",
+          "dynamic_import_chunk",
+          "outside_frontend_outdir"
+        ],
+        "dist_files": 20,
+        "dist_bytes": 5521820,
+        "reuse_binding": "Identical frontend/contracts inputs and all20 artifact hashes; no fresh native run on8a"
+      },
+      "current_backend_observations": {
+        "target": "5e1785041dfb438c4db304dffac6c5ac3bd0b13f",
+        "release_build_exit": 0,
+        "release_build_seconds": 74.733,
+        "domain_unit_passed": 756,
+        "persistence_unit_passed": 75,
+        "api_unit_passed": 176,
+        "failed": 0,
+        "skipped": 0,
+        "real_api_pg_integration": "PASS_EXACT_DISCOVERED_SCOPE",
+        "docker": "READY_AFTER_LOCAL_DOCKER_DESKTOP_START",
+        "persistence_integration_passed": 79,
+        "persistence_integration_failed": 0,
+        "persistence_integration_skipped": 0,
+        "persistence_integration_seconds": 255.731,
+        "api_discovered_cases": 837,
+        "api_discovered_methods": 544,
+        "api_attempt01": "GATE_EXECUTION_FAILED_BEFORE_TESTS_WINDOWS_COMMAND_LENGTH",
+        "attempt01_two_shard_command_utf16_lengths": [
+          35537,
+          36194
+        ],
+        "attempt02_four_shard_command_utf16_lengths": [
+          17908,
+          18316,
+          17862,
+          18113
+        ],
+        "attempt02_expected_case_partition": [
+          210,
+          209,
+          209,
+          209
+        ],
+        "attempt02_filter_scope_reduced": false,
+        "api_integration_passed": 837,
+        "api_integration_failed": 0,
+        "api_integration_skipped": 0,
+        "api_integration_seconds": 846.767,
+        "api_integration_shards": 4,
+        "critical_write_coverage": "PASS_ACTUAL_CURRENT_CRITICAL_SCOPE",
+        "critical_operations_required": 117,
+        "critical_operations_observed": 117,
+        "critical_route_templates": 107,
+        "critical_errors": [],
+        "owned_cleanup": "S3_CHILD_COMPLETED_S3_CONTAINER_PRIVATE_ENV_AND_CLAM_REMOVED",
+        "critical_coverage_is_business_acceptance": false
+      },
+      "genuine_provider_browser": "OPEN",
+      "independent_final_target_qa": "OPEN",
+      "required_ci": "OPEN",
+      "source_client_scan": {
+        "original_target": "5e1785041dfb438c4db304dffac6c5ac3bd0b13f",
+        "repository_files": 2736,
+        "original_repository_findings": 1,
+        "original_finding_rule": "credential-literal",
+        "original_finding_file": "scripts/test_bundle_observation_fixture.py",
+        "original_finding_line": 19,
+        "fix_target": "8a9462d5f86ee114e3083e2904a93142f3936e64",
+        "fix": "Generate ephemeral per-test input; retain preservation assertion",
+        "client_files": 20,
+        "client_findings": 0,
+        "current_rescan": "PASS",
+        "waiver_added": false,
+        "current_repository_files": 2736,
+        "current_repository_findings": 0,
+        "current_repository_seconds": 140.087,
+        "current_client_files": 20,
+        "current_client_findings": 0,
+        "current_client_seconds": 1.989,
+        "external_approval_input": "Existing controlled GitHub variable, consumed in memory without modification",
+        "evidence": ".runtime/technical-localization-gate-20261112/8a9462d/source-client-scan.json"
+      },
+      "python_observation_followup": {
+        "target": "8a9462d5f86ee114e3083e2904a93142f3936e64",
+        "passed": 8,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "note": "Targeted rerun; subset of previous56, not64 distinct tests"
+      },
+      "graphify_update": {
+        "target": "8a9462d",
+        "exit_code": 0,
+        "duration_seconds": 177.331,
+        "nodes": 19379,
+        "edges": 39982,
+        "mode": "AST_ONLY_NO_MODEL_CALLS",
+        "zero_node_warning": true,
+        "large_graph_html_skipped": true,
+        "runtime_acceptance": false
+      },
+      "backend_evidence_binding": {
+        "file": ".runtime/technical-localization-gate-20261112/5e17850/backend-input-parity-to-8a9462d.json",
+        "identical_input_blobs": 593,
+        "actual_execution_target": "5e1785041dfb438c4db304dffac6c5ac3bd0b13f",
+        "target": "8a9462d5f86ee114e3083e2904a93142f3936e64",
+        "native_rerun": false
+      }
+    },
+    "publication": "LOCAL_ONLY_NO_PUSH_OR_NEW_PR",
+    "canonical_acceptance_changed": false,
+    "next": "Implement reviewed explicit owned runtime port isolation without touching preview; then apply fresh genuine observation fixtures, run signed/browser scope, independent final QA and required CI.",
+    "source_reviews": [
+      {
+        "file": "config-source-review-b301b29.json",
+        "sha256": "7c3bcdb5a4eaab9ffeee38ea520adee4a9646864b1bce438f9ee29402b160a57",
+        "scope": "STATIC_ONLY",
+        "acceptance": false
+      },
+      {
+        "file": "config-source-review-66d5ee0.json",
+        "sha256": "f83603eb641da44fe333336ac5e583a4999ebfccf9d00c70bd2dc877dbb6b122",
+        "scope": "STATIC_ONLY",
+        "acceptance": false
+      },
+      {
+        "file": "full-source-review-3d7b5bf.json",
+        "sha256": "5b481cf196a97828f0ed954792309aa3795709715cadbb3387e1cf0def1f0c47",
+        "scope": "STATIC_ONLY",
+        "acceptance": false
+      }
+    ],
+    "genuine_runtime_readiness": {
+      "state": "SOURCE_REVIEW_FOUND_FIXED_PORT_COEXISTENCE_BLOCKER",
+      "api_port": 5443,
+      "provider_port": 8443,
+      "database_port": 55432,
+      "existing_preview_preserved": true,
+      "next_task": "BUNDLE-PORT-ISOLATION-01",
+      "new_author_worktree": "bundle-port-isolation-20261113",
+      "new_code_checks": "DEFERRED_DURING_AUTHORING"
+    }
   }
 }

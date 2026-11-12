@@ -1,5 +1,23 @@
 # POSEIDON — PR16 ve yerelleştirme durumu
 
+**13 Kasım — S8 teknik komut ve 17 dil paketi:** ön yüzün **1524/1524 bileşen
+testi**, lint, tip kontrolü ve üretim derlemesi geçti. Backend Release derlemesi,
+**1007/1007 birim testi** ve **79/79 gerçek PostgreSQL entegrasyon testi** geçti.
+Bu yürütmeler `5e17850` kapsamındadır; test verisindeki sabit istemci değerini
+kaldıran `8a9462d` için değişmeyen girdiler açık kaynak bağıyla korunur.
+Son değişikliğin 8/8 Python testi de geçti; önceki 56 Python testine ek sayılmaz.
+
+API entegrasyonu **837/837 PASS**, hata/skip 0; gerçek kritik HTTP/yazma
+kapsamı **117/117**. İlk girişimin Windows komut sınırı teşhis edilip dört shard
+ile bütün vaka kapsamı korundu; özgün başarısız kayıt silinmedi. Kaynak taramasındaki bir
+test-verisi bulgusu düzeltildi; yeni taramalar 2736 kaynak ve 20 istemci
+dosyasında sıfır bulguyla geçti. İmzalı fixture henüz uygulanmadı; gerçek browser,
+bağımsız son hedef QA ve yeni CI kapıları açık. Açık önizlemeye dokunmadan ikinci
+laboratuvarı çalıştırmak için ayrı port izolasyonu görevi başlatıldı. Yeni PR/push/merge yok.
+Resmî kabul **20/121 iş, 103/970 SP = %10,62; 0/196 ayrı ekran** olarak aynı.
+[Güncel büyük paket raporu](phases/OBSERVATION-SIGNED-FIXTURE-20261112.md).
+
+
 **12 Kasım — S8/PMS gözlem komutları:** 401/403 sonrası belirsiz capture/revoke
 komutunu koruma, asıl kullanıcıyla güncel CSRF üzerinden açık retry, private
 DOM/üst ekran erişim çekilmesi ve işlem sürerken navigasyon koruması yazıldı.
