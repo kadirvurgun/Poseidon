@@ -17,9 +17,10 @@ import oidc_lab as lab
 import bundle_fixture_plan as plan
 import bundle_private as private_io
 import bundle_crew_fixture as crew_fixture
+import bundle_observation_fixture as observation_fixture
 
 BASE_ENVIRONMENT = lab.environment
-FIXTURE_NAMES = ('DAILY','CERTIFICATE','CERTIFICATE_EXTRACTION','SHIP_OPERATIONS','DEFECT','WORK_ORDER','DOWNTIME')
+FIXTURE_NAMES = ('DAILY','CERTIFICATE','CERTIFICATE_EXTRACTION','SHIP_OPERATIONS','DEFECT','WORK_ORDER','DOWNTIME','OBSERVATION')
 NAVIGATION_KEYS = ['noon-report','deck-daily-log','engine-daily-log','fuel-bunker-log','port-activity-sof',
     'operational-downtime','defects','work-order-center','certificate-command-center','renewal-workflow',
     'audit','import','sources','requirements']
@@ -84,6 +85,7 @@ def prepare_bundle():
     for permission in ('audit.read','file.read','file.write'):
         if permission not in members[0]['Permissions']:
             members[0]['Permissions'].append(permission)
+    config = observation_fixture.configure(config, metadata)
     objects=source_object_root()
     config['SecureFiles']={'Adapter':'LocalDevelopment','Root':str(objects),'MaxBytes':1048576,
         'MaxPixels':1048576,'ScanSeconds':15,'ClamdPort':port,'CapabilitySeconds':60,

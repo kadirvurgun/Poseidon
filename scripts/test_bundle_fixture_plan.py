@@ -70,6 +70,39 @@ class BundleFixturePlanTests(unittest.TestCase):
         self.assertTrue(set(plan.WRITER_PERMISSIONS).issubset(writer['Permissions']))
         self.assertFalse(any('verify' in permission or 'finalize' in permission for permission in writer['Permissions']))
 
+    def test_fresh_plan_includes_only_its_exact_run_bound_observation_source_and_writer_capability(self):
+        realm, config = self.setup_fixture(); original = deepcopy(config)
+        after, metadata = self.configure(realm, config)
+        rule, = after['MaintenanceObservations']['Sources']
+        self.assertEqual((plan.TENANT, plan.SHIP, plan.SHIP), (rule['TenantId'], rule['VesselId'], rule['AssetId']))
+        self.assertEqual('SYNTHETIC-OBS-' + metadata['runId'], rule['Source'])
+        self.assertEqual('SYNTHETIC-OBS-v1-' + metadata['runId'], rule['Version'])
+        self.assertEqual(('Meter', 'hours', 3600, 4), (rule['Kind'], rule['Unit'], rule['FreshnessSeconds'], rule['MaxScale']))
+        for member in after['Authentication']['Oidc']['Memberships']:
+            self.assertEqual(member['ActorId'] == metadata['writerActorId'], 'maintenance.observation.write' in member['Permissions'])
+        self.assertEqual(original, config)
+
+    def test_explicit_selected_generation_preparation_adds_observation_before_immutable_publication(self):
+        import os
+        realm, config = self.setup_fixture(); selected, metadata = self.configure(realm, config)
+        expected = deepcopy(selected['MaintenanceObservations'])
+        del selected['MaintenanceObservations']
+        selected['Authentication']['Oidc']['Memberships'][0]['Permissions'].remove('maintenance.observation.write')
+        before = deepcopy(selected)
+        with tempfile.TemporaryDirectory() as directory, patch.object(lab, 'PRIVATE', Path(directory)), \
+                patch.object(lab, 'stage'), patch.object(lab, 'register_membership', side_effect=deepcopy), \
+                patch.object(private_io, 'selected', return_value=(selected, Path(directory) / 'selected.json')), \
+                patch.object(private_io, 'publish_config') as publish, patch.object(bundle, 'source_object_root', return_value=Path(directory) / 'objects') as objects, \
+                patch.object(bundle.socket, 'create_connection') as connect, patch.dict(os.environ, {'POSEIDON_GATE_CLAMD_PORT': '3310'}):
+            (Path(directory) / 'source-bundle-plan.json').write_text(json.dumps(metadata))
+            connect.return_value.__enter__.return_value.recv.return_value = b'PONG\0'
+            bundle.prepare_bundle()
+            publish.assert_called_once(); objects.assert_called_once()
+            prepared = publish.call_args.args[0]
+            self.assertEqual(expected, prepared['MaintenanceObservations'])
+            self.assertIn('maintenance.observation.write', prepared['Authentication']['Oidc']['Memberships'][0]['Permissions'])
+            self.assertEqual(before, selected)
+
     def test_exact_record_authorities_match_existing_browser_hash_scheme_both_lanes(self):
         realm, config = self.setup_fixture(); run = str(uuid.uuid4())
         after, _ = self.configure(realm, config, run)
@@ -157,24 +190,26 @@ class BundleFixturePlanTests(unittest.TestCase):
             self.assertFalse((Path(directory)/'source-bundle-plan.json').exists())
             self.assertTrue((Path(directory)/'source-bundle-host-000001.json').exists())
 
-    def test_fixture_environment_requires_all_seven_private_bounded_files(self):
+    def test_fixture_environment_requires_all_eight_private_bounded_files(self):
         with tempfile.TemporaryDirectory() as directory, patch.object(lab, 'PRIVATE', Path(directory)):
             root=Path(directory)
             self.assertEqual({},bundle.source_fixture_environment())
             values={}
-            for name in ('DAILY','CERTIFICATE','CERTIFICATE_EXTRACTION','SHIP_OPERATIONS','DEFECT','WORK_ORDER','DOWNTIME'):
+            for name in ('DAILY','CERTIFICATE','CERTIFICATE_EXTRACTION','SHIP_OPERATIONS','DEFECT','WORK_ORDER','DOWNTIME','OBSERVATION'):
                 file=root/(name.lower()+'.json');file.write_text('{}')
                 values['POSEIDON_BROWSER_'+name+'_FIXTURE']=str(file.resolve())
             env=root/'source-bundle-environment.json';env.write_text(json.dumps(values))
             self.assertEqual(values,bundle.source_fixture_environment())
-            values.pop('POSEIDON_BROWSER_DOWNTIME_FIXTURE');env.write_text(json.dumps(values))
-            with self.assertRaisesRegex(RuntimeError,'incomplete'):bundle.source_fixture_environment()
+            for missing in ('POSEIDON_BROWSER_DOWNTIME_FIXTURE', 'POSEIDON_BROWSER_OBSERVATION_FIXTURE'):
+                incomplete = {key: value for key, value in values.items() if key != missing}
+                env.write_text(json.dumps(incomplete))
+                with self.assertRaisesRegex(RuntimeError,'incomplete'):bundle.source_fixture_environment()
 
     def test_fixture_environment_rejects_path_escape_extra_env_and_oversized_files(self):
         for change in ('escape','extra','oversize'):
             with tempfile.TemporaryDirectory() as directory, patch.object(lab,'PRIVATE',Path(directory)):
                 root=Path(directory);file=root/'fixture.json';file.write_text('{}')
-                values={'POSEIDON_BROWSER_'+name+'_FIXTURE':str(file.resolve()) for name in ('DAILY','CERTIFICATE','CERTIFICATE_EXTRACTION','SHIP_OPERATIONS','DEFECT','WORK_ORDER','DOWNTIME')}
+                values={'POSEIDON_BROWSER_'+name+'_FIXTURE':str(file.resolve()) for name in ('DAILY','CERTIFICATE','CERTIFICATE_EXTRACTION','SHIP_OPERATIONS','DEFECT','WORK_ORDER','DOWNTIME','OBSERVATION')}
                 if change=='escape':values['POSEIDON_BROWSER_DAILY_FIXTURE']=str((root.parent/'untrusted.json').resolve())
                 if change=='extra':values['NODE_TLS_REJECT_UNAUTHORIZED']='0'
                 if change=='oversize':file.write_text('a'*8193)

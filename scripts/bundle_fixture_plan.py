@@ -8,6 +8,7 @@ from copy import deepcopy
 from datetime import datetime, timedelta, timezone
 import hashlib
 import uuid
+import bundle_observation_fixture as observation_fixture
 
 TENANT = '10000000-0000-0000-0000-000000000001'
 SHIP = '30000000-0000-0000-0000-000000000001'
@@ -146,6 +147,7 @@ def configure(config, realm, authority, project, run_id, now=None):
         'reviewerRoleId': reviewer_role, 'writerRoleId': writer['RoleReferences'][0],
         'legacyBatches': {lane: str(uuid.uuid4()) for lane in ('desktop', 'narrow')},
         'state': 'CONFIGURATION_ONLY_REQUIRES_REAL_LOGIN_AND_HTTP', 'extraction': 'UNCONFIGURED_REQUIRES_EXPLICIT_PROTOCOL_PEER'}
+    candidate = observation_fixture.configure(candidate, plan)
     return candidate, plan
 
 
