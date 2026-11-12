@@ -3,12 +3,12 @@ import { type Locale as AppLocale } from "../i18n";
 import { CompliancePolicyEditor } from './CompliancePolicyEditor';
 import { complianceFields } from './compliance-input-contract';
 import { owningFields } from './operation-equipment-contract';
-import { useEffect, useState } from 'react';
+import { Button } from '../components/ui/button';
+import { EnterpriseActions } from './EnterprisePatterns';
+import { useQualificationRecovery } from './use-qualification-recovery';
+import { loginHref } from './workspace-location';
 import { TugCalculationEditor } from './TugCalculationEditor';
 import * as api from './qualification-api';
-import { ApiError } from './api';
-import { loadProfile } from './profile-api';
-import type { Profile } from './profile-contract';
 type Props = {
     rule: string;
     ruleRevision: number;
@@ -19,113 +19,21 @@ type Props = {
     onDirty: (v: boolean) => void;
     onSaving: (v: boolean) => void;
 };
-type Attempt = {
-    body: string;
-    key: string;
-    action: 'events' | 'fact-attestations';
-};
-export function RegulatoryQualification({ rule, ruleRevision, vessel, language, csrf, offline, onDirty, onSaving }: Props) {
-    const [data, setData] = useState<api.Page | null>(null), [content, setContent] = useState(api.blank), [profile, setProfile] = useState<Profile | null>(null);
-    const [historyRows, setHistoryRows] = useState<api.Qualification[]>([]), [historyMore, setHistoryMore] = useState(false);
-    const [dirty, setDirty] = useState(false), [busy, setBusy] = useState(false), [error, setError] = useState<number | null>(null), [reload, setReload] = useState(0);
-    const [attempt, setAttempt] = useState<Attempt | null>(null), [conflict, setConflict] = useState(false), [state, setState] = useState('ADOPTED'), [until, setUntil] = useState(''), [notice, setNotice] = useState('');
-    useEffect(() => { onDirty(dirty || !!attempt || conflict); }, [dirty, attempt, conflict, onDirty]);
-    useEffect(() => { onSaving(busy); }, [busy, onSaving]);
-    const profileScope = `${vessel}:${reload}:${offline}`;
-    const [previousProfileScope, setPreviousProfileScope] = useState(profileScope);
-    if (previousProfileScope !== profileScope) {
-        setPreviousProfileScope(profileScope);
-        setProfile(null);
-    }
-    useEffect(() => {
-        if (offline)
-            return;
-        let active = true;
-        const c = new AbortController();
-        const timer = setTimeout(() => c.abort(), 15000);
-        api.load(rule, vessel, c.signal).then(p => {
-            if (active) {
-                setData(p);
-                setHistoryRows(p.items);
-                setHistoryMore(p.hasMore);
-                setContent(p.items[0]?.content ?? api.blank());
-                setError(null);
-            }
-        }).catch(e => {
-            if (active) {
-                setData(null);
-                setError(e instanceof ApiError ? e.status : 0);
-            }
-        });
-        if (vessel)
-            loadProfile(vessel, c.signal).then(p => {
-                if (active)
-                    setProfile(p);
-            }).catch(() => {
-                if (active)
-                    setProfile(null);
-            });
-        return () => { active = false; c.abort(); clearTimeout(timer); };
-    }, [rule, ruleRevision, vessel, reload, offline]);
-    const current = data?.items[0];
-    const locked = offline || busy || conflict || !!attempt || !data || [401, 403, 404].includes(error ?? -1);
-    const edit = (patch: Partial<api.Content>) => { setContent(c => ({ ...c, ...patch })); setDirty(true); };
-    async function send(a: Attempt) {
-        if (offline || busy || conflict)
-            return;
-        setAttempt(a);
-        setBusy(true);
-        setError(null);
-        const c = new AbortController();
-        const timer = setTimeout(() => c.abort(), 15000);
-        try {
-            await api.send(rule, a, csrf, c.signal);
-            setAttempt(null);
-            setDirty(false);
-            setReload(x => x + 1);
-            setNotice(localizedText(language, "pairs.m_d11768bdd33352e6"));
-        }
-        catch (e) {
-            const status = e instanceof ApiError ? e.status : 0;
-            setError(status);
-            if ([400, 401, 403, 404, 409].includes(status))
-                setAttempt(null);
-            if (status === 409)
-                setConflict(true);
-        }
-        finally {
-            setBusy(false);
-            clearTimeout(timer);
-        }
-    }
-    function transition(next: string) {
-        const action = next === 'DRAFT' ? 'draft' : next === 'IN_REVIEW' ? 'review' : 'qualify';
-        const authorityId = data?.authorities.find(a => a.action === action)?.authorityId;
-        if (!authorityId)
-            return;
-        void send({ action: 'events', key: crypto.randomUUID(), body: JSON.stringify({ expectedVersion: current?.version ?? 0, ruleRevision, authorityId, state: next, content: next === 'DRAFT' ? content : null }) });
-    }
-    async function source(file: File | undefined) {
-        if (!file)
-            return;
-        if (file.size < 1 || file.size > 2097152) {
-            setError(400);
-            return;
-        }
-        const bytes = new Uint8Array(await file.arrayBuffer());
-        let binary = '';
-        bytes.forEach(b => { binary += String.fromCharCode(b); });
-        edit({ sourceBytesBase64: btoa(binary) });
-    }
+export function RegulatoryQualification({ rule, ruleRevision, vessel, language, offline, onDirty, onSaving }: Props) {
+    const { data, content, profile, historyRows, historyMore, dirty, busy, error, attempt, notice, locked, current, canShow, available, canRetry, state, until, chooseState, chooseUntil, edit, send, capture, transition, source, discard, recheck, more } =
+        useQualificationRecovery({ rule, ruleRevision, vessel, offline, onDirty, onSaving });
     const control = content.control;
     const controlEdit = (patch: Partial<api.ControlPolicy>) => edit({ control: { ownerRole: content.ownerRole, frequency: null, evidencePolicy: null, verificationPolicy: null, maxAgeHours: null, requireFile: null, requireAcknowledgment: null, acknowledgmentRole: null, requiredVerificationMechanism: null, verificationMechanismSourceLocator: null, sourceLocator: null, ...control, ...patch } });
     return <section className="regulatory-qualification" aria-label={localizedText(language, "pairs.m_f61046966aa5331c")}>
     <h3>{localizedText(language, "pairs.m_f61046966aa5331c")}</h3>
     <p>{localizedText(language, "pairs.m_33934b7c51852222")}</p>
     {offline && <p role="status">{localizedText(language, "pairs.m_6ce71a12ae4fcd9b")}</p>}
-    {!data && error === null && <p role="status">{localizedText(language, "pairs.m_f9810a73f6e5c421")}</p>}
-    {error !== null && <p role="alert">{error === 403 ? localizedText(language, "pairs.m_c96b3e85ec9464f6") : error === 409 ? localizedText(language, "pairs.m_75ed663c7b057ed4") : error === 0 ? localizedText(language, "pairs.m_0236b48b05ed5a34") : `${localizedText(language, "pairs.m_eb3627298fe00267")} (${error})`}</p>}
-    {notice && <p role="status">{notice}</p>}
+    {!canShow && error === null && <p role="status">{localizedText(language, "pairs.m_f9810a73f6e5c421")}</p>}
+    {error !== null && <p role="alert">{error === 403 ? localizedText(language, "pairs.m_c96b3e85ec9464f6") : error === 409 ? localizedText(language, "pairs.m_75ed663c7b057ed4") : error === 0 ? localizedText(language, attempt?.unknown ? "pairs.m_0236b48b05ed5a34" : "pairs.m_eb3627298fe00267") : `${localizedText(language, "pairs.m_eb3627298fe00267")} (${error})`}</p>}
+    {error === 401 && <a href={loginHref()} target="_blank" rel="noopener noreferrer">{localizedText(language, 'pairs.m_e3f876bc9c438b22')}</a>}
+    {notice && <p role="status">{localizedText(language, 'pairs.m_d11768bdd33352e6')}</p>}
+    {attempt?.unknown && <p role="status">{localizedText(language, 'pairs.m_62930366e47b200e')}</p>}
+    {canShow && <>
     {data?.items.length === 0 && <p>{localizedText(language, "pairs.m_6865d2343faf7ae9")}</p>}
     {current && current.ruleRevision !== ruleRevision && <p role="alert">{localizedText(language, "pairs.m_f2f67f1fe95584ab")}</p>}
     {current && <p>{current.state} · {current.revision} · {current.savedAt} · {current.policyVersion}<br /><span className="register-hash">{current.sourceHash || '—'} · {current.hash}</span><br />{current.blockers.join(' · ')}<br />{current.contract?.sourceLocator} · {current.contract?.requiredMechanism}</p>}
@@ -157,16 +65,20 @@ export function RegulatoryQualification({ rule, ruleRevision, vessel, language, 
     </fieldset>
     <fieldset disabled={locked || dirty}><legend>{localizedText(language, "pairs.m_cfad7cfe48a0f655")}</legend>
       <button disabled={!data?.actions.includes('review') || current?.state !== 'DRAFT'} onClick={() => transition('IN_REVIEW')}>{localizedText(language, "pairs.m_1e37597983b930c9")}</button>
-      <label>{localizedText(language, "pairs.m_a49a2ecee46f4622")}<select value={state} onChange={e => setState(e.target.value)}>{['ADOPTED', 'AWAITING', 'FUTURE_EFFECTIVE', 'IN_FORCE', 'SUPERSEDED'].map(s => <option key={s}>{s}</option>)}</select></label>
+      <label>{localizedText(language, "pairs.m_a49a2ecee46f4622")}<select value={state} onChange={e => chooseState(e.target.value)}>{['ADOPTED', 'AWAITING', 'FUTURE_EFFECTIVE', 'IN_FORCE', 'SUPERSEDED'].map(s => <option key={s}>{s}</option>)}</select></label>
       <button disabled={!data?.actions.includes('qualify')} onClick={() => transition(state)}>{localizedText(language, "pairs.m_038db5c83a33d044")}</button>
-      {data?.actions.includes('attest') && <><p>{localizedText(language, "pairs.m_8a73ccd70e32c31a")} {profile?.revision}</p><label>{localizedText(language, "pairs.m_a8bb7cd619125d09")}<input value={until} onChange={e => setUntil(e.target.value)}/></label><button disabled={!profile || !until} onClick={() => {
+      {data?.actions.includes('attest') && <><p>{localizedText(language, "pairs.m_8a73ccd70e32c31a")} {profile?.revision}</p><label>{localizedText(language, "pairs.m_a8bb7cd619125d09")}<input value={until} onChange={e => chooseUntil(e.target.value)}/></label><button disabled={!profile || !until} onClick={() => {
                 const authorityId = data.authorities.find(a => a.action === 'attest')?.authorityId;
                 if (authorityId && profile)
-                    void send({ action: 'fact-attestations', key: crypto.randomUUID(), body: JSON.stringify({ authorityId, vesselId: vessel, profileRevision: profile.revision, profileVersion: profile.version, qualificationRevision: current?.revision, qualificationVersion: current?.version, fields: content.inputs?.filter(p => p.basis === 'HumanAttested' && api.profileInputs.includes(p.field)).map(p => p.field) ?? [], validUntil: until }) });
+                    capture('fact-attestations', { authorityId, vesselId: vessel, profileRevision: profile.revision, profileVersion: profile.version, qualificationRevision: current?.revision, qualificationVersion: current?.version, fields: content.inputs?.filter(p => p.basis === 'HumanAttested' && api.profileInputs.includes(p.field)).map(p => p.field) ?? [], validUntil: until });
             }}>{localizedText(language, "pairs.m_55c9915df68385a0")}</button></>}
     </fieldset>
-    {attempt && <button disabled={offline || busy || conflict} onClick={() => void send(attempt)}>{localizedText(language, "pairs.m_2915875883556658")}</button>}
-    <button disabled={busy} onClick={() => { setAttempt(null); setDirty(false); setConflict(false); setReload(x => x + 1); }}>{localizedText(language, "pairs.m_7a7b7dd849b7bc4b")}</button>
-    <details><summary>{localizedText(language, "pairs.m_279e367745c63e95")}</summary>{historyRows.map(row => <p key={row.revision}>{row.revision} · {row.state} · {row.savedAt} · {row.hash} · {row.authorityHash}</p>)}<button disabled={locked || !historyMore || historyRows.length === 0} onClick={() => { const c = new AbortController(); api.load(rule, vessel, c.signal, historyRows[historyRows.length - 1].revision).then(p => { setHistoryRows(rows => [...rows, ...p.items]); setHistoryMore(p.hasMore); }).catch(() => setError(403)); }}>{localizedText(language, "pairs.m_ff1beddacf15fc11")}</button></details>
+    <details><summary>{localizedText(language, "pairs.m_279e367745c63e95")}</summary>{historyRows.map(row => <p key={row.revision}>{row.revision} · {row.state} · {row.savedAt} · {row.hash} · {row.authorityHash}</p>)}<Button type="button" variant="outline" disabled={locked || !historyMore || historyRows.length === 0} onClick={() => void more()}>{localizedText(language, "pairs.m_ff1beddacf15fc11")}</Button></details>
+    </>}
+    <EnterpriseActions>
+      <Button type="button" variant="outline" disabled={busy || !available} onClick={recheck}>{localizedText(language, 'pairs.m_542619365a11df9d')}</Button>
+      {attempt && <Button type="button" disabled={!canRetry} onClick={() => void send(attempt)}>{localizedText(language, "pairs.m_2915875883556658")}</Button>}
+      <Button type="button" variant="outline" disabled={busy || !!attempt} onClick={discard}>{localizedText(language, "pairs.m_7a7b7dd849b7bc4b")}</Button>
+    </EnterpriseActions>
   </section>;
 }

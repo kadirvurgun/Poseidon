@@ -1,7 +1,7 @@
 import { validCompliancePolicies, type CompliancePolicies } from './compliance-input-contract'
 import { validBindings, type LiteralBinding } from './operation-equipment-contract'
 import { validCalculation, completeCalculation, type CalculationPolicy } from './tug-capability-contract'
-import { ApiError, request } from './api'
+import { ApiError, request, session } from './api'
 import { isGuid } from './identifiers'
 import { timestamp } from './date-validation'
 
@@ -50,10 +50,45 @@ export async function load(rule: string, vessel: string, signal: AbortSignal, be
   if (!exact(v, ['items', 'hasMore', 'actions', 'authorities', 'owners']) || typeof v.hasMore !== 'boolean' || !Array.isArray(v.items) || v.items.length > 100 || !Array.isArray(v.actions) || v.actions.some(a => !['draft', 'review', 'qualify', 'attest'].includes(a)) || !Array.isArray(v.authorities) || v.authorities.length > 4 || v.authorities.some(g => !exact(g, ['action', 'authorityId']) || !(v.actions as unknown[]).includes(g.action) || !isGuid(g.authorityId)) || !Array.isArray(v.owners) || v.owners.length > 100 || v.owners.some(o => !exact(o, ['actorId', 'roleId']) || !isGuid(o.actorId) || !isGuid(o.roleId))) return fail()
   return { ...v, items: v.items.map(x => decodeQualification(x, rule)) } as Page
 }
+// Compare actual instants at the API's seven-fraction precision. A legitimate
+// server offset/zero spelling change is not a different captured attestation.
+function sameInstant(left: unknown, right: unknown): boolean {
+  const ticks = (value: unknown): bigint | null => {
+    if (typeof value !== 'string' || !timestamp(value)) return null
+    const parts = /^(.*T\d{2}:\d{2}:\d{2})(?:\.(\d{1,7}))?(Z|[+-]\d{2}:\d{2})$/.exec(value)
+    if (!parts) return null
+    const milliseconds = Date.parse(parts[1] + parts[3])
+    return Number.isSafeInteger(milliseconds) ? BigInt(milliseconds) * 10000n + BigInt((parts[2] ?? '').padEnd(7, '0')) : null
+  }
+  const first = ticks(left), second = ticks(right)
+  return first !== null && second !== null && first === second
+}
+// Recovery identity is read from the actual current session, never a retained
+// CSRF prop, source owner declaration or reviewer label. No persistent cache.
+export type QualificationSession = Readonly<{ owner: string; csrf: string }>
+export async function loadSession(signal: AbortSignal): Promise<QualificationSession> {
+  const value: unknown = await session(signal)
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return fail()
+  const user = value as Obj
+  if (user.authenticated !== true) throw new ApiError(401, 'authentication_required')
+  if (user.canRead !== true || user.setupRequired !== false) throw new ApiError(403, 'permission_denied')
+  if (!isGuid(user.actorId) || !isGuid(user.tenantId) || typeof user.csrfToken !== 'string' ||
+      user.csrfToken.length < 16 || user.csrfToken.length > 2048 || /[\u0000-\u001f\u007f]/.test(user.csrfToken)) return fail()
+  return Object.freeze({ owner: `${user.tenantId.toLowerCase()}/${user.actorId.toLowerCase()}`, csrf: user.csrfToken })
+}
 export async function send(rule: string, attempt: { body: string; key: string; action: 'events' | 'fact-attestations' }, csrf: string, signal: AbortSignal) {
   const v = await request<unknown>(`regulatory-source-governance/${rule}/${attempt.action}`, signal, { method: 'POST', body: attempt.body, headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf, 'Idempotency-Key': attempt.key } })
-  if (attempt.action === 'events') return decodeQualification(v, rule)
+  let sent: Obj
+  try { sent = JSON.parse(attempt.body) as Obj } catch { return fail() }
+  if (!sent || typeof sent !== 'object' || Array.isArray(sent)) return fail()
+  if (attempt.action === 'events') {
+    const result = decodeQualification(v, rule)
+    if (result.ruleRevision !== sent.ruleRevision || result.authorityId !== sent.authorityId || result.state !== sent.state) return fail()
+    return result
+  }
   if (!exact(v, ['id', 'ruleId', 'qualificationRevision', 'vesselId', 'profileRevision', 'fields', 'hash', 'savedAt', 'validUntil']) || v.ruleId !== rule || !isGuid(v.id) || !isGuid(v.vesselId) || !positive(v.qualificationRevision) || !positive(v.profileRevision) || !Array.isArray(v.fields) || v.fields.some(f => !profileInputs.includes(f)) || !hash(v.hash) || !timestamp(v.savedAt) || !timestamp(v.validUntil)) return fail()
+  if (v.vesselId !== sent.vesselId || v.profileRevision !== sent.profileRevision || v.qualificationRevision !== sent.qualificationRevision ||
+      JSON.stringify(v.fields) !== JSON.stringify(sent.fields) || !sameInstant(v.validUntil, sent.validUntil)) return fail()
   return v
 }
 export async function current(id: string, signal: AbortSignal): Promise<{ current: boolean; causes: string[] }> {
