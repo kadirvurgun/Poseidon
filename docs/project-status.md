@@ -1,5 +1,14 @@
 # POSEIDON — PR16 ve yerelleştirme durumu
 
+**13 Kasım — yeni port izolasyonu paketi yazılıyor:** backend'in açık port
+seçimi, Development/CA sınırı ve doğrudan loopback bağlantısı `06e91936` ile
+yazılıp `ae34186` birleşimine alındı. 60 yeni kabul vakası kaynakta mevcut;
+**yeni test/build yürütmesi 0, DEFERRED**. Python/TypeScript/compose ve gerçek
+tarayıcı bağlantıları ayrı ajan tarafından tamamlanıyor; bağımsız QA kaynağı
+inceliyor. Önceki başarılı paket aşağıda kendi hedefleriyle korunur, yeni koda
+PASS taşınmaz. [Yeni paket raporu](phases/BUNDLE-PORT-ISOLATION-20261113.md).
+
+
 **13 Kasım — S8 teknik komut ve 17 dil paketi:** ön yüzün **1524/1524 bileşen
 testi**, lint, tip kontrolü ve üretim derlemesi geçti. Backend Release derlemesi,
 **1007/1007 birim testi** ve **79/79 gerçek PostgreSQL entegrasyon testi** geçti.

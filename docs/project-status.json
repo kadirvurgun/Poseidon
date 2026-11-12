@@ -1114,7 +1114,7 @@
     "verification_record_scope": "Authored/deferred and original20f1198 results are historical;current rejection-repair evidence in core_bundle_01.verification"
   },
   "baseline": "POSEIDON v46.3 updated 2026-10-30 / Library26 candidate",
-  "current_stage": "S8 technical+17locale native bundle gates passed: frontend1524/build, backend1007unit/79PG/837API, critical117; repository2736/client20 scans0findings. Exactexecution5e and explicit8a unchanged-input bindings; signedfixture/browser/finalQA/CI open. Separateownedport-isolation task authoring; canonical103/970SP10.62% unchanged.",
+  "current_stage": "S8 native technical+17locale bundle passed on5e/8a; new owned port isolation SOURCE_AUTHORING, backend06e merged ae34186 with60newcases authored/executed0. All new checks deferred to combined gate; genuine browser/finalQA/newCI open. Canonical103/970SP10.62% unchanged.",
   "method": "accepted story points / total baseline story points * 100",
   "scope": "complete v46.3 Backlog sheet; duplicates in other sheets excluded",
   "total_tasks": 121,
@@ -13706,6 +13706,55 @@
       "next_task": "BUNDLE-PORT-ISOLATION-01",
       "new_author_worktree": "bundle-port-isolation-20261113",
       "new_code_checks": "DEFERRED_DURING_AUTHORING"
+    }
+  },
+  "owned_runtime_port_isolation_20261113": {
+    "task": "BUNDLE-PORT-ISOLATION-01",
+    "state": "SOURCE_AUTHORING",
+    "observed_at_utc": "2026-11-12T21:45:05.569839+00:00",
+    "baseline": "poseidon-v46.3-20261030",
+    "sources": [
+      "DEV-OIDC-LAB-01 LAB01-LAB05",
+      "OBSERVATION-SIGNED-FIXTURE-01 criteria1-6",
+      "19.01 paragraphs26/29/30",
+      "docs/automation.md",
+      "docs/security-baseline.md"
+    ],
+    "authorization": "User2026-11-13 continued overnight development; PR and merge after completed phase and required checks/independent QA",
+    "scope": "An additional owned genuine signed lab with explicit coherent loopback API/provider/database ports while retaining existing preview",
+    "backend_author": "/root/status_forecast",
+    "runtime_author": "/root/locale_zh",
+    "independent_qa": "/root/frontend_gate_20261111",
+    "backend_source_commit": "06e91936b3ea5b5f75105a7cdf897fd1756de07b",
+    "receiving_backend_merge": "ae341862db7e91913e19309ad63ffbd3704cbb94",
+    "backend_behavior": [
+      "Explicit canonical DevelopmentLab:OidcPort1024..65535; absent retains8443",
+      "Development/privateCA and matching issuer/authority; fixed localhost realm with selected port",
+      "Direct IPv4loopback sockets, no proxy/redirect/cookie; request destination and Host guards",
+      "Existing certificate root/name/EKU/expiry validation preserved"
+    ],
+    "backend_test_source": {
+      "new_cases": 60,
+      "total_source_case_inventory": 71,
+      "executed": 0,
+      "status": "DEFERRED"
+    },
+    "runtime_source_state": "Python/TS/compose/browser wiring and meaningful tests in progress in separate worktree",
+    "verification": "ALL_NEW_BUILD_TYPECHECK_TEST_BROWSER_EXECUTION_DEFERRED_UNTIL_COMBINED_SOURCE_FREEZE",
+    "actual_runtime": "NOT_STARTED",
+    "preview_mutated": false,
+    "accepted": false,
+    "accepted_story_points_added": 0,
+    "prior_native_evidence": "Previous5e/8a native PASS remains scoped to unchanged old inputs, not this new backend source",
+    "report": "docs/phases/BUNDLE-PORT-ISOLATION-20261113.md",
+    "next": "Finish runtime/protocol source, independent source review, freeze combined target then run larger real bundle gate",
+    "backend_source_review": {
+      "target": "06e91936b3ea5b5f75105a7cdf897fd1756de07b",
+      "state": "NO_DEFINITE_SCOPED_SOURCE_BLOCKER",
+      "scope": "SOURCE_ONLY_FOUR_FILES",
+      "executed_tests": 0,
+      "evidence": ".runtime/bundle-port-isolation-qa-20261113/backend-source-review-06e9193.json",
+      "integrated_acceptance": false
     }
   }
 }
