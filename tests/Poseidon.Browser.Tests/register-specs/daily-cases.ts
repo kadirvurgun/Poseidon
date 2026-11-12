@@ -179,7 +179,18 @@ async function review(page: Page, family: Family) {
         expect(reflected.fields[family.kind === 'Engine' ? 'chief_engineer_review' : 'master_review'].value === (family.kind === 'Noon' ? 'DRAFT' : 'PENDING')).toBe(true);
         const entries = await (await reviewerPage.request.get(reviewsPath)).json();
         expect(entries.items.length === 1 && entries.items[0].id === recorded.id).toBe(true);
-        await expect(region.getByText('Recorded · unassessed', { exact: true }).first()).toBeVisible();
+        // History is intentionally collapsed. Open the exact immutable entry
+        // through its real disclosure instead of expecting hidden content visible.
+        const recordedEntry = region.locator('details.daily-review-entry').filter({ hasText: recorded.id });
+        await expect(recordedEntry).toHaveCount(1);
+        await recordedEntry.locator(':scope > summary').click();
+        await expect(recordedEntry).toHaveAttribute('open', '');
+        await expect(recordedEntry.getByText('Recorded · unassessed', { exact: true })).toBeVisible();
+        const lineage = recordedEntry.locator(':scope > details');
+        await lineage.locator(':scope > summary').click();
+        await expect(lineage.getByText(`${recorded.sequence} / ${recorded.id} / ${recorded.version}`, { exact: true })).toBeVisible();
+        await expect(lineage.getByText(recorded.authorityHash, { exact: true })).toBeVisible();
+        await expect(lineage.getByText(recorded.recordHash, { exact: true })).toBeVisible();
     }
     finally {
         await peer.close();

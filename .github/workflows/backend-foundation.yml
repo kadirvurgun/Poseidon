@@ -150,6 +150,8 @@ jobs:
           npm ci --prefix tests/Poseidon.Browser.Tests
       - name: Native whole register manifest import before provider
         run: node --test tests/Poseidon.Browser.Tests/lab/register-manifest.test.ts
+      - name: Closed signed-register diagnostic privacy tests
+        run: node --test tests/Poseidon.Browser.Tests/lab/register-diagnostics.test.ts
       - name: Lint and typecheck
         run: |
           npm run generate:api --prefix frontend
