@@ -24,7 +24,7 @@ export type DowntimeFieldDefinition = {
     unit: string | null;
     requiredWhen: 'SOURCE_CONDITIONAL_UNRESOLVED' | null;
 };
-export const downtimeSourceVersion = '14.02:3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018:2226-2239:v46.3';
+export { downtimeSourceVersion } from '../contracts/operational-source-pins';
 export const downtimeTypeOptions = ['Technical Failure', 'Planned Maintenance', 'Weather', 'Port Delay', 'Crew', 'Regulatory', 'Commercial', 'Other'];
 export function downtimeFieldInfo(): {
     key: DowntimeFieldKey;
