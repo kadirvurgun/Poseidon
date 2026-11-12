@@ -166,7 +166,7 @@ class BundleFixturePlanTests(unittest.TestCase):
             self.assertEqual('preserve', (Path(directory)/'appsettings.json').read_text())
 
     def test_fresh_source_profile_plan_has_matching_four_provider_subjects_without_provider_calls(self):
-        with tempfile.TemporaryDirectory() as directory, patch.object(lab, 'PRIVATE', Path(directory)), patch.object(lab, 'private_directory'), patch.object(lab, 'run') as child:
+        with tempfile.TemporaryDirectory() as directory, patch.object(lab, 'PRIVATE', Path(directory)), patch.object(lab, 'private_directory'), patch.object(bundle.lab_runtime, 'preflight'), patch.object(lab, 'run') as child:
             child.side_effect=lambda *args,**kwargs:[(Path(directory)/name).write_text('SYNTHETIC unit path fixture; not a trusted certificate') for name in ('ca.pem','tls.pem','tls.key')]
             bundle.init_source_bundle()
             root=Path(directory); metadata=json.loads((root/'source-bundle-plan.json').read_text())
@@ -184,7 +184,7 @@ class BundleFixturePlanTests(unittest.TestCase):
             self.assertTrue(any('certificate-command-center' in row['Keys'] for row in config['WorkspaceNavigation']['Mappings']))
 
     def test_incomplete_certificate_generation_never_publishes_source_plan_or_ready(self):
-        with tempfile.TemporaryDirectory() as directory, patch.object(lab,'PRIVATE',Path(directory)), patch.object(lab,'private_directory'), patch.object(lab,'run'):
+        with tempfile.TemporaryDirectory() as directory, patch.object(lab,'PRIVATE',Path(directory)), patch.object(lab,'private_directory'), patch.object(bundle.lab_runtime,'preflight'), patch.object(lab,'run'):
             with self.assertRaisesRegex(RuntimeError,'source_bundle_tls_missing'):bundle.init_source_bundle()
             self.assertFalse((Path(directory)/'ready').exists())
             self.assertFalse((Path(directory)/'source-bundle-plan.json').exists())

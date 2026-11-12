@@ -1,3 +1,4 @@
+import { labRuntimeFromEnvironment, validateLabOrigin } from './lab-runtime.ts';
 import { firefox, type BrowserContext, type BrowserContextOptions } from '@playwright/test';
 import { mkdtempSync, mkdirSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, isAbsolute, relative, resolve, sep } from 'node:path';
@@ -8,6 +9,8 @@ import { randomUUID } from 'node:crypto';
 // keeps normal hostname, chain, expiry and EKU verification. No browser error
 // overrides, route substitutions, host/user trust mutation or client certs.
 export async function strictContext(options: BrowserContextOptions = {}, trust = true): Promise<{ context: BrowserContext; close: () => Promise<void> }> {
+  const runtime = labRuntimeFromEnvironment();
+  validateLabOrigin(options.baseURL, runtime);
   const privateRoot = realpathSync(process.env.POSEIDON_LAB_PRIVATE!);
   const expected = realpathSync(resolve(import.meta.dirname, '../../..', '.runtime/oidc-lab'));
   if (privateRoot !== expected || options.ignoreHTTPSErrors) throw new Error('invalid_lab_boundary');

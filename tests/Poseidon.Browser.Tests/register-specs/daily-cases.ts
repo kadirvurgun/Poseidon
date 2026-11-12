@@ -1,3 +1,4 @@
+import { labRuntimeFromEnvironment } from '../lab/lab-runtime.ts';
 import { expect, type Page } from '@playwright/test';
 import { dailyAuthorityId, dailyRecordId, dailySignedSession, dailySourceVersion, requiredDailyFixture, type DailyFixture, type DailyKind } from './daily-fixture.ts';
 const families = [
@@ -130,7 +131,7 @@ async function review(page: Page, family: Family) {
     const invalid = { expectedVersion: row.version, expectedReviewVersion: 0, reviewedRevision: row.revision, authorityId: dailyAuthorityId(fixture, family.kind), decision: 'REVIEWED', reasonCode: 'REVIEW_RECORDED', rationale: 'FICTIONAL unauthorized writer request' };
     expect((await command(page, reviewsPath, 'post', invalid, user.csrfToken)).status()).toBe(403);
     const { strictContext } = await import('../lab/strict-browser.ts'), { login } = await import('../lab/journeys.ts');
-    const peer = await strictContext({ baseURL: 'https://localhost:5443', viewport: page.viewportSize()! });
+    const peer = await strictContext({ baseURL: labRuntimeFromEnvironment().appOrigin, viewport: page.viewportSize()! });
     try {
         const reviewerPage = await peer.context.newPage();
         await login(reviewerPage, fixture.reviewerAccount, `/app/${family.screen}/${fixture.vesselId}?id=${row.id}`);
@@ -199,7 +200,7 @@ async function foreignScope(page: Page) {
     const fixture = requiredDailyFixture(page);
     await dailySignedSession(page, fixture);
     const { strictContext } = await import('../lab/strict-browser.ts'), { login } = await import('../lab/journeys.ts');
-    const foreign = await strictContext({ baseURL: 'https://localhost:5443', viewport: page.viewportSize()! });
+    const foreign = await strictContext({ baseURL: labRuntimeFromEnvironment().appOrigin, viewport: page.viewportSize()! });
     try {
         const peer = await foreign.context.newPage();
         await login(peer, fixture.foreignAccount, '/app/today');

@@ -1,3 +1,4 @@
+import { labRuntimeFromEnvironment } from './lab-runtime.ts';
 import { tlsCases } from './tls-cases.ts';
 import { strictContext } from './strict-browser.ts';
 import { writeFileSync } from 'node:fs';
@@ -10,8 +11,9 @@ import { runSignedCase, type SignedCasePhase } from './signed-case.ts';
 // Direct library execution of the SAME manifest used by drafts.spec.ts. Never
 // serialize exceptions, DOM, network data, tokens or storage into diagnostics.
 const directory = process.env.POSEIDON_LAB_PRIVATE!;
+const runtime = labRuntimeFromEnvironment();
 Object.assign(process.env, {
-  POSEIDON_REGISTER_DIRECT: '1', POSEIDON_REGISTER_URL: 'https://localhost:5443',
+  POSEIDON_REGISTER_DIRECT: '1', POSEIDON_REGISTER_URL: runtime.appOrigin,
   POSEIDON_REGISTER_AUTHENTICATION: 'GenuinePerCase',
 });
 const { default: config } = await import('../register.playwright.config.ts');

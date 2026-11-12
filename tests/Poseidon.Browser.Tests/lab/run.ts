@@ -1,3 +1,4 @@
+import { labRuntimeFromEnvironment } from './lab-runtime.ts';
 import { strictContext } from './strict-browser.ts';
 import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -11,7 +12,7 @@ const persist = () => writeFileSync(resolve(process.env.POSEIDON_LAB_PRIVATE!, '
 persist();
 try {
   for (const journey of [managerJourney, restrictedJourney]) {
-    const owned = await strictContext({ baseURL: 'https://localhost:5443' });
+    const owned = await strictContext({ baseURL: labRuntimeFromEnvironment().appOrigin });
     const { context } = owned;
     try {
       const page = await context.newPage();

@@ -6,6 +6,7 @@ The caller must use the existing private lab provider lifecycle and real login.
 from copy import deepcopy
 from datetime import datetime, timedelta, timezone
 import uuid
+import lab_runtime
 
 TENANT = '10000000-0000-0000-0000-000000000001'
 SHIP = '30000000-0000-0000-0000-000000000001'
@@ -21,7 +22,7 @@ def catalog_membership(config, realm, authority, project, now=None):
     candidate = deepcopy(config)
     now = now or datetime.now(timezone.utc)
     federation = candidate.get('Authentication', {}).get('Oidc', {})
-    if (realm.get('realm') != 'poseidon-lab' or authority != 'https://localhost:8443/realms/poseidon-lab' or
+    if (realm.get('realm') != 'poseidon-lab' or authority != lab_runtime.authority(config) or
             federation.get('Authority') != authority or federation.get('Issuer') != authority or
             federation.get('ClientId') != 'poseidon-local'):
         raise RuntimeError('lab_human_provider_invalid')
