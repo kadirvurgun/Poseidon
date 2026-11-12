@@ -211,14 +211,13 @@ export function TechnicalWorkspace() {
     const asset = assets?.items.find(a => a.id === route?.id), plan = plans?.items.find(p => p.id === route?.id);
     const canWrite = canShowPrivate && (route?.plan ? plans?.canWrite : assets?.canWrite);
     const canHistory = canShowPrivate && (route?.plan ? plans?.canReadHistory : assets?.canReadHistory);
-    useEffect(() => {
-        if (!canShowPrivate || !user || !owner || !route || route.plan || !route.id || editor || !assets?.items.some(item => item.id === route.id)) return;
-        setObservationContext(previous => {
-            if (previous && (observationDirty || observationUncertain || observationBusy)) return previous;
-            if (previous?.owner === owner && previous.vessel === route.vessel && previous.asset === route.id) return previous;
-            return { owner, vessel: route.vessel, asset: route.id! };
-        });
-    }, [canShowPrivate, user, owner, route, editor, assets, observationDirty, observationUncertain, observationBusy]);
+    // Adjust clean derived scope before committing children, just like the
+    // projection withdrawal above. A dirty/unknown/running owner is never rebound.
+    if (canShowPrivate && user && owner && route && !route.plan && route.id && !editor &&
+        assets?.items.some(item => item.id === route.id) && !(observationDirty || observationUncertain || observationBusy) &&
+        (observationContext?.owner !== owner || observationContext.vessel !== route.vessel || observationContext.asset !== route.id)) {
+        setObservationContext({ owner, vessel: route.vessel, asset: route.id });
+    }
     const start = (create: boolean) => guard(() => {
         if (!route || !owner || !canWrite) return;
         clear();

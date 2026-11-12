@@ -18,7 +18,7 @@ const object = (value: unknown): value is Record<string, unknown> => !!value && 
 const exact = (value: unknown, names: readonly string[]): value is Record<string, unknown> => object(value) &&
   Object.keys(value).length === names.length && names.every(name => Object.hasOwn(value, name))
 const guid = (value: unknown): value is string => typeof value === 'string' && value.length === 36 &&
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(value) && value !== '00000000-0000-0000-0000-000000000000'
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(value) && value !== '00000000-0000-0000-0000-000000000000'
 function invalid(): never { throw new Error('observation_signed_fixture_invalid') }
 function contextInvalid(): never { throw new Error('observation_actual_context_invalid') }
 const actualOwner = (user: unknown, expected: Pick<ObservationSignedFixture, 'actorId' | 'tenantId'>) =>
