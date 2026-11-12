@@ -1,5 +1,6 @@
-"""Authored source-fixture regressions; no runtime/provider/secret inputs. NOT RUN."""
+"""Source-fixture regressions with isolated synthetic configuration inputs."""
 from copy import deepcopy
+import secrets
 import unittest
 
 import bundle_observation_fixture as fixture
@@ -16,7 +17,7 @@ class BundleObservationFixtureTests(unittest.TestCase):
             'TenantWideRead': True, 'TenantWideManage': True, 'Permissions': sorted(fixture.BASE_PERMISSIONS)}
         config = {'ConnectionStrings': {'Poseidon': 'synthetic-owned-fixture'}, 'Authentication': {'Oidc': {
             'Issuer': fixture.AUTHORITY, 'Authority': fixture.AUTHORITY, 'ClientId': 'poseidon-local',
-            'ClientSecret': 'synthetic-only', 'Memberships': [writer,
+            'ClientSecret': secrets.token_urlsafe(24), 'Memberships': [writer,
                 {'ActorId': '80000000-0000-0000-0000-000000000002', 'Permissions': ['directory.read'], 'TenantId': fixture.TENANT},
                 {'ActorId': '80000000-0000-0000-0000-000000000003', 'Permissions': ['directory.read'], 'TenantId': '10000000-0000-0000-0000-000000000002'}]}},
             'DailyOffline': {'Policies': [{'Version': 'preserved-synthetic-policy'}]}}
