@@ -5,6 +5,7 @@ The explicit source-bundle entry points publish through immutable private genera
 """
 from copy import deepcopy
 import uuid
+import lab_runtime
 
 AUTHORITY = 'https://localhost:8443/realms/poseidon-lab'
 TENANT = '10000000-0000-0000-0000-000000000001'
@@ -44,7 +45,11 @@ def configure(config, metadata):
         raise RuntimeError('observation_fixture_scope_invalid')
     authentication = config.get('Authentication')
     federation = authentication.get('Oidc') if isinstance(authentication, dict) else None
-    if not isinstance(federation, dict) or any(federation.get(key) != AUTHORITY for key in ('Authority', 'Issuer')) or federation.get('ClientId') != 'poseidon-local':
+    selected_authority = lab_runtime.authority(config)
+    runtime = lab_runtime.configured(config)
+    if runtime is not None and runtime['runId'] != metadata['runId']:
+        raise RuntimeError('observation_fixture_scope_invalid')
+    if not isinstance(federation, dict) or any(federation.get(key) != selected_authority for key in ('Authority', 'Issuer')) or federation.get('ClientId') != 'poseidon-local':
         raise RuntimeError('observation_fixture_provider_invalid')
     members = federation.get('Memberships')
     if not isinstance(members, list) or any(not isinstance(member, dict) for member in members):
@@ -53,7 +58,7 @@ def configure(config, metadata):
     if len(writers) != 1:
         raise RuntimeError('observation_fixture_writer_ambiguous')
     writer = writers[0]
-    if (writer.get('TenantId') != TENANT or writer.get('Issuer') != AUTHORITY or writer.get('ActorKind') != 'Human'
+    if (writer.get('TenantId') != TENANT or writer.get('Issuer') != selected_authority or writer.get('ActorKind') != 'Human'
             or writer.get('TenantWideRead') is not True or writer.get('TenantWideManage') is not True):
         raise RuntimeError('observation_fixture_writer_scope_invalid')
     _uuid(writer.get('Subject'))

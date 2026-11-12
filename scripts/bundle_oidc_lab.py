@@ -18,6 +18,7 @@ import bundle_fixture_plan as plan
 import bundle_private as private_io
 import bundle_crew_fixture as crew_fixture
 import bundle_observation_fixture as observation_fixture
+import lab_runtime
 
 BASE_ENVIRONMENT = lab.environment
 FIXTURE_NAMES = ('DAILY','CERTIFICATE','CERTIFICATE_EXTRACTION','SHIP_OPERATIONS','DEFECT','WORK_ORDER','DOWNTIME','OBSERVATION')
@@ -26,10 +27,18 @@ NAVIGATION_KEYS = ['noon-report','deck-daily-log','engine-daily-log','fuel-bunke
     'audit','import','sources','requirements']
 
 
-def init_source_bundle():
+def init_source_bundle(app_port=None, provider_port=None, database_port=None):
     lab.stage('fresh_disposable_source_bundle')
     if lab.PRIVATE.exists() and any(lab.PRIVATE.iterdir()):
         raise RuntimeError('fresh_disposable_bundle_profile_required')
+    run_id = str(uuid.uuid4())
+    ports = (app_port, provider_port, database_port)
+    if any(port is not None for port in ports) and any(port is None for port in ports):
+        raise RuntimeError('owned_lab_all_ports_required')
+    runtime = None if ports == (None, None, None) else lab_runtime.create(run_id, *ports)
+    lab_runtime.preflight(runtime)
+    lab.bind_runtime(runtime)
+    lab.selected_compose_ownership()  # Reject retained previous-run services/volumes before genesis writes.
     lab.private_directory(lab.PRIVATE)
     (lab.PRIVATE/'realm').mkdir()
     realm,credentials,database_password,config=lab.make_configuration()
@@ -43,7 +52,10 @@ def init_source_bundle():
         'TenantWideRead':False,'TenantWideManage':False,'VesselGrants':[{'VesselId':plan.FOREIGN_SHIP,'CanEdit':True}]})
     config=lab.navigation_membership(config,realm)
     config=lab.catalog_membership(config,realm,lab.AUTHORITY,lab.PROJECT)
-    config,metadata=plan.configure(config,realm,lab.AUTHORITY,lab.PROJECT,str(uuid.uuid4()))
+    config,metadata=plan.configure(config,realm,lab.AUTHORITY,lab.PROJECT,run_id)
+    if runtime is not None:
+        metadata['ownedRuntime'] = runtime
+        private_io.publish_json(lab.PRIVATE/lab_runtime.FILE, runtime)
     daily=str(uuid.uuid5(uuid.NAMESPACE_URL,lab.PROJECT+'/synthetic-writer-assignment'))
     mappings=[row for row in config['WorkspaceNavigation']['Mappings'] if row['TenantId']==plan.TENANT and row['Reference']==daily]
     if len(mappings)!=1:
@@ -154,6 +166,7 @@ def environment():
         env.pop('POSEIDON_BROWSER_'+name+'_FIXTURE', None)
     if (lab.PRIVATE/'source-bundle-plan.json').is_file():
         selected,selected_config=private_io.selected()
+        lab.bind_runtime(lab_runtime.validate_selected(selected, lab.PRIVATE))
         env['POSEIDON_LAB_CONFIG']=str(selected_config)
         env.pop(crew_fixture.REFERENCE, None)
         if selected.get('CrewProfilePolicy',{}).get('KeyReferences',{}).get('synthetic-bundle-v1') == crew_fixture.REFERENCE:
@@ -173,6 +186,10 @@ def environment():
     env['POSEIDON_LAB_PYTHON']=sys.executable
     env['NODE_EXTRA_CA_CERTS']=str(lab.PRIVATE/'ca.pem')
     env.pop('NODE_TLS_REJECT_UNAUTHORIZED',None)
+    env.pop('POSEIDON_LAB_RUNTIME_FILE', None)
+    if lab.CURRENT_RUNTIME is not None:
+        env['POSEIDON_LAB_RUNTIME_FILE'] = str(lab.PRIVATE/lab_runtime.FILE)
+    env['POSEIDON_REGISTER_URL'] = lab.APP
     return env
 
 
@@ -262,10 +279,22 @@ def stop():lab.stop()
 def main(argv=None):
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('action',choices=['init_source_bundle','prepare_bundle','prepare_crew_fixture','renew_fixture_window','prepare_source_fixtures','start','stop','register_browser'])
+    parser.add_argument('--app-port', type=lab_runtime.cli_port)
+    parser.add_argument('--provider-port', type=lab_runtime.cli_port)
+    parser.add_argument('--database-port', type=lab_runtime.cli_port)
     args=parser.parse_args(argv)
     try:
         if sys.version_info[:3]!=(3,13,13):raise RuntimeError('pinned_python_required')
-        globals()[args.action]()
+        ports = (args.app_port, args.provider_port, args.database_port)
+        if args.action == 'init_source_bundle':
+            init_source_bundle(*ports)
+        else:
+            if any(port is not None for port in ports):
+                raise RuntimeError('owned_lab_ports_genesis_only')
+            lab.bind_selected_runtime()
+            if (lab.PRIVATE/'source-bundle-plan.json').exists():
+                private_io.selected()  # Verify the immutable generation before any action mutates runtime.
+            globals()[args.action]()
         print('DEV-BUNDLE-FIXTURE-01 '+args.action+' COMPLETED; software fixture only')
         return 0
     except Exception:

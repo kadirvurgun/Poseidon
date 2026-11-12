@@ -8,6 +8,7 @@ from copy import deepcopy
 from datetime import datetime, timedelta, timezone
 import hashlib
 import uuid
+import lab_runtime
 import bundle_observation_fixture as observation_fixture
 
 TENANT = '10000000-0000-0000-0000-000000000001'
@@ -53,7 +54,7 @@ def configure(config, realm, authority, project, run_id, now=None):
         raise RuntimeError('bundle_fixture_utc_required')
     candidate = deepcopy(config)
     federation = candidate.get('Authentication', {}).get('Oidc', {})
-    if (realm.get('realm') != 'poseidon-lab' or authority != 'https://localhost:8443/realms/poseidon-lab'
+    if (realm.get('realm') != 'poseidon-lab' or authority != lab_runtime.authority(config)
             or federation.get('Authority') != authority or federation.get('Issuer') != authority
             or federation.get('ClientId') != 'poseidon-local'):
         raise RuntimeError('bundle_fixture_provider_invalid')

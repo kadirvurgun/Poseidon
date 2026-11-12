@@ -11,6 +11,7 @@ import os
 from pathlib import Path
 import re
 import tempfile
+import lab_runtime
 
 import oidc_lab as lab
 
@@ -91,6 +92,8 @@ def identity(config):
         'Oidc':{k:federation[k] for k in ('Authority','Issuer','ClientId','ClientSecret')},
         'Memberships':sorted(members,key=lambda m:(m['Issuer'],m['Subject'])),
         'DevelopmentLab':{k:config['DevelopmentLab'][k] for k in ('OidcCaPath','WebRoot')}}
+    if lab_runtime.configured(config) is not None:
+        value['DevelopmentLab'].update({k:config['DevelopmentLab'][k] for k in ('OwnedRuntime','OidcPort')})
     return digest(_bytes(value))
 
 
@@ -122,6 +125,7 @@ def generations():
 def selected():
     latest=generations()
     if latest is None:raise RuntimeError('bundle_private_generation_required')
+    lab_runtime.validate_selected(latest[0], lab.PRIVATE)
     return latest[0],latest[1]
 
 

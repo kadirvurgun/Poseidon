@@ -1,3 +1,4 @@
+import { labRuntimeFromEnvironment } from './lab-runtime.ts';
 import { createServer } from 'node:https';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -6,6 +7,7 @@ import { strictContext } from './strict-browser.ts';
 // Actual browser navigation and real TLS handshakes. No routes/proxies/fulfill,
 // no auth, no error text or browser artifacts in the persisted result.
 export async function tlsCases() {
+  const runtime = labRuntimeFromEnvironment();
   const directory = process.env.POSEIDON_LAB_PRIVATE!;
   const results: { code: string; passed: boolean }[] = [];
   async function reject(code: string, url: string, trust: boolean, expected: string) {
@@ -20,8 +22,8 @@ export async function tlsCases() {
   }
   const server = createServer({ key: readFileSync(resolve(directory, 'tls.key')), cert: readFileSync(resolve(directory, 'tls.pem')) }, (_, response) => response.end('TLS fixture'));
   try {
-    await reject('app_untrusted_ca', 'https://localhost:5443/health/live', false, 'SEC_ERROR_UNKNOWN_ISSUER');
-    await reject('provider_untrusted_ca', 'https://localhost:8443/realms/poseidon-lab/.well-known/openid-configuration', false, 'SEC_ERROR_UNKNOWN_ISSUER');
+    await reject('app_untrusted_ca', runtime.appOrigin + '/health/live', false, 'SEC_ERROR_UNKNOWN_ISSUER');
+    await reject('provider_untrusted_ca', runtime.authority + '/.well-known/openid-configuration', false, 'SEC_ERROR_UNKNOWN_ISSUER');
     await new Promise<void>((ok, fail) => { server.once('error', fail); server.listen(0, '127.0.0.2', ok); });
     const address = server.address();
     if (!address || typeof address === 'string') throw new Error('tls_fixture_address');

@@ -1,3 +1,4 @@
+import { labRuntimeFromEnvironment } from '../tests/Poseidon.Browser.Tests/lab/lab-runtime.ts'
 // DEV-BUNDLE-FIXTURE-01; actual isolated HTTPS + provider + audited API only.
 // No copied sessions, fulfilled responses, verified evidence or production approvals.
 import { createHash, randomUUID } from 'node:crypto'
@@ -9,6 +10,7 @@ import { login } from '../tests/Poseidon.Browser.Tests/lab/journeys.ts'
 import {canonical, FixtureJournal, verifyFixtureReceipt} from './bundle_fixture_journal.ts'
 import { observationFixtureFromActual } from '../tests/Poseidon.Browser.Tests/register-specs/observation-fixture.ts'
 
+const runtime = labRuntimeFromEnvironment()
 const privateRoot = realpathSync(process.env.POSEIDON_LAB_PRIVATE!)
 const expectedRoot = realpathSync(resolve(import.meta.dirname, '../.runtime/oidc-lab'))
 if (privateRoot !== expectedRoot) throw new Error('fixture_boundary')
@@ -38,12 +40,12 @@ const persist = (name: string, value: unknown) => {
   if(published.status!==0)throw new Error('fixture_new_publication_failed')
   return file
 }
-const journal=new FixtureJournal(privateRoot,{plan,origin:'https://localhost:5443'},persist,process.env.POSEIDON_BUNDLE_BEGIN_FIXTURE_ATTEMPT)
+const journal=new FixtureJournal(privateRoot,{plan,origin:runtime.appOrigin},persist,process.env.POSEIDON_BUNDLE_BEGIN_FIXTURE_ATTEMPT)
 evidence.attemptId=journal.manifest.attemptId
 const attemptTag=journal.manifest.attemptId.replaceAll('-','')
 const fixture = (key: string, file: string, value: unknown) => { environment[key] = persist(file, value); evidence.fixtureCount++ }
 const common = { runId: plan.runId, tenantId: plan.tenantId, vesselId: plan.vesselId, actorId: plan.writerActorId }
-const owned = await strictContext({ baseURL: 'https://localhost:5443' })
+const owned = await strictContext({ baseURL: runtime.appOrigin })
 try {
   const page = await owned.context.newPage(); page.setDefaultTimeout(15000)
   evidence.stage = 'writer_login'; await login(page, 'lab-manager', '/app/today')
@@ -131,7 +133,7 @@ try {
     fixture('POSEIDON_BROWSER_CERTIFICATE_EXTRACTION_FIXTURE','certificate-extraction-fixture.json',{schemaVersion:'poseidon.certificate-extraction.signed-fixture.v1',...common,modelVersion:extraction.ModelVersion,promptVersion:extraction.PromptVersion,files})
   } else evidence.blockers.push('EXPLICIT_EXTRACTION_PROTOCOL_POLICY_REQUIRED')
   for(const [account,actor,tenant] of [[plan.reviewerAccount,plan.reviewerActorId,plan.tenantId],[plan.foreignAccount,plan.foreignActorId,plan.foreignTenantId],['lab-restricted',plan.restrictedActorId,plan.tenantId]]) {
-    const other=await strictContext({baseURL:'https://localhost:5443'})
+    const other=await strictContext({baseURL:runtime.appOrigin})
     try {
       const signed=await other.context.newPage();signed.setDefaultTimeout(15000);evidence.stage='actual_'+account+'_login';await login(signed,account,'/app/today')
       const response=await signed.request.get('/api/v1/auth/session');evidence.httpChecks.push({stage:evidence.stage,status:response.status()})

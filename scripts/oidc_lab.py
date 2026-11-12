@@ -20,13 +20,31 @@ import tempfile
 import shutil
 from copy import deepcopy
 from oidc_lab_humans import catalog_membership
+import lab_runtime
 
 ROOT = Path(__file__).resolve().parents[1]
 PRIVATE = ROOT / '.runtime/oidc-lab'
 AUTHORITY = 'https://localhost:8443/realms/poseidon-lab'
 APP = 'https://localhost:5443'
+DATABASE_PORT = 55432
+CURRENT_RUNTIME = None
 PROJECT = 'poseidon-lab-' + hashlib.sha256(str(ROOT).encode()).hexdigest()[:12]
 STAGE = 'initialization'
+
+
+def bind_runtime(runtime=None):
+    global APP, AUTHORITY, DATABASE_PORT, CURRENT_RUNTIME
+    selected = lab_runtime.endpoints(runtime)
+    APP, AUTHORITY, DATABASE_PORT = selected['app'], selected['authority'], selected['databasePort']
+    CURRENT_RUNTIME = None if runtime is None else lab_runtime.decode(runtime)
+
+
+def bind_selected_runtime():
+    runtime = lab_runtime.read(PRIVATE)
+    genesis = PRIVATE / 'appsettings.json'
+    if genesis.exists() and lab_runtime.configured(lab_runtime._read(genesis, 2097152)) != runtime:
+        lab_runtime.fail()
+    bind_runtime(runtime)
 
 
 def root_tool(name):
@@ -127,12 +145,15 @@ def make_configuration():
                     'VesselGrants': [] if wide else [{'VesselId': '30000000-0000-0000-0000-000000000001', 'CanEdit': False}]}
                    for subject, wide in [(manager, True), (restricted, False), (reviewer, False)]]
     database_password = secrets.token_urlsafe(48)
-    config = {'ConnectionStrings': {'Poseidon': f'Host=localhost;Port=55432;Database=poseidon_lab;Username=poseidon_lab;Password={database_password};Include Error Detail=false'},
+    config = {'ConnectionStrings': {'Poseidon': f'Host=localhost;Port={DATABASE_PORT};Database=poseidon_lab;Username=poseidon_lab;Password={database_password};Include Error Detail=false'},
               'Authentication': {'Oidc': {'Authority': AUTHORITY, 'Issuer': AUTHORITY,
                                           'ClientId': 'poseidon-local', 'ClientSecret': secret, 'Memberships': memberships}},
               'DevelopmentLab': {'OidcCaPath': str(PRIVATE / 'ca.pem'), 'WebRoot': str(ROOT / 'frontend/dist')},
               'Kestrel': {'Endpoints': {'LocalLab': {'Url': APP, 'Certificate': {'Path': str(PRIVATE / 'tls.pem'), 'KeyPath': str(PRIVATE / 'tls.key')}}}},
               'Logging': {'LogLevel': {'Default': 'None'}}}
+    if CURRENT_RUNTIME is not None:
+        config['DevelopmentLab']['OwnedRuntime'] = dict(CURRENT_RUNTIME)
+        config['DevelopmentLab']['OidcPort'] = CURRENT_RUNTIME['providerPort']
     return realm, credentials, database_password, config
 
 
@@ -156,7 +177,77 @@ def init():
 
 
 def compose(*args):
-    run(['docker', 'compose', '-p', PROJECT, '-f', str(ROOT / 'infra/oidc-lab/compose.yaml'), *args], timeout=300)
+    run(['docker', 'compose', '-p', PROJECT, '-f', str(ROOT / 'infra/oidc-lab/compose.yaml'), *args],
+        env=lab_runtime.child_environment(os.environ, CURRENT_RUNTIME), timeout=300)
+
+
+def docker_metadata(args):
+    result = subprocess.run(args, cwd=ROOT,
+        env=lab_runtime.child_environment(os.environ, CURRENT_RUNTIME),
+        stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, timeout=15, check=True)
+    if len(result.stdout) > 16384:
+        raise RuntimeError('owned_lab_metadata_invalid')
+    return result.stdout.decode('utf-8').strip()
+
+
+def compose_owns(service, port, *, allow_absent=False, allow_stopped=False):
+    """Read only exact project/service labels and published bindings; never env."""
+    try:
+        identifier = docker_metadata(['docker', 'ps', '--all', '--no-trunc',
+            '--filter', 'label=com.docker.compose.project=' + PROJECT,
+            '--filter', 'label=com.docker.compose.service=' + service, '--format', '{{.ID}}'])
+        if not identifier:
+            return allow_absent
+        if len(identifier) != 64 or any(char not in '0123456789abcdef' for char in identifier):
+            return False
+        raw = docker_metadata(['docker', 'inspect', '--format',
+            '{{json .Config.Labels}}|{{json .NetworkSettings.Ports}}|{{json .State.Running}}|{{json .HostConfig.PortBindings}}', identifier])
+        if raw is None:
+            return False
+        labels_raw, ports_raw, running_raw, configured_raw = raw.split('|')
+        labels, bindings, running = json.loads(labels_raw), json.loads(ports_raw), json.loads(running_raw)
+        configured_bindings = json.loads(configured_raw)
+        internal = {'provider': '8443/tcp', 'database': '5432/tcp'}[service]
+        expected = [{'HostIp': '127.0.0.1', 'HostPort': str(port)}]
+        return ((running is True or allow_stopped and running is False) and isinstance(labels, dict) and
+            labels.get('com.docker.compose.project') == PROJECT and
+            labels.get('com.docker.compose.service') == service and
+            (CURRENT_RUNTIME is None or (labels.get('poseidon.lab.run-id') == CURRENT_RUNTIME['runId'] and
+                labels.get('poseidon.lab.runtime-identity') == lab_runtime.runtime_identity(CURRENT_RUNTIME))) and
+            isinstance(configured_bindings, dict) and configured_bindings == {internal: expected} and
+            (running is False and allow_stopped or isinstance(bindings, dict) and bindings.get(internal) == expected and
+                all(value is None for key, value in bindings.items() if key != internal)))
+    except Exception:
+        return False
+
+
+def compose_volume_owns(volume):
+    """A retained previous-run realm/database is not a new run's seed."""
+    try:
+        name = PROJECT + '_' + volume
+        observed = docker_metadata(['docker', 'volume', 'ls', '--filter', 'name=^' + name + '$', '--format', '{{.Name}}'])
+        if not observed:
+            return True
+        if observed != name:
+            return False
+        labels = json.loads(docker_metadata(['docker', 'volume', 'inspect', '--format', '{{json .Labels}}', name]))
+        return (isinstance(labels, dict) and labels.get('com.docker.compose.project') == PROJECT and
+            labels.get('com.docker.compose.volume') == volume and CURRENT_RUNTIME is not None and
+            labels.get('poseidon.lab.run-id') == CURRENT_RUNTIME['runId'] and
+            labels.get('poseidon.lab.runtime-identity') == lab_runtime.runtime_identity(CURRENT_RUNTIME))
+    except Exception:
+        return False
+
+
+def selected_compose_ownership():
+    if CURRENT_RUNTIME is None:
+        return
+    selected = lab_runtime.endpoints(CURRENT_RUNTIME)
+    for service, key in (('provider', 'providerPort'), ('database', 'databasePort')):
+        if not compose_owns(service, selected[key], allow_absent=True, allow_stopped=True):
+            raise RuntimeError('owned_lab_service_boundary')
+    if not all(compose_volume_owns(volume) for volume in ('provider-data', 'database-data')):
+        raise RuntimeError('owned_lab_volume_boundary')
 
 
 def wait_https(url):
@@ -181,7 +272,8 @@ def environment():
     # JSON overrides values, but cannot remove additional endpoint/array entries.
     blocked = ('authentication:oidc:', 'connectionstrings:', 'kestrel:', 'developmentlab:', 'securefiles:', 'secretreferences:',
                'workspacecontext:', 'workspacenavigation:')
-    exact = {'poseidon_database', 'poseidon_lab_config', 'urls', 'http_ports', 'https_ports'}
+    exact = {'poseidon_database', 'poseidon_lab_config', 'urls', 'http_ports', 'https_ports',
+             'poseidon_lab_provider_port', 'poseidon_lab_database_port', 'poseidon_lab_run_id', 'poseidon_lab_runtime_identity', 'poseidon_register_url', 'poseidon_lab_runtime_file'}
 
     def isolated(key):
         key = key.lower().replace('__', ':')
@@ -200,15 +292,14 @@ def environment():
 
 
 def start():
+    # Reject foreign listeners before init, compose, migrations or other writes.
+    app_owned = (PRIVATE / 'app.pid').exists() and owned_process('check')
+    lab_runtime.preflight(CURRENT_RUNTIME, compose_owns, app_owned)
+    selected_compose_ownership()
     init()
-    # An existing healthy task-owned app makes start idempotent; no reimport/reseed.
-    if (PRIVATE / 'app.pid').exists() and owned_process('check'):
+    if app_owned:
         wait_https(APP + '/health/live')
         return
-    # Compose can reuse its own database/provider on a retry. App port must be free.
-    with socket.socket() as connection:
-        if connection.connect_ex(('127.0.0.1', 5443)) == 0:
-            raise RuntimeError('app_port_in_use')
     stage('compose_start')
     compose('up', '-d', '--wait')
     stage('provider_https_readiness')
@@ -249,6 +340,7 @@ def owned_process(action):
 
 def stop():
     stage('owned_services_stop')
+    selected_compose_ownership()
     owned_process('stop')
     compose('down') # No --volumes, no prune, no global container deletion.
 
@@ -454,7 +546,7 @@ def prepare_humans():
         headers = {'Content-Type': 'application/x-www-form-urlencoded' if form else 'application/json'}
         if token:
             headers['Authorization'] = 'Bearer ' + token
-        request = urllib.request.Request('https://localhost:8443' + path, data=raw, headers=headers)
+        request = urllib.request.Request(AUTHORITY.removesuffix('/realms/poseidon-lab') + path, data=raw, headers=headers)
         with opener.open(request, timeout=15) as response:
             body = response.read(1048577)
             if len(body) > 1048576:
@@ -504,6 +596,7 @@ def main():
     try:
         if sys.version_info[:3] != (3, 13, 13):
             raise RuntimeError('pinned_python_required')
+        bind_selected_runtime()
         globals()[action]()
         print('DEV-OIDC-LAB-01 ' + action + ' PASS')
     except Exception:

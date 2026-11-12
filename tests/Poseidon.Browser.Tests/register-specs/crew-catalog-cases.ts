@@ -1,3 +1,4 @@
+import { labRuntimeFromEnvironment } from '../lab/lab-runtime.ts';
 import { expect, type Page } from '@playwright/test';
 async function independentCatalog(page: Page) {
     // Each context logs in through the real configured provider. No synthetic storageState,
@@ -9,7 +10,7 @@ async function independentCatalog(page: Page) {
     const session = await page.request.get('/api/v1/auth/session');
     expect(session.status()).toBe(200);
     const writer = await session.json();
-    const peer = await strictContext({ baseURL: 'https://localhost:5443' });
+    const peer = await strictContext({ baseURL: labRuntimeFromEnvironment().appOrigin });
     try {
         const reviewerPage = await peer.context.newPage();
         await login(reviewerPage, 'lab-reviewer', '/app/today');
