@@ -22,6 +22,14 @@ def _uuid(value):
     return value
 
 
+def _same_policy(actual, expected):
+    if not isinstance(actual, dict) or set(actual) != {'Sources'} or not isinstance(actual['Sources'], list) or len(actual['Sources']) != 1:
+        return False
+    rule = actual['Sources'][0]
+    wanted = expected['Sources'][0]
+    return isinstance(rule, dict) and set(rule) == set(wanted) and all(type(rule[key]) is type(value) and rule[key] == value for key, value in wanted.items())
+
+
 def configure(config, metadata):
     """Add one same-run synthetic source and only its writer capability to a copy.
 
@@ -51,7 +59,7 @@ def configure(config, metadata):
     _uuid(writer.get('Subject'))
     roles = writer.get('RoleReferences')
     permissions = writer.get('Permissions')
-    if not isinstance(roles, list) or any(not isinstance(role, str) for role in roles) or metadata['writerRoleId'] not in roles or len(set(roles)) != len(roles):
+    if not isinstance(roles, list) or not 1 <= len(roles) <= 16 or any(not isinstance(role, str) for role in roles) or metadata['writerRoleId'] not in roles or len(set(roles)) != len(roles):
         raise RuntimeError('observation_fixture_role_invalid')
     for role in roles:
         _uuid(role)
@@ -63,7 +71,8 @@ def configure(config, metadata):
         'Kind': 'Meter', 'Unit': 'hours', 'FreshnessSeconds': 3600, 'MaxScale': 4,
     }]}
     existing = config.get('MaintenanceObservations')
-    if 'MaintenanceObservations' in config and existing != {'Sources': []} and existing != expected:
+    empty = isinstance(existing, dict) and set(existing) == {'Sources'} and isinstance(existing['Sources'], list) and len(existing['Sources']) == 0
+    if 'MaintenanceObservations' in config and not empty and not _same_policy(existing, expected):
         raise RuntimeError('observation_fixture_existing_policy_preserved')
     candidate = deepcopy(config)
     candidate['MaintenanceObservations'] = expected

@@ -45,6 +45,27 @@ class BundleObservationFixtureTests(unittest.TestCase):
         self.assertEqual(once, fixture.configure(once, metadata))
         self.assertEqual(1, once['Authentication']['Oidc']['Memberships'][0]['Permissions'].count(fixture.PERMISSION))
 
+    def test_role_attribution_budget_matches_the_actual_server_bound_without_changing_the_input(self):
+        config, metadata = self.inputs()
+        roles = config['Authentication']['Oidc']['Memberships'][0]['RoleReferences']
+        roles.extend('90000000-0000-0000-0000-' + str(number).zfill(12) for number in range(2, 17))
+        before = deepcopy(config)
+        self.assertEqual(16, len(roles))
+        fixture.configure(config, metadata)
+        self.assertEqual(before, config)
+        roles.append('90000000-0000-0000-0000-000000000017'); before = deepcopy(config)
+        with self.assertRaisesRegex(RuntimeError, 'role_invalid'): fixture.configure(config, metadata)
+        self.assertEqual(before, config)
+
+    def test_operator_numeric_type_edits_are_not_silently_normalized_to_the_expected_policy(self):
+        for key in ('FreshnessSeconds', 'MaxScale'):
+            config, metadata = self.inputs(); configured = fixture.configure(config, metadata)
+            configured['MaintenanceObservations']['Sources'][0][key] = float(configured['MaintenanceObservations']['Sources'][0][key])
+            configured['Authentication']['Oidc']['Memberships'][0]['Permissions'].remove(fixture.PERMISSION)
+            before = deepcopy(configured)
+            with self.assertRaisesRegex(RuntimeError, 'existing_policy_preserved'): fixture.configure(configured, metadata)
+            self.assertEqual(before, configured)
+
     def test_existing_operator_or_other_run_policy_is_rejected_without_any_partial_grant(self):
         for value in ({'Sources': [{'Source': 'operator-owned'}]}, {'Unexpected': []}, [], None, {'Sources': None}):
             config, metadata = self.inputs(); config['MaintenanceObservations'] = value; before = deepcopy(config)
