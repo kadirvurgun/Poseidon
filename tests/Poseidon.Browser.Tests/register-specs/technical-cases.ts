@@ -1,4 +1,5 @@
 import { expect, type Page, type Request, type Route } from '@playwright/test';
+import { requireObservationContext, requireObservationFixture } from './observation-fixture.ts';
 // Real private HTTPS/signed-provider/PostgreSQL runner. The explicitly named
 // response-loss case injects transport faults only after actual host responses.
 // At the bundle gate, provision the disposable writer's explicit equipment/maintenance
@@ -187,34 +188,17 @@ async function controlledResponseLoss(page: Page) {
 
 async function observationControlledResponseLoss(page: Page) {
     // MAINTENANCE-OBSERVATION-OWNER-RECOVERY-01 AC2/3/4/5.
-    // PREREQUISITE_OPEN: the disposable genuine-host writer needs
-    // maintenance.observation.write and an actual synthetic observation source
-    // configured on the seed root asset (asset id = vessel id). This case fails
-    // when that fixture is absent; it never provisions or fabricates a policy.
+    // OBSERVATION-SIGNED-FIXTURE-01: an explicit private run-bound descriptor,
+    // matching real signed actor and exact current source are prerequisites.
+    // Loading references grants nothing; missing preparation fails, never skips.
     // AUTHORED ONLY; no new bundle execution or historical manifest acceptance.
-    const vessel = await context(page);
-    const path = `/api/v1/equipment-hierarchy/${vessel}/${vessel}/observations`;
-    const prerequisite = await page.request.get(path);
-    expect(prerequisite.status(), 'PREREQUISITE_OPEN: actual scoped observation fixture must be readable').toBe(200);
-    const initial = await prerequisite.json();
-    expect(initial.canWrite === true && initial.state === 'ConfiguredDeclarationsOnly' &&
-        Array.isArray(initial.sources) && Array.isArray(initial.items),
-    'PREREQUISITE_OPEN: genuine writer and configured synthetic observation source are required').toBe(true);
-    type ConfiguredSource = { source: string; version: string; kind: 'Meter' | 'Condition'; unit: string;
-        freshnessSeconds: number; maxScale: number; vesselId: string; assetId: string };
-    const source: ConfiguredSource | undefined = initial.sources.find((rule: ConfiguredSource) => rule &&
-        typeof rule.source === 'string' && rule.source.length > 0 && typeof rule.version === 'string' && rule.version.length > 0 &&
-        (rule.kind === 'Meter' || rule.kind === 'Condition') && typeof rule.unit === 'string' && rule.unit.length > 0 &&
-        rule.vesselId === vessel && rule.assetId === vessel && Number.isSafeInteger(rule.freshnessSeconds) && rule.freshnessSeconds > 0 &&
-        Number.isSafeInteger(rule.maxScale) && rule.maxScale >= 0 && rule.maxScale <= 28);
-    expect(source !== undefined, 'PREREQUISITE_OPEN: a real scoped Meter or Condition source is required').toBe(true);
-    if (!source) throw new Error('PREREQUISITE_OPEN: configured observation source unavailable');
-    const scale = Math.min(source.maxScale, 4);
-    const declaredValue = source.kind === 'Condition' ? 'False' : scale ? `19.${'5'.padEnd(scale, '0')}` : '19';
-    const existingRevisions = new Set(initial.items.filter((row: { source: string }) => row.source === source.source)
-        .map((row: { sourceRevision: number }) => row.sourceRevision));
-    let revision = Date.now();
-    while (existingRevisions.has(revision)) revision++;
+    const fixture = requireObservationFixture();
+    await requireObservationContext(page, fixture);
+    const vessel = fixture.vesselId, asset = fixture.assetId;
+    const path = `/api/v1/equipment-hierarchy/${vessel}/${asset}/observations`;
+    const source = { source: fixture.source, version: fixture.policyVersion, kind: fixture.kind, unit: fixture.unit };
+    const declaredValue = '19.5000'; // Exact declared text under this synthetic scale-4 fixture.
+    const revision = Date.now();
     expect(Number.isSafeInteger(revision) && revision > 0).toBe(true);
     const instant = new Date(Date.now() - 60_000).toISOString(); // Explicit UTC offset, never a future declaration.
     const attempts: { key: string | undefined; body: string | null; sessionReads: number }[] = [];
@@ -248,7 +232,7 @@ async function observationControlledResponseLoss(page: Page) {
     page.on('request', observeSession);
     try {
         await page.route(routeUrl, observationTransport);
-        await page.goto(`/app/equipment-hierarchy/${vessel}?id=${vessel}`);
+        await page.goto(`/app/equipment-hierarchy/${vessel}?id=${asset}`);
         await page.getByRole('combobox', { name: /^(Dil seçin|Choose language)$/ }).selectOption('en');
         const observations = page.getByRole('region', { name: 'Meter and condition observations', exact: true });
         const configured = observations.getByLabel('Configured source', { exact: true });
@@ -260,8 +244,7 @@ async function observationControlledResponseLoss(page: Page) {
         const discard = observations.getByRole('button', { name: 'Discard and reload', exact: true });
         await configured.selectOption(source.source);
         await sourceRevision.fill(String(revision));
-        if (source.kind === 'Condition') await value.selectOption('False');
-        else await value.fill(declaredValue);
+        await value.fill(declaredValue);
         await observedAt.fill(instant);
         const beforeCapture = sessionReads;
         await record.click();
