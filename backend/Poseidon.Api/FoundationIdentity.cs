@@ -98,6 +98,14 @@ public static class FoundationIdentity
     {
         var settings = configuration.GetSection("Authentication:Oidc").Get<FederationSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new();
         settings.ClientSecret = OperatorSecretReferences.Oidc(settings, environment);
+        var localCa = configuration["DevelopmentLab:OidcCaPath"];
+        var localPort = DevelopmentOidcTransport.ConfiguredPort(configuration);
+        var selectedLocalPort = configuration.GetSection("DevelopmentLab").GetChildren()
+            .Any(section => string.Equals(section.Key, "OidcPort", StringComparison.OrdinalIgnoreCase));
+        if (selectedLocalPort && (!environment.IsDevelopment() || string.IsNullOrEmpty(localCa)))
+            throw new InvalidOperationException("Local OIDC port selection requires explicit Development lab trust.");
+        if (!string.IsNullOrEmpty(localCa) && (!settings.Configured || !string.Equals(settings.Issuer, settings.Authority, StringComparison.Ordinal)))
+            throw new InvalidOperationException("Local OIDC trust requires a matching configured authority and issuer.");
         services.AddSingleton(settings);
         services.AddSingleton<ActorResolver>();
         services.AddAntiforgery(o =>
@@ -134,10 +142,9 @@ public static class FoundationIdentity
         });
         if (settings.Configured) auth.AddOpenIdConnect(Oidc, o =>
         {
-            var localCa = configuration["DevelopmentLab:OidcCaPath"];
             if (!string.IsNullOrEmpty(localCa))
                 o.BackchannelHttpHandler = DevelopmentOidcTransport.Create(
-                    environment, settings.Authority!, localCa);
+                    environment, settings.Authority!, localCa, localPort);
             o.Authority = settings.Authority;
             o.ClientId = settings.ClientId;
             o.ClientSecret = settings.ClientSecret;
