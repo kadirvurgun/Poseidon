@@ -18,8 +18,13 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v6.0.0
+        with:
+          python-version: '3.13.13'
       - name: Verify Windows scheduler construction without registration
         run: python -m unittest discover -s scripts -p windows_scheduler_checks.py -v
+      - name: Verify owned runtime Windows file metadata boundaries
+        run: python -m unittest discover -s scripts -p test_lab_runtime.py -v
 
   persistence-and-security:
     runs-on: ubuntu-latest
