@@ -2,6 +2,7 @@
 from copy import deepcopy
 import argparse
 import json
+import os
 from pathlib import Path
 import subprocess
 import tempfile
@@ -39,6 +40,8 @@ class LabRuntimeTests(unittest.TestCase):
         (self.root / 'source-bundle-plan.json').write_text(json.dumps({
             'schemaVersion': 'poseidon.bundle-fixture-plan.v1',
             'runId': self.runtime['runId'], 'ownedRuntime': self.runtime}), encoding='utf-8')
+        for name in (runtime.FILE, 'source-bundle-plan.json'):
+            (self.root / name).chmod(0o600)
 
     def test_legacy_defaults_omit_selected_config_and_keep_endpoint_identity(self):
         lab.bind_runtime()
@@ -119,6 +122,23 @@ class LabRuntimeTests(unittest.TestCase):
         (self.root / 'source-bundle-plan.json').write_text(json.dumps(plan), encoding='utf-8')
         with self.assertRaises(RuntimeError):
             runtime.read(self.root)
+
+    @unittest.skipIf(os.name == 'nt', 'POSIX UID/mode boundary; Windows uses existing private-root ACL')
+    def test_private_root_and_metadata_must_remain_owner_only_and_current_uid(self):
+        self.publish_metadata()
+        self.assertEqual(self.runtime, runtime.read(self.root))
+        for path, restored in ((self.root, 0o700), (self.root / runtime.FILE, 0o600),
+                               (self.root / 'source-bundle-plan.json', 0o600)):
+            try:
+                path.chmod(0o777 if path == self.root else 0o644)
+                with self.assertRaisesRegex(RuntimeError, '^owned_lab_runtime_invalid$'):
+                    runtime.read(self.root)
+            finally:
+                path.chmod(restored)
+        uid = os.geteuid()
+        with patch.object(runtime.os, 'geteuid', return_value=uid + 1):
+            with self.assertRaisesRegex(RuntimeError, '^owned_lab_runtime_invalid$'):
+                runtime.read(self.root)
 
     def test_raw_decimal_and_exponent_descriptor_ports_are_not_native_integers(self):
         self.publish_metadata()

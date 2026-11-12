@@ -109,19 +109,40 @@ def _closed(pairs):
     return value
 
 
+def _private(metadata, directory=False):
+    if not (stat.S_ISDIR(metadata.st_mode) if directory else stat.S_ISREG(metadata.st_mode)) or not directory and metadata.st_nlink != 1:
+        fail()
+    if os.name != 'nt' and (metadata.st_mode & 0o077 or hasattr(os, 'geteuid') and metadata.st_uid != os.geteuid()):
+        fail()
+
+
+def _unchanged(first, second):
+    return all(getattr(first, key) == getattr(second, key) for key in
+        ('st_dev', 'st_ino', 'st_size', 'st_mtime_ns', 'st_ctime_ns', 'st_mode', 'st_uid'))
+
+
 def _read(path, limit):
     try:
+        parent_before = path.parent.lstat()
+        _private(parent_before, True)
+        if path.parent.is_symlink() or path.parent.is_junction() or path.parent.resolve() != path.parent.absolute():
+            fail()
         before = path.lstat()
+        _private(before)
         if path.is_symlink() or path.is_junction() or not stat.S_ISREG(before.st_mode) or before.st_nlink != 1 or before.st_size > limit:
             fail()
         descriptor = os.open(path, os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_NONBLOCK', 0))
         try:
             opened = os.fstat(descriptor)
-            if (opened.st_dev, opened.st_ino, opened.st_size) != (before.st_dev, before.st_ino, before.st_size):
+            _private(opened)
+            if not _unchanged(before, opened):
                 fail()
             raw = os.read(descriptor, limit + 1)
-            after = os.fstat(descriptor)
-            if len(raw) > limit or len(raw) != before.st_size or (after.st_size, after.st_mtime_ns) != (opened.st_size, opened.st_mtime_ns):
+            after, current, parent_after = os.fstat(descriptor), path.lstat(), path.parent.lstat()
+            _private(after); _private(current); _private(parent_after, True)
+            if (len(raw) > limit or len(raw) != before.st_size or not _unchanged(opened, after) or not _unchanged(opened, current) or
+                    not _unchanged(parent_before, parent_after) or path.is_symlink() or path.is_junction() or
+                    path.resolve() != path.absolute()):
                 fail()
             return json.loads(raw.decode('utf-8'), object_pairs_hook=_closed)
         finally:
@@ -133,6 +154,8 @@ def _read(path, limit):
 def read(private):
     """Only same-worktree immutable public metadata is read, never credentials."""
     private = Path(private)
+    if private.exists():
+        _private(private.lstat(), True)
     path = private / FILE
     plan_path = private / 'source-bundle-plan.json'
     if path.exists() or path.is_symlink():

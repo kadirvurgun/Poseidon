@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto'
-import { closeSync, constants, existsSync, fstatSync, lstatSync, readdirSync, openSync, readSync, realpathSync } from 'node:fs'
-import { basename, isAbsolute, join, resolve } from 'node:path'
+import { closeSync, constants, existsSync, fstatSync, lstatSync, readdirSync, openSync, readSync, realpathSync, type Stats } from 'node:fs'
+import { basename, dirname, isAbsolute, join, resolve } from 'node:path'
 
 // BUNDLE-PORT-ISOLATION-01: public endpoint metadata inside the same owned
 // private root. No origin/issuer comes from requests or arbitrary environment URLs.
@@ -34,20 +34,40 @@ export function validateLabOrigin(origin: unknown, endpoints: LabEndpoints): voi
   if (origin !== undefined && origin !== endpoints.appOrigin) invalid()
 }
 
+function privateMetadata(metadata: Stats, directory: boolean): void {
+  if (metadata.isSymbolicLink() || !(directory ? metadata.isDirectory() : metadata.isFile()) || !directory && metadata.nlink !== 1) invalid()
+  // Windows keeps the existing private publication ACL; POSIX mode bits do not
+  // attest NTFS permissions. Both platforms still reject links and substitutions.
+  if (process.platform !== 'win32' && ((metadata.mode & 0o077) !== 0 ||
+      typeof process.geteuid === 'function' && metadata.uid !== process.geteuid())) invalid()
+}
+const unchanged = (first: Stats, second: Stats) => first.dev === second.dev && first.ino === second.ino &&
+  first.size === second.size && first.mtimeMs === second.mtimeMs && first.ctimeMs === second.ctimeMs &&
+  first.mode === second.mode && first.uid === second.uid
+
 function read(path: string, maximum: number, integerFields: readonly string[] = ['appPort', 'providerPort', 'databasePort', 'OidcPort']): { raw: string; value: unknown } {
+  const parent = dirname(path), parentBefore = lstatSync(parent)
+  privateMetadata(parentBefore, true)
+  if (!samePath(realpathSync(parent), parent)) invalid()
   const before = lstatSync(path)
+  privateMetadata(before, false)
   if (before.isSymbolicLink() || !before.isFile() || before.nlink !== 1 || before.size < 1 || before.size > maximum ||
       !samePath(realpathSync(path), path)) invalid()
   const descriptor = openSync(path, constants.O_RDONLY | (constants.O_NOFOLLOW ?? 0) | (constants.O_NONBLOCK ?? 0))
   try {
     const metadata = fstatSync(descriptor)
-    if (metadata.dev !== before.dev || metadata.ino !== before.ino || metadata.size !== before.size) invalid()
+    privateMetadata(metadata, false)
+    if (!unchanged(before, metadata)) invalid()
     const buffer = Buffer.alloc(maximum + 1)
     let length = 0, count: number
     while (length < buffer.length && (count = readSync(descriptor, buffer, length, buffer.length - length, length)) > 0) length += count
-    const after = fstatSync(descriptor), current = lstatSync(path)
-    if (length !== metadata.size || length > maximum || after.size !== metadata.size || after.mtimeMs !== metadata.mtimeMs ||
-        current.isSymbolicLink() || current.dev !== metadata.dev || current.ino !== metadata.ino || !samePath(realpathSync(path), path)) invalid()
+    const after = fstatSync(descriptor), current = lstatSync(path), parentAfter = lstatSync(parent)
+    privateMetadata(after, false); privateMetadata(current, false); privateMetadata(parentAfter, true)
+    if (length !== metadata.size || length > maximum || !unchanged(metadata, after) || !unchanged(metadata, current) ||
+        !unchanged(parentBefore, parentAfter) || !samePath(realpathSync(parent), parent) || !samePath(realpathSync(path), path)) invalid()
+    // TextDecoder otherwise removes this prefix and could hide changed bytes
+    // from immutable payload/manifest hashes. Python's UTF8 parser rejects it.
+    if (length >= 3 && buffer[0] === 0xef && buffer[1] === 0xbb && buffer[2] === 0xbf) invalid()
     const raw = new TextDecoder('utf-8', { fatal: true }).decode(buffer.subarray(0, length))
     return { raw, value: strictJson(raw, integerFields) }
   } finally { closeSync(descriptor) }
@@ -179,6 +199,7 @@ export function labRuntimeFromEnvironment(environment: Record<string, string | u
     }
     if (!isAbsolute(privateRoot)) invalid()
     const root = resolve(privateRoot)
+    privateMetadata(lstatSync(root), true)
     if (!samePath(realpathSync(root), root) || lstatSync(root).isSymbolicLink() || !lstatSync(root).isDirectory()) invalid()
     const expected = join(root, 'owned-runtime.json'), planFile = join(root, 'source-bundle-plan.json')
     if (supplied && (!isAbsolute(supplied) || !samePath(resolve(supplied), expected))) invalid()

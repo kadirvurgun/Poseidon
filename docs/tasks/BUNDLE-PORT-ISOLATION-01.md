@@ -70,6 +70,10 @@ The controlled child environment sets `POSEIDON_LAB_RUNTIME_FILE` to that exact
 same-root file and `POSEIDON_REGISTER_URL` to the selected app origin. Ambient
 application and Compose endpoint selectors are removed/overwritten. Metadata,
 source plan, genesis, selected latest generation and browser URL must agree;
+UTF8 BOM prefixes reject before decoding, preserving byte-exact immutable hashes.
+On POSIX, root and binding files must remain current-UID owned with no group/other
+permission bits, checked before/opened/after reads with stable identity/timestamps.
+Windows retains the existing private publication ACL boundary;
 missing selected markers, stale generation, duplicate JSON keys and path/link
 substitution reject closed without private parser/path/body diagnostics.
 

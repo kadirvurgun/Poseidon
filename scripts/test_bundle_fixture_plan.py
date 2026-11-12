@@ -228,7 +228,7 @@ class BundleFixturePlanTests(unittest.TestCase):
             self.assertNotIn('POSEIDON_BUNDLE_EXTRACTION_SECRET',bundle.environment())
             _,_,_,configuration=lab.make_configuration()
             private_io.publish_config(configuration)
-            (root/'source-bundle-plan.json').write_text('{}')
+            private_io.publish_json(root/'source-bundle-plan.json', {})
             self.assertEqual('synthetic_fixture_secret',bundle.environment()['POSEIDON_BUNDLE_EXTRACTION_SECRET'])
             (root/'extraction-peer-secret').write_text('bad\nsecret')
             with self.assertRaisesRegex(RuntimeError,'synthetic_peer_secret_invalid'):bundle.environment()

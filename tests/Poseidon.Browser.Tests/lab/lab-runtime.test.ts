@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict'
 import { createHash, randomUUID } from 'node:crypto'
-import { linkSync, mkdirSync, mkdtempSync, readFileSync, rmSync, unlinkSync, writeFileSync } from 'node:fs'
+import { chmodSync, linkSync, mkdirSync, mkdtempSync, readFileSync, rmSync, unlinkSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
-import test from 'node:test'
+import test, { mock } from 'node:test'
 import { decodeOwnedLabRuntime, labEndpoints, labConfigurationIdentity, labRuntimeFromEnvironment, validateLabOrigin, validateLabConfiguration, type OwnedLabRuntime } from './lab-runtime.ts'
 
 // Pure protocol/file tests. No browser, TLS/provider request, credentials or host.
@@ -168,6 +168,40 @@ test('raw decimal and exponent port spellings reject consistently in every bindi
         rejected(() => labRuntimeFromEnvironment(f.environment))
       } finally { f.close() }
     }
+  }
+})
+
+test('POSIX private root and every binding file remain owner only', { skip: process.platform === 'win32' }, () => {
+  const f = fixture()
+  try {
+    for (const name of ['', 'owned-runtime.json', 'source-bundle-plan.json', 'appsettings.json',
+      'source-bundle-config-000001.json', 'source-bundle-host-000001.json']) {
+      const path = name ? join(f.root, name) : f.root
+      try {
+        chmodSync(path, name ? 0o644 : 0o777)
+        rejected(() => labRuntimeFromEnvironment(f.environment))
+      } finally { chmodSync(path, name ? 0o600 : 0o700) }
+    }
+  } finally { f.close() }
+})
+
+test('POSIX metadata owned by a different effective UID fails closed', { skip: process.platform === 'win32' || typeof process.geteuid !== 'function' }, () => {
+  const f = fixture(), uid = process.geteuid!()
+  const changed = mock.method(process, 'geteuid', () => uid + 1)
+  try { rejected(() => labRuntimeFromEnvironment(f.environment)) } finally { changed.mock.restore(); f.close() }
+})
+
+test('BOM-prefixed binding files cannot retain the original immutable hashes', () => {
+  for (const name of ['owned-runtime.json', 'source-bundle-plan.json', 'appsettings.json',
+    'source-bundle-config-000001.json', 'source-bundle-host-000001.json']) {
+    const f = fixture()
+    try {
+      const file = join(f.root, name), original = readFileSync(file)
+      // Deliberately leave the recorded payload/chain hashes unchanged: the
+      // decoder must not erase these newly prefixed bytes before hashing.
+      writeFileSync(file, Buffer.concat([Buffer.from([0xef, 0xbb, 0xbf]), original]))
+      rejected(() => labRuntimeFromEnvironment(f.environment))
+    } finally { f.close() }
   }
 })
 
