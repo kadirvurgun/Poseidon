@@ -311,6 +311,9 @@ class ApiShardGateTests(unittest.TestCase):
         workflow = (gate.ROOT / '.github/workflows/backend-foundation.yml').read_text(encoding='utf-8')
         self.assertIn('POSEIDON_API_GATE_SHARDS: 4', workflow)
         self.assertIn('node --test tests/Poseidon.Browser.Tests/lab/register-lane-fixture.test.ts', workflow)
+        self.assertIn('tests/Poseidon.Browser.Tests/lab/observation-fixture.test.ts', workflow)
+        self.assertIn('python3 -m unittest discover -s scripts -p test_bundle_observation_fixture.py', workflow)
+        self.assertIn('python3 -m unittest discover -s scripts -p test_bundle_fixture_plan.py', workflow)
 
     def test_failed_native_shard_discovery_never_prepares_or_executes(self):
         result = subprocess.CompletedProcess([], 1, self.listed([self.full[0], self.full[0]]))

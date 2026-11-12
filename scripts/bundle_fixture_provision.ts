@@ -7,6 +7,7 @@ import { isAbsolute, relative, resolve, sep } from 'node:path'
 import { strictContext } from '../tests/Poseidon.Browser.Tests/lab/strict-browser.ts'
 import { login } from '../tests/Poseidon.Browser.Tests/lab/journeys.ts'
 import {canonical, FixtureJournal, verifyFixtureReceipt} from './bundle_fixture_journal.ts'
+import { observationFixtureFromActual } from '../tests/Poseidon.Browser.Tests/register-specs/observation-fixture.ts'
 
 const privateRoot = realpathSync(process.env.POSEIDON_LAB_PRIVATE!)
 const expectedRoot = realpathSync(resolve(import.meta.dirname, '../.runtime/oidc-lab'))
@@ -55,6 +56,13 @@ try {
   if (user.authenticated !== true || user.actorId !== plan.writerActorId || user.tenantId !== plan.tenantId || typeof user.csrfToken !== 'string' || user.csrfToken.length < 16) throw new Error('fixture_actual_actor_mismatch')
   const vessel = await read('/api/v1/vessels/' + plan.vesselId, 'actual_ship')
   if (vessel.id !== plan.vesselId || vessel.kind !== 'Ship') throw new Error('fixture_actual_ship_required')
+  // Configuration alone is never a fixture proof. Read the actual authorized
+  // endpoint before publishing only the closed descriptor, never its row values.
+  const observation = await read('/api/v1/equipment-hierarchy/' + plan.vesselId + '/' + plan.vesselId + '/observations', 'actual_observation_source')
+  const observationUser = await read('/api/v1/auth/session', 'actual_observation_owner_recheck')
+  const observationFixture = observationFixtureFromActual({ runId: plan.runId, tenantId: plan.tenantId, vesselId: plan.vesselId, writerActorId: plan.writerActorId }, observationUser, observation)
+  if (observationUser.actorId !== user.actorId || observationUser.tenantId !== user.tenantId) throw new Error('fixture_actual_actor_mismatch')
+  fixture('POSEIDON_BROWSER_OBSERVATION_FIXTURE', 'observation-fixture.json', observationFixture)
   const command = async (api:typeof page.request, identity:{actorId:string;tenantId:string;csrfToken:string}, path:string, body:unknown, stage:string, method='POST', idempotent=true) => {
     evidence.stage=stage
     return journal.command(stage,{actorId:identity.actorId,tenantId:identity.tenantId},method,path,body,idempotent,async intent=>{
