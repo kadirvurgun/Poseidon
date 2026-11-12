@@ -36,3 +36,25 @@ The genuine extension remains within synthetic-assigned-human-source-qualificati
 ## Verification boundary
 
 Author: locale_zh for product/component/adapter/genuine/task source; root for the separate real-host API test file. Independent QA: status_forecast after source freeze. All new tests, builds, typecheck, lint, browser and provider execution are DEFERRED, with zero author execution. Source review, Git metadata and a later AST update are not test PASS. Existing235d evidence stays bound to235d. Required final-target independent QA/CI and genuine provider/fixture authority remain required before any publication or phase acceptance. Root owns project status and phase records.
+
+## Independent source corrections after afa706e
+
+QOR-S01 found16 unsupported `exact` options on React Testing Library ByRole
+calls in the new recovery tests. Only those flags were removed; string accessible
+names remain exact by the role query contract. Playwright options were untouched.
+This was a source/type-contract finding, not a fabricated executed typecheck.
+
+QOR-S02 found a pending File.arrayBuffer continuation could invoke an old edit
+closure after a completed or uncertain command. Source selection now captures a
+monotonic edit generation invalidated by session revalidation, command dispatch,
+scope withdrawal and discard. Completion also checks current frozen/receipt refs;
+stale bytes cannot bind a new draft after the old envelope was captured. Failed
+current file reads report an ordinary translated validation error without a
+command or uncertain outcome. Three deferred-completion outcomes (UNKNOWN,
+confirmed-but-unreadable, initial400) and a rejected-file regression assert the
+public dirty/navigation state and exact retained command rather than internal
+implementation details. These four new cases are authored, execution DEFERRED.
+
+Root owns these bounded source corrections. Original afa706e and its two source
+findings are retained independently; corrected source requires a new freeze and
+independent delta review before any later actual bundle gate.

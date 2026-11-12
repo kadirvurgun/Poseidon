@@ -34,9 +34,9 @@ function setup() {
     csrf: crypto.randomUUID(), offline: false, onDirty: vi.fn(), onSaving: vi.fn() }
   return { state, row, originalOwner, sent, atPost, props }
 }
-const save = () => fireEvent.click(screen.getByRole('button', { name: 'Save qualification draft', exact: true }))
-const retry = () => fireEvent.click(screen.getByRole('button', { name: 'Retry exact qualification command', exact: true }))
-const recheck = () => fireEvent.click(screen.getByRole('button', { name: 'Retry source read', exact: true }))
+const save = () => fireEvent.click(screen.getByRole('button', { name: 'Save qualification draft' }))
+const retry = () => fireEvent.click(screen.getByRole('button', { name: 'Retry exact qualification command' }))
+const recheck = () => fireEvent.click(screen.getByRole('button', { name: 'Retry source read' }))
 const unknown = () => screen.findByText('Outcome uncertain. The exact original attempt is locked until retry.')
 
 it.each(['http', 'capability', 'replacement-authority'] as const)('retains a committed-unknown envelope through %s denial and same-owner reauthorization', async denial => {
@@ -56,7 +56,7 @@ it.each(['http', 'capability', 'replacement-authority'] as const)('retains a com
   retry()
   await screen.findByText('Assigned authority required.')
   expect(h.state.sessionReads).toBeGreaterThan(beforeDenied)
-  expect(screen.getByRole('button', { name: 'Discard local changes and reload', exact: true })).toBeDisabled()
+  expect(screen.getByRole('button', { name: 'Discard local changes and reload' })).toBeDisabled()
   expect(screen.queryByLabelText('Publisher')).not.toBeInTheDocument()
   expect(h.props.onSaving).toHaveBeenLastCalledWith(true)
   h.state.page = { ...h.state.page, actions: ['draft'], authorities: [{ action: 'draft', authorityId: h.row.authorityId }] }
@@ -82,11 +82,11 @@ it.each([401, 404, 409])('a later %s does not turn the earlier uncertain write i
   await screen.findByLabelText('Publisher'); save(); await unknown(); retry()
   await waitFor(() => expect(h.sent).toHaveBeenCalledTimes(2))
   await screen.findByRole('alert')
-  await waitFor(() => expect(screen.getByRole('button', { name: 'Discard local changes and reload', exact: true })).toBeDisabled())
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Discard local changes and reload' })).toBeDisabled())
   expect(h.sent.mock.calls[0][1].body === h.sent.mock.calls[1][1].body).toBe(true)
   expect(h.sent.mock.calls[0][1].key === h.sent.mock.calls[1][1].key).toBe(true)
   expect(screen.getByText('Outcome uncertain. The exact original attempt is locked until retry.')).toBeVisible()
-  if (code === 401) expect(screen.getByRole('link', { name: 'Sign in again', exact: true })).toHaveAttribute('target', '_blank')
+  if (code === 401) expect(screen.getByRole('link', { name: 'Sign in again' })).toHaveAttribute('target', '_blank')
 })
 
 it.each(['actor', 'tenant', 'rule', 'vessel'] as const)('fences a retained command and private DOM when the %s changes', async changed => {
@@ -104,7 +104,7 @@ it.each(['actor', 'tenant', 'rule', 'vessel'] as const)('fences a retained comma
   await screen.findByText('Assigned authority required.')
   expect(screen.queryByDisplayValue(privateDraft)).not.toBeInTheDocument()
   expect(screen.queryByText(h.row.hash)).not.toBeInTheDocument()
-  expect(screen.getByRole('button', { name: 'Retry exact qualification command', exact: true })).toBeDisabled()
+  expect(screen.getByRole('button', { name: 'Retry exact qualification command' })).toBeDisabled()
   expect(h.sent).toHaveBeenCalledTimes(1)
   h.state.owner = h.originalOwner
   view.rerender(<RegulatoryQualification {...h.props} />)
@@ -125,7 +125,7 @@ it('a confirmed receipt remains read-only at the same rule/route after readback 
   save(); await screen.findByText('Human record saved. No operational release follows.')
   await screen.findByRole('alert')
   expect(screen.queryByLabelText('Publisher')).not.toBeInTheDocument()
-  expect(screen.queryByRole('button', { name: 'Retry exact qualification command', exact: true })).not.toBeInTheDocument()
+  expect(screen.queryByRole('button', { name: 'Retry exact qualification command' })).not.toBeInTheDocument()
   expect(h.sent).toHaveBeenCalledTimes(1)
   expect(window.location.href).toBe(location)
   h.state.unavailable = false; recheck()
@@ -140,7 +140,7 @@ it('does not confirm a valid receipt for a different post-write session owner', 
   await screen.findByLabelText('Publisher'); save(); await unknown()
   expect(screen.queryByText('Human record saved. No operational release follows.')).not.toBeInTheDocument()
   expect(screen.queryByLabelText('Publisher')).not.toBeInTheDocument()
-  expect(screen.getByRole('button', { name: 'Discard local changes and reload', exact: true })).toBeDisabled()
+  expect(screen.getByRole('button', { name: 'Discard local changes and reload' })).toBeDisabled()
   const original = h.sent.mock.calls[0][1]
   h.state.owner = h.originalOwner; recheck()
   await screen.findByLabelText('Publisher'); retry()
@@ -154,7 +154,7 @@ it('does not accept a prior event projection as the new command receipt', async 
   render(<RegulatoryQualification {...h.props} />)
   await screen.findByLabelText('Publisher'); save(); await unknown()
   expect(screen.queryByText('Human record saved. No operational release follows.')).not.toBeInTheDocument()
-  expect(screen.getByRole('button', { name: 'Discard local changes and reload', exact: true })).toBeDisabled()
+  expect(screen.getByRole('button', { name: 'Discard local changes and reload' })).toBeDisabled()
   retry()
   await screen.findByText('Human record saved. No operational release follows.')
   expect(h.sent.mock.calls[0][1].body === h.sent.mock.calls[1][1].body && h.sent.mock.calls[0][1].key === h.sent.mock.calls[1][1].key).toBe(true)
@@ -173,8 +173,8 @@ it('withdraws readable private draft/history on source denial and treats initial
   await screen.findByLabelText('Publisher')
   h.sent.mockRejectedValueOnce(new ApiError(400))
   save(); await screen.findByRole('alert')
-  expect(screen.queryByRole('button', { name: 'Retry exact qualification command', exact: true })).not.toBeInTheDocument()
-  expect(screen.getByRole('button', { name: 'Discard local changes and reload', exact: true })).toBeEnabled()
+  expect(screen.queryByRole('button', { name: 'Retry exact qualification command' })).not.toBeInTheDocument()
+  expect(screen.getByRole('button', { name: 'Discard local changes and reload' })).toBeEnabled()
 })
 
 
@@ -201,9 +201,9 @@ it('retains a private draft on current-version drift without silently rebasing i
   h.state.page = { ...h.state.page, items: [{ ...h.row, version: h.row.version + 1 }] }
   recheck()
   expect(await screen.findByDisplayValue(privateDraft)).toBeDisabled()
-  expect(screen.getByRole('button', { name: 'Save qualification draft', exact: true })).toBeDisabled()
+  expect(screen.getByRole('button', { name: 'Save qualification draft' })).toBeDisabled()
   expect(h.sent).not.toHaveBeenCalled()
-  fireEvent.click(screen.getByRole('button', { name: 'Discard local changes and reload', exact: true }))
+  fireEvent.click(screen.getByRole('button', { name: 'Discard local changes and reload' }))
   expect(await screen.findByDisplayValue(h.row.content.publisher!)).toBeEnabled()
 })
 
@@ -213,7 +213,7 @@ it('retains a malformed successful response as uncertain until an explicit exact
   render(<RegulatoryQualification {...h.props} />)
   await screen.findByLabelText('Publisher'); save(); await unknown()
   expect(h.sent).toHaveBeenCalledTimes(1)
-  expect(screen.getByRole('button', { name: 'Discard local changes and reload', exact: true })).toBeDisabled()
+  expect(screen.getByRole('button', { name: 'Discard local changes and reload' })).toBeDisabled()
   recheck()
   await screen.findByLabelText('Publisher')
   expect(h.sent).toHaveBeenCalledTimes(1)
@@ -230,7 +230,7 @@ it('keeps the same draft nodes and captured command when the presentation langua
   view.rerender(<RegulatoryQualification {...h.props} language="tr" />)
   expect(screen.getByDisplayValue(value)).toBe(publisher)
   h.sent.mockRejectedValueOnce(new Error('synthetic response lost'))
-  fireEvent.click(screen.getByRole('button', { name: localizedText('tr', 'pairs.m_1da533f3cdfb3b33'), exact: true }))
+  fireEvent.click(screen.getByRole('button', { name: localizedText('tr', 'pairs.m_1da533f3cdfb3b33') }))
   await screen.findByText(localizedText('tr', 'pairs.m_62930366e47b200e'))
   const original = h.sent.mock.calls[0][1]
   view.rerender(<RegulatoryQualification {...h.props} />)
@@ -238,4 +238,63 @@ it('keeps the same draft nodes and captured command when the presentation langua
   retry()
   await screen.findByText('Human record saved. No operational release follows.')
   expect(h.sent.mock.calls[1][1].body === original.body && h.sent.mock.calls[1][1].key === original.key).toBe(true)
+})
+
+it.each(['unknown', 'confirmed-readback-unavailable', 'initial-rejection'] as const)(
+  'does not resurrect a late selected file after the command becomes %s', async outcome => {
+    const h = setup(), successful = h.sent.getMockImplementation()!
+    if (outcome === 'unknown') h.sent.mockRejectedValueOnce(new Error('synthetic response loss'))
+    else if (outcome === 'initial-rejection') h.sent.mockRejectedValueOnce(new ApiError(400))
+    else h.sent.mockImplementationOnce(async (...args) => {
+      const result = await successful(...args)
+      h.state.unavailable = true
+      return result
+    })
+    render(<RegulatoryQualification {...h.props} />)
+    await waitFor(() => expect(screen.getByLabelText('Publisher')).toBeEnabled())
+    let finish!: (value: ArrayBuffer) => void
+    const reading = new Promise<ArrayBuffer>(resolve => { finish = resolve })
+    const file = Object.assign(new File([new Uint8Array([1, 2, 3])], 'fictional-pending-source.txt'), {
+      arrayBuffer: vi.fn(() => reading),
+    })
+    fireEvent.change(screen.getByLabelText('Exact source bytes (maximum 2 MiB)'), { target: { files: [file] } })
+    expect(file.arrayBuffer).toHaveBeenCalledOnce()
+    save()
+    if (outcome === 'unknown') await unknown()
+    else {
+      await screen.findByRole('alert')
+      if (outcome === 'confirmed-readback-unavailable')
+        await screen.findByText('Human record saved. No operational release follows.')
+    }
+    await waitFor(() => expect(h.props.onDirty).toHaveBeenLastCalledWith(outcome === 'unknown'))
+    expect(screen.queryByLabelText('Publisher')).not.toBeInTheDocument()
+    const original = h.sent.mock.calls[0][1], dirtyNotifications = h.props.onDirty.mock.calls.length
+    await act(async () => { finish(new Uint8Array([1, 2, 3]).buffer); await reading })
+    // A late read must neither rebind a private draft nor produce another write.
+    // The UI's public navigation guard must retain its already settled state.
+    expect(h.props.onDirty).toHaveBeenCalledTimes(dirtyNotifications)
+    expect(h.sent).toHaveBeenCalledTimes(1)
+    expect(screen.queryByLabelText('Publisher')).not.toBeInTheDocument()
+    if (outcome === 'unknown') {
+      expect(screen.getByRole('button', { name: 'Discard local changes and reload' })).toBeDisabled()
+      retry()
+      await screen.findByText('Human record saved. No operational release follows.')
+      expect(h.sent.mock.calls[1][1].body === original.body && h.sent.mock.calls[1][1].key === original.key).toBe(true)
+    }
+  },
+)
+
+it('reports a current source-file read failure without a mutation or uncertain command', async () => {
+  const h = setup()
+  render(<RegulatoryQualification {...h.props} />)
+  await waitFor(() => expect(screen.getByLabelText('Publisher')).toBeEnabled())
+  const file = Object.assign(new File([new Uint8Array([1])], 'fictional-unreadable-source.txt'), {
+    arrayBuffer: vi.fn(async () => { throw new Error('synthetic file read unavailable') }),
+  })
+  fireEvent.change(screen.getByLabelText('Exact source bytes (maximum 2 MiB)'), { target: { files: [file] } })
+  await screen.findByRole('alert')
+  expect(h.sent).not.toHaveBeenCalled()
+  expect(h.props.onDirty).toHaveBeenLastCalledWith(false)
+  expect(screen.queryByText('Outcome uncertain. The exact original attempt is locked until retry.')).not.toBeInTheDocument()
+  expect(screen.getByRole('button', { name: 'Save qualification draft' })).toBeEnabled()
 })

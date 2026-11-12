@@ -33,6 +33,7 @@ export function useQualificationRecovery({ rule, ruleRevision, vessel, offline, 
   const [busy, setBusy] = useState(false), [error, setError] = useState<number | null>(null), [conflict, setConflict] = useState(false)
   const mounted = useRef(false), running = useRef(false), live = useRef('')
   const writer = useRef<AbortController | null>(null), frozen = useRef<QualificationAttempt | null>(null)
+  const sourceEpoch = useRef(0)
   const draft = useRef<Binding | null>(null), receipt = useRef<Confirmation | null>(null)
   const callbacks = useRef({ onDirty, onSaving })
   const owner = observed?.scope === scope ? observed.owner : null
@@ -44,7 +45,7 @@ export function useQualificationRecovery({ rule, ruleRevision, vessel, offline, 
   const current = canShow ? data.items[0] : undefined
   useLayoutEffect(() => {
     callbacks.current = { onDirty, onSaving }
-    if (live.current !== scope || !available) writer.current?.abort()
+    if (live.current !== scope || !available) { sourceEpoch.current++; writer.current?.abort() }
     live.current = scope
   }, [scope, available, onDirty, onSaving])
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; writer.current?.abort() } }, [])
@@ -58,6 +59,9 @@ export function useQualificationRecovery({ rule, ruleRevision, vessel, offline, 
   const confirm = useCallback((value: Confirmation | null) => { receipt.current = value; setConfirmed(value) }, [])
   const valid = useCallback((captured: string, signal: AbortSignal) => mounted.current && !signal.aborted && live.current === captured, [])
   const fresh = useCallback(async (captured: string, signal: AbortSignal, expected?: Binding | null) => {
+    // A pending file belongs to the authorization/edit generation in which it
+    // was selected, not to a later session or a completed/uncertain command.
+    sourceEpoch.current++
     const user = await api.loadSession(signal)
     if (!valid(captured, signal)) throw new ApiError(0, 'obsolete_qualification_scope')
     setObserved({ scope: captured, owner: user.owner })
@@ -104,17 +108,18 @@ export function useQualificationRecovery({ rule, ruleRevision, vessel, offline, 
   }, [rule, vessel, scope, available, context, confirm, fresh, valid])
 
   const edit = (patch: Partial<api.Content>) => {
-    if (locked || !owner || running.current) return
+    if (locked || !owner || running.current || frozen.current || receipt.current) return
     if (!binding) bind({ owner, context, version: current?.version ?? 0 })
     setContent(value => ({ ...value, ...patch })); setDirty(true)
   }
   function choose(value: string, setter: (value: string) => void) {
-    if (locked || !owner || running.current) return
+    if (locked || !owner || running.current || frozen.current || receipt.current) return
     if (!binding) bind({ owner, context, version: current?.version ?? 0 })
     setter(value)
   }
   async function send(value: QualificationAttempt) {
     if (!available || running.current || value.context !== context) return
+    sourceEpoch.current++
     const captured = scope, c = new AbortController(), wasUnknown = value.unknown
     let dispatched = false, outcomeReceived = false
     running.current = true; writer.current = c; setBusy(true); setError(null); setTrusted(null)
@@ -171,16 +176,23 @@ export function useQualificationRecovery({ rule, ruleRevision, vessel, offline, 
     capture('events', { expectedVersion: binding?.version ?? current?.version ?? 0, ruleRevision, authorityId, state: next, content: next === 'DRAFT' ? content : null })
   }
   async function source(file: File | undefined) {
-    if (!file || locked) return
+    if (locked || running.current || frozen.current || receipt.current) return
+    const selected = ++sourceEpoch.current, captured = scope
+    if (!file) return
     if (file.size < 1 || file.size > 2097152) { setError(400); return }
-    const captured = scope, bytes = new Uint8Array(await file.arrayBuffer())
-    if (!mounted.current || live.current !== captured || running.current) return
-    let binary = ''; bytes.forEach(value => { binary += String.fromCharCode(value) })
-    edit({ sourceBytesBase64: btoa(binary) })
+    const mayApply = () => mounted.current && live.current === captured && sourceEpoch.current === selected &&
+      !running.current && !frozen.current && !receipt.current
+    try {
+      const bytes = new Uint8Array(await file.arrayBuffer())
+      if (!mayApply()) return
+      let binary = ''; bytes.forEach(value => { binary += String.fromCharCode(value) })
+      edit({ sourceBytesBase64: btoa(binary) })
+    } catch { if (mayApply()) setError(400) }
   }
   function recheck() { if (!busy) setReload(value => value + 1) }
   function discard() {
     if (busy || frozen.current) return
+    sourceEpoch.current++
     bind(null); confirm(null); setDirty(false); setConflict(false); setNotice(null); setContent(api.blank()); setState('ADOPTED'); setUntil(''); setReload(value => value + 1)
   }
   async function more() {
