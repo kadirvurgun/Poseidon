@@ -2624,6 +2624,38 @@
       "rationale": "Exact source inspection establishes documented-placeholder. This recommendation supplies no scanner trust or exception approval.",
       "evidence_sha256": "768bb4fc857ff733a301ed9d5dfa8d830335a74279bd8180c8126f0c6fee3417",
       "author_reference": "PR12-CI-SOURCE-TRIAGE-author"
+    },
+    {
+      "target": {
+        "path": "scripts/oidc_lab.py",
+        "rule": "db-password",
+        "line": 148,
+        "occurrence": 6608,
+        "fingerprint": "45543031869109693eec8b5b5d4b7d485ab0439796161c070902e9dc82f8bdcc",
+        "context_sha256": "2f00fd1e12fa0346fb7a7f4ed160a796e718e9517e1ddfcf53fc31c202ec74e9",
+        "immutable_source_revision": "git-blob-sha256:409092c5a2a3f80e48ce6e687ef53843398efe9f8ef4aee852dd539f75c1a396",
+        "identity_version": "source-binding-v2"
+      },
+      "classification": "synthetic-fixture",
+      "rationale": "The detected source span is part of a constructed connection setting whose interpolated value is assigned from a fresh secrets.token_urlsafe call in the same local synthetic configuration factory. The value is returned for private lab configuration and file publication; it is not a fixed credential literal in tracked source. This proposal covers the source expression and observable Development fixture consumers only, without asserting operator nonreuse or approval.",
+      "evidence_sha256": "26da22fb28416c852fc011e2dbf9dd10d677e507cda131af8aa3f103a5c36c27",
+      "author_reference": "/root/locale_zh|role=BUNDLE-PORT-ISOLATION-01-source-author|source_commit=9f90900eb2213d2ca92c6ba1b22ddf2d42f872bb|target_commit=eb58432300aac4caedc0786766acd9da9d80890d"
+    },
+    {
+      "target": {
+        "path": "scripts/oidc_lab.py",
+        "rule": "credential-literal",
+        "line": 172,
+        "occurrence": 8150,
+        "fingerprint": "97e1c8c0187e435104fa612a7caf038bbeafe669b75a02ea4d38cd288ef09d24",
+        "context_sha256": "2f00fd1e12fa0346fb7a7f4ed160a796e718e9517e1ddfcf53fc31c202ec74e9",
+        "immutable_source_revision": "git-blob-sha256:409092c5a2a3f80e48ce6e687ef53843398efe9f8ef4aee852dd539f75c1a396",
+        "identity_version": "source-binding-v2"
+      },
+      "classification": "synthetic-fixture",
+      "rationale": "The detected source span crosses a private bootstrap publication expression whose runtime contribution is a fresh secrets.token_urlsafe call, rather than a fixed credential value committed in source. Bounded structural evidence binds the generating call, protected local file publication and local fixture consumers. The classification is limited to this synthetic Development fixture expression, with no operator nonreuse, production safety or approval assertion.",
+      "evidence_sha256": "57560bcccad48ab33cc3bcab17efa30c0cdb67dd6a7f83aab2e3568c9a630c64",
+      "author_reference": "/root/locale_zh|role=BUNDLE-PORT-ISOLATION-01-source-author|source_commit=9f90900eb2213d2ca92c6ba1b22ddf2d42f872bb|target_commit=eb58432300aac4caedc0786766acd9da9d80890d"
     }
   ],
   "receipts": [
@@ -4102,6 +4134,24 @@
       "author_reference": "PR12-CI-SOURCE-TRIAGE-author",
       "reviewer_reference": "native-codex:esra-pro:source-classification:sha256:a194637f9eaad4eb425c579fc5baeeb265feb5c96114a0146fb94708bab214e7",
       "target_sha256": "fe36ac8b8d33949bb411b481cc6afb8ca4c73fd67aaf1ba23ea54dd0d6896eef"
+    },
+    {
+      "author_reference": "/root/locale_zh|role=BUNDLE-PORT-ISOLATION-01-source-author|source_commit=9f90900eb2213d2ca92c6ba1b22ddf2d42f872bb|target_commit=eb58432300aac4caedc0786766acd9da9d80890d",
+      "evidence_sha256": "57560bcccad48ab33cc3bcab17efa30c0cdb67dd6a7f83aab2e3568c9a630c64",
+      "proposal_sha256": "41c17c8f14558164553e29b2724d6735e79d92ca5219ba12ecbaa5e69fc93012",
+      "reviewer_reference": "/root/status_forecast|role=independent-code-expression-review|review=SOURCE-REVIEW-PORT-20261113|target=eb58432300aac4caedc0786766acd9da9d80890d",
+      "schema_version": "source-binding-v2",
+      "status": "independently-reviewed",
+      "target_sha256": "5608013e9018fc58cea6f38e65f09528b1fb7e2ab8d6c4098ff8eed6df23daad"
+    },
+    {
+      "author_reference": "/root/locale_zh|role=BUNDLE-PORT-ISOLATION-01-source-author|source_commit=9f90900eb2213d2ca92c6ba1b22ddf2d42f872bb|target_commit=eb58432300aac4caedc0786766acd9da9d80890d",
+      "evidence_sha256": "26da22fb28416c852fc011e2dbf9dd10d677e507cda131af8aa3f103a5c36c27",
+      "proposal_sha256": "06cdd57270d642bf4bbff23bce0b5b85b865be72044628636b1172b4243e7bfd",
+      "reviewer_reference": "/root/status_forecast|role=independent-code-expression-review|review=SOURCE-REVIEW-PORT-20261113|target=eb58432300aac4caedc0786766acd9da9d80890d",
+      "schema_version": "source-binding-v2",
+      "status": "independently-reviewed",
+      "target_sha256": "09ddb1e84bbec5f41846ad598806d32e113aaecc03aa6b4daaf2f0f5118a9f98"
     }
   ],
   "exceptions": [
@@ -4760,6 +4810,14 @@
     {
       "proposal_sha256": "67c47de0321be70d74c50a1f36c3962ce9e753dd62aa7f8260b505f6861a16a2",
       "review_sha256": "3385fe398106b2cdab09a35e331cec7263499f166f065fb5eccb835ad4f69562"
+    },
+    {
+      "proposal_sha256": "06cdd57270d642bf4bbff23bce0b5b85b865be72044628636b1172b4243e7bfd",
+      "review_sha256": "8b40f1338f4a3fd0412012ea1777b09ce760ce4e6f9624be0b7d77b7278c6c92"
+    },
+    {
+      "proposal_sha256": "41c17c8f14558164553e29b2724d6735e79d92ca5219ba12ecbaa5e69fc93012",
+      "review_sha256": "02480e56df784ca4cc02ed48cd9b3c03456e3e48dccc1f61e6a9ff05f310058b"
     }
   ]
 }
