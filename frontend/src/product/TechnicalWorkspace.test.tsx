@@ -470,11 +470,11 @@ describe('owning observation recovery inside the actual technical workspace', ()
     it('discards observation inputs only after explicit dirty-navigation confirmation and never resurrects them on return', async () => {
         actualObservationTransport();
         render(<TechnicalWorkspace />); await english(); await fillObservationDraft();
-        await userEvent.click(screen.getByRole('button', { name: 'Plans', exact: true }));
-        await userEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Discard', exact: true }));
-        await screen.findByRole('heading', { name: 'Maintenance plan', exact: true });
-        await userEvent.click(screen.getByRole('button', { name: 'Equipment', exact: true }));
-        await userEvent.click(await screen.findByRole('treeitem', { name: 'FICTIONAL engine', exact: true }));
+        await userEvent.click(screen.getByRole('button', { name: 'Plans' }));
+        await userEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Discard' }));
+        await screen.findByRole('heading', { name: 'Maintenance plan' });
+        await userEvent.click(screen.getByRole('button', { name: 'Equipment' }));
+        await userEvent.click(await screen.findByRole('treeitem', { name: 'FICTIONAL engine' }));
         expect(await screen.findByLabelText('Observed value (exact declaration)')).toHaveValue('');
         expect(screen.getByLabelText('Source revision')).toHaveValue('');
         expect(posts()).toHaveLength(0);
@@ -486,15 +486,15 @@ describe('owning observation recovery inside the actual technical workspace', ()
         render(<TechnicalWorkspace />); await english(); await fillObservationDraft();
         await userEvent.click(screen.getByRole('button', { name: 'Record observation' }));
         await waitFor(() => expect(posts()).toHaveLength(1));
-        expect(screen.getByRole('button', { name: 'Plans', exact: true })).toBeDisabled();
-        expect(screen.getByRole('button', { name: 'Add draft', exact: true })).toBeDisabled();
-        await userEvent.click(screen.getByRole('button', { name: 'Plans', exact: true }));
+        expect(screen.getByRole('button', { name: 'Plans' })).toBeDisabled();
+        expect(screen.getByRole('button', { name: 'Add draft' })).toBeDisabled();
+        await userEvent.click(screen.getByRole('button', { name: 'Plans' }));
         expect(location.pathname).toBe(`/app/equipment-hierarchy/${vessel}`);
         expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
         const body = JSON.parse(posts()[0][1].body);
         await act(async () => outcome.resolve(json({ id: body.id, replayed: false })));
         await screen.findByText('Draft saved.');
-        await waitFor(() => expect(screen.getByRole('button', { name: 'Plans', exact: true })).toBeEnabled());
+        await waitFor(() => expect(screen.getByRole('button', { name: 'Plans' })).toBeEnabled());
     });
     it('withdraws the entire former-owner private workspace and restores the same uncertain observation only for that owner', async () => {
         actualObservationTransport();
