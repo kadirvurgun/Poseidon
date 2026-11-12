@@ -116,9 +116,14 @@ def _private(metadata, directory=False):
         fail()
 
 
-def _unchanged(first, second):
-    return all(getattr(first, key) == getattr(second, key) for key in
-        ('st_dev', 'st_ino', 'st_size', 'st_mtime_ns', 'st_ctime_ns', 'st_mode', 'st_uid'))
+def _unchanged(first, second, *, cross_api=False):
+    # Windows lstat and fstat can expose different ctime values for the same
+    # published file. Only that cross-API comparison omits ctime; each API's
+    # before/after snapshots below still detect ctime changes independently.
+    fields = ('st_dev', 'st_ino', 'st_nlink', 'st_size', 'st_mtime_ns', 'st_mode', 'st_uid')
+    if not cross_api or os.name != 'nt':
+        fields += ('st_ctime_ns',)
+    return all(getattr(first, key) == getattr(second, key) for key in fields)
 
 
 def _read(path, limit):
@@ -135,12 +140,12 @@ def _read(path, limit):
         try:
             opened = os.fstat(descriptor)
             _private(opened)
-            if not _unchanged(before, opened):
+            if not _unchanged(before, opened, cross_api=True):
                 fail()
             raw = os.read(descriptor, limit + 1)
             after, current, parent_after = os.fstat(descriptor), path.lstat(), path.parent.lstat()
             _private(after); _private(current); _private(parent_after, True)
-            if (len(raw) > limit or len(raw) != before.st_size or not _unchanged(opened, after) or not _unchanged(opened, current) or
+            if (len(raw) > limit or len(raw) != before.st_size or not _unchanged(opened, after) or not _unchanged(before, current) or
                     not _unchanged(parent_before, parent_after) or path.is_symlink() or path.is_junction() or
                     path.resolve() != path.absolute()):
                 fail()

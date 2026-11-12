@@ -9,6 +9,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 import uuid
+from types import SimpleNamespace
 
 import bundle_oidc_lab as bundle
 import bundle_private as store
@@ -122,6 +123,53 @@ class LabRuntimeTests(unittest.TestCase):
         (self.root / 'source-bundle-plan.json').write_text(json.dumps(plan), encoding='utf-8')
         with self.assertRaises(RuntimeError):
             runtime.read(self.root)
+
+    def test_windows_cross_api_ctime_difference_does_not_hide_identity_or_content_changes(self):
+        fields = {'st_dev': 1, 'st_ino': 2, 'st_nlink': 1, 'st_size': 64,
+                  'st_mtime_ns': 100, 'st_ctime_ns': 200, 'st_mode': 0o100600, 'st_uid': 10}
+        before = SimpleNamespace(**fields)
+        opened = SimpleNamespace(**{**fields, 'st_ctime_ns': 300})
+        with patch.object(runtime.os, 'name', 'nt'):
+            self.assertTrue(runtime._unchanged(before, opened, cross_api=True))
+            for key in ('st_dev', 'st_ino', 'st_nlink', 'st_size', 'st_mtime_ns', 'st_mode', 'st_uid'):
+                changed = SimpleNamespace(**{**fields, 'st_ctime_ns': 300, key: fields[key] + 1})
+                with self.subTest(field=key):
+                    self.assertFalse(runtime._unchanged(before, changed, cross_api=True))
+
+    def test_pathname_and_descriptor_same_api_ctime_changes_remain_rejected_on_all_platforms(self):
+        fields = {'st_dev': 1, 'st_ino': 2, 'st_nlink': 1, 'st_size': 64,
+                  'st_mtime_ns': 100, 'st_ctime_ns': 200, 'st_mode': 0o100600, 'st_uid': 10}
+        before = SimpleNamespace(**fields)
+        opened = SimpleNamespace(**{**fields, 'st_ctime_ns': 300})
+        current = SimpleNamespace(**{**fields, 'st_ctime_ns': 201})
+        after = SimpleNamespace(**{**fields, 'st_ctime_ns': 301})
+        for platform in ('nt', 'posix'):
+            with patch.object(runtime.os, 'name', platform):
+                self.assertFalse(runtime._unchanged(before, current))  # lstat -> lstat
+                self.assertFalse(runtime._unchanged(opened, after))  # fstat -> fstat
+        with patch.object(runtime.os, 'name', 'posix'):
+            self.assertFalse(runtime._unchanged(before, opened, cross_api=True))
+
+    @unittest.skipUnless(os.name == 'nt', 'Windows native lstat/fstat publication contract')
+    def test_windows_published_metadata_accepts_cross_api_ctime_but_rejects_descriptor_mutation(self):
+        self.publish_metadata()
+        actual_fstat = runtime.os.fstat
+        names = ('st_dev', 'st_ino', 'st_nlink', 'st_size', 'st_mtime_ns', 'st_ctime_ns', 'st_mode', 'st_uid')
+        def stable_descriptor(descriptor):
+            actual = actual_fstat(descriptor)
+            return SimpleNamespace(**{key: getattr(actual, key) + (100 if key == 'st_ctime_ns' else 0) for key in names})
+        with patch.object(runtime.os, 'fstat', side_effect=stable_descriptor):
+            self.assertEqual(self.runtime, runtime.read(self.root))
+        calls = 0
+        def changed_descriptor(descriptor):
+            nonlocal calls
+            calls += 1
+            value = stable_descriptor(descriptor)
+            value.st_ctime_ns += calls
+            return value
+        with patch.object(runtime.os, 'fstat', side_effect=changed_descriptor):
+            with self.assertRaisesRegex(RuntimeError, '^owned_lab_runtime_invalid$'):
+                runtime.read(self.root)
 
     @unittest.skipIf(os.name == 'nt', 'POSIX UID/mode boundary; Windows uses existing private-root ACL')
     def test_private_root_and_metadata_must_remain_owner_only_and_current_uid(self):
