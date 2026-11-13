@@ -150,8 +150,10 @@ public sealed partial class DirectoryWorkspaceTests
         await QualificationRecoveryRefreshSession(client, actorId, owner.TenantId);
         using var recovered = await QualificationRecoveryPost(client, rule.Current.Id, body, key);
         Assert.Equal(HttpStatusCode.OK, recovered.StatusCode);
-        Assert.True(originalBytes.SequenceEqual(await recovered.Content.ReadAsByteArrayAsync(Ct)));
-        Assert.True(originalState.SequenceEqual(await QualificationRecoveryCommittedState(rule.Current.Id, key, saved)));
+        var recoveredBytes = await recovered.Content.ReadAsByteArrayAsync(Ct);
+        Assert.True(originalBytes.SequenceEqual(recoveredBytes));
+        var recoveredState = await QualificationRecoveryCommittedState(rule.Current.Id, key, saved);
+        Assert.True(originalState.SequenceEqual(recoveredState));
     }
 
     [Theory]
@@ -196,8 +198,10 @@ public sealed partial class DirectoryWorkspaceTests
         await QualificationRecoveryRefreshSession(client, actorId, owner.TenantId);
         using var recovered = await QualificationRecoveryPost(client, rule.Current.Id, body, key);
         Assert.Equal(HttpStatusCode.OK, recovered.StatusCode);
-        Assert.True(originalBytes.SequenceEqual(await recovered.Content.ReadAsByteArrayAsync(Ct)));
-        Assert.True(originalState.SequenceEqual(await QualificationRecoveryCommittedState(rule.Current.Id, key, saved)));
+        var recoveredBytes = await recovered.Content.ReadAsByteArrayAsync(Ct);
+        Assert.True(originalBytes.SequenceEqual(recoveredBytes));
+        var recoveredState = await QualificationRecoveryCommittedState(rule.Current.Id, key, saved);
+        Assert.True(originalState.SequenceEqual(recoveredState));
     }
 
     [Fact]
@@ -234,7 +238,9 @@ public sealed partial class DirectoryWorkspaceTests
         await QualificationRecoveryRefreshSession(client, actorId, owner.TenantId);
         using var recovered = await QualificationRecoveryPost(client, rule.Current.Id, body, key);
         Assert.Equal(HttpStatusCode.OK, recovered.StatusCode);
-        Assert.True(originalBytes.SequenceEqual(await recovered.Content.ReadAsByteArrayAsync(Ct)));
-        Assert.True(originalState.SequenceEqual(await QualificationRecoveryCommittedState(rule.Current.Id, key, saved)));
+        var recoveredBytes = await recovered.Content.ReadAsByteArrayAsync(Ct);
+        Assert.True(originalBytes.SequenceEqual(recoveredBytes));
+        var recoveredState = await QualificationRecoveryCommittedState(rule.Current.Id, key, saved);
+        Assert.True(originalState.SequenceEqual(recoveredState));
     }
 }
