@@ -1,4 +1,6 @@
 import { expect, type Page } from '@playwright/test';
+import { loadQualifiedFixture, requireQualifiedContext } from './qualified-owning-fixture.ts';
+import { openQualifiedContext } from './qualified-owning-browser.ts';
 async function incompleteClassRecord(page: Page) {
     await page.goto('/app/sources');
     await page.getByRole("combobox", { name: /^(Dil seçin|Choose language)$/ }).selectOption("en");
@@ -29,50 +31,11 @@ async function incompleteClassRecord(page: Page) {
 async function qualifiedComplianceConsumer(page: Page) {
     // The owned gate must provision the fictional source/evidence with ordinary
     // commands and separately signed reviewers. Missing setup fails, never skips.
-    const fleet = await page.request.get('/api/v1/vessels?offset=0&limit=25');
-    expect(fleet.status()).toBe(200);
-    const vessel = (await fleet.json()).items.find((v: {
-        kind: string;
-    }) => v.kind === 'Ship');
-    expect(!!vessel).toBe(true);
-    const evidence = await page.request.get(`/api/v1/evidence?vesselId=${vessel.id}&offset=0`);
-    expect(evidence.status()).toBe(200);
-    const rows = (await evidence.json()).items.filter((r: {
-        content: {
-            title?: string;
-        };
-        verification: string;
-    }) => r.content.title?.startsWith('FICTIONAL signed-host compliance ') && r.verification === 'VERIFIED');
-    const pack = rows.filter((r: {
-        content: {
-            classPack?: unknown;
-        };
-    }) => r.content.classPack), msmd = rows.filter((r: {
-        content: {
-            msmd?: unknown;
-        };
-    }) => r.content.msmd);
-    expect(pack.length).toBe(1);
-    expect(msmd.length).toBe(1);
-    const rules = await page.request.get('/api/v1/rules');
-    expect(rules.status()).toBe(200);
-    const rule = (await rules.json()).items.find((r: {
-        current: {
-            rule: {
-                ruleId: string;
-            };
-        };
-    }) => r.current.rule?.ruleId === 'SYNTHETIC-FOUNDATION-COMPLIANCE');
-    expect(!!rule).toBe(true);
-    await page.goto('/app/sources');
-    await page.getByRole("combobox", { name: /^(Dil seçin|Choose language)$/ }).selectOption("en");
-    await page.getByRole('button', { name: 'Lifecycle and applicability', exact: true }).click();
-    const region = page.getByRole('region', { name: 'Lifecycle and applicability preparation', exact: true });
-    await region.getByRole('combobox', { name: 'Vessel context', exact: true }).selectOption(vessel.id);
-    await region.getByRole('checkbox', { name: new RegExp(rule.current.id) }).check();
-    await region.getByLabel('Class pack evidence reference', { exact: true }).fill(pack[0].id);
-    await region.getByLabel('MSMD evidence reference', { exact: true }).fill(msmd[0].id);
-    await region.getByLabel('Source evidence reference', { exact: true }).fill(pack[0].id);
+    const context = await requireQualifiedContext(page, loadQualifiedFixture(), 'Compliance');
+    const region = await openQualifiedContext(page, context);
+    await region.getByLabel('Class pack evidence reference', { exact: true }).fill(context.rows.classPack.id);
+    await region.getByLabel('MSMD evidence reference', { exact: true }).fill(context.rows.msmd.id);
+    await region.getByLabel('Source evidence reference', { exact: true }).fill(context.rows.classPack.id);
     const [response] = await Promise.all([page.waitForResponse(r => new URL(r.url()).pathname === '/api/v1/applicability/evaluate' && r.request().method() === 'POST'), region.getByRole('button', { name: 'Evaluate qualified current sources', exact: true }).click()]);
     expect(response.status()).toBe(200);
     const value = await response.json();
@@ -81,6 +44,7 @@ async function qualifiedComplianceConsumer(page: Page) {
     const current = await page.request.get(`/api/v1/applicability/evaluations/${value.id}/current`);
     expect(current.status()).toBe(200);
     expect((await current.json()).current).toBe(true);
+    await requireQualifiedContext(page, context.fixture, 'Compliance');
 }
 export const complianceInputCases = [
     { name: 'compliance-class-incomplete-unknown-command-history', run: incompleteClassRecord, restricted: false },

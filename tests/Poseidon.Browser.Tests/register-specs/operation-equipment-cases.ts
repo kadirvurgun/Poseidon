@@ -1,4 +1,6 @@
 import { expect, type Page } from '@playwright/test';
+import { loadQualifiedFixture, requireQualifiedContext } from './qualified-owning-fixture.ts';
+import { openQualifiedContext, selectQualifiedOwningReferences } from './qualified-owning-browser.ts';
 // Registered genuine signed-host source. Coordinator provisions explicit current
 // evidence/equipment/human-review rights. No fake provider, source approval or routes.
 async function incompleteCargo(page: Page) {
@@ -32,48 +34,10 @@ async function qualifiedConsumer(page: Page, mode: 'Ship' | 'Tug') {
     // The gate must command-author and independently review these FICTIONAL records
     // first. Missing fixtures fail; this case never inserts verified rows or issues
     // actual service authorization. This signed actor consumes references only.
-    const fleet = await page.request.get('/api/v1/vessels?offset=0&limit=25');
-    expect(fleet.status()).toBe(200);
-    const vessel = (await fleet.json()).items.find((v: {
-        kind: string;
-    }) => v.kind === mode);
-    expect(!!vessel).toBe(true);
-    const response = await page.request.get(`/api/v1/evidence?vesselId=${vessel.id}&offset=0`);
-    expect(response.status()).toBe(200);
-    const rows = (await response.json()).items.filter((r: {
-        content: {
-            title?: string;
-        };
-        verification: string;
-    }) => r.content.title?.startsWith('FICTIONAL signed-host owning ') && r.verification === 'VERIFIED');
+    const context = await requireQualifiedContext(page, loadQualifiedFixture(), mode);
+    const region = await openQualifiedContext(page, context);
     const fields = mode === 'Ship' ? ['cargoPlan'] : ['operation', 'winchFitment'];
-    for (const field of fields)
-        expect(rows.filter((r: {
-            content: Record<string, unknown>;
-        }) => r.content[field]).length).toBe(1);
-    const rules = await page.request.get('/api/v1/rules');
-    expect(rules.status()).toBe(200);
-    const rule = (await rules.json()).items.find((r: {
-        current: {
-            rule: {
-                ruleId: string;
-            };
-        };
-    }) => r.current.rule?.ruleId === `SYNTHETIC-FOUNDATION-OWNING-${mode.toUpperCase()}`);
-    expect(!!rule).toBe(true);
-    await page.goto('/app/sources');
-    await page.getByRole("combobox", { name: /^(Dil seçin|Choose language)$/ }).selectOption("en");
-    await page.getByRole('button', { name: 'Lifecycle and applicability', exact: true }).click();
-    const region = page.getByRole('region', { name: 'Lifecycle and applicability preparation', exact: true });
-    await region.getByRole('combobox', { name: 'Vessel context', exact: true }).selectOption(vessel.id);
-    await region.getByRole('checkbox', { name: new RegExp(rule.current.id) }).check();
-    const selector = region.getByRole('group', { name: 'Owning input references', exact: true });
-    for (const field of fields) {
-        const row = rows.find((r: {
-            content: Record<string, unknown>;
-        }) => r.content[field]);
-        await selector.getByRole('combobox', { name: field === 'cargoPlan' ? 'Cargo plan' : field === 'operation' ? 'Operation' : 'Winch fitment', exact: true }).selectOption(row.id);
-    }
+    await selectQualifiedOwningReferences(page, region, context, fields);
     const [evaluated] = await Promise.all([page.waitForResponse(r => new URL(r.url()).pathname === '/api/v1/applicability/evaluate' && r.request().method() === 'POST'), region.getByRole('button', { name: 'Evaluate qualified current sources', exact: true }).click()]);
     expect(evaluated.status()).toBe(200);
     const value = await evaluated.json();
@@ -87,6 +51,7 @@ async function qualifiedConsumer(page: Page, mode: 'Ship' | 'Tug') {
     const current = await page.request.get(`/api/v1/applicability/evaluations/${value.id}/current`);
     expect(current.status()).toBe(200);
     expect((await current.json()).current).toBe(true);
+    await requireQualifiedContext(page, context.fixture, mode);
 }
 export const operationEquipmentCases = [
     { name: 'operation-equipment-incomplete-cargo-unknown-current-rights-history', run: incompleteCargo, restricted: false },

@@ -158,6 +158,10 @@ jobs:
           npm run typecheck --prefix frontend
       - name: Signed lane fixture protocol unit tests
         run: node --test tests/Poseidon.Browser.Tests/lab/register-lane-fixture.test.ts tests/Poseidon.Browser.Tests/lab/signed-case.test.ts tests/Poseidon.Browser.Tests/lab/observation-fixture.test.ts tests/Poseidon.Browser.Tests/lab/lab-runtime.test.ts
+      - name: Qualified owning fixture protocol before provider
+        run: |
+          node --test tests/Poseidon.Browser.Tests/lab/qualified-owning-fixture.test.ts
+          python3 -m unittest discover -s scripts -p test_bundle_qualified_fixture_plan.py -v
       - name: Synthetic observation fixture configuration unit tests
         run: |
           python3 -m unittest discover -s scripts -p test_bundle_observation_fixture.py -v
