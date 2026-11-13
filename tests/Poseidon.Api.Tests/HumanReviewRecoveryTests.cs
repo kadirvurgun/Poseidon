@@ -106,8 +106,10 @@ public sealed partial class DirectoryWorkspaceTests
         await HumanRecoverySession(client, actorId, owner.TenantId);
         using var recovered = await HumanRecoveryPost(client, route, body, key);
         Assert.Equal(HttpStatusCode.OK, recovered.StatusCode);
-        Assert.True(original.SequenceEqual(await recovered.Content.ReadAsByteArrayAsync(Ct)));
-        Assert.True(snapshot.SequenceEqual(await HumanRecoveryState(saved, key)));
+        var recoveredBytes = await recovered.Content.ReadAsByteArrayAsync(Ct);
+        var recoveredState = await HumanRecoveryState(saved, key);
+        Assert.True(original.SequenceEqual(recoveredBytes));
+        Assert.True(snapshot.SequenceEqual(recoveredState));
         Assert.Equal(recording ? "RECORDED" : "PENDING", saved.State);
         if (recording) Assert.Equal("UNASSESSED", saved.Recording!.Qualification);
     }
@@ -144,7 +146,9 @@ public sealed partial class DirectoryWorkspaceTests
         } finally { settings.Memberships[0] = owner; }
         await HumanRecoverySession(client, actorId, owner.TenantId);
         using var recovered = await HumanRecoveryPost(client, route, body, key); Assert.Equal(HttpStatusCode.OK, recovered.StatusCode);
-        Assert.True(original.SequenceEqual(await recovered.Content.ReadAsByteArrayAsync(Ct)));
-        Assert.True(snapshot.SequenceEqual(await HumanRecoveryState(saved, key)));
+        var recoveredBytes = await recovered.Content.ReadAsByteArrayAsync(Ct);
+        var recoveredState = await HumanRecoveryState(saved, key);
+        Assert.True(original.SequenceEqual(recoveredBytes));
+        Assert.True(snapshot.SequenceEqual(recoveredState));
     }
 }
