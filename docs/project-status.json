@@ -1114,7 +1114,7 @@
     "verification_record_scope": "Authored/deferred and original20f1198 results are historical;current rejection-repair evidence in core_bundle_01.verification"
   },
   "baseline": "POSEIDON v46.3 updated 2026-10-30 / Library26 candidate",
-  "current_stage": "S8 native technical+17locale bundle passed on5e/8a; new owned port isolation SOURCE_AUTHORING, backend06e merged ae34186 with60newcases authored/executed0. All new checks deferred to combined gate; genuine browser/finalQA/newCI open. Canonical103/970SP10.62% unchanged.",
+  "current_stage": "0c5f8f3 source checkpoint: S3 ownerrecovery + five reviewed product/UI/testcorrections, QFedac/sourcefixtures13 + foundationpolicy201integration11 + crew98a integration10 all independent SOURCE_CLEAR, executionDEFERRED pending final clean freeze. Five delivery records/finalAST being finalized; backend/frontend/protocol/scans genuine176+finiteS2 thenindependenttargetQA/requiredCI beforePR/merge. Next Humanrecovery authoring isolated and excluded. Canonical20tasks103SP10.62percent unchanged; original95PASS58FAIL23NOTCOMPLETED/oneoldblockedprofile retained.",
   "method": "accepted story points / total baseline story points * 100",
   "scope": "complete v46.3 Backlog sheet; duplicates in other sheets excluded",
   "total_tasks": 121,
@@ -4695,10 +4695,10 @@
     "latest_report": "docs/phases/BUNDLE-SIGNED-RECOVERY-20261111.md",
     "parallel_product_development": {
       "task": "OBSERVATION-SIGNED-FIXTURE-01",
-      "state": "NATIVE_BUNDLE_GATES_PASS_GENUINE_GATES_OPEN",
-      "source_checkpoint": "8a9462d5f86ee114e3083e2904a93142f3936e64",
+      "state": "SOURCE_S3_AND_DIAGNOSTICS_INTEGRATED_QUALIFIED_FIXTURE_AUTHORING",
+      "source_checkpoint": "77221148fe5e9b1e0798dc69d97c2adac312eade",
       "accepted": false,
-      "report": "docs/phases/OBSERVATION-SIGNED-FIXTURE-20261112.md"
+      "report": "docs/phases/BUNDLE-PORT-ISOLATION-20261113.md"
     }
   },
   "nav_workspace_01": {
@@ -13710,8 +13710,8 @@
   },
   "owned_runtime_port_isolation_20261113": {
     "task": "BUNDLE-PORT-ISOLATION-01",
-    "state": "SOURCE_AUTHORING",
-    "observed_at_utc": "2026-11-12T21:45:05.569839+00:00",
+    "state": "GENUINE02_FAILED_PARTIAL_MANIFEST_CORRECTION_BATCH_AUTHORING",
+    "observed_at_utc": "2026-11-12T23:56:26.974113+00:00",
     "baseline": "poseidon-v46.3-20261030",
     "sources": [
       "DEV-OIDC-LAB-01 LAB01-LAB05",
@@ -13736,18 +13736,17 @@
     "backend_test_source": {
       "new_cases": 60,
       "total_source_case_inventory": 71,
-      "executed": 0,
-      "status": "DEFERRED"
+      "execution": "Included in actual fullAPIunit236 PASS, not added separately"
     },
-    "runtime_source_state": "Python/TS/compose/browser wiring and meaningful tests in progress in separate worktree",
-    "verification": "ALL_NEW_BUILD_TYPECHECK_TEST_BROWSER_EXECUTION_DEFERRED_UNTIL_COMBINED_SOURCE_FREEZE",
-    "actual_runtime": "NOT_STARTED",
+    "runtime_source_state": "All runtime/driver/helper/compose/browser and protocol sources authored and merged; source findingsS01-S04 corrected",
+    "verification": "Actual235d Node manifest1, fullcomponents1527, lint/typecheck/freshbuild and2750repo20client0findings PASS; original68f backend1067/837/117 reuse justified by652 unchanged inputs; genuine02 full gate authorized",
+    "actual_runtime": "GENUINE02_ENDED_DEADLINE_153OF176_WITH58FAILURES_AND1BLOCKED_PROFILE",
     "preview_mutated": false,
     "accepted": false,
     "accepted_story_points_added": 0,
     "prior_native_evidence": "Previous5e/8a native PASS remains scoped to unchanged old inputs, not this new backend source",
     "report": "docs/phases/BUNDLE-PORT-ISOLATION-20261113.md",
-    "next": "Finish runtime/protocol source, independent source review, freeze combined target then run larger real bundle gate",
+    "next": "Useactual14caseclosedsource/HTTPstatusdiagnosisforboundedfixes; finishdedicated-vesselqualifiedfixtureproducer; combinedfreeze/allgates/independentQA/CIbeforePR",
     "backend_source_review": {
       "target": "06e91936b3ea5b5f75105a7cdf897fd1756de07b",
       "state": "NO_DEFINITE_SCOPED_SOURCE_BLOCKER",
@@ -13755,6 +13754,596 @@
       "executed_tests": 0,
       "evidence": ".runtime/bundle-port-isolation-qa-20261113/backend-source-review-06e9193.json",
       "integrated_acceptance": false
+    },
+    "source_target": "235d3ea9926ea7d0f47b2a314366f9fff4579784",
+    "runtime_source_commit": "9f90900eb2213d2ca92c6ba1b22ddf2d42f872bb",
+    "source_correction_commit": "68fb45cdbba3d59e0b8e0663564cb1acdb3753e9",
+    "source_review": {
+      "target": "68fb45cdbba3d59e0b8e0663564cb1acdb3753e9",
+      "state": "SOURCE_ONLY_CLEAR_BEFORE_NATIVE_GATE",
+      "unresolved_source_findings_at_review": 0,
+      "runtime_acceptance": false,
+      "file": ".runtime/bundle-port-isolation-qa-20261113/full-source-review-68fb45c.json"
+    },
+    "actual_checks": {
+      "backend_execution_target": "68fb45cdbba3d59e0b8e0663564cb1acdb3753e9",
+      "release_build": "PASS",
+      "release_build_seconds": 73.13,
+      "unit_total_passed": 1067,
+      "unit_scopes": {
+        "persistence": 75,
+        "domain": 756,
+        "api": 236
+      },
+      "unit_failed": 0,
+      "unit_skipped": 0,
+      "api_integration_passed": 837,
+      "api_integration_failed": 0,
+      "api_integration_skipped": 0,
+      "api_shards": [
+        210,
+        209,
+        209,
+        209
+      ],
+      "critical_write_passed": 117,
+      "critical_route_templates": 107,
+      "persistence_integration": "REUSED_79_ACTUAL_ON_5e17850_ONLY_WITH_258_IDENTICAL_INPUTS",
+      "protocol_target": "eb58432300aac4caedc0786766acd9da9d80890d",
+      "windows_python": {
+        "total": 82,
+        "passed": 81,
+        "skipped_posix": 1,
+        "failed": 0,
+        "errors": 0
+      },
+      "windows_node": {
+        "total": 68,
+        "passed": 66,
+        "skipped_posix": 2,
+        "failed": 0
+      },
+      "linux_python": {
+        "total": 22,
+        "passed": 21,
+        "skipped_windows": 1,
+        "failed": 0
+      },
+      "linux_node": {
+        "total": 14,
+        "passed": 14,
+        "skipped": 0,
+        "failed": 0
+      },
+      "new_protocol_case_union": "ALL_22_PYTHON_AND_14_NODE_HAVE_APPLICABLE_OS_PASS",
+      "current_frontend_target": "235d3ea9926ea7d0f47b2a314366f9fff4579784",
+      "whole_manifest_import": {
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "duration_seconds": 1.798
+      },
+      "frontend_lint": "PASS_0_ERRORS_0_WARNINGS",
+      "frontend_typecheck": "PASS_0_DIAGNOSTICS",
+      "frontend_components": {
+        "passed": 1527,
+        "failed": 0,
+        "pending": 0,
+        "todo": 0,
+        "unhandled": 0,
+        "files": 147,
+        "duration_seconds": 304.07,
+        "new_pin_cases_passed": 3
+      },
+      "fresh_frontend_build_and_scans": "PASS_ACTUAL_235d_FRONTEND_BUILD_AND2750REPO20CLIENT0FINDINGS; S3_772_FRONTEND_UNEXECUTED",
+      "backend_final_input_binding": {
+        "state": "REUSE_JUSTIFIED_UNCHANGED_NATIVE_SCOPE",
+        "conservative_inputs": 652,
+        "changed_relevant": 0,
+        "original_target": "68fb45c",
+        "report": ".runtime/technical-localization-port-isolation-20261113/235d3ea/backend-evidence-binding.json",
+        "whole_repository_or_all_imported_blob_equality": false
+      },
+      "migration_model_cli": "PENDING_REQUIRED_FINAL_CI",
+      "genuine_provider_browser": "FAILED_PARTIAL153OF176:95PASS58FAIL23NOTCOMPLETED_TLS3PASS",
+      "fresh_frontend_build": {
+        "status": "PASS",
+        "duration_seconds": 4.9,
+        "artifact_files": 20,
+        "bytes": 5521820,
+        "warnings": [
+          "CHUNK_SIZE",
+          "STATIC_AND_DYNAMIC_IMPORT"
+        ]
+      },
+      "source_client_scans": {
+        "repository_files": 2750,
+        "client_files": 20,
+        "findings": 0,
+        "status": "PASS_ACTUAL_235d"
+      }
+    },
+    "native_finding": {
+      "id": "PORT-R01_WINDOWS_CTIME",
+      "state": "RESOLVED_BY_2aa43ed_AND_ACTUAL_CROSS_OS_PROTOCOLS",
+      "test": "test_lab_runtime.LabRuntimeTests.test_explicit_genesis_publishes_one_matching_runtime_across_plan_config_and_generation",
+      "test_file": "scripts/test_lab_runtime.py",
+      "test_line": 180,
+      "source_file": "scripts/lab_runtime.py",
+      "source_lines": [
+        119,
+        120,
+        121,
+        138,
+        139
+      ],
+      "cause": "Windows pathname lstat versus opened fstat differs only in st_ctime_ns for an unchanged valid file",
+      "narrow_diagnostic_runs": 1,
+      "raw_values_exported": false,
+      "original_failure_preserved": true
+    },
+    "graphify_update": {
+      "target": "235d3ea9926ea7d0f47b2a314366f9fff4579784",
+      "exit_code": 0,
+      "nodes": 19516,
+      "edges": 40311,
+      "duration_seconds": 95.762,
+      "mode": "AST_ONLY",
+      "zero_node_warning": true,
+      "large_graph_html_skipped": true,
+      "raw_output_persisted": false
+    },
+    "historical_first_gate": {
+      "target": "68fb45cdbba3d59e0b8e0663564cb1acdb3753e9",
+      "actual_checks": {
+        "execution_target": "68fb45cdbba3d59e0b8e0663564cb1acdb3753e9",
+        "release_build": "PASS",
+        "release_build_seconds": 73.13,
+        "persistence_unit_passed": 75,
+        "domain_unit_passed": 756,
+        "api_unit_passed": 236,
+        "unit_total_passed": 1067,
+        "unit_failed": 0,
+        "unit_skipped": 0,
+        "persistence_integration": "REUSED_79_ACTUAL_ON_5e17850_ONLY",
+        "persistence_unchanged_transitive_inputs": 258,
+        "api_integration": "RUNNING_FOUR_SHARDS",
+        "python_runtime_suite": {
+          "discovered": 19,
+          "ran": 7,
+          "passed": 6,
+          "errors": 1,
+          "status": "FAILED_STOPPED",
+          "remaining_not_run": 12
+        },
+        "node_protocol": "NOT_RUN_BLOCKED",
+        "linux_posix": "NOT_RUN_BLOCKED",
+        "new_source_client_scans": "NOT_RUN_BLOCKED",
+        "genuine_provider_browser": "NOT_STARTED"
+      },
+      "native_finding": {
+        "id": "PORT-R01_WINDOWS_CTIME",
+        "state": "DIAGNOSED_FIX_AUTHORING",
+        "test": "test_lab_runtime.LabRuntimeTests.test_explicit_genesis_publishes_one_matching_runtime_across_plan_config_and_generation",
+        "test_file": "scripts/test_lab_runtime.py",
+        "test_line": 180,
+        "source_file": "scripts/lab_runtime.py",
+        "source_lines": [
+          119,
+          120,
+          121,
+          138,
+          139
+        ],
+        "cause": "Windows pathname lstat versus opened fstat differs only in st_ctime_ns for an unchanged valid file",
+        "narrow_diagnostic_runs": 1,
+        "raw_values_exported": false
+      }
+    },
+    "source_scan_review": {
+      "prior_scan_target": "eb58432",
+      "files": 2744,
+      "findings": 2,
+      "cause": "Two generated synthetic fixture expressions had changed source context; prior exact-source approvals could not be inherited",
+      "resolution": "Two actual independent reviews integrated in b0b1281; external protected coordinator trust updated164->166 with byte-equal readback; old164 retained",
+      "fresh_full_scan": "PASS_ACTUAL_235d_2750REPO20CLIENT0FINDINGS",
+      "scanner_or_policy_relaxed": false,
+      "coordinator_record": ".runtime/source-review-port-20261113/coordinator-provisioning.json"
+    },
+    "register_source_pin_separation": {
+      "task": "REGISTER-SOURCE-PIN-SEPARATION-01",
+      "author_commit": "6621da1c8c28e8e4c35eb8258914c41103644179",
+      "receiving_target": "235d3ea9926ea7d0f47b2a314366f9fff4579784",
+      "state": "SOURCE_CLEAR_ACTUAL_FULL_FRONTEND_AND_MANIFEST_REGRESSION_PASS",
+      "cause": "Node register fixtures transitively imported Vite-only i18n UI modules",
+      "behavior": "Three unchanged canonical source pins moved to import-free contract; UI re-exports retained; browser fixtures import pure contract",
+      "source_review_blockers": 0,
+      "new_ui_cases_authored": 3,
+      "new_whole_manifest_regression_passed": 1,
+      "report": "docs/tasks/REGISTER-SOURCE-PIN-SEPARATION-01.md"
+    },
+    "genuine_attempt01": {
+      "target": "eb58432",
+      "state": "FAILED_MANIFEST_DISCOVERY_CLEANED",
+      "real_provider_and_api_start": "PASS",
+      "real_signed_source_descriptors": 8,
+      "signed_lanes": 2,
+      "registered_business_cases_executed": 0,
+      "failure": "GEN-S01 ERR_UNSUPPORTED_DIR_IMPORT; defect-fields.ts:1 -> i18n/labels; Vite import.meta.glob transitively imported",
+      "full_register_and_tls3": "NOT_INVOKED",
+      "cleanup": "PASS_EXACT_OWNED_RESOURCES_ONLY",
+      "retained_owned_volumes": 2,
+      "private_state_retained": true,
+      "historical_15_PASS_159_FAIL_unchanged": true,
+      "evidence": ".runtime/technical-localization-port-isolation-20261113/eb58432/genuine-execution/genuine-gate.json"
+    },
+    "genuine_attempt02": {
+      "target": "235d3ea9926ea7d0f47b2a314366f9fff4579784",
+      "state": "FAILED_DEADLINE_PARTIAL_MANIFEST_AND_CASE_FAILURES_CLEANUP_BLOCKED_PROFILE",
+      "worker": ".runtime/worktrees/genuine-owned-20261113-b",
+      "fresh_same_worker_artifacts": 156,
+      "restore_seconds": 5.748,
+      "api_build_seconds": 33.978,
+      "migrator_build_seconds": 6.476,
+      "locked_offline_npm_seconds": 73.168,
+      "frontend_build_seconds": 5.798,
+      "provider_started": true,
+      "private_initialized": true,
+      "acceptance": false,
+      "lease": ".runtime/technical-localization-port-isolation-20261113/genuine-execution-attempt02-lease.json",
+      "real_signed_descriptors": 8,
+      "signed_lanes": 2,
+      "full_manifest_expected": 176,
+      "projects": 2,
+      "tls_passed": 3,
+      "tls_failed": 0,
+      "first_diagnosed_failure": {
+        "task": "REGISTER-JOURNEY-RECOVERY-01",
+        "file": "tests/Poseidon.Browser.Tests/register-specs/daily-cases.ts",
+        "line": 182,
+        "cause": "History disclosure is collapsed; test expects hidden recorded status visible without opening it",
+        "api_receipt_and_exact_replay_assertions": "PASS_BEFORE_FAILURE",
+        "correction": "Authored on separate235d branch: open exact immutable entry and inspect visible lineage; no run yet"
+      },
+      "other_observed_failures": [
+        "daily offline3; diagnosis pending",
+        "certificate renewal1; diagnosis pending"
+      ],
+      "cleanup": {
+        "state": "BLOCKED_ONE_DISPOSABLE_PROFILE",
+        "owned_app_compose_extraction_clam": "STOPPED",
+        "owned_volumes_retained": 2,
+        "blocked_profile_count": 1,
+        "blocked_profile_processes": 0,
+        "automatic_review_reason": "blocked by policy; no additional reason returned",
+        "deletion_retry_or_workaround": false
+      },
+      "completed": 153,
+      "passed": 95,
+      "failed": 58,
+      "not_completed": 23,
+      "by_project": {
+        "firefox-desktop": {
+          "completed": 88,
+          "passed": 55,
+          "failed": 33,
+          "not_completed": 0
+        },
+        "firefox-narrow-responsive": {
+          "completed": 65,
+          "passed": 40,
+          "failed": 25,
+          "not_completed": 23
+        }
+      },
+      "child_duration_seconds": 1800.648,
+      "child_timed_out": true,
+      "evidence": ".runtime/technical-localization-port-isolation-20261113/235d3ea/genuine-execution-attempt02/genuine-summary.json"
+    },
+    "dependency_disposition": {
+      "state": "OPEN_UNREMEDIATED",
+      "advisory": "CVE-2026-118764 / GHSA-g3hv-75wg-m249",
+      "all_dependencies": {
+        "moderate": 10,
+        "high": 0,
+        "critical": 0
+      },
+      "production_omit_dev_findings": 0,
+      "bounded_review": "Locked parent consumers use default optimizationLevel1; advisory trigger needs attacker-controlled pattern and optimizationLevel>=2; no compatible ordinary patched parent update established",
+      "audit_all_exit": 1,
+      "waiver": false,
+      "release_acceptance": false,
+      "evidence": ".runtime/dependency-review-20261113/independent-assessment.json"
+    },
+    "register_journey_recovery": {
+      "task": "REGISTER-JOURNEY-RECOVERY-01",
+      "target": "faf7f91dcaabe7cc16c2bdc042628d2cfa8bd2ea",
+      "state": "SOURCE_CLEAR_NATIVE_PRIVACY_AND_MANIFEST_PASS",
+      "behavior": [
+        "Openexactrecordedhistorydisclosuresandvisiblelineagewithoutweakerassertions",
+        "Closedinferredsource/matcher/errorandpassivemaincontextHTTPstatusunderpublicOpenAPItemplates; no rawmessage/URL/body/DOM"
+      ],
+      "source_findings": [
+        "DIAG-S01 fullOpenAPIhealthroute corrected",
+        "DIAG-S02 multilinepoison/real-sourcebounds corrected"
+      ],
+      "actual_node_privacy_passed": 8,
+      "actual_manifest_import_passed": 1,
+      "native_failed": 0,
+      "native_skipped": 0,
+      "frontend235d_inputs_identical": true,
+      "full_frontend_rerun": false,
+      "genuine_diagnostic": {
+        "state": "COMPLETED_ONE_DIAGNOSTIC_INVOCATION_NOT_ACCEPTANCE",
+        "target": "faf7f91",
+        "discovered": 14,
+        "completed": 14,
+        "passed": 1,
+        "failed": 13,
+        "not_completed": 0,
+        "skipped": 0,
+        "todo": 0,
+        "tls_passed": 3,
+        "duration_seconds": 223.7,
+        "fixed_daily_disclosure": "PASS_ACTUAL",
+        "network_scope": "Onlymaincasepage/context responseevents; APIRequestContextandpeertrafficNOTCLAIMED",
+        "cleanup": "VERIFIED0OWNEDCONTAINERSAPPKEYEDPROFILESNOSCANSTATE;2OWNVOLUMESRETAINED;OLDBLOCKEDPROFILEUNTOUCHED",
+        "report": ".runtime/technical-localization-port-isolation-20261113/faf7f91/genuine-diagnostic-execution/diagnostic-summary.json",
+        "acceptance": false
+      },
+      "acceptance": false,
+      "receiving_target": "77221148fe5e9b1e0798dc69d97c2adac312eade",
+      "fresh_artifact_files": 156
+    },
+    "graphify_current_receiving": {
+      "target": "77221148fe5e9b1e0798dc69d97c2adac312eade",
+      "exit_code": 0,
+      "nodes": 19590,
+      "edges": 40475,
+      "duration_seconds": 131.45,
+      "warnings": [
+        "ZERO_NODE",
+        "HTML_LARGE_GRAPH"
+      ],
+      "runtime_proof": false
+    }
+  },
+  "s3_qualification_owner_recovery_20261113": {
+    "task": "S3-QUALIFICATION-OWNER-RECOVERY-01",
+    "trace": "DEV-026 / T-S3-001",
+    "state": "SOURCE_CLEAR_CORRECTED_COMMITTED_AND_LOCALLY_INTEGRATED_EXECUTION_DEFERRED",
+    "baseline": "poseidon-v46.3-20261030",
+    "sources": [
+      "18.01 Backlog27",
+      "15.01 paragraph71",
+      "19.01 paragraphs261-268"
+    ],
+    "dependencies": {
+      "DEV-005": "ACCEPTED_S0_RECEIPT_HASH_VERIFIED",
+      "DEV-008": "ACCEPTED_S0_RECEIPT_HASH_VERIFIED"
+    },
+    "source_target": "ef9cb2ccc9958d0e9b6eba81079436e820127677",
+    "finding": "UNKNOWN qualification envelope dropped after retry denial or reload despite possible original commit",
+    "independent_source_confirmation": true,
+    "worker": ".runtime/worktrees/s3-qualification-owner-recovery-20261113",
+    "owner": "/root/locale_zh",
+    "independent_qa": "/root/status_forecast",
+    "verification": "AllS3newtests/build/lint/typecheck/genuineexecutionDEFERRED_NEXT_COMBINED_GATE; source-onlyclear, no runtimePASS",
+    "accepted": false,
+    "accepted_story_points_added": 0,
+    "current_235d_gate_mutated": false,
+    "backend_test_authoring": {
+      "state": "SOURCE_CLEAR_COMMITTED18a_NORMAL_MERGED_EF9_AND_RECEIVING772_EXECUTION_DEFERRED",
+      "cases": 9,
+      "executed": 0,
+      "owner": "/root",
+      "file": "tests/Poseidon.Api.Tests/RegulatoryQualificationRecoveryTests.cs",
+      "worker": ".runtime/worktrees/s3-qualification-receipt-regression-20261113",
+      "execution": "DEFERRED_NEXT_BUNDLE_GATE"
+    },
+    "product_commit": "3247bcfffb617057b83359cb607cf969b11053ee",
+    "api_test_commit": "18a736cb4891cf9b79fbce09f549008665e33fb0",
+    "authored_files": 9,
+    "independent_findings": [
+      "QOR-S01 sixteenunsupportedReactByRoleoptions corrected",
+      "QOR-S02 lateFilearrayBuffer staleclosure corrected withgeneration/currentrefs"
+    ],
+    "correction_branch": "foundation/s3-qualification-source-fixes-20261113",
+    "additional_component_variants_authored": 4,
+    "graphify_original_package": {
+      "target": "afa706ed",
+      "exit_code": 0,
+      "nodes": 19557,
+      "edges": 40432,
+      "seconds": 155.467,
+      "runtime_proof": false
+    },
+    "receiving_target": "77221148fe5e9b1e0798dc69d97c2adac312eade",
+    "source_review": {
+      "state": "SOURCE_CLEAR_ALL8QOR",
+      "file": ".runtime/s3-next-scope-20261113/independent-product-review.json",
+      "sha256": "9c2cff48c879cea61b0a8238fd934d7f310891d36939e6f37986469744eed012",
+      "execution": 0,
+      "acceptance": false
+    },
+    "commit_binding": ".runtime/s3-next-scope-20261113/corrected-commit-integration-binding.json",
+    "report": "docs/phases/S3-QUALIFICATION-OWNER-RECOVERY-20261113.md"
+  },
+  "qualified_owning_signed_fixture_20261113": {
+    "task": "QUALIFIED-OWNING-SIGNED-FIXTURE-01",
+    "type": "ENGINEERING_GATE_PREREQUISITE",
+    "state": "CORRECTED_SOURCE_CLEAR_NORMAL_MERGE_EXECUTION_DEFERRED",
+    "owner": "/root/locale_zh",
+    "independent_qa": [
+      "/root/status_forecast",
+      "/root/frontend_gate_20261111"
+    ],
+    "proposal": ".runtime/genuine-qualified-fixture-proposal-20261113/report.json",
+    "proposal_sha256": "8187943bfbc8970838a45efe8796eae324418e8b85cfc625be6ab7506da500f5",
+    "scope": "ThreeFICTIONALrules/six typedwitnesses throughrealAPI/files/ownedClam/currentauthorization and distinctsyntheticA/B withSoD; additive strictdescriptor andboundedlookup; optinimmutableconfig/journal",
+    "no_verified_seed_or_real_human_operational_approval": true,
+    "execution": "DEFERRED_COMBINED_GATE",
+    "accepted": false,
+    "accepted_story_points_added": 0,
+    "coherence_correction": "QF-SCOPE-01: 2dedicatedFICTIONALShip/Tug+ordinaryprofiles; seedShipmutatedbydesktopmustnotinvalidate sharedqualifiedwitnessesbeforenarrow. No order/currentnessweakening/refreshtrick.",
+    "source_target": "23bd7525b6150cdf454cc36b8e53ab914d450fa7",
+    "authored_files": 13,
+    "handoff_sha256": "9fbb1435238fddedc049e94704dfa354454737cf8f81ba83dc5207fc14fcde75",
+    "independent_source_review_sha256": "46898138f05446f7a81c6782ba7ae16e863cd37f6a4c7d48466806ca4e3a088c",
+    "unresolved_source_findings": [],
+    "rejected_hypothesis": "QF-S02 original version stamps are documented provenance; audited no-op stamps legitimately advance xmin without semantic revision change. No naive equality change required.",
+    "corrected_source_target": "edac5f99f970eef058406c3d95a88ea8cd0da9e2",
+    "receiving_merge": "2f6f59a3e73eaff75c87926420fa255315413149",
+    "resolved_source_findings": [
+      "QF-S01 exact recursive bool/int/float equality; meaningful configure-level no-mutation regressions authored"
+    ],
+    "merge_binding_sha256": "82a8a18a2713b7fffec5a48a7ef580098ab87ed99652e6c54b112aa7da32e475"
+  },
+  "foundation_policy_signed_fixture_20261113": {
+    "task": "FOUNDATION-POLICY-SIGNED-FIXTURE-01",
+    "state": "CORRECTED_INTEGRATION_SOURCE_CLEAR_NORMAL_MERGE_EXECUTION_DEFERRED",
+    "source_base": "77221148fe5e9b1e0798dc69d97c2adac312eade",
+    "source_proposal_sha256": "f97d47411ed96df4f6f9eb387f2f477a7e260e0e564710e70ac42ae21778ca18",
+    "scope": [
+      "Preserve all21 navigation keys across original daily15/review7 role refs within backend16bound",
+      "Synthetic Draft watch_group A/B only, exact run/writer/originalShip and bounded unapproved policy window",
+      "Synthetic Photo+Passport policy only and exactly two writer crew.documents permissions with existing prerequisites"
+    ],
+    "owner": "/root/locale_zh",
+    "execution": "DEFERRED_FINAL_BUNDLE_GATE",
+    "production_policy_or_external_approval": false,
+    "accepted": false,
+    "accepted_story_points_added": 0,
+    "source_target": "d9510f86430a9c8150b5cdf72e397f909347d825",
+    "authored_files": 10,
+    "author_handoff_sha256": "2672a64ac14eb468b9790dea539047aab6c1903f97c0fdb5f0e10a48fbb324a7",
+    "tests_authored_source_inventory_only": {
+      "python": 10,
+      "node": 6
+    },
+    "receiving_target": "201280c5757a1254ee074649449082ab952e6b0a",
+    "independent_source_review_sha256": "8e9a25420faff1b51d80ddbfc6261955a32587a10dc191cb91bbff2a38e1998d",
+    "integration_independent_review_sha256": "f058afb03891800d8c1391653741cc405070402a548e63e7cee40e99a6c6e9bc",
+    "integration_files": 11,
+    "integration_resolution": "Both explicitverbs/imports/workflowgates preserved; directQFmandatorypreflight; FP-INT-S01 upstreammockisolation/exactbranchdiagnosis preventsfalsepositivetest; realmissingprep coversbothproducers"
+  },
+  "vessel_chooser_focus_20261113": {
+    "task": "S2-VESSEL-CHOOSER-FOCUS-01",
+    "state": "SOURCE_CLEAR_COMMITTED_EXECUTION_DEFERRED",
+    "source_target": "4e44101425a405a175fdc778d225cb05bed8b437",
+    "source_freeze_sha256": "0b9f6b3b997b5e15d69f9963c2cbf1bccfe07002223a359fc190644977b6e21a",
+    "delivered": "Explicit search focus after native showModal; connected original opener restored",
+    "tests_authored": 1,
+    "execution": 0,
+    "acceptance": false,
+    "canonical_sp_added": 0
+  },
+  "audit_capability_contract_20261113": {
+    "task": "AUDIT-CAPABILITY-CONTRACT-01",
+    "state": "SOURCE_CLEAR_CORRECTED_COMMITTED_EXECUTION_DEFERRED",
+    "source_target": "91312c537b324c94496276848431036aad2f74ef",
+    "source_freeze_sha256": "eb661765b4091eb214c9daf9d9df16019b64bbbe3bc28b5ba5fe18fbd203853f",
+    "delivered": "Closed decoder recognizes exact existing94 server capability codes (previously63); no authority/DTO/privacy relaxation",
+    "tests_authored": 2,
+    "original_source_finding": "AUDIT-S01 invalid detail mock could mask invalid list acceptance; corrected list/valid-detail routing plus no-detail-request assertion",
+    "execution": 0,
+    "acceptance": false,
+    "canonical_sp_added": 0
+  },
+  "human_trace_selector_20261113": {
+    "task": "HUMAN-TRACE-SELECTOR-01",
+    "state": "SOURCE_CLEAR_COMMITTED_EXECUTION_DEFERRED",
+    "source_freeze_sha256": "e55336f46b216eeba17d268478519f2121313ab016f03f78c99e3c4c30248078",
+    "delivered": "Unambiguous unique complete blocker observation while preserving repeated truthful lineage explanation",
+    "tests_authored": 1,
+    "execution": 0,
+    "acceptance": false,
+    "canonical_sp_added": 0,
+    "source_target": "5e3d652efb53657139e173e76a76826657c10d1f"
+  },
+  "certificate_candidate_loading_20261113": {
+    "task": "CERTIFICATE-CANDIDATE-LOADING-01",
+    "state": "SOURCE_CLEAR_COMMITTED_EXECUTION_DEFERRED",
+    "source_target": "cf4b063294ce5a242029e3a5830a5876009d0b1b",
+    "source_freeze_sha256": "d5457d869d7e76636a9cae8e95410eda38bda67238192028203d73844550cb5b",
+    "tests_authored": 1,
+    "execution": 0,
+    "acceptance": false,
+    "canonical_sp_added": 0
+  },
+  "audit_enterprise_patterns_20261113": {
+    "task": "AUDIT-ENTERPRISE-PATTERNS-01",
+    "state": "SOURCE_CLEAR_COMMITTED_EXECUTION_DEFERRED",
+    "source_base": "cf4b063294ce5a242029e3a5830a5876009d0b1b",
+    "source_freeze_sha256": "981a642cf0af0dceb9aac999203f2b3eaad0ce604e24a8c5bf0ed6ffd7819a2c",
+    "tests_authored": 1,
+    "execution": 0,
+    "measured_visual_contrast": false,
+    "acceptance": false,
+    "canonical_sp_added": 0,
+    "source_target": "cc1463b5134ab363390eda5312f3c58f3b3b08ec",
+    "independent_source_review_sha256": "91795bc22e42281f7ad655d0b18ca743b31f720201d476e744dfd9aae8739279"
+  },
+  "crew_boundary_signed_persona_20261113": {
+    "task": "CREW-BOUNDARY-SIGNED-PERSONA-01",
+    "state": "SOURCE_CLEAR_COMMITTED_NORMALLY_INTEGRATED_EXECUTION_DEFERRED",
+    "source_base": "cf4b063294ce5a242029e3a5830a5876009d0b1b",
+    "proposal_sha256": "52b9d83865432140ad6ac48cdb4658e5c3dca49a5fc2fff257dac7c8088524ef",
+    "author": "/root/frontend_gate_20261111",
+    "independent_qa": "/root/status_forecast",
+    "scope": "Fresh fifth private genuine-provider persona; exact single originalShip,6crew-scopedcaps,1auditrole; original four identities/credentials/permissions unchanged; only one assignmentInputHistory callback uses it",
+    "execution": 0,
+    "acceptance": false,
+    "canonical_sp_added": 0,
+    "source_target": "98a837c48b57eaba9ff64fa6ee0ed830fe8f452d",
+    "receiving_target": "0c5f8f3ccc11c0e03eda08315256649ac8c71636",
+    "source_freeze_sha256": "183062579ec76e1084e8153df35ed09f9b84dae51c83f83347e8f8da24562355",
+    "independent_source_review_sha256": "2fdae8194e5fc72160bbfb820e58aadc419fcddf9c2bc870a78cd43df3ab56ba",
+    "merge_binding_sha256": "1720393e0cd2547ae10b234d9c9d87f68869e91bb40929d5724137c4b5ce005c",
+    "authored_tests_source_inventory_only": {
+      "python": 8,
+      "node": 3
+    }
+  },
+  "human_review_owner_recovery_20261113": {
+    "task": "HUMAN-REVIEW-OWNER-RECOVERY-01",
+    "kind": "CORRECTION_EXISTING_SOFTWARE_SEPARATE_NEXT_PACKAGE",
+    "state": "AUTHORING_ISOLATED_BRANCH_NOT_IN_CURRENT_GATE",
+    "owner": "/root/locale_zh",
+    "source_base": "201280c5757a1254ee074649449082ab952e6b0a",
+    "proposal_sha256": "635e2e32a93d30028f8783796c3e4306d4aab898ed5502c71f64201c119aa02f",
+    "scope": "Retain human-review originalowner/anchor/authority/route/body/idempotencyKEY acrossUNKNOWN/denial, readonlyknownreceipt, currentCSRF/ownerfences/privatewithdrawal/parentnavigationbarrier; newhumanstreamID remainsservergenerated",
+    "canonical_dependency_promotion": false,
+    "execution": 0,
+    "accepted": false,
+    "accepted_story_points_added": 0
+  },
+  "foundation_corrections_combined_gate_20261113": {
+    "task": "FOUNDATION-CORRECTIONS-COMBINED-GATE",
+    "state": "SOURCE_REVIEW_CLOSED_PREPARING_FINAL_CLEAN_FREEZE",
+    "source_checkpoint": "0c5f8f3ccc11c0e03eda08315256649ac8c71636",
+    "execution_authorized": false,
+    "execution_performed": 0,
+    "backend": "Prepared independentreviewedwrapper false/nulllease; laterfreshRelease/all3unitprojects/fullPGintegration/fullAPI4shards/modelparity",
+    "frontend_protocol": "Preparedonly; laterwholemanifest/privacy/currentPythonNodeWindows+applicableLinux/fullfrontend/freshbuild/read-onlytrustedscans",
+    "genuine": "Notstarted; requiresnative/protocol/scans PASS plusonefreshownedworker/immutablegenesis andexplicitnewlease; full176+finiteS2; oldlabsunchanged",
+    "accepted": false,
+    "accepted_story_points_added": 0,
+    "ast_only_graph": {
+      "task": "FOUNDATION-CORRECTIONS-FINAL-SOURCE-GRAPH",
+      "source_target": "0c5f8f3ccc11c0e03eda08315256649ac8c71636",
+      "state": "AST_ONLY_DERIVED_GRAPH",
+      "exit_code": 0,
+      "seconds": 106.274,
+      "nodes": 19788,
+      "edges": 40986,
+      "warnings": {
+        "zero_node": true,
+        "large_html": true
+      },
+      "test_build_runtime_execution": 0,
+      "acceptance": false,
+      "record_sha256": "268093702282b9a77fdbe080976ed9d15fa77963ccebc7f7775b3ea1b2d1413f"
     }
   }
 }
