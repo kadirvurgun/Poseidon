@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { RegulatoryProfile } from './RegulatoryProfile';
 import { RequiredDataField } from './RequiredDataField';
 import { ProductApp } from './ProductApp';
+import * as profileApi from './profile-api';
 import { loadProfile, loadProfileHistory, saveProfile, validDecimal } from './profile-api';
 import { profileFields } from './profile-contract';
 import type { Profile, ProfileContent } from './profile-contract';
@@ -13,13 +14,19 @@ const content = { ...Object.fromEntries(profileFields.map(([key]) => [key, { sta
 const profile = { tenantId: '10000000-0000-0000-0000-000000000003', vessel, version: 19, revision: 1, savedAt: '2026-01-01T00:00:00Z', provenance: 'Synthetic', content } as Profile;
 const history = { items: [{ revision: 1, savedAt: profile.savedAt, provenance: 'Synthetic', content }], offset: 0, limit: 25, hasMore: false };
 const reply = (body: unknown, status = 200) => ({ ok: status >= 200 && status < 300, status, json: async () => body }) as Response;
+const freshCsrf = crypto.randomUUID();
 const callbacks = () => ({ id: vessel.id, language: 'en' as const, csrf: 'synthetic-csrf', onDirty: vi.fn(), onSaving: vi.fn() });
-function mock(save: (init: RequestInit) => Promise<Response> = async () => reply({ ...profile, version: 20, revision: 2 })) {
+function mock(save: (init: RequestInit) => Promise<Response> = async init => reply({ ...profile, content: JSON.parse(init.body as string).content, provenance: 'Missing', version: 20, revision: 2 })) {
     const fetchMock = vi.fn((url: string, init: RequestInit) => url.includes('/files?') ? Promise.resolve(reply({ items: [], offset: 0, hasMore: false, available: true, canWrite: false, maxBytes: 1048576, allowedTypes: ["image/png"] })) : url.endsWith('/history?offset=0&limit=25') ? Promise.resolve(reply(history)) : init?.method === 'PUT' ? save(init) : Promise.resolve(reply(profile)));
     vi.stubGlobal('fetch', fetchMock);
     return fetchMock;
 }
-beforeEach(() => window.history.replaceState(null, '', '/app'));
+beforeEach(() => {
+    window.history.replaceState(null, '', '/app');
+    // Legacy presentation/validation cases keep their transport focus. The new
+    // recovery suite below separately exercises actual session-wire fencing.
+    vi.spyOn(profileApi, 'loadProfileSession').mockResolvedValue({ owner: profile.tenantId+'/10000000-0000-0000-0000-000000000004', tenant: profile.tenantId, csrf: freshCsrf });
+});
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 describe('VESSEL-PROFILE-DRAFT-01 component and transport coverage (mocked API, no external IdP)', () => {
     it('DEV-020 shows the saved source observation and keeps an unsaved timestamp out of its provenance context', async () => {
@@ -50,7 +57,7 @@ describe('VESSEL-PROFILE-DRAFT-01 component and transport coverage (mocked API, 
         expect(screen.queryByText('Ready', { exact: true })).not.toBeInTheDocument();
     });
     it('saves incomplete drafts with explicit Unknown and Known zero and bounded same-origin transport', async () => {
-        const fetchMock = mock(async (init) => reply({ ...profile, content: JSON.parse(init.body as string).content, version: 20, revision: 2 }));
+        const fetchMock = mock(async (init) => reply({ ...profile, content: JSON.parse(init.body as string).content, provenance: 'Missing', version: 20, revision: 2 }));
         const props = callbacks();
         const user = userEvent.setup();
         render(<RegulatoryProfile {...props}/>);
@@ -62,7 +69,7 @@ describe('VESSEL-PROFILE-DRAFT-01 component and transport coverage (mocked API, 
         await screen.findByText('Draft saved.');
         const call = fetchMock.mock.calls.find(([, init]) => init?.method === 'PUT')!;
         expect(call[0]).toBe('/api/v1/vessels/10000000-0000-0000-0000-000000000001/regulatory-profile');
-        expect(call[1]).toMatchObject({ credentials: 'same-origin', method: 'PUT', headers: { 'X-CSRF-TOKEN': 'synthetic-csrf', 'Idempotency-Key': expect.any(String) } });
+        expect(call[1]).toMatchObject({ credentials: 'same-origin', method: 'PUT', headers: { 'X-CSRF-TOKEN': freshCsrf, 'Idempotency-Key': expect.any(String) } });
         expect(JSON.parse(call[1].body as string)).toMatchObject({ expectedVersion: 19, content: { flag: { state: 'Unknown', value: null }, gt: { state: 'Known', value: '0' } } });
         expect(props.onDirty).toHaveBeenLastCalledWith(false);
     });
@@ -101,7 +108,7 @@ describe('VESSEL-PROFILE-DRAFT-01 component and transport coverage (mocked API, 
         expect(calls).toHaveLength(2);
         expect(calls[1][1].body).toBe(calls[0][1].body);
         expect(calls[1][1].headers).toEqual(calls[0][1].headers);
-        complete(reply({ ...profile, version: 20, revision: 2 }));
+        complete(reply({ ...profile, provenance: 'Missing', version: 20, revision: 2 }));
         await screen.findByText('Taslak kaydedildi.');
         expect(props.onSaving).toHaveBeenLastCalledWith(false);
     });
@@ -157,7 +164,7 @@ describe('VESSEL-PROFILE-DRAFT-01 component and transport coverage (mocked API, 
     });
     it('opens from fleet details and guards vessel/tab navigation while a profile draft is dirty', async () => {
         vi.stubGlobal('fetch', vi.fn((url: string) => Promise.resolve(reply(url.includes('/auth/session') ?
-            { authenticated: true, canRead: true, canReadCompanies: false, canCreate: false, csrfToken: 'csrf', tenantId: '10000000-0000-0000-0000-000000000003' } :
+            { authenticated: true, canRead: true, canReadCompanies: false, canCreate: false, csrfToken: freshCsrf, setupRequired: false, actorId: '10000000-0000-0000-0000-000000000004', tenantId: '10000000-0000-0000-0000-000000000003' } :
             url === '/api/v1/workspace' ? { destinations: [{ key: 'fleet', href: '/app/fleet' }], canSearch: false, canWriteRegulatory: false } :
                 url.includes('/history?') ? history : url.includes('/regulatory-profile') ? profile :
                     url.includes('/vessels?') ? { items: [vessel], offset: 0, limit: 25, hasMore: false } : vessel))));
@@ -200,7 +207,7 @@ describe('VESSEL-PROFILE-DRAFT-01 component and transport coverage (mocked API, 
                     lost = false;
                     throw new TypeError('lost response');
                 }
-                return reply({ ...profile, content: JSON.parse(init.body as string).content });
+                return reply({ ...profile, content: JSON.parse(init.body as string).content, provenance: 'Missing', revision: 2, version: 20 });
             }
             // Use real JSON decoding, so this would detect a numeric wire regression.
             return new Response(JSON.stringify({ ...profile, content: precise }));
@@ -220,12 +227,15 @@ describe('VESSEL-PROFILE-DRAFT-01 component and transport coverage (mocked API, 
         const gt = screen.getByLabelText('GT'), nt = screen.getByLabelText('NT');
         expect(gt).toHaveValue('9007199254740993');
         expect(nt).toHaveValue('0.1234567890123456789012345678');
-        expect(gt).toBeEnabled();
-        expect(nt).toBeEnabled();
-        await user.clear(gt);
-        await user.type(gt, '7');
-        expect(gt).toHaveValue('7');
-        expect(nt).toHaveValue('0.1234567890123456789012345678');
+        expect(gt).toBeDisabled();
+        await user.click(screen.getByRole('button', { name: 'Discard local changes' }));
+        await waitFor(() => expect(screen.getByLabelText('GT')).toBeEnabled());
+        const resumedGt = screen.getByLabelText('GT'), resumedNt = screen.getByLabelText('NT');
+        expect(resumedNt).toBeEnabled();
+        await user.clear(resumedGt);
+        await user.type(resumedGt, '7');
+        expect(resumedGt).toHaveValue('7');
+        expect(resumedNt).toHaveValue('0.1234567890123456789012345678');
     });
     it('preserves exact decimal typing through save and retains the original history snapshot', async () => {
         const precise = { ...content, gt: { state: 'Known', value: '9007199254740993' }, nt: { state: 'Known', value: '0.1234567890123456789012345678' } };
@@ -233,7 +243,7 @@ describe('VESSEL-PROFILE-DRAFT-01 component and transport coverage (mocked API, 
             if (url.includes('/history?'))
                 return reply({ ...history, items: [{ ...history.items[0], content: precise }] });
             if (init?.method === 'PUT')
-                return reply({ ...profile, content: JSON.parse(init.body as string).content });
+                return reply({ ...profile, content: JSON.parse(init.body as string).content, provenance: 'Missing', revision: 2, version: 20 });
             return new Response(JSON.stringify({ ...profile, content: precise }));
         });
         vi.stubGlobal('fetch', fetchMock);
@@ -329,7 +339,7 @@ describe('VESSEL-PROFILE-DRAFT-01 component and transport coverage (mocked API, 
 });
 describe('S5-ONBOARDING-01 guided real profile commands (authored; execution deferred)', () => {
     it('retains edits across steps and saves an incomplete draft using the existing owning command', async () => {
-        const fetch = mock(async (init) => reply({ ...profile, content: JSON.parse(init.body as string).content, version: 20, revision: 2 }));
+        const fetch = mock(async (init) => reply({ ...profile, content: JSON.parse(init.body as string).content, provenance: 'Missing', version: 20, revision: 2 }));
         const user = userEvent.setup(), p = callbacks();
         render(<RegulatoryProfile {...p} journey="onboarding"/>);
         await screen.findByLabelText('Flag — Data state');
@@ -346,15 +356,15 @@ describe('S5-ONBOARDING-01 guided real profile commands (authored; execution def
         const call = fetch.mock.calls.find(([, init]) => init?.method === 'PUT')!;
         expect(JSON.parse(call[1].body as string)).toMatchObject({ expectedVersion: 19, content: { flag: { state: 'Unknown', value: null }, gt: { state: 'Known', value: '9007199254740993' }, cargoContext: { state: 'Missing', value: null } } });
         expect(call[0]).toBe(`/api/v1/vessels/${vessel.id}/regulatory-profile`);
-        expect(call[1]).toMatchObject({ credentials: 'same-origin', headers: { 'X-CSRF-TOKEN': p.csrf, 'Idempotency-Key': expect.any(String) } });
+        expect(call[1]).toMatchObject({ credentials: 'same-origin', headers: { 'X-CSRF-TOKEN': freshCsrf, 'Idempotency-Key': expect.any(String) } });
         expect(p.onDirty).toHaveBeenLastCalledWith(false);
     });
     it('freezes step navigation after an uncertain save and retries the exact owning bytes/key', async () => {
         let lost = true;
-        const fetch = mock(async () => { if (lost) {
+        const fetch = mock(async init => { if (lost) {
             lost = false;
             throw new TypeError('lost reply');
-        } return reply({ ...profile, version: 20, revision: 2 }); });
+        } return reply({ ...profile, content: JSON.parse(init.body as string).content, provenance: 'Missing', version: 20, revision: 2 }); });
         const user = userEvent.setup();
         render(<RegulatoryProfile {...callbacks()} journey="onboarding"/>);
         await screen.findByLabelText('Flag');
@@ -394,7 +404,7 @@ describe('S5-ONBOARDING-01 guided real profile commands (authored; execution def
     });
     it('routes to the guided form and keeps the existing back action behind the dirty guard', async () => {
         vi.stubGlobal('fetch', vi.fn(async (url: string) => reply(url.includes('/auth/session') ?
-            { authenticated: true, canRead: true, canReadCompanies: false, canCreate: false, csrfToken: 'csrf', tenantId: profile.tenantId } :
+            { authenticated: true, canRead: true, canReadCompanies: false, canCreate: false, csrfToken: freshCsrf, setupRequired: false, actorId: '10000000-0000-0000-0000-000000000004', tenantId: profile.tenantId } :
             url === '/api/v1/workspace' ? { destinations: [{ key: 'fleet', href: '/app/fleet' }], canSearch: false, canWriteRegulatory: false } :
                 url.includes('/history?') ? history : url.includes('/regulatory-profile') ? profile :
                     url.includes('/vessels?') ? { items: [vessel], offset: 0, limit: 25, hasMore: false } : vessel)));

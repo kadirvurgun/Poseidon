@@ -4,140 +4,48 @@ import { RegulatoryTraceLineage } from './RegulatoryTraceLineage';
 import { Button } from '../components/ui/button';
 import { EnterpriseActions, EnterprisePagination, EnterpriseToolbar } from './EnterprisePatterns';
 import './regulatory-enterprise.css';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import * as service from './human-review-api';
-import { ApiError } from './api';
+import { useHumanReviewRecovery } from './use-human-review-recovery';
 import { timestamp } from './date-validation';
 type Props = {
     anchor: service.Anchor;
+    owner?: string | null;
     language: AppLocale;
     csrf: string;
     offline: boolean;
     onDirty: (v: boolean) => void;
     onSaving: (v: boolean) => void;
 };
-export function HumanDecisionTrace({ anchor, language, csrf, offline, onDirty, onSaving }: Props) {
-    const [data, setData] = useState<service.Trace | null>(null), [error, setError] = useState<number | null>(null);
-    const [offset, setOffset] = useState(0), [asOf, setAsOf] = useState(''), [history, setHistory] = useState(''), [reload, setReload] = useState(0);
+export function HumanDecisionTrace({ anchor, owner, language, offline, onDirty, onSaving }: Props) {
+    const recovery = useHumanReviewRecovery({ anchor, owner, offline, onDirty, onSaving });
+    const { data, error, offset, history, busy, conflict, attempt, locked, dirty, confirmed } = recovery;
+    const [asOf, setAsOf] = useState('');
     const [rationale, setRationale] = useState(''), [authority, setAuthority] = useState(''), [selected, setSelected] = useState<service.Review | null>(null);
-    const [decision, setDecision] = useState(false), [busy, setBusy] = useState(false), [conflict, setConflict] = useState(false);
+    const [decision, setDecision] = useState(false), [recordingMode, setRecordingMode] = useState(false);
     const [humanDecision, setHumanDecision] = useState(''), [decisionContext, setDecisionContext] = useState(''), [triggerSource, setTriggerSource] = useState('');
-    const [recordingMode, setRecordingMode] = useState(false);
-    const [attempt, setAttempt] = useState<Parameters<typeof service.save>[1] | null>(null), [notice, setNotice] = useState('');
-    const dirty = !!rationale || !!humanDecision || !!decisionContext || !!triggerSource || !!attempt;
-    useEffect(() => { onDirty(dirty); }, [dirty, onDirty]);
-    useEffect(() => { onSaving(busy); }, [busy, onSaving]);
-    // Parent keys this component by the immutable anchor and guards context changes.
-    const { vesselId, evidenceId, evidenceRevision, controlId, controlRevision } = anchor;
-    const key = service.tracePath(anchor);
-    const resetScope1 = [key, offset, history, offline, reload] as const;
-    const [previousScope1, setPreviousScope1] = useState(resetScope1);
-    // Withdraw stale state in the same render that changes the request scope.
-    if (!Object.is(previousScope1[0], key) || !Object.is(previousScope1[1], offset) || !Object.is(previousScope1[2], history) || !Object.is(previousScope1[3], offline) || !Object.is(previousScope1[4], reload)) {
-        setPreviousScope1(resetScope1);
-        setData(null);
-    }
-    useEffect(() => {
-        if (offline)
-            return;
-        const c = new AbortController();
-        let active = true;
-        const timer = setTimeout(() => c.abort(), 15000);
-        service.trace({ vesselId, evidenceId, evidenceRevision, controlId, controlRevision }, offset, history, c.signal).then(v => {
-            if (active) {
-                setData(v);
-                setError(null);
-            }
-        }).catch(e => {
-            if (active)
-                setError(e instanceof ApiError ? e.status : 0);
-        });
-        return () => { active = false; c.abort(); clearTimeout(timer); };
-    }, [key, vesselId, evidenceId, evidenceRevision, controlId, controlRevision, offset, history, offline, reload]); // immutable anchor values form key
-    const locked = offline || busy || conflict || !!history || !data || error !== null;
     const grant = data?.authorities.find(g => g.id === authority);
     const capability = recordingMode ? 'human.decide' : decision ? 'human.review.submit' : selected ? (selected.kind === 'Decision' ? 'human.decide' : 'human.verify') : 'human.review.submit';
     const eligible = data?.authorities.filter(g => g.capability === capability && (!selected || g.operationId === selected.operationId)) ?? [];
+    const edit = (action: () => void, grant?: service.Authority) => { if (recovery.edit(grant)) action(); };
+    function clear() { setRationale(''); setHumanDecision(''); setDecisionContext(''); setTriggerSource(''); setRecordingMode(false); setSelected(null); setDecision(false); setAuthority(''); }
     function choose(row: service.Review | null, requestDecision = false, record = false) {
-        if (dirty || busy)
-            return;
-        setSelected(row);
-        setDecision(requestDecision);
-        setRecordingMode(record);
-        setAuthority('');
-        setConflict(false);
+        if (dirty || !recovery.edit()) return;
+        setSelected(row); setDecision(requestDecision); setRecordingMode(record); setAuthority('');
     }
-    function clearRecording() { setHumanDecision(''); setDecisionContext(''); setTriggerSource(''); setRecordingMode(false); }
-    async function command(state: string, reasonCode: string) {
-        if (locked || !grant || !eligible.some(g => g.id === grant.id) || !rationale.trim() || rationale !== rationale.trim() || rationale.length > 2000)
-            return;
-        if (recordingMode && (!grant.recording || grant.recording.requiredGate !== null || [humanDecision, decisionContext, triggerSource].some(v => !v.trim() || v !== v.trim() || v.length > 2000)))
-            return;
+    function command(state: string, reasonCode: string) {
+        if (locked || !grant || !eligible.some(g => g.id === grant.id) || !rationale.trim() || rationale !== rationale.trim() || rationale.length > 2000) return;
+        if (recordingMode && (!grant.recording || grant.recording.requiredGate !== null || [humanDecision, decisionContext, triggerSource].some(v => !v.trim() || v !== v.trim() || v.length > 2000))) return;
         const kind = decision || selected?.kind === 'Decision' ? 'Decision' : 'Verification';
-        const frozen = attempt ?? { kind, id: decision ? null : selected?.id ?? null, key: crypto.randomUUID(), body: JSON.stringify({
-                expectedVersion: decision ? 0 : selected?.version ?? 0, authorityId: grant.id, operationId: grant.operationId,
-                evidenceId: anchor.evidenceId, evidenceRevision: anchor.evidenceRevision, evidenceVersion: data!.evidenceVersion,
-                controlId: anchor.controlId, controlRevision: anchor.controlRevision, controlVersion: data!.controlVersion,
-                evaluationId: selected?.evaluationId ?? data?.evaluationId ?? null, verificationId: decision ? selected?.id : selected?.verificationId ?? null,
-                verificationRevision: decision ? selected?.revision : selected?.verificationRevision ?? null, state, reasonCode, rationale,
-                expectedProfileRevision: recordingMode ? data!.profileRevision : null,
-                recording: recordingMode ? { decisionType: grant.recording!.decisionType, subjectType: grant.recording!.subjectType, subjectId: grant.recording!.subjectId, humanDecision, decisionContext, triggerSource } : null,
-            }) } satisfies Parameters<typeof service.save>[1];
-        setAttempt(frozen);
-        setBusy(true);
-        setError(null);
-        const c = new AbortController();
-        const timer = setTimeout(() => c.abort(), 15000);
-        try {
-            await service.save(anchor, frozen, csrf, c.signal);
-            setAttempt(null);
-            setRationale('');
-            clearRecording();
-            setSelected(null);
-            setDecision(false);
-            setAuthority('');
-            setReload(v => v + 1);
-            setNotice(localizedText(language, "pairs.m_e9d83aabbaff7ec9"));
-        }
-        catch (e) {
-            const status = e instanceof ApiError ? e.status : 0;
-            setError(status);
-            if (status === 409)
-                setConflict(true);
-            setNotice(localizedText(language, "pairs.m_dc414551e07541c0"));
-        }
-        finally {
-            setBusy(false);
-            clearTimeout(timer);
-        }
-    }
-    async function retry() {
-        if (!attempt || offline || busy || conflict || error === 401 || error === 403 || error === 404)
-            return;
-        setBusy(true);
-        const c = new AbortController();
-        const timer = setTimeout(() => c.abort(), 15000);
-        try {
-            await service.save(anchor, attempt, csrf, c.signal);
-            setAttempt(null);
-            setRationale('');
-            clearRecording();
-            setSelected(null);
-            setAuthority('');
-            setDecision(false);
-            setError(null);
-            setReload(v => v + 1);
-        }
-        catch (e) {
-            const status = e instanceof ApiError ? e.status : 0;
-            setError(status);
-            if (status === 409)
-                setConflict(true);
-        }
-        finally {
-            setBusy(false);
-            clearTimeout(timer);
-        }
+        recovery.capture({ kind, id: decision ? null : selected?.id ?? null, body: JSON.stringify({
+            expectedVersion: decision ? 0 : selected?.version ?? 0, authorityId: grant.id, operationId: grant.operationId,
+            evidenceId: anchor.evidenceId, evidenceRevision: anchor.evidenceRevision, evidenceVersion: data!.evidenceVersion,
+            controlId: anchor.controlId, controlRevision: anchor.controlRevision, controlVersion: data!.controlVersion,
+            evaluationId: selected?.evaluationId ?? data?.evaluationId ?? null, verificationId: decision ? selected?.id : selected?.verificationId ?? null,
+            verificationRevision: decision ? selected?.revision : selected?.verificationRevision ?? null, state, reasonCode, rationale,
+            expectedProfileRevision: recordingMode ? data!.profileRevision : null,
+            recording: recordingMode ? { decisionType: grant.recording!.decisionType, subjectType: grant.recording!.subjectType, subjectId: grant.recording!.subjectId, humanDecision, decisionContext, triggerSource } : null,
+        }) }, grant, decision || !selected ? 1 : selected.revision + 1);
     }
     const label: Record<string, string> = {
         RECORDED: localizedText(language, "pairs.m_fab76565505d109e"),
@@ -164,11 +72,12 @@ export function HumanDecisionTrace({ anchor, language, csrf, offline, onDirty, o
     <h3>{localizedText(language, "pairs.m_da9a1c5cb435aac2")}</h3>
     <p>{localizedText(language, "pairs.m_265f8c46e1aaeed6")}</p>
     {offline && <p role="status">{localizedText(language, "pairs.m_3530ac370ce33448")}</p>}
-    {error !== null && <p role="alert">{error === 403 ? localizedText(language, "pairs.m_d53aca8daf96ef99") : error === 404 ? localizedText(language, "pairs.m_90ce5807f288abce") : conflict ? localizedText(language, "pairs.m_ec7585f3e5ceb065") : localizedText(language, "pairs.m_6ed3cc5d1dafcbac")}</p>}
+    {(error !== null || conflict) && <p role="alert">{error === 403 ? localizedText(language, "pairs.m_d53aca8daf96ef99") : error === 404 ? localizedText(language, "pairs.m_90ce5807f288abce") : conflict ? localizedText(language, "pairs.m_ec7585f3e5ceb065") : localizedText(language, "pairs.m_6ed3cc5d1dafcbac")}</p>}
     {!data && !offline && error === null && <p role="status">{localizedText(language, "pairs.m_fbcd4bf6b590b4a8")}</p>}
-    <p role="status">{notice}</p>
-    <EnterpriseToolbar><label>{localizedText(language, "pairs.m_bca6226d33126d14")}<input value={asOf} disabled={dirty || busy} onChange={e => setAsOf(e.target.value)}/></label>
-    <Button variant="outline" disabled={offline || dirty || busy || !!asOf && !timestamp(asOf)} onClick={() => { setHistory(asOf); setOffset(0); setSelected(null); setAuthority(''); }}>{localizedText(language, "pairs.m_24b4976a4e29b3a0")}</Button></EnterpriseToolbar>
+    <p role="status">{recovery.notice ? localizedText(language, "pairs.m_79054af08f971230") : ""}</p>
+    {attempt?.unknown && <p role="status">{localizedText(language, "pairs.m_62930366e47b200e")}</p>}
+    <EnterpriseToolbar><label>{localizedText(language, "pairs.m_bca6226d33126d14")}<input value={asOf} disabled={dirty || busy || !!confirmed} onChange={e => setAsOf(e.target.value)}/></label>
+    <Button variant="outline" disabled={offline || dirty || busy || !!confirmed || !!asOf && !timestamp(asOf)} onClick={() => { recovery.setHistory(asOf); clear(); }}>{localizedText(language, "pairs.m_24b4976a4e29b3a0")}</Button></EnterpriseToolbar>
     {data && <>
       <p>{localizedText(language, "pairs.m_2cdad0c15f6f5209")}: {data.asOf} · {data.disposition} · {data.historical ? localizedText(language, "pairs.m_13837b5b7ac6b357") : localizedText(language, "pairs.m_58332eba7763554a")}</p>
       <p>{localizedText(language, "pairs.m_606813080f3d6489")}: {data.evidenceContext.provenance ?? localizedText(language, "pairs.m_a5a7675bd7000dbd")}</p>
@@ -186,19 +95,19 @@ export function HumanDecisionTrace({ anchor, language, csrf, offline, onDirty, o
         {row.kind === 'Verification' && <Button variant="outline" disabled={locked || dirty} onClick={() => choose(row, true, true)}>{localizedText(language, "pairs.m_543ca985b5af9c69")}</Button>}
         {row.kind === 'Decision' && row.state === 'PENDING' && <Button variant="outline" disabled={locked || dirty} onClick={() => choose(row, false, true)}>{localizedText(language, "pairs.m_543ca985b5af9c69")}</Button>}</EnterpriseActions>
       </article>)}
-      {data.auditItems && <section aria-label={localizedText(language, "pairs.m_76dcfd615021b35d")}><h4>{localizedText(language, "pairs.m_76dcfd615021b35d")}</h4>{data.auditItems.map(e => <article key={`${e.id}/${e.revision}`}><p>{e.kind} · {e.state} · {e.currentState} · {e.savedAt} · {e.validUntil ?? '—'}</p><p>{e.id} / {e.revision} · {e.contextHash} · {e.authorityHash}</p></article>)}<Button disabled={dirty || busy || !data.auditHasMore} onClick={() => setOffset(v => v + 25)}>{localizedText(language, "pairs.m_7deacf622d320b82")}</Button></section>}
-      <EnterprisePagination label={localizedText(language, "pairs.m_4843022a3c413180")} previous={localizedText(language, "pairs.m_49b8865f52ef22ad")} next={localizedText(language, "pairs.m_d26023eac9179680")} previousDisabled={dirty || busy || offset === 0} nextDisabled={dirty || busy || !data.hasMore} onPrevious={() => setOffset(v => v - 25)} onNext={() => setOffset(v => v + 25)}/>
+      {data.auditItems && <section aria-label={localizedText(language, "pairs.m_76dcfd615021b35d")}><h4>{localizedText(language, "pairs.m_76dcfd615021b35d")}</h4>{data.auditItems.map(e => <article key={`${e.id}/${e.revision}`}><p>{e.kind} · {e.state} · {e.currentState} · {e.savedAt} · {e.validUntil ?? '—'}</p><p>{e.id} / {e.revision} · {e.contextHash} · {e.authorityHash}</p></article>)}<Button disabled={dirty || busy || !data.auditHasMore} onClick={() => recovery.setOffset(offset + 25)}>{localizedText(language, "pairs.m_7deacf622d320b82")}</Button></section>}
+      <EnterprisePagination label={localizedText(language, "pairs.m_4843022a3c413180")} previous={localizedText(language, "pairs.m_49b8865f52ef22ad")} next={localizedText(language, "pairs.m_d26023eac9179680")} previousDisabled={dirty || busy || offset === 0} nextDisabled={dirty || busy || !data.hasMore} onPrevious={() => recovery.setOffset(offset - 25)} onNext={() => recovery.setOffset(offset + 25)}/>
       {!history && <fieldset className="regulatory-review-command" disabled={locked || !!attempt}><legend>{localizedText(language, "pairs.m_1e7c4a57705609c7")}</legend>
         <Button variant="outline" disabled={dirty} onClick={() => choose(null)}>{localizedText(language, "pairs.m_0e211a8500728242")}</Button>
-        <label>{localizedText(language, "pairs.m_5596762e073edde5")}<select value={authority} onChange={e => setAuthority(e.target.value)}><option value="">{localizedText(language, "pairs.m_dd15208b3124fddb")}</option>{eligible.map(g => <option key={g.id} value={g.id}>{g.roleId} / {g.operationId} / {g.capability}{g.recording ? ` / ${g.recording.decisionType} / ${g.recording.subjectType}` : ''}</option>)}</select></label>
+        <label>{localizedText(language, "pairs.m_5596762e073edde5")}<select value={authority} onChange={e => edit(() => setAuthority(e.target.value), eligible.find(grant => grant.id === e.target.value))}><option value="">{localizedText(language, "pairs.m_dd15208b3124fddb")}</option>{eligible.map(g => <option key={g.id} value={g.id}>{g.roleId} / {g.operationId} / {g.capability}{g.recording ? ` / ${g.recording.decisionType} / ${g.recording.subjectType}` : ''}</option>)}</select></label>
         {eligible.length === 0 && <p>{localizedText(language, "pairs.m_041dee8666c873d5")}</p>}
-        <label>{localizedText(language, "pairs.m_590d7ac05bb45a0d")}<textarea maxLength={2000} value={rationale} onChange={e => setRationale(e.target.value)}/></label>
+        <label>{localizedText(language, "pairs.m_590d7ac05bb45a0d")}<textarea maxLength={2000} value={rationale} onChange={e => edit(() => setRationale(e.target.value))}/></label>
         {recordingMode ? <>
           <p>{grant?.recording ? `${grant.recording.decisionType} / ${grant.recording.subjectType} / ${grant.recording.subjectId}` : localizedText(language, "pairs.m_b95e9b76de104295")}</p>
           {grant?.recording?.requiredGate && <p role="alert">{localizedText(language, "pairs.m_610104b0f6f25659")}: {grant.recording.requiredGate} · {grant.recording.gateSourceLocator}</p>}
-          <label>{localizedText(language, "pairs.m_86d30e4e42c59c70")}<textarea maxLength={2000} value={humanDecision} onChange={e => setHumanDecision(e.target.value)}/></label>
-          <label>{localizedText(language, "pairs.m_1b666081a652cee7")}<textarea maxLength={2000} value={decisionContext} onChange={e => setDecisionContext(e.target.value)}/></label>
-          <label>{localizedText(language, "pairs.m_1e0c8d69d1880e2d")}<input maxLength={2000} value={triggerSource} onChange={e => setTriggerSource(e.target.value)}/></label>
+          <label>{localizedText(language, "pairs.m_86d30e4e42c59c70")}<textarea maxLength={2000} value={humanDecision} onChange={e => edit(() => setHumanDecision(e.target.value))}/></label>
+          <label>{localizedText(language, "pairs.m_1b666081a652cee7")}<textarea maxLength={2000} value={decisionContext} onChange={e => edit(() => setDecisionContext(e.target.value))}/></label>
+          <label>{localizedText(language, "pairs.m_1e0c8d69d1880e2d")}<input maxLength={2000} value={triggerSource} onChange={e => edit(() => setTriggerSource(e.target.value))}/></label>
           <p>{localizedText(language, "pairs.m_64996018d6e55394")}</p>
           <EnterpriseActions aria-label={localizedText(language, "pairs.m_bea9b1888352e6f8")}><Button disabled={!grant?.recording || grant.recording.requiredGate !== null || !rationale.trim() || !humanDecision.trim() || !decisionContext.trim() || !triggerSource.trim()} onClick={() => void command('RECORDED', 'HUMAN_DECIDED')}>{localizedText(language, "pairs.m_75209c48b66c7117")}</Button></EnterpriseActions>
         </> : <EnterpriseActions aria-label={localizedText(language, "pairs.m_1c0ca65b618ce6a8")}>{(!selected || decision) ? <Button disabled={!grant || !rationale.trim()} onClick={() => void command('PENDING', 'REQUEST_REVIEW')}>{localizedText(language, "pairs.m_dea785542f056c41")}</Button> : <>
@@ -207,14 +116,10 @@ export function HumanDecisionTrace({ anchor, language, csrf, offline, onDirty, o
         </>}</EnterpriseActions>}
       </fieldset>}
     </>}
-    <EnterpriseActions align="start" aria-label={localizedText(language, "pairs.m_7fb7bfcf00f28921")}>{attempt && <Button disabled={offline || busy || conflict || error === 401 || error === 403 || error === 404} onClick={() => void retry()}>{localizedText(language, "pairs.m_3176d9a6fa209af6")}</Button>}
-    <Button variant="outline" disabled={busy || offline} onClick={() => {
-            if (!dirty) {
-                setConflict(false);
-                setError(null);
-                setReload(v => v + 1);
-            }
-        }}>{localizedText(language, "pairs.m_313d49a7e8ad45ba")}</Button>
-    {dirty && <Button variant="outline" disabled={busy} onClick={() => { setAttempt(null); setRationale(''); clearRecording(); setSelected(null); setDecision(false); setAuthority(''); setConflict(false); setError(null); setReload(v => v + 1); setNotice(localizedText(language, "pairs.m_418d2156faa23890")); }}>{localizedText(language, "pairs.m_d3fd36629a8388d7")}</Button>}</EnterpriseActions>
+    <EnterpriseActions align="start" aria-label={localizedText(language, "pairs.m_7fb7bfcf00f28921")}>
+      {attempt && <Button disabled={!recovery.canRetry} onClick={recovery.retry}>{localizedText(language, "pairs.m_3176d9a6fa209af6")}</Button>}
+      <Button variant="outline" disabled={busy || offline} onClick={recovery.recheck}>{localizedText(language, 'pairs.m_542619365a11df9d')}</Button>
+      {(dirty || confirmed) && recovery.canDiscard && <Button variant="outline" disabled={busy || !recovery.available} onClick={async () => { if (await recovery.discard()) clear(); }}>{localizedText(language, "pairs.m_d3fd36629a8388d7")}</Button>}
+    </EnterpriseActions>
   </section>;
 }

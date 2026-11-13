@@ -2,16 +2,17 @@ import { localizedText } from "../i18n/messages";
 import { type Locale as AppLocale } from "../i18n";
 import { useLayoutEffect, useEffect, useRef, useState } from 'react';
 import { ApiError } from './api';
-import { filePage, type FileRecord } from './file-api';
+import { filePage, type FileRecord, type FilePage } from './file-api';
 import type { ProfileContent } from './profile-contract';
 // Ordinary vessel files only. The server independently excludes person/document stores.
-export function ConstructionRecordPicker({ vessel, language, value, disabled, onChange, onDenied }: {
+export function ConstructionRecordPicker({ vessel, language, value, disabled, onChange, onDenied, load = filePage }: {
     vessel: string;
     language: AppLocale;
     value: ProfileContent['constructionRecord'];
     disabled: boolean;
     onChange: (v: ProfileContent['constructionRecord']) => void;
     onDenied: (error: ApiError) => unknown;
+    load?: (vessel: string, offset: number, signal: AbortSignal) => Promise<FilePage>;
 }) {
     const [rows, setRows] = useState<FileRecord[]>([]), [offset, setOffset] = useState(0), [more, setMore] = useState(false);
     const [loading, setLoading] = useState(true), [failure, setFailure] = useState(false), [attempt, setAttempt] = useState(0);
@@ -24,10 +25,10 @@ export function ConstructionRecordPicker({ vessel, language, value, disabled, on
         window.addEventListener('offline', offline);
         return () => { window.removeEventListener('online', online); window.removeEventListener('offline', offline); };
     }, []);
-    const resetScope1 = [vessel, offset, attempt, offline, onDenied] as const;
+    const resetScope1 = [vessel, offset, attempt, offline, onDenied, load] as const;
     const [previousScope1, setPreviousScope1] = useState(resetScope1);
     // Withdraw stale state in the same render that changes the request scope.
-    if (!Object.is(previousScope1[0], vessel) || !Object.is(previousScope1[1], offset) || !Object.is(previousScope1[2], attempt) || !Object.is(previousScope1[3], offline) || !Object.is(previousScope1[4], onDenied)) {
+    if (!Object.is(previousScope1[0], vessel) || !Object.is(previousScope1[1], offset) || !Object.is(previousScope1[2], attempt) || !Object.is(previousScope1[3], offline) || !Object.is(previousScope1[4], onDenied) || !Object.is(previousScope1[5], load)) {
         setPreviousScope1(resetScope1);
         setRows([]);
         setMore(false);
@@ -40,7 +41,7 @@ export function ConstructionRecordPicker({ vessel, language, value, disabled, on
         const controller = new AbortController();
         let active = true;
         const timer = setTimeout(() => controller.abort(), 10000);
-        filePage(vessel, offset, controller.signal).then(page => {
+        load(vessel, offset, controller.signal).then(page => {
             if (active) {
                 setRows(page.items.filter(f => f.state === 'CleanTransport'));
                 setMore(page.hasMore);
@@ -57,7 +58,7 @@ export function ConstructionRecordPicker({ vessel, language, value, disabled, on
                 setLoading(false);
         });
         return () => { active = false; controller.abort(); clearTimeout(timer); };
-    }, [vessel, offset, attempt, offline, onDenied]);
+    }, [vessel, offset, attempt, offline, onDenied, load]);
     return <fieldset disabled={disabled || loading || offline}>
     <legend>{localizedText(language, "pairs.m_a63f84ca7e9e2df2")}</legend>
     <p>{localizedText(language, "pairs.m_9b08f8570085767c")}</p>

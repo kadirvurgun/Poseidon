@@ -17,6 +17,7 @@ const labels: Record<FieldKey, [
     string
 ]> = { title: [sourceText("en", "pairs.m_fa3e5e76e1977a4f"), sourceText("tr", "pairs.m_fa3e5e76e1977a4f")], authority: [sourceText("en", "pairs.m_39db52349248b598"), sourceText("tr", "pairs.m_39db52349248b598")], locator: [sourceText("en", "pairs.m_be6034131c381637"), sourceText("tr", "pairs.m_be6034131c381637")], instrument: [sourceText("en", "pairs.m_9ac4381a3797c51f"), sourceText("tr", "pairs.m_9ac4381a3797c51f")], amendment: [sourceText("en", "pairs.m_4871770ea162d7eb"), sourceText("tr", "pairs.m_4871770ea162d7eb")], effectiveDate: [sourceText("en", "pairs.m_de8b1680f4d7cb9a"), sourceText("tr", "pairs.m_de8b1680f4d7cb9a")], declaration: [sourceText("en", "pairs.m_d2045a0b1f190866"), sourceText("tr", "pairs.m_d2045a0b1f190866")], observedAt: [sourceText("en", "pairs.m_9482f9ce103abf01"), sourceText("tr", "pairs.m_9482f9ce103abf01")] };
 type Props = {
+    owner?: string | null;
     kind: RegisterKind;
     id: string | null;
     language: AppLocale;
@@ -32,12 +33,12 @@ export function RegulatoryRegister(props: Props) {
     const [chainSaving, setChainSaving] = useState(false);
     const [registerDirty, setRegisterDirty] = useState(false), [registerSaving, setRegisterSaving] = useState(false), [enterConfirm, setEnterConfirm] = useState(false);
     const [destination, setDestination] = useState<'lifecycle' | 'controls'>('lifecycle');
-    const enter = () => { props.onDirty(false); setRegisterDirty(false); setEnterConfirm(false); setChain(destination); };
-    const close = () => { props.onDirty(false); setChainDirty(false); setChain(null); setConfirm(false); };
+    const enter = () => { if (registerSaving) return; props.onDirty(false); setRegisterDirty(false); setEnterConfirm(false); setChain(destination); };
+    const close = () => { if (chainSaving) return; props.onDirty(false); setChainDirty(false); setChain(null); setConfirm(false); };
     return chain ? <>
     <Button variant="outline" type="button" disabled={chainSaving} onClick={() => chainDirty ? setConfirm(true) : close()}>{presentationLabel(props.language, 'registerBack')}</Button>
     {confirm && <DraftConfirmation language={props.language} onStay={() => setConfirm(false)} onDiscard={close}/>}
-    {chain === 'lifecycle' ? <LifecycleApplicability language={props.language} csrf={props.csrf} offline={props.offline} onDirty={v => { setChainDirty(v); props.onDirty(v); }} onSaving={v => { setChainSaving(v); props.onSaving(v); }}/> : <ControlEvidence language={props.language} csrf={props.csrf} offline={props.offline} onDirty={v => { setChainDirty(v); props.onDirty(v); }} onSaving={v => { setChainSaving(v); props.onSaving(v); }}/>}
+    {chain === 'lifecycle' ? <LifecycleApplicability language={props.language} csrf={props.csrf} offline={props.offline} onDirty={v => { setChainDirty(v); props.onDirty(v); }} onSaving={v => { setChainSaving(v); props.onSaving(v); }}/> : <ControlEvidence owner={props.owner} language={props.language} csrf={props.csrf} offline={props.offline} onDirty={v => { setChainDirty(v); props.onDirty(v); }} onSaving={v => { setChainSaving(v); props.onSaving(v); }}/>}
   </> : <>
     {!props.id && <EnterpriseActions align="start" aria-label={presentationLabel(props.language, 'regulatoryWorkspaces')}><Button variant="outline" type="button" disabled={registerSaving} onClick={() => {
                 setDestination('lifecycle');

@@ -1,8 +1,8 @@
 import { isGuid as guid } from './identifiers'
 import { calendar, timestamp } from './date-validation'
-import { ApiError, request } from './api'
+import { ApiError, request, session } from './api'
 import { profileFields } from './profile-contract'
-import type { Profile, ProfileCommand, ProfileHistory } from './profile-contract'
+import type { Profile, ProfileCommand, ProfileHistory, ProfileContent } from './profile-contract'
 
 // All untrusted JSON is checked before components see it.
 type ObjectValue = Record<string, unknown>
@@ -65,3 +65,56 @@ export const loadProfile = async (id: string, signal: AbortSignal) => decodeProf
 export const loadProfileHistory = async (id: string, offset: number, signal: AbortSignal) => decodeHistory(await response(`${path(id)}/history?offset=${offset}&limit=25`, signal), offset)
 export const saveProfile = async (id: string, command: ProfileCommand, csrf: string, key: string, signal: AbortSignal) =>
   decodeProfile(await response(path(id), signal, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf, 'Idempotency-Key': key }, body: JSON.stringify(command) }), id)
+
+
+// Owner hints never authorize profile reads or writes. This proof comes from the
+// real session endpoint immediately around each protected operation.
+export async function loadProfileSession(signal: AbortSignal) {
+  const value: unknown = await session(signal)
+  if (!object(value)) throw new ApiError(502, 'invalid_contract')
+  if (value.authenticated !== true) throw new ApiError(401, 'authentication_required')
+  if (value.canRead !== true || value.setupRequired !== false) throw new ApiError(403, 'permission_denied')
+  if (!guid(value.actorId) || !guid(value.tenantId) || typeof value.csrfToken !== 'string' || value.csrfToken.length < 16 ||
+      value.csrfToken.length > 2048 || Array.from(value.csrfToken).some(c => c.charCodeAt(0) < 32 || c.charCodeAt(0) === 127)) throw new ApiError(502, 'invalid_contract')
+  return Object.freeze({ owner: value.tenantId.toLowerCase()+'/'+value.actorId.toLowerCase(), tenant: value.tenantId.toLowerCase(), csrf: value.csrfToken })
+}
+function normalizedProfileContent(value: ProfileContent): string {
+  const fields = profileFields.map(([key, kind]) => {
+    const field = value[key]
+    if (field.state !== 'Known') return [key, field.state, null]
+    if (field.value == null && kind === 'text') return [key, 'Missing', null]
+    if (typeof field.value !== 'string') throw new ApiError(502, 'invalid_contract')
+    let normalized = field.value.trim()
+    if (kind === 'number') {
+      if (!validDecimal(normalized) || normalized !== field.value) throw new ApiError(502, 'invalid_contract')
+      const [whole, fraction = ''] = normalized.split('.')
+      const tail = fraction.replace(/0+$/, '')
+      normalized = (whole.replace(/^0+/, '') || '0')+(tail ? '.'+tail : '')
+    } else if (!normalized) return [key, 'Missing', null]
+    if (key === 'sourceObservedAt') {
+      if (!timestamp(normalized)) throw new ApiError(502, 'invalid_contract')
+      const fraction = /\.(\d+)(?=Z|[+-]\d{2}:\d{2}$)/.exec(normalized)?.[1] ?? ''
+      const milliseconds = Date.parse(normalized.replace(/\.\d+(?=Z|[+-]\d{2}:\d{2}$)/, ''))
+      normalized = (BigInt(milliseconds)*10000n+BigInt(fraction.padEnd(7, '0'))).toString()
+    }
+    return [key, 'Known', normalized]
+  })
+  const pin = value.constructionRecord
+  return JSON.stringify([fields, pin === null ? null : [pin.id.toLowerCase(), pin.revision, pin.checksum]])
+}
+export const profileContentMatches = (left: ProfileContent, right: ProfileContent) => normalizedProfileContent(left) === normalizedProfileContent(right)
+export type ProfileAttempt = Readonly<{ owner: string; vessel: string; route: string; method: 'PUT'; body: string; key: string; expectedVersion: number; nextRevision: number; unknown: boolean }>
+export async function saveProfileAttempt(value: ProfileAttempt, csrf: string, signal: AbortSignal) {
+  if (value.route !== path(value.vessel) || value.method !== 'PUT' || !guid(value.key)) throw new ApiError(502, 'invalid_contract')
+  const command = JSON.parse(value.body) as ProfileCommand
+  const result = decodeProfile(await response(value.route, signal, { method: value.method, headers: {
+    'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf, 'Idempotency-Key': value.key,
+  }, body: value.body }), value.vessel)
+  // The server returns its ORIGINAL receipt before checking the latest xmin.
+  // Bind that receipt to the captured command, never to a newer live head token.
+  const expectedProvenance = [command.content.declaration, command.content.sourceReference].some(field => field.state === 'Known' && typeof field.value === 'string' && field.value.trim()) ? 'DeclaredUnverified' :
+    [command.content.declaration, command.content.sourceReference].some(field => field.state === 'Unknown') ? 'Unknown' : 'Missing'
+  if (command.expectedVersion !== value.expectedVersion || result.tenantId.toLowerCase() !== value.owner.split('/')[0] || result.revision !== value.nextRevision ||
+      result.provenance !== expectedProvenance || !profileContentMatches(result.content, command.content)) throw new ApiError(502, 'invalid_contract')
+  return result
+}

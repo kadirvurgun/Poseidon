@@ -12,9 +12,9 @@ import { readLocation } from './workspace-location';
 import { profileFields } from './profile-contract';
 const vessel = { id: '10000000-0000-0000-0000-000000000001', companyId: '10000000-0000-0000-0000-000000000002', code: 'S1', name: 'Synthetic Ship', kind: 'Ship', version: 7, canEdit: true };
 const company = { id: vessel.companyId, code: 'C1', name: 'Synthetic Company', version: 7, canEdit: true };
-const session = { ...navigationTestIdentity, authenticated: true, setupRequired: false, canRead: true, canReadCompanies: true, canCreate: true, canSearch: false, csrfToken: 'synthetic-token' };
+const session = { ...navigationTestIdentity, authenticated: true, setupRequired: false, canRead: true, canReadCompanies: true, canCreate: true, canSearch: false, csrfToken: crypto.randomUUID() };
 const content = { ...Object.fromEntries(profileFields.map(([key]) => [key, { state: 'Missing', value: null }])), constructionRecord: null };
-const profile = { tenantId: '10000000-0000-0000-0000-000000000003', vessel, version: 19, revision: 1, savedAt: '2026-01-01T00:00:00Z', provenance: 'Synthetic', content };
+const profile = { tenantId: session.tenantId, vessel, version: 19, revision: 1, savedAt: '2026-01-01T00:00:00Z', provenance: 'Synthetic', content };
 const reply = (body: unknown, status = 200) => ({ ok: status === 200, status, json: async () => body }) as Response;
 function mock(overrides: Partial<typeof session> = {}, detailStatus = 200) {
     vi.mocked(loadLenses).mockImplementation(async (tenant, actor, vessel) => (await import('./workspace-navigation.test-fixture')).navigationTestLenses(tenant, actor, vessel, overrides.canSearch ?? false, overrides.canReadCompanies ?? true));
