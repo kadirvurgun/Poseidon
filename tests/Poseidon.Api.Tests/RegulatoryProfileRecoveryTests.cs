@@ -55,6 +55,7 @@ public sealed partial class DirectoryWorkspaceTests
         var receiptAudits = audits.Where(value => value.EntityType == nameof(CommandReceipt) &&
             Field(value, "CommandName") == "SaveRegulatoryDraft").ToArray();
         Assert.Equal(receipts.Length, receiptAudits.Length);
+        var matchedReceiptAudits = new HashSet<Guid>();
         foreach (var committed in receipts) {
             Assert.Equal("ProfileSave", committed.Action); Assert.Equal(vessel, committed.ProfileVesselId);
             var outcome = JsonSerializer.Deserialize<RegulatoryDraftDto>(committed.ProfileOutcomeJson!, ProfileRecoveryJson)!;
@@ -63,6 +64,7 @@ public sealed partial class DirectoryWorkspaceTests
             var audit = Assert.Single(receiptAudits, value => value.EntityId == committed.ResourceId.ToString("D") &&
                 value.TenantId == committed.TenantId && value.ActorId == committed.ActorId.ToString("D") &&
                 value.AfterRevision == committed.RegisterRevision && value.AfterVersion == committed.RegisterVersion);
+            Assert.True(matchedReceiptAudits.Add(audit.Id));
             Assert.Equal("Added", audit.Action);
             var revisionAudit = Assert.Single(audits, value => value.EntityType == nameof(RegulatoryDraftRevision) &&
                 value.AfterRevision == outcome.Revision && value.CorrelationId == audit.CorrelationId);
@@ -83,6 +85,7 @@ public sealed partial class DirectoryWorkspaceTests
                 Assert.False((item.ChangeSummary ?? "").Contains(committed.Key, StringComparison.Ordinal));
             }
         }
+        Assert.Equal(receiptAudits.Length, matchedReceiptAudits.Count);
         // Closed in-memory comparison; never emit receipt/content/private values.
         return JsonSerializer.SerializeToUtf8Bytes(new { head, revisions, receipts, audits }, ProfileRecoveryJson);
     }

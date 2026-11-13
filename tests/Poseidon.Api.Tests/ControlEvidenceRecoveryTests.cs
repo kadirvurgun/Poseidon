@@ -52,6 +52,7 @@ public sealed partial class DirectoryWorkspaceTests
             x.ResourceId == saved.Id).OrderBy(x => x.Id).ToArrayAsync(Ct);
         var receiptAudits = audits.Where(x => x.EntityType == nameof(ControlEvidenceReceipt)).ToArray();
         Assert.Equal(receipts.Length, receiptAudits.Length);
+        var matchedReceiptAudits = new HashSet<Guid>();
         static string? Field(AuditEvent audit, string name) {
             using var fields = JsonDocument.Parse(audit.ChangeSummary!);
             return Assert.Single(fields.RootElement.EnumerateArray(), value => value.GetProperty("field").GetString() == name)
@@ -66,6 +67,7 @@ public sealed partial class DirectoryWorkspaceTests
             var audit = Assert.Single(receiptAudits, value => value.EntityId == committed.ResourceId.ToString("D") &&
                 value.TenantId == committed.TenantId && value.ActorId == committed.ActorId.ToString("D") &&
                 value.AfterRevision == outcome.Revision && value.AfterVersion == outcome.Version);
+            Assert.True(matchedReceiptAudits.Add(audit.Id));
             Assert.Equal("Added", audit.Action);
             var revisionAudit = Assert.Single(audits, value => value.EntityType == nameof(ControlEvidenceRevision) &&
                 value.AfterRevision == outcome.Revision && value.CorrelationId == audit.CorrelationId);
@@ -86,6 +88,7 @@ public sealed partial class DirectoryWorkspaceTests
                 Assert.False((item.ChangeSummary ?? "").Contains(committed.Key, StringComparison.Ordinal));
             }
         }
+        Assert.Equal(receiptAudits.Length, matchedReceiptAudits.Count);
         Assert.True(head.Revision >= saved.Revision); Assert.Equal(head.Revision, revisions.Last().Revision);
         // Compare in memory: never print private serialized body/receipt/audit text.
         return JsonSerializer.SerializeToUtf8Bytes(new { head, revisions, receipts, pins, audits }, ControlRecoveryJson);
