@@ -1,8 +1,93 @@
 # Foundation düzeltmeleri — 13.11.2026
 
-Durum: **kaynak geliştirme / yeni yürütmeler DEFERRED / acceptance=false**.
-Canonical kabul20/121iş,103/970SP (%10,62),0/196ayrı ekran olarak korunur.
-S0/S1 kabulü değişmez; yerel düzeltmeler S2 veya S3 tam sprint kabulü değildir.
+**13 Kasım — güncel teslim kontrol noktası:** native alt paket bağımsız doğrulandı;
+canonical kabul **20/121 iş, 103/970 SP (%10,62), 0/196 ayrı ekran** olarak aynı.
+Backend özgün `64a8442` hedefinde 1067/1067 birim, 79/79 gerçek PostgreSQL,
+846/846 API ve bunun içindeki 117/117 kritik audit kapsamı PASS.
+Frontend özgün `aedffd3` hedefinde 1566/1566 bileşen, 244/244 suite,
+lint/tip/20 dosyalık üretim derlemesi PASS. 209 protokol kimliği platformların
+uygulanabilir birleşiminde geçti; özgün platforma özel skip'ler korunur.
+`0e197a2` üzerinde taze repository taraması **2784 dosya / 0 bulgu** ve aynı
+20 üretim dosyasının taraması **0 bulgu**; 6 saf S2 yardımcı regresyonu PASS.
+657 backend girdisi/8 proje ve frontend/build eşitliği bağımsız bağlandı;
+eski testler yeni koşu diye sayılmadı. Kaynak inceleme kaydı 166 eski + 2 bağımsız
+receipt = 168; eski başarısız koşular ayrı ve değişmeden korunur.
+
+Yeni sahipli genuine ortamında giriş/servisler ve 8 fixture + 2 lane / 65 başarılı
+HTTP hazırlığı tamamlandı. **Tam register henüz çağrılmadan** qualified fixture
+preflight `scripts/oidc-lab-private.ps1:9` Set-Acl adımında exit1 ile durdu.
+Özgün OS hata gerekçesi yoktur. Salt okunur inceleme mevcut dizinin doğru sahipli,
+korumalı tek-owner FullControl izinlerini doğruladı; izin onarımı yapılmadı.
+App/compose, extraction peer ve Clam temizliği PASS; kendi volume'ları korunur.
+Tam register/TLS/sonlu S2 gözlemleri bu koşuda **0**, kabul veya PR/merge yok.
+Mevcut doğru dizinde yeniden ACL uygulamayı kaldıran creation-only doğrulama
+ayrı kaynak dalında hazırlanıyor; eski private laboratuvar tekrar başlatılmaz.
+
+HRO `ec87f19`, CE `845bf55` ve Profil `7b1551e` kurtarma paketleri bağımsız
+SOURCE_CLEAR; mevcut native hedefin dışında, yeni yürütmeleri **DEFERRED**.
+Profil paketinde ilk edit CAS tabanı, iptal edilebilir gerçek parent discard
+izni ve geç receipt sonrası private-view koruması dahil üç kaynak bulgusu giderildi.
+Profil 20 UI / 16 wire / 10 API-PG / 2 genuine vaka kaynağıdır; test sonucu değildir.
+S2 doğrulama gözlemcisinin geçerli boş Flag probe'u çalıştırılmadan durduruldu;
+Known IMO `123` ile gerçek400/no-write gözlemine çevrilen ayrı kaynak bağımsız
+SOURCE_CLEAR, yürütmesi0. Sonraki adım: düzeltmeleri normal geçmişle birleştirip
+büyük paketin gerekli kontrolleri, taze genuine ve bağımsız QA/CI kapısını kapatmak.
+
+Aşağıdaki tarihlendirilmiş bölümler özgün kontrol noktalarıdır; güncel durum üsttedir.
+
+Özgün kontrol noktası: **backend native PASS; frontend protokol capture düzeltmesi; acceptance=false**.
+Canonical20/121iş,103/970SP (%10,62),0/196ayrı ekran değişmedi.
+
+## Güncel native/tarama ve sonraki ürün paketi
+
+**13 Kasım — en son native sonucu:** `aedffd3` üzerinde1566/1566bileşen,
+244/244suite,lint/tip ve20dosyalık üretim derlemesi PASS; hata/skip/pending/todo/
+unhandled0. Repository taraması2782dosyada2db-passwordeşleşmesiyle durdu;
+client taraması başlamadı. İki tam kaynak ifadesi bağımsız incelemede rastgele
+üretici çağrısı olarak sınıflandırıldı; gerçek runtime parolaları private kalır.
+166eski kayıt korunarak2exactreceipt entegrasyonu/provision adımı hazırlanıyor;
+taramaPASS/PR/merge/kabul ilan edilmedi. CE10dosyalık845bf55paketi bağımsız
+SOURCE_CLEAR;14UI/12adapter/17API-PG/1genuine testkaynağı0yürütme. Profil
+unknown/owner/CSRF düzeltmesi sonraki ayrı dalda başladı.
+
+## Önceki kontrol noktası — qualification lineage seçicisi
+
+`f4eea04` kontrollü devamında209platformlar arası protokol kimliği geçti;
+Linux sahipli konteyner kalıntısı0. Tam bileşen paketi1566vakanın1565
+PASS/1FAIL sonucu ile332,539s içinde durdu; pending/todo/unhandled0.
+`RegulatoryQualification.test.tsx:44:25` genel IN_FORCE seçicisi güncel kayıt,
+seçenek ve geçmiş satırını eşliyordu. Tek test `aedffd3` ile güncel lineage
+satırına bağlandı; hash ve disabled/zero-send kontrolleri korunup güçlendirildi,
+bağımsız SOURCE_CLEAR. Bu yeni hedefte yürütme henüz0; build/tarama başlamadı.
+Önceki başarısızlık korunur; yeni native kapı hazırlanıyor, kabul/PR/merge yok.
+
+## Önceki native sonuç ve sınırı
+
+- Backend **64a8442**: Release79,205s PASS; Persistence75, Domain756 ve API236
+  birim =1067/1067; gerçek PG79/79 (322,580s), API846/846 (870,423s),0hata/skip.
+  API4shard disjoint/tam;107route template,117gerekli/observed/audited kritik
+  işlem,0invalid satır.117 mevcut846içindeki alt kapsamdır, ek test sayısı değil.
+  Migration-model10,632s PASS. Sahipli Clam/S3 ve geçici S3env temizliği PASS.
+- Frontend **f4eea04**: lint34,322s0hata/uyarı; tip17,163s0tanı; manifest1/1 ve
+  tanı gizliliği8/8 PASS. Windows Python111=110PASS+1POSIXskip; lab-runtime
+  Node14=12PASS+2POSIXskip; Linux applicable union henüz çalışmadı.
+- Lane Node18/18gerçek PASS; literal-ad yakalayıcı5/18kimlik eşlediği için
+  capture FAIL.13ad iki sonlu kaynak döngüsünden geliyor; ürün/test hatası yok.
+  Orijinal çıktı ham olarak saklanmadı, kapalı sayılar/hashler/bulgu korunur.
+  Source-backed katalog V2 bağımsız SOURCE_CLEAR; ayrı `resume-01` çıktı/lease
+  ile kontrollü devam başladı. Geçen lint/tip/protokoller tekrar çalışmış gibi sayılmaz.
+- Bileşen, Linux, taze frontend build/tarama, yeni tam176genuine, sonlu S2,
+  bağımsız son hedef QA ve gerekli CI **henüz tamamlanmadı**. PR/merge yok.
+- a97ilk ReleaseCS4007/0test;64lint1hata;3ftip2matcher hatası kendi kayıtlarında
+  durur. Normal düzeltmeler sırasıyla64/3f/f4; kural/threshold/skip gevşetilmedi.
+  Backend sayıları özgün64kapsamında; bağımsız inceleme657compile/test/harness/
+  config/resource girdisi ve8transitive projede eşitlikle64→f4 yeniden-kullanım
+  bağını doğruladı. Backend yeniden çalışmadı; bütün-depo/eş-zamanlı PASS yok.
+
+## Yazım ve kaynak inceleme kontrol noktaları
+
+Aşağıdaki DEFERRED satırları özgün yazım anını kaydeder. Güncel gerçek sonuçlar
+üstteki kapsam/hedeflerle sınırlıdır; S2/S3 tam sprint kabulü çıkarılmaz.
 
 | Paket | Teslim edilen davranış / kaynak durumu | Yeni yürütme |
 |---|---|---|
