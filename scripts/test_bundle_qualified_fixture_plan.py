@@ -178,14 +178,20 @@ class QualifiedFixturePlanTests(unittest.TestCase):
     def test_driver_requires_the_existing_exact_eight_and_exact_owned_host_before_any_publication_or_command(self):
         lanes = {'schemaVersion': 'poseidon.bundle.signed-lane-fixtures.v1', 'runId': self.plan['runId'], 'lanes': {'desktop': {}, 'narrow': {}}}
         for count, owned in ((7, True), (8, False)):
-            with self.subTest(count=count, owned=owned), patch.object(driver.private_io, 'selected', return_value=(self.config, Path('unused.json'))), \
-                 patch.object(driver.private_io, 'read_json', side_effect=[self.metadata, lanes]), \
-                 patch.object(driver, 'source_fixture_environment', return_value={str(i): 'synthetic' for i in range(count)}), \
-                 patch.object(driver.lab, 'owned_process', return_value=owned), \
+            with self.subTest(count=count, owned=owned), patch.object(driver, 'require_foundation_policy_fixtures') as foundation, \
+                 patch.object(driver.private_io, 'selected', return_value=(self.config, Path('unused.json'))), \
+                 patch.object(driver.private_io, 'read_json', side_effect=[self.metadata, lanes]) as reads, \
+                 patch.object(driver, 'source_fixture_environment', return_value={str(i): 'synthetic' for i in range(count)}) as sources, \
+                 patch.object(driver.lab, 'owned_process', return_value=owned) as ownership, \
                  patch.object(driver.private_io, 'publish_json') as publish, patch.object(driver.private_io, 'publish_config') as config, \
                  patch.object(driver.lab, 'run') as run, patch.object(driver, 'start') as start:
-                with self.assertRaises(RuntimeError):
+                code = 'qualified_fixture_source_bundle_required' if count == 7 else 'qualified_fixture_owned_running_source_bundle_required'
+                with self.assertRaisesRegex(RuntimeError, '^' + code + '$'):
                     driver.prepare_qualified_fixtures()
+                foundation.assert_called_once_with(); sources.assert_called_once_with()
+                self.assertEqual(1 if count == 7 else 2, reads.call_count)
+                if count == 7: ownership.assert_not_called()
+                else: ownership.assert_called_once_with('check')
                 publish.assert_not_called(); config.assert_not_called(); run.assert_not_called(); start.assert_not_called()
 
     def test_only_actual_observed_dedicated_vessels_can_bind_the_plan_and_repeated_input_preserves_ids(self):

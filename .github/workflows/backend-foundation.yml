@@ -171,6 +171,10 @@ jobs:
           python3 -m unittest discover -s scripts -p test_lab_runtime.py -v
       - name: Source fixture journal fault and restart unit tests
         run: node --test scripts/test_bundle_fixture_journal.ts scripts/test_bundle_legacy_context.ts
+      - name: Explicit synthetic foundation policy and original consumer scope tests
+        run: |
+          python3 -m unittest discover -s scripts -p test_bundle_foundation_policy_fixture.py -v
+          node --test tests/Poseidon.Browser.Tests/lab/foundation-policy-context.test.ts
       - name: Component tests
         run: npm test --prefix frontend
       - name: Build frontend and real API
