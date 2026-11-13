@@ -43,9 +43,46 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Equal(head.Revision, revisions.Last().Revision);
         var types = new[] { nameof(RegulatoryDraft), nameof(RegulatoryDraftRevision), nameof(CommandReceipt) };
         var audits = await db.AuditEvents.AsNoTracking().Where(x => x.Source == "WebCommand" && types.Contains(x.EntityType) &&
-            (x.EntityId.Contains(vessel.ToString()) || x.EntityId.Contains(key))).OrderBy(x => x.Id).ToArrayAsync(Ct);
-        var receiptAudit = Assert.Single(audits, x => x.EntityType == nameof(CommandReceipt) && x.EntityId.Contains(key));
-        Assert.Equal(actorId.ToString(), receiptAudit.ActorId); Assert.Equal("Added", receiptAudit.Action);
+            x.ResourceId == vessel).OrderBy(x => x.Id).ToArrayAsync(Ct);
+        static string? Field(AuditEvent audit, string name) {
+            using var fields = JsonDocument.Parse(audit.ChangeSummary!);
+            return Assert.Single(fields.RootElement.EnumerateArray(), value => value.GetProperty("field").GetString() == name)
+                .GetProperty("after").GetString();
+        }
+        // Generic CommandReceipt also audits VesselCreate/VesselUpdate on this
+        // same resource. Use its real allowlisted endpoint context to distinguish
+        // ProfileSave without inventing a key-based audit identity.
+        var receiptAudits = audits.Where(value => value.EntityType == nameof(CommandReceipt) &&
+            Field(value, "CommandName") == "SaveRegulatoryDraft").ToArray();
+        Assert.Equal(receipts.Length, receiptAudits.Length);
+        foreach (var committed in receipts) {
+            Assert.Equal("ProfileSave", committed.Action); Assert.Equal(vessel, committed.ProfileVesselId);
+            var outcome = JsonSerializer.Deserialize<RegulatoryDraftDto>(committed.ProfileOutcomeJson!, ProfileRecoveryJson)!;
+            Assert.Equal(vessel, outcome.Vessel.Id); Assert.Equal(committed.TenantId, outcome.TenantId);
+            Assert.Equal(committed.RegisterRevision, outcome.Revision); Assert.Equal(committed.RegisterVersion, outcome.Version);
+            var audit = Assert.Single(receiptAudits, value => value.EntityId == committed.ResourceId.ToString("D") &&
+                value.TenantId == committed.TenantId && value.ActorId == committed.ActorId.ToString("D") &&
+                value.AfterRevision == committed.RegisterRevision && value.AfterVersion == committed.RegisterVersion);
+            Assert.Equal("Added", audit.Action);
+            var revisionAudit = Assert.Single(audits, value => value.EntityType == nameof(RegulatoryDraftRevision) &&
+                value.AfterRevision == outcome.Revision && value.CorrelationId == audit.CorrelationId);
+            var headAudit = Assert.Single(audits, value => value.EntityType == nameof(RegulatoryDraft) &&
+                value.AfterRevision == outcome.Revision && value.CorrelationId == audit.CorrelationId);
+            Assert.Equal("Added", revisionAudit.Action); Assert.Equal(outcome.Revision == 1 ? "Added" : "Modified", headAudit.Action);
+            foreach (var item in new[] { audit, revisionAudit, headAudit }) {
+                Assert.Equal(committed.TenantId, item.TenantId); Assert.Equal(committed.ActorId.ToString("D"), item.ActorId);
+                Assert.Equal("User", item.ActorType); Assert.Equal("WebCommand", item.Source);
+                Assert.Equal(vessel, item.ResourceId); Assert.Equal(vessel, item.VesselId);
+                Assert.False(string.IsNullOrWhiteSpace(item.CorrelationId)); Assert.Equal(audit.CorrelationId, item.CorrelationId);
+                Assert.False(string.IsNullOrWhiteSpace(item.RoleContext)); Assert.Equal(audit.RoleContext, item.RoleContext);
+                Assert.False(string.IsNullOrWhiteSpace(item.CapabilityContext)); Assert.Equal(audit.CapabilityContext, item.CapabilityContext);
+                Assert.Equal("RecordedControlledCode", item.ReasonStatus);
+                Assert.Equal("SaveRegulatoryDraft", Field(item, "CommandName"));
+                Assert.Equal("Vessel", Field(item, "ScopeKind")); Assert.Equal("PREPARATION_COMMAND", Field(item, "TechnicalReasonCode"));
+                Assert.False(item.EntityId.Contains(committed.Key, StringComparison.Ordinal));
+                Assert.False((item.ChangeSummary ?? "").Contains(committed.Key, StringComparison.Ordinal));
+            }
+        }
         // Closed in-memory comparison; never emit receipt/content/private values.
         return JsonSerializer.SerializeToUtf8Bytes(new { head, revisions, receipts, audits }, ProfileRecoveryJson);
     }

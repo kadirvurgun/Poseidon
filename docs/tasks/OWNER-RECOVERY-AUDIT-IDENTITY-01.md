@@ -1,0 +1,21 @@
+# OWNER-RECOVERY-AUDIT-IDENTITY-01
+
+Corrective test-source package only. Author /root/locale_zh; independent reviewer /root/status_forecast. Base11842ff8962c0c7b1cc05ab4bf6f386fb7f281dc. New tests/build/restore/HTTP/provider execution DEFERRED to the final coherent reviewed gate. Acceptance=false; canonicalSP added0.
+
+## Actual diagnosis and source authority
+
+The original37e backend gate discovered884API rows:857PASS/27FAIL/0skip. Release,1067unit and79PG results remain their original scoped evidence; fullAPI failed, critical117/model were not run due failfast, and original64 evidence stays separate. All17CE and10Profile recovery rows failed at their new helper receiptAudit Assert.Single predicates. A separately reviewed Root narrow lease8c440a0b226363e8e4c1b7d9208074ff5dabaaa701102b76d601662758275869 reproduced both original scopes against unchanged37e Release:17/17CE failures66.810s and10/10Profile failures45.720s, both closed ASSERT_SINGLE_NO_MATCH at helper53/47. Actual ownedPG/Clam/S3 cleanup and final originalreport/8Release bindings were verified. Diagnosis success is not a test PASS.
+
+[PoseidonDbContext](../../backend/Poseidon.Persistence/PoseidonDbContext.cs) lines648/655 deliberately records CommandReceipt/ControlEvidenceReceipt AuditEvent.EntityId as ResourceId, not a plaintext idempotency key or invented key hash. [AuditMetadata](../../backend/Poseidon.Persistence/AuditMetadata.cs) lines8/325 excludes bodies, keys, fingerprints and personal values and appends controlled CommandName/ScopeKind/TechnicalReasonCode. Active19.01 paragraphs261–268 require isolation/idempotence/no silent overwrite; existing CEO06/PRO08 require real-host recovery and attributed business effects. [S1 scope contract](../../contracts/security/s1-current-scope.v1.json) defines actual Control/Evidence Create/Update and SaveRegulatoryDraft command contexts.
+
+The author incorrectly assumed key text was an audit identity. This package corrects the assertions to the actual privacy contract. No production audit formatter/logger/auth/policy or business behavior changes.
+
+## Bounded correction and acceptance
+
+- **AID01:** Keep the exact original key/actor/tenant/resource receipt-table checks. Select related audit rows by real ResourceId; never search audit EntityId for an idempotency key. Raw keys/bodies/audits remain memory-only.
+- **AID02:** Require exact receipt↔receipt-audit cardinality for every historical receipt, not Any or one arbitrary receipt. CE immutable OutcomeJson supplies its original revision/version; Profile supplies RegisterRevision/RegisterVersion, crosschecked against immutable ProfileOutcomeJson. Match resource EntityId, actual receipt actor/tenant and after-revision/version with exactly one audit.
+- **AID03:** For each receipt, require Added/User/WebCommand plus exact vessel/resource/actor/tenant and same nonempty HTTP correlation/role/capability context with exactly one committed revision audit and one head audit. Head action is Added forrevision1 and Modified afterward; immutable revision audit is Added. Assert controlled command/scope/reason fields and absence of key text in EntityId/summary.
+- **AID04:** Generic CommandReceipt can also represent VesselCreate/VesselUpdate for the same vessel. Distinguish ProfileSave through actual allowlisted CommandName=SaveRegulatoryDraft; retain unrelated audit rows in the complete snapshot rather than miscount them as profile receipts. CE Create/Update context follows its observed kind/revision in these existing draft-only cases.
+- **AID05:** Retain all17CE+10Profile theory/fact rows and their real host/ownedPG/CSRF/denial/replay/isolation/history behavior. Preserve head/revisions/receipts/pins/full selected business-audit serialization and byte-identical denial/replay comparisons. No expected thresholds are reduced and no tests skipped.
+
+Only [ControlRecoveryState](../../tests/Poseidon.Api.Tests/ControlEvidenceRecoveryTests.cs) and [ProfileRecoveryState](../../tests/Poseidon.Api.Tests/RegulatoryProfileRecoveryTests.cs) are changed, plus this traceability record. No local execution after correction. Required next step is independent exact-source review, normal integration and the final coherent full gate; the original37e worker, Release and failed evidence remain immutable.
