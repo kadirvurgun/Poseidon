@@ -1114,7 +1114,7 @@
     "verification_record_scope": "Authored/deferred and original20f1198 results are historical;current rejection-repair evidence in core_bundle_01.verification"
   },
   "baseline": "POSEIDON v46.3 updated 2026-10-30 / Library26 candidate",
-  "current_stage": "Current owner-recovery source37e normal merges41files; actual new large native gate FAILED. BackendRelease81.175s/1067units/79PG338.488s PASS; fullAPI884=857PASS27FAIL0skip1033.914s, all17CE+10Profile rows hit sharedreceipt-audit Single atCE53/Profile47; critical/modelNOTRUNFAILFAST. Frontmanifest1/privacy8PASS, lint11errors6warnings64.462s; type/protocol/components/build/scansNOTRUNFAILFAST. AllownClam/S3/privateenvcleanupverified. S2pure10PASS1.201s noactualobservations. Original0e validatednative/64/AED execution scope preserved. Next0dd historysourceclear3newunrunUIcases; Frontrepairing17lintdiagnostics andlocale preparing narrow auditlookup reproduction beforeanyassertionedit. Canonical20tasks103SP10.62percent unchanged; no newpush/PR/merge.",
+  "current_stage": "Backend2b actual independentPASS:1067units/79PG/884API/critical117subset/model; source116 frontend lint/typePASS but Windows object-root native test fails at test_bundle_object_root.py:245. Remaining Linux/components/build/scans NOT_RUN_FAILFAST; fresh genuine/TLS/finiteS2 NOT_STARTED. Narrow correction in progress; producer2b→consumer116 reuse source665/addendum181 independent review pending. Canonical20tasks103SP10.62percent unchanged, no newpushPRmerge.",
   "method": "accepted story points / total baseline story points * 100",
   "scope": "complete v46.3 Backlog sheet; duplicates in other sheets excluded",
   "total_tasks": 121,
@@ -14778,5 +14778,56 @@
     "current37e_gate_includes_this": false,
     "acceptance": false,
     "canonical_sp_added": 0
+  },
+  "owner_recovery_gate_followup_20261113": {
+    "state": "BACKEND_PASS_FRONTEND_PROTOCOL_FAILED_CORRECTION_IN_PROGRESS",
+    "source_target": "116701b64390fd337310d3a785e92bb8f2d76bbd",
+    "backend_actual_target": "2b1e7b3996adf48c10d9d3013d59f24c48666fac",
+    "backend_actual_receipt_sha256": "23bbc82dec62b19d79f77e57c32278b66d651be0b5346d0e16153910e7016d3a",
+    "backend_independent_result_sha256": "68869f34fd06cfcefd9699614383dbe3c279db4612a6ca8b895a2b325378610c",
+    "backend": {
+      "units": 1067,
+      "postgresql": 79,
+      "api": 884,
+      "passed": true,
+      "failed": 0,
+      "skipped": 0,
+      "critical_audit_subset": 117,
+      "model": "PASS",
+      "release_seconds": 74.95,
+      "api_seconds": 958.104,
+      "cleanup": "OWNED_CLAM_S3_PRIVATEENV_REMOVED",
+      "original_release_files_unchanged": 136,
+      "separate_postgate_public_manifest_files": 181
+    },
+    "frontend": {
+      "target": "116701b64390fd337310d3a785e92bb8f2d76bbd",
+      "lint": "PASS",
+      "lint_seconds": 44.837,
+      "typecheck": "PASS",
+      "typecheck_seconds": 17.799,
+      "failed_step": "WINDOWS_PYTHON_PROTOCOL",
+      "failed_test": "test_bundle_object_root.BundleObjectRootTests.test_windows_native_fresh_once_then_existing_exclusive_child_never_restricts",
+      "failed_source": "scripts/test_bundle_object_root.py:245",
+      "module_discovered": 23,
+      "module_recorded": 22,
+      "module_passed": 18,
+      "module_failed": 1,
+      "module_platform_skipped": 3,
+      "later_stages": "NOT_RUN_FAILFAST",
+      "supervisor_seconds": 85.101,
+      "supervisor_exit": 1,
+      "timeout": false
+    },
+    "backend_reuse_review": "PENDING_INDEPENDENT",
+    "backend_executed_on_consumer": false,
+    "fresh_genuine_register_tls_finite_observations": "NOT_STARTED",
+    "acceptance": false,
+    "canonical_sp_added": 0,
+    "publication": {
+      "push": false,
+      "new_pr": false,
+      "merge": false
+    }
   }
 }
