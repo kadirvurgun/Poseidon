@@ -32,7 +32,11 @@ async function scopedTrace(page: Page) {
     await region.getByRole('button', { name: new RegExp(evidence.content.title ?? evidence.id) }).first().click();
     const trace = page.getByRole('region', { name: 'Human review and decision trace', exact: true }).first();
     await expect(trace.getByText('External signature mechanism unavailable', { exact: true })).toHaveCount(0); // No blanket signature requirement is defined for this fixture type.
-    await expect(trace.getByText('Authoritative evaluation unavailable', { exact: true })).toBeVisible();
+    // The same reason also explains the Applicability lineage card. Assert the
+    // complete blocker item, retaining both truthful explanations in the UI.
+    const evaluationBlocker = trace.getByRole('listitem').filter({ hasText: /^Authoritative evaluation unavailable$/ });
+    await expect(evaluationBlocker).toHaveCount(1);
+    await expect(evaluationBlocker).toBeVisible();
     const reason = trace.getByRole('textbox', { name: 'Bound review reason', exact: true });
     await reason.focus();
     await expect(reason).toBeFocused();
@@ -62,7 +66,8 @@ async function scopedTrace(page: Page) {
         }
         // The form returns only after the real trace/current-rights request completes.
         await expect(reason).toHaveValue('FICTIONAL deferred signed-host review draft');
-        await expect(trace.getByText('Authoritative evaluation unavailable', { exact: true })).toBeVisible();
+        await expect(evaluationBlocker).toHaveCount(1);
+        await expect(evaluationBlocker).toBeVisible();
         expect(humanMutationAttempts).toBe(0);
     }
     finally {

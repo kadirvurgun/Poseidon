@@ -8,6 +8,21 @@ const response = (value: unknown, status = 200) => ({ ok: status < 300, status, 
 const props = () => ({ anchor: reviewAnchor, language: 'en' as const, csrf: 'synthetic-csrf', offline: false, onDirty: vi.fn(), onSaving: vi.fn() })
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals() })
 describe('human review accessible UI authored NOT RUN; mocked transport is UI evidence only', () => {
+  it('retains the unavailable evaluation in both the unique blocker item and its source lineage', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => response(reviewTrace())))
+    render(<HumanDecisionTrace {...props()} />)
+    const lineage = await screen.findByRole('list', { name: 'Source-grounded trace' })
+    const applicability = within(lineage).getByRole('article', { name: 'Applicability' })
+    const reason = 'Authoritative evaluation unavailable'
+    expect(within(applicability).getByText(reason)).toBeVisible()
+    const blockers = screen.getAllByRole('listitem').filter(item => item.textContent === reason)
+    expect(blockers).toHaveLength(1)
+    expect(blockers[0]).toBeVisible()
+    // Broad exact text has two legitimate matches. Neither explanation may be
+    // removed just to make the genuine journey's locator unambiguous.
+    expect(screen.getAllByText(reason)).toHaveLength(2)
+    expect(screen.queryByRole('button', { name: /approve|release permit/i })).not.toBeInTheDocument()
+  })
   it.each(['en', 'tr'] as const)('preserves known source/control lifecycle and explicit qualification blockers in %s', async language => {
     const pin = { id: reviewAnchor.controlId, revision: 3, availability: 'Available', hash: 'C'.repeat(64), savedAt: '2026-11-02T00:00:00Z' }
     vi.stubGlobal('fetch', vi.fn(async () => response({ ...reviewTrace(),
