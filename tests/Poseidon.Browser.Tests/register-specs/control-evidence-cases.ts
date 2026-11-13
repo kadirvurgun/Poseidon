@@ -1,5 +1,5 @@
 import { expect, type Page, type Request, type Route } from '@playwright/test';
-// Genuine signed host manifest; no route.fulfill, test login or fake success.
+// Genuine signed host manifest; actual server responses forwarded, no test login or fabricated business response.
 // Coordinator must provision explicit graph/file permissions and real owned transport.
 async function writer(page: Page) {
     // Qualified positive consumers share this tenant. This negative needs its own

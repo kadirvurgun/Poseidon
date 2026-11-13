@@ -50,6 +50,14 @@ describe('CEO01/03 exact command receipt wire binding, authored execution DEFERR
     expect((await page(controlVessel, 'Control', 0, new AbortController().signal, controlId)).items[0].version).toBe(9)
     await expect(currentRecord(controlVessel, 'Control', controlId, new AbortController().signal)).rejects.toMatchObject({ status: 502 })
   })
+  it.each([{ label: 'NUL', code: 0 }, { label: 'DEL', code: 127 }])('rejects a wire session CSRF token containing $label within otherwise valid length bounds', async ({ code }) => {
+    const user = controlSession(), csrfToken = crypto.randomUUID()+String.fromCharCode(code)+crypto.randomUUID()
+    expect(csrfToken.length >= 16 && csrfToken.length <= 2048).toBe(true)
+    vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify({ ...user, csrfToken }), {
+      status: 200, headers: { 'Content-Type': 'application/json' },
+    })))
+    await expect(loadSession(new AbortController().signal)).rejects.toMatchObject({ status: 502, code: 'invalid_contract' })
+  })
   it('requires real readable owner/session data and bounded fresh CSRF rather than a UI role hint', async () => {
     const user = controlSession(); vi.stubGlobal('fetch', vi.fn(async () => response(user)))
     expect(await loadSession(new AbortController().signal)).toMatchObject({ owner: `${user.tenantId}/${user.actorId}`, csrf: user.csrfToken })
