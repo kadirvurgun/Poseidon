@@ -9,6 +9,44 @@ test('each independent journey authenticates its own account instead of reusing 
   assert.deepEqual(calls,['login:lab-manager/app/today','journey','login:lab-manager/app/today','journey','login:lab-restricted/app/today','journey'])
   assert.deepEqual(phases,['LOGIN','JOURNEY','LOGIN','JOURNEY','LOGIN','JOURNEY'])
 })
+
+test('only an explicit crew boundary entry selects its fresh genuine provider account',async()=>{
+  const calls:string[]=[],phases:string[]=[],page={identity:'same-owned-page'}
+  await runSignedCase(page,{restricted:false,account:'lab-crew-boundary',run:async value=>{
+    assert.equal(value,page);calls.push('journey')
+  }},async(value,account,destination)=>{
+    assert.equal(value,page);calls.push('login:'+account+destination)
+  },phase=>phases.push(phase))
+  assert.deepEqual(calls,['login:lab-crew-boundary/app/today','journey'])
+  assert.deepEqual(phases,['LOGIN','JOURNEY'])
+})
+
+test('unknown inherited or restricted account overrides fail before login phase or callback',async()=>{
+  const invalid:unknown[]=[undefined,null,'','lab-manager','lab-reviewer','lab-restricted','unknown',true,1,[],{}]
+  const entries:unknown[]=[...invalid.map(account=>({restricted:false,account})),
+    {restricted:true,account:'lab-crew-boundary'},{restricted:'false',account:'lab-crew-boundary'},
+    Object.assign(Object.create({account:'lab-crew-boundary'}),{restricted:false})]
+  for(const value of entries){
+    let logins=0,journeys=0;const phases:string[]=[]
+    const entry=Object.assign(value as object,{run:async()=>{journeys++}}) as {
+      restricted:boolean;account?:'lab-crew-boundary';run:()=>Promise<void>
+    }
+    await assert.rejects(runSignedCase({},entry,async()=>{logins++},phase=>phases.push(phase)),/invalid_signed_account/)
+    assert.equal(logins,0);assert.equal(journeys,0);assert.deepEqual(phases,[])
+  }
+})
+
+test('crew boundary authentication and journey failures are never retried or changed to manager',async()=>{
+  for(const failure of ['login','journey']){
+    const accounts:string[]=[];let journeys=0
+    await assert.rejects(runSignedCase({}, {restricted:false,account:'lab-crew-boundary',run:async()=>{
+      journeys++;if(failure==='journey')throw new Error('synthetic journey failure')
+    }},async(_page,account)=>{
+      accounts.push(account);if(failure==='login')throw new Error('synthetic login failure')
+    }))
+    assert.deepEqual(accounts,['lab-crew-boundary']);assert.equal(journeys,failure==='login'?0:1)
+  }
+})
 test('failed authentication cannot execute a journey or fall back to a previously signed context',async()=>{
   let journeys=0,logins=0
   await assert.rejects(runSignedCase({}, {restricted:false,run:async()=>{journeys++}},async()=>{logins++;throw new Error('synthetic login failure')}))
