@@ -78,9 +78,18 @@ export async function loadProfileSession(signal: AbortSignal) {
       value.csrfToken.length > 2048 || Array.from(value.csrfToken).some(c => c.charCodeAt(0) < 32 || c.charCodeAt(0) === 127)) throw new ApiError(502, 'invalid_contract')
   return Object.freeze({ owner: value.tenantId.toLowerCase()+'/'+value.actorId.toLowerCase(), tenant: value.tenantId.toLowerCase(), csrf: value.csrfToken })
 }
+type ProfileInput = { state: 'Known' | 'Missing' | 'Unknown'; value: string | null }
+function profileInput(value: unknown): ProfileInput {
+  if (!object(value) || Object.keys(value).length !== 2 || !Object.hasOwn(value, 'state') || !Object.hasOwn(value, 'value') ||
+      value.state !== 'Known' && value.state !== 'Missing' && value.state !== 'Unknown' ||
+      value.value !== null && typeof value.value !== 'string' || value.state !== 'Known' && value.value !== null)
+    throw new ApiError(502, 'invalid_contract')
+  return { state: value.state, value: value.value }
+}
 function normalizedProfileContent(value: ProfileContent): string {
+  if (!object(value)) throw new ApiError(502, 'invalid_contract')
   const fields = profileFields.map(([key, kind]) => {
-    const field = value[key]
+    const field = profileInput(value[key])
     if (field.state !== 'Known') return [key, field.state, null]
     if (field.value == null && kind === 'text') return [key, 'Missing', null]
     if (typeof field.value !== 'string') throw new ApiError(502, 'invalid_contract')
@@ -100,6 +109,8 @@ function normalizedProfileContent(value: ProfileContent): string {
     return [key, 'Known', normalized]
   })
   const pin = value.constructionRecord
+  if (!(pin === null || object(pin) && Object.keys(pin).length === 3 && guid(pin.id) && integer(pin.revision, 1) &&
+      typeof pin.checksum === 'string' && /^[A-F0-9]{64}$(?![\s\S])/.test(pin.checksum))) throw new ApiError(502, 'invalid_contract')
   return JSON.stringify([fields, pin === null ? null : [pin.id.toLowerCase(), pin.revision, pin.checksum]])
 }
 export const profileContentMatches = (left: ProfileContent, right: ProfileContent) => normalizedProfileContent(left) === normalizedProfileContent(right)
@@ -112,8 +123,10 @@ export async function saveProfileAttempt(value: ProfileAttempt, csrf: string, si
   }, body: value.body }), value.vessel)
   // The server returns its ORIGINAL receipt before checking the latest xmin.
   // Bind that receipt to the captured command, never to a newer live head token.
-  const expectedProvenance = [command.content.declaration, command.content.sourceReference].some(field => field.state === 'Known' && typeof field.value === 'string' && field.value.trim()) ? 'DeclaredUnverified' :
-    [command.content.declaration, command.content.sourceReference].some(field => field.state === 'Unknown') ? 'Unknown' : 'Missing'
+  if (!object(command.content)) throw new ApiError(502, 'invalid_contract')
+  const provenanceFields = [profileInput(command.content.declaration), profileInput(command.content.sourceReference)]
+  const expectedProvenance = provenanceFields.some(field => field.state === 'Known' && typeof field.value === 'string' && field.value.trim()) ? 'DeclaredUnverified' :
+    provenanceFields.some(field => field.state === 'Unknown') ? 'Unknown' : 'Missing'
   if (command.expectedVersion !== value.expectedVersion || result.tenantId.toLowerCase() !== value.owner.split('/')[0] || result.revision !== value.nextRevision ||
       result.provenance !== expectedProvenance || !profileContentMatches(result.content, command.content)) throw new ApiError(502, 'invalid_contract')
   return result

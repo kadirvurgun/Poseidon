@@ -121,18 +121,18 @@ describe('Control/Evidence original-owner recovery, authored execution DEFERRED'
     state.owners = [previous]
     const p = props(), view = render(<ControlEvidence {...p} />); await open()
     const oldLabel = `${previous.actorId} / ${previous.roleId}`
-    await screen.findByRole('option', { name: oldLabel, exact: true })
+    await screen.findByRole('option', { name: new RegExp(`^${oldLabel}$`) })
     const next = { actorId: controlId, roleId: crypto.randomUUID() }
     let finishOwners!: (value: Response) => void
     state.ownerResponse = new Promise(resolve => { finishOwners = resolve })
     state.user = { ...state.user, actorId: next.actorId }
     view.rerender(<ControlEvidence {...p} owner={`${state.user.tenantId}/${state.user.actorId}`} />)
-    expect(screen.queryByRole('option', { name: oldLabel, exact: true })).not.toBeInTheDocument()
+    expect(screen.queryByRole('option', { name: new RegExp(`^${oldLabel}$`) })).not.toBeInTheDocument()
     await screen.findByLabelText('Title')
-    expect(screen.queryByRole('option', { name: oldLabel, exact: true })).not.toBeInTheDocument()
+    expect(screen.queryByRole('option', { name: new RegExp(`^${oldLabel}$`) })).not.toBeInTheDocument()
     await act(async () => { finishOwners(response({ items: [next] })) })
-    await screen.findByRole('option', { name: `${next.actorId} / ${next.roleId}`, exact: true })
-    expect(screen.queryByRole('option', { name: oldLabel, exact: true })).not.toBeInTheDocument()
+    await screen.findByRole('option', { name: new RegExp(`^${next.actorId} / ${next.roleId}$`) })
+    expect(screen.queryByRole('option', { name: new RegExp(`^${oldLabel}$`) })).not.toBeInTheDocument()
     expect(state.attempts).toHaveLength(0)
   })
 

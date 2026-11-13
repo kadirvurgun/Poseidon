@@ -14,6 +14,21 @@ describe('PRO01/04 closed profile receipt and session wire sources, execution DE
     expect(profileContentMatches(raw, { ...canonical, flag: { state: 'Unknown', value: null } })).toBe(false)
     expect(profileContentMatches(raw, { ...canonical, constructionRecord: { ...pin, revision: 3 } })).toBe(false)
   })
+  it('rejects absent or malformed required fields and construction identity instead of accepting partial content', () => {
+    for (const key of ['imo', 'declaration', 'sourceReference'] as const) {
+      const partial = profileContent(); delete partial[key]
+      expect(() => profileContentMatches(partial, profileContent())).toThrowError('Request failed (502)')
+    }
+    for (const field of [{ state: 'Ready', value: null }, { state: 'Missing', value: 'FICTIONAL unexpected value' }, { state: 'Known', value: undefined }]) {
+      expect(() => profileContentMatches({ ...profileContent(), flag: field }, profileContent())).toThrowError('Request failed (502)')
+    }
+    expect(() => profileContentMatches({ ...profileContent(), constructionRecord: { id: 'invalid', revision: 1, checksum: 'A'.repeat(64) } }, profileContent())).toThrowError('Request failed (502)')
+  })
+  it('retains Unknown distinct from Missing while normalizing only actual Known-null text to Missing', () => {
+    expect(profileContentMatches({ ...profileContent(), flag: { state: 'Known', value: null } }, profileContent())).toBe(true)
+    expect(profileContentMatches({ ...profileContent(), flag: { state: 'Unknown', value: null } }, profileContent())).toBe(false)
+    expect(() => profileContentMatches({ ...profileContent(), gt: { state: 'Known', value: null } }, profileContent())).toThrowError('Request failed (502)')
+  })
   it('sends the exact original serialized bytes/key/PUT route and accepts its historical revision rather than a newer xmin', async () => {
     const value = attempt(), row = { ...profileRow(), revision: 2, version: 13, provenance: 'Missing' }, csrf = crypto.randomUUID()
     const fetch = vi.fn<(url: string, init?: RequestInit) => Promise<Response>>().mockResolvedValue(profileResponse(row)); vi.stubGlobal('fetch', fetch)
@@ -34,7 +49,7 @@ describe('PRO01/04 closed profile receipt and session wire sources, execution DE
     expect(JSON.stringify(value)).toBe(before)
   })
   it.each([{ label: 'NUL', code: 0 }, { label: 'DEL', code: 127 }])('rejects bounded wire CSRF containing $label', async ({ code }) => {
-    const user = profileSession(); user.csrfToken = crypto.randomUUID()+String.fromCharCode(code)+crypto.randomUUID()
+    const user = { ...profileSession(), csrfToken: crypto.randomUUID()+String.fromCharCode(code)+crypto.randomUUID() }
     vi.stubGlobal('fetch', vi.fn(async () => profileResponse(user)))
     await expect(loadProfileSession(new AbortController().signal)).rejects.toMatchObject({ status: 502 })
   })

@@ -65,7 +65,7 @@ describe('owner-bound human command recovery, authored execution DEFERRED', () =
 
   it('withdraws private draft immediately on owner drift and recovers only its original session', async () => {
     let user = reviewSession()
-    const fetch = vi.fn(async (url: string) => response(url.endsWith('/auth/session') ? user : reviewTrace()))
+    const fetch = vi.fn<(url: string, init?: RequestInit) => Promise<Response>>(async url => response(url.endsWith('/auth/session') ? user : reviewTrace()))
     vi.stubGlobal('fetch', fetch)
     const p = props(), view = render(<HumanDecisionTrace {...p} />), keyboard = await compose()
     user = { ...user, actorId: reviewAnchor.controlId }
@@ -73,7 +73,7 @@ describe('owner-bound human command recovery, authored execution DEFERRED', () =
     expect(screen.queryByDisplayValue(reason)).toBeNull()
     await screen.findByRole('alert')
     expect(p.onSaving).toHaveBeenLastCalledWith(true)
-    expect(fetch.mock.calls.some(([, init]) => (init as RequestInit | undefined)?.method)).toBe(false)
+    expect(fetch.mock.calls.some(([, init]) => init?.method)).toBe(false)
     user = reviewSession(); view.rerender(<HumanDecisionTrace {...p} />)
     expect(await screen.findByLabelText('Bound review reason')).toHaveValue(reason)
     await keyboard.click(screen.getByRole('button', { name: 'Discard local review draft' }))
