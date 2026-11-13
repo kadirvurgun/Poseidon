@@ -12,6 +12,42 @@ const page = { items: [record], total: 1, limit: 25, nextCursor: null }
 const response = (value: unknown, status = 200) => ({ ok: status === 200, status, json: async () => value }) as Response
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals() })
 
+// Existing ActorResolver metadata from currently supported operational domains.
+// These strings are observations, never client permission or authority grants.
+const operationalCapabilities = [
+  'operations.downtime.read', 'operations.downtime.write', 'workorder.read', 'workorder.write', 'defect.read', 'defect.write',
+  'operations.fuel.read', 'operations.fuel.write', 'operations.port.read', 'operations.port.write',
+  'certificate.verify.record', 'certificate.read', 'certificate.extract', 'certificate.write',
+  'certificate.renewal.write', 'certificate.renewal.owner',
+  'daily.noon.review', 'daily.deck.review', 'daily.engine.review', 'daily.noon.read', 'daily.noon.write',
+  'daily.deck.read', 'daily.deck.write', 'daily.engine.read', 'daily.engine.write', 'system.health.read',
+  'notification.evaluate', 'notification.read', 'notification.manage', 'notification.acknowledge', 'notification.preference.write',
+].join(',')
+
+it('opens exact audit history and immutable revision with current operational capability metadata', async () => {
+  const current = { ...record, roleContext: vessel, capabilityContext: `audit.read,directory.read,${operationalCapabilities}` }
+  vi.stubGlobal('fetch', vi.fn(async (url: string) => response(url.includes('?') ? { ...page, items: [current] } : current)))
+  render(<AuditWorkspace language="en" selected={id} allowed onNavigate={vi.fn()} />)
+  expect(await screen.findByRole('heading', { name: 'Record details' })).toBeVisible()
+  expect(screen.getByText(current.capabilityContext)).toBeVisible()
+  expect(screen.getByText(vessel, { selector: 'dd' })).toBeVisible()
+  expect(screen.getByRole('link', { name: 'Open exact immutable revision' })).toHaveAttribute('href', record.revisionHref)
+  expect(screen.getByText('21 → 22')).toBeVisible()
+})
+
+it('withholds the complete audit page and detail when a known operational context includes an unknown token', async () => {
+  const invalid = { ...record, id: vessel, capabilityContext: `${operationalCapabilities},notification.external-admin`, revisionHref: null }
+  const fetch = vi.fn(async (url: string) => response(url.includes('?') ? { ...page, total: 2, items: [record, invalid] } : record))
+  vi.stubGlobal('fetch', fetch)
+  render(<AuditWorkspace language="en" selected={id} allowed onNavigate={vi.fn()} />)
+  expect(await screen.findByRole('alert')).toHaveTextContent('History is unavailable.')
+  expect(screen.queryByRole('heading', { name: 'Record details' })).not.toBeInTheDocument()
+  expect(screen.queryByRole('table')).not.toBeInTheDocument()
+  expect(screen.queryByText(record.capabilityContext)).not.toBeInTheDocument()
+  expect(screen.queryByRole('link', { name: 'Open exact immutable revision' })).not.toBeInTheDocument()
+  expect(fetch.mock.calls.some(([url]) => url === `/api/v1/audit/${id}`)).toBe(false)
+})
+
 it('renders honest TR/EN details, withheld values, resource versions and exact authorized revision link', async () => {
   vi.stubGlobal('fetch', vi.fn(async (url: string) => response(url.includes('?') ? page : record)))
   const navigate = vi.fn(); const user = userEvent.setup()
