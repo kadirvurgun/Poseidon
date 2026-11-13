@@ -116,7 +116,8 @@ function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving, isTu
         values[key] = value; ackEpoch.current++; ackRead.current?.abort();
         if (saving) setReviewSaves({ ...values }); else setReviewDrafts({ ...values });
     }
-    useEffect(() => { mounted.current = true; return () => { mounted.current = false; ackEpoch.current++; ackRead.current?.abort(); }; }, []);
+    const abortAcknowledgment = useCallback(() => { ackEpoch.current++; ackRead.current?.abort(); }, []);
+    useEffect(() => { mounted.current = true; return () => { mounted.current = false; abortAcknowledgment(); }; }, [abortAcknowledgment]);
     const hydrate = useCallback((row: service.Row | null) => {
         setSelected(row); setContent(row?.content ?? service.blank()); setFile(row?.file ?? null);
         setRequirements(row?.requirements ?? []); setLinks(row?.links ?? []); setDirty(false);

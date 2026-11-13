@@ -18,3 +18,7 @@ Active DEV-020/T-S2-001 (18.01 Backlogrow21), existing [profile contract](PROFIL
 - **LINT06:** The preceding three profile-history cases and guarded first400/history behavior remain intact. No skips, assertion weakening, timeout/threshold changes, dependencies or backend/browser/provider operations are introduced.
 
 Full lint/typecheck/components/build/protocol/scans remain deferred to Root's later separately leased frozen successor. A single narrow lint check may run only under a distinct explicit Root authorization after coherent source preparation. Authored component/wire tests are not backend/genuine evidence or independent acceptance.
+
+## Actual bounded lint repair check
+
+Root executed the single authorized nine-file lint check on the exact `bec1b4d9` source snapshot:9.394seconds,0errors and1warning. All11 original errors and five of six warnings were resolved in that checked scope. The remaining ControlEvidence119:96 cleanup-ref warning was then corrected in source with a stable cancellation callback that reads and aborts the **latest** pending acknowledgment when invoked, retaining mounted=false and epoch invalidation on unmount. It does not capture a mount-time null controller. That final correction has not been rerun; full lint and all deferred checks require the next separate frozen bundle lease. Original37e failure, checked snapshot and narrow result remain immutable evidence.
