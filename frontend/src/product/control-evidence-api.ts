@@ -1,7 +1,7 @@
 import { complianceKeys, validCompliance, type ComplianceContent } from './compliance-input-contract'
 import { validOwning, type OwningContent } from './operation-equipment-contract'
 import { validCapability, type CapabilityStatement } from './tug-capability-contract'
-import { ApiError, request } from './api'
+import { ApiError, request, session } from './api'
 import { isGuid } from './identifiers'
 import { timestamp } from './date-validation'
 
@@ -56,11 +56,64 @@ const route = (kind: Kind) => kind === 'Control' ? 'controls' : 'evidence'
 export async function page(vessel: string, kind: Kind, offset: number, signal: AbortSignal, id?: string, asOf?: string): Promise<Page> {
   const v = await request<unknown>(`${route(kind)}${id ? `/${id}/versions` : ''}?vesselId=${vessel}&offset=${offset}${asOf ? `&asOf=${encodeURIComponent(asOf)}` : ''}`, signal)
   if (!exact(v, ['items', 'offset', 'hasMore', 'canWrite']) || v.offset !== offset || typeof v.hasMore !== 'boolean' || typeof v.canWrite !== 'boolean' || !Array.isArray(v.items) || v.items.length > 25 || v.hasMore && v.items.length !== 25) return invalid()
-  return { items: v.items.map(x => decodeRow(x, vessel, kind)), offset, hasMore: v.hasMore, canWrite: v.canWrite }
+  const items = v.items.map(x => decodeRow(x, vessel, kind))
+  if (id && items.some(row => row.id !== id)) return invalid()
+  return { items, offset, hasMore: v.hasMore, canWrite: v.canWrite }
 }
-export async function save(vessel: string, kind: Kind, id: string | null, frozen: { body: string; key: string; action?: 'submit' | 'complete' }, csrf: string, signal: AbortSignal): Promise<Row> {
+export async function currentRecord(vessel: string, kind: Kind, id: string, signal: AbortSignal, initial?: Page): Promise<Row> {
+  // Versions may expose an older visible revision with the live editing token.
+  // Establish the visible current row through the existing current-list route;
+  // never promote an historical projection merely because it carries that token.
+  const already = initial?.items.find(row => row.id === id && row.vesselId === vessel && row.kind === kind)
+  if (already) return already
+  for (let offset = 0; offset <= 100000; offset += 25) {
+    const value = await page(vessel, kind, offset, signal), found = value.items.find(row => row.id === id)
+    if (found) return found
+    if (!value.hasMore) return invalid()
+  }
+  return invalid() // Bounded backend query range; absence/uncertainty is not a new draft.
+}
+export async function loadSession(signal: AbortSignal) {
+  const value: unknown = await session(signal)
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return invalid()
+  const user = value as Obj
+  if (user.authenticated !== true) throw new ApiError(401, 'authentication_required')
+  if (user.canRead !== true || user.setupRequired !== false) throw new ApiError(403, 'permission_denied')
+  if (!isGuid(user.actorId) || !isGuid(user.tenantId) || typeof user.csrfToken !== 'string' || user.csrfToken.length < 16 ||
+      user.csrfToken.length > 2048 || /[\u0000-\u001f\u007f]/.test(user.csrfToken)) return invalid()
+  return Object.freeze({ owner: `${user.tenantId.toLowerCase()}/${user.actorId.toLowerCase()}`, csrf: user.csrfToken })
+}
+const instants = new Set(['observedAt', 'validFrom', 'validUntil', 'freshUntil', 'testAt', 'reviewAt'])
+function canonical(value: unknown, key = ''): string {
+  if (value === null || value === undefined) return 'null'
+  if (Array.isArray(value)) return '[' + value.map(item => canonical(item)).join(',') + ']'
+  if (typeof value === 'object') return '{' + Object.entries(value).sort(([a], [b]) => a.localeCompare(b, 'en')).map(([name, item]) => JSON.stringify(name)+':'+canonical(item, name)).join(',') + '}'
+  if (typeof value === 'string' && instants.has(key)) {
+    if (!timestamp(value)) return invalid()
+    const fraction = /\.(\d+)(?=Z|[+-]\d{2}:\d{2}$)/.exec(value)?.[1] ?? ''
+    const milliseconds = Date.parse(value.replace(/\.\d+(?=Z|[+-]\d{2}:\d{2}$)/, ''))
+    return JSON.stringify('instant:'+(BigInt(milliseconds)*10000n+BigInt(fraction.padEnd(7, '0'))).toString())
+  }
+  if (typeof value === 'string' && (key === 'id' || key.endsWith('Id') || key.endsWith('Role')) && isGuid(value)) return JSON.stringify(value.toLowerCase())
+  const encoded = JSON.stringify(value)
+  if (encoded === undefined) return invalid()
+  return encoded
+}
+function content(value: Content) {
+  return { ...blank(), tugCapability: null, operation: null, serviceAuthorization: null, cargoPlan: null, winchFitment: null,
+    ...Object.fromEntries(complianceKeys.map(key => [key, null])), ...value }
+}
+const pins = (value: unknown[]) => value.map(item => canonical(item)).sort().join('|')
+export function receiptMatches(value: Row, command: Command, action?: 'submit' | 'complete', expectedRevision?: number) {
+  return validContent(command.content) && value.lifecycle === (action === 'submit' ? 'SUBMITTED' : action === 'complete' ? 'COMPLETED' : 'DRAFT') &&
+    (expectedRevision === undefined || value.revision === expectedRevision) && canonical(content(value.content)) === canonical(content(command.content)) &&
+    canonical(value.file) === canonical(command.file) && pins(value.requirements) === pins(command.requirements) && pins(value.links) === pins(command.links)
+}
+export async function save(vessel: string, kind: Kind, id: string | null, frozen: { body: string; key: string; action?: 'submit' | 'complete'; expectedRevision?: number }, csrf: string, signal: AbortSignal): Promise<Row> {
   const value = decodeRow(await request<unknown>(`${route(kind)}${id ? `/${id}` : ''}${frozen.action ? `/${frozen.action}` : ''}?vesselId=${vessel}`, signal, { method: frozen.action ? 'POST' : id ? 'PUT' : 'POST', body: frozen.body, headers: { 'Content-Type': 'application/json', 'Idempotency-Key': frozen.key, 'X-CSRF-TOKEN': csrf } }), vessel, kind)
   if (id !== null && value.id !== id) return invalid()
+  const sent = JSON.parse(frozen.body) as Command
+  if (!receiptMatches(value, sent, frozen.action, frozen.expectedRevision ?? (id === null ? 1 : undefined))) return invalid()
   return value
 }
 export async function owners(vessel: string, signal: AbortSignal): Promise<{ actorId: string; roleId: string }[]> {

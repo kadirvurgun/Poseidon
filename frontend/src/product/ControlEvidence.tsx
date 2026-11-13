@@ -9,6 +9,8 @@ import { TugCapabilityEditor } from './TugCapabilityEditor';
 import { OperationEquipmentEditor } from './OperationEquipmentEditor';
 import { useEffect, useRef, useState } from 'react';
 import * as service from './control-evidence-api';
+import { useControlEvidenceRecovery } from './use-control-evidence-recovery';
+import { useWorkspaceRevalidation } from './use-workspace-revalidation';
 import * as directory from './api';
 import * as registers from './register-api';
 import * as rules from './applicability-api';
@@ -28,6 +30,8 @@ type Props = {
 };
 export function ControlEvidence(props: Props) {
     const language = props.language;
+    const vesselEpoch = useWorkspaceRevalidation(), vesselScope = `${props.owner ?? ''}/${props.offline}/${vesselEpoch}`;
+    const [vesselProof, setVesselProof] = useState<{ scope: string; owner: string } | null>(null), [vesselOwner, setVesselOwner] = useState<string | null>(null);
     const [vessels, setVessels] = useState<directory.Vessel[]>([]), [vesselOffset, setVesselOffset] = useState(0), [more, setMore] = useState(false);
     const [vessel, setVessel] = useState(''), [kind, setKind] = useState<service.Kind>('Control'), [dirty, setDirty] = useState(false), [saving, setSaving] = useState(false);
     const [pending, setPending] = useState<{
@@ -39,24 +43,37 @@ export function ControlEvidence(props: Props) {
             return;
         const c = new AbortController();
         let active = true;
-        directory.vessels(vesselOffset, '', c.signal).then(p => {
+        async function load() {
+            const before = await service.loadSession(c.signal);
+            if (props.owner !== undefined && props.owner !== before.owner) throw new directory.ApiError(403);
+            const page = await directory.vessels(vesselOffset, '', c.signal);
+            const after = await service.loadSession(c.signal);
+            if (before.owner !== after.owner) throw new directory.ApiError(403);
+            return { page, owner: after.owner };
+        }
+        load().then(({ page: p, owner }) => {
             if (active) {
                 setVessels(p.items);
                 setMore(p.hasMore);
                 setError(false);
+                setVesselProof({ scope: vesselScope, owner });
             }
         }).catch(() => {
-            if (active)
+            if (active) {
                 setError(true);
+                setVesselProof(null);
+            }
         });
         return () => { active = false; c.abort(); };
-    }, [vesselOffset, props.offline]);
+    }, [vesselOffset, props.offline, props.owner, vesselScope]);
+    const visibleVessels = vesselProof?.scope === vesselScope && !props.offline ? vessels : [];
     const change = (v: string, k: service.Kind) => {
         if (saving) return;
         if (dirty)
             setPending({ vessel: v, kind: k });
         else {
             setVessel(v);
+            setVesselOwner(vesselProof?.owner ?? null);
             setKind(k);
         }
     };
@@ -64,11 +81,11 @@ export function ControlEvidence(props: Props) {
     <h2>{localizedText(language, "pairs.m_edd35c8e32c4c9c9")}</h2>
     <p>{localizedText(language, "pairs.m_90295344c76121dc")}</p>
     {error && <p role="alert">{localizedText(language, "pairs.m_cee03bd7f5893ac6")}</p>}
-    <EnterpriseToolbar><label>{localizedText(language, "pairs.m_ba91f7fe5286366c")}<select value={vessel} disabled={saving} onChange={e => change(e.target.value, kind)}><option value="">{localizedText(language, "pairs.m_6e26333eb2a6b2c3")}</option>{vessel && !vessels.some(v => v.id === vessel) && <option value={vessel}>{vessel}</option>}{vessels.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}</select></label>
+    <EnterpriseToolbar><label>{localizedText(language, "pairs.m_ba91f7fe5286366c")}<select value={vessel} disabled={saving || vesselProof?.scope !== vesselScope} onChange={e => change(e.target.value, kind)}><option value="">{localizedText(language, "pairs.m_6e26333eb2a6b2c3")}</option>{vessel && vesselProof?.scope === vesselScope && vesselOwner === vesselProof.owner && !visibleVessels.some(v => v.id === vessel) && <option value={vessel}>{vessel}</option>}{visibleVessels.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}</select></label>
     <label>{localizedText(language, "pairs.m_b9f13e3611f63d16")}<select disabled={saving} value={kind} onChange={e => change(vessel, e.target.value as service.Kind)}><option value="Control">{localizedText(language, "pairs.m_72c87c6d289cd36f")}</option><option value="Evidence">{localizedText(language, "pairs.m_29983c02e9b2276d")}</option></select></label></EnterpriseToolbar>
     <EnterprisePagination label={localizedText(language, "pairs.m_ed930ce14a5fd685")} previous={localizedText(language, "pairs.m_3ebc6aea5e3f139e")} next={localizedText(language, "pairs.m_e86c29e387920d03")} previousDisabled={saving || vesselOffset === 0} nextDisabled={saving || !more} onPrevious={() => setVesselOffset(v => v - 25)} onNext={() => setVesselOffset(v => v + 25)}/>
-    {pending && <DraftConfirmation language={props.language} onStay={() => setPending(null)} onDiscard={() => { if (saving) return; setVessel(pending.vessel); setKind(pending.kind); setPending(null); setDirty(false); props.onDirty(false); }}/>}
-    {vessel && <Editor key={`${vessel}/${kind}`} {...props} vessel={vessel} kind={kind} isTug={vessels.find(v => v.id === vessel)?.kind === 'Tug'} onDirty={v => { setDirty(v); props.onDirty(v); }} onSaving={v => { setSaving(v); props.onSaving(v); }}/>}
+    {pending && <DraftConfirmation language={props.language} onStay={() => setPending(null)} onDiscard={() => { if (saving) return; setVessel(pending.vessel); setVesselOwner(vesselProof?.owner ?? null); setKind(pending.kind); setPending(null); setDirty(false); props.onDirty(false); }}/>}
+    {vessel && <Editor key={`${vessel}/${kind}`} {...props} vessel={vessel} kind={kind} isTug={visibleVessels.find(v => v.id === vessel)?.kind === 'Tug'} onDirty={v => { setDirty(v); props.onDirty(v); }} onSaving={v => { setSaving(v); props.onSaving(v); }}/>}
   </section>;
 }
 function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving, isTug, owner }: Props & {
@@ -76,7 +93,7 @@ function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving, isTu
     kind: service.Kind;
     isTug: boolean;
 }) {
-    const [rows, setRows] = useState<service.Page | null>(null), [offset, setOffset] = useState(0), [reload, setReload] = useState(0), [error, setError] = useState<number | null>(null);
+    const [offset, setOffset] = useState(0), [reload, setReload] = useState(0);
     const [selected, setSelected] = useState<service.Row | null>(null), [content, setContent] = useState(service.blank), [dirty, setDirty] = useState(false);
     const [requirements, setRequirements] = useState<service.RequirementPin[]>([]), [links, setLinks] = useState<service.GraphPin[]>([]), [file, setFile] = useState<service.FilePin | null>(null);
     const [owners, setOwners] = useState<{
@@ -87,11 +104,7 @@ function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving, isTu
     const [files, setFiles] = useState<FileRecord[]>([]), [fileOffset, setFileOffset] = useState(0), [fileMore, setFileMore] = useState(false);
     const [history, setHistory] = useState<service.Page | null>(null), [historyOffset, setHistoryOffset] = useState(0), [asOf, setAsOf] = useState(''), [historyAsOf, setHistoryAsOf] = useState('');
     const [orphan, setOrphan] = useState<Awaited<ReturnType<typeof service.orphans>> | null>(null), [orphanOffset, setOrphanOffset] = useState(0);
-    const [busy, setBusy] = useState(false), [frozen, setFrozen] = useState<{
-        body: string;
-        key: string;
-        action?: 'submit' | 'complete';
-    } | null>(null), [conflict, setConflict] = useState(false), [notice, setNotice] = useState('');
+    const [notice, setNotice] = useState('');
     const [reviewDrafts, setReviewDrafts] = useState<Record<string, boolean>>({}), [reviewSaves, setReviewSaves] = useState<Record<string, boolean>>({});
     const reviewDirty = Object.values(reviewDrafts).some(Boolean), reviewBusy = Object.values(reviewSaves).some(Boolean);
     const liveReviews = useRef<{ drafts: Record<string, boolean>; saves: Record<string, boolean> }>({ drafts: {}, saves: {} });
@@ -104,36 +117,26 @@ function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving, isTu
         if (saving) setReviewSaves({ ...values }); else setReviewDrafts({ ...values });
     }
     useEffect(() => { mounted.current = true; return () => { mounted.current = false; ackEpoch.current++; ackRead.current?.abort(); }; }, []);
+    function hydrate(row: service.Row | null) {
+        setSelected(row); setContent(row?.content ?? service.blank()); setFile(row?.file ?? null);
+        setRequirements(row?.requirements ?? []); setLinks(row?.links ?? []); setDirty(false);
+    }
+    const recovery = useControlEvidenceRecovery({ vessel, kind, owner, id: selected?.id ?? null, offset, offline, blocked: humanBlocked, onSaved: hydrate });
+    const { rows, busy, error, setError, conflict, attempt: frozen } = recovery;
     const [uploadDirty, setUploadDirty] = useState(false), [uploadBusy, setUploadBusy] = useState(false), [discard, setDiscard] = useState(false);
     const [source, setSource] = useState<registers.RegisterPage<registers.Revision> | null>(null), [pickerError, setPickerError] = useState(false);
     const [sourceId, setSourceId] = useState(''), [sourceOffset, setSourceOffset] = useState(0);
-    useEffect(() => { onDirty(dirty || !!frozen || uploadDirty || reviewDirty); }, [dirty, frozen, uploadDirty, reviewDirty, onDirty]);
-    useEffect(() => { onSaving(busy || uploadBusy || reviewBusy); }, [busy, uploadBusy, reviewBusy, onSaving]);
+    useEffect(() => { if (!rows) { setHistory(null); setSource(null); } }, [rows]);
+    useEffect(() => { onDirty(dirty || recovery.dirty || uploadDirty || reviewDirty); }, [dirty, recovery.dirty, uploadDirty, reviewDirty, onDirty]);
+    useEffect(() => { onSaving(recovery.barrier || uploadBusy || reviewBusy); }, [recovery.barrier, uploadBusy, reviewBusy, onSaving]);
     useEffect(() => {
-        if (offline)
+        if (offline || !rows) {
+            setOwners([]); setReqs(null); setControls(null); setRuleRows(null); setFiles([]); setOrphan(null);
             return;
+        }
         let active = true;
         const c = new AbortController();
-        const timer = setTimeout(() => c.abort(), 15000);
-        service.page(vessel, kind, offset, c.signal).then(p => {
-            if (active) {
-                setRows(p);
-                setError(null);
-            }
-        }).catch(e => {
-            if (active) {
-                setRows(null);
-                setError(e instanceof directory.ApiError ? e.status : 0);
-            }
-        });
-        return () => { active = false; c.abort(); clearTimeout(timer); };
-    }, [vessel, kind, offset, reload, offline]);
-    useEffect(() => {
-        if (offline || !rows)
-            return;
-        let active = true;
-        const c = new AbortController();
-        Promise.all([service.owners(vessel, c.signal), registers.listDrafts('requirements', '', reqOffset, c.signal), service.page(vessel, 'Control', controlOffset, c.signal), rules.rules(ruleOffset, c.signal), filePage(vessel, fileOffset, c.signal), service.orphans(vessel, orphanOffset, c.signal)]).then(([o, r, controls, ruleRows, files, orphan]) => {
+        recovery.read(signal => Promise.all([service.owners(vessel, signal), registers.listDrafts('requirements', '', reqOffset, signal), service.page(vessel, 'Control', controlOffset, signal), rules.rules(ruleOffset, signal), filePage(vessel, fileOffset, signal), service.orphans(vessel, orphanOffset, signal)]), c.signal).then(([o, r, controls, ruleRows, files, orphan]) => {
             if (!active)
                 return;
             setOwners(o);
@@ -156,7 +159,7 @@ function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving, isTu
             }
         });
         return () => { active = false; c.abort(); };
-    }, [vessel, rows, reqOffset, controlOffset, ruleOffset, fileOffset, orphanOffset, reload, offline]);
+    }, [vessel, rows, reqOffset, controlOffset, ruleOffset, fileOffset, orphanOffset, reload, offline, recovery.read]);
     const resetScope1 = [vessel, kind, selected, historyOffset, historyAsOf, offline] as const;
     const [previousScope1, setPreviousScope1] = useState(resetScope1);
     // Withdraw stale state in the same render that changes the request scope.
@@ -169,7 +172,7 @@ function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving, isTu
             return;
         let active = true;
         const c = new AbortController();
-        service.page(vessel, kind, historyOffset, c.signal, selected.id, historyAsOf || undefined).then(p => {
+        recovery.read(signal => service.page(vessel, kind, historyOffset, signal, selected.id, historyAsOf || undefined), c.signal).then(p => {
             if (active)
                 setHistory(p);
         }).catch(e => {
@@ -177,7 +180,7 @@ function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving, isTu
                 setError(e instanceof directory.ApiError ? e.status : 0);
         });
         return () => { active = false; c.abort(); };
-    }, [vessel, kind, selected, historyOffset, historyAsOf, offline]);
+    }, [vessel, kind, selected, historyOffset, historyAsOf, offline, recovery.read]);
     const resetScope2 = [sourceId, sourceOffset, offline] as const;
     const [previousScope2, setPreviousScope2] = useState(resetScope2);
     // Withdraw stale state in the same render that changes the request scope.
@@ -190,7 +193,7 @@ function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving, isTu
             return;
         const c = new AbortController();
         let active = true;
-        registers.historyDraft('sources', sourceId, sourceOffset, c.signal).then(p => {
+        recovery.read(signal => registers.historyDraft('sources', sourceId, sourceOffset, signal), c.signal).then(p => {
             if (active)
                 setSource(p);
         }).catch(() => {
@@ -198,11 +201,11 @@ function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving, isTu
                 setPickerError(true);
         });
         return () => { active = false; c.abort(); };
-    }, [sourceId, sourceOffset, offline]);
-    const locked = busy || uploadBusy || reviewDirty || reviewBusy || !!frozen || conflict || error === 401 || error === 403 || error === 404 || !rows?.canWrite;
-    const mutate = (key: keyof service.Content, value: string | boolean | null) => { setContent(c => ({ ...c, [key]: value })); setDirty(true); };
+    }, [sourceId, sourceOffset, offline, recovery.read]);
+    const locked = recovery.locked || uploadBusy || reviewDirty || reviewBusy;
+    const mutate = (key: keyof service.Content, value: string | boolean | null) => { if (!recovery.edit()) return; setContent(c => ({ ...c, [key]: value })); setDirty(true); };
     function choose(row: service.Row | null) {
-        if (dirty || frozen || uploadDirty || busy || uploadBusy || reviewDirty || reviewBusy)
+        if (!recovery.canShow || dirty || recovery.dirty || frozen || recovery.confirmed || uploadDirty || busy || uploadBusy || reviewDirty || reviewBusy)
             return;
         setSelected(row);
         setContent(row?.content ?? service.blank());
@@ -212,47 +215,20 @@ function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving, isTu
         setHistoryOffset(0);
         setSource(null);
         setSourceId('');
-        setConflict(false);
     }
-    async function save(action?: 'submit' | 'complete') {
-        if (offline || busy || conflict || !rows?.canWrite || humanBlocked())
+    function save(action?: 'submit' | 'complete') {
+        if (offline || busy || !recovery.canShow || !rows?.canWrite || humanBlocked())
             return;
+        if (frozen) { recovery.retry(); return; }
+        if (conflict || recovery.confirmed) return;
         if (!service.validContent(content)) {
             setError(400);
             return;
         }
         const command: service.Command = { expectedVersion: selected?.version ?? 0, content, requirements, links, file, reasonCode: action === 'submit' ? 'SUBMIT' : action === 'complete' ? 'COMPLETE' : selected ? 'AUTHORING_CORRECTION' : 'INITIAL_AUTHORING' };
-        const attempt = frozen ?? { body: JSON.stringify(command), key: crypto.randomUUID(), action };
-        setFrozen(attempt);
-        setBusy(true);
-        setError(null);
-        const c = new AbortController();
-        const timer = setTimeout(() => c.abort(), 15000);
-        try {
-            const saved = await service.save(vessel, kind, selected?.id ?? null, attempt, csrf, c.signal);
-            setSelected(saved);
-            setContent(saved.content);
-            setFile(saved.file);
-            setRequirements(saved.requirements);
-            setLinks(saved.links);
-            setFrozen(null);
-            setDirty(false);
-            setNotice(localizedText(language, "pairs.m_f8d39f40bcb914e3"));
-            setReload(x => x + 1);
-        }
-        catch (e) {
-            const status = e instanceof directory.ApiError ? e.status : 0;
-            setError(status);
-            if (status === 409)
-                setConflict(true);
-            setNotice(localizedText(language, "pairs.m_a10b87eb17f2e91d"));
-        }
-        finally {
-            setBusy(false);
-            clearTimeout(timer);
-        }
+        recovery.capture(command, selected, action);
     }
-    const pages = (value: number, hasMore: boolean, update: (v: number) => void, label: string) => <EnterprisePagination label={label} previous={`${localizedText(language, "pairs.m_2f7d24c724255a10")} · ${label}`} next={`${localizedText(language, "pairs.m_e6f6e57e02dd12ba")} · ${label}`} previousDisabled={value === 0 || busy} nextDisabled={!hasMore || busy} onPrevious={() => update(value - 25)} onNext={() => update(value + 25)}/>;
+    const pages = (value: number, hasMore: boolean, update: (v: number) => void, label: string) => <EnterprisePagination label={label} previous={`${localizedText(language, "pairs.m_2f7d24c724255a10")} · ${label}`} next={`${localizedText(language, "pairs.m_e6f6e57e02dd12ba")} · ${label}`} previousDisabled={value === 0 || busy || recovery.dirty || !!recovery.confirmed || reviewDirty || reviewBusy} nextDisabled={!hasMore || busy || recovery.dirty || !!recovery.confirmed || reviewDirty || reviewBusy} onPrevious={() => update(value - 25)} onNext={() => update(value + 25)}/>;
     const blockerLabels: Record<string, string> = {
         SOURCE_REVIEW_REQUIRED: localizedText(language, "pairs.m_300952988ccc08fd"), QUALIFIED_CONTROL_POLICY_MISMATCH: localizedText(language, "pairs.m_62996b0644f1a887"), QUALIFIED_FRESHNESS_REQUIRED: localizedText(language, "pairs.m_f788e5af6a56115a"), SOURCE_ACKNOWLEDGMENT_REQUIRED: localizedText(language, "pairs.m_e69b9a0f3568eddd"), AUTHORITATIVE_EVALUATION_UNAVAILABLE: localizedText(language, "pairs.m_c0fa91fad5695c6a"), APPLICABILITY_REVIEW_REQUIRED: localizedText(language, "pairs.m_b79e557d29fe5098"), PROFILE_CHANGED: localizedText(language, "pairs.m_aa38074473861e19"), SOURCE_NOT_CURRENT: localizedText(language, "pairs.m_76b76a0b5fb00bb9"),
         TITLE_MISSING: localizedText(language, "pairs.m_bcfcbd55af4802ac"), OWNER_MISSING: localizedText(language, "pairs.m_21d6a0a393e8035d"), REQUIREMENT_LINK_MISSING: localizedText(language, "pairs.m_8412783a43220351"), APPLICABILITY_LINK_MISSING: localizedText(language, "pairs.m_a31491dc8589c9a7"),
@@ -263,18 +239,26 @@ function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving, isTu
     const timeLabel = (state: service.Row['timeState']) => ({ UNKNOWN: localizedText(language, "pairs.m_659bf073a81a53fb"), SUPERSEDED: localizedText(language, "pairs.m_5f273650148d18d2"), DECLARED_EXPIRED: localizedText(language, "pairs.m_49c1d92f2ba3c44a"), DECLARED_STALE: localizedText(language, "pairs.m_008377b0056af9bf"), DECLARED_NOT_YET_VALID: localizedText(language, "pairs.m_628d87f32567175f") })[state];
     return <div className="regulatory-editor">
     {offline && <p role="status">{localizedText(language, "pairs.m_5602ad4a9ac376da")}</p>}
-    {error !== null && <p role="alert">{error === 409 ? localizedText(language, "pairs.m_1eca35ee027d5420") : [401, 403, 404].includes(error) ? localizedText(language, "pairs.m_61c59566341f7466") : localizedText(language, "pairs.m_25d71925eacbba19")}</p>}
-    {notice && <p role="status">{notice}</p>}
-    <Button variant="outline" disabled={busy || offline} onClick={() => setReload(x => x + 1)}>{localizedText(language, "pairs.m_7f1e6d9b7b56681e")}</Button>
+    {(error !== null || conflict) && <p role="alert">{error === 409 || conflict ? localizedText(language, "pairs.m_1eca35ee027d5420") : [401, 403, 404].includes(error ?? -1) ? localizedText(language, "pairs.m_61c59566341f7466") : localizedText(language, "pairs.m_25d71925eacbba19")}</p>}
+    {recovery.notice && <p role="status">{localizedText(language, recovery.confirmed?.row.lifecycle === 'DRAFT' ? 'pairs.m_f8d39f40bcb914e3' : 'pairs.m_79054af08f971230')}</p>}
+    {recovery.canShow && notice && <p role="status">{notice}</p>}
+    {frozen?.unknown && <p role="status">{localizedText(language, 'pairs.m_62930366e47b200e')}</p>}
+    <EnterpriseActions>
+      <Button variant="outline" disabled={busy || !recovery.available} onClick={recovery.recheck}>{localizedText(language, 'pairs.m_542619365a11df9d')}</Button>
+      {frozen && !recovery.canShow && <Button disabled onClick={recovery.retry}>{localizedText(language, 'pairs.m_eb449a06e44678ab')}</Button>}
+      {!frozen && recovery.canDiscard && <Button variant="outline" disabled={busy || uploadBusy || humanBlocked()} onClick={() => setDiscard(true)}>{localizedText(language, 'pairs.m_92ccf21431e2c4a0')}</Button>}
+    </EnterpriseActions>
     {!rows && error === null && <p role="status">{localizedText(language, "pairs.m_06330283a810bdf9")}</p>}
-    {rows && <><p>{rows.canWrite ? localizedText(language, "pairs.m_508cd3efef2ef29d") : localizedText(language, "pairs.m_4ac4ea608f5308ee")}</p>{rows.items.length === 0 && <p>{localizedText(language, "pairs.m_9d2d926f131471ce")}</p>}<ul className="regulatory-register-list">{rows.items.map(r => <li key={r.id}><Button variant="outline" disabled={dirty || !!frozen || uploadDirty || busy || reviewDirty || reviewBusy} onClick={() => choose(r)}>{r.content.title ?? r.id} · {r.revision}</Button> · {timeLabel(r.timeState)}</li>)}</ul>{pages(offset, rows.hasMore, setOffset, localizedText(language, "pairs.m_8b6433d45192da49"))}</>}
-    <Button variant="outline" disabled={dirty || !!frozen || uploadDirty || busy || reviewDirty || reviewBusy} onClick={() => choose(null)}>{localizedText(language, "pairs.m_ced646267c9def5d")}</Button>
-    {kind === 'Evidence' && selected && <Button disabled={locked || dirty || uploadDirty} onClick={() => { const old = selected; setSelected(null); setContent(service.blank()); setFile(null); setRequirements(old.requirements); setLinks([{ kind: 'Evidence', id: old.id, revision: old.revision, expectedVersion: old.version }]); setDirty(true); }}>{localizedText(language, "pairs.m_adf4f3cf079a1f1f")}</Button>}
-    <form onSubmit={e => { e.preventDefault(); void save(); }}>
+    {!recovery.canShow && !frozen && <Button disabled>{localizedText(language, 'pairs.m_bd59c5fb1d6040b0')}</Button>}
+    {recovery.canShow && <>
+    {rows && <><p>{rows.canWrite ? localizedText(language, "pairs.m_508cd3efef2ef29d") : localizedText(language, "pairs.m_4ac4ea608f5308ee")}</p>{rows.items.length === 0 && <p>{localizedText(language, "pairs.m_9d2d926f131471ce")}</p>}<ul className="regulatory-register-list">{rows.items.map(r => <li key={r.id}><Button variant="outline" disabled={dirty || recovery.dirty || !!frozen || !!recovery.confirmed || uploadDirty || busy || reviewDirty || reviewBusy} onClick={() => choose(r)}>{r.content.title ?? r.id} · {r.revision}</Button> · {timeLabel(r.timeState)}</li>)}</ul>{pages(offset, rows.hasMore, setOffset, localizedText(language, "pairs.m_8b6433d45192da49"))}</>}
+    <Button variant="outline" disabled={dirty || recovery.dirty || !!frozen || !!recovery.confirmed || uploadDirty || busy || reviewDirty || reviewBusy} onClick={() => choose(null)}>{localizedText(language, "pairs.m_ced646267c9def5d")}</Button>
+    {kind === 'Evidence' && selected && <Button disabled={locked || dirty || recovery.dirty || uploadDirty} onClick={() => { if (!recovery.edit()) return; const old = selected; setSelected(null); setContent(service.blank()); setFile(null); setRequirements(old.requirements); setLinks([{ kind: 'Evidence', id: old.id, revision: old.revision, expectedVersion: old.version }]); setDirty(true); }}>{localizedText(language, "pairs.m_adf4f3cf079a1f1f")}</Button>}
+    <form onChangeCapture={e => { if (!recovery.edit()) { e.preventDefault(); e.stopPropagation(); } }} onSubmit={e => { e.preventDefault(); save(); }}>
       <fieldset disabled={locked}><legend>{localizedText(language, "pairs.m_dfc8779d69512348")}</legend>
-        {kind === 'Evidence' && <OperationEquipmentEditor vessel={vessel} language={language} offline={offline} isTug={isTug} value={content} onChange={v => { setContent(v); setDirty(true); }}/>}
-        {kind === 'Evidence' && <ComplianceInputEditor value={content} onChange={v => { setContent(v); setDirty(true); }} offline={offline} language={language}/>}
-        {kind === 'Evidence' && isTug && ![content.operation, content.serviceAuthorization, content.cargoPlan, content.winchFitment, content.classPack, content.msmd, content.crewRoleAssessment].some(Boolean) && <TugCapabilityEditor vessel={vessel} language={language} offline={offline} value={content.tugCapability ?? null} onChange={v => { setContent(c => ({ ...c, tugCapability: v })); setDirty(true); }}/>}
+        {kind === 'Evidence' && <OperationEquipmentEditor vessel={vessel} language={language} offline={offline} isTug={isTug} value={content} onChange={v => { if (!recovery.edit()) return; setContent(v); setDirty(true); }}/>}
+        {kind === 'Evidence' && <ComplianceInputEditor value={content} onChange={v => { if (!recovery.edit()) return; setContent(v); setDirty(true); }} offline={offline} language={language}/>}
+        {kind === 'Evidence' && isTug && ![content.operation, content.serviceAuthorization, content.cargoPlan, content.winchFitment, content.classPack, content.msmd, content.crewRoleAssessment].some(Boolean) && <TugCapabilityEditor vessel={vessel} language={language} offline={offline} value={content.tugCapability ?? null} onChange={v => { if (!recovery.edit()) return; setContent(c => ({ ...c, tugCapability: v })); setDirty(true); }}/>}
         <label>{localizedText(language, "pairs.m_fa3e5e76e1977a4f")}<input value={content.title ?? ''} maxLength={2000} onChange={e => mutate('title', e.target.value || null)}/></label>
         <label>{localizedText(language, "pairs.m_f7636bbe8e724781")}<select value={content.ownerId ? `${content.ownerId}/${content.ownerRole}` : ''} onChange={e => { const [ownerId, ownerRole] = e.target.value.split('/'); setContent(c => ({ ...c, ownerId: ownerId || null, ownerRole: ownerRole || null })); setDirty(true); }}><option value="">{localizedText(language, "pairs.m_1015861ec36c5319")}</option>{content.ownerId && !owners.some(o => o.actorId === content.ownerId && o.roleId === content.ownerRole) && <option value={`${content.ownerId}/${content.ownerRole}`}>{localizedText(language, "pairs.m_b2e80edce385616b")}</option>}{owners.map(o => <option key={`${o.actorId}/${o.roleId}`} value={`${o.actorId}/${o.roleId}`}>{o.actorId} / {o.roleId}</option>)}</select></label>
         {kind === 'Control' ? <>
@@ -299,7 +283,7 @@ function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving, isTu
       </fieldset>
       {pickerError && <p role="alert">{localizedText(language, "pairs.m_f80c9ed0adef324c")}</p>}
       <EnterpriseActions aria-label={localizedText(language, "pairs.m_b6af93a4bfb1b689")}>
-       <Button type="submit" disabled={offline || busy || conflict || reviewDirty || reviewBusy || !rows?.canWrite || [401, 403, 404].includes(error ?? -1)}>{frozen ? localizedText(language, "pairs.m_eb449a06e44678ab") : localizedText(language, "pairs.m_bd59c5fb1d6040b0")}</Button>
+       <Button type="submit" disabled={offline || busy || reviewDirty || reviewBusy || !rows?.canWrite || (!frozen && (conflict || !!recovery.confirmed || [401, 403, 404].includes(error ?? -1)))}>{frozen ? localizedText(language, "pairs.m_eb449a06e44678ab") : localizedText(language, "pairs.m_bd59c5fb1d6040b0")}</Button>
       <Button variant="outline" type="button" disabled={locked || offline || !selected} onClick={() => void save('submit')}>{localizedText(language, "pairs.m_8a068b1629e78502")}</Button>
       <Button variant="outline" type="button" disabled={locked || offline || selected?.lifecycle !== 'SUBMITTED' || dirty} onClick={() => void save('complete')}>{localizedText(language, "pairs.m_cf1b3085d3f59f3b")}</Button>
       {kind === 'Evidence' && requirements.filter(p => p.ruleId !== null).map(p => <Button key={p.ruleId} type="button" disabled={locked || offline} onClick={() => {
@@ -309,7 +293,11 @@ function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving, isTu
                 ackRead.current = c;
                 const generation = ++ackEpoch.current;
                 const current = () => mounted.current && !c.signal.aborted && ackRead.current === c && ackEpoch.current === generation && !humanBlocked();
-                qualification.load(p.ruleId!, vessel, c.signal).then(q => {
+                recovery.acknowledge(signal => {
+                    const abort = () => c.abort();
+                    if (signal.aborted) c.abort(); else signal.addEventListener('abort', abort, { once: true });
+                    return qualification.load(p.ruleId!, vessel, c.signal).finally(() => signal.removeEventListener('abort', abort));
+                }, q => {
                     if (!current()) return;
                     const row = q.items[0];
                     if (row?.state === 'IN_FORCE' && row.sourceHash) {
@@ -319,17 +307,24 @@ function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving, isTu
                     }
                     else
                         setError(409);
-                }).catch(() => { if (current()) setError(403); }).finally(() => { if (ackRead.current === c) ackRead.current = null; });
+                }, current).finally(() => { if (ackRead.current === c) ackRead.current = null; });
             }}>{localizedText(language, "pairs.m_e771121463b43c62")} · {p.ruleId}</Button>)}
-      {(dirty || frozen || conflict) && <Button variant="outline" type="button" disabled={busy || uploadBusy} onClick={() => setDiscard(true)}>{localizedText(language, "pairs.m_92ccf21431e2c4a0")}</Button>}</EnterpriseActions>
+      </EnterpriseActions>
     </form>
-    {discard && <DraftConfirmation language={language} onStay={() => setDiscard(false)} onDiscard={() => { setDirty(false); setFrozen(null); setConflict(false); setDiscard(false); setSelected(null); setContent(service.blank()); setRequirements([]); setLinks([]); setFile(null); setReload(x => x + 1); }}/>}
-    <ul aria-label={localizedText(language, "pairs.m_91c721ee7d562f1b")}>{requirements.map(p => <li key={`${p.requirementId}/${p.requirementRevision}`}>{p.requirementId}/{p.requirementRevision} → {p.sourceId}/{p.sourceRevision}<Button disabled={offline} onClick={() => { setSourceId(p.sourceId); setSourceOffset(0); }}>{localizedText(language, "pairs.m_8f506dbe88c3ebd3")}</Button><Button disabled={locked} onClick={() => { setRequirements(ps => ps.filter(x => x !== p)); setDirty(true); }}>{localizedText(language, "pairs.m_96775b6b3f3e1c01")}</Button></li>)}{links.map(p => <li key={`${p.kind}/${p.id}/${p.revision}`}>{p.kind} {p.id}/{p.revision}<Button disabled={locked} onClick={() => { setLinks(ps => ps.filter(x => x !== p)); setDirty(true); }}>{localizedText(language, "pairs.m_96775b6b3f3e1c01")}</Button></li>)}</ul>
+    <ul aria-label={localizedText(language, "pairs.m_91c721ee7d562f1b")}>{requirements.map(p => <li key={`${p.requirementId}/${p.requirementRevision}`}>{p.requirementId}/{p.requirementRevision} → {p.sourceId}/{p.sourceRevision}<Button disabled={offline} onClick={() => { setSourceId(p.sourceId); setSourceOffset(0); }}>{localizedText(language, "pairs.m_8f506dbe88c3ebd3")}</Button><Button disabled={locked} onClick={() => { if (!recovery.edit()) return; setRequirements(ps => ps.filter(x => x !== p)); setDirty(true); }}>{localizedText(language, "pairs.m_96775b6b3f3e1c01")}</Button></li>)}{links.map(p => <li key={`${p.kind}/${p.id}/${p.revision}`}>{p.kind} {p.id}/{p.revision}<Button disabled={locked} onClick={() => { if (!recovery.edit()) return; setLinks(ps => ps.filter(x => x !== p)); setDirty(true); }}>{localizedText(language, "pairs.m_96775b6b3f3e1c01")}</Button></li>)}</ul>
     {source && <><ul aria-label={localizedText(language, "pairs.m_90a42aea41718d5b")}>{source.items.map(r => <li key={r.revision}>{r.id}/{r.revision} · {r.content.title.value} · {r.content.locator.value} · {r.hash} · {r.lifecycle}</li>)}</ul>{pages(sourceOffset, source.hasMore, setSourceOffset, localizedText(language, "pairs.m_d64eac926438b43c"))}</>}
     {selected && <section aria-label={localizedText(language, "pairs.m_d21b2e2163abcf4b")}><h3>{localizedText(language, "pairs.m_d21b2e2163abcf4b")}</h3><label>{localizedText(language, "pairs.m_285a2e9b5a7e00f7")}<input value={asOf} onChange={e => setAsOf(e.target.value)}/></label><Button disabled={offline || !!asOf && !timestamp(asOf)} onClick={() => { setHistoryAsOf(asOf); setHistoryOffset(0); }}>{localizedText(language, "pairs.m_abe27a0e178299f8")}</Button>{history?.items.map(r => <article key={r.revision}><h4>{r.revision} · {r.content.title}</h4><p>{r.savedAt} · {timeLabel(r.timeState)} · {r.hash}</p><p>{localizedText(language, "pairs.m_eb51fdc14888edff")}</p><p>{r.file ? `${r.file.id}/${r.file.revision} · ${r.file.checksum}` : localizedText(language, "pairs.m_f63c1fd92ab739ba")}</p><ul>{r.requirements.map(p => <li key={`${p.requirementId}/${p.requirementRevision}`}>{p.requirementId}/{p.requirementRevision} → {p.sourceId}/{p.sourceRevision} · {p.ruleId ?? '—'}/{p.ruleRevision ?? '—'}</li>)}{r.links.map(p => <li key={`${p.kind}/${p.id}/${p.revision}`}>{p.kind} {p.id}/{p.revision}</li>)}</ul><p>{localizedText(language, "pairs.m_ef764cb14360bfc4")}</p><details><summary>{localizedText(language, "pairs.m_976f026914e9fe02")}</summary><ul>{r.blockers.map(b => <li key={b}>{blockerLabel(b)}</li>)}</ul></details></article>)}{history && pages(historyOffset, history.hasMore, setHistoryOffset, localizedText(language, "pairs.m_bb5ad118ccbb2107"))}</section>}
     {orphan && <p role="status">{orphan.available ? localizedText(language, "pairs.m_23e7a96b7b285e82") : localizedText(language, "pairs.m_bd6299ce40586f12")} · {orphan.reason} · {orphan.uncontrolledObligations.map(o => `${o.requirementId}/${o.requirementRevision}`).join(' · ')}</p>}
-    {selected?.kind === 'Evidence' && !dirty && !frozen && (!uploadDirty || reviewDirty || reviewBusy) && selected.links.filter(p => p.kind === 'Control').map(p => <HumanDecisionTrace owner={owner} key={`${selected.id}/${selected.revision}/${p.id}/${p.revision}`} anchor={{ vesselId: vessel, evidenceId: selected.id, evidenceRevision: selected.revision, controlId: p.id, controlRevision: p.revision }} language={language} csrf={csrf} offline={offline} onDirty={v => reportReview(`${p.id}/${p.revision}`, v, false)} onSaving={v => reportReview(`${p.id}/${p.revision}`, v, true)}/>)}
-    <section aria-label={localizedText(language, "pairs.m_21b567ca86adf1ba")}><h3>{localizedText(language, "pairs.m_21b567ca86adf1ba")}</h3><p>{localizedText(language, "pairs.m_7471b126af2cfc68")}</p>{orphan ? <><ul>{orphan.draftCriticalOrphans.map(id => <li key={id}>{id}</li>)}</ul>{pages(orphanOffset, orphan.hasMore, setOrphanOffset, localizedText(language, "pairs.m_bd73803992337989"))}</> : <p>{localizedText(language, "pairs.m_0880bff615d8df3e")}</p>}</section>
-    {kind === 'Evidence' && <div inert={reviewDirty || reviewBusy}><VesselFiles offline={offline} vessel={vessel} language={language} csrf={csrf} onDirty={setUploadDirty} onSaving={setUploadBusy} onCommitted={() => setReload(x => x + 1)}/></div>}
+    </>}
+    {discard && <DraftConfirmation language={language} onStay={() => setDiscard(false)} onDiscard={async () => {
+      const result = await recovery.discard();
+      if (!result.released) return;
+      if (result.row || !selected) hydrate(result.row);
+      else { setContent(service.blank()); setFile(null); setRequirements([]); setLinks([]); setDirty(false); }
+      setDiscard(false); setNotice(''); setSource(null); setSourceId(''); setHistoryOffset(0); setReload(x => x + 1);
+    }}/>}
+    {selected?.kind === 'Evidence' && !dirty && !frozen && (!uploadDirty || reviewDirty || reviewBusy) && selected.links.filter(p => p.kind === 'Control').map(p => <div key={`${selected.id}/${selected.revision}/${p.id}/${p.revision}`} inert={busy}><HumanDecisionTrace owner={owner} anchor={{ vesselId: vessel, evidenceId: selected.id, evidenceRevision: selected.revision, controlId: p.id, controlRevision: p.revision }} language={language} csrf={csrf} offline={offline} onDirty={v => reportReview(`${p.id}/${p.revision}`, v, false)} onSaving={v => reportReview(`${p.id}/${p.revision}`, v, true)}/></div>)}
+    {recovery.canShow && <section aria-label={localizedText(language, "pairs.m_21b567ca86adf1ba")}><h3>{localizedText(language, "pairs.m_21b567ca86adf1ba")}</h3><p>{localizedText(language, "pairs.m_7471b126af2cfc68")}</p>{orphan ? <><ul>{orphan.draftCriticalOrphans.map(id => <li key={id}>{id}</li>)}</ul>{pages(orphanOffset, orphan.hasMore, setOrphanOffset, localizedText(language, "pairs.m_bd73803992337989"))}</> : <p>{localizedText(language, "pairs.m_0880bff615d8df3e")}</p>}</section>}
+    {kind === 'Evidence' && <div inert={reviewDirty || reviewBusy || !!frozen || busy || !recovery.canShow}><VesselFiles offline={offline} vessel={vessel} language={language} csrf={csrf} onDirty={setUploadDirty} onSaving={setUploadBusy} onCommitted={() => { setReload(x => x + 1); recovery.recheck(); }}/></div>}
   </div>;
 }
