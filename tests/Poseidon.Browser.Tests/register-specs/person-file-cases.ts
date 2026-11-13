@@ -1,11 +1,15 @@
 import { expect, type Page } from '@playwright/test';
 import { createHash } from 'node:crypto';
+import { assertOriginalFoundationShip, requiredFoundationConsumerPlan } from './foundation-policy-context.ts';
 // Real private signed host/current PostgreSQL/real clamd/storage and explicit synthetic
 // CrewFilePolicy + disposable memberships required. Missing configuration FAILS; no mocks/skips.
 async function personFiles(page: Page) {
     const vessels = await (await page.request.get('/api/v1/vessels?limit=25')).json();
     expect(vessels.items.length > 0).toBe(true);
     const vessel = vessels.items[0].id;
+    const currentUser = await page.request.get('/api/v1/auth/session');
+    expect(currentUser.status()).toBe(200);
+    assertOriginalFoundationShip(requiredFoundationConsumerPlan(), await currentUser.json(), vessels);
     const roster = await (await page.request.get(`/api/v1/vessels/${vessel}/crew`)).json();
     expect(roster.items.length > 0).toBe(true);
     const assignment = roster.items[0].id;
@@ -74,6 +78,9 @@ async function explicitPhotoSelection(page: Page) {
     const vessels = await (await page.request.get('/api/v1/vessels?limit=25')).json();
     expect(vessels.items.length > 0).toBe(true);
     const vessel = vessels.items[0].id;
+    const currentUser = await page.request.get('/api/v1/auth/session');
+    expect(currentUser.status()).toBe(200);
+    assertOriginalFoundationShip(requiredFoundationConsumerPlan(), await currentUser.json(), vessels);
     const roster = await (await page.request.get(`/api/v1/vessels/${vessel}/crew`)).json();
     expect(roster.items.length > 0).toBe(true);
     const assignment = roster.items[0].id;

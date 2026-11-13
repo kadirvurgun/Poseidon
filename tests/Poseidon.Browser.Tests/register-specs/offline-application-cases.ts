@@ -1,13 +1,16 @@
 import { expect, type Page } from '@playwright/test';
+import { assertOriginalFoundationShip, requiredFoundationConsumerPlan } from './foundation-policy-context.ts';
 // OA-BROWSER01..05: actual signed host, PostgreSQL, ordinary commands, product UI,
 // WebCrypto, IndexedDB and the static-only worker. No fabricated business responses.
 // Later gate MUST provision explicit fictional offline policy for the writer's Ship
 // scope with SYNTHETIC-A/B. Missing policy fails; these cases never skip it.
 async function setup(page: Page, medical = false) {
+    const fixture = requiredFoundationConsumerPlan();
     const vessels = await (await page.request.get('/api/v1/vessels?limit=25&kind=Ship')).json();
     expect(vessels.items.length > 0).toBe(true);
     const vessel = vessels.items[0].id as string;
     const user = await (await page.request.get('/api/v1/auth/session')).json();
+    assertOriginalFoundationShip(fixture, user, vessels);
     const assignment = crypto.randomUUID();
     const response = await page.request.post(`/api/v1/vessels/${vessel}/crew`, { headers: { 'X-CSRF-TOKEN': user.csrfToken, 'Idempotency-Key': crypto.randomUUID() }, data: {
             id: assignment, personId: null, baseVersion: null, fullName: null, employeeNo: null, positionId: null, from: null, to: null,

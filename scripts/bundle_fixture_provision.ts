@@ -9,6 +9,7 @@ import { strictContext } from '../tests/Poseidon.Browser.Tests/lab/strict-browse
 import { login } from '../tests/Poseidon.Browser.Tests/lab/journeys.ts'
 import {canonical, FixtureJournal, verifyFixtureReceipt} from './bundle_fixture_journal.ts'
 import { observationFixtureFromActual } from '../tests/Poseidon.Browser.Tests/register-specs/observation-fixture.ts'
+import { assertOriginalFoundationShip, requiredFoundationConsumerPlan } from '../tests/Poseidon.Browser.Tests/register-specs/foundation-policy-context.ts'
 
 const runtime = labRuntimeFromEnvironment()
 const privateRoot = realpathSync(process.env.POSEIDON_LAB_PRIVATE!)
@@ -56,6 +57,8 @@ try {
   }
   const user = await read('/api/v1/auth/session', 'actual_writer_session')
   if (user.authenticated !== true || user.actorId !== plan.writerActorId || user.tenantId !== plan.tenantId || typeof user.csrfToken !== 'string' || user.csrfToken.length < 16) throw new Error('fixture_actual_actor_mismatch')
+  const firstShip = await read('/api/v1/vessels?limit=25&kind=Ship', 'actual_original_consumer_ship')
+  assertOriginalFoundationShip(requiredFoundationConsumerPlan(), user, firstShip)
   const vessel = await read('/api/v1/vessels/' + plan.vesselId, 'actual_ship')
   if (vessel.id !== plan.vesselId || vessel.kind !== 'Ship') throw new Error('fixture_actual_ship_required')
   // Configuration alone is never a fixture proof. Read the actual authorized

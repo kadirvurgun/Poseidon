@@ -19,6 +19,7 @@ import bundle_private as private_io
 import bundle_crew_fixture as crew_fixture
 import bundle_observation_fixture as observation_fixture
 import lab_runtime
+import bundle_foundation_policy_fixture as foundation_policy
 
 BASE_ENVIRONMENT = lab.environment
 FIXTURE_NAMES = ('DAILY','CERTIFICATE','CERTIFICATE_EXTRACTION','SHIP_OPERATIONS','DEFECT','WORK_ORDER','DOWNTIME','OBSERVATION')
@@ -152,6 +153,47 @@ def renew_fixture_window():
     private_io.publish_config(configured)
 
 
+def require_foundation_policy_fixtures():
+    """Read-only prerequisite; ordinary source/qualified writes cannot opt in implicitly."""
+    lab.stage('foundation_policy_source_write_preflight')
+    path = lab.PRIVATE/'foundation-policy-fixture-plan.json'
+    if not path.is_file():
+        raise RuntimeError('foundation_policy_explicit_preparation_required')
+    metadata = private_io.read_json(lab.PRIVATE/'source-bundle-plan.json')
+    captured = private_io.read_json(path)
+    config, _ = private_io.selected()
+    foundation_policy.require_applied(config, metadata, captured, lab.PROJECT)
+
+
+def prepare_foundation_policy_fixtures():
+    """Explicit pre-start fixture setup only; no provider/HTTP/database actions.
+
+    Exact repeats are read-only, including after source preparation. First apply
+    refuses running/old business attempts rather than changing their field/window
+    policy. Source-approved oidc_lab.py and other policy sections stay unchanged.
+    """
+    lab.stage('explicit_foundation_policy_fixture')
+    metadata = private_io.read_json(lab.PRIVATE/'source-bundle-plan.json')
+    config, _ = private_io.selected()
+    path = lab.PRIVATE/'foundation-policy-fixture-plan.json'
+    captured = private_io.read_json(path) if path.exists() else foundation_policy.create_plan(metadata, lab.PROJECT)
+    configured = foundation_policy.configure(config, metadata, captured, lab.PROJECT)
+    if foundation_policy.exact(configured, config):
+        if not path.exists():
+            raise RuntimeError('foundation_policy_original_plan_required')
+        return
+    forbidden = ('source-bundle-command-', 'qualified-owning-', 'register-counts')
+    existing = {'source-bundle-provision-attempt.json', 'source-bundle-observed.json', 'source-bundle-environment.json',
+                'source-bundle-lane-environment.json', 'source-bundle-preparation.json'}
+    if ((lab.PRIVATE/'app.pid').exists() or any(file.name in existing or file.name.startswith(forbidden) for file in lab.PRIVATE.iterdir())
+            or not (lab.PRIVATE/'ready').is_file()):
+        raise RuntimeError('foundation_policy_fresh_prestart_run_required')
+    # All in-memory checks complete before either immutable publication.
+    if not path.exists():
+        private_io.publish_json(path, captured)
+    private_io.publish_config(configured)
+
+
 def environment():
     env=BASE_ENVIRONMENT()
     for key in list(env):
@@ -213,6 +255,7 @@ def source_fixture_environment():
 
 
 def prepare_source_fixtures():
+    require_foundation_policy_fixtures()
     lab.stage('real_signed_source_fixture_preparation')
     if not (lab.PRIVATE/'source-bundle-plan.json').is_file():
         raise RuntimeError('fresh_disposable_bundle_plan_required')
@@ -259,6 +302,7 @@ def start():
 
 
 def register_browser():
+    require_foundation_policy_fixtures()
     lab.stage('real_provider_source_bundle_browser')
     if any(os.environ.get(key) for key in ('POSEIDON_REGISTER_CASE','POSEIDON_REGISTER_PROJECT')):
         raise RuntimeError('full_bundle_manifest_required')
@@ -278,7 +322,7 @@ def stop():lab.stop()
 
 def main(argv=None):
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action',choices=['init_source_bundle','prepare_bundle','prepare_crew_fixture','renew_fixture_window','prepare_source_fixtures','start','stop','register_browser'])
+    parser.add_argument('action',choices=['init_source_bundle','prepare_bundle','prepare_crew_fixture','prepare_foundation_policy_fixtures','renew_fixture_window','prepare_source_fixtures','start','stop','register_browser'])
     parser.add_argument('--app-port', type=lab_runtime.cli_port)
     parser.add_argument('--provider-port', type=lab_runtime.cli_port)
     parser.add_argument('--database-port', type=lab_runtime.cli_port)
@@ -294,6 +338,10 @@ def main(argv=None):
             lab.bind_selected_runtime()
             if (lab.PRIVATE/'source-bundle-plan.json').exists():
                 private_io.selected()  # Verify the immutable generation before any action mutates runtime.
+            # The future QF verb is independently authored on its own branch;
+            # keep this explicit gate when the two normal commits are integrated.
+            if args.action in ('prepare_source_fixtures', 'prepare_qualified_fixtures', 'register_browser'):
+                require_foundation_policy_fixtures()
             globals()[args.action]()
         print('DEV-BUNDLE-FIXTURE-01 '+args.action+' COMPLETED; software fixture only')
         return 0
