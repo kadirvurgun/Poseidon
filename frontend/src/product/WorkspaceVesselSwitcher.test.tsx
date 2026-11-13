@@ -23,6 +23,25 @@ beforeEach(() => { vi.mocked(vessels).mockResolvedValue(page); vi.mocked(loadWor
 afterEach(() => { vi.resetAllMocks(); vi.restoreAllMocks(); history.replaceState(null, '', '/') })
 
 describe('DEV-021 / T-S2-002 authorized vessel context switch; authored, execution deferred', () => {
+  it('focuses the search after native modal opening and restores the original trigger on unmount', async () => {
+    const show = vi.spyOn(HTMLDialogElement.prototype, 'showModal').mockImplementation(function (this: HTMLDialogElement) {
+      this.open = true
+      // Native dialog focus may initially choose the first Close button. A
+      // mount-time autofocus does not establish post-showModal search focus.
+      this.querySelector<HTMLButtonElement>('button')?.focus()
+    })
+    const opener = document.createElement('button')
+    opener.textContent = 'Open fictional vessel chooser'
+    document.body.appendChild(opener); opener.focus()
+    try {
+      const view = render(<WorkspaceVesselSwitcher {...props} />)
+      try {
+        await waitFor(() => expect(screen.getByRole('searchbox', { name: 'Vessel name or code' })).toBeFocused())
+        expect(show).toHaveBeenCalledOnce()
+      } finally { view.unmount() }
+      expect(opener).toBeFocused()
+    } finally { opener.remove() }
+  })
   it('rechecks the selected vessel and waits for the existing dirty-navigation guard to commit before closing', async () => {
     const next = pending<WorkspaceContext>(); vi.mocked(loadWorkspaceContext).mockReturnValue(next.promise)
     const user = userEvent.setup(); render(<WorkspaceVesselSwitcher {...props} />)

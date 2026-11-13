@@ -42,6 +42,7 @@ export function WorkspaceVesselSwitcher({ session, vessel, language, onClose, on
     const en = language === 'en';
     const epoch = useWorkspaceRevalidation();
     const dialog = useRef<HTMLDialogElement>(null);
+    const queryInput = useRef<HTMLInputElement>(null);
     const [query, setQuery] = useState('');
     const [search, setSearch] = useState('');
     const [offset, setOffset] = useState(0);
@@ -81,6 +82,7 @@ export function WorkspaceVesselSwitcher({ session, vessel, language, onClose, on
         const previous = document.activeElement as HTMLElement | null;
         const node = dialog.current;
         node?.showModal();
+        queryInput.current?.focus();
         return () => { alive.current = false; node?.close(); check.current?.abort(); if (previous?.isConnected)
             previous.focus(); };
     }, []);
@@ -138,7 +140,7 @@ export function WorkspaceVesselSwitcher({ session, vessel, language, onClose, on
         retry(n => n + 1);
     } }}>
       <label htmlFor="vessel-switch-query">{localizedText(en, "pairs.m_08ca52213e308b0d")}</label>
-      <div className="vessel-switch-query"><input autoFocus id="vessel-switch-query" type="search" maxLength={100} value={query} aria-describedby="vessel-switch-help" onChange={event => setQuery(event.target.value)}/><Button type="submit" variant="outline" disabled={!online || !visible}><Search aria-hidden="true"/>{localizedText(en, "pairs.m_cd496e59db1422e0")}</Button></div>
+      <div className="vessel-switch-query"><input ref={queryInput} id="vessel-switch-query" type="search" maxLength={100} value={query} aria-describedby="vessel-switch-help" onChange={event => setQuery(event.target.value)}/><Button type="submit" variant="outline" disabled={!online || !visible}><Search aria-hidden="true"/>{localizedText(en, "pairs.m_cd496e59db1422e0")}</Button></div>
     </form>
     {!online ? <p role="status" className="vessel-switch-state"><WifiOff aria-hidden="true"/>{localizedText(en, "pairs.m_3387d8d4a9e59e4f")}</p> : !visible ? <p role="status">{localizedText(en, "pairs.m_a9a6ee6c050bd9f7")}</p> : current?.failed ? <div role="alert"><p>{localizedText(en, "pairs.m_21da236313e95714")}</p><Button variant="outline" onClick={() => retry(n => n + 1)}>{localizedText(en, "pairs.m_525dd72b26e12b26")}</Button></div> : !current?.data ? <p role="status">{localizedText(en, "pairs.m_a6455a7ec0514b45")}</p> : <>
       {choosing?.state === 'denied' && <p role="alert">{localizedText(en, "pairs.m_09c28a05eb60c775")}</p>}
