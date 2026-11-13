@@ -44,14 +44,51 @@ public sealed partial class DirectoryWorkspaceTests
         await using var db = Db();
         var head = await db.ControlEvidenceHeads.AsNoTracking().SingleAsync(x => x.Kind == saved.Kind && x.Id == saved.Id, Ct);
         var revisions = await db.ControlEvidenceRevisions.AsNoTracking().Where(x => x.Kind == saved.Kind && x.Id == saved.Id).OrderBy(x => x.Revision).ToArrayAsync(Ct);
-        var receipts = await db.ControlEvidenceReceipts.AsNoTracking().Where(x => x.ResourceId == saved.Id).OrderBy(x => x.Key).ToArrayAsync(Ct);
-        var receipt = Assert.Single(receipts, x => x.Key == key); Assert.Equal(actorId, receipt.ActorId); Assert.Equal(SeedVessel.TenantId, receipt.TenantId);
+        var receipts = await db.ControlEvidenceReceipts.AsNoTracking().Where(x => x.ResourceId == saved.Id && x.VesselId == saved.VesselId && x.Kind == saved.Kind).OrderBy(x => x.Key).ToArrayAsync(Ct);
+        var receipt = Assert.Single(receipts, x => x.Key == key && x.ActorId == actorId); Assert.Equal(actorId, receipt.ActorId); Assert.Equal(SeedVessel.TenantId, receipt.TenantId);
         var pins = await db.ControlEvidenceRequirements.AsNoTracking().Where(x => x.Kind == saved.Kind && x.Id == saved.Id).OrderBy(x => x.Revision).ThenBy(x => x.RequirementId).ToArrayAsync(Ct);
         var types = new[] { nameof(ControlEvidenceHead), nameof(ControlEvidenceRevision), nameof(ControlEvidenceRequirement), nameof(ControlEvidenceEdge), nameof(ControlEvidenceReceipt) };
         var audits = await db.AuditEvents.AsNoTracking().Where(x => x.Source == "WebCommand" && types.Contains(x.EntityType) &&
-            (x.ResourceId == saved.Id || x.EntityId.Contains(key))).OrderBy(x => x.Id).ToArrayAsync(Ct);
-        var receiptAudit = Assert.Single(audits, x => x.EntityType == nameof(ControlEvidenceReceipt) && x.EntityId.Contains(key));
-        Assert.Equal("Added", receiptAudit.Action); Assert.Equal(actorId.ToString("D"), receiptAudit.ActorId);
+            x.ResourceId == saved.Id).OrderBy(x => x.Id).ToArrayAsync(Ct);
+        var receiptAudits = audits.Where(x => x.EntityType == nameof(ControlEvidenceReceipt)).ToArray();
+        Assert.Equal(receipts.Length, receiptAudits.Length);
+        var matchedReceiptAudits = new HashSet<Guid>();
+        static string? Field(AuditEvent audit, string name) {
+            using var fields = JsonDocument.Parse(audit.ChangeSummary!);
+            return Assert.Single(fields.RootElement.EnumerateArray(), value => value.GetProperty("field").GetString() == name)
+                .GetProperty("after").GetString();
+        }
+        // Audit identity is the committed resource, never the private command key.
+        // Match EVERY historical receipt to its exact saved revision/xmin and
+        // original HTTP correlation; a later receipt is a separate valid effect.
+        foreach (var committed in receipts) {
+            var outcome = JsonSerializer.Deserialize<ControlEvidenceDto>(committed.OutcomeJson, ControlRecoveryJson)!;
+            Assert.Equal(saved.Id, outcome.Id); Assert.Equal(saved.VesselId, outcome.VesselId); Assert.Equal(saved.Kind, outcome.Kind);
+            var audit = Assert.Single(receiptAudits, value => value.EntityId == committed.ResourceId.ToString("D") &&
+                value.TenantId == committed.TenantId && value.ActorId == committed.ActorId.ToString("D") &&
+                value.AfterRevision == outcome.Revision && value.AfterVersion == outcome.Version);
+            Assert.True(matchedReceiptAudits.Add(audit.Id));
+            Assert.Equal("Added", audit.Action);
+            var revisionAudit = Assert.Single(audits, value => value.EntityType == nameof(ControlEvidenceRevision) &&
+                value.AfterRevision == outcome.Revision && value.CorrelationId == audit.CorrelationId);
+            var headAudit = Assert.Single(audits, value => value.EntityType == nameof(ControlEvidenceHead) &&
+                value.AfterRevision == outcome.Revision && value.CorrelationId == audit.CorrelationId);
+            Assert.Equal("Added", revisionAudit.Action); Assert.Equal(outcome.Revision == 1 ? "Added" : "Modified", headAudit.Action);
+            foreach (var item in new[] { audit, revisionAudit, headAudit }) {
+                Assert.Equal(committed.TenantId, item.TenantId); Assert.Equal(committed.ActorId.ToString("D"), item.ActorId);
+                Assert.Equal("User", item.ActorType); Assert.Equal("WebCommand", item.Source);
+                Assert.Equal(saved.Id, item.ResourceId); Assert.Equal(saved.VesselId, item.VesselId);
+                Assert.False(string.IsNullOrWhiteSpace(item.CorrelationId)); Assert.Equal(audit.CorrelationId, item.CorrelationId);
+                Assert.False(string.IsNullOrWhiteSpace(item.RoleContext)); Assert.Equal(audit.RoleContext, item.RoleContext);
+                Assert.False(string.IsNullOrWhiteSpace(item.CapabilityContext)); Assert.Equal(audit.CapabilityContext, item.CapabilityContext);
+                Assert.Equal("RecordedControlledCode", item.ReasonStatus);
+                Assert.Equal(outcome.Kind + (outcome.Revision == 1 ? "Create" : "Update"), Field(item, "CommandName"));
+                Assert.Equal("Vessel", Field(item, "ScopeKind")); Assert.Equal("PREPARATION_COMMAND", Field(item, "TechnicalReasonCode"));
+                Assert.False(item.EntityId.Contains(committed.Key, StringComparison.Ordinal));
+                Assert.False((item.ChangeSummary ?? "").Contains(committed.Key, StringComparison.Ordinal));
+            }
+        }
+        Assert.Equal(receiptAudits.Length, matchedReceiptAudits.Count);
         Assert.True(head.Revision >= saved.Revision); Assert.Equal(head.Revision, revisions.Last().Revision);
         // Compare in memory: never print private serialized body/receipt/audit text.
         return JsonSerializer.SerializeToUtf8Bytes(new { head, revisions, receipts, pins, audits }, ControlRecoveryJson);
