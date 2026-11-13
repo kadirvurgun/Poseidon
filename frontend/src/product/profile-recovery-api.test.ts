@@ -16,7 +16,7 @@ describe('PRO01/04 closed profile receipt and session wire sources, execution DE
   })
   it('sends the exact original serialized bytes/key/PUT route and accepts its historical revision rather than a newer xmin', async () => {
     const value = attempt(), row = { ...profileRow(), revision: 2, version: 13, provenance: 'Missing' }, csrf = crypto.randomUUID()
-    const fetch = vi.fn(async (_url: string, _init?: RequestInit) => profileResponse(row)); vi.stubGlobal('fetch', fetch)
+    const fetch = vi.fn<(url: string, init?: RequestInit) => Promise<Response>>().mockResolvedValue(profileResponse(row)); vi.stubGlobal('fetch', fetch)
     expect((await saveProfileAttempt(value, csrf, new AbortController().signal)).revision).toBe(2)
     expect(fetch.mock.calls[0][0]).toBe('/api/v1/'+value.route)
     expect(fetch.mock.calls[0][1]).toMatchObject({ credentials: 'same-origin', method: 'PUT', body: value.body, headers: { 'X-CSRF-TOKEN': csrf, 'Idempotency-Key': value.key } })

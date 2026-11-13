@@ -13,10 +13,11 @@ const props = () => ({ owner, language: 'en' as const, csrf: crypto.randomUUID()
 const text = 'FICTIONAL retained owning declaration'
 type Attempt = { path: string; method: string; body: string; key: string; csrf: string; sessions: number }
 type Fixture = { rows: Row[]; user: ReturnType<typeof controlSession>; sessions: number; attempts: Attempt[]; failReads: boolean;
-  acknowledgment: Promise<Response> | null; acknowledgmentReads: number; tokens: string[] }
+  acknowledgment: Promise<Response> | null; acknowledgmentReads: number; tokens: string[];
+  owners: { actorId: string; roleId: string }[]; ownerResponse: Promise<Response> | null }
 function fixture(post: (command: Command, attempt: Attempt) => Promise<Response>, initial: Row[] = []): Fixture {
   const state: Fixture = { rows: initial, user: controlSession(), sessions: 0, attempts: [], failReads: false,
-    acknowledgment: null as Promise<Response> | null, acknowledgmentReads: 0, tokens: [] as string[] }
+    acknowledgment: null as Promise<Response> | null, acknowledgmentReads: 0, tokens: [] as string[], owners: [], ownerResponse: null }
   const fetch = vi.fn(async (url: string, init?: RequestInit) => {
     if (url.endsWith('/auth/session')) { state.sessions++; state.tokens.push(crypto.randomUUID()); return response({ ...state.user, csrfToken: state.tokens.at(-1) }) }
     if (init?.method) {
@@ -26,7 +27,7 @@ function fixture(post: (command: Command, attempt: Attempt) => Promise<Response>
     }
     if (url.includes('/vessels?')) return response({ items: [{ id: controlVessel, name: 'FICTIONAL owning Ship', companyId: controlId, code: 'F1', kind: 'Ship', version: 1, canEdit: true }], offset: 0, limit: 25, hasMore: false })
     if (url.includes('/regulatory-source-governance/')) { state.acknowledgmentReads++; return state.acknowledgment ?? response({ items: [], hasMore: false, actions: [], authorities: [], owners: [] }) }
-    if (url.includes('/owners?')) return response({ items: [] })
+    if (url.includes('/owners?')) return state.ownerResponse ?? response({ items: state.owners })
     if (url.includes('/orphans?')) return response({ available: false, reason: 'AUTHORITATIVE_APPLICABILITY_UNAVAILABLE', draftCriticalOrphans: [], uncontrolledObligations: [], offset: 0, hasMore: false })
     if (url.includes('/rules') || url.includes('/requirement-drafts')) return response({ items: [], offset: 0, limit: 25, hasMore: false })
     if (url.includes('/files')) return response({ items: [], offset: 0, hasMore: false, canWrite: false, available: false, maxBytes: 0, allowedTypes: ['image/png'] })
@@ -112,6 +113,26 @@ describe('Control/Evidence original-owner recovery, authored execution DEFERRED'
     await screen.findByRole('alert'); expect(p.onSaving).toHaveBeenLastCalledWith(true)
     state.user = controlSession(); view.rerender(<ControlEvidence {...p} />)
     expect(await screen.findByLabelText('Title')).toHaveValue(text)
+    expect(state.attempts).toHaveLength(0)
+  })
+
+  it('does not reintroduce old picker owners while the newly authenticated owner read is pending', async () => {
+    const state = fixture(async () => response({}, 403)), previous = { actorId: state.user.actorId, roleId: crypto.randomUUID() }
+    state.owners = [previous]
+    const p = props(), view = render(<ControlEvidence {...p} />); await open()
+    const oldLabel = `${previous.actorId} / ${previous.roleId}`
+    await screen.findByRole('option', { name: oldLabel, exact: true })
+    const next = { actorId: controlId, roleId: crypto.randomUUID() }
+    let finishOwners!: (value: Response) => void
+    state.ownerResponse = new Promise(resolve => { finishOwners = resolve })
+    state.user = { ...state.user, actorId: next.actorId }
+    view.rerender(<ControlEvidence {...p} owner={`${state.user.tenantId}/${state.user.actorId}`} />)
+    expect(screen.queryByRole('option', { name: oldLabel, exact: true })).not.toBeInTheDocument()
+    await screen.findByLabelText('Title')
+    expect(screen.queryByRole('option', { name: oldLabel, exact: true })).not.toBeInTheDocument()
+    await act(async () => { finishOwners(response({ items: [next] })) })
+    await screen.findByRole('option', { name: `${next.actorId} / ${next.roleId}`, exact: true })
+    expect(screen.queryByRole('option', { name: oldLabel, exact: true })).not.toBeInTheDocument()
     expect(state.attempts).toHaveLength(0)
   })
 

@@ -7,7 +7,7 @@ import { ComplianceInputEditor } from './ComplianceInputEditor';
 import * as qualification from './qualification-api';
 import { TugCapabilityEditor } from './TugCapabilityEditor';
 import { OperationEquipmentEditor } from './OperationEquipmentEditor';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import * as service from './control-evidence-api';
 import { useControlEvidenceRecovery } from './use-control-evidence-recovery';
 import { useWorkspaceRevalidation } from './use-workspace-revalidation';
@@ -109,7 +109,7 @@ function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving, isTu
     const reviewDirty = Object.values(reviewDrafts).some(Boolean), reviewBusy = Object.values(reviewSaves).some(Boolean);
     const liveReviews = useRef<{ drafts: Record<string, boolean>; saves: Record<string, boolean> }>({ drafts: {}, saves: {} });
     const ackEpoch = useRef(0), ackRead = useRef<AbortController | null>(null), mounted = useRef(false);
-    const humanBlocked = () => Object.values(liveReviews.current.drafts).some(Boolean) || Object.values(liveReviews.current.saves).some(Boolean);
+    const humanBlocked = useCallback(() => Object.values(liveReviews.current.drafts).some(Boolean) || Object.values(liveReviews.current.saves).some(Boolean), []);
     function reportReview(key: string, value: boolean, saving: boolean) {
         const values = saving ? liveReviews.current.saves : liveReviews.current.drafts;
         if (values[key] === value) return;
@@ -117,26 +117,33 @@ function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving, isTu
         if (saving) setReviewSaves({ ...values }); else setReviewDrafts({ ...values });
     }
     useEffect(() => { mounted.current = true; return () => { mounted.current = false; ackEpoch.current++; ackRead.current?.abort(); }; }, []);
-    function hydrate(row: service.Row | null) {
+    const hydrate = useCallback((row: service.Row | null) => {
         setSelected(row); setContent(row?.content ?? service.blank()); setFile(row?.file ?? null);
         setRequirements(row?.requirements ?? []); setLinks(row?.links ?? []); setDirty(false);
-    }
+    }, []);
     const recovery = useControlEvidenceRecovery({ vessel, kind, owner, id: selected?.id ?? null, offset, offline, blocked: humanBlocked, onSaved: hydrate });
-    const { rows, busy, error, setError, conflict, attempt: frozen } = recovery;
+    const { rows, busy, error, setError, conflict, attempt: frozen, read } = recovery;
     const [uploadDirty, setUploadDirty] = useState(false), [uploadBusy, setUploadBusy] = useState(false), [discard, setDiscard] = useState(false);
     const [source, setSource] = useState<registers.RegisterPage<registers.Revision> | null>(null), [pickerError, setPickerError] = useState(false);
     const [sourceId, setSourceId] = useState(''), [sourceOffset, setSourceOffset] = useState(0);
-    useEffect(() => { if (!rows) { setHistory(null); setSource(null); } }, [rows]);
+    const resourcesVisible = !offline && !!rows;
+    const [previousResourcesVisible, setPreviousResourcesVisible] = useState(resourcesVisible);
+    // Withdraw read projections in the render that loses the owning proof.
+    // The local draft and immutable command remain owned by recovery.
+    if (previousResourcesVisible !== resourcesVisible) {
+        setPreviousResourcesVisible(resourcesVisible);
+        if (!resourcesVisible) {
+            setHistory(null); setSource(null); setOwners([]); setReqs(null); setControls(null);
+            setRuleRows(null); setFiles([]); setFileMore(false); setOrphan(null);
+        }
+    }
     useEffect(() => { onDirty(dirty || recovery.dirty || uploadDirty || reviewDirty); }, [dirty, recovery.dirty, uploadDirty, reviewDirty, onDirty]);
     useEffect(() => { onSaving(recovery.barrier || uploadBusy || reviewBusy); }, [recovery.barrier, uploadBusy, reviewBusy, onSaving]);
     useEffect(() => {
-        if (offline || !rows) {
-            setOwners([]); setReqs(null); setControls(null); setRuleRows(null); setFiles([]); setOrphan(null);
-            return;
-        }
+        if (offline || !rows) return;
         let active = true;
         const c = new AbortController();
-        recovery.read(signal => Promise.all([service.owners(vessel, signal), registers.listDrafts('requirements', '', reqOffset, signal), service.page(vessel, 'Control', controlOffset, signal), rules.rules(ruleOffset, signal), filePage(vessel, fileOffset, signal), service.orphans(vessel, orphanOffset, signal)]), c.signal).then(([o, r, controls, ruleRows, files, orphan]) => {
+        read(signal => Promise.all([service.owners(vessel, signal), registers.listDrafts('requirements', '', reqOffset, signal), service.page(vessel, 'Control', controlOffset, signal), rules.rules(ruleOffset, signal), filePage(vessel, fileOffset, signal), service.orphans(vessel, orphanOffset, signal)]), c.signal).then(([o, r, controls, ruleRows, files, orphan]) => {
             if (!active)
                 return;
             setOwners(o);
@@ -159,20 +166,20 @@ function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving, isTu
             }
         });
         return () => { active = false; c.abort(); };
-    }, [vessel, rows, reqOffset, controlOffset, ruleOffset, fileOffset, orphanOffset, reload, offline, recovery.read]);
-    const resetScope1 = [vessel, kind, selected, historyOffset, historyAsOf, offline] as const;
+    }, [vessel, rows, reqOffset, controlOffset, ruleOffset, fileOffset, orphanOffset, reload, offline, read]);
+    const resetScope1 = [vessel, kind, selected, historyOffset, historyAsOf, offline, rows] as const;
     const [previousScope1, setPreviousScope1] = useState(resetScope1);
     // Withdraw stale state in the same render that changes the request scope.
-    if (!Object.is(previousScope1[0], vessel) || !Object.is(previousScope1[1], kind) || !Object.is(previousScope1[2], selected) || !Object.is(previousScope1[3], historyOffset) || !Object.is(previousScope1[4], historyAsOf) || !Object.is(previousScope1[5], offline)) {
+    if (!Object.is(previousScope1[0], vessel) || !Object.is(previousScope1[1], kind) || !Object.is(previousScope1[2], selected) || !Object.is(previousScope1[3], historyOffset) || !Object.is(previousScope1[4], historyAsOf) || !Object.is(previousScope1[5], offline) || !Object.is(previousScope1[6], rows)) {
         setPreviousScope1(resetScope1);
         setHistory(null);
     }
     useEffect(() => {
-        if (!selected || offline)
+        if (!selected || offline || !rows)
             return;
         let active = true;
         const c = new AbortController();
-        recovery.read(signal => service.page(vessel, kind, historyOffset, signal, selected.id, historyAsOf || undefined), c.signal).then(p => {
+        read(signal => service.page(vessel, kind, historyOffset, signal, selected.id, historyAsOf || undefined), c.signal).then(p => {
             if (active)
                 setHistory(p);
         }).catch(e => {
@@ -180,20 +187,20 @@ function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving, isTu
                 setError(e instanceof directory.ApiError ? e.status : 0);
         });
         return () => { active = false; c.abort(); };
-    }, [vessel, kind, selected, historyOffset, historyAsOf, offline, recovery.read]);
-    const resetScope2 = [sourceId, sourceOffset, offline] as const;
+    }, [vessel, kind, selected, historyOffset, historyAsOf, offline, rows, read, setError]);
+    const resetScope2 = [sourceId, sourceOffset, offline, rows] as const;
     const [previousScope2, setPreviousScope2] = useState(resetScope2);
     // Withdraw stale state in the same render that changes the request scope.
-    if (!Object.is(previousScope2[0], sourceId) || !Object.is(previousScope2[1], sourceOffset) || !Object.is(previousScope2[2], offline)) {
+    if (!Object.is(previousScope2[0], sourceId) || !Object.is(previousScope2[1], sourceOffset) || !Object.is(previousScope2[2], offline) || !Object.is(previousScope2[3], rows)) {
         setPreviousScope2(resetScope2);
         setSource(null);
     }
     useEffect(() => {
-        if (!sourceId || offline)
+        if (!sourceId || offline || !rows)
             return;
         const c = new AbortController();
         let active = true;
-        recovery.read(signal => registers.historyDraft('sources', sourceId, sourceOffset, signal), c.signal).then(p => {
+        read(signal => registers.historyDraft('sources', sourceId, sourceOffset, signal), c.signal).then(p => {
             if (active)
                 setSource(p);
         }).catch(() => {
@@ -201,7 +208,7 @@ function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving, isTu
                 setPickerError(true);
         });
         return () => { active = false; c.abort(); };
-    }, [sourceId, sourceOffset, offline, recovery.read]);
+    }, [sourceId, sourceOffset, offline, rows, read]);
     const locked = recovery.locked || uploadBusy || reviewDirty || reviewBusy;
     const mutate = (key: keyof service.Content, value: string | boolean | null) => { if (!recovery.edit()) return; setContent(c => ({ ...c, [key]: value })); setDirty(true); };
     function choose(row: service.Row | null) {
@@ -246,7 +253,7 @@ function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving, isTu
     <EnterpriseActions>
       <Button variant="outline" disabled={busy || !recovery.available} onClick={recovery.recheck}>{localizedText(language, 'pairs.m_542619365a11df9d')}</Button>
       {frozen && !recovery.canShow && <Button disabled onClick={recovery.retry}>{localizedText(language, 'pairs.m_eb449a06e44678ab')}</Button>}
-      {!frozen && recovery.canDiscard && <Button variant="outline" disabled={busy || uploadBusy || humanBlocked()} onClick={() => setDiscard(true)}>{localizedText(language, 'pairs.m_92ccf21431e2c4a0')}</Button>}
+      {!frozen && recovery.canDiscard && <Button variant="outline" disabled={busy || uploadBusy || reviewDirty || reviewBusy} onClick={() => setDiscard(true)}>{localizedText(language, 'pairs.m_92ccf21431e2c4a0')}</Button>}
     </EnterpriseActions>
     {!rows && error === null && <p role="status">{localizedText(language, "pairs.m_06330283a810bdf9")}</p>}
     {!recovery.canShow && !frozen && <Button disabled>{localizedText(language, 'pairs.m_bd59c5fb1d6040b0')}</Button>}

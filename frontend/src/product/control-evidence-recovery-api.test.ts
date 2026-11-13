@@ -34,7 +34,7 @@ describe('CEO01/03 exact command receipt wire binding, authored execution DEFERR
   it('keeps historical expected revision/token independent of later live head data and sends unchanged serialized bytes', async () => {
     const command = { ...controlCommand(), expectedVersion: 5, reasonCode: 'AUTHORING_CORRECTION' as const }, row = echoControl(command, 'Control', 2)
     const body = JSON.stringify(command), key = crypto.randomUUID(), csrf = crypto.randomUUID()
-    const fetch = vi.fn(async (_url: string, _init?: RequestInit) => response(row)); vi.stubGlobal('fetch', fetch)
+    const fetch = vi.fn<(url: string, init?: RequestInit) => Promise<Response>>().mockResolvedValue(response(row)); vi.stubGlobal('fetch', fetch)
     expect((await save(controlVessel, 'Control', controlId, { body, key, expectedRevision: 2 }, csrf, new AbortController().signal)).revision).toBe(2)
     const [url, init] = fetch.mock.calls[0]
     expect(url.includes(`/controls/${controlId}?`) && init?.method === 'PUT' && init.body === body).toBe(true)

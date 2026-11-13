@@ -33,7 +33,8 @@ export function useControlEvidenceRecovery({ vessel, kind, owner: hint, id, offs
     if (live.current !== scope || !available) { editEpoch.current++; writer.current?.abort(); acknowledgment.current?.abort() }
     live.current = scope
   }, [scope, available, blocked, onSaved])
-  useEffect(() => { mounted.current = true; return () => { mounted.current = false; editEpoch.current++; writer.current?.abort(); acknowledgment.current?.abort() } }, [])
+  const abortPending = useCallback(() => { editEpoch.current++; writer.current?.abort(); acknowledgment.current?.abort() }, [])
+  useEffect(() => { mounted.current = true; return () => { mounted.current = false; abortPending() } }, [abortPending])
   const valid = useCallback((captured: string, signal: AbortSignal) => mounted.current && !signal.aborted && live.current === captured, [])
   const keep = (value: ControlAttempt | null) => { frozen.current = value; setAttempt(value) }
   const bind = (value: Binding | null) => { draft.current = value; setBinding(value) }

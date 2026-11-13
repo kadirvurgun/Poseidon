@@ -26,16 +26,16 @@ type Props = {
     journey?: 'profile' | 'onboarding';
 };
 export function RegulatoryProfile(props: Props) {
-    const { id, language, journey = 'profile' } = props;
+    const { id, language, journey = 'profile', onRegisterDiscard } = props;
     const onboarding = journey === 'onboarding', [step, setStep] = useState(0);
     const recovery = useProfileRecovery(props);
     const { profile, content, history, historyOffset, historyFailure, failure, busy: saving, uncertain, dirty, notice, invalidateAccess } = recovery;
     const currentRecovery = useRef(recovery);
     useLayoutEffect(() => { currentRecovery.current = recovery; });
     const discardContext = `${id}/${journey}/${props.owner ?? ''}`;
-    useEffect(() => props.onRegisterDiscard?.({ context: discardContext,
+    useEffect(() => onRegisterDiscard?.({ context: discardContext,
         discard: canRelease => currentRecovery.current.discard(canRelease), canLeave: () => currentRecovery.current.canLeave(),
-    }), [discardContext, props.onRegisterDiscard]);
+    }), [discardContext, onRegisterDiscard]);
     const errors = failure?.errors ?? {};
     const t = copy[language];
     useEffect(() => {
