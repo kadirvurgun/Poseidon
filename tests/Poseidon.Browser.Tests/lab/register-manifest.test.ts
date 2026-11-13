@@ -37,7 +37,7 @@ const declaredFamilies = [
   ['../register-specs/audit-cases.ts', 'auditCases'],
   ['../register-specs/file-cases.ts', 'fileCases'],
 ] as const
-type Entry = { name: string; run: unknown; restricted: boolean }
+type Entry = { name: string; run: unknown; restricted: boolean; account?: 'lab-crew-boundary' }
 
 test('native Node imports the entire declared signed register manifest with every unique callable case', async () => {
   const manifest = await import('../register-specs/cases.ts')
@@ -65,5 +65,11 @@ test('native Node imports the entire declared signed register manifest with ever
     assert.equal(typeof entry.restricted, 'boolean', 'explicit genuine account scope required')
     assert.equal(entry.run, expected[index].run, 'the declared journey callback must be registered')
     assert.equal(entry.restricted, expected[index].restricted, 'the declared account scope must be retained')
+    assert.equal(('account' in entry ? entry.account : undefined), expected[index].account, 'declared account metadata required')
   })
+  const overrides = actual.filter(entry => 'account' in entry)
+  assert.equal(overrides.length, 1, 'only the crew boundary journey selects its dedicated persona')
+  assert.equal(overrides[0].name, 'crew-assignment-policy-history-and-owning-input-boundary')
+  assert.equal('account' in overrides[0] && overrides[0].account, 'lab-crew-boundary')
+  assert.equal(overrides[0].restricted, false)
 })

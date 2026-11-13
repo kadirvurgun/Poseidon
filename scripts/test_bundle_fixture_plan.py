@@ -13,6 +13,7 @@ import bundle_fixture_plan as plan
 import oidc_lab as lab
 import bundle_oidc_lab as bundle
 import bundle_private as private_io
+import bundle_crew_boundary_fixture as crew_boundary
 
 
 class BundleFixturePlanTests(unittest.TestCase):
@@ -165,7 +166,7 @@ class BundleFixturePlanTests(unittest.TestCase):
                 bundle.init_source_bundle()
             self.assertEqual('preserve', (Path(directory)/'appsettings.json').read_text())
 
-    def test_fresh_source_profile_plan_has_matching_four_provider_subjects_without_provider_calls(self):
+    def test_fresh_source_profile_plan_has_five_exact_provider_subjects_and_scoped_crew_persona_without_provider_calls(self):
         with tempfile.TemporaryDirectory() as directory, patch.object(lab, 'PRIVATE', Path(directory)), patch.object(lab, 'private_directory'), patch.object(bundle.lab_runtime, 'preflight'), patch.object(lab, 'run') as child:
             child.side_effect=lambda *args,**kwargs:[(Path(directory)/name).write_text('SYNTHETIC unit path fixture; not a trusted certificate') for name in ('ca.pem','tls.pem','tls.key')]
             bundle.init_source_bundle()
@@ -173,9 +174,18 @@ class BundleFixturePlanTests(unittest.TestCase):
             realm=json.loads((root/'realm/poseidon-lab-realm.json').read_text())
             config=json.loads((root/'appsettings.json').read_text())
             members=config['Authentication']['Oidc']['Memberships']
-            self.assertEqual(4,len(realm['users'])); self.assertEqual({u['id'] for u in realm['users']},{m['Subject'] for m in members})
-            self.assertEqual(metadata['foreignActorId'],members[-1]['ActorId'])
-            self.assertEqual(plan.FOREIGN_TENANT,members[-1]['TenantId'])
+            self.assertEqual(5,len(realm['users'])); self.assertEqual(5,len(members))
+            self.assertEqual({'lab-manager','lab-restricted','lab-reviewer','lab-foreign',crew_boundary.ACCOUNT},
+                             {u['username'] for u in realm['users']})
+            self.assertEqual({u['id'] for u in realm['users']},{m['Subject'] for m in members})
+            self.assertEqual(5,len({m['ActorId'] for m in members}))
+            foreign=next(m for m in members if m['ActorId']==metadata['foreignActorId'])
+            self.assertEqual(plan.FOREIGN_TENANT,foreign['TenantId'])
+            person=next(m for m in members if m['ActorId']==crew_boundary.identity(metadata['runId'],'actor'))
+            self.assertEqual(list(crew_boundary.PERMISSIONS),person['Permissions'])
+            self.assertEqual([{'VesselId':metadata['vesselId'],'CanEdit':True}],person['VesselGrants'])
+            self.assertIs(person['TenantWideRead'],False);self.assertIs(person['TenantWideManage'],False)
+            self.assertEqual(1,len(person['RoleReferences']))
             self.assertEqual(1,child.call_count)
             self.assertIn('oidc-lab-certificates.ps1',child.call_args.args[0][3])
             self.assertNotIn('DailyReviewAuthorities',members[1])

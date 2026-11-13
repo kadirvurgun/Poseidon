@@ -17,6 +17,7 @@ import oidc_lab as lab
 import bundle_fixture_plan as plan
 import bundle_private as private_io
 import bundle_crew_fixture as crew_fixture
+import bundle_crew_boundary_fixture as crew_boundary
 import bundle_observation_fixture as observation_fixture
 import lab_runtime
 import bundle_qualified_fixture_plan as qualified_plan
@@ -55,6 +56,7 @@ def init_source_bundle(app_port=None, provider_port=None, database_port=None):
     config=lab.navigation_membership(config,realm)
     config=lab.catalog_membership(config,realm,lab.AUTHORITY,lab.PROJECT)
     config,metadata=plan.configure(config,realm,lab.AUTHORITY,lab.PROJECT,run_id)
+    config,realm,credentials=crew_boundary.configure(config,realm,credentials,metadata)
     if runtime is not None:
         metadata['ownedRuntime'] = runtime
         private_io.publish_json(lab.PRIVATE/lab_runtime.FILE, runtime)
@@ -63,7 +65,7 @@ def init_source_bundle(app_port=None, provider_port=None, database_port=None):
     if len(mappings)!=1:
         raise RuntimeError('synthetic_navigation_mapping_invalid')
     mappings[0]['Keys']=list(dict.fromkeys([*mappings[0]['Keys'],*NAVIGATION_KEYS]))
-    # Build the complete four-identity genesis before the first file is written.
+    # Build all five identities before the first immutable genesis is published.
     # No generic three-identity ready marker is ever published first.
     for name,value in [('realm/poseidon-lab-realm.json',realm),('credentials.json',credentials),('appsettings.json',config)]:
         private_io.publish_json(lab.PRIVATE/name,value)

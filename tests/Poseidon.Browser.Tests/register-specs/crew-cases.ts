@@ -2,11 +2,17 @@ import { expect, type Page } from '@playwright/test';
 // Actual HTTPS host/session/PostgreSQL only, using the existing private safe runner.
 // Combined-gate operator must provision disposable crew.read/write + identity read/write;
 // restricted membership must have directory scope but no crew permission. No production appointments.
-async function vesselFor(page: Page) {
+async function vesselFor(page: Page, singleShip = false) {
     const response = await page.request.get('/api/v1/vessels?limit=25');
     expect(response.status() === 200).toBe(true);
     const vessels = await response.json();
     expect(vessels.items.length > 0).toBe(true);
+    if (singleShip) {
+        expect(vessels.items).toHaveLength(1);
+        expect(vessels.items[0].kind).toBe('Ship');
+        // Directory canEdit requires directory.write, which this persona never
+        // receives. The actual ordinary Crew POST below proves scoped crew write.
+    }
     return vessels.items[0].id as string;
 }
 async function rosterCreateProfile(page: Page) {
@@ -124,7 +130,7 @@ async function medicalDeclaration(page: Page) {
     expect(!(await history.text()).includes('2031-02-03')).toBe(true);
 }
 export const crewCases = [
-    { name: 'crew-assignment-policy-history-and-owning-input-boundary', run: assignmentInputHistory, restricted: false },
+    { name: 'crew-assignment-policy-history-and-owning-input-boundary', run: assignmentInputHistory, restricted: false, account: 'lab-crew-boundary' },
     { name: 'crew-restricted-medical-declaration-reload-no-fitness-grant', run: medicalDeclaration, restricted: false },
     { name: 'crew-roster-profile-dirty', run: rosterCreateProfile, restricted: false },
     { name: 'crew-period-version-conflict', run: materialConflict, restricted: false },
@@ -132,7 +138,7 @@ export const crewCases = [
 ] as const;
 // Real signed HTTPS host and ordinary commands. No API routes mocked, no provider started.
 async function assignmentInputHistory(page: Page) {
-    const vessel = await vesselFor(page), id = crypto.randomUUID();
+    const vessel = await vesselFor(page, true), id = crypto.randomUUID();
     const session = await (await page.request.get('/api/v1/auth/session')).json();
     const created = await page.request.post(`/api/v1/vessels/${vessel}/crew`, {
         headers: { 'X-CSRF-TOKEN': session.csrfToken, 'Idempotency-Key': crypto.randomUUID() },
@@ -151,7 +157,7 @@ async function assignmentInputHistory(page: Page) {
     await expect(history.getByText('Historical policy unknown', { exact: true })).toHaveCount(2);
     const inputs = page.getByRole('region', { name: 'Crew input status', exact: true });
     // This incomplete assignment has no credential declaration. The current
-    // normal writer has neither contact-purpose nor assessment-family access;
+    // dedicated boundary writer has neither contact-purpose nor assessment access;
     // those protected inputs must remain withheld rather than become evaluable.
     const expectedInputs = [
         ['Certificate input', 'No visible declaration'],

@@ -166,6 +166,7 @@ jobs:
           python3 -m unittest discover -s scripts -p test_bundle_qualified_fixture_plan.py -v
       - name: Synthetic observation fixture configuration unit tests
         run: |
+          python3 -m unittest discover -s scripts -p test_bundle_crew_boundary_fixture.py -v
           python3 -m unittest discover -s scripts -p test_bundle_observation_fixture.py -v
           python3 -m unittest discover -s scripts -p test_bundle_fixture_plan.py -v
           python3 -m unittest discover -s scripts -p test_lab_runtime.py -v
