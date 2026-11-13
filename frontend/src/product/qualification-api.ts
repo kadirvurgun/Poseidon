@@ -73,7 +73,8 @@ export async function loadSession(signal: AbortSignal): Promise<QualificationSes
   if (user.authenticated !== true) throw new ApiError(401, 'authentication_required')
   if (user.canRead !== true || user.setupRequired !== false) throw new ApiError(403, 'permission_denied')
   if (!isGuid(user.actorId) || !isGuid(user.tenantId) || typeof user.csrfToken !== 'string' ||
-      user.csrfToken.length < 16 || user.csrfToken.length > 2048 || /[\u0000-\u001f\u007f]/.test(user.csrfToken)) return fail()
+      user.csrfToken.length < 16 || user.csrfToken.length > 2048 ||
+      Array.from(user.csrfToken).some(character => character.charCodeAt(0) < 32 || character.charCodeAt(0) === 127)) return fail()
   return Object.freeze({ owner: `${user.tenantId.toLowerCase()}/${user.actorId.toLowerCase()}`, csrf: user.csrfToken })
 }
 export async function send(rule: string, attempt: { body: string; key: string; action: 'events' | 'fact-attestations' }, csrf: string, signal: AbortSignal) {

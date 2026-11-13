@@ -24,6 +24,8 @@ it.each([
   { authenticated: true, canRead: true, setupRequired: false, actorId: null, tenantId: other, csrfToken: crypto.randomUUID() },
   { authenticated: true, canRead: true, setupRequired: false, actorId: other, tenantId: null, csrfToken: crypto.randomUUID() },
   { authenticated: true, canRead: true, setupRequired: false, actorId: other, tenantId: other, csrfToken: '' },
+  { authenticated: true, canRead: true, setupRequired: false, actorId: other, tenantId: other, csrfToken: crypto.randomUUID() + '\u0000' },
+  { authenticated: true, canRead: true, setupRequired: false, actorId: other, tenantId: other, csrfToken: crypto.randomUUID() + '\u007f' },
 ])('rejects an unavailable or malformed session without a write', async value => {
   const fetcher = response(value)
   await expect(loadSession(new AbortController().signal)).rejects.toThrow()
