@@ -1,5 +1,11 @@
 # S3 qualification işlem kurtarma — 13.11.2026
 
+Yeni37e kapı kontrol noktası: Release/1067birim/79PG PASS, tamAPI884vakanın857'si
+PASS/27FAIL. YeniCE17/Profil10 audit-helper lookup hataları nedeniyle kapı FAIL;
+S3qualification9 vakası bu27 hata arasında yoktur, ancak eski64kritik117/model
+sonuçları37e'ye aktarılmaz. Ön yüz lint11hata6uyarı ile durdu; sonraki UI/genuine
+kontrolleri başlamadı. S3 canonical kabulü açık; özgün64/AED/0e kanıtları korunur.
+
 Güncel kontrol noktası: backend64 üzerinde yeni9API dahil846/846 kapsamı PASS;
 frontendAED üzerinde1566/1566 bileşen ve lint/tip/build PASS. Bağımsız657girdi/8proje
 ve frontend eşitlik bağları, yalnız aynı girdiler için0e tüketimini doğrular.

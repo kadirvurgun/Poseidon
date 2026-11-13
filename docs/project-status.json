@@ -1114,7 +1114,7 @@
     "verification_record_scope": "Authored/deferred and original20f1198 results are historical;current rejection-repair evidence in core_bundle_01.verification"
   },
   "baseline": "POSEIDON v46.3 updated 2026-10-30 / Library26 candidate",
-  "current_stage": "Locally validated native subpackage: original64 backend1067unit/79PG/846API including117critical+model PASS; originalAED frontend1566/244suites/lint/type/build PASS; protocol209OS-union PASS. Fresh0e repo2784/client20 scans0findings and6pureS2helpersPASS with explicit unchanged-input bindings. Genuine0e signed8fixtures+2lanes completed but qualified preflight Set-Acl failed before fullregister/TLS/finiteS2; services stopped. Existing-root read-only validation fix authoring. HROec/CE845/Profile7b source-clear isolated next package, newexecutionDEFERRED. Canonical20tasks103SP10.62percent unchanged; no PR/merge.",
+  "current_stage": "Current owner-recovery source37e normal merges41files; actual new large native gate FAILED. BackendRelease81.175s/1067units/79PG338.488s PASS; fullAPI884=857PASS27FAIL0skip1033.914s, all17CE+10Profile rows hit sharedreceipt-audit Single atCE53/Profile47; critical/modelNOTRUNFAILFAST. Frontmanifest1/privacy8PASS, lint11errors6warnings64.462s; type/protocol/components/build/scansNOTRUNFAILFAST. AllownClam/S3/privateenvcleanupverified. S2pure10PASS1.201s noactualobservations. Original0e validatednative/64/AED execution scope preserved. Next0dd historysourceclear3newunrunUIcases; Frontrepairing17lintdiagnostics andlocale preparing narrow auditlookup reproduction beforeanyassertionedit. Canonical20tasks103SP10.62percent unchanged; no newpush/PR/merge.",
   "method": "accepted story points / total baseline story points * 100",
   "scope": "complete v46.3 Backlog sheet; duplicates in other sheets excluded",
   "total_tasks": 121,
@@ -14660,5 +14660,123 @@
       "api_postgresql": 10,
       "genuine": 2
     }
+  },
+  "owner_recovery_bundle_gate_20261113": {
+    "state": "FAILED_NATIVE_BUNDLE_STOPPED_CORRECTIONS_IN_PROGRESS",
+    "target": "37e9c6f8669dd017ba1e035122cce5a39eaeeb40",
+    "normal_source_merges": [
+      "c7bfc4c8adcffdaff30363387da269f85961cbcc",
+      "37e9c6f8669dd017ba1e035122cce5a39eaeeb40"
+    ],
+    "incoming_owner_files": 36,
+    "incoming_object_root_files": 5,
+    "receiving_prior_blobs_preserved": true,
+    "backend": {
+      "release": "PASS",
+      "release_seconds": 81.175,
+      "unit_counts": {
+        "persistence": 75,
+        "domain": 756,
+        "api": 236,
+        "total": 1067,
+        "failed": 0,
+        "skipped": 0
+      },
+      "persistence_integration": {
+        "total": 79,
+        "passed": 79,
+        "failed": 0,
+        "skipped": 0,
+        "seconds": 338.488
+      },
+      "api_integration": {
+        "total": 884,
+        "passed": 857,
+        "failed": 27,
+        "skipped": 0,
+        "seconds": 1033.914,
+        "shards": 4,
+        "rows_per_shard": 221,
+        "partition": "EXACT_DISJOINT_COMPLETE"
+      },
+      "new_recovery_discovery": {
+        "methods": 8,
+        "rows": 38,
+        "source_native_equal": true,
+        "human_review_rows_passed": 11,
+        "control_evidence_failed": 17,
+        "profile_failed": 10
+      },
+      "failed_shared_helpers": [
+        "tests/Poseidon.Api.Tests/ControlEvidenceRecoveryTests.cs:53",
+        "tests/Poseidon.Api.Tests/RegulatoryProfileRecoveryTests.cs:47"
+      ],
+      "source_diagnosis": "Test lookup expects raw idempotency key in auditEntityId; actual formatter uses ResourceId. No server defect concluded before narrow actual reproduction.",
+      "narrow_reproduction": "PREPARING_NOT_EXECUTED",
+      "critical_and_model": "NOT_RUN_FAILFAST",
+      "owned_clam_cleanup": "REMOVED",
+      "owned_s3_cleanup": "REMOVED",
+      "private_s3_environment_cleanup": "REMOVED",
+      "original_outputs_unchanged": 136,
+      "postgate_worker_tracked_clean": true,
+      "independent_result_sha256": "88b62684480268b669e69c6b762237cfdf9526168491237a45bff34b41c03127"
+    },
+    "frontend": {
+      "manifest_passed": 1,
+      "privacy_passed": 8,
+      "lint": {
+        "state": "FAIL",
+        "seconds": 64.462,
+        "errors": 11,
+        "warnings": 6
+      },
+      "later_stages": "NOT_RUN_FAILFAST",
+      "supervisor": {
+        "state": "CHILD_EXITED",
+        "exit_code": 1,
+        "elapsed_seconds": 77.585,
+        "deadline_seconds": 1800,
+        "timed_out": false,
+        "lease_unchanged": true
+      },
+      "cache": {
+        "state": "PREPARED_NO_INSTALL_OR_UPDATE",
+        "declared_hash_pins_verified": 12,
+        "package_version_resolution_integrity_matches_lock": true,
+        "all_installed_files_individually_hashed": false,
+        "previous_perfile_and_single_stream_copies": "INTERRUPTED_NOT_PASS"
+      },
+      "independent_result_sha256": "ff3776b116ae0dfe22c1aed05d7d5ceb05e9ec2cfb1a0da9cf931f260e989e71"
+    },
+    "s2_pure_helpers": {
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0,
+      "unknown": 0,
+      "seconds": 1.201,
+      "actual_source_identity_equal": true,
+      "genuine_observation_credit": false
+    },
+    "genuine_full_register": "NOT_STARTED_NATIVE_GATE_FAILED",
+    "publication": {
+      "push": false,
+      "new_pr": false,
+      "merge": false
+    },
+    "acceptance": false,
+    "canonical_sp_added": 0
+  },
+  "profile_definite_validation_history_20261113": {
+    "task": "PROFILE-DEFINITE-VALIDATION-HISTORY-01",
+    "state": "ISOLATED_SOURCE_CLEAR_EXECUTION_DEFERRED",
+    "source_commit": "0dd388d29346a10eb158ee3024a74b9e35f0973e",
+    "files": 3,
+    "new_component_case_sources": 3,
+    "independent_review_sha256": "b08f2fbf76e670190904a55c0ec2dcad892af944a2d64c6d8cbba2f1eefa1280",
+    "behavior": "Initial actual400 schedules authorized history refresh while preserving draft/errors; private-access epoch fences late history publication.",
+    "execution": 0,
+    "current37e_gate_includes_this": false,
+    "acceptance": false,
+    "canonical_sp_added": 0
   }
 }

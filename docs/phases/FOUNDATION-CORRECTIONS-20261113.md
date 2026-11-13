@@ -1,5 +1,36 @@
 # Foundation düzeltmeleri — 13.11.2026
 
+**13 Kasım — yeni birleşmiş paketin gerçek kapısı:** `37e9c6f` hedefinde
+36 dosyalık HRO/CE/Profil ve 5 dosyalık nesne-dizini düzeltmesi normal geçmişle
+birleşti; önceki düzeltmelerin blob'ları korundu. Bu yeni kapı **FAIL/STOPPED**.
+Backend Release (81,175s), **1067/1067 birim** ve **79/79 gerçek PostgreSQL**
+(338,488s) PASS. Tam API **884 = 857 PASS / 27 FAIL / 0 skip**, 1033,914s;
+dört ayrık/tam shard 221'er vaka, 38 yeni recovery satırının discovery'si tam.
+27 hata, yeni CE17/Profil10 testinin receipt-audit yardımcılarında aynı
+`Assert.Single` noktasında: CE53 / Profil47. Sunucunun audit kimliği ResourceId;
+testin raw işlem anahtarı varsayımı kaynakta yanlış. Değer/neden dar gerçek
+reproduction ile doğrulanmadan beklenti veya üretim kodu değiştirilmiyor.
+HRO11 satırı geçti. Bu hedefte kritik117 ve model kontrolü **NOT_RUN_FAILFAST**;
+eski64 sonuçları yeni koşu sayılmaz. Sahipli Clam/S3/privateenv temizliği PASS;
+136 Release dosyası ve kaynak temizliği bağımsız tekrar doğrulandı.
+
+Ön yüz manifest1/gizlilik8 PASS; **lint 11 hata + 6 uyarı**, 64,462s.
+Tip/protokol/bileşen/build/tarama başlamadı. 1800s dış gözetici normal exit1 ile
+77,585s'te kapandı; timeout yok. 12 sabit dosya hashi ve kilitli paketler
+hazırlıkta doğrulandı; önceki yavaş/kesilen kopyalar PASS sayılmadı, bütün kurulu
+dosyaların ayrı ayrı hash doğrulandığı iddia edilmez. Lint kuralları gevşetilmeden
+17 kaynak tanısı sonraki ayrı kaynak hedefinde düzeltiliyor.
+
+S2 saf yardımcı **10/10** gerçek PASS (1,201s; fail/skip/unknown0), gerçek tarayıcı
+gözlemi değildir. İlk400 sonrası geçmiş paneli yüklenmesinin uzaması, ayrı
+`0dd388d` üzerinde 3 dosyada düzeltildi; 3 regresyon kaynağı ve bağımsız SOURCE_CLEAR,
+yürütme0. Bu değişiklik37e kapısında yok; sonraki lint düzeltmesiyle birleşecek.
+Yeni tam genuine koşusu native FAIL nedeniyle başlamadı. **Canonical20/121 iş,
+103/970SP (%10,62), 0/196 ayrı ekran aynı; yeni push/PR/merge yok.**
+
+Aşağıdaki0e/64/AED sonuçları önceki hedeflere ait doğrulanmış alt paket ve tarihsel
+kontrol noktalarıdır; yeni37e başarısızlığının yerine geçmez.
+
 **13 Kasım — güncel teslim kontrol noktası:** native alt paket bağımsız doğrulandı;
 canonical kabul **20/121 iş, 103/970 SP (%10,62), 0/196 ayrı ekran** olarak aynı.
 Backend özgün `64a8442` hedefinde 1067/1067 birim, 79/79 gerçek PostgreSQL,
