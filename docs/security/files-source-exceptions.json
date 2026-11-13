@@ -2656,6 +2656,38 @@
       "rationale": "The detected source span crosses a private bootstrap publication expression whose runtime contribution is a fresh secrets.token_urlsafe call, rather than a fixed credential value committed in source. Bounded structural evidence binds the generating call, protected local file publication and local fixture consumers. The classification is limited to this synthetic Development fixture expression, with no operator nonreuse, production safety or approval assertion.",
       "evidence_sha256": "57560bcccad48ab33cc3bcab17efa30c0cdb67dd6a7f83aab2e3568c9a630c64",
       "author_reference": "/root/locale_zh|role=BUNDLE-PORT-ISOLATION-01-source-author|source_commit=9f90900eb2213d2ca92c6ba1b22ddf2d42f872bb|target_commit=eb58432300aac4caedc0786766acd9da9d80890d"
+    },
+    {
+      "author_reference": "/root/frontend_gate_20261111|role=CREW-BOUNDARY-SIGNED-PERSONA-01-source-author|source_commit=98a837c48b57eaba9ff64fa6ee0ed830fe8f452d|target_commit=aedffd372e65c5cc71386991c67c65801c498b70",
+      "classification": "synthetic-fixture",
+      "evidence_sha256": "dad89ad1afcdbd4ed26ff01f225f3221dc01a8d8c7e80d4a7a9ec60c0ad19a91",
+      "rationale": "The detected source expression assigns a fresh secrets.token_urlsafe result inside the strict fresh synthetic Development persona configuration path. Its value is copied into the private provider realm and private credential output, consumed by genuine signed local login; the tracked assignment is not a fixed credential value. Existing identities are preserved and no production or human decision authority is asserted. Classification is proposed for this exact source expression only, without claiming operator nonreuse, deployed credential safety or approval.",
+      "target": {
+        "context_sha256": "32419ccadb26c5be21a5e544b67e574e02cde3a46a8ac66a8a09f51f9cd351e2",
+        "fingerprint": "fb02563d18c930e96444823220482d407c037b5c61475483f51d42d76a4aec12",
+        "identity_version": "source-binding-v2",
+        "immutable_source_revision": "git-blob-sha256:75c0e963fb0c27e132d4174d2562eaa1e1ecced1dd164ee03a4f3da68a6a4175",
+        "line": 127,
+        "occurrence": 6125,
+        "path": "scripts/bundle_crew_boundary_fixture.py",
+        "rule": "db-password"
+      }
+    },
+    {
+      "author_reference": "/root/frontend_gate_20261111|role=CREW-BOUNDARY-SIGNED-PERSONA-01-source-author|source_commit=98a837c48b57eaba9ff64fa6ee0ed830fe8f452d|target_commit=aedffd372e65c5cc71386991c67c65801c498b70",
+      "classification": "synthetic-fixture",
+      "evidence_sha256": "8917bb5f3ab222e9e591707be42570ea8c8731b6bc19ef2a7cec2a3f88679ac8",
+      "rationale": "The detected source expression assigns a fresh secrets.token_urlsafe result in the synthetic test fixture setup. The generated value is used in test-owned realm and credential structures for strict preservation, collision and idempotence assertions; it is not a fixed committed credential. This classification is proposed for the exact test-source expression only and does not claim operator nonreuse, deployed safety, runtime execution evidence or approval.",
+      "target": {
+        "context_sha256": "d2b737a541458b082aec296b16b77197113edd94ae66e6267df2497d052d79d1",
+        "fingerprint": "fb02563d18c930e96444823220482d407c037b5c61475483f51d42d76a4aec12",
+        "identity_version": "source-binding-v2",
+        "immutable_source_revision": "git-blob-sha256:6dd7c0c584af752c02e9c046fc474ce0adb13c391a336083cc433100ba89014c",
+        "line": 18,
+        "occurrence": 545,
+        "path": "scripts/test_bundle_crew_boundary_fixture.py",
+        "rule": "db-password"
+      }
     }
   ],
   "receipts": [
@@ -4152,6 +4184,24 @@
       "schema_version": "source-binding-v2",
       "status": "independently-reviewed",
       "target_sha256": "09ddb1e84bbec5f41846ad598806d32e113aaecc03aa6b4daaf2f0f5118a9f98"
+    },
+    {
+      "author_reference": "/root/frontend_gate_20261111|role=CREW-BOUNDARY-SIGNED-PERSONA-01-source-author|source_commit=98a837c48b57eaba9ff64fa6ee0ed830fe8f452d|target_commit=aedffd372e65c5cc71386991c67c65801c498b70",
+      "evidence_sha256": "dad89ad1afcdbd4ed26ff01f225f3221dc01a8d8c7e80d4a7a9ec60c0ad19a91",
+      "proposal_sha256": "f606bb315aa8d2c9648b0ae59c110ba230ca601d37e0324c922826fe1639aff1",
+      "reviewer_reference": "/root/status_forecast|role=independent-source-expression-reviewer|task=CREW-BOUNDARY-EXACT-SOURCE-REVIEW-01|target_commit=aedffd372e65c5cc71386991c67c65801c498b70",
+      "schema_version": "source-binding-v2",
+      "status": "independently-reviewed",
+      "target_sha256": "9cb5010356fa1232be717a9a32247aa5de0e169588c4865ed1de711367ba7964"
+    },
+    {
+      "author_reference": "/root/frontend_gate_20261111|role=CREW-BOUNDARY-SIGNED-PERSONA-01-source-author|source_commit=98a837c48b57eaba9ff64fa6ee0ed830fe8f452d|target_commit=aedffd372e65c5cc71386991c67c65801c498b70",
+      "evidence_sha256": "8917bb5f3ab222e9e591707be42570ea8c8731b6bc19ef2a7cec2a3f88679ac8",
+      "proposal_sha256": "16955ee64d0f8cc4ae2302a494b49bb708a15d4194d78339a2c4624d358fff2c",
+      "reviewer_reference": "/root/status_forecast|role=independent-source-expression-reviewer|task=CREW-BOUNDARY-EXACT-SOURCE-REVIEW-01|target_commit=aedffd372e65c5cc71386991c67c65801c498b70",
+      "schema_version": "source-binding-v2",
+      "status": "independently-reviewed",
+      "target_sha256": "cb3eed5202492671eba7ee8fc4d61e207e997a43affd6a4a45a10b6e07f5817d"
     }
   ],
   "exceptions": [
@@ -4818,6 +4868,14 @@
     {
       "proposal_sha256": "41c17c8f14558164553e29b2724d6735e79d92ca5219ba12ecbaa5e69fc93012",
       "review_sha256": "02480e56df784ca4cc02ed48cd9b3c03456e3e48dccc1f61e6a9ff05f310058b"
+    },
+    {
+      "proposal_sha256": "f606bb315aa8d2c9648b0ae59c110ba230ca601d37e0324c922826fe1639aff1",
+      "review_sha256": "7867952cb20df93c3f494885c86c28b98b80921ff10b5ed88a10d140e6e99378"
+    },
+    {
+      "proposal_sha256": "16955ee64d0f8cc4ae2302a494b49bb708a15d4194d78339a2c4624d358fff2c",
+      "review_sha256": "da0afb0cb98c2f5a92ac79c637e10f1827e3abad6bcdaeb3d38fd0171563687a"
     }
   ]
 }
