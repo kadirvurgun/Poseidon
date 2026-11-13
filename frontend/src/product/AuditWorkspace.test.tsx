@@ -95,6 +95,18 @@ it('keeps filters and selected record in shareable URL context and clears cursor
   const path = `/app/audit/${id}?vesselId=${vessel}&action=Modified`
   expect(locationPath(readLocation(path))).toBe(path)
 })
+it('submits filters from the keyboard while Clear remains an independent navigation action', async () => {
+  vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response(page)))
+  const navigate = vi.fn(), user = userEvent.setup()
+  render(<AuditWorkspace language="en" selected={null} allowed onNavigate={navigate} />)
+  await screen.findByRole('table')
+  await user.type(screen.getByLabelText('Vessel ID'), vessel)
+  await user.keyboard('{Enter}')
+  expect(navigate).toHaveBeenCalledExactlyOnceWith(`/app/audit?vesselId=${vessel}`)
+  navigate.mockClear()
+  await user.click(screen.getByRole('button', { name: 'Clear filters' }))
+  expect(navigate).toHaveBeenCalledExactlyOnceWith('/app/audit')
+})
 it('discards late response after permission revocation', async () => {
   let resolve!: (v: Response) => void
   vi.stubGlobal('fetch', vi.fn(() => new Promise<Response>(r => { resolve = r })))

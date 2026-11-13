@@ -1,0 +1,7 @@
+.enterprise-shell .audit-workspace { min-width:0; }
+.enterprise-shell .audit-workspace .audit-filters { display:block; padding:20px; margin:20px 0; border:1px solid var(--border); border-radius:10px; background:var(--card); }
+.enterprise-shell .audit-workspace .audit-filters .enterprise-form-grid { margin:0; }
+.enterprise-shell .audit-workspace .audit-record-link { justify-content:flex-start; min-width:0; max-width:100%; white-space:normal; text-align:start; overflow-wrap:anywhere; }
+.enterprise-shell .audit-workspace .enterprise-record-summary > div { min-width:0; }
+.enterprise-shell .audit-workspace .audit-capability-summary { grid-column:1/-1; }
+.enterprise-shell .audit-workspace .enterprise-record-summary dd { overflow-wrap:anywhere; }
