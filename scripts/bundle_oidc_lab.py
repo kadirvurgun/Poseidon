@@ -19,6 +19,7 @@ import bundle_private as private_io
 import bundle_crew_fixture as crew_fixture
 import bundle_observation_fixture as observation_fixture
 import lab_runtime
+import bundle_qualified_fixture_plan as qualified_plan
 
 BASE_ENVIRONMENT = lab.environment
 FIXTURE_NAMES = ('DAILY','CERTIFICATE','CERTIFICATE_EXTRACTION','SHIP_OPERATIONS','DEFECT','WORK_ORDER','DOWNTIME','OBSERVATION')
@@ -162,6 +163,7 @@ def environment():
         if any(normalized == section or normalized.startswith(section+':') for section in ('dailyoffline','certificateextraction','crewfilepolicy','crewprofilepolicy','crewidentitypolicy','crewpositionpolicy','crewassignmentpolicy','maintenanceobservations','tugplanning','notifications','notificationscheduler','offlineapplication')):
             del env[key]
     env.pop('POSEIDON_BUNDLE_EXTRACTION_SECRET', None)
+    env.pop('POSEIDON_BROWSER_QUALIFIED_OWNING_FIXTURE', None)
     for name in FIXTURE_NAMES:
         env.pop('POSEIDON_BROWSER_'+name+'_FIXTURE', None)
     if (lab.PRIVATE/'source-bundle-plan.json').is_file():
@@ -245,6 +247,86 @@ def prepare_source_fixtures():
     lab.run([lab.root_tool('node'),str(lab.ROOT/'scripts/bundle_fixture_legacy_finish.ts')],env=environment(),timeout=600)
 
 
+def prepare_qualified_fixtures():
+    """Explicit opt-in real-command FICTIONAL witnesses, separate from exact-eight.
+
+    Never mutates another profile or provider. Each appointment generation is
+    additive, private and immutable; only this run's exact owned app restarts.
+    """
+    lab.stage('qualified_fixture_owned_preflight')
+    metadata = private_io.read_json(lab.PRIVATE/'source-bundle-plan.json')
+    config, _ = private_io.selected()
+    # Existing normal fixture preparation and actual owned scanner remain prerequisites.
+    if len(source_fixture_environment()) != len(FIXTURE_NAMES):
+        raise RuntimeError('qualified_fixture_source_bundle_required')
+    lanes = private_io.read_json(lab.PRIVATE/'source-bundle-lane-environment.json')
+    if (lanes.get('schemaVersion') != 'poseidon.bundle.signed-lane-fixtures.v1' or lanes.get('runId') != metadata.get('runId')
+            or set(lanes.get('lanes', {})) != {'desktop', 'narrow'} or not lab.owned_process('check')):
+        raise RuntimeError('qualified_fixture_owned_running_source_bundle_required')
+    secure = config.get('SecureFiles', {})
+    if (secure.get('Adapter') != 'LocalDevelopment' or secure.get('Root') != str(source_object_root())
+            or secure.get('ScannerReference') != 'pinned-ephemeral-clamd' or type(secure.get('ClamdPort')) is not int):
+        raise RuntimeError('qualified_fixture_actual_owned_scanner_required')
+    with socket.create_connection(('127.0.0.1', secure['ClamdPort']), timeout=2) as peer:
+        peer.sendall(b'zPING\0')
+        if peer.recv(5) != b'PONG\0':
+            raise RuntimeError('qualified_fixture_actual_owned_scanner_required')
+    producer = str(lab.ROOT/'scripts/bundle_qualified_fixture_provision.ts')
+    lab.stage('qualified_fixture_actual_isolated_vessels')
+    lab.run([lab.root_tool('node'), producer, 'vessels'], env=environment(), timeout=600)
+    vessels = qualified_plan.validate_vessels(metadata, private_io.read_json(lab.PRIVATE/'qualified-owning-observed-vessels.json'))
+    path = lab.PRIVATE/'qualified-owning-plan.json'
+    if not path.exists():
+        attempt = private_io.read_json(lab.PRIVATE/'qualified-owning-provision-attempt.json')
+        private_io.publish_json(path, qualified_plan.create(metadata, vessels, qualified_plan.instant(attempt['createdAt'])))
+    fixture_plan = qualified_plan.validate(private_io.read_json(path))
+
+    def install(sources=None, witnesses=None):
+        current, _ = private_io.selected()
+        candidate = qualified_plan.configure(current, metadata, fixture_plan, sources, witnesses, vessels=vessels)
+        if candidate != current:
+            # Confirm exact ownership before publication or any stop. Old selected
+            # config/process/generation is retained; provider and volumes are untouched.
+            if not lab.owned_process('check'):
+                raise RuntimeError('qualified_fixture_exact_owned_host_required')
+            private_io.publish_config(candidate)
+            if not lab.owned_process('stop'):
+                raise RuntimeError('qualified_fixture_exact_owned_host_required')
+            start()
+
+    install()
+    lab.stage('qualified_fixture_actual_sources')
+    lab.run([lab.root_tool('node'), producer, 'sources'], env=environment(), timeout=600)
+    sources = private_io.read_json(lab.PRIVATE/'qualified-owning-observed-sources.json')
+    install(sources)
+    lab.stage('qualified_fixture_actual_witnesses')
+    lab.run([lab.root_tool('node'), producer, 'witnesses'], env=environment(), timeout=1200)
+    witnesses = private_io.read_json(lab.PRIVATE/'qualified-owning-observed-witnesses.json')
+    install(sources, witnesses)
+    lab.stage('qualified_fixture_actual_independent_verification')
+    lab.run([lab.root_tool('node'), producer, 'verify'], env=environment(), timeout=1200)
+
+
+def qualified_fixture_environment():
+    """Separate additive descriptor; never a ninth key in exact-eight decoding."""
+    path = lab.PRIVATE/'qualified-owning-fixture.json'
+    if not path.exists():
+        raise RuntimeError('qualified_fixture_preparation_required')
+    value = private_io.read_json(path)
+    metadata = private_io.read_json(lab.PRIVATE/'source-bundle-plan.json')
+    fixture_plan = qualified_plan.validate(private_io.read_json(lab.PRIVATE/'qualified-owning-plan.json'))
+    qualified_plan.validate_descriptor(fixture_plan, value)
+    vessels = qualified_plan.validate_vessels(metadata, private_io.read_json(lab.PRIVATE/'qualified-owning-observed-vessels.json'))
+    if (value.get('schemaVersion') != 'poseidon.qualified-owning.signed-fixture.v1'
+            or value.get('runId') != metadata.get('runId') or value.get('expiresAt') != fixture_plan['expiresAt']
+            or value.get('vessels') != vessels['vessels']
+            or any(fixture_plan[key] != metadata.get(key) for key in ('runId', 'tenantId', 'writerActorId', 'reviewerActorId', 'writerRoleId', 'reviewerRoleId'))):
+        raise RuntimeError('qualified_fixture_scope_invalid')
+    # The strict TS consumer repeats private boundary, full schema, time bounds,
+    # selected config/runtime and actual authenticated current-source validation.
+    return {'POSEIDON_BROWSER_QUALIFIED_OWNING_FIXTURE': str(path.resolve())}
+
+
 def start():
     metadata=private_io.read_json(lab.PRIVATE/'source-bundle-plan.json')
     if metadata.get('schemaVersion')!='poseidon.bundle-fixture-plan.v1' or not (lab.PRIVATE/'ready').is_file():
@@ -266,6 +348,8 @@ def register_browser():
     if len(fixtures)!=len(FIXTURE_NAMES):
         raise RuntimeError('source_fixture_environment_required')
     env.update(fixtures)
+    env.pop('POSEIDON_BROWSER_QUALIFIED_OWNING_FIXTURE', None)
+    env.update(qualified_fixture_environment())
     lane_file=lab.PRIVATE/'source-bundle-lane-environment.json'
     if lane_file.is_symlink() or not lane_file.is_file() or lane_file.stat().st_size>8192:
         raise RuntimeError('source_lane_fixture_required')
@@ -278,7 +362,7 @@ def stop():lab.stop()
 
 def main(argv=None):
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action',choices=['init_source_bundle','prepare_bundle','prepare_crew_fixture','renew_fixture_window','prepare_source_fixtures','start','stop','register_browser'])
+    parser.add_argument('action',choices=['init_source_bundle','prepare_bundle','prepare_crew_fixture','renew_fixture_window','prepare_source_fixtures','prepare_qualified_fixtures','start','stop','register_browser'])
     parser.add_argument('--app-port', type=lab_runtime.cli_port)
     parser.add_argument('--provider-port', type=lab_runtime.cli_port)
     parser.add_argument('--database-port', type=lab_runtime.cli_port)
