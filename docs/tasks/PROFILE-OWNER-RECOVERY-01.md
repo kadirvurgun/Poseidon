@@ -1,0 +1,37 @@
+# PROFILE-OWNER-RECOVERY-01
+
+Existing product correction, isolated successor of reviewed CE845/HROec87. Authoring is not independent acceptance. All new execution is **DEFERRED** to the next larger frozen package; no canonical sprint/SP or dependency promotion.
+
+## Source authority and actual endpoint
+
+Active baseline `poseidon-v46.3-20261030`:
+
+- 18.01 Backlog row21: DEV-020 / T-S2-001, controlled vessel profile, versioned context/provenance/freshness; dependencies DEV-005 and DEV-014. SHA256 `09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674`.
+- 19.01 paragraphs261–268: cross-tenant leakage0, autonomous high-risk mutation0, offline duplicate-write0 for idempotent commands, unresolved material conflict silently overwritten0. SHA256 `063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49`.
+- 15.01 paragraph71: mandatory Idempotency-Key for externally retried create/command calls. SHA256 `68955985d1823f7f1bc495984f10f55db0d5b8447f424c676844830e15b28837`.
+- POL-DEFAULT-01: incomplete drafts remain permitted; Missing/Unknown/declaration are distinct and do not authorize submission, verification or operations.
+
+[RegulatoryDraftEndpoints](../../backend/Poseidon.Api/RegulatoryDraftEndpoints.cs) checks current vessel scope/edit, CSRF and construction-file read/access before an actor-scoped receipt. Replay returns the ORIGINAL outcome before current xmin conflict. Later401/403/404/409 cannot disprove an earlier lost commit. Server normalizes text/decimal/source instant and computes provenance; profile has an existing vessel identity, no new client body UUID or route. No backend production change.
+
+## Acceptance criteria and authored evidence
+
+| ID | Required behavior | Source evidence |
+|---|---|---|
+| PRO01 | Memory-only original actual tenant/actor, vessel/full PUT route/method, exact serialized body, UUID key, expectedVersion and next revision; no replacement after UNKNOWN | [controller](../../frontend/src/product/use-profile-recovery.ts), [adapter](../../frontend/src/product/profile-api.ts), wire/UI/PG sources below |
+| PRO02 | Before send/retry: new actual same-owner session, current authorized profile, fresh same-owner CSRF; post-response owner fence. Hints and current xmin cannot grant authority or block historical replay | controller; API historical case; UI nonce/session counters |
+| PRO03 | Later denial/conflict/readloss retains UNKNOWN and immutable body/key; no local discard/replacement/automatic resend, Back/dirty-confirmation/popstate/unload use existing parent barrier | controller, actual ProductApp UNKNOWN regression, registered browser cases |
+| PRO04 | Full normalized content/construction pin/provenance/tenant/vessel/next-revision receipt binding, preserving exact decimals and100ns instants. Confirm before optional history. Known receipt remains readonly through read failure; explicit current read and local resume use existing vessel URL/current version | adapter, controller, known/history-loss and historical-replay UI/API cases |
+| PRO05 | UNSENT local discard requires a NEW actual original-owner proof even after permission loss; foreign/unproven session cannot clear it. Profile/onboarding generic parent confirmation awaits the same proof, then rechecks exact registration/context/route/pending navigation/live frozen state before unmount. Other editors keep existing behavior | ProductApp optional profile registration, controller discard, actual parent positive/denied cases |
+| PRO06 | Withdraw private editor/history/picker/onboarding on owner/context/access withdrawal; ignore late history/file responses and stale edit closures. No browser persistence | guarded ConstructionRecordPicker loader, controller/session epochs, late-response and owner/tenant UI cases |
+| PRO07 | Shared enterprise fields/onboarding and all17 locale semantics remain; Missing/Unknown, clean ordinary-file policy, immutable history, incomplete drafts/server validation preserved. No production policy/grants/catalog/persona/upload rewrite | existing profile/privacy/owning-input/workspace tests retained/updated for fresh actual-shaped session, same-tenant fixtures and known readonly semantics |
+| PRO08 | Meaningful mocked component/wire, actual-host PG, registered actual-provider/browser regression sources; source handoff binds exact target and distinguishes execution from authoring | files below; independent target review and larger-package execution pending |
+
+## Authored test sources, execution0
+
+- [RegulatoryProfileRecovery.test.tsx](../../frontend/src/product/RegulatoryProfileRecovery.test.tsx): denial-after-loss matrix, original nonce/body/key, readonly known history failure, historical receipt after newer head, actor/tenant withdrawal and original-owner-only UNSENT discard, late file/history, actual ProductApp/profile/onboarding navigation.
+- Existing [privacy](../../frontend/src/product/RegulatoryProfilePrivacy.test.tsx), [owning input](../../frontend/src/product/RuleOwningInputs.test.tsx) and [workspace](../../frontend/src/product/Workspace.test.tsx) regressions remain: current privacy withdrawal/late response/scope cases, selected ordinary file and independent date/power, real parent Back/Forward/dialog semantics. The workspace fixture now uses its actual mocked session tenant and an ephemeral bounded CSRF instead of an unrelated tenant/short token.
+- [profile-recovery-api.test.ts](../../frontend/src/product/profile-recovery-api.test.ts): normalized complete receipt, exact serialization/route, altered tenant/vessel/revision/content/provenance/file rejection, strict actual session and wire NUL/DEL negatives.
+- [RegulatoryProfileRecoveryTests.cs](../../tests/Poseidon.Api.Tests/RegulatoryProfileRecoveryTests.cs): real host/antiforgery/owned PostgreSQL; absent/existing commit→read/write/scope denial→fresh same-owner exact replay; historical original receipt after newer edit; unentitled actor/tenant/route isolation. Compare head/history/receipt/business-audit state in memory; buffer awaited bytes before SequenceEqual.
+- [regulatory-admission-cases.ts](../../tests/Poseidon.Browser.Tests/register-specs/regulatory-admission-cases.ts): two added registered genuine profile/onboarding controlled-response-loss cases. Require genuine disposable writer with existing ordinary create/edit authority and visible company; fail hard if absent. Each ordinary-command-creates its OWN fictional Ship, proves absent profile, route.fetch commits real PUT then deliberately drops response, explicit source read never resends, exact retained replay forwards ONLY actual host response, optional history loss leaves known receipt readonly. Count real session requests before each PUT, compare exact key/body/route, final actual history has one revision. Remove owned route/listener in finally. No provider/fixture/policy mutation or shared QF profile change.
+
+Later authorized gate must run full affected frontend lint/typecheck/components/fresh build, actual real-PG API regressions and complete registered native-manifest/genuine lanes, bind unchanged backend production inputs, independent exact-target QA and required CI. No present execution PASS or phase acceptance is asserted.

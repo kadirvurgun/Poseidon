@@ -170,7 +170,76 @@ async function owningProfileCapture(page: Page) {
     expect(history.status()).toBe(200);
     expect((await history.json()).items[0].content.mainPropulsionKw.value).toBe('3600.000001');
 }
+// PRO07: ordinary command-created disposable Ship. Shared qualified fixtures,
+// witnesses and their profiles are never mutated by these response-loss cases.
+async function profileRecovery(page: Page, onboarding: boolean) {
+    const sessionResponse = await page.request.get('/api/v1/auth/session'); expect(sessionResponse.status()).toBe(200);
+    const session = await sessionResponse.json();
+    expect(session.authenticated === true && session.canRead === true && session.canCreate === true && typeof session.csrfToken === 'string').toBe(true);
+    const fleet = await page.request.get('/api/v1/vessels?offset=0&limit=25'); expect(fleet.status()).toBe(200);
+    const parent = (await fleet.json()).items.find((row: { kind: string; canEdit: boolean; companyId: string }) => row.kind === 'Ship' && row.canEdit && typeof row.companyId === 'string');
+    expect(!!parent).toBe(true);
+    const created = await page.request.post('/api/v1/vessels', { headers: { 'X-CSRF-TOKEN': session.csrfToken, 'Idempotency-Key': crypto.randomUUID() },
+        data: { code: 'FICTIONAL-PRO-'+crypto.randomUUID(), name: 'FICTIONAL isolated profile recovery', kind: 'Ship', companyId: parent.companyId } });
+    expect(created.status()).toBe(200);
+    const vessel = await created.json();
+    expect(typeof vessel.id === 'string' && vessel.id !== parent.id && vessel.kind === 'Ship' && vessel.canEdit === true).toBe(true);
+    const path = `/api/v1/vessels/${vessel.id}/regulatory-profile`;
+    const before = await page.request.get(path); expect(before.status()).toBe(200);
+    const initial = await before.json(); expect(initial.revision === 0 && initial.version === 0 && initial.provenance === 'Missing').toBe(true);
+    await page.goto(`/app/fleet/${vessel.id}/${onboarding ? 'onboarding' : 'profile'}`);
+    await page.getByRole('combobox', { name: /^(Dil seçin|Choose language)$/ }).selectOption('en');
+    const region = page.getByRole('region', { name: onboarding ? 'Pilot vessel onboarding' : 'Regulatory profile draft', exact: true });
+    await region.getByLabel('Flag — Data state', { exact: true }).selectOption('Unknown');
+    const writes: { body: string; key: string; path: string; method: string; sessions: number }[] = [];
+    let sessions = 0, dropHistory = false, lostHistory = false, committedRevision = 0;
+    const countSession = (request: Request) => { if (request.method() === 'GET' && new URL(request.url()).pathname === '/api/v1/auth/session') sessions++; };
+    const matches = (url: URL) => url.pathname === path || url.pathname === path+'/history';
+    const handler = async (route: Route) => {
+        const request = route.request(), pathname = new URL(request.url()).pathname;
+        if (request.method() === 'GET' && pathname === path+'/history' && dropHistory) { dropHistory = false; lostHistory = true; await route.abort('failed'); return; }
+        if (request.method() !== 'PUT' || pathname !== path) { await route.continue(); return; }
+        writes.push({ body: request.postData() ?? '', key: request.headers()['idempotency-key'] ?? '', path: pathname, method: request.method(), sessions });
+        const actual = await route.fetch(); expect(actual.status()).toBe(200);
+        const result = await actual.json();
+        expect(result.vessel.id === vessel.id && result.tenantId === session.tenantId && result.revision === 1 && result.content.flag.state === 'Unknown' && result.provenance === 'Missing').toBe(true);
+        if (writes.length === 1) { committedRevision = result.revision; await route.abort('failed'); }
+        else {
+            expect(result.revision === committedRevision && actual.headers()['idempotency-replayed'] === 'true').toBe(true);
+            dropHistory = true; await route.fulfill({ response: actual }); // Forward ONLY the actual host replay response.
+        }
+    };
+    page.on('request', countSession); await page.route(matches, handler);
+    try {
+        const location = page.url(), firstSession = sessions;
+        await region.getByRole('button', { name: 'Save draft', exact: true }).click();
+        await expect(region.getByText('The save outcome is unknown. Fields are frozen; retry the same command before leaving.', { exact: true })).toBeVisible();
+        expect(writes.length === 1 && writes[0].sessions > firstSession).toBe(true);
+        await expect(page.getByRole('button', { name: 'Back to vessel', exact: true })).toBeDisabled();
+        await expect(region.getByRole('button', { name: 'Discard local changes', exact: true })).toHaveCount(0);
+        await region.getByRole('button', { name: 'Retry source read', exact: true }).click();
+        await expect(region.getByRole('button', { name: 'Retry same command', exact: true })).toBeEnabled();
+        expect(writes.length).toBe(1);
+        const beforeRetry = sessions;
+        await region.getByRole('button', { name: 'Retry same command', exact: true }).click();
+        await expect(region.getByText('Draft saved.', { exact: true })).toBeVisible();
+        await expect(region.getByRole('alert')).toBeVisible();
+        expect(lostHistory && writes.length === 2 && writes[1].sessions > beforeRetry).toBe(true);
+        expect(writes[0].body === writes[1].body && writes[0].key === writes[1].key && writes[0].key.length === 36 && writes[0].path === writes[1].path && writes[1].method === 'PUT').toBe(true);
+        await expect(region.getByLabel('Flag — Data state', { exact: true })).toBeDisabled();
+        await expect(region.getByRole('button', { name: 'Save draft', exact: true })).toHaveCount(0);
+        expect(page.url() === location).toBe(true);
+        await region.getByRole('button', { name: 'Retry source read', exact: true }).click();
+        await expect(region.getByRole('button', { name: 'Discard local changes', exact: true })).toBeEnabled();
+        await expect(region.getByLabel('Flag — Data state', { exact: true })).toBeDisabled();
+        const history = await page.request.get(path+'/history?offset=0&limit=25'); expect(history.status()).toBe(200);
+        const rows = (await history.json()).items;
+        expect(rows.length === 1 && rows[0].revision === committedRevision && rows[0].content.flag.state === 'Unknown' && writes.length === 2).toBe(true);
+    } finally { page.off('request', countSession); await page.unroute(matches, handler); }
+}
 export const regulatoryAdmissionCases = [
+    { name: 'profile-controlled-response-loss-real-commit', run: (page: Page) => profileRecovery(page, false), restricted: false },
+    { name: 'onboarding-profile-controlled-response-loss-real-commit', run: (page: Page) => profileRecovery(page, true), restricted: false },
     { name: 'owning-power-and-independent-construction-date-draft-signed-host', run: owningProfileCapture, restricted: false },
     { name: 'synthetic-assigned-human-source-qualification-current-evaluation-signed-host', run: assignedQualification, restricted: false },
     { name: 'source-qualification-denied-before-lineage-or-owner-disclosure', run: deniedQualification, restricted: true },

@@ -5,14 +5,14 @@ import { Button } from '../components/ui/button';
 import { Plus } from 'lucide-react';
 import { DirectoryOverview } from './DirectoryOverview';
 import { VesselAttachments } from './VesselAttachments';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import * as api from './api';
 import './product.css';
 import { DirectoryEditor } from './DirectoryEditor';
 import type { EditorTarget } from './DirectoryEditor';
 import { DraftConfirmation } from './DraftConfirmation';
 import { CompliancePassport } from './CompliancePassport';
-import { RegulatoryProfile } from './RegulatoryProfile';
+import { RegulatoryProfile, type ProfileDiscardHandle } from './RegulatoryProfile';
 import { editorCopy } from './editor-copy';
 import { loginHref, readLocation, useWorkspaceLocation } from './workspace-location';
 import { TodayWorkspace } from './TodayWorkspace';
@@ -53,12 +53,20 @@ export function ProductApp() {
     const [dirty, setDirty] = useState(false);
     const [saving, setSaving] = useState(false);
     const [pendingNavigation, setPendingNavigation] = useState<(() => void) | null>(null);
+    const profileDiscard = useRef<ProfileDiscardHandle | null>(null);
+    const discardRunning = useRef(false);
+    const navigationLive = useRef<{ saving: boolean; pending: (() => void) | null; url: string }>({ saving: false, pending: null, url: '' });
+    const registerProfileDiscard = useCallback((handle: ProfileDiscardHandle) => {
+        profileDiscard.current = handle;
+        return () => { if (profileDiscard.current === handle) profileDiscard.current = null; };
+    }, []);
+    const profileSaving = useCallback((value: boolean) => { navigationLive.current.saving = value; setSaving(value); }, []);
     const [notice, setNotice] = useState('');
     const [profileInstance, setProfileInstance] = useState(0);
     const t = copy[language];
     const et = editorCopy[language];
     const guard = (action: () => void) => {
-        if (saving)
+        if (saving || navigationLive.current.saving)
             return;
         if (dirty) {
             setDrawer(false);
@@ -74,6 +82,23 @@ export function ProductApp() {
     const onboardingOpen = route.onboarding === true;
     const passportOpen = route.passport === true;
     const profileOpen = route.profile || onboardingOpen;
+    useLayoutEffect(() => { navigationLive.current = { saving, pending: pendingNavigation, url: window.location.pathname+window.location.search }; });
+    async function discardPendingNavigation() {
+        if (navigationLive.current.saving || discardRunning.current) return;
+        const action = navigationLive.current.pending, original = profileDiscard.current;
+        if (!action) return;
+        const url = navigationLive.current.url, context = original?.context;
+        discardRunning.current = true;
+        try {
+            if (profileOpen) {
+                if (!original || !await original.discard()) return;
+                const current = navigationLive.current;
+                if (profileDiscard.current !== original || original.context !== context || current.pending !== action || current.saving ||
+                    current.url !== url || window.location.pathname+window.location.search !== url || !original.canLeave()) return;
+            } else if (navigationLive.current.saving || navigationLive.current.pending !== action) return;
+            setPendingNavigation(null); closeEditor(); action();
+        } finally { discardRunning.current = false; }
+    }
     const formMode = editor !== null || (profileOpen || passportOpen) && selected !== null && tab === 'fleet';
     const registerTab = tab === 'sources' || tab === 'requirements';
     const setSelected = (id: string | null) => move({ tab, selected: id, profile: false });
@@ -255,13 +280,7 @@ export function ProductApp() {
         {logoutError && <p role="alert">{t.unavailable}</p>}
         {new URLSearchParams(window.location.search).has('auth') && <p role="alert">{t.failed}</p>}
       </section>}
-      {pendingNavigation && <DraftConfirmation language={language} onStay={() => setPendingNavigation(null)} onDiscard={() => {
-                if (saving) return;
-                const action = pendingNavigation;
-                setPendingNavigation(null);
-                closeEditor();
-                action();
-            }}/>}
+      {pendingNavigation && <DraftConfirmation language={language} onStay={() => setPendingNavigation(null)} onDiscard={() => void discardPendingNavigation()}/>}
       {canRead && !route.invalid && tab === 'audit' && <AuditWorkspace key={`${user?.tenantId}:${user?.actorId}:${selected}:${route.query ?? ''}`} language={language} selected={selected} query={route.query} allowed={auditAllowed} onNavigate={follow}/>}
       {canRead && !route.invalid && tab === 'today' && <TodayWorkspace key={selected ?? 'select'} id={selected} language={language} offline={offline} onNavigate={follow}/>}
       {canRead && regulatory && tab === 'today' && <p><a href="/app/sources" onClick={e => { e.preventDefault(); follow('/app/sources'); }}>{localizedText(language, "pairs.m_feecca63cf4fe395")}</a></p>}
@@ -286,7 +305,7 @@ export function ProductApp() {
         {selected && (!formMode || (profileOpen || passportOpen) && detail.state !== 'ok') && <section className="product-detail" aria-label={t.details}><EnterpriseSectionHeader title={t.details} actions={<Button variant="ghost" onClick={() => guard(() => { closeEditor(); setSelected(null); })}>{t.close}</Button>}/>{detail.state === 'loading' ? <p role="status">{t.loading}</p> : detail.state === 'error' ? <div role="alert"><p>{message(detail.status)}</p><Button variant="outline" onClick={() => guard(() => { closeEditor(); retry(); })}>{t.retry}</Button></div> : <><div className="enterprise-record-actions">{'kind' in detail.data && <Button variant="outline" disabled={saving} onClick={() => guard(() => { closeEditor(); move({ tab, selected, profile: true }); })}>{localizedText(language, "pairs.m_e2ecd6fd41f42570")}</Button>}{'kind' in detail.data && <><Button variant="outline" disabled={saving} onClick={() => guard(() => { closeEditor(); move({ tab, selected, profile: false, onboarding: true }); })}>{localizedText(language, "pairs.m_372d69a18a20b71d")}</Button><Button variant="outline" disabled={saving} onClick={() => guard(() => { closeEditor(); move({ tab, selected, profile: false, passport: true }); })}>{localizedText(language, "pairs.m_79a9c76a3213e157")}</Button></>}{detail.data.canEdit && <Button variant="outline" disabled={saving} onClick={() => guard(() => { closeEditor(); move({ tab, selected, profile: false }); setEditor({ instanceKey: crypto.randomUUID(), resource: tab === 'companies' ? 'companies' : 'vessels', record: detail.data }); })}>{et.edit}</Button>}</div><dl className="enterprise-record-summary"><div><dt>{t.code}</dt><dd>{detail.data.code}</dd></div><div><dt>{t.name}</dt><dd>{detail.data.name}</dd></div>{'kind' in detail.data && <div><dt>{t.kind}</dt><dd>{detail.data.kind === 'Tug' ? t.tug : t.ship}</dd></div>}</dl></>}</section>}
         {!formMode && selected && tab === 'fleet' && user && detail.state === 'ok' && <nav className="enterprise-record-links" aria-label={localizedText(language, "pairs.m_bd26c39cdffd99c5")}><Button variant="outline" asChild><a href={`/app/excel-migration/${selected}`}>{localizedText(language, "pairs.m_f1779f35acec39d7")}</a></Button><Button variant="outline" asChild><a href={`/app/equipment-hierarchy/${selected}`}>{localizedText(language, "pairs.m_6c4fb9c1511200f9")}</a></Button><Button variant="outline" asChild><a href={`/app/crew-roster/${selected}`}>{localizedText(language, "pairs.m_055ca5840cae3a74")}</a></Button></nav>}
         {selected && tab === 'fleet' && user && detail.state === 'ok' && !profileOpen && !passportOpen && !editor && <VesselAttachments key={`${user.tenantId}:${user.actorId}:${selected}`} vessel={selected} language={language} csrf={user.csrfToken} onDirty={setDirty} onSaving={setSaving}/>}
-        {profileOpen && selected && tab === 'fleet' && user && detail.state === 'ok' && <RegulatoryProfile key={`${selected}-${profileInstance}`} id={selected} language={language} journey={onboardingOpen ? 'onboarding' : 'profile'} csrf={user.csrfToken} onDirty={setDirty} onSaving={setSaving}/>}
+        {profileOpen && selected && tab === 'fleet' && user && detail.state === 'ok' && <RegulatoryProfile onRegisterDiscard={registerProfileDiscard} owner={user.tenantId && user.actorId ? `${user.tenantId.toLowerCase()}/${user.actorId.toLowerCase()}` : null} offline={offline} key={`${selected}-${profileInstance}`} id={selected} language={language} journey={onboardingOpen ? 'onboarding' : 'profile'} csrf={user.csrfToken} onDirty={setDirty} onSaving={profileSaving}/>}
         {passportOpen && selected && tab === 'fleet' && user && detail.state === 'ok' && <CompliancePassport key={`${user.tenantId}:${user.actorId}:${selected}`} vessel={selected} language={language} onNavigate={follow}/>}
       </>}
     </main>
