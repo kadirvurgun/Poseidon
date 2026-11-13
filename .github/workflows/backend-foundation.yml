@@ -25,6 +25,8 @@ jobs:
         run: python -m unittest discover -s scripts -p windows_scheduler_checks.py -v
       - name: Verify owned runtime Windows file metadata boundaries
         run: python -m unittest discover -s scripts -p test_lab_runtime.py -v
+      - name: Verify owned object-root Windows ACL validation without reapplication
+        run: python -m unittest discover -s scripts -p test_bundle_object_root.py -v
 
   persistence-and-security:
     runs-on: ubuntu-latest
@@ -170,6 +172,7 @@ jobs:
           python3 -m unittest discover -s scripts -p test_bundle_observation_fixture.py -v
           python3 -m unittest discover -s scripts -p test_bundle_fixture_plan.py -v
           python3 -m unittest discover -s scripts -p test_lab_runtime.py -v
+          python3 -m unittest discover -s scripts -p test_bundle_object_root.py -v
       - name: Source fixture journal fault and restart unit tests
         run: node --test scripts/test_bundle_fixture_journal.ts scripts/test_bundle_legacy_context.ts
       - name: Explicit synthetic foundation policy and original consumer scope tests

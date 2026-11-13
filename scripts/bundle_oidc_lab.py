@@ -10,7 +10,6 @@ from pathlib import Path
 import secrets
 import socket
 import sys
-import tempfile
 import uuid
 
 import oidc_lab as lab
@@ -22,6 +21,7 @@ import bundle_observation_fixture as observation_fixture
 import lab_runtime
 import bundle_qualified_fixture_plan as qualified_plan
 import bundle_foundation_policy_fixture as foundation_policy
+import bundle_object_root
 
 BASE_ENVIRONMENT = lab.environment
 FIXTURE_NAMES = ('DAILY','CERTIFICATE','CERTIFICATE_EXTRACTION','SHIP_OPERATIONS','DEFECT','WORK_ORDER','DOWNTIME','OBSERVATION')
@@ -110,21 +110,8 @@ def prepare_bundle():
 
 
 def source_object_root():
-    """The unchanged file adapter forbids repository/content/web-root storage."""
-    objects=Path(tempfile.gettempdir())/(lab.PROJECT+'-source-bundle-objects')
-    if not objects.is_absolute() or objects.is_symlink() or objects.is_junction():
-        raise RuntimeError('source_bundle_object_boundary')
-    resolved=objects.resolve()
-    if resolved==lab.ROOT.resolve() or resolved.is_relative_to(lab.ROOT.resolve()):
-        raise RuntimeError('source_bundle_object_boundary')
-    for directory in (objects,*objects.parents):
-        if directory.is_symlink() or directory.is_junction() or (directory/'.git').exists():
-            raise RuntimeError('source_bundle_object_boundary')
-    # Existing objects are retained; this only enforces the established owner ACL.
-    lab.private_directory(objects)
-    if objects.resolve()!=resolved:
-        raise RuntimeError('source_bundle_object_boundary')
-    return objects
+    """Privately create once; validate retained API object storage without ACL writes."""
+    return bundle_object_root.ensure(lab)
 
 
 def prepare_crew_fixture():
