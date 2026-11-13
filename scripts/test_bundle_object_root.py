@@ -245,9 +245,12 @@ class BundleObjectRootTests(unittest.TestCase):
                 self.fail('owned_fresh_native_restriction_failed')
         self.lab.private_directory.side_effect = restrict
         with patch.object(fixture, 'WindowsAcl', NativeWindowsAcl):
+            backend = NativeWindowsAcl()
+            parent_before = backend.snapshot(self.base)
             fixture.ensure(self.lab)
             self.assertTrue(self.lab.private_directory.call_count == 1 and self.lab.private_directory.call_args.args == (self.path,), 'fresh_restriction_contract')
-            backend = NativeWindowsAcl(); before = backend.snapshot(self.path)
+            before = backend.snapshot(self.path)
+            self.assertTrue(parent_before == backend.snapshot(self.base), 'parent_acl_changed')
             object_file = self.path / 'held.object'; object_file.write_bytes(b'fictional-held-object')
             kernel = c.WinDLL('kernel32', use_last_error=True)
             create = kernel.CreateFileW
@@ -264,6 +267,27 @@ class BundleObjectRootTests(unittest.TestCase):
             finally:
                 close(handle)
             self.assertEqual(b'fictional-held-object', object_file.read_bytes())
+
+    @unittest.skipUnless(os.name == 'nt', 'Windows native ACL applies on Windows')
+    def test_windows_native_shared_private_creator_preserves_parent_and_exact_owner_only_acl(self):
+        backend = NativeWindowsAcl()
+        parent_before = backend.snapshot(self.base)
+        commands = []
+        def capture_native(command, **kwargs):
+            commands.append(command)
+            result = subprocess.run(command, capture_output=True, timeout=30)
+            if result.returncode:
+                self.fail('owned_shared_native_restriction_failed')
+        # Real shared creator and real PowerShell/.NET setter; capture its child
+        # output in memory so failed ACL diagnostics never become raw evidence.
+        with patch.object(bundle.lab, 'run', side_effect=capture_native):
+            bundle.lab.private_directory(self.path)
+        self.assertEqual(1, len(commands))
+        self.assertTrue(commands[0][-4:] == ['-Action', 'restrict', '-Directory', str(self.path)], 'shared_restriction_command_changed')
+        fixture.validate_windows(backend.snapshot(self.path), backend.current_user)
+        self.assertTrue(parent_before == backend.snapshot(self.base), 'parent_acl_changed')
+        self.assertFalse(any(self.path.iterdir()), 'fresh_root_not_empty')
+        self.assertEqual(0, self.lab.private_directory.call_count)
 
     @unittest.skipUnless(os.name == 'nt', 'Windows native ACL applies on Windows')
     def test_windows_native_broader_existing_acl_is_not_repaired(self):
