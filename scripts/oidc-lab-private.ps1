@@ -6,7 +6,9 @@ if ($Action -eq 'restrict') {
     $acl.SetOwner($sid)
     $acl.SetAccessRuleProtection($true, $false)
     $acl.AddAccessRule([Security.AccessControl.FileSystemAccessRule]::new($sid, 'FullControl', 'ContainerInherit,ObjectInherit', 'None', 'Allow'))
-    Set-Acl -LiteralPath $Directory -AclObject $acl
+    # Persist only the owner and DACL modified above. Set-Acl requests SACL
+    # privilege even though this creator neither reads nor changes audit rules.
+    [System.IO.FileSystemAclExtensions]::SetAccessControl([System.IO.DirectoryInfo]::new($Directory), $acl)
     exit 0
 }
 $process = Get-CimInstance Win32_Process -Filter "ProcessId=$ProcessId"
