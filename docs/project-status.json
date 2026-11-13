@@ -1114,7 +1114,7 @@
     "verification_record_scope": "Authored/deferred and original20f1198 results are historical;current rejection-repair evidence in core_bundle_01.verification"
   },
   "baseline": "POSEIDON v46.3 updated 2026-10-30 / Library26 candidate",
-  "current_stage": "Backend2b actual independentPASS:1067units/79PG/884API/critical117subset/model; source116 frontend lint/typePASS but Windows object-root native test fails at test_bundle_object_root.py:245. Remaining Linux/components/build/scans NOT_RUN_FAILFAST; fresh genuine/TLS/finiteS2 NOT_STARTED. Narrow correction in progress; producer2b→consumer116 reuse source665/addendum181 independent review pending. Canonical20tasks103SP10.62percent unchanged, no newpushPRmerge.",
+  "current_stage": "User Today card reflow authored and preview updated (HTTP200/exact newHTML; previewbuild5.732s only); 2component+4viewportbrowser sourcesDEFERRED. Actual002 backend independent1067unit/79PG/884APIPASS; frontend lint/type+233applicableprotocol identitiesPASS; full1660components1659PASS1FAIL. Profilehistoryasyncassertion corrected with selected1PASS16.195s,79unselected, no fullrerun/acceptance. Freshgenuine/TLS/finiteS2/fullscans/sourceindependentQAandCI pending; parallelagentproviderquota no retry/account rotation. Canonical20tasks103SP10.62percent unchanged; no newpushPRmerge.",
   "method": "accepted story points / total baseline story points * 100",
   "scope": "complete v46.3 Backlog sheet; duplicates in other sheets excluded",
   "total_tasks": 121,
@@ -14829,5 +14829,251 @@
       "new_pr": false,
       "merge": false
     }
+  },
+  "current_status_record": "windows_private_owner_resume_20261113",
+  "windows_private_owner_resume_20261113": {
+    "task": "PROJECT_STATUS_RESUME_002",
+    "state": "BACKEND_LOCAL_PASS_FRONTEND_CAPTURE_CORRECTION_GENUINE_PENDING",
+    "observed_at_utc": "2026-11-13T14:03:10.847544+00:00",
+    "source_target": "002a931106e021631c8ca5ef24b98428f884edcf",
+    "report_author": "/root/genuine_preflight_resume",
+    "documentation_scope": "Draft in separate worker; no product/native evidence retargeting or canonical promotion",
+    "prior_current_stage_preserved": "Backend2b actual independentPASS:1067units/79PG/884API/critical117subset/model; source116 frontend lint/typePASS but Windows object-root native test fails at test_bundle_object_root.py:245. Remaining Linux/components/build/scans NOT_RUN_FAILFAST; fresh genuine/TLS/finiteS2 NOT_STARTED. Narrow correction in progress; producer2b→consumer116 reuse source665/addendum181 independent review pending. Canonical20tasks103SP10.62percent unchanged, no newpushPRmerge.",
+    "canonical_progress": {
+      "accepted_tasks": 20,
+      "total_tasks": 121,
+      "accepted_story_points": 103,
+      "total_story_points": 970,
+      "completion_percent": 10.62,
+      "accepted_screens": 0,
+      "screen_inventory": 196,
+      "s0": "ACCEPTED",
+      "s1": "ACCEPTED",
+      "s2_candidate_tasks": 6,
+      "s2_candidate_story_points": 42,
+      "s2_accepted_story_points": 0
+    },
+    "backend": {
+      "state": "PASS_BACKEND_SCOPE_INDEPENDENTLY_RECONCILED",
+      "actual_target": "002a931106e021631c8ca5ef24b98428f884edcf",
+      "actual_started_at_utc": "2026-11-13T06:16:09.377856+00:00",
+      "actual_finished_at_utc": "2026-11-13T06:42:14.564250+00:00",
+      "independent_reviewed_at_utc": "2026-11-13T13:57:24.115861+00:00",
+      "independent_reviewer": "/root/independent_qa_resume",
+      "independent_result_sha256": "b35223d0be9432bdd9d82adddce68097c6ed9f1581f73e1a65967fdb36e6b7c6",
+      "actual_receipt_sha256": "15a1997160346a4f3bdc70f5b085d1df1cb695f917ee0f1f39e66b9774efb478",
+      "release_seconds": 85.273,
+      "unit": {
+        "persistence": 75,
+        "domain": 756,
+        "api": 236,
+        "total": 1067,
+        "failed": 0,
+        "skipped": 0
+      },
+      "postgresql": {
+        "passed": 79,
+        "failed": 0,
+        "skipped": 0,
+        "seconds": 314.538
+      },
+      "api_integration": {
+        "passed": 884,
+        "failed": 0,
+        "skipped": 0,
+        "seconds": 1089.756,
+        "shards": [
+          221,
+          221,
+          221,
+          221
+        ],
+        "partition": "EXACT_DISJOINT_COMPLETE_MULTISET"
+      },
+      "critical": {
+        "route_templates": 107,
+        "required_observed_audited": 117,
+        "invalid": 0,
+        "capture_instances_verified": 858,
+        "subset_of_api_not_additional_tests": true
+      },
+      "migration_model": {
+        "state": "PASS",
+        "seconds": 11.683
+      },
+      "source": {
+        "tracked_exact_git_blob_inputs": 2808,
+        "tools_hashed": 4,
+        "worker_clean": true
+      },
+      "public_release_manifest": {
+        "files": 181,
+        "sha256": "9b6353ca54ee66147c722d8838ef04cfcf845ea72a86c9fef9f45ae3beafcd29",
+        "complete_post_model_physical_set": true,
+        "old2b_116_outputs_reused": false
+      },
+      "cleanup": {
+        "own_scanner": "REMOVED",
+        "own_s3": "REMOVED",
+        "own_private_env": "ABSENT",
+        "other_older_clam_containers_retained": 3
+      },
+      "canonical_or_release_acceptance": false
+    },
+    "windows_owner_correction": {
+      "source_commit": "90ee741902ecc3431a06997e7528257b0aa59faa",
+      "normal_merge_target": "002a931106e021631c8ca5ef24b98428f884edcf",
+      "behavior": "Persist owner and DACL only; no SACL requirement; parent ACL preserved",
+      "narrow_original_method_passed": 1,
+      "full_platform_protocol_gate": "PENDING_NOT_REPLACED_BY_NARROW_PASS"
+    },
+    "frontend": {
+      "state": "NOT_STARTED_ON_002",
+      "old_source_freeze_sha256": "93f16e3747f26fb123093dbcc3a7570624e313b03b6851002e7b9c7497fc01e1",
+      "old_independent_review_sha256": "dfe3925fe24c39f4bffe6e89936b93f95f181fe094dbdd9332ba5ed63c4b5470",
+      "old_review_state": "TWO_PRIVACY_CAPTURE_FINDINGS_PREEXEC_CORRECTION_REQUIRED",
+      "findings": [
+        "PRIV-CAP-S01",
+        "PRIV-CAP-S02"
+      ],
+      "old_packet_never_executed": true,
+      "current_capture_source": "frontend-v2",
+      "current_capture_state": "AUTHORING_NOT_FROZEN_AT_CHECKPOINT",
+      "pure_capture_test_execution": "NOT_STARTED",
+      "full_frontend_protocol_components_build_scans_execution": "NOT_STARTED",
+      "prior_target_results_preserved_not_relabelled": true
+    },
+    "s2": {
+      "source_freeze_sha256": "a116da93fc22a8084648b158285ba83fe37a1d26b4a149ad2b86973e0871604b",
+      "independent_source_review_sha256": "e3902303f65147f46e31581a268f4cffb03414f62150d802450d5a1c7058dedd",
+      "pure_helpers": {
+        "actual_target": "002a931106e021631c8ca5ef24b98428f884edcf",
+        "passed": 10,
+        "failed": 0,
+        "skipped": 0,
+        "seconds": 0.527,
+        "genuine_credit": false
+      },
+      "finite_steps_required": 21,
+      "actual_observation_steps_completed": 0,
+      "candidate_not_accepted": true
+    },
+    "genuine": {
+      "state": "SOURCE_CLEAR_RUNTIME_NOT_STARTED",
+      "source_freeze_sha256": "7ad45c6ec7d23cd9fb3d8a89cfa598c83b63a03cfaa5a95a71387d4cf9df3100",
+      "independent_source_review_sha256": "9806f52359baef41c6fb4d26f0b1192f2a737f61757855340244e615a2a233c5",
+      "files_reviewed": 7,
+      "actual_native_reviewer_required": "/root/independent_qa_resume",
+      "artifact_copy": false,
+      "private_genesis": false,
+      "provider_browser_execution": false,
+      "full_register_tls_executed": false,
+      "separate_root_artifact_genuine_and_actual_run_id_s2_authority_required": true
+    },
+    "publication": {
+      "remote_observed_at_utc": "2026-11-13T13:53:36.185134+00:00",
+      "main_sha": "856f75e6a143fb81e4f41ddcb2a593185179618a",
+      "pr16": {
+        "state": "open",
+        "draft": true,
+        "head": "32ff1d08aed38c02cd78a019caf5913d49c26ace",
+        "merged": false
+      },
+      "new_push": false,
+      "new_pr": false,
+      "merge": false,
+      "required_exact_head_ci_before_merge": true
+    },
+    "operational_cadence": {
+      "backend_completed_utc": "2026-11-13T06:42:14.564250+00:00",
+      "active_agents_resumed_utc": "2026-11-13T13:52:00+00:00",
+      "resume_minute_not_exact_second": true,
+      "continuous_overnight_claim": false,
+      "persistent_host_and_usage_budget_configured": false,
+      "eta": "NOT_PROMISED_DEPENDENT_ON_OPEN_GATES"
+    },
+    "remaining": [
+      "Independent review and pure tests of frontend capture privacy correction",
+      "Fresh full frontend lint/typecheck, Windows+Linux protocol applicable union, components, build, repository/client scans",
+      "Fresh complete unfiltered genuine register and TLS, separately authorized actual-runId21-step finite S2 observations",
+      "Independent exact-target QA and required CI before normal PR merge",
+      "Source-required real human, pilot, SME and qualified authority inputs remain external"
+    ],
+    "historical_evidence_unchanged": true,
+    "acceptance": false,
+    "canonical_tasks_added": 0,
+    "canonical_story_points_added": 0,
+    "tests_builds_imports_provider_browser_push_performed_for_report": 0
+  },
+  "today_vessel_reflow_20261113": {
+    "state": "AUTHORED_PREVIEW_UPDATED_REGRESSION_DEFERRED",
+    "task": "TODAY-VESSEL-REFLOW-01",
+    "base": "002a931106e021631c8ca5ef24b98428f884edcf",
+    "product_files": [
+      "frontend/src/product/TodayWorkspace.tsx",
+      "frontend/src/product/enterprise.css"
+    ],
+    "component_case_sources": 2,
+    "browser_viewport_sources": [
+      1365,
+      580,
+      390,
+      320
+    ],
+    "new_test_execution": "DEFERRED",
+    "preview_build_seconds": 5.732,
+    "preview_http_status": 200,
+    "preview_exact_html": true,
+    "pixel_reflow_measured": false,
+    "provider_database_accounts_preserved": true,
+    "independent_review": "PENDING_PROVIDER_QUOTA",
+    "canonical_sp_added": 0,
+    "acceptance": false
+  },
+  "frontend_native_002_followup_20261113": {
+    "state": "ORIGINAL_PACKAGE_FAILED_SELECTED_ASSERTION_REPAIRED_NOT_ACCEPTED",
+    "actual_target": "002a931106e021631c8ca5ef24b98428f884edcf",
+    "lint_seconds": 42.576,
+    "lint": "PASS",
+    "typecheck_seconds": 13.072,
+    "typecheck": "PASS",
+    "protocol_union": {
+      "state": "PASS_APPLICABLE_IDENTITIES",
+      "total": 233,
+      "python": 135,
+      "node": 98
+    },
+    "components": {
+      "total": 1660,
+      "passed": 1659,
+      "failed": 1,
+      "pending": 0,
+      "todo": 0,
+      "unhandled": 0,
+      "seconds": 295.006,
+      "actual_rows_reconciled": 1660,
+      "unknown_titles_withheld_count": 786,
+      "file_count": 156
+    },
+    "failure_source": "frontend/src/product/RegulatoryProfile.test.tsx:56",
+    "selected_repair_task": "PROFILE-HISTORY-ASYNC-ASSERTION-01",
+    "selected_repair": {
+      "passed": 1,
+      "failed": 0,
+      "unhandled": 0,
+      "seconds": 16.195,
+      "other_cases_not_selected": 79,
+      "full_run_not_inferred": true
+    },
+    "capture_privacy_synthetic": {
+      "node_passed": 5,
+      "python_passed": 9,
+      "full_phase_credit": false
+    },
+    "full_build_and_scans": "NOT_RUN_FAILFAST",
+    "new_genuine_register_tls_finite_s2": "NOT_STARTED",
+    "independent_phase_qa": "PENDING_PROVIDER_QUOTA",
+    "canonical_sp_added": 0,
+    "acceptance": false
   }
 }

@@ -100,8 +100,26 @@ function TodayContext({ id, language, offline, onNavigate }: Props) {
     const refresh = () => { setCardOffset(0); setExpanded(null); setWhy({ state: 'loading' }); setData({ state: 'loading' }); setVessels({ state: 'loading' }); setAttempt(v => v + 1); };
     if (!id)
         return <section aria-label={t.select}><h2>{t.select}</h2>{vessels.state === 'loading' ? <p role="status">{offline ? t.offlineEmpty : t.loading}</p> : vessels.state === 'error' ? <TodayError code={vessels.status} retry={refresh} offline={offline} t={t}/> : <>{offline && <p role="status">{t.offline}</p>}{vessels.data.items.length === 0 && <p>{t.empty}</p>}
-    <div className="enterprise-vessel-grid">{vessels.data.items.map(v => { const Icon = v.kind === 'Tug' ? Anchor : Ship; return <Card className="enterprise-vessel-card" key={v.id}><span className="enterprise-vessel-icon"><Icon aria-hidden="true"/></span><div><h3>{v.code}</h3><p>{v.name}</p><Button variant="outline" size="sm" aria-label={`${v.code} · ${v.name}`} onClick={() => onNavigate(`/app/today/${v.id}`)}>{localizedText(language, "pairs.m_dc42cf81fa770206")}<ArrowUpRight aria-hidden="true"/></Button></div></Card>; })}</div>
-    <div className="product-pagination"><Button variant="outline" disabled={!offset || offline} onClick={() => { setVessels({ state: 'loading' }); setOffset(v => Math.max(0, v - 25)); }}>{t.previous}</Button><Button variant="outline" disabled={!vessels.data.hasMore || offline || offset >= 100000} onClick={() => { setVessels({ state: 'loading' }); setOffset(v => v + 25); }}>{t.next}</Button><Button variant="ghost" disabled={offline} onClick={refresh}><RefreshCw aria-hidden="true"/>{t.refresh}</Button></div></>}</section>;
+    <div className="enterprise-vessel-grid">{vessels.data.items.map(v => {
+      const Icon = v.kind === 'Tug' ? Anchor : Ship;
+      const identity = `${v.code} · ${v.name}`;
+      return <Card className="enterprise-vessel-card" key={v.id} role="group" aria-label={identity}>
+        <div className="enterprise-vessel-card-header">
+          <span className="enterprise-vessel-icon"><Icon aria-hidden="true"/></span>
+          <div className="enterprise-vessel-card-identity">
+            <h3 dir="auto" title={v.code}>{v.code}</h3>
+            <p dir="auto" title={v.name}>{v.name}</p>
+          </div>
+        </div>
+        <Button className="enterprise-vessel-card-action" variant="outline" size="sm" aria-label={identity} onClick={() => onNavigate(`/app/today/${v.id}`)}>
+          <span>{localizedText(language, "pairs.m_dc42cf81fa770206")}</span><ArrowUpRight aria-hidden="true"/>
+        </Button>
+      </Card>;
+    })}</div>
+    <EnterpriseActions align="between" className="enterprise-vessel-pagination">
+      <Button variant="ghost" disabled={offline} onClick={refresh}><RefreshCw aria-hidden="true"/>{t.refresh}</Button>
+      <EnterprisePagination label={t.select} previous={t.previous} next={t.next} previousDisabled={!offset || offline} nextDisabled={!vessels.data.hasMore || offline || offset >= 100000} onPrevious={() => { setVessels({ state: 'loading' }); setOffset(v => Math.max(0, v - 25)); }} onNext={() => { setVessels({ state: 'loading' }); setOffset(v => v + 25); }}/>
+    </EnterpriseActions></>}</section>;
     return <section aria-label={localizedText(language, "pairs.m_14d5741b2e6e2585")}><EnterpriseActions align="start" className="today-card-toolbar" aria-label={localizedText(language, "pairs.m_76ee6d9d280d1972")}><Button variant="outline" disabled={offline || data.state === 'loading'} onClick={refresh}><RefreshCw aria-hidden="true"/>{t.refresh}</Button><Button variant="ghost" onClick={() => onNavigate('/app/today')}><ArrowLeft data-inline-navigation-icon aria-hidden="true"/>{t.switch}</Button></EnterpriseActions>
     {data.state === 'loading' ? <p role="status">{offline ? t.offlineEmpty : t.loading}</p> : data.state === 'error' ? <TodayError code={data.status} retry={refresh} offline={offline} t={t}/> : <>
       <h2>{t.context}: {data.data.vessel.kind === 'Tug' ? (localizedText(language, "pairs.m_306aaabcb4e04a9f")) : (localizedText(language, "pairs.m_bb1dbfbac5d5c650"))} · {data.data.vessel.code} · {data.data.vessel.name}</h2>

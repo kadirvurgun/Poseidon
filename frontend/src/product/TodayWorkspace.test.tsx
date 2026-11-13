@@ -125,6 +125,21 @@ it('pages the authorized vessel selector and navigates only to a selected Today 
   await user.click(screen.getByRole('button', { name: 'Previous vessels' }))
   expect(await screen.findByRole('button', { name: /T1 · Synthetic Tug/ })).toBeVisible()
 })
+it.each(['tr', 'ar'] as const)('keeps the full long vessel identity and keyboard action after card reflow in %s', async language => {
+  const code = `SYNTHETIC-${'X'.repeat(54)}`
+  const name = language === 'ar' ? 'سفينة تجريبية طويلة الاسم لا تمنح تصريحا للتشغيل' : `FICTIONAL-${'Y'.repeat(190)}`
+  vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response({ items: [{ ...vessel, code, name }], offset: 0, limit: 25, hasMore: false })))
+  const navigate = vi.fn(); const user = userEvent.setup()
+  render(<TodayWorkspace id={null} language={language} offline={false} onNavigate={navigate} />)
+  const identity = `${code} · ${name}`
+  const card = await screen.findByRole('group', { name: identity, exact: true })
+  expect(within(card).getByRole('heading', { name: code, exact: true })).toHaveAttribute('title', code)
+  expect(within(card).getByText(name, { exact: true })).toHaveAttribute('title', name)
+  const open = within(card).getByRole('button', { name: identity, exact: true })
+  open.focus(); await user.keyboard('{Enter}')
+  expect(navigate).toHaveBeenCalledExactlyOnceWith(`/app/today/${id}`)
+  expect(within(card).queryByText('Ready', { exact: true })).not.toBeInTheDocument()
+})
 it.each(['2026-02-30T00:00:00Z', '2026-11-01', '2026-11-01T00:00:00+15:00', '2026-11-01T25:00:00Z'])('rejects ambiguous or invalid source timestamps %s', timestamp => {
   expect(() => decodeToday({ ...data, readAt: timestamp }, id)).toThrow()
   expect(() => decodeWhy({ ...why, sourceObservedAt: timestamp }, id)).toThrow()

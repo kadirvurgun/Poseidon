@@ -1,5 +1,103 @@
 # Foundation düzeltmeleri — 13.11.2026
 
+**13 Kasım — taşma düzeltmesi önizlemede; büyük faz kapısı açık.**
+Kullanıcının Bugün ekranı geri bildirimi giderildi: uzun araç kod/adları kart
+sınırında kırılır; ortak Card/Button ile tam genişlikte alt aksiyon, ortak
+EnterprisePagination/EnterpriseActions ve ekranı aşmayan grid kullanılır.
+Tam değerler ve erişilebilir adlar korunur; genel yatay taşmayı gizleyen kural,
+veri filtreleme veya onay/durum değişikliği eklenmedi. Düzeltme açık yerel
+önizlemeye aktarıldı; HTTPS sayfası200 ve yeni derlemenin HTML eşitliği doğrulandı.
+Önizleme derlemesi5,732s PASS; bu sonuç test veya faz kabulü değildir.
+
+Yeni2 TR/Arapça bileşen varyantı ve1365/580/390/320px gerçek yerleşim/klavye
+regresyon kaynağı yazıldı, **DEFERRED**. Görsel taşmama ölçümü henüz yapılmadı.
+İlgili iş: [TODAY-VESSEL-REFLOW-01](../tasks/TODAY-VESSEL-REFLOW-01.md).
+
+Özgün002 kapısında lint42,576s/tip13,072s PASS, uygulanabilir Windows+Linux
+protokol birleşimi233 kimlik (Python135 + Node98) PASS. Tam bileşen paketi
+**1660 =1659 PASS/1 FAIL**, pending/todo/unhandled0,295,006s; failfast nedeniyle
+büyük kapı build/taraması başlamadı. Profil geçmişi satırını eşzamanlı arayan
+assertion dar çalışmada yeniden üretildi; satırın yetkili asenkron okumasını
+bekleyen düzeltme aynı tek vakada **1/1 PASS**,16,195s,0unhandled.
+Diğer79 vaka bu dar koşuda seçilmedi; bu sonuç tüm1660 paketi geçirmiş sayılmaz.
+[İş ve kabul sınırı](../tasks/PROFILE-HISTORY-ASYNC-ASSERTION-01.md).
+
+Backend002 bağımsız doğrulaması1067/1067 birim,79/79 PostgreSQL ve884/884 API
+PASS olarak korunur; yeni ön yüz kaynakları bu sonuçların yürütme hedefi değildir.
+Yakalama gizliliği14/14 saf regresyon PASS; tanınmayan bileşen başlıkları yalnız
+sayılır, özel metin veya ayrı digest saklanmaz. Senaryo satırlarının1660/1660
+özetiyle eşitliği doğrulandı; protokol kimlik kapıları gevşetilmedi.
+
+**Canonical20/121 iş,103/970SP (%10,62),0/196 ayrı ekran değişmedi.** S0/S1
+kabulü korunur; S2'nin6 işi/42SP'si adaydır. Yeni PR/push/merge yok. Kalan:
+yeni ön yüz paketinin kaynak incelemesi ve faz sonunda tam regresyon/taze build/
+tarama; genuine/register/TLS/S2 sonlu gözlemleri; bağımsız aynı-hedef QA ve required CI.
+Paralel ajanlar kullanım sınırı bildirdi; yeni ajan/hesap denemesi yapılmadı,
+bağımsız kabul henüz verilmedi. Aşağıdaki13:52 ve önceki hedefler tarihseldir.
+
+**13 Kasım — 13:52 UTC devam kontrol noktası; faz kabulü açık.**
+Güncel birleşmiş ürün hedefi `002a931` üzerinde backend kapısı gerçek çalışmayla
+tamamlandı ve ayrı ajan tarafından bağımsız doğrulandı. Bu sonuç, yerel backend
+alt paketine aittir; tüm Foundation paketi, S2 sprinti veya release tamamlanmış
+sayılmıyor. **Canonical ilerleme20/121 iş,103/970SP (%10,62); ayrı kabul edilmiş
+ekran0/196.** S0 ve S1 kabul edildi; S2'nin6 işi/42SP'si aday kapsam olarak duruyor,
+S2 kabulü henüz0SP. Yazılan kod miktarı kabul yüzdesi yerine kullanılmıyor.
+
+| Güncel002 doğrulaması | Gerçek sonuç |
+|---|---|
+| Release derlemesi | PASS;85,273s |
+| Birim testleri |1067/1067 PASS: Persistence75 +Domain756 +API236; fail/skip0 |
+| Gerçek PostgreSQL integration |79/79 PASS;314,538s; fail/skip0 |
+| Tam API integration |884/884 PASS;1089,756s; dört ayrık/tam shard221'er vaka; fail/skip0 |
+| Kritik HTTP/audit kapsamı |107 route template;117 gerekli/gözlenen/audit edilmiş işlem,0 invalid;884 API vakasının alt kümesi |
+| Migration-model | PASS;11,683s |
+| Ön yüz002 | **NOT_STARTED**; lint/tip/protokol/bileşen/build/tarama için yeni sonuç yok |
+| Genuine/register/TLS ve S2 sonlu gözlemler002 | **NOT_STARTED**;21 adımın gerçek gözlemi0 |
+
+Backend yürütmesi06:16–06:42 UTC arasında tamamlandı. Sonrasında kaynak2808/2808
+Git blob'u, dört araç hashi,858 kritik capture dosyası ve model kontrolünden sonra
+üretilen eksiksiz181 public Release dosyası bağımsız eşleştirildi. Bu181 manifesti
+özgün002 çıktısıdır; eski2b/116 sonuçları yeniden etiketlenmedi. Bu koşunun sahipli
+Clam/S3 servisleri ve geçici ortam dosyası kaldırıldı. Önceden var olan üç Clam
+konteyneri başka koşulara ait olduğundan korundu; genel temizlik yapılmadı.
+
+Windows private-root düzeltmesi `90ee741` ile owner+DACL kapsamına daraltıldı;
+SACL okunmuyor ve parent ACL değiştirilmeden bırakılıyor. Normal merge `002a931`
+ve dar özgün Windows regresyonunda1 PASS kaydı var; bu dar sonuç, tamamlanmamış
+tam Windows+Linux protokol birleşiminin yerine geçmiyor.
+
+Ön yüzün önceki002 hazırlığı, çalışma başlamadan yakalama gizliliğindeki
+**PRIV-CAP-S01/S02** kaynak bulguları nedeniyle durduruldu: tanınmayan runtime
+test adları ve özel hata/stack verilerinin ayrı digest'leri kalıcı kanıta
+aktarılmamalı. Eski17 dosyalık paket korunuyor. Ayrı `frontend-v2` düzeltmesi bu
+kontrol noktasında yazılıyor; kaynak dondurma/bağımsız inceleme, saf yakalama
+testleri ve tam ön yüz kapısı henüz tamamlanmadı. Gerçek002 ön yüz yürütmesi yok;
+önceki hedeflerdeki PASS/FAIL sonuçları aşağıda kendi hedeflerinde kalıyor.
+
+S2 yardımcılarının002 hedefindeki10/10 saf testi0,527s PASS; **genuine gözlem
+kredisi sağlamaz**. Yeni genuine hazırlığının7 dosyası ve S2'nin12 kaynak dosyası
+bağımsız incelemeden geçti;27 kaynak pini ve673 seçilmiş ağaç girdisi eşleşiyor.
+Yeni genuine worker'da artifact kopyası, private genesis, sağlayıcı veya tarayıcı
+başlatılmadı. Gerçek400/no-write IMO doğrulaması da dahil21 sonlu adım, ancak aynı
+yeni runId'ye bağlı ayrı yetki ve gerçek ortamla ölçülebilir; pilot/SME onayı
+üretilemez.
+
+Sıradaki sıra: yakalama gizliliği düzeltmesinin bağımsız incelemesi ve saf testleri;
+tam lint/tip, Windows+Linux protokol birleşimi, bileşenler, taze build ve
+repository/client taramaları; ardından taze tam unfiltered genuine/register/TLS,
+S2 sonlu gözlemler, bağımsız son hedef QA ve merge öncesi gereken CI. Bunlar
+kapanmadan yeni faz kabulü veya güvenilir bitiş tarihi verilmiyor.
+
+13:53 UTC salt okunur GitHub kontrolünde PR16 hâlâ draft/open (`32ff1d0`),
+main `856f75e`; yeni push/PR/merge yok. Aktif ajan çalışması13:52 UTC'de yeniden
+başladı.06:42'de biten backend sonucu korunmuş kanıttır; aradaki süre kesintisiz
+çalışma veya kurulmuş7/24 host olarak sunulmuyor. Kalıcı host/kullanım bütçesi
+kurulumu tamamlanmış değil.
+
+Aşağıdaki tarihlendirilmiş kayıtlar tarihsel kontrol noktalarıdır; önceki
+“güncel”/“sıradaki” ifadeleri yazıldıkları hedef ve anı anlatır. Yeni durum üstteki002
+kontrol noktasıdır; özgün kanıtlar ve başarısızlıklar değiştirilmedi.
+
 **13 Kasım — son gerçek doğrulama ve kalan engel:** `2b1e7b3` backend kapısı
 bağımsız doğrulandı: Release74,950s; **1067/1067 birim**, **79/79 PostgreSQL**
 (296,995s), **884/884 API** (958,104s), fail/skip0. Dört ayrık shard221'er vaka;

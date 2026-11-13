@@ -165,12 +165,18 @@
 .enterprise-summary-list li { display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 11px 0; border-bottom: 1px solid #edf1f6; color: var(--muted-foreground); font-size: 12px; }
 .enterprise-summary-list li:last-child { border: 0; }
 .enterprise-summary-list strong { font-size: 13px; color: #304c70; font-weight: 600; }
-.enterprise-vessel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 15px; margin: 20px 0; }
-.enterprise-vessel-card { padding: 20px; display: flex; align-items: center; gap: 15px; text-align: start; }
+.enterprise-vessel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 16px; min-inline-size: 0; margin: 20px 0; }
+.enterprise-vessel-card { min-inline-size: 0; padding: 20px; display: flex; flex-direction: column; align-items: stretch; gap: 20px; text-align: start; }
+.enterprise-vessel-card-header { display: flex; align-items: flex-start; gap: 14px; min-inline-size: 0; }
+.enterprise-vessel-card-identity { flex: 1 1 0; min-inline-size: 0; }
 .enterprise-vessel-card .enterprise-vessel-icon { width: 44px; height: 44px; border-radius: 11px; background: #eef4fb; color: #4978ac; display: grid; place-items: center; flex-shrink: 0; }
-.enterprise-vessel-card h3 { margin: 0 0 3px; font-size: 14px; }
-.enterprise-vessel-card p { color: var(--muted-foreground); font-size: 11px; margin-bottom: 10px; }
+.enterprise-vessel-card h3 { margin: 0 0 5px; font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; }
+.enterprise-vessel-card p { color: var(--muted-foreground); font-size: 12px; margin: 0; overflow-wrap: anywhere; }
 .enterprise-shell .enterprise-vessel-card [data-slot="button"] { font-size:12px; }
+.enterprise-shell .enterprise-vessel-card .enterprise-vessel-card-action { inline-size: 100%; min-inline-size: 0; margin-block-start: auto; justify-content: space-between; }
+.enterprise-vessel-card-action > span { min-inline-size: 0; overflow-wrap: anywhere; text-align: start; }
+.enterprise-shell .enterprise-vessel-pagination { align-items: center; margin-block-start: 0; }
+.enterprise-vessel-pagination > .enterprise-pagination { min-inline-size: 0; padding-block: 0; }
 .enterprise-empty { display: grid; justify-items: center; padding: 46px 24px; text-align: center; color: var(--muted-foreground); gap: 10px; }
 .enterprise-empty > svg { width: 32px; height: 32px; color: #7d9abf; }
 .enterprise-empty h2 { font-size: 16px; margin-bottom: 0; }

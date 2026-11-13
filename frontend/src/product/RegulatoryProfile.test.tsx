@@ -53,7 +53,9 @@ describe('VESSEL-PROFILE-DRAFT-01 component and transport coverage (mocked API, 
         expect(screen.getByText(/Mandatory submission policy is unresolved/)).toBeVisible();
         expect(screen.getByText(/does not authorize submission or operations/)).toBeVisible();
         expect(screen.getByRole('heading', { name: 'Version history' })).toBeVisible();
-        expect(screen.getByText(/Version 1 ·/)).toHaveTextContent('Synthetic');
+        // History has its own owner-authorized asynchronous read after the
+        // profile is visible; wait for that response rather than its heading.
+        expect(await screen.findByText(/Version 1 ·/)).toHaveTextContent('Synthetic');
         expect(screen.queryByText('Ready', { exact: true })).not.toBeInTheDocument();
     });
     it('saves incomplete drafts with explicit Unknown and Known zero and bounded same-origin transport', async () => {
