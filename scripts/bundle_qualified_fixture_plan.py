@@ -29,6 +29,17 @@ def invalid():
     raise RuntimeError('qualified_fixture_contract_invalid')
 
 
+def exact(value, expected):
+    """Closed JSON comparison: bool/float must never stand in for an integer."""
+    if type(value) is not type(expected):
+        return False
+    if isinstance(expected, dict):
+        return value.keys() == expected.keys() and all(exact(value[key], item) for key, item in expected.items())
+    if isinstance(expected, list):
+        return len(value) == len(expected) and all(exact(a, b) for a, b in zip(value, expected))
+    return value == expected
+
+
 def guid(value):
     if not isinstance(value, str) or len(value) != 36:
         invalid()
@@ -211,7 +222,7 @@ def configure(config, metadata, plan, sources=None, witnesses=None, now=None, ve
         'Scopes': [{'TenantId': plan['tenantId'], 'ActorId': plan['writerActorId'], 'VesselId': plan['tugId'], 'EligibleTugs': [plan['tugId']]}],
         'Types': [{'Code': 'FICTIONAL-QOF', 'Tr': 'Kurgusal yazılım testi', 'En': 'Fictional software test'}],
         'Contexts': [{'TenantId': plan['tenantId'], 'VesselId': plan['tugId'], 'Code': 'FICTIONAL-QOF', 'SourceReference': 'FICTIONAL/'+plan['runId'], 'SourceRevision': 1, 'ObservedAt': plan['notBefore']}], 'BpSources': []}
-    if candidate.get('TugPlanning') not in (None, {}, policy):
+    if not any(exact(candidate.get('TugPlanning'), allowed) for allowed in (None, {}, policy)):
         invalid()
     candidate['TugPlanning'] = policy
     position = {'Version': 'SYNTHETIC-QOF-'+plan['runId'], 'SourceReference': 'FICTIONAL/qualified-owning/'+plan['runId'],
@@ -219,7 +230,7 @@ def configure(config, metadata, plan, sources=None, witnesses=None, now=None, ve
             'TenantId': plan['tenantId'], 'VesselId': plan['shipId'], 'PositionId': plan['positionId'],
             'Code': 'FICTIONAL-QOF', 'Rank': None, 'Capacity': None, 'Department': None,
             'Provenance': 'UserDeclaredUnverified'}]}
-    if candidate.get('CrewPositionPolicy') not in (None, {}, position):
+    if not any(exact(candidate.get('CrewPositionPolicy'), allowed) for allowed in (None, {}, position)):
         invalid()
     candidate['CrewPositionPolicy'] = position
 
@@ -229,7 +240,7 @@ def configure(config, metadata, plan, sources=None, witnesses=None, now=None, ve
             invalid()
         matches = [g for g in rows if g.get('Id') == grant['Id'] or match_scope(g)]
         if matches:
-            if len(matches) != 1 or matches[0] != grant:
+            if len(matches) != 1 or not exact(matches[0], grant):
                 invalid()
         else:
             rows.append(grant)

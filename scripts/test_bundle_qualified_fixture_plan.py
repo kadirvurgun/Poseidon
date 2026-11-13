@@ -117,6 +117,30 @@ class QualifiedFixturePlanTests(unittest.TestCase):
             self.configure(config=restricted)
         self.assertFalse(restricted['Authentication']['Oidc']['Memberships'][1]['TenantWideRead'])
 
+    def test_existing_policy_and_appointment_numeric_types_or_nested_shape_cannot_be_adopted_or_repaired(self):
+        actual = self.configure(sources=self.sources, witnesses=self.witnesses)
+        variants = []
+        for value in (1.0, True):
+            policy = deepcopy(actual); policy['TugPlanning']['Contexts'][0]['SourceRevision'] = value
+            variants.append(policy)
+            appointment = deepcopy(actual)
+            appointment['Authentication']['Oidc']['Memberships'][0]['RegulatoryAuthorities'][0]['SourceRevision'] = value
+            variants.append(appointment)
+        extra = deepcopy(actual); extra['TugPlanning']['Contexts'][0]['extra'] = None; variants.append(extra)
+        extra = deepcopy(actual); extra['CrewPositionPolicy']['Positions'][0]['extra'] = None; variants.append(extra)
+        extra = deepcopy(actual); extra['Authentication']['Oidc']['Memberships'][0]['RegulatoryAuthorities'][0]['Contract']['extra'] = None
+        variants.append(extra)
+        reordered_type = deepcopy(actual)
+        reordered_type['Authentication']['Oidc']['Memberships'][0]['RegulatoryAuthorities'][0]['Actions'] = ('qualify',)
+        variants.append(reordered_type)
+        for index, changed in enumerate(variants):
+            # JSON retains bool-vs-int/float spellings where Python == does not.
+            before = json.dumps(changed, sort_keys=True)
+            with self.subTest(variant=index), self.assertRaises(RuntimeError):
+                self.configure(config=changed, sources=self.sources, witnesses=self.witnesses)
+            self.assertEqual(before, json.dumps(changed, sort_keys=True))
+        self.assertIsInstance(reordered_type['Authentication']['Oidc']['Memberships'][0]['RegulatoryAuthorities'][0]['Actions'], tuple)
+
     def test_stale_wrong_vessel_or_reused_witness_tuple_never_gets_an_appointment(self):
         for key, value in (('vesselId', q.base.FOREIGN_SHIP), ('revision', 0), ('controlRevision', True), ('baselineEvaluationId', uid())):
             changed = deepcopy(self.witnesses); changed['witnesses']['tugOperation'][key] = value
