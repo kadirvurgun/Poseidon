@@ -91,11 +91,14 @@ async function renewalRetainsOriginal(page: Page) {
     if (fixture.ownerRoleId)
         await form.getByLabel('Assigned renewal owner role', { exact: true }).selectOption(fixture.ownerRoleId);
     const replacement = form.getByLabel('Declared replacement certificate', { exact: true });
+    // Options do not exist while the initial authorized page is loading. The
+    // candidate may arrive on that first page with no further pages available.
+    await expect(replacement).toBeEnabled();
     for (let pages = 0; pages < 32 && await replacement.locator('option[value="' + candidate.id + '"]').count() === 0; pages++) {
         const next = form.getByRole('button', { name: 'More candidates', exact: true });
         await expect(next).toBeEnabled();
         await next.click();
-        await expect(form.getByText('Loading authorized candidates…', { exact: true })).not.toBeVisible();
+        await expect(replacement).toBeEnabled();
     }
     await replacement.selectOption(candidate.id);
     await expect(form.getByLabel('Declared replacement issue date', { exact: true })).toHaveValue('');
