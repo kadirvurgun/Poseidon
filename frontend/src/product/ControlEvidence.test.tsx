@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { ControlEvidence } from './ControlEvidence'
 import { blank } from './control-evidence-api'
+import { reviewAnchor, reviewSession, reviewTrace } from './human-review.test-fixtures'
 
 const vessel = '10000000-0000-4000-8000-000000000001', id = '10000000-0000-4000-8000-000000000002'
 const row = () => ({ id, vesselId: vessel, kind: 'Control', revision: 1, version: 5, content: blank(), hash: 'A'.repeat(64), lifecycle: 'DRAFT', completion: 'UNKNOWN', verification: 'UNVERIFIED', effectiveness: 'UNKNOWN', timeState: 'UNKNOWN', evidenceExists: false, file: null, requirements: [], links: [], blockers: ['SOURCE_ADMISSION_UNAVAILABLE', 'VERIFICATION_NOT_PERFORMED', 'TITLE_MISSING', 'OWNER_MISSING', 'REQUIREMENT_LINK_MISSING', 'FREQUENCY_UNSPECIFIED', 'EVIDENCE_POLICY_MISSING', 'VERIFICATION_POLICY_MISSING', 'CRITICALITY_UNKNOWN'], savedAt: '2026-11-02T00:00:00Z', asOf: '2026-11-02T00:00:00Z' })
@@ -57,5 +58,35 @@ describe('CE TR/EN accessible draft behavior authored / NOT RUN', () => {
     transport(async () => response({ code: 'version_conflict' }, 409)); render(<ControlEvidence {...props()} />); const user = userEvent.setup(); await user.selectOptions(await screen.findByLabelText('Vessel context'), vessel)
     await screen.findByText('Draft authoring available'); await user.type(screen.getByLabelText('Title'), 'conflicted draft'); await user.click(screen.getByRole('button', { name: 'Save incomplete draft' }))
     await screen.findByText('Version conflict. Draft retained; inspect history before discarding.'); expect(screen.getByLabelText('Title')).toHaveValue('conflicted draft'); expect(screen.getByLabelText('Title')).toBeDisabled()
+  })
+  it('keeps actual human UNKNOWN command behind the existing vessel/register navigation barrier', async () => {
+    let posts = 0;
+    const evidence = { ...row(), kind: 'Evidence', content: { ...blank(), title: 'FICTIONAL human recovery evidence' },
+      links: [{ kind: 'Control', id: reviewAnchor.controlId, revision: 1, expectedVersion: 3 }] }
+    const fetch = vi.fn(async (url: string, init?: RequestInit) => {
+      if (url.endsWith('/auth/session')) return response(reviewSession())
+      if (url.includes('/regulatory-trace?')) return response(reviewTrace())
+      if (init?.method === 'POST' && url.includes('/verifications?')) { posts++; throw new TypeError('controlled response loss') }
+      if (url.includes('/vessels?')) return response({ items: [{ id: vessel, name: 'FICTIONAL vessel', companyId: id, code: 'F1', kind: 'Ship', version: 1, canEdit: true }], offset: 0, limit: 25, hasMore: false })
+      if (url.includes('/owners?')) return response({ items: [] })
+      if (url.includes('/orphans?')) return response({ available: false, reason: 'AUTHORITATIVE_APPLICABILITY_UNAVAILABLE', draftCriticalOrphans: [], uncontrolledObligations: [], offset: 0, hasMore: false })
+      if (url.includes('/rules') || url.includes('/requirement-drafts')) return response({ items: [], offset: 0, limit: 25, hasMore: false })
+      if (url.includes('/files')) return response({ items: [], offset: 0, hasMore: false, canWrite: false, available: false, maxBytes: 0, allowedTypes: ['image/png'] })
+      return response({ items: url.includes('/evidence?') ? [evidence] : [], offset: 0, hasMore: false, canWrite: true })
+    }); vi.stubGlobal('fetch', fetch)
+    const p = props(); render(<ControlEvidence {...p} owner={`${reviewSession().tenantId}/${reviewSession().actorId}`} />); const user = userEvent.setup()
+    await user.selectOptions(await screen.findByLabelText('Vessel context'), vessel)
+    await user.selectOptions(screen.getByLabelText('Register'), 'Evidence')
+    await user.click(await screen.findByRole('button', { name: /FICTIONAL human recovery evidence · 1/ }))
+    await user.selectOptions(await screen.findByLabelText('Provisioned authority'), reviewTrace().authorities[0].id)
+    await user.type(screen.getByLabelText('Bound review reason'), 'FICTIONAL parent guarded review')
+    await user.click(screen.getByRole('button', { name: 'Record pending request' }))
+    await screen.findByText('Outcome uncertain. The exact original attempt is locked until retry.')
+    await waitFor(() => expect(screen.getByLabelText('Register')).toBeDisabled())
+    expect(screen.getByLabelText('Vessel context')).toBeDisabled()
+    expect(document.querySelector('.vessel-files')?.parentElement).toHaveAttribute('inert')
+    expect(p.onSaving).toHaveBeenLastCalledWith(true)
+    expect(screen.queryByRole('button', { name: 'Discard local review draft' })).toBeNull()
+    expect(posts).toBe(1)
   })
 })

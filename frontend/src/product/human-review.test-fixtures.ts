@@ -2,6 +2,8 @@
 import type { Anchor } from './human-review-api'
 export const reviewAnchor: Anchor = { vesselId: '10000000-0000-4000-8000-000000000001', evidenceId: '10000000-0000-4000-8000-000000000002', evidenceRevision: 1, controlId: '10000000-0000-4000-8000-000000000003', controlRevision: 1 }
 const actor = '10000000-0000-4000-8000-000000000004'
+export const reviewSession = () => ({ authenticated: true, setupRequired: false, canRead: true, actorId: actor,
+  tenantId: '10000000-0000-4000-8000-000000000005', csrfToken: crypto.randomUUID() })
 export const reviewRow = () => ({ ...reviewAnchor, id: actor, revision: 1, version: 5, kind: 'Verification', state: 'PENDING', currentState: 'PENDING', evaluationId: null, verificationId: null, verificationRevision: null, actorId: actor, roleId: actor, authorityId: actor, operationId: actor, reasonCode: 'REQUEST_REVIEW', rationale: 'FICTIONAL test review', authorityHash: 'B'.repeat(64), contextHash: 'A'.repeat(64), savedAt: '2026-11-02T00:00:00Z', validUntil: null, asOf: '2026-11-02T00:00:00Z', recording: null })
 export const reviewTrace = () => ({ ...reviewAnchor, evidenceVersion: 2, controlVersion: 3, profileRevision: 1, asOf: '2026-11-02T00:00:00Z', historical: false, disposition: 'REVIEW_REQUIRED', complete: false,
   evidenceContext: { provenance: null, observedAt: null, validUntil: null, freshUntil: null, timeState: 'UNKNOWN' },

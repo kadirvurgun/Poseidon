@@ -256,6 +256,7 @@ export function ProductApp() {
         {new URLSearchParams(window.location.search).has('auth') && <p role="alert">{t.failed}</p>}
       </section>}
       {pendingNavigation && <DraftConfirmation language={language} onStay={() => setPendingNavigation(null)} onDiscard={() => {
+                if (saving) return;
                 const action = pendingNavigation;
                 setPendingNavigation(null);
                 closeEditor();
@@ -264,7 +265,7 @@ export function ProductApp() {
       {canRead && !route.invalid && tab === 'audit' && <AuditWorkspace key={`${user?.tenantId}:${user?.actorId}:${selected}:${route.query ?? ''}`} language={language} selected={selected} query={route.query} allowed={auditAllowed} onNavigate={follow}/>}
       {canRead && !route.invalid && tab === 'today' && <TodayWorkspace key={selected ?? 'select'} id={selected} language={language} offline={offline} onNavigate={follow}/>}
       {canRead && regulatory && tab === 'today' && <p><a href="/app/sources" onClick={e => { e.preventDefault(); follow('/app/sources'); }}>{localizedText(language, "pairs.m_feecca63cf4fe395")}</a></p>}
-      {canRead && !route.invalid && registerTab && <RegulatoryRegister key={`${tab}-${selected}-${profileInstance}`} kind={tab === 'sources' ? 'sources' : 'requirements'} id={selected} language={language} csrf={user!.csrfToken} canWrite={regulatoryWrite} offline={offline} onDirty={setDirty} onSaving={setSaving} onNavigate={follow}/>}
+      {canRead && !route.invalid && registerTab && <RegulatoryRegister owner={user?.tenantId && user.actorId ? `${user.tenantId.toLowerCase()}/${user.actorId.toLowerCase()}` : null} key={`${tab}-${selected}-${profileInstance}`} kind={tab === 'sources' ? 'sources' : 'requirements'} id={selected} language={language} csrf={user!.csrfToken} canWrite={regulatoryWrite} offline={offline} onDirty={setDirty} onSaving={setSaving} onNavigate={follow}/>}
       {canRead && !registerTab && tab !== 'audit' && tab !== 'today' && !route.invalid && (tab !== 'companies' || user?.canReadCompanies) && <>
         {notice && <p role="status" className="directory-notice">{notice}</p>}
         {!formMode && records.state === 'ok' && <DirectoryOverview records={records.data.items} fleet={tab === 'fleet'} language={language} offset={offset} hasMore={records.data.hasMore}/>}

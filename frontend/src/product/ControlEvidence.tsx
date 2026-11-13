@@ -19,6 +19,7 @@ import { VesselFiles } from './VesselFiles';
 import { DraftConfirmation } from './DraftConfirmation';
 import { timestamp } from './date-validation';
 type Props = {
+    owner?: string | null;
     language: AppLocale;
     csrf: string;
     offline: boolean;
@@ -51,6 +52,7 @@ export function ControlEvidence(props: Props) {
         return () => { active = false; c.abort(); };
     }, [vesselOffset, props.offline]);
     const change = (v: string, k: service.Kind) => {
+        if (saving) return;
         if (dirty)
             setPending({ vessel: v, kind: k });
         else {
@@ -65,11 +67,11 @@ export function ControlEvidence(props: Props) {
     <EnterpriseToolbar><label>{localizedText(language, "pairs.m_ba91f7fe5286366c")}<select value={vessel} disabled={saving} onChange={e => change(e.target.value, kind)}><option value="">{localizedText(language, "pairs.m_6e26333eb2a6b2c3")}</option>{vessel && !vessels.some(v => v.id === vessel) && <option value={vessel}>{vessel}</option>}{vessels.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}</select></label>
     <label>{localizedText(language, "pairs.m_b9f13e3611f63d16")}<select disabled={saving} value={kind} onChange={e => change(vessel, e.target.value as service.Kind)}><option value="Control">{localizedText(language, "pairs.m_72c87c6d289cd36f")}</option><option value="Evidence">{localizedText(language, "pairs.m_29983c02e9b2276d")}</option></select></label></EnterpriseToolbar>
     <EnterprisePagination label={localizedText(language, "pairs.m_ed930ce14a5fd685")} previous={localizedText(language, "pairs.m_3ebc6aea5e3f139e")} next={localizedText(language, "pairs.m_e86c29e387920d03")} previousDisabled={saving || vesselOffset === 0} nextDisabled={saving || !more} onPrevious={() => setVesselOffset(v => v - 25)} onNext={() => setVesselOffset(v => v + 25)}/>
-    {pending && <DraftConfirmation language={props.language} onStay={() => setPending(null)} onDiscard={() => { setVessel(pending.vessel); setKind(pending.kind); setPending(null); setDirty(false); props.onDirty(false); }}/>}
+    {pending && <DraftConfirmation language={props.language} onStay={() => setPending(null)} onDiscard={() => { if (saving) return; setVessel(pending.vessel); setKind(pending.kind); setPending(null); setDirty(false); props.onDirty(false); }}/>}
     {vessel && <Editor key={`${vessel}/${kind}`} {...props} vessel={vessel} kind={kind} isTug={vessels.find(v => v.id === vessel)?.kind === 'Tug'} onDirty={v => { setDirty(v); props.onDirty(v); }} onSaving={v => { setSaving(v); props.onSaving(v); }}/>}
   </section>;
 }
-function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving, isTug }: Props & {
+function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving, isTug, owner }: Props & {
     vessel: string;
     kind: service.Kind;
     isTug: boolean;
@@ -310,8 +312,8 @@ function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving, isTu
     {source && <><ul aria-label={localizedText(language, "pairs.m_90a42aea41718d5b")}>{source.items.map(r => <li key={r.revision}>{r.id}/{r.revision} · {r.content.title.value} · {r.content.locator.value} · {r.hash} · {r.lifecycle}</li>)}</ul>{pages(sourceOffset, source.hasMore, setSourceOffset, localizedText(language, "pairs.m_d64eac926438b43c"))}</>}
     {selected && <section aria-label={localizedText(language, "pairs.m_d21b2e2163abcf4b")}><h3>{localizedText(language, "pairs.m_d21b2e2163abcf4b")}</h3><label>{localizedText(language, "pairs.m_285a2e9b5a7e00f7")}<input value={asOf} onChange={e => setAsOf(e.target.value)}/></label><Button disabled={offline || !!asOf && !timestamp(asOf)} onClick={() => { setHistoryAsOf(asOf); setHistoryOffset(0); }}>{localizedText(language, "pairs.m_abe27a0e178299f8")}</Button>{history?.items.map(r => <article key={r.revision}><h4>{r.revision} · {r.content.title}</h4><p>{r.savedAt} · {timeLabel(r.timeState)} · {r.hash}</p><p>{localizedText(language, "pairs.m_eb51fdc14888edff")}</p><p>{r.file ? `${r.file.id}/${r.file.revision} · ${r.file.checksum}` : localizedText(language, "pairs.m_f63c1fd92ab739ba")}</p><ul>{r.requirements.map(p => <li key={`${p.requirementId}/${p.requirementRevision}`}>{p.requirementId}/{p.requirementRevision} → {p.sourceId}/{p.sourceRevision} · {p.ruleId ?? '—'}/{p.ruleRevision ?? '—'}</li>)}{r.links.map(p => <li key={`${p.kind}/${p.id}/${p.revision}`}>{p.kind} {p.id}/{p.revision}</li>)}</ul><p>{localizedText(language, "pairs.m_ef764cb14360bfc4")}</p><details><summary>{localizedText(language, "pairs.m_976f026914e9fe02")}</summary><ul>{r.blockers.map(b => <li key={b}>{blockerLabel(b)}</li>)}</ul></details></article>)}{history && pages(historyOffset, history.hasMore, setHistoryOffset, localizedText(language, "pairs.m_bb5ad118ccbb2107"))}</section>}
     {orphan && <p role="status">{orphan.available ? localizedText(language, "pairs.m_23e7a96b7b285e82") : localizedText(language, "pairs.m_bd6299ce40586f12")} · {orphan.reason} · {orphan.uncontrolledObligations.map(o => `${o.requirementId}/${o.requirementRevision}`).join(' · ')}</p>}
-    {selected?.kind === 'Evidence' && !dirty && !frozen && !uploadDirty && selected.links.filter(p => p.kind === 'Control').map(p => <HumanDecisionTrace key={`${selected.id}/${selected.revision}/${p.id}/${p.revision}`} anchor={{ vesselId: vessel, evidenceId: selected.id, evidenceRevision: selected.revision, controlId: p.id, controlRevision: p.revision }} language={language} csrf={csrf} offline={offline} onDirty={v => setReviewDrafts(current => current[p.id] === v ? current : { ...current, [p.id]: v })} onSaving={v => setReviewSaves(current => current[p.id] === v ? current : { ...current, [p.id]: v })}/>)}
+    {selected?.kind === 'Evidence' && !dirty && !frozen && (!uploadDirty || reviewDirty || reviewBusy) && selected.links.filter(p => p.kind === 'Control').map(p => <HumanDecisionTrace owner={owner} key={`${selected.id}/${selected.revision}/${p.id}/${p.revision}`} anchor={{ vesselId: vessel, evidenceId: selected.id, evidenceRevision: selected.revision, controlId: p.id, controlRevision: p.revision }} language={language} csrf={csrf} offline={offline} onDirty={v => setReviewDrafts(current => current[`${p.id}/${p.revision}`] === v ? current : { ...current, [`${p.id}/${p.revision}`]: v })} onSaving={v => setReviewSaves(current => current[`${p.id}/${p.revision}`] === v ? current : { ...current, [`${p.id}/${p.revision}`]: v })}/>)}
     <section aria-label={localizedText(language, "pairs.m_21b567ca86adf1ba")}><h3>{localizedText(language, "pairs.m_21b567ca86adf1ba")}</h3><p>{localizedText(language, "pairs.m_7471b126af2cfc68")}</p>{orphan ? <><ul>{orphan.draftCriticalOrphans.map(id => <li key={id}>{id}</li>)}</ul>{pages(orphanOffset, orphan.hasMore, setOrphanOffset, localizedText(language, "pairs.m_bd73803992337989"))}</> : <p>{localizedText(language, "pairs.m_0880bff615d8df3e")}</p>}</section>
-    {kind === 'Evidence' && <VesselFiles offline={offline} vessel={vessel} language={language} csrf={csrf} onDirty={setUploadDirty} onSaving={setUploadBusy} onCommitted={() => setReload(x => x + 1)}/>}
+    {kind === 'Evidence' && <div inert={reviewDirty || reviewBusy}><VesselFiles offline={offline} vessel={vessel} language={language} csrf={csrf} onDirty={setUploadDirty} onSaving={setUploadBusy} onCommitted={() => setReload(x => x + 1)}/></div>}
   </div>;
 }

@@ -112,8 +112,92 @@ async function restrictedTrace(page: Page) {
         expect(value.authorities).toBeUndefined();
     }
 }
+// HRO07: actual assigned recording policy only. Missing evidence/appointment is
+// a hard prerequisite failure, never a provider switch or fabricated success.
+async function controlledRecordingLoss(page: Page) {
+    const trace = await scopedTrace(page);
+    const verification = trace.getByRole('article').filter({ has: page.getByRole('heading', { name: /^Verification ·/ }) }).first();
+    await expect(verification).toBeVisible();
+    await verification.getByRole('button', { name: 'Record authorized human decision', exact: true }).click();
+    const authority = trace.getByRole('combobox', { name: 'Provisioned authority', exact: true });
+    const option = authority.locator('option').filter({ hasText: 'human.decide' }).first();
+    await expect(option).toHaveCount(1);
+    await authority.selectOption(await option.getAttribute('value') ?? '');
+    await trace.getByRole('textbox', { name: 'Bound review reason', exact: true }).fill('FICTIONAL controlled recovery software journey');
+    await trace.getByRole('textbox', { name: 'Human decision text', exact: true }).fill('FICTIONAL retained text; no operational approval');
+    await trace.getByRole('textbox', { name: 'Decision context', exact: true }).fill('Synthetic existing assignment, pending qualification');
+    await trace.getByRole('textbox', { name: 'Trigger source', exact: true }).fill('FICTIONAL response-loss regression');
+    let sessions = 0, postCount = 0, failOptionalRead = false, failedReads = 0, traceUrl = '';
+    let savedId = '', savedRevision = 0;
+    const attempts: { body: string; key: string; path: string; sessions: number }[] = [];
+    const observe = (request: Request) => {
+        const url = new URL(request.url());
+        if (request.method() === 'GET' && url.pathname === '/api/v1/auth/session') sessions++;
+        if (request.method() === 'POST' && /^\/api\/v1\/decisions(?:\/[0-9a-f-]+\/events)?$/.test(url.pathname))
+            attempts.push({ body: request.postData() ?? '', key: request.headers()['idempotency-key'] ?? '', path: url.pathname + url.search, sessions });
+    };
+    const postPattern = '**/api/v1/decisions**', readPattern = '**/api/v1/regulatory-trace?**';
+    const interceptPost = async (route: import('@playwright/test').Route) => {
+        if (route.request().method() !== 'POST') { await route.continue(); return; }
+        const response = await route.fetch(); // REAL authenticated transaction, including current CSRF/authority.
+        try {
+            expect(response.status()).toBe(200);
+            const row = await response.json();
+            expect(row.state === 'RECORDED' && row.recording?.qualification === 'UNASSESSED').toBe(true);
+            if (++postCount === 1) {
+                savedId = row.id; savedRevision = row.revision;
+                expect(typeof savedId === 'string' && savedId.length === 36 && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(savedId) && savedRevision === 1).toBe(true);
+                await route.abort('connectionreset'); // Committed response intentionally lost.
+            } else {
+                expect(row.id === savedId && row.revision === savedRevision).toBe(true);
+                failOptionalRead = true;
+                await route.fulfill({ response });
+            }
+        } finally { await response.dispose(); }
+    };
+    const interceptRead = async (route: import('@playwright/test').Route) => {
+        traceUrl = route.request().url();
+        if (failOptionalRead) { failOptionalRead = false; failedReads++; await route.abort('connectionreset'); }
+        else await route.continue();
+    };
+    page.on('request', observe);
+    await page.route(postPattern, interceptPost); await page.route(readPattern, interceptRead);
+    try {
+        const beforeFirst = sessions;
+        await trace.getByRole('button', { name: 'Save human decision record', exact: true }).click();
+        await expect(trace.getByText('Outcome uncertain. The exact original attempt is locked until retry.', { exact: true })).toBeVisible();
+        expect(postCount).toBe(1); expect(attempts.length === 1 && attempts[0].sessions > beforeFirst).toBe(true);
+        await expect(trace.getByRole('button', { name: 'Discard local review draft', exact: true })).toHaveCount(0);
+        await expect(trace.getByRole('button', { name: 'Retry exact human command', exact: true })).toBeDisabled();
+        await trace.getByRole('button', { name: 'Retry source read', exact: true }).click();
+        await expect(trace.getByRole('button', { name: 'Retry exact human command', exact: true })).toBeEnabled();
+        expect(postCount).toBe(1);
+        await expect(trace.getByRole('textbox', { name: 'Human decision text', exact: true })).toBeDisabled();
+        const beforeRetry = sessions;
+        await trace.getByRole('button', { name: 'Retry exact human command', exact: true }).click();
+        await expect(trace.getByText('Draft saved.', { exact: true })).toBeVisible();
+        await expect.poll(() => failedReads).toBe(1);
+        expect(postCount === 2 && attempts.length === 2 && attempts[1].sessions > beforeRetry).toBe(true);
+        // Boolean comparisons keep private command/key/identity bytes out of diagnostics.
+        expect(attempts[0].body === attempts[1].body && attempts[0].key === attempts[1].key && attempts[0].path === attempts[1].path).toBe(true);
+        expect(!Object.hasOwn(JSON.parse(attempts[0].body), 'id') && attempts[0].key.length === 36).toBe(true);
+        await expect(trace.getByRole('button', { name: 'Retry exact human command', exact: true })).toHaveCount(0);
+        await trace.getByRole('button', { name: 'Retry source read', exact: true }).click();
+        await expect(trace.getByRole('textbox', { name: 'Human decision text', exact: true })).toBeDisabled();
+        await expect(trace.getByRole('button', { name: 'Save human decision record', exact: true })).toBeDisabled();
+        const actual = await page.request.get(traceUrl);
+        expect(actual.status()).toBe(200);
+        const items = (await actual.json()).items.filter((row: { id: string }) => row.id === savedId);
+        expect(items.length === 1 && items[0].revision === savedRevision && items[0].state === 'RECORDED').toBe(true);
+        expect(postCount).toBe(2);
+    } finally {
+        page.off('request', observe);
+        await page.unroute(postPattern, interceptPost); await page.unroute(readPattern, interceptRead);
+    }
+}
 export const humanReviewCases = [
     { name: 'assigned-human-recording-signed-host-pending-qualification', run: assignedRecording, restricted: false },
     { name: 'human-scoped-trace-source-signature-blockers-keyboard-dirty-offline', run: scopedTrace, restricted: false },
     { name: 'human-trace-denied-before-object-inference', run: restrictedTrace, restricted: true },
+    { name: 'human-recording-controlled-response-loss-real-commit', run: controlledRecordingLoss, restricted: false },
 ] as const;
