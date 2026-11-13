@@ -1,4 +1,4 @@
-import { render, screen, waitFor, fireEvent } from '@testing-library/react'
+import { render, screen, waitFor, fireEvent, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { RegulatoryQualification } from './RegulatoryQualification'
 import * as api from './qualification-api'
@@ -39,11 +39,15 @@ describe('Source qualification accessible command UI (authored, NOT RUN)', () =>
     expect(second.content.control.acknowledgmentRole).toBeNull() // incomplete drafts remain possible
   })
   it('renders read-only source lineage without offering an unassigned qualification command', async () => {
-    vi.spyOn(api, 'load').mockResolvedValue({ hasMore: false, items: [qualifiedFixture()], owners: [], actions: [], authorities: [] })
+    const current = qualifiedFixture(), sent = vi.spyOn(api, 'send')
+    vi.spyOn(api, 'load').mockResolvedValue({ hasMore: false, items: [current], owners: [], actions: [], authorities: [] })
     render(<RegulatoryQualification {...props()} />)
-    expect(await screen.findByText(/IN_FORCE/)).toBeVisible()
+    const lineage = await screen.findByText(/^IN_FORCE · 3 · /, { selector: '.regulatory-qualification > p' })
+    expect(lineage).toBeVisible()
     expect(screen.getByRole('button', { name: 'Record assigned human qualification' })).toBeDisabled()
-    expect(screen.getByText(/A{64}/)).toBeVisible()
+    expect(within(lineage).getByText(`${current.sourceHash} · ${current.hash}`, { exact: true })).toBeVisible()
+    fireEvent.click(screen.getByRole('button', { name: 'Record assigned human qualification' }))
+    expect(sent).not.toHaveBeenCalled()
   })
   it('uses the exact current rule, xmin and server authority for an independent human lifecycle command', async () => {
     const row = { ...qualifiedFixture(), state: 'IN_REVIEW' }
