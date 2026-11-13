@@ -70,6 +70,7 @@ export function ProductApp() {
             return;
         if (dirty) {
             setDrawer(false);
+            navigationLive.current.pending = action;
             setPendingNavigation(() => action);
         }
         else
@@ -91,7 +92,9 @@ export function ProductApp() {
         discardRunning.current = true;
         try {
             if (profileOpen) {
-                if (!original || !await original.discard()) return;
+                const canRelease = () => profileDiscard.current === original && original?.context === context &&
+                    navigationLive.current.pending === action && navigationLive.current.url === url && window.location.pathname+window.location.search === url;
+                if (!original || !await original.discard(canRelease)) return;
                 const current = navigationLive.current;
                 if (profileDiscard.current !== original || original.context !== context || current.pending !== action || current.saving ||
                     current.url !== url || window.location.pathname+window.location.search !== url || !original.canLeave()) return;
@@ -280,7 +283,7 @@ export function ProductApp() {
         {logoutError && <p role="alert">{t.unavailable}</p>}
         {new URLSearchParams(window.location.search).has('auth') && <p role="alert">{t.failed}</p>}
       </section>}
-      {pendingNavigation && <DraftConfirmation language={language} onStay={() => setPendingNavigation(null)} onDiscard={() => void discardPendingNavigation()}/>}
+      {pendingNavigation && <DraftConfirmation language={language} onStay={() => { navigationLive.current.pending = null; setPendingNavigation(null); }} onDiscard={() => void discardPendingNavigation()}/>}
       {canRead && !route.invalid && tab === 'audit' && <AuditWorkspace key={`${user?.tenantId}:${user?.actorId}:${selected}:${route.query ?? ''}`} language={language} selected={selected} query={route.query} allowed={auditAllowed} onNavigate={follow}/>}
       {canRead && !route.invalid && tab === 'today' && <TodayWorkspace key={selected ?? 'select'} id={selected} language={language} offline={offline} onNavigate={follow}/>}
       {canRead && regulatory && tab === 'today' && <p><a href="/app/sources" onClick={e => { e.preventDefault(); follow('/app/sources'); }}>{localizedText(language, "pairs.m_feecca63cf4fe395")}</a></p>}

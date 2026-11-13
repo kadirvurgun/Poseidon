@@ -6,6 +6,7 @@ import { filePage } from './file-api'
 import { useWorkspaceRevalidation } from './use-workspace-revalidation'
 
 type Binding = Readonly<{ owner: string; vessel: string }>
+type DraftBinding = Binding & Readonly<{ baseVersion: number; baseRevision: number }>
 type Confirmation = Binding & { row: Profile }
 type Props = { id: string; journey?: 'profile' | 'onboarding'; owner?: string | null; offline?: boolean; onDirty: (value: boolean) => void; onSaving: (value: boolean) => void }
 const problem = (value: unknown) => value instanceof ApiError ? value : new ApiError(0)
@@ -16,19 +17,20 @@ export function useProfileRecovery({ id, journey = 'profile', owner: hint, offli
   const epoch = useWorkspaceRevalidation(), [reload, setReload] = useState(0)
   const available = !offline && navigator.onLine && document.visibilityState !== 'hidden' && hint !== null
   const scope = `${id}/${journey}/${hint ?? ''}/${available}/${epoch}/${reload}`
-  const [profile, setProfile] = useState<Profile | null>(null), [trusted, setTrusted] = useState<{ scope: string; owner: string } | null>(null)
+  const [profile, setProfile] = useState<Profile | null>(null), [trusted, setTrusted] = useState<{ scope: string; owner: string; accessEpoch: number } | null>(null)
   const [observed, setObserved] = useState<{ scope: string; owner: string } | null>(null)
-  const [binding, setBinding] = useState<Binding | null>(null), [content, setContent] = useState<ProfileContent | null>(null)
+  const [binding, setBinding] = useState<DraftBinding | null>(null), [content, setContent] = useState<ProfileContent | null>(null)
   const [attempt, setAttempt] = useState<api.ProfileAttempt | null>(null), [confirmed, setConfirmed] = useState<Confirmation | null>(null)
   const [history, setHistory] = useState<ProfileHistory | null>(null), [historyOffset, setHistoryOffset] = useState(0), [historyAttempt, setHistoryAttempt] = useState(0)
   const [historyFailure, setHistoryFailure] = useState(false), [failure, setFailure] = useState<ApiError | null>(null), [conflict, setConflict] = useState(false)
   const [busy, setBusy] = useState(false)
   const mounted = useRef(false), live = useRef(''), running = useRef(false), writer = useRef<AbortController | null>(null)
-  const frozen = useRef<api.ProfileAttempt | null>(null), draft = useRef<Binding | null>(null), receipt = useRef<Confirmation | null>(null)
+  const frozen = useRef<api.ProfileAttempt | null>(null), draft = useRef<DraftBinding | null>(null), receipt = useRef<Confirmation | null>(null)
   const callbacks = useRef({ onDirty, onSaving })
+  const privateEpoch = useRef(0), [accessEpoch, setAccessEpoch] = useState(0)
   const owner = observed?.scope === scope ? observed.owner : null
   const expected = attempt ?? binding ?? confirmed
-  const canShow = available && !!owner && trusted?.scope === scope && trusted.owner === owner && !!profile &&
+  const canShow = available && !!owner && trusted?.scope === scope && trusted.owner === owner && trusted.accessEpoch === accessEpoch && !!profile &&
     (!expected || expected.owner === owner && expected.vessel === id)
   const locked = !canShow || busy || !!attempt || !!confirmed || profile?.vessel.canEdit !== true
   const notice = !!confirmed && available && owner === confirmed.owner && id === confirmed.vessel
@@ -42,8 +44,11 @@ export function useProfileRecovery({ id, journey = 'profile', owner: hint, offli
   useEffect(() => { onSaving(busy || !!attempt || !!binding && !canShow) }, [busy, attempt, binding, canShow, onSaving])
   const valid = useCallback((captured: string, signal: AbortSignal) => mounted.current && live.current === captured && !signal.aborted, [])
   const keep = (value: api.ProfileAttempt | null) => { frozen.current = value; setAttempt(value) }
-  const bind = (value: Binding | null) => { draft.current = value; setBinding(value) }
-  const withdraw = useCallback((value: unknown) => { setTrusted(null); setHistory(null); setFailure(problem(value)) }, [])
+  const bind = (value: DraftBinding | null) => { draft.current = value; setBinding(value) }
+  const withdraw = useCallback((value: unknown) => {
+    privateEpoch.current++; setAccessEpoch(privateEpoch.current)
+    setTrusted(null); setHistory(null); setFailure(problem(value))
+  }, [])
   const fresh = useCallback(async (captured: string, signal: AbortSignal, bound?: Binding | null) => {
     const user = await api.loadProfileSession(signal)
     if (!valid(captured, signal)) throw new ApiError(0, 'obsolete_profile_scope')
@@ -53,7 +58,7 @@ export function useProfileRecovery({ id, journey = 'profile', owner: hint, offli
   }, [hint, id, valid])
   useEffect(() => {
     if (!available) return
-    const c = new AbortController(), captured = scope
+    const c = new AbortController(), captured = scope, readEpoch = privateEpoch.current
     let active = true
     const timer = setTimeout(() => c.abort(), 15000)
     async function read() {
@@ -65,7 +70,12 @@ export function useProfileRecovery({ id, journey = 'profile', owner: hint, offli
       if (!active || !valid(captured, c.signal)) return
       const known = receipt.current
       if (known && (row.revision < known.row.revision || row.revision === known.row.revision && !api.profileContentMatches(row.content, known.row.content))) throw new ApiError(502, 'invalid_contract')
-      setProfile(row); setTrusted({ scope: captured, owner: before.owner }); setFailure(null)
+      if (privateEpoch.current !== readEpoch) throw new ApiError(403, 'profile_access_recheck_required')
+      setProfile(row); setTrusted({ scope: captured, owner: before.owner, accessEpoch: readEpoch }); setFailure(null)
+      const unsent = draft.current
+      if (!frozen.current && unsent && (row.version !== unsent.baseVersion || row.revision !== unsent.baseRevision)) {
+        setConflict(true); setFailure(new ApiError(409, 'version_conflict'))
+      }
       if (!bound) { setContent(null); setConflict(false) }
     }
     read().catch(error => { if (active && mounted.current && live.current === captured) withdraw(error) }).finally(() => clearTimeout(timer))
@@ -115,13 +125,13 @@ export function useProfileRecovery({ id, journey = 'profile', owner: hint, offli
   }, [canShow, scope, id, historyOffset, historyAttempt, read, valid, withdraw])
   function edit(key: keyof ProfileContent, value: ProfileContent[typeof key]) {
     if (live.current !== scope || locked || running.current || frozen.current || receipt.current || !owner) return
-    if (!draft.current) bind({ owner, vessel: id })
+    if (!draft.current) bind({ owner, vessel: id, baseVersion: profile!.version, baseRevision: profile!.revision })
     setContent(current => ({ ...(current ?? profile!.content), [key]: value }))
     if (!conflict) setFailure(null)
   }
   async function send(value: api.ProfileAttempt) {
     if (!available || running.current || value.vessel !== id) return
-    const captured = scope, c = new AbortController(), wasUnknown = value.unknown
+    const captured = scope, c = new AbortController(), wasUnknown = value.unknown, writeEpoch = privateEpoch.current
     let dispatched = false, received = false
     running.current = true; writer.current = c; keep(value); setBusy(true); setFailure(null); setHistory(null)
     callbacks.current.onSaving(true); callbacks.current.onDirty(true)
@@ -132,9 +142,11 @@ export function useProfileRecovery({ id, journey = 'profile', owner: hint, offli
       const user = await fresh(captured, c.signal, value)
       if (current.tenantId.toLowerCase() !== user.tenant) throw new ApiError(502, 'invalid_contract')
       if (!current.vessel.canEdit) throw new ApiError(403, 'permission_denied')
+      if (!wasUnknown && (current.version !== value.expectedVersion || current.revision+1 !== value.nextRevision)) throw new ApiError(409, 'version_conflict')
       // Live xmin may be newer precisely because the first PUT committed.
       // Let the server return its actor-bound original receipt before conflict.
       if (!valid(captured, c.signal)) throw new ApiError(0, 'obsolete_profile_scope')
+      if (privateEpoch.current !== writeEpoch) throw new ApiError(403, 'profile_access_recheck_required')
       dispatched = true; keep({ ...value, unknown: true })
       const row = await api.saveProfileAttempt(value, user.csrf, c.signal)
       received = true
@@ -142,7 +154,12 @@ export function useProfileRecovery({ id, journey = 'profile', owner: hint, offli
       if (!valid(captured, c.signal)) throw new ApiError(0, 'obsolete_profile_scope')
       const known = { owner: value.owner, vessel: id, row }
       receipt.current = known; setConfirmed(known); keep(null); bind(null); setContent(row.content); setProfile(row); setConflict(false)
-      setTrusted({ scope: captured, owner: value.owner }); setHistoryOffset(0); setHistoryAttempt(number => number + 1)
+      // A selected-file/history denial observed during this PUT remains a
+      // private boundary even after a valid receipt and global session proof.
+      // Keep the known outcome, requiring an explicit owning GET to restore UI.
+      if (privateEpoch.current === writeEpoch) setTrusted({ scope: captured, owner: value.owner, accessEpoch: writeEpoch })
+      else setTrusted(null)
+      setHistoryOffset(0); setHistoryAttempt(number => number + 1)
     } catch (error) {
       if (!mounted.current) return
       const failure = problem(error)
@@ -161,13 +178,17 @@ export function useProfileRecovery({ id, journey = 'profile', owner: hint, offli
   }
   function capture() {
     if (live.current !== scope || locked || conflict || running.current || frozen.current || receipt.current || !owner || !profile) return
-    const bound = draft.current ?? { owner, vessel: id }; bind(bound)
+    const bound = draft.current ?? { owner, vessel: id, baseVersion: profile.version, baseRevision: profile.revision }
+    if (bound.baseVersion !== profile.version || bound.baseRevision !== profile.revision) {
+      setConflict(true); setFailure(new ApiError(409, 'version_conflict')); return
+    }
+    bind(bound)
     void send(Object.freeze({ ...bound, route: `vessels/${encodeURIComponent(id)}/regulatory-profile`, method: 'PUT',
-      body: JSON.stringify({ expectedVersion: profile.version, content: structuredClone(content ?? profile.content) }), key: crypto.randomUUID(),
-      expectedVersion: profile.version, nextRevision: profile.revision + 1, unknown: false }))
+      body: JSON.stringify({ expectedVersion: bound.baseVersion, content: structuredClone(content ?? profile.content) }), key: crypto.randomUUID(),
+      expectedVersion: bound.baseVersion, nextRevision: bound.baseRevision + 1, unknown: false }))
   }
-  async function discard() {
-    if (!available || running.current || frozen.current) return false
+  async function discard(canRelease: () => boolean = () => true) {
+    if (!available || running.current || frozen.current || !canRelease()) return false
     const originalDraft = draft.current, originalReceipt = receipt.current, bound = originalDraft ?? originalReceipt
     if (!bound || originalReceipt && !canShow) return false
     const captured = scope, c = new AbortController(); running.current = true; writer.current = c; setBusy(true)
@@ -176,7 +197,7 @@ export function useProfileRecovery({ id, journey = 'profile', owner: hint, offli
       // An unsent local deletion requires a NEW actual original-owner observation;
       // it requires no restored profile write authority and reveals no private data.
       await fresh(captured, c.signal, bound)
-      if (!valid(captured, c.signal) || frozen.current || draft.current !== originalDraft || receipt.current !== originalReceipt) return false
+      if (!valid(captured, c.signal) || frozen.current || draft.current !== originalDraft || receipt.current !== originalReceipt || !canRelease()) return false
       bind(null); receipt.current = null; setConfirmed(null); setContent(null); setConflict(false); setTrusted(null); setHistory(null); setReload(n => n + 1)
       return true
     } catch (error) { if (valid(captured, c.signal)) withdraw(error); return false }

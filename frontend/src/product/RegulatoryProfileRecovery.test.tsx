@@ -33,6 +33,63 @@ describe('PRO01..08 actual session wire/component recovery sources, execution DE
     expect(screen.getByLabelText('Flag — Data state')).toBeDisabled()
     expect(screen.queryByRole('button', { name: 'Save draft' })).not.toBeInTheDocument()
   })
+  it.each(['focus', 'source-read'] as const)('keeps the UNSENT first-edit CAS base and local text through a newer head on %s until explicit discard/reload', async refresh => {
+    const { state, fetch } = profileTransport(); vi.stubGlobal('fetch', fetch)
+    const user = userEvent.setup(); render(<RegulatoryProfile {...props()}/>)
+    await user.selectOptions(await screen.findByLabelText('Flag — Data state'), 'Known')
+    await user.type(screen.getByLabelText('Flag'), 'FICTIONAL original unsent text')
+    const base = state.row.version
+    state.row = { ...state.row, revision: 2, version: base+1, content: { ...state.row.content, flag: { state: 'Known', value: 'FICTIONAL concurrent saved text' } } }
+    if (refresh === 'focus') fireEvent.focus(window)
+    else await user.click(screen.getByRole('button', { name: 'Retry source read' }))
+    await screen.findByText('The saved profile changed. Your draft is retained. Reload explicitly to discard it.')
+    expect(screen.getByLabelText('Flag')).toHaveValue('FICTIONAL original unsent text')
+    expect(screen.getByRole('button', { name: 'Save draft' })).toBeDisabled()
+    await act(async () => { fireEvent.submit(screen.getByLabelText('Flag').closest('form')!) })
+    expect(state.writes).toHaveLength(0)
+    await user.click(screen.getByRole('button', { name: 'Discard local changes' }))
+    await waitFor(() => expect(screen.getByLabelText('Flag')).toHaveValue('FICTIONAL concurrent saved text'))
+    await user.click(screen.getByRole('button', { name: 'Save draft' }))
+    await screen.findByText('Draft saved.')
+    expect(state.writes).toHaveLength(1)
+    expect(JSON.parse(state.writes[0].body).expectedVersion).toBe(base+1)
+    expect(JSON.parse(state.writes[0].body).content.flag.value).toBe('FICTIONAL concurrent saved text')
+  })
+  it('keeps a valid late PUT receipt known but private after selected construction access is withdrawn until an explicit owning read', async () => {
+    const { state, fetch } = profileTransport()
+    const record = { id: crypto.randomUUID(), vesselId: profileVessel, name: 'FICTIONAL-selected-record.pdf', state: 'CleanTransport', revision: 1, version: 1, checksum: 'A'.repeat(64), length: 1 }
+    const files = { items: [record], offset: 0, hasMore: false, available: true, canWrite: false, maxBytes: 1024, allowedTypes: ['application/pdf'] }
+    state.row.content.constructionRecord = { id: record.id, revision: 1, checksum: record.checksum }
+    state.file = Promise.resolve(profileResponse(files))
+    let finishWrite!: (response: Response) => void, denyFile!: (response: Response) => void
+    vi.stubGlobal('fetch', vi.fn(async (url: string, init?: RequestInit) => {
+      const response = await fetch(url, init)
+      if (init?.method === 'PUT') return new Promise<Response>(resolve => { finishWrite = resolve })
+      return response
+    }))
+    const user = userEvent.setup(); render(<RegulatoryProfile {...props()}/>)
+    await screen.findByRole('option', { name: record.name+' / 1' })
+    state.file = new Promise(resolve => { denyFile = resolve })
+    await user.click(screen.getByRole('button', { name: 'Save draft' }))
+    await waitFor(() => expect(state.writes).toHaveLength(1))
+    await waitFor(() => expect(typeof finishWrite).toBe('function'))
+    await act(async () => { denyFile(profileResponse({}, 403)) })
+    await waitFor(() => expect(screen.queryByLabelText('Flag')).not.toBeInTheDocument())
+    const owningReads = () => fetch.mock.calls.filter(([url, init]) => url.endsWith('/regulatory-profile') && init?.method !== 'PUT').length
+    const beforeReceipt = owningReads()
+    await act(async () => { finishWrite(profileResponse(state.receipt)) })
+    await screen.findByText('Draft saved.')
+    expect(screen.queryByLabelText('Flag')).not.toBeInTheDocument()
+    expect(screen.queryByText(record.name+' / 1')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Save draft' })).not.toBeInTheDocument()
+    expect(owningReads()).toBe(beforeReceipt)
+    state.file = Promise.resolve(profileResponse(files))
+    await user.click(screen.getByRole('button', { name: 'Retry source read' }))
+    await waitFor(() => expect(screen.getByLabelText('Flag — Data state')).toBeDisabled())
+    expect(owningReads()).toBeGreaterThan(beforeReceipt)
+    expect(screen.getByLabelText('Class / build record file')).toBeDisabled()
+    expect(state.writes).toHaveLength(1)
+  })
   it('retains known receipt readonly before optional history failure and explicitly resumes the current same-vessel profile', async () => {
     const { state, fetch } = profileTransport(); state.loseHistoryAfterSave = true; vi.stubGlobal('fetch', fetch)
     const user = userEvent.setup(); render(<RegulatoryProfile {...props()}/>)
@@ -167,7 +224,7 @@ describe('PRO01..08 actual session wire/component recovery sources, execution DE
     await waitFor(() => expect(screen.getByLabelText('Flag')).toHaveValue('FICTIONAL retained parent declaration'))
     expect(state.writes).toHaveLength(0)
   })
-  it('does not execute a canceled parent navigation after its delayed actual same-owner discard proof resolves', async () => {
+  it('preserves the entire unsent draft and URL when Keep editing cancels parent discard during actual same-owner proof', async () => {
     const { ProductApp } = await import('./ProductApp')
     const { state, fetch } = profileTransport()
     window.history.replaceState(null, '', '/app/fleet/'+profileVessel+'/profile')
@@ -179,7 +236,8 @@ describe('PRO01..08 actual session wire/component recovery sources, execution DE
     }))
     const user = userEvent.setup(); render(<ProductApp/>)
     await user.selectOptions(await screen.findByRole('combobox', { name: /^(Dil seçin|Choose language)$/ }), 'en')
-    await user.selectOptions(await screen.findByLabelText('Flag — Data state'), 'Unknown')
+    await user.selectOptions(await screen.findByLabelText('Flag — Data state'), 'Known')
+    await user.type(screen.getByLabelText('Flag'), 'FICTIONAL retained canceled discard')
     await user.click(screen.getByRole('button', { name: 'Back to vessel' }))
     await screen.findByRole('dialog')
     let resolve!: (response: Response) => void
@@ -190,7 +248,9 @@ describe('PRO01..08 actual session wire/component recovery sources, execution DE
     await user.click(screen.getByRole('button', { name: 'Keep editing' }))
     state.pendingSession = null
     await act(async () => { resolve(profileResponse({ ...state.session, csrfToken: crypto.randomUUID() })) })
-    await waitFor(() => expect(screen.getByLabelText('Flag — Data state')).toHaveValue('Missing'))
+    await waitFor(() => expect(screen.getByLabelText('Flag')).toBeEnabled())
+    expect(screen.getByLabelText('Flag')).toHaveValue('FICTIONAL retained canceled discard')
+    expect(screen.getByLabelText('Flag — Data state')).toHaveValue('Known')
     expect(window.location.pathname).toBe('/app/fleet/'+profileVessel+'/profile')
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     expect(state.writes).toHaveLength(0)

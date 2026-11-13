@@ -13,7 +13,7 @@ import { Button } from '../components/ui/button';
 import { EnterpriseActions, EnterprisePagination } from './EnterprisePatterns';
 import { OnboardingSteps, onboardingSteps, OnboardingAssessmentView } from './VesselOnboarding';
 const copy = localizedCopy("RegulatoryProfile_tsx_copy");
-export type ProfileDiscardHandle = { context: string; discard: () => Promise<boolean>; canLeave: () => boolean };
+export type ProfileDiscardHandle = { context: string; discard: (canRelease: () => boolean) => Promise<boolean>; canLeave: () => boolean };
 type Props = {
     id: string;
     language: AppLocale;
@@ -34,7 +34,7 @@ export function RegulatoryProfile(props: Props) {
     useLayoutEffect(() => { currentRecovery.current = recovery; });
     const discardContext = `${id}/${journey}/${props.owner ?? ''}`;
     useEffect(() => props.onRegisterDiscard?.({ context: discardContext,
-        discard: () => currentRecovery.current.discard(), canLeave: () => currentRecovery.current.canLeave(),
+        discard: canRelease => currentRecovery.current.discard(canRelease), canLeave: () => currentRecovery.current.canLeave(),
     }), [discardContext, props.onRegisterDiscard]);
     const errors = failure?.errors ?? {};
     const t = copy[language];
