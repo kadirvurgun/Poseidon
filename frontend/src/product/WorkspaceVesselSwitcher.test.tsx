@@ -36,10 +36,10 @@ describe('DEV-021 / T-S2-002 authorized vessel context switch; authored, executi
     try {
       const view = render(<WorkspaceVesselSwitcher {...props} />)
       try {
-        await waitFor(() => expect(screen.getByRole('searchbox', { name: 'Vessel name or code' })).toBeFocused())
+        await waitFor(() => expect(screen.getByRole('searchbox', { name: 'Vessel name or code' })).toHaveFocus())
         expect(show).toHaveBeenCalledOnce()
       } finally { view.unmount() }
-      expect(opener).toBeFocused()
+      expect(opener).toHaveFocus()
     } finally { opener.remove() }
   })
   it('rechecks the selected vessel and waits for the existing dirty-navigation guard to commit before closing', async () => {
