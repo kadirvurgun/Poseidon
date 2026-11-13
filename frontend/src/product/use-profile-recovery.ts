@@ -110,11 +110,11 @@ export function useProfileRecovery({ id, journey = 'profile', owner: hint, offli
   }, [scope, fresh, id, valid, withdraw])
   useEffect(() => {
     if (!canShow) return
-    const c = new AbortController(), captured = scope
+    const c = new AbortController(), captured = scope, readEpoch = privateEpoch.current
     let active = true
     const timer = setTimeout(() => c.abort(), 10000)
     read(s => api.loadProfileHistory(id, historyOffset, s), c.signal).then(value => {
-      if (active && valid(captured, c.signal)) { setHistory(value); setHistoryFailure(false) }
+      if (active && valid(captured, c.signal) && privateEpoch.current === readEpoch) { setHistory(value); setHistoryFailure(false) }
     }).catch(error => {
       if (active && mounted.current && live.current === captured) {
         setHistory(null); setHistoryFailure(true)
@@ -170,6 +170,10 @@ export function useProfileRecovery({ id, journey = 'profile', owner: hint, offli
       if (wasUnknown || received || dispatched && (!valid(captured, c.signal) || ![400, 401, 403, 404, 409].includes(failure.status))) keep({ ...value, unknown: true })
       else keep(null)
       if (failure.status === 409) setConflict(true)
+      // A definite first rejection did not save a revision. Restore history via
+      // its authorized read, without resetting the retained field errors/draft.
+      if (!wasUnknown && !received && dispatched && failure.status === 400 &&
+          valid(captured, c.signal) && privateEpoch.current === writeEpoch) setHistoryAttempt(number => number + 1)
     } finally {
       clearTimeout(timer); running.current = false
       if (writer.current === c) writer.current = null
