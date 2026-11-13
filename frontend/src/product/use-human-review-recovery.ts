@@ -37,7 +37,8 @@ export function useHumanReviewRecovery({ anchor, owner: currentOwner, offline, o
   const ownerReady = available && !!owner && trusted?.scope === scope && trusted.owner === owner && bound && !!data
   const authority = attempt?.authority ?? binding?.authority ?? confirmed?.authority
   const canShow = ownerReady && (!authority || !!data?.authorities.some(grant => sameAuthority(grant, authority)))
-  const canDiscard = !busy && !attempt && (ownerReady || !available && !!binding && currentOwner === binding.owner)
+  const unsentOwnerObserved = !!binding && !confirmed && binding.context === context && observed?.scope === scope && observed.owner === binding.owner
+  const canDiscard = !busy && !attempt && (ownerReady || unsentOwnerObserved || !available && !!binding && currentOwner === binding.owner)
   const locked = !canShow || busy || conflict || !!history || !!attempt || !!confirmed
   useLayoutEffect(() => {
     callbacks.current = { onDirty, onSaving }
@@ -133,16 +134,34 @@ export function useHumanReviewRecovery({ anchor, owner: currentOwner, offline, o
     void send(Object.freeze({ ...expected, ...command, key: crypto.randomUUID(), authority, nextRevision, unknown: false }))
   }
   function recheck() { if (!running.current) setReload(value => value + 1) }
-  function discard() {
-    if (running.current || frozen.current || !canDiscard) return false
-    bind(null); confirm(null); setConflict(false); setData(null); setTrusted(null); setReload(value => value + 1)
-    return true
+  async function discard() {
+    if (running.current || frozen.current || !canDiscard || !available) return false
+    const originalDraft = draft.current, originalReceipt = receipt.current, expected = originalDraft ?? originalReceipt
+    if (!expected) return false
+    const captured = scope, c = new AbortController()
+    running.current = true; writer.current = c; setBusy(true)
+    const timer = setTimeout(() => c.abort(), 15000)
+    try {
+      // Local deletion of an unsent draft needs a new actual owner proof, not
+      // restored write authority or an old pre-send/session hint. It reveals no text.
+      await fresh(captured, c.signal, expected)
+      if (!valid(captured, c.signal) || frozen.current || draft.current !== originalDraft || receipt.current !== originalReceipt) return false
+      bind(null); confirm(null); setConflict(false); setData(null); setTrusted(null); setReload(value => value + 1)
+      return true
+    } catch (problem) {
+      if (mounted.current && live.current === captured) { setError(status(problem)); setData(null); setTrusted(null) }
+      return false
+    } finally {
+      clearTimeout(timer); running.current = false
+      if (writer.current === c) writer.current = null
+      if (mounted.current) setBusy(false)
+    }
   }
   const eligibleRetry = canShow && !!attempt && attempt.owner === owner && attempt.context === context &&
     !!data?.authorities.some(grant => sameAuthority(grant, attempt.authority))
   return { data: canShow ? data : null, error, busy, conflict, attempt, confirmed,
     notice: !!confirmed && available && observed?.scope === scope && observed.owner === confirmed.owner && confirmed.context === context,
-    canShow, canDiscard, locked, dirty: !!binding || !!attempt, canRetry: eligibleRetry && !busy,
+    canShow, canDiscard, available, locked, dirty: !!binding || !!attempt, canRetry: eligibleRetry && !busy,
     offset, history, edit, capture, retry: () => { if (eligibleRetry && attempt) void send(attempt) }, recheck, discard,
     setOffset: (value: number) => { if (!binding && !attempt && !busy && !confirmed) setOffset(value) },
     setHistory: (value: string) => { if (!binding && !attempt && !busy && !confirmed) { setHistory(value); setOffset(0) } } }

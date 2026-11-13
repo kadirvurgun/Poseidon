@@ -1,9 +1,10 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { ControlEvidence } from './ControlEvidence'
 import { blank } from './control-evidence-api'
-import { reviewAnchor, reviewSession, reviewTrace } from './human-review.test-fixtures'
+import { reviewAnchor, reviewRow, reviewSession, reviewTrace } from './human-review.test-fixtures'
+import { qualifiedFixture } from './qualification.test-fixtures'
 
 const vessel = '10000000-0000-4000-8000-000000000001', id = '10000000-0000-4000-8000-000000000002'
 const row = () => ({ id, vesselId: vessel, kind: 'Control', revision: 1, version: 5, content: blank(), hash: 'A'.repeat(64), lifecycle: 'DRAFT', completion: 'UNKNOWN', verification: 'UNVERIFIED', effectiveness: 'UNKNOWN', timeState: 'UNKNOWN', evidenceExists: false, file: null, requirements: [], links: [], blockers: ['SOURCE_ADMISSION_UNAVAILABLE', 'VERIFICATION_NOT_PERFORMED', 'TITLE_MISSING', 'OWNER_MISSING', 'REQUIREMENT_LINK_MISSING', 'FREQUENCY_UNSPECIFIED', 'EVIDENCE_POLICY_MISSING', 'VERIFICATION_POLICY_MISSING', 'CRITICALITY_UNKNOWN'], savedAt: '2026-11-02T00:00:00Z', asOf: '2026-11-02T00:00:00Z' })
@@ -59,14 +60,24 @@ describe('CE TR/EN accessible draft behavior authored / NOT RUN', () => {
     await screen.findByText('Draft authoring available'); await user.type(screen.getByLabelText('Title'), 'conflicted draft'); await user.click(screen.getByRole('button', { name: 'Save incomplete draft' }))
     await screen.findByText('Version conflict. Draft retained; inspect history before discarding.'); expect(screen.getByLabelText('Title')).toHaveValue('conflicted draft'); expect(screen.getByLabelText('Title')).toBeDisabled()
   })
-  it('keeps actual human UNKNOWN command behind the existing vessel/register navigation barrier', async () => {
-    let posts = 0;
+  it.each([false, true])('protects actual human UNKNOWN from parent Save/Enter and late acknowledgment=%s, then retries the exact human command', async lateAcknowledgment => {
+    let posts = 0, parentWrites = 0, acknowledgmentReads = 0;
+    const attempts: { body: string; key: string }[] = [];
+    let finishAcknowledgment!: (value: Response) => void;
+    const acknowledgment = new Promise<Response>(resolve => { finishAcknowledgment = resolve; });
+    const requirement = { requirementId: crypto.randomUUID(), requirementRevision: 1, sourceId: crypto.randomUUID(), sourceRevision: 1, ruleId: qualifiedFixture().ruleId, ruleRevision: 1 };
     const evidence = { ...row(), kind: 'Evidence', content: { ...blank(), title: 'FICTIONAL human recovery evidence' },
-      links: [{ kind: 'Control', id: reviewAnchor.controlId, revision: 1, expectedVersion: 3 }] }
+      requirements: lateAcknowledgment ? [requirement] : [], links: [{ kind: 'Control', id: reviewAnchor.controlId, revision: 1, expectedVersion: 3 }] }
     const fetch = vi.fn(async (url: string, init?: RequestInit) => {
       if (url.endsWith('/auth/session')) return response(reviewSession())
       if (url.includes('/regulatory-trace?')) return response(reviewTrace())
-      if (init?.method === 'POST' && url.includes('/verifications?')) { posts++; throw new TypeError('controlled response loss') }
+      if (init?.method === 'POST' && url.includes('/verifications?')) {
+        attempts.push({ body: init.body as string, key: (init.headers as Record<string, string>)['Idempotency-Key'] });
+        if (++posts === 1) throw new TypeError('controlled response loss');
+        return response({ ...reviewRow(), rationale: JSON.parse(init.body as string).rationale });
+      }
+      if (init?.method) { parentWrites++; return response({ ...evidence, revision: 2, version: 6 }); }
+      if (url.includes('/regulatory-source-governance/')) { acknowledgmentReads++; return acknowledgment; }
       if (url.includes('/vessels?')) return response({ items: [{ id: vessel, name: 'FICTIONAL vessel', companyId: id, code: 'F1', kind: 'Ship', version: 1, canEdit: true }], offset: 0, limit: 25, hasMore: false })
       if (url.includes('/owners?')) return response({ items: [] })
       if (url.includes('/orphans?')) return response({ available: false, reason: 'AUTHORITATIVE_APPLICABILITY_UNAVAILABLE', draftCriticalOrphans: [], uncontrolledObligations: [], offset: 0, hasMore: false })
@@ -78,6 +89,10 @@ describe('CE TR/EN accessible draft behavior authored / NOT RUN', () => {
     await user.selectOptions(await screen.findByLabelText('Vessel context'), vessel)
     await user.selectOptions(screen.getByLabelText('Register'), 'Evidence')
     await user.click(await screen.findByRole('button', { name: /FICTIONAL human recovery evidence · 1/ }))
+    if (lateAcknowledgment) {
+      await user.click(await screen.findByRole('button', { name: /Acknowledge exact source revision/ }));
+      expect(acknowledgmentReads).toBe(1);
+    }
     await user.selectOptions(await screen.findByLabelText('Provisioned authority'), reviewTrace().authorities[0].id)
     await user.type(screen.getByLabelText('Bound review reason'), 'FICTIONAL parent guarded review')
     await user.click(screen.getByRole('button', { name: 'Record pending request' }))
@@ -88,5 +103,24 @@ describe('CE TR/EN accessible draft behavior authored / NOT RUN', () => {
     expect(p.onSaving).toHaveBeenLastCalledWith(true)
     expect(screen.queryByRole('button', { name: 'Discard local review draft' })).toBeNull()
     expect(posts).toBe(1)
+    const parentSave = screen.getByRole('button', { name: 'Save incomplete draft' });
+    expect(parentSave).toBeDisabled();
+    await user.click(parentSave);
+    // Exercise the actual form submit handler too (implicit Enter submission),
+    // rather than relying only on the disabled button's native behavior.
+    fireEvent.submit(parentSave.closest('form')!);
+    expect(parentWrites).toBe(0);
+    if (lateAcknowledgment) await act(async () => {
+      finishAcknowledgment(response({ items: [qualifiedFixture()], hasMore: false, actions: [], authorities: [], owners: [] }));
+      await acknowledgment;
+    });
+    expect(screen.getByText('Outcome uncertain. The exact original attempt is locked until retry.')).toBeVisible();
+    expect(screen.queryByText(/: A{64}$/)).toBeNull();
+    await user.click(screen.getByRole('button', { name: 'Retry source read' }));
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Retry exact human command' })).toBeEnabled());
+    await user.click(screen.getByRole('button', { name: 'Retry exact human command' }));
+    await screen.findByText('Draft saved.');
+    expect(posts).toBe(2); expect(parentWrites).toBe(0);
+    expect(attempts[0].body === attempts[1].body && attempts[0].key === attempts[1].key).toBe(true);
   })
 })

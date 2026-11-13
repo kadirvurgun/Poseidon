@@ -7,7 +7,7 @@ import { ComplianceInputEditor } from './ComplianceInputEditor';
 import * as qualification from './qualification-api';
 import { TugCapabilityEditor } from './TugCapabilityEditor';
 import { OperationEquipmentEditor } from './OperationEquipmentEditor';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as service from './control-evidence-api';
 import * as directory from './api';
 import * as registers from './register-api';
@@ -94,6 +94,16 @@ function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving, isTu
     } | null>(null), [conflict, setConflict] = useState(false), [notice, setNotice] = useState('');
     const [reviewDrafts, setReviewDrafts] = useState<Record<string, boolean>>({}), [reviewSaves, setReviewSaves] = useState<Record<string, boolean>>({});
     const reviewDirty = Object.values(reviewDrafts).some(Boolean), reviewBusy = Object.values(reviewSaves).some(Boolean);
+    const liveReviews = useRef<{ drafts: Record<string, boolean>; saves: Record<string, boolean> }>({ drafts: {}, saves: {} });
+    const ackEpoch = useRef(0), ackRead = useRef<AbortController | null>(null), mounted = useRef(false);
+    const humanBlocked = () => Object.values(liveReviews.current.drafts).some(Boolean) || Object.values(liveReviews.current.saves).some(Boolean);
+    function reportReview(key: string, value: boolean, saving: boolean) {
+        const values = saving ? liveReviews.current.saves : liveReviews.current.drafts;
+        if (values[key] === value) return;
+        values[key] = value; ackEpoch.current++; ackRead.current?.abort();
+        if (saving) setReviewSaves({ ...values }); else setReviewDrafts({ ...values });
+    }
+    useEffect(() => { mounted.current = true; return () => { mounted.current = false; ackEpoch.current++; ackRead.current?.abort(); }; }, []);
     const [uploadDirty, setUploadDirty] = useState(false), [uploadBusy, setUploadBusy] = useState(false), [discard, setDiscard] = useState(false);
     const [source, setSource] = useState<registers.RegisterPage<registers.Revision> | null>(null), [pickerError, setPickerError] = useState(false);
     const [sourceId, setSourceId] = useState(''), [sourceOffset, setSourceOffset] = useState(0);
@@ -205,7 +215,7 @@ function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving, isTu
         setConflict(false);
     }
     async function save(action?: 'submit' | 'complete') {
-        if (offline || busy || conflict || !rows?.canWrite)
+        if (offline || busy || conflict || !rows?.canWrite || humanBlocked())
             return;
         if (!service.validContent(content)) {
             setError(400);
@@ -289,12 +299,18 @@ function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving, isTu
       </fieldset>
       {pickerError && <p role="alert">{localizedText(language, "pairs.m_f80c9ed0adef324c")}</p>}
       <EnterpriseActions aria-label={localizedText(language, "pairs.m_b6af93a4bfb1b689")}>
-      <Button type="submit" disabled={offline || busy || conflict || !rows?.canWrite || [401, 403, 404].includes(error ?? -1)}>{frozen ? localizedText(language, "pairs.m_eb449a06e44678ab") : localizedText(language, "pairs.m_bd59c5fb1d6040b0")}</Button>
+       <Button type="submit" disabled={offline || busy || conflict || reviewDirty || reviewBusy || !rows?.canWrite || [401, 403, 404].includes(error ?? -1)}>{frozen ? localizedText(language, "pairs.m_eb449a06e44678ab") : localizedText(language, "pairs.m_bd59c5fb1d6040b0")}</Button>
       <Button variant="outline" type="button" disabled={locked || offline || !selected} onClick={() => void save('submit')}>{localizedText(language, "pairs.m_8a068b1629e78502")}</Button>
       <Button variant="outline" type="button" disabled={locked || offline || selected?.lifecycle !== 'SUBMITTED' || dirty} onClick={() => void save('complete')}>{localizedText(language, "pairs.m_cf1b3085d3f59f3b")}</Button>
       {kind === 'Evidence' && requirements.filter(p => p.ruleId !== null).map(p => <Button key={p.ruleId} type="button" disabled={locked || offline} onClick={() => {
+                if (humanBlocked()) return;
+                ackRead.current?.abort();
                 const c = new AbortController();
+                ackRead.current = c;
+                const generation = ++ackEpoch.current;
+                const current = () => mounted.current && !c.signal.aborted && ackRead.current === c && ackEpoch.current === generation && !humanBlocked();
                 qualification.load(p.ruleId!, vessel, c.signal).then(q => {
+                    if (!current()) return;
                     const row = q.items[0];
                     if (row?.state === 'IN_FORCE' && row.sourceHash) {
                         setContent(previous => ({ ...previous, acknowledgments: [...(previous.acknowledgments ?? []).filter(a => a.ruleId !== p.ruleId), { ruleId: p.ruleId!, qualificationHash: row.hash, sourceHash: row.sourceHash }] }));
@@ -303,7 +319,7 @@ function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving, isTu
                     }
                     else
                         setError(409);
-                }).catch(() => setError(403));
+                }).catch(() => { if (current()) setError(403); }).finally(() => { if (ackRead.current === c) ackRead.current = null; });
             }}>{localizedText(language, "pairs.m_e771121463b43c62")} · {p.ruleId}</Button>)}
       {(dirty || frozen || conflict) && <Button variant="outline" type="button" disabled={busy || uploadBusy} onClick={() => setDiscard(true)}>{localizedText(language, "pairs.m_92ccf21431e2c4a0")}</Button>}</EnterpriseActions>
     </form>
@@ -312,7 +328,7 @@ function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving, isTu
     {source && <><ul aria-label={localizedText(language, "pairs.m_90a42aea41718d5b")}>{source.items.map(r => <li key={r.revision}>{r.id}/{r.revision} · {r.content.title.value} · {r.content.locator.value} · {r.hash} · {r.lifecycle}</li>)}</ul>{pages(sourceOffset, source.hasMore, setSourceOffset, localizedText(language, "pairs.m_d64eac926438b43c"))}</>}
     {selected && <section aria-label={localizedText(language, "pairs.m_d21b2e2163abcf4b")}><h3>{localizedText(language, "pairs.m_d21b2e2163abcf4b")}</h3><label>{localizedText(language, "pairs.m_285a2e9b5a7e00f7")}<input value={asOf} onChange={e => setAsOf(e.target.value)}/></label><Button disabled={offline || !!asOf && !timestamp(asOf)} onClick={() => { setHistoryAsOf(asOf); setHistoryOffset(0); }}>{localizedText(language, "pairs.m_abe27a0e178299f8")}</Button>{history?.items.map(r => <article key={r.revision}><h4>{r.revision} · {r.content.title}</h4><p>{r.savedAt} · {timeLabel(r.timeState)} · {r.hash}</p><p>{localizedText(language, "pairs.m_eb51fdc14888edff")}</p><p>{r.file ? `${r.file.id}/${r.file.revision} · ${r.file.checksum}` : localizedText(language, "pairs.m_f63c1fd92ab739ba")}</p><ul>{r.requirements.map(p => <li key={`${p.requirementId}/${p.requirementRevision}`}>{p.requirementId}/{p.requirementRevision} → {p.sourceId}/{p.sourceRevision} · {p.ruleId ?? '—'}/{p.ruleRevision ?? '—'}</li>)}{r.links.map(p => <li key={`${p.kind}/${p.id}/${p.revision}`}>{p.kind} {p.id}/{p.revision}</li>)}</ul><p>{localizedText(language, "pairs.m_ef764cb14360bfc4")}</p><details><summary>{localizedText(language, "pairs.m_976f026914e9fe02")}</summary><ul>{r.blockers.map(b => <li key={b}>{blockerLabel(b)}</li>)}</ul></details></article>)}{history && pages(historyOffset, history.hasMore, setHistoryOffset, localizedText(language, "pairs.m_bb5ad118ccbb2107"))}</section>}
     {orphan && <p role="status">{orphan.available ? localizedText(language, "pairs.m_23e7a96b7b285e82") : localizedText(language, "pairs.m_bd6299ce40586f12")} · {orphan.reason} · {orphan.uncontrolledObligations.map(o => `${o.requirementId}/${o.requirementRevision}`).join(' · ')}</p>}
-    {selected?.kind === 'Evidence' && !dirty && !frozen && (!uploadDirty || reviewDirty || reviewBusy) && selected.links.filter(p => p.kind === 'Control').map(p => <HumanDecisionTrace owner={owner} key={`${selected.id}/${selected.revision}/${p.id}/${p.revision}`} anchor={{ vesselId: vessel, evidenceId: selected.id, evidenceRevision: selected.revision, controlId: p.id, controlRevision: p.revision }} language={language} csrf={csrf} offline={offline} onDirty={v => setReviewDrafts(current => current[`${p.id}/${p.revision}`] === v ? current : { ...current, [`${p.id}/${p.revision}`]: v })} onSaving={v => setReviewSaves(current => current[`${p.id}/${p.revision}`] === v ? current : { ...current, [`${p.id}/${p.revision}`]: v })}/>)}
+    {selected?.kind === 'Evidence' && !dirty && !frozen && (!uploadDirty || reviewDirty || reviewBusy) && selected.links.filter(p => p.kind === 'Control').map(p => <HumanDecisionTrace owner={owner} key={`${selected.id}/${selected.revision}/${p.id}/${p.revision}`} anchor={{ vesselId: vessel, evidenceId: selected.id, evidenceRevision: selected.revision, controlId: p.id, controlRevision: p.revision }} language={language} csrf={csrf} offline={offline} onDirty={v => reportReview(`${p.id}/${p.revision}`, v, false)} onSaving={v => reportReview(`${p.id}/${p.revision}`, v, true)}/>)}
     <section aria-label={localizedText(language, "pairs.m_21b567ca86adf1ba")}><h3>{localizedText(language, "pairs.m_21b567ca86adf1ba")}</h3><p>{localizedText(language, "pairs.m_7471b126af2cfc68")}</p>{orphan ? <><ul>{orphan.draftCriticalOrphans.map(id => <li key={id}>{id}</li>)}</ul>{pages(orphanOffset, orphan.hasMore, setOrphanOffset, localizedText(language, "pairs.m_bd73803992337989"))}</> : <p>{localizedText(language, "pairs.m_0880bff615d8df3e")}</p>}</section>
     {kind === 'Evidence' && <div inert={reviewDirty || reviewBusy}><VesselFiles offline={offline} vessel={vessel} language={language} csrf={csrf} onDirty={setUploadDirty} onSaving={setUploadBusy} onCommitted={() => setReload(x => x + 1)}/></div>}
   </div>;

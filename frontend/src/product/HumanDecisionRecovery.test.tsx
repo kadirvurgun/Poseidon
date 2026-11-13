@@ -115,6 +115,50 @@ describe('owner-bound human command recovery, authored execution DEFERRED', () =
     expect(posts).toBe(0)
   })
 
+  it.each([false, true])('fresh actual original owner can discard an UNSENT authority-denied draft; foreign actual owner=%s cannot', async foreignBeforeDiscard => {
+    let granted = true, posts = 0, sessions = 0, session = reviewSession()
+    vi.stubGlobal('fetch', vi.fn(async (url: string, init?: RequestInit) => {
+      if (url.endsWith('/auth/session')) { sessions++; return response(session) }
+      if (init?.method) posts++
+      return response({ ...reviewTrace(), authorities: granted ? reviewTrace().authorities : [] })
+    }))
+    const p = props(); render(<HumanDecisionTrace {...p} />); const user = await compose()
+    granted = false; await user.click(screen.getByRole('button', { name: 'Retry source read' }))
+    await screen.findByRole('alert'); expect(screen.queryByDisplayValue(reason)).toBeNull()
+    if (foreignBeforeDiscard) session = { ...session, actorId: reviewAnchor.controlId }
+    const beforeDiscard = sessions
+    await user.click(screen.getByRole('button', { name: 'Discard local review draft' }))
+    await waitFor(() => expect(sessions).toBeGreaterThan(beforeDiscard))
+    if (foreignBeforeDiscard) {
+      expect(p.onSaving).toHaveBeenLastCalledWith(true)
+      expect(screen.queryByDisplayValue(reason)).toBeNull()
+      session = reviewSession(); await user.click(screen.getByRole('button', { name: 'Retry source read' }))
+      await screen.findByRole('button', { name: 'Discard local review draft' })
+      await user.click(screen.getByRole('button', { name: 'Discard local review draft' }))
+    }
+    await waitFor(() => expect(p.onSaving).toHaveBeenLastCalledWith(false))
+    expect(screen.queryByDisplayValue(reason)).toBeNull(); expect(posts).toBe(0)
+    expect(screen.queryByText('Outcome uncertain. The exact original attempt is locked until retry.')).toBeNull()
+  })
+
+  it('initial pre-send trace denial permits only a fresh-owner local Discard, with zero dispatched commands', async () => {
+    let denied = false, posts = 0, sessions = 0
+    vi.stubGlobal('fetch', vi.fn(async (url: string, init?: RequestInit) => {
+      if (url.endsWith('/auth/session')) { sessions++; return response(reviewSession()) }
+      if (init?.method) posts++
+      return denied ? response({}, 403) : response(reviewTrace())
+    }))
+    const p = props(); render(<HumanDecisionTrace {...p} />); const user = await compose()
+    denied = true; await user.click(screen.getByRole('button', { name: 'Record pending request' }))
+    await screen.findByRole('alert')
+    expect(screen.queryByDisplayValue(reason)).toBeNull(); expect(posts).toBe(0)
+    const beforeDiscard = sessions
+    await user.click(screen.getByRole('button', { name: 'Discard local review draft' }))
+    await waitFor(() => expect(p.onSaving).toHaveBeenLastCalledWith(false))
+    expect(sessions).toBeGreaterThan(beforeDiscard); expect(posts).toBe(0)
+    expect(screen.queryByDisplayValue(reason)).toBeNull()
+  })
+
   it('rejects a forged actor receipt as UNKNOWN even when body and route match', async () => {
     vi.stubGlobal('fetch', vi.fn(async (url: string, init?: RequestInit) => response(url.endsWith('/auth/session') ? reviewSession() :
       init?.method ? { ...result(init.body as string), actorId: reviewAnchor.controlId } : reviewTrace())))

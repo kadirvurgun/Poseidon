@@ -119,7 +119,7 @@ export function HumanDecisionTrace({ anchor, owner, language, offline, onDirty, 
     <EnterpriseActions align="start" aria-label={localizedText(language, "pairs.m_7fb7bfcf00f28921")}>
       {attempt && <Button disabled={!recovery.canRetry} onClick={recovery.retry}>{localizedText(language, "pairs.m_3176d9a6fa209af6")}</Button>}
       <Button variant="outline" disabled={busy || offline} onClick={recovery.recheck}>{localizedText(language, 'pairs.m_542619365a11df9d')}</Button>
-      {(dirty || confirmed) && recovery.canDiscard && <Button variant="outline" disabled={busy} onClick={() => { if (recovery.discard()) clear(); }}>{localizedText(language, "pairs.m_d3fd36629a8388d7")}</Button>}
+      {(dirty || confirmed) && recovery.canDiscard && <Button variant="outline" disabled={busy || !recovery.available} onClick={async () => { if (await recovery.discard()) clear(); }}>{localizedText(language, "pairs.m_d3fd36629a8388d7")}</Button>}
     </EnterpriseActions>
   </section>;
 }
