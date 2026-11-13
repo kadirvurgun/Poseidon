@@ -37,7 +37,7 @@ describe('HRO01/03 fresh session and exact non-recording receipts, authored NOT 
     expectedProfileRevision: null, recording: null,
     ...Object.fromEntries(['state', 'reasonCode', 'rationale', 'authorityId', 'operationId', 'verificationId', 'verificationRevision', 'evaluationId'].map(key => [key, reviewRow()[key as keyof ReturnType<typeof reviewRow>]])) })
   it('uses the exact serialized command/key/CSRF and accepts its unpromoted PENDING receipt', async () => {
-    const fetch = vi.fn(async (_url: string, _init?: RequestInit) => response(reviewRow())); vi.stubGlobal('fetch', fetch)
+    const fetch = vi.fn<(url: string, init?: RequestInit) => Promise<Response>>().mockResolvedValue(response(reviewRow())); vi.stubGlobal('fetch', fetch)
     const body = JSON.stringify(command()), key = crypto.randomUUID(), csrf = crypto.randomUUID()
     const row = await save(reviewAnchor, { kind: 'Verification', id: null, body, key }, csrf, new AbortController().signal)
     expect(row.state).toBe('PENDING')
@@ -63,5 +63,14 @@ describe('HRO01/03 fresh session and exact non-recording receipts, authored NOT 
       vi.stubGlobal('fetch', vi.fn(async () => response({ ...user, ...patch })))
       await expect(loadSession(new AbortController().signal)).rejects.toBeInstanceOf(Error)
     }
+  })
+  it.each([{ label: 'NUL', code: 0 }, { label: 'DEL', code: 127 }])('rejects bounded actual-session CSRF containing $label without a write', async ({ code }) => {
+    const user = { ...reviewSession(), csrfToken: crypto.randomUUID()+String.fromCharCode(code)+crypto.randomUUID() }
+    const fetch = vi.fn<(url: string, init?: RequestInit) => Promise<Response>>().mockResolvedValue(response(user)); vi.stubGlobal('fetch', fetch)
+    await expect(loadSession(new AbortController().signal)).rejects.toMatchObject({ status: 502 })
+    expect(fetch).toHaveBeenCalledTimes(1)
+    expect(fetch.mock.calls[0][0]).toBe('/api/v1/auth/session')
+    expect(fetch.mock.calls[0][1]?.method).toBeUndefined()
+    expect(fetch.mock.calls[0][1]?.body).toBeUndefined()
   })
 })
