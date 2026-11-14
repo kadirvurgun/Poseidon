@@ -132,10 +132,10 @@ it.each(['tr', 'ar'] as const)('keeps the full long vessel identity and keyboard
   const navigate = vi.fn(); const user = userEvent.setup()
   render(<TodayWorkspace id={null} language={language} offline={false} onNavigate={navigate} />)
   const identity = `${code} · ${name}`
-  const card = await screen.findByRole('group', { name: identity, exact: true })
-  expect(within(card).getByRole('heading', { name: code, exact: true })).toHaveAttribute('title', code)
+  const card = await screen.findByRole('group', { name: identity })
+  expect(within(card).getByRole('heading', { name: code })).toHaveAttribute('title', code)
   expect(within(card).getByText(name, { exact: true })).toHaveAttribute('title', name)
-  const open = within(card).getByRole('button', { name: identity, exact: true })
+  const open = within(card).getByRole('button', { name: identity })
   open.focus(); await user.keyboard('{Enter}')
   expect(navigate).toHaveBeenCalledExactlyOnceWith(`/app/today/${id}`)
   expect(within(card).queryByText('Ready', { exact: true })).not.toBeInTheDocument()

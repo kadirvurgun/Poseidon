@@ -30,3 +30,18 @@ under the user's phase-delivery cadence. A user-requested preview build may upda
 the open application without implying regression PASS. Independent source/QA
 review is pending the reported agent usage limit; no retry/account rotation,
 new PR, merge, canonical sprint completion or release acceptance is claimed.
+
+## 14 November combined-gate type correction
+
+The authorized521ac720 full frontend gate passed lint39.076s, then failed full
+typecheck14.984s with TS2769 at the three new role queries (lines135/136/138).
+The installed Testing Library role-query contract does not accept `exact`.
+Its literal accessible-name matcher already compares exact normalized strings
+([role query](../../frontend/node_modules/@testing-library/dom/dist/queries/role.js)
+and [matcher](../../frontend/node_modules/@testing-library/dom/dist/matches.js)).
+Remove only those three unsupported options. Preserve the same roles, full
+literal names, within-card scope, full text/title assertions and keyboard target.
+The text-query `exact:true` remains supported and unchanged. No assertion,
+skip, timeout, source value, production logic or matching threshold is removed.
+Full typecheck and the subsequent larger gate must verify the corrected target;
+the original521 failure is retained and later stages were not run in that gate.
