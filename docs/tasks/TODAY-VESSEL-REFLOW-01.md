@@ -45,3 +45,12 @@ The text-query `exact:true` remains supported and unchanged. No assertion,
 skip, timeout, source value, production logic or matching threshold is removed.
 Full typecheck and the subsequent larger gate must verify the corrected target;
 the original521 failure is retained and later stages were not run in that gate.
+
+The next5680212 gate passed lint/typecheck and233 applicable protocol identities;
+its full component run was1661 PASS/1 FAIL. The remaining new Arabic variant
+rendered directly before the lazy product catalog had been loaded, reaching the
+intentional `locale_catalog_not_loaded` guard in messages.ts:88. The fixture now
+awaits the existing `changeAppLanguage(language,false)` operation inside act,
+then asserts the document direction before rendering. No fallback, translation
+guard or production behavior is changed; both TR/Arabic variants remain present.
+Verify the two selected variants before the next full package; retain568 failure.

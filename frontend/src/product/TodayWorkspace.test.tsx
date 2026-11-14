@@ -5,6 +5,7 @@ import { TodayWorkspace } from './TodayWorkspace'
 import { decodeToday, decodeWhy, decodeTodayVessels, today, todayVessels, why as loadWhy } from './today-api'
 import { ProductApp } from './ProductApp'
 import { navigationTestWorkspace, openNavigationTestWorkView } from './workspace-navigation.test-fixture'
+import { changeAppLanguage } from '../i18n'
 
 const id = '10000000-0000-0000-0000-000000000001'
 const vessel = { id, companyId: '10000000-0000-0000-0000-000000000002', code: 'T1', name: 'Synthetic Tug', kind: 'Tug', version: 1, canEdit: true }
@@ -126,6 +127,8 @@ it('pages the authorized vessel selector and navigates only to a selected Today 
   expect(await screen.findByRole('button', { name: /T1 · Synthetic Tug/ })).toBeVisible()
 })
 it.each(['tr', 'ar'] as const)('keeps the full long vessel identity and keyboard action after card reflow in %s', async language => {
+  await act(async () => { await changeAppLanguage(language, false) })
+  expect(document.documentElement.dir).toBe(language === 'ar' ? 'rtl' : 'ltr')
   const code = `SYNTHETIC-${'X'.repeat(54)}`
   const name = language === 'ar' ? 'سفينة تجريبية طويلة الاسم لا تمنح تصريحا للتشغيل' : `FICTIONAL-${'Y'.repeat(190)}`
   vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response({ items: [{ ...vessel, code, name }], offset: 0, limit: 25, hasMore: false })))
