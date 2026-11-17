@@ -33,6 +33,9 @@ async function authorizedHeaders(page: Page) {
         const bar = page.getByRole('region', { name: 'Current workspace context', exact: true });
         await expect(bar).toContainText(context.vessel.code);
         await expect(bar).toContainText(context.vessel.name);
+        await expect(bar).toContainText(context.company.code);
+        await expect(bar).toContainText(context.company.name);
+        await expect(bar).toContainText('Vessel mode');
         for (const role of context.roleContext.roles)
             await expect(bar).toContainText(role.en);
         await expect(bar).not.toContainText(context.actorId);

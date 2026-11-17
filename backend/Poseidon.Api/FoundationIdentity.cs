@@ -23,6 +23,9 @@ public sealed class FederationSettings
 public sealed record Membership(string Issuer, string Subject, Guid ActorId, Guid TenantId, string[] Permissions, bool TenantWideRead = false, bool TenantWideManage = false, VesselGrant[]? VesselGrants = null)
 {
     public string[]? RoleReferences { get; set; }
+    // Explicit current session scope. It is never inferred from a vessel owner,
+    // operator, manager, role name, IdP claim or request selector.
+    public Guid? ActiveCompanyId { get; set; }
     // Explicit operator appointments. No inference from administrator/IdP/client role names.
     public string ActorKind { get; set; } = "Unspecified";
     public HumanAuthority[] HumanAuthorities { get; set; } = [];
@@ -39,6 +42,7 @@ public sealed record VesselGrant(Guid VesselId, bool CanEdit = false);
 public sealed record TrustedActor(Guid Id, Guid TenantId, string[] Permissions, bool TenantWideRead, bool TenantWideManage, VesselGrant[] VesselGrants)
 {
     public string? RoleContext { get; init; }
+    public Guid? ActiveCompanyId { get; init; }
     public bool CanReadTug => CanRead && Permissions.Contains("mode.tug") && Permissions.Contains("tug.read");
     public bool CanSeeShip => !Permissions.Contains("mode.tug") || Permissions.Contains("mode.cross");
     public bool CanSeeTug => Permissions.Contains("mode.tug");
@@ -81,7 +85,10 @@ public sealed class ActorResolver(FederationSettings settings)
         if (matches.Length != 1 || matches[0].ActorId == Guid.Empty || matches[0].TenantId == Guid.Empty) return null;
         var m = matches[0];
         return new TrustedActor(m.ActorId, m.TenantId, (m.Permissions ?? []).Where(x => x is "operations.downtime.read" or "operations.downtime.write" or "workorder.read" or "workorder.write" or "defect.read" or "defect.write" or "operations.fuel.read" or "operations.fuel.write" or "operations.port.read" or "operations.port.write" or "certificate.verify.record" or "certificate.read" or "certificate.extract" or "certificate.write" or "certificate.renewal.write" or "certificate.renewal.owner" or "daily.noon.review" or "daily.deck.review" or "daily.engine.review" or "daily.noon.read" or "daily.noon.write" or "daily.deck.read" or "daily.deck.write" or "daily.engine.read" or "daily.engine.write" or "system.health.read" or "notification.evaluate" or "notification.read" or "notification.manage" or "notification.acknowledge" or "notification.preference.write" or "crew.catalog.govern" or "crew.assessment.read" or "regulatory.qualify" or "regulatory.facts.attest" or "human.trace.read" or "human.review.read" or "human.review.submit" or "human.verify" or "human.decide" or "control.read" or "control.write" or "control.owner.eligible" or "evidence.read" or "evidence.write" or "applicability.read" or "applicability.evaluate" or "rules.write" or "rules.review" or "import.legacy.convert" or "crew.identity.convert" or "crew.documents.read" or "crew.documents.write" or "crew.position.write" or "maintenance.observation.write" or "crew.assignment.declare" or "import.read" or "import.write" or "crew.certificate.read" or "crew.certificate.write" or "crew.profile.identity.read" or "crew.profile.identity.write" or "crew.profile.contact.read" or "crew.profile.contact.write" or "crew.profile.medical.read" or "crew.profile.medical.write" or "crew.profile.employment.read" or "crew.profile.employment.write" or "mode.tug" or "mode.cross" or "tug.read" or "tug.write" or "tug.plan.write" or "tug.owner.eligible" or "crew.read" or "crew.write" or "crew.identity.read" or "crew.identity.write" or "crew.history.read" or "directory.read" or "directory.write" or "workspace.search" or "regulatory.draft.read" or "regulatory.draft.write" or "audit.read" or "file.read" or "file.write" or "equipment.read" or "equipment.write" or "equipment.history.read" or "maintenance.read" or "maintenance.write" or "maintenance.history.read" or "maintenance.owner.eligible").Distinct().ToArray(),
-            m.TenantWideRead, m.TenantWideManage, (m.VesselGrants ?? []).Where(g => g.VesselId != Guid.Empty).ToArray()) { RoleContext = TrustedRoleContext(m.RoleReferences) };
+            m.TenantWideRead, m.TenantWideManage, (m.VesselGrants ?? []).Where(g => g.VesselId != Guid.Empty).ToArray()) {
+                RoleContext = TrustedRoleContext(m.RoleReferences),
+                ActiveCompanyId = m.ActiveCompanyId is { } company && company != Guid.Empty ? company : null
+            };
     }
 }
 

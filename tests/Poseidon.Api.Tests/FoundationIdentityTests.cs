@@ -87,15 +87,17 @@ public sealed class FoundationIdentityTests
     [Fact]
     public void Only_unique_authenticated_server_membership_supplies_actor_tenant_and_permissions()
     {
-        var actor = Guid.NewGuid(); var tenant = Guid.NewGuid();
-        var settings = new FederationSettings { Memberships = [new("https://idp.example", "synthetic-sub", actor, tenant, ["directory.read"])] };
+        var actor = Guid.NewGuid(); var tenant = Guid.NewGuid(); var company = Guid.NewGuid();
+        var settings = new FederationSettings { Memberships = [new Membership("https://idp.example", "synthetic-sub", actor, tenant, ["directory.read"]) { ActiveCompanyId = company }] };
         var resolver = new ActorResolver(settings);
-        var claims = new[] { new Claim("sub", "synthetic-sub"), new Claim("iss", "https://idp.example"), new Claim("tenant", Guid.NewGuid().ToString()), new Claim("role", "admin") };
+        var claims = new[] { new Claim("sub", "synthetic-sub"), new Claim("iss", "https://idp.example"),
+            new Claim("tenant", Guid.NewGuid().ToString()), new Claim("company", Guid.NewGuid().ToString()), new Claim("role", "admin") };
         Assert.Null(resolver.Resolve(new ClaimsPrincipal(new ClaimsIdentity(claims))));
         var identity = new ClaimsIdentity(claims, "test");
         var result = resolver.Resolve(new(identity));
         Assert.Equal(tenant, result!.TenantId);
         Assert.Equal(actor, result.Id);
+        Assert.Equal(company, result.ActiveCompanyId);
         Assert.Equal(["directory.read"], result.Permissions);
         identity.AddClaim(new Claim("sub", "ambiguous"));
         Assert.Null(resolver.Resolve(new(identity)));

@@ -19,6 +19,7 @@ class NavigationFixtureTests(unittest.TestCase):
         self.assertEqual(original['Authentication']['Oidc']['ClientSecret'], after['Authentication']['Oidc']['ClientSecret'])
         for field in ('Issuer', 'Subject', 'ActorId', 'TenantId', 'TenantWideRead', 'TenantWideManage', 'VesselGrants'):
             self.assertEqual(before_members[0][field], members[0][field])
+        self.assertEqual('20000000-0000-0000-0000-000000000001', members[0]['ActiveCompanyId'])
         added = set(members[0]['Permissions']) - set(before_members[0]['Permissions'])
         self.assertEqual({'crew.read', 'equipment.read', 'maintenance.read', 'import.read', 'mode.tug', 'mode.cross', 'tug.read'}, added)
 
@@ -79,6 +80,14 @@ class NavigationFixtureTests(unittest.TestCase):
                 with self.assertRaises(RuntimeError):
                     lab.navigation_membership(candidate, current_realm)
                 self.assertEqual(original, candidate)
+
+    def test_conflicting_active_company_is_not_overwritten_or_inferred_from_vessel(self):
+        realm, _, _, config = lab.make_configuration()
+        config['Authentication']['Oidc']['Memberships'][0]['ActiveCompanyId'] = str(uuid.uuid4())
+        original = deepcopy(config)
+        with self.assertRaisesRegex(RuntimeError, 'active_company_preserved'):
+            lab.navigation_membership(config, realm)
+        self.assertEqual(original, config)
 
     def test_unrelated_operator_catalog_entries_remain_and_duplicate_local_entries_fail(self):
         realm, _, _, config = lab.make_configuration()

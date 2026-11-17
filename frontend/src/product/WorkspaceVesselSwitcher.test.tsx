@@ -15,7 +15,8 @@ const session: Session = { authenticated: true, canRead: true, actorId: actor, t
   csrfToken: 'synthetic-only', setupRequired: false, canReadCompanies: false, canCreate: false, canSearch: false }
 const rows = [first, second].map((id, i) => ({ id, companyId: tenant, code: `SYN-${i + 1}`, name: `FICTIONAL vessel ${i + 1}`, kind: 'Ship' as const, version: 1, canEdit: false }))
 const page = { items: rows, offset: 0, limit: 25, hasMore: false }
-const context = (): WorkspaceContext => ({ tenantId: tenant, actorId: actor, roleContext: { state: 'Missing', roles: [], catalogVersion: null }, vessel: { ...rows[1] } })
+const context = (): WorkspaceContext => ({ tenantId: tenant, actorId: actor, roleContext: { state: 'Missing', roles: [], catalogVersion: null },
+  company: { id: tenant, code: 'SYN-CO', name: 'FICTIONAL company' }, vessel: { ...rows[1] } })
 const props = { session, vessel: first, language: 'en' as const, onClose: vi.fn(), onNavigate: vi.fn() }
 const target = () => screen.getByRole('button', { name: 'SYN-2 · FICTIONAL vessel 2 · Ship' })
 function pending<T>() { let resolve!: (value: T) => void; const promise = new Promise<T>(yes => { resolve = yes }); return { resolve, promise } }

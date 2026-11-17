@@ -1,4 +1,41 @@
 {
+  "analysis_20261115_continuation": {
+    "state": "SOURCE_LINEAGE_VERIFIED_PRODUCT_AUTHORED_TESTS_DEFERRED_NOT_ACCEPTED",
+    "baseline_id": "poseidon-v46.3-20261115",
+    "source_files": 312,
+    "supplemental_files": 43,
+    "unchanged_prior_files": 269,
+    "changed_prior_files": 0,
+    "removed_prior_files": 0,
+    "chunks": 182283,
+    "chunk_files": 4,
+    "source_mismatches": 0,
+    "report": "docs/phases/ANALYSIS-20261115-01.md",
+    "task": "docs/tasks/S2-COMPANY-ASSET-CONTEXT-01.md",
+    "product_scope": [
+      "Server-provisioned active company carried independently from vessel ownership/operator fields",
+      "Tenant-filtered active company projection with fail-closed invalid configuration",
+      "Company, vessel, Ship/Tug mode, role and connection in the shared workspace context bar",
+      "Two new UI labels completed in all 17 locale catalogs",
+      "Backend, wire, React and browser regression sources authored"
+    ],
+    "verification": {
+      "source_lineage": "PASS_312_FILES_182283_CHUNKS_0_MISMATCH",
+      "bounded_new_source_queries": "PASS",
+      "git_diff_check": "PASS",
+      "backend_tests": "DEFERRED",
+      "frontend_tests": "DEFERRED",
+      "build_typecheck_lint": "DEFERRED",
+      "playwright": "DEFERRED",
+      "independent_qa": "PENDING",
+      "required_ci": "PENDING"
+    },
+    "accepted_tasks_added": 0,
+    "accepted_story_points_added": 0,
+    "canonical_progress": "20/121 tasks; 103/970 SP; 0/196 accepted screens",
+    "acceptance": false,
+    "publication": false
+  },
   "foundation_acceptance_bundle_01_execution": {
     "task_id": "FOUNDATION-ACCEPTANCE-BUNDLE-01",
     "status": "INCOMPLETE",

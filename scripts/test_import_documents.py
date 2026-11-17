@@ -84,6 +84,31 @@ class ImportDocumentsTests(unittest.TestCase):
         self.assertEqual(row['locator'], 'sheet:Trace/row:7')
         self.assertEqual(row['text'], 'A7: REQ-01 | B7: Gemi | C7: 2')
 
+    def test_html_prototype_indexes_visible_copy_and_bounded_script_without_styles(self):
+        prototype = self.source / '12.01_Prototype.html'
+        prototype.write_text('''<!doctype html><html><head><style>.private { color: red }</style></head>
+          <body><main><h1>Gemi bağlamı</h1><button>Bağlamı değiştir</button></main>
+          <script>const contract = "Aktif şirket ve gemi sunucudan doğrulanır";</script></body></html>''', encoding='utf-8')
+        import_set(self.source, self.repo)
+        chunks = [json.loads(line) for line in (self.repo / 'docs/sources/chunks.jsonl').read_text(encoding='utf-8').splitlines()]
+        html = [chunk for chunk in chunks if chunk['source_path'].endswith('.html')]
+        self.assertTrue(any('Gemi bağlamı' in chunk['text'] and chunk['locator'].startswith('html-visible:') for chunk in html))
+        self.assertTrue(any('Aktif şirket ve gemi' in chunk['text'] and chunk['locator'].startswith('html-script:') for chunk in html))
+        self.assertFalse(any('color: red' in chunk['text'] for chunk in html))
+        self.assertTrue(all(len(chunk['text']) <= 4000 for chunk in html))
+
+    def test_large_index_can_be_split_into_deterministic_bounded_chunk_files(self):
+        (self.source / 'large.txt').write_text('\n'.join(f'Controlled source row {index}' for index in range(600)), encoding='utf-8')
+        result = import_set(self.source, self.repo, chunk_shard_bytes=4096)
+        self.assertGreater(len(result['chunk_files']), 1)
+        manifest = json.loads((self.repo / 'docs/sources/manifest.json').read_text(encoding='utf-8'))
+        self.assertEqual(manifest['chunk_files'], result['chunk_files'])
+        for name in result['chunk_files']:
+            path = self.repo / 'docs/sources' / name
+            self.assertTrue(path.is_file())
+            self.assertLessEqual(path.stat().st_size, 4096)
+        self.assertFalse((self.repo / 'docs/sources/chunks.jsonl').exists())
+
     def test_updated_set_indexes_repo_originals_without_overwriting_prior_baseline(self):
         import_set(self.source, self.repo)
         before = (self.repo / 'docs/sources/manifest.json').read_bytes()

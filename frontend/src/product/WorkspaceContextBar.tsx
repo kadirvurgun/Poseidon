@@ -3,7 +3,7 @@ import { type Locale as AppLocale } from "../i18n";
 import { Button } from '../components/ui/button';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { ArrowLeftRight, Wifi, WifiOff } from 'lucide-react';
+import { ArrowLeftRight, Building2, Compass, Wifi, WifiOff } from 'lucide-react';
 import { ApiError } from './api';
 import type { Session } from './directory-contract';
 import { loadWorkspaceContext } from './workspace-context-api';
@@ -71,7 +71,9 @@ function ScopedWorkspaceContextBar({ session, vessel = null, language, onNavigat
       <span role="alert">{current.error === 401 || current.error === 403 || current.error === 404 ? (localizedText(en, "pairs.m_e738676f907d8b26")) : (localizedText(en, "pairs.m_e59c3d6f026fb1d7"))}</span>
       <Button variant="outline" size="sm" disabled={!online} onClick={() => { setResult(null); retry(n => n + 1); }}>{localizedText(en, "pairs.m_d6420ab086c48ebe")}</Button>
     </> : <>
-      <span>{current.data.vessel ? `${current.data.vessel.code} · ${current.data.vessel.name} · ${current.data.vessel.kind === 'Ship' ? (localizedText(en, "pairs.m_bb1dbfbac5d5c650")) : (localizedText(en, "pairs.m_306aaabcb4e04a9f"))}` : (localizedText(en, "pairs.m_a46569aa0232494e"))}</span>
+      <span className="context-company"><Building2 aria-hidden="true"/>{localizedText(en, "pairs.m_d9580bbb7b397961")}: <strong>{current.data.company ? `${current.data.company.code} · ${current.data.company.name}` : localizedText(en, "pairs.m_49138f2831bf4262")}</strong></span>
+      <span className="context-vessel">{current.data.vessel ? `${current.data.vessel.code} · ${current.data.vessel.name}` : (localizedText(en, "pairs.m_a46569aa0232494e"))}</span>
+      {current.data.vessel && <span className="context-mode"><Compass aria-hidden="true"/>{localizedText(en, "pairs.m_ed4e66320421b039")}: {current.data.vessel.kind === 'Ship' ? (localizedText(en, "pairs.m_bb1dbfbac5d5c650")) : (localizedText(en, "pairs.m_306aaabcb4e04a9f"))}</span>}
       <span className="context-role">{localizedText(en, "pairs.m_fdbbf279aa546fe7")}: {current.data.roleContext.state === 'Configured'
                 ? current.data.roleContext.roles.map(role => localizedLabel(role, en)).join(' · ')
                 : current.data.roleContext.state === 'Missing' ? (localizedText(en, "pairs.m_2fd8f713bc6d358f")) : (localizedText(en, "pairs.m_49138f2831bf4262"))}</span>

@@ -38,7 +38,8 @@ test.describe('Today vessel selector reflow', () => {
                     const selected = vessels.find(vessel => path.endsWith('/' + vessel.id));
                     await route.fulfill({ json: { tenantId: tenant, actorId: actor,
                         roleContext: { state: 'Unavailable', catalogVersion: null, roles: [] },
-                        vessel: selected ? { id: selected.id, code: selected.code, name: selected.name, kind: selected.kind } : null } }); return;
+                        company: selected ? { id: selected.companyId, code: 'SYN-CO', name: 'FICTIONAL company' } : null,
+                        vessel: selected ? { id: selected.id, companyId: selected.companyId, code: selected.code, name: selected.name, kind: selected.kind } : null } }); return;
                 }
                 if (path.startsWith('/api/v1/workspace/lenses')) {
                     const selected = vessels.find(vessel => path.endsWith('/' + vessel.id));

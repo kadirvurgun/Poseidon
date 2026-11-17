@@ -43,7 +43,8 @@ async function mockShell(page: Page) {
             }
             await route.fulfill({ json: { tenantId: selected?.id === vessels[1].id && control.wrongTenant ? actorId : tenantId,
                     actorId, roleContext: { state: 'Configured', catalogVersion: 'synthetic-menu-v1', roles },
-                    vessel: selected ? { id: selected.id, code: selected.code, name: selected.name, kind: selected.kind } : null } });
+                    company: selected ? { id: selected.companyId, code: 'SYN-CO', name: selected.id === vessels[0].id ? 'FICTIONAL Alpha company' : 'FICTIONAL Beta company' } : null,
+                    vessel: selected ? { id: selected.id, companyId: selected.companyId, code: selected.code, name: selected.name, kind: selected.kind } : null } });
             return;
         }
         if (path.startsWith('/api/v1/workspace/lenses')) {

@@ -1,5 +1,16 @@
 # POSEIDON — PR16 ve yerelleştirme durumu
 
+**17 Kasım — 15.11 ek analizleri aktif kaynak zincirine alındı; S2 bağlam alt
+paketi yazıldı, kabul açık.** 42 DOCX ve bir güncel TR/EN prototip eklendi. Önceki
+269 kaynak byte olarak değişmedi; yeni baseline312 dosya/182.283 bölüm/0 mismatch
+ile doğrulandı ve dört GitHub-uyumlu parçaya ayrıldı. Yeni kaynak, aktif şirketin
+vessel owner/operator/CompanyId alanından türetilemeyeceğini belirledi. S2 global
+bağlamı server-provisioned aktif şirket, bağımsız yetkili vessel, Ship/Tug modu,
+rol ve bağlantı olarak genişletildi; eksik şirket Unavailable, geçersiz şirket503
+olur. İki yeni label17 dilde eklendi. Ürün testleri/build/Playwright **DEFERRED**;
+canonical20 iş/103SP (%10,62) değişmedi, push/PR/merge yok.
+[Kaynak sonucu ve ürün sınırı](phases/ANALYSIS-20261115-01.md).
+
 **13 Kasım — taşma düzeltmesi önizlemede; büyük faz kapısı açık.**
 Kullanıcının Bugün ekranı geri bildirimi giderildi: uzun araç kod/adları kart
 sınırında kırılır; ortak Card/Button ile tam genişlikte alt aksiyon, ortak

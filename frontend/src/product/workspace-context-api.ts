@@ -5,7 +5,8 @@ export type WorkspaceContext = Readonly<{
   tenantId: string
   actorId: string
   roleContext: { state: 'Configured' | 'Missing' | 'Unavailable'; catalogVersion: string | null; roles: { reference: string; tr: string; en: string }[] }
-  vessel: { id: string; code: string; name: string; kind: 'Ship' | 'Tug' } | null
+  company: { id: string; code: string; name: string } | null
+  vessel: { id: string; companyId: string; code: string; name: string; kind: 'Ship' | 'Tug' } | null
 }>
 const object = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v)
 const text = (v: unknown, max: number): v is string => typeof v === 'string' && v.length > 0 && v.length <= max && v.trim() === v && !/\p{Cc}/u.test(v)
@@ -28,12 +29,20 @@ export async function loadWorkspaceContext(tenant: string, actor: string, vessel
     roles.push({ reference: reference.toLowerCase(), tr: row.tr, en: row.en })
   }
   let selected: WorkspaceContext['vessel'] = null
+  let company: WorkspaceContext['company'] = null
+  if (value.company !== null && !object(value.company)) throw new ApiError(502, 'invalid_contract')
+  if (object(value.company)) {
+    if (!isGuid(value.company.id) || !text(value.company.code, 64) || !text(value.company.name, 200))
+      throw new ApiError(502, 'invalid_contract')
+    company = { id: value.company.id, code: value.company.code, name: value.company.name }
+  }
   if (vessel === null ? value.vessel !== null : !object(value.vessel)) throw new ApiError(502, 'invalid_contract')
   if (object(value.vessel)) {
     const row = value.vessel
-    if (!isGuid(row.id) || row.id.toLowerCase() !== vessel?.toLowerCase() || !text(row.code, 64) || !text(row.name, 200) || typeof row.kind !== 'string' || !['Ship', 'Tug'].includes(row.kind))
+    if (!isGuid(row.id) || row.id.toLowerCase() !== vessel?.toLowerCase() || !isGuid(row.companyId) ||
+        !text(row.code, 64) || !text(row.name, 200) || typeof row.kind !== 'string' || !['Ship', 'Tug'].includes(row.kind))
       throw new ApiError(502, 'invalid_contract')
-    selected = { id: row.id, code: row.code, name: row.name, kind: row.kind as 'Ship' | 'Tug' }
+    selected = { id: row.id, companyId: row.companyId, code: row.code, name: row.name, kind: row.kind as 'Ship' | 'Tug' }
   }
-  return { tenantId: value.tenantId, actorId: value.actorId, roleContext: { state: role.state as WorkspaceContext['roleContext']['state'], catalogVersion: role.catalogVersion as string | null, roles }, vessel: selected }
+  return { tenantId: value.tenantId, actorId: value.actorId, roleContext: { state: role.state as WorkspaceContext['roleContext']['state'], catalogVersion: role.catalogVersion as string | null, roles }, company, vessel: selected }
 }

@@ -19,6 +19,17 @@ def inside(root, relative):
     return path
 
 
+def chunk_paths(root, active):
+    configured = active['chunks']
+    values = [configured] if isinstance(configured, str) else configured
+    if not isinstance(values, list) or not values or not all(isinstance(value, str) for value in values):
+        raise ValueError('Active chunks must be a path or nonempty path list')
+    paths = [inside(root, value) for value in values]
+    if len(set(paths)) != len(paths):
+        raise ValueError('Active chunk paths must be unique')
+    return paths
+
+
 def query(text, *, root=ROOT, limit=4, include_references=False):
     if not 1 <= limit <= 20 or not text.strip() or len(text) > 500:
         raise ValueError('Supply a bounded nonempty query and limit 1..20')
@@ -27,8 +38,12 @@ def query(text, *, root=ROOT, limit=4, include_references=False):
     baseline = active['baseline_id']
     if not re.fullmatch(r'[A-Za-z0-9._-]+', baseline):
         raise ValueError('Invalid baseline ID')
-    chunks = inside(root, active['chunks'])
-    fingerprint = hashlib.sha256(chunks.read_bytes()).hexdigest()
+    chunks = chunk_paths(root, active)
+    fingerprint_hash = hashlib.sha256()
+    for path in chunks:
+        fingerprint_hash.update(path.as_posix().encode('utf-8')); fingerprint_hash.update(b'\0')
+        fingerprint_hash.update(path.read_bytes()); fingerprint_hash.update(b'\0')
+    fingerprint = fingerprint_hash.hexdigest()
     cache = root / '.runtime/source-index' / (baseline + '.sqlite3')
     cache.parent.mkdir(parents=True, exist_ok=True)
     rebuild = True
@@ -41,10 +56,11 @@ def query(text, *, root=ROOT, limit=4, include_references=False):
             with closing(sqlite3.connect(temporary)) as db:
                 db.execute('CREATE TABLE metadata (key TEXT PRIMARY KEY, value TEXT NOT NULL)')
                 db.execute('CREATE VIRTUAL TABLE source_fts USING fts5(source_path UNINDEXED, locator UNINDEXED, sha256 UNINDEXED, source_class UNINDEXED, text)')
-                with chunks.open(encoding='utf-8') as stream:
-                    for line in stream:
-                        c = json.loads(line)
-                        db.execute('INSERT INTO source_fts VALUES (?,?,?,?,?)', (c['source_path'], c['locator'], c['source_sha256'], c['source_class'], c['text']))
+                for path in chunks:
+                    with path.open(encoding='utf-8') as stream:
+                        for line in stream:
+                            c = json.loads(line)
+                            db.execute('INSERT INTO source_fts VALUES (?,?,?,?,?)', (c['source_path'], c['locator'], c['source_sha256'], c['source_class'], c['text']))
                 db.execute('INSERT INTO metadata VALUES (?,?)', ('sha256', fingerprint))
                 db.commit()
             os.replace(temporary, cache)

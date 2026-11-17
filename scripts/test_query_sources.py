@@ -25,6 +25,20 @@ class QuerySourceTests(unittest.TestCase):
             chunk_file.write_text('', encoding='utf-8')
             self.assertEqual(query('draft', root=root), [])
 
+    def test_lookup_reads_every_unique_configured_chunk_shard(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); sources = root / 'docs/sources'; sources.mkdir(parents=True)
+            paths = ['docs/sources/chunks-0001.jsonl', 'docs/sources/chunks-0002.jsonl']
+            (sources / 'active.json').write_text(json.dumps({'baseline_id': 'sharded', 'chunks': paths}))
+            for index, relative in enumerate(paths, 1):
+                (root / relative).write_text(json.dumps({'source_path': f'analiz/{index}.txt', 'locator': 'lines:1-1',
+                    'source_sha256': str(index), 'source_class': 'candidate-unverified', 'text': f'controlled shard result {index}'}) + '\n')
+            found = query('controlled shard result', root=root, limit=4)
+            self.assertEqual({row['sha256'] for row in found}, {'1', '2'})
+            (sources / 'active.json').write_text(json.dumps({'baseline_id': 'sharded', 'chunks': [paths[0], paths[0]]}))
+            with self.assertRaisesRegex(ValueError, 'unique'):
+                query('controlled', root=root)
+
     def test_invalid_queries_and_escape_paths_are_rejected(self):
         for text, limit in [('', 4), ('a', 0), ('a', 21), ('a' * 501, 1)]:
             with self.assertRaises(ValueError):

@@ -32,3 +32,15 @@ class VerifySourceTests(unittest.TestCase):
             chunk_file.write_text(json.dumps(altered), encoding='utf-8')
             with self.assertRaisesRegex(ValueError, 'lineage'):
                 verify(root)
+
+    def test_sharded_chunk_lineage_is_verified_as_one_complete_set(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); source = root / 'analiz/latest'; source.mkdir(parents=True)
+            (source / 'README_FIRST.txt').write_text('Controlled policy ' * 500, encoding='utf-8')
+            result = import_set(source, root, baseline_id='sharded', copy_originals=False, chunk_shard_bytes=1024)
+            (root / 'docs/sources/active.json').write_text(json.dumps({'baseline_id': 'sharded', 'source_root': 'analiz/latest',
+                'manifest': 'docs/sources/manifest.json', 'chunks': [f'docs/sources/{name}' for name in result['chunk_files']]}))
+            self.assertEqual(verify(root)['mismatches'], 0)
+            (root / 'docs/sources' / result['chunk_files'][-1]).write_text('', encoding='utf-8')
+            with self.assertRaisesRegex(ValueError, 'Chunk count'):
+                verify(root)

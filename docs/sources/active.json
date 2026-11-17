@@ -1,11 +1,17 @@
 {
-  "baseline_id": "poseidon-v46.3-20261030",
+  "baseline_id": "poseidon-v46.3-20261115",
   "source_root": "analiz/POSEIDON GUNCEL 30.10.2026",
-  "manifest": "docs/sources/2026-10-30/manifest.json",
-  "chunks": "docs/sources/2026-10-30/chunks.jsonl",
-  "delta": "docs/sources/2026-10-30/delta.json",
-  "prior_manifest": "docs/sources/manifest.json",
-  "authority": "user-supplied updated candidate; source proposals and external sign-off gates remain open",
+  "manifest": "docs/sources/2026-11-15/manifest.json",
+  "chunks": [
+    "docs/sources/2026-11-15/chunks-0001.jsonl",
+    "docs/sources/2026-11-15/chunks-0002.jsonl",
+    "docs/sources/2026-11-15/chunks-0003.jsonl",
+    "docs/sources/2026-11-15/chunks-0004.jsonl"
+  ],
+  "delta": "docs/sources/2026-11-15/delta.json",
+  "prior_manifest": "docs/sources/2026-10-30/manifest.json",
+  "authority": "user-supplied 15.11 supplemental analyses explicitly selected for development; candidate requirements and external legal, expert and pilot sign-off gates remain open",
+  "supplemental_documents": 43,
   "backlog_tasks": 121,
   "backlog_story_points": 970,
   "screens": 196,

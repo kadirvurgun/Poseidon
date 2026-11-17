@@ -5,6 +5,7 @@ Uses only Python's standard library. No model, network or embedding calls.
 
 import argparse
 import hashlib
+from html.parser import HTMLParser
 import json
 from pathlib import Path
 import re
@@ -17,6 +18,87 @@ ROOT = Path(__file__).resolve().parents[1]
 W = '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}'
 S = '{http://schemas.openxmlformats.org/spreadsheetml/2006/main}'
 R = '{http://schemas.openxmlformats.org/officeDocument/2006/relationships}'
+
+
+class SourceHtmlParser(HTMLParser):
+    """Extract visible prototype copy and bounded script source without CSS noise."""
+    block_tags = {'address', 'article', 'aside', 'blockquote', 'button', 'caption', 'dd', 'div',
+                  'dl', 'dt', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2',
+                  'h3', 'h4', 'h5', 'h6', 'header', 'label', 'legend', 'li', 'main', 'nav', 'ol',
+                  'option', 'p', 'section', 'summary', 'table', 'td', 'th', 'tr', 'ul'}
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.hidden = 0
+        self.script = 0
+        self.visible = []
+        self.scripts = []
+        self._current = []
+
+    def _flush(self):
+        text = re.sub(r'\s+', ' ', ' '.join(self._current)).strip()
+        if text:
+            self.visible.append(text)
+        self._current = []
+
+    def handle_starttag(self, tag, attrs):
+        tag = tag.lower()
+        if tag in self.block_tags:
+            self._flush()
+        if tag in {'style', 'template', 'noscript'}:
+            self.hidden += 1
+        elif tag == 'script' and self.hidden == 0:
+            self.script += 1
+            self.scripts.append([])
+
+    def handle_endtag(self, tag):
+        tag = tag.lower()
+        if tag == 'script' and self.script:
+            self.script -= 1
+        elif tag in {'style', 'template', 'noscript'} and self.hidden:
+            self.hidden -= 1
+        if tag in self.block_tags:
+            self._flush()
+
+    def handle_data(self, data):
+        if self.hidden:
+            return
+        if self.script:
+            self.scripts[-1].append(data)
+        elif data.strip():
+            self._current.append(data)
+
+    def finish(self):
+        self._flush()
+
+
+def bounded_text(value, maximum=4000):
+    """Yield stable nonempty character windows, preferring whitespace boundaries."""
+    start = 0
+    while start < len(value):
+        end = min(start + maximum, len(value))
+        if end < len(value):
+            boundary = value.rfind(' ', start + maximum // 2, end)
+            if boundary > start:
+                end = boundary
+        text = value[start:end].strip()
+        if text:
+            yield start, end, text
+        start = end
+
+
+def html_sections(path):
+    parser = SourceHtmlParser()
+    parser.feed(path.read_text(encoding='utf-8-sig'))
+    parser.close()
+    parser.finish()
+    visible = '\n'.join(parser.visible)
+    for start, end, text in bounded_text(visible):
+        yield f'html-visible:chars:{start + 1}-{end}', text
+    for index, parts in enumerate(parser.scripts, 1):
+        script = ''.join(parts)
+        for start, end, text in bounded_text(script):
+            yield f'html-script:{index}/chars:{start + 1}-{end}', text
 
 
 def digest(data):
@@ -80,6 +162,8 @@ def extract(path):
         yield from paragraphs(path)
     elif path.suffix.lower() == '.xlsx':
         yield from spreadsheet_rows(path)
+    elif path.suffix.lower() in {'.html', '.htm'}:
+        yield from html_sections(path)
     elif path.suffix.lower() in {'.md', '.txt', '.json', '.yaml', '.yml', '.sh'}:
         lines = path.read_text(encoding='utf-8-sig').splitlines()
         for index in range(0, len(lines), 40):
@@ -89,7 +173,7 @@ def extract(path):
 
 
 def import_set(source, repo_root=ROOT, *, baseline_id='poseidon-v46.3',
-               output_relative='docs/sources', copy_originals=True):
+               output_relative='docs/sources', copy_originals=True, chunk_shard_bytes=None):
     if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._-]*', baseline_id):
         raise ValueError('Invalid baseline ID')
     repo_root = repo_root.resolve()
@@ -157,10 +241,30 @@ def import_set(source, repo_root=ROOT, *, baseline_id='poseidon-v46.3',
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(text.rstrip() + '\n', encoding='utf-8')
     manifest = {'baseline': 'POSEIDON v46.3 CONTROLLED CANDIDATE', 'baseline_id': baseline_id,
-                'parser_version': 1, 'files': records}
+                'parser_version': 2, 'files': records}
+    lines = [json.dumps(c, ensure_ascii=False) + '\n' for c in chunks]
+    chunk_files = []
+    if chunk_shard_bytes is not None:
+        if chunk_shard_bytes < 1024:
+            raise ValueError('Chunk shard size must be at least 1024 bytes')
+        shard, size = [], 0
+        for line in lines:
+            encoded = len(line.encode('utf-8'))
+            if shard and size + encoded > chunk_shard_bytes:
+                chunk_files.append(shard); shard, size = [], 0
+            shard.append(line); size += encoded
+        if shard:
+            chunk_files.append(shard)
+        names = [f'chunks-{index:04d}.jsonl' for index in range(1, len(chunk_files) + 1)]
+        for name, shard in zip(names, chunk_files):
+            (output / name).write_text(''.join(shard), encoding='utf-8')
+        manifest['chunk_files'] = names
+    else:
+        names = ['chunks.jsonl']
+        (output / names[0]).write_text(''.join(lines), encoding='utf-8')
+        manifest['chunk_files'] = names
     (output / 'manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
-    (output / 'chunks.jsonl').write_text(''.join(json.dumps(c, ensure_ascii=False) + '\n' for c in chunks), encoding='utf-8')
-    return {'files': len(records), 'text_files': len(texts), 'chunks': len(chunks)}
+    return {'files': len(records), 'text_files': len(texts), 'chunks': len(chunks), 'chunk_files': names}
 
 
 if __name__ == '__main__':
@@ -169,7 +273,9 @@ if __name__ == '__main__':
     parser.add_argument('--baseline-id', default='poseidon-v46.3')
     parser.add_argument('--output-relative', default='docs/sources')
     parser.add_argument('--in-place', action='store_true', help='Index original files already inside this repo without copying them')
+    parser.add_argument('--chunk-shard-bytes', type=int, help='Write bounded numbered JSONL shards instead of one chunk file')
     arguments = parser.parse_args()
     print(json.dumps(import_set(arguments.source, baseline_id=arguments.baseline_id,
                                 output_relative=arguments.output_relative,
-                                copy_originals=not arguments.in_place), ensure_ascii=False))
+                                copy_originals=not arguments.in_place,
+                                chunk_shard_bytes=arguments.chunk_shard_bytes), ensure_ascii=False))

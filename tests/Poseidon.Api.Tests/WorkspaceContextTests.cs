@@ -33,9 +33,40 @@ public sealed partial class DirectoryWorkspaceTests
         var dto = (await response.Content.ReadFromJsonAsync<WorkspaceContextDto>(Ct))!;
         Assert.Equal(seed.Tenants[0].Id, dto.TenantId); Assert.Equal(actorId, dto.ActorId);
         Assert.Equal(SeedVessel.Id, dto.Vessel!.Id); Assert.Equal("Configured", dto.RoleContext.State);
+        Assert.Equal(SeedVessel.CompanyId, dto.Company!.Id);
+        Assert.Equal(seed.Companies.Single(x => x.Id == SeedVessel.CompanyId).Name, dto.Company.Name);
         Assert.Equal("synthetic-v1", dto.RoleContext.CatalogVersion);
         Assert.Equal("FICTIONAL local role", Assert.Single(dto.RoleContext.Roles).En);
         Assert.DoesNotContain("FOREIGN", await response.Content.ReadAsStringAsync(Ct));
+    }
+
+    [Fact]
+    public async Task Workspace_context_uses_the_trusted_active_company_independently_from_vessel_ownership()
+    {
+        var activeCompany = Guid.NewGuid();
+        await using (var db = Db()) {
+            db.Companies.Add(new Company { Id = activeCompany, TenantId = seed.Tenants[0].Id,
+                Code = "SYN-ACTIVE", Name = "Synthetic active session company" });
+            await db.SaveChangesAsync(Ct);
+        }
+        using var host = Host(manage: false, read: false);
+        var settings = host.Services.GetRequiredService<FederationSettings>();
+        settings.Memberships = [settings.Memberships[0] with { ActiveCompanyId = activeCompany }];
+        using var client = Client(host);
+        var dto = (await client.GetFromJsonAsync<WorkspaceContextDto>("/api/v1/workspace/context/" + SeedVessel.Id, Ct))!;
+        Assert.Equal(activeCompany, dto.Company!.Id); Assert.Equal("SYN-ACTIVE", dto.Company.Code);
+        Assert.Equal(SeedVessel.CompanyId, dto.Vessel!.CompanyId); Assert.NotEqual(dto.Company.Id, dto.Vessel.CompanyId);
+    }
+
+    [Fact]
+    public async Task Missing_active_company_is_explicit_and_never_inferred_from_the_selected_vessel()
+    {
+        using var host = Host(manage: false, read: false);
+        var settings = host.Services.GetRequiredService<FederationSettings>();
+        settings.Memberships = [settings.Memberships[0] with { ActiveCompanyId = null }];
+        using var client = Client(host);
+        var dto = (await client.GetFromJsonAsync<WorkspaceContextDto>("/api/v1/workspace/context/" + SeedVessel.Id, Ct))!;
+        Assert.Null(dto.Company); Assert.Equal(SeedVessel.Id, dto.Vessel!.Id);
     }
 
     [Fact]
@@ -69,7 +100,7 @@ public sealed partial class DirectoryWorkspaceTests
         using var host = Host(); using var client = Client(host);
         var dto = (await client.GetFromJsonAsync<WorkspaceContextDto>("/api/v1/workspace/context", Ct))!;
         Assert.Equal("Unavailable", dto.RoleContext.State); Assert.Empty(dto.RoleContext.Roles);
-        Assert.Null(dto.RoleContext.CatalogVersion); Assert.Null(dto.Vessel);
+        Assert.Null(dto.RoleContext.CatalogVersion); Assert.Equal(SeedVessel.CompanyId, dto.Company!.Id); Assert.Null(dto.Vessel);
     }
 
     [Fact]

@@ -400,6 +400,7 @@ def navigation_membership(config, realm):
     """
     candidate = deepcopy(config)
     tenant = '10000000-0000-0000-0000-000000000001'
+    company = '20000000-0000-0000-0000-000000000001'
     subjects = [u['id'] for u in realm['users'] if u['username'] == 'lab-manager']
     if realm.get('realm') != 'poseidon-lab' or len(subjects) != 1:
         raise RuntimeError('lab_navigation_identity_invalid')
@@ -413,6 +414,9 @@ def navigation_membership(config, realm):
             members[0].get('TenantWideRead') is not True or members[0].get('TenantWideManage') is not True):
         raise RuntimeError('lab_navigation_scope_invalid')
     member = members[0]
+    if member.get('ActiveCompanyId') not in (None, company):
+        raise RuntimeError('lab_navigation_active_company_preserved')
+    member['ActiveCompanyId'] = company
     daily = str(uuid.uuid5(uuid.NAMESPACE_URL, PROJECT + '/synthetic-writer-assignment'))
     review = str(uuid.uuid5(uuid.NAMESPACE_URL, PROJECT + '/synthetic-review-assignment'))
     refs = member.get('RoleReferences', [])
