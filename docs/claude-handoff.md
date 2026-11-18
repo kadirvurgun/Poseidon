@@ -10,7 +10,7 @@ Her büyük adımdan önce `C:\Users\avurgun\.claude-poseidon\statusline\cache\u
 - C: diski 18.11 gece 0 bayta düştü → Docker Desktop daemon kilitlendi (`docker info` timeout). Eski worktree bin/obj silinerek ~1,9 GB açıldı. Başlarken `(Get-PSDrive C).Free` < 5 GB ise önce yer aç (yalnız yeniden üretilebilir şeyler: eski `.runtime/worktrees/*` bin/obj, TestResults, indirilen CI artifact'ları). Docker hâlâ yanıt vermiyorsa yerel PG testlerini çalıştırma; CI kanıtı yeterli, kullanıcıdan Docker restart iste.
 
 ## Main ve PR durumu
-Main: #16 #17 #18 #20 #23 birleşik (son: `4d63012`).
+Main: #16 #17 #18 #20 #23 + **#36 S2 paketi** (#31 #24 #19 #21 #26 #27 #22 #35) birleşik (son: `b1b02b4`, 19.11 ~01:00). Açık: #25 #28 #29 #30 #32 #33 #34 (hepsi taban main) → ikinci entegrasyon PR'ında topla.
 
 | PR | İçerik | Durum / sıradaki adım |
 |---|---|---|
@@ -25,7 +25,7 @@ Main: #16 #17 #18 #20 #23 birleşik (son: `4d63012`).
 | (dal) | `fix/same-key-replay-race-followup-20261118` worktree `.runtime/worktrees/replay-race-followup-20261118` | Ajan yarıda durdu: 15 dosya commit'lenmemiş (HumanReview/RegulatoryQualification/Notification aynı-anahtar replay yarışı). İncele, testleri çalıştır, commit, push, PR (taban: #31 birleştiyse main). |
 
 ## Sıradaki iş (sıra)
-1. #36'yı birleştir (S2'nin 5/6 işi main'e girer).
+1. ✅ #36 birleşti (S2'nin 5/6 işi main'de).
 2. #29'u (DEV-024) tamamla → S2 6/6 main'de.
 3. **S2 sprint kapısı:** main üzerinde tam backend/persistence/API/frontend/Playwright + bağımsız S2 QA (poseidon-qa). Geçerse `docs/project-status.json` → S2 accepted 6 iş / 42 SP; toplam 145/970 = %14,9 (PR ile).
 4. İkinci paket: #28 #30 #33 #34 (+#32), sonra #25.
