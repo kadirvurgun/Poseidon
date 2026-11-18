@@ -7,8 +7,9 @@ using System.Text.RegularExpressions;
 namespace Poseidon.Domain;
 
 public sealed record ParameterFieldError(string Path, string Code);
+// RequestedEffectiveFrom keeps the caller's explicit boundary (null = "now at acceptance") for retry identity.
 public sealed record ParameterProposal(string ScopeKind, string SelectorJson, string SelectorHash, string ValueMode, string? ValueJson,
-    DateTimeOffset EffectiveFrom, DateTimeOffset? EffectiveTo, string Reason);
+    DateTimeOffset EffectiveFrom, DateTimeOffset? EffectiveTo, string Reason, DateTimeOffset? RequestedEffectiveFrom);
 
 // PLAN-1511-5401 typed validation (54.01 paragraph:13-17, :25, :77, :170-183). Closed types only:
 // no free JSON, script, regex or caller-supplied validator. Errors keep the draft untouched.
@@ -129,7 +130,8 @@ public static partial class ParameterValuePolicy
         if (reason == null || reason.Trim().Length < ReasonMin || reason.Length > ReasonMax || reason.Any(c => char.IsControl(c) && c is not ('\n' or '\r' or '\t')))
             errors.Add(new("/reason", "invalid_reason"));
         if (errors.Count > 0) return (null, errors);
-        return (new(scopeKind!, selector!.Value.Json, selector.Value.Hash, valueMode!, json, Micro(from), effectiveTo is { } end ? Micro(end) : null, reason!), errors);
+        return (new(scopeKind!, selector!.Value.Json, selector.Value.Hash, valueMode!, json, Micro(from), effectiveTo is { } end ? Micro(end) : null, reason!,
+            effectiveFrom is { } requested ? Micro(requested) : null), errors);
     }
 
     // PostgreSQL timestamptz has microsecond precision; keep responses equal to later reads.

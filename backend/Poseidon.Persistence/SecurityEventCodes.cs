@@ -29,6 +29,7 @@ public static class SecurityEventCodes
         "TodayRead", "TodayWhyRead", "TugRead", "TugSave",
         "VesselCreate", "VesselUpdate", "VesselsRead", "WorkspaceRead",
         "WorkspaceSearch", "SystemHealthRead", "NotificationRead", "NotificationCommand", "ComplianceWorkspaceRead", "DailyOfflineRead", "DailyOfflineRequest", "DailyOperationsRead", "DailyOperationsCommand", "DailyReviewRead", "DailyReviewCommand", "ShipOperationsRead", "ShipOperationsCommand",
+        "ParameterRead", "ParameterCommand",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static IReadOnlySet<string> Results { get; } = new string[]
     {
@@ -69,6 +70,9 @@ public static class SecurityEventCodes
         "version_conflict", "invalid_qualification_transition", "independent_reviewer_required",
         "incomplete_qualification", "acceptance_trigger_required", "impact_review_required",
         "outside_effective_dates", "superseding_rule_required",
+        "owner_field_not_writable", "invariant_not_writable", "alias_read_only", "family_not_writable", "type_mismatch", "out_of_range",
+        "unresolved_reference", "scope_not_allowed", "selector_invalid", "definition_version_mismatch", "effective_from_in_past",
+        "pending_change_exists", "ambiguous_selection", "synthetic_not_approvable",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static bool Allows(string action, string result) => Actions.Contains(action) && Results.Contains(result);
 }

@@ -117,7 +117,10 @@
     "FuelShipOpsCreate": "PREPARATION_COMMAND",
     "FuelShipOpsUpdate": "PREPARATION_COMMAND",
     "PortShipOpsCreate": "PREPARATION_COMMAND",
-    "PortShipOpsUpdate": "PREPARATION_COMMAND"
+    "PortShipOpsUpdate": "PREPARATION_COMMAND",
+    "ProposeParameterChange": "PREPARATION_COMMAND",
+    "ApproveParameterChange": "HUMAN_REVIEW_WORKFLOW",
+    "RejectParameterChange": "HUMAN_REVIEW_WORKFLOW"
   },
   "reasonCodes": [
     "PREPARATION_COMMAND",

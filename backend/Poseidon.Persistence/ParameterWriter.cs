@@ -34,7 +34,7 @@ public static class ParameterWriter
         ParameterDefinition definition, ParameterProposal proposal, Guid scopeId, DateTimeOffset now, Func<Task<bool>> stillAuthorized, CancellationToken ct)
     {
         var fingerprint = Fingerprint(Propose, definition.Key, definition.DefinitionVersion, expectedVersion, proposal.ScopeKind, scopeId,
-            proposal.SelectorHash, proposal.ValueMode, proposal.ValueJson, proposal.EffectiveFrom, proposal.EffectiveTo, proposal.Reason);
+            proposal.SelectorHash, proposal.ValueMode, proposal.ValueJson, proposal.RequestedEffectiveFrom, proposal.EffectiveTo, proposal.Reason);
         return await Run(db, actor, key, Propose, fingerprint, ct, async () =>
         {
             var root = await db.ParameterRoots.SingleOrDefaultAsync(x => x.Key == definition.Key && x.ScopeKind == proposal.ScopeKind &&

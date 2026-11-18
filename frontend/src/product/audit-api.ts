@@ -74,6 +74,7 @@ const auditCapabilities = new Set([
   'workspace.search', 'regulatory.draft.read', 'regulatory.draft.write', 'audit.read', 'file.read', 'file.write',
   'equipment.read', 'equipment.write', 'equipment.history.read', 'maintenance.read', 'maintenance.write',
   'maintenance.history.read', 'maintenance.owner.eligible',
+  'config.read', 'config.resolve', 'config.draft', 'config.approve', 'config.reject',
 ])
 function invalid(): never { throw new ApiError(502, 'invalid_audit_contract') }
 export function changes(summary: string | null): Change[] {
