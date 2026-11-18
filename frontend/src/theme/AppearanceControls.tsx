@@ -1,7 +1,8 @@
-import { useId, useRef } from 'react'
+import { useId, useRef, useState } from 'react'
 import { Palette as PaletteIcon } from 'lucide-react'
 import { useAppearance } from './appearance-store'
 import type { AppearanceMode, Palette } from './appearance-store'
+import { ThemeBuilder } from './ThemeBuilder'
 import type { Locale } from '../i18n'
 import './appearance-controls.css'
 
@@ -9,8 +10,11 @@ import './appearance-controls.css'
 export function AppearanceControls({ language }: { language: Locale }) {
   const { appearance, setAppearance } = useAppearance()
   const details = useRef<HTMLDetailsElement>(null)
+  const customizeButton = useRef<HTMLButtonElement>(null)
+  const [builderOpen, setBuilderOpen] = useState(false)
   const id = useId()
   const en = language !== 'tr'
+  const closeBuilder = () => { setBuilderOpen(false); queueMicrotask(() => customizeButton.current?.focus()) }
   return <details className="appearance-controls" ref={details} onKeyDown={event => {
     if (event.key === 'Escape' && details.current?.open) {
       event.preventDefault(); details.current.open = false; details.current.querySelector('summary')?.focus()
@@ -29,7 +33,12 @@ export function AppearanceControls({ language }: { language: Locale }) {
         <option value="emerald">{en ? 'Emerald' : 'Zümrüt'}</option>
         <option value="ocean">{en ? 'Ocean' : 'Okyanus'}</option>
         <option value="graphite">{en ? 'Graphite' : 'Grafit'}</option>
+        <option value="custom">{en ? 'Custom' : 'Özel'}</option>
       </select>
+      <button type="button" ref={customizeButton} className="appearance-customize" aria-haspopup="dialog" aria-expanded={builderOpen} onClick={() => setBuilderOpen(true)}>
+        {en ? 'Customize…' : 'Özelleştir…'}
+      </button>
     </div>
+    {builderOpen && <ThemeBuilder language={language} onClose={closeBuilder} />}
   </details>
 }

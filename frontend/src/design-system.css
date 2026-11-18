@@ -55,7 +55,7 @@
   --radius: 0.625rem;
   --sidebar: oklch(0.985 0.001 106.423);
   --sidebar-foreground: oklch(0.147 0.004 49.25);
-  --sidebar-primary: oklch(0.596 0.145 163.225);
+  --sidebar-primary: oklch(0.508 0.118 165.612); /* preset 0.596 0.145 163.225 measured 3.48:1 with its foreground; THEME-BUILDER-CONTRAST */
   --sidebar-primary-foreground: oklch(0.979 0.021 166.113);
   --sidebar-accent: oklch(0.97 0.001 106.424);
   --sidebar-accent-foreground: oklch(0.216 0.006 56.043);
