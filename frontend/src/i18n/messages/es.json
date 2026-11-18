@@ -284,7 +284,22 @@
       "OperationalSourcesUnavailable": "Fuentes operativas no disponibles",
       "rule": "Regla",
       "context": "Buque actual",
-      "switch": "Cambiar buque"
+      "switch": "Cambiar buque",
+      "ViewMaintenancePlan": "Ver plan de mantenimiento",
+      "ViewTugJob": "Ver trabajo de remolcador",
+      "sourceOwner": "Propietario de la fuente",
+      "sourceSaved": "Fuente guardada el",
+      "noRevision": "Sin revisión almacenada",
+      "REGULATORY": "Normativa",
+      "PMS": "Mantenimiento planificado",
+      "TUG": "Operaciones de remolcador",
+      "viewReady": "Elementos devueltos por todas las fuentes listadas. Esto no es preparación ni verificación.",
+      "viewEmpty": "Todas las fuentes listadas se leyeron y no devolvieron elementos. Esto no es una autorización de seguridad.",
+      "viewPartial": "Vista parcial: algunas fuentes propietarias no están disponibles en este contexto. La ausencia de elementos no significa que todo esté en orden.",
+      "viewUnavailable": "No se pudo leer ninguna fuente propietaria en este contexto. Esto no significa que todo esté en orden.",
+      "partialCounters": "Fuentes parciales: cero no significa que todo esté en orden",
+      "rateLimited": "Demasiadas solicitudes. Espere y vuelva a intentarlo.",
+      "contract": "La respuesta del servidor no superó la validación; no se muestra nada de ella."
     },
     "TugCrewCoverage_tsx_copy": {
       "title": "Roles mínimos de tripulación cualificados por la fuente",

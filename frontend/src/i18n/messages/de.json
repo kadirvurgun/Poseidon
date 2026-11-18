@@ -284,7 +284,22 @@
       "OperationalSourcesUnavailable": "Betriebliche Quellen nicht verfügbar",
       "rule": "Regel",
       "context": "Aktuelles Schiff",
-      "switch": "Schiff wechseln"
+      "switch": "Schiff wechseln",
+      "ViewMaintenancePlan": "Wartungsplan anzeigen",
+      "ViewTugJob": "Schlepperauftrag anzeigen",
+      "sourceOwner": "Quelleneigentümer",
+      "sourceSaved": "Quelle gespeichert am",
+      "noRevision": "Keine gespeicherte Revision",
+      "REGULATORY": "Regulatorik",
+      "PMS": "Planmäßige Wartung",
+      "TUG": "Schlepperbetrieb",
+      "viewReady": "Einträge aus allen aufgeführten Quellen. Dies ist keine Bereitschaft oder Verifizierung.",
+      "viewEmpty": "Alle aufgeführten Quellen wurden gelesen und lieferten keine Einträge. Dies ist keine Sicherheitsfreigabe.",
+      "viewPartial": "Teilansicht: Einige zuständige Quellen sind in diesem Kontext nicht verfügbar. Fehlende Einträge bedeuten nicht, dass alles in Ordnung ist.",
+      "viewUnavailable": "In diesem Kontext konnte keine zuständige Quelle gelesen werden. Das bedeutet nicht, dass alles in Ordnung ist.",
+      "partialCounters": "Teilweise Quellen: Null bedeutet nicht, dass alles in Ordnung ist",
+      "rateLimited": "Zu viele Anfragen. Warten Sie und versuchen Sie es erneut.",
+      "contract": "Die Serverantwort hat die Prüfung nicht bestanden; nichts davon wird angezeigt."
     },
     "TugCrewCoverage_tsx_copy": {
       "title": "Durch Quellen qualifizierte Mindestbesatzungsrollen",

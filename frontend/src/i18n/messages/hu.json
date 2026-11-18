@@ -284,7 +284,22 @@
       "OperationalSourcesUnavailable": "Üzemi források nem érhetők el",
       "rule": "Szabály",
       "context": "Aktuális hajó",
-      "switch": "Hajóváltás"
+      "switch": "Hajóváltás",
+      "ViewMaintenancePlan": "Karbantartási terv megtekintése",
+      "ViewTugJob": "Vontatóhajó-munka megtekintése",
+      "sourceOwner": "Forrás tulajdonosa",
+      "sourceSaved": "Forrás mentve",
+      "noRevision": "Nincs tárolt változat",
+      "REGULATORY": "Szabályozás",
+      "PMS": "Tervezett karbantartás",
+      "TUG": "Vontatóhajó-műveletek",
+      "viewReady": "Tételek érkeztek minden felsorolt forrásból. Ez nem készenlét és nem ellenőrzés.",
+      "viewEmpty": "Minden felsorolt forrás beolvasva, tétel nem érkezett. Ez nem biztonsági jóváhagyás.",
+      "viewPartial": "Részleges nézet: egyes tulajdonos források ebben a környezetben nem érhetők el. A hiányzó tételek nem jelentik, hogy minden rendben van.",
+      "viewUnavailable": "Ebben a környezetben egyetlen tulajdonos forrás sem olvasható. Ez nem jelenti, hogy minden rendben van.",
+      "partialCounters": "Részleges források: a nulla nem jelenti, hogy minden rendben van",
+      "rateLimited": "Túl sok kérés. Várjon, majd próbálja újra.",
+      "contract": "A szerver válasza nem felelt meg az ellenőrzésen; semmi sem jelenik meg belőle."
     },
     "TugCrewCoverage_tsx_copy": {
       "title": "Forrásminősített minimális személyzeti szerepek",

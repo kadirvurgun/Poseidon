@@ -13,7 +13,7 @@ const why = { vesselId, cardKey: 'regulatory-draft', rule: 'TW-DRAFT-01', reason
   owner: null, nextAction: 'ReviewDraft', href }
 const today = { vessel: { id: vesselId, companyId: other, code: 'SYN-1', name: 'FICTIONAL vessel', kind: 'Ship', version: 1, canEdit: true }, readAt: now,
   coverage: ['RegulatoryDraft', 'OperationalTasks', 'SafetyDecisions', 'Permits', 'EvidenceVerification', 'TechnicalMaintenance', 'TugPlanning'].map((source, i) => ({ source, status: i ? 'Unavailable' : 'Available' })),
-  cards: { items: [{ key: 'regulatory-draft', priority: 'Advisory', source: 'RegulatoryDraft', reason: 'DraftUnverified', owner: null, nextAction: 'ReviewDraft', href }], offset: 0, limit: 25, hasMore: false } }
+  cards: { items: [{ key: 'regulatory-draft', priority: 'Advisory', source: 'RegulatoryDraft', reason: 'DraftUnverified', owner: null, nextAction: 'ReviewDraft', href, sourceRef: { owner: 'REGULATORY', kind: 'RegulatoryDraft', id: vesselId, revision: 1, savedAt: now } }], offset: 0, limit: 25, hasMore: false }, viewState: 'Partial' }
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals() })
 
 it('DEV-024 accepts a saved incomplete draft with Missing provenance without turning it into an absent or verified source', () => {
@@ -37,12 +37,12 @@ it('binds absent-draft lineage to the selected vessel with no invented revision'
   expect(() => decodeWhy({ ...absent, source: { ...absent.source, revision: 1 } }, vesselId)).toThrow()
 })
 it('supports unavailable owning-profile coverage while rejecting a profile card that would disclose its hidden source', () => {
-  const redacted = { ...today, coverage: today.coverage.map((c, i) => i ? c : { ...c, status: 'Unavailable' }), cards: { ...today.cards, items: [] } }
+  const redacted = { ...today, coverage: today.coverage.map((c, i) => i ? c : { ...c, status: 'Unavailable' }), cards: { ...today.cards, items: [] }, viewState: 'Unavailable' }
   expect(decodeToday(redacted, vesselId).cards.items).toEqual([])
   expect(() => decodeToday({ ...redacted, cards: today.cards }, vesselId)).toThrow()
 })
 it('DEV-023 shows explicit unavailable coverage and an honest empty page with no profile disclosure action', async () => {
-  const data = { ...today, coverage: today.coverage.map(c => ({ ...c, status: 'Unavailable' })), cards: { ...today.cards, items: [] } }
+  const data = { ...today, coverage: today.coverage.map(c => ({ ...c, status: 'Unavailable' })), cards: { ...today.cards, items: [] }, viewState: 'Unavailable' }
   vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify(data))))
   render(<TodayWorkspace id={vesselId} language="en" offline={false} onNavigate={vi.fn()} />)
   expect(await screen.findByText('Regulatory draft: Unavailable in this context')).toBeVisible()
@@ -54,11 +54,15 @@ it('discloses the exact authorized source revision with freshness and blockers o
   vi.stubGlobal('fetch', vi.fn(async (url: string) => new Response(JSON.stringify(url.includes('why-engine') ? { ...why, source: { kind: 'RegulatoryDraft', id: vesselId, revision: 3 } } : today))))
   const user = userEvent.setup(); render(<TodayWorkspace id={vesselId} language="en" offline={false} onNavigate={vi.fn()} />)
   await screen.findByRole('button', { name: 'Why?' })
-  expect(screen.queryByText('Source revision', { selector: 'dt' })).not.toBeInTheDocument()
+  // DEV-023: the card names the revision it was composed from; the Why lineage is a separate fresh read.
+  const cardSource = document.querySelector<HTMLElement>('.today-card-source')!
+  expect(within(cardSource).getByText('Source revision', { selector: 'dt' }).nextElementSibling).toHaveTextContent('1')
+  expect(document.querySelector('.today-why-lineage')).toBeNull()
   await user.click(screen.getByRole('button', { name: 'Why?' }))
-  const term = await screen.findByText('Source revision', { selector: 'dt' })
-  expect(term.nextElementSibling).toHaveTextContent('3')
-  expect(screen.getByText('Source reference', { selector: 'dt' }).nextElementSibling).toHaveTextContent(vesselId)
+  await screen.findByText(/Input freshness is unverified/)
+  const lineage = document.querySelector<HTMLElement>('.today-why-lineage')!
+  expect(within(lineage).getByText('Source revision', { selector: 'dt' }).nextElementSibling).toHaveTextContent('3')
+  expect(within(lineage).getByText('Source reference', { selector: 'dt' }).nextElementSibling).toHaveTextContent(vesselId)
   expect(screen.getByText(/Input freshness is unverified/)).toBeVisible()
   const disclosure = screen.getByRole('region', { name: 'Why?' })
   expect(within(disclosure).getByText('Verification source unavailable')).toBeVisible()

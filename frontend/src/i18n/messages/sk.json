@@ -284,7 +284,22 @@
       "OperationalSourcesUnavailable": "Prevádzkové zdroje nie sú dostupné",
       "rule": "Pravidlo",
       "context": "Aktuálne plavidlo",
-      "switch": "Zmeniť plavidlo"
+      "switch": "Zmeniť plavidlo",
+      "ViewMaintenancePlan": "Zobraziť plán údržby",
+      "ViewTugJob": "Zobraziť zákazku remorkéra",
+      "sourceOwner": "Vlastník zdroja",
+      "sourceSaved": "Zdroj uložený",
+      "noRevision": "Žiadna uložená revízia",
+      "REGULATORY": "Regulácia",
+      "PMS": "Plánovaná údržba",
+      "TUG": "Prevádzka remorkérov",
+      "viewReady": "Položky vrátené zo všetkých uvedených zdrojov. Nejde o pripravenosť ani overenie.",
+      "viewEmpty": "Všetky uvedené zdroje boli načítané a nevrátili žiadne položky. Nejde o bezpečnostné schválenie.",
+      "viewPartial": "Čiastočné zobrazenie: niektoré vlastnícke zdroje nie sú v tomto kontexte dostupné. Chýbajúce položky neznamenajú, že je všetko v poriadku.",
+      "viewUnavailable": "V tomto kontexte nebolo možné načítať žiadny vlastnícky zdroj. Neznamená to, že je všetko v poriadku.",
+      "partialCounters": "Čiastočné zdroje: nula neznamená, že je všetko v poriadku",
+      "rateLimited": "Príliš veľa požiadaviek. Počkajte a skúste to znova.",
+      "contract": "Odpoveď servera neprešla overením; nič z nej sa nezobrazuje."
     },
     "TugCrewCoverage_tsx_copy": {
       "title": "Minimálne roly posádky kvalifikované zdrojom",

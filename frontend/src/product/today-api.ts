@@ -6,7 +6,11 @@ import { ApiError, request } from './api'
 import { decodePlanningEvidence } from './tug-planning-api'
 import type { PlanningEvidence } from './tug-planning-api'
 
-export type Today = components['schemas']['TodayDto']
+type GeneratedToday = components['schemas']['TodayDto']
+export type TodaySourceRef = { owner: 'REGULATORY' | 'PMS' | 'TUG'; kind: 'RegulatoryDraft' | 'MaintenancePlan' | 'TugJob'; id: string; revision: number | null; savedAt: string | null }
+export type TodayCard = Omit<GeneratedToday['cards']['items'][number], 'sourceRef'> & { sourceRef: TodaySourceRef }
+export type Today = Omit<GeneratedToday, 'cards' | 'viewState'> & { viewState: 'Ready' | 'Empty' | 'Partial' | 'Unavailable';
+  cards: Omit<GeneratedToday['cards'], 'items'> & { items: TodayCard[] } }
 // Authored extension until actual host/OpenAPI regeneration at the combined gate.
 // Existing generated artifacts are preserved; this is not generated parity evidence.
 type DraftWhy = components['schemas']['TodayWhyDto']
@@ -41,6 +45,15 @@ const tugHref = (x: unknown, vessel: string, key: unknown) => tugJobId(key) !== 
 const tugAttention = ['TugConflictReviewRequired', 'TugReadinessBlocked']
 const tugReview = ['TugRequestChanged', 'TugPlanMissing', 'TugBoundaryReviewRequired', 'TugRequestIncomplete', 'TugPlanningReviewRequired']
 const rank = (priority: unknown) => priority === 'Attention' ? 0 : priority === 'Review' ? 1 : 2
+export const viewStates = ['Ready', 'Empty', 'Partial', 'Unavailable'] as const
+export type TodayViewState = typeof viewStates[number]
+export type TodaySourceOwner = 'REGULATORY' | 'PMS' | 'TUG'
+// 61.03 SourceRef subset: owner module, record kind/id and the exact revision/time read. An absent
+// regulatory draft has neither; every other item must name a positive revision and a save time.
+function sourceRef(x: unknown, owner: TodaySourceOwner, kind: string, id: string | null, absent: boolean) {
+  return object(x) && exact(x, ['owner', 'kind', 'id', 'revision', 'savedAt']) && x.owner === owner && x.kind === kind && id !== null && x.id === id &&
+    (absent ? x.revision === null && x.savedAt === null : integer(x.revision) && Number(x.revision) > 0 && date(x.savedAt))
+}
 function validVessel(x: unknown): x is Vessel {
   return object(x) && exact(x, ['id', 'companyId', 'code', 'name', 'kind', 'version', 'canEdit']) && guid(x.id) && guid(x.companyId) &&
     text(x.code, 64) && text(x.name, 200) && one(x.kind, ['Ship', 'Tug']) && integer(x.version) &&
@@ -54,7 +67,7 @@ export function decodeTodayVessels(x: unknown, offset: number): Page<Vessel> {
   return x as Page<Vessel>
 }
 export function decodeToday(x: unknown, id: string, offset = todayOffset): Today {
-  if (!object(x) || !exact(x, ['vessel', 'readAt', 'coverage', 'cards']) || !validVessel(x.vessel) || x.vessel.id !== id || !guid(id) || !date(x.readAt) ||
+  if (!object(x) || !exact(x, ['vessel', 'readAt', 'coverage', 'cards', 'viewState']) || !one(x.viewState, [...viewStates]) || !validVessel(x.vessel) || x.vessel.id !== id || !guid(id) || !date(x.readAt) ||
     !integer(offset) || offset > 100000 || !Array.isArray(x.coverage) || x.coverage.length !== 7 || !object(x.cards) || !Array.isArray(x.cards.items) || x.cards.items.length > pageLimit ||
     !exact(x.cards, ['items', 'offset', 'limit', 'hasMore']) || x.cards.offset !== offset ||
     x.cards.limit !== pageLimit || typeof x.cards.hasMore !== 'boolean' || (x.cards.hasMore && x.cards.items.length !== pageLimit)) fail()
@@ -67,16 +80,24 @@ export function decodeToday(x: unknown, id: string, offset = todayOffset): Today
   const canEdit = x.vessel.canEdit
   const maintenanceAvailable = x.coverage[5].status === 'Available'
   const tugAvailable = x.coverage[6].status === 'Available'
+  // DEV-023: viewState is recomputed from the decoded coverage; a server or proxy cannot promote
+  // a partial/unavailable composition to Ready or Empty (61.03 §33, no false green).
+  const readable = x.coverage.filter(c => c.status !== 'Unavailable').length
+  const viewState = readable === 0 ? 'Unavailable' : readable < x.coverage.length ? 'Partial' : x.cards.items.length > 0 ? 'Ready' : offset === 0 ? 'Empty' : null
+  // A beyond-the-end page cannot tell Empty from Ready; any other mismatch is a contract failure.
+  if (viewState === null ? !one(x.viewState, ['Empty', 'Ready']) : x.viewState !== viewState) fail()
   if (!x.cards.items.every(c => {
-    if (!object(c) || !exact(c, ['key', 'priority', 'source', 'reason', 'owner', 'nextAction', 'href'])) return false
+    if (!object(c) || !exact(c, ['key', 'priority', 'source', 'reason', 'owner', 'nextAction', 'href', 'sourceRef'])) return false
     if (c.key === 'regulatory-draft') return !draftUnavailable && c.priority === 'Advisory' && c.source === 'RegulatoryDraft' &&
-      c.reason === (draftMissing ? 'DraftAbsent' : 'DraftUnverified') && c.owner === null && c.nextAction === (canEdit ? 'ReviewDraft' : 'ViewDraft') && href(c.href, id)
+      c.reason === (draftMissing ? 'DraftAbsent' : 'DraftUnverified') && c.owner === null && c.nextAction === (canEdit ? 'ReviewDraft' : 'ViewDraft') && href(c.href, id) &&
+      sourceRef(c.sourceRef, 'REGULATORY', 'RegulatoryDraft', id, draftMissing)
     if (tugJobId(c.key) !== null) return tugAvailable && c.source === 'TugJob' && (c.owner === null || guid(c.owner)) &&
       (c.priority === 'Attention' && one(c.reason, tugAttention) || c.priority === 'Review' && one(c.reason, tugReview)) &&
-      c.nextAction === 'ReviewTugJob' && tugHref(c.href, id, c.key)
+      one(c.nextAction, ['ReviewTugJob', 'ViewTugJob']) && tugHref(c.href, id, c.key) && sourceRef(c.sourceRef, 'TUG', 'TugJob', tugJobId(c.key), false)
     return maintenanceAvailable && planId(c.key) !== null && c.source === 'MaintenancePlan' &&
       (c.reason === 'MaintenanceDue' && c.priority === 'Attention' || c.reason === 'MaintenanceReviewRequired' && c.priority === 'Review') &&
-      (c.owner === null || guid(c.owner)) && c.nextAction === 'ReviewMaintenancePlan' && planHref(c.href, id, c.key)
+      (c.owner === null || guid(c.owner)) && one(c.nextAction, ['ReviewMaintenancePlan', 'ViewMaintenancePlan']) && planHref(c.href, id, c.key) &&
+      sourceRef(c.sourceRef, 'PMS', 'MaintenancePlan', planId(c.key), false)
   }) || new Set(x.cards.items.map(c => c.key)).size !== x.cards.items.length) fail()
   for (let i = 1; i < x.cards.items.length; i++) {
     const before = x.cards.items[i - 1], current = x.cards.items[i]
@@ -118,7 +139,7 @@ function decodeTugWhy(x: unknown, vessel: string, key: string): Why {
     'freshness', 'provenance', 'blockers', 'owner', 'nextAction', 'href', 'tug']) || x.vesselId !== vessel || x.cardKey !== key ||
     x.rule !== 'TW-TUG-01' || !one(x.reason, [...tugAttention, ...tugReview]) || x.inputs !== null || !date(x.readAt) || !date(x.savedAt) ||
     x.sourceObservedAt !== null || x.freshness !== 'Unverified' || !text(x.provenance, 200) || !(x.owner === null || guid(x.owner)) ||
-    x.nextAction !== 'ReviewTugJob' || !tugHref(x.href, vessel, key) || !Array.isArray(x.blockers) || x.blockers.length !== 3 ||
+    !one(x.nextAction, ['ReviewTugJob', 'ViewTugJob']) || !tugHref(x.href, vessel, key) || !Array.isArray(x.blockers) || x.blockers.length !== 3 ||
     x.blockers[0] !== 'DraftPlanningNotOperationalApproval' || x.blockers[1] !== 'OwningReadinessCoverageIncomplete' ||
     x.blockers[2] !== 'MasterDecisionRequired' || !object(x.tug)) fail()
   const p = x.tug
@@ -156,7 +177,7 @@ function decodeMaintenanceWhy(x: unknown, vessel: string, key: string): Why {
     x.rule !== 'TW-MAINTENANCE-01' || !one(x.reason, ['MaintenanceDue', 'MaintenanceReviewRequired']) || x.inputs !== null || !date(x.readAt) ||
     !date(x.savedAt) || !(x.sourceObservedAt === null || date(x.sourceObservedAt)) || x.freshness !== 'Unverified' || !text(x.provenance, 200) ||
     !Array.isArray(x.blockers) || x.blockers.length !== 1 || x.blockers[0] !== 'PlanningDraftNotVerified' ||
-    !(x.owner === null || guid(x.owner)) || x.nextAction !== 'ReviewMaintenancePlan' || !planHref(x.href, vessel, key) || !object(x.maintenance)) fail()
+    !(x.owner === null || guid(x.owner)) || !one(x.nextAction, ['ReviewMaintenancePlan', 'ViewMaintenancePlan']) || !planHref(x.href, vessel, key) || !object(x.maintenance)) fail()
   const m = x.maintenance
   if (!exact(m, ['planId', 'planRevision', 'assetId', 'assetRevision', 'currentAssetRevision', 'jobAvailable', 'ownerEligible', 'calculation', 'observationState']) ||
     m.planId !== planId(key) || !guid(m.assetId) || !integer(m.planRevision) || m.planRevision === 0 || !integer(m.assetRevision) || m.assetRevision === 0 ||

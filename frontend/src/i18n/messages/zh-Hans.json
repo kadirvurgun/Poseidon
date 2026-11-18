@@ -284,7 +284,22 @@
       "OperationalSourcesUnavailable": "作业来源不可用",
       "rule": "规则",
       "context": "当前船舶",
-      "switch": "切换船舶"
+      "switch": "切换船舶",
+      "ViewMaintenancePlan": "查看维护计划",
+      "ViewTugJob": "查看拖轮作业",
+      "sourceOwner": "来源负责方",
+      "sourceSaved": "来源保存时间",
+      "noRevision": "无已存储修订",
+      "REGULATORY": "法规",
+      "PMS": "计划维护",
+      "TUG": "拖轮作业",
+      "viewReady": "已从所有列出的来源返回条目。这不代表就绪或已验证。",
+      "viewEmpty": "所有列出的来源均已读取且未返回条目。这不是安全许可。",
+      "viewPartial": "部分视图：部分负责来源在此上下文中不可用。没有条目不代表一切正常。",
+      "viewUnavailable": "在此上下文中无法读取任何负责来源。这不代表一切正常。",
+      "partialCounters": "部分来源：零不代表一切正常",
+      "rateLimited": "请求过多。请稍候再试。",
+      "contract": "服务器响应未通过校验；不显示其中任何内容。"
     },
     "TugCrewCoverage_tsx_copy": {
       "title": "经来源确认的最低船员角色",

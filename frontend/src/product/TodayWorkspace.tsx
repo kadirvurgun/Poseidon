@@ -120,11 +120,12 @@ function TodayContext({ id, language, offline, onNavigate }: Props) {
       <Button variant="ghost" disabled={offline} onClick={refresh}><RefreshCw aria-hidden="true"/>{t.refresh}</Button>
       <EnterprisePagination label={t.select} previous={t.previous} next={t.next} previousDisabled={!offset || offline} nextDisabled={!vessels.data.hasMore || offline || offset >= 100000} onPrevious={() => { setVessels({ state: 'loading' }); setOffset(v => Math.max(0, v - 25)); }} onNext={() => { setVessels({ state: 'loading' }); setOffset(v => v + 25); }}/>
     </EnterpriseActions></>}</section>;
-    return <section aria-label={localizedText(language, "pairs.m_14d5741b2e6e2585")}><EnterpriseActions align="start" className="today-card-toolbar" aria-label={localizedText(language, "pairs.m_76ee6d9d280d1972")}><Button variant="outline" disabled={offline || data.state === 'loading'} onClick={refresh}><RefreshCw aria-hidden="true"/>{t.refresh}</Button><Button variant="ghost" onClick={() => onNavigate('/app/today')}><ArrowLeft data-inline-navigation-icon aria-hidden="true"/>{t.switch}</Button></EnterpriseActions>
+    return <section aria-label={localizedText(language, "pairs.m_14d5741b2e6e2585")} aria-busy={data.state === 'loading'} data-today-state={offline ? 'offline' : data.state}><EnterpriseActions align="start" className="today-card-toolbar" aria-label={localizedText(language, "pairs.m_76ee6d9d280d1972")}><Button variant="outline" disabled={offline || data.state === 'loading'} onClick={refresh}><RefreshCw aria-hidden="true"/>{t.refresh}</Button><Button variant="ghost" onClick={() => onNavigate('/app/today')}><ArrowLeft data-inline-navigation-icon aria-hidden="true"/>{t.switch}</Button></EnterpriseActions>
     {data.state === 'loading' ? <p role="status">{offline ? t.offlineEmpty : t.loading}</p> : data.state === 'error' ? <TodayError code={data.status} retry={refresh} offline={offline} t={t}/> : <>
       <h2>{t.context}: {data.data.vessel.kind === 'Tug' ? (localizedText(language, "pairs.m_306aaabcb4e04a9f")) : (localizedText(language, "pairs.m_bb1dbfbac5d5c650"))} · {data.data.vessel.code} · {data.data.vessel.name}</h2>
       <p role="status">{offline ? t.offline : t.stale}</p><p>{t.read}: <time dateTime={data.data.readAt}>{data.data.readAt}</time></p>
-      <TodayOverview data={data.data} language={language}/>
+      <TodayViewStateNotice state={data.data.viewState} t={t}/>
+      <TodayOverview data={data.data} language={language} partialNote={data.data.viewState === 'Ready' ? undefined : t.partialCounters}/>
       <h3>{t.coverage}</h3><ul className="today-source-coverage">{data.data.coverage.map(c => <li key={c.source}>{t[c.source as keyof typeof t]}: {t[c.status as keyof typeof t]}</li>)}</ul>
       {data.data.cards.items.length === 0 && <p>{t.empty}</p>}
       {data.data.cards.items.map(card => {
@@ -133,7 +134,9 @@ function TodayContext({ id, language, offline, onNavigate }: Props) {
                 const PriorityIcon = card.priority === 'Attention' ? TriangleAlert : card.priority === 'Review' ? CircleHelp : Info;
                 return <article key={card.key} className="product-detail today-feed-card" data-priority={card.priority} aria-label={card.source === 'TugJob' ? `${t.TugJob} ${card.key.slice('tug-job:'.length)}` : `${t[card.priority as keyof typeof t]} · ${t[card.source as keyof typeof t]}`}><div className="today-feed-card-header"><h3>{t[card.priority as keyof typeof t]} · {t[card.source as keyof typeof t]}</h3><Badge tone={card.priority === 'Attention' ? 'warning' : card.priority === 'Review' ? 'neutral' : 'info'}><PriorityIcon aria-hidden="true"/>{t[card.priority as keyof typeof t]}</Badge></div>
           {card.source === 'TugJob' && <p>{t.jobReference}: {card.key.slice('tug-job:'.length)}</p>}
-          <p>{t[card.reason as keyof typeof t]}</p><p>{card.owner ? `${t.ownerRole}: ${card.owner}` : t.owner}</p>
+          <p>{t[card.reason as keyof typeof t]}</p>
+          <TodayCardSource source={card.sourceRef} language={language} t={t}/>
+          <p>{card.owner ? `${t.ownerRole}: ${card.owner}` : t.owner}</p>
           <div className="today-feed-card-actions"><Button variant="outline" onClick={() => onNavigate(card.href)}>{t[card.nextAction as keyof typeof t]}<ArrowUpRight aria-hidden="true"/></Button>
           <Button variant="ghost" aria-expanded={open} aria-controls={disclosureId} disabled={offline} onClick={event => {
                         disclosureButton.current = event.currentTarget;
@@ -153,7 +156,31 @@ function TodayError({ code, retry, offline, t }: {
     offline: boolean;
     t: Record<keyof typeof copy.en, string>;
 }) {
-    return <div role="alert" tabIndex={-1} ref={focusError}><p>{code === 401 ? t.login : code === 403 ? t.denied : code === 404 ? t.missing : t.error}</p>{code === 401 ? <a href={loginHref()}>{t.login}</a> : <button disabled={offline} onClick={retry}>{t.retry}</button>}</div>;
+    // Deterministic status → message mapping (61.03 §33). 0 = network/timeout abort.
+    const message = code === 401 ? t.login : code === 403 ? t.denied : code === 404 ? t.missing : code === 429 ? t.rateLimited : code === 502 ? t.contract : t.error;
+    return <div role="alert" tabIndex={-1} ref={focusError} data-error-status={code}><p>{message}</p>{code === 401 ? <a href={loginHref()}>{t.login}</a> : <button disabled={offline} onClick={retry}>{t.retry}</button>}</div>;
+}
+// DEV-023: the composition state is shown as text + icon; only Ready omits the "not all clear" caveat
+// and even Ready never states readiness or verification.
+function TodayViewStateNotice({ state, t }: {
+    state: service.TodayViewState;
+    t: Record<keyof typeof copy.en, string>;
+}) {
+    const Icon = state === 'Ready' ? Info : TriangleAlert;
+    const text = state === 'Ready' ? t.viewReady : state === 'Empty' ? t.viewEmpty : state === 'Partial' ? t.viewPartial : t.viewUnavailable;
+    return <p className="today-view-state" data-view-state={state}><Icon aria-hidden="true"/>{text}</p>;
+}
+function TodayCardSource({ source, language, t }: {
+    source: service.TodaySourceRef;
+    language: AppLocale;
+    t: Record<keyof typeof copy.en, string>;
+}) {
+    return <dl className="today-card-source" aria-label={localizedText(language, "pairs.m_10c331bd1a515ec2")}>
+      <div><dt>{t.sourceOwner}</dt><dd>{t[source.owner]}</dd></div>
+      <div><dt>{localizedText(language, "pairs.m_2e37798ea762793a")}</dt><dd>{t[source.kind as keyof typeof t]} · {source.id}</dd></div>
+      <div><dt>{localizedText(language, "pairs.m_291f25245b3342d1")}</dt><dd>{source.revision ?? t.noRevision}</dd></div>
+      <div><dt>{t.sourceSaved}</dt><dd>{source.savedAt ? <time dateTime={source.savedAt}>{source.savedAt}</time> : t.noRevision}</dd></div>
+    </dl>;
 }
 function TodayExplanation({ why, language, t }: {
     why: service.Why;
