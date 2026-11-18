@@ -28,7 +28,13 @@ Güncelleme: 2026-11-18 (Claude Opus 5.5, Codex'ten devralma oturumu)
 - Sidebar tamamen tokenlara geçirildi; kontrast ölçümü yapılmadı.
 - Codex otomasyonları (Poseidon-HourlyQuota/MetadataMonitor/ProductBatch/ProductReview) 18.11'de devre dışı bırakıldı.
 
+## CI durumu — PR #17 (bu dal → main)
+- PR #16 18.11.2026'da birleşti (merge `e2e1200`).
+- PR #17 açık. İlk push+PR koşuları aynı iki adımda kırmızıydı (deterministik):
+  1. `frontend-and-browser / Real API browser smoke`: i18n JSON import attribute, `import.meta.glob` ve describe içi `test.use({trace})` → `9b25dc1` ile düzeltildi (yerelde `playwright test --list` 116 test yüklüyor). Sonucu CI'da kontrol et.
+  2. `persistence-and-security / Scan every tracked repository input`: 10 bulgu (8'i `docs/sources/2026-11-15/` metin kopyalarındaki analiz dokümanı örnek DB şifreleri, 2'si `scripts/oidc_lab.py:148,172` çalışma anında üretilen lab şifreleri). **İNSAN ONAYI GEREKİR.** İstisna sadece bağımsız inceleme + korumalı `vars.POSEIDON_SOURCE_REVIEW_SHA256` pini ile geçer (`docs/security/source-review-v2.md`). AI kendi istisnasını yazıp onaylayamaz (izin sistemi de engelliyor). Bu adım için push döngüsüne GİRME; kullanıcı kararını bekle. Diğer kırmızı adımlar için CI protokolü geçerli.
+
 ## Sıradaki iş (öncelik sırası)
-1. PR16 birleşince: bu dalı main'e PR olarak aç, CI'yı izle (AGENTS.md CI protokolü).
+1. PR #17 CI: browser smoke sonucunu oku; kırmızıysa protokole göre teşhis et. Secret scan kullanıcı onayını bekliyor.
 2. THEME-BUILDER-01: uygulama içi tema düzenleyici (shadcn/create benzeri: taban renk, vurgu, radius, mod; canlı önizleme; tarayıcıya kaydet; preset paylaşımı) + component testleri.
 3. 15.11 planı dalga 0–1: DEV-020 / T-S2-001 (59.01+52.01 LegalEntity/Vessel sahipliği), ardından DEV-021/022 kabuk-menü, DEV-023/024 Today/Why, DEV-025 erişilebilirlik.
