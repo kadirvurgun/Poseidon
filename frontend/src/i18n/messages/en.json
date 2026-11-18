@@ -396,6 +396,98 @@
       "equipment": "Equipment context",
       "freshness": "Freshness",
       "provenance": "Provenance"
+    },
+    "CriticalStatePanel_tsx_copy": {
+      "title": "Critical states and their sources",
+      "loading": "Loading critical states…",
+      "reload": "Reload critical states",
+      "offline": "Offline: critical states are not shown from cache.",
+      "dirty": "Unsaved form edits are not included. Explanations reflect the saved record only.",
+      "empty": "No critical states are visible for your access.",
+      "scope": "Only states you are allowed to view are listed.",
+      "restricted": "Details are restricted for your access. This state is not a ready or verified result.",
+      "source": "Source",
+      "revision": "revision",
+      "noRevision": "no saved revision",
+      "recorded": "recorded",
+      "noSource": "No owning record yet",
+      "verification": "Verification",
+      "notVerified": "Not verified",
+      "freshness": "Freshness",
+      "observed": "observed",
+      "checked": "checked",
+      "reasonsTitle": "Reasons",
+      "blockersTitle": "Blockers",
+      "noBlockers": "No blockers listed",
+      "resolution": "Resolution",
+      "open": "Open the owning record",
+      "errors": {
+        "e401": "Your session has expired. Sign in again.",
+        "e403": "You do not have permission to view these critical states.",
+        "e404": "This vessel is not available.",
+        "other": "Critical states could not be loaded. Try again."
+      },
+      "keys": {
+        "onboarding": "Onboarding readiness",
+        "profileFreshness": "Profile freshness",
+        "applicability": "Compliance applicability"
+      },
+      "fields": {
+        "profile": "Profile",
+        "applicability": "Applicability evaluation",
+        "vesselCode": "Vessel code",
+        "vesselName": "Vessel name"
+      },
+      "states": {
+        "BLOCKED": "Blocked",
+        "REVIEW_REQUIRED": "Review required",
+        "UNKNOWN": "Unknown",
+        "STALE": "Stale",
+        "UNAVAILABLE": "Unavailable",
+        "DECLARED_UNVERIFIED": "Declared · not verified",
+        "QUALIFIED_CURRENT_UNVERIFIED": "Qualified evaluation current · not verified"
+      },
+      "freshnessStates": {
+        "FRESH": "Within policy age (not verified)",
+        "STALE": "Stale",
+        "UNKNOWN": "Unknown",
+        "UNAVAILABLE": "Unavailable"
+      },
+      "sourceKinds": {
+        "RegulatoryDraft": "Vessel profile",
+        "ApplicabilityEvaluation": "Applicability evaluation"
+      },
+      "resolutions": {
+        "PROFILE_DECLARATION": "Declare the profile",
+        "REQUIRED_DECLARATION": "Declare the required value",
+        "POLICY_OR_EVIDENCE": "Policy or evidence needed",
+        "QUALIFIED_EVIDENCE": "Qualified evidence needed",
+        "SOURCE_DECLARATION": "Declare the source",
+        "SOURCE_RENEWAL": "Renew the source",
+        "FRESHNESS_POLICY_CONFIGURATION": "Configure an approved freshness policy",
+        "SERVICE_RECOVERY": "Service recovery needed",
+        "RE_EVALUATION": "Re-evaluate",
+        "QUALIFIED_EVALUATION": "Run a qualified evaluation",
+        "CATALOG_QUALIFICATION": "Qualify the catalog",
+        "HUMAN_REVIEW": "Authorized human review"
+      },
+      "reasons": {
+        "PROFILE_MISSING": "Profile not saved",
+        "REQUIRED_DATA_MISSING": "Required data missing",
+        "REQUIRED_DATA_UNKNOWN": "Required data unknown",
+        "VERIFICATION_NOT_ESTABLISHED": "Verification not established",
+        "FIELDS_UNKNOWN": "Some fields have unknown freshness",
+        "FIELDS_STALE": "Some fields are stale",
+        "FIELDS_UNAVAILABLE": "Some fields are unavailable",
+        "ALL_FIELDS_WITHIN_POLICY": "All fields within policy age (not verified)",
+        "VALUE_NOT_RECORDED": "Value not recorded",
+        "VALUE_UNKNOWN": "Value recorded as unknown",
+        "SOURCE_NOT_DECLARED": "No source declared",
+        "FRESHNESS_POLICY_UNCONFIGURED": "No approved freshness policy",
+        "QUALIFIED_EVALUATION_UNAVAILABLE": "No qualified evaluation",
+        "PROFILE_CHANGED": "Profile changed after evaluation",
+        "APPLICABILITY_REVIEW_REQUIRED": "Applicability review required"
+      }
     }
   },
   "pairs": {

@@ -396,6 +396,98 @@
       "equipment": "Contesto attrezzature",
       "freshness": "Freschezza",
       "provenance": "Provenienza"
+    },
+    "CriticalStatePanel_tsx_copy": {
+      "title": "Stati critici e relative fonti",
+      "loading": "Caricamento degli stati critici…",
+      "reload": "Ricarica gli stati critici",
+      "offline": "Offline: gli stati critici non vengono mostrati dalla cache.",
+      "dirty": "Le modifiche non salvate del modulo non sono incluse. Le spiegazioni riflettono solo il record salvato.",
+      "empty": "Nessuno stato critico è visibile per il suo accesso.",
+      "scope": "Sono elencati solo gli stati che può visualizzare.",
+      "restricted": "I dettagli sono limitati per il suo accesso. Questo stato non è un risultato pronto o verificato.",
+      "source": "Fonte",
+      "revision": "revisione",
+      "noRevision": "nessuna revisione salvata",
+      "recorded": "registrato",
+      "noSource": "Nessun record proprietario",
+      "verification": "Verifica",
+      "notVerified": "Non verificato",
+      "freshness": "Aggiornamento",
+      "observed": "osservato",
+      "checked": "controllato",
+      "reasonsTitle": "Motivi",
+      "blockersTitle": "Blocchi",
+      "noBlockers": "Nessun blocco elencato",
+      "resolution": "Risoluzione",
+      "open": "Apri il record proprietario",
+      "errors": {
+        "e401": "La sessione è scaduta. Acceda di nuovo.",
+        "e403": "Non ha l’autorizzazione per visualizzare questi stati critici.",
+        "e404": "Questa nave non è disponibile.",
+        "other": "Impossibile caricare gli stati critici. Riprovi."
+      },
+      "keys": {
+        "onboarding": "Prontezza di onboarding",
+        "profileFreshness": "Aggiornamento del profilo",
+        "applicability": "Applicabilità della conformità"
+      },
+      "fields": {
+        "profile": "Profilo",
+        "applicability": "Valutazione di applicabilità",
+        "vesselCode": "Codice nave",
+        "vesselName": "Nome nave"
+      },
+      "states": {
+        "BLOCKED": "Bloccato",
+        "REVIEW_REQUIRED": "Revisione richiesta",
+        "UNKNOWN": "Sconosciuto",
+        "STALE": "Obsoleto",
+        "UNAVAILABLE": "Non disponibile",
+        "DECLARED_UNVERIFIED": "Dichiarato · non verificato",
+        "QUALIFIED_CURRENT_UNVERIFIED": "Valutazione qualificata attuale · non verificata"
+      },
+      "freshnessStates": {
+        "FRESH": "Entro l’età prevista dalla politica (non verificato)",
+        "STALE": "Obsoleto",
+        "UNKNOWN": "Sconosciuto",
+        "UNAVAILABLE": "Non disponibile"
+      },
+      "sourceKinds": {
+        "RegulatoryDraft": "Profilo nave",
+        "ApplicabilityEvaluation": "Valutazione di applicabilità"
+      },
+      "resolutions": {
+        "PROFILE_DECLARATION": "Dichiarare il profilo",
+        "REQUIRED_DECLARATION": "Dichiarare il valore richiesto",
+        "POLICY_OR_EVIDENCE": "Serve una politica o un’evidenza",
+        "QUALIFIED_EVIDENCE": "Serve un’evidenza qualificata",
+        "SOURCE_DECLARATION": "Dichiarare la fonte",
+        "SOURCE_RENEWAL": "Rinnovare la fonte",
+        "FRESHNESS_POLICY_CONFIGURATION": "Configurare una politica di aggiornamento approvata",
+        "SERVICE_RECOVERY": "Serve il ripristino del servizio",
+        "RE_EVALUATION": "Rivalutare",
+        "QUALIFIED_EVALUATION": "Eseguire una valutazione qualificata",
+        "CATALOG_QUALIFICATION": "Qualificare il catalogo",
+        "HUMAN_REVIEW": "Revisione umana autorizzata"
+      },
+      "reasons": {
+        "PROFILE_MISSING": "Profilo non salvato",
+        "REQUIRED_DATA_MISSING": "Dati obbligatori mancanti",
+        "REQUIRED_DATA_UNKNOWN": "Dati obbligatori sconosciuti",
+        "VERIFICATION_NOT_ESTABLISHED": "Verifica non stabilita",
+        "FIELDS_UNKNOWN": "Aggiornamento sconosciuto per alcuni campi",
+        "FIELDS_STALE": "Alcuni campi sono obsoleti",
+        "FIELDS_UNAVAILABLE": "Alcuni campi non sono disponibili",
+        "ALL_FIELDS_WITHIN_POLICY": "Tutti i campi entro l’età della politica (non verificato)",
+        "VALUE_NOT_RECORDED": "Valore non registrato",
+        "VALUE_UNKNOWN": "Valore registrato come sconosciuto",
+        "SOURCE_NOT_DECLARED": "Nessuna fonte dichiarata",
+        "FRESHNESS_POLICY_UNCONFIGURED": "Nessuna politica di aggiornamento approvata",
+        "QUALIFIED_EVALUATION_UNAVAILABLE": "Nessuna valutazione qualificata",
+        "PROFILE_CHANGED": "Profilo modificato dopo la valutazione",
+        "APPLICABILITY_REVIEW_REQUIRED": "Revisione di applicabilità richiesta"
+      }
     }
   },
   "pairs": {

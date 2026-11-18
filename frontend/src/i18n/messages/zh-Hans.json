@@ -396,6 +396,98 @@
       "equipment": "设备背景",
       "freshness": "时效性",
       "provenance": "溯源信息"
+    },
+    "CriticalStatePanel_tsx_copy": {
+      "title": "关键状态及其来源",
+      "loading": "正在加载关键状态…",
+      "reload": "重新加载关键状态",
+      "offline": "离线：不会从缓存显示关键状态。",
+      "dirty": "未保存的表单修改不包括在内。说明仅反映已保存的记录。",
+      "empty": "您的访问权限下没有可见的关键状态。",
+      "scope": "仅列出您有权查看的状态。",
+      "restricted": "您的访问权限下详细信息受限。此状态不是就绪或已验证的结果。",
+      "source": "来源",
+      "revision": "修订",
+      "noRevision": "无已保存修订",
+      "recorded": "记录于",
+      "noSource": "尚无所属记录",
+      "verification": "验证",
+      "notVerified": "未验证",
+      "freshness": "时效性",
+      "observed": "观察于",
+      "checked": "检查于",
+      "reasonsTitle": "原因",
+      "blockersTitle": "阻碍",
+      "noBlockers": "未列出阻碍",
+      "resolution": "解决方式",
+      "open": "打开所属记录",
+      "errors": {
+        "e401": "您的会话已过期。请重新登录。",
+        "e403": "您无权查看这些关键状态。",
+        "e404": "此船舶不可用。",
+        "other": "无法加载关键状态。请重试。"
+      },
+      "keys": {
+        "onboarding": "入驻准备情况",
+        "profileFreshness": "档案时效性",
+        "applicability": "合规适用性"
+      },
+      "fields": {
+        "profile": "档案",
+        "applicability": "适用性评估",
+        "vesselCode": "船舶代码",
+        "vesselName": "船舶名称"
+      },
+      "states": {
+        "BLOCKED": "已阻止",
+        "REVIEW_REQUIRED": "需要审核",
+        "UNKNOWN": "未知",
+        "STALE": "已过时",
+        "UNAVAILABLE": "不可用",
+        "DECLARED_UNVERIFIED": "已声明 · 未验证",
+        "QUALIFIED_CURRENT_UNVERIFIED": "合格评估为当前 · 未验证"
+      },
+      "freshnessStates": {
+        "FRESH": "在政策时限内（未验证）",
+        "STALE": "已过时",
+        "UNKNOWN": "未知",
+        "UNAVAILABLE": "不可用"
+      },
+      "sourceKinds": {
+        "RegulatoryDraft": "船舶档案",
+        "ApplicabilityEvaluation": "适用性评估"
+      },
+      "resolutions": {
+        "PROFILE_DECLARATION": "声明档案",
+        "REQUIRED_DECLARATION": "声明必需值",
+        "POLICY_OR_EVIDENCE": "需要政策或证据",
+        "QUALIFIED_EVIDENCE": "需要合格证据",
+        "SOURCE_DECLARATION": "声明来源",
+        "SOURCE_RENEWAL": "更新来源",
+        "FRESHNESS_POLICY_CONFIGURATION": "配置已批准的时效政策",
+        "SERVICE_RECOVERY": "需要恢复服务",
+        "RE_EVALUATION": "重新评估",
+        "QUALIFIED_EVALUATION": "运行合格评估",
+        "CATALOG_QUALIFICATION": "认定目录",
+        "HUMAN_REVIEW": "授权人员审核"
+      },
+      "reasons": {
+        "PROFILE_MISSING": "档案未保存",
+        "REQUIRED_DATA_MISSING": "缺少必需数据",
+        "REQUIRED_DATA_UNKNOWN": "必需数据未知",
+        "VERIFICATION_NOT_ESTABLISHED": "未建立验证",
+        "FIELDS_UNKNOWN": "部分字段时效未知",
+        "FIELDS_STALE": "部分字段已过时",
+        "FIELDS_UNAVAILABLE": "部分字段不可用",
+        "ALL_FIELDS_WITHIN_POLICY": "所有字段均在政策时限内（未验证）",
+        "VALUE_NOT_RECORDED": "未记录值",
+        "VALUE_UNKNOWN": "值记录为未知",
+        "SOURCE_NOT_DECLARED": "未声明来源",
+        "FRESHNESS_POLICY_UNCONFIGURED": "无已批准的时效政策",
+        "QUALIFIED_EVALUATION_UNAVAILABLE": "无合格评估",
+        "PROFILE_CHANGED": "评估后档案已更改",
+        "APPLICABILITY_REVIEW_REQUIRED": "需要适用性审核"
+      }
     }
   },
   "pairs": {

@@ -11,6 +11,7 @@ import { loginHref } from './workspace-location';
 import { ConstructionRecordPicker } from './ConstructionRecordPicker';
 import { ProfileSourceSummary } from './ProfileSourceSummary';
 import { ProfileFieldProvenance } from './ProfileFieldProvenance';
+import { CriticalStatesPanel } from './CriticalStatePanel';
 import { Button } from '../components/ui/button';
 import { EnterpriseActions, EnterprisePagination } from './EnterprisePatterns';
 import { OnboardingSteps, onboardingSteps, OnboardingAssessmentView } from './VesselOnboarding';
@@ -28,6 +29,8 @@ type Props = {
     journey?: 'profile' | 'onboarding';
     // DEV-020: opt-in field provenance/freshness panel bound to the saved profile revision.
     fieldProvenance?: boolean;
+    // DEV-024: server-redacted critical-state explanations for the saved record.
+    criticalStates?: boolean;
 };
 export function RegulatoryProfile(props: Props) {
     const { id, language, journey = 'profile', onRegisterDiscard } = props;
@@ -78,6 +81,7 @@ export function RegulatoryProfile(props: Props) {
       <p>{t.provenance}: {provenance(profile.provenance)} · {t.revision}: {profile.revision} · {t.time}: {profile.savedAt ?? t.unknown}</p>
       <ProfileSourceSummary profile={profile} language={language} />
       {props.fieldProvenance && !onboarding && <ProfileFieldProvenance vessel={id} language={language} revision={profile.revision} dirty={dirty} onDenied={invalidateAccess}/>}
+      {props.criticalStates && !onboarding && <CriticalStatesPanel vessel={id} language={language} revision={profile.revision} dirty={dirty} onDenied={invalidateAccess}/>}
       <aside className="profile-source-context" aria-label={localizedText(language, "pairs.m_e263b98182c6b18a")}><strong>{t.observed}</strong><p>{observedAt !== null ? <time dateTime={observedAt}>{observedAt}</time> : savedObservation?.state === 'Missing' ? (localizedText(language, "pairs.m_a5bd35d90de7c160")) : t.unknown}</p><p>{localizedText(language, "pairs.m_bdf69e4bcf117eaa")}</p></aside>
       <p>{profileFields.filter(([key]) => content[key]?.state !== 'Known').length} {onboarding ? (localizedText(language, "pairs.m_344296b81dee2be9")) : t.count}</p>
       {!profile.vessel.canEdit && <p>{t.readonly}</p>}
@@ -92,7 +96,7 @@ export function RegulatoryProfile(props: Props) {
                 return kind === 'number' ? <RequiredDataField key={key} {...common} kind="number" value={content[key] ?? { state: 'Missing' }} onChange={value => change(key, value)}/> :
                     <RequiredDataField key={key} {...common} kind="text" value={content[key] ?? { state: 'Missing' }} onChange={value => change(key, value)}/>;
             })}</div>
-        {onboarding && step === 3 && <><dl className="onboarding-review-values">{profileFields.map(([key, , tr, en]) => <div key={key}><dt>{localizedLabel({ en: en, tr: tr }, language)}</dt><dd>{content[key]?.state === 'Known' ? String(content[key]?.value ?? t.unknown) : content[key]?.state === 'Unknown' ? t.unknown : (localizedText(language, "pairs.m_a5bd35d90de7c160"))}</dd></div>)}</dl><OnboardingAssessmentView vessel={id} savedRevision={profile.revision > 0 ? profile.revision : null} dirty={dirty} language={language}/></>}
+        {onboarding && step === 3 && <><dl className="onboarding-review-values">{profileFields.map(([key, , tr, en]) => <div key={key}><dt>{localizedLabel({ en: en, tr: tr }, language)}</dt><dd>{content[key]?.state === 'Known' ? String(content[key]?.value ?? t.unknown) : content[key]?.state === 'Unknown' ? t.unknown : (localizedText(language, "pairs.m_a5bd35d90de7c160"))}</dd></div>)}</dl><OnboardingAssessmentView vessel={id} savedRevision={profile.revision > 0 ? profile.revision : null} dirty={dirty} language={language}/>{props.criticalStates && <CriticalStatesPanel vessel={id} language={language} revision={profile.revision} dirty={dirty} onDenied={invalidateAccess}/>}</>}
         {onboarding && <EnterpriseActions aria-label={localizedText(language, "pairs.m_69b974dc1090cab4")}><Button variant="outline" disabled={step === 0 || stepLocked} onClick={() => setStep(n => Math.max(0, n - 1))}>{localizedText(language, "pairs.m_11b5b0852be5c621")}</Button><Button variant="outline" disabled={step === 3 || stepLocked} onClick={() => setStep(n => Math.min(3, n + 1))}>{localizedText(language, "pairs.m_892b82e46cfa25df")}</Button></EnterpriseActions>}
         {profile.vessel.canEdit && !recovery.confirmed && <EnterpriseActions aria-label={localizedText(language, "pairs.m_7207e9da6d60a23c")}><Button type="submit" disabled={saving || (uncertain ? !recovery.canRetry : recovery.locked || failure?.code === 'version_conflict')}>{saving ? t.saving : uncertain ? t.retry : t.save}</Button></EnterpriseActions>}
       </form>

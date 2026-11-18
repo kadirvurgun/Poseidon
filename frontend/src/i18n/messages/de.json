@@ -396,6 +396,98 @@
       "equipment": "Ausrüstungskontext",
       "freshness": "Aktualität",
       "provenance": "Herkunft"
+    },
+    "CriticalStatePanel_tsx_copy": {
+      "title": "Kritische Zustände und ihre Quellen",
+      "loading": "Kritische Zustände werden geladen…",
+      "reload": "Kritische Zustände neu laden",
+      "offline": "Offline: Kritische Zustände werden nicht aus dem Cache angezeigt.",
+      "dirty": "Nicht gespeicherte Formularänderungen sind nicht enthalten. Erläuterungen beziehen sich nur auf den gespeicherten Datensatz.",
+      "empty": "Für Ihren Zugriff sind keine kritischen Zustände sichtbar.",
+      "scope": "Es werden nur Zustände aufgeführt, die Sie einsehen dürfen.",
+      "restricted": "Details sind für Ihren Zugriff eingeschränkt. Dieser Zustand ist kein bereites oder verifiziertes Ergebnis.",
+      "source": "Quelle",
+      "revision": "Revision",
+      "noRevision": "keine gespeicherte Revision",
+      "recorded": "erfasst",
+      "noSource": "Noch kein zuständiger Datensatz",
+      "verification": "Verifizierung",
+      "notVerified": "Nicht verifiziert",
+      "freshness": "Aktualität",
+      "observed": "beobachtet",
+      "checked": "geprüft",
+      "reasonsTitle": "Gründe",
+      "blockersTitle": "Hindernisse",
+      "noBlockers": "Keine Hindernisse aufgeführt",
+      "resolution": "Lösung",
+      "open": "Zuständigen Datensatz öffnen",
+      "errors": {
+        "e401": "Ihre Sitzung ist abgelaufen. Melden Sie sich erneut an.",
+        "e403": "Sie haben keine Berechtigung, diese kritischen Zustände anzuzeigen.",
+        "e404": "Dieses Schiff ist nicht verfügbar.",
+        "other": "Kritische Zustände konnten nicht geladen werden. Versuchen Sie es erneut."
+      },
+      "keys": {
+        "onboarding": "Onboarding-Bereitschaft",
+        "profileFreshness": "Profilaktualität",
+        "applicability": "Anwendbarkeit der Compliance"
+      },
+      "fields": {
+        "profile": "Profil",
+        "applicability": "Anwendbarkeitsbewertung",
+        "vesselCode": "Schiffscode",
+        "vesselName": "Schiffsname"
+      },
+      "states": {
+        "BLOCKED": "Gesperrt",
+        "REVIEW_REQUIRED": "Prüfung erforderlich",
+        "UNKNOWN": "Unbekannt",
+        "STALE": "Veraltet",
+        "UNAVAILABLE": "Nicht verfügbar",
+        "DECLARED_UNVERIFIED": "Angegeben · nicht verifiziert",
+        "QUALIFIED_CURRENT_UNVERIFIED": "Qualifizierte Bewertung aktuell · nicht verifiziert"
+      },
+      "freshnessStates": {
+        "FRESH": "Innerhalb des Richtlinienalters (nicht verifiziert)",
+        "STALE": "Veraltet",
+        "UNKNOWN": "Unbekannt",
+        "UNAVAILABLE": "Nicht verfügbar"
+      },
+      "sourceKinds": {
+        "RegulatoryDraft": "Schiffsprofil",
+        "ApplicabilityEvaluation": "Anwendbarkeitsbewertung"
+      },
+      "resolutions": {
+        "PROFILE_DECLARATION": "Profil angeben",
+        "REQUIRED_DECLARATION": "Erforderlichen Wert angeben",
+        "POLICY_OR_EVIDENCE": "Richtlinie oder Nachweis erforderlich",
+        "QUALIFIED_EVIDENCE": "Qualifizierter Nachweis erforderlich",
+        "SOURCE_DECLARATION": "Quelle angeben",
+        "SOURCE_RENEWAL": "Quelle erneuern",
+        "FRESHNESS_POLICY_CONFIGURATION": "Genehmigte Aktualitätsrichtlinie konfigurieren",
+        "SERVICE_RECOVERY": "Wiederherstellung des Dienstes erforderlich",
+        "RE_EVALUATION": "Neu bewerten",
+        "QUALIFIED_EVALUATION": "Qualifizierte Bewertung ausführen",
+        "CATALOG_QUALIFICATION": "Katalog qualifizieren",
+        "HUMAN_REVIEW": "Prüfung durch eine befugte Person"
+      },
+      "reasons": {
+        "PROFILE_MISSING": "Profil nicht gespeichert",
+        "REQUIRED_DATA_MISSING": "Erforderliche Daten fehlen",
+        "REQUIRED_DATA_UNKNOWN": "Erforderliche Daten unbekannt",
+        "VERIFICATION_NOT_ESTABLISHED": "Verifizierung nicht hergestellt",
+        "FIELDS_UNKNOWN": "Aktualität einiger Felder unbekannt",
+        "FIELDS_STALE": "Einige Felder sind veraltet",
+        "FIELDS_UNAVAILABLE": "Einige Felder sind nicht verfügbar",
+        "ALL_FIELDS_WITHIN_POLICY": "Alle Felder innerhalb des Richtlinienalters (nicht verifiziert)",
+        "VALUE_NOT_RECORDED": "Wert nicht erfasst",
+        "VALUE_UNKNOWN": "Wert als unbekannt erfasst",
+        "SOURCE_NOT_DECLARED": "Keine Quelle angegeben",
+        "FRESHNESS_POLICY_UNCONFIGURED": "Keine genehmigte Aktualitätsrichtlinie",
+        "QUALIFIED_EVALUATION_UNAVAILABLE": "Keine qualifizierte Bewertung",
+        "PROFILE_CHANGED": "Profil nach der Bewertung geändert",
+        "APPLICABILITY_REVIEW_REQUIRED": "Anwendbarkeitsprüfung erforderlich"
+      }
     }
   },
   "pairs": {
