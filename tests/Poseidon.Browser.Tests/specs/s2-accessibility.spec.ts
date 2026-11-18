@@ -55,7 +55,7 @@ async function mockShell(page: Page) {
             await route.fulfill({ json: { vessel, readAt: '2026-11-04T12:00:00Z',
                     coverage: ['RegulatoryDraft', 'OperationalTasks', 'SafetyDecisions', 'Permits', 'EvidenceVerification', 'TechnicalMaintenance', 'TugPlanning']
                         .map((source, i) => ({ source, status: i === 0 ? 'Missing' : 'Unavailable' })),
-                    cards: { items: [], offset: 0, limit: 25, hasMore: false } } });
+                    cards: { items: [], offset: 0, limit: 25, hasMore: false }, viewState: 'Partial' } });
             return;
         }
         await route.fulfill({ status: 404, json: { code: 'unconfigured_synthetic_read' } });
