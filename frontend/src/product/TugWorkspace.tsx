@@ -15,6 +15,7 @@ import { TugPlanningPanel } from './TugPlanningPanel';
 import { DraftConfirmation } from './DraftConfirmation';
 import { ApiError, session, type Session } from './api';
 import { emptyTugInputs, tugApi, type TugAttempt, type TugBoard, type TugContext, type TugInputs, type TugRequest } from './tug-api';
+import { unsavedState, useUnsavedChangesSource } from './unsaved-changes';
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const text = localizedCopy("TugWorkspace_tsx_text");
 function location() {
@@ -41,6 +42,8 @@ export function TugWorkspace() {
     const [planningDirty, setPlanningDirty] = useState(false);
     const locks = useRef({ dirty: false, planning: false, busy: false, attempt: false });
     const uncertain = useRef(false);
+    // DEV-021 AC-07: an uncertain write outcome blocks a shell context switch like an in-flight save.
+    useUnsavedChangesSource(() => unsavedState(locks.current.dirty || locks.current.planning || locks.current.attempt, locks.current.busy || uncertain.current));
     const [uncertainOutcome, setUncertainOutcome] = useState(false);
     const markUncertain = (value: boolean) => { uncertain.current = value; setUncertainOutcome(value); };
     const active = useRef(false), writer = useRef<AbortController | null>(null);

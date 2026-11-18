@@ -1,7 +1,7 @@
 import { localizedText } from "../i18n/messages";
 import { useAppLanguage, type Locale as AppLocale } from "../i18n";
 import { EnterpriseChrome } from './EnterpriseChrome';
-import { useLayoutEffect, useEffect, useRef, useState } from 'react';
+import { useCallback, useLayoutEffect, useEffect, useRef, useState } from 'react';
 import { ApiError, session } from './api';
 import type { Session } from './directory-contract';
 import * as api from './import-api';
@@ -9,13 +9,17 @@ import { roster, type CrewPage } from './crew-api';
 import { ImportMappingEditor, type ImportMappingBinding } from './ImportMappingEditor';
 import { ImportValidationResults } from './ImportValidationResults';
 import './import-workspace.css';
+import { unsavedState, useUnsavedChangesSource } from './unsaved-changes';
 export function ImportWorkspace({ vessel }: {
     vessel: string;
 }) {
     const [language, setLanguage] = useAppLanguage(), [identity, setIdentity] = useState<Session | null>(null);
     const [href, setHref] = useState(window.location.href), [generation, setGeneration] = useState(0), [error, setError] = useState(0);
     const [dirty, setDirty] = useState(false), [pending, setPending] = useState<string | null>(null);
-    const location = useRef(href), dirtyRef = useRef(false);
+    const location = useRef(href), dirtyRef = useRef(false), savingRef = useRef(false);
+    // DEV-021 AC-07: an in-flight write or uncertain commit outcome blocks a shell context switch.
+    useUnsavedChangesSource(() => unsavedState(dirtyRef.current, savingRef.current));
+    const reportDirty = useCallback((value: boolean, saving = false) => { savingRef.current = saving; setDirty(value); }, []);
     const navigationCommit = useRef<(() => void) | null>(null);
     useLayoutEffect(() => { dirtyRef.current = dirty; }, [dirty]);
     const en = language === 'en';
@@ -90,7 +94,7 @@ export function ImportWorkspace({ vessel }: {
       {error ? <div role="alert"><p>{error === 401 ? (localizedText(en, "pairs.m_48c324493374e672")) : (localizedText(en, "pairs.m_08b20099663c7a89"))}</p>
         <button onClick={() => setGeneration(g => g + 1)}>{localizedText(en, "pairs.m_044bf27da41fda96")}</button>{error === 401 && <a href={`/api/v1/auth/login?returnUrl=${encodeURIComponent(window.location.pathname)}`}>{localizedText(en, "pairs.m_16505c0ee5e527ad")}</a>}</div>
             : !identity ? <p role="status">{localizedText(en, "pairs.m_a603212553b98958")}</p>
-                : <Importer key={`${generation}:${identity.tenantId}:${identity.actorId}:${identity.csrfToken}:${vessel}:${href}`} vessel={vessel} language={language} user={identity} href={href} navigate={navigate} savedNavigate={next => { setDirty(false); dirtyRef.current = false; history.pushState(null, '', next); location.current = window.location.href; setHref(window.location.href); }} onDirty={setDirty}/>}
+                : <Importer key={`${generation}:${identity.tenantId}:${identity.actorId}:${identity.csrfToken}:${vessel}:${href}`} vessel={vessel} language={language} user={identity} href={href} navigate={navigate} savedNavigate={next => { setDirty(false); dirtyRef.current = false; history.pushState(null, '', next); location.current = window.location.href; setHref(window.location.href); }} onDirty={reportDirty}/>}
     </main>
     {pending && <div role="dialog" aria-modal="true" aria-label={localizedText(en, "pairs.m_27ecae4f282f7b40")}>
       <p>{localizedText(en, "pairs.m_69685d1c6273381b")}</p>
@@ -106,7 +110,7 @@ function Importer({ vessel, language, user, href, navigate, savedNavigate, onDir
     href: string;
     navigate: (href: string) => void;
     savedNavigate: (href: string) => void;
-    onDirty: (dirty: boolean) => void;
+    onDirty: (dirty: boolean, saving?: boolean) => void;
 }) {
     const en = language === 'en', query = new URL(href).searchParams;
     const [templates, setTemplates] = useState<api.ImportTemplate[]>([]), [category, setCategory] = useState('vessel');
@@ -114,7 +118,7 @@ function Importer({ vessel, language, user, href, navigate, savedNavigate, onDir
     const [batch, setBatch] = useState<api.ImportBatch | null>(null), [bindings, setBindings] = useState<readonly ImportMappingBinding[]>([]);
     const [preview, setPreview] = useState<api.Preview | null>(null), [outcome, setOutcome] = useState<api.Committed | null>(null);
     const [busy, setBusy] = useState(true), [error, setError] = useState(0), [failure, setFailure] = useState<'draft' | 'preview' | null>(null);
-    const [file, setFile] = useState<File | null>(null), [dirty, setDirty] = useState(false), [uncertain, setUncertain] = useState(false);
+    const [file, setFile] = useState<File | null>(null), [dirty, setDirty] = useState(false), [uncertain, setUncertain] = useState(false), [writing, setWriting] = useState(false);
     const [historyRows, setHistoryRows] = useState<Awaited<ReturnType<typeof api.history>> | null>(null), [historyOffset, setHistoryOffset] = useState(0);
     const attempt = useRef<{
         key: string;
@@ -124,7 +128,7 @@ function Importer({ vessel, language, user, href, navigate, savedNavigate, onDir
     const selectedTemplate = batch?.template ?? templates.find(t => t.category === category);
     const contextKey = `${user.actorId}:${user.tenantId}:${user.csrfToken}:${vessel}:${batch?.id ?? 'new'}:${selectedTemplate?.version}:${selectedTemplate?.fingerprint}`;
     useEffect(() => { mounted.current = true; return () => { mounted.current = false; operation.current?.abort(); onDirty(false); }; }, [onDirty]);
-    useEffect(() => { onDirty(dirty || uncertain || busy && !!attempt.current); }, [dirty, uncertain, busy, onDirty]);
+    useEffect(() => { onDirty(dirty || uncertain || busy && !!attempt.current, uncertain || writing); }, [dirty, uncertain, busy, writing, onDirty]);
     useEffect(() => {
         const c = new AbortController();
         operation.current = c;
@@ -207,7 +211,10 @@ function Importer({ vessel, language, user, href, navigate, savedNavigate, onDir
             }
         }
     }
-    function finish(c: AbortController) { if (!c.signal.aborted && mounted.current)
+    // A write (upload, draft, commit) in flight is reported as 'saving' to the shell context switch.
+    function startWrite() { const c = start(); setWriting(true); return c; }
+    function finish(c: AbortController) { if (operation.current === c && mounted.current)
+        setWriting(false); if (!c.signal.aborted && mounted.current)
         setBusy(false); }
     function route(b: api.ImportBatch, p?: api.Preview, offset = 0) {
         const q = new URLSearchParams({ batch: b.id });
@@ -226,7 +233,7 @@ function Importer({ vessel, language, user, href, navigate, savedNavigate, onDir
             setError(400);
             return;
         }
-        const c = start();
+        const c = startWrite();
         try {
             const b = await api.upload(vessel, category, assignment, file, user.csrfToken, c.signal);
             if (!c.signal.aborted)
@@ -242,7 +249,7 @@ function Importer({ vessel, language, user, href, navigate, savedNavigate, onDir
     async function save(previewAfter: boolean) {
         if (!batch || busy || uncertain)
             return;
-        const c = start();
+        const c = startWrite();
         setFailure(null);
         setPreview(null);
         try {
@@ -251,7 +258,7 @@ function Importer({ vessel, language, user, href, navigate, savedNavigate, onDir
                 return;
             setBatch(b);
             setDirty(false);
-            onDirty(false);
+            onDirty(false, previewAfter);
             if (previewAfter) {
                 const p = await api.preview(vessel, b.id, user.csrfToken, c.signal);
                 if (!c.signal.aborted) {
@@ -274,7 +281,7 @@ function Importer({ vessel, language, user, href, navigate, savedNavigate, onDir
             return;
         if (!attempt.current)
             attempt.current = { key: crypto.randomUUID(), preview };
-        const c = start();
+        const c = startWrite();
         try {
             const result = await api.commit(vessel, batch.id, attempt.current.preview, user.csrfToken, attempt.current.key, c.signal);
             if (!c.signal.aborted) {

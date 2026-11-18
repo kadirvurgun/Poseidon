@@ -19,6 +19,7 @@ import { dailyFields, dailyTitle, emptyDailyFields, type DailyFields } from './d
 import { dailyLocationPath, readDailyLocation, useDailyLocation, type DailyLocation } from './daily-location';
 import { useWorkspaceRevalidation } from './use-workspace-revalidation';
 import './daily-operations.css';
+import { unsavedState, useUnsavedChangesSource } from './unsaved-changes';
 type GuardChannel = 'ordinary' | 'review' | 'offline';
 type View = {
     scope: string;
@@ -35,6 +36,7 @@ export function DailyReportWorkspace() {
     const [language, setLanguage] = useAppLanguage(), [pending, setPending] = useState<(() => void) | null>(null), [instance, setInstance] = useState(0), [savedNotice, setSavedNotice] = useState(false);
     const dirtyRef = useRef(false), savingRef = useRef(false);
     const setDirty = useCallback((value: boolean) => { dirtyRef.current = value; }, []);
+    useUnsavedChangesSource(() => unsavedState(dirtyRef.current, savingRef.current));
     const setSaving = useCallback((value: boolean) => { savingRef.current = value; }, []);
     const guard = (action: () => void) => { if (savingRef.current)
         return; if (dirtyRef.current)
