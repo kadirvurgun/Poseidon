@@ -15363,6 +15363,23 @@
       "Self actual origin and company-scoped HR grants (52.02/54.02)",
       "HR3 read profile",
       "endpoint profile registration after PR #25"
-    ]
+    ],
+    "qa_follow_up": {
+      "date": "2026-11-18",
+      "independent_qa": "PASS-WITH-NOTES",
+      "status": "AUTHORED_PARTIALLY_VERIFIED_DOCKER_BLOCKED",
+      "decisions": "P5201-D12..D17, P5201-AC-12..17 in task doc",
+      "migration": "20261118202721_Hr5201QaFollowUp (additive; base migration unchanged); has-pending-model-changes clean",
+      "api": "role cancel command added; S1 scope 129/121/131; identifier value masked unless hr.legal_entity.identifier.read",
+      "verification": {
+        "release_build": "0 warnings / 0 errors",
+        "domain": "16/16 passed",
+        "serializable_guard": "2/2 passed",
+        "migration_id_ordering": "7/7 passed",
+        "s1_audit_vocabulary_script": "OK after adding 14 HR commands",
+        "frontend": "tsc 0 errors; LegalEntitySummary 5/5; i18n 81/81; audit 54/54; eslint 0",
+        "blocked_not_run": "persistence HR trait, PostgresSeedTests, FoundationModelParityTests, API HR trait, DiagnosticsTests, S1 coverage methods (Docker engine unresponsive)"
+      }
+    }
   }
 }
