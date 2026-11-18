@@ -375,6 +375,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/metrics/definitions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** 55.01 metric registry entries the actor may view. Definition only; no formula designer or export. */
+        get: operations["ListMetricDefinitions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/metrics/scalar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Evaluates one registered scalar over records the actor can currently read. SUPPRESSED, UNKNOWN and UNAVAILABLE carry no value; zero is never substituted for a missing source. */
+        get: operations["GetMetricScalar"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/system-health": {
         parameters: {
             query?: never;
@@ -724,6 +758,56 @@ export interface paths {
         get: operations["GetRegulatoryHistory"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{id}/regulatory-profile/fields": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Per-field value version, declared provenance and computed freshness. Declared sources are never verification; without an approved freshness policy every field is UNKNOWN with a reason. */
+        get: operations["GetProfileFields"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{id}/regulatory-profile/fields/{field}/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GetProfileFieldHistory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{id}/regulatory-profile/field-sources": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Appends one declared (unverified) source for the exact current field value version. Trusted vessel edit grant, CSRF and Idempotency-Key required; expectedValueRevision and expectedSequence are compare-and-set fences. */
+        post: operations["DeclareProfileFieldSource"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6384,6 +6468,16 @@ export interface components {
         };
         DeclaredCredentialDateOrder: number;
         DeclaredDateRelation: number;
+        DeclareProfileFieldSource: {
+            fieldPath: null | string;
+            /** Format: int64 */
+            expectedValueRevision: null | number;
+            /** Format: int64 */
+            expectedSequence: null | number;
+            sourceKind: null | string;
+            reference: null | components["schemas"]["TextInput"];
+            observedAt: null | components["schemas"]["TextInput"];
+        };
         DefectAssetContextDto: {
             /** Format: uuid */
             vesselId: string;
@@ -6774,6 +6868,37 @@ export interface components {
             /** Format: date-time */
             validUntil: string;
         };
+        FieldFreshness: {
+            state: string;
+            reasonCode: string;
+            /** Format: date-time */
+            observedAt: null | string;
+            /** Format: date-time */
+            checkedAt: string;
+            /** Format: int64 */
+            ageSeconds: null | number;
+        };
+        FieldSourceDto: {
+            /** Format: int64 */
+            sequence: number;
+            /** Format: int64 */
+            valueRevision: number;
+            sourceKind: string;
+            reference: components["schemas"]["TextInput"];
+            observedAt: components["schemas"]["TextInput"];
+            /** Format: uuid */
+            declaredBy: string;
+            /** Format: uuid */
+            stewardCompanyId: string;
+            /** Format: date-time */
+            recordedAt: string;
+            provenance: string;
+            verificationState: string;
+        };
+        FieldValueDto: {
+            state: string;
+            value: null | string;
+        };
         FileDto: {
             /** Format: uuid */
             id: string;
@@ -6799,6 +6924,26 @@ export interface components {
             /** Format: int64 */
             maxBytes: number;
             allowedTypes: string[];
+        };
+        FreshnessPolicyDto: {
+            status: string;
+            policyRef: null | string;
+        };
+        FreshnessSummary: {
+            state: string;
+            reasonCode: string;
+            /** Format: date-time */
+            oldestObservedAt: null | string;
+            /** Format: date-time */
+            checkedAt: string;
+            /** Format: int32 */
+            fresh: number;
+            /** Format: int32 */
+            stale: number;
+            /** Format: int32 */
+            unknown: number;
+            /** Format: int32 */
+            unavailable: number;
         };
         GraphPin: {
             kind: string;
@@ -7510,6 +7655,65 @@ export interface components {
             state: string;
             reason: string;
         };
+        MetricCatalogDto: {
+            contractVersion: string;
+            items: components["schemas"]["MetricDefinitionDto"][];
+        };
+        MetricDefinitionDto: {
+            id: string;
+            /** Format: int32 */
+            version: number;
+            ownerModule: string;
+            label: string;
+            unitCode: string;
+            sourceProjectionId: string;
+            aggregation: string;
+            /** Format: int32 */
+            minCohort: number;
+            freshnessRule: string;
+            requiredPermissions: string[];
+            allowedActions: string[];
+            scopes: string[];
+            basis: string;
+            source: string;
+        };
+        MetricScalarDto: {
+            metricId: string;
+            /** Format: int32 */
+            definitionVersion: number;
+            ownerModule: string;
+            state: string;
+            value: null | string;
+            unitCode: string;
+            quality: string;
+            /** Format: date-time */
+            asOf: string;
+            sourceProjectionId: string;
+            /** Format: date-time */
+            sourceWatermark: null | string;
+            scope: components["schemas"]["MetricScopeDto"];
+            /** Format: int32 */
+            unknownCount: number;
+            reasons: string[];
+            basis: string;
+            freshnessRule: string;
+            source: string;
+        };
+        MetricScopeDto: {
+            kind: string;
+            /** Format: uuid */
+            vesselId: null | string;
+            /** Format: int32 */
+            expectedSources: number;
+            /** Format: int32 */
+            readSources: number;
+            /** Format: int32 */
+            withheldSources: number;
+            /** Format: int32 */
+            unreadableSources: number;
+            /** Format: int32 */
+            notCollectedSources: number;
+        };
         MsmdReference: {
             documentReference?: null | string;
             issuerReference?: null | string;
@@ -7807,6 +8011,14 @@ export interface components {
             limit: number;
             hasMore: boolean;
         };
+        PageDtoOfProfileFieldVersionDto: {
+            items: components["schemas"]["ProfileFieldVersionDto"][];
+            /** Format: int32 */
+            offset: number;
+            /** Format: int32 */
+            limit: number;
+            hasMore: boolean;
+        };
         PageDtoOfRegisterDto: {
             items: components["schemas"]["RegisterDto"][];
             /** Format: int32 */
@@ -7871,6 +8083,61 @@ export interface components {
             status?: null | number;
             detail?: null | string;
             instance?: null | string;
+        };
+        ProfileFieldDto: {
+            fieldPath: string;
+            kind: string;
+            unit: null | string;
+            value: components["schemas"]["FieldValueDto"];
+            /** Format: int64 */
+            valueRevision: null | number;
+            /** Format: int64 */
+            latestSequence: number;
+            source: null | components["schemas"]["FieldSourceDto"];
+            priorValueSource: null | components["schemas"]["FieldSourceDto"];
+            freshness: components["schemas"]["FieldFreshness"];
+            verificationState: string;
+        };
+        ProfileFieldsDto: {
+            /** Format: uuid */
+            tenantId: string;
+            /** Format: uuid */
+            vesselId: string;
+            owner: components["schemas"]["ProfileOwnerDto"];
+            /** Format: int64 */
+            profileRevision: number;
+            /** Format: date-time */
+            profileSavedAt: null | string;
+            /** Format: date-time */
+            checkedAt: string;
+            policy: components["schemas"]["FreshnessPolicyDto"];
+            summary: components["schemas"]["FreshnessSummary"];
+            fields: components["schemas"]["ProfileFieldDto"][];
+            canDeclare: boolean;
+        };
+        ProfileFieldSourceOutcomeDto: {
+            /** Format: uuid */
+            tenantId: string;
+            /** Format: uuid */
+            vesselId: string;
+            fieldPath: string;
+            source: components["schemas"]["FieldSourceDto"];
+        };
+        ProfileFieldVersionDto: {
+            /** Format: int64 */
+            valueRevision: number;
+            /** Format: date-time */
+            recordedAt: string;
+            profileProvenance: string;
+            value: components["schemas"]["FieldValueDto"];
+            sources: components["schemas"]["FieldSourceDto"][];
+            moreSources: boolean;
+        };
+        ProfileOwnerDto: {
+            /** Format: uuid */
+            legalEntityId: string;
+            binding: string;
+            registeredOwnerState: string;
         };
         QualificationCommand: {
             /** Format: uint32 */
@@ -8359,6 +8626,17 @@ export interface components {
             owner: null | string;
             nextAction: string;
             href: string;
+            sourceRef: components["schemas"]["TodayCardSourceDto"];
+        };
+        TodayCardSourceDto: {
+            owner: string;
+            kind: string;
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: null | number;
+            /** Format: date-time */
+            savedAt: null | string;
         };
         TodayCoverageDto: {
             source: string;
@@ -8370,6 +8648,7 @@ export interface components {
             readAt: string;
             coverage: components["schemas"]["TodayCoverageDto"][];
             cards: components["schemas"]["PageDtoOfTodayCardDto"];
+            viewState: string;
         };
         TodayMaintenanceEvidenceDto: {
             /** Format: uuid */
@@ -9803,6 +10082,13 @@ export interface operations {
                     "application/json": components["schemas"]["WorkspaceDto"];
                 };
             };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
             /** @description Unauthorized */
             401: {
                 headers: {
@@ -9976,6 +10262,112 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TodayWhyDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ListMetricDefinitions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MetricCatalogDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    GetMetricScalar: {
+        parameters: {
+            query?: {
+                metricId?: string;
+                vesselId?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MetricScalarDto"];
                 };
             };
             /** @description Bad Request */
@@ -10778,6 +11170,205 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    GetProfileFields: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProfileFieldsDto"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    GetProfileFieldHistory: {
+        parameters: {
+            query?: {
+                offset?: number;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                id: string;
+                field: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PageDtoOfProfileFieldVersionDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    DeclareProfileFieldSource: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string;
+                "X-CSRF-TOKEN"?: string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeclareProfileFieldSource"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProfileFieldSourceOutcomeDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
             };
             /** @description Service Unavailable */
             503: {

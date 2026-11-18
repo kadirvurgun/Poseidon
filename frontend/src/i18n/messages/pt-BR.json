@@ -122,7 +122,8 @@
       "leMissing": "Valores ausentes antes da ativação",
       "leNote": "Somente leitura. Os valores mudam apenas por comandos de RH auditados.",
       "leShow": "Mostrar registro da pessoa jurídica",
-      "leIdentifiers": "Identificadores de registro (mascarados)"
+      "leIdentifiers": "Identificadores de registro (mascarados)",
+      "errorSummary": "Verifique estes campos antes de salvar:"
     },
     "ProductApp_tsx_copy": {
       "audit": "Histórico de ações",
@@ -300,7 +301,23 @@
       "OperationalSourcesUnavailable": "Fontes operacionais indisponíveis",
       "rule": "Regra",
       "context": "Navio atual",
-      "switch": "Trocar navio"
+      "switch": "Trocar navio",
+      "ViewMaintenancePlan": "Ver plano de manutenção",
+      "ViewTugJob": "Ver trabalho de rebocador",
+      "sourceOwner": "Proprietário da fonte",
+      "sourceSaved": "Fonte salva em",
+      "noRevision": "Nenhuma revisão armazenada",
+      "REGULATORY": "Regulatório",
+      "PMS": "Manutenção planejada",
+      "TUG": "Operações de rebocador",
+      "viewReady": "Itens retornados de todas as fontes listadas. Isso não é prontidão nem verificação.",
+      "viewEmpty": "Todas as fontes listadas foram lidas e não retornaram itens. Isso não é uma liberação de segurança.",
+      "viewPartial": "Visão parcial: algumas fontes proprietárias estão indisponíveis neste contexto. A ausência de itens não significa que está tudo certo.",
+      "viewUnavailable": "Nenhuma fonte proprietária pôde ser lida neste contexto. Isso não significa que está tudo certo.",
+      "partialCounters": "Fontes parciais: zero não significa que está tudo certo",
+      "emptyCounters": "Resultado vazio autorizado: nenhuma fonte listada retornou itens. Não é uma liberação de segurança",
+      "rateLimited": "Solicitações demais. Aguarde e tente novamente.",
+      "contract": "A resposta do servidor falhou na validação; nada dela é exibido."
     },
     "TugCrewCoverage_tsx_copy": {
       "title": "Papéis mínimos de tripulação qualificados pela fonte",
@@ -3222,6 +3239,10 @@
     "m_2492dcd13a8d5ab3": "Um salvamento ainda está em andamento. Aguarde o resultado antes de trocar de embarcação; seu contexto atual não foi alterado.",
     "m_221de6ea6fc51bb7": "Sua sessão terminou ou mudou. Entre novamente para ver seu contexto de trabalho.",
     "m_9b1a1deb14aac372": "A embarcação selecionada não está no seu escopo autorizado atual. Nenhuma outra embarcação foi selecionada automaticamente.",
-    "m_5db2b92c3bcc6931": "Escolher outra embarcação"
+    "m_5db2b92c3bcc6931": "Escolher outra embarcação",
+    "m_7c2c3c0f372d028d": "Filtrar menu",
+    "m_4895cdb4b14ff26c": "Somente as telas que você está autorizado a abrir são pesquisadas.",
+    "m_9e601b252c4fb4b3": "Nenhum item de menu autorizado corresponde a este filtro.",
+    "m_5af49f5d0c78416e": "Limpar filtro do menu"
   }
 }

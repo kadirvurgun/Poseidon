@@ -838,6 +838,9 @@
               }
             }
           },
+          "400": {
+            "description": "Bad Request"
+          },
           "401": {
             "description": "Unauthorized"
           },
@@ -1050,6 +1053,91 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TodayWhyDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/metrics/definitions": {
+      "get": {
+        "tags": [
+          "MetricEndpoints"
+        ],
+        "summary": "55.01 metric registry entries the actor may view. Definition only; no formula designer or export.",
+        "operationId": "ListMetricDefinitions",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MetricCatalogDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/metrics/scalar": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "summary": "Evaluates one registered scalar over records the actor can currently read. SUPPRESSED, UNKNOWN and UNAVAILABLE carry no value; zero is never substituted for a missing source.",
+        "operationId": "GetMetricScalar",
+        "parameters": [
+          {
+            "name": "metricId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "vesselId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MetricScalarDto"
                 }
               }
             }
@@ -2118,6 +2206,232 @@
           },
           "404": {
             "description": "Not Found"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/vessels/{id}/regulatory-profile/fields": {
+      "get": {
+        "tags": [
+          "VesselProfileFieldEndpoints"
+        ],
+        "description": "Per-field value version, declared provenance and computed freshness. Declared sources are never verification; without an approved freshness policy every field is UNKNOWN with a reason.",
+        "operationId": "GetProfileFields",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileFieldsDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/vessels/{id}/regulatory-profile/fields/{field}/history": {
+      "get": {
+        "tags": [
+          "VesselProfileFieldEndpoints"
+        ],
+        "operationId": "GetProfileFieldHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "field",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageDtoOfProfileFieldVersionDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/vessels/{id}/regulatory-profile/field-sources": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "description": "Appends one declared (unverified) source for the exact current field value version. Trusted vessel edit grant, CSRF and Idempotency-Key required; expectedValueRevision and expectedSequence are compare-and-set fences.",
+        "operationId": "DeclareProfileFieldSource",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-CSRF-TOKEN",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeclareProfileFieldSource"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileFieldSourceOutcomeDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           },
           "503": {
             "description": "Service Unavailable"
@@ -16852,6 +17166,66 @@
       "DeclaredDateRelation": {
         "type": "integer"
       },
+      "DeclareProfileFieldSource": {
+        "required": [
+          "fieldPath",
+          "expectedValueRevision",
+          "expectedSequence",
+          "sourceKind",
+          "reference",
+          "observedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "fieldPath": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "expectedValueRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "expectedSequence": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "sourceKind": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reference": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/TextInput"
+              }
+            ]
+          },
+          "observedAt": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/TextInput"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
       "DefectAssetContextDto": {
         "required": [
           "vesselId",
@@ -18306,6 +18680,112 @@
         },
         "additionalProperties": false
       },
+      "FieldFreshness": {
+        "required": [
+          "state",
+          "reasonCode",
+          "observedAt",
+          "checkedAt",
+          "ageSeconds"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "observedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "checkedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ageSeconds": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          }
+        }
+      },
+      "FieldSourceDto": {
+        "required": [
+          "sequence",
+          "valueRevision",
+          "sourceKind",
+          "reference",
+          "observedAt",
+          "declaredBy",
+          "stewardCompanyId",
+          "recordedAt",
+          "provenance",
+          "verificationState"
+        ],
+        "type": "object",
+        "properties": {
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "valueRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sourceKind": {
+            "type": "string"
+          },
+          "reference": {
+            "$ref": "#/components/schemas/TextInput"
+          },
+          "observedAt": {
+            "$ref": "#/components/schemas/TextInput"
+          },
+          "declaredBy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "stewardCompanyId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "verificationState": {
+            "type": "string"
+          }
+        }
+      },
+      "FieldValueDto": {
+        "required": [
+          "state",
+          "value"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "value": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "FileDto": {
         "required": [
           "id",
@@ -18396,6 +18876,72 @@
             "items": {
               "type": "string"
             }
+          }
+        }
+      },
+      "FreshnessPolicyDto": {
+        "required": [
+          "status",
+          "policyRef"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "policyRef": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "FreshnessSummary": {
+        "required": [
+          "state",
+          "reasonCode",
+          "oldestObservedAt",
+          "checkedAt",
+          "fresh",
+          "stale",
+          "unknown",
+          "unavailable"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "oldestObservedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "checkedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "fresh": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stale": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unknown": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unavailable": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
@@ -21077,6 +21623,226 @@
           }
         }
       },
+      "MetricCatalogDto": {
+        "required": [
+          "contractVersion",
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "contractVersion": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MetricDefinitionDto"
+            }
+          }
+        }
+      },
+      "MetricDefinitionDto": {
+        "required": [
+          "id",
+          "version",
+          "ownerModule",
+          "label",
+          "unitCode",
+          "sourceProjectionId",
+          "aggregation",
+          "minCohort",
+          "freshnessRule",
+          "requiredPermissions",
+          "allowedActions",
+          "scopes",
+          "basis",
+          "source"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ownerModule": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "unitCode": {
+            "type": "string"
+          },
+          "sourceProjectionId": {
+            "type": "string"
+          },
+          "aggregation": {
+            "type": "string"
+          },
+          "minCohort": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "freshnessRule": {
+            "type": "string"
+          },
+          "requiredPermissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "allowedActions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "basis": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          }
+        }
+      },
+      "MetricScalarDto": {
+        "required": [
+          "metricId",
+          "definitionVersion",
+          "ownerModule",
+          "state",
+          "value",
+          "unitCode",
+          "quality",
+          "asOf",
+          "sourceProjectionId",
+          "sourceWatermark",
+          "scope",
+          "unknownCount",
+          "reasons",
+          "basis",
+          "freshnessRule",
+          "source"
+        ],
+        "type": "object",
+        "properties": {
+          "metricId": {
+            "type": "string"
+          },
+          "definitionVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ownerModule": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "value": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "unitCode": {
+            "type": "string"
+          },
+          "quality": {
+            "type": "string"
+          },
+          "asOf": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sourceProjectionId": {
+            "type": "string"
+          },
+          "sourceWatermark": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "scope": {
+            "$ref": "#/components/schemas/MetricScopeDto"
+          },
+          "unknownCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "basis": {
+            "type": "string"
+          },
+          "freshnessRule": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          }
+        }
+      },
+      "MetricScopeDto": {
+        "required": [
+          "kind",
+          "vesselId",
+          "expectedSources",
+          "readSources",
+          "withheldSources",
+          "unreadableSources",
+          "notCollectedSources"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "vesselId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "expectedSources": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "readSources": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "withheldSources": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unreadableSources": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "notCollectedSources": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
       "MsmdReference": {
         "type": "object",
         "properties": {
@@ -22098,6 +22864,34 @@
           }
         }
       },
+      "PageDtoOfProfileFieldVersionDto": {
+        "required": [
+          "items",
+          "offset",
+          "limit",
+          "hasMore"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProfileFieldVersionDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          }
+        }
+      },
       "PageDtoOfRegisterDto": {
         "required": [
           "items",
@@ -22343,6 +23137,214 @@
               "null",
               "string"
             ]
+          }
+        }
+      },
+      "ProfileFieldDto": {
+        "required": [
+          "fieldPath",
+          "kind",
+          "unit",
+          "value",
+          "valueRevision",
+          "latestSequence",
+          "source",
+          "priorValueSource",
+          "freshness",
+          "verificationState"
+        ],
+        "type": "object",
+        "properties": {
+          "fieldPath": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "unit": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "value": {
+            "$ref": "#/components/schemas/FieldValueDto"
+          },
+          "valueRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "latestSequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "source": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/FieldSourceDto"
+              }
+            ]
+          },
+          "priorValueSource": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/FieldSourceDto"
+              }
+            ]
+          },
+          "freshness": {
+            "$ref": "#/components/schemas/FieldFreshness"
+          },
+          "verificationState": {
+            "type": "string"
+          }
+        }
+      },
+      "ProfileFieldsDto": {
+        "required": [
+          "tenantId",
+          "vesselId",
+          "owner",
+          "profileRevision",
+          "profileSavedAt",
+          "checkedAt",
+          "policy",
+          "summary",
+          "fields",
+          "canDeclare"
+        ],
+        "type": "object",
+        "properties": {
+          "tenantId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/ProfileOwnerDto"
+          },
+          "profileRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "profileSavedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "checkedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "policy": {
+            "$ref": "#/components/schemas/FreshnessPolicyDto"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/FreshnessSummary"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProfileFieldDto"
+            }
+          },
+          "canDeclare": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ProfileFieldSourceOutcomeDto": {
+        "required": [
+          "tenantId",
+          "vesselId",
+          "fieldPath",
+          "source"
+        ],
+        "type": "object",
+        "properties": {
+          "tenantId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fieldPath": {
+            "type": "string"
+          },
+          "source": {
+            "$ref": "#/components/schemas/FieldSourceDto"
+          }
+        }
+      },
+      "ProfileFieldVersionDto": {
+        "required": [
+          "valueRevision",
+          "recordedAt",
+          "profileProvenance",
+          "value",
+          "sources",
+          "moreSources"
+        ],
+        "type": "object",
+        "properties": {
+          "valueRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "profileProvenance": {
+            "type": "string"
+          },
+          "value": {
+            "$ref": "#/components/schemas/FieldValueDto"
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FieldSourceDto"
+            }
+          },
+          "moreSources": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ProfileOwnerDto": {
+        "required": [
+          "legalEntityId",
+          "binding",
+          "registeredOwnerState"
+        ],
+        "type": "object",
+        "properties": {
+          "legalEntityId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "binding": {
+            "type": "string"
+          },
+          "registeredOwnerState": {
+            "type": "string"
           }
         }
       },
@@ -24246,7 +25248,8 @@
           "reason",
           "owner",
           "nextAction",
-          "href"
+          "href",
+          "sourceRef"
         ],
         "type": "object",
         "properties": {
@@ -24273,6 +25276,45 @@
           },
           "href": {
             "type": "string"
+          },
+          "sourceRef": {
+            "$ref": "#/components/schemas/TodayCardSourceDto"
+          }
+        }
+      },
+      "TodayCardSourceDto": {
+        "required": [
+          "owner",
+          "kind",
+          "id",
+          "revision",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "owner": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "savedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
           }
         }
       },
@@ -24296,7 +25338,8 @@
           "vessel",
           "readAt",
           "coverage",
-          "cards"
+          "cards",
+          "viewState"
         ],
         "type": "object",
         "properties": {
@@ -24315,6 +25358,9 @@
           },
           "cards": {
             "$ref": "#/components/schemas/PageDtoOfTodayCardDto"
+          },
+          "viewState": {
+            "type": "string"
           }
         }
       },
@@ -26645,6 +27691,9 @@
       "name": "HumanReviewEndpoints"
     },
     {
+      "name": "MetricEndpoints"
+    },
+    {
       "name": "SystemHealthEndpoints"
     },
     {
@@ -26679,6 +27728,9 @@
     },
     {
       "name": "RegulatoryDraftEndpoints"
+    },
+    {
+      "name": "VesselProfileFieldEndpoints"
     },
     {
       "name": "LifecycleApplicabilityEndpoints"

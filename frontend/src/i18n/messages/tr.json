@@ -122,7 +122,8 @@
       "leMissing": "Aktivasyon öncesi eksik değerler",
       "leNote": "Salt okunur. Tüzel kişi değerleri yalnız denetlenen İK komutlarıyla değişir.",
       "leShow": "Tüzel kişi kaydını göster",
-      "leIdentifiers": "Sicil tanımlayıcıları (maskeli)"
+      "leIdentifiers": "Sicil tanımlayıcıları (maskeli)",
+      "errorSummary": "Kaydetmeden önce şu alanları kontrol edin:"
     },
     "ProductApp_tsx_copy": {
       "audit": "İşlem geçmişi",
@@ -300,7 +301,23 @@
       "OperationalSourcesUnavailable": "Operasyonel kaynaklar kullanılamıyor",
       "rule": "Kural",
       "context": "Etkin araç",
-      "switch": "Araç değiştir"
+      "switch": "Araç değiştir",
+      "ViewMaintenancePlan": "Bakım planını görüntüle",
+      "ViewTugJob": "Römorkör işini görüntüle",
+      "sourceOwner": "Kaynak sahibi",
+      "sourceSaved": "Kaynak kayıt zamanı",
+      "noRevision": "Kayıtlı revizyon yok",
+      "REGULATORY": "Mevzuat",
+      "PMS": "Planlı bakım",
+      "TUG": "Römorkör operasyonları",
+      "viewReady": "Listelenen tüm kaynaklardan öğe döndü. Bu, hazırlık veya doğrulama değildir.",
+      "viewEmpty": "Listelenen tüm kaynaklar okundu ve öğe dönmedi. Bu bir emniyet onayı değildir.",
+      "viewPartial": "Kısmi görünüm: bazı sahip kaynaklar bu bağlamda kullanılamıyor. Görünmeyen öğe, her şeyin uygun olduğu anlamına gelmez.",
+      "viewUnavailable": "Bu bağlamda hiçbir sahip kaynak okunamadı. Bu, her şeyin uygun olduğu anlamına gelmez.",
+      "partialCounters": "Kısmi kaynaklar: sıfır, her şeyin uygun olduğu anlamına gelmez",
+      "emptyCounters": "Yetkili boş sonuç: listelenen her kaynak öğe döndürmedi. Bu bir emniyet onayı değildir",
+      "rateLimited": "Çok fazla istek. Bekleyip yeniden deneyin.",
+      "contract": "Sunucu yanıtı doğrulamadan geçemedi; yanıttan hiçbir şey gösterilmiyor."
     },
     "TugCrewCoverage_tsx_copy": {
       "title": "Kaynağı nitelendirilmiş asgari mürettebat rolleri",
@@ -3222,6 +3239,10 @@
     "m_2492dcd13a8d5ab3": "Kayıt işlemi hâlâ sürüyor. Gemi değiştirmeden önce sonucunu bekleyin; mevcut bağlamınız değişmedi.",
     "m_221de6ea6fc51bb7": "Oturumunuz sona erdi veya değişti. Çalışma bağlamınızı görmek için yeniden oturum açın.",
     "m_9b1a1deb14aac372": "Seçilen gemi mevcut yetki kapsamınızda değil. Otomatik olarak başka bir gemi seçilmedi.",
-    "m_5db2b92c3bcc6931": "Başka gemi seç"
+    "m_5db2b92c3bcc6931": "Başka gemi seç",
+    "m_7c2c3c0f372d028d": "Menüde ara",
+    "m_4895cdb4b14ff26c": "Yalnızca açmaya yetkili olduğunuz ekranlarda arar.",
+    "m_9e601b252c4fb4b3": "Bu filtreyle eşleşen yetkili menü öğesi yok.",
+    "m_5af49f5d0c78416e": "Menü filtresini temizle"
   }
 }

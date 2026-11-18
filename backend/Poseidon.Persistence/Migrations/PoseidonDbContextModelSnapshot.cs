@@ -6095,6 +6095,157 @@ namespace Poseidon.Persistence.Migrations
                 b.HasOne("Poseidon.Persistence.FleetCatalogDraft",null).WithMany().HasForeignKey("TenantId","CatalogId").HasConstraintName("FK_FleetCatalogDraftRevision_Head").OnDelete(DeleteBehavior.Restrict).IsRequired();
                 b.HasOne("Poseidon.Persistence.FleetCatalogDraftRevision",null).WithMany().HasForeignKey("TenantId","CatalogId","PriorRevisionId","ExpectedRevision").HasPrincipalKey("TenantId","CatalogId","Id","Revision").HasConstraintName("FK_FleetCatalogDraftRevision_Prior").OnDelete(DeleteBehavior.Restrict);
             });
+            modelBuilder.Entity("Poseidon.Persistence.VesselProfileFieldSource", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("VesselId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("FieldPath")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<long>("Sequence")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("DeclaredBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("ObservedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ObservedAtState")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<string>("Provenance")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<DateTimeOffset>("RecordedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Reference")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("ReferenceState")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<string>("SourceKind")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<Guid>("StewardCompanyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ValueHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<long>("ValueRevision")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("ValueState")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.HasKey("TenantId", "VesselId", "FieldPath", "Sequence");
+
+                    b.HasIndex("TenantId", "StewardCompanyId")
+                        .HasDatabaseName("IX_VesselProfileFieldSources_StewardCompany");
+
+                    b.HasIndex("TenantId", "VesselId", "ValueRevision")
+                        .HasDatabaseName("IX_VesselProfileFieldSources_ValueRevision");
+
+                    b.ToTable("VesselProfileFieldSources", "core", t =>
+                        {
+                            t.HasCheckConstraint("CK_VesselProfileFieldSources_Declaration", "\"Sequence\" > 0 AND \"ValueRevision\" > 0 AND \"FieldPath\" IN ('breadth','buildDate','cargoContext','classNumber','classSociety','constructionRecordReference','contractForConstructionDate','draft','dwt','flag','gt','imo','loa','mainPropulsionKw','nt','shipType','tradingArea') AND \"SourceKind\" IN ('DOCUMENT','REGISTRY_RECORD','CLASS_RECORD','OWNER_DECLARATION','SURVEY_OR_MEASUREMENT','OTHER','UNKNOWN') AND \"ValueState\" IN ('Missing','Unknown','Known') AND \"ValueHash\" ~ '^[0-9a-f]{64}$' AND \"ReferenceState\" IN ('Missing','Unknown','Known') AND ((\"ReferenceState\" = 'Known') = (\"Reference\" IS NOT NULL)) AND \"ObservedAtState\" IN ('Missing','Unknown','Known') AND ((\"ObservedAtState\" = 'Known') = (\"ObservedAt\" IS NOT NULL)) AND \"Provenance\" IN ('DeclaredUnverified','SyntheticUnverified') AND (\"ValueState\" <> 'Missing' OR (\"Provenance\" = 'SyntheticUnverified' AND \"SourceKind\" = 'UNKNOWN'))");
+                        });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.VesselProfileFieldSourceReceipt", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Key")
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<string>("FieldPath")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("Fingerprint")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("OutcomeJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("SavedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long>("Sequence")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("VesselId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("TenantId", "ActorId", "Key");
+
+                    b.HasIndex("TenantId", "VesselId", "FieldPath", "Sequence")
+                        .HasDatabaseName("IX_VesselProfileFieldSourceReceipts_Declaration");
+
+                    b.ToTable("VesselProfileFieldSourceReceipts", "core", t =>
+                        {
+                            t.HasCheckConstraint("CK_VesselProfileFieldSourceReceipts_Sequence", "\"Sequence\" > 0");
+                        });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.VesselProfileFieldSource", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.Company", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "StewardCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_VesselProfileFieldSource_StewardCompany");
+
+                    b.HasOne("Poseidon.Persistence.RegulatoryDraftRevision", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "VesselId", "ValueRevision")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_VesselProfileFieldSource_ValueRevision");
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.VesselProfileFieldSourceReceipt", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.VesselProfileFieldSource", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "VesselId", "FieldPath", "Sequence")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_VesselProfileFieldSourceReceipt_Declaration");
+                });
+
 #pragma warning restore 612, 618
         }
     }

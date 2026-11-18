@@ -1,4 +1,5 @@
-import { localizedText } from "../i18n/messages";
+import { localizedText, localizedTuple } from "../i18n/messages";
+import { lensLabels } from './workspace-lens-api';
 import { type Locale as AppLocale } from "../i18n";
 import { useEffect, useRef, useState } from 'react';
 import { ApiError } from './api';
@@ -19,7 +20,8 @@ export function WorkspaceSearch({ language, onNavigate, onClose, authorization, 
     const [loadedEpoch, setLoadedEpoch] = useState(-1);
     const [loadedGrant, setLoadedGrant] = useState<object | null>(null);
     const allowed = authorization === 'allowed' && typeof grant === 'object' && grant !== null && !Array.isArray(grant);
-    const destinationLabels: Record<string, string> = { today: localizedText(en, "pairs.m_14d5741b2e6e2585"), fleet: localizedText(en, "pairs.m_624c9bbf6ccfa3dd"), companies: localizedText(en, "pairs.m_3ff4996c5348b429"), sources: localizedText(en, "pairs.m_d52797a6e362de20"), requirements: localizedText(en, "pairs.m_d6ad4bb19c60b2b2"), audit: localizedText(en, "pairs.m_9f8662ba28b5b4fc"), 'tug-command': localizedText(en, "pairs.m_8d10fb1a220cd756"), 'tug-job-board': localizedText(en, "pairs.m_326009e7c4fb72c6"), 'tug-job-intake': localizedText(en, "pairs.m_ba8de4826f405e02"), 'system-health': localizedText(en, "pairs.m_4e40e458d82d0a06"), 'notification-escalation': localizedText(en, "pairs.m_11fcfe7e5ea66ca5") };
+    // DEV-022: every authorized destination gets its localized menu label (never the raw route key).
+    const destinationLabels: Record<string, string> = { ...Object.fromEntries(Object.entries(lensLabels).map(([key, label]) => [key, localizedTuple(label, en, 1)])), today: localizedText(en, "pairs.m_14d5741b2e6e2585"), fleet: localizedText(en, "pairs.m_624c9bbf6ccfa3dd"), companies: localizedText(en, "pairs.m_3ff4996c5348b429"), sources: localizedText(en, "pairs.m_d52797a6e362de20"), requirements: localizedText(en, "pairs.m_d6ad4bb19c60b2b2"), audit: localizedText(en, "pairs.m_9f8662ba28b5b4fc"), 'tug-command': localizedText(en, "pairs.m_8d10fb1a220cd756"), 'tug-job-board': localizedText(en, "pairs.m_326009e7c4fb72c6"), 'tug-job-intake': localizedText(en, "pairs.m_ba8de4826f405e02"), 'system-health': localizedText(en, "pairs.m_4e40e458d82d0a06"), 'notification-escalation': localizedText(en, "pairs.m_11fcfe7e5ea66ca5") };
     const dialog = useRef<HTMLDialogElement>(null);
     const [query, setQuery] = useState('');
     const [search, setSearch] = useState('');

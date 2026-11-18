@@ -7,6 +7,7 @@ import type { Language } from './editor-copy';
 import { Button } from '../components/ui/button';
 import { EnterpriseActions, EnterpriseField, EnterpriseFormGrid } from './EnterprisePatterns';
 import { LegalEntitySummary } from './LegalEntitySummary';
+import { FormErrorSummary } from '../components/a11y/FormErrorSummary';
 export type EditorTarget = {
     instanceKey?: string;
     resource: 'companies' | 'vessels';
@@ -33,6 +34,7 @@ export function DirectoryEditor({ target, language, csrf, onDirty, onSaving, onC
     const [choiceAttempt, setChoiceAttempt] = useState(0);
     const [choiceError, setChoiceError] = useState(false);
     const [errors, setErrors] = useState<Record<string, string[]>>({});
+    const [submitAttempt, setSubmitAttempt] = useState(0);
     const [failure, setFailure] = useState<api.ApiError | null>(null);
     const [saving, setSaving] = useState(false);
     const [uncertain, setUncertain] = useState(false);
@@ -86,7 +88,8 @@ export function DirectoryEditor({ target, language, csrf, onDirty, onSaving, onC
             fields.companyId = ['required'];
         setErrors(fields);
         if (Object.keys(fields).length) {
-            document.getElementById(`dir-${Object.keys(fields)[0]}`)?.focus();
+            // DEV-025 / 65.03 paragraph 167: focus the error summary; each entry links to its field.
+            setSubmitAttempt(n => n + 1);
             return;
         }
         const body = vesselCreate ? { code: code.trim(), name: name.trim(), kind: kind as 'Ship' | 'Tug', companyId } :
@@ -112,6 +115,8 @@ export function DirectoryEditor({ target, language, csrf, onDirty, onSaving, onC
             const failure = error instanceof api.ApiError ? error : new api.ApiError(0);
             setFailure(failure);
             setErrors(failure.errors);
+            if (Object.values(failure.errors ?? {}).some(list => list?.length))
+                setSubmitAttempt(n => n + 1);
             // A failed response or transport can follow a committed transaction. Retry keeps key and payload.
             setUncertain(failure.status === 0 || failure.status >= 500);
             navigationFrozen = failure.status === 0 || failure.status >= 500;
@@ -126,10 +131,14 @@ export function DirectoryEditor({ target, language, csrf, onDirty, onSaving, onC
     const errorText = failure?.code === 'version_conflict' ? t.conflict : failure?.code === 'duplicate_code' ? t.duplicate :
         failure?.status === 401 || failure?.status === 403 ? t.forbidden : uncertain ? t.uncertain : t.failed;
     const fieldError = (field: string) => errors[field]?.length ? <span id={`dir-${field}-error`} className="field-error">{errors[field][0] === 'required' ? t.required : t.invalid}</span> : null;
+    const fieldLabels: Record<string, string> = { code: t.code, name: t.name, kind: t.kind, companyId: t.company };
+    const summary = Object.entries(errors).filter(([field, list]) => list?.length && fieldLabels[field])
+        .map(([field, list]) => ({ fieldId: `dir-${field}`, label: fieldLabels[field], message: list[0] === 'required' ? t.required : t.invalid }));
     return <section className="directory-editor" aria-labelledby="editor-heading">
     <h2 id="editor-heading" ref={heading} tabIndex={-1}>{initial ? t.edit : t.create}</h2>
     <p>{t.requiredNote}</p>
     <form noValidate aria-label={localizedText(language, "pairs.m_097dbb5a6d51f871")} onSubmit={e => void submit(e)} aria-busy={saving}>
+      <FormErrorSummary title={t.errorSummary} errors={summary} attempt={submitAttempt}/>
       <EnterpriseFormGrid disabled={saving || uncertain}>
         <EnterpriseField label={`${t.code} *`} htmlFor="dir-code"><input id="dir-code" value={code} maxLength={64} required aria-invalid={!!errors.code?.length} aria-describedby={errors.code?.length ? 'dir-code-error' : undefined} onChange={e => change('code', e.target.value)}/>{fieldError('code')}</EnterpriseField>
         <EnterpriseField label={`${t.name} *`} htmlFor="dir-name"><input id="dir-name" value={name} maxLength={200} required aria-invalid={!!errors.name?.length} aria-describedby={errors.name?.length ? 'dir-name-error' : undefined} onChange={e => change('name', e.target.value)}/>{fieldError('name')}</EnterpriseField>

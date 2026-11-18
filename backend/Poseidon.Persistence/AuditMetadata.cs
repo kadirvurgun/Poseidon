@@ -151,6 +151,17 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             return new(notificationReceipt.VesselId, notificationReceipt.ResourceId, "NotificationReceipt", null, null,
                 Fields(Field("Binding", null, "CommittedResource")));
         if (HrProjection(entry) is { } hr) return hr;
+        // Never copy the declared reference text, value or observation time into audit.
+        if (entry.Entity is VesselProfileFieldSource fieldSource)
+            return new(fieldSource.VesselId, fieldSource.VesselId, "VesselProfileFieldSource", null, fieldSource.Sequence,
+                Fields(Field("FieldPath", null, Closed(fieldSource.FieldPath, [.. VesselProfileFieldPolicy.Paths])),
+                    Field("SourceKind", null, Closed(fieldSource.SourceKind, [.. VesselProfileFieldPolicy.SourceKinds])),
+                    Field("ValueRevision", null, Number(fieldSource.ValueRevision)), Field("Sequence", null, Number(fieldSource.Sequence)),
+                    Field("Provenance", null, Closed(fieldSource.Provenance, "DeclaredUnverified", "SyntheticUnverified")),
+                    Field("Binding", null, "OwnerReference")));
+        if (entry.Entity is VesselProfileFieldSourceReceipt fieldReceipt)
+            return new(fieldReceipt.VesselId, fieldReceipt.VesselId, "VesselProfileFieldSourceReceipt", null, fieldReceipt.Sequence,
+                Fields(Field("Binding", null, "CommittedResource")));
         if (entry.Entity is FleetCatalogDraft fleetCatalogHead)
             return new(null, fleetCatalogHead.Id, "FleetCatalogDraft", entry.State == EntityState.Added ? null : (long?)entry.Property(nameof(fleetCatalogHead.Revision)).OriginalValue,
                 fleetCatalogHead.Revision, Fields(Field("DraftState", null, "DRAFT")));

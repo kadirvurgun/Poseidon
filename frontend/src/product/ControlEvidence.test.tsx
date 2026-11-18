@@ -6,6 +6,7 @@ import { blank } from './control-evidence-api'
 import { reviewAnchor, reviewRow, reviewSession, reviewTrace } from './human-review.test-fixtures'
 import { qualifiedFixture } from './qualification.test-fixtures'
 import * as service from './control-evidence-api'
+import { loadedVesselContext } from './control-evidence-recovery.test-fixtures'
 
 const vessel = '10000000-0000-4000-8000-000000000001', id = '10000000-0000-4000-8000-000000000002'
 const row = () => ({ id, vesselId: vessel, kind: 'Control', revision: 1, version: 5, content: blank(), hash: 'A'.repeat(64), lifecycle: 'DRAFT', completion: 'UNKNOWN', verification: 'UNVERIFIED', effectiveness: 'UNKNOWN', timeState: 'UNKNOWN', evidenceExists: false, file: null, requirements: [], links: [], blockers: ['SOURCE_ADMISSION_UNAVAILABLE', 'VERIFICATION_NOT_PERFORMED', 'TITLE_MISSING', 'OWNER_MISSING', 'REQUIREMENT_LINK_MISSING', 'FREQUENCY_UNSPECIFIED', 'EVIDENCE_POLICY_MISSING', 'VERIFICATION_POLICY_MISSING', 'CRITICALITY_UNKNOWN'], savedAt: '2026-11-02T00:00:00Z', asOf: '2026-11-02T00:00:00Z' })
@@ -31,7 +32,7 @@ describe('CE TR/EN accessible draft behavior authored / NOT RUN', () => {
   it('retains same frozen command through ambiguous response and TR language change', async () => {
     let count = 0; const fetch = transport(async init => ++count === 1 ? Promise.reject(new TypeError('network')) : response(saved(init)))
     const p = props(); const { rerender } = render(<ControlEvidence {...p} />); const user = userEvent.setup()
-    await user.selectOptions(await screen.findByLabelText('Vessel context'), vessel)
+    await user.selectOptions(await loadedVesselContext(vessel), vessel)
     await screen.findByText('Draft authoring available'); await user.type(screen.getByLabelText('Title'), 'retained declaration')
     await user.click(screen.getByRole('button', { name: 'Save incomplete draft' })); await screen.findByRole('button', { name: 'Retry same command' })
     expect(screen.queryByLabelText('Title')).toBeNull(); rerender(<ControlEvidence {...p} language="tr" />)
@@ -44,14 +45,14 @@ describe('CE TR/EN accessible draft behavior authored / NOT RUN', () => {
     expect((calls[0][1]?.headers as Record<string, string>)['Idempotency-Key']).toBe((calls[1][1]?.headers as Record<string, string>)['Idempotency-Key'])
   })
   it('keeps UNKNOWN and incomplete owner/frequency instead of inventing a catalog or allclear', async () => {
-    const fetch = transport(); render(<ControlEvidence {...props()} />); const user = userEvent.setup(); await user.selectOptions(await screen.findByLabelText('Vessel context'), vessel)
+    const fetch = transport(); render(<ControlEvidence {...props()} />); const user = userEvent.setup(); await user.selectOptions(await loadedVesselContext(vessel), vessel)
     await screen.findByText('Draft authoring available'); expect(screen.getByLabelText('Criticality')).toHaveValue('UNKNOWN')
     await user.click(screen.getByRole('button', { name: 'Save incomplete draft' })); await screen.findByText('Draft saved; verification and effectiveness remain unmet.')
     const call = fetch.mock.calls.find(([, init]) => init?.method)!; expect(JSON.parse(call[1]!.body as string).content).toMatchObject({ critical: null, ownerId: null, frequency: null })
     expect(await screen.findByText(/Authoritative applicability report unavailable/)).toBeVisible()
   })
   it('retains a dirty draft across offline transition and asks before register change', async () => {
-    transport(); const p = props(); const { rerender } = render(<ControlEvidence {...p} />); const user = userEvent.setup(); await user.selectOptions(await screen.findByLabelText('Vessel context'), vessel)
+    transport(); const p = props(); const { rerender } = render(<ControlEvidence {...p} />); const user = userEvent.setup(); await user.selectOptions(await loadedVesselContext(vessel), vessel)
     await screen.findByText('Draft authoring available'); await user.type(screen.getByLabelText('Title'), 'keep me')
     rerender(<ControlEvidence {...p} offline />); expect(screen.getByRole('button', { name: 'Save incomplete draft' })).toBeDisabled(); expect(screen.queryByLabelText('Title')).toBeNull()
     rerender(<ControlEvidence {...p} />); expect(await screen.findByLabelText('Title')).toHaveValue('keep me')
@@ -59,12 +60,12 @@ describe('CE TR/EN accessible draft behavior authored / NOT RUN', () => {
     expect(screen.getByLabelText('Register')).toHaveValue('Control'); expect(screen.getByLabelText('Title')).toHaveValue('keep me')
   })
   it('shows permission failure without querying scoped files owners or reports', async () => {
-    const fetch = transport(undefined, true); render(<ControlEvidence {...props()} />); const user = userEvent.setup(); await user.selectOptions(await screen.findByLabelText('Vessel context'), vessel)
+    const fetch = transport(undefined, true); render(<ControlEvidence {...props()} />); const user = userEvent.setup(); await user.selectOptions(await loadedVesselContext(vessel), vessel)
     await screen.findByText('Current context or permission unavailable.'); await waitFor(() => expect(screen.getByRole('button', { name: 'Save incomplete draft' })).toBeDisabled())
     expect(fetch.mock.calls.some(([url]) => url.includes('/owners') || url.includes('/files') || url.includes('/orphans'))).toBe(false)
   })
   it('keeps local values after conflict and offers explicit discard', async () => {
-    transport(async () => response({ code: 'version_conflict' }, 409)); render(<ControlEvidence {...props()} />); const user = userEvent.setup(); await user.selectOptions(await screen.findByLabelText('Vessel context'), vessel)
+    transport(async () => response({ code: 'version_conflict' }, 409)); render(<ControlEvidence {...props()} />); const user = userEvent.setup(); await user.selectOptions(await loadedVesselContext(vessel), vessel)
     await screen.findByText('Draft authoring available'); await user.type(screen.getByLabelText('Title'), 'conflicted draft'); await user.click(screen.getByRole('button', { name: 'Save incomplete draft' }))
     await screen.findByText('Version conflict. Draft retained; inspect history before discarding.'); expect(screen.queryByLabelText('Title')).toBeNull()
     await user.click(screen.getByRole('button', { name: 'Retry source read' }))
@@ -96,7 +97,7 @@ describe('CE TR/EN accessible draft behavior authored / NOT RUN', () => {
       return response({ items: url.includes('/evidence') ? [evidence] : [], offset: 0, hasMore: false, canWrite: true })
     }); vi.stubGlobal('fetch', fetch)
     const p = props(); render(<ControlEvidence {...p} owner={`${reviewSession().tenantId}/${reviewSession().actorId}`} />); const user = userEvent.setup()
-    await user.selectOptions(await screen.findByLabelText('Vessel context'), vessel)
+    await user.selectOptions(await loadedVesselContext(vessel), vessel)
     await user.selectOptions(screen.getByLabelText('Register'), 'Evidence')
     await user.click(await screen.findByRole('button', { name: /FICTIONAL human recovery evidence · 1/ }))
     if (lateAcknowledgment) {

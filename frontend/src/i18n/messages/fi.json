@@ -122,7 +122,8 @@
       "leMissing": "Puuttuvat arvot ennen aktivointia",
       "leNote": "Vain luku. Arvot muuttuvat vain auditoiduilla HR-komennoilla.",
       "leShow": "Näytä oikeushenkilön tietue",
-      "leIdentifiers": "Rekisteritunnisteet (peitetty)"
+      "leIdentifiers": "Rekisteritunnisteet (peitetty)",
+      "errorSummary": "Tarkista nämä kentät ennen tallentamista:"
     },
     "ProductApp_tsx_copy": {
       "audit": "Toimintahistoria",
@@ -300,7 +301,23 @@
       "OperationalSourcesUnavailable": "Operatiiviset lähteet eivät ole käytettävissä",
       "rule": "Sääntö",
       "context": "Nykyinen alus",
-      "switch": "Vaihda alusta"
+      "switch": "Vaihda alusta",
+      "ViewMaintenancePlan": "Näytä huoltosuunnitelma",
+      "ViewTugJob": "Näytä hinaajatyö",
+      "sourceOwner": "Lähteen omistaja",
+      "sourceSaved": "Lähde tallennettu",
+      "noRevision": "Ei tallennettua versiota",
+      "REGULATORY": "Sääntely",
+      "PMS": "Suunniteltu huolto",
+      "TUG": "Hinaajatoiminta",
+      "viewReady": "Kohteet palautettiin kaikista luetelluista lähteistä. Tämä ei ole valmius tai varmennus.",
+      "viewEmpty": "Kaikki luetellut lähteet luettiin eikä kohteita palautunut. Tämä ei ole turvallisuushyväksyntä.",
+      "viewPartial": "Osittainen näkymä: osa omistavista lähteistä ei ole käytettävissä tässä yhteydessä. Puuttuvat kohteet eivät tarkoita, että kaikki on kunnossa.",
+      "viewUnavailable": "Yhtään omistavaa lähdettä ei voitu lukea tässä yhteydessä. Tämä ei tarkoita, että kaikki on kunnossa.",
+      "partialCounters": "Osittaiset lähteet: nolla ei tarkoita, että kaikki on kunnossa",
+      "emptyCounters": "Valtuutettu tyhjä tulos: mikään luetelluista lähteistä ei palauttanut kohteita. Tämä ei ole turvallisuushyväksyntä",
+      "rateLimited": "Liian monta pyyntöä. Odota ja yritä uudelleen.",
+      "contract": "Palvelimen vastaus ei läpäissyt tarkistusta; siitä ei näytetä mitään."
     },
     "TugCrewCoverage_tsx_copy": {
       "title": "Lähteen perusteella kelpuutetut vähimmäismiehitysroolit",
@@ -3222,6 +3239,10 @@
     "m_2492dcd13a8d5ab3": "Tallennus on yhä käynnissä. Odota tulosta ennen aluksen vaihtamista; nykyinen kontekstisi ei muuttunut.",
     "m_221de6ea6fc51bb7": "Istuntosi on päättynyt tai muuttunut. Kirjaudu uudelleen nähdäksesi työkontekstisi.",
     "m_9b1a1deb14aac372": "Valittu alus ei kuulu nykyiseen valtuutettuun laajuuteesi. Muuta alusta ei valittu automaattisesti.",
-    "m_5db2b92c3bcc6931": "Valitse toinen alus"
+    "m_5db2b92c3bcc6931": "Valitse toinen alus",
+    "m_7c2c3c0f372d028d": "Suodata valikkoa",
+    "m_4895cdb4b14ff26c": "Haku kattaa vain näkymät, joiden avaamiseen sinulla on oikeus.",
+    "m_9e601b252c4fb4b3": "Mikään sallittu valikkokohde ei vastaa tätä suodatinta.",
+    "m_5af49f5d0c78416e": "Tyhjennä valikkosuodatin"
   }
 }

@@ -63,6 +63,8 @@ public sealed class PoseidonDbContext(
     public DbSet<OfflineOutcome> OfflineOutcomes => Set<OfflineOutcome>();
     public DbSet<RegulatoryDraft> RegulatoryDrafts => Set<RegulatoryDraft>();
     public DbSet<RegulatoryDraftRevision> RegulatoryDraftRevisions => Set<RegulatoryDraftRevision>();
+    public DbSet<VesselProfileFieldSource> VesselProfileFieldSources => Set<VesselProfileFieldSource>();
+    public DbSet<VesselProfileFieldSourceReceipt> VesselProfileFieldSourceReceipts => Set<VesselProfileFieldSourceReceipt>();
     public DbSet<RegisterDraft> RegisterDrafts => Set<RegisterDraft>();
     public DbSet<RegisterRevision> RegisterRevisions => Set<RegisterRevision>();
     public DbSet<RuleDraft> RuleDrafts => Set<RuleDraft>();
@@ -286,6 +288,9 @@ public sealed class PoseidonDbContext(
         RegulatoryDraftStorage.Configure(model);
         model.Entity<RegulatoryDraft>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<RegulatoryDraftRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        VesselProfileFieldStorage.Configure(model);
+        model.Entity<VesselProfileFieldSource>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<VesselProfileFieldSourceReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<CommandReceipt>(b =>
         {
             b.HasKey(x => new { x.TenantId, x.ActorId, x.Key });
@@ -655,6 +660,8 @@ public sealed class PoseidonDbContext(
             throw new InvalidOperationException("Command receipts are immutable.");
         if (changes.Any(e => e.Entity is RegulatoryDraftRevision && e.State != EntityState.Added))
             throw new InvalidOperationException("Draft revisions are immutable.");
+        if (changes.Any(e => e.Entity is VesselProfileFieldSource or VesselProfileFieldSourceReceipt && e.State != EntityState.Added))
+            throw new InvalidOperationException("Profile field provenance and outcomes are immutable.");
         if (changes.Any(e => e.Entity is RegisterRevision && e.State != EntityState.Added))
             throw new InvalidOperationException("Register revisions are immutable.");
         if (changes.Any(e => e.Entity is RegisterDraft && (e.State == EntityState.Deleted ||
@@ -701,6 +708,7 @@ public sealed class PoseidonDbContext(
                     entry.Entity is HumanReviewReceipt humanReceipt ? humanReceipt.ResourceId.ToString() :
                     entry.Entity is RegulatoryQualificationReceipt regulatoryReceipt ? regulatoryReceipt.RuleId.ToString() :
                     entry.Entity is ControlEvidenceReceipt controlReceipt ? controlReceipt.ResourceId.ToString() :
+                    entry.Entity is VesselProfileFieldSourceReceipt fieldReceipt ? fieldReceipt.VesselId + "/" + fieldReceipt.FieldPath + "/" + fieldReceipt.Sequence :
                     string.Join('/', key.Select(p => entry.Property(p.Name).CurrentValue)),
                 CorrelationId = actor.CorrelationId, OccurredAt = DateTimeOffset.UtcNow,
                 VesselId = metadata.VesselId, ResourceId = metadata.ResourceId,
