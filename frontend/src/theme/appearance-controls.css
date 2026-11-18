@@ -7,3 +7,44 @@
 .appearance-controls .appearance-panel > label { color: var(--popover-foreground); font-weight: 600; }
 .appearance-controls .appearance-panel > select { width: 100%; min-height: 44px; font: inherit; border: 1px solid var(--input); border-radius: calc(var(--radius) - 2px); padding: 8px; background: var(--card); color: var(--foreground); }
 @media (max-width: 580px) { .appearance-controls > summary > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); } }
+.appearance-controls .appearance-panel > .appearance-customize { min-height: 44px; font: inherit; font-weight: 600; border: 1px solid var(--border); border-radius: calc(var(--radius) - 2px); background: var(--secondary); color: var(--secondary-foreground); cursor: pointer; }
+.appearance-panel .appearance-customize:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
+/* THEME-BUILDER-01 side sheet; app chrome stays visible behind a light scrim for live preview. */
+.theme-builder-backdrop { position: fixed; inset: 0; z-index: 1000; background: #0000002e; display: flex; justify-content: flex-end; }
+.theme-builder { box-sizing: border-box; width: min(440px, 100vw); height: 100%; overflow-y: auto; display: grid; align-content: start; gap: 10px; padding: 18px 18px 24px; background: var(--popover); color: var(--popover-foreground); border-inline-start: 1px solid var(--border); box-shadow: -12px 0 40px #0004; font-size: 13px; }
+.theme-builder-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.theme-builder h2 { margin: 0; font-size: 18px; }
+.theme-builder h3 { margin: 0 0 6px; font-size: 13px; }
+.theme-builder h2:focus-visible, .theme-builder :is(button, select, textarea, input):focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.theme-builder button, .theme-builder select, .theme-builder textarea { font: inherit; min-height: 44px; border: 1px solid var(--input); border-radius: calc(var(--radius) - 2px); background: var(--card); color: var(--card-foreground); padding: 8px 10px; }
+.theme-builder button { cursor: pointer; font-weight: 600; }
+.theme-builder button:disabled { cursor: not-allowed; opacity: .55; }
+.theme-builder textarea { min-height: 72px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12px; resize: vertical; }
+.theme-builder .theme-builder-close { min-width: 44px; font-size: 20px; line-height: 1; }
+.theme-builder-field { font-weight: 600; }
+.theme-builder-hint { margin: 0; color: var(--muted-foreground); }
+.theme-builder-group { margin: 0; padding: 0; border: 0; display: grid; gap: 6px; }
+.theme-builder-group > legend { padding: 0 0 6px; font-weight: 600; }
+.theme-builder-options { display: flex; flex-wrap: wrap; gap: 6px; }
+.theme-builder-option { position: relative; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 6px 10px; border: 1px solid var(--border); border-radius: calc(var(--radius) - 2px); background: var(--card); cursor: pointer; }
+.theme-builder-option > input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.theme-builder-option:has(input:checked) { border-color: var(--primary); box-shadow: inset 0 0 0 1px var(--primary); font-weight: 600; }
+.theme-builder-option:has(input:focus-visible) { outline: 2px solid var(--ring); outline-offset: 2px; }
+.theme-builder-swatch { width: 14px; height: 14px; border-radius: 50%; border: 1px solid #0003; }
+.theme-builder-preview, .theme-builder-contrast { display: grid; gap: 8px; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--background); color: var(--foreground); }
+.theme-builder-preview-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.theme-builder .theme-builder-sample-primary { background: var(--primary); color: var(--primary-foreground); border-color: transparent; border-radius: var(--radius); }
+.theme-builder .theme-builder-sample-secondary { background: var(--secondary); color: var(--secondary-foreground); border-radius: var(--radius); }
+.theme-builder-sample-card { display: grid; gap: 2px; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--card); color: var(--card-foreground); }
+.theme-builder-sample-card > span { color: var(--muted-foreground); }
+.theme-builder-status { padding: 3px 8px; border: 1px solid; border-radius: calc(var(--radius) - 4px); font-weight: 600; }
+.theme-builder-status.is-warning { color: var(--warning); background: var(--warning-surface); border-color: var(--warning-border); }
+.theme-builder-status.is-danger { color: var(--danger-text); background: var(--danger-surface); border-color: var(--danger-border); }
+.theme-builder-status.is-info { color: var(--info-text); background: var(--info-surface); border-color: var(--info-border); }
+.theme-builder-chart { display: flex; align-items: flex-end; gap: 6px; height: 56px; }
+.theme-builder-chart > span { flex: 1; border-radius: calc(var(--radius) - 4px) calc(var(--radius) - 4px) 0 0; }
+.theme-builder-blocked { margin: 0; color: var(--danger-text); font-weight: 600; }
+.theme-builder-footer { position: sticky; bottom: -24px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; padding: 10px 0; background: var(--popover); }
+.theme-builder .theme-builder-apply { background: var(--primary); color: var(--primary-foreground); border-color: transparent; }
+@media (prefers-reduced-motion: no-preference) { .theme-builder { animation: theme-builder-in .16s ease-out; } }
+@keyframes theme-builder-in { from { transform: translateX(16px); opacity: .6; } to { transform: none; opacity: 1; } }

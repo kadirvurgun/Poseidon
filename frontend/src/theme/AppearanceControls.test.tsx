@@ -21,7 +21,7 @@ beforeEach(() => {
   })))
   dispose = initializeAppearance()
 })
-afterEach(() => { dispose(); vi.restoreAllMocks(); localStorage.clear(); document.documentElement.className = ''; delete document.documentElement.dataset.palette; delete document.documentElement.dataset.appearanceMode; document.documentElement.style.colorScheme = '' })
+afterEach(() => { dispose(); vi.restoreAllMocks(); localStorage.clear(); document.documentElement.className = ''; delete document.documentElement.dataset.palette; delete document.documentElement.dataset.appearanceMode; for (const key of ['base', 'accent', 'chart', 'radius']) delete document.documentElement.dataset[key]; document.documentElement.style.colorScheme = '' })
 
 describe('THEME-FOUNDATION-01 appearance behavior; browser/contrast acceptance deferred', () => {
   it('changes mode and palette without losing a form or changing a safety state', async () => {
@@ -32,7 +32,7 @@ describe('THEME-FOUNDATION-01 appearance behavior; browser/contrast acceptance d
     await user.selectOptions(screen.getByLabelText('Renk teması'), 'ocean')
     expect(document.documentElement).toHaveClass('dark')
     expect(document.documentElement.dataset.palette).toBe('ocean')
-    expect(JSON.parse(localStorage.getItem(appearanceKey)!)).toEqual({ mode: 'dark', palette: 'ocean' })
+    expect(JSON.parse(localStorage.getItem(appearanceKey)!)).toEqual({ v: 2, mode: 'dark', palette: 'ocean', custom: { base: 'stone', accent: 'emerald', chart: 'cyan', radius: '0.625' } })
     expect(screen.getByLabelText('Taslak')).toHaveValue('Kaydedilmemiş')
     expect(screen.getByRole('status')).toHaveTextContent('REVIEW_REQUIRED')
     act(() => { dispose(); dispose = initializeAppearance() })
