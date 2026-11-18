@@ -31,6 +31,9 @@ Main: #16 #17 #18 #20 #23 birleşik (son: `4d63012`).
 4. İkinci paket: #28 #30 #33 #34 (+#32), sonra #25.
 5. Sonra S3 backlog (DEV-026…) + 15.11 dalga 1 kalanları (63.06, 65.03), dalga 2 (59.01, 60.03).
 
+## PR KURALI (kullanıcı, 19.11.2026)
+İş başına ayrı PR AÇMA. Paketler özellik dallarında geliştirilir (push edilebilir, CI koşar) ama PR yalnız **entegrasyon dalı** için açılır: `integration/<konu>-<tarih>` dalında birden çok paket birleştirilir, tek büyük PR → tek CI → main. Mevcut tekil PR'lar (#25 #28 #29 #30 #32 #33 #34) ikinci entegrasyon PR'ında toplanacak; o birleşince otomatik Merged olurlar (ayrıca yeni tekil PR açma). Bağımsız QA paket başına yine yapılır (alt-ajan), PR başına değil.
+
 ## Kararlar
 - Kullanıcı soru istemiyor; kararlar analiz/araştırma ile verilir, buraya ve görev dokümanlarına yazılır.
 - Her PR: CI yeşil + bağımsız QA (yazar ≠ inceleyici alt-ajan). Main korumalı: güncel dal şart → çok PR'ı entegrasyon paketiyle birleştir.
