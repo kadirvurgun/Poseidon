@@ -18,6 +18,8 @@ Yeni plan; exact API profilleri ve kalıcı retry, IAM Rev4 action/epoch, tek Le
 
 **18.11.2026 — katalog persistence:** Boş/kısmi Fleet katalog taslağı, immutable revizyon/komut sonucu, tenant/prior FK, serializable audit ve replay katmanı yazıldı. Opsiyonel fixture boş ve doğrulanmamış kalır; normal seed/startup değişmedi. 6 domain metodu /9 senaryo ve10 PostgreSQL integration metodu yazıldı; çalıştırılmadı. Migration designer/snapshot uzlaştırması, gerçek PostgreSQL doğrulaması ve yetkili host/source governance açık. Yeni kabul puanı yok. [Görev](tasks/s2-fleet-catalog-draft-01.md) · [Rapor](phases/S2-FLEET-CATALOG-DRAFT-01.md).
 
+**18.11.2026 — PLAN-1511-5601 kapsam uzlaştırması:** 42 belge (exact yol+SHA256) ve 42 G/X/S kalemi sahip paket, önkoşul/bağımlı paket ve kanonik DEV/T-S eşlemesiyle kaydedildi. 7 kalemin kanonik işi yok (G11, G16, G23, S04–S06, S09). 17 çakışma/supersede ve 8 boşluk karar önerisi olarak yazıldı. Mainde 23 paket kısmi, 19 paket karşılıksız (grep, doğrulanmadı). Önerilen sıra: 5202 → 5802 → 6503+DEV-025 → 5401/5201. Yalnız doküman; yeni iş/SP/kabul yok, kontroller DEFERRED. [Görev](tasks/plan-1511-5601-01.md) · [Rapor](phases/PLAN-1511-5601-01.md).
+
 [Analiz raporu](phases/ANALYSIS-20261115-01.md) · [42 paketlik plan](tasks/analysis-20261115-01.md) · [Kaynak manifesti](sources/2026-11-15/planning-manifest.json) · [Canonical kayıt](project-status.json)
 
 ---

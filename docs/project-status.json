@@ -4002,7 +4002,8 @@
     "docs/phases/S1-FOUNDATION-20261103.md",
     "docs/phases/TECHNICAL-COMMAND-OWNER-RECOVERY-20261111.md",
     "docs/phases/MAINTENANCE-OBSERVATION-RECOVERY-20261112.md",
-    "docs/phases/OBSERVATION-SIGNED-FIXTURE-20261112.md"
+    "docs/phases/OBSERVATION-SIGNED-FIXTURE-20261112.md",
+    "docs/phases/PLAN-1511-5601-01.md"
   ],
   "active_source": "docs/sources/active.json",
   "current_package": {
@@ -15325,5 +15326,43 @@
       "source_receipts": 122,
       "limitations": "732 zero-node/unsupported inputs; HTML skipped above5000 nodes; no full semantic document review"
     }
+  },
+  "plan_1511_5601_01": {
+    "id": "PLAN-1511-5601-01",
+    "date": "2026-11-18",
+    "package": "PLAN-1511-5601",
+    "status": "AUTHORED_PLANNING_RECONCILIATION_UNVERIFIED_NOT_ACCEPTED",
+    "branch": "docs/plan-5601-scope-reconciliation-20261118",
+    "task": "docs/tasks/plan-1511-5601-01.md",
+    "data": "docs/tasks/plan-1511-5601-01.ownership.json",
+    "report": "docs/phases/PLAN-1511-5601-01.md",
+    "documents_mapped": 42,
+    "scope_items_mapped": 42,
+    "scope_items_no_canonical_task": [
+      "G11",
+      "G16",
+      "G23",
+      "S04",
+      "S05",
+      "S06",
+      "S09"
+    ],
+    "conflicts": 17,
+    "gaps": 8,
+    "implementation_on_main": {
+      "PARTIAL": 23,
+      "NONE": 19,
+      "EXISTS_UNVERIFIED": 0
+    },
+    "recommended_next": [
+      "PLAN-1511-5202",
+      "PLAN-1511-5802",
+      "PLAN-1511-6503 + DEV-025",
+      "PLAN-1511-5401",
+      "PLAN-1511-5201"
+    ],
+    "accepted_sp_added": 0,
+    "new_canonical_tasks_added": 0,
+    "verification": "DEFERRED_NOT_RUN (docs/data only)"
   }
 }
