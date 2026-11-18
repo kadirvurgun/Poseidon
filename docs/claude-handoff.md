@@ -1,41 +1,38 @@
 # Claude handoff
 
 STATUS: IN_PROGRESS
-in_progress: interaktif oturum aktif — 2026-11-19 02:00'a kadar zamanlanmış oturum yalnız okuma/rapor yapsın, kod değiştirmesin.
-Güncelleme: 2026-11-18 akşam (Claude Opus 5.5)
+Güncelleme: 2026-11-19 ~00:30 (interaktif oturum 5 saatlik kotanın %90'ında durdu; kilit kaldırıldı)
 
-## Main durumu
-- PR #16 (Codex S6 foundation) birleşti: `e2e1200`.
-- PR #17 (continuation + 17 dil i18n + 15.11 analizleri + tema temeli + entegrasyon düzeltmeleri) birleşti: `b61dbef`. Push ve PR CI koşularında 4/4 iş yeşil (API/PG dahil).
-- Secret scan: 10 bulgu bağımsız incelendi, `docs/security/files-source-exceptions.json` 178 kayıt, repo değişkeni `POSEIDON_SOURCE_REVIEW_SHA256` 178 pin.
+## KOTA KURALI (zorunlu)
+Her büyük adımdan önce `C:\Users\avurgun\.claude-poseidon\statusline\cache\usage.json` oku (`fiveHourPct`, `resetsAt`). `fiveHourPct >= 97` ise yeni iş başlatma, durumu bu dosyaya yaz, commit et ve çık. `>= 90` ise yeni alt-ajan başlatma, yalnız mevcut işi bitir. Alt-ajanları aynı anda en fazla 3 tut.
 
-## Açık işler ve sahipleri (18.11 gece)
-Main: PR #16, #17, #18 (tema oluşturucu) birleşti (`d7479d6`).
+## Disk / Docker (önce kontrol et)
+- C: diski 18.11 gece 0 bayta düştü → Docker Desktop daemon kilitlendi (`docker info` timeout). Eski worktree bin/obj silinerek ~1,9 GB açıldı. Başlarken `(Get-PSDrive C).Free` < 5 GB ise önce yer aç (yalnız yeniden üretilebilir şeyler: eski `.runtime/worktrees/*` bin/obj, TestResults, indirilen CI artifact'ları). Docker hâlâ yanıt vermiyorsa yerel PG testlerini çalıştırma; CI kanıtı yeterli, kullanıcıdan Docker restart iste.
 
-| Paket | Dal / PR | Durum |
+## Main ve PR durumu
+Main: #16 #17 #18 #20 #23 birleşik (son: `4d63012`).
+
+| PR | İçerik | Durum / sıradaki adım |
 |---|---|---|
-| DEV-020 gemi profili provenance/freshness | `feature/s2-dev020-vessel-profile-20261118` / PR #19 | QA PASS-WITH-NOTES düzeltildi; CI browser smoke `profile-repair.spec.ts` eski mock → düzeltiliyor |
-| DEV-021 bağlam geçişi | `feature/s2-dev021-context-switch-20261118` / PR #20 | QA düzeltildi, CI bekleniyor |
-| DEV-022 role menü/arama | `feature/s2-dev022-role-menu-20261118` / PR #21 (taban #20) | QA PASS-WITH-NOTES; etiketle arama düzeltmesi yapılıyor |
-| DEV-023 Today/Why | `feature/s2-dev023-today-why-20261118` | geliştiriliyor |
-| DEV-024 kritik durum | `feature/s2-dev024-critical-state-20261118` (taban DEV-020) | geliştiriliyor |
-| DEV-025 erişilebilirlik | `feature/s2-dev025-accessibility-20261118` (taban DEV-022) | geliştiriliyor |
-| PLAN-1511-5601 kapsam haritası | PR #22 | CI bekleniyor; lider kararları LEAD-5601-D01..D05 |
-| PLAN-1511-5803 endpoint profilleri | `feature/plan-5803-endpoint-profiles-20261118` | geliştiriliyor |
-| PLAN-1511-5402 action scope | `feature/plan-5402-action-scope-20261118` | geliştiriliyor |
-| PLAN-1511-5202 üyelik | `feature/plan-5202-membership-20261118` | geliştiriliyor |
-| PLAN-1511-5802 belge/kanıt | `feature/plan-5802-document-evidence-20261118` | geliştiriliyor |
-| PLAN-1511-5501-SLICE metrik sözleşmesi | `feature/plan-5501-metric-contract-20261118` | geliştiriliyor |
+| **#36** | S2 entegrasyon paketi: #31 #24 #19 #21 #26 #27 #22 #35 (HEAD 42c9c25) | CI koşuyor. Push+PR koşusu yeşilse `gh pr merge 36 --merge --match-head-commit <sha>`; branch koruması "up to date" ister — main ilerlediyse main'i birleştir, push, CI bekle. Birleşince #19 #21 #22 #24 #26 #27 #31 #35 otomatik Merged olur. |
+| #29 | DEV-024 kritik durum (taban DEV-020 dalı) | QA FAIL düzeltildi (944759e). #36 birleşince tabanı main'e çevir (`gh pr edit 29 --base main`), main'i birleştir, push, **bağımsız yeniden QA**, CI. |
+| #32 | axe-core kapısı (taban DEV-025 dalı) | #36 sonrası tabanı main'e çevir, main'i birleştir, CI. |
+| #28 | 52.02 üyelik | QA PASS-WITH-NOTES; düzeltme ajanı yarıda durdu: worktree `.runtime/worktrees/plan-5202-20261118` (9f05cc9, origin'den 3 commit ileri, 1 dosya commit'lenmemiş). Değişikliği incele, tamamla (vekalet kapsamı+gerekçe, security-suspend resume yetkisi, last-admin eşzamanlılık testi, 503/cookie testleri), commit, push. |
+| #30 | 58.02 belge zinciri | QA düzeltmeleri commit'li ve push edildi (8cca242) — ajan durdurulmadan önce son commit docs idi; testleri (trait PLAN-1511-5802, ModelParity, MigrationIdOrdering) CI/yerelde doğrula; eksik kalan F1–F5 maddesi varsa tamamla. |
+| #33 | 52.01 tüzel kişi/İK | QA düzeltmeleri push edildi (94dd49b). Docker'lı testler yerelde koşmadı → CI'ya bak. |
+| #34 | 54.01 tipli politika | Açık; bağımsız QA yapılmadı → QA başlat. |
+| #25 | 58.03 uç profil sicili | En son birleşecek; diğer PR'ların yeni uçlarına profil ekle (scripts/endpoint_profiles.py). |
+| (dal) | `fix/same-key-replay-race-followup-20261118` worktree `.runtime/worktrees/replay-race-followup-20261118` | Ajan yarıda durdu: 15 dosya commit'lenmemiş (HumanReview/RegulatoryQualification/Notification aynı-anahtar replay yarışı). İncele, testleri çalıştır, commit, push, PR (taban: #31 birleştiyse main). |
 
-Birleştirme sırası: #22 → #19 → #20 → #21 (taban main'e çevir) → DEV-024/025 (tabanları birleşince main'e) → 5803/5402/5202/5802/5501 (her biri main ile birleştirilip CI + bağımsız QA).
 ## Sıradaki iş (sıra)
-1. Yukarıdaki PR'ların CI'sını izle; kırmızıysa AGENTS.md CI protokolü (teşhis → tek push → bekle; durma limiti).
-2. DEV-022 / T-S2-003 role-first menü + yetkili arama (gizli menü/sayı sızıntısı yok) — 54.02, 61.03, 65.03.
-3. DEV-023 / T-S2-004 Today priority/source/Why/owner/next action; DEV-024 / T-S2-005 kritik state source/reason/freshness/blocker.
-4. DEV-025 / T-S2-006 erişilebilirlik (DEV-022 sonrası paralel).
-5. S2 tamamlanınca: bağımsız QA (poseidon-qa skill) + `docs/project-status.*` canonical güncelleme; sonra 15.11 plan dalga 1 (52.02, 54.01, 54.02, 58.02, 63.06, 65.03).
+1. #36'yı birleştir (S2'nin 5/6 işi main'e girer).
+2. #29'u (DEV-024) tamamla → S2 6/6 main'de.
+3. **S2 sprint kapısı:** main üzerinde tam backend/persistence/API/frontend/Playwright + bağımsız S2 QA (poseidon-qa). Geçerse `docs/project-status.json` → S2 accepted 6 iş / 42 SP; toplam 145/970 = %14,9 (PR ile).
+4. İkinci paket: #28 #30 #33 #34 (+#32), sonra #25.
+5. Sonra S3 backlog (DEV-026…) + 15.11 dalga 1 kalanları (63.06, 65.03), dalga 2 (59.01, 60.03).
 
 ## Kararlar
-- Kullanıcı soru istemiyor; kararlar analiz/araştırmaya göre verilir ve buraya yazılır.
-- Main korumalı: her iş PR ile; required checks + bağımsız inceleme sonrası `gh pr merge --merge --match-head-commit <sha>`.
-- `gh` kurulu ve oturum açık: `C:\Users\avurgun\AppData\Local\Microsoft\WinGet\Links\gh.exe`.
+- Kullanıcı soru istemiyor; kararlar analiz/araştırma ile verilir, buraya ve görev dokümanlarına yazılır.
+- Her PR: CI yeşil + bağımsız QA (yazar ≠ inceleyici alt-ajan). Main korumalı: güncel dal şart → çok PR'ı entegrasyon paketiyle birleştir.
+- Ajanlara: yalnız mutlak yol, kendi başlatmadığı süreci öldürme, Playwright için benzersiz port.
+- Secret scan istisnaları: yazar + bağımsız inceleyici paketi; pin ekleme adımı kullanıcı onayı gerektirebilir.
