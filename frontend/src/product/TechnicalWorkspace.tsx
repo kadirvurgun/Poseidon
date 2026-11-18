@@ -19,6 +19,7 @@ import './technical-workspace.css';
 import { EnterpriseActions, EnterpriseFormGrid, EnterprisePageHeader } from './EnterprisePatterns';
 import { useWorkspaceRevalidation } from './use-workspace-revalidation';
 import { isGuid } from './identifiers';
+import { unsavedState, useUnsavedChangesSource } from './unsaved-changes';
 type Route = {
     vessel: string;
     plan: boolean;
@@ -147,6 +148,8 @@ export function TechnicalWorkspace() {
         guards.current = { dirty: dirty || observationDirty, busy: busy || observationBusy, uncertain: uncertain || observationUncertain,
             protected: !!draftContext && !canShowPrivate || !!observationContext && (observationDirty || observationUncertain || observationBusy) && !canShowPrivate };
     }, [scope, route, owner, online, visible, ready, dirty, observationDirty, busy, uncertain, observationUncertain, observationBusy, draftContext, canShowPrivate, observationContext]);
+    // An uncertain write outcome blocks a context switch exactly like an in-flight save.
+    useUnsavedChangesSource(() => unsavedState(guards.current.dirty, guards.current.busy || guards.current.uncertain));
     useEffect(() => { mounted.current = true; return () => { mounted.current = false; writer.current?.abort(); }; }, []);
     const resetScope1 = [scope, online, visible] as const;
     const [previousScope1, setPreviousScope1] = useState(resetScope1);

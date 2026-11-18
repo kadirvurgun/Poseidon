@@ -15,6 +15,7 @@ import { ShipOperationsFields } from './ShipOperationsFields';
 import { ShipOperationOriginView } from './ShipOperationOriginView';
 import { ShipOpsRecordHistory, ShipOpsRecordList, ShipOpsRecordSummary } from './ShipOperationsRecordView';
 import { useWorkspaceRevalidation } from './use-workspace-revalidation';
+import { unsavedState, useUnsavedChangesSource } from './unsaved-changes';
 type Editor = {
     owner: string;
     id: string;
@@ -41,6 +42,7 @@ const mutable = (record: ShipOpsRecord): ShipOpsFields => Object.fromEntries(mut
 export function ShipOperationsWorkspace() {
     const [language, setLanguage] = useAppLanguage(), [pending, setPending] = useState<(() => void) | null>(null), [instance, setInstance] = useState(0);
     const dirty = useRef(false), saving = useRef(false);
+    useUnsavedChangesSource(() => unsavedState(dirty.current, saving.current));
     const onDirty = useCallback((value: boolean) => { dirty.current = value; }, []), onSaving = useCallback((value: boolean) => { saving.current = value; }, []);
     const clear = () => { dirty.current = false; setInstance(n => n + 1); };
     const guard = (action: () => void) => { if (saving.current)

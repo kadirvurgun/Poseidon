@@ -3,6 +3,8 @@ import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-li
 import userEvent from '@testing-library/user-event';
 import { CrewWorkspace } from './CrewWorkspace';
 import { localeStorageKey } from '../i18n';
+import { WorkspaceVesselSwitcher } from './WorkspaceVesselSwitcher';
+import { currentUnsavedState } from './unsaved-changes';
 const vessel = '11111111-1111-1111-1111-111111111111';
 const id = '22222222-2222-2222-2222-222222222222';
 const row = { id, vesselId: vessel, personId: id, version: 7, revision: 1, positionId: null,
@@ -188,6 +190,33 @@ describe('CREW-ROSTER-01 authored component behavior; no backend execution claim
         expect(calls).toHaveLength(2);
         expect(calls[0][1].body).toEqual(calls[1][1].body);
         expect(calls[0][1].headers['Idempotency-Key']).toEqual(calls[1][1].headers['Idempotency-Key']);
+    });
+    it('DEV021-AC-07 blocks a shell vessel switch with the saving reason and no request while the outcome is uncertain', async () => {
+        mutation = async () => { throw new TypeError('synthetic network loss'); };
+        const other = '33333333-3333-3333-3333-333333333333';
+        const base = fetcher.getMockImplementation()!;
+        fetcher.mockImplementation(async (path: string, init?: RequestInit) => path.includes('/vessels?')
+            ? json({ items: [{ id: other, companyId: vessel, code: 'SYN-2', name: 'FICTIONAL vessel 2', kind: 'Ship', version: 1, canEdit: false }], offset: 0, limit: 25, hasMore: false })
+            : base(path, init));
+        render(<CrewWorkspace vessel={vessel}/>);
+        await english();
+        await userEvent.click(screen.getByRole('button', { name: 'Add person and assignment' }));
+        await userEvent.click(screen.getByRole('button', { name: 'Save draft' }));
+        await screen.findByText('Result uncertain. Retry the same attempt before editing.');
+        expect(currentUnsavedState()).toBe('saving');
+        const onNavigate = vi.fn(), onClose = vi.fn();
+        const switcher = render(<WorkspaceVesselSwitcher session={{ authenticated: true, canRead: true, actorId: id, tenantId: vessel, tenantName: 'FICTIONAL workspace', csrfToken: 'synthetic-csrf', setupRequired: false, canReadCompanies: false, canCreate: false, canSearch: false }} vessel={vessel} language="en" onClose={onClose} onNavigate={onNavigate}/>);
+        const writes = fetcher.mock.calls.filter(([, init]) => init?.method === 'POST').length;
+        const contextChecks = () => fetcher.mock.calls.filter(([path]) => String(path).includes(`workspace/context/${other}`)).length;
+        const before = contextChecks();
+        await userEvent.click(await within(switcher.container).findByRole('button', { name: 'SYN-2 · FICTIONAL vessel 2 · Ship' }));
+        expect(await within(switcher.container).findByRole('alert')).toHaveTextContent('A save is still in progress.');
+        expect(onNavigate).not.toHaveBeenCalled();
+        expect(onClose).not.toHaveBeenCalled();
+        expect(contextChecks()).toBe(before);
+        expect(before).toBe(0);
+        expect(fetcher.mock.calls.filter(([, init]) => init?.method === 'POST')).toHaveLength(writes);
+        expect(screen.getByRole('button', { name: 'Retry' })).toBeInTheDocument();
     });
     it('does not overwrite a conflict and requires explicit discard/reload', async () => {
         mutation = async () => json({ code: 'version_conflict' }, 409);

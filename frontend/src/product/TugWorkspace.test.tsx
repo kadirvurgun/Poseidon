@@ -1,8 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { TugWorkspace } from './TugWorkspace';
 import { emptyTugInputs, tugRequestSource } from './tug-api';
+import { WorkspaceVesselSwitcher } from './WorkspaceVesselSwitcher';
+import { currentUnsavedState } from './unsaved-changes';
 const vessel = '11111111-1111-1111-1111-111111111111', id = '22222222-2222-2222-2222-222222222222';
 const json = (value: unknown, status = 200) => new Response(JSON.stringify(value), { status, headers: { 'Content-Type': 'application/json' } });
 const context = { vessel: { id: vessel, code: 'FICTIONAL', name: 'Synthetic tug' }, mode: 'Tug', crossMode: false, roleReferences: null,
@@ -75,6 +77,33 @@ describe('T-TUG-001/002/003 UI behavior; mocked API, all execution DEFERRED', ()
         expect(attempts).toHaveLength(2);
         expect(attempts[0][1].body).toBe(attempts[1][1].body);
         expect(attempts[0][1].headers['Idempotency-Key']).toBe(attempts[1][1].headers['Idempotency-Key']);
+    });
+    it('DEV021-AC-07 blocks a shell vessel switch with the saving reason and no request while the outcome is uncertain', async () => {
+        mutate = async () => { throw new TypeError('synthetic transport loss'); };
+        const other = '55555555-5555-5555-5555-555555555555';
+        const base = fetcher.getMockImplementation()!;
+        fetcher.mockImplementation(async (url: string, init?: RequestInit) => url.includes('/vessels?')
+            ? json({ items: [{ id: other, companyId: tenantId, code: 'SYN-2', name: 'FICTIONAL vessel 2', kind: 'Tug', version: 1, canEdit: false }], offset: 0, limit: 25, hasMore: false })
+            : base(url, init));
+        render(<TugWorkspace />);
+        await english();
+        await userEvent.type(screen.getByLabelText('Assisted vessel', { exact: true }), 'FICTIONAL retained');
+        await userEvent.click(screen.getByRole('button', { name: 'Save draft' }));
+        await screen.findByText(/Save outcome uncertain/);
+        expect(currentUnsavedState()).toBe('saving');
+        const onNavigate = vi.fn(), onClose = vi.fn();
+        const switcher = render(<WorkspaceVesselSwitcher session={{ authenticated: true, canRead: true, actorId, tenantId, tenantName: 'FICTIONAL workspace', csrfToken: 'synthetic-only', setupRequired: false, canReadCompanies: false, canCreate: false, canSearch: false }} vessel={vessel} language="en" onClose={onClose} onNavigate={onNavigate}/>);
+        const writes = fetcher.mock.calls.filter(c => c[1]?.method === 'POST').length;
+        const contextChecks = () => fetcher.mock.calls.filter(c => String(c[0]).includes(`workspace/context/${other}`)).length;
+        const before = contextChecks();
+        await userEvent.click(await within(switcher.container).findByRole('button', { name: 'SYN-2 · FICTIONAL vessel 2 · Tug' }));
+        expect(await within(switcher.container).findByRole('alert')).toHaveTextContent('A save is still in progress.');
+        expect(onNavigate).not.toHaveBeenCalled();
+        expect(onClose).not.toHaveBeenCalled();
+        expect(contextChecks()).toBe(before);
+        expect(before).toBe(0);
+        expect(fetcher.mock.calls.filter(c => c[1]?.method === 'POST')).toHaveLength(writes);
+        expect(screen.getByLabelText('Assisted vessel', { exact: true })).toHaveValue('FICTIONAL retained');
     });
     it('protects dirty navigation and retains the draft when the user stays', async () => {
         render(<TugWorkspace />);
