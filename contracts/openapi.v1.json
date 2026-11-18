@@ -24791,6 +24791,9 @@
       "name": "DocumentEndpoints"
     },
     {
+      "name": "ControlledDocumentEndpoints"
+    },
+    {
       "name": "CrewCatalogEndpoints"
     },
     {

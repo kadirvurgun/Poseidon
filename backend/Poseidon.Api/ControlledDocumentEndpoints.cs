@@ -49,6 +49,7 @@ public sealed record ControlledDocumentListDto(ControlledDocumentSummaryDto[] It
 public static class ControlledDocumentEndpoints
 {
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { MaxDepth = 4 };
+    private static readonly JsonSerializerOptions Output = new(JsonSerializerDefaults.Web);
     private const string Prefix = "/api/v1/vessels/{vessel:guid}/controlled-documents";
 
     public static void MapControlledDocuments(this IEndpointRouteBuilder app)
@@ -259,7 +260,7 @@ public static class ControlledDocumentEndpoints
             var current = document == null ? null : await ControlledDocumentChain.LoadAsync(db, vessel, document.Value, expected, ct);
             var d = await apply(db, a, command, current, ct);
             await db.SaveChangesAsync(ct);
-            var outcome = JsonSerializer.Serialize(await Dto(db, a, d, ct), Json);
+            var outcome = JsonSerializer.Serialize(await Dto(db, a, d, ct), Output);
             db.ControlledDocumentReceipts.Add(new() { TenantId = a.TenantId, ActorId = a.Id, Key = key, VesselId = vessel, DocumentId = d.Id, Action = action,
                 Fingerprint = fingerprint, OutcomeJson = outcome, SavedAt = DateTimeOffset.UtcNow });
             await db.SaveChangesAsync(ct);
