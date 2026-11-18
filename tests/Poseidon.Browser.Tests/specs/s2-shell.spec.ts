@@ -96,14 +96,14 @@ test('S2 keyboard vessel switch rechecks current access and rejects a mismatched
     const target = context.getByRole('button', { name: 'SYN-B · FICTIONAL Beta · Ship', exact: true });
     control.denyTarget = true;
     await Promise.all([page.waitForResponse(r => r.url().endsWith('/workspace/context/' + vessels[1].id) && r.status() === 404), target.click()]);
-    await expect(context.getByText('Vessel access could not be confirmed. Choose another vessel or retry.', { exact: true })).toBeVisible();
+    await expect(context.getByRole('alert')).toContainText('Vessel access could not be confirmed. Choose another vessel or retry. It is not in your current authorized scope or access was withdrawn. Your current context is unchanged.');
     await expect(page).toHaveURL(new RegExp(`/app/today/${vessels[0].id}$`));
     expect(control.targetTodayReads).toBe(0);
     control.denyTarget = false;
     control.wrongTenant = true;
     await expect(target).toBeEnabled();
     await Promise.all([page.waitForResponse(r => r.url().endsWith('/workspace/context/' + vessels[1].id) && r.status() === 200), target.click()]);
-    await expect(context.getByText('Vessel access could not be confirmed. Choose another vessel or retry.', { exact: true })).toBeVisible();
+    await expect(context.getByRole('alert')).toContainText('The context service is unavailable or did not answer in time. Your current context is unchanged; retry.');
     await expect(page).toHaveURL(new RegExp(`/app/today/${vessels[0].id}$`));
     expect(control.targetTodayReads).toBe(0);
     control.wrongTenant = false;
@@ -127,12 +127,17 @@ test('S2 global context change preserves a dirty form until explicit discard', a
     await expect(dialog).toBeVisible();
     await dialog.getByRole('button', { name: 'Keep editing', exact: true }).click();
     await expect(page).toHaveURL(new RegExp(`/app/fleet/${vessels[0].id}$`));
+    // DEV021-AC-06 / UX-038: Stay sends no switch request for the target context.
+    expect(control.targetContextReads).toBe(0);
     await expect(page.getByLabel('Name *', { exact: true })).toHaveValue('Unsaved operator draft');
     context = page.getByRole('dialog', { name: 'Change vessel context', exact: true });
     await context.getByRole('button', { name: 'SYN-B · FICTIONAL Beta · Ship', exact: true }).click();
     await dialog.getByRole('button', { name: 'Discard draft', exact: true }).click();
     await expect(page).toHaveURL(new RegExp(`/app/fleet/${vessels[1].id}$`));
     await expect(page.getByRole('region', { name: 'Details', exact: true })).toContainText('FICTIONAL Beta');
+    // After the explicit discard the destination re-verifies the new context server-side.
+    await expect(page.getByRole('region', { name: 'Current workspace context' })).toContainText('FICTIONAL Beta');
+    expect(control.targetContextReads).toBeGreaterThanOrEqual(1);
     expect(control.writes).toBe(0);
 });
 

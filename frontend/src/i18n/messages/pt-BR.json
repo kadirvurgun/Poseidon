@@ -3290,6 +3290,14 @@
     "m_0d01ac4a95241b66": "Bloqueios de integração",
     "m_b9cce241afdb94a4": "Declaração obrigatória",
     "m_18895857bed22127": "Política ou evidência necessária",
-    "m_9233a4a00cb3f57a": "Evidência qualificada necessária"
+    "m_9233a4a00cb3f57a": "Evidência qualificada necessária",
+    "m_b8002f9e764b18ef": "Não está no seu escopo autorizado atual ou o acesso foi retirado. Seu contexto atual não foi alterado.",
+    "m_2b19d5fd50cd15bd": "Sua sessão terminou ou mudou. Entre novamente; seu contexto atual não foi alterado.",
+    "m_3a8d042ee60783dc": "O serviço de contexto está indisponível ou não respondeu a tempo. Seu contexto atual não foi alterado; tente novamente.",
+    "m_e7bc23cb053dacc1": "O formulário atual tem alterações não salvas. Antes de trocar, você escolherá Ficar ou Descartar; Ficar mantém seu rascunho e não envia solicitação de troca.",
+    "m_2492dcd13a8d5ab3": "Um salvamento ainda está em andamento. Aguarde o resultado antes de trocar de embarcação; seu contexto atual não foi alterado.",
+    "m_221de6ea6fc51bb7": "Sua sessão terminou ou mudou. Entre novamente para ver seu contexto de trabalho.",
+    "m_9b1a1deb14aac372": "A embarcação selecionada não está no seu escopo autorizado atual. Nenhuma outra embarcação foi selecionada automaticamente.",
+    "m_5db2b92c3bcc6931": "Escolher outra embarcação"
   }
 }
