@@ -9,6 +9,7 @@ import { roster, type CrewPage } from './crew-api';
 import { ImportMappingEditor, type ImportMappingBinding } from './ImportMappingEditor';
 import { ImportValidationResults } from './ImportValidationResults';
 import './import-workspace.css';
+import { unsavedState, useUnsavedChangesSource } from './unsaved-changes';
 export function ImportWorkspace({ vessel }: {
     vessel: string;
 }) {
@@ -16,6 +17,7 @@ export function ImportWorkspace({ vessel }: {
     const [href, setHref] = useState(window.location.href), [generation, setGeneration] = useState(0), [error, setError] = useState(0);
     const [dirty, setDirty] = useState(false), [pending, setPending] = useState<string | null>(null);
     const location = useRef(href), dirtyRef = useRef(false);
+    useUnsavedChangesSource(() => unsavedState(dirtyRef.current));
     const navigationCommit = useRef<(() => void) | null>(null);
     useLayoutEffect(() => { dirtyRef.current = dirty; }, [dirty]);
     const en = language === 'en';

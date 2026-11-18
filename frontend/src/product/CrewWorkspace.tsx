@@ -20,6 +20,7 @@ import { ApiError, session } from './api';
 import type { Session } from './directory-contract';
 import * as crew from './crew-api';
 import { EnterpriseActions, EnterpriseFormGrid, EnterprisePageHeader } from './EnterprisePatterns';
+import { unsavedState, useUnsavedChangesSource } from './unsaved-changes';
 const words = localizedCopy("CrewWorkspace_tsx_words");
 type Editor = {
     command: crew.CrewCommand;
@@ -64,6 +65,7 @@ export function CrewWorkspace({ vessel, assignment }: {
     const [online, setOnline] = useState(navigator.onLine);
     const [destination, setDestination] = useState<string | null>(null);
     const inFlight = useRef(false);
+    useUnsavedChangesSource(() => unsavedState(!!editor || childDirty, inFlight.current));
     const knownIdentity = useRef<Session | null>(null);
     const [paused, setPaused] = useState(false);
     const dialog = useRef<HTMLDialogElement>(null);
