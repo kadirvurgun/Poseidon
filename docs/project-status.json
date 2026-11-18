@@ -15351,6 +15351,20 @@
       "frontend_typecheck": "exit 0",
       "frontend_lint_changed_files": "exit 0",
       "not_run": "full suites, full lint/build, Playwright, CI, independent QA (DEFERRED)"
+    },
+    "independent_qa": "PASS-WITH-NOTES",
+    "qa_follow_up": {
+      "applied": "SOURCE_NOT_COLLECTED for no-profile vessels (required_fields.unknown v2); SOURCE_UNREADABLE + unreadableSources/notCollectedSources scope fields; crew overlap differential suppression; crew definition v2 any-status label; frontend decoder invariants and catalog enums; scalar audit-unavailable 503 test; cohort 5 unapproved default (64.01 paragraph:1398)",
+      "verification": {
+        "release_build": "0 warnings, 0 errors",
+        "domain_trait": "11/11 passed",
+        "api_integration_trait_real_pg": "8/8 passed",
+        "diagnostics_tests": "6/6 passed",
+        "frontend_metrics_client": "5/5 passed",
+        "frontend_typecheck": "exit 0",
+        "frontend_lint_changed_files": "exit 0",
+        "not_run": "full suites, Playwright, CI for this commit, QA re-check (DEFERRED)"
+      }
     }
   }
 }

@@ -19,9 +19,9 @@
     },
     {
       "id": "onboarding.required_fields.unknown",
-      "version": 1,
+      "version": 2,
       "ownerModule": "59.01/18.01 vessel onboarding (ComplianceOnboardingPolicy)",
-      "label": "Required onboarding fields declared UNKNOWN",
+      "label": "Required onboarding fields declared UNKNOWN (declared profiles only)",
       "unitCode": "field",
       "sourceProjectionId": "projection.compliance-onboarding.v1",
       "aggregation": "SUM",
@@ -31,13 +31,13 @@
       "allowedActions": ["view"],
       "scopes": ["TENANT_VISIBLE", "VESSEL"],
       "basis": "DECLARED_UNVERIFIED",
-      "source": "55.01/paragraph:263;55.01/paragraph:557;18.01/Backlog/row:40"
+      "source": "55.01/paragraph:263;55.01/paragraph:557;55.01/paragraph:652;18.01/Backlog/row:40"
     },
     {
       "id": "crew.assignments.declared_persons",
-      "version": 1,
+      "version": 2,
       "ownerModule": "53.01/58.03 crew assignment declarations (CrewAssignments)",
-      "label": "Persons with a declared crew assignment",
+      "label": "Persons with a declared crew assignment (any status or dates; not current crew)",
       "unitCode": "person",
       "sourceProjectionId": "projection.crew-assignment-declarations.v1",
       "aggregation": "COUNT_DISTINCT",
@@ -47,7 +47,7 @@
       "allowedActions": ["view"],
       "scopes": ["TENANT_VISIBLE", "VESSEL"],
       "basis": "DECLARED_UNVERIFIED",
-      "source": "55.01/paragraph:645-647;55.01/paragraph:661;64.01/paragraph:142"
+      "source": "55.01/paragraph:645-647;55.01/paragraph:661;64.01/paragraph:142;64.01/paragraph:1398"
     }
   ]
 }

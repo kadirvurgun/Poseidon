@@ -11,6 +11,7 @@ public sealed class MetricContractTests
 {
     private static MetricDefinition Vessel => MetricRegistry.Find(MetricRegistry.OnboardingVesselsReviewRequired)!;
     private static MetricDefinition Crew => MetricRegistry.Find(MetricRegistry.CrewDeclaredPersons)!;
+    private static MetricDefinition Fields => MetricRegistry.Find(MetricRegistry.OnboardingRequiredFieldsUnknown)!;
 
     [Fact]
     public void Registry_matches_the_published_consumer_contract_file()
@@ -36,6 +37,9 @@ public sealed class MetricContractTests
         Assert.False(MetricRegistry.Permits(Crew, ["directory.read"]));
         Assert.True(MetricRegistry.Permits(Crew, ["directory.read", "crew.read"]));
         Assert.False(MetricRegistry.Permits(Vessel, ["directory.read"], "export"));
+        // QA follow-up 4: the crew scalar is explicitly declared-any-status, never current crew.
+        Assert.Equal(2, Crew.Version); Assert.Contains("any status", Crew.Label); Assert.Contains("not current crew", Crew.Label);
+        Assert.Equal(2, Fields.Version);
     }
 
     [Fact]
@@ -92,6 +96,43 @@ public sealed class MetricContractTests
     }
 
     [Fact]
+    public void Not_collected_sources_are_unknown_or_partial_never_a_complete_zero()
+    {
+        // QA follow-up 1: no profile declaration on any vessel -> UNKNOWN, not 0 unknown fields.
+        var none = MetricScalarPolicy.Evaluate(Fields, new(3, 0, 0, 0, NotCollectedSources: 3));
+        Assert.Equal(MetricStates.Unknown, none.State); Assert.Null(none.Value); Assert.Equal(MetricQualities.Unknown, none.Quality);
+        Assert.Equal(["SOURCE_NOT_COLLECTED"], none.Reasons); Assert.Equal(3, none.UnknownCount);
+        var mixed = MetricScalarPolicy.Evaluate(Fields, new(3, 2, 0, 0, NotCollectedSources: 1));
+        Assert.Equal(MetricStates.Value, mixed.State); Assert.Equal(0, mixed.Value); Assert.Equal(MetricQualities.Partial, mixed.Quality);
+        Assert.Equal(["PARTIAL_SOURCE_COVERAGE", "SOURCE_NOT_COLLECTED"], mixed.Reasons); Assert.Equal(1, mixed.UnknownCount);
+    }
+
+    [Fact]
+    public void Unreadable_sources_are_a_separate_cause_from_access_withholding()
+    {
+        var observation = new MetricObservation(4, 2, 1, 0, UnreadableSources: 1);
+        Assert.Equal(1, observation.WithheldSources);
+        var result = MetricScalarPolicy.Evaluate(Vessel, observation);
+        Assert.Equal(MetricQualities.Partial, result.Quality); Assert.Equal(2, result.UnknownCount);
+        Assert.Equal(["PARTIAL_SOURCE_COVERAGE", "SOURCE_WITHHELD", "SOURCE_UNREADABLE"], result.Reasons);
+        var corruptOnly = MetricScalarPolicy.Evaluate(Vessel, new(1, 0, 0, 0, UnreadableSources: 1));
+        Assert.Equal(MetricStates.Unknown, corruptOnly.State); Assert.Equal(["SOURCE_UNREADABLE"], corruptOnly.Reasons);
+        Assert.Equal(["SOURCE_WITHHELD"], MetricScalarPolicy.Evaluate(Vessel, new(2, 0, 0, 0)).Reasons);
+    }
+
+    [Fact]
+    public void Small_overlap_between_scope_components_is_complementarily_suppressed()
+    {
+        // QA follow-up 3: A=5, B=5, fleet distinct 9 -> one person on both vessels would be disclosed by 10 - 9.
+        var overlap = MetricScalarPolicy.Evaluate(Crew, new(2, 2, 9, 0, [5, 5]));
+        Assert.Equal(MetricStates.Suppressed, overlap.State); Assert.Null(overlap.Value);
+        Assert.Contains("COMPLEMENTARY_SUPPRESSION", overlap.Reasons);
+        // Overlap at or above the cohort threshold is publishable.
+        Assert.Equal(10, MetricScalarPolicy.Evaluate(Crew, new(2, 2, 10, 0, [10, 5])).Value);
+        Assert.Equal(5, MetricScalarPolicy.Evaluate(Crew, new(2, 2, 5, 0, [5, 5])).Value);
+    }
+
+    [Fact]
     public void Inconsistent_observations_are_rejected()
     {
         Assert.Throws<ArgumentException>(() => MetricScalarPolicy.Evaluate(Vessel, new(1, 2, 0, 0)));
@@ -99,5 +140,7 @@ public sealed class MetricContractTests
         Assert.Throws<ArgumentException>(() => MetricScalarPolicy.Evaluate(Vessel, new(1, 1, 0, -1)));
         Assert.Throws<ArgumentException>(() => MetricScalarPolicy.Evaluate(Crew, new(1, 1, 5, 0, [-1])));
         Assert.Throws<ArgumentException>(() => MetricScalarPolicy.Evaluate(Vessel with { MinCohort = 0 }, new(1, 1, 0, 0)));
+        Assert.Throws<ArgumentException>(() => MetricScalarPolicy.Evaluate(Vessel, new(2, 1, 0, 0, UnreadableSources: 1, NotCollectedSources: 1)));
+        Assert.Throws<ArgumentException>(() => MetricScalarPolicy.Evaluate(Vessel, new(2, 1, 0, 0, NotCollectedSources: -1)));
     }
 }

@@ -6984,6 +6984,10 @@ export interface components {
             readSources: number;
             /** Format: int32 */
             withheldSources: number;
+            /** Format: int32 */
+            unreadableSources: number;
+            /** Format: int32 */
+            notCollectedSources: number;
         };
         MsmdReference: {
             documentReference?: null | string;

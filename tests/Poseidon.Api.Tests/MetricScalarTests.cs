@@ -97,7 +97,7 @@ public sealed partial class DirectoryWorkspaceTests
             Assert.Equal(MetricStates.Value, fleet.State); Assert.Equal(MetricQualities.Complete, fleet.Quality);
             // Synthetic seed declarations are incomplete: every visible vessel needs review; other tenant never counted.
             Assert.Equal(tenantVessels.Length.ToString(), fleet.Value);
-            Assert.Equal(new MetricScopeDto("TENANT_VISIBLE", null, tenantVessels.Length, tenantVessels.Length, 0), fleet.Scope);
+            Assert.Equal(new MetricScopeDto("TENANT_VISIBLE", null, tenantVessels.Length, tenantVessels.Length, 0, 0, 0), fleet.Scope);
             Assert.Equal("projection.compliance-onboarding.v1", fleet.SourceProjectionId); Assert.Equal(1, fleet.DefinitionVersion);
             Assert.Equal("DECLARED_UNVERIFIED", fleet.Basis); Assert.True(fleet.AsOf <= DateTimeOffset.UtcNow);
             Assert.True(fleet.SourceWatermark == null || fleet.SourceWatermark <= fleet.AsOf);
@@ -108,7 +108,7 @@ public sealed partial class DirectoryWorkspaceTests
             var saved = await SaveProfile(client, before, new RegulatoryDraftContent { Flag = new("Unknown"), Imo = new("Unknown") });
             var unknown = await Metric(client, MetricRegistry.OnboardingRequiredFieldsUnknown, SeedVessel.Id);
             Assert.Equal("2", unknown.Value); Assert.Equal(saved.SavedAt, unknown.SourceWatermark);
-            Assert.Equal(new MetricScopeDto("VESSEL", SeedVessel.Id, 1, 1, 0), unknown.Scope);
+            Assert.Equal(new MetricScopeDto("VESSEL", SeedVessel.Id, 1, 1, 0, 0, 0), unknown.Scope);
             var expectedFleet = fleetUnknownBefore - long.Parse(vesselUnknownBefore.Value!) + 2;
             Assert.Equal(expectedFleet.ToString(), (await Metric(client, MetricRegistry.OnboardingRequiredFieldsUnknown)).Value);
         }
@@ -117,7 +117,7 @@ public sealed partial class DirectoryWorkspaceTests
             using var client = Client(host);
             var own = await Metric(client, MetricRegistry.OnboardingVesselsReviewRequired);
             // Restricted actor: value over its single granted vessel only, never the tenant total.
-            Assert.Equal("1", own.Value); Assert.Equal(new MetricScopeDto("TENANT_VISIBLE", null, 1, 1, 0), own.Scope);
+            Assert.Equal("1", own.Value); Assert.Equal(new MetricScopeDto("TENANT_VISIBLE", null, 1, 1, 0, 0, 0), own.Scope);
             var other = tenantVessels.First(v => v.Id != SeedVessel.Id);
             Assert.Equal(HttpStatusCode.NotFound, (await client.GetAsync(MetricPath(MetricRegistry.OnboardingVesselsReviewRequired, other.Id), Ct)).StatusCode);
             var settings = host.Services.GetRequiredService<FederationSettings>();
@@ -149,13 +149,14 @@ public sealed partial class DirectoryWorkspaceTests
             Assert.DoesNotContain("FICTIONAL-PRIVATE", body); Assert.DoesNotContain(file.Id.ToString(), body);
             var vessel = (await response.Content.ReadFromJsonAsync<MetricScalarDto>(Ct))!;
             Assert.Equal(MetricStates.Unknown, vessel.State); Assert.Null(vessel.Value); Assert.Equal(MetricQualities.Unknown, vessel.Quality);
-            Assert.Equal(new MetricScopeDto("VESSEL", SeedVessel.Id, 1, 0, 1), vessel.Scope); Assert.Null(vessel.SourceWatermark);
+            Assert.Equal(new MetricScopeDto("VESSEL", SeedVessel.Id, 1, 0, 1, 0, 0), vessel.Scope); Assert.Null(vessel.SourceWatermark);
             var fleet = await Metric(client, MetricRegistry.OnboardingVesselsReviewRequired);
             var visible = seed.Vessels.Count(v => v.TenantId == SeedVessel.TenantId);
             Assert.Equal(MetricStates.Value, fleet.State); Assert.Equal(MetricQualities.Partial, fleet.Quality);
             Assert.Equal((visible - 1).ToString(), fleet.Value); Assert.Equal(1, fleet.UnknownCount);
-            Assert.Equal(new MetricScopeDto("TENANT_VISIBLE", null, visible, visible - 1, 1), fleet.Scope);
-            Assert.Contains("PARTIAL_SOURCE_COVERAGE", fleet.Reasons);
+            Assert.Equal(new MetricScopeDto("TENANT_VISIBLE", null, visible, visible - 1, 1, 0, 0), fleet.Scope);
+            Assert.Contains("PARTIAL_SOURCE_COVERAGE", fleet.Reasons); Assert.Contains("SOURCE_WITHHELD", fleet.Reasons);
+            Assert.DoesNotContain("SOURCE_UNREADABLE", fleet.Reasons); Assert.Equal(["SOURCE_WITHHELD"], vessel.Reasons);
         }
         finally { if (Directory.Exists(root)) Directory.Delete(root, true); }
     }
@@ -202,8 +203,77 @@ public sealed partial class DirectoryWorkspaceTests
         {
             using var client = Client(host);
             var own = await Metric(client, MetricRegistry.CrewDeclaredPersons);
-            Assert.Equal("6", own.Value); Assert.Equal(new MetricScopeDto("TENANT_VISIBLE", null, 1, 1, 0), own.Scope);
+            Assert.Equal("6", own.Value); Assert.Equal(new MetricScopeDto("TENANT_VISIBLE", null, 1, 1, 0, 0, 0), own.Scope);
             Assert.Equal(HttpStatusCode.NotFound, (await client.GetAsync(MetricPath(MetricRegistry.CrewDeclaredPersons, local.Id), Ct)).StatusCode);
         }
+    }
+
+    [Fact]
+    [Trait("Requirement", "PLAN-1511-5501-SLICE")]
+    public async Task Vessel_without_profile_is_a_not_collected_source_never_zero_unknown_fields()
+    {
+        var bare = Guid.NewGuid();
+        await using (var db = Db()) {
+            db.Vessels.Add(new() { TenantId = SeedVessel.TenantId, Id = bare, CompanyId = SeedVessel.CompanyId,
+                Code = "SYN-5501-NOPROFILE", Name = "FICTIONAL vessel without profile", Kind = SeedVessel.Kind });
+            await db.SaveChangesAsync(Ct);
+        }
+        var visible = seed.Vessels.Count(v => v.TenantId == SeedVessel.TenantId) + 1;
+        await using (var host = Host())
+        {
+            using var client = Client(host);
+            var vessel = await Metric(client, MetricRegistry.OnboardingRequiredFieldsUnknown, bare);
+            Assert.Equal(MetricStates.Unknown, vessel.State); Assert.Null(vessel.Value); Assert.Equal(MetricQualities.Unknown, vessel.Quality);
+            Assert.Equal(["SOURCE_NOT_COLLECTED"], vessel.Reasons); Assert.Equal(2, vessel.DefinitionVersion);
+            Assert.Equal(new MetricScopeDto("VESSEL", bare, 1, 0, 0, 0, 1), vessel.Scope);
+            var fleet = await Metric(client, MetricRegistry.OnboardingRequiredFieldsUnknown);
+            Assert.Equal(MetricStates.Value, fleet.State); Assert.Equal(MetricQualities.Partial, fleet.Quality);
+            Assert.Equal(["PARTIAL_SOURCE_COVERAGE", "SOURCE_NOT_COLLECTED"], fleet.Reasons);
+            Assert.Equal(new MetricScopeDto("TENANT_VISIBLE", null, visible, visible - 1, 0, 0, 1), fleet.Scope);
+            // A missing declaration is itself a review need: that count stays a complete read.
+            var review = await Metric(client, MetricRegistry.OnboardingVesselsReviewRequired, bare);
+            Assert.Equal("1", review.Value); Assert.Equal(MetricQualities.Complete, review.Quality);
+        }
+        await using (var host = Host(manage: false, read: false, edit: false))
+        {
+            using var client = Client(host);
+            var settings = host.Services.GetRequiredService<FederationSettings>();
+            settings.Memberships[0] = settings.Memberships[0] with { VesselGrants = [new(bare)] };
+            // Fleet where no visible vessel has a profile: UNKNOWN, not COMPLETE 0.
+            var fleet = await Metric(client, MetricRegistry.OnboardingRequiredFieldsUnknown);
+            Assert.Equal(MetricStates.Unknown, fleet.State); Assert.Null(fleet.Value); Assert.Equal(["SOURCE_NOT_COLLECTED"], fleet.Reasons);
+            Assert.Equal(new MetricScopeDto("TENANT_VISIBLE", null, 1, 0, 0, 0, 1), fleet.Scope);
+        }
+    }
+
+    [Fact]
+    [Trait("Requirement", "PLAN-1511-5501-SLICE")]
+    public async Task Undecodable_profile_is_unreadable_not_access_withheld()
+    {
+        // Test-owned database only: simulate stored-source corruption below the audited write path.
+        await Sql($"UPDATE core.\"RegulatoryDrafts\" SET \"ContentJson\" = '{{not json' WHERE \"TenantId\" = '{SeedVessel.TenantId}' AND \"VesselId\" = '{SeedVessel.Id}'");
+        var visible = seed.Vessels.Count(v => v.TenantId == SeedVessel.TenantId);
+        await using var host = Host(); using var client = Client(host);
+        var vessel = await Metric(client, MetricRegistry.OnboardingRequiredFieldsUnknown, SeedVessel.Id);
+        Assert.Equal(MetricStates.Unknown, vessel.State); Assert.Null(vessel.Value); Assert.Equal(["SOURCE_UNREADABLE"], vessel.Reasons);
+        Assert.Equal(new MetricScopeDto("VESSEL", SeedVessel.Id, 1, 0, 0, 1, 0), vessel.Scope);
+        var fleet = await Metric(client, MetricRegistry.OnboardingVesselsReviewRequired);
+        Assert.Equal(MetricQualities.Partial, fleet.Quality); Assert.Equal((visible - 1).ToString(), fleet.Value);
+        Assert.Equal(["PARTIAL_SOURCE_COVERAGE", "SOURCE_UNREADABLE"], fleet.Reasons);
+        Assert.Equal(new MetricScopeDto("TENANT_VISIBLE", null, visible, visible - 1, 0, 1, 0), fleet.Scope);
+    }
+
+    [Fact]
+    [Trait("Requirement", "PLAN-1511-5501-SLICE")]
+    public async Task Metric_scalar_fails_closed_without_value_when_its_audit_cannot_persist()
+    {
+        await using var host = Host(); using var client = Client(host);
+        // This test's independently owned PostgreSQL database only.
+        await Sql("CREATE FUNCTION audit.reject_metric_read() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NEW.\"Action\" = 'MetricScalarRead' THEN RAISE EXCEPTION 'synthetic metric audit failure'; END IF; RETURN NEW; END $$; CREATE TRIGGER reject_metric_read BEFORE INSERT ON audit.\"SecurityEvents\" FOR EACH ROW EXECUTE FUNCTION audit.reject_metric_read();");
+        using var response = await client.GetAsync(MetricPath(MetricRegistry.OnboardingVesselsReviewRequired), Ct);
+        Assert.Equal(HttpStatusCode.ServiceUnavailable, response.StatusCode);
+        var body = await response.Content.ReadAsStringAsync(Ct);
+        Assert.DoesNotContain("synthetic metric audit failure", body);
+        foreach (var field in new[] { "\"value\"", "\"state\"", "\"scope\"", "\"metricId\"" }) Assert.DoesNotContain(field, body);
     }
 }

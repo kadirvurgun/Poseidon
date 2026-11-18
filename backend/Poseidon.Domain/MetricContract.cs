@@ -60,20 +60,25 @@ public static class MetricRegistry
             "LIVE_READ;55.01 rpt.freshness.online_min",
             ["directory.read"], ["view"], [ScopeTenantVisible, ScopeVessel], "DECLARED_UNVERIFIED",
             "55.01/paragraph:156;55.01/paragraph:1397;18.01/Backlog/row:40;59.01/paragraph:55"),
-        new(OnboardingRequiredFieldsUnknown, 1,
+        // v2: a vessel with no profile declaration is a not-collected source
+        // (55.01 paragraph:263, no zero-fill paragraph:652), never 0 unknown fields.
+        new(OnboardingRequiredFieldsUnknown, 2,
             "59.01/18.01 vessel onboarding (ComplianceOnboardingPolicy)",
-            "Required onboarding fields declared UNKNOWN",
+            "Required onboarding fields declared UNKNOWN (declared profiles only)",
             "field", "projection.compliance-onboarding.v1", "SUM", 1,
             "LIVE_READ;55.01 rpt.freshness.online_min",
             ["directory.read"], ["view"], [ScopeTenantVisible, ScopeVessel], "DECLARED_UNVERIFIED",
-            "55.01/paragraph:263;55.01/paragraph:557;18.01/Backlog/row:40"),
-        new(CrewDeclaredPersons, 1,
+            "55.01/paragraph:263;55.01/paragraph:557;55.01/paragraph:652;18.01/Backlog/row:40"),
+        // v2: explicit that the count is declared assignments regardless of
+        // status or dates; it is not current/onboard crew and Today/Why must not
+        // present it as such. MinCohort 5 is an unapproved default (64.01 paragraph:1398).
+        new(CrewDeclaredPersons, 2,
             "53.01/58.03 crew assignment declarations (CrewAssignments)",
-            "Persons with a declared crew assignment",
+            "Persons with a declared crew assignment (any status or dates; not current crew)",
             "person", "projection.crew-assignment-declarations.v1", "COUNT_DISTINCT", 5,
             "LIVE_READ;55.01 rpt.freshness.online_min",
             ["directory.read", "crew.read"], ["view"], [ScopeTenantVisible, ScopeVessel], "DECLARED_UNVERIFIED",
-            "55.01/paragraph:645-647;55.01/paragraph:661;64.01/paragraph:142"),
+            "55.01/paragraph:645-647;55.01/paragraph:661;64.01/paragraph:142;64.01/paragraph:1398"),
     ];
 
     public static MetricDefinition? Find(string? id) => id == null ? null : All.SingleOrDefault(d => d.Id == id);
@@ -86,14 +91,22 @@ public static class MetricRegistry
 
 // Raw owning-source observation, computed ONLY over records the actor may
 // currently read. ExpectedSources counts visible source subjects (e.g. visible
-// vessels); ReadSources those whose source could be read; Withheld = expected - read.
+// vessels); ReadSources those whose source could be read. Unread sources split
+// into Unreadable (stored source cannot be decoded), NotCollected (no source
+// declaration exists) and Withheld (current access hides the source) =
+// expected - read - unreadable - notCollected.
 public sealed record MetricObservation(
     int ExpectedSources,
     int ReadSources,
     long? Count,
     int UnknownCount,
     IReadOnlyList<long>? CohortComponents = null,
-    string? UnavailableReason = null);
+    string? UnavailableReason = null,
+    int UnreadableSources = 0,
+    int NotCollectedSources = 0)
+{
+    public int WithheldSources => ExpectedSources - ReadSources - UnreadableSources - NotCollectedSources;
+}
 
 public sealed record MetricScalarOutcome(string State, long? Value, string Quality, int UnknownCount, string[] Reasons);
 
@@ -107,17 +120,24 @@ public static class MetricScalarPolicy
         if (observation.UnavailableReason != null)
             return new(MetricStates.Unavailable, null, MetricQualities.Unknown, 0, [observation.UnavailableReason]);
         if (observation.ExpectedSources < 0 || observation.ReadSources < 0 || observation.ReadSources > observation.ExpectedSources ||
+            observation.UnreadableSources < 0 || observation.NotCollectedSources < 0 || observation.WithheldSources < 0 ||
             observation.Count < 0 || observation.UnknownCount < 0 || observation.CohortComponents?.Any(c => c < 0) == true)
             throw new ArgumentException("Metric observation is inconsistent.", nameof(observation));
-        var withheld = observation.ExpectedSources - observation.ReadSources;
         // No visible population or no readable source: UNKNOWN, never a false zero.
         if (observation.ExpectedSources == 0)
             return new(MetricStates.Unknown, null, MetricQualities.Unknown, 0, ["NO_VISIBLE_SOURCE"]);
+        var unread = observation.ExpectedSources - observation.ReadSources;
+        var unknown = observation.UnknownCount + unread;
+        // Cause codes stay separate: access withholding is not corruption, and a
+        // never-collected source is neither (55.01 paragraph:263, 652).
+        var causes = new List<string>();
+        if (observation.WithheldSources > 0) causes.Add("SOURCE_WITHHELD");
+        if (observation.UnreadableSources > 0) causes.Add("SOURCE_UNREADABLE");
+        if (observation.NotCollectedSources > 0) causes.Add("SOURCE_NOT_COLLECTED");
         if (observation.ReadSources == 0 || observation.Count == null)
-            return new(MetricStates.Unknown, null, MetricQualities.Unknown, observation.UnknownCount + withheld, ["SOURCE_WITHHELD_OR_UNREADABLE"]);
-        var unknown = observation.UnknownCount + withheld;
+            return new(MetricStates.Unknown, null, MetricQualities.Unknown, unknown, causes.Count == 0 ? ["SOURCE_UNREADABLE"] : causes.ToArray());
         var reasons = new List<string>();
-        if (withheld > 0) reasons.Add("PARTIAL_SOURCE_COVERAGE");
+        if (unread > 0) reasons.AddRange(["PARTIAL_SOURCE_COVERAGE", .. causes]);
         if (observation.UnknownCount > 0) reasons.Add("UNKNOWN_SOURCE_VALUES");
         var quality = unknown > 0 ? MetricQualities.Partial : MetricQualities.Complete;
         if (definition.MinCohort > 1)
@@ -128,6 +148,15 @@ public static class MetricScalarPolicy
                 return new(MetricStates.Suppressed, null, quality, unknown, [.. reasons, "SMALL_GROUP"]);
             if (observation.CohortComponents?.Any(c => c > 0 && c < definition.MinCohort) == true)
                 return new(MetricStates.Suppressed, null, quality, unknown, [.. reasons, "COMPLEMENTARY_SUPPRESSION"]);
+            // Overlap differential: sum(per-scope components) - distinct total is
+            // itself a group (subjects declared in several scopes). A small
+            // non-zero overlap would be disclosed by differencing, so suppress.
+            if (observation.CohortComponents is { Count: > 1 } components)
+            {
+                var overlap = components.Sum() - observation.Count.Value;
+                if (overlap > 0 && overlap < definition.MinCohort)
+                    return new(MetricStates.Suppressed, null, quality, unknown, [.. reasons, "COMPLEMENTARY_SUPPRESSION"]);
+            }
         }
         return new(MetricStates.Value, observation.Count, quality, unknown, reasons.ToArray());
     }

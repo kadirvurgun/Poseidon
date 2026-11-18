@@ -11,9 +11,13 @@ public sealed record MetricDefinitionDto(string Id, int Version, string OwnerMod
     string SourceProjectionId, string Aggregation, int MinCohort, string FreshnessRule, string[] RequiredPermissions,
     string[] AllowedActions, string[] Scopes, string Basis, string Source);
 public sealed record MetricCatalogDto(string ContractVersion, MetricDefinitionDto[] Items);
-// Scope coverage: visible source subjects, how many were read and how many the
-// actor's current access withheld. Never a hidden-record count.
-public sealed record MetricScopeDto(string Kind, Guid? VesselId, int ExpectedSources, int ReadSources, int WithheldSources);
+// Scope coverage over visible source subjects: Expected = Read + Withheld +
+// Unreadable + NotCollected (all zero except Expected when UNAVAILABLE).
+// WithheldSources counts ONLY sources the actor's current access hides;
+// UnreadableSources are stored sources that could not be decoded and
+// NotCollectedSources subjects with no source declaration. Never a hidden-record count.
+public sealed record MetricScopeDto(string Kind, Guid? VesselId, int ExpectedSources, int ReadSources, int WithheldSources,
+    int UnreadableSources, int NotCollectedSources);
 // 55.01 paragraph:834 / 61.03 paragraph:177 MetricTile alignment. Value is an
 // invariant decimal string and is present ONLY when State is VALUE.
 public sealed record MetricScalarDto(string MetricId, int DefinitionVersion, string OwnerModule, string State,
@@ -119,9 +123,7 @@ public static class MetricEndpoints
             dto = new(definition.Id, definition.Version, definition.OwnerModule, outcome.State,
                 outcome.Value?.ToString(CultureInfo.InvariantCulture), definition.UnitCode, outcome.Quality, asOf,
                 definition.SourceProjectionId, outcome.State == MetricStates.Value ? watermark : null,
-                new(vesselId == null ? MetricRegistry.ScopeTenantVisible : MetricRegistry.ScopeVessel, vesselId,
-                    observation.ExpectedSources, observation.UnavailableReason == null ? observation.ReadSources : 0,
-                    observation.UnavailableReason == null ? observation.ExpectedSources - observation.ReadSources : 0),
+                Scope(vesselId, observation),
                 outcome.UnknownCount, outcome.Reasons, definition.Basis, definition.FreshnessRule, definition.Source);
         }
         // Current access is rechecked after evaluation: a grant or permission
@@ -132,6 +134,14 @@ public static class MetricEndpoints
         live = Actor(h);
         if (live == null || AccessHash(live) != access) return await Fail(h, action, 403, "permission_denied");
         return Results.Ok(dto);
+    }
+
+    private static MetricScopeDto Scope(Guid? vesselId, MetricObservation o)
+    {
+        var kind = vesselId == null ? MetricRegistry.ScopeTenantVisible : MetricRegistry.ScopeVessel;
+        return o.UnavailableReason == null
+            ? new(kind, vesselId, o.ExpectedSources, o.ReadSources, o.WithheldSources, o.UnreadableSources, o.NotCollectedSources)
+            : new(kind, vesselId, o.ExpectedSources, 0, 0, 0, 0);
     }
 
     // projection.compliance-onboarding.v1: the same ComplianceOnboardingPolicy
@@ -152,33 +162,43 @@ public static class MetricEndpoints
         }).AsNoTracking().ToArrayAsync(ct);
         if (rows.Length > MetricRegistry.MaxSourceVessels)
             return (new(rows.Length, 0, null, 0, null, "QUERY_LIMIT_EXCEEDED"), null);
-        int read = 0; long count = 0; DateTimeOffset? watermark = null;
+        var unknownFields = definition.Id == MetricRegistry.OnboardingRequiredFieldsUnknown;
+        int read = 0, unreadable = 0, notCollected = 0; long count = 0; DateTimeOffset? watermark = null;
         foreach (var row in rows)
         {
-            if (row.Draft is { Readable: false }) continue;
+            if (row.Draft is { Readable: false }) continue; // withheld by current access
             RegulatoryDraftContent? content = null;
-            if (row.Draft != null)
+            if (row.Draft == null)
+            {
+                // No declaration: the unknown-field source was never collected
+                // (55.01 paragraph:263/652), never zero unknown fields. A missing
+                // profile still means the vessel itself requires review.
+                if (unknownFields) { notCollected++; continue; }
+            }
+            else
             {
                 try { content = RegulatoryDraftStorage.Deserialize(row.Draft.Content!); }
                 catch (Exception e) when (e is JsonException or InvalidOperationException or ArgumentException or InvalidDataException or FormatException)
-                { continue; }
+                { unreadable++; continue; }
                 if (watermark == null || row.Draft.SavedAt > watermark) watermark = row.Draft.SavedAt;
             }
             var assessment = ComplianceOnboardingPolicy.Assess(row.Id, row.Code, row.Name, content);
             read++;
-            count += definition.Id == MetricRegistry.OnboardingVesselsReviewRequired
-                ? assessment.State == "REVIEW_REQUIRED" ? 1 : 0
-                : assessment.Fields.Count(f => f.State == "Unknown");
+            count += unknownFields
+                ? assessment.Fields.Count(f => f.State == "Unknown")
+                : assessment.State == "REVIEW_REQUIRED" ? 1 : 0;
         }
-        // Withheld and undecodable profiles are both unread sources (expected - read):
-        // the value covers only read sources and is PARTIAL, never a full-fleet total.
-        return (new(rows.Length, read, count, 0), watermark);
+        // Withheld, undecodable and not-collected profiles are unread sources with
+        // separate causes: the value covers only read sources and is PARTIAL (or
+        // UNKNOWN when nothing was read), never a full-fleet total or a zero.
+        return (new(rows.Length, read, count, 0, UnreadableSources: unreadable, NotCollectedSources: notCollected), watermark);
     }
 
-    // projection.crew-assignment-declarations.v1: distinct persons with any
-    // declared assignment on visible vessels. Declaration only: no presence,
-    // eligibility or verification claim. Per-vessel components feed the
-    // complementary small-group suppression.
+    // projection.crew-assignment-declarations.v1 (definition v2): distinct persons
+    // with any declared assignment on visible vessels, regardless of assignment
+    // status or dates. Declaration only: no current-crew, presence, eligibility or
+    // verification claim. Per-vessel components feed complementary and overlap
+    // small-group suppression.
     private static async Task<MetricObservation> CrewPersons(PoseidonDbContext db, IQueryable<Vessel> vessels, CancellationToken ct)
     {
         var ids = await vessels.OrderBy(v => v.Id).Take(MetricRegistry.MaxSourceVessels + 1).Select(v => v.Id).ToArrayAsync(ct);
