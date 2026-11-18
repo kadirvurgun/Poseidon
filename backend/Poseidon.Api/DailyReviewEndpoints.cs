@@ -161,7 +161,7 @@ public static class DailyReviewEndpoints
             if(row.Version!=command.ExpectedVersion || row.Revision!=command.ReviewedRevision)return await Fail(h,409,"version_conflict");
             if(row.SourceVersion!=DailyOperationsPolicy.SourceVersion)return await Fail(h,409,"source_contract_changed");
             var head=await db.DailyReviewHeads.SingleOrDefaultAsync(r=>r.RecordId==id && r.VesselId==vessel && r.Kind==kind,ct);
-            if((head?.Version??0)!=command.ExpectedReviewVersion)return await Fail(h,409,"version_conflict");
+            if((head?.Version??0)!=command.ExpectedReviewVersion)return await Replay()??await Fail(h,409,"version_conflict");
             if(head==null){head=new(){TenantId=actor.TenantId,VesselId=vessel,RecordId=id,Kind=kind};db.DailyReviewHeads.Add(head);}else head.Sequence++;
             await db.SaveChangesAsync(ct);
             var entry=new DailyReviewEvent{TenantId=actor.TenantId,VesselId=vessel,RecordId=id,Kind=kind,Id=Guid.NewGuid(),RecordRevision=row.Revision,RecordVersion=row.Version,
