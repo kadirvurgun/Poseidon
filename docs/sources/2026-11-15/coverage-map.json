@@ -1,0 +1,733 @@
+{
+  "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/56.01_POSEIDON_Tam_Urun_Kapsam_ve_Gelistirici_Teslim_Analizi_TR_Rev2(1).docx",
+  "source_sha256": "adf077572cdff126dd6a98082b2f7bbb61ca4f9a92e3b339d98376bd590e1435",
+  "groups": [
+    {
+      "source_tracking_id": "G01",
+      "title": "Ortak komuta ve arama",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:68",
+      "owners": [
+        "61.03",
+        "55.01",
+        "54.02"
+      ],
+      "source_locators": [
+        "paragraph:69",
+        "paragraph:70",
+        "paragraph:71"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "G02",
+      "title": "Filo şirket gemi profil yaşam döngüsü",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:72",
+      "owners": [
+        "59.01",
+        "60.03"
+      ],
+      "source_locators": [
+        "paragraph:73",
+        "paragraph:74",
+        "paragraph:75"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "G03",
+      "title": "Gemi operasyonları ve tipe özgü işler",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:76",
+      "owners": [
+        "60.01",
+        "50.01",
+        "58.04",
+        "59.04"
+      ],
+      "source_locators": [
+        "paragraph:77",
+        "paragraph:78",
+        "paragraph:79"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "G04",
+      "title": "Römorkör operasyonu uçtan uca",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:80",
+      "owners": [
+        "60.02",
+        "58.04",
+        "59.04",
+        "50.01"
+      ],
+      "source_locators": [
+        "paragraph:81",
+        "paragraph:82",
+        "paragraph:83"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "G05",
+      "title": "Göreve uygunluk çalışma dinlenme ve MLC",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:84",
+      "owners": [
+        "53.01",
+        "53.02",
+        "58.04",
+        "59.03",
+        "52.01",
+        "61.02"
+      ],
+      "source_locators": [
+        "paragraph:85",
+        "paragraph:86",
+        "paragraph:87"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "G06",
+      "title": "Varlık PMS teknik hazır olma",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:88",
+      "owners": [
+        "59.04",
+        "63.01",
+        "50.01"
+      ],
+      "source_locators": [
+        "paragraph:89",
+        "paragraph:90",
+        "paragraph:91"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "G07",
+      "title": "Teknik tedarik ve stok sınırı",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:92",
+      "owners": [
+        "63.01",
+        "63.02"
+      ],
+      "source_locators": [
+        "paragraph:93",
+        "paragraph:94",
+        "paragraph:95"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "G08",
+      "title": "SMS emniyet aksiyonları",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:96",
+      "owners": [
+        "59.02",
+        "61.03",
+        "60.01",
+        "54.03"
+      ],
+      "source_locators": [
+        "paragraph:97",
+        "paragraph:98",
+        "paragraph:99"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "G09",
+      "title": "Olay yakın kaza ve gizli bildirim",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:100",
+      "owners": [
+        "61.01",
+        "58.02",
+        "59.02",
+        "63.06"
+      ],
+      "source_locators": [
+        "paragraph:101",
+        "paragraph:102",
+        "paragraph:103"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "G10",
+      "title": "Risk bariyer MOC ve çalışma izni",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:104",
+      "owners": [
+        "50.01",
+        "59.02",
+        "60.01",
+        "60.02"
+      ],
+      "source_locators": [
+        "paragraph:105",
+        "paragraph:106",
+        "paragraph:107"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "G11",
+      "title": "Acil durum ve tatbikat",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:108",
+      "owners": [
+        "61.02",
+        "53.01",
+        "58.04",
+        "52.01"
+      ],
+      "source_locators": [
+        "paragraph:109",
+        "paragraph:110",
+        "paragraph:111"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "G12",
+      "title": "Emniyet zekâsı ve filo sinyalleri",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:112",
+      "owners": [
+        "64.01",
+        "55.01",
+        "17.01",
+        "61.03"
+      ],
+      "source_locators": [
+        "paragraph:113",
+        "paragraph:114",
+        "paragraph:115"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "G13",
+      "title": "Kaynak mevzuat uygulanabilirlik yayını",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:116",
+      "owners": [
+        "60.03",
+        "59.01",
+        "58.02",
+        "62.01"
+      ],
+      "source_locators": [
+        "paragraph:117",
+        "paragraph:118",
+        "paragraph:119"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "G14",
+      "title": "ISM SOLAS kontrol uygulama paketleri",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:120",
+      "owners": [
+        "62.01",
+        "60.03",
+        "58.02",
+        "62.04"
+      ],
+      "source_locators": [
+        "paragraph:121",
+        "paragraph:122",
+        "paragraph:123"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "G15",
+      "title": "Çevresel kayıtlar ve MARPOL",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:124",
+      "owners": [
+        "62.02",
+        "60.01",
+        "60.03"
+      ],
+      "source_locators": [
+        "paragraph:125",
+        "paragraph:126",
+        "paragraph:127"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "G16",
+      "title": "Kargo ve tehlikeli yük",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:128",
+      "owners": [
+        "62.03",
+        "60.01",
+        "60.03"
+      ],
+      "source_locators": [
+        "paragraph:129",
+        "paragraph:130",
+        "paragraph:131"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "G17",
+      "title": "Gemi sertifikası ve sörvey",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:132",
+      "owners": [
+        "60.04",
+        "59.01",
+        "58.02",
+        "60.03"
+      ],
+      "source_locators": [
+        "paragraph:133",
+        "paragraph:134",
+        "paragraph:135"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "G18",
+      "title": "Denetim PSC ve vetting",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:136",
+      "owners": [
+        "62.04",
+        "59.02",
+        "58.02",
+        "60.04"
+      ],
+      "source_locators": [
+        "paragraph:137",
+        "paragraph:138",
+        "paragraph:139"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "G19",
+      "title": "Kontrollü doküman ve kanıt",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:140",
+      "owners": [
+        "58.02",
+        "54.03",
+        "63.06"
+      ],
+      "source_locators": [
+        "paragraph:141",
+        "paragraph:142",
+        "paragraph:143"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "G20",
+      "title": "Entegrasyon işlemleri",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:144",
+      "owners": [
+        "63.02",
+        "58.01",
+        "53.01",
+        "60.03",
+        "63.01"
+      ],
+      "source_locators": [
+        "paragraph:145",
+        "paragraph:146",
+        "paragraph:147"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "G21",
+      "title": "AI öneri yaşam döngüsü",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:148",
+      "owners": [
+        "17.01",
+        "64.01",
+        "57.01",
+        "58.02"
+      ],
+      "source_locators": [
+        "paragraph:149",
+        "paragraph:150",
+        "paragraph:151"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "G22",
+      "title": "Mobil ve çevrimdışı senkronizasyon",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:152",
+      "owners": [
+        "63.03",
+        "58.03",
+        "58.02",
+        "54.02"
+      ],
+      "source_locators": [
+        "paragraph:153",
+        "paragraph:154",
+        "paragraph:155"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "G23",
+      "title": "Yönetim değerlendirmesi",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:156",
+      "owners": [
+        "63.04",
+        "55.01",
+        "54.03",
+        "59.02"
+      ],
+      "source_locators": [
+        "paragraph:157",
+        "paragraph:158",
+        "paragraph:159"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "G24",
+      "title": "Pilot ve müşteri değeri",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:160",
+      "owners": [
+        "63.05",
+        "65.02",
+        "55.01",
+        "65.01"
+      ],
+      "source_locators": [
+        "paragraph:161",
+        "paragraph:162",
+        "paragraph:163"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "G25",
+      "title": "Tenant onboarding bildirim ve platform",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:164",
+      "owners": [
+        "58.01",
+        "52.02",
+        "54.01",
+        "54.02",
+        "54.03",
+        "54.04",
+        "63.02",
+        "65.01",
+        "65.02"
+      ],
+      "source_locators": [
+        "paragraph:165",
+        "paragraph:166",
+        "paragraph:167"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "G26",
+      "title": "Siber olay ve mahremiyet operasyonu",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:168",
+      "owners": [
+        "63.06",
+        "65.01",
+        "52.02",
+        "54.02",
+        "58.02"
+      ],
+      "source_locators": [
+        "paragraph:169",
+        "paragraph:170",
+        "paragraph:171"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "X01",
+      "title": "Ortak veri alanı ve kaynak sözlüğü",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:173",
+      "owners": [
+        "58.03",
+        "54.01",
+        "54.04"
+      ],
+      "source_locators": [
+        "paragraph:174",
+        "paragraph:175",
+        "paragraph:176"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "X02",
+      "title": "Domain komut sorgu ve işlem sözleşmeleri",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:177",
+      "owners": [
+        "58.03",
+        "54.02",
+        "63.02"
+      ],
+      "source_locators": [
+        "paragraph:178",
+        "paragraph:179",
+        "paragraph:180"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "X03",
+      "title": "Üretim işletimi ve kurtarma kabulü",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:181",
+      "owners": [
+        "65.01",
+        "63.06",
+        "65.02"
+      ],
+      "source_locators": [
+        "paragraph:182",
+        "paragraph:183",
+        "paragraph:184"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "X04",
+      "title": "Gereksinim test uzman ve UAT kabulü",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:185",
+      "owners": [
+        "65.02",
+        "65.01",
+        "60.03"
+      ],
+      "source_locators": [
+        "paragraph:186",
+        "paragraph:187",
+        "paragraph:188"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "X05",
+      "title": "Kullanıcı deneyimi dil ve erişilebilirlik",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:189",
+      "owners": [
+        "65.03",
+        "63.03"
+      ],
+      "source_locators": [
+        "paragraph:190",
+        "paragraph:191",
+        "paragraph:192"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "X06",
+      "title": "Mahremiyet saklama ve veri sahipliği",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:193",
+      "owners": [
+        "63.06",
+        "58.02",
+        "54.02",
+        "55.01"
+      ],
+      "source_locators": [
+        "paragraph:194",
+        "paragraph:195",
+        "paragraph:196"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "X07",
+      "title": "Projection ve pano sözleşmeleri",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:197",
+      "owners": [
+        "55.01",
+        "61.03",
+        "58.03"
+      ],
+      "source_locators": [
+        "paragraph:198",
+        "paragraph:199",
+        "paragraph:200"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "S01",
+      "title": "HR personel organizasyon vardiya ve mürettebat",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:203",
+      "owners": [
+        "52.01",
+        "58.04",
+        "53.01"
+      ],
+      "source_locators": [
+        "paragraph:204",
+        "paragraph:205"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "S02",
+      "title": "Kullanıcı hesabı ve hesap ayarları",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:206",
+      "owners": [
+        "52.02",
+        "54.02",
+        "58.01"
+      ],
+      "source_locators": [
+        "paragraph:207",
+        "paragraph:208"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "S03",
+      "title": "Rol grup menü ve işlem yetkileri",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:209",
+      "owners": [
+        "54.02",
+        "52.02"
+      ],
+      "source_locators": [
+        "paragraph:210",
+        "paragraph:211",
+        "paragraph:212"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "S04",
+      "title": "İşlev parametreleri ve kontrollü politikalar",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:213",
+      "owners": [
+        "54.01"
+      ],
+      "source_locators": [
+        "paragraph:214",
+        "paragraph:215",
+        "paragraph:216"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "S05",
+      "title": "Yapılandırılabilir iş akışları",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:217",
+      "owners": [
+        "54.03"
+      ],
+      "source_locators": [
+        "paragraph:218",
+        "paragraph:219"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "S06",
+      "title": "Kullanıcı tanımlı özel alanlar",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:220",
+      "owners": [
+        "54.04",
+        "54.01",
+        "55.01"
+      ],
+      "source_locators": [
+        "paragraph:221",
+        "paragraph:222"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "S07",
+      "title": "Raporlar dashboardlar ve dışa aktarım",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:223",
+      "owners": [
+        "55.01",
+        "61.03"
+      ],
+      "source_locators": [
+        "paragraph:224",
+        "paragraph:225"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "S08",
+      "title": "Yetkinlik havuzu ve yetkinlik yönetimi",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:226",
+      "owners": [
+        "53.02",
+        "53.01"
+      ],
+      "source_locators": [
+        "paragraph:227",
+        "paragraph:228"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    },
+    {
+      "source_tracking_id": "S09",
+      "title": "Ödül takdir ve teşvik",
+      "source_document": "56.01",
+      "heading_locator": "paragraph:229",
+      "owners": [
+        "57.01",
+        "17.01",
+        "63.02",
+        "55.01"
+      ],
+      "source_locators": [
+        "paragraph:230",
+        "paragraph:231"
+      ],
+      "status": "SOURCE_DESCRIBED_NOT_IMPLEMENTED_OR_ACCEPTED"
+    }
+  ]
+}

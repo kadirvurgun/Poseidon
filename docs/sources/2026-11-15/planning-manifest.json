@@ -1,0 +1,497 @@
+{
+  "baseline_id": "poseidon-analysis-20261115",
+  "parent_baseline": "poseidon-v46.3-20261030",
+  "status": "PLANNING_SUPPLEMENT_NOT_RUNTIME_OR_RELEASE_ACCEPTANCE",
+  "source_root": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26",
+  "files": [
+    {
+      "source_id": "poseidon-analysis-20261115:17.01_POSEIDON_AI_Governance_Data_Strategy_TR_Rev6(1).docx",
+      "document_number": "17.01",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/17.01_POSEIDON_AI_Governance_Data_Strategy_TR_Rev6(1).docx",
+      "sha256": "5fd268862ec87ea7b0716767e778327e866864d9ff096d38764b526eb06c5b3a",
+      "bytes": 123767,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 1211,
+      "prior_same_number_candidates": [
+        {
+          "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/05_TECHNICAL_ARCHITECTURE/17.01_POSEIDON_AI_Governance_Data_Strategy_TR.docx",
+          "sha256": "f31d9e5cd1d156a455284885309380838e4367b08932c47200f5f275cf547f60"
+        }
+      ],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:50.01_POSEIDON_HSE_Risk_Bariyer_MOC_PTW_Tam_Analiz_TR_Rev3(1).docx",
+      "document_number": "50.01",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/50.01_POSEIDON_HSE_Risk_Bariyer_MOC_PTW_Tam_Analiz_TR_Rev3(1).docx",
+      "sha256": "6eee8e317f011b1f9b4a98301230fb422e37a05e83d407fe216594eed7c83507",
+      "bytes": 167824,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 1842,
+      "prior_same_number_candidates": [
+        {
+          "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/04_UX_PRODUCT_DESIGN/50.01_POSEIDON_v46.3_HSE_Calisma_Izni_Risk_Degerlendirme_Form_Tasarimi_TR.docx",
+          "sha256": "f701317f2bd03abc622253ae16338527a3c4111058a9a357f8658e89a8e8cb63"
+        }
+      ],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:52.01_POSEIDON_HR_Personel_Organizasyon_Vardiya_ve_Murettebat_Yonetimi_Tam_Analiz_Rev6(1).docx",
+      "document_number": "52.01",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/52.01_POSEIDON_HR_Personel_Organizasyon_Vardiya_ve_Murettebat_Yonetimi_Tam_Analiz_Rev6(1).docx",
+      "sha256": "04d01d0094fd581e58b9494c2976dd35ac823e447c7ae072dc8a33b2227322b2",
+      "bytes": 335291,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 4711,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:52.02_POSEIDON_Hesap_Ayarlari_ve_Yetkilendirme_Islem_Analizi_TR_Rev3.docx",
+      "document_number": "52.02",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/52.02_POSEIDON_Hesap_Ayarlari_ve_Yetkilendirme_Islem_Analizi_TR_Rev3.docx",
+      "sha256": "1b3e59edfa589536b1bb9dbfe0fd6c3dc9f03bf8b0986d4bc97e171b7c11ac26",
+      "bytes": 89045,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 619,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:53.01_POSEIDON_Egitim_Yetkinlik_STCW_Personel_Belge_Yonetimi_Birlesik_Analiz_Rev6(1).docx",
+      "document_number": "53.01",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/53.01_POSEIDON_Egitim_Yetkinlik_STCW_Personel_Belge_Yonetimi_Birlesik_Analiz_Rev6(1).docx",
+      "sha256": "9e8f9cb9ec5ba2419a7b0b047114f31cbfd59a5c89cb46ed5d56c00e42a7aa2a",
+      "bytes": 450680,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 7480,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:53.02_POSEIDON_Yetkinlik_Havuzu_ve_Yonetimi_Ayrintili_Analiz_Rev3(1).docx",
+      "document_number": "53.02",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/53.02_POSEIDON_Yetkinlik_Havuzu_ve_Yonetimi_Ayrintili_Analiz_Rev3(1).docx",
+      "sha256": "1135c8f377140e39182a7c9191d2fafef130510d35e2f4080ef400f08558c7ba",
+      "bytes": 98540,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 925,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:54.01_POSEIDON_Islev_Parametreleri_ve_Kontrollu_Politika_Sicili_Tam_Analiz_Rev4(1).docx",
+      "document_number": "54.01",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/54.01_POSEIDON_Islev_Parametreleri_ve_Kontrollu_Politika_Sicili_Tam_Analiz_Rev4(1).docx",
+      "sha256": "73fcde366550ff1eb23aaebb33c8d246f4173b03b5c416a1b74736078a36c892",
+      "bytes": 633363,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 17890,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:54.02_POSEIDON_Rol_Grup_Menu_ve_Islem_Yetkileri_Tam_Analiz_Rev4(1).docx",
+      "document_number": "54.02",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/54.02_POSEIDON_Rol_Grup_Menu_ve_Islem_Yetkileri_Tam_Analiz_Rev4(1).docx",
+      "sha256": "dee6c269a0a144bbea87ee57c5cf92c8262297d154083742a094c3c3407d50e6",
+      "bytes": 1746160,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 47956,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:54.03_POSEIDON_Yapilandirilabilir_Is_Akisi_ve_Yonetim_Ekrani_Tam_Analiz_TR_Rev4(1).docx",
+      "document_number": "54.03",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/54.03_POSEIDON_Yapilandirilabilir_Is_Akisi_ve_Yonetim_Ekrani_Tam_Analiz_TR_Rev4(1).docx",
+      "sha256": "092f9ef1d3c8ccca4e8709a0375a1e1809af10907c63430361a9fd530da74c35",
+      "bytes": 105081,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 1020,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:54.04_POSEIDON_Kullanici_Tanimli_Ozel_Alan_Analizi_TR_Rev3(1).docx",
+      "document_number": "54.04",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/54.04_POSEIDON_Kullanici_Tanimli_Ozel_Alan_Analizi_TR_Rev3(1).docx",
+      "sha256": "4fd8c93f8899c091fab5bbd70ff91e89b69eb27e38e7919a6db76ca0135115c3",
+      "bytes": 77135,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 400,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:55.01_POSEIDON_Raporlama_ve_Dashboard_Yonetimi_Tam_Analiz_Rev5(1).docx",
+      "document_number": "55.01",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/55.01_POSEIDON_Raporlama_ve_Dashboard_Yonetimi_Tam_Analiz_Rev5(1).docx",
+      "sha256": "939a5f62d1ef1c5f97b91be260f1b77522a9edb400aa1c52b874383473834dd6",
+      "bytes": 307287,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 4768,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:56.01_POSEIDON_Tam_Urun_Kapsam_ve_Gelistirici_Teslim_Analizi_TR_Rev2(1).docx",
+      "document_number": "56.01",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/56.01_POSEIDON_Tam_Urun_Kapsam_ve_Gelistirici_Teslim_Analizi_TR_Rev2(1).docx",
+      "sha256": "adf077572cdff126dd6a98082b2f7bbb61ca4f9a92e3b339d98376bd590e1435",
+      "bytes": 65721,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 1603,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:57.01_POSEIDON_Odul_Takdir_ve_Tesvik_Yonetimi_Tam_Analiz_TR_Rev3(1).docx",
+      "document_number": "57.01",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/57.01_POSEIDON_Odul_Takdir_ve_Tesvik_Yonetimi_Tam_Analiz_TR_Rev3(1).docx",
+      "sha256": "81bec31338647c9035be8ca574d5d144dd11cc4cca52cef42268c6fe7472ea56",
+      "bytes": 90212,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 842,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:58.01_POSEIDON_Tenant_Onboarding_ve_Bildirim_Yonetimi_Tam_Analiz_TR_Rev3(1).docx",
+      "document_number": "58.01",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/58.01_POSEIDON_Tenant_Onboarding_ve_Bildirim_Yonetimi_Tam_Analiz_TR_Rev3(1).docx",
+      "sha256": "5c16ac7ac17d1c2a1186083a5cc54e1dcd09284632363dbe98d098d0ce41e747",
+      "bytes": 121753,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 1208,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:58.02_POSEIDON_Kontrollu_Dokuman_ve_Kanit_Yonetimi_Tam_Analiz_TR_Rev4(1).docx",
+      "document_number": "58.02",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/58.02_POSEIDON_Kontrollu_Dokuman_ve_Kanit_Yonetimi_Tam_Analiz_TR_Rev4(1).docx",
+      "sha256": "d72c2aa18d12cee0a910afd24753f1f55911101265575e33938603c8e46f9e59",
+      "bytes": 185194,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 1964,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:58.03_POSEIDON_Ortak_API_ve_Islem_Sozlesmeleri_TR(2).docx",
+      "document_number": "58.03",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/58.03_POSEIDON_Ortak_API_ve_Islem_Sozlesmeleri_TR(2).docx",
+      "sha256": "16a4dbd858d3a97a08d860841e9953bcf95f5ca77a6ae2d702d4999cc7528ae6",
+      "bytes": 63972,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 404,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:58.04_POSEIDON_Personel_Donatim_Goreve_Uygunluk_Calisma_Dinlenme_Analizi_TR(1)(1).docx",
+      "document_number": "58.04",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/58.04_POSEIDON_Personel_Donatim_Goreve_Uygunluk_Calisma_Dinlenme_Analizi_TR(1)(1).docx",
+      "sha256": "954cc254fd9a9e5e1f9c773378b9711a290b0d2f3a0edb9f041821f46f34b373",
+      "bytes": 159996,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 1595,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "document_number": "59.01",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "bytes": 151857,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 1903,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:59.02_POSEIDON_SMS_Emniyet_Aksiyonlari_Uygunsuzluk_ve_CAPA_Tam_Analiz_TR_Rev3(1).docx",
+      "document_number": "59.02",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.02_POSEIDON_SMS_Emniyet_Aksiyonlari_Uygunsuzluk_ve_CAPA_Tam_Analiz_TR_Rev3(1).docx",
+      "sha256": "1b7a9d0532d0d3a2cf7e75ee20f19cfcd8007ecd73de3fc640777c96e015e385",
+      "bytes": 127157,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 1491,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:59.03_POSEIDON_MLC_Refah_Sikayet_ve_DMLC_Sertifikasyon_Tam_Analiz_TR(1)(1).docx",
+      "document_number": "59.03",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.03_POSEIDON_MLC_Refah_Sikayet_ve_DMLC_Sertifikasyon_Tam_Analiz_TR(1)(1).docx",
+      "sha256": "83edecb7bf4a7d198e04cfd4d7df15fe6e7d28bb57d85ff0d98c620407d763b3",
+      "bytes": 159182,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 1962,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:59.04_POSEIDON_Varlik_Ekipman_ve_Planli_Bakim_Detayli_Analizi_TR_Rev2(1).docx",
+      "document_number": "59.04",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.04_POSEIDON_Varlik_Ekipman_ve_Planli_Bakim_Detayli_Analizi_TR_Rev2(1).docx",
+      "sha256": "fa795bfb06694d9265dccd28c797be0f6f8cb7ecbbe036d07e070f00c9727553",
+      "bytes": 181756,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 3093,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:60.01_POSEIDON_Gemi_Operasyonlari_ve_Emniyet_Koordinasyonu_Tam_Analiz_TR_Rev3(1).docx",
+      "document_number": "60.01",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/60.01_POSEIDON_Gemi_Operasyonlari_ve_Emniyet_Koordinasyonu_Tam_Analiz_TR_Rev3(1).docx",
+      "sha256": "4d3e4f33854cbbba83e523c06e901f6d201f4c9e42e798f68396980627449338",
+      "bytes": 243814,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 3320,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:60.02_POSEIDON_Romorkor_Operasyonlari_Uctan_Uca_Tam_Analiz_TR_Rev2(1).docx",
+      "document_number": "60.02",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/60.02_POSEIDON_Romorkor_Operasyonlari_Uctan_Uca_Tam_Analiz_TR_Rev2(1).docx",
+      "sha256": "cee7e0e07d0991a36da566cfbeef72fafaf18571f9aac06c4a2188cc9504a2d4",
+      "bytes": 145318,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 2377,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:60.03_POSEIDON_Mevzuat_Kaynak_ve_Uygulanabilirlik_Yasam_Dongusu_Tam_Analiz_TR_Rev4(1).docx",
+      "document_number": "60.03",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/60.03_POSEIDON_Mevzuat_Kaynak_ve_Uygulanabilirlik_Yasam_Dongusu_Tam_Analiz_TR_Rev4(1).docx",
+      "sha256": "4a2479b8613c0fcaceecc070bdec9d4ef6458577e9924a32955288d510f3aaeb",
+      "bytes": 228171,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 2588,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:60.04_POSEIDON_Gemi_Sertifika_ve_Sorvey_Yasam_Dongusu_Tam_Analiz_TR_Rev3(1).docx",
+      "document_number": "60.04",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/60.04_POSEIDON_Gemi_Sertifika_ve_Sorvey_Yasam_Dongusu_Tam_Analiz_TR_Rev3(1).docx",
+      "sha256": "578be6833568521fd5f18333c933aeb3f59155fe0633e649d71097596643cfa0",
+      "bytes": 150167,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 1699,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:61.01_POSEIDON_Olay_Yakin_Kaza_Gizli_Bildirim_ve_Ogrenme_Tam_Analiz_TR_Rev3.docx",
+      "document_number": "61.01",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/61.01_POSEIDON_Olay_Yakin_Kaza_Gizli_Bildirim_ve_Ogrenme_Tam_Analiz_TR_Rev3.docx",
+      "sha256": "6b3bb4ef4422b1f2bc451b15c8f841ae272b6564507eff0785910f6e565912bb",
+      "bytes": 122573,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 1374,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:61.02_POSEIDON_Acil_Durum_Hazirligi_Muster_ve_Tatbikat_Yasam_Dongusu_Tam_Analiz_TR(1).docx",
+      "document_number": "61.02",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/61.02_POSEIDON_Acil_Durum_Hazirligi_Muster_ve_Tatbikat_Yasam_Dongusu_Tam_Analiz_TR(1).docx",
+      "sha256": "a6f4b0fe78227a7b3f86458795378bf8d30c44d1cfa6db4bf5e920ef3eae7684",
+      "bytes": 159077,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 2256,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:61.03_POSEIDON_Ortak_Komuta_ve_Emniyet_Calisma_Alanlari_Tam_Analiz_TR_Rev3(1).docx",
+      "document_number": "61.03",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/61.03_POSEIDON_Ortak_Komuta_ve_Emniyet_Calisma_Alanlari_Tam_Analiz_TR_Rev3(1).docx",
+      "sha256": "7797b1776ad054e1fd93dab7eeebbae5d1f1c6879af5f0afbf354626984fae81",
+      "bytes": 130439,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 1702,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:62.01_POSEIDON_ISM_SMS_ve_SOLAS_Kontrol_Uygulama_Yasam_Dongusu_Tam_Analiz_TR(1).docx",
+      "document_number": "62.01",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/62.01_POSEIDON_ISM_SMS_ve_SOLAS_Kontrol_Uygulama_Yasam_Dongusu_Tam_Analiz_TR(1).docx",
+      "sha256": "36b381b624d58770dde77e13198cb21ce447de4c9f0885a4578749a2ec1edb13",
+      "bytes": 172443,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 2523,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:62.02_POSEIDON_MARPOL_BWM_Cevresel_Kayit_ve_Defter_Tam_Analiz_TR_Rev2(1).docx",
+      "document_number": "62.02",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/62.02_POSEIDON_MARPOL_BWM_Cevresel_Kayit_ve_Defter_Tam_Analiz_TR_Rev2(1).docx",
+      "sha256": "b9444861955f28bcbde76dd2de8f49ae98f7a872e25d8b1bcb8cd1bf8d7c07d7",
+      "bytes": 122485,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 1494,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:62.03_POSEIDON_Kargo_ve_Tehlikeli_Yuk_Uygunluk_Tam_Analiz_TR_Rev2(1).docx",
+      "document_number": "62.03",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/62.03_POSEIDON_Kargo_ve_Tehlikeli_Yuk_Uygunluk_Tam_Analiz_TR_Rev2(1).docx",
+      "sha256": "64f330698f49265f0dc3b79291ad7895aa9d41dc86b3db6d59539c60c23420c2",
+      "bytes": 161902,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 2475,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:62.04_POSEIDON_Denetim_PSC_Vetting_ve_Assurance_Yasam_Dongusu_Tam_Analiz_TR(1).docx",
+      "document_number": "62.04",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/62.04_POSEIDON_Denetim_PSC_Vetting_ve_Assurance_Yasam_Dongusu_Tam_Analiz_TR(1).docx",
+      "sha256": "16f47b9a811f7512292bbf4f397269aef8a9b1d04814e95aa5f69e5d524cdae2",
+      "bytes": 120662,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 1585,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:63.01_POSEIDON_Teknik_Tedarik_ve_Stok_Yasam_Dongusu_Tam_Analiz_TR(1).docx",
+      "document_number": "63.01",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/63.01_POSEIDON_Teknik_Tedarik_ve_Stok_Yasam_Dongusu_Tam_Analiz_TR(1).docx",
+      "sha256": "2ba9ef0b4c4d411de8d7525c7a455611bee633897eda0e2b8bd374a0e736329e",
+      "bytes": 139415,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 2412,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:63.02_POSEIDON_Entegrasyon_Yasam_Dongusu_ve_Adaptor_Yonetisimi_Tam_Analiz_TR_Rev3.docx",
+      "document_number": "63.02",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/63.02_POSEIDON_Entegrasyon_Yasam_Dongusu_ve_Adaptor_Yonetisimi_Tam_Analiz_TR_Rev3.docx",
+      "sha256": "b7d7bd376ea018a8f7045d5c4f7a0e93f41433472bbfcf9b148d9aaefe3e885a",
+      "bytes": 188270,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 2224,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:63.03_POSEIDON_Mobil_Cevrimdisi_ve_Cihaz_Esitleme_Tam_Analiz_TR_Rev2.docx",
+      "document_number": "63.03",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/63.03_POSEIDON_Mobil_Cevrimdisi_ve_Cihaz_Esitleme_Tam_Analiz_TR_Rev2.docx",
+      "sha256": "56e902149d627a7ad95074fe16f8b1e2e6c8dddc1f7ae03edea9029b4d050db1",
+      "bytes": 119734,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 921,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:63.04_POSEIDON_Yonetim_Gozden_Gecirme_ve_Yonetisim_Yasam_Dongusu_Tam_Analiz_TR(1).docx",
+      "document_number": "63.04",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/63.04_POSEIDON_Yonetim_Gozden_Gecirme_ve_Yonetisim_Yasam_Dongusu_Tam_Analiz_TR(1).docx",
+      "sha256": "96c114e90bb54ab0fa4d274cca87bf6f3297b6d88086f23da191ac93c52ae6cb",
+      "bytes": 115586,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 1540,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:63.05_POSEIDON_Musteri_Degeri_Pilot_Paket_ve_Demo_Yonetimi_Tam_Analiz_TR(1).docx",
+      "document_number": "63.05",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/63.05_POSEIDON_Musteri_Degeri_Pilot_Paket_ve_Demo_Yonetimi_Tam_Analiz_TR(1).docx",
+      "sha256": "c3e6463eacdce10579e4ba0b1ed111d9441d7ecf2ea1718c44e7c00ad6d3031e",
+      "bytes": 64603,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 470,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:63.06_POSEIDON_Siber_Guvenlik_ve_Mahremiyet_Operasyonlari_Tam_Analiz_TR_Rev3(1).docx",
+      "document_number": "63.06",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/63.06_POSEIDON_Siber_Guvenlik_ve_Mahremiyet_Operasyonlari_Tam_Analiz_TR_Rev3(1).docx",
+      "sha256": "1b0b97e857839b4d34e37f4e295f1820d9c1d3a9b79bbe76d11054fd3c221767",
+      "bytes": 210379,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 3780,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:64.01_POSEIDON_Emniyet_Zekasi_ve_Filo_Sinyalleri_Tam_Analiz_TR(1).docx",
+      "document_number": "64.01",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/64.01_POSEIDON_Emniyet_Zekasi_ve_Filo_Sinyalleri_Tam_Analiz_TR(1).docx",
+      "sha256": "b628bfbf7247f9d3158aa7e8a241d4b4316eb3c1b8544d516cdc51c527723d51",
+      "bytes": 141800,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 1515,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:65.01_POSEIDON_Uretim_Isletimi_Dagitim_ve_Kontrollu_Geri_Donus_Tam_Analiz_TR(1).docx",
+      "document_number": "65.01",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/65.01_POSEIDON_Uretim_Isletimi_Dagitim_ve_Kontrollu_Geri_Donus_Tam_Analiz_TR(1).docx",
+      "sha256": "874c8ecb851ba19ebd7e38629221d02b2b37f30e72d9cd89e89a83cb5a75fd46",
+      "bytes": 183885,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 1857,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:65.02_POSEIDON_Yazilim_Surum_Kabulu_Pilot_ve_UAT_Yasam_Dongusu_Tam_Analiz_TR(1).docx",
+      "document_number": "65.02",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/65.02_POSEIDON_Yazilim_Surum_Kabulu_Pilot_ve_UAT_Yasam_Dongusu_Tam_Analiz_TR(1).docx",
+      "sha256": "bd60fde59f57e66ac568a1f207b50381f936435c26092f955206738ebd9aff21",
+      "bytes": 146877,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 2108,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:65.03_POSEIDON_Kullanici_Deneyimi_TR_EN_ve_Erisilebilirlik_Tam_Analiz_TR(1).docx",
+      "document_number": "65.03",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/65.03_POSEIDON_Kullanici_Deneyimi_TR_EN_ve_Erisilebilirlik_Tam_Analiz_TR(1).docx",
+      "sha256": "3ce010297c5d74f3686a6054b69690e1b7ca196d8acf4ec50ba077bb21fd72c9",
+      "bytes": 77587,
+      "source_class": "candidate-unverified",
+      "paragraph_count": 1399,
+      "prior_same_number_candidates": [],
+      "review_status": "PLANNING_REVIEW_NOT_IMPLEMENTATION_ACCEPTANCE"
+    },
+    {
+      "source_id": "poseidon-analysis-20261115:POSEIDON_Analizlerle_Guncel_Prototip_TR_EN_2026-11-15.html",
+      "document_number": null,
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/POSEIDON_Analizlerle_Guncel_Prototip_TR_EN_2026-11-15.html",
+      "sha256": "0c11dfaea230c0750cb171bff3f5bdd143ae6885e50686131aa1111b5fef08a0",
+      "bytes": 1769208,
+      "source_class": "prototype-reference-only",
+      "paragraph_count": 0,
+      "prior_same_number_candidates": [],
+      "review_status": "INVENTORIED_NOT_EXECUTED"
+    }
+  ],
+  "file_count": 43,
+  "docx_count": 42,
+  "prototype_count": 1,
+  "paragraph_count": 146506,
+  "extraction": "Word document.xml paragraphs including tables; original paragraph ordinals; HTML bytes inventoried only; no scripts executed",
+  "full_semantic_review": false
+}

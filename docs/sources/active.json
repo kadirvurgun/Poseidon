@@ -15,5 +15,18 @@
   "backlog_tasks": 121,
   "backlog_story_points": 970,
   "screens": 196,
-  "field_contracts": 2316
+  "field_contracts": 2316,
+  "planning_supplement": {
+    "baseline_id": "poseidon-analysis-20261115",
+    "source_root": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26",
+    "manifest": "docs/sources/2026-11-15/planning-manifest.json",
+    "excerpts": "docs/sources/2026-11-15/planning-excerpts.jsonl",
+    "coverage": "docs/sources/2026-11-15/coverage-map.json",
+    "plan": "docs/tasks/analysis-20261115-01.plan.json",
+    "report": "docs/phases/ANALYSIS-20261115-01.md",
+    "authority": "User selected 15.11.26 analyses for review and planning on 2026-11-17; use current exact owner versions for changed/new planning requirements; expert/legal/operational gates remain open",
+    "status": "PLANNING_REVIEW_AUTHORED_FULL_CONTRACT_RECONCILIATION_OPEN",
+    "default_query_sources_includes_supplement": true,
+    "retrieval": "Primary chunk shards (baseline poseidon-v46.3-20261115) already contain all 43 15.11 files with identical SHA256. query_sources.py overlays the 42 pinned DOCX originals from planning-manifest.json with paragraph locators, skips primary chunk rows for those exact paths so nothing is indexed twice, and demotes older same-number candidates (17.01, 50.01) to superseded-candidate-reference (--include-references only). HTML is never executed; overlay tests/independent QA remain deferred."
+  }
 }

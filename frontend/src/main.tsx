@@ -4,6 +4,10 @@ import { App } from './App'
 import './styles.css'
 import './design-system.css'
 import { initializeAppLanguage } from './i18n'
+import { initializeAppearance } from './theme/appearance-store'
+
+const disposeAppearance = initializeAppearance()
+if (import.meta.hot) import.meta.hot.dispose(disposeAppearance)
 
 // Product modules register their local catalog loaders while App is imported.
 // Resolve a stored locale before first paint; a failed catalog keeps Turkish.

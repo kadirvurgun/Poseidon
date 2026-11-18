@@ -1,34 +1,135 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark *));
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
-  --color-card-foreground: var(--foreground);
+  --color-card-foreground: var(--card-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--foreground);
+  --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
-  --color-accent-foreground: var(--foreground);
+  --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
 }
 
-.product-shell {
-  --background: #f5f7fb; --foreground: #17263c; --card: #ffffff;
-  --primary: #2363d7; --primary-foreground: #ffffff; --secondary: #eaf0f8;
-  --muted: #f1f4f8; --muted-foreground: #526780; --accent: #e8f0fd;
-  --sidebar-foreground: #d0ddec; --sidebar-muted-foreground: #adbed3;
-  --focus-ring: #245fba; --focus-ring-on-dark: #a5d8ff; --ring: var(--focus-ring);
-  --warning-background: #fff8e9; --warning-foreground: #875c18; --warning-border: #f0dfb9;
-  --destructive: #c03d4c; --border: #e1e7ef; --input: #ccd7e4;
-  --radius: .65rem; color-scheme: light;
+/* Theme colors from https://ui.shadcn.com/init?preset=b3Zheoix4U&only=theme (MIT).
+   Apply only color/radius tokens; existing component/font/icon families stay owned locally. */
+:root, :root.light {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.147 0.004 49.25);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.147 0.004 49.25);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.147 0.004 49.25);
+  --primary: oklch(0.508 0.118 165.612);
+  --primary-foreground: oklch(0.979 0.021 166.113);
+  --secondary: oklch(0.967 0.001 286.375);
+  --secondary-foreground: oklch(0.21 0.006 285.885);
+  --muted: oklch(0.97 0.001 106.424);
+  --muted-foreground: oklch(0.553 0.013 58.071);
+  --accent: oklch(0.97 0.001 106.424);
+  --accent-foreground: oklch(0.216 0.006 56.043);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.923 0.003 48.717);
+  --input: oklch(0.923 0.003 48.717);
+  --ring: oklch(0.709 0.01 56.259);
+  --chart-1: oklch(0.865 0.127 207.078);
+  --chart-2: oklch(0.715 0.143 215.221);
+  --chart-3: oklch(0.609 0.126 221.723);
+  --chart-4: oklch(0.52 0.105 223.128);
+  --chart-5: oklch(0.45 0.085 224.283);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0.001 106.423);
+  --sidebar-foreground: oklch(0.147 0.004 49.25);
+  --sidebar-primary: oklch(0.596 0.145 163.225);
+  --sidebar-primary-foreground: oklch(0.979 0.021 166.113);
+  --sidebar-accent: oklch(0.97 0.001 106.424);
+  --sidebar-accent-foreground: oklch(0.216 0.006 56.043);
+  --sidebar-border: oklch(0.923 0.003 48.717);
+  --sidebar-ring: oklch(0.709 0.01 56.259);
+  --warning: #835d27;
+  --warning-surface: #fffbf4;
+  --warning-border: #c99039;
+  --danger-text: #b54554;
+  --danger-surface: #fff0f1;
+  --danger-border: #f1d4d9;
+  --info-text: #245caa;
+  --info-surface: #edf4ff;
+  --info-border: #d3e4fb;
+  /* Workspace-specific tokens kept from the continuation line; values follow the active mode. */
+  --focus-ring: #245fba;
+  --focus-ring-on-dark: var(--focus-ring);
+  --sidebar-muted-foreground: var(--muted-foreground);
+  --warning-background: var(--warning-surface);
+  --warning-foreground: var(--warning);
+  color-scheme: light;
 }
+:root.dark {
+  --background: oklch(0.147 0.004 49.25);
+  --foreground: oklch(0.985 0.001 106.423);
+  --card: oklch(0.216 0.006 56.043);
+  --card-foreground: oklch(0.985 0.001 106.423);
+  --popover: oklch(0.216 0.006 56.043);
+  --popover-foreground: oklch(0.985 0.001 106.423);
+  --primary: oklch(0.432 0.095 166.913);
+  --primary-foreground: oklch(0.979 0.021 166.113);
+  --secondary: oklch(0.274 0.006 286.033);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.268 0.007 34.298);
+  --muted-foreground: oklch(0.709 0.01 56.259);
+  --accent: oklch(0.268 0.007 34.298);
+  --accent-foreground: oklch(0.985 0.001 106.423);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.553 0.013 58.071);
+  --chart-1: oklch(0.865 0.127 207.078);
+  --chart-2: oklch(0.715 0.143 215.221);
+  --chart-3: oklch(0.609 0.126 221.723);
+  --chart-4: oklch(0.52 0.105 223.128);
+  --chart-5: oklch(0.45 0.085 224.283);
+  --sidebar: oklch(0.216 0.006 56.043);
+  --sidebar-foreground: oklch(0.985 0.001 106.423);
+  --sidebar-primary: oklch(0.696 0.17 162.48);
+  --sidebar-primary-foreground: oklch(0.262 0.051 172.552);
+  --sidebar-accent: oklch(0.268 0.007 34.298);
+  --sidebar-accent-foreground: oklch(0.985 0.001 106.423);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.553 0.013 58.071);
+  --warning: #fde68a;
+  --warning-surface: #352a18;
+  --warning-border: #ad8434;
+  --danger-text: #fda4af;
+  --danger-surface: #3f1822;
+  --danger-border: #9f4356;
+  --info-text: #93c5fd;
+  --info-surface: #162a46;
+  --info-border: #3d6598;
+  --focus-ring: #a5d8ff;
+  color-scheme: dark;
+}
+
+:root[data-palette="ocean"] { --primary: #1d4ed8; --primary-foreground: #ffffff; --ring: #2563eb; --sidebar-primary: #1d4ed8; --sidebar-primary-foreground: #ffffff; }
+:root.dark[data-palette="ocean"] { --primary: #93c5fd; --primary-foreground: #172554; --ring: #60a5fa; --sidebar-primary: #93c5fd; --sidebar-primary-foreground: #172554; }
+:root[data-palette="graphite"] { --primary: #292524; --primary-foreground: #fafaf9; --ring: #78716c; --sidebar-primary: #292524; --sidebar-primary-foreground: #fafaf9; }
+:root.dark[data-palette="graphite"] { --primary: #e7e5e4; --primary-foreground: #1c1917; --ring: #a8a29e; --sidebar-primary: #e7e5e4; --sidebar-primary-foreground: #1c1917; }
+:root { color: var(--foreground); background: var(--background); }
+body { background: var(--background); color: var(--foreground); }
+.product-shell { color-scheme: inherit; --ring: var(--focus-ring); }
 
 /* Locale presentation never changes canonical source strings or input values. */
 :root[dir="rtl"] .enterprise-breadcrumb > svg,

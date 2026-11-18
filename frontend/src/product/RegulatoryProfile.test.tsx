@@ -29,6 +29,37 @@ beforeEach(() => {
 });
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 describe('VESSEL-PROFILE-DRAFT-01 component and transport coverage (mocked API, no external IdP)', () => {
+  it('removes saved source context when a history read withdraws access', async () => {
+    let finish!: (response: Response) => void
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => url.includes('/history?') ? new Promise<Response>(resolve => { finish = resolve }) : url.includes('/files?') ?
+      reply({ items: [], offset: 0, hasMore: false, available: true, canWrite: false, maxBytes: 1048576, allowedTypes: ['image/png'] }) : reply(profile)))
+    render(<RegulatoryProfile {...callbacks()} />)
+    expect(await screen.findByRole('region', { name: 'Saved source context' })).toBeVisible()
+    finish(reply({}, 403))
+    await waitFor(() => expect(screen.queryByRole('region', { name: 'Saved source context' })).not.toBeInTheDocument())
+    expect(screen.queryByLabelText('GT')).not.toBeInTheDocument()
+    expect(screen.getByRole('alert')).toHaveTextContent('permission')
+  })
+  it('keeps saved source time distinct from save time and from unsaved form edits across languages', async () => {
+    const observed = '2001-01-01T00:00:00Z'
+    const saved = { ...profile, content: { ...content, sourceObservedAt: { state: 'Known', value: observed }, sourceReference: { state: 'Unknown', value: null } } }
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => url.includes('/files?') ? reply({ items: [], offset: 0, hasMore: false, available: true, canWrite: false, maxBytes: 1048576, allowedTypes: ['image/png'] }) : url.includes('/history?') ? reply(history) : reply(saved)))
+    const props = callbacks(); const user = userEvent.setup(); const view = render(<RegulatoryProfile {...props} />)
+    const summary = await screen.findByRole('region', { name: 'Saved source context' })
+    expect(within(summary).getByText(observed)).toHaveAttribute('datetime', observed)
+    expect(within(summary).getByText(profile.savedAt!)).toHaveAttribute('datetime', profile.savedAt!)
+    expect(within(summary).getByText('Unknown')).toBeVisible()
+    expect(within(summary).getByText('Not assessed')).toBeVisible()
+    const input = screen.getByLabelText('Source observed at (with timezone)')
+    await user.clear(input); await user.type(input, '2026-01-01T00:00:00Z')
+    expect(within(summary).getByText(observed)).toBeVisible()
+    view.rerender(<RegulatoryProfile {...props} language="tr" />)
+    const translated = screen.getByRole('region', { name: 'Kayıtlı kaynak bağlamı' })
+    expect(within(translated).getByText('Değerlendirilmedi')).toBeVisible()
+    expect(within(translated).getByText(observed)).toBeVisible()
+    expect(screen.getByLabelText('Kaynak gözlem zamanı (saat dilimi ile)')).toHaveValue('2026-01-01T00:00:00Z')
+    expect(props.onDirty).toHaveBeenLastCalledWith(true)
+  })
     it('DEV-020 shows the saved source observation and keeps an unsaved timestamp out of its provenance context', async () => {
         const observed = '2026-10-30T08:00:00Z';
         const saved = { ...profile, content: { ...content, sourceObservedAt: { state: 'Known', value: observed } } };

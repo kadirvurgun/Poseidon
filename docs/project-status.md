@@ -1,5 +1,27 @@
 # POSEIDON — PR16 ve yerelleştirme durumu
 
+## Paralel S2 planlama, tema ve katalog alt paketleri (17–18.11.2026)
+
+_18.11.2026 entegrasyonu: ayrı oturumda yazılan bu kayıt `foundation/s2-integration-20261118` dalına cherry-pick ile alındı; planlama manifesti `sources/2026-11-15/planning-manifest.json` yoluna taşındı. Entegrasyon testleri DEFERRED / NOT RUN._
+
+**17.11.2026:** Yeni analiz seti için kaynak bağlı planlama eki yazıldı: **42 Word + 1 HTML**, 42 geliştirme paketi, G01–G26 / X01–X07 / S01–S09 sahiplik eşlemesi. Mevcut S0/S1 mühendislik kabulü **103 / 970 SP, 20 / 121 iş; ayrı ekran kabulü 0 / 196** olarak korunur. Bu çalışma yeni kabul puanı eklemez.
+
+Yeni plan; exact API profilleri ve kalıcı retry, IAM Rev4 action/epoch, tek LegalEntity/Vessel, personel→teknik/risk/mevzuat→Ship/Tug kaynak zinciri, kurum içi/self-hosted üretim, offline sınırları, TR/EN/erişilebilirlik ve gerçek kanıta bağlı release kapılarını içerir. S2 DEV-020–025 için 42 SP kaynak bağı çıkarıldı; ilk uygulama DEV-020 gemi/profil akışıdır.
+
+İnceleme kapsam ve owner ifadeleri ile seçilmiş sözleşme paragraflarına dayanır. 146.506 dolu paragrafın bütün sicil/FR/TC/action satırları semantik olarak doğrulanmadı. Eski revizyon atıfları, 61.01 dosya adı/iç sürüm farkı ve exact alan/endpoint eşlemesi açık takiptir. Aktif FTS araması artık yeni42DOCX kaynağını da içerir; eski aynı numaralı adaylar yalnız referans modunda bulunur. Kaynak araması başarılı oldu; test/bağımsız kabul yerine geçmez.
+
+İlk analiz incelemesinde kaynak/metin ve SHA256/byte/konum metadata üretimi yapıldı; devamında tema, kaynak araması, domain ve profil UI kodu yazıldı. Test/build/typecheck/Playwright, bağımsız QA ve CI **DEFERRED / NOT RUN**; prototip çalıştırılmadı. Sonraki adım DEV-020 native Fleet producer ve exact owner/profile/trace uzlaştırması. S1 PR/merge/main CI yayın uzlaştırması ayrı korunur.
+
+**Tema eki — 17.11.2026:** Kullanıcının shadcn b3Zheoix4U presetiyle ortak tema altyapısı yazıldı: açık/koyu/sistem, Zümrüt/Okyanus/Grafit, yerel tercih ve sekmeler/OS eşitlemesi, ilk boyama ve offline bootstrap. 6 davranış + 1 offline test kaynağı eklendi. Modül CSS/grafik renklerinin tam geçişi, font/icon/stil geçişi ve gerçek kontrast/browser kabulü açık. Lint/typecheck/build/test/QA/CI **DEFERRED / NOT RUN**; accepted SP eklenmedi. [Görev](tasks/theme-foundation-01.md) · [Rapor](phases/THEME-FOUNDATION-01.md).
+
+**S2 geliştirme — 17.11.2026:** DEV-020 için kaynak bağlı temel alt paketi yazıldı. Yeni42DOCX dahil181.464 adresli kayıt aramada; iç Fleet tamlık politikası ve kayıtlı kaynak/gözlem zamanı özeti eklendi. 8 domain +4 Python +2 UI test kaynağı yazıldı, çalıştırılmadı. Katalog/schema/source registration ve aynı-kesit yetki/lineage producerı henüz yok; hesaplayıcı public quality alanına bağlanmadı. DEV-020/S2 tamamlanmadı; accepted SP +0. Dal `foundation/s2-analysis-20261117`. [Görev](tasks/s2-profile-foundation-01.md) · [Rapor](phases/S2-PROFILE-FOUNDATION-01.md).
+
+**18.11.2026 — katalog persistence:** Boş/kısmi Fleet katalog taslağı, immutable revizyon/komut sonucu, tenant/prior FK, serializable audit ve replay katmanı yazıldı. Opsiyonel fixture boş ve doğrulanmamış kalır; normal seed/startup değişmedi. 6 domain metodu /9 senaryo ve10 PostgreSQL integration metodu yazıldı; çalıştırılmadı. Migration designer/snapshot uzlaştırması, gerçek PostgreSQL doğrulaması ve yetkili host/source governance açık. Yeni kabul puanı yok. [Görev](tasks/s2-fleet-catalog-draft-01.md) · [Rapor](phases/S2-FLEET-CATALOG-DRAFT-01.md).
+
+[Analiz raporu](phases/ANALYSIS-20261115-01.md) · [42 paketlik plan](tasks/analysis-20261115-01.md) · [Kaynak manifesti](sources/2026-11-15/planning-manifest.json) · [Canonical kayıt](project-status.json)
+
+---
+
 **17 Kasım — 15.11 ek analizleri aktif kaynak zincirine alındı; S2 bağlam alt
 paketi yazıldı, kabul açık.** 42 DOCX ve bir güncel TR/EN prototip eklendi. Önceki
 269 kaynak byte olarak değişmedi; yeni baseline312 dosya/182.283 bölüm/0 mismatch

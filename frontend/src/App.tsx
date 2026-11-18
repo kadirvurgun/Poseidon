@@ -19,6 +19,7 @@ import { CertificateWorkspace } from './product/CertificateWorkspace';
 import { DefectWorkspace } from './product/DefectWorkspace';
 import { WorkOrderWorkspace } from './product/WorkOrderWorkspace';
 import { DowntimeWorkspace } from './product/DowntimeWorkspace';
+import { AppearanceControls } from './theme/AppearanceControls';
 type Connection = 'loading' | 'available' | 'error';
 const content = localizedCopy("App_tsx_content");
 export function App() {
@@ -85,7 +86,7 @@ export function ExistingApp() {
         <div className="sidebar-bottom"><span className="compass" aria-hidden="true">✧</span><p>{t.phase}</p><small><bdi dir="ltr">v0.1</bdi> · {presentationLabel(language, 'developmentCaption')}</small></div>
       </aside>
       <div className="workspace">
-        <header className="topbar"><span className="breadcrumb">POSEIDON <span aria-hidden="true">/</span> {t.page}</span><div className="topbar-actions"><span className="environment"><span />{t.environment}</span><LanguageSelector locale={language} onChange={setLanguage} /></div></header>
+        <header className="topbar"><span className="breadcrumb">POSEIDON <span aria-hidden="true">/</span> {t.page}</span><div className="topbar-actions"><AppearanceControls language={language} /><span className="environment"><span />{t.environment}</span><LanguageSelector locale={language} onChange={setLanguage} /></div></header>
         <main id="main" tabIndex={-1}>
           <div className="page-heading"><p className="eyebrow">{t.eyebrow}</p><h1>{t.heading}</h1><p className="intro">{t.intro}</p></div>
           <section className={`connection-card connection-${connection}`} aria-labelledby="connection-title" data-testid="connection-card" data-state={connection}>

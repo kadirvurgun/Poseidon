@@ -15136,5 +15136,194 @@
     "independent_phase_qa": "PENDING_PROVIDER_QUOTA",
     "canonical_sp_added": 0,
     "acceptance": false
+  },
+  "analysis_20261115_01": {
+    "task_id": "ANALYSIS-20261115-01",
+    "recorded_date": "2026-11-17",
+    "status": "PLANNING_REVIEW_AUTHORED_FULL_CONTRACT_RECONCILIATION_OPEN",
+    "accepted": false,
+    "accepted_sp_added": 0,
+    "source_root": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26",
+    "manifest": "docs/sources/2026-11-15/planning-manifest.json",
+    "excerpts": "docs/sources/2026-11-15/planning-excerpts.jsonl",
+    "coverage_map": "docs/sources/2026-11-15/coverage-map.json",
+    "plan": "docs/tasks/analysis-20261115-01.plan.json",
+    "task": "docs/tasks/analysis-20261115-01.md",
+    "report": "docs/phases/ANALYSIS-20261115-01.md",
+    "inventory": {
+      "files": 43,
+      "docx": 42,
+      "prototype_html": 1,
+      "bytes": 10355368,
+      "nonempty_word_paragraphs": 146506,
+      "exact_planning_excerpts": 688,
+      "planning_packages": 42,
+      "G_groups": 26,
+      "X_groups": 7,
+      "S_groups": 9
+    },
+    "review_scope": "All document scope/owner introductions, selected contract/authority/offline/privacy/acceptance excerpts, master G/X/S mapping, exact S2 backlog rows; NOT full semantic review of all 146506 paragraphs or registry rows",
+    "canonical_denominators_unchanged": {
+      "tasks": 121,
+      "sp": 970,
+      "screens": 196,
+      "fields": 2316
+    },
+    "historical_acceptance_unchanged": "S0/S1 engineering 103/970SP;20/121tasks;0/196separate-screen acceptances; original exact-target evidence preserved",
+    "s2_plan": {
+      "tasks": [
+        "DEV-020",
+        "DEV-021",
+        "DEV-022",
+        "DEV-023",
+        "DEV-024",
+        "DEV-025"
+      ],
+      "sp": 42,
+      "source_rows": "18.01 sheet:Backlog/row:21-26",
+      "accepted_sp_added": 0
+    },
+    "unresolved": [
+      "ANA15-REF-01 exact owner/profile version reconciliation",
+      "ANA15-REF-02 HR6/Fleet source identity and read contracts",
+      "ANA15-META-01 61.01 filename Rev3 vs body Rev2",
+      "ANA15-IDX-01 overlay authored; regression and independent source review deferred",
+      "ANA15-TRACE-01 full action/field/FR/TC registry reconciliation",
+      "ANA15-GATE-01 new-baseline regression and independent source/release acceptance"
+    ],
+    "verification": "Source/metadata retrieval and plan generation only; tests/build/typecheck/generation/browser/migration/seed/independent QA/CI DEFERRED_NOT_RUN",
+    "prototype": "Inventoried by bytes/SHA256; not executed or browser validated",
+    "publication": "No commit/push/PR/merge/deployment",
+    "next": "Native Fleet producer, exact owner/profile/trace mapping and S2 implementation; S1 publication reconciliation remains separate",
+    "search_overlay_followup": "ANA15-IDX-01 source-query code authored in S2-PROFILE-FOUNDATION-01;14tests authored across package but no tests run; full new42DOCX searchable with original SHA/paragraph refs",
+    "integration_note": "Parallel planning record from 2026-11-17 cherry-picked onto foundation/s2-integration-20261118; primary manifest docs/sources/2026-11-15/manifest.json (312 files) is the HEAD continuation import and already includes all 43 15.11 files with identical SHA256. Integration checks DEFERRED_NOT_RUN."
+  },
+  "theme_foundation_01": {
+    "task_id": "THEME-FOUNDATION-01",
+    "date": "2026-11-17",
+    "status": "AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+    "accepted": false,
+    "accepted_sp_added": 0,
+    "phase": "15.11.26 plan wave 1 shared UI foundation",
+    "task": "docs/tasks/theme-foundation-01.md",
+    "report": "docs/phases/THEME-FOUNDATION-01.md",
+    "source": "docs/sources/ui/shadcn-b3Zheoix4U.json",
+    "preset": "https://ui.shadcn.com/create?preset=b3Zheoix4U",
+    "authored": [
+      "Runtime light/dark/system and Emerald/Ocean/Graphite selector in enterprise chrome and connection screen",
+      "Local cosmetic persistence, blocked-storage fallback, cross-tab and OS synchronization",
+      "First-paint same-origin bootstrap and exact-byte public offline inventory",
+      "Shared token migration and 6 component/store/boot plus 1 offline test source"
+    ],
+    "verification": "DEFERRED_NOT_RUN: lint/typecheck/build/tests/browser/contrast/AT/independent QA/CI",
+    "remaining": [
+      "Domain CSS fixed colors and ECharts token consumers",
+      "All mode/palette contrast, mobile, portal/dialog, CSP/offline browser checks",
+      "Full Sera/Phosphor/Oxanium/Geist style migration separately planned",
+      "Optional server account preference integration under 52.02 contract"
+    ],
+    "publication": "No commit/push/PR/merge/deployment",
+    "next": "Use shared tokens from S2 onward; finish scoped legacy colors and validate at combined gate",
+    "source_maintenance": {
+      "tracked_diff_whitespace": "exit0",
+      "graphify_ast_update": "exit0",
+      "nodes": 15203,
+      "edges": 27362,
+      "communities": 1018,
+      "limitations": "730 zero-node inputs; HTML skipped above5000 nodes; no full semantic document review"
+    }
+  },
+  "s2_profile_foundation_01": {
+    "task_id": "S2-PROFILE-FOUNDATION-01",
+    "date": "2026-11-17",
+    "status": "AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+    "accepted": false,
+    "accepted_sp_added": 0,
+    "phase": "S2 source-aware foundation authoring; DEV-020 incomplete",
+    "branch": "foundation/s2-analysis-20261117",
+    "task": "docs/tasks/s2-profile-foundation-01.md",
+    "sources": "docs/tasks/s2-profile-foundation-01.sources.json",
+    "report": "docs/phases/S2-PROFILE-FOUNDATION-01.md",
+    "authored": [
+      "Full pinned42DOCX bounded-search overlay; superseded candidate references and atomic cache",
+      "Internal FleetQualityPolicy with complete source coverage, lineage, exact100limit and DISPUTED/UNKNOWN/PARTIAL/COMPLETE precedence",
+      "Saved source reference/observation/save-time UI, unsaved edit separation and withdrawal handling"
+    ],
+    "source_retrieval": {
+      "actual_bounded_query": "exit0;59.01 paragraphs1860/1861 exact SHA",
+      "fts_rows": 181464,
+      "current_candidates": 178069,
+      "superseded_candidates": 611,
+      "new_docx_paragraphs": 146506
+    },
+    "test_sources_authored": {
+      "domain": 8,
+      "python_overlay": 4,
+      "ui": 2
+    },
+    "verification": "DEFERRED_NOT_RUN: tests/build/typecheck/lint/generation/migration/seed/browser/independent QA/CI; source retrieval is not product PASS",
+    "persistence": "No new entity/schema/migration/seed; no business mutation or legacy protocol/receipt change",
+    "not_implemented": [
+      "Accepted native catalog/schema and source registration",
+      "Single-cut source/authorization fencing and protected native row/detail quality projection",
+      "LegalEntity legacy company mapping and full identity/profile lifecycle",
+      "Required API/PostgreSQL integration and combined verification gate"
+    ],
+    "publication": "No commit/push/PR/merge/deployment",
+    "next": "Implement registered native Fleet producer with EF migrations/incomplete fixtures and source/auth/lineage API+PG tests; then remainingDEV-020 andS2",
+    "source_maintenance": {
+      "tracked_diff_whitespace": "exit0",
+      "graphify_ast_update": "exit0",
+      "nodes": 15250,
+      "edges": 27478,
+      "communities": 1024,
+      "limitations": "730 zero-node inputs; HTML skipped above5000 nodes; semantic document graph not refreshed"
+    },
+    "catalog_followup": "S2-FLEET-CATALOG-DRAFT-01 authors staging EF draft/history and private writer; accepted native catalog, schema/source registration and public projection still open"
+  },
+  "s2_fleet_catalog_draft_01": {
+    "task_id": "S2-FLEET-CATALOG-DRAFT-01",
+    "date": "2026-11-18",
+    "status": "AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+    "accepted": false,
+    "accepted_sp_added": 0,
+    "phase": "S2 Fleet catalog draft persistence authoring; DEV-020 incomplete",
+    "branch": "foundation/s2-analysis-20261117",
+    "task": "docs/tasks/s2-fleet-catalog-draft-01.md",
+    "sources": "docs/tasks/s2-fleet-catalog-draft-01.sources.json",
+    "report": "docs/phases/S2-FLEET-CATALOG-DRAFT-01.md",
+    "authored": [
+      "Closed incomplete catalog drafting policy; no inferred schema, mode or publication",
+      "EF tenant-scoped draft roots, immutable revision/outcome/prior lineage, migration and dual EF/PG guards",
+      "Serializable audited writer, exact command replay and actor/intent conflict; no pending unrelated writes",
+      "Optional explicit empty synthetic fixture preserving operator revisions"
+    ],
+    "test_sources": {
+      "domain_methods": 6,
+      "domain_declared_cases": 9,
+      "postgres_integration_methods": 10
+    },
+    "verification": "DEFERRED_NOT_RUN: tests/build/restore/model generation/migration apply/seed/browser/independent QA/CI",
+    "migration": "20261117090000_FleetCatalogDraftFoundation; authored SQL only; designer/snapshot reconciliation at combined gate",
+    "native_publication": "Not implemented; no accepted catalog/schema/selector, public endpoint or role grant created",
+    "audit": "EF tenant/catalog/revision metadata only; no body/hash/title copy; not complete HTTP/user-action/GDPR acceptance",
+    "fixture": "Optional administrative only; empty FICTIONAL draft; normal seed totals unchanged",
+    "remaining": [
+      "Generated model/designer/snapshot reconciliation and actual PostgreSQL verification at combined gate",
+      "54.01 catalog governance and59.01 accepted source/schema binding",
+      "Exact authoring actions and commit-time authority/source fence in future host",
+      "Protected native Fleet quality projection and remainingDEV-020/S2"
+    ],
+    "publication": "No commit/push/PR/merge/deployment",
+    "next": "Native catalog/schema governance and fenced authoring host; later accepted source-based Fleet quality consumer",
+    "source_maintenance": {
+      "tracked_diff_whitespace": "exit0",
+      "graphify_ast_update": "exit0",
+      "nodes": 15351,
+      "edges": 27705,
+      "communities": 1035,
+      "source_receipts": 122,
+      "limitations": "732 zero-node/unsupported inputs; HTML skipped above5000 nodes; no full semantic document review"
+    }
   }
 }

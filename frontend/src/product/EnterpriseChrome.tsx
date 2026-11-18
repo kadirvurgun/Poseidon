@@ -15,6 +15,7 @@ import { WorkspaceSearch } from './WorkspaceSearch';
 import { useEnterpriseNavigation } from './enterprise-navigation';
 import { enterpriseFocusTargets } from './enterprise-focus';
 import { EnterpriseSidebarNav } from './EnterpriseSidebarNav';
+import { AppearanceControls } from '../theme/AppearanceControls';
 import './enterprise.css';
 const labels: Record<string, {
     tr: string;
@@ -151,6 +152,7 @@ export function EnterpriseChrome({ session, vessel = null, language, onLanguageC
       <Button ref={menuButton} variant="ghost" size="icon" className="workspace-menu" aria-expanded={drawer} aria-controls="workspace-navigation" aria-label={localizedText(en, "pairs.m_489a9d5d52c1f266")} onClick={() => setDrawer(!drawer)}><Menu /></Button>
       <div className="enterprise-breadcrumb">{vessel && <Button variant="ghost" size="icon-sm" asChild><a href={`/app/fleet/${vessel}`} aria-label={localizedText(en, "pairs.m_09d51047be4de855")} onClick={event => { event.preventDefault(); move(`/app/fleet/${vessel}`); }}><ArrowLeft aria-hidden="true"/></a></Button>}<span>POSEIDON</span><ChevronRight aria-hidden="true"/><strong>{title}</strong></div>
       <div className="enterprise-topbar-actions">
+        <AppearanceControls language={language} />
         {navigation.canSearch && <Button variant="outline" className="enterprise-search-trigger" aria-label={localizedText(en, "pairs.m_a959c1a640f4b9b6")} onClick={() => { if (session)
         setSearchOwner({ owner: session }); }}><Search /><span>{localizedText(en, "pairs.m_a959c1a640f4b9b6")}</span><kbd>⌘ / Ctrl K</kbd></Button>}
         <LanguageSelector locale={language} onChange={onLanguageChange} />

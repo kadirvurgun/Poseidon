@@ -16,7 +16,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         {
             Person or CrewIdentityRevision or CrewPersonalProfile or CrewPersonalProfileRevision => "TenantPerson",
             CommandReceipt r when r.Action is "CrewPersonSave" or "CrewIdentityConvert" or "CrewProfileSave" or "CrewPhotoSave" => "TenantPerson",
-            Tenant or Company or RegisterDraft or RegisterRevision or RuleDraft or RuleRevision or
+            Tenant or Company or RegisterDraft or RegisterRevision or RuleDraft or RuleRevision or FleetCatalogDraft or FleetCatalogDraftRevision or
                 RegulatoryQualificationHead or RegulatoryQualificationEvent or RegulatoryQualificationReceipt => "Tenant",
             CommandReceipt r when r.Action is "CompanyCreate" or "CompanyUpdate" or "SourceDraftSave" or "RequirementDraftSave" => "Tenant",
             ApplicabilityReceipt r when r.Action is "author" or "review" => "Tenant",
@@ -144,6 +144,12 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         if (entry.Entity is NotificationReceipt notificationReceipt)
             return new(notificationReceipt.VesselId, notificationReceipt.ResourceId, "NotificationReceipt", null, null,
                 Fields(Field("Binding", null, "CommittedResource")));
+        if (entry.Entity is FleetCatalogDraft fleetCatalogHead)
+            return new(null, fleetCatalogHead.Id, "FleetCatalogDraft", entry.State == EntityState.Added ? null : (long?)entry.Property(nameof(fleetCatalogHead.Revision)).OriginalValue,
+                fleetCatalogHead.Revision, Fields(Field("DraftState", null, "DRAFT")));
+        if (entry.Entity is FleetCatalogDraftRevision fleetCatalogRevision)
+            return new(null, fleetCatalogRevision.CatalogId, "FleetCatalogDraftRevision", null, fleetCatalogRevision.Revision,
+                Fields(Field("DraftState", null, "DRAFT")));
         if (entry.Entity is CommandReceipt { Action: "CrewCatalogSave" } catalogReceipt)
             return new(catalogReceipt.ResourceId, catalogReceipt.ResourceId, "CrewCatalogReceipt", null, catalogReceipt.RegisterRevision, "[]");
         if (entry.Entity is CrewCatalogEvent catalog)

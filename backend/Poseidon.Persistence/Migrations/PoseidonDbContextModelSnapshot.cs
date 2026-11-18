@@ -5368,6 +5368,28 @@ namespace Poseidon.Persistence.Migrations
                 b.HasOne("Poseidon.Persistence.Downtime",null).WithMany().HasForeignKey("TenantId","VesselId","DowntimeId").HasPrincipalKey("TenantId","VesselId","Id").HasConstraintName("FK_DowntimeReceipt_Head").OnDelete(DeleteBehavior.Restrict).IsRequired();
                 b.HasOne("Poseidon.Persistence.DowntimeRevision",null).WithMany().HasForeignKey("TenantId","DowntimeId","Revision","RecordVersion").HasPrincipalKey("TenantId","DowntimeId","Revision","RecordVersion").HasConstraintName("FK_DowntimeReceipt_Revision").OnDelete(DeleteBehavior.Restrict).IsRequired();
             });
+            modelBuilder.Entity("Poseidon.Persistence.FleetCatalogDraft",b=> {
+                b.Property<Guid>("TenantId").HasColumnType("uuid");b.Property<Guid>("Id").HasColumnType("uuid");b.Property<long>("Revision").HasColumnType("bigint");
+                b.Property<uint>("Version").IsConcurrencyToken().ValueGeneratedOnAddOrUpdate().HasColumnType("xid").HasColumnName("xmin");
+                b.HasKey("TenantId","Id");
+                b.ToTable("CatalogDrafts","fleet",t=>t.HasCheckConstraint("CK_FleetCatalogDrafts_Revision","\"Revision\" > 0"));
+                b.HasOne("Poseidon.Persistence.Tenant",null).WithMany().HasForeignKey("TenantId").HasConstraintName("FK_FleetCatalogDraft_Tenant").OnDelete(DeleteBehavior.Restrict).IsRequired();
+            });
+            modelBuilder.Entity("Poseidon.Persistence.FleetCatalogDraftRevision",b=> {
+                b.Property<Guid>("TenantId").HasColumnType("uuid");b.Property<Guid>("Id").HasColumnType("uuid");b.Property<Guid>("CatalogId").HasColumnType("uuid");
+                b.Property<long>("Revision").HasColumnType("bigint");b.Property<Guid?>("PriorRevisionId").HasColumnType("uuid");b.Property<Guid?>("CommandId").HasColumnType("uuid");
+                b.Property<long>("ExpectedRevision").HasColumnType("bigint");b.Property<string>("ActorId").IsRequired().HasMaxLength(300).HasColumnType("character varying(300)");
+                b.Property<string>("ContentJson").IsRequired().HasColumnType("text");b.Property<string>("ContentHash").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");
+                b.Property<string>("IntentHash").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");b.Property<string>("Contract").IsRequired().HasMaxLength(64).HasColumnType("character varying(64)");
+                b.Property<DateTimeOffset>("RecordedAt").HasColumnType("timestamp with time zone");b.Property<string>("Provenance").IsRequired().HasMaxLength(32).HasColumnType("character varying(32)");
+                b.HasKey("TenantId","Id");b.HasAlternateKey("TenantId","CatalogId","Id","Revision").HasName("AK_FleetCatalogDraftRevision_Lineage");
+                b.HasIndex("TenantId","CatalogId","Revision").IsUnique().HasDatabaseName("IX_FleetCatalogDraftRevision_Revision");
+                b.HasIndex("TenantId","CommandId").IsUnique().HasDatabaseName("IX_FleetCatalogDraftRevision_Command");
+                b.HasIndex("TenantId","CatalogId","PriorRevisionId","ExpectedRevision").HasDatabaseName("IX_FleetCatalogDraftRevision_Prior");
+                b.ToTable("CatalogDraftRevisions","fleet",t=>t.HasCheckConstraint("CK_FleetCatalogDraftRevisions","\"Revision\" > 0 AND \"ExpectedRevision\" = \"Revision\" - 1 AND (\"PriorRevisionId\" IS NULL) = (\"Revision\" = 1) AND \"Provenance\" IN ('DeclaredUnverified','SyntheticUnverified') AND (\"CommandId\" IS NOT NULL OR \"Provenance\" = 'SyntheticUnverified')"));
+                b.HasOne("Poseidon.Persistence.FleetCatalogDraft",null).WithMany().HasForeignKey("TenantId","CatalogId").HasConstraintName("FK_FleetCatalogDraftRevision_Head").OnDelete(DeleteBehavior.Restrict).IsRequired();
+                b.HasOne("Poseidon.Persistence.FleetCatalogDraftRevision",null).WithMany().HasForeignKey("TenantId","CatalogId","PriorRevisionId","ExpectedRevision").HasPrincipalKey("TenantId","CatalogId","Id","Revision").HasConstraintName("FK_FleetCatalogDraftRevision_Prior").OnDelete(DeleteBehavior.Restrict);
+            });
 #pragma warning restore 612, 618
         }
     }

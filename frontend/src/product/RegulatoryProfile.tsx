@@ -9,6 +9,7 @@ import type { ProfileContent } from './profile-contract';
 import { RequiredDataField } from './RequiredDataField';
 import { loginHref } from './workspace-location';
 import { ConstructionRecordPicker } from './ConstructionRecordPicker';
+import { ProfileSourceSummary } from './ProfileSourceSummary';
 import { Button } from '../components/ui/button';
 import { EnterpriseActions, EnterprisePagination } from './EnterprisePatterns';
 import { OnboardingSteps, onboardingSteps, OnboardingAssessmentView } from './VesselOnboarding';
@@ -72,6 +73,7 @@ export function RegulatoryProfile(props: Props) {
       <p className="profile-context">{profile.tenantId} · <strong>{profile.vessel.code} · {profile.vessel.name}</strong> · {profile.vessel.kind === 'Ship' ? (localizedText(language, "pairs.m_bb1dbfbac5d5c650")) : (localizedText(language, "pairs.m_306aaabcb4e04a9f"))}</p>
       {!profile.revision && <p>{t.empty}</p>}
       <p>{t.provenance}: {provenance(profile.provenance)} · {t.revision}: {profile.revision} · {t.time}: {profile.savedAt ?? t.unknown}</p>
+      <ProfileSourceSummary profile={profile} language={language} />
       <aside className="profile-source-context" aria-label={localizedText(language, "pairs.m_e263b98182c6b18a")}><strong>{t.observed}</strong><p>{observedAt !== null ? <time dateTime={observedAt}>{observedAt}</time> : savedObservation?.state === 'Missing' ? (localizedText(language, "pairs.m_a5bd35d90de7c160")) : t.unknown}</p><p>{localizedText(language, "pairs.m_bdf69e4bcf117eaa")}</p></aside>
       <p>{profileFields.filter(([key]) => content[key]?.state !== 'Known').length} {onboarding ? (localizedText(language, "pairs.m_344296b81dee2be9")) : t.count}</p>
       {!profile.vessel.canEdit && <p>{t.readonly}</p>}
