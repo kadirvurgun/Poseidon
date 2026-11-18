@@ -1,0 +1,53 @@
+{
+  "contractVersion": "metrics.v1",
+  "items": [
+    {
+      "id": "onboarding.vessels.review_required",
+      "version": 1,
+      "ownerModule": "59.01/18.01 vessel onboarding (ComplianceOnboardingPolicy)",
+      "label": "Vessels whose onboarding declaration requires review",
+      "unitCode": "vessel",
+      "sourceProjectionId": "projection.compliance-onboarding.v1",
+      "aggregation": "COUNT_DISTINCT",
+      "minCohort": 1,
+      "freshnessRule": "LIVE_READ;55.01 rpt.freshness.online_min",
+      "requiredPermissions": ["directory.read"],
+      "allowedActions": ["view"],
+      "scopes": ["TENANT_VISIBLE", "VESSEL"],
+      "basis": "DECLARED_UNVERIFIED",
+      "source": "55.01/paragraph:156;55.01/paragraph:1397;18.01/Backlog/row:40;59.01/paragraph:55"
+    },
+    {
+      "id": "onboarding.required_fields.unknown",
+      "version": 1,
+      "ownerModule": "59.01/18.01 vessel onboarding (ComplianceOnboardingPolicy)",
+      "label": "Required onboarding fields declared UNKNOWN",
+      "unitCode": "field",
+      "sourceProjectionId": "projection.compliance-onboarding.v1",
+      "aggregation": "SUM",
+      "minCohort": 1,
+      "freshnessRule": "LIVE_READ;55.01 rpt.freshness.online_min",
+      "requiredPermissions": ["directory.read"],
+      "allowedActions": ["view"],
+      "scopes": ["TENANT_VISIBLE", "VESSEL"],
+      "basis": "DECLARED_UNVERIFIED",
+      "source": "55.01/paragraph:263;55.01/paragraph:557;18.01/Backlog/row:40"
+    },
+    {
+      "id": "crew.assignments.declared_persons",
+      "version": 1,
+      "ownerModule": "53.01/58.03 crew assignment declarations (CrewAssignments)",
+      "label": "Persons with a declared crew assignment",
+      "unitCode": "person",
+      "sourceProjectionId": "projection.crew-assignment-declarations.v1",
+      "aggregation": "COUNT_DISTINCT",
+      "minCohort": 5,
+      "freshnessRule": "LIVE_READ;55.01 rpt.freshness.online_min",
+      "requiredPermissions": ["directory.read", "crew.read"],
+      "allowedActions": ["view"],
+      "scopes": ["TENANT_VISIBLE", "VESSEL"],
+      "basis": "DECLARED_UNVERIFIED",
+      "source": "55.01/paragraph:645-647;55.01/paragraph:661;64.01/paragraph:142"
+    }
+  ]
+}
