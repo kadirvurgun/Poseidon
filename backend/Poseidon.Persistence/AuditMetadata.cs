@@ -16,6 +16,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         {
             Person or CrewIdentityRevision or CrewPersonalProfile or CrewPersonalProfileRevision => "TenantPerson",
             CommandReceipt r when r.Action is "CrewPersonSave" or "CrewIdentityConvert" or "CrewProfileSave" or "CrewPhotoSave" => "TenantPerson",
+            UserAccount or AccountMembership or AccountMembershipVesselGrant or MembershipDelegation or TenantAccessRecovery or MembershipCommandReceipt => "Tenant",
             Tenant or Company or RegisterDraft or RegisterRevision or RuleDraft or RuleRevision or FleetCatalogDraft or FleetCatalogDraftRevision or
                 RegulatoryQualificationHead or RegulatoryQualificationEvent or RegulatoryQualificationReceipt => "Tenant",
             CommandReceipt r when r.Action is "CompanyCreate" or "CompanyUpdate" or "SourceDraftSave" or "RequirementDraftSave" => "Tenant",
@@ -144,6 +145,38 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         if (entry.Entity is NotificationReceipt notificationReceipt)
             return new(notificationReceipt.VesselId, notificationReceipt.ResourceId, "NotificationReceipt", null, null,
                 Fields(Field("Binding", null, "CommittedResource")));
+        // PLAN-1511-5202: identity values (issuer/subject), permission lists and actor-supplied
+        // text never enter audit summaries; only closed lifecycle codes and revisions do.
+        if (entry.Entity is UserAccount account)
+            return new(null, account.Id, "Account", null, null, Fields(Field("IdentityLink", null, null, "ValuesWithheld"),
+                Field("Source", null, Closed(account.Source, "ConfigurationImport", "SyntheticUnverified"))));
+        if (entry.Entity is AccountMembership membership)
+        {
+            string? Prior(string name) => entry.State == EntityState.Added ? null : entry.Property(name).OriginalValue?.ToString();
+            return new(null, membership.Id, "Membership", entry.State == EntityState.Added ? null : (long?)entry.Property(nameof(membership.AccessRevision)).OriginalValue,
+                membership.AccessRevision, Fields(
+                    Field("Status", Prior(nameof(membership.Status)) is { } s ? Closed(s, "Active", "Suspended", "Revoked") : null, Closed(membership.Status, "Active", "Suspended", "Revoked")),
+                    Field("StatusReason", null, Closed(membership.StatusReason, "ConfigurationImport", "SyntheticFixture", "AdministrativeSuspension", "AdministrativeResume", "AdministrativeRevocation", "SecuritySuspension")),
+                    Field("AccessRevision", Prior(nameof(membership.AccessRevision)), Number(membership.AccessRevision)),
+                    Field("AccountId", null, membership.AccountId.ToString("D"))));
+        }
+        if (entry.Entity is AccountMembershipVesselGrant grant)
+            return new(grant.VesselId, grant.MembershipId, "MembershipVesselGrant", null, null,
+                Fields(Field("CanEdit", null, grant.CanEdit ? "true" : "false")));
+        if (entry.Entity is MembershipDelegation delegation)
+            return new(null, delegation.Id, "Delegation", null, null, Fields(
+                Field("Status", entry.State == EntityState.Added ? null : "Active", Closed(delegation.Status, "Active", "Revoked")),
+                Field("DelegatorMembershipId", null, delegation.DelegatorMembershipId.ToString("D")),
+                Field("DelegateMembershipId", null, delegation.DelegateMembershipId.ToString("D")),
+                Field("Permissions", null, null, "ValuesWithheld"),
+                Field("RevocationReason", null, delegation.RevocationReason is { } r ? Closed(r, "AdministrativeRevocation", "MembershipSuspended", "MembershipRevoked") : null)));
+        if (entry.Entity is TenantAccessRecovery recovery)
+            return new(null, recovery.MembershipId, "AccessRecovery", null, null,
+                Fields(Field("State", null, "RECOVERY_REQUIRED"), Field("Cause", null, Closed(recovery.Cause, "SecuritySuspension"))));
+        if (entry.Entity is MembershipCommandReceipt membershipReceipt)
+            return new(null, membershipReceipt.ResourceId, "MembershipCommandReceipt", null, null,
+                Fields(Field("Action", null, Closed(membershipReceipt.Action, "MembershipImport", "MembershipSuspend", "MembershipResume", "MembershipRevoke",
+                    "MembershipSecuritySuspend", "DelegationCreate", "DelegationRevoke"))));
         if (entry.Entity is FleetCatalogDraft fleetCatalogHead)
             return new(null, fleetCatalogHead.Id, "FleetCatalogDraft", entry.State == EntityState.Added ? null : (long?)entry.Property(nameof(fleetCatalogHead.Revision)).OriginalValue,
                 fleetCatalogHead.Revision, Fields(Field("DraftState", null, "DRAFT")));

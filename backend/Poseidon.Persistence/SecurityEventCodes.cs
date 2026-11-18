@@ -28,7 +28,7 @@ public static class SecurityEventCodes
         "RegulatorySourceBytesRead", "RuleCapabilities", "RulesRead", "Session",
         "TodayRead", "TodayWhyRead", "TugRead", "TugSave",
         "VesselCreate", "VesselUpdate", "VesselsRead", "WorkspaceRead",
-        "WorkspaceSearch", "SystemHealthRead", "NotificationRead", "NotificationCommand", "ComplianceWorkspaceRead", "DailyOfflineRead", "DailyOfflineRequest", "DailyOperationsRead", "DailyOperationsCommand", "DailyReviewRead", "DailyReviewCommand", "ShipOperationsRead", "ShipOperationsCommand",
+        "WorkspaceSearch", "SystemHealthRead", "NotificationRead", "NotificationCommand", "ComplianceWorkspaceRead", "DailyOfflineRead", "DailyOfflineRequest", "DailyOperationsRead", "DailyOperationsCommand", "DailyReviewRead", "DailyReviewCommand", "ShipOperationsRead", "ShipOperationsCommand", "MembershipRead", "MembershipCommand", "SessionRevalidation",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static IReadOnlySet<string> Results { get; } = new string[]
     {
@@ -68,7 +68,7 @@ public static class SecurityEventCodes
         "invalid_reason", "invalid_state", "expiry_not_due", "supersession_not_proven", "freshness_review_required",
         "version_conflict", "invalid_qualification_transition", "independent_reviewer_required",
         "incomplete_qualification", "acceptance_trigger_required", "impact_review_required",
-        "outside_effective_dates", "superseding_rule_required",
+        "outside_effective_dates", "superseding_rule_required", "last_admin", "membership_inactive",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static bool Allows(string action, string result) => Actions.Contains(action) && Results.Contains(result);
 }
