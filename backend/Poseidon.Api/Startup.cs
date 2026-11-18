@@ -52,11 +52,16 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
                     S1SecurityContract.Command(http)), qualifiedInputs: sp.GetRequiredService<IQualifiedInputRuntime>());
         });
         services.AddProblemDetails();
-        services.AddOpenApi(options => options.AddDocumentTransformer((document, _, _) =>
+        services.AddOpenApi(options =>
         {
-            document.Servers = [];
-            return Task.CompletedTask;
-        }));
+            options.AddDocumentTransformer((document, _, _) =>
+            {
+                document.Servers = [];
+                return Task.CompletedTask;
+            });
+            // PLAN-1511-5803: each operation advertises its single registered transport profile.
+            EndpointProfiles.AddOpenApiProfiles(options);
+        });
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment environment)
