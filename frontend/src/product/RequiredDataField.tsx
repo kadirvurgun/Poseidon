@@ -20,6 +20,7 @@ export function RequiredDataField(props: Props) {
     <label htmlFor={id}>{props.label}</label>
     <div className="required-data-controls">
       <select id={`${id}-state`} aria-label={`${props.label} — ${tr ? 'Bilgi durumu' : 'Data state'}`} disabled={props.disabled}
+        aria-invalid={props.error} aria-describedby={props.error ? `${id}-error` : undefined}
         value={state} onChange={e => empty(e.target.value)}>
         <option value="Missing">{tr ? 'Eksik' : 'Missing'}</option><option value="Unknown">{tr ? 'Bilinmiyor' : 'Unknown'}</option><option value="Known">{tr ? 'Biliniyor' : 'Known'}</option>
       </select>

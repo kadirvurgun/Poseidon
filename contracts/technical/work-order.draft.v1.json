@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "poseidon.work-order.draft.v1",
+  "title": "Incomplete work-order execution declaration",
+  "description": "DEV-054/T-S8-003 engineering declaration. Execution stage and verification text are unassessed literals. Owning state remains DRAFT/REVIEW_REQUIRED. No release, permit, evidence adoption, human verification or closure is authorized by these facts. Date ordering is additionally enforced server-side.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "expectedVersion", "fields", "plan", "sourceVersion"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "expectedVersion": { "type": "integer", "minimum": 0, "maximum": 4294967295 },
+    "sourceVersion": { "const": "18.01:09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674:55;14.02:3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018:1426-1463:v46.3" },
+    "plan": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object", "additionalProperties": false,
+          "description": "Optional exact owning maintenance-plan lineage outside DD job_id; actual scoped plan/asset lineage is checked by the server.",
+          "required": ["id", "revision", "version", "hash", "sourceVersion"],
+          "properties": {
+            "id": { "type": "string", "format": "uuid" },
+            "revision": { "type": "integer", "minimum": 1 },
+            "version": { "type": "integer", "minimum": 1, "maximum": 4294967295 },
+            "hash": { "type": "string", "pattern": "^[A-F0-9]{64}$" },
+            "sourceVersion": { "const": "poseidon.maintenance-plan-context.v1" }
+          }
+        }
+      ]
+    },
+    "fields": {
+      "type": "object", "additionalProperties": false,
+      "description": "Omitted fields normalize to Missing. Required/conditional source fields may remain incomplete in a draft. Known is unavailable for unapproved lookups/catalogs and assigned_to source conflict.",
+      "properties": {
+        "work_order_no": { "$ref": "#/$defs/text" },
+        "equipment_id": { "$ref": "#/$defs/uncertain" },
+        "job_id": { "$ref": "#/$defs/uncertain" },
+        "work_order_type": { "$ref": "#/$defs/uncertain" },
+        "priority": { "$ref": "#/$defs/uncertain" },
+        "criticality": { "$ref": "#/$defs/uncertain" },
+        "planned_start": { "$ref": "#/$defs/date" },
+        "due_date": { "$ref": "#/$defs/date" },
+        "assigned_to": { "$ref": "#/$defs/uncertain" },
+        "description": { "$ref": "#/$defs/narrative" },
+        "planned_finish": { "$ref": "#/$defs/date" },
+        "actual_start": { "$ref": "#/$defs/date" },
+        "actual_finish": { "$ref": "#/$defs/date" },
+        "executed_by": { "$ref": "#/$defs/uncertain" },
+        "meter_before": { "$ref": "#/$defs/number" },
+        "meter_after": { "$ref": "#/$defs/number" },
+        "findings": { "$ref": "#/$defs/narrative" },
+        "work_done": { "$ref": "#/$defs/narrative" },
+        "spares_used": { "$ref": "#/$defs/text" },
+        "measurements": { "$ref": "#/$defs/text" },
+        "photo_evidence": { "$ref": "#/$defs/uncertain" },
+        "document_evidence": { "$ref": "#/$defs/uncertain" },
+        "verification_result": { "$ref": "#/$defs/text" },
+        "verified_by": { "$ref": "#/$defs/uncertain" },
+        "execution_stage": { "$ref": "#/$defs/stage" }
+      }
+    }
+  },
+  "$defs": {
+    "uncertain": {
+      "type": "object", "additionalProperties": false, "required": ["state", "value"],
+      "properties": { "state": { "enum": ["Missing", "Unknown"] }, "value": { "type": "null" } }
+    },
+    "known": {
+      "type": "object", "additionalProperties": false, "required": ["state", "value"],
+      "properties": {
+        "state": { "const": "Known" },
+        "value": { "type": "string", "minLength": 1, "maxLength": 256, "allOf": [{ "pattern": "\\S" }, { "not": { "pattern": "[\u0000-\u001f\u007f-\u009f]" } }] }
+      }
+    },
+    "text": { "oneOf": [{ "$ref": "#/$defs/uncertain" }, { "$ref": "#/$defs/known" }] },
+    "date": { "oneOf": [
+      { "$ref": "#/$defs/uncertain" },
+      { "allOf": [{ "$ref": "#/$defs/known" }, { "properties": { "value": { "format": "date", "minLength": 10, "maxLength": 10, "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" } } }] }
+    ] },
+    "number": { "oneOf": [
+      { "$ref": "#/$defs/uncertain" },
+      { "allOf": [{ "$ref": "#/$defs/known" }, { "properties": { "value": { "maxLength": 48, "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$" } } }] }
+    ] },
+    "narrative": { "oneOf": [
+      { "$ref": "#/$defs/uncertain" },
+      {
+        "type": "object", "additionalProperties": false, "required": ["state", "value"],
+        "properties": {
+          "state": { "const": "Known" },
+          "value": { "type": "string", "minLength": 1, "maxLength": 4000, "allOf": [{ "pattern": "\\S" }, { "not": { "pattern": "[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f-\u009f]" } }] }
+        }
+      }
+    ] },
+    "stage": { "oneOf": [
+      { "$ref": "#/$defs/uncertain" },
+      { "allOf": [{ "$ref": "#/$defs/known" }, { "properties": { "value": { "enum": ["RELEASED", "IN_PROGRESS", "EVIDENCE_SUBMITTED"] } } }] }
+    ] }
+  }
+}

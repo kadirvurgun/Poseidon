@@ -38,10 +38,13 @@ public sealed class ApiRequestTelemetry(RequestDelegate next)
             var route = (context.GetEndpoint() as RouteEndpoint)?.RoutePattern.RawText;
             var tags = new TagList { { "http.request.method", method }, { "http.response.status_class", status },
                 { "poseidon.area", Area(route) }, { "poseidon.request.failure", failure } };
+            var elapsed = Stopwatch.GetElapsedTime(started);
+            var tenant = context.Items.TryGetValue(OperationalHealthObservations.TenantItem, out var attribution) && attribution is Guid id ? id : (Guid?)null;
+            OperationalHealthObservations.Request(tenant, failure != "none" || code is >= 400 and <= 599, elapsed.TotalMilliseconds);
             try {
                 Requests.Add(1, tags);
                 if (failure != "none" || code is >= 400 and <= 599) Errors.Add(1, tags);
-                Duration.Record(Stopwatch.GetElapsedTime(started).TotalSeconds, tags);
+                Duration.Record(elapsed.TotalSeconds, tags);
             }
             catch {
                 // Optional diagnostic listener failure must not alter an already committed
@@ -53,7 +56,7 @@ public sealed class ApiRequestTelemetry(RequestDelegate next)
     private static string Area(string? route)
     {
         if (route is null) return "unmatched";
-        if (route == "/health/live" || route == "/api/v1/system/status") return "system";
+        if (route is "/health/live" or "/api/v1/system/status" or "/api/v1/system-health") return "system";
         if (!route.StartsWith("/api/v1/", StringComparison.Ordinal)) return "other";
         if (route.Contains("/auth/", StringComparison.Ordinal)) return "identity";
         if (route.Contains("/crew", StringComparison.Ordinal) || route.Contains("/certificates", StringComparison.Ordinal)) return "crew";

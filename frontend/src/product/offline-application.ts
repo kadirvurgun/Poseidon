@@ -205,7 +205,8 @@ export class OfflineApplication {
     this.requireActive(); return this.store.put(commandId, sealed, expected)
   }
   async captures(): Promise<PendingCapture[]> {
-    this.requireActive(); const rows = await this.store.list(this.context.maxRecords)
+    this.requireActive(); const rows = await this.store.listRetained(128)
+    this.requireActive()
     const values: PendingCapture[] = []
     for (const row of rows) {
       if (row.commandId === this.context.id) continue // separately authenticated read snapshot

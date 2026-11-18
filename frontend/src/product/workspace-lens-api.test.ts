@@ -26,3 +26,12 @@ describe('role menu untrusted wire boundary', () => {
     expect(() => decodeLenses(e, tenant, actor, vessel)).toThrow()
   })
 })
+
+
+it('admits actual scoped daily destinations without manufacturing missing role work', () => {
+  const base = value()
+  const daily = { ...base, lenses: [{ ...base.lenses[0], items: [{ key: 'noon-report', href: `/app/noon-report/${vessel}`, group: 'daily' }, { key: 'deck-daily-log', href: `/app/deck-daily-log/${vessel}`, group: 'daily' }, { key: 'engine-daily-log', href: `/app/engine-daily-log/${vessel}`, group: 'daily' }] }] }
+  expect(decodeLenses(daily, tenant, actor, vessel).lenses[0].items).toHaveLength(3)
+  expect(decodeLenses(base, tenant, actor, vessel).lenses[0].items.some(item => item.key === 'noon-report')).toBe(false)
+  expect(() => decodeLenses({ ...daily, lenses: [{ ...daily.lenses[0], items: [{ ...daily.lenses[0].items[0], href: `/app/noon-report/${actor}` }] }] }, tenant, actor, vessel)).toThrow()
+})

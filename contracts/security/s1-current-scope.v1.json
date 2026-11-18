@@ -11,7 +11,8 @@
       17,
       18,
       19,
-      20
+      20,
+      37
     ]
   },
   "definitionState": "AUTHORED_NOT_RUNTIME_MEASURED_NOT_ACCEPTED",
@@ -29,11 +30,40 @@
     "TenantPerson",
     "Unresolved"
   ],
-  "mutationRouteTemplates": 83,
-  "criticalRouteTemplates": 77,
-  "criticalOperations": 82,
+  "mutationRouteTemplates": 115,
+  "criticalRouteTemplates": 107,
+  "criticalOperations": 117,
   "scopeMeaning": "Current exposed HTTP command surface, including aliases. Counts are authoring definitions until actual EndpointDataSource drift and real audit observations pass the phase gate. Technical codes describe accepted commands, never human justification or safety authority.",
   "operations": [
+    { "operationId": "DefectCreate", "method": "POST", "routePattern": "/api/v1/defects", "family": "Defect", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "DefectCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "DefectUpdate", "method": "PUT", "routePattern": "/api/v1/defects/{id:guid}", "family": "Defect", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "DefectCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "DowntimeCreate", "method": "POST", "routePattern": "/api/v1/operational-downtime", "family": "Downtime", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "DowntimeCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "DowntimeUpdate", "method": "PUT", "routePattern": "/api/v1/operational-downtime/{id:guid}", "family": "Downtime", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "DowntimeCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "WorkOrderCreate", "method": "POST", "routePattern": "/api/v1/work-orders", "family": "WorkOrder", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "WorkOrderCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "WorkOrderUpdate", "method": "PUT", "routePattern": "/api/v1/work-orders/{id:guid}", "family": "WorkOrder", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "WorkOrderCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "FuelShipOpsCreate", "method": "POST", "routePattern": "/api/v1/fuel-bunker-logs", "family": "ShipOperations", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "ShipOperationsCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "FuelShipOpsUpdate", "method": "PUT", "routePattern": "/api/v1/fuel-bunker-logs/{id:guid}", "family": "ShipOperations", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "ShipOperationsCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "PortShipOpsCreate", "method": "POST", "routePattern": "/api/v1/port-activity-sof", "family": "ShipOperations", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "ShipOperationsCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "PortShipOpsUpdate", "method": "PUT", "routePattern": "/api/v1/port-activity-sof/{id:guid}", "family": "ShipOperations", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "ShipOperationsCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    {"operationId": "CertificateAssertionRecord", "method": "POST", "routePattern": "/api/v1/vessels/{vessel:guid}/certificates/{id:guid}/verification-assertions", "family": "CertificateAssertion", "scope": "Vessel", "kind": "CriticalWrite", "reasonCode": "HUMAN_REVIEW_WORKFLOW", "denialAction": "CertificateCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"]},
+    {"operationId": "CertificateExtract", "method": "POST", "routePattern": "/api/v1/vessels/{vessel:guid}/certificates/{id:guid}/extractions", "family": "CertificateExtraction", "scope": "Vessel", "kind": "SecurityObservation", "reasonCode": null, "denialAction": "CertificateExtraction", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"]},
+    {"operationId": "CredentialExtract", "method": "POST", "routePattern": "/api/v1/vessels/{vessel:guid}/crew/{assignment:guid}/certificates/{id:guid}/extractions", "family": "CertificateExtraction", "scope": "Vessel", "kind": "SecurityObservation", "reasonCode": null, "denialAction": "CertificateExtraction", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"]},
+    {"operationId": "CertificateExtractionConfirm", "method": "POST", "routePattern": "/api/v1/vessels/{vessel:guid}/certificates/{id:guid}/extractions/confirm", "family": "CertificateExtraction", "scope": "Vessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "CertificateExtraction", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"]},
+    { "operationId": "CertificateRenewalCreate", "method": "POST", "routePattern": "/api/v1/renewal-workflow", "family": "CertificateRenewal", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "CertificateCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "CertificateRenewalUpdate", "method": "PUT", "routePattern": "/api/v1/renewal-workflow/{id:guid}", "family": "CertificateRenewal", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "CertificateCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "VesselCertificateCreate", "method": "POST", "routePattern": "/api/v1/vessels/{vessel:guid}/certificates", "family": "Certificate", "scope": "Vessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "CertificateCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "VesselCertificateUpdate", "method": "PUT", "routePattern": "/api/v1/vessels/{vessel:guid}/certificates/{id:guid}", "family": "Certificate", "scope": "Vessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "CertificateCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    {"operationId":"DailyOfflineEnroll","method":"POST","routePattern":"/api/v1/daily-offline/{kind}/{record:guid}","family":"DailyOffline","scope":"CommandVessel","kind":"CriticalWrite","reasonCode":"OFFLINE_LIFECYCLE","denialAction":"DailyOfflineRequest","variants":[],"traceIds":["T-S1-002","T-S1-003","T-S1-004","T-S1-007"]},
+    {"operationId":"DailyOfflineAction","method":"POST","routePattern":"/api/v1/daily-offline/{kind}/{record:guid}/{enrollment:guid}/{action}","family":"DailyOffline","scope":"CommandVessel","kind":"CriticalWrite","reasonCode":"OFFLINE_LIFECYCLE","denialAction":"DailyOfflineRequest","variants":[{"routeValue":"renew","operationId":"DailyOfflineRenew"},{"routeValue":"key","operationId":"DailyOfflineKeyEnroll"},{"routeValue":"revoke","operationId":"DailyOfflineRevoke"},{"routeValue":"lost","operationId":"DailyOfflineKeyLost"},{"routeValue":"cleanup","operationId":"DailyOfflineCleanup"},{"routeValue":"replay","operationId":"DailyOfflineReplay"}],"traceIds":["T-S1-002","T-S1-003","T-S1-004","T-S1-007"]},
+    { "operationId": "NoonDailyReviewRecord", "method": "POST", "routePattern": "/api/v1/noon-reports/{id:guid}/reviews", "family": "DailyReview", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "HUMAN_REVIEW_WORKFLOW", "denialAction": "DailyReviewCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "DeckDailyReviewRecord", "method": "POST", "routePattern": "/api/v1/deck-daily-logs/{id:guid}/reviews", "family": "DailyReview", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "HUMAN_REVIEW_WORKFLOW", "denialAction": "DailyReviewCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "EngineDailyReviewRecord", "method": "POST", "routePattern": "/api/v1/engine-daily-logs/{id:guid}/reviews", "family": "DailyReview", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "HUMAN_REVIEW_WORKFLOW", "denialAction": "DailyReviewCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "NoonDailyCreate", "method": "POST", "routePattern": "/api/v1/noon-reports", "family": "DailyOperations", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "DailyOperationsCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "NoonDailyUpdate", "method": "PUT", "routePattern": "/api/v1/noon-reports/{id:guid}", "family": "DailyOperations", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "DailyOperationsCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "DeckDailyCreate", "method": "POST", "routePattern": "/api/v1/deck-daily-logs", "family": "DailyOperations", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "DailyOperationsCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "DeckDailyUpdate", "method": "PUT", "routePattern": "/api/v1/deck-daily-logs/{id:guid}", "family": "DailyOperations", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "DailyOperationsCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "EngineDailyCreate", "method": "POST", "routePattern": "/api/v1/engine-daily-logs", "family": "DailyOperations", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "DailyOperationsCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "EngineDailyUpdate", "method": "PUT", "routePattern": "/api/v1/engine-daily-logs/{id:guid}", "family": "DailyOperations", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "DailyOperationsCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     {
       "operationId": "ApplicabilityEvaluate",
       "method": "POST",
@@ -1462,6 +1492,57 @@
       "kind": "CriticalWrite",
       "reasonCode": "PREPARATION_COMMAND",
       "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "NotificationRefresh",
+      "method": "POST",
+      "routePattern": "/api/v1/notification-escalation/refresh",
+      "family": "Notification",
+      "scope": "CommandVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "NotificationCommand",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "NotificationAcknowledge",
+      "method": "POST",
+      "routePattern": "/api/v1/notification-escalation/{id:guid}/acknowledge",
+      "family": "Notification",
+      "scope": "CommandVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "NotificationCommand",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "NotificationPreference",
+      "method": "PUT",
+      "routePattern": "/api/v1/notification-escalation/preference",
+      "family": "Notification",
+      "scope": "CommandVessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "NotificationCommand",
       "variants": [],
       "traceIds": [
         "T-S1-002",

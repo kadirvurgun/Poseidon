@@ -1,0 +1,12 @@
+.enterprise-shell .daily-offline-panel { margin:20px 0; padding:22px; border:1px solid var(--border); border-radius:10px; background:var(--card); }
+.enterprise-shell .daily-offline-panel header { display:flex; flex-wrap:wrap; gap:12px; align-items:center; }
+.enterprise-shell .daily-offline-panel header h3 { margin:0; }
+.enterprise-shell .daily-offline-fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; margin:20px 0; }
+.enterprise-shell .daily-offline-field { display:grid; gap:8px; min-width:0; }
+.enterprise-shell .daily-offline-fields label { font-weight:600; }
+.enterprise-shell .daily-offline-fields textarea,.enterprise-shell .daily-offline-fields select { min-width:0; width:100%; }
+.enterprise-shell .daily-offline-queue { padding:0; list-style:none; display:grid; gap:12px; }
+.enterprise-shell .daily-offline-queue li { padding:14px; border:1px solid var(--border); border-radius:8px; display:grid; gap:8px; }
+.enterprise-shell .daily-offline-panel table { width:100%; table-layout:fixed; border-collapse:collapse; }
+.enterprise-shell .daily-offline-panel th,.enterprise-shell .daily-offline-panel td { text-align:start; padding:10px; border-bottom:1px solid var(--border); overflow-wrap:anywhere; vertical-align:top; }
+@media(max-width:700px) { .enterprise-shell .daily-offline-panel { padding:16px; } .enterprise-shell .daily-offline-fields { grid-template-columns:minmax(0,1fr); } }

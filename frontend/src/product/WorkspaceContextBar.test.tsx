@@ -28,6 +28,19 @@ function deferred<T>() {
 describe('shared current workspace context', () => {
   beforeEach(() => { vi.mocked(loadWorkspaceContext).mockResolvedValue(context()) })
   afterEach(() => { vi.resetAllMocks(); vi.restoreAllMocks() })
+  it('DEV-021 shows a deterministic initial offline state without starting a context read', () => {
+    vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(false)
+    render(<WorkspaceContextBar session={session} vessel={vessel} language="en" />)
+    expect(screen.getByRole('status')).toHaveTextContent('Offline · reconnect to load context.')
+    expect(screen.queryByText('Loading context…')).not.toBeInTheDocument()
+    expect(loadWorkspaceContext).not.toHaveBeenCalled()
+  })
+  it('DEV-025 keeps hidden-window context paused instead of presenting an endless loading state', () => {
+    vi.spyOn(document, 'visibilityState', 'get').mockReturnValue('hidden')
+    render(<WorkspaceContextBar session={session} vessel={vessel} language="en" />)
+    expect(screen.getByRole('status')).toHaveTextContent('Context paused while this window is hidden.')
+    expect(loadWorkspaceContext).not.toHaveBeenCalled()
+  })
   it('shows actual configured role/vessel labels in TR/EN without exposing IDs or credentials', async () => {
     const view = render(<WorkspaceContextBar session={session} vessel={vessel} language="en" />)
     expect(await screen.findByText(/FICTIONAL local role/)).toBeVisible()

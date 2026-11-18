@@ -37,10 +37,12 @@ public sealed partial class DirectoryWorkspaceTests
         await using var host = Host();
         var endpoints = host.Services.GetRequiredService<EndpointDataSource>().Endpoints;
         var observed = S1SecurityContract.ValidateEndpointInventory(endpoints);
-        Assert.Equal(83, observed.Count);
-        Assert.Equal(77, observed.Count(x => x.IsCritical));
-        Assert.Equal(82, S1SecurityContract.CriticalOperationIds.Count);
-        Assert.Equal(6, observed.Count(x => !x.IsCritical));
+        // S6 adds owning drafts, extraction and assigned Human assertion recording.
+        // Historical native receipts remain unchanged; these are source denominators.
+        Assert.Equal(115, observed.Count);
+        Assert.Equal(107, observed.Count(x => x.IsCritical));
+        Assert.Equal(117, S1SecurityContract.CriticalOperationIds.Count);
+        Assert.Equal(8, observed.Count(x => !x.IsCritical));
         var extra = new RouteEndpoint(_ => Task.CompletedTask, RoutePatternFactory.Parse("/api/v1/unclassified-write"), 0,
             new EndpointMetadataCollection(new HttpMethodMetadata(["POST"]), new AuthorizeAttribute("DirectoryRead")), "unclassified");
         Assert.Throws<InvalidOperationException>(() => S1SecurityContract.ValidateEndpointInventory(endpoints.Append(extra)));
@@ -153,6 +155,7 @@ public sealed partial class DirectoryWorkspaceTests
             "vessel" => SeedVessel.Id.ToString(),
             "revision" or "personalRevision" => "1",
             "personalKind" => "medical",
+            "kind" => "Noon",
             "category" => "crew",
             "action" => operation.Variants.First().RouteValue,
             _ => "10000000-0000-4000-8000-000000000011"

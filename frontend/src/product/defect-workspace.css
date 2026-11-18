@@ -1,0 +1,20 @@
+.defect-workspace main { min-width:0; }
+.enterprise-shell .defect-fields .enterprise-form-grid { margin-block:20px; padding:22px; border:1px solid var(--border); border-radius:10px; background:var(--card); }
+.enterprise-shell .defect-fields legend { padding-inline:6px; font-weight:650; }
+.enterprise-shell .defect-field { display:grid; gap:12px; padding:16px; min-width:0; border:1px solid var(--border); border-radius:8px; }
+.enterprise-shell .defect-field-wide { grid-column:1/-1; }
+.enterprise-shell .defect-field input,.enterprise-shell .defect-field select,.enterprise-shell .defect-field textarea { min-width:0; width:100%; margin:0; }
+.enterprise-shell .defect-field textarea { resize:vertical; }
+.enterprise-shell .defect-hint { color:var(--muted-foreground); font-size:12px; margin:0; }
+.enterprise-shell .defect-status { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+.enterprise-shell .defect-summary-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px 24px; }
+.enterprise-shell .defect-summary-grid dd { margin:6px 0 0; overflow-wrap:anywhere; white-space:pre-wrap; }
+.enterprise-shell .defect-source,.enterprise-shell .defect-asset-context,.enterprise-shell .defect-timeline { margin-block:16px; padding:20px; border:1px solid var(--border); border-radius:10px; background:var(--card); min-width:0; }
+.enterprise-shell .defect-records { list-style:none; padding:0; display:grid; gap:16px; }
+.enterprise-shell .defect-records > li { min-width:0; padding:18px; border:1px solid var(--border); border-radius:10px; background:var(--card); }
+.enterprise-shell .defect-records .defect-source { padding:0; border:0; }
+.enterprise-shell .defect-timeline ol { padding-inline-start:22px; display:grid; gap:16px; }
+.defect-workspace code { white-space:normal; overflow-wrap:anywhere; }
+@media(max-width:600px) { .enterprise-shell .defect-summary-grid { grid-template-columns:minmax(0,1fr); } .enterprise-shell .defect-fields .enterprise-form-grid,.enterprise-shell .defect-source,.enterprise-shell .defect-asset-context,.enterprise-shell .defect-timeline { padding:16px; } .enterprise-shell .defect-field { padding:14px; } }
+
+.enterprise-shell .defect-declared-text { white-space:pre-wrap; overflow-wrap:anywhere; }

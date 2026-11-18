@@ -178,3 +178,150 @@ class ApiTestGateTests(unittest.TestCase):
         self.assertIn('go build -mod=readonly', dockerfile)
         self.assertIn('USER 65532:65532', dockerfile)
         self.assertNotIn('MINIO_ROOT_', dockerfile)
+
+
+class ApiShardGateTests(unittest.TestCase):
+    setUp = ApiTestGateTests.setUp
+    full = ['Poseidon.Api.Tests.Cases.Theory', 'Poseidon.Api.Tests.Cases.Theory',
+            'Poseidon.Api.Tests.Cases.A', 'Poseidon.Api.Tests.Cases.B']
+
+    @staticmethod
+    def listed(names):
+        return ('\n'.join(names) + '\n').encode()
+
+    @staticmethod
+    def summary(count, failed=0, skipped=0):
+        return f'total: {count}\nfailed: {failed}\nsucceeded: {count-failed-skipped}\nskipped: {skipped}\n'.encode()
+
+    def execute_shards(self, mutate=None, outputs=None, discoveries=None):
+        groups = gate.partition_methods(self.full, 3)
+        actual = [list(group.elements()) for group in groups]
+        if mutate: mutate(actual)
+        self.coverage.write(self.coverage.report())
+        executions = []
+        def capture(args, root, timeout, env=None):
+            self.assertGreater(timeout, 0); self.assertLessEqual(timeout, 1800)
+            if '--filter-method' not in args:
+                return subprocess.CompletedProcess([], 0, self.listed(self.full))
+            methods = args[args.index('--filter-method')+1:]
+            methods = methods[:next((i for i, name in enumerate(methods) if name.startswith('--')), len(methods))]
+            index = next(i for i, group in enumerate(groups) if sorted(group) == methods)
+            if '--list-tests' in args:
+                if discoveries and index in discoveries:
+                    value = discoveries[index]
+                    if isinstance(value, Exception): raise value
+                    return value
+                self.assertFalse(any(k.startswith(gate.critical_write_coverage.ENV_PREFIX) for k in env))
+                return subprocess.CompletedProcess([], 0, self.listed(actual[index]))
+            executions.append((index, env[gate.critical_write_coverage.ENV_PREFIX+'RUN_ID']))
+            if outputs and index in outputs:
+                result = outputs[index]
+                if isinstance(result, Exception): raise result
+                return result
+            return subprocess.CompletedProcess([], 0, self.summary(groups[index].total()))
+        with patch.object(gate, 'root_tool', return_value='dotnet'), \
+                patch.object(gate.critical_write_coverage, 'prepare', return_value=self.coverage.run) as prepare, \
+                patch.object(gate.critical_write_coverage, 'evaluate', wraps=gate.critical_write_coverage.evaluate) as evaluate, \
+                patch.object(gate, 'capture', side_effect=capture):
+            code, report = gate.run('integration', shards=3)
+        return code, report, executions, prepare, evaluate
+
+    def test_parallel_exact_theory_multiset_uses_single_coverage_run(self):
+        code, report, executions, prepare, evaluate = self.execute_shards()
+        self.assertEqual(0, code)
+        self.assertEqual('EXACT_DISJOINT_COMPLETE_MULTISET', report['partition']['status'])
+        self.assertEqual([2, 1, 1], report['partition']['cases'])
+        self.assertEqual([4], report['count_observations']['succeeded'])
+        self.assertEqual(3, len(executions))
+        self.assertEqual({self.coverage.run.run_id}, {run_id for _, run_id in executions})
+        prepare.assert_called_once(); evaluate.assert_called_once()
+
+    def test_complete_sharded_evidence_is_accepted_by_the_independent_native_scope_validator(self):
+        from copy import deepcopy
+        code, report, _, _, _ = self.execute_shards()
+        self.assertEqual(0, code)
+        self.assertEqual(0, report['exit_code'])
+        self.assertTrue(gate.critical_write_coverage.native_scope_complete(report, self.coverage.run))
+        for exit_code in (None, True, 1, 2):
+            altered = deepcopy(report); altered['exit_code'] = exit_code
+            self.assertFalse(gate.critical_write_coverage.native_scope_complete(altered, self.coverage.run))
+        altered = deepcopy(report); altered.pop('exit_code')
+        self.assertFalse(gate.critical_write_coverage.native_scope_complete(altered, self.coverage.run))
+        altered = deepcopy(report); altered['count_observations']['skipped'] = [1]
+        self.assertFalse(gate.critical_write_coverage.native_scope_complete(altered, self.coverage.run))
+
+    def test_partial_overlap_foreign_empty_and_theory_multiplicity_fail_before_execution(self):
+        def missing(groups): groups[0].pop()
+        def overlap(groups): groups[1].append(groups[0][0])
+        def foreign(groups): groups[0][0] = 'Poseidon.Api.Tests.Cases.Foreign'
+        def empty(groups): groups[1].clear()
+        def swapped(groups): groups[0], groups[1] = groups[1], groups[0]
+        for mutate in (missing, overlap, foreign, empty, swapped):
+            with self.subTest(mutate=mutate.__name__):
+                code, report, executions, prepare, evaluate = self.execute_shards(mutate=mutate)
+                self.assertEqual(2, code)
+                self.assertEqual('SHARD_DISCOVERY_PARTITION_FAILED', report['status'])
+                self.assertEqual([], executions); prepare.assert_not_called(); evaluate.assert_not_called()
+
+    def test_failed_skipped_partial_and_duplicate_summary_cannot_hide_other_shards(self):
+        for output, exit_code in ((self.summary(2, failed=1), 1), (self.summary(2, skipped=1), 0),
+                                  (b'', 0), (self.summary(1), 0), (self.summary(2)*2, 0)):
+            with self.subTest(output=output):
+                code, report, executions, _, evaluate = self.execute_shards(
+                    outputs={0: subprocess.CompletedProcess([], exit_code, output)})
+                self.assertNotEqual(0, code); self.assertEqual(3, len(executions))
+                self.assertNotEqual(0, report['exit_code'])
+                self.assertNotEqual('PASS_EXACT_DISCOVERED_SCOPE', report['status']); evaluate.assert_not_called()
+                if output in (b'', self.summary(2)*2): self.assertNotIn('count_observations', report)
+
+    def test_parallel_deadline_collects_every_shard_but_cannot_evaluate_coverage(self):
+        code, report, executions, _, evaluate = self.execute_shards(
+            outputs={0: subprocess.TimeoutExpired('dotnet', 1, output=b'private-parameter')})
+        self.assertEqual(2, code); self.assertEqual(3, len(executions))
+        self.assertEqual('INTERRUPTED_DEADLINE', report['status']); evaluate.assert_not_called()
+        self.assertNotIn('count_observations', report); self.assertNotIn('private-parameter', json.dumps(report))
+
+    def test_parallel_exception_collects_every_shard_and_cannot_claim_summary(self):
+        code, report, executions, _, evaluate = self.execute_shards(outputs={1: OSError('private-message')})
+        self.assertEqual(2, code); self.assertEqual(3, len(executions))
+        self.assertEqual('GATE_EXECUTION_FAILED', report['status']); evaluate.assert_not_called()
+        self.assertNotIn('private-message', json.dumps(report)); self.assertNotIn('count_observations', report)
+
+    def test_method_filter_preserves_individual_arguments_and_command_limit_is_closed(self):
+        args = gate.method_command(['dotnet', 'test'], {'Poseidon.Api.Tests.Cases.A': 1})
+        self.assertEqual(['dotnet', 'test', '--filter-method', 'Poseidon.Api.Tests.Cases.A'], args)
+        with self.assertRaises(ValueError): gate.method_command(['x'*30000], {'Poseidon.Api.Tests.Cases.A': 1})
+
+    def test_invalid_shard_config_cannot_launch_or_weaken_scope(self):
+        with patch.object(gate, 'capture') as capture:
+            for scope, shards in (('unit', 2), ('all', 4), ('integration', 0), ('integration', 5), ('integration', True)):
+                with self.assertRaises(ValueError): gate.run(scope, shards=shards)
+            capture.assert_not_called()
+
+    def test_single_global_deadline_includes_discovery_and_setup(self):
+        with patch.object(gate, 'root_tool', return_value='dotnet'), \
+                patch.object(gate.time, 'monotonic', side_effect=[0, 0, 1801, 1801]), \
+                patch.object(gate.critical_write_coverage, 'prepare', return_value=self.coverage.run), \
+                patch.object(gate, 'capture', return_value=subprocess.CompletedProcess([], 0, self.listed(self.full))) as capture:
+            code, report = gate.run('integration')
+        self.assertEqual(2, code); self.assertEqual('INTERRUPTED_DEADLINE', report['status'])
+        self.assertEqual(1, capture.call_count)
+
+    def test_ci_uses_four_integration_shards_and_executes_new_node_fixture_unit_gate(self):
+        workflow = (gate.ROOT / '.github/workflows/backend-foundation.yml').read_text(encoding='utf-8')
+        self.assertIn('POSEIDON_API_GATE_SHARDS: 4', workflow)
+        self.assertIn('node --test tests/Poseidon.Browser.Tests/lab/register-lane-fixture.test.ts', workflow)
+
+    def test_failed_native_shard_discovery_never_prepares_or_executes(self):
+        result = subprocess.CompletedProcess([], 1, self.listed([self.full[0], self.full[0]]))
+        code, report, executions, prepare, evaluate = self.execute_shards(discoveries={0: result})
+        self.assertEqual(2, code); self.assertEqual('SHARD_DISCOVERY_PARTITION_FAILED', report['status'])
+        self.assertEqual([], executions); prepare.assert_not_called(); evaluate.assert_not_called()
+
+    def test_shard_discovery_deadline_or_process_failure_never_prepares_coverage(self):
+        for failure, status in ((subprocess.TimeoutExpired('dotnet', 1), 'INTERRUPTED_DEADLINE'),
+                                (OSError('private-discovery-message'), 'GATE_EXECUTION_FAILED')):
+            code, report, executions, prepare, evaluate = self.execute_shards(discoveries={0: failure})
+            self.assertEqual(2, code); self.assertEqual(status, report['status'])
+            self.assertEqual([], executions); prepare.assert_not_called(); evaluate.assert_not_called()
+            self.assertNotIn('private-discovery-message', json.dumps(report))

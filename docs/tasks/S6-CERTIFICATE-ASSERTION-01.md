@@ -1,0 +1,28 @@
+# S6 certificate assigned Human assertion source package
+
+DEV043 / T-S6-001, with DEV044 / T-S6-002 lifecycle boundary. Source authoring only; no acceptance, runtime or passing-test claim. Canonical S6 remains nine tasks / 87 SP; this package contributes to the selected first four tasks / 42 SP.
+
+## Controlled source and decision
+
+The active 18.01 development backlog SHA256 `09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674`, rows 44–45, requires scoped certificate verification and controlled renewal. The original 14.02 dictionary SHA256 `3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018`, row 39, supplies literal `Verified`, `Not Verified`, `Expiring`, `Suspicious`, `Suspended / Revoked` values. Cell V names an Auditor as assigned; cell X requires authorized role, reason/evidence prerequisites and a legal transition. Approved editable/readonly transition cells BF/BG and approval evidence BQ are absent; BO remains REVIEW_REQUIRED. Renewal rows 1754–1755 also lack an approved legal transition matrix. The source therefore supports recording an exact assigned Human assertion, while legal adoption/completion and supersession remain unavailable. `Expiring` remains a declared calendar projection rather than an assertion choice.
+
+## Delivered source behavior
+
+- The existing owning certificate and exact ordinary file revision/checksum are prerequisites. The API reads actual bytes through the existing qualified-input integrity service; CleanTransport alone does not verify the certificate.
+- Operator-owned, default-empty appointments bind a Human actor, tenant, vessel, certificate, actual trusted role, Auditor duty, exact source version, assignment reference and validity interval. Permission `certificate.verify.record`, ordinary write attribution and current vessel/file access are also required. AI, generic administrator labels, client roles and missing appointments confer no recording authority. No operational grants or fake verified fixtures are provisioned.
+- A separate audited EF assertion head/event ledger preserves exact certificate/file pins, recording identity, full original authority snapshot/hash, canonical assignment binding hash, rationale and actual PostgreSQL version. The binding hash excludes only the validity interval, so a valid extension can preserve currentness; source/reference/role/scope replacement cannot relabel an old appointment as current.
+- `GET .../verification-capabilities`, paged `GET .../verification-assertions` and `POST .../verification-assertions` operate under the owning vessel/certificate route. The command binds certificate revision/version and expected assertion head version, explicit authority, literal state, rationale, CSRF and exact actor-owned idempotency UUID. Immutable exact outcomes can be recovered under current authorization after legitimate appointment validity extension; changed bodies conflict and revoked authority denies replay.
+- Certificate reads append a minimal recorded assertion projection. Its qualification is `RECORDED_UNASSESSED`; the owning certificate retains `REVIEW_REQUIRED` and `DRAFT`. Historical authorized assertions remain visible with `Current=false`. Private rationale and operator configuration are not returned or copied into logs. No readiness, legal validity, file authenticity, accepted source transition or supersession is inferred.
+- Fresh response fencing composes exact certificate/assertion/event/head/file predicates into the existing trusted fresh database query, then synchronously rechecks current appointment identity after awaits and success audit. A postcommit revocation returns `503 command_outcome_withheld` without leaking the saved payload or rolling back a committed receipt. The caller retains its exact command for authorized outcome recovery.
+
+The passport owner should retain the full owning DTO only server-side, call `CertificateAssertions.Decorate` before composing its projection, merge `CertificateReader.ReturnedVisible` into its one final resource query, and call synchronous `CertificateAssertions.CurrentPolicies` after that query and after the parent audit. Scalar passport rendering need not expose Human actor IDs or rationale.
+
+## Acceptance and authored regression sources
+
+The authored API/real PostgreSQL tests cover exact file/MVCC/immutable event and receipt lineage, no legal promotion or supersession, exact replay and changed-body conflict, expected assertion version conflict, assigned Human vs AI/unspecified/foreign role/certificate/source denial, valid extension vs replaced assignment identity, deterministic read-audit interleaving, postcommit appointment/file-read withdrawal and exact outcome recovery. Synthetic certificate fixtures remain incomplete and create no assertions. Persistence migration and snapshot are source authored; migration/model parity and all execution are deferred.
+
+Current local definition denominator becomes 102 mutation templates / 96 critical templates / 106 concrete critical operations. This branch does not yet contain the extraction author's three additional routes; the integrated denominator must preserve those additive definitions. Historical actual S1/S2/phase evidence remains unchanged.
+
+## Open gates
+
+No tests, build, typecheck, lint, API generation, contract gate, browser, provider or private configuration operation was executed for this package. Real appointed Human fixture activation, genuine signed journeys, integration/independent QA/CI and migration parity remain future PR-gate work. Legal transition approval and complete renewal/supersession policy require actual qualified source; no source matrix has been invented to close this gap.

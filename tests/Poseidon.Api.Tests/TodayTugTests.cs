@@ -85,6 +85,7 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.NotNull(why.Tug); Assert.Null(why.Tug.PlanRevision); Assert.Null(why.Tug.Evidence);
         Assert.Null(why.Inputs); Assert.Null(why.Maintenance); Assert.Empty(why.Tug.AssignedTugs);
         Assert.Equal(job.Revision, why.Tug.RequestRevision); Assert.Equal("TW-TUG-01", why.Rule);
+        Assert.Equal(new TodayWhySourceDto("TugJob", job.Id, job.Revision), why.Source);
         Assert.Equal("Unverified", why.Freshness); Assert.Null(why.SourceObservedAt);
         Assert.Contains("MasterDecisionRequired", why.Blockers);
         var json = await client.GetStringAsync(TugWhyPath(job.Id), Ct);
@@ -132,6 +133,7 @@ public sealed partial class DirectoryWorkspaceTests
         var why = (await client.GetFromJsonAsync<TodayWhyDto>(TugWhyPath(job.Id), Ct))!;
         Assert.Equal("TugRequestChanged", why.Reason); Assert.NotNull(why.Tug);
         Assert.Equal(2, why.Tug.RequestRevision); Assert.Equal(plan.Revision, why.Tug.PlanRevision);
+        Assert.Equal(new TodayWhySourceDto("TugJob", job.Id, why.Tug.RequestRevision), why.Source);
         Assert.Equal(1, why.Tug.PlannedRequestRevision); Assert.Equal("ReviewRequired", why.Tug.Evidence!.Readiness);
         Assert.DoesNotContain("SYNTHETIC changed request", await client.GetStringAsync(TugWhyPath(job.Id), Ct));
         await using var db = Db(); Assert.Single(await db.TugDraftPlanRevisions.Where(r => r.JobId == job.Id).ToArrayAsync(Ct));

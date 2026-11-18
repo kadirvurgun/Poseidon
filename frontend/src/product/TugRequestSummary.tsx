@@ -7,8 +7,8 @@ import type { TugRequest } from './tug-api'
 import { tugLabel } from './tug-labels'
 import './tug-request-summary.css'
 
-function Field({ label, children }: { label: string; children: ReactNode }) {
-  return <div><dt>{label}</dt><dd>{children}</dd></div>
+function Field({ label, children, multiline = false }: { label: string; children: ReactNode; multiline?: boolean }) {
+  return <div><dt>{label}</dt><dd className={multiline ? 'tug-request-narrative' : undefined}>{children}</dd></div>
 }
 
 export function TugRequestSummary({ record, language, editing, onEdit }: { record: TugRequest; language: 'tr' | 'en'; editing: boolean; onEdit?: () => void }) {
@@ -39,7 +39,7 @@ export function TugRequestSummary({ record, language, editing, onEdit }: { recor
       </dl></CardContent></Card>
       <Card><CardHeader><CardTitle>{en ? 'Planning demand' : 'Planlama talebi'}</CardTitle><Weight size={17} aria-hidden="true" /></CardHeader><CardContent><dl>
         <Field label={en ? 'Required BP · tonnes' : 'Gerekli BP · ton'}>{value(i.requiredBollardPull)}</Field><Field label={en ? 'Required tug count' : 'Gerekli römorkör sayısı'}>{value(i.requiredTugCount)}</Field>
-        <Field label={en ? 'Special requirements' : 'Özel gereksinimler'}>{value(i.specialRequirements)}</Field><Field label={en ? 'Notes' : 'Notlar'}>{value(i.notes)}</Field>
+        <Field multiline label={en ? 'Special requirements' : 'Özel gereksinimler'}>{value(i.specialRequirements)}</Field><Field multiline label={en ? 'Notes' : 'Notlar'}>{value(i.notes)}</Field>
       </dl></CardContent></Card>
     </div>}
     <details className="tug-request-lineage"><summary>{en ? 'Request revision and source context' : 'Talep sürümü ve kaynak bağlamı'}</summary><dl>

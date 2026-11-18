@@ -27,20 +27,20 @@ public static class TugPlanningEvidenceAdapter
         foreach (var tug in plan.AssignedTugs.Where(visible.Contains)) {
             var source = policy.Current(now) ? policy.BpSources.SingleOrDefault(s => s.TenantId == actor.TenantId && s.VesselId == tug) : null;
             if (!actor.Permissions.Contains("equipment.read") || !actor.Permissions.Contains("maintenance.read") || !policy.Current(now) || source == null || source.MaxAgeSeconds is < 1 or > 31536000) {
-                OperationalTelemetry.ObserveFreshness(ObservationArea.Tug, SourceFreshness.Unavailable);
+                OperationalTelemetry.ObserveFreshness(ObservationArea.Tug, SourceFreshness.Unavailable, db.TenantId);
                 bp.Add(new(tug, "Unavailable", null, null, null, null, null, null, "Unavailable", "Unavailable")); continue;
             }
             var rule = observationSettings.Rule(actor.TenantId, tug, source.AssetId, source.Source);
             if (rule == null || rule.Version != source.PolicyVersion || rule.Kind != "Meter" || rule.Unit != "tonnes") {
-                OperationalTelemetry.ObserveFreshness(ObservationArea.Tug, SourceFreshness.Unavailable);
+                OperationalTelemetry.ObserveFreshness(ObservationArea.Tug, SourceFreshness.Unavailable, db.TenantId);
                 bp.Add(new(tug, "Unavailable", null, null, null, null, null, null, "Unavailable", "Unavailable")); continue;
             }
             var observation = await db.MaintenanceObservations.AsNoTracking().Where(o => o.VesselId == tug && o.AssetId == source.AssetId && o.Source == source.Source)
                 .OrderByDescending(o => o.SourceRevision).FirstOrDefaultAsync(ct);
-            if (observation == null) { OperationalTelemetry.ObserveFreshness(ObservationArea.Tug, SourceFreshness.Unknown); bp.Add(new(tug, "Missing", null, source.Source, source.PolicyVersion, null, null, null, "Unknown", "Missing")); continue; }
+            if (observation == null) { OperationalTelemetry.ObserveFreshness(ObservationArea.Tug, SourceFreshness.Unknown, db.TenantId); bp.Add(new(tug, "Missing", null, source.Source, source.PolicyVersion, null, null, null, "Unknown", "Missing")); continue; }
             var revoked = await db.MaintenanceObservationRevocations.AnyAsync(r => r.ObservationId == observation.Id, ct);
             var freshnessState = SourceFreshnessPolicy.Assess(observation.ObservedAt, now, TimeSpan.FromSeconds(source.MaxAgeSeconds));
-            OperationalTelemetry.ObserveFreshness(ObservationArea.Tug, freshnessState);
+            OperationalTelemetry.ObserveFreshness(ObservationArea.Tug, freshnessState, db.TenantId);
             var freshness = freshnessState.ToString();
             var state = revoked ? "Revoked" : observation.PolicyVersion != source.PolicyVersion ? "PolicyChanged" : observation.Unit != "tonnes" || observation.Kind != "Meter" ? "UnitOrKindMismatch" :
                 !TugRequestPolicy.TryBp(observation.Value, out var value) || value == null ? "Unknown" : freshness != "Current" ? freshness : "DeclaredUnverified";

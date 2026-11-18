@@ -10,4 +10,19 @@
 .tug-workspace td { max-width: 270px; overflow-wrap: anywhere; vertical-align: top; }
 .tug-workspace dd { margin: .3rem 0 1rem; overflow-wrap: anywhere; }
 .tug-workspace summary { cursor: pointer; padding-block: .6rem; }
-.tug-workspace button { margin: .3rem; }
+.tug-workspace button:not([data-slot="button"]) { margin: .3rem; }
+.tug-workspace .tug-intake-form { max-width: 1120px; margin-block: 24px; padding: 24px; border: 1px solid var(--border); border-radius: 12px; background: var(--card); }
+.tug-workspace .tug-intake-form .enterprise-form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 24px; padding: 20px 0; margin: 0; border: 0; border-bottom: 1px solid var(--border); }
+.tug-workspace .tug-intake-form .enterprise-form-grid legend { padding-top: 24px; font-size: 15px; }
+.tug-workspace .tug-intake-form .enterprise-form-field > label { margin: 0; font-weight: 500; font-size: 13px; }
+.tug-workspace .tug-intake-form :is(input, select, textarea) { width: 100%; min-height: 44px; border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; color: var(--foreground); background: var(--background); font: inherit; box-sizing: border-box; }
+.tug-workspace .tug-intake-form textarea { resize: vertical; min-height: 96px; }
+.tug-workspace .tug-intake-form :is(input, select, textarea):focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.tug-workspace .tug-intake-form :is(input, select, textarea)[aria-invalid="true"] { border-color: var(--destructive); }
+.tug-workspace .tug-intake-form .tug-field-wide { grid-column: 1 / -1; }
+.tug-workspace .tug-form-guidance { margin: 0; max-width: 80ch; font-size: 13px; color: var(--muted-foreground); }
+.tug-workspace .tug-intake-form .enterprise-actions button { margin: 0; }
+@media (max-width: 650px) {
+  .tug-workspace .tug-intake-form { padding: 16px; }
+  .tug-workspace .tug-intake-form .enterprise-form-grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+}

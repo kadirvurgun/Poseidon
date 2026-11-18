@@ -1,8 +1,8 @@
 import { afterEach, expect, it, vi } from 'vitest'
-import { emptyTugInputs, tugApi } from './tug-api'
+import { emptyTugInputs, tugApi, tugRequestSource } from './tug-api'
 
 const vessel = '11111111-1111-1111-1111-111111111111', id = '22222222-2222-2222-2222-222222222222'
-const row = () => ({ request: { id, vesselId: vessel, jobNumber: 'FICTIONAL-JOB', inputs: emptyTugInputs() }, assignedTugs: [], availableBollardPull: null,
+const row = () => ({ request: { id, vesselId: vessel, jobNumber: 'FICTIONAL-JOB', revision: 1, version: 4, inputs: emptyTugInputs(), provenance: 'SyntheticUnverified', savedAt: '2026-11-01T00:00:00Z', missing: ['requested_start'], replayed: false, sourceVersion: tugRequestSource }, assignedTugs: [], availableBollardPull: null,
   readiness: 'Unknown', conflict: 'Unknown', declaredComparisons: [], blockingReasons: [], detailHref: `/app/tug-job-detail/${id}?vessel=${vessel}` })
 const load = (items: unknown[]) => {
   vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify({ items, hasMore: false }), { headers: { 'Content-Type': 'application/json' } })))

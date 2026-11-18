@@ -1,0 +1,34 @@
+.enterprise-shell .onboarding-steps { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; list-style:none; margin:18px 0 24px; padding:0; }
+.enterprise-shell .onboarding-steps [data-slot="button"] { width:100%; height:auto; min-height:54px; padding:10px; justify-content:flex-start; white-space:normal; text-align:start; font-size:12px; }
+.enterprise-shell .onboarding-steps [aria-current="step"] { border:1px solid var(--primary); }
+.enterprise-shell .onboarding-steps [data-slot="button"] span { display:grid; place-items:center; border:1px solid var(--border); border-radius:50%; width:22px; height:22px; flex:0 0 22px; background:var(--card); color:var(--foreground); }
+.enterprise-shell .onboarding-checklist { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; list-style:none; margin:16px 0; padding:0; }
+.enterprise-shell .onboarding-checklist li { display:flex; flex-wrap:wrap; justify-content:space-between; gap:8px; padding:12px; border:1px solid var(--border); border-radius:7px; }
+.enterprise-shell .onboarding-checklist li span { color:var(--muted-foreground); }
+.enterprise-shell .onboarding-assessment { margin:20px 0; padding:18px; border:1px solid var(--border); border-radius:9px; background:var(--muted); }
+.enterprise-shell .onboarding-review-values { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px 24px; }
+.enterprise-shell .onboarding-review-values dd { margin:5px 0 0; overflow-wrap:anywhere; }
+@media(max-width:800px) { .enterprise-shell .onboarding-steps { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media(max-width:600px) { .enterprise-shell .onboarding-checklist,.enterprise-shell .onboarding-review-values { grid-template-columns:minmax(0,1fr); } }
+
+.enterprise-shell .compliance-passport { min-width:0; margin:20px 0; }
+.enterprise-shell .compliance-passport > section,.enterprise-shell .passport-coverage > section { padding:20px; border:1px solid var(--border); border-radius:10px; background:var(--card); margin:18px 0; min-width:0; }
+.enterprise-shell .passport-coverage { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+.enterprise-shell .passport-coverage > section { margin:18px 0 0; }
+.enterprise-shell .compliance-passport h3 { margin-top:0; }
+.enterprise-shell .compliance-passport code,.enterprise-shell .applicability-reason-list code { white-space:normal; overflow-wrap:anywhere; font-size:12px; }
+.enterprise-shell .compliance-passport details,.enterprise-shell .applicability-reason-list > details { min-width:0; margin:12px 0; padding:14px 16px; border:1px solid var(--border); border-radius:8px; background:var(--card); overflow-wrap:anywhere; }
+.enterprise-shell .compliance-passport summary,.enterprise-shell .applicability-reason-list summary { padding-block:4px; cursor:pointer; }
+.enterprise-shell .applicability-reason-list dl { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px 24px; }
+.enterprise-shell .applicability-reason-list dd { margin:4px 0 0; overflow-wrap:anywhere; }
+.enterprise-shell .applicability-reason-list ul { padding-inline-start:20px; }
+.enterprise-shell .applicability-reason-list li { margin-block:8px; overflow-wrap:anywhere; }
+.enterprise-shell #applicability { scroll-margin-top:90px; }
+@media(max-width:600px) { .enterprise-shell .passport-coverage,.enterprise-shell .applicability-reason-list dl { grid-template-columns:minmax(0,1fr); } .enterprise-shell .compliance-passport > section { padding:16px; } }
+.passport-certificate-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 20px 0; }
+.passport-certificate-card { min-width: 0; border: 1px solid var(--border); border-radius: 10px; padding: 20px; background: var(--card); }
+.passport-certificate-heading { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.passport-certificate-heading h4 { margin: 0; flex: 1 1 180px; overflow-wrap: anywhere; }
+.passport-certificate-card :is(code, dd) { overflow-wrap: anywhere; }
+.passport-certificate-card details { margin-top: 16px; font-size: 12px; }
+@media (max-width: 800px) { .passport-certificate-list { grid-template-columns: minmax(0, 1fr); } }

@@ -7,5 +7,5 @@
 .import-results :is(td, th) { text-align: start; vertical-align: top; padding: .7rem; border-block-start: 1px solid currentColor; overflow-wrap: anywhere; }
 .import-results ul { margin: 0; padding-inline-start: 1.2rem; }
 .import-results__actions { display: flex; flex-wrap: wrap; gap: .8rem; margin-block: 1rem; }
-.import-results button { min-height: 44px; padding: .6rem 1rem; font: inherit; }
+.import-results button:not([data-slot="button"]) { min-height: 44px; padding: .6rem 1rem; font: inherit; }
 .import-results :is(button, .import-results__scroll):focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }

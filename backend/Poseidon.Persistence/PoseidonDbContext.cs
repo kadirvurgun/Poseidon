@@ -14,6 +14,25 @@ public sealed class PoseidonDbContext(
     public Guid TenantId { get; } = tenantId;
     public bool IsAdministrativeImport { get; } = administrativeImport;
     public DbSet<Tenant> Tenants => Set<Tenant>();
+    public DbSet<VesselCertificate> VesselCertificates => Set<VesselCertificate>();
+    public DbSet<VesselCertificateRevision> VesselCertificateRevisions => Set<VesselCertificateRevision>();
+    public DbSet<CertificateRenewal> CertificateRenewals => Set<CertificateRenewal>();
+    public DbSet<CertificateRenewalRevision> CertificateRenewalRevisions => Set<CertificateRenewalRevision>();
+    public DbSet<CertificateAssertionHead> CertificateAssertionHeads => Set<CertificateAssertionHead>();
+    public DbSet<CertificateAssertionEvent> CertificateAssertionEvents => Set<CertificateAssertionEvent>();
+    public DbSet<CertificateCommandReceipt> CertificateCommandReceipts => Set<CertificateCommandReceipt>();
+    public DbSet<ShipOperation> ShipOperations => Set<ShipOperation>();
+    public DbSet<ShipOperationRevision> ShipOperationRevisions => Set<ShipOperationRevision>();
+    public DbSet<ShipOperationReceipt> ShipOperationReceipts => Set<ShipOperationReceipt>();
+    public DbSet<Downtime> Downtimes => Set<Downtime>();
+    public DbSet<DowntimeRevision> DowntimeRevisions => Set<DowntimeRevision>();
+    public DbSet<DowntimeReceipt> DowntimeReceipts => Set<DowntimeReceipt>();
+    public DbSet<WorkOrder> WorkOrders => Set<WorkOrder>();
+    public DbSet<WorkOrderRevision> WorkOrderRevisions => Set<WorkOrderRevision>();
+    public DbSet<WorkOrderReceipt> WorkOrderReceipts => Set<WorkOrderReceipt>();
+    public DbSet<Defect> Defects => Set<Defect>();
+    public DbSet<DefectRevision> DefectRevisions => Set<DefectRevision>();
+    public DbSet<DefectReceipt> DefectReceipts => Set<DefectReceipt>();
     public DbSet<Company> Companies => Set<Company>();
     public DbSet<Vessel> Vessels => Set<Vessel>();
     public DbSet<VesselProfile> VesselProfiles => Set<VesselProfile>();
@@ -21,6 +40,21 @@ public sealed class PoseidonDbContext(
     public DbSet<AuditEvent> AuditEvents => Set<AuditEvent>();
 
     public DbSet<CommandReceipt> CommandReceipts => Set<CommandReceipt>();
+    public DbSet<Notification> Notifications => Set<Notification>();
+    public DbSet<NotificationEvent> NotificationEvents => Set<NotificationEvent>();
+    public DbSet<NotificationPreference> NotificationPreferences => Set<NotificationPreference>();
+    public DbSet<NotificationReceipt> NotificationReceipts => Set<NotificationReceipt>();
+    public DbSet<NotificationDispatchState> NotificationDispatchStates => Set<NotificationDispatchState>();
+    public DbSet<NotificationEpisode> NotificationEpisodes => Set<NotificationEpisode>();
+    public DbSet<DailyOfflineEnrollment> DailyOfflineEnrollments => Set<DailyOfflineEnrollment>();
+    public DbSet<DailyOfflineLifecycle> DailyOfflineLifecycles => Set<DailyOfflineLifecycle>();
+    public DbSet<DailyOfflineOutcome> DailyOfflineOutcomes => Set<DailyOfflineOutcome>();
+    public DbSet<DailyOperation> DailyOperations => Set<DailyOperation>();
+    public DbSet<DailyOperationRevision> DailyOperationRevisions => Set<DailyOperationRevision>();
+    public DbSet<DailyOperationReceipt> DailyOperationReceipts => Set<DailyOperationReceipt>();
+    public DbSet<DailyReviewHead> DailyReviewHeads => Set<DailyReviewHead>();
+    public DbSet<DailyReviewEvent> DailyReviewEvents => Set<DailyReviewEvent>();
+    public DbSet<DailyReviewReceipt> DailyReviewReceipts => Set<DailyReviewReceipt>();
     public DbSet<OfflineEnrollment> OfflineEnrollments => Set<OfflineEnrollment>();
     public DbSet<OfflineLifecycle> OfflineLifecycles => Set<OfflineLifecycle>();
     public DbSet<OfflineOutcome> OfflineOutcomes => Set<OfflineOutcome>();
@@ -99,6 +133,38 @@ public sealed class PoseidonDbContext(
         model.Entity<CrewCatalogHead>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<CrewCatalogEvent>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.HasDefaultSchema("core");
+        VesselCertificateStorage.Configure(model);
+        ShipOperationsStorage.Configure(model);
+        model.Entity<ShipOperation>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<ShipOperationRevision>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<ShipOperationReceipt>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        CertificateAssertionStorage.Configure(model);
+        model.Entity<CertificateAssertionHead>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<CertificateAssertionEvent>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<VesselCertificate>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<VesselCertificateRevision>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<CertificateRenewal>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<CertificateRenewalRevision>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<CertificateCommandReceipt>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        DailyOperationsStorage.Configure(model);
+        DailyOfflineStorage.Configure(model);
+        model.Entity<DailyOfflineEnrollment>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<DailyOfflineLifecycle>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<DailyOfflineOutcome>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        DailyReviewStorage.Configure(model);
+        model.Entity<DailyReviewHead>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<DailyReviewEvent>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<DailyReviewReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<DailyOperation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<DailyOperationRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<DailyOperationReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        NotificationStorage.Configure(model);
+        model.Entity<Notification>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<NotificationEvent>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<NotificationPreference>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<NotificationReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<NotificationDispatchState>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<NotificationEpisode>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         ControlEvidenceStorage.Configure(model);
         HumanReviewStorage.Configure(model);
         RegulatoryQualificationStorage.Configure(model);
@@ -157,6 +223,18 @@ public sealed class PoseidonDbContext(
         model.Entity<MaintenanceObservation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<MaintenanceObservationRevocation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         TechnicalStorage.Configure(model);
+        DefectStorage.Configure(model);
+        model.Entity<Defect>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<DefectRevision>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<DefectReceipt>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        DowntimeStorage.Configure(model);
+        model.Entity<Downtime>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<DowntimeRevision>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<DowntimeReceipt>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        WorkOrderStorage.Configure(model);
+        model.Entity<WorkOrder>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<WorkOrderRevision>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<WorkOrderReceipt>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
         model.Entity<Asset>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<AssetRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<TechnicalOwner>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -401,6 +479,73 @@ public sealed class PoseidonDbContext(
             throw new InvalidOperationException("Current web writes require trusted role and command provenance.");
         if (changes.Any(e => e.Entity is AuditEvent or SecurityEvent))
             throw new InvalidOperationException("Audit events are generated by the context and cannot be directly changed.");
+        if(changes.Any(e=>e.Entity is VesselCertificateRevision or CertificateRenewalRevision or CertificateAssertionEvent or CertificateCommandReceipt && e.State!=EntityState.Added))
+            throw new InvalidOperationException("Certificate and renewal history/receipts are immutable.");
+        if(changes.Any(e=>e.Entity is VesselCertificate or CertificateRenewal or CertificateAssertionHead && (e.State==EntityState.Deleted || e.State==EntityState.Modified &&
+            (e.Properties.Any(p=>p.IsModified && p.Metadata.Name!="Revision") || (long)e.Property("Revision").CurrentValue! != (long)e.Property("Revision").OriginalValue!+1))))
+            throw new InvalidOperationException("Certificate and renewal ownership are immutable; append one revision.");
+        if (changes.Any(e => e.Entity is DailyOfflineLifecycle or DailyOfflineOutcome && e.State != EntityState.Added))
+            throw new InvalidOperationException("Daily offline lineage is immutable.");
+        if (changes.Any(e => e.Entity is DailyOfflineEnrollment && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
+            (e.Properties.Any(p => p.IsModified && p.Metadata.Name is not ("ExpiresAt" or "RevokedAt" or "PublicKey")) ||
+             e.Property("RevokedAt").OriginalValue != null ||
+             (DateTimeOffset)e.Property("ExpiresAt").CurrentValue! < (DateTimeOffset)e.Property("ExpiresAt").OriginalValue! ||
+             e.Property("PublicKey").OriginalValue != null && !Equals(e.Property("PublicKey").OriginalValue,e.Property("PublicKey").CurrentValue)))))
+            throw new InvalidOperationException("Daily offline ownership and key identity are immutable.");
+        if(changes.Any(e=>e.Entity is DefectRevision or DefectReceipt && e.State!=EntityState.Added))
+            throw new InvalidOperationException("Defect history and outcomes are immutable.");
+        if(changes.Any(e=>e.Entity is Defect && (e.State==EntityState.Deleted || e.State==EntityState.Modified &&
+            (e.Properties.Any(p=>p.IsModified && p.Metadata.Name is not("FieldsJson" or "AssetId" or "AssetRevision" or "AssetVersion" or "AssetHash" or "SourceVersion" or "Hash" or "Provenance" or "ActorId" or "SavedAt" or "Revision")) ||
+                (long)e.Property("Revision").CurrentValue! != (long)e.Property("Revision").OriginalValue!+1))))
+            throw new InvalidOperationException("Defect ownership is immutable; append one revision.");
+        if(changes.Any(e=>e.Entity is WorkOrderRevision or WorkOrderReceipt && e.State!=EntityState.Added))
+            throw new InvalidOperationException("WorkOrder history and outcomes are immutable.");
+        if(changes.Any(e=>e.Entity is WorkOrder && (e.State==EntityState.Deleted || e.State==EntityState.Modified &&
+            (e.Properties.Any(p=>p.IsModified && p.Metadata.Name is not("FieldsJson" or "PlanId" or "PlanRevision" or "PlanVersion" or "PlanHash" or "PlanSourceVersion" or "SourceVersion" or "Hash" or "Provenance" or "ActorId" or "SavedAt" or "Revision")) ||
+                (long)e.Property("Revision").CurrentValue! != (long)e.Property("Revision").OriginalValue!+1))))
+            throw new InvalidOperationException("WorkOrder ownership is immutable; append one revision.");
+        if(changes.Any(e=>e.Entity is DowntimeRevision or DowntimeReceipt && e.State!=EntityState.Added))
+            throw new InvalidOperationException("Downtime history and outcomes are immutable.");
+        if(changes.Any(e=>e.Entity is Downtime && (e.State==EntityState.Deleted || e.State==EntityState.Modified &&
+            (e.Properties.Any(p=>p.IsModified && p.Metadata.Name is not("FieldsJson" or "OriginJson" or "StartedAt" or "SourceVersion" or "Hash" or "Provenance" or "ActorId" or "SavedAt" or "Revision")) ||
+                (long)e.Property("Revision").CurrentValue! != (long)e.Property("Revision").OriginalValue!+1))))
+            throw new InvalidOperationException("Downtime ownership is immutable; append one revision.");
+        if(changes.Any(e=>e.Entity is ShipOperationRevision or ShipOperationReceipt && e.State!=EntityState.Added))
+            throw new InvalidOperationException("Ship operation history and outcomes are immutable.");
+        if(changes.Any(e=>e.Entity is ShipOperation && (e.State==EntityState.Deleted || e.State==EntityState.Modified &&
+            (e.Properties.Any(p=>p.IsModified && p.Metadata.Name is not("FieldsJson" or "OriginJson" or "SourceVersion" or "Hash" or "Provenance" or "ActorId" or "SavedAt" or "OccurredAt" or "EndedAt" or "Revision")) ||
+                (long)e.Property("Revision").CurrentValue! != (long)e.Property("Revision").OriginalValue!+1))))
+            throw new InvalidOperationException("Ship operation ownership is immutable; append one revision.");
+        if (changes.Any(e => e.Entity is DailyOperationRevision or DailyOperationReceipt && e.State != EntityState.Added))
+            throw new InvalidOperationException("Daily operation history and command outcomes are immutable.");
+        if (changes.Any(e => e.Entity is DailyReviewEvent or DailyReviewReceipt && e.State != EntityState.Added))
+            throw new InvalidOperationException("Recorded daily human review provenance is immutable.");
+        if (changes.Any(e => e.Entity is DailyReviewHead && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
+            (e.Properties.Any(p => p.IsModified && p.Metadata.Name != "Sequence") ||
+                (long)e.Property("Sequence").CurrentValue! != (long)e.Property("Sequence").OriginalValue! + 1))))
+            throw new InvalidOperationException("Daily review ownership is immutable; append one event.");
+        if (changes.Any(e => e.Entity is DailyOperation && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
+            (e.Properties.Any(p => p.IsModified && p.Metadata.Name is not ("FieldsJson" or "Hash" or "Provenance" or "ActorId" or "SavedAt" or "Revision")) ||
+                (long)e.Property("Revision").CurrentValue! != (long)e.Property("Revision").OriginalValue! + 1))))
+            throw new InvalidOperationException("Daily operation identity is immutable; edits append one revision.");
+        if (changes.Any(e => e.Entity is NotificationEvent or NotificationReceipt && e.State != EntityState.Added))
+            throw new InvalidOperationException("Notification lifecycle and receipts are immutable.");
+        if (changes.Any(e => e.Entity is NotificationDispatchState && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
+            (e.Properties.Any(p => p.IsModified && p.Metadata.Name is not ("LeaseOwner" or "LeaseUntil" or "NextRunAt" or "LastCompletedAt" or "SourceOffset" or "Revision")) ||
+                (long)e.Property("Revision").CurrentValue! != (long)e.Property("Revision").OriginalValue! + 1))))
+            throw new InvalidOperationException("Notification dispatch ownership is immutable.");
+        if (changes.Any(e => e.Entity is NotificationEpisode && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
+            (e.Properties.Any(p => p.IsModified && p.Metadata.Name is not ("Active" or "LastKnownActive" or "Episode" or "SourceContextHash" or "Revision")) ||
+                (long)e.Property("Revision").CurrentValue! != (long)e.Property("Revision").OriginalValue! + 1))))
+            throw new InvalidOperationException("Notification episode ownership is immutable.");
+        if (changes.Any(e => e.Entity is Notification && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
+            (e.Properties.Any(p => p.IsModified && p.Metadata.Name is not "State" and not "Revision") ||
+                (long)e.Property("Revision").CurrentValue! != (long)e.Property("Revision").OriginalValue! + 1))))
+            throw new InvalidOperationException("Notification source and routing are immutable.");
+        if (changes.Any(e => e.Entity is NotificationPreference && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
+            (e.Properties.Any(p => p.IsModified && p.Metadata.Name is not "MutedAdvisory" and not "Revision") ||
+                (long)e.Property("Revision").CurrentValue! != (long)e.Property("Revision").OriginalValue! + 1))))
+            throw new InvalidOperationException("Notification preference ownership is immutable.");
         if (changes.Any(e => e.Entity is RegulatoryQualificationEvent or RegulatoryFactAttestation or EvaluationQualification or RegulatoryQualificationReceipt && e.State != EntityState.Added))
             throw new InvalidOperationException("Regulatory qualification lineage is immutable.");
         if (changes.Any(e => e.Entity is RegulatoryQualificationHead && (e.State == EntityState.Deleted || e.State == EntityState.Modified && e.Properties.Any(p => p.IsModified && p.Metadata.Name != "Revision"))))
@@ -501,6 +646,9 @@ public sealed class PoseidonDbContext(
                 Id = Guid.NewGuid(), TenantId = scope, ActorId = actor.Id, ActorType = actor.Type,
                 Action = entry.State.ToString(), EntityType = entry.Metadata.ClrType.Name,
                 EntityId = entry.Entity is CommandReceipt receipt ? receipt.ResourceId.ToString() :
+                    entry.Entity is CertificateCommandReceipt certificateReceipt ? certificateReceipt.ResourceId.ToString() :
+                    entry.Entity is DailyOperationReceipt dailyReceipt ? dailyReceipt.RecordId.ToString() :
+                    entry.Entity is DailyReviewReceipt reviewReceipt ? reviewReceipt.RecordId.ToString() :
                     entry.Entity is ApplicabilityReceipt applicabilityReceipt ? applicabilityReceipt.ResourceId.ToString() :
                     entry.Entity is HumanReviewReceipt humanReceipt ? humanReceipt.ResourceId.ToString() :
                     entry.Entity is RegulatoryQualificationReceipt regulatoryReceipt ? regulatoryReceipt.RuleId.ToString() :
@@ -523,6 +671,49 @@ public sealed class PoseidonDbContext(
                     entry.Entity is RuleRevision or ControlEvidenceRevision or HumanReviewEvent or TugOfflineOutcome { ParentCommandId: not null } ? "RecordedControlledCode" : entry.Entity is OfflineOutcome { ParentCommandId: not null }
                     ? "RecordedProtected" : currentWebCommand ? "RecordedControlledCode" : "HistoricalUnavailable", Source = actor.Source
             });
+            if(entry.Entity is CertificateCommandReceipt certificateOutcome) {
+                if(certificateOutcome.Action=="CertificateAssertion") {
+                    var saved=ChangeTracker.Entries<CertificateAssertionHead>().SingleOrDefault(e=>e.State==EntityState.Unchanged && e.Entity.TenantId==certificateOutcome.TenantId &&
+                        e.Entity.VesselId==certificateOutcome.VesselId && e.Entity.CertificateId==certificateOutcome.CertificateId)?.Entity;
+                    events[^1].AfterVersion=saved?.Version;events[^1].AfterRevision=saved?.Revision;
+                }else if(certificateOutcome.RenewalId==null) {
+                    var saved=ChangeTracker.Entries<VesselCertificate>().SingleOrDefault(e=>e.State==EntityState.Unchanged && e.Entity.TenantId==certificateOutcome.TenantId &&
+                        e.Entity.VesselId==certificateOutcome.VesselId && e.Entity.Id==certificateOutcome.CertificateId)?.Entity;
+                    events[^1].AfterVersion=saved?.Version;events[^1].AfterRevision=saved?.Revision;
+                }else {
+                    var saved=ChangeTracker.Entries<CertificateRenewal>().SingleOrDefault(e=>e.State==EntityState.Unchanged && e.Entity.TenantId==certificateOutcome.TenantId &&
+                        e.Entity.VesselId==certificateOutcome.VesselId && e.Entity.Id==certificateOutcome.RenewalId)?.Entity;
+                    events[^1].AfterVersion=saved?.Version;events[^1].AfterRevision=saved?.Revision;
+                }
+            }
+            if(entry.Entity is DefectReceipt defectOutcome) {
+                events[^1].AfterVersion=checked((uint)defectOutcome.RecordVersion);events[^1].AfterRevision=defectOutcome.Revision;
+            }
+            if(entry.Entity is WorkOrderReceipt work_orderOutcome) {
+                events[^1].AfterVersion=checked((uint)work_orderOutcome.RecordVersion);events[^1].AfterRevision=work_orderOutcome.Revision;
+            }
+            if(entry.Entity is DowntimeReceipt downtimeOutcome) {
+                events[^1].AfterVersion=checked((uint)downtimeOutcome.RecordVersion);events[^1].AfterRevision=downtimeOutcome.Revision;
+            }
+            if(entry.Entity is ShipOperationReceipt shipOutcome) {
+                var saved=ChangeTracker.Entries<ShipOperation>().SingleOrDefault(e=>e.State==EntityState.Unchanged && e.Entity.TenantId==shipOutcome.TenantId &&
+                    e.Entity.VesselId==shipOutcome.VesselId && e.Entity.Kind==shipOutcome.Kind && e.Entity.Id==shipOutcome.RecordId)?.Entity;
+                events[^1].AfterVersion=saved?.Version;events[^1].AfterRevision=saved?.Revision;
+            }
+            if (entry.Entity is DailyOperationReceipt dailyOutcome) {
+                var saved = ChangeTracker.Entries<DailyOperation>().SingleOrDefault(e => e.State == EntityState.Unchanged &&
+                    e.Entity.TenantId == dailyOutcome.TenantId && e.Entity.VesselId == dailyOutcome.VesselId &&
+                    e.Entity.Kind == dailyOutcome.Kind && e.Entity.Id == dailyOutcome.RecordId)?.Entity;
+                events[^1].AfterVersion = saved?.Version;
+                events[^1].AfterRevision = saved?.Revision;
+            }
+            if (entry.Entity is DailyReviewReceipt reviewOutcome) {
+                var saved = ChangeTracker.Entries<DailyReviewHead>().SingleOrDefault(e => e.State == EntityState.Unchanged &&
+                    e.Entity.TenantId == reviewOutcome.TenantId && e.Entity.VesselId == reviewOutcome.VesselId &&
+                    e.Entity.Kind == reviewOutcome.Kind && e.Entity.RecordId == reviewOutcome.RecordId)?.Entity;
+                events[^1].AfterVersion = saved?.Version;
+                events[^1].AfterRevision = saved?.Sequence;
+            }
         }
         AuditEvents.AddRange(events);
         return events;

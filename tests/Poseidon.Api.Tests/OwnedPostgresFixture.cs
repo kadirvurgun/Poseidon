@@ -72,10 +72,16 @@ public sealed class OwnedPostgresFixture : IAsyncLifetime
                 if (migratedTemplate?.Name != template || !owned.TryGetValue(template, out var actual) || !ReferenceEquals(actual, migratedTemplate))
                     throw new InvalidOperationException("Migration template is not owned by this fixture.");
             }
-            var connection = new NpgsqlConnectionStringBuilder(container.GetConnectionString()) { Database = name, Pooling = false };
+            // Pool only this UUID-named owned database. Short-lived audited
+            // request/fence contexts may reuse transports, never another lease.
+            var connection = new NpgsqlConnectionStringBuilder(container.GetConnectionString()) { Database = name, Pooling = true, MinPoolSize = 0, MaxPoolSize = 16 };
             var lease = new OwnedTestDatabase(this, name, connection.ConnectionString);
             if (!owned.TryAdd(name, lease)) throw new InvalidOperationException("Test database ownership collision.");
             try {
+                // PostgreSQL refuses CREATE ... TEMPLATE while its source has
+                // idle sessions. The exact owned template pool is the only pool
+                // cleared; its contexts have already finished migration.
+                if (template != null) ClearOwnedPool(migratedTemplate!);
                 await using var admin = new NpgsqlConnection(container.GetConnectionString());
                 await admin.OpenAsync(deadline.Token);
                 var sql = template == null ? $"CREATE DATABASE \"{name}\"" : $"CREATE DATABASE \"{name}\" TEMPLATE \"{template}\"";
@@ -85,6 +91,14 @@ public sealed class OwnedPostgresFixture : IAsyncLifetime
             return lease;
         }
         finally { lifecycle.Release(); }
+    }
+
+    // Call only after the lifecycle gate has verified this precise lease object.
+    // ClearPool closes idle transports and retires in-flight ones on return.
+    private static void ClearOwnedPool(OwnedTestDatabase lease)
+    {
+        using var connection = new NpgsqlConnection(lease.GetConnectionString());
+        NpgsqlConnection.ClearPool(connection);
     }
 
     internal static void ValidateName(string name)
@@ -102,6 +116,7 @@ public sealed class OwnedPostgresFixture : IAsyncLifetime
             ValidateName(lease.Name);
             if (!owned.TryGetValue(lease.Name, out var actual) || !ReferenceEquals(actual, lease))
                 throw new InvalidOperationException("Database is not owned by this fixture lease.");
+            ClearOwnedPool(lease);
             await using var admin = new NpgsqlConnection(container.GetConnectionString());
             await admin.OpenAsync(deadline.Token);
             await using var command = new NpgsqlCommand($"DROP DATABASE IF EXISTS \"{lease.Name}\" WITH (FORCE)", admin) { CommandTimeout = 20 };

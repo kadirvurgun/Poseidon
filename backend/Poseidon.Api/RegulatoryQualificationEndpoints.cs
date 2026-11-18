@@ -135,6 +135,11 @@ public static class RegulatoryQualificationEndpoints
         var replay = await Replay(); if (replay != null) return replay;
         await using var tx = await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.RepeatableRead, ct);
         try {
+            // Close the outside-lookup/transaction gap before examining mutable
+            // editor tokens. Replay retains the original actor/tenant and current
+            // grant binding; a receipt never restores a withdrawn appointment.
+            // A later winner is handled by the existing guarded-write rollback.
+            var transactionReplay = await Replay(); if (transactionReplay != null) return transactionReplay;
             var now = h.RequestServices.GetRequiredService<TimeProvider>().GetUtcNow(); now = now.AddTicks(-(now.Ticks % 10));
             var ruleHead = await db.RuleDrafts.SingleOrDefaultAsync(x => x.Id == rule, ct);
             if (ruleHead == null) return await Fail(h, 404, "resource_not_found");

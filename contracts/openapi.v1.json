@@ -907,6 +907,26 @@
         }
       }
     },
+    "/api/v1/vessel-compliance-passport": {
+      "get": {
+        "tags": [
+          "ComplianceWorkspaceEndpoints"
+        ],
+        "operationId": "VesselCompliancePassport",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompliancePassportDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/regulatory-trace": {
       "get": {
         "tags": [
@@ -1048,6 +1068,288 @@
           },
           "503": {
             "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/system-health": {
+      "get": {
+        "tags": [
+          "SystemHealthEndpoints"
+        ],
+        "operationId": "SystemHealthRead",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemHealthDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/certificate-command-center": {
+      "get": {
+        "tags": [
+          "CertificateEndpoints"
+        ],
+        "operationId": "CertificateCommandCenter",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CertificateCenterDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/certificate-command-center/capabilities": {
+      "get": {
+        "tags": [
+          "CertificateEndpoints"
+        ],
+        "operationId": "CertificateCapabilities",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CertificateCapabilitiesDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/vessels/{vessel}/certificates/{id}/extractions": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "CertificateExtract",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CertificateExtractCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CertificateExtractionDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/vessels/{vessel}/crew/{assignment}/certificates/{id}/extractions": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "CredentialExtract",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "assignment",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CertificateExtractCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CertificateExtractionDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/vessels/{vessel}/certificates/{id}/extractions/confirm": {
+      "post": {
+        "tags": [
+          "CertificateExtractionEndpoints"
+        ],
+        "operationId": "CertificateExtractionConfirm",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CertificateExtractConfirm"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CertificateDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/vessels/{vessel}/ship-operation-origins/{kind}/{id}": {
+      "get": {
+        "tags": [
+          "DailyOperationOriginReader"
+        ],
+        "operationId": "DailyOperationOrigin",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "kind",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyOperationOriginDto"
+                }
+              }
+            }
           }
         }
       }
@@ -1448,6 +1750,134 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TechnicalSaved"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/vessels/{vessel}/defect-asset-context/{id}": {
+      "get": {
+        "tags": [
+          "DefectAssetContextReader"
+        ],
+        "operationId": "DefectAssetContext",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DefectAssetContextDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/vessels/{vessel}/work-order-plan-origins/{id}": {
+      "get": {
+        "tags": [
+          "WorkOrderPlanOriginReader"
+        ],
+        "operationId": "WorkOrderPlanOriginRead",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkOrderPlanContextDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/vessels/{vessel}/downtime-origins/{kind}/{id}": {
+      "get": {
+        "tags": [
+          "DowntimeOriginReader"
+        ],
+        "operationId": "DowntimeOriginRead",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "kind",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DowntimeOriginDto"
                 }
               }
             }
@@ -3463,6 +3893,130 @@
         }
       }
     },
+    "/api/v1/vessels/{id}/compliance-onboarding": {
+      "get": {
+        "tags": [
+          "ComplianceWorkspaceEndpoints"
+        ],
+        "operationId": "ComplianceOnboarding",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ComplianceOnboardingDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/vessels/{id}/compliance-passport": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "CompliancePassport",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompliancePassportDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/vessels/{id}/compliance-applicability-review": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "ComplianceApplicabilityReview",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ComplianceApplicabilityDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/vessels/{id}/compliance-control-plan": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "ComplianceControlPlan",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ComplianceControlPlanDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/verifications": {
       "post": {
         "tags": [
@@ -3594,6 +4148,1948 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/HumanReviewDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/notification-escalation": {
+      "get": {
+        "tags": [
+          "NotificationEndpoints"
+        ],
+        "operationId": "NotificationInbox",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationInboxDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/notification-escalation/{id}/history": {
+      "get": {
+        "tags": [
+          "NotificationEndpoints"
+        ],
+        "operationId": "NotificationHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/notification-escalation/preference": {
+      "get": {
+        "tags": [
+          "NotificationEndpoints"
+        ],
+        "operationId": "NotificationPreferenceRead",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationPreferenceDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "NotificationPreference",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificationPreferenceCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationPreferenceDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/notification-escalation/refresh": {
+      "post": {
+        "tags": [
+          "NotificationEndpoints"
+        ],
+        "operationId": "NotificationRefresh",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/notification-escalation/{id}/acknowledge": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "NotificationAcknowledge",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificationAckCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationSavedDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/noon-reports": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "NoonDailyList",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyPageDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "NoonDailyCreate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DailyDraftCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyRecordDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/noon-reports/capabilities": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "NoonDailyCapabilities",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyCapabilitiesDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/noon-reports/{id}": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "NoonDailyRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyRecordDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "NoonDailyUpdate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DailyDraftCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyRecordDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/noon-reports/{id}/history": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "NoonDailyHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyHistoryDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/deck-daily-logs": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DeckDailyList",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyPageDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DeckDailyCreate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DailyDraftCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyRecordDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/deck-daily-logs/capabilities": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DeckDailyCapabilities",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyCapabilitiesDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/deck-daily-logs/{id}": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DeckDailyRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyRecordDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DeckDailyUpdate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DailyDraftCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyRecordDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/deck-daily-logs/{id}/history": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DeckDailyHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyHistoryDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/engine-daily-logs": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "EngineDailyList",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyPageDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "EngineDailyCreate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DailyDraftCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyRecordDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/engine-daily-logs/capabilities": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "EngineDailyCapabilities",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyCapabilitiesDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/engine-daily-logs/{id}": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "EngineDailyRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyRecordDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "EngineDailyUpdate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DailyDraftCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyRecordDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/engine-daily-logs/{id}/history": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "EngineDailyHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyHistoryDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/vessels/{vessel}/certificates": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "VesselCertificateList",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "VesselCertificateCreate",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CertificateSaveCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CertificateDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/vessels/{vessel}/certificates/{id}": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "VesselCertificateRead",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CertificateDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "VesselCertificateUpdate",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CertificateSaveCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CertificateDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/vessels/{vessel}/certificates/{id}/history": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "VesselCertificateHistory",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/renewal-workflow": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "CertificateRenewals",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RenewalPageDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "CertificateRenewalCreate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CertificateRenewalCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/renewal-workflow/capabilities": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "CertificateRenewalCapabilities",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RenewalCapabilitiesDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/renewal-workflow/{id}": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "CertificateRenewalRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CertificateRenewalDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "CertificateRenewalUpdate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CertificateRenewalCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/renewal-workflow/{id}/history": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "CertificateRenewalHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RenewalPageDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/vessels/{vessel}/certificates/{id}/verification-capabilities": {
+      "get": {
+        "tags": [
+          "CertificateAssertions"
+        ],
+        "operationId": "CertificateAssertionCapabilities",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CertificateAssertionCapabilities"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/vessels/{vessel}/certificates/{id}/verification-assertions": {
+      "get": {
+        "tags": [
+          "CertificateAssertions"
+        ],
+        "operationId": "CertificateAssertions",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "CertificateAssertions"
+        ],
+        "operationId": "CertificateAssertionRecord",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CertificateAssertionCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CertificateVerificationDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/fuel-bunker-logs": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "FuelShipOpsList",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShipOpsPageDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "FuelShipOpsCreate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShipOpsDraftCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShipOpsRecordDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/fuel-bunker-logs/capabilities": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "FuelShipOpsCapabilities",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShipOpsCapabilitiesDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/fuel-bunker-logs/{id}": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "FuelShipOpsRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShipOpsRecordDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "FuelShipOpsUpdate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShipOpsDraftCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShipOpsRecordDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/fuel-bunker-logs/{id}/history": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "FuelShipOpsHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShipOpsHistoryDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/port-activity-sof": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "PortShipOpsList",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShipOpsPageDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "PortShipOpsCreate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShipOpsDraftCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShipOpsRecordDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/port-activity-sof/capabilities": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "PortShipOpsCapabilities",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShipOpsCapabilitiesDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/port-activity-sof/{id}": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "PortShipOpsRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShipOpsRecordDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "PortShipOpsUpdate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShipOpsDraftCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShipOpsRecordDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/port-activity-sof/{id}/history": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "PortShipOpsHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShipOpsHistoryDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/daily-offline/{kind}/{record}": {
+      "get": {
+        "tags": [
+          "DailyOfflineEndpoints"
+        ],
+        "operationId": "DailyOfflineInventory",
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "record",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "DailyOfflineEndpoints"
+        ],
+        "operationId": "DailyOfflineEnroll",
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "record",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyOfflineContextDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/daily-offline/{kind}/{record}/{enrollment}/{action}": {
+      "post": {
+        "tags": [
+          "DailyOfflineEndpoints"
+        ],
+        "operationId": "DailyOfflineAction",
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "record",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "enrollment",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "action",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/daily-offline/{kind}/{record}/{enrollment}/history": {
+      "get": {
+        "tags": [
+          "DailyOfflineEndpoints"
+        ],
+        "operationId": "DailyOfflineHistory",
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "record",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "enrollment",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/daily-offline/{kind}/{record}/{enrollment}/conflicts/{command}": {
+      "get": {
+        "tags": [
+          "DailyOfflineEndpoints"
+        ],
+        "operationId": "DailyOfflineConflict",
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "record",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "enrollment",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "command",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/noon-reports/{id}/review-capabilities": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "NoonDailyReviewCapabilities",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyReviewCapabilitiesDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/noon-reports/{id}/reviews": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "NoonDailyReviews",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "NoonDailyReviewRecord",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DailyReviewCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyReviewDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/deck-daily-logs/{id}/review-capabilities": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DeckDailyReviewCapabilities",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyReviewCapabilitiesDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/deck-daily-logs/{id}/reviews": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DeckDailyReviews",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DeckDailyReviewRecord",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DailyReviewCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyReviewDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/engine-daily-logs/{id}/review-capabilities": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "EngineDailyReviewCapabilities",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyReviewCapabilitiesDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/engine-daily-logs/{id}/reviews": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "EngineDailyReviews",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "EngineDailyReviewRecord",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DailyReviewCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyReviewDto"
                 }
               }
             }
@@ -6562,6 +9058,513 @@
         }
       }
     },
+    "/api/v1/defects": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DefectList",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DefectPageDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DefectCreate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DefectDraftCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DefectRecordDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/defects/capabilities": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DefectCapabilities",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DefectCapabilitiesDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/defects/{id}": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DefectRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DefectRecordDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DefectUpdate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DefectDraftCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DefectRecordDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/defects/{id}/history": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DefectHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DefectHistoryDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/work-orders": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "WorkOrderList",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkOrderPageDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "WorkOrderCreate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkOrderDraftCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkOrderRecordDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/work-orders/capabilities": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "WorkOrderCapabilities",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkOrderCapabilitiesDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/work-orders/{id}": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "WorkOrderRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkOrderRecordDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "WorkOrderUpdate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkOrderDraftCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkOrderRecordDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/work-orders/{id}/history": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "WorkOrderHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkOrderHistoryDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/operational-downtime": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DowntimeList",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DowntimePageDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DowntimeCreate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DowntimeDraftCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DowntimeRecordDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/operational-downtime/capabilities": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DowntimeCapabilities",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DowntimeCapabilitiesDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/operational-downtime/{id}": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DowntimeRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DowntimeRecordDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DowntimeUpdate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DowntimeDraftCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DowntimeRecordDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/operational-downtime/{id}/history": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DowntimeHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DowntimeHistoryDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/equipment-hierarchy/{vessel}/{asset}/observations": {
       "get": {
         "tags": [
@@ -7439,6 +10442,682 @@
         },
         "additionalProperties": false
       },
+      "CertificateAssertionCapabilities": {
+        "required": [
+          "certificateId",
+          "certificateRevision",
+          "certificateVersion",
+          "assertionVersion",
+          "canRecord",
+          "authorities",
+          "blockers",
+          "sourceVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "certificateId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "certificateRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "certificateVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "assertionVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "canRecord": {
+            "type": "boolean"
+          },
+          "authorities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CertificateAssertionOption"
+            }
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sourceVersion": {
+            "type": "string"
+          }
+        }
+      },
+      "CertificateAssertionCommand": {
+        "required": [
+          "expectedVersion",
+          "certificateRevision",
+          "expectedAssertionVersion",
+          "authorityId",
+          "state",
+          "rationale"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "certificateRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "expectedAssertionVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "authorityId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CertificateAssertionOption": {
+        "required": [
+          "id",
+          "roleId",
+          "duty",
+          "states"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "roleId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "duty": {
+            "type": "string"
+          },
+          "states": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "CertificateCalendarDto": {
+        "required": [
+          "state",
+          "referenceDate",
+          "daysToDeclaredExpiry",
+          "surveyState",
+          "dates"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "referenceDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "daysToDeclaredExpiry": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "surveyState": {
+            "type": "string"
+          },
+          "dates": {
+            "$ref": "#/components/schemas/CertificateDateFactsDto"
+          },
+          "semantics": {
+            "type": "string",
+            "default": "DeclaredUtcCalendarNotLegalValidity"
+          }
+        }
+      },
+      "CertificateCandidate": {
+        "required": [
+          "key",
+          "value",
+          "confidence",
+          "page",
+          "lowConfidence",
+          "state",
+          "reasons"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "value": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "confidence": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "page": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "lowConfidence": {
+            "type": "boolean"
+          },
+          "state": {
+            "type": "string"
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "CertificateCapabilitiesDto": {
+        "required": [
+          "vesselId",
+          "canReadVessel",
+          "canWriteVessel",
+          "canReadCrew",
+          "crewPurpose",
+          "sourceVersion",
+          "scopes",
+          "temporalSemantics",
+          "availabilityOptions",
+          "vesselMetadataMembers"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "canReadVessel": {
+            "type": "boolean"
+          },
+          "canWriteVessel": {
+            "type": "boolean"
+          },
+          "canReadCrew": {
+            "type": "boolean"
+          },
+          "crewPurpose": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "temporalSemantics": {
+            "type": "string"
+          },
+          "availabilityOptions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "vesselMetadataMembers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "canVerify": {
+            "type": "boolean",
+            "default": false
+          },
+          "canCompleteRenewal": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      },
+      "CertificateCenterDto": {
+        "required": [
+          "items",
+          "offset",
+          "limit",
+          "hasMore",
+          "scope",
+          "coverage",
+          "crewCoverage",
+          "counts",
+          "criticalGapCount",
+          "state",
+          "referenceDate"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CertificateDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "scope": {
+            "type": "string"
+          },
+          "coverage": {
+            "type": "string"
+          },
+          "crewCoverage": {
+            "type": "string"
+          },
+          "counts": {
+            "$ref": "#/components/schemas/CertificateCountsDto"
+          },
+          "criticalGapCount": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "state": {
+            "type": "string"
+          },
+          "referenceDate": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
+      "CertificateConfirmedFact": {
+        "required": [
+          "key",
+          "value",
+          "confirmed"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "confirmed": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CertificateCountsDto": {
+        "required": [
+          "valid",
+          "due90",
+          "due60",
+          "due30",
+          "expired",
+          "surveyWindow",
+          "reviewRequired"
+        ],
+        "type": "object",
+        "properties": {
+          "valid": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "due90": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "due60": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "due30": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "expired": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "surveyWindow": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "reviewRequired": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "CertificateDateFactsDto": {
+        "required": [
+          "issue",
+          "expiry",
+          "order"
+        ],
+        "type": "object",
+        "properties": {
+          "issue": {
+            "type": "string"
+          },
+          "expiry": {
+            "type": "string"
+          },
+          "order": {
+            "type": "string"
+          }
+        }
+      },
+      "CertificateDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "scope",
+          "assignmentId",
+          "personId",
+          "revision",
+          "version",
+          "content",
+          "sourceVersion",
+          "provenance",
+          "savedAt",
+          "hash",
+          "calendar",
+          "qualification",
+          "state",
+          "blockers",
+          "canEdit",
+          "href",
+          "currentRevision"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scope": {
+            "type": "string"
+          },
+          "assignmentId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "personId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "content": {
+            "$ref": "#/components/schemas/VesselCertificateContent"
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "hash": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "calendar": {
+            "$ref": "#/components/schemas/CertificateCalendarDto"
+          },
+          "qualification": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "href": {
+            "type": "string"
+          },
+          "currentRevision": {
+            "type": "boolean"
+          },
+          "supersededBy": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/CertificateSupersessionDto"
+              }
+            ]
+          },
+          "verification": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/CertificateVerificationDto"
+              }
+            ]
+          }
+        }
+      },
+      "CertificateExtractCommand": {
+        "required": [
+          "expectedVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CertificateExtractConfirm": {
+        "required": [
+          "expectedVersion",
+          "reviewContext",
+          "facts",
+          "vesselContextConfirmed"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "reviewContext": {
+            "type": "string"
+          },
+          "facts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CertificateConfirmedFact"
+            }
+          },
+          "vesselContextConfirmed": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CertificateExtractionDto": {
+        "required": [
+          "certificateId",
+          "vesselId",
+          "scope",
+          "version",
+          "state",
+          "candidates",
+          "modelVersion",
+          "promptVersion",
+          "policyVersion",
+          "sourceVersion",
+          "lowConfidenceThreshold",
+          "reviewContext",
+          "expiresAt",
+          "canConfirm",
+          "blockers"
+        ],
+        "type": "object",
+        "properties": {
+          "certificateId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scope": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "state": {
+            "type": "string"
+          },
+          "candidates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CertificateCandidate"
+            }
+          },
+          "modelVersion": {
+            "type": "string"
+          },
+          "promptVersion": {
+            "type": "string"
+          },
+          "policyVersion": {
+            "type": "string"
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "lowConfidenceThreshold": {
+            "type": "number",
+            "format": "double"
+          },
+          "reviewContext": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "canConfirm": {
+            "type": "boolean"
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "CertificateFilePin": {
+        "required": [
+          "id",
+          "revision",
+          "checksum"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "checksum": {
+            "type": "string"
+          }
+        }
+      },
       "CertificateMetadata": {
         "required": [
           "declaration"
@@ -7518,6 +11197,426 @@
           }
         },
         "additionalProperties": false
+      },
+      "CertificateRenewalCommand": {
+        "required": [
+          "id",
+          "expectedVersion",
+          "certificateId",
+          "certificateRevision",
+          "certificateVersion",
+          "content",
+          "reasonCode"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "certificateId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "certificateRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "certificateVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "content": {
+            "$ref": "#/components/schemas/CertificateRenewalContent"
+          },
+          "reasonCode": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CertificateRenewalContent": {
+        "type": "object",
+        "properties": {
+          "renewalType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "triggerDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "leadDaysNumeric": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "ownerRoleId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "requiredSurvey": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "requiredDocuments": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "requiredActions": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "plannedLocation": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "applicationDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "authorityReference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "newIssueDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "newExpiryDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "newCertificateId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "newCertificateRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "newCertificateVersion": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          },
+          "newDocument": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/CertificateFilePin"
+              }
+            ]
+          },
+          "dueDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "surveyWindowStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "surveyWindowEnd": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "CertificateRenewalDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "certificateId",
+          "certificateRevision",
+          "certificateVersion",
+          "revision",
+          "version",
+          "content",
+          "sourceVersion",
+          "hash",
+          "savedAt",
+          "state",
+          "qualification",
+          "canEdit",
+          "canComplete",
+          "blockers",
+          "currentRevision"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "certificateId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "certificateRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "certificateVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "content": {
+            "$ref": "#/components/schemas/CertificateRenewalContent"
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "state": {
+            "type": "string"
+          },
+          "qualification": {
+            "type": "string"
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "canComplete": {
+            "type": "boolean"
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "currentRevision": {
+            "type": "boolean"
+          },
+          "provenance": {
+            "type": "string",
+            "default": "UserDeclaredUnverified"
+          }
+        }
+      },
+      "CertificateSaveCommand": {
+        "required": [
+          "id",
+          "expectedVersion",
+          "content",
+          "reasonCode"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "content": {
+            "$ref": "#/components/schemas/VesselCertificateContent"
+          },
+          "reasonCode": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CertificateSupersessionDto": {
+        "required": [
+          "certificateId",
+          "certificateRevision",
+          "renewalId",
+          "completedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "certificateId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "certificateRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "renewalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "completedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "CertificateVerificationDto": {
+        "required": [
+          "id",
+          "certificateId",
+          "certificateRevision",
+          "certificateVersion",
+          "fileId",
+          "fileRevision",
+          "checksum",
+          "revision",
+          "version",
+          "state",
+          "actorId",
+          "roleId",
+          "authorityId",
+          "authorityHash",
+          "authorityBindingHash",
+          "sourceVersion",
+          "savedAt",
+          "current",
+          "blockers"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "certificateId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "certificateRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "certificateVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "fileId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fileRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "checksum": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "state": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "roleId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "authorityId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "authorityHash": {
+            "type": "string"
+          },
+          "authorityBindingHash": {
+            "type": "string"
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "current": {
+            "type": "boolean"
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "qualification": {
+            "type": "string",
+            "default": "RECORDED_UNASSESSED"
+          }
+        }
       },
       "ClassPackReference": {
         "type": "object",
@@ -7629,6 +11728,530 @@
           }
         },
         "additionalProperties": false
+      },
+      "ComplianceApplicabilityDto": {
+        "required": [
+          "available",
+          "evaluationId",
+          "profileRevision",
+          "evaluatedAt",
+          "current",
+          "results",
+          "conflicts",
+          "blockers",
+          "reviewerState",
+          "manualOverrideAvailable",
+          "href"
+        ],
+        "type": "object",
+        "properties": {
+          "available": {
+            "type": "boolean"
+          },
+          "evaluationId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "profileRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "evaluatedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "current": {
+            "type": "boolean"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvaluationPrediction"
+            }
+          },
+          "conflicts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RuleConflict"
+            }
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reviewerState": {
+            "type": "string"
+          },
+          "manualOverrideAvailable": {
+            "type": "boolean"
+          },
+          "href": {
+            "type": "string"
+          },
+          "inputs": { },
+          "inputHash": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "ruleSetHash": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "ComplianceCertificateAssertionDto": {
+        "required": [
+          "id",
+          "revision",
+          "version",
+          "state",
+          "qualification",
+          "current",
+          "recordedAt",
+          "sourceVersion",
+          "blockers"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "state": {
+            "type": "string"
+          },
+          "qualification": {
+            "type": "string"
+          },
+          "current": {
+            "type": "boolean"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ComplianceCertificateDto": {
+        "required": [
+          "id",
+          "revision",
+          "version",
+          "typeReference",
+          "number",
+          "issuer",
+          "issueDate",
+          "expiryDate",
+          "temporalState",
+          "qualification",
+          "document",
+          "sourceVersion",
+          "hash",
+          "href"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "typeReference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "number": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "issuer": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "issueDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "expiryDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "temporalState": {
+            "type": "string"
+          },
+          "qualification": {
+            "type": "string"
+          },
+          "document": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/CertificateFilePin"
+              }
+            ]
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "href": {
+            "type": "string"
+          },
+          "assertion": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/ComplianceCertificateAssertionDto"
+              }
+            ]
+          }
+        }
+      },
+      "ComplianceCertificatePageDto": {
+        "required": [
+          "coverage",
+          "items",
+          "offset",
+          "limit",
+          "hasMore",
+          "referenceDate",
+          "blockers"
+        ],
+        "type": "object",
+        "properties": {
+          "coverage": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ComplianceCertificateDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "referenceDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ComplianceControlPlanDto": {
+        "required": [
+          "coverage",
+          "requirements",
+          "controls",
+          "evidence",
+          "hasMore",
+          "uncontrolledRequirementCount",
+          "orphanCriticalCount",
+          "blockers"
+        ],
+        "type": "object",
+        "properties": {
+          "coverage": {
+            "type": "string"
+          },
+          "requirements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ComplianceRequirementPlanDto"
+            }
+          },
+          "controls": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ControlEvidenceDto"
+            }
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ControlEvidenceDto"
+            }
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "uncontrolledRequirementCount": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "orphanCriticalCount": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ComplianceOnboardingDto": {
+        "required": [
+          "vesselId",
+          "profileRevision",
+          "savedAt",
+          "provenance",
+          "freshness",
+          "state",
+          "fields",
+          "blockers",
+          "canEdit"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "profileRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "savedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "freshness": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OnboardingField"
+            }
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "canSubmit": {
+            "type": "boolean",
+            "default": false
+          },
+          "source": {
+            "type": "string",
+            "default": "18.01/Backlog/row:40"
+          }
+        }
+      },
+      "CompliancePassportDto": {
+        "required": [
+          "vesselId",
+          "readAt",
+          "state",
+          "freshness",
+          "certificateCoverage",
+          "blockers",
+          "onboarding",
+          "applicability",
+          "plan",
+          "certificates"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "readAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "state": {
+            "type": "string"
+          },
+          "freshness": {
+            "type": "string"
+          },
+          "certificateCoverage": {
+            "type": "string"
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "onboarding": {
+            "$ref": "#/components/schemas/ComplianceOnboardingDto"
+          },
+          "applicability": {
+            "$ref": "#/components/schemas/ComplianceApplicabilityDto"
+          },
+          "plan": {
+            "$ref": "#/components/schemas/ComplianceControlPlanDto"
+          },
+          "certificates": {
+            "$ref": "#/components/schemas/ComplianceCertificatePageDto"
+          }
+        }
+      },
+      "ComplianceRequirementPlanDto": {
+        "required": [
+          "ruleId",
+          "ruleRevision",
+          "requirementId",
+          "requirementRevision",
+          "sourceId",
+          "sourceRevision",
+          "controlIds",
+          "state",
+          "blockers"
+        ],
+        "type": "object",
+        "properties": {
+          "ruleId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "ruleRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "requirementId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "requirementRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "sourceId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "sourceRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "controlIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "state": {
+            "type": "string"
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
       },
       "ConstructionRecordPin": {
         "required": [
@@ -9274,6 +13897,779 @@
           }
         }
       },
+      "DailyCapabilitiesDto": {
+        "required": [
+          "vesselId",
+          "kind",
+          "canRead",
+          "canWrite",
+          "canReview",
+          "canSubmit",
+          "schema",
+          "sourceVersion",
+          "offline",
+          "destinations"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "canRead": {
+            "type": "boolean"
+          },
+          "canWrite": {
+            "type": "boolean"
+          },
+          "canReview": {
+            "type": "boolean"
+          },
+          "canSubmit": {
+            "type": "boolean"
+          },
+          "schema": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DailyFieldDefinition"
+            }
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "offline": {
+            "$ref": "#/components/schemas/DailyOfflineDto"
+          },
+          "destinations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DailyDestinationDto"
+            }
+          }
+        }
+      },
+      "DailyDestinationDto": {
+        "required": [
+          "key",
+          "href"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "href": {
+            "type": "string"
+          }
+        }
+      },
+      "DailyDraftCommand": {
+        "required": [
+          "id",
+          "expectedVersion",
+          "fields",
+          "reasonCode"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "fields": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/DailyValue"
+            }
+          },
+          "reasonCode": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DailyFieldDefinition": {
+        "required": [
+          "key",
+          "type",
+          "required",
+          "options",
+          "readOnly",
+          "referenceUnavailable",
+          "sourceRow"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "readOnly": {
+            "type": "boolean"
+          },
+          "referenceUnavailable": {
+            "type": "boolean"
+          },
+          "sourceRow": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unit": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "DailyHistoryDto": {
+        "required": [
+          "items",
+          "offset",
+          "limit",
+          "hasMore"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DailyRecordDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DailyOfflineContextDto": {
+        "required": [
+          "id",
+          "tenantId",
+          "actorId",
+          "vesselId",
+          "kind",
+          "recordId",
+          "deviceId",
+          "keyId",
+          "challenge",
+          "policyVersion",
+          "policyDigest",
+          "authorityDigest",
+          "sourceVersion",
+          "schemaHash",
+          "operation",
+          "allowedFields",
+          "baseVersion",
+          "baseRevision",
+          "baseFields",
+          "serverTime",
+          "expiresAt",
+          "retainUntil",
+          "maxRecords",
+          "maxEncryptedBytes",
+          "maxDeviceRecords",
+          "maxDeviceEncryptedBytes"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tenantId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "recordId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "deviceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "keyId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "challenge": {
+            "type": "string"
+          },
+          "policyVersion": {
+            "type": "string"
+          },
+          "policyDigest": {
+            "type": "string"
+          },
+          "authorityDigest": {
+            "type": "string"
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "schemaHash": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string"
+          },
+          "allowedFields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "baseVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "baseRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "baseFields": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/DailyValue"
+            }
+          },
+          "serverTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "retainUntil": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "maxRecords": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxEncryptedBytes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxDeviceRecords": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxDeviceEncryptedBytes": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "DailyOfflineDto": {
+        "required": [
+          "supported",
+          "state",
+          "operation"
+        ],
+        "type": "object",
+        "properties": {
+          "supported": {
+            "type": "boolean"
+          },
+          "state": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string"
+          }
+        }
+      },
+      "DailyOperationOriginDto": {
+        "required": [
+          "vesselId",
+          "pin",
+          "current",
+          "state",
+          "qualification",
+          "provenance",
+          "savedAt",
+          "fields",
+          "href"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "pin": {
+            "$ref": "#/components/schemas/ShipOperationOriginPin"
+          },
+          "current": {
+            "type": "boolean"
+          },
+          "state": {
+            "type": "string"
+          },
+          "qualification": {
+            "type": "string"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DailyOriginFieldDto"
+            }
+          },
+          "href": {
+            "type": "string"
+          }
+        }
+      },
+      "DailyOriginFieldDto": {
+        "required": [
+          "key",
+          "type",
+          "value",
+          "sourceRow",
+          "unit"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "value": {
+            "$ref": "#/components/schemas/DailyValue"
+          },
+          "sourceRow": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unit": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "DailyPageDto": {
+        "required": [
+          "items",
+          "offset",
+          "limit",
+          "hasMore",
+          "canWrite",
+          "canReview",
+          "canSubmit",
+          "offline"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DailyRecordDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "canWrite": {
+            "type": "boolean"
+          },
+          "canReview": {
+            "type": "boolean"
+          },
+          "canSubmit": {
+            "type": "boolean"
+          },
+          "offline": {
+            "$ref": "#/components/schemas/DailyOfflineDto"
+          }
+        }
+      },
+      "DailyRecordDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "kind",
+          "revision",
+          "version",
+          "fields",
+          "state",
+          "provenance",
+          "savedAt",
+          "hash",
+          "reviewState",
+          "reviewedRevision",
+          "reviewedBy",
+          "reviewedAt",
+          "blockers"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "fields": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/DailyValue"
+            }
+          },
+          "state": {
+            "type": "string"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "reviewState": {
+            "type": "string"
+          },
+          "reviewedRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "reviewedBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "reviewedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "DailyReviewCapabilitiesDto": {
+        "required": [
+          "recordId",
+          "vesselId",
+          "kind",
+          "recordRevision",
+          "recordVersion",
+          "reviewVersion",
+          "canRecord",
+          "authorities",
+          "blockers"
+        ],
+        "type": "object",
+        "properties": {
+          "recordId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "recordRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "recordVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "reviewVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "canRecord": {
+            "type": "boolean"
+          },
+          "authorities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DailyReviewerDto"
+            }
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sourceVersion": {
+            "type": "string",
+            "default": "14.02:3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018:2128-2185:v46.3"
+          }
+        }
+      },
+      "DailyReviewCommand": {
+        "required": [
+          "expectedVersion",
+          "expectedReviewVersion",
+          "reviewedRevision",
+          "authorityId",
+          "decision",
+          "reasonCode",
+          "rationale"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "expectedReviewVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "reviewedRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "authorityId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DailyReviewDto": {
+        "required": [
+          "id",
+          "recordId",
+          "vesselId",
+          "kind",
+          "recordRevision",
+          "sequence",
+          "version",
+          "actorId",
+          "roleId",
+          "authorityId",
+          "duty",
+          "decision",
+          "reasonCode",
+          "rationale",
+          "sourceVersion",
+          "authorityHash",
+          "recordHash",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recordId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "recordRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "roleId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "authorityId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "duty": {
+            "type": "string"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": "string"
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "authorityHash": {
+            "type": "string"
+          },
+          "recordHash": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "state": {
+            "type": "string",
+            "default": "RECORDED_UNASSESSED"
+          }
+        }
+      },
+      "DailyReviewerDto": {
+        "required": [
+          "id",
+          "roleId",
+          "duty",
+          "decisions"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "roleId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "duty": {
+            "type": "string"
+          },
+          "decisions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "DailyValue": {
+        "required": [
+          "state",
+          "value"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "value": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "DecisionRecording": {
         "required": [
           "decisionType",
@@ -9331,6 +14727,457 @@
       },
       "DeclaredDateRelation": {
         "type": "integer"
+      },
+      "DefectAssetContextDto": {
+        "required": [
+          "vesselId",
+          "pin",
+          "current",
+          "qualification",
+          "provenance",
+          "savedAt",
+          "asset",
+          "href"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "pin": {
+            "$ref": "#/components/schemas/DefectAssetPin"
+          },
+          "current": {
+            "type": "boolean"
+          },
+          "qualification": {
+            "type": "string"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "asset": {
+            "$ref": "#/components/schemas/DefectAssetSummaryDto"
+          },
+          "href": {
+            "type": "string"
+          }
+        }
+      },
+      "DefectAssetPin": {
+        "required": [
+          "id",
+          "revision",
+          "version",
+          "hash"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "hash": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DefectAssetSummaryDto": {
+        "required": [
+          "code",
+          "name",
+          "level",
+          "criticality",
+          "maker",
+          "model",
+          "location"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "level": {
+            "type": "string"
+          },
+          "criticality": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "maker": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "model": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "location": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "DefectCapabilitiesDto": {
+        "required": [
+          "vesselId",
+          "canRead",
+          "canWrite",
+          "canClose",
+          "canVerify",
+          "canAssessEffectiveness",
+          "schema",
+          "sourceVersion",
+          "offline"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "canRead": {
+            "type": "boolean"
+          },
+          "canWrite": {
+            "type": "boolean"
+          },
+          "canClose": {
+            "type": "boolean"
+          },
+          "canVerify": {
+            "type": "boolean"
+          },
+          "canAssessEffectiveness": {
+            "type": "boolean"
+          },
+          "schema": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DefectFieldDefinition"
+            }
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "offline": {
+            "$ref": "#/components/schemas/DefectOfflineDto"
+          }
+        }
+      },
+      "DefectDraftCommand": {
+        "required": [
+          "id",
+          "expectedVersion",
+          "fields",
+          "sourceVersion",
+          "asset"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "fields": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/DefectFact"
+            }
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "asset": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DefectAssetPin"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "DefectFact": {
+        "required": [
+          "state",
+          "value"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "value": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "DefectFieldDefinition": {
+        "required": [
+          "key",
+          "type",
+          "required",
+          "options",
+          "sourceLocator"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sourceLocator": {
+            "type": "string"
+          },
+          "requiredWhen": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "DefectHistoryDto": {
+        "required": [
+          "items",
+          "offset",
+          "limit",
+          "hasMore"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DefectRecordDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DefectOfflineDto": {
+        "required": [
+          "supported",
+          "state"
+        ],
+        "type": "object",
+        "properties": {
+          "supported": {
+            "type": "boolean"
+          },
+          "state": {
+            "type": "string"
+          }
+        }
+      },
+      "DefectPageDto": {
+        "required": [
+          "items",
+          "offset",
+          "limit",
+          "hasMore",
+          "canWrite",
+          "sourceVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DefectRecordDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "canWrite": {
+            "type": "boolean"
+          },
+          "sourceVersion": {
+            "type": "string"
+          }
+        }
+      },
+      "DefectRecordDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "revision",
+          "version",
+          "fields",
+          "asset",
+          "sourceVersion",
+          "hash",
+          "provenance",
+          "savedAt",
+          "stage",
+          "qualification",
+          "blockers",
+          "currentRevision",
+          "canEdit",
+          "temporal"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "fields": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/DefectFact"
+            }
+          },
+          "asset": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DefectAssetPin"
+              }
+            ]
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "stage": {
+            "type": "string"
+          },
+          "qualification": {
+            "type": "string"
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "currentRevision": {
+            "type": "boolean"
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "temporal": {
+            "$ref": "#/components/schemas/DefectTemporalAssessment"
+          }
+        }
+      },
+      "DefectTemporalAssessment": {
+        "required": [
+          "temporaryMeasureState",
+          "assessedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "temporaryMeasureState": {
+            "type": "string"
+          },
+          "assessedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "closureAvailable": {
+            "type": "boolean",
+            "default": false
+          }
+        }
       },
       "DocumentDraftDto": {
         "required": [
@@ -9398,6 +15245,478 @@
           },
           "hasMore": {
             "type": "boolean"
+          }
+        }
+      },
+      "DowntimeCapabilitiesDto": {
+        "required": [
+          "vesselId",
+          "canRead",
+          "canWrite",
+          "canVerify",
+          "canClose",
+          "canFinalize",
+          "originKinds",
+          "schema",
+          "sourceVersion",
+          "offline"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "canRead": {
+            "type": "boolean"
+          },
+          "canWrite": {
+            "type": "boolean"
+          },
+          "canVerify": {
+            "type": "boolean"
+          },
+          "canClose": {
+            "type": "boolean"
+          },
+          "canFinalize": {
+            "type": "boolean"
+          },
+          "originKinds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "schema": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DowntimeFieldDefinition"
+            }
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "offline": {
+            "$ref": "#/components/schemas/DowntimeOfflineDto"
+          }
+        }
+      },
+      "DowntimeDraftCommand": {
+        "required": [
+          "id",
+          "expectedVersion",
+          "fields",
+          "sourceVersion",
+          "origin"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "fields": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/DowntimeFact"
+            }
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "origin": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DowntimeOriginPin"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "DowntimeFact": {
+        "required": [
+          "state",
+          "value"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "value": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "DowntimeFieldDefinition": {
+        "required": [
+          "key",
+          "type",
+          "required",
+          "options",
+          "readOnly",
+          "referenceUnavailable",
+          "sourceRow"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "readOnly": {
+            "type": "boolean"
+          },
+          "referenceUnavailable": {
+            "type": "boolean"
+          },
+          "sourceRow": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unit": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "requiredWhen": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "DowntimeHistoryDto": {
+        "required": [
+          "items",
+          "offset",
+          "limit",
+          "hasMore"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DowntimeRecordDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DowntimeIntervalObservation": {
+        "required": [
+          "state",
+          "elapsedTicks",
+          "unit",
+          "qualification"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "elapsedTicks": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "unit": {
+            "type": "string"
+          },
+          "qualification": {
+            "type": "string"
+          }
+        }
+      },
+      "DowntimeOfflineDto": {
+        "required": [
+          "supported",
+          "state"
+        ],
+        "type": "object",
+        "properties": {
+          "supported": {
+            "type": "boolean"
+          },
+          "state": {
+            "type": "string"
+          }
+        }
+      },
+      "DowntimeOriginDto": {
+        "required": [
+          "vesselId",
+          "pin",
+          "current",
+          "state",
+          "qualification",
+          "provenance",
+          "savedAt",
+          "fields",
+          "href"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "pin": {
+            "$ref": "#/components/schemas/DowntimeOriginPin"
+          },
+          "current": {
+            "type": "boolean"
+          },
+          "state": {
+            "type": "string"
+          },
+          "qualification": {
+            "type": "string"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DowntimeOriginFieldDto"
+            }
+          },
+          "href": {
+            "type": "string"
+          }
+        }
+      },
+      "DowntimeOriginFieldDto": {
+        "required": [
+          "key",
+          "type",
+          "value",
+          "sourceRow",
+          "unit"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "value": {
+            "$ref": "#/components/schemas/DowntimeFact"
+          },
+          "sourceRow": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unit": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "DowntimeOriginPin": {
+        "required": [
+          "kind",
+          "id",
+          "revision",
+          "version",
+          "hash",
+          "sourceVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "sourceVersion": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DowntimePageDto": {
+        "required": [
+          "items",
+          "offset",
+          "limit",
+          "hasMore",
+          "canWrite",
+          "sourceVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DowntimeRecordDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "canWrite": {
+            "type": "boolean"
+          },
+          "sourceVersion": {
+            "type": "string"
+          }
+        }
+      },
+      "DowntimeRecordDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "revision",
+          "version",
+          "fields",
+          "origin",
+          "sourceVersion",
+          "hash",
+          "provenance",
+          "savedAt",
+          "state",
+          "qualification",
+          "blockers",
+          "currentRevision",
+          "canEdit",
+          "engineeringInterval"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "fields": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/DowntimeFact"
+            }
+          },
+          "origin": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DowntimeOriginPin"
+              }
+            ]
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "state": {
+            "type": "string"
+          },
+          "qualification": {
+            "type": "string"
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "currentRevision": {
+            "type": "boolean"
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "engineeringInterval": {
+            "$ref": "#/components/schemas/DowntimeIntervalObservation"
           }
         }
       },
@@ -9982,6 +16301,191 @@
           }
         },
         "additionalProperties": false
+      },
+      "HealthApiDto": {
+        "required": [
+          "state",
+          "scope",
+          "requests",
+          "errors",
+          "averageLatencyMs"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "scope": {
+            "type": "string"
+          },
+          "requests": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "errors": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "averageLatencyMs": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          }
+        }
+      },
+      "HealthAuditDto": {
+        "required": [
+          "state",
+          "scope",
+          "persisted",
+          "unavailable",
+          "averageLatencyMs"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "scope": {
+            "type": "string"
+          },
+          "persisted": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "unavailable": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "averageLatencyMs": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          }
+        }
+      },
+      "HealthFilesDto": {
+        "required": [
+          "state",
+          "adapter",
+          "scanState"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "adapter": {
+            "type": "string"
+          },
+          "scanState": {
+            "type": "string"
+          }
+        }
+      },
+      "HealthFreshnessDto": {
+        "required": [
+          "state",
+          "scope",
+          "current",
+          "stale",
+          "future",
+          "unknown",
+          "unavailable"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "scope": {
+            "type": "string"
+          },
+          "current": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "stale": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "future": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "unknown": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "unavailable": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          }
+        }
+      },
+      "HealthSyncDto": {
+        "required": [
+          "state",
+          "scope",
+          "committed",
+          "unresolvedConflicts",
+          "localBacklog"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "scope": {
+            "type": "string"
+          },
+          "committed": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "unresolvedConflicts": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "localBacklog": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          }
+        }
       },
       "HumanRecordingPolicy": {
         "required": [
@@ -11300,6 +17804,229 @@
           }
         }
       },
+      "NotificationAckCommand": {
+        "required": [
+          "expectedVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "NotificationDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "sourceId",
+          "sourceRevision",
+          "ruleKey",
+          "policyVersion",
+          "sourceState",
+          "severity",
+          "mandatory",
+          "recipientRoleId",
+          "escalationRoleId",
+          "dueDate",
+          "createdAt",
+          "escalateAt",
+          "state",
+          "revision",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sourceRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "ruleKey": {
+            "type": "string"
+          },
+          "policyVersion": {
+            "type": "string"
+          },
+          "sourceState": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string"
+          },
+          "mandatory": {
+            "type": "boolean"
+          },
+          "recipientRoleId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "escalationRoleId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "dueDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "escalateAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "state": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "provenance": {
+            "type": "string",
+            "default": "ConfiguredUnverified"
+          }
+        }
+      },
+      "NotificationInboxDto": {
+        "required": [
+          "items",
+          "offset",
+          "hasMore",
+          "policyState",
+          "delivery",
+          "canManage",
+          "canAcknowledge",
+          "canWritePreference"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NotificationDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "policyState": {
+            "type": "string"
+          },
+          "delivery": {
+            "type": "string"
+          },
+          "canManage": {
+            "type": "boolean"
+          },
+          "canAcknowledge": {
+            "type": "boolean"
+          },
+          "canWritePreference": {
+            "type": "boolean"
+          }
+        }
+      },
+      "NotificationPreferenceCommand": {
+        "required": [
+          "expectedVersion",
+          "mutedAdvisory"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "mutedAdvisory": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "NotificationPreferenceDto": {
+        "required": [
+          "mutedAdvisory",
+          "revision",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "mutedAdvisory": {
+            "type": "boolean"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "mandatoryRouteMutable": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      },
+      "NotificationSavedDto": {
+        "required": [
+          "id",
+          "revision",
+          "version",
+          "state"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "state": {
+            "type": "string"
+          }
+        }
+      },
       "NumberInput": {
         "type": "object",
         "properties": {
@@ -11829,6 +18556,29 @@
           }
         },
         "additionalProperties": false
+      },
+      "OnboardingField": {
+        "required": [
+          "key",
+          "state",
+          "critical",
+          "complete"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "critical": {
+            "type": "boolean"
+          },
+          "complete": {
+            "type": "boolean"
+          }
+        }
       },
       "OperationReference": {
         "type": "object",
@@ -13051,6 +19801,77 @@
           }
         }
       },
+      "RenewalCapabilitiesDto": {
+        "required": [
+          "vesselId",
+          "canWrite",
+          "canComplete",
+          "ownerOptions",
+          "sourceVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "canWrite": {
+            "type": "boolean"
+          },
+          "canComplete": {
+            "type": "boolean"
+          },
+          "ownerOptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RenewalOwnerDto"
+            }
+          },
+          "sourceVersion": {
+            "type": "string"
+          }
+        }
+      },
+      "RenewalOwnerDto": {
+        "required": [
+          "roleId"
+        ],
+        "type": "object",
+        "properties": {
+          "roleId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "RenewalPageDto": {
+        "required": [
+          "items",
+          "offset",
+          "limit",
+          "hasMore"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CertificateRenewalDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          }
+        }
+      },
       "RequirementPin": {
         "required": [
           "requirementId",
@@ -13512,6 +20333,368 @@
           }
         }
       },
+      "ShipOperationOriginPin": {
+        "required": [
+          "kind",
+          "id",
+          "revision",
+          "version",
+          "hash",
+          "sourceVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "sourceVersion": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ShipOpsCapabilitiesDto": {
+        "required": [
+          "vesselId",
+          "kind",
+          "canRead",
+          "canWrite",
+          "canReview",
+          "canSubmit",
+          "schema",
+          "sourceVersion",
+          "offline"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "canRead": {
+            "type": "boolean"
+          },
+          "canWrite": {
+            "type": "boolean"
+          },
+          "canReview": {
+            "type": "boolean"
+          },
+          "canSubmit": {
+            "type": "boolean"
+          },
+          "schema": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShipOpsFieldDefinition"
+            }
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "offline": {
+            "$ref": "#/components/schemas/ShipOpsOfflineDto"
+          }
+        }
+      },
+      "ShipOpsDraftCommand": {
+        "required": [
+          "id",
+          "expectedVersion",
+          "fields",
+          "reasonCode"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "fields": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ShipOpsFact"
+            }
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "origin": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/ShipOperationOriginPin"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "ShipOpsFact": {
+        "required": [
+          "state",
+          "value"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "value": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "ShipOpsFieldDefinition": {
+        "required": [
+          "key",
+          "type",
+          "required",
+          "options",
+          "readOnly",
+          "referenceUnavailable",
+          "sourceRow"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "readOnly": {
+            "type": "boolean"
+          },
+          "referenceUnavailable": {
+            "type": "boolean"
+          },
+          "sourceRow": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unit": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "requiredWhen": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "ShipOpsHistoryDto": {
+        "required": [
+          "items",
+          "offset",
+          "limit",
+          "hasMore"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShipOpsRecordDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ShipOpsOfflineDto": {
+        "required": [
+          "supported",
+          "state",
+          "operation"
+        ],
+        "type": "object",
+        "properties": {
+          "supported": {
+            "type": "boolean"
+          },
+          "state": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string"
+          }
+        }
+      },
+      "ShipOpsPageDto": {
+        "required": [
+          "items",
+          "offset",
+          "limit",
+          "hasMore",
+          "canWrite",
+          "sourceVersion",
+          "offline"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShipOpsRecordDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "canWrite": {
+            "type": "boolean"
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "offline": {
+            "$ref": "#/components/schemas/ShipOpsOfflineDto"
+          }
+        }
+      },
+      "ShipOpsRecordDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "kind",
+          "revision",
+          "version",
+          "fields",
+          "state",
+          "provenance",
+          "savedAt",
+          "hash",
+          "sourceVersion",
+          "blockers",
+          "currentRevision",
+          "canEdit"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "fields": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ShipOpsFact"
+            }
+          },
+          "state": {
+            "type": "string"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "currentRevision": {
+            "type": "boolean"
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "origin": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/ShipOperationOriginPin"
+              }
+            ]
+          }
+        }
+      },
       "SourceAcknowledgment": {
         "required": [
           "ruleId",
@@ -13573,6 +20756,43 @@
           }
         },
         "additionalProperties": false
+      },
+      "SystemHealthDto": {
+        "required": [
+          "vesselId",
+          "readAt",
+          "api",
+          "audit",
+          "sync",
+          "files",
+          "freshness"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "readAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "api": {
+            "$ref": "#/components/schemas/HealthApiDto"
+          },
+          "audit": {
+            "$ref": "#/components/schemas/HealthAuditDto"
+          },
+          "sync": {
+            "$ref": "#/components/schemas/HealthSyncDto"
+          },
+          "files": {
+            "$ref": "#/components/schemas/HealthFilesDto"
+          },
+          "freshness": {
+            "$ref": "#/components/schemas/HealthFreshnessDto"
+          }
+        }
       },
       "SystemStatus": {
         "required": [
@@ -13970,6 +21190,40 @@
                 "$ref": "#/components/schemas/TodayTugEvidenceDto"
               }
             ]
+          },
+          "source": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/TodayWhySourceDto"
+              }
+            ]
+          }
+        }
+      },
+      "TodayWhySourceDto": {
+        "required": [
+          "kind",
+          "id",
+          "revision"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
           }
         }
       },
@@ -15115,6 +22369,65 @@
         },
         "additionalProperties": false
       },
+      "VesselCertificateContent": {
+        "required": [
+          "metadata"
+        ],
+        "type": "object",
+        "properties": {
+          "metadata": {
+            "$ref": "#/components/schemas/CertificateMetadata"
+          },
+          "documentName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "regulatoryBasis": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "declaredFlag": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "availability": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "surveyWindowStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "surveyWindowEnd": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "document": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/CertificateFilePin"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
       "VesselCreateCommand": {
         "required": [
           "code",
@@ -15258,6 +22571,478 @@
           }
         },
         "additionalProperties": false
+      },
+      "WorkOrderAssetSummaryDto": {
+        "required": [
+          "code",
+          "name",
+          "level",
+          "criticality",
+          "maker",
+          "model",
+          "location"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "level": {
+            "type": "string"
+          },
+          "criticality": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "maker": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "model": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "location": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "WorkOrderCapabilitiesDto": {
+        "required": [
+          "vesselId",
+          "canRead",
+          "canWrite",
+          "canRelease",
+          "canSubmitEvidence",
+          "canVerify",
+          "canClose",
+          "schema",
+          "sourceVersion",
+          "offline"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "canRead": {
+            "type": "boolean"
+          },
+          "canWrite": {
+            "type": "boolean"
+          },
+          "canRelease": {
+            "type": "boolean"
+          },
+          "canSubmitEvidence": {
+            "type": "boolean"
+          },
+          "canVerify": {
+            "type": "boolean"
+          },
+          "canClose": {
+            "type": "boolean"
+          },
+          "schema": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkOrderFieldDefinition"
+            }
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "offline": {
+            "$ref": "#/components/schemas/WorkOrderOfflineDto"
+          }
+        }
+      },
+      "WorkOrderDraftCommand": {
+        "required": [
+          "id",
+          "expectedVersion",
+          "fields",
+          "sourceVersion",
+          "plan"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "fields": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/WorkOrderFact"
+            }
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "plan": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/WorkOrderPlanPin"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkOrderFact": {
+        "required": [
+          "state",
+          "value"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "value": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkOrderFieldDefinition": {
+        "required": [
+          "key",
+          "type",
+          "required",
+          "options",
+          "sourceLocator"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sourceLocator": {
+            "type": "string"
+          },
+          "requiredWhen": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "knownUnavailable": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      },
+      "WorkOrderHistoryDto": {
+        "required": [
+          "items",
+          "offset",
+          "limit",
+          "hasMore"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkOrderRecordDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          }
+        }
+      },
+      "WorkOrderOfflineDto": {
+        "required": [
+          "supported",
+          "state"
+        ],
+        "type": "object",
+        "properties": {
+          "supported": {
+            "type": "boolean"
+          },
+          "state": {
+            "type": "string"
+          }
+        }
+      },
+      "WorkOrderPageDto": {
+        "required": [
+          "items",
+          "offset",
+          "limit",
+          "hasMore",
+          "canWrite",
+          "sourceVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkOrderRecordDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "canWrite": {
+            "type": "boolean"
+          },
+          "sourceVersion": {
+            "type": "string"
+          }
+        }
+      },
+      "WorkOrderPlanContextDto": {
+        "required": [
+          "vesselId",
+          "pin",
+          "current",
+          "qualification",
+          "provenance",
+          "savedAt",
+          "plan",
+          "asset",
+          "href"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "pin": {
+            "$ref": "#/components/schemas/WorkOrderPlanPin"
+          },
+          "current": {
+            "type": "boolean"
+          },
+          "qualification": {
+            "type": "string"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "plan": {
+            "$ref": "#/components/schemas/WorkOrderPlanSummaryDto"
+          },
+          "asset": {
+            "$ref": "#/components/schemas/WorkOrderAssetSummaryDto"
+          },
+          "href": {
+            "type": "string"
+          }
+        }
+      },
+      "WorkOrderPlanPin": {
+        "required": [
+          "id",
+          "revision",
+          "version",
+          "hash",
+          "sourceVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "sourceVersion": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkOrderPlanSummaryDto": {
+        "required": [
+          "assetId",
+          "assetRevision",
+          "jobId",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "assetId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "assetRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "jobId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "WorkOrderRecordDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "revision",
+          "version",
+          "fields",
+          "plan",
+          "sourceVersion",
+          "hash",
+          "provenance",
+          "savedAt",
+          "state",
+          "qualification",
+          "blockers",
+          "currentRevision",
+          "canEdit"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "fields": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/WorkOrderFact"
+            }
+          },
+          "plan": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/WorkOrderPlanPin"
+              }
+            ]
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "state": {
+            "type": "string"
+          },
+          "qualification": {
+            "type": "string"
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "currentRevision": {
+            "type": "boolean"
+          },
+          "canEdit": {
+            "type": "boolean"
+          }
+        }
       },
       "WorkspaceContextDto": {
         "required": [
@@ -15462,7 +23247,22 @@
       "name": "Poseidon.Api"
     },
     {
+      "name": "ComplianceWorkspaceEndpoints"
+    },
+    {
       "name": "HumanReviewEndpoints"
+    },
+    {
+      "name": "SystemHealthEndpoints"
+    },
+    {
+      "name": "CertificateEndpoints"
+    },
+    {
+      "name": "CertificateExtractionEndpoints"
+    },
+    {
+      "name": "DailyOperationOriginReader"
     },
     {
       "name": "CrewPositionPolicyEndpoints"
@@ -15477,6 +23277,15 @@
       "name": "TechnicalEndpoints"
     },
     {
+      "name": "DefectAssetContextReader"
+    },
+    {
+      "name": "WorkOrderPlanOriginReader"
+    },
+    {
+      "name": "DowntimeOriginReader"
+    },
+    {
       "name": "RegulatoryDraftEndpoints"
     },
     {
@@ -15487,6 +23296,15 @@
     },
     {
       "name": "ControlEvidenceEndpoints"
+    },
+    {
+      "name": "NotificationEndpoints"
+    },
+    {
+      "name": "CertificateAssertions"
+    },
+    {
+      "name": "DailyOfflineEndpoints"
     },
     {
       "name": "AuditHistoryEndpoints"

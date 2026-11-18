@@ -9,8 +9,9 @@ internal static class AuditTelemetry
     private static readonly Counter<long> Persisted = Meter.CreateCounter<long>("poseidon.audit.security.persisted", "events");
     private static readonly Counter<long> Unavailable = Meter.CreateCounter<long>("poseidon.audit.security.unavailable", "attempts");
     private static readonly Histogram<double> Latency = Meter.CreateHistogram<double>("poseidon.audit.security.duration", "ms");
-    internal static void Record(bool success, TimeSpan elapsed)
+    internal static void Record(bool success, TimeSpan elapsed, Guid? tenant = null)
     {
+        OperationalHealthObservations.Audit(tenant, success, elapsed.TotalMilliseconds);
         if (success) Persisted.Add(1); else Unavailable.Add(1);
         Latency.Record(elapsed.TotalMilliseconds);
     }

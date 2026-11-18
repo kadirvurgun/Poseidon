@@ -1,0 +1,9 @@
+.certificate-extraction { border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-block: 1rem; background: var(--card); color: var(--card-foreground); }
+.certificate-extraction-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: .85rem; margin-block: 1rem; }
+.certificate-extraction-fact { border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; display: grid; gap: .65rem; align-content: start; }
+.certificate-extraction-fact > div:first-child { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: space-between; align-items: center; }
+.certificate-extraction-fact input:not([type=checkbox]) { width: 100%; min-width: 0; border: 1px solid var(--border); border-radius: var(--radius); background: var(--background); color: var(--foreground); padding: .5rem; }
+.certificate-extraction-review { border-inline-start: .25rem solid var(--warning, #b7791f); }
+.certificate-extraction label { display: flex; align-items: center; gap: .5rem; }
+.certificate-extraction code, .certificate-extraction dd { overflow-wrap: anywhere; }
+.certificate-extraction details { font-size: .875rem; margin-block: .5rem; }

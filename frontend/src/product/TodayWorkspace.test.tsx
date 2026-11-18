@@ -201,7 +201,7 @@ it('guards navigation from an unsaved directory draft into Today', async () => {
   await user.type(screen.getByLabelText('Ad *'), ' retained')
   await openNavigationTestWorkView(user)
   await user.selectOptions(await screen.findByLabelText('Menü merceği'), id)
-  await user.click(within(screen.getByRole('navigation', { name: 'Günlük iş menüsü' })).getByRole('button', { name: /^Bugün$/ }))
+  await user.click(within(screen.getByRole('navigation', { name: 'POSEIDON' })).getByRole('button', { name: /^Bugün$/ }))
   expect(await screen.findByRole('dialog')).toBeVisible()
   await user.click(screen.getByRole('button', { name: 'Düzenlemeye devam et' }))
   expect(screen.getByLabelText('Ad *')).toHaveValue('Synthetic Tug retained')

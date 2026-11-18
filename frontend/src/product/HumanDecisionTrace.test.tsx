@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { HumanDecisionTrace } from './HumanDecisionTrace'
@@ -8,6 +8,29 @@ const response = (value: unknown, status = 200) => ({ ok: status < 300, status, 
 const props = () => ({ anchor: reviewAnchor, language: 'en' as const, csrf: 'synthetic-csrf', offline: false, onDirty: vi.fn(), onSaving: vi.fn() })
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals() })
 describe('human review accessible UI authored NOT RUN; mocked transport is UI evidence only', () => {
+  it.each(['en', 'tr'] as const)('preserves known source/control lifecycle and explicit qualification blockers in %s', async language => {
+    const pin = { id: reviewAnchor.controlId, revision: 3, availability: 'Available', hash: 'C'.repeat(64), savedAt: '2026-11-02T00:00:00Z' }
+    vi.stubGlobal('fetch', vi.fn(async () => response({ ...reviewTrace(),
+      segments: [
+        { ...pin, kind: 'Source', state: 'IN_FORCE', why: 'RECORDED_QUALIFICATION' },
+        { ...pin, kind: 'Rule', state: 'FUTURE_EFFECTIVE', why: 'HISTORICAL_INPUTS_ONLY' },
+        { ...pin, kind: 'Control', state: 'COMPLETED', why: 'COMPLETION_AND_EFFECTIVENESS_UNKNOWN' }
+      ],
+      blockers: ['QUALIFICATION_LINEAGE_UNAVAILABLE', 'SOURCE_REVIEW_REQUIRED', 'ATTESTATION_EXPIRED', 'EXTERNAL_SIGNATURE_UNAVAILABLE']
+    })))
+    render(<HumanDecisionTrace {...props()} language={language} />)
+    const trace = await screen.findByRole('list', { name: language === 'en' ? 'Source-grounded trace' : 'Kaynağa dayalı iz' })
+    const source = within(trace).getByRole('article', { name: language === 'en' ? 'Source' : 'Kaynak' })
+    expect(source).toHaveTextContent(language === 'en' ? 'In force' : 'Yürürlükte')
+    expect(source).toHaveTextContent(language === 'en' ? 'Recorded source qualification' : 'Kaydedilmiş kaynak nitelendirmesi')
+    expect(source).not.toHaveTextContent(language === 'en' ? 'Unknown' : 'Bilinmiyor')
+    expect(within(trace).getByRole('article', { name: language === 'en' ? 'Rule' : 'Kural' })).toHaveTextContent(language === 'en' ? 'Future effective' : 'Gelecekte yürürlüğe girecek')
+    expect(within(trace).getByRole('article', { name: language === 'en' ? 'Control' : 'Kontrol' })).toHaveTextContent(language === 'en' ? 'Completed (verification separate)' : 'Tamamlandı (doğrulama ayrı)')
+    expect(screen.getByText(language === 'en' ? 'Qualification lineage unavailable' : 'Nitelendirme izi kullanılamıyor')).toBeVisible()
+    expect(screen.getByText(language === 'en' ? 'Source review required' : 'Kaynak incelemesi gerekli')).toBeVisible()
+    expect(screen.getByText(language === 'en' ? 'Source attestation expired' : 'Kaynak beyanının süresi doldu')).toBeVisible()
+    expect(screen.queryByRole('button', { name: /approve/i })).not.toBeInTheDocument()
+  })
   it('shows unavailable signatures, empty review and keyboard reachable human reason in EN/TR', async () => {
     vi.stubGlobal('fetch', vi.fn(async () => response(reviewTrace())))
     const p = props(); const { rerender } = render(<HumanDecisionTrace {...p} />); const user = userEvent.setup()

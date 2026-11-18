@@ -50,6 +50,7 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Equal("TW-MAINTENANCE-01", why.Rule); Assert.Null(why.Inputs);
         Assert.NotNull(why.Maintenance); Assert.Equal(due.Id, why.Maintenance.PlanId);
         Assert.Equal(1, why.Maintenance.PlanRevision); Assert.Equal(1, why.Maintenance.CurrentAssetRevision);
+        Assert.Equal(new TodayWhySourceDto("MaintenancePlan", due.Id, why.Maintenance.PlanRevision), why.Source);
         Assert.Equal("Due", why.Maintenance.Calculation.State); Assert.Equal("Unverified", why.Freshness);
         Assert.Contains("PlanningDraftNotVerified", why.Blockers);
         await using var db = Db();

@@ -1,7 +1,7 @@
 .workspace-global-context { display:flex; flex:1 0 100%; flex-wrap:wrap; align-items:center; gap:.5rem 1.25rem; padding:.75rem 1rem; border:1px solid #a2b8c6; border-radius:.4rem; background:#eef4f7; color:#193344; font-size:.9rem; overflow-wrap:anywhere; min-width:0; }
 .workspace-global-context .context-workspace { font-weight:650; }
 .workspace-global-context .context-connection { margin-inline-start:auto; }
-.workspace-global-context button { padding:.4rem .7rem; background:white; color:#16384c; border:1px solid #597b91; border-radius:.25rem; }
+.workspace-global-context button:not([data-slot="button"]) { padding:.4rem .7rem; background:white; color:#16384c; border:1px solid #597b91; border-radius:.25rem; }
 .workspace-global-context button:focus-visible { outline:3px solid #a34d09; outline-offset:3px; }
 .import-workspace > header { flex-wrap:wrap; }
 @media (max-width:48rem) { .workspace-global-context { flex-direction:column; align-items:flex-start; gap:.45rem; } .workspace-global-context .context-connection { margin-inline-start:0; } }

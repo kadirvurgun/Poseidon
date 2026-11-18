@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { RegulatoryRegister } from './RegulatoryRegister'
@@ -18,6 +18,19 @@ function mock(save: (init: RequestInit) => Promise<Response> = async () => respo
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals() })
 
 describe('REG-SOURCE-DRAFT-01 authored component/transport tests; mocked transport only, NOT RUN', () => {
+  it('keeps register navigation separate from the explicitly submitted draft command', async () => {
+    const fetch = mock(); const p = props(); const user = userEvent.setup()
+    render(<RegulatoryRegister {...p} />)
+    await screen.findByLabelText('Title · State')
+    const actions = screen.getByRole('group', { name: 'Draft actions' })
+    const back = within(actions).getByRole('button', { name: 'Back to register' })
+    back.focus(); await user.keyboard('{Enter}')
+    expect(p.onNavigate).toHaveBeenCalledWith('/app/sources')
+    expect(fetch.mock.calls.filter(([, init]) => init?.method)).toHaveLength(0)
+    await user.click(within(actions).getByRole('button', { name: 'Save draft' }))
+    await screen.findByText('Draft saved. Unverified.')
+    expect(fetch.mock.calls.filter(([, init]) => init?.method === 'PUT')).toHaveLength(1)
+  })
   it('retains an unsaved new source before switching into lifecycle preparation', async () => {
     vi.stubGlobal('fetch', vi.fn(async () => response(page([]))))
     const p = props(); render(<RegulatoryRegister {...p} id={null} />); const user = userEvent.setup()

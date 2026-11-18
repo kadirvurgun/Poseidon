@@ -9,5 +9,6 @@
   <ItemGroup>
     <Content Include="../../contracts/golden/applicability.sample-rules.json" Link="Fixtures/applicability.sample-rules.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="../../contracts/golden/pilot-dataset.v1.json" Link="Fixtures/pilot-dataset.v1.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../fixtures/certificate-extraction/synthetic-masked-v1.json" Link="Fixtures/certificate-extraction.synthetic-masked-v1.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

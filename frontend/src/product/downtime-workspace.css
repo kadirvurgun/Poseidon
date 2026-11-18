@@ -1,0 +1,19 @@
+.downtime-workspace main { min-width:0; }
+.enterprise-shell .downtime-fields .enterprise-form-grid { margin-block:20px; padding:22px; border:1px solid var(--border); border-radius:10px; background:var(--card); }
+.enterprise-shell .downtime-fields legend { padding-inline:6px; font-weight:650; }
+.enterprise-shell .downtime-field { display:grid; gap:12px; padding:16px; min-width:0; border:1px solid var(--border); border-radius:8px; }
+.enterprise-shell .downtime-field-wide { grid-column:1/-1; }
+.enterprise-shell .downtime-field input,.enterprise-shell .downtime-field select,.enterprise-shell .downtime-field textarea { min-width:0; width:100%; margin:0; }
+.enterprise-shell .downtime-field textarea { resize:vertical; }
+.enterprise-shell .downtime-hint { color:var(--muted-foreground); font-size:12px; margin:0; }
+.enterprise-shell .downtime-status { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+.enterprise-shell .downtime-summary-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px 24px; }
+.enterprise-shell .downtime-summary-grid dd { margin:6px 0 0; overflow-wrap:anywhere; white-space:pre-wrap; }
+.enterprise-shell .downtime-source,.enterprise-shell .downtime-origin-context,.enterprise-shell .downtime-timeline { margin-block:16px; padding:20px; border:1px solid var(--border); border-radius:10px; background:var(--card); min-width:0; }
+.enterprise-shell .downtime-records { list-style:none; padding:0; display:grid; gap:16px; }
+.enterprise-shell .downtime-records > li { min-width:0; padding:18px; border:1px solid var(--border); border-radius:10px; background:var(--card); }
+.enterprise-shell .downtime-records .downtime-source { padding:0; border:0; }
+.downtime-workspace code { white-space:normal; overflow-wrap:anywhere; }
+@media(max-width:600px) { .enterprise-shell .downtime-summary-grid { grid-template-columns:minmax(0,1fr); } .enterprise-shell .downtime-fields .enterprise-form-grid,.enterprise-shell .downtime-source,.enterprise-shell .downtime-origin-context,.enterprise-shell .downtime-timeline { padding:16px; } .enterprise-shell .downtime-field { padding:14px; } }
+
+.enterprise-shell .downtime-declared-text { white-space:pre-wrap; overflow-wrap:anywhere; }

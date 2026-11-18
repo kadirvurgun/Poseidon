@@ -16,6 +16,7 @@ public sealed record SaveRegulatoryDraft(uint? ExpectedVersion, RegulatoryDraftC
 public sealed record RegulatoryDraftDto(Guid TenantId, VesselDto Vessel, uint Version, long Revision,
     DateTimeOffset? SavedAt, string Provenance, RegulatoryDraftContent Content);
 public sealed record RegulatoryRevisionDto(long Revision, DateTimeOffset SavedAt, string Provenance, RegulatoryDraftContent Content);
+internal sealed record CurrentRegulatoryDraft(bool Readable, RegulatoryDraft? Draft);
 
 public static class RegulatoryDraftEndpoints
 {
@@ -39,15 +40,36 @@ public static class RegulatoryDraftEndpoints
         draft?.Version ?? 0, draft?.Revision ?? 0, draft?.SavedAt, draft?.Provenance ?? "Missing",
         draft == null ? new() : RegulatoryDraftStorage.Deserialize(draft.ContentJson));
 
+    // Shared by owning and cross-module reads after the vessel selector is scoped.
+    // Binding and content use ONE statement snapshot. SQL conditional projections
+    // withhold restricted values rather than loading them and redacting afterward.
+    internal static async Task<CurrentRegulatoryDraft> ReadCurrent(TrustedActor actor, Guid vessel, PoseidonDbContext db, CancellationToken ct)
+    {
+        var files = actor.Permissions.Contains("file.read");
+        var row = await db.RegulatoryDrafts.AsNoTracking().Where(x => x.VesselId == vessel).Select(x => new {
+            Readable = files || x.ConstructionFileId == null,
+            Content = files || x.ConstructionFileId == null ? x.ContentJson : null,
+            Revision = files || x.ConstructionFileId == null ? (long?)x.Revision : null,
+            Version = files || x.ConstructionFileId == null ? (uint?)x.Version : null,
+            SavedAt = files || x.ConstructionFileId == null ? (DateTimeOffset?)x.SavedAt : null,
+            Provenance = files || x.ConstructionFileId == null ? x.Provenance : null
+        }).SingleOrDefaultAsync(ct);
+        if (row == null) return new(true, null);
+        if (!row.Readable) return new(false, null);
+        return new(true, new() { TenantId = actor.TenantId, VesselId = vessel, ContentJson = row.Content!,
+            Revision = row.Revision!.Value, Version = row.Version!.Value, SavedAt = row.SavedAt!.Value, Provenance = row.Provenance! });
+    }
+
     private static async Task<IResult> Read(Guid id, HttpContext http, PoseidonDbContext db, SecurityAudit audit)
     {
         var actor = Actor(http);
         var vessel = await actor.Scope(db.Vessels.AsNoTracking()).SingleOrDefaultAsync(x => x.Id == id, http.RequestAborted);
         if (vessel == null) { await audit.WriteAsync(http, "ProfileRead", "NotFound", resourceId: id); return Results.NotFound(); }
-        if (!actor.Permissions.Contains("file.read") && await db.RegulatoryDrafts.AnyAsync(x => x.VesselId == id && x.ConstructionFileId != null, http.RequestAborted)) {
+        var source = await ReadCurrent(actor, id, db, http.RequestAborted);
+        if (!source.Readable) {
             await audit.WriteAsync(http, "ProfileRead", "permission_denied", resourceId: id); return Results.StatusCode(403);
         }
-        var projection = Dto(actor, vessel, await db.RegulatoryDrafts.AsNoTracking().SingleOrDefaultAsync(x => x.VesselId == id, http.RequestAborted));
+        var projection = Dto(actor, vessel, source.Draft);
         await audit.WriteAsync(http, "ProfileRead", "Success", resourceId: id);
         return Results.Ok(projection);
     }
@@ -57,17 +79,29 @@ public static class RegulatoryDraftEndpoints
         var actor = Actor(http);
         var allowed = await actor.Scope(db.Vessels.AsNoTracking()).AnyAsync(x => x.Id == id, http.RequestAborted);
         if (!allowed) { await audit.WriteAsync(http, "ProfileHistory", "NotFound", resourceId: id); return Results.NotFound(); }
-        if (!actor.Permissions.Contains("file.read") && await db.RegulatoryDraftRevisions.AnyAsync(x => x.VesselId == id && x.ConstructionFileId != null, http.RequestAborted)) {
+        var invalid = offset is < 0 or > 100000 || limit is < 1 or > 100;
+        var (skip, take) = invalid ? (0, 25) : (offset ?? 0, limit ?? 25);
+        var files = actor.Permissions.Contains("file.read");
+        // One statement snapshot covers the WHOLE history gate and the page.
+        // Rooting in the visible vessel retains the denial even for an empty or
+        // out-of-range page. The child filter withholds every content column if
+        // any history revision is restricted; do not filter just that revision.
+        var snapshot = await actor.Scope(db.Vessels.AsNoTracking()).Where(v => v.Id == id)
+            .Select(v => new {
+                Readable = files || !db.RegulatoryDraftRevisions.Any(r => r.VesselId == v.Id && r.ConstructionFileId != null),
+                Rows = db.RegulatoryDraftRevisions.AsNoTracking()
+                    .Where(r => !invalid && r.VesselId == v.Id && (files || !db.RegulatoryDraftRevisions.Any(blocked =>
+                        blocked.VesselId == v.Id && blocked.ConstructionFileId != null)))
+                    .OrderByDescending(r => r.Revision).Skip(skip).Take(take + 1)
+                    .Select(r => new { r.Revision, r.SavedAt, r.Provenance, r.ContentJson }).ToArray()
+            }).AsSingleQuery().SingleOrDefaultAsync(http.RequestAborted);
+        if (snapshot == null) { await audit.WriteAsync(http, "ProfileHistory", "NotFound", resourceId: id); return Results.NotFound(); }
+        if (!snapshot.Readable) {
             await audit.WriteAsync(http, "ProfileHistory", "permission_denied", resourceId: id); return Results.StatusCode(403);
         }
-        if (offset is < 0 or > 100000 || limit is < 1 or > 100) {
-            await audit.WriteAsync(http, "ProfileHistory", "Invalid", resourceId: id); return Results.BadRequest();
-        }
-        var (skip, take) = (offset ?? 0, limit ?? 25);
-        var rows = await db.RegulatoryDraftRevisions.AsNoTracking().Where(x => x.VesselId == id)
-            .OrderByDescending(x => x.Revision).Skip(skip).Take(take + 1).ToArrayAsync(http.RequestAborted);
-        var projection = new PageDto<RegulatoryRevisionDto>(rows.Take(take).Select(x =>
-            new RegulatoryRevisionDto(x.Revision, x.SavedAt, x.Provenance, RegulatoryDraftStorage.Deserialize(x.ContentJson))).ToArray(), skip, take, rows.Length > take);
+        if (invalid) { await audit.WriteAsync(http, "ProfileHistory", "Invalid", resourceId: id); return Results.BadRequest(); }
+        var projection = new PageDto<RegulatoryRevisionDto>(snapshot.Rows.Take(take).Select(x =>
+            new RegulatoryRevisionDto(x.Revision, x.SavedAt, x.Provenance, RegulatoryDraftStorage.Deserialize(x.ContentJson))).ToArray(), skip, take, snapshot.Rows.Length > take);
         await audit.WriteAsync(http, "ProfileHistory", "Success", resourceId: id);
         return Results.Ok(projection);
     }

@@ -1,6 +1,7 @@
 import { expect, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { signedDestination } from './signed-case.ts';
 
 const ship = '30000000-0000-0000-0000-000000000001';
 const tug = '30000000-0000-0000-0000-000000000002';
@@ -12,7 +13,10 @@ async function english(page: Page) {
   await page.getByRole('button', { name: 'EN', exact: true }).click();
 }
 export async function login(page: Page, account: string, destination: string) {
-  await page.goto(destination);
+  const target = signedDestination(destination);
+  // The signed entry owns the sign-in/out controls. Authenticate there first,
+  // then open the exact requested workspace through a normal browser navigation.
+  await page.goto('/app/today');
   await english(page);
   await page.getByRole('link', { name: 'Sign in', exact: true }).click();
   await page.waitForURL(url => url.origin === 'https://localhost:8443');
@@ -21,9 +25,11 @@ export async function login(page: Page, account: string, destination: string) {
   await page.locator('#username').fill(credentials[account].username);
   await page.locator('#password').fill(credentials[account].password);
   await page.locator('#kc-login').click();
-  await page.waitForURL('https://localhost:5443' + destination);
+  await page.waitForURL('https://localhost:5443/app/today');
   await english(page);
   await expect(page.getByRole('button', { name: 'Sign out', exact: true })).toBeVisible();
+  if (target !== '/app/today') { await page.goto(target); await english(page); }
+  expect(new URL(page.url()).origin === 'https://localhost:5443' && new URL(page.url()).pathname + new URL(page.url()).search === target).toBe(true);
   const session = await (await page.request.get('/api/v1/auth/session')).json();
   expect(session.authenticated).toBe(true);
   expect(session.setupRequired).toBe(false);

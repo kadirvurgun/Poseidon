@@ -99,12 +99,13 @@ public static class TechnicalEndpoints
     // including replay; no names, subject IDs or credential data leave the server.
     internal static Guid[] EligibleOwners(HttpContext h, Guid vessel) {
         var a = Actor(h);
-        return h.RequestServices.GetRequiredService<FederationSettings>().Memberships
-            .Where(m => m.TenantId == a.TenantId && m.ActorId != Guid.Empty && m.Permissions.Contains("maintenance.owner.eligible") &&
+        return a == null ? [] : EligibleOwners(h.RequestServices.GetRequiredService<FederationSettings>(), a.TenantId, vessel);
+    }
+    internal static Guid[] EligibleOwners(FederationSettings settings, Guid tenant, Guid vessel) => settings.Memberships
+            .Where(m => m.TenantId == tenant && m.ActorId != Guid.Empty && m.Permissions != null && m.Permissions.Contains("maintenance.owner.eligible") &&
                 m.Permissions.Contains("directory.read") && (m.TenantWideManage || m.TenantWideRead || (m.VesselGrants ?? []).Any(g => g.VesselId == vessel)))
             .Where(m => ActorResolver.TrustedRoleContext(m.RoleReferences) != null)
             .SelectMany(m => m.RoleReferences!).Select(Guid.Parse).Distinct().Order().ToArray();
-    }
     private static async Task EnsureOwner(PoseidonDbContext db, Guid vessel, Guid? role, CancellationToken ct) {
         if (role == null || await db.TechnicalOwners.AnyAsync(x => x.VesselId == vessel && x.Id == role, ct)) return;
         db.TechnicalOwners.Add(new() { TenantId = db.TenantId, VesselId = vessel, Id = role.Value });

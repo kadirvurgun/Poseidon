@@ -16,6 +16,7 @@ public sealed class MaintenanceObservationSettings
 }
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record MaintenanceObservationCommand(Guid Id, string Source, string PolicyVersion, long SourceRevision, string Kind, string Unit, string? Value, [property: JsonConverter(typeof(ExplicitObservationInstantConverter))] DateTimeOffset? ObservedAt);
+internal sealed record CurrentMaintenanceObservation(MaintenanceObservationAssessment Assessment, DateTimeOffset? ObservedAt);
 public static class MaintenanceObservationEndpoints
 {
     public static void MapMaintenanceObservations(this IEndpointRouteBuilder app) {
@@ -48,7 +49,7 @@ public static class MaintenanceObservationEndpoints
         foreach (var row in rows) {
             var rule = settings.Rule(db.TenantId, vessel, asset, row.Source);
             var age = rule != null && rule.Version == row.PolicyVersion && !row.revoked ? TimeSpan.FromSeconds(rule.FreshnessSeconds) : (TimeSpan?)null;
-            OperationalTelemetry.ObserveFreshness(ObservationArea.Technical, SourceFreshnessPolicy.Assess(row.ObservedAt, now, age));
+            OperationalTelemetry.ObserveFreshness(ObservationArea.Technical, SourceFreshnessPolicy.Assess(row.ObservedAt, now, age), db.TenantId);
         }
         var actor = h.RequestServices.GetRequiredService<ActorResolver>().Resolve(h.User)!;
         return Results.Ok(new { sources, items = rows, canWrite = actor.Permissions.Contains("maintenance.observation.write") && actor.Permissions.Contains("maintenance.write") && actor.HasWriteAttribution &&
@@ -94,11 +95,21 @@ public static class MaintenanceObservationEndpoints
         }
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "MaintenanceObservationRevoke", "Success", resourceId: asset); return Results.Ok(new { id, state = "Revoked" });
     }
-    internal static async Task<MaintenanceObservationAssessment> Resolve(Guid vessel, Guid asset, MaintenanceInputs inputs, HttpContext h, PoseidonDbContext db, DateTimeOffset? serverNow = null) {
-        var row = await db.MaintenanceObservations.AsNoTracking().SingleOrDefaultAsync(x => x.Id == inputs.ObservationId && x.VesselId == vessel && x.AssetId == asset, h.RequestAborted);
-        var rule = row == null ? null : h.RequestServices.GetRequiredService<MaintenanceObservationSettings>().Rule(db.TenantId, vessel, asset, row.Source);
+    internal static async Task<MaintenanceObservationAssessment> Resolve(Guid vessel, Guid asset, MaintenanceInputs inputs, HttpContext h, PoseidonDbContext db, DateTimeOffset? serverNow = null) =>
+        (await ResolveCurrent(vessel, asset, inputs, h, db, serverNow)).Assessment;
+
+    internal static Task<CurrentMaintenanceObservation> ResolveCurrent(Guid vessel, Guid asset, MaintenanceInputs inputs, HttpContext h, PoseidonDbContext db, DateTimeOffset? serverNow = null) =>
+        ResolveOwned(vessel, asset, inputs, db, h.RequestServices.GetRequiredService<MaintenanceObservationSettings>(), serverNow ?? DateTimeOffset.UtcNow, h.RequestAborted);
+
+    internal static async Task<CurrentMaintenanceObservation> ResolveOwned(Guid vessel, Guid asset, MaintenanceInputs inputs, PoseidonDbContext db,
+        MaintenanceObservationSettings settings, DateTimeOffset serverNow, CancellationToken ct) {
+        var row = await db.MaintenanceObservations.AsNoTracking().SingleOrDefaultAsync(x => x.Id == inputs.ObservationId && x.VesselId == vessel && x.AssetId == asset, ct);
+        var rule = row == null ? null : settings.Rule(db.TenantId, vessel, asset, row.Source);
         var observation = row == null ? null : new MaintenanceObservationValue(row.Id, row.TenantId, row.VesselId, row.AssetId, row.Source, row.PolicyVersion, row.SourceRevision,
-            row.Kind, row.Unit, row.Value, row.ObservedAt, await db.MaintenanceObservationRevocations.AnyAsync(x => x.ObservationId == row.Id, h.RequestAborted));
-        return MaintenanceObservationPolicy.Assess(observation, rule, db.TenantId, vessel, asset, inputs, serverNow ?? DateTimeOffset.UtcNow);
+            row.Kind, row.Unit, row.Value, row.ObservedAt, await db.MaintenanceObservationRevocations.AnyAsync(x => x.ObservationId == row.Id, ct));
+        // Preserve the selected row's real observation time even for a revoked or
+        // stale declaration. Never substitute the plan's legacy inline timestamp
+        // when the selected row is absent or out of this vessel/asset scope.
+        return new(MaintenanceObservationPolicy.Assess(observation, rule, db.TenantId, vessel, asset, inputs, serverNow), row?.ObservedAt);
     }
 }

@@ -1,26 +1,28 @@
-# POSEIDON güncel durum — S1 mühendislik kabulü
+# POSEIDON — PR16 ve yerelleştirme durumu
 
-**S0 ve S1 mühendislik kapsamı %100 kabul edildi. Genel proje: 103 / 970 SP = %10,62; 20 / 121 iş; ayrı ekran kabulü 0 / 196.**
+[PR16](https://github.com/kadirvurgun/Poseidon/pull/16) taslak olarak açık. İlk push ve PR CI koşularında gerçek API integration816/822PASS,6FAIL,0skip kaydedildi. Hatalar dar kapsamda yeniden üretildi; toplu ilk düzeltme push’u hazırlanıyor. Tam CI ve genuine signed senaryoları geçmeden merge kabulü verilmedi.
 
-Kayıt: `2026-11-04T15:52:45.449192+00:00`. S1 uygulama hedefi `dc7f5117fb99a962d70a54b1f12f2c118f1cca66`, tree `e8843d8fb0bffd56a6d7955dfc286b8113a09bfd`; 7 özgün iş / 50 SP. Bağımsız inceleme mevcut S1 kapsamında 0 açık P0 buldu.
+Canonical kabul **103/970SP=%10,62;20/121iş;0/196ayrı ekran**. S0/S1 kabulü korunur; S6 seçili9iş/87SP ve S8 seçili2iş/26SP tamamlanmış faz değildir.
 
-OIDC login/logout ve secret-reference sınırları, sunucu tarafında tenant/rol/gemi/nesne yetkisi, gerçek aktör ve correlation ile immutable audit, güvenli dosya kabulü ve yetkisiz erişim regresyonları teslim edildi. Dosya reddinde iş durumu korunuyor; audit özel veri değerlerini kopyalamıyor.
-
-| Doğrulama | Gerçek sonuç |
+| Kontrol | Gerçek sonuç ve sınırı |
 |---|---|
-| [Uygulama hedefi push CI](https://github.com/kadirvurgun/Poseidon/actions/runs/41617601700) | 4 / 4 iş, 19 / 19 gereken komut başarılı |
-| Native API unit / tam integration | 137 / 137 ve 582 / 582 PASS; her ikisinde 0 fail / skip |
-| Gerçek HTTP → committed audit | 82 / 82 kritik operasyon; 558 capture; 0 invalid / unavailable |
-| Taze signed-06 | 122 / 122 PASS, 10 grup; 0 fail / pending / skip / retry |
-| Ayrı login baseline / strict TLS / gerçek sağlayıcı logout | 2 gerçek login; 3 / 3 TLS; ayrı 1 / 1 logout PASS |
-| Build, frontend, model, contract, kaynak ve repository / gerçek client taraması | Gereken CI komutları PASS; verilmemiş native sayaçlar türetilmedi |
+| Domain / Persistence | Önceki aynı kaynak alt ağaçlarında756unit,75persistenceunit,79gerçekPG;0skip. |
+| API / client | Önceki176APIunit;1337component ve72ordinary gerçek API browser. İlk tamCI816/822; altı hata korunur. |
+| CI16 düzeltmeleri | İki gerçek transaction receipt yarışı önce409 ile yeniden üretildi; düzeltme sonrası9/9PG. Kaynak revizyonu/immutable dosya/gerçek OpenAPI düzeltmeleri5/5PG. Entegre generatedconsumer typecheck geçti. |
+| Lifecycle | Author31Linux/24Windows; bağımsızLinux7/7,0skip. QA-GATE-004 kapandı. Yalnız sahipli SID/process tree temizlenir; kanıtlanamayan cleanup provider’ı korur. |
+| Repo scan |6abbe829 kaynak ve çalışma metadata girdilerinde2643dosya,0bulgu,93,689s. Önceki başarısız/kesilen kanıtlar silinmedi. |
+| Tam kabul | Yeni tamCI, genuine signed manifest ve bağımsız final-target kabulü bekleniyor. Önceki native kesilmeler PASS sayılmaz. |
 
-Önizleme geri yüklendi; önceki özel ayarlar ve **kadirvurgun** test kullanıcısı yapılandırması korundu. Test hesabının gerçek sağlayıcı girişi ve ordinary yetkileri ayrıca doğrulandı. Parola/private içerik kaynak veya raporda yok.
+İstenen kadirvurgun test hesabı yeni disposable provider’da oluşturuldu. Gerçek strict-TLS browser login, secureHttpOnly cookie, kendi tenant erişimi ve foreign404 doğrulandı; parola kaynakta/dosyada tutulmadı, eski hesaplar ve private generation zinciri korundu. Önizleme açık; runtime build/config yeni hedefe taşındığında signed kanıt ayrıca alınacak.
 
-Bu kabul uygulama hedefi F'nin mühendislik kabulüdür. Bu kayıt zamanında S1 PR'ı, PR hedefinin CI/bağımsız incelemesi, merge ve merged-main kontrolleri henüz yapılmadı. Sonraki adım büyük S1 PR'ı için kanıt/status paketini yayımlamak; gereken hedef kontrollerinden sonra normal merge ve main CI sonucunu izlemektir. Metadata commit'i F kanıtlarının hedefini değiştirmez.
+Kullanıcının yeni talimatıyla geliştirme önceliği17dilli JSON i18n. Ayrı ürün dalında ortak17×38çeviri, kalıcı locale, ArapçaRTL, erişilebilir seçici ve test kaynakları yazıldı.3169ürün metni/2991benzersiz değerin EN/TR kataloğu donduruldu; AI çeviriler devam ediyor. Bu yeni paket PR16’ya dahil değil; testleri büyük paket kapısına ertelendi ve PASS ilan edilmedi. Dil değişimi canonical kodları, taslakları, actor/tenant veya idempotency içeriğini değiştirmemeli.
 
-Önceki 4978 hedefinin 580 total / 577 PASS / 3 FAIL ve tanısal 80 / 82 kaydı ile signed-05'in 104 PASS / 18 FAIL sonucu özgün hedefleriyle korunur. Bunlar güncel başarıya eklenmedi. [Bağımsız S1 kabul kanıtı](evidence/s1-20261104-dc7f511/qa/final-s1-independent-review-dc7f511-signed06.json) exact F'ye bağlıdır.
+[Ayrıntılı PR kapısı](phases/BUNDLE-PR-GATE-20261109.md) · [Canonical kayıt](project-status.json)
 
-Production IdP/MFA/vault/storage/scanner rollout, privacy/retention/key custody, hukuk/source aktivasyonu, gerçek Marine/Tug uzmanı ve pilot/DR/release kararları ayrı açık kapılardır.
 
-[Faz raporu](phases/S1-FOUNDATION-20261103.md) · [Kabul sözleşmesi](tasks/s1-foundation-closure-01.md) · [Canonical kayıt](project-status.json)
+09.11.2026 sonraki kapı:317704f hem push42653576164 hem PR42653615048 için4/4CI işi yeşil; API826/826integration ve176/176unit,0skip. Tam kaynak değişimi olmayan eski kapsam kanıtları kendi checkpoint’inde korunur.69bc92c fixture tamamlama kodunda4Pythoncrew+18Pythonplan+13Nodejournal/history kontrolü geçti;2650dosya taramasında0bulgu. Dört gerçek hesap/yediAPIverigrubu ve son legacy önkoşulları tamamlandı.174senaryolu desktop/narrow genuine signed koşusu başladı; başarısız vakalar var, tamamı PASS veya merge kabulü yok. Yeni sourceCI/bağımsız finalQA ve gerçek signed sonuçları açık.
+
+Ayrı i18n ürün dalında10tamkatalog ve17ortak katalog yazıldı;3169metin alanı. UI/RTL/taslak-koruma testleri yazıldı, yeni paketin yürütmesi DEFERRED. Tamamlanmayan diller İngilizce kopyalarıyla doldurulmadı.
+
+
+11.11güncellemesi: gerçek174signedmanifesti69bc92c üzerinde15PASS/159FAIL ile tamamlandı; kabul edilmedi.8e0523d’de API826/826+176/176ve117/117kritikişlem geçti, ancak GitHub’ın kendiInternalservererror hatası diğer requiredjobları oluşturmamış.0fb4bee her vaka için gerçek taze giriş ve güvenli derin-hedef navigasyonu ekler;36darprotokol testi+2gerçekOIDCgiriş geçti,2652dosya taramasında0bulgu. Yeni tam signed/CI/bağımsızQA açık; PR16merge edilmedi. [Güncel kapı raporu](phases/BUNDLE-SIGNED-RECOVERY-20261111.md).

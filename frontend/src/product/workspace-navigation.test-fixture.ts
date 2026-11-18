@@ -16,6 +16,10 @@ export async function openNavigationTestWorkView(user: { click: (target: Element
   const summary = screen.getByText(/^(Work view|Çalışma görünümü)$/, { selector: 'summary' })
   if (!summary.closest('details')?.open) await user.click(summary)
 }
+export async function openNavigationTestOverview(user: { click: (target: Element) => Promise<void> }) {
+  const trigger = await screen.findByRole('button', { name: /^(Overview|Genel bakış)$/ })
+  if (trigger.getAttribute('aria-expanded') !== 'true') await user.click(trigger)
+}
 export function navigationTestLenses(tenantId: string, actorId: string, vesselId: string | null, canSearch = false, companies = true): Lenses {
   return { tenantId, actorId, vesselId, mode: vesselId ? 'Ship' : 'Fleet', state: 'Configured', version: 'synthetic-menu-v1', canSearch,
     lenses: [{ reference: navigationTestRole, tr: 'KURGUSAL test menüsü', en: 'FICTIONAL test menu', items: [

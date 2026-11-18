@@ -11,7 +11,7 @@ export function WorkspaceSearch({ language, onNavigate, onClose, authorization, 
   const [loadedEpoch, setLoadedEpoch] = useState(-1)
   const [loadedGrant, setLoadedGrant] = useState<object | null>(null)
   const allowed = authorization === 'allowed' && typeof grant === 'object' && grant !== null && !Array.isArray(grant)
-  const destinationLabels: Record<string, string> = { today: en ? 'Today' : 'Bugün', fleet: en ? 'Fleet' : 'Filo', companies: en ? 'Companies' : 'Şirketler', sources: en ? 'Source drafts' : 'Kaynak taslakları', requirements: en ? 'Requirement drafts' : 'Gereksinim taslakları', audit: en ? 'Action history' : 'İşlem geçmişi', 'tug-command': en ? 'Tug operations' : 'Römorkör operasyonları', 'tug-job-board': en ? 'Tug job board' : 'Römorkör iş panosu', 'tug-job-intake': en ? 'Tug job intake' : 'Römorkör iş kaydı' }
+  const destinationLabels: Record<string, string> = { today: en ? 'Today' : 'Bugün', fleet: en ? 'Fleet' : 'Filo', companies: en ? 'Companies' : 'Şirketler', sources: en ? 'Source drafts' : 'Kaynak taslakları', requirements: en ? 'Requirement drafts' : 'Gereksinim taslakları', audit: en ? 'Action history' : 'İşlem geçmişi', 'tug-command': en ? 'Tug operations' : 'Römorkör operasyonları', 'tug-job-board': en ? 'Tug job board' : 'Römorkör iş panosu', 'tug-job-intake': en ? 'Tug job intake' : 'Römorkör iş kaydı', 'system-health': en ? 'System health' : 'Sistem sağlığı', 'notification-escalation': en ? 'Notifications' : 'Bildirimler' }
   const dialog = useRef<HTMLDialogElement>(null)
   const [query, setQuery] = useState('')
   const [search, setSearch] = useState('')

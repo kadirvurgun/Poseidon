@@ -5,5 +5,5 @@
 .offline-conflict dd { margin: .3rem 0; white-space: pre-wrap; overflow-wrap: anywhere; }
 .offline-conflict__choice { display: flex; align-items: center; gap: .6rem; min-height: 44px; }
 .offline-conflict textarea { display: block; box-sizing: border-box; width: 100%; min-height: 7rem; margin-block: .5rem 1rem; padding: .7rem; font: inherit; }
-.offline-conflict button { min-height: 44px; padding: .6rem 1rem; font: inherit; }
+.offline-conflict button:not([data-slot="button"]) { min-height: 44px; padding: .6rem 1rem; font: inherit; }
 .offline-conflict :is(button, textarea, input):focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }

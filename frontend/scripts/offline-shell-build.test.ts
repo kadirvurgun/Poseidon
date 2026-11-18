@@ -57,6 +57,30 @@ function harness(worker = source(), stores = new Map<string, Map<string, Respons
 }
 
 describe('public offline shell build and safe update lifecycle', () => {
+  // DEV-097/098/099 + DEV-033: source-authored only, NOT RUN in authoring.
+  it.each(['noon-report', 'deck-daily-log', 'engine-daily-log'])('boots %s only from public shell bytes with closed resource context', async screen => {
+    const h = harness(); await h.lifecycle('install')
+    const id = '11111111-1111-4111-8111-111111111111', path = `/app/${screen}/${id}`
+    for (const query of ['', `?id=${id}`, `?draft=${id}`]) {
+      expect(await (await h.request(path + query))!.text()).toBe(fixtures[0].bytes)
+      expect(h.stores.get(cacheName(source()))!.has(path + query)).toBe(false)
+    }
+    h.network.set(path, new Response('signed private daily navigation'))
+    expect(await (await h.request(`${path}?draft=${id}`))!.text()).toBe('signed private daily navigation')
+    expect(await h.stores.get(cacheName(source()))!.get('/index.html')!.clone().text()).toBe(fixtures[0].bytes)
+    expect([...h.stores.get(cacheName(source()))!.keys()].some(key => key.includes(id) || key.includes('?'))).toBe(false)
+    expect(h.skipWaiting).not.toHaveBeenCalled(); expect(h.claim).not.toHaveBeenCalled(); expect(h.reload).not.toHaveBeenCalled()
+  })
+  it.each(['noon-report', 'deck-daily-log', 'engine-daily-log'])('refuses private, duplicate and malformed %s route contexts', screen => {
+    const h = harness(), id = '11111111-1111-4111-8111-111111111111', path = `/app/${screen}/${id}`
+    for (const query of [`?draft=${id}&draft=${id}`, `?id=${id}&draft=${id}`, '?draft=invalid', `?draft=${id}&offset=0`,
+      `?actor=${id}`, `?draft=${id}&token=private`, `?id=${id}&policy=private`]) expect(h.request(path + query)).toBeUndefined()
+    for (const target of [`/app/${screen}?draft=${id}`, `/app/${screen}/bad?draft=${id}`, `/api/v1/${screen}?draft=${id}`,
+      `https://other.test${path}?draft=${id}`]) expect(h.request(target)).toBeUndefined()
+    expect(h.request(`${path}?draft=${id}`, 'POST')).toBeUndefined()
+    expect(h.request(`${path}?draft=${id}`, 'GET', 'cors')).toBeUndefined()
+    expect(h.fetcher).not.toHaveBeenCalled(); expect(h.cacheStorage.open).not.toHaveBeenCalled()
+  })
   it('falls back to public bytes for exact Tug job/vessel navigation while never caching its API or query context', async () => {
     const h = harness(); await h.lifecycle('install')
     const id = '11111111-1111-4111-8111-111111111111'

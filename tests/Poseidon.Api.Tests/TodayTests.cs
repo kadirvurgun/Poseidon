@@ -29,6 +29,7 @@ public sealed partial class DirectoryWorkspaceTests
         var why = (await client.GetFromJsonAsync<TodayWhyDto>(WhyPath, Ct))!;
         Assert.Equal(new DraftObservation(3, 16, 1, "DraftUnverified"), why.Inputs);
         Assert.Equal("Unverified", why.Freshness); Assert.Equal("DeclaredUnverified", why.Provenance);
+        Assert.Equal(new TodayWhySourceDto("RegulatoryDraft", SeedVessel.Id, initial.Revision + 1), why.Source);
         Assert.Equal(DateTimeOffset.Parse("2001-01-01T00:00:00Z"), DateTimeOffset.Parse(why.SourceObservedAt!));
         Assert.True(why.SavedAt > DateTimeOffset.Parse(why.SourceObservedAt!)); Assert.Null(why.Owner);
         Assert.Contains("VerificationUnavailable", why.Blockers);
@@ -52,6 +53,13 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Equal(new DraftObservation(0, 0, 0, "DraftAbsent"), absentWhy.Inputs);
         Assert.Null(absentWhy.SavedAt); Assert.Null(absentWhy.SourceObservedAt);
         Assert.Equal("Missing", absentWhy.Provenance); Assert.Equal("Unverified", absentWhy.Freshness);
+        Assert.Equal(new TodayWhySourceDto("RegulatoryDraft", vessel.Id, null), absentWhy.Source);
+        var absentProfile = await Profile(client, vessel.Id);
+        var incomplete = await SaveProfile(client, absentProfile, new());
+        var savedWhy = (await client.GetFromJsonAsync<TodayWhyDto>($"/api/v1/why-engine?vesselId={vessel.Id}&cardKey=regulatory-draft", Ct))!;
+        Assert.Equal("DraftUnverified", savedWhy.Reason); Assert.Equal("Missing", savedWhy.Provenance);
+        Assert.Equal(incomplete.SavedAt, savedWhy.SavedAt);
+        Assert.Equal(new TodayWhySourceDto("RegulatoryDraft", vessel.Id, incomplete.Revision), savedWhy.Source);
         var empty = (await client.GetFromJsonAsync<TodayDto>(TodayPath + "&offset=1&limit=1", Ct))!;
         Assert.Empty(empty.Cards.Items); Assert.False(empty.Cards.HasMore); Assert.Equal(7, empty.Coverage.Length);
         var again = (await client.GetFromJsonAsync<TodayDto>(TodayPath + "&offset=0&limit=1", Ct))!;

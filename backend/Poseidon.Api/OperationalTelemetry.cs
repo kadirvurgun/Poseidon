@@ -15,8 +15,9 @@ public static class OperationalTelemetry
     private static readonly Meter Meter = new(MeterName, "1.0.0");
     private static readonly Counter<long> Freshness = Meter.CreateCounter<long>("poseidon.source.freshness.observations", "{observation}");
     private static readonly Counter<long> Replay = Meter.CreateCounter<long>("poseidon.sync.replay.outcomes", "{observation}");
-    public static void ObserveFreshness(ObservationArea area, SourceFreshness state)
+    public static void ObserveFreshness(ObservationArea area, SourceFreshness state, Guid? tenant = null)
     {
+        OperationalHealthObservations.Freshness(tenant, state);
         var source = area switch { ObservationArea.Technical => "technical", ObservationArea.Tug => "tug", _ => "other" };
         var status = state switch { SourceFreshness.Current => "current", SourceFreshness.Stale => "stale", SourceFreshness.Future => "future", SourceFreshness.Unknown => "unknown", _ => "unavailable" };
         try { Freshness.Add(1, new TagList { { "poseidon.area", source }, { "poseidon.freshness", status } }); } catch { }

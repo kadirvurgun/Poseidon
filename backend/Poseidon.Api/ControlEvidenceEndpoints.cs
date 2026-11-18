@@ -25,6 +25,12 @@ public sealed record ControlEvidenceDto(Guid Id, Guid VesselId, string Kind, lon
 
 public static class ControlEvidenceEndpoints
 {
+    // Shared projection for the passport: retain every owning object/file/role
+    // gate and current verification calculation instead of making a second model.
+    internal static IQueryable<ControlEvidenceRevision> CurrentVisible(PoseidonDbContext db, Guid vessel, TrustedActor actor) =>
+        Visible(db, vessel, actor).Where(r => db.ControlEvidenceHeads.Any(h => h.VesselId == vessel && h.Kind == r.Kind && h.Id == r.Id && h.Revision == r.Revision));
+    internal static Task<ControlEvidenceDto> ProjectCurrent(PoseidonDbContext db, ControlEvidenceRevision row, uint version,
+        DateTimeOffset now, CancellationToken ct, TrustedActor actor, FederationSettings settings) => Dto(db, row, version, now, ct, actor, settings);
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { PropertyNameCaseInsensitive = false, MaxDepth = 12 };
     private static TrustedActor Actor(HttpContext h) => h.RequestServices.GetRequiredService<ActorResolver>().Resolve(h.User)!;
     // This first consumer deliberately supports vessel-owned, non-protected files only.

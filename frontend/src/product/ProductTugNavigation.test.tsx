@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, expect, it, vi } from 'vitest'
 import { ProductApp } from './ProductApp'
@@ -22,7 +22,7 @@ it('guards the actual Tug workspace link and retains a cancelled unsaved vessel 
   await user.type(screen.getByLabelText('Ad *'), ' retained')
   await openNavigationTestWorkView(user)
   await user.selectOptions(await screen.findByLabelText('Menü merceği'), id)
-  await user.click(await screen.findByRole('button', { name: 'Römorkör bağlamı' }))
+  await user.click(await within(screen.getByRole('navigation', { name: 'POSEIDON' })).findByRole('button', { name: 'Römorkör merkezi' }))
   expect(await screen.findByRole('dialog')).toBeVisible()
   expect(window.location.pathname).toBe(`/app/fleet/${id}`)
   await user.click(screen.getByRole('button', { name: 'Düzenlemeye devam et' }))

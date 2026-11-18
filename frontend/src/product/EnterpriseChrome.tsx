@@ -1,17 +1,29 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Anchor, ArrowLeft, ArrowUpRight, Building2, ChevronRight, ClipboardList, FileCheck2, FolderCheck, Gauge, LayoutDashboard, Menu, Search, ShieldCheck, Ship, Waves, X } from 'lucide-react'
+import { Anchor, ArrowLeft, ArrowUpRight, Building2, ChevronRight, ClipboardList, FileCheck2, FolderCheck, Gauge, LayoutDashboard, Menu, Search, ShieldCheck, Ship, Users, Wrench, Upload, Waves, X } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { Button } from '../components/ui/button'
 import type { Session } from './directory-contract'
 import { WorkspaceContextBar } from './WorkspaceContextBar'
 import { WorkspaceRoleNavigation } from './WorkspaceRoleNavigation'
+import type { RoleLensProjection } from './WorkspaceRoleNavigation'
 import { WorkspaceSearch } from './WorkspaceSearch'
 import { useEnterpriseNavigation } from './enterprise-navigation'
 import { enterpriseFocusTargets } from './enterprise-focus'
+import { EnterpriseSidebarNav } from './EnterpriseSidebarNav'
 import './enterprise.css'
 
 const labels: Record<string, { tr: string; en: string; icon: LucideIcon; group: string }> = {
+  'operational-downtime': { tr: 'Operasyonel duruşlar', en: 'Operational downtime', icon: Gauge, group: 'operations' },
+  'work-order-center': { tr: 'İş emirleri', en: 'Work orders', icon: ClipboardList, group: 'operations' },
+  defects: { tr: 'Arızalar ve önlemler', en: 'Defects and safeguards', icon: Wrench, group: 'operations' },
+  'fuel-bunker-log': { tr: 'Yakıt, ikmal ve ROB', en: 'Fuel, bunker and ROB', icon: Gauge, group: 'operations' },
+  'port-activity-sof': { tr: 'Liman faaliyeti ve SOF', en: 'Port activity and SOF', icon: Anchor, group: 'operations' },
+  'certificate-command-center': { tr: 'Sertifika merkezi', en: 'Certificate center', icon: FileCheck2, group: 'assurance' },
+  'renewal-workflow': { tr: 'Sertifika yenileme', en: 'Certificate renewal', icon: ClipboardList, group: 'assurance' },
+  'noon-report': { tr: 'Öğle raporu', en: 'Noon report', icon: ClipboardList, group: 'operations' },
+  'deck-daily-log': { tr: 'Güverte günlük kaydı', en: 'Deck daily log', icon: Ship, group: 'operations' },
+  'engine-daily-log': { tr: 'Makine günlük kaydı', en: 'Engine daily log', icon: Wrench, group: 'operations' },
   today: { tr: 'Bugün', en: 'Today', icon: LayoutDashboard, group: 'operations' },
   fleet: { tr: 'Filo', en: 'Fleet', icon: Ship, group: 'operations' },
   'tug-command': { tr: 'Römorkör merkezi', en: 'Tug command', icon: Anchor, group: 'operations' },
@@ -20,7 +32,13 @@ const labels: Record<string, { tr: string; en: string; icon: LucideIcon; group: 
   sources: { tr: 'Kaynaklar', en: 'Sources', icon: FolderCheck, group: 'assurance' },
   requirements: { tr: 'Gereksinimler', en: 'Requirements', icon: ShieldCheck, group: 'assurance' },
   audit: { tr: 'İşlem geçmişi', en: 'Action history', icon: Gauge, group: 'assurance' },
-  companies: { tr: 'Şirketler', en: 'Companies', icon: Building2, group: 'workspace' }
+  companies: { tr: 'Şirketler', en: 'Companies', icon: Building2, group: 'workspace' },
+  'system-health': { tr: 'Sistem sağlığı', en: 'System health', icon: Gauge, group: 'workspace' },
+  'notification-escalation': { tr: 'Bildirimler', en: 'Notifications', icon: ClipboardList, group: 'workspace' },
+  crew: { tr: 'Mürettebat', en: 'Crew', icon: Users, group: 'operations' },
+  equipment: { tr: 'Ekipman', en: 'Equipment', icon: Wrench, group: 'operations' },
+  maintenance: { tr: 'Bakım planları', en: 'Maintenance plans', icon: ClipboardList, group: 'operations' },
+  import: { tr: 'Kontrollü içe aktarma', en: 'Controlled import', icon: Upload, group: 'assurance' }
 }
 type Props = { session: Session | null; vessel?: string | null; language: 'tr' | 'en'; onLanguageChange: (value: 'tr' | 'en') => void;
   onNavigate: (href: string, committed?: () => void) => void; title: string; mainId: string; drawer?: boolean; onDrawerChange?: (open: boolean) => void; parentManagesFocus?: boolean }
@@ -30,11 +48,30 @@ export function EnterpriseChrome({ session, vessel = null, language, onLanguageC
   const en = language === 'en'; const navigation = useEnterpriseNavigation(session)
   const [localDrawer, setLocalDrawer] = useState(false)
   const [searchOwner, setSearchOwner] = useState<{ owner: Session } | null>(null)
+  const [roleLens, setRoleLens] = useState<RoleLensProjection | null>(null)
+  const projectLens = useCallback((value: RoleLensProjection | null) => setRoleLens(value), [])
+  const currentLens = roleLens?.owner === session && roleLens.vessel === vessel && roleLens.epoch === navigation.epoch ? roleLens : null
+  // A service-observation utility remains separately granted by the server;
+  // selecting a role lens never grants it or hides it from an assigned operator.
+  const menuItems = currentLens ? [...currentLens.items, ...navigation.destinations.filter(item => ['system-health', 'notification-escalation'].includes(item.key) && !currentLens.items.some(lens => lens.key === item.key))] : navigation.destinations
   const menuButton = useRef<HTMLButtonElement>(null)
   const drawer = controlledDrawer ?? localDrawer
   const setDrawer = (open: boolean) => { setLocalDrawer(open); onDrawerChange?.(open) }
   const searchOpen = searchOwner !== null && searchOwner.owner === session && !!session?.authenticated && session.canRead
   const move = (href: string, committed?: () => void) => { setDrawer(false); onNavigate(href, () => { setSearchOwner(null); committed?.() }) }
+  useEffect(() => {
+    if (!drawer) return
+    const previous = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = previous }
+  }, [drawer])
+  useEffect(() => {
+    if (typeof window.matchMedia !== 'function') return
+    const desktop = window.matchMedia('(min-width: 901px)')
+    const closeOnDesktop = () => { if (desktop.matches) { setLocalDrawer(false); onDrawerChange?.(false) } }
+    desktop.addEventListener('change', closeOnDesktop)
+    return () => desktop.removeEventListener('change', closeOnDesktop)
+  }, [onDrawerChange])
   useEffect(() => {
     if (!drawer || parentManagesFocus) return
     const trigger = menuButton.current
@@ -62,8 +99,8 @@ export function EnterpriseChrome({ session, vessel = null, language, onLanguageC
     window.addEventListener('keydown', key); return () => window.removeEventListener('keydown', key)
   }, [navigation.canSearch, navigation.epoch, session, onDrawerChange])
   const path = window.location.pathname
-  const currentKey = path === '/app' || path === '/app/' ? (session?.canReadCompanies ? 'companies' : 'fleet') : path.startsWith('/app/tug-job-detail') ? 'tug-job-board' : /^\/app\/(crew-roster|equipment-hierarchy|maintenance-plan|excel-migration)\//.test(path) ? 'fleet' : navigation.destinations
-    .find(item => path === item.href || path.startsWith(item.href + '/'))?.key
+  const currentKey = path === '/app' || path === '/app/' ? (session?.canReadCompanies ? 'companies' : 'fleet') : path.startsWith('/app/tug-job-detail') ? 'tug-job-board' : menuItems
+    .find(item => { const target = item.href.split('?')[0]; return path === target || path.startsWith(target + '/') })?.key
   return <>
     <a className="skip-link" href={`#${mainId}`}>{en ? 'Skip to main content' : 'Ana içeriğe geç'}</a>
     <header className="product-header enterprise-topbar" inert={drawer}>
@@ -71,24 +108,22 @@ export function EnterpriseChrome({ session, vessel = null, language, onLanguageC
       <div className="enterprise-breadcrumb">{vessel && <Button variant="ghost" size="icon-sm" asChild><a href={`/app/fleet/${vessel}`} aria-label={en ? 'Back to vessel' : 'Araca dön'} onClick={event => { event.preventDefault(); move(`/app/fleet/${vessel}`) }}><ArrowLeft aria-hidden="true" /></a></Button>}<span>POSEIDON</span><ChevronRight aria-hidden="true" /><strong>{title}</strong></div>
       <div className="enterprise-topbar-actions">
         {navigation.canSearch && <Button variant="outline" className="enterprise-search-trigger" aria-label={en ? 'Search workspace' : 'Çalışma alanında ara'} onClick={() => { if (session) setSearchOwner({ owner: session }) }}><Search /><span>{en ? 'Search workspace' : 'Çalışma alanında ara'}</span><kbd>⌘ / Ctrl K</kbd></Button>}
-        <div className="languages" role="group" aria-label={en ? 'Language' : 'Dil'}><button aria-pressed={!en} onClick={() => onLanguageChange('tr')}>TR</button><button aria-pressed={en} onClick={() => onLanguageChange('en')}>EN</button></div>
+        <div className="languages" role="group" aria-label={en ? 'Language' : 'Dil'}><Button variant="ghost" size="sm" aria-pressed={!en} onClick={() => onLanguageChange('tr')}>TR</Button><Button variant="ghost" size="sm" aria-pressed={en} onClick={() => onLanguageChange('en')}>EN</Button></div>
       </div>
-      <WorkspaceContextBar session={session} vessel={vessel} language={language} />
+      <WorkspaceContextBar session={session} vessel={vessel} language={language} onNavigate={move} />
     </header>
     {drawer && <button type="button" className="enterprise-nav-overlay" aria-label={en ? 'Close menu' : 'Menüyü kapat'} onClick={() => setDrawer(false)} />}
     <nav id="workspace-navigation" className={`product-nav enterprise-sidebar ${drawer ? 'is-open' : ''}`} aria-label="POSEIDON" role={drawer ? 'dialog' : undefined} aria-modal={drawer ? true : undefined}>
       <div className="enterprise-brand-row"><a className="enterprise-brand" href="/app" aria-label="POSEIDON" onClick={event => { event.preventDefault(); move('/app') }}><span className="enterprise-brand-mark"><Waves aria-hidden="true" /></span><span>POSEIDON<small>MARITIME OPERATIONS</small></span></a>{drawer && <Button variant="ghost" size="icon" aria-label={en ? 'Close' : 'Kapat'} onClick={() => setDrawer(false)}><X /></Button>}</div>
       <div className="enterprise-nav-scroll">
-        {(['operations', 'assurance', 'workspace'] as const).map(group => {
-          const items = navigation.destinations.filter(item => labels[item.key]?.group === group)
-          return items.length > 0 && <div className="enterprise-nav-group" key={group}><p>{group === 'operations' ? (en ? 'OPERATIONS' : 'OPERASYON') : group === 'assurance' ? (en ? 'ASSURANCE' : 'GÜVENCE') : (en ? 'WORKSPACE' : 'ÇALIŞMA ALANI')}</p>
-            {items.map(item => { const label = labels[item.key]; const Icon = label.icon
-              return <Button variant="ghost" className="enterprise-nav-item" key={item.key} aria-current={item.key === currentKey ? 'page' : undefined} onClick={() => move(item.href)}><Icon aria-hidden="true" /><span>{en ? label.en : label.tr}</span>{item.key === currentKey && <span className="enterprise-nav-indicator" />}</Button>
-            })}</div>
-        })}
+        <details className="enterprise-role-settings"><summary>{en ? 'Work view' : 'Çalışma görünümü'}</summary><WorkspaceRoleNavigation session={session} vessel={vessel} language={language} onNavigate={move} embedded primary scopeEpoch={navigation.epoch} onProjection={projectLens} /></details>
+        <EnterpriseSidebarNav key={`${session?.tenantId}:${session?.actorId}:${vessel}`} items={menuItems.flatMap(item => {
+          const label = labels[item.key]
+          return label ? [{ ...item, label: en ? label.en : label.tr, icon: label.icon }] : []
+        })} currentKey={currentKey} language={language} onNavigate={href => move(href)} />
         {navigation.loading && <div className="enterprise-nav-loading" role="status">{en ? 'Loading navigation…' : 'Menü yükleniyor…'}</div>}
         {navigation.failed && <div className="enterprise-nav-loading" role="status"><p>{en ? 'Navigation unavailable' : 'Menü kullanılamıyor'}</p><Button variant="ghost" onClick={navigation.retry}>{en ? 'Retry navigation' : 'Menüyü tekrar yükle'}</Button></div>}
-        <details className="enterprise-role-settings"><summary>{en ? 'Work view' : 'Çalışma görünümü'}</summary><WorkspaceRoleNavigation session={session} vessel={vessel} language={language} onNavigate={move} embedded /></details>
+        {currentLens && menuItems.length === 0 && <p className="enterprise-nav-loading" role="status">{en ? 'No available work in this lens and context.' : 'Bu mercek ve bağlamda kullanılabilir iş yok.'}</p>}
       </div>
       <div className="enterprise-sidebar-footer"><span className="enterprise-workspace-avatar">{session?.tenantName?.slice(0, 2).toLocaleUpperCase(language) ?? 'PO'}</span><div><strong>{session?.tenantName ?? (en ? 'Maritime workspace' : 'Denizcilik çalışma alanı')}</strong><span>{session?.authenticated ? (en ? 'Authorized workspace' : 'Yetkili çalışma alanı') : (en ? 'Secure workspace sign-in' : 'Güvenli çalışma alanı girişi')}</span></div><ArrowUpRight aria-hidden="true" /></div>
     </nav>

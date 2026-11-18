@@ -6,6 +6,12 @@ it('only exposes implemented destinations returned by the current server capabil
   expect(decodeEnterpriseNavigation(source)).toEqual({ destinations: source.destinations, canSearch: false })
   expect(decodeEnterpriseNavigation({ ...source, destinations: [] }).destinations).toEqual([])
 })
+it('DEV-037 admits the exact server-provisioned health destination without inventing it in ordinary navigation', () => {
+  expect(decodeEnterpriseNavigation(source).destinations.some(item => item.key === 'system-health')).toBe(false)
+  const health = { key: 'system-health', href: '/app/system-health' }
+  expect(decodeEnterpriseNavigation({ ...source, destinations: [...source.destinations, health] }).destinations).toContainEqual(health)
+  expect(() => decodeEnterpriseNavigation({ ...source, destinations: [{ ...health, href: '/app/system-health?tenant=foreign' }] })).toThrow()
+})
 it.each([
   { ...source, destinations: [{ key: 'fleet', href: 'https://outside.invalid/app/fleet' }] },
   { ...source, destinations: [{ key: 'fleet', href: '/app/fleet?tenant=other' }] },
@@ -15,4 +21,11 @@ it.each([
   { ...source, canSearch: 'true' }, { ...source, canWriteRegulatory: null }
 ])('rejects forged, duplicate, foreign or untyped capability destinations %#', value => {
   expect(() => decodeEnterpriseNavigation(value)).toThrow()
+})
+
+it('admits only exact server granted daily workspace destinations', () => {
+  const value = { ...source, destinations: [{ key: 'noon-report', href: '/app/noon-report' }, { key: 'engine-daily-log', href: '/app/engine-daily-log' }] }
+  expect(decodeEnterpriseNavigation(value).destinations).toEqual(value.destinations)
+  expect(decodeEnterpriseNavigation(source).destinations.some(item => item.key === 'noon-report')).toBe(false)
+  expect(() => decodeEnterpriseNavigation({ ...value, destinations: [{ key: 'noon-report', href: '/app/noon-report?role=admin' }] })).toThrow()
 })
