@@ -61,6 +61,7 @@ public sealed class DirectoryAuthorizationResultHandler : IAuthorizationMiddlewa
             "CrewPositions" => "CrewPositions",
             "GetToday" => "TodayRead",
             "GetTodayWhy" => "TodayWhyRead",
+            "GetCriticalStates" => "CriticalStateRead",
             _ => null
         };
         if (!result.Succeeded && todayAction != null)

@@ -141,6 +141,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapFoundation();
             endpoints.MapRegulatoryDrafts();
             endpoints.MapVesselProfileFields();
+            endpoints.MapCriticalStates();
             endpoints.MapRegulatoryRegister();
             endpoints.MapLifecycleApplicability();
             endpoints.MapRegulatoryQualifications();

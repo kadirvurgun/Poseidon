@@ -907,6 +907,60 @@
         }
       }
     },
+    "/api/v1/vessels/{id}/critical-states": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "description": "Critical-state explanations for one vessel: owning source and revision, reason codes, server-computed freshness and blockers with resolution types. Never a ready, verified or compliant outcome. Readers without the owning detail authority receive STATE_ONLY entries without source details; components without a state capability are omitted.",
+        "operationId": "GetCriticalStates",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "key",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CriticalStatesDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
     "/api/v1/vessel-compliance-passport": {
       "get": {
         "tags": [
@@ -14127,6 +14181,196 @@
           "authority": {
             "type": "string",
             "default": "SYSTEM_DERIVED;BA_DEFINITION_PENDING"
+          }
+        }
+      },
+      "CriticalStateBlocker": {
+        "required": [
+          "fieldPath",
+          "reasonCode",
+          "resolutionType"
+        ],
+        "type": "object",
+        "properties": {
+          "fieldPath": {
+            "type": "string"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "resolutionType": {
+            "type": "string"
+          }
+        }
+      },
+      "CriticalStateExplanation": {
+        "required": [
+          "key",
+          "subjectId",
+          "state",
+          "disclosure",
+          "asOf"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "subjectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "disclosure": {
+            "type": "string"
+          },
+          "asOf": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "verification": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "source": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/CriticalStateSource"
+              }
+            ]
+          },
+          "reasonCodes": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "freshness": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/CriticalStateFreshness"
+              }
+            ]
+          },
+          "blockers": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/CriticalStateBlocker"
+            }
+          },
+          "href": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "CriticalStateFreshness": {
+        "required": [
+          "state",
+          "reasonCode",
+          "observedAt",
+          "checkedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "observedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "checkedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "CriticalStatesDto": {
+        "required": [
+          "vesselId",
+          "readAt",
+          "scope",
+          "states"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "readAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "scope": {
+            "type": "string"
+          },
+          "states": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CriticalStateExplanation"
+            }
+          }
+        }
+      },
+      "CriticalStateSource": {
+        "required": [
+          "kind",
+          "id",
+          "revision",
+          "recordedAt",
+          "provenance"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "recordedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "provenance": {
+            "type": "string"
           }
         }
       },

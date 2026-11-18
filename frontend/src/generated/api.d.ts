@@ -228,6 +228,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/vessels/{id}/critical-states": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Critical-state explanations for one vessel: owning source and revision, reason codes, server-computed freshness and blockers with resolution types. Never a ready, verified or compliant outcome. Readers without the owning detail authority receive STATE_ONLY entries without source details; components without a state capability are omitted. */
+        get: operations["GetCriticalStates"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/vessel-compliance-passport": {
         parameters: {
             query?: never;
@@ -5867,6 +5884,52 @@ export interface components {
             /** @default SYSTEM_DERIVED;BA_DEFINITION_PENDING */
             authority: string;
         };
+        CriticalStateBlocker: {
+            fieldPath: string;
+            reasonCode: string;
+            resolutionType: string;
+        };
+        CriticalStateExplanation: {
+            key: string;
+            /** Format: uuid */
+            subjectId: string;
+            state: string;
+            disclosure: string;
+            /** Format: date-time */
+            asOf: string;
+            verification?: null | string;
+            source?: null | components["schemas"]["CriticalStateSource"];
+            reasonCodes?: null | string[];
+            freshness?: null | components["schemas"]["CriticalStateFreshness"];
+            blockers?: null | components["schemas"]["CriticalStateBlocker"][];
+            href?: null | string;
+        };
+        CriticalStateFreshness: {
+            state: string;
+            reasonCode: string;
+            /** Format: date-time */
+            observedAt: null | string;
+            /** Format: date-time */
+            checkedAt: string;
+        };
+        CriticalStatesDto: {
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: date-time */
+            readAt: string;
+            scope: string;
+            states: components["schemas"]["CriticalStateExplanation"][];
+        };
+        CriticalStateSource: {
+            kind: string;
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: null | number;
+            /** Format: date-time */
+            recordedAt: null | string;
+            provenance: string;
+        };
         DailyCapabilitiesDto: {
             /** Format: uuid */
             vesselId: string;
@@ -9424,6 +9487,65 @@ export interface operations {
             };
             /** @description Forbidden */
             403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    GetCriticalStates: {
+        parameters: {
+            query?: {
+                key?: string;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CriticalStatesDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
