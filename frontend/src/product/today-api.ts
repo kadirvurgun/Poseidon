@@ -199,6 +199,23 @@ function decodeMaintenanceWhy(x: unknown, vessel: string, key: string): Why {
     (c.reason !== m.observationState || c.nextDueDate !== null || c.nextDueMeter !== null)) fail()
   return x as Why
 }
-export const today = async (id: string, signal: AbortSignal, offset = todayOffset) => decodeToday(await request<unknown>(`poseidon-today?vesselId=${encodeURIComponent(id)}&offset=${offset}&limit=${pageLimit}`, signal), id, offset)
-export const why = async (id: string, signal: AbortSignal, cardKey = 'regulatory-draft') => decodeWhy(await request<unknown>(`why-engine?vesselId=${encodeURIComponent(id)}&cardKey=${encodeURIComponent(cardKey)}`, signal), id, cardKey)
-export const todayVessels = async (offset: number, signal: AbortSignal) => decodeTodayVessels(await request<unknown>(`vessels?offset=${offset}&limit=${pageLimit}`, signal), offset)
+// A client-side contract-validation failure is not an HTTP 502 from the server or a proxy. Every
+// decoder failure on a received body is re-thrown as this type so the UI can tell them apart.
+export class TodayContractError extends ApiError {
+  constructor() { super(502, 'invalid_today_contract') }
+}
+const decoded = <T>(decode: () => T): T => {
+  try { return decode() } catch { throw new TodayContractError() }
+}
+export const today = async (id: string, signal: AbortSignal, offset = todayOffset) => {
+  const body = await request<unknown>(`poseidon-today?vesselId=${encodeURIComponent(id)}&offset=${offset}&limit=${pageLimit}`, signal)
+  return decoded(() => decodeToday(body, id, offset))
+}
+export const why = async (id: string, signal: AbortSignal, cardKey = 'regulatory-draft') => {
+  const body = await request<unknown>(`why-engine?vesselId=${encodeURIComponent(id)}&cardKey=${encodeURIComponent(cardKey)}`, signal)
+  return decoded(() => decodeWhy(body, id, cardKey))
+}
+export const todayVessels = async (offset: number, signal: AbortSignal) => {
+  const body = await request<unknown>(`vessels?offset=${offset}&limit=${pageLimit}`, signal)
+  return decoded(() => decodeTodayVessels(body, offset))
+}

@@ -298,6 +298,7 @@
       "viewPartial": "Visão parcial: algumas fontes proprietárias estão indisponíveis neste contexto. A ausência de itens não significa que está tudo certo.",
       "viewUnavailable": "Nenhuma fonte proprietária pôde ser lida neste contexto. Isso não significa que está tudo certo.",
       "partialCounters": "Fontes parciais: zero não significa que está tudo certo",
+      "emptyCounters": "Resultado vazio autorizado: nenhuma fonte listada retornou itens. Não é uma liberação de segurança",
       "rateLimited": "Solicitações demais. Aguarde e tente novamente.",
       "contract": "A resposta do servidor falhou na validação; nada dela é exibido."
     },

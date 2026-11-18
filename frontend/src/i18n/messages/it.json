@@ -298,6 +298,7 @@
       "viewPartial": "Vista parziale: alcune fonti proprietarie non sono disponibili in questo contesto. L’assenza di elementi non significa che sia tutto a posto.",
       "viewUnavailable": "Nessuna fonte proprietaria è stata letta in questo contesto. Non significa che sia tutto a posto.",
       "partialCounters": "Fonti parziali: zero non significa che sia tutto a posto",
+      "emptyCounters": "Risultato vuoto autorizzato: nessuna fonte elencata ha restituito elementi. Non è un nulla osta di sicurezza",
       "rateLimited": "Troppe richieste. Attendi e riprova.",
       "contract": "La risposta del server non ha superato la convalida; non viene mostrato nulla."
     },

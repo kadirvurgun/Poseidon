@@ -298,6 +298,7 @@
       "viewPartial": "Kısmi görünüm: bazı sahip kaynaklar bu bağlamda kullanılamıyor. Görünmeyen öğe, her şeyin uygun olduğu anlamına gelmez.",
       "viewUnavailable": "Bu bağlamda hiçbir sahip kaynak okunamadı. Bu, her şeyin uygun olduğu anlamına gelmez.",
       "partialCounters": "Kısmi kaynaklar: sıfır, her şeyin uygun olduğu anlamına gelmez",
+      "emptyCounters": "Yetkili boş sonuç: listelenen her kaynak öğe döndürmedi. Bu bir emniyet onayı değildir",
       "rateLimited": "Çok fazla istek. Bekleyip yeniden deneyin.",
       "contract": "Sunucu yanıtı doğrulamadan geçemedi; yanıttan hiçbir şey gösterilmiyor."
     },

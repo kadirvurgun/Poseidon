@@ -298,6 +298,7 @@
       "viewPartial": "Vista parcial: algunas fuentes propietarias no están disponibles en este contexto. La ausencia de elementos no significa que todo esté en orden.",
       "viewUnavailable": "No se pudo leer ninguna fuente propietaria en este contexto. Esto no significa que todo esté en orden.",
       "partialCounters": "Fuentes parciales: cero no significa que todo esté en orden",
+      "emptyCounters": "Resultado vacío autorizado: ninguna fuente listada devolvió elementos. No es una autorización de seguridad",
       "rateLimited": "Demasiadas solicitudes. Espere y vuelva a intentarlo.",
       "contract": "La respuesta del servidor no superó la validación; no se muestra nada de ella."
     },

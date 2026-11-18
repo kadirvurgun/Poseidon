@@ -298,6 +298,7 @@
       "viewPartial": "Teilansicht: Einige zuständige Quellen sind in diesem Kontext nicht verfügbar. Fehlende Einträge bedeuten nicht, dass alles in Ordnung ist.",
       "viewUnavailable": "In diesem Kontext konnte keine zuständige Quelle gelesen werden. Das bedeutet nicht, dass alles in Ordnung ist.",
       "partialCounters": "Teilweise Quellen: Null bedeutet nicht, dass alles in Ordnung ist",
+      "emptyCounters": "Autorisiertes leeres Ergebnis: Keine aufgeführte Quelle lieferte Einträge. Keine Sicherheitsfreigabe",
       "rateLimited": "Zu viele Anfragen. Warten Sie und versuchen Sie es erneut.",
       "contract": "Die Serverantwort hat die Prüfung nicht bestanden; nichts davon wird angezeigt."
     },

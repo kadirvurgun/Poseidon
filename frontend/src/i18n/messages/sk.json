@@ -298,6 +298,7 @@
       "viewPartial": "Čiastočné zobrazenie: niektoré vlastnícke zdroje nie sú v tomto kontexte dostupné. Chýbajúce položky neznamenajú, že je všetko v poriadku.",
       "viewUnavailable": "V tomto kontexte nebolo možné načítať žiadny vlastnícky zdroj. Neznamená to, že je všetko v poriadku.",
       "partialCounters": "Čiastočné zdroje: nula neznamená, že je všetko v poriadku",
+      "emptyCounters": "Autorizovaný prázdny výsledok: žiadny uvedený zdroj nevrátil položky. Nejde o bezpečnostné schválenie",
       "rateLimited": "Príliš veľa požiadaviek. Počkajte a skúste to znova.",
       "contract": "Odpoveď servera neprešla overením; nič z nej sa nezobrazuje."
     },

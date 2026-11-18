@@ -2,7 +2,8 @@ import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, expect, it, vi } from 'vitest'
 import { TodayWorkspace } from './TodayWorkspace'
-import { decodeToday } from './today-api'
+import { TodayOverview } from './TodayOverview'
+import { decodeToday, today, TodayContractError, type Today } from './today-api'
 
 // DEV-023 / T-S2-004 (61.03 paragraph 401-428, §33). Mocked transport: UI behavior only.
 const vesselId = '40000000-0000-0000-0000-000000000001'
@@ -59,7 +60,9 @@ it('DEV023-AC-05 a partial composition is never all clear and zero counters say 
   const notice = await screen.findByText(/Kısmi görünüm/)
   expect(notice).toHaveAttribute('data-view-state', 'Partial')
   expect(notice.querySelector('svg')).not.toBeNull() // text + icon, not color only
-  expect(screen.getAllByText('Kısmi kaynaklar: sıfır, her şeyin uygun olduğu anlamına gelmez')).toHaveLength(2)
+  // Total, attention and review counters all carry the partial caveat (not only the priority counters).
+  expect(screen.getAllByText('Kısmi kaynaklar: sıfır, her şeyin uygun olduğu anlamına gelmez')).toHaveLength(3)
+  expect(screen.queryByText(/Yetkili boş sonuç/)).not.toBeInTheDocument()
 })
 
 it('DEV023-AC-05 shows an explicit unavailable state when no owning source is readable', async () => {
@@ -86,13 +89,17 @@ it('DEV023-AC-06 rejects a server-promoted green state and a card without an exa
 
 it.each([
   [429, 'Too many requests. Wait, then retry.'],
+  [502, 'Source unavailable. Retry when connected.'],
   [503, 'Source unavailable. Retry when connected.'],
+  [504, 'Source unavailable. Retry when connected.'],
   [500, 'Source unavailable. Retry when connected.']
 ])('DEV023-AC-07 maps HTTP %s deterministically and retries without stale data', async (status, message) => {
   const fetch = vi.fn().mockResolvedValueOnce(response({}, status)).mockResolvedValue(response(page)); vi.stubGlobal('fetch', fetch)
   const user = userEvent.setup(); render(<TodayWorkspace id={vesselId} language="en" offline={false} onNavigate={vi.fn()} />)
   const alert = await screen.findByRole('alert')
   expect(alert).toHaveTextContent(message); expect(alert).toHaveFocus(); expect(alert).toHaveAttribute('data-error-status', String(status))
+  expect(alert).toHaveAttribute('data-error-kind', 'http') // An HTTP 502 response is never reported as a validation failure.
+  expect(alert).not.toHaveTextContent('failed validation')
   expect(screen.queryByText(/FICTIONAL Today tug/)).not.toBeInTheDocument()
   await user.click(screen.getByRole('button', { name: 'Retry' }))
   expect(await screen.findByText(/Partial view/)).toBeVisible()
@@ -101,7 +108,9 @@ it.each([
 it('DEV023-AC-07 an invalid contract and a network failure show distinct fixed messages', async () => {
   vi.stubGlobal('fetch', vi.fn(async () => response({ ...page, viewState: 'Ready' })))
   const view = render(<TodayWorkspace id={vesselId} language="en" offline={false} onNavigate={vi.fn()} />)
-  expect(await screen.findByRole('alert')).toHaveTextContent('The server response failed validation; nothing from it is shown.')
+  const invalid = await screen.findByRole('alert')
+  expect(invalid).toHaveTextContent('The server response failed validation; nothing from it is shown.')
+  expect(invalid).toHaveAttribute('data-error-kind', 'contract')
   expect(screen.queryByText(/Planned maintenance/)).not.toBeInTheDocument()
   view.unmount()
   vi.stubGlobal('fetch', vi.fn(async () => { throw new TypeError('synthetic network failure') }))
@@ -125,6 +134,40 @@ it('DEV023-AC-08 loading and offline states are exposed deterministically withou
   view.unmount()
   const fetch = vi.fn(); vi.stubGlobal('fetch', fetch)
   render(<TodayWorkspace id={vesselId} language="en" offline onNavigate={vi.fn()} />)
-  expect(screen.getByRole('region', { name: 'Today' })).toHaveAttribute('data-today-state', 'offline')
+  const offlineRegion = screen.getByRole('region', { name: 'Today' })
+  expect(offlineRegion).toHaveAttribute('data-today-state', 'offline')
+  expect(offlineRegion).not.toHaveAttribute('aria-busy', 'true') // Offline start is not a pending read.
+  expect(screen.getByRole('status')).toHaveTextContent('Offline. No server snapshot is available. Reconnect to load sources.')
   expect(fetch).not.toHaveBeenCalled()
+})
+
+it('DEV023-AC-05 a synthetic authorized Empty composition gets its own counter note, not the partial note (61.03 paragraph:1061)', () => {
+  // Synthetic: the current decoder never yields Empty (placeholder owners stay Unavailable), so the
+  // counters are exercised directly with an Empty composition.
+  const empty = { ...page, coverage: coverage([0, 1, 2, 3, 4, 5, 6]), cards: { ...page.cards, items: [] }, viewState: 'Empty' } as unknown as Today
+  render(<TodayOverview data={empty} language="en" />)
+  expect(screen.getAllByText('Authorized empty result: every listed source returned no items. Not a safety clearance')).toHaveLength(3)
+  expect(screen.queryByText('Partial sources: zero does not mean all clear')).not.toBeInTheDocument()
+})
+
+it('DEV023-AC-05 a Partial composition puts the partial note on the total counter too', () => {
+  render(<TodayOverview data={decodeToday({ ...page, cards: { ...page.cards, items: [] } }, vesselId)} language="en" />)
+  expect(screen.getAllByText('Partial sources: zero does not mean all clear')).toHaveLength(3)
+  expect(screen.queryByText(/Authorized empty result/)).not.toBeInTheDocument()
+})
+
+it('DEV023-AC-07 an HTTP 502 whose body names a contract code is still a source failure, not a validation failure', async () => {
+  vi.stubGlobal('fetch', vi.fn(async () => response({ code: 'invalid_today_contract' }, 502)))
+  render(<TodayWorkspace id={vesselId} language="en" offline={false} onNavigate={vi.fn()} />)
+  const alert = await screen.findByRole('alert')
+  expect(alert).toHaveTextContent('Source unavailable. Retry when connected.')
+  expect(alert).toHaveAttribute('data-error-kind', 'http'); expect(alert).toHaveAttribute('data-error-status', '502')
+})
+
+it('DEV023-AC-07 the client decoder throws a distinct contract error type, an HTTP 502 response does not', async () => {
+  vi.stubGlobal('fetch', vi.fn(async () => response({ ...page, viewState: 'Ready' })))
+  await expect(today(vesselId, new AbortController().signal)).rejects.toBeInstanceOf(TodayContractError)
+  vi.stubGlobal('fetch', vi.fn(async () => response({}, 502)))
+  const failure = await today(vesselId, new AbortController().signal).catch(e => e)
+  expect(failure).toMatchObject({ status: 502 }); expect(failure).not.toBeInstanceOf(TodayContractError)
 })

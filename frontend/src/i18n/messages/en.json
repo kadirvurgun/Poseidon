@@ -298,6 +298,7 @@
       "viewPartial": "Partial view: some owning sources are unavailable in this context. Absent items do not mean all clear.",
       "viewUnavailable": "No owning source could be read in this context. This is not all clear.",
       "partialCounters": "Partial sources: zero does not mean all clear",
+      "emptyCounters": "Authorized empty result: every listed source returned no items. Not a safety clearance",
       "rateLimited": "Too many requests. Wait, then retry.",
       "contract": "The server response failed validation; nothing from it is shown."
     },

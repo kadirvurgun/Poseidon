@@ -84,7 +84,7 @@ public static class TodayEndpoints
                 await audit.WriteAsync(http, action, "NotFound");
                 return Results.NotFound();
             }
-            var card = TugCard(id, current, actor);
+            var card = TugCard(http, id, current, actor);
             await audit.WriteAsync(http, action, "Success", resourceId: id);
             return Results.Ok(new TodayWhyDto(id, card.Key, "TW-TUG-01", card.Reason, null,
                 readAt, current.SavedAt, null, "Unverified", current.Provenance,
@@ -141,7 +141,7 @@ public static class TodayEndpoints
             var advice = TodayMaintenancePolicy.Observe(current.Row.Due);
             if (advice != null) cards.Add(MaintenanceCard(id, current, advice, actor));
         }
-        cards.AddRange((tug ?? []).Select(current => TugCard(id, current, actor)));
+        cards.AddRange((tug ?? []).Select(current => TugCard(http, id, current, actor)));
         cards = cards.OrderBy(c => c.Priority == "Attention" ? 0 : c.Priority == "Review" ? 1 : 2)
             .ThenBy(c => c.Key, StringComparer.Ordinal).ToList();
         TodayCoverageDto[] coverage = [new("RegulatoryDraft", !profileReadable ? "Unavailable" : draft == null ? "Missing" : "Available"), new("OperationalTasks", "Unavailable"),
@@ -163,8 +163,10 @@ public static class TodayEndpoints
             $"/app/maintenance-plan/{vessel:D}?id={source.Row.Id:D}",
             new("PMS", "MaintenancePlan", source.Row.Id, source.Row.Revision, source.Row.SavedAt));
 
-    private static TodayCardDto TugCard(Guid vessel, TodayTugProjection source, TrustedActor actor) =>
+    // SourceRef = the TugJob's own revision AND its own save time (one record). Review requires the
+    // same gate as the plan write endpoints, including a current planning-policy scope.
+    private static TodayCardDto TugCard(HttpContext http, Guid vessel, TodayTugProjection source, TrustedActor actor) =>
         new($"tug-job:{source.Detail.JobId:D}", source.Advice.Priority, "TugJob", source.Advice.Reason, source.Detail.CurrentOwnerRoleId?.ToString("D"),
-            TugEndpoints.PlanWrite(actor, vessel) ? "ReviewTugJob" : "ViewTugJob", $"/app/tug-job-detail/{source.Detail.JobId:D}?vessel={vessel:D}",
+            TugEndpoints.PlanWriteScoped(http, actor, vessel) ? "ReviewTugJob" : "ViewTugJob", $"/app/tug-job-detail/{source.Detail.JobId:D}?vessel={vessel:D}",
             new("TUG", "TugJob", source.Detail.JobId, source.Detail.RequestRevision, source.SavedAt));
 }

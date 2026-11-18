@@ -298,6 +298,7 @@
       "viewPartial": "Részleges nézet: egyes tulajdonos források ebben a környezetben nem érhetők el. A hiányzó tételek nem jelentik, hogy minden rendben van.",
       "viewUnavailable": "Ebben a környezetben egyetlen tulajdonos forrás sem olvasható. Ez nem jelenti, hogy minden rendben van.",
       "partialCounters": "Részleges források: a nulla nem jelenti, hogy minden rendben van",
+      "emptyCounters": "Engedélyezett üres eredmény: egyik felsorolt forrás sem adott vissza elemet. Ez nem biztonsági jóváhagyás",
       "rateLimited": "Túl sok kérés. Várjon, majd próbálja újra.",
       "contract": "A szerver válasza nem felelt meg az ellenőrzésen; semmi sem jelenik meg belőle."
     },

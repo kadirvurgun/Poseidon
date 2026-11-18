@@ -93,6 +93,38 @@ public sealed partial class DirectoryWorkspaceTests
 
     [Fact]
     [Trait("Requirement", "DEV-023")]
+    public async Task Today_tug_source_ref_with_a_draft_plan_names_the_job_save_time_not_the_plan_save_time()
+    {
+        using var host = PlanningHost(); using var client = Client(host); await Token(client);
+        var job = await PlanningJob(client);
+        var plan = await ChangePlan(client, job, null, new("Window", DateTimeOffset.UtcNow.AddHours(2), DateTimeOffset.UtcNow.AddHours(3)));
+        await using var db = Db();
+        var stored = await db.TugJobs.AsNoTracking().SingleAsync(j => j.Id == job.Id, Ct);
+        Assert.NotEqual(stored.SavedAt, plan.SavedAt); // The plan is a separate, later record.
+        var card = Assert.Single((await client.GetFromJsonAsync<TodayDto>(TugTodayPath, Ct))!.Cards.Items, c => c.Key == $"tug-job:{job.Id:D}");
+        var why = (await client.GetFromJsonAsync<TodayWhyDto>(TugWhyPath(job.Id), Ct))!;
+        Assert.Equal(new TodayCardSourceDto("TUG", "TugJob", job.Id, stored.Revision, stored.SavedAt), card.SourceRef);
+        Assert.Equal(card.SourceRef.SavedAt, why.SavedAt); // AC-02: card ≡ Why.
+        Assert.Equal(new TodayWhySourceDto("TugJob", job.Id, stored.Revision), why.Source);
+        Assert.Equal(plan.Revision, why.Tug!.PlanRevision); // Plan lineage stays visible in Why only.
+    }
+
+    [Fact]
+    [Trait("Requirement", "DEV-023")]
+    public async Task Today_tug_review_requires_a_current_planning_scope_like_the_plan_write_endpoints()
+    {
+        using var host = PlanningHost(); using var client = Client(host); await Token(client);
+        var job = await PlanningJob(client);
+        var key = $"tug-job:{job.Id:D}";
+        Assert.Equal("ReviewTugJob", Assert.Single((await client.GetFromJsonAsync<TodayDto>(TugTodayPath, Ct))!.Cards.Items, c => c.Key == key).NextAction);
+        // Permission retained, but no configured planning scope for this actor/vessel: the plan write would be denied.
+        host.Services.GetRequiredService<TugPlanningPolicy>().Scopes = [];
+        Assert.Equal("ViewTugJob", Assert.Single((await client.GetFromJsonAsync<TodayDto>(TugTodayPath, Ct))!.Cards.Items, c => c.Key == key).NextAction);
+        Assert.Equal("ViewTugJob", (await client.GetFromJsonAsync<TodayWhyDto>(TugWhyPath(job.Id), Ct))!.NextAction);
+    }
+
+    [Fact]
+    [Trait("Requirement", "DEV-023")]
     public async Task Today_absent_draft_source_ref_has_no_invented_revision_or_time()
     {
         await using var host = Host(); using var client = Client(host); await Token(client);
