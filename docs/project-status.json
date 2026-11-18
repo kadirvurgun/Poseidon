@@ -15325,5 +15325,55 @@
       "source_receipts": 122,
       "limitations": "732 zero-node/unsupported inputs; HTML skipped above5000 nodes; no full semantic document review"
     }
+  },
+  "s2_dev020_01": {
+    "task_id": "S2-DEV020-01",
+    "canonical": "DEV-020 / T-S2-001",
+    "date": "2026-11-18",
+    "status": "LOCALLY_VERIFIED_NOT_ACCEPTED",
+    "accepted": false,
+    "accepted_sp_added": 0,
+    "branch": "feature/s2-dev020-vessel-profile-20261118",
+    "base": "86cb7da",
+    "task": "docs/tasks/s2-dev020-01.md",
+    "report": "docs/phases/S2-DEV020-01.md",
+    "migration": "20261118170000_VesselProfileFieldSources",
+    "delivered": [
+      "Field value versions derived from immutable profile revisions",
+      "Append-only audited field source declarations pinned to value revision/hash",
+      "Server-computed freshness with explicit reasons; UNCONFIGURED policy keeps UNKNOWN",
+      "Owner LegalEntity legacy binding shown without registered-owner claim",
+      "GET fields/history and POST field-sources with scope/CSRF/idempotency/CAS",
+      "TR/EN profile panel with loading/empty/error/conflict/uncertain states",
+      "Optional synthetic fixture"
+    ],
+    "verification": {
+      "build": "PASS 0 warnings",
+      "pending_model_changes": "NONE",
+      "domain": "786/786",
+      "persistence_unit": "75/75",
+      "persistence_integration": "95/95",
+      "api_new_dev020": "8/8",
+      "api_profile_filter": "52/52",
+      "api_s1_scope": "6/6",
+      "api_serializable_guard": "2/2",
+      "api_diagnostics_openapi": "6/6",
+      "python_s1_audit_contract": "1/1",
+      "frontend_typecheck_lint_build": "PASS",
+      "vitest_new": "8/8",
+      "vitest_affected_13_files": "297/297",
+      "full_api_suite": "NOT_RUN",
+      "playwright": "NOT_RUN",
+      "independent_qa": "PENDING",
+      "required_ci": "PENDING"
+    },
+    "open": [
+      "54.01 freshness policy registry",
+      "54.02 exact fleet action evaluation",
+      "methodCode/evidence link/unit conversion/catalog codes/publication",
+      "freshness consumers (DEV-024)",
+      "audit history listing of new entity types"
+    ],
+    "publication": "Local commits only; no push/PR"
   }
 }
