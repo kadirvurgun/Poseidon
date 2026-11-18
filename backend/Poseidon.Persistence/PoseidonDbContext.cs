@@ -21,6 +21,7 @@ public sealed class PoseidonDbContext(
     public DbSet<AccountMembership> AccountMemberships => Set<AccountMembership>();
     public DbSet<AccountMembershipVesselGrant> AccountMembershipVesselGrants => Set<AccountMembershipVesselGrant>();
     public DbSet<MembershipDelegation> MembershipDelegations => Set<MembershipDelegation>();
+    public DbSet<DelegationVesselScope> DelegationVesselScopes => Set<DelegationVesselScope>();
     public DbSet<TenantAccessRecovery> TenantAccessRecoveries => Set<TenantAccessRecovery>();
     public DbSet<MembershipCommandReceipt> MembershipCommandReceipts => Set<MembershipCommandReceipt>();
     public DbSet<VesselCertificate> VesselCertificates => Set<VesselCertificate>();
@@ -143,6 +144,7 @@ public sealed class PoseidonDbContext(
         model.Entity<AccountMembership>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<AccountMembershipVesselGrant>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<MembershipDelegation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<DelegationVesselScope>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<TenantAccessRecovery>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<MembershipCommandReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         FleetCatalogDraftStorage.Configure(model);

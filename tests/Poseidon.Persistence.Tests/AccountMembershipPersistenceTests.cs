@@ -115,16 +115,78 @@ public sealed class AccountMembershipPersistenceTests(AccountMembershipPostgresF
         var now = DateTimeOffset.UtcNow;
         db.MembershipDelegations.Add(new MembershipDelegation { TenantId = db.TenantId, Id = Guid.NewGuid(), DelegatorMembershipId = membership.Id,
             DelegateMembershipId = membership2.Id, Permissions = "crew.read", ValidFrom = now, ValidUntil = now.AddDays(1), Status = "Active",
-            ApprovedBy = "synthetic-membership-admin", CreatedAt = now });
+            ApprovedBy = "synthetic-membership-admin", CreatedAt = now, ReasonCode = "PlannedAbsence" });
         await db.SaveChangesAsync(Ct);
         await Assert.ThrowsAnyAsync<Exception>(() => db.Database.ExecuteSqlInterpolatedAsync(
-            $"INSERT INTO identity.\"Delegations\" (\"TenantId\",\"Id\",\"DelegatorMembershipId\",\"DelegateMembershipId\",\"Permissions\",\"ValidFrom\",\"ValidUntil\",\"Status\",\"ApprovedBy\",\"CreatedAt\") VALUES ({db.TenantId},{Guid.NewGuid()},{membership.Id},{membership2.Id},'crew.read',now(),now() - interval '1 day','Active','x',now())", Ct));
+            $"INSERT INTO identity.\"Delegations\" (\"TenantId\",\"Id\",\"DelegatorMembershipId\",\"DelegateMembershipId\",\"Permissions\",\"ValidFrom\",\"ValidUntil\",\"Status\",\"ApprovedBy\",\"CreatedAt\",\"ReasonCode\") VALUES ({db.TenantId},{Guid.NewGuid()},{membership.Id},{membership2.Id},'crew.read',now(),now() - interval '1 day','Active','x',now(),'PlannedAbsence')", Ct));
         await Assert.ThrowsAnyAsync<Exception>(() => db.Database.ExecuteSqlInterpolatedAsync(
-            $"INSERT INTO identity.\"Delegations\" (\"TenantId\",\"Id\",\"DelegatorMembershipId\",\"DelegateMembershipId\",\"Permissions\",\"ValidFrom\",\"ValidUntil\",\"Status\",\"ApprovedBy\",\"CreatedAt\") VALUES ({db.TenantId},{Guid.NewGuid()},{membership.Id},{membership.Id},'crew.read',now(),now() + interval '1 day','Active','x',now())", Ct));
+            $"INSERT INTO identity.\"Delegations\" (\"TenantId\",\"Id\",\"DelegatorMembershipId\",\"DelegateMembershipId\",\"Permissions\",\"ValidFrom\",\"ValidUntil\",\"Status\",\"ApprovedBy\",\"CreatedAt\",\"ReasonCode\") VALUES ({db.TenantId},{Guid.NewGuid()},{membership.Id},{membership.Id},'crew.read',now(),now() + interval '1 day','Active','x',now(),'PlannedAbsence')", Ct));
         var delegation = await db.MembershipDelegations.SingleAsync(x => x.DelegatorMembershipId == membership.Id, Ct);
         delegation.ValidUntil = delegation.ValidUntil.AddDays(30);
         await Assert.ThrowsAsync<InvalidOperationException>(() => db.SaveChangesAsync(Ct)); // A window never extends itself.
     }
+
+    // QA follow-up: delegation scope snapshot + closed reason (52.02 paragraph:102) and one-time
+    // audited closure of RECOVERY_REQUIRED.
+    [Fact]
+    public async Task Delegation_scope_snapshot_is_immutable_reason_is_closed_and_recovery_closes_once()
+    {
+        var (account, membership) = New(fixture.Data.Tenants[0].Id);
+        var (account2, membership2) = New(fixture.Data.Tenants[0].Id);
+        var vessel = fixture.Data.Vessels.First(v => v.TenantId == fixture.Data.Tenants[0].Id);
+        var otherVessel = fixture.Data.Vessels.First(v => v.TenantId == fixture.Data.Tenants[1].Id);
+        await using var db = fixture.Db();
+        db.UserAccounts.AddRange(account, account2); db.AccountMemberships.AddRange(membership, membership2); await db.SaveChangesAsync(Ct);
+        var now = DateTimeOffset.UtcNow;
+        MembershipDelegation Delegation(string reason) => new() { TenantId = db.TenantId, Id = Guid.NewGuid(), DelegatorMembershipId = membership.Id,
+            DelegateMembershipId = membership2.Id, Permissions = "crew.read", ValidFrom = now, ValidUntil = now.AddDays(1), Status = "Active",
+            ApprovedBy = "synthetic-membership-admin", CreatedAt = now, ReasonCode = reason, CompanyId = vessel.CompanyId };
+        db.MembershipDelegations.Add(Delegation("Free text reason"));
+        await Assert.ThrowsAsync<InvalidOperationException>(() => db.SaveChangesAsync(Ct));
+        db.ChangeTracker.Clear();
+        db.MembershipDelegations.Add(Delegation(DelegationReasonLegacy));
+        await Assert.ThrowsAsync<InvalidOperationException>(() => db.SaveChangesAsync(Ct)); // Legacy marker is migration-only.
+        db.ChangeTracker.Clear();
+        var delegation = Delegation("PlannedAbsence");
+        db.MembershipDelegations.Add(delegation);
+        var scope = new DelegationVesselScope { TenantId = db.TenantId, DelegationId = delegation.Id, VesselId = vessel.Id, CanEdit = false };
+        db.DelegationVesselScopes.Add(scope);
+        await db.SaveChangesAsync(Ct);
+        var audit = await db.AuditEvents.AsNoTracking().Where(x => x.ResourceId == delegation.Id).ToArrayAsync(Ct);
+        Assert.Contains(audit, x => x.ResourceKind == "Delegation" && x.ChangeSummary!.Contains("PlannedAbsence") && !x.ChangeSummary.Contains("crew.read"));
+        Assert.Contains(audit, x => x.ResourceKind == "DelegationVesselScope" && x.VesselId == vessel.Id);
+        scope.CanEdit = true;
+        await Assert.ThrowsAsync<InvalidOperationException>(() => db.SaveChangesAsync(Ct)); // Scope snapshot is immutable.
+        db.ChangeTracker.Clear();
+        var tracked = await db.MembershipDelegations.SingleAsync(x => x.Id == delegation.Id, Ct);
+        tracked.ReasonCode = "Handover";
+        await Assert.ThrowsAsync<InvalidOperationException>(() => db.SaveChangesAsync(Ct));
+        db.ChangeTracker.Clear();
+        // Database second line: unknown reason and a cross-tenant vessel are rejected.
+        await Assert.ThrowsAnyAsync<Exception>(() => db.Database.ExecuteSqlInterpolatedAsync(
+            $"UPDATE identity.\"Delegations\" SET \"ReasonCode\"='Other' WHERE \"Id\"={delegation.Id}", Ct));
+        // NULL never satisfies a closed set (SQL three-valued logic hardened in the constraint).
+        await Assert.ThrowsAnyAsync<Exception>(() => db.Database.ExecuteSqlInterpolatedAsync(
+            $"UPDATE identity.\"Delegations\" SET \"Status\"='Revoked', \"RevokedAt\"=now(), \"RevocationReason\"=NULL WHERE \"Id\"={delegation.Id}", Ct));
+        await Assert.ThrowsAnyAsync<Exception>(() => db.Database.ExecuteSqlInterpolatedAsync(
+            $"INSERT INTO identity.\"DelegationVesselScopes\" (\"TenantId\",\"DelegationId\",\"VesselId\",\"CanEdit\") VALUES ({db.TenantId},{delegation.Id},{otherVessel.Id},false)", Ct));
+
+        var recovery = new TenantAccessRecovery { TenantId = db.TenantId, Id = Guid.NewGuid(), MembershipId = membership.Id, Cause = "SecuritySuspension", RaisedAt = now };
+        db.TenantAccessRecoveries.Add(recovery); await db.SaveChangesAsync(Ct);
+        recovery.ResolvedAt = now.AddMinutes(1); recovery.Resolution = "Whatever";
+        await Assert.ThrowsAsync<InvalidOperationException>(() => db.SaveChangesAsync(Ct));
+        recovery.Resolution = "SecuritySuspensionResumed";
+        await db.SaveChangesAsync(Ct);
+        Assert.Contains(await db.AuditEvents.AsNoTracking().Where(x => x.ResourceId == membership.Id && x.ResourceKind == "AccessRecovery").ToArrayAsync(Ct),
+            x => x.ChangeSummary!.Contains("SecuritySuspensionResumed"));
+        recovery.ResolvedAt = now.AddMinutes(2);
+        await Assert.ThrowsAsync<InvalidOperationException>(() => db.SaveChangesAsync(Ct)); // Closed exactly once.
+        db.ChangeTracker.Clear();
+        await Assert.ThrowsAnyAsync<Exception>(() => db.Database.ExecuteSqlInterpolatedAsync(
+            $"UPDATE identity.\"AccessRecoveries\" SET \"Resolution\"=NULL WHERE \"Id\"={recovery.Id}", Ct));
+    }
+
+    private const string DelegationReasonLegacy = "LegacyUnscoped";
 
     [Fact]
     public async Task Optional_fixture_is_idempotent_synthetic_and_requires_administrative_import()

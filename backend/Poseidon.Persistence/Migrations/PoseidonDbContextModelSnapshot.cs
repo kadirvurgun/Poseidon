@@ -5452,7 +5452,7 @@ namespace Poseidon.Persistence.Migrations
 
                     b.ToTable("Memberships", "identity", t =>
                         {
-                            t.HasCheckConstraint("CK_Memberships_Closed", "\"Status\" IN ('Active','Suspended','Revoked') AND \"AccessRevision\" >= 0 AND \"Source\" IN ('ConfigurationImport','SyntheticUnverified') AND \"StatusReason\" IN ('ConfigurationImport','SyntheticFixture','AdministrativeSuspension','AdministrativeResume','AdministrativeRevocation','SecuritySuspension')");
+                            t.HasCheckConstraint("CK_Memberships_Closed", "\"Status\" IN ('Active','Suspended','Revoked') AND \"AccessRevision\" >= 0 AND \"Source\" IN ('ConfigurationImport','SyntheticUnverified') AND \"StatusReason\" IN ('ConfigurationImport','SyntheticFixture','AdministrativeSuspension','AdministrativeResume','AdministrativeRevocation','SecuritySuspension','SecurityResume')");
                         });
                 });
 
@@ -5505,6 +5505,10 @@ namespace Poseidon.Persistence.Migrations
                     b.Property<Guid>("ResourceId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Result")
+                        .HasMaxLength(8192)
+                        .HasColumnType("character varying(8192)");
+
                     b.HasKey("TenantId", "ActorId", "Key");
 
                     b.ToTable("MembershipCommandReceipts", "identity", t =>
@@ -5526,6 +5530,9 @@ namespace Poseidon.Persistence.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
+                    b.Property<Guid?>("CompanyId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -5539,6 +5546,11 @@ namespace Poseidon.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(2048)
                         .HasColumnType("character varying(2048)");
+
+                    b.Property<string>("ReasonCode")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
 
                     b.Property<string>("RevocationReason")
                         .HasMaxLength(32)
@@ -5566,6 +5578,8 @@ namespace Poseidon.Persistence.Migrations
 
                     b.HasKey("TenantId", "Id");
 
+                    b.HasIndex("TenantId", "CompanyId");
+
                     b.HasIndex("TenantId", "DelegateMembershipId", "Status")
                         .HasDatabaseName("IX_Delegations_Delegate");
 
@@ -5574,8 +5588,29 @@ namespace Poseidon.Persistence.Migrations
 
                     b.ToTable("Delegations", "identity", t =>
                         {
-                            t.HasCheckConstraint("CK_Delegations_Closed", "\"Status\" IN ('Active','Revoked') AND \"ValidUntil\" > \"ValidFrom\" AND \"DelegatorMembershipId\" <> \"DelegateMembershipId\" AND length(\"Permissions\") > 0 AND ((\"Status\" = 'Active' AND \"RevokedAt\" IS NULL AND \"RevocationReason\" IS NULL) OR (\"Status\" = 'Revoked' AND \"RevokedAt\" IS NOT NULL AND \"RevocationReason\" IN ('AdministrativeRevocation','MembershipSuspended','MembershipRevoked')))");
+                            t.HasCheckConstraint("CK_Delegations_Closed", "\"Status\" IN ('Active','Revoked') AND \"ValidUntil\" > \"ValidFrom\" AND \"DelegatorMembershipId\" <> \"DelegateMembershipId\" AND length(\"Permissions\") > 0 AND \"ReasonCode\" IN ('PlannedAbsence','UnplannedAbsence','WorkloadCover','Handover','LegacyUnscoped') AND ((\"Status\" = 'Active' AND \"RevokedAt\" IS NULL AND \"RevocationReason\" IS NULL) OR (\"Status\" = 'Revoked' AND \"RevokedAt\" IS NOT NULL AND \"RevocationReason\" IS NOT NULL AND \"RevocationReason\" IN ('AdministrativeRevocation','MembershipSuspended','MembershipRevoked')))");
                         });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.DelegationVesselScope", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("DelegationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("VesselId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("CanEdit")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("TenantId", "DelegationId", "VesselId");
+
+                    b.HasIndex("TenantId", "VesselId");
+
+                    b.ToTable("DelegationVesselScopes", "identity");
                 });
 
             modelBuilder.Entity("Poseidon.Persistence.TenantAccessRecovery", b =>
@@ -5597,6 +5632,13 @@ namespace Poseidon.Persistence.Migrations
                     b.Property<DateTimeOffset>("RaisedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Resolution")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<DateTimeOffset?>("ResolvedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("TenantId", "Id");
 
                     b.HasIndex("TenantId", "MembershipId");
@@ -5607,6 +5649,8 @@ namespace Poseidon.Persistence.Migrations
                     b.ToTable("AccessRecoveries", "identity", t =>
                         {
                             t.HasCheckConstraint("CK_AccessRecoveries_Cause", "\"Cause\" IN ('SecuritySuspension')");
+
+                            t.HasCheckConstraint("CK_AccessRecoveries_Resolution", "(\"ResolvedAt\" IS NULL AND \"Resolution\" IS NULL) OR (\"ResolvedAt\" IS NOT NULL AND \"Resolution\" IS NOT NULL AND \"Resolution\" IN ('SecuritySuspensionResumed'))");
                         });
                 });
 
@@ -5707,6 +5751,12 @@ namespace Poseidon.Persistence.Migrations
 
             modelBuilder.Entity("Poseidon.Persistence.MembershipDelegation", b =>
                 {
+                    b.HasOne("Poseidon.Persistence.Company", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_Delegations_Company");
+
                     b.HasOne("Poseidon.Persistence.AccountMembership", null)
                         .WithMany()
                         .HasForeignKey("TenantId", "DelegateMembershipId")
@@ -5720,6 +5770,23 @@ namespace Poseidon.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("FK_Delegations_Delegator");
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.DelegationVesselScope", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.MembershipDelegation", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "DelegationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_DelegationVesselScopes_Delegation");
+
+                    b.HasOne("Poseidon.Persistence.Vessel", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "VesselId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_DelegationVesselScopes_Vessel");
                 });
 
             modelBuilder.Entity("Poseidon.Persistence.TenantAccessRecovery", b =>
