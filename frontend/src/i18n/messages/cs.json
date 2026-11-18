@@ -106,7 +106,8 @@
       "previous": "Předchozí společnosti",
       "next": "Další společnosti",
       "reloadCompanies": "Znovu načíst společnosti",
-      "requiredNote": "Všechna pole jsou povinná. Tento záznam neuděluje provozní schválení."
+      "requiredNote": "Všechna pole jsou povinná. Tento záznam neuděluje provozní schválení.",
+      "errorSummary": "Před uložením zkontrolujte tato pole:"
     },
     "ProductApp_tsx_copy": {
       "audit": "Historie akcí",

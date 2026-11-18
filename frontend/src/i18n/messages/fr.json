@@ -106,7 +106,8 @@
       "previous": "Sociétés précédentes",
       "next": "Sociétés suivantes",
       "reloadCompanies": "Recharger les sociétés",
-      "requiredNote": "Tous les champs sont obligatoires. Cet enregistrement ne constitue pas une approbation opérationnelle."
+      "requiredNote": "Tous les champs sont obligatoires. Cet enregistrement ne constitue pas une approbation opérationnelle.",
+      "errorSummary": "Vérifiez ces champs avant d’enregistrer :"
     },
     "ProductApp_tsx_copy": {
       "audit": "Historique des actions",

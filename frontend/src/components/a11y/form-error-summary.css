@@ -1,0 +1,5 @@
+.form-error-summary { margin: 0 0 16px; padding: 12px 14px; border: 2px solid var(--danger-border); border-inline-start-width: 6px; border-radius: 8px; background: var(--danger-surface); color: var(--foreground); }
+.form-error-summary:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 3px; }
+.form-error-summary-title { margin: 0 0 6px; font-weight: 650; color: var(--danger-text); }
+.form-error-summary ul { margin: 0; padding-inline-start: 1.25rem; }
+.form-error-summary a { color: var(--danger-text); text-decoration: underline; overflow-wrap: anywhere; }

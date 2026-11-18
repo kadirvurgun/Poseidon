@@ -106,7 +106,8 @@
       "previous": "Előző vállalatok",
       "next": "Következő vállalatok",
       "reloadCompanies": "Vállalatok újratöltése",
-      "requiredNote": "Minden mező kötelező. Ez a rekord nem ad üzemi jóváhagyást."
+      "requiredNote": "Minden mező kötelező. Ez a rekord nem ad üzemi jóváhagyást.",
+      "errorSummary": "Mentés előtt ellenőrizze ezeket a mezőket:"
     },
     "ProductApp_tsx_copy": {
       "audit": "Műveleti előzmények",

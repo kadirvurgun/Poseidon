@@ -106,7 +106,8 @@
       "previous": "Previous companies",
       "next": "Next companies",
       "reloadCompanies": "Reload companies",
-      "requiredNote": "All fields are required. This record does not confer operational approval."
+      "requiredNote": "All fields are required. This record does not confer operational approval.",
+      "errorSummary": "Check these fields before saving:"
     },
     "ProductApp_tsx_copy": {
       "audit": "Action history",

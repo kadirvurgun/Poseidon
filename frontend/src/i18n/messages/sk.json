@@ -106,7 +106,8 @@
       "previous": "Predchádzajúce spoločnosti",
       "next": "Ďalšie spoločnosti",
       "reloadCompanies": "Znova načítať spoločnosti",
-      "requiredNote": "Všetky polia sú povinné. Tento záznam neudeľuje prevádzkové schválenie."
+      "requiredNote": "Všetky polia sú povinné. Tento záznam neudeľuje prevádzkové schválenie.",
+      "errorSummary": "Pred uložením skontrolujte tieto polia:"
     },
     "ProductApp_tsx_copy": {
       "audit": "História činností",

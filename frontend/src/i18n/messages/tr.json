@@ -106,7 +106,8 @@
       "previous": "Önceki şirketler",
       "next": "Sonraki şirketler",
       "reloadCompanies": "Şirketleri tekrar yükle",
-      "requiredNote": "Tüm alanlar zorunludur. Bu kayıt operasyonel onay oluşturmaz."
+      "requiredNote": "Tüm alanlar zorunludur. Bu kayıt operasyonel onay oluşturmaz.",
+      "errorSummary": "Kaydetmeden önce şu alanları kontrol edin:"
     },
     "ProductApp_tsx_copy": {
       "audit": "İşlem geçmişi",

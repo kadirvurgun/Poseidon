@@ -106,7 +106,8 @@
       "previous": "Edelliset yritykset",
       "next": "Seuraavat yritykset",
       "reloadCompanies": "Lataa yritykset uudelleen",
-      "requiredNote": "Kaikki kentät ovat pakollisia. Tämä tietue ei myönnä operatiivista hyväksyntää."
+      "requiredNote": "Kaikki kentät ovat pakollisia. Tämä tietue ei myönnä operatiivista hyväksyntää.",
+      "errorSummary": "Tarkista nämä kentät ennen tallentamista:"
     },
     "ProductApp_tsx_copy": {
       "audit": "Toimintahistoria",
