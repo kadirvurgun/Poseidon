@@ -115,7 +115,7 @@ it.each([
     <div className="product-shell enterprise-shell"><EnterpriseChrome {...props} language={language} /><main id="test-main" /></div></>)
   const trigger = await screen.findByRole('button', { name: label })
   expect(within(trigger).getByText(label)).not.toBeVisible()
-  expect(within(trigger).getByText('⌘ / Ctrl K')).not.toBeVisible()
+  expect(trigger.querySelector('kbd[data-shortcut="⌘ / Ctrl K"]')).not.toBeVisible()
   expect(trigger).toHaveAccessibleName(label)
   await user.click(trigger)
   expect(screen.getByRole('dialog', { name: 'Workspace search' })).toBeVisible()

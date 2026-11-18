@@ -170,15 +170,15 @@ export function EnterpriseChrome({ session, vessel = null, language, onLanguageC
       <div className="enterprise-breadcrumb">{vessel && <Button variant="ghost" size="icon-sm" asChild><a href={`/app/fleet/${vessel}`} aria-label={localizedText(en, "pairs.m_09d51047be4de855")} onClick={event => { event.preventDefault(); move(`/app/fleet/${vessel}`); }}><ArrowLeft aria-hidden="true"/></a></Button>}<span>POSEIDON</span><ChevronRight aria-hidden="true"/><strong>{title}</strong></div>
       <div className="enterprise-topbar-actions">
         <AppearanceControls language={language} />
-        {navigation.canSearch && <Button variant="outline" className="enterprise-search-trigger" aria-label={localizedText(en, "pairs.m_a959c1a640f4b9b6")} onClick={() => { if (session)
-        setSearchOwner({ owner: session }); }}><Search /><span>{localizedText(en, "pairs.m_a959c1a640f4b9b6")}</span><kbd>⌘ / Ctrl K</kbd></Button>}
+        {navigation.canSearch && <Button variant="outline" className="enterprise-search-trigger" aria-keyshortcuts="Control+K Meta+K" aria-label={localizedText(en, "pairs.m_a959c1a640f4b9b6")} onClick={() => { if (session)
+        setSearchOwner({ owner: session }); }}><Search /><span>{localizedText(en, "pairs.m_a959c1a640f4b9b6")}</span><kbd aria-hidden="true" data-shortcut="⌘ / Ctrl K" /></Button>}
         <LanguageSelector locale={language} onChange={onLanguageChange} />
       </div>
       <WorkspaceContextBar session={session} vessel={vessel} language={language} onNavigate={move}/>
     </header>
     {drawer && <button type="button" className="enterprise-nav-overlay" aria-label={localizedText(en, "pairs.m_7cf3ab76311a388d")} onClick={() => setDrawer(false)}/>}
     <nav id="workspace-navigation" className={`product-nav enterprise-sidebar ${drawer ? 'is-open' : ''}`} aria-label="POSEIDON" role={drawer ? 'dialog' : undefined} aria-modal={drawer ? true : undefined}>
-      <div className="enterprise-brand-row"><a className="enterprise-brand" href="/app" aria-label="POSEIDON" onClick={event => { event.preventDefault(); move('/app'); }}><span className="enterprise-brand-mark"><Waves aria-hidden="true"/></span><span>POSEIDON<small>{presentationLabel(language, 'maritimeOperations')}</small></span></a>{drawer && <Button variant="ghost" size="icon" aria-label={localizedText(en, "pairs.m_99627faa6a096fa8")} onClick={() => setDrawer(false)}><X /></Button>}</div>
+      <div className="enterprise-brand-row"><a className="enterprise-brand" href="/app" onClick={event => { event.preventDefault(); move('/app'); }}><span className="enterprise-brand-mark"><Waves aria-hidden="true"/></span><span>POSEIDON<small aria-hidden="true">{presentationLabel(language, 'maritimeOperations')}</small></span></a>{drawer && <Button variant="ghost" size="icon" aria-label={localizedText(en, "pairs.m_99627faa6a096fa8")} onClick={() => setDrawer(false)}><X /></Button>}</div>
       <div className="enterprise-nav-scroll">
         <details className="enterprise-role-settings"><summary>{localizedText(en, "pairs.m_10b48db6980a8159")}</summary><WorkspaceRoleNavigation session={session} vessel={vessel} language={language} onNavigate={move} embedded primary scopeEpoch={navigation.epoch} onProjection={projectLens}/></details>
         <EnterpriseSidebarNav key={`${session?.tenantId}:${session?.actorId}:${vessel}`} items={menuItems.flatMap(item => {

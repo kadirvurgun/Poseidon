@@ -74,6 +74,8 @@
 .enterprise-breadcrumb strong { color: var(--foreground); font-weight: 550; }
 .enterprise-topbar-actions { display: flex; align-items: center; gap: 18px; margin-inline-start: auto; }
 .enterprise-shell .enterprise-search-trigger[data-slot="button"] { border-color: var(--border); background: var(--muted); color: var(--muted-foreground); font-size: 11px; font-weight: 400; }
+/* Shortcut hint is CSS-generated so it is not part of the visible label (WCAG 2.5.3); the shortcut is exposed via aria-keyshortcuts. */
+.enterprise-search-trigger kbd::before { content: attr(data-shortcut); }
 .enterprise-search-trigger kbd { margin-inline-start: 22px; color: var(--muted-foreground); border: 1px solid var(--border); border-radius: 4px; padding: 1px 4px; font-size: 9px; }
 .enterprise-topbar .languages { background: var(--muted); border: 1px solid var(--border); padding: 2px; gap: 2px; }
 .enterprise-shell .enterprise-topbar .languages button { min-width:36px; border:0; border-radius:6px; color: var(--muted-foreground); background: transparent; font-size:12px; }
