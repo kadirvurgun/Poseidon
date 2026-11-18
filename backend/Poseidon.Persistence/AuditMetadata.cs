@@ -17,7 +17,8 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             Person or CrewIdentityRevision or CrewPersonalProfile or CrewPersonalProfileRevision => "TenantPerson",
             CommandReceipt r when r.Action is "CrewPersonSave" or "CrewIdentityConvert" or "CrewProfileSave" or "CrewPhotoSave" => "TenantPerson",
             Tenant or Company or RegisterDraft or RegisterRevision or RuleDraft or RuleRevision or FleetCatalogDraft or FleetCatalogDraftRevision or
-                RegulatoryQualificationHead or RegulatoryQualificationEvent or RegulatoryQualificationReceipt => "Tenant",
+                RegulatoryQualificationHead or RegulatoryQualificationEvent or RegulatoryQualificationReceipt or
+                ParameterRoot or ParameterRevision or ParameterDecision or ParameterCommandReceipt => "Tenant",
             CommandReceipt r when r.Action is "CompanyCreate" or "CompanyUpdate" or "SourceDraftSave" or "RequirementDraftSave" => "Tenant",
             ApplicabilityReceipt r when r.Action is "author" or "review" => "Tenant",
             _ => "Unresolved"
@@ -143,6 +144,28 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
                     Field("Binding", entry.State == EntityState.Added ? null : "OwnerReference", "OwnerReference")));
         if (entry.Entity is NotificationReceipt notificationReceipt)
             return new(notificationReceipt.VesselId, notificationReceipt.ResourceId, "NotificationReceipt", null, null,
+                Fields(Field("Binding", null, "CommittedResource")));
+        // PLAN-1511-5401: catalog key and closed states only; values, selectors and reasons are withheld.
+        if (entry.Entity is ParameterRoot parameterRoot)
+            return new(null, parameterRoot.Id, "ParameterRoot", entry.State == EntityState.Added ? null : (long?)entry.Property(nameof(parameterRoot.Revision)).OriginalValue,
+                parameterRoot.Revision, Fields(Field("Revision", entry.State == EntityState.Added ? null : Number((long)entry.Property(nameof(parameterRoot.Revision)).OriginalValue!), Number(parameterRoot.Revision)),
+                    Field("Key", null, Closed(parameterRoot.Key, ParameterRegistry.Definitions.Select(d => d.Key).ToArray())),
+                    Field("SecurityScope", null, Closed(parameterRoot.ScopeKind, "TENANT", "COMPANY", "VESSEL")),
+                    Field("PendingChange", entry.State == EntityState.Added ? null : entry.Property(nameof(parameterRoot.PendingRevisionId)).OriginalValue == null ? "None" : "Present",
+                        parameterRoot.PendingRevisionId == null ? "None" : "Present"),
+                    Field("Selector", null, null, "ValuesWithheld")));
+        if (entry.Entity is ParameterRevision parameterRevision)
+            return new(null, parameterRevision.RootId, "ParameterRevision", null, parameterRevision.Sequence,
+                Fields(Field("State", null, "IN_REVIEW"), Field("Key", null, Closed(parameterRevision.Key, ParameterRegistry.Definitions.Select(d => d.Key).ToArray())),
+                    Field("ValueMode", null, Closed(parameterRevision.ValueMode, "VALUE", "INHERIT")),
+                    Field("Provenance", null, Closed(parameterRevision.Provenance, "DeclaredUnverified", "SyntheticUnverified")),
+                    Field("Value", null, null, "ValuesWithheld"), Field("Reason", null, null, "ValuesWithheld")));
+        if (entry.Entity is ParameterDecision parameterDecision)
+            return new(null, parameterDecision.RootId, "ParameterDecision", null, parameterDecision.Sequence,
+                Fields(Field("Decision", null, Closed(parameterDecision.Outcome, "APPROVED", "REJECTED")),
+                    Field("RevisionId", null, parameterDecision.RevisionId.ToString("D")), Field("Reason", null, null, "ValuesWithheld")));
+        if (entry.Entity is ParameterCommandReceipt parameterReceipt)
+            return new(null, parameterReceipt.RootId, "ParameterCommandReceipt", null, parameterReceipt.RootRevision,
                 Fields(Field("Binding", null, "CommittedResource")));
         if (entry.Entity is FleetCatalogDraft fleetCatalogHead)
             return new(null, fleetCatalogHead.Id, "FleetCatalogDraft", entry.State == EntityState.Added ? null : (long?)entry.Property(nameof(fleetCatalogHead.Revision)).OriginalValue,
