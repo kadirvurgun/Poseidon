@@ -3198,6 +3198,14 @@
     "m_0d01ac4a95241b66": "Blocchi dell’onboarding",
     "m_b9cce241afdb94a4": "Dichiarazione richiesta",
     "m_18895857bed22127": "Politica o evidenza richiesta",
-    "m_9233a4a00cb3f57a": "Evidenza qualificata richiesta"
+    "m_9233a4a00cb3f57a": "Evidenza qualificata richiesta",
+    "m_b8002f9e764b18ef": "Non rientra nel tuo ambito autorizzato attuale o l’accesso è stato revocato. Il contesto attuale è invariato.",
+    "m_2b19d5fd50cd15bd": "La sessione è terminata o è cambiata. Accedi di nuovo; il contesto attuale è invariato.",
+    "m_3a8d042ee60783dc": "Il servizio di contesto non è disponibile o non ha risposto in tempo. Il contesto attuale è invariato; riprova.",
+    "m_e7bc23cb053dacc1": "Il modulo corrente ha modifiche non salvate. Prima del cambio sceglierai Resta o Scarta; Resta conserva la bozza e non invia alcuna richiesta di cambio.",
+    "m_2492dcd13a8d5ab3": "Un salvataggio è ancora in corso. Attendi l’esito prima di cambiare nave; il contesto attuale è invariato.",
+    "m_221de6ea6fc51bb7": "La sessione è terminata o è cambiata. Accedi di nuovo per vedere il tuo contesto di lavoro.",
+    "m_9b1a1deb14aac372": "La nave selezionata non rientra nel tuo ambito autorizzato attuale. Nessun’altra nave è stata selezionata automaticamente.",
+    "m_5db2b92c3bcc6931": "Scegli un’altra nave"
   }
 }

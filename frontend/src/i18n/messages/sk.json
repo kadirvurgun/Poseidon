@@ -3198,6 +3198,14 @@
     "m_0d01ac4a95241b66": "Prekážky onboardingu",
     "m_b9cce241afdb94a4": "Povinné vyhlásenie",
     "m_18895857bed22127": "Vyžaduje sa politika alebo dôkaz",
-    "m_9233a4a00cb3f57a": "Vyžaduje sa kvalifikovaný dôkaz"
+    "m_9233a4a00cb3f57a": "Vyžaduje sa kvalifikovaný dôkaz",
+    "m_b8002f9e764b18ef": "Nie je vo vašom aktuálnom oprávnenom rozsahu alebo bol prístup odobratý. Váš aktuálny kontext sa nezmenil.",
+    "m_2b19d5fd50cd15bd": "Vaša relácia skončila alebo sa zmenila. Prihláste sa znova; váš aktuálny kontext sa nezmenil.",
+    "m_3a8d042ee60783dc": "Služba kontextu nie je dostupná alebo neodpovedala včas. Váš aktuálny kontext sa nezmenil; skúste to znova.",
+    "m_e7bc23cb053dacc1": "Aktuálny formulár obsahuje neuložené zmeny. Pred prepnutím zvolíte Zostať alebo Zahodiť; Zostať zachová koncept a neodošle žiadosť o prepnutie.",
+    "m_2492dcd13a8d5ab3": "Ukladanie stále prebieha. Pred prepnutím plavidla počkajte na výsledok; váš aktuálny kontext sa nezmenil.",
+    "m_221de6ea6fc51bb7": "Vaša relácia skončila alebo sa zmenila. Prihláste sa znova, aby ste videli svoj pracovný kontext.",
+    "m_9b1a1deb14aac372": "Vybrané plavidlo nie je vo vašom aktuálnom oprávnenom rozsahu. Žiadne iné plavidlo nebolo vybrané automaticky.",
+    "m_5db2b92c3bcc6931": "Vybrať iné plavidlo"
   }
 }
