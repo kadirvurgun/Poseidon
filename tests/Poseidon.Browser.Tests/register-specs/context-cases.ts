@@ -57,7 +57,8 @@ async function restrictedVessel(page: Page) {
     await page.goto(`/app/fleet/${unknown}`);
     await page.getByRole("combobox", { name: /^(Dil seçin|Choose language)$/ }).selectOption("en");
     const bar = page.getByRole('region', { name: 'Current workspace context', exact: true });
-    await expect(bar).toContainText('Context access unavailable.');
+    await expect(bar).toContainText('The selected vessel is not in your current authorized scope. No other vessel was selected automatically.');
+    await expect(bar.getByRole('button', { name: 'Choose another vessel', exact: true })).toBeVisible();
     await expect(bar).not.toContainText(unknown);
 }
 export const contextCases = [
