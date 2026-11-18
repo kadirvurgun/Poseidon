@@ -2109,7 +2109,7 @@
           "Poseidon.Api"
         ],
         "summary": "CreateDelegation",
-        "description": "Approves a time-boxed delegation from this membership. The approver can be neither source nor delegate; scope cannot exceed the source's current grant; re-delegation is not possible.",
+        "description": "Approves a time-boxed delegation from this membership with a mandatory closed reasonCode and an explicit company/vessel scope. The approver can be neither source nor delegate; permissions and scope cannot exceed the source's current grant (400 exceeds_source_scope); tenant-wide scope is never delegated; re-delegation is not possible.",
         "operationId": "CreateDelegation",
         "parameters": [
           {
@@ -2212,7 +2212,7 @@
           "Poseidon.Api"
         ],
         "summary": "ImportConfiguredMemberships",
-        "description": "Deterministically imports operator-provisioned memberships of the caller's tenant that have no persisted record. Never changes existing records and never widens access.",
+        "description": "Deterministically imports operator-provisioned memberships of the caller's tenant that have no persisted record. Never changes existing records and never widens access. Entries that cannot be imported (including an identity already bound in another tenant) are skipped with a closed reason; configuration keeps governing them. Replay returns the original result.",
         "operationId": "ImportConfiguredMemberships",
         "parameters": [
           {
@@ -2409,7 +2409,7 @@
           "Poseidon.Api"
         ],
         "summary": "ResumeMembership",
-        "description": "Requires antiforgery, a 16–80 character Idempotency-Key and server-provisioned membership.manage with tenant-wide manage scope and a trusted role. Transitions require expectedVersion; stale changes return 409. Voluntary removal of the last active identity administrator returns 409 last_admin. Replay returns the fresh representation.",
+        "description": "Requires antiforgery, a 16–80 character Idempotency-Key and server-provisioned membership.manage with tenant-wide manage scope and a trusted role. Transitions require expectedVersion; stale changes return 409. Voluntary removal of the last active identity administrator returns 409 last_admin. Replay returns the fresh representation. Resuming a security suspension requires membership.security.suspend (membership.manage alone returns 403) and closes its RECOVERY_REQUIRED case.",
         "operationId": "ResumeMembership",
         "parameters": [
           {
@@ -16207,6 +16207,28 @@
               "string"
             ],
             "format": "date-time"
+          },
+          "reasonCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "companyId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "vesselScope": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/DelegationVesselCommand"
+            }
           }
         },
         "additionalProperties": false
@@ -16222,7 +16244,10 @@
           "status",
           "state",
           "revocationReason",
-          "version"
+          "version",
+          "reasonCode",
+          "companyId",
+          "vesselScope"
         ],
         "type": "object",
         "properties": {
@@ -16267,8 +16292,41 @@
           "version": {
             "type": "integer",
             "format": "uint32"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "companyId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "vesselScope": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VesselGrant"
+            }
           }
         }
+      },
+      "DelegationVesselCommand": {
+        "required": [
+          "vesselId"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "canEdit": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "additionalProperties": false
       },
       "DocumentDraftDto": {
         "required": [
@@ -16844,7 +16902,10 @@
           "delegatorMembershipId",
           "permissions",
           "validFrom",
-          "validUntil"
+          "validUntil",
+          "reasonCode",
+          "activeCompanyId",
+          "vesselGrants"
         ],
         "type": "object",
         "properties": {
@@ -16873,6 +16934,25 @@
           "validUntil": {
             "type": "string",
             "format": "date-time"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "activeCompanyId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "vesselGrants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VesselGrant"
+            }
+          },
+          "tenantWide": {
+            "type": "boolean"
           }
         }
       },
@@ -18943,7 +19023,8 @@
         "required": [
           "imported",
           "alreadyPresent",
-          "skipped"
+          "skipped",
+          "skips"
         ],
         "type": "object",
         "properties": {
@@ -18958,6 +19039,28 @@
           "skipped": {
             "type": "integer",
             "format": "int32"
+          },
+          "skips": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MembershipImportSkip"
+            }
+          }
+        }
+      },
+      "MembershipImportSkip": {
+        "required": [
+          "actorId",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reason": {
+            "type": "string"
           }
         }
       },
@@ -23798,6 +23901,22 @@
           },
           "canEdit": {
             "type": "boolean"
+          }
+        }
+      },
+      "VesselGrant": {
+        "required": [
+          "vesselId"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "canEdit": {
+            "type": "boolean",
+            "default": false
           }
         }
       },

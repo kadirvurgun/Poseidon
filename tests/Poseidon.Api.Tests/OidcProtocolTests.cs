@@ -38,6 +38,7 @@ public sealed class OidcProtocolTests(OwnedPostgresFixture fixture)
     [InlineData("state")]
     [InlineData("correlation")]
     [InlineData("suspended")] // PLAN-1511-5202: persisted suspended membership denies a new session.
+    [InlineData("revoked-session")] // PLAN-1511-5202 QA: a live cookie session is ended and the real cookie deleted.
     public async Task Federation_validates_protocol_before_issuing_a_bounded_session(string failure)
     {
         await using var postgres = await fixture.CreateAsync(TestContext.Current.CancellationToken);
@@ -46,7 +47,7 @@ public sealed class OidcProtocolTests(OwnedPostgresFixture fixture)
         await using var setup = new PoseidonDbContext(SeedImporter.Options(postgres.GetConnectionString(), seed), Guid.Empty, ActorContext.SeedImport(), true);
         await setup.Database.MigrateAsync(TestContext.Current.CancellationToken);
         var actorId = Guid.NewGuid();
-        if (failure == "suspended")
+        async Task PersistSuspendedMembership()
         {
             // Synthetic persisted lifecycle state for the configured identity; no credential is stored.
             setup.UserAccounts.Add(new UserAccount { TenantId = tenant, Id = actorId, Issuer = "https://idp.example", Subject = "synthetic-subject",
@@ -58,6 +59,7 @@ public sealed class OidcProtocolTests(OwnedPostgresFixture fixture)
             membership.Status = "Suspended"; membership.StatusReason = "AdministrativeSuspension"; membership.AccessRevision = 1;
             await setup.SaveChangesAsync(TestContext.Current.CancellationToken);
         }
+        if (failure == "suspended") await PersistSuspendedMembership();
         var options = SeedImporter.Options(postgres.GetConnectionString());
         await using var invariantDb = new PoseidonDbContext(options, tenant, new("test", "User", "oidc-invariants"));
         var originalCompanies = await CompanyStates(invariantDb);
@@ -148,7 +150,7 @@ public sealed class OidcProtocolTests(OwnedPostgresFixture fixture)
         Assert.True(Guid.TryParseExact(callbackCorrelation, "N", out _));
         Assert.NotEqual(challengeCorrelation, callbackCorrelation);
         Assert.NotEqual("synthetic-client-correlation", callbackCorrelation);
-        if (failure == "valid")
+        if (failure is "valid" or "revoked-session")
         {
             Assert.Equal("/app", response.Headers.Location?.OriginalString);
             var cookie = Assert.Single(response.Headers.GetValues("Set-Cookie"), x => x.StartsWith("__Host-poseidon-session="));
@@ -171,6 +173,27 @@ public sealed class OidcProtocolTests(OwnedPostgresFixture fixture)
             var session = await client.GetFromJsonAsync<SessionDto>("/api/v1/auth/session", TestContext.Current.CancellationToken);
             Assert.True(session?.Authenticated == true, "The automatic HTTPS client did not authenticate after the callback issued a valid protected session ticket.");
             Assert.Equal(tenant, session.TenantId);
+            if (failure == "revoked-session")
+            {
+                using (var before = await client.GetAsync("/api/v1/companies", TestContext.Current.CancellationToken))
+                    Assert.Equal(HttpStatusCode.OK, before.StatusCode);
+                // The membership is suspended after the real cookie session was issued.
+                await PersistSuspendedMembership();
+                using var revoked = await explicitCookieClient.GetAsync("/api/v1/companies", TestContext.Current.CancellationToken);
+                Assert.Equal(HttpStatusCode.Unauthorized, revoked.StatusCode);
+                var deletion = Assert.Single(revoked.Headers.GetValues("Set-Cookie"), x => x.StartsWith("__Host-poseidon-session=", StringComparison.Ordinal));
+                Assert.StartsWith("__Host-poseidon-session=;", deletion);
+                Assert.Contains("expires=Thu, 01 Jan 1970", deletion, StringComparison.OrdinalIgnoreCase);
+                Assert.Contains("path=/", deletion, StringComparison.OrdinalIgnoreCase);
+                // The automatic cookie client honors the deletion; nothing revives the old ticket.
+                using (var deleted = await client.GetAsync("/api/v1/companies", TestContext.Current.CancellationToken))
+                    Assert.Equal(HttpStatusCode.Unauthorized, deleted.StatusCode);
+                Assert.False((await client.GetFromJsonAsync<SessionDto>("/api/v1/auth/session", TestContext.Current.CancellationToken))!.Authenticated);
+                await using var observed = new SecurityEventWriter(new DbContextOptionsBuilder<SecurityEventWriter>().UseNpgsql(postgres.GetConnectionString()).Options);
+                Assert.True(await observed.Set<SecurityEvent>().AnyAsync(x => x.Action == "SessionRevalidation" && x.Result == "membership_inactive" &&
+                    x.ActorId == actorId.ToString(), TestContext.Current.CancellationToken));
+                return;
+            }
             ticket.Properties.ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(-1);
             using var expiredClient = host.CreateClient(new() { BaseAddress = new("https://localhost"), AllowAutoRedirect = false, HandleCookies = false });
             expiredClient.DefaultRequestHeaders.Add("Cookie", "__Host-poseidon-session=" + cookieOptions.TicketDataFormat.Protect(ticket));

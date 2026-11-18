@@ -15,9 +15,12 @@ namespace Poseidon.Api;
 public sealed record MembershipDto(Guid Id, Guid AccountId, string Status, string StatusReason, long AccessRevision, Guid? ActiveCompanyId,
     bool RoleBound, int VesselGrantCount, string Source, bool Administrator, DateTimeOffset StatusChangedAt, uint Version);
 public sealed record MembershipPageDto(MembershipDto[] Items, int Offset, int Limit, bool HasMore, bool RecoveryRequired, int ConfiguredNotImported);
-public sealed record MembershipImportDto(int Imported, int AlreadyPresent, int Skipped);
+// Skip reasons are closed codes; issuer/subject are never returned. ActorId is the operator-configured id.
+public sealed record MembershipImportSkip(Guid ActorId, string Reason);
+public sealed record MembershipImportDto(int Imported, int AlreadyPresent, int Skipped, MembershipImportSkip[] Skips);
 public sealed record DelegationDto(Guid Id, Guid DelegatorMembershipId, Guid DelegateMembershipId, string[] Permissions,
-    DateTimeOffset ValidFrom, DateTimeOffset ValidUntil, string Status, string State, string? RevocationReason, uint Version);
+    DateTimeOffset ValidFrom, DateTimeOffset ValidUntil, string Status, string State, string? RevocationReason, uint Version,
+    string ReasonCode, Guid? CompanyId, VesselGrant[] VesselScope);
 public sealed record CurrentMembershipDto(Guid ActorId, Guid TenantId, Guid? MembershipId, string Status, long AccessRevision, bool Persisted,
     Guid? ActiveCompanyId, EffectiveDelegation[] ReceivedDelegations);
 
@@ -26,7 +29,10 @@ public sealed record MembershipImportCommand;
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record MembershipTransitionCommand(uint? ExpectedVersion);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
-public sealed record DelegationCreateCommand(Guid? DelegateMembershipId, string[]? Permissions, DateTimeOffset? ValidFrom, DateTimeOffset? ValidUntil);
+public sealed record DelegationCreateCommand(Guid? DelegateMembershipId, string[]? Permissions, DateTimeOffset? ValidFrom, DateTimeOffset? ValidUntil,
+    string? ReasonCode = null, Guid? CompanyId = null, DelegationVesselCommand[]? VesselScope = null);
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
+public sealed record DelegationVesselCommand(Guid VesselId, bool CanEdit = false);
 
 // PLAN-1511-5202 / 52.02 ACC04-ACC05, §6, §9. Tenant-scoped membership lifecycle commands.
 // Exact controlled transitions only (no state PATCH); CSRF, Idempotency-Key, xmin CAS and
@@ -40,6 +46,8 @@ public static class MembershipEndpoints
         (a.Permissions.Contains("membership.read") || a.Permissions.Contains("membership.manage"));
     internal static bool CanManageMemberships(TrustedActor a) => a.HasWriteAttribution && a.CanRead && a.TenantWideManage && a.Permissions.Contains("membership.manage");
     internal static bool CanSecuritySuspend(TrustedActor a) => a.HasWriteAttribution && a.CanRead && a.TenantWideManage && a.Permissions.Contains("membership.security.suspend");
+    // Import skip reasons (closed). Cross-tenant bindings skip the entry; config keeps governing that identity.
+    internal static readonly string[] ImportSkipReasons = ["invalid_configuration", "duplicate_configuration", "actor_conflict", "identity_bound_other_tenant"];
 
     public static void MapMemberships(this IEndpointRouteBuilder app)
     {
@@ -55,7 +63,7 @@ public static class MembershipEndpoints
             .WithSummary("Delegations where the membership is source or delegate. State is computed from server time.")
             .Produces<DelegationDto[]>().Produces(401).ProducesProblem(403).ProducesProblem(404).Produces(503);
         Command(app.MapPost("/api/v1/memberships/import", (HttpContext h, [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey, [FromHeader(Name = "X-CSRF-TOKEN")] string? csrfToken) =>
-            Import(h)), "ImportConfiguredMemberships", "Deterministically imports operator-provisioned memberships of the caller's tenant that have no persisted record. Never changes existing records and never widens access.")
+            Import(h)), "ImportConfiguredMemberships", "Deterministically imports operator-provisioned memberships of the caller's tenant that have no persisted record. Never changes existing records and never widens access. Entries that cannot be imported (including an identity already bound in another tenant) are skipped with a closed reason; configuration keeps governing them. Replay returns the original result.")
             .Accepts<MembershipImportCommand>("application/json").Produces<MembershipImportDto>();
         foreach (var (segment, name, transition) in new[] {
             ("suspend", "SuspendMembership", MembershipTransition.Suspend), ("resume", "ResumeMembership", MembershipTransition.Resume),
@@ -63,10 +71,12 @@ public static class MembershipEndpoints
             Command(app.MapPost($"/api/v1/memberships/{{id:guid}}/{segment}", (Guid id, HttpContext h, [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey, [FromHeader(Name = "X-CSRF-TOKEN")] string? csrfToken) =>
                 Transition(h, id, transition)), name, transition == MembershipTransition.SecuritySuspend
                     ? "Forced security suspension (membership.security.suspend). Not blocked by the last-admin guard; removing the last administrator records RECOVERY_REQUIRED and creates no hidden administrator."
-                    : Description)
+                    : transition == MembershipTransition.Resume
+                        ? Description + " Resuming a security suspension requires membership.security.suspend (membership.manage alone returns 403) and closes its RECOVERY_REQUIRED case."
+                        : Description)
                 .Accepts<MembershipTransitionCommand>("application/json").Produces<MembershipDto>();
         Command(app.MapPost("/api/v1/memberships/{id:guid}/delegations", (Guid id, HttpContext h, [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey, [FromHeader(Name = "X-CSRF-TOKEN")] string? csrfToken) =>
-            CreateDelegation(h, id)), "CreateDelegation", "Approves a time-boxed delegation from this membership. The approver can be neither source nor delegate; scope cannot exceed the source's current grant; re-delegation is not possible.")
+            CreateDelegation(h, id)), "CreateDelegation", "Approves a time-boxed delegation from this membership with a mandatory closed reasonCode and an explicit company/vessel scope. The approver can be neither source nor delegate; permissions and scope cannot exceed the source's current grant (400 exceeds_source_scope); tenant-wide scope is never delegated; re-delegation is not possible.")
             .Accepts<DelegationCreateCommand>("application/json").Produces<DelegationDto>();
         Command(app.MapPost("/api/v1/delegations/{id:guid}/revoke", (Guid id, HttpContext h, [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey, [FromHeader(Name = "X-CSRF-TOKEN")] string? csrfToken) =>
             RevokeDelegation(h, id)), "RevokeDelegation", Description)
@@ -88,12 +98,17 @@ public static class MembershipEndpoints
 
     // Current active tenant identity administrators: operator grant (membership.manage, tenant-wide
     // manage, trusted role, directory.read) AND a persisted Active state when one exists.
+    // Operator-side administrator predicate; the MembershipDto.Administrator flag and the last-admin
+    // count both use ActiveAdministrators, so they can never disagree.
+    internal static bool IsConfiguredAdministrator(FederationSettings settings, Membership m, Guid tenant) =>
+        m.TenantId == tenant && m.ActorId != Guid.Empty && !string.IsNullOrEmpty(m.Issuer) &&
+        !string.IsNullOrEmpty(m.Subject) && m.TenantWideManage && (m.Permissions ?? []).Contains("membership.manage") &&
+        (m.Permissions ?? []).Contains("directory.read") && ActorResolver.TrustedRoleContext(m.RoleReferences) != null &&
+        settings.Memberships.Count(x => x.Issuer == m.Issuer && x.Subject == m.Subject) == 1;
+
     internal static async Task<HashSet<Guid>> ActiveAdministrators(PoseidonDbContext db, FederationSettings settings, Guid tenant, CancellationToken ct)
     {
-        var configured = settings.Memberships.Where(m => m.TenantId == tenant && m.ActorId != Guid.Empty && !string.IsNullOrEmpty(m.Issuer) &&
-            !string.IsNullOrEmpty(m.Subject) && m.TenantWideManage && (m.Permissions ?? []).Contains("membership.manage") &&
-            (m.Permissions ?? []).Contains("directory.read") && ActorResolver.TrustedRoleContext(m.RoleReferences) != null &&
-            settings.Memberships.Count(x => x.Issuer == m.Issuer && x.Subject == m.Subject) == 1).ToArray();
+        var configured = settings.Memberships.Where(m => IsConfiguredAdministrator(settings, m, tenant)).ToArray();
         var persisted = await db.UserAccounts.AsNoTracking().Join(db.AccountMemberships.AsNoTracking(), a => a.Id, m => m.AccountId,
             (a, m) => new { a.Id, a.Issuer, a.Subject, m.Status, m.RoleContext }).ToArrayAsync(ct);
         var result = new HashSet<Guid>();
@@ -108,16 +123,15 @@ public static class MembershipEndpoints
         return result;
     }
 
-    private static async Task<MembershipDto[]> Dtos(PoseidonDbContext db, FederationSettings settings, IQueryable<AccountMembership> query, CancellationToken ct)
+    private static async Task<MembershipDto[]> Dtos(PoseidonDbContext db, FederationSettings settings, Guid tenant, IQueryable<AccountMembership> query, CancellationToken ct)
     {
         var rows = await query.Join(db.UserAccounts.AsNoTracking(), m => m.AccountId, a => a.Id, (m, a) => new { m, a.Issuer, a.Subject }).ToArrayAsync(ct);
+        var admins = await ActiveAdministrators(db, settings, tenant, ct);
         var ids = rows.Select(x => x.m.Id).ToArray();
         var grants = await db.AccountMembershipVesselGrants.AsNoTracking().Where(g => ids.Contains(g.MembershipId))
             .GroupBy(g => g.MembershipId).Select(g => new { g.Key, Count = g.Count() }).ToDictionaryAsync(x => x.Key, x => x.Count, ct);
         return rows.Select(x => new MembershipDto(x.m.Id, x.m.AccountId, x.m.Status, x.m.StatusReason, x.m.AccessRevision, x.m.ActiveCompanyId,
-            x.m.RoleContext != null, grants.GetValueOrDefault(x.m.Id), x.m.Source,
-            settings.Memberships.Count(c => c.Issuer == x.Issuer && c.Subject == x.Subject && c.ActorId == x.m.AccountId &&
-                (c.Permissions ?? []).Contains("membership.manage")) == 1,
+            x.m.RoleContext != null, grants.GetValueOrDefault(x.m.Id), x.m.Source, admins.Contains(x.m.AccountId),
             x.m.StatusChangedAt, x.m.Version)).ToArray();
     }
 
@@ -138,8 +152,8 @@ public static class MembershipEndpoints
         if (skip < 0 || take is < 1 or > 100 || status != null && MembershipLifecyclePolicy.Parse(status) == null)
         { await audit.WriteAsync(h, "MembershipRead", "invalid_query"); return Problem(h, 400, "invalid_query"); }
         var query = db.AccountMemberships.AsNoTracking().Where(m => status == null || m.Status == status).OrderBy(m => m.AccountId).ThenBy(m => m.Id).Skip(skip).Take(take + 1);
-        var items = await Dtos(db, settings, query, h.RequestAborted);
-        var recovery = await db.TenantAccessRecoveries.AsNoTracking().AnyAsync(h.RequestAborted) &&
+        var items = await Dtos(db, settings, actor.TenantId, query, h.RequestAborted);
+        var recovery = await db.TenantAccessRecoveries.AsNoTracking().AnyAsync(r => r.ResolvedAt == null, h.RequestAborted) &&
             (await ActiveAdministrators(db, settings, actor.TenantId, h.RequestAborted)).Count == 0;
         var accounts = await db.UserAccounts.AsNoTracking().Select(a => new { a.Issuer, a.Subject }).ToArrayAsync(h.RequestAborted);
         var notImported = settings.Memberships.Count(m => m.TenantId == actor.TenantId && !accounts.Any(a => a.Issuer == m.Issuer && a.Subject == m.Subject));
@@ -151,7 +165,7 @@ public static class MembershipEndpoints
     {
         var actor = Actor(h);
         if (!CanReadMemberships(actor)) { await audit.WriteAsync(h, "MembershipRead", "permission_denied", resourceId: id); return Problem(h, 403, "permission_denied"); }
-        var item = (await Dtos(db, settings, db.AccountMemberships.AsNoTracking().Where(m => m.Id == id), h.RequestAborted)).SingleOrDefault();
+        var item = (await Dtos(db, settings, actor.TenantId, db.AccountMemberships.AsNoTracking().Where(m => m.Id == id), h.RequestAborted)).SingleOrDefault();
         if (item == null) { await audit.WriteAsync(h, "MembershipRead", "resource_not_found", resourceId: id); return Problem(h, 404, "resource_not_found"); }
         await audit.WriteAsync(h, "MembershipRead", "Success", resourceId: id);
         h.Response.Headers.ETag = $"\"{item.Version}\"";
@@ -162,10 +176,14 @@ public static class MembershipEndpoints
     {
         var states = await db.AccountMemberships.AsNoTracking().Where(m => m.Id == d.DelegatorMembershipId || m.Id == d.DelegateMembershipId)
             .Select(m => new { m.Id, m.Status }).ToArrayAsync(ct);
+        var scope = await db.DelegationVesselScopes.AsNoTracking().Where(v => v.DelegationId == d.Id).OrderBy(v => v.VesselId)
+            .Select(v => new VesselGrant(v.VesselId, v.CanEdit)).ToArrayAsync(ct);
         bool Active(Guid id) => states.Any(x => x.Id == id && x.Status == "Active");
+        // Stored snapshot. A LegacyUnscoped row (predates the snapshot) is never effective.
+        var state = d.ReasonCode == DelegationPolicy.LegacyUnscoped && d.Status == "Active" ? "Ineffective"
+            : DelegationPolicy.State(d.Status == "Revoked", d.ValidFrom, d.ValidUntil, now, Active(d.DelegatorMembershipId), Active(d.DelegateMembershipId));
         return new(d.Id, d.DelegatorMembershipId, d.DelegateMembershipId, d.Permissions.Split(','), d.ValidFrom, d.ValidUntil, d.Status,
-            DelegationPolicy.State(d.Status == "Revoked", d.ValidFrom, d.ValidUntil, now, Active(d.DelegatorMembershipId), Active(d.DelegateMembershipId)),
-            d.RevocationReason, d.Version);
+            state, d.RevocationReason, d.Version, d.ReasonCode, d.CompanyId, scope);
     }
 
     private static async Task<IResult> Delegations(Guid id, HttpContext h, PoseidonDbContext db, SecurityAudit audit, TimeProvider time)
@@ -223,9 +241,17 @@ public static class MembershipEndpoints
         return receipt == null ? (false, false) : (true, receipt.Action == action && receipt.Fingerprint == fingerprint);
     }
 
-    private static void AddReceipt(PoseidonDbContext db, TrustedActor actor, string key, string action, string fingerprint, Guid resource, DateTimeOffset now) =>
+    private static void AddReceipt(PoseidonDbContext db, TrustedActor actor, string key, string action, string fingerprint, Guid resource, DateTimeOffset now, string? result = null) =>
         db.MembershipCommandReceipts.Add(new MembershipCommandReceipt { TenantId = actor.TenantId, ActorId = actor.Id, Key = key, Action = action,
-            Fingerprint = fingerprint, ResourceId = resource, CommittedAt = now });
+            Fingerprint = fingerprint, ResourceId = resource, CommittedAt = now, Result = result });
+
+    // A COMMIT that fails (e.g. SSI 40001 raised at commit) already completed the transaction; a second
+    // rollback would throw and turn a classified 409 into a 500.
+    private static async Task Rollback(Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction transaction)
+    {
+        try { await transaction.RollbackAsync(CancellationToken.None); }
+        catch (InvalidOperationException) { /* Already completed by the failed COMMIT; nothing left to undo. */ }
+    }
 
     private static async Task<IResult> Run(HttpContext h, Guid? resource, Func<PoseidonDbContext, Task<(IResult Result, string Outcome)>> body)
     {
@@ -234,38 +260,46 @@ public static class MembershipEndpoints
         await using var transaction = await db.Database.BeginTransactionAsync(IsolationLevel.Serializable, h.RequestAborted);
         try
         {
-            var (result, outcome) = await body(db);
+            // Commit-time fence for the acting administrator: the gate checked the session before the
+            // transaction; a concurrent suspension of the actor must not let this command commit.
+            var actor = Actor(h);
+            var self = await db.AccountMemberships.AsNoTracking().Where(m => m.AccountId == actor.Id)
+                .Select(m => new { m.Status, m.AccessRevision }).Take(2).ToArrayAsync(h.RequestAborted);
+            var (result, outcome) = self.Length > 1 || self.Length == 1 &&
+                !MembershipLifecyclePolicy.AdmitsSession(MembershipLifecyclePolicy.Parse(self[0].Status), self[0].AccessRevision, MembershipSession.SessionAccessRevision(h.User))
+                ? (Problem(h, 409, "conflict_changed"), "conflict_changed")
+                : await body(db);
             if (outcome == "Success")
             {
                 // Business change, receipt and EF write audit commit together; no fallible write after commit.
                 await transaction.CommitAsync(h.RequestAborted);
                 return result;
             }
-            await transaction.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear();
+            await Rollback(transaction); db.ChangeTracker.Clear();
             await audit.WriteAsync(h, "MembershipCommand", outcome, resourceId: resource);
             return result;
         }
         catch (DbUpdateConcurrencyException)
         {
-            await transaction.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear();
+            await Rollback(transaction); db.ChangeTracker.Clear();
             await audit.WriteAsync(h, "MembershipCommand", "version_conflict", resourceId: resource);
             return Problem(h, 409, "version_conflict");
         }
         catch (Exception ex) when (PostgresFailure.IsSerialization(ex))
         {
-            await transaction.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear();
+            await Rollback(transaction); db.ChangeTracker.Clear();
             await audit.WriteAsync(h, "MembershipCommand", "conflict_changed", resourceId: resource);
             return Problem(h, 409, "conflict_changed");
         }
         catch (DbUpdateException ex) when (PostgresFailure.Provider(ex)?.SqlState == PostgresErrorCodes.UniqueViolation)
         {
-            await transaction.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear();
+            await Rollback(transaction); db.ChangeTracker.Clear();
             await audit.WriteAsync(h, "MembershipCommand", "lineage_conflict", resourceId: resource);
             return Problem(h, 409, "lineage_conflict");
         }
         catch (Exception ex) when (PostgresFailure.IsDatabase(ex))
         {
-            await transaction.RollbackAsync(CancellationToken.None);
+            await Rollback(transaction);
             await audit.WriteAsync(h, "MembershipCommand", "service_unavailable", resourceId: resource);
             return Problem(h, 503, "service_unavailable");
         }
@@ -286,18 +320,27 @@ public static class MembershipEndpoints
         {
             var receipt = await Receipt(db, actor, prelude.Key, action, fingerprint, h.RequestAborted);
             if (receipt.Found && !receipt.Matches) return (Problem(h, 409, "idempotency_key_reused"), "idempotency_key_reused");
-            if (receipt.Found) { h.Response.Headers["Idempotency-Replayed"] = "true"; return (Results.Ok(new MembershipImportDto(0, 0, 0)), "Success"); }
+            if (receipt.Found)
+            {
+                // Replay returns the original committed result stored with the receipt.
+                h.Response.Headers["Idempotency-Replayed"] = "true";
+                var stored = (await db.MembershipCommandReceipts.AsNoTracking().SingleAsync(r => r.ActorId == actor.Id && r.Key == prelude.Key, h.RequestAborted)).Result;
+                var original = stored == null ? null : JsonSerializer.Deserialize<MembershipImportDto>(stored, Json);
+                return original == null ? (Problem(h, 409, "conflict_changed"), "conflict_changed") : (Results.Ok(original), "Success");
+            }
             var accounts = await db.UserAccounts.AsNoTracking().Select(a => new { a.Id, a.Issuer, a.Subject }).ToArrayAsync(h.RequestAborted);
             var companies = await db.Companies.AsNoTracking().Select(c => c.Id).ToArrayAsync(h.RequestAborted);
             var vessels = await db.Vessels.AsNoTracking().Select(v => v.Id).ToArrayAsync(h.RequestAborted);
-            int imported = 0, present = 0, skipped = 0;
-            foreach (var m in settings.Memberships.Where(m => m.TenantId == actor.TenantId))
+            int imported = 0, present = 0;
+            var skips = new List<MembershipImportSkip>();
+            foreach (var m in settings.Memberships.Where(m => m.TenantId == actor.TenantId).OrderBy(m => m.ActorId))
             {
-                if (m.ActorId == Guid.Empty || m.Issuer is not { Length: > 0 and <= 1024 } || m.Subject is not { Length: > 0 and <= 255 } ||
-                    settings.Memberships.Count(x => x.Issuer == m.Issuer && x.Subject == m.Subject) != 1 ||
-                    settings.Memberships.Count(x => x.ActorId == m.ActorId) != 1) { skipped++; continue; }
+                if (m.ActorId == Guid.Empty || m.Issuer is not { Length: > 0 and <= 1024 } || m.Subject is not { Length: > 0 and <= 255 })
+                { skips.Add(new(m.ActorId, "invalid_configuration")); continue; }
+                if (settings.Memberships.Count(x => x.Issuer == m.Issuer && x.Subject == m.Subject) != 1 || settings.Memberships.Count(x => x.ActorId == m.ActorId) != 1)
+                { skips.Add(new(m.ActorId, "duplicate_configuration")); continue; }
                 if (accounts.Any(a => a.Issuer == m.Issuer && a.Subject == m.Subject)) { present++; continue; }
-                if (accounts.Any(a => a.Id == m.ActorId)) { skipped++; continue; } // Identity conflict: never rebind.
+                if (accounts.Any(a => a.Id == m.ActorId)) { skips.Add(new(m.ActorId, "actor_conflict")); continue; } // Identity conflict: never rebind.
                 var membership = MembershipIdFor(actor.TenantId, m.ActorId);
                 db.UserAccounts.Add(new UserAccount { TenantId = actor.TenantId, Id = m.ActorId, Issuer = m.Issuer, Subject = m.Subject,
                     Source = "ConfigurationImport", CreatedAt = now });
@@ -310,18 +353,38 @@ public static class MembershipEndpoints
                 foreach (var grant in (m.VesselGrants ?? []).Where(g => vessels.Contains(g.VesselId)).GroupBy(g => g.VesselId))
                     db.AccountMembershipVesselGrants.Add(new AccountMembershipVesselGrant { TenantId = actor.TenantId, MembershipId = membership,
                         VesselId = grant.Key, CanEdit = grant.All(g => g.CanEdit) });
-                imported++;
+                try
+                {
+                    // One audited SaveChanges per entry inside the SERIALIZABLE transaction; EF wraps it in a
+                    // savepoint, so a global issuer/subject or actor-id binding in another tenant (invisible
+                    // through the tenant filter) skips only this entry. No cross-tenant query is issued.
+                    await db.SaveChangesAsync(h.RequestAborted);
+                    imported++;
+                }
+                catch (DbUpdateException ex) when (PostgresFailure.Provider(ex) is { SqlState: PostgresErrorCodes.UniqueViolation } unique &&
+                    unique.ConstraintName is "IX_Accounts_IssuerSubject" or "AK_Accounts_Id")
+                {
+                    db.ChangeTracker.Clear();
+                    skips.Add(new(m.ActorId, "identity_bound_other_tenant"));
+                }
             }
+            var result = new MembershipImportDto(imported, present, skips.Count, skips.Take(100).ToArray());
+            AddReceipt(db, actor, prelude.Key, action, fingerprint, actor.TenantId, now, JsonSerializer.Serialize(result, Json));
             await db.SaveChangesAsync(h.RequestAborted);
-            AddReceipt(db, actor, prelude.Key, action, fingerprint, actor.TenantId, now);
-            await db.SaveChangesAsync(h.RequestAborted);
-            return (Results.Ok(new MembershipImportDto(imported, present, skipped)), "Success");
+            return (Results.Ok(result), "Success");
         });
     }
 
     private static async Task<IResult> Transition(HttpContext h, Guid id, MembershipTransition transition)
     {
-        var (prelude, failure) = await Begin(h, id, transition == MembershipTransition.SecuritySuspend ? CanSecuritySuspend : CanManageMemberships);
+        // Resume is admitted for either authority here; the exact authority depends on the current
+        // suspension reason and is checked against the fresh row inside the transaction.
+        var (prelude, failure) = await Begin(h, id, transition switch
+        {
+            MembershipTransition.SecuritySuspend => CanSecuritySuspend,
+            MembershipTransition.Resume => a => CanManageMemberships(a) || CanSecuritySuspend(a),
+            _ => CanManageMemberships
+        });
         if (prelude == null) return failure!;
         var audit = h.RequestServices.GetRequiredService<SecurityAudit>();
         var command = Parse<MembershipTransitionCommand>(prelude.Body);
@@ -345,18 +408,21 @@ public static class MembershipEndpoints
             // Fresh object authorization precedes receipt reads (tenant filter => cross-tenant 404).
             var target = await db.AccountMemberships.SingleOrDefaultAsync(m => m.Id == id, h.RequestAborted);
             if (target == null) return (Problem(h, 404, "resource_not_found"), "resource_not_found");
+            var security = MembershipLifecyclePolicy.RequiresSecurityAuthority(transition, target.StatusReason) ||
+                transition == MembershipTransition.Resume && target.StatusReason == "SecurityResume";
+            if (!(security ? CanSecuritySuspend(actor) : CanManageMemberships(actor))) return (Problem(h, 403, "permission_denied"), "permission_denied");
             var receipt = await Receipt(db, actor, prelude.Key, action, fingerprint, h.RequestAborted);
             if (receipt.Found && !receipt.Matches) return (Problem(h, 409, "idempotency_key_reused"), "idempotency_key_reused");
             if (receipt.Found)
             {
                 h.Response.Headers["Idempotency-Replayed"] = "true";
-                var fresh = (await Dtos(db, settings, db.AccountMemberships.AsNoTracking().Where(m => m.Id == id), h.RequestAborted)).Single();
+                var fresh = (await Dtos(db, settings, actor.TenantId, db.AccountMemberships.AsNoTracking().Where(m => m.Id == id), h.RequestAborted)).Single();
                 return (Results.Ok(fresh), "Success");
             }
             if (target.Version != command.ExpectedVersion) return (Problem(h, 409, "version_conflict"), "version_conflict");
             var status = MembershipLifecyclePolicy.Parse(target.Status) ?? throw new InvalidOperationException("Membership state is outside its closed contract.");
             var admins = await ActiveAdministrators(db, settings, actor.TenantId, h.RequestAborted);
-            var decision = MembershipLifecyclePolicy.Decide(status, transition, MembershipLifecyclePolicy.IsLastActiveAdministrator(target.AccountId, admins));
+            var decision = MembershipLifecyclePolicy.Decide(status, transition, MembershipLifecyclePolicy.IsLastActiveAdministrator(target.AccountId, admins), target.StatusReason);
             if (!decision.Allowed) return (Problem(h, 409, decision.ErrorCode!), decision.ErrorCode!);
             target.Status = MembershipLifecyclePolicy.Wire(decision.Next);
             target.StatusReason = decision.ReasonCode;
@@ -377,10 +443,14 @@ public static class MembershipEndpoints
             if (decision.RecoveryRequired)
                 db.TenantAccessRecoveries.Add(new TenantAccessRecovery { TenantId = actor.TenantId, Id = Guid.NewGuid(), MembershipId = id,
                     Cause = "SecuritySuspension", RaisedAt = now });
+            if (decision.ReasonCode == "SecurityResume")
+                // RECOVERY_REQUIRED for this membership closes with an audited closed resolution (one-time).
+                foreach (var open in await db.TenantAccessRecoveries.Where(r => r.MembershipId == id && r.ResolvedAt == null).ToArrayAsync(h.RequestAborted))
+                { open.ResolvedAt = now; open.Resolution = "SecuritySuspensionResumed"; }
             await db.SaveChangesAsync(h.RequestAborted);
             AddReceipt(db, actor, prelude.Key, action, fingerprint, id, now);
             await db.SaveChangesAsync(h.RequestAborted);
-            var dto = (await Dtos(db, settings, db.AccountMemberships.AsNoTracking().Where(m => m.Id == id), h.RequestAborted)).Single();
+            var dto = (await Dtos(db, settings, actor.TenantId, db.AccountMemberships.AsNoTracking().Where(m => m.Id == id), h.RequestAborted)).Single();
             return (Results.Ok(dto), "Success");
         });
     }
@@ -397,7 +467,9 @@ public static class MembershipEndpoints
         var now = h.RequestServices.GetRequiredService<TimeProvider>().GetUtcNow();
         const string action = "DelegationCreate";
         var permissions = command.Permissions ?? [];
-        var fingerprint = Fingerprint(new { action, delegator, command.DelegateMembershipId, permissions = DelegationPolicy.Canonical(permissions), command.ValidFrom, command.ValidUntil });
+        var vesselScope = (command.VesselScope ?? []).Select(v => v == null ? new DelegatedVessel(Guid.Empty, false) : new DelegatedVessel(v.VesselId, v.CanEdit)).ToArray();
+        var fingerprint = Fingerprint(new { action, delegator, command.DelegateMembershipId, permissions = DelegationPolicy.Canonical(permissions), command.ValidFrom, command.ValidUntil,
+            command.ReasonCode, command.CompanyId, scope = string.Join(',', vesselScope.Select(v => v.VesselId.ToString("D") + (v.CanEdit ? ":e" : ":r")).Order(StringComparer.Ordinal)) });
         return await Run(h, delegator, async db =>
         {
             var pair = await db.AccountMemberships.Where(m => m.Id == delegator || m.Id == command.DelegateMembershipId)
@@ -418,17 +490,22 @@ public static class MembershipEndpoints
                 return (Problem(h, 404, "resource_not_found"), "resource_not_found");
             // Maker-checker: the approving administrator is neither source nor delegate.
             if (source.m.AccountId == actor.Id || target?.m.AccountId == actor.Id) return (Problem(h, 403, "separation_of_duties"), "separation_of_duties");
-            var sourceGrant = settings.Memberships.Where(c => c.Issuer == source.Issuer && c.Subject == source.Subject && c.ActorId == source.m.AccountId && c.TenantId == actor.TenantId).ToArray();
-            var sourcePermissions = sourceGrant.Length == 1 && source.m.Status == "Active" ? sourceGrant[0].Permissions ?? [] : [];
-            var errors = DelegationPolicy.Validate(new(delegator, command.DelegateMembershipId ?? Guid.Empty, command.Permissions, command.ValidFrom, command.ValidUntil),
-                sourcePermissions, now);
+            // Source's CURRENT authority: operator grant narrowed by its persisted membership and grant snapshot.
+            var sourceGrants = await db.AccountMembershipVesselGrants.AsNoTracking().Where(g => g.MembershipId == delegator).ToArrayAsync(h.RequestAborted);
+            var current = DelegationAuthority.Current(settings, actor.TenantId, source.m.AccountId, source.Issuer, source.Subject, source.m.Status,
+                source.m.ActiveCompanyId, sourceGrants) ?? new DelegationSource([], null, []);
+            var errors = DelegationPolicy.Validate(new(delegator, command.DelegateMembershipId ?? Guid.Empty, command.Permissions, command.ValidFrom, command.ValidUntil,
+                command.ReasonCode, command.CompanyId, vesselScope), current, now);
             if (target != null && target.m.Status != "Active") errors["delegateMembershipId"] = ["membership_inactive"];
             if (source.m.Status != "Active") errors["delegatorMembershipId"] = ["membership_inactive"];
             if (errors.Count > 0) return (Problem(h, 400, "validation_failed", errors), "validation_failed");
             var delegation = new MembershipDelegation { TenantId = actor.TenantId, Id = Guid.NewGuid(), DelegatorMembershipId = delegator,
                 DelegateMembershipId = target!.m.Id, Permissions = DelegationPolicy.Canonical(permissions), ValidFrom = command.ValidFrom!.Value,
-                ValidUntil = command.ValidUntil!.Value, Status = "Active", ApprovedBy = actor.Id.ToString(), CreatedAt = now };
+                ValidUntil = command.ValidUntil!.Value, Status = "Active", ApprovedBy = actor.Id.ToString(), CreatedAt = now,
+                ReasonCode = command.ReasonCode!, CompanyId = command.CompanyId };
             db.MembershipDelegations.Add(delegation);
+            foreach (var vessel in vesselScope)
+                db.DelegationVesselScopes.Add(new DelegationVesselScope { TenantId = actor.TenantId, DelegationId = delegation.Id, VesselId = vessel.VesselId, CanEdit = vessel.CanEdit });
             await db.SaveChangesAsync(h.RequestAborted);
             AddReceipt(db, actor, prelude.Key, action, fingerprint, delegation.Id, now);
             await db.SaveChangesAsync(h.RequestAborted);

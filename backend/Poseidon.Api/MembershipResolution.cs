@@ -20,11 +20,39 @@ public interface ICurrentMembershipResolver
 public sealed record CurrentMembership(Guid ActorId, Guid TenantId, Guid? MembershipId, string Status, long AccessRevision,
     bool Persisted, Guid? ActiveCompanyId, EffectiveDelegation[] ReceivedDelegations);
 
-// Delegated permissions are already intersected with the delegator's current operator grant.
-// They are NOT merged into TrustedActor.Permissions; an exact action resolver must apply
-// them per action and record actor + on-behalf-of + delegationId together (52.02 §6).
+// Delegated permissions AND delegated scope are already intersected with the delegator's
+// CURRENT authority (operator grant narrowed by the delegator's persisted membership).
+// They are NOT merged into TrustedActor.Permissions. Contract for PLAN-1511-5402: a delegated
+// permission may be applied only inside this delegation's own ActiveCompanyId/VesselGrants,
+// never with the delegate's own vessel/company scope and never tenant-wide; the exact action
+// resolver records actor + on-behalf-of + delegationId together (52.02 paragraph:102-103).
 public sealed record EffectiveDelegation(Guid DelegationId, Guid DelegatorActorId, Guid DelegatorMembershipId, string[] Permissions,
-    DateTimeOffset ValidFrom, DateTimeOffset ValidUntil);
+    DateTimeOffset ValidFrom, DateTimeOffset ValidUntil, string ReasonCode, Guid? ActiveCompanyId, VesselGrant[] VesselGrants)
+{
+    // Delegations never convey tenant-wide read/manage scope.
+    public bool TenantWide => false;
+}
+
+// Current authority of a delegation source, using the same narrowing rules as ActorResolver:
+// non-Active => none; vessel grants = operator ∩ persisted snapshot (edit only when both allow);
+// company survives only when operator and persisted snapshot agree; permissions follow the
+// operator allow-list live.
+internal static class DelegationAuthority
+{
+    internal static DelegationSource? Current(FederationSettings settings, Guid tenant, Guid accountId, string issuer, string subject,
+        string persistedStatus, Guid? persistedCompany, IReadOnlyCollection<AccountMembershipVesselGrant> persistedGrants)
+    {
+        if (persistedStatus != "Active") return null;
+        var config = settings.Memberships.Where(m => m.Issuer == issuer && m.Subject == subject).ToArray();
+        if (config.Length != 1 || config[0].ActorId != accountId || config[0].TenantId != tenant) return null;
+        var m = config[0];
+        var vessels = (m.VesselGrants ?? []).Where(g => g.VesselId != Guid.Empty && persistedGrants.Any(p => p.VesselId == g.VesselId))
+            .GroupBy(g => g.VesselId)
+            .Select(g => new DelegatedVessel(g.Key, g.All(x => x.CanEdit) && persistedGrants.Any(p => p.VesselId == g.Key && p.CanEdit))).ToArray();
+        var company = m.ActiveCompanyId is { } c && c != Guid.Empty && c == persistedCompany ? c : (Guid?)null;
+        return new DelegationSource(ActorResolver.TrustedPermissions(m.Permissions), company, vessels);
+    }
+}
 
 public sealed record MembershipSnapshot(Guid AccountId, Guid MembershipId, Guid TenantId, MembershipStatus Status, long AccessRevision,
     string? RoleContext, Guid? ActiveCompanyId, VesselGrant[] VesselGrants, bool IdentityConflict);
@@ -78,11 +106,26 @@ public sealed class MembershipStateReader(IConfiguration configuration, IHostEnv
 // all existing endpoint policies deny it (401) without any endpoint-specific code.
 public sealed class MembershipSessionGate(RequestDelegate next)
 {
+    // EF reports a failed connection as InvalidOperationException("transient failure") wrapping
+    // NpgsqlException, so the whole inner chain is classified.
+    internal static bool StateUnavailable(Exception ex) => ex is AuditUnavailableException or TimeoutException || PostgresFailure.IsDatabase(ex) ||
+        ex.InnerException is { } inner && StateUnavailable(inner);
+
     public async Task InvokeAsync(HttpContext context, ActorResolver actors, MembershipStateReader reader, SecurityAudit audit)
     {
         if (actors.ConfiguredIdentityFor(context.User) is { } identity)
         {
-            var snapshot = await reader.ReadAsync(identity, context.TraceIdentifier, context.RequestAborted);
+            MembershipSnapshot? snapshot;
+            try { snapshot = await reader.ReadAsync(identity, context.TraceIdentifier, context.RequestAborted); }
+            catch (Exception ex) when (StateUnavailable(ex))
+            {
+                // Fail closed: current state unknown => no request proceeds with the old authority.
+                context.User = new ClaimsPrincipal(new ClaimsIdentity());
+                if (context.Response.HasStarted) throw;
+                context.Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
+                await context.Response.WriteAsJsonAsync(new { code = "service_unavailable", correlationId = context.TraceIdentifier }, context.RequestAborted);
+                return;
+            }
             var admitted = snapshot is null || !snapshot.IdentityConflict &&
                 MembershipLifecyclePolicy.AdmitsSession(snapshot.Status, snapshot.AccessRevision, MembershipSession.SessionAccessRevision(context.User));
             if (!admitted)
@@ -111,20 +154,30 @@ public sealed class CurrentMembershipResolver(ActorResolver actors, FederationSe
         var db = http.RequestServices.GetRequiredService<PoseidonDbContext>();
         var now = time.GetUtcNow();
         var rows = await db.MembershipDelegations.AsNoTracking()
-            .Where(d => d.DelegateMembershipId == snapshot.MembershipId && d.Status == "Active" && d.ValidFrom <= now && d.ValidUntil > now)
-            .Join(db.AccountMemberships.AsNoTracking().Where(m => m.Status == "Active"), d => d.DelegatorMembershipId, m => m.Id, (d, m) => new { d, m.AccountId })
-            .Join(db.UserAccounts.AsNoTracking(), x => x.AccountId, a => a.Id, (x, a) => new { x.d, a.Id, a.Issuer, a.Subject })
+            .Where(d => d.DelegateMembershipId == snapshot.MembershipId && d.Status == "Active" && d.ValidFrom <= now && d.ValidUntil > now &&
+                d.ReasonCode != DelegationPolicy.LegacyUnscoped)
+            .Join(db.AccountMemberships.AsNoTracking().Where(m => m.Status == "Active"), d => d.DelegatorMembershipId, m => m.Id,
+                (d, m) => new { d, m.AccountId, m.Status, m.ActiveCompanyId })
+            .Join(db.UserAccounts.AsNoTracking(), x => x.AccountId, a => a.Id, (x, a) => new { x.d, x.Status, x.ActiveCompanyId, a.Id, a.Issuer, a.Subject })
             .OrderBy(x => x.d.ValidUntil).ThenBy(x => x.d.Id).Take(64).ToArrayAsync(cancellationToken);
+        var delegationIds = rows.Select(x => x.d.Id).ToArray();
+        var sourceIds = rows.Select(x => x.d.DelegatorMembershipId).Distinct().ToArray();
+        var scopes = (await db.DelegationVesselScopes.AsNoTracking().Where(v => delegationIds.Contains(v.DelegationId)).ToArrayAsync(cancellationToken))
+            .ToLookup(v => v.DelegationId);
+        var sourceGrants = (await db.AccountMembershipVesselGrants.AsNoTracking().Where(g => sourceIds.Contains(g.MembershipId)).ToArrayAsync(cancellationToken))
+            .ToLookup(g => g.MembershipId);
         var delegations = new List<EffectiveDelegation>();
         foreach (var row in rows)
         {
-            // The delegator's current operator grant bounds the delegation at request time.
-            var source = settings.Memberships.Where(m => m.Issuer == row.Issuer && m.Subject == row.Subject).ToArray();
-            if (source.Length != 1 || source[0].ActorId != row.Id || source[0].TenantId != actor.TenantId) continue;
-            var current = (source[0].Permissions ?? []).ToHashSet(StringComparer.Ordinal);
-            var permissions = row.d.Permissions.Split(',').Where(p => current.Contains(p) && !DelegationPolicy.NonDelegable(p)).ToArray();
-            if (permissions.Length == 0) continue;
-            delegations.Add(new(row.d.Id, row.Id, row.d.DelegatorMembershipId, permissions, row.d.ValidFrom, row.d.ValidUntil));
+            // The delegator's CURRENT authority bounds both the permissions and the scope at request time.
+            var source = DelegationAuthority.Current(settings, actor.TenantId, row.Id, row.Issuer, row.Subject, row.Status, row.ActiveCompanyId,
+                sourceGrants[row.d.DelegatorMembershipId].ToArray());
+            if (source == null) continue;
+            var effective = DelegationPolicy.Effective(row.d.Permissions.Split(','), row.d.CompanyId,
+                scopes[row.d.Id].Select(v => new DelegatedVessel(v.VesselId, v.CanEdit)), source);
+            if (effective.IsEmpty) continue; // Nothing left to apply; the delegate's own scope is never substituted.
+            delegations.Add(new(row.d.Id, row.Id, row.d.DelegatorMembershipId, effective.Permissions, row.d.ValidFrom, row.d.ValidUntil,
+                row.d.ReasonCode, effective.CompanyId, effective.Vessels.Select(v => new VesselGrant(v.VesselId, v.CanEdit)).ToArray()));
         }
         return new(actor.Id, actor.TenantId, snapshot.MembershipId, MembershipLifecyclePolicy.Wire(snapshot.Status), snapshot.AccessRevision,
             true, actor.ActiveCompanyId, delegations.ToArray());

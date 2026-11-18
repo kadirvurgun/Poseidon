@@ -725,7 +725,7 @@ export interface paths {
         put?: never;
         /**
          * CreateDelegation
-         * @description Approves a time-boxed delegation from this membership. The approver can be neither source nor delegate; scope cannot exceed the source's current grant; re-delegation is not possible.
+         * @description Approves a time-boxed delegation from this membership with a mandatory closed reasonCode and an explicit company/vessel scope. The approver can be neither source nor delegate; permissions and scope cannot exceed the source's current grant (400 exceeds_source_scope); tenant-wide scope is never delegated; re-delegation is not possible.
          */
         post: operations["CreateDelegation"];
         delete?: never;
@@ -745,7 +745,7 @@ export interface paths {
         put?: never;
         /**
          * ImportConfiguredMemberships
-         * @description Deterministically imports operator-provisioned memberships of the caller's tenant that have no persisted record. Never changes existing records and never widens access.
+         * @description Deterministically imports operator-provisioned memberships of the caller's tenant that have no persisted record. Never changes existing records and never widens access. Entries that cannot be imported (including an identity already bound in another tenant) are skipped with a closed reason; configuration keeps governing them. Replay returns the original result.
          */
         post: operations["ImportConfiguredMemberships"];
         delete?: never;
@@ -785,7 +785,7 @@ export interface paths {
         put?: never;
         /**
          * ResumeMembership
-         * @description Requires antiforgery, a 16–80 character Idempotency-Key and server-provisioned membership.manage with tenant-wide manage scope and a trusted role. Transitions require expectedVersion; stale changes return 409. Voluntary removal of the last active identity administrator returns 409 last_admin. Replay returns the fresh representation.
+         * @description Requires antiforgery, a 16–80 character Idempotency-Key and server-provisioned membership.manage with tenant-wide manage scope and a trusted role. Transitions require expectedVersion; stale changes return 409. Voluntary removal of the last active identity administrator returns 409 last_admin. Replay returns the fresh representation. Resuming a security suspension requires membership.security.suspend (membership.manage alone returns 403) and closes its RECOVERY_REQUIRED case.
          */
         post: operations["ResumeMembership"];
         delete?: never;
@@ -6398,6 +6398,10 @@ export interface components {
             validFrom: null | string;
             /** Format: date-time */
             validUntil: null | string;
+            reasonCode?: null | string;
+            /** Format: uuid */
+            companyId?: null | string;
+            vesselScope?: null | components["schemas"]["DelegationVesselCommand"][];
         };
         DelegationDto: {
             /** Format: uuid */
@@ -6416,6 +6420,16 @@ export interface components {
             revocationReason: null | string;
             /** Format: uint32 */
             version: number;
+            reasonCode: string;
+            /** Format: uuid */
+            companyId: null | string;
+            vesselScope: components["schemas"]["VesselGrant"][];
+        };
+        DelegationVesselCommand: {
+            /** Format: uuid */
+            vesselId: string;
+            /** @default false */
+            canEdit: boolean;
         };
         DocumentDraftDto: {
             /** Format: uuid */
@@ -6583,6 +6597,11 @@ export interface components {
             validFrom: string;
             /** Format: date-time */
             validUntil: string;
+            reasonCode: string;
+            /** Format: uuid */
+            activeCompanyId: null | string;
+            vesselGrants: components["schemas"]["VesselGrant"][];
+            tenantWide?: boolean;
         };
         EquipmentCommand: {
             /** Format: uuid */
@@ -7171,6 +7190,12 @@ export interface components {
             alreadyPresent: number;
             /** Format: int32 */
             skipped: number;
+            skips: components["schemas"]["MembershipImportSkip"][];
+        };
+        MembershipImportSkip: {
+            /** Format: uuid */
+            actorId: string;
+            reason: string;
         };
         MembershipPageDto: {
             items: components["schemas"]["MembershipDto"][];
@@ -8440,6 +8465,12 @@ export interface components {
             kind: string;
             /** Format: uint32 */
             version: number;
+            canEdit: boolean;
+        };
+        VesselGrant: {
+            /** Format: uuid */
+            vesselId: string;
+            /** @default false */
             canEdit: boolean;
         };
         VesselUpdateCommand: {
