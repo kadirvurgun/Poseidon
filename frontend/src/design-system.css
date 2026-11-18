@@ -138,3 +138,9 @@ body { background: var(--background); color: var(--foreground); }
 :root[dir="rtl"] .enterprise-sidebar.is-open { box-shadow: -12px 0 60px #10203345; }
 code, pre, [data-canonical-value] { direction: ltr; unicode-bidi: isolate; }
 input[type="number"], .ops-countdown { direction: ltr; unicode-bidi: isolate; }
+
+/* DEV-025 / 65.03 paragraph 90, 291, UX-015: reduced motion applies to every surface, including
+   portals outside the enterprise shell (theme builder, dialogs). State never depends on motion. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
