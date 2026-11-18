@@ -9189,6 +9189,13 @@ export interface operations {
                     "application/json": components["schemas"]["WorkspaceDto"];
                 };
             };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
             /** @description Unauthorized */
             401: {
                 headers: {

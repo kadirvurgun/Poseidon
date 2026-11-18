@@ -25,7 +25,11 @@ public sealed partial class DirectoryWorkspaceTests
         var page = (await client.GetFromJsonAsync<PageDto<SearchItemDto>>("/api/v1/workspace/search", Ct))!;
         Assert.Equal(["today", "fleet", SeedVessel.Id.ToString()], page.Items.Select(x => x.Key).ToArray());
         Assert.False(page.HasMore);
-        var body = await client.GetStringAsync("/api/v1/workspace/search?tenantId=" + seed.Tenants[1].Id, Ct);
+        // DEV-022: a client tenant selector is rejected (400), never honoured or silently ignored.
+        using var selector = await client.GetAsync("/api/v1/workspace/search?tenantId=" + seed.Tenants[1].Id, Ct);
+        Assert.Equal(HttpStatusCode.BadRequest, selector.StatusCode);
+        Assert.DoesNotContain(seed.Vessels.Single(v => v.TenantId == seed.Tenants[1].Id).Name, await selector.Content.ReadAsStringAsync(Ct));
+        var body = await client.GetStringAsync("/api/v1/workspace/search", Ct);
         Assert.DoesNotContain(SeedVessel.CompanyId.ToString(), body);
         Assert.DoesNotContain(seed.Companies[0].Name, body);
         foreach (var vessel in seed.Vessels.Where(v => v.Id != SeedVessel.Id))

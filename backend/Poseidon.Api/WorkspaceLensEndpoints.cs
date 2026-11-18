@@ -89,7 +89,8 @@ public static class WorkspaceLensEndpoints
             kind = await actor.Scope(db.Vessels.AsNoTracking()).Where(v => v.Id == vessel)
                 .Select(v => (VesselKind?)v.Kind).SingleOrDefaultAsync(h.RequestAborted);
             if (kind == null) {
-                await audit.WriteAsync(h, "WorkspaceRead", "NotFound");
+                // DEV-022: same 404 for foreign, ungranted and missing vessels; the probe stays attributable.
+                await audit.WriteAsync(h, "WorkspaceRead", "NotFound", resourceId: vessel);
                 return Results.NotFound(new { code = "resource_not_found" });
             }
         }
