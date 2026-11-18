@@ -106,7 +106,8 @@
       "previous": "Vorherige Unternehmen",
       "next": "Nächste Unternehmen",
       "reloadCompanies": "Unternehmen neu laden",
-      "requiredNote": "Alle Felder sind erforderlich. Dieser Datensatz erteilt keine betriebliche Freigabe."
+      "requiredNote": "Alle Felder sind erforderlich. Dieser Datensatz erteilt keine betriebliche Freigabe.",
+      "errorSummary": "Prüfen Sie vor dem Speichern diese Felder:"
     },
     "ProductApp_tsx_copy": {
       "audit": "Aktionsverlauf",
@@ -284,7 +285,23 @@
       "OperationalSourcesUnavailable": "Betriebliche Quellen nicht verfügbar",
       "rule": "Regel",
       "context": "Aktuelles Schiff",
-      "switch": "Schiff wechseln"
+      "switch": "Schiff wechseln",
+      "ViewMaintenancePlan": "Wartungsplan anzeigen",
+      "ViewTugJob": "Schlepperauftrag anzeigen",
+      "sourceOwner": "Quelleneigentümer",
+      "sourceSaved": "Quelle gespeichert am",
+      "noRevision": "Keine gespeicherte Revision",
+      "REGULATORY": "Regulatorik",
+      "PMS": "Planmäßige Wartung",
+      "TUG": "Schlepperbetrieb",
+      "viewReady": "Einträge aus allen aufgeführten Quellen. Dies ist keine Bereitschaft oder Verifizierung.",
+      "viewEmpty": "Alle aufgeführten Quellen wurden gelesen und lieferten keine Einträge. Dies ist keine Sicherheitsfreigabe.",
+      "viewPartial": "Teilansicht: Einige zuständige Quellen sind in diesem Kontext nicht verfügbar. Fehlende Einträge bedeuten nicht, dass alles in Ordnung ist.",
+      "viewUnavailable": "In diesem Kontext konnte keine zuständige Quelle gelesen werden. Das bedeutet nicht, dass alles in Ordnung ist.",
+      "partialCounters": "Teilweise Quellen: Null bedeutet nicht, dass alles in Ordnung ist",
+      "emptyCounters": "Autorisiertes leeres Ergebnis: Keine aufgeführte Quelle lieferte Einträge. Keine Sicherheitsfreigabe",
+      "rateLimited": "Zu viele Anfragen. Warten Sie und versuchen Sie es erneut.",
+      "contract": "Die Serverantwort hat die Prüfung nicht bestanden; nichts davon wird angezeigt."
     },
     "TugCrewCoverage_tsx_copy": {
       "title": "Durch Quellen qualifizierte Mindestbesatzungsrollen",
@@ -3206,6 +3223,10 @@
     "m_2492dcd13a8d5ab3": "Ein Speichervorgang läuft noch. Warten Sie auf das Ergebnis, bevor Sie das Schiff wechseln; Ihr aktueller Kontext bleibt unverändert.",
     "m_221de6ea6fc51bb7": "Ihre Sitzung ist beendet oder hat sich geändert. Melden Sie sich erneut an, um Ihren Arbeitskontext zu sehen.",
     "m_9b1a1deb14aac372": "Das ausgewählte Schiff liegt nicht in Ihrem aktuell berechtigten Bereich. Es wurde kein anderes Schiff automatisch ausgewählt.",
-    "m_5db2b92c3bcc6931": "Anderes Schiff wählen"
+    "m_5db2b92c3bcc6931": "Anderes Schiff wählen",
+    "m_7c2c3c0f372d028d": "Menü filtern",
+    "m_4895cdb4b14ff26c": "Es werden nur Bildschirme durchsucht, die Sie öffnen dürfen.",
+    "m_9e601b252c4fb4b3": "Kein berechtigter Menüeintrag entspricht diesem Filter.",
+    "m_5af49f5d0c78416e": "Menüfilter löschen"
   }
 }

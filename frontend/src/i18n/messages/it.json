@@ -106,7 +106,8 @@
       "previous": "Società precedenti",
       "next": "Società successive",
       "reloadCompanies": "Ricarica società",
-      "requiredNote": "Tutti i campi sono obbligatori. Questo record non conferisce approvazione operativa."
+      "requiredNote": "Tutti i campi sono obbligatori. Questo record non conferisce approvazione operativa.",
+      "errorSummary": "Controlla questi campi prima di salvare:"
     },
     "ProductApp_tsx_copy": {
       "audit": "Cronologia delle azioni",
@@ -284,7 +285,23 @@
       "OperationalSourcesUnavailable": "Fonti operative non disponibili",
       "rule": "Regola",
       "context": "Nave corrente",
-      "switch": "Cambia nave"
+      "switch": "Cambia nave",
+      "ViewMaintenancePlan": "Visualizza piano di manutenzione",
+      "ViewTugJob": "Visualizza lavoro rimorchiatore",
+      "sourceOwner": "Proprietario della fonte",
+      "sourceSaved": "Fonte salvata il",
+      "noRevision": "Nessuna revisione memorizzata",
+      "REGULATORY": "Normativa",
+      "PMS": "Manutenzione pianificata",
+      "TUG": "Operazioni rimorchiatore",
+      "viewReady": "Elementi restituiti da tutte le fonti elencate. Non è prontezza né verifica.",
+      "viewEmpty": "Tutte le fonti elencate sono state lette e non hanno restituito elementi. Non è un nulla osta di sicurezza.",
+      "viewPartial": "Vista parziale: alcune fonti proprietarie non sono disponibili in questo contesto. L’assenza di elementi non significa che sia tutto a posto.",
+      "viewUnavailable": "Nessuna fonte proprietaria è stata letta in questo contesto. Non significa che sia tutto a posto.",
+      "partialCounters": "Fonti parziali: zero non significa che sia tutto a posto",
+      "emptyCounters": "Risultato vuoto autorizzato: nessuna fonte elencata ha restituito elementi. Non è un nulla osta di sicurezza",
+      "rateLimited": "Troppe richieste. Attendi e riprova.",
+      "contract": "La risposta del server non ha superato la convalida; non viene mostrato nulla."
     },
     "TugCrewCoverage_tsx_copy": {
       "title": "Ruoli minimi dell’equipaggio qualificati dalla fonte",
@@ -3206,6 +3223,10 @@
     "m_2492dcd13a8d5ab3": "Un salvataggio è ancora in corso. Attendi l’esito prima di cambiare nave; il contesto attuale è invariato.",
     "m_221de6ea6fc51bb7": "La sessione è terminata o è cambiata. Accedi di nuovo per vedere il tuo contesto di lavoro.",
     "m_9b1a1deb14aac372": "La nave selezionata non rientra nel tuo ambito autorizzato attuale. Nessun’altra nave è stata selezionata automaticamente.",
-    "m_5db2b92c3bcc6931": "Scegli un’altra nave"
+    "m_5db2b92c3bcc6931": "Scegli un’altra nave",
+    "m_7c2c3c0f372d028d": "Filtra menu",
+    "m_4895cdb4b14ff26c": "Vengono cercate solo le schermate che sei autorizzato ad aprire.",
+    "m_9e601b252c4fb4b3": "Nessuna voce di menu autorizzata corrisponde a questo filtro.",
+    "m_5af49f5d0c78416e": "Cancella filtro menu"
   }
 }

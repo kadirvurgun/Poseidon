@@ -44,7 +44,9 @@ internal static class TodayTugReader
                 incomplete, evidence?.Readiness == "Blocked", evidence?.ConflictState ?? "Unknown"));
             result.Add(new(new(job.Id, job.Revision, incomplete, head?.Revision, revision?.RequestRevision,
                 inputs?.PlannedStart, inputs?.PlannedEnd, inputs?.AssignedTugs ?? [], owner, evidence), advice,
-                revision?.SavedAt ?? job.SavedAt, revision?.Provenance ?? job.Provenance));
+                // DEV-023 SourceRef: revision + save time describe ONE record, the TugJob itself. A contributing
+                // draft plan is not represented here; its lineage is shown in Why (PlanRevision/PlannedRequestRevision).
+                job.SavedAt, revision?.Provenance ?? job.Provenance));
         }
         return result.ToArray();
     }
