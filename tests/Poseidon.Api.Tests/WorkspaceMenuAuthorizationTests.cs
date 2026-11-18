@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -94,6 +95,92 @@ public sealed partial class DirectoryWorkspaceTests
         var visible = (await auditClient.GetFromJsonAsync<PageDto<SearchItemDto>>("/api/v1/workspace/search?q=AUDIT", Ct))!;
         var item = Assert.Single(visible.Items);
         Assert.Equal(("audit", "/app/audit", "Destination"), (item.Key, item.Href, item.Kind));
+    }
+
+    // DEV022-AC-04/05 (QA follow-up): destinations match by their TR/EN display label as well as the
+    // route key, with Turkish-aware folding, but only after the scope projection. A hidden
+    // destination's label is byte-identical to a no-match. "Denetim" is not a label the UI shows for
+    // audit (TR label is "İşlem geçmişi"), so it matches nothing rather than an invented synonym.
+    [Fact]
+    public async Task Dev022_search_matches_authorized_destinations_by_tr_and_en_label()
+    {
+        await using var host = Host(manage: false, read: false, search: true); using var client = Client(host);
+        var nothing = await client.GetStringAsync("/api/v1/workspace/search?q=zz-no-such-entry", Ct);
+        foreach (var hidden in new[] { "İşlem geçmişi", "Action history", "işlem GEÇMİŞİ", "Denetim", "Şirketler", "Companies" })
+            Assert.Equal(nothing, await client.GetStringAsync("/api/v1/workspace/search?q=" + Uri.EscapeDataString(hidden), Ct));
+        foreach (var fleet in new[] { "Filo", "FİLO", "filo", "Fleet" })
+        {
+            var page = (await client.GetFromJsonAsync<PageDto<SearchItemDto>>("/api/v1/workspace/search?q=" + Uri.EscapeDataString(fleet), Ct))!;
+            Assert.Equal(("fleet", "/app/fleet", "Destination"), (page.Items[0].Key, page.Items[0].Href, page.Items[0].Kind));
+            Assert.DoesNotContain(page.Items, i => i.Kind == "Destination" && i.Key != "fleet");
+        }
+
+        await using var auditHost = Host(manage: false, read: false, search: true, auditRead: true); using var auditClient = Client(auditHost);
+        foreach (var label in new[] { "İşlem geçmişi", "islem gecmisi", "IŞLEM", "Action history", "action HISTORY" })
+        {
+            var page = (await auditClient.GetFromJsonAsync<PageDto<SearchItemDto>>("/api/v1/workspace/search?q=" + Uri.EscapeDataString(label), Ct))!;
+            var item = Assert.Single(page.Items);
+            Assert.Equal(("audit", "/app/audit", "Destination"), (item.Key, item.Href, item.Kind));
+            Assert.False(page.HasMore);
+        }
+        Assert.Equal(nothing, await auditClient.GetStringAsync("/api/v1/workspace/search?q=Denetim", Ct));
+        Assert.Equal(nothing, await auditClient.GetStringAsync("/api/v1/workspace/search?q=" + Uri.EscapeDataString("Şirketler"), Ct));
+    }
+
+    // DEV022-AC-04 (QA follow-up): the server TR/EN label map equals the labels the frontend shows
+    // for every destination key the server can return (search result and sidebar menu labels).
+    [Fact]
+    public void Dev022_search_label_map_matches_frontend_tr_en_catalog()
+    {
+        var root = new DirectoryInfo(AppContext.BaseDirectory);
+        while (root != null && !File.Exists(Path.Combine(root.FullName, "Directory.Packages.props"))) root = root.Parent;
+        Assert.NotNull(root);
+        var src = Path.Combine(root!.FullName, "frontend", "src");
+        Dictionary<string, string> Pairs(string locale)
+        {
+            using var doc = JsonDocument.Parse(File.ReadAllText(Path.Combine(src, "i18n", "messages", locale + ".json")));
+            return doc.RootElement.GetProperty("pairs").EnumerateObject().ToDictionary(p => p.Name, p => p.Value.GetString()!);
+        }
+        Dictionary<string, string> Grab(string file, string pattern) =>
+            System.Text.RegularExpressions.Regex.Matches(File.ReadAllText(Path.Combine(src, "product", file)), pattern)
+                .ToDictionary(m => m.Groups[1].Value, m => m.Groups[2].Value);
+        var tr = Pairs("tr"); var en = Pairs("en");
+        var search = Grab("workspace-lens-api.ts", "'?([a-z-]+)'?: \\[sourceText\\(\"tr\", \"pairs\\.(m_[0-9a-f]+)\"\\)");
+        foreach (var (key, pair) in Grab("WorkspaceSearch.tsx", "'?([a-z-]+)'?: localizedText\\(en, \"pairs\\.(m_[0-9a-f]+)\"\\)")) search[key] = pair;
+        var menu = Grab("EnterpriseChrome.tsx", "'?([a-z-]+)'?: \\{ tr: sourceText\\(\"tr\", \"pairs\\.(m_[0-9a-f]+)\"\\)");
+        // Every destination key the server projection can emit (WorkspaceEndpoints.Destinations).
+        var serverKeys = System.Text.RegularExpressions.Regex.Matches(
+                File.ReadAllText(Path.Combine(root.FullName, "backend", "Poseidon.Api", "WorkspaceEndpoints.cs")), "new\\s*(?:NavigationDto)?\\(\\s*\"([a-z-]+)\"\\s*,\\s*\"/app/")
+            .Select(m => m.Groups[1].Value).Distinct().ToArray();
+        Assert.Contains("audit", serverKeys); Assert.Contains("engine-daily-log", serverKeys);
+        Assert.Equal(serverKeys.Order(StringComparer.Ordinal), WorkspaceDestinationLabels.Labels.Keys.Order(StringComparer.Ordinal));
+        foreach (var key in serverKeys)
+        {
+            Assert.True(search.ContainsKey(key) && menu.ContainsKey(key), "frontend label missing for " + key);
+            string[] expected = [tr[search[key]], en[search[key]], tr[menu[key]], en[menu[key]]];
+            Assert.Equal(expected.Distinct().Order(StringComparer.Ordinal).ToArray(),
+                WorkspaceDestinationLabels.Labels[key].Order(StringComparer.Ordinal).ToArray());
+        }
+    }
+
+    [Theory]
+    [InlineData("İŞLEM GEÇMİŞİ", "islem gecmisi")]
+    [InlineData("Işık", "isik")]
+    [InlineData("ıiIİ", "iiii")]
+    [InlineData("Öğle  ", "ogle")]
+    [InlineData("Şirketler", "sirketler")]
+    public void Dev022_search_folding_is_turkish_aware_and_culture_independent(string value, string folded)
+    {
+        var previous = CultureInfo.CurrentCulture;
+        try
+        {
+            foreach (var culture in new[] { "tr-TR", "en-US", "" })
+            {
+                CultureInfo.CurrentCulture = new CultureInfo(culture);
+                Assert.Equal(folded, WorkspaceDestinationLabels.Fold(value));
+            }
+        }
+        finally { CultureInfo.CurrentCulture = previous; }
     }
 
     // DEV022-AC-04/05: vessel search is case-insensitive inside scope; a foreign tenant vessel with
