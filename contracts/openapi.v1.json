@@ -11799,7 +11799,7 @@
           "href": {
             "type": "string"
           },
-          "inputs": {},
+          "inputs": { },
           "inputHash": {
             "type": [
               "null",
@@ -12121,6 +12121,12 @@
               "type": "string"
             }
           },
+          "blockerDetails": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OnboardingBlocker"
+            }
+          },
           "canEdit": {
             "type": "boolean"
           },
@@ -12131,12 +12137,6 @@
           "source": {
             "type": "string",
             "default": "18.01/Backlog/row:40;59.01/paragraph:55"
-          },
-          "blockerDetails": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/OnboardingBlocker"
-            }
           }
         }
       },
@@ -17220,7 +17220,7 @@
           }
         }
       },
-      "JsonElement": {},
+      "JsonElement": { },
       "LegacyCrewImportCommand": {
         "required": [
           "baseVersion",
@@ -18563,6 +18563,30 @@
           }
         },
         "additionalProperties": false
+      },
+      "OnboardingBlocker": {
+        "required": [
+          "subjectId",
+          "fieldPath",
+          "reasonCode",
+          "resolutionType"
+        ],
+        "type": "object",
+        "properties": {
+          "subjectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fieldPath": {
+            "type": "string"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "resolutionType": {
+            "type": "string"
+          }
+        }
       },
       "OnboardingField": {
         "required": [
@@ -20892,7 +20916,8 @@
           "reason",
           "owner",
           "nextAction",
-          "href"
+          "href",
+          "sourceRef"
         ],
         "type": "object",
         "properties": {
@@ -20919,6 +20944,45 @@
           },
           "href": {
             "type": "string"
+          },
+          "sourceRef": {
+            "$ref": "#/components/schemas/TodayCardSourceDto"
+          }
+        }
+      },
+      "TodayCardSourceDto": {
+        "required": [
+          "owner",
+          "kind",
+          "id",
+          "revision",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "owner": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "savedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
           }
         }
       },
@@ -20942,7 +21006,8 @@
           "vessel",
           "readAt",
           "coverage",
-          "cards"
+          "cards",
+          "viewState"
         ],
         "type": "object",
         "properties": {
@@ -20961,6 +21026,9 @@
           },
           "cards": {
             "$ref": "#/components/schemas/PageDtoOfTodayCardDto"
+          },
+          "viewState": {
+            "type": "string"
           }
         }
       },
@@ -23051,6 +23119,26 @@
           }
         }
       },
+      "WorkspaceCompanyDto": {
+        "required": [
+          "id",
+          "code",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
       "WorkspaceContextDto": {
         "required": [
           "tenantId",
@@ -23072,16 +23160,6 @@
           "roleContext": {
             "$ref": "#/components/schemas/WorkspaceRoleContextDto"
           },
-          "vessel": {
-            "oneOf": [
-              {
-                "type": "null"
-              },
-              {
-                "$ref": "#/components/schemas/VesselDto"
-              }
-            ]
-          },
           "company": {
             "oneOf": [
               {
@@ -23089,6 +23167,16 @@
               },
               {
                 "$ref": "#/components/schemas/WorkspaceCompanyDto"
+              }
+            ]
+          },
+          "vessel": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/VesselDto"
               }
             ]
           }
@@ -23254,50 +23342,6 @@
             "type": "string"
           },
           "en": {
-            "type": "string"
-          }
-        }
-      },
-      "OnboardingBlocker": {
-        "required": [
-          "subjectId",
-          "fieldPath",
-          "reasonCode",
-          "resolutionType"
-        ],
-        "type": "object",
-        "properties": {
-          "subjectId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "fieldPath": {
-            "type": "string"
-          },
-          "reasonCode": {
-            "type": "string"
-          },
-          "resolutionType": {
-            "type": "string"
-          }
-        }
-      },
-      "WorkspaceCompanyDto": {
-        "required": [
-          "id",
-          "code",
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "code": {
-            "type": "string"
-          },
-          "name": {
             "type": "string"
           }
         }

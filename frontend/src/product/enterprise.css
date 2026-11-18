@@ -195,6 +195,12 @@
 .enterprise-shell .today-feed-card section[aria-live] > p { margin: 7px 0; overflow-wrap: anywhere; }
 .today-why-lineage { display:grid; grid-template-columns:1fr minmax(0,2fr) 1fr; gap:12px; padding:14px; background:var(--muted); border:1px solid var(--border); border-radius:8px; }
 .today-why-lineage dd { margin:4px 0 0; overflow-wrap:anywhere; }.today-feed-card-header [data-slot="badge"] svg { width:13px; height:13px; }
+/* DEV-023: per-item owning source and composition state (text + icon, never colour-only). */
+.today-card-source { display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:8px 12px; margin:10px 0; font-size:11px; color:var(--muted-foreground); }
+.today-card-source dt { font-weight:600; color:var(--foreground); }
+.today-card-source dd { margin:2px 0 0; overflow-wrap:anywhere; }
+.today-view-state { display:flex; gap:8px; align-items:flex-start; padding:10px 12px; border:1px solid var(--border); border-radius:8px; background:var(--muted); font-size:12px; }
+.today-view-state svg { flex:none; width:15px; height:15px; margin-top:1px; }
 .profile-source-context { background:var(--muted); border:1px solid var(--border); border-radius:8px; padding:14px 16px; margin:14px 0; color:var(--foreground); font-size:12px; }
 .profile-source-context p { margin:4px 0; }.profile-source-context p:last-child { color:var(--muted-foreground); font-size:11px; }
 .enterprise-nav-overlay { display: none; }
