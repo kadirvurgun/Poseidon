@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef } from 'react'
 
-// DEV-021 / 65.03 §2 (paragraph 64) and UX-038 (paragraph 619): the shell must know
+// DEV-021 / 65.03 paragraph 65 (switch order) and UX-038 (paragraph 620): the shell must know
 // whether the current surface holds an unsaved typed form BEFORE it starts a context
 // switch request. Each guarded workspace reports its own state; the shell never reads
 // form values, never persists drafts and never discards on a workspace's behalf. The
@@ -9,8 +9,8 @@ export type UnsavedState = 'clean' | 'dirty' | 'saving'
 
 const sources = new Set<{ read: () => UnsavedState }>()
 
-// 'saving' wins over 'dirty': an in-flight write has an unknown outcome and must not be
-// abandoned by a context change (65.03 paragraph 65).
+// 'saving' wins over 'dirty': an in-flight write or an uncertain outcome must not be
+// abandoned by a context change; discarding would lose its idempotency key/body (AC-07).
 export function currentUnsavedState(): UnsavedState {
   let result: UnsavedState = 'clean'
   for (const source of sources) {

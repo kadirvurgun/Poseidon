@@ -65,26 +65,30 @@ function ScopedWorkspaceContextBar({ session, vessel = null, language, onNavigat
     if (!allowed)
         return null;
     const current = result?.scope === scope && result.owner === session ? result : null;
-    // 65.03 paragraph 64 step 6: a vessel the server no longer grants shows a reason and a
+    // 65.03 paragraph 65 step 6: a vessel the server no longer grants shows a reason and a
     // safe chooser; it never falls back to another vessel or shows the old record's name.
     const deniedScope = !!vessel && !current?.data && (current?.error === 403 || current?.error === 404);
     const roleText = current?.data ? (current.data.roleContext.state === 'Configured'
         ? current.data.roleContext.roles.map(role => localizedLabel(role, en)).join(' · ')
         : current.data.roleContext.state === 'Missing' ? localizedText(en, "pairs.m_2fd8f713bc6d358f") : localizedText(en, "pairs.m_49138f2831bf4262")) : '';
     const vesselText = current?.data ? (current.data.vessel ? `${current.data.vessel.code} · ${current.data.vessel.name}` : localizedText(en, "pairs.m_a46569aa0232494e")) : '';
-    // DEV-021: polite live region, so a verified context arriving after a switch (or its
-    // denial) is perceivable without moving focus.
-    return <section className="workspace-global-context" aria-label={localizedText(en, "pairs.m_8628de1435d643d5")} aria-live="polite" aria-relevant="additions text">
+    const showData = online && document.visibilityState !== 'hidden' && !!current?.data;
+    // DEV-021: one dedicated polite live region holding only the verified context text
+    // (vessel, mode, role), so a context arriving after a switch is perceivable without moving
+    // focus. The section itself is not live, so the role=status/alert children below are never
+    // nested inside another live region.
+    return <section className="workspace-global-context" aria-label={localizedText(en, "pairs.m_8628de1435d643d5")}>
     <span className="context-workspace">{current?.data && session?.tenantName || (localizedText(en, "pairs.m_e9d69ba1c5c8afd8"))}</span>
     {!online ? <span role="status">{localizedText(en, "pairs.m_cdfc48e331f96299")}</span> : document.visibilityState === 'hidden' ? <span role="status">{localizedText(en, "pairs.m_0713fa35fcf43a0b")}</span> : !current ? <span role="status">{localizedText(en, "pairs.m_93cbd8401551ea19")}</span> : !current.data ? <>
       <span role="alert">{current.error === 401 ? localizedText(en, "pairs.m_221de6ea6fc51bb7") : deniedScope ? localizedText(en, "pairs.m_9b1a1deb14aac372") : current.error === 403 || current.error === 404 ? (localizedText(en, "pairs.m_e738676f907d8b26")) : (localizedText(en, "pairs.m_e59c3d6f026fb1d7"))}</span>
       <Button variant="outline" size="sm" disabled={!online} onClick={() => { setResult(null); retry(n => n + 1); }}>{localizedText(en, "pairs.m_d6420ab086c48ebe")}</Button>
-    </> : <>
+    </> : null}
+    <span className="context-live" aria-live="polite" aria-atomic="true">{showData && current?.data && <>
       <span className="context-company"><Building2 aria-hidden="true"/>{localizedText(en, "pairs.m_d9580bbb7b397961")}: <strong>{current.data.company ? `${current.data.company.code} · ${current.data.company.name}` : localizedText(en, "pairs.m_49138f2831bf4262")}</strong></span>
       <span className="context-vessel">{vesselText}</span>
       {current.data.vessel && <span className="context-mode"><Compass aria-hidden="true"/>{localizedText(en, "pairs.m_ed4e66320421b039")}: {current.data.vessel.kind === 'Ship' ? (localizedText(en, "pairs.m_bb1dbfbac5d5c650")) : (localizedText(en, "pairs.m_306aaabcb4e04a9f"))}</span>}
       <span className="context-role">{localizedText(en, "pairs.m_fdbbf279aa546fe7")}: {roleText}</span>
-    </>}
+    </>}</span>
     {onNavigate && (current?.data || deniedScope) && online && session && <Button variant="outline" size="sm" className="context-switch-trigger" onClick={() => setChooser({ owner: session, epoch })}><ArrowLeftRight aria-hidden="true"/>{deniedScope ? localizedText(en, "pairs.m_5db2b92c3bcc6931") : localizedText(en, "pairs.m_4f3d73f754a89edf")}</Button>}
     <span className="context-connection">{online ? <Wifi aria-hidden="true"/> : <WifiOff aria-hidden="true"/>}{online ? (localizedText(en, "pairs.m_0772a120920395b6")) : (localizedText(en, "pairs.m_a24f7431b69a1715"))}</span>
     {chooser?.owner === session && chooser.epoch === epoch && session && onNavigate && createPortal(<WorkspaceVesselSwitcher session={session} vessel={vessel} language={language} onClose={() => setChooser(null)} onNavigate={onNavigate}/>, document.querySelector('.product-shell') ?? document.body)}

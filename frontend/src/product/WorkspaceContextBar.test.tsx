@@ -119,7 +119,9 @@ describe('shared current workspace context', () => {
     vi.mocked(loadWorkspaceContext).mockRejectedValueOnce(new ApiError(status))
     const onNavigate = vi.fn()
     render(<WorkspaceContextBar session={session} vessel={vessel} language="en" onNavigate={onNavigate} />)
-    expect(await screen.findByRole('alert')).toHaveTextContent('The selected vessel is not in your current authorized scope. No other vessel was selected automatically.')
+    const alert = await screen.findByRole('alert')
+    expect(alert).toHaveTextContent('The selected vessel is not in your current authorized scope. No other vessel was selected automatically.')
+    expect(alert.closest('[aria-live]')).toBeNull()
     expect(screen.queryByText(/FICTIONAL-OLD|FICTIONAL local role|FICTIONAL workspace/)).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Choose another vessel' })).toBeVisible()
     expect(onNavigate).not.toHaveBeenCalled(); expect(loadWorkspaceContext).toHaveBeenCalledTimes(1)
@@ -130,12 +132,18 @@ describe('shared current workspace context', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent('Oturumunuz sona erdi veya değişti.')
     expect(screen.queryByRole('button', { name: 'Başka gemi seç' })).not.toBeInTheDocument()
   })
-  it('DEV021-AC-01 keeps active vessel, mode and role visible in one polite live context region', async () => {
+  it('DEV021-AC-01 keeps active vessel, mode and role visible with one dedicated polite live summary', async () => {
     render(<WorkspaceContextBar session={session} vessel={vessel} language="en" onNavigate={vi.fn()} />)
     await screen.findByText(/FICTIONAL local role/)
     const region = screen.getByRole('region', { name: 'Current workspace context' })
-    expect(region).toHaveAttribute('aria-live', 'polite')
+    expect(region).not.toHaveAttribute('aria-live')
     expect(region).toHaveTextContent(/FICTIONAL-OLD · Synthetic vessel.*Vessel mode: Ship.*FICTIONAL local role/)
+    const live = region.querySelectorAll('[aria-live]')
+    expect(live).toHaveLength(1)
+    expect(live[0]).toHaveAttribute('aria-live', 'polite')
+    expect(live[0]).toHaveTextContent(/FICTIONAL-OLD · Synthetic vessel.*Vessel mode: Ship.*Role context: .*FICTIONAL local role/)
+    // No live region wraps the status/alert children (no nested live regions).
+    expect(live[0].querySelector('[role="status"], [role="alert"]')).toBeNull()
     expect(screen.getByRole('button', { name: 'Change vessel context' })).toBeVisible()
   })
   it.each(['Missing', 'Unavailable'] as const)('keeps %s role context explicit rather than inventing admin/master', async state => {
