@@ -118,7 +118,12 @@ public static class ExactActionCatalog
             Doc + " paragraph:821 (no published owner key; 59.01/60.x owner registry pending)", VesselEdit),
         new(VesselDirectoryUpdate, "PUT /api/v1/vessels/{id}", ExactScopeKind.Vessel,
             [PurposeDirectoryMaintenance], ExactActionSourceState.LocalProvisional,
-            Doc + " paragraph:10745-10838 (fleet.* published as read-only; no write key)", VesselEdit),
+            // 59.01 publishes the fleet write literal `fleet.vessel.edit` (59.01 paragraph:589 "DraftVesselDto;
+            // fleet.vessel.edit") and 54.02 registers it on PUT /api/v1/fleet/vessels/{id}/draft (54.02
+            // paragraph:15755, PROPOSED_DISABLED_DISTINCT_SELECTOR_KEY / DISABLED_UNTIL_VERIFIED, owner 59.01).
+            // That registry record is not activated and its route differs, so the local key stays provisional
+            // until the 59.01 owner registry exists. Mapping target: fleet.vessel.edit (MIGRATION_REVIEW).
+            Doc + " paragraph:15755 + 59.01 paragraph:589 (mapping target fleet.vessel.edit; owner registry 59.01 DISABLED_UNTIL_VERIFIED)", VesselEdit),
         new(RegulatorySourceCreate, "POST /api/v1/source-drafts", ExactScopeKind.Tenant,
             [PurposeRegisterDraft], ExactActionSourceState.SourceRegistered, Doc + " paragraph:4081", RegulatoryRegisterWrite),
         new(RegulatorySourceEdit, "PUT /api/v1/source-drafts/{id}", ExactScopeKind.Tenant,
@@ -137,7 +142,13 @@ public static class ExactActionCatalog
     public static IReadOnlyList<LegacyCompatibility> Compatibility { get; } =
     [
         new("directory.write", [VesselRegulatoryProfileDraftSave, VesselDirectoryUpdate], "MAPPED_EQUAL",
-            "Vessel-scoped only with CanEdit grant or TenantWideManage; company create/update stay on CanManage (unmigrated)."),
+            "Vessel-scoped only with CanEdit grant or TenantWideManage; company create/update stay on CanManage (unmigrated). " +
+            "vessel.directory.update is local; MIGRATION_REVIEW mapping target fleet.vessel.edit (59.01 p:589, 54.02 p:15755)."),
+        // CanManage writes stay on their legacy predicate. Published 59.01 candidates (not enabled here):
+        // fleet.vessel.create (59.01 p:586, 54.02 p:15753), fleet.company.edit (59.01 p:616, 792),
+        // fleet.vessel.retire/reactivate/merge (59.01 p:670, 804). Registry state DISABLED_UNTIL_VERIFIED.
+        new("directory.write+CanManage", [], "MIGRATION_REVIEW_REQUIRED",
+            "Company create/update and vessel create; candidates fleet.vessel.create, fleet.company.edit, fleet.vessel.retire/reactivate/merge (59.01 owner registry pending)."),
         new("regulatory.draft.write", [RegulatorySourceCreate, RegulatorySourceEdit, RegulatoryRequirementCreate, RegulatoryRequirementEdit], "MAPPED_EQUAL",
             "Tenant-wide read scope + regulatory.draft.read required; never approve/publish/legal_review."),
         new("rules.write", [], "MIGRATION_REVIEW_REQUIRED", "Rule authoring unmigrated; no rule.validate/approve derived."),

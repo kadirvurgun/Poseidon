@@ -24,14 +24,16 @@ public sealed partial class DirectoryWorkspaceTests
     {
         private readonly TaskCompletionSource reached = new(TaskCreationOptions.RunContinuationsAsynchronously);
         private readonly TaskCompletionSource released = new(TaskCreationOptions.RunContinuationsAsynchronously);
-        private int armed;
-        public void Arm() => Interlocked.Exchange(ref armed, 1);
+        private int armed, skip;
+        // skip: number of later receipt INSERTs to let pass before pausing (e.g. import row receipts).
+        public void Arm(int skipInserts = 0) { Interlocked.Exchange(ref skip, skipInserts); Interlocked.Exchange(ref armed, 1); }
         public Task WaitUntilReachedAsync(CancellationToken ct) => reached.Task.WaitAsync(TimeSpan.FromSeconds(30), ct);
         public void Release() => released.TrySetResult();
         private async Task Pause(DbCommand command, CancellationToken ct)
         {
             if (command.CommandText.Contains("INSERT INTO", StringComparison.Ordinal) &&
                 command.CommandText.Contains("\"CommandReceipts\"", StringComparison.Ordinal) &&
+                Volatile.Read(ref armed) == 1 && Interlocked.Decrement(ref skip) < 0 &&
                 Interlocked.CompareExchange(ref armed, 0, 1) == 1)
             {
                 reached.TrySetResult();
@@ -145,6 +147,101 @@ public sealed partial class DirectoryWorkspaceTests
             Assert.Equal(drafts, await db.RegisterDrafts.CountAsync(Ct));
             Assert.Empty(await db.CommandReceipts.ToArrayAsync(Ct));
             Assert.Contains(await db.Set<SecurityEvent>().ToArrayAsync(Ct), x => x.Action == "RegisterSave" && x.Result == "permission_denied");
+        }
+        finally { barrier.Release(); response ??= await pending.WaitAsync(TimeSpan.FromSeconds(30), Ct); response.Dispose(); }
+    }
+
+    // P5402-AC-15: the commit-time recheck includes the live vessel scope, not only the exact action.
+    // Kind visibility (mode.tug/mode.cross) removed mid-transaction while directory.write and
+    // TenantWideManage stay intact must still roll back the vessel update.
+    [Fact]
+    [Trait("Requirement", "PLAN-1511-5402")]
+    public async Task Exact_vessel_update_with_kind_scope_removed_inside_transaction_rolls_back()
+    {
+        var barrier = new ReceiptInsertBarrier();
+        await using var host = Host(interceptor: barrier); using var client = Client(host); await Token(client);
+        var path = $"vessels/{SeedVessel.Id}";
+        var before = await DirectoryRow(client, path, false);
+        barrier.Arm();
+        var pending = Send(client, path, new { code = before.Code, name = "Synthetic mode-scoped edit", expectedVersion = before.Version }, update: true);
+        HttpResponseMessage? response = null;
+        try
+        {
+            response = await RevokeWhilePaused(host, barrier, pending, m => m with { Permissions = SeedVessel.Kind == VesselKind.Tug
+                ? m.Permissions.Where(p => p != "mode.tug").ToArray()
+                : [.. m.Permissions.Where(p => p != "mode.cross"), "mode.tug"] });
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            Assert.Contains("permission_denied", await response.Content.ReadAsStringAsync(Ct));
+            await using var db = Db();
+            var row = await db.Vessels.SingleAsync(v => v.Id == SeedVessel.Id, Ct);
+            Assert.Equal((before.Name, before.Version), (row.Name, row.Version));
+            Assert.Empty(await db.CommandReceipts.ToArrayAsync(Ct));
+        }
+        finally { barrier.Release(); response ??= await pending.WaitAsync(TimeSpan.FromSeconds(30), Ct); response.Dispose(); }
+    }
+
+    private async Task<(ImportBatchDto Batch, ImportCommitCommand Command, VesselDto Before, int VesselAudits, int Receipts)> VesselImportReady(HttpClient client)
+    {
+        var before = (await client.GetFromJsonAsync<VesselDto>("/api/v1/vessels/" + SeedVessel.Id, Ct))!;
+        var batch = await UploadImport(client, "vessel", new Dictionary<string, string> { ["record_key"] = before.Id.ToString(),
+            ["code"] = before.Code, ["name"] = "FICTIONAL 5402 import revoked",
+            ["base_version"] = before.Version.ToString(System.Globalization.CultureInfo.InvariantCulture) });
+        var preview = await PreviewImport(client, batch); Assert.Equal(1, preview.ValidRows);
+        await using var db = Db();
+        return (batch, new ImportCommitCommand(preview.PreviewId, long.Parse(preview.Revision, System.Globalization.CultureInfo.InvariantCulture), preview.TemplateFingerprint),
+            before, await db.AuditEvents.CountAsync(x => x.EntityType == "Vessel", Ct), await db.CommandReceipts.CountAsync(Ct));
+    }
+
+    private async Task AssertImportRolledBack(HttpResponseMessage response, ImportBatchDto batch, VesselDto before, int vesselAudits, int receipts)
+    {
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        Assert.Contains("permission_denied", await response.Content.ReadAsStringAsync(Ct));
+        await using var db = Db();
+        var row = await db.Vessels.SingleAsync(v => v.Id == SeedVessel.Id, Ct);
+        Assert.Equal((before.Name, before.Version), (row.Name, row.Version));
+        Assert.Equal(vesselAudits, await db.AuditEvents.CountAsync(x => x.EntityType == "Vessel", Ct));
+        Assert.Equal(receipts, await db.CommandReceipts.CountAsync(Ct));
+        Assert.False(await db.CommandReceipts.AnyAsync(x => x.Action == "ImportCommit" && x.ResourceId == batch.Id, Ct));
+        Assert.NotEqual("Committed", (await db.ImportBatches.SingleAsync(x => x.Id == batch.Id, Ct)).State);
+        Assert.Contains(await db.Set<SecurityEvent>().ToArrayAsync(Ct), x => x.Action == "ImportSave" && x.Result == "permission_denied");
+    }
+
+    // P5402-AC-16: vessel-row exact action revoked inside the outer SERIALIZABLE import transaction
+    // (paused after the row receipt INSERT) rolls back the whole batch with 403 permission_denied.
+    [Fact]
+    [Trait("Requirement", "PLAN-1511-5402")]
+    public async Task Exact_import_vessel_row_revoked_inside_batch_transaction_returns_403_and_persists_nothing()
+    {
+        var barrier = new ReceiptInsertBarrier();
+        await using var host = ImportHost(interceptor: barrier); using var client = Client(host); await Token(client);
+        var (batch, command, before, audits, receipts) = await VesselImportReady(client);
+        barrier.Arm();
+        var pending = Send(client, Imports + $"/{batch.Id}/commit", command, Guid.NewGuid().ToString());
+        HttpResponseMessage? response = null;
+        try
+        {
+            response = await RevokeWhilePaused(host, barrier, pending, m => m with { TenantWideManage = false, VesselGrants = [new(SeedVessel.Id, false)] });
+            await AssertImportRolledBack(response, batch, before, audits, receipts);
+        }
+        finally { barrier.Release(); response ??= await pending.WaitAsync(TimeSpan.FromSeconds(30), Ct); response.Dispose(); }
+    }
+
+    // P5402-AC-17: the batch-level revalidation right before the outer commit (paused after the
+    // ImportCommit receipt INSERT, i.e. after every row succeeded) also rolls back with 403.
+    [Fact]
+    [Trait("Requirement", "PLAN-1511-5402")]
+    public async Task Exact_import_batch_revoked_before_outer_commit_returns_403_and_persists_nothing()
+    {
+        var barrier = new ReceiptInsertBarrier();
+        await using var host = ImportHost(interceptor: barrier); using var client = Client(host); await Token(client);
+        var (batch, command, before, audits, receipts) = await VesselImportReady(client);
+        barrier.Arm(skipInserts: 1); // let the row receipt pass; pause on the ImportCommit receipt
+        var pending = Send(client, Imports + $"/{batch.Id}/commit", command, Guid.NewGuid().ToString());
+        HttpResponseMessage? response = null;
+        try
+        {
+            response = await RevokeWhilePaused(host, barrier, pending, m => m with { TenantWideManage = false, VesselGrants = [new(SeedVessel.Id, false)] });
+            await AssertImportRolledBack(response, batch, before, audits, receipts);
         }
         finally { barrier.Release(); response ??= await pending.WaitAsync(TimeSpan.FromSeconds(30), Ct); response.Dispose(); }
     }

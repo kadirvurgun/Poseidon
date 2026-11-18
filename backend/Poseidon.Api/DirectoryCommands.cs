@@ -195,10 +195,14 @@ public static class DirectoryCommands
             db.CommandReceipts.Add(new CommandReceipt { TenantId = actor.TenantId, ActorId = actor.Id, Key = key, Action = action,
                 Fingerprint = fingerprint, ResourceId = resource, CommittedAt = DateTimeOffset.UtcNow });
             await db.SaveChangesAsync(http.RequestAborted);
-            // Commit-time revalidation (54.02 A03-007 step 8) for the migrated vessel update.
-            if (vesselDecision != null && !ExactActionAccess.RevalidateBeforeCommit(http, vesselDecision, vesselAccess!, actor.Id).Allowed)
+            // Commit-time revalidation (54.02 A03-007 step 8) for the migrated vessel update: the exact action
+            // AND the live actor's vessel scope (tenant/grant/kind visibility via mode.tug/mode.cross), as in
+            // the regulatory profile save's RecordAccess.
+            if (vesselDecision != null && !await ExactActionAccess.VesselWriteHoldsBeforeCommit(http, db, vesselDecision, vesselAccess!, actor))
             {
-                // An outer import transaction owns rollback of the whole batch on a non-success row.
+                // An outer import transaction owns rollback of the whole batch; the marker lets it
+                // report the revocation as 403 permission_denied instead of a version conflict.
+                ExactActionAccess.MarkRevokedBeforeCommit(http);
                 if (transaction != null) { await transaction.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear(); }
                 return await Fail(403, "permission_denied");
             }
