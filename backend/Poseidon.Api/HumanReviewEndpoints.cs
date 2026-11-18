@@ -382,7 +382,8 @@ public static class HumanReviewEndpoints
             var owningVerificationPins = OperationEquipmentInputs.Present(content) ? await db.ControlEvidenceRequirements.AsNoTracking().Where(x => x.VesselId == vessel && x.Kind == "Evidence" && x.Id == ev.Id && x.Revision == ev.Revision)
                 .Select(x => new RequirementPin(x.RequirementId, x.RequirementRevision, x.SourceId, x.SourceRevision, x.RuleId, x.RuleRevision)).ToArrayAsync(ct) : requirementPins;
             if (cmd.State == "VERIFIED" && !await OperationEquipmentCommands.VerificationAllowed(db, h.RequestServices.GetRequiredService<FederationSettings>(), content, owningVerificationPins, grant.RoleId, now, ct)) return await Fail(h, 403, "owning_document_verifier_required");
-            var independent = prior != null && prior.SubmitterId != a.Id && ev.ActorId != a.Id && co.ActorId != a.Id && ev.ActorId != null && co.ActorId != null;
+            // PLAN-1511-5402 dynamic SoD helper: unknown submitter/author fails closed, same record only.
+            var independent = prior != null && SeparationOfDuties.Independent(a.Id, prior.SubmitterId, ev.ActorId, co.ActorId);
             if (cmd.State == "VERIFIED" && !independent) return await Fail(h, 409, "separation_of_duties");
             if (cmd.State == "VERIFIED" && cmd.EvaluationId == null) return await Fail(h, 409, "authoritative_evaluation_unavailable");
             var qualified = await QualifiedControlContext.Resolve(db, vessel, requirementPins, "Evidence", content, ev.FileId != null, now, ct, h.RequestServices.GetRequiredService<FederationSettings>());
