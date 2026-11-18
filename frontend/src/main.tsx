@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { App } from './App'
 import './styles.css'
 import './design-system.css'
+import './theme/theme-builder.css'
 import { initializeAppLanguage } from './i18n'
 import { initializeAppearance } from './theme/appearance-store'
 

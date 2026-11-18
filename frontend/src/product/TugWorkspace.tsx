@@ -41,8 +41,9 @@ export function TugWorkspace() {
     const [pending, setPending] = useState<(() => void) | null>(null), [offline, setOffline] = useState(!navigator.onLine);
     const [planningDirty, setPlanningDirty] = useState(false);
     const locks = useRef({ dirty: false, planning: false, busy: false, attempt: false });
-    useUnsavedChangesSource(() => unsavedState(locks.current.dirty || locks.current.planning || locks.current.attempt, locks.current.busy));
     const uncertain = useRef(false);
+    // DEV-021 AC-07: an uncertain write outcome blocks a shell context switch like an in-flight save.
+    useUnsavedChangesSource(() => unsavedState(locks.current.dirty || locks.current.planning || locks.current.attempt, locks.current.busy || uncertain.current));
     const [uncertainOutcome, setUncertainOutcome] = useState(false);
     const markUncertain = (value: boolean) => { uncertain.current = value; setUncertainOutcome(value); };
     const active = useRef(false), writer = useRef<AbortController | null>(null);

@@ -65,7 +65,9 @@ export function CrewWorkspace({ vessel, assignment }: {
     const [online, setOnline] = useState(navigator.onLine);
     const [destination, setDestination] = useState<string | null>(null);
     const inFlight = useRef(false);
-    useUnsavedChangesSource(() => unsavedState(!!editor || childDirty, inFlight.current));
+    // DEV-021 AC-07: an uncertain outcome blocks a shell context switch like an in-flight save;
+    // discarding it would lose the idempotency key/body needed to resolve the write.
+    useUnsavedChangesSource(() => unsavedState(!!editor || childDirty, inFlight.current || result === 'uncertain'));
     const knownIdentity = useRef<Session | null>(null);
     const [paused, setPaused] = useState(false);
     const dialog = useRef<HTMLDialogElement>(null);

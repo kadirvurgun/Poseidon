@@ -121,7 +121,7 @@ export function WorkspaceVesselSwitcher({ session, vessel, language, onClose, on
         if (!online || !visible || choosing?.state === 'checking' || !current?.data?.items.some(row => row.id === id) || !session.tenantId || !session.actorId)
             return;
         const row = current.data.items.find(item => item.id === id)!;
-        // 65.03 paragraph 64 step 2 / UX-038: an unsaved form is resolved BEFORE any switch
+        // 65.03 paragraph 65 step 2 / UX-038 (paragraph 620): an unsaved form is resolved BEFORE any switch
         // request. 'saving' blocks (outcome unknown); 'dirty' goes straight to the owning
         // workspace guard, so Stay sends no request and keeps the draft. After an explicit
         // discard the destination re-verifies the new context server-side (step 4).

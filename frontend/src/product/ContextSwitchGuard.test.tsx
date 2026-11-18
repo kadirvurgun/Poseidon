@@ -9,7 +9,7 @@ import { WorkspaceVesselSwitcher } from './WorkspaceVesselSwitcher'
 import { currentUnsavedState, registerUnsavedSource, unsavedState, useUnsavedChangesSource } from './unsaved-changes'
 import type { Session } from './directory-contract'
 
-// DEV-021 / T-S2-002, 65.03 paragraph 64 + UX-038 (paragraph 619): a real guarded form,
+// DEV-021 / T-S2-002, 65.03 paragraph 65 + UX-038 (Given/When/Then paragraph 620): a real guarded form,
 // the shared DraftConfirmation and the vessel switcher wired exactly like a workspace.
 vi.mock('./api', async original => ({ ...await original<typeof import('./api')>(), vessels: vi.fn() }))
 vi.mock('./workspace-context-api', () => ({ loadWorkspaceContext: vi.fn() }))

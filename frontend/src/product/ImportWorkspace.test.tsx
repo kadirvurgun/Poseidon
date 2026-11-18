@@ -3,6 +3,7 @@ import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ImportWorkspace } from './ImportWorkspace';
 import * as api from './import-api';
+import { currentUnsavedState } from './unsaved-changes';
 const vessel = '11111111-1111-1111-1111-111111111111', id = '22222222-2222-2222-2222-222222222222', previewId = '33333333-3333-3333-3333-333333333333';
 const template: api.ImportTemplate = { category: 'equipment', version: 'v1/equipment', fingerprint: 'ABC', fields: [{ key: 'record_key', requiredInput: true, userWritable: true }, { key: 'level', requiredInput: true, userWritable: true }], allowSourceColumnReuse: false, format: 'xlsx-single-sheet', maxBytes: 2097152, maxRows: 500, maxColumns: 40, maxCellCharacters: 4096, numericPolicy: 'exact', commitPolicy: 'atomic trial' };
 const batch: api.ImportBatch = { id, category: 'equipment', revision: 2, version: 7, state: 'MappingDraft', template, headers: ['PRIVATE HEADER', 'Level'], bindings: [{ sourceColumn: 0, targetField: 'record_key' }, { sourceColumn: 1, targetField: 'level' }], rowCount: 26, sourceHash: 'HASH', createdAt: '2026-11-01T00:00:00Z', reviewerState: 'Unassigned', committedAt: null, committedPreviewId: null };
@@ -60,7 +61,10 @@ describe('DEV-069 connected importer (authored UI mocks; execution DEFERRED)', (
         await english();
         await userEvent.click(screen.getByRole('button', { name: 'Validate and preview' }));
         await userEvent.click(await screen.findByRole('button', { name: 'Commit atomic trial import' }));
-        await userEvent.click(await screen.findByRole('button', { name: 'Retry same commit' }));
+        const retry = await screen.findByRole('button', { name: 'Retry same commit' });
+        // DEV021-AC-07: the uncertain commit outcome blocks a shell context switch (reported as saving).
+        await waitFor(() => expect(currentUnsavedState()).toBe('saving'));
+        await userEvent.click(retry);
         expect(keys).toHaveLength(2);
         expect(keys[0]).toBe(keys[1]);
         expect(await screen.findByText(/Committed rows/)).toHaveTextContent('26');
