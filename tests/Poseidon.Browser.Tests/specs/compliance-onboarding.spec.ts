@@ -19,8 +19,8 @@ for (const width of [390, 1440])
                 return;
             }
             if (path.endsWith('/auth/session')) {
-                await route.fulfill({ json: { authenticated: true, canRead: true, canReadCompanies: false, canCreate: false, canSearch: false,
-                        actorId: otherComplianceVessel, tenantId: otherComplianceVessel, tenantName: 'FICTIONAL tenant', csrfToken: 'synthetic-only' } });
+                await route.fulfill({ json: { authenticated: true, setupRequired: false, canRead: true, canReadCompanies: false, canCreate: false, canSearch: false,
+                        actorId: otherComplianceVessel, tenantId: otherComplianceVessel, tenantName: 'FICTIONAL tenant', csrfToken: 'synthetic-only-csrf-token' } });
                 return;
             }
             if (path.endsWith('/regulatory-profile/history')) {

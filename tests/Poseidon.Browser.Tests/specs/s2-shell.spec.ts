@@ -147,11 +147,13 @@ test('L17-AC-RTL: Arabic navigation indents from the inline start while retainin
     await expect(back).toHaveCSS('transform', 'none');
     await page.goto(`/app/fleet/${vessels[0].id}`);
     await page.getByRole('button', { name: 'Edit', exact: true }).click();
-    const name = page.getByLabel('Name *', { exact: true });
-    await name.fill('SYNTHETIC retained RTL draft');
+    await page.getByLabel('Name *', { exact: true }).fill('SYNTHETIC retained RTL draft');
+    // The field label is localized (17-locale i18n), so retention is tracked by the stable input id.
+    const name = page.locator('#dir-name');
     await selector.selectOption('ar');
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
     await expect(name).toHaveValue('SYNTHETIC retained RTL draft');
+    await expect(page.getByLabel('الاسم *', { exact: true })).toHaveValue('SYNTHETIC retained RTL draft');
     const trigger = page.locator('.workspace-menu');
     if (await trigger.isVisible()) await trigger.click();
     const group = page.locator('.enterprise-nav-group-content').filter({ has: page.locator('[data-navigation-key="fleet"]') });

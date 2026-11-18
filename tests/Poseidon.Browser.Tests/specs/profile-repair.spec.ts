@@ -14,7 +14,20 @@ test('profile exact decimal save and malformed background history recovery retai
         const url = route.request().url();
         let body: unknown;
         if (url.includes('/auth/session'))
-            body = { authenticated: true, canRead: true, canReadCompanies: false, canCreate: false, csrfToken: 'synthetic', tenantId: profile.tenantId };
+            body = { authenticated: true, setupRequired: false, canRead: true, canReadCompanies: false, canCreate: false, csrfToken: 'synthetic-csrf-token-only', actorId: '10000000-0000-0000-0000-000000000004', tenantId: profile.tenantId };
+        else if (new URL(url).pathname === '/api/v1/workspace')
+            body = { destinations: [{ key: 'fleet', href: '/app/fleet' }], canSearch: false, canWriteRegulatory: false };
+        else if (url.includes('/workspace/context')) {
+            const selected = url.includes('/context/' + vessel.id);
+            body = { tenantId: profile.tenantId, actorId: '10000000-0000-0000-0000-000000000004', roleContext: { state: 'Missing', catalogVersion: null, roles: [] },
+                company: selected ? { id: vessel.companyId, code: 'SYN-CO', name: 'Synthetic company' } : null,
+                vessel: selected ? { id: vessel.id, companyId: vessel.companyId, code: vessel.code, name: vessel.name, kind: vessel.kind } : null };
+        }
+        else if (url.includes('/workspace/lenses')) {
+            const selected = url.includes('/lenses/' + vessel.id);
+            body = { tenantId: profile.tenantId, actorId: '10000000-0000-0000-0000-000000000004', vesselId: selected ? vessel.id : null,
+                mode: selected ? 'Ship' : 'Fleet', state: 'Missing', version: null, lenses: [], canSearch: false };
+        }
         else if (url.includes('/files?'))
             body = { items: [], offset: 0, hasMore: false, available: true, canWrite: false, maxBytes: 1048576, allowedTypes: ['image/png'] };
         else if (url.includes('/history?')) {
@@ -30,7 +43,10 @@ test('profile exact decimal save and malformed background history recovery retai
                 const command = route.request().postDataJSON();
                 expect(command.content.gt.value).toBe('9007199254740993');
                 expect(command.content.nt.value).toBe('0.1234567890123456789012345678');
-                body = { ...profile, revision: 2, version: 20, content: command.content };
+                // The server derives provenance from declaration/sourceReference states (RegulatoryDraftEndpoints).
+                const states = [command.content.declaration.state, command.content.sourceReference.state];
+                const provenance = states.includes('Known') ? 'DeclaredUnverified' : states.includes('Unknown') ? 'Unknown' : 'Missing';
+                body = { ...profile, revision: 2, version: 20, provenance, content: command.content };
             }
             else
                 body = profile;
