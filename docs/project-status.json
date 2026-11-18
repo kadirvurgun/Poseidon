@@ -1,4 +1,65 @@
 {
+  "analysis_20261115_continuation": {
+    "state": "SOURCE_LINEAGE_VERIFIED_PRODUCT_AUTHORED_TESTS_DEFERRED_NOT_ACCEPTED",
+    "baseline_id": "poseidon-v46.3-20261115",
+    "source_files": 312,
+    "supplemental_files": 43,
+    "unchanged_prior_files": 269,
+    "changed_prior_files": 0,
+    "removed_prior_files": 0,
+    "chunks": 182283,
+    "chunk_files": 4,
+    "source_mismatches": 0,
+    "report": "docs/phases/ANALYSIS-20261115-01.md",
+    "task": "docs/tasks/S2-COMPANY-ASSET-CONTEXT-01.md",
+    "product_scope": [
+      "Server-provisioned active company carried independently from vessel ownership/operator fields",
+      "Tenant-filtered active company projection with fail-closed invalid configuration",
+      "Company, vessel, Ship/Tug mode, role and connection in the shared workspace context bar",
+      "Two new UI labels completed in all 17 locale catalogs",
+      "Backend, wire, React and browser regression sources authored"
+    ],
+    "verification": {
+      "source_lineage": "PASS_312_FILES_182283_CHUNKS_0_MISMATCH",
+      "bounded_new_source_queries": "PASS",
+      "git_diff_check": "PASS",
+      "backend_tests": "DEFERRED",
+      "frontend_tests": "DEFERRED",
+      "build_typecheck_lint": "DEFERRED",
+      "playwright": "DEFERRED",
+      "independent_qa": "PENDING",
+      "required_ci": "PENDING"
+    },
+    "accepted_tasks_added": 0,
+    "accepted_story_points_added": 0,
+    "canonical_progress": "20/121 tasks; 103/970 SP; 0/196 accepted screens",
+    "acceptance": false,
+    "publication": false
+  },
+  "s2_vessel_blocker_details_20261117": {
+    "state": "AUTHORED_TESTS_DEFERRED_NOT_ACCEPTED",
+    "task": "docs/tasks/S2-VESSEL-BLOCKER-DETAILS-01.md",
+    "report": "docs/phases/ANALYSIS-20261115-01.md",
+    "source": "59.01/paragraph:55/sha256:daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+    "behavior": [
+      "Per-field onboarding blockers bind exact vessel subject, field path, reason and required resolution type",
+      "Missing and Unknown remain distinct and never become No, NotApplicable or Ready",
+      "A complete declaration still requires qualified evidence",
+      "Aggregate passport blocker codes remain compatible with structured details",
+      "Structured blocker labels and resolutions are complete in 17 locale catalogs"
+    ],
+    "verification": {
+      "tests": "DEFERRED",
+      "build_typecheck_lint": "DEFERRED",
+      "playwright": "DEFERRED",
+      "independent_qa": "PENDING",
+      "required_ci": "PENDING"
+    },
+    "accepted_tasks_added": 0,
+    "accepted_story_points_added": 0,
+    "acceptance": false,
+    "publication": false
+  },
   "foundation_acceptance_bundle_01_execution": {
     "task_id": "FOUNDATION-ACCEPTANCE-BUNDLE-01",
     "status": "INCOMPLETE",
@@ -1009,7 +1070,7 @@
       "accepted": false
     }
   },
-  "as_of": "2026-11-11",
+  "as_of": "2026-11-13",
   "audit_trace_01": {
     "status": "combined_gate_executed_not_accepted",
     "accepted": false,
@@ -1114,7 +1175,7 @@
     "verification_record_scope": "Authored/deferred and original20f1198 results are historical;current rejection-repair evidence in core_bundle_01.verification"
   },
   "baseline": "POSEIDON v46.3 updated 2026-10-30 / Library26 candidate",
-  "current_stage": "Büyük ürün paketi draft PR hazırlığı: yerel kapsamlı test sonuçları korunuyor; tam API/provider koşusu sürüyor. Genuine login hazırlığı nedeni belirsiz başarısız, yeniden tanı host bellek baskısında engellendi; exact integrated repo scan UNPROVEN. Genel kabul103/970SP %10,62,20/121iş,0/196ekran değişmedi.",
+  "current_stage": "User Today card reflow authored and preview updated (HTTP200/exact newHTML; previewbuild5.732s only); 2component+4viewportbrowser sourcesDEFERRED. Actual002 backend independent1067unit/79PG/884APIPASS; frontend lint/type+233applicableprotocol identitiesPASS; full1660components1659PASS1FAIL. Profilehistoryasyncassertion corrected with selected1PASS16.195s,79unselected, no fullrerun/acceptance. Freshgenuine/TLS/finiteS2/fullscans/sourceindependentQAandCI pending; parallelagentproviderquota no retry/account rotation. Canonical20tasks103SP10.62percent unchanged; no newpushPRmerge.",
   "method": "accepted story points / total baseline story points * 100",
   "scope": "complete v46.3 Backlog sheet; duplicates in other sheets excluded",
   "total_tasks": 121,
@@ -3938,7 +3999,10 @@
     "docs/phases/VESSEL-PROFILE-DRAFT-01.md",
     "docs/phases/CREW-IDENTITY-CLOSURE-01.md",
     "docs/phases/S0-OVERNIGHT-20261102.md",
-    "docs/phases/S1-FOUNDATION-20261103.md"
+    "docs/phases/S1-FOUNDATION-20261103.md",
+    "docs/phases/TECHNICAL-COMMAND-OWNER-RECOVERY-20261111.md",
+    "docs/phases/MAINTENANCE-OBSERVATION-RECOVERY-20261112.md",
+    "docs/phases/OBSERVATION-SIGNED-FIXTURE-20261112.md"
   ],
   "active_source": "docs/sources/active.json",
   "current_package": {
@@ -4689,7 +4753,14 @@
       "cause_not_established": "No model or native-process memory leak diagnosis; each native child reported approximately240MB private bytes by Root, not causal attribution.",
       "response": "Stopped only four exact worktree native children after their parent ended; no other process stopped. No new local wide native jobs; final complete scope remains open for CI."
     },
-    "latest_report": "docs/phases/BUNDLE-SIGNED-RECOVERY-20261111.md"
+    "latest_report": "docs/phases/BUNDLE-SIGNED-RECOVERY-20261111.md",
+    "parallel_product_development": {
+      "task": "OBSERVATION-SIGNED-FIXTURE-01",
+      "state": "SOURCE_S3_AND_DIAGNOSTICS_INTEGRATED_QUALIFIED_FIXTURE_AUTHORING",
+      "source_checkpoint": "77221148fe5e9b1e0798dc69d97c2adac312eade",
+      "accepted": false,
+      "report": "docs/phases/BUNDLE-PORT-ISOLATION-20261113.md"
+    }
   },
   "nav_workspace_01": {
     "status": "locally_validated_awaiting_independent_qa",
@@ -12469,7 +12540,7 @@
       "Fix actual full-scope CI failures, batch one push then await Application foundation, independent exact-target QA remains required"
     ],
     "next": {
-      "action": "Review auth-recovery source and run required CI once; finish missing genuine fixture/flow requirements and provision fresh isolated run IDs before full174gate; merge only after independent current-target QA and all required checks.",
+      "action": "Required CI passed on32ff1d0 in both events. Finish fresh-run genuine174journeys and independent exact-target QA; merge only after all mandatory gates pass. Continue separate localization authoring.",
       "candidate": "DEV-056 PMS Command Center",
       "trace_id": "T-S8-005",
       "source_locator": "18.01 sheet:Backlog/row:57",
@@ -12493,27 +12564,2766 @@
       "cause_not_established": "No model or native-process memory leak diagnosis; each native child reported approximately240MB private bytes by Root, not causal attribution.",
       "response": "Stopped only four exact worktree native children after their parent ended; no other process stopped. No new local wide native jobs; final complete scope remains open for CI."
     },
-    "latest_report": "docs/phases/BUNDLE-SIGNED-RECOVERY-20261111.md"
+    "latest_report": "docs/phases/BUNDLE-SIGNED-RECOVERY-20261111.md",
+    "ci_32ff1d0_20261111": {
+      "source_commit": "32ff1d08aed38c02cd78a019caf5913d49c26ace",
+      "observed_at_utc": "2026-11-11T07:03:47.563169+00:00",
+      "state": "REQUIRED_CI_SUCCESS_SIGNED_AND_INDEPENDENT_FINAL_QA_OPEN",
+      "canonical_acceptance_changed": false,
+      "merge_authorized_by_evidence": false,
+      "runs": [
+        {
+          "event": "pr",
+          "run_id": 42911168567,
+          "url": "https://github.com/kadirvurgun/Poseidon/actions/runs/42911168567",
+          "required_jobs": 4,
+          "successful_jobs": 4,
+          "conclusion": "success",
+          "api": {
+            "integration": {
+              "total": 826,
+              "passed": 826,
+              "failed": 0,
+              "skipped": 0,
+              "artifact": "pr-32ff1d0/integration.json",
+              "sha256": "cb98e6875cc9f10ebac12e6ea5ee83d596277cb8291afa7940990d910a626604",
+              "critical_operations_required": 117,
+              "critical_operations_observed": 117,
+              "coverage_scope": "actual attributed HTTP/write audit operations; not signed journey or business acceptance"
+            },
+            "unit": {
+              "total": 176,
+              "passed": 176,
+              "failed": 0,
+              "skipped": 0,
+              "artifact": "pr-32ff1d0/unit.json",
+              "sha256": "bfc399c9bcc1c30fce78e2b9a39ba252f56e59d797d95a10ed4f599d9ff1a7e3"
+            }
+          }
+        },
+        {
+          "event": "push",
+          "run_id": 42911160703,
+          "url": "https://github.com/kadirvurgun/Poseidon/actions/runs/42911160703",
+          "required_jobs": 4,
+          "successful_jobs": 4,
+          "conclusion": "success",
+          "api": {
+            "integration": {
+              "total": 826,
+              "passed": 826,
+              "failed": 0,
+              "skipped": 0,
+              "artifact": "push-32ff1d0/integration.json",
+              "sha256": "eb792ced12a10b3156a04838c3a4a01f53dd1862c75622bf0743e573335937e2",
+              "critical_operations_required": 117,
+              "critical_operations_observed": 117,
+              "coverage_scope": "actual attributed HTTP/write audit operations; not signed journey or business acceptance"
+            },
+            "unit": {
+              "total": 176,
+              "passed": 176,
+              "failed": 0,
+              "skipped": 0,
+              "artifact": "push-32ff1d0/unit.json",
+              "sha256": "3df0b386cf4f96b5d4f471a3c8cdda5d495d69042c8e670354b26ca1704192e8"
+            }
+          }
+        }
+      ]
+    }
   },
   "localization_17_20261109": {
-    "state": "AUTHORED_UNVERIFIED_TRANSLATION_IN_PROGRESS",
+    "state": "CATALOG_AUTHORING_COMPLETE_PR_PREPARATION_FRONTEND_GATE_RUNNING_NOT_ACCEPTED",
     "accepted": false,
     "accepted_story_points_added": 0,
+    "observed_at_utc": "2026-11-11T19:17:23.959010+00:00",
     "branch": "foundation/enterprise-localization-20261109",
-    "user_source": "User supplied17-language selector screenshot and explicit JSON i18n AI translation instruction",
-    "canonical_source_constraint": "15.01 paragraph1626: localization does not change canonical enum/code values",
-    "core_commit": "5a87136",
-    "common_locales": 17,
-    "common_keys_per_locale": 38,
-    "product_catalog_frozen_sha256": "a555c082fcdbecb4836be6d3734eaf7587230ce0a463dd8274bffd59e6123203",
-    "product_string_leaves": 3169,
-    "product_distinct_strings": 2991,
-    "translation_locales_in_progress": [
+    "task": "docs/tasks/LOCALIZATION-17-01.md",
+    "report": "docs/phases/LOCALIZATION-17-20261109.md",
+    "source_constraint": "15.01 paragraph1626; explicit user17locale image andAIJSONinstruction",
+    "source_catalog_sha256": "a555c082fcdbecb4836be6d3734eaf7587230ce0a463dd8274bffd59e6123203",
+    "string_leaves": 3169,
+    "distinct_values": 2991,
+    "common_locales_authored": 17,
+    "product_locales_authored": [
       "ar",
+      "cs",
+      "hu",
+      "fr",
+      "en",
+      "fi",
+      "en-GB",
+      "zh-Hans",
+      "hi",
+      "sk",
+      "tr",
+      "ru",
+      "pt-BR",
+      "it",
+      "es",
       "de",
-      "fr"
+      "zh-Hant"
     ],
-    "test_execution": "DEFERRED_NEW_BUNDLE_GATE; tests authored, no PASS claimed",
-    "not_in_PR16": true
+    "product_locales_in_progress": [],
+    "product_locales_remaining": [],
+    "worker_limit": "Actual usage limit reported; partial authoring retained; no account/model rotation",
+    "verification": "Exact23b87d4 frontend subgate PASS:contractparity(sourcebound),lint,typecheck,3/3narrow,1437/1437components,productionbuild. No skipped/pending/todo/unhandled. Integratedbrowser/backend/signed/finalQA/CIremainOPEN; acceptancefalse.",
+    "canonical_acceptance_changed": false,
+    "pr16_merge_status": "32ff1d0: all4requiredCIjobs passed both push42911160703 and PR42911168567; full174signed gate and independent final-target QA remain open",
+    "source_checkpoint": "23b87d47de56ed5015032dd6a21a00ee92a1a1e6",
+    "status_label_locales_authored": 17,
+    "status_label_keys_per_locale": 139,
+    "main_catalog_string_leaves": 3169,
+    "remaining_work": [
+      "Review in-context language quality and resolve any integration findings",
+      "Execute the full new-package bundle gate when preparing its PR",
+      "Run independent final exact-target QA plus required push/PR CI before merge",
+      "Keep PR16 genuine signed recovery and its independent final QA separate"
+    ],
+    "delivered_since_950c412": [
+      "Complete Italian3169leaf catalog",
+      "Strict reversible repair of347Italian and2378French corrupted text leaves",
+      "17locale crew states and scoped counter",
+      "59regulatory copy calls, language-live saved notice, unchanged command bytes",
+      "Health freshness and tug conflict labels",
+      "Shared attachment controls preserve dirty/busy locks",
+      "Selected-locale case folding preserves source names and IDs",
+      "Four operational option dictionaries use17locale labels; exact source codes, fuel abbreviations and unsupported values retained"
+    ],
+    "source_authoring_assistance": {
+      "scope": "NOT build/typecheck/test execution",
+      "last_changed_typescript_files": 7,
+      "syntax_diagnostics": 0,
+      "unresolved_literal_keys": 0,
+      "limited_locale_branch_query_matches": 0,
+      "does_not_establish_complete_migration": true,
+      "variable_condition_product_matches": 0,
+      "variable_condition_core_fallback_matches": 1,
+      "graphify_note": "Derived AST graph; zero-node configuration/JSON warning does not establish complete code or requirement coverage",
+      "committed_typescript_files_inspected_this_continuation": 13
+    },
+    "remaining_static_caption_inventory": {
+      "state": "SIX_CAPTIONS_AUTHORED_SEVENTH_RECLASSIFIED_AS_CANONICAL_API_LITERAL",
+      "scope": "Source changes authored; UI execution deferred",
+      "translated": [
+        "LOCAL OPERATIONS",
+        "MARITIME PLATFORM",
+        "WORKSPACE",
+        "DEVELOPMENT",
+        "FOUNDATION",
+        "MARITIME OPERATIONS"
+      ],
+      "retained_literal": {
+        "value": "available",
+        "reason": "Validated public heartbeat response code in poseidon / available example; display and decoder retain exact contract"
+      },
+      "owners": [
+        "frontend/src/agents/AgentsDashboard.tsx",
+        "frontend/src/App.tsx",
+        "frontend/src/product/EnterpriseChrome.tsx"
+      ]
+    },
+    "shell_continuation": {
+      "caption_commit": "b3a2966fe10ed3ceb1a29aa97179b476acc7c9b0",
+      "blank_catalog_and_shared_controls_commit": "d2eac62",
+      "browser_matrix": "tests/Poseidon.Browser.Tests/specs/localized-shell.spec.ts",
+      "browser_cases_authored": 17,
+      "projects": [
+        "chromium",
+        "mobile-chromium"
+      ],
+      "browser_matrix_requires_all_main_catalogs": true,
+      "tests": "DEFERRED_NOT_RUN",
+      "new_package_published": false,
+      "behavior": [
+        "Six captions123presentationkeys in17locales",
+        "Long brand captions wrap; Arabic letter spacing normal",
+        "Blank declaration labels reject activation and retain preference",
+        "Shared retry buttons retain same DOM and ongoing requests",
+        "No external model API calls by generation scripts; test execution deferred"
+      ]
+    },
+    "translation_dispatch_20261111": {
+      "state": "ALL_SIX_REMAINING_MAIN_CATALOGS_INTEGRATED",
+      "previous_limit_reset_local": "2026-11-11T18:04:00+03:00",
+      "clock_before_dispatch_utc": "2026-11-11T15:09:33Z",
+      "no_account_or_model_rotation": true,
+      "leases": [
+        {
+          "task": "L17-ES-PT-01",
+          "agent": "/root/locale_es_pt",
+          "branch": "work/locales-es-pt-20261111",
+          "locales": [
+            "es",
+            "pt-BR"
+          ]
+        },
+        {
+          "task": "L17-FI-SK-01",
+          "agent": "/root/locale_fi_sk",
+          "branch": "work/locales-fi-sk-20261111",
+          "locales": [
+            "fi",
+            "sk"
+          ]
+        },
+        {
+          "task": "L17-ZH-01",
+          "agent": "/root/locale_zh",
+          "branch": "work/locales-zh-20261111",
+          "locales": [
+            "zh-Hans",
+            "zh-Hant"
+          ]
+        }
+      ],
+      "completion_claim": false,
+      "instruction_on_new_limit": "Preserve partial progress and stop; no repeated retry or rotation",
+      "last_partial_authoring_observation": {
+        "observed_at_utc": "2026-11-11T15:20:43.381913+00:00",
+        "es_and_pt_distinct_values_authored_each": 1450,
+        "fi_and_sk_distinct_values_authored_each": 1020,
+        "required_distinct_values_each": 2991,
+        "scope": "Preserved incomplete scratch; not committed product catalogs or acceptance"
+      },
+      "first_completed_catalog": {
+        "locale": "zh-Hans",
+        "author_commit": "d0bc628e37b5e7528b5c7dcfa45f391354487b08",
+        "integration_commit": "a843f80",
+        "string_leaves": 3169,
+        "state": "AUTHORED_NOT_TESTED_NOT_ACCEPTED"
+      },
+      "chinese_completed": {
+        "author_commits": [
+          "d0bc628",
+          "e578dfa",
+          "08986b5"
+        ],
+        "integration_commits": [
+          "a843f80",
+          "8a3cfd7",
+          "981dae4"
+        ],
+        "locales": [
+          "zh-Hans",
+          "zh-Hant"
+        ],
+        "string_leaves_each": 3169,
+        "state": "AUTHORED_NOT_TESTED_NOT_ACCEPTED"
+      },
+      "es_pt_completed": {
+        "author_commits": [
+          "d3762aea85627d663b402edde18c3cf435921989",
+          "365fc2f1dfccda3e6e1598e826cf6223a94d840e"
+        ],
+        "integration_commits": [
+          "4fa3c74",
+          "786a0b9"
+        ],
+        "locales": [
+          "es",
+          "pt-BR"
+        ],
+        "string_leaves_each": 3169,
+        "state": "AUTHORED_NOT_TESTED_NOT_ACCEPTED"
+      },
+      "fi_sk_completed": {
+        "author_commits": [
+          "d4f4c42c34e4f573add49c00761c58e82059e0ca",
+          "32d98c206119c9abc54310540f11602af9b5749e"
+        ],
+        "integration_commits": [
+          "9e195dd",
+          "4a253fb"
+        ],
+        "locales": [
+          "fi",
+          "sk"
+        ],
+        "string_leaves_each": 3169,
+        "state": "AUTHORED_NOT_TESTED_NOT_ACCEPTED"
+      }
+    },
+    "rtl_layout_continuation": {
+      "commits": [
+        "3219461",
+        "f4c00a3",
+        "b172b5d",
+        "2187e1d"
+      ],
+      "behavior": "Logical crew filter/pagination/editor accents, regulatory lineage/index, tug search/blocked accent, nested sidebar padding, ops timeline and public protocol/detail-action spacing",
+      "authored_test": "tests/Poseidon.Browser.Tests/specs/s2-shell.spec.ts L17-AC-RTL",
+      "test_scope": "Synthetic scoped API UI behavior, retained dirty input, actual CSS RTL/LTR indentation; not real server authorization",
+      "execution": "DEFERRED_NOT_RUN",
+      "navigation_arrows": "Explicit inline-navigation icons mirror only inRTL; href/callback/command content unchanged"
+    },
+    "foundation_alignment": {
+      "state": "LOCAL_NORMAL_MERGE_UNVERIFIED_NEW_TARGET",
+      "foundation_parent": "52c1181d7fd35de2ec21641361d2fb0f34914b2c",
+      "original_successful_ci_target": "32ff1d08aed38c02cd78a019caf5913d49c26ace",
+      "source_subtrees_identical_to_foundation": [
+        "backend",
+        "tests/Poseidon.Api.Tests",
+        "contracts",
+        "frontend/src/generated"
+      ],
+      "source_comparison_not_test_execution": true,
+      "conflict_resolution": "Foundation current evidence/history plus authored localization namespace; current genuine per-case/deep-target login plus actual native locale selector",
+      "new_target_tests": "DEFERRED_NEW_BUNDLE_GATE",
+      "original_full_signed_result": "15PASS159FAIL on69bc92c retained; not replaced by new target or localization authoring",
+      "PR16_status": "Still draft; no remote PR merge performed"
+    },
+    "independent_source_review": {
+      "task": "L17-QA-SOURCE-01",
+      "agent": "/root/locale_zh",
+      "target": "981dae4",
+      "scope": "Root-authored UI/i18n/native-selector merge; excludes reviewer-authored Chinese catalogs",
+      "state": "NO_CONCRETE_FINDINGS_IN_BOUNDED_STATIC_REVIEW",
+      "execution": "DEFERRED",
+      "acceptance": false,
+      "inspected_files": 60
+    },
+    "independent_copy_source_review": {
+      "task": "L17-QA-COPY-01",
+      "agent": "/root/locale_es_pt",
+      "target": "786a0b9",
+      "scope": "Bounded authority/Unknown/encoding semantics in other-author catalogs andRootlabels; ownES/PTmaincatalogs excluded",
+      "state": "L17_COPY_01_RESOLVED_SOURCE_ONLY",
+      "execution": "DEFERRED",
+      "acceptance": false,
+      "original_main_entries_sampled": 40,
+      "label_entries_sampled": 408,
+      "fi_sk_addendum": {
+        "target": "4a253fbd45afa3a46d1e1ac9e6069928373d7a05",
+        "entries": 16,
+        "concrete_findings": 0,
+        "execution": "DEFERRED",
+        "acceptance": false
+      },
+      "resolved_finding": {
+        "id": "L17-COPY-01",
+        "severity": "P2",
+        "source_target": "786a0b9",
+        "fix": "3c301447facb1249ec182a71dbd67754829c6870",
+        "state": "RESOLVED_SOURCE_ONLY",
+        "behavior": "ExplicitNONE no-discrepancy declaration remains distinct from Missing/Unknown/NotDeclared; canonical valueNONE unchanged",
+        "source_locator": "11.01/sheet:2316 Alan v46.3/row2204",
+        "source_sha256": "bc3afb0cf721c6cebe7a755602a1adc0cfb8db17d16514a96459403daed6b3d9",
+        "execution": "DEFERRED",
+        "acceptance": false
+      }
+    },
+    "complete_product_catalogs_authored": 17,
+    "common_keys_per_locale": 38,
+    "independent_copy_es_pt_source_review": {
+      "task": "L17-QA-COPY-ESPT-01",
+      "agent": "/root/locale_fi_sk",
+      "target": "4a253fbd45afa3a46d1e1ac9e6069928373d7a05",
+      "state": "NO_MATERIAL_FINDINGS_IN_BOUNDED_STATIC_SAMPLE",
+      "sample_entries": 16,
+      "execution": "DEFERRED",
+      "acceptance": false,
+      "concrete_findings": 0
+    },
+    "catalog_source_inventory": {
+      "ar": {
+        "sha256": "d813a4f3a6bb152d04b6163f57b6f46e5c9df6ca39299bbd0a24ceb1bc03c0ad",
+        "string_leaves": 3169,
+        "claim": "Authored source inventory only; not runtime or translation-quality acceptance"
+      },
+      "cs": {
+        "sha256": "13e2228e1d8422919ed62c91ef564d4d3aba0f5c1bd5ac9beeb89fd81b8e2193",
+        "string_leaves": 3169,
+        "claim": "Authored source inventory only; not runtime or translation-quality acceptance"
+      },
+      "hu": {
+        "sha256": "1307ac584e15ff2fa182e52b5e31ca142bd7fa7f6b5813db38e204ad085f8788",
+        "string_leaves": 3169,
+        "claim": "Authored source inventory only; not runtime or translation-quality acceptance"
+      },
+      "fr": {
+        "sha256": "646aed41c53d9b280d209623d81909f4c5690dbafdffbd6b59f6a99e9050cf9b",
+        "string_leaves": 3169,
+        "claim": "Authored source inventory only; not runtime or translation-quality acceptance"
+      },
+      "en": {
+        "sha256": "a555c082fcdbecb4836be6d3734eaf7587230ce0a463dd8274bffd59e6123203",
+        "string_leaves": 3169,
+        "claim": "Authored source inventory only; not runtime or translation-quality acceptance"
+      },
+      "fi": {
+        "sha256": "136c16793766349e967adad3f5af1eef17b1f575f223fde3e1149a063ca21fde",
+        "string_leaves": 3169,
+        "claim": "Authored source inventory only; not runtime or translation-quality acceptance"
+      },
+      "en-GB": {
+        "sha256": "7834ca7739c5b0129197b5c0cece4a2801213df562b350d133c885d9b39626b4",
+        "string_leaves": 3169,
+        "claim": "Authored source inventory only; not runtime or translation-quality acceptance"
+      },
+      "zh-Hans": {
+        "sha256": "32b083cf3b1421d11918f87c387645f85942a31661d9290bb113d764120dd637",
+        "string_leaves": 3169,
+        "claim": "Authored source inventory only; not runtime or translation-quality acceptance"
+      },
+      "hi": {
+        "sha256": "cfd3a5cb5dd164477da86ad689bdcf165b06da639043b781946ca14e980a3632",
+        "string_leaves": 3169,
+        "claim": "Authored source inventory only; not runtime or translation-quality acceptance"
+      },
+      "sk": {
+        "sha256": "201f279fc4155535af5bc6e58678d0d67397fbd23069c1b0745df23b9d300d7e",
+        "string_leaves": 3169,
+        "claim": "Authored source inventory only; not runtime or translation-quality acceptance"
+      },
+      "tr": {
+        "sha256": "d787691a3da316fa5f35e883a1ba754c4be68b0380f1ad726692f81d0e9d0ba3",
+        "string_leaves": 3169,
+        "claim": "Authored source inventory only; not runtime or translation-quality acceptance"
+      },
+      "ru": {
+        "sha256": "998bd9570232d1cd80721784ab5268d8c6e6af04952c86b831fb3fa48735aee6",
+        "string_leaves": 3169,
+        "claim": "Authored source inventory only; not runtime or translation-quality acceptance"
+      },
+      "pt-BR": {
+        "sha256": "47868a1bf54590d0d602c37bc28f6f665d651e5b51ef31422c5fb4139c7366b2",
+        "string_leaves": 3169,
+        "claim": "Authored source inventory only; not runtime or translation-quality acceptance"
+      },
+      "it": {
+        "sha256": "126c3cc0fbf21e9dee2455875e479592e928deedcac61610a7d834f2ef3e6d4c",
+        "string_leaves": 3169,
+        "claim": "Authored source inventory only; not runtime or translation-quality acceptance"
+      },
+      "es": {
+        "sha256": "a5bd66b17d02cdec08058037421cf1d01e934f5b68f04fac6183792f25790f05",
+        "string_leaves": 3169,
+        "claim": "Authored source inventory only; not runtime or translation-quality acceptance"
+      },
+      "de": {
+        "sha256": "a3e9c7b7448fc47f8bb81b160da6523c36ae146a1cf930e0f8b565d74dee237b",
+        "string_leaves": 3169,
+        "claim": "Authored source inventory only; not runtime or translation-quality acceptance"
+      },
+      "zh-Hant": {
+        "sha256": "5d1f0e8cb0c121fe5bc6a6a0f92b81ae1dd49db29acf4bf1e18612dc0babe9c1",
+        "string_leaves": 3169,
+        "claim": "Authored source inventory only; not runtime or translation-quality acceptance"
+      }
+    },
+    "planned_bounded_source_reviews_completed": true,
+    "bounded_source_review_evidence": {
+      "ui": {
+        "sha256": "61cb66298a512fcc05306cb3b4fb97eb77f660ddfc1e4c5b52b8a9c2cad438bb",
+        "filename": "source-review-l17-981dae4.json",
+        "execution": "DEFERRED",
+        "acceptance": false
+      },
+      "copy_and_fix": {
+        "sha256": "99b970f17053898cade5b4c2143306de70fb18f6988cc5755e3141ef47205f2d",
+        "filename": "source-copy-review-l17-786a0b9.json",
+        "execution": "DEFERRED",
+        "acceptance": false
+      },
+      "fi_sk_copy": {
+        "sha256": "8a24885038439e473a635f5cc2f3ff3ae91a572ccdff9c43b827e501692903cc",
+        "filename": "source-copy-review-l17-4a253fb-fi-sk.json",
+        "execution": "DEFERRED",
+        "acceptance": false
+      },
+      "es_pt_copy": {
+        "sha256": "0f469d6b0364ecb74be5317aaec19354bcea8413324ed70d14832f26bd238bb1",
+        "filename": "source-copy-review-espt-4a253fb.json",
+        "execution": "DEFERRED",
+        "acceptance": false
+      },
+      "compliance_labels": {
+        "sha256": "b61dd0447a29219b6711c9b6005100fdf7ad42d2c14ae5062a947f88a4803ee4",
+        "filename": "source-review-compliance-labels-721cf0b.json",
+        "target": "721cf0bcc9b444de7d4eeae8dbbcad828599ee07",
+        "resolution_target": "23b87d47de56ed5015032dd6a21a00ee92a1a1e6",
+        "values_reviewed": 272,
+        "unresolved_findings": 0,
+        "status": "RESOLVED_SOURCE_ONLY",
+        "execution": "DEFERRED_FOR_THIS_REVIEW",
+        "acceptance": false
+      }
+    },
+    "pr_preparation_gate_20261111": {
+      "task": "LOCALIZATION-17-GATE-01",
+      "target": "23b87d47de56ed5015032dd6a21a00ee92a1a1e6",
+      "agent": "/root/frontend_gate_20261111",
+      "worktree": "frontend-bundle-gate",
+      "state": "FRONTEND_SUBGATE_PASS_INTEGRATED_GATES_OPEN",
+      "authorization": "Larger17locale package source authored; current user cadence allows full checks at PRpreparation",
+      "steps": [
+        "generatedconsumerparity",
+        "lint",
+        "typecheck",
+        "components",
+        "productionbuild"
+      ],
+      "browser_and_backend_not_started_by_this_frontend_gate": true,
+      "acceptance": false,
+      "original_target": "1ff65b9e686b7a807ff30d75c4fab22c2c4baeff",
+      "first_attempt": {
+        "generate_api_exit_code": 0,
+        "generated_consumer_parity_exit_code": 0,
+        "lint_exit_code": 1,
+        "lint_rule": "@typescript-eslint/no-unused-vars",
+        "lint_file": "frontend/src/product/ComplianceInputEditor.tsx",
+        "lint_line": 34,
+        "cause": "Unused local t helper in ComplianceEvaluationSelector after directlocalizedTextmigration",
+        "fix": "5ae621a4685f7bf26663cb12ec114ecb70eea70e",
+        "typecheck_components_build": "NOT_RUN_FAILFAST",
+        "runtime_tests_executed": 0,
+        "acceptance": false
+      },
+      "actual_stage_observations": [
+        {
+          "stage": "generate-api",
+          "status": "PASS_REUSED_IDENTICAL_SOURCES",
+          "exit_code": 0,
+          "duration_seconds": 3.34,
+          "original_target_commit": "1ff65b9e686b7a807ff30d75c4fab22c2c4baeff"
+        },
+        {
+          "stage": "lint",
+          "status": "PASS",
+          "exit_code": 0,
+          "duration_seconds": 17.128,
+          "error_count": 0,
+          "warning_count": 0
+        },
+        {
+          "stage": "typecheck",
+          "status": "PASS",
+          "exit_code": 0,
+          "duration_seconds": 12.525
+        },
+        {
+          "stage": "components-narrow",
+          "status": "PASS",
+          "exit_code": 0,
+          "duration_seconds": 12.464,
+          "counts": {
+            "numTotalTestSuites": 2,
+            "numPassedTestSuites": 2,
+            "numFailedTestSuites": 0,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 3,
+            "numPassedTests": 3,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "success": true
+          },
+          "component_file_count": 1
+        },
+        {
+          "stage": "components",
+          "status": "PASS",
+          "exit_code": 0,
+          "duration_seconds": 259.826,
+          "counts": {
+            "numTotalTestSuites": 235,
+            "numPassedTestSuites": 235,
+            "numFailedTestSuites": 0,
+            "numPendingTestSuites": 0,
+            "numTotalTests": 1437,
+            "numPassedTests": 1437,
+            "numFailedTests": 0,
+            "numPendingTests": 0,
+            "numTodoTests": 0,
+            "success": true
+          },
+          "component_file_count": 144
+        },
+        {
+          "stage": "build",
+          "status": "PASS",
+          "exit_code": 0,
+          "duration_seconds": 8.47
+        }
+      ],
+      "5ae621a_component_attempt": {
+        "target": "5ae621a4685f7bf26663cb12ec114ecb70eea70e",
+        "tests": 1435,
+        "passed": 1430,
+        "failed": 5,
+        "pending": 0,
+        "todo": 0,
+        "seconds": 305.849,
+        "acceptance": false,
+        "original_raw_report_sha256": "6a30fe7f8a6050479915dece3bb7b79b37b25148aed2f8ba9f02b65b33b42e33",
+        "diagnosis": [
+          "CertificateAssertionPanel.test.tsx:58 obsolete human-assertion caption",
+          "CrewWorkspace.test.tsx:212 expected zero storage instead of safelisted locale only",
+          "TechnicalReadViews.test.tsx:22 composite source asset/job caption",
+          "TugBoardView.test.tsx:20 hardcoded en-GB format under en locale",
+          "TugOfflinePanel.test.tsx:34 article caption instead of actual Review conflict button"
+        ],
+        "corrective_commit": "152fb0ab7e2c14c27d3998640f3db036f9a3d7b1",
+        "narrow_correction": {
+          "tests": 36,
+          "passed": 36,
+          "failed": 0,
+          "pending": 0,
+          "todo": 0,
+          "unhandled": 0,
+          "seconds": 11.755
+        }
+      },
+      "721cf0b_lint_attempt": {
+        "target": "721cf0bcc9b444de7d4eeae8dbbcad828599ee07",
+        "exit_code": 1,
+        "file": "frontend/src/product/ComplianceInputEditor.tsx",
+        "line": 12,
+        "cause": "Obsolete tuple helper left after explicit presentation-label migration",
+        "fix": "23b87d47de56ed5015032dd6a21a00ee92a1a1e6",
+        "later_stages": "NOT_RUN_FAILFAST",
+        "acceptance": false
+      },
+      "frontend_subgate_pass": true,
+      "evidence": {
+        "filename": "frontend-gate.json",
+        "sha256": "e8d0bb9a570a4ad887b1e5dad7d08d60e0ccaa3388fc915431e96fdf7c9a1bd6",
+        "target": "23b87d47de56ed5015032dd6a21a00ee92a1a1e6",
+        "tree": "2de37edd1edf3463928d47a61b9065784d1113bf",
+        "tracked_status": [],
+        "component_test_counts": {
+          "numTotalTestSuites": 235,
+          "numPassedTestSuites": 235,
+          "numFailedTestSuites": 0,
+          "numPendingTestSuites": 0,
+          "numTotalTests": 1437,
+          "numPassedTests": 1437,
+          "numFailedTests": 0,
+          "numPendingTests": 0,
+          "numTodoTests": 0,
+          "success": true
+        },
+        "unhandled_error_count": 0,
+        "build_artifact_count": 20,
+        "build_artifact_bytes": 5512879,
+        "default_raw_report_exists": false
+      }
+    }
+  },
+  "delivery_forecast_20261111": {
+    "as_of": "2026-11-11",
+    "source_head": "1ff65b9e686b7a807ff30d75c4fab22c2c4baeff",
+    "baseline": "poseidon-v46.3-20261030",
+    "backlog_sha256": "5c4c11c0bcc07b75d06ff676024ab36b4c79864636d96adbdc9d27aabb6aedb1",
+    "total_tasks": 121,
+    "total_story_points": 970,
+    "accepted_tasks": 20,
+    "accepted_story_points": 103,
+    "accepted_percent": 10.62,
+    "unaccepted_tasks": 101,
+    "unaccepted_story_points": 867,
+    "implemented_percent": null,
+    "forecast_kind": "PROVISIONAL_CONDITIONAL_NOT_OBSERVED_VELOCITY",
+    "milestones": [
+      {
+        "latest": "2026-11-20",
+        "name": "current_bundle_readiness",
+        "target": "2026-11-20",
+        "earliest": "2026-11-13"
+      },
+      {
+        "latest": "2027-02-26",
+        "name": "end_to_end_controlled_ship_tug_mvp",
+        "target": "2027-02-26",
+        "earliest": "2027-01-18"
+      },
+      {
+        "latest": "2027-04-30",
+        "name": "four_week_pilot_and_release_readiness",
+        "target": "2027-04-30",
+        "earliest": "2027-03-22"
+      }
+    ],
+    "assumptions": [
+      "Unchanged controlled scope",
+      "One sustained implementation stream, 4–5 effective workdays per week",
+      "Independent target-commit QA available",
+      "Usable host and CI capacity",
+      "Existing foundations reusable",
+      "Real pilot vessel+tug, data and Marine/Regulatory reviewers available"
+    ],
+    "open_gates": [
+      "Later localization target execution",
+      "Full genuine174 signed manifest after auth correction",
+      "Independent final QA",
+      "Canonical S2–S11 acceptance",
+      "Real SME and pilot sign-offs",
+      "Production data/hosting/IdP/DR decisions"
+    ],
+    "tests_executed_by_this_review": 0,
+    "canonical_acceptance_changed": false,
+    "report": "docs/phases/DELIVERY-FORECAST-20261111.md",
+    "prepared_by": "independent status_forecast agent; Root source-checkedDEV076/104locators",
+    "observation_utc": "2026-11-11T18:46:08.089447+00:00"
+  },
+  "technical_command_owner_recovery_20261111": {
+    "task": "TECHNICAL-COMMAND-OWNER-RECOVERY-01",
+    "state": "AUTHORED_UNVERIFIED",
+    "accepted": false,
+    "accepted_story_points_added": 0,
+    "source_checkpoint": "0f2de6d5403d64bf1d79267b9ec18b6b30322cd6",
+    "receiving_checkpoint": "7bcb79ba9dd311e72e28a7db0b3c03e346f59245",
+    "observed_at_utc": "2026-11-11T19:26:51.519361+00:00",
+    "baseline": "poseidon-v46.3-20261030",
+    "canonical_tasks": [
+      "DEV-014",
+      "DEV-015",
+      "DEV-019",
+      "DEV-052",
+      "DEV-053"
+    ],
+    "source_locators": [
+      "18.01 Backlog!A53:Q54",
+      "15.01 paragraphs67/71/73",
+      "13.04 paragraphs10-34",
+      "equipment-maintenance-01 existing recovery contract"
+    ],
+    "task_file": "docs/tasks/TECHNICAL-COMMAND-OWNER-RECOVERY-01.md",
+    "report": "docs/phases/TECHNICAL-COMMAND-OWNER-RECOVERY-20261111.md",
+    "behavior": [
+      "Original actor+tenant/vessel/resource binding for equipment/plan/job drafts and uncertain in-memory commands",
+      "Fresh actual session and current module/vessel access before explicit submission; refreshed same-owner CSRF",
+      "Post-response owner/scope fence and strict matching mutation receipts before canonical URL confirmation",
+      "Earlier unknown outcome retained through later denial/source failure with original key/body/UUID/base",
+      "Failed optional current read preserves confirmed identity and read-only result",
+      "Observation suspension removes private DOM while preserving the mounted draft; shared enterprise actions"
+    ],
+    "verification": {
+      "new_component_adapter_api_pg_browser_checks": "DEFERRED_NOT_RUN_NEW_PACKAGE",
+      "independent_source_review": {
+        "filename": "technical-owner-source-review-0f2de6d.json",
+        "sha256": "cab14120497719216d7be1a83a9e031e84f4e823183eaa31c295a5ccdf664787",
+        "target": "0f2de6d5403d64bf1d79267b9ec18b6b30322cd6",
+        "scope": "STATIC_ONLY",
+        "acceptance": false,
+        "retained_finding": {
+          "id": "TOCR-S01",
+          "original_target": "76f765a25438e837cde433f99cccae36a1eb5ba2",
+          "fix": "0f2de6d5403d64bf1d79267b9ec18b6b30322cd6",
+          "status": "RESOLVED_SOURCE_ONLY"
+        },
+        "unresolved_in_scope_findings": 0,
+        "known_out_of_scope_open_count": 1,
+        "execution": "DEFERRED_NEW_PACKAGE",
+        "test_execution_count": 0
+      },
+      "receiving_source_tree_parity_only": {
+        "frontend": "938eb89c0b746cfd1f4fa8784d1ccb01bbcadbfe",
+        "backend": "59b65910425c59448583b9cd2caa34d082244162",
+        "tests": "80c8d9e6883e3ac3d6447602abe4b30d0919a2ca",
+        "contracts": "82d7d16bd8c36a84e5b05bf3f770a87a1a518bb5"
+      },
+      "prior_localization_frontend_gate": {
+        "target": "23b87d47de56ed5015032dd6a21a00ee92a1a1e6",
+        "tests_passed": 1437,
+        "tests_total": 1437,
+        "claim": "Separate preceding target; not a PASS for new technical changes"
+      },
+      "graphify_ast_maintenance": {
+        "exit_code": 0,
+        "nodes": 19247,
+        "edges": 39678,
+        "zero_node_source_files": 783,
+        "scope": "AST_ONLY_DERIVED_GRAPH_NOT_RUNTIME_PROOF",
+        "warning": "Zero-node sources absent; HTML skipped above5000nodes"
+      }
+    },
+    "remaining": [
+      "Run new technical bundle checks only at its later delivery gate, then independent exact-target QA and CI",
+      "Observation-owning command recovery remains a separate prerequisite: existing child can clear unknown attempts on later denial and binds reset to CSRF",
+      "Complete canonical technical dependencies and full source scope; no full DEV-052/053/055/056 or sprint acceptance",
+      "Keep localization real-browser/integrated gates and PR16 full genuine signed/finalQA separate and open"
+    ],
+    "publication": "LOCAL_ONLY_NO_PUSH_OR_NEW_PR",
+    "canonical_acceptance_changed": false,
+    "observation_followup": {
+      "task": "MAINTENANCE-OBSERVATION-OWNER-RECOVERY-01",
+      "state": "AUTHORED_UNVERIFIED",
+      "report": "docs/phases/MAINTENANCE-OBSERVATION-RECOVERY-20261112.md",
+      "source_checkpoint": "972d40ed1b92e7864c09d927886ec3be96c52f4e",
+      "verification": "DEFERRED_NEW_PACKAGE",
+      "accepted": false
+    }
+  },
+  "maintenance_observation_owner_recovery_20261112": {
+    "task": "MAINTENANCE-OBSERVATION-OWNER-RECOVERY-01",
+    "state": "AUTHORED_UNVERIFIED",
+    "source_checkpoint": "972d40ed1b92e7864c09d927886ec3be96c52f4e",
+    "baseline": "poseidon-v46.3-20261030",
+    "observed_at_utc": "2026-11-11T21:57:08.040910+00:00",
+    "accepted": false,
+    "accepted_story_points_added": 0,
+    "canonical_acceptance_changed": false,
+    "task_file": "docs/tasks/MAINTENANCE-OBSERVATION-OWNER-RECOVERY-01.md",
+    "report": "docs/phases/MAINTENANCE-OBSERVATION-RECOVERY-20261112.md",
+    "sources": [
+      "18.01 Backlog row54 DEV-053/T-S8-002",
+      "11.01 sheet:2316 Alan v46.3/row:1413 FR46/TC46-maintenance-plan-meter_source",
+      "15.01paragraphs67/71/73",
+      "13.04paragraphs10-24",
+      "equipment-maintenance-01 and domain-completion-01"
+    ],
+    "delivered": [
+      "Original actor+tenant/vessel/asset draft and immutable capture/revoke command binding; private DOM withdrawal",
+      "Fresh session and actual observation scope/capabilities before mutation; refreshed same-owner CSRF and post-response fence",
+      "Unknown commands survive later401/403/404/400/409, source reload, focus, callback and CSRF changes; explicit exact UUID/key/body retry",
+      "Capture/revoke result target and shape validation; read-only confirmation through failed readback without recapture",
+      "Parent busy/unknown navigation guards, actual access-denial withdrawal and explicit-discard unmount",
+      "Shared enterprise controls and existing17-language messages; no new storage/backend authority/catalog"
+    ],
+    "verification": {
+      "new_tests_build_typecheck_lint_browser": "DEFERRED_NOT_RUN",
+      "executed_tests": 0,
+      "ui_source_review": {
+        "file": "observation-owner-source-review-972d40e.json",
+        "sha256": "e5a5910af0d37bd8612473ede95f19830b72a45546b9866b9c4844636c01a8e3",
+        "scope": "STATIC_ONLY",
+        "execution": "DEFERRED_NEW_PACKAGE",
+        "acceptance": false,
+        "target": "972d40ed1b92e7864c09d927886ec3be96c52f4e",
+        "unresolved_in_scope_findings": 0,
+        "executed_tests": 0
+      },
+      "api_source_review": {
+        "file": "api-source-review-716762b.json",
+        "sha256": "f97502b00cff63be0ce3d7c07bec70d01e82a8e76d4eab36cd140327718636b1",
+        "scope": "STATIC_ONLY",
+        "execution": "DEFERRED",
+        "acceptance": false,
+        "target": "716762b71ef281462a45f4f720ac103032d20212",
+        "result": "NO_BLOCKING_SOURCE_FINDINGS",
+        "executed_tests": 0
+      },
+      "authored_api_cases": 6,
+      "new_registered_browser_cases": 1,
+      "browser_fixture": "PREREQUISITE_OPEN: genuine disposable writer observation.write and actual configured synthetic source on rootasset=vessel; hard failure if missing, no skip/fake policy",
+      "prior_localization_gate": "1437/1437 pluslint/typecheck/build PASS23b87d4 only; not carried to new technical source",
+      "graphify_ast_maintenance": {
+        "exit_code": 0,
+        "nodes": 19310,
+        "edges": 39860,
+        "zero_node_source_files": 783,
+        "scope": "AST_ONLY_DERIVED_NOT_RUNTIME_PROOF",
+        "html": "SKIPPED_ABOVE_5000_NODES"
+      },
+      "followup_bundle_gate": {
+        "target": "8a9462d5f86ee114e3083e2904a93142f3936e64",
+        "state": "NATIVE_BUNDLE_GATES_PASS_GENUINE_GATES_OPEN",
+        "integrated_acceptance": false,
+        "report": "docs/phases/OBSERVATION-SIGNED-FIXTURE-20261112.md"
+      }
+    },
+    "retained_findings": [
+      {
+        "id": "TOCR-OBS-EXISTING-DENIAL",
+        "status": "CORRECTION_AUTHORED_EXECUTION_OPEN",
+        "original_target": "0f2de6d"
+      },
+      {
+        "id": "OBS-S01",
+        "original_target": "77732f9",
+        "fix": "278797d",
+        "status": "RESOLVED_SOURCE_ONLY"
+      }
+    ],
+    "open_gates": [
+      "New technical bundle execution, genuine fixture/browser, independent final-target QA and required CI",
+      "Localization integrated/browser gates",
+      "PR16 full genuine signed recovery and finalQA",
+      "Full canonicalDEV-052/053/054/055/056 scope and external operational expert/pilot gates"
+    ],
+    "publication": "LOCAL_ONLY_NO_PUSH_OR_NEW_PR",
+    "next": "Prepare the larger technical bundle gate against the integrated owning-command package; provision actual disposable observation fixture and retain original failures before any PR/merge.",
+    "source_constraints": "Current14.02 Data Dictionary2316 row1413 remains numeric/precision/physical-mapping placeholder underreview; existing observation transport recovery doesnotapproveproductioncatalog/mapping/precision or operationalpolicy."
+  },
+  "observation_signed_fixture_20261112": {
+    "task": "OBSERVATION-SIGNED-FIXTURE-01",
+    "state": "NATIVE_BUNDLE_GATES_PASS_GENUINE_GATES_OPEN",
+    "observed_at_utc": "2026-11-12T21:32:10.613716+00:00",
+    "source_checkpoint": "3d7b5bf9cbc56ff73edc1d8f053759929e38e3a4",
+    "accepted": false,
+    "accepted_story_points_added": 0,
+    "baseline": "poseidon-v46.3-20261030",
+    "report": "docs/phases/OBSERVATION-SIGNED-FIXTURE-20261112.md",
+    "task_file": "docs/tasks/OBSERVATION-SIGNED-FIXTURE-01.md",
+    "sources": [
+      "DEV-053/T-S8-00218.01Backlog54",
+      "19.01paragraph26/29/30",
+      "15.01actualauthority/idempotency",
+      "14.02mapping/precision remainsREVIEW_REQUIRED"
+    ],
+    "delivered": [
+      "Pure isolated localhost/run configuration: only exact writer observation capability and one synthetic rootasset source; operator/different-run configuration rejected",
+      "Fresh genesis and explicit immutable selected-generation preparation wired; no production defaults or current private runtime changed",
+      "Actual signed session/observation GET/session fence before publishing a closed twelve-field descriptor; no token/row values copied",
+      "Strict bounded private descriptor loader and fixed vessel/asset/source browser context replacing first-vessel selection",
+      "Required eighth source fixture environment key and explicit new Python/Node CI regression gates"
+    ],
+    "source_findings": [
+      {
+        "id": "OBS-CFG-S01",
+        "original_target": "b301b29",
+        "fix": "66d5ee0",
+        "status": "CORRECTED_SOURCE_ONLY",
+        "cause": "Match actual maximum16trustedroles"
+      },
+      {
+        "id": "OBS-CFG-S02",
+        "original_target": "b301b29",
+        "fix": "66d5ee0",
+        "status": "CORRECTED_SOURCE_ONLY",
+        "cause": "Reject float-typed operator edits rather than normalize exact policy"
+      }
+    ],
+    "verification": {
+      "authorization": "Larger technical owning-command plus17locale bundle source authored and independentlysource-reviewed; userdeliverycadence permits fullPRpreparation gate",
+      "target": "8a9462d5f86ee114e3083e2904a93142f3936e64",
+      "frontend": "PASS_ON_5e17850_REUSE_REQUIRES_IDENTICAL_INPUTS",
+      "protocols": "NODE54_PASS_66f613c_PY56_PASS_3d7b5bf_PY8_PASS_8a9462d",
+      "integrated_acceptance": false,
+      "actual_fixture_application": "NOT_APPLIED",
+      "genuine_provider_browser_backend_ci": "OPEN",
+      "prior_passes": "1437/1437 frontend23b87d4 and PR16CI32ff1d0 retained on originaltargets only",
+      "retained_attempts": [
+        {
+          "target": "3d7b5bf9cbc56ff73edc1d8f053759929e38e3a4",
+          "frontend": {
+            "lint_exit": 1,
+            "rule": "react-hooks/set-state-in-effect",
+            "file": "frontend/src/product/TechnicalWorkspace.tsx",
+            "line": 216,
+            "tests_executed": 0,
+            "later_stages": "NOT_RUN_FAILFAST"
+          },
+          "protocol": {
+            "python_passed": 56,
+            "python_failed": 0,
+            "python_skipped": 0,
+            "node_tests": 41,
+            "node_passed": 33,
+            "node_failed": 8,
+            "node_skipped": 0,
+            "not_run": [
+              "test_bundle_fixture_journal.ts",
+              "test_bundle_legacy_context.ts"
+            ]
+          },
+          "diagnosis": {
+            "first_failing_test": "loads only the twelve run-bound references from a private regular descriptor",
+            "test_file": "tests/Poseidon.Browser.Tests/lab/observation-fixture.test.ts",
+            "test_line": 61,
+            "source_file": "tests/Poseidon.Browser.Tests/register-specs/observation-fixture.ts",
+            "source_line": 21,
+            "cause": "UUIDregexmissingone4character group;31characterregexcombinedwith36lengthrejectsvalidUUID"
+          },
+          "fix": "66f613c55b6eeac8b06b42eba897404ffb563ba7",
+          "acceptance": false
+        },
+        {
+          "target": "66f613c55b6eeac8b06b42eba897404ffb563ba7",
+          "frontend": {
+            "lint": "PASS",
+            "lint_seconds": 24.884,
+            "typecheck_exit": 1,
+            "typecheck_seconds": 15.382,
+            "diagnostic": "TS2769",
+            "count": 9,
+            "file": "frontend/src/product/TechnicalWorkspace.test.tsx",
+            "lines": [
+              473,
+              474,
+              475,
+              476,
+              477,
+              489,
+              490,
+              491,
+              497
+            ],
+            "tests_executed": 0,
+            "cause": "PlaywrightexactoptionunsupportedbyTestingLibraryByRoleOptions",
+            "fix": "597cafae981a28a396c152a0e620bde36faf5f1a"
+          },
+          "protocol": {
+            "node_tests": 54,
+            "node_passed": 54,
+            "node_failed": 0,
+            "node_skipped": 0,
+            "node_todo": 0,
+            "python_reused": 56,
+            "python_executed_now": 0,
+            "python_original_target": "3d7b5bf9cbc56ff73edc1d8f053759929e38e3a4",
+            "identical_source_blobs": 88
+          },
+          "acceptance": false
+        },
+        {
+          "target": "597cafae981a28a396c152a0e620bde36faf5f1a",
+          "frontend": {
+            "lint": "PASS",
+            "typecheck": "PASS",
+            "components_total": 1524,
+            "components_passed": 1523,
+            "components_failed": 1,
+            "pending": 0,
+            "todo": 0,
+            "unhandled": 0,
+            "seconds": 277.263,
+            "failed_test": "ignores a history completion from a previously selected resource",
+            "file": "frontend/src/product/TechnicalWorkspace.test.tsx",
+            "line": 359,
+            "cause": "Testqueriedcollapseddescendantwithoutopeningroot",
+            "build": "NOT_RUN_FAILFAST"
+          },
+          "backend": {
+            "restore": "PASS",
+            "release_build": "FAIL",
+            "file": "tests/Poseidon.Api.Tests/MaintenanceObservationRecoveryTests.cs",
+            "line": 138,
+            "code": "xUnit2012",
+            "narrow_compile_confirmed": true,
+            "tests_executed": 0,
+            "docker_at_first_preflight": "UNAVAILABLE"
+          },
+          "fix": "5e1785041dfb438c4db304dffac6c5ac3bd0b13f",
+          "acceptance": false
+        }
+      ],
+      "backend": "PASS_ON_5e17850_BUILD_UNIT1007_PERSISTENCE_PG79_API837_CRITICAL117",
+      "current_frontend_observations": {
+        "lint_exit": 0,
+        "errors": 0,
+        "warnings": 0,
+        "lint_seconds": 31.864,
+        "typecheck_exit": 0,
+        "typecheck_seconds": 25.599,
+        "technical_file_tests": 31,
+        "technical_file_passed": 31,
+        "technical_file_seconds": 29.551,
+        "components": "PASS",
+        "build": "PASS",
+        "execution_target": "5e1785041dfb438c4db304dffac6c5ac3bd0b13f",
+        "component_files": 146,
+        "component_tests": 1524,
+        "component_passed": 1524,
+        "component_failed": 0,
+        "component_pending": 0,
+        "component_todo": 0,
+        "component_unhandled": 0,
+        "component_seconds": 306.484,
+        "technical_file_tests_are_subset": true,
+        "build_exit": 0,
+        "build_seconds": 5.878,
+        "build_warning_categories": [
+          "large_chunk",
+          "dynamic_import_chunk",
+          "outside_frontend_outdir"
+        ],
+        "dist_files": 20,
+        "dist_bytes": 5521820,
+        "reuse_binding": "Identical frontend/contracts inputs and all20 artifact hashes; no fresh native run on8a"
+      },
+      "current_backend_observations": {
+        "target": "5e1785041dfb438c4db304dffac6c5ac3bd0b13f",
+        "release_build_exit": 0,
+        "release_build_seconds": 74.733,
+        "domain_unit_passed": 756,
+        "persistence_unit_passed": 75,
+        "api_unit_passed": 176,
+        "failed": 0,
+        "skipped": 0,
+        "real_api_pg_integration": "PASS_EXACT_DISCOVERED_SCOPE",
+        "docker": "READY_AFTER_LOCAL_DOCKER_DESKTOP_START",
+        "persistence_integration_passed": 79,
+        "persistence_integration_failed": 0,
+        "persistence_integration_skipped": 0,
+        "persistence_integration_seconds": 255.731,
+        "api_discovered_cases": 837,
+        "api_discovered_methods": 544,
+        "api_attempt01": "GATE_EXECUTION_FAILED_BEFORE_TESTS_WINDOWS_COMMAND_LENGTH",
+        "attempt01_two_shard_command_utf16_lengths": [
+          35537,
+          36194
+        ],
+        "attempt02_four_shard_command_utf16_lengths": [
+          17908,
+          18316,
+          17862,
+          18113
+        ],
+        "attempt02_expected_case_partition": [
+          210,
+          209,
+          209,
+          209
+        ],
+        "attempt02_filter_scope_reduced": false,
+        "api_integration_passed": 837,
+        "api_integration_failed": 0,
+        "api_integration_skipped": 0,
+        "api_integration_seconds": 846.767,
+        "api_integration_shards": 4,
+        "critical_write_coverage": "PASS_ACTUAL_CURRENT_CRITICAL_SCOPE",
+        "critical_operations_required": 117,
+        "critical_operations_observed": 117,
+        "critical_route_templates": 107,
+        "critical_errors": [],
+        "owned_cleanup": "S3_CHILD_COMPLETED_S3_CONTAINER_PRIVATE_ENV_AND_CLAM_REMOVED",
+        "critical_coverage_is_business_acceptance": false
+      },
+      "genuine_provider_browser": "OPEN",
+      "independent_final_target_qa": "OPEN",
+      "required_ci": "OPEN",
+      "source_client_scan": {
+        "original_target": "5e1785041dfb438c4db304dffac6c5ac3bd0b13f",
+        "repository_files": 2736,
+        "original_repository_findings": 1,
+        "original_finding_rule": "credential-literal",
+        "original_finding_file": "scripts/test_bundle_observation_fixture.py",
+        "original_finding_line": 19,
+        "fix_target": "8a9462d5f86ee114e3083e2904a93142f3936e64",
+        "fix": "Generate ephemeral per-test input; retain preservation assertion",
+        "client_files": 20,
+        "client_findings": 0,
+        "current_rescan": "PASS",
+        "waiver_added": false,
+        "current_repository_files": 2736,
+        "current_repository_findings": 0,
+        "current_repository_seconds": 140.087,
+        "current_client_files": 20,
+        "current_client_findings": 0,
+        "current_client_seconds": 1.989,
+        "external_approval_input": "Existing controlled GitHub variable, consumed in memory without modification",
+        "evidence": ".runtime/technical-localization-gate-20261112/8a9462d/source-client-scan.json"
+      },
+      "python_observation_followup": {
+        "target": "8a9462d5f86ee114e3083e2904a93142f3936e64",
+        "passed": 8,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "note": "Targeted rerun; subset of previous56, not64 distinct tests"
+      },
+      "graphify_update": {
+        "target": "8a9462d",
+        "exit_code": 0,
+        "duration_seconds": 177.331,
+        "nodes": 19379,
+        "edges": 39982,
+        "mode": "AST_ONLY_NO_MODEL_CALLS",
+        "zero_node_warning": true,
+        "large_graph_html_skipped": true,
+        "runtime_acceptance": false
+      },
+      "backend_evidence_binding": {
+        "file": ".runtime/technical-localization-gate-20261112/5e17850/backend-input-parity-to-8a9462d.json",
+        "identical_input_blobs": 593,
+        "actual_execution_target": "5e1785041dfb438c4db304dffac6c5ac3bd0b13f",
+        "target": "8a9462d5f86ee114e3083e2904a93142f3936e64",
+        "native_rerun": false
+      }
+    },
+    "publication": "LOCAL_ONLY_NO_PUSH_OR_NEW_PR",
+    "canonical_acceptance_changed": false,
+    "next": "Implement reviewed explicit owned runtime port isolation without touching preview; then apply fresh genuine observation fixtures, run signed/browser scope, independent final QA and required CI.",
+    "source_reviews": [
+      {
+        "file": "config-source-review-b301b29.json",
+        "sha256": "7c3bcdb5a4eaab9ffeee38ea520adee4a9646864b1bce438f9ee29402b160a57",
+        "scope": "STATIC_ONLY",
+        "acceptance": false
+      },
+      {
+        "file": "config-source-review-66d5ee0.json",
+        "sha256": "f83603eb641da44fe333336ac5e583a4999ebfccf9d00c70bd2dc877dbb6b122",
+        "scope": "STATIC_ONLY",
+        "acceptance": false
+      },
+      {
+        "file": "full-source-review-3d7b5bf.json",
+        "sha256": "5b481cf196a97828f0ed954792309aa3795709715cadbb3387e1cf0def1f0c47",
+        "scope": "STATIC_ONLY",
+        "acceptance": false
+      }
+    ],
+    "genuine_runtime_readiness": {
+      "state": "SOURCE_REVIEW_FOUND_FIXED_PORT_COEXISTENCE_BLOCKER",
+      "api_port": 5443,
+      "provider_port": 8443,
+      "database_port": 55432,
+      "existing_preview_preserved": true,
+      "next_task": "BUNDLE-PORT-ISOLATION-01",
+      "new_author_worktree": "bundle-port-isolation-20261113",
+      "new_code_checks": "DEFERRED_DURING_AUTHORING"
+    }
+  },
+  "owned_runtime_port_isolation_20261113": {
+    "task": "BUNDLE-PORT-ISOLATION-01",
+    "state": "GENUINE02_FAILED_PARTIAL_MANIFEST_CORRECTION_BATCH_AUTHORING",
+    "observed_at_utc": "2026-11-12T23:56:26.974113+00:00",
+    "baseline": "poseidon-v46.3-20261030",
+    "sources": [
+      "DEV-OIDC-LAB-01 LAB01-LAB05",
+      "OBSERVATION-SIGNED-FIXTURE-01 criteria1-6",
+      "19.01 paragraphs26/29/30",
+      "docs/automation.md",
+      "docs/security-baseline.md"
+    ],
+    "authorization": "User2026-11-13 continued overnight development; PR and merge after completed phase and required checks/independent QA",
+    "scope": "An additional owned genuine signed lab with explicit coherent loopback API/provider/database ports while retaining existing preview",
+    "backend_author": "/root/status_forecast",
+    "runtime_author": "/root/locale_zh",
+    "independent_qa": "/root/frontend_gate_20261111",
+    "backend_source_commit": "06e91936b3ea5b5f75105a7cdf897fd1756de07b",
+    "receiving_backend_merge": "ae341862db7e91913e19309ad63ffbd3704cbb94",
+    "backend_behavior": [
+      "Explicit canonical DevelopmentLab:OidcPort1024..65535; absent retains8443",
+      "Development/privateCA and matching issuer/authority; fixed localhost realm with selected port",
+      "Direct IPv4loopback sockets, no proxy/redirect/cookie; request destination and Host guards",
+      "Existing certificate root/name/EKU/expiry validation preserved"
+    ],
+    "backend_test_source": {
+      "new_cases": 60,
+      "total_source_case_inventory": 71,
+      "execution": "Included in actual fullAPIunit236 PASS, not added separately"
+    },
+    "runtime_source_state": "All runtime/driver/helper/compose/browser and protocol sources authored and merged; source findingsS01-S04 corrected",
+    "verification": "Actual235d Node manifest1, fullcomponents1527, lint/typecheck/freshbuild and2750repo20client0findings PASS; original68f backend1067/837/117 reuse justified by652 unchanged inputs; genuine02 full gate authorized",
+    "actual_runtime": "GENUINE02_ENDED_DEADLINE_153OF176_WITH58FAILURES_AND1BLOCKED_PROFILE",
+    "preview_mutated": false,
+    "accepted": false,
+    "accepted_story_points_added": 0,
+    "prior_native_evidence": "Previous5e/8a native PASS remains scoped to unchanged old inputs, not this new backend source",
+    "report": "docs/phases/BUNDLE-PORT-ISOLATION-20261113.md",
+    "next": "Useactual14caseclosedsource/HTTPstatusdiagnosisforboundedfixes; finishdedicated-vesselqualifiedfixtureproducer; combinedfreeze/allgates/independentQA/CIbeforePR",
+    "backend_source_review": {
+      "target": "06e91936b3ea5b5f75105a7cdf897fd1756de07b",
+      "state": "NO_DEFINITE_SCOPED_SOURCE_BLOCKER",
+      "scope": "SOURCE_ONLY_FOUR_FILES",
+      "executed_tests": 0,
+      "evidence": ".runtime/bundle-port-isolation-qa-20261113/backend-source-review-06e9193.json",
+      "integrated_acceptance": false
+    },
+    "source_target": "235d3ea9926ea7d0f47b2a314366f9fff4579784",
+    "runtime_source_commit": "9f90900eb2213d2ca92c6ba1b22ddf2d42f872bb",
+    "source_correction_commit": "68fb45cdbba3d59e0b8e0663564cb1acdb3753e9",
+    "source_review": {
+      "target": "68fb45cdbba3d59e0b8e0663564cb1acdb3753e9",
+      "state": "SOURCE_ONLY_CLEAR_BEFORE_NATIVE_GATE",
+      "unresolved_source_findings_at_review": 0,
+      "runtime_acceptance": false,
+      "file": ".runtime/bundle-port-isolation-qa-20261113/full-source-review-68fb45c.json"
+    },
+    "actual_checks": {
+      "backend_execution_target": "68fb45cdbba3d59e0b8e0663564cb1acdb3753e9",
+      "release_build": "PASS",
+      "release_build_seconds": 73.13,
+      "unit_total_passed": 1067,
+      "unit_scopes": {
+        "persistence": 75,
+        "domain": 756,
+        "api": 236
+      },
+      "unit_failed": 0,
+      "unit_skipped": 0,
+      "api_integration_passed": 837,
+      "api_integration_failed": 0,
+      "api_integration_skipped": 0,
+      "api_shards": [
+        210,
+        209,
+        209,
+        209
+      ],
+      "critical_write_passed": 117,
+      "critical_route_templates": 107,
+      "persistence_integration": "REUSED_79_ACTUAL_ON_5e17850_ONLY_WITH_258_IDENTICAL_INPUTS",
+      "protocol_target": "eb58432300aac4caedc0786766acd9da9d80890d",
+      "windows_python": {
+        "total": 82,
+        "passed": 81,
+        "skipped_posix": 1,
+        "failed": 0,
+        "errors": 0
+      },
+      "windows_node": {
+        "total": 68,
+        "passed": 66,
+        "skipped_posix": 2,
+        "failed": 0
+      },
+      "linux_python": {
+        "total": 22,
+        "passed": 21,
+        "skipped_windows": 1,
+        "failed": 0
+      },
+      "linux_node": {
+        "total": 14,
+        "passed": 14,
+        "skipped": 0,
+        "failed": 0
+      },
+      "new_protocol_case_union": "ALL_22_PYTHON_AND_14_NODE_HAVE_APPLICABLE_OS_PASS",
+      "current_frontend_target": "235d3ea9926ea7d0f47b2a314366f9fff4579784",
+      "whole_manifest_import": {
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "duration_seconds": 1.798
+      },
+      "frontend_lint": "PASS_0_ERRORS_0_WARNINGS",
+      "frontend_typecheck": "PASS_0_DIAGNOSTICS",
+      "frontend_components": {
+        "passed": 1527,
+        "failed": 0,
+        "pending": 0,
+        "todo": 0,
+        "unhandled": 0,
+        "files": 147,
+        "duration_seconds": 304.07,
+        "new_pin_cases_passed": 3
+      },
+      "fresh_frontend_build_and_scans": "PASS_ACTUAL_235d_FRONTEND_BUILD_AND2750REPO20CLIENT0FINDINGS; S3_772_FRONTEND_UNEXECUTED",
+      "backend_final_input_binding": {
+        "state": "REUSE_JUSTIFIED_UNCHANGED_NATIVE_SCOPE",
+        "conservative_inputs": 652,
+        "changed_relevant": 0,
+        "original_target": "68fb45c",
+        "report": ".runtime/technical-localization-port-isolation-20261113/235d3ea/backend-evidence-binding.json",
+        "whole_repository_or_all_imported_blob_equality": false
+      },
+      "migration_model_cli": "PENDING_REQUIRED_FINAL_CI",
+      "genuine_provider_browser": "FAILED_PARTIAL153OF176:95PASS58FAIL23NOTCOMPLETED_TLS3PASS",
+      "fresh_frontend_build": {
+        "status": "PASS",
+        "duration_seconds": 4.9,
+        "artifact_files": 20,
+        "bytes": 5521820,
+        "warnings": [
+          "CHUNK_SIZE",
+          "STATIC_AND_DYNAMIC_IMPORT"
+        ]
+      },
+      "source_client_scans": {
+        "repository_files": 2750,
+        "client_files": 20,
+        "findings": 0,
+        "status": "PASS_ACTUAL_235d"
+      }
+    },
+    "native_finding": {
+      "id": "PORT-R01_WINDOWS_CTIME",
+      "state": "RESOLVED_BY_2aa43ed_AND_ACTUAL_CROSS_OS_PROTOCOLS",
+      "test": "test_lab_runtime.LabRuntimeTests.test_explicit_genesis_publishes_one_matching_runtime_across_plan_config_and_generation",
+      "test_file": "scripts/test_lab_runtime.py",
+      "test_line": 180,
+      "source_file": "scripts/lab_runtime.py",
+      "source_lines": [
+        119,
+        120,
+        121,
+        138,
+        139
+      ],
+      "cause": "Windows pathname lstat versus opened fstat differs only in st_ctime_ns for an unchanged valid file",
+      "narrow_diagnostic_runs": 1,
+      "raw_values_exported": false,
+      "original_failure_preserved": true
+    },
+    "graphify_update": {
+      "target": "235d3ea9926ea7d0f47b2a314366f9fff4579784",
+      "exit_code": 0,
+      "nodes": 19516,
+      "edges": 40311,
+      "duration_seconds": 95.762,
+      "mode": "AST_ONLY",
+      "zero_node_warning": true,
+      "large_graph_html_skipped": true,
+      "raw_output_persisted": false
+    },
+    "historical_first_gate": {
+      "target": "68fb45cdbba3d59e0b8e0663564cb1acdb3753e9",
+      "actual_checks": {
+        "execution_target": "68fb45cdbba3d59e0b8e0663564cb1acdb3753e9",
+        "release_build": "PASS",
+        "release_build_seconds": 73.13,
+        "persistence_unit_passed": 75,
+        "domain_unit_passed": 756,
+        "api_unit_passed": 236,
+        "unit_total_passed": 1067,
+        "unit_failed": 0,
+        "unit_skipped": 0,
+        "persistence_integration": "REUSED_79_ACTUAL_ON_5e17850_ONLY",
+        "persistence_unchanged_transitive_inputs": 258,
+        "api_integration": "RUNNING_FOUR_SHARDS",
+        "python_runtime_suite": {
+          "discovered": 19,
+          "ran": 7,
+          "passed": 6,
+          "errors": 1,
+          "status": "FAILED_STOPPED",
+          "remaining_not_run": 12
+        },
+        "node_protocol": "NOT_RUN_BLOCKED",
+        "linux_posix": "NOT_RUN_BLOCKED",
+        "new_source_client_scans": "NOT_RUN_BLOCKED",
+        "genuine_provider_browser": "NOT_STARTED"
+      },
+      "native_finding": {
+        "id": "PORT-R01_WINDOWS_CTIME",
+        "state": "DIAGNOSED_FIX_AUTHORING",
+        "test": "test_lab_runtime.LabRuntimeTests.test_explicit_genesis_publishes_one_matching_runtime_across_plan_config_and_generation",
+        "test_file": "scripts/test_lab_runtime.py",
+        "test_line": 180,
+        "source_file": "scripts/lab_runtime.py",
+        "source_lines": [
+          119,
+          120,
+          121,
+          138,
+          139
+        ],
+        "cause": "Windows pathname lstat versus opened fstat differs only in st_ctime_ns for an unchanged valid file",
+        "narrow_diagnostic_runs": 1,
+        "raw_values_exported": false
+      }
+    },
+    "source_scan_review": {
+      "prior_scan_target": "eb58432",
+      "files": 2744,
+      "findings": 2,
+      "cause": "Two generated synthetic fixture expressions had changed source context; prior exact-source approvals could not be inherited",
+      "resolution": "Two actual independent reviews integrated in b0b1281; external protected coordinator trust updated164->166 with byte-equal readback; old164 retained",
+      "fresh_full_scan": "PASS_ACTUAL_235d_2750REPO20CLIENT0FINDINGS",
+      "scanner_or_policy_relaxed": false,
+      "coordinator_record": ".runtime/source-review-port-20261113/coordinator-provisioning.json"
+    },
+    "register_source_pin_separation": {
+      "task": "REGISTER-SOURCE-PIN-SEPARATION-01",
+      "author_commit": "6621da1c8c28e8e4c35eb8258914c41103644179",
+      "receiving_target": "235d3ea9926ea7d0f47b2a314366f9fff4579784",
+      "state": "SOURCE_CLEAR_ACTUAL_FULL_FRONTEND_AND_MANIFEST_REGRESSION_PASS",
+      "cause": "Node register fixtures transitively imported Vite-only i18n UI modules",
+      "behavior": "Three unchanged canonical source pins moved to import-free contract; UI re-exports retained; browser fixtures import pure contract",
+      "source_review_blockers": 0,
+      "new_ui_cases_authored": 3,
+      "new_whole_manifest_regression_passed": 1,
+      "report": "docs/tasks/REGISTER-SOURCE-PIN-SEPARATION-01.md"
+    },
+    "genuine_attempt01": {
+      "target": "eb58432",
+      "state": "FAILED_MANIFEST_DISCOVERY_CLEANED",
+      "real_provider_and_api_start": "PASS",
+      "real_signed_source_descriptors": 8,
+      "signed_lanes": 2,
+      "registered_business_cases_executed": 0,
+      "failure": "GEN-S01 ERR_UNSUPPORTED_DIR_IMPORT; defect-fields.ts:1 -> i18n/labels; Vite import.meta.glob transitively imported",
+      "full_register_and_tls3": "NOT_INVOKED",
+      "cleanup": "PASS_EXACT_OWNED_RESOURCES_ONLY",
+      "retained_owned_volumes": 2,
+      "private_state_retained": true,
+      "historical_15_PASS_159_FAIL_unchanged": true,
+      "evidence": ".runtime/technical-localization-port-isolation-20261113/eb58432/genuine-execution/genuine-gate.json"
+    },
+    "genuine_attempt02": {
+      "target": "235d3ea9926ea7d0f47b2a314366f9fff4579784",
+      "state": "FAILED_DEADLINE_PARTIAL_MANIFEST_AND_CASE_FAILURES_CLEANUP_BLOCKED_PROFILE",
+      "worker": ".runtime/worktrees/genuine-owned-20261113-b",
+      "fresh_same_worker_artifacts": 156,
+      "restore_seconds": 5.748,
+      "api_build_seconds": 33.978,
+      "migrator_build_seconds": 6.476,
+      "locked_offline_npm_seconds": 73.168,
+      "frontend_build_seconds": 5.798,
+      "provider_started": true,
+      "private_initialized": true,
+      "acceptance": false,
+      "lease": ".runtime/technical-localization-port-isolation-20261113/genuine-execution-attempt02-lease.json",
+      "real_signed_descriptors": 8,
+      "signed_lanes": 2,
+      "full_manifest_expected": 176,
+      "projects": 2,
+      "tls_passed": 3,
+      "tls_failed": 0,
+      "first_diagnosed_failure": {
+        "task": "REGISTER-JOURNEY-RECOVERY-01",
+        "file": "tests/Poseidon.Browser.Tests/register-specs/daily-cases.ts",
+        "line": 182,
+        "cause": "History disclosure is collapsed; test expects hidden recorded status visible without opening it",
+        "api_receipt_and_exact_replay_assertions": "PASS_BEFORE_FAILURE",
+        "correction": "Authored on separate235d branch: open exact immutable entry and inspect visible lineage; no run yet"
+      },
+      "other_observed_failures": [
+        "daily offline3; diagnosis pending",
+        "certificate renewal1; diagnosis pending"
+      ],
+      "cleanup": {
+        "state": "BLOCKED_ONE_DISPOSABLE_PROFILE",
+        "owned_app_compose_extraction_clam": "STOPPED",
+        "owned_volumes_retained": 2,
+        "blocked_profile_count": 1,
+        "blocked_profile_processes": 0,
+        "automatic_review_reason": "blocked by policy; no additional reason returned",
+        "deletion_retry_or_workaround": false
+      },
+      "completed": 153,
+      "passed": 95,
+      "failed": 58,
+      "not_completed": 23,
+      "by_project": {
+        "firefox-desktop": {
+          "completed": 88,
+          "passed": 55,
+          "failed": 33,
+          "not_completed": 0
+        },
+        "firefox-narrow-responsive": {
+          "completed": 65,
+          "passed": 40,
+          "failed": 25,
+          "not_completed": 23
+        }
+      },
+      "child_duration_seconds": 1800.648,
+      "child_timed_out": true,
+      "evidence": ".runtime/technical-localization-port-isolation-20261113/235d3ea/genuine-execution-attempt02/genuine-summary.json"
+    },
+    "dependency_disposition": {
+      "state": "OPEN_UNREMEDIATED",
+      "advisory": "CVE-2026-118764 / GHSA-g3hv-75wg-m249",
+      "all_dependencies": {
+        "moderate": 10,
+        "high": 0,
+        "critical": 0
+      },
+      "production_omit_dev_findings": 0,
+      "bounded_review": "Locked parent consumers use default optimizationLevel1; advisory trigger needs attacker-controlled pattern and optimizationLevel>=2; no compatible ordinary patched parent update established",
+      "audit_all_exit": 1,
+      "waiver": false,
+      "release_acceptance": false,
+      "evidence": ".runtime/dependency-review-20261113/independent-assessment.json"
+    },
+    "register_journey_recovery": {
+      "task": "REGISTER-JOURNEY-RECOVERY-01",
+      "target": "faf7f91dcaabe7cc16c2bdc042628d2cfa8bd2ea",
+      "state": "SOURCE_CLEAR_NATIVE_PRIVACY_AND_MANIFEST_PASS",
+      "behavior": [
+        "Openexactrecordedhistorydisclosuresandvisiblelineagewithoutweakerassertions",
+        "Closedinferredsource/matcher/errorandpassivemaincontextHTTPstatusunderpublicOpenAPItemplates; no rawmessage/URL/body/DOM"
+      ],
+      "source_findings": [
+        "DIAG-S01 fullOpenAPIhealthroute corrected",
+        "DIAG-S02 multilinepoison/real-sourcebounds corrected"
+      ],
+      "actual_node_privacy_passed": 8,
+      "actual_manifest_import_passed": 1,
+      "native_failed": 0,
+      "native_skipped": 0,
+      "frontend235d_inputs_identical": true,
+      "full_frontend_rerun": false,
+      "genuine_diagnostic": {
+        "state": "COMPLETED_ONE_DIAGNOSTIC_INVOCATION_NOT_ACCEPTANCE",
+        "target": "faf7f91",
+        "discovered": 14,
+        "completed": 14,
+        "passed": 1,
+        "failed": 13,
+        "not_completed": 0,
+        "skipped": 0,
+        "todo": 0,
+        "tls_passed": 3,
+        "duration_seconds": 223.7,
+        "fixed_daily_disclosure": "PASS_ACTUAL",
+        "network_scope": "Onlymaincasepage/context responseevents; APIRequestContextandpeertrafficNOTCLAIMED",
+        "cleanup": "VERIFIED0OWNEDCONTAINERSAPPKEYEDPROFILESNOSCANSTATE;2OWNVOLUMESRETAINED;OLDBLOCKEDPROFILEUNTOUCHED",
+        "report": ".runtime/technical-localization-port-isolation-20261113/faf7f91/genuine-diagnostic-execution/diagnostic-summary.json",
+        "acceptance": false
+      },
+      "acceptance": false,
+      "receiving_target": "77221148fe5e9b1e0798dc69d97c2adac312eade",
+      "fresh_artifact_files": 156
+    },
+    "graphify_current_receiving": {
+      "target": "77221148fe5e9b1e0798dc69d97c2adac312eade",
+      "exit_code": 0,
+      "nodes": 19590,
+      "edges": 40475,
+      "duration_seconds": 131.45,
+      "warnings": [
+        "ZERO_NODE",
+        "HTML_LARGE_GRAPH"
+      ],
+      "runtime_proof": false
+    }
+  },
+  "s3_qualification_owner_recovery_20261113": {
+    "task": "S3-QUALIFICATION-OWNER-RECOVERY-01",
+    "trace": "DEV-026 / T-S3-001",
+    "state": "BACKEND_AND_COMPONENT_NATIVE_SCOPE_VALIDATED_GENUINE_CANONICAL_ACCEPTANCE_OPEN",
+    "baseline": "poseidon-v46.3-20261030",
+    "sources": [
+      "18.01 Backlog27",
+      "15.01 paragraph71",
+      "19.01 paragraphs261-268"
+    ],
+    "dependencies": {
+      "DEV-005": "ACCEPTED_S0_RECEIPT_HASH_VERIFIED",
+      "DEV-008": "ACCEPTED_S0_RECEIPT_HASH_VERIFIED"
+    },
+    "source_target": "ef9cb2ccc9958d0e9b6eba81079436e820127677",
+    "finding": "UNKNOWN qualification envelope dropped after retry denial or reload despite possible original commit",
+    "independent_source_confirmation": true,
+    "worker": ".runtime/worktrees/s3-qualification-owner-recovery-20261113",
+    "owner": "/root/locale_zh",
+    "independent_qa": "/root/status_forecast",
+    "verification": "Actual64 API846 includes all9newS3cases; actualAED component1566/244suites lint/type/buildPASS; explicit source-equality bindings to0e. Fresh0e scansPASS. Fullgenuine register notinvoked due qualified preflight failure; no S3sprintacceptance.",
+    "accepted": false,
+    "accepted_story_points_added": 0,
+    "current_235d_gate_mutated": false,
+    "backend_test_authoring": {
+      "state": "SOURCE_CLEAR_COMMITTED18a_NORMAL_MERGED_EF9_AND_RECEIVING772_EXECUTION_DEFERRED",
+      "cases": 9,
+      "executed": 0,
+      "owner": "/root",
+      "file": "tests/Poseidon.Api.Tests/RegulatoryQualificationRecoveryTests.cs",
+      "worker": ".runtime/worktrees/s3-qualification-receipt-regression-20261113",
+      "execution": "DEFERRED_NEXT_BUNDLE_GATE",
+      "historical_snapshot": "Original772 source-authoring checkpoint; all9 cases subsequently included in actual64 API846 execution."
+    },
+    "product_commit": "3247bcfffb617057b83359cb607cf969b11053ee",
+    "api_test_commit": "18a736cb4891cf9b79fbce09f549008665e33fb0",
+    "authored_files": 9,
+    "independent_findings": [
+      "QOR-S01 sixteenunsupportedReactByRoleoptions corrected",
+      "QOR-S02 lateFilearrayBuffer staleclosure corrected withgeneration/currentrefs"
+    ],
+    "correction_branch": "foundation/s3-qualification-source-fixes-20261113",
+    "additional_component_variants_authored": 4,
+    "graphify_original_package": {
+      "target": "afa706ed",
+      "exit_code": 0,
+      "nodes": 19557,
+      "edges": 40432,
+      "seconds": 155.467,
+      "runtime_proof": false
+    },
+    "receiving_target": "77221148fe5e9b1e0798dc69d97c2adac312eade",
+    "source_review": {
+      "state": "SOURCE_CLEAR_ALL8QOR",
+      "file": ".runtime/s3-next-scope-20261113/independent-product-review.json",
+      "sha256": "9c2cff48c879cea61b0a8238fd934d7f310891d36939e6f37986469744eed012",
+      "execution": 0,
+      "acceptance": false
+    },
+    "commit_binding": ".runtime/s3-next-scope-20261113/corrected-commit-integration-binding.json",
+    "report": "docs/phases/S3-QUALIFICATION-OWNER-RECOVERY-20261113.md",
+    "original_source_checkpoint_state": "SOURCE_CLEAR_CORRECTED_COMMITTED_AND_LOCALLY_INTEGRATED_EXECUTION_DEFERRED",
+    "historical_scope_note": "backend_test_authoring executed0, source_review execution0 and original_source_checkpoint_state are immutable original772/ef9 source-authoring snapshots, not current execution results.",
+    "actual_current_evidence": "foundation_corrections_combined_gate_20261113.actual_backend / aed_native / native_closure_0e / genuine_0e"
+  },
+  "qualified_owning_signed_fixture_20261113": {
+    "task": "QUALIFIED-OWNING-SIGNED-FIXTURE-01",
+    "type": "ENGINEERING_GATE_PREREQUISITE",
+    "state": "CORRECTED_SOURCE_CLEAR_NORMAL_MERGE_EXECUTION_DEFERRED",
+    "owner": "/root/locale_zh",
+    "independent_qa": [
+      "/root/status_forecast",
+      "/root/frontend_gate_20261111"
+    ],
+    "proposal": ".runtime/genuine-qualified-fixture-proposal-20261113/report.json",
+    "proposal_sha256": "8187943bfbc8970838a45efe8796eae324418e8b85cfc625be6ab7506da500f5",
+    "scope": "ThreeFICTIONALrules/six typedwitnesses throughrealAPI/files/ownedClam/currentauthorization and distinctsyntheticA/B withSoD; additive strictdescriptor andboundedlookup; optinimmutableconfig/journal",
+    "no_verified_seed_or_real_human_operational_approval": true,
+    "execution": "DEFERRED_COMBINED_GATE",
+    "accepted": false,
+    "accepted_story_points_added": 0,
+    "coherence_correction": "QF-SCOPE-01: 2dedicatedFICTIONALShip/Tug+ordinaryprofiles; seedShipmutatedbydesktopmustnotinvalidate sharedqualifiedwitnessesbeforenarrow. No order/currentnessweakening/refreshtrick.",
+    "source_target": "23bd7525b6150cdf454cc36b8e53ab914d450fa7",
+    "authored_files": 13,
+    "handoff_sha256": "9fbb1435238fddedc049e94704dfa354454737cf8f81ba83dc5207fc14fcde75",
+    "independent_source_review_sha256": "46898138f05446f7a81c6782ba7ae16e863cd37f6a4c7d48466806ca4e3a088c",
+    "unresolved_source_findings": [],
+    "rejected_hypothesis": "QF-S02 original version stamps are documented provenance; audited no-op stamps legitimately advance xmin without semantic revision change. No naive equality change required.",
+    "corrected_source_target": "edac5f99f970eef058406c3d95a88ea8cd0da9e2",
+    "receiving_merge": "2f6f59a3e73eaff75c87926420fa255315413149",
+    "resolved_source_findings": [
+      "QF-S01 exact recursive bool/int/float equality; meaningful configure-level no-mutation regressions authored"
+    ],
+    "merge_binding_sha256": "82a8a18a2713b7fffec5a48a7ef580098ab87ed99652e6c54b112aa7da32e475"
+  },
+  "foundation_policy_signed_fixture_20261113": {
+    "task": "FOUNDATION-POLICY-SIGNED-FIXTURE-01",
+    "state": "CORRECTED_INTEGRATION_SOURCE_CLEAR_NORMAL_MERGE_EXECUTION_DEFERRED",
+    "source_base": "77221148fe5e9b1e0798dc69d97c2adac312eade",
+    "source_proposal_sha256": "f97d47411ed96df4f6f9eb387f2f477a7e260e0e564710e70ac42ae21778ca18",
+    "scope": [
+      "Preserve all21 navigation keys across original daily15/review7 role refs within backend16bound",
+      "Synthetic Draft watch_group A/B only, exact run/writer/originalShip and bounded unapproved policy window",
+      "Synthetic Photo+Passport policy only and exactly two writer crew.documents permissions with existing prerequisites"
+    ],
+    "owner": "/root/locale_zh",
+    "execution": "DEFERRED_FINAL_BUNDLE_GATE",
+    "production_policy_or_external_approval": false,
+    "accepted": false,
+    "accepted_story_points_added": 0,
+    "source_target": "d9510f86430a9c8150b5cdf72e397f909347d825",
+    "authored_files": 10,
+    "author_handoff_sha256": "2672a64ac14eb468b9790dea539047aab6c1903f97c0fdb5f0e10a48fbb324a7",
+    "tests_authored_source_inventory_only": {
+      "python": 10,
+      "node": 6
+    },
+    "receiving_target": "201280c5757a1254ee074649449082ab952e6b0a",
+    "independent_source_review_sha256": "8e9a25420faff1b51d80ddbfc6261955a32587a10dc191cb91bbff2a38e1998d",
+    "integration_independent_review_sha256": "f058afb03891800d8c1391653741cc405070402a548e63e7cee40e99a6c6e9bc",
+    "integration_files": 11,
+    "integration_resolution": "Both explicitverbs/imports/workflowgates preserved; directQFmandatorypreflight; FP-INT-S01 upstreammockisolation/exactbranchdiagnosis preventsfalsepositivetest; realmissingprep coversbothproducers"
+  },
+  "vessel_chooser_focus_20261113": {
+    "task": "S2-VESSEL-CHOOSER-FOCUS-01",
+    "state": "SOURCE_CLEAR_COMMITTED_EXECUTION_DEFERRED",
+    "source_target": "4e44101425a405a175fdc778d225cb05bed8b437",
+    "source_freeze_sha256": "0b9f6b3b997b5e15d69f9963c2cbf1bccfe07002223a359fc190644977b6e21a",
+    "delivered": "Explicit search focus after native showModal; connected original opener restored",
+    "tests_authored": 1,
+    "execution": 0,
+    "acceptance": false,
+    "canonical_sp_added": 0
+  },
+  "audit_capability_contract_20261113": {
+    "task": "AUDIT-CAPABILITY-CONTRACT-01",
+    "state": "SOURCE_CLEAR_CORRECTED_COMMITTED_EXECUTION_DEFERRED",
+    "source_target": "91312c537b324c94496276848431036aad2f74ef",
+    "source_freeze_sha256": "eb661765b4091eb214c9daf9d9df16019b64bbbe3bc28b5ba5fe18fbd203853f",
+    "delivered": "Closed decoder recognizes exact existing94 server capability codes (previously63); no authority/DTO/privacy relaxation",
+    "tests_authored": 2,
+    "original_source_finding": "AUDIT-S01 invalid detail mock could mask invalid list acceptance; corrected list/valid-detail routing plus no-detail-request assertion",
+    "execution": 0,
+    "acceptance": false,
+    "canonical_sp_added": 0
+  },
+  "human_trace_selector_20261113": {
+    "task": "HUMAN-TRACE-SELECTOR-01",
+    "state": "SOURCE_CLEAR_COMMITTED_EXECUTION_DEFERRED",
+    "source_freeze_sha256": "e55336f46b216eeba17d268478519f2121313ab016f03f78c99e3c4c30248078",
+    "delivered": "Unambiguous unique complete blocker observation while preserving repeated truthful lineage explanation",
+    "tests_authored": 1,
+    "execution": 0,
+    "acceptance": false,
+    "canonical_sp_added": 0,
+    "source_target": "5e3d652efb53657139e173e76a76826657c10d1f"
+  },
+  "certificate_candidate_loading_20261113": {
+    "task": "CERTIFICATE-CANDIDATE-LOADING-01",
+    "state": "SOURCE_CLEAR_COMMITTED_EXECUTION_DEFERRED",
+    "source_target": "cf4b063294ce5a242029e3a5830a5876009d0b1b",
+    "source_freeze_sha256": "d5457d869d7e76636a9cae8e95410eda38bda67238192028203d73844550cb5b",
+    "tests_authored": 1,
+    "execution": 0,
+    "acceptance": false,
+    "canonical_sp_added": 0
+  },
+  "audit_enterprise_patterns_20261113": {
+    "task": "AUDIT-ENTERPRISE-PATTERNS-01",
+    "state": "SOURCE_CLEAR_COMMITTED_EXECUTION_DEFERRED",
+    "source_base": "cf4b063294ce5a242029e3a5830a5876009d0b1b",
+    "source_freeze_sha256": "981a642cf0af0dceb9aac999203f2b3eaad0ce604e24a8c5bf0ed6ffd7819a2c",
+    "tests_authored": 1,
+    "execution": 0,
+    "measured_visual_contrast": false,
+    "acceptance": false,
+    "canonical_sp_added": 0,
+    "source_target": "cc1463b5134ab363390eda5312f3c58f3b3b08ec",
+    "independent_source_review_sha256": "91795bc22e42281f7ad655d0b18ca743b31f720201d476e744dfd9aae8739279"
+  },
+  "crew_boundary_signed_persona_20261113": {
+    "task": "CREW-BOUNDARY-SIGNED-PERSONA-01",
+    "state": "SOURCE_CLEAR_COMMITTED_NORMALLY_INTEGRATED_EXECUTION_DEFERRED",
+    "source_base": "cf4b063294ce5a242029e3a5830a5876009d0b1b",
+    "proposal_sha256": "52b9d83865432140ad6ac48cdb4658e5c3dca49a5fc2fff257dac7c8088524ef",
+    "author": "/root/frontend_gate_20261111",
+    "independent_qa": "/root/status_forecast",
+    "scope": "Fresh fifth private genuine-provider persona; exact single originalShip,6crew-scopedcaps,1auditrole; original four identities/credentials/permissions unchanged; only one assignmentInputHistory callback uses it",
+    "execution": 0,
+    "acceptance": false,
+    "canonical_sp_added": 0,
+    "source_target": "98a837c48b57eaba9ff64fa6ee0ed830fe8f452d",
+    "receiving_target": "0c5f8f3ccc11c0e03eda08315256649ac8c71636",
+    "source_freeze_sha256": "183062579ec76e1084e8153df35ed09f9b84dae51c83f83347e8f8da24562355",
+    "independent_source_review_sha256": "2fdae8194e5fc72160bbfb820e58aadc419fcddf9c2bc870a78cd43df3ab56ba",
+    "merge_binding_sha256": "1720393e0cd2547ae10b234d9c9d87f68869e91bb40929d5724137c4b5ce005c",
+    "authored_tests_source_inventory_only": {
+      "python": 8,
+      "node": 3
+    }
+  },
+  "human_review_owner_recovery_20261113": {
+    "task": "HUMAN-REVIEW-OWNER-RECOVERY-01",
+    "kind": "CORRECTION_EXISTING_SOFTWARE_SEPARATE_NEXT_PACKAGE",
+    "state": "CORRECTED_SOURCE_CLEAR_ISOLATED_NEXT_PACKAGE_EXECUTION_DEFERRED",
+    "owner": "/root/locale_zh",
+    "source_base": "201280c5757a1254ee074649449082ab952e6b0a",
+    "proposal_sha256": "635e2e32a93d30028f8783796c3e4306d4aab898ed5502c71f64201c119aa02f",
+    "scope": "Retain human-review originalowner/anchor/authority/route/body/idempotencyKEY acrossUNKNOWN/denial, readonlyknownreceipt, currentCSRF/ownerfences/privatewithdrawal/parentnavigationbarrier; newhumanstreamID remainsservergenerated",
+    "canonical_dependency_promotion": false,
+    "execution": 0,
+    "accepted": false,
+    "accepted_story_points_added": 0,
+    "source_target": "ec87f19355f319c57ecde3feb8751686bc29c9cb",
+    "authored_files": 14,
+    "independent_review_sha256": "b4d9ecfd5b23ad254e922c6b018bbcfbf265331d34643f0f650ecfa20fb70abe",
+    "corrections": [
+      "HRO-S01 parentSave/handler/implicit-submit fence",
+      "HRO-S02 freshoriginalownerUNSENTlocalDiscard distinctfromUNKNOWN",
+      "HRO-S03 synchronousliveACKepoch/mounted/currentfence"
+    ],
+    "authored_actual_api_cases": 11
+  },
+  "foundation_corrections_combined_gate_20261113": {
+    "task": "FOUNDATION-CORRECTIONS-COMBINED-GATE",
+    "state": "NATIVE_SUBPACKAGE_VALIDATED_GENUINE_QUALIFIED_PREFLIGHT_FAILED",
+    "source_checkpoint": "0c5f8f3ccc11c0e03eda08315256649ac8c71636",
+    "execution_authorized": false,
+    "execution_performed": true,
+    "backend": "Actual64Release/1067units/79PG/846API/117criticalsubset/modelPASS; independent657input8projectidenticalbindingreusablef4,notrerun",
+    "frontend_protocol": "Actual AED frontend1566/1566 in244suites/lint/type/buildPASS; actual protocol209OS-union identitiesPASS; explicit unchanged-input binding to0e, not rerun",
+    "genuine": "Actual0e fresh owning environment and8fixtures+2lanes completed; qualified preflight failed Set-Acl at scripts/oidc-lab-private.ps1:9 before full register or finiteS2; services stopped; original OS reason unavailable",
+    "accepted": false,
+    "accepted_story_points_added": 0,
+    "ast_only_graph": {
+      "task": "FOUNDATION-CORRECTIONS-FINAL-SOURCE-GRAPH",
+      "source_target": "0c5f8f3ccc11c0e03eda08315256649ac8c71636",
+      "state": "AST_ONLY_DERIVED_GRAPH",
+      "exit_code": 0,
+      "seconds": 106.274,
+      "nodes": 19788,
+      "edges": 40986,
+      "warnings": {
+        "zero_node": true,
+        "large_html": true
+      },
+      "test_build_runtime_execution": 0,
+      "acceptance": false,
+      "record_sha256": "268093702282b9a77fdbe080976ed9d15fa77963ccebc7f7775b3ea1b2d1413f"
+    },
+    "actual_backend": {
+      "task": "FOUNDATION-CORRECTIONS-BACKEND-GATE",
+      "state": "PASS_BACKEND_NATIVE_SCOPE_ONLY",
+      "actual_target": "64a84423bc593b407dd77b7a718fca0e4c2bc4bb",
+      "release_build": "PASS",
+      "fresh_counts": {
+        "persistence_unit": 75,
+        "domain_unit": 756,
+        "api_unit": 236,
+        "persistence_integration": 79,
+        "api_integration": 846,
+        "failed": 0,
+        "skipped": 0
+      },
+      "api_partition": {
+        "state": "EXACT_DISJOINT_COMPLETE_MULTISET",
+        "shards": 4
+      },
+      "critical": {
+        "status": "PASS_ACTUAL_CURRENT_CRITICAL_SCOPE",
+        "critical_route_templates": 107,
+        "required_operations": 117,
+        "audited_operations": 117,
+        "observed_operations": 117,
+        "invalid_rows": 0
+      },
+      "critical_is_subset_not_extra_case_count": true,
+      "migration_model": "PASS",
+      "own_scanner_cleanup": "REMOVED_EXACT_OWNED_CONTAINER",
+      "own_s3_cleanup": "REMOVED_EXACT_OWNED_CONTAINER",
+      "own_s3_private_env_cleanup": "REMOVED_PRIVATE_ENV_FILE",
+      "api_report_sha256": "e9f2d50f9cb424390078e965d1b61d543a7336ecb0df814a823906aed18c9358",
+      "api_integration_report_sha256": "caf6d3b15a019486979a488e137bb0568453ed60cf254fe0590dbd3baa96d0f2",
+      "original_a97_compile_failure_preserved": true,
+      "frontend_current_target_different_and_not_retargeted": true,
+      "acceptance": false
+    },
+    "actual_backend_handoff_sha256": "bee6b15afadb2b7629a9a074637486022de044da575d8c633f1d5669e3ac7f8b",
+    "backend_actual_target": "64a84423bc593b407dd77b7a718fca0e4c2bc4bb",
+    "frontend_actual_target": "f4eea046cf9bdff32d0d500ee984f9bb8c667ed5",
+    "backend_evidence_retargeted": false,
+    "frontend_lint": {
+      "state": "PASS",
+      "seconds": 34.322,
+      "errors": 0,
+      "warnings": 0
+    },
+    "frontend_typecheck": {
+      "state": "PASS",
+      "seconds": 17.163,
+      "diagnostics": 0
+    },
+    "frontend_initial_native": {
+      "manifest_passed": 1,
+      "privacy_passed": 8,
+      "skipped": 0
+    },
+    "windows_python_protocol": {
+      "state": "PASS_WINDOWS_APPLICABLE_SCOPE_ONLY_LINUX_UNION_PENDING",
+      "total": 111,
+      "passed": 110,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 1
+    },
+    "windows_node_lab_runtime": {
+      "state": "PASS_WINDOWS_APPLICABLE_SCOPE_ONLY_LINUX_UNION_PENDING",
+      "total": 14,
+      "passed": 12,
+      "failed": 0,
+      "skipped": 2
+    },
+    "windows_node_lane": {
+      "native_total": 18,
+      "native_passed": 18,
+      "native_failed": 0,
+      "native_skipped": 0,
+      "capture_state": "FAIL_CASE_IDENTITY_MAPPING_5OF18",
+      "cause": "13 source-declared finite-loop titles absent from literal-only capture catalog; no product/test failure observed"
+    },
+    "native_failure_history": [
+      "a97ReleaseCS4007beforetests:fixednormal64afterindependentreview; original79.049sfailurepreserved",
+      "64frontendno-control-regex1error:exactC0/DELguardfixednormal3f; original57.266sfailurepreserved",
+      "3ffrontendTS2339focusmatcher2locations:installedjestdomtoHaveFocusfixednormalf4; original25.718sfailurepreserved",
+      "f4protocolcapturelaneNode18PASSbut13unmappedidentities:ignoredcapture/resumeauthoring, no product/sourcechanges"
+    ],
+    "remaining": [
+      "Finish independent source review and integrate creation-only qualified object-root correction plus HRO/CE/Profile recovery packages through normal history",
+      "One coherent affected native/build/protocol/scans bundle gate with exact original evidence preserved",
+      "Fresh owned qualified fixture/full genuine register and separately reviewed corrected finite S2 observations",
+      "Same-target independent QA and required CI before any later merge/publication"
+    ],
+    "current_source_code_target": "0e197a29d661af6b896a146fbfece60bbc48d5ea",
+    "acceptance": false,
+    "authorization_note": "All completed native/provider runs have distinct immutable target-scoped leases. No current execution authorization or phase acceptance.",
+    "backend_input_evidence_binding": {
+      "state": "INDEPENDENT_REUSABLE_IDENTICAL_INPUTS",
+      "actual_backend_target": "64a84423bc593b407dd77b7a718fca0e4c2bc4bb",
+      "consumer_target": "f4eea046cf9bdff32d0d500ee984f9bb8c667ed5",
+      "inputs": 657,
+      "transitive_projects": 8,
+      "independent_report_sha256": "7ee6ff474356f73c73a80e0a51ad8a2601e0e890a82354c013eb074f77c6748d",
+      "new_backend_execution": false,
+      "retargeted": false
+    },
+    "capture_resume": {
+      "state": "ENDED_PROTOCOL_PASS_COMPONENT_ONE_FAILURE_BUILD_SCANS_NOT_RUN",
+      "source_freeze_sha256": "0a1b82fe6afd83bcade5274aa3489b3da4bae556fdec8a840398e126861058ea",
+      "independent_review_sha256": "01dbdd4e964d36c401eaa84e5fda70ca7074dfb8eee5e925021b92257d25929d",
+      "execution_lease_sha256": "a12c82830a6ae4e775fdf41aea2735eab9ee550080ea615984fb456f1205501c",
+      "run_id": "resume-01",
+      "target": "f4eea046cf9bdff32d0d500ee984f9bb8c667ed5",
+      "old_failure_preserved": true,
+      "provider_browser_authorized": false,
+      "acceptance": false,
+      "component_results": {
+        "actual_target": "f4eea046cf9bdff32d0d500ee984f9bb8c667ed5",
+        "total": 1566,
+        "passed": 1565,
+        "failed": 1,
+        "pending": 0,
+        "todo": 0,
+        "unhandled": 0,
+        "duration_seconds": 332.539,
+        "source_locator": "frontend/src/product/RegulatoryQualification.test.tsx:44:25",
+        "diagnosis": "Broad IN_FORCE text matches current paragraph, lifecycle option and seeded history paragraph; source diagnosis, original raw exception unavailable"
+      },
+      "protocol_union": {
+        "state": "PASS_APPLICABLE_IDENTITIES",
+        "python_identities": 111,
+        "node_identities": 98,
+        "total": 209,
+        "windows_manifest_separate": true,
+        "linux_owned_containers_remaining": 0
+      },
+      "stop_summary_sha256": "97b921d9ca279f4319ea9f74293de0027dbf296031179a181bba8d15ffb4e142"
+    },
+    "lineage_query_fix": {
+      "state": "SOURCE_CLEAR_NORMAL_COMMIT_EXECUTION_DEFERRED",
+      "target": "aedffd372e65c5cc71386991c67c65801c498b70",
+      "independent_review_sha256": "36b3c20547b2a6ab5d7e76e3c2f86acdc300263974ca295327cf649b89fe5440",
+      "production_changes": 0,
+      "test_files_changed": 1,
+      "native_execution": 0
+    },
+    "aed_native": {
+      "actual_target": "aedffd372e65c5cc71386991c67c65801c498b70",
+      "frontend": {
+        "lint_seconds": 35.706,
+        "typecheck_seconds": 17.267,
+        "component_total": 1566,
+        "component_passed": 1566,
+        "suites_total": 244,
+        "suites_passed": 244,
+        "failed": 0,
+        "skipped": 0,
+        "pending": 0,
+        "todo": 0,
+        "unhandled": 0,
+        "component_seconds": 300.705,
+        "build_seconds": 4.874,
+        "artifact_count": 20,
+        "artifact_bytes": 5531087
+      },
+      "repository_scan": {
+        "state": "FAIL_PRESERVED",
+        "covered_files": 2782,
+        "findings": 2,
+        "seconds": 90.311,
+        "locators": [
+          "scripts/bundle_crew_boundary_fixture.py:127",
+          "scripts/test_bundle_crew_boundary_fixture.py:18"
+        ],
+        "rule": "db-password"
+      },
+      "client_scan": "NOT_RUN_FAILFAST",
+      "external_pins_at_execution": 166,
+      "stop_summary_sha256": "95cd22f0b55bc5f81bc7d05c80cc00c577f22e1403b953d55d9ffe21808d1a4b",
+      "acceptance": false
+    },
+    "source_scan_classification": {
+      "state": "EXACT2RECEIPTS_MECHANICALLY_REVIEWED_NORMAL_SECURITY_COMMIT_COORDINATOR_PROVISION_READBACK_VERIFIED",
+      "independent_review_sha256": "17e7ccd64d3614aa8a6c52103ffe02f9b583724d25033e444a22033d848f8279",
+      "old_entries_preserved": 166,
+      "new_reviewed_proposals": 2,
+      "source_literal_credentials_found": false,
+      "runtime_generated_credentials_remain_private": true,
+      "external_mutation_performed": true,
+      "scanner_rules_changed": false,
+      "full_scan_pass": true,
+      "security_commit": "0e197a29d661af6b896a146fbfece60bbc48d5ea",
+      "mechanical_copy_review_sha256": "baceaa041b2fab2936288ae695ace52cc3b844d250217873c892df0ba188ee05",
+      "verified_total_receipts": 168,
+      "actual_remote_write_attempts": 1,
+      "uninvoked_precheck_failure_preserved": true,
+      "full_scan_pass_scope": "Fresh0e2784repositoryfiles and20identicalAEDbuildassets; original AED2findings remain FAIL"
+    },
+    "native_closure_0e": {
+      "state": "INDEPENDENT_NATIVE_SUBPACKAGE_VALIDATED_NOT_PHASE_ACCEPTED",
+      "consumer_target": "0e197a29d661af6b896a146fbfece60bbc48d5ea",
+      "fresh_repository_scan": {
+        "covered_files": 2784,
+        "findings": 0,
+        "seconds": 98.402
+      },
+      "fresh_client_scan": {
+        "covered_files": 20,
+        "findings": 0,
+        "seconds": 1.809,
+        "original_build_target": "aedffd372e65c5cc71386991c67c65801c498b70",
+        "rebuilt": false
+      },
+      "fresh_pure_s2_helpers": {
+        "passed": 6,
+        "failed": 0,
+        "genuine_observation_credit": false
+      },
+      "live_independently_reviewed_source_receipts": 168,
+      "original_backend_target": "64a84423bc593b407dd77b7a718fca0e4c2bc4bb",
+      "original_frontend_target": "aedffd372e65c5cc71386991c67c65801c498b70",
+      "backend_input_count": 657,
+      "backend_transitive_projects": 8,
+      "independent_reconciliation_sha256": "f1fdb58d7cd9c62d1ab4508759bcf798402431aac35c587be9064fbde4b146de",
+      "native_handoff_sha256": "b6227269573c049b6d7ea2c060f7f9197e36b4ea1910b2068c9fac890095852f",
+      "acceptance": false
+    },
+    "genuine_0e": {
+      "state": "FAIL_QUALIFIED_OWNING_PREFLIGHT_FULL_REGISTER_NOT_INVOKED",
+      "target": "0e197a29d661af6b896a146fbfece60bbc48d5ea",
+      "signed_fixtures": 8,
+      "signed_lanes": 2,
+      "fixture_http_200": 65,
+      "failing_stage": "qualified_fixture_owned_preflight",
+      "child_exit": 1,
+      "source_locator": "scripts/oidc-lab-private.ps1:9",
+      "original_os_reason": "UNAVAILABLE",
+      "full_register_cases_executed": 0,
+      "registered_tls_cases_executed": 0,
+      "finite_s2_observations_executed": 0,
+      "app_compose_cleanup": "PASS",
+      "extraction_peer_cleanup": "PASS",
+      "clam_cleanup": "PASS",
+      "owned_volumes_retained": true,
+      "source_clean": true,
+      "public_artifacts_unchanged": 201,
+      "read_only_acl_diagnosis": "Existing exact-owned ordinary directory has protected owner-only FullControl DACL; no current ACL repair required; historical OS error not established",
+      "read_only_diagnosis_sha256": "a84cd29eef14b3af2c28a40442aa5d1f254aacd9ac6c7dffe137d4b23319a259",
+      "acceptance": false
+    },
+    "corrected_s2_observer": {
+      "state": "SOURCE_CLEAR_EXECUTION_DEFERRED",
+      "old_probe": "WITHHELD_KNOWN_EMPTY_FLAG_CAN_VALIDLY_SAVE",
+      "corrected_probe": "Known IMO 123; real400 seven_digits_required; unchanged profile content/version/history before and after",
+      "source_freeze_sha256": "7806295a2b481cdacf167ef9f6795fe802fff1e29ac8ee10bca1775cbcb3868b",
+      "independent_review_sha256": "6b5da0cb6231edbd056cd4f655aeb3617dceaa15f2aec04ee78ff8f16307532a",
+      "execution": 0,
+      "acceptance": false
+    }
+  },
+  "control_evidence_owner_recovery_20261113": {
+    "task": "CONTROL-EVIDENCE-OWNER-RECOVERY-01",
+    "kind": "CORRECTION_EXISTING_SOFTWARE_SEPARATE_NEXT_PACKAGE",
+    "state": "SOURCE_CLEAR_CORRECTED_ISOLATED_NEXT_PACKAGE_EXECUTION_DEFERRED",
+    "owner": "/root/locale_zh",
+    "source_base": "ec87f19355f319c57ecde3feb8751686bc29c9cb",
+    "proposal_sha256": "edb21a4158ce83d7aabce0db91719d4f5de4b36ffdc82edbc7b42a541a92a728",
+    "execution": 0,
+    "current_f4_gate_includes_this": false,
+    "accepted": false,
+    "accepted_story_points_added": 0,
+    "source_target": "845bf555c0dc7d8f90430697dbdaf74ad9150b07",
+    "independent_source_review_sha256": "0965c8bc1812e77d36b0410eb4d34444c0e11a0a48209d71cae7116a434104d8",
+    "authored_files": 10,
+    "ui_cases_source_only": 14,
+    "adapter_cases_source_only": 12,
+    "api_pg_cases_source_only": 17,
+    "genuine_cases_source_only": 1
+  },
+  "profile_owner_recovery_20261113": {
+    "task": "PROFILE-OWNER-RECOVERY-01",
+    "state": "SOURCE_CLEAR_ISOLATED_NEXT_PACKAGE_EXECUTION_DEFERRED",
+    "source_base": "845bf555c0dc7d8f90430697dbdaf74ad9150b07",
+    "owner": "/root/locale_zh",
+    "source_locator": "Active18.01Backlog21 DEV020/T-S2-001;19.01paras261-268;15.01p71",
+    "gap": "Laterdenialclearsfrozenunknown/stalepropsCSRF/noactualownerbinding",
+    "current_aed_gate_includes_this": false,
+    "execution": 0,
+    "accepted": false,
+    "canonical_sp_added": 0,
+    "source_commit": "7b1551ea49fe147dd9d81b092826c4ab2928d07c",
+    "independent_review_sha256": "96fe9e01ac331f044f25b18a5954f0c3df04450630579c6b6a0a91ccaa110824",
+    "resolved_source_findings": [
+      "PRO-S01 first-edit CAS base preserved across refresh",
+      "PRO-S02 live parent release proof before discard",
+      "PRO-S03 late receipt cannot restore withdrawn private view"
+    ],
+    "authored_case_inventory": {
+      "ui": 20,
+      "wire": 16,
+      "api_postgresql": 10,
+      "genuine": 2
+    }
+  },
+  "owner_recovery_bundle_gate_20261113": {
+    "state": "FAILED_NATIVE_BUNDLE_STOPPED_CORRECTIONS_IN_PROGRESS",
+    "target": "37e9c6f8669dd017ba1e035122cce5a39eaeeb40",
+    "normal_source_merges": [
+      "c7bfc4c8adcffdaff30363387da269f85961cbcc",
+      "37e9c6f8669dd017ba1e035122cce5a39eaeeb40"
+    ],
+    "incoming_owner_files": 36,
+    "incoming_object_root_files": 5,
+    "receiving_prior_blobs_preserved": true,
+    "backend": {
+      "release": "PASS",
+      "release_seconds": 81.175,
+      "unit_counts": {
+        "persistence": 75,
+        "domain": 756,
+        "api": 236,
+        "total": 1067,
+        "failed": 0,
+        "skipped": 0
+      },
+      "persistence_integration": {
+        "total": 79,
+        "passed": 79,
+        "failed": 0,
+        "skipped": 0,
+        "seconds": 338.488
+      },
+      "api_integration": {
+        "total": 884,
+        "passed": 857,
+        "failed": 27,
+        "skipped": 0,
+        "seconds": 1033.914,
+        "shards": 4,
+        "rows_per_shard": 221,
+        "partition": "EXACT_DISJOINT_COMPLETE"
+      },
+      "new_recovery_discovery": {
+        "methods": 8,
+        "rows": 38,
+        "source_native_equal": true,
+        "human_review_rows_passed": 11,
+        "control_evidence_failed": 17,
+        "profile_failed": 10
+      },
+      "failed_shared_helpers": [
+        "tests/Poseidon.Api.Tests/ControlEvidenceRecoveryTests.cs:53",
+        "tests/Poseidon.Api.Tests/RegulatoryProfileRecoveryTests.cs:47"
+      ],
+      "source_diagnosis": "Test lookup expects raw idempotency key in auditEntityId; actual formatter uses ResourceId. No server defect concluded before narrow actual reproduction.",
+      "narrow_reproduction": "PREPARING_NOT_EXECUTED",
+      "critical_and_model": "NOT_RUN_FAILFAST",
+      "owned_clam_cleanup": "REMOVED",
+      "owned_s3_cleanup": "REMOVED",
+      "private_s3_environment_cleanup": "REMOVED",
+      "original_outputs_unchanged": 136,
+      "postgate_worker_tracked_clean": true,
+      "independent_result_sha256": "88b62684480268b669e69c6b762237cfdf9526168491237a45bff34b41c03127"
+    },
+    "frontend": {
+      "manifest_passed": 1,
+      "privacy_passed": 8,
+      "lint": {
+        "state": "FAIL",
+        "seconds": 64.462,
+        "errors": 11,
+        "warnings": 6
+      },
+      "later_stages": "NOT_RUN_FAILFAST",
+      "supervisor": {
+        "state": "CHILD_EXITED",
+        "exit_code": 1,
+        "elapsed_seconds": 77.585,
+        "deadline_seconds": 1800,
+        "timed_out": false,
+        "lease_unchanged": true
+      },
+      "cache": {
+        "state": "PREPARED_NO_INSTALL_OR_UPDATE",
+        "declared_hash_pins_verified": 12,
+        "package_version_resolution_integrity_matches_lock": true,
+        "all_installed_files_individually_hashed": false,
+        "previous_perfile_and_single_stream_copies": "INTERRUPTED_NOT_PASS"
+      },
+      "independent_result_sha256": "ff3776b116ae0dfe22c1aed05d7d5ceb05e9ec2cfb1a0da9cf931f260e989e71"
+    },
+    "s2_pure_helpers": {
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0,
+      "unknown": 0,
+      "seconds": 1.201,
+      "actual_source_identity_equal": true,
+      "genuine_observation_credit": false
+    },
+    "genuine_full_register": "NOT_STARTED_NATIVE_GATE_FAILED",
+    "publication": {
+      "push": false,
+      "new_pr": false,
+      "merge": false
+    },
+    "acceptance": false,
+    "canonical_sp_added": 0
+  },
+  "profile_definite_validation_history_20261113": {
+    "task": "PROFILE-DEFINITE-VALIDATION-HISTORY-01",
+    "state": "ISOLATED_SOURCE_CLEAR_EXECUTION_DEFERRED",
+    "source_commit": "0dd388d29346a10eb158ee3024a74b9e35f0973e",
+    "files": 3,
+    "new_component_case_sources": 3,
+    "independent_review_sha256": "b08f2fbf76e670190904a55c0ec2dcad892af944a2d64c6d8cbba2f1eefa1280",
+    "behavior": "Initial actual400 schedules authorized history refresh while preserving draft/errors; private-access epoch fences late history publication.",
+    "execution": 0,
+    "current37e_gate_includes_this": false,
+    "acceptance": false,
+    "canonical_sp_added": 0
+  },
+  "owner_recovery_gate_followup_20261113": {
+    "state": "BACKEND_PASS_FRONTEND_PROTOCOL_FAILED_CORRECTION_IN_PROGRESS",
+    "source_target": "116701b64390fd337310d3a785e92bb8f2d76bbd",
+    "backend_actual_target": "2b1e7b3996adf48c10d9d3013d59f24c48666fac",
+    "backend_actual_receipt_sha256": "23bbc82dec62b19d79f77e57c32278b66d651be0b5346d0e16153910e7016d3a",
+    "backend_independent_result_sha256": "68869f34fd06cfcefd9699614383dbe3c279db4612a6ca8b895a2b325378610c",
+    "backend": {
+      "units": 1067,
+      "postgresql": 79,
+      "api": 884,
+      "passed": true,
+      "failed": 0,
+      "skipped": 0,
+      "critical_audit_subset": 117,
+      "model": "PASS",
+      "release_seconds": 74.95,
+      "api_seconds": 958.104,
+      "cleanup": "OWNED_CLAM_S3_PRIVATEENV_REMOVED",
+      "original_release_files_unchanged": 136,
+      "separate_postgate_public_manifest_files": 181
+    },
+    "frontend": {
+      "target": "116701b64390fd337310d3a785e92bb8f2d76bbd",
+      "lint": "PASS",
+      "lint_seconds": 44.837,
+      "typecheck": "PASS",
+      "typecheck_seconds": 17.799,
+      "failed_step": "WINDOWS_PYTHON_PROTOCOL",
+      "failed_test": "test_bundle_object_root.BundleObjectRootTests.test_windows_native_fresh_once_then_existing_exclusive_child_never_restricts",
+      "failed_source": "scripts/test_bundle_object_root.py:245",
+      "module_discovered": 23,
+      "module_recorded": 22,
+      "module_passed": 18,
+      "module_failed": 1,
+      "module_platform_skipped": 3,
+      "later_stages": "NOT_RUN_FAILFAST",
+      "supervisor_seconds": 85.101,
+      "supervisor_exit": 1,
+      "timeout": false
+    },
+    "backend_reuse_review": "PENDING_INDEPENDENT",
+    "backend_executed_on_consumer": false,
+    "fresh_genuine_register_tls_finite_observations": "NOT_STARTED",
+    "acceptance": false,
+    "canonical_sp_added": 0,
+    "publication": {
+      "push": false,
+      "new_pr": false,
+      "merge": false
+    }
+  },
+  "current_status_record": "windows_private_owner_resume_20261113",
+  "windows_private_owner_resume_20261113": {
+    "task": "PROJECT_STATUS_RESUME_002",
+    "state": "BACKEND_LOCAL_PASS_FRONTEND_CAPTURE_CORRECTION_GENUINE_PENDING",
+    "observed_at_utc": "2026-11-13T14:03:10.847544+00:00",
+    "source_target": "002a931106e021631c8ca5ef24b98428f884edcf",
+    "report_author": "/root/genuine_preflight_resume",
+    "documentation_scope": "Draft in separate worker; no product/native evidence retargeting or canonical promotion",
+    "prior_current_stage_preserved": "Backend2b actual independentPASS:1067units/79PG/884API/critical117subset/model; source116 frontend lint/typePASS but Windows object-root native test fails at test_bundle_object_root.py:245. Remaining Linux/components/build/scans NOT_RUN_FAILFAST; fresh genuine/TLS/finiteS2 NOT_STARTED. Narrow correction in progress; producer2b→consumer116 reuse source665/addendum181 independent review pending. Canonical20tasks103SP10.62percent unchanged, no newpushPRmerge.",
+    "canonical_progress": {
+      "accepted_tasks": 20,
+      "total_tasks": 121,
+      "accepted_story_points": 103,
+      "total_story_points": 970,
+      "completion_percent": 10.62,
+      "accepted_screens": 0,
+      "screen_inventory": 196,
+      "s0": "ACCEPTED",
+      "s1": "ACCEPTED",
+      "s2_candidate_tasks": 6,
+      "s2_candidate_story_points": 42,
+      "s2_accepted_story_points": 0
+    },
+    "backend": {
+      "state": "PASS_BACKEND_SCOPE_INDEPENDENTLY_RECONCILED",
+      "actual_target": "002a931106e021631c8ca5ef24b98428f884edcf",
+      "actual_started_at_utc": "2026-11-13T06:16:09.377856+00:00",
+      "actual_finished_at_utc": "2026-11-13T06:42:14.564250+00:00",
+      "independent_reviewed_at_utc": "2026-11-13T13:57:24.115861+00:00",
+      "independent_reviewer": "/root/independent_qa_resume",
+      "independent_result_sha256": "b35223d0be9432bdd9d82adddce68097c6ed9f1581f73e1a65967fdb36e6b7c6",
+      "actual_receipt_sha256": "15a1997160346a4f3bdc70f5b085d1df1cb695f917ee0f1f39e66b9774efb478",
+      "release_seconds": 85.273,
+      "unit": {
+        "persistence": 75,
+        "domain": 756,
+        "api": 236,
+        "total": 1067,
+        "failed": 0,
+        "skipped": 0
+      },
+      "postgresql": {
+        "passed": 79,
+        "failed": 0,
+        "skipped": 0,
+        "seconds": 314.538
+      },
+      "api_integration": {
+        "passed": 884,
+        "failed": 0,
+        "skipped": 0,
+        "seconds": 1089.756,
+        "shards": [
+          221,
+          221,
+          221,
+          221
+        ],
+        "partition": "EXACT_DISJOINT_COMPLETE_MULTISET"
+      },
+      "critical": {
+        "route_templates": 107,
+        "required_observed_audited": 117,
+        "invalid": 0,
+        "capture_instances_verified": 858,
+        "subset_of_api_not_additional_tests": true
+      },
+      "migration_model": {
+        "state": "PASS",
+        "seconds": 11.683
+      },
+      "source": {
+        "tracked_exact_git_blob_inputs": 2808,
+        "tools_hashed": 4,
+        "worker_clean": true
+      },
+      "public_release_manifest": {
+        "files": 181,
+        "sha256": "9b6353ca54ee66147c722d8838ef04cfcf845ea72a86c9fef9f45ae3beafcd29",
+        "complete_post_model_physical_set": true,
+        "old2b_116_outputs_reused": false
+      },
+      "cleanup": {
+        "own_scanner": "REMOVED",
+        "own_s3": "REMOVED",
+        "own_private_env": "ABSENT",
+        "other_older_clam_containers_retained": 3
+      },
+      "canonical_or_release_acceptance": false
+    },
+    "windows_owner_correction": {
+      "source_commit": "90ee741902ecc3431a06997e7528257b0aa59faa",
+      "normal_merge_target": "002a931106e021631c8ca5ef24b98428f884edcf",
+      "behavior": "Persist owner and DACL only; no SACL requirement; parent ACL preserved",
+      "narrow_original_method_passed": 1,
+      "full_platform_protocol_gate": "PENDING_NOT_REPLACED_BY_NARROW_PASS"
+    },
+    "frontend": {
+      "state": "NOT_STARTED_ON_002",
+      "old_source_freeze_sha256": "93f16e3747f26fb123093dbcc3a7570624e313b03b6851002e7b9c7497fc01e1",
+      "old_independent_review_sha256": "dfe3925fe24c39f4bffe6e89936b93f95f181fe094dbdd9332ba5ed63c4b5470",
+      "old_review_state": "TWO_PRIVACY_CAPTURE_FINDINGS_PREEXEC_CORRECTION_REQUIRED",
+      "findings": [
+        "PRIV-CAP-S01",
+        "PRIV-CAP-S02"
+      ],
+      "old_packet_never_executed": true,
+      "current_capture_source": "frontend-v2",
+      "current_capture_state": "AUTHORING_NOT_FROZEN_AT_CHECKPOINT",
+      "pure_capture_test_execution": "NOT_STARTED",
+      "full_frontend_protocol_components_build_scans_execution": "NOT_STARTED",
+      "prior_target_results_preserved_not_relabelled": true
+    },
+    "s2": {
+      "source_freeze_sha256": "a116da93fc22a8084648b158285ba83fe37a1d26b4a149ad2b86973e0871604b",
+      "independent_source_review_sha256": "e3902303f65147f46e31581a268f4cffb03414f62150d802450d5a1c7058dedd",
+      "pure_helpers": {
+        "actual_target": "002a931106e021631c8ca5ef24b98428f884edcf",
+        "passed": 10,
+        "failed": 0,
+        "skipped": 0,
+        "seconds": 0.527,
+        "genuine_credit": false
+      },
+      "finite_steps_required": 21,
+      "actual_observation_steps_completed": 0,
+      "candidate_not_accepted": true
+    },
+    "genuine": {
+      "state": "SOURCE_CLEAR_RUNTIME_NOT_STARTED",
+      "source_freeze_sha256": "7ad45c6ec7d23cd9fb3d8a89cfa598c83b63a03cfaa5a95a71387d4cf9df3100",
+      "independent_source_review_sha256": "9806f52359baef41c6fb4d26f0b1192f2a737f61757855340244e615a2a233c5",
+      "files_reviewed": 7,
+      "actual_native_reviewer_required": "/root/independent_qa_resume",
+      "artifact_copy": false,
+      "private_genesis": false,
+      "provider_browser_execution": false,
+      "full_register_tls_executed": false,
+      "separate_root_artifact_genuine_and_actual_run_id_s2_authority_required": true
+    },
+    "publication": {
+      "remote_observed_at_utc": "2026-11-13T13:53:36.185134+00:00",
+      "main_sha": "856f75e6a143fb81e4f41ddcb2a593185179618a",
+      "pr16": {
+        "state": "open",
+        "draft": true,
+        "head": "32ff1d08aed38c02cd78a019caf5913d49c26ace",
+        "merged": false
+      },
+      "new_push": false,
+      "new_pr": false,
+      "merge": false,
+      "required_exact_head_ci_before_merge": true
+    },
+    "operational_cadence": {
+      "backend_completed_utc": "2026-11-13T06:42:14.564250+00:00",
+      "active_agents_resumed_utc": "2026-11-13T13:52:00+00:00",
+      "resume_minute_not_exact_second": true,
+      "continuous_overnight_claim": false,
+      "persistent_host_and_usage_budget_configured": false,
+      "eta": "NOT_PROMISED_DEPENDENT_ON_OPEN_GATES"
+    },
+    "remaining": [
+      "Independent review and pure tests of frontend capture privacy correction",
+      "Fresh full frontend lint/typecheck, Windows+Linux protocol applicable union, components, build, repository/client scans",
+      "Fresh complete unfiltered genuine register and TLS, separately authorized actual-runId21-step finite S2 observations",
+      "Independent exact-target QA and required CI before normal PR merge",
+      "Source-required real human, pilot, SME and qualified authority inputs remain external"
+    ],
+    "historical_evidence_unchanged": true,
+    "acceptance": false,
+    "canonical_tasks_added": 0,
+    "canonical_story_points_added": 0,
+    "tests_builds_imports_provider_browser_push_performed_for_report": 0
+  },
+  "today_vessel_reflow_20261113": {
+    "state": "AUTHORED_PREVIEW_UPDATED_REGRESSION_DEFERRED",
+    "task": "TODAY-VESSEL-REFLOW-01",
+    "base": "002a931106e021631c8ca5ef24b98428f884edcf",
+    "product_files": [
+      "frontend/src/product/TodayWorkspace.tsx",
+      "frontend/src/product/enterprise.css"
+    ],
+    "component_case_sources": 2,
+    "browser_viewport_sources": [
+      1365,
+      580,
+      390,
+      320
+    ],
+    "new_test_execution": "DEFERRED",
+    "preview_build_seconds": 5.732,
+    "preview_http_status": 200,
+    "preview_exact_html": true,
+    "pixel_reflow_measured": false,
+    "provider_database_accounts_preserved": true,
+    "independent_review": "PENDING_PROVIDER_QUOTA",
+    "canonical_sp_added": 0,
+    "acceptance": false
+  },
+  "frontend_native_002_followup_20261113": {
+    "state": "ORIGINAL_PACKAGE_FAILED_SELECTED_ASSERTION_REPAIRED_NOT_ACCEPTED",
+    "actual_target": "002a931106e021631c8ca5ef24b98428f884edcf",
+    "lint_seconds": 42.576,
+    "lint": "PASS",
+    "typecheck_seconds": 13.072,
+    "typecheck": "PASS",
+    "protocol_union": {
+      "state": "PASS_APPLICABLE_IDENTITIES",
+      "total": 233,
+      "python": 135,
+      "node": 98
+    },
+    "components": {
+      "total": 1660,
+      "passed": 1659,
+      "failed": 1,
+      "pending": 0,
+      "todo": 0,
+      "unhandled": 0,
+      "seconds": 295.006,
+      "actual_rows_reconciled": 1660,
+      "unknown_titles_withheld_count": 786,
+      "file_count": 156
+    },
+    "failure_source": "frontend/src/product/RegulatoryProfile.test.tsx:56",
+    "selected_repair_task": "PROFILE-HISTORY-ASYNC-ASSERTION-01",
+    "selected_repair": {
+      "passed": 1,
+      "failed": 0,
+      "unhandled": 0,
+      "seconds": 16.195,
+      "other_cases_not_selected": 79,
+      "full_run_not_inferred": true
+    },
+    "capture_privacy_synthetic": {
+      "node_passed": 5,
+      "python_passed": 9,
+      "full_phase_credit": false
+    },
+    "full_build_and_scans": "NOT_RUN_FAILFAST",
+    "new_genuine_register_tls_finite_s2": "NOT_STARTED",
+    "independent_phase_qa": "PENDING_PROVIDER_QUOTA",
+    "canonical_sp_added": 0,
+    "acceptance": false
+  },
+  "analysis_20261115_01": {
+    "task_id": "ANALYSIS-20261115-01",
+    "recorded_date": "2026-11-17",
+    "status": "PLANNING_REVIEW_AUTHORED_FULL_CONTRACT_RECONCILIATION_OPEN",
+    "accepted": false,
+    "accepted_sp_added": 0,
+    "source_root": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26",
+    "manifest": "docs/sources/2026-11-15/planning-manifest.json",
+    "excerpts": "docs/sources/2026-11-15/planning-excerpts.jsonl",
+    "coverage_map": "docs/sources/2026-11-15/coverage-map.json",
+    "plan": "docs/tasks/analysis-20261115-01.plan.json",
+    "task": "docs/tasks/analysis-20261115-01.md",
+    "report": "docs/phases/ANALYSIS-20261115-01.md",
+    "inventory": {
+      "files": 43,
+      "docx": 42,
+      "prototype_html": 1,
+      "bytes": 10355368,
+      "nonempty_word_paragraphs": 146506,
+      "exact_planning_excerpts": 688,
+      "planning_packages": 42,
+      "G_groups": 26,
+      "X_groups": 7,
+      "S_groups": 9
+    },
+    "review_scope": "All document scope/owner introductions, selected contract/authority/offline/privacy/acceptance excerpts, master G/X/S mapping, exact S2 backlog rows; NOT full semantic review of all 146506 paragraphs or registry rows",
+    "canonical_denominators_unchanged": {
+      "tasks": 121,
+      "sp": 970,
+      "screens": 196,
+      "fields": 2316
+    },
+    "historical_acceptance_unchanged": "S0/S1 engineering 103/970SP;20/121tasks;0/196separate-screen acceptances; original exact-target evidence preserved",
+    "s2_plan": {
+      "tasks": [
+        "DEV-020",
+        "DEV-021",
+        "DEV-022",
+        "DEV-023",
+        "DEV-024",
+        "DEV-025"
+      ],
+      "sp": 42,
+      "source_rows": "18.01 sheet:Backlog/row:21-26",
+      "accepted_sp_added": 0
+    },
+    "unresolved": [
+      "ANA15-REF-01 exact owner/profile version reconciliation",
+      "ANA15-REF-02 HR6/Fleet source identity and read contracts",
+      "ANA15-META-01 61.01 filename Rev3 vs body Rev2",
+      "ANA15-IDX-01 overlay authored; regression and independent source review deferred",
+      "ANA15-TRACE-01 full action/field/FR/TC registry reconciliation",
+      "ANA15-GATE-01 new-baseline regression and independent source/release acceptance"
+    ],
+    "verification": "Source/metadata retrieval and plan generation only; tests/build/typecheck/generation/browser/migration/seed/independent QA/CI DEFERRED_NOT_RUN",
+    "prototype": "Inventoried by bytes/SHA256; not executed or browser validated",
+    "publication": "No commit/push/PR/merge/deployment",
+    "next": "Native Fleet producer, exact owner/profile/trace mapping and S2 implementation; S1 publication reconciliation remains separate",
+    "search_overlay_followup": "ANA15-IDX-01 source-query code authored in S2-PROFILE-FOUNDATION-01;14tests authored across package but no tests run; full new42DOCX searchable with original SHA/paragraph refs",
+    "integration_note": "Parallel planning record from 2026-11-17 cherry-picked onto foundation/s2-integration-20261118; primary manifest docs/sources/2026-11-15/manifest.json (312 files) is the HEAD continuation import and already includes all 43 15.11 files with identical SHA256. Integration checks DEFERRED_NOT_RUN."
+  },
+  "theme_foundation_01": {
+    "task_id": "THEME-FOUNDATION-01",
+    "date": "2026-11-17",
+    "status": "AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+    "accepted": false,
+    "accepted_sp_added": 0,
+    "phase": "15.11.26 plan wave 1 shared UI foundation",
+    "task": "docs/tasks/theme-foundation-01.md",
+    "report": "docs/phases/THEME-FOUNDATION-01.md",
+    "source": "docs/sources/ui/shadcn-b3Zheoix4U.json",
+    "preset": "https://ui.shadcn.com/create?preset=b3Zheoix4U",
+    "authored": [
+      "Runtime light/dark/system and Emerald/Ocean/Graphite selector in enterprise chrome and connection screen",
+      "Local cosmetic persistence, blocked-storage fallback, cross-tab and OS synchronization",
+      "First-paint same-origin bootstrap and exact-byte public offline inventory",
+      "Shared token migration and 6 component/store/boot plus 1 offline test source"
+    ],
+    "verification": "DEFERRED_NOT_RUN: lint/typecheck/build/tests/browser/contrast/AT/independent QA/CI",
+    "remaining": [
+      "Domain CSS fixed colors and ECharts token consumers",
+      "All mode/palette contrast, mobile, portal/dialog, CSP/offline browser checks",
+      "Full Sera/Phosphor/Oxanium/Geist style migration separately planned",
+      "Optional server account preference integration under 52.02 contract"
+    ],
+    "publication": "No commit/push/PR/merge/deployment",
+    "next": "Use shared tokens from S2 onward; finish scoped legacy colors and validate at combined gate",
+    "source_maintenance": {
+      "tracked_diff_whitespace": "exit0",
+      "graphify_ast_update": "exit0",
+      "nodes": 15203,
+      "edges": 27362,
+      "communities": 1018,
+      "limitations": "730 zero-node inputs; HTML skipped above5000 nodes; no full semantic document review"
+    }
+  },
+  "s2_profile_foundation_01": {
+    "task_id": "S2-PROFILE-FOUNDATION-01",
+    "date": "2026-11-17",
+    "status": "AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+    "accepted": false,
+    "accepted_sp_added": 0,
+    "phase": "S2 source-aware foundation authoring; DEV-020 incomplete",
+    "branch": "foundation/s2-analysis-20261117",
+    "task": "docs/tasks/s2-profile-foundation-01.md",
+    "sources": "docs/tasks/s2-profile-foundation-01.sources.json",
+    "report": "docs/phases/S2-PROFILE-FOUNDATION-01.md",
+    "authored": [
+      "Full pinned42DOCX bounded-search overlay; superseded candidate references and atomic cache",
+      "Internal FleetQualityPolicy with complete source coverage, lineage, exact100limit and DISPUTED/UNKNOWN/PARTIAL/COMPLETE precedence",
+      "Saved source reference/observation/save-time UI, unsaved edit separation and withdrawal handling"
+    ],
+    "source_retrieval": {
+      "actual_bounded_query": "exit0;59.01 paragraphs1860/1861 exact SHA",
+      "fts_rows": 181464,
+      "current_candidates": 178069,
+      "superseded_candidates": 611,
+      "new_docx_paragraphs": 146506
+    },
+    "test_sources_authored": {
+      "domain": 8,
+      "python_overlay": 4,
+      "ui": 2
+    },
+    "verification": "DEFERRED_NOT_RUN: tests/build/typecheck/lint/generation/migration/seed/browser/independent QA/CI; source retrieval is not product PASS",
+    "persistence": "No new entity/schema/migration/seed; no business mutation or legacy protocol/receipt change",
+    "not_implemented": [
+      "Accepted native catalog/schema and source registration",
+      "Single-cut source/authorization fencing and protected native row/detail quality projection",
+      "LegalEntity legacy company mapping and full identity/profile lifecycle",
+      "Required API/PostgreSQL integration and combined verification gate"
+    ],
+    "publication": "No commit/push/PR/merge/deployment",
+    "next": "Implement registered native Fleet producer with EF migrations/incomplete fixtures and source/auth/lineage API+PG tests; then remainingDEV-020 andS2",
+    "source_maintenance": {
+      "tracked_diff_whitespace": "exit0",
+      "graphify_ast_update": "exit0",
+      "nodes": 15250,
+      "edges": 27478,
+      "communities": 1024,
+      "limitations": "730 zero-node inputs; HTML skipped above5000 nodes; semantic document graph not refreshed"
+    },
+    "catalog_followup": "S2-FLEET-CATALOG-DRAFT-01 authors staging EF draft/history and private writer; accepted native catalog, schema/source registration and public projection still open"
+  },
+  "s2_fleet_catalog_draft_01": {
+    "task_id": "S2-FLEET-CATALOG-DRAFT-01",
+    "date": "2026-11-18",
+    "status": "AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+    "accepted": false,
+    "accepted_sp_added": 0,
+    "phase": "S2 Fleet catalog draft persistence authoring; DEV-020 incomplete",
+    "branch": "foundation/s2-analysis-20261117",
+    "task": "docs/tasks/s2-fleet-catalog-draft-01.md",
+    "sources": "docs/tasks/s2-fleet-catalog-draft-01.sources.json",
+    "report": "docs/phases/S2-FLEET-CATALOG-DRAFT-01.md",
+    "authored": [
+      "Closed incomplete catalog drafting policy; no inferred schema, mode or publication",
+      "EF tenant-scoped draft roots, immutable revision/outcome/prior lineage, migration and dual EF/PG guards",
+      "Serializable audited writer, exact command replay and actor/intent conflict; no pending unrelated writes",
+      "Optional explicit empty synthetic fixture preserving operator revisions"
+    ],
+    "test_sources": {
+      "domain_methods": 6,
+      "domain_declared_cases": 9,
+      "postgres_integration_methods": 10
+    },
+    "verification": "DEFERRED_NOT_RUN: tests/build/restore/model generation/migration apply/seed/browser/independent QA/CI",
+    "migration": "20261117090000_FleetCatalogDraftFoundation; authored SQL only; designer/snapshot reconciliation at combined gate",
+    "native_publication": "Not implemented; no accepted catalog/schema/selector, public endpoint or role grant created",
+    "audit": "EF tenant/catalog/revision metadata only; no body/hash/title copy; not complete HTTP/user-action/GDPR acceptance",
+    "fixture": "Optional administrative only; empty FICTIONAL draft; normal seed totals unchanged",
+    "remaining": [
+      "Generated model/designer/snapshot reconciliation and actual PostgreSQL verification at combined gate",
+      "54.01 catalog governance and59.01 accepted source/schema binding",
+      "Exact authoring actions and commit-time authority/source fence in future host",
+      "Protected native Fleet quality projection and remainingDEV-020/S2"
+    ],
+    "publication": "No commit/push/PR/merge/deployment",
+    "next": "Native catalog/schema governance and fenced authoring host; later accepted source-based Fleet quality consumer",
+    "source_maintenance": {
+      "tracked_diff_whitespace": "exit0",
+      "graphify_ast_update": "exit0",
+      "nodes": 15351,
+      "edges": 27705,
+      "communities": 1035,
+      "source_receipts": 122,
+      "limitations": "732 zero-node/unsupported inputs; HTML skipped above5000 nodes; no full semantic document review"
+    }
   }
 }

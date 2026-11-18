@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { afterEach, expect, it, vi } from 'vitest'
 import { EnterpriseChrome } from './EnterpriseChrome'
 import type { Session } from './directory-contract'
+import { changeAppLanguage } from '../i18n'
 
 vi.mock('./WorkspaceContextBar', () => ({ WorkspaceContextBar: () => <div>Scoped context</div> }))
 vi.mock('./WorkspaceRoleNavigation', () => ({ WorkspaceRoleNavigation: () => <div>Scoped work view<button>Hidden work-view action</button></div> }))
@@ -16,6 +17,25 @@ const response = (value: unknown) => new Response(JSON.stringify(value), { heade
 const props = { session, language: 'en' as const, onLanguageChange: vi.fn(), onNavigate: vi.fn(), title: 'Fleet', mainId: 'test-main' }
 const view = (value = props) => <div className="product-shell enterprise-shell"><EnterpriseChrome {...value} /><main id="test-main"><button>Work action</button></main></div>
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals(); history.replaceState(null, '', '/') })
+
+it('translates the brand caption without replacing the tenant, navigation grant or guarded destination', async () => {
+  const fetcher = vi.fn(async () => response(menu))
+  vi.stubGlobal('fetch', fetcher)
+  const { rerender } = render(view())
+  await screen.findByRole('button', { name: 'Fleet' })
+  const brand = screen.getByRole('link', { name: 'POSEIDON' })
+  await act(async () => { await changeAppLanguage('it', false) })
+  rerender(<div className="product-shell enterprise-shell"><EnterpriseChrome {...props} language="it" /><main id="test-main"><button>Work action</button></main></div>)
+  expect(brand).toBeInTheDocument()
+  expect(within(brand).getByText('OPERAZIONI MARITTIME')).toBeVisible()
+  expect(screen.getByText('FICTIONAL workspace')).toBeVisible()
+  expect(fetcher).toHaveBeenCalledTimes(1)
+  expect(props.onNavigate).not.toHaveBeenCalled()
+  await userEvent.click(brand)
+  expect(props.onNavigate).toHaveBeenCalledWith('/app', expect.any(Function))
+  expect(session.tenantId).toBe(tenant)
+  expect(session.actorId).toBe(actor)
+})
 
 it('renders grouped server-authorized navigation with a current-page marker and no invented module entries', async () => {
   history.replaceState(null, '', '/app/fleet'); vi.stubGlobal('fetch', vi.fn(async () => response(menu)))

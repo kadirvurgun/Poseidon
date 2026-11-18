@@ -1,3 +1,4 @@
+import { labRuntimeFromEnvironment } from '../tests/Poseidon.Browser.Tests/lab/lab-runtime.ts'
 // DEV-BUNDLE-FIXTURE-01. Real signed fixture draft/review, never operational approval.
 import {randomUUID} from 'node:crypto'
 import {spawnSync} from 'node:child_process'
@@ -7,6 +8,7 @@ import {strictContext} from '../tests/Poseidon.Browser.Tests/lab/strict-browser.
 import {login} from '../tests/Poseidon.Browser.Tests/lab/journeys.ts'
 import {canonical,fixtureUuid} from './bundle_fixture_journal.ts'
 import {qualificationFixtureState} from './bundle_legacy_context.ts'
+const runtime = labRuntimeFromEnvironment()
 const privateRoot=realpathSync(process.env.POSEIDON_LAB_PRIVATE!)
 if(privateRoot!==realpathSync(resolve(import.meta.dirname,'../.runtime/oidc-lab')))throw new Error('fixture_boundary')
 const plan=JSON.parse(readFileSync(resolve(privateRoot,'source-bundle-plan.json'),'utf8'))
@@ -24,7 +26,7 @@ const persist=(name:string,value:unknown)=>{
   const temp=resolve(privateRoot,'.'+randomUUID()+'.json');writeFileSync(temp,JSON.stringify(value),{flag:'wx',mode:0o600,flush:true});const published=spawnSync(process.env.POSEIDON_LAB_PYTHON!,[resolve(import.meta.dirname,'bundle_private.py'),'publish-temp','--source',temp,'--target',target],{stdio:'ignore',windowsHide:true,timeout:30000});if(published.status!==0)throw new Error('fixture_new_publication_failed')
 }
 try{
-  const reviewer=await strictContext({baseURL:'https://localhost:5443'})
+  const reviewer=await strictContext({baseURL:runtime.appOrigin})
   try{
     const page=await reviewer.context.newPage();page.setDefaultTimeout(15000);evidence.stage='reviewer_login';await login(page,plan.reviewerAccount,'/app/today')
     const response=await page.request.get('/api/v1/auth/session');if(response.status()!==200)throw new Error('fixture_session_failed')
@@ -52,7 +54,7 @@ try{
       evidence.checks.push({stage:evidence.stage,status:review.status()});if(review.status()!==200||(await review.json()).state!=='IN_REVIEW')throw new Error('fixture_review_failed')
     }
   }finally{await reviewer.close()}
-  const writer=await strictContext({baseURL:'https://localhost:5443'})
+  const writer=await strictContext({baseURL:runtime.appOrigin})
   try{
     const page=await writer.context.newPage();page.setDefaultTimeout(15000);evidence.stage='writer_login';await login(page,'lab-manager','/app/today')
     const session=await page.request.get('/api/v1/auth/session');if(session.status()!==200)throw new Error('fixture_session_failed')

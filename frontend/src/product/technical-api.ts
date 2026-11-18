@@ -56,10 +56,19 @@ export function decodeTechnicalPlans(value: unknown): Plans {
 export const plans = async (vessel: string, signal: AbortSignal) => decodeTechnicalPlans(await request<unknown>(planPath(vessel), signal))
 export const references = (vessel: string, signal: AbortSignal) => request<References>(`${planPath(vessel)}/references`, signal)
 export const owners = (vessel: string, signal: AbortSignal) => request<string[]>(`${equipmentPath(vessel)}/owners`, signal)
-export const addJob = (vessel: string, body: { id: string; code: string; title: string }, csrf: string, signal: AbortSignal) =>
-  request<{ id: string }>(`${planPath(vessel)}/jobs`, signal, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf }, body: JSON.stringify(body) })
+export const addJob = async (vessel: string, body: { id: string; code: string; title: string }, csrf: string, signal: AbortSignal) => {
+  const value = await request<unknown>(`${planPath(vessel)}/jobs`, signal, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf }, body: JSON.stringify(body) })
+  if (!object(value) || !sameResource(value.id, body.id)) throw new ApiError(502, 'invalid_technical_job_receipt')
+  return { id: value.id as string }
+}
 export const history = (vessel: string, id: string, plan: boolean, signal: AbortSignal) => request<unknown[]>(`${plan ? planPath(vessel) : equipmentPath(vessel)}/${encodeURIComponent(id)}/history`, signal)
-export function save(vessel: string, plan: boolean, body: EquipmentCommand | PlanCommand, csrf: string, key: string, signal: AbortSignal) {
-  return request<Saved>(plan ? planPath(vessel) : equipmentPath(vessel), signal, { method: 'POST',
+// A successful HTTP status alone cannot confirm this command's resource or base.
+// Invalid receipts remain an unknown outcome for the owner-bound caller to recover.
+const sameResource = (actual: unknown, expected: string) => isGuid(actual) && isGuid(expected) && actual.toLowerCase() === expected.toLowerCase()
+export async function save(vessel: string, plan: boolean, body: EquipmentCommand | PlanCommand, csrf: string, key: string, signal: AbortSignal): Promise<Saved> {
+  const value = await request<unknown>(plan ? planPath(vessel) : equipmentPath(vessel), signal, { method: 'POST',
     headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf, 'Idempotency-Key': key }, body: JSON.stringify(body) })
+  if (!object(value) || !sameResource(value.id, body.id) || !positive(value.revision) || !positive(value.version) || typeof value.replayed !== 'boolean')
+    throw new ApiError(502, 'invalid_technical_save_receipt')
+  return { id: value.id as string, revision: value.revision as number, version: value.version as number, replayed: value.replayed }
 }

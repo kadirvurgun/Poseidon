@@ -6,7 +6,7 @@ describe('S5-CONSUMER-01 scoped compliance contracts (authored; execution deferr
   it('accepts the closed field set in server order and keeps complete declarations unverified', () => {
     const a = assessmentFixture(); a.fields.reverse()
     expect(decodeOnboarding(a, complianceVessel).state).toBe('REVIEW_REQUIRED')
-    const complete = { ...a, state: 'DECLARED_COMPLETE_UNVERIFIED', fields: a.fields.map(f => ({ ...f, state: 'Known', complete: true })), blockers: ['VERIFICATION_NOT_ESTABLISHED'] }
+    const complete = { ...a, state: 'DECLARED_COMPLETE_UNVERIFIED', fields: a.fields.map(f => ({ ...f, state: 'Known', complete: true })), blockers: ['VERIFICATION_NOT_ESTABLISHED'], blockerDetails: [a.blockerDetails.at(-1)] }
     expect(decodeOnboarding(complete, complianceVessel)).toMatchObject({ freshness: 'Unverified', canSubmit: false })
     expect(() => decodeOnboarding({ ...complete, canSubmit: true }, complianceVessel)).toThrow()
   })
@@ -14,6 +14,8 @@ describe('S5-CONSUMER-01 scoped compliance contracts (authored; execution deferr
     const a = assessmentFixture()
     for (const fields of [a.fields.slice(1), [...a.fields.slice(1), a.fields[1]], a.fields.map((f, i) => i ? f : { ...f, key: 'private.health' }), a.fields.map((f, i) => i ? f : { ...f, critical: false }), a.fields.map((f, i) => i ? f : { ...f, state: 'Unknown', complete: true })]) expect(() => decodeOnboarding({ ...a, fields }, complianceVessel)).toThrow()
     expect(() => decodeOnboarding({ ...a, state: 'DECLARED_COMPLETE_UNVERIFIED' }, complianceVessel)).toThrow()
+    for (const blockerDetails of [a.blockerDetails.slice(1), a.blockerDetails.map((b, i) => i ? b : { ...b, subjectId: otherComplianceVessel }), a.blockerDetails.map((b, i) => i ? b : { ...b, fieldPath: 'private.health' }), a.blockerDetails.map((b, i) => i ? b : { ...b, resolutionType: 'READY' })])
+      expect(() => decodeOnboarding({ ...a, blockerDetails }, complianceVessel)).toThrow()
   })
   it('rejects foreign vessels, readiness, certificate assumptions and forged override authority', () => {
     const p = passportFixture()

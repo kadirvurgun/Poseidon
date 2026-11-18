@@ -18,8 +18,15 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v6.0.0
+        with:
+          python-version: '3.13.13'
       - name: Verify Windows scheduler construction without registration
         run: python -m unittest discover -s scripts -p windows_scheduler_checks.py -v
+      - name: Verify owned runtime Windows file metadata boundaries
+        run: python -m unittest discover -s scripts -p test_lab_runtime.py -v
+      - name: Verify owned object-root Windows ACL validation without reapplication
+        run: python -m unittest discover -s scripts -p test_bundle_object_root.py -v
 
   persistence-and-security:
     runs-on: ubuntu-latest
@@ -143,6 +150,10 @@ jobs:
         run: |
           npm ci --prefix frontend
           npm ci --prefix tests/Poseidon.Browser.Tests
+      - name: Native whole register manifest import before provider
+        run: node --test tests/Poseidon.Browser.Tests/lab/register-manifest.test.ts
+      - name: Closed signed-register diagnostic privacy tests
+        run: node --test tests/Poseidon.Browser.Tests/lab/register-diagnostics.test.ts
       - name: Lint and typecheck
         run: |
           npm run generate:api --prefix frontend
@@ -150,9 +161,24 @@ jobs:
           npm run lint --prefix frontend
           npm run typecheck --prefix frontend
       - name: Signed lane fixture protocol unit tests
-        run: node --test tests/Poseidon.Browser.Tests/lab/register-lane-fixture.test.ts tests/Poseidon.Browser.Tests/lab/signed-case.test.ts
+        run: node --test tests/Poseidon.Browser.Tests/lab/register-lane-fixture.test.ts tests/Poseidon.Browser.Tests/lab/signed-case.test.ts tests/Poseidon.Browser.Tests/lab/observation-fixture.test.ts tests/Poseidon.Browser.Tests/lab/lab-runtime.test.ts
+      - name: Qualified owning fixture protocol before provider
+        run: |
+          node --test tests/Poseidon.Browser.Tests/lab/qualified-owning-fixture.test.ts
+          python3 -m unittest discover -s scripts -p test_bundle_qualified_fixture_plan.py -v
+      - name: Synthetic observation fixture configuration unit tests
+        run: |
+          python3 -m unittest discover -s scripts -p test_bundle_crew_boundary_fixture.py -v
+          python3 -m unittest discover -s scripts -p test_bundle_observation_fixture.py -v
+          python3 -m unittest discover -s scripts -p test_bundle_fixture_plan.py -v
+          python3 -m unittest discover -s scripts -p test_lab_runtime.py -v
+          python3 -m unittest discover -s scripts -p test_bundle_object_root.py -v
       - name: Source fixture journal fault and restart unit tests
         run: node --test scripts/test_bundle_fixture_journal.ts scripts/test_bundle_legacy_context.ts
+      - name: Explicit synthetic foundation policy and original consumer scope tests
+        run: |
+          python3 -m unittest discover -s scripts -p test_bundle_foundation_policy_fixture.py -v
+          node --test tests/Poseidon.Browser.Tests/lab/foundation-policy-context.test.ts
       - name: Component tests
         run: npm test --prefix frontend
       - name: Build frontend and real API

@@ -16,9 +16,10 @@ afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals() })
 
 it('saves power and a distinct contract date with an actual selected file reference, preserving incomplete build date', async () => {
   const fetch = vi.fn(async (url: string, init?: RequestInit) => {
+    if (url.endsWith('/auth/session')) return response({ authenticated: true, setupRequired: false, canRead: true, actorId: '10000000-0000-0000-0000-000000000004', tenantId: profile.tenantId, csrfToken: crypto.randomUUID() })
     if (url.endsWith('/files?offset=0')) return response(files)
     if (url.includes('/history?')) return response({ items: [], offset: 0, limit: 25, hasMore: false })
-    return response(init?.method === 'PUT' ? { ...profile, version: 2, revision: 2, content: JSON.parse(init.body as string).content } : profile)
+    return response(init?.method === 'PUT' ? { ...profile, provenance: 'Missing', version: 2, revision: 2, content: JSON.parse(init.body as string).content } : profile)
   }); vi.stubGlobal('fetch', fetch)
   const user = userEvent.setup()
   render(<RegulatoryProfile id={vessel} language="en" csrf="synthetic-csrf" onDirty={vi.fn()} onSaving={vi.fn()} />)

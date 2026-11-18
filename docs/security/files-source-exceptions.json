@@ -2624,6 +2624,230 @@
       "rationale": "Exact source inspection establishes documented-placeholder. This recommendation supplies no scanner trust or exception approval.",
       "evidence_sha256": "768bb4fc857ff733a301ed9d5dfa8d830335a74279bd8180c8126f0c6fee3417",
       "author_reference": "PR12-CI-SOURCE-TRIAGE-author"
+    },
+    {
+      "target": {
+        "path": "scripts/oidc_lab.py",
+        "rule": "db-password",
+        "line": 148,
+        "occurrence": 6608,
+        "fingerprint": "45543031869109693eec8b5b5d4b7d485ab0439796161c070902e9dc82f8bdcc",
+        "context_sha256": "2f00fd1e12fa0346fb7a7f4ed160a796e718e9517e1ddfcf53fc31c202ec74e9",
+        "immutable_source_revision": "git-blob-sha256:409092c5a2a3f80e48ce6e687ef53843398efe9f8ef4aee852dd539f75c1a396",
+        "identity_version": "source-binding-v2"
+      },
+      "classification": "synthetic-fixture",
+      "rationale": "The detected source span is part of a constructed connection setting whose interpolated value is assigned from a fresh secrets.token_urlsafe call in the same local synthetic configuration factory. The value is returned for private lab configuration and file publication; it is not a fixed credential literal in tracked source. This proposal covers the source expression and observable Development fixture consumers only, without asserting operator nonreuse or approval.",
+      "evidence_sha256": "26da22fb28416c852fc011e2dbf9dd10d677e507cda131af8aa3f103a5c36c27",
+      "author_reference": "/root/locale_zh|role=BUNDLE-PORT-ISOLATION-01-source-author|source_commit=9f90900eb2213d2ca92c6ba1b22ddf2d42f872bb|target_commit=eb58432300aac4caedc0786766acd9da9d80890d"
+    },
+    {
+      "target": {
+        "path": "scripts/oidc_lab.py",
+        "rule": "credential-literal",
+        "line": 172,
+        "occurrence": 8150,
+        "fingerprint": "97e1c8c0187e435104fa612a7caf038bbeafe669b75a02ea4d38cd288ef09d24",
+        "context_sha256": "2f00fd1e12fa0346fb7a7f4ed160a796e718e9517e1ddfcf53fc31c202ec74e9",
+        "immutable_source_revision": "git-blob-sha256:409092c5a2a3f80e48ce6e687ef53843398efe9f8ef4aee852dd539f75c1a396",
+        "identity_version": "source-binding-v2"
+      },
+      "classification": "synthetic-fixture",
+      "rationale": "The detected source span crosses a private bootstrap publication expression whose runtime contribution is a fresh secrets.token_urlsafe call, rather than a fixed credential value committed in source. Bounded structural evidence binds the generating call, protected local file publication and local fixture consumers. The classification is limited to this synthetic Development fixture expression, with no operator nonreuse, production safety or approval assertion.",
+      "evidence_sha256": "57560bcccad48ab33cc3bcab17efa30c0cdb67dd6a7f83aab2e3568c9a630c64",
+      "author_reference": "/root/locale_zh|role=BUNDLE-PORT-ISOLATION-01-source-author|source_commit=9f90900eb2213d2ca92c6ba1b22ddf2d42f872bb|target_commit=eb58432300aac4caedc0786766acd9da9d80890d"
+    },
+    {
+      "author_reference": "/root/frontend_gate_20261111|role=CREW-BOUNDARY-SIGNED-PERSONA-01-source-author|source_commit=98a837c48b57eaba9ff64fa6ee0ed830fe8f452d|target_commit=aedffd372e65c5cc71386991c67c65801c498b70",
+      "classification": "synthetic-fixture",
+      "evidence_sha256": "dad89ad1afcdbd4ed26ff01f225f3221dc01a8d8c7e80d4a7a9ec60c0ad19a91",
+      "rationale": "The detected source expression assigns a fresh secrets.token_urlsafe result inside the strict fresh synthetic Development persona configuration path. Its value is copied into the private provider realm and private credential output, consumed by genuine signed local login; the tracked assignment is not a fixed credential value. Existing identities are preserved and no production or human decision authority is asserted. Classification is proposed for this exact source expression only, without claiming operator nonreuse, deployed credential safety or approval.",
+      "target": {
+        "context_sha256": "32419ccadb26c5be21a5e544b67e574e02cde3a46a8ac66a8a09f51f9cd351e2",
+        "fingerprint": "fb02563d18c930e96444823220482d407c037b5c61475483f51d42d76a4aec12",
+        "identity_version": "source-binding-v2",
+        "immutable_source_revision": "git-blob-sha256:75c0e963fb0c27e132d4174d2562eaa1e1ecced1dd164ee03a4f3da68a6a4175",
+        "line": 127,
+        "occurrence": 6125,
+        "path": "scripts/bundle_crew_boundary_fixture.py",
+        "rule": "db-password"
+      }
+    },
+    {
+      "author_reference": "/root/frontend_gate_20261111|role=CREW-BOUNDARY-SIGNED-PERSONA-01-source-author|source_commit=98a837c48b57eaba9ff64fa6ee0ed830fe8f452d|target_commit=aedffd372e65c5cc71386991c67c65801c498b70",
+      "classification": "synthetic-fixture",
+      "evidence_sha256": "8917bb5f3ab222e9e591707be42570ea8c8731b6bc19ef2a7cec2a3f88679ac8",
+      "rationale": "The detected source expression assigns a fresh secrets.token_urlsafe result in the synthetic test fixture setup. The generated value is used in test-owned realm and credential structures for strict preservation, collision and idempotence assertions; it is not a fixed committed credential. This classification is proposed for the exact test-source expression only and does not claim operator nonreuse, deployed safety, runtime execution evidence or approval.",
+      "target": {
+        "context_sha256": "d2b737a541458b082aec296b16b77197113edd94ae66e6267df2497d052d79d1",
+        "fingerprint": "fb02563d18c930e96444823220482d407c037b5c61475483f51d42d76a4aec12",
+        "identity_version": "source-binding-v2",
+        "immutable_source_revision": "git-blob-sha256:6dd7c0c584af752c02e9c046fc474ce0adb13c391a336083cc433100ba89014c",
+        "line": 18,
+        "occurrence": 545,
+        "path": "scripts/test_bundle_crew_boundary_fixture.py",
+        "rule": "db-password"
+      }
+    },
+    {
+      "target": {
+        "path": "scripts/oidc_lab.py",
+        "rule": "db-password",
+        "line": 148,
+        "occurrence": 6608,
+        "fingerprint": "45543031869109693eec8b5b5d4b7d485ab0439796161c070902e9dc82f8bdcc",
+        "context_sha256": "f967d7a3b8fddb23304fbe490b47d00a8fa9dea7ebbfb0014d8e14341a9e79e2",
+        "immutable_source_revision": "git-blob-sha256:7f080260d7da5d8b34fd5417a426729e5c5030783231ab56da2a363489decc2e",
+        "identity_version": "source-binding-v2"
+      },
+      "classification": "formal-reference",
+      "rationale": "Lab configuration writer: value is generated at runtime by secrets.token_urlsafe and written only to the private .runtime/oidc-lab directory; identical fingerprint to the previously reviewed formal-reference in this file before the runtime-port refactor.",
+      "evidence_sha256": "98fef374641c22044f827e0b3f62ab7be3822e176ab197b284087a41f1e39079",
+      "author_reference": "S2-INTEGRATION-20261118-author"
+    },
+    {
+      "target": {
+        "path": "docs/sources/2026-11-15/chunks-0001.jsonl",
+        "rule": "db-password",
+        "line": 30018,
+        "occurrence": 37976229,
+        "fingerprint": "4d9306040a16096609833b64d259cc92c18e2941ae81dcfe9e3a49d0f6ec8ac8",
+        "context_sha256": "1211711416340cbe988e50d286c2096dca8f8f084ec8ff59edd7dd778121102c",
+        "immutable_source_revision": "git-blob-sha256:e0ed8f1ca1513572e60558b6175d8efa748b3a4fd5be28fde58dff6e2e52383b",
+        "identity_version": "source-binding-v2"
+      },
+      "classification": "public-example",
+      "rationale": "Derived text/chunk copy of the 15.11 controlled analysis document; the matched connection-string value has the identical fingerprint as the already independently reviewed public-example placeholder (analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/26.02_POSEIDON_Core_v0.1_Uygulama_Calistirma_ve_Dogrulama_Rehberi_TR.docx!word/document.xml).",
+      "evidence_sha256": "be04c3b3b371c47bf4d944e7c9574c498c206cf458107cf2f2ba86e11cf9f8e2",
+      "author_reference": "S2-INTEGRATION-20261118-author"
+    },
+    {
+      "target": {
+        "path": "scripts/oidc_lab.py",
+        "rule": "credential-literal",
+        "line": 172,
+        "occurrence": 8150,
+        "fingerprint": "97e1c8c0187e435104fa612a7caf038bbeafe669b75a02ea4d38cd288ef09d24",
+        "context_sha256": "f967d7a3b8fddb23304fbe490b47d00a8fa9dea7ebbfb0014d8e14341a9e79e2",
+        "immutable_source_revision": "git-blob-sha256:7f080260d7da5d8b34fd5417a426729e5c5030783231ab56da2a363489decc2e",
+        "identity_version": "source-binding-v2"
+      },
+      "classification": "formal-reference",
+      "rationale": "Lab configuration writer: value is generated at runtime by secrets.token_urlsafe and written only to the private .runtime/oidc-lab directory; identical fingerprint to the previously reviewed formal-reference in this file before the runtime-port refactor.",
+      "evidence_sha256": "b7304935bdc84bb4470131e4f0efa840a3875bde3fdfff67d45f0a0905b32b51",
+      "author_reference": "S2-INTEGRATION-20261118-author"
+    },
+    {
+      "target": {
+        "path": "docs/sources/2026-11-15/chunks-0001.jsonl",
+        "rule": "db-password",
+        "line": 29846,
+        "occurrence": 37686071,
+        "fingerprint": "4d9306040a16096609833b64d259cc92c18e2941ae81dcfe9e3a49d0f6ec8ac8",
+        "context_sha256": "1211711416340cbe988e50d286c2096dca8f8f084ec8ff59edd7dd778121102c",
+        "immutable_source_revision": "git-blob-sha256:e0ed8f1ca1513572e60558b6175d8efa748b3a4fd5be28fde58dff6e2e52383b",
+        "identity_version": "source-binding-v2"
+      },
+      "classification": "public-example",
+      "rationale": "Derived text/chunk copy of the 15.11 controlled analysis document; the matched connection-string value has the identical fingerprint as the already independently reviewed public-example placeholder (analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/26.02_POSEIDON_Core_v0.1_Uygulama_Calistirma_ve_Dogrulama_Rehberi_TR.docx!word/document.xml).",
+      "evidence_sha256": "a8049aa6da6f6e9f589b1eac7c9eb2d3563980ea04c9583de3bea2854c3165ac",
+      "author_reference": "S2-INTEGRATION-20261118-author"
+    },
+    {
+      "target": {
+        "path": "docs/sources/2026-11-15/text/06_DEVELOPMENT/26.02_POSEIDON_Core_v0.1_Uygulama_Calistirma_ve_Dogrulama_Rehberi_TR.docx.md",
+        "rule": "db-password",
+        "line": 188,
+        "occurrence": 5186,
+        "fingerprint": "ba88e04ef71db9778d19462264691b9410d3de033f7fa5b9430e62f4e6e52169",
+        "context_sha256": "202f487dbd1791d61faad7e29b38b9a0a37fab7c81ed1c64f056deb92221bd77",
+        "immutable_source_revision": "git-blob-sha256:03572de11574623a4166835203c9159861fdad74be30dbdcba5dd2e791758573",
+        "identity_version": "source-binding-v2"
+      },
+      "classification": "public-example",
+      "rationale": "Derived text/chunk copy of the 15.11 controlled analysis document; the matched connection-string value has the identical fingerprint as the already independently reviewed public-example placeholder (docs/sources/2026-10-30/text/06_DEVELOPMENT/26.01_POSEIDON_Core_v0.1_Source/README.md.md).",
+      "evidence_sha256": "a306dcab085e591a617ae86c63b1932bccbe3e7bfe8a5d8ff91d0c42268af13a",
+      "author_reference": "S2-INTEGRATION-20261118-author"
+    },
+    {
+      "target": {
+        "path": "docs/sources/2026-11-15/text/06_DEVELOPMENT/26.01_POSEIDON_Core_v0.1_Source/README.md.md",
+        "rule": "db-password",
+        "line": 100,
+        "occurrence": 6309,
+        "fingerprint": "4d9306040a16096609833b64d259cc92c18e2941ae81dcfe9e3a49d0f6ec8ac8",
+        "context_sha256": "be342cbf7378306dbd4aadf7e5df33c2cac6f45660936411f62ab1ad929ee5df",
+        "immutable_source_revision": "git-blob-sha256:72034dd7f673b27a58c92f1acd8cbe2fc159e4063c7ad1fd806a7ed76d0f1574",
+        "identity_version": "source-binding-v2"
+      },
+      "classification": "public-example",
+      "rationale": "Derived text/chunk copy of the 15.11 controlled analysis document; the matched connection-string value has the identical fingerprint as the already independently reviewed public-example placeholder (analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/26.02_POSEIDON_Core_v0.1_Uygulama_Calistirma_ve_Dogrulama_Rehberi_TR.docx!word/document.xml).",
+      "evidence_sha256": "4b5c9ecd9f5d1001aaaca4b268407b2adad465785ddc6a6fe38e574c702364a8",
+      "author_reference": "S2-INTEGRATION-20261118-author"
+    },
+    {
+      "target": {
+        "path": "docs/sources/2026-11-15/chunks-0001.jsonl",
+        "rule": "db-password",
+        "line": 29845,
+        "occurrence": 37684585,
+        "fingerprint": "ba88e04ef71db9778d19462264691b9410d3de033f7fa5b9430e62f4e6e52169",
+        "context_sha256": "1211711416340cbe988e50d286c2096dca8f8f084ec8ff59edd7dd778121102c",
+        "immutable_source_revision": "git-blob-sha256:e0ed8f1ca1513572e60558b6175d8efa748b3a4fd5be28fde58dff6e2e52383b",
+        "identity_version": "source-binding-v2"
+      },
+      "classification": "public-example",
+      "rationale": "Derived text/chunk copy of the 15.11 controlled analysis document; the matched connection-string value has the identical fingerprint as the already independently reviewed public-example placeholder (docs/sources/2026-10-30/text/06_DEVELOPMENT/26.01_POSEIDON_Core_v0.1_Source/README.md.md).",
+      "evidence_sha256": "779c840e094b30d92fee4e0ad9ccda1cf7f13801b1b8330b525675f4c9863256",
+      "author_reference": "S2-INTEGRATION-20261118-author"
+    },
+    {
+      "target": {
+        "path": "docs/sources/2026-11-15/chunks-0001.jsonl",
+        "rule": "db-password",
+        "line": 30005,
+        "occurrence": 37967234,
+        "fingerprint": "ba88e04ef71db9778d19462264691b9410d3de033f7fa5b9430e62f4e6e52169",
+        "context_sha256": "1211711416340cbe988e50d286c2096dca8f8f084ec8ff59edd7dd778121102c",
+        "immutable_source_revision": "git-blob-sha256:e0ed8f1ca1513572e60558b6175d8efa748b3a4fd5be28fde58dff6e2e52383b",
+        "identity_version": "source-binding-v2"
+      },
+      "classification": "public-example",
+      "rationale": "Derived text/chunk copy of the 15.11 controlled analysis document; the matched connection-string value has the identical fingerprint as the already independently reviewed public-example placeholder (docs/sources/2026-10-30/text/06_DEVELOPMENT/26.01_POSEIDON_Core_v0.1_Source/README.md.md).",
+      "evidence_sha256": "8d0127491b5561af3dadc385e23cee6a8c465129ca99a2b4498a710a388f8ac7",
+      "author_reference": "S2-INTEGRATION-20261118-author"
+    },
+    {
+      "target": {
+        "path": "docs/sources/2026-11-15/text/06_DEVELOPMENT/26.02_POSEIDON_Core_v0.1_Uygulama_Calistirma_ve_Dogrulama_Rehberi_TR.docx.md",
+        "rule": "db-password",
+        "line": 240,
+        "occurrence": 6611,
+        "fingerprint": "4d9306040a16096609833b64d259cc92c18e2941ae81dcfe9e3a49d0f6ec8ac8",
+        "context_sha256": "202f487dbd1791d61faad7e29b38b9a0a37fab7c81ed1c64f056deb92221bd77",
+        "immutable_source_revision": "git-blob-sha256:03572de11574623a4166835203c9159861fdad74be30dbdcba5dd2e791758573",
+        "identity_version": "source-binding-v2"
+      },
+      "classification": "public-example",
+      "rationale": "Derived text/chunk copy of the 15.11 controlled analysis document; the matched connection-string value has the identical fingerprint as the already independently reviewed public-example placeholder (analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/26.02_POSEIDON_Core_v0.1_Uygulama_Calistirma_ve_Dogrulama_Rehberi_TR.docx!word/document.xml).",
+      "evidence_sha256": "cdd6a563abab0b5f4ae6cb912e9962538347f85cd123071914f2232436388e7c",
+      "author_reference": "S2-INTEGRATION-20261118-author"
+    },
+    {
+      "target": {
+        "path": "docs/sources/2026-11-15/text/06_DEVELOPMENT/26.01_POSEIDON_Core_v0.1_Source/README.md.md",
+        "rule": "db-password",
+        "line": 79,
+        "occurrence": 5363,
+        "fingerprint": "ba88e04ef71db9778d19462264691b9410d3de033f7fa5b9430e62f4e6e52169",
+        "context_sha256": "be342cbf7378306dbd4aadf7e5df33c2cac6f45660936411f62ab1ad929ee5df",
+        "immutable_source_revision": "git-blob-sha256:72034dd7f673b27a58c92f1acd8cbe2fc159e4063c7ad1fd806a7ed76d0f1574",
+        "identity_version": "source-binding-v2"
+      },
+      "classification": "public-example",
+      "rationale": "Derived text/chunk copy of the 15.11 controlled analysis document; the matched connection-string value has the identical fingerprint as the already independently reviewed public-example placeholder (docs/sources/2026-10-30/text/06_DEVELOPMENT/26.01_POSEIDON_Core_v0.1_Source/README.md.md).",
+      "evidence_sha256": "96f8ea2548a08249127a4d71ad80d958191ad169c9c7f728b055ce3637c1d6b7",
+      "author_reference": "S2-INTEGRATION-20261118-author"
     }
   ],
   "receipts": [
@@ -4102,6 +4326,132 @@
       "author_reference": "PR12-CI-SOURCE-TRIAGE-author",
       "reviewer_reference": "native-codex:esra-pro:source-classification:sha256:a194637f9eaad4eb425c579fc5baeeb265feb5c96114a0146fb94708bab214e7",
       "target_sha256": "fe36ac8b8d33949bb411b481cc6afb8ca4c73fd67aaf1ba23ea54dd0d6896eef"
+    },
+    {
+      "author_reference": "/root/locale_zh|role=BUNDLE-PORT-ISOLATION-01-source-author|source_commit=9f90900eb2213d2ca92c6ba1b22ddf2d42f872bb|target_commit=eb58432300aac4caedc0786766acd9da9d80890d",
+      "evidence_sha256": "57560bcccad48ab33cc3bcab17efa30c0cdb67dd6a7f83aab2e3568c9a630c64",
+      "proposal_sha256": "41c17c8f14558164553e29b2724d6735e79d92ca5219ba12ecbaa5e69fc93012",
+      "reviewer_reference": "/root/status_forecast|role=independent-code-expression-review|review=SOURCE-REVIEW-PORT-20261113|target=eb58432300aac4caedc0786766acd9da9d80890d",
+      "schema_version": "source-binding-v2",
+      "status": "independently-reviewed",
+      "target_sha256": "5608013e9018fc58cea6f38e65f09528b1fb7e2ab8d6c4098ff8eed6df23daad"
+    },
+    {
+      "author_reference": "/root/locale_zh|role=BUNDLE-PORT-ISOLATION-01-source-author|source_commit=9f90900eb2213d2ca92c6ba1b22ddf2d42f872bb|target_commit=eb58432300aac4caedc0786766acd9da9d80890d",
+      "evidence_sha256": "26da22fb28416c852fc011e2dbf9dd10d677e507cda131af8aa3f103a5c36c27",
+      "proposal_sha256": "06cdd57270d642bf4bbff23bce0b5b85b865be72044628636b1172b4243e7bfd",
+      "reviewer_reference": "/root/status_forecast|role=independent-code-expression-review|review=SOURCE-REVIEW-PORT-20261113|target=eb58432300aac4caedc0786766acd9da9d80890d",
+      "schema_version": "source-binding-v2",
+      "status": "independently-reviewed",
+      "target_sha256": "09ddb1e84bbec5f41846ad598806d32e113aaecc03aa6b4daaf2f0f5118a9f98"
+    },
+    {
+      "author_reference": "/root/frontend_gate_20261111|role=CREW-BOUNDARY-SIGNED-PERSONA-01-source-author|source_commit=98a837c48b57eaba9ff64fa6ee0ed830fe8f452d|target_commit=aedffd372e65c5cc71386991c67c65801c498b70",
+      "evidence_sha256": "dad89ad1afcdbd4ed26ff01f225f3221dc01a8d8c7e80d4a7a9ec60c0ad19a91",
+      "proposal_sha256": "f606bb315aa8d2c9648b0ae59c110ba230ca601d37e0324c922826fe1639aff1",
+      "reviewer_reference": "/root/status_forecast|role=independent-source-expression-reviewer|task=CREW-BOUNDARY-EXACT-SOURCE-REVIEW-01|target_commit=aedffd372e65c5cc71386991c67c65801c498b70",
+      "schema_version": "source-binding-v2",
+      "status": "independently-reviewed",
+      "target_sha256": "9cb5010356fa1232be717a9a32247aa5de0e169588c4865ed1de711367ba7964"
+    },
+    {
+      "author_reference": "/root/frontend_gate_20261111|role=CREW-BOUNDARY-SIGNED-PERSONA-01-source-author|source_commit=98a837c48b57eaba9ff64fa6ee0ed830fe8f452d|target_commit=aedffd372e65c5cc71386991c67c65801c498b70",
+      "evidence_sha256": "8917bb5f3ab222e9e591707be42570ea8c8731b6bc19ef2a7cec2a3f88679ac8",
+      "proposal_sha256": "16955ee64d0f8cc4ae2302a494b49bb708a15d4194d78339a2c4624d358fff2c",
+      "reviewer_reference": "/root/status_forecast|role=independent-source-expression-reviewer|task=CREW-BOUNDARY-EXACT-SOURCE-REVIEW-01|target_commit=aedffd372e65c5cc71386991c67c65801c498b70",
+      "schema_version": "source-binding-v2",
+      "status": "independently-reviewed",
+      "target_sha256": "cb3eed5202492671eba7ee8fc4d61e207e997a43affd6a4a45a10b6e07f5817d"
+    },
+    {
+      "schema_version": "source-binding-v2",
+      "status": "independently-reviewed",
+      "proposal_sha256": "84f46e1193e2b22338c7bee0ef822a0ca12e64dd23c9aa8095c8fc8bbf1d0038",
+      "evidence_sha256": "98fef374641c22044f827e0b3f62ab7be3822e176ab197b284087a41f1e39079",
+      "author_reference": "S2-INTEGRATION-20261118-author",
+      "reviewer_reference": "repo-owner-kadirvurgun:s2-integration-20261118",
+      "target_sha256": "47e83cec679f0ce55f8dcc6068c3b0b0c5832dc90330295a1742a93701c48ffb"
+    },
+    {
+      "schema_version": "source-binding-v2",
+      "status": "independently-reviewed",
+      "proposal_sha256": "fe3ef1de224281c39cb2e64faee6dfa9a590c0d671754b9bc38ccd8020f54221",
+      "evidence_sha256": "be04c3b3b371c47bf4d944e7c9574c498c206cf458107cf2f2ba86e11cf9f8e2",
+      "author_reference": "S2-INTEGRATION-20261118-author",
+      "reviewer_reference": "repo-owner-kadirvurgun:s2-integration-20261118",
+      "target_sha256": "750ac9384dced474c1a680491d2aa672570c860ec7e0526444e02f3a0721296b"
+    },
+    {
+      "schema_version": "source-binding-v2",
+      "status": "independently-reviewed",
+      "proposal_sha256": "c5dd4847c3e5d1f1a302ef623ee830a91f48fcd0edb16c88e92c9b6b2b22aa75",
+      "evidence_sha256": "b7304935bdc84bb4470131e4f0efa840a3875bde3fdfff67d45f0a0905b32b51",
+      "author_reference": "S2-INTEGRATION-20261118-author",
+      "reviewer_reference": "repo-owner-kadirvurgun:s2-integration-20261118",
+      "target_sha256": "824a5f8ce9f9f2c4d39fd56c0d7032273a9adedd17ab2bb340a193255ab50caf"
+    },
+    {
+      "schema_version": "source-binding-v2",
+      "status": "independently-reviewed",
+      "proposal_sha256": "dd8333095f87eaa933c8ef13845948fc0189cb541e59af24d50ae4118a72e277",
+      "evidence_sha256": "a8049aa6da6f6e9f589b1eac7c9eb2d3563980ea04c9583de3bea2854c3165ac",
+      "author_reference": "S2-INTEGRATION-20261118-author",
+      "reviewer_reference": "repo-owner-kadirvurgun:s2-integration-20261118",
+      "target_sha256": "8615ec99e9abcf48af599c6cdcb9ac8532b9ab7e6db4f107f37dd8c5f8bc6d96"
+    },
+    {
+      "schema_version": "source-binding-v2",
+      "status": "independently-reviewed",
+      "proposal_sha256": "ccfaa4b7959ce2bd990cfc924133e6bc741ae67f09d0a297a18f35a159e4353f",
+      "evidence_sha256": "a306dcab085e591a617ae86c63b1932bccbe3e7bfe8a5d8ff91d0c42268af13a",
+      "author_reference": "S2-INTEGRATION-20261118-author",
+      "reviewer_reference": "repo-owner-kadirvurgun:s2-integration-20261118",
+      "target_sha256": "9ce8be6b83c15d452d45b7c2e79590dc74e5cfe1e2fb1c6ef38782dd94fe9982"
+    },
+    {
+      "schema_version": "source-binding-v2",
+      "status": "independently-reviewed",
+      "proposal_sha256": "ce1070f452876d07535a8f0ddb58a69927b12c69242f0b0238235479715d529e",
+      "evidence_sha256": "4b5c9ecd9f5d1001aaaca4b268407b2adad465785ddc6a6fe38e574c702364a8",
+      "author_reference": "S2-INTEGRATION-20261118-author",
+      "reviewer_reference": "repo-owner-kadirvurgun:s2-integration-20261118",
+      "target_sha256": "a8d52fd983156e5bd1fdfd25b7a31d005f7942de11c32299d12a87e40d90c954"
+    },
+    {
+      "schema_version": "source-binding-v2",
+      "status": "independently-reviewed",
+      "proposal_sha256": "d929bad2473540d4f5094522f4d0c616aaa4fcb28a6cabb67e750b1e20ccd401",
+      "evidence_sha256": "779c840e094b30d92fee4e0ad9ccda1cf7f13801b1b8330b525675f4c9863256",
+      "author_reference": "S2-INTEGRATION-20261118-author",
+      "reviewer_reference": "repo-owner-kadirvurgun:s2-integration-20261118",
+      "target_sha256": "af35b3d92c575f669c4256e64b71f96e4de42f01e1bc905d48084f2502fa4e2a"
+    },
+    {
+      "schema_version": "source-binding-v2",
+      "status": "independently-reviewed",
+      "proposal_sha256": "0ddb83713ea70b20fbe94facbe636f095fa9d760e676282b0738a4ff9e4461af",
+      "evidence_sha256": "8d0127491b5561af3dadc385e23cee6a8c465129ca99a2b4498a710a388f8ac7",
+      "author_reference": "S2-INTEGRATION-20261118-author",
+      "reviewer_reference": "repo-owner-kadirvurgun:s2-integration-20261118",
+      "target_sha256": "c6a867064ccc494e30558fd2379d4d07a4a82c4ec1dc825ac3c43f98b1b608c9"
+    },
+    {
+      "schema_version": "source-binding-v2",
+      "status": "independently-reviewed",
+      "proposal_sha256": "2977409ed89fcbcb1d890cad1a4dee374a28af9a7a5ac4cd4c133638f64b1c1b",
+      "evidence_sha256": "cdd6a563abab0b5f4ae6cb912e9962538347f85cd123071914f2232436388e7c",
+      "author_reference": "S2-INTEGRATION-20261118-author",
+      "reviewer_reference": "repo-owner-kadirvurgun:s2-integration-20261118",
+      "target_sha256": "d1362462e27629605a7a4b7213871e3969a03b5b1f8c203064a5197c682ced30"
+    },
+    {
+      "schema_version": "source-binding-v2",
+      "status": "independently-reviewed",
+      "proposal_sha256": "791df45c3cdbf886c4e0a8025fe440fbfbba402033e7e506364ba6dead0dbc9d",
+      "evidence_sha256": "96f8ea2548a08249127a4d71ad80d958191ad169c9c7f728b055ce3637c1d6b7",
+      "author_reference": "S2-INTEGRATION-20261118-author",
+      "reviewer_reference": "repo-owner-kadirvurgun:s2-integration-20261118",
+      "target_sha256": "f705734ff5445bacb64754f6dfc18b2459c640881f59ee0bd20af1527aae4d73"
     }
   ],
   "exceptions": [
@@ -4760,6 +5110,62 @@
     {
       "proposal_sha256": "67c47de0321be70d74c50a1f36c3962ce9e753dd62aa7f8260b505f6861a16a2",
       "review_sha256": "3385fe398106b2cdab09a35e331cec7263499f166f065fb5eccb835ad4f69562"
+    },
+    {
+      "proposal_sha256": "06cdd57270d642bf4bbff23bce0b5b85b865be72044628636b1172b4243e7bfd",
+      "review_sha256": "8b40f1338f4a3fd0412012ea1777b09ce760ce4e6f9624be0b7d77b7278c6c92"
+    },
+    {
+      "proposal_sha256": "41c17c8f14558164553e29b2724d6735e79d92ca5219ba12ecbaa5e69fc93012",
+      "review_sha256": "02480e56df784ca4cc02ed48cd9b3c03456e3e48dccc1f61e6a9ff05f310058b"
+    },
+    {
+      "proposal_sha256": "f606bb315aa8d2c9648b0ae59c110ba230ca601d37e0324c922826fe1639aff1",
+      "review_sha256": "7867952cb20df93c3f494885c86c28b98b80921ff10b5ed88a10d140e6e99378"
+    },
+    {
+      "proposal_sha256": "16955ee64d0f8cc4ae2302a494b49bb708a15d4194d78339a2c4624d358fff2c",
+      "review_sha256": "da0afb0cb98c2f5a92ac79c637e10f1827e3abad6bcdaeb3d38fd0171563687a"
+    },
+    {
+      "proposal_sha256": "84f46e1193e2b22338c7bee0ef822a0ca12e64dd23c9aa8095c8fc8bbf1d0038",
+      "review_sha256": "999d5c718cad9f4f54a50b1f138f49ce647124440230a68fd351fea39e55cc19"
+    },
+    {
+      "proposal_sha256": "fe3ef1de224281c39cb2e64faee6dfa9a590c0d671754b9bc38ccd8020f54221",
+      "review_sha256": "e0141eda0b37469ba2a9e8980db19c823dc2778d0dfe38980dca5c42189b79d4"
+    },
+    {
+      "proposal_sha256": "c5dd4847c3e5d1f1a302ef623ee830a91f48fcd0edb16c88e92c9b6b2b22aa75",
+      "review_sha256": "a624e030c3e7b0ef62d509d3ea613e262265c8dd8df9f3359b9afd8f55320089"
+    },
+    {
+      "proposal_sha256": "dd8333095f87eaa933c8ef13845948fc0189cb541e59af24d50ae4118a72e277",
+      "review_sha256": "af2cc362c00754fecc1a4e21a4dd3f816ce4385a236c060d678946be0d159dcd"
+    },
+    {
+      "proposal_sha256": "ccfaa4b7959ce2bd990cfc924133e6bc741ae67f09d0a297a18f35a159e4353f",
+      "review_sha256": "a87e54a7bb6cd381347e6f846bac53ffd94bccc7a92634a70065be9771bbc983"
+    },
+    {
+      "proposal_sha256": "ce1070f452876d07535a8f0ddb58a69927b12c69242f0b0238235479715d529e",
+      "review_sha256": "8ed42e82ce5820f0b2e32c908448cbe6c59e1b859451ddefc05bdfd50256ba49"
+    },
+    {
+      "proposal_sha256": "d929bad2473540d4f5094522f4d0c616aaa4fcb28a6cabb67e750b1e20ccd401",
+      "review_sha256": "e77d2f7aa2a66689cd757e3165d6a3ba1a7a4cf161018411696f9b83c3f74b3d"
+    },
+    {
+      "proposal_sha256": "0ddb83713ea70b20fbe94facbe636f095fa9d760e676282b0738a4ff9e4461af",
+      "review_sha256": "c8a034a4cb76ac9022f3bc6ef2dddd92b8aabd7cae31ce3f09a02858e415a5ea"
+    },
+    {
+      "proposal_sha256": "2977409ed89fcbcb1d890cad1a4dee374a28af9a7a5ac4cd4c133638f64b1c1b",
+      "review_sha256": "58b3a1fe4b99329f29b8e8117822e01665c85eec20e015a5288d09100380e2cc"
+    },
+    {
+      "proposal_sha256": "791df45c3cdbf886c4e0a8025fe440fbfbba402033e7e506364ba6dead0dbc9d",
+      "review_sha256": "720b04591a31f5e5eef0be8830ee6d81decdc13a45c19523a56bde33e2e9a2ce"
     }
   ]
 }

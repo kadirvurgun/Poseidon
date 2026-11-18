@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { expect, it, vi } from 'vitest'
 import { EquipmentSummary, MaintenancePlanSummary, TechnicalOverview, TechnicalPlanList } from './TechnicalReadViews'
 import type { Asset, Plan, References, Snapshot } from './technical-api'
+import { changeAppLanguage } from '../i18n'
 
 const asset: Asset = { id: '11111111-1111-1111-1111-111111111111', vesselId: '22222222-2222-2222-2222-222222222222', parentId: null,
   code: 'DEMO-PUMP', name: 'FICTIONAL Pompa', level: 'Equipment', systemFamily: null, equipmentType: null, criticality: null, maker: null, model: null, serialNumber: null, location: null,
@@ -13,6 +14,15 @@ const plan: Plan = { id: '33333333-3333-3333-3333-333333333333', assetId: asset.
   revision: 2, version: 1, assetRevision: 1, status: 'Draft', provenance: 'SyntheticUnverified', referenceAt: '2026-11-02T12:00:00Z', savedAt: '2026-11-01T12:00:00Z' }
 const references: References = { jobs: [{ id: plan.jobId!, code: 'DEMO-LUBE', title: 'FICTIONAL Lubrication', provenance: 'SyntheticUnverified' }], owners: [], policy: 'DraftDeclarationsOnly;PostponementPolicyUnresolved' }
 const snapshot: Snapshot = { items: [asset, { ...asset, id: '55555555-5555-5555-5555-555555555555', level: 'System' }], complete: true, canWrite: false, canReadHistory: false }
+
+it('uses selected-language case folding for source names without changing names or plan identifiers', async () => {
+  await changeAppLanguage('de', false)
+  const onSelect = vi.fn(), user = userEvent.setup()
+  render(<TechnicalPlanList plans={[plan]} assets={[{ ...asset, name: 'SYNTHETIC MACHINE' }]} references={references} filter="machine" selectedId={plan.id} en={false} onSelect={onSelect} />)
+  expect(screen.getByText('SYNTHETIC MACHINE · DEMO-LUBE')).toBeVisible()
+  await user.click(screen.getByRole('button'))
+  expect(onSelect).toHaveBeenCalledWith(plan.id)
+})
 
 it('summarizes only returned hierarchy levels and does not infer maintenance coverage from missing plan access', () => {
   render(<TechnicalOverview assets={snapshot} plans={null} en />)

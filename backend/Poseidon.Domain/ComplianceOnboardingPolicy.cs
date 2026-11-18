@@ -1,14 +1,18 @@
 namespace Poseidon.Domain;
 
 public sealed record OnboardingField(string Key, string State, bool Critical, bool Complete);
-public sealed record OnboardingAssessment(string State, OnboardingField[] Fields, string[] Blockers);
+public sealed record OnboardingBlocker(Guid SubjectId, string FieldPath, string ReasonCode, string ResolutionType);
+public sealed record OnboardingAssessment(string State, OnboardingField[] Fields, string[] Blockers,
+    OnboardingBlocker[] BlockerDetails);
 
-// 18.01/Backlog/row:40. Completeness is a declaration check, never verification,
-// source admission, a safety decision, or permission to submit an incomplete draft.
+// 18.01/Backlog/row:40 and 59.01/paragraph:55. Completeness is a declaration
+// check, never verification, source admission, a safety decision, or permission
+// to submit an incomplete draft.
 public static class ComplianceOnboardingPolicy
 {
-    public static OnboardingAssessment Assess(string? code, string? name, RegulatoryDraftContent? profile)
+    public static OnboardingAssessment Assess(Guid subjectId, string? code, string? name, RegulatoryDraftContent? profile)
     {
+        if (subjectId == Guid.Empty) throw new ArgumentException("Onboarding subject is required.", nameof(subjectId));
         var fields = new List<OnboardingField>();
         var errors = profile == null ? new Dictionary<string, string[]>() : RegulatoryDraftPolicy.Normalize(profile).Errors;
         void Field(string key, string? state, string? value) {
@@ -30,6 +34,13 @@ public static class ComplianceOnboardingPolicy
         if (fields.Any(f => f.State == "Missing")) blockers.Add("REQUIRED_DATA_MISSING");
         if (fields.Any(f => f.State == "Unknown")) blockers.Add("REQUIRED_DATA_UNKNOWN");
         blockers.Add("VERIFICATION_NOT_ESTABLISHED");
-        return new(fields.All(f => f.Complete) ? "DECLARED_COMPLETE_UNVERIFIED" : "REVIEW_REQUIRED", fields.ToArray(), blockers.ToArray());
+        var details = new List<OnboardingBlocker>();
+        if (profile == null) details.Add(new(subjectId, "profile", "PROFILE_MISSING", "PROFILE_DECLARATION"));
+        details.AddRange(fields.Where(field => !field.Complete).Select(field => new OnboardingBlocker(subjectId,
+            field.Key, field.State == "Unknown" ? "REQUIRED_DATA_UNKNOWN" : "REQUIRED_DATA_MISSING",
+            field.State == "Unknown" ? "POLICY_OR_EVIDENCE" : "REQUIRED_DECLARATION")));
+        details.Add(new(subjectId, "profile", "VERIFICATION_NOT_ESTABLISHED", "QUALIFIED_EVIDENCE"));
+        return new(fields.All(f => f.Complete) ? "DECLARED_COMPLETE_UNVERIFIED" : "REVIEW_REQUIRED",
+            fields.ToArray(), blockers.ToArray(), details.ToArray());
     }
 }

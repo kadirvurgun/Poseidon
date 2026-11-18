@@ -1,7 +1,7 @@
 // DEV-BUNDLE-FIXTURE-01: private publish-once software-fixture intents/receipts.
 // No authenticated response is synthesized, and unknown non-idempotent writes stop.
 import {createHash, randomUUID} from 'node:crypto'
-import {existsSync, lstatSync, readFileSync, realpathSync} from 'node:fs'
+import {existsSync, lstatSync, readFileSync, readdirSync, realpathSync} from 'node:fs'
 import {resolve, sep} from 'node:path'
 
 export const canonical = (value: unknown): string => {
@@ -14,7 +14,7 @@ export const fixtureUuid = (attempt: string, key: string) => {
   const hex=createHash('sha256').update('poseidon.bundle.fixture-journal.v1:'+attempt+':'+key).digest('hex').slice(0,32)
   return hex.slice(0,8)+'-'+hex.slice(8,12)+'-'+hex.slice(12,16)+'-'+hex.slice(16,20)+'-'+hex.slice(20)
 }
-const uuid=(value:unknown):value is string=>typeof value==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(value)&&value!=='00000000-0000-0000-0000-000000000000'
+const uuid=(value:unknown):value is string=>typeof value==='string'&&value.length===36&&/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(value)&&value!=='00000000-0000-0000-0000-000000000000'
 type Publish=(name:string,value:unknown)=>unknown
 type Identity={actorId:string;tenantId:string}
 type Intent={schemaVersion:string;attemptId:string;stage:string;identity:Identity;method:string;path:string;body:unknown;key:string;idempotent:boolean}
@@ -24,17 +24,22 @@ export class FixtureJournal {
   readonly root:string
   readonly manifest:Manifest
   readonly publish:Publish
-  constructor(root:string,binding:unknown,publish:Publish,explicitAttempt?:string) {
+  readonly namespace:string
+  readonly privateRead:((name:string)=>unknown)|undefined
+  constructor(root:string,binding:unknown,publish:Publish,explicitAttempt?:string,namespace='source-bundle',privateRead?:((name:string)=>unknown)) {
+    if(!['source-bundle','qualified-owning'].includes(namespace))throw new Error('fixture_journal_namespace_invalid')
+    this.namespace=namespace;this.privateRead=privateRead
     this.root=realpathSync(root);this.publish=publish
-    const file='source-bundle-provision-attempt.json'
+    const file=namespace+'-provision-attempt.json'
     const prior=this.load(file)
     if(prior!==undefined) {
       const m=prior as Manifest
       if(m.schemaVersion!=='poseidon.bundle.fixture-attempt.v1'||!uuid(m.attemptId)||m.bindingSha256!==digest(binding)||!Number.isFinite(Date.parse(m.createdAt))||explicitAttempt!==undefined&&explicitAttempt!==m.attemptId)throw new Error('fixture_attempt_binding_changed')
       this.manifest=m
     } else {
+      if(namespace==='qualified-owning'&&readdirSync(this.root).some(name=>name.startsWith(namespace+'-command-')||name.startsWith(namespace+'-observed-')||name===namespace+'-fixture.json'))throw new Error('fixture_orphaned_journal')
       // A status-only legacy report has no receipts: never adopt its orphan drafts.
-      if(this.load('source-bundle-preparation.json')!==undefined&&!uuid(explicitAttempt))throw new Error('fixture_legacy_attempt_requires_explicit_new_uuid')
+      if(this.load(namespace+'-preparation.json')!==undefined&&!uuid(explicitAttempt))throw new Error('fixture_legacy_attempt_requires_explicit_new_uuid')
       if(explicitAttempt!==undefined&&!uuid(explicitAttempt))throw new Error('fixture_attempt_uuid_invalid')
       this.manifest={schemaVersion:'poseidon.bundle.fixture-attempt.v1',attemptId:explicitAttempt??randomUUID(),bindingSha256:digest(binding),createdAt:new Date().toISOString()}
       publish(file,this.manifest)
@@ -44,6 +49,7 @@ export class FixtureJournal {
     if(!/^[a-z][a-z0-9-]*\.json$/.test(name))throw new Error('fixture_journal_name_invalid')
     const file=resolve(this.root,name)
     if(!existsSync(file))return undefined
+    if(this.privateRead)return this.privateRead(name)
     if(lstatSync(file).isSymbolicLink()||!lstatSync(file).isFile()||lstatSync(file).size>2097152||!realpathSync(file).startsWith(this.root+sep))throw new Error('fixture_journal_boundary')
     return JSON.parse(readFileSync(file,'utf8'))
   }
@@ -51,7 +57,7 @@ export class FixtureJournal {
   async command(stage:string,identity:Identity,method:string,path:string,body:unknown,idempotent:boolean,
     send:(intent:Intent)=>Promise<WireResult>,verify:(body:unknown)=>Promise<void>):Promise<unknown> {
     if(!/^[a-z][a-z0-9_]*$/.test(stage)||!uuid(identity.actorId)||!uuid(identity.tenantId)||!path.startsWith('/api/v1/'))throw new Error('fixture_command_invalid')
-    const prefix='source-bundle-command-'+stage.replaceAll('_','-')
+    const prefix=this.namespace+'-command-'+stage.replaceAll('_','-')
     const intent:Intent={schemaVersion:'poseidon.bundle.fixture-intent.v1',attemptId:this.manifest.attemptId,stage,identity,method,path,body,key:this.id(stage),idempotent}
     const previous=this.load(prefix+'-intent.json')
     if(previous!==undefined&&canonical(previous)!==canonical(intent))throw new Error('fixture_intent_changed')

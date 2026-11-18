@@ -23,11 +23,21 @@ describe('S5-EXPERIENCE-01 honest source review (authored; execution deferred)',
     expect(screen.getByRole('button', { name: 'Submit for review' })).toBeDisabled()
   })
   it('shows complete declarations as unverified with submission still unavailable', async () => {
-    const a = assessmentFixture(); vi.stubGlobal('fetch', vi.fn(async () => response({ ...a, state: 'DECLARED_COMPLETE_UNVERIFIED', fields: a.fields.map(f => ({ ...f, state: 'Known', complete: true })), blockers: ['VERIFICATION_NOT_ESTABLISHED'] })))
+    const a = assessmentFixture(); vi.stubGlobal('fetch', vi.fn(async () => response({ ...a, state: 'DECLARED_COMPLETE_UNVERIFIED', fields: a.fields.map(f => ({ ...f, state: 'Known', complete: true })), blockers: ['VERIFICATION_NOT_ESTABLISHED'], blockerDetails: [a.blockerDetails.at(-1)] })))
     render(<OnboardingAssessmentView vessel={complianceVessel} savedRevision={1} dirty={false} language="en" />)
     expect(await screen.findByText('Declared complete · unverified')).toBeVisible()
     expect(screen.getByRole('button', { name: 'Submit for review' })).toBeDisabled()
     expect(screen.queryByText('Ready')).not.toBeInTheDocument()
+  })
+  it('shows field-scoped resolutions without exposing the subject identifier', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => response(assessmentFixture())))
+    const view = render(<OnboardingAssessmentView vessel={complianceVessel} savedRevision={1} dirty={false} language="en" />)
+    const blockers = await screen.findByRole('region', { name: 'Onboarding blockers' })
+    expect(within(blockers).getAllByText('Required declaration')).toHaveLength(8)
+    expect(within(blockers).getByText('Qualified evidence required')).toBeVisible()
+    expect(blockers).not.toHaveTextContent(complianceVessel)
+    view.rerender(<OnboardingAssessmentView vessel={complianceVessel} savedRevision={1} dirty={false} language="tr" />)
+    expect(screen.getByRole('region', { name: 'Onboarding engelleri' })).toHaveTextContent('Nitelikli kanıt gerekli')
   })
   it('shows missing certificate and critical coverage sources without a fake zero or approval', async () => {
     const fetch = vi.fn(async () => response(passportFixture())); vi.stubGlobal('fetch', fetch)

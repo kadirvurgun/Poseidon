@@ -1,44 +1,44 @@
-.product-shell { min-height: 100vh; color: #193344; background: #f4f7f9; }
+.product-shell { min-height: 100vh; color: var(--foreground); background: var(--background); }
 .product-header { display: flex; align-items: center; justify-content: space-between; padding: 1.4rem max(1rem, calc((100vw - 1120px)/2)); background: #102d3e; color: white; }
 .product-brand { color: white; letter-spacing: .15em; font-weight: 800; text-decoration: none; }
-.product-nav { display: flex; flex-wrap: wrap; align-items: center; gap: .7rem; padding: 1rem; border-bottom: 1px solid #d1dce3; background: white; }
-.product-nav a { margin-left: auto; color: #25556c; }
+.product-nav { display: flex; flex-wrap: wrap; align-items: center; gap: .7rem; padding: 1rem; border-bottom: 1px solid var(--border); background: var(--card); }
+.product-nav a { margin-inline-start: auto; color: #25556c; }
 .product-shell main { max-width: 1120px; margin: auto; padding: clamp(1rem, 4vw, 3rem); }
-.product-shell button:not([data-slot="button"]):not(.enterprise-nav-overlay), .product-shell select { min-height: 44px; border: 1px solid #9eb3c0; border-radius: 6px; padding: .55rem 1rem; background: white; color: #193344; cursor: pointer; font: inherit; }
+.product-shell button:not([data-slot="button"]):not(.enterprise-nav-overlay), .product-shell select { min-height: 44px; border: 1px solid var(--input); border-radius: 6px; padding: .55rem 1rem; background: var(--card); color: var(--foreground); cursor: pointer; font: inherit; }
 .product-shell button[aria-current=page] { background: #193e52; color: white; }
 .product-shell button:disabled { opacity: .55; cursor: default; }
-.product-shell :focus-visible { outline: 3px solid #c77616; outline-offset: 3px; }
-.product-session, .product-detail { background: white; border: 1px solid #d1dce3; border-radius: 10px; padding: 1.2rem; margin: 1.5rem 0; }
+.product-shell :focus-visible { outline: 3px solid var(--ring); outline-offset: 3px; }
+.product-session, .product-detail { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.2rem; margin: 1.5rem 0; }
 .product-session code { overflow-wrap: anywhere; }
-.product-table { overflow-x: auto; background: white; border-radius: 8px; margin-top: 1.5rem; }
-.product-table table { width: 100%; border-collapse: collapse; text-align: left; }
-.product-table th, .product-table td { padding: .8rem; border-bottom: 1px solid #e2e9ed; }
-.product-table th { background: #e9f0f4; }
+.product-table { overflow-x: auto; background: var(--card); border-radius: 8px; margin-top: 1.5rem; }
+.product-table table { width: 100%; border-collapse: collapse; text-align: start; }
+.product-table th, .product-table td { padding: .8rem; border-bottom: 1px solid var(--border); }
+.product-table th { background: var(--muted); }
 .product-pagination { display: flex; align-items: center; justify-content: space-between; gap: .5rem; margin-top: 1rem; }
-.product-shell [role=alert] { border-left: 4px solid #a34b21; padding: 1rem; background: #fff6ed; margin: 1rem 0; }
+.product-shell [role=alert] { border-inline-start: 4px solid var(--warning-border); padding: 1rem; background: var(--warning-surface); margin: 1rem 0; }
 .product-detail dd { margin: .3rem 0 1rem; overflow-wrap: anywhere; }
 @media (max-width: 500px) { .product-nav a { width: 100%; margin: .5rem 0 0; } .product-table th, .product-table td { padding: .45rem; } }
-.directory-editor { margin: 1.5rem 0; padding: clamp(1rem, 3vw, 2rem); border: 1px solid #b5c7d2; border-top: 4px solid #2d6178; border-radius: 10px; background: #fff; box-shadow: 0 8px 24px #1933440a; }
+.directory-editor { margin: 1.5rem 0; padding: clamp(1rem, 3vw, 2rem); border: 1px solid #b5c7d2; border-top: 4px solid #2d6178; border-radius: 10px; background: var(--card); box-shadow: 0 8px 24px var(--foreground)0a; }
 .directory-editor fieldset { display: grid; gap: .6rem; border: 0; padding: 0; margin: 1.5rem 0; max-width: 620px; min-width: 0; }
 .directory-editor label { font-weight: 650; margin-top: .6rem; }
-.product-shell input { box-sizing: border-box; width: 100%; min-height: 44px; border: 1px solid #748d9c; border-radius: 6px; padding: .7rem; background: #fff; color: #193344; font: inherit; }
+.product-shell input { box-sizing: border-box; width: 100%; min-height: 44px; border: 1px solid var(--input); border-radius: 6px; padding: .7rem; background: var(--card); color: var(--foreground); font: inherit; }
 .product-shell [aria-invalid=true] { border: 2px solid #a13d20; }
 .product-shell .field-error { color: #9b321b; }
 .product-shell .form-actions { display: flex; flex-wrap: wrap; gap: .8rem; margin-top: 1.2rem; }
 .product-shell .primary-button { display: inline-block; background: #193e52; color: #fff; border-radius: 6px; padding: .7rem 1rem; }
-.directory-notice { padding: 1rem; border-left: 4px solid #2d6178; background: #e8f1f6; }
-.product-shell dialog { max-width: min(90vw, 520px); border: 1px solid #748d9c; border-radius: 12px; padding: 1.5rem; color: #193344; }
+.directory-notice { padding: 1rem; border-inline-start: 4px solid #2d6178; background: #e8f1f6; }
+.product-shell dialog { max-width: min(90vw, 520px); border: 1px solid var(--input); border-radius: 12px; padding: 1.5rem; color: var(--foreground); }
 .product-shell dialog::backdrop { background: #102d3e99; }
 .directory-search { margin: 1.5rem 0; max-width: 660px; }
 .directory-search .form-actions { flex-wrap: nowrap; margin-top: .5rem; }
-.regulatory-profile { background: #fff; border: 1px solid #b5c7d2; border-radius: 12px; padding: clamp(1rem, 3vw, 2rem); margin: 1.5rem 0; }
-.profile-draft-note { background: #fff5e4; border-left: 4px solid #9a6619; padding: 1rem; line-height: 1.6; }
-.profile-context { background: #e9f0f4; padding: 1rem; overflow-wrap: anywhere; }
+.regulatory-profile { background: var(--card); border: 1px solid #b5c7d2; border-radius: 12px; padding: clamp(1rem, 3vw, 2rem); margin: 1.5rem 0; }
+.profile-draft-note { background: #fff5e4; border-inline-start: 4px solid #9a6619; padding: 1rem; line-height: 1.6; }
+.profile-context { background: var(--muted); padding: 1rem; overflow-wrap: anywhere; }
 .profile-field-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); gap: 1.4rem; }
 .required-data-field label { display: block; font-weight: 650; margin-bottom: .5rem; }
 .required-data-controls { display: grid; grid-template-columns: minmax(115px, .8fr) minmax(0, 1.5fr); gap: .5rem; }
 .required-data-controls input, .required-data-controls select { width: 100%; min-width: 0; }
-.regulatory-profile details { border-top: 1px solid #d1dce3; padding: 1rem 0; }
+.regulatory-profile details { border-top: 1px solid var(--border); padding: 1rem 0; }
 .regulatory-profile summary { cursor: pointer; min-height: 44px; line-height: 1.6; }
 .regulatory-profile dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
 .regulatory-profile dt { font-weight: 650; }
@@ -47,9 +47,9 @@
 /* NAV-WORKSPACE-01: shared shell, without remote fonts or a second component system. */
 .product-shell { display: grid; grid-template-columns: 220px minmax(0, 1fr); grid-template-rows: auto 1fr; }
 .product-header { grid-column: 1 / -1; padding: 1rem 1.5rem; gap: 1rem; flex-wrap: wrap; }
-.workspace-breadcrumb { margin-right: auto; color: #d5e3eb; }
-.product-nav { grid-column: 1; grid-row: 2; display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; padding: 1.5rem 1rem; border-right: 1px solid #d1dce3; border-bottom: 0; }
-.product-nav button { text-align: left; }
+.workspace-breadcrumb { margin-inline-end: auto; color: #d5e3eb; }
+.product-nav { grid-column: 1; grid-row: 2; display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; padding: 1.5rem 1rem; border-inline-end: 1px solid var(--border); border-bottom: 0; }
+.product-nav button { text-align: start; }
 .product-nav a { margin: 1.5rem 0 0; padding: .6rem; }
 .product-shell main { grid-column: 2; grid-row: 2; min-width: 0; width: 100%; box-sizing: border-box; }
 .product-shell h1 { letter-spacing: -.03em; margin-bottom: .5rem; }
@@ -57,7 +57,7 @@
 .product-header .workspace-menu { display: none; }
 .workspace-search { width: min(640px, 90vw); max-height: 85vh; overflow: auto; }
 .workspace-search ul { padding: 0; list-style: none; }
-.workspace-search li a { display: block; padding: .8rem .4rem; color: #193e52; border-bottom: 1px solid #d1dce3; overflow-wrap: anywhere; }
+.workspace-search li a { display: block; padding: .8rem .4rem; color: #193e52; border-bottom: 1px solid var(--border); overflow-wrap: anywhere; }
 .product-shell kbd { font-size: .75rem; }
 .register-hash { overflow-wrap: anywhere; font-family: monospace; }
 .product-shell section[aria-label="Regulatory draft register"] fieldset,
@@ -101,8 +101,8 @@
 .crew-shell form { margin-top: 1.5rem; }
 .crew-shell fieldset { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; min-width: 0; margin: 1rem 0; }
 .crew-shell label { display: flex; flex-direction: column; gap: .4rem; min-width: 0; }
-.crew-shell input, .crew-shell select { min-height: 44px; max-width: 100%; width: 100%; padding: .6rem; background: white; color: #193344; border: 1px solid #9eb3c0; border-radius: 6px; font: inherit; }
-.crew-shell dialog { max-width: min(32rem, 90vw); padding: 1.5rem; border: 1px solid #9eb3c0; border-radius: 6px; background: #f4f7f9; color: #193344; }
+.crew-shell input, .crew-shell select { min-height: 44px; max-width: 100%; width: 100%; padding: .6rem; background: var(--card); color: var(--foreground); border: 1px solid var(--input); border-radius: 6px; font: inherit; }
+.crew-shell dialog { max-width: min(32rem, 90vw); padding: 1.5rem; border: 1px solid var(--input); border-radius: 6px; background: var(--background); color: var(--foreground); }
 .crew-shell dialog::backdrop { background: rgb(16 45 62 / .65); }
 @media (max-width: 600px) { .crew-shell fieldset { grid-template-columns: minmax(0, 1fr); } }
 .control-evidence { min-width: 0; max-width: 100%; }
@@ -113,7 +113,7 @@
 .control-evidence p, .control-evidence li, .control-evidence button, .control-evidence summary { overflow-wrap: anywhere; }
 .control-evidence button:not([data-slot="button"]) { min-height: 44px; max-width: 100%; white-space: normal; }
 .control-evidence :focus-visible { outline: 3px solid #126b94; outline-offset: 3px; }
-.control-evidence article { padding: 1rem; margin-block: 1rem; border: 1px solid #9eb3c0; }
+.control-evidence article { padding: 1rem; margin-block: 1rem; border: 1px solid var(--input); }
 .human-review { border-block-start: 1px solid var(--border, #718096); margin-block-start: 1rem; padding-block-start: 1rem; min-width: 0; }
 .human-review article { padding-block: .75rem; border-block-end: 1px solid var(--border, #718096); }
 .human-review code, .human-review p, .human-review li { overflow-wrap: anywhere; }

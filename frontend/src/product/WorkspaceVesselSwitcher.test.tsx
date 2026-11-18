@@ -15,7 +15,8 @@ const session: Session = { authenticated: true, canRead: true, actorId: actor, t
   csrfToken: 'synthetic-only', setupRequired: false, canReadCompanies: false, canCreate: false, canSearch: false }
 const rows = [first, second].map((id, i) => ({ id, companyId: tenant, code: `SYN-${i + 1}`, name: `FICTIONAL vessel ${i + 1}`, kind: 'Ship' as const, version: 1, canEdit: false }))
 const page = { items: rows, offset: 0, limit: 25, hasMore: false }
-const context = (): WorkspaceContext => ({ tenantId: tenant, actorId: actor, roleContext: { state: 'Missing', roles: [], catalogVersion: null }, vessel: { ...rows[1] } })
+const context = (): WorkspaceContext => ({ tenantId: tenant, actorId: actor, roleContext: { state: 'Missing', roles: [], catalogVersion: null },
+  company: { id: tenant, code: 'SYN-CO', name: 'FICTIONAL company' }, vessel: { ...rows[1] } })
 const props = { session, vessel: first, language: 'en' as const, onClose: vi.fn(), onNavigate: vi.fn() }
 const target = () => screen.getByRole('button', { name: 'SYN-2 · FICTIONAL vessel 2 · Ship' })
 function pending<T>() { let resolve!: (value: T) => void; const promise = new Promise<T>(yes => { resolve = yes }); return { resolve, promise } }
@@ -23,6 +24,25 @@ beforeEach(() => { vi.mocked(vessels).mockResolvedValue(page); vi.mocked(loadWor
 afterEach(() => { vi.resetAllMocks(); vi.restoreAllMocks(); history.replaceState(null, '', '/') })
 
 describe('DEV-021 / T-S2-002 authorized vessel context switch; authored, execution deferred', () => {
+  it('focuses the search after native modal opening and restores the original trigger on unmount', async () => {
+    const show = vi.spyOn(HTMLDialogElement.prototype, 'showModal').mockImplementation(function (this: HTMLDialogElement) {
+      this.open = true
+      // Native dialog focus may initially choose the first Close button. A
+      // mount-time autofocus does not establish post-showModal search focus.
+      this.querySelector<HTMLButtonElement>('button')?.focus()
+    })
+    const opener = document.createElement('button')
+    opener.textContent = 'Open fictional vessel chooser'
+    document.body.appendChild(opener); opener.focus()
+    try {
+      const view = render(<WorkspaceVesselSwitcher {...props} />)
+      try {
+        await waitFor(() => expect(screen.getByRole('searchbox', { name: 'Vessel name or code' })).toHaveFocus())
+        expect(show).toHaveBeenCalledOnce()
+      } finally { view.unmount() }
+      expect(opener).toHaveFocus()
+    } finally { opener.remove() }
+  })
   it('rechecks the selected vessel and waits for the existing dirty-navigation guard to commit before closing', async () => {
     const next = pending<WorkspaceContext>(); vi.mocked(loadWorkspaceContext).mockReturnValue(next.promise)
     const user = userEvent.setup(); render(<WorkspaceVesselSwitcher {...props} />)

@@ -1,7 +1,8 @@
-import { describe, expect, it } from 'vitest'
-import { decodeReview, decodeTrace } from './human-review-api'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { decodeReview, decodeTrace, loadSession, save } from './human-review-api'
 
-import { reviewAnchor, reviewRow, reviewTrace, recordedRow } from './human-review.test-fixtures'
+import { reviewAnchor, reviewRow, reviewTrace, recordedRow, reviewSession } from './human-review.test-fixtures'
+afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals() })
 const actor = reviewRow().actorId
 describe('human trace closed wire boundary authored NOT RUN', () => {
   it('retains pending and unavailable instead of inferred success', () => {
@@ -26,5 +27,50 @@ describe('authorized human recording wire boundary, NOT RUN', () => {
     expect(() => decodeReview({ ...recordedRow(), currentState: 'Effective' }, reviewAnchor)).toThrow()
     expect(() => decodeReview({ ...recordedRow(), recording: { ...recordedRow().recording, policy: { ...recordedRow().recording.policy, authorityRole: 'Admin' } } }, reviewAnchor)).toThrow()
     expect(() => decodeReview({ ...recordedRow(), recording: { ...recordedRow().recording, content: { ...recordedRow().recording.content, subjectId: actor } } }, reviewAnchor)).toThrow()
+  })
+})
+
+describe('HRO01/03 fresh session and exact non-recording receipts, authored NOT RUN', () => {
+  const response = (value: unknown) => ({ ok: true, status: 200, json: async () => value }) as Response
+  const command = () => ({ expectedVersion: 0, evidenceId: reviewAnchor.evidenceId, evidenceRevision: reviewAnchor.evidenceRevision,
+    evidenceVersion: 2, controlId: reviewAnchor.controlId, controlRevision: reviewAnchor.controlRevision, controlVersion: 3,
+    expectedProfileRevision: null, recording: null,
+    ...Object.fromEntries(['state', 'reasonCode', 'rationale', 'authorityId', 'operationId', 'verificationId', 'verificationRevision', 'evaluationId'].map(key => [key, reviewRow()[key as keyof ReturnType<typeof reviewRow>]])) })
+  it('uses the exact serialized command/key/CSRF and accepts its unpromoted PENDING receipt', async () => {
+    const fetch = vi.fn<(url: string, init?: RequestInit) => Promise<Response>>().mockResolvedValue(response(reviewRow())); vi.stubGlobal('fetch', fetch)
+    const body = JSON.stringify(command()), key = crypto.randomUUID(), csrf = crypto.randomUUID()
+    const row = await save(reviewAnchor, { kind: 'Verification', id: null, body, key }, csrf, new AbortController().signal)
+    expect(row.state).toBe('PENDING')
+    expect(fetch.mock.calls[0][1]?.body).toBe(body)
+    expect(fetch.mock.calls[0][1]?.headers).toMatchObject({ 'X-CSRF-TOKEN': csrf, 'Idempotency-Key': key })
+  })
+  it.each(['rationale', 'authorityId', 'operationId', 'evaluationId', 'reasonCode', 'state'] as const)('rejects a structurally valid PENDING receipt with altered %s', async field => {
+    const row = { ...reviewRow(), [field]: field === 'rationale' ? 'Different valid private reason' : field === 'reasonCode' ? 'HUMAN_REJECTED' : field === 'state' ? 'REJECTED' : reviewAnchor.controlId }
+    if (field === 'state') row.currentState = 'REJECTED'
+    vi.stubGlobal('fetch', vi.fn(async () => response(row)))
+    await expect(save(reviewAnchor, { kind: 'Verification', id: null, body: JSON.stringify(command()), key: crypto.randomUUID() }, crypto.randomUUID(), new AbortController().signal)).rejects.toMatchObject({ status: 502 })
+  })
+  it('binds PENDING decision verification lineage before declaring success', async () => {
+    const row = { ...reviewRow(), kind: 'Decision', verificationId: reviewAnchor.controlId, verificationRevision: 2 }
+    const body = JSON.stringify({ ...command(), verificationId: reviewRow().id, verificationRevision: 1 })
+    vi.stubGlobal('fetch', vi.fn(async () => response(row)))
+    await expect(save(reviewAnchor, { kind: 'Decision', id: null, body, key: crypto.randomUUID() }, crypto.randomUUID(), new AbortController().signal)).rejects.toMatchObject({ status: 502 })
+  })
+  it('requires authenticated readable canonical owner and fresh bounded CSRF, never a caller role', async () => {
+    const user = reviewSession(); vi.stubGlobal('fetch', vi.fn(async () => response(user)))
+    expect(await loadSession(new AbortController().signal)).toMatchObject({ owner: `${user.tenantId}/${user.actorId}`, csrf: user.csrfToken })
+    for (const patch of [{ authenticated: false }, { setupRequired: true }, { canRead: false }, { actorId: user.actorId+'\n' }, { tenantId: null }, { csrfToken: '' }, { csrfToken: crypto.randomUUID()+'\n' }]) {
+      vi.stubGlobal('fetch', vi.fn(async () => response({ ...user, ...patch })))
+      await expect(loadSession(new AbortController().signal)).rejects.toBeInstanceOf(Error)
+    }
+  })
+  it.each([{ label: 'NUL', code: 0 }, { label: 'DEL', code: 127 }])('rejects bounded actual-session CSRF containing $label without a write', async ({ code }) => {
+    const user = { ...reviewSession(), csrfToken: crypto.randomUUID()+String.fromCharCode(code)+crypto.randomUUID() }
+    const fetch = vi.fn<(url: string, init?: RequestInit) => Promise<Response>>().mockResolvedValue(response(user)); vi.stubGlobal('fetch', fetch)
+    await expect(loadSession(new AbortController().signal)).rejects.toMatchObject({ status: 502 })
+    expect(fetch).toHaveBeenCalledTimes(1)
+    expect(fetch.mock.calls[0][0]).toBe('/api/v1/auth/session')
+    expect(fetch.mock.calls[0][1]?.method).toBeUndefined()
+    expect(fetch.mock.calls[0][1]?.body).toBeUndefined()
   })
 })

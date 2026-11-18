@@ -1,0 +1,56 @@
+# TODAY-VESSEL-REFLOW-01
+
+Source: user-reported Today-page overflow screenshot,13.11.2026; active13.04
+design-system responsive layout/accessibility contract, with17 locale directions.
+Parent phase: S2 workspace; source baseline002a931. Acceptance and added SP:0.
+
+The Today vessel grid used a fixed240px minimum and horizontal icon/body rows.
+The text body's automatic minimum width let long, unbroken vessel codes/names
+escape their cards. The selector's ad hoc pagination also spread controls over
+the page. Do not fix this by hiding horizontal overflow or dropping identities.
+
+- **TVR01:** Responsive grid tracks may shrink to their container; shared Card
+  headers and identity flex items have an explicit zero minimum. Full codes and
+  names wrap inside each card, with the original strings retained as accessible
+  names and titles. No clipping, ellipsis, fixture filtering or value mutation.
+- **TVR02:** Each card uses the shared Button with a consistent full-width footer;
+  actions align at the bottom while text remains readable. Previous/next and
+  refresh use EnterprisePagination and EnterpriseActions. Same disabled/offline,
+  pagination limits and authorized target URL; no business writes or approvals.
+- **TVR03:** Preserve keyboard activation, logical RTL alignment, all17 translations
+  and full accessible identities. The two authored component variants cover TR
+  and Arabic identities at the existing wire length limits.
+- **TVR04:** The authored Playwright spec in the normal specs test directory covers
+  six long-identity records at1365/580/390/320px, RTL, full text, page/card/button
+  bounds, keyboard navigation and zero writes. It uses synthetic transport and
+  no screenshots/traces/video; it is not real-backend authority evidence.
+
+New tests and the larger lint/typecheck/component/browser gate are **DEFERRED**
+under the user's phase-delivery cadence. A user-requested preview build may update
+the open application without implying regression PASS. Independent source/QA
+review is pending the reported agent usage limit; no retry/account rotation,
+new PR, merge, canonical sprint completion or release acceptance is claimed.
+
+## 14 November combined-gate type correction
+
+The authorized521ac720 full frontend gate passed lint39.076s, then failed full
+typecheck14.984s with TS2769 at the three new role queries (lines135/136/138).
+The installed Testing Library role-query contract does not accept `exact`.
+Its literal accessible-name matcher already compares exact normalized strings
+([role query](../../frontend/node_modules/@testing-library/dom/dist/queries/role.js)
+and [matcher](../../frontend/node_modules/@testing-library/dom/dist/matches.js)).
+Remove only those three unsupported options. Preserve the same roles, full
+literal names, within-card scope, full text/title assertions and keyboard target.
+The text-query `exact:true` remains supported and unchanged. No assertion,
+skip, timeout, source value, production logic or matching threshold is removed.
+Full typecheck and the subsequent larger gate must verify the corrected target;
+the original521 failure is retained and later stages were not run in that gate.
+
+The next5680212 gate passed lint/typecheck and233 applicable protocol identities;
+its full component run was1661 PASS/1 FAIL. The remaining new Arabic variant
+rendered directly before the lazy product catalog had been loaded, reaching the
+intentional `locale_catalog_not_loaded` guard in messages.ts:88. The fixture now
+awaits the existing `changeAppLanguage(language,false)` operation inside act,
+then asserts the document direction before rendering. No fallback, translation
+guard or production behavior is changed; both TR/Arabic variants remain present.
+Verify the two selected variants before the next full package; retain568 failure.

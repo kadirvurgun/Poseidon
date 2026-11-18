@@ -1,6 +1,6 @@
 # PR16 — imzalı koşu düzeltmesi, 11.11.2026
 
-Durum: **DÜZELTME YAZILDI / DAR KONTROLLER GEÇTİ / TAM KABUL AÇIK**.
+Durum: **GÜNCEL REQUIRED CI YEŞİL / TAM SIGNED VE BAĞIMSIZ SON QA AÇIK / KABUL EDİLMEDİ**.
 
 ## Gerçek sonuçlar
 
@@ -49,3 +49,10 @@ PR16draft kalır. Yeni sourceCI, güncel bağımsızQA ve temiz/disposable yeni 
 kimlikleriyle tam signedmanifest doğrulaması gerekir. Tüketilmiş fixtureIDleri
 ve süresi geçmiş kurgusal yetki pencereleri sessizce başarıya çevrilmez.
 Canonical103/970SP,%10,62 ve20/121iş kabul değişmedi.
+
+
+## Güncel CI sonucu — 32ff1d0
+
+`32ff1d08aed38c02cd78a019caf5913d49c26ace` için [PR 42911168567](https://github.com/kadirvurgun/Poseidon/actions/runs/42911168567) ve [push 42911160703](https://github.com/kadirvurgun/Poseidon/actions/runs/42911160703) dört zorunlu işi de başarıyla tamamladı. Her olayın indirilen `api-test-counts` artifact’i 826/826 integration ve 176/176 unit, hata 0, skip 0; gerçek HTTP/write-audit eşleştirmesinde 117/117 kritik işlem gösteriyor. Kapalı sayım özeti ve iki integration/unit artifact SHA256 değerleri durum JSON’unda tutulur. Bu sonuç yeni 17-dil dalını veya tam signed manifestini doğrulamaz.
+
+Özgün 174 koşu ve başarısızlıkları aynen korunur. Güncel tam signed koşu ve bağımsız hedef QA olmadan PR taslak kalır. Bu raporun sonraki metadata commit’i, CI hedefi olan 32ff1d0 ile karıştırılmaz.

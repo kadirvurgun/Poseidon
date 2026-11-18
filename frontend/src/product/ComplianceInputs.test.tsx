@@ -1,10 +1,39 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import { act, render, screen, fireEvent } from '@testing-library/react'
+import { useState } from 'react'
 import { describe, expect, it } from 'vitest'
 import { ComplianceInputEditor } from './ComplianceInputEditor'
 import { blank, validContent, type Content } from './control-evidence-api'
 import { validCompliancePolicies, validOwningReferences } from './compliance-input-contract'
+import { changeAppLanguage, type Locale } from '../i18n'
 
 describe('source-defined compliance capture', () => {
+  it('translates the actual class declaration inputs while preserving draft bytes, false and explicit unknown', async () => {
+    function Draft({ language, offline = false }: { language: Locale; offline?: boolean }) {
+      const [value, setValue] = useState<Content>(() => ({ ...blank(), classPack: {
+        packReference: 'SYNTHETIC pack', edition: null, surveyReference: null, iacsM79: false,
+      } }))
+      return <><ComplianceInputEditor value={value} onChange={setValue} offline={offline} language={language} />
+        <output aria-label="Retained compliance bytes">{JSON.stringify(value)}</output></>
+    }
+    const { rerender } = render(<Draft language="en" />)
+    const reference = screen.getByLabelText('Class rule pack reference')
+    const declaration = screen.getByLabelText('M79 statement in source')
+    fireEvent.change(reference, { target: { value: 'SYNTHETIC retained declaration' } })
+    const original = screen.getByLabelText('Retained compliance bytes').textContent
+    await act(async () => { await changeAppLanguage('fr', false) })
+    rerender(<Draft language="fr" />)
+    expect(screen.getByLabelText('Référence du recueil de règles de classe')).toBe(reference)
+    expect(reference).toHaveValue('SYNTHETIC retained declaration')
+    expect(screen.getByLabelText('Déclaration M79 dans la source')).toBe(declaration)
+    expect(declaration).toHaveValue('false')
+    expect(screen.getByLabelText('Retained compliance bytes').textContent).toBe(original)
+    fireEvent.change(declaration, { target: { value: '' } })
+    expect(JSON.parse(screen.getByLabelText('Retained compliance bytes').textContent!).classPack.iacsM79).toBeNull()
+    rerender(<Draft language="fr" offline />)
+    expect(reference).toBeDisabled()
+    expect(declaration).toBeDisabled()
+  })
+
   it('preserves Unknown and explicit false without approval or declaration coercion', () => {
     let value: Content = { ...blank(), classPack: { packReference: null, edition: null, surveyReference: null, iacsM79: null } }
     const { rerender } = render(<ComplianceInputEditor value={value} onChange={v => { value = v }} offline={false} language="en" />)

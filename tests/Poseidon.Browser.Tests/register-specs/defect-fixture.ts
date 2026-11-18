@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto'
 import { readFileSync, realpathSync, statSync } from 'node:fs'
 import { isAbsolute, relative, sep } from 'node:path'
 import { expect, type Page } from '@playwright/test'
-import { defectSourceVersion } from '../../../frontend/src/product/defect-fields.ts'
+import { defectSourceVersion } from '../../../frontend/src/contracts/operational-source-pins.ts'
 export type DefectSignedFixture = { schemaVersion: 'poseidon.defect.signed-fixture.v1'; runId: string; tenantId: string; vesselId: string; actorId: string; assetId: string; assetRevision: number }
 const object = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v)
 const exact = (v: unknown, keys: string[]): v is Record<string, unknown> => object(v) && Object.keys(v).length === keys.length && keys.every(key => Object.hasOwn(v, key))

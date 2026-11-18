@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { beforeEach, expect, it, vi } from 'vitest'
 import { ApiError } from './api'
 import { TugOfflinePanel } from './TugOfflinePanel'
+import { changeAppLanguage } from '../i18n'
 
 const mock = vi.hoisted(() => ({ authorize: vi.fn(), inventory: vi.fn(), shell: vi.fn(), lost: vi.fn() }))
 vi.mock('./tug-offline', () => ({ TugOfflineApplication: { authorize: mock.authorize }, tugOfflineInventory: mock.inventory, reportTugLostKey: mock.lost }))
@@ -17,6 +18,33 @@ beforeEach(() => {
   Object.defineProperty(navigator, 'onLine', { configurable: true, value: true }); Object.defineProperty(document, 'hidden', { configurable: true, value: false })
 })
 async function authorize() { await userEvent.click(screen.getByRole('button', { name: 'Authorize encrypted capture' })); await screen.findByText('Enrolled encrypted device capture available') }
+
+it('retains the exact offline conflict across a locale change and requires an explicit resolution choice', async () => {
+  const retained = { ...pending, outcome: { result: 'MaterialConflict' } }
+  const conflict = {
+    base: { plannedStart: '2026-11-11T10:00:00Z', plannedEnd: '2026-11-11T11:00:00Z' },
+    captured: { plannedStart: '2026-11-11T10:30:00Z', plannedEnd: '2026-11-11T11:30:00Z' },
+    server: { plannedStart: '2026-11-11T12:00:00Z', plannedEnd: '2026-11-11T13:00:00Z' },
+    choices: ['keepServer', 'useCaptured'],
+  }
+  app.captures.mockResolvedValue([retained])
+  app.conflict.mockResolvedValue(conflict)
+  const { rerender } = render(<TugOfflinePanel job={job} vessel={vessel} language="en" />)
+  await authorize()
+  await userEvent.click(screen.getByRole('button', { name: 'Review conflict' }))
+  expect(await screen.findByText('Current server')).toBeVisible()
+  await changeAppLanguage('it', false)
+  rerender(<TugOfflinePanel job={job} vessel={vessel} language="it" />)
+  expect(screen.getByText('Server attuale')).toBeVisible()
+  expect(screen.getByText('2026-11-11T12:00:00Z / 2026-11-11T13:00:00Z')).toBeVisible()
+  expect(app.close).not.toHaveBeenCalled()
+  expect(app.capture).not.toHaveBeenCalled()
+  expect(app.replay).not.toHaveBeenCalled()
+  await userEvent.click(screen.getByRole('button', { name: 'Mantieni gli orari attuali del server' }))
+  expect(app.capture).toHaveBeenCalledWith(conflict.server, { conflict, choice: 'keepServer' })
+  expect(retained.body).toBe('{"frozen":"synthetic"}')
+})
+
 it('captures only nullable times after real enrollment contract and withdraws on reconnect without automatic sync', async () => {
   render(<TugOfflinePanel job={job} vessel={vessel} language="en" />)
   expect(screen.queryByRole('button', { name: 'Capture encrypted draft' })).not.toBeInTheDocument(); await authorize()

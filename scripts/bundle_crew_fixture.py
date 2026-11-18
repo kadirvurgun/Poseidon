@@ -5,6 +5,7 @@ fictional writer receives the complete legacy-conversion field scope; reviewer,
 restricted and foreign memberships remain byte-equivalent.
 """
 from copy import deepcopy
+import lab_runtime
 import re
 import uuid
 
@@ -24,7 +25,7 @@ def configure(config, metadata):
         raise RuntimeError('bundle_crew_fixture_run_required') from None
     if (metadata.get('schemaVersion') != 'poseidon.bundle-fixture-plan.v1' or
             metadata.get('tenantId') != '10000000-0000-0000-0000-000000000001' or
-            config.get('Authentication', {}).get('Oidc', {}).get('Issuer') != 'https://localhost:8443/realms/poseidon-lab'):
+            config.get('Authentication', {}).get('Oidc', {}).get('Issuer') != lab_runtime.authority(config)):
         raise RuntimeError('bundle_crew_fixture_scope_required')
     try:
         actor = metadata.get('writerActorId')

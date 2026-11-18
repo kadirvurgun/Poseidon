@@ -36,7 +36,7 @@ function transport() {
 }
 beforeEach(() => { history.replaceState(null, '', `/app/noon-report/${dailyVessel}?id=${dailyId}`); vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(true); panel.current = null })
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals() })
-async function english() { await userEvent.setup().click(screen.getByRole('button', { name: 'EN' })) }
+async function english() { await userEvent.setup().selectOptions(screen.getByRole('combobox', { name: /^(Dil seçin|Choose language)$/ }), 'en'); await waitFor(() => expect(screen.getByRole('combobox', { name: 'Choose language' })).toHaveValue('en')) }
 describe('S5 daily offline parent orchestration (authored; not executed)', () => {
   it('keeps the same resource panel mounted through offline source withdrawal and locks it on known identity mismatch', async () => {
     const { state, fetch } = transport(); render(<DailyReportWorkspace />); await english()

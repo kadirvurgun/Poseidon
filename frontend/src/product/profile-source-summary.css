@@ -1,0 +1,5 @@
+.profile-source-summary { border: 1px solid var(--border); border-radius: var(--radius); background: var(--card); color: var(--foreground); padding: 16px; margin: 16px 0; }
+.profile-source-summary dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 16px; }
+.profile-source-summary dt { font-weight: 600; color: var(--muted-foreground); }
+.profile-source-summary dd { margin: 4px 0 0; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.profile-source-summary > p { margin-top: 12px; color: var(--muted-foreground); }

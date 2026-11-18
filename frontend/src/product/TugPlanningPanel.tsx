@@ -1,100 +1,204 @@
-import { useLayoutEffect, useEffect, useRef, useState } from 'react'
-import { TugOwningEvidence } from './TugOwningEvidence'
-import { TugOfflinePanel } from './TugOfflinePanel'
-import { ApiError } from './api'
-import { planningApi, type Plan, type PlanAttempt, type PlanChange, type PlanHistory, type PlanningEvidence, type PlanningOptions } from './tug-planning-api'
-
-const words = {
-  en: { title: 'Draft planning', start: 'Planned start (UTC)', end: 'Planned end (UTC)', save: 'Save planning window', assign: 'Assign to draft', remove: 'Remove from draft', reassign: 'Reassign in draft', select: 'Eligible tug', replacement: 'Replacement tug', history: 'Planning history', review: 'Review exact revision', reload: 'Discard and reload planning', retry: 'Retry exact planning command', uncertain: 'Planning outcome uncertain. Retry the retained command.', conflict: 'Planning conflict. Input retained; discard and reload to continue.', denial: 'Planning access unavailable. Current rights and policy are required.', unavailable: 'Planning data unavailable.', boundary: 'Draft assignments and times require authorized operational review. No permit or safety approval.', unknown: 'Unknown', missing: 'Missing', unavailableState: 'Unavailable', saved: 'Draft plan saved.', historyNote: 'Historical unverified plan. No current availability or approval is implied.', bp: 'Available verified BP', declared: 'Declared BP evidence', geometry: 'Draft geometry conflicts', offline: 'Tug offline capture is unavailable under the current command policy.', dirty: 'Unsaved planning changes', read: 'Read-only planning', state: 'State', source: 'Source / revision / observation / freshness', noPlan: 'No draft plan', noHistory: 'No visible planning history' },
-  tr: { title: 'Taslak planlama', start: 'Planlanan başlangıç (UTC)', end: 'Planlanan bitiş (UTC)', save: 'Plan aralığını kaydet', assign: 'Taslağa ata', remove: 'Taslak atamasını kaldır', reassign: 'Taslakta yeniden ata', select: 'Uygun römorkör', replacement: 'Yeni römorkör', history: 'Planlama geçmişi', review: 'Kesin sürümü incele', reload: 'Plan değişikliklerini bırak ve yenile', retry: 'Aynı plan komutunu yinele', uncertain: 'Plan kaydının sonucu belirsiz. Korunan komutu yineleyin.', conflict: 'Plan çakışması. Girdi korundu; devam etmek için bırakıp yenileyin.', denial: 'Planlama erişimi yok. Güncel yetki ve politika gerekir.', unavailable: 'Planlama verisi alınamadı.', boundary: 'Taslak atamalar ve zamanlar yetkili operasyon incelemesi gerektirir. İzin veya emniyet onayı değildir.', unknown: 'Bilinmiyor', missing: 'Eksik', unavailableState: 'Kullanılamıyor', saved: 'Taslak plan kaydedildi.', historyNote: 'Geçmiş doğrulanmamış plan. Güncel uygunluk veya onay oluşturmaz.', bp: 'Kullanılabilir doğrulanmış BP', declared: 'Beyan edilen BP kaynağı', geometry: 'Taslak zaman çakışmaları', offline: 'Güncel komut politikası römorkör çevrimdışı kaydını desteklemiyor.', dirty: 'Kaydedilmemiş plan değişiklikleri', read: 'Salt okunur planlama', state: 'Durum', source: 'Kaynak / sürüm / gözlem / güncellik', noPlan: 'Taslak plan yok', noHistory: 'Görünür plan geçmişi yok' },
-}
-const statuses: Record<string, [string, string]> = {
-  CurrentRequestRevision: ['Güncel talep sürümü', 'Current request revision'], RequestChangedSincePlan: ['Talep plan kaydından sonra değişti; inceleme gerekir', 'Request changed since this plan; review required'],
-  Unknown: ['Bilinmiyor', 'Unknown'], Missing: ['Eksik', 'Missing'], Unavailable: ['Kullanılamıyor', 'Unavailable'],
-  DeclaredUnverified: ['Beyan edilmiş, doğrulanmamış', 'Declared, unverified'], Current: ['Güncel', 'Current'], Stale: ['Eski', 'Stale'], Future: ['Gelecek zamanlı', 'Future'], Revoked: ['Geri çekilmiş', 'Revoked'],
-  PolicyChanged: ['Politika değişmiş', 'Policy changed'], UnitOrKindMismatch: ['Birim veya tür uyuşmuyor', 'Unit or kind mismatch'], UnverifiedOrIncomplete: ['Doğrulanmamış veya eksik', 'Unverified or incomplete'],
-  HumanReviewRequired: ['Yetkili insan incelemesi gerekir', 'Authorized human review required'], BoundaryReviewRequired: ['Sınır teması incelemesi gerekir', 'Boundary touch review required'], Intersecting: ['Örtüşüyor', 'Intersecting'], BoundaryTouch: ['Sınır teması', 'Boundary touch'],
-  Window: ['Plan aralığı', 'Planning window'], Assign: ['Taslak atama', 'Draft assignment'], Reassign: ['Taslak yeniden atama', 'Draft reassignment'], Remove: ['Taslak atama kaldırma', 'Draft removal'],
-}
-export function TugPlanningPanel({ id, vessel, requestVersion, csrf, language, onDirty }: { id: string; vessel: string; requestVersion: number; csrf: string; language: 'tr' | 'en'; onDirty: (dirty: boolean) => void }) {
-  const t = words[language], label = (s: string) => statuses[s]?.[language === 'en' ? 1 : 0] ?? s
-  const [requestState, setRequestState] = useState(''), [loading, setLoading] = useState(true)
-  const [plan, setPlan] = useState<Plan | null>(null), [options, setOptions] = useState<PlanningOptions | null>(null)
-  const [evidence, setEvidence] = useState<PlanningEvidence | null>(null), [history, setHistory] = useState<PlanHistory | null>(null), [selected, setSelected] = useState<Plan | null>(null)
-  const [start, setStart] = useState(''), [end, setEnd] = useState(''), [tug, setTug] = useState(''), [replacement, setReplacement] = useState('')
-  const [attempt, setAttempt] = useState<PlanAttempt | null>(null), [notice, setNotice] = useState(''), [busy, setBusy] = useState(false), [dirty, setDirty] = useState(false), [generation, reload] = useState(0)
-  const [offlineDirty, setOfflineDirty] = useState(false)
-  const active = useRef<AbortController | null>(null), review = useRef<AbortController | null>(null), changed = useRef(onDirty); useLayoutEffect(() => { changed.current = onDirty }, [onDirty])
-  useEffect(() => { changed.current(dirty || busy || !!attempt || offlineDirty); return () => changed.current(false) }, [dirty, busy, attempt, offlineDirty])
-  useEffect(() => {
-    const c = new AbortController()
-    const refresh = () => {
-      setEvidence(null)
-      if (!navigator.onLine) return
-      planningApi.detail(id, vessel, c.signal).then(current => {
-        if (c.signal.aborted) return
-        if (current.plan?.revision !== plan?.revision) { setNotice('conflict'); return }
-        setEvidence(current.evidence); setRequestState(current.requestState ?? '')
-      }).catch(e => {
-        if (c.signal.aborted) return
-        if (e instanceof ApiError && [401, 403, 404].includes(e.status)) { setPlan(null); setOptions(null); setHistory(null); setSelected(null); setNotice('denial') }
-      })
+import { sourceText, localizedTuple } from "../i18n/messages";
+import { localizedCopy, localizedText } from "../i18n/messages";
+import { type Locale as AppLocale } from "../i18n";
+import { useLayoutEffect, useEffect, useRef, useState } from 'react';
+import { TugOwningEvidence } from './TugOwningEvidence';
+import { TugOfflinePanel } from './TugOfflinePanel';
+import { ApiError } from './api';
+import { planningApi, type Plan, type PlanAttempt, type PlanChange, type PlanHistory, type PlanningEvidence, type PlanningOptions } from './tug-planning-api';
+const words = localizedCopy("TugPlanningPanel_tsx_words");
+const statuses: Record<string, [
+    string,
+    string
+]> = {
+    CurrentRequestRevision: [sourceText("tr", "pairs.m_21dfcc71731b68a5"), sourceText("en", "pairs.m_21dfcc71731b68a5")], RequestChangedSincePlan: [sourceText("tr", "pairs.m_8140b3e03c50ef21"), sourceText("en", "pairs.m_8140b3e03c50ef21")],
+    Unknown: [sourceText("tr", "pairs.m_a5a7675bd7000dbd"), sourceText("en", "pairs.m_a5a7675bd7000dbd")], Missing: [sourceText("tr", "pairs.m_a5bd35d90de7c160"), sourceText("en", "pairs.m_a5bd35d90de7c160")], Unavailable: [sourceText("tr", "pairs.m_49138f2831bf4262"), sourceText("en", "pairs.m_49138f2831bf4262")],
+    DeclaredUnverified: [sourceText("tr", "pairs.m_31d15511b7a24c4c"), sourceText("en", "pairs.m_31d15511b7a24c4c")], Current: [sourceText("tr", "pairs.m_3d20d517375ac03d"), sourceText("en", "pairs.m_3d20d517375ac03d")], Stale: [sourceText("tr", "pairs.m_ebe8426d02ff1c56"), sourceText("en", "pairs.m_ebe8426d02ff1c56")], Future: [sourceText("tr", "pairs.m_eda6db5dd9d05e69"), sourceText("en", "pairs.m_eda6db5dd9d05e69")], Revoked: [sourceText("tr", "pairs.m_827ef86d6706cc0c"), sourceText("en", "pairs.m_827ef86d6706cc0c")],
+    PolicyChanged: [sourceText("tr", "pairs.m_286f139cc3f61861"), sourceText("en", "pairs.m_286f139cc3f61861")], UnitOrKindMismatch: [sourceText("tr", "pairs.m_45c59880c0512e80"), sourceText("en", "pairs.m_45c59880c0512e80")], UnverifiedOrIncomplete: [sourceText("tr", "pairs.m_2df9286d381108f5"), sourceText("en", "pairs.m_2df9286d381108f5")],
+    HumanReviewRequired: [sourceText("tr", "pairs.m_71e42a38b52f969a"), sourceText("en", "pairs.m_71e42a38b52f969a")], BoundaryReviewRequired: [sourceText("tr", "pairs.m_8cf7cdc2082275d3"), sourceText("en", "pairs.m_8cf7cdc2082275d3")], Intersecting: [sourceText("tr", "pairs.m_57f3171189e7d10b"), sourceText("en", "pairs.m_57f3171189e7d10b")], BoundaryTouch: [sourceText("tr", "pairs.m_6b39882eb43e12e3"), sourceText("en", "pairs.m_6b39882eb43e12e3")],
+    Window: [sourceText("tr", "pairs.m_57e0bc39150de348"), sourceText("en", "pairs.m_57e0bc39150de348")], Assign: [sourceText("tr", "pairs.m_0ebe2ae88d0b2360"), sourceText("en", "pairs.m_0ebe2ae88d0b2360")], Reassign: [sourceText("tr", "pairs.m_c387608371a0f752"), sourceText("en", "pairs.m_c387608371a0f752")], Remove: [sourceText("tr", "pairs.m_007634ceb4ce4267"), sourceText("en", "pairs.m_007634ceb4ce4267")],
+};
+export function TugPlanningPanel({ id, vessel, requestVersion, csrf, language, onDirty }: {
+    id: string;
+    vessel: string;
+    requestVersion: number;
+    csrf: string;
+    language: AppLocale;
+    onDirty: (dirty: boolean) => void;
+}) {
+    const t = words[language], label = (s: string) => localizedTuple(statuses[s], language, 1) ?? s;
+    const [requestState, setRequestState] = useState(''), [loading, setLoading] = useState(true);
+    const [plan, setPlan] = useState<Plan | null>(null), [options, setOptions] = useState<PlanningOptions | null>(null);
+    const [evidence, setEvidence] = useState<PlanningEvidence | null>(null), [history, setHistory] = useState<PlanHistory | null>(null), [selected, setSelected] = useState<Plan | null>(null);
+    const [start, setStart] = useState(''), [end, setEnd] = useState(''), [tug, setTug] = useState(''), [replacement, setReplacement] = useState('');
+    const [attempt, setAttempt] = useState<PlanAttempt | null>(null), [notice, setNotice] = useState(''), [busy, setBusy] = useState(false), [dirty, setDirty] = useState(false), [generation, reload] = useState(0);
+    const [offlineDirty, setOfflineDirty] = useState(false);
+    const active = useRef<AbortController | null>(null), review = useRef<AbortController | null>(null), changed = useRef(onDirty);
+    useLayoutEffect(() => { changed.current = onDirty; }, [onDirty]);
+    useEffect(() => { changed.current(dirty || busy || !!attempt || offlineDirty); return () => changed.current(false); }, [dirty, busy, attempt, offlineDirty]);
+    useEffect(() => {
+        const c = new AbortController();
+        const refresh = () => {
+            setEvidence(null);
+            if (!navigator.onLine)
+                return;
+            planningApi.detail(id, vessel, c.signal).then(current => {
+                if (c.signal.aborted)
+                    return;
+                if (current.plan?.revision !== plan?.revision) {
+                    setNotice('conflict');
+                    return;
+                }
+                setEvidence(current.evidence);
+                setRequestState(current.requestState ?? '');
+            }).catch(e => {
+                if (c.signal.aborted)
+                    return;
+                if (e instanceof ApiError && [401, 403, 404].includes(e.status)) {
+                    setPlan(null);
+                    setOptions(null);
+                    setHistory(null);
+                    setSelected(null);
+                    setNotice('denial');
+                }
+            });
+        };
+        const timer = window.setInterval(refresh, 30000);
+        window.addEventListener('focus', refresh);
+        window.addEventListener('online', refresh);
+        window.addEventListener('offline', refresh);
+        return () => { c.abort(); window.clearInterval(timer); window.removeEventListener('focus', refresh); window.removeEventListener('online', refresh); window.removeEventListener('offline', refresh); };
+    }, [id, vessel, plan?.revision]);
+    const resetScope1 = [id, vessel, requestVersion, generation] as const;
+    const [previousScope1, setPreviousScope1] = useState(resetScope1);
+    // Withdraw stale state in the same render that changes the request scope.
+    if (!Object.is(previousScope1[0], id) || !Object.is(previousScope1[1], vessel) || !Object.is(previousScope1[2], requestVersion) || !Object.is(previousScope1[3], generation)) {
+        const sameContext = previousScope1[0] === id && previousScope1[1] === vessel && previousScope1[2] === requestVersion;
+        setPreviousScope1(resetScope1);
+        setNotice(n => sameContext && n === 'saved' ? n : '');
+        setLoading(true);
+        setBusy(false);
+        setPlan(null);
+        setOptions(null);
+        setEvidence(null);
+        setHistory(null);
+        setSelected(null);
+        setRequestState('');
+        setDirty(false);
+        setAttempt(null);
     }
-    const timer = window.setInterval(refresh, 30000)
-    window.addEventListener('focus', refresh); window.addEventListener('online', refresh); window.addEventListener('offline', refresh)
-    return () => { c.abort(); window.clearInterval(timer); window.removeEventListener('focus', refresh); window.removeEventListener('online', refresh); window.removeEventListener('offline', refresh) }
-  }, [id, vessel, plan?.revision])
-  const resetScope1 = [id, vessel, requestVersion, generation] as const
-  const [previousScope1, setPreviousScope1] = useState(resetScope1)
-  // Withdraw stale state in the same render that changes the request scope.
-  if (!Object.is(previousScope1[0], id) || !Object.is(previousScope1[1], vessel) || !Object.is(previousScope1[2], requestVersion) || !Object.is(previousScope1[3], generation)) {
-    const sameContext = previousScope1[0] === id && previousScope1[1] === vessel && previousScope1[2] === requestVersion
-    setPreviousScope1(resetScope1); setNotice(n => sameContext && n === 'saved' ? n : '')
-    setLoading(true); setBusy(false); setPlan(null); setOptions(null); setEvidence(null); setHistory(null); setSelected(null); setRequestState(''); setDirty(false); setAttempt(null)
-  }
-  useEffect(() => {
-    const c = new AbortController(), signal = AbortSignal.any([c.signal, AbortSignal.timeout(10000)])
-    active.current = c;
-    Promise.all([planningApi.detail(id, vessel, signal), planningApi.options(id, vessel, signal), planningApi.history(id, vessel, signal)])
-      .then(([detail, opts, h]) => { if (c.signal.aborted) return; setPlan(detail.plan); setRequestState(detail.requestState ?? ''); setEvidence(detail.evidence); setOptions(opts); setHistory(h); setStart(detail.plan?.inputs.plannedStart?.slice(0, 19) ?? ''); setEnd(detail.plan?.inputs.plannedEnd?.slice(0, 19) ?? '') })
-      .catch(e => { if (!c.signal.aborted) setNotice(e instanceof ApiError && [401, 403, 404].includes(e.status) ? 'denial' : 'unavailable') })
-      .finally(() => { if (!c.signal.aborted) setLoading(false) })
-    return () => { c.abort(); review.current?.abort() }
-  }, [id, vessel, requestVersion, generation])
-  async function save(change?: PlanChange) {
-    if (!options?.policyVersion || !active.current) return
-    const c = active.current, frozen = attempt ?? { key: crypto.randomUUID(), body: { baseVersion: plan?.version ?? null, requestVersion, policyVersion: options.policyVersion, change: change! } }
-    setAttempt(frozen); setBusy(true); setNotice('')
-    try {
-      const result = await planningApi.save(id, vessel, frozen, csrf, AbortSignal.any([c.signal, AbortSignal.timeout(15000)]))
-      if (c.signal.aborted) return
-      setPlan(result); setAttempt(null); setDirty(false); setNotice('saved'); reload(x => x + 1)
-    } catch (e) {
-      if (c.signal.aborted) return
-      if (e instanceof ApiError && [401, 403, 404].includes(e.status)) { setPlan(null); setOptions(null); setEvidence(null); setHistory(null); setSelected(null); setRequestState(''); setStart(''); setEnd(''); setTug(''); setReplacement(''); setAttempt(null); setDirty(false); setNotice('denial') }
-      else setNotice(e instanceof ApiError && [400, 409].includes(e.status) ? 'conflict' : 'uncertain')
-    } finally { if (!c.signal.aborted) setBusy(false) }
-  }
-  async function exact(revision: number) {
-    review.current?.abort(); const c = new AbortController(); review.current = c; setSelected(null)
-    try { const r = await planningApi.revision(id, vessel, revision, c.signal); if (!c.signal.aborted) setSelected(r) }
-    catch (e) { if (!c.signal.aborted) { setSelected(null); setHistory(null); if (e instanceof ApiError && [401, 403, 404].includes(e.status)) { setPlan(null); setOptions(null); setEvidence(null); setRequestState(''); setStart(''); setEnd(''); setNotice('denial') } else setNotice('unavailable') } }
-  }
-  const locked = busy || !!attempt, editable = options?.canWrite && notice !== 'denial'
-  if (loading) return <section aria-label={t.title}><h3>{t.title}</h3><p role="status">{language === 'en' ? 'Loading planning…' : 'Planlama yükleniyor…'}</p></section>
-  return <section aria-label={t.title}><h3>{t.title}</h3><p>{t.boundary}</p>
+    useEffect(() => {
+        const c = new AbortController(), signal = AbortSignal.any([c.signal, AbortSignal.timeout(10000)]);
+        active.current = c;
+        Promise.all([planningApi.detail(id, vessel, signal), planningApi.options(id, vessel, signal), planningApi.history(id, vessel, signal)])
+            .then(([detail, opts, h]) => {
+            if (c.signal.aborted)
+                return;
+            setPlan(detail.plan);
+            setRequestState(detail.requestState ?? '');
+            setEvidence(detail.evidence);
+            setOptions(opts);
+            setHistory(h);
+            setStart(detail.plan?.inputs.plannedStart?.slice(0, 19) ?? '');
+            setEnd(detail.plan?.inputs.plannedEnd?.slice(0, 19) ?? '');
+        })
+            .catch(e => {
+            if (!c.signal.aborted)
+                setNotice(e instanceof ApiError && [401, 403, 404].includes(e.status) ? 'denial' : 'unavailable');
+        })
+            .finally(() => {
+            if (!c.signal.aborted)
+                setLoading(false);
+        });
+        return () => { c.abort(); review.current?.abort(); };
+    }, [id, vessel, requestVersion, generation]);
+    async function save(change?: PlanChange) {
+        if (!options?.policyVersion || !active.current)
+            return;
+        const c = active.current, frozen = attempt ?? { key: crypto.randomUUID(), body: { baseVersion: plan?.version ?? null, requestVersion, policyVersion: options.policyVersion, change: change! } };
+        setAttempt(frozen);
+        setBusy(true);
+        setNotice('');
+        try {
+            const result = await planningApi.save(id, vessel, frozen, csrf, AbortSignal.any([c.signal, AbortSignal.timeout(15000)]));
+            if (c.signal.aborted)
+                return;
+            setPlan(result);
+            setAttempt(null);
+            setDirty(false);
+            setNotice('saved');
+            reload(x => x + 1);
+        }
+        catch (e) {
+            if (c.signal.aborted)
+                return;
+            if (e instanceof ApiError && [401, 403, 404].includes(e.status)) {
+                setPlan(null);
+                setOptions(null);
+                setEvidence(null);
+                setHistory(null);
+                setSelected(null);
+                setRequestState('');
+                setStart('');
+                setEnd('');
+                setTug('');
+                setReplacement('');
+                setAttempt(null);
+                setDirty(false);
+                setNotice('denial');
+            }
+            else
+                setNotice(e instanceof ApiError && [400, 409].includes(e.status) ? 'conflict' : 'uncertain');
+        }
+        finally {
+            if (!c.signal.aborted)
+                setBusy(false);
+        }
+    }
+    async function exact(revision: number) {
+        review.current?.abort();
+        const c = new AbortController();
+        review.current = c;
+        setSelected(null);
+        try {
+            const r = await planningApi.revision(id, vessel, revision, c.signal);
+            if (!c.signal.aborted)
+                setSelected(r);
+        }
+        catch (e) {
+            if (!c.signal.aborted) {
+                setSelected(null);
+                setHistory(null);
+                if (e instanceof ApiError && [401, 403, 404].includes(e.status)) {
+                    setPlan(null);
+                    setOptions(null);
+                    setEvidence(null);
+                    setRequestState('');
+                    setStart('');
+                    setEnd('');
+                    setNotice('denial');
+                }
+                else
+                    setNotice('unavailable');
+            }
+        }
+    }
+    const locked = busy || !!attempt, editable = options?.canWrite && notice !== 'denial';
+    if (loading)
+        return <section aria-label={t.title}><h3>{t.title}</h3><p role="status">{localizedText(language, "pairs.m_e504ac8d13b9bc0c")}</p></section>;
+    return <section aria-label={t.title}><h3>{t.title}</h3><p>{t.boundary}</p>
     {notice && <p role="alert">{t[notice as keyof typeof t] ?? t.unavailable}</p>}{dirty && <p role="status">{t.dirty}</p>}
     {plan ? <p>r{plan.revision} · {plan.sourceVersion} · {plan.policyVersion} · {plan.savedAt}</p> : !['denial', 'unavailable'].includes(notice) && <p>{t.noPlan}</p>}
-    <ul aria-label={language === 'en' ? 'Current draft assignments' : 'Güncel taslak atamaları'}>{plan?.inputs.assignedTugs.map(id => <li key={id}>{options?.tugs.find(v => v.id === id)?.code ?? id}</li>)}</ul>
+    <ul aria-label={localizedText(language, "pairs.m_e58e0c09570a1012")}>{plan?.inputs.assignedTugs.map(id => <li key={id}>{options?.tugs.find(v => v.id === id)?.code ?? id}</li>)}</ul>
     {requestState && <p role={requestState === 'RequestChangedSincePlan' ? 'alert' : undefined}>{label(requestState)}</p>}
     <p>{t.bp}: {evidence?.availableBollardPull ?? t.unknown} · {label(evidence?.capacityState ?? 'Unknown')}</p>
-    <TugOwningEvidence value={evidence} language={language} />
+    <TugOwningEvidence value={evidence} language={language}/>
     <ul aria-label={t.declared}>{evidence?.bp.map(b => <li key={b.tugId}>{b.tugId}: {b.declaredValue ?? '—'} · {label(b.state)}<p>{t.source}: {b.source ?? '—'} / {b.sourceRevision ?? '—'} / {b.observationId ?? '—'} / {b.observedAt ?? '—'} / {label(b.freshness)} · {b.policyVersion ?? '—'}</p></li>)}</ul>
     <p>{t.geometry}: {label(evidence?.conflictState ?? 'Unknown')}</p><ul>{evidence?.conflicts.map(c => <li key={`${c.jobId}/${c.revision}`}>{c.jobId} · r{c.revision} · {label(c.relation)} · {c.observedAt}</li>)}</ul>
-    {options?.offline === 'SupportedDraftWindowOnly' && plan ? <TugOfflinePanel key={`${id}/${vessel}/${requestVersion}`} job={id} vessel={vessel} language={language} onDirty={setOfflineDirty} /> : <p>{t.offline}</p>}
+    {options?.offline === 'SupportedDraftWindowOnly' && plan ? <TugOfflinePanel key={`${id}/${vessel}/${requestVersion}`} job={id} vessel={vessel} language={language} onDirty={setOfflineDirty}/> : <p>{t.offline}</p>}
     {!editable && <p>{options?.state === 'Unavailable' ? t.denial : t.read}</p>}
-    {editable && <><form onSubmit={e => { e.preventDefault(); void save({ operation: 'Window', plannedStart: start ? `${start.length === 16 ? start + ':00' : start}Z` : null, plannedEnd: end ? `${end.length === 16 ? end + ':00' : end}Z` : null }) }}>
-      <fieldset disabled={locked}><label>{t.start}<input type="datetime-local" step="1" value={start} onChange={e => { setStart(e.target.value); setDirty(true) }} /></label><label>{t.end}<input type="datetime-local" step="1" value={end} onChange={e => { setEnd(e.target.value); setDirty(true) }} /></label></fieldset><button disabled={locked}>{t.save}</button></form>
+    {editable && <><form onSubmit={e => { e.preventDefault(); void save({ operation: 'Window', plannedStart: start ? `${start.length === 16 ? start + ':00' : start}Z` : null, plannedEnd: end ? `${end.length === 16 ? end + ':00' : end}Z` : null }); }}>
+      <fieldset disabled={locked}><label>{t.start}<input type="datetime-local" step="1" value={start} onChange={e => { setStart(e.target.value); setDirty(true); }}/></label><label>{t.end}<input type="datetime-local" step="1" value={end} onChange={e => { setEnd(e.target.value); setDirty(true); }}/></label></fieldset><button disabled={locked}>{t.save}</button></form>
       <fieldset disabled={locked || dirty}><label>{t.select}<select value={tug} onChange={e => setTug(e.target.value)}><option value="">—</option>{options.tugs.map(v => <option value={v.id} key={v.id}>{v.code}</option>)}</select></label>
         <label>{t.replacement}<select value={replacement} onChange={e => setReplacement(e.target.value)}><option value="">—</option>{options.tugs.filter(v => !plan?.inputs.assignedTugs.includes(v.id)).map(v => <option value={v.id} key={v.id}>{v.code}</option>)}</select></label>
         <button type="button" disabled={!tug || !!plan?.inputs.assignedTugs.includes(tug)} onClick={() => void save({ operation: 'Assign', tugId: tug })}>{t.assign}</button>
@@ -102,8 +206,8 @@ export function TugPlanningPanel({ id, vessel, requestVersion, csrf, language, o
         <button type="button" disabled={!tug || !replacement || !plan?.inputs.assignedTugs.includes(tug)} onClick={() => void save({ operation: 'Reassign', tugId: tug, replacementTugId: replacement })}>{t.reassign}</button>
       </fieldset></>}
     {attempt && notice === 'uncertain' && <button disabled={busy} onClick={() => void save()}>{t.retry}</button>}
-    {(dirty || attempt || notice === 'conflict' || notice === 'unavailable') && <button disabled={busy} onClick={() => { setDirty(false); setAttempt(null); reload(x => x + 1) }}>{t.reload}</button>}
+    {(dirty || attempt || notice === 'conflict' || notice === 'unavailable') && <button disabled={busy} onClick={() => { setDirty(false); setAttempt(null); reload(x => x + 1); }}>{t.reload}</button>}
     <h4>{t.history}</h4>{history?.items.length === 0 && <p>{t.noHistory}</p>}<ol>{history?.items.map(h => <li key={h.revision}>r{h.revision} · {label(h.operation)} · {h.savedAt} <button disabled={busy} onClick={() => void exact(h.revision)}>{t.review} {h.revision}</button></li>)}</ol>
     {selected && <article aria-label={t.historyNote}><p>{t.historyNote}</p><p>r{selected.revision} · {selected.sourceVersion} · {selected.policyVersion} · {selected.savedAt}</p><p>{selected.inputs.plannedStart ?? t.missing} / {selected.inputs.plannedEnd ?? t.missing}</p><ul>{selected.inputs.assignedTugs.map(id => <li key={id}>{id}</li>)}</ul></article>}
-  </section>
+  </section>;
 }

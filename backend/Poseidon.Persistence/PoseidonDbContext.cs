@@ -13,6 +13,9 @@ public sealed class PoseidonDbContext(
     public IQualifiedInputRuntime? QualifiedInputs { get; } = qualifiedInputs;
     public Guid TenantId { get; } = tenantId;
     public bool IsAdministrativeImport { get; } = administrativeImport;
+    internal string AuditActorId => actor.Id;
+    public DbSet<FleetCatalogDraft> FleetCatalogDrafts => Set<FleetCatalogDraft>();
+    public DbSet<FleetCatalogDraftRevision> FleetCatalogDraftRevisions => Set<FleetCatalogDraftRevision>();
     public DbSet<Tenant> Tenants => Set<Tenant>();
     public DbSet<VesselCertificate> VesselCertificates => Set<VesselCertificate>();
     public DbSet<VesselCertificateRevision> VesselCertificateRevisions => Set<VesselCertificateRevision>();
@@ -129,6 +132,9 @@ public sealed class PoseidonDbContext(
 
     protected override void OnModelCreating(ModelBuilder model)
     {
+        FleetCatalogDraftStorage.Configure(model);
+        model.Entity<FleetCatalogDraft>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<FleetCatalogDraftRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         CrewCatalogStorage.Configure(model);
         model.Entity<CrewCatalogHead>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<CrewCatalogEvent>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -470,6 +476,7 @@ public sealed class PoseidonDbContext(
         ChangeTracker.DetectChanges();
         var changes = ChangeTracker.Entries().Where(e => e.State is EntityState.Added or EntityState.Modified or EntityState.Deleted).ToList();
         if (changes.Count == 0) return [];
+        FleetCatalogDraftStorage.Guard(this, changes);
         if (string.IsNullOrWhiteSpace(actor.Id) || string.IsNullOrWhiteSpace(actor.Type) || string.IsNullOrWhiteSpace(actor.CorrelationId))
             throw new InvalidOperationException("An authenticated or explicit system actor and correlation ID are required.");
         if (actor.Command != null && !actor.Command.IsValid)

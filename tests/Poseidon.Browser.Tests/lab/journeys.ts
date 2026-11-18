@@ -1,8 +1,10 @@
+import { labRuntimeFromEnvironment } from './lab-runtime.ts';
 import { expect, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { signedDestination } from './signed-case.ts';
 
+const runtime = labRuntimeFromEnvironment();
 const ship = '30000000-0000-0000-0000-000000000001';
 const tug = '30000000-0000-0000-0000-000000000002';
 const foreign = '30000000-0000-0000-0000-000000000003';
@@ -10,7 +12,8 @@ const profile = `/app/fleet/${ship}/profile`;
 const credentials = JSON.parse(readFileSync(resolve(process.env.POSEIDON_LAB_PRIVATE!, 'credentials.json'), 'utf8'));
 
 async function english(page: Page) {
-  await page.getByRole('button', { name: 'EN', exact: true }).click();
+  await page.getByRole('combobox', { name: /^(Dil seçin|Choose language)$/ }).selectOption('en');
+  await expect(page.getByRole('combobox', { name: 'Choose language', exact: true })).toHaveValue('en');
 }
 export async function login(page: Page, account: string, destination: string) {
   const target = signedDestination(destination);
@@ -19,22 +22,22 @@ export async function login(page: Page, account: string, destination: string) {
   await page.goto('/app/today');
   await english(page);
   await page.getByRole('link', { name: 'Sign in', exact: true }).click();
-  await page.waitForURL(url => url.origin === 'https://localhost:8443');
+  await page.waitForURL(url => url.origin === runtime.providerOrigin);
   // Check origin without emitting the full OIDC login URL in assertion errors.
-  expect(new URL(page.url()).origin === 'https://localhost:8443').toBe(true);
+  expect(new URL(page.url()).origin === runtime.providerOrigin).toBe(true);
   await page.locator('#username').fill(credentials[account].username);
   await page.locator('#password').fill(credentials[account].password);
   await page.locator('#kc-login').click();
-  await page.waitForURL('https://localhost:5443/app/today');
+  await page.waitForURL(runtime.appOrigin + '/app/today');
   await english(page);
   await expect(page.getByRole('button', { name: 'Sign out', exact: true })).toBeVisible();
   if (target !== '/app/today') { await page.goto(target); await english(page); }
-  expect(new URL(page.url()).origin === 'https://localhost:5443' && new URL(page.url()).pathname + new URL(page.url()).search === target).toBe(true);
+  expect(new URL(page.url()).origin === runtime.appOrigin && new URL(page.url()).pathname + new URL(page.url()).search === target).toBe(true);
   const session = await (await page.request.get('/api/v1/auth/session')).json();
   expect(session.authenticated).toBe(true);
   expect(session.setupRequired).toBe(false);
   // Protocol success above uses real Keycloak-signed tokens; no mocked route/issuer.
-  const cookies = await page.context().cookies('https://localhost:5443');
+  const cookies = await page.context().cookies(runtime.appOrigin);
   expect(cookies.some(c => c.name === '__Host-poseidon-session' && c.secure && c.httpOnly)).toBe(true);
   expect(await page.evaluate(() => Object.keys(localStorage).some(k => /token/i.test(k)))).toBe(false);
 }
@@ -101,12 +104,12 @@ export async function managerJourney(page: Page) {
   // Existing antiforgery pipeline also applies to real signed-provider sessions.
   expect((await page.request.post('/api/v1/auth/logout')).status()).toBe(403);
   await page.getByRole('button', { name: 'Sign out', exact: true }).click();
-  await page.waitForURL(url => url.origin === 'https://localhost:8443' ||
-    (url.origin === 'https://localhost:5443' && url.pathname === '/app'));
+  await page.waitForURL(url => url.origin === runtime.providerOrigin ||
+    (url.origin === runtime.appOrigin && url.pathname === '/app'));
   // No ID-token hint is stored. Keycloak requires user confirmation for this flow.
-  if (new URL(page.url()).origin === 'https://localhost:8443')
+  if (new URL(page.url()).origin === runtime.providerOrigin)
     await page.locator('#kc-logout').click();
-  await page.waitForURL('https://localhost:5443/app');
+  await page.waitForURL(runtime.appOrigin + '/app');
   expect((await (await page.request.get('/api/v1/auth/session')).json()).authenticated).toBe(false);
   expect((await page.request.get('/api/v1/vessels')).status()).toBe(401);
   // Provider session ended too: login returns to a credential prompt.

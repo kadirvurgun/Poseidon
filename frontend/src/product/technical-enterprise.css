@@ -4,15 +4,15 @@
 .technical-record-panel > h2 { font-size: 14px; margin-bottom: 15px; }
 .enterprise-shell .technical-filter { display: grid; gap: 8px; padding: 16px 18px; margin-top: 22px; border: 1px solid var(--border); border-radius: 10px; background: #fff; font-size: 11px; color: #63758c; }
 .technical-filter > div { position: relative; max-width: 440px; }
-.technical-filter > div > svg { width: 16px; height: 16px; position: absolute; top: 13px; left: 11px; color: #758da8; }
-.enterprise-shell .technical-filter input { width: 100%; margin: 0; padding-left: 35px; }
+.technical-filter > div > svg { width: 16px; height: 16px; position: absolute; top: 13px; inset-inline-start: 11px; color: #758da8; }
+.enterprise-shell .technical-filter input { width: 100%; margin: 0; padding-inline-start: 35px; }
 .enterprise-shell .technical-record-panel .equipment-hierarchy-row { border-radius: 7px; font-size: 12px; gap: 4px; }
 .enterprise-shell .technical-record-panel .equipment-hierarchy-row:hover { background: #f4f8fd; }
 .enterprise-shell .technical-record-panel .equipment-hierarchy-row[aria-selected="true"] { border-color: #c6d9f1; background: #ecf4ff; color: #2c619f; }
 .enterprise-shell .technical-record-panel .equipment-hierarchy-toggle { padding: 2px; margin: 0; border-color: transparent; background: transparent; box-shadow: none; }
 .technical-record-count { font-size: 11px; color: #63758c; margin: 0 0 12px; }
 .technical-plan-list ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
-.enterprise-shell .technical-plan-item[data-slot="button"] { display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; text-align: left; width: 100%; height: auto; padding: 13px; background: #fafcfe; border: 1px solid #e5ebf3; gap: 7px; color: #62758e; white-space: normal; font-size: 11px; }
+.enterprise-shell .technical-plan-item[data-slot="button"] { display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; text-align: start; width: 100%; height: auto; padding: 13px; background: #fafcfe; border: 1px solid #e5ebf3; gap: 7px; color: #62758e; white-space: normal; font-size: 11px; }
 .enterprise-shell .technical-plan-item[data-slot="button"][aria-current="true"] { background: #edf4ff; border-color: #aac6eb; }
 .technical-plan-item > span { overflow-wrap: anywhere; }
 .technical-plan-item-title { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }

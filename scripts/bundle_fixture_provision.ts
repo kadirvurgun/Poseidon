@@ -1,3 +1,4 @@
+import { labRuntimeFromEnvironment } from '../tests/Poseidon.Browser.Tests/lab/lab-runtime.ts'
 // DEV-BUNDLE-FIXTURE-01; actual isolated HTTPS + provider + audited API only.
 // No copied sessions, fulfilled responses, verified evidence or production approvals.
 import { createHash, randomUUID } from 'node:crypto'
@@ -7,7 +8,10 @@ import { isAbsolute, relative, resolve, sep } from 'node:path'
 import { strictContext } from '../tests/Poseidon.Browser.Tests/lab/strict-browser.ts'
 import { login } from '../tests/Poseidon.Browser.Tests/lab/journeys.ts'
 import {canonical, FixtureJournal, verifyFixtureReceipt} from './bundle_fixture_journal.ts'
+import { observationFixtureFromActual } from '../tests/Poseidon.Browser.Tests/register-specs/observation-fixture.ts'
+import { assertOriginalFoundationShip, requiredFoundationConsumerPlan } from '../tests/Poseidon.Browser.Tests/register-specs/foundation-policy-context.ts'
 
+const runtime = labRuntimeFromEnvironment()
 const privateRoot = realpathSync(process.env.POSEIDON_LAB_PRIVATE!)
 const expectedRoot = realpathSync(resolve(import.meta.dirname, '../.runtime/oidc-lab'))
 if (privateRoot !== expectedRoot) throw new Error('fixture_boundary')
@@ -37,12 +41,12 @@ const persist = (name: string, value: unknown) => {
   if(published.status!==0)throw new Error('fixture_new_publication_failed')
   return file
 }
-const journal=new FixtureJournal(privateRoot,{plan,origin:'https://localhost:5443'},persist,process.env.POSEIDON_BUNDLE_BEGIN_FIXTURE_ATTEMPT)
+const journal=new FixtureJournal(privateRoot,{plan,origin:runtime.appOrigin},persist,process.env.POSEIDON_BUNDLE_BEGIN_FIXTURE_ATTEMPT)
 evidence.attemptId=journal.manifest.attemptId
 const attemptTag=journal.manifest.attemptId.replaceAll('-','')
 const fixture = (key: string, file: string, value: unknown) => { environment[key] = persist(file, value); evidence.fixtureCount++ }
 const common = { runId: plan.runId, tenantId: plan.tenantId, vesselId: plan.vesselId, actorId: plan.writerActorId }
-const owned = await strictContext({ baseURL: 'https://localhost:5443' })
+const owned = await strictContext({ baseURL: runtime.appOrigin })
 try {
   const page = await owned.context.newPage(); page.setDefaultTimeout(15000)
   evidence.stage = 'writer_login'; await login(page, 'lab-manager', '/app/today')
@@ -53,8 +57,17 @@ try {
   }
   const user = await read('/api/v1/auth/session', 'actual_writer_session')
   if (user.authenticated !== true || user.actorId !== plan.writerActorId || user.tenantId !== plan.tenantId || typeof user.csrfToken !== 'string' || user.csrfToken.length < 16) throw new Error('fixture_actual_actor_mismatch')
+  const firstShip = await read('/api/v1/vessels?limit=25&kind=Ship', 'actual_original_consumer_ship')
+  assertOriginalFoundationShip(requiredFoundationConsumerPlan(), user, firstShip)
   const vessel = await read('/api/v1/vessels/' + plan.vesselId, 'actual_ship')
   if (vessel.id !== plan.vesselId || vessel.kind !== 'Ship') throw new Error('fixture_actual_ship_required')
+  // Configuration alone is never a fixture proof. Read the actual authorized
+  // endpoint before publishing only the closed descriptor, never its row values.
+  const observation = await read('/api/v1/equipment-hierarchy/' + plan.vesselId + '/' + plan.vesselId + '/observations', 'actual_observation_source')
+  const observationUser = await read('/api/v1/auth/session', 'actual_observation_owner_recheck')
+  const observationFixture = observationFixtureFromActual({ runId: plan.runId, tenantId: plan.tenantId, vesselId: plan.vesselId, writerActorId: plan.writerActorId }, observationUser, observation)
+  if (observationUser.actorId !== user.actorId || observationUser.tenantId !== user.tenantId) throw new Error('fixture_actual_actor_mismatch')
+  fixture('POSEIDON_BROWSER_OBSERVATION_FIXTURE', 'observation-fixture.json', observationFixture)
   const command = async (api:typeof page.request, identity:{actorId:string;tenantId:string;csrfToken:string}, path:string, body:unknown, stage:string, method='POST', idempotent=true) => {
     evidence.stage=stage
     return journal.command(stage,{actorId:identity.actorId,tenantId:identity.tenantId},method,path,body,idempotent,async intent=>{
@@ -123,7 +136,7 @@ try {
     fixture('POSEIDON_BROWSER_CERTIFICATE_EXTRACTION_FIXTURE','certificate-extraction-fixture.json',{schemaVersion:'poseidon.certificate-extraction.signed-fixture.v1',...common,modelVersion:extraction.ModelVersion,promptVersion:extraction.PromptVersion,files})
   } else evidence.blockers.push('EXPLICIT_EXTRACTION_PROTOCOL_POLICY_REQUIRED')
   for(const [account,actor,tenant] of [[plan.reviewerAccount,plan.reviewerActorId,plan.tenantId],[plan.foreignAccount,plan.foreignActorId,plan.foreignTenantId],['lab-restricted',plan.restrictedActorId,plan.tenantId]]) {
-    const other=await strictContext({baseURL:'https://localhost:5443'})
+    const other=await strictContext({baseURL:runtime.appOrigin})
     try {
       const signed=await other.context.newPage();signed.setDefaultTimeout(15000);evidence.stage='actual_'+account+'_login';await login(signed,account,'/app/today')
       const response=await signed.request.get('/api/v1/auth/session');evidence.httpChecks.push({stage:evidence.stage,status:response.status()})

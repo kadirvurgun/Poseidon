@@ -57,6 +57,18 @@ function harness(worker = source(), stores = new Map<string, Map<string, Respons
 }
 
 describe('public offline shell build and safe update lifecycle', () => {
+  it('preserves the first-paint appearance script offline and binds updates to its exact bytes', async () => {
+    const appearance = { fileName: 'appearance-init.js', bytes: '/* public cosmetic bootstrap */' }
+    const worker = source([...fixtures, appearance])
+    const h = harness(worker)
+    h.network.set('/appearance-init.js', new Response(appearance.bytes))
+    await h.lifecycle('install')
+    h.network.delete('/appearance-init.js')
+    expect(await (await h.request('/appearance-init.js', 'GET', 'cors'))!.text()).toBe(appearance.bytes)
+    expect(cacheName(source([...fixtures, { ...appearance, bytes: '/* new bootstrap */' }]))).not.toBe(cacheName(worker))
+    expect(h.request('/appearance-init.js?actor=private')).toBeUndefined()
+    expect(h.request('/other-preferences.js')).toBeUndefined()
+  })
   // DEV-097/098/099 + DEV-033: source-authored only, NOT RUN in authoring.
   it.each(['noon-report', 'deck-daily-log', 'engine-daily-log'])('boots %s only from public shell bytes with closed resource context', async screen => {
     const h = harness(); await h.lifecycle('install')

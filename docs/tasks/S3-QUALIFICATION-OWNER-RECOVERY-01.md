@@ -1,0 +1,60 @@
+# S3-QUALIFICATION-OWNER-RECOVERY-01
+
+State: AUTHORED_UNVERIFIED; acceptance=false. Execution DEFERRED to the next larger frozen bundle. Starting target:235d3ea9926ea7d0f47b2a314366f9fff4579784. This package does not accept S2, DEV-026 or a canonical sprint and adds no story points.
+
+## Source and dependency boundary
+
+Baseline: poseidon-v46.3-20261030, selected by [active.json](../sources/active.json). Active18.01 Development Backlog, Backlog row27: DEV-026 / T-S3-001 /8SP, dependencies DEV-005 and DEV-008. Its criterion separates Draft/adopted/future/in-force/superseded and forbids silent current-source overwrite. Source SHA256:09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674. DEV-005/008 original accepted S0 target is3ca49a30976afd7bb6b63531523a36df646b82dd; supporting DEV-015/016 original S1 target isdc7f5117fb99a962d70a54b1f12f2c118f1cca66. This package does not replace those receipts.
+
+15.01 paragraph71 requires Idempotency-Key.19.01 paragraphs26/29/30 require tenant/asset/job boundaries, retry/duplicate/conflict handling and no data loss; paragraphs261–268 prohibit cross-tenant leakage, autonomous AI high-risk state mutation, duplicate idempotent offline writes and silent unresolved material-conflict overwrite.19.01 SHA256:063823ea7d453adc91033c6eabb17f60906b4e6b9b4595be884eb12e02040a49.13.04 enterprise patterns and explicit authority/blocker labels apply. Source inventory and independently confirmed defect are retained in the coordinator's ignored s3-next-scope-20261113 report; they are authoring evidence, not acceptance.
+
+The existing [qualification endpoint](../../backend/Poseidon.Api/RegulatoryQualificationEndpoints.cs) checks current CSRF and live human appointment before actor/tenant/authority/fingerprint-bound receipt replay. A denied replay does not prove that a prior response-lost command rolled back. The existing [transition policy](../../backend/Poseidon.Domain/RegulatoryQualificationPolicy.cs) and immutable event/hash history remain authoritative. No new backend production behavior, policy, reviewer appointment, approval catalog or lifecycle state is introduced.
+
+## Finite acceptance criteria and authored evidence
+
+| ID | Required behavior | Authored source/evidence |
+| --- | --- | --- |
+| QOR-01 | Keep an in-memory original actor+tenant/rule/revision/vessel/action/body/UUID-key binding. A replacement owner/context cannot view its private draft/history, transmit it or adopt it. No browser persistent storage. | [Recovery controller](../../frontend/src/product/use-qualification-recovery.ts); actor/tenant/rule/vessel and pre-capture lifecycle-choice cases in [component regressions](../../frontend/src/product/RegulatoryQualificationRecovery.test.tsx). |
+| QOR-02 | Unknown remains unknown after later401/403/404/409 or interrupted reads. Explicit exact retry is the only resend. Unknown cannot be discarded or replaced by a new command/key. An initial definite rejection is distinct. | Controller retains the original envelope and blocks discard; denied retry, initial400, malformed2xx and version-drift component cases. |
+| QOR-03 | Read actual current session and owning source capabilities before every POST; require original owner and exact captured authority; use the newly read CSRF. Fence the response with another same-owner session. Never substitute a new authority into the old body. | [Adapter](../../frontend/src/product/qualification-api.ts), [wire regressions](../../frontend/src/product/qualification-recovery-api.test.ts); per-POST freshness counters in component and genuine regressions. |
+| QOR-04 | Denied/offline/hidden/mismatched current reads withdraw private form/history/actions. Source recheck performs reads only and never resolves unknown from a head/list read. | Controller scopes each read and write; [presentation](../../frontend/src/product/RegulatoryQualification.tsx) renders private content only after current same-owner fences. Component read-denial and context cases; genuine read-only recheck assertion. |
+| QOR-05 | A valid same-owner receipt remains a known read-only result through optional readback failure. Preserve the existing selected rule and route; no new URL/resource UUID. Only current authorized source read or explicit known-outcome discard permits editing. Malformed/unrelated2xx cannot confirm. | Event reply binds rule/revision/authority/state, actor and the next append revision captured before send; fact reply binds rule/vessel/profile/qualification/fields/instant. Readback requires at least the confirmed head revision and exact hash/state when equal. Component and wire receipt regressions, including rejection of a prior event projection; genuine optional-GET loss. |
+| QOR-06 | Actual host/PostgreSQL: committed event/fact, permission/appointment withdrawal, denied replay, fresh same-owner CSRF and restored exact authority, identical key/body replay. One event/fact and business audit; foreign actor/tenant/rule/authority cannot obtain prior private outcome. | Root-authored [API regressions](../../tests/Poseidon.Api.Tests/RegulatoryQualificationRecoveryTests.cs), separate source commit18a736cb4891cf9b79fbce09f549008665e33fb0, normally merged into this package. No API execution in authoring. |
+| QOR-07 | Genuine assigned fixture uses actual route.fetch commit/replay, deliberately lost first response, current same-owner pre-send session, exact body/key, one event and failed optional GET recovery. Preserve scenario independence and final qualified evaluation. | Existing assigned-human case extended in [regulatory admission cases](../../tests/Poseidon.Browser.Tests/register-specs/regulatory-admission-cases.ts). No extra fixture, grant, fake success or provider mutation. |
+| QOR-08 | Preserve all lifecycle enums, source bytes, SoD/human/authority/xmin/current-source and history gates. Preserve17locale presentation and draft nodes through locale change. No invented approval or silent conflict rebase. | Existing [component tests](../../frontend/src/product/RegulatoryQualification.test.tsx) retained with current-session setup; recovery locale-node case. Existing catalog keys and shared Button/EnterpriseActions only. |
+
+## Runtime meaning and integration
+
+401 means current authentication is unavailable; the sign-in link opens the existing login route in another tab so the original in-memory uncertain attempt remains.403 means current permission/CSRF/appointment or original-owner fence denies the current action.404 means current scoped resource unavailability.409 can mean receipt fingerprint, version, source/review context or material conflict. None proves rollback of an earlier unknown write. An initial definite400/401/403/404/409 before any earlier unknown outcome can release that new attempt; local dirty content remains fenced and requires source recovery or explicit discard. Network/aborted/malformed-response outcomes retain the envelope.
+
+The controller binds content edits, lifecycle choice and attestation date before capture. Current reads cannot replace a bound draft or silently update its original xmin. Session/capability refresh never emits a mutation. Post-write confirmation requires a valid matching response and the original session fence; failure of that fence leaves the exact packet uncertain. Confirmed optional-read failure displays the existing human-record-saved qualification, hides private form/history and offers source read without a mutation retry.
+
+The existing [LifecycleApplicability](../../frontend/src/product/LifecycleApplicability.tsx) already blocks rule/vessel changes when qualificationDirty or qualificationSaving is true and forwards write protection to its parent navigation guard. The controller keeps that protection asserted while a command is unknown or a private bound draft is inaccessible. Its own explicit recovery controls remain available. No caller, lifecycle engine or route changes are needed. A hard browser reload still destroys in-memory state; this task does not persist private commands/credentials across reloads or claim recovery after process loss.
+
+The genuine extension remains within synthetic-assigned-human-source-qualification-current-evaluation-signed-host, before its existing final current evaluation. The same distinct assigned rule is used only within that scenario. Actual POST response is dropped once, actual replay is delivered, one optional owning GET is aborted, and explicit source read restores the same selected rule/route. Request listeners and routes are removed in finally. No private body/session values are printed and assertion equality is boolean.
+
+## Verification boundary
+
+Author: locale_zh for product/component/adapter/genuine/task source; root for the separate real-host API test file. Independent QA: status_forecast after source freeze. All new tests, builds, typecheck, lint, browser and provider execution are DEFERRED, with zero author execution. Source review, Git metadata and a later AST update are not test PASS. Existing235d evidence stays bound to235d. Required final-target independent QA/CI and genuine provider/fixture authority remain required before any publication or phase acceptance. Root owns project status and phase records.
+
+## Independent source corrections after afa706e
+
+QOR-S01 found16 unsupported `exact` options on React Testing Library ByRole
+calls in the new recovery tests. Only those flags were removed; string accessible
+names remain exact by the role query contract. Playwright options were untouched.
+This was a source/type-contract finding, not a fabricated executed typecheck.
+
+QOR-S02 found a pending File.arrayBuffer continuation could invoke an old edit
+closure after a completed or uncertain command. Source selection now captures a
+monotonic edit generation invalidated by session revalidation, command dispatch,
+scope withdrawal and discard. Completion also checks current frozen/receipt refs;
+stale bytes cannot bind a new draft after the old envelope was captured. Failed
+current file reads report an ordinary translated validation error without a
+command or uncertain outcome. Three deferred-completion outcomes (UNKNOWN,
+confirmed-but-unreadable, initial400) and a rejected-file regression assert the
+public dirty/navigation state and exact retained command rather than internal
+implementation details. These four new cases are authored, execution DEFERRED.
+
+Root owns these bounded source corrections. Original afa706e and its two source
+findings are retained independently; corrected source requires a new freeze and
+independent delta review before any later actual bundle gate.

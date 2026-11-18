@@ -10,7 +10,8 @@ namespace Poseidon.Api;
 
 public sealed record ComplianceOnboardingDto(Guid VesselId, long? ProfileRevision, DateTimeOffset? SavedAt,
     string Provenance, string Freshness, string State, OnboardingField[] Fields, string[] Blockers,
-    bool CanEdit, bool CanSubmit = false, string Source = "18.01/Backlog/row:40");
+    OnboardingBlocker[] BlockerDetails, bool CanEdit, bool CanSubmit = false,
+    string Source = "18.01/Backlog/row:40;59.01/paragraph:55");
 public sealed record ComplianceApplicabilityDto(bool Available, Guid? EvaluationId, long? ProfileRevision,
     DateTimeOffset? EvaluatedAt, bool Current, EvaluationPrediction[] Results, RuleConflict[] Conflicts,
     string[] Blockers, string ReviewerState, bool ManualOverrideAvailable, string Href,
@@ -137,9 +138,9 @@ public static class ComplianceWorkspaceEndpoints
         if (!current.Readable) return null;
         var draft = current.Draft;
         var content = draft == null ? null : RegulatoryDraftStorage.Deserialize(draft.ContentJson);
-        var assessment = ComplianceOnboardingPolicy.Assess(vessel.Code, vessel.Name, content);
+        var assessment = ComplianceOnboardingPolicy.Assess(vessel.Id, vessel.Code, vessel.Name, content);
         return new(vessel.Id, draft?.Revision, draft?.SavedAt, draft?.Provenance ?? "Missing", "Unverified",
-            assessment.State, assessment.Fields, assessment.Blockers, actor.CanEditVessel(vessel.Id));
+            assessment.State, assessment.Fields, assessment.Blockers, assessment.BlockerDetails, actor.CanEditVessel(vessel.Id));
     }
     private static async Task<IResult> Onboarding(Guid id, HttpContext h, PoseidonDbContext db) {
         h.Response.Headers.CacheControl = "no-store";

@@ -93,6 +93,38 @@ test('legacy status-only failure requires explicit new owned attempt and keeps o
   }finally{s.close()}
 })
 
+test('qualified journal is separate, immutable and cannot adopt orphaned previous-run commands',async()=>{
+  const s=setup();try{
+    const source=s.open(), sourceId=source.manifest.attemptId
+    const qualified=new FixtureJournal(s.root,{...binding,purpose:'qualified-owning'},s.publish,undefined,'qualified-owning')
+    assert.notEqual(qualified.manifest.attemptId,sourceId)
+    const first:any[]=[]
+    const send=async(intent:any)=>{first.push(intent);throw new Error('synthetic lost actual-write response')}
+    await assert.rejects(command(qualified,send,async()=>{}),/lost actual-write/)
+    const reopened=new FixtureJournal(s.root,{...binding,purpose:'qualified-owning'},s.publish,undefined,'qualified-owning')
+    await command(reopened,async intent=>{first.push(intent);return {status:200,body:{synthetic:true}}},async()=>{})
+    assert.deepEqual(first[0],first[1]);assert.equal(s.open().manifest.attemptId,sourceId)
+    assert.throws(()=>new FixtureJournal(s.root,{...binding,tenantId:attempt},s.publish,undefined,'qualified-owning'),/binding_changed/)
+    rmSync(join(s.root,'qualified-owning-provision-attempt.json'))
+    assert.throws(()=>new FixtureJournal(s.root,{...binding,purpose:'qualified-owning'},s.publish,undefined,'qualified-owning'),/orphaned_journal/)
+  }finally{s.close()}
+})
+
+test('qualified unknown non-idempotent upload cannot reach descriptor publication after restart',async()=>{
+  const s=setup();try{
+    const open=()=>new FixtureJournal(s.root,binding,s.publish,undefined,'qualified-owning')
+    let sends=0
+    const pipeline=async()=>{
+      await command(open(),async()=>{sends++;throw new Error('synthetic unknown upload')},async()=>{},{idempotent:false})
+      s.publish('qualified-owning-fixture.json',{mustNeverPublish:true})
+    }
+    await assert.rejects(pipeline(),/unknown upload/)
+    await assert.rejects(pipeline(),/nonidempotent_outcome_unknown/)
+    assert.equal(sends,1);assert.ok(!readdirSync(s.root).includes('qualified-owning-fixture.json'))
+    assert.throws(()=>new FixtureJournal(s.root,binding,s.publish,attempt+'\n','qualified-owning'),/binding_changed/)
+  }finally{s.close()}
+})
+
 test('failed API response has no fabricated success receipt and restarts retain intent',async()=>{
   const s=setup();try{
     let original:any

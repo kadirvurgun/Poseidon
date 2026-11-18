@@ -32,7 +32,7 @@ function transport(kind: DailyKind, options: { writable?: boolean; row?: boolean
   })
   vi.stubGlobal('fetch', fetch); return fetch
 }
-async function english() { await userEvent.setup().click(screen.getByRole('button', { name: 'EN' })) }
+async function english() { await userEvent.setup().selectOptions(screen.getByRole('combobox', { name: /^(Dil seçin|Choose language)$/ }), 'en'); await waitFor(() => expect(screen.getByRole('combobox', { name: 'Choose language' })).toHaveValue('en')) }
 async function newDraft() { await userEvent.setup().click(await screen.findByRole('button', { name: 'New draft' })); return screen.findByRole('form', { name: 'Daily declaration form' }) }
 beforeEach(() => { window.history.replaceState(null, '', `/app/noon-report/${dailyVessel}`); vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(true) })
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals() })

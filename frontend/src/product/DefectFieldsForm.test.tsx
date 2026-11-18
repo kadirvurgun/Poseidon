@@ -4,8 +4,30 @@ import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 import { DefectFieldsForm } from './DefectFieldsForm'
 import { defectSchema, emptyDefectFields } from './defect-fields'
+import { changeAppLanguage, type Locale } from '../i18n'
 function Harness() { const [fields, setFields] = useState(emptyDefectFields); return <><DefectFieldsForm fields={fields} schema={defectSchema()} language="en" disabled={false} onChange={setFields} /><output aria-label="Declared defect fields">{JSON.stringify(fields)}</output></> }
 describe('T-S8-004 enterprise declaration fields — source only', () => {
+  it('keeps the same controlled field and canonical workflow value when switching its options to Arabic', async () => {
+    function LocalizedHarness({ language }: { language: Locale }) {
+      const [fields, setFields] = useState(emptyDefectFields)
+      return <><DefectFieldsForm fields={fields} schema={defectSchema()} language={language} disabled={false} onChange={setFields} />
+        <output aria-label="Retained canonical fields">{JSON.stringify(fields)}</output></>
+    }
+    const user = userEvent.setup(), { rerender } = render(<LocalizedHarness language="en" />)
+    await user.selectOptions(screen.getByLabelText('Declared workflow phase value state'), 'Known')
+    const phase = screen.getByLabelText('Declared workflow phase')
+    await user.selectOptions(phase, 'Verify')
+    const original = screen.getByLabelText('Retained canonical fields').textContent
+    await changeAppLanguage('ar', false)
+    rerender(<LocalizedHarness language="ar" />)
+    expect(phase).toBeInTheDocument()
+    expect(phase).toHaveValue('Verify')
+    expect(screen.getByRole('option', { name: 'مرحلة التحقق' })).toHaveValue('Verify')
+    expect(screen.getByLabelText('Retained canonical fields').textContent).toBe(original)
+    await user.selectOptions(phase, 'Effectiveness')
+    expect(JSON.parse(screen.getByLabelText('Retained canonical fields').textContent!).lifecycle_stage).toEqual({ state: 'Known', value: 'Effectiveness' })
+  })
+
   it('preserves unknown expiry and multiline safeguard declarations without implying a cleared measure', async () => {
     render(<Harness />); const user = userEvent.setup()
     await user.selectOptions(screen.getByLabelText('Declared temporary measure expiry value state'), 'Unknown')

@@ -1,0 +1,1445 @@
+{
+  "task_id": "ANALYSIS-20261115-01",
+  "date": "2026-11-17",
+  "status": "PLANNING_REVIEW_AUTHORED_FULL_CONTRACT_RECONCILIATION_OPEN",
+  "parent_baseline": "poseidon-v46.3-20261030",
+  "supplement_manifest": "docs/sources/2026-11-15/planning-manifest.json",
+  "source_excerpts": "docs/sources/2026-11-15/planning-excerpts.jsonl",
+  "canonical_denominators_unchanged": {
+    "tasks": 121,
+    "sp": 970,
+    "screens": 196,
+    "fields": 2316
+  },
+  "accepted_sp_added": 0,
+  "packages": [
+    {
+      "id": "PLAN-1511-5601",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "56.01",
+      "title": "Kapsam ve kaynak uzlaştırma",
+      "wave": 0,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/56.01_POSEIDON_Tam_Urun_Kapsam_ve_Gelistirici_Teslim_Analizi_TR_Rev2(1).docx",
+      "source_sha256": "adf077572cdff126dd6a98082b2f7bbb61ca4f9a92e3b339d98376bd590e1435",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "42 dosya, G01–G26, X01–X07 ve S01–S09 sahipliğini eşle; kanonik sayımları artırma.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-5803",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "58.03",
+      "title": "Transport ve exact endpoint profil sicili",
+      "wave": 0,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/58.03_POSEIDON_Ortak_API_ve_Islem_Sozlesmeleri_TR(2).docx",
+      "source_sha256": "16a4dbd858d3a97a08d860841e9953bcf95f5ca77a6ae2d702d4999cc7528ae6",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5601"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "Her endpoint için tek profil; concurrency, durable dedup, hata zarfı ve cache sonrası retry sözleşmesi.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-5202",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "52.02",
+      "title": "Hesap üyelik oturum ve vekalet",
+      "wave": 1,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/52.02_POSEIDON_Hesap_Ayarlari_ve_Yetkilendirme_Islem_Analizi_TR_Rev3.docx",
+      "source_sha256": "1b3e59edfa589536b1bb9dbfe0fd6c3dc9f03bf8b0986d4bc97e171b7c11ac26",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5803"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "Issuer/subject, güncel üyelik, askı/iptal ve last-admin istisnasını 54.02 ile birleştir.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-5402",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "54.02",
+      "title": "Exact action scope field amaç ve SoD",
+      "wave": 1,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/54.02_POSEIDON_Rol_Grup_Menu_ve_Islem_Yetkileri_Tam_Analiz_Rev4(1).docx",
+      "source_sha256": "dee6c269a0a144bbea87ee57c5cf92c8262297d154083742a094c3c3407d50e6",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5803",
+        "PLAN-1511-5202"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "Rev4 IAM-3/IAM_READ_V1; legacy manage göçü yetki genişletmez; revoke ve source epoch committe yeniden doğrulanır.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-5401",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "54.01",
+      "title": "Typed parametre ve kontrollü politika",
+      "wave": 1,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/54.01_POSEIDON_Islev_Parametreleri_ve_Kontrollu_Politika_Sicili_Tam_Analiz_Rev4(1).docx",
+      "source_sha256": "73fcde366550ff1eb23aaebb33c8d246f4173b03b5c416a1b74736078a36c892",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5803",
+        "PLAN-1511-5402"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "CFG3 resolver, owner-field write reddi, politika ile teknik değer ayrımı; 354 tanımın tekil izlenmesi.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-5802",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "58.02",
+      "title": "Kontrollü belge ve kanıt zinciri",
+      "wave": 1,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/58.02_POSEIDON_Kontrollu_Dokuman_ve_Kanit_Yonetimi_Tam_Analiz_TR_Rev4(1).docx",
+      "source_sha256": "d72c2aa18d12cee0a910afd24753f1f55911101265575e33938603c8e46f9e59",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5803",
+        "PLAN-1511-5402"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "Karantina, custody, yayın/revizyon, bağımsız doğrulama, hold ve imha ayrı; upload doğrulanmış kanıt olmaz.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-6503",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "65.03",
+      "title": "Ortak kabuk TR EN ve erişilebilirlik",
+      "wave": 1,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/65.03_POSEIDON_Kullanici_Deneyimi_TR_EN_ve_Erisilebilirlik_Tam_Analiz_TR(1).docx",
+      "source_sha256": "3ce010297c5d74f3686a6054b69690e1b7ca196d8acf4ec50ba077bb21fd72c9",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5803",
+        "PLAN-1511-5402"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "Klavye, odak, state metni, responsive ve bağlam geçişi; her domain tesliminde aynı yükümlülükler.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-5201",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "52.01",
+      "title": "HR tüzel kişi personel atama ve fiili vardiya",
+      "wave": 2,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/52.01_POSEIDON_HR_Personel_Organizasyon_Vardiya_ve_Murettebat_Yonetimi_Tam_Analiz_Rev6(1).docx",
+      "source_sha256": "04d01d0094fd581e58b9494c2976dd35ac823e447c7ae072dc8a33b2227322b2",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5402",
+        "PLAN-1511-5803"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "Tek LegalEntity/Person; plan ve fiili olay farklı; ücret/bordro yok; alan ve kaynak revizyonları korunur.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-5901",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "59.01",
+      "title": "Filo gemi profil ve tarihli ilişkiler",
+      "wave": 2,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5201",
+        "PLAN-1511-5402",
+        "PLAN-1511-5803"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "Tek Vessel/TugProfile; profil kaynağı ve freshness; duplicate birleştirme/devir tarihsel kararı değiştirmez.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-6003",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "60.03",
+      "title": "Kaynak mevzuat ve uygulanabilirlik",
+      "wave": 2,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/60.03_POSEIDON_Mevzuat_Kaynak_ve_Uygulanabilirlik_Yasam_Dongusu_Tam_Analiz_TR_Rev4(1).docx",
+      "source_sha256": "4a2479b8613c0fcaceecc070bdec9d4ef6458577e9924a32955288d510f3aaeb",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5901",
+        "PLAN-1511-5802",
+        "PLAN-1511-5401"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "Kaynak/kural revizyonu, uzman ve legal authority, supersede/withdrawal, UNKNOWN ve etki yeniden hesabı.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-6103",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "61.03",
+      "title": "Today komuta arama rol panoları",
+      "wave": 3,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/61.03_POSEIDON_Ortak_Komuta_ve_Emniyet_Calisma_Alanlari_Tam_Analiz_TR_Rev3(1).docx",
+      "source_sha256": "7797b1776ad054e1fd93dab7eeebbae5d1f1c6879af5f0afbf354626984fae81",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5901",
+        "PLAN-1511-5402",
+        "PLAN-1511-6503"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "Kaynak projection ve action yönlendirme; hidden/stale/empty sonuç false-green üretmez; metrik ownerı 55.01.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-5403",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "54.03",
+      "title": "Yapılandırılabilir iş akışı",
+      "wave": 3,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/54.03_POSEIDON_Yapilandirilabilir_Is_Akisi_ve_Yonetim_Ekrani_Tam_Analiz_TR_Rev4(1).docx",
+      "source_sha256": "092f9ef1d3c8ccca4e8709a0375a1e1809af10907c63430361a9fd530da74c35",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5402",
+        "PLAN-1511-5401",
+        "PLAN-1511-5803"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "Maker-checker, sürümlü graph, task/retry/telafi; workflow domain yetkisi veya rol yaratmaz.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-5404",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "54.04",
+      "title": "Kullanıcı özel alanları",
+      "wave": 3,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/54.04_POSEIDON_Kullanici_Tanimli_Ozel_Alan_Analizi_TR_Rev3(1).docx",
+      "source_sha256": "4fd8c93f8899c091fab5bbd70ff91e89b69eb27e38e7919a6db76ca0135115c3",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5401",
+        "PLAN-1511-5402"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "Typed alan/option revizyonu ve kontrollü backfill; çekirdek güvenlik alanını veya bordro sınırını aşmaz.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-5801",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "58.01",
+      "title": "Tenant onboarding ve bildirim",
+      "wave": 3,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/58.01_POSEIDON_Tenant_Onboarding_ve_Bildirim_Yonetimi_Tam_Analiz_TR_Rev3(1).docx",
+      "source_sha256": "5c16ac7ac17d1c2a1186083a5cc54e1dcd09284632363dbe98d098d0ce41e747",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5202",
+        "PLAN-1511-5402",
+        "PLAN-1511-5401"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "Tenant lifecycle, import/cutover/rollback ve bildirim receiptleri; GLOBAL yetki tenant rolünden türetilmez.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-5301",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "53.01",
+      "title": "Eğitim STCW ve kişi belgeleri",
+      "wave": 4,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/53.01_POSEIDON_Egitim_Yetkinlik_STCW_Personel_Belge_Yonetimi_Birlesik_Analiz_Rev6(1).docx",
+      "source_sha256": "9e8f9cb9ec5ba2419a7b0b047114f31cbfd59a5c89cb46ed5d56c00e42a7aa2a",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5201",
+        "PLAN-1511-5802",
+        "PLAN-1511-5402"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "Katılım, completion, yeterlik, issuer doğrulaması ve güncel operasyon uygunluğu ayrı; gizlilik ve geçerlilik.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-5302",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "53.02",
+      "title": "Yetkinlik havuzu ve değerlendirme",
+      "wave": 4,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/53.02_POSEIDON_Yetkinlik_Havuzu_ve_Yonetimi_Ayrintili_Analiz_Rev3(1).docx",
+      "source_sha256": "1135c8f377140e39182a7c9191d2fafef130510d35e2f4080ef400f08558c7ba",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5201",
+        "PLAN-1511-5301"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "Katalog/KUP, pozisyon hedefi, assessor yetkisi, gap ve itiraz; eğitim completionı otomatik yetkinlik değildir.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-5804",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "58.04",
+      "title": "Donatım göreve uygunluk çalışma dinlenme",
+      "wave": 4,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/58.04_POSEIDON_Personel_Donatim_Goreve_Uygunluk_Calisma_Dinlenme_Analizi_TR(1)(1).docx",
+      "source_sha256": "954cc254fd9a9e5e1f9c773378b9711a290b0d2f3a0edb9f041821f46f34b373",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5201",
+        "PLAN-1511-5301",
+        "PLAN-1511-5302",
+        "PLAN-1511-6003"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "Kaynaklı dönemsel uygunluk; plan/fiili, kayan pencere ve düzeltme; UNKNOWN olumluya çevrilmez.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-5903",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "59.03",
+      "title": "MLC refah şikayet ve DMLC",
+      "wave": 4,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.03_POSEIDON_MLC_Refah_Sikayet_ve_DMLC_Sertifikasyon_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "83edecb7bf4a7d198e04cfd4d7df15fe6e7d28bb57d85ff0d98c620407d763b3",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5201",
+        "PLAN-1511-5804",
+        "PLAN-1511-5802",
+        "PLAN-1511-6003"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "Kısıtlı şikayet görünürlüğü ve refah/sertifikasyon kararları ayrı; hukuk ve gerçek otorite kanıtı.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-5904",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "59.04",
+      "title": "Varlık ekipman PMS ve teknik hazırlık",
+      "wave": 5,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.04_POSEIDON_Varlik_Ekipman_ve_Planli_Bakim_Detayli_Analizi_TR_Rev2(1).docx",
+      "source_sha256": "fa795bfb06694d9265dccd28c797be0f6f8cb7ecbbe036d07e070f00c9727553",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5901",
+        "PLAN-1511-5402",
+        "PLAN-1511-5802"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "Hiyerarşi, sayaç, plan, iş emri, kusur, erteleme; completed/verified/effective ayrımı.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-5001",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "50.01",
+      "title": "HSE risk bariyer MOC ve PTW",
+      "wave": 5,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/50.01_POSEIDON_HSE_Risk_Bariyer_MOC_PTW_Tam_Analiz_TR_Rev3(1).docx",
+      "source_sha256": "6eee8e317f011b1f9b4a98301230fb422e37a05e83d407fe216594eed7c83507",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5402",
+        "PLAN-1511-5401",
+        "PLAN-1511-5802"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "HSE-G01–G08 OPEN ve DEMO_ADMIN_ONLY; gerçek issue/activate/resume/extend yetkisini belgeyle açma.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-6004",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "60.04",
+      "title": "Gemi sertifika ve sorvey",
+      "wave": 5,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/60.04_POSEIDON_Gemi_Sertifika_ve_Sorvey_Yasam_Dongusu_Tam_Analiz_TR_Rev3(1).docx",
+      "source_sha256": "578be6833568521fd5f18333c933aeb3f59155fe0633e649d71097596643cfa0",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5901",
+        "PLAN-1511-6003",
+        "PLAN-1511-5802"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "Kimlik, survey/endorsement/pencere ve authority sonucu; başvuru süreyi otomatik uzatmaz.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-5902",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "59.02",
+      "title": "SMS bulgu uygunsuzluk CAPA",
+      "wave": 5,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.02_POSEIDON_SMS_Emniyet_Aksiyonlari_Uygunsuzluk_ve_CAPA_Tam_Analiz_TR_Rev3(1).docx",
+      "source_sha256": "1b7a9d0532d0d3a2cf7e75ee20f19cfcd8007ecd73de3fc640777c96e015e385",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5403",
+        "PLAN-1511-5802",
+        "PLAN-1511-5402"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "Containment, kök neden, aksiyon, doğrulama, etkinlik ve reopen; kapanış operasyon izni değildir.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-6101",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "61.01",
+      "title": "Olay yakın kaza gizli bildirim",
+      "wave": 5,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/61.01_POSEIDON_Olay_Yakin_Kaza_Gizli_Bildirim_ve_Ogrenme_Tam_Analiz_TR_Rev3.docx",
+      "source_sha256": "6b3bb4ef4422b1f2bc451b15c8f841ae272b6564507eff0785910f6e565912bb",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5802",
+        "PLAN-1511-5902",
+        "PLAN-1511-5402"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "Kimlik kasası, anonim takip, disclosure/redaction; arama/audit/export kısıtlı kimliği sızdırmaz.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-6001",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "60.01",
+      "title": "Gemi operasyonu ve tipe özgü akışlar",
+      "wave": 6,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/60.01_POSEIDON_Gemi_Operasyonlari_ve_Emniyet_Koordinasyonu_Tam_Analiz_TR_Rev3(1).docx",
+      "source_sha256": "4d3e4f33854cbbba83e523c06e901f6d201f4c9e42e798f68396980627449338",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5804",
+        "PLAN-1511-5904",
+        "PLAN-1511-5001",
+        "PLAN-1511-6003",
+        "PLAN-1511-6004"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "Güncel personel/teknik/risk/kaynak, kalkış insan kararı; olgu ve emniyet izni ayrı.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-6002",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "60.02",
+      "title": "Römorkör uçtan uca iş yaşam döngüsü",
+      "wave": 6,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/60.02_POSEIDON_Romorkor_Operasyonlari_Uctan_Uca_Tam_Analiz_TR_Rev2(1).docx",
+      "source_sha256": "cee7e0e07d0991a36da566cfbeef72fafaf18571f9aac06c4a2188cc9504a2d4",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5804",
+        "PLAN-1511-5904",
+        "PLAN-1511-5001",
+        "PLAN-1511-6003"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "Atama/çakışma, plan, briefing, release, factual icra, suspend/resume; Tug Master yetkisi korunur.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-6102",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "61.02",
+      "title": "Acil durum muster ve tatbikat",
+      "wave": 6,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/61.02_POSEIDON_Acil_Durum_Hazirligi_Muster_ve_Tatbikat_Yasam_Dongusu_Tam_Analiz_TR(1).docx",
+      "source_sha256": "a6f4b0fe78227a7b3f86458795378bf8d30c44d1cfa6db4bf5e920ef3eae7684",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5201",
+        "PLAN-1511-5301",
+        "PLAN-1511-5804",
+        "PLAN-1511-5904"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "Gerçek olay ile tatbikat ayrı; actual kayıt izin yokluğuyla engellenmez; muster sonucu operasyon izni olmaz.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-6201",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "62.01",
+      "title": "ISM SMS SOLAS kontrol icrası",
+      "wave": 6,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/62.01_POSEIDON_ISM_SMS_ve_SOLAS_Kontrol_Uygulama_Yasam_Dongusu_Tam_Analiz_TR(1).docx",
+      "source_sha256": "36b381b624d58770dde77e13198cb21ce447de4c9f0885a4578749a2ec1edb13",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-6003",
+        "PLAN-1511-5802",
+        "PLAN-1511-5902"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "Applicability→icra→kanıt→bağımsız doğrulama→etkinlik; kontrol tamamlandı diye otorite kabulü üretme.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-6202",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "62.02",
+      "title": "MARPOL BWM çevresel kayıt",
+      "wave": 6,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/62.02_POSEIDON_MARPOL_BWM_Cevresel_Kayit_ve_Defter_Tam_Analiz_TR_Rev2(1).docx",
+      "source_sha256": "b9444861955f28bcbde76dd2de8f49ae98f7a872e25d8b1bcb8cd1bf8d7c07d7",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-6001",
+        "PLAN-1511-6003",
+        "PLAN-1511-5802"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "Factual intake, düzeltme, officer/master attestation ve resmi defter ayrı; bilinmeyen miktar sıfır olmaz.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-6203",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "62.03",
+      "title": "Kargo tehlikeli yük uygunluğu",
+      "wave": 6,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/62.03_POSEIDON_Kargo_ve_Tehlikeli_Yuk_Uygunluk_Tam_Analiz_TR_Rev2(1).docx",
+      "source_sha256": "64f330698f49265f0dc3b79291ad7895aa9d41dc86b3db6d59539c60c23420c2",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-6001",
+        "PLAN-1511-6003",
+        "PLAN-1511-5802"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "Beyan/sınıflandırma/uygulanabilirlik/operasyon izni ayrı; cargo context ve source güncelliği.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-6204",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "62.04",
+      "title": "Denetim PSC vetting assurance",
+      "wave": 6,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/62.04_POSEIDON_Denetim_PSC_Vetting_ve_Assurance_Yasam_Dongusu_Tam_Analiz_TR(1).docx",
+      "source_sha256": "16f47b9a811f7512292bbf4f397269aef8a9b1d04814e95aa5f69e5d524cdae2",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5902",
+        "PLAN-1511-5802",
+        "PLAN-1511-6004",
+        "PLAN-1511-6003"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "Evidence freeze, süreli denetçi yetkisi, bulgu/cevap/bağımsız kapanış; resmi PSC release üretme.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-6302",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "63.02",
+      "title": "Entegrasyon adaptör ve dış etki",
+      "wave": 3,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/63.02_POSEIDON_Entegrasyon_Yasam_Dongusu_ve_Adaptor_Yonetisimi_Tam_Analiz_TR_Rev3.docx",
+      "source_sha256": "b7d7bd376ea018a8f7045d5c4f7a0e93f41433472bbfcf9b148d9aaefe3e885a",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5803",
+        "PLAN-1511-5402",
+        "PLAN-1511-5802",
+        "PLAN-1511-5801"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "INTG1 exact owner/source, dry-run, effect UNKNOWN/APPLIED ayrımı, lost-result replay/uzlaşım; secret sınırı.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-6303",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "63.03",
+      "title": "PWA cihaz ve offline eşitleme",
+      "wave": 3,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/63.03_POSEIDON_Mobil_Cevrimdisi_ve_Cihaz_Esitleme_Tam_Analiz_TR_Rev2.docx",
+      "source_sha256": "56e902149d627a7ad95074fe16f8b1e2e6c8dddc1f7ae03edea9029b4d050db1",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5803",
+        "PLAN-1511-5402",
+        "PLAN-1511-5802",
+        "PLAN-1511-5202"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "Kaynak özgü lease/capture adapterı; device-bound şifreleme, tombstone, lost-result; kritik kararlar online.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-6301",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "63.01",
+      "title": "Teknik tedarik ve stok",
+      "wave": 6,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/63.01_POSEIDON_Teknik_Tedarik_ve_Stok_Yasam_Dongusu_Tam_Analiz_TR(1).docx",
+      "source_sha256": "2ba9ef0b4c4d411de8d7525c7a455611bee633897eda0e2b8bd374a0e736329e",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5904",
+        "PLAN-1511-6302"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "ERP stok/rezervasyon/sipariş/ödeme ownerı; POSEIDON teknik talep ve fiziksel gözlem, receipt uzlaşımı.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-5501",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "55.01",
+      "title": "Rapor metrik dashboard ve export",
+      "wave": 7,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/55.01_POSEIDON_Raporlama_ve_Dashboard_Yonetimi_Tam_Analiz_Rev5(1).docx",
+      "source_sha256": "939a5f62d1ef1c5f97b91be260f1b77522a9edb400aa1c52b874383473834dd6",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5402",
+        "PLAN-1511-5802",
+        "PLAN-1511-5901"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "Metrik/veri kümesi tek ownerı; kaynak projection ve scalar, current access, küçük grup ve export güvenliği.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-6304",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "63.04",
+      "title": "Yönetim gözden geçirme",
+      "wave": 7,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/63.04_POSEIDON_Yonetim_Gozden_Gecirme_ve_Yonetisim_Yasam_Dongusu_Tam_Analiz_TR(1).docx",
+      "source_sha256": "96c114e90bb54ab0fa4d274cca87bf6f3297b6d88086f23da191ac93c52ae6cb",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5501",
+        "PLAN-1511-5403",
+        "PLAN-1511-5902"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "Gerçek toplantı/karar/uygulama/doğrulama/etkinlik ayrı; safety CAPA kopyalanmaz.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-6305",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "63.05",
+      "title": "Müşteri değeri pilot görünümü ve demo",
+      "wave": 7,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/63.05_POSEIDON_Musteri_Degeri_Pilot_Paket_ve_Demo_Yonetimi_Tam_Analiz_TR(1).docx",
+      "source_sha256": "c3e6463eacdce10579e4ba0b1ed111d9441d7ecf2ea1718c44e7c00ad6d3031e",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5501",
+        "PLAN-1511-6502"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "65.02 kabulünü salt okunur tüket; demo sentetik/izole; ticari paket yetki veya faturalama yaratmaz.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-6401",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "64.01",
+      "title": "Emniyet sinyalleri ve filo öğrenmesi",
+      "wave": 7,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/64.01_POSEIDON_Emniyet_Zekasi_ve_Filo_Sinyalleri_Tam_Analiz_TR(1).docx",
+      "source_sha256": "b628bfbf7247f9d3158aa7e8a241d4b4316eb3c1b8544d516cdc51c527723d51",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5501",
+        "PLAN-1511-6101",
+        "PLAN-1511-5902"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "Nüfus/pencere/kaynak/örneklem, küçük grup gizliliği ve insan incelemesi; düşük bildirim güvenli demek değildir.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-1701",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "17.01",
+      "title": "AI Gateway veri ve model yönetişimi",
+      "wave": 7,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/17.01_POSEIDON_AI_Governance_Data_Strategy_TR_Rev6(1).docx",
+      "source_sha256": "5fd268862ec87ea7b0716767e778327e866864d9ff096d38764b526eb06c5b3a",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5402",
+        "PLAN-1511-5802",
+        "PLAN-1511-6306"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "Grounding, izin kesişimi, abstention, injection/redaction, evaluation/kill switch; yalnız yetkili domain taslağı.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-5701",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "57.01",
+      "title": "Ödül takdir teşvik",
+      "wave": 7,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/57.01_POSEIDON_Odul_Takdir_ve_Tesvik_Yonetimi_Tam_Analiz_TR_Rev3(1).docx",
+      "source_sha256": "81bec31338647c9035be8ca574d5d144dd11cc4cca52cef42268c6fe7472ea56",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5501",
+        "PLAN-1511-5402",
+        "PLAN-1511-6302"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "İnsan rubriği, puan/rezervasyon/tahsis/teslim/itiraz ve telafi; düşük olay bildirimi ödüllendirilmez.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-6306",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "63.06",
+      "title": "Siber ve mahremiyet işletim sınırları",
+      "wave": 1,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/63.06_POSEIDON_Siber_Guvenlik_ve_Mahremiyet_Operasyonlari_Tam_Analiz_TR_Rev3(1).docx",
+      "source_sha256": "1b0b97e857839b4d34e37f4e295f1820d9c1d3a9b79bbe76d11054fd3c221767",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5402",
+        "PLAN-1511-5802"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "Threat/containment talebi ile gerçek etki ayrı; purpose/retention/hold/disclosure; genel admin hassas kimliğe erişmez.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-6502",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "65.02",
+      "title": "Yazılım kabulü gerçek TestRun UAT ve pilot",
+      "wave": 8,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/65.02_POSEIDON_Yazilim_Surum_Kabulu_Pilot_ve_UAT_Yasam_Dongusu_Tam_Analiz_TR(1).docx",
+      "source_sha256": "bd60fde59f57e66ac568a1f207b50381f936435c26092f955206738ebd9aff21",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-5601",
+        "PLAN-1511-5802",
+        "PLAN-1511-5402"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "Exact candidate/required set, actual attempt/assertion, bağımsız imza, P0 full PASS; NOT_RUN başarı olmaz.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "PLAN-1511-6501",
+      "id_authority": "DERIVED_PLANNING_ONLY_NOT_CANONICAL_FR_TC_OR_SP",
+      "document_number": "65.01",
+      "title": "On-prem işletim dağıtım DR ve geri dönüş",
+      "wave": 8,
+      "status": "PLANNED_NOT_IMPLEMENTED_OR_ACCEPTED",
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/65.01_POSEIDON_Uretim_Isletimi_Dagitim_ve_Kontrollu_Geri_Donus_Tam_Analiz_TR(1).docx",
+      "source_sha256": "874c8ecb851ba19ebd7e38629221d02b2b37f30e72d9cd89e89a83cb5a75fd46",
+      "source_locators": [
+        "paragraph:1",
+        "paragraph:2",
+        "paragraph:3",
+        "paragraph:4",
+        "paragraph:5",
+        "paragraph:6"
+      ],
+      "dependencies": [
+        "PLAN-1511-6502",
+        "PLAN-1511-6306",
+        "PLAN-1511-6302"
+      ],
+      "dependency_meaning": "Required contracts/interfaces before consumer acceptance; stub/source authoring may proceed in parallel; not all predecessor modules must be fully delivered",
+      "acceptance_focus": "Tam restore seti ve gerçek etki, bağımsız doğrulama, trafik açma; kabul/deploy/operasyon izinleri ayrı.",
+      "required_checks": [
+        "Exact source/owner/profile and FR/TC/action/field mapping review",
+        "Backend domain + PostgreSQL integration + audit/scope regression when implemented",
+        "TR/EN UI component and appropriate browser/offline/authority regression when implemented",
+        "Independent exact-target QA and required CI before acceptance/merge"
+      ],
+      "verification": "DEFERRED_NOT_RUN",
+      "accepted_sp_added": 0
+    }
+  ],
+  "prototype": {
+    "source_id": "poseidon-analysis-20261115:POSEIDON_Analizlerle_Guncel_Prototip_TR_EN_2026-11-15.html",
+    "document_number": null,
+    "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/POSEIDON_Analizlerle_Guncel_Prototip_TR_EN_2026-11-15.html",
+    "sha256": "0c11dfaea230c0750cb171bff3f5bdd143ae6885e50686131aa1111b5fef08a0",
+    "bytes": 1769208,
+    "source_class": "prototype-reference-only",
+    "paragraph_count": 0,
+    "prior_same_number_candidates": [],
+    "review_status": "INVENTORIED_NOT_EXECUTED"
+  },
+  "foundation_extensions": [
+    {
+      "id": "THEME-FOUNDATION-01",
+      "authority": "Explicit user request 2026-11-17 and shadcn preset b3Zheoix4U",
+      "status": "AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+      "wave": 1,
+      "task": "docs/tasks/theme-foundation-01.md",
+      "report": "docs/phases/THEME-FOUNDATION-01.md",
+      "source_receipt": "docs/sources/ui/shadcn-b3Zheoix4U.json",
+      "related_packages": [
+        "PLAN-1511-6503",
+        "PLAN-1511-5202"
+      ],
+      "acceptance_focus": "Runtime light/dark/system plus selectable palette, local persistence, first-paint/offline bootstrap, TR/EN keyboard access and semantic safety colors",
+      "accepted_sp_added": 0
+    }
+  ],
+  "implementation_checkpoints": [
+    {
+      "id": "S2-PROFILE-FOUNDATION-01",
+      "status": "AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+      "canonical_task": "DEV-020",
+      "trace": "T-S2-001",
+      "branch": "foundation/s2-analysis-20261117",
+      "task": "docs/tasks/s2-profile-foundation-01.md",
+      "report": "docs/phases/S2-PROFILE-FOUNDATION-01.md",
+      "accepted_sp_added": 0
+    },
+    {
+      "id": "S2-FLEET-CATALOG-DRAFT-01",
+      "date": "2026-11-18",
+      "status": "AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+      "canonical_task": "DEV-020",
+      "trace": "T-S2-001",
+      "branch": "foundation/s2-analysis-20261117",
+      "task": "docs/tasks/s2-fleet-catalog-draft-01.md",
+      "report": "docs/phases/S2-FLEET-CATALOG-DRAFT-01.md",
+      "accepted_sp_added": 0
+    }
+  ]
+}

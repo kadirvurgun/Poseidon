@@ -53,6 +53,13 @@ function safeChangeValue(field: string, value: unknown): boolean {
 // Metadata emitted by ActorResolver's closed permission filter through
 // TrustedActor.AuditCapabilities (FoundationIdentity.cs), not client authority.
 const auditCapabilities = new Set([
+  'operations.downtime.read', 'operations.downtime.write', 'workorder.read', 'workorder.write', 'defect.read', 'defect.write',
+  'operations.fuel.read', 'operations.fuel.write', 'operations.port.read', 'operations.port.write',
+  'certificate.verify.record', 'certificate.read', 'certificate.extract', 'certificate.write',
+  'certificate.renewal.write', 'certificate.renewal.owner',
+  'daily.noon.review', 'daily.deck.review', 'daily.engine.review', 'daily.noon.read', 'daily.noon.write',
+  'daily.deck.read', 'daily.deck.write', 'daily.engine.read', 'daily.engine.write', 'system.health.read',
+  'notification.evaluate', 'notification.read', 'notification.manage', 'notification.acknowledge', 'notification.preference.write',
   'crew.catalog.govern', 'crew.assessment.read', 'regulatory.qualify', 'regulatory.facts.attest',
   'human.trace.read', 'human.review.read', 'human.review.submit', 'human.verify', 'human.decide',
   'control.read', 'control.write', 'control.owner.eligible', 'evidence.read', 'evidence.write',

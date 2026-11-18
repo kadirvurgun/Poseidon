@@ -21,12 +21,12 @@
 .enterprise-shell .regulatory-workspace .enterprise-actions [data-slot="button"] { width:auto; }
 .enterprise-shell .regulatory-trace-lineage { display:grid; gap:12px; list-style:none; margin:20px 0; padding:0; }
 .enterprise-shell .regulatory-trace-lineage > li { position:relative; min-width:0; padding-inline-start:28px; }
-.enterprise-shell .regulatory-trace-lineage > li::before { content:''; position:absolute; left:9px; top:0; bottom:-12px; border-left:2px solid var(--border); }
+.enterprise-shell .regulatory-trace-lineage > li::before { content:''; position:absolute; inset-inline-start:9px; inset-block:0 -12px; border-inline-start:2px solid var(--border); }
 .enterprise-shell .regulatory-trace-lineage > li:last-child::before { bottom:50%; }
 .enterprise-shell .regulatory-trace-lineage article { padding:16px; border:1px solid var(--border); border-radius:9px; background:var(--card); }
 .enterprise-shell .regulatory-trace-lineage header { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-bottom:10px; }
 .enterprise-shell .regulatory-trace-lineage h4 { margin:0; flex:1; }
-.enterprise-shell .regulatory-trace-index { display:grid; place-items:center; position:absolute; left:0; width:20px; height:20px; border:1px solid var(--border); border-radius:50%; color:var(--foreground); background:var(--background); font-size:10px; }
+.enterprise-shell .regulatory-trace-index { display:grid; place-items:center; position:absolute; inset-inline-start:0; width:20px; height:20px; border:1px solid var(--border); border-radius:50%; color:var(--foreground); background:var(--background); font-size:10px; }
 .enterprise-shell .regulatory-trace-lineage dl { display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr); gap:12px; margin:12px 0; }
 .enterprise-shell .regulatory-trace-lineage dd { margin:4px 0 0; overflow-wrap:anywhere; }
 .enterprise-shell .regulatory-trace-lineage code { display:block; overflow-wrap:anywhere; white-space:normal; font-size:11px; }

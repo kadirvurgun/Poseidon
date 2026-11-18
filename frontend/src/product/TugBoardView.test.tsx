@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { expect, it, vi } from 'vitest'
 import { TugBoardView, tugBoardHref } from './TugBoardView'
 import { emptyTugInputs, type TugBoard } from './tug-api'
+import { changeAppLanguage } from '../i18n'
 
 vi.mock('./TugOwningEvidence', () => ({ TugOwningEvidence: () => <section aria-label="Current evidence detail">Synthetic UI projection</section> }))
 const vessel = '11111111-1111-1111-1111-111111111111', id = '22222222-2222-2222-2222-222222222222'
@@ -13,11 +14,15 @@ const row: TugBoard['items'][number] = { request: { id, vesselId: vessel, jobNum
   availableBollardPull: null, readiness: 'Unknown', conflict: 'Unknown', declaredComparisons: [], comparisonCoverage: 'VisiblePageEnteredDataOnly;NoBufferOrOperationalAssessment', blockingReasons: ['AssignmentCoverageUnavailable'], nextAction: 'CompleteDraft', detailHref: `/app/tug-job-detail/${id}?vessel=${vessel}` }
 const defaults = { board: { items: [row], hasMore: true }, priorities: ['Normal', 'High', 'Critical'], filter: { q: 'FICTIONAL', priority: 'High', offset: 25 }, language: 'en' as const, offline: false, onFilter: vi.fn(), onNavigate: vi.fn(), onRefresh: vi.fn() }
 
-it('shows exact BP, UTC instants and Unknown without treating missing assignment coverage as zero available tugs', () => {
-  render(<TugBoardView {...defaults} />)
+it.each([
+  { language: 'en' as const, timestamp: 'Nov 03, 2026, 02:30' },
+  { language: 'en-GB' as const, timestamp: '03 Nov 2026, 02:30' },
+])('shows exact BP, UTC instants and Unknown in $language without treating missing assignment coverage as zero available tugs', async ({ language, timestamp }) => {
+  await changeAppLanguage(language, false)
+  render(<TugBoardView {...defaults} language={language} />)
   const job = screen.getByRole('article', { name: 'FICTIONAL-JOB-01' })
   expect(job).toHaveTextContent('45.01 t')
-  expect(job).toHaveTextContent('03 Nov 2026, 02:30')
+  expect(within(job).getByText(timestamp)).toHaveAttribute('dateTime', '2026-11-02T23:30:00-03:00')
   expect(job).toHaveTextContent('End not supplied')
   expect(job).toHaveTextContent('Controlled assignment data unavailable')
   expect(job).not.toHaveTextContent('0 tugs')

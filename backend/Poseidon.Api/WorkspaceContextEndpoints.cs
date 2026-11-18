@@ -5,7 +5,9 @@ namespace Poseidon.Api;
 
 public sealed record WorkspaceRoleDto(Guid Reference, string Tr, string En);
 public sealed record WorkspaceRoleContextDto(string State, string? CatalogVersion, WorkspaceRoleDto[] Roles);
-public sealed record WorkspaceContextDto(Guid TenantId, Guid ActorId, WorkspaceRoleContextDto RoleContext, VesselDto? Vessel);
+public sealed record WorkspaceCompanyDto(Guid Id, string Code, string Name);
+public sealed record WorkspaceContextDto(Guid TenantId, Guid ActorId, WorkspaceRoleContextDto RoleContext,
+    WorkspaceCompanyDto? Company, VesselDto? Vessel);
 
 // Labels resolve ONLY existing server-provisioned role references. They confer no
 // permissions, appointments, delegation or safety authority.
@@ -62,6 +64,15 @@ public static class WorkspaceContextEndpoints
         }
         var actor = actors.Resolve(h.User)!;
         VesselDto? context = null;
+        WorkspaceCompanyDto? company = null;
+        if (actor.ActiveCompanyId is { } activeCompany) {
+            var row = await db.Companies.AsNoTracking().SingleOrDefaultAsync(x => x.Id == activeCompany, h.RequestAborted);
+            if (row == null) {
+                await audit.WriteAsync(h, "WorkspaceRead", "Unavailable", resourceId: vessel);
+                return Results.Json(new { code = "context_unavailable" }, statusCode: 503);
+            }
+            company = new(row.Id, row.Code, row.Name);
+        }
         if (vessel != null) {
             var row = await actor.Scope(db.Vessels.AsNoTracking()).SingleOrDefaultAsync(x => x.Id == vessel, h.RequestAborted);
             if (row == null) {
@@ -72,6 +83,6 @@ public static class WorkspaceContextEndpoints
         }
         var role = WorkspaceRoleContext.Describe(actor.TenantId, actor.RoleContext, config);
         await audit.WriteAsync(h, "WorkspaceRead", "Success", resourceId: vessel);
-        return Results.Ok(new WorkspaceContextDto(actor.TenantId, actor.Id, role, context));
+        return Results.Ok(new WorkspaceContextDto(actor.TenantId, actor.Id, role, company, context));
     }
 }

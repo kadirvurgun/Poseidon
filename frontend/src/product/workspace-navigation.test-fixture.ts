@@ -30,5 +30,6 @@ export function navigationTestLenses(tenantId: string, actorId: string, vesselId
 }
 export async function navigationTestContext(tenantId: string, actorId: string, vessel: string | null): Promise<WorkspaceContext> {
   return { tenantId, actorId, roleContext: { state: 'Missing', catalogVersion: null, roles: [] },
-    vessel: vessel ? { id: vessel, code: 'SYNTHETIC', name: 'Synthetic vessel', kind: 'Ship' } : null }
+    company: { id: tenantId, code: 'SYN-CO', name: 'Synthetic company' },
+    vessel: vessel ? { id: vessel, companyId: tenantId, code: 'SYNTHETIC', name: 'Synthetic vessel', kind: 'Ship' } : null }
 }

@@ -3,7 +3,14 @@ import { passportCertificateSource, type PassportCertificates } from './complian
 import { onboardingFields, type ApplicabilityReview } from './compliance-api'
 export const complianceVessel = '10000000-0000-4000-8000-000000000001'
 export const otherComplianceVessel = '10000000-0000-4000-8000-000000000099'
-export const assessmentFixture = () => ({ vesselId: complianceVessel, profileRevision: 1, savedAt: '2026-11-04T08:00:00Z', provenance: 'DeclaredUnverified', freshness: 'Unverified', state: 'REVIEW_REQUIRED', fields: onboardingFields.map(key => ({ key, state: key.startsWith('vessel.') ? 'Known' : 'Missing', critical: true, complete: key.startsWith('vessel.') })), blockers: ['REQUIRED_DATA_MISSING', 'VERIFICATION_NOT_ESTABLISHED'], canEdit: true, canSubmit: false, source: '18.01/Backlog/row:40' })
+export const assessmentFixture = () => {
+  const fields = onboardingFields.map(key => ({ key, state: key.startsWith('vessel.') ? 'Known' : 'Missing', critical: true, complete: key.startsWith('vessel.') }))
+  return { vesselId: complianceVessel, profileRevision: 1, savedAt: '2026-11-04T08:00:00Z', provenance: 'DeclaredUnverified', freshness: 'Unverified', state: 'REVIEW_REQUIRED', fields,
+    blockers: ['REQUIRED_DATA_MISSING', 'VERIFICATION_NOT_ESTABLISHED'],
+    blockerDetails: [...fields.filter(field => !field.complete).map(field => ({ subjectId: complianceVessel, fieldPath: field.key, reasonCode: 'REQUIRED_DATA_MISSING', resolutionType: 'REQUIRED_DECLARATION' })),
+      { subjectId: complianceVessel, fieldPath: 'profile', reasonCode: 'VERIFICATION_NOT_ESTABLISHED', resolutionType: 'QUALIFIED_EVIDENCE' }],
+    canEdit: true, canSubmit: false, source: '18.01/Backlog/row:40;59.01/paragraph:55' }
+}
 export const capturedInputFixture = () => {
   const fields: Record<string, number> = { 'context.mode': 0, evaluationDate: 2, 'vessel.flag': 0, 'vessel.type': 0, 'vessel.gt': 1, 'vessel.mainPropulsionKw': 1, 'vessel.buildDate': 2, 'vessel.contractForConstructionDate': 2, 'vessel.classSociety': 0, 'vessel.tradingArea': 0, 'vessel.operatingArea': 0, 'operation.jobType': 0, 'operation.profile': 0, 'operation.serviceContext': 0, 'cargo.packagedDangerousGoods': 3, 'cargo.type': 0, 'equipment.towingWinchFitted': 3, 'class.rulePack.IACS_M79': 3, 'regulatory.ismApplicable': 3, 'regulatory.msmdVerified': 3, 'crew.requiredRoleEligible': 3, 'evidence.sourceVerified': 3, 'source.lifecycle': 0 }
   return { adapterVersion: 'controlled-input-catalog-v1', vesselId: complianceVessel, vesselVersion: 5, profileRevision: 1, asOf: '2026-11-04T07:00:00Z', facts: Object.fromEntries(Object.entries(fields).map(([key, type]) => [key, { type, knowledge: 'Unknown', value: null, provenance: 'AdapterUnavailable', revision: 'controlled-input-catalog-v1', observedAt: null, freshUntil: null, authoritativeEmpty: false }])) }

@@ -1,0 +1,9 @@
+.appearance-controls { position: relative; color: var(--foreground); font-size: 12px; }
+.appearance-controls > summary, .enterprise-shell .appearance-controls > summary { display: flex; align-items: center; gap: 7px; min-height: 44px; padding: 6px 10px; cursor: pointer; border: 1px solid var(--border); border-radius: var(--radius); background: var(--card); color: var(--foreground); list-style: none; }
+.appearance-controls > summary::-webkit-details-marker { display: none; }
+.appearance-controls > summary > svg { width: 16px; height: 16px; }
+.appearance-controls > summary:focus-visible, .appearance-panel select:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
+.appearance-panel { position: absolute; z-index: 20; right: 0; top: calc(100% + 8px); width: min(240px, calc(100vw - 32px)); display: grid; gap: 8px; padding: 16px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--popover); color: var(--popover-foreground); box-shadow: 0 10px 30px #0003; }
+.appearance-controls .appearance-panel > label { color: var(--popover-foreground); font-weight: 600; }
+.appearance-controls .appearance-panel > select { width: 100%; min-height: 44px; font: inherit; border: 1px solid var(--input); border-radius: calc(var(--radius) - 2px); padding: 8px; background: var(--card); color: var(--foreground); }
+@media (max-width: 580px) { .appearance-controls > summary > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); } }

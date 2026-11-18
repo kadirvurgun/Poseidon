@@ -1,0 +1,261 @@
+{
+  "task": "S2-PROFILE-FOUNDATION-01",
+  "baseline": "poseidon-v46.3-20261030+poseidon-analysis-20261115",
+  "native_source": [
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "locator": "paragraph:55",
+      "text": "Eksik kaynakla taslak kaydedilebilir. Eksik bilgi yalnız etkilenen iş akışını bloke eder: kimliği veya işletmecisi belirsiz tekne operasyonel atamaya açılamaz; belirsiz class, bayrak veya tonajla ilgili requirement değerlendirmesi REVIEW_REQUIRED olur. Diğer teknelerin bağımsız yönetimi devam eder. Her blocker subjectId, fieldPath, reasonCode ve çözüm için gereken policy/evidence türünü döndürür.",
+      "content_sha256": "480b81922f4c9941c266ff477a11faba156f5cc03d50ac09aebb79c88dd2d1f3"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "locator": "paragraph:65",
+      "text": "Filo yeni Company tablosu yaratmaz. Ticaret unvanı ve şirket lifecycle HR masterından okunur.",
+      "content_sha256": "8321301665a67598bdcd3cdb267c06a4c4272d00ef4503a4d27a0149690fcca9"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "locator": "paragraph:74",
+      "text": "SHIP veya TUG çalışma modu; ad, bayrak, şirket veya IMO değişimi yeni kimlik doğurmaz.",
+      "content_sha256": "89eb21c9de07b7d21622f44ce2b03ae25f8b6923a2f241fc27c728bfffb30297"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "locator": "paragraph:86",
+      "text": "14.01 company_id alanı doğrudan registered owner veya operator kabul edilmez. Migrationda eski UUID aynı LegalEntity.id olarak korunur ve LegacyCompanyBinding ile kaynak anlamı tutulur. Kayıt yönetim kapsamı doğrulanırsa VesselCompanyScope olur. Operator/owner/manager bağı yalnız kaynak ve bağımsız incelemeyle ayrıca kurulur. Belirsiz eşleme REVIEW_REQUIRED kalır.",
+      "content_sha256": "7cc062678c38781c16cdcb418639af6d77e10861a488ff71f66b208224a73fea"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "locator": "paragraph:97",
+      "text": "Sunucu zamanı; geriye tarihli effectiveFrom, recordedAtı değiştirmez.",
+      "content_sha256": "395a177e16650406d2350e2cc5119fa1e953882faf4bf799c879074cecbd6f4d"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "locator": "paragraph:117",
+      "text": "asOf, iş zamanı için effectiveAt; knownAt ise kayıt sisteminin o anda bildiği bilgidir. Varsayılan knownAt=now. Geçmiş düzeltme eski snapshotı değiştirmez; daha sonra öğrenilen gerçek ayrı recordedAt ile görülebilir. API her iki zamanı ve seçilen revisionIdleri döndürür. Desteklenmeyen tarih aralığında UNKNOWN_HISTORY döner; güncel değer geçmiş için kullanılamaz.",
+      "content_sha256": "a5e353a3fc1d447ca70148e5b0b56d3a1336caafe7731c6a23fbe3200f128bc5"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "locator": "paragraph:1856",
+      "text": "Gemi ana verisi tamlık göstergesinin kesin üretimi",
+      "content_sha256": "5c2de54bed75b057f1e97f0776765603d39f9fafd2962df7a84bbc289513d737"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "locator": "paragraph:1857",
+      "text": "Bu bölüm mevcut VesselRow.dataQuality alanı ile dataQualityState sorgu filtresinin tek üreticisini tanımlar. Quality yalnız COMPLETE|PARTIAL|UNKNOWN|DISPUTED değerlerini alır. Kapsam, kök ana alanları ile seçilmiş kimlik, teknik profil ve römorkör profilinin gerekli alanlarıdır. Doğrulama, şirket ilişkisi, kanıt geçerliliği, mevzuat uygulanabilirliği ve operasyonel hazır olma ayrı eksenler olarak korunur. Yeni genel uç nokta, kullanıcı girdisi veya erişim yetkisi oluşturulmaz.",
+      "content_sha256": "c9b00c6b8bded9a23f7503215c8dcf4906a4064a5dabd50ed01895ffe27a9388"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "locator": "paragraph:1858",
+      "text": "Eski üçlü INCOMPLETE|REVIEW_REQUIRED|VERIFIED gösterimi bu alanın güncel üreticisi değildir. VERIFIED değeri COMPLETE, REVIEW_REQUIRED değeri PARTIAL olarak çevrilemez. Tarihsel etiketler korunur; kaynaklar yeniden değerlendirilmeden yeni Quality sonucu üretilmez. RevisionMeta.verificationState, kayıt olgusu factVerification, Context.status ve yaşam döngüsü birbirine dönüştürülmez.",
+      "content_sha256": "3bb22e90870dd25ccf77d90e32a8a9c1585a2250d1df82a4d7daf0f2538eed13"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "locator": "paragraph:1859",
+      "text": "Kapalı iç tipler aşağıdadır; bunlar kullanıcıya gönderilen yeni API alanları değildir. Bütün propertyler zorunludur, ek property kabul edilmez. ReadCut mevcut 59.01 yerel kesit tipidir; başka modülün aynı adlı tipi yerine kullanılmaz. Kaynak sürümleri kayıpsız okunur; public JSON safe-integer değerinden korumalı kaynak sürümü yeniden oluşturulmaz.",
+      "content_sha256": "769afd7596ab59a7699b4034d6364b88242690daa4d8d337dbd8cafb2d517dce"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "locator": "paragraph:1860",
+      "text": "FleetQualityRequirementV1 = {sourceKind:ROOT|IDENTITY|PROFILE|TUG_PROFILE,path:string1..200,required:literaltrue,nullableAllowed:boolean}",
+      "content_sha256": "62dd5aa3a583625cbb5eb8c2ff4a6f6d39d3057fb0249c5659efb07edd3c635a"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "locator": "paragraph:1861",
+      "text": "FleetQualityObservationV1 = {requirement: FleetQualityRequirementV1,state:KNOWN_VALUE|KNOWN_NOT_APPLICABLE|MISSING|DISPUTED|UNAVAILABLE,sourceRevisionId:UUID|null,sourceVersion:Version|null}",
+      "content_sha256": "7088e8fa42eb2b4e4d51b1e0acb615aed2308af3976922b4d9edc26e6e4cb06a"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "locator": "paragraph:1862",
+      "text": "FleetQualityEvaluationV1 = {vesselId:UUID,cut:ReadCut,catalogRevisionId:UUID|null,enumerationComplete:boolean,checks:FleetQualityObservationV1[0..100],result:COMPLETE|PARTIAL|UNKNOWN|DISPUTED}",
+      "content_sha256": "930471f0e715e44b71d4448765423e982fa976bc28cdc2f80bd06a96461a497a"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "locator": "paragraph:1863",
+      "text": "Kaynak sahibi, hesaplamayı Fleet sorgusunun aynı güvenilir kesiti ve kaynak kilidi altında yapar. Değerlendirme girdileri kendi kalıcı kaynak kayıtları ve kabul edilmiş değişmez VesselTypeCatalogRevision alan gereklilikleridir. Public TypeRow, sayfalanmış kullanıcı listesi veya yalnız görünür alanlar tam kaynak kümesi sayılmaz. GET yeni kayıt, onay, kanıt kararı veya yaşam döngüsü geçişi oluşturmaz.",
+      "content_sha256": "5cde5284d0134d28164d46d85766bf01c13c90e23c4dc392577c30c5f5ae5775"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "locator": "paragraph:1864",
+      "text": "Sabit ROOT gereklilikleri /recordCode, /displayName ve /operatingMode JSON pointerlarıdır; mevcut kök şemasındaki alanları gösterir. initialStewardCompanyId yalnız oluşturma girdisidir; managingCompanyId ayrı ve isteğe bağlı ilişki projeksiyonudur. İkisi zorunlu kalıcı ROOT alanı gibi değerlendirilmez. Steward, işletmeci veya sahiplik gerekiyorsa mevcut ayrı kaynak kontrolleri uygulanır.",
+      "content_sha256": "d7a74df107ad2a497afdd9c0bcca3bf1c778d357d822c8cf43acd67b3ba61f2d"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "locator": "paragraph:1865",
+      "text": "Ek IDENTITY, PROFILE ve TUG_PROFILE gereklilikleri yalnız seçili kabul edilmiş katalog kaydının requiredInputPaths kümesinden alınır. Her pointer, kayıtlı native writer şemasındaki kaynak türü, veri tipi, nullability ve min/max kısıtlarına kesin bağlanır; katalogda bu ek metadatanın bulunduğu varsayılmaz. Bilinmeyen veya belirsiz şema/pointer bağı UNAVAILABLE ve UNKNOWN üretir, kümeden sessizce çıkarılmaz. Tekilleştirme anahtarı (sourceKind,path) çiftidir; farklı kaynak türlerindeki aynı pointer adı tek alan sayılmaz.",
+      "content_sha256": "97caecda32810aff47f1bd27effc7ba092a8ba6938dce7bbff70b956aecff6d7"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "locator": "paragraph:1866",
+      "text": "Gereklilik kümesi üç ROOT alanı dahil en fazla 100 öğedir. Aşım 422 QUALITY_REQUIREMENT_SET_TOO_LARGE üretir; ilk 100 öğeyle COMPLETE hesaplanmaz. Kümedeki required daima true olur; isteğe bağlı alanlar ayrıca zorunluluk olarak eklenmez. Boş küme COMPLETE olamaz. Yeni bir profileRuleVersion kaynağı icat edilmez; değişmez catalogRevisionId ile kabul edilmiş native şema bağları kullanılır. Üretici ve şema kayıt sürümleri iç kaynak kilidi ve önbellek geçersizleştirmesine dahildir.",
+      "content_sha256": "97a3c4d24ffad82448c675c463fdb4364cb193bdc480bda166c31da4b4f7a446"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "locator": "paragraph:1867",
+      "text": "Katalog seçimi kökün vesselTypeCode ve kesin catalogRevisionId bağını kullanır. Katalog yoksa, desteklenmiyorsa veya yayımlanmamışsa enumerationComplete=false ve sonuç UNKNOWN olur. Kimlik/profil/römorkör profili aynı ReadCut içinde seçilmiş revizyonlardan okunur. Gereken revizyon gerçekten yoksa ilgili alan MISSING, arşive veya kaynağa ulaşılamıyorsa UNAVAILABLE olur. Gelecek önizleme güncel uygunluk kanıtına dönüştürülemez.",
+      "content_sha256": "37d76d63609f2fce19fe2610bd6413d3c3e3db5af8c4898055dbe5d3f87c1297"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "locator": "paragraph:1868",
+      "text": "KNOWN_VALUE, saklanan dolu değerin mevcut kaynak tipi ve kısıtlarına uygun olmasıdır; bağımsız doğrulanmış gerçek anlamına gelmez. KNOWN_NOT_APPLICABLE yalnız alan yokluğuna açıkça izin veren native uygulanabilirlik kararı ve politika kaynağıyla üretilebilir. Nullable olmak veya boş dizi tek başına uygulanmazlık kanıtı değildir. Gerekli diziler mevcut min/max ve tam küme şartlarına uyar; isteğe bağlı boş alan tamlık sonucunu düşürmez.",
+      "content_sha256": "3d78ca52e0878877020e9b5911f6f69a4c777c011ecf45f246da2f621aef5314"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "locator": "paragraph:1869",
+      "text": "ROOT gözleminde sourceRevisionId=null ve sourceVersion gerçek kök sürümüdür. Revizyonlu gözlem gerçek native revisionId ve version değerlerini taşır; yeni kimlik üretilmez. Eksik revizyonda iki kaynak değeri null kalır ve MISSING/UNAVAILABLE durumu açıklanır. Bilinen değer mutlaka gerçek kaynak kökenine bağlıdır.",
+      "content_sha256": "7423fe30590dc2550f84aa716767a7587b77375bd7226af10ab8e6684e946541"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "locator": "paragraph:1870",
+      "text": "Kesin öncelik: gerekli bir gözlem DISPUTED ise sonuç DISPUTED olur. Aksi halde gereklilik kümesi tamamlanmamışsa, kaynak/şema desteklenmiyorsa veya herhangi bir gözlem UNAVAILABLE ise UNKNOWN olur. Bunlar yokken herhangi bir gerekli gözlem MISSING ise PARTIAL, kalan durumda COMPLETE olur. Sonuç kullanıcıya görünür alt kümeyle yeniden hesaplanamaz.",
+      "content_sha256": "9d2415109d8252bdfb3f0bf0f4b362d8c4ae40e9ef119db02af38a42da839689"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "locator": "paragraph:1871",
+      "text": "dataQuality korumalı ve zorunlu bir okuma alanıdır. Mevcut güncel alan ve kaynak izinleri hem bu toplam göstergeyi hem bütün gerekli katkı alanlarını kapsamıyorsa mevcut whole-row withholding/detail 404 kuralı uygulanır. Gizli katkılar çıkarılarak olumlu sonuç gösterilmez. Filtre aynı korumalı sonucu ve aynı güncel izinleri kullanır; eski üçlü etiketlere dönüşüm yapılmaz.",
+      "content_sha256": "7faca37589da01e6f9d647a35a5348f9bfb8a0a9fb8df417d3bbe289722a2f2a"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "locator": "paragraph:1872",
+      "text": "Önbellek anahtarı bütün ilgili kaynak sürüm/sayaçlarını, kesin kesiti, güncel aktörü ve alan politikasını bağlar. Serileştirme öncesi kaynak kilidi yeniden doğrulanır; kilit sağlanamazsa 503 ile kapanır, eski COMPLETE gösterilmez. Üretici, kesin native şemalar, tam küme seçicisi, kaynak sürüm yöntemi ve negatif fixturelarla kayıtlı olmalıdır; kabul edilmiş bağ yoksa SOURCE_NOT_REGISTERED olur. Bu analiz gerçek kurulum veya test başarısı iddiası değildir.",
+      "content_sha256": "0ac1867da9fe95ea322d5316acf62cb51ab98b9bb1d3093fe003d94272929294"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "locator": "paragraph:1873",
+      "text": "COMPLETE sonucu sahiplik, işletmeci, steward, kanıt doğrulaması, yasal uygunluk veya anlık operasyonel kapasiteyi tamamlanmış ilan etmez. Mevcut MLC, PMS ve diğer tüketici kontrolleri ayrıca uygulanır; bu gösterge nedeniyle kaldırılmaz.",
+      "content_sha256": "20a79c4073ce125d2d7cca10b87b8c98bf6318e4991803e78f9af14561cef7c4"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "locator": "paragraph:1874",
+      "text": "Geliştirici kabul senaryoları",
+      "content_sha256": "4b1e9de488a381a355c69d160bddc49dba5a68c153bc10440190f9c960399c66"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "locator": "paragraph:1875",
+      "text": "FLT-QUALITY-01: Katalog yoksa dolu bazı alanlar bulunması UNKNOWN sonucunu değiştirmez.",
+      "content_sha256": "b91a54853ca4d88aa3f1a8f74bfbc817b81eafcf64e2a1625169be811d9fe54a"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "locator": "paragraph:1876",
+      "text": "FLT-QUALITY-02: Gerekli ana alanlar tam ve şema uyumluysa COMPLETE olur; ayrı UNVERIFIED doğrulama durumu değişmez.",
+      "content_sha256": "09c6591c4021485b8f9713cd196cae7f0a5d83ad81d117e41af25b3bb9c8893b"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "locator": "paragraph:1877",
+      "text": "FLT-QUALITY-03: Gerekli alan gerçekten yoksa PARTIAL, gerekli kaynak çelişkiliyse DISPUTED olur.",
+      "content_sha256": "3f8899aa51fbc6ba3d01999b94b5273329bf574a88c674b9a08bc56ae8bd08d2"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "locator": "paragraph:1878",
+      "text": "FLT-QUALITY-04: Eksik tam küme kanıtı veya kaynak kesintisi UNKNOWN/503 üretir; eski COMPLETE kullanılamaz.",
+      "content_sha256": "a94a598491f72c9decf0c4230faecb1e9a633b1228e3d0723db9971a87391566"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "locator": "paragraph:1879",
+      "text": "FLT-QUALITY-05: Gizli gerekli katkı alanı satırın saklanmasına/detail 404 sonucuna yol açar; görünür alt kümeden yeniden hesaplama yapılmaz.",
+      "content_sha256": "a03e7654363391d5bb7eada33bc25c3b7ec219af38614fb9f96a84ab716c25cd"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "locator": "paragraph:1880",
+      "text": "FLT-QUALITY-06: Eski VERIFIED etiketi tek başına COMPLETE üretmez; eski üçlü filtre değerleri dört değerli enum yerine zorlanamaz.",
+      "content_sha256": "c37800a4ce13da9c121c95cc04e1972d066d95ee91c15c93b024c8b03c8536a9"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "locator": "paragraph:1881",
+      "text": "FLT-QUALITY-07: Boş küme ve 100 üzeri gereklilik COMPLETE üretemez; kapasite aşımı exact 422 kodunu verir.",
+      "content_sha256": "b64bd29f7bd2c0a565cbdb5d41a9de35b17fa622ed15048c846065b21659aba0"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "locator": "paragraph:1882",
+      "text": "FLT-QUALITY-08: Aynı pointer adı farklı sourceKind altında ayrı gerekliliktir; root sürümü revizyon UUIDsi gibi yeniden kimliklendirilmez.",
+      "content_sha256": "fa2736eeee3bf29f9380960a07c22cc410bd2966b343ab78a767e674bf77f86f"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "locator": "paragraph:1883",
+      "text": "FLT-QUALITY-09: Kalite hesaplaması onay, kanıt doğrulaması, yaşam döngüsü veya operasyonel izin üretmez.",
+      "content_sha256": "7485af44764b99fe420cbccae27398bb5bc129ae4b269370661a39f2b955adf9"
+    },
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/59.01_POSEIDON_Filo_Sirket_ve_Gemi_Ana_Veri_Yonetimi_Tam_Analiz_TR(1)(1).docx",
+      "source_sha256": "daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+      "locator": "paragraph:1884",
+      "text": "Bu senaryolar tasarlanmış kabul koşullarıdır; gerçek uygulama testleri çalıştırılmamıştır (NOT_RUN).",
+      "content_sha256": "8e40167f5cb33d1cbf36fa3bf3468d90ef9e20f7d5c819533291867b2cfe928b"
+    }
+  ],
+  "canonical_backlog": [
+    {
+      "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
+      "locator": "sheet:Backlog/row:21",
+      "sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
+      "source_class": "candidate-unverified",
+      "text": "A21: DEV-020 | B21: Story | C21: E02 Vessel & Fleet Context | D21: Vessel | E21: Vessel master ve regulatory profile | F21: DPA olarak pilot geminin tek kontrollü profile sahip olmasını istiyorum. | G21: IMO no, flag, class, ship type, GT, build/trading/cargo context versioned kaydedilir; provenance/freshness görünür. | H21: fleet-vessels / /api/v1/vessels | I21: P0 | J21: S2 | K21: Backend+Frontend | L21: DEV-005,DEV-014 | M21: T-S2-001 | N21: Not Started | O21: YES | P21: 8 | Q21: M",
+      "truncated": false
+    }
+  ]
+}

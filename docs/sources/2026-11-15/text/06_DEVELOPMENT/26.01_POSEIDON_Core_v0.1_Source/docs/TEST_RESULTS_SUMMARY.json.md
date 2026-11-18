@@ -1,0 +1,157 @@
+# TEST_RESULTS_SUMMARY.json
+
+Source: analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/26.01_POSEIDON_Core_v0.1_Source/docs/TEST_RESULTS_SUMMARY.json
+SHA256: ec4ffef51bf7467c3f21018cc3be76ee74e259940c81f12ed9f0f72d072a8ba5
+
+## lines:1-40
+
+{
+  "schema_version": 2,
+  "as_of": "2026-10-27T17:56:19.574500+00:00",
+  "scope": "First non-operational vessel/certificate metadata draft slice using synthetic Development sessions",
+  "repository": "emgt41/Poseidon",
+  "tested_revision": {
+    "base_commit": "fc4c9858205a02c8ba3d41b5495d525a73bb4a69",
+    "additional_patch": "fetch-receiver.patch",
+    "patch_sha256": "79b4e929944d086a6361720f8c0429146bdb831041ff059d918cc863601e3aa2",
+    "files": [
+      "src/Frontend/src/api.ts",
+      "src/Frontend/src/api.test.ts"
+    ],
+    "description": "Base revision plus exact two-file fetch-receiver patch; evidence was produced before this integration was committed or pushed."
+  },
+  "provenance": {
+    "portable_report": "docs/VALIDATION_2026-10-27.md",
+    "evidence_archive": "27.02_POSEIDON_Core_v0.1_Dogrulama_Kanitlari_2026-10-27.zip",
+    "evidence_location": "Canonical master package / 07_TEST_PILOT_RELEASE",
+    "original_archive_sha256": "dd8a9a96b95bdb8a910022228776a74d1026767b02f5839c9e33bad03fb5325c",
+    "integration_test_rerun": false
+  },
+  "runtime": {
+    "dotnet_sdk": "10.0.403",
+    "dotnet_runtime": "10.0.14",
+    "postgresql": "17.11",
+    "node": "24.19.0",
+    "chromium": "154.0.8037.57",
+    "playwright": "1.62.1",
+    "vitest": "5.0.5",
+    "vite": "8.3.5"
+  },
+  "backend": {
+    "status": "PASS",
+    "tests_passed": 37,
+    "tests_failed": 0,
+    "tests_skipped": 0,
+    "actual_http_postgresql_integration": "PASS_SCOPED_SYNTHETIC_DEVELOPMENT",
+    "evidence": [
+      "backend-after.log",
+
+## lines:41-80
+
+"backend-after.trx"
+    ]
+  },
+  "frontend": {
+    "tests_passed": 33,
+    "tests_failed": 0,
+    "build": "PASS",
+    "typecheck": "PASS",
+    "test_transport": "jsdom and mocked HTTP in unit tests only",
+    "real_browser_checks": "PASS_SCOPED_HEADLESS_CHROMIUM",
+    "evidence": [
+      "frontend-after.log",
+      "typecheck-after.log",
+      "build-after.log"
+    ]
+  },
+  "browser": {
+    "before_fix": "FAIL: native fetch invoked with Api receiver; Illegal invocation before HTTP request",
+    "after_fix": "PASS",
+    "control_groups_passed": 12,
+    "api_and_database": "Real API and PostgreSQL; synthetic data only",
+    "checks": [
+      {
+        "name": "synthetic_A_login",
+        "status": "PASS"
+      },
+      {
+        "name": "incomplete_vessel_save",
+        "status": "PASS"
+      },
+      {
+        "name": "server_reopen_update",
+        "status": "PASS"
+      },
+      {
+        "name": "TR_EN_switch",
+        "status": "PASS"
+      },
+      {
+        "name": "invalid_IMO_UI",
+
+## lines:81-120
+
+"status": "PASS"
+      },
+      {
+        "name": "API_invalid_unauthorized_submit",
+        "status": "PASS"
+      },
+      {
+        "name": "stale_UI_conflict",
+        "status": "PASS"
+      },
+      {
+        "name": "ambiguous_response_retry",
+        "status": "PASS"
+      },
+      {
+        "name": "linked_incomplete_certificate_and_invalid_dates",
+        "status": "PASS"
+      },
+      {
+        "name": "B_isolation",
+        "status": "PASS"
+      },
+      {
+        "name": "browser_reload_persistence",
+        "status": "PASS"
+      },
+      {
+        "name": "API_restart_persistence",
+        "status": "PASS"
+      }
+    ],
+    "fault_injection": "Ambiguous-response check aborts response after real upstream commit; not a real infrastructure outage",
+    "restart_scope": "API process restart and fresh browser session only; not database or host restart"
+  },
+  "historical_evidence": {
+    "preserved": "Existing VERIFICATION.md snapshots remain unchanged",
+    "previous_as_of": "2026-10-27T12:49:45Z",
+    "previous_backend": "34 passed; 3 real PostgreSQL suites skipped",
+    "previous_frontend": "32 passed; browser not run",
+    "sql_single_user": "Prior PostgreSQL 18.6 single-user checks remain historical; not rerun here",
+
+## lines:121-141
+
+"dependency_checks": "Prior npm/NuGet results remain historical; no new vulnerability audit claimed"
+  },
+  "not_run": [
+    "Production OIDC integration",
+    "Production deployment / HTTPS reverse proxy",
+    "Operational or maritime approval",
+    "Full manual visual/accessibility/mobile/cross-browser review",
+    "Database process/host restart or backup-restore resilience",
+    "Long-term durability or network fault matrix"
+  ],
+  "remaining": [
+    "Production IdP integration and claim governance",
+    "On-premises production deployment, HTTPS and independent security review",
+    "Full manual visual/accessibility/mobile/cross-browser review",
+    "Database process/host restart, backup-restore and long-term durability",
+    "Domain catalogs, operational states and independent maritime/SME approval",
+    "Whole-product acceptance beyond this first metadata draft slice"
+  ],
+  "deployment_target": "On-premises/self-hosted web application accessed by browser; cloud development/test is not cloud production hosting",
+  "release_status": "DEVELOPMENT_SLICE_NOT_PRODUCTION_READY"
+}

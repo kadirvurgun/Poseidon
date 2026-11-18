@@ -1,6 +1,378 @@
 # POSEIDON — PR16 ve yerelleştirme durumu
 
-[PR16](https://github.com/kadirvurgun/Poseidon/pull/16) taslak olarak açık. İlk push ve PR CI koşularında gerçek API integration816/822PASS,6FAIL,0skip kaydedildi. Hatalar dar kapsamda yeniden üretildi; toplu ilk düzeltme push’u hazırlanıyor. Tam CI ve genuine signed senaryoları geçmeden merge kabulü verilmedi.
+## Paralel S2 planlama, tema ve katalog alt paketleri (17–18.11.2026)
+
+_18.11.2026 entegrasyonu: ayrı oturumda yazılan bu kayıt `foundation/s2-integration-20261118` dalına cherry-pick ile alındı; planlama manifesti `sources/2026-11-15/planning-manifest.json` yoluna taşındı. Entegrasyon testleri DEFERRED / NOT RUN._
+
+**17.11.2026:** Yeni analiz seti için kaynak bağlı planlama eki yazıldı: **42 Word + 1 HTML**, 42 geliştirme paketi, G01–G26 / X01–X07 / S01–S09 sahiplik eşlemesi. Mevcut S0/S1 mühendislik kabulü **103 / 970 SP, 20 / 121 iş; ayrı ekran kabulü 0 / 196** olarak korunur. Bu çalışma yeni kabul puanı eklemez.
+
+Yeni plan; exact API profilleri ve kalıcı retry, IAM Rev4 action/epoch, tek LegalEntity/Vessel, personel→teknik/risk/mevzuat→Ship/Tug kaynak zinciri, kurum içi/self-hosted üretim, offline sınırları, TR/EN/erişilebilirlik ve gerçek kanıta bağlı release kapılarını içerir. S2 DEV-020–025 için 42 SP kaynak bağı çıkarıldı; ilk uygulama DEV-020 gemi/profil akışıdır.
+
+İnceleme kapsam ve owner ifadeleri ile seçilmiş sözleşme paragraflarına dayanır. 146.506 dolu paragrafın bütün sicil/FR/TC/action satırları semantik olarak doğrulanmadı. Eski revizyon atıfları, 61.01 dosya adı/iç sürüm farkı ve exact alan/endpoint eşlemesi açık takiptir. Aktif FTS araması artık yeni42DOCX kaynağını da içerir; eski aynı numaralı adaylar yalnız referans modunda bulunur. Kaynak araması başarılı oldu; test/bağımsız kabul yerine geçmez.
+
+İlk analiz incelemesinde kaynak/metin ve SHA256/byte/konum metadata üretimi yapıldı; devamında tema, kaynak araması, domain ve profil UI kodu yazıldı. Test/build/typecheck/Playwright, bağımsız QA ve CI **DEFERRED / NOT RUN**; prototip çalıştırılmadı. Sonraki adım DEV-020 native Fleet producer ve exact owner/profile/trace uzlaştırması. S1 PR/merge/main CI yayın uzlaştırması ayrı korunur.
+
+**Tema eki — 17.11.2026:** Kullanıcının shadcn b3Zheoix4U presetiyle ortak tema altyapısı yazıldı: açık/koyu/sistem, Zümrüt/Okyanus/Grafit, yerel tercih ve sekmeler/OS eşitlemesi, ilk boyama ve offline bootstrap. 6 davranış + 1 offline test kaynağı eklendi. Modül CSS/grafik renklerinin tam geçişi, font/icon/stil geçişi ve gerçek kontrast/browser kabulü açık. Lint/typecheck/build/test/QA/CI **DEFERRED / NOT RUN**; accepted SP eklenmedi. [Görev](tasks/theme-foundation-01.md) · [Rapor](phases/THEME-FOUNDATION-01.md).
+
+**S2 geliştirme — 17.11.2026:** DEV-020 için kaynak bağlı temel alt paketi yazıldı. Yeni42DOCX dahil181.464 adresli kayıt aramada; iç Fleet tamlık politikası ve kayıtlı kaynak/gözlem zamanı özeti eklendi. 8 domain +4 Python +2 UI test kaynağı yazıldı, çalıştırılmadı. Katalog/schema/source registration ve aynı-kesit yetki/lineage producerı henüz yok; hesaplayıcı public quality alanına bağlanmadı. DEV-020/S2 tamamlanmadı; accepted SP +0. Dal `foundation/s2-analysis-20261117`. [Görev](tasks/s2-profile-foundation-01.md) · [Rapor](phases/S2-PROFILE-FOUNDATION-01.md).
+
+**18.11.2026 — katalog persistence:** Boş/kısmi Fleet katalog taslağı, immutable revizyon/komut sonucu, tenant/prior FK, serializable audit ve replay katmanı yazıldı. Opsiyonel fixture boş ve doğrulanmamış kalır; normal seed/startup değişmedi. 6 domain metodu /9 senaryo ve10 PostgreSQL integration metodu yazıldı; çalıştırılmadı. Migration designer/snapshot uzlaştırması, gerçek PostgreSQL doğrulaması ve yetkili host/source governance açık. Yeni kabul puanı yok. [Görev](tasks/s2-fleet-catalog-draft-01.md) · [Rapor](phases/S2-FLEET-CATALOG-DRAFT-01.md).
+
+[Analiz raporu](phases/ANALYSIS-20261115-01.md) · [42 paketlik plan](tasks/analysis-20261115-01.md) · [Kaynak manifesti](sources/2026-11-15/planning-manifest.json) · [Canonical kayıt](project-status.json)
+
+---
+
+**17 Kasım — 15.11 ek analizleri aktif kaynak zincirine alındı; S2 bağlam alt
+paketi yazıldı, kabul açık.** 42 DOCX ve bir güncel TR/EN prototip eklendi. Önceki
+269 kaynak byte olarak değişmedi; yeni baseline312 dosya/182.283 bölüm/0 mismatch
+ile doğrulandı ve dört GitHub-uyumlu parçaya ayrıldı. Yeni kaynak, aktif şirketin
+vessel owner/operator/CompanyId alanından türetilemeyeceğini belirledi. S2 global
+bağlamı server-provisioned aktif şirket, bağımsız yetkili vessel, Ship/Tug modu,
+rol ve bağlantı olarak genişletildi; eksik şirket Unavailable, geçersiz şirket503
+olur. İki yeni label17 dilde eklendi. Ürün testleri/build/Playwright **DEFERRED**;
+canonical20 iş/103SP (%10,62) değişmedi, push/PR/merge yok.
+[Kaynak sonucu ve ürün sınırı](phases/ANALYSIS-20261115-01.md).
+Devamında 59.01 `paragraph:55` uygulandı: onboarding blockerları exact vessel,
+alan, gerekçe ve gereken declaration/policy/evidence türünü taşır; tam beyan bile
+nitelikli kanıt olmadan doğrulanmış/ready gösterilmez. Subject ID UI'a taşınmaz,
+yeni blocker metinleri17 dilde tamamlandı. Test yürütme yine büyük kapıya ertelendi.
+
+**13 Kasım — taşma düzeltmesi önizlemede; büyük faz kapısı açık.**
+Kullanıcının Bugün ekranı geri bildirimi giderildi: uzun araç kod/adları kart
+sınırında kırılır; ortak Card/Button ile tam genişlikte alt aksiyon, ortak
+EnterprisePagination/EnterpriseActions ve ekranı aşmayan grid kullanılır.
+Tam değerler ve erişilebilir adlar korunur; genel yatay taşmayı gizleyen kural,
+veri filtreleme veya onay/durum değişikliği eklenmedi. Düzeltme açık yerel
+önizlemeye aktarıldı; HTTPS sayfası200 ve yeni derlemenin HTML eşitliği doğrulandı.
+Önizleme derlemesi5,732s PASS; bu sonuç test veya faz kabulü değildir.
+
+Yeni2 TR/Arapça bileşen varyantı ve1365/580/390/320px gerçek yerleşim/klavye
+regresyon kaynağı yazıldı, **DEFERRED**. Görsel taşmama ölçümü henüz yapılmadı.
+İlgili iş: [TODAY-VESSEL-REFLOW-01](tasks/TODAY-VESSEL-REFLOW-01.md).
+
+Özgün002 kapısında lint42,576s/tip13,072s PASS, uygulanabilir Windows+Linux
+protokol birleşimi233 kimlik (Python135 + Node98) PASS. Tam bileşen paketi
+**1660 =1659 PASS/1 FAIL**, pending/todo/unhandled0,295,006s; failfast nedeniyle
+büyük kapı build/taraması başlamadı. Profil geçmişi satırını eşzamanlı arayan
+assertion dar çalışmada yeniden üretildi; satırın yetkili asenkron okumasını
+bekleyen düzeltme aynı tek vakada **1/1 PASS**,16,195s,0unhandled.
+Diğer79 vaka bu dar koşuda seçilmedi; bu sonuç tüm1660 paketi geçirmiş sayılmaz.
+[İş ve kabul sınırı](tasks/PROFILE-HISTORY-ASYNC-ASSERTION-01.md).
+
+Backend002 bağımsız doğrulaması1067/1067 birim,79/79 PostgreSQL ve884/884 API
+PASS olarak korunur; yeni ön yüz kaynakları bu sonuçların yürütme hedefi değildir.
+Yakalama gizliliği14/14 saf regresyon PASS; tanınmayan bileşen başlıkları yalnız
+sayılır, özel metin veya ayrı digest saklanmaz. Senaryo satırlarının1660/1660
+özetiyle eşitliği doğrulandı; protokol kimlik kapıları gevşetilmedi.
+
+**Canonical20/121 iş,103/970SP (%10,62),0/196 ayrı ekran değişmedi.** S0/S1
+kabulü korunur; S2'nin6 işi/42SP'si adaydır. Yeni PR/push/merge yok. Kalan:
+yeni ön yüz paketinin kaynak incelemesi ve faz sonunda tam regresyon/taze build/
+tarama; genuine/register/TLS/S2 sonlu gözlemleri; bağımsız aynı-hedef QA ve required CI.
+Paralel ajanlar kullanım sınırı bildirdi; yeni ajan/hesap denemesi yapılmadı,
+bağımsız kabul henüz verilmedi. Aşağıdaki13:52 ve önceki hedefler tarihseldir.
+
+**13 Kasım — 13:52 UTC devam kontrol noktası; faz kabulü açık.**
+Güncel birleşmiş ürün hedefi `002a931` üzerinde backend kapısı gerçek çalışmayla
+tamamlandı ve ayrı ajan tarafından bağımsız doğrulandı. Bu sonuç, yerel backend
+alt paketine aittir; tüm Foundation paketi, S2 sprinti veya release tamamlanmış
+sayılmıyor. **Canonical ilerleme20/121 iş,103/970SP (%10,62); ayrı kabul edilmiş
+ekran0/196.** S0 ve S1 kabul edildi; S2'nin6 işi/42SP'si aday kapsam olarak duruyor,
+S2 kabulü henüz0SP. Yazılan kod miktarı kabul yüzdesi yerine kullanılmıyor.
+
+| Güncel002 doğrulaması | Gerçek sonuç |
+|---|---|
+| Release derlemesi | PASS;85,273s |
+| Birim testleri |1067/1067 PASS: Persistence75 +Domain756 +API236; fail/skip0 |
+| Gerçek PostgreSQL integration |79/79 PASS;314,538s; fail/skip0 |
+| Tam API integration |884/884 PASS;1089,756s; dört ayrık/tam shard221'er vaka; fail/skip0 |
+| Kritik HTTP/audit kapsamı |107 route template;117 gerekli/gözlenen/audit edilmiş işlem,0 invalid;884 API vakasının alt kümesi |
+| Migration-model | PASS;11,683s |
+| Ön yüz002 | **NOT_STARTED**; lint/tip/protokol/bileşen/build/tarama için yeni sonuç yok |
+| Genuine/register/TLS ve S2 sonlu gözlemler002 | **NOT_STARTED**;21 adımın gerçek gözlemi0 |
+
+Backend yürütmesi06:16–06:42 UTC arasında tamamlandı. Sonrasında kaynak2808/2808
+Git blob'u, dört araç hashi,858 kritik capture dosyası ve model kontrolünden sonra
+üretilen eksiksiz181 public Release dosyası bağımsız eşleştirildi. Bu181 manifesti
+özgün002 çıktısıdır; eski2b/116 sonuçları yeniden etiketlenmedi. Bu koşunun sahipli
+Clam/S3 servisleri ve geçici ortam dosyası kaldırıldı. Önceden var olan üç Clam
+konteyneri başka koşulara ait olduğundan korundu; genel temizlik yapılmadı.
+
+Windows private-root düzeltmesi `90ee741` ile owner+DACL kapsamına daraltıldı;
+SACL okunmuyor ve parent ACL değiştirilmeden bırakılıyor. Normal merge `002a931`
+ve dar özgün Windows regresyonunda1 PASS kaydı var; bu dar sonuç, tamamlanmamış
+tam Windows+Linux protokol birleşiminin yerine geçmiyor.
+
+Ön yüzün önceki002 hazırlığı, çalışma başlamadan yakalama gizliliğindeki
+**PRIV-CAP-S01/S02** kaynak bulguları nedeniyle durduruldu: tanınmayan runtime
+test adları ve özel hata/stack verilerinin ayrı digest'leri kalıcı kanıta
+aktarılmamalı. Eski17 dosyalık paket korunuyor. Ayrı `frontend-v2` düzeltmesi bu
+kontrol noktasında yazılıyor; kaynak dondurma/bağımsız inceleme, saf yakalama
+testleri ve tam ön yüz kapısı henüz tamamlanmadı. Gerçek002 ön yüz yürütmesi yok;
+önceki hedeflerdeki PASS/FAIL sonuçları aşağıda kendi hedeflerinde kalıyor.
+
+S2 yardımcılarının002 hedefindeki10/10 saf testi0,527s PASS; **genuine gözlem
+kredisi sağlamaz**. Yeni genuine hazırlığının7 dosyası ve S2'nin12 kaynak dosyası
+bağımsız incelemeden geçti;27 kaynak pini ve673 seçilmiş ağaç girdisi eşleşiyor.
+Yeni genuine worker'da artifact kopyası, private genesis, sağlayıcı veya tarayıcı
+başlatılmadı. Gerçek400/no-write IMO doğrulaması da dahil21 sonlu adım, ancak aynı
+yeni runId'ye bağlı ayrı yetki ve gerçek ortamla ölçülebilir; pilot/SME onayı
+üretilemez.
+
+Sıradaki sıra: yakalama gizliliği düzeltmesinin bağımsız incelemesi ve saf testleri;
+tam lint/tip, Windows+Linux protokol birleşimi, bileşenler, taze build ve
+repository/client taramaları; ardından taze tam unfiltered genuine/register/TLS,
+S2 sonlu gözlemler, bağımsız son hedef QA ve merge öncesi gereken CI. Bunlar
+kapanmadan yeni faz kabulü veya güvenilir bitiş tarihi verilmiyor.
+
+13:53 UTC salt okunur GitHub kontrolünde PR16 hâlâ draft/open (`32ff1d0`),
+main `856f75e`; yeni push/PR/merge yok. Aktif ajan çalışması13:52 UTC'de yeniden
+başladı.06:42'de biten backend sonucu korunmuş kanıttır; aradaki süre kesintisiz
+çalışma veya kurulmuş7/24 host olarak sunulmuyor. Kalıcı host/kullanım bütçesi
+kurulumu tamamlanmış değil.
+
+Aşağıdaki tarihlendirilmiş kayıtlar tarihsel kontrol noktalarıdır; önceki
+“güncel”/“sıradaki” ifadeleri yazıldıkları hedef ve anı anlatır. Yeni durum üstteki002
+kontrol noktasıdır; özgün kanıtlar ve başarısızlıklar değiştirilmedi.
+
+**13 Kasım — son gerçek doğrulama ve kalan engel:** `2b1e7b3` backend kapısı
+bağımsız doğrulandı: Release74,950s; **1067/1067 birim**, **79/79 PostgreSQL**
+(296,995s), **884/884 API** (958,104s), fail/skip0. Dört ayrık shard221'er vaka;
+kritik117 işlem mevcut884 içindeki audit alt kümesidir. Model10,333s PASS.
+Önceki27 CE/Profil hatası iki test yardımcısının receipt-audit eşlemesinde dar
+reproduction ile doğrulandı; audit biçimi veya gizlilik zayıflatılmadan düzeltildi.
+Sahipli Clam/S3/privateenv kaldırıldı; özgün136 Release dosyası değişmedi.
+Sonraki45 public BuildHost dosyası ayrı181-dosyalık ek manifestte kaydedildi;
+özgün manifest ve gerçek çalışma hedefi yeniden yazılmadı.
+
+`116701b` ön yüzde lint44,837s ve tam tip kontrolü17,799s **PASS**, tanı0.
+Windows protokolünde `test_bundle_object_root.py:245` konumundaki
+`test_windows_native_fresh_once_then_existing_exclusive_child_never_restricts`
+**FAIL**: modül23 keşif,22 sonuç =18PASS/1FAIL/3POSIXskip; failfast nedeniyle
+kalan vaka tamamlanmadı. Dış gözetici85,101s'te normal exit1, timeout yok.
+Linux birleşimi/bileşen/build/tarama bu koşuda **NOT_RUN_FAILFAST**; eski
+geçen sonuçlar yeni hedefte koşulmuş gibi sayılmadı. Dar tanı ve düzeltme sürüyor.
+
+Profil history ilk400 yenilemesi, lint ve TypeScript düzeltmeleri normal geçmişle
+birleşti. Ayrı yazım hedefindeki tip kontrolü27,117s PASS ve kaynak incelemeleri
+korunur; bu sonuç tam tarayıcı kabulü değildir. Yeni genuine/register/TLS ve S2
+21 sonlu gözlem bu pakette **başlamadı**. S2 saf10 testin2b hedefindeki1,209s
+PASS sonucu ayrı yardımcı kanıtıdır. Backend2b→116 değişmeyen665girdi bağı için
+bağımsız yeniden-kullanım incelemesi sürüyor; yeni backend yürütmesi iddia edilmez.
+
+**Canonical20/121 iş,103/970SP (%10,62),0/196 ayrı ekran değişmedi.** Yeni
+push/PR/merge yok. Sıradaki adım: Windows protokol hatasını düzeltmek, kalan
+bileşen/derleme/tarama ve gerçek tarayıcı kapılarını kapatmak; bağımsız QA ve
+required CI geçerse büyük PR ve normal merge. Aşağıdaki37e/0e sonuçları özgün
+tarihsel hedeflerinde korunur.
+
+**13 Kasım — yeni birleşmiş paketin gerçek kapısı:** `37e9c6f` hedefinde
+36 dosyalık HRO/CE/Profil ve 5 dosyalık nesne-dizini düzeltmesi normal geçmişle
+birleşti; önceki düzeltmelerin blob'ları korundu. Bu yeni kapı **FAIL/STOPPED**.
+Backend Release (81,175s), **1067/1067 birim** ve **79/79 gerçek PostgreSQL**
+(338,488s) PASS. Tam API **884 = 857 PASS / 27 FAIL / 0 skip**, 1033,914s;
+dört ayrık/tam shard 221'er vaka, 38 yeni recovery satırının discovery'si tam.
+27 hata, yeni CE17/Profil10 testinin receipt-audit yardımcılarında aynı
+`Assert.Single` noktasında: CE53 / Profil47. Sunucunun audit kimliği ResourceId;
+testin raw işlem anahtarı varsayımı kaynakta yanlış. Değer/neden dar gerçek
+reproduction ile doğrulanmadan beklenti veya üretim kodu değiştirilmiyor.
+HRO11 satırı geçti. Bu hedefte kritik117 ve model kontrolü **NOT_RUN_FAILFAST**;
+eski64 sonuçları yeni koşu sayılmaz. Sahipli Clam/S3/privateenv temizliği PASS;
+136 Release dosyası ve kaynak temizliği bağımsız tekrar doğrulandı.
+
+Ön yüz manifest1/gizlilik8 PASS; **lint 11 hata + 6 uyarı**, 64,462s.
+Tip/protokol/bileşen/build/tarama başlamadı. 1800s dış gözetici normal exit1 ile
+77,585s'te kapandı; timeout yok. 12 sabit dosya hashi ve kilitli paketler
+hazırlıkta doğrulandı; önceki yavaş/kesilen kopyalar PASS sayılmadı, bütün kurulu
+dosyaların ayrı ayrı hash doğrulandığı iddia edilmez. Lint kuralları gevşetilmeden
+17 kaynak tanısı sonraki ayrı kaynak hedefinde düzeltiliyor.
+
+S2 saf yardımcı **10/10** gerçek PASS (1,201s; fail/skip/unknown0), gerçek tarayıcı
+gözlemi değildir. İlk400 sonrası geçmiş paneli yüklenmesinin uzaması, ayrı
+`0dd388d` üzerinde 3 dosyada düzeltildi; 3 regresyon kaynağı ve bağımsız SOURCE_CLEAR,
+yürütme0. Bu değişiklik37e kapısında yok; sonraki lint düzeltmesiyle birleşecek.
+Yeni tam genuine koşusu native FAIL nedeniyle başlamadı. **Canonical20/121 iş,
+103/970SP (%10,62), 0/196 ayrı ekran aynı; yeni push/PR/merge yok.**
+
+Aşağıdaki0e/64/AED sonuçları önceki hedeflere ait doğrulanmış alt paket ve tarihsel
+kontrol noktalarıdır; yeni37e başarısızlığının yerine geçmez.
+
+**13 Kasım — güncel teslim kontrol noktası:** native alt paket bağımsız doğrulandı;
+canonical kabul **20/121 iş, 103/970 SP (%10,62), 0/196 ayrı ekran** olarak aynı.
+Backend özgün `64a8442` hedefinde 1067/1067 birim, 79/79 gerçek PostgreSQL,
+846/846 API ve bunun içindeki 117/117 kritik audit kapsamı PASS.
+Frontend özgün `aedffd3` hedefinde 1566/1566 bileşen, 244/244 suite,
+lint/tip/20 dosyalık üretim derlemesi PASS. 209 protokol kimliği platformların
+uygulanabilir birleşiminde geçti; özgün platforma özel skip'ler korunur.
+`0e197a2` üzerinde taze repository taraması **2784 dosya / 0 bulgu** ve aynı
+20 üretim dosyasının taraması **0 bulgu**; 6 saf S2 yardımcı regresyonu PASS.
+657 backend girdisi/8 proje ve frontend/build eşitliği bağımsız bağlandı;
+eski testler yeni koşu diye sayılmadı. Kaynak inceleme kaydı 166 eski + 2 bağımsız
+receipt = 168; eski başarısız koşular ayrı ve değişmeden korunur.
+
+Yeni sahipli genuine ortamında giriş/servisler ve 8 fixture + 2 lane / 65 başarılı
+HTTP hazırlığı tamamlandı. **Tam register henüz çağrılmadan** qualified fixture
+preflight `scripts/oidc-lab-private.ps1:9` Set-Acl adımında exit1 ile durdu.
+Özgün OS hata gerekçesi yoktur. Salt okunur inceleme mevcut dizinin doğru sahipli,
+korumalı tek-owner FullControl izinlerini doğruladı; izin onarımı yapılmadı.
+App/compose, extraction peer ve Clam temizliği PASS; kendi volume'ları korunur.
+Tam register/TLS/sonlu S2 gözlemleri bu koşuda **0**, kabul veya PR/merge yok.
+Mevcut doğru dizinde yeniden ACL uygulamayı kaldıran creation-only doğrulama
+ayrı kaynak dalında hazırlanıyor; eski private laboratuvar tekrar başlatılmaz.
+
+HRO `ec87f19`, CE `845bf55` ve Profil `7b1551e` kurtarma paketleri bağımsız
+SOURCE_CLEAR; mevcut native hedefin dışında, yeni yürütmeleri **DEFERRED**.
+Profil paketinde ilk edit CAS tabanı, iptal edilebilir gerçek parent discard
+izni ve geç receipt sonrası private-view koruması dahil üç kaynak bulgusu giderildi.
+Profil 20 UI / 16 wire / 10 API-PG / 2 genuine vaka kaynağıdır; test sonucu değildir.
+S2 doğrulama gözlemcisinin geçerli boş Flag probe'u çalıştırılmadan durduruldu;
+Known IMO `123` ile gerçek400/no-write gözlemine çevrilen ayrı kaynak bağımsız
+SOURCE_CLEAR, yürütmesi0. Sonraki adım: düzeltmeleri normal geçmişle birleştirip
+büyük paketin gerekli kontrolleri, taze genuine ve bağımsız QA/CI kapısını kapatmak.
+
+Aşağıdaki tarihlendirilmiş bölümler özgün kontrol noktalarıdır; güncel durum üsttedir.
+
+**13 Kasım — en son native sonucu:** `aedffd3` üzerinde1566/1566bileşen,
+244/244suite,lint/tip ve20dosyalık üretim derlemesi PASS; hata/skip/pending/todo/
+unhandled0. Repository taraması2782dosyada2db-passwordeşleşmesiyle durdu;
+client taraması başlamadı. İki tam kaynak ifadesi bağımsız incelemede rastgele
+üretici çağrısı olarak sınıflandırıldı; gerçek runtime parolaları private kalır.
+166eski kayıt korunarak2exactreceipt entegrasyonu/provision adımı hazırlanıyor;
+taramaPASS/PR/merge/kabul ilan edilmedi. CE10dosyalık845bf55paketi bağımsız
+SOURCE_CLEAR;14UI/12adapter/17API-PG/1genuine testkaynağı0yürütme. Profil
+unknown/owner/CSRF düzeltmesi sonraki ayrı dalda başladı.
+
+**13 Kasım — son frontend kontrol noktası:** `f4eea04` kontrollü devamında209platformlar arası protokol kimliği geçti;
+Linux sahipli konteyner kalıntısı0. Tam bileşen paketi1566vakanın1565
+PASS/1FAIL sonucu ile332,539s içinde durdu; pending/todo/unhandled0.
+`RegulatoryQualification.test.tsx:44:25` genel IN_FORCE seçicisi güncel kayıt,
+seçenek ve geçmiş satırını eşliyordu. Tek test `aedffd3` ile güncel lineage
+satırına bağlandı; hash ve disabled/zero-send kontrolleri korunup güçlendirildi,
+bağımsız SOURCE_CLEAR. Bu yeni hedefte yürütme henüz0; build/tarama başlamadı.
+Önceki başarısızlık korunur; yeni native kapı hazırlanıyor, kabul/PR/merge yok.
+
+**13 Kasım — güncel gerçek doğrulama:** backend `64a8442` Release,
+**1067/1067 birim +79/79 gerçek PostgreSQL +846/846 API**, hata/skip0;
+**117/117** kritik HTTP/audit kapsamı ve migration-model kontrolü PASS.
+Sahipli Clam/S3 konteynerleri ve geçici S3 ortam dosyası kaldırıldı.
+Bu sayılar özgün backend hedefinde korunur. Bağımsız inceleme657girdi/8proje
+eşitliğiyle `f4eea04` için açık yeniden-kullanım bağını doğruladı; yeni backend
+yürütmesi veya raporun yeniden etiketlenmesi değildir.
+Frontend `f4eea04` lint/tip kontrolü,1manifest+8gizlilik testi PASS.
+Windows Python110PASS/1POSIXskip; lab-runtime Node12PASS/2POSIXskip.
+Lane Node18/18gerçek geçti fakat13döngü kaynaklı adı raporlayıcı eşleyemedi:
+**capture FAIL**, ürün/test başarısızlığı gözlenmedi. Geçen kanıtlar korunarak
+sadece doğrulanamayan/çalışmayan kısımlara ayrı `resume-01` çıktısıyla devam
+başladı. Kaynak katalog düzeltmesi bağımsız SOURCE_CLEAR; yeni yürütme sürüyor.
+Linux/bileşen/build/tarama/yeni tam genuine ve bağımsız final QA/CI açık;
+**canonical kabul20/121iş,103/970SP=%10,62 olarak aynı**, yeni PR/merge yok.
+Sonraki HRO14dosyalık `ec87f19` kaynak düzeltmesi bağımsız SOURCE_CLEAR ama
+**yürütmesi DEFERRED**; CE komut kurtarması ayrı dalda kodlanıyor. Bu iki yeni
+paket mevcut doğrulama hedefine dahil değil.
+[Güncel düzeltme ve kapı raporu](phases/FOUNDATION-CORRECTIONS-20261113.md).
+
+**13 Kasım — özgün 0c5f8f3 yazım kontrol noktası (aşağıdaki DEFERRED ifadeleri o anı kaydeder):** gemi seçicisi odağı (`4e44101`),
+denetim kaydı94yetki sözleşmesi (`91312c5`), insan izinin tek engel seçicisi
+(`5e3d652`) ve sertifika aday yükleme yarışı (`cf4b063`) bağımsız SOURCE_CLEAR.
+Denetim ekranı ortak enterprise filtre/form/düğme/sayfalama ve ayrıntı düzenine
+taşındı (`cc1463b`, SOURCE_CLEAR). Bu beş alt pakette6yeni bileşen regresyonu
+kaynağı var; **yeni yürütmeler DEFERRED**, ölçülmüş görsel kabul yok.
+Nitelikli hazırlayıcının13dosyalık `23bd7525` sürümündeki tip-eşitliği bulgusu
+`edac5f99` ile düzeltildi, bağımsız SOURCE_CLEAR ve normal receiving merge
+`2f6f59a` ile entegre.21gezinme anahtarının15/7iki özgün role dağıtımı ve sınırlı
+sentetik offline/Photo-Passport politikaları10dosyalık `d9510f8` commitinde;
+bağımsız SOURCE_CLEAR ve11dosyalık normal merge `201280c` tamamlandı. Çelişen crew persona beklentisi için yalnız tek
+Ship/6capability erişimli beşinci gerçek test-provider hesabı `98a837c` bağımsız
+SOURCE_CLEAR, normal receiving merge `0c5f8f3` içinde;
+mevcut dört hesabın kimliği/parolası/yetkileri korunur. Sonraki insan-inceleme
+kurtarması ayrı dalda yazılıyor; mevcut paket kapısına dahil değil. İnsan/uzman ve üretim
+politika onayı üretilmez. Mevcut paket için kaynak incelemeleri kapandı; temiz
+hedef dondurma/son AST ve ardından toplu native/protokol/genuine kapıları sırada.
+[Düzeltme raporu](phases/FOUNDATION-CORRECTIONS-20261113.md).
+
+**13 Kasım — gerçek paket sonucu ve devam eden kod:** `235d3ea` gerçek browser
+koşusu değişmeyen1800s sınırında durdu: **153/176 tamamlandı,95PASS/58FAIL,
+23TAMAMLANMADI**; TLS3/3PASS. Masaüstü88=55PASS/33FAIL; dar ekran65=40PASS/25FAIL,
+23tamamlanmadı. Bu sonuç kabul değildir. Sahipli app/compose/peer/Clam kapatıldı;
+iki kendi volume'u korundu. Bir süreçsiz geçici profilin silinmesi otomatik onay
+incelemesince “blocked by policy” ile reddedildi; ek gerekçe yok, yeniden deneme
+veya başka yol kullanılmadı. Cleanup bu profil için BLOCKED.
+
+Günlük kapalı geçmiş ayrıntısının açılması ve gizli veri içermeyen tanı raporu
+`faf7f91` üzerinde yazıldı ve bağımsız incelendi: **8/8 gizlilik +1/1 tam manifest
+import testi PASS**. Ön yüz/contracts/lock girdileri önceki235d ile aynı;
+1527bileşen sonucu yeni koşu diye sayılmadı. Ayrı temiz laboratuvarda14temsilci
+vaka tamamlandı:1PASS/13FAIL,TLS3/3PASS; düzeltilen günlük disclosure gerçek geçti.
+Yeni laboratuvar profilleri/servisleri0kalıntıyla kapandı; eski blocked profil
+korundu. Bu tanı tam176kabulünün yerine geçmez.
+
+S3 qualification işlem kurtarması9dosyalık `afa706e` paketinde yazıldı.
+İnceleme iki kaynak hatası buldu: desteklenmeyen16test seçeneği ve geç gelen
+dosya okumasının eski editor closure'ı. Düzeltmeler ve4anlamlı regresyon yazıldı;
+8QORmaddesi bağımsız kaynak incelemesinde CLEAR. Normalcommit `ef9cb2c`, receiving
+`7722114` içinde15dosyalık S3+tanı kodu birleşti; **S3 yeni yürütmeleri DEFERRED**.
+[S3 kaynak paketi](phases/S3-QUALIFICATION-OWNER-RECOVERY-20261113.md). Üç kurgu kural/altı
+typed witness'ı normalAPI/dosya/Clam/ayrı sentetik aktörlerle üretecek hazırlayıcı
+`edac5f99` üzerinde bağımsız SOURCE_CLEAR ve receiving `2f6f59a` içinde entegre;
+gerçek hazırlayıcı yürütmesi DEFERRED. VERIFIED seed veya gerçek insan/operasyon
+onayı üretmez.
+
+Özgün68fb45c Release/**1067birim/837API/117kritik** PASS,235d **1527bileşen**,
+lint/typecheck/build ve2750kaynak/20istemci0bulgu kanıtı kendi kapsamında korunur.
+Geliştirme bağımlılıklarında tek danışmaya bağlı10moderate bulgu açık;
+production omit-dev0bulgu, muafiyet yok. Resmî kabul **20/121iş,103/970SP=%10,62;
+0/196ayrı ekran**; yeni PR/push/merge yok. [Paket raporu](phases/BUNDLE-PORT-ISOLATION-20261113.md).
+
+**13 Kasım — S8 teknik komut ve 17 dil paketi:** ön yüzün **1524/1524 bileşen
+testi**, lint, tip kontrolü ve üretim derlemesi geçti. Backend Release derlemesi,
+**1007/1007 birim testi** ve **79/79 gerçek PostgreSQL entegrasyon testi** geçti.
+Bu yürütmeler `5e17850` kapsamındadır; test verisindeki sabit istemci değerini
+kaldıran `8a9462d` için değişmeyen girdiler açık kaynak bağıyla korunur.
+Son değişikliğin 8/8 Python testi de geçti; önceki 56 Python testine ek sayılmaz.
+
+API entegrasyonu **837/837 PASS**, hata/skip 0; gerçek kritik HTTP/yazma
+kapsamı **117/117**. İlk girişimin Windows komut sınırı teşhis edilip dört shard
+ile bütün vaka kapsamı korundu; özgün başarısız kayıt silinmedi. Kaynak taramasındaki bir
+test-verisi bulgusu düzeltildi; yeni taramalar 2736 kaynak ve 20 istemci
+dosyasında sıfır bulguyla geçti. İmzalı fixture henüz uygulanmadı; gerçek browser,
+bağımsız son hedef QA ve yeni CI kapıları açık. Açık önizlemeye dokunmadan ikinci
+laboratuvarı çalıştırmak için ayrı port izolasyonu görevi başlatıldı. Yeni PR/push/merge yok.
+Resmî kabul **20/121 iş, 103/970 SP = %10,62; 0/196 ayrı ekran** olarak aynı.
+[Güncel büyük paket raporu](phases/OBSERVATION-SIGNED-FIXTURE-20261112.md).
+
+
+**12 Kasım — S8/PMS gözlem komutları:** 401/403 sonrası belirsiz capture/revoke
+komutunu koruma, asıl kullanıcıyla güncel CSRF üzerinden açık retry, private
+DOM/üst ekran erişim çekilmesi ve işlem sürerken navigasyon koruması yazıldı.
+Yeni UI/adapter,6API/PG vakası ve1gerçek-host browser senaryosu kaynakta mevcut;
+**bütün yeni yürütmeler DEFERRED**. Gerçek gözlem source/yetki fixture'ı ve toplu
+kapılar açık; resmî kabul artmadı. [Güncel teknik rapor](phases/MAINTENANCE-OBSERVATION-RECOVERY-20261112.md).
+
+
+**Analizden yeni geliştirme:** DEV-052/053 ekipman/bakım temeli içinde asıl
+kullanıcıya bağlı taslak ve belirsiz komut kurtarması yazıldı: güncel oturum/yetki
+kontrolü, aynı anahtar/gövdeyle açık retry, kayıt kimliğinin URL'de korunması ve
+gözlem formunun taslağı kaybetmeden askıya alınması. Yeni UI/API/PG/browser test
+kaynakları yazıldı; **yürütme kendi teknik paket kapısına ertelendi**.
+[Teknik ilerleme raporu](phases/TECHNICAL-COMMAND-OWNER-RECOVERY-20261111.md).
+Tam gözlem komut kurtarması ve canonical teknik kapsam açıktır; resmî yüzde artmadı.
+
+
+**Tahmini termin:** mevcut paket/PR hazırlığı **20 Kasım 2026**; uçtan uca gemi+römorkör MVP **26 Şubat 2027**; dört haftalık gerçek pilot ve teslim hazırlığı **30 Nisan 2027**. Bunlar sabit kapsam, düzenli kapasite ve zamanında uzman/pilot erişimi varsayan planlama hedefleridir; ölçülmüş SP hızına dayalı kesin taahhüt değildir. Resmî kabul **20/121 iş ve 103/970 SP = %10,62**; kalan 101 iş/867 SP, yazılmamış kod yüzdesi değildir. [Durum ve takvim raporu](phases/DELIVERY-FORECAST-20261111.md).
+
+
+Güncel yerelleştirme kaynak kontrol noktası `23b87d4`: **17/17 tam ana katalog**, 17 ortak katalog ve **17 × 139 sunum etiketi** yazıldı ve aynı dala entegre edildi. Her ana katalog 3169 metin alanı kapsar. Arapça RTL yerleşimi, ortak düğmeler ve source code/değer koruması uyarlandı. Bağımsız statik incelemede bulunan NONE/eksik-beyan metin ayrımı `3c30144` ile düzeltildi ve kaynak düzeyinde tekrar incelendi.
+
+**11 Kasım PR hazırlığı:** `23b87d4` ön yüz alt kapısı geçti: lint, tip kontrolü, 3/3 yeni form testi, **1437/1437 tam bileşen testi** ve üretim derlemesi. Hata/skip/pending/todo/unhandled0. Gerçek browser/signed, bütünleşik bağımsız QA ve CI kapıları açık. Önceki 1430/1435 sonucu ve beş düzeltmenin 36/36 dar doğrulaması kendi hedeflerinde korunur. Teknik komutların asıl kullanıcıya bağlanması ayrı geliştirme dalında başladı; bu yeni paketin testleri kendi teslim kapısına ertelendi. 17 katalog dosyasının yazılması, bütün ekranların runtime doğrulaması veya sprint kabulü değildir. Yeni kod canlı önizlemeye derlenmedi; yeni PR açılmadı. Sonraki adım bu paketin PR hazırlığındaki toplu yürütme, bağımsız son hedef QA ve required CI'dır.
+
+Ayrı [PR16](https://github.com/kadirvurgun/Poseidon/pull/16) hedefi `32ff1d0` için iki CI koşusunda dört zorunlu iş de geçti: her olayda API 826/826 integration, 176/176 unit, hata/skip 0 ve 117/117 kritik işlem. Önceki tam signed sonuç 15 PASS / 159 FAIL olarak korunur; güncel tam signed ve bağımsız son QA olmadan merge yoktur. Canonical kabul **103/970 SP (%10,62)** olarak değişmedi.
+
+[11.11 yerelleştirme raporu](phases/LOCALIZATION-17-20261109.md) · [Görev ve kabul koşulları](tasks/LOCALIZATION-17-01.md)
+
+Yerelleştirme güncel foundation kaynaklarıyla yerel dalda birleştirildi; bu yeni hedefin toplu ön yüz kontrolleri yürütülüyor, bütün paket henüz kabul edilmedi. Aşağıdaki sonuçlar belirtilen özgün commit kapsamlarıyla korunur.
+
+
+[PR16](https://github.com/kadirvurgun/Poseidon/pull/16) taslak olarak açık. `32ff1d0` hedefinin push ve PR koşularında dört zorunlu CI işi de geçti. Her iki artifact gerçek API için **826/826 integration, 176/176 unit, hata 0, skip 0; 117/117 kritik işlem** gösteriyor. Tam imzalı 174 senaryonun önceki gerçek sonucu **15 PASS / 159 FAIL**; güncel kaynak üzerinde tekrar koşulmadı. Güncel bağımsız son hedef QA ve tam signed kapı açık olduğundan merge yapılmadı.
 
 Canonical kabul **103/970SP=%10,62;20/121iş;0/196ayrı ekran**. S0/S1 kabulü korunur; S6 seçili9iş/87SP ve S8 seçili2iş/26SP tamamlanmış faz değildir.
 
@@ -26,3 +398,6 @@ Ayrı i18n ürün dalında10tamkatalog ve17ortak katalog yazıldı;3169metin ala
 
 
 11.11güncellemesi: gerçek174signedmanifesti69bc92c üzerinde15PASS/159FAIL ile tamamlandı; kabul edilmedi.8e0523d’de API826/826+176/176ve117/117kritikişlem geçti, ancak GitHub’ın kendiInternalservererror hatası diğer requiredjobları oluşturmamış.0fb4bee her vaka için gerçek taze giriş ve güvenli derin-hedef navigasyonu ekler;36darprotokol testi+2gerçekOIDCgiriş geçti,2652dosya taramasında0bulgu. Yeni tam signed/CI/bağımsızQA açık; PR16merge edilmedi. [Güncel kapı raporu](phases/BUNDLE-SIGNED-RECOVERY-20261111.md).
+
+
+11.11 güncel kaynak: `32ff1d0` için [PR CI](https://github.com/kadirvurgun/Poseidon/actions/runs/42911168567) ve [push CI](https://github.com/kadirvurgun/Poseidon/actions/runs/42911160703) başarılı. Önceki GitHub internal-server-error ve 174 signed başarısızlık kayıtları korunur. Ayrı yerelleştirme dalında 11 tam ana katalog, 17 ortak katalog ve 17 × 81 sunum etiketi yazıldı. Altı ana katalog ve yeni paket doğrulaması açık; yeni test yürütmesi DEFERRED.

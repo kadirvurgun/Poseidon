@@ -1,13 +1,30 @@
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { HumanDecisionTrace } from './HumanDecisionTrace'
-import { reviewAnchor, reviewRow, reviewTrace, recordingPolicy, recordedRow } from './human-review.test-fixtures'
+import { reviewAnchor, reviewRow, reviewTrace, reviewSession, recordingPolicy, recordedRow } from './human-review.test-fixtures'
+import * as service from './human-review-api'
 
 const response = (value: unknown, status = 200) => ({ ok: status < 300, status, json: async () => value }) as Response
 const props = () => ({ anchor: reviewAnchor, language: 'en' as const, csrf: 'synthetic-csrf', offline: false, onDirty: vi.fn(), onSaving: vi.fn() })
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals() })
+beforeEach(() => { vi.spyOn(service, 'loadSession').mockResolvedValue({ owner: `${reviewSession().tenantId}/${reviewSession().actorId}`, actorId: reviewSession().actorId, csrf: reviewSession().csrfToken }) })
 describe('human review accessible UI authored NOT RUN; mocked transport is UI evidence only', () => {
+  it('retains the unavailable evaluation in both the unique blocker item and its source lineage', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => response(reviewTrace())))
+    render(<HumanDecisionTrace {...props()} />)
+    const lineage = await screen.findByRole('list', { name: 'Source-grounded trace' })
+    const applicability = within(lineage).getByRole('article', { name: 'Applicability' })
+    const reason = 'Authoritative evaluation unavailable'
+    expect(within(applicability).getByText(reason)).toBeVisible()
+    const blockers = screen.getAllByRole('listitem').filter(item => item.textContent === reason)
+    expect(blockers).toHaveLength(1)
+    expect(blockers[0]).toBeVisible()
+    // Broad exact text has two legitimate matches. Neither explanation may be
+    // removed just to make the genuine journey's locator unambiguous.
+    expect(screen.getAllByText(reason)).toHaveLength(2)
+    expect(screen.queryByRole('button', { name: /approve|release permit/i })).not.toBeInTheDocument()
+  })
   it.each(['en', 'tr'] as const)('preserves known source/control lifecycle and explicit qualification blockers in %s', async language => {
     const pin = { id: reviewAnchor.controlId, revision: 3, availability: 'Available', hash: 'C'.repeat(64), savedAt: '2026-11-02T00:00:00Z' }
     vi.stubGlobal('fetch', vi.fn(async () => response({ ...reviewTrace(),
@@ -48,17 +65,20 @@ describe('human review accessible UI authored NOT RUN; mocked transport is UI ev
   it('retains exact body and idempotency key across ambiguous response and translation', async () => {
     let count = 0
     const fetch = vi.fn(async (_url: string, init?: RequestInit) => {
-      if (init?.method) { if (++count === 1) throw new TypeError('synthetic lost response'); return response(reviewRow()) }
+      if (init?.method) { if (++count === 1) throw new TypeError('synthetic lost response'); return response({ ...reviewRow(), rationale: JSON.parse(init.body as string).rationale }) }
       return response(reviewTrace())
     }); vi.stubGlobal('fetch', fetch)
     const p = props(); const { rerender } = render(<HumanDecisionTrace {...p} />); const user = userEvent.setup()
     await user.selectOptions(await screen.findByLabelText('Provisioned authority'), reviewTrace().authorities[0].id)
     await user.type(screen.getByLabelText('Bound review reason'), 'FICTIONAL pending request')
     await user.click(screen.getByRole('button', { name: 'Record pending request' })); await screen.findByRole('button', { name: 'Retry exact human command' })
-    expect(screen.getByLabelText('Bound review reason')).toBeDisabled()
+    expect(screen.queryByLabelText('Bound review reason')).toBeNull()
     rerender(<HumanDecisionTrace {...p} language="tr" />)
+    await user.click(screen.getByRole('button', { name: 'Kaynak okumayı tekrar dene' }))
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Aynı insan komutunu tekrar dene' })).toBeEnabled())
     await user.click(screen.getByRole('button', { name: 'Aynı insan komutunu tekrar dene' }))
     await waitFor(() => expect(count).toBe(2))
+    await screen.findByText('Taslak kaydedildi.')
     const calls = fetch.mock.calls.filter(([, init]) => init?.method)
     expect(calls[0][1]?.body).toBe(calls[1][1]?.body); expect(calls[0][1]?.headers).toEqual(calls[1][1]?.headers)
     expect(JSON.parse(calls[0][1]!.body as string)).not.toHaveProperty('actorContext')
@@ -69,9 +89,12 @@ describe('human review accessible UI authored NOT RUN; mocked transport is UI ev
     await user.selectOptions(await screen.findByLabelText('Provisioned authority'), reviewTrace().authorities[0].id)
     await user.type(screen.getByLabelText('Bound review reason'), 'keep unresolved draft')
     await user.click(screen.getByRole('button', { name: 'Record pending request' })); await screen.findByRole('alert')
-    expect(screen.getByLabelText('Bound review reason')).toHaveValue('keep unresolved draft')
-    expect(screen.getByRole('button', { name: 'Record pending request' })).toBeDisabled()
-    if (status !== 503) expect(screen.getByRole('button', { name: 'Retry exact human command' })).toBeDisabled()
+    expect(screen.queryByLabelText('Bound review reason')).toBeNull()
+    await user.click(screen.getByRole('button', { name: 'Retry source read' }))
+    expect(await screen.findByLabelText('Bound review reason')).toHaveValue('keep unresolved draft')
+    if (status === 409 || status === 503) expect(screen.getByRole('button', { name: 'Record pending request' })).toBeDisabled()
+    else expect(screen.getByRole('button', { name: 'Record pending request' })).toBeEnabled()
+    if (status !== 503) expect(screen.queryByRole('button', { name: 'Retry exact human command' })).toBeNull()
   })
   it('retains dirty context offline, and historical mode offers no command', async () => {
     vi.stubGlobal('fetch', vi.fn(async (url: string) => response(url.includes('asOf=') ? { ...reviewTrace(), historical: true, authorities: [] } : reviewTrace())))

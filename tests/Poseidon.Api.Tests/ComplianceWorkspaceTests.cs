@@ -96,6 +96,9 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Equal(saved.Revision, dto.ProfileRevision); Assert.Equal(saved.SavedAt, dto.SavedAt);
         Assert.Equal("REVIEW_REQUIRED", dto.State); Assert.Equal("Unverified", dto.Freshness); Assert.False(dto.CanSubmit);
         Assert.Equal("Unknown", Assert.Single(dto.Fields, f => f.Key == "profile.flag").State);
+        var flag = Assert.Single(dto.BlockerDetails, b => b.FieldPath == "profile.flag");
+        Assert.Equal(SeedVessel.Id, flag.SubjectId); Assert.Equal("REQUIRED_DATA_UNKNOWN", flag.ReasonCode);
+        Assert.Equal("POLICY_OR_EVIDENCE", flag.ResolutionType);
         await using var verify = Db(); Assert.Equal(writes, await verify.AuditEvents.LongCountAsync(Ct));
         Assert.Equal(receipts, await verify.CommandReceipts.LongCountAsync(Ct));
         Assert.Contains(await verify.Set<SecurityEvent>().ToArrayAsync(Ct), e => e.Action == "ComplianceWorkspaceRead" && e.Result == "Success" && e.ResourceId == SeedVessel.Id);
@@ -112,6 +115,9 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Equal("DECLARED_COMPLETE_UNVERIFIED", dto.State); Assert.False(dto.CanSubmit);
         Assert.Equal(saved.Revision, dto.ProfileRevision); Assert.All(dto.Fields, f => Assert.True(f.Complete));
         Assert.Contains("VERIFICATION_NOT_ESTABLISHED", dto.Blockers);
+        var verification = Assert.Single(dto.BlockerDetails);
+        Assert.Equal(SeedVessel.Id, verification.SubjectId); Assert.Equal("profile", verification.FieldPath);
+        Assert.Equal("QUALIFIED_EVIDENCE", verification.ResolutionType);
         Assert.Equal(saved.Content, (await Profile(client)).Content);
         var history = (await client.GetFromJsonAsync<PageDto<RegulatoryRevisionDto>>($"/api/v1/{ProfilePath(SeedVessel.Id)}/history", Ct))!;
         Assert.Equal(before.Content, history.Items.Single(r => r.Revision == before.Revision).Content);

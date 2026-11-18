@@ -1,4 +1,4 @@
-import { ApiError, request } from './api'
+import { ApiError, request, session } from './api'
 import { isGuid } from './identifiers'
 import { timestamp } from './date-validation'
 
@@ -63,15 +63,27 @@ export function decodeTrace(v: unknown, a: Anchor, offset: number): Trace {
 }
 export const tracePath = (a: Anchor, offset = 0, asOf = '') => `regulatory-trace?vesselId=${a.vesselId}&evidenceId=${a.evidenceId}&evidenceRevision=${a.evidenceRevision}&controlId=${a.controlId}&controlRevision=${a.controlRevision}&offset=${offset}${asOf ? `&asOf=${encodeURIComponent(asOf)}` : ''}`
 export const trace = async (a: Anchor, offset: number, asOf: string, signal: AbortSignal) => decodeTrace(await request<unknown>(tracePath(a, offset, asOf), signal), a, offset)
+export async function loadSession(signal: AbortSignal) {
+  const value: unknown = await session(signal)
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return fail()
+  const user = value as Obj
+  if (user.authenticated !== true) throw new ApiError(401, 'authentication_required')
+  if (user.canRead !== true || user.setupRequired !== false) throw new ApiError(403, 'permission_denied')
+  if (!isGuid(user.actorId) || !isGuid(user.tenantId) || typeof user.csrfToken !== 'string' ||
+      user.csrfToken.length < 16 || user.csrfToken.length > 2048 || Array.from(user.csrfToken).some(c => c.charCodeAt(0) < 32 || c.charCodeAt(0) === 127)) return fail()
+  return Object.freeze({ owner: `${user.tenantId.toLowerCase()}/${user.actorId.toLowerCase()}`, actorId: user.actorId, csrf: user.csrfToken })
+}
 export async function save(a: Anchor, attempt: { body: string; key: string; kind: 'Verification' | 'Decision'; id: string | null }, csrf: string, signal: AbortSignal) {
   const route = attempt.kind === 'Verification' ? 'verifications' : 'decisions'
   const row = decodeReview(await request<unknown>(`${route}${attempt.id ? `/${attempt.id}/events` : ''}?vesselId=${a.vesselId}`, signal, { method: 'POST', body: attempt.body, headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf, 'Idempotency-Key': attempt.key } }), a)
   if (row.kind !== attempt.kind || attempt.id !== null && row.id !== attempt.id) return fail()
   const command = JSON.parse(attempt.body) as Obj
+  for (const field of ['state', 'reasonCode', 'rationale', 'authorityId', 'operationId', 'verificationId', 'verificationRevision', 'evaluationId'] as const)
+    if (row[field] !== command[field]) return fail()
   if (command.state === 'RECORDED') {
-    for (const field of ['state', 'reasonCode', 'rationale', 'authorityId', 'operationId', 'verificationId', 'verificationRevision', 'evaluationId'] as const) if (row[field] !== command[field]) return fail()
     if (!row.recording || row.recording.profileRevision !== command.expectedProfileRevision || !exact(command.recording, ['decisionType', 'subjectType', 'subjectId', 'humanDecision', 'triggerSource', 'decisionContext'])) return fail()
     for (const field of ['decisionType', 'subjectType', 'subjectId', 'humanDecision', 'triggerSource', 'decisionContext'] as const) if (row.recording.content[field] !== command.recording[field]) return fail()
   }
+  else if (row.recording !== null) return fail()
   return row
 }

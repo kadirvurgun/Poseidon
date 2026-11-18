@@ -97,6 +97,7 @@ public sealed partial class DirectoryWorkspaceTests(OwnedPostgresFixture fixture
             ["Authentication:Oidc:Memberships:0:Subject"] = "synthetic",
             ["Authentication:Oidc:Memberships:0:ActorId"] = actorId.ToString(),
             ["Authentication:Oidc:Memberships:0:TenantId"] = seed.Tenants[0].Id.ToString(),
+            ["Authentication:Oidc:Memberships:0:ActiveCompanyId"] = SeedVessel.CompanyId.ToString(),
             ["Authentication:Oidc:Memberships:0:RoleReferences:0"] = "91c26eb5-cf16-4553-981d-1c275358c535", // Synthetic local assignment, no operational appointment.
             ["Authentication:Oidc:Memberships:0:Permissions:0"] = "directory.read",
             ["Authentication:Oidc:Memberships:0:Permissions:1"] = edit ? "directory.write" : "unused",
