@@ -121,7 +121,8 @@
       "leUnknown": "Unknown",
       "leMissing": "Missing values before activation",
       "leNote": "Read-only. Legal entity values change only through audited HR commands.",
-      "leShow": "Show legal entity record"
+      "leShow": "Show legal entity record",
+      "leIdentifiers": "Registration identifiers (masked)"
     },
     "ProductApp_tsx_copy": {
       "audit": "Action history",

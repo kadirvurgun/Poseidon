@@ -17,8 +17,10 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             Person or CrewIdentityRevision or CrewPersonalProfile or CrewPersonalProfileRevision => "TenantPerson",
             PersonFieldRevision or Employment or HrAssignment or HrActualEvent => "TenantPerson",
             LegalEntityFieldRevision or LegalEntityIdentifier or LegalEntityRole => "Tenant",
+            HrStateChange s when s.SubjectKind is "Employment" or "PlannedAssignment" => "TenantPerson",
+            HrStateChange => "Tenant",
             CommandReceipt r when r.Action is "HrPersonUpdate" or "HrPersonVerify" or "HrEmploymentCreate" or "HrEmploymentStatus" or "HrAssignmentCreate" or "HrAssignmentStatus" or "HrActualEventRecord" => "TenantPerson",
-            CommandReceipt r when r.Action is "HrLegalEntityUpdate" or "HrLegalEntityStatus" or "HrIdentifierAdd" or "HrIdentifierRetire" or "HrRoleAdd" or "HrRoleEnd" => "Tenant",
+            CommandReceipt r when r.Action is "HrLegalEntityUpdate" or "HrLegalEntityStatus" or "HrIdentifierAdd" or "HrIdentifierRetire" or "HrRoleAdd" or "HrRoleEnd" or "HrRoleCancel" => "Tenant",
             CommandReceipt r when r.Action is "CrewPersonSave" or "CrewIdentityConvert" or "CrewProfileSave" or "CrewPhotoSave" => "TenantPerson",
             Tenant or Company or RegisterDraft or RegisterRevision or RuleDraft or RuleRevision or FleetCatalogDraft or FleetCatalogDraftRevision or
                 RegulatoryQualificationHead or RegulatoryQualificationEvent or RegulatoryQualificationReceipt => "Tenant",
@@ -362,16 +364,23 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         {
             LegalEntityFieldRevision r => new(null, r.LegalEntityId, "LegalEntityFieldRevision", null, r.Revision, Fields(
                 Field("Field", null, Closed(r.Field, "LegalName", "CountryCode", "HrTimeZone", "BaseLocale", "EffectiveFrom", "EffectiveTo", "LegalEntityStatus")),
-                Field("SourceKind", null, Closed(r.SourceKind, Poseidon.Domain.HrSourcePolicy.SourceKinds)), Field("Value", null, null, "ValuesWithheld"))),
+                Field("SourceKind", null, Closed(r.SourceKind, Poseidon.Domain.HrSourcePolicy.SourceKinds)), Field("Value", null, null, "ValuesWithheld"),
+                Field("Reason", null, null, "ValuesWithheld"))),
             PersonFieldRevision r => new(null, r.PersonId, "PersonFieldRevision", null, r.Revision, Fields(
                 Field("Field", null, Closed(r.Field, "PersonType", "MasterState")),
-                Field("SourceKind", null, Closed(r.SourceKind, Poseidon.Domain.HrSourcePolicy.SourceKinds)), Field("Value", null, null, "ValuesWithheld"))),
+                Field("SourceKind", null, Closed(r.SourceKind, Poseidon.Domain.HrSourcePolicy.SourceKinds)), Field("Value", null, null, "ValuesWithheld"),
+                Field("Reason", null, null, "ValuesWithheld"))),
             LegalEntityIdentifier i => new(null, i.LegalEntityId, "LegalEntityIdentifier", null, null, Fields(
                 Field("Type", null, Closed(i.Type, Poseidon.Domain.HrIdentifierPolicy.Types)), Field("Value", null, null, "ValuesWithheld"),
                 Field("Retired", entry.State == EntityState.Added ? null : Flag(entry.Property("RetiredAt").OriginalValue != null), Flag(i.RetiredAt != null)))),
             LegalEntityRole r => new(null, r.LegalEntityId, "LegalEntityRole", null, null, Fields(
                 Field("Role", null, Closed(r.Role, Poseidon.Domain.HrRolePolicy.Roles)), Field("VesselId", null, r.VesselId?.ToString("D")),
-                Field("Ended", entry.State == EntityState.Added ? null : Flag(entry.Property("EffectiveTo").OriginalValue != null), Flag(r.EffectiveTo != null)))),
+                Field("Ended", entry.State == EntityState.Added ? null : Flag(entry.Property("EffectiveTo").OriginalValue != null), Flag(r.EffectiveTo != null)),
+                State(entry, "State", Poseidon.Domain.HrRolePolicy.States))),
+            HrStateChange s => new(null, s.LegalEntityId, "HrStateChange", null, null, Fields(
+                Field("SubjectKind", null, Closed(s.SubjectKind, Poseidon.Domain.HrStateChangePolicy.SubjectKinds)), Field("SubjectId", null, s.SubjectId.ToString("D")),
+                Field("State", Closed(s.FromState, Poseidon.Domain.HrStateChangePolicy.States), Closed(s.ToState, Poseidon.Domain.HrStateChangePolicy.States)),
+                Field("Reason", null, null, "ValuesWithheld"))),
             Employment e => new(null, e.Id, "Employment", entry.State == EntityState.Added ? null : (long?)entry.Property("Revision").OriginalValue, e.Revision, Fields(
                 State(entry, "State", Poseidon.Domain.HrEmploymentPolicy.States), Field("LegalEntityId", null, e.LegalEntityId.ToString("D")),
                 Field("EmployeeNo", null, null, "ValuesWithheld"))),

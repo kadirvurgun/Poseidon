@@ -121,7 +121,8 @@
       "leUnknown": "Desconocido",
       "leMissing": "Valores faltantes antes de la activación",
       "leNote": "Solo lectura. Los valores solo cambian mediante comandos de RR. HH. auditados.",
-      "leShow": "Mostrar registro de la entidad jurídica"
+      "leShow": "Mostrar registro de la entidad jurídica",
+      "leIdentifiers": "Identificadores registrales (enmascarados)"
     },
     "ProductApp_tsx_copy": {
       "audit": "Historial de acciones",

@@ -121,7 +121,8 @@
       "leUnknown": "Sconosciuto",
       "leMissing": "Valori mancanti prima dell’attivazione",
       "leNote": "Sola lettura. I valori cambiano solo tramite comandi HR verificati.",
-      "leShow": "Mostra la scheda dell’entità giuridica"
+      "leShow": "Mostra la scheda dell’entità giuridica",
+      "leIdentifiers": "Identificativi di registrazione (mascherati)"
     },
     "ProductApp_tsx_copy": {
       "audit": "Cronologia delle azioni",

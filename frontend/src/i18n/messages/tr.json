@@ -121,7 +121,8 @@
       "leUnknown": "Bilinmiyor",
       "leMissing": "Aktivasyon öncesi eksik değerler",
       "leNote": "Salt okunur. Tüzel kişi değerleri yalnız denetlenen İK komutlarıyla değişir.",
-      "leShow": "Tüzel kişi kaydını göster"
+      "leShow": "Tüzel kişi kaydını göster",
+      "leIdentifiers": "Sicil tanımlayıcıları (maskeli)"
     },
     "ProductApp_tsx_copy": {
       "audit": "İşlem geçmişi",

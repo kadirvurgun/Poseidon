@@ -15,6 +15,8 @@ public sealed class LegalEntityFieldRevision : ITenantEntity
     public string? Value { get; set; }
     public required string SourceKind { get; set; }
     public string? SourceRef { get; set; }
+    // 52.01 paragraph:50 correction/status reason. Never copied into audit summaries; read only through HR detail reads.
+    public string? Reason { get; set; }
     public required string ActorId { get; set; }
     public DateTimeOffset RecordedAt { get; set; }
 }
@@ -29,6 +31,8 @@ public sealed class PersonFieldRevision : ITenantEntity
     public string? Value { get; set; }
     public required string SourceKind { get; set; }
     public string? SourceRef { get; set; }
+    // 52.01 paragraph:50 correction/status reason. Never copied into audit summaries; read only through HR detail reads.
+    public string? Reason { get; set; }
     public required string ActorId { get; set; }
     public DateTimeOffset RecordedAt { get; set; }
 }
@@ -67,7 +71,27 @@ public sealed class LegalEntityRole : ITenantEntity
     public required string CreatedBy { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
     public string? EndedBy { get; set; }
+    // Recorded (current or ended) or Cancelled (mistaken record: retained, excluded from cardinality constraints).
+    public string State { get; set; } = "Recorded";
+    public string? CancelledBy { get; set; }
+    public DateTimeOffset? CancelledAt { get; set; }
     public uint Version { get; set; }
+}
+
+// Append-only state decision on an HR record (retire/end/cancel/activate/approve) with its required reason (52.01 paragraph:50).
+// The reason is free business text and is withheld from audit summaries.
+public sealed class HrStateChange : ITenantEntity
+{
+    public Guid TenantId { get; set; }
+    public Guid Id { get; set; }
+    public Guid LegalEntityId { get; set; }
+    public required string SubjectKind { get; set; }
+    public Guid SubjectId { get; set; }
+    public required string FromState { get; set; }
+    public required string ToState { get; set; }
+    public required string Reason { get; set; }
+    public required string ActorId { get; set; }
+    public DateTimeOffset RecordedAt { get; set; }
 }
 
 // Employment: Person <-> legal employer. Records only; no wage, contract money or payroll.
@@ -160,6 +184,7 @@ internal static class HrStorage
             b.HasOne<Company>().WithMany().HasForeignKey(x => new { x.TenantId, x.LegalEntityId }).OnDelete(DeleteBehavior.Restrict);
             b.Property(x => x.Field).HasMaxLength(32); b.Property(x => x.Value).HasMaxLength(300);
             b.Property(x => x.SourceKind).HasMaxLength(32); b.Property(x => x.SourceRef).HasMaxLength(200);
+            b.Property(x => x.Reason).HasMaxLength(Poseidon.Domain.HrSourcePolicy.ReasonMaxLength);
             b.Property(x => x.ActorId).HasMaxLength(200);
         });
         model.Entity<PersonFieldRevision>(b => {
@@ -168,6 +193,7 @@ internal static class HrStorage
             b.HasOne<Person>().WithMany().HasForeignKey(x => new { x.TenantId, x.PersonId }).OnDelete(DeleteBehavior.Restrict);
             b.Property(x => x.Field).HasMaxLength(32); b.Property(x => x.Value).HasMaxLength(64);
             b.Property(x => x.SourceKind).HasMaxLength(32); b.Property(x => x.SourceRef).HasMaxLength(200);
+            b.Property(x => x.Reason).HasMaxLength(Poseidon.Domain.HrSourcePolicy.ReasonMaxLength);
             b.Property(x => x.ActorId).HasMaxLength(200);
         });
         model.Entity<LegalEntityIdentifier>(b => {
@@ -186,6 +212,7 @@ internal static class HrStorage
             b.ToTable("LegalEntityRoles", Schema, t => {
                 t.HasCheckConstraint("CK_LegalEntityRole_Period", "\"EffectiveTo\" IS NULL OR \"EffectiveTo\" > \"EffectiveFrom\"");
                 t.HasCheckConstraint("CK_LegalEntityRole_Kind", "\"Role\" IN ('RegisteredOwner','Operator','TechnicalManager','CrewManager','CommercialManager','DocCompany','Employer') AND ((\"Role\" = 'Employer') = (\"VesselId\" IS NULL)) AND \"VerificationState\" = 'Unverified'");
+                t.HasCheckConstraint("CK_LegalEntityRole_State", "\"State\" IN ('Recorded','Cancelled') AND ((\"State\" = 'Cancelled') = (\"CancelledBy\" IS NOT NULL AND \"CancelledAt\" IS NOT NULL)) AND (\"CancelledBy\" IS NULL OR \"CancelledBy\" <> \"CreatedBy\")");
             });
             b.HasKey(x => new { x.TenantId, x.Id });
             b.HasOne<Company>().WithMany().HasForeignKey(x => new { x.TenantId, x.LegalEntityId }).OnDelete(DeleteBehavior.Restrict);
@@ -195,7 +222,18 @@ internal static class HrStorage
             b.Property(x => x.Role).HasMaxLength(32); b.Property(x => x.VerificationState).HasMaxLength(16);
             b.Property(x => x.SourceKind).HasMaxLength(32); b.Property(x => x.SourceRef).HasMaxLength(200);
             b.Property(x => x.CreatedBy).HasMaxLength(200); b.Property(x => x.EndedBy).HasMaxLength(200);
+            b.Property(x => x.State).HasMaxLength(16).HasDefaultValue("Recorded"); b.Property(x => x.CancelledBy).HasMaxLength(200);
             b.Property(x => x.Version).IsRowVersion();
+        });
+        model.Entity<HrStateChange>(b => {
+            b.ToTable("StateChanges", Schema, t => t.HasCheckConstraint("CK_HrStateChange",
+                "\"SubjectKind\" IN ('LegalEntityIdentifier','LegalEntityRole','Employment','PlannedAssignment') AND \"FromState\" <> \"ToState\" AND length(btrim(\"Reason\")) > 0"));
+            b.HasKey(x => new { x.TenantId, x.Id });
+            b.HasOne<Company>().WithMany().HasForeignKey(x => new { x.TenantId, x.LegalEntityId }).OnDelete(DeleteBehavior.Restrict);
+            b.HasIndex(x => new { x.TenantId, x.SubjectKind, x.SubjectId, x.RecordedAt });
+            b.HasIndex(x => new { x.TenantId, x.LegalEntityId });
+            b.Property(x => x.SubjectKind).HasMaxLength(32); b.Property(x => x.FromState).HasMaxLength(16); b.Property(x => x.ToState).HasMaxLength(16);
+            b.Property(x => x.Reason).HasMaxLength(Poseidon.Domain.HrSourcePolicy.ReasonMaxLength); b.Property(x => x.ActorId).HasMaxLength(200);
         });
         model.Entity<Employment>(b => {
             b.ToTable("Employments", Schema, t => {

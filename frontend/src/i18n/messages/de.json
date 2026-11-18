@@ -121,7 +121,8 @@
       "leUnknown": "Unbekannt",
       "leMissing": "Fehlende Werte vor der Aktivierung",
       "leNote": "Schreibgeschützt. Werte ändern sich nur über protokollierte HR-Befehle.",
-      "leShow": "Rechtsträgerdatensatz anzeigen"
+      "leShow": "Rechtsträgerdatensatz anzeigen",
+      "leIdentifiers": "Registerkennungen (maskiert)"
     },
     "ProductApp_tsx_copy": {
       "audit": "Aktionsverlauf",

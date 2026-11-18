@@ -121,7 +121,8 @@
       "leUnknown": "Inconnu",
       "leMissing": "Valeurs manquantes avant activation",
       "leNote": "Lecture seule. Les valeurs ne changent que par des commandes RH auditées.",
-      "leShow": "Afficher la fiche de l’entité juridique"
+      "leShow": "Afficher la fiche de l’entité juridique",
+      "leIdentifiers": "Identifiants d’immatriculation (masqués)"
     },
     "ProductApp_tsx_copy": {
       "audit": "Historique des actions",

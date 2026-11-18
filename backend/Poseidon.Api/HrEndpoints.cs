@@ -13,27 +13,30 @@ namespace Poseidon.Api;
 
 // PLAN-1511-5201 / 52.01 Rev6 foundation: LegalEntity (the existing Company master), the single Person master,
 // Employment, planned Assignment and actual (fiilî) facts. No wage/payroll/bank/monetary field exists anywhere.
-public sealed record HrFieldRevisionDto(long Revision, string Field, string? Value, string SourceKind, string? SourceRef, string ActorId, DateTimeOffset RecordedAt);
-public sealed record HrLegalEntityIdentifierDto(Guid Id, string Type, string Issuer, string Value, string MaskedValue, string SourceKind, DateTimeOffset CreatedAt, DateTimeOffset? RetiredAt, uint Version);
-public sealed record HrLegalEntityRoleDto(Guid Id, string Role, Guid? VesselId, DateTimeOffset EffectiveFrom, DateTimeOffset? EffectiveTo, string VerificationState, string SourceKind, uint Version);
+// Reason: 52.01 paragraph:50 correction/status reason, returned only by HR detail reads to holders of the matching hr.*.read permission.
+public sealed record HrFieldRevisionDto(long Revision, string Field, string? Value, string SourceKind, string? SourceRef, string? Reason, string ActorId, DateTimeOffset RecordedAt);
+public sealed record HrStateChangeDto(string SubjectKind, Guid SubjectId, string FromState, string ToState, string Reason, string ActorId, DateTimeOffset RecordedAt);
+// Value is null unless the reader holds hr.legal_entity.identifier.read; MaskedValue is always present (52.01 paragraph:93).
+public sealed record HrLegalEntityIdentifierDto(Guid Id, string Type, string Issuer, string? Value, string MaskedValue, string SourceKind, DateTimeOffset CreatedAt, DateTimeOffset? RetiredAt, uint Version);
+public sealed record HrLegalEntityRoleDto(Guid Id, string Role, Guid? VesselId, DateTimeOffset EffectiveFrom, DateTimeOffset? EffectiveTo, string VerificationState, string State, string SourceKind, uint Version);
 public sealed record HrLegalEntitySummaryDto(Guid Id, string Code, string Name, string? LegalName, string? CountryCode, string? HrTimeZone, string Status, uint Version);
 public sealed record HrLegalEntityDto(Guid Id, string Code, string Name, string? LegalName, string? CountryCode, string? HrTimeZone, string? BaseLocale,
     string Status, DateTimeOffset? EffectiveFrom, DateTimeOffset? EffectiveTo, long Revision, uint Version, string[] MissingForActivation,
-    HrLegalEntityIdentifierDto[] Identifiers, HrLegalEntityRoleDto[] Roles, bool CanEdit);
+    HrLegalEntityIdentifierDto[] Identifiers, HrLegalEntityRoleDto[] Roles, bool CanEdit, HrStateChangeDto[]? StateChanges = null);
 public sealed record HrPersonDto(Guid Id, string PersonType, string MasterState, long Revision, uint Version, bool CanEdit, bool CanVerify);
 public sealed record HrEmploymentDto(Guid Id, Guid PersonId, Guid LegalEntityId, string EmployeeNo, string EmploymentType, DateTimeOffset StartAt,
-    DateTimeOffset? EndAt, string State, DateTimeOffset? ActivatedAt, long Revision, uint Version);
+    DateTimeOffset? EndAt, string State, DateTimeOffset? ActivatedAt, long Revision, uint Version, HrStateChangeDto[]? StateChanges = null);
 public sealed record HrAssignmentPlanDto(DateTimeOffset PlannedFrom, DateTimeOffset PlannedTo, string PlannedZoneId, string State, DateTimeOffset PlannedAt, DateTimeOffset? ApprovedAt);
 public sealed record HrActualEventDto(Guid Id, string Kind, DateTimeOffset OccurredAt, string OriginZoneId, string Origin, string Quality, string Disposition, DateTimeOffset RecordedAt);
 public sealed record HrActualSessionDto(DateTimeOffset ActualFrom, DateTimeOffset? ActualTo);
 public sealed record HrAssignmentActualDto(string Status, DateTimeOffset? ActualFrom, DateTimeOffset? ActualTo, int PendingReconciliation, HrActualSessionDto[] Sessions, HrActualEventDto[] Events);
 public sealed record HrAssignmentDto(Guid Id, Guid EmploymentId, Guid PersonId, Guid LegalEntityId, string Kind, Guid? VesselId, Guid? PositionId,
-    HrAssignmentPlanDto Plan, HrAssignmentActualDto Actual, long Revision, uint Version);
+    HrAssignmentPlanDto Plan, HrAssignmentActualDto Actual, long Revision, uint Version, HrStateChangeDto[]? StateChanges = null);
 public sealed record HrListDto<T>(T[] Items, bool Truncated);
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record HrLegalEntityUpdateCommand(uint? ExpectedVersion, string? LegalName, string? CountryCode, string? HrTimeZone, string? BaseLocale,
-    DateTimeOffset? EffectiveFrom, DateTimeOffset? EffectiveTo, string? SourceKind, string? SourceRef);
+    DateTimeOffset? EffectiveFrom, DateTimeOffset? EffectiveTo, string? SourceKind, string? SourceRef, string? Reason = null);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record HrStatusCommand(uint? ExpectedVersion, string? TargetState, string? Reason, DateTimeOffset? EndAt = null);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
@@ -43,7 +46,7 @@ public sealed record HrRoleAddCommand(string? Role, Guid? VesselId, DateTimeOffs
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record HrRetireCommand(uint? ExpectedVersion, string? Reason, DateTimeOffset? EffectiveTo = null);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
-public sealed record HrPersonUpdateCommand(uint? ExpectedVersion, string? PersonType, string? SourceKind, string? SourceRef);
+public sealed record HrPersonUpdateCommand(uint? ExpectedVersion, string? PersonType, string? SourceKind, string? SourceRef, string? Reason = null);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record HrEmploymentCreateCommand(Guid? PersonId, Guid? LegalEntityId, string? EmployeeNo, string? EmploymentType, DateTimeOffset? StartAt, DateTimeOffset? EndAt);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
@@ -104,6 +107,8 @@ public static class HrEndpoints
             Run<HrRoleAddCommand>(h, "HrRoleAdd", "hr.legal_entity.write", id, null, AddRole, RoleRepresentation)), "HrAddLegalEntityRole");
         Command<HrRetireCommand, HrLegalEntityRoleDto>(g.MapPost("/legal-entities/{id:guid}/roles/{roleId:guid}/end", (Guid id, Guid roleId, HttpContext h) =>
             Run<HrRetireCommand>(h, "HrRoleEnd", "hr.legal_entity.write", id, roleId, EndRole, RoleRepresentation)), "HrEndLegalEntityRole");
+        Command<HrRetireCommand, HrLegalEntityRoleDto>(g.MapPost("/legal-entities/{id:guid}/roles/{roleId:guid}/cancel", (Guid id, Guid roleId, HttpContext h) =>
+            Run<HrRetireCommand>(h, "HrRoleCancel", "hr.legal_entity.write", id, roleId, CancelRole, RoleRepresentation)), "HrCancelLegalEntityRole");
         Command<HrPersonUpdateCommand, HrPersonDto>(g.MapPut("/people/{id:guid}", (Guid id, HttpContext h) =>
             Run<HrPersonUpdateCommand>(h, "HrPersonUpdate", "hr.person.write", id, null, UpdatePerson, PersonRepresentation)), "HrUpdatePerson");
         Command<HrStatusCommand, HrPersonDto>(g.MapPost("/people/{id:guid}/verify", (Guid id, HttpContext h) =>
@@ -117,7 +122,7 @@ public static class HrEndpoints
         Command<HrStatusCommand, HrAssignmentDto>(g.MapPost("/assignments/{id:guid}/status", (Guid id, HttpContext h) =>
             Run<HrStatusCommand>(h, "HrAssignmentStatus", "hr.assignment.write", id, null, AssignmentStatus, AssignmentRepresentation)), "HrChangeAssignmentStatus");
         Command<HrActualEventCommand, HrAssignmentDto>(g.MapPost("/assignments/{id:guid}/actual-events", (Guid id, HttpContext h) =>
-            Run<HrActualEventCommand>(h, "HrActualEventRecord", "hr.actual.record", id, null, RecordActual, ActualRepresentation)), "HrRecordActualEvent");
+            Run<HrActualEventCommand>(h, "HrActualEventRecord", "hr.actual.record", id, null, RecordActual, ActualRepresentation, SameActualEvent)), "HrRecordActualEvent");
     }
 
     private static void Command<TCommand, TResult>(RouteHandlerBuilder route, string name) where TCommand : notnull where TResult : notnull => route.WithName(name)
@@ -152,7 +157,8 @@ public static class HrEndpoints
     // Shared audited command pipeline: permission -> antiforgery -> key -> bounded closed JSON -> SERIALIZABLE
     // transaction -> receipt replay -> domain change -> audited SaveChanges -> receipt -> commit.
     private static async Task<IResult> Run<TCommand>(HttpContext h, string action, string permission, Guid? routeId, Guid? childId,
-        Func<Ctx, Guid?, Guid?, TCommand, Task<Outcome>> execute, Func<Ctx, Guid, Task<object?>> represent) where TCommand : class
+        Func<Ctx, Guid?, Guid?, TCommand, Task<Outcome>> execute, Func<Ctx, Guid, Task<object?>> represent,
+        Func<Ctx, Guid?, TCommand, Task<Outcome?>>? convergent = null) where TCommand : class
     {
         var actor = h.RequestServices.GetRequiredService<ActorResolver>().Resolve(h.User);
         if (actor == null || !actor.HasWriteAttribution || !Allowed(actor, permission)) return await Fail(h, CommandAction, 403, "permission_denied", routeId);
@@ -213,7 +219,24 @@ public static class HrEndpoints
             if (error is not DbUpdateConcurrencyException && state is not ("23505" or "23P01") && !PostgresFailure.IsSerialization(error))
                 return await Fail(h, CommandAction, 503, "service_unavailable", routeId);
             // A concurrent identical command may have committed first: replay it instead of reporting a conflict.
-            try { if (await Replay() is { } replayed) return replayed; }
+            try
+            {
+                if (await Replay() is { } replayed) return replayed;
+                // A concurrent command under another key may have committed the same natural record first (e.g. the same
+                // source event). Converge on that committed record when its content matches; otherwise report the conflict.
+                if (convergent != null && (state == "23505" || PostgresFailure.IsSerialization(error)) &&
+                    await convergent(ctx, routeId, command) is { } converged)
+                {
+                    if (converged.ResourceId is not { } existing) return await Fail(h, CommandAction, converged.Status, converged.Code!, routeId, converged.Errors);
+                    if (await represent(ctx, existing) is not { } same) return await Fail(h, CommandAction, 404, "resource_not_found", routeId);
+                    db.CommandReceipts.Add(new CommandReceipt { TenantId = actor.TenantId, ActorId = actor.Id, Key = key, Action = action,
+                        Fingerprint = fingerprint, ResourceId = existing, CommittedAt = ctx.Now });
+                    // The receipt only makes a later replay of this key cheap; losing that race changes nothing.
+                    try { await db.SaveChangesAsync(ctx.Ct); }
+                    catch (Exception receiptError) when (receiptError is DbUpdateConcurrencyException || PostgresFailure.IsDatabase(receiptError)) { db.ChangeTracker.Clear(); }
+                    return Results.Ok(same);
+                }
+            }
             catch (Exception replayError) when (PostgresFailure.IsDatabase(replayError)) { return await Fail(h, CommandAction, 503, "service_unavailable", routeId); }
             var code = state switch
             {
@@ -250,6 +273,7 @@ public static class HrEndpoints
         var errors = HrLegalEntityPolicy.Validate(legalName, cmd.CountryCode, cmd.HrTimeZone, cmd.BaseLocale, cmd.EffectiveFrom, cmd.EffectiveTo);
         if (!HrSourcePolicy.ValidSourceKind(cmd.SourceKind)) errors["sourceKind"] = ["closed_source_kind_required"];
         if (!HrSourcePolicy.ValidSourceRef(cmd.SourceRef)) errors["sourceRef"] = ["text_1_200"];
+        if (!HrSourcePolicy.ValidReason(cmd.Reason, false)) errors["reason"] = ["text_1_500"];
         if (cmd.ExpectedVersion is null) errors["expectedVersion"] = ["required"];
         if (errors.Count > 0) return Outcome.Fail(400, "validation_failed", errors);
         if (!Cas(c, entity, cmd.ExpectedVersion)) return Outcome.Fail(409, "version_conflict");
@@ -264,13 +288,25 @@ public static class HrEndpoints
             ("HrTimeZone", entity.HrTimeZone, cmd.HrTimeZone), ("BaseLocale", entity.BaseLocale, cmd.BaseLocale),
             ("EffectiveFrom", Instant(entity.EffectiveFrom), Instant(cmd.EffectiveFrom)), ("EffectiveTo", Instant(entity.EffectiveTo), Instant(cmd.EffectiveTo))
         }.Where(x => x.Before != x.After).ToArray();
+        // 52.01 paragraph:50: correcting an already recorded value requires the reason, stored with the new revision.
+        if (cmd.Reason is null && changes.Any(x => HrSourcePolicy.IsCorrection(x.Before, x.After)))
+            return Outcome.Fail(400, "validation_failed", Errors(("reason", "correction_reason_required")));
+        // 52.01 paragraph:51: the legal-entity period must keep containing every active employment it carries.
+        if (changes.Any(x => x.Field is "EffectiveFrom" or "EffectiveTo"))
+        {
+            var active = await c.Db.Employments.AsNoTracking().Where(x => x.LegalEntityId == entity.Id && x.State == "Active")
+                .Select(x => new { x.StartAt, x.EndAt }).ToArrayAsync(c.Ct);
+            if (!HrLegalEntityPolicy.CoversAll(cmd.EffectiveFrom is { } from ? new HrPeriod(from, cmd.EffectiveTo) : null, active.Select(x => new HrPeriod(x.StartAt, x.EndAt))))
+                return Outcome.Fail(409, "hr_employment_outside_legal_entity");
+        }
         // An unchanged update is still an attributed xmin touch, but adds no field revision.
         if (changes.Length > 0)
         {
             entity.LegalEntityRevision = checked(entity.LegalEntityRevision + 1);
             foreach (var change in changes)
                 c.Db.LegalEntityFieldRevisions.Add(new() { TenantId = c.Actor.TenantId, LegalEntityId = entity.Id, Revision = entity.LegalEntityRevision,
-                    Field = change.Field, Value = change.After, SourceKind = cmd.SourceKind!, SourceRef = cmd.SourceRef, ActorId = c.ActorId, RecordedAt = c.Now });
+                    Field = change.Field, Value = change.After, SourceKind = cmd.SourceKind!, SourceRef = cmd.SourceRef, Reason = cmd.Reason?.Trim(),
+                    ActorId = c.ActorId, RecordedAt = c.Now });
         }
         (entity.LegalName, entity.CountryCode, entity.HrTimeZone, entity.BaseLocale, entity.EffectiveFrom, entity.EffectiveTo) =
             (legalName, cmd.CountryCode, cmd.HrTimeZone, cmd.BaseLocale, cmd.EffectiveFrom, cmd.EffectiveTo);
@@ -294,7 +330,7 @@ public static class HrEndpoints
         }
         entity.LegalEntityRevision = checked(entity.LegalEntityRevision + 1);
         c.Db.LegalEntityFieldRevisions.Add(new() { TenantId = c.Actor.TenantId, LegalEntityId = entity.Id, Revision = entity.LegalEntityRevision,
-            Field = "LegalEntityStatus", Value = cmd.TargetState, SourceKind = "UserDeclared", ActorId = c.ActorId, RecordedAt = c.Now });
+            Field = "LegalEntityStatus", Value = cmd.TargetState, SourceKind = "UserDeclared", Reason = cmd.Reason!.Trim(), ActorId = c.ActorId, RecordedAt = c.Now });
         entity.LegalEntityStatus = cmd.TargetState;
         return Outcome.Ok(entity.Id);
     }
@@ -324,7 +360,32 @@ public static class HrEndpoints
         if (!Cas(c, row, cmd.ExpectedVersion)) return Outcome.Fail(409, "version_conflict");
         if (row.RetiredAt != null) return Outcome.Fail(409, "invalid_transition");
         (row.RetiredAt, row.RetiredBy) = (c.Now, c.ActorId);
+        StateChange(c, row.LegalEntityId, "LegalEntityIdentifier", row.Id, "Current", "Retired", cmd.Reason!);
         return Outcome.Ok(row.Id);
+    }
+
+    private static void StateChange(Ctx c, Guid legalEntityId, string kind, Guid subject, string from, string to, string reason) =>
+        c.Db.HrStateChanges.Add(new() { TenantId = c.Actor.TenantId, Id = Guid.NewGuid(), LegalEntityId = legalEntityId, SubjectKind = kind, SubjectId = subject,
+            FromState = from, ToState = to, Reason = reason.Trim(), ActorId = c.ActorId, RecordedAt = c.Now });
+
+    // A recorded vessel relation outside the actor's server-resolved vessel scope does not exist for them (same rule as AddRole).
+    private static async Task<LegalEntityRole?> ScopedRole(Ctx c, Guid? id, Guid? roleId)
+    {
+        var row = await c.Db.LegalEntityRoles.SingleOrDefaultAsync(x => x.Id == roleId && x.LegalEntityId == id, c.Ct);
+        return row == null || row.VesselId is { } vessel && !await c.Actor.Scope(c.Db.Vessels).AnyAsync(x => x.Id == vessel, c.Ct) ? null : row;
+    }
+
+    // Ending or cancelling an Employer relation must leave every active employment of the entity covered by the remaining ones.
+    private static async Task<bool> EmployerCoverageKept(Ctx c, LegalEntityRole row, HrPeriod? replacement)
+    {
+        if (row.Role != "Employer") return true;
+        var active = await c.Db.Employments.AsNoTracking().Where(x => x.LegalEntityId == row.LegalEntityId && x.State == "Active")
+            .Select(x => new { x.StartAt, x.EndAt }).ToArrayAsync(c.Ct);
+        if (active.Length == 0) return true;
+        var others = await c.Db.LegalEntityRoles.AsNoTracking().Where(x => x.LegalEntityId == row.LegalEntityId && x.Role == "Employer" && x.State == "Recorded" && x.Id != row.Id)
+            .Select(x => new { x.EffectiveFrom, x.EffectiveTo }).ToArrayAsync(c.Ct);
+        var employers = others.Select(x => new HrPeriod(x.EffectiveFrom, x.EffectiveTo)).Concat(replacement is { } kept ? [kept] : []).ToArray();
+        return active.All(e => employers.Any(r => r.Covers(new HrPeriod(e.StartAt, e.EndAt))));
     }
 
     private static async Task<Outcome> AddRole(Ctx c, Guid? id, Guid? _, HrRoleAddCommand cmd)
@@ -337,7 +398,7 @@ public static class HrEndpoints
         // The vessel must be inside the actor's server-resolved vessel scope; otherwise it does not exist for them.
         if (cmd.VesselId is { } vessel && !await c.Actor.Scope(c.Db.Vessels).AnyAsync(x => x.Id == vessel, c.Ct)) return Outcome.Fail(404, "resource_not_found");
         var period = new HrPeriod(cmd.EffectiveFrom!.Value, cmd.EffectiveTo);
-        var current = await c.Db.LegalEntityRoles.AsNoTracking().Where(x => x.Role == cmd.Role && (x.VesselId == cmd.VesselId || x.LegalEntityId == id))
+        var current = await c.Db.LegalEntityRoles.AsNoTracking().Where(x => x.Role == cmd.Role && x.State == "Recorded" && (x.VesselId == cmd.VesselId || x.LegalEntityId == id))
             .Select(x => new { x.Id, x.LegalEntityId, x.Role, x.VesselId, x.EffectiveFrom, x.EffectiveTo }).ToArrayAsync(c.Ct);
         if (HrRolePolicy.Conflict(current.Select(x => new HrRolePolicy.Existing(x.Id, x.LegalEntityId, x.Role, x.VesselId, new HrPeriod(x.EffectiveFrom, x.EffectiveTo))),
             id!.Value, cmd.Role!, cmd.VesselId, period) != null) return Outcome.Fail(409, "hr_role_overlap");
@@ -349,14 +410,32 @@ public static class HrEndpoints
 
     private static async Task<Outcome> EndRole(Ctx c, Guid? id, Guid? roleId, HrRetireCommand cmd)
     {
-        var row = await c.Db.LegalEntityRoles.SingleOrDefaultAsync(x => x.Id == roleId && x.LegalEntityId == id, c.Ct);
+        var row = await ScopedRole(c, id, roleId);
         if (row == null) return Outcome.Fail(404, "resource_not_found");
         if (cmd.ExpectedVersion is null || cmd.EffectiveTo is null || !HrSourcePolicy.ValidReason(cmd.Reason, true))
             return Outcome.Fail(400, "validation_failed", Errors(("effectiveTo", "expected_version_effective_to_and_reason_required")));
         if (!Cas(c, row, cmd.ExpectedVersion)) return Outcome.Fail(409, "version_conflict");
-        if (row.EffectiveTo != null) return Outcome.Fail(409, "invalid_transition");
+        if (row.EffectiveTo != null || row.State != "Recorded") return Outcome.Fail(409, "invalid_transition");
         if (cmd.EffectiveTo <= row.EffectiveFrom) return Outcome.Fail(400, "validation_failed", Errors(("effectiveTo", "must_follow_effective_from")));
+        if (!await EmployerCoverageKept(c, row, new HrPeriod(row.EffectiveFrom, cmd.EffectiveTo))) return Outcome.Fail(409, "hr_employment_outside_employer_role");
         (row.EffectiveTo, row.EndedBy) = (cmd.EffectiveTo, c.ActorId);
+        StateChange(c, row.LegalEntityId, "LegalEntityRole", row.Id, "Recorded", "Ended", cmd.Reason!);
+        return Outcome.Ok(row.Id);
+    }
+
+    // A mistaken relation is cancelled, never deleted: it stays visible as Cancelled and stops counting for cardinality.
+    private static async Task<Outcome> CancelRole(Ctx c, Guid? id, Guid? roleId, HrRetireCommand cmd)
+    {
+        var row = await ScopedRole(c, id, roleId);
+        if (row == null) return Outcome.Fail(404, "resource_not_found");
+        if (cmd.ExpectedVersion is null || cmd.EffectiveTo != null || !HrSourcePolicy.ValidReason(cmd.Reason, true))
+            return Outcome.Fail(400, "validation_failed", Errors(("reason", "expected_version_and_reason_required")));
+        if (!Cas(c, row, cmd.ExpectedVersion)) return Outcome.Fail(409, "version_conflict");
+        var rejected = HrRolePolicy.CancelRejection(row.State, row.CreatedBy, c.ActorId);
+        if (rejected != null) return Outcome.Fail(rejected == "separation_of_duties" ? 403 : 409, rejected);
+        if (!await EmployerCoverageKept(c, row, null)) return Outcome.Fail(409, "hr_employment_outside_employer_role");
+        (row.State, row.CancelledBy, row.CancelledAt) = ("Cancelled", c.ActorId, c.Now);
+        StateChange(c, row.LegalEntityId, "LegalEntityRole", row.Id, row.EffectiveTo == null ? "Recorded" : "Ended", "Cancelled", cmd.Reason!);
         return Outcome.Ok(row.Id);
     }
 
@@ -369,24 +448,28 @@ public static class HrEndpoints
         if (!HrPersonPolicy.ValidType(cmd.PersonType)) errors["personType"] = ["closed_person_type_required"];
         if (!HrSourcePolicy.ValidSourceKind(cmd.SourceKind)) errors["sourceKind"] = ["closed_source_kind_required"];
         if (!HrSourcePolicy.ValidSourceRef(cmd.SourceRef)) errors["sourceRef"] = ["text_1_200"];
+        if (!HrSourcePolicy.ValidReason(cmd.Reason, false)) errors["reason"] = ["text_1_500"];
         if (cmd.ExpectedVersion is null) errors["expectedVersion"] = ["required"];
         if (errors.Count > 0) return Outcome.Fail(400, "validation_failed", errors);
         if (!Cas(c, person, cmd.ExpectedVersion)) return Outcome.Fail(409, "version_conflict");
         if (person.PersonType != cmd.PersonType)
         {
+            // Unknown is not a recorded value: declaring it is not a correction. Changing a declared type is (52.01 paragraph:50).
+            if (cmd.Reason is null && HrSourcePolicy.IsCorrection(person.PersonType == "Unknown" ? null : person.PersonType, cmd.PersonType))
+                return Outcome.Fail(400, "validation_failed", Errors(("reason", "correction_reason_required")));
             person.MasterRevision = checked(person.MasterRevision + 1);
-            Revision(c, person, "PersonType", cmd.PersonType, cmd.SourceKind!, cmd.SourceRef);
+            Revision(c, person, "PersonType", cmd.PersonType, cmd.SourceKind!, cmd.SourceRef, cmd.Reason);
             // A changed core field invalidates a prior verification; it must be verified again independently.
-            if (person.MasterState == "Verified") { person.MasterState = "Draft"; Revision(c, person, "MasterState", "Draft", cmd.SourceKind!, cmd.SourceRef); }
+            if (person.MasterState == "Verified") { person.MasterState = "Draft"; Revision(c, person, "MasterState", "Draft", cmd.SourceKind!, cmd.SourceRef, cmd.Reason); }
             person.PersonType = cmd.PersonType!;
         }
         c.Db.Entry(person).Property(x => x.MasterRevision).IsModified = true;
         return Outcome.Ok(person.Id);
     }
 
-    private static void Revision(Ctx c, Person person, string field, string? value, string sourceKind, string? sourceRef) =>
+    private static void Revision(Ctx c, Person person, string field, string? value, string sourceKind, string? sourceRef, string? reason) =>
         c.Db.PersonFieldRevisions.Add(new() { TenantId = c.Actor.TenantId, PersonId = person.Id, Revision = person.MasterRevision, Field = field,
-            Value = value, SourceKind = sourceKind, SourceRef = sourceRef, ActorId = c.ActorId, RecordedAt = c.Now });
+            Value = value, SourceKind = sourceKind, SourceRef = sourceRef, Reason = reason?.Trim(), ActorId = c.ActorId, RecordedAt = c.Now });
 
     private static async Task<Outcome> VerifyPerson(Ctx c, Guid? id, Guid? _, HrStatusCommand cmd)
     {
@@ -401,7 +484,7 @@ public static class HrEndpoints
         if (rejected != null) return Outcome.Fail(rejected == "hr_reference_incomplete" ? 422 : rejected == "separation_of_duties" ? 403 : 409, rejected);
         person.MasterRevision = checked(person.MasterRevision + 1);
         person.MasterState = "Verified";
-        Revision(c, person, "MasterState", "Verified", "UserDeclared", null);
+        Revision(c, person, "MasterState", "Verified", "UserDeclared", null, cmd.Reason);
         return Outcome.Ok(person.Id);
     }
 
@@ -439,7 +522,7 @@ public static class HrEndpoints
             if (!c.Actor.Permissions.Contains("hr.employment.approve")) return Outcome.Fail(403, "permission_denied");
             var person = await c.Db.Persons.AsNoTracking().SingleAsync(x => x.Id == row.PersonId, c.Ct);
             var entity = await c.Db.Companies.AsNoTracking().SingleAsync(x => x.Id == row.LegalEntityId, c.Ct);
-            var employer = await c.Db.LegalEntityRoles.AsNoTracking().Where(x => x.LegalEntityId == row.LegalEntityId && x.Role == "Employer")
+            var employer = await c.Db.LegalEntityRoles.AsNoTracking().Where(x => x.LegalEntityId == row.LegalEntityId && x.Role == "Employer" && x.State == "Recorded")
                 .Select(x => new { x.EffectiveFrom, x.EffectiveTo }).ToArrayAsync(c.Ct);
             var rejected = HrEmploymentPolicy.ActivationRejection(person.MasterState, entity.LegalEntityStatus,
                 entity.EffectiveFrom is { } from ? new HrPeriod(from, entity.EffectiveTo) : null, employer.Select(x => new HrPeriod(x.EffectiveFrom, x.EffectiveTo)),
@@ -456,6 +539,7 @@ public static class HrEndpoints
                 return Outcome.Fail(409, "hr_active_assignment_at_exit");
             row.EndAt = end;
         }
+        StateChange(c, row.LegalEntityId, "Employment", row.Id, row.State, cmd.TargetState, cmd.Reason!);
         row.State = cmd.TargetState;
         row.Revision = checked(row.Revision + 1);
         return Outcome.Ok(row.Id);
@@ -495,7 +579,7 @@ public static class HrEndpoints
             if (!c.Actor.Permissions.Contains("hr.assignment.approve")) return Outcome.Fail(403, "permission_denied");
             var employment = await c.Db.Employments.AsNoTracking().SingleAsync(x => x.Id == row.EmploymentId, c.Ct);
             var operators = row.VesselId is { } vessel ? await c.Db.LegalEntityRoles.AsNoTracking()
-                .Where(x => x.LegalEntityId == row.LegalEntityId && x.VesselId == vessel && x.Role == "Operator")
+                .Where(x => x.LegalEntityId == row.LegalEntityId && x.VesselId == vessel && x.Role == "Operator" && x.State == "Recorded")
                 .Select(x => new { x.EffectiveFrom, x.EffectiveTo }).ToArrayAsync(c.Ct) : [];
             var approved = await c.Db.HrAssignments.AsNoTracking().Where(x => x.PersonId == row.PersonId && x.Id != row.Id && x.State == "Approved")
                 .Select(x => new { x.PlannedFrom, x.PlannedTo }).ToArrayAsync(c.Ct);
@@ -508,6 +592,7 @@ public static class HrEndpoints
         // A plan that already has an accepted actual check-in is history, not a cancellable intention.
         if (cmd.TargetState == "Cancelled" && await c.Db.HrActualEvents.AnyAsync(x => x.AssignmentId == row.Id && x.Disposition == "Accepted", c.Ct))
             return Outcome.Fail(409, "hr_actual_exists");
+        StateChange(c, row.LegalEntityId, "PlannedAssignment", row.Id, row.State, cmd.TargetState, cmd.Reason!);
         row.State = cmd.TargetState;
         row.Revision = checked(row.Revision + 1);
         return Outcome.Ok(row.Id);
@@ -526,26 +611,51 @@ public static class HrEndpoints
         if (!HrSourcePolicy.ValidText(cmd.SourceSystem, 64)) errors["sourceSystem"] = ["text_1_64_required"];
         if (!HrSourcePolicy.ValidText(cmd.SourceEventId, 128)) errors["sourceEventId"] = ["text_1_128_required"];
         if (errors.Count > 0) return Outcome.Fail(400, "validation_failed", errors);
-        var hash = Hash(JsonSerializer.Serialize(new { assignment = row.Id, cmd.Kind, occurredAt = cmd.OccurredAt!.Value.ToUniversalTime(), cmd.OriginZoneId, cmd.Origin }, Json));
-        var duplicate = await c.Db.HrActualEvents.AsNoTracking().SingleOrDefaultAsync(x => x.SourceSystem == cmd.SourceSystem && x.SourceEventId == cmd.SourceEventId, c.Ct);
+        // The stored source key is trimmed, so the duplicate lookup uses the same trimmed key.
+        var (sourceSystem, sourceEventId, hash) = ActualIdentity(row.Id, cmd);
+        var duplicate = await c.Db.HrActualEvents.AsNoTracking().SingleOrDefaultAsync(x => x.SourceSystem == sourceSystem && x.SourceEventId == sourceEventId, c.Ct);
         if (duplicate != null) return duplicate.ContentHash == hash ? Outcome.Ok(duplicate.Id) : Outcome.Fail(409, "hr_event_conflict");
         var existing = await c.Db.HrActualEvents.AsNoTracking().Where(x => x.AssignmentId == row.Id)
             .Select(x => new HrActualTimeline.Fact(x.Id, x.Kind, x.OccurredAt, x.Quality, x.Disposition)).ToArrayAsync(c.Ct);
-        var (quality, disposition) = HrActualTimeline.Classify(existing, cmd.Kind!, cmd.OccurredAt.Value, row.State == "Approved", c.Now);
+        var (quality, disposition) = HrActualTimeline.Classify(existing, cmd.Kind!, cmd.OccurredAt!.Value, row.State == "Approved", c.Now);
         var fact = new HrActualEvent { TenantId = c.Actor.TenantId, Id = Guid.NewGuid(), AssignmentId = row.Id, PersonId = row.PersonId, Kind = cmd.Kind!,
-            OccurredAt = cmd.OccurredAt.Value, OriginZoneId = cmd.OriginZoneId!, Origin = cmd.Origin!, SourceSystem = cmd.SourceSystem!.Trim(),
-            SourceEventId = cmd.SourceEventId!.Trim(), ContentHash = hash, Quality = quality, Disposition = disposition, RecordedBy = c.ActorId, RecordedAt = c.Now };
+            OccurredAt = cmd.OccurredAt.Value, OriginZoneId = cmd.OriginZoneId!, Origin = cmd.Origin!, SourceSystem = sourceSystem,
+            SourceEventId = sourceEventId, ContentHash = hash, Quality = quality, Disposition = disposition, RecordedBy = c.ActorId, RecordedAt = c.Now };
         c.Db.HrActualEvents.Add(fact);
         return Outcome.Ok(fact.Id);
     }
 
+    private static (string SourceSystem, string SourceEventId, string Hash) ActualIdentity(Guid assignment, HrActualEventCommand cmd) =>
+        (cmd.SourceSystem!.Trim(), cmd.SourceEventId!.Trim(),
+            Hash(JsonSerializer.Serialize(new { assignment, cmd.Kind, occurredAt = cmd.OccurredAt!.Value.ToUniversalTime(), cmd.OriginZoneId, cmd.Origin }, Json)));
+
+    // Concurrent identical submissions under different idempotency keys: after the unique source key (or a serialization
+    // failure) rejects the loser, it converges on the committed fact when the content is the same, else hr_event_conflict.
+    private static async Task<Outcome?> SameActualEvent(Ctx c, Guid? id, HrActualEventCommand cmd)
+    {
+        if (id is not { } assignment || cmd.Kind is null || cmd.OccurredAt is null || !HrSourcePolicy.ValidText(cmd.SourceSystem, 64) ||
+            !HrSourcePolicy.ValidText(cmd.SourceEventId, 128)) return null;
+        var (sourceSystem, sourceEventId, hash) = ActualIdentity(assignment, cmd);
+        var committed = await c.Db.HrActualEvents.AsNoTracking().Where(x => x.SourceSystem == sourceSystem && x.SourceEventId == sourceEventId)
+            .Select(x => new { x.Id, x.ContentHash }).SingleOrDefaultAsync(c.Ct);
+        return committed == null ? null : committed.ContentHash == hash ? Outcome.Ok(committed.Id) : Outcome.Fail(409, "hr_event_conflict");
+    }
+
     // ---------- Representations (fresh, tenant-filtered reads) ----------
-    private static HrLegalEntityIdentifierDto IdentifierDto(LegalEntityIdentifier x) =>
-        new(x.Id, x.Type, x.Issuer, x.Value, HrIdentifierPolicy.Mask(x.Value), x.SourceKind, x.CreatedAt, x.RetiredAt, x.Version);
-    private static HrLegalEntityRoleDto RoleDto(LegalEntityRole x) => new(x.Id, x.Role, x.VesselId, x.EffectiveFrom, x.EffectiveTo, x.VerificationState, x.SourceKind, x.Version);
+    // Masked by default; the full registration value needs the specific tenant-wide identifier permission.
+    private static bool FullIdentifier(TrustedActor a) => Allowed(a, "hr.legal_entity.identifier.read");
+    private static HrLegalEntityIdentifierDto IdentifierDto(LegalEntityIdentifier x, bool full) =>
+        new(x.Id, x.Type, x.Issuer, full ? x.Value : null, HrIdentifierPolicy.Mask(x.Value), x.SourceKind, x.CreatedAt, x.RetiredAt, x.Version);
+    private static HrLegalEntityRoleDto RoleDto(LegalEntityRole x) => new(x.Id, x.Role, x.VesselId, x.EffectiveFrom, x.EffectiveTo, x.VerificationState, x.State, x.SourceKind, x.Version);
+
+    // Reasons are returned only by detail reads, which already require the matching hr.*.read permission.
+    private static async Task<HrStateChangeDto[]> StateChanges(PoseidonDbContext db, string[] kinds, Guid[] subjects, CancellationToken ct) =>
+        (await db.HrStateChanges.AsNoTracking().Where(x => kinds.Contains(x.SubjectKind) && subjects.Contains(x.SubjectId))
+            .OrderBy(x => x.RecordedAt).ThenBy(x => x.Id).Take(500).ToArrayAsync(ct))
+        .Select(x => new HrStateChangeDto(x.SubjectKind, x.SubjectId, x.FromState, x.ToState, x.Reason, x.ActorId, x.RecordedAt)).ToArray();
 
     private static async Task<object?> LegalEntityRepresentation(Ctx c, Guid id) => await LegalEntity(c.Db, c.Actor, id, c.Ct);
-    private static async Task<HrLegalEntityDto?> LegalEntity(PoseidonDbContext db, TrustedActor a, Guid id, CancellationToken ct)
+    private static async Task<HrLegalEntityDto?> LegalEntity(PoseidonDbContext db, TrustedActor a, Guid id, CancellationToken ct, bool detail = false)
     {
         var e = await db.Companies.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id, ct);
         if (e == null) return null;
@@ -553,15 +663,20 @@ public static class HrEndpoints
         var roles = await db.LegalEntityRoles.AsNoTracking().Where(x => x.LegalEntityId == id).OrderBy(x => x.EffectiveFrom).ThenBy(x => x.Id).ToArrayAsync(ct);
         // Vessel relations outside the reader's vessel scope are not disclosed.
         var visible = (await a.Scope(db.Vessels.AsNoTracking()).Select(x => x.Id).ToArrayAsync(ct)).ToHashSet();
+        var shownRoles = roles.Where(r => r.VesselId is not { } v || visible.Contains(v)).ToArray();
+        var full = FullIdentifier(a);
         return new(e.Id, e.Code, e.Name, e.LegalName, e.CountryCode, e.HrTimeZone, e.BaseLocale, e.LegalEntityStatus, e.EffectiveFrom, e.EffectiveTo,
             e.LegalEntityRevision, e.Version, HrLegalEntityPolicy.MissingForActivation(e.LegalName, e.CountryCode, e.HrTimeZone, e.BaseLocale, e.EffectiveFrom),
-            identifiers.Select(IdentifierDto).ToArray(), roles.Where(r => r.VesselId is not { } v || visible.Contains(v)).Select(RoleDto).ToArray(),
-            a.HasWriteAttribution && Allowed(a, "hr.legal_entity.write"));
+            identifiers.Select(x => IdentifierDto(x, full)).ToArray(), shownRoles.Select(RoleDto).ToArray(),
+            a.HasWriteAttribution && Allowed(a, "hr.legal_entity.write"),
+            detail ? await StateChanges(db, ["LegalEntityIdentifier", "LegalEntityRole"], [.. identifiers.Select(x => x.Id), .. shownRoles.Select(x => x.Id)], ct) : null);
     }
     private static async Task<object?> IdentifierRepresentation(Ctx c, Guid id) =>
-        await c.Db.LegalEntityIdentifiers.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id, c.Ct) is { } row ? IdentifierDto(row) : null;
+        await c.Db.LegalEntityIdentifiers.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id, c.Ct) is { } row ? IdentifierDto(row, FullIdentifier(c.Actor)) : null;
+    // Command results follow the same vessel-scope rule as the reads.
     private static async Task<object?> RoleRepresentation(Ctx c, Guid id) =>
-        await c.Db.LegalEntityRoles.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id, c.Ct) is { } row ? RoleDto(row) : null;
+        await c.Db.LegalEntityRoles.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id, c.Ct) is { } row &&
+            (row.VesselId is not { } vessel || await c.Actor.Scope(c.Db.Vessels).AnyAsync(x => x.Id == vessel, c.Ct)) ? RoleDto(row) : null;
     private static async Task<object?> PersonRepresentation(Ctx c, Guid id) => await Person(c.Db, c.Actor, id, c.Ct);
     private static async Task<HrPersonDto?> Person(PoseidonDbContext db, TrustedActor a, Guid id, CancellationToken ct) =>
         await db.Persons.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id, ct) is { } p
@@ -633,7 +748,7 @@ public static class HrEndpoints
     private static async Task<IResult> GetLegalEntity(Guid id, HttpContext h)
     {
         var (a, denied) = await Reader(h, "hr.legal_entity.read", id); if (denied != null) return denied;
-        return await Found(h, await LegalEntity(h.RequestServices.GetRequiredService<PoseidonDbContext>(), a!, id, h.RequestAborted), id);
+        return await Found(h, await LegalEntity(h.RequestServices.GetRequiredService<PoseidonDbContext>(), a!, id, h.RequestAborted, detail: true), id);
     }
     private static async Task<IResult> LegalEntityRevisions(Guid id, HttpContext h)
     {
@@ -641,7 +756,7 @@ public static class HrEndpoints
         var db = h.RequestServices.GetRequiredService<PoseidonDbContext>();
         if (!await db.Companies.AnyAsync(x => x.Id == id, h.RequestAborted)) return await Fail(h, ReadAction, 404, "resource_not_found", id);
         var rows = await db.LegalEntityFieldRevisions.AsNoTracking().Where(x => x.LegalEntityId == id).OrderByDescending(x => x.Revision).ThenBy(x => x.Field).Take(501).ToArrayAsync(h.RequestAborted);
-        return await Found(h, new HrListDto<HrFieldRevisionDto>(rows.Take(500).Select(x => new HrFieldRevisionDto(x.Revision, x.Field, x.Value, x.SourceKind, x.SourceRef, x.ActorId, x.RecordedAt)).ToArray(), rows.Length > 500), id);
+        return await Found(h, new HrListDto<HrFieldRevisionDto>(rows.Take(500).Select(x => new HrFieldRevisionDto(x.Revision, x.Field, x.Value, x.SourceKind, x.SourceRef, x.Reason, x.ActorId, x.RecordedAt)).ToArray(), rows.Length > 500), id);
     }
     private static async Task<IResult> GetPerson(Guid id, HttpContext h)
     {
@@ -654,7 +769,7 @@ public static class HrEndpoints
         var db = h.RequestServices.GetRequiredService<PoseidonDbContext>();
         if (!await db.Persons.AnyAsync(x => x.Id == id, h.RequestAborted)) return await Fail(h, ReadAction, 404, "resource_not_found", id);
         var rows = await db.PersonFieldRevisions.AsNoTracking().Where(x => x.PersonId == id).OrderByDescending(x => x.Revision).ThenBy(x => x.Field).Take(501).ToArrayAsync(h.RequestAborted);
-        return await Found(h, new HrListDto<HrFieldRevisionDto>(rows.Take(500).Select(x => new HrFieldRevisionDto(x.Revision, x.Field, x.Value, x.SourceKind, x.SourceRef, x.ActorId, x.RecordedAt)).ToArray(), rows.Length > 500), id);
+        return await Found(h, new HrListDto<HrFieldRevisionDto>(rows.Take(500).Select(x => new HrFieldRevisionDto(x.Revision, x.Field, x.Value, x.SourceKind, x.SourceRef, x.Reason, x.ActorId, x.RecordedAt)).ToArray(), rows.Length > 500), id);
     }
     private static async Task<IResult> ListEmployments(HttpContext h)
     {
@@ -672,7 +787,8 @@ public static class HrEndpoints
     {
         var (_, denied) = await Reader(h, "hr.employment.read", id); if (denied != null) return denied;
         var db = h.RequestServices.GetRequiredService<PoseidonDbContext>();
-        return await Found(h, await db.Employments.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id, h.RequestAborted) is { } row ? EmploymentDto(row) : null, id);
+        return await Found(h, await db.Employments.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id, h.RequestAborted) is { } row
+            ? EmploymentDto(row) with { StateChanges = await StateChanges(db, ["Employment"], [row.Id], h.RequestAborted) } : null, id);
     }
     private static async Task<IResult> ListAssignments(HttpContext h)
     {
@@ -691,6 +807,8 @@ public static class HrEndpoints
     private static async Task<IResult> GetAssignment(Guid id, HttpContext h)
     {
         var (a, denied) = await Reader(h, "hr.assignment.read", id); if (denied != null) return denied;
-        return await Found(h, await Assignment(h.RequestServices.GetRequiredService<PoseidonDbContext>(), a!, id, h.RequestAborted), id);
+        var db = h.RequestServices.GetRequiredService<PoseidonDbContext>();
+        return await Found(h, await Assignment(db, a!, id, h.RequestAborted) is { } row
+            ? row with { StateChanges = await StateChanges(db, ["PlannedAssignment"], [row.Id], h.RequestAborted) } : null, id);
     }
 }

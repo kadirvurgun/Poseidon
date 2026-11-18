@@ -121,7 +121,8 @@
       "leUnknown": "Ismeretlen",
       "leMissing": "Hiányzó értékek az aktiválás előtt",
       "leNote": "Csak olvasható. Az értékek csak auditált HR-parancsokkal változnak.",
-      "leShow": "Jogi személy rekordjának megjelenítése"
+      "leShow": "Jogi személy rekordjának megjelenítése",
+      "leIdentifiers": "Nyilvántartási azonosítók (maszkolva)"
     },
     "ProductApp_tsx_copy": {
       "audit": "Műveleti előzmények",

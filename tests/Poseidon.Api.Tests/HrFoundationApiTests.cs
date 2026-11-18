@@ -24,7 +24,7 @@ public sealed partial class DirectoryWorkspaceTests
         "hr.assignment.approve", "hr.actual.record"];
 
     // Two genuinely separate synthetic humans in the same tenant; HR grants are explicit, no admin fallback.
-    private WebApplicationFactory<Program> HrHost(bool approver = false, bool hr = true) =>
+    private WebApplicationFactory<Program> HrHost(bool approver = false, bool hr = true, string[]? extra = null, string[]? drop = null) =>
         Host().WithWebHostBuilder(b => b.ConfigureAppConfiguration((_, c) => {
             var config = new Dictionary<string, string?> {
                 ["Authentication:Oidc:Issuer"] = "https://directory-test.example",
@@ -41,7 +41,8 @@ public sealed partial class DirectoryWorkspaceTests
                 config[prefix + "ActorKind"] = "Human";
                 config[prefix + "RoleReferences:0"] = "91c26eb5-cf16-4553-981d-1c275358c535";
                 config[prefix + "TenantWideRead"] = "true"; config[prefix + "TenantWideManage"] = "true";
-                var permissions = hr ? HrPermissions : HrPermissions.Where(p => !p.StartsWith("hr.", StringComparison.Ordinal)).ToArray();
+                var permissions = (hr ? HrPermissions : HrPermissions.Where(p => !p.StartsWith("hr.", StringComparison.Ordinal)).ToArray())
+                    .Concat(extra ?? []).Where(p => drop == null || !drop.Contains(p)).ToArray();
                 for (var n = 0; n < 50; n++) config[prefix + $"Permissions:{n}"] = n < permissions.Length ? permissions[n] : "unused";
             }
             c.AddInMemoryCollection(config);
@@ -118,7 +119,8 @@ public sealed partial class DirectoryWorkspaceTests
         // P5201-AC-03: typed registration identifiers; duplicates rejected; detail shows mask.
         var identifier = await HrJson(await HrSend(author, $"hr/legal-entities/{company}/identifiers",
             new { type = "TradeRegistry", issuer = "tr-synthetic-registry", value = "SYN 990011", sourceKind = "RegistryExtract", sourceRef = "synthetic-extract-1" }));
-        Assert.Equal("SYN990011", identifier.GetProperty("value").GetString());
+        // Masked by default: no existing HR permission returns the full registration value.
+        Assert.Equal(JsonValueKind.Null, identifier.GetProperty("value").ValueKind);
         Assert.Equal("*****0011", identifier.GetProperty("maskedValue").GetString());
         Assert.Equal("hr_identifier_duplicate", HrCode(await HrJson(await HrSend(author, $"hr/legal-entities/{draftCompany}/identifiers",
             new { type = "TradeRegistry", issuer = "TR-SYNTHETIC-REGISTRY", value = "syn990011", sourceKind = "UserDeclared", sourceRef = (string?)null }), HttpStatusCode.Conflict)));

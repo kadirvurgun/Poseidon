@@ -24,6 +24,31 @@ describe('PLAN-1511-5201 legal entity summary', () => {
     expect(screen.queryByText('Active')).not.toBeInTheDocument()
   })
 
+  it('shows only masked current identifiers and accepts responses without the full value', async () => {
+    const identifiers = [
+      { id: 'i1', type: 'TradeRegistry', issuer: 'SYN', value: null, maskedValue: '*****0011', sourceKind: 'Document', createdAt: '2026-01-01T00:00:00Z', retiredAt: null, version: 1 },
+      { id: 'i2', type: 'TaxId', issuer: 'SYN', value: 'SYN77770022', maskedValue: '*******0022', sourceKind: 'Document', createdAt: '2026-01-01T00:00:00Z', retiredAt: null, version: 1 },
+      { id: 'i3', type: 'Other', issuer: 'SYN', value: null, maskedValue: '****9999', sourceKind: 'Document', createdAt: '2026-01-01T00:00:00Z', retiredAt: '2026-02-01T00:00:00Z', version: 2 }]
+    vi.stubGlobal('fetch', vi.fn(async () => reply({ ...draft, identifiers })))
+    const user = userEvent.setup()
+    render(<LegalEntitySummary companyId="company-one" language="en" />)
+    await user.click(screen.getByRole('button', { name: 'Show legal entity record' }))
+    expect(await screen.findByText('Registration identifiers (masked)')).toBeInTheDocument()
+    expect(screen.getByText('*****0011')).toBeInTheDocument()
+    expect(screen.getByText('*******0022')).toBeInTheDocument()
+    expect(screen.queryByText(/SYN77770022/)).not.toBeInTheDocument()
+    expect(screen.queryByText('****9999')).not.toBeInTheDocument()
+  })
+
+  it('rejects an identifier without a mask as an invalid contract', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => reply({ ...draft, identifiers: [{ id: 'i1', type: 'Other', value: 'RAW' }] })))
+    const user = userEvent.setup()
+    render(<LegalEntitySummary companyId="company-one" language="en" />)
+    await user.click(screen.getByRole('button', { name: 'Show legal entity record' }))
+    expect(await screen.findByRole('alert')).toHaveTextContent('Legal entity details could not be loaded.')
+    expect(screen.queryByText(/RAW/)).not.toBeInTheDocument()
+  })
+
   it('renders Turkish copy and explains unavailable access without exposing details', async () => {
     vi.stubGlobal('fetch', vi.fn(async () => reply({ code: 'permission_denied' }, 403)))
     const user = userEvent.setup()

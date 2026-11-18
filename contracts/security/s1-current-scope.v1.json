@@ -30,9 +30,9 @@
     "TenantPerson",
     "Unresolved"
   ],
-  "mutationRouteTemplates": 128,
-  "criticalRouteTemplates": 120,
-  "criticalOperations": 130,
+  "mutationRouteTemplates": 129,
+  "criticalRouteTemplates": 121,
+  "criticalOperations": 131,
   "scopeMeaning": "Current exposed HTTP command surface, including aliases. Counts are authoring definitions until actual EndpointDataSource drift and real audit observations pass the phase gate. Technical codes describe accepted commands, never human justification or safety authority.",
   "operations": [
     { "operationId": "DefectCreate", "method": "POST", "routePattern": "/api/v1/defects", "family": "Defect", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "DefectCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
@@ -1640,6 +1640,23 @@
       "operationId": "HrEndLegalEntityRole",
       "method": "POST",
       "routePattern": "/api/v1/hr/legal-entities/{id:guid}/roles/{roleId:guid}/end",
+      "family": "Hr",
+      "scope": "Tenant",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "HrCommand",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "HrCancelLegalEntityRole",
+      "method": "POST",
+      "routePattern": "/api/v1/hr/legal-entities/{id:guid}/roles/{roleId:guid}/cancel",
       "family": "Hr",
       "scope": "Tenant",
       "kind": "CriticalWrite",

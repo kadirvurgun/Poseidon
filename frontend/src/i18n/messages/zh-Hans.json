@@ -121,7 +121,8 @@
       "leUnknown": "未知",
       "leMissing": "激活前缺少的值",
       "leNote": "只读。数值仅通过经审计的人力资源命令更改。",
-      "leShow": "显示法律实体记录"
+      "leShow": "显示法律实体记录",
+      "leIdentifiers": "注册标识符（已遮蔽）"
     },
     "ProductApp_tsx_copy": {
       "audit": "操作历史",

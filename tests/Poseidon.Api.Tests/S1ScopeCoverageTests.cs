@@ -39,10 +39,10 @@ public sealed partial class DirectoryWorkspaceTests
         var observed = S1SecurityContract.ValidateEndpointInventory(endpoints);
         // S6 adds owning drafts, extraction and assigned Human assertion recording.
         // Historical native receipts remain unchanged; these are source denominators.
-        // PLAN-1511-5201 adds 13 audited HR commands (legal entity, person master, employment, plan, actual).
-        Assert.Equal(128, observed.Count);
-        Assert.Equal(120, observed.Count(x => x.IsCritical));
-        Assert.Equal(130, S1SecurityContract.CriticalOperationIds.Count);
+        // PLAN-1511-5201 adds 14 audited HR commands (legal entity, person master, employment, plan, actual; QA: role cancel).
+        Assert.Equal(129, observed.Count);
+        Assert.Equal(121, observed.Count(x => x.IsCritical));
+        Assert.Equal(131, S1SecurityContract.CriticalOperationIds.Count);
         Assert.Equal(8, observed.Count(x => !x.IsCritical));
         var extra = new RouteEndpoint(_ => Task.CompletedTask, RoutePatternFactory.Parse("/api/v1/unclassified-write"), 0,
             new EndpointMetadataCollection(new HttpMethodMetadata(["POST"]), new AuthorizeAttribute("DirectoryRead")), "unclassified");

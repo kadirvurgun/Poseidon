@@ -121,7 +121,8 @@
       "leUnknown": "未知",
       "leMissing": "啟用前缺少的值",
       "leNote": "唯讀。數值僅透過經稽核的人力資源指令變更。",
-      "leShow": "顯示法律實體紀錄"
+      "leShow": "顯示法律實體紀錄",
+      "leIdentifiers": "註冊識別碼（已遮蔽）"
     },
     "ProductApp_tsx_copy": {
       "audit": "操作歷史",

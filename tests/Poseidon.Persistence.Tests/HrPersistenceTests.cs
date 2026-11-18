@@ -203,6 +203,128 @@ public sealed class HrPersistenceTests(HrPostgresFixture fixture) : IClassFixtur
             Assert.Equal("55000", (await Assert.ThrowsAsync<PostgresException>(() => Sql(sql))).SqlState);
     }
 
+    // QA follow-up: reasons are retained as append-only state-change rows and withheld from audit summaries (52.01 paragraph:50).
+    [Fact]
+    public async Task State_changes_keep_reasons_append_only_and_out_of_audit_summaries()
+    {
+        const string reason = "Synthetic retirement reason 5201";
+        var id = Guid.NewGuid();
+        await using (var db = fixture.Db())
+        {
+            db.HrStateChanges.Add(new HrStateChange { TenantId = db.TenantId, Id = id, LegalEntityId = SeedCompany.Id, SubjectKind = "LegalEntityIdentifier",
+                SubjectId = Guid.NewGuid(), FromState = "Current", ToState = "Retired", Reason = reason, ActorId = "synthetic-hr-author", RecordedAt = T0 });
+            db.LegalEntityFieldRevisions.Add(new LegalEntityFieldRevision { TenantId = db.TenantId, LegalEntityId = SeedCompany.Id, Revision = 9101,
+                Field = "CountryCode", Value = "TR", SourceKind = "UserDeclared", Reason = reason, ActorId = "synthetic-hr-author", RecordedAt = T0 });
+            await db.SaveChangesAsync(Ct);
+            var audit = await db.AuditEvents.Where(x => (x.EntityType == nameof(HrStateChange) || x.EntityType == nameof(LegalEntityFieldRevision)) && x.ResourceId == SeedCompany.Id).ToArrayAsync(Ct);
+            Assert.Contains(audit, x => x.EntityType == nameof(HrStateChange));
+            Assert.All(audit, x => { Assert.DoesNotContain(reason, x.ChangeSummary); Assert.Contains("ValuesWithheld", x.ChangeSummary); });
+        }
+        await using (var db = fixture.Db())
+        {
+            var row = await db.HrStateChanges.SingleAsync(x => x.Id == id, Ct);
+            row.Reason = "Tampered";
+            await Assert.ThrowsAsync<InvalidOperationException>(() => db.SaveChangesAsync(Ct));
+        }
+        await using (var other = fixture.Db(fixture.Data.Tenants[1].Id)) Assert.False(await other.HrStateChanges.AnyAsync(x => x.Id == id, Ct));
+        foreach (var sql in new[] { "UPDATE hr.\"StateChanges\" SET \"Reason\"='x'", "DELETE FROM hr.\"StateChanges\"", "TRUNCATE hr.\"StateChanges\"" })
+            Assert.Equal("55000", (await Assert.ThrowsAsync<PostgresException>(() => Sql(sql))).SqlState);
+        // An empty reason is rejected below the API as well.
+        await using (var db = fixture.Db())
+        {
+            db.HrStateChanges.Add(new HrStateChange { TenantId = db.TenantId, Id = Guid.NewGuid(), LegalEntityId = SeedCompany.Id, SubjectKind = "Employment",
+                SubjectId = Guid.NewGuid(), FromState = "Draft", ToState = "Active", Reason = "  ", ActorId = "x", RecordedAt = T0 });
+            Assert.Equal("23514", PostgresFailure.Provider(await Assert.ThrowsAsync<DbUpdateException>(() => db.SaveChangesAsync(Ct)))?.SqlState);
+        }
+    }
+
+    [Fact]
+    public async Task Cancelled_roles_are_retained_terminal_independent_and_excluded_from_cardinality()
+    {
+        var tenant = fixture.Data.Tenants[0].Id;
+        var (company, other, vessel) = (Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
+        await using (var db = fixture.Db())
+        {
+            db.Companies.Add(new Company { TenantId = tenant, Id = company, Code = "HR-CX-" + company.ToString("N")[..6], Name = "Synthetic C" });
+            db.Companies.Add(new Company { TenantId = tenant, Id = other, Code = "HR-CX-" + other.ToString("N")[..6], Name = "Synthetic D" });
+            db.Vessels.Add(new Vessel { TenantId = tenant, Id = vessel, CompanyId = company, Code = "HR-CV-" + vessel.ToString("N")[..6], Name = "Synthetic vessel", Kind = VesselKind.Ship });
+            await db.SaveChangesAsync(Ct);
+        }
+        var mistaken = new LegalEntityRole { TenantId = tenant, Id = Guid.NewGuid(), LegalEntityId = company, Role = "Operator", VesselId = vessel,
+            EffectiveFrom = T0, SourceKind = "UserDeclared", CreatedBy = "author", CreatedAt = T0 };
+        await using (var db = fixture.Db()) { db.LegalEntityRoles.Add(mistaken); await db.SaveChangesAsync(Ct); }
+        // The creator cannot cancel their own relation, even below the API.
+        await using (var db = fixture.Db())
+        {
+            var row = await db.LegalEntityRoles.SingleAsync(x => x.Id == mistaken.Id, Ct);
+            (row.State, row.CancelledBy, row.CancelledAt) = ("Cancelled", "author", T0);
+            Assert.Equal("23514", PostgresFailure.Provider(await Assert.ThrowsAsync<DbUpdateException>(() => db.SaveChangesAsync(Ct)))?.SqlState);
+        }
+        await using (var db = fixture.Db())
+        {
+            var row = await db.LegalEntityRoles.SingleAsync(x => x.Id == mistaken.Id, Ct);
+            (row.State, row.CancelledBy, row.CancelledAt) = ("Cancelled", "reviewer", T0);
+            await db.SaveChangesAsync(Ct);
+        }
+        // The cancelled operator no longer blocks the correct operator for the same vessel and period.
+        await using (var db = fixture.Db())
+        {
+            db.LegalEntityRoles.Add(new LegalEntityRole { TenantId = tenant, Id = Guid.NewGuid(), LegalEntityId = other, Role = "Operator", VesselId = vessel,
+                EffectiveFrom = T0, SourceKind = "UserDeclared", CreatedBy = "author", CreatedAt = T0 });
+            await db.SaveChangesAsync(Ct);
+        }
+        // Cancellation is terminal: the retained row cannot be reinstated.
+        await using (var db = fixture.Db())
+        {
+            var row = await db.LegalEntityRoles.SingleAsync(x => x.Id == mistaken.Id, Ct);
+            Assert.Equal("Cancelled", row.State);
+            (row.State, row.CancelledBy, row.CancelledAt) = ("Recorded", null, null);
+            await Assert.ThrowsAsync<InvalidOperationException>(() => db.SaveChangesAsync(Ct));
+        }
+    }
+
+    // QA follow-up: the occupancy exclusion constraint holds under truly concurrent approvals (one commits, one 23P01).
+    [Fact]
+    public async Task Concurrent_overlapping_approvals_are_resolved_by_the_exclusion_constraint()
+    {
+        var tenant = fixture.Data.Tenants[0].Id;
+        var company = Guid.NewGuid();
+        var person = SeedVessel.Id;
+        var employment = Guid.NewGuid();
+        await using (var db = fixture.Db())
+        {
+            db.Companies.Add(new Company { TenantId = tenant, Id = company, Code = "HR-CC-" + company.ToString("N")[..6], Name = "Synthetic E" });
+            db.Employments.Add(new Employment { TenantId = tenant, Id = employment, PersonId = person, LegalEntityId = company, EmployeeNo = "CC-" + employment.ToString("N")[..8],
+                EmploymentType = "Employee", StartAt = T0.AddYears(5), CreatedBy = "creator", CreatedAt = T0 });
+            await db.SaveChangesAsync(Ct);
+        }
+        HrAssignment Approved(int from, int to) => new() { TenantId = tenant, Id = Guid.NewGuid(), EmploymentId = employment, PersonId = person, LegalEntityId = company,
+            Kind = "Shore", PlannedFrom = T0.AddYears(5).AddDays(from), PlannedTo = T0.AddYears(5).AddDays(to), PlannedZoneId = "UTC", State = "Approved",
+            PlannedBy = "planner", PlannedAt = T0, ApprovedBy = "approver", ApprovedAt = T0 };
+        // Both transactions insert before either commits; the barrier makes the overlap genuinely concurrent.
+        using var barrier = new Barrier(2);
+        async Task<string?> Approve(HrAssignment plan)
+        {
+            await using var db = fixture.Db();
+            await using var tx = await db.Database.BeginTransactionAsync(Ct);
+            await db.Database.ExecuteSqlRawAsync("SELECT 1", Ct);
+            barrier.SignalAndWait(TimeSpan.FromSeconds(30), Ct);
+            try
+            {
+                db.HrAssignments.Add(plan);
+                await db.SaveChangesAsync(Ct);
+                await tx.CommitAsync(Ct);
+                return null;
+            }
+            catch (Exception error) when (PostgresFailure.IsDatabase(error)) { return PostgresFailure.Provider(error)?.SqlState; }
+        }
+        var results = await Task.WhenAll(Task.Run(() => Approve(Approved(0, 30)), Ct), Task.Run(() => Approve(Approved(10, 40)), Ct));
+        Assert.Single(results, x => x == null);
+        Assert.Single(results, x => x == "23P01");
+        await using var check = fixture.Db();
+        Assert.Equal(1, await check.HrAssignments.CountAsync(x => x.EmploymentId == employment && x.State == "Approved", Ct));
+    }
+
     [Fact]
     public async Task Plan_values_and_identity_are_immutable_and_history_is_never_deleted()
     {

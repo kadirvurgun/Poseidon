@@ -5077,6 +5077,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/hr/legal-entities/{id}/roles/{roleId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Audited HR command. Requires tenant-wide HR permission, a trusted role, antiforgery and a 16-80 character Idempotency-Key. Mutations of existing records require expectedVersion (409 on conflict). Replay returns the fresh authorized representation. */
+        post: operations["HrCancelLegalEntityRole"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/hr/people/{id}/verify": {
         parameters: {
             query?: never;
@@ -5673,12 +5690,12 @@ export interface components {
             state: string;
             fields: components["schemas"]["OnboardingField"][];
             blockers: string[];
+            blockerDetails: components["schemas"]["OnboardingBlocker"][];
             canEdit: boolean;
             /** @default false */
             canSubmit: boolean;
             /** @default 18.01/Backlog/row:40;59.01/paragraph:55 */
             source: string;
-            blockerDetails: components["schemas"]["OnboardingBlocker"][];
         };
         CompliancePassportDto: {
             /** Format: uuid */
@@ -6841,6 +6858,301 @@ export interface components {
             /** Format: int64 */
             localBacklog: null | number;
         };
+        HrActualEventCommand: {
+            kind: null | string;
+            /** Format: date-time */
+            occurredAt: null | string;
+            originZoneId: null | string;
+            origin: null | string;
+            sourceSystem: null | string;
+            sourceEventId: null | string;
+        };
+        HrActualEventDto: {
+            /** Format: uuid */
+            id: string;
+            kind: string;
+            /** Format: date-time */
+            occurredAt: string;
+            originZoneId: string;
+            origin: string;
+            quality: string;
+            disposition: string;
+            /** Format: date-time */
+            recordedAt: string;
+        };
+        HrActualSessionDto: {
+            /** Format: date-time */
+            actualFrom: string;
+            /** Format: date-time */
+            actualTo: null | string;
+        };
+        HrAssignmentActualDto: {
+            status: string;
+            /** Format: date-time */
+            actualFrom: null | string;
+            /** Format: date-time */
+            actualTo: null | string;
+            /** Format: int32 */
+            pendingReconciliation: number;
+            sessions: components["schemas"]["HrActualSessionDto"][];
+            events: components["schemas"]["HrActualEventDto"][];
+        };
+        HrAssignmentCreateCommand: {
+            /** Format: uuid */
+            employmentId: null | string;
+            kind: null | string;
+            /** Format: uuid */
+            vesselId: null | string;
+            /** Format: uuid */
+            positionId: null | string;
+            /** Format: date-time */
+            plannedFrom: null | string;
+            /** Format: date-time */
+            plannedTo: null | string;
+            plannedZoneId: null | string;
+        };
+        HrAssignmentDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            employmentId: string;
+            /** Format: uuid */
+            personId: string;
+            /** Format: uuid */
+            legalEntityId: string;
+            kind: string;
+            /** Format: uuid */
+            vesselId: null | string;
+            /** Format: uuid */
+            positionId: null | string;
+            plan: components["schemas"]["HrAssignmentPlanDto"];
+            actual: components["schemas"]["HrAssignmentActualDto"];
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            stateChanges?: null | components["schemas"]["HrStateChangeDto"][];
+        };
+        HrAssignmentPlanDto: {
+            /** Format: date-time */
+            plannedFrom: string;
+            /** Format: date-time */
+            plannedTo: string;
+            plannedZoneId: string;
+            state: string;
+            /** Format: date-time */
+            plannedAt: string;
+            /** Format: date-time */
+            approvedAt: null | string;
+        };
+        HrEmploymentCreateCommand: {
+            /** Format: uuid */
+            personId: null | string;
+            /** Format: uuid */
+            legalEntityId: null | string;
+            employeeNo: null | string;
+            employmentType: null | string;
+            /** Format: date-time */
+            startAt: null | string;
+            /** Format: date-time */
+            endAt: null | string;
+        };
+        HrEmploymentDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            personId: string;
+            /** Format: uuid */
+            legalEntityId: string;
+            employeeNo: string;
+            employmentType: string;
+            /** Format: date-time */
+            startAt: string;
+            /** Format: date-time */
+            endAt: null | string;
+            state: string;
+            /** Format: date-time */
+            activatedAt: null | string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            stateChanges?: null | components["schemas"]["HrStateChangeDto"][];
+        };
+        HrFieldRevisionDto: {
+            /** Format: int64 */
+            revision: number;
+            field: string;
+            value: null | string;
+            sourceKind: string;
+            sourceRef: null | string;
+            reason: null | string;
+            actorId: string;
+            /** Format: date-time */
+            recordedAt: string;
+        };
+        HrIdentifierAddCommand: {
+            type: null | string;
+            issuer: null | string;
+            value: null | string;
+            sourceKind: null | string;
+            sourceRef: null | string;
+        };
+        HrLegalEntityDto: {
+            /** Format: uuid */
+            id: string;
+            code: string;
+            name: string;
+            legalName: null | string;
+            countryCode: null | string;
+            hrTimeZone: null | string;
+            baseLocale: null | string;
+            status: string;
+            /** Format: date-time */
+            effectiveFrom: null | string;
+            /** Format: date-time */
+            effectiveTo: null | string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            missingForActivation: string[];
+            identifiers: components["schemas"]["HrLegalEntityIdentifierDto"][];
+            roles: components["schemas"]["HrLegalEntityRoleDto"][];
+            canEdit: boolean;
+            stateChanges?: null | components["schemas"]["HrStateChangeDto"][];
+        };
+        HrLegalEntityIdentifierDto: {
+            /** Format: uuid */
+            id: string;
+            type: string;
+            issuer: string;
+            value: null | string;
+            maskedValue: string;
+            sourceKind: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            retiredAt: null | string;
+            /** Format: uint32 */
+            version: number;
+        };
+        HrLegalEntityRoleDto: {
+            /** Format: uuid */
+            id: string;
+            role: string;
+            /** Format: uuid */
+            vesselId: null | string;
+            /** Format: date-time */
+            effectiveFrom: string;
+            /** Format: date-time */
+            effectiveTo: null | string;
+            verificationState: string;
+            state: string;
+            sourceKind: string;
+            /** Format: uint32 */
+            version: number;
+        };
+        HrLegalEntitySummaryDto: {
+            /** Format: uuid */
+            id: string;
+            code: string;
+            name: string;
+            legalName: null | string;
+            countryCode: null | string;
+            hrTimeZone: null | string;
+            status: string;
+            /** Format: uint32 */
+            version: number;
+        };
+        HrLegalEntityUpdateCommand: {
+            /** Format: uint32 */
+            expectedVersion: null | number;
+            legalName: null | string;
+            countryCode: null | string;
+            hrTimeZone: null | string;
+            baseLocale: null | string;
+            /** Format: date-time */
+            effectiveFrom: null | string;
+            /** Format: date-time */
+            effectiveTo: null | string;
+            sourceKind: null | string;
+            sourceRef: null | string;
+            reason?: null | string;
+        };
+        HrListDtoOfHrAssignmentDto: {
+            items: components["schemas"]["HrAssignmentDto"][];
+            truncated: boolean;
+        };
+        HrListDtoOfHrEmploymentDto: {
+            items: components["schemas"]["HrEmploymentDto"][];
+            truncated: boolean;
+        };
+        HrListDtoOfHrFieldRevisionDto: {
+            items: components["schemas"]["HrFieldRevisionDto"][];
+            truncated: boolean;
+        };
+        HrListDtoOfHrLegalEntitySummaryDto: {
+            items: components["schemas"]["HrLegalEntitySummaryDto"][];
+            truncated: boolean;
+        };
+        HrPersonDto: {
+            /** Format: uuid */
+            id: string;
+            personType: string;
+            masterState: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            canEdit: boolean;
+            canVerify: boolean;
+        };
+        HrPersonUpdateCommand: {
+            /** Format: uint32 */
+            expectedVersion: null | number;
+            personType: null | string;
+            sourceKind: null | string;
+            sourceRef: null | string;
+            reason?: null | string;
+        };
+        HrRetireCommand: {
+            /** Format: uint32 */
+            expectedVersion: null | number;
+            reason: null | string;
+            /** Format: date-time */
+            effectiveTo?: null | string;
+        };
+        HrRoleAddCommand: {
+            role: null | string;
+            /** Format: uuid */
+            vesselId: null | string;
+            /** Format: date-time */
+            effectiveFrom: null | string;
+            /** Format: date-time */
+            effectiveTo: null | string;
+            sourceKind: null | string;
+            sourceRef: null | string;
+        };
+        HrStateChangeDto: {
+            subjectKind: string;
+            /** Format: uuid */
+            subjectId: string;
+            fromState: string;
+            toState: string;
+            reason: string;
+            actorId: string;
+            /** Format: date-time */
+            recordedAt: string;
+        };
+        HrStatusCommand: {
+            /** Format: uint32 */
+            expectedVersion: null | number;
+            targetState: null | string;
+            reason: null | string;
+            /** Format: date-time */
+            endAt?: null | string;
+        };
         HumanRecordingPolicy: {
             decisionType: string;
             subjectType: string;
@@ -7440,6 +7752,13 @@ export interface components {
             expectedServerVersion?: null | number;
             choice?: null | string;
             reason?: null | string;
+        };
+        OnboardingBlocker: {
+            /** Format: uuid */
+            subjectId: string;
+            fieldPath: string;
+            reasonCode: string;
+            resolutionType: string;
         };
         OnboardingField: {
             key: string;
@@ -8587,14 +8906,20 @@ export interface components {
             currentRevision: boolean;
             canEdit: boolean;
         };
+        WorkspaceCompanyDto: {
+            /** Format: uuid */
+            id: string;
+            code: string;
+            name: string;
+        };
         WorkspaceContextDto: {
             /** Format: uuid */
             tenantId: string;
             /** Format: uuid */
             actorId: string;
             roleContext: components["schemas"]["WorkspaceRoleContextDto"];
-            vessel: null | components["schemas"]["VesselDto"];
             company: null | components["schemas"]["WorkspaceCompanyDto"];
+            vessel: null | components["schemas"]["VesselDto"];
         };
         WorkspaceDto: {
             destinations: components["schemas"]["NavigationDto"][];
@@ -8637,296 +8962,6 @@ export interface components {
             reference: string;
             tr: string;
             en: string;
-        };
-        OnboardingBlocker: {
-            /** Format: uuid */
-            subjectId: string;
-            fieldPath: string;
-            reasonCode: string;
-            resolutionType: string;
-        };
-        WorkspaceCompanyDto: {
-            /** Format: uuid */
-            id: string;
-            code: string;
-            name: string;
-        };
-        HrActualEventCommand: {
-            kind: null | string;
-            /** Format: date-time */
-            occurredAt: null | string;
-            originZoneId: null | string;
-            origin: null | string;
-            sourceSystem: null | string;
-            sourceEventId: null | string;
-        };
-        HrActualEventDto: {
-            /** Format: uuid */
-            id: string;
-            kind: string;
-            /** Format: date-time */
-            occurredAt: string;
-            originZoneId: string;
-            origin: string;
-            quality: string;
-            disposition: string;
-            /** Format: date-time */
-            recordedAt: string;
-        };
-        HrActualSessionDto: {
-            /** Format: date-time */
-            actualFrom: string;
-            /** Format: date-time */
-            actualTo: null | string;
-        };
-        HrAssignmentActualDto: {
-            status: string;
-            /** Format: date-time */
-            actualFrom: null | string;
-            /** Format: date-time */
-            actualTo: null | string;
-            /** Format: int32 */
-            pendingReconciliation: number;
-            sessions: components["schemas"]["HrActualSessionDto"][];
-            events: components["schemas"]["HrActualEventDto"][];
-        };
-        HrAssignmentCreateCommand: {
-            /** Format: uuid */
-            employmentId: null | string;
-            kind: null | string;
-            /** Format: uuid */
-            vesselId: null | string;
-            /** Format: uuid */
-            positionId: null | string;
-            /** Format: date-time */
-            plannedFrom: null | string;
-            /** Format: date-time */
-            plannedTo: null | string;
-            plannedZoneId: null | string;
-        };
-        HrAssignmentDto: {
-            /** Format: uuid */
-            id: string;
-            /** Format: uuid */
-            employmentId: string;
-            /** Format: uuid */
-            personId: string;
-            /** Format: uuid */
-            legalEntityId: string;
-            kind: string;
-            /** Format: uuid */
-            vesselId: null | string;
-            /** Format: uuid */
-            positionId: null | string;
-            plan: components["schemas"]["HrAssignmentPlanDto"];
-            actual: components["schemas"]["HrAssignmentActualDto"];
-            /** Format: int64 */
-            revision: number;
-            /** Format: uint32 */
-            version: number;
-        };
-        HrAssignmentPlanDto: {
-            /** Format: date-time */
-            plannedFrom: string;
-            /** Format: date-time */
-            plannedTo: string;
-            plannedZoneId: string;
-            state: string;
-            /** Format: date-time */
-            plannedAt: string;
-            /** Format: date-time */
-            approvedAt: null | string;
-        };
-        HrEmploymentCreateCommand: {
-            /** Format: uuid */
-            personId: null | string;
-            /** Format: uuid */
-            legalEntityId: null | string;
-            employeeNo: null | string;
-            employmentType: null | string;
-            /** Format: date-time */
-            startAt: null | string;
-            /** Format: date-time */
-            endAt: null | string;
-        };
-        HrEmploymentDto: {
-            /** Format: uuid */
-            id: string;
-            /** Format: uuid */
-            personId: string;
-            /** Format: uuid */
-            legalEntityId: string;
-            employeeNo: string;
-            employmentType: string;
-            /** Format: date-time */
-            startAt: string;
-            /** Format: date-time */
-            endAt: null | string;
-            state: string;
-            /** Format: date-time */
-            activatedAt: null | string;
-            /** Format: int64 */
-            revision: number;
-            /** Format: uint32 */
-            version: number;
-        };
-        HrFieldRevisionDto: {
-            /** Format: int64 */
-            revision: number;
-            field: string;
-            value: null | string;
-            sourceKind: string;
-            sourceRef: null | string;
-            actorId: string;
-            /** Format: date-time */
-            recordedAt: string;
-        };
-        HrIdentifierAddCommand: {
-            type: null | string;
-            issuer: null | string;
-            value: null | string;
-            sourceKind: null | string;
-            sourceRef: null | string;
-        };
-        HrLegalEntityDto: {
-            /** Format: uuid */
-            id: string;
-            code: string;
-            name: string;
-            legalName: null | string;
-            countryCode: null | string;
-            hrTimeZone: null | string;
-            baseLocale: null | string;
-            status: string;
-            /** Format: date-time */
-            effectiveFrom: null | string;
-            /** Format: date-time */
-            effectiveTo: null | string;
-            /** Format: int64 */
-            revision: number;
-            /** Format: uint32 */
-            version: number;
-            missingForActivation: string[];
-            identifiers: components["schemas"]["HrLegalEntityIdentifierDto"][];
-            roles: components["schemas"]["HrLegalEntityRoleDto"][];
-            canEdit: boolean;
-        };
-        HrLegalEntityIdentifierDto: {
-            /** Format: uuid */
-            id: string;
-            type: string;
-            issuer: string;
-            value: string;
-            maskedValue: string;
-            sourceKind: string;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            retiredAt: null | string;
-            /** Format: uint32 */
-            version: number;
-        };
-        HrLegalEntityRoleDto: {
-            /** Format: uuid */
-            id: string;
-            role: string;
-            /** Format: uuid */
-            vesselId: null | string;
-            /** Format: date-time */
-            effectiveFrom: string;
-            /** Format: date-time */
-            effectiveTo: null | string;
-            verificationState: string;
-            sourceKind: string;
-            /** Format: uint32 */
-            version: number;
-        };
-        HrLegalEntitySummaryDto: {
-            /** Format: uuid */
-            id: string;
-            code: string;
-            name: string;
-            legalName: null | string;
-            countryCode: null | string;
-            hrTimeZone: null | string;
-            status: string;
-            /** Format: uint32 */
-            version: number;
-        };
-        HrLegalEntityUpdateCommand: {
-            /** Format: uint32 */
-            expectedVersion: null | number;
-            legalName: null | string;
-            countryCode: null | string;
-            hrTimeZone: null | string;
-            baseLocale: null | string;
-            /** Format: date-time */
-            effectiveFrom: null | string;
-            /** Format: date-time */
-            effectiveTo: null | string;
-            sourceKind: null | string;
-            sourceRef: null | string;
-        };
-        HrListDtoOfHrAssignmentDto: {
-            items: components["schemas"]["HrAssignmentDto"][];
-            truncated: boolean;
-        };
-        HrListDtoOfHrEmploymentDto: {
-            items: components["schemas"]["HrEmploymentDto"][];
-            truncated: boolean;
-        };
-        HrListDtoOfHrFieldRevisionDto: {
-            items: components["schemas"]["HrFieldRevisionDto"][];
-            truncated: boolean;
-        };
-        HrListDtoOfHrLegalEntitySummaryDto: {
-            items: components["schemas"]["HrLegalEntitySummaryDto"][];
-            truncated: boolean;
-        };
-        HrPersonDto: {
-            /** Format: uuid */
-            id: string;
-            personType: string;
-            masterState: string;
-            /** Format: int64 */
-            revision: number;
-            /** Format: uint32 */
-            version: number;
-            canEdit: boolean;
-            canVerify: boolean;
-        };
-        HrPersonUpdateCommand: {
-            /** Format: uint32 */
-            expectedVersion: null | number;
-            personType: null | string;
-            sourceKind: null | string;
-            sourceRef: null | string;
-        };
-        HrRetireCommand: {
-            /** Format: uint32 */
-            expectedVersion: null | number;
-            reason: null | string;
-            /** Format: date-time */
-            effectiveTo?: null | string;
-        };
-        HrRoleAddCommand: {
-            role: null | string;
-            /** Format: uuid */
-            vesselId: null | string;
-            /** Format: date-time */
-            effectiveFrom: null | string;
-            /** Format: date-time */
-            effectiveTo: null | string;
-            sourceKind: null | string;
-            sourceRef: null | string;
-        };
-        HrStatusCommand: {
-            /** Format: uint32 */
-            expectedVersion: null | number;
-            targetState: null | string;
-            reason: null | string;
-            /** Format: date-time */
-            endAt?: null | string;
         };
     };
     responses: never;
@@ -16651,6 +16686,95 @@ export interface operations {
         };
     };
     HrEndLegalEntityRole: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-CSRF-TOKEN": string;
+            };
+            path: {
+                id: string;
+                roleId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HrRetireCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HrLegalEntityRoleDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    HrCancelLegalEntityRole: {
         parameters: {
             query?: never;
             header: {

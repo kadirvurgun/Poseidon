@@ -121,7 +121,8 @@
       "leUnknown": "Neznámé",
       "leMissing": "Chybějící hodnoty před aktivací",
       "leNote": "Pouze pro čtení. Hodnoty se mění jen auditovanými příkazy HR.",
-      "leShow": "Zobrazit záznam právnické osoby"
+      "leShow": "Zobrazit záznam právnické osoby",
+      "leIdentifiers": "Registrační identifikátory (maskované)"
     },
     "ProductApp_tsx_copy": {
       "audit": "Historie akcí",

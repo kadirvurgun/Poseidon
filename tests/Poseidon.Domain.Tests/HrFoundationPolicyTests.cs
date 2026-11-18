@@ -146,4 +146,39 @@ public sealed class HrFoundationPolicyTests
         var closed = HrActualTimeline.Derive([.. checkedIn, new(Guid.NewGuid(), "CheckOut", T0.AddDays(3), "Valid", "Accepted")]);
         Assert.Equal("Completed", closed.Status); Assert.Equal(T0.AddDays(3), closed.ActualTo); Assert.Single(closed.Sessions);
     }
+
+    // QA follow-up (52.01 paragraph:50/51): correction reasons, period coverage on date edits and cancellable mistaken roles.
+    [Fact]
+    public void Corrections_need_a_reason_but_first_declarations_of_unknown_values_do_not()
+    {
+        Assert.False(HrSourcePolicy.IsCorrection(null, "Synthetic Denizcilik AS"));
+        Assert.False(HrSourcePolicy.IsCorrection("TR", "TR"));
+        Assert.True(HrSourcePolicy.IsCorrection("TR", "GR"));
+        Assert.True(HrSourcePolicy.IsCorrection("TR", null));
+        Assert.True(HrSourcePolicy.ValidReason(new string('r', HrSourcePolicy.ReasonMaxLength), true));
+        Assert.False(HrSourcePolicy.ValidReason(new string('r', HrSourcePolicy.ReasonMaxLength + 1), true));
+        Assert.False(HrSourcePolicy.ValidReason("line\nbreak", true));
+        Assert.True(HrSourcePolicy.ValidReason(null, false));
+    }
+
+    [Fact]
+    public void Legal_entity_period_changes_must_keep_every_active_employment_covered()
+    {
+        Assert.True(HrLegalEntityPolicy.CoversAll(P(0, null), [P(10, 20), P(30, null)]));
+        Assert.False(HrLegalEntityPolicy.CoversAll(P(15, null), [P(10, 20)]));
+        Assert.False(HrLegalEntityPolicy.CoversAll(P(0, 100), [P(30, null)]));   // a bounded entity never covers an open employment
+        Assert.False(HrLegalEntityPolicy.CoversAll(null, [P(0, 1)]));            // removing the period leaves employment uncovered
+        Assert.True(HrLegalEntityPolicy.CoversAll(null, []));
+    }
+
+    [Fact]
+    public void Only_recorded_roles_can_be_cancelled_and_never_by_their_creator()
+    {
+        Assert.Equal(["Recorded", "Cancelled"], HrRolePolicy.States);
+        Assert.Null(HrRolePolicy.CancelRejection("Recorded", "author", "reviewer"));
+        Assert.Equal("separation_of_duties", HrRolePolicy.CancelRejection("Recorded", "author", "author"));
+        Assert.Equal("invalid_transition", HrRolePolicy.CancelRejection("Cancelled", "author", "reviewer"));
+        Assert.Contains("Cancelled", HrStateChangePolicy.States);
+        Assert.Contains("LegalEntityRole", HrStateChangePolicy.SubjectKinds);
+    }
 }

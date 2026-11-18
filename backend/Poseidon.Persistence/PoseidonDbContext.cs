@@ -137,6 +137,7 @@ public sealed class PoseidonDbContext(
     public DbSet<Employment> Employments => Set<Employment>();
     public DbSet<HrAssignment> HrAssignments => Set<HrAssignment>();
     public DbSet<HrActualEvent> HrActualEvents => Set<HrActualEvent>();
+    public DbSet<HrStateChange> HrStateChanges => Set<HrStateChange>();
 
     protected override void OnModelCreating(ModelBuilder model)
     {
@@ -155,6 +156,7 @@ public sealed class PoseidonDbContext(
         model.Entity<Employment>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<HrAssignment>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<HrActualEvent>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<HrStateChange>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         VesselCertificateStorage.Configure(model);
         ShipOperationsStorage.Configure(model);
         model.Entity<ShipOperation>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
@@ -445,7 +447,7 @@ public sealed class PoseidonDbContext(
         "CompanyCreate" or "CompanyUpdate" => TenantResource(Companies, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, asynchronous, ct),
         "HrLegalEntityUpdate" or "HrLegalEntityStatus" => TenantResource(Companies, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, asynchronous, ct),
         "HrIdentifierAdd" or "HrIdentifierRetire" => TenantResource(LegalEntityIdentifiers, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, asynchronous, ct),
-        "HrRoleAdd" or "HrRoleEnd" => TenantResource(LegalEntityRoles, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, asynchronous, ct),
+        "HrRoleAdd" or "HrRoleEnd" or "HrRoleCancel" => TenantResource(LegalEntityRoles, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, asynchronous, ct),
         "HrPersonUpdate" or "HrPersonVerify" => TenantResource(Persons, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, asynchronous, ct),
         "HrEmploymentCreate" or "HrEmploymentStatus" => TenantResource(Employments, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, asynchronous, ct),
         "HrAssignmentCreate" or "HrAssignmentStatus" => TenantResource(HrAssignments, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, asynchronous, ct),
@@ -666,13 +668,14 @@ public sealed class PoseidonDbContext(
         if (changes.Any(e => e.Entity is ImportBatch && (e.State == EntityState.Deleted || e.State == EntityState.Modified && !LegacyImportStorage.IsConversion(e) &&
             (LegacyImportStorage.Protected(e) || new[] { "VesselId", "ActorId", "SessionHash", "AssignmentId", "Category", "TemplateVersion", "TemplateFingerprint", "CrewIdentityPolicyVersion", "SourceHash", "TableJson", "SourceName", "SourceLocator", "LegacyProtectedAt", "LegacyProtectionPolicyVersion", "LegacyProtectionIdentityVersion", "LegacyProtectionPurpose" }.Any(n => e.Property(n).IsModified)))))
             throw new InvalidOperationException("Import source and ownership are immutable.");
-        if (changes.Any(e => e.Entity is LegalEntityFieldRevision or PersonFieldRevision or HrActualEvent && e.State != EntityState.Added))
+        if (changes.Any(e => e.Entity is LegalEntityFieldRevision or PersonFieldRevision or HrActualEvent or HrStateChange && e.State != EntityState.Added))
             throw new InvalidOperationException("HR field/source revisions and actual facts are append-only.");
         if (changes.Any(e => e.State == EntityState.Deleted && e.Entity is LegalEntityIdentifier or LegalEntityRole or Employment or HrAssignment))
             throw new InvalidOperationException("HR history is retained; retire, end or cancel instead of deleting.");
         if (changes.Any(e => e.State == EntityState.Modified && (
             e.Entity is LegalEntityIdentifier && new[] { "LegalEntityId", "Type", "Issuer", "Value", "CreatedBy", "CreatedAt", "SourceKind", "SourceRef" }.Any(n => e.Property(n).IsModified) ||
-            e.Entity is LegalEntityRole && new[] { "LegalEntityId", "Role", "VesselId", "EffectiveFrom", "CreatedBy", "CreatedAt", "SourceKind", "SourceRef" }.Any(n => e.Property(n).IsModified) ||
+            e.Entity is LegalEntityRole && new[] { "LegalEntityId", "Role", "VesselId", "EffectiveFrom", "CreatedBy", "CreatedAt", "SourceKind", "SourceRef", "CancelledBy", "CancelledAt" }.Where(n => n is not ("CancelledBy" or "CancelledAt") || e.Property(n).OriginalValue != null).Any(n => e.Property(n).IsModified) ||
+            e.Entity is LegalEntityRole && (string?)e.Property("State").OriginalValue == "Cancelled" ||
             e.Entity is Employment && new[] { "PersonId", "LegalEntityId", "EmployeeNo", "StartAt", "CreatedBy", "CreatedAt" }.Any(n => e.Property(n).IsModified) ||
             e.Entity is HrAssignment && new[] { "EmploymentId", "PersonId", "LegalEntityId", "Kind", "VesselId", "PositionId", "PlannedFrom", "PlannedTo", "PlannedZoneId", "PlannedBy", "PlannedAt" }.Any(n => e.Property(n).IsModified))))
             throw new InvalidOperationException("HR identity, ownership and plan values are immutable; append a new record.");

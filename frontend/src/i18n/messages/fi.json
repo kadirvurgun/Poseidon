@@ -121,7 +121,8 @@
       "leUnknown": "Tuntematon",
       "leMissing": "Puuttuvat arvot ennen aktivointia",
       "leNote": "Vain luku. Arvot muuttuvat vain auditoiduilla HR-komennoilla.",
-      "leShow": "Näytä oikeushenkilön tietue"
+      "leShow": "Näytä oikeushenkilön tietue",
+      "leIdentifiers": "Rekisteritunnisteet (peitetty)"
     },
     "ProductApp_tsx_copy": {
       "audit": "Toimintahistoria",

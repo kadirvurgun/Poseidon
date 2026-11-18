@@ -21,8 +21,19 @@ public static partial class HrSourcePolicy
     public static bool ValidSourceKind(string? kind, bool allowSynthetic = false) =>
         kind is not null && SourceKinds.Contains(kind, StringComparer.Ordinal) && (allowSynthetic || kind != "Synthetic");
     public static bool ValidSourceRef(string? value) => value is null || value.Length is > 0 and <= 200 && !value.Any(char.IsControl);
-    public static bool ValidReason(string? value, bool required) => value is null ? !required : value.Trim().Length is > 0 and <= 500 && !value.Any(char.IsControl);
+    public const int ReasonMaxLength = 500;
+    public static bool ValidReason(string? value, bool required) => value is null ? !required : value.Trim().Length is > 0 and <= ReasonMaxLength && !value.Any(char.IsControl);
+    // 52.01 paragraph:50: a correction of an already recorded value produces a new revision with its reason. A first
+    // declaration of a previously unknown value is not a correction. Reasons are free business text: no personal data.
+    public static bool IsCorrection(string? before, string? after) => before is not null && !string.Equals(before, after, StringComparison.Ordinal);
     public static bool ValidText(string? value, int max) => value is not null && value.Trim().Length is > 0 && value.Trim().Length <= max && !value.Any(char.IsControl);
+}
+
+// 52.01 paragraph:50: every state decision on an HR record keeps who/when/why as an append-only state-change row.
+public static class HrStateChangePolicy
+{
+    public static readonly string[] SubjectKinds = ["LegalEntityIdentifier", "LegalEntityRole", "Employment", "PlannedAssignment"];
+    public static readonly string[] States = ["Current", "Retired", "Recorded", "Ended", "Cancelled", "Draft", "Active", "Planned", "Approved"];
 }
 
 public static partial class HrLegalEntityPolicy
@@ -59,6 +70,10 @@ public static partial class HrLegalEntityPolicy
             ("hrTimeZone", hrTimeZone is null), ("baseLocale", baseLocale is null), ("effectiveFrom", effectiveFrom is null)
         }.Where(x => x.Missing).Select(x => x.Field).ToArray();
 
+    // 52.01 paragraph:51: a changed legal-entity period must still contain every active employment it carries.
+    public static bool CoversAll(HrPeriod? entity, IEnumerable<HrPeriod> activeEmployments) =>
+        activeEmployments.All(e => entity is { } period && period.Covers(e));
+
     // Deactivation never deletes employments or assignments (52.01 paragraph:119); reactivation is an explicit command.
     public static bool CanTransition(string from, string to) => (from, to) is ("Draft", "Active") or ("Active", "Inactive") or ("Inactive", "Active");
 }
@@ -85,7 +100,8 @@ public static partial class HrIdentifierPolicy
         return errors;
     }
 
-    // Lists never show the full registration value (52.01 paragraph:93).
+    // Responses carry only this mask by default (52.01 paragraph:93); the full value is returned solely to holders of
+    // the specific hr.legal_entity.identifier.read permission.
     public static string Mask(string normalized) => normalized.Length <= 4 ? new string('*', normalized.Length) : new string('*', normalized.Length - 4) + normalized[^4..];
 }
 
@@ -93,6 +109,11 @@ public static class HrRolePolicy
 {
     // Typed legal-entity relations. Vessel relations are consumed by 59.01 (DEV-020); here they are declared, unverified facts.
     public static readonly string[] Roles = ["RegisteredOwner", "Operator", "TechnicalManager", "CrewManager", "CommercialManager", "DocCompany", "Employer"];
+    // Recorded relations count (current or ended). Cancelled marks a mistaken record: it is retained but never counts.
+    public static readonly string[] States = ["Recorded", "Cancelled"];
+    // Cancelling a recorded relation is an independent act with a reason, like the other HR state decisions.
+    public static string? CancelRejection(string state, string creator, string canceller) =>
+        state != "Recorded" ? "invalid_transition" : creator == canceller ? "separation_of_duties" : null;
     public static bool RequiresVessel(string role) => role != "Employer";
     // 59.01 paragraph:273-279/285-286: co-ownership is possible; at most one primary operator and one holder per management role/vessel/period.
     public static bool ExclusivePerVessel(string role) => role is "Operator" or "TechnicalManager" or "CrewManager" or "CommercialManager" or "DocCompany";
