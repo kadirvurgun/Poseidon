@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Poseidon.Api;
@@ -125,6 +126,100 @@ public sealed partial class DirectoryWorkspaceTests
         var response = await denied.GetAsync("/api/v1/workspace/context/" + SeedVessel.Id, Ct);
         Assert.True(response.StatusCode is HttpStatusCode.Forbidden or HttpStatusCode.NotFound);
         Assert.DoesNotContain(SeedVessel.Name, await response.Content.ReadAsStringAsync(Ct));
+    }
+
+    // DEV-021 / T-S2-002 (DEV021-AC-03..07): a context switch is a server-verified read of the
+    // target; the actor's CURRENT membership decides, every denial is non-enumerating and the
+    // attempted target is attributable in the security audit.
+    private async Task<SecurityEvent[]> WorkspaceAudit(Guid? resource)
+    {
+        await using var db = Db();
+        return await db.Set<SecurityEvent>().Where(e => e.Action == "WorkspaceRead" && e.ResourceId == resource).ToArrayAsync(Ct);
+    }
+
+    [Fact]
+    public async Task Context_switch_to_a_granted_vessel_is_verified_and_audited_for_the_actor()
+    {
+        using var host = Host(manage: false, read: false); using var client = Client(host);
+        using var response = await client.GetAsync("/api/v1/workspace/context/" + SeedVessel.Id, Ct);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(SeedVessel.Id, (await response.Content.ReadFromJsonAsync<WorkspaceContextDto>(Ct))!.Vessel!.Id);
+        var audit = Assert.Single(await WorkspaceAudit(SeedVessel.Id));
+        Assert.Equal(("Success", seed.Tenants[0].Id, actorId.ToString()), (audit.Result, audit.TenantId, audit.ActorId));
+    }
+
+    [Fact]
+    public async Task Context_switch_to_a_foreign_tenant_vessel_is_denied_without_leak_and_attributed()
+    {
+        var foreign = seed.Vessels.First(v => v.TenantId != seed.Tenants[0].Id);
+        using var host = Host(); using var client = Client(host);
+        using var response = await client.GetAsync("/api/v1/workspace/context/" + foreign.Id, Ct);
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        var body = await response.Content.ReadAsStringAsync(Ct);
+        Assert.DoesNotContain(foreign.Name, body); Assert.DoesNotContain(foreign.Code, body); Assert.DoesNotContain("company", body);
+        var audit = Assert.Single(await WorkspaceAudit(foreign.Id));
+        Assert.Equal(("NotFound", seed.Tenants[0].Id, actorId.ToString()), (audit.Result, audit.TenantId, audit.ActorId));
+    }
+
+    [Fact]
+    public async Task Context_switch_to_a_vessel_outside_the_granted_mode_is_denied()
+    {
+        var tug = seed.Vessels.First(v => v.TenantId == seed.Tenants[0].Id && v.Kind == VesselKind.Tug);
+        using var host = Host(tugMode: false, crossMode: false); using var client = Client(host);
+        using var response = await client.GetAsync("/api/v1/workspace/context/" + tug.Id, Ct);
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.DoesNotContain(tug.Name, await response.Content.ReadAsStringAsync(Ct));
+    }
+
+    [Fact]
+    public async Task Context_switch_rechecks_a_vessel_grant_withdrawn_during_the_same_session()
+    {
+        using var host = Host(manage: false, read: false); using var client = Client(host);
+        Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/api/v1/workspace/context/" + SeedVessel.Id, Ct)).StatusCode);
+        var settings = host.Services.GetRequiredService<FederationSettings>();
+        // The actor keeps read access elsewhere, so this is a stale grant for this vessel, not a logout.
+        settings.Memberships = [settings.Memberships[0] with { VesselGrants = [new VesselGrant(Guid.NewGuid())] }];
+        using var stale = await client.GetAsync("/api/v1/workspace/context/" + SeedVessel.Id, Ct);
+        Assert.Equal(HttpStatusCode.NotFound, stale.StatusCode);
+        Assert.DoesNotContain(SeedVessel.Name, await stale.Content.ReadAsStringAsync(Ct));
+        Assert.Contains(await WorkspaceAudit(SeedVessel.Id), e => e.Result == "NotFound");
+    }
+
+    [Fact]
+    public async Task Context_switch_with_a_removed_membership_fails_closed_without_a_fallback_context()
+    {
+        using var host = Host(manage: false, read: false); using var client = Client(host);
+        Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/api/v1/workspace/context", Ct)).StatusCode);
+        host.Services.GetRequiredService<FederationSettings>().Memberships = [];
+        foreach (var path in new[] { "/api/v1/workspace/context", "/api/v1/workspace/context/" + SeedVessel.Id }) {
+            using var response = await client.GetAsync(path, Ct);
+            Assert.True(response.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden, path + " " + response.StatusCode);
+            var body = await response.Content.ReadAsStringAsync(Ct);
+            Assert.DoesNotContain("roleContext", body); Assert.DoesNotContain(SeedVessel.Name, body);
+        }
+    }
+
+    [Fact]
+    public async Task Context_roles_are_exactly_the_current_membership_and_never_an_ungranted_catalog_role()
+    {
+        const string other = "5b0a7c62-4d4e-4f0f-9a43-0e1f7e2bd021";
+        var labels = ContextLabels();
+        labels["WorkspaceContext:RoleCatalog:Roles:2:TenantId"] = seed.Tenants[0].Id.ToString();
+        labels["WorkspaceContext:RoleCatalog:Roles:2:Reference"] = other;
+        labels["WorkspaceContext:RoleCatalog:Roles:2:Tr"] = "KURGUSAL atanmamış rol";
+        labels["WorkspaceContext:RoleCatalog:Roles:2:En"] = "FICTIONAL ungranted role";
+        using var host = Host(manage: false, read: false).WithWebHostBuilder(b => b.ConfigureAppConfiguration((_, c) => c.AddInMemoryCollection(labels)));
+        using var client = Client(host);
+        var first = (await client.GetFromJsonAsync<WorkspaceContextDto>("/api/v1/workspace/context/" + SeedVessel.Id, Ct))!;
+        Assert.Equal(Guid.Parse(ContextRole), Assert.Single(first.RoleContext.Roles).Reference);
+        // A client cannot pick the other role; only a server-side membership change can.
+        Assert.Equal(HttpStatusCode.BadRequest, (await client.GetAsync("/api/v1/workspace/context/" + SeedVessel.Id + "?role=" + other, Ct)).StatusCode);
+        var settings = host.Services.GetRequiredService<FederationSettings>();
+        var changed = settings.Memberships[0] with { }; changed.RoleReferences = [other];
+        settings.Memberships = [changed];
+        var second = (await client.GetFromJsonAsync<WorkspaceContextDto>("/api/v1/workspace/context/" + SeedVessel.Id, Ct))!;
+        Assert.Equal("FICTIONAL ungranted role", Assert.Single(second.RoleContext.Roles).En);
+        Assert.DoesNotContain(second.RoleContext.Roles, r => r.Reference == Guid.Parse(ContextRole));
     }
 
     [Fact]

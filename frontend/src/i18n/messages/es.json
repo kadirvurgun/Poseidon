@@ -3198,6 +3198,14 @@
     "m_0d01ac4a95241b66": "Bloqueos de incorporación",
     "m_b9cce241afdb94a4": "Declaración obligatoria",
     "m_18895857bed22127": "Se requiere política o evidencia",
-    "m_9233a4a00cb3f57a": "Se requiere evidencia cualificada"
+    "m_9233a4a00cb3f57a": "Se requiere evidencia cualificada",
+    "m_b8002f9e764b18ef": "No está en su ámbito autorizado actual o se retiró el acceso. Su contexto actual no ha cambiado.",
+    "m_2b19d5fd50cd15bd": "Su sesión finalizó o cambió. Inicie sesión de nuevo; su contexto actual no ha cambiado.",
+    "m_3a8d042ee60783dc": "El servicio de contexto no está disponible o no respondió a tiempo. Su contexto actual no ha cambiado; reintente.",
+    "m_e7bc23cb053dacc1": "El formulario actual tiene cambios sin guardar. Antes de cambiar elegirá Quedarse o Descartar; Quedarse conserva su borrador y no envía ninguna solicitud de cambio.",
+    "m_2492dcd13a8d5ab3": "Todavía hay un guardado en curso. Espere su resultado antes de cambiar de buque; su contexto actual no ha cambiado.",
+    "m_221de6ea6fc51bb7": "Su sesión finalizó o cambió. Inicie sesión de nuevo para ver su contexto de trabajo.",
+    "m_9b1a1deb14aac372": "El buque seleccionado no está en su ámbito autorizado actual. No se seleccionó automáticamente ningún otro buque.",
+    "m_5db2b92c3bcc6931": "Elegir otro buque"
   }
 }

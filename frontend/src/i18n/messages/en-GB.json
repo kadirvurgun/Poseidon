@@ -3198,6 +3198,14 @@
     "m_0d01ac4a95241b66": "Onboarding blockers",
     "m_b9cce241afdb94a4": "Required declaration",
     "m_18895857bed22127": "Policy or evidence required",
-    "m_9233a4a00cb3f57a": "Qualified evidence required"
+    "m_9233a4a00cb3f57a": "Qualified evidence required",
+    "m_b8002f9e764b18ef": "It is not in your current authorised scope or access was withdrawn. Your current context is unchanged.",
+    "m_2b19d5fd50cd15bd": "Your session has ended or changed. Sign in again; your current context is unchanged.",
+    "m_3a8d042ee60783dc": "The context service is unavailable or did not answer in time. Your current context is unchanged; retry.",
+    "m_e7bc23cb053dacc1": "The current form has unsaved changes. Before switching you will choose Stay or Discard; Stay keeps your draft and sends no switch request.",
+    "m_2492dcd13a8d5ab3": "A save is still in progress. Wait for its result before switching vessel; your current context is unchanged.",
+    "m_221de6ea6fc51bb7": "Your session has ended or changed. Sign in again to see your working context.",
+    "m_9b1a1deb14aac372": "The selected vessel is not in your current authorised scope. No other vessel was selected automatically.",
+    "m_5db2b92c3bcc6931": "Choose another vessel"
   }
 }

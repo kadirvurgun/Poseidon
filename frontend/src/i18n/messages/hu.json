@@ -3198,6 +3198,14 @@
     "m_0d01ac4a95241b66": "Bevezetési akadályok",
     "m_b9cce241afdb94a4": "Kötelező nyilatkozat",
     "m_18895857bed22127": "Szabályzat vagy bizonyíték szükséges",
-    "m_9233a4a00cb3f57a": "Minősített bizonyíték szükséges"
+    "m_9233a4a00cb3f57a": "Minősített bizonyíték szükséges",
+    "m_b8002f9e764b18ef": "Nem tartozik a jelenlegi jogosultsági körébe, vagy a hozzáférést visszavonták. A jelenlegi kontextus nem változott.",
+    "m_2b19d5fd50cd15bd": "A munkamenet lejárt vagy megváltozott. Jelentkezzen be újra; a jelenlegi kontextus nem változott.",
+    "m_3a8d042ee60783dc": "A kontextusszolgáltatás nem érhető el, vagy nem válaszolt időben. A jelenlegi kontextus nem változott; próbálja újra.",
+    "m_e7bc23cb053dacc1": "Az aktuális űrlapon nem mentett módosítások vannak. Váltás előtt a Maradás vagy Elvetés közül választ; a Maradás megtartja a piszkozatot, és nem küld váltási kérést.",
+    "m_2492dcd13a8d5ab3": "A mentés még folyamatban van. Hajóváltás előtt várja meg az eredményt; a jelenlegi kontextus nem változott.",
+    "m_221de6ea6fc51bb7": "A munkamenet lejárt vagy megváltozott. Jelentkezzen be újra a munkakontextus megtekintéséhez.",
+    "m_9b1a1deb14aac372": "A kiválasztott hajó nem tartozik a jelenlegi jogosultsági körébe. Más hajó nem lett automatikusan kiválasztva.",
+    "m_5db2b92c3bcc6931": "Másik hajó választása"
   }
 }
