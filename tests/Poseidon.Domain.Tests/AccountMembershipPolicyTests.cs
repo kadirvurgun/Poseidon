@@ -125,4 +125,64 @@ public sealed class AccountMembershipPolicyTests
         Assert.Equal("Revoked", DelegationPolicy.State(true, from, until, Now, true, true));
         Assert.Equal("a,b", DelegationPolicy.Canonical(["b", "a", "b"]));
     }
+
+    // QA follow-up: 52.02 paragraph:102 scope snapshot + mandatory closed reason.
+    private static readonly Guid Company = Guid.Parse("20000000-0000-4000-8000-000000000001");
+    private static readonly Guid VesselA = Guid.Parse("30000000-0000-4000-8000-00000000000a");
+    private static readonly Guid VesselB = Guid.Parse("30000000-0000-4000-8000-00000000000b");
+    private static readonly DelegationSource Source = new(["crew.read", "crew.write"], Company, [new(VesselA, false), new(VesselB, true)]);
+    private static DelegationRequest Scoped(string? reason = "PlannedAbsence", Guid? company = null, DelegatedVessel[]? vessels = null) =>
+        Request() with { ReasonCode = reason, CompanyId = company, VesselScope = vessels ?? [new(VesselA, false)] };
+
+    [Fact]
+    public void Delegation_scope_must_be_a_subset_of_the_source_current_scope()
+    {
+        Assert.Empty(DelegationPolicy.Validate(Scoped(company: Company, vessels: [new(VesselA, false), new(VesselB, true)]), Source, Now));
+        Assert.Empty(DelegationPolicy.Validate(Scoped(), Source, Now));
+        Assert.Equal(["exceeds_source_scope"], DelegationPolicy.Validate(Scoped(vessels: [new(Guid.NewGuid(), false)]), Source, Now)["vesselScope"]);
+        // Edit on a vessel the source can only read is wider than the source.
+        Assert.Equal(["exceeds_source_scope"], DelegationPolicy.Validate(Scoped(vessels: [new(VesselA, true)]), Source, Now)["vesselScope"]);
+        Assert.Equal(["exceeds_source_scope"], DelegationPolicy.Validate(Scoped(company: Guid.NewGuid()), Source, Now)["companyId"]);
+        Assert.Equal(["exceeds_source_scope"], DelegationPolicy.Validate(Scoped(company: Company), Source with { CompanyId = null }, Now)["companyId"]);
+        Assert.Equal(["duplicate"], DelegationPolicy.Validate(Scoped(vessels: [new(VesselA, false), new(VesselA, false)]), Source, Now)["vesselScope"]);
+        Assert.Equal(["required"], DelegationPolicy.Validate(Scoped(vessels: []), Source, Now)["scope"]);
+        Assert.Equal(["required"], DelegationPolicy.Validate(Scoped(vessels: [new(Guid.Empty, false)]), Source, Now)["vesselScope"]);
+    }
+
+    [Theory]
+    [InlineData(null, "required")]
+    [InlineData("", "unknown_reason")]
+    [InlineData("Vacation in Izmir", "unknown_reason")] // Free text is never accepted.
+    [InlineData(DelegationPolicy.LegacyUnscoped, "unknown_reason")]
+    public void Delegation_reason_is_a_mandatory_closed_code(string? reason, string error) =>
+        Assert.Equal([error], DelegationPolicy.Validate(Scoped(reason), Source, Now)["reasonCode"]);
+
+    [Fact]
+    public void Request_time_scope_is_narrowed_to_the_source_current_authority()
+    {
+        DelegatedVessel[] snapshot = [new(VesselA, false), new(VesselB, true)];
+        var full = DelegationPolicy.Effective(["crew.read", "crew.write"], Company, snapshot, Source);
+        Assert.Equal(["crew.read", "crew.write"], full.Permissions); Assert.Equal(Company, full.CompanyId); Assert.Equal(snapshot, full.Vessels);
+        // Source loses vessel B, edit on A was never present, company changed and crew.write removed.
+        var narrowed = DelegationPolicy.Effective(["crew.read", "crew.write"], Company, snapshot,
+            new DelegationSource(["crew.read"], Guid.NewGuid(), [new(VesselA, false)]));
+        Assert.Equal(["crew.read"], narrowed.Permissions); Assert.Null(narrowed.CompanyId); Assert.Equal([new DelegatedVessel(VesselA, false)], narrowed.Vessels);
+        Assert.False(narrowed.IsEmpty);
+        var lostEdit = DelegationPolicy.Effective(["crew.write"], null, [new(VesselB, true)], Source with { Vessels = [new(VesselB, false)] });
+        Assert.Equal([new DelegatedVessel(VesselB, false)], lostEdit.Vessels);
+        // Losing every scoped grant leaves nothing to apply; the delegate's own scope is never substituted.
+        Assert.True(DelegationPolicy.Effective(["crew.read"], null, snapshot, Source with { Vessels = [] }).IsEmpty);
+        Assert.True(DelegationPolicy.Effective(["membership.manage"], Company, snapshot, Source with { Permissions = ["membership.manage"] }).IsEmpty);
+    }
+
+    [Fact]
+    public void Resuming_a_security_suspension_requires_the_security_authority_and_has_its_own_reason()
+    {
+        Assert.True(MembershipLifecyclePolicy.RequiresSecurityAuthority(MembershipTransition.Resume, "SecuritySuspension"));
+        Assert.True(MembershipLifecyclePolicy.RequiresSecurityAuthority(MembershipTransition.SecuritySuspend, null));
+        Assert.False(MembershipLifecyclePolicy.RequiresSecurityAuthority(MembershipTransition.Resume, "AdministrativeSuspension"));
+        Assert.False(MembershipLifecyclePolicy.RequiresSecurityAuthority(MembershipTransition.Suspend, "SecuritySuspension"));
+        Assert.Equal("SecurityResume", MembershipLifecyclePolicy.Decide(MembershipStatus.Suspended, MembershipTransition.Resume, false, "SecuritySuspension").ReasonCode);
+        Assert.Equal("AdministrativeResume", MembershipLifecyclePolicy.Decide(MembershipStatus.Suspended, MembershipTransition.Resume, false, "AdministrativeSuspension").ReasonCode);
+    }
 }

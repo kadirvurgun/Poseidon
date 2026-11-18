@@ -20,6 +20,12 @@ public static class MembershipLifecyclePolicy
 {
     public const string LastAdmin = "last_admin";
     public const string InvalidTransition = "invalid_transition";
+    public const string SecuritySuspensionReason = "SecuritySuspension";
+
+    // QA follow-up (PLAN-1511-5202): a forced security suspension can only be lifted by the
+    // separate security authority; ordinary membership administration cannot undo it.
+    public static bool RequiresSecurityAuthority(MembershipTransition transition, string? currentReason) =>
+        transition is MembershipTransition.SecuritySuspend || transition is MembershipTransition.Resume && currentReason == SecuritySuspensionReason;
 
     public static string Wire(MembershipStatus status) => status switch
     {
@@ -35,7 +41,7 @@ public static class MembershipLifecyclePolicy
     // isLastActiveAdministrator: the target is currently an active tenant identity
     // administrator and no other active administrator remains. UNKNOWN is never passed
     // here as false; callers that cannot count administrators must fail closed.
-    public static MembershipDecision Decide(MembershipStatus current, MembershipTransition transition, bool isLastActiveAdministrator)
+    public static MembershipDecision Decide(MembershipStatus current, MembershipTransition transition, bool isLastActiveAdministrator, string? currentReason = null)
     {
         static MembershipDecision Deny(MembershipStatus current, string code) => new(false, current, code, false, "Rejected");
         switch (transition)
@@ -52,7 +58,8 @@ public static class MembershipLifecyclePolicy
             case MembershipTransition.Resume:
                 // Revoked is terminal: 52.02 "otomatik yeniden açılmaz".
                 if (current != MembershipStatus.Suspended) return Deny(current, InvalidTransition);
-                return new(true, MembershipStatus.Active, null, false, "AdministrativeResume");
+                // Resuming a security suspension closes the RECOVERY_REQUIRED case with its own reason.
+                return new(true, MembershipStatus.Active, null, false, currentReason == SecuritySuspensionReason ? "SecurityResume" : "AdministrativeResume");
             case MembershipTransition.SecuritySuspend:
                 if (current != MembershipStatus.Active) return Deny(current, InvalidTransition);
                 // Fail-closed access removal; RECOVERY_REQUIRED instead of a hidden admin.
@@ -75,22 +82,50 @@ public static class MembershipLifecyclePolicy
         persisted is null || persisted == MembershipStatus.Active && sessionAccessRevision >= persistedAccessRevision;
 }
 
-public sealed record DelegationRequest(Guid DelegatorMembershipId, Guid DelegateMembershipId, string[]? Permissions,
-    DateTimeOffset? ValidFrom, DateTimeOffset? ValidUntil);
+// 52.02 paragraph:102: source person, delegate, scope, permitted actions and reason are
+// mandatory. Scope is an explicit company/vessel snapshot; tenant-wide scope is never delegated.
+public sealed record DelegatedVessel(Guid VesselId, bool CanEdit);
 
-// 52.02 §6: source person, delegate, scope, validity window are mandatory; delegation
+public sealed record DelegationRequest(Guid DelegatorMembershipId, Guid DelegateMembershipId, string[]? Permissions,
+    DateTimeOffset? ValidFrom, DateTimeOffset? ValidUntil, string? ReasonCode = null, Guid? CompanyId = null, DelegatedVessel[]? VesselScope = null);
+
+// The source's CURRENT effective authority (operator grant narrowed by the persisted snapshot).
+public sealed record DelegationSource(IReadOnlyCollection<string> Permissions, Guid? CompanyId, IReadOnlyCollection<DelegatedVessel> Vessels);
+
+// Request-time effective scope: snapshot intersected with the source's current authority.
+public sealed record DelegatedScope(string[] Permissions, Guid? CompanyId, DelegatedVessel[] Vessels)
+{
+    public bool IsEmpty => Permissions.Length == 0 || CompanyId is null && Vessels.Length == 0;
+}
+
+// 52.02 §6: source person, delegate, scope, validity window and reason are mandatory; delegation
 // can never be wider than the source authority; re-delegation is forbidden by default.
 public static class DelegationPolicy
 {
     public static readonly TimeSpan MaximumWindow = TimeSpan.FromDays(90); // Technical ceiling, not an approved policy value.
     public const int MaximumPermissions = 32;
+    public const int MaximumVessels = 64;
+    // Closed technical reason codes (no free text: privacy decision P5202). Not an approved
+    // 54.01 catalog; a future catalog replaces this list through a reviewed migration.
+    public static readonly string[] ReasonCodes = ["PlannedAbsence", "UnplannedAbsence", "WorkloadCover", "Handover"];
+    // Rows created before the scope snapshot existed; they never become effective.
+    public const string LegacyUnscoped = "LegacyUnscoped";
 
     public static bool NonDelegable(string permission) =>
         permission.StartsWith("membership.", StringComparison.Ordinal) || permission.StartsWith("delegation.", StringComparison.Ordinal) ||
         permission is "audit.read" or "directory.read";
 
-    public static Dictionary<string, string[]> Validate(DelegationRequest request, IReadOnlyCollection<string> delegatorPermissions, DateTimeOffset now)
+    // Permission/window/identity rules only (no scope); kept for focused policy checks.
+    public static Dictionary<string, string[]> Validate(DelegationRequest request, IReadOnlyCollection<string> delegatorPermissions, DateTimeOffset now) =>
+        Validate(request, new DelegationSource(delegatorPermissions, null, []), now, scoped: false);
+
+    // Full create validation: also reason and a scope that is a subset of the source's current scope.
+    public static Dictionary<string, string[]> Validate(DelegationRequest request, DelegationSource source, DateTimeOffset now) =>
+        Validate(request, source, now, scoped: true);
+
+    private static Dictionary<string, string[]> Validate(DelegationRequest request, DelegationSource source, DateTimeOffset now, bool scoped)
     {
+        var delegatorPermissions = source.Permissions;
         var errors = new Dictionary<string, string[]>(StringComparer.Ordinal);
         if (request.DelegatorMembershipId == Guid.Empty) errors["delegatorMembershipId"] = ["required"];
         if (request.DelegateMembershipId == Guid.Empty) errors["delegateMembershipId"] = ["required"];
@@ -110,7 +145,29 @@ public static class DelegationPolicy
             else if (until <= now) errors["validUntil"] = ["already_expired"];
             if (from < now - TimeSpan.FromMinutes(5)) errors["validFrom"] = ["backdated"];
         }
+        if (!scoped) return errors;
+        if (request.ReasonCode is null) errors["reasonCode"] = ["required"];
+        else if (!ReasonCodes.Contains(request.ReasonCode, StringComparer.Ordinal)) errors["reasonCode"] = ["unknown_reason"];
+        var vessels = request.VesselScope ?? [];
+        if (request.CompanyId == Guid.Empty) errors["companyId"] = ["required"];
+        else if (request.CompanyId is { } company && company != source.CompanyId) errors["companyId"] = ["exceeds_source_scope"];
+        if (vessels.Length > MaximumVessels || vessels.Any(v => v is null || v.VesselId == Guid.Empty)) errors["vesselScope"] = ["required"];
+        else if (vessels.Select(v => v.VesselId).Distinct().Count() != vessels.Length) errors["vesselScope"] = ["duplicate"];
+        else if (vessels.Any(v => !source.Vessels.Any(s => s.VesselId == v.VesselId && (s.CanEdit || !v.CanEdit))))
+            errors["vesselScope"] = ["exceeds_source_scope"];
+        else if (request.CompanyId is null && vessels.Length == 0) errors["scope"] = ["required"];
         return errors;
+    }
+
+    // Request-time narrowing: the snapshot never outlives the source's current authority.
+    public static DelegatedScope Effective(IEnumerable<string> delegatedPermissions, Guid? snapshotCompany, IEnumerable<DelegatedVessel> snapshotVessels, DelegationSource current)
+    {
+        var permissions = delegatedPermissions.Where(p => current.Permissions.Contains(p) && !NonDelegable(p)).Distinct(StringComparer.Ordinal).ToArray();
+        var company = snapshotCompany is { } c && c == current.CompanyId ? c : (Guid?)null;
+        var vessels = snapshotVessels
+            .Select(v => current.Vessels.FirstOrDefault(s => s.VesselId == v.VesselId) is { } s ? new DelegatedVessel(v.VesselId, v.CanEdit && s.CanEdit) : null)
+            .OfType<DelegatedVessel>().DistinctBy(v => v.VesselId).ToArray();
+        return new(permissions, company, vessels);
     }
 
     public static string Canonical(IEnumerable<string> permissions) => string.Join(',', permissions.Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal));
