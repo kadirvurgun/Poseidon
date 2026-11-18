@@ -17,6 +17,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         services.AddCertificateExtraction(configuration);
         services.AddSingleton(configuration.GetSection("TugPlanning").Get<TugPlanningPolicy>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<TimeProvider>(TimeProvider.System);
+        services.AddSingleton<IProfileFreshnessPolicySource, UnconfiguredProfileFreshnessPolicy>();
         services.AddSingleton(configuration.GetSection("Notifications").Get<NotificationSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddScoped<NotificationEngine>();
         services.AddSingleton(configuration.GetSection("DailyOffline").Get<DailyOfflineSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
@@ -139,6 +140,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         {
             endpoints.MapFoundation();
             endpoints.MapRegulatoryDrafts();
+            endpoints.MapVesselProfileFields();
             endpoints.MapRegulatoryRegister();
             endpoints.MapLifecycleApplicability();
             endpoints.MapRegulatoryQualifications();

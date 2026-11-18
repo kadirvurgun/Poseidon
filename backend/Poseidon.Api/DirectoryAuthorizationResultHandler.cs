@@ -43,6 +43,8 @@ public sealed class DirectoryAuthorizationResultHandler : IAuthorizationMiddlewa
         {
             "GetRegulatoryDraft" => "ProfileRead",
             "GetRegulatoryHistory" => "ProfileHistory",
+            "GetProfileFields" => "ProfileRead",
+            "GetProfileFieldHistory" => "ProfileHistory",
             "ListCompanies" or "GetCompany" => "CompaniesRead",
             "ListVessels" or "GetVessel" => "VesselsRead",
             "GetWorkspace" => "WorkspaceRead",
