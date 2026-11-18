@@ -74,7 +74,9 @@ async function mockShell(page: Page) {
                     coverage: ['RegulatoryDraft', 'OperationalTasks', 'SafetyDecisions', 'Permits', 'EvidenceVerification', 'TechnicalMaintenance', 'TugPlanning']
                         .map((source, i) => ({ source, status: i === 0 ? 'Missing' : 'Unavailable' })),
                     cards: { items: [{ key: 'regulatory-draft', priority: 'Advisory', source: 'RegulatoryDraft', reason: 'DraftAbsent', owner: null,
-                                nextAction: 'ReviewDraft', href: `/app/fleet/${vessel.id}/profile` }], offset: 0, limit: 25, hasMore: false } } });
+                                nextAction: 'ReviewDraft', href: `/app/fleet/${vessel.id}/profile`,
+                                sourceRef: { owner: 'REGULATORY', kind: 'RegulatoryDraft', id: vessel.id, revision: null, savedAt: null } }], offset: 0, limit: 25, hasMore: false },
+                    viewState: 'Partial' } });
             return;
         }
         await route.fulfill({ status: 404, json: { code: 'unconfigured_synthetic_read' } });
