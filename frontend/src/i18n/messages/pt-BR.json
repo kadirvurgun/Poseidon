@@ -3206,6 +3206,10 @@
     "m_2492dcd13a8d5ab3": "Um salvamento ainda está em andamento. Aguarde o resultado antes de trocar de embarcação; seu contexto atual não foi alterado.",
     "m_221de6ea6fc51bb7": "Sua sessão terminou ou mudou. Entre novamente para ver seu contexto de trabalho.",
     "m_9b1a1deb14aac372": "A embarcação selecionada não está no seu escopo autorizado atual. Nenhuma outra embarcação foi selecionada automaticamente.",
-    "m_5db2b92c3bcc6931": "Escolher outra embarcação"
+    "m_5db2b92c3bcc6931": "Escolher outra embarcação",
+    "m_7c2c3c0f372d028d": "Filtrar menu",
+    "m_4895cdb4b14ff26c": "Somente as telas que você está autorizado a abrir são pesquisadas.",
+    "m_9e601b252c4fb4b3": "Nenhum item de menu autorizado corresponde a este filtro.",
+    "m_5af49f5d0c78416e": "Limpar filtro do menu"
   }
 }

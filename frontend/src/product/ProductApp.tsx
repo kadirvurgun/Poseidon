@@ -110,7 +110,7 @@ export function ProductApp() {
     const setTab = (value: typeof tab) => move({ tab: value, selected: null, profile: false });
     const user = identity.state === 'ok' ? identity.data : null;
     const canRead = user?.authenticated === true && user.canRead;
-    const heading = registerTab ? localizedText(language, tab === 'sources' ? 'pairs.m_d52797a6e362de20' : 'pairs.m_d6ad4bb19c60b2b2') : canRead && !route.invalid && (tab !== 'companies' || user?.canReadCompanies) ? (onboardingOpen ? (localizedText(language, "pairs.m_372d69a18a20b71d")) : passportOpen ? (localizedText(language, "pairs.m_79a9c76a3213e157")) : t[tab]) : t.tenant;
+    const heading = registerTab ? localizedText(language, tab === 'sources' ? 'pairs.m_d52797a6e362de20' : 'pairs.m_d6ad4bb19c60b2b2') : canRead && !route.invalid && (tab !== 'companies' || user?.canReadCompanies) && (tab !== 'audit' || auditAllowed) ? (onboardingOpen ? (localizedText(language, "pairs.m_372d69a18a20b71d")) : passportOpen ? (localizedText(language, "pairs.m_79a9c76a3213e157")) : t[tab]) : t.tenant;
     const canCreateRecord = !formMode && canRead && !route.invalid && !registerTab && tab !== 'today' && tab !== 'audit' && user?.canCreate && (tab !== 'companies' || user.canReadCompanies);
     useEffect(() => {
         if (!canRead || route.invalid)

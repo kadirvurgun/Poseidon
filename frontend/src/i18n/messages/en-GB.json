@@ -3206,6 +3206,10 @@
     "m_2492dcd13a8d5ab3": "A save is still in progress. Wait for its result before switching vessel; your current context is unchanged.",
     "m_221de6ea6fc51bb7": "Your session has ended or changed. Sign in again to see your working context.",
     "m_9b1a1deb14aac372": "The selected vessel is not in your current authorised scope. No other vessel was selected automatically.",
-    "m_5db2b92c3bcc6931": "Choose another vessel"
+    "m_5db2b92c3bcc6931": "Choose another vessel",
+    "m_7c2c3c0f372d028d": "Filter menu",
+    "m_4895cdb4b14ff26c": "Only screens you are authorized to open are searched.",
+    "m_9e601b252c4fb4b3": "No authorized menu item matches this filter.",
+    "m_5af49f5d0c78416e": "Clear menu filter"
   }
 }

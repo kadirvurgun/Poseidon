@@ -10,7 +10,8 @@ const destinations: Record<string, string> = { 'operational-downtime': '/app/ope
 export function decodeEnterpriseNavigation(value: unknown): { destinations: EnterpriseDestination[]; canSearch: boolean } {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new ApiError(502, 'invalid_navigation')
   const v = value as Record<string, unknown>
-  if (!Array.isArray(v.destinations) || v.destinations.length > Object.keys(destinations).length || typeof v.canSearch !== 'boolean' || typeof v.canWriteRegulatory !== 'boolean') throw new ApiError(502, 'invalid_navigation')
+  // DEV-022: closed shape. An extra member (for example a hidden count) is a contract breach, not ignored.
+  if (Object.keys(v).length !== 3 || !Array.isArray(v.destinations) || v.destinations.length > Object.keys(destinations).length || typeof v.canSearch !== 'boolean' || typeof v.canWriteRegulatory !== 'boolean') throw new ApiError(502, 'invalid_navigation')
   const result: EnterpriseDestination[] = []
   for (const item of v.destinations) {
     if (!item || typeof item !== 'object' || Array.isArray(item) || Object.keys(item).length !== 2 || typeof item.key !== 'string' ||

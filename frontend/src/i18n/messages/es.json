@@ -3206,6 +3206,10 @@
     "m_2492dcd13a8d5ab3": "Todavía hay un guardado en curso. Espere su resultado antes de cambiar de buque; su contexto actual no ha cambiado.",
     "m_221de6ea6fc51bb7": "Su sesión finalizó o cambió. Inicie sesión de nuevo para ver su contexto de trabajo.",
     "m_9b1a1deb14aac372": "El buque seleccionado no está en su ámbito autorizado actual. No se seleccionó automáticamente ningún otro buque.",
-    "m_5db2b92c3bcc6931": "Elegir otro buque"
+    "m_5db2b92c3bcc6931": "Elegir otro buque",
+    "m_7c2c3c0f372d028d": "Filtrar menú",
+    "m_4895cdb4b14ff26c": "Solo se buscan las pantallas que tiene autorización para abrir.",
+    "m_9e601b252c4fb4b3": "Ningún elemento de menú autorizado coincide con este filtro.",
+    "m_5af49f5d0c78416e": "Borrar filtro del menú"
   }
 }
