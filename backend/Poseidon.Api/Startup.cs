@@ -98,6 +98,8 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         });
         app.UseRouting();
         app.UseAuthentication();
+        // PLAN-1511-5202: persisted suspension/revocation is re-checked on every request.
+        app.UseMiddleware<MembershipSessionGate>();
         app.UseAuthorization();
         app.Use(async (context, next) =>
         {
@@ -176,6 +178,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapDowntimeOrigins();
             endpoints.MapMaintenanceObservations();
             endpoints.MapTug();
+            endpoints.MapMemberships();
             endpoints.MapGet("/health/live", () => Results.Text("alive"))
                 .WithName("GetLiveness")
                 .WithSummary("Process liveness only; does not indicate database or operational readiness.");

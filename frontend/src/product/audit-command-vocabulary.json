@@ -1,6 +1,13 @@
 {
   "schemaVersion": "poseidon.s1-audit-vocabulary.v1",
   "operationReasons": {
+    "MembershipImport": "PREPARATION_COMMAND",
+    "MembershipSuspend": "PREPARATION_COMMAND",
+    "MembershipResume": "PREPARATION_COMMAND",
+    "MembershipRevoke": "PREPARATION_COMMAND",
+    "MembershipSecuritySuspend": "PREPARATION_COMMAND",
+    "DelegationCreate": "PREPARATION_COMMAND",
+    "DelegationRevoke": "PREPARATION_COMMAND",
     "DowntimeCreate": "PREPARATION_COMMAND",
     "DowntimeUpdate": "PREPARATION_COMMAND",
     "WorkOrderCreate": "PREPARATION_COMMAND",

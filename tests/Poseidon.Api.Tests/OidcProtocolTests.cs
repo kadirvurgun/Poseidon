@@ -37,6 +37,7 @@ public sealed class OidcProtocolTests(OwnedPostgresFixture fixture)
     [InlineData("nonce")]
     [InlineData("state")]
     [InlineData("correlation")]
+    [InlineData("suspended")] // PLAN-1511-5202: persisted suspended membership denies a new session.
     public async Task Federation_validates_protocol_before_issuing_a_bounded_session(string failure)
     {
         await using var postgres = await fixture.CreateAsync(TestContext.Current.CancellationToken);
@@ -44,6 +45,19 @@ public sealed class OidcProtocolTests(OwnedPostgresFixture fixture)
         var tenant = seed.Tenants[0].Id;
         await using var setup = new PoseidonDbContext(SeedImporter.Options(postgres.GetConnectionString(), seed), Guid.Empty, ActorContext.SeedImport(), true);
         await setup.Database.MigrateAsync(TestContext.Current.CancellationToken);
+        var actorId = Guid.NewGuid();
+        if (failure == "suspended")
+        {
+            // Synthetic persisted lifecycle state for the configured identity; no credential is stored.
+            setup.UserAccounts.Add(new UserAccount { TenantId = tenant, Id = actorId, Issuer = "https://idp.example", Subject = "synthetic-subject",
+                Source = "ConfigurationImport", CreatedAt = DateTimeOffset.UtcNow });
+            var membership = new AccountMembership { TenantId = tenant, Id = Guid.NewGuid(), AccountId = actorId, Status = "Active",
+                StatusReason = "ConfigurationImport", StatusChangedAt = DateTimeOffset.UtcNow, Source = "ConfigurationImport", CreatedAt = DateTimeOffset.UtcNow };
+            setup.AccountMemberships.Add(membership);
+            await setup.SaveChangesAsync(TestContext.Current.CancellationToken);
+            membership.Status = "Suspended"; membership.StatusReason = "AdministrativeSuspension"; membership.AccessRevision = 1;
+            await setup.SaveChangesAsync(TestContext.Current.CancellationToken);
+        }
         var options = SeedImporter.Options(postgres.GetConnectionString());
         await using var invariantDb = new PoseidonDbContext(options, tenant, new("test", "User", "oidc-invariants"));
         var originalCompanies = await CompanyStates(invariantDb);
@@ -86,7 +100,7 @@ public sealed class OidcProtocolTests(OwnedPostgresFixture fixture)
                 ["Authentication:Oidc:ClientId"] = "synthetic-client",
                 ["Authentication:Oidc:Memberships:0:Issuer"] = "https://idp.example",
                 ["Authentication:Oidc:Memberships:0:Subject"] = "synthetic-subject",
-                ["Authentication:Oidc:Memberships:0:ActorId"] = Guid.NewGuid().ToString(),
+                ["Authentication:Oidc:Memberships:0:ActorId"] = actorId.ToString(),
                 ["Authentication:Oidc:Memberships:0:TenantId"] = tenant.ToString(),
                 ["Authentication:Oidc:Memberships:0:TenantWideRead"] = "true",
             ["Authentication:Oidc:Memberships:0:Permissions:0"] = "directory.read"
