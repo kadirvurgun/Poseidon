@@ -62,6 +62,8 @@ public sealed class DirectoryAuthorizationResultHandler : IAuthorizationMiddlewa
             "GetToday" => "TodayRead",
             "GetTodayWhy" => "TodayWhyRead",
             "GetCriticalStates" => "CriticalStateRead",
+            "ListMetricDefinitions" => "MetricCatalogRead",
+            "GetMetricScalar" => "MetricScalarRead",
             _ => null
         };
         if (!result.Succeeded && todayAction != null)

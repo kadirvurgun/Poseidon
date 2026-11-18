@@ -9,6 +9,7 @@ import {
 } from './theme-tokens'
 import type { AccentColor, BaseColor, ChartColor, CustomTheme, RadiusOption } from './theme-tokens'
 import type { Locale } from '../i18n'
+import { trapTab, useInertBackground } from '../components/a11y/modal'
 
 // Only TR/EN copy is authored; every non-Turkish locale falls back to English (same convention as AppearanceControls).
 const copy = {
@@ -51,7 +52,6 @@ const colorNames: Record<'en' | 'tr', Record<BaseColor | AccentColor, string>> =
 const statusLikeAccents: readonly AccentColor[] = ['rose', 'orange', 'amber']
 type PresetId = 'emerald' | 'ocean' | 'graphite' | 'b3Zheoix4U'
 const sameTheme = (a: CustomTheme, b: CustomTheme) => a.base === b.base && a.accent === b.accent && a.chart === b.chart && a.radius === b.radius
-const focusable = 'button:not([disabled]), select:not([disabled]), textarea:not([disabled]), input:not([disabled]), [href], [tabindex]:not([tabindex="-1"])'
 
 export function ThemeBuilder({ language, onClose }: { language: Locale; onClose: () => void }) {
   const lang = language === 'tr' ? 'tr' : 'en'
@@ -59,6 +59,7 @@ export function ThemeBuilder({ language, onClose }: { language: Locale; onClose:
   const names = colorNames[lang]
   const id = useId()
   const dialog = useRef<HTMLDivElement>(null)
+  const backdrop = useRef<HTMLDivElement>(null)
   const heading = useRef<HTMLHeadingElement>(null)
   const [draft, setDraft] = useState<Appearance>(getAppearance)
   const [importText, setImportText] = useState('')
@@ -71,6 +72,8 @@ export function ThemeBuilder({ language, onClose }: { language: Locale; onClose:
   const presetValue: PresetId | null = draft.palette !== 'custom' ? draft.palette : sameTheme(draft.custom, presetB3Zheoix4U) ? 'b3Zheoix4U' : null
 
   useEffect(() => { previewAppearance(draft) }, [draft])
+  // DEV-025 / UX-016: the page behind the sheet is inert (pointer, Tab and AT) while it is open.
+  useInertBackground(backdrop)
   useEffect(() => { heading.current?.focus(); return () => previewAppearance(null) }, [])
 
   const customize = (patch: Partial<CustomTheme>) => setDraft(value => ({ ...value, palette: 'custom', custom: { ...value.custom, ...patch } }))
@@ -89,12 +92,8 @@ export function ThemeBuilder({ language, onClose }: { language: Locale; onClose:
   const apply = () => { if (report.blocked) return; setAppearance(draft); onClose() }
   const onKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); onClose(); return }
-    if (event.key !== 'Tab' || !dialog.current) return
-    const items = [...dialog.current.querySelectorAll<HTMLElement>(focusable)]
-    if (items.length === 0) return
-    const first = items[0], last = items[items.length - 1]
-    if (event.shiftKey && (document.activeElement === first || document.activeElement === heading.current)) { event.preventDefault(); last.focus() }
-    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus() }
+    // Preview samples (tabindex=-1) are excluded from the cycle by focusableTargets.
+    trapTab(event, dialog.current, heading.current)
   }
 
   const radios = <T extends string>(legend: string, name: string, values: readonly T[], selected: T | null, label: (value: T) => string, onPick: (value: T) => void, swatch?: (value: T) => string) =>
@@ -109,7 +108,7 @@ export function ThemeBuilder({ language, onClose }: { language: Locale; onClose:
       </div>
     </fieldset>
 
-  return createPortal(<div className="theme-builder-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) onClose() }}>
+  return createPortal(<div ref={backdrop} className="theme-builder-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) onClose() }}>
     <div ref={dialog} className="theme-builder" role="dialog" aria-modal="true" aria-labelledby={`${id}-title`} aria-describedby={`${id}-intro`} onKeyDown={onKeyDown}>
       <header className="theme-builder-header">
         <h2 id={`${id}-title`} ref={heading} tabIndex={-1}>{t.title}</h2>

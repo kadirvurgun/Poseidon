@@ -101,7 +101,9 @@ public sealed class DiagnosticsTests(OwnedPostgresFixture fixture)
         foreach (var (path, operationId, parameters) in new[]
         {
             ("/api/v1/poseidon-today", "GetToday", new[] { "vesselId", "offset", "limit" }),
-            ("/api/v1/why-engine", "GetTodayWhy", new[] { "vesselId", "cardKey" })
+            ("/api/v1/why-engine", "GetTodayWhy", new[] { "vesselId", "cardKey" }),
+            // PLAN-1511-5501-SLICE-01: 55.01 scalar contract consumed by Today/Why.
+            ("/api/v1/metrics/scalar", "GetMetricScalar", new[] { "metricId", "vesselId" })
         })
         {
             var read = paths.GetProperty(path).GetProperty("get");
@@ -110,6 +112,12 @@ public sealed class DiagnosticsTests(OwnedPostgresFixture fixture)
             foreach (var code in new[] { "200", "400", "401", "403", "404", "503" })
                 Assert.True(read.GetProperty("responses").TryGetProperty(code, out _));
         }
+        var catalog = paths.GetProperty("/api/v1/metrics/definitions").GetProperty("get");
+        Assert.Equal("ListMetricDefinitions", catalog.GetProperty("operationId").GetString());
+        Assert.False(catalog.TryGetProperty("parameters", out _));
+        var scalar = root.GetProperty("components").GetProperty("schemas").GetProperty("MetricScalarDto").GetProperty("properties");
+        foreach (var name in new[] { "metricId", "definitionVersion", "state", "value", "unitCode", "quality", "asOf", "sourceProjectionId", "scope", "unknownCount", "reasons" })
+            Assert.True(scalar.TryGetProperty(name, out _), name);
     }
 
     [Fact]

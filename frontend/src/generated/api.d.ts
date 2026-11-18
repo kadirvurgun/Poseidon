@@ -392,6 +392,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/metrics/definitions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** 55.01 metric registry entries the actor may view. Definition only; no formula designer or export. */
+        get: operations["ListMetricDefinitions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/metrics/scalar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Evaluates one registered scalar over records the actor can currently read. SUPPRESSED, UNKNOWN and UNAVAILABLE carry no value; zero is never substituted for a missing source. */
+        get: operations["GetMetricScalar"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/system-health": {
         parameters: {
             query?: never;
@@ -7070,6 +7104,65 @@ export interface components {
             state: string;
             reason: string;
         };
+        MetricCatalogDto: {
+            contractVersion: string;
+            items: components["schemas"]["MetricDefinitionDto"][];
+        };
+        MetricDefinitionDto: {
+            id: string;
+            /** Format: int32 */
+            version: number;
+            ownerModule: string;
+            label: string;
+            unitCode: string;
+            sourceProjectionId: string;
+            aggregation: string;
+            /** Format: int32 */
+            minCohort: number;
+            freshnessRule: string;
+            requiredPermissions: string[];
+            allowedActions: string[];
+            scopes: string[];
+            basis: string;
+            source: string;
+        };
+        MetricScalarDto: {
+            metricId: string;
+            /** Format: int32 */
+            definitionVersion: number;
+            ownerModule: string;
+            state: string;
+            value: null | string;
+            unitCode: string;
+            quality: string;
+            /** Format: date-time */
+            asOf: string;
+            sourceProjectionId: string;
+            /** Format: date-time */
+            sourceWatermark: null | string;
+            scope: components["schemas"]["MetricScopeDto"];
+            /** Format: int32 */
+            unknownCount: number;
+            reasons: string[];
+            basis: string;
+            freshnessRule: string;
+            source: string;
+        };
+        MetricScopeDto: {
+            kind: string;
+            /** Format: uuid */
+            vesselId: null | string;
+            /** Format: int32 */
+            expectedSources: number;
+            /** Format: int32 */
+            readSources: number;
+            /** Format: int32 */
+            withheldSources: number;
+            /** Format: int32 */
+            unreadableSources: number;
+            /** Format: int32 */
+            notCollectedSources: number;
+        };
         MsmdReference: {
             documentReference?: null | string;
             issuerReference?: null | string;
@@ -7982,6 +8075,17 @@ export interface components {
             owner: null | string;
             nextAction: string;
             href: string;
+            sourceRef: components["schemas"]["TodayCardSourceDto"];
+        };
+        TodayCardSourceDto: {
+            owner: string;
+            kind: string;
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: null | number;
+            /** Format: date-time */
+            savedAt: null | string;
         };
         TodayCoverageDto: {
             source: string;
@@ -7993,6 +8097,7 @@ export interface components {
             readAt: string;
             coverage: components["schemas"]["TodayCoverageDto"][];
             cards: components["schemas"]["PageDtoOfTodayCardDto"];
+            viewState: string;
         };
         TodayMaintenanceEvidenceDto: {
             /** Format: uuid */
@@ -9426,6 +9531,13 @@ export interface operations {
                     "application/json": components["schemas"]["WorkspaceDto"];
                 };
             };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
             /** @description Unauthorized */
             401: {
                 headers: {
@@ -9658,6 +9770,112 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TodayWhyDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ListMetricDefinitions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MetricCatalogDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    GetMetricScalar: {
+        parameters: {
+            query?: {
+                metricId?: string;
+                vesselId?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MetricScalarDto"];
                 };
             };
             /** @description Bad Request */

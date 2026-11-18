@@ -106,7 +106,8 @@
       "previous": "Előző vállalatok",
       "next": "Következő vállalatok",
       "reloadCompanies": "Vállalatok újratöltése",
-      "requiredNote": "Minden mező kötelező. Ez a rekord nem ad üzemi jóváhagyást."
+      "requiredNote": "Minden mező kötelező. Ez a rekord nem ad üzemi jóváhagyást.",
+      "errorSummary": "Mentés előtt ellenőrizze ezeket a mezőket:"
     },
     "ProductApp_tsx_copy": {
       "audit": "Műveleti előzmények",
@@ -284,7 +285,23 @@
       "OperationalSourcesUnavailable": "Üzemi források nem érhetők el",
       "rule": "Szabály",
       "context": "Aktuális hajó",
-      "switch": "Hajóváltás"
+      "switch": "Hajóváltás",
+      "ViewMaintenancePlan": "Karbantartási terv megtekintése",
+      "ViewTugJob": "Vontatóhajó-munka megtekintése",
+      "sourceOwner": "Forrás tulajdonosa",
+      "sourceSaved": "Forrás mentve",
+      "noRevision": "Nincs tárolt változat",
+      "REGULATORY": "Szabályozás",
+      "PMS": "Tervezett karbantartás",
+      "TUG": "Vontatóhajó-műveletek",
+      "viewReady": "Tételek érkeztek minden felsorolt forrásból. Ez nem készenlét és nem ellenőrzés.",
+      "viewEmpty": "Minden felsorolt forrás beolvasva, tétel nem érkezett. Ez nem biztonsági jóváhagyás.",
+      "viewPartial": "Részleges nézet: egyes tulajdonos források ebben a környezetben nem érhetők el. A hiányzó tételek nem jelentik, hogy minden rendben van.",
+      "viewUnavailable": "Ebben a környezetben egyetlen tulajdonos forrás sem olvasható. Ez nem jelenti, hogy minden rendben van.",
+      "partialCounters": "Részleges források: a nulla nem jelenti, hogy minden rendben van",
+      "emptyCounters": "Engedélyezett üres eredmény: egyik felsorolt forrás sem adott vissza elemet. Ez nem biztonsági jóváhagyás",
+      "rateLimited": "Túl sok kérés. Várjon, majd próbálja újra.",
+      "contract": "A szerver válasza nem felelt meg az ellenőrzésen; semmi sem jelenik meg belőle."
     },
     "TugCrewCoverage_tsx_copy": {
       "title": "Forrásminősített minimális személyzeti szerepek",
@@ -3298,6 +3315,10 @@
     "m_2492dcd13a8d5ab3": "A mentés még folyamatban van. Hajóváltás előtt várja meg az eredményt; a jelenlegi kontextus nem változott.",
     "m_221de6ea6fc51bb7": "A munkamenet lejárt vagy megváltozott. Jelentkezzen be újra a munkakontextus megtekintéséhez.",
     "m_9b1a1deb14aac372": "A kiválasztott hajó nem tartozik a jelenlegi jogosultsági körébe. Más hajó nem lett automatikusan kiválasztva.",
-    "m_5db2b92c3bcc6931": "Másik hajó választása"
+    "m_5db2b92c3bcc6931": "Másik hajó választása",
+    "m_7c2c3c0f372d028d": "Menü szűrése",
+    "m_4895cdb4b14ff26c": "Csak azokban a képernyőkben keres, amelyek megnyitására jogosult.",
+    "m_9e601b252c4fb4b3": "Egyetlen engedélyezett menüelem sem felel meg ennek a szűrőnek.",
+    "m_5af49f5d0c78416e": "Menüszűrő törlése"
   }
 }

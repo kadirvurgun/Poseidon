@@ -121,7 +121,11 @@ public static class RegulatoryDraftEndpoints
         // Scope and edit authorization are reevaluated before every receipt lookup, including replay.
         var vessel = await actor.Scope(db.Vessels.AsNoTracking()).SingleOrDefaultAsync(x => x.Id == id, http.RequestAborted);
         if (vessel == null) return await Fail(404, "resource_not_found");
-        if (!actor.CanEditVessel(id)) return await Fail(403, "permission_denied");
+        // PLAN-1511-5402: exact action derived equal to the former CanEditVessel(id) predicate.
+        var access = new ExactAccessRequest(ExactActionCatalog.VesselRegulatoryProfileDraftSave,
+            ExactActionCatalog.PurposeRegulatoryProfileDraft, vessel.TenantId, id);
+        var decision = ExactActionAccess.Evaluate(actor, access);
+        if (!decision.Allowed) return await Fail(403, "permission_denied");
         try { await http.RequestServices.GetRequiredService<IAntiforgery>().ValidateRequestAsync(http); }
         catch (AntiforgeryValidationException) { return await Fail(403, "csrf_invalid"); }
         if (!http.Request.HasJsonContentType() || http.Request.ContentLength > 32768) return await Fail(400, "invalid_request");
@@ -143,15 +147,20 @@ public static class RegulatoryDraftEndpoints
         if (command.ExpectedVersion == null || command.Content == null) return await Fail(400, "validation_failed");
         var (content, errors) = RegulatoryDraftPolicy.Normalize(command.Content);
         if (errors.Count > 0) return await Fail(400, "validation_failed", errors);
-        async Task<bool> RecordAccess() {
+        // Returns null when current access holds, otherwise the failure code. The exact action is
+        // re-resolved from the live membership on every call (pre-receipt, replay and pre-commit).
+        async Task<string?> RecordAccess() {
             var live = Actor(http);
-            if (live == null || live.Id != actor.Id || live.TenantId != actor.TenantId || !live.CanEditVessel(id) || !await live.Scope(db.Vessels).AnyAsync(v => v.Id == id, http.RequestAborted)) return false;
-            if (!live.Permissions.Contains("file.read") && (content.ConstructionRecord != null || await db.RegulatoryDrafts.AnyAsync(x => x.VesselId == id && x.ConstructionFileId != null, http.RequestAborted))) return false;
-            if (content.ConstructionRecord is not { } pin) return true;
+            if (live == null || live.Id != actor.Id || live.TenantId != actor.TenantId ||
+                !ExactActionAccess.RevalidateBeforeCommit(http, decision, access, actor.Id).Allowed ||
+                !await live.Scope(db.Vessels).AnyAsync(v => v.Id == id, http.RequestAborted)) return "permission_denied";
+            if (!live.Permissions.Contains("file.read") && (content.ConstructionRecord != null || await db.RegulatoryDrafts.AnyAsync(x => x.VesselId == id && x.ConstructionFileId != null, http.RequestAborted))) return "construction_record_unavailable";
+            if (content.ConstructionRecord is not { } pin) return null;
             return await db.StoredFiles.AnyAsync(f => f.Id == pin.Id && f.VesselId == id && f.Revision == pin.Revision && f.Checksum == pin.Checksum &&
-                db.FileStages.Any(s => s.Id == f.Id && s.VesselId == id && s.PersonId == null && s.DocumentId == null && s.State == "CleanTransport"), http.RequestAborted);
+                db.FileStages.Any(s => s.Id == f.Id && s.VesselId == id && s.PersonId == null && s.DocumentId == null && s.State == "CleanTransport"), http.RequestAborted)
+                ? null : "construction_record_unavailable";
         }
-        if (!await RecordAccess()) return await Fail(403, "construction_record_unavailable");
+        if (await RecordAccess() is { } accessFailure) return await Fail(403, accessFailure);
         var keys = http.Request.Headers["Idempotency-Key"];
         var key = keys.Count == 1 ? keys[0] : null;
         if (key == null || key.Length is < 16 or > 80 || key.Any(c => !char.IsAsciiLetterOrDigit(c) && c != '-'))
@@ -160,7 +169,7 @@ public static class RegulatoryDraftEndpoints
         var fingerprint = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes($"ProfileSave/{id}/{command.ExpectedVersion}/{json}")));
         async Task<IResult?> Replay()
         {
-            if (!await RecordAccess()) return await Fail(403, "construction_record_unavailable");
+            if (await RecordAccess() is { } replayFailure) return await Fail(403, replayFailure);
             var receipt = await db.CommandReceipts.AsNoTracking().SingleOrDefaultAsync(x => x.ActorId == actor.Id && x.Key == key, http.RequestAborted);
             if (receipt == null) return null;
             if (receipt.Action != "ProfileSave" || receipt.ResourceId != id || receipt.Fingerprint != fingerprint)
@@ -209,7 +218,11 @@ public static class RegulatoryDraftEndpoints
             db.CommandReceipts.Add(new() { TenantId = actor.TenantId, ActorId = actor.Id, Key = key, Action = "ProfileSave",
                 Fingerprint = fingerprint, ResourceId = id, CommittedAt = draft.SavedAt, RegisterRevision = draft.Revision, RegisterVersion = draft.Version, ProfileVesselId = id, ProfileOutcomeJson = outcomeJson });
             await db.SaveChangesAsync(http.RequestAborted);
-            if (!await RecordAccess()) return await Fail(403, "construction_record_unavailable");
+            // Commit-time revalidation (54.02 A03-007 step 8): revoked access rolls back the write.
+            if (await RecordAccess() is { } commitFailure) {
+                await transaction.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear();
+                return await Fail(403, commitFailure);
+            }
             await transaction.CommitAsync(http.RequestAborted);
             return Results.Content(outcomeJson, "application/json");
         }

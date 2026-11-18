@@ -4002,7 +4002,8 @@
     "docs/phases/S1-FOUNDATION-20261103.md",
     "docs/phases/TECHNICAL-COMMAND-OWNER-RECOVERY-20261111.md",
     "docs/phases/MAINTENANCE-OBSERVATION-RECOVERY-20261112.md",
-    "docs/phases/OBSERVATION-SIGNED-FIXTURE-20261112.md"
+    "docs/phases/OBSERVATION-SIGNED-FIXTURE-20261112.md",
+    "docs/phases/PLAN-1511-5601-01.md"
   ],
   "active_source": "docs/sources/active.json",
   "current_package": {
@@ -15422,5 +15423,84 @@
       "Locale expert review of 15 additional catalogs",
       "i18n all-locale test timing under load"
     ]
+  },
+  "plan_1511_5501_slice_01": {
+    "task_id": "PLAN-1511-5501-SLICE-01",
+    "date": "2026-11-18",
+    "status": "LOCALLY_VALIDATED_SUBPACKAGE",
+    "accepted": false,
+    "accepted_sp_added": 0,
+    "decision": "LEAD-5601-D02 (C03/GAP06, PROPOSED_AWAITING_OWNER_DECISION)",
+    "branch": "feature/plan-5501-metric-contract-20261118",
+    "base_commit": "d7479d6",
+    "task": "docs/tasks/plan-1511-5501-slice-01.md",
+    "report": "docs/phases/PLAN-1511-5501-SLICE-01.md",
+    "contract": "contracts/metrics.v1.json",
+    "endpoints": [
+      "GET /api/v1/metrics/definitions",
+      "GET /api/v1/metrics/scalar"
+    ],
+    "verification": {
+      "domain_trait": "8/8 passed",
+      "api_integration_trait_real_pg": "5/5 passed",
+      "diagnostics_tests": "6/6 passed",
+      "s1_mutation_inventory": "1/1 passed (counts unchanged)",
+      "frontend_metrics_client": "3/3 passed",
+      "frontend_typecheck": "exit 0",
+      "frontend_lint_changed_files": "exit 0",
+      "not_run": "full suites, full lint/build, Playwright, CI, independent QA (DEFERRED)"
+    },
+    "independent_qa": "PASS-WITH-NOTES",
+    "qa_follow_up": {
+      "applied": "SOURCE_NOT_COLLECTED for no-profile vessels (required_fields.unknown v2); SOURCE_UNREADABLE + unreadableSources/notCollectedSources scope fields; crew overlap differential suppression; crew definition v2 any-status label; frontend decoder invariants and catalog enums; scalar audit-unavailable 503 test; cohort 5 unapproved default (64.01 paragraph:1398)",
+      "verification": {
+        "release_build": "0 warnings, 0 errors",
+        "domain_trait": "11/11 passed",
+        "api_integration_trait_real_pg": "8/8 passed",
+        "diagnostics_tests": "6/6 passed",
+        "frontend_metrics_client": "5/5 passed",
+        "frontend_typecheck": "exit 0",
+        "frontend_lint_changed_files": "exit 0",
+        "not_run": "full suites, Playwright, CI for this commit, QA re-check (DEFERRED)"
+      }
+    }
+  },
+  "plan_1511_5601_01": {
+    "id": "PLAN-1511-5601-01",
+    "date": "2026-11-18",
+    "package": "PLAN-1511-5601",
+    "status": "AUTHORED_PLANNING_RECONCILIATION_UNVERIFIED_NOT_ACCEPTED",
+    "branch": "docs/plan-5601-scope-reconciliation-20261118",
+    "task": "docs/tasks/plan-1511-5601-01.md",
+    "data": "docs/tasks/plan-1511-5601-01.ownership.json",
+    "report": "docs/phases/PLAN-1511-5601-01.md",
+    "documents_mapped": 42,
+    "scope_items_mapped": 42,
+    "scope_items_no_canonical_task": [
+      "G11",
+      "G16",
+      "G23",
+      "S04",
+      "S05",
+      "S06",
+      "S09"
+    ],
+    "conflicts": 17,
+    "gaps": 8,
+    "implementation_on_main": {
+      "PARTIAL": 23,
+      "NONE": 19,
+      "EXISTS_UNVERIFIED": 0
+    },
+    "recommended_next": [
+      "PLAN-1511-5202",
+      "PLAN-1511-5802",
+      "PLAN-1511-6503 + DEV-025",
+      "PLAN-1511-5401",
+      "PLAN-1511-5201"
+    ],
+    "accepted_sp_added": 0,
+    "new_canonical_tasks_added": 0,
+    "verification": "DEFERRED_NOT_RUN (docs/data only)"
   }
 }

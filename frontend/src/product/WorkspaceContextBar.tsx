@@ -1,9 +1,9 @@
 import { localizedLabel, localizedText } from "../i18n/messages";
 import { type Locale as AppLocale } from "../i18n";
 import { Button } from '../components/ui/button';
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { ArrowLeftRight, Building2, Compass, Wifi, WifiOff } from 'lucide-react';
+import { ArrowLeftRight, Building2, ChevronDown, Compass, Wifi, WifiOff } from 'lucide-react';
 import { ApiError } from './api';
 import type { Session } from './directory-contract';
 import { loadWorkspaceContext } from './workspace-context-api';
@@ -11,6 +11,20 @@ import type { WorkspaceContext } from './workspace-context-api';
 import './workspace-context-bar.css';
 import { useWorkspaceRevalidation } from './use-workspace-revalidation';
 import { WorkspaceVesselSwitcher } from './WorkspaceVesselSwitcher';
+// Same breakpoint as workspace-context-bar.css (47.9375rem): only there is the context collapsed.
+const narrowQuery = '(max-width: 47.9375rem)';
+function useNarrowContext(): boolean {
+    const [narrow, setNarrow] = useState(() => typeof window.matchMedia === 'function' && window.matchMedia(narrowQuery).matches);
+    useEffect(() => {
+        if (typeof window.matchMedia !== 'function')
+            return;
+        const query = window.matchMedia(narrowQuery), update = () => setNarrow(query.matches);
+        update();
+        query.addEventListener?.('change', update);
+        return () => query.removeEventListener?.('change', update);
+    }, []);
+    return narrow;
+}
 type Props = {
     session: Session | null;
     vessel?: string | null;
@@ -42,6 +56,9 @@ function ScopedWorkspaceContextBar({ session, vessel = null, language, onNavigat
         epoch: number;
     } | null>(null);
     const en = language === 'en';
+    const detailsId = useId();
+    const narrow = useNarrowContext();
+    const [expanded, setExpanded] = useState(false);
     useEffect(() => {
         const update = () => setOnline(navigator.onLine);
         window.addEventListener('online', update);
@@ -77,8 +94,24 @@ function ScopedWorkspaceContextBar({ session, vessel = null, language, onNavigat
     // (vessel, mode, role), so a context arriving after a switch is perceivable without moving
     // focus. The section itself is not live, so the role=status/alert children below are never
     // nested inside another live region.
-    return <section className="workspace-global-context" aria-label={localizedText(en, "pairs.m_8628de1435d643d5")}>
-    <span className="context-workspace">{current?.data && session?.tenantName || (localizedText(en, "pairs.m_e9d69ba1c5c8afd8"))}</span>
+    const modeText = current?.data?.vessel ? `${localizedText(en, "pairs.m_ed4e66320421b039")}: ${current.data.vessel.kind === 'Ship' ? localizedText(en, "pairs.m_bb1dbfbac5d5c650") : localizedText(en, "pairs.m_306aaabcb4e04a9f")}` : '';
+    const companyText = current?.data ? `${localizedText(en, "pairs.m_d9580bbb7b397961")}: ${current.data.company ? `${current.data.company.code} · ${current.data.company.name}` : localizedText(en, "pairs.m_49138f2831bf4262")}` : '';
+    const connectionText = online ? localizedText(en, "pairs.m_0772a120920395b6") : localizedText(en, "pairs.m_a24f7431b69a1715");
+    const contextLabel = localizedText(en, "pairs.m_8628de1435d643d5");
+    // DEV-025 / 65.03 paragraph 48: on a narrow screen the context collapses into one summary
+    // button whose accessible name carries the full context (workspace, company, vessel, mode,
+    // role, connection). CSS shows it only at <=767px (65.03 paragraph 71); the verified values
+    // stay in the polite live region, which is only visually clipped, never removed. While collapsed
+    // on a narrow screen the workspace name (already in the summary name) is aria-hidden; the live
+    // region stays exposed on purpose so a verified context switch is still announced (trade-off:
+    // a virtual-cursor reader may hear company/vessel/mode/role twice; docs/tasks/s2-dev025-01.md).
+    const summaryName = showData ? [`${contextLabel}: ${session?.tenantName ?? ''}`, companyText, vesselText, modeText, `${localizedText(en, "pairs.m_fdbbf279aa546fe7")}: ${roleText}`, connectionText].filter(Boolean).join(' · ') : '';
+    return <section className="workspace-global-context" aria-label={contextLabel} data-collapsible={showData || undefined} data-expanded={showData ? String(expanded) : undefined}>
+    {showData && <button type="button" className="context-summary-toggle" aria-expanded={expanded} aria-controls={detailsId} aria-label={summaryName} onClick={() => setExpanded(value => !value)}>
+      <span className="context-summary-text" aria-hidden="true">{current?.data?.vessel ? current.data.vessel.code : vesselText}</span><ChevronDown aria-hidden="true"/>
+    </button>}
+    <div id={detailsId} className="context-details">
+    <span className="context-workspace" aria-hidden={showData && narrow && !expanded ? true : undefined}>{current?.data && session?.tenantName || (localizedText(en, "pairs.m_e9d69ba1c5c8afd8"))}</span>
     {!online ? <span role="status">{localizedText(en, "pairs.m_cdfc48e331f96299")}</span> : document.visibilityState === 'hidden' ? <span role="status">{localizedText(en, "pairs.m_0713fa35fcf43a0b")}</span> : !current ? <span role="status">{localizedText(en, "pairs.m_93cbd8401551ea19")}</span> : !current.data ? <>
       <span role="alert">{current.error === 401 ? localizedText(en, "pairs.m_221de6ea6fc51bb7") : deniedScope ? localizedText(en, "pairs.m_9b1a1deb14aac372") : current.error === 403 || current.error === 404 ? (localizedText(en, "pairs.m_e738676f907d8b26")) : (localizedText(en, "pairs.m_e59c3d6f026fb1d7"))}</span>
       <Button variant="outline" size="sm" disabled={!online} onClick={() => { setResult(null); retry(n => n + 1); }}>{localizedText(en, "pairs.m_d6420ab086c48ebe")}</Button>
@@ -86,9 +119,10 @@ function ScopedWorkspaceContextBar({ session, vessel = null, language, onNavigat
     <span className="context-live" aria-live="polite" aria-atomic="true">{showData && current?.data && <>
       <span className="context-company"><Building2 aria-hidden="true"/>{localizedText(en, "pairs.m_d9580bbb7b397961")}: <strong>{current.data.company ? `${current.data.company.code} · ${current.data.company.name}` : localizedText(en, "pairs.m_49138f2831bf4262")}</strong></span>
       <span className="context-vessel">{vesselText}</span>
-      {current.data.vessel && <span className="context-mode"><Compass aria-hidden="true"/>{localizedText(en, "pairs.m_ed4e66320421b039")}: {current.data.vessel.kind === 'Ship' ? (localizedText(en, "pairs.m_bb1dbfbac5d5c650")) : (localizedText(en, "pairs.m_306aaabcb4e04a9f"))}</span>}
+      {current.data.vessel && <span className="context-mode"><Compass aria-hidden="true"/>{modeText}</span>}
       <span className="context-role">{localizedText(en, "pairs.m_fdbbf279aa546fe7")}: {roleText}</span>
     </>}</span>
+    </div>
     {onNavigate && (current?.data || deniedScope) && online && session && <Button variant="outline" size="sm" className="context-switch-trigger" onClick={() => setChooser({ owner: session, epoch })}><ArrowLeftRight aria-hidden="true"/>{deniedScope ? localizedText(en, "pairs.m_5db2b92c3bcc6931") : localizedText(en, "pairs.m_4f3d73f754a89edf")}</Button>}
     <span className="context-connection">{online ? <Wifi aria-hidden="true"/> : <WifiOff aria-hidden="true"/>}{online ? (localizedText(en, "pairs.m_0772a120920395b6")) : (localizedText(en, "pairs.m_a24f7431b69a1715"))}</span>
     {chooser?.owner === session && chooser.epoch === epoch && session && onNavigate && createPortal(<WorkspaceVesselSwitcher session={session} vessel={vessel} language={language} onClose={() => setChooser(null)} onNavigate={onNavigate}/>, document.querySelector('.product-shell') ?? document.body)}

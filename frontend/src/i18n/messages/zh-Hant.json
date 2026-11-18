@@ -106,7 +106,8 @@
       "previous": "上一頁公司",
       "next": "下一頁公司",
       "reloadCompanies": "重新載入公司",
-      "requiredNote": "所有欄位均為必填項。此記錄不授予作業批准。"
+      "requiredNote": "所有欄位均為必填項。此記錄不授予作業批准。",
+      "errorSummary": "儲存前請檢查以下欄位："
     },
     "ProductApp_tsx_copy": {
       "audit": "操作歷史",
@@ -284,7 +285,23 @@
       "OperationalSourcesUnavailable": "作業來源不可用",
       "rule": "規則",
       "context": "目前船舶",
-      "switch": "切換船舶"
+      "switch": "切換船舶",
+      "ViewMaintenancePlan": "檢視維護計畫",
+      "ViewTugJob": "檢視拖船作業",
+      "sourceOwner": "來源負責方",
+      "sourceSaved": "來源儲存時間",
+      "noRevision": "無已儲存修訂",
+      "REGULATORY": "法規",
+      "PMS": "計畫維護",
+      "TUG": "拖船作業",
+      "viewReady": "已從所有列出的來源傳回項目。這不代表就緒或已驗證。",
+      "viewEmpty": "所有列出的來源均已讀取且未傳回項目。這不是安全許可。",
+      "viewPartial": "部分檢視：部分負責來源在此情境中無法使用。沒有項目不代表一切正常。",
+      "viewUnavailable": "在此情境中無法讀取任何負責來源。這不代表一切正常。",
+      "partialCounters": "部分來源：零不代表一切正常",
+      "emptyCounters": "授權的空結果：所列來源均未傳回任何項目。這不是安全許可",
+      "rateLimited": "請求過多。請稍候再試。",
+      "contract": "伺服器回應未通過驗證；不顯示其中任何內容。"
     },
     "TugCrewCoverage_tsx_copy": {
       "title": "經來源確認的最低船員角色",
@@ -3298,6 +3315,10 @@
     "m_2492dcd13a8d5ab3": "儲存仍在進行中。切換船舶前請等待結果；您目前的情境未變更。",
     "m_221de6ea6fc51bb7": "您的工作階段已結束或已變更。請重新登入以查看您的工作情境。",
     "m_9b1a1deb14aac372": "所選船舶不在您目前的授權範圍內。未自動選擇其他船舶。",
-    "m_5db2b92c3bcc6931": "選擇其他船舶"
+    "m_5db2b92c3bcc6931": "選擇其他船舶",
+    "m_7c2c3c0f372d028d": "篩選選單",
+    "m_4895cdb4b14ff26c": "僅搜尋您有權開啟的畫面。",
+    "m_9e601b252c4fb4b3": "沒有符合此篩選條件的授權選單項目。",
+    "m_5af49f5d0c78416e": "清除選單篩選"
   }
 }
