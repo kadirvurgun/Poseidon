@@ -20,6 +20,8 @@ Yeni plan; exact API profilleri ve kalıcı retry, IAM Rev4 action/epoch, tek Le
 
 **18.11.2026 — DEV-020 alan provenance/tazelik (S2-DEV020-01):** Profil alan değer sürümü (immutable revizyondan türetilir), append-only audited alan kaynak beyanı, sunucu hesaplı nedenli tazelik (onaylı politika yokken UNKNOWN) ve TR/EN profil paneli. Migration `20261118170000_VesselProfileFieldSources`. Yerel gerçek sonuçlar: build 0 uyarı; domain 786/786; persistence unit 75/75, integration 95/95; API yeni 8/8, profil filtresi 52/52, S1 6/6, Diagnostics 6/6; vitest yeni 8/8, etkilenen 297/297; lint/typecheck/build geçti. Tam API suite/Playwright/QA/CI yapılmadı; accepted SP +0. [Görev](tasks/s2-dev020-01.md) · [Rapor](phases/S2-DEV020-01.md).
 
+**18.11.2026 — DEV-024 kritik durum açıklaması (S2-DEV024-01):** Onboarding, profil tazeliği ve uygulanabilirlik için ortak kaynak/gerekçe/tazelik/engel açıklaması (`GET /vessels/{id}/critical-states`); sahip detay yetkisi olmayan okuyucuya sunucu tarafında STATE_ONLY redaksiyon, uygulanabilirlik kapısı yoksa bileşen yok; paylaşılan React bileşeni ve 17 katalog. Yerel gerçek sonuçlar: build 0 uyarı; domain 795/795; API DEV-024 5/5, DEV-020 9/9, Diagnostics 6/6, S1 5/5, onboarding/passport 14/14; persistence SecurityEvent 7/7; lint/typecheck/build geçti; vitest yeni 7/7, etkilenen 227/227, tam 1721/1723 (2 zaman aşımı, 30 s ile geçti); Playwright onboarding 4/4 (mock). Tam API suite/QA/CI yapılmadı; accepted SP +0. [Görev](tasks/s2-dev024-01.md) · [Rapor](phases/S2-DEV024-01.md).
+
 [Analiz raporu](phases/ANALYSIS-20261115-01.md) · [42 paketlik plan](tasks/analysis-20261115-01.md) · [Kaynak manifesti](sources/2026-11-15/planning-manifest.json) · [Canonical kayıt](project-status.json)
 
 ---

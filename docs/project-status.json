@@ -15375,5 +15375,52 @@
       "audit history listing of new entity types"
     ],
     "publication": "Local commits only; no push/PR"
+  },
+  "s2_dev024_01": {
+    "task_id": "S2-DEV024-01",
+    "canonical": "DEV-024 / T-S2-005",
+    "date": "2026-11-18",
+    "status": "LOCALLY_VERIFIED_NOT_ACCEPTED",
+    "accepted": false,
+    "accepted_sp_added": 0,
+    "branch": "feature/s2-dev024-critical-state-20261118",
+    "base": "2d9a66e",
+    "stacked_on": "feature/s2-dev020-vessel-profile-20261118 (PR #19)",
+    "task": "docs/tasks/s2-dev024-01.md",
+    "report": "docs/phases/S2-DEV024-01.md",
+    "migration": null,
+    "delivered": [
+      "Shared CriticalStateExplanation (source/revision/time, reason codes, DEV-020 freshness, resolution-typed blockers)",
+      "GET /api/v1/vessels/{id}/critical-states with optional key filter",
+      "Server-side STATE_ONLY redaction; applicability omitted without review gate; VISIBLE_ONLY scope",
+      "CriticalStateRead security events and live access fence",
+      "Reusable CriticalStateExplanationView and CriticalStatesPanel on profile and onboarding review; 17 catalogs"
+    ],
+    "verification": {
+      "build": "PASS 0 warnings",
+      "domain": "795/795",
+      "domain_dev024": "9/9",
+      "api_dev024": "5/5",
+      "api_dev020": "9/9",
+      "api_diagnostics_openapi": "6/6",
+      "api_s1_scope": "5/5",
+      "api_onboarding_passport": "14/14",
+      "persistence_security_event": "7/7",
+      "frontend_typecheck_lint_build": "PASS",
+      "vitest_new": "7/7",
+      "vitest_affected_12_files": "227/227",
+      "vitest_full": "1721/1723 (2 x 5s timeout under load; both pass with 30s timeout)",
+      "playwright_onboarding_mocked": "4/4",
+      "full_api_suite": "NOT_RUN",
+      "independent_qa": "PENDING",
+      "required_ci": "PENDING"
+    },
+    "open": [
+      "54.02 exact fleet.revision.body.read action",
+      "60.03 WhyNode tree/capacity",
+      "DEV-023 Why/Today consumption",
+      "Locale expert review of 15 additional catalogs",
+      "i18n all-locale test timing under load"
+    ]
   }
 }
