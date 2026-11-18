@@ -39,8 +39,9 @@ for (const width of [390, 1440])
                 // DEV-024: server-redacted entries (existence only) for a reader without the owning detail.
                 const asOf = '2026-11-04T08:00:00Z';
                 await route.fulfill({ json: { vesselId: complianceVessel, readAt: asOf, scope: 'VISIBLE_ONLY', states: [
+                    // DEV024-DEC-02: a state-only reader never sees UNKNOWN; the server collapses it into REVIEW_REQUIRED.
                     { key: 'vessel.onboarding', subjectId: complianceVessel, state: 'REVIEW_REQUIRED', disclosure: 'STATE_ONLY', asOf },
-                    { key: 'vessel.profile.freshness', subjectId: complianceVessel, state: 'UNKNOWN', disclosure: 'STATE_ONLY', asOf }] } });
+                    { key: 'vessel.profile.freshness', subjectId: complianceVessel, state: 'REVIEW_REQUIRED', disclosure: 'STATE_ONLY', asOf }] } });
                 return;
             }
             if (path.endsWith('/compliance-onboarding')) {
@@ -72,7 +73,7 @@ for (const width of [390, 1440])
         await expect(wizard.getByRole('button', { name: 'Submit for review', exact: true })).toBeDisabled();
         const critical = wizard.getByRole('region', { name: 'Critical states and their sources', exact: true });
         await expect(critical.getByRole('article', { name: 'Onboarding readiness', exact: true })).toContainText('Details are restricted for your access');
-        await expect(critical.getByRole('article', { name: 'Profile freshness', exact: true })).toContainText('Unknown');
+        await expect(critical.getByRole('article', { name: 'Profile freshness', exact: true })).toContainText('Review required');
         await expect(critical.getByRole('link')).toHaveCount(0);
         await expect(critical.getByText('Ready', { exact: true })).toHaveCount(0);
         expect(writes).toBe(0);
