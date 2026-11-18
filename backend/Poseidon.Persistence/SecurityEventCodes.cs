@@ -26,7 +26,7 @@ public static class SecurityEventCodes
         "ProfileRead", "ProfileSave", "RegisterHistory", "RegisterList",
         "RegisterRead", "RegisterSave", "RegulatoryQualification", "RegulatoryQualificationRead",
         "RegulatorySourceBytesRead", "RuleCapabilities", "RulesRead", "Session",
-        "TodayRead", "TodayWhyRead", "TugRead", "TugSave",
+        "TodayRead", "TodayWhyRead", "MetricCatalogRead", "MetricScalarRead", "TugRead", "TugSave",
         "VesselCreate", "VesselUpdate", "VesselsRead", "WorkspaceRead",
         "WorkspaceSearch", "SystemHealthRead", "NotificationRead", "NotificationCommand", "ComplianceWorkspaceRead", "DailyOfflineRead", "DailyOfflineRequest", "DailyOperationsRead", "DailyOperationsCommand", "DailyReviewRead", "DailyReviewCommand", "ShipOperationsRead", "ShipOperationsCommand",
         "ControlledDocument", "ControlledDocumentRead", "ControlledDocumentCommand", "ControlledDocumentReplay",
@@ -72,6 +72,7 @@ public static class SecurityEventCodes
         "outside_effective_dates", "superseding_rule_required",
         "legal_hold_active", "legal_hold_not_active", "retention_not_elapsed", "retention_unconfigured", "intake_not_released",
         "document_disposed", "document_disposal_pending", "precondition_required",
+        "invalid_metric_query", "invalid_metric_scope", "metric_not_found",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static bool Allows(string action, string result) => Actions.Contains(action) && Results.Contains(result);
 }

@@ -36,6 +36,10 @@ public static class WorkspaceEndpoints
             ? [new("today", "/app/today"), new("companies", "/app/companies"), new("fleet", "/app/fleet")]
             : [new("today", "/app/today"), new("fleet", "/app/fleet")];
 
+    private static readonly string[] SearchQueryKeys = ["q", "offset", "limit"];
+    internal static bool SearchQueryClosed(IQueryCollection query) =>
+        query.All(p => SearchQueryKeys.Contains(p.Key, StringComparer.OrdinalIgnoreCase) && p.Value.Count == 1);
+
     public static void MapWorkspace(this IEndpointRouteBuilder app)
     {
         app.MapWorkspaceContext();
@@ -43,9 +47,16 @@ public static class WorkspaceEndpoints
         app.MapGet("/api/v1/workspace", async (HttpContext http, ActorResolver actors, SecurityAudit audit) =>
         {
             var actor = actors.Resolve(http.User)!;
+            http.Response.Headers.CacheControl = "no-store";
+            // DEV-022: the menu projection has no selector; a client tenant/role/vessel hint is rejected.
+            if (http.Request.Query.Count != 0)
+            {
+                await audit.WriteAsync(http, "WorkspaceRead", "Invalid");
+                return Results.BadRequest(new { code = "invalid_request" });
+            }
             await audit.WriteAsync(http, "WorkspaceRead", "Success");
-            return TypedResults.Ok(new WorkspaceDto(Destinations(actor), actor.CanSearch, actor.CanWriteRegulatory));
-        }).RequireAuthorization("DirectoryRead").WithName("GetWorkspace").Produces(401).Produces(403).Produces(503);
+            return Results.Ok(new WorkspaceDto(Destinations(actor), actor.CanSearch, actor.CanWriteRegulatory));
+        }).RequireAuthorization("DirectoryRead").WithName("GetWorkspace").Produces<WorkspaceDto>().Produces(400).Produces(401).Produces(403).Produces(503);
 
         app.MapGet("/api/v1/workspace/search", async (HttpContext http, ActorResolver actors, PoseidonDbContext db, SecurityAudit audit, string? q, int? offset, int? limit) =>
         {
@@ -55,20 +66,31 @@ public static class WorkspaceEndpoints
                 await audit.WriteAsync(http, "WorkspaceSearch", "Denied");
                 return Results.StatusCode(403);
             }
-            if (q is { Length: > 100 } || q?.Any(char.IsControl) == true || offset is < 0 or > 100000 || limit is < 1 or > 25)
+            // DEV-022: closed query union (65.03 paragraph 170; 54.02 IAM_READ_V1 paragraph 13347 "unknown filter 400"). A tenant, vessel,
+            // role, mode or permission selector is never an authority input and is rejected, not ignored.
+            if (!SearchQueryClosed(http.Request.Query) || q is { Length: > 100 } || q?.Any(char.IsControl) == true || offset is < 0 or > 100000 || limit is < 1 or > 25)
             {
                 await audit.WriteAsync(http, "WorkspaceSearch", "Invalid");
                 return Results.BadRequest(new { code = "invalid_search" });
             }
             var search = q?.Trim() ?? "";
+            var folded = search.ToLowerInvariant();
             var skip = offset ?? 0;
             var take = limit ?? 25;
             // Stable ordinal destination order, followed by Code/Id vessel order. No total count.
-            var destinations = Destinations(actor).Where(x => search == "" || x.Key.Contains(search, StringComparison.OrdinalIgnoreCase))
+            // Destinations are matched in memory AFTER the scope projection (Destinations(actor)), by route
+            // key or TR/EN display label with Turkish-aware folding; a hidden destination's label never
+            // participates, so it is indistinguishable from no match.
+            var needle = WorkspaceDestinationLabels.Fold(search);
+            var destinations = Destinations(actor).Where(x => search == "" || WorkspaceDestinationLabels.Matches(x.Key, needle))
                 .Select(x => new SearchItemDto(x.Key, x.Href, x.Key, "Destination")).ToArray();
             var vesselSkip = Math.Max(0, skip - destinations.Length);
+            // Scope is applied before matching and pagination, so hidden vessels never influence
+            // matches, ordering, hasMore or the page boundary. Matching is case-insensitive via SQL
+            // lower(); known limitation: lower() follows the database collation/ctype, so Turkish
+            // dotted/dotless I and diacritics are not folded for vessel code/name (destinations are).
             var rows = await actor.Scope(db.Vessels.AsNoTracking())
-                .Where(x => search == "" || x.Code.Contains(search) || x.Name.Contains(search))
+                .Where(x => folded == "" || x.Code.ToLower().Contains(folded) || x.Name.ToLower().Contains(folded))
                 .OrderBy(x => x.Code).ThenBy(x => x.Id).Skip(vesselSkip).Take(take + 1)
                 .Select(x => new { x.Id, x.Code, x.Name, x.Kind }).ToArrayAsync(http.RequestAborted);
             var candidates = new List<SearchItemDto>();
