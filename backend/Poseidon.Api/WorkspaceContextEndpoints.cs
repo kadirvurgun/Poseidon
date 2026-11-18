@@ -76,7 +76,9 @@ public static class WorkspaceContextEndpoints
         if (vessel != null) {
             var row = await actor.Scope(db.Vessels.AsNoTracking()).SingleOrDefaultAsync(x => x.Id == vessel, h.RequestAborted);
             if (row == null) {
-                await audit.WriteAsync(h, "WorkspaceRead", "NotFound");
+                // DEV-021: a denied context switch is attributable to the attempted target
+                // (server-generated audit only; the response still reveals nothing about it).
+                await audit.WriteAsync(h, "WorkspaceRead", "NotFound", resourceId: vessel);
                 return Results.NotFound(new { code = "resource_not_found" });
             }
             context = new(row.Id, row.CompanyId, row.Code, row.Name, row.Kind.ToString(), row.Version, actor.CanEditVessel(row.Id));
