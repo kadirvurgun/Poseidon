@@ -9,13 +9,25 @@ Güncelleme: 2026-11-18 akşam (Claude Opus 5.5)
 - PR #17 (continuation + 17 dil i18n + 15.11 analizleri + tema temeli + entegrasyon düzeltmeleri) birleşti: `b61dbef`. Push ve PR CI koşularında 4/4 iş yeşil (API/PG dahil).
 - Secret scan: 10 bulgu bağımsız incelendi, `docs/security/files-source-exceptions.json` 178 kayıt, repo değişkeni `POSEIDON_SOURCE_REVIEW_SHA256` 178 pin.
 
-## Açık işler ve sahipleri
+## Açık işler ve sahipleri (18.11 gece)
+Main: PR #16, #17, #18 (tema oluşturucu) birleşti (`d7479d6`).
+
 | Paket | Dal / PR | Durum |
 |---|---|---|
-| THEME-BUILDER-01 | `feature/theme-builder-20261118` / PR #18 (taban main) | Yerelde 1705/1705 vitest, lint/typecheck/build geçti; CI bekleniyor, yeşilse birleştir. |
-| DEV-020 / T-S2-001 gemi profili provenance/freshness | `feature/s2-dev020-vessel-profile-20261118` (worktree `.runtime/worktrees/s2-dev020-20261118`) | Geliştirme sürüyor (interaktif oturum alt-ajanı). |
-| DEV-021 / T-S2-002 aktif gemi/rol, yetkili geçiş, dirty form | `feature/s2-dev021-context-switch-20261118` (worktree `.runtime/worktrees/s2-dev021-20261118`) | Geliştirme sürüyor. |
+| DEV-020 gemi profili provenance/freshness | `feature/s2-dev020-vessel-profile-20261118` / PR #19 | QA PASS-WITH-NOTES düzeltildi; CI browser smoke `profile-repair.spec.ts` eski mock → düzeltiliyor |
+| DEV-021 bağlam geçişi | `feature/s2-dev021-context-switch-20261118` / PR #20 | QA düzeltildi, CI bekleniyor |
+| DEV-022 role menü/arama | `feature/s2-dev022-role-menu-20261118` / PR #21 (taban #20) | QA PASS-WITH-NOTES; etiketle arama düzeltmesi yapılıyor |
+| DEV-023 Today/Why | `feature/s2-dev023-today-why-20261118` | geliştiriliyor |
+| DEV-024 kritik durum | `feature/s2-dev024-critical-state-20261118` (taban DEV-020) | geliştiriliyor |
+| DEV-025 erişilebilirlik | `feature/s2-dev025-accessibility-20261118` (taban DEV-022) | geliştiriliyor |
+| PLAN-1511-5601 kapsam haritası | PR #22 | CI bekleniyor; lider kararları LEAD-5601-D01..D05 |
+| PLAN-1511-5803 endpoint profilleri | `feature/plan-5803-endpoint-profiles-20261118` | geliştiriliyor |
+| PLAN-1511-5402 action scope | `feature/plan-5402-action-scope-20261118` | geliştiriliyor |
+| PLAN-1511-5202 üyelik | `feature/plan-5202-membership-20261118` | geliştiriliyor |
+| PLAN-1511-5802 belge/kanıt | `feature/plan-5802-document-evidence-20261118` | geliştiriliyor |
+| PLAN-1511-5501-SLICE metrik sözleşmesi | `feature/plan-5501-metric-contract-20261118` | geliştiriliyor |
 
+Birleştirme sırası: #22 → #19 → #20 → #21 (taban main'e çevir) → DEV-024/025 (tabanları birleşince main'e) → 5803/5402/5202/5802/5501 (her biri main ile birleştirilip CI + bağımsız QA).
 ## Sıradaki iş (sıra)
 1. Yukarıdaki PR'ların CI'sını izle; kırmızıysa AGENTS.md CI protokolü (teşhis → tek push → bekle; durma limiti).
 2. DEV-022 / T-S2-003 role-first menü + yetkili arama (gizli menü/sayı sızıntısı yok) — 54.02, 61.03, 65.03.
