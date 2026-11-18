@@ -4,6 +4,7 @@ import hashlib
 import json
 from pathlib import Path
 import re
+from pinned_baseline import pinned_manifest
 from source_contracts import SourceRecords
 
 SHA = re.compile(r"\A[a-f0-9]{64}\Z")
@@ -101,10 +102,9 @@ def validate(package, root):
         return rejected("schema_version")
     try:
         root = root.resolve()
-        active = json.loads((root / "docs/sources/active.json").read_text(encoding="utf-8"))
-        manifest_path = (root / active["manifest"]).resolve()
-        if (active["baseline_id"] != BASELINE or active["source_root"] != "analiz/POSEIDON GUNCEL 30.10.2026" or
-                not manifest_path.is_relative_to(root) or manifest_path.stat().st_size > 2 * 1024 * 1024):
+        manifest_name = pinned_manifest(root, BASELINE, source_root="analiz/POSEIDON GUNCEL 30.10.2026")
+        manifest_path = (root / manifest_name).resolve()
+        if not manifest_path.is_relative_to(root) or manifest_path.stat().st_size > 2 * 1024 * 1024:
             return rejected("source_baseline")
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
         if manifest["baseline_id"] != BASELINE or set(package.get("sources", {})) != set(SOURCE_DOCUMENTS):

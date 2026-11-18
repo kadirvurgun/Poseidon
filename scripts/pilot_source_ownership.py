@@ -9,6 +9,7 @@ import hashlib
 import json
 from pathlib import Path
 
+from pinned_baseline import pinned_manifest
 from source_contracts import SourceRecords
 
 BASELINE = "poseidon-v46.3-20261030"
@@ -69,8 +70,9 @@ def validate(plan, root):
         errors.add("source_pins"); return result()
     root = root.resolve()
     try:
-        active = json.loads((root / "docs/sources/active.json").read_text(encoding="utf-8"))
-        if active["baseline_id"] != BASELINE or active["source_root"] != PREFIX.rstrip("/"):
+        try:
+            pinned_manifest(root, BASELINE, source_root=PREFIX.rstrip("/"))
+        except ValueError:  # includes PinnedBaselineError and a malformed prior manifest
             errors.add("active_baseline")
         for source in SOURCES.values():
             path = (root / source["path"]).resolve()

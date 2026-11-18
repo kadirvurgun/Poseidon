@@ -14,6 +14,7 @@ import re
 import subprocess
 import tempfile
 
+from pinned_baseline import PinnedBaselineError, pinned_manifest
 from source_contracts import SourceRecords
 from task_contracts import CHECKS, IMPACTS, validate as validate_task_definitions
 
@@ -87,9 +88,11 @@ def source_scope(policy, root):
     if policy.get("schemaVersion") != "poseidon.s0-policy.v1" or policy.get("baseline") != "poseidon-v46.3-20261030":
         raise ValueError("policy_identity")
     active = read_json(root / "docs/sources/active.json", 65536)[1]
-    if active.get("baseline_id") != policy["baseline"]:
-        raise ValueError("inactive_source_baseline")
-    manifest = read_json(safe_path(root, active["manifest"]), 1024 * 1024)[1]
+    try:
+        manifest_name = pinned_manifest(root, policy["baseline"], limit=1024 * 1024, active=active)
+    except (PinnedBaselineError, OSError, UnicodeDecodeError):
+        raise ValueError("inactive_source_baseline") from None
+    manifest = read_json(safe_path(root, manifest_name), 1024 * 1024)[1]
     if manifest.get("baseline_id") != policy["baseline"]:
         raise ValueError("source_manifest_identity")
     manifest_files = {item["source_path"]: item["sha256"] for item in manifest["files"]}
