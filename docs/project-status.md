@@ -18,6 +18,8 @@ Yeni plan; exact API profilleri ve kalıcı retry, IAM Rev4 action/epoch, tek Le
 
 **18.11.2026 — katalog persistence:** Boş/kısmi Fleet katalog taslağı, immutable revizyon/komut sonucu, tenant/prior FK, serializable audit ve replay katmanı yazıldı. Opsiyonel fixture boş ve doğrulanmamış kalır; normal seed/startup değişmedi. 6 domain metodu /9 senaryo ve10 PostgreSQL integration metodu yazıldı; çalıştırılmadı. Migration designer/snapshot uzlaştırması, gerçek PostgreSQL doğrulaması ve yetkili host/source governance açık. Yeni kabul puanı yok. [Görev](tasks/s2-fleet-catalog-draft-01.md) · [Rapor](phases/S2-FLEET-CATALOG-DRAFT-01.md).
 
+**18.11.2026 — PLAN-1511-5201-01 (52.01 temeli):** LEAD-5601-D01 uygulandı: mevcut `Company` kaydı ikinci tablo açılmadan 52.01 LegalEntity'ye genişletildi (eski şirketler Draft, bilinmeyen değerler boş). Tek Person master (`crew.Persons`), tipli/tarihli tanımlayıcı ve roller, alan/kaynak revizyonları, employment, planlanan atama ve plandan ayrı fiilî olaylar; ücret/bordro alanı yok. 13 audited HR komutu + 9 okuma, OpenAPI ve 17 katalogda salt okunur şirket özeti. Hedefli testler gerçekten koştu ve geçti: domain 13/13, PG persistence 7/7, HR API 2/2, S1 kapsam/yetki 6/6, Diagnostics/Serializable/mimari 10/10, PostgresSeed+ModelParity 13/13 (seed sayımı 103→113), frontend 30/30 + typecheck/lint. Tam suite, Playwright, CI ve bağımsız QA koşmadı; accepted SP +0. Dal `feature/plan-5201-legal-entity-20261118`. [Görev](tasks/plan-1511-5201-01.md) · [Rapor](phases/PLAN-1511-5201-01.md).
+
 [Analiz raporu](phases/ANALYSIS-20261115-01.md) · [42 paketlik plan](tasks/analysis-20261115-01.md) · [Kaynak manifesti](sources/2026-11-15/planning-manifest.json) · [Canonical kayıt](project-status.json)
 
 ---

@@ -4002,7 +4002,8 @@
     "docs/phases/S1-FOUNDATION-20261103.md",
     "docs/phases/TECHNICAL-COMMAND-OWNER-RECOVERY-20261111.md",
     "docs/phases/MAINTENANCE-OBSERVATION-RECOVERY-20261112.md",
-    "docs/phases/OBSERVATION-SIGNED-FIXTURE-20261112.md"
+    "docs/phases/OBSERVATION-SIGNED-FIXTURE-20261112.md",
+    "docs/phases/PLAN-1511-5201-01.md"
   ],
   "active_source": "docs/sources/active.json",
   "current_package": {
@@ -15325,5 +15326,43 @@
       "source_receipts": 122,
       "limitations": "732 zero-node/unsupported inputs; HTML skipped above5000 nodes; no full semantic document review"
     }
+  },
+  "plan_1511_5201_01": {
+    "task_id": "PLAN-1511-5201-01",
+    "date": "2026-11-18",
+    "status": "LOCALLY_VALIDATED_SUBPACKAGE_NOT_ACCEPTED",
+    "accepted": false,
+    "accepted_sp_added": 0,
+    "phase": "S2 wave 2 PLAN-1511-5201 foundation: LegalEntity (Company), single Person master, employment, planned assignment, actual facts",
+    "branch": "feature/plan-5201-legal-entity-20261118",
+    "base_commit": "d237f8a",
+    "task": "docs/tasks/plan-1511-5201-01.md",
+    "report": "docs/phases/PLAN-1511-5201-01.md",
+    "decisions": [
+      "LEAD-5601-D01 applied: Company extended in place, no second company table",
+      "Single Person master: crew.Persons extended",
+      "P5201-D01..D11 in task doc"
+    ],
+    "migration": "20261118185332_Hr5201LegalEntityFoundation (EF-generated + exclusion constraints and append-only triggers); has-pending-model-changes clean",
+    "api": "13 audited HR commands + 9 no-store reads under /api/v1/hr; S1 scope 128/120/130; OpenAPI additive (18 paths, 25 schemas)",
+    "verification": {
+      "domain": "13/13 passed",
+      "persistence_hr": "7/7 passed",
+      "api_hr": "2/2 passed",
+      "s1_scope_and_authorization": "6/6 passed",
+      "diagnostics_serializable_architecture": "10/10 passed",
+      "postgres_seed_and_model_parity": "13/13 passed after seed count update",
+      "frontend_targeted": "30/30 vitest, tsc 0 errors, eslint 0 on changed files",
+      "not_run": "full backend/frontend suites, Playwright, CI, independent QA"
+    },
+    "open": [
+      "org structure (holding/workplace/department/slot/OrgAssignment)",
+      "contracts, leave, shift roster/AttendanceSession, transfer, secondment",
+      "58.04 DutyLedger adapter",
+      "controlled country catalog",
+      "Self actual origin and company-scoped HR grants (52.02/54.02)",
+      "HR3 read profile",
+      "endpoint profile registration after PR #25"
+    ]
   }
 }
