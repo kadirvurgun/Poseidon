@@ -80,7 +80,7 @@
 .enterprise-shell .enterprise-topbar .languages button[aria-pressed="true"] { color: var(--primary); background: var(--card); box-shadow: 0 1px 3px #17263c12; }
 .enterprise-topbar .workspace-global-context { flex: 1 0 100%; margin: 0; min-height: 32px; padding: 5px 0 9px; border: 0; border-radius: 0; gap: 8px 18px; background: transparent; color: var(--muted-foreground); font-size: 10px; }
 .enterprise-topbar .workspace-global-context .context-workspace { color: var(--muted-foreground); font-weight: 550; }
-.enterprise-topbar .workspace-global-context .context-connection { margin-inline-start: auto; color: #3f717c; font-size: 10px; }
+.enterprise-topbar .workspace-global-context .context-connection { margin-inline-start: auto; color: var(--muted-foreground); font-size: 10px; }
 .enterprise-topbar .workspace-global-context .context-connection::before { content: ''; display: inline-block; width: 5px; height: 5px; margin-inline-end: 5px; border-radius: 50%; background: currentColor; }
 .enterprise-topbar .workspace-global-context .context-connection::before { display:none; }
 .workspace-global-context .context-connection,.workspace-global-context .context-switch-trigger { display:inline-flex; align-items:center; gap:6px; }
@@ -240,5 +240,9 @@
   .enterprise-shell .directory-search > select { margin: 0; }
   .enterprise-shell .enterprise-vessel-grid { grid-template-columns: minmax(0, 1fr); }
 }
+/* DEV-025: sticky top bar never covers focus (65.03 paragraph 90, UX-013); on a short viewport
+   (e.g. 200%/400% zoom) it scrolls with the page instead of occupying most of the screen. */
+html { scroll-padding-top: calc(var(--shell-sticky-offset, 0px) + 8px); }
+@media (max-height: 31.25rem) { .enterprise-shell .enterprise-topbar { position: relative; backdrop-filter: none; } }
 @media (pointer: coarse) { .enterprise-shell button, .enterprise-shell [data-slot="button"], .enterprise-shell select, .enterprise-shell input { min-height: 44px; } }
 @media (prefers-reduced-motion: reduce) { .enterprise-shell *, .enterprise-shell *::before, .enterprise-shell *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }
