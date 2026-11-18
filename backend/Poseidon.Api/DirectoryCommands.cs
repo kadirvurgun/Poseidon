@@ -121,13 +121,21 @@ public static class DirectoryCommands
             JsonSerializer.Serialize(new { action, id, code, name, kind, companyId, version }))));
         var db = http.RequestServices.GetRequiredService<PoseidonDbContext>();
         Company? targetCompany = null; Vessel? targetVessel = null;
+        Poseidon.Domain.ExactAccessRequest? vesselAccess = null; Poseidon.Domain.ExactAccessDecision? vesselDecision = null;
         // Fresh object authorization precedes receipt reads, including retries after revocation.
         if (update)
         {
             if (company) targetCompany = await db.Companies.SingleOrDefaultAsync(x => x.Id == id, http.RequestAborted);
             else targetVessel = await actor.Scope(db.Vessels).SingleOrDefaultAsync(x => x.Id == id, http.RequestAborted);
             if (targetCompany == null && targetVessel == null) return await Fail(404, "resource_not_found");
-            if (!company && !actor.CanEditVessel(id!.Value)) return await Fail(403, "permission_denied");
+            if (!company)
+            {
+                // PLAN-1511-5402: exact action derived equal to the former CanEditVessel(id) predicate.
+                vesselAccess = new(Poseidon.Domain.ExactActionCatalog.VesselDirectoryUpdate,
+                    Poseidon.Domain.ExactActionCatalog.PurposeDirectoryMaintenance, targetVessel!.TenantId, id!.Value);
+                vesselDecision = ExactActionAccess.Evaluate(actor, vesselAccess);
+                if (!vesselDecision.Allowed) return await Fail(403, "permission_denied");
+            }
         }
         if (!company && !update && !await db.Companies.AnyAsync(x => x.Id == companyId, http.RequestAborted))
             return await Fail(404, "resource_not_found");
@@ -187,6 +195,13 @@ public static class DirectoryCommands
             db.CommandReceipts.Add(new CommandReceipt { TenantId = actor.TenantId, ActorId = actor.Id, Key = key, Action = action,
                 Fingerprint = fingerprint, ResourceId = resource, CommittedAt = DateTimeOffset.UtcNow });
             await db.SaveChangesAsync(http.RequestAborted);
+            // Commit-time revalidation (54.02 A03-007 step 8) for the migrated vessel update.
+            if (vesselDecision != null && !ExactActionAccess.RevalidateBeforeCommit(http, vesselDecision, vesselAccess!, actor.Id).Allowed)
+            {
+                // An outer import transaction owns rollback of the whole batch on a non-success row.
+                if (transaction != null) { await transaction.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear(); }
+                return await Fail(403, "permission_denied");
+            }
             if (transaction != null) await transaction.CommitAsync(http.RequestAborted);
             // No independent HTTP Success before commit, and no fallible audit write after commit.
             return company ? Results.Ok(new CompanyDto(resource, code, name, targetCompany!.Version, actor.CanManage)) :
