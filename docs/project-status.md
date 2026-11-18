@@ -18,6 +18,8 @@ Yeni plan; exact API profilleri ve kalıcı retry, IAM Rev4 action/epoch, tek Le
 
 **18.11.2026 — katalog persistence:** Boş/kısmi Fleet katalog taslağı, immutable revizyon/komut sonucu, tenant/prior FK, serializable audit ve replay katmanı yazıldı. Opsiyonel fixture boş ve doğrulanmamış kalır; normal seed/startup değişmedi. 6 domain metodu /9 senaryo ve10 PostgreSQL integration metodu yazıldı; çalıştırılmadı. Migration designer/snapshot uzlaştırması, gerçek PostgreSQL doğrulaması ve yetkili host/source governance açık. Yeni kabul puanı yok. [Görev](tasks/s2-fleet-catalog-draft-01.md) · [Rapor](phases/S2-FLEET-CATALOG-DRAFT-01.md).
 
+**18.11.2026 — DEV-020 alan provenance/tazelik (S2-DEV020-01):** Profil alan değer sürümü (immutable revizyondan türetilir), append-only audited alan kaynak beyanı, sunucu hesaplı nedenli tazelik (onaylı politika yokken UNKNOWN) ve TR/EN profil paneli. Migration `20261118170000_VesselProfileFieldSources`. Yerel gerçek sonuçlar: build 0 uyarı; domain 786/786; persistence unit 75/75, integration 95/95; API yeni 8/8, profil filtresi 52/52, S1 6/6, Diagnostics 6/6; vitest yeni 8/8, etkilenen 297/297; lint/typecheck/build geçti. Tam API suite/Playwright/QA/CI yapılmadı; accepted SP +0. [Görev](tasks/s2-dev020-01.md) · [Rapor](phases/S2-DEV020-01.md).
+
 [Analiz raporu](phases/ANALYSIS-20261115-01.md) · [42 paketlik plan](tasks/analysis-20261115-01.md) · [Kaynak manifesti](sources/2026-11-15/planning-manifest.json) · [Canonical kayıt](project-status.json)
 
 ---
