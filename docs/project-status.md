@@ -18,6 +18,8 @@ Yeni plan; exact API profilleri ve kalıcı retry, IAM Rev4 action/epoch, tek Le
 
 **18.11.2026 — katalog persistence:** Boş/kısmi Fleet katalog taslağı, immutable revizyon/komut sonucu, tenant/prior FK, serializable audit ve replay katmanı yazıldı. Opsiyonel fixture boş ve doğrulanmamış kalır; normal seed/startup değişmedi. 6 domain metodu /9 senaryo ve10 PostgreSQL integration metodu yazıldı; çalıştırılmadı. Migration designer/snapshot uzlaştırması, gerçek PostgreSQL doğrulaması ve yetkili host/source governance açık. Yeni kabul puanı yok. [Görev](tasks/s2-fleet-catalog-draft-01.md) · [Rapor](phases/S2-FLEET-CATALOG-DRAFT-01.md).
 
+**18.11.2026 — PLAN-1511-5501-SLICE-01 metrik/scalar sözleşmesi (LEAD-5601-D02):** 55.01 metrik sicili (kimlik, sürüm, sahip, birim, kaynak projection, küçük grup eşiği, tazelik kuralı, izinli kitle/eylem), `contracts/metrics.v1.json` ve `GET /api/v1/metrics/definitions|scalar` yazıldı. Scalar yalnız aktörün o an okuyabildiği kayıtlar üzerinden hesaplanır; eksik/gizli kaynak UNKNOWN/PARTIAL, küçük grup ve tamamlayıcı hücre SUPPRESSED döner, sıfır uydurulmaz. 3 referans scalar (onboarding review/UNKNOWN alan, beyan edilmiş mürettebat kişi sayısı) ve tipli frontend istemcisi. Hedefli testler gerçekten koşturuldu: domain 8/8, API gerçek PG 5/5, Diagnostics 6/6, S1 envanter 1/1, frontend istemci 3/3, typecheck/lint exit 0. Tam suite/CI/bağımsız QA **DEFERRED**; accepted SP +0. [Görev](tasks/plan-1511-5501-slice-01.md) · [Rapor](phases/PLAN-1511-5501-SLICE-01.md).
+
 [Analiz raporu](phases/ANALYSIS-20261115-01.md) · [42 paketlik plan](tasks/analysis-20261115-01.md) · [Kaynak manifesti](sources/2026-11-15/planning-manifest.json) · [Canonical kayıt](project-status.json)
 
 ---
