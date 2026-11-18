@@ -30,3 +30,7 @@ Kararlar ve sapmalar:
 Açık: gerçek tarayıcıda görsel/AT/320px ve ilk boyama flash ölçümü, domain CSS sabit renkleri ve ECharts serilerinin chart tokenlarını tüketmesi (THEME-FOUNDATION-01'den devralınan), bağımsız QA ve CI.
 
 [Faz raporu](../phases/THEME-BUILDER-01.md) · [Tema temeli](theme-foundation-01.md)
+
+## Bağımsız QA (18.11.2026) ve düzeltme
+
+PR #18 bağımsız QA: PASS-WITH-NOTES, blocker yok. Should-fix uygulandı: kontrast denetimine `muted-foreground`/`muted` ve `primary`/`background` (primary link metni olarak da kullanılıyor) çiftleri eklendi. Açık modda muted metin *-600 tonuna (4.34–4.41:1 → ≥4.5:1), koyu modda primary 500 (yetmezse 300) tonuna alındı; varsayılan `design-system.css` aynı değerlere eşitlendi. Notlar (tamper edilmiş v2 kaydında `v` alanı, gamut clipping basitleştirmesi, arka planın `inert` yapılması, tabindex=-1 önizleme düğmeleri) takip işi olarak açık.

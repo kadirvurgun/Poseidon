@@ -57,11 +57,16 @@ export const builderTokenNames = [
 ] as const
 export const protectedSemanticTokens = ['destructive', 'warning', 'warning-surface', 'warning-border', 'danger-text', 'danger-surface', 'danger-border', 'info-text', 'info-surface', 'info-border', 'focus-ring'] as const
 
+// Tailwind v4 *-600 neutrals: light muted text needs >= 4.5:1 on the muted surface (s500 measured 4.34-4.41:1).
+const neutral600: Record<BaseColor, string> = {
+  stone: '0.444 0.011 73.639', zinc: '0.442 0.017 285.786', neutral: '0.439 0 0', slate: '0.446 0.043 257.281', gray: '0.446 0.03 256.802',
+}
+
 export function baseTokens(base: BaseColor, mode: TokenMode): Record<string, string> {
   const [s50, s100, s200, s400, s500, s800, s900, s950] = neutralScales[base].map(oklch)
   if (mode === 'light') return {
     background: oklch('1 0 0'), foreground: s950, card: oklch('1 0 0'), 'card-foreground': s950, popover: oklch('1 0 0'), 'popover-foreground': s950,
-    secondary: s100, 'secondary-foreground': s900, muted: s100, 'muted-foreground': s500, accent: s100, 'accent-foreground': s900,
+    secondary: s100, 'secondary-foreground': s900, muted: s100, 'muted-foreground': oklch(neutral600[base]), accent: s100, 'accent-foreground': s900,
     border: s200, input: s200, ring: s400, sidebar: s50, 'sidebar-foreground': s950, 'sidebar-accent': s100,
     'sidebar-accent-foreground': s900, 'sidebar-border': s200, 'sidebar-ring': s400,
   }
@@ -74,10 +79,13 @@ export function baseTokens(base: BaseColor, mode: TokenMode): Record<string, str
 }
 
 export function accentTokens(accent: AccentColor, mode: TokenMode): Record<string, string> {
-  const [a50, , a500, , a700, a800, a950] = accentScales[accent].map(oklch)
+  const [a50, a300, a500, , a700, , a950] = accentScales[accent].map(oklch)
+  // Primary is also used as text/link colour on the page background. In dark mode take the first
+  // tone (500, then 300) that keeps >= 4.5:1 on every base's dark background (accent CSS is base-independent).
+  const darkPrimary = [a500, a300].find(tone => baseColors.every(base => (contrastRatio(tone, oklch(neutralScales[base][7])) ?? 0) >= textContrastFloor)) ?? a300
   const raw = mode === 'light'
     ? { primary: a700, 'primary-foreground': a50, 'sidebar-primary': a700, 'sidebar-primary-foreground': a50 }
-    : { primary: a800, 'primary-foreground': a50, 'sidebar-primary': a500, 'sidebar-primary-foreground': a950 }
+    : { primary: darkPrimary, 'primary-foreground': a950, 'sidebar-primary': a500, 'sidebar-primary-foreground': a950 }
   // Foregrounds are auto-picked when the default fails 4.5:1 (THEME-BUILDER-CONTRAST).
   const candidates = [a50, a950, oklch('1 0 0'), oklch('0 0 0')]
   return {
@@ -92,7 +100,7 @@ export function autoAdjustedForegrounds(accent: AccentColor): ReadonlyArray<Read
   const [a50, , , , , , a950] = accentScales[accent].map(oklch)
   const defaultsByMode: Record<TokenMode, Record<string, string>> = {
     light: { 'primary-foreground': a50, 'sidebar-primary-foreground': a50 },
-    dark: { 'primary-foreground': a50, 'sidebar-primary-foreground': a950 },
+    dark: { 'primary-foreground': a950, 'sidebar-primary-foreground': a950 },
   }
   return (['light', 'dark'] as const).flatMap(mode => {
     const resolved = accentTokens(accent, mode)
@@ -193,7 +201,8 @@ function pickForeground(background: string, preferred: string, candidates: reado
 export const contrastPairs = [
   ['primary-foreground', 'primary'], ['foreground', 'background'], ['card-foreground', 'card'],
   ['popover-foreground', 'popover'], ['secondary-foreground', 'secondary'], ['accent-foreground', 'accent'],
-  ['muted-foreground', 'background'], ['sidebar-foreground', 'sidebar'], ['sidebar-primary-foreground', 'sidebar-primary'],
+  ['muted-foreground', 'background'], ['muted-foreground', 'muted'], ['primary', 'background'],
+  ['sidebar-foreground', 'sidebar'], ['sidebar-primary-foreground', 'sidebar-primary'],
 ] as const
 export type ContrastCheck = Readonly<{ mode: TokenMode; foreground: string; background: string; ratio: number | null; ok: boolean }>
 

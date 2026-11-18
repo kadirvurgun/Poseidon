@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import {
   accentColors, autoAdjustedForegrounds, baseColors, buildThemeStylesheet, builtInPalettes, contrastRatio, contrastReport,
-  customTokens, defaultCustomTheme, exportCss, exportJson, parseThemeFile, protectedSemanticTokens, radiusOptions, toHex,
+  customTokens, defaultCustomTheme, exportCss, exportJson, parseThemeFile, protectedSemanticTokens, radiusOptions, toHex, contrastPairs,
 } from './theme-tokens'
 import type { ThemeSelection } from './theme-tokens'
 
@@ -28,7 +28,7 @@ describe('THEME-BUILDER-01 token resolution and contrast guard', () => {
     for (const base of baseColors) for (const accent of accentColors) {
       const report = contrastReport(custom({ base, accent }))
       expect(report.blocked, `${base}/${accent}`).toBe(false)
-      expect(report.checks).toHaveLength(18)
+      expect(report.checks).toHaveLength(contrastPairs.length * 2)
     }
     for (const palette of builtInPalettes) expect(contrastReport({ palette, custom: defaultCustomTheme }).blocked, palette).toBe(false)
   })
