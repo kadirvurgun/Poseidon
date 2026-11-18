@@ -5374,8 +5374,9 @@ export interface components {
             canEdit: boolean;
             /** @default false */
             canSubmit: boolean;
-            /** @default 18.01/Backlog/row:40 */
+            /** @default 18.01/Backlog/row:40;59.01/paragraph:55 */
             source: string;
+            blockerDetails: components["schemas"]["OnboardingBlocker"][];
         };
         CompliancePassportDto: {
             /** Format: uuid */
@@ -8291,6 +8292,7 @@ export interface components {
             actorId: string;
             roleContext: components["schemas"]["WorkspaceRoleContextDto"];
             vessel: null | components["schemas"]["VesselDto"];
+            company: null | components["schemas"]["WorkspaceCompanyDto"];
         };
         WorkspaceDto: {
             destinations: components["schemas"]["NavigationDto"][];
@@ -8333,6 +8335,19 @@ export interface components {
             reference: string;
             tr: string;
             en: string;
+        };
+        OnboardingBlocker: {
+            /** Format: uuid */
+            subjectId: string;
+            fieldPath: string;
+            reasonCode: string;
+            resolutionType: string;
+        };
+        WorkspaceCompanyDto: {
+            /** Format: uuid */
+            id: string;
+            code: string;
+            name: string;
         };
     };
     responses: never;

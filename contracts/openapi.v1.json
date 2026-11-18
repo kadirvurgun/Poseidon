@@ -11799,7 +11799,7 @@
           "href": {
             "type": "string"
           },
-          "inputs": { },
+          "inputs": {},
           "inputHash": {
             "type": [
               "null",
@@ -12077,6 +12077,7 @@
           "state",
           "fields",
           "blockers",
+          "blockerDetails",
           "canEdit"
         ],
         "type": "object",
@@ -12129,7 +12130,13 @@
           },
           "source": {
             "type": "string",
-            "default": "18.01/Backlog/row:40"
+            "default": "18.01/Backlog/row:40;59.01/paragraph:55"
+          },
+          "blockerDetails": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OnboardingBlocker"
+            }
           }
         }
       },
@@ -17213,7 +17220,7 @@
           }
         }
       },
-      "JsonElement": { },
+      "JsonElement": {},
       "LegacyCrewImportCommand": {
         "required": [
           "baseVersion",
@@ -23049,6 +23056,7 @@
           "tenantId",
           "actorId",
           "roleContext",
+          "company",
           "vessel"
         ],
         "type": "object",
@@ -23071,6 +23079,16 @@
               },
               {
                 "$ref": "#/components/schemas/VesselDto"
+              }
+            ]
+          },
+          "company": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/WorkspaceCompanyDto"
               }
             ]
           }
@@ -23236,6 +23254,50 @@
             "type": "string"
           },
           "en": {
+            "type": "string"
+          }
+        }
+      },
+      "OnboardingBlocker": {
+        "required": [
+          "subjectId",
+          "fieldPath",
+          "reasonCode",
+          "resolutionType"
+        ],
+        "type": "object",
+        "properties": {
+          "subjectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fieldPath": {
+            "type": "string"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "resolutionType": {
+            "type": "string"
+          }
+        }
+      },
+      "WorkspaceCompanyDto": {
+        "required": [
+          "id",
+          "code",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "name": {
             "type": "string"
           }
         }
