@@ -3198,6 +3198,14 @@
     "m_0d01ac4a95241b66": "Onboarding engelleri",
     "m_b9cce241afdb94a4": "Zorunlu beyan",
     "m_18895857bed22127": "Politika veya kanıt gerekli",
-    "m_9233a4a00cb3f57a": "Nitelikli kanıt gerekli"
+    "m_9233a4a00cb3f57a": "Nitelikli kanıt gerekli",
+    "m_b8002f9e764b18ef": "Mevcut yetki kapsamınızda değil veya erişim geri alındı. Mevcut bağlamınız değişmedi.",
+    "m_2b19d5fd50cd15bd": "Oturumunuz sona erdi veya değişti. Yeniden oturum açın; mevcut bağlamınız değişmedi.",
+    "m_3a8d042ee60783dc": "Bağlam servisine erişilemiyor veya zamanında yanıt vermedi. Mevcut bağlamınız değişmedi; tekrar deneyin.",
+    "m_e7bc23cb053dacc1": "Mevcut formda kaydedilmemiş değişiklikler var. Değiştirmeden önce Kal veya Vazgeç seçeceksiniz; Kal taslağınızı korur ve bağlam değişikliği isteği göndermez.",
+    "m_2492dcd13a8d5ab3": "Kayıt işlemi hâlâ sürüyor. Gemi değiştirmeden önce sonucunu bekleyin; mevcut bağlamınız değişmedi.",
+    "m_221de6ea6fc51bb7": "Oturumunuz sona erdi veya değişti. Çalışma bağlamınızı görmek için yeniden oturum açın.",
+    "m_9b1a1deb14aac372": "Seçilen gemi mevcut yetki kapsamınızda değil. Otomatik olarak başka bir gemi seçilmedi.",
+    "m_5db2b92c3bcc6931": "Başka gemi seç"
   }
 }
