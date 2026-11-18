@@ -9,7 +9,7 @@ test('quarantined transport cannot be downloaded and malformed success is withhe
         const body = url.includes('auth/session') ? { authenticated: true, canRead: true, canReadCompanies: false, canCreate: false, csrfToken: 'synthetic' }
             : url.includes('/files?') ? { items: [{ ...pending, state: malformed ? ['CleanTransport'] : 'Receiving' }], offset: 0, hasMore: false, canWrite: false, available: false, maxBytes: 0 }
                 : url.endsWith(`/files/${pending.id}`) ? pending
-                    : url.includes('workspace') ? { destinations: [] } : url.includes('vessels?') ? { items: [vessel], offset: 0, limit: 25, hasMore: false } : vessel;
+                    : url.includes('workspace') ? { destinations: [], canSearch: false, canWriteRegulatory: false } : url.includes('vessels?') ? { items: [vessel], offset: 0, limit: 25, hasMore: false } : vessel;
         await route.fulfill({ json: body });
     });
     await page.goto(`/app/fleet/${vessel.id}`);

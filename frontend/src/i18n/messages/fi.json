@@ -3222,6 +3222,10 @@
     "m_2492dcd13a8d5ab3": "Tallennus on yhä käynnissä. Odota tulosta ennen aluksen vaihtamista; nykyinen kontekstisi ei muuttunut.",
     "m_221de6ea6fc51bb7": "Istuntosi on päättynyt tai muuttunut. Kirjaudu uudelleen nähdäksesi työkontekstisi.",
     "m_9b1a1deb14aac372": "Valittu alus ei kuulu nykyiseen valtuutettuun laajuuteesi. Muuta alusta ei valittu automaattisesti.",
-    "m_5db2b92c3bcc6931": "Valitse toinen alus"
+    "m_5db2b92c3bcc6931": "Valitse toinen alus",
+    "m_7c2c3c0f372d028d": "Suodata valikkoa",
+    "m_4895cdb4b14ff26c": "Haku kattaa vain näkymät, joiden avaamiseen sinulla on oikeus.",
+    "m_9e601b252c4fb4b3": "Mikään sallittu valikkokohde ei vastaa tätä suodatinta.",
+    "m_5af49f5d0c78416e": "Tyhjennä valikkosuodatin"
   }
 }

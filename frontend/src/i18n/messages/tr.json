@@ -3222,6 +3222,10 @@
     "m_2492dcd13a8d5ab3": "Kayıt işlemi hâlâ sürüyor. Gemi değiştirmeden önce sonucunu bekleyin; mevcut bağlamınız değişmedi.",
     "m_221de6ea6fc51bb7": "Oturumunuz sona erdi veya değişti. Çalışma bağlamınızı görmek için yeniden oturum açın.",
     "m_9b1a1deb14aac372": "Seçilen gemi mevcut yetki kapsamınızda değil. Otomatik olarak başka bir gemi seçilmedi.",
-    "m_5db2b92c3bcc6931": "Başka gemi seç"
+    "m_5db2b92c3bcc6931": "Başka gemi seç",
+    "m_7c2c3c0f372d028d": "Menüde ara",
+    "m_4895cdb4b14ff26c": "Yalnızca açmaya yetkili olduğunuz ekranlarda arar.",
+    "m_9e601b252c4fb4b3": "Bu filtreyle eşleşen yetkili menü öğesi yok.",
+    "m_5af49f5d0c78416e": "Menü filtresini temizle"
   }
 }

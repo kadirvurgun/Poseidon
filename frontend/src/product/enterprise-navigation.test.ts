@@ -29,3 +29,8 @@ it('admits only exact server granted daily workspace destinations', () => {
   expect(decodeEnterpriseNavigation(source).destinations.some(item => item.key === 'noon-report')).toBe(false)
   expect(() => decodeEnterpriseNavigation({ ...value, destinations: [{ key: 'noon-report', href: '/app/noon-report?role=admin' }] })).toThrow()
 })
+
+// DEV022-AC-07: the menu projection is closed; a hidden count or denied list is rejected, not ignored.
+it.each([{ hiddenCount: 2 }, { totalCount: 9 }, { deniedDestinations: [{ key: 'audit', href: '/app/audit' }] }])('rejects an extra aggregate member %#', extra => {
+  expect(() => decodeEnterpriseNavigation({ ...source, ...extra })).toThrow()
+})

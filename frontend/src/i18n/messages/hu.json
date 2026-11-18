@@ -3222,6 +3222,10 @@
     "m_2492dcd13a8d5ab3": "A mentés még folyamatban van. Hajóváltás előtt várja meg az eredményt; a jelenlegi kontextus nem változott.",
     "m_221de6ea6fc51bb7": "A munkamenet lejárt vagy megváltozott. Jelentkezzen be újra a munkakontextus megtekintéséhez.",
     "m_9b1a1deb14aac372": "A kiválasztott hajó nem tartozik a jelenlegi jogosultsági körébe. Más hajó nem lett automatikusan kiválasztva.",
-    "m_5db2b92c3bcc6931": "Másik hajó választása"
+    "m_5db2b92c3bcc6931": "Másik hajó választása",
+    "m_7c2c3c0f372d028d": "Menü szűrése",
+    "m_4895cdb4b14ff26c": "Csak azokban a képernyőkben keres, amelyek megnyitására jogosult.",
+    "m_9e601b252c4fb4b3": "Egyetlen engedélyezett menüelem sem felel meg ennek a szűrőnek.",
+    "m_5af49f5d0c78416e": "Menüszűrő törlése"
   }
 }

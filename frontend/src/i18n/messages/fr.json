@@ -3222,6 +3222,10 @@
     "m_2492dcd13a8d5ab3": "Un enregistrement est encore en cours. Attendez son résultat avant de changer de navire ; votre contexte actuel est inchangé.",
     "m_221de6ea6fc51bb7": "Votre session a pris fin ou a changé. Reconnectez-vous pour voir votre contexte de travail.",
     "m_9b1a1deb14aac372": "Le navire sélectionné ne fait pas partie de votre périmètre autorisé actuel. Aucun autre navire n’a été sélectionné automatiquement.",
-    "m_5db2b92c3bcc6931": "Choisir un autre navire"
+    "m_5db2b92c3bcc6931": "Choisir un autre navire",
+    "m_7c2c3c0f372d028d": "Filtrer le menu",
+    "m_4895cdb4b14ff26c": "Seuls les écrans que vous êtes autorisé à ouvrir sont recherchés.",
+    "m_9e601b252c4fb4b3": "Aucun élément de menu autorisé ne correspond à ce filtre.",
+    "m_5af49f5d0c78416e": "Effacer le filtre du menu"
   }
 }
