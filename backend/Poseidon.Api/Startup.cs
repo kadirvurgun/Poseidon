@@ -160,6 +160,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapAuditHistory();
             endpoints.MapSecureFiles();
             endpoints.MapDocuments();
+            endpoints.MapControlledDocuments();
             endpoints.MapCrew();
             endpoints.MapOfflineApplication();
             endpoints.MapCrewPersonalProfiles();

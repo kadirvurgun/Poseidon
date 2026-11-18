@@ -4843,6 +4843,198 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/vessels/{vessel}/controlled-documents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ListControlledDocuments"];
+        put?: never;
+        post: operations["CreateControlledDocument"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{vessel}/controlled-documents/{document}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GetControlledDocument"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{vessel}/controlled-documents/{document}/revisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["RegisterControlledDocumentRevision"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{vessel}/controlled-documents/{document}/revisions/{revision}/release": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ReleaseControlledDocumentRevision"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{vessel}/controlled-documents/{document}/revisions/{revision}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["PublishControlledDocumentRevision"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{vessel}/controlled-documents/{document}/revisions/{revision}/verifications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["VerifyControlledDocumentRevision"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{vessel}/controlled-documents/{document}/hold": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["PlaceControlledDocumentHold"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{vessel}/controlled-documents/{document}/hold/release": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ReleaseControlledDocumentHold"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{vessel}/controlled-documents/{document}/retention": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SetControlledDocumentRetention"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{vessel}/controlled-documents/{document}/disposal-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["RequestControlledDocumentDisposal"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{vessel}/controlled-documents/{document}/disposal-requests/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ApproveControlledDocumentDisposal"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{vessel}/controlled-documents/{document}/links": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["LinkControlledDocument"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -8348,6 +8540,151 @@ export interface components {
             id: string;
             code: string;
             name: string;
+        };
+        ControlledDocumentCreateCommand: {
+            code: null | string;
+            title: null | string;
+            classification: null | string;
+        };
+        ControlledDocumentCustodyDto: {
+            /** Format: int64 */
+            sequence: number;
+            /** Format: int64 */
+            revision: null | number;
+            eventType: string;
+            source: string;
+            /** Format: uuid */
+            subjectActorId: null | string;
+            /** Format: date-time */
+            occurredAt: string;
+            /** Format: date-time */
+            recordedAt: string;
+        };
+        ControlledDocumentDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            vesselId: string;
+            code: string;
+            title: string;
+            classification: string;
+            /** Format: int64 */
+            currentRevision: null | number;
+            /** Format: int64 */
+            latestRevision: number;
+            /** Format: uint32 */
+            version: number;
+            holdActive: boolean;
+            /** Format: date-time */
+            holdPlacedAt: null | string;
+            retentionState: string;
+            retentionPolicyRef: null | string;
+            /** Format: date */
+            retainUntil: null | string;
+            disposalState: string;
+            physicalDeletion: string;
+            provenance: string;
+            revisions: components["schemas"]["ControlledDocumentRevisionDto"][];
+            custody: components["schemas"]["ControlledDocumentCustodyDto"][];
+            links: components["schemas"]["ControlledDocumentLinkDto"][];
+            /** Format: date-time */
+            asOf: string;
+        };
+        ControlledDocumentHoldCommand: {
+            authorityRef: null | string;
+            reason: null | string;
+        };
+        ControlledDocumentLinkCommand: {
+            targetKind: null | string;
+            /** Format: uuid */
+            targetId: string;
+        };
+        ControlledDocumentLinkDto: {
+            targetKind: string;
+            /** Format: uuid */
+            targetId: string;
+            /** Format: date-time */
+            linkedAt: string;
+        };
+        ControlledDocumentListDto: {
+            items: components["schemas"]["ControlledDocumentSummaryDto"][];
+            /** Format: int32 */
+            offset: number;
+            hasMore: boolean;
+            canWrite: boolean;
+        };
+        ControlledDocumentReasonCommand: {
+            reason: null | string;
+        };
+        ControlledDocumentRetentionCommand: {
+            policyRef: null | string;
+            /** Format: date */
+            retainUntil: null | string;
+        };
+        ControlledDocumentRevisionCommand: {
+            /** Format: uuid */
+            fileId: string;
+        };
+        ControlledDocumentRevisionDto: {
+            /** Format: int64 */
+            revision: number;
+            /** Format: uuid */
+            fileId: string;
+            contentSha256: string;
+            /** Format: int64 */
+            contentLength: number;
+            mime: string;
+            intakeState: string;
+            publicationState: string;
+            verificationState: string;
+            /** Format: uuid */
+            uploadedBy: string;
+            /** Format: uuid */
+            registeredBy: string;
+            /** Format: date-time */
+            registeredAt: string;
+            /** Format: date-time */
+            releasedAt: null | string;
+            /** Format: uuid */
+            publishedBy: null | string;
+            /** Format: date-time */
+            publishedAt: null | string;
+            verifications: components["schemas"]["ControlledDocumentVerificationDto"][];
+        };
+        ControlledDocumentSummaryDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            vesselId: string;
+            code: string;
+            title: string;
+            classification: string;
+            /** Format: int64 */
+            currentRevision: null | number;
+            /** Format: int64 */
+            latestRevision: number;
+            /** Format: uint32 */
+            version: number;
+            holdActive: boolean;
+            retentionState: string;
+            disposalState: string;
+            provenance: string;
+        };
+        ControlledDocumentVerificationCommand: {
+            method: null | string;
+            result: null | string;
+            basis: null | string;
+        };
+        ControlledDocumentVerificationDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            verifierId: string;
+            method: string;
+            result: string;
+            basis: null | string;
+            /** Format: date-time */
+            checkedAt: string;
         };
     };
     responses: never;
@@ -14879,6 +15216,393 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TugRequestDto"];
+                };
+            };
+        };
+    };
+    ListControlledDocuments: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ControlledDocumentListDto"];
+                };
+            };
+        };
+    };
+    CreateControlledDocument: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string;
+                "X-CSRF-TOKEN"?: string;
+            };
+            path: {
+                vessel: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ControlledDocumentCreateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ControlledDocumentDto"];
+                };
+            };
+        };
+    };
+    GetControlledDocument: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+                document: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ControlledDocumentDto"];
+                };
+            };
+        };
+    };
+    RegisterControlledDocumentRevision: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string;
+                "X-CSRF-TOKEN"?: string;
+                "If-Match"?: string;
+            };
+            path: {
+                vessel: string;
+                document: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ControlledDocumentRevisionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ControlledDocumentDto"];
+                };
+            };
+        };
+    };
+    ReleaseControlledDocumentRevision: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string;
+                "X-CSRF-TOKEN"?: string;
+                "If-Match"?: string;
+            };
+            path: {
+                vessel: string;
+                document: string;
+                revision: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ControlledDocumentReasonCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ControlledDocumentDto"];
+                };
+            };
+        };
+    };
+    PublishControlledDocumentRevision: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string;
+                "X-CSRF-TOKEN"?: string;
+                "If-Match"?: string;
+            };
+            path: {
+                vessel: string;
+                document: string;
+                revision: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ControlledDocumentReasonCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ControlledDocumentDto"];
+                };
+            };
+        };
+    };
+    VerifyControlledDocumentRevision: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string;
+                "X-CSRF-TOKEN"?: string;
+                "If-Match"?: string;
+            };
+            path: {
+                vessel: string;
+                document: string;
+                revision: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ControlledDocumentVerificationCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ControlledDocumentDto"];
+                };
+            };
+        };
+    };
+    PlaceControlledDocumentHold: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string;
+                "X-CSRF-TOKEN"?: string;
+                "If-Match"?: string;
+            };
+            path: {
+                vessel: string;
+                document: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ControlledDocumentHoldCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ControlledDocumentDto"];
+                };
+            };
+        };
+    };
+    ReleaseControlledDocumentHold: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string;
+                "X-CSRF-TOKEN"?: string;
+                "If-Match"?: string;
+            };
+            path: {
+                vessel: string;
+                document: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ControlledDocumentReasonCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ControlledDocumentDto"];
+                };
+            };
+        };
+    };
+    SetControlledDocumentRetention: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string;
+                "X-CSRF-TOKEN"?: string;
+                "If-Match"?: string;
+            };
+            path: {
+                vessel: string;
+                document: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ControlledDocumentRetentionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ControlledDocumentDto"];
+                };
+            };
+        };
+    };
+    RequestControlledDocumentDisposal: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string;
+                "X-CSRF-TOKEN"?: string;
+                "If-Match"?: string;
+            };
+            path: {
+                vessel: string;
+                document: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ControlledDocumentReasonCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ControlledDocumentDto"];
+                };
+            };
+        };
+    };
+    ApproveControlledDocumentDisposal: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string;
+                "X-CSRF-TOKEN"?: string;
+                "If-Match"?: string;
+            };
+            path: {
+                vessel: string;
+                document: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ControlledDocumentReasonCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ControlledDocumentDto"];
+                };
+            };
+        };
+    };
+    LinkControlledDocument: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string;
+                "X-CSRF-TOKEN"?: string;
+                "If-Match"?: string;
+            };
+            path: {
+                vessel: string;
+                document: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ControlledDocumentLinkCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ControlledDocumentDto"];
                 };
             };
         };
