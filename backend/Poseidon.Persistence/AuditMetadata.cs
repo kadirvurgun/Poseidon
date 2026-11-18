@@ -25,7 +25,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         if (requireResolvedScope && scopeKind == "Unresolved")
             throw new InvalidOperationException("Current command audit scope is unavailable.");
         var fields = JsonSerializer.Deserialize<List<JsonElement>>(metadata.Summary) ?? [];
-        if (entry.Entity is CommandReceipt or ApplicabilityReceipt or HumanReviewReceipt or ControlEvidenceReceipt or RegulatoryQualificationReceipt)
+        if (entry.Entity is CommandReceipt or ApplicabilityReceipt or HumanReviewReceipt or ControlEvidenceReceipt or RegulatoryQualificationReceipt or ControlledDocumentReceipt)
             fields.Add(JsonSerializer.SerializeToElement(Field("Binding", null, "CommittedResource")));
         fields.Add(JsonSerializer.SerializeToElement(Field("ScopeKind", null, scopeKind)));
         if (command != null)
@@ -181,6 +181,43 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             return new(parentVessel, binding.EvaluationId, "EvaluationQualification", null, binding.QualificationRevision,
                 Fields(Field("RuleId", null, binding.RuleId.ToString("D")), Field("QualificationRevision", null, Number(binding.QualificationRevision)),
                     Field("AttestationId", null, binding.AttestationId?.ToString("D"))));
+        // PLAN-1511-5802: closed state fields only. Titles, codes, authority refs, reasons,
+        // verification basis, hashes and object generations are never copied.
+        if (entry.Entity is ControlledDocument controlled)
+        {
+            long? beforeSequence = entry.State == EntityState.Added ? null : (long?)entry.Property(nameof(controlled.Sequence)).OriginalValue;
+            string? Prior(string name) => entry.State == EntityState.Added ? null : entry.Property(name).OriginalValue?.ToString();
+            return new(controlled.VesselId, controlled.Id, "ControlledDocument", beforeSequence, controlled.Sequence,
+                Fields(Field("Sequence", beforeSequence is long b ? Number(b) : null, Number(controlled.Sequence)),
+                    Field("DisposalState", Prior(nameof(controlled.DisposalState)), Closed(controlled.DisposalState, ControlledDocumentPolicy.DisposalStates)),
+                    Field("HoldActive", Prior(nameof(controlled.HoldActive)) is { } h ? (h == bool.TrueString ? "true" : "false") : null, controlled.HoldActive ? "true" : "false"),
+                    Field("CurrentRevision", entry.State == EntityState.Added ? null : entry.Property(nameof(controlled.CurrentRevision)).OriginalValue is long cr ? Number(cr) : null,
+                        controlled.CurrentRevision is long current ? Number(current) : null),
+                    Field("Retention", null, null, "ValuesWithheld")));
+        }
+        if (entry.Entity is ControlledDocumentRevision controlledRevision)
+            return new(controlledRevision.VesselId, controlledRevision.DocumentId, "ControlledDocumentRevision", null, controlledRevision.Revision,
+                Fields(Field("IntakeState", entry.State == EntityState.Added ? null : (string?)entry.Property(nameof(controlledRevision.IntakeState)).OriginalValue,
+                        Closed(controlledRevision.IntakeState, ControlledDocumentPolicy.IntakeStates)),
+                    Field("PublicationState", entry.State == EntityState.Added ? null : (string?)entry.Property(nameof(controlledRevision.PublicationState)).OriginalValue,
+                        Closed(controlledRevision.PublicationState, ControlledDocumentPolicy.PublicationStates)),
+                    Field("Binding", null, "FileReference")));
+        if (entry.Entity is ControlledDocumentCustodyEvent custody)
+            return new(custody.VesselId, custody.DocumentId, "ControlledDocumentCustody", null, custody.Sequence,
+                Fields(Field("EventType", null, Closed(custody.EventType, ControlledDocumentPolicy.EventTypes)),
+                    Field("Source", null, Closed(custody.Source, "COMMAND", "SECURE_FILE_PIPELINE", "SYNTHETIC_SEED")), Field("Basis", null, null, "ValuesWithheld")));
+        if (entry.Entity is ControlledDocumentVerification controlledVerification)
+            return new(controlledVerification.VesselId, controlledVerification.DocumentId, "ControlledDocumentVerification", null, controlledVerification.Revision,
+                Fields(Field("Method", null, Closed(controlledVerification.Method, ControlledDocumentPolicy.VerificationMethods)),
+                    Field("Result", null, Closed(controlledVerification.Result, ControlledDocumentPolicy.VerificationResults)), Field("Basis", null, null, "ValuesWithheld")));
+        if (entry.Entity is ControlledDocumentReceipt controlledReceipt)
+            return new(controlledReceipt.VesselId, controlledReceipt.DocumentId, "ControlledDocumentReceipt", null, null, "[]");
+        if (entry.Entity is ControlledDocumentCertificateLink certificateLink)
+            return new(certificateLink.VesselId, certificateLink.DocumentId, "ControlledDocumentLink", null, null, Fields(Field("TargetKind", null, "VesselCertificate")));
+        if (entry.Entity is ControlledDocumentEvidenceLink evidenceLink)
+            return new(evidenceLink.VesselId, evidenceLink.DocumentId, "ControlledDocumentLink", null, null, Fields(Field("TargetKind", null, "ControlEvidence")));
+        if (entry.Entity is ControlledDocumentCredentialLink credentialLink)
+            return new(credentialLink.VesselId, credentialLink.DocumentId, "ControlledDocumentLink", null, null, Fields(Field("TargetKind", null, "Credential")));
         Guid? vessel = entry.Entity switch {
             OperationEquipmentBinding e => e.VesselId, EvaluationOwningReference e => e.VesselId,
             EvaluationUpstreamReference e => e.VesselId, MsmdRoleBinding e => e.VesselId,

@@ -75,6 +75,14 @@ public sealed class PoseidonDbContext(
     public DbSet<StoredFile> StoredFiles => Set<StoredFile>();
     public DbSet<Document> Documents => Set<Document>();
     public DbSet<DocumentVersion> DocumentVersions => Set<DocumentVersion>();
+    public DbSet<ControlledDocument> ControlledDocuments => Set<ControlledDocument>();
+    public DbSet<ControlledDocumentRevision> ControlledDocumentRevisions => Set<ControlledDocumentRevision>();
+    public DbSet<ControlledDocumentCustodyEvent> ControlledDocumentCustodyEvents => Set<ControlledDocumentCustodyEvent>();
+    public DbSet<ControlledDocumentVerification> ControlledDocumentVerifications => Set<ControlledDocumentVerification>();
+    public DbSet<ControlledDocumentReceipt> ControlledDocumentReceipts => Set<ControlledDocumentReceipt>();
+    public DbSet<ControlledDocumentCertificateLink> ControlledDocumentCertificateLinks => Set<ControlledDocumentCertificateLink>();
+    public DbSet<ControlledDocumentEvidenceLink> ControlledDocumentEvidenceLinks => Set<ControlledDocumentEvidenceLink>();
+    public DbSet<ControlledDocumentCredentialLink> ControlledDocumentCredentialLinks => Set<ControlledDocumentCredentialLink>();
 
     public DbSet<Credential> Credentials => Set<Credential>();
     public DbSet<CredentialRevision> CredentialRevisions => Set<CredentialRevision>();
@@ -262,6 +270,15 @@ public sealed class PoseidonDbContext(
         model.Entity<DocumentVersion>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<FileStage>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<StoredFile>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        ControlledDocumentStorage.Configure(model);
+        model.Entity<ControlledDocument>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ControlledDocumentRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ControlledDocumentCustodyEvent>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ControlledDocumentVerification>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ControlledDocumentReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ControlledDocumentCertificateLink>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ControlledDocumentEvidenceLink>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ControlledDocumentCredentialLink>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         RegisterStorage.Configure(model);
         model.Entity<RegisterDraft>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<RegisterRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -477,6 +494,7 @@ public sealed class PoseidonDbContext(
         var changes = ChangeTracker.Entries().Where(e => e.State is EntityState.Added or EntityState.Modified or EntityState.Deleted).ToList();
         if (changes.Count == 0) return [];
         FleetCatalogDraftStorage.Guard(this, changes);
+        ControlledDocumentStorage.Guard(this, changes);
         if (string.IsNullOrWhiteSpace(actor.Id) || string.IsNullOrWhiteSpace(actor.Type) || string.IsNullOrWhiteSpace(actor.CorrelationId))
             throw new InvalidOperationException("An authenticated or explicit system actor and correlation ID are required.");
         if (actor.Command != null && !actor.Command.IsValid)
