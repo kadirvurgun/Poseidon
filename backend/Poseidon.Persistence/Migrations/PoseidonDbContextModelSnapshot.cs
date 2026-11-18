@@ -3906,6 +3906,12 @@ namespace Poseidon.Persistence.Migrations
                     b.Property<Guid?>("HoldPlacedBy")
                         .HasColumnType("uuid");
 
+                    b.Property<DateTimeOffset?>("HoldReleasedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("HoldReleasedBy")
+                        .HasColumnType("uuid");
+
                     b.Property<long>("LatestRevision")
                         .HasColumnType("bigint");
 
@@ -3955,6 +3961,8 @@ namespace Poseidon.Persistence.Migrations
                             t.HasCheckConstraint("CK_ControlledDocuments_Disposal", "((\"DisposalState\" = 'NONE') = (\"DisposalRequestedBy\" IS NULL AND \"DisposalRequestedAt\" IS NULL)) AND ((\"DisposalState\" = 'APPROVED') = (\"DisposalApprovedBy\" IS NOT NULL AND \"DisposalApprovedAt\" IS NOT NULL)) AND (\"DisposalApprovedBy\" IS NULL OR \"DisposalApprovedBy\" <> \"DisposalRequestedBy\") AND (\"DisposalState\" = 'NONE' OR (\"RetentionPolicyRef\" IS NOT NULL AND \"RetainUntil\" IS NOT NULL))");
 
                             t.HasCheckConstraint("CK_ControlledDocuments_Hold", "NOT \"HoldActive\" OR (\"HoldPlacedBy\" IS NOT NULL AND \"HoldPlacedAt\" IS NOT NULL AND \"HoldAuthorityRef\" IS NOT NULL)");
+
+                            t.HasCheckConstraint("CK_ControlledDocuments_HoldRelease", "(\"HoldReleasedBy\" IS NULL) = (\"HoldReleasedAt\" IS NULL) AND (\"HoldReleasedBy\" IS NULL OR (NOT \"HoldActive\" AND \"HoldPlacedBy\" IS NOT NULL AND \"HoldReleasedBy\" <> \"HoldPlacedBy\"))");
 
                             t.HasCheckConstraint("CK_ControlledDocuments_State", "\"Classification\" IN ('INTERNAL','CONFIDENTIAL','RESTRICTED') AND \"DisposalState\" IN ('NONE','REQUESTED','APPROVED') AND \"Provenance\" IN ('DeclaredUnverified','SyntheticUnverified') AND \"Sequence\" > 0 AND \"LatestRevision\" >= 0 AND (\"CurrentRevision\" IS NULL OR (\"CurrentRevision\" > 0 AND \"CurrentRevision\" <= \"LatestRevision\"))");
                         });
@@ -4077,7 +4085,7 @@ namespace Poseidon.Persistence.Migrations
 
                     b.ToTable("ControlledDocumentCustodyEvents", "files", t =>
                         {
-                            t.HasCheckConstraint("CK_ControlledDocumentCustodyEvents", "\"Sequence\" > 0 AND \"EventType\" IN ('CREATED','RECEIVED','QUARANTINED','SCANNED_CLEAN','RELEASED','PUBLISHED','SUPERSEDED','VERIFICATION_RECORDED','HOLD_PLACED','HOLD_RELEASED','RETENTION_SET','DISPOSAL_REQUESTED','DISPOSAL_APPROVED','LINKED') AND \"Source\" IN ('COMMAND','SECURE_FILE_PIPELINE','SYNTHETIC_SEED') AND length(\"RecordedBy\") > 0 AND (\"Revision\" IS NULL OR \"Revision\" > 0) AND (\"Source\" <> 'SECURE_FILE_PIPELINE' OR \"SubjectActorId\" IS NOT NULL)");
+                            t.HasCheckConstraint("CK_ControlledDocumentCustodyEvents", "\"Sequence\" > 0 AND \"EventType\" IN ('CREATED','RECEIVED','QUARANTINED','SCANNED_CLEAN','RELEASED','PUBLISHED','SUPERSEDED','VERIFICATION_RECORDED','HOLD_PLACED','HOLD_RELEASED','RETENTION_SET','DISPOSAL_REQUESTED','DISPOSAL_APPROVED','LINKED','DISPOSAL_REQUEST_INVALIDATED') AND \"Source\" IN ('COMMAND','SECURE_FILE_PIPELINE','SYNTHETIC_SEED') AND length(\"RecordedBy\") > 0 AND (\"Revision\" IS NULL OR \"Revision\" > 0) AND (\"Source\" <> 'SECURE_FILE_PIPELINE' OR \"SubjectActorId\" IS NOT NULL)");
                         });
                 });
 
@@ -4226,6 +4234,11 @@ namespace Poseidon.Persistence.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("TenantId", "DocumentId", "Revision");
+
+                    b.HasIndex("TenantId", "DocumentId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_ControlledDocumentRevisions_Effective")
+                        .HasFilter("\"PublicationState\" = 'EFFECTIVE'");
 
                     b.HasIndex("TenantId", "FileId")
                         .IsUnique()

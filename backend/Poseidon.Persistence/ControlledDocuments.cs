@@ -24,6 +24,10 @@ public sealed class ControlledDocument : ITenantEntity
     public string? HoldAuthorityRef { get; set; }
     public Guid? HoldPlacedBy { get; set; }
     public DateTimeOffset? HoldPlacedAt { get; set; }
+    // QA F1: the releaser of the last hold, kept until the next placement; DB check + trigger
+    // enforce releaser <> placer and match the HOLD_RELEASED custody event actor.
+    public Guid? HoldReleasedBy { get; set; }
+    public DateTimeOffset? HoldReleasedAt { get; set; }
     public string? RetentionPolicyRef { get; set; }
     public DateOnly? RetainUntil { get; set; }
     public string DisposalState { get; set; } = "NONE";
@@ -154,6 +158,9 @@ public static class ControlledDocumentStorage
                     "AND (\"CurrentRevision\" IS NULL OR (\"CurrentRevision\" > 0 AND \"CurrentRevision\" <= \"LatestRevision\"))");
                 t.HasCheckConstraint("CK_ControlledDocuments_Hold",
                     "NOT \"HoldActive\" OR (\"HoldPlacedBy\" IS NOT NULL AND \"HoldPlacedAt\" IS NOT NULL AND \"HoldAuthorityRef\" IS NOT NULL)");
+                t.HasCheckConstraint("CK_ControlledDocuments_HoldRelease",
+                    "(\"HoldReleasedBy\" IS NULL) = (\"HoldReleasedAt\" IS NULL) AND (\"HoldReleasedBy\" IS NULL OR (NOT \"HoldActive\" " +
+                    "AND \"HoldPlacedBy\" IS NOT NULL AND \"HoldReleasedBy\" <> \"HoldPlacedBy\"))");
                 t.HasCheckConstraint("CK_ControlledDocuments_Disposal",
                     "((\"DisposalState\" = 'NONE') = (\"DisposalRequestedBy\" IS NULL AND \"DisposalRequestedAt\" IS NULL)) " +
                     "AND ((\"DisposalState\" = 'APPROVED') = (\"DisposalApprovedBy\" IS NOT NULL AND \"DisposalApprovedAt\" IS NOT NULL)) " +
@@ -183,6 +190,9 @@ public static class ControlledDocumentStorage
             b.HasIndex(x => new { x.TenantId, x.FileId }).IsUnique().HasDatabaseName("IX_ControlledDocumentRevisions_File");
             b.HasIndex(x => new { x.TenantId, x.DocumentId, x.VesselId }).HasDatabaseName("IX_ControlledDocumentRevisions_Document");
             b.HasIndex(x => new { x.TenantId, x.FileId, x.VesselId }).HasDatabaseName("IX_ControlledDocumentRevisions_Stage");
+            // QA F4: at most one EFFECTIVE revision per document.
+            b.HasIndex(x => new { x.TenantId, x.DocumentId }).IsUnique().HasFilter("\"PublicationState\" = 'EFFECTIVE'")
+                .HasDatabaseName("IX_ControlledDocumentRevisions_Effective");
             b.HasOne<ControlledDocument>().WithMany().HasForeignKey(x => new { x.TenantId, x.DocumentId, x.VesselId })
                 .HasPrincipalKey(x => new { x.TenantId, x.Id, x.VesselId }).HasConstraintName("FK_ControlledDocumentRevisions_Document").OnDelete(DeleteBehavior.Restrict);
             b.HasOne<FileStage>().WithMany().HasForeignKey(x => new { x.TenantId, x.FileId, x.VesselId })
@@ -312,9 +322,15 @@ public static class ControlledDocumentStorage
                 if (entry.Properties.Any(p => p.IsModified && DocumentImmutableColumns.Contains(p.Metadata.Name)))
                     throw new InvalidOperationException("Controlled document identity is immutable.");
                 var disposal = (string)entry.Property(nameof(d.DisposalState)).OriginalValue!;
-                if (Array.IndexOf(ControlledDocumentPolicy.DisposalStates, d.DisposalState) < Array.IndexOf(ControlledDocumentPolicy.DisposalStates, disposal) ||
-                    disposal != "APPROVED" && d.DisposalState == "APPROVED" && d.HoldActive)
-                    throw new InvalidOperationException("Disposal only advances and a legal hold blocks disposal approval.");
+                // NONE -> REQUESTED -> APPROVED; REQUESTED -> NONE only as a recorded invalidation (58.02 §100).
+                var transition = disposal == d.DisposalState || disposal == "NONE" && d.DisposalState == "REQUESTED" ||
+                    disposal == "REQUESTED" && (d.DisposalState == "APPROVED" || d.DisposalState == "NONE" && changes.Any(x => x.State == EntityState.Added &&
+                        x.Entity is ControlledDocumentCustodyEvent c && c.TenantId == d.TenantId && c.DocumentId == d.Id && c.EventType == "DISPOSAL_REQUEST_INVALIDATED"));
+                if (!transition || disposal != d.DisposalState && d.DisposalState != "NONE" && d.HoldActive)
+                    throw new InvalidOperationException("Disposal only advances and a legal hold blocks disposal.");
+                var wasHeld = (bool)entry.Property(nameof(d.HoldActive)).OriginalValue!;
+                if (wasHeld && !d.HoldActive && (d.HoldReleasedBy == null || d.HoldReleasedBy == d.HoldPlacedBy))
+                    throw new InvalidOperationException("A legal hold is released by an actor other than its placer.");
             }
             if (d.Sequence <= before || d.Id == Guid.Empty) throw new InvalidOperationException("Every controlled document change appends custody.");
             for (var sequence = before + 1; sequence <= d.Sequence; sequence++)

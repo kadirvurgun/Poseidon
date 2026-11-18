@@ -101,7 +101,7 @@ public static class ControlledDocumentChain
     {
         Actor(db, actor);
         var r = await RevisionAsync(db, d, revision, ct);
-        if (ControlledDocumentPolicy.PublishBlocker(r.IntakeState, r.PublicationState, d.DisposalState, actor, r.UploadedBy, r.RegisteredBy) is { } blocked)
+        if (ControlledDocumentPolicy.PublishBlocker(r.IntakeState, r.PublicationState, d.DisposalState, actor, r.UploadedBy, r.RegisteredBy, revision, d.CurrentRevision) is { } blocked)
             throw new ControlledDocumentException(blocked);
         var now = Now();
         if (d.CurrentRevision is long current && current != revision)
@@ -136,32 +136,51 @@ public static class ControlledDocumentChain
         if (ControlledDocumentPolicy.PlaceHoldBlocker(d.HoldActive, authorityRef, reason) is { } blocked) throw new ControlledDocumentException(blocked);
         var now = Now();
         d.HoldActive = true; d.HoldAuthorityRef = authorityRef!.Trim(); d.HoldPlacedBy = actor; d.HoldPlacedAt = now;
+        d.HoldReleasedBy = null; d.HoldReleasedAt = null;
         Append(db, d, "HOLD_PLACED", now, basis: reason!.Trim());
+        InvalidatePendingDisposal(db, d, now, "HOLD_PLACED");
     }
+
+    // 58.02 §100/§273: a new hold or link while a disposal request is pending invalidates it.
+    private static void InvalidatePendingDisposal(PoseidonDbContext db, ControlledDocument d, DateTimeOffset now, string cause)
+    {
+        if (!ControlledDocumentPolicy.InvalidatesDisposalRequest(d.DisposalState)) return;
+        d.DisposalState = "NONE"; d.DisposalRequestedBy = null; d.DisposalRequestedAt = null;
+        Append(db, d, "DISPOSAL_REQUEST_INVALIDATED", now, basis: cause);
+    }
+
+    // §271 active use: an EFFECTIVE revision or any live domain link keeps the document in use.
+    private static async Task<bool> ActiveUseOpenAsync(PoseidonDbContext db, ControlledDocument d, CancellationToken ct) =>
+        ControlledDocumentPolicy.ActiveUseOpen(
+            await db.ControlledDocumentRevisions.AnyAsync(x => x.DocumentId == d.Id && x.VesselId == d.VesselId && x.PublicationState == "EFFECTIVE", ct),
+            await db.ControlledDocumentCertificateLinks.AnyAsync(x => x.DocumentId == d.Id && x.VesselId == d.VesselId, ct) ||
+            await db.ControlledDocumentEvidenceLinks.AnyAsync(x => x.DocumentId == d.Id && x.VesselId == d.VesselId, ct) ||
+            await db.ControlledDocumentCredentialLinks.AnyAsync(x => x.DocumentId == d.Id && x.VesselId == d.VesselId, ct));
 
     public static void ReleaseHold(PoseidonDbContext db, Guid actor, ControlledDocument d, string? reason)
     {
         Actor(db, actor);
         if (ControlledDocumentPolicy.ReleaseHoldBlocker(d.HoldActive, d.HoldPlacedBy, actor, reason) is { } blocked) throw new ControlledDocumentException(blocked);
         var now = Now();
-        d.HoldActive = false;
+        d.HoldActive = false; d.HoldReleasedBy = actor; d.HoldReleasedAt = now;
         Append(db, d, "HOLD_RELEASED", now, basis: reason!.Trim());
     }
 
     public static void SetRetention(PoseidonDbContext db, Guid actor, ControlledDocument d, string? policyRef, DateOnly? retainUntil)
     {
         Actor(db, actor);
-        if (ControlledDocumentPolicy.RetentionBlocker(d.DisposalState, policyRef, retainUntil) is { } blocked) throw new ControlledDocumentException(blocked);
         var now = Now();
+        if (ControlledDocumentPolicy.RetentionBlocker(d.DisposalState, policyRef, retainUntil, Today(now)) is { } blocked) throw new ControlledDocumentException(blocked);
         d.RetentionPolicyRef = policyRef; d.RetainUntil = retainUntil;
         Append(db, d, "RETENTION_SET", now, basis: policyRef + "@" + retainUntil!.Value.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture));
     }
 
-    public static void RequestDisposal(PoseidonDbContext db, Guid actor, ControlledDocument d, string? reason)
+    public static async Task RequestDisposalAsync(PoseidonDbContext db, Guid actor, ControlledDocument d, string? reason, CancellationToken ct)
     {
         Actor(db, actor);
         var now = Now();
-        if (ControlledDocumentPolicy.DisposalRequestBlocker(d.HoldActive, d.RetentionPolicyRef, d.RetainUntil, Today(now), d.DisposalState, reason) is { } blocked)
+        if (ControlledDocumentPolicy.DisposalRequestBlocker(d.HoldActive, d.RetentionPolicyRef, d.RetainUntil, Today(now), d.DisposalState, reason,
+            await ActiveUseOpenAsync(db, d, ct)) is { } blocked)
             throw new ControlledDocumentException(blocked);
         d.DisposalState = "REQUESTED"; d.DisposalRequestedBy = actor; d.DisposalRequestedAt = now;
         Append(db, d, "DISPOSAL_REQUESTED", now, basis: reason!.Trim());
@@ -169,11 +188,12 @@ public static class ControlledDocumentChain
 
     // Approval records the disposal decision only. Physical object deletion (conditional,
     // generation-fenced, receipted) is a separate storage reconciler; nothing is deleted here.
-    public static void ApproveDisposal(PoseidonDbContext db, Guid actor, ControlledDocument d, string? reason)
+    public static async Task ApproveDisposalAsync(PoseidonDbContext db, Guid actor, ControlledDocument d, string? reason, CancellationToken ct)
     {
         Actor(db, actor);
         var now = Now();
-        if (ControlledDocumentPolicy.DisposalApproveBlocker(d.HoldActive, d.RetentionPolicyRef, d.RetainUntil, Today(now), d.DisposalState, d.DisposalRequestedBy, actor, reason) is { } blocked)
+        if (ControlledDocumentPolicy.DisposalApproveBlocker(d.HoldActive, d.RetentionPolicyRef, d.RetainUntil, Today(now), d.DisposalState, d.DisposalRequestedBy, actor, reason,
+            await ActiveUseOpenAsync(db, d, ct)) is { } blocked)
             throw new ControlledDocumentException(blocked);
         d.DisposalState = "APPROVED"; d.DisposalApprovedBy = actor; d.DisposalApprovedAt = now;
         Append(db, d, "DISPOSAL_APPROVED", now, basis: reason!.Trim());
@@ -206,5 +226,6 @@ public static class ControlledDocumentChain
                 break;
         }
         Append(db, d, "LINKED", now, basis: kind);
+        InvalidatePendingDisposal(db, d, now, "LINKED");
     }
 }

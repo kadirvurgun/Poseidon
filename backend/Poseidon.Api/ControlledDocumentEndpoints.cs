@@ -31,7 +31,9 @@ public sealed record ControlledDocumentVerificationDto(Guid Id, Guid VerifierId,
 public sealed record ControlledDocumentRevisionDto(long Revision, Guid FileId, string ContentSha256, long ContentLength, string Mime,
     string IntakeState, string PublicationState, string VerificationState, Guid UploadedBy, Guid RegisteredBy, DateTimeOffset RegisteredAt,
     DateTimeOffset? ReleasedAt, Guid? PublishedBy, DateTimeOffset? PublishedAt, ControlledDocumentVerificationDto[] Verifications);
-public sealed record ControlledDocumentCustodyDto(long Sequence, long? Revision, string EventType, string Source, Guid? SubjectActorId,
+// Position is the 1-based order among the events visible to this reader (QA F3): the raw
+// chain sequence is not exposed because gaps would disclose hidden domain links.
+public sealed record ControlledDocumentCustodyDto(long Position, long? Revision, string EventType, string Source, Guid? SubjectActorId,
     DateTimeOffset OccurredAt, DateTimeOffset RecordedAt);
 public sealed record ControlledDocumentLinkDto(string TargetKind, Guid TargetId, DateTimeOffset LinkedAt);
 public sealed record ControlledDocumentSummaryDto(Guid Id, Guid VesselId, string Code, string Title, string Classification, long? CurrentRevision,
@@ -90,11 +92,11 @@ public static class ControlledDocumentEndpoints
             .WithName("SetControlledDocumentRetention").Accepts<ControlledDocumentRetentionCommand>("application/json").Produces<ControlledDocumentDto>();
         g.MapPost("/{document:guid}/disposal-requests", (Guid vessel, Guid document, HttpContext h, [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey, [FromHeader(Name = "X-CSRF-TOKEN")] string? csrfToken, [FromHeader(Name = "If-Match")] string? ifMatch) =>
                 Command<ControlledDocumentReasonCommand>(h, vessel, document, "DisposalRequest", (a, _) => Authority(a, "record.purge.request"),
-                    (db, a, c, d, ct) => Sync(() => ControlledDocumentChain.RequestDisposal(db, a.Id, d!, c.Reason))))
+                    (db, a, c, d, ct) => ControlledDocumentChain.RequestDisposalAsync(db, a.Id, d!, c.Reason, ct)))
             .WithName("RequestControlledDocumentDisposal").Accepts<ControlledDocumentReasonCommand>("application/json").Produces<ControlledDocumentDto>();
         g.MapPost("/{document:guid}/disposal-requests/approve", (Guid vessel, Guid document, HttpContext h, [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey, [FromHeader(Name = "X-CSRF-TOKEN")] string? csrfToken, [FromHeader(Name = "If-Match")] string? ifMatch) =>
                 Command<ControlledDocumentReasonCommand>(h, vessel, document, "DisposalApprove", (a, _) => Authority(a, "record.purge.approve"),
-                    (db, a, c, d, ct) => Sync(() => ControlledDocumentChain.ApproveDisposal(db, a.Id, d!, c.Reason))))
+                    (db, a, c, d, ct) => ControlledDocumentChain.ApproveDisposalAsync(db, a.Id, d!, c.Reason, ct)))
             .WithName("ApproveControlledDocumentDisposal").Accepts<ControlledDocumentReasonCommand>("application/json").Produces<ControlledDocumentDto>();
         g.MapPost("/{document:guid}/links", (Guid vessel, Guid document, HttpContext h, [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey, [FromHeader(Name = "X-CSRF-TOKEN")] string? csrfToken, [FromHeader(Name = "If-Match")] string? ifMatch) =>
                 Command<ControlledDocumentLinkCommand>(h, vessel, document, "Link", Write,
@@ -116,6 +118,7 @@ public static class ControlledDocumentEndpoints
         "Credential" => a.Permissions.Contains("crew.certificate.read"),
         _ => true // unknown kinds are rejected by the chain as invalid_request
     };
+    private static bool LinkTargetKnownAndReadable(TrustedActor a, string? kind) => kind != null && ControlledDocumentPolicy.LinkKinds.Contains(kind) && LinkTargetReadable(a, kind);
     private static Task Sync(Action action) { action(); return Task.CompletedTask; }
     private static Task<bool> Scope(PoseidonDbContext db, TrustedActor a, Guid vessel, CancellationToken ct) => a.Scope(db.Vessels).AnyAsync(v => v.Id == vessel, ct);
 
@@ -167,7 +170,10 @@ public static class ControlledDocumentEndpoints
         var revisions = await db.ControlledDocumentRevisions.AsNoTracking().Where(x => x.DocumentId == d.Id && x.VesselId == d.VesselId).OrderBy(x => x.Revision).ToArrayAsync(ct);
         var verifications = await db.ControlledDocumentVerifications.AsNoTracking().Where(x => x.DocumentId == d.Id && x.VesselId == d.VesselId)
             .OrderBy(x => x.CheckedAt).ThenBy(x => x.Id).ToArrayAsync(ct);
-        var custody = await db.ControlledDocumentCustodyEvents.AsNoTracking().Where(x => x.DocumentId == d.Id && x.VesselId == d.VesselId).OrderBy(x => x.Sequence).ToArrayAsync(ct);
+        // QA F3: LINKED events whose target domain the reader cannot read are omitted entirely
+        // (no placeholder, no count) and positions are renumbered over the visible events.
+        var custody = (await db.ControlledDocumentCustodyEvents.AsNoTracking().Where(x => x.DocumentId == d.Id && x.VesselId == d.VesselId).OrderBy(x => x.Sequence).ToArrayAsync(ct))
+            .Where(x => x.EventType != "LINKED" || LinkTargetKnownAndReadable(a, x.Basis)).ToArray();
         var links = new List<ControlledDocumentLinkDto>();
         // A link is listed only when the reader may read that domain; hidden link counts are not disclosed.
         if (a.Permissions.Contains("certificate.read"))
@@ -190,7 +196,7 @@ public static class ControlledDocumentEndpoints
                     ControlledDocumentPolicy.Verification(own.LastOrDefault()?.Result), r.UploadedBy, r.RegisteredBy, r.RegisteredAt, r.ReleasedAt, r.PublishedBy, r.PublishedAt,
                     own.Select(v => new ControlledDocumentVerificationDto(v.Id, v.VerifierId, v.Method, v.Result, showBasis ? v.Basis : null, v.CheckedAt)).ToArray());
             }).ToArray(),
-            custody.Select(c => new ControlledDocumentCustodyDto(c.Sequence, c.Revision, c.EventType, c.Source, c.SubjectActorId, c.OccurredAt, c.RecordedAt)).ToArray(),
+            custody.Select((c, i) => new ControlledDocumentCustodyDto(i + 1, c.Revision, c.EventType, c.Source, c.SubjectActorId, c.OccurredAt, c.RecordedAt)).ToArray(),
             links.OrderBy(x => x.TargetKind, StringComparer.Ordinal).ThenBy(x => x.TargetId).ToArray(), now);
     }
 
@@ -285,9 +291,9 @@ public static class ControlledDocumentEndpoints
         {
             DatabaseFailureObservation.Record(h, e);
             await tx.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear();
-            var code = PostgresFailure.Provider(e)?.SqlState;
-            var conflict = code is PostgresErrorCodes.UniqueViolation or PostgresErrorCodes.SerializationFailure or PostgresErrorCodes.DeadlockDetected or PostgresErrorCodes.CheckViolation;
-            return await Replay() ?? await Fail(h, conflict ? 409 : 503, conflict ? "version_conflict" : "service_unavailable", document);
+            // QA F5: DB state-rule rejections (trigger 55000/23514) are 409 invalid_state, not 503.
+            var code = PostgresFailure.IsStateRule(e) ? "invalid_state" : PostgresFailure.IsConflict(e) ? "version_conflict" : "service_unavailable";
+            return await Replay() ?? await Fail(h, code == "service_unavailable" ? 503 : 409, code, document);
         }
     }
 }

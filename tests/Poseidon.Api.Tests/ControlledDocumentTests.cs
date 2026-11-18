@@ -126,7 +126,10 @@ public sealed partial class DirectoryWorkspaceTests
         CdActor(host.Services, records, "record.hold", "record.retention.manage", "record.purge.request");
         var created = await CdCreate(client);
         await CdDenied(await CdSend(client, $"{CdPath}/{created.Id}/disposal-requests", new { reason = "end" }, created.Version), HttpStatusCode.Conflict, "retention_unconfigured");
-        var retained = await CdOk(await CdSend(client, $"{CdPath}/{created.Id}/retention", new { policyRef = "SYN-POLICY-1", retainUntil = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(-1) }, created.Version));
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        // QA F5 LEAD decision: a back-dated retain-until is rejected at set time.
+        await CdDenied(await CdSend(client, $"{CdPath}/{created.Id}/retention", new { policyRef = "SYN-POLICY-1", retainUntil = today.AddDays(-1) }, created.Version), HttpStatusCode.BadRequest, "invalid_request");
+        var retained = await CdOk(await CdSend(client, $"{CdPath}/{created.Id}/retention", new { policyRef = "SYN-POLICY-1", retainUntil = today }, created.Version));
         Assert.Equal("ELIGIBLE", retained.RetentionState);
         var held = await CdOk(await CdSend(client, $"{CdPath}/{created.Id}/hold", new { authorityRef = "SYN-CASE-1", reason = "FICTIONAL litigation hold" }, retained.Version));
         Assert.True(held.HoldActive);
@@ -139,16 +142,22 @@ public sealed partial class DirectoryWorkspaceTests
         var requested = await CdOk(await CdSend(client, $"{CdPath}/{created.Id}/disposal-requests", new { reason = "retention elapsed" }, unheld.Version));
         Assert.Equal("REQUESTED", requested.DisposalState);
         await CdDenied(await CdSend(client, $"{CdPath}/{created.Id}/disposal-requests/approve", new { reason = "self" }, requested.Version), HttpStatusCode.Forbidden, "permission_denied");
+        // QA F2 / 58.02 §100: a hold placed while the request is pending invalidates the request.
         var lateHold = await CdOk(await CdSend(client, $"{CdPath}/{created.Id}/hold", new { authorityRef = "SYN-CASE-2", reason = "late hold" }, requested.Version));
+        Assert.Equal(("NONE", "DISPOSAL_REQUEST_INVALIDATED"), (lateHold.DisposalState, lateHold.Custody[^1].EventType));
         CdActor(host.Services, approver, "record.hold", "record.purge.approve");
-        await CdDenied(await CdSend(client, $"{CdPath}/{created.Id}/disposal-requests/approve", new { reason = "approve" }, lateHold.Version), HttpStatusCode.Conflict, "legal_hold_active");
+        await CdDenied(await CdSend(client, $"{CdPath}/{created.Id}/disposal-requests/approve", new { reason = "approve" }, lateHold.Version), HttpStatusCode.Conflict, "invalid_state");
         var released = await CdOk(await CdSend(client, $"{CdPath}/{created.Id}/hold/release", new { reason = "late case closed" }, lateHold.Version));
-        var approved = await CdOk(await CdSend(client, $"{CdPath}/{created.Id}/disposal-requests/approve", new { reason = "approve" }, released.Version));
+        CdActor(host.Services, records, "record.hold", "record.retention.manage", "record.purge.request");
+        var again = await CdOk(await CdSend(client, $"{CdPath}/{created.Id}/disposal-requests", new { reason = "retention elapsed again" }, released.Version));
+        CdActor(host.Services, approver, "record.hold", "record.purge.approve");
+        var approved = await CdOk(await CdSend(client, $"{CdPath}/{created.Id}/disposal-requests/approve", new { reason = "approve" }, again.Version));
         // A recorded disposal decision is not physical deletion.
         Assert.Equal(("APPROVED", "NOT_STARTED"), (approved.DisposalState, approved.PhysicalDeletion));
         await using var db = Db();
         var row = await db.ControlledDocuments.AsNoTracking().SingleAsync(x => x.Id == created.Id, Ct);
         Assert.Equal((records, approver), (row.DisposalRequestedBy!.Value, row.DisposalApprovedBy!.Value));
+        Assert.Equal((false, records, approver), (row.HoldActive, row.HoldPlacedBy!.Value, row.HoldReleasedBy!.Value));
     }
 
     [Fact]
@@ -168,9 +177,20 @@ public sealed partial class DirectoryWorkspaceTests
         await CdDenied(await CdSend(client, $"{CdPath}/{created.Id}/links", new { targetKind = "ControlEvidence", targetId = ControlEvidenceFixtures.Id(other.Id, "Evidence") }, created.Version), HttpStatusCode.Conflict, "linked_resource_unavailable");
         var linked = await CdOk(await CdSend(client, $"{CdPath}/{created.Id}/links", new { targetKind = "ControlEvidence", targetId = evidence }, created.Version));
         Assert.Equal(("ControlEvidence", evidence), (Assert.Single(linked.Links).TargetKind, linked.Links[0].TargetId));
+        Assert.Equal(["CREATED", "LINKED"], linked.Custody.Select(x => x.EventType));
+        // QA F2 / §271: a live link keeps active use open, so disposal cannot be requested.
+        CdActor(host.Services, actorId, "evidence.read", "record.retention.manage", "record.purge.request");
+        var retained = await CdOk(await CdSend(client, $"{CdPath}/{created.Id}/retention", new { policyRef = "SYN-POLICY-1", retainUntil = DateOnly.FromDateTime(DateTime.UtcNow) }, linked.Version));
+        await CdDenied(await CdSend(client, $"{CdPath}/{created.Id}/disposal-requests", new { reason = "end" }, retained.Version), HttpStatusCode.Conflict, "active_use_open");
         CdActor(host.Services, actorId);
         using (var hidden = await client.GetAsync($"/api/v1/{CdPath}/{created.Id}", Ct))
-            Assert.Empty((await hidden.Content.ReadFromJsonAsync<ControlledDocumentDto>(Ct))!.Links); // hidden domain links are not disclosed
+        {
+            var dto = (await hidden.Content.ReadFromJsonAsync<ControlledDocumentDto>(Ct))!;
+            Assert.Empty(dto.Links); // hidden domain links are not disclosed
+            // QA F3: the custody list omits the hidden LINKED event without a gap or count.
+            Assert.Equal(["CREATED", "RETENTION_SET"], dto.Custody.Select(x => x.EventType));
+            Assert.Equal([1L, 2L], dto.Custody.Select(x => x.Position));
+        }
 
         var settings = host.Services.GetRequiredService<FederationSettings>();
         var original = settings.Memberships[0];

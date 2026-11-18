@@ -8548,7 +8548,7 @@ export interface components {
         };
         ControlledDocumentCustodyDto: {
             /** Format: int64 */
-            sequence: number;
+            position: number;
             /** Format: int64 */
             revision: null | number;
             eventType: string;

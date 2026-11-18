@@ -75,8 +75,8 @@ public sealed class ControlledDocumentPolicyTests
         Assert.Equal("ELIGIBLE", ControlledDocumentPolicy.Retention("POLICY-1", Today, Today));
         Assert.Equal("retention_unconfigured", ControlledDocumentPolicy.DisposalRequestBlocker(false, null, null, Today, "NONE", "end of retention"));
         Assert.Equal("retention_not_elapsed", ControlledDocumentPolicy.DisposalRequestBlocker(false, "POLICY-1", Today.AddDays(1), Today, "NONE", "end of retention"));
-        Assert.Equal("invalid_request", ControlledDocumentPolicy.RetentionBlocker("NONE", "bad ref with spaces", Today));
-        Assert.Equal("document_disposal_pending", ControlledDocumentPolicy.RetentionBlocker("REQUESTED", "POLICY-1", Today));
+        Assert.Equal("invalid_request", ControlledDocumentPolicy.RetentionBlocker("NONE", "bad ref with spaces", Today, Today));
+        Assert.Equal("document_disposal_pending", ControlledDocumentPolicy.RetentionBlocker("REQUESTED", "POLICY-1", Today, Today));
     }
 
     [Fact]
@@ -99,5 +99,44 @@ public sealed class ControlledDocumentPolicyTests
         Assert.Equal("legal_hold_not_active", ControlledDocumentPolicy.ReleaseHoldBlocker(false, Other, Registrar, "case closed"));
         Assert.Equal("invalid_state", ControlledDocumentPolicy.PlaceHoldBlocker(true, "AUTH-1", "litigation"));
         Assert.Equal("invalid_request", ControlledDocumentPolicy.PlaceHoldBlocker(false, "", "litigation"));
+    }
+
+    // QA F2 / 58.02 §271: open active use (EFFECTIVE revision or live domain link) blocks request and approval.
+    [Theory]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    [InlineData(true, true)]
+    public void Disposal_requires_closed_active_use_at_request_and_approval(bool effective, bool links)
+    {
+        var open = ControlledDocumentPolicy.ActiveUseOpen(effective, links);
+        Assert.True(open);
+        Assert.Equal("active_use_open", ControlledDocumentPolicy.DisposalRequestBlocker(false, "POLICY-1", Today, Today, "NONE", "end of retention", open));
+        Assert.Equal("active_use_open", ControlledDocumentPolicy.DisposalApproveBlocker(false, "POLICY-1", Today, Today, "REQUESTED", Other, Registrar, "approve", open));
+        Assert.False(ControlledDocumentPolicy.ActiveUseOpen(false, false));
+        Assert.Null(ControlledDocumentPolicy.DisposalRequestBlocker(false, "POLICY-1", Today, Today, "NONE", "end of retention", false));
+        // A hold still wins over active use: the more specific legal blocker is reported first.
+        Assert.Equal("legal_hold_active", ControlledDocumentPolicy.DisposalRequestBlocker(true, "POLICY-1", Today, Today, "NONE", "end of retention", open));
+    }
+
+    // QA F2 / 58.02 §100: only a pending request is invalidated by a new hold or link; APPROVED is terminal.
+    [Fact]
+    public void Only_a_pending_disposal_request_is_invalidated_by_a_new_hold_or_link()
+    {
+        Assert.True(ControlledDocumentPolicy.InvalidatesDisposalRequest("REQUESTED"));
+        Assert.False(ControlledDocumentPolicy.InvalidatesDisposalRequest("NONE"));
+        Assert.False(ControlledDocumentPolicy.InvalidatesDisposalRequest("APPROVED"));
+        Assert.Contains("DISPOSAL_REQUEST_INVALIDATED", ControlledDocumentPolicy.EventTypes);
+    }
+
+    // QA F5 LEAD decisions: no rollback publish of an older revision; no back-dated retain-until.
+    [Fact]
+    public void Older_revision_is_never_published_over_the_effective_one_and_retention_cannot_be_back_dated()
+    {
+        Assert.Equal("revision_older_than_effective", ControlledDocumentPolicy.PublishBlocker("RELEASED", "UNPUBLISHED", "NONE", Other, Uploader, Registrar, 1, 2));
+        Assert.Null(ControlledDocumentPolicy.PublishBlocker("RELEASED", "UNPUBLISHED", "NONE", Other, Uploader, Registrar, 3, 2));
+        Assert.Null(ControlledDocumentPolicy.PublishBlocker("RELEASED", "UNPUBLISHED", "NONE", Other, Uploader, Registrar, 1, null));
+        Assert.Equal("invalid_request", ControlledDocumentPolicy.RetentionBlocker("NONE", "POLICY-1", Today.AddDays(-1), Today));
+        Assert.Null(ControlledDocumentPolicy.RetentionBlocker("NONE", "POLICY-1", Today, Today));
+        Assert.Equal("ELIGIBLE", ControlledDocumentPolicy.Retention("POLICY-1", Today, Today));
     }
 }

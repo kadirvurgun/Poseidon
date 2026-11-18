@@ -24194,7 +24194,7 @@
       },
       "ControlledDocumentCustodyDto": {
         "required": [
-          "sequence",
+          "position",
           "revision",
           "eventType",
           "source",
@@ -24204,7 +24204,7 @@
         ],
         "type": "object",
         "properties": {
-          "sequence": {
+          "position": {
             "type": "integer",
             "format": "int64"
           },

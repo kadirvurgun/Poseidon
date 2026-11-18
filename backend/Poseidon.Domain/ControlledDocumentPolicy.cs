@@ -15,7 +15,8 @@ public static class ControlledDocumentPolicy
     public static readonly string[] VerificationResults = ["VALID", "INVALID", "INCONCLUSIVE"];
     public static readonly string[] LinkKinds = ["VesselCertificate", "ControlEvidence", "Credential"];
     public static readonly string[] EventTypes = ["CREATED", "RECEIVED", "QUARANTINED", "SCANNED_CLEAN", "RELEASED", "PUBLISHED", "SUPERSEDED",
-        "VERIFICATION_RECORDED", "HOLD_PLACED", "HOLD_RELEASED", "RETENTION_SET", "DISPOSAL_REQUESTED", "DISPOSAL_APPROVED", "LINKED"];
+        "VERIFICATION_RECORDED", "HOLD_PLACED", "HOLD_RELEASED", "RETENTION_SET", "DISPOSAL_REQUESTED", "DISPOSAL_APPROVED", "LINKED",
+        "DISPOSAL_REQUEST_INVALIDATED"];
 
     public static bool Text(string? value, int max, bool required = true) => value == null ? !required :
         value.Length <= max && (!required || value.Trim().Length > 0) && !value.Any(c => char.IsControl(c) && c is not ('\n' or '\r')) &&
@@ -40,9 +41,13 @@ public static class ControlledDocumentPolicy
     public static string? ReleaseBlocker(string intake, string disposal, bool cleanFileMatches) =>
         disposal == "APPROVED" ? "document_disposed" : intake != "QUARANTINED" ? "invalid_state" : !cleanFileMatches ? "clean_file_unavailable" : null;
 
-    public static string? PublishBlocker(string intake, string publication, string disposal, Guid actor, Guid uploader, Guid registrar) =>
+    // LEAD decision (QA F5): a revision older than the current EFFECTIVE one is never published
+    // (no rollback publish); a rollback is a new revision of the older content.
+    public static string? PublishBlocker(string intake, string publication, string disposal, Guid actor, Guid uploader, Guid registrar,
+        long revision = 0, long? currentEffective = null) =>
         disposal != "NONE" ? "document_disposal_pending" : intake != "RELEASED" ? "intake_not_released" :
-        publication != "UNPUBLISHED" ? "invalid_state" : !Independent(actor, uploader, registrar) ? "separation_of_duties" : null;
+        publication != "UNPUBLISHED" ? "invalid_state" : currentEffective is long current && revision < current ? "revision_older_than_effective" :
+        !Independent(actor, uploader, registrar) ? "separation_of_duties" : null;
 
     public static string? VerifyBlocker(string intake, string disposal, Guid verifier, Guid uploader, Guid registrar,
         string? method, string? result, string? basis) =>
@@ -57,18 +62,33 @@ public static class ControlledDocumentPolicy
     public static string? ReleaseHoldBlocker(bool holdActive, Guid? placer, Guid actor, string? reason) =>
         !Text(reason, 1000) ? "invalid_request" : !holdActive ? "legal_hold_not_active" : placer == actor ? "separation_of_duties" : null;
 
-    public static string? RetentionBlocker(string disposal, string? policyRef, DateOnly? retainUntil) =>
-        !Code(policyRef) || retainUntil == null ? "invalid_request" : disposal != "NONE" ? "document_disposal_pending" : null;
+    // LEAD decision (QA F5): a retain-until date earlier than today (UTC) is rejected at set
+    // time; it would otherwise make a record immediately disposable by back-dating.
+    public static string? RetentionBlocker(string disposal, string? policyRef, DateOnly? retainUntil, DateOnly today) =>
+        !Code(policyRef) || retainUntil == null || retainUntil < today ? "invalid_request" : disposal != "NONE" ? "document_disposal_pending" : null;
 
-    // DE-009: hold blocks disposal; unconfigured or unelapsed retention blocks disposal.
-    public static string? DisposalRequestBlocker(bool holdActive, string? policyRef, DateOnly? retainUntil, DateOnly today, string disposal, string? reason) =>
+    // 58.02 §271 (DE-009) "kapatılmış aktif kullanım": active use is open while any revision is
+    // EFFECTIVE or any domain link (certificate/evidence/credential) exists. Links are
+    // append-only in this slice (no unlink yet) and there is no withdraw/retire, so such a
+    // document stays non-disposable (fail-closed) until those slices exist.
+    public static bool ActiveUseOpen(bool effectiveRevision, bool liveLinks) => effectiveRevision || liveLinks;
+
+    // DE-009: hold blocks disposal; open active use, unconfigured or unelapsed retention blocks disposal.
+    public static string? DisposalRequestBlocker(bool holdActive, string? policyRef, DateOnly? retainUntil, DateOnly today, string disposal, string? reason,
+        bool activeUseOpen = false) =>
         !Text(reason, 1000) ? "invalid_request" : holdActive ? "legal_hold_active" : disposal != "NONE" ? "invalid_state" :
+        activeUseOpen ? "active_use_open" :
         Retention(policyRef, retainUntil, today) switch { "UNCONFIGURED" => "retention_unconfigured", "RETAINING" => "retention_not_elapsed", _ => null };
 
-    // Approval re-checks hold/retention at approval time and requires a different approver.
+    // Approval re-checks hold/active use/retention at approval time and requires a different approver.
     public static string? DisposalApproveBlocker(bool holdActive, string? policyRef, DateOnly? retainUntil, DateOnly today, string disposal,
-        Guid? requester, Guid approver, string? reason) =>
+        Guid? requester, Guid approver, string? reason, bool activeUseOpen = false) =>
         !Text(reason, 1000) ? "invalid_request" : disposal != "REQUESTED" ? "invalid_state" : requester == approver ? "separation_of_duties" :
-        holdActive ? "legal_hold_active" :
+        holdActive ? "legal_hold_active" : activeUseOpen ? "active_use_open" :
         Retention(policyRef, retainUntil, today) switch { "UNCONFIGURED" => "retention_unconfigured", "RETAINING" => "retention_not_elapsed", _ => null };
+
+    // 58.02 §100/§273: a new hold or a new link while a disposal request is pending invalidates
+    // the request (back to NONE, recorded in custody); the requester must request again and
+    // approval re-checks everything. An APPROVED decision is terminal and is not reset.
+    public static bool InvalidatesDisposalRequest(string disposal) => disposal == "REQUESTED";
 }
