@@ -252,7 +252,7 @@ public static class ControlEvidenceEndpoints
                 return await Fail(h, 409, "tug_capability_context_unavailable");
             var head = id == null ? null : await db.ControlEvidenceHeads.SingleOrDefaultAsync(x => x.Kind == kind && x.VesselId == vessel && x.Id == id, ct);
             if (id != null && head == null) return await Fail(h, 404, "resource_not_found");
-            if (command.ExpectedVersion != (head?.Version ?? 0)) return await Fail(h, 409, "version_conflict");
+            if (command.ExpectedVersion != (head?.Version ?? 0)) return await Replay() ?? await Fail(h, 409, "version_conflict");
             foreach (var p in command.Links)
                 if (!await db.ControlEvidenceHeads.AnyAsync(x => x.Kind == p.Kind && x.Id == p.Id && x.VesselId == vessel && x.Version == p.ExpectedVersion, ct)) return await Fail(h, 409, "linked_version_conflict");
             if (head != null) {

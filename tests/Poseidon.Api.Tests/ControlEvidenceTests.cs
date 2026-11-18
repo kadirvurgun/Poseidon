@@ -177,6 +177,34 @@ public sealed partial class DirectoryWorkspaceTests
         await using var db = Db(); Assert.Equal(2, await db.ControlEvidenceRevisions.CountAsync(x => x.Id == first.Id, Ct)); Assert.Single(await db.ControlEvidenceReceipts.Where(x => x.ResourceId == first.Id && x.Key == key).ToArrayAsync(Ct));
     }
     [Fact]
+    public async Task Duplicate_key_that_reaches_its_transaction_after_the_winner_committed_replays_instead_of_conflicting() {
+        // Deterministic form of the CI race: the late duplicate's pre-transaction receipt lookup
+        // misses, the winner then commits, and only then does the late request open its transaction.
+        var gate = new HoldFirstGraphReceiptLookup(); await using var host = Host(interceptor: gate); using var a = Client(host); using var b = Client(host); GraphPermissionsForTest(host.Services); await Token(a); await Token(b);
+        var first = await GraphSave(a, "controls", GraphCommand()); var key = Guid.NewGuid().ToString(); var command = GraphCommand(first.Version, first.Content);
+        gate.Armed = true;
+        try {
+            var late = Send(b, GraphRoute($"controls/{first.Id}"), command, key, true);
+            await gate.Held.Task.WaitAsync(TimeSpan.FromSeconds(60), Ct);
+            using (var winner = await Send(a, GraphRoute($"controls/{first.Id}"), command, key, true)) Assert.Equal(HttpStatusCode.OK, winner.StatusCode);
+            gate.Release.TrySetResult();
+            using var replayed = await late; Assert.Equal(HttpStatusCode.OK, replayed.StatusCode);
+        } finally { gate.Release.TrySetResult(); }
+        await using var db = Db(); Assert.Equal(2, await db.ControlEvidenceRevisions.CountAsync(x => x.Id == first.Id, Ct)); Assert.Single(await db.ControlEvidenceReceipts.Where(x => x.ResourceId == first.Id && x.Key == key).ToArrayAsync(Ct));
+    }
+    private sealed class HoldFirstGraphReceiptLookup : DbCommandInterceptor {
+        private int held;
+        public volatile bool Armed;
+        public TaskCompletionSource Held { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        public TaskCompletionSource Release { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        public override async ValueTask<DbDataReader> ReaderExecutedAsync(DbCommand command, CommandExecutedEventData eventData, DbDataReader result, CancellationToken cancellationToken = default) {
+            if (Armed && command.CommandText.Contains("FROM core.\"ControlEvidenceReceipts\"", StringComparison.Ordinal) && Interlocked.Exchange(ref held, 1) == 0) {
+                Held.TrySetResult(); await Release.Task.WaitAsync(TimeSpan.FromSeconds(60), cancellationToken);
+            }
+            return result;
+        }
+    }
+    [Fact]
     public async Task Receipt_storage_failure_rolls_back_business_revision_and_attributed_write_audit() {
         var fault = new RejectGraphReceipt(); await using var host = Host(interceptor: fault); using var c = Client(host); GraphPermissionsForTest(host.Services); await Token(c);
         var first = await GraphSave(c, "controls", GraphCommand());

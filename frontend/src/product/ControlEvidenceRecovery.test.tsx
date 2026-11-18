@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { ControlEvidence } from './ControlEvidence'
 import type { Command, Kind, Row } from './control-evidence-api'
-import { controlId, controlRow, controlSession, controlVessel, echoControl } from './control-evidence-recovery.test-fixtures'
+import { controlId, controlRow, controlSession, controlVessel, echoControl, loadedVesselContext } from './control-evidence-recovery.test-fixtures'
 import { qualifiedFixture } from './qualification.test-fixtures'
 
 // CEO01..05/08. Mocked UI transport only; real hostPG/browser sources are separate.
@@ -38,7 +38,7 @@ function fixture(post: (command: Command, attempt: Attempt) => Promise<Response>
 }
 async function open(kind: Kind = 'Control') {
   const user = userEvent.setup()
-  await user.selectOptions(await screen.findByLabelText('Vessel context'), controlVessel)
+  await user.selectOptions(await loadedVesselContext(controlVessel), controlVessel)
   if (kind === 'Evidence') await user.selectOptions(screen.getByLabelText('Register'), 'Evidence')
   await screen.findByLabelText('Title')
   return user

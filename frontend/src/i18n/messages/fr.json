@@ -106,7 +106,8 @@
       "previous": "Sociétés précédentes",
       "next": "Sociétés suivantes",
       "reloadCompanies": "Recharger les sociétés",
-      "requiredNote": "Tous les champs sont obligatoires. Cet enregistrement ne constitue pas une approbation opérationnelle."
+      "requiredNote": "Tous les champs sont obligatoires. Cet enregistrement ne constitue pas une approbation opérationnelle.",
+      "errorSummary": "Vérifiez ces champs avant d’enregistrer :"
     },
     "ProductApp_tsx_copy": {
       "audit": "Historique des actions",
@@ -284,7 +285,23 @@
       "OperationalSourcesUnavailable": "Sources opérationnelles indisponibles",
       "rule": "Règle",
       "context": "Navire actuel",
-      "switch": "Changer de navire"
+      "switch": "Changer de navire",
+      "ViewMaintenancePlan": "Voir le plan de maintenance",
+      "ViewTugJob": "Voir la mission de remorquage",
+      "sourceOwner": "Propriétaire de la source",
+      "sourceSaved": "Source enregistrée le",
+      "noRevision": "Aucune révision enregistrée",
+      "REGULATORY": "Réglementaire",
+      "PMS": "Maintenance planifiée",
+      "TUG": "Opérations de remorquage",
+      "viewReady": "Éléments renvoyés par toutes les sources listées. Ce n’est ni une disponibilité ni une vérification.",
+      "viewEmpty": "Toutes les sources listées ont été lues et n’ont renvoyé aucun élément. Ce n’est pas une autorisation de sécurité.",
+      "viewPartial": "Vue partielle : certaines sources propriétaires sont indisponibles dans ce contexte. L’absence d’éléments ne signifie pas que tout va bien.",
+      "viewUnavailable": "Aucune source propriétaire n’a pu être lue dans ce contexte. Cela ne signifie pas que tout va bien.",
+      "partialCounters": "Sources partielles : zéro ne signifie pas que tout va bien",
+      "emptyCounters": "Résultat vide autorisé : aucune source listée n'a renvoyé d'élément. Ce n'est pas une autorisation de sécurité",
+      "rateLimited": "Trop de requêtes. Patientez, puis réessayez.",
+      "contract": "La réponse du serveur n’a pas passé la validation ; rien n’en est affiché."
     },
     "TugCrewCoverage_tsx_copy": {
       "title": "Rôles minimaux d’équipage qualifiés par la source",
@@ -3206,6 +3223,10 @@
     "m_2492dcd13a8d5ab3": "Un enregistrement est encore en cours. Attendez son résultat avant de changer de navire ; votre contexte actuel est inchangé.",
     "m_221de6ea6fc51bb7": "Votre session a pris fin ou a changé. Reconnectez-vous pour voir votre contexte de travail.",
     "m_9b1a1deb14aac372": "Le navire sélectionné ne fait pas partie de votre périmètre autorisé actuel. Aucun autre navire n’a été sélectionné automatiquement.",
-    "m_5db2b92c3bcc6931": "Choisir un autre navire"
+    "m_5db2b92c3bcc6931": "Choisir un autre navire",
+    "m_7c2c3c0f372d028d": "Filtrer le menu",
+    "m_4895cdb4b14ff26c": "Seuls les écrans que vous êtes autorisé à ouvrir sont recherchés.",
+    "m_9e601b252c4fb4b3": "Aucun élément de menu autorisé ne correspond à ce filtre.",
+    "m_5af49f5d0c78416e": "Effacer le filtre du menu"
   }
 }
