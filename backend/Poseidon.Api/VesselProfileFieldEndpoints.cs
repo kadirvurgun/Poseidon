@@ -149,6 +149,8 @@ public static class VesselProfileFieldEndpoints
 
     private static async Task<IResult> Declare(Guid id, HttpContext http)
     {
+        // Outcomes and receipt replays carry declared provenance: never cacheable, like the reads.
+        http.Response.Headers.CacheControl = "private, no-store";
         var actor = Actor(http)!;
         var audit = http.RequestServices.GetRequiredService<SecurityAudit>();
         var ct = http.RequestAborted;
@@ -215,7 +217,9 @@ public static class VesselProfileFieldEndpoints
             var (state, value) = VesselProfileFieldPolicy.Value(RegulatoryDraftStorage.Deserialize(head.ContentJson), path);
             // A source attests a recorded value; a Missing value has nothing to attest.
             if (state == "Missing") return await Fail(422, "known_profile_value_required");
-            var revision = (await VesselProfileFieldStorage.CurrentValueRevisions(db, actor.TenantId, id, head.Revision, [path], ct))[path];
+            // No derivable value version (GET reports FIELD_VERSION_UNAVAILABLE): nothing to bind a source to.
+            if (!(await VesselProfileFieldStorage.CurrentValueRevisions(db, actor.TenantId, id, head.Revision, [path], ct)).TryGetValue(path, out var revision))
+                return await Fail(409, "profile_unavailable");
             var latest = await db.VesselProfileFieldSources.AsNoTracking().Where(s => s.VesselId == id && s.FieldPath == path).MaxAsync(s => (long?)s.Sequence, ct) ?? 0;
             if (revision != command.ExpectedValueRevision || latest != command.ExpectedSequence)
             {

@@ -111,7 +111,9 @@ export function ProfileFieldProvenance({ vessel, language, revision, dirty = fal
   const [busy, setBusy] = useState(false)
   const [failure, setFailure] = useState<number | null>(null)
   const [notice, setNotice] = useState(false)
-  const [history, setHistory] = useState<{ path: string; offset: number; data: FieldHistory | null; status?: number } | null>(null)
+  // Each history request owns an AbortController; only the request that is still current may update the panel.
+  const [historyState, setHistory] = useState<{ vessel: string; path: string; offset: number; abort: AbortController; data: FieldHistory | null; status?: number } | null>(null)
+  const history = historyState?.vessel === vessel ? historyState : null
   const formId = useId()
 
   const [nonce, setNonce] = useState(0)
@@ -120,24 +122,36 @@ export function ProfileFieldProvenance({ vessel, language, revision, dirty = fal
   // A load for an older vessel/revision/reload key is never shown as current.
   const load: Load = result?.key === loadKey ? result.load : { state: 'loading' }
   const reload = useCallback(() => setNonce(n => n + 1), [])
+  // A superseded, hidden or unmounted history request is aborted; an older page response is ignored.
+  const historyAbort = historyState?.abort
+  useEffect(() => () => historyAbort?.abort(), [historyAbort, vessel])
+  const closeHistory = useCallback(() => setHistory(null), [])
+  // Withdrawn access removes previously shown source details, history and any open declaration.
+  const withdraw = useCallback((key: string, status: number) => {
+    setResult({ key, load: { state: 'error', status } }); closeHistory(); setOpen(null); setPending(null); setFailure(null); setNotice(false)
+  }, [closeHistory])
   useEffect(() => {
     const abort = new AbortController()
     loadProfileFields(vessel, abort.signal).then(data => { if (!abort.signal.aborted) setResult({ key: loadKey, load: { state: 'ok', data } }) }, (error: unknown) => {
       if (abort.signal.aborted) return
       const status = error instanceof ApiError ? error.status : 0
-      // Withdrawn access removes previously shown source details.
-      setResult({ key: loadKey, load: { state: 'error', status } }); setHistory(null); setOpen(null)
+      withdraw(loadKey, status)
       if (status === 403 && error instanceof ApiError) onDenied?.(error)
     })
     return () => abort.abort()
-  }, [loadKey, vessel, onDenied])
+  }, [loadKey, vessel, onDenied, withdraw])
 
   const openHistory = useCallback((path: string, offset: number) => {
-    setHistory({ path, offset, data: null })
     const abort = new AbortController()
-    loadFieldHistory(vessel, path, offset, abort.signal).then(data => setHistory(h => h?.path === path ? { path, offset, data } : h),
-      (error: unknown) => setHistory(h => h?.path === path ? { path, offset, data: null, status: error instanceof ApiError ? error.status : 0 } : h))
-  }, [vessel])
+    setHistory({ vessel, path, offset, abort, data: null })
+    const settle = (next: { data: FieldHistory | null; status?: number }) => setHistory(h => h?.abort === abort ? { ...h, ...next } : h)
+    loadFieldHistory(vessel, path, offset, abort.signal).then(data => { if (!abort.signal.aborted) settle({ data }) }, (error: unknown) => {
+      if (abort.signal.aborted) return
+      const status = error instanceof ApiError ? error.status : 0
+      if (status === 403 && error instanceof ApiError) { withdraw(loadKey, status); onDenied?.(error); return }
+      settle({ data: null, status })
+    })
+  }, [vessel, loadKey, withdraw, onDenied])
 
   function start(field: ProfileField) {
     setOpen(field.fieldPath); setFailure(null); setNotice(false); setPending(null)
@@ -199,10 +213,11 @@ export function ProfileFieldProvenance({ vessel, language, revision, dirty = fal
               <td><FreshnessBadge value={field.freshness} t={t}/></td>
               <td>{t.notVerified}</td>
               <td className="field-provenance-actions">
-                <Button variant="outline" size="sm" aria-expanded={history?.path === field.fieldPath} onClick={() => history?.path === field.fieldPath ? setHistory(null) : openHistory(field.fieldPath, 0)}>
+                <Button variant="outline" size="sm" aria-expanded={history?.path === field.fieldPath} onClick={() => history?.path === field.fieldPath ? closeHistory() : openHistory(field.fieldPath, 0)}>
                   {history?.path === field.fieldPath ? t.hideHistory : t.history}<span className="sr-only">: {name}</span></Button>
                 {data.canDeclare && field.value.state !== 'Missing' && field.valueRevision != null &&
-                  <Button variant="outline" size="sm" disabled={busy} onClick={() => start(field)}>{t.declare}<span className="sr-only">: {name}</span></Button>}
+                  // An uncertain declaration keeps its key and body: no other declaration may start until it resolves.
+                  <Button variant="outline" size="sm" disabled={busy || !!pending?.uncertain} onClick={() => start(field)}>{t.declare}<span className="sr-only">: {name}</span></Button>}
               </td>
             </tr>,
             open === field.fieldPath && <tr key={field.fieldPath + '-form'}><td colSpan={7}>

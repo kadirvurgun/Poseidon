@@ -161,6 +161,77 @@ describe('ProfileFieldProvenance (DEV-020)', () => {
     expect(fetchMock.mock.calls.some(([url]) => url === `/api/v1/vessels/${vessel}/regulatory-profile/fields/gt/history?offset=0`)).toBe(true)
   })
 
+  it('treats a 403 on field history like any other denial and withdraws loaded details', async () => {
+    const fetchMock = vi.fn(async (url: string) => url.includes('/history') ? reply({ code: 'permission_denied' }, 403) : reply(fields()))
+    vi.stubGlobal('fetch', fetchMock)
+    const onDenied = vi.fn()
+    const user = userEvent.setup()
+    render(<ProfileFieldProvenance vessel={vessel} language="en" revision={2} onDenied={onDenied}/>)
+    expect(await screen.findByText('Synthetic certificate ref', { exact: false })).toBeVisible()
+    await user.click(screen.getByRole('button', { name: 'History: GT' }))
+    expect(await screen.findByRole('alert')).toHaveTextContent('You no longer have permission')
+    expect(screen.queryByText('Synthetic certificate ref', { exact: false })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /^History/ })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /^Declare source/ })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Reload' })).not.toBeInTheDocument()
+    expect(onDenied).toHaveBeenCalledTimes(1)
+  })
+
+  it('aborts and ignores an older history response so it cannot overwrite a newer one', async () => {
+    const requests: { resolve: (r: Response) => void; signal?: AbortSignal | null }[] = []
+    const version = (valueRevision: number, value: string) => ({ items: [{ valueRevision, recordedAt: '2026-11-18T09:00:00+00:00', profileProvenance: 'DeclaredUnverified',
+      value: { state: 'Known', value }, sources: [], moreSources: false }], offset: 0, limit: 25, hasMore: false })
+    vi.stubGlobal('fetch', vi.fn((url: string, init?: RequestInit) => url.includes('/history')
+      ? new Promise<Response>(resolve => { requests.push({ resolve, signal: init?.signal }) }) : Promise.resolve(reply(fields()))))
+    const user = userEvent.setup()
+    render(<ProfileFieldProvenance vessel={vessel} language="en" revision={2}/>)
+    // Same field, same page: open, hide and reopen while the first request is still in flight.
+    await user.click(await screen.findByRole('button', { name: 'History: GT' }))
+    await waitFor(() => expect(requests).toHaveLength(1))
+    await user.click(screen.getByRole('button', { name: 'Hide history: GT' }))
+    expect(requests[0].signal?.aborted).toBe(true)
+    await user.click(screen.getByRole('button', { name: 'History: GT' }))
+    await waitFor(() => expect(requests).toHaveLength(2))
+    requests[1].resolve(reply(version(2, 'Newer gt history')))
+    expect(await screen.findByText('Newer gt history', { exact: false })).toBeVisible()
+    requests[0].resolve(reply(version(9, 'Older gt history')))
+    await new Promise(resolve => setTimeout(resolve, 20))
+    expect(screen.queryByText('Older gt history', { exact: false })).not.toBeInTheDocument()
+    expect(screen.getByText('Newer gt history', { exact: false })).toBeVisible()
+    // Switching fields also aborts the superseded request.
+    await user.click(screen.getByRole('button', { name: 'History: Flag' }))
+    await waitFor(() => expect(requests).toHaveLength(3))
+    await user.click(screen.getByRole('button', { name: 'History: GT' }))
+    await waitFor(() => expect(requests).toHaveLength(4))
+    expect(requests[2].signal?.aborted).toBe(true)
+  })
+
+  it('blocks starting another declaration while an outcome is uncertain so the pending key and body are kept', async () => {
+    let attempts = 0
+    const fetchMock = vi.fn(async (_url: string, init?: RequestInit) => {
+      if (init?.method !== 'POST') return reply(fields())
+      attempts++
+      if (attempts === 1) throw new TypeError('network')
+      return reply({ tenantId: '10000000-0000-0000-0000-000000000003', vesselId: vessel, fieldPath: 'flag', source })
+    })
+    vi.stubGlobal('fetch', fetchMock)
+    const user = userEvent.setup()
+    render(<ProfileFieldProvenance vessel={vessel} language="en" revision={2}/>)
+    await user.click(await screen.findByRole('button', { name: 'Declare source: Flag' }))
+    const form = screen.getByRole('form', { name: 'Declare source: Flag' })
+    await user.selectOptions(within(form).getByLabelText('Observed at (with timezone) — Data state'), 'Unknown')
+    await user.click(within(form).getByRole('button', { name: 'Record declared source' }))
+    const retry = await within(form).findByRole('button', { name: 'Retry the same declaration' })
+    expect(screen.getByRole('button', { name: 'Declare source: GT' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Declare source: Flag' })).toBeDisabled()
+    await user.click(retry)
+    expect(await screen.findByText('Declared source recorded. It is unverified.')).toBeVisible()
+    const posts = fetchMock.mock.calls.filter(([, init]) => init?.method === 'POST')
+    expect(posts).toHaveLength(2)
+    expect((posts[0][1]!.headers as Record<string, string>)['Idempotency-Key']).toBe((posts[1][1]!.headers as Record<string, string>)['Idempotency-Key'])
+    expect(posts[0][1]!.body).toBe(posts[1][1]!.body)
+  })
+
   it('rejects a contract that reports FRESH while a field is not fresh', () => {
     expect(() => decodeFields(fields({ summary: { state: 'FRESH', reasonCode: 'ALL_FIELDS_WITHIN_POLICY', oldestObservedAt: null, checkedAt, fresh: 0, stale: 0, unknown: 3, unavailable: 0 } }), vessel)).toThrow()
     expect(() => decodeFields(fields({ fields: [field('gt', { state: 'Known', value: '1' }, unknown('SOURCE_NOT_DECLARED'), { verificationState: 'VERIFIED' })] }), vessel)).toThrow()

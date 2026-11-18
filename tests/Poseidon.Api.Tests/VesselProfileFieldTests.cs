@@ -1,7 +1,9 @@
 using System.Net;
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Poseidon.Api;
 using Poseidon.Domain;
@@ -11,6 +13,7 @@ using Xunit;
 namespace Poseidon.Api.Tests;
 
 // DEV-020 / T-S2-001: DEV020-AC-01..10 through the actual API host, antiforgery and PostgreSQL.
+// Partial of DirectoryWorkspaceTests (shared fixture): select with --filter-trait "Requirement=DEV-020", not --filter-class.
 public sealed partial class DirectoryWorkspaceTests
 {
     private static string FieldsPath(Guid id) => $"/api/v1/vessels/{id}/regulatory-profile/fields";
@@ -27,7 +30,7 @@ public sealed partial class DirectoryWorkspaceTests
     private async Task<RegulatoryDraftDto> SeedProfileValues(HttpClient client, RegulatoryDraftContent? content = null) =>
         await SaveProfile(client, await Profile(client), content ?? new RegulatoryDraftContent { Gt = new("Known", "100.50"), Flag = new("Unknown") });
 
-    [Fact]
+    [Fact, Trait("Requirement", "DEV-020")]
     public async Task Profile_fields_show_owner_value_versions_and_explicit_unknown_freshness_reasons()
     {
         await using var host = Host(); using var client = Client(host); await Token(client);
@@ -50,13 +53,14 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.DoesNotContain(fields.Fields, x => x.Freshness.State is "FRESH" or "STALE");
     }
 
-    [Fact]
+    [Fact, Trait("Requirement", "DEV-020")]
     public async Task Declared_source_is_audited_replayable_and_bound_to_the_exact_value_version()
     {
         await using var host = Host(); using var client = Client(host); await Token(client);
         var profile = await SeedProfileValues(client); var key = Guid.NewGuid().ToString();
         using var declared = await Send(client, SourcesPath(SeedVessel.Id), Declaration("gt", profile.Revision, 0, reference: "  Synthetic certificate reference  "), key);
         Assert.Equal(HttpStatusCode.OK, declared.StatusCode);
+        Assert.True(declared.Headers.CacheControl is { NoStore: true, Private: true });
         var outcome = (await declared.Content.ReadFromJsonAsync<ProfileFieldSourceOutcomeDto>(Ct))!;
         Assert.Equal((1L, profile.Revision, "DOCUMENT", "NOT_VERIFIED", "DeclaredUnverified"),
             (outcome.Source.Sequence, outcome.Source.ValueRevision, outcome.Source.SourceKind, outcome.Source.VerificationState, outcome.Source.Provenance));
@@ -68,6 +72,7 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Equal(DateTimeOffset.Parse("2026-01-01T00:00:00Z"), gt.Freshness.ObservedAt); Assert.NotNull(gt.Freshness.AgeSeconds);
         using var replay = await Send(client, SourcesPath(SeedVessel.Id), Declaration("gt", profile.Revision, 0, reference: "  Synthetic certificate reference  "), key);
         Assert.Equal(HttpStatusCode.OK, replay.StatusCode); Assert.Equal("true", Assert.Single(replay.Headers.GetValues("Idempotency-Replayed")));
+        Assert.True(replay.Headers.CacheControl is { NoStore: true, Private: true });
         Assert.Equal(outcome, await replay.Content.ReadFromJsonAsync<ProfileFieldSourceOutcomeDto>(Ct));
         using var reused = await Send(client, SourcesPath(SeedVessel.Id), Declaration("gt", profile.Revision, 0, "OTHER"), key);
         Assert.Equal(HttpStatusCode.Conflict, reused.StatusCode); Assert.Contains("idempotency_key_reused", await reused.Content.ReadAsStringAsync(Ct));
@@ -82,7 +87,7 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Contains(events, x => x.ChangeSummary!.Contains("DeclareProfileFieldSource"));
     }
 
-    [Fact]
+    [Fact, Trait("Requirement", "DEV-020")]
     public async Task Changing_a_value_supersedes_its_source_and_history_keeps_both_versions()
     {
         await using var host = Host(); using var client = Client(host); await Token(client);
@@ -110,7 +115,7 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Equal(HttpStatusCode.BadRequest, unknownField.StatusCode);
     }
 
-    [Fact]
+    [Fact, Trait("Requirement", "DEV-020")]
     public async Task Declaration_rejects_missing_values_invalid_bodies_csrf_and_keys_without_effects()
     {
         await using var host = Host(); using var client = Client(host); await Token(client);
@@ -133,7 +138,7 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Empty(await db.VesselProfileFieldSources.ToArrayAsync(Ct)); Assert.Empty(await db.VesselProfileFieldSourceReceipts.ToArrayAsync(Ct));
     }
 
-    [Fact]
+    [Fact, Trait("Requirement", "DEV-020")]
     public async Task Read_only_role_cannot_declare_and_unscoped_or_other_tenant_vessels_are_not_found()
     {
         RegulatoryDraftDto profile;
@@ -145,16 +150,48 @@ public sealed partial class DirectoryWorkspaceTests
         var foreign = seed.Vessels.First(v => v.TenantId != seed.Tenants[0].Id);
         using (var other = await client.GetAsync(FieldsPath(foreign.Id), Ct)) Assert.Equal(HttpStatusCode.NotFound, other.StatusCode);
         using (var otherHistory = await client.GetAsync(FieldsPath(foreign.Id) + "/gt/history", Ct)) Assert.Equal(HttpStatusCode.NotFound, otherHistory.StatusCode);
+        // 59.01 p1257 hidden root: an actor who can read the directory, but only another vessel, gets exactly 404 (never 403).
+        await using var otherScopeBase = Host();
+        await using var otherScopeHost = otherScopeBase.WithWebHostBuilder(b => b.ConfigureAppConfiguration((_, c) => c.AddInMemoryCollection(
+            new Dictionary<string, string?> { ["Authentication:Oidc:Memberships:0:TenantWideManage"] = "False", ["Authentication:Oidc:Memberships:0:TenantWideRead"] = "False",
+                ["Authentication:Oidc:Memberships:0:VesselGrants:0:VesselId"] = Guid.NewGuid().ToString() })));
+        using var otherScope = Client(otherScopeHost); await Token(otherScope);
+        using (var hidden = await otherScope.GetAsync(FieldsPath(SeedVessel.Id), Ct)) Assert.Equal(HttpStatusCode.NotFound, hidden.StatusCode);
+        using (var hiddenHistory = await otherScope.GetAsync(FieldsPath(SeedVessel.Id) + "/gt/history", Ct)) Assert.Equal(HttpStatusCode.NotFound, hiddenHistory.StatusCode);
+        using (var write = await Send(otherScope, SourcesPath(SeedVessel.Id), Declaration("gt", profile.Revision, 0)))
+            Assert.Equal(HttpStatusCode.NotFound, write.StatusCode);
+        // 59.01 p1257 missing action: an actor with no directory read scope at all fails the DirectoryRead policy (403) before
+        // any vessel lookup, so the answer is identical for an existing and a random vessel id (no existence oracle).
         await using var unscopedHost = Host(scope: false); using var unscoped = Client(unscopedHost); await Token(unscoped);
-        using (var hidden = await unscoped.GetAsync(FieldsPath(SeedVessel.Id), Ct)) Assert.True(hidden.StatusCode is HttpStatusCode.NotFound or HttpStatusCode.Forbidden);
-        using (var write = await Send(unscoped, SourcesPath(SeedVessel.Id), Declaration("gt", profile.Revision, 0)))
-            Assert.True(write.StatusCode is HttpStatusCode.NotFound or HttpStatusCode.Forbidden);
+        foreach (var vesselId in new[] { SeedVessel.Id, Guid.NewGuid() })
+        {
+            using (var denied = await unscoped.GetAsync(FieldsPath(vesselId), Ct)) Assert.Equal(HttpStatusCode.Forbidden, denied.StatusCode);
+            using (var deniedWrite = await Send(unscoped, SourcesPath(vesselId), Declaration("gt", profile.Revision, 0)))
+                Assert.Equal(HttpStatusCode.Forbidden, deniedWrite.StatusCode);
+        }
         using var anonymous = Client(host, false);
         using (var anon = await anonymous.GetAsync(FieldsPath(SeedVessel.Id), Ct)) Assert.Equal(HttpStatusCode.Unauthorized, anon.StatusCode);
         await using var db = Db(); Assert.Empty(await db.VesselProfileFieldSources.ToArrayAsync(Ct));
     }
 
-    [Fact]
+    [Fact, Trait("Requirement", "DEV-020")]
+    public async Task Declaration_without_a_derivable_value_version_is_a_conflict_not_a_server_error()
+    {
+        await using var host = Host(); using var client = Client(host); await Token(client);
+        var profile = await SeedProfileValues(client);
+        // Test-only fault injection: point the head at a revision with no immutable revision row,
+        // so no field value version can be derived (the append-only revision table stays untouched).
+        await using (var db = Db())
+            await db.Database.ExecuteSqlInterpolatedAsync($"UPDATE core.\"RegulatoryDrafts\" SET \"Revision\" = \"Revision\" + 1000 WHERE \"VesselId\" = {SeedVessel.Id}", Ct);
+        var gt = (await ProfileFields(client)).Fields.Single(x => x.FieldPath == "gt");
+        Assert.Null(gt.ValueRevision); Assert.Equal(("UNKNOWN", "FIELD_VERSION_UNAVAILABLE"), (gt.Freshness.State, gt.Freshness.ReasonCode));
+        using var declared = await Send(client, SourcesPath(SeedVessel.Id), Declaration("gt", profile.Revision, 0));
+        Assert.Equal(HttpStatusCode.Conflict, declared.StatusCode); Assert.Contains("profile_unavailable", await declared.Content.ReadAsStringAsync(Ct));
+        Assert.True(declared.Headers.CacheControl is { NoStore: true, Private: true });
+        await using var check = Db(); Assert.Empty(await check.VesselProfileFieldSources.ToArrayAsync(Ct)); Assert.Empty(await check.VesselProfileFieldSourceReceipts.ToArrayAsync(Ct));
+    }
+
+    [Fact, Trait("Requirement", "DEV-020")]
     public async Task Concurrent_declarations_with_the_same_fence_commit_exactly_one()
     {
         await using var host = Host(); using var client = Client(host); await Token(client);
@@ -180,7 +217,7 @@ public sealed partial class DirectoryWorkspaceTests
             new FreshnessPolicyResolution("RESOLVED", "synthetic-test-policy", new Dictionary<string, TimeSpan> { ["gt"] = maxAge }));
     }
 
-    [Theory]
+    [Theory, Trait("Requirement", "DEV-020")]
     [InlineData(36500, "FRESH", "WITHIN_POLICY_MAX_AGE")]
     [InlineData(1, "STALE", "POLICY_MAX_AGE_EXCEEDED")]
     public async Task Resolved_policy_computes_fresh_or_stale_but_summary_stays_non_positive(int days, string state, string reason)
