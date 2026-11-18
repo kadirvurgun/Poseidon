@@ -10,6 +10,10 @@ rol ve bağlantı olarak genişletildi; eksik şirket Unavailable, geçersiz şi
 olur. İki yeni label17 dilde eklendi. Ürün testleri/build/Playwright **DEFERRED**;
 canonical20 iş/103SP (%10,62) değişmedi, push/PR/merge yok.
 [Kaynak sonucu ve ürün sınırı](phases/ANALYSIS-20261115-01.md).
+Devamında 59.01 `paragraph:55` uygulandı: onboarding blockerları exact vessel,
+alan, gerekçe ve gereken declaration/policy/evidence türünü taşır; tam beyan bile
+nitelikli kanıt olmadan doğrulanmış/ready gösterilmez. Subject ID UI'a taşınmaz,
+yeni blocker metinleri17 dilde tamamlandı. Test yürütme yine büyük kapıya ertelendi.
 
 **13 Kasım — taşma düzeltmesi önizlemede; büyük faz kapısı açık.**
 Kullanıcının Bugün ekranı geri bildirimi giderildi: uzun araç kod/adları kart

@@ -36,6 +36,30 @@
     "acceptance": false,
     "publication": false
   },
+  "s2_vessel_blocker_details_20261117": {
+    "state": "AUTHORED_TESTS_DEFERRED_NOT_ACCEPTED",
+    "task": "docs/tasks/S2-VESSEL-BLOCKER-DETAILS-01.md",
+    "report": "docs/phases/ANALYSIS-20261115-01.md",
+    "source": "59.01/paragraph:55/sha256:daa1a931b1fa90a4a4f3418700264980ced60691673c919888448da7c1bbce7f",
+    "behavior": [
+      "Per-field onboarding blockers bind exact vessel subject, field path, reason and required resolution type",
+      "Missing and Unknown remain distinct and never become No, NotApplicable or Ready",
+      "A complete declaration still requires qualified evidence",
+      "Aggregate passport blocker codes remain compatible with structured details",
+      "Structured blocker labels and resolutions are complete in 17 locale catalogs"
+    ],
+    "verification": {
+      "tests": "DEFERRED",
+      "build_typecheck_lint": "DEFERRED",
+      "playwright": "DEFERRED",
+      "independent_qa": "PENDING",
+      "required_ci": "PENDING"
+    },
+    "accepted_tasks_added": 0,
+    "accepted_story_points_added": 0,
+    "acceptance": false,
+    "publication": false
+  },
   "foundation_acceptance_bundle_01_execution": {
     "task_id": "FOUNDATION-ACCEPTANCE-BUNDLE-01",
     "status": "INCOMPLETE",
