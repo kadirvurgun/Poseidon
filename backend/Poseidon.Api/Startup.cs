@@ -176,6 +176,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapDowntimeOrigins();
             endpoints.MapMaintenanceObservations();
             endpoints.MapTug();
+            endpoints.MapHr();
             endpoints.MapGet("/health/live", () => Results.Text("alive"))
                 .WithName("GetLiveness")
                 .WithSummary("Process liveness only; does not indicate database or operational readiness.");
