@@ -106,7 +106,8 @@
       "previous": "Vorherige Unternehmen",
       "next": "Nächste Unternehmen",
       "reloadCompanies": "Unternehmen neu laden",
-      "requiredNote": "Alle Felder sind erforderlich. Dieser Datensatz erteilt keine betriebliche Freigabe."
+      "requiredNote": "Alle Felder sind erforderlich. Dieser Datensatz erteilt keine betriebliche Freigabe.",
+      "errorSummary": "Prüfen Sie vor dem Speichern diese Felder:"
     },
     "ProductApp_tsx_copy": {
       "audit": "Aktionsverlauf",

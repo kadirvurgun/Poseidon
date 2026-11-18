@@ -106,7 +106,8 @@
       "previous": "Empresas anteriores",
       "next": "Próximas empresas",
       "reloadCompanies": "Recarregar empresas",
-      "requiredNote": "Todos os campos são obrigatórios. Este registro não confere aprovação operacional."
+      "requiredNote": "Todos os campos são obrigatórios. Este registro não confere aprovação operacional.",
+      "errorSummary": "Verifique estes campos antes de salvar:"
     },
     "ProductApp_tsx_copy": {
       "audit": "Histórico de ações",

@@ -106,7 +106,8 @@
       "previous": "Società precedenti",
       "next": "Società successive",
       "reloadCompanies": "Ricarica società",
-      "requiredNote": "Tutti i campi sono obbligatori. Questo record non conferisce approvazione operativa."
+      "requiredNote": "Tutti i campi sono obbligatori. Questo record non conferisce approvazione operativa.",
+      "errorSummary": "Controlla questi campi prima di salvare:"
     },
     "ProductApp_tsx_copy": {
       "audit": "Cronologia delle azioni",
