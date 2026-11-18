@@ -3213,6 +3213,14 @@
     "m_0d01ac4a95241b66": "Onboarding-Hindernisse",
     "m_b9cce241afdb94a4": "Erforderliche Erklärung",
     "m_18895857bed22127": "Richtlinie oder Nachweis erforderlich",
-    "m_9233a4a00cb3f57a": "Qualifizierter Nachweis erforderlich"
+    "m_9233a4a00cb3f57a": "Qualifizierter Nachweis erforderlich",
+    "m_b8002f9e764b18ef": "Es liegt nicht in Ihrem aktuell berechtigten Bereich oder der Zugriff wurde entzogen. Ihr aktueller Kontext bleibt unverändert.",
+    "m_2b19d5fd50cd15bd": "Ihre Sitzung ist beendet oder hat sich geändert. Melden Sie sich erneut an; Ihr aktueller Kontext bleibt unverändert.",
+    "m_3a8d042ee60783dc": "Der Kontextdienst ist nicht verfügbar oder hat nicht rechtzeitig geantwortet. Ihr aktueller Kontext bleibt unverändert; versuchen Sie es erneut.",
+    "m_e7bc23cb053dacc1": "Das aktuelle Formular enthält ungespeicherte Änderungen. Vor dem Wechsel wählen Sie Bleiben oder Verwerfen; Bleiben behält Ihren Entwurf und sendet keine Wechselanfrage.",
+    "m_2492dcd13a8d5ab3": "Ein Speichervorgang läuft noch. Warten Sie auf das Ergebnis, bevor Sie das Schiff wechseln; Ihr aktueller Kontext bleibt unverändert.",
+    "m_221de6ea6fc51bb7": "Ihre Sitzung ist beendet oder hat sich geändert. Melden Sie sich erneut an, um Ihren Arbeitskontext zu sehen.",
+    "m_9b1a1deb14aac372": "Das ausgewählte Schiff liegt nicht in Ihrem aktuell berechtigten Bereich. Es wurde kein anderes Schiff automatisch ausgewählt.",
+    "m_5db2b92c3bcc6931": "Anderes Schiff wählen"
   }
 }

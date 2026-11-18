@@ -9,6 +9,7 @@ import { isGuid } from './identifiers';
 import { loadWorkspaceContext } from './workspace-context-api';
 import { useWorkspaceRevalidation } from './use-workspace-revalidation';
 import { decodeTodayVessels } from './today-api';
+import { currentUnsavedState } from './unsaved-changes';
 import './workspace-vessel-switcher.css';
 type Props = {
     session: Session;
@@ -16,6 +17,18 @@ type Props = {
     language: AppLocale;
     onClose: () => void;
     onNavigate: (href: string, committed?: () => void) => void;
+};
+// Safe, non-enumerating denial reasons (59.01 paragraph 858: 403/404 never reveal
+// whether a foreign vessel exists). Every reason states that the current context is kept.
+export type SwitchDenial = 'scope' | 'session' | 'unavailable';
+export function switchDenial(error: unknown): SwitchDenial {
+    const status = error instanceof api.ApiError ? error.status : 0;
+    return status === 403 || status === 404 ? 'scope' : status === 401 ? 'session' : 'unavailable';
+}
+export const switchDenialKey: Record<SwitchDenial, string> = {
+    scope: 'pairs.m_b8002f9e764b18ef',
+    session: 'pairs.m_2b19d5fd50cd15bd',
+    unavailable: 'pairs.m_3a8d042ee60783dc',
 };
 // A context switch carries no form/entity ID from the old vessel into the new one.
 export function vesselContextHref(path: string, vessel: string, kind: 'Ship' | 'Tug') {
@@ -61,8 +74,11 @@ export function WorkspaceVesselSwitcher({ session, vessel, language, onClose, on
         owner: Session;
         scope: string;
         id: string;
-        state: 'checking' | 'denied';
+        state: 'checking' | 'denied' | 'saving';
+        reason?: SwitchDenial;
     } | null>(null);
+    // Read once at opening: the surface below is inert while this modal is open.
+    const [unsavedAtOpen] = useState(() => currentUnsavedState());
     const check = useRef<AbortController | null>(null);
     const alive = useRef(true);
     const online = navigator.onLine;
@@ -104,12 +120,28 @@ export function WorkspaceVesselSwitcher({ session, vessel, language, onClose, on
     async function choose(id: string) {
         if (!online || !visible || choosing?.state === 'checking' || !current?.data?.items.some(row => row.id === id) || !session.tenantId || !session.actorId)
             return;
+        const row = current.data.items.find(item => item.id === id)!;
+        // 65.03 paragraph 65 step 2 / UX-038 (paragraph 620): an unsaved form is resolved BEFORE any switch
+        // request. 'saving' blocks (outcome unknown); 'dirty' goes straight to the owning
+        // workspace guard, so Stay sends no request and keeps the draft. After an explicit
+        // discard the destination re-verifies the new context server-side (step 4).
+        const unsaved = currentUnsavedState();
+        if (unsaved === 'saving') {
+            setSelection({ owner: session, scope, id, state: 'saving' });
+            return;
+        }
+        if (unsaved === 'dirty') {
+            check.current?.abort();
+            setSelection(null);
+            onNavigate(vesselContextHref(window.location.pathname, row.id, row.kind), onClose);
+            return;
+        }
         check.current?.abort();
         const c = new AbortController();
         check.current = c;
         const stillCurrent = () => alive.current && activeScope.current?.session === session && activeScope.current.scope === scope;
         const timer = setTimeout(() => { c.abort(); if (stillCurrent())
-            setSelection({ owner: session, scope, id, state: 'denied' }); }, 10000);
+            setSelection({ owner: session, scope, id, state: 'denied', reason: 'unavailable' }); }, 10000);
         setSelection({ owner: session, scope, id, state: 'checking' });
         try {
             // A list result is not a switch grant. Recheck the target against the server
@@ -122,9 +154,9 @@ export function WorkspaceVesselSwitcher({ session, vessel, language, onClose, on
             setSelection(null);
             onNavigate(vesselContextHref(window.location.pathname, target.vessel.id, target.vessel.kind), onClose);
         }
-        catch {
-            if (stillCurrent())
-                setSelection({ owner: session, scope, id, state: 'denied' });
+        catch (error) {
+            if (stillCurrent() && !c.signal.aborted)
+                setSelection({ owner: session, scope, id, state: 'denied', reason: switchDenial(error) });
         }
         finally {
             clearTimeout(timer);
@@ -143,7 +175,9 @@ export function WorkspaceVesselSwitcher({ session, vessel, language, onClose, on
       <div className="vessel-switch-query"><input ref={queryInput} id="vessel-switch-query" type="search" maxLength={100} value={query} aria-describedby="vessel-switch-help" onChange={event => setQuery(event.target.value)}/><Button type="submit" variant="outline" disabled={!online || !visible}><Search aria-hidden="true"/>{localizedText(en, "pairs.m_cd496e59db1422e0")}</Button></div>
     </form>
     {!online ? <p role="status" className="vessel-switch-state"><WifiOff aria-hidden="true"/>{localizedText(en, "pairs.m_3387d8d4a9e59e4f")}</p> : !visible ? <p role="status">{localizedText(en, "pairs.m_a9a6ee6c050bd9f7")}</p> : current?.failed ? <div role="alert"><p>{localizedText(en, "pairs.m_21da236313e95714")}</p><Button variant="outline" onClick={() => retry(n => n + 1)}>{localizedText(en, "pairs.m_525dd72b26e12b26")}</Button></div> : !current?.data ? <p role="status">{localizedText(en, "pairs.m_a6455a7ec0514b45")}</p> : <>
-      {choosing?.state === 'denied' && <p role="alert">{localizedText(en, "pairs.m_09c28a05eb60c775")}</p>}
+      {unsavedAtOpen === 'dirty' && <p className="vessel-switch-unsaved" role="status">{localizedText(en, "pairs.m_e7bc23cb053dacc1")}</p>}
+      {choosing?.state === 'saving' && <p role="alert">{localizedText(en, "pairs.m_2492dcd13a8d5ab3")}</p>}
+      {choosing?.state === 'denied' && <p role="alert">{localizedText(en, "pairs.m_09c28a05eb60c775")} {localizedText(en, switchDenialKey[choosing.reason ?? 'unavailable'])}</p>}
       {choosing?.state === 'checking' && <p role="status">{localizedText(en, "pairs.m_62efeb5e3f768a57")}</p>}
       {!current.data.items.length && <p role="status">{localizedText(en, "pairs.m_ae517ef119c87e49")}</p>}
       <ul className="vessel-switch-results">{current.data.items.map(row => { const Icon = row.kind === 'Tug' ? Anchor : Ship; const selected = row.id.toLowerCase() === vessel?.toLowerCase(); return <li key={row.id}><button type="button" disabled={choosing?.state === 'checking' || selected} onClick={() => void choose(row.id)} aria-label={`${row.code} · ${row.name} · ${row.kind === 'Tug' ? (localizedText(en, "pairs.m_306aaabcb4e04a9f")) : (localizedText(en, "pairs.m_bb1dbfbac5d5c650"))}`}><Icon aria-hidden="true"/><span><strong>{row.code} · {row.name}</strong><small>{row.kind === 'Tug' ? (localizedText(en, "pairs.m_306aaabcb4e04a9f")) : (localizedText(en, "pairs.m_bb1dbfbac5d5c650"))}{selected && ` · ${localizedText(en, "pairs.m_566583a89f579f0f")}`}</small></span><ArrowUpRight aria-hidden="true"/></button></li>; })}</ul>

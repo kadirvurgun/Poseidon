@@ -3213,6 +3213,14 @@
     "m_0d01ac4a95241b66": "Blocages de l’intégration",
     "m_b9cce241afdb94a4": "Déclaration requise",
     "m_18895857bed22127": "Politique ou preuve requise",
-    "m_9233a4a00cb3f57a": "Preuve qualifiée requise"
+    "m_9233a4a00cb3f57a": "Preuve qualifiée requise",
+    "m_b8002f9e764b18ef": "Il ne fait pas partie de votre périmètre autorisé actuel ou l’accès a été retiré. Votre contexte actuel est inchangé.",
+    "m_2b19d5fd50cd15bd": "Votre session a pris fin ou a changé. Reconnectez-vous ; votre contexte actuel est inchangé.",
+    "m_3a8d042ee60783dc": "Le service de contexte est indisponible ou n’a pas répondu à temps. Votre contexte actuel est inchangé ; réessayez.",
+    "m_e7bc23cb053dacc1": "Le formulaire actuel contient des modifications non enregistrées. Avant de changer, vous choisirez Rester ou Abandonner ; Rester conserve votre brouillon et n’envoie aucune demande de changement.",
+    "m_2492dcd13a8d5ab3": "Un enregistrement est encore en cours. Attendez son résultat avant de changer de navire ; votre contexte actuel est inchangé.",
+    "m_221de6ea6fc51bb7": "Votre session a pris fin ou a changé. Reconnectez-vous pour voir votre contexte de travail.",
+    "m_9b1a1deb14aac372": "Le navire sélectionné ne fait pas partie de votre périmètre autorisé actuel. Aucun autre navire n’a été sélectionné automatiquement.",
+    "m_5db2b92c3bcc6931": "Choisir un autre navire"
   }
 }

@@ -19,10 +19,12 @@ import { CertificateWorkflowHistory } from './CertificateWorkflowHistory';
 import type { CertificateWorkflowEditor, CertificateWorkspaceSource } from './certificate-workspace-model';
 import { useWorkspaceRevalidation } from './use-workspace-revalidation';
 import './certificates-enterprise.css';
+import { unsavedState, useUnsavedChangesSource } from './unsaved-changes';
 const ownerOf = (user?: Session | null) => user?.authenticated && user.canRead && isGuid(user.tenantId) && isGuid(user.actorId) ? user.tenantId + '/' + user.actorId : null;
 export function CertificateWorkspace() {
     const [language, setLanguage] = useAppLanguage(), [pending, setPending] = useState<(() => void) | null>(null), [instance, setInstance] = useState(0);
     const dirty = useRef(false), saving = useRef(false);
+    useUnsavedChangesSource(() => unsavedState(dirty.current, saving.current));
     const onDirty = useCallback((value: boolean) => { dirty.current = value; }, []), onSaving = useCallback((value: boolean) => { saving.current = value; }, []);
     const clear = () => { dirty.current = false; setInstance(n => n + 1); };
     const guard = (action: () => void) => { if (saving.current)
