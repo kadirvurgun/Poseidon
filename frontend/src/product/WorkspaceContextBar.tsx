@@ -11,6 +11,20 @@ import type { WorkspaceContext } from './workspace-context-api';
 import './workspace-context-bar.css';
 import { useWorkspaceRevalidation } from './use-workspace-revalidation';
 import { WorkspaceVesselSwitcher } from './WorkspaceVesselSwitcher';
+// Same breakpoint as workspace-context-bar.css (47.9375rem): only there is the context collapsed.
+const narrowQuery = '(max-width: 47.9375rem)';
+function useNarrowContext(): boolean {
+    const [narrow, setNarrow] = useState(() => typeof window.matchMedia === 'function' && window.matchMedia(narrowQuery).matches);
+    useEffect(() => {
+        if (typeof window.matchMedia !== 'function')
+            return;
+        const query = window.matchMedia(narrowQuery), update = () => setNarrow(query.matches);
+        update();
+        query.addEventListener?.('change', update);
+        return () => query.removeEventListener?.('change', update);
+    }, []);
+    return narrow;
+}
 type Props = {
     session: Session | null;
     vessel?: string | null;
@@ -43,6 +57,7 @@ function ScopedWorkspaceContextBar({ session, vessel = null, language, onNavigat
     } | null>(null);
     const en = language === 'en';
     const detailsId = useId();
+    const narrow = useNarrowContext();
     const [expanded, setExpanded] = useState(false);
     useEffect(() => {
         const update = () => setOnline(navigator.onLine);
@@ -86,14 +101,17 @@ function ScopedWorkspaceContextBar({ session, vessel = null, language, onNavigat
     // DEV-025 / 65.03 paragraph 48: on a narrow screen the context collapses into one summary
     // button whose accessible name carries the full context (workspace, company, vessel, mode,
     // role, connection). CSS shows it only at <=767px (65.03 paragraph 71); the verified values
-    // stay in the polite live region, which is only visually clipped, never removed.
+    // stay in the polite live region, which is only visually clipped, never removed. While collapsed
+    // on a narrow screen the workspace name (already in the summary name) is aria-hidden; the live
+    // region stays exposed on purpose so a verified context switch is still announced (trade-off:
+    // a virtual-cursor reader may hear company/vessel/mode/role twice; docs/tasks/s2-dev025-01.md).
     const summaryName = showData ? [`${contextLabel}: ${session?.tenantName ?? ''}`, companyText, vesselText, modeText, `${localizedText(en, "pairs.m_fdbbf279aa546fe7")}: ${roleText}`, connectionText].filter(Boolean).join(' · ') : '';
     return <section className="workspace-global-context" aria-label={contextLabel} data-collapsible={showData || undefined} data-expanded={showData ? String(expanded) : undefined}>
     {showData && <button type="button" className="context-summary-toggle" aria-expanded={expanded} aria-controls={detailsId} aria-label={summaryName} onClick={() => setExpanded(value => !value)}>
       <span className="context-summary-text" aria-hidden="true">{current?.data?.vessel ? current.data.vessel.code : vesselText}</span><ChevronDown aria-hidden="true"/>
     </button>}
     <div id={detailsId} className="context-details">
-    <span className="context-workspace">{current?.data && session?.tenantName || (localizedText(en, "pairs.m_e9d69ba1c5c8afd8"))}</span>
+    <span className="context-workspace" aria-hidden={showData && narrow && !expanded ? true : undefined}>{current?.data && session?.tenantName || (localizedText(en, "pairs.m_e9d69ba1c5c8afd8"))}</span>
     {!online ? <span role="status">{localizedText(en, "pairs.m_cdfc48e331f96299")}</span> : document.visibilityState === 'hidden' ? <span role="status">{localizedText(en, "pairs.m_0713fa35fcf43a0b")}</span> : !current ? <span role="status">{localizedText(en, "pairs.m_93cbd8401551ea19")}</span> : !current.data ? <>
       <span role="alert">{current.error === 401 ? localizedText(en, "pairs.m_221de6ea6fc51bb7") : deniedScope ? localizedText(en, "pairs.m_9b1a1deb14aac372") : current.error === 403 || current.error === 404 ? (localizedText(en, "pairs.m_e738676f907d8b26")) : (localizedText(en, "pairs.m_e59c3d6f026fb1d7"))}</span>
       <Button variant="outline" size="sm" disabled={!online} onClick={() => { setResult(null); retry(n => n + 1); }}>{localizedText(en, "pairs.m_d6420ab086c48ebe")}</Button>

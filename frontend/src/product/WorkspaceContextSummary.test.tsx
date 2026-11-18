@@ -45,6 +45,22 @@ describe('DEV-025 narrow-screen context summary (65.03 paragraph 48)', () => {
     expect(live.querySelector('[aria-live], [role="status"], [role="alert"]')).toBeNull()
   })
 
+  it('DEV025-AC-07 on a narrow screen hides the duplicated workspace name while collapsed but keeps the live region exposed', async () => {
+    vi.stubGlobal('matchMedia', vi.fn((query: string) => ({ matches: query === '(max-width: 47.9375rem)', addEventListener: () => {}, removeEventListener: () => {} })))
+    const user = userEvent.setup()
+    render(<WorkspaceContextBar session={session} vessel={vessel} language="en" />)
+    const summary = await screen.findByRole('button', { name: /^Current workspace context: FICTIONAL workspace/ })
+    const details = document.getElementById(summary.getAttribute('aria-controls')!)!
+    const workspace = details.querySelector('.context-workspace')!
+    expect(workspace).toHaveAttribute('aria-hidden', 'true')
+    const live = details.querySelector('[aria-live="polite"]')!
+    expect(live.closest('[aria-hidden="true"]')).toBeNull()
+    expect(live).toHaveTextContent('SYN-A · FICTIONAL Alpha')
+    await user.click(summary)
+    expect(workspace).not.toHaveAttribute('aria-hidden')
+    vi.unstubAllGlobals()
+  })
+
   it('DEV025-AC-07 renders no summary while the context is not verified, so errors stay visible', async () => {
     vi.mocked(loadWorkspaceContext).mockRejectedValue(new ApiError(503))
     render(<WorkspaceContextBar session={session} vessel={vessel} language="tr" />)

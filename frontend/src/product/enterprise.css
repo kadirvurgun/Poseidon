@@ -97,7 +97,7 @@
 .enterprise-shell button.primary-button:hover:not(:disabled) { background: var(--primary); border-color: var(--primary); }
 .enterprise-shell input, .enterprise-shell textarea { border: 1px solid var(--input); border-radius: 7px; min-height: 38px; padding: 8px 11px; font-size: 12px; background: var(--card); color: var(--foreground); box-shadow: 0 1px 2px #142b4208; }
 .enterprise-shell input::placeholder, .enterprise-shell textarea::placeholder { color: var(--muted-foreground); }
-.enterprise-shell input:focus, .enterprise-shell select:focus, .enterprise-shell textarea:focus { border-color: var(--ring); }
+.enterprise-shell input:focus, .enterprise-shell select:focus, .enterprise-shell textarea:focus { border-color: var(--focus-ring); }
 .enterprise-shell label, .enterprise-shell legend { color: var(--foreground); font-size: 12px; font-weight: 550; }
 .enterprise-shell fieldset { border-color: var(--border); border-radius: 9px; padding: 18px; }
 .enterprise-shell fieldset:disabled { opacity: .7; }

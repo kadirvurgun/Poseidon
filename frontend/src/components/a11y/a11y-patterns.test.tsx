@@ -37,6 +37,24 @@ describe('DEV-025 shared modal helpers', () => {
     trapTab(event(false), trap)
     expect(screen.getByRole('button', { name: 'First' })).toHaveFocus()
   })
+  it('a named radio group is one tab stop: the checked radio, else the first', () => {
+    render(<div data-testid="box">
+      <button>Before</button>
+      <input type="radio" name="base" aria-label="stone" /><input type="radio" name="base" aria-label="zinc" defaultChecked /><input type="radio" name="base" aria-label="gray" />
+      <input type="radio" name="accent" aria-label="emerald" /><input type="radio" name="accent" aria-label="teal" />
+      <button>After</button>
+    </div>)
+    expect(focusableTargets(screen.getByTestId('box')).map(el => el.getAttribute('aria-label') ?? el.textContent)).toEqual(['Before', 'zinc', 'emerald', 'After'])
+  })
+  it('trapTab wraps from the last stop even when the last control is a radio group', () => {
+    render(<div data-testid="trap"><button>First</button><input type="radio" name="r" aria-label="a" /><input type="radio" name="r" aria-label="b" defaultChecked /><input type="radio" name="r" aria-label="c" /></div>)
+    const trap = screen.getByTestId('trap'), event = (shiftKey: boolean) => ({ key: 'Tab', shiftKey, preventDefault() {} })
+    screen.getByRole('button', { name: 'First' }).focus()
+    expect(trapTab(event(true), trap)).toBe(true)
+    expect(screen.getByRole('radio', { name: 'b' })).toHaveFocus()
+    expect(trapTab(event(false), trap)).toBe(true)
+    expect(screen.getByRole('button', { name: 'First' })).toHaveFocus()
+  })
 })
 
 function Form() {
