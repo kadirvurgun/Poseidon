@@ -35,10 +35,13 @@ async function mockShell(page: Page, options: { search?: boolean } = {}) {
         if (path === '/api/v1/workspace/search') {
             // Synthetic stand-in for the server: only the two authorized destinations and the granted vessel exist.
             control.searches.push(url.searchParams);
-            const q = (url.searchParams.get('q') ?? '').toLowerCase();
+            // Mirrors the server: destinations match by route key OR TR/EN display label (Turkish-aware fold).
+            const fold = (value: string) => value.replace(/[İIı]/g, 'i').toLowerCase().normalize('NFD').replace(/\p{M}/gu, '').trim();
+            const q = fold(url.searchParams.get('q') ?? '');
+            const labels: Record<string, string[]> = { today: ['Bugün', 'Today'], fleet: ['Filo', 'Fleet'] };
             const items = [{ key: 'today', href: '/app/today', label: 'today', kind: 'Destination' }, { key: 'fleet', href: '/app/fleet', label: 'fleet', kind: 'Destination' },
                 { key: vessels[0].id, href: '/app/fleet/' + vessels[0].id, label: vessels[0].code + ' · ' + vessels[0].name, kind: 'Ship' }]
-                .filter(item => item.label.toLowerCase().includes(q));
+                .filter(item => [item.kind === 'Destination' ? item.key : item.label, ...(labels[item.key] ?? [])].some(text => fold(text).includes(q)));
             await route.fulfill({ json: { items, offset: 0, limit: 25, hasMore: false } });
             return;
         }
@@ -270,6 +273,16 @@ test('DEV-022 role menu filter and authorized search never name, count or match 
     await dialog.getByRole('button', { name: 'Search', exact: true }).click();
     await expect(dialog.getByText('No records found.')).toBeVisible();
     await expect(dialog.getByRole('link')).toHaveCount(0);
+    // A hidden destination's display label is no different from a miss.
+    await dialog.getByRole('searchbox').fill('Action history');
+    await dialog.getByRole('button', { name: 'Search', exact: true }).click();
+    await expect(dialog.getByText('No records found.')).toBeVisible();
+    await expect(dialog.getByRole('link')).toHaveCount(0);
+    // An authorized destination is found by its TR label and shown with its localized label.
+    await dialog.getByRole('searchbox').fill('FİLO');
+    await dialog.getByRole('button', { name: 'Search', exact: true }).click();
+    await expect(dialog.getByRole('link', { name: 'Fleet', exact: true })).toBeVisible();
+    await expect(dialog.getByRole('link')).toHaveCount(1);
     await dialog.getByRole('searchbox').fill('syn-a');
     await dialog.getByRole('button', { name: 'Search', exact: true }).click();
     await expect(dialog.getByRole('link', { name: /SYN-A · FICTIONAL Alpha/ })).toBeVisible();

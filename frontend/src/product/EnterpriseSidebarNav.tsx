@@ -73,7 +73,18 @@ export function EnterpriseSidebarNav({ items, currentKey, language, onNavigate }
       </div>
       <p id={`${id}-filter-hint`} className="enterprise-nav-filter-hint">{localizedText(language, "pairs.m_4895cdb4b14ff26c")}</p>
     </div>}
-    <div id={`${id}-results`} ref={results} className="enterprise-sidebar-nav-results">
+    <div id={`${id}-results`} ref={results} className="enterprise-sidebar-nav-results" onKeyDown={event => {
+            // Arrow keys move between visible results; ArrowUp on the first returns to the filter.
+            // Tab order is unchanged (every item stays a regular tab stop).
+            if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+            const target = event.target as HTMLElement;
+            if (!target.classList.contains('enterprise-nav-item')) return;
+            const list = [...(results.current?.querySelectorAll<HTMLButtonElement>('.enterprise-nav-item') ?? [])].filter(item => !item.closest('[hidden]'));
+            const index = list.indexOf(target as HTMLButtonElement);
+            if (index < 0) return;
+            const next = event.key === 'ArrowDown' ? list[index + 1] : index === 0 ? input.current : list[index - 1];
+            if (next) { event.preventDefault(); next.focus(); }
+        }}>
     {needle && groups.length === 0 && <p className="enterprise-nav-loading" role="status">{localizedText(language, "pairs.m_9e601b252c4fb4b3")}</p>}
     {groups.map(group => {
             // While filtering every matching group is open so each match is reachable by keyboard.

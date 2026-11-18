@@ -66,7 +66,7 @@ public static class WorkspaceEndpoints
                 await audit.WriteAsync(http, "WorkspaceSearch", "Denied");
                 return Results.StatusCode(403);
             }
-            // DEV-022: closed query union (54.02 IAM_READ_V1 "unknown filter 400"). A tenant, vessel,
+            // DEV-022: closed query union (65.03 paragraph 170; 54.02 IAM_READ_V1 paragraph 13347 "unknown filter 400"). A tenant, vessel,
             // role, mode or permission selector is never an authority input and is rejected, not ignored.
             if (!SearchQueryClosed(http.Request.Query) || q is { Length: > 100 } || q?.Any(char.IsControl) == true || offset is < 0 or > 100000 || limit is < 1 or > 25)
             {
@@ -78,11 +78,17 @@ public static class WorkspaceEndpoints
             var skip = offset ?? 0;
             var take = limit ?? 25;
             // Stable ordinal destination order, followed by Code/Id vessel order. No total count.
-            var destinations = Destinations(actor).Where(x => search == "" || x.Key.Contains(search, StringComparison.OrdinalIgnoreCase))
+            // Destinations are matched in memory AFTER the scope projection (Destinations(actor)), by route
+            // key or TR/EN display label with Turkish-aware folding; a hidden destination's label never
+            // participates, so it is indistinguishable from no match.
+            var needle = WorkspaceDestinationLabels.Fold(search);
+            var destinations = Destinations(actor).Where(x => search == "" || WorkspaceDestinationLabels.Matches(x.Key, needle))
                 .Select(x => new SearchItemDto(x.Key, x.Href, x.Key, "Destination")).ToArray();
             var vesselSkip = Math.Max(0, skip - destinations.Length);
             // Scope is applied before matching and pagination, so hidden vessels never influence
-            // matches, ordering, hasMore or the page boundary. Matching is case-insensitive.
+            // matches, ordering, hasMore or the page boundary. Matching is case-insensitive via SQL
+            // lower(); known limitation: lower() follows the database collation/ctype, so Turkish
+            // dotted/dotless I and diacritics are not folded for vessel code/name (destinations are).
             var rows = await actor.Scope(db.Vessels.AsNoTracking())
                 .Where(x => folded == "" || x.Code.ToLower().Contains(folded) || x.Name.ToLower().Contains(folded))
                 .OrderBy(x => x.Code).ThenBy(x => x.Id).Skip(vesselSkip).Take(take + 1)
