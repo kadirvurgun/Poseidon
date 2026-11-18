@@ -6,6 +6,7 @@ import { loadWorkspaceContext } from './workspace-context-api'
 import { WorkspaceVesselSwitcher, vesselContextHref } from './WorkspaceVesselSwitcher'
 import type { Session } from './directory-contract'
 import type { WorkspaceContext } from './workspace-context-api'
+import { registerUnsavedSource } from './unsaved-changes'
 
 vi.mock('./api', async original => ({ ...await original<typeof import('./api')>(), vessels: vi.fn() }))
 vi.mock('./workspace-context-api', () => ({ loadWorkspaceContext: vi.fn() }))
@@ -65,6 +66,40 @@ describe('DEV-021 / T-S2-002 authorized vessel context switch; authored, executi
     expect(props.onNavigate).not.toHaveBeenCalled(); expect(props.onClose).not.toHaveBeenCalled()
     expect(window.location.pathname).toBe(`/app/today/${first}`)
     await user.click(target()); await waitFor(() => expect(props.onNavigate).toHaveBeenCalledTimes(1))
+  })
+  it.each([
+    [403, 'It is not in your current authorized scope or access was withdrawn. Your current context is unchanged.'],
+    [404, 'It is not in your current authorized scope or access was withdrawn. Your current context is unchanged.'],
+    [401, 'Your session has ended or changed. Sign in again; your current context is unchanged.'],
+    [503, 'The context service is unavailable or did not answer in time. Your current context is unchanged; retry.'],
+  ])('DEV021-AC-04 explains denial %s with a non-enumerating reason and keeps the current context', async (status, reason) => {
+    vi.mocked(loadWorkspaceContext).mockRejectedValueOnce(new ApiError(status))
+    const user = userEvent.setup(); render(<WorkspaceVesselSwitcher {...props} />)
+    await user.click(await screen.findByRole('button', { name: 'SYN-2 · FICTIONAL vessel 2 · Ship' }))
+    expect(await screen.findByRole('alert')).toHaveTextContent(reason)
+    expect(screen.getByRole('alert')).not.toHaveTextContent('FICTIONAL vessel 2')
+    expect(props.onNavigate).not.toHaveBeenCalled(); expect(window.location.pathname).toBe(`/app/today/${first}`)
+  })
+  it('DEV021-AC-06 hands an unsaved form to the workspace guard BEFORE any switch request; Stay keeps the draft', async () => {
+    const release = registerUnsavedSource(() => 'dirty')
+    try {
+      const user = userEvent.setup(); render(<WorkspaceVesselSwitcher {...props} />)
+      expect(await screen.findByText(/Stay keeps your draft and sends no switch request/)).toBeVisible()
+      await user.click(target())
+      // The guard owns Stay/Discard. Until it commits, no context request exists and the chooser stays open.
+      expect(props.onNavigate).toHaveBeenCalledWith(`/app/today/${second}`, props.onClose)
+      expect(loadWorkspaceContext).not.toHaveBeenCalled(); expect(props.onClose).not.toHaveBeenCalled()
+      expect(screen.getByRole('dialog', { name: 'Change vessel context' })).toBeVisible()
+    } finally { release() }
+  })
+  it('DEV021-AC-07 blocks switching while a save is in flight and sends no request', async () => {
+    const release = registerUnsavedSource(() => 'saving')
+    try {
+      const user = userEvent.setup(); render(<WorkspaceVesselSwitcher {...props} language="tr" />)
+      await user.click(await screen.findByRole('button', { name: /SYN-2 · FICTIONAL vessel 2/ }))
+      expect(await screen.findByRole('alert')).toHaveTextContent('Kayıt işlemi hâlâ sürüyor.')
+      expect(loadWorkspaceContext).not.toHaveBeenCalled(); expect(props.onNavigate).not.toHaveBeenCalled()
+    } finally { release() }
   })
   it('does not navigate from a late grant belonging to the previous actor', async () => {
     const next = pending<WorkspaceContext>(); vi.mocked(loadWorkspaceContext).mockReturnValue(next.promise)

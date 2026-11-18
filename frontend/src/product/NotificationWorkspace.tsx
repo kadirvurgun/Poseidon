@@ -12,6 +12,7 @@ import { useWorkspaceRevalidation } from './use-workspace-revalidation';
 import * as notifications from './notification-inbox-api';
 import './offline-enterprise.css';
 import './product.css';
+import { unsavedState, useUnsavedChangesSource } from './unsaved-changes';
 export function NotificationWorkspace() {
     const [language, setLanguage] = useAppLanguage(), en = language === 'en', epoch = useWorkspaceRevalidation();
     const [selected, setSelected] = useState(() => {
@@ -32,6 +33,7 @@ export function NotificationWorkspace() {
     const dirty = useRef(false);
     const setDirty = useCallback((value: boolean) => { dirty.current = value; }, []);
     const [saving, setSaving] = useState(false), [pending, setPending] = useState<(() => void) | null>(null);
+    useUnsavedChangesSource(() => unsavedState(dirty.current, saving));
     const invalid = selected === null;
     const online = navigator.onLine, visible = document.visibilityState !== 'hidden', lastUser = retainedUser;
     const currentUser = identity?.epoch === epoch ? identity.user : null;

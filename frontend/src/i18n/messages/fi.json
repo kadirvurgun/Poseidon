@@ -3198,6 +3198,14 @@
     "m_0d01ac4a95241b66": "Käyttöönoton esteet",
     "m_b9cce241afdb94a4": "Vaadittu ilmoitus",
     "m_18895857bed22127": "Käytäntö tai näyttö vaaditaan",
-    "m_9233a4a00cb3f57a": "Pätevä näyttö vaaditaan"
+    "m_9233a4a00cb3f57a": "Pätevä näyttö vaaditaan",
+    "m_b8002f9e764b18ef": "Se ei kuulu nykyiseen valtuutettuun laajuuteesi tai käyttöoikeus on peruttu. Nykyinen kontekstisi ei muuttunut.",
+    "m_2b19d5fd50cd15bd": "Istuntosi on päättynyt tai muuttunut. Kirjaudu uudelleen; nykyinen kontekstisi ei muuttunut.",
+    "m_3a8d042ee60783dc": "Kontekstipalvelu ei ole käytettävissä tai ei vastannut ajoissa. Nykyinen kontekstisi ei muuttunut; yritä uudelleen.",
+    "m_e7bc23cb053dacc1": "Nykyisessä lomakkeessa on tallentamattomia muutoksia. Ennen vaihtoa valitset Jää tai Hylkää; Jää säilyttää luonnoksen eikä lähetä vaihtopyyntöä.",
+    "m_2492dcd13a8d5ab3": "Tallennus on yhä käynnissä. Odota tulosta ennen aluksen vaihtamista; nykyinen kontekstisi ei muuttunut.",
+    "m_221de6ea6fc51bb7": "Istuntosi on päättynyt tai muuttunut. Kirjaudu uudelleen nähdäksesi työkontekstisi.",
+    "m_9b1a1deb14aac372": "Valittu alus ei kuulu nykyiseen valtuutettuun laajuuteesi. Muuta alusta ei valittu automaattisesti.",
+    "m_5db2b92c3bcc6931": "Valitse toinen alus"
   }
 }

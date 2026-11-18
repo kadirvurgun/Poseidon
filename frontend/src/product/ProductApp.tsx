@@ -21,6 +21,7 @@ import { AuditWorkspace } from './AuditWorkspace';
 import { RegulatoryRegister } from './RegulatoryRegister';
 import { enterpriseFocusTargets } from './enterprise-focus';
 import { EnterprisePageHeader, EnterprisePagination, EnterpriseSectionHeader, EnterpriseToolbar } from './EnterprisePatterns';
+import { unsavedState, useUnsavedChangesSource } from './unsaved-changes';
 const copy = localizedCopy("ProductApp_tsx_copy");
 type State<T> = {
     state: 'loading';
@@ -76,6 +77,7 @@ export function ProductApp() {
         else
             action();
     };
+    useUnsavedChangesSource(() => unsavedState(dirty, saving || navigationLive.current.saving));
     const closeEditor = () => { setEditor(null); setDirty(false); setProfileInstance(v => v + 1); };
     const { route, move } = useWorkspaceLocation(guard, () => { closeEditor(); setDrawer(false); setDetail({ state: 'loading' }); setRecords({ state: 'loading' }); setOffset(0); setSearch(''); setSearchInput(''); setAttempt(v => v + 1); document.getElementById('product-main')?.focus(); });
     const tab = route.tab;
