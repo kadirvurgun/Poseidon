@@ -1,0 +1,22 @@
+/* DEV-020: field provenance panel. FRESH uses the neutral info tone, never a success/"ready" green. */
+.profile-field-provenance { border: 1px solid var(--border); border-radius: var(--radius); background: var(--card); color: var(--foreground); padding: 16px; margin: 16px 0; }
+.profile-field-provenance h3 { margin-top: 0; }
+.field-provenance-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 16px; margin: 0 0 12px; }
+.field-provenance-meta dt { font-weight: 600; color: var(--muted-foreground); }
+.field-provenance-meta dd { margin: 4px 0 0; overflow-wrap: anywhere; }
+.field-provenance-note { display: block; color: var(--muted-foreground); font-size: 0.875rem; }
+.field-provenance-table { overflow-x: auto; }
+.field-provenance-table table { width: 100%; border-collapse: collapse; }
+.field-provenance-table th, .field-provenance-table td { text-align: start; vertical-align: top; padding: 8px; border-top: 1px solid var(--border); overflow-wrap: anywhere; }
+.field-provenance-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.field-freshness { display: inline-flex; flex-direction: column; gap: 2px; padding: 4px 8px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--muted); color: var(--foreground); }
+.field-freshness[data-state="FRESH"] { background: var(--info-surface); border-color: var(--info-border); color: var(--info-text); }
+.field-freshness[data-state="STALE"] { background: var(--warning-surface); border-color: var(--warning-border); color: var(--warning); }
+.field-freshness[data-state="UNAVAILABLE"] { background: var(--danger-surface); border-color: var(--danger-border); color: var(--danger-text); }
+.field-source { display: inline-flex; flex-direction: column; gap: 2px; }
+.field-source-form { display: grid; gap: 8px; max-width: 40rem; }
+.field-source-pair { display: flex; flex-wrap: wrap; gap: 8px; }
+.field-source-pair input { flex: 1 1 16rem; min-width: 0; }
+.field-source-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+.field-history { margin: 0; padding-inline-start: 1.25rem; display: grid; gap: 8px; }
+.field-provenance-error { display: grid; gap: 8px; }

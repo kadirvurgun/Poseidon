@@ -10,6 +10,7 @@ import { RequiredDataField } from './RequiredDataField';
 import { loginHref } from './workspace-location';
 import { ConstructionRecordPicker } from './ConstructionRecordPicker';
 import { ProfileSourceSummary } from './ProfileSourceSummary';
+import { ProfileFieldProvenance } from './ProfileFieldProvenance';
 import { Button } from '../components/ui/button';
 import { EnterpriseActions, EnterprisePagination } from './EnterprisePatterns';
 import { OnboardingSteps, onboardingSteps, OnboardingAssessmentView } from './VesselOnboarding';
@@ -25,6 +26,8 @@ type Props = {
     onDirty: (value: boolean) => void;
     onSaving: (value: boolean) => void;
     journey?: 'profile' | 'onboarding';
+    // DEV-020: opt-in field provenance/freshness panel bound to the saved profile revision.
+    fieldProvenance?: boolean;
 };
 export function RegulatoryProfile(props: Props) {
     const { id, language, journey = 'profile', onRegisterDiscard } = props;
@@ -74,6 +77,7 @@ export function RegulatoryProfile(props: Props) {
       {!profile.revision && <p>{t.empty}</p>}
       <p>{t.provenance}: {provenance(profile.provenance)} · {t.revision}: {profile.revision} · {t.time}: {profile.savedAt ?? t.unknown}</p>
       <ProfileSourceSummary profile={profile} language={language} />
+      {props.fieldProvenance && !onboarding && <ProfileFieldProvenance vessel={id} language={language} revision={profile.revision} dirty={dirty} onDenied={invalidateAccess}/>}
       <aside className="profile-source-context" aria-label={localizedText(language, "pairs.m_e263b98182c6b18a")}><strong>{t.observed}</strong><p>{observedAt !== null ? <time dateTime={observedAt}>{observedAt}</time> : savedObservation?.state === 'Missing' ? (localizedText(language, "pairs.m_a5bd35d90de7c160")) : t.unknown}</p><p>{localizedText(language, "pairs.m_bdf69e4bcf117eaa")}</p></aside>
       <p>{profileFields.filter(([key]) => content[key]?.state !== 'Known').length} {onboarding ? (localizedText(language, "pairs.m_344296b81dee2be9")) : t.count}</p>
       {!profile.vessel.canEdit && <p>{t.readonly}</p>}
