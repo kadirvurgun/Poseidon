@@ -85,7 +85,9 @@ export function CriticalStatesPanel({ vessel, language, revision = null, dirty =
   const denied = useRef(onDenied)
   useEffect(() => { denied.current = onDenied }, [onDenied])
   useEffect(() => {
-    const update = () => setOnline(navigator.onLine)
+    // 61.03 p1064-1072: going offline drops the held explanations from memory; after reconnect
+    // the panel shows loading until a fresh server read replaces them.
+    const update = () => { const on = navigator.onLine; if (!on) setResult(null); setOnline(on) }
     window.addEventListener('online', update); window.addEventListener('offline', update)
     return () => { window.removeEventListener('online', update); window.removeEventListener('offline', update) }
   }, [])

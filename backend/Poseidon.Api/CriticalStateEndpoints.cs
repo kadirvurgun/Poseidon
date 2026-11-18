@@ -41,56 +41,104 @@ public static class CriticalStateEndpoints
         var actor = actors.Resolve(http.User)!;
         var access = ComplianceWorkspaceEndpoints.AccessHash(actor);
         var ct = http.RequestAborted;
-        CriticalStatesDto dto;
+        CriticalStateExplanation? onboarding = null, freshness = null, applicability = null;
+        bool profileDetail, fieldDetail;
+        long? headRevision;
+        Guid? evaluation = null;
+        DateTimeOffset now;
         try
         {
             // One snapshot for the vessel scope, profile head, field sources and evaluation.
             await using var tx = await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.RepeatableRead, ct);
             var vessel = await actor.Scope(db.Vessels.AsNoTracking()).SingleOrDefaultAsync(v => v.Id == id, ct);
             if (vessel == null) { await audit.WriteAsync(http, "CriticalStateRead", "NotFound", resourceId: id); return Results.NotFound(); }
-            // Owning detail gates, exactly as the owner endpoints apply them.
-            var profileDetail = (await RegulatoryDraftEndpoints.ReadCurrent(actor, id, db, ct)).Readable;
-            var fieldDetail = profileDetail && await VesselProfileFieldEndpoints.Readable(actor, id, db, ct);
+            // Owning detail gates, exactly as the owner endpoints apply them: the onboarding owner
+            // (current draft binding) and the DEV-020 field owner (any bound revision).
+            profileDetail = (await RegulatoryDraftEndpoints.ReadCurrent(actor, id, db, ct)).Readable;
+            fieldDetail = profileDetail && await VesselProfileFieldEndpoints.Readable(actor, id, db, ct);
             // The full state is computed server-side, then redacted before serialization.
             var projection = await VesselProfileFieldEndpoints.Project(actor.TenantId, id, db, http, clock, ct);
             var head = projection.Head;
+            headRevision = head?.Revision;
             var content = head == null ? null : RegulatoryDraftStorage.Deserialize(head.ContentJson);
-            var now = projection.CheckedAt;
-            var states = new List<CriticalStateExplanation>();
+            now = projection.CheckedAt;
             if (only is null or CriticalStatePolicy.Onboarding)
-            {
-                var onboarding = CriticalStatePolicy.ForOnboarding(id, ComplianceOnboardingPolicy.Assess(vessel.Id, vessel.Code, vessel.Name, content),
+                onboarding = CriticalStatePolicy.ForOnboarding(id, ComplianceOnboardingPolicy.Assess(vessel.Id, vessel.Code, vessel.Name, content),
                     head?.Revision, head?.SavedAt, head?.Provenance ?? "Missing", projection.Summary, now, $"/app/fleet/{id:D}/onboarding");
-                states.Add(profileDetail ? onboarding : CriticalStatePolicy.Redact(onboarding));
-            }
             if (only is null or CriticalStatePolicy.ProfileFreshness)
-            {
-                var freshness = CriticalStatePolicy.ForProfileFreshness(id, head?.Revision ?? 0, head?.SavedAt, head?.Provenance ?? "Missing",
+                freshness = CriticalStatePolicy.ForProfileFreshness(id, head?.Revision ?? 0, head?.SavedAt, head?.Provenance ?? "Missing",
                     [.. projection.Fields.Select(f => (f.FieldPath, f.Freshness))], projection.Summary, now, $"/app/fleet/{id:D}/profile");
-                states.Add(fieldDetail ? freshness : CriticalStatePolicy.Redact(freshness));
-            }
             // 61.03 p214: no independent minimal-result capability exists for applicability, so a
             // reader without the review gate gets no component at all (never emulated by broad read).
-            if (only is (null or CriticalStatePolicy.Applicability) && ControlEvidenceEndpoints.Read(actor))
+            // DEV024-DEC-05: the review gate includes file.read, so its reader always holds the
+            // profile and field detail; there is no STATE_ONLY applicability (see Compose).
+            if (only is (null or CriticalStatePolicy.Applicability) && ControlEvidenceEndpoints.Read(actor) && fieldDetail)
             {
                 var review = await ComplianceWorkspaceEndpoints.Review(id, actor, http, db, now);
-                var applicability = CriticalStatePolicy.ForApplicability(id, review.Available, review.Current, review.EvaluationId,
+                evaluation = review.EvaluationId;
+                applicability = CriticalStatePolicy.ForApplicability(id, review.Available, review.Current, review.EvaluationId,
                     review.EvaluatedAt, review.Blockers, projection.Summary, now, review.Href);
-                states.Add(profileDetail ? applicability : CriticalStatePolicy.Redact(applicability));
             }
             await tx.CommitAsync(ct);
-            dto = new(id, now, "VISIBLE_ONLY", [.. states]);
         }
         catch (Exception ex) when (PostgresFailure.IsDatabase(ex))
         {
             await audit.WriteAsync(http, "CriticalStateRead", "service_unavailable", resourceId: id);
             return Results.StatusCode(503);
         }
+
+        // Each sub-object is disclosed only under its own owner's detail predicate (QA F1):
+        // onboarding by the onboarding owner, its embedded DEV-020 freshness summary and the
+        // profile-freshness component by the DEV-020 owner, applicability by the review owner.
+        CriticalStatesDto Compose(bool profile, bool field)
+        {
+            var states = new List<CriticalStateExplanation>();
+            if (onboarding != null)
+                states.Add(!profile ? CriticalStatePolicy.Redact(onboarding) : field ? onboarding : CriticalStatePolicy.WithoutProfileFreshness(onboarding));
+            if (freshness != null) states.Add(profile && field ? freshness : CriticalStatePolicy.Redact(freshness));
+            if (applicability != null && profile && field) states.Add(applicability);
+            return new(id, now, "VISIBLE_ONLY", [.. states]);
+        }
+
         // Live access fence: a grant change during composition withholds the whole response.
         bool Current() => actors.Resolve(http.User) is { CanRead: true } live && ComplianceWorkspaceEndpoints.AccessHash(live) == access;
-        if (!Current()) { await audit.WriteAsync(http, "CriticalStateRead", "permission_denied", resourceId: id); return Results.StatusCode(403); }
-        await audit.WriteAsync(http, "CriticalStateRead", "Success", resourceId: id);
-        if (!Current()) { await audit.WriteAsync(http, "CriticalStateRead", "permission_denied", resourceId: id); return Results.StatusCode(403); }
-        return Results.Ok(dto);
+        // Live resource fence (QA F2), as ComplianceWorkspaceEndpoints.ResponseCurrent: a fresh DI
+        // scope reads outside the composition snapshot, so a construction-file binding or an
+        // evaluation withdrawn after the snapshot is seen. All predicates share one statement.
+        async Task<(bool Visible, bool Profile, bool Field)> Fence()
+        {
+            if (!Current()) return (false, false, false);
+            await using var scope = http.RequestServices.GetRequiredService<IServiceScopeFactory>().CreateAsyncScope();
+            var live = scope.ServiceProvider.GetRequiredService<ActorResolver>().Resolve(http.User);
+            if (live is not { CanRead: true } || ComplianceWorkspaceEndpoints.AccessHash(live) != access) return (false, false, false);
+            var fresh = scope.ServiceProvider.GetRequiredService<PoseidonDbContext>();
+            var files = live.Permissions.Contains("file.read");
+            var evaluations = OperationEquipmentCommands.Evaluations(fresh, live);
+            var gates = await live.Scope(fresh.Vessels.AsNoTracking()).Where(v => v.Id == id).Select(v => new
+            {
+                Profile = files || !fresh.RegulatoryDrafts.Any(p => p.VesselId == id && p.ConstructionFileId != null) &&
+                    !fresh.RegulatoryDraftRevisions.Any(p => p.VesselId == id && p.Revision == headRevision && p.ConstructionFileId != null),
+                Field = files || !fresh.RegulatoryDraftRevisions.Any(p => p.VesselId == id && p.ConstructionFileId != null),
+                Evaluation = evaluation == null || evaluations.Any(e => e.Id == evaluation && e.VesselId == id)
+            }).SingleOrDefaultAsync(ct);
+            // A withdrawn evaluation is denied like the review owner's fence (403); a new file
+            // binding narrows the disclosure to what the owners would now grant.
+            return gates is { Evaluation: true } && Current() ? (true, gates.Profile, gates.Field) : (false, false, false);
+        }
+
+        try
+        {
+            var before = await Fence();
+            if (!before.Visible) { await audit.WriteAsync(http, "CriticalStateRead", "permission_denied", resourceId: id); return Results.StatusCode(403); }
+            await audit.WriteAsync(http, "CriticalStateRead", "Success", resourceId: id);
+            var after = await Fence();
+            if (!after.Visible) { await audit.WriteAsync(http, "CriticalStateRead", "permission_denied", resourceId: id); return Results.StatusCode(403); }
+            return Results.Ok(Compose(profileDetail && before.Profile && after.Profile, fieldDetail && before.Field && after.Field));
+        }
+        catch (Exception ex) when (PostgresFailure.IsDatabase(ex))
+        {
+            await audit.WriteAsync(http, "CriticalStateRead", "service_unavailable", resourceId: id);
+            return Results.StatusCode(503);
+        }
     }
 }

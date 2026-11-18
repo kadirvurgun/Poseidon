@@ -135,6 +135,84 @@ public sealed partial class DirectoryWorkspaceTests
         finally { try { Directory.Delete(root, true); } catch (IOException) { } catch (UnauthorizedAccessException) { } }
     }
 
+    // QA F1: each embedded sub-object follows its own owner's gate. A construction record bound
+    // then removed leaves the current draft readable by the onboarding owner, but the DEV-020
+    // owner still withholds field freshness (any bound revision). The onboarding entry stays
+    // FULL without its embedded freshness; profile freshness is STATE_ONLY.
+    [Fact, Trait("Requirement", "DEV-024")]
+    public async Task Onboarding_omits_embedded_dev020_freshness_when_only_a_prior_revision_is_construction_bound()
+    {
+        var root = Path.Combine(Path.GetTempPath(), "poseidon-critical-prior-" + Guid.NewGuid().ToString("N")); Directory.CreateDirectory(root);
+        try
+        {
+            using var scanner = new ScanPeer("stream: OK\0", repeat: true); await using var host = FileHost(root, scanner.Port); using var client = Client(host);
+            FilePermissions(host.Services); await Token(client);
+            var stage = await StagePng(client); using var accepted = await PutPng(client, stage.Id); Assert.Equal(HttpStatusCode.OK, accepted.StatusCode);
+            var file = (await accepted.Content.ReadFromJsonAsync<FileDto>(Ct))!;
+            var before = await Profile(client);
+            var bound = await SaveProfile(client, before, before.Content with { ConstructionRecord = new(file.Id, file.Revision!.Value, file.Checksum!), Flag = new("Unknown") });
+            var removed = await SaveProfile(client, bound, bound.Content with { ConstructionRecord = null });
+            var settings = host.Services.GetRequiredService<FederationSettings>();
+            settings.Memberships[0] = settings.Memberships[0] with { Permissions = ["directory.read", "directory.write"] };
+            // Owners: onboarding readable (current draft unbound), DEV-020 fields withheld (prior revision bound).
+            using (var owner = await client.GetAsync(CompliancePath("onboarding"), Ct)) Assert.Equal(HttpStatusCode.OK, owner.StatusCode);
+            using (var fields = await client.GetAsync(FieldsPath(SeedVessel.Id), Ct)) Assert.Equal(HttpStatusCode.Forbidden, fields.StatusCode);
+            using var raw = await client.GetAsync(CriticalPath(SeedVessel.Id), Ct);
+            Assert.Equal(HttpStatusCode.OK, raw.StatusCode);
+            var json = await raw.Content.ReadAsStringAsync(Ct);
+            using var document = JsonDocument.Parse(json);
+            var states = document.RootElement.GetProperty("states").EnumerateArray().ToArray();
+            Assert.Equal([CriticalStatePolicy.Onboarding, CriticalStatePolicy.ProfileFreshness], states.Select(s => s.GetProperty("key").GetString()));
+            Assert.Equal("FULL", states[0].GetProperty("disclosure").GetString());
+            Assert.Equal(removed.Revision, states[0].GetProperty("source").GetProperty("revision").GetInt64());
+            Assert.False(states[0].TryGetProperty("freshness", out _));
+            Assert.Equal(["key", "subjectId", "state", "disclosure", "asOf", "verification", "source", "reasonCodes", "blockers", "href"],
+                states[0].EnumerateObject().Select(p => p.Name));
+            Assert.Equal(["key", "subjectId", "state", "disclosure", "asOf"], states[1].EnumerateObject().Select(p => p.Name));
+            Assert.Equal(("STATE_ONLY", "REVIEW_REQUIRED"), (states[1].GetProperty("disclosure").GetString(), states[1].GetProperty("state").GetString()));
+            foreach (var secret in new[] { "FIELDS_", "SOURCE_NOT_DECLARED", "VALUE_UNKNOWN", "observedAt", "checkedAt", file.Id.ToString() })
+                Assert.DoesNotContain(secret, json, StringComparison.Ordinal);
+            var single = await CriticalStates(client, query: "?key=vessel.onboarding");
+            Assert.Null(Assert.Single(single.States).Freshness);
+        }
+        finally { try { Directory.Delete(root, true); } catch (IOException) { } catch (UnauthorizedAccessException) { } }
+    }
+
+    // QA F2: the final fence re-reads the construction-file gates outside the composition
+    // snapshot. A binding committed while the read is paused after its first profile statement
+    // narrows the response to what the owners would now grant (both STATE_ONLY).
+    [Fact, Trait("Requirement", "DEV-024")]
+    public async Task Critical_states_recheck_a_construction_binding_committed_during_composition()
+    {
+        var root = Path.Combine(Path.GetTempPath(), "poseidon-critical-fence-" + Guid.NewGuid().ToString("N")); Directory.CreateDirectory(root);
+        try
+        {
+            using var scanner = new ScanPeer("stream: OK\0", repeat: true);
+            await using var writerHost = FileHost(root, scanner.Port); using var writer = Client(writerHost); FilePermissions(writerHost.Services); await Token(writer);
+            var before = await Profile(writer); var stage = await StagePng(writer); using var uploaded = await PutPng(writer, stage.Id);
+            Assert.Equal(HttpStatusCode.OK, uploaded.StatusCode); var file = (await uploaded.Content.ReadFromJsonAsync<FileDto>(Ct))!;
+            var barrier = new ComplianceRowsBarrier(); await using var readerHost = Host(interceptor: barrier); using var reader = Client(readerHost); await Token(reader);
+            Assert.All((await CriticalStates(reader)).States, s => Assert.Equal("FULL", s.Disclosure));
+            barrier.Arm(); var pending = reader.GetAsync(CriticalPath(SeedVessel.Id), Ct); HttpResponseMessage? response = null;
+            try
+            {
+                await barrier.Wait(Ct);
+                await SaveProfile(writer, before, before.Content with { ConstructionRecord = new(file.Id, file.Revision!.Value, file.Checksum!) });
+                barrier.Release(); response = await pending.WaitAsync(TimeSpan.FromSeconds(30), Ct);
+                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                var json = await response.Content.ReadAsStringAsync(Ct);
+                using var document = JsonDocument.Parse(json);
+                var states = document.RootElement.GetProperty("states").EnumerateArray().ToArray();
+                Assert.Equal([CriticalStatePolicy.Onboarding, CriticalStatePolicy.ProfileFreshness], states.Select(s => s.GetProperty("key").GetString()));
+                Assert.All(states, s => Assert.Equal(["key", "subjectId", "state", "disclosure", "asOf"], s.EnumerateObject().Select(p => p.Name)));
+                Assert.All(states, s => Assert.Equal("STATE_ONLY", s.GetProperty("disclosure").GetString()));
+                foreach (var secret in new[] { "RegulatoryDraft", "reasonCodes", "blockers", "\"freshness\"", "/app/fleet", file.Id.ToString() })
+                    Assert.DoesNotContain(secret, json, StringComparison.OrdinalIgnoreCase);
+            }
+            finally { barrier.Release(); response ??= await pending.WaitAsync(TimeSpan.FromSeconds(30), Ct); response.Dispose(); }
+        }
+        finally { try { Directory.Delete(root, true); } catch (IOException) { } catch (UnauthorizedAccessException) { } }
+    }
     [Fact, Trait("Requirement", "DEV-024")]
     public async Task Other_tenant_and_unscoped_vessels_are_not_found_and_unscoped_readers_are_denied_without_an_oracle()
     {

@@ -1,4 +1,4 @@
-import { render, screen, waitFor, within } from '@testing-library/react'
+import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { CriticalStateExplanationView, CriticalStatesPanel } from './CriticalStatePanel'
@@ -21,7 +21,7 @@ const applicability = (extra: object = {}) => ({ key: 'vessel.compliance.applica
   reasonCodes: ['PROFILE_CHANGED'], freshness: freshness('STALE', 'PROFILE_CHANGED', at),
   blockers: [{ fieldPath: 'applicability', reasonCode: 'PROFILE_CHANGED', resolutionType: 'RE_EVALUATION' }],
   href: `/app/fleet/${vessel}/passport#applicability`, ...extra })
-const redacted = (key = 'vessel.profile.freshness', state = 'UNKNOWN') => ({ key, subjectId: vessel, state, disclosure: 'STATE_ONLY', asOf: at })
+const redacted = (key = 'vessel.profile.freshness', state = 'REVIEW_REQUIRED') => ({ key, subjectId: vessel, state, disclosure: 'STATE_ONLY', asOf: at })
 const page = (states: object[]) => ({ vesselId: vessel, readAt: at, scope: 'VISIBLE_ONLY', states })
 const reply = (body: unknown, status = 200) => ({ ok: status >= 200 && status < 300, status, json: async () => body }) as Response
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals() })
@@ -60,7 +60,7 @@ describe('CriticalStatesPanel (DEV-024)', () => {
     expect(article).toHaveTextContent('Review required'); expect(article).toHaveTextContent('Details are restricted for your access')
     expect(within(article).queryByRole('link')).toBeNull(); expect(within(article).queryByText('Source')).toBeNull()
     expect(within(article).queryByRole('region', { name: 'Blockers' })).toBeNull()
-    expect(screen.getByRole('article', { name: 'Profile freshness' })).toHaveTextContent('Unknown')
+    expect(screen.getByRole('article', { name: 'Profile freshness' })).toHaveTextContent('Review required')
     expect(screen.getByText('Only states you are allowed to view are listed.')).toBeVisible()
   })
 
@@ -83,6 +83,16 @@ describe('CriticalStatesPanel (DEV-024)', () => {
     expect(() => decodeCriticalStates(page([onboarding({ subjectId: evaluation })]), vessel)).toThrow()
     expect(() => decodeCriticalStates(page([onboarding(), onboarding()]), vessel)).toThrow()
     expect(() => decodeCriticalStates(page([onboarding({ blockers: [{ fieldPath: 'profile.imo', reasonCode: 'X', resolutionType: 'AUTO_APPROVE' }] })]), vessel)).toThrow()
+    // DEV024-DEC-02: a state-only entry never carries UNKNOWN (a reason class).
+    expect(() => decodeCriticalStates(page([redacted('vessel.profile.freshness', 'UNKNOWN')]), vessel)).toThrow()
+    // DEV024-DEC-05: applicability has no state-only form.
+    expect(() => decodeCriticalStates(page([redacted('vessel.compliance.applicability', 'REVIEW_REQUIRED')]), vessel)).toThrow()
+    // DEV024-DEC-01: only onboarding may omit the embedded DEV-020 freshness; never null-with-value.
+    const withoutFreshness: Record<string, unknown> = onboarding(); delete withoutFreshness.freshness
+    expect(decodeCriticalStates(page([withoutFreshness]), vessel).states[0].freshness).toBeUndefined()
+    expect(() => decodeCriticalStates(page([onboarding({ freshness: null })]), vessel)).toThrow()
+    const applicabilityWithoutFreshness: Record<string, unknown> = applicability(); delete applicabilityWithoutFreshness.freshness
+    expect(() => decodeCriticalStates(page([applicabilityWithoutFreshness]), vessel)).toThrow()
     const unavailable: Record<string, unknown> = applicability({ state: 'UNAVAILABLE' }); delete unavailable.source
     expect(decodeCriticalStates(page([unavailable]), vessel).states).toHaveLength(1)
     vi.stubGlobal('fetch', vi.fn(async () => reply(page([{ ...redacted(), reasonCodes: ['VALUE_UNKNOWN'] }]))))
@@ -101,6 +111,26 @@ describe('CriticalStatesPanel (DEV-024)', () => {
     await waitFor(() => expect(screen.queryByRole('article')).toBeNull())
     expect(screen.getByText(/Çevrimdışı/)).toBeVisible()
     view.unmount()
+  })
+
+  it('clears held explanations when going offline and shows loading after reconnect until the refetch lands', async () => {
+    let resolve: (value: Response) => void = () => {}
+    const fetch = vi.fn(async () => reply(page([onboarding()]))); vi.stubGlobal('fetch', fetch)
+    const online = vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(true)
+    render(<CriticalStatesPanel vessel={vessel} language="en"/>)
+    await screen.findByRole('article', { name: 'Onboarding readiness' })
+    online.mockReturnValue(false)
+    act(() => { window.dispatchEvent(new Event('offline')) })
+    expect(screen.queryByRole('article')).toBeNull()
+    fetch.mockImplementation(() => new Promise<Response>(r => { resolve = r }))
+    online.mockReturnValue(true)
+    act(() => { window.dispatchEvent(new Event('online')) })
+    // The previously held explanation is not resurrected while the refetch is pending.
+    expect(screen.getByRole('status')).toHaveTextContent(/Loading/)
+    expect(screen.queryByRole('article')).toBeNull()
+    await waitFor(() => expect(fetch).toHaveBeenCalledTimes(2))
+    await act(async () => { resolve(reply(page([onboarding({ state: 'REVIEW_REQUIRED' })]))) })
+    expect(within(await screen.findByRole('article', { name: 'Onboarding readiness' })).getByText('Review required')).toBeVisible()
   })
 
   it('renders a single explanation for reuse by other Why panels', () => {

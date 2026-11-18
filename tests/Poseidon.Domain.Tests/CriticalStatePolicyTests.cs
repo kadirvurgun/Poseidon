@@ -96,9 +96,30 @@ public sealed class CriticalStatePolicyTests
         Assert.Equal(["key", "subjectId", "state", "disclosure", "asOf"], document.RootElement.EnumerateObject().Select(p => p.Name));
         Assert.DoesNotContain("REQUIRED_DATA", json); Assert.DoesNotContain("RegulatoryDraft", json); Assert.DoesNotContain("secret", json);
         foreach (var state in CriticalStatePolicy.States) Assert.Contains(CriticalStatePolicy.Redact(state), CriticalStatePolicy.RedactedStates);
-        Assert.Equal("UNKNOWN", CriticalStatePolicy.Redact("UNKNOWN")); Assert.Equal("REVIEW_REQUIRED", CriticalStatePolicy.Redact("STALE"));
+        // DEV024-DEC-02 (QA F3): UNKNOWN reveals a reason class, so it collapses into the
+        // non-positive REVIEW_REQUIRED; it never becomes a positive state.
+        Assert.Equal("REVIEW_REQUIRED", CriticalStatePolicy.Redact("UNKNOWN")); Assert.Equal("REVIEW_REQUIRED", CriticalStatePolicy.Redact("STALE"));
+        Assert.Equal("UNAVAILABLE", CriticalStatePolicy.Redact("UNAVAILABLE"));
+        Assert.Equal(["REVIEW_REQUIRED", "UNAVAILABLE"], CriticalStatePolicy.RedactedStates);
         Assert.Equal("REVIEW_REQUIRED", CriticalStatePolicy.Redact("QUALIFIED_CURRENT_UNVERIFIED"));
         Assert.Throws<ArgumentOutOfRangeException>(() => CriticalStatePolicy.Redact("READY"));
+    }
+
+    [Fact, Trait("Requirement", "DEV-024")]
+    public void Onboarding_without_dev020_detail_omits_only_the_embedded_freshness()
+    {
+        var assessment = ComplianceOnboardingPolicy.Assess(Vessel, "SYN", "FICTIONAL", new() { Flag = new("Unknown") });
+        var full = CriticalStatePolicy.ForOnboarding(Vessel, assessment, 7, Now, "DeclaredUnverified", Summary("STALE", "FIELDS_STALE"), Now, "/app/x");
+        var stripped = CriticalStatePolicy.WithoutProfileFreshness(full);
+        Assert.Null(stripped.Freshness);
+        Assert.Equal(full with { Freshness = null }, stripped);
+        Assert.Equal("FULL", stripped.Disclosure);
+        using var document = JsonDocument.Parse(JsonSerializer.Serialize(stripped, new JsonSerializerOptions(JsonSerializerDefaults.Web)));
+        Assert.False(document.RootElement.TryGetProperty("freshness", out _));
+        Assert.DoesNotContain("FIELDS_STALE", document.RootElement.GetRawText());
+        Assert.Throws<ArgumentException>(() => CriticalStatePolicy.WithoutProfileFreshness(CriticalStatePolicy.Redact(full)));
+        var profile = CriticalStatePolicy.ForProfileFreshness(Vessel, 7, Now, "x", [], Summary(), Now, "/");
+        Assert.Throws<ArgumentException>(() => CriticalStatePolicy.WithoutProfileFreshness(profile));
     }
 
     [Fact, Trait("Requirement", "DEV-024")]

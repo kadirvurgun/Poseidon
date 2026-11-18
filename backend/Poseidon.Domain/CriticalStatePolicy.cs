@@ -34,8 +34,10 @@ public static class CriticalStatePolicy
     public static IReadOnlyList<string> States { get; } =
         ["BLOCKED", "REVIEW_REQUIRED", "UNKNOWN", "STALE", "UNAVAILABLE", "DECLARED_UNVERIFIED", "QUALIFIED_CURRENT_UNVERIFIED"];
     // DEV024-DEC-02: a state-only reader learns only that the state is not positive.
-    // BLOCKED/STALE/DECLARED would reveal a reason class (missing data, source age).
-    public static IReadOnlyList<string> RedactedStates { get; } = ["REVIEW_REQUIRED", "UNKNOWN", "UNAVAILABLE"];
+    // BLOCKED/STALE/DECLARED/UNKNOWN would reveal a reason class (missing data, source age,
+    // undeclared source); all collapse into the non-positive REVIEW_REQUIRED, so UNKNOWN is
+    // never converted to a positive state. Only service unavailability stays distinct.
+    public static IReadOnlyList<string> RedactedStates { get; } = ["REVIEW_REQUIRED", "UNAVAILABLE"];
     public static IReadOnlyList<string> ResolutionTypes { get; } =
     [
         "PROFILE_DECLARATION", "REQUIRED_DECLARATION", "POLICY_OR_EVIDENCE", "QUALIFIED_EVIDENCE", "SOURCE_DECLARATION",
@@ -45,7 +47,6 @@ public static class CriticalStatePolicy
 
     public static string Redact(string state) => state switch
     {
-        "UNKNOWN" => "UNKNOWN",
         "UNAVAILABLE" => "UNAVAILABLE",
         _ when States.Contains(state) => "REVIEW_REQUIRED",
         _ => throw new ArgumentOutOfRangeException(nameof(state), "Unsupported critical state.")
@@ -54,6 +55,14 @@ public static class CriticalStatePolicy
     // Server-side redaction: keeps only key, subject, coarse state, disclosure and time.
     public static CriticalStateExplanation Redact(CriticalStateExplanation full) =>
         new(full.Key, full.SubjectId, Redact(full.State), StateOnly, full.AsOf);
+
+    // DEV024-DEC-01 per sub-object: the onboarding explanation embeds the DEV-020 freshness
+    // summary, whose owner gate (any construction-file-bound revision withholds it) is
+    // stricter than the onboarding gate (current draft only). Without the DEV-020 detail the
+    // embedded freshness is omitted (never sent as null); the rest stays FULL.
+    public static CriticalStateExplanation WithoutProfileFreshness(CriticalStateExplanation full) =>
+        full.Key == Onboarding && full.Disclosure == Full ? full with { Freshness = null }
+            : throw new ArgumentException("Only a FULL onboarding explanation embeds a separately owned freshness summary.", nameof(full));
 
     private static CriticalStateExplanation Checked(CriticalStateExplanation value)
     {

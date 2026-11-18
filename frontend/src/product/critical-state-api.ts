@@ -11,7 +11,8 @@ export type CriticalStates = components['schemas']['CriticalStatesDto']
 export const criticalStateKeys = ['vessel.onboarding', 'vessel.profile.freshness', 'vessel.compliance.applicability'] as const
 export type CriticalStateKey = typeof criticalStateKeys[number]
 export const criticalStates = ['BLOCKED', 'REVIEW_REQUIRED', 'UNKNOWN', 'STALE', 'UNAVAILABLE', 'DECLARED_UNVERIFIED', 'QUALIFIED_CURRENT_UNVERIFIED'] as const
-export const redactedStates = ['REVIEW_REQUIRED', 'UNKNOWN', 'UNAVAILABLE'] as const
+// DEV024-DEC-02: UNKNOWN reveals a reason class and is collapsed server-side into REVIEW_REQUIRED.
+export const redactedStates = ['REVIEW_REQUIRED', 'UNAVAILABLE'] as const
 export const resolutionTypes = ['PROFILE_DECLARATION', 'REQUIRED_DECLARATION', 'POLICY_OR_EVIDENCE', 'QUALIFIED_EVIDENCE', 'SOURCE_DECLARATION',
   'SOURCE_RENEWAL', 'FRESHNESS_POLICY_CONFIGURATION', 'SERVICE_RECOVERY', 'RE_EVALUATION', 'QUALIFIED_EVALUATION', 'CATALOG_QUALIFICATION', 'HUMAN_REVIEW'] as const
 const freshnessStates = ['FRESH', 'STALE', 'UNKNOWN', 'UNAVAILABLE']
@@ -32,10 +33,13 @@ export function decodeCriticalState(value: unknown, vessel: string): CriticalSta
   if (!object(value) || !one(criticalStateKeys, value.key) || value.subjectId !== vessel || !timestamp(value.asOf)) fail()
   if (value.disclosure === 'STATE_ONLY') {
     // A redacted entry carries nothing beyond existence and a coarse non-positive state.
-    if (!exact(value, base) || !one(redactedStates, value.state)) fail()
+    // DEV024-DEC-05: applicability has no state-only capability (61.03 p214); it is FULL or absent.
+    if (value.key === 'vessel.compliance.applicability' || !exact(value, base) || !one(redactedStates, value.state)) fail()
     return value as CriticalStateExplanation
   }
-  const keys = value.source === undefined ? full.filter(k => k !== 'source') : full
+  // DEV024-DEC-01: only onboarding may omit its embedded DEV-020 freshness (withheld by that owner's gate).
+  if (value.freshness === undefined && value.key !== 'vessel.onboarding') fail()
+  const keys = full.filter(k => !(k === 'source' && value.source === undefined) && !(k === 'freshness' && value.freshness === undefined))
   if (value.disclosure !== 'FULL' || !exact(value, keys) || !one(criticalStates, value.state) || value.verification !== 'NOT_VERIFIED' ||
       !Array.isArray(value.reasonCodes) || value.reasonCodes.length > 64 || !value.reasonCodes.every(code) ||
       new Set(value.reasonCodes).size !== value.reasonCodes.length || !text(value.href, 512) || !String(value.href).startsWith('/app/')) fail()
@@ -46,8 +50,8 @@ export function decodeCriticalState(value: unknown, vessel: string): CriticalSta
   // Only applicability without any recorded evaluation may lack an owning source record.
   if ((value.source === undefined || value.source === null) && !(value.key === 'vessel.compliance.applicability' && value.state === 'UNAVAILABLE')) fail()
   const f = value.freshness
-  if (!exact(f, ['state', 'reasonCode', 'observedAt', 'checkedAt']) || !one(freshnessStates, f.state) || !code(f.reasonCode) ||
-      !(f.observedAt === null || timestamp(f.observedAt)) || !timestamp(f.checkedAt)) fail()
+  if (f !== undefined && (!exact(f, ['state', 'reasonCode', 'observedAt', 'checkedAt']) || !one(freshnessStates, f.state) || !code(f.reasonCode) ||
+      !(f.observedAt === null || timestamp(f.observedAt)) || !timestamp(f.checkedAt))) fail()
   if (!Array.isArray(value.blockers) || value.blockers.length > 64 || !value.blockers.every(b => exact(b, ['fieldPath', 'reasonCode', 'resolutionType']) &&
       typeof b.fieldPath === 'string' && /^(profile|applicability|vessel)(\.[A-Za-z]{1,64})?$/.test(b.fieldPath) && code(b.reasonCode) && one(resolutionTypes, b.resolutionType)))
     fail()
