@@ -88,7 +88,7 @@ public sealed class FleetCatalogDraftPersistenceTests(FleetCatalogPostgresFixtur
             return await Record.ExceptionAsync(async () => { await FleetCatalogDraftWriter.AppendAsync(db, catalog, 1, Guid.NewGuid(), Draft("next"), Ct); });
         }
         var results = await Task.WhenAll(Attempt(), Attempt());
-        Assert.Single(results.Where(x => x is null)); Assert.Single(results.Where(x => x is not null));
+        Assert.Single(results, x => x is null); Assert.Single(results, x => x is not null);
         await using var check = fixture.Db();
         Assert.Equal(2, (await check.FleetCatalogDrafts.SingleAsync(x => x.Id == catalog, Ct)).Revision);
         Assert.Equal(2, await check.FleetCatalogDraftRevisions.CountAsync(x => x.CatalogId == catalog, Ct));

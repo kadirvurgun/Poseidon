@@ -2,7 +2,9 @@ using System.Net;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Poseidon.Api;
+using Poseidon.Persistence;
 using Xunit;
 
 namespace Poseidon.Api.Tests;

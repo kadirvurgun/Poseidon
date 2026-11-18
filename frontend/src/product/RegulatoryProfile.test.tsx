@@ -165,7 +165,7 @@ describe('VESSEL-PROFILE-DRAFT-01 component and transport coverage (mocked API, 
         vi.stubGlobal('fetch', vi.fn((url: string) => Promise.resolve(reply(url.includes('/history?') ? { ...history, items: [] } : { ...profile, version: 0, revision: 0, savedAt: null, provenance: 'Missing', vessel: { ...vessel, canEdit: false } }))));
         render(<RegulatoryProfile {...callbacks()}/>);
         expect(await screen.findByText('No saved profile draft yet.')).toBeVisible();
-        expect(screen.getByText('No saved versions.')).toBeVisible();
+        expect(await screen.findByText('No saved versions.')).toBeVisible();
         expect(screen.getByText('Read-only profile')).toBeVisible();
         expect(screen.queryByRole('button', { name: 'Save draft' })).not.toBeInTheDocument();
         expect(screen.getByLabelText('Flag — Data state')).toBeDisabled();
