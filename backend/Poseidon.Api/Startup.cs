@@ -9,6 +9,9 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
     {
         // The generic host completes application configuration before invoking Startup.
         // OIDC scheme registration and membership resolution must share that final configuration.
+        // PLAN-1511-5803: first startup filter = outermost; validates the endpoint profile registry
+        // against the mapped endpoints after the whole pipeline is configured (fail closed).
+        services.AddTransient<IStartupFilter, EndpointProfiles.StartupValidation>();
         services.AddRouting();
         // Numeric wire values remain numbers; do not advertise implicit string coercion.
         services.ConfigureHttpJsonOptions(options => options.SerializerOptions.NumberHandling =

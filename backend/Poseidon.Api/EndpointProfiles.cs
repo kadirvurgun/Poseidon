@@ -183,12 +183,32 @@ public static class EndpointProfiles
         return errors;
     }
 
+    // Reserved markers (scripts/endpoint_profiles.py) can never be a real profile.
+    public static readonly FrozenSet<string> ReservedProfileIds = new[] { "UNASSIGNED" }.ToFrozenSet(StringComparer.Ordinal);
+
+    // Exclusions may only name known non-API surfaces; nothing under /api/ can be excluded from profiling.
+    internal static bool AllowedExclusion(string? path) => path is { Length: > 1 and <= 200 } &&
+        !path.StartsWith("/api", StringComparison.OrdinalIgnoreCase) && !path.Contains("..", StringComparison.Ordinal) &&
+        (path.StartsWith("/openapi/", StringComparison.Ordinal) || path.StartsWith("/app/", StringComparison.Ordinal) || path == "/agents");
+
     private static EndpointProfileRegistryDocument Load()
     {
         using var stream = typeof(EndpointProfiles).Assembly.GetManifestResourceStream("Poseidon.EndpointProfiles")
             ?? throw new InvalidOperationException("The endpoint profile registry is unavailable.");
+        return Parse(stream);
+    }
+
+    internal static EndpointProfileRegistryDocument Parse(Stream stream)
+    {
         var document = JsonSerializer.Deserialize<EndpointProfileRegistryDocument>(stream, Json)
             ?? throw new InvalidOperationException("The endpoint profile registry is invalid.");
+        if (document.Profiles.Any(p => ReservedProfileIds.Contains(p.ProfileId)) ||
+            document.Endpoints.Any(e => ReservedProfileIds.Contains(e.ProfileId)))
+            throw new InvalidOperationException("The endpoint profile registry uses a reserved profile id.");
+        if (document.Exclusions.Length > 16 ||
+            document.Exclusions.Any(x => !AllowedExclusion(x.NormalizedPath) || string.IsNullOrWhiteSpace(x.Reason)) ||
+            document.Exclusions.Select(x => x.NormalizedPath).Distinct(StringComparer.Ordinal).Count() != document.Exclusions.Length)
+            throw new InvalidOperationException("The endpoint profile registry has an invalid exclusion.");
         static bool Id(string? value) => value is { Length: > 0 and <= 40 } && value.All(c => char.IsAsciiLetterOrDigit(c) || c is '-' or '_');
         var profileIds = document.Profiles.Select(x => x.ProfileId).ToArray();
         if (document.SchemaVersion != SchemaVersion || document.Profiles.Length is 0 or > 32 || document.Endpoints.Length is 0 or > 2048 ||
@@ -210,6 +230,20 @@ public static class EndpointProfiles
             document.Endpoints.Select(x => (x.Method, x.NormalizedPath)).Distinct().Count() != document.Endpoints.Length)
             throw new InvalidOperationException("The endpoint profile registry is invalid.");
         return document;
+    }
+
+    // Fail closed at host start (58.03 paragraph:8, :59): an invalid/unassigned registry or a
+    // mapped endpoint without an exact profile stops the host in every environment. Registered
+    // first in ConfigureServices, this filter is outermost and runs after every endpoint is mapped.
+    internal sealed class StartupValidation : Microsoft.AspNetCore.Hosting.IStartupFilter
+    {
+        public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next) => app =>
+        {
+            next(app);
+            var errors = Validate(app.ApplicationServices.GetRequiredService<EndpointDataSource>().Endpoints);
+            if (errors.Count > 0)
+                throw new InvalidOperationException("Endpoint profile registry validation failed: " + string.Join(" | ", errors.Take(20)));
+        };
     }
 
     // OpenAPI 3.1 operation extension (58.03 paragraph:278): every documented operation
