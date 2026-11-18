@@ -15,6 +15,10 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         var scopeKind = metadata.VesselId is { } vessel && vessel != Guid.Empty ? "Vessel" : entry.Entity switch
         {
             Person or CrewIdentityRevision or CrewPersonalProfile or CrewPersonalProfileRevision => "TenantPerson",
+            PersonFieldRevision or Employment or HrAssignment or HrActualEvent => "TenantPerson",
+            LegalEntityFieldRevision or LegalEntityIdentifier or LegalEntityRole => "Tenant",
+            CommandReceipt r when r.Action is "HrPersonUpdate" or "HrPersonVerify" or "HrEmploymentCreate" or "HrEmploymentStatus" or "HrAssignmentCreate" or "HrAssignmentStatus" or "HrActualEventRecord" => "TenantPerson",
+            CommandReceipt r when r.Action is "HrLegalEntityUpdate" or "HrLegalEntityStatus" or "HrIdentifierAdd" or "HrIdentifierRetire" or "HrRoleAdd" or "HrRoleEnd" => "Tenant",
             CommandReceipt r when r.Action is "CrewPersonSave" or "CrewIdentityConvert" or "CrewProfileSave" or "CrewPhotoSave" => "TenantPerson",
             Tenant or Company or RegisterDraft or RegisterRevision or RuleDraft or RuleRevision or FleetCatalogDraft or FleetCatalogDraftRevision or
                 RegulatoryQualificationHead or RegulatoryQualificationEvent or RegulatoryQualificationReceipt => "Tenant",
@@ -144,6 +148,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         if (entry.Entity is NotificationReceipt notificationReceipt)
             return new(notificationReceipt.VesselId, notificationReceipt.ResourceId, "NotificationReceipt", null, null,
                 Fields(Field("Binding", null, "CommittedResource")));
+        if (HrProjection(entry) is { } hr) return hr;
         if (entry.Entity is FleetCatalogDraft fleetCatalogHead)
             return new(null, fleetCatalogHead.Id, "FleetCatalogDraft", entry.State == EntityState.Added ? null : (long?)entry.Property(nameof(fleetCatalogHead.Revision)).OriginalValue,
                 fleetCatalogHead.Revision, Fields(Field("DraftState", null, "DRAFT")));
@@ -344,6 +349,40 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
                 evidence = AuditValuePolicy.Evidence(name) });
         }
         return new(vessel, resource, kind, before, after, JsonSerializer.Serialize(fields));
+    }
+
+    // PLAN-1511-5201: closed HR audit summaries. Names, legal names, registration values, employee numbers,
+    // source references and reasons are never copied into audit summaries.
+    private static AuditMetadata? HrProjection(EntityEntry entry)
+    {
+        static object State(EntityEntry e, string property, params string[] allowed) => Field(property,
+            e.State == EntityState.Added ? null : Closed((string)e.Property(property).OriginalValue!, allowed), Closed((string)e.Property(property).CurrentValue!, allowed));
+        static string Flag(bool value) => value ? "True" : "False";
+        return entry.Entity switch
+        {
+            LegalEntityFieldRevision r => new(null, r.LegalEntityId, "LegalEntityFieldRevision", null, r.Revision, Fields(
+                Field("Field", null, Closed(r.Field, "LegalName", "CountryCode", "HrTimeZone", "BaseLocale", "EffectiveFrom", "EffectiveTo", "LegalEntityStatus")),
+                Field("SourceKind", null, Closed(r.SourceKind, Poseidon.Domain.HrSourcePolicy.SourceKinds)), Field("Value", null, null, "ValuesWithheld"))),
+            PersonFieldRevision r => new(null, r.PersonId, "PersonFieldRevision", null, r.Revision, Fields(
+                Field("Field", null, Closed(r.Field, "PersonType", "MasterState")),
+                Field("SourceKind", null, Closed(r.SourceKind, Poseidon.Domain.HrSourcePolicy.SourceKinds)), Field("Value", null, null, "ValuesWithheld"))),
+            LegalEntityIdentifier i => new(null, i.LegalEntityId, "LegalEntityIdentifier", null, null, Fields(
+                Field("Type", null, Closed(i.Type, Poseidon.Domain.HrIdentifierPolicy.Types)), Field("Value", null, null, "ValuesWithheld"),
+                Field("Retired", entry.State == EntityState.Added ? null : Flag(entry.Property("RetiredAt").OriginalValue != null), Flag(i.RetiredAt != null)))),
+            LegalEntityRole r => new(null, r.LegalEntityId, "LegalEntityRole", null, null, Fields(
+                Field("Role", null, Closed(r.Role, Poseidon.Domain.HrRolePolicy.Roles)), Field("VesselId", null, r.VesselId?.ToString("D")),
+                Field("Ended", entry.State == EntityState.Added ? null : Flag(entry.Property("EffectiveTo").OriginalValue != null), Flag(r.EffectiveTo != null)))),
+            Employment e => new(null, e.Id, "Employment", entry.State == EntityState.Added ? null : (long?)entry.Property("Revision").OriginalValue, e.Revision, Fields(
+                State(entry, "State", Poseidon.Domain.HrEmploymentPolicy.States), Field("LegalEntityId", null, e.LegalEntityId.ToString("D")),
+                Field("EmployeeNo", null, null, "ValuesWithheld"))),
+            HrAssignment a => new(a.VesselId, a.Id, "HrAssignment", entry.State == EntityState.Added ? null : (long?)entry.Property("Revision").OriginalValue, a.Revision, Fields(
+                State(entry, "State", Poseidon.Domain.HrAssignmentPolicy.States), Field("Kind", null, Closed(a.Kind, Poseidon.Domain.HrAssignmentPolicy.Kinds)),
+                Field("Plan", null, "PlannedOnly"))),
+            HrActualEvent v => new(null, v.AssignmentId, "HrActualEvent", null, null, Fields(
+                Field("Kind", null, Closed(v.Kind, Poseidon.Domain.HrActualTimeline.Kinds)), Field("Disposition", null, Closed(v.Disposition, "Accepted", "PendingReconciliation")),
+                Field("Quality", null, Closed(v.Quality, "Valid", "Suspect")))),
+            _ => null
+        };
     }
 
     private static string Closed(string value, params string[] allowed) => allowed.Contains(value, StringComparer.Ordinal)

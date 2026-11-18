@@ -210,3 +210,8 @@ REGULATORY-CHAIN-BUNDLE-01. [Task](tasks/human-decision-trace-01.md).
 ## S2-FLEET-CATALOG-DRAFT-01 — 18.11.2026, AUTHORED / NOT RUN
 
 FleetCatalogDraftFixtures.AddMissingAsync yalnız explicit administrative context ve caller-owned audited SaveChanges ile iki tenant için boş FICTIONAL/SyntheticUnverified katalog draftı/history ekleyebilir. Pending/persisted tekrarlar atlanır; operator revizyonu korunur. Normal SeedImporter/startup çağrısına bağlanmadı; önceki normal seed/audit sayımları değiştirilmedi. Member, accepted katalog/source/schema, vessel type ataması, approval veya legal/operational karar seed edilmez. PostgreSQL fixture/operator-preservation/tenant/immutability testleri yazıldı; koşulmadı. Migration snapshot/designer ve gerçek apply birleşik kapıda uzlaştırılacak.
+
+
+## PLAN-1511-5201-01 — 18.11.2026, normal seed'e bağlandı
+
+`HrFixtures.AddMissingAsync` normal `SeedImporter` içinde `CrewFixtures` sonrasında çalışır ve yalnız eksik deterministik kayıtları ekler (operatör düzenlemeleri yeniden yazılmaz): her sentetik şirket için `Other / SYNTHETIC-FIXTURE` tanımlayıcısı ve `Employer` rolü (`Synthetic`, `Unverified`); her sentetik gemi için o geminin sentetik Person kaydına (Person.Id = Vessel.Id) bağlı `Draft` employment (`SYN-<gemi kodu>`) ve `Planned` gemi ataması. Tüzel kişiler incomplete `Draft` kalır (legal name/ülke/saat dilimi seed edilmez). Doğrulanmış kişi, aktif employment, onaylı atama, fiilî olay, operator/sahip rolü, gerçek sicil numarası veya kişi verisi seed edilmez. Tekrar import satır/audit sayısını değiştirmez (`HrPersistenceTests.Seed_is_idempotent_unverified_and_contains_no_approved_or_actual_records`). [Görev](tasks/plan-1511-5201-01.md).

@@ -28,7 +28,7 @@ public static class SecurityEventCodes
         "RegulatorySourceBytesRead", "RuleCapabilities", "RulesRead", "Session",
         "TodayRead", "TodayWhyRead", "TugRead", "TugSave",
         "VesselCreate", "VesselUpdate", "VesselsRead", "WorkspaceRead",
-        "WorkspaceSearch", "SystemHealthRead", "NotificationRead", "NotificationCommand", "ComplianceWorkspaceRead", "DailyOfflineRead", "DailyOfflineRequest", "DailyOperationsRead", "DailyOperationsCommand", "DailyReviewRead", "DailyReviewCommand", "ShipOperationsRead", "ShipOperationsCommand",
+        "WorkspaceSearch", "SystemHealthRead", "NotificationRead", "NotificationCommand", "ComplianceWorkspaceRead", "DailyOfflineRead", "DailyOfflineRequest", "DailyOperationsRead", "DailyOperationsCommand", "DailyReviewRead", "DailyReviewCommand", "ShipOperationsRead", "ShipOperationsCommand", "HrRead", "HrCommand",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static IReadOnlySet<string> Results { get; } = new string[]
     {
@@ -68,7 +68,7 @@ public static class SecurityEventCodes
         "invalid_reason", "invalid_state", "expiry_not_due", "supersession_not_proven", "freshness_review_required",
         "version_conflict", "invalid_qualification_transition", "independent_reviewer_required",
         "incomplete_qualification", "acceptance_trigger_required", "impact_review_required",
-        "outside_effective_dates", "superseding_rule_required",
+        "outside_effective_dates", "superseding_rule_required", "hr_reference_incomplete", "hr_identifier_duplicate", "hr_role_overlap", "hr_employee_no_overlap", "hr_person_not_verified", "hr_legal_entity_inactive", "hr_employer_role_missing", "hr_employment_not_active", "hr_period_outside_employment", "hr_operator_path_missing", "hr_assignment_overlap", "hr_active_assignment_at_exit", "hr_actual_exists", "hr_event_conflict",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static bool Allows(string action, string result) => Actions.Contains(action) && Results.Contains(result);
 }

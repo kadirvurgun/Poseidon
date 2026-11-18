@@ -17,6 +17,11 @@ public sealed class Person : ITenantEntity
     public string Provenance { get; set; } = "UserDeclaredUnverified";
     public DateTimeOffset? SourceObservedAt { get; set; }
     public uint Version { get; set; }
+    // PLAN-1511-5201: this crew Person is the single tenant person master (52.01 paragraph:234). HR core fields
+    // extend it in place; no second person table exists. Master state is not employment or account activity.
+    public string PersonType { get; set; } = "Unknown";
+    public string MasterState { get; set; } = "Draft";
+    public long MasterRevision { get; set; }
 }
 
 // Metadata-only identity history. No private values, ciphertext or private value digests.
@@ -108,6 +113,9 @@ internal static class CrewStorage
             b.Property(x => x.IdentityStorageState).HasMaxLength(32);
             b.Property(x => x.EmploymentState).HasMaxLength(32); b.Property(x => x.Provenance).HasMaxLength(32);
             b.Property(x => x.Version).IsRowVersion();
+            b.Property(x => x.PersonType).HasMaxLength(16).HasDefaultValue("Unknown");
+            b.Property(x => x.MasterState).HasMaxLength(16).HasDefaultValue("Draft");
+            b.Property(x => x.MasterRevision).HasDefaultValue(0L);
         });
         model.Entity<CrewIdentityRevision>(b => {
             b.ToTable("IdentityRevisions", "crew"); b.HasKey(x => new { x.TenantId, x.PersonId, x.Revision });
