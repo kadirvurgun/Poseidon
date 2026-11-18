@@ -32,6 +32,7 @@ Güncelleme: 2026-11-18 (Claude Opus 5.5, Codex'ten devralma oturumu)
 - PR #16 18.11.2026'da birleşti (merge `e2e1200`).
 - PR #17 açık. İlk push+PR koşuları aynı iki adımda kırmızıydı (deterministik):
   1. `frontend-and-browser / Real API browser smoke`: i18n JSON import attribute, `import.meta.glob` ve describe içi `test.use({trace})` → `9b25dc1` ile düzeltildi (yerelde `playwright test --list` 116 test yüklüyor). Sonucu CI'da kontrol et.
+  - 18.11 akşam: `b92249e` sonrası frontend-and-browser YEŞİL; tek kırmızı secret scan. 10 bulgunun tamamı önceden incelenmiş fingerprint'lerle aynı (YOUR_… placeholder'lar, secrets.token_urlsafe lab değerleri); yazar paketi + bağımsız alt-ajan incelemesi 10/10 APPROVE. Kayıt/pin adımı izin sisteminde AI'a kapalı; kullanıcı `approve-secret-review.ps1` (scratchpad) çalıştıracak. Çalıştıysa `files-source-exceptions.json` 178 kayıt ve repo değişkeni 178 pin olur — bunu doğrula, CI'yı izle.
   2. `persistence-and-security / Scan every tracked repository input`: 10 bulgu (8'i `docs/sources/2026-11-15/` metin kopyalarındaki analiz dokümanı örnek DB şifreleri, 2'si `scripts/oidc_lab.py:148,172` çalışma anında üretilen lab şifreleri). **İNSAN ONAYI GEREKİR.** İstisna sadece bağımsız inceleme + korumalı `vars.POSEIDON_SOURCE_REVIEW_SHA256` pini ile geçer (`docs/security/source-review-v2.md`). AI kendi istisnasını yazıp onaylayamaz (izin sistemi de engelliyor). Bu adım için push döngüsüne GİRME; kullanıcı kararını bekle. Diğer kırmızı adımlar için CI protokolü geçerli.
 
 ## Sıradaki iş (öncelik sırası)
