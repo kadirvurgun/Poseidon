@@ -106,7 +106,22 @@
       "previous": "Empresas anteriores",
       "next": "Próximas empresas",
       "reloadCompanies": "Recarregar empresas",
-      "requiredNote": "Todos os campos são obrigatórios. Este registro não confere aprovação operacional."
+      "requiredNote": "Todos os campos são obrigatórios. Este registro não confere aprovação operacional.",
+      "leHeading": "Registro da pessoa jurídica",
+      "leLoading": "Carregando pessoa jurídica…",
+      "leUnavailable": "Os detalhes da pessoa jurídica não estão disponíveis com seu acesso atual.",
+      "leFailed": "Não foi possível carregar os detalhes da pessoa jurídica.",
+      "leStatus": "Status da pessoa jurídica",
+      "leDraft": "Rascunho – incompleto, não ativo",
+      "leActive": "Ativa",
+      "leInactive": "Inativa",
+      "leLegalName": "Razão social",
+      "leCountry": "País",
+      "leTimeZone": "Fuso horário de RH",
+      "leUnknown": "Desconhecido",
+      "leMissing": "Valores ausentes antes da ativação",
+      "leNote": "Somente leitura. Os valores mudam apenas por comandos de RH auditados.",
+      "leShow": "Mostrar registro da pessoa jurídica"
     },
     "ProductApp_tsx_copy": {
       "audit": "Histórico de ações",

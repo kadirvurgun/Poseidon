@@ -106,7 +106,22 @@
       "previous": "Předchozí společnosti",
       "next": "Další společnosti",
       "reloadCompanies": "Znovu načíst společnosti",
-      "requiredNote": "Všechna pole jsou povinná. Tento záznam neuděluje provozní schválení."
+      "requiredNote": "Všechna pole jsou povinná. Tento záznam neuděluje provozní schválení.",
+      "leHeading": "Záznam právnické osoby",
+      "leLoading": "Načítání právnické osoby…",
+      "leUnavailable": "Údaje o právnické osobě nejsou s vaším aktuálním přístupem dostupné.",
+      "leFailed": "Údaje o právnické osobě se nepodařilo načíst.",
+      "leStatus": "Stav právnické osoby",
+      "leDraft": "Koncept – neúplný, neaktivní",
+      "leActive": "Aktivní",
+      "leInactive": "Neaktivní",
+      "leLegalName": "Obchodní firma",
+      "leCountry": "Země",
+      "leTimeZone": "Časové pásmo HR",
+      "leUnknown": "Neznámé",
+      "leMissing": "Chybějící hodnoty před aktivací",
+      "leNote": "Pouze pro čtení. Hodnoty se mění jen auditovanými příkazy HR.",
+      "leShow": "Zobrazit záznam právnické osoby"
     },
     "ProductApp_tsx_copy": {
       "audit": "Historie akcí",

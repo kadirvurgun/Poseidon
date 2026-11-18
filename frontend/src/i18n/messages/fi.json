@@ -106,7 +106,22 @@
       "previous": "Edelliset yritykset",
       "next": "Seuraavat yritykset",
       "reloadCompanies": "Lataa yritykset uudelleen",
-      "requiredNote": "Kaikki kentät ovat pakollisia. Tämä tietue ei myönnä operatiivista hyväksyntää."
+      "requiredNote": "Kaikki kentät ovat pakollisia. Tämä tietue ei myönnä operatiivista hyväksyntää.",
+      "leHeading": "Oikeushenkilön tietue",
+      "leLoading": "Ladataan oikeushenkilöä…",
+      "leUnavailable": "Oikeushenkilön tiedot eivät ole saatavilla nykyisellä käyttöoikeudellasi.",
+      "leFailed": "Oikeushenkilön tietoja ei voitu ladata.",
+      "leStatus": "Oikeushenkilön tila",
+      "leDraft": "Luonnos – keskeneräinen, ei aktiivinen",
+      "leActive": "Aktiivinen",
+      "leInactive": "Ei aktiivinen",
+      "leLegalName": "Virallinen nimi",
+      "leCountry": "Maa",
+      "leTimeZone": "HR-aikavyöhyke",
+      "leUnknown": "Tuntematon",
+      "leMissing": "Puuttuvat arvot ennen aktivointia",
+      "leNote": "Vain luku. Arvot muuttuvat vain auditoiduilla HR-komennoilla.",
+      "leShow": "Näytä oikeushenkilön tietue"
     },
     "ProductApp_tsx_copy": {
       "audit": "Toimintahistoria",

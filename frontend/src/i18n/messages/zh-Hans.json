@@ -106,7 +106,22 @@
       "previous": "上一页公司",
       "next": "下一页公司",
       "reloadCompanies": "重新加载公司",
-      "requiredNote": "所有字段均为必填项。此记录不授予作业批准。"
+      "requiredNote": "所有字段均为必填项。此记录不授予作业批准。",
+      "leHeading": "法律实体记录",
+      "leLoading": "正在加载法律实体…",
+      "leUnavailable": "您当前的访问权限无法查看法律实体详情。",
+      "leFailed": "无法加载法律实体详情。",
+      "leStatus": "法律实体状态",
+      "leDraft": "草稿 – 不完整，未生效",
+      "leActive": "有效",
+      "leInactive": "无效",
+      "leLegalName": "法定名称",
+      "leCountry": "国家",
+      "leTimeZone": "人力资源时区",
+      "leUnknown": "未知",
+      "leMissing": "激活前缺少的值",
+      "leNote": "只读。数值仅通过经审计的人力资源命令更改。",
+      "leShow": "显示法律实体记录"
     },
     "ProductApp_tsx_copy": {
       "audit": "操作历史",
