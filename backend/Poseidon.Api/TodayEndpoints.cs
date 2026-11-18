@@ -8,8 +8,13 @@ using Poseidon.Persistence;
 namespace Poseidon.Api;
 
 public sealed record TodayCoverageDto(string Source, string Status);
-public sealed record TodayCardDto(string Key, string Priority, string Source, string Reason, string? Owner, string NextAction, string Href);
-public sealed record TodayDto(VesselDto Vessel, DateTimeOffset ReadAt, TodayCoverageDto[] Coverage, PageDto<TodayCardDto> Cards);
+// DEV-023 / 61.03 SourceRef: owning module code, record kind/id, exact revision read and its save time.
+// A missing regulatory draft has no revision/time. No content hash or hidden contributor is disclosed.
+public sealed record TodayCardSourceDto(string Owner, string Kind, Guid Id, long? Revision, DateTimeOffset? SavedAt);
+public sealed record TodayCardDto(string Key, string Priority, string Source, string Reason, string? Owner, string NextAction, string Href,
+    TodayCardSourceDto SourceRef);
+// ViewState (61.03 ScreenEnvelope/§33) is a source-coverage state, never readiness or clearance.
+public sealed record TodayDto(VesselDto Vessel, DateTimeOffset ReadAt, TodayCoverageDto[] Coverage, PageDto<TodayCardDto> Cards, string ViewState);
 public sealed record TodayMaintenanceEvidenceDto(Guid PlanId, long PlanRevision, Guid AssetId, long AssetRevision,
     long? CurrentAssetRevision, bool JobAvailable, bool OwnerEligible, MaintenanceDue Calculation, string ObservationState);
 // Safe owning-source lineage, not a source document, verification or authority.
@@ -79,7 +84,7 @@ public static class TodayEndpoints
                 await audit.WriteAsync(http, action, "NotFound");
                 return Results.NotFound();
             }
-            var card = TugCard(id, current);
+            var card = TugCard(id, current, actor);
             await audit.WriteAsync(http, action, "Success", resourceId: id);
             return Results.Ok(new TodayWhyDto(id, card.Key, "TW-TUG-01", card.Reason, null,
                 readAt, current.SavedAt, null, "Unverified", current.Provenance,
@@ -100,7 +105,7 @@ public static class TodayEndpoints
                 return Results.NotFound();
             }
             var row = current.Row;
-            var card = MaintenanceCard(id, current, advice);
+            var card = MaintenanceCard(id, current, advice, actor);
             await audit.WriteAsync(http, action, "Success", resourceId: id);
             return Results.Ok(new TodayWhyDto(id, card.Key, "TW-MAINTENANCE-01", card.Reason, null,
                 readAt, row.SavedAt, current.SourceObservedAt?.ToString("O", CultureInfo.InvariantCulture), "Unverified", row.Provenance,
@@ -130,29 +135,36 @@ public static class TodayEndpoints
         var maintenance = await MaintenanceCurrentReader.Read(id, http, db, actor, readAt);
         var tug = await TodayTugReader.Read(id, http, db, actor, readAt);
         var cards = new List<TodayCardDto>();
-        if (profileReadable) cards.Add(new("regulatory-draft", "Advisory", "RegulatoryDraft", observation.Reason, null, next, href));
+        if (profileReadable) cards.Add(new("regulatory-draft", "Advisory", "RegulatoryDraft", observation.Reason, null, next, href,
+            new("REGULATORY", "RegulatoryDraft", id, draft?.Revision, draft?.SavedAt)));
         foreach (var current in maintenance ?? []) {
             var advice = TodayMaintenancePolicy.Observe(current.Row.Due);
-            if (advice != null) cards.Add(MaintenanceCard(id, current, advice));
+            if (advice != null) cards.Add(MaintenanceCard(id, current, advice, actor));
         }
-        cards.AddRange((tug ?? []).Select(current => TugCard(id, current)));
+        cards.AddRange((tug ?? []).Select(current => TugCard(id, current, actor)));
         cards = cards.OrderBy(c => c.Priority == "Attention" ? 0 : c.Priority == "Review" ? 1 : 2)
             .ThenBy(c => c.Key, StringComparer.Ordinal).ToList();
-        await audit.WriteAsync(http, action, "Success", resourceId: id);
-        return Results.Ok(new TodayDto(new(vessel.Id, vessel.CompanyId, vessel.Code, vessel.Name, vessel.Kind.ToString(), vessel.Version, actor.CanEditVessel(id)), readAt,
-            [new("RegulatoryDraft", !profileReadable ? "Unavailable" : draft == null ? "Missing" : "Available"), new("OperationalTasks", "Unavailable"),
+        TodayCoverageDto[] coverage = [new("RegulatoryDraft", !profileReadable ? "Unavailable" : draft == null ? "Missing" : "Available"), new("OperationalTasks", "Unavailable"),
              new("SafetyDecisions", "Unavailable"), new("Permits", "Unavailable"), new("EvidenceVerification", "Unavailable"),
              new("TechnicalMaintenance", maintenance == null ? "Unavailable" : maintenance.Length == 0 ? "Missing" : "Available"),
-             new("TugPlanning", tug == null ? "Unavailable" : tug.Length == 0 ? "Missing" : "Available")],
-            new(cards.Skip(skip).Take(take).ToArray(), skip, take, cards.Count > skip + take)));
+             new("TugPlanning", tug == null ? "Unavailable" : tug.Length == 0 ? "Missing" : "Available")];
+        var viewState = TodayViewStatePolicy.Classify(coverage.Select(c => c.Status).ToArray(), cards.Count);
+        await audit.WriteAsync(http, action, "Success", resourceId: id);
+        return Results.Ok(new TodayDto(new(vessel.Id, vessel.CompanyId, vessel.Code, vessel.Name, vessel.Kind.ToString(), vessel.Version, actor.CanEditVessel(id)), readAt,
+            coverage, new(cards.Skip(skip).Take(take).ToArray(), skip, take, cards.Count > skip + take), viewState));
     }
 
-    private static TodayCardDto MaintenanceCard(Guid vessel, MaintenanceCurrentProjection source, TodayMaintenanceAdvisory advice) =>
+    // Next action names only what the current actor may do in the owning module: Review needs that
+    // owner's write gate, otherwise the authorized action is View. Today itself never writes.
+    private static TodayCardDto MaintenanceCard(Guid vessel, MaintenanceCurrentProjection source, TodayMaintenanceAdvisory advice, TrustedActor actor) =>
         new($"maintenance-plan:{source.Row.Id:D}", advice.Priority, "MaintenancePlan", advice.Reason,
             source.OwnerEligible ? source.Row.OwnerRoleId?.ToString("D") : null,
-            "ReviewMaintenancePlan", $"/app/maintenance-plan/{vessel:D}?id={source.Row.Id:D}");
+            TechnicalEndpoints.Write(actor, vessel, "maintenance") ? "ReviewMaintenancePlan" : "ViewMaintenancePlan",
+            $"/app/maintenance-plan/{vessel:D}?id={source.Row.Id:D}",
+            new("PMS", "MaintenancePlan", source.Row.Id, source.Row.Revision, source.Row.SavedAt));
 
-    private static TodayCardDto TugCard(Guid vessel, TodayTugProjection source) =>
+    private static TodayCardDto TugCard(Guid vessel, TodayTugProjection source, TrustedActor actor) =>
         new($"tug-job:{source.Detail.JobId:D}", source.Advice.Priority, "TugJob", source.Advice.Reason, source.Detail.CurrentOwnerRoleId?.ToString("D"),
-            "ReviewTugJob", $"/app/tug-job-detail/{source.Detail.JobId:D}?vessel={vessel:D}");
+            TugEndpoints.PlanWrite(actor, vessel) ? "ReviewTugJob" : "ViewTugJob", $"/app/tug-job-detail/{source.Detail.JobId:D}?vessel={vessel:D}",
+            new("TUG", "TugJob", source.Detail.JobId, source.Detail.RequestRevision, source.SavedAt));
 }

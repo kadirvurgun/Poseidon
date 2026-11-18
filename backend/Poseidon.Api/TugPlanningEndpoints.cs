@@ -27,7 +27,7 @@ public static partial class TugEndpoints
         if (h.Request.Query.Any(q => q.Key != "vessel")) return (default, await Fail(h, 400, "invalid_request"));
         return await Gate(h, db, write);
     }
-    private static bool PlanWrite(TrustedActor a, Guid vessel) => Write(a, vessel) && a.Permissions.Contains("tug.plan.write");
+    internal static bool PlanWrite(TrustedActor a, Guid vessel) => Write(a, vessel) && a.Permissions.Contains("tug.plan.write");
     private static async Task<Guid[]> Eligible(HttpContext h, PoseidonDbContext db, Guid vessel) {
         var a = Actor(h); var scope = Planning(h).Scope(a, vessel);
         if (scope == null || !PlanWrite(a, vessel)) return [];

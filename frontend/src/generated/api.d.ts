@@ -5371,12 +5371,12 @@ export interface components {
             state: string;
             fields: components["schemas"]["OnboardingField"][];
             blockers: string[];
+            blockerDetails: components["schemas"]["OnboardingBlocker"][];
             canEdit: boolean;
             /** @default false */
             canSubmit: boolean;
             /** @default 18.01/Backlog/row:40;59.01/paragraph:55 */
             source: string;
-            blockerDetails: components["schemas"]["OnboardingBlocker"][];
         };
         CompliancePassportDto: {
             /** Format: uuid */
@@ -7139,6 +7139,13 @@ export interface components {
             choice?: null | string;
             reason?: null | string;
         };
+        OnboardingBlocker: {
+            /** Format: uuid */
+            subjectId: string;
+            fieldPath: string;
+            reasonCode: string;
+            resolutionType: string;
+        };
         OnboardingField: {
             key: string;
             state: string;
@@ -7738,6 +7745,17 @@ export interface components {
             owner: null | string;
             nextAction: string;
             href: string;
+            sourceRef: components["schemas"]["TodayCardSourceDto"];
+        };
+        TodayCardSourceDto: {
+            owner: string;
+            kind: string;
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: null | number;
+            /** Format: date-time */
+            savedAt: null | string;
         };
         TodayCoverageDto: {
             source: string;
@@ -7749,6 +7767,7 @@ export interface components {
             readAt: string;
             coverage: components["schemas"]["TodayCoverageDto"][];
             cards: components["schemas"]["PageDtoOfTodayCardDto"];
+            viewState: string;
         };
         TodayMaintenanceEvidenceDto: {
             /** Format: uuid */
@@ -8285,14 +8304,20 @@ export interface components {
             currentRevision: boolean;
             canEdit: boolean;
         };
+        WorkspaceCompanyDto: {
+            /** Format: uuid */
+            id: string;
+            code: string;
+            name: string;
+        };
         WorkspaceContextDto: {
             /** Format: uuid */
             tenantId: string;
             /** Format: uuid */
             actorId: string;
             roleContext: components["schemas"]["WorkspaceRoleContextDto"];
-            vessel: null | components["schemas"]["VesselDto"];
             company: null | components["schemas"]["WorkspaceCompanyDto"];
+            vessel: null | components["schemas"]["VesselDto"];
         };
         WorkspaceDto: {
             destinations: components["schemas"]["NavigationDto"][];
@@ -8335,19 +8360,6 @@ export interface components {
             reference: string;
             tr: string;
             en: string;
-        };
-        OnboardingBlocker: {
-            /** Format: uuid */
-            subjectId: string;
-            fieldPath: string;
-            reasonCode: string;
-            resolutionType: string;
-        };
-        WorkspaceCompanyDto: {
-            /** Format: uuid */
-            id: string;
-            code: string;
-            name: string;
         };
     };
     responses: never;

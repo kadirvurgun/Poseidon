@@ -57,7 +57,7 @@ public static class TechnicalEndpoints
     }
     private static TrustedActor Actor(HttpContext h) => h.RequestServices.GetRequiredService<ActorResolver>().Resolve(h.User)!;
     private static bool Read(TrustedActor a, string module) => a.CanRead && a.Permissions.Contains(module + ".read") && (module != "maintenance" || a.Permissions.Contains("equipment.read"));
-    private static bool Write(TrustedActor a, Guid vessel, string module) => Read(a, module) && a.HasWriteAttribution &&
+    internal static bool Write(TrustedActor a, Guid vessel, string module) => Read(a, module) && a.HasWriteAttribution &&
         a.Permissions.Contains(module + ".write") && (a.TenantWideManage || a.VesselGrants.Any(g => g.VesselId == vessel && g.CanEdit));
     private static Task<bool> Scope(PoseidonDbContext db, TrustedActor a, Guid vessel, CancellationToken ct) =>
         a.Scope(db.Vessels).AnyAsync(x => x.Id == vessel, ct);
