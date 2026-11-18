@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { changeAppLanguage, locales } from './index'
 import { presentationLabel } from './labels'
-import english from './labels/en.json'
+import english from './labels/en.json' with { type: 'json' }
 import { assertCompleteCatalog } from './messages'
 import { assertionStateLabel } from '../product/certificate-copy'
 import { dailyReviewDuty } from '../product/daily-review-copy'

@@ -2,8 +2,9 @@ import { expect, test } from '@playwright/test';
 
 // TODAY-VESSEL-REFLOW-01: authored/deferred. Synthetic transport verifies layout
 // and keyboard navigation only; it supplies no real authority/operational evidence.
+// Trace/video options force a new worker, so Playwright only accepts them at file scope.
+test.use({ trace: 'off', screenshot: 'off', video: 'off' });
 test.describe('Today vessel selector reflow', () => {
-    test.use({ trace: 'off', screenshot: 'off', video: 'off' });
     const tenant = '10000000-0000-0000-0000-000000000098';
     const actor = '10000000-0000-0000-0000-000000000099';
     const vessels = Array.from({ length: 6 }, (_, index) => ({

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import en from './messages/en.json'
+import en from './messages/en.json' with { type: 'json' }
 import { changeAppLanguage, i18n, locales, registerLocaleLoader } from './index'
 import { assertCompleteCatalog, localizedCopy, localizedLabel, localizedText, localizedTuple, sourceText } from './messages'
 

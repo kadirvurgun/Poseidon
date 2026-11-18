@@ -1,6 +1,6 @@
 import type { TOptions } from 'i18next'
-import en from './messages/en.json'
-import tr from './messages/tr.json'
+import en from './messages/en.json' with { type: 'json' }
+import tr from './messages/tr.json' with { type: 'json' }
 import { i18n, isLocale, locales, registerLocaleLoader, registerResourceBundle, text } from './index'
 import type { Locale } from './index'
 
@@ -9,7 +9,26 @@ type CopyKey = keyof Catalog['copies']
 type LanguageInput = Locale | boolean
 const catalogs = new Map<Locale, Catalog>([['en', en], ['tr', tr]])
 const loading = new Map<Locale, Promise<void>>()
-const modules = import.meta.glob<{ default: Catalog }>('./messages/*.json')
+// Explicit lazy loaders (not import.meta.glob) so Node/Playwright can load this module too.
+const modules: Record<string, () => Promise<{ default: Catalog }>> = {
+  './messages/ar.json': () => import('./messages/ar.json', { with: { type: 'json' } }) as unknown as Promise<{ default: Catalog }>,
+  './messages/cs.json': () => import('./messages/cs.json', { with: { type: 'json' } }) as unknown as Promise<{ default: Catalog }>,
+  './messages/de.json': () => import('./messages/de.json', { with: { type: 'json' } }) as unknown as Promise<{ default: Catalog }>,
+  './messages/en-GB.json': () => import('./messages/en-GB.json', { with: { type: 'json' } }) as unknown as Promise<{ default: Catalog }>,
+  './messages/en.json': () => import('./messages/en.json', { with: { type: 'json' } }) as unknown as Promise<{ default: Catalog }>,
+  './messages/es.json': () => import('./messages/es.json', { with: { type: 'json' } }) as unknown as Promise<{ default: Catalog }>,
+  './messages/fi.json': () => import('./messages/fi.json', { with: { type: 'json' } }) as unknown as Promise<{ default: Catalog }>,
+  './messages/fr.json': () => import('./messages/fr.json', { with: { type: 'json' } }) as unknown as Promise<{ default: Catalog }>,
+  './messages/hi.json': () => import('./messages/hi.json', { with: { type: 'json' } }) as unknown as Promise<{ default: Catalog }>,
+  './messages/hu.json': () => import('./messages/hu.json', { with: { type: 'json' } }) as unknown as Promise<{ default: Catalog }>,
+  './messages/it.json': () => import('./messages/it.json', { with: { type: 'json' } }) as unknown as Promise<{ default: Catalog }>,
+  './messages/pt-BR.json': () => import('./messages/pt-BR.json', { with: { type: 'json' } }) as unknown as Promise<{ default: Catalog }>,
+  './messages/ru.json': () => import('./messages/ru.json', { with: { type: 'json' } }) as unknown as Promise<{ default: Catalog }>,
+  './messages/sk.json': () => import('./messages/sk.json', { with: { type: 'json' } }) as unknown as Promise<{ default: Catalog }>,
+  './messages/tr.json': () => import('./messages/tr.json', { with: { type: 'json' } }) as unknown as Promise<{ default: Catalog }>,
+  './messages/zh-Hans.json': () => import('./messages/zh-Hans.json', { with: { type: 'json' } }) as unknown as Promise<{ default: Catalog }>,
+  './messages/zh-Hant.json': () => import('./messages/zh-Hant.json', { with: { type: 'json' } }) as unknown as Promise<{ default: Catalog }>,
+}
 const pairs = new Map<string, string>()
 for (const key of Object.keys(en.pairs) as (keyof typeof en.pairs)[]) {
   pairs.set(`${en.pairs[key]}\0${tr.pairs[key]}`, key)
