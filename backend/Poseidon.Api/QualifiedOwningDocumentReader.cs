@@ -57,7 +57,7 @@ internal static class QualifiedOwningDocumentReader
         if (verification?.State != "VERIFIED" || verification.ActorId == row.ActorId || verification.ValidUntil == null || verification.ValidUntil <= now || verification.EvaluationId == null ||
             verification.EvaluationId is { } inputEvaluation && await db.EvaluationOwningReferences.AnyAsync(p => p.EvaluationId == inputEvaluation && p.Id == row.Id, ct) ||
             (content.Operation?.JobId ?? content.ServiceAuthorization?.JobId) is { } owningJob && verification.OperationId != owningJob ||
-            !await db.ControlEvidenceHeads.AnyAsync(h => h.VesselId == vessel && h.Kind == "Control" && h.Id == verification.ControlId && h.Revision == verification.ControlRevision, ct) ||
+            !await db.ControlEvidenceHeads.AnyAsync(h => h.VesselId == vessel && h.Kind == "Control" && h.Id == verification.ControlId && (h.PublishedRevision ?? h.Revision) == verification.ControlRevision, ct) ||
             !OperationEquipmentContext.CurrentVerifier(settings, verification, kind ?? "Evidence", now) || (await CurrentRegulatoryContext.Stale(db, verification.EvaluationId.Value, vessel, now, ct, settings, ancestors)).Length != 0) return null;
         var requirements = await db.ControlEvidenceRequirements.AsNoTracking().Where(p => p.VesselId == vessel && p.Kind == "Evidence" && p.Id == row.Id && p.Revision == row.Revision).ToArrayAsync(ct);
         if (requirements.Length == 0) return null;

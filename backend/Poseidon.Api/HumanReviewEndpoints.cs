@@ -102,13 +102,79 @@ public static class HumanReviewEndpoints
         }
         foreach (var route in new[] { "regulatory-trace", "verification-gates", "audit-ready" })
             app.MapGet("/api/v1/" + route, Trace).RequireAuthorization("DirectoryRead");
+        // DEV-030 canonical read side of /api/v1/verifications (15.01 paragraph:97-102).
+        var verifications = app.MapGroup("/api/v1/verifications").RequireAuthorization("DirectoryRead");
+        verifications.MapGet("", (HttpContext h, PoseidonDbContext db) => Verifications(h, db, null));
+        verifications.MapGet("/{id:guid}", (Guid id, HttpContext h, PoseidonDbContext db) => Verifications(h, db, id));
+    }
+    // Scope of the read side: exact live review/verify appointments for this vessel. A
+    // verification is listed only for an appointment on its own evidence/control/operation.
+    private static HumanAuthority[] ReviewAppointments(HttpContext h, TrustedActor a, Guid vessel, DateTimeOffset now)
+    {
+        if (!Read(a) || a.RoleContext == null) return [];
+        var matches = h.RequestServices.GetRequiredService<FederationSettings>().Memberships.Where(m => m.ActorId == a.Id && m.TenantId == a.TenantId).ToArray();
+        if (matches.Length != 1 || matches[0].ActorKind != "Human") return [];
+        return (matches[0].HumanAuthorities ?? []).Where(g => g.Id != Guid.Empty && g.OperationId != Guid.Empty && g.RoleId != Guid.Empty &&
+            matches[0].HumanAuthorities.Count(other => other.Id == g.Id) == 1 && g.VesselId == vessel && g.ValidFrom <= now && now < g.ValidUntil &&
+            g.ValidUntil > g.ValidFrom && a.RoleContext.Split(',').Contains(g.RoleId.ToString("D")) &&
+            g.Capability is "human.review.submit" or "human.verify" && a.Permissions.Contains(g.Capability)).ToArray();
+    }
+    private sealed record VerificationSummary(Guid Id, Guid VesselId, long Revision, uint Version, string State, string CurrentState,
+        Guid EvidenceId, long EvidenceRevision, Guid ControlId, long ControlRevision, Guid? EvaluationId, Guid SubmitterId, Guid ActorId,
+        Guid RoleId, Guid OperationId, string ReasonCode, DateTimeOffset SavedAt, DateTimeOffset? ValidUntil, DateTimeOffset AsOf);
+    private static async Task<IResult> Verifications(HttpContext h, PoseidonDbContext db, Guid? id)
+    {
+        h.Response.Headers.CacheControl = "no-store";
+        var a = Actor(h); var ct = h.RequestAborted;
+        if (!Read(a)) return await Fail(h, 403, "permission_denied");
+        var offset = 0;
+        if (h.Request.Query.Any(x => x.Value.Count != 1 || x.Key is not ("vesselId" or "offset")) || !GuidQuery(h, "vesselId", out var vessel) ||
+            h.Request.Query.ContainsKey("offset") && (!int.TryParse(h.Request.Query["offset"], NumberStyles.None, CultureInfo.InvariantCulture, out offset) || offset is < 0 or > 100000))
+            return await Fail(h, 400, "invalid_query");
+        if (!await a.Scope(db.Vessels).AnyAsync(v => v.Id == vessel, ct)) return await Fail(h, 404, "resource_not_found");
+        var now = DateTimeOffset.UtcNow; var settings = h.RequestServices.GetRequiredService<FederationSettings>();
+        var grants = ReviewAppointments(h, a, vessel, now);
+        var visible = Visible(db, vessel, a);
+        // Current revision of each review stream; Verification only (decisions stay with DEV-031).
+        var heads = new List<HumanReviewEvent>();
+        foreach (var g in grants.DistinctBy(g => (g.EvidenceId, g.ControlId, g.OperationId)))
+            heads.AddRange(await db.HumanReviewEvents.AsNoTracking().Where(e => e.VesselId == vessel && e.Kind == "Verification" && (id == null || e.Id == id) &&
+                e.EvidenceId == g.EvidenceId && e.ControlId == g.ControlId && e.OperationId == g.OperationId &&
+                db.HumanReviewHeads.Any(x => x.VesselId == vessel && x.Id == e.Id && x.Revision == e.Revision) &&
+                visible.Any(v => v.Kind == "Evidence" && v.Id == e.EvidenceId && v.Revision == e.EvidenceRevision) &&
+                visible.Any(v => v.Kind == "Control" && v.Id == e.ControlId && v.Revision == e.ControlRevision)).ToArrayAsync(ct));
+        var current = heads.DistinctBy(e => e.Id).OrderByDescending(e => e.SavedAt).ThenBy(e => e.Id).ToArray();
+        if (id != null) {
+            var head = current.SingleOrDefault();
+            if (head == null) return await Fail(h, 404, "resource_not_found");
+            var version = await db.HumanReviewHeads.Where(x => x.VesselId == vessel && x.Id == head.Id).Select(x => x.Version).SingleAsync(ct);
+            var stream = await db.HumanReviewEvents.AsNoTracking().Where(e => e.VesselId == vessel && e.Id == head.Id).OrderByDescending(e => e.Revision).Skip(offset).Take(26).ToArrayAsync(ct);
+            var history = new List<HumanReviewDto>();
+            foreach (var e in stream.Take(25)) history.Add(await Dto(db, e, version, now, ct, settings));
+            await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "HumanReviewRead", "Success", resourceId: head.Id);
+            return Results.Ok(new { current = await Dto(db, head, version, now, ct, settings), history, offset, hasMore = stream.Length > 25 });
+        }
+        var items = new List<VerificationSummary>();
+        foreach (var e in current.Skip(offset).Take(25)) {
+            var version = await db.HumanReviewHeads.Where(x => x.VesselId == vessel && x.Id == e.Id).Select(x => x.Version).SingleAsync(ct);
+            var dto = await Dto(db, e, version, now, ct, settings);
+            // The private rationale is detail-only; list rows carry closed codes and lineage.
+            items.Add(new(dto.Id, dto.VesselId, dto.Revision, dto.Version, dto.State, dto.CurrentState, dto.EvidenceId, dto.EvidenceRevision, dto.ControlId, dto.ControlRevision,
+                dto.EvaluationId, e.SubmitterId, dto.ActorId, dto.RoleId, dto.OperationId, dto.ReasonCode, dto.SavedAt, dto.ValidUntil, dto.AsOf));
+        }
+        await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "HumanReviewRead", "Success", resourceId: vessel);
+        return Results.Ok(new { items, offset, hasMore = current.Length > offset + 25, assigned = grants.Length > 0 });
     }
     private static bool GuidQuery(HttpContext h, string key, out Guid id) => Guid.TryParseExact(h.Request.Query[key], "D", out id) && id != Guid.Empty;
     private static bool RevisionQuery(HttpContext h, string key, out long revision) => long.TryParse(h.Request.Query[key], NumberStyles.None, CultureInfo.InvariantCulture, out revision) && revision is > 0 and <= 9007199254740991;
-    private static bool Superseded(ControlEvidenceHead evidence, ControlEvidenceHead control, long er, long cr) => evidence.Revision != er || control.Revision != cr;
+    // 62.01 §6: the control side compares with the effective published revision, which a pending
+    // successor draft/review/approval does not replace; a never-published control uses its latest revision.
+    private static bool Superseded(ControlEvidenceHead evidence, ControlEvidenceHead control, long er, long cr) =>
+        evidence.Revision != er || ControlLifecyclePolicy.EffectiveRevision(control.PublishedRevision, control.Revision) != cr;
     private static async Task<HumanReviewDto> Dto(PoseidonDbContext db, HumanReviewEvent e, uint version, DateTimeOffset asOf, CancellationToken ct, FederationSettings settings, bool currentView = true) {
         var superseded = await db.ControlEvidenceRevisions.AnyAsync(x => x.VesselId == e.VesselId && x.SavedAt <= asOf &&
-            (x.Kind == "Evidence" && x.Id == e.EvidenceId && x.Revision > e.EvidenceRevision || x.Kind == "Control" && x.Id == e.ControlId && x.Revision > e.ControlRevision), ct)
+            x.Kind == "Evidence" && x.Id == e.EvidenceId && x.Revision > e.EvidenceRevision, ct)
+            || await ControlEvidenceEndpoints.ControlRevisionSuperseded(db, e.VesselId, e.ControlId, e.ControlRevision, asOf, ct)
             || await LineageChanged(db, e.VesselId, e.ControlId, e.ControlRevision, e.EvaluationId, asOf, ct, settings, currentView);
         if (e.VerificationId != null) superseded |= await db.HumanReviewEvents.AnyAsync(x => x.VesselId == e.VesselId && x.Id == e.VerificationId && x.Revision > e.VerificationRevision && x.SavedAt <= asOf, ct);
         if (e.DecisionJson != null) {
@@ -225,7 +291,7 @@ public static class HumanReviewEndpoints
         var ch = await db.ControlEvidenceHeads.SingleAsync(x => x.VesselId == vessel && x.Kind == "Control" && x.Id == control, ct);
         var content = JsonSerializer.Deserialize<ControlEvidenceContent>(ev.ContentJson, Json)!;
         var historicalSuperseded = await db.ControlEvidenceRevisions.AnyAsync(x => x.VesselId == vessel && x.SavedAt <= asOf &&
-            (x.Kind == "Evidence" && x.Id == evidence && x.Revision > er || x.Kind == "Control" && x.Id == control && x.Revision > cr), ct);
+            x.Kind == "Evidence" && x.Id == evidence && x.Revision > er, ct) || await ControlEvidenceEndpoints.ControlRevisionSuperseded(db, vessel, control, cr, asOf, ct);
         var currentEvents = await authorizedMetadata.Where(e => db.HumanReviewHeads.Any(head => head.VesselId == vessel && head.Id == e.Id && head.Revision == e.Revision))
             .OrderByDescending(e => e.SavedAt).ThenBy(e => e.Id).Take(64).ToArrayAsync(ct);
         var chainBlockers = new List<string>(evaluationCauses);
@@ -344,7 +410,7 @@ public static class HumanReviewEndpoints
             return Results.Content(r.OutcomeJson, "application/json");
         }
         async Task<bool> RecordingChanged() =>
-            await db.ControlEvidenceHeads.AnyAsync(x => x.VesselId == vessel && (x.Kind == "Evidence" && x.Id == ev.Id && x.Revision != ev.Revision || x.Kind == "Control" && x.Id == co.Id && x.Revision != co.Revision), ct) ||
+            await db.ControlEvidenceHeads.AnyAsync(x => x.VesselId == vessel && (x.Kind == "Evidence" && x.Id == ev.Id && x.Revision != ev.Revision || x.Kind == "Control" && x.Id == co.Id && (x.PublishedRevision ?? x.Revision) != co.Revision), ct) ||
             await LineageChanged(db, vessel, co.Id, co.Revision, cmd.EvaluationId, DateTimeOffset.UtcNow, ct, h.RequestServices.GetRequiredService<FederationSettings>()) ||
             await db.HumanReviewHeads.AnyAsync(x => x.VesselId == vessel && x.Id == cmd.VerificationId && x.Revision != cmd.VerificationRevision, ct);
         var replay = await Replay(); if (replay != null) return replay;
@@ -366,6 +432,8 @@ public static class HumanReviewEndpoints
             var eh = await db.ControlEvidenceHeads.SingleAsync(x => x.VesselId == vessel && x.Kind == "Evidence" && x.Id == ev.Id, ct);
             var ch = await db.ControlEvidenceHeads.SingleAsync(x => x.VesselId == vessel && x.Kind == "Control" && x.Id == co.Id, ct);
             if (eh.Version != cmd.EvidenceVersion || ch.Version != cmd.ControlVersion) return await Fail(h, 409, "input_version_conflict");
+            // DEV-028: a retired control has no current implementation; it cannot be newly verified.
+            if (cmd.State == "VERIFIED" && ch.ControlState == "RETIRED") return await Fail(h, 409, "control_retired");
             var content = JsonSerializer.Deserialize<ControlEvidenceContent>(ev.ContentJson, Json)!; var now = DateTimeOffset.UtcNow;
             if (OperationEquipmentInputs.Present(content) && cmd.EvaluationId != null && await db.ApplicabilityEvaluations.AnyAsync(e => e.Id == cmd.EvaluationId && e.IncludesOwningInputs, ct)) return await Fail(h, 409, "owning_verification_requires_independent_evaluation");
             if (OperationEquipmentInputs.Present(content) && (!await OperationEquipmentCommands.Check(db, a, vessel, ev.Id, content, ct) ||

@@ -76,6 +76,7 @@
     "ControlCreate": "PREPARATION_COMMAND",
     "ControlUpdate": "PREPARATION_COMMAND",
     "ControlSubmit": "PREPARATION_COMMAND",
+    "ControlLifecycleTransition": "REGULATORY_WORKFLOW",
     "ControlComplete": "PREPARATION_COMMAND",
     "EvidenceCreate": "PREPARATION_COMMAND",
     "EvidenceUpdate": "PREPARATION_COMMAND",
