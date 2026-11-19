@@ -69,3 +69,6 @@ Main: #16 #17 #18 #20 #23 #36 + **#37 paket 2** birleşik (`2995f70`, 19.11 ~08:
 - Her PR: CI yeşil + bağımsız QA (yazar ≠ inceleyici alt-ajan). Main korumalı: güncel dal şart → çok PR'ı entegrasyon paketiyle birleştir.
 - Ajanlara: yalnız mutlak yol, kendi başlatmadığı süreci öldürme, Playwright için benzersiz port.
 - Secret scan istisnaları: yazar + bağımsız inceleyici paketi; pin ekleme adımı kullanıcı onayı gerektirebilir.
+
+### Paket 4 (19.11 ~13:30)
+- #30 1c61483 CI yeşil. **PR #39** = `integration/bundle4-20261119` 9c82bee (main e488b34 + #25 b92792a + #28 a33e130 + #30 1c61483; 24 yeni profil, yeni NATIVE-COMMAND-IF-MATCH-1, snapshot elle birleştirildi). Yerel: Release build 0 uyarı, Domain 933, Persistence unit 83, API unit 276, script 591 OK, lint/typecheck, vitest 1704/1704. CI + entegrasyon bağımsız QA'sı koşuyor. İkisi geçerse: `gh pr merge 39 --merge --match-head-commit <tam SHA>`. Sonra S2 sprint kapısı.
