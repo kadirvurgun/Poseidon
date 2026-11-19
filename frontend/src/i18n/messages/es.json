@@ -3360,6 +3360,8 @@
     "m_7c2c3c0f372d028d": "Filtrar menú",
     "m_4895cdb4b14ff26c": "Solo se buscan las pantallas que tiene autorización para abrir.",
     "m_9e601b252c4fb4b3": "Ningún elemento de menú autorizado coincide con este filtro.",
-    "m_5af49f5d0c78416e": "Borrar filtro del menú"
+    "m_5af49f5d0c78416e": "Borrar filtro del menú",
+    "m_e9537921034aa833": "Esperando a que un cambio anterior de este registro llegue al servidor",
+    "m_4aff1a1251fdec46": "No guardado: el servidor tiene un contenido distinto para esta clave de comando"
   }
 }

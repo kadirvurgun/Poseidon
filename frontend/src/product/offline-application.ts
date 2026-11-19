@@ -2,6 +2,7 @@ import { ApiError, request, session } from './api'
 import { isGuid } from './identifiers'
 import { openOfflineRecord, sealOfflineRecord, type OfflineCipherContext } from './offline-cipher'
 import { OfflineEncryptedRecordStore } from './offline-record-store'
+import { maxSyncOperations, reconcileOperations, type SyncState } from './sync-operations'
 import type { OfflineConflict, OfflineConflictResolution } from './OfflineConflictReview'
 import { decodeOfflineCapture, decodeOfflineSnapshot, offlineKeys, offlineOperation as operation, offlineSource as source,
   offlineInteger as integer, offlineTime as time, invalidOffline as bad, type OfflineCaptureBody } from './offline-capture-contract'
@@ -263,6 +264,31 @@ export class OfflineApplication {
     this.requireActive(); if (signal.aborted || result.commandId !== capture.commandId) throw new Error('response_withdrawn')
     await this.write(capture.commandId, capture.body, capture.revision, result)
     return result
+  }
+  // DEV-034 reconnect reconciliation. Asks the server which frozen captures it already
+  // holds (same key + same digest) and durably stores those authoritative receipts
+  // WITHOUT re-signing or re-sending, so a lost replay response is recovered. Anything
+  // not proven by a receipt stays pending; key/payload mismatches are reported, never saved.
+  async reconcile(signal: AbortSignal): Promise<ReadonlyMap<string, SyncState>> {
+    this.requireActive()
+    const pending = (await this.captures()).filter(row => !row.outcome).slice(0, maxSyncOperations)
+    const states = new Map<string, SyncState>()
+    if (pending.length === 0) return states
+    const refs = await Promise.all(pending.map(async row => ({ operationId: row.commandId, domain: 'CrewWatchGroup' as const,
+      resourceId: this.context.assignmentId, payloadDigest: await hash(row.body) })))
+    const results = await reconcileOperations(this.context.vesselId, refs, signal)
+    this.requireActive(); if (signal.aborted) throw new Error('response_withdrawn')
+    for (const [index, item] of results.entries()) {
+      const row = pending[index]
+      states.set(row.commandId, item.state)
+      if (item.state !== 'Recorded') continue
+      const body = decodeOfflineCapture(JSON.parse(row.body), row.commandId, this.context)
+      const outcome = captureOutcome({ commandId: row.commandId, result: item.result, baseVersion: item.baseVersion,
+        serverVersion: item.serverVersion, revision: item.revision, capturedAt: body.capturedAt, offsetMinutes: body.offsetMinutes,
+        receivedAt: item.receivedAt, parentCommandId: item.parentCommandId }, body)
+      await this.write(row.commandId, row.body, row.revision, outcome)
+    }
+    return states
   }
   async conflict(commandId: string, signal: AbortSignal): Promise<OfflineConflictDetail> {
     this.requireActive()

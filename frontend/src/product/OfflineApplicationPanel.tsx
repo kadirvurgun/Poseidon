@@ -2,7 +2,8 @@ import { localizedText } from "../i18n/messages";
 import { type Locale as AppLocale } from "../i18n";
 import { Button } from '../components/ui/button';
 import { EnterpriseActions, EnterprisePagination, EnterpriseToolbar } from './EnterprisePatterns';
-import { OfflineCaptureMetadata, OfflineQueueSummary } from './OfflineQueueSummary';
+import { OfflineCaptureMetadata, OfflineQueueSummary, captureDisplayMetadata } from './OfflineQueueSummary';
+import { orderReplayQueue, type SyncState } from './sync-operations';
 import { useEffectEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { ApiError } from './api';
 import { OfflineConflictReview, type OfflineConflictResolution, type OfflineConflictValue } from './OfflineConflictReview';
@@ -28,6 +29,8 @@ export function OfflineApplicationPanel({ vessel, assignment, language, onDirty 
     const [historyOffset, setHistoryOffset] = useState(0), [historyMore, setHistoryMore] = useState(false);
     const [confirmDiscard, setConfirmDiscard] = useState(false), [uncertain, setUncertain] = useState(false);
     const [lease, setLease] = useState(0);
+    // DEV-034 reconnect reconciliation states; never persisted, never shown as saved.
+    const [syncStates, setSyncStates] = useState<ReadonlyMap<string, SyncState>>(new Map());
     const [authorizedContext, setAuthorizedContext] = useState<OfflineApplication['context'] | null>(null);
     const withdraw = useCallback(() => {
         generation.current++;
@@ -38,6 +41,7 @@ export function OfflineApplicationPanel({ vessel, assignment, language, onDirty 
         setAuthorizedContext(null);
         setBusy(false);
         setCaptures([]);
+        setSyncStates(new Map());
         setConflict(null);
         setHistory([]);
         setHistoryOffset(0);
@@ -144,8 +148,15 @@ export function OfflineApplicationPanel({ vessel, assignment, language, onDirty 
             baseVersion: number;
             revision: number;
         };
+        let reconciled: ReadonlyMap<string, SyncState> = new Map();
         try {
             await prepareOfflineShell(signal);
+            if (navigator.onLine) {
+                // Lost replay responses are recovered from server receipts without re-sending.
+                // Failure is non-fatal: unproven captures simply remain pending.
+                try { reconciled = await value.reconcile(signal); }
+                catch (error) { if (signal.aborted) throw error; }
+            }
             rows = await value.captures();
             base = await value.snapshot();
         }
@@ -161,6 +172,7 @@ export function OfflineApplicationPanel({ vessel, assignment, language, onDirty 
         setAuthorizedContext(value.context);
         setSelected(value.context.id);
         setCaptures(rows);
+        setSyncStates(reconciled);
         setSnapshot(base);
         value.onWithdraw(() => { if (app.current === value)
             withdraw(); });
@@ -198,6 +210,7 @@ export function OfflineApplicationPanel({ vessel, assignment, language, onDirty 
         const rows = await value.captures();
         if (fresh(current, signal)) {
             setCaptures(rows);
+            setSyncStates(previous => { const next = new Map(previous); next.delete(row.commandId); return next; });
             setStatus('ready');
             setUncertain(false);
         }
@@ -244,6 +257,12 @@ export function OfflineApplicationPanel({ vessel, assignment, language, onDirty 
     const before: OfflineConflictValue = conflict?.base.kind === 'known' && typeof conflict.base.text === 'string' ? { kind: 'known', text: conflict.base.text }
         : conflict?.base.kind === 'missing' ? { kind: 'missing' } : conflict?.base.kind === 'withheld' ? { kind: 'withheld' } : { kind: 'unknown' };
     const displayedConflict = conflict ? { ...conflict, fields: conflict.fields.map(field => field.key === 'watch_group' ? { ...field, before } : field) } : null;
+    // DEV-033 ordered per resource: only the oldest unresolved capture may be replayed.
+    const replayOrder = new Map(orderReplayQueue(captures.map(row => {
+        const metadata = captureDisplayMetadata(row);
+        return { operationId: row.commandId, resourceKey: assignment, capturedAt: metadata?.capturedAt ?? '', outcome: row.outcome ?? null,
+            sync: syncStates.get(row.commandId) ?? null, parentOperationId: metadata?.parentCommandId ?? null };
+    })).map(entry => [entry.op.operationId, entry]));
     return <section className="offline-workspace" aria-label={localizedText(en, "pairs.m_bd180a669347ef89")}>
     <h2>{localizedText(en, "pairs.m_bd180a669347ef89")}</h2>
     <p>{localizedText(en, "pairs.m_9470d5c16338e443")}</p>
@@ -266,10 +285,12 @@ export function OfflineApplicationPanel({ vessel, assignment, language, onDirty 
         <option value="">{localizedText(en, "pairs.m_a5a7675bd7000dbd")}</option>{authorizedContext?.watchGroups.map(v => <option key={v}>{v}</option>)}
       </select></label>
       <EnterpriseActions aria-label={localizedText(en, "pairs.m_04ba784116a2cf40")}><Button variant="outline" disabled={busy} onClick={() => { setWatch(snapshot.watchGroup ?? ''); setDirty(false); }}>{localizedText(en, "pairs.m_391bd1f8046032b2")}</Button><Button disabled={busy} onClick={() => void capture()}>{localizedText(en, "pairs.m_6935dec4c224fffd")}</Button></EnterpriseActions>
-      <OfflineQueueSummary captures={captures} language={language}/><ul className="offline-capture-list" aria-label={localizedText(en, "pairs.m_dccad8ac57ececd7")}>{captures.map((row, index) => <li key={row.commandId}>
+      <OfflineQueueSummary captures={captures} language={language}/><ul className="offline-capture-list" aria-label={localizedText(en, "pairs.m_dccad8ac57ececd7")}>{captures.map((row, index) => { const order = replayOrder.get(row.commandId); return <li key={row.commandId}>
         {localizedText(en, "pairs.m_78fd146a51f0c965")} {index + 1} · {row.outcome?.result ?? (localizedText(en, "pairs.m_e2f96a34d108961d"))}
         <OfflineCaptureMetadata capture={row} language={language}/><EnterpriseActions align="start" aria-label={localizedText(en, "pairs.m_6554165b4d2b56b4")}>
-        <Button variant="outline" disabled={busy || !online} onClick={() => void replay(row)}>{localizedText(en, "pairs.m_e02b437f8d432d05")}</Button>
+        {order?.state === 'blocked' && <p role="status">{localizedText(en, "pairs.m_e9537921034aa833")}</p>}
+        {order?.state === 'rejected' && <p role="alert">{localizedText(en, "pairs.m_4aff1a1251fdec46")}</p>}
+        <Button variant="outline" disabled={busy || !online || order?.state === 'blocked' || order?.state === 'rejected'} onClick={() => void replay(row)}>{localizedText(en, "pairs.m_e02b437f8d432d05")}</Button>
         {row.outcome?.result === 'MaterialConflict' && <Button variant="outline" disabled={busy || !online} onClick={() => void review(row.commandId)}>{localizedText(en, "pairs.m_81941c7b2d89edfc")}</Button>}
         <Button variant="outline" disabled={busy || !confirmDiscard} onClick={() => void run(async (signal, current) => {
                     const value = app.current;
@@ -282,7 +303,7 @@ export function OfflineApplicationPanel({ vessel, assignment, language, onDirty 
                         setConfirmDiscard(false);
                     }
                 })}>{localizedText(en, "pairs.m_63ed17a59e454a9a")}</Button></EnterpriseActions>
-      </li>)}</ul>
+      </li>; })}</ul>
       <Button variant="outline" disabled={busy || !online} onClick={() => void loadHistory(0)}>{localizedText(en, "pairs.m_85c3e973e82bad0a")}</Button>
       <ul aria-label={localizedText(en, "pairs.m_67a98367864a0460")}>{history.map((o, i) => <li key={o.commandId}>{i + 1} · {o.result} · {o.revision} · {o.receivedAt}{o.parentCommandId ? (localizedText(en, "pairs.m_29690a213331d2e9")) : ''}</li>)}</ul>
       <EnterprisePagination label={localizedText(en, "pairs.m_2464b5f3c1b53ac1")} previous={localizedText(en, "pairs.m_9a38c6be24d2da85")} next={localizedText(en, "pairs.m_98acb984cf8d64d0")} previousDisabled={busy || !online || historyOffset === 0} nextDisabled={busy || !online || !historyMore} onPrevious={() => void loadHistory(Math.max(0, historyOffset - 25))} onNext={() => void loadHistory(historyOffset + 25)}/>

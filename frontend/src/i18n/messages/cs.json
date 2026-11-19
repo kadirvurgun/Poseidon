@@ -3360,6 +3360,8 @@
     "m_7c2c3c0f372d028d": "Filtrovat nabídku",
     "m_4895cdb4b14ff26c": "Prohledávají se pouze obrazovky, které máte oprávnění otevřít.",
     "m_9e601b252c4fb4b3": "Tomuto filtru neodpovídá žádná oprávněná položka nabídky.",
-    "m_5af49f5d0c78416e": "Vymazat filtr nabídky"
+    "m_5af49f5d0c78416e": "Vymazat filtr nabídky",
+    "m_e9537921034aa833": "Čeká se, až předchozí změna tohoto záznamu dorazí na server",
+    "m_4aff1a1251fdec46": "Neuloženo: server má pro tento klíč příkazu jiný obsah"
   }
 }

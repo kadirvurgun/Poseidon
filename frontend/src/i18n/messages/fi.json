@@ -3360,6 +3360,8 @@
     "m_7c2c3c0f372d028d": "Suodata valikkoa",
     "m_4895cdb4b14ff26c": "Haku kattaa vain näkymät, joiden avaamiseen sinulla on oikeus.",
     "m_9e601b252c4fb4b3": "Mikään sallittu valikkokohde ei vastaa tätä suodatinta.",
-    "m_5af49f5d0c78416e": "Tyhjennä valikkosuodatin"
+    "m_5af49f5d0c78416e": "Tyhjennä valikkosuodatin",
+    "m_e9537921034aa833": "Odotetaan, että tämän tietueen aiempi muutos saapuu palvelimelle",
+    "m_4aff1a1251fdec46": "Ei tallennettu: palvelimella on tälle komentoavaimelle eri sisältö"
   }
 }

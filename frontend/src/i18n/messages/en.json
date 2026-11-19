@@ -3360,6 +3360,8 @@
     "m_7c2c3c0f372d028d": "Filter menu",
     "m_4895cdb4b14ff26c": "Only screens you are authorized to open are searched.",
     "m_9e601b252c4fb4b3": "No authorized menu item matches this filter.",
-    "m_5af49f5d0c78416e": "Clear menu filter"
+    "m_5af49f5d0c78416e": "Clear menu filter",
+    "m_e9537921034aa833": "Waiting for an earlier change to this record to reach the server",
+    "m_4aff1a1251fdec46": "Not saved: the server holds different content for this command key"
   }
 }
