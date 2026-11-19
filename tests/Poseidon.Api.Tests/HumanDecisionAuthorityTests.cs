@@ -36,14 +36,19 @@ public sealed partial class DirectoryWorkspaceTests
         var request = await CurrentReviewCommand(c, host.Services, ev, co, v, "human.review.submit") with { ExpectedVersion = 0, VerificationId = v.Id, VerificationRevision = v.Revision };
         using var pendingResponse = await Send(c, GraphRoute("decisions"), request); Assert.Equal(HttpStatusCode.OK, pendingResponse.StatusCode);
         var pending = (await pendingResponse.Content.ReadFromJsonAsync<HumanReviewDto>(Ct))!;
+        // The exact rejection envelope is built while the principal is still the appointed human:
+        // the regulatory trace it reads is itself human-only (ActorKind == "Human"), so building it
+        // after the switch would fail on the trace read rather than exercise the decision gate.
+        var reject = await CurrentReviewCommand(c, host.Services, ev, co, pending, "human.decide");
         var settings = host.Services.GetRequiredService<FederationSettings>(); settings.Memberships[0] = settings.Memberships[0] with { ActorKind = actorKind };
+        // The trace is not readable by the non-human principal either.
+        Assert.Equal(HttpStatusCode.Forbidden, (await c.GetAsync(TraceRoute(ev, co), Ct)).StatusCode);
         using var direct = await Send(c, GraphRoute("decisions"), cmd); Assert.Equal(HttpStatusCode.Forbidden, direct.StatusCode);
         using var finalize = await Send(c, GraphRoute($"decisions/{pending.Id}/events"), cmd with { ExpectedVersion = pending.Version });
         Assert.Equal(HttpStatusCode.Forbidden, finalize.StatusCode);
-        var reject = await CurrentReviewCommand(c, host.Services, ev, co, pending, "human.decide");
         using var rejected = await Send(c, GraphRoute($"decisions/{pending.Id}/events"), reject with { State = "REJECTED", ReasonCode = "HUMAN_REJECTED" });
-        Assert.True(rejected.StatusCode is HttpStatusCode.Forbidden or HttpStatusCode.BadRequest);
-        foreach (var r in new[] { direct, finalize }) Assert.Contains("human_authority_required", await r.Content.ReadAsStringAsync(Ct));
+        Assert.Equal(HttpStatusCode.Forbidden, rejected.StatusCode);
+        foreach (var r in new[] { direct, finalize, rejected }) Assert.Contains("human_authority_required", await r.Content.ReadAsStringAsync(Ct));
         await AssertNoFinalDecisionAndAuditedDenial(0);
         await using var db = Db(); Assert.Equal("PENDING", (await db.HumanReviewEvents.Where(x => x.Id == pending.Id).OrderByDescending(x => x.Revision).FirstAsync(Ct)).State);
     }
