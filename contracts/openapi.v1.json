@@ -1042,6 +1042,42 @@
         "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
+    "/api/v1/audit-ready/chains": {
+      "get": {
+        "tags": [
+          "AuditReadyEndpoints"
+        ],
+        "operationId": "GetAuditReadyChains",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditReadyChains"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
     "/api/v1/poseidon-today": {
       "get": {
         "tags": [
@@ -15413,6 +15449,161 @@
               "null",
               "string"
             ]
+          }
+        }
+      },
+      "AuditReadyChain": {
+        "required": [
+          "evidenceId",
+          "evidenceRevision",
+          "controlId",
+          "controlRevision",
+          "sources"
+        ],
+        "type": "object",
+        "properties": {
+          "evidenceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "evidenceRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "controlId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "controlRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditReadySource"
+            }
+          }
+        }
+      },
+      "AuditReadyChains": {
+        "required": [
+          "vesselId",
+          "asOf",
+          "items",
+          "unavailable",
+          "hasMore"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "asOf": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditReadyChain"
+            }
+          },
+          "unavailable": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AuditReadySource": {
+        "required": [
+          "sourceId",
+          "sourceRevision",
+          "requirementId",
+          "requirementRevision",
+          "ruleId",
+          "ruleRevision",
+          "availability",
+          "locatorState",
+          "locator",
+          "titleState",
+          "title",
+          "provenance",
+          "sourceHash",
+          "sourceSavedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "sourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sourceRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "requirementId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "requirementRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "ruleId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "ruleRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "availability": {
+            "type": "string"
+          },
+          "locatorState": {
+            "type": "string"
+          },
+          "locator": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleState": {
+            "type": "string"
+          },
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "sourceHash": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sourceSavedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
           }
         }
       },
@@ -32246,6 +32437,9 @@
     },
     {
       "name": "HumanReviewEndpoints"
+    },
+    {
+      "name": "AuditReadyEndpoints"
     },
     {
       "name": "MetricEndpoints"

@@ -360,6 +360,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/audit-ready/chains": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GetAuditReadyChains"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/poseidon-today": {
         parameters: {
             query?: never;
@@ -5797,6 +5813,50 @@ export interface components {
             limit: number;
             nextCursor: null | string;
         };
+        AuditReadyChain: {
+            /** Format: uuid */
+            evidenceId: string;
+            /** Format: int64 */
+            evidenceRevision: number;
+            /** Format: uuid */
+            controlId: string;
+            /** Format: int64 */
+            controlRevision: number;
+            sources: components["schemas"]["AuditReadySource"][];
+        };
+        AuditReadyChains: {
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: date-time */
+            asOf: string;
+            items: components["schemas"]["AuditReadyChain"][];
+            /** Format: int32 */
+            unavailable: number;
+            hasMore: boolean;
+        };
+        AuditReadySource: {
+            /** Format: uuid */
+            sourceId: string;
+            /** Format: int64 */
+            sourceRevision: number;
+            /** Format: uuid */
+            requirementId: string;
+            /** Format: int64 */
+            requirementRevision: number;
+            /** Format: uuid */
+            ruleId: null | string;
+            /** Format: int64 */
+            ruleRevision: null | number;
+            availability: string;
+            locatorState: string;
+            locator: null | string;
+            titleState: string;
+            title: null | string;
+            provenance: string;
+            sourceHash: null | string;
+            /** Format: date-time */
+            sourceSavedAt: null | string;
+        };
         AuditRecordDto: {
             /** Format: uuid */
             id: string;
@@ -11232,6 +11292,61 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["CompliancePassportDto"];
                 };
+            };
+        };
+    };
+    GetAuditReadyChains: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuditReadyChains"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
