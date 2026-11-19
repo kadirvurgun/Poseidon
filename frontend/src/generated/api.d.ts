@@ -5666,6 +5666,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/tug-jobs/{id}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["TugSubmit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-jobs/{id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["TugCancel"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/tug-command": {
         parameters: {
             query?: never;
@@ -10776,6 +10808,16 @@ export interface components {
             /** @default SourceQualifiedMinimumRolesOnly;OtherCrewGatesAndMasterDecisionSeparate */
             coverage: string;
         };
+        TugLifecycleCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            reason?: null | string;
+        };
+        TugLifecycleFailure: {
+            code: string;
+            missing: string[];
+            correlationId: string;
+        };
         TugOfflineContext: {
             /** Format: uuid */
             id: string;
@@ -10949,6 +10991,8 @@ export interface components {
             replayed: boolean;
             /** @default poseidon-v46.3-20261030/14.02/1914-1931/TUG-FOUNDATION-01 */
             sourceVersion: string;
+            /** @default Draft */
+            state: string;
         };
         TugRequestInputs: {
             customerRef?: null | string;
@@ -19689,6 +19733,67 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    TugSubmit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TugLifecycleCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugRequestDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugLifecycleFailure"];
+                };
+            };
+        };
+    };
+    TugCancel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TugLifecycleCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugRequestDto"];
+                };
             };
         };
     };

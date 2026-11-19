@@ -397,6 +397,19 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         };
         if (entry.Entity is TugOfflineEnrollment) return new(vessel, resource, "TugOfflineEnrollment", null, null,
             Fields(Field("Binding", entry.State == EntityState.Added ? null : "ServerOwnedContext", "ServerOwnedContext")));
+        // DEV-081 lifecycle (60.02 §5): closed state codes and revisions only; the cancel reason is withheld.
+        if (entry.Entity is TugJob lifecycleJob && entry.State == EntityState.Modified && entry.Property(nameof(TugJob.Status)).IsModified) {
+            var priorRevision = (long)entry.Property(nameof(TugJob.Revision)).OriginalValue!;
+            var jobFields = new List<object> { Field("Revision", Number(priorRevision), Number(lifecycleJob.Revision)),
+                Field("JobState", Closed((string)entry.Property(nameof(TugJob.Status)).OriginalValue!, Poseidon.Domain.TugJobLifecycle.States),
+                    Closed(lifecycleJob.Status, Poseidon.Domain.TugJobLifecycle.States)) };
+            if (lifecycleJob.Status == Poseidon.Domain.TugJobLifecycle.Cancelled) jobFields.Add(Field("CancelReason", null, null, "ValuesWithheld"));
+            return new(lifecycleJob.VesselId, lifecycleJob.Id, "TugJob", priorRevision, lifecycleJob.Revision, Fields([.. jobFields]));
+        }
+        if (entry.Entity is TugJobRevision lifecycleRevision && entry.State == EntityState.Added && lifecycleRevision.JobState != Poseidon.Domain.TugJobLifecycle.Draft)
+            return new(lifecycleRevision.VesselId, lifecycleRevision.JobId, "TugJobRevision", null, lifecycleRevision.Revision, Fields(
+                Field("ContentJson", null, null, "RevisionReference"), Field("JobState", null, Closed(lifecycleRevision.JobState, Poseidon.Domain.TugJobLifecycle.States)),
+                Field("Revision", null, Number(lifecycleRevision.Revision))));
         if (entry.Entity is TechnicalOwner or TugOwner)
             return new(vessel, resource, "OwnerReference", null, null, Fields(Field("Binding", null, "OwnerReference")));
         if (entry.Entity is CrewPosition)

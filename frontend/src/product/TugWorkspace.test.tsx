@@ -10,7 +10,7 @@ const json = (value: unknown, status = 200) => new Response(JSON.stringify(value
 const context = { vessel: { id: vessel, code: 'FICTIONAL', name: 'Synthetic tug' }, mode: 'Tug', crossMode: false, roleReferences: null, roleLens: { roleState: 'Missing', roleCatalogVersion: null, roles: [], lensState: 'Missing', lensVersion: null, lenses: [] }, shipModeDestinations: [],
     canWrite: true, owners: [], jobTypes: ['Harbour Towage'], priorities: ['Normal', 'High'], requestSources: ['Customer'], tugType: 'Unavailable', tugTypeContext: null, tugTypeOptions: [], tugTypePolicyVersion: null,
     bollardPull: { value: '45.01', version: 7, provenance: 'LegacyMeasurementUnverified', freshness: 'Unknown', observedAt: null, source: 'TugProfile' }, equipment: null, equipmentCoverage: 'Unavailable', readiness: 'Unknown', reason: 'VerifiedMeasurementCertificateCrewAndAssignmentAdaptersUnavailable' };
-const row = { id, vesselId: vessel, jobNumber: 'TUG-SYNTHETIC', revision: 1, version: 8, inputs: emptyTugInputs(), provenance: 'UserDeclaredUnverified', savedAt: '2026-11-01T00:00:00Z', missing: ['requested_start'], replayed: false, sourceVersion: tugRequestSource };
+const row = { id, vesselId: vessel, jobNumber: 'TUG-SYNTHETIC', revision: 1, version: 8, inputs: emptyTugInputs(), provenance: 'UserDeclaredUnverified', savedAt: '2026-11-01T00:00:00Z', missing: ['requested_start'], replayed: false, sourceVersion: tugRequestSource, state: 'Draft' as const };
 const fetcher = vi.fn();
 let mutate: (init: RequestInit) => Promise<Response>;
 let actorId: string, tenantId: string, canWrite: boolean;

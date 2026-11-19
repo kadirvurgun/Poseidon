@@ -123,6 +123,8 @@ public static partial class TugEndpoints
             // Actual current object/mode/write/assignment eligibility precede recovery, including old receipts.
             var job = await db.TugJobs.SingleOrDefaultAsync(j => j.Id == id && j.VesselId == vessel, ct);
             if (job == null) return await Fail(h, 404, "resource_not_found");
+            // DEV-081: a cancelled request is terminal (60.02 paragraph 102); no new draft plan revision.
+            if (job.Status == Poseidon.Domain.TugJobLifecycle.Cancelled) return await Fail(h, 409, "invalid_state");
             var receipt = await db.CommandReceipts.AsNoTracking().SingleOrDefaultAsync(r => r.ActorId == a.Id && r.Key == key, ct);
             if (receipt != null) {
                 if (receipt.Action != "TugPlanSave" || receipt.ResourceId != id || receipt.Fingerprint != digest) return await Fail(h, 409, "idempotency_key_reused");
