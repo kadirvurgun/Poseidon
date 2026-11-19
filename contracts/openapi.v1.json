@@ -8250,6 +8250,27 @@
         "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
+    "/api/v1/engine-daily-logs/reference-candidates": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "EngineDailyReferenceCandidates",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyEngineReferenceCandidatePageDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
     "/api/v1/engine-daily-logs/{id}/references": {
       "get": {
         "tags": [
@@ -8273,13 +8294,53 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DailyReferencesDto"
+                  "$ref": "#/components/schemas/DailyEngineReferencesDto"
                 }
               }
             }
           }
         },
         "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "EngineDailyReferenceRecord",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DailyEngineReferenceCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyEngineReferenceEventDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
     },
     "/api/v1/audit": {
@@ -21383,6 +21444,348 @@
           }
         },
         "additionalProperties": false
+      },
+      "DailyEngineReferenceCandidateDto": {
+        "required": [
+          "pin",
+          "label",
+          "detail",
+          "provenance",
+          "savedAt",
+          "qualification",
+          "href"
+        ],
+        "type": "object",
+        "properties": {
+          "pin": {
+            "$ref": "#/components/schemas/DailyEngineReferencePin"
+          },
+          "label": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "detail": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "qualification": {
+            "type": "string"
+          },
+          "href": {
+            "type": "string"
+          }
+        }
+      },
+      "DailyEngineReferenceCandidatePageDto": {
+        "required": [
+          "vesselId",
+          "kind",
+          "items",
+          "offset",
+          "limit",
+          "hasMore"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DailyEngineReferenceCandidateDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DailyEngineReferenceCommand": {
+        "required": [
+          "expectedRecordVersion",
+          "recordRevision",
+          "expectedReferenceVersion",
+          "operation",
+          "target"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedRecordVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "recordRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "expectedReferenceVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "operation": {
+            "type": "string"
+          },
+          "target": {
+            "$ref": "#/components/schemas/DailyEngineReferencePin"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DailyEngineReferenceEventDto": {
+        "required": [
+          "id",
+          "recordId",
+          "vesselId",
+          "sequence",
+          "referenceVersion",
+          "recordRevision",
+          "operation",
+          "target",
+          "actorId",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recordId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "referenceVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "recordRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "operation": {
+            "type": "string"
+          },
+          "target": {
+            "$ref": "#/components/schemas/DailyEngineReferencePin"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "qualification": {
+            "type": "string",
+            "default": "REVIEW_REQUIRED"
+          },
+          "sourceVersion": {
+            "type": "string",
+            "default": "18.01:09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674:100;14.02:3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018:2177-2178:v46.3"
+          }
+        }
+      },
+      "DailyEngineReferenceItemDto": {
+        "required": [
+          "kind",
+          "pin",
+          "sequence",
+          "state",
+          "qualification",
+          "label",
+          "href",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "pin": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DailyEngineReferencePin"
+              }
+            ]
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "state": {
+            "type": "string"
+          },
+          "qualification": {
+            "type": "string"
+          },
+          "label": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "href": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "DailyEngineReferencePin": {
+        "required": [
+          "kind",
+          "id",
+          "revision",
+          "version",
+          "hash",
+          "sourceVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "sourceVersion": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DailyEngineReferencesDto": {
+        "required": [
+          "recordId",
+          "vesselId",
+          "recordRevision",
+          "recordVersion",
+          "referenceVersion",
+          "sequence",
+          "canLink",
+          "sources",
+          "items",
+          "offline"
+        ],
+        "type": "object",
+        "properties": {
+          "recordId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recordRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "recordVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "referenceVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "canLink": {
+            "type": "boolean"
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DailyEngineReferenceSourceDto"
+            }
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DailyEngineReferenceItemDto"
+            }
+          },
+          "offline": {
+            "type": "string"
+          },
+          "sourceVersion": {
+            "type": "string",
+            "default": "18.01:09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674:100;14.02:3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018:2177-2178:v46.3"
+          }
+        }
+      },
+      "DailyEngineReferenceSourceDto": {
+        "required": [
+          "kind",
+          "state"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        }
       },
       "DailyFieldDefinition": {
         "required": [
