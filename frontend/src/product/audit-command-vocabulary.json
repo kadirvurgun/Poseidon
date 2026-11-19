@@ -58,6 +58,8 @@
     "MaintenanceObservationRevoke": "PREPARATION_COMMAND",
     "TugSave": "PREPARATION_COMMAND",
     "TugUpdate": "PREPARATION_COMMAND",
+    "TugSubmit": "PREPARATION_COMMAND",
+    "TugCancel": "PREPARATION_COMMAND",
     "TugPlanSave": "PREPARATION_COMMAND",
     "TugOfflineEnroll": "OFFLINE_LIFECYCLE",
     "TugOfflineActionRenew": "OFFLINE_LIFECYCLE",

@@ -14,7 +14,8 @@ import './tug.css';
 import { TugPlanningPanel } from './TugPlanningPanel';
 import { DraftConfirmation } from './DraftConfirmation';
 import { ApiError, session, type Session } from './api';
-import { emptyTugInputs, tugApi, type TugAttempt, type TugBoard, type TugContext, type TugInputs, type TugRequest } from './tug-api';
+import { emptyTugInputs, tugApi, tugBoardWindows, tugJobStates, type TugAttempt, type TugBoard, type TugBoardWindow, type TugContext, type TugInputs, type TugJobState, type TugRequest } from './tug-api';
+import { TugJobLifecycle } from './TugJobLifecycle';
 import { unsavedState, useUnsavedChangesSource } from './unsaved-changes';
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const text = localizedCopy("TugWorkspace_tsx_text");
@@ -25,8 +26,11 @@ function location() {
     const offset = Number(params.get('offset') ?? '0');
     const invalid = !match || (vessel !== '' && !uuid.test(vessel)) || (id !== '' && !uuid.test(id)) ||
         (match?.[1] === 'tug-job-detail' ? !id : !!id) || !Number.isSafeInteger(offset) || offset < 0 || offset > 100000 ||
-        [...params.keys()].some(k => !['vessel', 'priority', 'q', 'offset'].includes(k) || params.getAll(k).length !== 1);
-    return { screen: match?.[1], vessel, id, priority: params.get('priority') ?? '', q: params.get('q') ?? '', offset, invalid };
+        [...params.keys()].some(k => !['vessel', 'priority', 'q', 'offset', 'state', 'window'].includes(k) || params.getAll(k).length !== 1);
+    // DEV-082 board filters are closed server codes; anything else is an invalid route, never a silent default.
+    const state = params.get('state') ?? '', boardWindow = params.get('window') ?? '';
+    const filterInvalid = state !== '' && !tugJobStates.includes(state as TugJobState) || boardWindow !== '' && !tugBoardWindows.includes(boardWindow as TugBoardWindow);
+    return { screen: match?.[1], vessel, id, priority: params.get('priority') ?? '', q: params.get('q') ?? '', offset, state: state as TugJobState | '', window: boardWindow as TugBoardWindow | '', invalid: invalid || filterInvalid };
 }
 export function TugWorkspace() {
     const [lang, language] = useAppLanguage(), t = text[lang];
@@ -39,11 +43,11 @@ export function TugWorkspace() {
     const [editing, setEditing] = useState(route.screen === 'tug-job-intake'), [dirty, setDirty] = useState(false), [busy, setBusy] = useState(false);
     const [attempt, setAttempt] = useState<TugAttempt | null>(null), [conflict, setConflict] = useState(false);
     const [pending, setPending] = useState<(() => void) | null>(null), [offline, setOffline] = useState(!navigator.onLine);
-    const [planningDirty, setPlanningDirty] = useState(false);
-    const locks = useRef({ dirty: false, planning: false, busy: false, attempt: false });
+    const [planningDirty, setPlanningDirty] = useState(false), [lifecyclePending, setLifecyclePending] = useState(false);
+    const locks = useRef({ dirty: false, planning: false, busy: false, attempt: false, lifecycle: false });
     const uncertain = useRef(false);
     // DEV-021 AC-07: an uncertain write outcome blocks a shell context switch like an in-flight save.
-    useUnsavedChangesSource(() => unsavedState(locks.current.dirty || locks.current.planning || locks.current.attempt, locks.current.busy || uncertain.current));
+    useUnsavedChangesSource(() => unsavedState(locks.current.dirty || locks.current.planning || locks.current.attempt || locks.current.lifecycle, locks.current.busy || uncertain.current));
     const [uncertainOutcome, setUncertainOutcome] = useState(false);
     const markUncertain = (value: boolean) => { uncertain.current = value; setUncertainOutcome(value); };
     const active = useRef(false), writer = useRef<AbortController | null>(null);
@@ -55,7 +59,9 @@ export function TugWorkspace() {
     const markDirty = (value: boolean) => { locks.current.dirty = value; setDirty(value); };
     const markPlanning = useCallback((value: boolean) => { locks.current.planning = value; setPlanningDirty(value); }, []);
     const markAttempt = (value: TugAttempt | null) => { locks.current.attempt = !!value; setAttempt(value); };
-    const hasRetained = () => locks.current.dirty || locks.current.planning || locks.current.attempt;
+    // A pending or uncertain lifecycle command is retained like an unsaved draft.
+    const markLifecycle = useCallback((value: boolean) => { locks.current.lifecycle = value; setLifecyclePending(value); }, []);
+    const hasRetained = () => locks.current.dirty || locks.current.planning || locks.current.attempt || locks.current.lifecycle;
     const guard = (action: () => void) => { if (locks.current.busy)
         return; if (hasRetained())
         setPending(() => action);
@@ -77,7 +83,7 @@ export function TugWorkspace() {
     }, [route.screen, dirty, planningDirty, busy, attempt]);
     useEffect(() => {
         const pop = () => { const target = window.location.href; if (locks.current.busy || hasRetained()) {
-            history.pushState(null, '', `/app/${route.screen}${route.id ? '/' + route.id : ''}?${new URLSearchParams({ vessel: route.vessel, priority: route.priority, q: route.q, offset: String(route.offset) })}`);
+            history.pushState(null, '', `/app/${route.screen}${route.id ? '/' + route.id : ''}?${new URLSearchParams({ vessel: route.vessel, priority: route.priority, q: route.q, offset: String(route.offset), ...(route.state ? { state: route.state } : {}), ...(route.window ? { window: route.window } : {}) })}`);
             if (!locks.current.busy)
                 setPending(() => () => { history.pushState(null, '', target); setRoute(location()); setReload(n => n + 1); });
         }
@@ -156,7 +162,7 @@ export function TugWorkspace() {
             editorOwner.current = `${s.tenantId}/${s.actorId}`;
             markAuthority(true);
             if (route.screen === 'tug-job-board') {
-                const b = await tugApi.board(route.vessel, route.priority, route.q, route.offset, c.signal);
+                const b = await tugApi.board(route.vessel, route.priority, route.q, route.offset, c.signal, route.state, route.window);
                 if (active)
                     setBoard(b);
             }
@@ -294,9 +300,11 @@ export function TugWorkspace() {
         <nav aria-label={t.title}>{(['tug-command', 'tug-job-board', ...(ctx.canWrite ? ['tug-job-intake'] : [])] as const).map((s, i) => <a key={s} aria-current={route.screen === s ? 'page' : undefined} href={href(s)} onClick={e => { e.preventDefault(); move(href(s)); }}>{[t.context, t.board, t.intake][i]} </a>)}</nav>
         {route.screen === 'tug-command' && <TugProfileContext context={ctx} language={lang} offline={offline}/>}
         {notice && <p role="alert">{notice === 'saved' ? t.saved : notice === 'uncertain' ? t.uncertain : notice === 'conflict' ? t.conflict : `${localizedText(lang, "pairs.m_2465a45ef9be4085")} (${notice})`}</p>}
-        {route.screen === 'tug-job-board' && <TugBoardView board={board} priorities={ctx.priorities} filter={{ q: route.q, priority: route.priority, offset: route.offset }} language={lang} offline={offline} onFilter={filter => move(tugBoardHref(route.vessel, filter))} onNavigate={move} onRefresh={() => guard(() => setReload(n => n + 1))}/>}
-        {route.screen === 'tug-job-detail' && record && <TugRequestSummary record={record} language={lang} editing={editing} onEdit={ctx.canWrite ? () => guard(() => setEditing(true)) : undefined}/>}
-        {route.screen === 'tug-job-detail' && record && !editing && <TugPlanningPanel key={`${user?.tenantId}/${user?.actorId}/${record.id}`} id={record.id} vessel={route.vessel} requestVersion={record.version} csrf={csrf} language={lang} onDirty={markPlanning}/>}
+        {route.screen === 'tug-job-board' && <TugBoardView board={board} priorities={ctx.priorities} filter={{ q: route.q, priority: route.priority, offset: route.offset, state: route.state, window: route.window }} language={lang} offline={offline} onFilter={filter => move(tugBoardHref(route.vessel, filter))} onNavigate={move} onRefresh={() => guard(() => setReload(n => n + 1))}/>}
+        {route.screen === 'tug-job-detail' && record && <TugRequestSummary record={record} language={lang} editing={editing} onEdit={ctx.canWrite && record.state === 'Draft' && !lifecyclePending ? () => guard(() => setEditing(true)) : undefined}/>}
+        {route.screen === 'tug-job-detail' && record && !editing && <TugJobLifecycle key={`${user?.tenantId}/${user?.actorId}/${record.id}`} record={record} vessel={route.vessel} canWrite={ctx.canWrite} offline={offline} language={lang}
+          owner={user ? `${user.tenantId}/${user.actorId}` : null} onChanged={r => { setRecord(r); setInputs(r.inputs); }} onReload={() => guard(() => setReload(n => n + 1))} onPending={markLifecycle}/>}
+        {route.screen === 'tug-job-detail' && record && !editing && record.state !== 'Cancelled' && <TugPlanningPanel key={`${user?.tenantId}/${user?.actorId}/${record.id}`} id={record.id} vessel={route.vessel} requestVersion={record.version} csrf={csrf} language={lang} onDirty={markPlanning}/>}
         {route.screen === 'tug-job-intake' && !ctx.canWrite && <p role="alert">{t.denied}</p>}
         {formOpen && <form className="tug-intake-form" noValidate aria-busy={busy} onSubmit={e => { e.preventDefault(); void save(); }} aria-label={t.intake}>
           <TugRequestFields inputs={inputs} context={ctx} language={lang} disabled={busy || !!attempt || conflict} errors={fieldErrors} onChange={change}/>

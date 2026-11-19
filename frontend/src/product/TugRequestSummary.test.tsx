@@ -5,7 +5,7 @@ import { TugRequestSummary } from './TugRequestSummary'
 import { emptyTugInputs, type TugRequest } from './tug-api'
 
 const record: TugRequest = { id: '22222222-2222-2222-2222-222222222222', vesselId: '11111111-1111-1111-1111-111111111111',
-  jobNumber: 'FICTIONAL-JOB', revision: 4, version: 1, sourceVersion: 'synthetic-source/v1', savedAt: '2026-11-02T12:00:00Z', replayed: false,
+  jobNumber: 'FICTIONAL-JOB', revision: 4, version: 1, sourceVersion: 'synthetic-source/v1', state: 'Draft', savedAt: '2026-11-02T12:00:00Z', replayed: false,
   provenance: 'SyntheticUnverified', missing: ['requested_start'], inputs: { ...emptyTugInputs(), assistedVessel: 'FICTIONAL Assisted Vessel', requiredBollardPull: '45.01', notes: 'FICTIONAL operator notes', priority: 'High' } }
 
 it('shows grouped source-owned request data with exact decimals and explicit unknown times', () => {

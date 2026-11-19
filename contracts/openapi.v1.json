@@ -13264,6 +13264,100 @@
         "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
+    "/api/v1/tug-jobs/{id}/submit": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "TugSubmit",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TugLifecycleCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TugRequestDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TugLifecycleFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/tug-jobs/{id}/cancel": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "TugCancel",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TugLifecycleCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TugRequestDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
     "/api/v1/tug-command": {
       "get": {
         "tags": [
@@ -33690,6 +33784,47 @@
           }
         }
       },
+      "TugLifecycleCommand": {
+        "required": [
+          "expectedVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "TugLifecycleFailure": {
+        "required": [
+          "code",
+          "missing",
+          "correlationId"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "missing": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "correlationId": {
+            "type": "string"
+          }
+        }
+      },
       "TugOfflineContext": {
         "required": [
           "id",
@@ -34299,6 +34434,10 @@
           "sourceVersion": {
             "type": "string",
             "default": "poseidon-v46.3-20261030/14.02/1914-1931/TUG-FOUNDATION-01"
+          },
+          "state": {
+            "type": "string",
+            "default": "Draft"
           }
         }
       },

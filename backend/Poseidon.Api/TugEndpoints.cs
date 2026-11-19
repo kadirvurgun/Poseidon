@@ -12,7 +12,7 @@ namespace Poseidon.Api;
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record TugSaveCommand(Guid ClientId, uint? BaseVersion, TugRequestInputs Inputs);
 public sealed record TugRequestDto(Guid Id, Guid VesselId, string JobNumber, long Revision, uint Version,
-    TugRequestInputs Inputs, string Provenance, DateTimeOffset SavedAt, string[] Missing, bool Replayed = false, string SourceVersion = TugRequestPolicy.SourceVersion);
+    TugRequestInputs Inputs, string Provenance, DateTimeOffset SavedAt, string[] Missing, bool Replayed = false, string SourceVersion = TugRequestPolicy.SourceVersion, string State = TugJobLifecycle.Draft);
 public sealed record TugDeclaredComparison(Guid JobId, string Relation);
 public sealed record TugBoardRow(TugRequestDto Request, string WindowState, string PlannedTimeSource,
     Guid[] AssignedTugs, string AssignmentCoverage, string? AvailableBollardPull, string Readiness,
@@ -23,6 +23,7 @@ public static partial class TugEndpoints
     public static void MapTug(this IEndpointRouteBuilder app) {
         MapPlanning(app);
         MapTugOffline(app);
+        MapTugLifecycle(app);
         var g = app.MapGroup("/api/v1").RequireAuthorization("DirectoryRead");
         g.MapGet("/tug-command", Context).WithName("TugContext");
         g.MapGet("/tug-job-board", Board).WithName("TugBoard");
@@ -50,7 +51,7 @@ public static partial class TugEndpoints
     private static async Task<(Guid Vessel, IResult? Failure)> Gate(HttpContext h, PoseidonDbContext db, bool write = false) {
         var a = Actor(h);
         if (!a.CanReadTug) return (default, await Fail(h, 403, "permission_denied"));
-        var allowed = h.Request.Method == "GET" ? new[] { "vessel", "offset", "limit", "priority", "q" } : ["vessel"];
+        var allowed = h.Request.Method == "GET" ? new[] { "vessel", "offset", "limit", "priority", "q", "state", "window" } : ["vessel"];
         if (h.Request.Query.Any(q => !allowed.Contains(q.Key) || q.Value.Count != 1) ||
             !Guid.TryParseExact(h.Request.Query["vessel"], "D", out var vessel) || vessel == Guid.Empty)
             return (default, await Fail(h, 400, "invalid_request"));
@@ -59,10 +60,10 @@ public static partial class TugEndpoints
         return (vessel, null);
     }
     private static TugRequestDto Dto(TugJob j) => new(j.Id, j.VesselId, j.JobNumber, j.Revision, j.Version,
-        j.Inputs(), j.Provenance, j.SavedAt, TugRequestPolicy.Missing(j.Inputs()), SourceVersion: j.SourceVersion);
+        j.Inputs(), j.Provenance, j.SavedAt, TugRequestPolicy.Missing(j.Inputs()), SourceVersion: j.SourceVersion, State: j.Status);
     private static TugRequestDto Dto(TugJobRevision r, uint version, bool replayed) {
         var inputs = JsonSerializer.Deserialize<TugRequestInputs>(r.ContentJson)!;
-        return new(r.JobId, r.VesselId, r.JobNumber, r.Revision, version, inputs, r.Provenance, r.SavedAt, TugRequestPolicy.Missing(inputs), replayed, r.SourceVersion);
+        return new(r.JobId, r.VesselId, r.JobNumber, r.Revision, version, inputs, r.Provenance, r.SavedAt, TugRequestPolicy.Missing(inputs), replayed, r.SourceVersion, r.JobState);
     }
     private static async Task<IResult> Context(HttpContext h, PoseidonDbContext db) {
         var a = Actor(h);
@@ -108,9 +109,16 @@ public static partial class TugEndpoints
         var (vessel, failure) = await Gate(h, db); if (failure != null) return failure;
         int ReadInt(string key, int fallback) => h.Request.Query.ContainsKey(key) && int.TryParse(h.Request.Query[key], NumberStyles.None, CultureInfo.InvariantCulture, out var n) ? n : h.Request.Query.ContainsKey(key) ? -1 : fallback;
         var offset = ReadInt("offset", 0); var limit = ReadInt("limit", 25); var priority = h.Request.Query["priority"].ToString(); var q = h.Request.Query["q"].ToString();
-        if (offset is < 0 or > 100000 || limit is < 1 or > 100 || q.Length > 100 || q.Any(char.IsControl) || priority != "" && !TugRequestPolicy.Priorities.Contains(priority))
+        var state = h.Request.Query["state"].ToString(); var window = h.Request.Query["window"].ToString();
+        if (offset is < 0 or > 100000 || limit is < 1 or > 100 || q.Length > 100 || q.Any(char.IsControl) || priority != "" && !TugRequestPolicy.Priorities.Contains(priority) ||
+            h.Request.Query.ContainsKey("state") && !TugJobLifecycle.States.Contains(state) || h.Request.Query.ContainsKey("window") && !TugBoardWindows.Hours.ContainsKey(window))
             return await Fail(h, 400, "invalid_request");
+        // DEV-082 short/frequent board: default excludes only explicit Cancelled requests. A relative
+        // window uses the server clock and keeps requests whose start is still UNKNOWN visible.
+        var now = DateTimeOffset.UtcNow; var horizon = window == "" ? now : now.AddHours(TugBoardWindows.Hours[window]);
         var jobs = await db.TugJobs.AsNoTracking().Where(j => j.VesselId == vessel && (priority == "" || j.Priority == priority) &&
+            (state == "" ? j.Status != TugJobLifecycle.Cancelled : j.Status == state) &&
+            (window == "" || j.RequestedStart == null || j.RequestedStart < horizon && (j.RequestedEnd ?? j.RequestedStart) >= now) &&
             (q == "" || j.JobNumber.Contains(q) || j.AssistedVessel != null && j.AssistedVessel.Contains(q)))
             .OrderBy(j => j.RequestedStart).ThenBy(j => j.Id).Skip(offset).Take(limit + 1).ToArrayAsync(h.RequestAborted);
         var ids = jobs.Take(limit).Select(j => j.Id).ToArray();
@@ -134,12 +142,14 @@ public static partial class TugEndpoints
                 draft == null ? "RequestedWindowOnly;NoApprovedPlan" : "DraftPlanUnverified;NoOperationalApproval", actual, draft == null ? "UnavailableControlledAssignmentAdapter" : "CurrentDraftAssignmentsOnly", planningEvidence?.AvailableBollardPull, planningEvidence?.Readiness ?? "Unknown", planningEvidence?.ConflictState ?? "Unknown",
                 jobs.Take(limit).Where(other => other.Id != j.Id).Select(other => new TugDeclaredComparison(other.Id, TugPlanningWindowPolicy.CompareDeclared(new(j.RequestedStart, j.RequestedEnd), new(other.RequestedStart, other.RequestedEnd)).ToString())).ToArray(), "VisiblePageEnteredDataOnly;NoBufferOrOperationalAssessment",
                 [.. missing.Select(x => "Missing:" + x), draft == null ? "AssignmentCoverageUnavailable" : "DraftAssignmentsUnverified", .. (draft != null && draft.RequestRevision != j.Revision ? new[] { "RequestChangedSincePlan" } : Array.Empty<string>()), .. (planningEvidence?.OwnedBp?.Where(c => c.State != "CurrentPlanningCapacity").Select(c => c.Why) ?? new[] { "OwningCapacityMissing" }), .. (planningEvidence?.ReadinessFacts?.Where(f => f.State != "Current").Select(f => f.Why).Distinct() ?? new[] { "OwningReadinessMissing" }), "OperationalConflictInputsIncomplete", .. (planningEvidence?.ConflictState == "HumanReviewRequired" ? new[] { "AuthorizedHumanConflictReviewRequired" } : Array.Empty<string>()), "D-STATE-01"],
+                j.Status == TugJobLifecycle.Cancelled ? "NoFurtherActionCancelled" :
                 planningEvidence?.ConflictState == "HumanReviewRequired" ? "AuthorizedHumanConflictReviewRequired" : draft != null && draft.RequestRevision != j.Revision ? "RequestChangedSincePlan" :
                     planningEvidence?.Readiness == "Blocked" ? "ResolveOwningReadinessBlockers" : missing.Length > 0 ? "CompleteDraft" :
-                    draft?.Inputs.AssignedTugs.Length > 0 && planningEvidence?.CapacityState != "CurrentPlanningCapacity" ? "RefreshOwningCapacityEvidence" : "AuthorizedPlanningReviewRequired", $"/app/tug-job-detail/{j.Id}?vessel={vessel}", draft, planningEvidence));
+                    draft?.Inputs.AssignedTugs.Length > 0 && planningEvidence?.CapacityState != "CurrentPlanningCapacity" ? "RefreshOwningCapacityEvidence" : j.Status == TugJobLifecycle.Draft ? "SubmitRequest" : "AuthorizedPlanningReviewRequired", $"/app/tug-job-detail/{j.Id}?vessel={vessel}", draft, planningEvidence));
         }
         await Observe(h, "Success", vessel); return Results.Ok(new PageDto<TugBoardRow>(rows.ToArray(), offset, limit, jobs.Length > limit));
     }
+    internal static bool UniqueMembers(JsonElement e) => Unique(e);
     private static bool Unique(JsonElement e) => e.ValueKind switch {
         JsonValueKind.Object => e.EnumerateObject().Select(p => p.Name.ToUpperInvariant()).Distinct().Count() == e.EnumerateObject().Count() && e.EnumerateObject().All(p => Unique(p.Value)),
         JsonValueKind.Array => e.EnumerateArray().All(Unique), _ => true
@@ -187,6 +197,8 @@ public static partial class TugEndpoints
             var job = await db.TugJobs.SingleOrDefaultAsync(j => j.Id == command.ClientId, ct);
             if (job != null && job.VesselId != vessel) return await Fail(h, 404, "resource_not_found");
             if (job == null && update || job != null && (!update || job.Version != command.BaseVersion)) return await Fail(h, 409, "version_conflict");
+            // 60.02 §5: only DRAFT accepts PUT draftFields; a submitted body changes only through a later revise command.
+            if (job != null && !TugJobLifecycle.Editable(job.Status)) return await Fail(h, 409, "invalid_state");
             if (job == null) {
                 job = new() { TenantId = a.TenantId, VesselId = vessel, Id = command.ClientId, JobNumber = "TUG-" + Guid.NewGuid().ToString("N") };
                 db.TugJobs.Add(job);
