@@ -366,6 +366,11 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
 
     // PLAN-1511-5201: closed HR audit summaries. Names, legal names, registration values, employee numbers,
     // source references and reasons are never copied into audit summaries.
+    // HR-owned legal-entity columns on the single company master (LEAD-5601-D01); values are never copied.
+    private static readonly string[] HrCompanyValueFields = [nameof(Company.LegalName), nameof(Company.CountryCode), nameof(Company.HrTimeZone),
+        nameof(Company.BaseLocale), nameof(Company.EffectiveFrom), nameof(Company.EffectiveTo)];
+    private static readonly string[] HrCompanyFields = [.. HrCompanyValueFields, nameof(Company.LegalEntityStatus), nameof(Company.LegalEntityRevision)];
+
     private static AuditMetadata? HrProjection(EntityEntry entry)
     {
         static object State(EntityEntry e, string property, params string[] allowed) => Field(property,
@@ -381,17 +386,25 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
                 Field("Field", null, Closed(r.Field, "PersonType", "MasterState")),
                 Field("SourceKind", null, Closed(r.SourceKind, Poseidon.Domain.HrSourcePolicy.SourceKinds)), Field("Value", null, null, "ValuesWithheld"),
                 Field("Reason", null, null, "ValuesWithheld"))),
-            LegalEntityIdentifier i => new(null, i.LegalEntityId, "LegalEntityIdentifier", null, null, Fields(
+            // An HR legal-entity edit proves itself by its LegalEntityRevision and the original/committed company xmin.
+            Company c when entry.State == EntityState.Modified && HrCompanyFields.Any(f => entry.Property(f).IsModified) => new(null, c.Id, "LegalEntity",
+                (long?)entry.Property(nameof(Company.LegalEntityRevision)).OriginalValue, c.LegalEntityRevision, Fields([
+                    Field("Revision", Number((long)entry.Property(nameof(Company.LegalEntityRevision)).OriginalValue!), Number(c.LegalEntityRevision)),
+                    State(entry, nameof(Company.LegalEntityStatus), Poseidon.Domain.HrLegalEntityPolicy.Statuses),
+                    .. HrCompanyValueFields.Where(f => entry.Property(f).IsModified).Select(f => Field(f, null, null, "ValuesWithheld"))])),
+            // Identifier and role rows are their own command resource: the committed receipt carries their post-save xmin
+            // and a status change carries the original xmin as BeforeVersion; the owning legal entity stays a closed scope.
+            LegalEntityIdentifier i => new(null, i.Id, "LegalEntityIdentifier", null, null, Fields(
                 Field("Type", null, Closed(i.Type, Poseidon.Domain.HrIdentifierPolicy.Types)), Field("Value", null, null, "ValuesWithheld"),
                 Field("Retired", entry.State == EntityState.Added ? null : Flag(entry.Property("RetiredAt").OriginalValue != null), Flag(i.RetiredAt != null)))),
-            LegalEntityRole r => new(null, r.LegalEntityId, "LegalEntityRole", null, null, Fields(
+            LegalEntityRole r => new(null, r.Id, "LegalEntityRole", null, null, Fields(
                 Field("Role", null, Closed(r.Role, Poseidon.Domain.HrRolePolicy.Roles)), Field("VesselId", null, r.VesselId?.ToString("D")),
                 Field("Ended", entry.State == EntityState.Added ? null : Flag(entry.Property("EffectiveTo").OriginalValue != null), Flag(r.EffectiveTo != null)),
                 State(entry, "State", Poseidon.Domain.HrRolePolicy.States))),
             HrStateChange s => new(null, s.LegalEntityId, "HrStateChange", null, null, Fields(
                 Field("SubjectKind", null, Closed(s.SubjectKind, Poseidon.Domain.HrStateChangePolicy.SubjectKinds)), Field("SubjectId", null, s.SubjectId.ToString("D")),
                 Field("State", Closed(s.FromState, Poseidon.Domain.HrStateChangePolicy.States), Closed(s.ToState, Poseidon.Domain.HrStateChangePolicy.States)),
-                Field("Reason", null, null, "ValuesWithheld"))),
+                Field("Reason", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference"))),
             Employment e => new(null, e.Id, "Employment", entry.State == EntityState.Added ? null : (long?)entry.Property("Revision").OriginalValue, e.Revision, Fields(
                 State(entry, "State", Poseidon.Domain.HrEmploymentPolicy.States), Field("LegalEntityId", null, e.LegalEntityId.ToString("D")),
                 Field("EmployeeNo", null, null, "ValuesWithheld"))),
@@ -400,7 +413,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
                 Field("Plan", null, "PlannedOnly"))),
             HrActualEvent v => new(null, v.AssignmentId, "HrActualEvent", null, null, Fields(
                 Field("Kind", null, Closed(v.Kind, Poseidon.Domain.HrActualTimeline.Kinds)), Field("Disposition", null, Closed(v.Disposition, "Accepted", "PendingReconciliation")),
-                Field("Quality", null, Closed(v.Quality, "Valid", "Suspect")))),
+                Field("Quality", null, Closed(v.Quality, "Valid", "Suspect")), Field("Binding", null, "OwnerReference"))),
             _ => null
         };
     }
