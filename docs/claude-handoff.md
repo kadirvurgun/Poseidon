@@ -155,3 +155,4 @@ Main: #16 #17 #18 #20 #23 #36 + **#37 paket 2** birleşik (`2995f70`, 19.11 ~08:
 ### S7 başladı (20.11 ~03:00)
 - Keşif: 13 iş / 125 SP; tayfa/römorkör temeli var (doğrulanmamış), risk ve sörvey yok. Motorlar yalnız tavsiye; GO/onay/yetkinlik/doğrulama insan kaydı.
 - 4 paket (taban origin s6-bundle, migration önekleri 20261120A–D): **WP-A** tayfa DEV-047–051 → `feature/s7-wpa-crew-20261120` (`ICrewEligibilityEvaluator` arayüzü); **WP-B** römorkör DEV-083–086 → `feature/s7-wpb-tug-readiness-20261120`; **WP-C** risk DEV-105/106 → `feature/s7-wpc-risk-20261120`; **WP-D** sörvey DEV-104/112 → `feature/s7-wpd-survey-20261120`. DEV-104 öncülü DEV-060/061 (S9) numaralandırma sorusu açık.
+- **PR #44** = `integration/s6-bundle-20261119` 1d0cf43 (9242ffa WP-B, 1d0cf43 WP-D; S1 162/153/163; profil 383; Domain 1236, API unit 332, vitest S6+i18n 412). CI + S6 2. tur QA sürüyor. S6 kabul kaydı henüz yazılmadı (geçerse S7 dalına/sonraki PR'a).
