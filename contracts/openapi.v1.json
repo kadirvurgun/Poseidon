@@ -13772,6 +13772,341 @@
         "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
     },
+    "/api/v1/tug-assignments": {
+      "get": {
+        "tags": [
+          "TugAssignmentEndpoints"
+        ],
+        "operationId": "TugAssignmentList",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TugAssignmentList"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "TugAssignmentEndpoints"
+        ],
+        "operationId": "TugAssignmentPropose",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TugAssignmentProposeCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TugAssignmentDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/tug-assignments/{id}/respond": {
+      "post": {
+        "tags": [
+          "TugAssignmentEndpoints"
+        ],
+        "operationId": "TugAssignmentRespond",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TugAssignmentRespondCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TugAssignmentDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/tug-assignments/{id}/withdraw": {
+      "post": {
+        "tags": [
+          "TugAssignmentEndpoints"
+        ],
+        "operationId": "TugAssignmentWithdraw",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TugAssignmentWithdrawCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TugAssignmentDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/tug-readiness": {
+      "get": {
+        "tags": [
+          "TugReadinessEndpoints"
+        ],
+        "operationId": "TugReadinessRead",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TugReadinessView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/tug-readiness/decisions": {
+      "post": {
+        "tags": [
+          "TugReadinessEndpoints"
+        ],
+        "operationId": "TugReadinessDecide",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TugReadinessDecisionCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TugReadinessDecisionDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/tug-crew-readiness": {
+      "get": {
+        "tags": [
+          "TugReadinessEndpoints"
+        ],
+        "operationId": "TugCrewReadinessRead",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TugCrewReadinessView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/tug-equipment-readiness": {
+      "get": {
+        "tags": [
+          "TugReadinessEndpoints"
+        ],
+        "operationId": "TugEquipmentReadinessRead",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowEquipmentView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/tug-tow-equipment": {
+      "post": {
+        "tags": [
+          "TugReadinessEndpoints"
+        ],
+        "operationId": "TugTowEquipmentSave",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TowEquipmentSaveCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowEquipmentDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/tug-tow-equipment/{id}": {
+      "put": {
+        "tags": [
+          "TugReadinessEndpoints"
+        ],
+        "operationId": "TugTowEquipmentUpdate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TowEquipmentSaveCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowEquipmentDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/tug-tow-equipment/{id}/verifications": {
+      "post": {
+        "tags": [
+          "TugReadinessEndpoints"
+        ],
+        "operationId": "TugTowEquipmentVerify",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TowEquipmentVerifyCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowEquipmentVerificationDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
     "/api/v1/parameter-definitions": {
       "get": {
         "tags": [
@@ -35819,6 +36154,679 @@
           }
         }
       },
+      "TowEquipmentAssessment": {
+        "required": [
+          "tugId",
+          "state",
+          "items",
+          "checks",
+          "assessedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "tugId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TowEquipmentRow"
+            }
+          },
+          "checks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugReadinessCheck"
+            }
+          },
+          "assessedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TowEquipmentDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "revision",
+          "version",
+          "inputs",
+          "provenance",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "inputs": {
+            "$ref": "#/components/schemas/TowEquipmentInputs"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "replayed": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      },
+      "TowEquipmentInputs": {
+        "required": [
+          "kind",
+          "label",
+          "swlTonnes",
+          "lastTestDate",
+          "nextTestDue",
+          "condition",
+          "critical",
+          "assetId",
+          "certificateId",
+          "notes"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "label": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "swlTonnes": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "lastTestDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "nextTestDue": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "condition": {
+            "type": "string"
+          },
+          "critical": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "assetId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "certificateId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "notes": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "TowEquipmentRow": {
+        "required": [
+          "id",
+          "revision",
+          "version",
+          "inputs",
+          "provenance",
+          "savedAt",
+          "check",
+          "verifications"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "inputs": {
+            "$ref": "#/components/schemas/TowEquipmentInputs"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "check": {
+            "$ref": "#/components/schemas/TugReadinessCheck"
+          },
+          "verifications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TowEquipmentVerificationDto"
+            }
+          }
+        }
+      },
+      "TowEquipmentSaveCommand": {
+        "required": [
+          "clientId",
+          "baseVersion",
+          "inputs"
+        ],
+        "type": "object",
+        "properties": {
+          "clientId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "baseVersion": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          },
+          "inputs": {
+            "$ref": "#/components/schemas/TowEquipmentInputs"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TowEquipmentVerificationDto": {
+        "required": [
+          "id",
+          "itemRevision",
+          "outcome",
+          "reason",
+          "duty",
+          "recordedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "itemRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "duty": {
+            "type": "string"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TowEquipmentVerifyCommand": {
+        "required": [
+          "expectedVersion",
+          "expectedRevision",
+          "outcome",
+          "authorityId"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "authorityId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "TowEquipmentView": {
+        "required": [
+          "assessment",
+          "canWrite",
+          "canVerify",
+          "authorities",
+          "kinds",
+          "conditions"
+        ],
+        "type": "object",
+        "properties": {
+          "assessment": {
+            "$ref": "#/components/schemas/TowEquipmentAssessment"
+          },
+          "canWrite": {
+            "type": "boolean"
+          },
+          "canVerify": {
+            "type": "boolean"
+          },
+          "authorities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugAuthorityDto"
+            }
+          },
+          "kinds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "conditions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sourceLocator": {
+            "type": "string",
+            "default": "18.01/sheet:Backlog/row:86;60.02/paragraph:190,196,520"
+          }
+        }
+      },
+      "TugAssignmentDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "jobId",
+          "jobRevision",
+          "tugId",
+          "plannedStart",
+          "plannedEnd",
+          "role",
+          "state",
+          "masterAck",
+          "scopeHash",
+          "revision",
+          "version",
+          "proposedAt",
+          "cancelledAt",
+          "cancelReason"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "tugId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "plannedStart": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "plannedEnd": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "role": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "masterAck": {
+            "type": "string"
+          },
+          "scopeHash": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "proposedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "cancelledAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "cancelReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "replayed": {
+            "type": "boolean",
+            "default": false
+          },
+          "sourceVersion": {
+            "type": "string",
+            "default": "18.01:09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674:84;60.02:Rev2:108-128"
+          }
+        }
+      },
+      "TugAssignmentItem": {
+        "required": [
+          "assignment",
+          "response",
+          "conflicts",
+          "conflictState",
+          "canRespond",
+          "canWithdraw",
+          "authorities",
+          "requestChanged"
+        ],
+        "type": "object",
+        "properties": {
+          "assignment": {
+            "$ref": "#/components/schemas/TugAssignmentDto"
+          },
+          "response": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/TugAssignmentResponseDto"
+              }
+            ]
+          },
+          "conflicts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugConflictReason"
+            }
+          },
+          "conflictState": {
+            "type": "string"
+          },
+          "canRespond": {
+            "type": "boolean"
+          },
+          "canWithdraw": {
+            "type": "boolean"
+          },
+          "authorities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugAuthorityDto"
+            }
+          },
+          "requestChanged": {
+            "type": "boolean"
+          }
+        }
+      },
+      "TugAssignmentList": {
+        "required": [
+          "jobId",
+          "jobRevision",
+          "jobVersion",
+          "jobState",
+          "canPropose",
+          "items",
+          "tugs",
+          "roles"
+        ],
+        "type": "object",
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "jobVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "jobState": {
+            "type": "string"
+          },
+          "canPropose": {
+            "type": "boolean"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugAssignmentItem"
+            }
+          },
+          "tugs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugOption"
+            }
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "boundary": {
+            "type": "string",
+            "default": "ShoreProposes;TugMasterAcknowledges;NoDispatchOrRelease"
+          }
+        }
+      },
+      "TugAssignmentProposeCommand": {
+        "required": [
+          "clientId",
+          "jobId",
+          "expectedJobVersion",
+          "tugId",
+          "plannedStart",
+          "plannedEnd",
+          "role"
+        ],
+        "type": "object",
+        "properties": {
+          "clientId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedJobVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "tugId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "plannedStart": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "plannedEnd": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "role": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "TugAssignmentRespondCommand": {
+        "required": [
+          "expectedVersion",
+          "scopeHash",
+          "decision",
+          "authorityId"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "scopeHash": {
+            "type": "string"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "authorityId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "TugAssignmentResponseDto": {
+        "required": [
+          "id",
+          "decision",
+          "reason",
+          "duty",
+          "recordedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "duty": {
+            "type": "string"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TugAssignmentWithdrawCommand": {
+        "required": [
+          "expectedVersion",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
       "TugAuditRevisionDto": {
         "required": [
           "jobId",
@@ -35903,6 +36911,22 @@
               "string"
             ],
             "format": "uuid"
+          }
+        }
+      },
+      "TugAuthorityDto": {
+        "required": [
+          "id",
+          "duty"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "duty": {
+            "type": "string"
           }
         }
       },
@@ -36142,6 +37166,33 @@
         },
         "additionalProperties": false
       },
+      "TugConflictReason": {
+        "required": [
+          "kind",
+          "result",
+          "reason",
+          "sourceId"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "sourceId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        }
+      },
       "TugCrewReadinessDto": {
         "required": [
           "tugId",
@@ -36215,6 +37266,66 @@
           "coverage": {
             "type": "string",
             "default": "SourceQualifiedMinimumRolesOnly;OtherCrewGatesAndMasterDecisionSeparate"
+          }
+        }
+      },
+      "TugCrewReadinessView": {
+        "required": [
+          "tugId",
+          "assignmentId",
+          "state",
+          "evaluatorState",
+          "evaluatorSource",
+          "checks",
+          "minimumManning",
+          "assessedAt",
+          "validUntil"
+        ],
+        "type": "object",
+        "properties": {
+          "tugId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "assignmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "evaluatorState": {
+            "type": "string"
+          },
+          "evaluatorSource": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "checks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugReadinessCheck"
+            }
+          },
+          "minimumManning": {
+            "$ref": "#/components/schemas/TugCrewReadinessDto"
+          },
+          "assessedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "validUntil": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "coverage": {
+            "type": "string",
+            "default": "SharedCrewEngineAndTowageCompetence;UnverifiedNeverPositive;MasterDecisionSeparate"
           }
         }
       },
@@ -36397,6 +37508,22 @@
               "string"
             ],
             "format": "date-time"
+          }
+        }
+      },
+      "TugOption": {
+        "required": [
+          "id",
+          "code"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
           }
         }
       },
@@ -36758,6 +37885,146 @@
           }
         }
       },
+      "TugReadinessCategoryState": {
+        "required": [
+          "category",
+          "result",
+          "reasons"
+        ],
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string"
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "TugReadinessCheck": {
+        "required": [
+          "category",
+          "result",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "critical": {
+            "type": "boolean",
+            "default": true
+          },
+          "sourceId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "sourceRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          }
+        }
+      },
+      "TugReadinessDecisionCommand": {
+        "required": [
+          "assignmentId",
+          "expectedAssessmentHash",
+          "decision",
+          "reason",
+          "authorityId"
+        ],
+        "type": "object",
+        "properties": {
+          "assignmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedAssessmentHash": {
+            "type": "string"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "authorityId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TugReadinessDecisionDto": {
+        "required": [
+          "id",
+          "assignmentId",
+          "assignmentRevision",
+          "decision",
+          "assessedState",
+          "assessmentHash",
+          "reason",
+          "duty",
+          "recordedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "assignmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "assignmentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "assessedState": {
+            "type": "string"
+          },
+          "assessmentHash": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "duty": {
+            "type": "string"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "replayed": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      },
       "TugReadinessFact": {
         "required": [
           "tugId",
@@ -36809,6 +38076,119 @@
               "string"
             ],
             "format": "date-time"
+          }
+        }
+      },
+      "TugReadinessView": {
+        "required": [
+          "assignment",
+          "state",
+          "categories",
+          "criticalBlockers",
+          "reviewReasons",
+          "conditions",
+          "assessmentHash",
+          "requiredBollardPull",
+          "availableBollardPull",
+          "bollardPullMargin",
+          "checks",
+          "conflicts",
+          "decisions",
+          "authorities",
+          "canDecide",
+          "assessedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "assignment": {
+            "$ref": "#/components/schemas/TugAssignmentDto"
+          },
+          "state": {
+            "type": "string"
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugReadinessCategoryState"
+            }
+          },
+          "criticalBlockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reviewReasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "conditions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "assessmentHash": {
+            "type": "string"
+          },
+          "requiredBollardPull": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "availableBollardPull": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "bollardPullMargin": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "checks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugReadinessCheck"
+            }
+          },
+          "conflicts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugConflictReason"
+            }
+          },
+          "decisions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugReadinessDecisionDto"
+            }
+          },
+          "authorities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugAuthorityDto"
+            }
+          },
+          "canDecide": {
+            "type": "boolean"
+          },
+          "assessedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "decisionAuthority": {
+            "type": "string",
+            "default": "MasterOrTugMasterHumanDecisionRequired;EngineNeverIssuesGo"
+          },
+          "sourceLocator": {
+            "type": "string",
+            "default": "18.01/sheet:Backlog/row:85;60.02/paragraph:199,201,3540-3736"
           }
         }
       },
@@ -40097,6 +41477,12 @@
     },
     {
       "name": "TugEndpoints"
+    },
+    {
+      "name": "TugAssignmentEndpoints"
+    },
+    {
+      "name": "TugReadinessEndpoints"
     },
     {
       "name": "ParameterEndpoints"

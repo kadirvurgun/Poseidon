@@ -28,6 +28,8 @@ public sealed record Membership(string Issuer, string Subject, Guid ActorId, Gui
     public Guid? ActiveCompanyId { get; set; }
     // Explicit operator appointments. No inference from administrator/IdP/client role names.
     public string ActorKind { get; set; } = "Unspecified";
+    // S7 WP-B: vessel-scoped Tug Master/Master/Chief Engineer appointments (TugOperationsAuthority).
+    public TugOperationsAuthority[] TugOperationsAuthorities { get; set; } = [];
     public HumanAuthority[] HumanAuthorities { get; set; } = [];
     public DailyReviewAuthority[] DailyReviewAuthorities { get; set; } = [];
     public CertificateAssertionAuthority[] CertificateAssertionAuthorities { get; set; } = [];

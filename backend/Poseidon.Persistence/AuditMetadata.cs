@@ -442,6 +442,45 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
                 Field("ContentJson", null, null, "RevisionReference"), Field("JobState", null, Closed(lifecycleRevision.JobState, Poseidon.Domain.TugJobLifecycle.States)),
                 Field("Revision", null, Number(lifecycleRevision.Revision)),
                 .. (lifecycleRevision.CancelReason == null ? Array.Empty<object>() : [Field("CancelReason", null, null, "ValuesWithheld")])]));
+        // S7 WP-B (DEV-083..085): closed state/decision codes, revisions and duty only. Reasons, labels, notes,
+        // scope/assessment hashes and receipt keys are withheld; no actor identity is copied into summaries.
+        if (entry.Entity is TugAssignmentProposal proposal) {
+            var added = entry.State == EntityState.Added;
+            var proposalFields = new List<object> { Field("Revision", added ? null : Number((long)entry.Property(nameof(TugAssignmentProposal.Revision)).OriginalValue!), Number(proposal.Revision)),
+                Field("AssignmentState", added ? null : Closed((string)entry.Property(nameof(TugAssignmentProposal.State)).OriginalValue!, TugAssignmentWorkflow.States), Closed(proposal.State, TugAssignmentWorkflow.States)),
+                Field("MasterAck", added ? null : Closed((string)entry.Property(nameof(TugAssignmentProposal.MasterAck)).OriginalValue!, TugAssignmentWorkflow.Acks), Closed(proposal.MasterAck, TugAssignmentWorkflow.Acks)),
+                Field("Role", null, Closed(proposal.Role, TugAssignmentWorkflow.Roles)), Field("ScopeHash", null, null, "ValuesWithheld") };
+            if (proposal.State == TugAssignmentWorkflow.Cancelled) proposalFields.Add(Field("CancelReason", null, null, "ValuesWithheld"));
+            return new(proposal.VesselId, proposal.Id, "TugAssignmentProposal", added ? null : (long?)entry.Property(nameof(TugAssignmentProposal.Revision)).OriginalValue, proposal.Revision, Fields([.. proposalFields]));
+        }
+        if (entry.Entity is TugAssignmentResponse response)
+            return new(response.VesselId, response.AssignmentId, "TugAssignmentResponse", null, null, Fields(
+                Field("Decision", null, Closed(response.Decision, TugAssignmentWorkflow.Decisions)), Field("Duty", null, Closed(response.Duty, "TugMaster", "Master")),
+                Field("Reason", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference")));
+        if (entry.Entity is TowEquipmentItem towItem) {
+            var added = entry.State == EntityState.Added;
+            return new(towItem.VesselId, towItem.Id, "TowEquipment", added ? null : (long?)entry.Property(nameof(TowEquipmentItem.Revision)).OriginalValue, towItem.Revision, Fields(
+                Field("Revision", added ? null : Number((long)entry.Property(nameof(TowEquipmentItem.Revision)).OriginalValue!), Number(towItem.Revision)),
+                Field("Kind", null, Closed(towItem.Kind, TowEquipmentPolicy.Kinds)),
+                Field("Condition", added ? null : Closed((string)entry.Property(nameof(TowEquipmentItem.Condition)).OriginalValue!, TowEquipmentPolicy.Conditions), Closed(towItem.Condition, TowEquipmentPolicy.Conditions)),
+                Field("Content", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference")));
+        }
+        if (entry.Entity is TowEquipmentRevision towRevision)
+            return new(towRevision.VesselId, towRevision.ItemId, "TowEquipmentRevision", null, towRevision.Revision, Fields(
+                Field("Revision", null, Number(towRevision.Revision)), Field("ContentJson", null, null, "RevisionReference")));
+        if (entry.Entity is TowEquipmentVerification towVerification)
+            return new(towVerification.VesselId, towVerification.ItemId, "TowEquipmentVerification", null, towVerification.ItemRevision, Fields(
+                Field("Outcome", null, Closed(towVerification.Outcome, TowEquipmentPolicy.Verifications)), Field("Duty", null, Closed(towVerification.Duty, "ChiefEngineer")),
+                Field("ItemRevision", null, Number(towVerification.ItemRevision)), Field("Reason", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference")));
+        if (entry.Entity is TugReadinessDecision readinessDecision)
+            return new(readinessDecision.VesselId, readinessDecision.AssignmentId, "TugReadinessDecision", null, readinessDecision.AssignmentRevision, Fields(
+                Field("Decision", null, Closed(readinessDecision.Decision, TugReadinessDecisionPolicy.Decisions)),
+                Field("AssessedState", null, Closed(readinessDecision.AssessedState, TugReadinessEngine.States)),
+                Field("Duty", null, Closed(readinessDecision.Duty, "TugMaster", "Master")), Field("AssessmentHash", null, null, "ValuesWithheld"),
+                Field("Reason", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference")));
+        if (entry.Entity is TugReadinessReceipt readinessReceipt)
+            return new(readinessReceipt.VesselId, readinessReceipt.ResourceId, "TugReadinessReceipt", null, readinessReceipt.Revision, Fields(
+                Field("Action", null, Closed(readinessReceipt.Action, TugReadinessStorage.ReceiptActions)), Field("Binding", null, "CommittedResource")));
         if (entry.Entity is TechnicalOwner or TugOwner)
             return new(vessel, resource, "OwnerReference", null, null, Fields(Field("Binding", null, "OwnerReference")));
         if (entry.Entity is CrewPosition)

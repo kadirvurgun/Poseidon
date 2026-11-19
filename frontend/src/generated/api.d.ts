@@ -5922,6 +5922,166 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/tug-assignments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["TugAssignmentList"];
+        put?: never;
+        post: operations["TugAssignmentPropose"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-assignments/{id}/respond": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["TugAssignmentRespond"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-assignments/{id}/withdraw": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["TugAssignmentWithdraw"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-readiness": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["TugReadinessRead"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-readiness/decisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["TugReadinessDecide"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-crew-readiness": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["TugCrewReadinessRead"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-equipment-readiness": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["TugEquipmentReadinessRead"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-tow-equipment": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["TugTowEquipmentSave"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-tow-equipment/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["TugTowEquipmentUpdate"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-tow-equipment/{id}/verifications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["TugTowEquipmentVerify"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/parameter-definitions": {
         parameters: {
             query?: never;
@@ -11570,6 +11730,193 @@ export interface components {
             /** Format: int64 */
             revision: null | number;
         };
+        TowEquipmentAssessment: {
+            /** Format: uuid */
+            tugId: string;
+            state: string;
+            items: components["schemas"]["TowEquipmentRow"][];
+            checks: components["schemas"]["TugReadinessCheck"][];
+            /** Format: date-time */
+            assessedAt: string;
+        };
+        TowEquipmentDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            inputs: components["schemas"]["TowEquipmentInputs"];
+            provenance: string;
+            /** Format: date-time */
+            savedAt: string;
+            /** @default false */
+            replayed: boolean;
+        };
+        TowEquipmentInputs: {
+            kind: string;
+            label: null | string;
+            swlTonnes: null | string;
+            /** Format: date */
+            lastTestDate: null | string;
+            /** Format: date */
+            nextTestDue: null | string;
+            condition: string;
+            critical: null | boolean;
+            /** Format: uuid */
+            assetId: null | string;
+            /** Format: uuid */
+            certificateId: null | string;
+            notes: null | string;
+        };
+        TowEquipmentRow: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            inputs: components["schemas"]["TowEquipmentInputs"];
+            provenance: string;
+            /** Format: date-time */
+            savedAt: string;
+            check: components["schemas"]["TugReadinessCheck"];
+            verifications: components["schemas"]["TowEquipmentVerificationDto"][];
+        };
+        TowEquipmentSaveCommand: {
+            /** Format: uuid */
+            clientId: string;
+            /** Format: uint32 */
+            baseVersion: null | number;
+            inputs: components["schemas"]["TowEquipmentInputs"];
+        };
+        TowEquipmentVerificationDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            itemRevision: number;
+            outcome: string;
+            reason: null | string;
+            duty: string;
+            /** Format: date-time */
+            recordedAt: string;
+        };
+        TowEquipmentVerifyCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            /** Format: int64 */
+            expectedRevision: number;
+            outcome: string;
+            /** Format: uuid */
+            authorityId: string;
+            reason?: null | string;
+        };
+        TowEquipmentView: {
+            assessment: components["schemas"]["TowEquipmentAssessment"];
+            canWrite: boolean;
+            canVerify: boolean;
+            authorities: components["schemas"]["TugAuthorityDto"][];
+            kinds: string[];
+            conditions: string[];
+            /** @default 18.01/sheet:Backlog/row:86;60.02/paragraph:190,196,520 */
+            sourceLocator: string;
+        };
+        TugAssignmentDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: uuid */
+            jobId: string;
+            /** Format: int64 */
+            jobRevision: number;
+            /** Format: uuid */
+            tugId: string;
+            /** Format: date-time */
+            plannedStart: string;
+            /** Format: date-time */
+            plannedEnd: string;
+            role: string;
+            state: string;
+            masterAck: string;
+            scopeHash: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            /** Format: date-time */
+            proposedAt: string;
+            /** Format: date-time */
+            cancelledAt: null | string;
+            cancelReason: null | string;
+            /** @default false */
+            replayed: boolean;
+            /** @default 18.01:09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674:84;60.02:Rev2:108-128 */
+            sourceVersion: string;
+        };
+        TugAssignmentItem: {
+            assignment: components["schemas"]["TugAssignmentDto"];
+            response: null | components["schemas"]["TugAssignmentResponseDto"];
+            conflicts: components["schemas"]["TugConflictReason"][];
+            conflictState: string;
+            canRespond: boolean;
+            canWithdraw: boolean;
+            authorities: components["schemas"]["TugAuthorityDto"][];
+            requestChanged: boolean;
+        };
+        TugAssignmentList: {
+            /** Format: uuid */
+            jobId: string;
+            /** Format: int64 */
+            jobRevision: number;
+            /** Format: uint32 */
+            jobVersion: number;
+            jobState: string;
+            canPropose: boolean;
+            items: components["schemas"]["TugAssignmentItem"][];
+            tugs: components["schemas"]["TugOption"][];
+            roles: string[];
+            /** @default ShoreProposes;TugMasterAcknowledges;NoDispatchOrRelease */
+            boundary: string;
+        };
+        TugAssignmentProposeCommand: {
+            /** Format: uuid */
+            clientId: string;
+            /** Format: uuid */
+            jobId: string;
+            /** Format: uint32 */
+            expectedJobVersion: number;
+            /** Format: uuid */
+            tugId: string;
+            plannedStart: null | string;
+            plannedEnd: null | string;
+            role: null | string;
+        };
+        TugAssignmentRespondCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            scopeHash: string;
+            decision: string;
+            /** Format: uuid */
+            authorityId: string;
+            reason?: null | string;
+        };
+        TugAssignmentResponseDto: {
+            /** Format: uuid */
+            id: string;
+            decision: string;
+            reason: null | string;
+            duty: string;
+            /** Format: date-time */
+            recordedAt: string;
+        };
+        TugAssignmentWithdrawCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            reason: string;
+        };
         TugAuditRevisionDto: {
             /** Format: uuid */
             jobId: string;
@@ -11591,6 +11938,11 @@ export interface components {
             priority: null | string;
             /** Format: uuid */
             ownerRoleReference: null | string;
+        };
+        TugAuthorityDto: {
+            /** Format: uuid */
+            id: string;
+            duty: string;
         };
         TugBpEvidence: {
             /** Format: uuid */
@@ -11646,6 +11998,13 @@ export interface components {
             /** Format: uint32 */
             assetVersion?: null | number;
         };
+        TugConflictReason: {
+            kind: string;
+            result: string;
+            reason: string;
+            /** Format: uuid */
+            sourceId: null | string;
+        };
         TugCrewReadinessDto: {
             /** Format: uuid */
             tugId: string;
@@ -11665,6 +12024,23 @@ export interface components {
             /** Format: date-time */
             validUntil: null | string;
             /** @default SourceQualifiedMinimumRolesOnly;OtherCrewGatesAndMasterDecisionSeparate */
+            coverage: string;
+        };
+        TugCrewReadinessView: {
+            /** Format: uuid */
+            tugId: string;
+            /** Format: uuid */
+            assignmentId: string;
+            state: string;
+            evaluatorState: string;
+            evaluatorSource: null | string;
+            checks: components["schemas"]["TugReadinessCheck"][];
+            minimumManning: components["schemas"]["TugCrewReadinessDto"];
+            /** Format: date-time */
+            assessedAt: string;
+            /** Format: date-time */
+            validUntil: null | string;
+            /** @default SharedCrewEngineAndTowageCompetence;UnverifiedNeverPositive;MasterDecisionSeparate */
             coverage: string;
         };
         TugLifecycleCommand: {
@@ -11723,6 +12099,11 @@ export interface components {
             provenance: string;
             /** Format: date-time */
             observedAt: null | string;
+        };
+        TugOption: {
+            /** Format: uuid */
+            id: string;
+            code: string;
         };
         TugOwnedCapacity: {
             /** Format: uuid */
@@ -11816,6 +12197,48 @@ export interface components {
             operationalConflicts?: null | components["schemas"]["TugOperationalConflict"][];
             crew?: null | components["schemas"]["TugCrewReadinessDto"][];
         };
+        TugReadinessCategoryState: {
+            category: string;
+            result: string;
+            reasons: string[];
+        };
+        TugReadinessCheck: {
+            category: string;
+            result: string;
+            reason: string;
+            /** @default true */
+            critical: boolean;
+            /** Format: uuid */
+            sourceId?: null | string;
+            /** Format: int64 */
+            sourceRevision?: null | number;
+        };
+        TugReadinessDecisionCommand: {
+            /** Format: uuid */
+            assignmentId: string;
+            expectedAssessmentHash: string;
+            decision: string;
+            reason: string;
+            /** Format: uuid */
+            authorityId: string;
+        };
+        TugReadinessDecisionDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            assignmentId: string;
+            /** Format: int64 */
+            assignmentRevision: number;
+            decision: string;
+            assessedState: string;
+            assessmentHash: string;
+            reason: string;
+            duty: string;
+            /** Format: date-time */
+            recordedAt: string;
+            /** @default false */
+            replayed: boolean;
+        };
         TugReadinessFact: {
             /** Format: uuid */
             tugId: string;
@@ -11830,6 +12253,29 @@ export interface components {
             observedAt?: null | string;
             /** Format: date-time */
             expiresAt?: null | string;
+        };
+        TugReadinessView: {
+            assignment: components["schemas"]["TugAssignmentDto"];
+            state: string;
+            categories: components["schemas"]["TugReadinessCategoryState"][];
+            criticalBlockers: string[];
+            reviewReasons: string[];
+            conditions: string[];
+            assessmentHash: string;
+            requiredBollardPull: null | string;
+            availableBollardPull: null | string;
+            bollardPullMargin: null | string;
+            checks: components["schemas"]["TugReadinessCheck"][];
+            conflicts: components["schemas"]["TugConflictReason"][];
+            decisions: components["schemas"]["TugReadinessDecisionDto"][];
+            authorities: components["schemas"]["TugAuthorityDto"][];
+            canDecide: boolean;
+            /** Format: date-time */
+            assessedAt: string;
+            /** @default MasterOrTugMasterHumanDecisionRequired;EngineNeverIssuesGo */
+            decisionAuthority: string;
+            /** @default 18.01/sheet:Backlog/row:85;60.02/paragraph:199,201,3540-3736 */
+            sourceLocator: string;
         };
         TugRequestDto: {
             /** Format: uuid */
@@ -21554,6 +22000,267 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TugRequestDto"];
+                };
+            };
+        };
+    };
+    TugAssignmentList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugAssignmentList"];
+                };
+            };
+        };
+    };
+    TugAssignmentPropose: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TugAssignmentProposeCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugAssignmentDto"];
+                };
+            };
+        };
+    };
+    TugAssignmentRespond: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TugAssignmentRespondCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugAssignmentDto"];
+                };
+            };
+        };
+    };
+    TugAssignmentWithdraw: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TugAssignmentWithdrawCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugAssignmentDto"];
+                };
+            };
+        };
+    };
+    TugReadinessRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugReadinessView"];
+                };
+            };
+        };
+    };
+    TugReadinessDecide: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TugReadinessDecisionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugReadinessDecisionDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TugCrewReadinessRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugCrewReadinessView"];
+                };
+            };
+        };
+    };
+    TugEquipmentReadinessRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TowEquipmentView"];
+                };
+            };
+        };
+    };
+    TugTowEquipmentSave: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TowEquipmentSaveCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TowEquipmentDto"];
+                };
+            };
+        };
+    };
+    TugTowEquipmentUpdate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TowEquipmentSaveCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TowEquipmentDto"];
+                };
+            };
+        };
+    };
+    TugTowEquipmentVerify: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TowEquipmentVerifyCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TowEquipmentVerificationDto"];
                 };
             };
         };

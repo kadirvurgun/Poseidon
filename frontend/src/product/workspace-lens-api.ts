@@ -40,6 +40,10 @@ export const lensLabels: Record<string, readonly [
     audit: [sourceText("tr", "pairs.m_9f8662ba28b5b4fc"), sourceText("en", "pairs.m_9f8662ba28b5b4fc")],
     'audit-ready': [sourceText("tr", "pairs.m_372c48ba7e84c124"), sourceText("en", "pairs.m_372c48ba7e84c124")], sources: [sourceText("tr", "pairs.m_d52797a6e362de20"), sourceText("en", "pairs.m_d52797a6e362de20")], requirements: [sourceText("tr", "pairs.m_d6ad4bb19c60b2b2"), sourceText("en", "pairs.m_d6ad4bb19c60b2b2")],
     'tug-command': [sourceText("tr", "pairs.m_21739423fc15322f"), sourceText("en", "pairs.m_21739423fc15322f")], 'tug-job-board': [sourceText("tr", "pairs.m_326009e7c4fb72c6"), sourceText("en", "pairs.m_326009e7c4fb72c6")], 'tug-job-intake': [sourceText("tr", "pairs.m_967bfbc16e73959c"), sourceText("en", "pairs.m_967bfbc16e73959c")],
+    'tug-assignment': [sourceText("tr", "pairs.m_e933a2eb7a19d5c1"), sourceText("en", "pairs.m_e933a2eb7a19d5c1")],
+    'tug-readiness': [sourceText("tr", "pairs.m_ea1a685b360fc1b6"), sourceText("en", "pairs.m_ea1a685b360fc1b6")],
+    'tug-equipment-readiness': [sourceText("tr", "pairs.m_5151864934be8fa1"), sourceText("en", "pairs.m_5151864934be8fa1")],
+    'tug-crew-readiness': [sourceText("tr", "pairs.m_13bb4091a158976a"), sourceText("en", "pairs.m_13bb4091a158976a")],
 };
 const root: Record<string, string> = { crew: 'crew-roster', equipment: 'equipment-hierarchy', maintenance: 'maintenance-plan', import: 'excel-migration' };
 export function lensHref(key: string, vessel: string | null) {

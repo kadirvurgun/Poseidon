@@ -19,6 +19,7 @@ import { TugJobLifecycle } from './TugJobLifecycle';
 import { unsavedState, useUnsavedChangesSource } from './unsaved-changes';
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const text = localizedCopy("TugWorkspace_tsx_text");
+const readinessLink = localizedCopy("TugReadiness_tsx_copy");
 function location() {
     const url = new URL(window.location.href), params = url.searchParams;
     const match = /^\/app\/(tug-command|tug-job-board|tug-job-intake|tug-job-detail)(?:\/([0-9a-f-]+))?\/?$/i.exec(url.pathname);
@@ -304,6 +305,7 @@ export function TugWorkspace() {
         {route.screen === 'tug-job-detail' && record && <TugRequestSummary record={record} language={lang} editing={editing} onEdit={ctx.canWrite && record.state === 'Draft' && !lifecyclePending ? () => guard(() => setEditing(true)) : undefined}/>}
         {route.screen === 'tug-job-detail' && record && !editing && <TugJobLifecycle key={`${user?.tenantId}/${user?.actorId}/${record.id}`} record={record} vessel={route.vessel} canWrite={ctx.canWrite} offline={offline} language={lang}
           owner={user ? `${user.tenantId}/${user.actorId}` : null} onChanged={r => { setRecord(r); setInputs(r.inputs); }} onReload={() => guard(() => setReload(n => n + 1))} onPending={markLifecycle}/>}
+        {route.screen === 'tug-job-detail' && record && record.state === 'Submitted' && <p><a href={`/app/tug-assignment?vessel=${route.vessel}&job=${record.id}`}>{readinessLink[lang].openFromJob}</a></p>}
         {route.screen === 'tug-job-detail' && record && !editing && record.state !== 'Cancelled' && <TugPlanningPanel key={`${user?.tenantId}/${user?.actorId}/${record.id}`} id={record.id} vessel={route.vessel} requestVersion={record.version} csrf={csrf} language={lang} onDirty={markPlanning}/>}
         {route.screen === 'tug-job-intake' && !ctx.canWrite && <p role="alert">{t.denied}</p>}
         {formOpen && <form className="tug-intake-form" noValidate aria-busy={busy} onSubmit={e => { e.preventDefault(); void save(); }} aria-label={t.intake}>

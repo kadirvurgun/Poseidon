@@ -240,3 +240,13 @@ wired into `SeedImporter`. It adds one FICTIONAL `SyntheticUnverified` checklist
 vessel from the `STARTER_UNAPPROVED` annual template, linked to the synthetic certificate. All
 items stay OPEN. No owner, due date, evidence, finding, plan date, port call, verification or
 receipt is seeded. Persisted or pending repeats are skipped, and operator revisions are never rewritten.
+
+## S7-WPB-20261120 — TowEquipmentFixtures (AUTHORED / PG DEFERRED)
+
+Each synthetic Tug receives one FICTIONAL tow equipment declaration per kind (Winch, TowHook,
+Towline, EmergencyRelease, FiFi) with its initial immutable revision: condition Unknown,
+criticality not assessed, no SWL/test dates/PMS or certificate links, provenance
+SyntheticUnverified, deterministic IDs, add-missing only. One Tug adds ten attributed seed
+writes. No assignment proposal, Tug Master acknowledgement, Chief Engineer verification,
+GO/NO_GO decision or receipt is ever seeded; every seeded item stays UNKNOWN (REVIEW_REQUIRED).
+Any exact seeded audit-count expectation in deferred PostgreSQL tests must add these ten writes.

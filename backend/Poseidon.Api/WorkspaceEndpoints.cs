@@ -29,7 +29,9 @@ public static class WorkspaceEndpoints
             new("certificate-command-center", "/app/certificate-command-center"), new("renewal-workflow", "/app/renewal-workflow"),
             // DEV-104/DEV-112: same server read authority as their endpoints (certificate.read).
             new("pre-survey-checklist", "/app/pre-survey-checklist"), new("survey-planner", "/app/survey-planner")];
-        if (actor.CanReadTug) destinations = [.. destinations, new("tug-command", "/app/tug-command"), new("tug-job-board", "/app/tug-job-board"), new("tug-job-intake", "/app/tug-job-intake")];
+        if (actor.CanReadTug) destinations = [.. destinations, new("tug-command", "/app/tug-command"), new("tug-job-board", "/app/tug-job-board"), new("tug-job-intake", "/app/tug-job-intake"),
+            // S7 WP-B DEV-083..086: assignment, readiness gate, tow equipment and crew readiness screens.
+            new("tug-assignment", "/app/tug-assignment"), new("tug-readiness", "/app/tug-readiness"), new("tug-equipment-readiness", "/app/tug-equipment-readiness"), new("tug-crew-readiness", "/app/tug-crew-readiness")];
         if (actor.CanSeeShip) {
             if (ShipOperationsEndpoints.CanRead(actor,"Fuel")) destinations = [.. destinations,new("fuel-bunker-log","/app/fuel-bunker-log")];
             if (ShipOperationsEndpoints.CanRead(actor,"Port")) destinations = [.. destinations,new("port-activity-sof","/app/port-activity-sof")];
