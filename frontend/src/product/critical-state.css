@@ -1,0 +1,22 @@
+/* DEV-024: critical-state explanations. No success/green tone exists here: declared or
+   qualified-current states use the neutral info tone; status is always text + icon. */
+.critical-states { border: 1px solid var(--border); border-radius: var(--radius); background: var(--card); color: var(--foreground); padding: 16px; margin: 16px 0; display: grid; gap: 12px; }
+.critical-states h3 { margin: 0; }
+.critical-states-note { color: var(--muted-foreground); font-size: 0.875rem; margin: 0; }
+.critical-state { border-top: 1px solid var(--border); padding-top: 12px; display: grid; gap: 8px; min-width: 0; }
+.critical-state-header { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.critical-state-header h3, .critical-state-header h4, .critical-state-header h5 { margin: 0; }
+.critical-state h5 { margin: 4px 0; font-size: 0.875rem; }
+.critical-state-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 8px 16px; margin: 0; }
+.critical-state-meta dt { font-weight: 600; color: var(--muted-foreground); }
+.critical-state-meta dd { margin: 2px 0 0; overflow-wrap: anywhere; }
+.critical-state-reasons, .critical-state-blockers { margin: 0; padding-inline-start: 1.25rem; display: grid; gap: 4px; }
+.critical-state-blockers li { overflow-wrap: anywhere; }
+.critical-state-blockers li > * + * { margin-inline-start: 0.5rem; }
+.critical-state-reasons code { color: var(--muted-foreground); font-size: 0.75rem; overflow-wrap: anywhere; }
+.critical-state-freshness { font-weight: 600; }
+.critical-state-freshness[data-state="FRESH"] { color: var(--info-text); }
+.critical-state-freshness[data-state="STALE"] { color: var(--warning); }
+.critical-state-freshness[data-state="UNAVAILABLE"] { color: var(--danger-text); }
+.critical-state-restricted { margin: 0; color: var(--muted-foreground); }
+.critical-state-link { justify-self: start; }

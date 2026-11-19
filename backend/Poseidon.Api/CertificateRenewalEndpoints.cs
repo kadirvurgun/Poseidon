@@ -153,7 +153,7 @@ public static class CertificateRenewalEndpoints
             if(!await CertificateReader.FileAllowed(db,actor,vessel,command.Content.NewDocument,h.RequestAborted))return await CertificateEndpoints.Fail(h,403,"linked_resource_unavailable");
             var head=await db.CertificateRenewals.SingleOrDefaultAsync(r=>r.Id==command.Id,h.RequestAborted);CertificateRenewalDto? previous=null;
             if(head!=null && (head.VesselId!=vessel || head.CertificateId!=command.CertificateId))return await CertificateEndpoints.Fail(h,404,"resource_not_found");
-            if(routeId==null && (head!=null || command.ExpectedVersion!=0) || head!=null && head.Version!=command.ExpectedVersion)return await CertificateEndpoints.Fail(h,409,"version_conflict");
+            if(routeId==null && (head!=null || command.ExpectedVersion!=0) || head!=null && head.Version!=command.ExpectedVersion)return await Replay()??await CertificateEndpoints.Fail(h,409,"version_conflict");
             if(routeId!=null && head==null)return await CertificateEndpoints.Fail(h,404,"resource_not_found");
             if(head!=null) {
                 var old=await Visible(db,actor,vessel).SingleOrDefaultAsync(r=>r.RenewalId==head.Id,h.RequestAborted);if(old==null)return await CertificateEndpoints.Fail(h,404,"resource_not_found");

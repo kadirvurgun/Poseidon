@@ -107,6 +107,22 @@
       "next": "下一頁公司",
       "reloadCompanies": "重新載入公司",
       "requiredNote": "所有欄位均為必填項。此記錄不授予作業批准。",
+      "leHeading": "法律實體紀錄",
+      "leLoading": "正在載入法律實體…",
+      "leUnavailable": "您目前的存取權限無法檢視法律實體詳情。",
+      "leFailed": "無法載入法律實體詳情。",
+      "leStatus": "法律實體狀態",
+      "leDraft": "草稿 – 不完整，未生效",
+      "leActive": "有效",
+      "leInactive": "無效",
+      "leLegalName": "法定名稱",
+      "leCountry": "國家",
+      "leTimeZone": "人力資源時區",
+      "leUnknown": "未知",
+      "leMissing": "啟用前缺少的值",
+      "leNote": "唯讀。數值僅透過經稽核的人力資源指令變更。",
+      "leShow": "顯示法律實體紀錄",
+      "leIdentifiers": "註冊識別碼（已遮蔽）",
       "errorSummary": "儲存前請檢查以下欄位："
     },
     "ProductApp_tsx_copy": {
@@ -413,6 +429,98 @@
       "equipment": "設備情境",
       "freshness": "時效性",
       "provenance": "溯源資訊"
+    },
+    "CriticalStatePanel_tsx_copy": {
+      "title": "關鍵狀態及其來源",
+      "loading": "正在載入關鍵狀態…",
+      "reload": "重新載入關鍵狀態",
+      "offline": "離線：不會從快取顯示關鍵狀態。",
+      "dirty": "未儲存的表單修改不包括在內。說明僅反映已儲存的記錄。",
+      "empty": "您的存取權限下沒有可見的關鍵狀態。",
+      "scope": "僅列出您有權檢視的狀態。",
+      "restricted": "您的存取權限下詳細資訊受限。此狀態不是就緒或已驗證的結果。",
+      "source": "來源",
+      "revision": "修訂",
+      "noRevision": "無已儲存修訂",
+      "recorded": "記錄於",
+      "noSource": "尚無所屬記錄",
+      "verification": "驗證",
+      "notVerified": "未驗證",
+      "freshness": "時效性",
+      "observed": "觀察於",
+      "checked": "檢查於",
+      "reasonsTitle": "原因",
+      "blockersTitle": "阻礙",
+      "noBlockers": "未列出阻礙",
+      "resolution": "解決方式",
+      "open": "開啟所屬記錄",
+      "errors": {
+        "e401": "您的工作階段已過期。請重新登入。",
+        "e403": "您無權檢視這些關鍵狀態。",
+        "e404": "此船舶無法使用。",
+        "other": "無法載入關鍵狀態。請重試。"
+      },
+      "keys": {
+        "onboarding": "入駐準備情況",
+        "profileFreshness": "檔案時效性",
+        "applicability": "合規適用性"
+      },
+      "fields": {
+        "profile": "檔案",
+        "applicability": "適用性評估",
+        "vesselCode": "船舶代碼",
+        "vesselName": "船舶名稱"
+      },
+      "states": {
+        "BLOCKED": "已封鎖",
+        "REVIEW_REQUIRED": "需要審核",
+        "UNKNOWN": "未知",
+        "STALE": "已過時",
+        "UNAVAILABLE": "無法使用",
+        "DECLARED_UNVERIFIED": "已聲明 · 未驗證",
+        "QUALIFIED_CURRENT_UNVERIFIED": "合格評估為目前 · 未驗證"
+      },
+      "freshnessStates": {
+        "FRESH": "在政策時限內（未驗證）",
+        "STALE": "已過時",
+        "UNKNOWN": "未知",
+        "UNAVAILABLE": "無法使用"
+      },
+      "sourceKinds": {
+        "RegulatoryDraft": "船舶檔案",
+        "ApplicabilityEvaluation": "適用性評估"
+      },
+      "resolutions": {
+        "PROFILE_DECLARATION": "聲明檔案",
+        "REQUIRED_DECLARATION": "聲明必要值",
+        "POLICY_OR_EVIDENCE": "需要政策或證據",
+        "QUALIFIED_EVIDENCE": "需要合格證據",
+        "SOURCE_DECLARATION": "聲明來源",
+        "SOURCE_RENEWAL": "更新來源",
+        "FRESHNESS_POLICY_CONFIGURATION": "設定已核准的時效政策",
+        "SERVICE_RECOVERY": "需要恢復服務",
+        "RE_EVALUATION": "重新評估",
+        "QUALIFIED_EVALUATION": "執行合格評估",
+        "CATALOG_QUALIFICATION": "認定目錄",
+        "HUMAN_REVIEW": "授權人員審核"
+      },
+      "reasons": {
+        "PROFILE_MISSING": "檔案未儲存",
+        "REQUIRED_DATA_MISSING": "缺少必要資料",
+        "REQUIRED_DATA_UNKNOWN": "必要資料未知",
+        "VERIFICATION_NOT_ESTABLISHED": "未建立驗證",
+        "FIELDS_UNKNOWN": "部分欄位時效未知",
+        "FIELDS_STALE": "部分欄位已過時",
+        "FIELDS_UNAVAILABLE": "部分欄位無法使用",
+        "ALL_FIELDS_WITHIN_POLICY": "所有欄位均在政策時限內（未驗證）",
+        "VALUE_NOT_RECORDED": "未記錄值",
+        "VALUE_UNKNOWN": "值記錄為未知",
+        "SOURCE_NOT_DECLARED": "未聲明來源",
+        "FRESHNESS_POLICY_UNCONFIGURED": "無已核准的時效政策",
+        "QUALIFIED_EVALUATION_UNAVAILABLE": "無合格評估",
+        "PROFILE_CHANGED": "評估後檔案已變更",
+        "APPLICABILITY_REVIEW_REQUIRED": "需要適用性審核"
+      }
     }
   },
   "pairs": {

@@ -15,6 +15,10 @@ public sealed class PoseidonDbContext(
     public bool IsAdministrativeImport { get; } = administrativeImport;
     internal string AuditActorId => actor.Id;
     public DbSet<FleetCatalogDraft> FleetCatalogDrafts => Set<FleetCatalogDraft>();
+    public DbSet<ParameterRoot> ParameterRoots => Set<ParameterRoot>();
+    public DbSet<ParameterRevision> ParameterRevisions => Set<ParameterRevision>();
+    public DbSet<ParameterDecision> ParameterDecisions => Set<ParameterDecision>();
+    public DbSet<ParameterCommandReceipt> ParameterCommandReceipts => Set<ParameterCommandReceipt>();
     public DbSet<FleetCatalogDraftRevision> FleetCatalogDraftRevisions => Set<FleetCatalogDraftRevision>();
     public DbSet<Tenant> Tenants => Set<Tenant>();
     public DbSet<VesselCertificate> VesselCertificates => Set<VesselCertificate>();
@@ -132,15 +136,38 @@ public sealed class PoseidonDbContext(
     public DbSet<CrewCatalogHead> CrewCatalogHeads => Set<CrewCatalogHead>();
     public DbSet<CrewCatalogEvent> CrewCatalogEvents => Set<CrewCatalogEvent>();
 
+    public DbSet<LegalEntityFieldRevision> LegalEntityFieldRevisions => Set<LegalEntityFieldRevision>();
+    public DbSet<PersonFieldRevision> PersonFieldRevisions => Set<PersonFieldRevision>();
+    public DbSet<LegalEntityIdentifier> LegalEntityIdentifiers => Set<LegalEntityIdentifier>();
+    public DbSet<LegalEntityRole> LegalEntityRoles => Set<LegalEntityRole>();
+    public DbSet<Employment> Employments => Set<Employment>();
+    public DbSet<HrAssignment> HrAssignments => Set<HrAssignment>();
+    public DbSet<HrActualEvent> HrActualEvents => Set<HrActualEvent>();
+    public DbSet<HrStateChange> HrStateChanges => Set<HrStateChange>();
+
     protected override void OnModelCreating(ModelBuilder model)
     {
         FleetCatalogDraftStorage.Configure(model);
+        ParameterStorage.Configure(model);
+        model.Entity<ParameterRoot>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ParameterRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ParameterDecision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ParameterCommandReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<FleetCatalogDraft>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<FleetCatalogDraftRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         CrewCatalogStorage.Configure(model);
         model.Entity<CrewCatalogHead>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<CrewCatalogEvent>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.HasDefaultSchema("core");
+        HrStorage.Configure(model);
+        model.Entity<LegalEntityFieldRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<PersonFieldRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<LegalEntityIdentifier>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<LegalEntityRole>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<Employment>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<HrAssignment>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<HrActualEvent>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<HrStateChange>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         VesselCertificateStorage.Configure(model);
         ShipOperationsStorage.Configure(model);
         model.Entity<ShipOperation>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
@@ -305,6 +332,7 @@ public sealed class PoseidonDbContext(
             b.Property(x => x.Code).HasMaxLength(64);
             b.Property(x => x.Name).HasMaxLength(200);
             b.Property(x => x.Version).IsRowVersion();
+            HrStorage.ConfigureCompany(b);
             b.HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         });
         model.Entity<Vessel>(b =>
@@ -391,11 +419,15 @@ public sealed class PoseidonDbContext(
             Asset a => receipt.Action == "EquipmentSave" && a.Id == receipt.ResourceId && a.TenantId == receipt.TenantId,
             MaintenancePlan p => receipt.Action == "MaintenanceSave" && p.Id == receipt.ResourceId && p.TenantId == receipt.TenantId,
             CrewPersonalProfile p => receipt.Action is "CrewProfileSave" or "CrewPhotoSave" && p.PersonId == receipt.ResourceId && p.TenantId == receipt.TenantId,
-            Person p => receipt.Action is "CrewPersonSave" or "CrewIdentityConvert" && p.Id == receipt.ResourceId && p.TenantId == receipt.TenantId,
+            Person p => receipt.Action is "CrewPersonSave" or "CrewIdentityConvert" or "HrPersonUpdate" or "HrPersonVerify" && p.Id == receipt.ResourceId && p.TenantId == receipt.TenantId,
             CrewAssignment c => receipt.Action == "CrewSave" && c.Id == receipt.ResourceId && c.TenantId == receipt.TenantId,
             Document d => receipt.Action == "DocumentDraftSave" && d.Id == receipt.ResourceId && d.TenantId == receipt.TenantId && d.Revision == receipt.RegisterRevision,
             StoredFile f => receipt.Action == "FileFinalize" && f.Id == receipt.ResourceId && f.TenantId == receipt.TenantId,
-            Company c => receipt.Action.StartsWith("Company", StringComparison.Ordinal) && c.Id == receipt.ResourceId && c.TenantId == receipt.TenantId,
+            Company c => (receipt.Action.StartsWith("Company", StringComparison.Ordinal) || receipt.Action.StartsWith("HrLegalEntity", StringComparison.Ordinal)) && c.Id == receipt.ResourceId && c.TenantId == receipt.TenantId,
+            LegalEntityIdentifier i => receipt.Action.StartsWith("HrIdentifier", StringComparison.Ordinal) && i.Id == receipt.ResourceId && i.TenantId == receipt.TenantId,
+            LegalEntityRole r => receipt.Action.StartsWith("HrRole", StringComparison.Ordinal) && r.Id == receipt.ResourceId && r.TenantId == receipt.TenantId,
+            Employment em => receipt.Action.StartsWith("HrEmployment", StringComparison.Ordinal) && em.Id == receipt.ResourceId && em.TenantId == receipt.TenantId,
+            HrAssignment a => receipt.Action.StartsWith("HrAssignment", StringComparison.Ordinal) && a.Id == receipt.ResourceId && a.TenantId == receipt.TenantId,
             Vessel v => receipt.Action.StartsWith("Vessel", StringComparison.Ordinal) && v.Id == receipt.ResourceId && v.TenantId == receipt.TenantId,
             RegulatoryDraft d => receipt.Action == "ProfileSave" && d.VesselId == receipt.ResourceId && d.TenantId == receipt.TenantId,
             RegisterDraft d => receipt.Action == d.Kind + "DraftSave" && d.Id == receipt.ResourceId && d.TenantId == receipt.TenantId && d.Revision == receipt.RegisterRevision,
@@ -427,6 +459,13 @@ public sealed class PoseidonDbContext(
     private ValueTask<Guid?> ReceiptVessel(CommandReceipt r, bool asynchronous, CancellationToken ct) => r.Action switch
     {
         "CompanyCreate" or "CompanyUpdate" => TenantResource(Companies, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, asynchronous, ct),
+        "HrLegalEntityUpdate" or "HrLegalEntityStatus" => TenantResource(Companies, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, asynchronous, ct),
+        "HrIdentifierAdd" or "HrIdentifierRetire" => TenantResource(LegalEntityIdentifiers, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, asynchronous, ct),
+        "HrRoleAdd" or "HrRoleEnd" or "HrRoleCancel" => TenantResource(LegalEntityRoles, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, asynchronous, ct),
+        "HrPersonUpdate" or "HrPersonVerify" => TenantResource(Persons, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, asynchronous, ct),
+        "HrEmploymentCreate" or "HrEmploymentStatus" => TenantResource(Employments, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, asynchronous, ct),
+        "HrAssignmentCreate" or "HrAssignmentStatus" => TenantResource(HrAssignments, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, asynchronous, ct),
+        "HrActualEventRecord" => TenantResource(HrActualEvents, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, asynchronous, ct),
         "CrewPersonSave" or "CrewIdentityConvert" => TenantResource(Persons, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, asynchronous, ct),
         "CrewProfileSave" or "CrewPhotoSave" => TenantResource(CrewPersonalProfiles, x => x.TenantId == r.TenantId && x.PersonId == r.ResourceId, asynchronous, ct),
         "SourceDraftSave" => TenantResource(RegisterDrafts, x => x.TenantId == r.TenantId && x.Kind == "Source" && x.Id == r.ResourceId, asynchronous, ct),
@@ -482,6 +521,7 @@ public sealed class PoseidonDbContext(
         var changes = ChangeTracker.Entries().Where(e => e.State is EntityState.Added or EntityState.Modified or EntityState.Deleted).ToList();
         if (changes.Count == 0) return [];
         FleetCatalogDraftStorage.Guard(this, changes);
+        ParameterStorage.Guard(changes);
         if (string.IsNullOrWhiteSpace(actor.Id) || string.IsNullOrWhiteSpace(actor.Type) || string.IsNullOrWhiteSpace(actor.CorrelationId))
             throw new InvalidOperationException("An authenticated or explicit system actor and correlation ID are required.");
         if (actor.Command != null && !actor.Command.IsValid)
@@ -645,6 +685,17 @@ public sealed class PoseidonDbContext(
         if (changes.Any(e => e.Entity is ImportBatch && (e.State == EntityState.Deleted || e.State == EntityState.Modified && !LegacyImportStorage.IsConversion(e) &&
             (LegacyImportStorage.Protected(e) || new[] { "VesselId", "ActorId", "SessionHash", "AssignmentId", "Category", "TemplateVersion", "TemplateFingerprint", "CrewIdentityPolicyVersion", "SourceHash", "TableJson", "SourceName", "SourceLocator", "LegacyProtectedAt", "LegacyProtectionPolicyVersion", "LegacyProtectionIdentityVersion", "LegacyProtectionPurpose" }.Any(n => e.Property(n).IsModified)))))
             throw new InvalidOperationException("Import source and ownership are immutable.");
+        if (changes.Any(e => e.Entity is LegalEntityFieldRevision or PersonFieldRevision or HrActualEvent or HrStateChange && e.State != EntityState.Added))
+            throw new InvalidOperationException("HR field/source revisions and actual facts are append-only.");
+        if (changes.Any(e => e.State == EntityState.Deleted && e.Entity is LegalEntityIdentifier or LegalEntityRole or Employment or HrAssignment))
+            throw new InvalidOperationException("HR history is retained; retire, end or cancel instead of deleting.");
+        if (changes.Any(e => e.State == EntityState.Modified && (
+            e.Entity is LegalEntityIdentifier && new[] { "LegalEntityId", "Type", "Issuer", "Value", "CreatedBy", "CreatedAt", "SourceKind", "SourceRef" }.Any(n => e.Property(n).IsModified) ||
+            e.Entity is LegalEntityRole && new[] { "LegalEntityId", "Role", "VesselId", "EffectiveFrom", "CreatedBy", "CreatedAt", "SourceKind", "SourceRef", "CancelledBy", "CancelledAt" }.Where(n => n is not ("CancelledBy" or "CancelledAt") || e.Property(n).OriginalValue != null).Any(n => e.Property(n).IsModified) ||
+            e.Entity is LegalEntityRole && (string?)e.Property("State").OriginalValue == "Cancelled" ||
+            e.Entity is Employment && new[] { "PersonId", "LegalEntityId", "EmployeeNo", "StartAt", "CreatedBy", "CreatedAt" }.Any(n => e.Property(n).IsModified) ||
+            e.Entity is HrAssignment && new[] { "EmploymentId", "PersonId", "LegalEntityId", "Kind", "VesselId", "PositionId", "PlannedFrom", "PlannedTo", "PlannedZoneId", "PlannedBy", "PlannedAt" }.Any(n => e.Property(n).IsModified))))
+            throw new InvalidOperationException("HR identity, ownership and plan values are immutable; append a new record.");
         var events = new List<AuditEvent>();
         foreach (var entry in changes)
         {

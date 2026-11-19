@@ -141,6 +141,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapFoundation();
             endpoints.MapRegulatoryDrafts();
             endpoints.MapVesselProfileFields();
+            endpoints.MapCriticalStates();
             endpoints.MapRegulatoryRegister();
             endpoints.MapLifecycleApplicability();
             endpoints.MapRegulatoryQualifications();
@@ -179,6 +180,8 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapDowntimeOrigins();
             endpoints.MapMaintenanceObservations();
             endpoints.MapTug();
+            endpoints.MapParameters();
+            endpoints.MapHr();
             endpoints.MapGet("/health/live", () => Results.Text("alive"))
                 .WithName("GetLiveness")
                 .WithSummary("Process liveness only; does not indicate database or operational readiness.");

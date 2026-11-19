@@ -107,6 +107,22 @@
       "next": "Ďalšie spoločnosti",
       "reloadCompanies": "Znova načítať spoločnosti",
       "requiredNote": "Všetky polia sú povinné. Tento záznam neudeľuje prevádzkové schválenie.",
+      "leHeading": "Záznam právnickej osoby",
+      "leLoading": "Načítava sa právnická osoba…",
+      "leUnavailable": "Údaje o právnickej osobe nie sú s vaším aktuálnym prístupom dostupné.",
+      "leFailed": "Údaje o právnickej osobe sa nepodarilo načítať.",
+      "leStatus": "Stav právnickej osoby",
+      "leDraft": "Koncept – neúplný, neaktívny",
+      "leActive": "Aktívna",
+      "leInactive": "Neaktívna",
+      "leLegalName": "Obchodné meno",
+      "leCountry": "Krajina",
+      "leTimeZone": "Časové pásmo HR",
+      "leUnknown": "Neznáme",
+      "leMissing": "Chýbajúce hodnoty pred aktiváciou",
+      "leNote": "Iba na čítanie. Hodnoty sa menia len auditovanými príkazmi HR.",
+      "leShow": "Zobraziť záznam právnickej osoby",
+      "leIdentifiers": "Registračné identifikátory (maskované)",
       "errorSummary": "Pred uložením skontrolujte tieto polia:"
     },
     "ProductApp_tsx_copy": {
@@ -413,6 +429,98 @@
       "equipment": "Kontext vybavenia",
       "freshness": "Aktuálnosť",
       "provenance": "Pôvod"
+    },
+    "CriticalStatePanel_tsx_copy": {
+      "title": "Kritické stavy a ich zdroje",
+      "loading": "Načítavajú sa kritické stavy…",
+      "reload": "Znova načítať kritické stavy",
+      "offline": "Offline: kritické stavy sa nezobrazujú z vyrovnávacej pamäte.",
+      "dirty": "Neuložené zmeny formulára nie sú zahrnuté. Vysvetlenia odrážajú iba uložený záznam.",
+      "empty": "Pre váš prístup nie sú viditeľné žiadne kritické stavy.",
+      "scope": "Uvádzajú sa iba stavy, ktoré smiete zobraziť.",
+      "restricted": "Podrobnosti sú pre váš prístup obmedzené. Tento stav nie je pripravený ani overený výsledok.",
+      "source": "Zdroj",
+      "revision": "revízia",
+      "noRevision": "žiadna uložená revízia",
+      "recorded": "zaznamenané",
+      "noSource": "Zatiaľ žiadny vlastnícky záznam",
+      "verification": "Overenie",
+      "notVerified": "Neoverené",
+      "freshness": "Aktuálnosť",
+      "observed": "pozorované",
+      "checked": "skontrolované",
+      "reasonsTitle": "Dôvody",
+      "blockersTitle": "Prekážky",
+      "noBlockers": "Nie sú uvedené žiadne prekážky",
+      "resolution": "Riešenie",
+      "open": "Otvoriť vlastnícky záznam",
+      "errors": {
+        "e401": "Vaša relácia vypršala. Prihláste sa znova.",
+        "e403": "Nemáte oprávnenie zobraziť tieto kritické stavy.",
+        "e404": "Toto plavidlo nie je dostupné.",
+        "other": "Kritické stavy sa nepodarilo načítať. Skúste to znova."
+      },
+      "keys": {
+        "onboarding": "Pripravenosť na zapojenie",
+        "profileFreshness": "Aktuálnosť profilu",
+        "applicability": "Uplatniteľnosť požiadaviek"
+      },
+      "fields": {
+        "profile": "Profil",
+        "applicability": "Hodnotenie uplatniteľnosti",
+        "vesselCode": "Kód plavidla",
+        "vesselName": "Názov plavidla"
+      },
+      "states": {
+        "BLOCKED": "Blokované",
+        "REVIEW_REQUIRED": "Vyžaduje kontrolu",
+        "UNKNOWN": "Neznáme",
+        "STALE": "Zastarané",
+        "UNAVAILABLE": "Nedostupné",
+        "DECLARED_UNVERIFIED": "Deklarované · neoverené",
+        "QUALIFIED_CURRENT_UNVERIFIED": "Kvalifikované hodnotenie aktuálne · neoverené"
+      },
+      "freshnessStates": {
+        "FRESH": "V rámci veku podľa zásady (neoverené)",
+        "STALE": "Zastarané",
+        "UNKNOWN": "Neznáme",
+        "UNAVAILABLE": "Nedostupné"
+      },
+      "sourceKinds": {
+        "RegulatoryDraft": "Profil plavidla",
+        "ApplicabilityEvaluation": "Hodnotenie uplatniteľnosti"
+      },
+      "resolutions": {
+        "PROFILE_DECLARATION": "Deklarovať profil",
+        "REQUIRED_DECLARATION": "Deklarovať požadovanú hodnotu",
+        "POLICY_OR_EVIDENCE": "Potrebná zásada alebo dôkaz",
+        "QUALIFIED_EVIDENCE": "Potrebný kvalifikovaný dôkaz",
+        "SOURCE_DECLARATION": "Deklarovať zdroj",
+        "SOURCE_RENEWAL": "Obnoviť zdroj",
+        "FRESHNESS_POLICY_CONFIGURATION": "Nastaviť schválenú zásadu aktuálnosti",
+        "SERVICE_RECOVERY": "Potrebná obnova služby",
+        "RE_EVALUATION": "Znova vyhodnotiť",
+        "QUALIFIED_EVALUATION": "Spustiť kvalifikované hodnotenie",
+        "CATALOG_QUALIFICATION": "Kvalifikovať katalóg",
+        "HUMAN_REVIEW": "Kontrola oprávnenou osobou"
+      },
+      "reasons": {
+        "PROFILE_MISSING": "Profil nie je uložený",
+        "REQUIRED_DATA_MISSING": "Chýbajú povinné údaje",
+        "REQUIRED_DATA_UNKNOWN": "Povinné údaje sú neznáme",
+        "VERIFICATION_NOT_ESTABLISHED": "Overenie nie je stanovené",
+        "FIELDS_UNKNOWN": "Pri niektorých poliach je aktuálnosť neznáma",
+        "FIELDS_STALE": "Niektoré polia sú zastarané",
+        "FIELDS_UNAVAILABLE": "Niektoré polia sú nedostupné",
+        "ALL_FIELDS_WITHIN_POLICY": "Všetky polia v rámci veku podľa zásady (neoverené)",
+        "VALUE_NOT_RECORDED": "Hodnota nezaznamenaná",
+        "VALUE_UNKNOWN": "Hodnota zaznamenaná ako neznáma",
+        "SOURCE_NOT_DECLARED": "Zdroj nebol deklarovaný",
+        "FRESHNESS_POLICY_UNCONFIGURED": "Žiadna schválená zásada aktuálnosti",
+        "QUALIFIED_EVALUATION_UNAVAILABLE": "Žiadne kvalifikované hodnotenie",
+        "PROFILE_CHANGED": "Profil sa po hodnotení zmenil",
+        "APPLICABILITY_REVIEW_REQUIRED": "Vyžaduje kontrolu uplatniteľnosti"
+      }
     }
   },
   "pairs": {

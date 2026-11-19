@@ -4003,6 +4003,7 @@
     "docs/phases/TECHNICAL-COMMAND-OWNER-RECOVERY-20261111.md",
     "docs/phases/MAINTENANCE-OBSERVATION-RECOVERY-20261112.md",
     "docs/phases/OBSERVATION-SIGNED-FIXTURE-20261112.md",
+    "docs/phases/PLAN-1511-5201-01.md",
     "docs/phases/PLAN-1511-5601-01.md"
   ],
   "active_source": "docs/sources/active.json",
@@ -15327,6 +15328,61 @@
       "limitations": "732 zero-node/unsupported inputs; HTML skipped above5000 nodes; no full semantic document review"
     }
   },
+  "plan_1511_5201_01": {
+    "task_id": "PLAN-1511-5201-01",
+    "date": "2026-11-18",
+    "status": "LOCALLY_VALIDATED_SUBPACKAGE_NOT_ACCEPTED",
+    "accepted": false,
+    "accepted_sp_added": 0,
+    "phase": "S2 wave 2 PLAN-1511-5201 foundation: LegalEntity (Company), single Person master, employment, planned assignment, actual facts",
+    "branch": "feature/plan-5201-legal-entity-20261118",
+    "base_commit": "d237f8a",
+    "task": "docs/tasks/plan-1511-5201-01.md",
+    "report": "docs/phases/PLAN-1511-5201-01.md",
+    "decisions": [
+      "LEAD-5601-D01 applied: Company extended in place, no second company table",
+      "Single Person master: crew.Persons extended",
+      "P5201-D01..D11 in task doc"
+    ],
+    "migration": "20261118185332_Hr5201LegalEntityFoundation (EF-generated + exclusion constraints and append-only triggers); has-pending-model-changes clean",
+    "api": "13 audited HR commands + 9 no-store reads under /api/v1/hr; S1 scope 128/120/130; OpenAPI additive (18 paths, 25 schemas)",
+    "verification": {
+      "domain": "13/13 passed",
+      "persistence_hr": "7/7 passed",
+      "api_hr": "2/2 passed",
+      "s1_scope_and_authorization": "6/6 passed",
+      "diagnostics_serializable_architecture": "10/10 passed",
+      "postgres_seed_and_model_parity": "13/13 passed after seed count update",
+      "frontend_targeted": "30/30 vitest, tsc 0 errors, eslint 0 on changed files",
+      "not_run": "full backend/frontend suites, Playwright, CI, independent QA"
+    },
+    "open": [
+      "org structure (holding/workplace/department/slot/OrgAssignment)",
+      "contracts, leave, shift roster/AttendanceSession, transfer, secondment",
+      "58.04 DutyLedger adapter",
+      "controlled country catalog",
+      "Self actual origin and company-scoped HR grants (52.02/54.02)",
+      "HR3 read profile",
+      "endpoint profile registration after PR #25"
+    ],
+    "qa_follow_up": {
+      "date": "2026-11-18",
+      "independent_qa": "PASS-WITH-NOTES",
+      "status": "AUTHORED_PARTIALLY_VERIFIED_DOCKER_BLOCKED",
+      "decisions": "P5201-D12..D17, P5201-AC-12..17 in task doc",
+      "migration": "20261118202721_Hr5201QaFollowUp (additive; base migration unchanged); has-pending-model-changes clean",
+      "api": "role cancel command added; S1 scope 129/121/131; identifier value masked unless hr.legal_entity.identifier.read",
+      "verification": {
+        "release_build": "0 warnings / 0 errors",
+        "domain": "16/16 passed",
+        "serializable_guard": "2/2 passed",
+        "migration_id_ordering": "7/7 passed",
+        "s1_audit_vocabulary_script": "OK after adding 14 HR commands",
+        "frontend": "tsc 0 errors; LegalEntitySummary 5/5; i18n 81/81; audit 54/54; eslint 0",
+        "blocked_not_run": "persistence HR trait, PostgresSeedTests, FoundationModelParityTests, API HR trait, DiagnosticsTests, S1 coverage methods (Docker engine unresponsive)"
+      }
+    }
+  },
   "s2_dev020_01": {
     "task_id": "S2-DEV020-01",
     "canonical": "DEV-020 / T-S2-001",
@@ -15376,6 +15432,53 @@
       "audit history listing of new entity types"
     ],
     "publication": "Local commits only; no push/PR"
+  },
+  "s2_dev024_01": {
+    "task_id": "S2-DEV024-01",
+    "canonical": "DEV-024 / T-S2-005",
+    "date": "2026-11-18",
+    "status": "LOCALLY_VERIFIED_NOT_ACCEPTED",
+    "accepted": false,
+    "accepted_sp_added": 0,
+    "branch": "feature/s2-dev024-critical-state-20261118",
+    "base": "2d9a66e",
+    "stacked_on": "feature/s2-dev020-vessel-profile-20261118 (PR #19)",
+    "task": "docs/tasks/s2-dev024-01.md",
+    "report": "docs/phases/S2-DEV024-01.md",
+    "migration": null,
+    "delivered": [
+      "Shared CriticalStateExplanation (source/revision/time, reason codes, DEV-020 freshness, resolution-typed blockers)",
+      "GET /api/v1/vessels/{id}/critical-states with optional key filter",
+      "Server-side STATE_ONLY redaction; applicability omitted without review gate; VISIBLE_ONLY scope",
+      "CriticalStateRead security events and live access fence",
+      "Reusable CriticalStateExplanationView and CriticalStatesPanel on profile and onboarding review; 17 catalogs"
+    ],
+    "verification": {
+      "build": "PASS 0 warnings",
+      "domain": "795/795",
+      "domain_dev024": "9/9",
+      "api_dev024": "5/5",
+      "api_dev020": "9/9",
+      "api_diagnostics_openapi": "6/6",
+      "api_s1_scope": "5/5",
+      "api_onboarding_passport": "14/14",
+      "persistence_security_event": "7/7",
+      "frontend_typecheck_lint_build": "PASS",
+      "vitest_new": "7/7",
+      "vitest_affected_12_files": "227/227",
+      "vitest_full": "1721/1723 (2 x 5s timeout under load; both pass with 30s timeout)",
+      "playwright_onboarding_mocked": "4/4",
+      "full_api_suite": "NOT_RUN",
+      "independent_qa": "PENDING",
+      "required_ci": "PENDING"
+    },
+    "open": [
+      "54.02 exact fleet.revision.body.read action",
+      "60.03 WhyNode tree/capacity",
+      "DEV-023 Why/Today consumption",
+      "Locale expert review of 15 additional catalogs",
+      "i18n all-locale test timing under load"
+    ]
   },
   "plan_1511_5501_slice_01": {
     "task_id": "PLAN-1511-5501-SLICE-01",

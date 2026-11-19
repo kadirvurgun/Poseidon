@@ -57,7 +57,7 @@ public static class VesselProfileFieldEndpoints
     private static TrustedActor? Actor(HttpContext http) => http.RequestServices.GetRequiredService<ActorResolver>().Resolve(http.User);
 
     // Same rule as the profile history: any restricted construction-record revision withholds all.
-    private static async Task<bool> Readable(TrustedActor actor, Guid vessel, PoseidonDbContext db, CancellationToken ct) =>
+    internal static async Task<bool> Readable(TrustedActor actor, Guid vessel, PoseidonDbContext db, CancellationToken ct) =>
         actor.Permissions.Contains("file.read") ||
         !await db.RegulatoryDraftRevisions.AnyAsync(r => r.VesselId == vessel && r.ConstructionFileId != null, ct);
 
@@ -74,6 +74,35 @@ public static class VesselProfileFieldEndpoints
         catch (Exception ex) when (ex is not OperationCanceledException) { return FreshnessPolicyResolution.Unavailable; }
     }
 
+    internal sealed record ProfileFieldProjection(RegulatoryDraft? Head, ProfileFieldDto[] Fields, FreshnessPolicyResolution Policy,
+        FreshnessSummary Summary, DateTimeOffset CheckedAt);
+
+    // Shared server computation (DEV-020 fields, DEV-024 critical-state explanations). The caller has
+    // already established vessel scope and decides what may be disclosed; this never authorizes.
+    internal static async Task<ProfileFieldProjection> Project(Guid tenant, Guid id, PoseidonDbContext db, HttpContext http, TimeProvider clock, CancellationToken ct)
+    {
+        var head = await db.RegulatoryDrafts.AsNoTracking().SingleOrDefaultAsync(x => x.VesselId == id, ct);
+        var content = head == null ? new RegulatoryDraftContent() : RegulatoryDraftStorage.Deserialize(head.ContentJson);
+        var revisions = head == null ? [] : await VesselProfileFieldStorage.CurrentValueRevisions(db, tenant, id, head.Revision, [.. VesselProfileFieldPolicy.Paths], ct);
+        var latest = await db.VesselProfileFieldSources.AsNoTracking().Where(s => s.VesselId == id && s.Sequence ==
+            db.VesselProfileFieldSources.Where(x => x.VesselId == id && x.FieldPath == s.FieldPath).Max(x => x.Sequence)).ToArrayAsync(ct);
+        var policy = await Policy(http, tenant, id);
+        var now = clock.GetUtcNow();
+        var fields = VesselProfileFieldPolicy.Fields.Select(f =>
+        {
+            var (state, value) = VesselProfileFieldPolicy.Value(content, f.Path);
+            long? revision = revisions.TryGetValue(f.Path, out var r) ? r : null;
+            var source = latest.SingleOrDefault(s => s.FieldPath == f.Path);
+            var applies = source != null && revision == source.ValueRevision && source.ValueState == state &&
+                source.ValueHash == VesselProfileFieldPolicy.ValueHash(state, value);
+            var facts = applies ? new ProfileFieldSourceFacts(source!.SourceKind, source.ReferenceState, source.Reference, source.ObservedAtState, source.ObservedAt) : null;
+            var freshness = VesselProfileFieldPolicy.Evaluate(f.Path, state, revision, facts, source != null && !applies, policy, now);
+            return new ProfileFieldDto(f.Path, f.Kind, f.Unit, Value(f.Kind, state, value), revision, source?.Sequence ?? 0,
+                applies ? Dto(source!) : null, source != null && !applies ? Dto(source) : null, freshness, "NOT_VERIFIED");
+        }).ToArray();
+        return new(head, fields, policy, VesselProfileFieldPolicy.Summarize([.. fields.Select(x => x.Freshness)], now), now);
+    }
+
     private static async Task<IResult> Fields(Guid id, HttpContext http, PoseidonDbContext db, SecurityAudit audit, TimeProvider clock)
     {
         http.Response.Headers.CacheControl = "private, no-store";
@@ -86,28 +115,11 @@ public static class VesselProfileFieldEndpoints
             var vessel = await actor.Scope(db.Vessels.AsNoTracking()).SingleOrDefaultAsync(x => x.Id == id, ct);
             if (vessel == null) { await audit.WriteAsync(http, "ProfileRead", "NotFound", resourceId: id); return Results.NotFound(); }
             if (!await Readable(actor, id, db, ct)) { await audit.WriteAsync(http, "ProfileRead", "permission_denied", resourceId: id); return Results.StatusCode(403); }
-            var head = await db.RegulatoryDrafts.AsNoTracking().SingleOrDefaultAsync(x => x.VesselId == id, ct);
-            var content = head == null ? new RegulatoryDraftContent() : RegulatoryDraftStorage.Deserialize(head.ContentJson);
-            var revisions = head == null ? [] : await VesselProfileFieldStorage.CurrentValueRevisions(db, actor.TenantId, id, head.Revision, [.. VesselProfileFieldPolicy.Paths], ct);
-            var latest = await db.VesselProfileFieldSources.AsNoTracking().Where(s => s.VesselId == id && s.Sequence ==
-                db.VesselProfileFieldSources.Where(x => x.VesselId == id && x.FieldPath == s.FieldPath).Max(x => x.Sequence)).ToArrayAsync(ct);
+            var projection = await Project(actor.TenantId, id, db, http, clock, ct);
             await tx.CommitAsync(ct);
-            var policy = await Policy(http, actor.TenantId, id);
-            var now = clock.GetUtcNow();
-            var fields = VesselProfileFieldPolicy.Fields.Select(f =>
-            {
-                var (state, value) = VesselProfileFieldPolicy.Value(content, f.Path);
-                long? revision = revisions.TryGetValue(f.Path, out var r) ? r : null;
-                var source = latest.SingleOrDefault(s => s.FieldPath == f.Path);
-                var applies = source != null && revision == source.ValueRevision && source.ValueState == state &&
-                    source.ValueHash == VesselProfileFieldPolicy.ValueHash(state, value);
-                var facts = applies ? new ProfileFieldSourceFacts(source!.SourceKind, source.ReferenceState, source.Reference, source.ObservedAtState, source.ObservedAt) : null;
-                var freshness = VesselProfileFieldPolicy.Evaluate(f.Path, state, revision, facts, source != null && !applies, policy, now);
-                return new ProfileFieldDto(f.Path, f.Kind, f.Unit, Value(f.Kind, state, value), revision, source?.Sequence ?? 0,
-                    applies ? Dto(source!) : null, source != null && !applies ? Dto(source) : null, freshness, "NOT_VERIFIED");
-            }).ToArray();
-            dto = new(actor.TenantId, id, new(vessel.CompanyId, "LEGACY_COMPANY_BINDING", "NOT_ESTABLISHED"), head?.Revision ?? 0, head?.SavedAt, now,
-                new(policy.Status, policy.PolicyRef), VesselProfileFieldPolicy.Summarize([.. fields.Select(x => x.Freshness)], now), fields, actor.CanEditVessel(id));
+            var head = projection.Head;
+            dto = new(actor.TenantId, id, new(vessel.CompanyId, "LEGACY_COMPANY_BINDING", "NOT_ESTABLISHED"), head?.Revision ?? 0, head?.SavedAt, projection.CheckedAt,
+                new(projection.Policy.Status, projection.Policy.PolicyRef), projection.Summary, projection.Fields, actor.CanEditVessel(id));
         }
         catch (Exception ex) when (PostgresFailure.IsDatabase(ex)) { await audit.WriteAsync(http, "ProfileRead", "service_unavailable", resourceId: id); return Results.StatusCode(503); }
         await audit.WriteAsync(http, "ProfileRead", "Success", resourceId: id);

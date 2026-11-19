@@ -107,6 +107,22 @@
       "next": "Sociétés suivantes",
       "reloadCompanies": "Recharger les sociétés",
       "requiredNote": "Tous les champs sont obligatoires. Cet enregistrement ne constitue pas une approbation opérationnelle.",
+      "leHeading": "Fiche de l’entité juridique",
+      "leLoading": "Chargement de l’entité juridique…",
+      "leUnavailable": "Les détails de l’entité juridique ne sont pas disponibles avec votre accès actuel.",
+      "leFailed": "Les détails de l’entité juridique n’ont pas pu être chargés.",
+      "leStatus": "Statut de l’entité juridique",
+      "leDraft": "Brouillon – incomplet, non actif",
+      "leActive": "Active",
+      "leInactive": "Inactive",
+      "leLegalName": "Raison sociale",
+      "leCountry": "Pays",
+      "leTimeZone": "Fuseau horaire RH",
+      "leUnknown": "Inconnu",
+      "leMissing": "Valeurs manquantes avant activation",
+      "leNote": "Lecture seule. Les valeurs ne changent que par des commandes RH auditées.",
+      "leShow": "Afficher la fiche de l’entité juridique",
+      "leIdentifiers": "Identifiants d’immatriculation (masqués)",
       "errorSummary": "Vérifiez ces champs avant d’enregistrer :"
     },
     "ProductApp_tsx_copy": {
@@ -413,6 +429,98 @@
       "equipment": "Contexte des équipements",
       "freshness": "Fraîcheur",
       "provenance": "Provenance"
+    },
+    "CriticalStatePanel_tsx_copy": {
+      "title": "États critiques et leurs sources",
+      "loading": "Chargement des états critiques…",
+      "reload": "Recharger les états critiques",
+      "offline": "Hors ligne : les états critiques ne sont pas affichés depuis le cache.",
+      "dirty": "Les modifications non enregistrées du formulaire ne sont pas incluses. Les explications reflètent uniquement l’enregistrement sauvegardé.",
+      "empty": "Aucun état critique n’est visible pour votre accès.",
+      "scope": "Seuls les états que vous êtes autorisé à consulter sont listés.",
+      "restricted": "Les détails sont restreints pour votre accès. Cet état n’est pas un résultat prêt ou vérifié.",
+      "source": "Source",
+      "revision": "révision",
+      "noRevision": "aucune révision enregistrée",
+      "recorded": "enregistré",
+      "noSource": "Aucun enregistrement propriétaire",
+      "verification": "Vérification",
+      "notVerified": "Non vérifié",
+      "freshness": "Fraîcheur",
+      "observed": "observé",
+      "checked": "contrôlé",
+      "reasonsTitle": "Motifs",
+      "blockersTitle": "Blocages",
+      "noBlockers": "Aucun blocage listé",
+      "resolution": "Résolution",
+      "open": "Ouvrir l’enregistrement propriétaire",
+      "errors": {
+        "e401": "Votre session a expiré. Reconnectez-vous.",
+        "e403": "Vous n’êtes pas autorisé à consulter ces états critiques.",
+        "e404": "Ce navire n’est pas disponible.",
+        "other": "Les états critiques n’ont pas pu être chargés. Réessayez."
+      },
+      "keys": {
+        "onboarding": "Préparation à l’intégration",
+        "profileFreshness": "Fraîcheur du profil",
+        "applicability": "Applicabilité de la conformité"
+      },
+      "fields": {
+        "profile": "Profil",
+        "applicability": "Évaluation d’applicabilité",
+        "vesselCode": "Code du navire",
+        "vesselName": "Nom du navire"
+      },
+      "states": {
+        "BLOCKED": "Bloqué",
+        "REVIEW_REQUIRED": "Examen requis",
+        "UNKNOWN": "Inconnu",
+        "STALE": "Obsolète",
+        "UNAVAILABLE": "Indisponible",
+        "DECLARED_UNVERIFIED": "Déclaré · non vérifié",
+        "QUALIFIED_CURRENT_UNVERIFIED": "Évaluation qualifiée à jour · non vérifiée"
+      },
+      "freshnessStates": {
+        "FRESH": "Dans l’âge autorisé par la politique (non vérifié)",
+        "STALE": "Obsolète",
+        "UNKNOWN": "Inconnu",
+        "UNAVAILABLE": "Indisponible"
+      },
+      "sourceKinds": {
+        "RegulatoryDraft": "Profil du navire",
+        "ApplicabilityEvaluation": "Évaluation d’applicabilité"
+      },
+      "resolutions": {
+        "PROFILE_DECLARATION": "Déclarer le profil",
+        "REQUIRED_DECLARATION": "Déclarer la valeur requise",
+        "POLICY_OR_EVIDENCE": "Politique ou preuve nécessaire",
+        "QUALIFIED_EVIDENCE": "Preuve qualifiée nécessaire",
+        "SOURCE_DECLARATION": "Déclarer la source",
+        "SOURCE_RENEWAL": "Renouveler la source",
+        "FRESHNESS_POLICY_CONFIGURATION": "Configurer une politique de fraîcheur approuvée",
+        "SERVICE_RECOVERY": "Rétablissement du service nécessaire",
+        "RE_EVALUATION": "Réévaluer",
+        "QUALIFIED_EVALUATION": "Lancer une évaluation qualifiée",
+        "CATALOG_QUALIFICATION": "Qualifier le catalogue",
+        "HUMAN_REVIEW": "Examen humain autorisé"
+      },
+      "reasons": {
+        "PROFILE_MISSING": "Profil non enregistré",
+        "REQUIRED_DATA_MISSING": "Données requises manquantes",
+        "REQUIRED_DATA_UNKNOWN": "Données requises inconnues",
+        "VERIFICATION_NOT_ESTABLISHED": "Vérification non établie",
+        "FIELDS_UNKNOWN": "Fraîcheur inconnue pour certains champs",
+        "FIELDS_STALE": "Certains champs sont obsolètes",
+        "FIELDS_UNAVAILABLE": "Certains champs sont indisponibles",
+        "ALL_FIELDS_WITHIN_POLICY": "Tous les champs dans l’âge autorisé (non vérifié)",
+        "VALUE_NOT_RECORDED": "Valeur non enregistrée",
+        "VALUE_UNKNOWN": "Valeur enregistrée comme inconnue",
+        "SOURCE_NOT_DECLARED": "Aucune source déclarée",
+        "FRESHNESS_POLICY_UNCONFIGURED": "Aucune politique de fraîcheur approuvée",
+        "QUALIFIED_EVALUATION_UNAVAILABLE": "Aucune évaluation qualifiée",
+        "PROFILE_CHANGED": "Profil modifié après l’évaluation",
+        "APPLICABILITY_REVIEW_REQUIRED": "Examen d’applicabilité requis"
+      }
     }
   },
   "pairs": {

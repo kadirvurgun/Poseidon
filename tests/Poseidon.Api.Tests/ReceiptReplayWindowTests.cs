@@ -84,8 +84,10 @@ public sealed partial class DirectoryWorkspaceTests
         } finally { window.Release(); using var completed = await delayed; }
     }
 
+    // Holds the first armed out-of-transaction receipt miss on `table` in any schema.
     private sealed class ReceiptLookupWindow(string table) : DbCommandInterceptor
     {
+        private readonly System.Text.RegularExpressions.Regex lookup = new($@"FROM [a-z_]+\.""{table}""", System.Text.RegularExpressions.RegexOptions.CultureInvariant);
         private readonly TaskCompletionSource entered = new(TaskCreationOptions.RunContinuationsAsynchronously);
         private readonly TaskCompletionSource released = new(TaskCreationOptions.RunContinuationsAsynchronously);
         private int armed;
@@ -96,7 +98,7 @@ public sealed partial class DirectoryWorkspaceTests
             DbDataReader result, CancellationToken cancellationToken = default)
         {
             if (eventData.Context?.Database.CurrentTransaction == null &&
-                command.CommandText.Contains($"FROM core.\"{table}\"", StringComparison.Ordinal) &&
+                lookup.IsMatch(command.CommandText) &&
                 !result.HasRows && Interlocked.CompareExchange(ref armed, 0, 1) == 1) {
                 entered.TrySetResult();
                 await released.Task.WaitAsync(TimeSpan.FromSeconds(30), cancellationToken);

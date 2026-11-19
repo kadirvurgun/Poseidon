@@ -1,0 +1,3535 @@
+{
+  "schemaVersion": "poseidon.parameters.v1",
+  "trackingId": "PLAN-1511-5401",
+  "source": {
+    "path": "analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/54.01_POSEIDON_Islev_Parametreleri_ve_Kontrollu_Politika_Sicili_Tam_Analiz_Rev4(1).docx",
+    "sha256": "73fcde366550ff1eb23aaebb33c8d246f4173b03b5c416a1b74736078a36c892",
+    "definitionCountLocator": "paragraph:1004",
+    "definitionCount": 354
+  },
+  "meaning": "Software contract of the 54.01 CFG3 registry subset implemented by this repository. Not a production registration, owner adapter admission, deployment acceptance or approved value.",
+  "definitions": [
+    {
+      "key": "ops.source.freshness_policy_ref",
+      "definitionVersion": 1,
+      "ownerDomain": "60.01",
+      "classification": "POLICY_REF",
+      "valueClass": "POLICY",
+      "risk": "SAFETY",
+      "type": {
+        "type": "REVISION_REF",
+        "nullable": true,
+        "minimum": null,
+        "maximum": null,
+        "unit": null
+      },
+      "allowedScopes": [
+        "TENANT"
+      ],
+      "requiredSelectors": [
+        "sourceOwner",
+        "sourceKind",
+        "purpose"
+      ],
+      "fallback": "BLOCK",
+      "approvedProductDefault": null,
+      "productDefaultDeploymentAccepted": false,
+      "aliasTarget": null,
+      "sensitivity": "NOT_DECLARED_IN_SOURCE_VALUES_WITHHELD",
+      "sourceLocator": "paragraph:2313",
+      "runtimeStatus": "FOUNDATION_REGISTERED_OWNER_ADAPTER_NOT_REGISTERED"
+    },
+    {
+      "key": "regulatory.source.freshness_policy_ref",
+      "definitionVersion": 1,
+      "ownerDomain": "60.03",
+      "classification": "POLICY_REF",
+      "valueClass": "POLICY",
+      "risk": "SAFETY",
+      "type": {
+        "type": "REVISION_REF",
+        "nullable": true,
+        "minimum": null,
+        "maximum": null,
+        "unit": null
+      },
+      "allowedScopes": [
+        "TENANT"
+      ],
+      "requiredSelectors": [
+        "sourceKind",
+        "purpose"
+      ],
+      "fallback": "BLOCK",
+      "approvedProductDefault": null,
+      "productDefaultDeploymentAccepted": false,
+      "aliasTarget": null,
+      "sensitivity": "NOT_DECLARED_IN_SOURCE_VALUES_WITHHELD",
+      "sourceLocator": "paragraph:2523",
+      "runtimeStatus": "FOUNDATION_REGISTERED_OWNER_ADAPTER_NOT_REGISTERED"
+    },
+    {
+      "key": "pms.measurement.freshness_minutes",
+      "definitionVersion": 1,
+      "ownerDomain": "59.04",
+      "classification": "PARAMETER",
+      "valueClass": "PARAMETER",
+      "risk": "SAFETY",
+      "type": {
+        "type": "INTEGER",
+        "nullable": false,
+        "minimum": 1,
+        "maximum": 10080,
+        "unit": "MINUTE"
+      },
+      "allowedScopes": [
+        "TENANT"
+      ],
+      "requiredSelectors": [
+        "equipmentTypeId",
+        "measurementPointId"
+      ],
+      "fallback": "APPROVED_DEFAULT",
+      "approvedProductDefault": "60",
+      "productDefaultDeploymentAccepted": false,
+      "aliasTarget": null,
+      "sensitivity": "NOT_DECLARED_IN_SOURCE_VALUES_WITHHELD",
+      "sourceLocator": "paragraph:2211",
+      "runtimeStatus": "FOUNDATION_REGISTERED_OWNER_ADAPTER_NOT_REGISTERED"
+    },
+    {
+      "key": "rpt.freshness.online_min",
+      "definitionVersion": 1,
+      "ownerDomain": "55.01",
+      "classification": "PARAMETER",
+      "valueClass": "PARAMETER",
+      "risk": "HIGH",
+      "type": {
+        "type": "INTEGER",
+        "nullable": false,
+        "minimum": 1,
+        "maximum": 60,
+        "unit": "MINUTE"
+      },
+      "allowedScopes": [
+        "GLOBAL",
+        "TENANT"
+      ],
+      "requiredSelectors": [
+        "datasetId"
+      ],
+      "fallback": "APPROVED_DEFAULT",
+      "approvedProductDefault": "15",
+      "productDefaultDeploymentAccepted": false,
+      "aliasTarget": null,
+      "sensitivity": "NOT_DECLARED_IN_SOURCE_VALUES_WITHHELD",
+      "sourceLocator": "paragraph:1565",
+      "runtimeStatus": "FOUNDATION_REGISTERED_OWNER_ADAPTER_NOT_REGISTERED"
+    },
+    {
+      "key": "rpt.export.rows",
+      "definitionVersion": 1,
+      "ownerDomain": "55.01",
+      "classification": "PARAMETER",
+      "valueClass": "PARAMETER",
+      "risk": "HIGH",
+      "type": {
+        "type": "INTEGER",
+        "nullable": false,
+        "minimum": 1,
+        "maximum": 100000,
+        "unit": "COUNT"
+      },
+      "allowedScopes": [
+        "GLOBAL",
+        "TENANT"
+      ],
+      "requiredSelectors": [],
+      "fallback": "APPROVED_DEFAULT",
+      "approvedProductDefault": "10000",
+      "productDefaultDeploymentAccepted": false,
+      "aliasTarget": null,
+      "sensitivity": "NOT_DECLARED_IN_SOURCE_VALUES_WITHHELD",
+      "sourceLocator": "paragraph:1120",
+      "runtimeStatus": "FOUNDATION_REGISTERED_OWNER_ADAPTER_NOT_REGISTERED"
+    },
+    {
+      "key": "regulatory.cache.max_age_seconds",
+      "definitionVersion": 1,
+      "ownerDomain": "60.03",
+      "classification": "PARAMETER",
+      "valueClass": "PARAMETER",
+      "risk": "SAFETY",
+      "type": {
+        "type": "INTEGER",
+        "nullable": false,
+        "minimum": 1,
+        "maximum": 60,
+        "unit": "SECOND"
+      },
+      "allowedScopes": [
+        "TENANT"
+      ],
+      "requiredSelectors": [],
+      "fallback": "APPROVED_DEFAULT",
+      "approvedProductDefault": "60",
+      "productDefaultDeploymentAccepted": false,
+      "aliasTarget": null,
+      "sensitivity": "NOT_DECLARED_IN_SOURCE_VALUES_WITHHELD",
+      "sourceLocator": "paragraph:2496",
+      "runtimeStatus": "FOUNDATION_REGISTERED_OWNER_ADAPTER_NOT_REGISTERED"
+    },
+    {
+      "key": "control.assurance.maxAgeSeconds",
+      "definitionVersion": 1,
+      "ownerDomain": "54.01 technical",
+      "classification": "PARAMETER",
+      "valueClass": "PARAMETER",
+      "risk": "SAFETY",
+      "type": {
+        "type": "INTEGER",
+        "nullable": false,
+        "minimum": 1,
+        "maximum": 300,
+        "unit": null
+      },
+      "allowedScopes": [
+        "COMPANY",
+        "VESSEL"
+      ],
+      "requiredSelectors": [],
+      "fallback": "APPROVED_DEFAULT",
+      "approvedProductDefault": "60",
+      "productDefaultDeploymentAccepted": false,
+      "aliasTarget": null,
+      "sensitivity": "NOT_DECLARED_IN_SOURCE_VALUES_WITHHELD",
+      "sourceLocator": "paragraph:3602",
+      "runtimeStatus": "FOUNDATION_REGISTERED_OWNER_ADAPTER_NOT_REGISTERED"
+    },
+    {
+      "key": "mobile.offline.idleLockSeconds",
+      "definitionVersion": 1,
+      "ownerDomain": "63.03",
+      "classification": "TECHNICAL_PARAMETER",
+      "valueClass": "TECHNICAL",
+      "risk": "HIGH",
+      "type": {
+        "type": "INTEGER",
+        "nullable": false,
+        "minimum": 60,
+        "maximum": 900,
+        "unit": null
+      },
+      "allowedScopes": [
+        "VESSEL"
+      ],
+      "requiredSelectors": [],
+      "fallback": "APPROVED_DEFAULT",
+      "approvedProductDefault": "300",
+      "productDefaultDeploymentAccepted": false,
+      "aliasTarget": null,
+      "sensitivity": "NOT_DECLARED_IN_SOURCE_VALUES_WITHHELD",
+      "sourceLocator": "paragraph:4315",
+      "runtimeStatus": "FOUNDATION_REGISTERED_OWNER_ADAPTER_NOT_REGISTERED"
+    },
+    {
+      "key": "safety.deferral.max_count",
+      "definitionVersion": 1,
+      "ownerDomain": "59.02",
+      "classification": "OWNER_FIELD",
+      "valueClass": "OWNER_FIELD",
+      "risk": null,
+      "type": {
+        "type": "INTEGER",
+        "nullable": false,
+        "minimum": 0,
+        "maximum": 20,
+        "unit": "COUNT"
+      },
+      "allowedScopes": [
+        "TENANT"
+      ],
+      "requiredSelectors": [
+        "actionType"
+      ],
+      "fallback": "BLOCK",
+      "approvedProductDefault": null,
+      "productDefaultDeploymentAccepted": false,
+      "aliasTarget": null,
+      "sensitivity": "NOT_DECLARED_IN_SOURCE_VALUES_WITHHELD",
+      "sourceLocator": "paragraph:2051",
+      "runtimeStatus": "FOUNDATION_REGISTERED_OWNER_ADAPTER_NOT_REGISTERED"
+    },
+    {
+      "key": "common.list.default_limit",
+      "definitionVersion": 1,
+      "ownerDomain": "58.03",
+      "classification": "INVARIANT",
+      "valueClass": "INVARIANT",
+      "risk": null,
+      "type": {
+        "type": "INTEGER",
+        "nullable": false,
+        "minimum": 25,
+        "maximum": 25,
+        "unit": "COUNT"
+      },
+      "allowedScopes": [
+        "GLOBAL"
+      ],
+      "requiredSelectors": [],
+      "fallback": "APPROVED_DEFAULT",
+      "approvedProductDefault": "25",
+      "productDefaultDeploymentAccepted": false,
+      "aliasTarget": null,
+      "sensitivity": "NOT_DECLARED_IN_SOURCE_VALUES_WITHHELD",
+      "sourceLocator": "paragraph:1912",
+      "runtimeStatus": "FOUNDATION_REGISTERED_OWNER_ADAPTER_NOT_REGISTERED"
+    },
+    {
+      "key": "tug.history.export.max_rows",
+      "definitionVersion": 1,
+      "ownerDomain": "60.02",
+      "classification": "ALIAS",
+      "valueClass": "ALIAS",
+      "risk": null,
+      "type": {
+        "type": "INTEGER",
+        "nullable": false,
+        "minimum": null,
+        "maximum": null,
+        "unit": "COUNT"
+      },
+      "allowedScopes": [
+        "TENANT"
+      ],
+      "requiredSelectors": [],
+      "fallback": "BLOCK",
+      "approvedProductDefault": null,
+      "productDefaultDeploymentAccepted": false,
+      "aliasTarget": "rpt.export.rows",
+      "sensitivity": "NOT_DECLARED_IN_SOURCE_VALUES_WITHHELD",
+      "sourceLocator": "paragraph:2479",
+      "runtimeStatus": "FOUNDATION_REGISTERED_OWNER_ADAPTER_NOT_REGISTERED"
+    },
+    {
+      "key": "eligibility.rule_version",
+      "definitionVersion": 1,
+      "ownerDomain": "54.01",
+      "classification": "FAMILY_REFERENCE",
+      "valueClass": "FAMILY_REFERENCE",
+      "risk": null,
+      "type": {
+        "type": "FAMILY",
+        "nullable": false,
+        "minimum": null,
+        "maximum": null,
+        "unit": null
+      },
+      "allowedScopes": [
+        "TENANT"
+      ],
+      "requiredSelectors": [
+        "ownerDomain",
+        "purpose",
+        "vesselId",
+        "positionId"
+      ],
+      "fallback": "BLOCK",
+      "approvedProductDefault": null,
+      "productDefaultDeploymentAccepted": false,
+      "aliasTarget": null,
+      "sensitivity": "NOT_DECLARED_IN_SOURCE_VALUES_WITHHELD",
+      "sourceLocator": "paragraph:3195",
+      "runtimeStatus": "FOUNDATION_REGISTERED_OWNER_ADAPTER_NOT_REGISTERED"
+    }
+  ],
+  "inventory": [
+    {
+      "ordinal": 1,
+      "key": "hr.organization.max_depth",
+      "classification": "PARAMETER",
+      "ownerDomain": "52.01",
+      "sourceLocator": "paragraph:1019",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 2,
+      "key": "hr.change.max_operations",
+      "classification": "PARAMETER",
+      "ownerDomain": "52.01",
+      "sourceLocator": "paragraph:1028",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 3,
+      "key": "hr.team.cross_company.enabled",
+      "classification": "PARAMETER",
+      "ownerDomain": "52.01",
+      "sourceLocator": "paragraph:1037",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 4,
+      "key": "hr.assignment.future_days",
+      "classification": "PARAMETER",
+      "ownerDomain": "52.01",
+      "sourceLocator": "paragraph:1046",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 5,
+      "key": "hr.leave.balance_max_age_minutes",
+      "classification": "PARAMETER",
+      "ownerDomain": "52.01",
+      "sourceLocator": "paragraph:1055",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 6,
+      "key": "hr.leave.max_borrow_minutes",
+      "classification": "PARAMETER",
+      "ownerDomain": "52.01",
+      "sourceLocator": "paragraph:1064",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 7,
+      "key": "hr.person.duplicate_review",
+      "classification": "INVARIANT",
+      "ownerDomain": "52.01",
+      "sourceLocator": "paragraph:1087",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 8,
+      "key": "hr.contract.notice_days",
+      "classification": "PARAMETER",
+      "ownerDomain": "52.01",
+      "sourceLocator": "paragraph:1093",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 9,
+      "key": "hr.assignment.confirmation_max_age_minutes",
+      "classification": "PARAMETER",
+      "ownerDomain": "52.01",
+      "sourceLocator": "paragraph:1102",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 10,
+      "key": "hr.import.max_rows",
+      "classification": "PARAMETER",
+      "ownerDomain": "52.01",
+      "sourceLocator": "paragraph:1111",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 11,
+      "key": "rpt.export.rows",
+      "classification": "PARAMETER",
+      "ownerDomain": "55.01",
+      "sourceLocator": "paragraph:1120",
+      "risk": "HIGH",
+      "status": "IMPLEMENTED_FOUNDATION"
+    },
+    {
+      "ordinal": 12,
+      "key": "retention.policy_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "58.02",
+      "sourceLocator": "paragraph:1137",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 13,
+      "key": "learning.curriculum.revision",
+      "classification": "POLICY_REF",
+      "ownerDomain": "53.01",
+      "sourceLocator": "paragraph:1157",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 14,
+      "key": "learning.training.recurrency",
+      "classification": "POLICY_REF",
+      "ownerDomain": "53.01",
+      "sourceLocator": "paragraph:1166",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 15,
+      "key": "learning.training.completionPolicy",
+      "classification": "POLICY_REF",
+      "ownerDomain": "53.01",
+      "sourceLocator": "paragraph:1175",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 16,
+      "key": "learning.assessment.allowedMethods",
+      "classification": "PARAMETER",
+      "ownerDomain": "53.01",
+      "sourceLocator": "paragraph:1184",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 17,
+      "key": "learning.assessment.passThreshold",
+      "classification": "OWNER_FIELD",
+      "ownerDomain": "53.01",
+      "sourceLocator": "paragraph:1193",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 18,
+      "key": "learning.assessor.authorityPolicy",
+      "classification": "POLICY_REF",
+      "ownerDomain": "53.01",
+      "sourceLocator": "paragraph:1200",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 19,
+      "key": "learning.assessment.maxAttempts",
+      "classification": "OWNER_FIELD",
+      "ownerDomain": "53.01",
+      "sourceLocator": "paragraph:1210",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 20,
+      "key": "learning.appeal.windowDays",
+      "classification": "PARAMETER",
+      "ownerDomain": "53.01",
+      "sourceLocator": "paragraph:1217",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 21,
+      "key": "learning.familiarization.requiredItems",
+      "classification": "OWNER_FIELD",
+      "ownerDomain": "53.01",
+      "sourceLocator": "paragraph:1226",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 22,
+      "key": "learning.seaService.countPolicy",
+      "classification": "POLICY_REF",
+      "ownerDomain": "53.01",
+      "sourceLocator": "paragraph:1232",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 23,
+      "key": "learning.credential.requiredTypes",
+      "classification": "POLICY_REF",
+      "ownerDomain": "53.01",
+      "sourceLocator": "paragraph:1241",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 24,
+      "key": "learning.credential.expiryPolicy",
+      "classification": "POLICY_REF",
+      "ownerDomain": "53.01",
+      "sourceLocator": "paragraph:1250",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 25,
+      "key": "learning.credential.renewalLeadDays",
+      "classification": "PARAMETER",
+      "ownerDomain": "53.01",
+      "sourceLocator": "paragraph:1259",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 26,
+      "key": "credential.notice_days",
+      "classification": "PARAMETER",
+      "ownerDomain": "53.01",
+      "sourceLocator": "paragraph:1267",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 27,
+      "key": "learning.verification.maxAge",
+      "classification": "POLICY_REF",
+      "ownerDomain": "53.01",
+      "sourceLocator": "paragraph:1280",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 28,
+      "key": "learning.verification.acceptedMethods",
+      "classification": "PARAMETER",
+      "ownerDomain": "53.01",
+      "sourceLocator": "paragraph:1289",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 29,
+      "key": "learning.recognition.requirement",
+      "classification": "POLICY_REF",
+      "ownerDomain": "53.01",
+      "sourceLocator": "paragraph:1297",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 30,
+      "key": "learning.limitations.scopeRules",
+      "classification": "POLICY_REF",
+      "ownerDomain": "53.01",
+      "sourceLocator": "paragraph:1306",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 31,
+      "key": "learning.evidence.acceptedTypes",
+      "classification": "PARAMETER",
+      "ownerDomain": "53.01",
+      "sourceLocator": "paragraph:1315",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 32,
+      "key": "learning.drill.recurrency",
+      "classification": "POLICY_REF",
+      "ownerDomain": "53.01",
+      "sourceLocator": "paragraph:1324",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 33,
+      "key": "learning.eligibility.openEndHorizonDays",
+      "classification": "PARAMETER",
+      "ownerDomain": "53.01",
+      "sourceLocator": "paragraph:1333",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 34,
+      "key": "learning.eligibility.reevaluationInterval",
+      "classification": "PARAMETER",
+      "ownerDomain": "53.01",
+      "sourceLocator": "paragraph:1341",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 35,
+      "key": "learning.override.allowedCategories",
+      "classification": "PARAMETER",
+      "ownerDomain": "53.01",
+      "sourceLocator": "paragraph:1350",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 36,
+      "key": "learning.offline.maxSnapshotAge",
+      "classification": "PARAMETER",
+      "ownerDomain": "53.01",
+      "sourceLocator": "paragraph:1358",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 37,
+      "key": "learning.offline.allowedCommands",
+      "classification": "PARAMETER",
+      "ownerDomain": "53.01",
+      "sourceLocator": "paragraph:1366",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 38,
+      "key": "learning.export.allowedFieldSet",
+      "classification": "PARAMETER",
+      "ownerDomain": "53.01",
+      "sourceLocator": "paragraph:1374",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 39,
+      "key": "learning.verification.sodRequired",
+      "classification": "INVARIANT",
+      "ownerDomain": "53.01",
+      "sourceLocator": "paragraph:1383",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 40,
+      "key": "learning.evidence.uploadPolicy",
+      "classification": "POLICY_REF",
+      "ownerDomain": "53.01",
+      "sourceLocator": "paragraph:1392",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 41,
+      "key": "learning.ocimf.projectionPolicy",
+      "classification": "POLICY_REF",
+      "ownerDomain": "53.01",
+      "sourceLocator": "paragraph:1402",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 42,
+      "key": "rpt.preview.rows",
+      "classification": "PARAMETER",
+      "ownerDomain": "55.01",
+      "sourceLocator": "paragraph:1412",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 43,
+      "key": "rpt.export.bytes",
+      "classification": "PARAMETER",
+      "ownerDomain": "55.01",
+      "sourceLocator": "paragraph:1421",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 44,
+      "key": "rpt.query.interactive_sec",
+      "classification": "PARAMETER",
+      "ownerDomain": "55.01",
+      "sourceLocator": "paragraph:1430",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 45,
+      "key": "rpt.query.batch_sec",
+      "classification": "PARAMETER",
+      "ownerDomain": "55.01",
+      "sourceLocator": "paragraph:1439",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 46,
+      "key": "rpt.job.timeout_sec",
+      "classification": "PARAMETER",
+      "ownerDomain": "55.01",
+      "sourceLocator": "paragraph:1448",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 47,
+      "key": "rpt.jobs.user_max",
+      "classification": "PARAMETER",
+      "ownerDomain": "55.01",
+      "sourceLocator": "paragraph:1457",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 48,
+      "key": "rpt.jobs.tenant_max",
+      "classification": "PARAMETER",
+      "ownerDomain": "55.01",
+      "sourceLocator": "paragraph:1466",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 49,
+      "key": "rpt.schedule.user_max",
+      "classification": "PARAMETER",
+      "ownerDomain": "55.01",
+      "sourceLocator": "paragraph:1475",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 50,
+      "key": "rpt.schedule.tenant_max",
+      "classification": "PARAMETER",
+      "ownerDomain": "55.01",
+      "sourceLocator": "paragraph:1484",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 51,
+      "key": "rpt.schedule.min_minutes",
+      "classification": "PARAMETER",
+      "ownerDomain": "55.01",
+      "sourceLocator": "paragraph:1493",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 52,
+      "key": "rpt.output.days",
+      "classification": "PARAMETER",
+      "ownerDomain": "55.01",
+      "sourceLocator": "paragraph:1502",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 53,
+      "key": "rpt.output.restricted_hours",
+      "classification": "PARAMETER",
+      "ownerDomain": "55.01",
+      "sourceLocator": "paragraph:1511",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 54,
+      "key": "rpt.download.url_sec",
+      "classification": "PARAMETER",
+      "ownerDomain": "55.01",
+      "sourceLocator": "paragraph:1520",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 55,
+      "key": "rpt.cache.max_sec",
+      "classification": "PARAMETER",
+      "ownerDomain": "55.01",
+      "sourceLocator": "paragraph:1529",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 56,
+      "key": "rpt.dashboard.refresh_sec",
+      "classification": "PARAMETER",
+      "ownerDomain": "55.01",
+      "sourceLocator": "paragraph:1556",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 57,
+      "key": "rpt.freshness.online_min",
+      "classification": "PARAMETER",
+      "ownerDomain": "55.01",
+      "sourceLocator": "paragraph:1565",
+      "risk": "HIGH",
+      "status": "IMPLEMENTED_FOUNDATION"
+    },
+    {
+      "ordinal": 58,
+      "key": "rpt.freshness.daily_hours",
+      "classification": "PARAMETER",
+      "ownerDomain": "55.01",
+      "sourceLocator": "paragraph:1592",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 59,
+      "key": "rpt.public_share",
+      "classification": "INVARIANT",
+      "ownerDomain": "55.01",
+      "sourceLocator": "paragraph:1619",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 60,
+      "key": "rpt.delivery.email_attachment",
+      "classification": "INVARIANT",
+      "ownerDomain": "55.01",
+      "sourceLocator": "paragraph:1625",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 61,
+      "key": "onboarding.upload.max_mib",
+      "classification": "PARAMETER",
+      "ownerDomain": "58.01",
+      "sourceLocator": "paragraph:1631",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 62,
+      "key": "onboarding.package.max_mib",
+      "classification": "PARAMETER",
+      "ownerDomain": "58.01",
+      "sourceLocator": "paragraph:1640",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 63,
+      "key": "onboarding.rows.max_per_file",
+      "classification": "PARAMETER",
+      "ownerDomain": "58.01",
+      "sourceLocator": "paragraph:1649",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 64,
+      "key": "onboarding.approval_hours",
+      "classification": "PARAMETER",
+      "ownerDomain": "58.01",
+      "sourceLocator": "paragraph:1658",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 65,
+      "key": "notification.retry.max_attempts",
+      "classification": "PARAMETER",
+      "ownerDomain": "58.01",
+      "sourceLocator": "paragraph:1667",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 66,
+      "key": "notification.unknown.max_hours",
+      "classification": "PARAMETER",
+      "ownerDomain": "58.01",
+      "sourceLocator": "paragraph:1676",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 67,
+      "key": "notification.email.enabled",
+      "classification": "PARAMETER",
+      "ownerDomain": "58.01",
+      "sourceLocator": "paragraph:1685",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 68,
+      "key": "notification.optional.max_age_hours",
+      "classification": "PARAMETER",
+      "ownerDomain": "58.01",
+      "sourceLocator": "paragraph:1694",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 69,
+      "key": "archive.download_grant_minutes",
+      "classification": "PARAMETER",
+      "ownerDomain": "58.01",
+      "sourceLocator": "paragraph:1703",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 70,
+      "key": "notification.template.max_body",
+      "classification": "PARAMETER",
+      "ownerDomain": "58.01",
+      "sourceLocator": "paragraph:1712",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 71,
+      "key": "training.reminder_days",
+      "classification": "PARAMETER",
+      "ownerDomain": "53.01",
+      "sourceLocator": "paragraph:1721",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 72,
+      "key": "document.ack.required",
+      "classification": "PARAMETER",
+      "ownerDomain": "58.02",
+      "sourceLocator": "paragraph:1731",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 73,
+      "key": "document.ack.dueDays",
+      "classification": "PARAMETER",
+      "ownerDomain": "58.02",
+      "sourceLocator": "paragraph:1741",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 74,
+      "key": "document.review.maxAgeDays",
+      "classification": "PARAMETER",
+      "ownerDomain": "58.02",
+      "sourceLocator": "paragraph:1751",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 75,
+      "key": "document.emergencyReviewHours",
+      "classification": "PARAMETER",
+      "ownerDomain": "58.02",
+      "sourceLocator": "paragraph:1760",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 76,
+      "key": "document.copy.enabled",
+      "classification": "PARAMETER",
+      "ownerDomain": "58.02",
+      "sourceLocator": "paragraph:1769",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 77,
+      "key": "evidence.verification.policyRef",
+      "classification": "POLICY_REF",
+      "ownerDomain": "58.02",
+      "sourceLocator": "paragraph:1782",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 78,
+      "key": "record.purge.enabled",
+      "classification": "PARAMETER",
+      "ownerDomain": "58.02",
+      "sourceLocator": "paragraph:1792",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 79,
+      "key": "record.disposition.maxItems",
+      "classification": "PARAMETER",
+      "ownerDomain": "58.02",
+      "sourceLocator": "paragraph:1801",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 80,
+      "key": "document.search.indexLagWarnSeconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "58.02",
+      "sourceLocator": "paragraph:1810",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 81,
+      "key": "fitness.assessment.ttlSeconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "58.04",
+      "sourceLocator": "paragraph:1819",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 82,
+      "key": "fitness.capture.maxPeriodDays",
+      "classification": "PARAMETER",
+      "ownerDomain": "58.04",
+      "sourceLocator": "paragraph:1828",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 83,
+      "key": "fitness.ledger.import.maxRows",
+      "classification": "PARAMETER",
+      "ownerDomain": "58.04",
+      "sourceLocator": "paragraph:1837",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 84,
+      "key": "fitness.review.slaHours",
+      "classification": "PARAMETER",
+      "ownerDomain": "58.04",
+      "sourceLocator": "paragraph:1846",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 85,
+      "key": "fitness.forecast.enabled",
+      "classification": "PARAMETER",
+      "ownerDomain": "58.04",
+      "sourceLocator": "paragraph:1855",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 86,
+      "key": "fitness.offline.capture.enabled",
+      "classification": "PARAMETER",
+      "ownerDomain": "58.04",
+      "sourceLocator": "paragraph:1864",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 87,
+      "key": "fitness.alert.beforeExpiryHours",
+      "classification": "PARAMETER",
+      "ownerDomain": "58.04",
+      "sourceLocator": "paragraph:1873",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 88,
+      "key": "fitness.rulePack.ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "58.04",
+      "sourceLocator": "paragraph:1882",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 89,
+      "key": "fitness.attestation.policy.ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "58.04",
+      "sourceLocator": "paragraph:1892",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 90,
+      "key": "common.list.default_limit",
+      "classification": "INVARIANT",
+      "ownerDomain": "58.03",
+      "sourceLocator": "paragraph:1912",
+      "risk": null,
+      "status": "IMPLEMENTED_FOUNDATION"
+    },
+    {
+      "ordinal": 91,
+      "key": "common.idempotency.response_ttl",
+      "classification": "INVARIANT",
+      "ownerDomain": "58.03",
+      "sourceLocator": "paragraph:1921",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 92,
+      "key": "fleet.preview.ttl_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "59.01",
+      "sourceLocator": "paragraph:1930",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 93,
+      "key": "fleet.change_set.max_operations",
+      "classification": "PARAMETER",
+      "ownerDomain": "59.01",
+      "sourceLocator": "paragraph:1939",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 94,
+      "key": "fleet.dependency.max_items",
+      "classification": "PARAMETER",
+      "ownerDomain": "59.01",
+      "sourceLocator": "paragraph:1948",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 95,
+      "key": "fleet.ownership.max_parties",
+      "classification": "PARAMETER",
+      "ownerDomain": "59.01",
+      "sourceLocator": "paragraph:1957",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 96,
+      "key": "fleet.group.approval_required",
+      "classification": "PARAMETER",
+      "ownerDomain": "59.01",
+      "sourceLocator": "paragraph:1966",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 97,
+      "key": "fleet.identifier.policy_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "59.01",
+      "sourceLocator": "paragraph:1975",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 98,
+      "key": "fleet.verification.policy_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "59.01",
+      "sourceLocator": "paragraph:1985",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 99,
+      "key": "fleet.reference.catalog_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "59.01",
+      "sourceLocator": "paragraph:1996",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 100,
+      "key": "fleet.approval.route_registry_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "59.01",
+      "sourceLocator": "paragraph:2010",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 101,
+      "key": "fleet.approval.schedule_policy_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "59.01",
+      "sourceLocator": "paragraph:2020",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 102,
+      "key": "safety.classification.policy_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "59.02",
+      "sourceLocator": "paragraph:2030",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 103,
+      "key": "safety.deadlines.matrix_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "59.02",
+      "sourceLocator": "paragraph:2041",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 104,
+      "key": "safety.deferral.max_count",
+      "classification": "OWNER_FIELD",
+      "ownerDomain": "59.02",
+      "sourceLocator": "paragraph:2051",
+      "risk": null,
+      "status": "IMPLEMENTED_FOUNDATION"
+    },
+    {
+      "ordinal": 105,
+      "key": "safety.deferral.max_days",
+      "classification": "OWNER_FIELD",
+      "ownerDomain": "59.02",
+      "sourceLocator": "paragraph:2057",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 106,
+      "key": "safety.effectiveness.policy_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "59.02",
+      "sourceLocator": "paragraph:2063",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 107,
+      "key": "safety.escalation.roster_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "59.02",
+      "sourceLocator": "paragraph:2072",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 108,
+      "key": "safety.source.registry_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "59.02",
+      "sourceLocator": "paragraph:2082",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 109,
+      "key": "safety.retention.policy_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "58.02",
+      "sourceLocator": "paragraph:2091",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 110,
+      "key": "safety.scheduler.scan_seconds",
+      "classification": "INVARIANT",
+      "ownerDomain": "59.02",
+      "sourceLocator": "paragraph:2101",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 111,
+      "key": "safety.preview.ttl_seconds",
+      "classification": "INVARIANT",
+      "ownerDomain": "59.02",
+      "sourceLocator": "paragraph:2107",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 112,
+      "key": "safety.offline.capture_enabled",
+      "classification": "PARAMETER",
+      "ownerDomain": "59.02",
+      "sourceLocator": "paragraph:2113",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 113,
+      "key": "mlc.policy.ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "59.03",
+      "sourceLocator": "paragraph:2122",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 114,
+      "key": "complaint.procedure.ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "59.03",
+      "sourceLocator": "paragraph:2139",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 115,
+      "key": "mlc.assessment.ttlSeconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "59.03",
+      "sourceLocator": "paragraph:2157",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 116,
+      "key": "mlc.check.capture.enabled",
+      "classification": "PARAMETER",
+      "ownerDomain": "59.03",
+      "sourceLocator": "paragraph:2166",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 117,
+      "key": "mlc.complaint.pseudonymous.enabled",
+      "classification": "PARAMETER",
+      "ownerDomain": "59.03",
+      "sourceLocator": "paragraph:2175",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 118,
+      "key": "mlc.complaint.aggregate.enabled",
+      "classification": "PARAMETER",
+      "ownerDomain": "59.03",
+      "sourceLocator": "paragraph:2184",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 119,
+      "key": "mlc.review.slaHours",
+      "classification": "PARAMETER",
+      "ownerDomain": "59.03",
+      "sourceLocator": "paragraph:2193",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 120,
+      "key": "pms.reading.future_skew_minutes",
+      "classification": "PARAMETER",
+      "ownerDomain": "59.04",
+      "sourceLocator": "paragraph:2202",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 121,
+      "key": "pms.measurement.freshness_minutes",
+      "classification": "PARAMETER",
+      "ownerDomain": "59.04",
+      "sourceLocator": "paragraph:2211",
+      "risk": "SAFETY",
+      "status": "IMPLEMENTED_FOUNDATION"
+    },
+    {
+      "ordinal": 122,
+      "key": "pms.plan.warning_lead_days",
+      "classification": "PARAMETER",
+      "ownerDomain": "59.04",
+      "sourceLocator": "paragraph:2230",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 123,
+      "key": "pms.deferral.policy_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "59.04",
+      "sourceLocator": "paragraph:2239",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 124,
+      "key": "pms.repeat_defect.window_days",
+      "classification": "PARAMETER",
+      "ownerDomain": "59.04",
+      "sourceLocator": "paragraph:2249",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 125,
+      "key": "pms.readiness.max_age_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "59.04",
+      "sourceLocator": "paragraph:2258",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 126,
+      "key": "pms.retention.policy_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "58.02",
+      "sourceLocator": "paragraph:2267",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 127,
+      "key": "ops.reservation.hold_ttl_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "60.01",
+      "sourceLocator": "paragraph:2276",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 128,
+      "key": "ops.reservation.max_resources",
+      "classification": "PARAMETER",
+      "ownerDomain": "60.01",
+      "sourceLocator": "paragraph:2285",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 129,
+      "key": "ops.current_gate.ttl_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "60.01",
+      "sourceLocator": "paragraph:2294",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 130,
+      "key": "ops.profile.policy_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "60.01",
+      "sourceLocator": "paragraph:2303",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 131,
+      "key": "ops.source.freshness_policy_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "60.01",
+      "sourceLocator": "paragraph:2313",
+      "risk": "SAFETY",
+      "status": "IMPLEMENTED_FOUNDATION"
+    },
+    {
+      "ordinal": 132,
+      "key": "ops.simultaneous_operation.policy_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "60.01",
+      "sourceLocator": "paragraph:2331",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 133,
+      "key": "ops.reservation.buffer_policy_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "60.01",
+      "sourceLocator": "paragraph:2343",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 134,
+      "key": "ops.voyage.closure_policy_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "60.01",
+      "sourceLocator": "paragraph:2355",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 135,
+      "key": "ops.clock.policy_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "60.01",
+      "sourceLocator": "paragraph:2366",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 136,
+      "key": "ops.measurement.policy_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "60.01",
+      "sourceLocator": "paragraph:2377",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 137,
+      "key": "ops.query.max_days",
+      "classification": "PARAMETER",
+      "ownerDomain": "60.01",
+      "sourceLocator": "paragraph:2389",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 138,
+      "key": "ops.assessment.max_items",
+      "classification": "PARAMETER",
+      "ownerDomain": "60.01",
+      "sourceLocator": "paragraph:2398",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 139,
+      "key": "ops.record.text_max",
+      "classification": "INVARIANT",
+      "ownerDomain": "60.01",
+      "sourceLocator": "paragraph:2407",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 140,
+      "key": "rpt.export",
+      "classification": "FAMILY_REFERENCE",
+      "ownerDomain": "55.01",
+      "sourceLocator": "paragraph:2415",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 141,
+      "key": "tug.source_policy_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "60.02",
+      "sourceLocator": "paragraph:2421",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 142,
+      "key": "tug.release.max_age_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "60.02",
+      "sourceLocator": "paragraph:2440",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 143,
+      "key": "tug.offline.capture_enabled",
+      "classification": "INVARIANT",
+      "ownerDomain": "60.02",
+      "sourceLocator": "paragraph:2449",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 144,
+      "key": "tug.plan.required_window",
+      "classification": "INVARIANT",
+      "ownerDomain": "60.02",
+      "sourceLocator": "paragraph:2457",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 145,
+      "key": "tug.reservation.buffer_policy_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "60.02",
+      "sourceLocator": "paragraph:2463",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 146,
+      "key": "tug.history.export.max_rows",
+      "classification": "ALIAS",
+      "ownerDomain": "60.02",
+      "sourceLocator": "paragraph:2479",
+      "risk": null,
+      "status": "IMPLEMENTED_FOUNDATION"
+    },
+    {
+      "ordinal": 147,
+      "key": "tug.retention.policy_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "58.02",
+      "sourceLocator": "paragraph:2487",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 148,
+      "key": "regulatory.cache.max_age_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "60.03",
+      "sourceLocator": "paragraph:2496",
+      "risk": "SAFETY",
+      "status": "IMPLEMENTED_FOUNDATION"
+    },
+    {
+      "ordinal": 149,
+      "key": "regulatory.impact.batch_size",
+      "classification": "PARAMETER",
+      "ownerDomain": "60.03",
+      "sourceLocator": "paragraph:2505",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 150,
+      "key": "regulatory.review.reminder_hours",
+      "classification": "PARAMETER",
+      "ownerDomain": "60.03",
+      "sourceLocator": "paragraph:2514",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 151,
+      "key": "regulatory.source.freshness_policy_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "60.03",
+      "sourceLocator": "paragraph:2523",
+      "risk": "SAFETY",
+      "status": "IMPLEMENTED_FOUNDATION"
+    },
+    {
+      "ordinal": 152,
+      "key": "regulatory.override.authority_policy_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "60.03",
+      "sourceLocator": "paragraph:2544",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 153,
+      "key": "regulatory.engine.schema_version",
+      "classification": "OWNER_FIELD",
+      "ownerDomain": "60.03",
+      "sourceLocator": "paragraph:2561",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 154,
+      "key": "regulatory.retention.policy_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "58.02",
+      "sourceLocator": "paragraph:2570",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 155,
+      "key": "cert.authority.trust_profile_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "60.04",
+      "sourceLocator": "paragraph:2580",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 156,
+      "key": "cert.calendar.policy_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "60.04",
+      "sourceLocator": "paragraph:2589",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 157,
+      "key": "cert.survey.satisfaction_rule_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "60.04",
+      "sourceLocator": "paragraph:2600",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 158,
+      "key": "cert.renewal.lead_days",
+      "classification": "PARAMETER",
+      "ownerDomain": "60.04",
+      "sourceLocator": "paragraph:2617",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 159,
+      "key": "cert.alert.buckets",
+      "classification": "INVARIANT",
+      "ownerDomain": "60.04",
+      "sourceLocator": "paragraph:2626",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 160,
+      "key": "cert.assessment.max_age_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "60.04",
+      "sourceLocator": "paragraph:2634",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 161,
+      "key": "cert.availability.policy_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "60.04",
+      "sourceLocator": "paragraph:2643",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 162,
+      "key": "cert.source.max_age_policy_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "60.04",
+      "sourceLocator": "paragraph:2654",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 163,
+      "key": "cert.retention.policy_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "58.02",
+      "sourceLocator": "paragraph:2665",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 164,
+      "key": "cert.owner.routing_registry",
+      "classification": "OWNER_FIELD",
+      "ownerDomain": "60.04",
+      "sourceLocator": "paragraph:2674",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 165,
+      "key": "cert.scope.alert_recipients_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "60.04",
+      "sourceLocator": "paragraph:2680",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 166,
+      "key": "incident.policy_revision_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "61.01",
+      "sourceLocator": "paragraph:2702",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 167,
+      "key": "incident.protected_procedure_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "61.01",
+      "sourceLocator": "paragraph:2713",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 168,
+      "key": "incident.max_report_chars",
+      "classification": "PARAMETER",
+      "ownerDomain": "61.01",
+      "sourceLocator": "paragraph:2724",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 169,
+      "key": "incident.offline.max_facts",
+      "classification": "PARAMETER",
+      "ownerDomain": "61.01",
+      "sourceLocator": "paragraph:2733",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 170,
+      "key": "incident.anonymous_session_hours",
+      "classification": "PARAMETER",
+      "ownerDomain": "61.01",
+      "sourceLocator": "paragraph:2742",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 171,
+      "key": "incident.protected_aggregate_min",
+      "classification": "PARAMETER",
+      "ownerDomain": "61.01",
+      "sourceLocator": "paragraph:2751",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 172,
+      "key": "incident.source_receipt_ttl",
+      "classification": "POLICY_REF",
+      "ownerDomain": "61.01",
+      "sourceLocator": "paragraph:2759",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 173,
+      "key": "incident.ai_adapter_enabled",
+      "classification": "PARAMETER",
+      "ownerDomain": "61.01",
+      "sourceLocator": "paragraph:2772",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 174,
+      "key": "emergency.drill.cycleBinding",
+      "classification": "POLICY_REF",
+      "ownerDomain": "61.02",
+      "sourceLocator": "paragraph:2781",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 175,
+      "key": "emergency.drill.qualifyingRule",
+      "classification": "POLICY_REF",
+      "ownerDomain": "61.02",
+      "sourceLocator": "paragraph:2793",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 176,
+      "key": "emergency.readiness.requiredChecks",
+      "classification": "POLICY_REF",
+      "ownerDomain": "61.02",
+      "sourceLocator": "paragraph:2803",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 177,
+      "key": "emergency.sources.maxAgeSeconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "61.02",
+      "sourceLocator": "paragraph:2814",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 178,
+      "key": "emergency.offline.leaseSeconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "61.02",
+      "sourceLocator": "paragraph:2823",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 179,
+      "key": "emergency.clock.futureToleranceSeconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "61.02",
+      "sourceLocator": "paragraph:2833",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 180,
+      "key": "emergency.plan.reviewDueRule",
+      "classification": "POLICY_REF",
+      "ownerDomain": "61.02",
+      "sourceLocator": "paragraph:2843",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 181,
+      "key": "emergency.role.combinationPolicy",
+      "classification": "POLICY_REF",
+      "ownerDomain": "61.02",
+      "sourceLocator": "paragraph:2853",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 182,
+      "key": "emergency.drill.closurePolicy",
+      "classification": "POLICY_REF",
+      "ownerDomain": "61.02",
+      "sourceLocator": "paragraph:2870",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 183,
+      "key": "emergency.incident.notificationPolicy",
+      "classification": "POLICY_REF",
+      "ownerDomain": "61.02",
+      "sourceLocator": "paragraph:2880",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 184,
+      "key": "emergency.ai.narrativeAssistEnabled",
+      "classification": "PARAMETER",
+      "ownerDomain": "61.02",
+      "sourceLocator": "paragraph:2892",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 185,
+      "key": "command.page.default",
+      "classification": "PARAMETER",
+      "ownerDomain": "61.03",
+      "sourceLocator": "paragraph:2903",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 186,
+      "key": "command.cursor.ttl_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "61.03",
+      "sourceLocator": "paragraph:2912",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 187,
+      "key": "command.link.ttl_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "61.03",
+      "sourceLocator": "paragraph:2921",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 188,
+      "key": "command.refresh.seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "61.03",
+      "sourceLocator": "paragraph:2930",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 189,
+      "key": "command.queue.max_age_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "61.03",
+      "sourceLocator": "paragraph:2939",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 190,
+      "key": "command.critical.max_age_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "61.03",
+      "sourceLocator": "paragraph:2948",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 191,
+      "key": "command.normal.max_age_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "61.03",
+      "sourceLocator": "paragraph:2957",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 192,
+      "key": "command.search.max_lag_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "61.03",
+      "sourceLocator": "paragraph:2966",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 193,
+      "key": "command.search.rate",
+      "classification": "INVARIANT",
+      "ownerDomain": "61.03",
+      "sourceLocator": "paragraph:2975",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 194,
+      "key": "command.search.max_results",
+      "classification": "INVARIANT",
+      "ownerDomain": "61.03",
+      "sourceLocator": "paragraph:2981",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 195,
+      "key": "command.query.timeout_ms",
+      "classification": "PARAMETER",
+      "ownerDomain": "61.03",
+      "sourceLocator": "paragraph:2987",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 196,
+      "key": "command.priority.due_soon_hours",
+      "classification": "PARAMETER",
+      "ownerDomain": "61.03",
+      "sourceLocator": "paragraph:2996",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 197,
+      "key": "command.scope.max_vessels",
+      "classification": "PARAMETER",
+      "ownerDomain": "61.03",
+      "sourceLocator": "paragraph:3005",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 198,
+      "key": "command.report.binding",
+      "classification": "OWNER_FIELD",
+      "ownerDomain": "61.03",
+      "sourceLocator": "paragraph:3014",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 199,
+      "key": "command.source.adapter_binding",
+      "classification": "OWNER_FIELD",
+      "ownerDomain": "61.03",
+      "sourceLocator": "paragraph:3020",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 200,
+      "key": "command.cyber.assessment_binding",
+      "classification": "OWNER_FIELD",
+      "ownerDomain": "61.03",
+      "sourceLocator": "paragraph:3026",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 201,
+      "key": "reward.appeal_days",
+      "classification": "OWNER_FIELD",
+      "ownerDomain": "57.01",
+      "sourceLocator": "paragraph:3032",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 202,
+      "key": "reward.review_due_days",
+      "classification": "OWNER_FIELD",
+      "ownerDomain": "57.01",
+      "sourceLocator": "paragraph:3038",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 203,
+      "key": "reward.nomination_window_days",
+      "classification": "OWNER_FIELD",
+      "ownerDomain": "57.01",
+      "sourceLocator": "paragraph:3044",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 204,
+      "key": "reward.max_points_per_decision",
+      "classification": "OWNER_FIELD",
+      "ownerDomain": "57.01",
+      "sourceLocator": "paragraph:3050",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 205,
+      "key": "reward.team_allocation",
+      "classification": "OWNER_FIELD",
+      "ownerDomain": "57.01",
+      "sourceLocator": "paragraph:3056",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 206,
+      "key": "reward.privacy_mode",
+      "classification": "OWNER_FIELD",
+      "ownerDomain": "57.01",
+      "sourceLocator": "paragraph:3062",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 207,
+      "key": "reward.duplicate_policy",
+      "classification": "INVARIANT",
+      "ownerDomain": "57.01",
+      "sourceLocator": "paragraph:3068",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 208,
+      "key": "reward.reservation_hours",
+      "classification": "OWNER_FIELD",
+      "ownerDomain": "57.01",
+      "sourceLocator": "paragraph:3074",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 209,
+      "key": "reward.ai_assistance",
+      "classification": "OWNER_FIELD",
+      "ownerDomain": "57.01",
+      "sourceLocator": "paragraph:3080",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 210,
+      "key": "reward.allow_zero_incident_metric",
+      "classification": "INVARIANT",
+      "ownerDomain": "57.01",
+      "sourceLocator": "paragraph:3086",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 211,
+      "key": "ai.request.max_sources",
+      "classification": "PARAMETER",
+      "ownerDomain": "17.01",
+      "sourceLocator": "paragraph:3093",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 212,
+      "key": "ai.request.max_text_chars",
+      "classification": "PARAMETER",
+      "ownerDomain": "17.01",
+      "sourceLocator": "paragraph:3102",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 213,
+      "key": "ai.request.timeout_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "17.01",
+      "sourceLocator": "paragraph:3111",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 214,
+      "key": "ai.tool.max_calls",
+      "classification": "PARAMETER",
+      "ownerDomain": "17.01",
+      "sourceLocator": "paragraph:3120",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 215,
+      "key": "ai.output.current_cache_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "17.01",
+      "sourceLocator": "paragraph:3129",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 216,
+      "key": "ai.transfer.preview_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "17.01",
+      "sourceLocator": "paragraph:3138",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 217,
+      "key": "ai.provider_policy_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "17.01",
+      "sourceLocator": "paragraph:3147",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 218,
+      "key": "ai.privacy_policy_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "17.01",
+      "sourceLocator": "paragraph:3160",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 219,
+      "key": "ai.retention_policy_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "17.01",
+      "sourceLocator": "paragraph:3169",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 220,
+      "key": "ai.training_enabled",
+      "classification": "INVARIANT",
+      "ownerDomain": "17.01",
+      "sourceLocator": "paragraph:3179",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 221,
+      "key": "ai.use_case.enabled",
+      "classification": "PARAMETER",
+      "ownerDomain": "17.01",
+      "sourceLocator": "paragraph:3185",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 222,
+      "key": "eligibility.rule_version",
+      "classification": "FAMILY_REFERENCE",
+      "ownerDomain": "54.01",
+      "sourceLocator": "paragraph:3195",
+      "risk": null,
+      "status": "IMPLEMENTED_FOUNDATION"
+    },
+    {
+      "ordinal": 223,
+      "key": "assignment.overlap_policy",
+      "classification": "INVARIANT",
+      "ownerDomain": "52.01",
+      "sourceLocator": "paragraph:3203",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 224,
+      "key": "workflow.reminder_hours",
+      "classification": "PARAMETER",
+      "ownerDomain": "54.03",
+      "sourceLocator": "paragraph:3209",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 225,
+      "key": "workflow.escalation_hours",
+      "classification": "PARAMETER",
+      "ownerDomain": "54.03",
+      "sourceLocator": "paragraph:3217",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 226,
+      "key": "delegation.max_days",
+      "classification": "PARAMETER",
+      "ownerDomain": "54.02",
+      "sourceLocator": "paragraph:3225",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 227,
+      "key": "account.invite_hours",
+      "classification": "PARAMETER",
+      "ownerDomain": "52.02",
+      "sourceLocator": "paragraph:3234",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 228,
+      "key": "report.timezone",
+      "classification": "PARAMETER",
+      "ownerDomain": "55.01",
+      "sourceLocator": "paragraph:3243",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 229,
+      "key": "custom_field.max_active",
+      "classification": "PARAMETER",
+      "ownerDomain": "54.04",
+      "sourceLocator": "paragraph:3252",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 230,
+      "key": "cert.subject.type_profile_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "60.04",
+      "sourceLocator": "paragraph:3269",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 231,
+      "key": "cert.company.doc_coverage_policy_ref",
+      "classification": "POLICY_REF",
+      "ownerDomain": "60.04",
+      "sourceLocator": "paragraph:3278",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 232,
+      "key": "cert.subject.read_profile",
+      "classification": "PARAMETER",
+      "ownerDomain": "60.04",
+      "sourceLocator": "paragraph:3287",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 233,
+      "key": "audit.source.max_age_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "62.04",
+      "sourceLocator": "paragraph:3316",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 234,
+      "key": "audit.program.policy_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "62.04",
+      "sourceLocator": "paragraph:3325",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 235,
+      "key": "audit.sampling.policy_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "62.04",
+      "sourceLocator": "paragraph:3334",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 236,
+      "key": "audit.classification.policy_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "62.04",
+      "sourceLocator": "paragraph:3343",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 237,
+      "key": "audit.independence.policy_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "62.04",
+      "sourceLocator": "paragraph:3352",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 238,
+      "key": "audit.external_closure.policy_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "62.04",
+      "sourceLocator": "paragraph:3361",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 239,
+      "key": "audit.readiness.max_age_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "62.04",
+      "sourceLocator": "paragraph:3370",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 240,
+      "key": "audit.offline.lease_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "62.04",
+      "sourceLocator": "paragraph:3379",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 241,
+      "key": "audit.impact.policy_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "62.04",
+      "sourceLocator": "paragraph:3388",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 242,
+      "key": "audit.capa.adapter_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "62.04",
+      "sourceLocator": "paragraph:3397",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 243,
+      "key": "audit.management_review.adapter_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "62.04",
+      "sourceLocator": "paragraph:3406",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 244,
+      "key": "audit.industry.definition_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "62.04",
+      "sourceLocator": "paragraph:3415",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 245,
+      "key": "audit.share.policy_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "62.04",
+      "sourceLocator": "paragraph:3424",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 246,
+      "key": "audit.ai.narrative_enabled",
+      "classification": "PARAMETER",
+      "ownerDomain": "62.04",
+      "sourceLocator": "paragraph:3433",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 247,
+      "key": "governance.source.max_age_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.04",
+      "sourceLocator": "paragraph:3442",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 248,
+      "key": "governance.review.policy_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.04",
+      "sourceLocator": "paragraph:3450",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 249,
+      "key": "governance.mandate.policy_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.04",
+      "sourceLocator": "paragraph:3457",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 250,
+      "key": "governance.independence.policy_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.04",
+      "sourceLocator": "paragraph:3464",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 251,
+      "key": "governance.metric.comparison_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.04",
+      "sourceLocator": "paragraph:3471",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 252,
+      "key": "governance.commitment.classification_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.04",
+      "sourceLocator": "paragraph:3478",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 253,
+      "key": "governance.effectiveness.policy_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.04",
+      "sourceLocator": "paragraph:3485",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 254,
+      "key": "governance.capa.adapter_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.04",
+      "sourceLocator": "paragraph:3492",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 255,
+      "key": "governance.workflow.adapter_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.04",
+      "sourceLocator": "paragraph:3499",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 256,
+      "key": "governance.readiness.max_age_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.04",
+      "sourceLocator": "paragraph:3507",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 257,
+      "key": "governance.offline.lease_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.04",
+      "sourceLocator": "paragraph:3516",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 258,
+      "key": "governance.custody.policy_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.04",
+      "sourceLocator": "paragraph:3524",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 259,
+      "key": "governance.share.policy_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.04",
+      "sourceLocator": "paragraph:3531",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 260,
+      "key": "governance.ai.narrative_enabled",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.04",
+      "sourceLocator": "paragraph:3539",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 261,
+      "key": "control.source.maxAgeSeconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "54.01+source owner",
+      "sourceLocator": "paragraph:3548",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 262,
+      "key": "control.review.policyRef",
+      "classification": "PARAMETER",
+      "ownerDomain": "60.03",
+      "sourceLocator": "paragraph:3557",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 263,
+      "key": "control.cycle.policyRef",
+      "classification": "PARAMETER",
+      "ownerDomain": "60.03",
+      "sourceLocator": "paragraph:3566",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 264,
+      "key": "control.effectiveness.policyRef",
+      "classification": "PARAMETER",
+      "ownerDomain": "60.03+59.02",
+      "sourceLocator": "paragraph:3575",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 265,
+      "key": "control.impact.policyRef",
+      "classification": "PARAMETER",
+      "ownerDomain": "60.03",
+      "sourceLocator": "paragraph:3584",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 266,
+      "key": "control.offline.leaseSeconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "54.01 Security",
+      "sourceLocator": "paragraph:3593",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 267,
+      "key": "control.assurance.maxAgeSeconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "54.01 technical",
+      "sourceLocator": "paragraph:3602",
+      "risk": "SAFETY",
+      "status": "IMPLEMENTED_FOUNDATION"
+    },
+    {
+      "ordinal": 268,
+      "key": "control.loadline.comparisonRef",
+      "classification": "PARAMETER",
+      "ownerDomain": "60.03 authorised engineering",
+      "sourceLocator": "paragraph:3611",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 269,
+      "key": "control.security.purposePolicyRef",
+      "classification": "PARAMETER",
+      "ownerDomain": "Security/Privacy",
+      "sourceLocator": "paragraph:3620",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 270,
+      "key": "control.bwm.adapterRef",
+      "classification": "PARAMETER",
+      "ownerDomain": "62.02",
+      "sourceLocator": "paragraph:3629",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 271,
+      "key": "control.ai.narrativeEnabled",
+      "classification": "PARAMETER",
+      "ownerDomain": "Privacy+DPA",
+      "sourceLocator": "paragraph:3638",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 272,
+      "key": "control.legal.gateBindingRef",
+      "classification": "PARAMETER",
+      "ownerDomain": "60.03",
+      "sourceLocator": "paragraph:3647",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 273,
+      "key": "si.query.page_limit",
+      "classification": "PARAMETER",
+      "ownerDomain": "64.01",
+      "sourceLocator": "paragraph:3656",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 274,
+      "key": "si.query.scan_limit",
+      "classification": "PARAMETER",
+      "ownerDomain": "64.01",
+      "sourceLocator": "paragraph:3665",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 275,
+      "key": "si.cursor.ttl_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "64.01",
+      "sourceLocator": "paragraph:3674",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 276,
+      "key": "si.insight.direct_source_limit",
+      "classification": "PARAMETER",
+      "ownerDomain": "64.01",
+      "sourceLocator": "paragraph:3683",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 277,
+      "key": "si.lineage.page_size",
+      "classification": "PARAMETER",
+      "ownerDomain": "64.01",
+      "sourceLocator": "paragraph:3692",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 278,
+      "key": "si.privacy.policy_ref",
+      "classification": "OWNER_FIELD",
+      "ownerDomain": "64.01",
+      "sourceLocator": "paragraph:3701",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 279,
+      "key": "si.quality.policy_ref",
+      "classification": "OWNER_FIELD",
+      "ownerDomain": "64.01",
+      "sourceLocator": "paragraph:3710",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 280,
+      "key": "si.privacy.profile",
+      "classification": "PARAMETER",
+      "ownerDomain": "64.01",
+      "sourceLocator": "paragraph:3719",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 281,
+      "key": "si.quality.profile",
+      "classification": "PARAMETER",
+      "ownerDomain": "64.01",
+      "sourceLocator": "paragraph:3732",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 282,
+      "key": "si.population.profile_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "64.01",
+      "sourceLocator": "paragraph:3745",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 283,
+      "key": "si.metric.adapter_binding",
+      "classification": "PARAMETER",
+      "ownerDomain": "64.01",
+      "sourceLocator": "paragraph:3754",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 284,
+      "key": "si.source.adapter_registry",
+      "classification": "PARAMETER",
+      "ownerDomain": "64.01",
+      "sourceLocator": "paragraph:3763",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 285,
+      "key": "si.retention.policy_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "64.01",
+      "sourceLocator": "paragraph:3772",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 286,
+      "key": "si.offline.enabled",
+      "classification": "INVARIANT",
+      "ownerDomain": "64.01",
+      "sourceLocator": "paragraph:3781",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 287,
+      "key": "technical_supply.source.max_age_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.01",
+      "sourceLocator": "paragraph:3787",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 288,
+      "key": "technical_supply.approval.max_age_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.01",
+      "sourceLocator": "paragraph:3796",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 289,
+      "key": "technical_supply.expiry.boundary_policy_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.01",
+      "sourceLocator": "paragraph:3809",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 290,
+      "key": "technical_supply.critical_requirement.policy_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.01",
+      "sourceLocator": "paragraph:3818",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 291,
+      "key": "technical_supply.hazmat.handling_policy_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.01",
+      "sourceLocator": "paragraph:3828",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 292,
+      "key": "technical_supply.disposal.authority_policy_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.01",
+      "sourceLocator": "paragraph:3838",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 293,
+      "key": "technical_supply.count.warning_threshold",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.01",
+      "sourceLocator": "paragraph:3847",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 294,
+      "key": "technical_supply.quantity.conversion_revision_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.01",
+      "sourceLocator": "paragraph:3856",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 295,
+      "key": "technical_supply.erp.authority_binding_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.01",
+      "sourceLocator": "paragraph:3869",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 296,
+      "key": "technical_supply.fact.future_tolerance_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.01",
+      "sourceLocator": "paragraph:3878",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 297,
+      "key": "technical_supply.requisition.overdue_policy_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.01",
+      "sourceLocator": "paragraph:3887",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 298,
+      "key": "technical_supply.payload.max_bytes",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.01",
+      "sourceLocator": "paragraph:3900",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 299,
+      "key": "technical_supply.query.max_page_size",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.01",
+      "sourceLocator": "paragraph:3908",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 300,
+      "key": "technical_supply.lines.max_count",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.01",
+      "sourceLocator": "paragraph:3916",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 301,
+      "key": "technical_supply.snapshot.max_rows",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.01",
+      "sourceLocator": "paragraph:3924",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 302,
+      "key": "release.gate_policy_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "65.02",
+      "sourceLocator": "paragraph:3932",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 303,
+      "key": "release.pilot_protocol_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "65.02",
+      "sourceLocator": "paragraph:3941",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 304,
+      "key": "release.source_adapter_refs",
+      "classification": "PARAMETER",
+      "ownerDomain": "65.02",
+      "sourceLocator": "paragraph:3950",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 305,
+      "key": "release.mandate_policy_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "65.02",
+      "sourceLocator": "paragraph:3959",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 306,
+      "key": "release.defect_classification_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "65.02",
+      "sourceLocator": "paragraph:3968",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 307,
+      "key": "release.condition_policy_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "65.02",
+      "sourceLocator": "paragraph:3977",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 308,
+      "key": "release.proof_ttl_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "65.02",
+      "sourceLocator": "paragraph:3986",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 309,
+      "key": "release.owner_receipt_adapter_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "65.02",
+      "sourceLocator": "paragraph:3995",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 310,
+      "key": "release.metric_purpose_binding_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "65.02",
+      "sourceLocator": "paragraph:4004",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 311,
+      "key": "release.offline_lease_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "65.02",
+      "sourceLocator": "paragraph:4013",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 312,
+      "key": "release.custody_policy_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "65.02",
+      "sourceLocator": "paragraph:4022",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 313,
+      "key": "release.share_policy_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "65.02",
+      "sourceLocator": "paragraph:4031",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 314,
+      "key": "release.ai_narrative_enabled",
+      "classification": "PARAMETER",
+      "ownerDomain": "65.02",
+      "sourceLocator": "paragraph:4040",
+      "risk": "SAFETY",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 315,
+      "key": "ops.proof_ttl_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "65.01",
+      "sourceLocator": "paragraph:4049",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 316,
+      "key": "ops.health_freshness_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "65.01",
+      "sourceLocator": "paragraph:4056",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 317,
+      "key": "ops.diagnostic_window_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "65.01",
+      "sourceLocator": "paragraph:4063",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 318,
+      "key": "ops.support_access_max_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "65.01",
+      "sourceLocator": "paragraph:4070",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 319,
+      "key": "ops.executor_poll_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "65.01",
+      "sourceLocator": "paragraph:4078",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 320,
+      "key": "ops.diagnostic_ticket_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "65.01",
+      "sourceLocator": "paragraph:4085",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 321,
+      "key": "ops.environment_profile_ref",
+      "classification": "OWNER_FIELD",
+      "ownerDomain": "65.01",
+      "sourceLocator": "paragraph:4093",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 322,
+      "key": "ops.executor_registration_ref",
+      "classification": "OWNER_FIELD",
+      "ownerDomain": "65.01",
+      "sourceLocator": "paragraph:4099",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 323,
+      "key": "ops.recovery_participant_contracts",
+      "classification": "OWNER_FIELD",
+      "ownerDomain": "65.01",
+      "sourceLocator": "paragraph:4105",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 324,
+      "key": "cyber.readiness.max_age_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.06",
+      "sourceLocator": "paragraph:4110",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 325,
+      "key": "cyber.source_fence.max_age_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.06",
+      "sourceLocator": "paragraph:4118",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 326,
+      "key": "cyber.containment.authorization_ttl_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.06",
+      "sourceLocator": "paragraph:4126",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 327,
+      "key": "privacy.disclosure.authorization_ttl_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.06",
+      "sourceLocator": "paragraph:4133",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 328,
+      "key": "privacy.internal_reminder_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.06",
+      "sourceLocator": "paragraph:4140",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 329,
+      "key": "cyber.receipt.reconcile_interval_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.06",
+      "sourceLocator": "paragraph:4148",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 330,
+      "key": "cyber.offline.intake.enabled",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.06",
+      "sourceLocator": "paragraph:4156",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 331,
+      "key": "cyber.ai.draft_assistance.enabled",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.06",
+      "sourceLocator": "paragraph:4163",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 332,
+      "key": "integration.source.max_age_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.02",
+      "sourceLocator": "paragraph:4170",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 333,
+      "key": "integration.source_fence.max_age_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.02",
+      "sourceLocator": "paragraph:4178",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 334,
+      "key": "integration.preview.max_age_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.02",
+      "sourceLocator": "paragraph:4186",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 335,
+      "key": "integration.plan.approval_max_age_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.02",
+      "sourceLocator": "paragraph:4193",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 336,
+      "key": "integration.retry.max_attempts",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.02",
+      "sourceLocator": "paragraph:4200",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 337,
+      "key": "integration.retry.base_delay_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.02",
+      "sourceLocator": "paragraph:4208",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 338,
+      "key": "integration.retry.max_delay_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.02",
+      "sourceLocator": "paragraph:4217",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 339,
+      "key": "integration.worker.lease_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.02",
+      "sourceLocator": "paragraph:4226",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 340,
+      "key": "integration.event.gap_alert_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.02",
+      "sourceLocator": "paragraph:4234",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 341,
+      "key": "integration.webhook.clock_skew_seconds",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.02",
+      "sourceLocator": "paragraph:4242",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 342,
+      "key": "integration.query.max_event_range_days",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.02",
+      "sourceLocator": "paragraph:4251",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 343,
+      "key": "integration.external_dispatch.enabled",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.02",
+      "sourceLocator": "paragraph:4259",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 344,
+      "key": "integration.credential_import.enabled",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.02",
+      "sourceLocator": "paragraph:4266",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 345,
+      "key": "integration.regulatory_source_import.enabled",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.02",
+      "sourceLocator": "paragraph:4273",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 346,
+      "key": "integration.retention_policy_revision_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.02",
+      "sourceLocator": "paragraph:4280",
+      "risk": null,
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 347,
+      "key": "integration.data_transfer_policy_revision_ref",
+      "classification": "PARAMETER",
+      "ownerDomain": "63.02",
+      "sourceLocator": "paragraph:4287",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 348,
+      "key": "mobile.offline.enabled",
+      "classification": "TECHNICAL_PARAMETER",
+      "ownerDomain": "63.03",
+      "sourceLocator": "paragraph:4294",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 349,
+      "key": "mobile.offline.cacheLeaseSeconds",
+      "classification": "TECHNICAL_PARAMETER",
+      "ownerDomain": "63.03",
+      "sourceLocator": "paragraph:4301",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 350,
+      "key": "mobile.offline.capturePermitSeconds",
+      "classification": "TECHNICAL_PARAMETER",
+      "ownerDomain": "63.03",
+      "sourceLocator": "paragraph:4308",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 351,
+      "key": "mobile.offline.idleLockSeconds",
+      "classification": "TECHNICAL_PARAMETER",
+      "ownerDomain": "63.03",
+      "sourceLocator": "paragraph:4315",
+      "risk": "HIGH",
+      "status": "IMPLEMENTED_FOUNDATION"
+    },
+    {
+      "ordinal": 352,
+      "key": "mobile.offline.maxQueueItems",
+      "classification": "TECHNICAL_PARAMETER",
+      "ownerDomain": "63.03",
+      "sourceLocator": "paragraph:4322",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 353,
+      "key": "mobile.offline.maxCacheBytes",
+      "classification": "TECHNICAL_PARAMETER",
+      "ownerDomain": "63.03",
+      "sourceLocator": "paragraph:4329",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    },
+    {
+      "ordinal": 354,
+      "key": "mobile.offline.maxEvidenceBytes",
+      "classification": "TECHNICAL_PARAMETER",
+      "ownerDomain": "63.03",
+      "sourceLocator": "paragraph:4336",
+      "risk": "HIGH",
+      "status": "NOT_IMPLEMENTED"
+    }
+  ]
+}

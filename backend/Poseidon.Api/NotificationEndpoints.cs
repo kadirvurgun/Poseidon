@@ -225,7 +225,7 @@ public static class NotificationEndpoints
             if (id != null) {
                 var notice = await Visible(db, a, vessel).SingleOrDefaultAsync(n => n.Id == id, ct);
                 if (notice == null) return await Fail(h, 404, "resource_not_found");
-                if (notice.Version != expected) return await Fail(h, 409, "version_conflict");
+                if (notice.Version != expected) return await Replay() ?? await Fail(h, 409, "version_conflict");
                 if (notice.State is not ("Open" or "Escalated")) return await Fail(h, 409, "invalid_state");
                 if (!(await ConfirmedSources(h, db, vessel, [notice])).Contains(notice.Id)) return await Fail(h, 409, "input_review_required");
                 notice.State = "Acknowledged"; notice.Revision++;
@@ -233,7 +233,7 @@ public static class NotificationEndpoints
                 await db.SaveChangesAsync(ct); result = new NotificationSavedDto(notice.Id, notice.Revision, notice.Version, notice.State);
             } else {
                 var p = await db.NotificationPreferences.SingleOrDefaultAsync(p => p.VesselId == vessel && p.ActorId == a.Id, ct);
-                if ((p?.Version ?? 0) != expected) return await Fail(h, 409, "version_conflict");
+                if ((p?.Version ?? 0) != expected) return await Replay() ?? await Fail(h, 409, "version_conflict");
                 if (p == null) { p = new() { TenantId = a.TenantId, VesselId = vessel, ActorId = a.Id }; db.NotificationPreferences.Add(p); }
                 else { p.Revision++; db.Entry(p).Property(x => x.MutedAdvisory).IsModified = true; }
                 p.MutedAdvisory = muted; await db.SaveChangesAsync(ct);

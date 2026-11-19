@@ -119,16 +119,16 @@ public static class CertificateExtractionEndpoints
             return Results.Content(receipt.OutcomeJson,"application/json");
         }
         var replay=await Replay();if(replay!=null)return replay;
-        if(review.ExpiresAt<=Now(h) || !await CertificateExtractionAccess.Current(h,binding,null,true,true))return await Fail(h,409,"version_conflict",id);
+        if(review.ExpiresAt<=Now(h) || !await CertificateExtractionAccess.Current(h,binding,null,true,true))return await Replay()??await Fail(h,409,"version_conflict",id);
         IDbContextTransaction? tx=null;
         try {
             tx=await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable,ct);
             var source=await CertificateExtractionAccess.Read(db,h,vessel,id,null,command.ExpectedVersion,null,ct);
-            if(source==null || source.Binding!=binding)return await Fail(h,409,"version_conflict",id);
+            if(source==null || source.Binding!=binding)return await Replay()??await Fail(h,409,"version_conflict",id);
             if(!CertificateExtractionPolicy.TryMerge(source.Record.Content.Metadata,command.Facts,out var metadata))return await Fail(h,400,"validation_failed",id);
             var content=source.Record.Content with{Metadata=metadata};
             var applied=await CertificateWriter.Apply(db,actor,vessel,new(id,command.ExpectedVersion,content,"AUTHORING_CORRECTION"),false,Now(h),ct);
-            if(applied.Record==null)return await Fail(h,applied.Status,applied.Code??"validation_failed",id);
+            if(applied.Record==null)return (applied.Status==409?await Replay():null)??await Fail(h,applied.Status,applied.Code??"validation_failed",id);
             var saved=applied.Record with{CanEdit=false,CurrentRevision=false};var outcome=JsonSerializer.Serialize(saved,CertificateReader.Json);
             db.CertificateCommandReceipts.Add(new(){TenantId=actor.TenantId,VesselId=vessel,ActorId=actor.Id,Key=key,ResourceId=id,CertificateId=id,Action="CertificateSave",Fingerprint=fingerprint,OutcomeJson=outcome,SavedAt=Now(h)});
             await db.SaveChangesAsync(ct);

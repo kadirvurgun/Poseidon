@@ -38,6 +38,7 @@ public static class SeedImporter
         await TugFixtures.AddMissingAsync(db, data.Vessels, cancellationToken).ConfigureAwait(false);
         await TechnicalFixtures.AddMissingAsync(db, data.Vessels, cancellationToken).ConfigureAwait(false);
         await CrewFixtures.AddMissingAsync(db, data.Vessels, cancellationToken).ConfigureAwait(false);
+        await HrFixtures.AddMissingAsync(db, data.Companies, data.Vessels, cancellationToken).ConfigureAwait(false);
         foreach (var vessel in data.Vessels) {
             if (await db.Credentials.FindAsync([vessel.TenantId, vessel.Id], cancellationToken) != null) continue;
             db.Credentials.Add(new Credential { TenantId = vessel.TenantId, Id = vessel.Id, VesselId = vessel.Id,

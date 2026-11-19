@@ -17,6 +17,16 @@ public sealed class Company : ITenantEntity
     public required string Code { get; set; }
     public required string Name { get; set; }
     public uint Version { get; set; }
+    // PLAN-1511-5201 / LEAD-5601-D01: the single company master is the 52.01 LegalEntity (companyId == legalEntityId).
+    // Unknown values stay null; existing rows migrate as incomplete Draft legal entities (no value is inferred from Name).
+    public string? LegalName { get; set; }
+    public string? CountryCode { get; set; }
+    public string? HrTimeZone { get; set; }
+    public string? BaseLocale { get; set; }
+    public string LegalEntityStatus { get; set; } = "Draft";
+    public DateTimeOffset? EffectiveFrom { get; set; }
+    public DateTimeOffset? EffectiveTo { get; set; }
+    public long LegalEntityRevision { get; set; }
 }
 
 public enum VesselKind { Ship, Tug }
