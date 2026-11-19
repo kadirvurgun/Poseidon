@@ -75,3 +75,9 @@ Main: #16 #17 #18 #20 #23 #36 + **#37 paket 2** birleşik (`2995f70`, 19.11 ~08:
 - PR #39 entegrasyon bağımsız QA **PASS-WITH-NOTES** (9c82bee; birleşimler, snapshot, 24 profil doğru). Düşük notlar: L1 gerçek-host probe If-Match eksik/bayat istek göndermiyor (428/412 yalnız `ControlledDocumentTests.cs:71-72` Integration'da); L2 40001/40P01 `ControlledDocumentEndpoints.cs:295-296` 409 `version_conflict` dönüyor, profil bayatı 412 diyor → profilde belgele; L3 probe izin regex'i `[a-z_.]` rakam içeren izni atlar → `[a-z0-9_.]`.
 - PR #39 push run 9c82bee kırmızı / PR run yeşil (aynı commit = gerçek yarış): `RegulatoryProfile.test.tsx:149` `onSaving(false)`'ı pasif effect (`use-profile-recovery.ts:44`) flush olmadan doğruluyordu → 3ea87b4 waitFor (doğrulama aynı). 3ea87b4 CI push+PR yeşil → **#39 birleşti, main `55d5e1f`** (#25 #28 #30 Merged).
 - Açık PR yok. Sıradaki: **S2 sprint kapısı** (main 55d5e1f CI kanıtı + bağımsız S2 QA → project-status S2 kabul), sonra QA düşük-not takip paketi, sonra S3 backlog.
+
+### S2 kapısı (19.11 ~14:15)
+- Main 55d5e1f CI run 44510977746 yeşil. Bağımsız S2 QA: DEV-020…025 **ACCEPT-WITH-NOTES ×6**, engelleyici yok.
+- `docs/s2-gate-acceptance-20261119` **b97686b** (push edildi, PR yok): project-status.json/md → **26 iş / 145 SP / %14,95**, `docs/phases/S2-GATE-20261119.md`, QA kanıtı `docs/evidence/s2-20261119-55d5e1f/qa/`, CLAUDE.md sayım satırı.
+- `fix/qa-low-notes-20261119` alt-ajanda (probe regex, IF-MATCH 409 belgesi, STORED-OUTCOME metni, ControlledDocumentPolicy activeUseOpen zorunlu, axe kapsamı + incomplete ek, EnterpriseChrome tagline). Bitince: `integration/bundle5-20261119` = main + s2-gate docs + qa-notes → tek PR.
+- Ertelenen tasarım işi: critical-write kapısında Modified satırlar için gerçek durum geçişi kanıtı (OwnerReference sabiti yerine Status/AccessRevision/State; belge revizyonunda IntakeState/PublicationState).
