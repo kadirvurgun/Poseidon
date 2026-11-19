@@ -121,8 +121,60 @@ export async function owners(vessel: string, signal: AbortSignal): Promise<{ act
   if (!exact(v, ['items']) || !Array.isArray(v.items) || v.items.length > 1000 || v.items.some(x => !exact(x, ['actorId', 'roleId']) || !isGuid(x.actorId) || !isGuid(x.roleId))) return invalid()
   return v.items as { actorId: string; roleId: string }[]
 }
-export async function orphans(vessel: string, offset: number, signal: AbortSignal): Promise<{ draftCriticalOrphans: string[]; hasMore: boolean; available: boolean; reason: string; uncontrolledObligations: { ruleId: string; ruleRevision: number; requirementId: string; requirementRevision: number }[] }> {
+export type OrphanReason = 'CRITICALITY_UNKNOWN' | 'REQUIREMENT_LINK_MISSING' | 'OWNER_MISSING'
+export type ControlState = 'DRAFT' | 'IN_REVIEW' | 'APPROVED' | 'PUBLISHED' | 'RETIRED'
+export type CriticalOrphan = { id: string; revision: number; controlState: ControlState; reasons: OrphanReason[] }
+const controlStates: readonly string[] = ['DRAFT', 'IN_REVIEW', 'APPROVED', 'PUBLISHED', 'RETIRED']
+const orphanReasons: readonly string[] = ['CRITICALITY_UNKNOWN', 'REQUIREMENT_LINK_MISSING', 'OWNER_MISSING']
+function criticalOrphan(v: unknown): v is CriticalOrphan {
+  return exact(v, ['id', 'revision', 'controlState', 'reasons']) && isGuid(v.id) && positive(v.revision) && typeof v.controlState === 'string' && controlStates.includes(v.controlState) && v.controlState !== 'RETIRED' &&
+    Array.isArray(v.reasons) && v.reasons.length > 0 && v.reasons.length <= 3 && v.reasons.every(r => typeof r === 'string' && orphanReasons.includes(r)) && new Set(v.reasons).size === v.reasons.length
+}
+// DEV-028: criticalOrphans is null only when an older server omits it; absence is never "no orphans".
+export async function orphans(vessel: string, offset: number, signal: AbortSignal): Promise<{ draftCriticalOrphans: string[]; criticalOrphans: CriticalOrphan[] | null; hasMore: boolean; available: boolean; reason: string; uncontrolledObligations: { ruleId: string; ruleRevision: number; requirementId: string; requirementRevision: number }[] }> {
   const v = await request<unknown>(`controls/orphans?vesselId=${vessel}&offset=${offset}`, signal)
-  if (!exact(v, ['available', 'reason', 'draftCriticalOrphans', 'uncontrolledObligations', 'offset', 'hasMore']) || typeof v.available !== 'boolean' || typeof v.reason !== 'string' || v.available && v.reason !== 'QUALIFIED_CATALOG_SCOPE_ONLY' || !Array.isArray(v.uncontrolledObligations) || v.uncontrolledObligations.length > 25 || v.uncontrolledObligations.some(o => !exact(o, ['ruleId', 'ruleRevision', 'requirementId', 'requirementRevision']) || !isGuid(o.ruleId) || !positive(o.ruleRevision) || !isGuid(o.requirementId) || !positive(o.requirementRevision)) || v.offset !== offset || typeof v.hasMore !== 'boolean' || !Array.isArray(v.draftCriticalOrphans) || v.draftCriticalOrphans.length > 25 || !v.draftCriticalOrphans.every(isGuid)) return invalid()
-  return { draftCriticalOrphans: v.draftCriticalOrphans as string[], hasMore: v.hasMore, available: v.available, reason: v.reason, uncontrolledObligations: v.uncontrolledObligations as { ruleId: string; ruleRevision: number; requirementId: string; requirementRevision: number }[] }
+  const keys = ['available', 'reason', 'draftCriticalOrphans', 'uncontrolledObligations', 'offset', 'hasMore']
+  const extended = !!v && typeof v === 'object' && Object.hasOwn(v, 'criticalOrphans')
+  if (!exact(v, extended ? [...keys, 'criticalOrphans'] : keys) || typeof v.available !== 'boolean' || typeof v.reason !== 'string' || v.available && v.reason !== 'QUALIFIED_CATALOG_SCOPE_ONLY' || !Array.isArray(v.uncontrolledObligations) || v.uncontrolledObligations.length > 25 || v.uncontrolledObligations.some(o => !exact(o, ['ruleId', 'ruleRevision', 'requirementId', 'requirementRevision']) || !isGuid(o.ruleId) || !positive(o.ruleRevision) || !isGuid(o.requirementId) || !positive(o.requirementRevision)) || v.offset !== offset || typeof v.hasMore !== 'boolean' || !Array.isArray(v.draftCriticalOrphans) || v.draftCriticalOrphans.length > 25 || !v.draftCriticalOrphans.every(isGuid)) return invalid()
+  if (extended && (!Array.isArray(v.criticalOrphans) || v.criticalOrphans.length > 25 || !v.criticalOrphans.every(criticalOrphan))) return invalid()
+  return { draftCriticalOrphans: v.draftCriticalOrphans as string[], criticalOrphans: extended ? v.criticalOrphans as CriticalOrphan[] : null, hasMore: v.hasMore, available: v.available, reason: v.reason, uncontrolledObligations: v.uncontrolledObligations as { ruleId: string; ruleRevision: number; requirementId: string; requirementRevision: number }[] }
+}
+export type LifecycleReason = 'SUBMIT_FOR_REVIEW' | 'RETURN_FOR_CORRECTION' | 'APPROVE' | 'PUBLISH' | 'RETIRE'
+export type LifecycleEvent = { sequence: number; controlRevision: number; fromState: ControlState; toState: ControlState; reasonCode: LifecycleReason | 'CONTENT_REVISED'; actorId: string; rationale: string | null; savedAt: string }
+export type Lifecycle = { id: string; vesselId: string; revision: number; version: number; state: ControlState; effectiveness: 'UNKNOWN'; events: LifecycleEvent[]; offset: number; hasMore: boolean; canWrite: boolean; canReview: boolean }
+const lifecycleReasons: readonly string[] = ['SUBMIT_FOR_REVIEW', 'RETURN_FOR_CORRECTION', 'APPROVE', 'PUBLISH', 'RETIRE', 'CONTENT_REVISED']
+function lifecycleEvent(v: unknown): v is LifecycleEvent {
+  return exact(v, ['sequence', 'controlRevision', 'fromState', 'toState', 'reasonCode', 'actorId', 'rationale', 'savedAt']) && positive(v.sequence) && positive(v.controlRevision) &&
+    typeof v.fromState === 'string' && controlStates.includes(v.fromState) && v.fromState !== 'RETIRED' && typeof v.toState === 'string' && controlStates.includes(v.toState) &&
+    typeof v.reasonCode === 'string' && lifecycleReasons.includes(v.reasonCode) && isGuid(v.actorId) && (v.rationale === null || typeof v.rationale === 'string' && v.rationale.length <= 2000) && timestamp(v.savedAt)
+}
+// The definition lifecycle is never completion, verification or effectiveness.
+export async function lifecycle(vessel: string, id: string, offset: number, signal: AbortSignal): Promise<Lifecycle> {
+  const v = await request<unknown>(`controls/${id}/lifecycle?vesselId=${vessel}&offset=${offset}`, signal)
+  if (!exact(v, ['id', 'vesselId', 'revision', 'version', 'state', 'effectiveness', 'events', 'offset', 'hasMore', 'canWrite', 'canReview']) || v.id !== id || v.vesselId !== vessel || !positive(v.revision) || !version(v.version) ||
+    typeof v.state !== 'string' || !controlStates.includes(v.state) || v.effectiveness !== 'UNKNOWN' || !Array.isArray(v.events) || v.events.length > 25 || !v.events.every(lifecycleEvent) ||
+    v.offset !== offset || typeof v.hasMore !== 'boolean' || v.hasMore && v.events.length !== 25 || typeof v.canWrite !== 'boolean' || typeof v.canReview !== 'boolean') return invalid()
+  return v as Lifecycle
+}
+export type LifecycleCommand = { expectedVersion: number; revision: number; reasonCode: LifecycleReason; rationale: string }
+export async function transition(vessel: string, id: string, frozen: { body: string; key: string }, csrf: string, signal: AbortSignal): Promise<{ state: ControlState; version: number; revision: number; event: LifecycleEvent }> {
+  const v = await request<unknown>(`controls/${id}/lifecycle?vesselId=${vessel}`, signal, { method: 'POST', body: frozen.body, headers: { 'Content-Type': 'application/json', 'Idempotency-Key': frozen.key, 'X-CSRF-TOKEN': csrf } })
+  const sent = JSON.parse(frozen.body) as LifecycleCommand
+  if (!exact(v, ['id', 'vesselId', 'revision', 'version', 'state', 'effectiveness', 'event']) || v.id !== id || v.vesselId !== vessel || v.revision !== sent.revision || !version(v.version) ||
+    typeof v.state !== 'string' || !controlStates.includes(v.state) || v.effectiveness !== 'UNKNOWN' || !lifecycleEvent(v.event) || v.event.reasonCode !== sent.reasonCode || v.event.toState !== v.state || v.event.controlRevision !== sent.revision) return invalid()
+  return { state: v.state as ControlState, version: v.version, revision: v.revision, event: v.event }
+}
+export type SupportingEvidence = { evidence: Row; pinnedControlRevision: number; pinCurrent: boolean }
+export async function supportingEvidence(vessel: string, id: string, offset: number, signal: AbortSignal): Promise<{ controlRevision: number; items: SupportingEvidence[]; hasMore: boolean }> {
+  const v = await request<unknown>(`controls/${id}/supporting-evidence?vesselId=${vessel}&offset=${offset}`, signal)
+  if (!exact(v, ['controlId', 'vesselId', 'controlRevision', 'items', 'offset', 'hasMore']) || v.controlId !== id || v.vesselId !== vessel || !positive(v.controlRevision) || v.offset !== offset ||
+    typeof v.hasMore !== 'boolean' || !Array.isArray(v.items) || v.items.length > 25) return invalid()
+  const controlRevision = v.controlRevision
+  const items = v.items.map(item => {
+    if (!exact(item, ['evidence', 'pinnedControlRevision', 'pinCurrent']) || !positive(item.pinnedControlRevision) || typeof item.pinCurrent !== 'boolean' || item.pinCurrent !== (item.pinnedControlRevision === controlRevision)) return invalid()
+    const evidence = decodeRow(item.evidence, vessel, 'Evidence')
+    if (!evidence.links.some(link => link.kind === 'Control' && link.id === id && link.revision === item.pinnedControlRevision)) return invalid()
+    return { evidence, pinnedControlRevision: item.pinnedControlRevision, pinCurrent: item.pinCurrent }
+  })
+  return { controlRevision, items, hasMore: v.hasMore }
 }
