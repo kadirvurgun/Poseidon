@@ -14,6 +14,7 @@ import { AgentsDashboard } from './agents/AgentsDashboard';
 import { ProductApp } from './product/ProductApp';
 import { SystemHealthWorkspace } from './product/SystemHealthWorkspace';
 import { NotificationWorkspace } from './product/NotificationWorkspace';
+import { ConflictCenterWorkspace } from './product/ConflictCenterWorkspace';
 import { ShipOperationsWorkspace } from './product/ShipOperationsWorkspace';
 import { CertificateWorkspace } from './product/CertificateWorkspace';
 import { DefectWorkspace } from './product/DefectWorkspace';
@@ -33,6 +34,8 @@ export function App() {
         return <SystemHealthWorkspace />;
     if (window.location.pathname === '/app/notification-escalation')
         return <NotificationWorkspace />;
+    if (window.location.pathname === '/app/offline-conflict-center')
+        return <ConflictCenterWorkspace />;
     const importer = /^\/app\/excel-migration\/([0-9a-fA-F-]{36})\/?$/.exec(window.location.pathname);
     if (importer)
         return <ImportWorkspace key={importer[1]} vessel={importer[1]}/>;

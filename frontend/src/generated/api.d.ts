@@ -586,6 +586,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/sync/conflicts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["SyncConflictList"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/vessels/{vessel}/crew/{assignment}/current-assignment": {
         parameters: {
             query?: never;
@@ -9570,6 +9586,43 @@ export interface components {
             /** Format: date */
             expiresOn?: null | string;
         };
+        SyncConflictItemDto: {
+            source: string;
+            /** Format: uuid */
+            resourceId: string;
+            resourceKind: null | string;
+            /** Format: uuid */
+            enrollmentId: string;
+            /** Format: uuid */
+            commandId: string;
+            /** Format: uint32 */
+            baseVersion: number;
+            /** Format: uint32 */
+            serverVersionAtConflict: number;
+            /** Format: date-time */
+            capturedAt: null | string;
+            /** Format: date-time */
+            receivedAt: string;
+            state: string;
+            /** Format: uuid */
+            resolutionCommandId: null | string;
+            resolutionResult: null | string;
+        };
+        SyncConflictPageDto: {
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: date-time */
+            readAt: string;
+            sources: components["schemas"]["SyncConflictSourceDto"][];
+            items: components["schemas"]["SyncConflictItemDto"][];
+            /** Format: int32 */
+            offset: number;
+            hasMore: boolean;
+        };
+        SyncConflictSourceDto: {
+            source: string;
+            state: string;
+        };
         SystemHealthDto: {
             /** Format: uuid */
             vesselId: string;
@@ -11714,6 +11767,54 @@ export interface operations {
         responses: {
             /** @description OK */
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    SyncConflictList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SyncConflictPageDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
