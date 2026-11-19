@@ -11,26 +11,30 @@ Her büyük adımdan önce `C:\Users\avurgun\.claude-poseidon\statusline\cache\u
 - C: diski 18.11 gece 0 bayta düştü → Docker Desktop daemon kilitlendi (`docker info` timeout). Eski worktree bin/obj silinerek ~1,9 GB açıldı. Başlarken `(Get-PSDrive C).Free` < 5 GB ise önce yer aç (yalnız yeniden üretilebilir şeyler: eski `.runtime/worktrees/*` bin/obj, TestResults, indirilen CI artifact'ları). Docker hâlâ yanıt vermiyorsa yerel PG testlerini çalıştırma; CI kanıtı yeterli, kullanıcıdan Docker restart iste.
 
 ## Main ve PR durumu
-Main: #16 #17 #18 #20 #23 + **#36 S2 paketi** (#31 #24 #19 #21 #26 #27 #22 #35) birleşik (son: `b1b02b4`, 19.11 ~01:00). Açık: #25 #28 #29 #30 #32 #33 #34 (hepsi taban main) → ikinci entegrasyon PR'ında topla.
+Main: #16 #17 #18 #20 #23 + **#36 S2 paketi** birleşik (`b1b02b4`). Açık tekil PR'lar (hepsi taban main): #25 #28 #29 #30 #32 #33 #34 → ikinci entegrasyon PR'ında toplanacak.
 
-| PR | İçerik | Durum / sıradaki adım |
+### 19.11 02:41 oturumu (zamanlanmış) — yapılanlar
+- Ortam: git 2.37 "dubious ownership" → ilgili worktree yolları **tek tek** global `safe.directory`'ye eklendi (asla `*`). `.tools/dotnet` boştu → SDK 10.0.403 `dotnet-install.ps1` ile `C:/Users/avurgun/source/repos/Poseidon/.tools/dotnet`'e yeniden kuruldu. `git push` kimlik yardımcısı bozuk (`.tools/gh` yok) → push: `git -c credential.helper= -c "credential.helper=!'C:/Users/avurgun/AppData/Local/Microsoft/WinGet/Links/gh.exe' auth git-credential" push origin HEAD:<dal>`. Docker `docker info` 20 sn timeout → PG testleri yerelde DEFERRED.
+- Kota dosyası (`usage.json`) 00:06'dan beri güncellenmiyor (91%, resetsAt geçmiş) → temkinli: en fazla 2 alt-ajan.
+
+| PR / dal | Bu oturumda | Son durum / sıradaki adım |
 |---|---|---|
-| **#36** | S2 entegrasyon paketi: #31 #24 #19 #21 #26 #27 #22 #35 (HEAD 42c9c25) | CI koşuyor. Push+PR koşusu yeşilse `gh pr merge 36 --merge --match-head-commit <sha>`; branch koruması "up to date" ister — main ilerlediyse main'i birleştir, push, CI bekle. Birleşince #19 #21 #22 #24 #26 #27 #31 #35 otomatik Merged olur. |
-| #29 | DEV-024 kritik durum (taban DEV-020 dalı) | QA FAIL düzeltildi (944759e). #36 birleşince tabanı main'e çevir (`gh pr edit 29 --base main`), main'i birleştir, push, **bağımsız yeniden QA**, CI. |
-| #32 | axe-core kapısı (taban DEV-025 dalı) | #36 sonrası tabanı main'e çevir, main'i birleştir, CI. |
-| #28 | 52.02 üyelik | QA PASS-WITH-NOTES; düzeltme ajanı yarıda durdu: worktree `.runtime/worktrees/plan-5202-20261118` (9f05cc9, origin'den 3 commit ileri, 1 dosya commit'lenmemiş). Değişikliği incele, tamamla (vekalet kapsamı+gerekçe, security-suspend resume yetkisi, last-admin eşzamanlılık testi, 503/cookie testleri), commit, push. |
-| #30 | 58.02 belge zinciri | QA düzeltmeleri commit'li ve push edildi (8cca242) — ajan durdurulmadan önce son commit docs idi; testleri (trait PLAN-1511-5802, ModelParity, MigrationIdOrdering) CI/yerelde doğrula; eksik kalan F1–F5 maddesi varsa tamamla. |
-| #33 | 52.01 tüzel kişi/İK | QA düzeltmeleri push edildi (94dd49b). Docker'lı testler yerelde koşmadı → CI'ya bak. |
-| #34 | 54.01 tipli politika | Açık; bağımsız QA yapılmadı → QA başlat. |
-| #25 | 58.03 uç profil sicili | En son birleşecek; diğer PR'ların yeni uçlarına profil ekle (scripts/endpoint_profiles.py). |
-| (dal) | `fix/same-key-replay-race-followup-20261118` worktree `.runtime/worktrees/replay-race-followup-20261118` | Ajan yarıda durdu: 15 dosya commit'lenmemiş (HumanReview/RegulatoryQualification/Notification aynı-anahtar replay yarışı). İncele, testleri çalıştır, commit, push, PR (taban: #31 birleştiyse main). |
+| #29 DEV-024 | main birleştirildi (30c93e9). CI teşhisleri: (1) `compliance-onboarding.spec.ts:74` mock UNKNOWN+STATE_ONLY gönderiyordu (DEC-02 sonrası decoder reddediyor) → 773f1f8; (2) main birleşimi sonrası `profile-repair.spec.ts:81` iki `alert` (mock `/critical-states` yok) → 3d1b398. Yerel: build 0 uyarı, domain 832/832, lint, vitest product 1600/1600. Playwright real-API smoke yerelde koşmadı (PG). | 3d1b398 CI bekleniyor. **Dalda art arda 2 kırmızı; 3. kırmızıda dur ve raporla (AGENTS.md).** Yeşilse bağımsız yeniden QA. |
+| #33 52.01 İK | Teşhis: API 905/905 geçti, critical-write audit kapısı `AUDIT_BEFORE_AFTER_UNPROVEN` (34 HR satırı). Alt-ajan: main birleşimi (73a5fd0) + `AuditMetadata.cs` HR projeksiyonu (identifier/role ResourceId, HrStateChange/HrActualEvent `Binding=OwnerReference`, HR Company projeksiyonu) + `HrAuditBeforeAfterTests` 11/11 → ebb697d. S1 130/122/132. | CI bekleniyor. |
+| #30 58.02 belge | `FoundationModelParityTests:98` PG deparse `(("PublicationState")::text = 'EFFECTIVE'::text)` karşılaştıramıyordu (migration doğru) → test normalizasyonu + main birleşimi → 2026a2b. Yeni CI: persistence yeşil; API kapısında 1 kırmızı: `ControlledDocumentTests.cs:184` (canlı link varken imha talebi 409 `active_use_open` bekleniyor), ham çıktı yok. | Alt-ajan kök neden arıyor; tek düzeltme push'u. |
+| #28 52.02 üyelik | QA düzeltmeleri (D06–D08, AC-15..19) commit'liydi; doc commit + main birleşimi (4f43b7d; S1 123/115/125; OpenAPI/api.d.ts yeniden üretildi). Yerel: domain 860/860, API/persistence unit geçti. | CI bekleniyor. |
+| #34 54.01 politika | Bağımsız QA **PASS-WITH-NOTES**. F1 (orta: onaylı TECHNICAL değer aktivasyonsuz `positiveUseAllowed=true`) → `APPROVED_NOT_ACTIVATED`, pozitif kullanım kapalı; F2 kullanılmış anahtar+geçersiz yük → 409; F3 karar gerekçesinde kontrol karakteri; F4 DB guard testleri SqlState+mesaj → c4728b2. Yerel: domain 815/815, API unit 239/239, persistence unit 75/75. | CI bekleniyor. |
+| `fix/same-key-replay-race-followup-20261118` | Yarım iş commit'lendi (12 uçta aynı-anahtar replay) + main birleşimi → 250ead1. | **CI yeşil (push).** PR açılmaz; entegrasyon dalına girer. |
+| #32 axe-core | Dokunulmadı. | Main birleşimi + CI. |
+| #25 58.03 | Dokunulmadı. | En son; yeni uçlara profil ekle. |
 
 ## Sıradaki iş (sıra)
 1. ✅ #36 birleşti (S2'nin 5/6 işi main'de).
-2. #29'u (DEV-024) tamamla → S2 6/6 main'de.
-3. **S2 sprint kapısı:** main üzerinde tam backend/persistence/API/frontend/Playwright + bağımsız S2 QA (poseidon-qa). Geçerse `docs/project-status.json` → S2 accepted 6 iş / 42 SP; toplam 145/970 = %14,9 (PR ile).
-4. İkinci paket: #28 #30 #33 #34 (+#32), sonra #25.
-5. Sonra S3 backlog (DEV-026…) + 15.11 dalga 1 kalanları (63.06, 65.03), dalga 2 (59.01, 60.03).
+2. Bekleyen CI sonuçlarını oku (ebb697d #33, 4f43b7d #28, c4728b2 #34, 3d1b398 #29, #30 düzeltmesi). Kırmızıysa AGENTS.md protokolü (teşhis → tek push → durma limiti).
+3. #29'u (DEV-024) tamamla: CI yeşil + bağımsız yeniden QA → S2 6/6.
+4. **İkinci paket:** `integration/bundle2-20261119` = main + #29 #28 #30 #33 #34 + `fix/same-key-replay-race-followup-20261118` (+#32); çakışmalar (S1 sayıları, snapshot, OpenAPI/api.d.ts yeniden üret) çözülür, tek PR → CI → main. Sonra #25 (58.03 profil sicili).
+5. **S2 sprint kapısı:** main üzerinde tam backend/persistence/API/frontend/Playwright + bağımsız S2 QA. Geçerse `docs/project-status.json` → S2 accepted 6 iş / 42 SP (145/970 = %14,9).
+6. Sonra S3 backlog (DEV-026…) + 15.11 dalga 1 kalanları (63.06, 65.03), dalga 2 (59.01, 60.03).
 
 ## PR KURALI (kullanıcı, 19.11.2026)
 İş başına ayrı PR AÇMA. Paketler özellik dallarında geliştirilir (push edilebilir, CI koşar) ama PR yalnız **entegrasyon dalı** için açılır: `integration/<konu>-<tarih>` dalında birden çok paket birleştirilir, tek büyük PR → tek CI → main. Mevcut tekil PR'lar (#25 #28 #29 #30 #32 #33 #34) ikinci entegrasyon PR'ında toplanacak; o birleşince otomatik Merged olurlar (ayrıca yeni tekil PR açma). Bağımsız QA paket başına yine yapılır (alt-ajan), PR başına değil.
