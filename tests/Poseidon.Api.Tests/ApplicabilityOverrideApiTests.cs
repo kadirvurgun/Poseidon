@@ -120,7 +120,9 @@ public sealed partial class DirectoryWorkspaceTests
             HttpStatusCode.Conflict, "evaluation_stale");
         var foreign = seed.Vessels.First(v => v.TenantId != SeedVessel.TenantId);
         Assert.Equal(HttpStatusCode.NotFound, (await c.GetAsync("/api/v1/" + OverridesRoute(foreign.Id), Ct)).StatusCode);
-        await AssertCode(await Send(c, OverridesRoute(foreign.Id), OverrideCommand(review, rule.Current.Id, rule.Current.Revision)), HttpStatusCode.Forbidden, "permission_denied");
+        // Cross-tenant writes are not-found like the read above (no existence oracle): a tenant-wide author
+        // passes Author()/Human() but the tenant Scope() excludes the foreign vessel (ApplicabilityOverrideEndpoints.cs:141).
+        await AssertCode(await Send(c, OverridesRoute(foreign.Id), OverrideCommand(review, rule.Current.Id, rule.Current.Revision)), HttpStatusCode.NotFound, "resource_not_found");
         await using var other = Db(foreign.TenantId); Assert.False(await other.ApplicabilityOverrides.AnyAsync(o => o.Id == proposed.Id, Ct));
     }
 
