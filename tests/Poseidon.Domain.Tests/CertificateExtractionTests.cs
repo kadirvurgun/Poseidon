@@ -12,7 +12,7 @@ public sealed class CertificateExtractionTests
         ["certificate_no"]=new("MASKED-001",0.99m,1),["expiry_date"]=new("2032-01-02",0.2m,1),["vessel_reference"]=new("OTHER-SYNTHETIC-VESSEL",0.99m,1)});
     [Fact]
     public void Confidence_missing_fields_and_reference_mismatch_never_promote_candidates_to_verified_or_owning_state() {
-        var fields=CertificateExtractionPolicy.Project(Raw(),new string('A',64),"synthetic-model-v1","synthetic-prompt-v1",0.8m,new CertificateVesselIdentifiers("SYNTHETIC VESSEL","SYN-V"),null);
+        var fields=CertificateExtractionPolicy.Project(Raw(),new string('A',64),"synthetic-model-v1","synthetic-prompt-v1",0.8m,new CertificateVesselIdentifiers("SYNTHETIC VESSEL","SYN-V"),(CertificatePersonIdentifiers?)null);
         Assert.Equal(7,fields.Length);Assert.All(fields,f=>Assert.Equal("REVIEW_REQUIRED",f.State));
         Assert.False(fields.Single(f=>f.Key=="certificate_no").LowConfidence);Assert.True(fields.Single(f=>f.Key=="expiry_date").LowConfidence);
         Assert.Contains("SCOPED_REFERENCE_UNMATCHED",fields.Single(f=>f.Key=="vessel_reference").Reasons);

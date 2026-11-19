@@ -68,7 +68,7 @@ public sealed class CertificateOcrGoldenSetTests
             report.DatasetVersion, report.ModelVersion, report.PromptVersion, report.State, documents = report.Cases.Length,
             report.Precision, report.Recall, report.ExactMatchRate, report.FieldAccuracy, report.CorrectionRate, report.CriticalUnsupportedFacts, report.AuthorityBypasses,
             unavailable = run.Capability.Where(c => c.Value != null).ToDictionary(c => c.Key, c => c.Value),
-            vesselMatch = VesselMatches(run),
+            vesselMatch = VesselMatches(run), personMatch = PersonMatches(run),
             fields = report.Fields.Select(f => new { f.Key, f.Precision, f.Recall, exactMatch = f.Accuracy, f.Proposed, f.TruthPresent, f.CorrectProposed }),
             cases = report.Cases.Select(c => new { c.Id, c.ExactMatch, c.CorrectFields, c.ScoredFields, c.CriticalUnsupportedFacts }),
         }, new JsonSerializerOptions(Web) { WriteIndented = true });
@@ -85,6 +85,9 @@ public sealed class CertificateOcrGoldenSetTests
         Assert.True(report.ExactMatchRate >= thresholds.GetProperty("exactMatchRate").GetDecimal(), $"exact match regressed: {report.ExactMatchRate}");
         Assert.True(report.CriticalUnsupportedFacts <= thresholds.GetProperty("criticalUnsupportedFactsMax").GetInt32());
         Assert.True(report.AuthorityBypasses <= thresholds.GetProperty("authorityBypassesMax").GetInt32());
+        var person = PersonMatches(run);
+        Assert.True(person.FalseMatches <= thresholds.GetProperty("personFalseMatchesMax").GetInt32(), "person_reference false match");
+        Assert.True(person.Recall >= thresholds.GetProperty("personMatchRecall").GetDecimal(), $"person match recall regressed: {person.Recall}");
         var vessel = VesselMatches(run);
         Assert.True(vessel.FalseMatches <= thresholds.GetProperty("vesselFalseMatchesMax").GetInt32(), "vessel_reference false match");
         Assert.True(vessel.Recall >= thresholds.GetProperty("vesselMatchRecall").GetDecimal(), $"vessel match recall regressed: {vessel.Recall}");
@@ -97,18 +100,21 @@ public sealed class CertificateOcrGoldenSetTests
 
     // Runs the production projection with each document's fictional scoped vessel
     // profile; a match is only a suggestion reason, never verification.
-    internal static VesselMatchSummary VesselMatches(GoldenRun run)
+    internal static VesselMatchSummary PersonMatches(GoldenRun run) => Matches(run, "personProfile", "expectPersonMatch", "person_reference",
+        (value, profile) => CertificatePersonMatch.Match(value, new CertificatePersonIdentifiers(profile.GetProperty("name").GetString(), profile.GetProperty("employeeNo").GetString())));
+    internal static VesselMatchSummary VesselMatches(GoldenRun run) => Matches(run, "vesselProfile", "expectVesselMatch", "vessel_reference",
+        (value, profile) => CertificateVesselMatch.Match(value, new CertificateVesselIdentifiers(profile.GetProperty("name").GetString(), profile.GetProperty("code").GetString(),
+            profile.GetProperty("imo").ValueKind == JsonValueKind.Null ? null : profile.GetProperty("imo").GetString())));
+    private static VesselMatchSummary Matches(GoldenRun run, string profileKey, string expectKey, string field, Func<string?, JsonElement, string?> match)
     {
         int expected = 0, correct = 0, falseMatches = 0, missed = 0;
         foreach (var document in run.Fixture.GetProperty("documents").EnumerateArray())
         {
             var id = document.GetProperty("id").GetString()!;
-            var profile = document.GetProperty("vesselProfile");
-            var identifiers = new CertificateVesselIdentifiers(profile.GetProperty("name").GetString(), profile.GetProperty("code").GetString(),
-                profile.GetProperty("imo").ValueKind == JsonValueKind.Null ? null : profile.GetProperty("imo").GetString());
-            var want = document.GetProperty("expectVesselMatch").ValueKind == JsonValueKind.Null ? null : document.GetProperty("expectVesselMatch").GetString();
+            var profile = document.GetProperty(profileKey);
+            var want = document.GetProperty(expectKey).ValueKind == JsonValueKind.Null ? null : document.GetProperty(expectKey).GetString();
             var raw = run.Raw[id];
-            var got = raw == null ? null : CertificateVesselMatch.Match(raw.Fields.GetValueOrDefault("vessel_reference")?.Value, identifiers);
+            var got = raw == null ? null : match(raw.Fields.GetValueOrDefault(field)?.Value, profile);
             if (want != null) expected++;
             if (want != null && got == want) correct++;
             else if (want == null && got != null) falseMatches++;
@@ -211,5 +217,32 @@ public sealed class CertificateOcrGoldenSetTests
     public void Vessel_reference_matches_only_exact_normalised_identifiers(string extracted, string? name, string? code, string? imo, string? expected)
     {
         Assert.Equal(expected, CertificateVesselMatch.Match(extracted, new CertificateVesselIdentifiers(name, code, imo)));
+    }
+
+    [Theory]
+    [InlineData("SYNTHETIC SEAFARER ONE", "Synthetic Seafarer One", "SEA-1", "NAME")]
+    [InlineData("synthetic seafarer, one.", "Synthetic Seafarer One", "SEA-1", "NAME")]
+    [InlineData("SENTETİK DENİZCİ BİR", "Sentetik Denizci Bir", "SEA-1", "NAME")]
+    [InlineData("sea 0042", "Synthetic Seafarer One", "SEA-0042", "EMPLOYEE_NO")]
+    [InlineData("SYNTHETIC SEAFARER", "Synthetic Seafarer One", "SEA-1", null)]
+    [InlineData("SYNTHETIC SEAFARER ONE", null, null, null)]
+    [InlineData("SYNTHETIC", "Synthetic", "SEA-1", null)]
+    [InlineData("MV SYNTHETIC ONE", "Synthetic One", "SEA-1", null)]
+    public void Person_reference_matches_only_exact_normalised_crew_identity(string extracted, string? name, string? employee, string? expected)
+    {
+        Assert.Equal(expected, CertificatePersonMatch.Match(extracted, new CertificatePersonIdentifiers(name, employee)));
+        Assert.Null(CertificatePersonMatch.Match(extracted, null));
+    }
+
+    [Fact]
+    public void Person_match_is_only_a_review_suggestion_and_unreadable_identity_stays_unmatched()
+    {
+        var raw = Run().Raw["basic-labelled"]!;
+        Project(raw, new("Synthetic Seafarer One", "SEA-0001"), out var matched);
+        Assert.Equal("REVIEW_REQUIRED", matched.State); Assert.Contains("SCOPED_REFERENCE_MATCHED_BY_NAME", matched.Reasons); Assert.Contains("PROVIDER_CANDIDATE_NOT_VERIFICATION", matched.Reasons);
+        Project(raw, null, out var unreadable);
+        Assert.Contains("SCOPED_REFERENCE_UNMATCHED", unreadable.Reasons); Assert.DoesNotContain("SCOPED_REFERENCE_MATCH_SUGGESTED", unreadable.Reasons);
+        static void Project(CertificateRawExtraction raw, CertificatePersonIdentifiers? person, out CertificateCandidate candidate) =>
+            candidate = CertificateExtractionPolicy.Project(raw, raw.InputSha256, raw.ModelVersion, raw.PromptVersion, 0.8m, null, person).Single(c => c.Key == "person_reference");
     }
 }

@@ -28,7 +28,7 @@ public static class CertificateExtractionPolicy
     public static bool ValidRaw(CertificateRawExtraction? raw,string checksum,string model,string prompt)=>raw!=null && raw.Protocol==Protocol && raw.ModelVersion==model && raw.PromptVersion==prompt && raw.InputSha256==checksum &&
         raw.Fields!=null && raw.Fields.Count<=Fields.Length && raw.Fields.All(f=>Fields.Contains(f.Key,StringComparer.Ordinal) && ValidCandidate(f.Value));
     public static CertificateCandidate[] Project(CertificateRawExtraction raw,string checksum,string model,string prompt,decimal threshold,
-        CertificateVesselIdentifiers? vessel,string? personReference)
+        CertificateVesselIdentifiers? vessel,CertificatePersonIdentifiers? person)
     {
         if(!ValidRaw(raw,checksum,model,prompt) || threshold is <0 or >1)throw new InvalidDataException("extraction_contract_unavailable");
         return Fields.Select(key=> {
@@ -48,7 +48,13 @@ public static class CertificateExtractionPolicy
                 if(match==null)reasons.Add("SCOPED_REFERENCE_UNMATCHED");
                 else{reasons.Add("SCOPED_REFERENCE_MATCH_SUGGESTED");reasons.Add("SCOPED_REFERENCE_MATCHED_BY_"+match);}
             }
-            if(key=="person_reference" && (personReference==null || field?.Value==null || !string.Equals(personReference,field.Value,StringComparison.OrdinalIgnoreCase)))reasons.Add("SCOPED_REFERENCE_UNMATCHED");
+            if(key=="person_reference") {
+                // Same suggestion-only semantics; identifiers exist only when the actor
+                // may read crew identity under the configured privacy policy.
+                var match=CertificatePersonMatch.Match(field?.Value,person);
+                if(match==null)reasons.Add("SCOPED_REFERENCE_UNMATCHED");
+                else{reasons.Add("SCOPED_REFERENCE_MATCH_SUGGESTED");reasons.Add("SCOPED_REFERENCE_MATCHED_BY_"+match);}
+            }
             reasons.Add("PROVIDER_CANDIDATE_NOT_VERIFICATION");
             return new CertificateCandidate(key,field?.Value,field?.Confidence,field?.Page,low,"REVIEW_REQUIRED",reasons.ToArray(),field?.Region,ambiguous);
         }).ToArray();
@@ -84,7 +90,8 @@ public static class CertificateVesselMatch
 {
     private static readonly string[] Prefixes=["MV","MT","MS","MY","SS","TUG","M V","M T","M S"];
     /// <summary>Upper-case invariant, letters/digits only, single spaces; leading ship-type prefixes removed.</summary>
-    public static string Normalize(string? value)
+    public static string Normalize(string? value)=>Normalize(value,true);
+    internal static string Normalize(string? value,bool stripVesselPrefix)
     {
         if(string.IsNullOrWhiteSpace(value))return "";
         var builder=new System.Text.StringBuilder(value.Length);
@@ -94,6 +101,7 @@ public static class CertificateVesselMatch
             builder.Append(char.IsLetterOrDigit(c)?char.ToUpperInvariant(c):' ');
         }
         var text=string.Join(' ',builder.ToString().Split(' ',StringSplitOptions.RemoveEmptyEntries));
+        if(!stripVesselPrefix)return text;
         foreach(var prefix in Prefixes.OrderByDescending(p=>p.Length))
             if(text.StartsWith(prefix+" ",StringComparison.Ordinal) && text.Length>prefix.Length+1){text=text[(prefix.Length+1)..];break;}
         return text;
@@ -111,6 +119,28 @@ public static class CertificateVesselMatch
         if(code.Length>=2 && Compact(value)==Compact(code))return "CODE";
         var name=Normalize(vessel.Name);
         if(name.Length>=2 && value==name)return "NAME";
+        return null;
+    }
+}
+
+/// <summary>Crew identity values of the bound person, available only under the crew
+/// identity privacy policy. Never logged, audited or returned.</summary>
+public sealed record CertificatePersonIdentifiers(string? Name,string? EmployeeNo)
+{
+    public override string ToString()=>nameof(CertificatePersonIdentifiers);
+}
+
+public static class CertificatePersonMatch
+{
+    /// <summary>NAME or EMPLOYEE_NO on exact normalised equality; otherwise null (unmatched).</summary>
+    public static string? Match(string? extracted,CertificatePersonIdentifiers? person)
+    {
+        var value=CertificateVesselMatch.Normalize(extracted,false);
+        if(value.Length==0 || person==null)return null;
+        var employee=CertificateVesselMatch.Normalize(person.EmployeeNo,false).Replace(" ","",StringComparison.Ordinal);
+        if(employee.Length>=3 && value.Replace(" ","",StringComparison.Ordinal)==employee)return "EMPLOYEE_NO";
+        var name=CertificateVesselMatch.Normalize(person.Name,false);
+        if(name.Length>=2 && name.Contains(' ',StringComparison.Ordinal) && value==name)return "NAME";
         return null;
     }
 }

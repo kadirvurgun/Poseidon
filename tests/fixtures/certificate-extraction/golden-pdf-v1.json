@@ -5,17 +5,19 @@
  "sourceVersion": "18.01:DEV045-046:rows46-47:v46.3",
  "notice": "Every document, name, number, authority and date here is fictional and generated for software evaluation. No real certificate, person or vessel data. Results measure the in-process text-layer engine on this synthetic set only; they are not operational accuracy, provider qualification or approval evidence.",
  "regressionThresholds": {
-  "basis": "Measured baseline of poseidon-pdf-text-layer-1.0.0 + poseidon-certificate-label-rules-1.0.0 on this set (20 docs, vessel identifier matching), 19.11.2026, floored to 2 decimals; lowering requires a reviewed change.",
+  "basis": "Measured baseline of poseidon-pdf-text-layer-1.0.0 + poseidon-certificate-label-rules-1.0.0 on this set (23 docs, vessel and person identifier matching), 19.11.2026, floored to 2 decimals; lowering requires a reviewed change.",
   "microPrecision": 1.0,
-  "microRecall": 0.84,
-  "exactMatchRate": 0.8,
+  "microRecall": 0.85,
+  "exactMatchRate": 0.82,
   "criticalUnsupportedFactsMax": 0,
   "authorityBypassesMax": 0,
   "vesselFalseMatchesMax": 0,
   "vesselMatchRecall": 1.0,
+  "personFalseMatchesMax": 0,
+  "personMatchRecall": 1.0,
   "fieldRecall": {
    "certificate_type": 1.0,
-   "certificate_no": 0.84,
+   "certificate_no": 0.86,
    "issuer": 1.0,
    "issue_date": 1.0,
    "expiry_date": 0.73,
@@ -110,7 +112,12 @@
     "code": "SYN-ALPHA",
     "imo": null
    },
-   "expectVesselMatch": "NAME"
+   "expectVesselMatch": "NAME",
+   "personProfile": {
+    "name": "Synthetic Seafarer One",
+    "employeeNo": "SEA-0001"
+   },
+   "expectPersonMatch": "NAME"
   },
   {
    "id": "two-column",
@@ -186,7 +193,12 @@
     "code": "SYN-BETA",
     "imo": null
    },
-   "expectVesselMatch": "NAME"
+   "expectVesselMatch": "NAME",
+   "personProfile": {
+    "name": "Synthetic Default Person",
+    "employeeNo": "SEA-9999"
+   },
+   "expectPersonMatch": null
   },
   {
    "id": "label-above-value",
@@ -274,7 +286,12 @@
     "code": "SYN-GAMMA",
     "imo": null
    },
-   "expectVesselMatch": "NAME"
+   "expectVesselMatch": "NAME",
+   "personProfile": {
+    "name": "Synthetic Default Person",
+    "employeeNo": "SEA-9999"
+   },
+   "expectPersonMatch": null
   },
   {
    "id": "dotted-dates",
@@ -344,7 +361,12 @@
     "code": "SYN-DELTA",
     "imo": null
    },
-   "expectVesselMatch": "NAME"
+   "expectVesselMatch": "NAME",
+   "personProfile": {
+    "name": "Synthetic Default Person",
+    "employeeNo": "SEA-9999"
+   },
+   "expectPersonMatch": null
   },
   {
    "id": "named-month-dates",
@@ -414,7 +436,12 @@
     "code": "SYN-DEFAULT",
     "imo": null
    },
-   "expectVesselMatch": null
+   "expectVesselMatch": null,
+   "personProfile": {
+    "name": "Synthetic Seafarer Two",
+    "employeeNo": "SEA-0002"
+   },
+   "expectPersonMatch": "NAME"
   },
   {
    "id": "ambiguous-slash-date",
@@ -474,7 +501,12 @@
     "code": "SYN-EPSILON",
     "imo": null
    },
-   "expectVesselMatch": "NAME"
+   "expectVesselMatch": "NAME",
+   "personProfile": {
+    "name": "Synthetic Default Person",
+    "employeeNo": "SEA-9999"
+   },
+   "expectPersonMatch": null
   },
   {
    "id": "turkish-tounicode",
@@ -550,7 +582,12 @@
     "code": "SYN-ZETA",
     "imo": null
    },
-   "expectVesselMatch": "NAME"
+   "expectVesselMatch": "NAME",
+   "personProfile": {
+    "name": "Synthetic Default Person",
+    "employeeNo": "SEA-9999"
+   },
+   "expectPersonMatch": null
   },
   {
    "id": "identity-without-tounicode",
@@ -608,7 +645,12 @@
     "code": "SYN-ETA",
     "imo": null
    },
-   "expectVesselMatch": null
+   "expectVesselMatch": null,
+   "personProfile": {
+    "name": "Synthetic Default Person",
+    "employeeNo": "SEA-9999"
+   },
+   "expectPersonMatch": null
   },
   {
    "id": "scanned-image-only-pdf",
@@ -647,7 +689,12 @@
     "code": "SYN-THETA",
     "imo": null
    },
-   "expectVesselMatch": null
+   "expectVesselMatch": null,
+   "personProfile": {
+    "name": "Synthetic Default Person",
+    "employeeNo": "SEA-9999"
+   },
+   "expectPersonMatch": null
   },
   {
    "id": "photo-png",
@@ -684,7 +731,12 @@
     "code": "SYN-IOTA",
     "imo": null
    },
-   "expectVesselMatch": null
+   "expectVesselMatch": null,
+   "personProfile": {
+    "name": "Synthetic Default Person",
+    "employeeNo": "SEA-9999"
+   },
+   "expectPersonMatch": null
   },
   {
    "id": "adversarial-instructions",
@@ -748,7 +800,12 @@
     "code": "SYN-DEFAULT",
     "imo": null
    },
-   "expectVesselMatch": null
+   "expectVesselMatch": null,
+   "personProfile": {
+    "name": "Synthetic Default Person",
+    "employeeNo": "SEA-9999"
+   },
+   "expectPersonMatch": null
   },
   {
    "id": "conflicting-numbers",
@@ -808,7 +865,12 @@
     "code": "SYN-DEFAULT",
     "imo": null
    },
-   "expectVesselMatch": null
+   "expectVesselMatch": null,
+   "personProfile": {
+    "name": "Synthetic Default Person",
+    "employeeNo": "SEA-9999"
+   },
+   "expectPersonMatch": null
   },
   {
    "id": "multi-page",
@@ -877,7 +939,12 @@
     "code": "SYN-DEFAULT",
     "imo": null
    },
-   "expectVesselMatch": null
+   "expectVesselMatch": null,
+   "personProfile": {
+    "name": "Synthetic Seafarer Three",
+    "employeeNo": "SEA-0003"
+   },
+   "expectPersonMatch": "NAME"
   },
   {
    "id": "object-stream",
@@ -935,7 +1002,12 @@
     "code": "SYN-DEFAULT",
     "imo": null
    },
-   "expectVesselMatch": null
+   "expectVesselMatch": null,
+   "personProfile": {
+    "name": "Synthetic Default Person",
+    "employeeNo": "SEA-9999"
+   },
+   "expectPersonMatch": null
   },
   {
    "id": "partial-fields",
@@ -987,7 +1059,12 @@
     "code": "SYN-DEFAULT",
     "imo": null
    },
-   "expectVesselMatch": null
+   "expectVesselMatch": null,
+   "personProfile": {
+    "name": "Synthetic Default Person",
+    "employeeNo": "SEA-9999"
+   },
+   "expectPersonMatch": null
   },
   {
    "id": "unlabelled-prose",
@@ -1045,7 +1122,12 @@
     "code": "SYN-KAPPA",
     "imo": null
    },
-   "expectVesselMatch": null
+   "expectVesselMatch": null,
+   "personProfile": {
+    "name": "Synthetic Default Person",
+    "employeeNo": "SEA-9999"
+   },
+   "expectPersonMatch": null
   },
   {
    "id": "tj-kerning",
@@ -1103,7 +1185,12 @@
     "code": "SYN-DEFAULT",
     "imo": null
    },
-   "expectVesselMatch": null
+   "expectVesselMatch": null,
+   "personProfile": {
+    "name": "Synthetic Default Person",
+    "employeeNo": "SEA-9999"
+   },
+   "expectPersonMatch": null
   },
   {
    "id": "cm-scaled",
@@ -1161,7 +1248,12 @@
     "code": "SYN-LAMBDA",
     "imo": null
    },
-   "expectVesselMatch": "NAME"
+   "expectVesselMatch": "NAME",
+   "personProfile": {
+    "name": "Synthetic Default Person",
+    "employeeNo": "SEA-9999"
+   },
+   "expectPersonMatch": null
   },
   {
    "id": "vessel-name-variant",
@@ -1213,7 +1305,12 @@
     "code": "SYN-MU",
     "imo": null
    },
-   "expectVesselMatch": "NAME"
+   "expectVesselMatch": "NAME",
+   "personProfile": {
+    "name": "Synthetic Default Person",
+    "employeeNo": "SEA-9999"
+   },
+   "expectPersonMatch": null
   },
   {
    "id": "foreign-vessel",
@@ -1265,7 +1362,183 @@
     "code": "SYN-NU",
     "imo": null
    },
-   "expectVesselMatch": null
+   "expectVesselMatch": null,
+   "personProfile": {
+    "name": "Synthetic Default Person",
+    "employeeNo": "SEA-9999"
+   },
+   "expectPersonMatch": null
+  },
+  {
+   "id": "person-name-variant",
+   "description": "Holder name in different case/spacing/punctuation than the crew identity; normalised match.",
+   "mime": "application/pdf",
+   "encoding": "winansi",
+   "compress": true,
+   "objectStream": false,
+   "textMode": "tj",
+   "scale": 1,
+   "imageOnly": false,
+   "expectCapability": null,
+   "expectAmbiguous": [],
+   "expectPage": {},
+   "pages": [
+    [
+     {
+      "x": 72,
+      "y": 700,
+      "size": 11,
+      "text": "Certificate No: SYN-0021"
+     },
+     {
+      "x": 72,
+      "y": 680,
+      "size": 11,
+      "text": "Name of Holder: synthetic  seafarer, four"
+     }
+    ]
+   ],
+   "truth": {
+    "certificate_type": null,
+    "certificate_no": "SYN-0021",
+    "issuer": null,
+    "issue_date": null,
+    "expiry_date": null,
+    "vessel_reference": null,
+    "person_reference": "synthetic seafarer, four"
+   },
+   "criticalFields": [
+    "certificate_type",
+    "certificate_no",
+    "expiry_date",
+    "vessel_reference",
+    "person_reference"
+   ],
+   "vesselProfile": {
+    "name": "Synthetic Default",
+    "code": "SYN-DEFAULT",
+    "imo": null
+   },
+   "expectVesselMatch": null,
+   "personProfile": {
+    "name": "Synthetic Seafarer Four",
+    "employeeNo": "SEA-0004"
+   },
+   "expectPersonMatch": "NAME"
+  },
+  {
+   "id": "person-by-employee-no",
+   "description": "Holder printed as the seafarer/employee number held in the crew identity.",
+   "mime": "application/pdf",
+   "encoding": "winansi",
+   "compress": true,
+   "objectStream": false,
+   "textMode": "tj",
+   "scale": 1,
+   "imageOnly": false,
+   "expectCapability": null,
+   "expectAmbiguous": [],
+   "expectPage": {},
+   "pages": [
+    [
+     {
+      "x": 72,
+      "y": 700,
+      "size": 11,
+      "text": "Certificate No: SYN-0022"
+     },
+     {
+      "x": 72,
+      "y": 680,
+      "size": 11,
+      "text": "Seafarer Name: SEA-0042"
+     }
+    ]
+   ],
+   "truth": {
+    "certificate_type": null,
+    "certificate_no": "SYN-0022",
+    "issuer": null,
+    "issue_date": null,
+    "expiry_date": null,
+    "vessel_reference": null,
+    "person_reference": "SEA-0042"
+   },
+   "criticalFields": [
+    "certificate_type",
+    "certificate_no",
+    "expiry_date",
+    "vessel_reference",
+    "person_reference"
+   ],
+   "vesselProfile": {
+    "name": "Synthetic Default",
+    "code": "SYN-DEFAULT",
+    "imo": null
+   },
+   "expectVesselMatch": null,
+   "personProfile": {
+    "name": "Synthetic Seafarer Five",
+    "employeeNo": "SEA 0042"
+   },
+   "expectPersonMatch": "EMPLOYEE_NO"
+  },
+  {
+   "id": "foreign-person",
+   "description": "Certificate names a different person than the bound crew identity; must stay UNMATCHED.",
+   "mime": "application/pdf",
+   "encoding": "winansi",
+   "compress": true,
+   "objectStream": false,
+   "textMode": "tj",
+   "scale": 1,
+   "imageOnly": false,
+   "expectCapability": null,
+   "expectAmbiguous": [],
+   "expectPage": {},
+   "pages": [
+    [
+     {
+      "x": 72,
+      "y": 700,
+      "size": 11,
+      "text": "Certificate No: SYN-0023"
+     },
+     {
+      "x": 72,
+      "y": 680,
+      "size": 11,
+      "text": "Name of Holder: SYNTHETIC SEAFARER OTHER"
+     }
+    ]
+   ],
+   "truth": {
+    "certificate_type": null,
+    "certificate_no": "SYN-0023",
+    "issuer": null,
+    "issue_date": null,
+    "expiry_date": null,
+    "vessel_reference": null,
+    "person_reference": "SYNTHETIC SEAFARER OTHER"
+   },
+   "criticalFields": [
+    "certificate_type",
+    "certificate_no",
+    "expiry_date",
+    "vessel_reference",
+    "person_reference"
+   ],
+   "vesselProfile": {
+    "name": "Synthetic Default",
+    "code": "SYN-DEFAULT",
+    "imo": null
+   },
+   "expectVesselMatch": null,
+   "personProfile": {
+    "name": "Synthetic Seafarer Six",
+    "employeeNo": "SEA-0006"
+   },
+   "expectPersonMatch": null
   }
  ]
 }
